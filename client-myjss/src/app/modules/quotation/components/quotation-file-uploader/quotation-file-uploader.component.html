@@ -10,7 +10,7 @@
           <ul>
             <li>
               {{ entity.typeDocument.customLabel ? entity.typeDocument.customLabel:
-              entity.typeDocument.label }}
+              entity.typeDocument.label }} {{ entity.isMandatory ? '*':''}}
             </li>
           </ul>
         </div>
@@ -66,10 +66,13 @@
                 </div>
 
                 <!-- Date of document -->
-                <div class="row align-items-center mb-3">
+                <div class="row align-items-center mb-3"
+                  *ngIf="entity.typeDocument.attachmentType.isDocumentDateRequired || true">
                   <div class="col-4">Date du document*</div>
                   <div class="col-8">
-                    <generic-date-picker></generic-date-picker>
+                    <generic-date-picker [(model)]="attachment.attachmentDate" label="  " [form]="uploadForm"
+                      [propertyName]="'attachmentDate'" [isMandatory]="true" [isDisabled]="false"
+                      (onDateChange)="updateAttachment(attachment)"></generic-date-picker>
                   </div>
                 </div>
                 <hr *ngIf="attachment != entity.attachments[entity.attachments.length-1]" class="mb-4">

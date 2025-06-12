@@ -218,6 +218,7 @@ public class Attachment implements Serializable, IId {
 	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
 	private DocumentAssocieInfogreffe documentAssocieInfogreffe;
 
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
 	private LocalDate attachmentDate;
 
 	@ManyToOne(fetch = FetchType.LAZY)

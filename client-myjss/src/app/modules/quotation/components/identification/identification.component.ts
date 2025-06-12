@@ -87,11 +87,12 @@ export class IdentificationComponent implements OnInit {
   }
 
   selectFamilyGroupService(item: ServiceFamilyGroup) {
-    if (this.quotation.serviceFamilyGroup)
+    if (this.quotation.serviceFamilyGroup) {
+      this.quotation.serviceFamilyGroup = item;
       return;
+    }
     if (!this.quotation)
       this.initIQuotation();
-    this.quotation.serviceFamilyGroup = item;
     this.quotation.assoAffaireOrders = [];
     this.addAffaire();
   }

@@ -225,6 +225,14 @@ export class RequiredInformationComponent implements OnInit {
                 }
               }
             }
+
+            if (serv.assoServiceDocuments) {
+              serv.assoServiceDocuments.sort((a, b) => (b.isMandatory ? 1 : 0) - (a.isMandatory ? 1 : 0))
+            }
+
+            if (serv.assoServiceFieldTypes) {
+              serv.assoServiceFieldTypes.sort((a, b) => (b.isMandatory ? 1 : 0) - (a.isMandatory ? 1 : 0))
+            }
           }
         }
       }
@@ -308,7 +316,7 @@ export class RequiredInformationComponent implements OnInit {
 
   refreshAssoServiceDocument(selectedAssoIndex: number, selectedServiceIndex: number, assoServiceDocumentIndex: number, assoServiceDocument: AssoServiceDocument) {
     this.assoServiceDocumentService.getAssoServiceDocument(assoServiceDocument).subscribe(response => {
-      if (this.quotation) {
+      if (this.quotation && response) {
         this.quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments[assoServiceDocumentIndex] = response;
       }
     });

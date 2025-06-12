@@ -65,7 +65,7 @@ export class PayQuotationComponent implements OnInit {
 
   refreshQrCode() {
     if (this.defaultMail && this.defaultMail.length > 0 && validateEmail(this.defaultMail) && this.idQuotation)
-      this.myJssImageService.downloadQrCode(this.idQuotation, this.defaultMail).subscribe(response => {
+      this.myJssImageService.downloadQrCodeForQuotation(this.idQuotation, this.defaultMail).subscribe(response => {
         this.qrCodeImage = response;
         this.qrCodeRecourse = this.sanitizer.bypassSecurityTrustResourceUrl('data:image/jpg;base64,' + this.qrCodeImage.data);
       })

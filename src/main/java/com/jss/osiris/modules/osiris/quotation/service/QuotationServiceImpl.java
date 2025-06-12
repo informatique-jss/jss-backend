@@ -234,6 +234,9 @@ public class QuotationServiceImpl implements QuotationService {
             quotation = quotationRepository.save(quotation);
         }
 
+        if (!oneNewProvision && !computePrice && !isNewQuotation)
+            quotation = quotationRepository.save(quotation);
+
         quotation = getQuotation(quotation.getId());
 
         batchService.declareNewBatch(Batch.REINDEX_QUOTATION, quotation.getId());

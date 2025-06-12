@@ -1,4 +1,4 @@
-<div class="position-relative ">
+<div class="position-relative " *ngIf="form && form.get(propertyName)">
   <div [formGroup]="form!" class="needs-validation">
     <label [for]="'fl-text'+uniqueId" *ngIf="isDisplayLabel && label!=null && label!=undefined && label.length>0"
       class="form-label">{{label}}</label>

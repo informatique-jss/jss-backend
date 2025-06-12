@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -482,6 +483,30 @@ public class MyJssQuotationController {
 		return new ResponseEntity<Boolean>(false, HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/attachment/update/date")
+	public ResponseEntity<Boolean> updateAttachmentDocumentDate(@RequestParam Integer idAttachment,
+			@RequestParam("attachmentDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate attachmentDate)
+			throws OsirisValidationException {
+
+		Attachment attachment = attachmentService.getAttachment(idAttachment);
+		if (attachment == null)
+			throw new OsirisValidationException("service");
+
+		if ((attachment.getAssoServiceDocument().getService().getAssoAffaireOrder().getQuotation() != null
+				&& myJssQuotationValidationHelper.canSeeQuotation(
+						attachment.getAssoServiceDocument().getService().getAssoAffaireOrder().getQuotation()))
+				|| (attachment.getAssoServiceDocument().getService().getAssoAffaireOrder().getCustomerOrder() != null
+						&& myJssQuotationValidationHelper.canSeeQuotation(attachment.getAssoServiceDocument()
+								.getService().getAssoAffaireOrder().getCustomerOrder()))) {
+
+			attachment.setAttachmentDate(attachmentDate);
+			attachmentService.addOrUpdateAttachment(attachment);
+			return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+		}
+
+		return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/service/delete")
 	public ResponseEntity<Boolean> deleteService(@RequestParam Integer idService)
 			throws OsirisValidationException {
@@ -666,6 +691,23 @@ public class MyJssQuotationController {
 		validationHelper.validateMail(mail);
 
 		return new ResponseEntity<MyJssImage>(paymentService.downloadQrCodeForOrderPayment(customerOrder, mail),
+				new HttpHeaders(), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/quotation/payment/cb/qrcode")
+	@Transactional
+	public ResponseEntity<MyJssImage> downloadQrCodeForQuotationPayment(
+			@RequestParam("quotationId") Integer quotationId,
+			@RequestParam("mail") String mail)
+			throws OsirisValidationException, OsirisException {
+
+		Quotation quotation = quotationService.getQuotation(quotationId);
+		if (quotation == null || !myJssQuotationValidationHelper.canSeeQuotation(quotation))
+			return new ResponseEntity<MyJssImage>(null, new HttpHeaders(), HttpStatus.OK);
+
+		validationHelper.validateMail(mail);
+
+		return new ResponseEntity<MyJssImage>(paymentService.downloadQrCodeForQuotationPayment(quotation, mail),
 				new HttpHeaders(), HttpStatus.OK);
 	}
 

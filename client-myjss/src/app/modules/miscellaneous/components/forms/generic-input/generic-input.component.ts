@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { UntypedFormBuilder } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { SHARED_IMPORTS } from '../../../../../libs/SharedImports';
 import { GenericFormComponent } from '../generic-form.components';
 
@@ -53,6 +53,14 @@ export class GenericInputComponent extends GenericFormComponent implements OnIni
   }
 
   callOnNgInit(): void {
+  }
+
+  override ngOnInit(): void {
+    if (this.type == 'email') {
+      if (!this.customValidators)
+        this.customValidators = [Validators.email];
+    }
+    super.ngOnInit();
   }
 
   parse(event: any) {

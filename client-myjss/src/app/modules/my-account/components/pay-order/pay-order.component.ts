@@ -25,6 +25,7 @@ import { MyJssImageService } from '../../services/my.jss.image.service';
 })
 export class PayOrderComponent implements OnInit {
   idOrder: number | undefined;
+  idQuotation: number | undefined;
   invoiceSummary: InvoicingSummary | undefined;
   qrCodeRecourse: SafeResourceUrl | undefined;
   qrCodeImage: MyJssImage | undefined;
@@ -60,17 +61,19 @@ export class PayOrderComponent implements OnInit {
   }
 
   cancelPay() {
-    this.appService.openRoute(null, "account/orders/details/" + this.idOrder, undefined);
+    if (this.idOrder)
+      this.appService.openRoute(null, "account/orders/details/" + this.idOrder, undefined);
   }
 
   refreshQrCode() {
-    if (this.defaultMail && this.defaultMail.length > 0 && validateEmail(this.defaultMail) && this.idOrder)
-      this.myJssImageService.downloadQrCode(this.idOrder, this.defaultMail).subscribe(response => {
-        this.qrCodeImage = response;
-        this.qrCodeRecourse = this.sanitizer.bypassSecurityTrustResourceUrl('data:image/jpg;base64,' + this.qrCodeImage.data);
-      })
-    else
-      this.qrCodeRecourse = undefined;
+    if (this.defaultMail && this.defaultMail.length > 0 && validateEmail(this.defaultMail))
+      if (this.idOrder)
+        this.myJssImageService.downloadQrCodeForOrder(this.idOrder, this.defaultMail).subscribe(response => {
+          this.qrCodeImage = response;
+          this.qrCodeRecourse = this.sanitizer.bypassSecurityTrustResourceUrl('data:image/jpg;base64,' + this.qrCodeImage.data);
+        })
+      else
+        this.qrCodeRecourse = undefined;
   }
 
   payedCb() {

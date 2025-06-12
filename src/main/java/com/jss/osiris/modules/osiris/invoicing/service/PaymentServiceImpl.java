@@ -1750,4 +1750,15 @@ public class PaymentServiceImpl implements PaymentService {
         return image;
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public MyJssImage downloadQrCodeForQuotationPayment(Quotation quotation, String mail) throws OsirisException {
+        MyJssImage image = new MyJssImage();
+        image.setAddress(
+                paymentCbEntryPoint + "/quotation/deposit?quotationId=" + quotation.getId() + "&mail=" + mail);
+        image.setData(pictureHelper
+                .getPictureAsBase64String(qrCodeHelper.getQrCode(image.getAddress(), 150)));
+        return image;
+    }
+
 }
