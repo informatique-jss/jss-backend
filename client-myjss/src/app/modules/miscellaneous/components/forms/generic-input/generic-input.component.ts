@@ -46,6 +46,10 @@ export class GenericInputComponent extends GenericFormComponent implements OnIni
 
   @Input() doNotValidate: boolean = false;
 
+  @Input() isAutocompleteAvailable: boolean = true;
+
+  @Input() canPaste: boolean = true;
+
   constructor(
     private formBuilder2: UntypedFormBuilder
   ) {
@@ -79,4 +83,11 @@ export class GenericInputComponent extends GenericFormComponent implements OnIni
     event.stopPropagation();
     this.onEnter.emit();
   }
+
+  onPaste($event: ClipboardEvent) {
+    if (!this.canPaste) {
+      $event.preventDefault();
+    }
+  }
+
 }
