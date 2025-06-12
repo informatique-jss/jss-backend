@@ -107,7 +107,6 @@ export class AffairesComponent implements OnInit {
   }
 
   loadAffaireDetails(affaire: Affaire) {
-    console.log("show");
     if (!this.ordersAffaire[affaire.id]) {
       this.customerOrderService.getCustomerOrdersForAffaireAndCurrentUser(affaire.id).subscribe(response => {
         this.ordersAffaire[affaire.id] = response;
