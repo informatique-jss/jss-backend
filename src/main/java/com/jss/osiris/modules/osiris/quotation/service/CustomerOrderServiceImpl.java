@@ -1882,6 +1882,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 if (asso.getAffaire() != null && asso.getAffaire().getId() == null)
                     affaireService.addOrUpdateAffaire(asso.getAffaire());
 
+        myJssQuotationDelegate.saveNewMailsOnAffaire(order);
+
         order.setResponsable(employeeService.getCurrentMyJssUser());
         order.setCustomerOrderOrigin(constantService.getCustomerOrderOriginMyJss());
         order.setCustomerOrderStatus(
