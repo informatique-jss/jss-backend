@@ -39,4 +39,6 @@ public interface AssoAffaireOrderSearchResult {
 	public LocalDateTime getProvisionStatusDatetime();
 
 	public LocalDateTime getProvisionCreatedDatetime();
+
+	public LocalDateTime getCreatedDate();
 }

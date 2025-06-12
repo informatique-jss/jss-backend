@@ -207,7 +207,7 @@ public class CustomerMailServiceImpl implements CustomerMailService {
                 }
             }
 
-            // Send Order finalization then attachment => keep order finalization and steal
+            // Send attachment then order finalization => keep order finalization and steal
             // attachments
             if (mail.getMailTemplate().equals(CustomerMail.TEMPLATE_SEND_ATTACHMENTS)) {
                 for (CustomerMail existingMail : customerOrderMails) {

@@ -7,7 +7,7 @@ import { Employee } from 'src/app/modules/profile/model/Employee';
 import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
 import { AppService } from 'src/app/services/app.service';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
-import { formatDateTimeForSortTable } from '../../../../libs/FormatHelper';
+import { formatDateForSortTable, formatDateTimeForSortTable } from '../../../../libs/FormatHelper';
 import { AffaireSearch } from '../../model/AffaireSearch';
 import { AssoAffaireOrderSearchResult } from '../../model/AssoAffaireOrderSearchResult';
 import { AssoAffaireOrderSearchResultService } from '../../services/asso.affaire.order.search.result.service';
@@ -78,7 +78,7 @@ export class ProvisionListComponent implements OnInit {
           return undefined;
         }, display: true,
       } as SortTableAction<AssoAffaireOrderSearchResult>);
-      this.availableColumns.push({ id: "provisionCreatedDatetime", fieldName: "provisionCreatedDatetime", label: "Date de création", valueFonction: formatDateTimeForSortTable, colorWarnFunction: (element: AssoAffaireOrderSearchResult) => { return element.isEmergency } } as SortTableColumn<AssoAffaireOrderSearchResult>);
+      this.availableColumns.push({ id: "provisionCreatedDatetime", fieldName: "provisionCreatedDatetime", label: "Date production", valueFonction: formatDateForSortTable, colorWarnFunction: (element: AssoAffaireOrderSearchResult) => { return element.isEmergency } } as SortTableColumn<AssoAffaireOrderSearchResult>);
       this.availableColumns.push({ id: "customerOrderId", fieldName: "customerOrderId", label: "Nº de commande", colorWarnFunction: (element: AssoAffaireOrderSearchResult) => { return element.isEmergency } } as SortTableColumn<AssoAffaireOrderSearchResult>);
       this.availableColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire", isShrinkColumn: true, colorWarnFunction: (element: AssoAffaireOrderSearchResult) => { return element.isEmergency } } as SortTableColumn<AssoAffaireOrderSearchResult>);
       this.availableColumns.push({ id: "serviceTypeLabel", fieldName: "serviceTypeLabel", label: "Service(s)", isShrinkColumn: true, colorWarnFunction: (element: AssoAffaireOrderSearchResult) => { return element.isEmergency } } as SortTableColumn<AssoAffaireOrderSearchResult>);
@@ -93,6 +93,7 @@ export class ProvisionListComponent implements OnInit {
       this.availableColumns.push({ id: "provisionStatusDatetime", fieldName: "provisionStatusDatetime", label: "Date de MAJ", valueFonction: formatDateTimeForSortTable, colorWarnFunction: (element: AssoAffaireOrderSearchResult) => { return element.isEmergency } } as SortTableColumn<AssoAffaireOrderSearchResult>);
       this.availableColumns.push({ id: "competentAuthorityLabel", fieldName: "competentAuthorityLabel", label: "Autorité compétente" } as SortTableColumn<AssoAffaireOrderSearchResult>);
       this.availableColumns.push({ id: "waitedCompetentAuthorityLabel", fieldName: "waitedCompetentAuthorityLabel", label: "Autorité compétente en attente" } as SortTableColumn<AssoAffaireOrderSearchResult>);
+      this.availableColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateTimeForSortTable, colorWarnFunction: (element: AssoAffaireOrderSearchResult) => { return element.isEmergency } } as SortTableColumn<AssoAffaireOrderSearchResult>);
       this.getCurrentEmployee();
 
       this.setColumns();
