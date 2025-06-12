@@ -39,3 +39,11 @@
 .header-navbar-bottom .navbar-nav>li:first-child>a {
   padding-left: 1rem !important;
 }
+
+.dropdown-header {
+  color: var(--ar-secondary) !important;
+}
+
+.navbar-nav .nav-link.active {
+  color: #CCE1FA !important;
+}

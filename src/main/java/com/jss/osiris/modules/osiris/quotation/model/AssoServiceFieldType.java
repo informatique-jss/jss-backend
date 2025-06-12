@@ -53,18 +53,20 @@ public class AssoServiceFieldType implements Serializable, IId {
     @ManyToOne
     @JoinColumn(name = "id_service_field_type_possible_value")
     @IndexedField
-    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
+    @JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
     private ServiceTypeFieldTypePossibleValue selectValue;
 
     @Column(columnDefinition = "TEXT")
-    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
+    @JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
     private String textAreaValue;
 
-    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class,
+            JacksonViews.OsirisDetailedView.class })
     private Boolean isMandatory;
 
     @Column(columnDefinition = "TEXT")
-    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class,
+            JacksonViews.OsirisDetailedView.class })
     private String formalisteComment;
 
     public Integer getId() {

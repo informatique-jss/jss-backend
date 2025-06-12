@@ -44,6 +44,8 @@ export class GenericInputComponent extends GenericFormComponent implements OnIni
  */
   @Output() onEnter: EventEmitter<any> = new EventEmitter();
 
+  @Input() doNotValidate: boolean = false;
+
   constructor(
     private formBuilder2: UntypedFormBuilder
   ) {

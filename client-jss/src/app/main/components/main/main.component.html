@@ -186,7 +186,7 @@
                 <div class="col-md-12">
                   <div class="section-title-block d-flex pb-3">
                     <h3 class="section-widget-title">île-de-France</h3>
-                    <a class="text-uppercase section-title-link" [routerLink]="'/post/department/'+idf.id">
+                    <a class="text-uppercase section-title-link" [routerLink]="'/post/department/'+idf.code">
                       Voir tous
                       <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path
@@ -306,7 +306,7 @@
                 <div class="col-md-12">
                   <div class="section-title-block d-flex">
                     <h3 class="section-widget-title">Tendances</h3>
-                    <a routerLink="'/post/tendency'" class="text-uppercase section-title-link">
+                    <a routerLink="/post/tendency" class="text-uppercase section-title-link">
                       Voir tous
                       <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path
@@ -634,7 +634,7 @@
           communauté de rédacteurs.</p>
       </div>
       <div class="row">
-        <a class="btn btn-light-blue my-3 px-5" href="#">Devenir contributeur</a>
+        <a class="btn btn-light-blue my-3 px-5" routerLink="/contribute">Devenir contributeur</a>
       </div>
     </div>
 
@@ -669,7 +669,7 @@
                 <a (click)="openCategoryPosts(post.jssCategories[0], $event)"
                   class="badge bg-info rounded-pill px-1 col-auto me-2">{{post.jssCategories[0].name}}</a>
                 <a class="rounded-outline-icon rounded-circle fs-8 d-flex align-items-center justify-content-center ms-2"
-                  (click)="post.isBookmarked ? unBookmarkPost(post) : bookmarkPost(post)">
+                  (click)="post.isBookmarked ? unBookmarkPost(post) : bookmarkPost(post)" *ngIf="currentUser">
                   <i [ngClass]="{'bi-bookmark': !post.isBookmarked,
                                 'bi-bookmark-fill text-dark': post.isBookmarked,
                                 'text-transparent': !post.isBookmarked}">

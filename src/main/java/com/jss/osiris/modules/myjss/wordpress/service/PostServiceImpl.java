@@ -39,7 +39,6 @@ import com.jss.osiris.modules.myjss.wordpress.model.Post;
 import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
 import com.jss.osiris.modules.myjss.wordpress.model.Serie;
 import com.jss.osiris.modules.myjss.wordpress.model.Subscription;
-import com.jss.osiris.modules.myjss.wordpress.model.Subscription.SubscriptionTypeEnum;
 import com.jss.osiris.modules.myjss.wordpress.model.Tag;
 import com.jss.osiris.modules.myjss.wordpress.repository.PostRepository;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
@@ -103,9 +102,6 @@ public class PostServiceImpl implements PostService {
 
     @Autowired
     AssoMailJssCategoryService assoMailJssCategoryService;
-
-    @Autowired
-    EmployeeService employeeService;
 
     @Autowired
     AssoMailPostService assoMailPostService;
@@ -217,7 +213,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<Post> getJssCategoryStickyPost(Pageable pageableRequest) throws OsirisException {
-        return computeBookmarkedPosts(postRepository.findJssCategoryPostSticky(pageableRequest));
+        return postRepository.findJssCategoryPostSticky(pageableRequest);
     }
 
     @Override
@@ -227,8 +223,13 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Post updateBookmarkPost(Post post) {
+    public void updateBookmarkPost(Post post) {
         Responsable responsable = employeeService.getCurrentMyJssUser();
+
+        AssoMailPost existingAsso = assoMailPostService.getAssoMailPostByMailAndPost(responsable.getMail(), post);
+        if (existingAsso != null)
+            return;
+
         AssoMailPost assoMailPost = new AssoMailPost();
         if (responsable != null) {
             assoMailPost.setMail(responsable.getMail());
@@ -239,11 +240,10 @@ public class PostServiceImpl implements PostService {
             post.getAssoMailPosts().add(assoMailPost);
             postRepository.save(post);
         }
-        return post;
     }
 
     @Override
-    public Post deleteBookmarkPost(Post post) {
+    public void deleteBookmarkPost(Post post) {
         Responsable responsable = employeeService.getCurrentMyJssUser();
         AssoMailPost assoMailPost = new AssoMailPost();
         if (responsable != null) {
@@ -251,7 +251,7 @@ public class PostServiceImpl implements PostService {
             if (assoMailPost != null)
                 assoMailPostService.deleteAssoMailPost(assoMailPost);
         }
-        return post;
+        return;
     }
 
     @Override
@@ -263,8 +263,9 @@ public class PostServiceImpl implements PostService {
         if (post.getExcerpt() != null)
             post.setExcerptText(
                     StringEscapeUtils.unescapeHtml4(post.getExcerpt().getRendered().replaceAll("<[^>]*>", "")));
-        if (post.getContent() != null)
-            post.setContentText(StringEscapeUtils.unescapeHtml4(post.getContent().getRendered()));
+        if (post.getContent() != null) {
+            post.setOriginalContentText(StringEscapeUtils.unescapeHtml4(post.getContent().getRendered()));
+        }
 
         modifyPodcastUrls(post);
         modifyVideoUrls(post);
@@ -284,7 +285,7 @@ public class PostServiceImpl implements PostService {
      */
     private void modifyPodcastUrls(Post post) {
         Pattern pattern = Pattern.compile("<audio[^>]*\\ssrc=\"(.*?)\"");
-        Matcher matcher = pattern.matcher(post.getContentText());
+        Matcher matcher = pattern.matcher(post.getOriginalContentText());
         if (matcher.find()) {
             String url = matcher.group(1);
             Media podcastMedia = mediaService.getMediaByUrl(url);
@@ -302,7 +303,7 @@ public class PostServiceImpl implements PostService {
      */
     private void modifyVideoUrls(Post post) {
         Pattern pattern = Pattern.compile("<video[^>]*\\ssrc=\"(.*?)\"");
-        Matcher matcher = pattern.matcher(post.getContentText());
+        Matcher matcher = pattern.matcher(post.getOriginalContentText());
         if (matcher.find()) {
             String url = matcher.group(1);
             Media videoMedia = mediaService.getMediaByUrl(url);
@@ -324,7 +325,7 @@ public class PostServiceImpl implements PostService {
         final String TARGET_BLANK = " target=\"_blank\"";
         pattern = Pattern.compile("<a\\s+[^>]*href=\"([^\"]+)\".*?>(.*?)<\\/a>");
 
-        matcher = pattern.matcher(post.getContentText());
+        matcher = pattern.matcher(post.getOriginalContentText());
 
         int insertions = 0; // Keeps track of the number of insertions of the ATTRIBUTE_TO_INSERT attribute
         while (matcher.find()) {
@@ -333,10 +334,10 @@ public class PostServiceImpl implements PostService {
                 // We want to insert after the " of the found url (+1) and shift the end index
                 // everytime we add the attribute TARGET_BLANK
                 int indexToInsert = matcher.end(1) + 1 + insertions * TARGET_BLANK.length();
-                String newString = post.getContentText().substring(0, indexToInsert)
+                String newString = post.getOriginalContentText().substring(0, indexToInsert)
                         + TARGET_BLANK
-                        + post.getContentText().substring(indexToInsert);
-                post.setContentText(newString);
+                        + post.getOriginalContentText().substring(indexToInsert);
+                post.setOriginalContentText(newString);
                 insertions++;
             }
         }
@@ -349,25 +350,27 @@ public class PostServiceImpl implements PostService {
      */
     private void reformatQuotes(Post post) {
         Pattern pattern = Pattern.compile("(?s)<blockquote[^>]*\\sclass=\"([^\"]+)\".*?</blockquote>");
-        Matcher matcher = pattern.matcher(post.getContentText());
+        Matcher matcher = pattern.matcher(post.getOriginalContentText());
 
         while (matcher.find()) {
             String blockquoteElement = matcher.group();
 
             // Addind a <figure> tag encapsulating the quote
-            post.setContentText(post.getContentText().replaceFirst(escapeRegexSpecialChars(blockquoteElement),
-                    "<figure class=\"my-5\">" + blockquoteElement + "</figure>"));
+            post.setOriginalContentText(
+                    post.getOriginalContentText().replaceFirst(escapeRegexSpecialChars(blockquoteElement),
+                            "<figure class=\"my-5\">" + blockquoteElement + "</figure>"));
 
             // Replacing the <blockquote> wordpress classes by the "blockquote" class
             String wordpressQuoteClasses = matcher.group(1);
-            post.setContentText(
-                    post.getContentText().replaceFirst(escapeRegexSpecialChars(wordpressQuoteClasses), "blockquote"));
+            post.setOriginalContentText(
+                    post.getOriginalContentText().replaceFirst(escapeRegexSpecialChars(wordpressQuoteClasses),
+                            "blockquote"));
 
         }
 
         // We modify all the <cite> tag classes with good format
         final String CITE_TAG = "<cite";
-        post.setContentText(post.getContentText().replace(CITE_TAG,
+        post.setOriginalContentText(post.getOriginalContentText().replace(CITE_TAG,
                 CITE_TAG + " class=\"blockquote-footer\" style=\"padding-left:0\""));
     }
 
@@ -391,7 +394,7 @@ public class PostServiceImpl implements PostService {
     private void reformatFootnotes(Post post) {
         Pattern pattern = Pattern.compile(
                 "<sup\\s+data-fn=\"([0-9a-fA-F\\-]+)\"\\s+class=\"fn\"><a[^>]*id=\"\\1-link\"[^>]*>(.*?)<\\/a><\\/sup>");
-        Matcher matcher = pattern.matcher(post.getContentText());
+        Matcher matcher = pattern.matcher(post.getOriginalContentText());
 
         while (matcher.find()) {
             String id = matcher.group(1);
@@ -401,18 +404,19 @@ public class PostServiceImpl implements PostService {
                     + "-link\">" + footnoteNumber + "</sup>";
 
             // Changing the <sup> tag of the footnote
-            post.setContentText(post.getContentText().replace(supElement, newSupTag));
+            post.setOriginalContentText(post.getOriginalContentText().replace(supElement, newSupTag));
 
             // Changing the footnote it self to have it link to the <sup> tag
-            post.setContentText(post.getContentText().replace("<a href=\"#" + id + "-link\" target=\"_blank\"",
-                    "<a onclick=\"scrollToElement('" + id + "-link')\" style=\"cursor: pointer;\""));
+            post.setOriginalContentText(
+                    post.getOriginalContentText().replace("<a href=\"#" + id + "-link\" target=\"_blank\"",
+                            "<a onclick=\"scrollToElement('" + id + "-link')\" style=\"cursor: pointer;\""));
         }
     }
 
     @Override
     public Page<Post> getJssCategoryPosts(Pageable pageableRequest) throws OsirisException {
-        return computeBookmarkedPosts(postRepository.findJssCategoryPosts(getCategoryArticle(), false,
-                pageableRequest));
+        return postRepository.findJssCategoryPosts(getCategoryArticle(), false,
+                pageableRequest);
     }
 
     @Override
@@ -440,13 +444,12 @@ public class PostServiceImpl implements PostService {
             tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
                 return searchPostAgainstEntitiesToMatch(searchText,
-                        computeBookmarkedPosts(
-                                postRepository.findByJssCategoriesAndIsCancelled(jssCategory, false, consultationDate,
-                                        pageableRequest)));
+                        postRepository.findByJssCategoriesAndIsCancelled(jssCategory, false, consultationDate,
+                                pageableRequest));
             }
         }
         posts = postRepository.findByJssCategoriesAndIsCancelled(jssCategory, false, consultationDate, pageableRequest);
-        return computeBookmarkedPosts(posts);
+        return posts;
     }
 
     @Override
@@ -457,18 +460,22 @@ public class PostServiceImpl implements PostService {
     @Override
     public Page<Post> getBookmarkPostsForCurrentUser(Pageable pageableRequest) {
         Responsable responsable = employeeService.getCurrentMyJssUser();
+        Page<Post> bookmarkedPosts = null;
+
         if (responsable != null && responsable.getMail() != null)
-            return postRepository.findBookmarkedPostsByMail(false, responsable.getMail(), pageableRequest);
-        else
-            return null;
+            bookmarkedPosts = postRepository.findBookmarkedPostsByMail(false, responsable.getMail(), pageableRequest);
+
+        if (bookmarkedPosts != null)
+            for (Post post : bookmarkedPosts.getContent())
+                post.setIsBookmarked(true);
+        return bookmarkedPosts;
     }
 
-    private Page<Post> computeBookmarkedPosts(Page<Post> posts) {
+    @Override
+    public Page<Post> computeBookmarkedPosts(Page<Post> posts) {
         Responsable responsable = employeeService.getCurrentMyJssUser();
         List<Post> bookmarkedPosts = null;
-        Order order = new Order(Direction.DESC, "date");
-        Sort sort = Sort.by(Arrays.asList(order));
-        Pageable pageableRequest = PageRequest.of(0, 15, sort);
+        Pageable pageableRequest = PageRequest.of(0, Integer.MAX_VALUE);
 
         if (posts != null && !posts.getContent().isEmpty()) {
             if (responsable != null && responsable.getMail() != null) {
@@ -492,6 +499,30 @@ public class PostServiceImpl implements PostService {
 
         }
         return posts;
+    }
+
+    private Post computeBookmarkedPost(Post post) {
+        Responsable responsable = employeeService.getCurrentMyJssUser();
+        List<Post> bookmarkedPosts = null;
+        Pageable pageableRequest = PageRequest.of(0, Integer.MAX_VALUE);
+
+        if (responsable != null && responsable.getMail() != null) {
+            bookmarkedPosts = postRepository.findBookmarkedPostsByMail(false, responsable.getMail(),
+                    pageableRequest).getContent();
+
+            if (bookmarkedPosts != null) {
+                post.setIsBookmarked(false);
+                for (Post bookmarkedPost : bookmarkedPosts) {
+                    if (post.getId().equals(bookmarkedPost.getId())) {
+                        post.setIsBookmarked(true);
+                        break;
+                    }
+                }
+            }
+        } else
+            post.setIsBookmarked(false);
+
+        return post;
     }
 
     private Page<Post> searchPostAgainstEntitiesToMatch(String searchText, Page<Post> entityToMatchWithResearch) {
@@ -522,10 +553,10 @@ public class PostServiceImpl implements PostService {
             tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
                 return searchPostAgainstEntitiesToMatch(searchText,
-                        computeBookmarkedPosts(postRepository.findPostsIdf(getCategoryArticle(), pageableRequest)));
+                        postRepository.findPostsIdf(getCategoryArticle(), pageableRequest));
             }
         }
-        return computeBookmarkedPosts(postRepository.findPostsIdf(getCategoryArticle(), pageableRequest));
+        return postRepository.findPostsIdf(getCategoryArticle(), pageableRequest);
     }
 
     @Override
@@ -545,15 +576,12 @@ public class PostServiceImpl implements PostService {
             List<IndexEntity> tmpEntitiesFound = null;
             tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
-                return searchPostAgainstEntitiesToMatch(searchText,
-                        computeBookmarkedPosts(postRepository.findByPostTagsAndIsCancelled(tag, getCategoryArticle(),
-                                false, consultationDate,
-                                pageableRequest)));
+                return searchPostAgainstEntitiesToMatch(searchText, postRepository.findByPostTagsAndIsCancelled(tag,
+                        getCategoryArticle(), false, consultationDate, pageableRequest));
             }
         }
-        return computeBookmarkedPosts(
-                postRepository.findByPostTagsAndIsCancelled(tag, getCategoryArticle(), false, consultationDate,
-                        pageableRequest));
+        return postRepository.findByPostTagsAndIsCancelled(tag, getCategoryArticle(), false, consultationDate,
+                pageableRequest);
     }
 
     @Override
@@ -568,14 +596,11 @@ public class PostServiceImpl implements PostService {
             List<IndexEntity> tmpEntitiesFound = null;
             tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
-                return searchPostAgainstEntitiesToMatch(searchText,
-                        computeBookmarkedPosts(
-                                postRepository.findByFullAuthorAndIsCancelled(author, false, consultationDate,
-                                        pageableRequest)));
+                return searchPostAgainstEntitiesToMatch(searchText, postRepository
+                        .findByFullAuthorAndIsCancelled(author, false, consultationDate, pageableRequest));
             }
         }
-        return computeBookmarkedPosts(
-                postRepository.findByFullAuthorAndIsCancelled(author, false, consultationDate, pageableRequest));
+        return postRepository.findByFullAuthorAndIsCancelled(author, false, consultationDate, pageableRequest);
     }
 
     @Override
@@ -585,11 +610,11 @@ public class PostServiceImpl implements PostService {
             tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
                 return searchPostAgainstEntitiesToMatch(searchText,
-                        computeBookmarkedPosts(postRepository.findByPostSerieAndIsCancelled(serie, false,
-                                pageableRequest)));
+                        postRepository.findByPostSerieAndIsCancelled(serie, false,
+                                pageableRequest));
             }
         }
-        return computeBookmarkedPosts(postRepository.findByPostSerieAndIsCancelled(serie, false, pageableRequest));
+        return postRepository.findByPostSerieAndIsCancelled(serie, false, pageableRequest);
     }
 
     @Override
@@ -600,16 +625,12 @@ public class PostServiceImpl implements PostService {
             List<IndexEntity> tmpEntitiesFound = null;
             tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
-                return searchPostAgainstEntitiesToMatch(searchText,
-                        computeBookmarkedPosts(postRepository.findByDepartmentsAndIsCancelled(getCategoryArticle(),
-                                publishingDepartment,
-                                false,
-                                pageableRequest)));
+                return searchPostAgainstEntitiesToMatch(searchText, postRepository.findByDepartmentsAndIsCancelled(
+                        getCategoryArticle(), publishingDepartment, false, pageableRequest));
             }
         }
-        return computeBookmarkedPosts(
-                postRepository.findByDepartmentsAndIsCancelled(getCategoryArticle(), publishingDepartment, false,
-                        pageableRequest));
+        return postRepository.findByDepartmentsAndIsCancelled(getCategoryArticle(), publishingDepartment, false,
+                pageableRequest);
     }
 
     @Override
@@ -745,22 +766,24 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Page<Post> applyPremium(Page<Post> posts) {
-        if (posts != null)
+    public Page<Post> applyPremiumAndBookmarks(Page<Post> posts) {
+        if (posts != null) {
+            computeBookmarkedPosts(posts);
             for (Post post : posts) {
-                applyPremium(post);
+                applyPremiumAndBookmarks(post, null, null, true);
             }
+        }
         return posts;
     }
 
     @Override
-    public Post applyPremium(Post post) {
-        return applyPremium(post, null, null);
-    }
+    public Post applyPremiumAndBookmarks(Post post, String token, String mail, boolean byPassBookmarkComputation) {
+        if (post != null) {
+            if (!byPassBookmarkComputation)
+                computeBookmarkedPost(post);
 
-    @Override
-    public Post applyPremium(Post post, String token, String mail) {
-        if (post != null)
+            post.setContentText(post.getOriginalContentText());
+
             if (post.getIsPremium() != null && post.getIsPremium()) {
 
                 Responsable signedInUser = employeeService.getCurrentMyJssUser();
@@ -772,11 +795,15 @@ public class PostServiceImpl implements PostService {
                         for (Subscription sub : subscriptions) {
                             if (sub.getStartDate() != null && sub.getEndDate() != null
                                     && sub.getStartDate().isBefore(LocalDate.now())
-                                    && LocalDate.now().isBefore(sub.getEndDate())) {
+                                    && LocalDate.now().isBefore(sub.getEndDate())
+                                    && (sub.getSubscriptionType().equals(Subscription.ANNUAL_SUBSCRIPTION)
+                                            || sub.getSubscriptionType().equals(Subscription.MONTHLY_SUBSCRIPTION)
+                                            || sub.getSubscriptionType()
+                                                    .equals(Subscription.ENTERPRISE_ANNUAL_SUBSCRIPTION))) {
                                 return post;
 
                             } else if (sub.getPost().getId().equals(post.getId())
-                                    && sub.getSubscriptionType().equals(SubscriptionTypeEnum.ONE_POST_SUBSCRIPTION)) {
+                                    && sub.getSubscriptionType().equals(Subscription.ONE_POST_SUBSCRIPTION)) {
                                 return post;
                             }
                         }
@@ -803,8 +830,9 @@ public class PostServiceImpl implements PostService {
                 if (post.getPremiumPercentage() != null && post.getPremiumPercentage() > 0)
                     percentage = post.getPremiumPercentage();
 
-                post.setContentText(htmlTruncateHelper.truncateHtml(post.getContentText(), percentage));
+                post.setContentText(htmlTruncateHelper.truncateHtml(post.getOriginalContentText(), percentage));
             }
+        }
         return post;
     }
 

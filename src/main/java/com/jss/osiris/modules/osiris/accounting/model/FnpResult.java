@@ -4,6 +4,8 @@ public interface FnpResult {
 
     public String getCustomerOrder();
 
+    public String getYear();
+
     public Float getAmount();
 
     public Boolean getIsPayed();

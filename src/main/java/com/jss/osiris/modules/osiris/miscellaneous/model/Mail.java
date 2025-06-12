@@ -3,14 +3,11 @@ package com.jss.osiris.modules.osiris.miscellaneous.model;
 import java.io.Serializable;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
-import com.jss.osiris.modules.myjss.wordpress.model.AssoMailAuthor;
-import com.jss.osiris.modules.myjss.wordpress.model.AssoMailJssCategory;
-import com.jss.osiris.modules.myjss.wordpress.model.AssoMailTag;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -37,20 +34,9 @@ public class Mail implements Serializable, IId {
 			JacksonViews.OsirisDetailedView.class })
 	private String mail;
 
-	@OneToMany(mappedBy = "mail", cascade = CascadeType.ALL, orphanRemoval = true)
-	@JsonIgnoreProperties(value = { "mail" }, allowSetters = true)
-	@JsonView({ JacksonViews.MyJssDetailedView.class })
-	private List<AssoMailAuthor> assoMailAuthors;
-
-	@OneToMany(mappedBy = "mail", cascade = CascadeType.ALL, orphanRemoval = true)
-	@JsonIgnoreProperties(value = { "mail" }, allowSetters = true)
-	@JsonView({ JacksonViews.MyJssDetailedView.class })
-	private List<AssoMailTag> assoMailTags;
-
-	@OneToMany(mappedBy = "mail", cascade = CascadeType.ALL, orphanRemoval = true)
-	@JsonIgnoreProperties(value = { "mail" }, allowSetters = true)
-	@JsonView({ JacksonViews.MyJssDetailedView.class })
-	private List<AssoMailJssCategory> assoMailJssCategories;
+	@OneToMany(mappedBy = "mail")
+	@JsonIgnore
+	private List<Responsable> responsables;
 
 	public Mail() {
 	}
@@ -75,28 +61,12 @@ public class Mail implements Serializable, IId {
 		this.mail = mail;
 	}
 
-	public List<AssoMailAuthor> getAssoMailAuthors() {
-		return assoMailAuthors;
+	public List<Responsable> getResponsables() {
+		return responsables;
 	}
 
-	public void setAssoMailAuthors(List<AssoMailAuthor> assoMailAuthors) {
-		this.assoMailAuthors = assoMailAuthors;
-	}
-
-	public List<AssoMailTag> getAssoMailTags() {
-		return assoMailTags;
-	}
-
-	public void setAssoMailTags(List<AssoMailTag> assoMailTags) {
-		this.assoMailTags = assoMailTags;
-	}
-
-	public List<AssoMailJssCategory> getAssoMailJssCategories() {
-		return assoMailJssCategories;
-	}
-
-	public void setAssoMailJssCategories(List<AssoMailJssCategory> assoMailJssCategories) {
-		this.assoMailJssCategories = assoMailJssCategories;
+	public void setResponsables(List<Responsable> responsables) {
+		this.responsables = responsables;
 	}
 
 }

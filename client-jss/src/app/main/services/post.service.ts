@@ -42,6 +42,10 @@ export class PostService extends AppRestService<Post> {
     return this.get(new HttpParams().set("slug", slug), "posts/slug");
   }
 
+  getOfferedPostByToken(validationToken: string, mail: string) {
+    return this.get(new HttpParams().set("validationToken", validationToken).set("mail", mail), "posts/slug/token");
+  }
+
   completeMediaInPosts(posts: Post[]) {
     posts.forEach(post => {
       if (!post.media) {
@@ -126,7 +130,7 @@ export class PostService extends AppRestService<Post> {
 
   getAllPostsByPublishingDepartment(department: PublishingDepartment, page: number, size: number, searchText: string): Observable<PagedContent<Post>> {
     let params = new HttpParams()
-      .set('departmentId', department.id)
+      .set('departmentCode', department.code)
       .set('page', page.toString())
       .set('size', size.toString());
     if (searchText)
@@ -168,7 +172,7 @@ export class PostService extends AppRestService<Post> {
 
   getMostSeenPostByPublishingDepartment(department: PublishingDepartment, page: number, size: number): Observable<PagedContent<Post>> {
     let params = new HttpParams()
-      .set('departmentId', department.id)
+      .set('departmentCode', department.code)
       .set('page', page.toString())
       .set('size', size.toString());
     return this.getPagedList(params, "posts/publishing-department/most-seen", "", "");
@@ -179,7 +183,7 @@ export class PostService extends AppRestService<Post> {
   }
 
   getTopPostByDepartment(page: number, size: number, department: PublishingDepartment) {
-    return this.getPagedList(new HttpParams().set("page", page).set("size", size).set("departmentId", department.id), "posts/top/department");
+    return this.getPagedList(new HttpParams().set("page", page).set("size", size).set("departmentCode", department.code), "posts/top/department");
   }
 
   getTopPostPodcast(page: number, size: number) {

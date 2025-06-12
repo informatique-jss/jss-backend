@@ -50,6 +50,10 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.accountingJournalSales;
   }
 
+  getAccountingJournalSituation() {
+    return this.constant.accountingJournalSituation;
+  }
+
   getAccountingJournalSalary() {
     return this.constant.accountingJournalSalary;
   }
@@ -530,6 +534,10 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.employeeBillingResponsible;
   }
 
+  getEmployeeProductionDirector() {
+    return this.constant.employeeProductionDirector;
+  }
+
   getEmployeeMailResponsible() {
     return this.constant.employeeMailResponsible;
   }
@@ -824,6 +832,30 @@ export class ConstantService extends AppRestService<Constant> {
 
   getServiceTypeOther() {
     return this.constant.serviceTypeOther;
+  }
+
+  getServiceTypeAnnualSubscription() {
+    return this.constant.serviceTypeAnnualSubscription;
+  }
+
+  getServiceTypeEnterpriseAnnualSubscription() {
+    return this.constant.serviceTypeEnterpriseAnnualSubscription;
+  }
+
+  getServiceTypeMonthlySubscription() {
+    return this.constant.serviceTypeMonthlySubscription;
+  }
+
+  getServiceTypeKioskNewspaperBuy() {
+    return this.constant.serviceTypeKioskNewspaperBuy;
+  }
+
+  getServiceTypeUniqueArticleBuy() {
+    return this.constant.serviceTypeUniqueArticleBuy;
+  }
+
+  getSpecialOfferJssSubscriptionReduction() {
+    return this.constant.specialOfferJssSubscriptionReduction;
   }
 
   getDateAccountingClosureForAll() {

@@ -29,3 +29,7 @@
 .modal-footer .btn-danger:hover {
   color: var(--ar-danger);
 }
+
+.nav-item, .nav-tabs {
+  margin-bottom: 0px !important;
+}

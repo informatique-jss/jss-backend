@@ -17,6 +17,7 @@ import { GenericTextareaComponent } from '../../../miscellaneous/components/form
 import { GenericSwiperComponent } from '../../../miscellaneous/components/generic-swiper/generic-swiper.component';
 import { Pagination } from '../../../miscellaneous/model/Pagination';
 import { Responsable } from '../../../profile/model/Responsable';
+import { LoginService } from '../../../profile/services/login.service';
 import { Comment } from '../../model/Comment';
 import { MyJssCategory } from '../../model/MyJssCategory';
 import { Post } from '../../model/Post';
@@ -38,6 +39,8 @@ import { PostService } from '../../services/post.service';
     NewsletterComponent]
 })
 export class PostComponent implements OnInit, AfterViewInit {
+
+  currentUser: Responsable | undefined;
 
   slug: string | undefined;
   post: Post | undefined;
@@ -70,7 +73,8 @@ export class PostComponent implements OnInit, AfterViewInit {
     private formBuilder: FormBuilder,
     private appService: AppService,
     private constantService: ConstantService,
-    private platformService: PlatformService
+    private platformService: PlatformService,
+    private loginService: LoginService
   ) { }
 
   getTimeReading = getTimeReading;
@@ -86,6 +90,7 @@ export class PostComponent implements OnInit, AfterViewInit {
 
     this.slug = this.activatedRoute.snapshot.params['slug'];
 
+    this.loginService.getCurrentUser().subscribe(res => this.currentUser = res);
     if (this.slug) {
       this.postService.getPostBySlug(this.slug).subscribe(post => {
         this.post = post;
@@ -105,7 +110,8 @@ export class PostComponent implements OnInit, AfterViewInit {
   }
 
   ngOnDestroy() {
-    window.speechSynthesis.pause();
+    if (this.platformService.isBrowser())
+      window.speechSynthesis.pause();
     this.isPlaying = undefined;
   }
 
@@ -117,28 +123,28 @@ export class PostComponent implements OnInit, AfterViewInit {
   }
 
   shareOnFacebook() {
-    if (this.post) {
+    if (this.post && this.platformService.isBrowser()) {
       let url = environment.frontendUrl + "post/" + this.post.slug;
       window.open("https://www.facebook.com/sharer/sharer.php?u=" + url, "_blank");
     }
   }
 
   shareOnLinkedin() {
-    if (this.post) {
+    if (this.post && this.platformService.isBrowser()) {
       let url = environment.frontendUrl + "post/" + this.post.slug;
       window.open("https://www.linkedin.com/shareArticle?mini=true&url=" + url + "&title=" + this.extractContent(this.post.titleText) + "&summary=" + this.extractContent(this.post.excerptText), "_blank");
     }
   }
 
   shareOnTwitter() {
-    if (this.post) {
+    if (this.post && this.platformService.isBrowser()) {
       let url = environment.frontendUrl + "post/" + this.post.slug;
       window.open("https://twitter.com/intent/tweet?text=" + this.extractContent(this.post.titleText) + "&url=" + url, "_blank");
     }
   }
 
   shareOnInstagram() {
-    if (this.post) {
+    if (this.post && this.platformService.isBrowser()) {
       let url = environment.frontendUrl + "post/" + this.post.slug;
       let message = encodeURIComponent(`Découvrez cet article : ${this.extractContent(this.post.titleText)}\n\n🔗 ${url}`);
 
@@ -155,7 +161,7 @@ export class PostComponent implements OnInit, AfterViewInit {
   }
 
   shareByMail() {
-    if (this.post) {
+    if (this.post && this.platformService.isBrowser()) {
       let url = environment.frontendUrl + "post/" + this.post.slug;
       window.open('mailto:?subject=Découvrez cet article intéressant sur JSS.FR&body=Bonjour,%0A%0AJe voulais vous partager cet article :%0A%0A' + this.extractContent(this.post.titleText) + '%0A' + url + '%0A%0ABonne lecture!', "_blank");
     }
@@ -191,17 +197,17 @@ export class PostComponent implements OnInit, AfterViewInit {
     if (this.isPlaying === undefined) {
       this.readArticle();
       this.isPlaying = true;
-    } else if (this.isPlaying == false) {
+    } else if (this.isPlaying == false && this.platformService.isBrowser()) {
       window.speechSynthesis.resume();
       this.isPlaying = true;
-    } else {
+    } else if (this.platformService.isBrowser()) {
       window.speechSynthesis.pause();
       this.isPlaying = false;
     }
   }
 
   updateSpeed(): void {
-    if (this.speechSynthesisUtterance) {
+    if (this.speechSynthesisUtterance && this.platformService.isBrowser()) {
       this.speechSynthesisUtterance.rate = this.speechRate;
       window.speechSynthesis.speak(this.speechSynthesisUtterance);
     }
@@ -213,6 +219,15 @@ export class PostComponent implements OnInit, AfterViewInit {
 
   postComment() {
     if (this.post) {
+      if (this.currentUser) {
+        if (this.currentUser.firstname)
+          this.newComment.authorFirstName = this.currentUser.firstname;
+        if (this.currentUser.lastname)
+          this.newComment.authorLastName = this.currentUser.lastname;
+
+        this.newComment.mail = this.currentUser.mail;
+      }
+
       this.commentService.addOrUpdateComment(this.newComment, this.newCommentParent.id, this.post.id).subscribe(() => {
         this.fetchComments(0);
       });

@@ -2,9 +2,11 @@ package com.jss.osiris.modules.myjss.wordpress.service;
 
 import java.util.List;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.myjss.wordpress.model.Post;
 import com.jss.osiris.modules.myjss.wordpress.model.Subscription;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 public interface SubscriptionService {
 
@@ -14,7 +16,7 @@ public interface SubscriptionService {
 
         public Subscription addOrUpdateSubscription(Subscription subscription);
 
-        public Subscription givePostSubscription(Post postToOffer, Mail recipientMail);
+        public Subscription givePostSubscription(Post postToOffer, Mail recipientMail) throws OsirisException;
 
-        public Integer getNumberOfPostSharedOnMonth(Mail responsableMail);
+        public Integer getRemainingPostToShareForCurrentMonth(Responsable signedInUser);
 }

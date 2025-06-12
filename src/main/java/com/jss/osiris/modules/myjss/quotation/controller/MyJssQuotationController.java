@@ -40,6 +40,11 @@ import com.jss.osiris.modules.myjss.quotation.controller.model.DashboardUserStat
 import com.jss.osiris.modules.myjss.quotation.controller.model.MyJssImage;
 import com.jss.osiris.modules.myjss.quotation.service.DashboardUserStatisticsService;
 import com.jss.osiris.modules.myjss.quotation.service.MyJssQuotationDelegate;
+import com.jss.osiris.modules.myjss.wordpress.model.Newspaper;
+import com.jss.osiris.modules.myjss.wordpress.model.Post;
+import com.jss.osiris.modules.myjss.wordpress.model.Subscription;
+import com.jss.osiris.modules.myjss.wordpress.service.NewspaperService;
+import com.jss.osiris.modules.myjss.wordpress.service.PostService;
 import com.jss.osiris.modules.osiris.crm.model.Candidacy;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
@@ -73,6 +78,7 @@ import com.jss.osiris.modules.osiris.quotation.model.AssoServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.BuildingDomiciliation;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
 import com.jss.osiris.modules.osiris.quotation.model.MailRedirectionType;
@@ -224,6 +230,12 @@ public class MyJssQuotationController {
 
 	@Autowired
 	LegalFormService legalFormService;
+
+	@Autowired
+	PostService postService;
+
+	@Autowired
+	NewspaperService newspaperService;
 
 	private final ConcurrentHashMap<String, AtomicLong> requestCount = new ConcurrentHashMap<>();
 	private final long rateLimit = 1000;
@@ -1123,18 +1135,6 @@ public class MyJssQuotationController {
 
 		Service serviceFetched = serviceService.getService(service.getId());
 
-		for (Provision provision : serviceFetched.getProvisions()) {
-			if (serviceFetched.getAssoAffaireOrder().getCustomerOrder() == null) {
-				quotationValidationHelper.validateProvisionTransactionnal(provision,
-						serviceFetched.getAssoAffaireOrder().getQuotation(), true);
-			} else {
-				quotationValidationHelper.validateProvisionTransactionnal(provision,
-						serviceFetched.getAssoAffaireOrder().getCustomerOrder(), true);
-			}
-
-			provision.setService(serviceFetched);
-		}
-
 		if (serviceFetched.getAssoAffaireOrder().getCustomerOrder() == null
 				&& serviceFetched.getAssoAffaireOrder().getQuotation() == null
 				|| !myJssQuotationValidationHelper
@@ -1143,6 +1143,7 @@ public class MyJssQuotationController {
 								: serviceFetched.getAssoAffaireOrder().getQuotation()))
 			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
 
+		boolean canUpdateProvision = false;
 		if (serviceFetched.getAssoAffaireOrder().getQuotation() != null) {
 			String quotationStatusCode = serviceFetched.getAssoAffaireOrder().getQuotation().getQuotationStatus()
 					.getCode();
@@ -1150,9 +1151,25 @@ public class MyJssQuotationController {
 					|| quotationStatusCode.equals(QuotationStatus.REFUSED_BY_CUSTOMER)
 					|| quotationStatusCode.equals(QuotationStatus.VALIDATED_BY_CUSTOMER))
 				return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+
+			if (quotationStatusCode.equals(QuotationStatus.DRAFT))
+				canUpdateProvision = true;
+		}
+
+		if (serviceFetched.getAssoAffaireOrder().getCustomerOrder() != null) {
+			String orderStatusCode = serviceFetched.getAssoAffaireOrder().getCustomerOrder().getCustomerOrderStatus()
+					.getCode();
+			if (orderStatusCode.equals(CustomerOrderStatus.ABANDONED)
+					|| orderStatusCode.equals(CustomerOrderStatus.TO_BILLED)
+					|| orderStatusCode.equals(CustomerOrderStatus.BILLED))
+				return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+
+			if (orderStatusCode.equals(CustomerOrderStatus.DRAFT))
+				canUpdateProvision = true;
 		}
 
 		for (AssoServiceFieldType assoServiceFieldTypeOld : serviceFetched.getAssoServiceFieldTypes()) {
+			assoServiceFieldTypeOld.setService(serviceFetched);
 			for (AssoServiceFieldType assoServiceFieldType : service.getAssoServiceFieldTypes()) {
 				if (assoServiceFieldType.getId().equals(assoServiceFieldTypeOld.getId())) {
 					if (assoServiceFieldType.getServiceFieldType().getDataType()
@@ -1197,22 +1214,43 @@ public class MyJssQuotationController {
 			}
 		}
 
+		if (canUpdateProvision) {
+			for (Provision provision : serviceFetched.getProvisions()) {
+				for (Provision provisionIn : service.getProvisions()) {
+					if (provision.getId().equals(provisionIn.getId())) {
+						if (provision.getAnnouncement() != null) {
+							provision.getAnnouncement().setNotice(provisionIn.getAnnouncement().getNotice());
+							provision.getAnnouncement().setDepartment(provisionIn.getAnnouncement().getDepartment());
+							provision.getAnnouncement().setNoticeTypes(provisionIn.getAnnouncement().getNoticeTypes());
+							provision.getAnnouncement()
+									.setPublicationDate(provisionIn.getAnnouncement().getPublicationDate());
+							provision.getAnnouncement()
+									.setNoticeTypeFamily(provisionIn.getAnnouncement().getNoticeTypeFamily());
+							provision.setIsRedactedByJss(provisionIn.getIsRedactedByJss());
+							provision.getAnnouncement()
+									.setIsProofReadingDocument(
+											provisionIn.getAnnouncement().getIsProofReadingDocument());
+						}
+						if (provision.getDomiciliation() != null) {
+							provision = provisionIn;
+						}
+					}
+				}
+			}
+		}
+
 		serviceService.addOrUpdateServiceFromUser(serviceFetched);
 
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+
 	}
 
 	@GetMapping(inputEntryPoint + "/services")
 	public ResponseEntity<Boolean> addOrUpdateServices(@RequestParam List<Integer> serviceTypeIds,
-			@RequestParam("affaireId") Integer affaireId, @RequestParam("affaireOrderId") Integer affaireOrderId)
+			@RequestParam("affaireOrderId") Integer affaireOrderId)
 			throws OsirisException {
 
-		Affaire affaire = null;
 		AssoAffaireOrder assoAffaireOrder = null;
-
-		if (affaireId != null) {
-			affaire = affaireService.getAffaire(affaireId);
-		}
 
 		if (affaireOrderId != null) {
 			assoAffaireOrder = assoAffaireOrderService.getAssoAffaireOrder(affaireOrderId);
@@ -1230,8 +1268,8 @@ public class MyJssQuotationController {
 			throw new OsirisValidationException("servicesTypeIds");
 		}
 
-		if (affaire != null && assoAffaireOrder != null) {
-			serviceService.addOrUpdateServices(serviceTypes, affaireId, affaireOrderId, null);
+		if (assoAffaireOrder != null) {
+			serviceService.addOrUpdateServices(serviceTypes, affaireOrderId, null, assoAffaireOrder.getAffaire());
 
 			return new ResponseEntity<>(true, HttpStatus.OK);
 		}
@@ -1481,12 +1519,9 @@ public class MyJssQuotationController {
 
 	@GetMapping(inputEntryPoint + "/service-types/provisions")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
-	public ResponseEntity<List<Service>> getServiceForServiceTypeAndAffaire(@RequestParam Integer idAffaire,
-			@RequestParam List<Integer> serviceTypeIds) throws OsirisException {
-
-		Affaire affaire = affaireService.getAffaire(idAffaire);
-		if (affaire == null)
-			throw new OsirisValidationException("Affaire");
+	public ResponseEntity<List<Service>> getServiceForServiceTypeAndAffaire(@RequestParam List<Integer> serviceTypeIds,
+			@RequestParam Integer affaireCityId)
+			throws OsirisException {
 
 		List<ServiceType> serviceTypes = new ArrayList<ServiceType>();
 		if (serviceTypeIds != null) {
@@ -1500,8 +1535,15 @@ public class MyJssQuotationController {
 			throw new OsirisValidationException("servicesTypeIds");
 		}
 
+		City city = cityService.getCity(affaireCityId);
+		Affaire affaire = null;
+		if (city != null) {
+			affaire = new Affaire();
+			affaire.setCity(city);
+		}
+
 		return new ResponseEntity<List<Service>>(
-				serviceService.generateServiceInstanceFromMultiServiceTypes(serviceTypes, affaire, null),
+				serviceService.generateServiceInstanceFromMultiServiceTypes(serviceTypes, null, affaire),
 				HttpStatus.OK);
 	}
 
@@ -1548,6 +1590,41 @@ public class MyJssQuotationController {
 
 		return new ResponseEntity<Page<LegalForm>>(
 				legalFormService.getLegalFormsByName(label, pageable),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/order/subscription")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<CustomerOrder> getCustomerOrderForSubscription(@RequestParam String subscriptionType,
+			@RequestParam Boolean isPriceReductionForSubscription, @RequestParam(required = false) Integer idArticle,
+			HttpServletRequest request) throws OsirisException {
+		detectFlood(request);
+
+		if (subscriptionType == null)
+			throw new OsirisValidationException("subscriptionType");
+
+		if ((subscriptionType.equals(Subscription.ONE_POST_SUBSCRIPTION)
+				|| subscriptionType.equals(Subscription.NEWSPAPER_KIOSK_BUY)) && idArticle == null) {
+			throw new OsirisValidationException("subscriptionType need an idArticle for doing the checkout");
+		}
+
+		if (subscriptionType.equals(Subscription.ONE_POST_SUBSCRIPTION) && idArticle != null) {
+			Post post = postService.getPost(idArticle);
+			if (post == null) {
+				throw new OsirisValidationException("Post does not exist");
+			}
+		}
+
+		if (subscriptionType.equals(Subscription.NEWSPAPER_KIOSK_BUY) && idArticle != null) {
+			Newspaper newspaper = newspaperService.getNewspaper(idArticle);
+			if (newspaper == null) {
+				throw new OsirisValidationException("Newspaper in kiosk does not exist");
+			}
+		}
+
+		return new ResponseEntity<CustomerOrder>(
+				customerOrderService.getCustomerOrderForSubscription(subscriptionType, isPriceReductionForSubscription,
+						idArticle),
 				HttpStatus.OK);
 	}
 }

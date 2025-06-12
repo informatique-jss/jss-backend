@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { validateSiret } from '../../../../libs/CustomFormsValidatorsHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
@@ -41,7 +41,6 @@ export class IdentificationComponent implements OnInit {
 
   selectedQuotationType: QuotationType = quotation;
   familyGroupService: ServiceFamilyGroup[] = [];
-  @Input() hideFamilyGroupServiceSelection: boolean = false;
 
   quotation: IQuotation = {} as IQuotation;
   isRegisteredAffaire: Boolean[] = [];
@@ -56,7 +55,6 @@ export class IdentificationComponent implements OnInit {
   individual: AffaireType = individual;
 
   currentUser: Responsable | undefined;
-  isSavingQuotation: boolean = false;
 
   currentDraftStep: string | null = null;
 
@@ -89,8 +87,13 @@ export class IdentificationComponent implements OnInit {
   }
 
   selectFamilyGroupService(item: ServiceFamilyGroup) {
-    this.initIQuotation();
+    if (this.quotation.serviceFamilyGroup)
+      return;
+    if (!this.quotation)
+      this.initIQuotation();
     this.quotation.serviceFamilyGroup = item;
+    this.quotation.assoAffaireOrders = [];
+    this.addAffaire();
   }
 
   initIQuotation() {
@@ -125,8 +128,6 @@ export class IdentificationComponent implements OnInit {
         return;
       }
     }
-    this.quotation.assoAffaireOrders = [];
-    this.addAffaire();
   }
 
   changeQuotationType() {
@@ -175,6 +176,9 @@ export class IdentificationComponent implements OnInit {
     this.quotation.assoAffaireOrders.splice(indexAsso, 1);
     this.isRegisteredAffaire.splice(indexAsso, 1);
     this.affaireTypes.splice(indexAsso, 1);
+    this.currentOpenedPanel = undefined;
+    if (!this.quotation.assoAffaireOrders || this.quotation.assoAffaireOrders.length == 0)
+      this.quotation.serviceFamilyGroup = undefined;
   }
 
   searchSiret(indexAsso: number) {
@@ -224,24 +228,26 @@ export class IdentificationComponent implements OnInit {
   }
 
   startQuotation() {
-    this.isSavingQuotation = true;
+    this.appService.showLoadingSpinner();
     if (this.selectedQuotationType)
       if (this.currentUser) {
         if (this.selectedQuotationType.id == quotation.id) {
           this.quotation.isQuotation = true;
           this.quotationService.saveQuotation(this.quotation, false).subscribe(response => {
             this.quotation = response;
+            this.appService.hideLoadingSpinner();
             this.quotationService.setCurrentDraftQuotationId(this.quotation.id);
             this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);
-            this.appService.openRoute(undefined, "quotation", undefined);
+            this.appService.openRoute(undefined, "quotation/services-selection", undefined);
           })
         } else if (this.selectedQuotationType.id == order.id) {
           this.quotation.isQuotation = false;
           this.orderService.saveOrder(this.quotation, false).subscribe(response => {
             this.quotation = response;
+            this.appService.hideLoadingSpinner();
             this.orderService.setCurrentDraftOrderId(this.quotation.id);
             this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);
-            this.appService.openRoute(undefined, "quotation", undefined);
+            this.appService.openRoute(undefined, "quotation/services-selection", undefined);
           })
         }
       } else {
@@ -252,8 +258,9 @@ export class IdentificationComponent implements OnInit {
           this.quotation.isQuotation = false;
           this.orderService.setCurrentDraftOrder(this.quotation);
         }
+        this.appService.hideLoadingSpinner();
         this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);
-        this.appService.openRoute(undefined, "quotation", undefined);
+        this.appService.openRoute(undefined, "quotation/services-selection", undefined);
       }
   }
 

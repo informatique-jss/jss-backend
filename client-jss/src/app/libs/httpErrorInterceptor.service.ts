@@ -2,6 +2,7 @@ import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest
 import { Injectable } from '@angular/core';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 import { AppService } from '../services/app.service';
 import { PlatformService } from '../services/platform.service';
 
@@ -12,11 +13,23 @@ export class HttpErrorInterceptor implements HttpInterceptor {
   ) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    if (this.plateformService.isServer()) {
+      const cookie = (globalThis as any).cookies ?? '';
 
-    request = request.clone({
-      withCredentials: true,
-      headers: request.headers.set("domain", "media")
-    });
+      request = request.clone({
+        withCredentials: true,
+        setHeaders: {
+          Cookie: cookie,
+        },
+        headers: request.headers.set("domain", "myjss" + (environment.production ? '_PROD' : '_REC'))
+      });
+    } else {
+      request = request.clone({
+        withCredentials: true,
+        headers: request.headers.set("domain", "myjss" + (environment.production ? '_PROD' : '_REC'))
+      });
+    }
+
 
     return next.handle(request).pipe(
       tap(data => {

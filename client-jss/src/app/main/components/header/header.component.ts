@@ -1,8 +1,8 @@
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, TemplateRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
-import { MY_JSS_HOME_ROUTE, MY_JSS_NEW_ANNOUNCEMENT_ROUTE, MY_JSS_NEW_FORMALITY_ROUTE, MY_JSS_SIGN_IN_ROUTE, MY_JSS_SUBSCRIBE_ROUTE } from '../../../libs/Constants';
+import { MY_JSS_HOME_ROUTE, MY_JSS_NEW_ANNOUNCEMENT_ROUTE, MY_JSS_NEW_FORMALITY_ROUTE, MY_JSS_SIGN_IN_ROUTE } from '../../../libs/Constants';
 import { capitalizeName } from '../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { AppService } from '../../../services/app.service';
@@ -61,7 +61,8 @@ export class HeaderComponent implements OnInit {
     private appService: AppService,
     private indexEntityService: IndexEntityService,
     private loginService: LoginService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private eRef: ElementRef,
   ) { }
 
   ngOnInit() {
@@ -71,11 +72,11 @@ export class HeaderComponent implements OnInit {
       this.currentUser = response;
     })
     this.departmentService.getAvailablePublishingDepartments().subscribe(departments => {
-      this.departments = departments
+      this.departments = departments.sort((a: PublishingDepartment, b: PublishingDepartment) => parseInt(a.code) - parseInt(b.code));
     });
     this.jssCategoryService.getAvailableJssCategories().subscribe(categories => {
-      this.categories = categories
-      this.categoriesByOrder = this.categories.sort((a: JssCategory, b: JssCategory) => b.categoryOrder - a.categoryOrder);
+      this.categories = categories.sort((a: JssCategory, b: JssCategory) => b.categoryOrder - a.categoryOrder);
+      this.categoriesByOrder = this.categories.slice(0, 3);
     });
   }
 
@@ -85,6 +86,22 @@ export class HeaderComponent implements OnInit {
     event.preventDefault();
     this.dropdownOpen = !this.dropdownOpen;
   }
+
+  @HostListener('document:click', ['$event'])
+  handleClickOutside(event: MouseEvent): void {
+    this.attempToCloseNavbar(false, event);
+  }
+
+  attempToCloseNavbar(force: boolean = true, event: MouseEvent | any) {
+    if (force ||
+      this.dropdownOpen &&
+      !this.eRef.nativeElement.contains(event.target as HTMLElement)
+    ) {
+      this.dropdownOpen = false;
+    }
+  }
+
+
 
   toggleMobileMenu(): void {
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
@@ -97,6 +114,13 @@ export class HeaderComponent implements OnInit {
 
   openMyJssRoute(item: MenuItem) {
     this.appService.openMyJssRoute(undefined, item.route, false);
+  }
+
+  disconnect() {
+    this.loginService.signOut().subscribe(response => {
+      this.currentUser = undefined;
+      this.appService.openRoute(undefined, '/', undefined);
+    })
   }
 
   displaySearchModal(content: TemplateRef<any>) {
@@ -142,7 +166,7 @@ export class HeaderComponent implements OnInit {
 
   openSubscribe(event: any) {
     this.isMobileMenuOpen = false;
-    this.appService.openMyJssRoute(event, MY_JSS_SUBSCRIBE_ROUTE);
+    this.appService.openRoute(event, "subscription/", undefined);
   }
 
   openSignIn(event: any) {
@@ -158,7 +182,7 @@ export class HeaderComponent implements OnInit {
 
   openDepartment(department: PublishingDepartment, event: any) {
     this.isMobileMenuOpen = false;
-    this.appService.openRoute(event, "post/department/" + department.id, undefined);
+    this.appService.openRoute(event, "post/department/" + department.code, undefined);
   }
 
   openPremiumPosts() {

@@ -114,8 +114,6 @@ public class DocumentServiceImpl implements DocumentService {
         documentToMergeTo.setAffaireRecipient(document.getAffaireRecipient());
         documentToMergeTo.setClientAddress(document.getClientAddress());
         documentToMergeTo.setClientRecipient(document.getClientRecipient());
-        documentToMergeTo.setNumberMailingAffaire(document.getNumberMailingAffaire());
-        documentToMergeTo.setNumberMailingClient(document.getNumberMailingClient());
         documentToMergeTo.setBillingLabelType(document.getBillingLabelType());
 
         documentToMergeTo.setMailsClient(new ArrayList<Mail>());

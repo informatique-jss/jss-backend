@@ -172,7 +172,6 @@ public class Responsable implements IAttachment, IId {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_mail")
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
-
 	private Mail mail;
 
 	// TODO : remove after new webstie
@@ -230,7 +229,7 @@ public class Responsable implements IAttachment, IId {
 	private LocalDateTime loginTokenExpirationDateTime;
 
 	@JsonView(JacksonViews.MyJssDetailedView.class)
-	private Integer numberOfPostsSharingAuthorized;
+	private Integer numberOfGiftPostsPerMonth;
 
 	public Tiers getTiers() {
 		return tiers;
@@ -592,11 +591,11 @@ public class Responsable implements IAttachment, IId {
 		this.mails = mails;
 	}
 
-	public Integer getNumberOfPostsSharingAuthorized() {
-		return numberOfPostsSharingAuthorized;
+	public Integer getNumberOfGiftPostsPerMonth() {
+		return numberOfGiftPostsPerMonth;
 	}
 
-	public void setNumberOfPostsSharingAuthorized(Integer numberOfPostsSharingAuthorized) {
-		this.numberOfPostsSharingAuthorized = numberOfPostsSharingAuthorized;
+	public void setNumberOfGiftPostsPerMonth(Integer numberOfPostsSharingAuthorized) {
+		this.numberOfGiftPostsPerMonth = numberOfPostsSharingAuthorized;
 	}
 }

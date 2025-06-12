@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
-import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.Confrere;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
@@ -37,7 +36,6 @@ import jakarta.persistence.Table;
 @Entity
 @Table(indexes = { @Index(name = "idx_tiers_document", columnList = "id_tiers"),
 		@Index(name = "idx_responsable_document", columnList = "id_responsable"),
-		@Index(name = "idx_announcement_document", columnList = "id_announcement"),
 		@Index(name = "idx_confrere_document", columnList = "id_confrere"),
 		@Index(name = "idx_customer_order_document", columnList = "id_customer_order"),
 		@Index(name = "idx_quotation_document", columnList = "id_quotation"),
@@ -81,12 +79,6 @@ public class Document implements Serializable, IId {
 	private CustomerOrder customerOrder;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JsonIgnore
-	@JoinColumn(name = "id_announcement")
-	@JsonIgnoreProperties(value = { "documents" }, allowSetters = true)
-	private Announcement announcement;
-
-	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_document_type")
 	@JsonView({ JacksonViews.MyJssDetailedView.class })
 	private DocumentType documentType;
@@ -107,8 +99,6 @@ public class Document implements Serializable, IId {
 	private String clientAddress;
 	@Column(length = 200)
 	private String clientRecipient;
-	private Integer numberMailingAffaire;
-	private Integer numberMailingClient;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_billing_label_type")
@@ -299,22 +289,6 @@ public class Document implements Serializable, IId {
 		this.clientRecipient = clientRecipient;
 	}
 
-	public Integer getNumberMailingAffaire() {
-		return numberMailingAffaire;
-	}
-
-	public void setNumberMailingAffaire(Integer numberMailingAffaire) {
-		this.numberMailingAffaire = numberMailingAffaire;
-	}
-
-	public Integer getNumberMailingClient() {
-		return numberMailingClient;
-	}
-
-	public void setNumberMailingClient(Integer numberMailingClient) {
-		this.numberMailingClient = numberMailingClient;
-	}
-
 	public BillingLabelType getBillingLabelType() {
 		return billingLabelType;
 	}
@@ -449,14 +423,6 @@ public class Document implements Serializable, IId {
 
 	public void setBillingLabelIsIndividual(Boolean billingLabelIsIndividual) {
 		this.billingLabelIsIndividual = billingLabelIsIndividual;
-	}
-
-	public Announcement getAnnouncement() {
-		return announcement;
-	}
-
-	public void setAnnouncement(Announcement announcement) {
-		this.announcement = announcement;
 	}
 
 	public String getCedexComplement() {

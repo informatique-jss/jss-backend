@@ -30,6 +30,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Language;
 import com.jss.osiris.modules.osiris.miscellaneous.model.LegalForm;
 import com.jss.osiris.modules.osiris.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Provider;
+import com.jss.osiris.modules.osiris.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Vat;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.ActType;
@@ -96,6 +97,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public AccountingJournal getAccountingJournalSales() throws OsirisException {
         return getConstants().getAccountingJournalSales();
+    }
+
+    @Override
+    public AccountingJournal getAccountingJournalSituation() throws OsirisException {
+        return getConstants().getAccountingJournalSituation();
     }
 
     @Override
@@ -504,6 +510,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public ProvisionFamilyType getProvisionFamilyTypeAbonnement() throws OsirisException {
+        return getConstants().getProvisionFamilyTypeAbonnement();
+    }
+
+    @Override
     public BillingType getBillingTypeInfogreffeDebour() throws OsirisException {
         return getConstants().getBillingTypeInfogreffeDebour();
     }
@@ -696,6 +707,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public Employee getEmployeeBillingResponsible() throws OsirisException {
         return getConstants().getEmployeeBillingResponsible();
+    }
+
+    @Override
+    public Employee getEmployeeProductionDirector() throws OsirisException {
+        return getConstants().getEmployeeProductionDirector();
     }
 
     @Override
@@ -1081,6 +1097,36 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public ServiceType getServiceTypeSecondaryCenterOpeningAlAndFormality() throws OsirisException {
         return getConstants().getServiceTypeSecondaryCenterOpeningAlAndFormality();
+    }
+
+    @Override
+    public ServiceType getServiceTypeAnnualSubscription() throws OsirisException {
+        return getConstants().getServiceTypeAnnualSubscription();
+    }
+
+    @Override
+    public ServiceType getServiceTypeEnterpriseAnnualSubscription() throws OsirisException {
+        return getConstants().getServiceTypeEnterpriseAnnualSubscription();
+    }
+
+    @Override
+    public ServiceType getServiceTypeMonthlySubscription() throws OsirisException {
+        return getConstants().getServiceTypeMonthlySubscription();
+    }
+
+    @Override
+    public ServiceType getServiceTypeKioskNewspaperBuy() throws OsirisException {
+        return getConstants().getServiceTypeKioskNewspaperBuy();
+    }
+
+    @Override
+    public ServiceType getServiceTypeUniqueArticleBuy() throws OsirisException {
+        return getConstants().getServiceTypeUniqueArticleBuy();
+    }
+
+    @Override
+    public SpecialOffer getSpecialOfferJssSubscriptionReduction() throws OsirisException {
+        return getConstants().getSpecialOfferJssSubscriptionReduction();
     }
 
     @Override

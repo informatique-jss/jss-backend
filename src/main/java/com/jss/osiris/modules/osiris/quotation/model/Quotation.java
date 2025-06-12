@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.quotation.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -77,7 +78,7 @@ public class Quotation implements IQuotation {
 	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
 	@IndexedField
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
-			JacksonViews.OsirisDetailedView.class })
+			JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private LocalDateTime createdDate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -178,6 +179,8 @@ public class Quotation implements IQuotation {
 	@Transient
 	@JsonView({ JacksonViews.OsirisListView.class })
 	public Boolean isHasNotifications;
+
+	private LocalDate princingEffectiveDate;
 
 	public Integer getId() {
 		return id;
@@ -393,6 +396,14 @@ public class Quotation implements IQuotation {
 
 	public void setIsHasNotifications(Boolean isHasNotifications) {
 		this.isHasNotifications = isHasNotifications;
+	}
+
+	public LocalDate getPrincingEffectiveDate() {
+		return princingEffectiveDate;
+	}
+
+	public void setPrincingEffectiveDate(LocalDate princingEffectiveDate) {
+		this.princingEffectiveDate = princingEffectiveDate;
 	}
 
 }

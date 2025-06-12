@@ -3,6 +3,10 @@ package com.jss.osiris.modules.osiris.quotation.model;
 import java.io.Serializable;
 import java.util.List;
 
+import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
+import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.FormeJuridique;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -16,10 +20,6 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-
-import com.jss.osiris.libs.search.model.IndexedField;
-import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
-import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.FormeJuridique;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_asso_service_provision_type", columnList = "id_service_type") })
@@ -49,6 +49,18 @@ public class AssoServiceProvisionType implements Serializable, IId {
 
 	private Integer minEmployee;
 	private Integer maxEmployee;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_notice_type")
+	private NoticeType noticeType;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_notice_type_family")
+	private NoticeTypeFamily noticeTypeFamily;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_notice_template")
+	private AnnouncementNoticeTemplate noticeTemplate;
 
 	@Column(length = 400)
 	private String customerMessageWhenAdded;
@@ -115,6 +127,30 @@ public class AssoServiceProvisionType implements Serializable, IId {
 
 	public void setServiceType(ServiceType serviceType) {
 		this.serviceType = serviceType;
+	}
+
+	public NoticeType getNoticeType() {
+		return noticeType;
+	}
+
+	public void setNoticeType(NoticeType noticeType) {
+		this.noticeType = noticeType;
+	}
+
+	public NoticeTypeFamily getNoticeTypeFamily() {
+		return noticeTypeFamily;
+	}
+
+	public void setNoticeTypeFamily(NoticeTypeFamily noticeTypeFamily) {
+		this.noticeTypeFamily = noticeTypeFamily;
+	}
+
+	public AnnouncementNoticeTemplate getNoticeTemplate() {
+		return noticeTemplate;
+	}
+
+	public void setNoticeTemplate(AnnouncementNoticeTemplate noticeTemplate) {
+		this.noticeTemplate = noticeTemplate;
 	}
 
 }

@@ -39,6 +39,7 @@ import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
 import com.jss.osiris.libs.mail.model.VatMail;
 import com.jss.osiris.modules.myjss.crm.model.WebinarParticipant;
+import com.jss.osiris.modules.myjss.wordpress.model.Subscription;
 import com.jss.osiris.modules.osiris.crm.model.Candidacy;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
@@ -107,6 +108,9 @@ public class MailHelper {
 
     @Value("${jss.bic}")
     private String bicJss;
+
+    @Value("${jss.media.entry.point}")
+    private String jssMediaEntryPoint;
 
     private JavaMailSender javaMailSender;
 
@@ -509,6 +513,11 @@ public class MailHelper {
                             + mail.getResponsable().getLoginToken());
         }
 
+        if (mail.getSubscription() != null) {
+            ctx.setVariable("postLink", jssMediaEntryPoint + "/posts/" + mail.getSubscription().getValidationToken()
+                    + "/" + mail.getSubscription().getSubscriptionOfferedMail());
+            ctx.setVariable("responsable", mail.getSubscription().getSubcriptionMail().getResponsables().get(0));
+        }
     }
 
     private String getCustomerOrderAffaireLabel(IQuotation customerOrder, AssoAffaireOrder asso) {
@@ -801,7 +810,7 @@ public class MailHelper {
     public void sendConfirmationContactFormMyJss(String mailAdress) throws OsirisException {
         sendCustomerMailForMyJssMail(mailAdress, null,
                 constantService.getStringMyJssContactFormRequestMail(),
-                "Confirmation de la réception de votre demande d'information",
+                "Confirmation de la réception de votre demande de contribution",
                 CustomerMail.TEMPLATE_SEND_CONTACT_CONFIRMATION);
     }
 
@@ -830,7 +839,7 @@ public class MailHelper {
                 + message;
         sendCustomerMailForMyJssMail(constantService.getStringMyJssContactFormRequestMail(), explaination,
                 constantService.getStringMyJssContactFormRequestMail(),
-                "Notification d'une prise d'information client",
+                "Notification d'une contribution d'un lecteur",
                 CustomerMail.TEMPLATE_SEND_CONTACT_REQUEST);
     }
 
@@ -1320,6 +1329,24 @@ public class MailHelper {
         mail.setMailComputeResult(mailComputeResult);
 
         mail.setSubject("Votre lien de connexion à MyJSS");
+
+        customerMailService.addMailToQueue(mail);
+    }
+
+    public void sendGiftedPost(Subscription subscription) throws OsirisException {
+        CustomerMail mail = new CustomerMail();
+        mail.setMailTemplate(CustomerMail.TEMPLATE_SEND_GIFTED_POST);
+        mail.setReplyToMail(constantService.getStringMyJssContactFormRequestMail() + "");
+        mail.setSendToMe(false);
+        mail.setSubscription(subscription);
+
+        MailComputeResult mailComputeResult = new MailComputeResult();
+        mailComputeResult.setRecipientsMailTo(new ArrayList<Mail>());
+
+        mailComputeResult.getRecipientsMailTo().add(subscription.getSubscriptionOfferedMail());
+        mail.setMailComputeResult(mailComputeResult);
+
+        mail.setSubject("Votre article offert");
 
         customerMailService.addMailToQueue(mail);
     }

@@ -20,9 +20,8 @@ export class SearchAnnouncementComponent implements OnInit {
   searchObservableRef: Subscription | undefined;
   page: number = 0;
   pageSize: number = 10;
-  announcements: Announcement[] = [];
   searchResults: Announcement[] | undefined;
-  displayLoadMoreButton: boolean = true;
+  displayLoadMoreButton: boolean = false;
   searchText: string = "";
   searchAnnouncementForm!: FormGroup;
   isClickedOnce: boolean = false;
@@ -36,7 +35,6 @@ export class SearchAnnouncementComponent implements OnInit {
 
   ngOnInit() {
     this.searchAnnouncementForm = this.formBuilder.group({});
-    this.fetchNextAnnouncements();
   }
 
 
@@ -50,24 +48,24 @@ export class SearchAnnouncementComponent implements OnInit {
   }
 
   fetchNextAnnouncements() {
-    this.announcementService.getTopAnnouncementSearch(this.page, this.pageSize, this.searchText).subscribe(response => {
-      if (response && response.content && response.content.length > 0 && (!this.searchText || this.searchText.length <= 2))
-        this.announcements.push(...response.content);
-      else if (response && response.content && response.content.length > 0 && this.searchText && this.searchText.length > 2) {
+    this.isLoading = true;
+    if (this.searchText && this.searchText.length > 2)
+      this.announcementService.getTopAnnouncementSearch(this.page, this.pageSize, this.searchText).subscribe(response => {
         if (!this.searchResults)
           this.searchResults = [];
         this.searchResults.push(...response.content);
-      }
-      else
-        this.displayLoadMoreButton = false;
-    });
+
+        if (!this.searchResults || response.page.totalElements <= this.searchResults.length)
+          this.displayLoadMoreButton = false;
+        this.isLoading = false;
+      });
   }
 
   clearSearch() {
     this.searchText = '';
     this.searchResults = [];
     this.isLoading = false;
-    this.displayLoadMoreButton = true;
+    this.displayLoadMoreButton = false;
     this.isClickedOnce = false;
   }
 
@@ -96,8 +94,8 @@ export class SearchAnnouncementComponent implements OnInit {
             this.searchResults = [];
           this.searchResults.push(...response.content);
         }
-        if (!response || response.content.length == 0)
-          this.displayLoadMoreButton = false;
+        if (this.searchResults && response.page.totalElements > this.searchResults.length)
+          this.displayLoadMoreButton = true;
         this.isLoading = false;
       })
   }

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { combineLatest } from 'rxjs';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
@@ -19,7 +20,7 @@ import { ServiceFamilyService } from '../../services/service.family.service';
   templateUrl: './services-selection.component.html',
   styleUrls: ['./services-selection.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, GenericInputComponent]
+  imports: [SHARED_IMPORTS, GenericInputComponent, NgbNavModule]
 })
 export class ServicesSelectionComponent implements OnInit {
 
@@ -31,7 +32,6 @@ export class ServicesSelectionComponent implements OnInit {
   quotation: IQuotation | undefined;
   currentUser: Responsable | undefined;
   applyToAllAffaires: boolean = false;
-  isSavingQuotation: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -153,11 +153,11 @@ export class ServicesSelectionComponent implements OnInit {
 
   saveQuotation() {
     if (this.quotation) {
-      this.isSavingQuotation = true;
+      this.appService.showLoadingSpinner();
       if (!this.currentUser) {
         let promises = [];
         for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++) {
-          promises.push(this.serviceService.getServiceForServiceTypeAndAffaire(this.selectedServiceTypes[i], this.quotation.assoAffaireOrders[i].affaire));
+          promises.push(this.serviceService.getServiceForServiceType(this.selectedServiceTypes[i], this.quotation.assoAffaireOrders[i].affaire.city));
         }
         combineLatest(promises).subscribe(response => {
           for (let i = 0; i < this.quotation!.assoAffaireOrders.length; i++) {
@@ -171,18 +171,18 @@ export class ServicesSelectionComponent implements OnInit {
           }
 
           this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[2]);
-          this.isSavingQuotation = false;
-          this.appService.openRoute(undefined, "quotation", undefined);
+          this.appService.hideLoadingSpinner();
+          this.appService.openRoute(undefined, "quotation/required-information", undefined);
         });
       } else {
         let promises = [];
         for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++) {
-          promises.push(this.serviceService.addOrUpdateServices(this.selectedServiceTypes[i], this.quotation.assoAffaireOrders[i].affaire.id, this.quotation.assoAffaireOrders[i].id));
+          promises.push(this.serviceService.addOrUpdateServices(this.selectedServiceTypes[i], this.quotation.assoAffaireOrders[i].id));
         }
         combineLatest(promises).subscribe(response => {
           this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[2]);
-          this.isSavingQuotation = false;
-          this.appService.openRoute(undefined, "quotation", undefined);
+          this.appService.hideLoadingSpinner();
+          this.appService.openRoute(undefined, "quotation/required-information", undefined);
         });
       }
     }
@@ -190,6 +190,15 @@ export class ServicesSelectionComponent implements OnInit {
 
   goBackQuotation() {
     this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[0]);
-    this.appService.openRoute(undefined, "quotation", undefined);
+    this.appService.openRoute(undefined, "quotation/identification", undefined);
+  }
+
+  hasServiceForUnregisteredAffaire(serviceFamily: ServiceFamily) {
+    if (serviceFamily) {
+      for (let service of serviceFamily.services)
+        if (service.isRequiringNewUnregisteredAffaire)
+          return true;
+    }
+    return false;
   }
 }

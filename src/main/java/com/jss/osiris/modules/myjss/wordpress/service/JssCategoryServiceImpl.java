@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.myjss.wordpress.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.modules.myjss.wordpress.model.AssoMailJssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
 import com.jss.osiris.modules.myjss.wordpress.repository.JssCategoryRepository;
 
@@ -18,6 +20,9 @@ public class JssCategoryServiceImpl implements JssCategoryService {
 
     @Autowired
     JssCategoryRepository jssCategoryRepository;
+
+    @Autowired
+    AssoMailJssCategoryService assoMailJssCategoryService;
 
     @Override
     public JssCategory getJssCategory(Integer id) {
@@ -47,5 +52,18 @@ public class JssCategoryServiceImpl implements JssCategoryService {
     @Override
     public JssCategory getJssCategoryBySlug(String slug) {
         return jssCategoryRepository.findBySlug(slug);
+    }
+
+    @Override
+    public List<JssCategory> getFollowedJssCategoriesForCurrentUser() {
+        List<JssCategory> jssCategories = new ArrayList<>();
+        List<AssoMailJssCategory> assoMailJssCategories = assoMailJssCategoryService
+                .getAssoMailJssCategoryForCurrentUser();
+
+        if (!assoMailJssCategories.isEmpty()) {
+            for (AssoMailJssCategory asso : assoMailJssCategories)
+                jssCategories.add(asso.getJssCategory());
+        }
+        return jssCategories;
     }
 }

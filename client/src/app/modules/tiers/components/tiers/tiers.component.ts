@@ -90,7 +90,7 @@ export class TiersComponent implements OnInit, AfterContentChecked {
           this.appService.changeHeaderTitle(this.tiers.denomination != null ? this.tiers.denomination : this.tiers.firstname + " " + this.tiers.lastname);
         this.selectedTabIndex = 2;
         this.responsableMainComponent?.setSelectedResponsableId(this.idResponsable ? this.idResponsable : idTiers);
-
+        this.setRffSearch();
         this.loadQuotationFilter();
       })
       // Load by tiers
@@ -98,23 +98,10 @@ export class TiersComponent implements OnInit, AfterContentChecked {
       this.tiersService.getTiers(idTiers).subscribe(response => {
         this.tiers = response;
         this.tiersService.setCurrentViewedTiers(this.tiers);
+        this.setRffSearch();
         this.changeHeader();
         this.restoreTab();
         this.loadQuotationFilter();
-
-        this.rffSearch = {} as RffSearch;
-        this.rffSearch.tiers = { entityId: this.tiers.id } as IndexEntity;
-        this.rffSearch.isHideCancelledRff = false;
-
-        let start = new Date();
-        let d = new Date(start.getTime());
-        d.setFullYear(d.getFullYear() - 2);
-        this.rffSearch.startDate = d;
-
-        let end = new Date();
-        let d2 = new Date(end.getTime());
-        d2.setFullYear(d2.getFullYear() + 2);
-        this.rffSearch.endDate = d2;
       })
     } else if (this.createMode == false) {
       // Blank page
@@ -129,6 +116,22 @@ export class TiersComponent implements OnInit, AfterContentChecked {
         else if (this.tiers && this.tiers.id)
           this.editTiers()
     });
+  }
+
+  setRffSearch() {
+    this.rffSearch = {} as RffSearch;
+    this.rffSearch.tiers = { entityId: this.tiers.id } as IndexEntity;
+    this.rffSearch.isHideCancelledRff = false;
+
+    let start = new Date();
+    let d = new Date(start.getTime());
+    d.setFullYear(d.getFullYear() - 2);
+    this.rffSearch.startDate = d;
+
+    let end = new Date();
+    let d2 = new Date(end.getTime());
+    d2.setFullYear(d2.getFullYear() + 2);
+    this.rffSearch.endDate = d2;
   }
 
   ngOnDestroy() {

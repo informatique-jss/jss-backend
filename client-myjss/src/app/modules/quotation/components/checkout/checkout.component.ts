@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { NgbAccordionModule, NgbDropdownModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { validateEmail, validateFrenchPhone, validateInternationalPhone } from '../../../../libs/CustomFormsValidatorsHelper';
 import { getDocument } from '../../../../libs/DocumentHelper';
@@ -21,6 +22,7 @@ import { CustomerOrder } from '../../../my-account/model/CustomerOrder';
 import { Document } from '../../../my-account/model/Document';
 import { DocumentType } from '../../../my-account/model/DocumentType';
 import { Quotation } from '../../../my-account/model/Quotation';
+import { ServiceType } from '../../../my-account/model/ServiceType';
 import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
 import { DocumentService } from '../../../my-account/services/document.service';
 import { QuotationService } from '../../../my-account/services/quotation.service';
@@ -45,7 +47,10 @@ import { CityService } from '../../services/city.service';
     GenericTextareaComponent,
     SelectCountryComponent,
     SelectCivilityComponent,
-    SelectBillingLabelTypeComponent
+    SelectBillingLabelTypeComponent,
+    NgbDropdownModule,
+    NgbNavModule,
+    NgbAccordionModule
   ]
 })
 export class CheckoutComponent implements OnInit {
@@ -88,12 +93,22 @@ export class CheckoutComponent implements OnInit {
   acceptDocs: boolean = false;
   acceptTerms: boolean = false;
 
-  isSavingQuotation: boolean = false;
-
   quotationPriceObservableRef: Subscription | undefined;
 
   userScope: Responsable[] | undefined;
+
+  subscriptionType: string | undefined;
+  isPriceReductionForSubscription: boolean = false;
+  idArticle: number | undefined;
+
+
   capitalizeName = capitalizeName;
+
+  serviceTypeAnnualSubscription!: ServiceType;
+  serviceTypeEnterpriseAnnualSubscription!: ServiceType;
+  serviceTypeMonthlySubscription!: ServiceType;
+  serviceTypeUniqueArticleBuy!: ServiceType;
+  serviceTypeKioskNewspaperBuy!: ServiceType;
 
   constructor(
     private loginService: LoginService,
@@ -108,7 +123,13 @@ export class CheckoutComponent implements OnInit {
     private cityService: CityService
   ) { }
 
-  ngOnInit() {
+  async ngOnInit() {
+    this.serviceTypeAnnualSubscription = this.constantService.getServiceTypeAnnualSubscription();
+    this.serviceTypeEnterpriseAnnualSubscription = this.constantService.getServiceTypeEnterpriseAnnualSubscription();
+    this.serviceTypeMonthlySubscription = this.constantService.getServiceTypeMonthlySubscription();
+    this.serviceTypeUniqueArticleBuy = this.constantService.getServiceTypeUniqueArticleBuy();
+    this.serviceTypeKioskNewspaperBuy = this.constantService.getServiceTypeKioskNewspaperBuy();
+
     this.documentForm = this.formBuilder.group({});
 
     this.documentTypeBilling = this.constantService.getDocumentTypeBilling();
@@ -116,7 +137,7 @@ export class CheckoutComponent implements OnInit {
     this.documentTypePaper = this.constantService.getDocumentTypePaper();
     this.billingLabelTypeOther = this.constantService.getBillingLabelTypeOther();
 
-    this.loginService.getCurrentUser().subscribe(response => {
+    await this.loginService.getCurrentUser().subscribe(response => {
       this.currentUser = response;
       this.initIQuotation();
     })
@@ -127,7 +148,9 @@ export class CheckoutComponent implements OnInit {
         this.logCurrentUser(response);
       }
     })
-    this.initIQuotation();
+
+    if (!this.currentUser)
+      this.initIQuotation();
 
     this.userScopeService.getUserScope().subscribe(response => {
       this.userScope = [];
@@ -170,6 +193,7 @@ export class CheckoutComponent implements OnInit {
   }
 
   onValidateOrder(isDraft: boolean) {
+    this.documentForm.markAllAsTouched();
     if (this.isOrderPossible())
       this.saveOrder(isDraft);
   }
@@ -178,7 +202,7 @@ export class CheckoutComponent implements OnInit {
     if (!this.quotation)
       return;
 
-    this.isSavingQuotation = true;
+    this.appService.showLoadingSpinner();
     if (!this.currentUser) {
       if (this.quotation) {
         this.quotationService.setCurrentDraftQuotation(this.quotation);
@@ -196,13 +220,14 @@ export class CheckoutComponent implements OnInit {
               this.appService.openRoute(undefined, "account/orders/details/" + response.id, undefined);
             }
           });
-        this.isSavingQuotation = false;
+        this.appService.hideLoadingSpinner();
       }
     } else {
       if (this.quotation.isQuotation)
         this.quotationService.saveQuotation(this.quotation, !isDraft).subscribe(response => {
           if (response && response.id) {
             this.cleanStorageData();
+            this.appService.hideLoadingSpinner();
             this.appService.openRoute(undefined, "account/quotations/details/" + response.id, undefined);
           }
         })
@@ -210,6 +235,7 @@ export class CheckoutComponent implements OnInit {
         this.orderService.saveOrder(this.quotation, !isDraft).subscribe(response => {
           if (response && response.id) {
             this.cleanStorageData();
+            this.appService.hideLoadingSpinner();
             this.appService.openRoute(undefined, "account/orders/details/" + response.id, undefined);
           }
         })
@@ -217,7 +243,7 @@ export class CheckoutComponent implements OnInit {
   }
 
   cleanStorageData() {
-    this.quotationService.cleanStorageData;
+    this.quotationService.cleanStorageData();
   }
 
 
@@ -315,6 +341,13 @@ export class CheckoutComponent implements OnInit {
 
   initEmptyDocuments() {
     if (this.quotation) {
+      if (this.quotation.assoAffaireOrders && this.quotation.assoAffaireOrders[0].affaire) {
+        if (!this.quotation.assoAffaireOrders[0].affaire.mails)
+          this.quotation.assoAffaireOrders[0].affaire.mails = [];
+        if (this.quotation.assoAffaireOrders[0].affaire.mails.length == 0)
+          this.quotation.assoAffaireOrders[0].affaire.mails.push({} as Mail);
+      }
+
       if (!this.quotation.responsable)
         return;
 
@@ -356,12 +389,12 @@ export class CheckoutComponent implements OnInit {
         if (!isFromInit) {
           if (this.quotationService.getCurrentDraftQuotationId()) {
             this.quotationService.getQuotation(parseInt(this.quotationService.getCurrentDraftQuotationId()!)).subscribe(response => {
-              this.quotation = response;
+              this.quotation!.assoAffaireOrders = response.assoAffaireOrders;
               this.finalizePricingAnswer();
             });
           } else if (this.orderService.getCurrentDraftOrderId()) {
             this.orderService.getCustomerOrder(parseInt(this.orderService.getCurrentDraftOrderId()!)).subscribe(response => {
-              this.quotation = response;
+              this.quotation!.assoAffaireOrders = response.assoAffaireOrders;
               this.finalizePricingAnswer();
             });
           }
@@ -403,6 +436,7 @@ export class CheckoutComponent implements OnInit {
 
   setEmergencyOption() {
     if (this.quotation) {
+      this.isComputingPrice = true;
       if (this.currentUser) {
         if (this.quotation.isQuotation) {
           this.quotationService.setEmergencyOnQuotation(this.quotation.id, this.quotation.assoAffaireOrders[0].services[0].provisions[0].isEmergency).subscribe(res => {
@@ -620,5 +654,19 @@ export class CheckoutComponent implements OnInit {
           document.billingLabelCity = response[0];
       })
     }
+  }
+
+  isServiceJssSubscription(serviceType: ServiceType): boolean {
+    return serviceType.id === this.serviceTypeAnnualSubscription.id
+      || serviceType.id === this.serviceTypeMonthlySubscription.id
+      || serviceType.id === this.serviceTypeUniqueArticleBuy.id
+      //TODO : create constant
+      // || serviceType.id === this.serviceTypeEnterpriseAnnualSubscription.id
+      || serviceType.id === this.serviceTypeUniqueArticleBuy.id;
+  }
+
+  goBackQuotation() {
+    this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[2]);
+    this.appService.openRoute(undefined, "quotation/required-information", undefined);
   }
 }

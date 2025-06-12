@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { combineLatest } from 'rxjs';
 import { capitalizeName } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
@@ -16,7 +17,7 @@ import { BillingClosureService } from '../../services/billing.closure.service';
   templateUrl: './billing-closure.component.html',
   styleUrls: ['./billing-closure.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, TrustHtmlPipe]
+  imports: [SHARED_IMPORTS, TrustHtmlPipe, NgbDropdownModule]
 })
 export class BillingClosureComponent implements OnInit {
 

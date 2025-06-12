@@ -53,6 +53,16 @@ export class CustomerOrderService extends AppRestService<CustomerOrder> {
     return this.postItem(new HttpParams().set("orderId", orderId), 'order/document', document);
   }
 
+  getCustomerOrderForSubscription(subscriptionType: string, isPriceReductionForSubscription: boolean, idArticle: number | undefined) {
+    let params = new HttpParams();
+    if (idArticle)
+      params = params.set("idArticle", idArticle);
+    params = params.set("subscriptionType", subscriptionType);
+    params = params.set("isPriceReductionForSubscription", isPriceReductionForSubscription);
+
+    return this.get(params, 'order/subscription');
+  }
+
   getCurrentDraftOrderId() {
     return localStorage.getItem('current-draft-order-id');
   }

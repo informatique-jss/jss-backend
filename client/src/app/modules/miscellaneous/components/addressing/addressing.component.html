@@ -22,18 +22,6 @@
           <mat-icon>edit</mat-icon>
         </button>
       </td>
-      <td *ngIf="document.isRecipientAffaire && displayNumberMailing">
-        <generic-input [(model)]="document.numberMailingAffaire" label="Nombre d'exemplaire Affaire"
-          (onFormChange)="changeDocument()" [form]="adressingForm" propertyName="numberMailingAffaire"
-          [isDisabled]="!editMode" type="number">
-        </generic-input>
-      </td>
-      <td *ngIf="document.isRecipientClient && displayNumberMailing">
-        <generic-input [(model)]="document.numberMailingClient" label="Nombre d'exemplaire Client"
-          (onFormChange)="changeDocument()" [form]="adressingForm" propertyName="numberMailingClient"
-          [isDisabled]="!editMode" type="number">
-        </generic-input>
-      </td>
     </tr>
     <tr *ngIf=" document.isRecipientAffaire && overrideAffaireAddress">
       <td>

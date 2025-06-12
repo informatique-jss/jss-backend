@@ -25,7 +25,4 @@ export class AssoMailAuthorService extends AppRestService<AssoMailAuthor> {
     return this.get(new HttpParams().set("idAuthor", author.id), "author/follow/get");
   }
 
-  getFollowedAuthorByMail() {
-    return this.getList(new HttpParams(), "preferences/followed/author");
-  }
 }

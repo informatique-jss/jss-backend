@@ -14,11 +14,21 @@ export class AppService {
 
   toasts: Toast[] = [];
   private toastSource = new BehaviorSubject<Toast[]>(this.toasts);
+  private loadingSpinner = new BehaviorSubject<boolean>(false);
+  readonly loadingSpinnerObservable = this.loadingSpinner.asObservable();
 
   constructor(
     private router: Router,
     private responsableService: ResponsableService,
   ) { }
+
+  showLoadingSpinner(): void {
+    this.loadingSpinner.next(true);
+  }
+
+  hideLoadingSpinner(): void {
+    this.loadingSpinner.next(false);
+  }
 
   displayToast(message: string, isError: boolean, title: string, delayInMili: number) {
     let newToast = { isError: isError, message: message, title: title } as Toast;
@@ -73,7 +83,7 @@ export class AppService {
     menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Mon compte", iconClass: "ai-user-check", route: "/account/settings" } as AccountMenuItem);
     menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Suivis", iconClass: "ai-bookmark", route: "/account/bookmarks" } as AccountMenuItem);
     menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Relevé de compte", iconClass: "ai-wallet", route: "/account/closure" } as AccountMenuItem);
-    menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Préférences de communication", iconClass: "ai-messages", route: "/account/communication-preference" } as AccountMenuItem);
+    menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Newsletter et alertes", iconClass: "ai-messages", route: "/account/communication-preference" } as AccountMenuItem);
     menuItem.push({ mainItem: MAIN_ITEM_DASHBOARD, label: "Tableau de bord", iconClass: "ai-chart", route: "/account/overview" } as AccountMenuItem);
     menuItem.push({ mainItem: MAIN_ITEM_DASHBOARD, label: "Devis", iconClass: "ai-slider", route: "/account/quotations" } as AccountMenuItem);
     menuItem.push({ mainItem: MAIN_ITEM_DASHBOARD, label: "Commandes", iconClass: "ai-cart", route: "/account/orders" } as AccountMenuItem);

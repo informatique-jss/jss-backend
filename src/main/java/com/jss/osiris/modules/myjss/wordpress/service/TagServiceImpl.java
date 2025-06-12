@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.myjss.wordpress.model.AssoMailTag;
 import com.jss.osiris.modules.myjss.wordpress.model.Author;
 import com.jss.osiris.modules.myjss.wordpress.model.Category;
 import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
@@ -34,6 +35,9 @@ public class TagServiceImpl implements TagService {
 
     @Autowired
     PostService postService;
+
+    @Autowired
+    AssoMailTagService assoMailTagService;
 
     @Override
     public Tag getTag(Integer id) {
@@ -178,6 +182,18 @@ public class TagServiceImpl implements TagService {
                         }
                     }
                 }
+        return tags;
+    }
+
+    @Override
+    public List<Tag> getFollowedTagsForCurrentUser() {
+        List<Tag> tags = new ArrayList<>();
+        List<AssoMailTag> assoMailTags = assoMailTagService.getAssoMailTagForCurrentUser();
+
+        if (!assoMailTags.isEmpty()) {
+            for (AssoMailTag asso : assoMailTags)
+                tags.add(asso.getTag());
+        }
         return tags;
     }
 }

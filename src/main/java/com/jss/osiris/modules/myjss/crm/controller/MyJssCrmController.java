@@ -23,12 +23,15 @@ import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.myjss.crm.model.WebinarParticipant;
 import com.jss.osiris.modules.myjss.crm.service.WebinarParticipantService;
-import com.jss.osiris.modules.myjss.wordpress.model.AssoMailAuthor;
-import com.jss.osiris.modules.myjss.wordpress.model.AssoMailJssCategory;
-import com.jss.osiris.modules.myjss.wordpress.model.AssoMailTag;
+import com.jss.osiris.modules.myjss.wordpress.model.Author;
+import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
+import com.jss.osiris.modules.myjss.wordpress.model.Tag;
 import com.jss.osiris.modules.myjss.wordpress.service.AssoMailAuthorService;
 import com.jss.osiris.modules.myjss.wordpress.service.AssoMailJssCategoryService;
 import com.jss.osiris.modules.myjss.wordpress.service.AssoMailTagService;
+import com.jss.osiris.modules.myjss.wordpress.service.AuthorService;
+import com.jss.osiris.modules.myjss.wordpress.service.JssCategoryService;
+import com.jss.osiris.modules.myjss.wordpress.service.TagService;
 import com.jss.osiris.modules.osiris.crm.model.Candidacy;
 import com.jss.osiris.modules.osiris.crm.model.CommunicationPreference;
 import com.jss.osiris.modules.osiris.crm.service.CandidacyService;
@@ -64,6 +67,15 @@ public class MyJssCrmController {
 
     @Autowired
     AssoMailAuthorService assoMailAuthorService;
+
+    @Autowired
+    AuthorService authorService;
+
+    @Autowired
+    TagService tagService;
+
+    @Autowired
+    JssCategoryService jssCategoryService;
 
     @Autowired
     AssoMailTagService assoMailTagService;
@@ -326,31 +338,31 @@ public class MyJssCrmController {
 
     @JsonView(JacksonViews.MyJssDetailedView.class)
     @GetMapping(inputEntryPoint + "/preferences/followed/author")
-    public ResponseEntity<List<AssoMailAuthor>> getAssoMailAuthorForCurrentUser(HttpServletRequest request)
+    public ResponseEntity<List<Author>> getFollowedAuthorsForCurrentUser(HttpServletRequest request)
             throws OsirisValidationException {
         detectFlood(request);
 
-        return new ResponseEntity<List<AssoMailAuthor>>(
-                assoMailAuthorService.getAssoMailAuthorForCurrentUser(), HttpStatus.OK);
+        return new ResponseEntity<List<Author>>(
+                authorService.getFollowedAuthorsForCurrentUser(), HttpStatus.OK);
     }
 
     @JsonView(JacksonViews.MyJssDetailedView.class)
     @GetMapping(inputEntryPoint + "/preferences/followed/tag")
-    public ResponseEntity<List<AssoMailTag>> getAssoMailTagForCurrentUser(HttpServletRequest request)
+    public ResponseEntity<List<Tag>> getFollowedTagsForCurrentUser(HttpServletRequest request)
             throws OsirisValidationException {
         detectFlood(request);
 
-        return new ResponseEntity<List<AssoMailTag>>(
-                assoMailTagService.getAssoMailTagForCurrentUser(), HttpStatus.OK);
+        return new ResponseEntity<List<Tag>>(
+                tagService.getFollowedTagsForCurrentUser(), HttpStatus.OK);
     }
 
     @JsonView(JacksonViews.MyJssDetailedView.class)
     @GetMapping(inputEntryPoint + "/preferences/followed/jss-category")
-    public ResponseEntity<List<AssoMailJssCategory>> getAssoMailJssCategoryForCurrentUser(HttpServletRequest request)
+    public ResponseEntity<List<JssCategory>> getFollowedJssCategoriesForCurrentUser(HttpServletRequest request)
             throws OsirisValidationException {
         detectFlood(request);
 
-        return new ResponseEntity<List<AssoMailJssCategory>>(
-                assoMailJssCategoryService.getAssoMailJssCategoryForCurrentUser(), HttpStatus.OK);
+        return new ResponseEntity<List<JssCategory>>(
+                jssCategoryService.getFollowedJssCategoriesForCurrentUser(), HttpStatus.OK);
     }
 }

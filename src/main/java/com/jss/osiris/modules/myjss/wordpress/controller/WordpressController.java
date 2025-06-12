@@ -76,6 +76,7 @@ import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -173,10 +174,10 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/publishing-department")
-	public ResponseEntity<PublishingDepartment> getPublishingDepartmentById(
-			@Param("departmentId") Integer departmentId) {
+	public ResponseEntity<PublishingDepartment> getPublishingDepartmentByCode(
+			@Param("departmentCode") String departmentCode) {
 		return new ResponseEntity<PublishingDepartment>(
-				publishingDepartmentService.getPublishingDepartment(departmentId),
+				publishingDepartmentService.getPublishingDepartment(departmentCode),
 				HttpStatus.OK);
 	}
 
@@ -223,7 +224,7 @@ public class WordpressController {
 
 	@GetMapping(inputEntryPoint + "/post/bookmark/add")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
-	public ResponseEntity<Post> addAssoMailPost(@RequestParam Integer idPost,
+	public ResponseEntity<Boolean> addAssoMailPost(@RequestParam Integer idPost,
 			HttpServletRequest request) throws OsirisException {
 
 		detectFlood(request);
@@ -233,13 +234,14 @@ public class WordpressController {
 		if (post == null)
 			throw new OsirisValidationException("post");
 
-		return new ResponseEntity<Post>(postService.updateBookmarkPost(post),
-				HttpStatus.OK);
+		postService.updateBookmarkPost(post);
+
+		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/post/bookmark/delete")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
-	public ResponseEntity<Post> deleteBookmarkPost(@RequestParam Integer idPost,
+	public ResponseEntity<Boolean> deleteBookmarkPost(@RequestParam Integer idPost,
 			HttpServletRequest request) throws OsirisException {
 
 		detectFlood(request);
@@ -249,8 +251,8 @@ public class WordpressController {
 		if (post == null)
 			throw new OsirisValidationException("post");
 
-		return new ResponseEntity<Post>(postService.deleteBookmarkPost(post),
-				HttpStatus.OK);
+		postService.deleteBookmarkPost(post);
+		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/post/bookmark/all")
@@ -426,7 +428,7 @@ public class WordpressController {
 				Sort.by(Sort.Direction.DESC, "date"));
 
 		return new ResponseEntity<Page<Post>>(
-				postService.getJssCategoryPosts(pageable),
+				postService.computeBookmarkedPosts(postService.getJssCategoryPosts(pageable)),
 				HttpStatus.OK);
 	}
 
@@ -526,7 +528,23 @@ public class WordpressController {
 		Post post = postService.getPostsBySlug(slug);
 		if (post != null && !isCrawler(request))
 			postViewService.incrementView(post);
-		return new ResponseEntity<Post>(postService.applyPremium(post), HttpStatus.OK);
+		return new ResponseEntity<Post>(postService.applyPremiumAndBookmarks(post, null, null, false), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/posts/slug/token")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<Post> getPostBySlugWithToken(String validationToken, String mail,
+			HttpServletRequest request)
+			throws OsirisException {
+		Subscription subscription = subscriptionService.getSubscriptionByToken(validationToken);
+		if (subscription == null)
+			throw new OsirisValidationException("validationToken");
+
+		if (subscription.getPost() != null && !isCrawler(request))
+			postViewService.incrementView(subscription.getPost());
+		return new ResponseEntity<Post>(
+				postService.applyPremiumAndBookmarks(subscription.getPost(), validationToken, mail, false),
+				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/serie/slug")
@@ -638,14 +656,14 @@ public class WordpressController {
 	@GetMapping(inputEntryPoint + "/posts/publishing-department/most-seen")
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Page<Post>> getMostSeenPostByPublishingDepartment(
-			@RequestParam Integer departmentId, @RequestParam(defaultValue = "0") int page,
+			@RequestParam String departmentCode, @RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "20") int size,
 			HttpServletRequest request) throws OsirisException {
 		detectFlood(request);
 		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
 				Sort.by(Sort.Direction.DESC, "date"));
 
-		PublishingDepartment publishingDepartment = publishingDepartmentService.getPublishingDepartment(departmentId);
+		PublishingDepartment publishingDepartment = publishingDepartmentService.getPublishingDepartment(departmentCode);
 
 		if (publishingDepartment == null)
 			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
@@ -786,7 +804,7 @@ public class WordpressController {
 	@GetMapping(inputEntryPoint + "/posts/all/publishing-department")
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Page<Post>> getAllPostsByPublishingDepartment(
-			@RequestParam Integer departmentId,
+			@RequestParam String departmentCode,
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "20") int size, @RequestParam(required = false) String searchText,
 			HttpServletRequest request) throws OsirisException {
@@ -796,7 +814,7 @@ public class WordpressController {
 		Pageable pageableRequest = PageRequest.of(page, ValidationHelper.limitPageSize(size),
 				Sort.by(Sort.Direction.DESC, "date"));
 
-		PublishingDepartment publishingDepartment = publishingDepartmentService.getPublishingDepartment(departmentId);
+		PublishingDepartment publishingDepartment = publishingDepartmentService.getPublishingDepartment(departmentCode);
 
 		if (publishingDepartment == null)
 			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
@@ -911,7 +929,9 @@ public class WordpressController {
 		Post post = postService.getPost(idPost);
 		if (post == null)
 			return new ResponseEntity<Post>(new Post(), HttpStatus.OK);
-		return new ResponseEntity<Post>(postService.applyPremium(postService.getNextPost(post)), HttpStatus.OK);
+		return new ResponseEntity<Post>(
+				postService.applyPremiumAndBookmarks(postService.getNextPost(post), null, null, true),
+				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/post/previous")
@@ -920,7 +940,9 @@ public class WordpressController {
 		Post post = postService.getPost(idPost);
 		if (post == null)
 			return new ResponseEntity<Post>(new Post(), HttpStatus.OK);
-		return new ResponseEntity<Post>(postService.applyPremium(postService.getPreviousPost(post)), HttpStatus.OK);
+		return new ResponseEntity<Post>(
+				postService.applyPremiumAndBookmarks(postService.getPreviousPost(post), null, null, true),
+				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/post/get")
@@ -929,7 +951,9 @@ public class WordpressController {
 
 		if (postService.getPost(idPost) == null)
 			return new ResponseEntity<Post>(new Post(), HttpStatus.OK);
-		return new ResponseEntity<Post>(postService.applyPremium(postService.getPost(idPost)), HttpStatus.OK);
+		return new ResponseEntity<Post>(
+				postService.applyPremiumAndBookmarks(postService.getPost(idPost), null, null, false),
+				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/top/department")
@@ -937,13 +961,13 @@ public class WordpressController {
 	public ResponseEntity<Page<Post>> getTopPostByDepartment(
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size,
-			@RequestParam Integer departmentId,
+			@RequestParam String departmentCode,
 			HttpServletRequest request) throws OsirisException {
 
 		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
 				Sort.by(Sort.Direction.DESC, "date"));
 
-		PublishingDepartment department = publishingDepartmentService.getPublishingDepartment(departmentId);
+		PublishingDepartment department = publishingDepartmentService.getPublishingDepartment(departmentCode);
 		if (department == null)
 			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
 
@@ -1066,13 +1090,13 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/tags/all/publishing-department")
-	public ResponseEntity<List<Tag>> getAllTagsByPublishingDepartment(@RequestParam Integer departmentId)
+	public ResponseEntity<List<Tag>> getAllTagsByPublishingDepartment(@RequestParam String departmentCode)
 			throws OsirisException {
 
-		if (departmentId == null)
+		if (departmentCode == null)
 			return new ResponseEntity<List<Tag>>(new ArrayList<Tag>(), HttpStatus.OK);
 
-		PublishingDepartment publishingDepartment = publishingDepartmentService.getPublishingDepartment(departmentId);
+		PublishingDepartment publishingDepartment = publishingDepartmentService.getPublishingDepartment(departmentCode);
 
 		if (publishingDepartment.getId().equals(constantService.getPublishingDepartmentIdf().getId()))
 			return new ResponseEntity<List<Tag>>(tagService.getAllTagsByIdf(), HttpStatus.OK);
@@ -1205,10 +1229,16 @@ public class WordpressController {
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<Comment> addOrUpdateComment(@RequestBody Comment comment,
 			@RequestParam(value = "parentCommentId", required = false) Integer parentCommentId,
-			@RequestParam Integer postId)
+			@RequestParam Integer postId, HttpServletRequest request)
 			throws OsirisException {
 
+		detectFlood(request);
+
 		if (comment != null && postId != null && comment.getMail() != null) {
+
+			if (comment.getContent() == null || comment.getContent().trim() == "") {
+				throw new OsirisValidationException("Impossible d'enregistrer un mail sans contenu");
+			}
 
 			if (!validationHelper.validateMail(comment.getMail())) {
 				throw new OsirisValidationException("Le mail renseigné n'est pas valide !");
@@ -1228,27 +1258,45 @@ public class WordpressController {
 
 	@GetMapping(inputEntryPoint + "/subscription/give-post")
 	public ResponseEntity<Subscription> givePost(@RequestParam Integer postId, @RequestParam String recipientMailString,
-			HttpServletRequest request)
+			HttpServletRequest request) throws OsirisException {
+
+		detectFlood(request);
+		if (!validationHelper.validateMail(recipientMailString))
+			throw new OsirisValidationException("Le mail renseigné n'est pas valide !");
+
+		Mail recipientMail = new Mail(recipientMailString);
+		recipientMail = mailService.populateMailId(recipientMail);
+
+		Post postToOffer = postService.getPost(postId);
+		if (postToOffer == null)
+			throw new OsirisValidationException("Trying to offer a non-existing post");
+
+		return new ResponseEntity<Subscription>(
+				subscriptionService.givePostSubscription(postToOffer, recipientMail),
+				HttpStatus.OK);
+	}
+
+	/**
+	 * If response is null ==> the user cannot share any post
+	 * 
+	 * @param request
+	 * @return
+	 * @throws OsirisValidationException
+	 */
+	@GetMapping(inputEntryPoint + "/subscription/share-post-left")
+	public ResponseEntity<Integer> getNumberOfRemainingPostsToShareForMonth(HttpServletRequest request)
 			throws OsirisValidationException {
 
 		detectFlood(request);
 
-		if (!validationHelper.validateMail(recipientMailString)) {
-			throw new OsirisValidationException("Le mail renseigné n'est pas valide !");
+		Responsable currentUser = employeeService.getCurrentMyJssUser();
+
+		if (currentUser == null) {
+			throw new OsirisValidationException("Subscription e-mail does not exist");
 		}
 
-		Mail recipientMail = new Mail(recipientMailString);
-
-		recipientMail = mailService.populateMailId(recipientMail);
-
-		Post postToOffer = postService.getPost(postId);
-
-		if (postToOffer == null) {
-			throw new OsirisValidationException("Trying to offer a non-existing post");
-		}
-
-		return new ResponseEntity<Subscription>(
-				subscriptionService.givePostSubscription(postToOffer, recipientMail),
+		return new ResponseEntity<Integer>(
+				subscriptionService.getRemainingPostToShareForCurrentMonth(currentUser),
 				HttpStatus.OK);
 	}
 

@@ -8,7 +8,7 @@
         <div class="row pt-2">
           <div class="col-12">
             <ng-container *ngIf="post.jssCategories!=null && post.jssCategories.length>0">
-              <a *ngFor="let category of post.jssCategories" style="cursor: pointer;"
+              <a *ngFor="let category of post.jssCategories | slice : 1 " style="cursor: pointer;"
                 (click)="openCategoryPosts(category, $event)" class="my-2 margin-category fw-bold"
                 [style.background-color]="category.color+' !important'">{{category.name}}</a>
             </ng-container>
@@ -41,11 +41,14 @@
           <!-- Boutons offrir article, enrregistrer, partager  -->
           <div class="row inline-row align-items-center mb-2 g-2">
             <div class="col-auto mt-0">
-              <button class="btn btn-primary" (click)="openOfferPostModal(givePostModal)" [disabled]="!currentUser"><i
+              <button *ngIf="currentUser" class="btn btn-primary" (click)="openOfferPostModal(givePostModal)"><i
                   class="bi bi-gift me-2"></i>Offrir cet article</button>
             </div>
-            <div class="col-auto mt-0">
-              <a class="btn btn-primary"><i class="bi bi-bookmark me-2"></i>Enregistrer</a>
+            <div class="col-auto mt-0" *ngIf="currentUser">
+              <button *ngIf="currentUser" class="btn btn-primary"
+                (click)="post.isBookmarked ? unBookmarkPost(post) : bookmarkPost(post)"><i [ngClass]="{'bi-bookmark': !post.isBookmarked,
+                                'bi-bookmark-fill text-dark': post.isBookmarked,
+                                'text-transparent': !post.isBookmarked}" class="bi  me-2"></i>Enregistrer</button>
             </div>
             <div class="col-auto mt-0">
               <!-- Share dropdown -->
@@ -66,7 +69,7 @@
                         style="width: 48px; height: 48px;">
                         <i class="bi bi-linkedin fs-6"></i>
                       </a>
-                      <a (click)="shareOnLinkedin()"
+                      <a (click)="shareOnInstagram()"
                         class="btn btn-primary bg-light border-0 rounded-circle d-flex justify-content-center align-items-center"
                         style="width: 48px; height: 48px;">
                         <i class="bi bi-instagram fs-4"></i>
@@ -136,19 +139,14 @@
                 <span [innerHTML]="post.contentText| trustHtml"></span>
 
                 <!-- Bannière d'abonnement en bas de l'article visible -->
-                <div class="bg-secondary d-flex justify-content-center align-items-center text-center text-white"
-                  style="position: relative; margin-top: -70px;" *ngIf="post.isPremium">
-                  La suite est réservée à nos abonnés. Déjà abonné ?
-                  <a class="ms-1 text-white fw-bold" (click)="openSignIn($event)">Se connecter</a>
-                </div>
                 <div class="bg-blue-400 d-flex justify-content-center align-items-center flex-column text-center p-4"
-                  style="position: relative; ">
+                  style="position: relative; " *ngIf="post.isPremium">
                   <h2 class=" fw-bold">Vous souhaitez lire la suite ?</h2>
                   <p>Lisez cette article pour seulement 1 € ou abonnez-vous pour profiter de cet article en
                     intégralité et de bien d'autres !</p>
                   <div><a class="btn btn-secondary mt-3" style="margin-right: 20px;cursor: pointer;"
                       (click)="openSubscribe($event)">Lire pour 1 €</a>
-                    <a href="/abonnement" class="btn btn-yellow mt-3" style="cursor: pointer;"
+                    <a class="btn btn-yellow mt-3" style="cursor: pointer;"
                       (click)="openSubscribe($event)">S'abonner</a>
                   </div>
                 </div>
@@ -160,7 +158,7 @@
                     <a *ngFor="let relatedPost of post.relatedPosts.slice(0, 3)" (click)="openPost(relatedPost, $event)"
                       class="card-truncate-1">
                       <h6 class="m-0 p-1"><img *ngIf="post.isPremium" class="px-0 me-1"
-                          src="/assets/images/premium-icon.svg">{{relatedPost.titleText}}</h6>
+                          src="/assets/images/premium-icon.svg"> &#9632; {{relatedPost.titleText}}</h6>
                     </a>
                   </div>
                 </div>
@@ -175,7 +173,7 @@
                         style="width: 48px; height: 48px;">
                         <i class="bi bi-linkedin fs-6"></i>
                       </a>
-                      <a (click)="shareOnLinkedin()"
+                      <a (click)="shareOnInstagram()"
                         class="btn btn-primary rounded-circle d-flex justify-content-center align-items-center"
                         style="width: 48px; height: 48px;">
                         <i class="bi bi-instagram fs-4"></i>
@@ -236,7 +234,7 @@
                             <a (click)="openPost(nextPost, $event)">{{nextPost.titleText}}</a>
                           </h6>
                         </div>
-                        <a (click)="openPost(nextPost, $event)">
+                        <a (click)="openPost(nextPost, $event)" *ngIf="nextPost.media">
                           <div class="post-img-wrap position-relative overflow-hidden me-0 ms-2">
                             <img class="post-img"
                               [src]="nextPost.media.urlThumbnail ? nextPost.media.urlThumbnail : nextPost.media.urlFull"
@@ -335,8 +333,9 @@
                         </div>
                       </div>
 
-                      <!-- Comment form -->
-                      <div id="commentForm" class="card border-2 pt-2 p-md-2 p-xl-3 p-xxl-4 mt-5 mt-md-0 mb-4">
+                      <!-- Comment form not connected user -->
+                      <div *ngIf="!currentUser" id="commentForm"
+                        class="card border-2 pt-2 p-md-2 p-xl-3 p-xxl-4 mt-5 mt-md-0 mb-4">
                         <div class="card-body">
                           <div class="row justify-content-between align-items-center">
                             <h2 class="col-8 pb-2 pb-lg-3 pb-xl-4" *ngIf="!newCommentParent.id">Laisser un commentaire
@@ -367,6 +366,35 @@
                                 propertyName="mail" [isMandatory]="true" [isDisabled]="false"
                                 [isDisplayLabel]="true"></generic-input>
                             </div>
+                            <div class="col-12">
+                              <generic-textarea [(model)]="newComment.content" label="Commentaire*"
+                                [form]="newCommentForm" propertyName="comment" [isMandatory]="true" [isDisabled]="false"
+                                [numberOfLines]="5"></generic-textarea>
+                            </div>
+                            <div class="col-12">
+                              <button class="btn btn-secondary" type="submit" (click)="postComment()">Publier</button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                      <!-- Comment form connected user -->
+                      <div *ngIf="currentUser" id="commentForm"
+                        class="card border-2 pt-2 p-md-2 p-xl-3 p-xxl-4 mt-5 mt-md-0 mb-4">
+                        <div class="card-body">
+                          <div class="row justify-content-between align-items-center">
+                            <h2 class="col-8 pb-2 pb-lg-3 pb-xl-4" *ngIf="!newCommentParent.id">Laisser un commentaire
+                            </h2>
+                            <h2 class="col-8 pb-2 pb-lg-3 pb-xl-4" *ngIf="newCommentParent.id">Répondre à
+                              {{newCommentParent.authorFirstName}} {{newCommentParent.authorLastNameInitials}}.</h2>
+                            <div class=" col-4 d-inline-flex justify-content-end pb-2 pb-lg-3 pb-xl-4"
+                              *ngIf="newCommentParent.id">
+                              <a type="button" aria-label="Close" class="fs-sm" (click)="cancelReply()">
+                                Annuler la réponse
+                              </a>
+                            </div>
+                          </div>
+                          <p>Votre adresse e-mail ne sera pas publiée. Les champs obligatoires sont indiqués avec *</p>
+                          <form class="row needs-validation g-4" novalidate>
                             <div class="col-12">
                               <generic-textarea [(model)]="newComment.content" label="Commentaire*"
                                 [form]="newCommentForm" propertyName="comment" [isMandatory]="true" [isDisabled]="false"
@@ -475,16 +503,16 @@
             </div>
           </form>
         </div>
-        <p class="small text-muted" *ngIf="currentUser!.numberOfPostsSharingAuthorized">
+        <p class="small text-muted" *ngIf="numberOfSharingPostRemaining">
           Nombre d'articles que vous pouvez encore partager ce mois-ci : <strong>
-            {{ currentUser!.numberOfPostsSharingAuthorized }}</strong>
+            {{ numberOfSharingPostRemaining }}</strong>
         </p>
-        <p class="small text-muted" *ngIf="!currentUser!.numberOfPostsSharingAuthorized">
+        <p class="small text-muted alert alert-danger" *ngIf="!numberOfSharingPostRemaining">
           Il ne vous reste plus d'article à partager pour ce mois-ci ! Vous retrouverez votre crédit le mois prochain.
         </p>
         <div class="text-end">
           <button type="submit" class="btn btn-secondary"
-            [disabled]="giftForm.invalid && currentUser!.numberOfPostsSharingAuthorized <= 0">Envoyer</button>
+            [disabled]="giftForm.invalid && !numberOfSharingPostRemaining">Envoyer</button>
         </div>
       </form>
     </div>

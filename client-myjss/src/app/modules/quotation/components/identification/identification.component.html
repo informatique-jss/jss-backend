@@ -11,8 +11,8 @@
       (change)="changeQuotationType()"></radio-group-quotation-type>
   </section>
 
-  <section *ngIf="!currentDraftStep" class="quotation-container">
-    <div *ngIf="!hideFamilyGroupServiceSelection">
+  <section class="quotation-container">
+    <div>
       <h6><i class="ai-pen pe-2"></i>Pour quel service ?</h6>
       <div *ngFor="let serviceFamily of familyGroupService" class="btn btn-outline-secondary m-2"
         [class.active]="quotation.serviceFamilyGroup && serviceFamily.id == quotation.serviceFamilyGroup.id"
@@ -224,8 +224,6 @@
     *ngIf="quotation.serviceFamilyGroup">
     <button type="button" class="btn btn-secondary rounded-1 col-auto mx-5" *ngIf="canStartQuotation()"
       (click)="startQuotation()">
-      <span class="spinner-grow spinner-grow-sm me-2  text-body-secondary" role="status" aria-hidden="true"
-        *ngIf="isSavingQuotation"></span>
       Démarrer<i class="ai-arrow-right ms-2"></i></button>
   </div>
 </div>

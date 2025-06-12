@@ -1,9 +1,9 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ChangeEvent, CKEditorModule } from '@ckeditor/ckeditor5-angular';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { Alignment, Bold, ClassicEditor, Essentials, Font, GeneralHtmlSupport, Indent, IndentBlock, Italic, Link, List, Mention, Paragraph, PasteFromOffice, RemoveFormat, Underline, Undo } from 'ckeditor5';
-import { combineLatest } from 'rxjs';
+import { combineLatest, of, tap } from 'rxjs';
 import { PROVISION_SCREEN_TYPE_ANNOUNCEMENT, PROVISION_SCREEN_TYPE_DOMICILIATION, SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
 import { validateEmail, validateFrenchPhone, validateInternationalPhone } from '../../../../libs/CustomFormsValidatorsHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
@@ -79,7 +79,8 @@ import { QuotationFileUploaderComponent } from '../quotation-file-uploader/quota
     SelectBuildingDomiciliationComponent,
     SelectCountryComponent,
     SelectCivilityComponent,
-    CKEditorModule
+    CKEditorModule,
+    NgbNavModule
   ]
 })
 export class RequiredInformationComponent implements OnInit {
@@ -96,8 +97,6 @@ export class RequiredInformationComponent implements OnInit {
 
   affaire: Affaire = { isIndividual: false } as Affaire;
 
-  announcementNoticeInit: string = "";
-
   noticeTypes: NoticeType[] | undefined;
   noticeTypeFamilies: NoticeTypeFamily[] | undefined;
   departments: Department[] | undefined;
@@ -108,8 +107,6 @@ export class RequiredInformationComponent implements OnInit {
   isDoNotGenerateAnnouncement: boolean = true;
   selectionRedaction: string[] = [this.CONFIER_ANNONCE_AU_JSS, "Je m'occupe de la publication de l'annonce légale"];
   selectedRedaction: string[][] = [];
-  isSaving: boolean = false;
-  isGoBack: boolean = false;
 
   checkedOnce = false;
   isBrowser = false;
@@ -158,18 +155,22 @@ export class RequiredInformationComponent implements OnInit {
 
   informationForm!: FormGroup;
 
-  ngOnInit() {
+  parseInt = parseInt;
+
+  async ngOnInit() {
     this.mailRedirectionTypeOther = this.constantService.getMailRedirectionTypeOther();
     this.domiciliationContractTypeRouteEmailAndMail = this.constantService.getDomiciliationContractTypeRouteEmailAndMail();
     this.domiciliationContractTypeRouteMail = this.constantService.getDomiciliationContractTypeRouteMail();
 
     this.informationForm = this.formBuilder.group({});
 
-    this.loginService.getCurrentUser().subscribe(response => {
+    await this.loginService.getCurrentUser().subscribe(response => {
       this.currentUser = response;
       this.initIQuotation();
     })
-    this.initIQuotation();
+
+    if (!this.currentUser)
+      this.initIQuotation();
     this.fetchAnnouncementReferentials();
   }
 
@@ -271,8 +272,22 @@ export class RequiredInformationComponent implements OnInit {
           styles: true
         }
       ]
+    },
+    language: {
+      ui: 'fr',
+      content: 'fr'
     }
   } as any;
+
+
+  onEditorReady(editor: any, provision: Provision) {
+    if (!provision || !provision.announcement)
+      return;
+
+    const initialValue = provision.announcement.notice?.length > 0 ? provision.announcement.notice : "";
+
+    editor.setData(initialValue);
+  }
 
   onNoticeChange(event: ChangeEvent, provision: Provision) {
     if (provision && provision.announcement)
@@ -310,19 +325,22 @@ export class RequiredInformationComponent implements OnInit {
   saveFieldsValue() {
     if (this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined) {
       if (this.currentUser) {
-        this.isSaving = true;
-        this.serviceService.addOrUpdateService(this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex]).subscribe(response => {
-          this.isSaving = false;
-        });
+        this.appService.showLoadingSpinner();
+        return this.serviceService.addOrUpdateService(this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex]).pipe(tap(response => {
+          this.appService.hideLoadingSpinner();
+        }));
 
       } else {
         if (this.quotation.isQuotation) {
           this.quotationService.setCurrentDraftQuotation(this.quotation);
+          return of({} as Service);
         } else {
           this.orderService.setCurrentDraftOrder(this.quotation);
+          return of({} as Service);
         }
       }
     }
+    return of({} as Service);
   }
 
   moveToService(newServiceIndex: number, newAssoIndex: number) {
@@ -347,13 +365,15 @@ export class RequiredInformationComponent implements OnInit {
     }
 
     if (newAssoIndex >= this.quotation.assoAffaireOrders.length) {
-      this.saveFieldsValue();
-      this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[3]);
-      this.appService.openRoute(undefined, "quotation", undefined);
+      this.saveFieldsValue().subscribe(response => {
+        let r = response;
+        this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[3]);
+        this.appService.openRoute(undefined, "quotation/checkout", undefined);
+      });
       return;
     }
 
-    this.saveFieldsValue();
+    this.saveFieldsValue().subscribe();
     this.selectedAssoIndex = null;
     this.selectedServiceIndex = null;
 
@@ -379,7 +399,7 @@ export class RequiredInformationComponent implements OnInit {
 
   confirmGoBack() {
     if (this.currentUser) {
-      this.isGoBack = true;
+      this.appService.showLoadingSpinner();
       let promises = [];
       if (this.quotation && this.quotation.assoAffaireOrders)
         for (let asso of this.quotation.assoAffaireOrders)
@@ -387,9 +407,9 @@ export class RequiredInformationComponent implements OnInit {
             for (let service of asso.services)
               promises.push(this.serviceService.deleteService(service));
       combineLatest(promises).subscribe(response => {
-        this.isGoBack = false;
+        this.appService.hideLoadingSpinner();
         this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);
-        this.appService.openRoute(undefined, "quotation", undefined);
+        this.appService.openRoute(undefined, "quotation/services-selection", undefined);
       })
     } else {
       if (this.quotation && this.quotation.assoAffaireOrders)
@@ -397,7 +417,7 @@ export class RequiredInformationComponent implements OnInit {
           asso.services = [];
       this.saveFieldsValue();
       this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);
-      this.appService.openRoute(undefined, "quotation", undefined);
+      this.appService.openRoute(undefined, "quotation/services-selection", undefined);
     }
 
   }

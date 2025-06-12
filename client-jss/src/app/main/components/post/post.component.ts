@@ -42,6 +42,7 @@ declare var tns: any;
 export class PostComponent implements OnInit, AfterViewInit {
 
   slug: string | undefined;
+  validationToken: string | undefined;
   post: Post | undefined;
   nextPost: Post | undefined;
   previousPost: Post | undefined;
@@ -66,6 +67,8 @@ export class PostComponent implements OnInit, AfterViewInit {
 
   currentUser: Responsable | undefined;
 
+  numberOfSharingPostRemaining: number = 0;
+
   @ViewChildren('sliderPage') sliderPage!: QueryList<any>;
 
   constructor(private activatedRoute: ActivatedRoute,
@@ -87,25 +90,33 @@ export class PostComponent implements OnInit, AfterViewInit {
   newCommentForm!: FormGroup;
 
   ngOnInit() {
-    this.loginService.getCurrentUser().subscribe(res => {
-      if (res) {
-        this.currentUser = res;
-      }
-    });
+    this.loginService.getCurrentUser().subscribe(res => this.currentUser = res);
 
     this.newCommentForm = this.formBuilder.group({});
     this.giftForm = this.formBuilder.group({});
 
-    this.slug = this.activatedRoute.snapshot.params['slug'];
-    if (this.slug)
-      this.postService.getPostBySlug(this.slug).subscribe(post => {
+    this.validationToken = this.activatedRoute.snapshot.params['token'];
+    if (this.validationToken) {
+      let mail = this.activatedRoute.snapshot.params['mail'];
+      this.postService.getOfferedPostByToken(this.validationToken, mail).subscribe(post => {
         this.post = post;
         if (this.post) {
-          this.postService.getNextArticle(this.post).subscribe(response => this.nextPost = response);
-          this.postService.getPreviousArticle(this.post).subscribe(response => this.previousPost = response);
-          this.fetchComments(0);
+          this.fetchNextPrevArticleAndComments(this.post);
         }
-      })
+      });
+
+    } else {
+      this.slug = this.activatedRoute.snapshot.params['slug'];
+      if (this.slug) {
+        this.postService.getPostBySlug(this.slug).subscribe(post => {
+          this.post = post;
+          if (this.post) {
+            this.fetchNextPrevArticleAndComments(this.post);
+          }
+        })
+      }
+    }
+
     this.cancelReply()
     this.fetchMostSeenPosts();
 
@@ -113,6 +124,12 @@ export class PostComponent implements OnInit, AfterViewInit {
       this.progress = item;
       this.cdr.detectChanges();
     });
+  }
+
+  private fetchNextPrevArticleAndComments(post: Post) {
+    this.postService.getNextArticle(post).subscribe(response => this.nextPost = response);
+    this.postService.getPreviousArticle(post).subscribe(response => this.previousPost = response);
+    this.fetchComments(0);
   }
 
   ngOnDestroy() {
@@ -150,7 +167,7 @@ export class PostComponent implements OnInit, AfterViewInit {
       });
     })
   }
- 
+
   unBookmarkPost(post: Post) {
     this.postService.deleteAssoMailPost(post).subscribe(response => {
       if (response)
@@ -164,7 +181,7 @@ export class PostComponent implements OnInit, AfterViewInit {
         post.isBookmarked = true;
     });
   }
- 
+
   dropdownOpen = false;
 
   toggleDropdown(event: Event): void {
@@ -211,11 +228,21 @@ export class PostComponent implements OnInit, AfterViewInit {
   }
 
   postComment() {
-    if (this.post) {
+    if (this.post && this.newComment.content.trim()) {
+      if (this.currentUser) {
+        if (this.currentUser.firstname)
+          this.newComment.authorFirstName = this.currentUser.firstname;
+        if (this.currentUser.lastname)
+          this.newComment.authorLastName = this.currentUser.lastname;
+
+        this.newComment.mail = this.currentUser.mail;
+      }
+
       this.commentService.addOrUpdateComment(this.newComment, this.newCommentParent.id, this.post.id).subscribe(() => {
         this.fetchComments(0);
       });
-    }
+    } else if (!this.newComment.content.trim())
+      this.appService.displayToast("Vous ne pouvez pas publier un commentaire sans contenu", true, "Contenu vide", 5000);
     this.cancelReply();
   }
 
@@ -246,7 +273,7 @@ export class PostComponent implements OnInit, AfterViewInit {
   getResponsableNames(comment: Comment): Responsable {
     return { firstname: comment?.authorFirstName || '', lastname: comment?.authorLastNameInitials || '' } as Responsable;
   }
- 
+
   openPost(post: Post, event: any) {
     this.appService.openRoute(event, "post/" + post.slug, undefined);
   }
@@ -296,7 +323,14 @@ export class PostComponent implements OnInit, AfterViewInit {
   }
 
   openOfferPostModal(content: any) {
-    this.modalService.open(content, { centered: true, size: 'md' });
+    this.subscriptionService.getNumberOfRemainingPostsToShareForCurrentMonth().subscribe(res => {
+      if (res != null) {
+        this.numberOfSharingPostRemaining = res;
+        this.modalService.open(content, { centered: true, size: 'md' });
+      } else {
+        this.appService.displayToast("Vous n'êtes pas autorisé à partager des articles", true, "Partage impossible", 5000);
+      }
+    });
   }
 
   givePost(modalRef: any, post: Post) {

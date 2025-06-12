@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { NgbAccordionModule, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_PAYED, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT } from '../../../../libs/Constants';
 import { capitalizeName, formatDateFrance } from '../../../../libs/FormatHelper';
@@ -24,7 +25,7 @@ declare var bootstrap: any;
   templateUrl: './orders.component.html',
   styleUrls: ['./orders.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS]
+  imports: [SHARED_IMPORTS, NgbDropdownModule, NgbAccordionModule]
 })
 export class OrdersComponent implements OnInit {
 
@@ -129,7 +130,7 @@ export class OrdersComponent implements OnInit {
     this.refreshOrders();
   }
 
-  loadOrderDetails(event: any, order: CustomerOrder) {
+  loadOrderDetails(order: CustomerOrder) {
     if (!this.ordersAssoAffaireOrders[order.id]) {
       this.assoAffaireOrderService.getAssoAffaireOrdersForCustomerOrder(order).subscribe(response => {
         this.ordersAssoAffaireOrders[order.id] = response;

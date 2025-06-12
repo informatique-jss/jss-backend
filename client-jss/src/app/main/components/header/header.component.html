@@ -42,7 +42,7 @@
                 </a>
               </ng-container>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item btn-outline-light" [routerLink]="'/account/signout'">
+              <a class="dropdown-item btn-outline-light" (click)="disconnect()">
                 Se déconnecter
               </a>
             </div>
@@ -81,14 +81,15 @@
                 de France </a>
               <ul class="dropdown-menu">
                 <li> <a *ngFor="let department of departments" class="dropdown-item"
-                    (click)="openDepartment(department,$event)">{{department.code!="0" ?(department.code+ " - ")
+                    (click)="openDepartment(department,$event)">{{department.code.trim().length>0 &&
+                    department.code!="0" ?(department.code+ " - ")
                     :""}}{{department.name}}</a>
                 </li>
               </ul>
             </li>
 
             <!-- Categories -->
-            <li class="nav-item" *ngFor="let category of categories">
+            <li class="nav-item" *ngFor="let category of categoriesByOrder">
               <a class="nav-link"
                 [ngClass]="{'active': getCurrentRoute().includes('/post/category') && getCurrentRoute().includes('/'+category.slug)}"
                 (click)="openCategoryPosts(category, $event)">

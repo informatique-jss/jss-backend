@@ -75,6 +75,15 @@
   </div>
 </div>
 <mat-menu #menu="matMenu" style="max-width: 100%;">
+  <div mat-menu-item *ngIf="canDisplayKanban()" routerLink="/dashboard/kanban/order">
+    <span>Kanban commande</span>
+  </div>
+  <div mat-menu-item *ngIf="canDisplayKanban()" routerLink="/dashboard/kanban/quotation">
+    <span>Kanban devis</span>
+  </div>
+  <div mat-menu-item *ngIf="canDisplayKanban()" routerLink="/dashboard/kanban/provision">
+    <span>Kanban prestation</span>
+  </div>
   <mat-divider></mat-divider>
   <div mat-menu-item *ngFor="let checkbox of checkboxes">
     <mat-checkbox [(ngModel)]="checkbox.value" (click)="toggleDisplay(checkbox.id);$event.stopPropagation()">
@@ -86,15 +95,5 @@
     <mat-checkbox [(ngModel)]="boxSize.value" (click)="toggleDisplaySize(boxSize.id);$event.stopPropagation()">
       {{boxSize.id}}
     </mat-checkbox>
-  </div>
-  <mat-divider></mat-divider>
-  <div mat-menu-item *ngIf="canDisplayKanban()" routerLink="/dashboard/kanban/order">
-    <span>Kanban commande</span>
-  </div>
-  <div mat-menu-item *ngIf="canDisplayKanban()" routerLink="/dashboard/kanban/quotation">
-    <span>Kanban devis</span>
-  </div>
-  <div mat-menu-item *ngIf="canDisplayKanban()" routerLink="/dashboard/kanban/provision">
-    <span>Kanban prestation</span>
   </div>
 </mat-menu>

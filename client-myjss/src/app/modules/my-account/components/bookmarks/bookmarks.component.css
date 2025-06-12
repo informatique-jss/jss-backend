@@ -1,0 +1,5 @@
+.post-image {
+  height: 18rem;
+  object-fit: cover;
+  border-radius: 1rem;
+}

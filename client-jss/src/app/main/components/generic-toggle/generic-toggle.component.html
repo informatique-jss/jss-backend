@@ -1,0 +1,7 @@
+<form [formGroup]="form!" class="form-group">
+  <div class="form-check form-switch custom-toggle">
+    <input color="primary" type="checkbox" class="form-check-input" [id]="propertyName" [formControlName]="propertyName"
+      [required]="isMandatory">
+    <label class="form-check-label" [for]="propertyName">{{label}}</label>
+  </div>
+</form>

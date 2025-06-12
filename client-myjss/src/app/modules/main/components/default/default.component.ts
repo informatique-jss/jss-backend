@@ -4,12 +4,13 @@ import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { ToastComponent } from '../../../../libs/toast/toast.component';
 import { FooterComponent } from '../../../profile/components/footer/footer.component';
 import { TopBarComponent } from '../../../profile/components/top-bar/top-bar.component';
+import { LoadingComponent } from '../loading/loading.component';
 
 @Component({
   selector: 'default',
   templateUrl: './default.component.html',
   styleUrls: ['./default.component.css'],
-  imports: [SHARED_IMPORTS, TopBarComponent, FooterComponent, ToastComponent],
+  imports: [SHARED_IMPORTS, TopBarComponent, FooterComponent, ToastComponent, LoadingComponent],
   standalone: true
 })
 export class DefaultComponent implements OnInit {

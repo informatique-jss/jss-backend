@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from '../../main/services/appRest.service';
-import { Affaire } from '../model/Affaire';
+import { City } from '../../profile/model/City';
 import { Service } from '../model/Service';
 import { ServiceType } from '../model/ServiceType';
 
@@ -19,12 +19,12 @@ export class ServiceService extends AppRestService<Service> {
     return this.addOrUpdate(new HttpParams(), "service", service);
   }
 
-  addOrUpdateServices(services: ServiceType[], affaireId: number, affaireOrderId: number) {
-    return this.getList(new HttpParams().set("affaireId", affaireId).set("affaireOrderId", affaireOrderId).set("serviceTypeIds", services.map(s => s.id).join(",")), "services");
+  addOrUpdateServices(services: ServiceType[], affaireOrderId: number) {
+    return this.getList(new HttpParams().set("affaireOrderId", affaireOrderId).set("serviceTypeIds", services.map(s => s.id).join(",")), "services");
   }
 
-  getServiceForServiceTypeAndAffaire(services: ServiceType[], affaire: Affaire) {
-    return this.getList(new HttpParams().set("idAffaire", affaire.id).set("serviceTypeIds", services.map(s => s.id).join(",")), "service-types/provisions");
+  getServiceForServiceType(services: ServiceType[], affaireCity: City) {
+    return this.getList(new HttpParams().set("serviceTypeIds", services.map(s => s.id).join(",")).set("affaireCityId", affaireCity.id + ""), "service-types/provisions");
   }
 
   deleteService(service: Service) {

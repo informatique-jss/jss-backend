@@ -16,5 +16,6 @@
     </div>
   </div>
 
-  <department-hub [selectedEntityType]="selectedDepartment"></department-hub>
+  <department-hub [selectedEntityType]="selectedDepartment"
+    (departmentChange)="updateSelectedDepartment($event)"></department-hub>
 </div>

@@ -5,18 +5,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.jackson.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Department;
-import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
-import com.jss.osiris.modules.osiris.miscellaneous.model.IDocument;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -36,8 +32,9 @@ import jakarta.persistence.Transient;
 @Entity
 @Table(indexes = { @Index(name = "idx_announcement_status", columnList = "id_announcement_status"),
 		@Index(name = "idx_announcement_confrere", columnList = "id_confrere"),
+		@Index(name = "idx_announcement_publication_date", columnList = "publication_date"),
 })
-public class Announcement implements IId, IDocument {
+public class Announcement implements IId {
 
 	@Id
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
@@ -97,10 +94,6 @@ public class Announcement implements IId, IDocument {
 	@Column(nullable = false)
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private Boolean isProofReadingDocument;
-
-	@OneToMany(targetEntity = Document.class, mappedBy = "announcement", cascade = CascadeType.ALL, orphanRemoval = true)
-	@JsonIgnoreProperties(value = { "announcement" }, allowSetters = true)
-	private List<Document> documents;
 
 	private Boolean isPublicationReciptAlreadySent;
 	private Boolean isPublicationFlagAlreadySent;
@@ -241,14 +234,6 @@ public class Announcement implements IId, IDocument {
 
 	public void setIsProofReadingDocument(Boolean isProofReadingDocument) {
 		this.isProofReadingDocument = isProofReadingDocument;
-	}
-
-	public List<Document> getDocuments() {
-		return documents;
-	}
-
-	public void setDocuments(List<Document> documents) {
-		this.documents = documents;
 	}
 
 	public Boolean getIsPublicationReciptAlreadySent() {
@@ -435,5 +420,4 @@ public class Announcement implements IId, IDocument {
 	public void setIsReReadByJss(Boolean isReReadByJss) {
 		this.isReReadByJss = isReReadByJss;
 	}
-
 }
