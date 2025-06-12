@@ -36,6 +36,7 @@ import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrderSearchResult;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceFieldType;
+import com.jss.osiris.modules.osiris.quotation.model.Confrere;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Domiciliation;
@@ -130,6 +131,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
     @Autowired
     QuotationService quotationService;
+
+    @Autowired
+    ConfrereService confrereService;
 
     @Override
     public List<AssoAffaireOrder> getAssoAffaireOrders() {
@@ -424,6 +428,15 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                                 }
                     }
 
+                    Confrere confrere = null;
+                    if (announcement.getDepartment() != null) {
+                        confrere = confrereService
+                                .searchConfrereFilteredByDepartmentAndName(announcement.getDepartment(), "")
+                                .get(0);
+                        if (confrere != null)
+                            announcement.setConfrere(confrere);
+                    }
+
                     // Handle status change
                     if (announcement.getAnnouncementStatus() != null
                             && announcement.getConfrere() != null) {
@@ -469,7 +482,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                                 if (currentAnnouncement.getAnnouncementStatus().getId()
                                         .equals(announcement.getAnnouncementStatus().getId()))
-                                    generateWord = !currentAnnouncement.getNotice().equals(announcement.getNotice());
+                                    generateWord = !currentAnnouncement.getNotice()
+                                            .equals(announcement.getNotice());
                             }
 
                             if (generateWord)

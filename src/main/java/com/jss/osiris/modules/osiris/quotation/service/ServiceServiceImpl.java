@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.quotation.service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -352,6 +353,7 @@ public class ServiceServiceImpl implements ServiceService {
                 provision.getAnnouncement().setNoticeTypes(noticeTypes);
             }
             provision.getAnnouncement().setNotice(noticeTemplate);
+            provision.getAnnouncement().setPublicationDate(LocalDate.now());
             if (affaire != null && affaire.getCity() != null)
                 provision.getAnnouncement().setDepartment(affaire.getCity().getDepartment());
         }
@@ -718,8 +720,10 @@ public class ServiceServiceImpl implements ServiceService {
         String currentStatus = "";
         if (service.getProvisions() != null && service.getId() != null)
             for (Provision provision : service.getProvisions()) {
-                if (provision.getAnnouncement() != null && provision.getAnnouncement().getAnnouncementStatus()
-                        .getServicePriority() > currentPriority) {
+                if (provision.getAnnouncement() != null && provision.getAnnouncement().getAnnouncementStatus() != null
+                        && provision.getAnnouncement().getAnnouncementStatus().getServicePriority() != null
+                        && provision.getAnnouncement().getAnnouncementStatus()
+                                .getServicePriority() > currentPriority) {
                     currentPriority = provision.getAnnouncement().getAnnouncementStatus().getServicePriority();
                     currentStatus = provision.getAnnouncement().getAnnouncementStatus().getLabel();
                 } else if (provision.getSimpleProvision() != null && provision.getSimpleProvision()

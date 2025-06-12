@@ -149,7 +149,7 @@ export class RequiredInformationComponent implements OnInit {
     private civilityService: CivilityService,
     private constantService: ConstantService,
     private cityService: CityService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
   ) { }
 
 

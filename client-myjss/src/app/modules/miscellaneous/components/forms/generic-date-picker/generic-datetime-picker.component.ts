@@ -34,6 +34,7 @@ export class GenericDatePickerComponent extends GenericFormComponent implements 
   }
 
   callOnNgInit(): void {
+
   }
 
   clearField(): void {
