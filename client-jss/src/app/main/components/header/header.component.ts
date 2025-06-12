@@ -2,7 +2,7 @@ import { Component, ElementRef, HostListener, OnInit, TemplateRef } from '@angul
 import { Router } from '@angular/router';
 import { NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
-import { MY_JSS_HOME_ROUTE, MY_JSS_NEW_ANNOUNCEMENT_ROUTE, MY_JSS_NEW_FORMALITY_ROUTE, MY_JSS_SIGN_IN_ROUTE, MY_JSS_SUBSCRIBE_ROUTE } from '../../../libs/Constants';
+import { MY_JSS_HOME_ROUTE, MY_JSS_NEW_ANNOUNCEMENT_ROUTE, MY_JSS_NEW_FORMALITY_ROUTE, MY_JSS_SIGN_IN_ROUTE } from '../../../libs/Constants';
 import { capitalizeName } from '../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { AppService } from '../../../services/app.service';
@@ -75,8 +75,8 @@ export class HeaderComponent implements OnInit {
       this.departments = departments.sort((a: PublishingDepartment, b: PublishingDepartment) => parseInt(a.code) - parseInt(b.code));
     });
     this.jssCategoryService.getAvailableJssCategories().subscribe(categories => {
-      this.categories = categories
-      this.categoriesByOrder = this.categories.sort((a: JssCategory, b: JssCategory) => b.categoryOrder - a.categoryOrder);
+      this.categories = categories.sort((a: JssCategory, b: JssCategory) => b.categoryOrder - a.categoryOrder);
+      this.categoriesByOrder = this.categories.slice(0, 3);
     });
   }
 
@@ -166,7 +166,7 @@ export class HeaderComponent implements OnInit {
 
   openSubscribe(event: any) {
     this.isMobileMenuOpen = false;
-    this.appService.openMyJssRoute(event, MY_JSS_SUBSCRIBE_ROUTE);
+    this.appService.openRoute(event, "subscription/", undefined);
   }
 
   openSignIn(event: any) {

@@ -72,7 +72,7 @@
         <table class="full-width" *ngIf="quotation && instanceOfCustomerOrder(quotation)">
           <tr>
             <td><generic-toggle [(model)]="quotation.isRecurring" label="Est récurrente ?" [form]="orderingCustomerForm"
-                propertyName="propeisRecurringrtyName" [isDisabled]="true"></generic-toggle></td>
+                propertyName="propeisRecurringrtyName" [isDisabled]="!editMode"></generic-toggle></td>
           </tr>
         </table>
         <table class="full-width" *ngIf="quotation && instanceOfCustomerOrder(quotation) && quotation.isRecurring">

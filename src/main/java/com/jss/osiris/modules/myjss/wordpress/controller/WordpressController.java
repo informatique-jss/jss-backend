@@ -1229,10 +1229,16 @@ public class WordpressController {
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<Comment> addOrUpdateComment(@RequestBody Comment comment,
 			@RequestParam(value = "parentCommentId", required = false) Integer parentCommentId,
-			@RequestParam Integer postId)
+			@RequestParam Integer postId, HttpServletRequest request)
 			throws OsirisException {
 
+		detectFlood(request);
+
 		if (comment != null && postId != null && comment.getMail() != null) {
+
+			if (comment.getContent() == null || comment.getContent().trim() == "") {
+				throw new OsirisValidationException("Impossible d'enregistrer un mail sans contenu");
+			}
 
 			if (!validationHelper.validateMail(comment.getMail())) {
 				throw new OsirisValidationException("Le mail renseigné n'est pas valide !");
@@ -1252,8 +1258,7 @@ public class WordpressController {
 
 	@GetMapping(inputEntryPoint + "/subscription/give-post")
 	public ResponseEntity<Subscription> givePost(@RequestParam Integer postId, @RequestParam String recipientMailString,
-			HttpServletRequest request)
-			throws OsirisException {
+			HttpServletRequest request) throws OsirisException {
 
 		detectFlood(request);
 		if (!validationHelper.validateMail(recipientMailString))

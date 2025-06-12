@@ -5,11 +5,12 @@ export const serverRoutes: ServerRoute[] = [
   { path: 'account/signout', renderMode: RenderMode.Client },
   { path: 'profile/login', renderMode: RenderMode.Client },
   { path: 'quotation', renderMode: RenderMode.Client },
+  { path: 'quotation/:subscription-type/:is-price-reduction/:id-article', renderMode: RenderMode.Client },
   { path: 'quotation/identification', renderMode: RenderMode.Client },
   { path: 'quotation/services-selection', renderMode: RenderMode.Client },
   { path: 'quotation/checkout', renderMode: RenderMode.Client },
   { path: 'account/signin', renderMode: RenderMode.Prerender },
-  { path: 'account/signout', renderMode: RenderMode.Prerender },
+  { path: 'account/signout', renderMode: RenderMode.Client },
 
   { path: 'services', renderMode: RenderMode.Prerender },
 

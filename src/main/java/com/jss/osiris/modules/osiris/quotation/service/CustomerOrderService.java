@@ -49,6 +49,10 @@ public interface CustomerOrderService {
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 
+        public void markCustomerOrderAsPayed(CustomerOrder customerOrder, boolean isPayed)
+                        throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException,
+                        OsirisException;
+
         public void generateCreditNoteForCustomerOrderInvoice(CustomerOrder customerOrder, Invoice invoiceToRefund)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
@@ -175,5 +179,8 @@ public interface CustomerOrderService {
         public CustomerOrder assignNewCustomerOrderToBilled();
 
         public InvoicingStatistics getInvoicingStatistics() throws OsirisException;
+
+        public CustomerOrder getCustomerOrderForSubscription(String subscriptionType,
+                        Boolean isPriceReductionForSubscription, Integer idArticle) throws OsirisException;
 
 }

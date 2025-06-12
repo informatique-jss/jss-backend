@@ -75,7 +75,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     }
 
     /**
-     * @return null ==> no annual subscription ==> impossible to share posts
+     * @return null ==> no annual/monthly subscription ==> impossible to share posts
      */
     @Override
     public Integer getRemainingPostToShareForCurrentMonth(Responsable signedInUser) {

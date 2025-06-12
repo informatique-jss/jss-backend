@@ -28,9 +28,12 @@ import jakarta.persistence.Table;
         @Index(name = "idx_subscription_validation_token", columnList = "validationToken", unique = true) })
 public class Subscription implements IId, Serializable {
 
-    public static String ANNUAL_SUBSCRIPTION = "ANNUAL_SUBSCRIPTION";
-    public static String ONE_POST_SUBSCRIPTION = "ONE_POST_SUBSCRIPTION";
-    public static String SHARED_POST_SUBSCRIPTION = "SHARED_POST_SUBSCRIPTION";
+    public final static String ANNUAL_SUBSCRIPTION = "ANNUAL_SUBSCRIPTION";
+    public final static String ENTERPRISE_ANNUAL_SUBSCRIPTION = "ENTERPRISE_ANNUAL_SUBSCRIPTION";
+    public final static String MONTHLY_SUBSCRIPTION = "MONTHLY_SUBSCRIPTION";
+    public final static String ONE_POST_SUBSCRIPTION = "ONE_POST_SUBSCRIPTION";
+    public final static String SHARED_POST_SUBSCRIPTION = "SHARED_POST_SUBSCRIPTION";
+    public final static String NEWSPAPER_KIOSK_BUY = "NEWSPAPER_KIOSK_BUY";
 
     @Id
     @SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
@@ -50,6 +53,10 @@ public class Subscription implements IId, Serializable {
     @ManyToOne
     @JoinColumn(name = "id_post", nullable = true)
     private Post post;
+
+    @ManyToOne
+    @JoinColumn(name = "id_newspaper", nullable = true)
+    private Newspaper newspaper;
 
     @ManyToOne
     @JoinColumn(name = "id_subscription_mail")
@@ -105,6 +112,14 @@ public class Subscription implements IId, Serializable {
 
     public void setPost(Post post) {
         this.post = post;
+    }
+
+    public Newspaper getNewspaper() {
+        return newspaper;
+    }
+
+    public void setNewspaper(Newspaper newspaper) {
+        this.newspaper = newspaper;
     }
 
     public Mail getSubcriptionMail() {

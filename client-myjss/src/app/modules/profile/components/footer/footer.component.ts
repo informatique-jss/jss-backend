@@ -72,4 +72,8 @@ export class FooterComponent implements OnInit {
   openFacebook() {
     this.appService.openFacebookJssPage();
   }
+
+  openJssRoute(event: any) {
+    this.appService.openJssRoute(event, "");
+  }
 }

@@ -1,7 +1,11 @@
 import { Routes } from '@angular/router';
-import { RenderMode } from '@angular/ssr';
+import { DefaultComponent } from './modules/main/components/default/default.component';
 import { ConstantsResolver } from './modules/main/services/constant.service';
 import { MyAccountComponent } from './modules/my-account/components/my-account/my-account.component';
+import { CheckoutComponent } from './modules/quotation/components/checkout/checkout.component';
+import { IdentificationComponent } from './modules/quotation/components/identification/identification.component';
+import { QuotationComponent } from './modules/quotation/components/quotation/quotation.component';
+import { ServicesSelectionComponent } from './modules/quotation/components/services-selection/services-selection.component';
 
 const routesMyAccount = [
   {
@@ -22,7 +26,8 @@ const routesMyAccount = [
       { path: 'quotation/pay/:idQuotation', loadComponent: () => import('./modules/my-account/components/pay-quotation/pay-quotation.component').then(m => m.PayQuotationComponent) },
       { path: 'affaires', loadComponent: () => import('./modules/my-account/components/affaires/affaires.component').then(m => m.AffairesComponent) },
       { path: 'affaires/:idAffaire', loadComponent: () => import('./modules/my-account/components/affaires/affaires.component').then(m => m.AffairesComponent) },
-      { path: 'affaire/edit/:id/:idOrder', loadComponent: () => import('./modules/my-account/components/edit-affaire/edit-affaire.component').then(m => m.EditAffaireComponent) },
+      { path: 'affaire/edit/order/:id/:idOrder', loadComponent: () => import('./modules/my-account/components/edit-affaire/edit-affaire.component').then(m => m.EditAffaireComponent) },
+      { path: 'affaire/edit/quotation/:id/:idQuotation', loadComponent: () => import('./modules/my-account/components/edit-affaire/edit-affaire.component').then(m => m.EditAffaireComponent) },
       { path: 'settings', loadComponent: () => import('./modules/my-account/components/user-settings/user-settings.component').then(m => m.UserSettingsComponent) },
       { path: 'settings/:idResponsable', loadComponent: () => import('./modules/my-account/components/user-settings/user-settings.component').then(m => m.UserSettingsComponent) },
       { path: 'settings/address/edit/:idResponsable', loadComponent: () => import('./modules/my-account/components/edit-address/edit-address.component').then(m => m.EditAddressComponent) },
@@ -53,19 +58,20 @@ const routesMyService = [
 
 const routesQuotation = [
   {
-    path: 'quotation',
-    loadComponent: () => import('./modules/quotation/components/quotation/quotation.component').then(m => m.QuotationComponent),
+    path: 'quotation', component: QuotationComponent,
     children: [
-      { path: 'identification', loadComponent: () => import('./modules/quotation/components/identification/identification.component').then(m => m.IdentificationComponent) },
-      { path: 'services-selection', loadComponent: () => import('./modules/quotation/components/services-selection/services-selection.component').then(m => m.ServicesSelectionComponent) },
+      { path: 'identification', component: IdentificationComponent },
+      { path: 'services-selection', component: ServicesSelectionComponent },
       {
         path: 'required-information',
-        renderMode: RenderMode.Client,
         loadComponent: () => import('./modules/quotation/components/required-information/required-information.component').then(m => m.RequiredInformationComponent),
       },
-      { path: 'checkout', loadComponent: () => import('./modules/quotation/components/checkout/checkout.component').then(m => m.CheckoutComponent) },
+      { path: 'checkout', component: CheckoutComponent },
     ]
-  },
+  }, {
+    path: 'quotation/:subscription-type/:is-price-reduction/:id-article',
+    loadComponent: () => import('./modules/quotation/components/quotation/quotation.component').then(m => m.QuotationComponent),
+  }
 ];
 
 const routesCompany = [
@@ -110,15 +116,15 @@ const routesTools = [
 export const routes: Routes = [
   {
     path: '',
-    loadComponent: () => import('./modules/main/components/default/default.component').then(m => m.DefaultComponent),
+    component: DefaultComponent,
     resolve: { messages: ConstantsResolver },
     children: [
-      { path: '', redirectTo: '/home', pathMatch: 'full' },
+      { path: '', loadComponent: () => import('./modules/general/components/homepage/homepage.component').then(m => m.HomepageComponent) },
+      ...routesGeneral,
       ...routesMyAccount,
       ...routesMyService,
       ...routesQuotation,
       ...routesCompany,
-      ...routesGeneral,
       ...routesTools,
     ]
   }

@@ -148,7 +148,7 @@
             </tr>
           </table>
           <table class="full-width"
-            *ngIf="assoServiceProvisionType.provisionType.provisionScreenType.code==PROVISION_SCREEN_TYPE_ANNOUNCEMENT">
+            *ngIf="assoServiceProvisionType.provisionType && assoServiceProvisionType.provisionType.provisionScreenType.code==PROVISION_SCREEN_TYPE_ANNOUNCEMENT">
             <tr>
               <td>
                 <select-notice-family (onFormChange)="changeProvisionFamilyType(assoServiceProvisionType);"

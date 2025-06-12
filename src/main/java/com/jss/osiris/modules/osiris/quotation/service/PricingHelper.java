@@ -3,7 +3,6 @@ package com.jss.osiris.modules.osiris.quotation.service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -12,7 +11,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.jss.osiris.libs.audit.model.Audit;
 import com.jss.osiris.libs.audit.service.AuditService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
@@ -33,15 +31,12 @@ import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CharacterPrice;
 import com.jss.osiris.modules.osiris.quotation.model.Confrere;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
-import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.osiris.quotation.model.DomiciliationFee;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
 import com.jss.osiris.modules.osiris.quotation.model.NoticeType;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionType;
-import com.jss.osiris.modules.osiris.quotation.model.Quotation;
-import com.jss.osiris.modules.osiris.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 
@@ -156,41 +151,8 @@ public class PricingHelper {
         LocalDate billingDate = null;
         // Use quotation date if customerOrder linked to customer validated one
         // Else use first TO_BILLED status to determine billing date
-        if (quotation != null && quotation.getId() != null) {
-            CustomerOrder customerOrder = customerOrderService.getCustomerOrder(quotation.getId());
-            if (customerOrder != null) {
-                if (customerOrder.getQuotations() != null && customerOrder.getQuotations().size() > 0) {
-                    for (Quotation orderQuotation : customerOrder.getQuotations())
-                        if (orderQuotation.getQuotationStatus().getCode()
-                                .equals(QuotationStatus.VALIDATED_BY_CUSTOMER)) {
-                            billingDate = orderQuotation.getCreatedDate().toLocalDate();
-                        }
-                }
-
-                if (billingDate == null) {
-                    List<Audit> audits = auditService.getAuditForEntity(CustomerOrder.class.getSimpleName(),
-                            quotation.getId());
-                    if (audits != null && audits.size() > 0) {
-                        List<LocalDateTime> toBilledDate = new ArrayList<LocalDateTime>();
-                        for (Audit audit : audits) {
-                            if (audit.getFieldName().equals("customerOrderStatus")
-                                    && audit.getNewValue().equals(CustomerOrderStatus.TO_BILLED)) {
-                                toBilledDate.add(audit.getDatetime());
-                            }
-                        }
-                        if (toBilledDate.size() > 0) {
-                            toBilledDate.sort(new Comparator<LocalDateTime>() {
-                                @Override
-                                public int compare(LocalDateTime o1, LocalDateTime o2) {
-                                    return o1.compareTo(o2);
-                                }
-                            });
-                            billingDate = toBilledDate.get(0).toLocalDate();
-                        }
-                    }
-                }
-            }
-        }
+        if (quotation != null && quotation.getId() != null)
+            billingDate = customerOrderService.getCustomerOrder(quotation.getId()).getPrincingEffectiveDate();
 
         if (billingDate == null)
             billingDate = LocalDate.now();
@@ -843,6 +805,9 @@ public class PricingHelper {
             quotation.getAssoAffaireOrders().get(0).getServices().get(0).getProvisions().get(0)
                     .setIsEmergency(isEmergency);
         }
-        return getAndSetInvoiceItemsForQuotation(quotation, false);
+        quotation = getAndSetInvoiceItemsForQuotation(quotation, false);
+
+        quotation.setResponsable(null);
+        return quotation;
     }
 }
