@@ -31,7 +31,7 @@ export class AppService {
   }
 
   displayToast(message: string, isError: boolean, title: string, delayInMili: number) {
-    let newToast = { isError: isError, message: message, title: title } as Toast;
+    let newToast = { isError: isError, message: message, title: title, delay: delayInMili } as Toast;
     this.toasts.push(newToast);
     this.toastSource.next(this.toasts);
     if (this.toasts.indexOf(newToast) >= 0)
