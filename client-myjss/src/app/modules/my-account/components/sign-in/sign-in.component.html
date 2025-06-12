@@ -12,7 +12,7 @@
       <h1>Se connecter à MyJSS</h1>
       <div class="pb-3 mb-3">
         <generic-input [(model)]="inputMail" label="Votre adresse mail" [form]="signinForm" propertyName="inputMail"
-          [isMandatory]="true" [isDisabled]="false" type="email" [isDisplayLabel]="false" [icon]="'mail'"
+          [isMandatory]="false" [isDisabled]="false" type="email" [isDisplayLabel]="false" [icon]="'mail'"
           [doNotValidate]="true"></generic-input>
       </div>
       <button class="btn btn-lg btn-secondary w-100 mb-4" (click)="sendConnectionLink()">Recevoir un lien de
