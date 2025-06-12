@@ -95,6 +95,7 @@ export class CheckoutComponent implements OnInit {
 
   quotationPriceObservableRef: Subscription | undefined;
 
+  mailToConfirm: string | undefined;
   userScope: Responsable[] | undefined;
 
   subscriptionType: string | undefined;
@@ -250,6 +251,10 @@ export class CheckoutComponent implements OnInit {
   isOrderPossible() {
     if (this.documentForm.invalid) {
       this.appService.displayToast("Il manque des informations obligatoires pour pouvoir passer commande", true, "Validation de commande impossible", 5000);
+      return false;
+    }
+    if (this.quotation!.responsable!.mail.mail != this.mailToConfirm) {
+      this.appService.displayToast("Les deux e-mails renseignés ne sont pas identiques !", true, "Validation de commande impossible", 5000);
       return false;
     }
     if (!this.acceptDocs || !this.acceptTerms) {
