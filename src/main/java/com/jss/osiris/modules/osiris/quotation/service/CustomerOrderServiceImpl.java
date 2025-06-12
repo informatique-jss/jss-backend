@@ -585,24 +585,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     mailHelper.sendCustomerOrderInProgressToCustomer(customerOrder, false);
                 }
             }
-
-            if (isOnlyJssAnnouncement(customerOrder, true)) {
-                quotationValidationHelper.validateQuotationAndCustomerOrder(customerOrder, targetStatusCode);
-                for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders())
-                    for (Service service : assoAffaireOrder.getServices())
-                        for (Provision provision : service.getProvisions())
-                            if (provision.getAnnouncement() != null) {
-                                provision.getAnnouncement().setAnnouncementStatus(announcementStatusService
-                                        .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_DONE));
-                                provisionService.addOrUpdateProvision(provision);
-                                announcementService.generateAndStorePublicationFlag(provision.getAnnouncement(),
-                                        provision);
-                                announcementService.generateAndStorePublicationReceipt(provision.getAnnouncement(),
-                                        provision);
-                            } // TODO deleteand modify next call to true
-                // this.addOrUpdateCustomerOrder(customerOrder, true, true);
-            }
-
+            autoBilledProvisions(customerOrder);
             // save once customer order to recompute invoice item before set it in stone...
             this.addOrUpdateCustomerOrder(customerOrder, true, true);
         }
@@ -1488,39 +1471,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
                     if (customerOrder.getIsRecurringAutomaticallyBilled()) {
                         newChild = getCustomerOrder(newChild.getId());
-                        if (newChild.getCustomerOrderStatus() != null && newChild.getCustomerOrderStatus().getCode()
-                                .equals(CustomerOrderStatus.BEING_PROCESSED)) {
-                            if (newChild.getAssoAffaireOrders() != null) {
-                                for (AssoAffaireOrder asso : newChild.getAssoAffaireOrders()) {
-                                    if (asso.getServices() != null) {
-                                        for (Service service : asso.getServices()) {
-                                            if (service.getProvisions() != null) {
-                                                for (Provision provision : service.getProvisions()) {
-                                                    if (provision.getSimpleProvision() != null) {
-                                                        SimpleProvision simpleProvision = provision
-                                                                .getSimpleProvision();
-                                                        simpleProvision
-                                                                .setSimpleProvisionStatus(simpleProvisionStatusService
-                                                                        .getSimpleProvisionStatusByCode(
-                                                                                SimpleProvisionStatus.SIMPLE_PROVISION_DONE));
-                                                        simpleProvisionService
-                                                                .addOrUpdateSimpleProvision(simpleProvision);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            newChild = getCustomerOrder(newChild.getId());
-                            try {
-                                addOrUpdateCustomerOrder(newChild, false, true); // Put to billed if all ended
-                            } catch (Exception e) {
-                                if (!(e instanceof OsirisClientMessageException
-                                        || e instanceof OsirisValidationException))
-                                    throw e;
-                            }
-                        }
+                        autoBilledProvisions(newChild);
                     }
                 }
             }
@@ -2114,5 +2065,64 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         customerOrder.setResponsable(null);
 
         return customerOrder;
+    }
+
+    @Override
+    public void autoBilledProvisions(CustomerOrder customerOrder)
+            throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException, OsirisException {
+        if (customerOrder.getIsRecurringAutomaticallyBilled() != null
+                && customerOrder.getIsRecurringAutomaticallyBilled()) {
+            addOrUpdateCustomerOrderStatus(customerOrder, CustomerOrderStatus.BEING_PROCESSED, false);
+            customerOrder = getCustomerOrder(customerOrder.getId());
+            if (customerOrder.getCustomerOrderStatus() != null
+                    && customerOrder.getCustomerOrderStatus().getCode()
+                            .equals(CustomerOrderStatus.BEING_PROCESSED)) {
+                if (customerOrder.getAssoAffaireOrders() != null) {
+                    for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
+                        if (asso.getServices() != null) {
+                            for (Service service : asso.getServices()) {
+                                if (service.getProvisions() != null) {
+                                    for (Provision provision : service.getProvisions()) {
+                                        if (provision.getSimpleProvision() != null) {
+                                            SimpleProvision simpleProvision = provision
+                                                    .getSimpleProvision();
+                                            simpleProvision
+                                                    .setSimpleProvisionStatus(simpleProvisionStatusService
+                                                            .getSimpleProvisionStatusByCode(
+                                                                    SimpleProvisionStatus.SIMPLE_PROVISION_DONE));
+                                            simpleProvisionService
+                                                    .addOrUpdateSimpleProvision(simpleProvision);
+                                        }
+                                    }
+                                }
+                            }
+                            customerOrder = getCustomerOrder(customerOrder.getId());
+                            try {
+                                addOrUpdateCustomerOrder(customerOrder, false, true); // Put to billed if all
+                                                                                      // ended
+                            } catch (Exception e) {
+                                if (!(e instanceof OsirisClientMessageException
+                                        || e instanceof OsirisValidationException))
+                                    throw e;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (isOnlyJssAnnouncement(customerOrder, true)) {
+            quotationValidationHelper.validateQuotationAndCustomerOrder(customerOrder,
+                    CustomerOrderStatus.BEING_PROCESSED);
+            for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders())
+                for (Service service : assoAffaireOrder.getServices())
+                    for (Provision provision : service.getProvisions())
+                        if (provision.getAnnouncement() != null) {
+                            provision.getAnnouncement().setAnnouncementStatus(announcementStatusService
+                                    .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_DONE));
+                            provisionService.addOrUpdateProvision(provision);
+                            announcementService.generateAndStorePublicationReceipt(provision.getAnnouncement(),
+                                    provision);
+                        }
+        }
     }
 }

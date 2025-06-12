@@ -323,7 +323,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                             break;
                         }
 
-        if (announcement.getPublicationDate() != null && announcement.getPublicationDate().isBefore(LocalDate.now())
+        if (announcement.getPublicationDate().isBefore(LocalDate.now())
                 || announcement.getPublicationDate().isEqual(LocalDate.now())) {
             if ((announcement.getIsPublicationFlagAlreadySent() == null
                     || !announcement.getIsPublicationFlagAlreadySent()) && announcement.getNotice() != null) {
