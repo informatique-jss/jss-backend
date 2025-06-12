@@ -509,7 +509,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         return true;
     }
 
-    private boolean isOnlyJssAnnouncement(CustomerOrder customerOrder, Boolean isReadyForBilling)
+    @Override
+    public boolean isOnlyJssAnnouncement(CustomerOrder customerOrder, Boolean isReadyForBilling)
             throws OsirisException {
         if (!isOnlyAnnouncement(customerOrder))
             return false;
@@ -524,7 +525,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         if (isReadyForBilling && provision.getAnnouncement() != null
                                 && (provision.getIsRedactedByJss() || provision.getAnnouncement().getNotice() == null
                                         || provision.getAnnouncement().getNotice().length() == 0
-                                        || provision.getAnnouncement().getPublicationDate() == null))
+                                        || provision.getAnnouncement().getPublicationDate() == null
+                                        || provision.getAnnouncement().getNoticeTypeFamily() == null
+                                        || provision.getAnnouncement().getNoticeTypes().isEmpty()))
                             return false;
                     }
         return true;
@@ -585,9 +588,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     mailHelper.sendCustomerOrderInProgressToCustomer(customerOrder, false);
                 }
             }
-            autoBilledProvisions(customerOrder);
-            // save once customer order to recompute invoice item before set it in stone...
-            this.addOrUpdateCustomerOrder(customerOrder, true, true);
         }
 
         // Target : TO BILLED => notify
@@ -1468,11 +1468,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     newChild.setCustomerOrderParentRecurring(customerOrder);
                     addOrUpdateCustomerOrder(newChild, false, false);
                     addOrUpdateCustomerOrderStatus(newChild, CustomerOrderStatus.BEING_PROCESSED, false);
+                    newChild = getCustomerOrder(newChild.getId());
 
-                    if (customerOrder.getIsRecurringAutomaticallyBilled()) {
-                        newChild = getCustomerOrder(newChild.getId());
+                    if (customerOrder.getIsRecurringAutomaticallyBilled() != null
+                            && customerOrder.getIsRecurringAutomaticallyBilled())
                         autoBilledProvisions(newChild);
-                    }
                 }
             }
         }
@@ -1872,8 +1872,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         myJssQuotationDelegate.populateBooleansOfProvisions(order);
         order = addOrUpdateCustomerOrder(order, true, false);
 
-        if (isValidation != null && isValidation)
+        if (isValidation != null && isValidation) {
             addOrUpdateCustomerOrderStatus(order, CustomerOrderStatus.BEING_PROCESSED, true);
+            if (isOnlyJssAnnouncement(order, true)) {
+                quotationValidationHelper.validateQuotationAndCustomerOrder(order, null);
+                autoBilledProvisions(order);
+            }
+        }
         return order;
     }
 
@@ -2070,59 +2075,48 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Override
     public void autoBilledProvisions(CustomerOrder customerOrder)
             throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException, OsirisException {
-        if (customerOrder.getIsRecurringAutomaticallyBilled() != null
-                && customerOrder.getIsRecurringAutomaticallyBilled()) {
-            addOrUpdateCustomerOrderStatus(customerOrder, CustomerOrderStatus.BEING_PROCESSED, false);
-            customerOrder = getCustomerOrder(customerOrder.getId());
-            if (customerOrder.getCustomerOrderStatus() != null
-                    && customerOrder.getCustomerOrderStatus().getCode()
-                            .equals(CustomerOrderStatus.BEING_PROCESSED)) {
-                if (customerOrder.getAssoAffaireOrders() != null) {
-                    for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
-                        if (asso.getServices() != null) {
-                            for (Service service : asso.getServices()) {
-                                if (service.getProvisions() != null) {
-                                    for (Provision provision : service.getProvisions()) {
-                                        if (provision.getSimpleProvision() != null) {
-                                            SimpleProvision simpleProvision = provision
-                                                    .getSimpleProvision();
-                                            simpleProvision
-                                                    .setSimpleProvisionStatus(simpleProvisionStatusService
-                                                            .getSimpleProvisionStatusByCode(
-                                                                    SimpleProvisionStatus.SIMPLE_PROVISION_DONE));
-                                            simpleProvisionService
-                                                    .addOrUpdateSimpleProvision(simpleProvision);
-                                        }
+        if (customerOrder.getCustomerOrderStatus() != null && customerOrder.getCustomerOrderStatus().getCode()
+                .equals(CustomerOrderStatus.BEING_PROCESSED))
+            if (customerOrder.getAssoAffaireOrders() != null) {
+                for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
+                    if (asso.getServices() != null) {
+                        for (Service service : asso.getServices()) {
+                            if (service.getProvisions() != null) {
+                                for (Provision provision : service.getProvisions()) {
+                                    if (provision.getSimpleProvision() != null) {
+                                        SimpleProvision simpleProvision = provision
+                                                .getSimpleProvision();
+                                        simpleProvision
+                                                .setSimpleProvisionStatus(simpleProvisionStatusService
+                                                        .getSimpleProvisionStatusByCode(
+                                                                SimpleProvisionStatus.SIMPLE_PROVISION_DONE));
+                                        simpleProvisionService
+                                                .addOrUpdateSimpleProvision(simpleProvision);
+                                    }
+                                    if (provision.getAnnouncement() != null) {
+                                        provision.getAnnouncement()
+                                                .setAnnouncementStatus(announcementStatusService
+                                                        .getAnnouncementStatusByCode(
+                                                                AnnouncementStatus.ANNOUNCEMENT_DONE));
+                                        provisionService.addOrUpdateProvision(provision);
+                                        announcementService.generateAndStorePublicationReceipt(
+                                                provision.getAnnouncement(),
+                                                provision);
                                     }
                                 }
                             }
-                            customerOrder = getCustomerOrder(customerOrder.getId());
-                            try {
-                                addOrUpdateCustomerOrder(customerOrder, false, true); // Put to billed if all
-                                                                                      // ended
-                            } catch (Exception e) {
-                                if (!(e instanceof OsirisClientMessageException
-                                        || e instanceof OsirisValidationException))
-                                    throw e;
-                            }
+                        }
+                        customerOrder = getCustomerOrder(customerOrder.getId());
+                        try {
+                            addOrUpdateCustomerOrder(customerOrder, false, true); // Put to billed if all
+                                                                                  // ended
+                        } catch (Exception e) {
+                            if (!(e instanceof OsirisClientMessageException
+                                    || e instanceof OsirisValidationException))
+                                throw e;
                         }
                     }
                 }
             }
-        }
-        if (isOnlyJssAnnouncement(customerOrder, true)) {
-            quotationValidationHelper.validateQuotationAndCustomerOrder(customerOrder,
-                    CustomerOrderStatus.BEING_PROCESSED);
-            for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders())
-                for (Service service : assoAffaireOrder.getServices())
-                    for (Provision provision : service.getProvisions())
-                        if (provision.getAnnouncement() != null) {
-                            provision.getAnnouncement().setAnnouncementStatus(announcementStatusService
-                                    .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_DONE));
-                            provisionService.addOrUpdateProvision(provision);
-                            announcementService.generateAndStorePublicationReceipt(provision.getAnnouncement(),
-                                    provision);
-                        }
-        }
     }
 }

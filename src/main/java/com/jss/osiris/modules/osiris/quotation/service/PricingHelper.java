@@ -151,8 +151,11 @@ public class PricingHelper {
         LocalDate billingDate = null;
         // Use quotation date if customerOrder linked to customer validated one
         // Else use first TO_BILLED status to determine billing date
-        if (quotation != null && quotation.getId() != null)
-            billingDate = customerOrderService.getCustomerOrder(quotation.getId()).getPrincingEffectiveDate();
+        if (quotation != null && quotation.getId() != null) {
+            CustomerOrder order = customerOrderService.getCustomerOrder(quotation.getId());
+            if (order != null && order.getPrincingEffectiveDate() != null)
+                billingDate = order.getPrincingEffectiveDate();
+        }
 
         if (billingDate == null)
             billingDate = LocalDate.now();

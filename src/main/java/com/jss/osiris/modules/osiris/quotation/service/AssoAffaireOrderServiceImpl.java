@@ -36,6 +36,7 @@ import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrderSearchResult;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceFieldType;
+import com.jss.osiris.modules.osiris.quotation.model.Confrere;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Domiciliation;
@@ -426,10 +427,15 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                                     break;
                                 }
                     }
-                    if (announcement.getDepartment() != null)
-                        announcement.setConfrere(confrereService
+
+                    Confrere confrere = null;
+                    if (announcement.getDepartment() != null) {
+                        confrere = confrereService
                                 .searchConfrereFilteredByDepartmentAndName(announcement.getDepartment(), "")
-                                .get(0));
+                                .get(0);
+                        if (confrere != null)
+                            announcement.setConfrere(confrere);
+                    }
 
                     // Handle status change
                     if (announcement.getAnnouncementStatus() != null
