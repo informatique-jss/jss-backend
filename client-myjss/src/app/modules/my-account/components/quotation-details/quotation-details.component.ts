@@ -19,6 +19,7 @@ import { MailComputeResult } from '../../model/MailComputeResult';
 import { Quotation } from '../../model/Quotation';
 import { Service } from '../../model/Service';
 import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
+import { AttachmentService } from '../../services/attachment.service';
 import { CustomerOrderService } from '../../services/customer.order.service';
 import { InvoiceLabelResultService } from '../../services/invoice.label.result.service';
 import { InvoicingSummaryService } from '../../services/invoicing.summary.service';
@@ -48,6 +49,7 @@ export class QuotationDetailsComponent implements OnInit {
   invoiceSummary: InvoicingSummary | undefined;
   billingLabelTypeCodeAffaire!: BillingLabelType;
   associatedCustomerOrder: CustomerOrder | undefined;
+  quotationAttachments: Attachment[][] = [];
 
   selectedAssoAffaireOrder: AssoAffaireOrder | undefined;
   ASSO_SERVICE_DOCUMENT_ENTITY_TYPE = ASSO_SERVICE_DOCUMENT_ENTITY_TYPE;
@@ -68,6 +70,7 @@ export class QuotationDetailsComponent implements OnInit {
     private mailComputeResultService: MailComputeResultService,
     private invoicingSummaryService: InvoicingSummaryService,
     private uploadAttachmentService: UploadAttachmentService,
+    private attachementService: AttachmentService,
     private appService: AppService,
     private formBuilder: FormBuilder,
     private customerOrderService: CustomerOrderService,
@@ -211,5 +214,14 @@ export class QuotationDetailsComponent implements OnInit {
 
   displayMyInformation(service: Service) {
     return service.assoServiceFieldTypes && service.assoServiceFieldTypes.find(a => a.isMandatory);
+  }
+
+  loadServiceDetails(service: Service, forceLoad: boolean) {
+    if (service) {
+      if (!this.quotationAttachments[service.id] || forceLoad)
+        this.attachementService.getAttachmentsForProvisionOfService(service).subscribe(response => {
+          this.quotationAttachments[service.id] = response;
+        })
+    }
   }
 }

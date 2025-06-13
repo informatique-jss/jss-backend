@@ -25,7 +25,7 @@ public interface ServiceService {
         public List<Service> generateServiceInstanceFromMultiServiceTypes(List<ServiceType> serviceTypes,
                         String customLabel, Affaire affaire) throws OsirisException;
 
-        public List<Attachment> getAttachmentsForProvisionOfService(Service service);
+        public List<Attachment> getAttachmentsForProvisionOfService(Service service) throws OsirisException;
 
         public boolean isServiceHasMissingInformations(Service service);
 

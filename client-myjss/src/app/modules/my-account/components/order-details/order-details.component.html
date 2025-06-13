@@ -148,7 +148,7 @@
         <div ngbAccordionBody>
           <ng-template>
             <ul ngbNav #nav="ngbNav" [activeId]="1" class="nav-tabs">
-              <li [ngbNavItem]="1">
+              <li [ngbNavItem]="1" *ngIf="service.assoServiceDocuments && service.assoServiceDocuments.length>0">
                 <button ngbNavLink>Mes documents</button>
                 <ng-template ngbNavContent>
                   <div class="alert alert-info d-flex mb-0 mb-2" role="alert">
@@ -210,7 +210,7 @@
                   </div>
                 </ng-template>
               </li>
-              <li [ngbNavItem]="2" *ngIf=" service.assoServiceFieldTypes && service.assoServiceFieldTypes.length>0">
+              <li [ngbNavItem]="2" *ngIf="service.assoServiceFieldTypes && service.assoServiceFieldTypes.length>0">
                 <button ngbNavLink>Mes informations complémentaires</button>
                 <ng-template ngbNavContent>
                   <div class="alert alert-info d-flex mb-2" role="alert">
@@ -274,8 +274,7 @@
                 <button ngbNavLink>Documents disponibles <span class="badge bg-success"
                     style="margin-left: 10px;"></span></button>
                 <ng-template ngbNavContent>
-                  <div class="table-responsive"
-                    *ngIf="serviceProvisionAttachments[service.id] && serviceProvisionAttachments[service.id].length>0">
+                  <div class="table-responsive">
                     <table class="table table-hover mb-0">
                       <thead>
                         <tr>
