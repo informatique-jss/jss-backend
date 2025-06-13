@@ -63,7 +63,7 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
                         " 	max(nbr_for.announcementConfrereNbr) as announcementConfrereNbr, " +
                         " 	max(nbr_for.announcementNbr) as announcementNbr, " +
                         " 	max(nbr_for.formalityNbr) as formalityNbr, " +
-                        " 	blt.label as billingLabelType,cf.label as confrere, " +
+                        " 	blt.label as billingLabelType, string_agg(cf.label, ', ' order by cf.label) as confrere, " +
                         " 	sum( case when i.id_invoice_status =115359  then -1 else 1 end *(ii.pre_tax_price-coalesce (ii.discount_amount, 0) ) ) as turnoverAmountWithoutTax, "
                         +
                         " 	sum( case when i.id_invoice_status =115359  then -1 else 1 end *(ii.pre_tax_price + coalesce (ii.vat_price, 0)-coalesce (ii.discount_amount, 0)) ) as turnoverAmountWithTax, "
@@ -115,7 +115,7 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
                         +
                         " and (CAST(:label as text) ='' or CAST(r.id as text) = upper(CAST(:label as text)) or  upper(concat(r.firstname, ' ',r.lastname))  like '%' || trim(upper(CAST(:label as text)))  || '%' or  upper(t.denomination)  like '%' || trim(upper(CAST(:label as text)))  || '%'  ) "
                         +
-                        " group by cf.label," +
+                        " group by " +
                         " 	coalesce(t.denomination, " +
                         " 	concat(t.firstname, " +
                         " 	' ', " +

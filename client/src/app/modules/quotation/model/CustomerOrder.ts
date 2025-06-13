@@ -26,4 +26,5 @@ export interface CustomerOrder extends IQuotation {
   servicesList: string;
   invoicingBlockage: InvoicingBlockage;
   invoicingEmployee: Employee;
+  productionEffectiveDateTime: Date;
 }
