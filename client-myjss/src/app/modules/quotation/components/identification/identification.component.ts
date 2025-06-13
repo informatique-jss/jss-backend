@@ -93,6 +93,7 @@ export class IdentificationComponent implements OnInit {
     }
     if (!this.quotation)
       this.initIQuotation();
+    this.quotation.serviceFamilyGroup = item;
     this.quotation.assoAffaireOrders = [];
     this.addAffaire();
   }
