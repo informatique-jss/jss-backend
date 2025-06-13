@@ -47,6 +47,8 @@ export class AccountingProfitLostComponent implements OnInit {
       this.appService.displaySnackBar("🙄 Merci de saisir une plage de recherche", false, 10);
       return;
     }
+    this.accountingBalanceSearch.startDate = new Date(this.accountingBalanceSearch.startDate.setHours(12));
+    this.accountingBalanceSearch.endDate = new Date(this.accountingBalanceSearch.endDate.setHours(12));
     this.restoreTotalDivPosition();
     this.accountingBalanceViewTitleService.getProfitLost(this.accountingBalanceSearch).subscribe(response => {
       this.profitAndLost = response;

@@ -462,17 +462,17 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
         @Query(nativeQuery = true, value = "select * from closed_accounting_record where id_payment =:idPayment")
         List<AccountingRecord> findClosedAccountingRecordsForPayment(@Param("idPayment") Integer idPayment);
 
-        @Query("select sum(a.creditAmount) as creditAmount, " +
-                        " sum(a.debitAmount) as debitAmount, pa.code as accountingAccountNumber "
+        @Query("select sum(coalesce(a.creditAmount,0)) as creditAmount, " +
+                        " sum(coalesce(a.debitAmount,0)) as debitAmount, pa.code as accountingAccountNumber "
                         +
                         " from AccountingRecord a  JOIN a.accountingAccount aa  JOIN aa.principalAccountingAccount pa  where "
                         +
-                        "(a.accountingDateTime is null or (coalesce(a.manualAccountingDocumentDate,a.accountingDateTime) >=:startDate and coalesce(a.manualAccountingDocumentDate,a.accountingDateTime) <=:endDate ))   "
+                        "a.operationDateTime >=:startDate and a.operationDateTime <=:endDate   "
                         + " and (:canViewRestricted=true or aa.isViewRestricted=false)  " +
                         " group by pa.code ")
         List<AccountingBalanceBilan> getAccountingRecordAggregateByAccountingNumber(
-                        @Param("startDate") LocalDate startDate,
-                        @Param("endDate") LocalDate endDate,
+                        @Param("startDate") LocalDateTime startDate,
+                        @Param("endDate") LocalDateTime endDate,
                         @Param("canViewRestricted") boolean canViewRestricted);
 
         @Modifying

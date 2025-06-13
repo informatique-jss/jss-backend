@@ -1669,6 +1669,8 @@ public class AccountingBalanceHelper {
                                 }
                                 if (isNotExcluded && accountingRecord.getCreditAmount() != null)
                                         credit += accountingRecord.getCreditAmount();
+                                if (isNotExcluded && accountingRecord.getDebitAmount() != null)
+                                        credit -= accountingRecord.getDebitAmount();
                         }
                 }
                 return credit;
@@ -1698,6 +1700,8 @@ public class AccountingBalanceHelper {
                                 }
                                 if (isNotExcluded && accountingRecord.getDebitAmount() != null)
                                         debit += accountingRecord.getDebitAmount();
+                                if (isNotExcluded && accountingRecord.getCreditAmount() != null)
+                                        debit -= accountingRecord.getCreditAmount();
                         }
                 }
                 return debit;
