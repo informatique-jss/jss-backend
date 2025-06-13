@@ -54,7 +54,8 @@
                 {{ provision.service.assoAffaireOrder.customerOrder.id }} -
                 {{getResponsableLabelIQuotation(provision.service.assoAffaireOrder.customerOrder)}} -
                 {{getTiersLabelIQuotation(provision.service.assoAffaireOrder.customerOrder)}}
-                <br /> le {{formatDateFrance(provision.service.assoAffaireOrder.customerOrder.createdDate)}}
+                <br /> le
+                {{formatDateFrance(provision.service.assoAffaireOrder.customerOrder.productionEffectiveDateTime)}}
               </div>
               <div class="card-avatar">
                 <avatar class="avatar-select" [employee]="provision.assignedTo" [size]="20">
