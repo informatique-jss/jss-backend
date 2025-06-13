@@ -253,7 +253,7 @@ export class CheckoutComponent implements OnInit {
       this.appService.displayToast("Il manque des informations obligatoires pour pouvoir passer commande", true, "Validation de commande impossible", 5000);
       return false;
     }
-    if (this.quotation!.responsable!.mail.mail != this.mailToConfirm) {
+    if (!this.currentUser && this.quotation!.responsable!.mail.mail != this.mailToConfirm) {
       this.appService.displayToast("Les deux e-mails renseignés ne sont pas identiques !", true, "Validation de commande impossible", 5000);
       return false;
     }
