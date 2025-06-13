@@ -864,6 +864,10 @@ public class PostServiceImpl implements PostService {
             post.setIsPremium(post.getAcf().isPremium());
             post.setIsSticky(post.getAcf().isSticky());
             post.setPremiumPercentage(post.getAcf().getPremium_percentage());
+            post.setApplePodcastLinkUrl(post.getAcf().getApplePodcastLinkUrl());
+            post.setSpotifyLinkUrl(post.getAcf().getSpotifyLinkUrl());
+            post.setDeezerLinkUrl(post.getAcf().getDeezerLinkUrl());
+            post.setAmazonMusicLinkUrl(post.getAcf().getAmazonMusicLinkUrl());
             if (post.getAcf().getAssociated_post() != null) {
                 List<Post> postList = new ArrayList<Post>();
                 for (Integer postId : post.getAcf().getAssociated_post()) {
