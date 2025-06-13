@@ -98,6 +98,18 @@ public class Post implements IId, Serializable {
     @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private Boolean isSticky;
 
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+    private String applePodcastLinkUrl;
+
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+    private String spotifyLinkUrl;
+
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+    private String deezerLinkUrl;
+
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+    private String amazonMusicLinkUrl;
+
     @Transient
     private Integer[] tags;
 
@@ -475,6 +487,38 @@ public class Post implements IId, Serializable {
 
     public void setIsSticky(Boolean isSticky) {
         this.isSticky = isSticky;
+    }
+
+    public String getApplePodcastLinkUrl() {
+        return applePodcastLinkUrl;
+    }
+
+    public void setApplePodcastLinkUrl(String applePodcastLinkUrl) {
+        this.applePodcastLinkUrl = applePodcastLinkUrl;
+    }
+
+    public String getSpotifyLinkUrl() {
+        return spotifyLinkUrl;
+    }
+
+    public void setSpotifyLinkUrl(String spotifyLinkUrl) {
+        this.spotifyLinkUrl = spotifyLinkUrl;
+    }
+
+    public String getDeezerLinkUrl() {
+        return deezerLinkUrl;
+    }
+
+    public void setDeezerLinkUrl(String deezerLinkUrl) {
+        this.deezerLinkUrl = deezerLinkUrl;
+    }
+
+    public String getAmazonMusicLinkUrl() {
+        return amazonMusicLinkUrl;
+    }
+
+    public void setAmazonMusicLinkUrl(String amazonMusicLinkUrl) {
+        this.amazonMusicLinkUrl = amazonMusicLinkUrl;
     }
 
     public List<AssoMailPost> getAssoMailPosts() {

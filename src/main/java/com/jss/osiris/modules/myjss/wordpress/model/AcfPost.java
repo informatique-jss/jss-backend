@@ -6,9 +6,20 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.jss.osiris.libs.jackson.EmptyStringAsEmptyListDeserializer;
 
 public class AcfPost {
+
     private boolean premium;
-    private boolean sticky;
+
     private Integer premium_percentage;
+
+    private boolean sticky;
+
+    private String applePodcastLinkUrl;
+
+    private String spotifyLinkUrl;
+
+    private String deezerLinkUrl;
+
+    private String amazonMusicLinkUrl;
 
     @JsonDeserialize(using = EmptyStringAsEmptyListDeserializer.class)
     private List<Integer> associated_post;
@@ -43,5 +54,37 @@ public class AcfPost {
 
     public void setSticky(boolean sticky) {
         this.sticky = sticky;
+    }
+
+    public String getApplePodcastLinkUrl() {
+        return applePodcastLinkUrl;
+    }
+
+    public void setApplePodcastLinkUrl(String applePodcastLinkUrl) {
+        this.applePodcastLinkUrl = applePodcastLinkUrl;
+    }
+
+    public String getSpotifyLinkUrl() {
+        return spotifyLinkUrl;
+    }
+
+    public void setSpotifyLinkUrl(String spotifyLinkUrl) {
+        this.spotifyLinkUrl = spotifyLinkUrl;
+    }
+
+    public String getDeezerLinkUrl() {
+        return deezerLinkUrl;
+    }
+
+    public void setDeezerLinkUrl(String deezerLinkUrl) {
+        this.deezerLinkUrl = deezerLinkUrl;
+    }
+
+    public String getAmazonMusicLinkUrl() {
+        return amazonMusicLinkUrl;
+    }
+
+    public void setAmazonMusicLinkUrl(String amazonMusicLinkUrl) {
+        this.amazonMusicLinkUrl = amazonMusicLinkUrl;
     }
 }
