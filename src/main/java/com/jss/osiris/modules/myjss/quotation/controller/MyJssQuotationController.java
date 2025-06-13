@@ -447,7 +447,7 @@ public class MyJssQuotationController {
 	@GetMapping(inputEntryPoint + "/service/provision/attachments")
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Attachment>> getAttachmentsForProvisionOfService(@RequestParam Integer serviceId)
-			throws OsirisClientMessageException {
+			throws OsirisException {
 
 		Service service = serviceService.getService(serviceId);
 		IQuotation quotation = service.getAssoAffaireOrder().getCustomerOrder();

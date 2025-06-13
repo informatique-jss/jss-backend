@@ -99,7 +99,8 @@
   </div>
 
   <div ngbAccordion [closeOthers]="true" *ngIf="selectedAssoAffaireOrder.services">
-    <div ngbAccordionItem *ngFor="let service of selectedAssoAffaireOrder.services; let index =index">
+    <div ngbAccordionItem *ngFor="let service of selectedAssoAffaireOrder.services; let index =index"
+      (show)="loadServiceDetails(service,false)">
       <h2 ngbAccordionHeader>
         <button ngbAccordionButton class="border-top">
           <div class="d-flex justify-content-between w-100">
@@ -127,7 +128,7 @@
         <div ngbAccordionBody>
           <ng-template>
             <ul ngbNav #nav="ngbNav" [activeId]="1" class="nav-tabs">
-              <li [ngbNavItem]="1">
+              <li [ngbNavItem]="1" *ngIf="service.assoServiceDocuments && service.assoServiceDocuments.length>0">
                 <button ngbNavLink>Mes documents</button>
                 <ng-template ngbNavContent>
                   <div class="alert alert-info d-flex mb-0 mb-2" role="alert" *ngIf="canEditQuotation">
@@ -245,6 +246,41 @@
                       <button type="button" class="btn btn-primary"
                         (click)="saveFieldsValue(service)">Enregistrer</button>
                     </div>
+                  </div>
+                </ng-template>
+              </li>
+
+              <li [ngbNavItem]="3"
+                *ngIf="quotationAttachments[service.id] && quotationAttachments[service.id].length>0">
+                <button ngbNavLink>Documents disponibles <span class="badge bg-success"
+                    style="margin-left: 10px;"></span></button>
+                <ng-template ngbNavContent>
+                  <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                      <thead>
+                        <tr>
+                          <th style="width: 5%;">#</th>
+                          <th>Nom</th>
+                          <th class="d-none d-md-table-cell" style="width: 20%;">Type</th>
+                          <th class="d-none d-lg-table-cell" style="width: 20%;">Date de dépôt</th>
+                          <th style="width: 10%;"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let attachment of quotationAttachments[service.id]; let i = index">
+                          <th scope="row">{{i + 1}}</th>
+                          <td class="text-wrap" style="min-width: 150px;">{{attachment.description}}</td>
+                          <td class="d-none d-md-table-cell">{{attachment.attachmentType.label}}</td>
+                          <td class="d-none d-lg-table-cell">{{attachment.creatDateTime | date:'dd/MM/yyyy'}}</td>
+                          <td>
+                            <button type="button" class="btn btn-secondary btn-icon btn-sm" aria-label="Télécharger"
+                              placement="right" ngbTooltip="Télécharger" (click)="downloadAttachment(attachment)">
+                              <i class="ai-download"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
                   </div>
                 </ng-template>
               </li>

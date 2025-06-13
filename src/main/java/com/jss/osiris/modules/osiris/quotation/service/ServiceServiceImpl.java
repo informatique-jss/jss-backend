@@ -573,7 +573,7 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<Attachment> getAttachmentsForProvisionOfService(Service service) {
+    public List<Attachment> getAttachmentsForProvisionOfService(Service service) throws OsirisException {
         service = getService(service.getId());
         List<Integer> attachmentTypeIdsDone = new ArrayList<Integer>();
         List<Attachment> attachments = new ArrayList<Attachment>();
@@ -589,6 +589,13 @@ public class ServiceServiceImpl implements ServiceService {
                                                 && attachment.getAttachmentType().getIsToSentOnUpload())) {
                             attachments.add(attachment);
                         }
+        if (service.getAssoAffaireOrder() != null && service.getAssoAffaireOrder().getQuotation() != null)
+            if (!service.getAssoAffaireOrder().getQuotation().getAttachments().isEmpty())
+                for (Attachment attachment : service.getAssoAffaireOrder().getQuotation().getAttachments())
+                    if (attachment.getAttachmentType().getId()
+                            .equals(constantService.getAttachmentTypeQuotation().getId()))
+                        attachments.add(attachment);
+
         return attachments;
     }
 
