@@ -251,7 +251,7 @@
               </li>
 
               <li [ngbNavItem]="3"
-                *ngIf="quotationAttachments[service.id] && quotationAttachments[service.id].length>0">
+                *ngIf="quotationAttachments && quotationAttachments[service.id] && quotationAttachments[service.id].length>0">
                 <button ngbNavLink>Documents disponibles <span class="badge bg-success"
                     style="margin-left: 10px;"></span></button>
                 <ng-template ngbNavContent>
