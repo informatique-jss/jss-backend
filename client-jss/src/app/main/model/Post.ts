@@ -16,6 +16,10 @@ export interface Post {
   podcastUrl: string;
   videoUrl: string;
   isSticky: boolean;
+  applePodcastLinkUrl: string;
+  spotifyLinkUrl: string;
+  deezerLinkUrl: string;
+  amazonMusicLinkUrl: string;
   isBookmarked: boolean;
   relatedPosts: Post[];
   mediaTimeLength: number;

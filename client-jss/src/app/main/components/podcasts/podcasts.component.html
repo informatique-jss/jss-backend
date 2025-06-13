@@ -52,18 +52,15 @@
                           <!-- Listen podcast in .. Dropdown menu -->
                           <div class="dropdown-menu p-1" [ngClass]="{ show: openedListenDropdownPostId === post.id }">
                             <ul class="list-unstyled d-flex  inline-row gap-2 align-items-center mb-0">
-                              <li><a href="#"><img src="assets/images/icon/apple-podcasts.svg" alt="Apple Podcasts"></a>
-                              </li>
-                              <li><a href="#"><img src="assets/images/icon/divider-icon.svg" alt="Deezer"></a></li>
-                              <li><a href="#"><img src="assets/images/icon/spotify.svg" alt="Spotify"></a></li>
-                              <li><a href="#"><img src="assets/images/icon/google-podcasts.svg"
-                                    alt="Google Podcasts"></a></li>
-                              <li><a href="#"><img src="assets/images/icon/pocket.svg" alt="Pocket Casts"></a></li>
-                              <li><a href="#"><img src="assets/images/icon/sound-cloud.svg" alt="SoundCloud"></a></li>
+                              <li *ngIf="post.deezerLinkUrl"><a [href]="post.deezerLinkUrl"><img
+                                    src="assets/images/icon/deezer.svg" alt="Deezer"></a></li>
+                              <li *ngIf="post.applePodcastLinkUrl"><a [href]="post.applePodcastLinkUrl"><img
+                                    src="assets/images/icon/apple-podcasts.svg" alt="Apple Podcasts"></a></li>
+                              <li *ngIf="post.spotifyLinkUrl"><a [href]="post.spotifyLinkUrl"><img
+                                    src="assets/images/icon/spotify.svg" alt="Spotify"></a></li>
                             </ul>
                           </div>
                         </div>
-
                         <span class="col-auto small text fs-9 border-end">
                           Publié le {{post.date | date:'EEEE d MMMM'}}</span>
                         <span class="col-auto small text fs-9">Durée {{post.mediaTimeLength | duration}}</span>
