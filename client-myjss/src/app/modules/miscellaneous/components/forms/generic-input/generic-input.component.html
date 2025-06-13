@@ -1,5 +1,5 @@
 <div class="position-relative ">
-  <div [formGroup]="form!" *ngIf="form" class="needs-validation">
+  <div [formGroup]="form!" *ngIf="form && form.get(propertyName)" class="needs-validation">
     <label [for]="'fl-text'+uniqueId" *ngIf="isDisplayLabel && label && label.length>0"
       class="form-label">{{label}}</label>
     <i class="fs-lg position-absolute top-50 start-0 ms-3" *ngIf="icon"
@@ -10,7 +10,8 @@
       [placeholder]="label" (blur)="blurForm()" (keydown.enter)="onEnterTrigger($event)"
       [type]="type=='number'?'text':type" (change)="parse($event)"
       [class.is-invalid]="!doNotValidate && form.get(propertyName)?.invalid && form.get(propertyName)?.touched"
-      [class.is-valid]="!doNotValidate && form.get(propertyName)?.valid && form.get(propertyName)?.touched">
+      [class.is-valid]="!doNotValidate && form.get(propertyName)?.valid && form.get(propertyName)?.touched"
+      [autocomplete]="isAutocompleteAvailable" [autocapitalize]="isAutocompleteAvailable" (paste)="onPaste($event)">
     <div class="error" *ngIf="errorMessage && form!.controls[propertyName].hasError('notFilled')">{{errorMessage}}</div>
   </div>
 </div>

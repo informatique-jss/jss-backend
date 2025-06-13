@@ -71,6 +71,29 @@ export function formatDate(date: Date) {
   ].join('-');
 }
 
+export function formatDateIso(date: Date) {
+  date = new Date(date);
+  return [
+    date.getFullYear(),
+    padTo2Digits(date.getMonth() + 1),
+    padTo2Digits(date.getDate()),
+  ].join('-');
+}
+
+export function toIsoString(date: Date) {
+  const pad = function (num: number) {
+    return (num < 10 ? '0' : '') + num;
+  };
+
+  return date.getFullYear() +
+    '-' + pad(date.getMonth() + 1) +
+    '-' + pad(date.getDate()) +
+    'T' + pad(date.getHours()) +
+    ':' + pad(date.getMinutes()) +
+    ':' + pad(date.getSeconds()) +
+    '.000Z';
+}
+
 export function getTimeReading(html: string): string {
   return Math.ceil(html.replace(/<[^>]+>/g, '').split(' ').length / 220) + " min";
 }

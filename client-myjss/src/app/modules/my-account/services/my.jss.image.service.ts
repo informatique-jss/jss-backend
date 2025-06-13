@@ -11,7 +11,11 @@ export class MyJssImageService extends AppRestService<MyJssImage> {
     super(http, "quotation");
   }
 
-  downloadQrCode(customerOrderId: number, mail: string) {
+  downloadQrCodeForOrder(customerOrderId: number, mail: string) {
     return this.get(new HttpParams().set("customerOrderId", customerOrderId + "").set("mail", mail), "order/payment/cb/qrcode");
+  }
+
+  downloadQrCodeForQuotation(quotationId: number, mail: string) {
+    return this.get(new HttpParams().set("quotationId", quotationId + "").set("mail", mail), "quotation/payment/cb/qrcode");
   }
 }

@@ -38,6 +38,9 @@ public class AttachmentType implements Serializable, IId {
 
 	private Boolean isHiddenFromUser;
 
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
+	private Boolean isDocumentDateRequired;
+
 	public Integer getId() {
 		return id;
 	}
@@ -92,6 +95,14 @@ public class AttachmentType implements Serializable, IId {
 
 	public void setIsHiddenFromUser(Boolean isHiddenFromUser) {
 		this.isHiddenFromUser = isHiddenFromUser;
+	}
+
+	public Boolean getIsDocumentDateRequired() {
+		return isDocumentDateRequired;
+	}
+
+	public void setIsDocumentDateRequired(Boolean isDocumentDateRequired) {
+		this.isDocumentDateRequired = isDocumentDateRequired;
 	}
 
 }

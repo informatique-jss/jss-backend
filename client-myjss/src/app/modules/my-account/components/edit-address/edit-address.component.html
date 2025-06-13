@@ -56,22 +56,10 @@
                   <label class="form-check-label" for="billing-isBillingOther">Libeller à un tiers</label>
                 </div>
               </div>
-              <generic-input [(model)]="document.externalReference" label="Vos références à rappeler"
-                [form]="documentForm" propertyName="externalReference" [isMandatory]="false" [isDisabled]="false"
-                [maxLength]="200"></generic-input>
-              <div class="form-check form-switch mt-3">
-                <input type="checkbox" class="form-check-input" id="billing-isCommandNumberMandatory"
-                  [(ngModel)]="document.isCommandNumberMandatory" [checked]="document.isCommandNumberMandatory">
-                <label class="form-check-label" for="billing-isCommandNumberMandatory">Définir un numéro de commande à
-                  rappeler</label>
-              </div>
-              <generic-input [(model)]="document.commandNumber" label="Numéro de commande à rappeler"
-                [form]="documentForm" *ngIf="document.isCommandNumberMandatory" propertyName="commandNumber"
-                [isMandatory]="false" [isDisabled]="false" [maxLength]="200"></generic-input>
               <div class="d-flex align-items-center pb-1 mb-2">
                 <h3 class="h6 mb-0 me-3 mt-3">Destinataires de la facture</h3>
               </div>
-              <div class="form-check">
+              <div class="form-check mb-3">
                 <div class="form-check" [formGroup]="documentForm">
                   <input class="form-check-input" type="checkbox" id="billing-isRecipientAffaire"
                     [(ngModel)]="document.isRecipientAffaire" [ngModelOptions]="{standalone: true}">
@@ -82,56 +70,74 @@
                     [(ngModel)]="document.isRecipientClient" [ngModelOptions]="{standalone: true}">
                   <label class="form-check-label" for="billing-isRecipientClient">Me l'envoyer</label>
                 </div>
-              </div>
-              <div class="form-check form-switch mt-3" *ngIf="document.isRecipientAffaire">
-                <input type="checkbox" class="form-check-input" id="billing-addCopieAffaire"
-                  [(ngModel)]="document.addToAffaireMailList" [checked]="document.addToAffaireMailList">
-                <label class="form-check-label" for="billing-addCopieAffaire">Ajouter des adresses mails en copie de
-                  l'affaire</label>
-              </div>
-              <ul class="list-group mt-1 mb-3"
-                *ngIf="document.addToAffaireMailList && document.mailsAffaire && document.mailsAffaire.length>0">
-                <li class="list-group-item" *ngFor="let mail of document.mailsAffaire">
-                  <div class="d-flex flex-wrap w-100 justify-content-between">
-                    <div class="mt-auto mb-auto">{{mail.mail}}</div>
-                    <div>
-                      <button type="button" class="btn btn-danger btn-icon btn-sm me-3" aria-label="Supprimer"
-                        placement="right" ngbTooltip="Supprimer" (click)="deleteMail(mail, document, true)">
-                        <i class="ai-cross"></i>
-                      </button>
+                <div class="form-check form-switch mt-3" *ngIf="document.isRecipientAffaire">
+                  <input type="checkbox" class="form-check-input command-toggle" id="billing-addCopieAffaire"
+                    [(ngModel)]="document.addToAffaireMailList" [checked]="document.addToAffaireMailList">
+                  <label class="form-check-label" for="billing-addCopieAffaire">Ajouter des adresses mails en copie de
+                    l'affaire</label>
+                </div>
+                <ul class="list-group mt-1 mb-3"
+                  *ngIf="document.addToAffaireMailList && document.mailsAffaire && document.mailsAffaire.length>0">
+                  <li class="list-group-item" *ngFor="let mail of document.mailsAffaire">
+                    <div class="d-flex flex-wrap w-100 justify-content-between">
+                      <div class="mt-auto mb-auto">{{mail.mail}}</div>
+                      <div>
+                        <button type="button" class="btn btn-danger btn-icon btn-sm me-3" aria-label="Supprimer"
+                          placement="right" ngbTooltip="Supprimer" (click)="deleteMail(mail, document, true)">
+                          <i class="ai-cross"></i>
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                </li>
-              </ul>
-              <generic-input *ngIf="document.addToAffaireMailList && document.isRecipientAffaire" class="mt-4"
-                [(model)]="newMailBillingAffaire" label="Nouveau mail (entrer pour valider)" [form]="documentForm"
-                propertyName="newMailBillingAffaire" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="true"
-                [icon]="'mail'" [isDisplayLabel]="false" (onEnter)="addMail(document, true)"></generic-input>
+                  </li>
+                </ul>
+                <generic-input *ngIf="document.addToAffaireMailList && document.isRecipientAffaire" class="mt-4"
+                  [(model)]="newMailBillingAffaire" label="Nouveau mail (entrer pour valider)" [form]="documentForm"
+                  propertyName="newMailBillingAffaire" [isMandatory]="false" [isDisabled]="false"
+                  [isDisplayLabel]="true" [icon]="'mail'" [isDisplayLabel]="false"
+                  (onEnter)="addMail(document, true)"></generic-input>
 
-              <div class="form-check form-switch mt-3" *ngIf="document.isRecipientClient">
-                <input type="checkbox" class="form-check-input" id="billing-addCopieClient"
-                  [(ngModel)]="document.addToClientMailList" [checked]="document.addToClientMailList">
-                <label class="form-check-label" for="billing-addCopieAffaire">Ajouter des adresses mails en copie de
-                  moi</label>
-              </div>
-              <ul class="list-group mt-1 mb-3"
-                *ngIf="document.addToClientMailList && document.mailsClient && document.mailsClient.length>0">
-                <li class="list-group-item" *ngFor="let mail of document.mailsClient">
-                  <div class="d-flex flex-wrap w-100 justify-content-between">
-                    <div class="mt-auto mb-auto">{{mail.mail}}</div>
-                    <div>
-                      <button type="button" class="btn btn-danger btn-icon btn-sm me-3" aria-label="Supprimer"
-                        placement="right" ngbTooltip="Supprimer" (click)="deleteMail(mail, document, false)">
-                        <i class="ai-cross"></i>
-                      </button>
+                <div class="form-check form-switch mt-3" *ngIf="document.isRecipientClient">
+                  <input type="checkbox" class="form-check-input command-toggle" id="billing-addCopieClient"
+                    [(ngModel)]="document.addToClientMailList" [checked]="document.addToClientMailList">
+                  <label class="form-check-label" for="billing-addCopieAffaire">Ajouter des adresses mails en copie de
+                    moi</label>
+                </div>
+                <ul class="list-group mt-1 mb-3"
+                  *ngIf="document.addToClientMailList && document.mailsClient && document.mailsClient.length>0">
+                  <li class="list-group-item" *ngFor="let mail of document.mailsClient">
+                    <div class="d-flex flex-wrap w-100 justify-content-between">
+                      <div class="mt-auto mb-auto">{{mail.mail}}</div>
+                      <div>
+                        <button type="button" class="btn btn-danger btn-icon btn-sm me-3" aria-label="Supprimer"
+                          placement="right" ngbTooltip="Supprimer" (click)="deleteMail(mail, document, false)">
+                          <i class="ai-cross"></i>
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                </li>
-              </ul>
-              <generic-input *ngIf="document.addToClientMailList && document.isRecipientClient" class="mt-4"
-                [(model)]="newMailBillingClient" label="Nouveau mail (entrer pour valider)" [form]="documentForm"
-                propertyName="newMailBillingClient" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="true"
-                [icon]="'mail'" [isDisplayLabel]="false" (onEnter)="addMail(document, false)"></generic-input>
+                  </li>
+                </ul>
+                <generic-input *ngIf="document.addToClientMailList && document.isRecipientClient" class="mt-4"
+                  [(model)]="newMailBillingClient" label="Nouveau mail (entrer pour valider)" [form]="documentForm"
+                  propertyName="newMailBillingClient" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="true"
+                  [icon]="'mail'" [isDisplayLabel]="false" (onEnter)="addMail(document, false)"></generic-input>
+              </div>
+              <div class="d-flex align-items-center pb-1 mb-2">
+                <h3 class="h6 mb-0 me-3">Références</h3>
+              </div>
+              <div class="form-check mb-3">
+                <generic-input [(model)]="document.externalReference" label="Vos références à rappeler"
+                  [form]="documentForm" propertyName="externalReference" [isMandatory]="false" [isDisabled]="false"
+                  [maxLength]="200"></generic-input>
+                <div class="form-check form-switch mt-3">
+                  <input type="checkbox" class="form-check-input command-toggle" id="billing-isCommandNumberMandatory"
+                    [(ngModel)]="document.isCommandNumberMandatory" [checked]="document.isCommandNumberMandatory">
+                  <label class="form-check-label" for="billing-isCommandNumberMandatory">Définir un numéro de commande à
+                    rappeler</label>
+                </div>
+                <generic-input [(model)]="document.commandNumber" label="Numéro de commande à rappeler"
+                  [form]="documentForm" *ngIf="document.isCommandNumberMandatory" propertyName="commandNumber"
+                  [isMandatory]="false" [isDisabled]="false" [maxLength]="200"></generic-input>
+              </div>
             </ng-container>
           </ng-container>
         </ng-template>
@@ -157,7 +163,7 @@
                 </div>
               </div>
               <div class="form-check form-switch mt-3" *ngIf="document.isRecipientAffaire">
-                <input type="checkbox" class="form-check-input" id="digital-addCopieAffaire"
+                <input type="checkbox" class="form-check-input command-toggle" id="digital-addCopieAffaire"
                   [(ngModel)]="document.addToAffaireMailList" [checked]="document.addToAffaireMailList">
                 <label class="form-check-label" for="digital-addCopieAffaire">Ajouter des adresses mails en copie de
                   l'affaire</label>
@@ -182,7 +188,7 @@
                 [icon]="'mail'" [isDisplayLabel]="false" (onEnter)="addMailDigital(document, true)"></generic-input>
 
               <div class="form-check form-switch mt-3" *ngIf="document.isRecipientClient">
-                <input type="checkbox" class="form-check-input" id="billing-addCopieClient"
+                <input type="checkbox" class="form-check-input command-toggle" id="billing-addCopieClient"
                   [(ngModel)]="document.addToClientMailList" [checked]="document.addToClientMailList">
                 <label class="form-check-label" for="billing-addCopieAffaire">Ajouter des adresses mails en copie de
                   moi</label>

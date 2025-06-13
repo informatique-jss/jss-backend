@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { ASSO_SERVICE_DOCUMENT_ENTITY_TYPE } from '../../../../libs/Constants';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { GenericDatePickerComponent } from '../../../miscellaneous/components/forms/generic-date-picker/generic-datetime-picker.component';
@@ -32,11 +33,15 @@ export class QuotationFileUploaderComponent implements OnInit {
   uploadedKB = 0;
   totalKB = 0;
 
+  uploadForm: FormGroup | undefined;
+
   constructor(
     private attachmentService: AttachmentService,
+    private formBuilder: FormBuilder
   ) { }
 
   ngOnInit() {
+    this.uploadForm = this.formBuilder.group({});
     if (this.entity) {
       let assoServDoc: AssoServiceDocument = this.entity;
       for (let attachment of assoServDoc.attachments) {
@@ -59,12 +64,8 @@ export class QuotationFileUploaderComponent implements OnInit {
 
   deleteFile(attachment: Attachment) {
     this.attachmentService.deleteAttachment(attachment.id).subscribe((res) => {
-      if (res) {
-        this.isUploadDeleted.emit(true);
-        this.isComplete = true;
-      } else {
-        console.warn("The file was not deleted");
-      }
+      this.isUploadDeleted.emit(true);
+      this.isComplete = true;
     });
   }
 
@@ -82,6 +83,10 @@ export class QuotationFileUploaderComponent implements OnInit {
       this.uploadStateMap.set(fileId, { progress: 100, isComplete: true, isError: false, isUploading: false });
     }
     this.isUploadComplete.emit(true);
+  }
+
+  updateAttachment(attachment: Attachment) {
+    this.attachmentService.updateAttachmentDocumentDate(attachment.id, attachment.attachmentDate).subscribe();
   }
 
 }

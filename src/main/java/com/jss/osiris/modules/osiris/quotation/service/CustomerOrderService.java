@@ -183,4 +183,11 @@ public interface CustomerOrderService {
         public CustomerOrder getCustomerOrderForSubscription(String subscriptionType,
                         Boolean isPriceReductionForSubscription, Integer idArticle) throws OsirisException;
 
+        public boolean isOnlyJssAnnouncement(CustomerOrder customerOrder, Boolean isReadyForBilling)
+                        throws OsirisException;
+
+        public void autoBilledProvisions(CustomerOrder recurringCustomerOrder)
+                        throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException,
+                        OsirisException;
+
 }

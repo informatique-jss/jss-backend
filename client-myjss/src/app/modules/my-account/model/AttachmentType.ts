@@ -5,4 +5,5 @@ export interface AttachmentType {
   label: string;
   code: string;
   description: string;
+  isDocumentDateRequired: boolean;
 }

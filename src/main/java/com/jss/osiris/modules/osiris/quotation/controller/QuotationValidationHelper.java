@@ -385,8 +385,8 @@ public class QuotationValidationHelper {
                         throws OsirisValidationException, OsirisException, OsirisClientMessageException {
 
                 validationHelper.validateReferential(provision.getProvisionFamilyType(),
-                                !isByPassMandatoryFields || true, "Famille de prestation");
-                validationHelper.validateReferential(provision.getProvisionType(), !isByPassMandatoryFields || true,
+                                !isByPassMandatoryFields, "Famille de prestation");
+                validationHelper.validateReferential(provision.getProvisionType(), !isByPassMandatoryFields,
                                 "Type de prestation");
 
                 if (quotation.getId() == null && !quotation.getCustomerOrderOrigin().getId()

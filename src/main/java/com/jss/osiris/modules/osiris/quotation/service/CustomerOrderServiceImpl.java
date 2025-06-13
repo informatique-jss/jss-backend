@@ -253,6 +253,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Autowired
     MyJssQuotationDelegate myJssQuotationDelegate;
 
+    @Autowired
+    AnnouncementService announcementService;
+
     private CustomerOrder simpleAddOrUpdate(CustomerOrder customerOrder) {
         return customerOrderRepository.save(customerOrder);
     }
@@ -506,17 +509,27 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         return true;
     }
 
-    private boolean isOnlyJssAnnouncement(CustomerOrder customerOrder) throws OsirisException {
+    @Override
+    public boolean isOnlyJssAnnouncement(CustomerOrder customerOrder, Boolean isReadyForBilling)
+            throws OsirisException {
         if (!isOnlyAnnouncement(customerOrder))
             return false;
 
         if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
                 for (Service service : asso.getServices())
-                    for (Provision provision : service.getProvisions())
+                    for (Provision provision : service.getProvisions()) {
                         if (provision.getAnnouncement() != null && !provision.getAnnouncement().getConfrere().getId()
                                 .equals(constantService.getConfrereJssSpel().getId()))
                             return false;
+                        if (isReadyForBilling && provision.getAnnouncement() != null
+                                && (provision.getIsRedactedByJss() || provision.getAnnouncement().getNotice() == null
+                                        || provision.getAnnouncement().getNotice().length() == 0
+                                        || provision.getAnnouncement().getPublicationDate() == null
+                                        || provision.getAnnouncement().getNoticeTypeFamily() == null
+                                        || provision.getAnnouncement().getNoticeTypes().isEmpty()))
+                            return false;
+                    }
         return true;
     }
 
@@ -584,7 +597,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 customerOrder.setPrincingEffectiveDate(LocalDate.now());
             // Auto billed for JSS Announcement only customer order
             if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)
-                    && isOnlyJssAnnouncement(customerOrder)
+                    && isOnlyJssAnnouncement(customerOrder, false)
                     && getRemainingAmountToPayForCustomerOrder(customerOrder).compareTo(zeroValue) >= 0) {
                 targetStatusCode = CustomerOrderStatus.BILLED;
             }
@@ -603,6 +616,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     }
                 }
             }
+
             // save once customer order to recompute invoice item before set it in stone...
             this.addOrUpdateCustomerOrder(customerOrder, true, checkAllProvisionEnded);
 
@@ -1455,43 +1469,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     newChild.setCustomerOrderParentRecurring(customerOrder);
                     addOrUpdateCustomerOrder(newChild, false, false);
                     addOrUpdateCustomerOrderStatus(newChild, CustomerOrderStatus.BEING_PROCESSED, false);
+                    newChild = getCustomerOrder(newChild.getId());
 
-                    if (customerOrder.getIsRecurringAutomaticallyBilled()) {
-                        newChild = getCustomerOrder(newChild.getId());
-                        if (newChild.getCustomerOrderStatus() != null && newChild.getCustomerOrderStatus().getCode()
-                                .equals(CustomerOrderStatus.BEING_PROCESSED)) {
-                            if (newChild.getAssoAffaireOrders() != null) {
-                                for (AssoAffaireOrder asso : newChild.getAssoAffaireOrders()) {
-                                    if (asso.getServices() != null) {
-                                        for (Service service : asso.getServices()) {
-                                            if (service.getProvisions() != null) {
-                                                for (Provision provision : service.getProvisions()) {
-                                                    if (provision.getSimpleProvision() != null) {
-                                                        SimpleProvision simpleProvision = provision
-                                                                .getSimpleProvision();
-                                                        simpleProvision
-                                                                .setSimpleProvisionStatus(simpleProvisionStatusService
-                                                                        .getSimpleProvisionStatusByCode(
-                                                                                SimpleProvisionStatus.SIMPLE_PROVISION_DONE));
-                                                        simpleProvisionService
-                                                                .addOrUpdateSimpleProvision(simpleProvision);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            newChild = getCustomerOrder(newChild.getId());
-                            try {
-                                addOrUpdateCustomerOrder(newChild, false, true); // Put to billed if all ended
-                            } catch (Exception e) {
-                                if (!(e instanceof OsirisClientMessageException
-                                        || e instanceof OsirisValidationException))
-                                    throw e;
-                            }
-                        }
-                    }
+                    if (customerOrder.getIsRecurringAutomaticallyBilled() != null
+                            && customerOrder.getIsRecurringAutomaticallyBilled())
+                        autoBilledProvisions(newChild);
                 }
             }
         }
@@ -1893,8 +1875,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         myJssQuotationDelegate.populateBooleansOfProvisions(order);
         order = addOrUpdateCustomerOrder(order, true, false);
 
-        if (isValidation != null && isValidation)
+        if (isValidation != null && isValidation) {
             addOrUpdateCustomerOrderStatus(order, CustomerOrderStatus.BEING_PROCESSED, true);
+            if (isOnlyJssAnnouncement(order, true)) {
+                quotationValidationHelper.validateQuotationAndCustomerOrder(order, null);
+                autoBilledProvisions(order);
+            }
+        }
         return order;
     }
 
@@ -2086,5 +2073,53 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         customerOrder.setResponsable(null);
 
         return customerOrder;
+    }
+
+    @Override
+    public void autoBilledProvisions(CustomerOrder customerOrder)
+            throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException, OsirisException {
+        if (customerOrder.getCustomerOrderStatus() != null && customerOrder.getCustomerOrderStatus().getCode()
+                .equals(CustomerOrderStatus.BEING_PROCESSED))
+            if (customerOrder.getAssoAffaireOrders() != null) {
+                for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
+                    if (asso.getServices() != null) {
+                        for (Service service : asso.getServices()) {
+                            if (service.getProvisions() != null) {
+                                for (Provision provision : service.getProvisions()) {
+                                    if (provision.getSimpleProvision() != null) {
+                                        SimpleProvision simpleProvision = provision
+                                                .getSimpleProvision();
+                                        simpleProvision
+                                                .setSimpleProvisionStatus(simpleProvisionStatusService
+                                                        .getSimpleProvisionStatusByCode(
+                                                                SimpleProvisionStatus.SIMPLE_PROVISION_DONE));
+                                        simpleProvisionService
+                                                .addOrUpdateSimpleProvision(simpleProvision);
+                                    }
+                                    if (provision.getAnnouncement() != null) {
+                                        provision.getAnnouncement()
+                                                .setAnnouncementStatus(announcementStatusService
+                                                        .getAnnouncementStatusByCode(
+                                                                AnnouncementStatus.ANNOUNCEMENT_DONE));
+                                        provisionService.addOrUpdateProvision(provision);
+                                        announcementService.generateAndStorePublicationReceipt(
+                                                provision.getAnnouncement(),
+                                                provision);
+                                    }
+                                }
+                            }
+                        }
+                        customerOrder = getCustomerOrder(customerOrder.getId());
+                        try {
+                            addOrUpdateCustomerOrder(customerOrder, false, true); // Put to billed if all
+                                                                                  // ended
+                        } catch (Exception e) {
+                            if (!(e instanceof OsirisClientMessageException
+                                    || e instanceof OsirisValidationException))
+                                throw e;
+                        }
+                    }
+                }
+            }
     }
 }

@@ -377,9 +377,14 @@
                 </li>
               </ul>
 
+              <generic-input class="col-md-6 mt-3" [(model)]="mailToConfirm" label="Votre adresse mail"
+                [form]="documentForm" propertyName="respMail" [isMandatory]="true" [isDisabled]="false" type="email"
+                [icon]="'mail'">
+              </generic-input>
               <generic-input (onFormChange)="saveDraftQuotation()" class="col-md-6 mt-3"
-                [(model)]="quotation.responsable.mail.mail" label="Votre adresse mail" [form]="documentForm"
-                propertyName="respMail" [isMandatory]="true" [isDisabled]="false" type="email" [icon]="'mail'">
+                [(model)]="quotation.responsable.mail.mail" label="Confirmez votre adresse mail" [form]="documentForm"
+                propertyName="confirmationRespMail" [isMandatory]="true" [isDisabled]="false" type="email"
+                [icon]="'mail'" [isAutocompleteAvailable]="false" [canPaste]="false">
               </generic-input>
             </div>
           </ng-template>
@@ -465,7 +470,7 @@
       <div class="mb-2">
         <generic-input *ngIf="document.isRecipientAffaire"
           [(model)]="quotation!.assoAffaireOrders[0].affaire.mails[0].mail" label="Mail de mon client"
-          [form]="documentForm" propertyName="affaireMail" [isMandatory]="true" [isDisabled]="false"
+          [form]="documentForm" propertyName="affaireMail" [isMandatory]="true" [isDisabled]="false" type="email"
           [maxLength]="250"></generic-input>
       </div>
       <div class="row ps-4 pb-3">
@@ -542,7 +547,7 @@
       <div class="mb-2">
         <generic-input *ngIf="document.isRecipientAffaire"
           [(model)]="quotation!.assoAffaireOrders[0].affaire.mails[0].mail" label="Mail de mon client"
-          [form]="documentForm" propertyName="affaireMailDigital" [isMandatory]="true" [isDisabled]="false"
+          [form]="documentForm" propertyName="affaireMailDigital" [isMandatory]="true" [isDisabled]="false" type="email"
           [maxLength]="250"></generic-input>
       </div>
       <div class="row ps-4 pb-3">
@@ -577,8 +582,8 @@
       </generic-toggle>
       <div class="row ps-4 pb-3">
         <generic-toggle *ngIf="document.isRecipientClient" [(model)]="document.addToClientMailList"
-          label="Ajouter des adresses mails en copie de moi" [form]="documentForm"
-          propertyName="addToClientMailListDigital" [isMandatory]="false">
+          label="Ajouter des adresses mails en copie" [form]="documentForm" propertyName="addToClientMailListDigital"
+          [isMandatory]="false">
         </generic-toggle>
 
         <generic-input (onFormChange)="saveDraftQuotation()" class="pb-0 pt-2"

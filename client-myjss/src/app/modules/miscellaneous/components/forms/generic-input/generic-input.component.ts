@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { UntypedFormBuilder } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { SHARED_IMPORTS } from '../../../../../libs/SharedImports';
 import { GenericFormComponent } from '../generic-form.components';
 
@@ -46,6 +46,10 @@ export class GenericInputComponent extends GenericFormComponent implements OnIni
 
   @Input() doNotValidate: boolean = false;
 
+  @Input() isAutocompleteAvailable: boolean = true;
+
+  @Input() canPaste: boolean = true;
+
   constructor(
     private formBuilder2: UntypedFormBuilder
   ) {
@@ -53,6 +57,14 @@ export class GenericInputComponent extends GenericFormComponent implements OnIni
   }
 
   callOnNgInit(): void {
+  }
+
+  override ngOnInit(): void {
+    if (this.type == 'email') {
+      if (!this.customValidators)
+        this.customValidators = [Validators.email];
+    }
+    super.ngOnInit();
   }
 
   parse(event: any) {
@@ -79,4 +91,11 @@ export class GenericInputComponent extends GenericFormComponent implements OnIni
     event.stopPropagation();
     this.onEnter.emit();
   }
+
+  onPaste($event: ClipboardEvent) {
+    if (!this.canPaste) {
+      $event.preventDefault();
+    }
+  }
+
 }

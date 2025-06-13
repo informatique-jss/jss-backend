@@ -70,9 +70,9 @@
                     <div class="col-12 col-md-6 col-lg-4"
                       *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_TEXT">
                       <generic-input [(model)]="assoServiceFieldType.stringValue"
-                        [label]="assoServiceFieldType.serviceFieldType.label" [form]="informationForm"
-                        [propertyName]="'stringFieldType'+i" [isMandatory]="assoServiceFieldType.isMandatory"
-                        [maxLength]="255">
+                        [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
+                        [form]="informationForm" [propertyName]="'stringFieldType'+i"
+                        [isMandatory]="assoServiceFieldType.isMandatory" [maxLength]="255">
                       </generic-input>
                     </div>
 
@@ -80,8 +80,9 @@
                     <div class="col-12 "
                       *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_TEXTAREA">
                       <generic-textarea [(model)]="assoServiceFieldType.textAreaValue"
-                        [label]="assoServiceFieldType.serviceFieldType.label" [form]="informationForm" [maxLength]="255"
-                        [propertyName]="'textAreaFieldType'+i" [isMandatory]="assoServiceFieldType.isMandatory">
+                        [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
+                        [form]="informationForm" [maxLength]="255" [propertyName]="'textAreaFieldType'+i"
+                        [isMandatory]="assoServiceFieldType.isMandatory">
                       </generic-textarea>
                     </div>
 
@@ -90,8 +91,9 @@
                       *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_DATE">
                       <div class="form-group w-auto">
                         <generic-date-picker [(model)]="assoServiceFieldType.dateValue"
-                          [label]="assoServiceFieldType.serviceFieldType.label" [form]="informationForm"
-                          [propertyName]="'dateFieldType'+i" [isMandatory]="assoServiceFieldType.isMandatory">
+                          [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
+                          [form]="informationForm" [propertyName]="'dateFieldType'+i"
+                          [isMandatory]="assoServiceFieldType.isMandatory">
                         </generic-date-picker>
                       </div>
                     </div>
@@ -100,9 +102,9 @@
                     <div class="col-12 col-md-6 col-lg-4"
                       *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_INTEGER">
                       <generic-input [(model)]="assoServiceFieldType.integerValue"
-                        [label]="assoServiceFieldType.serviceFieldType.label" [form]="informationForm"
-                        [propertyName]="'integerFieldType'+i" [isMandatory]="assoServiceFieldType.isMandatory"
-                        type="number">
+                        [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
+                        [form]="informationForm" [propertyName]="'integerFieldType'+i"
+                        [isMandatory]="assoServiceFieldType.isMandatory" type="number">
                       </generic-input>
                     </div>
 
@@ -110,8 +112,9 @@
                     <div class="col-12 col-md-6 col-lg-4"
                       *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_SELECT">
                       <select-value-service-field-type [(model)]="assoServiceFieldType.selectValue"
-                        [label]="assoServiceFieldType.serviceFieldType.label" [form]="informationForm"
-                        [propertyName]="'selectFieldType'+i" [serviceFieldType]="assoServiceFieldType.serviceFieldType"
+                        [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
+                        [form]="informationForm" [propertyName]="'selectFieldType'+i"
+                        [serviceFieldType]="assoServiceFieldType.serviceFieldType"
                         [isMandatory]="assoServiceFieldType.isMandatory">
                       </select-value-service-field-type>
                     </div>
@@ -122,7 +125,7 @@
             <div *ngIf="currentUser">
               <div
                 *ngFor="let assoServiceDocument of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments; let i = index">
-                <div *ngIf="assoServiceDocument.isMandatory" class="quotation-container mb-4">
+                <div class="quotation-container mb-4">
                   <quotation-file-uploader [entity]="assoServiceDocument"
                     (isUploadComplete)="onIsCompleteChange($event, selectedAssoIndex, selectedServiceIndex, i, assoServiceDocument)"
                     (isUploadDeleted)="onIsUploadDelete($event, selectedAssoIndex, selectedServiceIndex, i, assoServiceDocument)"></quotation-file-uploader>
@@ -156,10 +159,9 @@
                     <label class="col col-form-label" for="announcementPublicationDate">Date de publication
                       souhaitée*</label>
                     <div class="col">
-                      <generic-date-picker [(model)]="provision.announcement.publicationDate"
-                        label="Date de publication souhaitée" [form]="informationForm"
-                        [propertyName]="'publicationDate'+provision.order" [isMandatory]="false" [isDisabled]="false"
-                        [minDate]="minDatePublication"></generic-date-picker>
+                      <generic-date-picker [(model)]="provision.announcement.publicationDate" label="  "
+                        [form]="informationForm" [propertyName]="'publicationDate'+provision.order"
+                        [isMandatory]="false" [isDisabled]="false" [minDate]="minDatePublication"></generic-date-picker>
                     </div>
                   </div>
                 </div>

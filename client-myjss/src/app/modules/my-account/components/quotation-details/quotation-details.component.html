@@ -103,21 +103,21 @@
       (show)="loadServiceDetails(service,false)">
       <h2 ngbAccordionHeader>
         <button ngbAccordionButton class="border-top">
-          <div class="d-flex justify-content-between w-100">
-            <div class="ps-3 ps-sm-4">
+          <div class="row d-flex justify-content-between align-items-center w-100">
+            <div class="col-md-auto col-md-10">
               <h4 class="h6 mb-2">
                 <a>{{service.serviceLabelToDisplay}}</a>
               </h4>
-              <div class="text-body-secondary fs-sm me-3">
+              <div class="text-body-secondary fs-sm">
                 <span class="badge bg-info bg-opacity-10 text-info fs-xs">{{service.serviceStatus}}</span>
               </div>
             </div>
-            <div class="me-3 me-sm-4" *ngIf="service.confrereLabel">
+            <div class="col-md-auto col" *ngIf="service.confrereLabel">
               <div class="fs-sm text-body-secondary">{{service.confrereLabel}}</div>
               <!-- TODO : ajouter le lien vers le SPEL jss ou autre-->
             </div>
-            <div class="me-3 me-sm-4">
-              <div class="text-body-secondary fs-sm me-3 ">
+            <div class="col-md-auto col justify-content-end d-flex">
+              <div class="text-body-secondary fs-sm">
                 {{service.serviceTotalPrice | currency:'EUR' }}
               </div>
             </div>

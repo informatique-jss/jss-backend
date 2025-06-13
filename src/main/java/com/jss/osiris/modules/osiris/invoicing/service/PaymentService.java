@@ -24,6 +24,7 @@ import com.jss.osiris.modules.osiris.quotation.model.BankTransfert;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.DirectDebitTransfert;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
+import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.centralPay.CentralPayPaymentRequest;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
@@ -136,5 +137,7 @@ public interface PaymentService {
 
         public MyJssImage downloadQrCodeForOrderPayment(CustomerOrder customerOrder, String mail)
                         throws OsirisException;
+
+        public MyJssImage downloadQrCodeForQuotationPayment(Quotation quotation, String mail) throws OsirisException;
 
 }
