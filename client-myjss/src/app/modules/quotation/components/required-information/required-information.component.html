@@ -18,11 +18,14 @@
 
           <div class="row align-items-center" *ngIf="asso.services">
             <!-- Pill buttons -->
-            <a *ngFor="let service of asso.services;let indexService = index"
-              (click)="moveToService(indexService, indexAsso!)"
-              [ngClass]="{'btn-secondary': indexAsso == selectedAssoIndex && indexService == selectedServiceIndex, 'btn-outline-primary': indexAsso != selectedAssoIndex || indexService != selectedServiceIndex}"
-              class="btn btn-secondary rounded-pill mt-2 ms-1 mt-md-3 ms-md-3 col-auto pill">
-              {{service.serviceLabelToDisplay}}
+            <a *ngFor="let service of asso.services; let indexService = index"
+              (click)="moveToService(indexService, indexAsso!)" [ngClass]="{
+       'btn-secondary': indexAsso == selectedAssoIndex && indexService == selectedServiceIndex,
+       'btn-outline-primary': indexAsso != selectedAssoIndex || indexService != selectedServiceIndex
+     }" class="btn rounded-pill mt-2 ms-1 mt-md-3 ms-md-0 col-auto pill text-wrap text-break">
+
+              {{ service.serviceLabelToDisplay }}
+
               <i *ngIf="indexAsso == selectedAssoIndex && indexService == selectedServiceIndex"
                 class="ai-circle-arrow-right ms-2"></i>
             </a>
@@ -44,7 +47,7 @@
           quotation.assoAffaireOrders[selectedAssoIndex].affaire.lastname) }}
           - {{quotation.assoAffaireOrders[selectedAssoIndex].affaire.address}}</span>
       </strong>
-      <a class="btn btn-secondary rounded-pill col-auto pill ms-3 fs-xs">
+      <a class="btn btn-secondary rounded-pill mt-2 ms-0 mt-md-3 ms-md-0 col-auto pill text-wrap text-break fs-xs">
         {{quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].serviceLabelToDisplay }}
       </a>
     </div>
