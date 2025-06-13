@@ -579,6 +579,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         // Target : BEING PROCESSED => notify customer
         if (targetStatusCode.equals(CustomerOrderStatus.BEING_PROCESSED)) {
+            if (customerOrder.getProductionEffectiveDateTime() == null)
+                customerOrder.setProductionEffectiveDateTime(LocalDateTime.now());
             resetDeboursInvoiceItems(customerOrder);
             // Confirm deposit taken into account or customer order starting and only if not
             // from to billed

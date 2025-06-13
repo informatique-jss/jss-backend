@@ -105,7 +105,7 @@ public class InvoiceHelper {
 
         orderingCustomer = responsableService.getResponsable(orderingCustomer.getId());
 
-        if (customerOrder.getId() != null) {
+        if (customerOrder != null && customerOrder.getId() != null) {
             if (customerOrder instanceof CustomerOrder)
                 customerOrder = customerOrderService.getCustomerOrder(customerOrder.getId());
             else

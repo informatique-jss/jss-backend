@@ -285,6 +285,8 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	private InvoicingBlockage invoicingBlockage;
 
 	private LocalDate princingEffectiveDate;
+
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private LocalDateTime productionEffectiveDateTime;
 
 	public Integer getId() {
