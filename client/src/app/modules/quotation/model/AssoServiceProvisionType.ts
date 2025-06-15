@@ -15,4 +15,5 @@ export interface AssoServiceProvisionType {
   noticeType: NoticeType;
   noticeTypeFamily: NoticeTypeFamily;
   noticeTemplate: AnnouncementNoticeTemplate;
+  complexity: number;
 }

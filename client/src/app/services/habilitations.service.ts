@@ -11,6 +11,10 @@ export class HabilitationsService {
   ) {
   }
 
+  canUpdateComplexity() {
+    return this.loginService.hasGroup([ADMINISTRATEURS]);
+  }
+
   canDisplayNotifications() {
     return true;
   }

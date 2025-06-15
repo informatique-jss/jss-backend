@@ -58,6 +58,9 @@ public class Indicator implements Serializable, IId {
 	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private List<Kpi> kpis;
 
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
+	private Boolean isReverse;
+
 	public Integer getId() {
 		return id;
 	}
@@ -120,6 +123,14 @@ public class Indicator implements Serializable, IId {
 
 	public void setKpis(List<Kpi> kpis) {
 		this.kpis = kpis;
+	}
+
+	public Boolean getIsReverse() {
+		return isReverse;
+	}
+
+	public void setIsReverse(Boolean isReverse) {
+		this.isReverse = isReverse;
 	}
 
 }

@@ -7,4 +7,5 @@ export interface Indicator extends IReferential {
   lastUpdate: Date;
   indicatorGroup: IndicatorGroup;
   kpis: Kpi[];
+  isReverse: boolean;
 }

@@ -68,6 +68,8 @@ public class IndicatorServiceImpl implements IndicatorService {
         if (indicator.getKpis() != null)
             for (Kpi kpi : indicator.getKpis())
                 kpi.setIndicator(indicator);
+        if (indicator.getIsReverse() == null)
+            indicator.setIsReverse(false);
         return indicatorRepository.save(indicator);
     }
 
@@ -140,11 +142,12 @@ public class IndicatorServiceImpl implements IndicatorService {
                         BigDecimal baseValue = kpi.getBaseValue() != null ? kpi.getBaseValue() : new BigDecimal(0);
                         indicatorValue.setSuccededValue(indicatorValue.getValue().subtract(baseValue));
 
-                        indicatorValue
-                                .setSuccededPercentage(indicatorValue.getSuccededValue().subtract(kpi.getMaxValue())
-                                        .divide(kpi.getMaxValue(), 10, RoundingMode.HALF_EVEN)
-                                        .setScale(2, RoundingMode.HALF_EVEN)
-                                        .floatValue() + 1);
+                        if (kpi.getMaxValue().compareTo(new BigDecimal(0)) > 0)
+                            indicatorValue
+                                    .setSuccededPercentage(indicatorValue.getSuccededValue().subtract(kpi.getMaxValue())
+                                            .divide(kpi.getMaxValue(), 10, RoundingMode.HALF_EVEN)
+                                            .setScale(2, RoundingMode.HALF_EVEN)
+                                            .floatValue() + 1);
                     }
                 }
 

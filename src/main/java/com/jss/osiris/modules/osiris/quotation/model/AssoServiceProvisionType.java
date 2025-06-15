@@ -65,6 +65,9 @@ public class AssoServiceProvisionType implements Serializable, IId {
 	@Column(length = 400)
 	private String customerMessageWhenAdded;
 
+	// 1 hard => 3 easy
+	private Integer complexity;
+
 	public Integer getId() {
 		return id;
 	}
@@ -151,6 +154,14 @@ public class AssoServiceProvisionType implements Serializable, IId {
 
 	public void setNoticeTemplate(AnnouncementNoticeTemplate noticeTemplate) {
 		this.noticeTemplate = noticeTemplate;
+	}
+
+	public Integer getComplexity() {
+		return complexity;
+	}
+
+	public void setComplexity(Integer complexity) {
+		this.complexity = complexity;
 	}
 
 }

@@ -158,6 +158,9 @@ export class ProvisionItemComponent implements OnInit {
         this.provision.simpleProvision = {} as SimpleProvision;
       }
 
+      if (!this.provision.complexity)
+        this.provision.complexity = 4;
+
       this.selectedProvisionTypeChange.emit();
     }
   }
@@ -167,5 +170,9 @@ export class ProvisionItemComponent implements OnInit {
   }
 
   compareWithId = compareWithId;
+
+  canUpdateComplexity() {
+    return this.habilitationsService.canUpdateComplexity();
+  }
 
 }

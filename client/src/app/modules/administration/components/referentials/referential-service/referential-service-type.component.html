@@ -120,6 +120,11 @@
           <table class="full-width" style="padding-top: 20px;">
             <tr>
               <td>
+                <generic-input [(model)]="assoServiceProvisionType.complexity" label="Complexité par défaut"
+                  [form]="entityForm" [propertyName]="'complexity'+index+deleteIndex" [isMandatory]="true"
+                  [isDisabled]="!editMode" type="number"></generic-input>
+              </td>
+              <td>
                 <generic-input [(model)]="assoServiceProvisionType.minEmployee" label="Nombre minimal de salariés"
                   [form]="entityForm" [propertyName]="'minEmployee'+index+deleteIndex" [isMandatory]="false"
                   matTooltipShowDelay="1000" [isDisabled]="!editMode"

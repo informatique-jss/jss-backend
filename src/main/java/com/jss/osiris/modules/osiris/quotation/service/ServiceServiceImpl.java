@@ -367,6 +367,8 @@ public class ServiceServiceImpl implements ServiceService {
             provision.setProvisionFamilyType(provisionType.getProvisionFamilyType());
             provision.setProvisionType(provisionType);
             provision.setService(service);
+            if (provision.getComplexity() == null)
+                provision.setComplexity(4);
             provision.setIsLogo(false);
             provision.setIsRedactedByJss(false);
             provision.setIsBaloPackage(false);

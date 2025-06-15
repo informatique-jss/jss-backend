@@ -61,5 +61,6 @@ export interface Provision extends IAttachment {
   providerInvoices: Invoice[];
   payments: Payment[];
   lastCompetentAuthorityReminderDateTime: Date;
+  complexity: number;
   customerOrderComments: CustomerOrderComment[];
 }

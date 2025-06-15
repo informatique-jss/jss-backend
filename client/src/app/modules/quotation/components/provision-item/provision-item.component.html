@@ -13,6 +13,11 @@
         [isDisabled]="!editMode || ( provision.announcement!=undefined && provision.announcement.actuLegaleId!=undefined && provision.announcement.actuLegaleId>0)"
         [filteredProvisionFamilyType]="provision.provisionFamilyType"></select-provision-type>
     </td>
+    <td>
+      <generic-input [(model)]="provision.complexity" label="Complexité" [form]="provisionItemForm"
+        propertyName="complexity" [isMandatory]="true" [isDisabled]="!editMode || !canUpdateComplexity()" type='number'
+        type="type"></generic-input>
+    </td>
     <td *ngIf="instanceOfCustomerOrder && provision && provision.id">
     <td colspan="2">
       <autocomplete-employee [(model)]="provision.assignedTo" [form]="provisionItemForm" propertyName="assignedTo"
