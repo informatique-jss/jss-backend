@@ -43,7 +43,7 @@ public class IndicatorValueServiceImpl implements IndicatorValueService {
 
     @Override
     public List<IndicatorValue> getIndicatorValuesForIndicator(Indicator indicator) {
-        return indicatorValueRepository.findByIndicator(indicator);
+        return indicatorValueRepository.findByIndicatorOrderByDate(indicator);
     }
 
     @Override

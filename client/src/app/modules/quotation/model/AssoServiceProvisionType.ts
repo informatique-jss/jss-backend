@@ -9,4 +9,5 @@ export interface AssoServiceProvisionType {
   minEmployee: number;
   maxEmployee: number;
   customerMessageWhenAdded: string;
+  complexity: number;
 }

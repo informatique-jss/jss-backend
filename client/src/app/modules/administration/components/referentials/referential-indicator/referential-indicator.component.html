@@ -36,6 +36,12 @@
           </tr>
           <tr>
             <td>
+              <generic-toggle [(model)]="selectedEntity.isReverse" label="Est à ne pas dépasser ?" [form]="entityForm"
+                propertyName="isReverse" [isDisabled]="!editMode"></generic-toggle>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-indicator-group [(model)]="selectedEntity.indicatorGroup" label="Groupe d'indicateurs"
                 [form]="entityForm" propertyName="indicatorGroup" [isMandatory]="true"
                 [isDisabled]="!editMode"></select-indicator-group>

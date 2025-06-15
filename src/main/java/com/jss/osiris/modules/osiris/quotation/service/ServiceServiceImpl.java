@@ -205,7 +205,9 @@ public class ServiceServiceImpl implements ServiceService {
                             assoServiceProvisionType.getProvisionType().getProvisionFamilyType());
                     provision.setProvisionType(assoServiceProvisionType.getProvisionType());
                     provision.setService(service);
-
+                    provision.setComplexity(assoServiceProvisionType.getComplexity());
+                    if (provision.getComplexity() == null)
+                        provision.setComplexity(4);
                     provision.setIsLogo(false);
                     provision.setIsRedactedByJss(false);
                     provision.setIsBaloPackage(false);

@@ -7,14 +7,14 @@
 
   <div class="dashboard-container" fxLayout="row wrap" fxLayoutGap="16px" fxLayoutAlign="start stretch">
     <h2>Indicateurs Objectivés</h2>
-    <div style="display: flex;">
+    <div style="display: flex; flex-wrap: wrap;">
       <ng-container *ngFor="let item of values">
         <mat-card class="indicator-card pointer" *ngIf="hasKpi(item)" appearance="outlined"
           (click)="displayDetailedIndicator(item)">
           <div class="indicator-title">{{ item.indicator.label }}</div>
 
           <div class="indicator-value" [ngClass]="getValueClass(item)">
-            {{ item.value ? item.value : '' }}
+            {{ item.value!=null && item.value!=undefined ? item.value : '' }}
           </div>
 
           <div class="indicator-date" [matTooltip]="'Mis à jour le '+formatDateHourFrance(item.indicator.lastUpdate)">
@@ -30,19 +30,23 @@
   </div>
   <div class="dashboard-container" fxLayout="row wrap" fxLayoutGap="16px" fxLayoutAlign="start stretch">
     <h2>Indicateurs meusurés</h2>
-    <ng-container *ngFor="let item of values">
-      <mat-card class="indicator-card pointer" *ngIf="!hasKpi(item)" appearance="outlined"
-        (click)="displayDetailedIndicator(item)">
-        <div class="indicator-title">{{ item.indicator.label }}</div>
+    <ng-container *ngFor="let group of indicatorGroups">
+      <div style="display: flex; flex-wrap: wrap;">
+        <ng-container *ngFor="let item of values">
+          <mat-card class="indicator-card pointer" *ngIf="!hasKpi(item) && item.indicator.indicatorGroup.id==group.id"
+            appearance="outlined" (click)="displayDetailedIndicator(item)">
+            <div class="indicator-title">{{ item.indicator.label }}</div>
 
-        <div class="indicator-value">
-          {{ item.value ? item.value : '' }}
-        </div>
+            <div class="indicator-value">
+              {{ item.value ? item.value : '' }}
+            </div>
 
-        <div class="indicator-date" [matTooltip]="'Mis à jour le '+formatDateHourFrance(item.indicator.lastUpdate)">
-          {{ item.date | date: 'd MMMM yyyy' }}
-        </div>
-      </mat-card>
+            <div class="indicator-date" [matTooltip]="'Mis à jour le '+formatDateHourFrance(item.indicator.lastUpdate)">
+              {{ item.date | date: 'd MMMM yyyy' }}
+            </div>
+          </mat-card>
+        </ng-container>
+      </div>
     </ng-container>
   </div>
 </div>

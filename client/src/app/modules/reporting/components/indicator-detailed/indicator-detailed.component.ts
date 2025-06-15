@@ -119,7 +119,11 @@ export class IndicatorDetailedComponent implements OnInit {
 
 
   refreshIndicator(isRefreshData: boolean = false) {
-    if (this.selectedIndicator)
+    if (this.selectedIndicator) {
+      this.indicatorValues = [];
+      this.selectedEmployeeIds = new Set<number>();
+      this.employees = [];
+      this.dataSource = new MatTreeNestedDataSource<EmployeeNode>();
       this.indicatorValueService.getIndicatorValues(this.selectedIndicator.id!).subscribe(response => {
         if (response) {
           this.indicatorValues = response;
@@ -129,6 +133,7 @@ export class IndicatorDetailedComponent implements OnInit {
             this.updateData();
         }
       })
+    }
   }
 
   /**
@@ -157,7 +162,7 @@ export class IndicatorDetailedComponent implements OnInit {
         .slice()
         .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-      let data: [string, number][] = [];
+      let data: [any, number][] = [];
 
       if (this.mode === 'cumulative') {
         // Group by year
@@ -183,7 +188,7 @@ export class IndicatorDetailedComponent implements OnInit {
             data.push([lastDate, sum]);
           });
       } else {
-        data = sortedValues.map(v => [formatDateFrance(v.date), v.value]);
+        data = sortedValues.map(v => [v.date, v.value]);
       }
 
       return {
@@ -211,7 +216,12 @@ export class IndicatorDetailedComponent implements OnInit {
           return `<strong>${dateLabel}</strong><br/>` + lines.join('<br/>');
         }
       },
-      xAxis: { type: 'category' },
+      xAxis: {
+        type: this.mode === 'cumulative' ? 'category' : 'time' as any,
+        axisLabel: {
+          formatter: (value: any) => formatDateFrance(value) // optionnel
+        }
+      },
       yAxis: { type: 'value' },
       legend: { data: series.map(s => s.name as string) },
       series: [...series, ...safeKpiSeries],

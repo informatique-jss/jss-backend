@@ -5,8 +5,10 @@ import { Employee } from 'src/app/modules/profile/model/Employee';
 import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from '../../../../services/habilitations.service';
+import { IndicatorGroup } from '../../model/IndicatorGroup';
 import { IndicatorValue } from '../../model/IndicatorValue';
 import { Kpi } from '../../model/Kpi';
+import { IndicatorGroupService } from '../../services/indicator-group.service';
 import { IndicatorValueService } from '../../services/indicator.value.service';
 
 @Component({
@@ -18,12 +20,14 @@ export class MyIndicatorsComponent implements OnInit {
 
   currentEmployee: Employee | undefined;
   values: IndicatorValue[] = [];
+  indicatorGroups: IndicatorGroup[] = [];
 
   constructor(private appService: AppService,
     private indicatorValueService: IndicatorValueService,
     private employeeService: EmployeeService,
     private habilitationsService: HabilitationsService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private indicatorGroupService: IndicatorGroupService
   ) { }
 
   formIndicator = this.formBuilder.group({});
@@ -31,6 +35,7 @@ export class MyIndicatorsComponent implements OnInit {
 
   ngOnInit() {
     this.appService.changeHeaderTitle("Mes indicateurs");
+    this.indicatorGroupService.getIndicatorGroups().subscribe(response => { this.indicatorGroups = response.sort((a, b) => a.label.localeCompare(b.label)) })
     this.employeeService.getCurrentEmployee().subscribe(currentEmployee => {
       this.currentEmployee = currentEmployee;
       this.loadValues();
@@ -87,44 +92,78 @@ export class MyIndicatorsComponent implements OnInit {
     const hasMedium = kpi.mediumValue != null;
     const hasMax = kpi.maxValue != null;
 
+    let reverse = item.indicator.isReverse;
+
     // 1 objective
-    if (hasMedium && !hasMin && !hasMax) {
-      return value < kpi.mediumValue ? 'red' : 'green';
-    }
-
     if (hasMin && !hasMedium && !hasMax) {
-      return value < kpi.minValue ? 'red' : 'green';
+      return reverse
+        ? value > kpi.minValue ? 'red' : 'green'
+        : value < kpi.minValue ? 'red' : 'green';
     }
 
-    if (hasMax && !hasMin && !hasMedium) {
-      return value < kpi.maxValue ? 'red' : 'green';
+    if (!hasMin && hasMedium && !hasMax) {
+      return reverse
+        ? value > kpi.mediumValue ? 'red' : 'green'
+        : value < kpi.mediumValue ? 'red' : 'green';
+    }
+
+    if (!hasMin && !hasMedium && hasMax) {
+      return reverse
+        ? value > kpi.maxValue ? 'red' : 'green'
+        : value < kpi.maxValue ? 'red' : 'green';
     }
 
     // 2 objectives
     if (hasMin && hasMedium && !hasMax) {
-      if (value < kpi.minValue) return 'red';
-      if (value < kpi.mediumValue) return 'orange';
-      return 'green';
+      if (!reverse) {
+        if (value < kpi.minValue) return 'red';
+        if (value < kpi.mediumValue) return 'orange';
+        return 'green';
+      } else {
+        if (value > kpi.mediumValue) return 'red';
+        if (value > kpi.minValue) return 'orange';
+        return 'green';
+      }
     }
 
     if (hasMin && !hasMedium && hasMax) {
-      if (value < kpi.minValue) return 'red';
-      if (value < kpi.maxValue) return 'orange';
-      return 'green';
+      if (!reverse) {
+        if (value < kpi.minValue) return 'red';
+        if (value < kpi.maxValue) return 'orange';
+        return 'green';
+      } else {
+        if (value > kpi.maxValue) return 'red';
+        if (value > kpi.minValue) return 'orange';
+        return 'green';
+      }
     }
 
     if (!hasMin && hasMedium && hasMax) {
-      if (value < kpi.mediumValue) return 'red';
-      if (value < kpi.maxValue) return 'orange';
-      return 'green';
+      if (!reverse) {
+        if (value < kpi.mediumValue) return 'red';
+        if (value < kpi.maxValue) return 'orange';
+        return 'green';
+      } else {
+        if (value > kpi.maxValue) return 'red';
+        if (value > kpi.mediumValue) return 'orange';
+        return 'green';
+      }
     }
+
 
     // 3 objectives
     if (hasMin && hasMedium && hasMax) {
-      if (value < kpi.minValue) return 'red';
-      if (value < kpi.mediumValue) return 'orange';
-      if (value < kpi.maxValue) return 'yellow';
-      return 'green';
+      if (!reverse) {
+        if (value < kpi.minValue) return 'red';
+        if (value < kpi.mediumValue) return 'orange';
+        if (value < kpi.maxValue) return 'yellow';
+        return 'green';
+      } else {
+        if (value > kpi.maxValue) return 'red';
+        if (value > kpi.mediumValue) return 'orange';
+        if (value > kpi.minValue) return 'yellow';
+        return 'green';
+      }
     }
 
     return '';

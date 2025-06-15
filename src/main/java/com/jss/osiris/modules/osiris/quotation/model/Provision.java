@@ -226,6 +226,9 @@ public class Provision implements IId, IAttachment {
 
 	private LocalDateTime lastCompetentAuthorityReminderDateTime;
 
+	// 1 hard => 3 easy
+	private Integer complexity;
+
 	public Integer getId() {
 		return id;
 	}
@@ -632,5 +635,13 @@ public class Provision implements IId, IAttachment {
 
 	public void setInvoiceItemsGrouped(List<InvoiceItem> invoiceItemsGrouped) {
 		this.invoiceItemsGrouped = invoiceItemsGrouped;
+	}
+
+	public Integer getComplexity() {
+		return complexity;
+	}
+
+	public void setComplexity(Integer complexity) {
+		this.complexity = complexity;
 	}
 }

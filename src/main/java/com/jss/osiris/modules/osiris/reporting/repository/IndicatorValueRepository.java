@@ -12,7 +12,7 @@ import com.jss.osiris.modules.osiris.reporting.model.IndicatorValue;
 
 public interface IndicatorValueRepository extends QueryCacheCrudRepository<IndicatorValue, Integer> {
 
-  List<IndicatorValue> findByIndicator(Indicator indicator);
+  List<IndicatorValue> findByIndicatorOrderByDate(Indicator indicator);
 
   @Query("""
         SELECT iv FROM IndicatorValue iv join fetch iv.indicator i left join fetch i.kpis
