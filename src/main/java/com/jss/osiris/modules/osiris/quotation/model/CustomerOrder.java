@@ -219,12 +219,16 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_recurring_frequency")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private CustomerOrderFrequency customerOrderFrequency;
 
 	@Transient
 	private Boolean hasCustomerOrderParentRecurring;
 
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private LocalDate recurringPeriodStartDate;
+
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private LocalDate recurringPeriodEndDate;
 
 	@JsonView(JacksonViews.MyJssDetailedView.class)

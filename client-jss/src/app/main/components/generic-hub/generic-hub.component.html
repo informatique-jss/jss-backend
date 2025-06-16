@@ -95,7 +95,7 @@
                       <div class="card-body  d-md-flex align-items-center">
                         <div class="card-flex-content">
                           <div class="d-flex flex-wrap">
-                            <a *ngFor="let tag of post.postTags" (click)="openTagPosts(tag, $event)"
+                            <a *ngFor="let tag of post.postTags.slice(0,8)" (click)="openTagPosts(tag, $event)"
                               class="badge bg-info rounded-pill px-2">{{ tag.name }}</a>
                             <a *ngIf="currentUser"
                               class="rounded-outline-icon rounded-circle fs-8 d-flex align-items-center justify-content-center ms-2"
@@ -253,7 +253,7 @@
                   </div>
                   <ul class="tag-cloud list-inline">
                     <!-- TODO replace with routerLink and make it work -->
-                    <li *ngFor="let tag of tagsByEntityType" class="list-inline-item pb-1"><a
+                    <li *ngFor="let tag of tagsByEntityType.slice(0,8)" class="list-inline-item pb-1"><a
                         class="btn bg-light text-secondary bg-hover-danger text-hover-white bg-hover-secondary text-hover-white"
                         (click)="openTagPosts(tag,$event)">{{tag.name}}</a>
                     </li>
