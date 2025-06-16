@@ -22,6 +22,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.osiris.miscellaneous.model.CompetentAuthorityType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Constant;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Country;
+import com.jss.osiris.modules.osiris.miscellaneous.model.CustomerOrderFrequency;
 import com.jss.osiris.modules.osiris.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.osiris.miscellaneous.model.DeliveryService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Department;
@@ -1087,6 +1088,21 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public RffFrequency getRffFrequencyQuarterly() throws OsirisException {
         return getConstants().getRffFrequencyQuarterly();
+    }
+
+    @Override
+    public CustomerOrderFrequency getCustomerOrderFrequencyAnnual() throws OsirisException {
+        return getConstants().getCustomerOrderFrequencyAnnual();
+    }
+
+    @Override
+    public CustomerOrderFrequency getCustomerOrderFrequencyMonthly() throws OsirisException {
+        return getConstants().getCustomerOrderFrequencyMonthly();
+    }
+
+    @Override
+    public CustomerOrderFrequency getCustomerOrderFrequencyQuarterly() throws OsirisException {
+        return getConstants().getCustomerOrderFrequencyQuarterly();
     }
 
     @Override

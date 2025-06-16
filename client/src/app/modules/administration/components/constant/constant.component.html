@@ -1578,6 +1578,30 @@
           </tr>
           <tr>
             <td>
+              <select-customer-order-frequency [(model)]="constant.customerOrderFrequencyAnnual"
+                label="Périodicité de la commande - Annuelle" [form]="constantForm"
+                propertyName="customerOrderFrequencyAnnual " [isMandatory]="true"
+                [isDisabled]="!editMode"></select-customer-order-frequency>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-customer-order-frequency [(model)]="constant.customerOrderFrequencyQuarterly"
+                label="Périodicité de la commande - Trimestiel" [form]="constantForm"
+                propertyName="customerOrderFrequencyQuarterly " [isMandatory]="true"
+                [isDisabled]="!editMode"></select-customer-order-frequency>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-customer-order-frequency [(model)]="constant.customerOrderFrequencyMonthly"
+                label="Périodicité de la commande - Mensuel" [form]="constantForm"
+                propertyName="customerOrderFrequencyMonthly " [isMandatory]="true"
+                [isDisabled]="!editMode"></select-customer-order-frequency>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <autocomplete-service-type [(model)]="constant.serviceTypeOther" [form]="constantForm"
                 propertyName="serviceTypeOther" [isMandatory]="true" label="Service - Autre"
                 [isDisabled]="!editMode"></autocomplete-service-type>

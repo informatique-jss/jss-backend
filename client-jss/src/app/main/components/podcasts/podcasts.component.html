@@ -22,7 +22,7 @@
 
             <!---------------------Left column-------------------->
             <div class="col-md-8">
-              <img src="/assets/images/raide-comme-la-justice-hub-img.png" class="w-100" />
+              <img src="/assets/images/raide-comme-la-justice-hub-img.svg" class="w-100" />
 
               <div class="row p-0">
                 <div *ngIf="!postsByEntityType || postsByEntityType.length == 0" class="pb-3">
@@ -95,7 +95,7 @@
                     </div>
                   </div>
                   <ul class="tag-cloud list-inline">
-                    <li *ngFor="let tag of tagsByEntityType" class="list-inline-item pb-1"><a
+                    <li *ngFor="let tag of tagsByEntityType.slice(0,8)" class="list-inline-item pb-1"><a
                         class="btn bg-light text-secondary bg-hover-danger text-hover-white bg-hover-secondary text-hover-white"
                         (click)="openTagPosts(tag,$event)">{{tag.name}}</a>
                     </li>
