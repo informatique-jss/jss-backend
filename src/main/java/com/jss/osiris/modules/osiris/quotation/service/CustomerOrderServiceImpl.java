@@ -71,6 +71,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.InvoicingSummary;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Notification;
+import com.jss.osiris.modules.osiris.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.CompetentAuthorityService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
@@ -2078,7 +2079,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         assoAffaireOrder.setServices(Arrays.asList(serviceSubscription));
 
         customerOrder.setAssoAffaireOrders(Arrays.asList(assoAffaireOrder));
-        customerOrder.setSpecialOffers(Arrays.asList());
+
+        List<SpecialOffer> specialOffers = new ArrayList<>();
+        if (isPriceReductionForSubscription) {
+            specialOffers.add(constantService.getSpecialOfferJssSubscriptionReduction());
+        }
+        customerOrder.setSpecialOffers(specialOffers);
         pricingHelper.getAndSetInvoiceItemsForQuotation(customerOrder, false);
 
         customerOrder.setResponsable(null);

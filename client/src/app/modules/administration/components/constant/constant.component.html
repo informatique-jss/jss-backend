@@ -1646,9 +1646,10 @@
           <tr>
           <tr>
             <td>
-              <autocomplete-service-type [(model)]="constant.specialOfferJssSubscriptionReduction" [form]="constantForm"
+              <select-special-offer [(model)]="constant.specialOfferJssSubscriptionReduction"
+                label="Offre spéciale - Abonnement JSS média" [form]="constantForm"
                 propertyName="specialOfferJssSubscriptionReduction" [isMandatory]="true"
-                label="Offre spéciale - Abonnement JSS média" [isDisabled]="!editMode"></autocomplete-service-type>
+                [isDisabled]="!editMode"></select-special-offer>
             </td>
           </tr>
           <tr>

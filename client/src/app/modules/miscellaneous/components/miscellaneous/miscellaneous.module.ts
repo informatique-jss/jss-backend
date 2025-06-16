@@ -266,6 +266,7 @@ import { SelectServiceFamilyComponent } from '../forms/select-service-family/sel
 import { SelectServiceFieldDataTypeComponent } from '../forms/select-service-field-data-type/select-service-field-data-type.component';
 import { SelectServiceFieldTypeComponent } from '../forms/select-service-field-type/select-service-field-type.component';
 import { SelectServiceTypeComponent } from '../forms/select-service-type/select-service-type.component';
+import { SelectSpecialOfferComponent } from '../forms/select-special-offer/select-special-offer.component';
 import { SelectSubscriptionPeriodComponent } from '../forms/select-subscription-period/select-subscription-period.component';
 import { SelectTiersCategoryComponent } from '../forms/select-tiers-category/select-tiers-category.component';
 import { SelectTiersTypeComponent } from '../forms/select-tiers-type/select-tiers-type.component';
@@ -554,6 +555,7 @@ const routes: Routes = [
     SelectTypeDocumentComponent,
     AutocompleteTypeDocumentComponent,
     SelectServiceTypeComponent,
+    SelectSpecialOfferComponent,
     AutocompleteServiceTypeComponent,
     MultipleUploadComponent,
     AutocompleteProvisionTypeComponent,
@@ -815,6 +817,7 @@ const routes: Routes = [
     SelectTypeDocumentComponent,
     AutocompleteTypeDocumentComponent,
     SelectServiceTypeComponent,
+    SelectSpecialOfferComponent,
     AutocompleteServiceTypeComponent,
     MultipleUploadComponent,
     AutocompleteProvisionTypeComponent,

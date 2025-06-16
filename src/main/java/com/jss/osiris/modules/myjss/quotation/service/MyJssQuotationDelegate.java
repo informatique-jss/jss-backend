@@ -112,7 +112,7 @@ public class MyJssQuotationDelegate {
                 }
                 saveNewMailsOnAffaire(quotation);
             } else {
-                Affaire newAffaire = createAffaireWithTiers(responsable.getTiers());
+                Affaire newAffaire = createAffaireWithTiers(quotation.getResponsable().getTiers());
                 asso.setAffaire(affaireService.addOrUpdateAffaire(newAffaire));
             }
         }
@@ -295,13 +295,17 @@ public class MyJssQuotationDelegate {
         affaire.setFirstname(tiers.getFirstname());
         affaire.setLastname(tiers.getLastname());
         List<Mail> mails = new ArrayList<>();
-        for (Mail mail : tiers.getMails()) {
-            mails.add(mail);
+        if (tiers.getMails() != null) {
+            for (Mail mail : tiers.getMails()) {
+                mails.add(mail);
+            }
         }
         affaire.setMails(mails);
         List<Phone> phones = new ArrayList<>();
-        for (Phone phone : tiers.getPhones()) {
-            phones.add(phone);
+        if (tiers.getPhones() != null) {
+            for (Phone phone : tiers.getPhones()) {
+                phones.add(phone);
+            }
         }
         affaire.setPhones(phones);
         affaire.setSiret(tiers.getSiret());
