@@ -12,7 +12,8 @@ const routesMyAccount = [
     path: 'account', component: MyAccountComponent,
     children: [
       { path: 'overview', loadComponent: () => import('./modules/my-account/components/overview/overview.component').then(m => m.OverviewComponent) },
-      { path: 'bookmarks', loadComponent: () => import('./modules/my-account/components/bookmarks/bookmarks.component').then(m => m.BookmarksComponent) },
+      { path: 'reading-folders', loadComponent: () => import('./modules/my-account/components/reading-folders/reading-folders.component').then(m => m.ReadingFoldersComponent) },
+      { path: 'reading-folders/:idReadingFolder', loadComponent: () => import('./modules/my-account/components/bookmarks/bookmarks.component').then(m => m.BookmarksComponent) },
       { path: 'scope', loadComponent: () => import('./modules/my-account/components/scope/scope.component').then(m => m.ScopeComponent) },
       { path: 'closure', loadComponent: () => import('./modules/my-account/components/billing-closure/billing-closure.component').then(m => m.BillingClosureComponent) },
       { path: 'communication-preference', loadComponent: () => import('./modules/my-account/components/communication-preference/communication-preference.component').then(m => m.CommunicationPreferenceComponent) },

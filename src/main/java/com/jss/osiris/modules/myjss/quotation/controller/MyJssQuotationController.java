@@ -43,9 +43,11 @@ import com.jss.osiris.modules.myjss.quotation.service.DashboardUserStatisticsSer
 import com.jss.osiris.modules.myjss.quotation.service.MyJssQuotationDelegate;
 import com.jss.osiris.modules.myjss.wordpress.model.Newspaper;
 import com.jss.osiris.modules.myjss.wordpress.model.Post;
+import com.jss.osiris.modules.myjss.wordpress.model.ReadingFolder;
 import com.jss.osiris.modules.myjss.wordpress.model.Subscription;
 import com.jss.osiris.modules.myjss.wordpress.service.NewspaperService;
 import com.jss.osiris.modules.myjss.wordpress.service.PostService;
+import com.jss.osiris.modules.myjss.wordpress.service.ReadingFolderService;
 import com.jss.osiris.modules.osiris.crm.model.Candidacy;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
@@ -237,6 +239,9 @@ public class MyJssQuotationController {
 
 	@Autowired
 	NewspaperService newspaperService;
+
+	@Autowired
+	ReadingFolderService readingFolderService;
 
 	private final ConcurrentHashMap<String, AtomicLong> requestCount = new ConcurrentHashMap<>();
 	private final long rateLimit = 1000;
@@ -1668,4 +1673,51 @@ public class MyJssQuotationController {
 						idArticle),
 				HttpStatus.OK);
 	}
+
+	@PostMapping(inputEntryPoint + "/reading-folder")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<ReadingFolder> addOrUpdateReadingFolder(@RequestBody ReadingFolder readingFolder,
+			HttpServletRequest request)
+			throws OsirisValidationException {
+		detectFlood(request);
+		if (readingFolder.getLabel() != null && readingFolder.getLabel().trim().length() > 0)
+			validationHelper.validateString(readingFolder.getLabel(), null, "readingFolderLabel");
+
+		return new ResponseEntity<ReadingFolder>(readingFolderService.addOrUpdateReadingFolder(readingFolder),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/reading-folder/delete")
+	public ResponseEntity<Boolean> deleteReadingFolder(@RequestParam Integer idReadingFolder,
+			HttpServletRequest request)
+			throws OsirisValidationException {
+		detectFlood(request);
+		ReadingFolder readingFolder = readingFolderService.getReadingFolder(idReadingFolder);
+		if (readingFolder == null)
+			throw new OsirisValidationException("readingFolder");
+
+		readingFolderService.deleteReadingFolder(readingFolder);
+		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/reading-folders")
+	public ResponseEntity<List<ReadingFolder>> getReadingFolders(HttpServletRequest request)
+			throws OsirisValidationException {
+		detectFlood(request);
+		return new ResponseEntity<List<ReadingFolder>>(readingFolderService.getAvailableReadingFolders(),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/reading-folder/image")
+	public ResponseEntity<ReadingFolder> getFirstPostImageForReadingFolder(@RequestParam Integer idReadingFolder,
+			HttpServletRequest request)
+			throws OsirisValidationException {
+		detectFlood(request);
+		ReadingFolder readingFolder = readingFolderService.getReadingFolder(idReadingFolder);
+		if (readingFolder == null)
+			throw new OsirisValidationException("readingFolder");
+		return new ResponseEntity<ReadingFolder>(readingFolderService.getFirstPostImage(readingFolder),
+				HttpStatus.OK);
+	}
+
 }

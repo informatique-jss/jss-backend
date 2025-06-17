@@ -9,6 +9,7 @@ import { Media } from '../model/Media';
 import { PagedContent } from '../model/PagedContent';
 import { Post } from '../model/Post';
 import { PublishingDepartment } from '../model/PublishingDepartment';
+import { ReadingFolder } from '../model/ReadingFolder';
 import { Serie } from '../model/Serie';
 import { Tag } from '../model/Tag';
 
@@ -65,8 +66,12 @@ export class PostService extends AppRestService<Post> {
     });
   }
 
-  addAssoMailPost(post: Post) {
-    return this.get(new HttpParams().set("idPost", post.id), "post/bookmark/add");
+  addAssoMailPost(post: Post, readingFolder?: ReadingFolder) {
+    let params = new HttpParams()
+      .set("idPost", post.id)
+    if (readingFolder)
+      params = params.set('idReadingFolder', readingFolder.id);
+    return this.get(params, "post/bookmark/add");
   }
 
   deleteAssoMailPost(post: Post) {

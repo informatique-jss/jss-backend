@@ -46,6 +46,7 @@ import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.Post;
 import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
+import com.jss.osiris.modules.myjss.wordpress.model.ReadingFolder;
 import com.jss.osiris.modules.myjss.wordpress.model.Serie;
 import com.jss.osiris.modules.myjss.wordpress.model.Subscription;
 import com.jss.osiris.modules.myjss.wordpress.model.Tag;
@@ -60,6 +61,7 @@ import com.jss.osiris.modules.myjss.wordpress.service.MyJssCategoryService;
 import com.jss.osiris.modules.myjss.wordpress.service.PostService;
 import com.jss.osiris.modules.myjss.wordpress.service.PostViewService;
 import com.jss.osiris.modules.myjss.wordpress.service.PublishingDepartmentService;
+import com.jss.osiris.modules.myjss.wordpress.service.ReadingFolderService;
 import com.jss.osiris.modules.myjss.wordpress.service.SerieService;
 import com.jss.osiris.modules.myjss.wordpress.service.SubscriptionService;
 import com.jss.osiris.modules.myjss.wordpress.service.TagService;
@@ -159,6 +161,9 @@ public class WordpressController {
 	@Autowired
 	EmployeeService employeeService;
 
+	@Autowired
+	ReadingFolderService readingFolderService;
+
 	// Crawler user-agents
 	private static final List<String> CRAWLER_USER_AGENTS = Arrays.asList("Googlebot", "Bingbot", "Slurp",
 			"DuckDuckBot", "Baiduspider", "YandexBot", "Sogou", "Exabot", "facebot", "ia_archiver");
@@ -225,6 +230,7 @@ public class WordpressController {
 	@GetMapping(inputEntryPoint + "/post/bookmark/add")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<Boolean> addAssoMailPost(@RequestParam Integer idPost,
+			@RequestParam(required = false) Integer idReadingFolder,
 			HttpServletRequest request) throws OsirisException {
 
 		detectFlood(request);
@@ -234,7 +240,11 @@ public class WordpressController {
 		if (post == null)
 			throw new OsirisValidationException("post");
 
-		postService.updateBookmarkPost(post);
+		ReadingFolder readingFolder = null;
+		if (idReadingFolder != null)
+			readingFolder = readingFolderService.getReadingFolder(idReadingFolder);
+
+		postService.updateBookmarkPost(post, readingFolder);
 
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
@@ -257,15 +267,22 @@ public class WordpressController {
 
 	@GetMapping(inputEntryPoint + "/post/bookmark/all")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
-	public ResponseEntity<Page<Post>> getBookmarkPostsForCurrentUser(@RequestParam(defaultValue = "0") int page,
+	public ResponseEntity<Page<Post>> getBookmarkPostsForCurrentUser(
+			@RequestParam Integer idReadingFolder,
+			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size,
 			HttpServletRequest request) throws OsirisException {
 
 		detectFlood(request);
+		ReadingFolder readingFolder = null;
+		if (idReadingFolder != null)
+			readingFolder = readingFolderService.getReadingFolder(idReadingFolder);
+
 		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
 				Sort.by(Sort.Direction.DESC, "date"));
 
-		return new ResponseEntity<Page<Post>>(postService.getBookmarkPostsForCurrentUser(pageable),
+		return new ResponseEntity<Page<Post>>(
+				postService.getBookmarkPostsByReadingFolderForCurrentUser(readingFolder, pageable),
 				HttpStatus.OK);
 	}
 
@@ -698,8 +715,10 @@ public class WordpressController {
 			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
 
 		return new ResponseEntity<Page<Post>>(
-				postService.getAllPostsByJssCategory(pageableRequest, jssCategory, searchText,
-						computeJssCategoryConsultationDate(isDisplayNewPosts, jssCategory)),
+				postService
+						.applyPremiumAndBookmarks(
+								postService.getAllPostsByJssCategory(pageableRequest, jssCategory, searchText,
+										computeJssCategoryConsultationDate(isDisplayNewPosts, jssCategory))),
 				HttpStatus.OK);
 	}
 
@@ -746,8 +765,9 @@ public class WordpressController {
 			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
 
 		return new ResponseEntity<Page<Post>>(
-				postService.getAllPostsByTag(pageableRequest, tag, searchText,
-						computeTagConsultationDate(isDisplayNewPosts, tag)),
+				postService
+						.applyPremiumAndBookmarks(postService.getAllPostsByTag(pageableRequest, tag, searchText,
+								computeTagConsultationDate(isDisplayNewPosts, tag))),
 				HttpStatus.OK);
 
 	}
@@ -773,8 +793,9 @@ public class WordpressController {
 			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
 
 		return new ResponseEntity<Page<Post>>(
-				postService.getAllPostsByAuthor(pageableRequest, author, searchText,
-						computeAuthorConsultationDate(isDisplayNewPosts, author)),
+				postService
+						.applyPremiumAndBookmarks(postService.getAllPostsByAuthor(pageableRequest, author, searchText,
+								computeAuthorConsultationDate(isDisplayNewPosts, author))),
 				HttpStatus.OK);
 	}
 
@@ -797,7 +818,8 @@ public class WordpressController {
 			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
 
 		return new ResponseEntity<Page<Post>>(
-				postService.getAllPostsBySerie(pageableRequest, serie, searchText),
+				postService
+						.applyPremiumAndBookmarks(postService.getAllPostsBySerie(pageableRequest, serie, searchText)),
 				HttpStatus.OK);
 	}
 
@@ -825,8 +847,10 @@ public class WordpressController {
 					HttpStatus.OK);
 
 		return new ResponseEntity<Page<Post>>(
-				postService.getAllPostsByPublishingDepartment(pageableRequest, publishingDepartment,
-						searchText),
+				postService
+						.applyPremiumAndBookmarks(
+								postService.getAllPostsByPublishingDepartment(pageableRequest, publishingDepartment,
+										searchText)),
 				HttpStatus.OK);
 	}
 

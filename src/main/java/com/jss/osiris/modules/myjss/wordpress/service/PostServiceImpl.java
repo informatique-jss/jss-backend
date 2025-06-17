@@ -37,6 +37,7 @@ import com.jss.osiris.modules.myjss.wordpress.model.Media;
 import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.Post;
 import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
+import com.jss.osiris.modules.myjss.wordpress.model.ReadingFolder;
 import com.jss.osiris.modules.myjss.wordpress.model.Serie;
 import com.jss.osiris.modules.myjss.wordpress.model.Subscription;
 import com.jss.osiris.modules.myjss.wordpress.model.Tag;
@@ -223,7 +224,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void updateBookmarkPost(Post post) {
+    public void updateBookmarkPost(Post post, ReadingFolder readingFolder) {
         Responsable responsable = employeeService.getCurrentMyJssUser();
 
         AssoMailPost existingAsso = assoMailPostService.getAssoMailPostByMailAndPost(responsable.getMail(), post);
@@ -234,6 +235,8 @@ public class PostServiceImpl implements PostService {
         if (responsable != null) {
             assoMailPost.setMail(responsable.getMail());
             assoMailPost.setPost(post);
+            if (readingFolder != null)
+                assoMailPost.setReadingFolder(readingFolder);
             assoMailPost = assoMailPostService.addOrUpdateAssoMailPost(assoMailPost);
             if (post.getAssoMailPosts().isEmpty())
                 post.setAssoMailPosts(new ArrayList<>());
@@ -458,12 +461,15 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Page<Post> getBookmarkPostsForCurrentUser(Pageable pageableRequest) {
+    public Page<Post> getBookmarkPostsByReadingFolderForCurrentUser(ReadingFolder readingFolder,
+            Pageable pageableRequest) {
         Responsable responsable = employeeService.getCurrentMyJssUser();
         Page<Post> bookmarkedPosts = null;
 
         if (responsable != null && responsable.getMail() != null)
-            bookmarkedPosts = postRepository.findBookmarkedPostsByMail(false, responsable.getMail(), pageableRequest);
+            bookmarkedPosts = postRepository.findBookmarkedPostsByMailAndReadingFolder(false, readingFolder,
+                    responsable.getMail(),
+                    pageableRequest);
 
         if (bookmarkedPosts != null)
             for (Post post : bookmarkedPosts.getContent())
@@ -479,8 +485,10 @@ public class PostServiceImpl implements PostService {
 
         if (posts != null && !posts.getContent().isEmpty()) {
             if (responsable != null && responsable.getMail() != null) {
-                bookmarkedPosts = postRepository.findBookmarkedPostsByMail(false, responsable.getMail(),
-                        pageableRequest).getContent();
+                bookmarkedPosts = postRepository
+                        .findBookmarkedPostsByMailAndReadingFolder(false, null, responsable.getMail(),
+                                pageableRequest)
+                        .getContent();
 
                 if (bookmarkedPosts != null) {
                     for (Post post : posts.getContent()) {
@@ -507,8 +515,10 @@ public class PostServiceImpl implements PostService {
         Pageable pageableRequest = PageRequest.of(0, Integer.MAX_VALUE);
 
         if (responsable != null && responsable.getMail() != null) {
-            bookmarkedPosts = postRepository.findBookmarkedPostsByMail(false, responsable.getMail(),
-                    pageableRequest).getContent();
+            bookmarkedPosts = postRepository
+                    .findBookmarkedPostsByMailAndReadingFolder(false, null, responsable.getMail(),
+                            pageableRequest)
+                    .getContent();
 
             if (bookmarkedPosts != null) {
                 post.setIsBookmarked(false);

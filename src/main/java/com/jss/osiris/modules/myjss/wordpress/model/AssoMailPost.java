@@ -20,7 +20,8 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(indexes = { @Index(name = "idx_asso_mail_post", columnList = "id_mail,id_post", unique = true) })
+@Table(indexes = { @Index(name = "idx_asso_mail_post", columnList = "id_mail,id_post", unique = true),
+                @Index(name = "idx_asso_mail_post_mail", columnList = "id_mail") })
 public class AssoMailPost implements Serializable, IId {
 
         @Id
@@ -38,6 +39,11 @@ public class AssoMailPost implements Serializable, IId {
         @JoinColumn(name = "id_post")
         @IndexedField
         private Post post;
+
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "id_reading_folder")
+        @IndexedField
+        private ReadingFolder readingFolder;
 
         public Integer getId() {
                 return id;
@@ -61,6 +67,14 @@ public class AssoMailPost implements Serializable, IId {
 
         public void setPost(Post post) {
                 this.post = post;
+        }
+
+        public ReadingFolder getReadingFolder() {
+                return readingFolder;
+        }
+
+        public void setReadingFolder(ReadingFolder readingFolder) {
+                this.readingFolder = readingFolder;
         }
 
 }

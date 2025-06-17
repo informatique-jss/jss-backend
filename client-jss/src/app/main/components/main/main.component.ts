@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbPopover, NgbPopoverModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { MY_JSS_HOME_ROUTE } from '../../../libs/Constants';
 import { validateEmail } from '../../../libs/CustomFormsValidatorsHelper';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
@@ -9,6 +9,7 @@ import { Author } from '../../model/Author';
 import { JssCategory } from '../../model/JssCategory';
 import { Post } from '../../model/Post';
 import { PublishingDepartment } from '../../model/PublishingDepartment';
+import { ReadingFolder } from '../../model/ReadingFolder';
 import { Responsable } from '../../model/Responsable';
 import { Serie } from '../../model/Serie';
 import { Tag } from '../../model/Tag';
@@ -16,6 +17,7 @@ import { AudioPlayerService } from '../../services/audio.player.service';
 import { CommunicationPreferencesService } from '../../services/communication.preference.service';
 import { LoginService } from '../../services/login.service';
 import { PostService } from '../../services/post.service';
+import { ReadingFolderService } from '../../services/reading.folder.service';
 import { SerieService } from '../../services/serie.service';
 import { TagService } from '../../services/tag.service';
 
@@ -26,7 +28,7 @@ declare var tns: any;
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, NgbTooltipModule]
+  imports: [SHARED_IMPORTS, NgbTooltipModule, NgbPopover, NgbPopoverModule]
 })
 export class MainComponent implements OnInit {
 
@@ -40,7 +42,7 @@ export class MainComponent implements OnInit {
   podcasts: Post[] = [];
   series: Serie[] = [];
   tagTendencies: Tag[] = [];
-
+  readingFolders: ReadingFolder[] = [];
   mail: string = '';
 
   firstCategory!: JssCategory;
@@ -58,7 +60,8 @@ export class MainComponent implements OnInit {
     private communicationPreferenceService: CommunicationPreferencesService,
     private constantService: ConstantService,
     private tagService: TagService,
-    private audioService: AudioPlayerService
+    private audioService: AudioPlayerService,
+    private readingFolderService: ReadingFolderService
   ) { }
 
 
@@ -88,7 +91,7 @@ export class MainComponent implements OnInit {
 
     // Fetch posts by category
     this.fillPostsForCategories();
-
+    this.fetchReadingFolders();
     //Fetch most viewed posts
     this.postService.getMostViewedPosts(0, 5).subscribe(pagedPosts => {
       if (pagedPosts.content) {
@@ -189,7 +192,6 @@ export class MainComponent implements OnInit {
       })
     }
   }
-
   unBookmarkPost(post: Post) {
     this.postService.deleteAssoMailPost(post).subscribe(response => {
       if (response)
@@ -197,12 +199,25 @@ export class MainComponent implements OnInit {
     });
   }
 
-  bookmarkPost(post: Post) {
-    this.postService.addAssoMailPost(post).subscribe(response => {
-      if (response)
+  bookmarkPost(post: Post, readingFolder?: ReadingFolder) {
+    this.postService.addAssoMailPost(post, readingFolder).subscribe(response => {
+      if (response) {
         post.isBookmarked = true;
+      }
     });
+  }
 
+  fetchReadingFolders() {
+    this.readingFolderService.getReadingFolders().subscribe(response => {
+      if (response)
+        this.readingFolders.push(...response);
+    });
+  }
+
+  handleBookmarkPost(post: Post) {
+    if (post.isBookmarked)
+      this.unBookmarkPost(post);
+    else this.bookmarkPost(post);
   }
 
   followSerie(serieToFollow: Serie, event: MouseEvent) {

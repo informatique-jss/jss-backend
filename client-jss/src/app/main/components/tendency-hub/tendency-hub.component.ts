@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbPopover, NgbPopoverModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { AppService } from '../../../services/app.service';
@@ -10,6 +10,7 @@ import { Post } from '../../model/Post';
 import { Tag } from '../../model/Tag';
 import { LoginService } from '../../services/login.service';
 import { PostService } from '../../services/post.service';
+import { ReadingFolderService } from '../../services/reading.folder.service';
 import { TagService } from '../../services/tag.service';
 import { GenericHubComponent } from '../generic-hub/generic-hub.component';
 import { GenericInputComponent } from '../generic-input/generic-input.component';
@@ -18,13 +19,13 @@ import { GenericInputComponent } from '../generic-input/generic-input.component'
   selector: 'tendency-hub',
   templateUrl: './../generic-hub/generic-hub.component.html',
   styleUrls: ['./../generic-hub/generic-hub.component.css'],
-  imports: [SHARED_IMPORTS, GenericInputComponent, NgbTooltipModule],
+  imports: [SHARED_IMPORTS, GenericInputComponent, NgbTooltipModule, NgbPopover, NgbPopoverModule],
   standalone: true
 })
 export class TendencyHubComponent extends GenericHubComponent<{ id: number }> implements OnInit {
-  constructor(postService: PostService, private tagService: TagService, appService: AppService, formBuilder: FormBuilder, activeRoute: ActivatedRoute, loginService: LoginService
+  constructor(postService: PostService, private tagService: TagService, readingFolderService: ReadingFolderService, appService: AppService, formBuilder: FormBuilder, activeRoute: ActivatedRoute, loginService: LoginService
   ) {
-    super(appService, formBuilder, activeRoute, postService, loginService);
+    super(appService, readingFolderService, formBuilder, activeRoute, postService, loginService,);
   }
   override getAllPostByEntityType(selectedEntityType: Post, page: number, pageSize: number, searchText: string): Observable<PagedContent<Post>> {
     return this.postService.getPostsTendency(page, pageSize, searchText);

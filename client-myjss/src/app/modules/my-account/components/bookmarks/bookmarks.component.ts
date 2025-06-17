@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
@@ -20,18 +21,22 @@ export class BookmarksComponent implements OnInit {
   @Input() mail: string | undefined;
   @Input() validationToken: string | null = null;
   bookmarkPosts: Post[] = [] as Array<Post>;
+  idReadingFolder: number = -1;
 
-  constructor(private postService: PostService, private appService: AppService) { }
+  constructor(private postService: PostService, private appService: AppService,
+    private activeRoute: ActivatedRoute,
+  ) { }
 
   ngOnInit() {
-    this.fetchBookmarkPosts();
+    if (this.activeRoute.snapshot.params['idReadingFolder'])
+      this.idReadingFolder = this.activeRoute.snapshot.params['idReadingFolder'];
+    this.fetchBookmarkPostsByReadingFolder();
   }
 
-  fetchBookmarkPosts() {
-    this.postService.getBookmarkPostsByMail(0, 15).subscribe(data => {
+  fetchBookmarkPostsByReadingFolder() {
+    this.postService.getBookmarkPostsByMailAndReadingFolders(this.idReadingFolder, 0, 15).subscribe(data => {
       if (data)
         this.bookmarkPosts = data.content;
-
     });
   }
 
@@ -60,4 +65,5 @@ export class BookmarksComponent implements OnInit {
   openTagPosts(tag: Tag, event: any) {
     this.appService.openJssRoute(event, "post/tag/" + tag.slug, undefined);
   }
+
 }

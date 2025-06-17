@@ -13722,3 +13722,49 @@ img[class^="wp-image-"] {
   background: transparent;
   border: none;
 }
+
+.custom-drop {
+  width: 100%;
+  min-width: inherit;
+  padding: 0;
+  border-radius: 0.375rem;
+  overflow: hidden;
+}
+
+.dropdown-item-custom {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  font-weight: 400;
+  color: var(--ar-primary);
+  text-align: left !important;
+  text-decoration: none;
+  white-space: nowrap;
+  background-color: transparent;
+  border: 0;
+  border-radius: 0;
+}
+
+.dropdown-item-custom:hover,
+.dropdown-item-custom:focus {
+  background-color: var(--ar-primary);
+  color: var(--ar-secondary);
+}
+
+::ng-deep .custom-popover .popover-header {
+  border-bottom: none;
+  background-color: transparent;
+  font-weight: 600;
+}
+
+::ng-deep .custom-popover .popover-body {
+  padding: 0;
+}
+
+.custom-popover.popover {
+  border-radius: 0.75rem !important;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  border: none;
+  padding: 0.5rem;
+}

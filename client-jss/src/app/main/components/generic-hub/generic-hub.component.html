@@ -46,9 +46,31 @@
                           <div class="d-flex flex-wrap gap-1">
                             <a *ngFor="let tag of post.postTags" (click)="openTagPosts(tag, $event)"
                               class="badge bg-info rounded-pill px-2">{{ tag.name }}</a>
-                            <a *ngIf="currentUser"
+
+                            <a type="button" *ngIf="currentUser && readingFolders && readingFolders.length>0"
                               class="rounded-outline-icon rounded-circle fs-8 d-flex align-items-center justify-content-center ms-2"
-                              (click)="post.isBookmarked ? unBookmarkPost(post) : bookmarkPost(post)">
+                              [ngbPopover]="popoverContentTpl" popoverTitle="" placement="end" triggers="manual"
+                              #p="ngbPopover" popoverClass="custom-popover"
+                              (click)="post.isBookmarked ? unBookmarkPost(post) : p.open()">
+                              <i [ngClass]="{'bi-bookmark': !post.isBookmarked,
+                                'bi-bookmark-fill text-dark': post.isBookmarked,
+                                'text-transparent': !post.isBookmarked}">
+                              </i>
+                            </a>
+
+                            <ng-template #popoverContentTpl>
+                              <div class="list-group w-100">
+                                <button *ngFor="let folder of readingFolders" type="button"
+                                  (click)="handleBookmarkPost(post)"
+                                  class="list-group-item list-group-item-action text-truncate text-start py-2 px-3">
+                                  {{ folder.label }}
+                                </button>
+                              </div>
+                            </ng-template>
+
+                            <a *ngIf="currentUser && (!readingFolders || readingFolders.length==0)"
+                              class="rounded-outline-icon rounded-circle fs-8 d-flex align-items-center justify-content-center ms-2"
+                              (click)="handleBookmarkPost(post)">
                               <i [ngClass]="{'bi-bookmark': !post.isBookmarked,
                                 'bi-bookmark-fill text-dark': post.isBookmarked,
                                 'text-transparent': !post.isBookmarked}">
@@ -94,12 +116,34 @@
                       </div>
                       <div class="card-body  d-md-flex align-items-center">
                         <div class="card-flex-content">
-                          <div class="d-flex flex-wrap">
+                          <div class="d-flex flex-wrap gap-1">
                             <a *ngFor="let tag of post.postTags" (click)="openTagPosts(tag, $event)"
                               class="badge bg-info rounded-pill px-2">{{ tag.name }}</a>
-                            <a *ngIf="currentUser"
+
+                            <a type="button" *ngIf="currentUser && readingFolders && readingFolders.length>0"
                               class="rounded-outline-icon rounded-circle fs-8 d-flex align-items-center justify-content-center ms-2"
-                              (click)="post.isBookmarked ? unBookmarkPost(post) : bookmarkPost(post)">
+                              [ngbPopover]="popoverContentTpl" popoverTitle="" placement="end" triggers="manual"
+                              #p="ngbPopover" popoverClass="custom-popover"
+                              (click)="post.isBookmarked ? unBookmarkPost(post) : p.open()">
+                              <i [ngClass]="{'bi-bookmark': !post.isBookmarked,
+                                'bi-bookmark-fill text-dark': post.isBookmarked,
+                                'text-transparent': !post.isBookmarked}">
+                              </i>
+                            </a>
+
+                            <ng-template #popoverContentTpl>
+                              <div class="list-group w-100">
+                                <button *ngFor="let folder of readingFolders" type="button"
+                                  (click)="handleBookmarkPost(post)"
+                                  class="list-group-item list-group-item-action text-truncate text-start py-2 px-3">
+                                  {{ folder.label }}
+                                </button>
+                              </div>
+                            </ng-template>
+
+                            <a *ngIf="currentUser && (!readingFolders || readingFolders.length==0)"
+                              class="rounded-outline-icon rounded-circle fs-8 d-flex align-items-center justify-content-center ms-2"
+                              (click)="handleBookmarkPost(post)">
                               <i [ngClass]="{'bi-bookmark': !post.isBookmarked,
                                 'bi-bookmark-fill text-dark': post.isBookmarked,
                                 'text-transparent': !post.isBookmarked}">
@@ -151,9 +195,31 @@
                           <div class="d-flex flex-wrap gap-1">
                             <a *ngFor="let tag of post.postTags" (click)="openTagPosts(tag, $event)"
                               class="badge bg-info rounded-pill px-2">{{ tag.name }}</a>
-                            <a *ngIf="currentUser"
+
+                            <a type="button" *ngIf="currentUser && readingFolders && readingFolders.length>0"
                               class="rounded-outline-icon rounded-circle fs-8 d-flex align-items-center justify-content-center ms-2"
-                              (click)="post.isBookmarked ? unBookmarkPost(post) : bookmarkPost(post)">
+                              [ngbPopover]="popoverContentTpl" popoverTitle="" placement="end" triggers="manual"
+                              #p="ngbPopover" popoverClass="custom-popover"
+                              (click)="post.isBookmarked ? unBookmarkPost(post) : p.open()">
+                              <i [ngClass]="{'bi-bookmark': !post.isBookmarked,
+                                'bi-bookmark-fill text-dark': post.isBookmarked,
+                                'text-transparent': !post.isBookmarked}">
+                              </i>
+                            </a>
+
+                            <ng-template #popoverContentTpl>
+                              <div class="list-group w-100">
+                                <button *ngFor="let folder of readingFolders" type="button"
+                                  (click)="handleBookmarkPost(post)"
+                                  class="list-group-item list-group-item-action text-truncate text-start py-2 px-3">
+                                  {{ folder.label }}
+                                </button>
+                              </div>
+                            </ng-template>
+
+                            <a *ngIf="currentUser && (!readingFolders || readingFolders.length==0)"
+                              class="rounded-outline-icon rounded-circle fs-8 d-flex align-items-center justify-content-center ms-2"
+                              (click)="handleBookmarkPost(post)">
                               <i [ngClass]="{'bi-bookmark': !post.isBookmarked,
                                 'bi-bookmark-fill text-dark': post.isBookmarked,
                                 'text-transparent': !post.isBookmarked}">
@@ -197,12 +263,34 @@
                       </div>
                       <div class="card-body  d-md-flex align-items-center">
                         <div class="card-flex-content">
-                          <div class="d-flex flex-wrap">
+                          <div class="d-flex flex-wrap gap-1">
                             <a *ngFor="let tag of post.postTags" (click)="openTagPosts(tag, $event)"
                               class="badge bg-info rounded-pill px-2">{{ tag.name }}</a>
-                            <a *ngIf="currentUser"
+
+                            <a type="button" *ngIf="currentUser && readingFolders && readingFolders.length>0"
                               class="rounded-outline-icon rounded-circle fs-8 d-flex align-items-center justify-content-center ms-2"
-                              (click)="post.isBookmarked ? unBookmarkPost(post) : bookmarkPost(post)">
+                              [ngbPopover]="popoverContentTpl" popoverTitle="" placement="end" triggers="manual"
+                              #p="ngbPopover" popoverClass="custom-popover"
+                              (click)="post.isBookmarked ? unBookmarkPost(post) : p.open()">
+                              <i [ngClass]="{'bi-bookmark': !post.isBookmarked,
+                                'bi-bookmark-fill text-dark': post.isBookmarked,
+                                'text-transparent': !post.isBookmarked}">
+                              </i>
+                            </a>
+
+                            <ng-template #popoverContentTpl>
+                              <div class="list-group w-100">
+                                <button *ngFor="let folder of readingFolders" type="button"
+                                  (click)="handleBookmarkPost(post)"
+                                  class="list-group-item list-group-item-action text-truncate text-start py-2 px-3">
+                                  {{ folder.label }}
+                                </button>
+                              </div>
+                            </ng-template>
+
+                            <a *ngIf="currentUser && (!readingFolders || readingFolders.length==0)"
+                              class="rounded-outline-icon rounded-circle fs-8 d-flex align-items-center justify-content-center ms-2"
+                              (click)="handleBookmarkPost(post)">
                               <i [ngClass]="{'bi-bookmark': !post.isBookmarked,
                                 'bi-bookmark-fill text-dark': post.isBookmarked,
                                 'text-transparent': !post.isBookmarked}">

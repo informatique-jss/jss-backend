@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.jss.osiris.modules.myjss.wordpress.model.AssoMailPost;
 import com.jss.osiris.modules.myjss.wordpress.model.Post;
+import com.jss.osiris.modules.myjss.wordpress.model.ReadingFolder;
 import com.jss.osiris.modules.myjss.wordpress.repository.AssoMailPostRepository;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 
@@ -34,5 +35,13 @@ public class AssoMailPostServiceImpl implements AssoMailPostService {
     @Override
     public void deleteAssoMailPost(AssoMailPost assoMailPost) {
         assoMailPostRepository.delete(assoMailPost);
+    }
+
+    @Override
+    public List<AssoMailPost> getAssoMailPostsByReadingFolder(ReadingFolder readingFolder) {
+        if (readingFolder != null) {
+            return assoMailPostRepository.findByReadingFolder(readingFolder);
+        }
+        return null;
     }
 }

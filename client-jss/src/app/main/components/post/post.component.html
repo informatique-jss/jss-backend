@@ -44,12 +44,42 @@
               <button *ngIf="currentUser" class="btn btn-primary" (click)="openOfferPostModal(givePostModal)"><i
                   class="bi bi-gift me-2"></i>Offrir cet article</button>
             </div>
-            <div class="col-auto mt-0" *ngIf="currentUser">
-              <button *ngIf="currentUser" class="btn btn-primary"
-                (click)="post.isBookmarked ? unBookmarkPost(post) : bookmarkPost(post)"><i [ngClass]="{'bi-bookmark': !post.isBookmarked,
+
+            <div class="col-auto mt-0 position-relative">
+              <button *ngIf="currentUser && (!readingFolders || readingFolders.length==0)" class="btn btn-primary"
+                (click)="post.isBookmarked ? unBookmarkPost(post) : bookmarkPost(post, undefined)"><i [ngClass]="{'bi-bookmark': !post.isBookmarked,
                                 'bi-bookmark-fill text-dark': post.isBookmarked,
-                                'text-transparent': !post.isBookmarked}" class="bi  me-2"></i>Enregistrer</button>
+                                'text-transparent': !post.isBookmarked}" class="bi me-2"></i>Enregistrer</button>
+
+              <div *ngIf="currentUser && readingFolders && readingFolders.length>0" class="dropdown nav"
+                [ngClass]="{ show: dropdownReadingFolder }">
+                <a role="button" class="d-flex align-items-center p-0 user-account"
+                  (click)="post.isBookmarked ? unBookmarkPost(post) : toggleBookmark($event)"
+                  [attr.aria-expanded]="dropdownReadingFolder">
+
+                  <div class="d-none d-md-block">
+                    <div class="d-none d-md-block">
+                      <div class="btn btn-primary"><i [ngClass]="{'bi-bookmark': !post.isBookmarked,
+                                'bi-bookmark-fill text-dark': post.isBookmarked,
+                                'text-transparent': !post.isBookmarked}" class="bi me-2"></i>Enregistrer</div>
+                    </div>
+                  </div>
+                </a>
+
+                <div class="dropdown-menu dropdown-menu-end my-1 custom-drop p-0 mb-0"
+                  [ngClass]="{ show: dropdownReadingFolder }">
+                  <ul class="list-unstyled p-0 m-0">
+                    <li class="" *ngFor="let readingFolder of readingFolders">
+                      <a (click)="bookmarkPost(post, readingFolder)"
+                        class="dropdown-item-custom text-center text-truncate">
+                        <span>{{readingFolder.label}}</span>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
             </div>
+
             <div class="col-auto mt-0">
               <!-- Share dropdown -->
               <div class="dropdown nav" [ngClass]="{ show: dropdownOpen }">

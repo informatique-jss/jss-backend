@@ -86,3 +86,7 @@
   height: 24px;
 
 }
+
+.custom-drop {
+  min-width: 200px !important;
+}
