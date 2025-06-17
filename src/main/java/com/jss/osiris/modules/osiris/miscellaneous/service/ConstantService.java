@@ -19,6 +19,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.osiris.miscellaneous.model.CompetentAuthorityType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Constant;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Country;
+import com.jss.osiris.modules.osiris.miscellaneous.model.CustomerOrderFrequency;
 import com.jss.osiris.modules.osiris.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.osiris.miscellaneous.model.DeliveryService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Department;
@@ -471,6 +472,12 @@ public interface ConstantService {
     public RffFrequency getRffFrequencyMonthly() throws OsirisException;
 
     public RffFrequency getRffFrequencyQuarterly() throws OsirisException;
+
+    public CustomerOrderFrequency getCustomerOrderFrequencyAnnual() throws OsirisException;
+
+    public CustomerOrderFrequency getCustomerOrderFrequencyMonthly() throws OsirisException;
+
+    public CustomerOrderFrequency getCustomerOrderFrequencyQuarterly() throws OsirisException;
 
     public ServiceType getServiceTypeOther() throws OsirisException;
 

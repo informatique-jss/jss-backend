@@ -71,6 +71,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.InvoicingSummary;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Notification;
+import com.jss.osiris.modules.osiris.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.CompetentAuthorityService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
@@ -423,7 +424,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 }
             }
 
-        if (oneNewProvision)
+        if (oneNewProvision || isNewCustomerOrder)
             customerOrder = simpleAddOrUpdate(customerOrder);
 
         if (computePrice)
@@ -2016,16 +2017,25 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         switch (subscriptionType) {
             case Subscription.ANNUAL_SUBSCRIPTION:
                 serviceTypeSubscription = constantService.getServiceTypeAnnualSubscription();
+                customerOrder.setRecurringPeriodStartDate(LocalDate.now());
+                customerOrder.setRecurringPeriodEndDate(LocalDate.now().plusYears(1));
+                customerOrder.setCustomerOrderFrequency(constantService.getCustomerOrderFrequencyAnnual());
                 isRecurring = true;
                 break;
 
             case Subscription.ENTERPRISE_ANNUAL_SUBSCRIPTION:
                 serviceTypeSubscription = constantService.getServiceTypeEnterpriseAnnualSubscription();
+                customerOrder.setRecurringPeriodStartDate(LocalDate.now());
+                customerOrder.setRecurringPeriodEndDate(LocalDate.now().plusYears(1));
+                customerOrder.setCustomerOrderFrequency(constantService.getCustomerOrderFrequencyAnnual());
                 isRecurring = true;
                 break;
 
             case Subscription.MONTHLY_SUBSCRIPTION:
                 serviceTypeSubscription = constantService.getServiceTypeMonthlySubscription();
+                customerOrder.setRecurringPeriodStartDate(LocalDate.now());
+                customerOrder.setRecurringPeriodEndDate(LocalDate.now().plusMonths(1));
+                customerOrder.setCustomerOrderFrequency(constantService.getCustomerOrderFrequencyMonthly());
                 isRecurring = true;
                 break;
 
@@ -2069,10 +2079,16 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         assoAffaireOrder.setServices(Arrays.asList(serviceSubscription));
 
         customerOrder.setAssoAffaireOrders(Arrays.asList(assoAffaireOrder));
-        customerOrder.setSpecialOffers(Arrays.asList());
+
+        List<SpecialOffer> specialOffers = new ArrayList<>();
+        if (isPriceReductionForSubscription) {
+            specialOffers.add(constantService.getSpecialOfferJssSubscriptionReduction());
+        }
+        customerOrder.setSpecialOffers(specialOffers);
         pricingHelper.getAndSetInvoiceItemsForQuotation(customerOrder, false);
 
         customerOrder.setResponsable(null);
+        customerOrder.setIsQuotation(false);
 
         return customerOrder;
     }

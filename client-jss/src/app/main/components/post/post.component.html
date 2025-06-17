@@ -145,9 +145,8 @@
                   <p>Lisez cette article pour seulement 1 € ou abonnez-vous pour profiter de cet article en
                     intégralité et de bien d'autres !</p>
                   <div><a class="btn btn-secondary mt-3" style="margin-right: 20px;cursor: pointer;"
-                      (click)="openSubscribe($event)">Lire pour 1 €</a>
-                    <a class="btn btn-yellow mt-3" style="cursor: pointer;"
-                      (click)="openSubscribe($event)">S'abonner</a>
+                      (click)="subscribeToOnePost($event, post.id)">Lire pour 1 €</a>
+                    <a class="btn btn-yellow mt-3" style="cursor: pointer;" href="subscription">S'abonner</a>
                   </div>
                 </div>
 

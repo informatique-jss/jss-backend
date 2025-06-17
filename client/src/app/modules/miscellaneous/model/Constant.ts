@@ -39,6 +39,7 @@ import { Category } from './Category';
 import { CompetentAuthority } from './CompetentAuthority';
 import { CompetentAuthorityType } from "./CompetentAuthorityType";
 import { Country } from "./Country";
+import { CustomerOrderFrequency } from './CustomerOrderFrequency';
 import { CustomerOrderOrigin } from './CustomerOrderOrigin';
 import { DeliveryService } from './DeliveryService';
 import { Department } from "./Department";
@@ -252,6 +253,9 @@ export interface Constant {
   rffFrequencyAnnual: RffFrequency;
   rffFrequencyQuarterly: RffFrequency;
   rffFrequencyMonthly: RffFrequency;
+  customerOrderFrequencyAnnual: CustomerOrderFrequency;
+  customerOrderFrequencyQuarterly: CustomerOrderFrequency;
+  customerOrderFrequencyMonthly: CustomerOrderFrequency;
   serviceTypeOther: ServiceType;
   serviceTypeSecondaryCenterOpeningAlAndFormality: ServiceType;
   serviceTypeAnnualSubscription: ServiceType;
