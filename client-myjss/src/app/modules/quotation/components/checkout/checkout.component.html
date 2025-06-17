@@ -196,7 +196,9 @@
     </div>
   </form>
 
-  <div
+  <div *ngIf="quotation && quotation.assoAffaireOrders && quotation.assoAffaireOrders[0] && quotation.assoAffaireOrders[0].services
+          && quotation.assoAffaireOrders[0].services[0] && quotation.assoAffaireOrders[0].services[0]
+          && !isServiceJssSubscription(quotation.assoAffaireOrders[0].services[0].serviceTypes[0])"
     class="position-fixed bottom-0 start-0 w-100 bg-light shadow-sm p-3 m-0 mt-3 d-flex justify-content-between align-items-center z-3">
     <button type="button" class="btn btn-secondary rounded-1 mx-5 d-flex align-items-center"
       (click)="goBackQuotation()">
@@ -644,8 +646,10 @@
                     <h3 class="h5 mb-2 text-blue">{{service.serviceLabelToDisplay}}
                     </h3>
                     <p class="card-text small">
-                      <strong>{{service.assoServiceDocuments.length}}</strong>
-                      documents nécessaires
+                      <strong>{{service.assoServiceDocuments.length == 0 ? 'Aucun ' :
+                        service.assoServiceDocuments.length}}</strong>
+                      document{{service.assoServiceDocuments.length == 0 ? '' : 's'}}
+                      nécessaire{{service.assoServiceDocuments.length == 0 ? '' : 's'}}
                       <br>
                       <strong *ngIf="asso.affaire && asso.affaire.denomination"> {{asso.affaire.denomination}} -
                         {{asso.affaire.address}} -

@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable, Subscription } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import { MY_JSS_SIGN_IN_ROUTE, MY_JSS_SUBSCRIBE_ROUTE } from '../../../libs/Constants';
+import { MY_JSS_SIGN_IN_ROUTE } from '../../../libs/Constants';
 import { validateEmail } from '../../../libs/CustomFormsValidatorsHelper';
 import { getTimeReading } from '../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
@@ -20,6 +20,7 @@ import { Pagination } from '../../model/Pagination';
 import { Post } from '../../model/Post';
 import { ReadingFolder } from '../../model/ReadingFolder';
 import { Responsable } from '../../model/Responsable';
+import { ONE_POST_SUBSCRIPTION } from '../../model/Subscription';
 import { Tag } from '../../model/Tag';
 import { AudioPlayerService } from '../../services/audio.player.service';
 import { CommentService } from '../../services/comment.service';
@@ -377,8 +378,8 @@ export class PostComponent implements OnInit, AfterViewInit {
     return '';
   };
 
-  openSubscribe(event: any) {
-    this.appService.openMyJssRoute(event, MY_JSS_SUBSCRIBE_ROUTE);
+  subscribeToOnePost(event: any, idArticle: number) {
+    this.appService.openMyJssRoute(event, "/quotation/" + ONE_POST_SUBSCRIPTION + "/" + false + "/" + idArticle, true);
   }
 
   readArticle(): void {

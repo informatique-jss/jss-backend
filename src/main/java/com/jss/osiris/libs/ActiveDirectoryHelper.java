@@ -1,6 +1,6 @@
 package com.jss.osiris.libs;
 
-import static org.springframework.ldap.query.LdapQueryBuilder.*;
+import static org.springframework.ldap.query.LdapQueryBuilder.query;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -50,9 +50,12 @@ public class ActiveDirectoryHelper {
             + ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP + "')";
     public static final String MYJSS_USER = "@activeDirectoryHelper.isUserHasGroup('"
             + ActiveDirectoryHelper.MYJSS_USER_GROUP + "')";
+    public static final String TEAM_RESPONSIBLE = "@activeDirectoryHelper.isUserHasGroup('"
+            + ActiveDirectoryHelper.TEAM_RESPONSIBLE_GROUP + "')";
     public static final String ADMINISTRATEUR_GROUP = "ROLE_OSIRIS_ADMINISTRATEURS";
     public static final String ACCOUNTING_GROUP = "ROLE_OSIRIS_COMPTABILITÉ";
     public static final String ACCOUNTING_RESPONSIBLE_GROUP = "ROLE_OSIRIS_RESPONSABLE_COMPTABILITÉ";
+    public static final String TEAM_RESPONSIBLE_GROUP = "ROLE_OSIRIS_RESPONSABLES_EQUIPE";
     public static final String MYJSS_USER_GROUP = "ROLE_MYJSS_USER";
 
     public String getCurrentUsername() {

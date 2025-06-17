@@ -9,6 +9,7 @@ export const ADMINISTRATEURS: string = 'ROLE_OSIRIS_ADMINISTRATEURS';
 export const BETA_TESTEURS: string = 'ROLE_OSIRIS_BETA_TESTEURS';
 export const ACCOUNTING: string = 'ROLE_OSIRIS_COMPTABILITÉ';
 export const ACCOUNTING_RESPONSIBLE: string = 'ROLE_OSIRIS_RESPONSABLE_COMPTABILITÉ';
+export const TEAM_RESPONSIBLE: string = 'ROLE_OSIRIS_RESPONSABLES_EQUIPE';
 
 @Injectable({
   providedIn: 'root'

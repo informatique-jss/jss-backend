@@ -859,6 +859,18 @@ public class Constant implements Serializable, IId {
 	private RffFrequency rffFrequencyMonthly;
 
 	@ManyToOne
+	@JoinColumn(name = "id_customer_order_frequency_annual")
+	private CustomerOrderFrequency customerOrderFrequencyAnnual;
+
+	@ManyToOne
+	@JoinColumn(name = "id_customer_order_frequency_quarterly")
+	private CustomerOrderFrequency customerOrderFrequencyQuarterly;
+
+	@ManyToOne
+	@JoinColumn(name = "id_customer_order_frequency_monthly")
+	private CustomerOrderFrequency customerOrderFrequencyMonthly;
+
+	@ManyToOne
 	@JoinColumn(name = "id_service_type_other")
 	private ServiceType serviceTypeOther;
 
@@ -2424,6 +2436,30 @@ public class Constant implements Serializable, IId {
 
 	public void setRffFrequencyMonthly(RffFrequency rffFrequencyMonthly) {
 		this.rffFrequencyMonthly = rffFrequencyMonthly;
+	}
+
+	public CustomerOrderFrequency getCustomerOrderFrequencyAnnual() {
+		return customerOrderFrequencyAnnual;
+	}
+
+	public void setCustomerOrderFrequencyAnnual(CustomerOrderFrequency customerOrderFrequencyAnnual) {
+		this.customerOrderFrequencyAnnual = customerOrderFrequencyAnnual;
+	}
+
+	public CustomerOrderFrequency getCustomerOrderFrequencyQuarterly() {
+		return customerOrderFrequencyQuarterly;
+	}
+
+	public void setCustomerOrderFrequencyQuarterly(CustomerOrderFrequency customerOrderFrequencyQuarterly) {
+		this.customerOrderFrequencyQuarterly = customerOrderFrequencyQuarterly;
+	}
+
+	public CustomerOrderFrequency getCustomerOrderFrequencyMonthly() {
+		return customerOrderFrequencyMonthly;
+	}
+
+	public void setCustomerOrderFrequencyMonthly(CustomerOrderFrequency customerOrderFrequencyMonthly) {
+		this.customerOrderFrequencyMonthly = customerOrderFrequencyMonthly;
 	}
 
 	public BillingType getBillingTypeRff() {

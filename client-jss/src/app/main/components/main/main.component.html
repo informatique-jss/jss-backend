@@ -382,7 +382,7 @@
               </div>
 
               <ul class="tag-cloud list-inline">
-                <li *ngFor="let tag of tagTendencies" class="list-inline-item pb-1"><a
+                <li *ngFor="let tag of tagTendencies.slice(0,10)" class="list-inline-item pb-1"><a
                     class="btn bg-light text-secondary bg-hover-danger text-hover-white bg-hover-secondary text-hover-white"
                     [routerLink]="'/post/tag/'+tag.slug">{{tag.name}}</a>
                 </li>
