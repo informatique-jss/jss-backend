@@ -1,4 +1,4 @@
-import { CompetentAuthority } from 'src/app/modules/miscellaneous/model/CompetentAuthority';
+import { CompetentAuthority } from '../../miscellaneous/model/CompetentAuthority';
 import { ActeDeposit } from './ActeDeposit';
 import { FormaliteStatus } from './FormaliteStatus';
 import { FormaliteGuichetUnique } from './guichet-unique/FormaliteGuichetUnique';

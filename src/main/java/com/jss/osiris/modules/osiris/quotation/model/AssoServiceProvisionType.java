@@ -58,9 +58,8 @@ public class AssoServiceProvisionType implements Serializable, IId {
 	@JoinColumn(name = "id_notice_type_family")
 	private NoticeTypeFamily noticeTypeFamily;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_notice_template")
-	private AnnouncementNoticeTemplate noticeTemplate;
+	@Column(columnDefinition = "TEXT")
+	private String noticeTemplate;
 
 	@Column(length = 400)
 	private String customerMessageWhenAdded;
@@ -148,11 +147,11 @@ public class AssoServiceProvisionType implements Serializable, IId {
 		this.noticeTypeFamily = noticeTypeFamily;
 	}
 
-	public AnnouncementNoticeTemplate getNoticeTemplate() {
+	public String getNoticeTemplate() {
 		return noticeTemplate;
 	}
 
-	public void setNoticeTemplate(AnnouncementNoticeTemplate noticeTemplate) {
+	public void setNoticeTemplate(String noticeTemplate) {
 		this.noticeTemplate = noticeTemplate;
 	}
 

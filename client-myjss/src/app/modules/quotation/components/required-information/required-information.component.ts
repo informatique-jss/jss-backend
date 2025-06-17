@@ -4,6 +4,7 @@ import { ChangeEvent, CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { NgbModal, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { Alignment, Bold, ClassicEditor, Essentials, Font, GeneralHtmlSupport, Indent, IndentBlock, Italic, Link, List, Mention, Paragraph, PasteFromOffice, RemoveFormat, Underline, Undo } from 'ckeditor5';
 import { combineLatest, of, tap } from 'rxjs';
+import { AssoServiceProvisionType } from '../../../../../../../client/src/app/modules/quotation/model/AssoServiceProvisionType';
 import { PROVISION_SCREEN_TYPE_ANNOUNCEMENT, PROVISION_SCREEN_TYPE_DOMICILIATION, SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
 import { validateEmail, validateFrenchPhone, validateInternationalPhone } from '../../../../libs/CustomFormsValidatorsHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
@@ -53,6 +54,7 @@ import { CivilityService } from '../../services/civility.service';
 import { DepartmentService } from '../../services/department.service';
 import { NoticeTypeFamilyService } from '../../services/notice.type.family.service';
 import { NoticeTypeService } from '../../services/notice.type.service';
+import { NoticeTemplateComponent } from "../notice-template/notice-template.component";
 import { QuotationFileUploaderComponent } from '../quotation-file-uploader/quotation-file-uploader.component';
 
 @Component({
@@ -80,8 +82,7 @@ import { QuotationFileUploaderComponent } from '../quotation-file-uploader/quota
     SelectCountryComponent,
     SelectCivilityComponent,
     CKEditorModule,
-    NgbNavModule
-  ]
+    NgbNavModule, NoticeTemplateComponent]
 })
 export class RequiredInformationComponent implements OnInit {
 
@@ -134,6 +135,23 @@ export class RequiredInformationComponent implements OnInit {
   goBackModalInstance: any | undefined;
 
   currentTab: string = 'documents';
+
+  isUsingTemplate: boolean = true;
+
+  assoServiceProvitionType = {
+    noticeTemplate: `Avis de constitution
+Il a été constitué une société par acte sous seing privé en date du 17 juin 2025
+Dénomination : [Dénomination *].
+Forme : Société en Commandite par Actions (SCA) .
+Objet : [Objet social *] .
+Durée de la société : [Durée *] année(s).
+Capital social fixe : [Capital (en euros) *] euros
+Siège social : [Adresse *] , [Code postal *] [Ville *].
+La société sera immatriculée au RCS [Lieu d'immatriculation (RCS) *]
+Gérant : Madame [Prénom *] [Nom *], demeurant [Adresse *], [Code postal *] [Ville *].
+Gérant : [Dénomination *] SCA, sise [Adresse *], [Code postal *] [Ville *].
+Pour avis.`
+  } as AssoServiceProvisionType;
 
   constructor(
     private formBuilder: FormBuilder,

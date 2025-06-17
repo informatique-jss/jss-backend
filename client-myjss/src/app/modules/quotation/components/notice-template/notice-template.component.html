@@ -1,0 +1,38 @@
+<form [formGroup]="form" class="row g-3 mb-4">
+  <div class="col-md-6" *ngFor="let field of service.assoServiceFieldTypes">
+    <tr>
+      <td *ngIf="field.dataType==SERVICE_FIELD_TYPE_TEXT">
+        <generic-input [(model)]="field.stringValue" [label]="field.label" [form]="serviceForm"
+          [propertyName]='"stringFieldType"+i' [isDisabled]="!editMode" [isMandatory]="assoServiceFieldType.isMandatory"
+          [maxLength]="255"></generic-input>
+      </td>
+      <td *ngIf="field.dataType==SERVICE_FIELD_TYPE_TEXTAREA">
+        <generic-textarea [(model)]="assoServiceFieldType.textAreaValue" [label]="field.label" [form]="serviceForm"
+          [propertyName]='"textAreaFieldType"+i' [isDisabled]="!editMode"
+          [isMandatory]="assoServiceFieldType.isMandatory"></generic-textarea>
+      </td>
+      <td *ngIf="field.dataType==SERVICE_FIELD_TYPE_DATE">
+        <generic-datepicker [(model)]="assoServiceFieldType.dateValue" [label]="field.label" [form]="serviceForm"
+          [propertyName]='"dateFieldType"+i' [isMandatory]="assoServiceFieldType.isMandatory"
+          [isDisabled]="!editMode"></generic-datepicker>
+      </td>
+      <td *ngIf="field.dataType==SERVICE_FIELD_TYPE_INTEGER">
+        <generic-input [(model)]="assoServiceFieldType.integerValue" [label]="field.label" [form]="serviceForm"
+          [propertyName]='"integerFieldType"+i' [isMandatory]="assoServiceFieldType.isMandatory"
+          [isDisabled]=" !editMode" type="number"></generic-input>
+      </td>
+      <td *ngIf="field.dataType==SERVICE_FIELD_TYPE_SELECT">
+        <select-value-service-field-type [(model)]="assoServiceFieldType.selectValue" [label]="field.label"
+          [form]="serviceForm" [propertyName]='"selectFieldType"+i' [serviceFieldType]="field"
+          [isMandatory]="assoServiceFieldType.isMandatory" [isDisabled]="!editMode"></select-value-service-field-type>
+      </td>
+    </tr>
+    <!-- <generic-input [label]="field.label" [form]="form" [propertyName]="field.key" [isMandatory]="true"
+      [isDisabled]="false" type="text">
+    </generic-input> -->
+  </div>
+</form>
+
+<div class="p-3 border rounded">
+  <div class="mb-0 text-wrap" [innerHTML]="displayText"></div>
+</div>

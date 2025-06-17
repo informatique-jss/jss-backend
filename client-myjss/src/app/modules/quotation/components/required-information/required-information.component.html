@@ -181,6 +181,13 @@
                       [isDisabled]="false"></generic-toggle>
                   </div>
 
+                  <div *ngIf="!provision.isRedactedByJss"
+                    class="form-check form-switch d-flex m-0 pe-md-5 pe-2 right-border">
+                    <generic-toggle [(model)]="isUsingTemplate" label="Utiliser les modèles proposés pour la rédaction"
+                      [form]="informationForm" [propertyName]="'isUsingTemplate'+provision.order"
+                      [isDisabled]="false"></generic-toggle>
+                  </div>
+
                   <div class="form-check form-switch d-flex ms-md-4 m-0" *ngIf="provision.isRedactedByJss">
                     <generic-toggle [(model)]="provision.announcement.isProofReadingDocument"
                       label="Recevoir une épreuve de relecture avant publication" [form]="informationForm"
@@ -190,8 +197,47 @@
               </div>
 
 
+              <!-- announcement form : template form -->
+              <div *ngIf="!provision.isRedactedByJss && isUsingTemplate" class="quotation-container mb-5">
+
+                <div class="row">
+                  <div class="col-md-3">
+
+                    <!-- Toggle relecture -->
+                    <div class="form-check  d-flex align-items-center mb-4" style="padding-left: 0px;">
+                      <generic-toggle [(model)]="provision.announcement.isReReadByJss" label="Relecture par le JSS"
+                        [form]="informationForm" [propertyName]="'isReReadByJss'+provision.order"
+                        [isDisabled]="false"></generic-toggle>
+                    </div>
+
+                    <!-- Département -->
+                    <!-- <div class="mb-3" *ngIf="departments">
+                      <select-department [(model)]="provision.announcement.department"
+                        label="Département de publication" [form]="informationForm"
+                        [propertyName]="'department'+provision.order" [isMandatory]="false"
+                        [isDisabled]="false"></select-department>
+                    </div> -->
+
+                    <!-- Rubrique -->
+                    <!-- <div class="mb-3" *ngIf="noticeTypeFamilies">
+                      <select-notice-type-family [(model)]="provision.announcement.noticeTypeFamily"
+                        label="Rubrique de publication" [form]="informationForm"
+                        [propertyName]="'noticeTypeFamily'+provision.order" [isMandatory]="false"
+                        [isDisabled]="false"></select-notice-type-family>
+                    </div> -->
+                  </div>
+                  <!-- <div>
+                    <generic-textarea [(model)]="assoServiceProvitionType.noticeTemplate" [form]="informationForm"
+                      [propertyName]="'noticeTemplate'+provision.order" [isMandatory]="false"
+                      [isDisabled]="false"></generic-textarea>
+                  </div> -->
+                </div>
+                <notice-template [template]="assoServiceProvitionType.noticeTemplate"></notice-template>
+
+              </div>
+
               <!-- announcement form : text area -->
-              <div *ngIf="provision.isDoNotGenerateAnnouncement && !provision.isRedactedByJss"
+              <div *ngIf="provision.isDoNotGenerateAnnouncement && !provision.isRedactedByJss && !isUsingTemplate"
                 class="quotation-container mb-5">
 
                 <div class="row">
