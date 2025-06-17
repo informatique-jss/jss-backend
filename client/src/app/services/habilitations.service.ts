@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ACCOUNTING, ACCOUNTING_RESPONSIBLE, ADMINISTRATEURS, BETA_TESTEURS, LoginService } from '../routing/login-dialog/login.service';
+import { ACCOUNTING, ACCOUNTING_RESPONSIBLE, ADMINISTRATEURS, LoginService, TEAM_RESPONSIBLE } from '../routing/login-dialog/login.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +12,7 @@ export class HabilitationsService {
   }
 
   canUpdateComplexity() {
-    return this.loginService.hasGroup([ADMINISTRATEURS]);
+    return this.loginService.hasGroup([TEAM_RESPONSIBLE]);
   }
 
   canDisplayNotifications() {
@@ -32,11 +32,11 @@ export class HabilitationsService {
   }
 
   canViewIndicators() {
-    return this.loginService.hasGroup([BETA_TESTEURS], false)
+    return true;
   }
 
   canDisplayMyIndicatorsForEverybody() {
-    return this.loginService.hasGroup([ADMINISTRATEURS])
+    return this.loginService.hasGroup([TEAM_RESPONSIBLE])
   }
 
   isAdministrator() {
