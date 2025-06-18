@@ -66,7 +66,7 @@ export class PostService extends AppRestService<Post> {
     });
   }
 
-  addAssoMailPost(post: Post, readingFolder?: ReadingFolder) {
+  addBookmarkPost(post: Post, readingFolder?: ReadingFolder) {
     let params = new HttpParams()
       .set("idPost", post.id)
     if (readingFolder)
@@ -74,7 +74,7 @@ export class PostService extends AppRestService<Post> {
     return this.get(params, "post/bookmark/add");
   }
 
-  deleteAssoMailPost(post: Post) {
+  deleteBookmarkPost(post: Post) {
     return this.get(new HttpParams().set("idPost", post.id), "post/bookmark/delete");
   }
 

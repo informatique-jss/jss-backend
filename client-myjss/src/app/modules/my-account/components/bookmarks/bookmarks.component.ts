@@ -21,7 +21,7 @@ export class BookmarksComponent implements OnInit {
   @Input() mail: string | undefined;
   @Input() validationToken: string | null = null;
   bookmarkPosts: Post[] = [] as Array<Post>;
-  idReadingFolder: number = -1;
+  idReadingFolder: number | undefined;
 
   constructor(private postService: PostService, private appService: AppService,
     private activeRoute: ActivatedRoute,
@@ -34,24 +34,26 @@ export class BookmarksComponent implements OnInit {
   }
 
   fetchBookmarkPostsByReadingFolder() {
-    this.postService.getBookmarkPostsByMailAndReadingFolders(this.idReadingFolder, 0, 15).subscribe(data => {
-      if (data)
-        this.bookmarkPosts = data.content;
-    });
+    if (this.idReadingFolder)
+      this.postService.getBookmarkPostsByMailAndReadingFolders(this.idReadingFolder, 0, 15).subscribe(data => {
+        if (data)
+          this.bookmarkPosts = data.content;
+      });
   }
 
   unBookmarkPost(post: Post) {
-    this.postService.deleteAssoMailPost(post).subscribe(response => {
+    this.postService.deleteBookmarkPost(post).subscribe(response => {
       if (response)
         post.isBookmarked = false;
     });
   }
 
   bookmarkPost(post: Post) {
-    this.postService.addAssoMailPost(post, this.idReadingFolder).subscribe(response => {
-      if (response)
-        post.isBookmarked = true;
-    });
+    if (this.idReadingFolder)
+      this.postService.addBookmarkPost(post, this.idReadingFolder).subscribe(response => {
+        if (response)
+          post.isBookmarked = true;
+      });
   }
 
   openPost(post: Post, event: any) {

@@ -225,7 +225,7 @@ public class WordpressController {
 
 	@GetMapping(inputEntryPoint + "/post/bookmark/add")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
-	public ResponseEntity<Boolean> addAssoMailPost(@RequestParam Integer idPost,
+	public ResponseEntity<Boolean> addBookmarkPost(@RequestParam Integer idPost,
 			@RequestParam(required = false) Integer idReadingFolder,
 			HttpServletRequest request) throws OsirisException {
 

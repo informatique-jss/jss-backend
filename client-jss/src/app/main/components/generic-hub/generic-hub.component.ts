@@ -24,7 +24,6 @@ export abstract class GenericHubComponent<T extends { id: number }> implements O
   postsByEntityType: { [key: number]: Array<Post> } = {};
   postsByEntityTypeFullLoaded: number[] = [];
 
-  NgbPopoverModule: any;
   tagsByEntityType: Tag[] = [] as Array<Tag>;
   pageSize: number = 15;
   page: number = 0;

@@ -174,14 +174,14 @@ export class PostComponent implements OnInit, AfterViewInit {
   }
 
   unBookmarkPost(post: Post) {
-    this.postService.deleteAssoMailPost(post).subscribe(response => {
+    this.postService.deleteBookmarkPost(post).subscribe(response => {
       if (response)
         post.isBookmarked = false;
     });
   }
 
   bookmarkPost(post: Post, readingFolder?: ReadingFolder) {
-    this.postService.addAssoMailPost(post, readingFolder).subscribe(response => {
+    this.postService.addBookmarkPost(post, readingFolder).subscribe(response => {
       if (response) {
         post.isBookmarked = true;
         this.dropdownReadingFolder = false;

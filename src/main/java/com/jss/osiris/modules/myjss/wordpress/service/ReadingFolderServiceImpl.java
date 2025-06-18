@@ -69,8 +69,9 @@ public class ReadingFolderServiceImpl implements ReadingFolderService {
                 readingFolder.setLabel("Tous les articles");
                 readingFolder.setMail(responsable.getMail());
                 readingFolder.setPosts(new ArrayList<>());
-                readingFolder = addOrUpdateReadingFolder(readingFolder);
-            }
+                return addOrUpdateReadingFolder(readingFolder);
+            } else
+                return this.getAvailableReadingFolders().get(0);
         }
         return readingFolder;
     }
