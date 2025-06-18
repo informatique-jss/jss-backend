@@ -121,7 +121,6 @@ export class IndicatorDetailedComponent implements OnInit {
   refreshIndicator(isRefreshData: boolean = false) {
     if (this.selectedIndicator) {
       this.indicatorValues = [];
-      this.selectedEmployeeIds = new Set<number>();
       this.employees = [];
       this.dataSource = new MatTreeNestedDataSource<EmployeeNode>();
       this.indicatorValueService.getIndicatorValues(this.selectedIndicator.id!).subscribe(response => {
@@ -238,7 +237,7 @@ export class IndicatorDetailedComponent implements OnInit {
           type: 'slider',
           throttle: 500,
           labelFormatter: function (value, valueStr) {
-            let currentDate = formatDate(value, 'dd/MM/yyyy HH:mm', 'fr-FR');
+            let currentDate = value ? formatDate(value, 'dd/MM/yyyy HH:mm', 'fr-FR') : '';
             return currentDate;
           }
         }
@@ -287,12 +286,12 @@ export class IndicatorDetailedComponent implements OnInit {
         baseValue: 'gray'
       };
 
-      const data: [string, number][] = [];
+      const data: [Date, number][] = [];
 
       for (let i = 0; i < sorted.length; i++) {
         const kpi = sorted[i];
         const value = kpi[key as keyof Kpi];
-        const date = formatDateFrance(new Date(kpi.applicationDate));
+        const date = new Date(kpi.applicationDate);
 
         if (value) {
           data.push([date, value as number]);
@@ -302,14 +301,14 @@ export class IndicatorDetailedComponent implements OnInit {
           if (nextDate) {
             const repeatDate = new Date(nextDate);
             repeatDate.setDate(repeatDate.getDate() - 1);
-            const repeatDateStr = formatDateFrance(repeatDate);
+            const repeatDateStr = repeatDate;
             data.push([repeatDateStr, value as number]);
           }
         }
       }
 
       // repeat the last one with current date
-      data.push([formatDateFrance(new Date()), sorted[sorted.length - 1][key as keyof Kpi] as number]);
+      data.push([new Date(), sorted[sorted.length - 1][key as keyof Kpi] as number]);
 
       let name = '';
       if (key == 'minValue')
