@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -26,6 +27,7 @@ import org.springframework.data.domain.Sort.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +36,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule;
 import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule.Feature;
+import com.jss.osiris.libs.PdfTools;
 import com.jss.osiris.libs.PrintDelegate;
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
@@ -76,6 +79,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.CompetentAuthorityService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.KiosqueRenamerService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
@@ -2139,5 +2143,27 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     }
                 }
             }
+    }
+
+    @Autowired
+    KiosqueRenamerService kiosqueRenamerService;
+
+    @Scheduled(initialDelay = 15000, fixedDelay = Integer.MAX_VALUE)
+    public void toto() {
+        kiosqueRenamerService.renameFromExcel(
+                Paths.get(
+                        "C:\\Users\\fboxebeld\\OneDrive - JSS - SPPS\\Documents\\Back-end\\ExportBDD-kiosque-JSS-v2.xlsx"),
+                Paths.get("C:\\Users\\fboxebeld\\OneDrive - JSS - SPPS\\Documents\\Back-end\\Kiosque"));
+    }
+
+    @Autowired
+    PdfTools pdfTools;
+
+    @Scheduled(initialDelay = 15000, fixedDelay = Integer.MAX_VALUE)
+    public void extractFirstPages() throws IOException {
+        pdfTools.extractFirstPagesAsImages(
+                Paths.get(
+                        "C:\\Users\\fboxebeld\\OneDrive - JSS - SPPS\\Documents\\Back-end\\Kiosque\\Kiosk"),
+                Paths.get("C:\\Users\\fboxebeld\\OneDrive - JSS - SPPS\\Documents\\Back-end\\Kiosque\\Kiosk_images"));
     }
 }

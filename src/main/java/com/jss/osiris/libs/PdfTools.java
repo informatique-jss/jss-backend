@@ -5,20 +5,28 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import javax.imageio.ImageIO;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.rendering.PDFRenderer;
 import org.springframework.stereotype.Service;
 
+import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PRStream;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfNumber;
 import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfSmartCopy;
 import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.parser.PdfImageObject;
 import com.jss.osiris.libs.exception.OsirisException;
@@ -27,6 +35,8 @@ import com.jss.osiris.libs.exception.OsirisException;
 public class PdfTools {
 
     private Float factorCompression = 0.8f;
+
+    private static final int MAX_PAGES = 5;
 
     public InputStream keepPages(InputStream file, String pageSelection)
             throws OsirisException {
@@ -153,4 +163,104 @@ public class PdfTools {
         }
     }
 
+    public void extractFirstPagesOfAllPdfs(Path sourceRoot, Path targetRoot) throws IOException {
+        if (!Files.exists(sourceRoot) || !Files.isDirectory(sourceRoot)) {
+            throw new IllegalArgumentException("Source path is invalid: " + sourceRoot);
+        }
+
+        System.out.println("Beginning extraction...");
+
+        Files.walk(sourceRoot)
+                .filter(Files::isRegularFile)
+                .filter(path -> path.toString().toLowerCase().endsWith(".pdf"))
+                .forEach(pdfPath -> {
+                    try {
+                        Path relativePath = sourceRoot.relativize(pdfPath);
+                        Path targetDir = targetRoot.resolve(relativePath.getParent());
+                        Files.createDirectories(targetDir);
+
+                        String originalFileName = pdfPath.getFileName().toString();
+                        String baseName = originalFileName.substring(0, originalFileName.length() - 4); // remove ".pdf"
+                        String targetFileName = baseName + "_ext.pdf";
+
+                        Path outputPath = targetDir.resolve(targetFileName);
+                        extractFirstPages(pdfPath.toFile(), outputPath.toFile(), MAX_PAGES);
+
+                        System.out.println("[OK] Extracted: " + pdfPath + " → " + outputPath);
+                    } catch (Exception e) {
+                        System.err.println("[ERROR] Error processing " + pdfPath + ": " + e.getMessage());
+                    }
+                });
+
+        System.out.println("Extraction finished");
+    }
+
+    private void extractFirstPages(File inputPdf, File outputPdf, int maxPages) throws Exception {
+        PdfReader reader = null;
+        Document document = null;
+        PdfSmartCopy copy = null;
+
+        try {
+            reader = new PdfReader(inputPdf.getAbsolutePath());
+            int totalPages = reader.getNumberOfPages();
+            int pagesToCopy = Math.min(maxPages, totalPages);
+
+            document = new Document(reader.getPageSizeWithRotation(1));
+            copy = new PdfSmartCopy(document, new FileOutputStream(outputPdf));
+            document.open();
+
+            for (int i = 1; i <= pagesToCopy; i++) {
+                copy.addPage(copy.getImportedPage(reader, i));
+            }
+
+        } finally {
+            if (document != null)
+                document.close();
+            if (reader != null)
+                reader.close();
+        }
+    }
+
+    private static final String IMAGE_FORMAT = "jpg"; // ou "png"
+    private static final float DPI = 200f;
+
+    public void extractFirstPagesAsImages(Path sourceRoot, Path targetRoot) throws IOException {
+        if (!Files.exists(sourceRoot) || !Files.isDirectory(sourceRoot)) {
+            throw new IllegalArgumentException("Source path is invalid: " + sourceRoot);
+        }
+
+        System.out.println("Beginning image extraction...");
+
+        Files.walk(sourceRoot)
+                .filter(Files::isRegularFile)
+                .filter(path -> path.toString().toLowerCase().endsWith(".pdf"))
+                .forEach(pdfPath -> {
+                    try {
+                        Path relativePath = sourceRoot.relativize(pdfPath);
+                        Path targetDir = targetRoot.resolve(relativePath.getParent());
+                        Files.createDirectories(targetDir);
+
+                        String originalFileName = pdfPath.getFileName().toString();
+                        String baseName = originalFileName.substring(0, originalFileName.length() - 4); // remove ".pdf"
+                        String imageFileName = baseName + "." + IMAGE_FORMAT;
+
+                        Path outputImagePath = targetDir.resolve(imageFileName);
+                        extractFirstPageAsImage(pdfPath.toFile(), outputImagePath.toFile());
+
+                        System.out.println("[OK] Image created: " + outputImagePath);
+                    } catch (Exception e) {
+                        System.err.println("[ERROR] Failed to extract image from " + pdfPath + ": " + e.getMessage());
+                    }
+                });
+
+        System.out.println("Image extraction finished.");
+    }
+
+    private void extractFirstPageAsImage(File inputPdf, File outputImage) throws IOException {
+        try (PDDocument document = PDDocument.load(inputPdf)) {
+            PDFRenderer renderer = new PDFRenderer(document);
+            BufferedImage image = renderer.renderImageWithDPI(0, DPI); // first page, 200 DPI
+            ImageIO.write(image, IMAGE_FORMAT, outputImage);
+        }
+    }
 }
