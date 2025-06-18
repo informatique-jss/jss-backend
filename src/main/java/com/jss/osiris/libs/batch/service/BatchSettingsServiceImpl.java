@@ -624,7 +624,7 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setFixedRate(60 * 1000);
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
-            batchSettings.setIsOnlyOneJob(true);
+            batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
             batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.MISCELLANEOUS));
             addOrUpdateBatchSettings(batchSettings);
