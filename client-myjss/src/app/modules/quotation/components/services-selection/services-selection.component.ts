@@ -85,6 +85,9 @@ export class ServicesSelectionComponent implements OnInit {
     if (this.quotation && this.quotation.serviceFamilyGroup)
       this.serviceFamilyService.getServiceFamiliesForFamilyGroup(this.quotation.serviceFamilyGroup.id).subscribe(response => {
         this.serviceFamilies = response.filter(s => s.myJssOrder != null && s.myJssOrder != undefined).sort((a: ServiceFamily, b: ServiceFamily) => a.myJssOrder - b.myJssOrder);
+        for (let family of this.serviceFamilies)
+          if (family.services)
+            family.services.sort((a, b) => a.label.localeCompare(b.label));
         this.selectedServiceFamily = this.serviceFamilies[0];
       });
 
