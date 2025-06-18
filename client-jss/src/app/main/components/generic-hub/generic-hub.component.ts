@@ -7,12 +7,10 @@ import { Author } from '../../model/Author';
 import { JssCategory } from '../../model/JssCategory';
 import { PagedContent } from '../../model/PagedContent';
 import { Post } from '../../model/Post';
-import { ReadingFolder } from '../../model/ReadingFolder';
 import { Responsable } from '../../model/Responsable';
 import { Tag } from '../../model/Tag';
 import { LoginService } from '../../services/login.service';
 import { PostService } from '../../services/post.service';
-import { ReadingFolderService } from '../../services/reading.folder.service';
 
 @Directive()
 export abstract class GenericHubComponent<T extends { id: number }> implements OnInit {
@@ -35,10 +33,8 @@ export abstract class GenericHubComponent<T extends { id: number }> implements O
   searchResults: Post[] = [] as Array<Post>;
   hubForm!: FormGroup;
   currentUser: Responsable | undefined;
-  readingFolders: ReadingFolder[] = [];
 
   constructor(protected appService: AppService,
-    protected readingFolderService: ReadingFolderService,
     protected formBuilder: FormBuilder,
     protected activeRoute: ActivatedRoute,
     protected postService: PostService,
@@ -52,7 +48,6 @@ export abstract class GenericHubComponent<T extends { id: number }> implements O
     this.fetchPosts(0);
     this.fetchTags();
     this.fetchMostSeenPosts();
-    this.fetchReadingFolders();
     this.loginService.getCurrentUser().subscribe(user => {
       if (user)
         this.currentUser = user;
@@ -90,34 +85,6 @@ export abstract class GenericHubComponent<T extends { id: number }> implements O
         if (data)
           this.mostSeenPostsByEntityType = data.content;
       });
-  }
-
-  unBookmarkPost(post: Post) {
-    this.postService.deleteAssoMailPost(post).subscribe(response => {
-      if (response)
-        post.isBookmarked = false;
-    });
-  }
-
-  bookmarkPost(post: Post, readingFolder?: ReadingFolder) {
-    this.postService.addAssoMailPost(post, readingFolder).subscribe(response => {
-      if (response) {
-        post.isBookmarked = true;
-      }
-    });
-  }
-
-  fetchReadingFolders() {
-    this.readingFolderService.getReadingFolders().subscribe(response => {
-      if (response)
-        this.readingFolders.push(...response);
-    });
-  }
-
-  handleBookmarkPost(post: Post) {
-    if (post.isBookmarked)
-      this.unBookmarkPost(post);
-    else this.bookmarkPost(post);
   }
 
   searchForPosts() {

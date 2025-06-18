@@ -16,18 +16,10 @@ import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.Post;
 import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
-import com.jss.osiris.modules.myjss.wordpress.model.ReadingFolder;
 import com.jss.osiris.modules.myjss.wordpress.model.Serie;
 import com.jss.osiris.modules.myjss.wordpress.model.Tag;
-import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 
 public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> {
-
-        @Query("SELECT p from Post p join p.assoMailPosts a"
-                        + " WHERE p.isCancelled =:isCancelled AND a.mail= :mail AND (:readingFolder IS NULL OR a.readingFolder = :readingFolder)")
-        Page<Post> findBookmarkedPostsByMailAndReadingFolder(@Param("isCancelled") Boolean isCancelled,
-                        @Param("readingFolder") ReadingFolder readingFolder, @Param("mail") Mail mail,
-                        Pageable pageableRequest);
 
         @Query("select p from Post p where p.isCancelled =:isCancelled and p.date<=CURRENT_TIMESTAMP and p.date>:consultationDate and ((:jssCategory IS NOT NULL AND :jssCategory MEMBER OF p.jssCategories) OR (:jssCategory IS NULL AND size(p.jssCategories) > 0))")
         Page<Post> findByJssCategoriesAndIsCancelled(@Param("jssCategory") JssCategory jssCategory,

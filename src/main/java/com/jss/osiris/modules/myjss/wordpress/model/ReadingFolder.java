@@ -1,21 +1,29 @@
 package com.jss.osiris.modules.myjss.wordpress.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(indexes = { @Index(name = "idx_reading_folder", columnList = "id", unique = true),
+        @Index(name = "idx_reading_folder_mail", columnList = "id_mail"),
+})
 public class ReadingFolder implements Serializable {
     @Id
     @SequenceGenerator(name = "reading_folder_sequence", sequenceName = "reading_folder_sequence", allocationSize = 1)
@@ -30,10 +38,10 @@ public class ReadingFolder implements Serializable {
     @JoinColumn(name = "id_mail", nullable = false)
     private Mail mail;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_media")
     @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
-    private Media media;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "asso_reading_folder_post", joinColumns = @JoinColumn(name = "id_reading_folder"), inverseJoinColumns = @JoinColumn(name = "id_post"))
+    private List<Post> posts;
 
     public Integer getId() {
         return id;
@@ -59,12 +67,12 @@ public class ReadingFolder implements Serializable {
         this.mail = mail;
     }
 
-    public Media getMedia() {
-        return media;
+    public List<Post> getPosts() {
+        return posts;
     }
 
-    public void setMedia(Media media) {
-        this.media = media;
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
     }
 
 }

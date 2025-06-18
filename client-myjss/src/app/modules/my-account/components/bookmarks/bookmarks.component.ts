@@ -48,7 +48,7 @@ export class BookmarksComponent implements OnInit {
   }
 
   bookmarkPost(post: Post) {
-    this.postService.addAssoMailPost(post).subscribe(response => {
+    this.postService.addAssoMailPost(post, this.idReadingFolder).subscribe(response => {
       if (response)
         post.isBookmarked = true;
     });

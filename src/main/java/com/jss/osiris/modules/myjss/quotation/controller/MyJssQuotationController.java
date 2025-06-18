@@ -1675,7 +1675,7 @@ public class MyJssQuotationController {
 	}
 
 	@PostMapping(inputEntryPoint + "/reading-folder")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class })
 	public ResponseEntity<ReadingFolder> addOrUpdateReadingFolder(@RequestBody ReadingFolder readingFolder,
 			HttpServletRequest request)
 			throws OsirisValidationException {
@@ -1688,6 +1688,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/reading-folder/delete")
+	@JsonView({ JacksonViews.MyJssDetailedView.class })
 	public ResponseEntity<Boolean> deleteReadingFolder(@RequestParam Integer idReadingFolder,
 			HttpServletRequest request)
 			throws OsirisValidationException {
@@ -1696,27 +1697,20 @@ public class MyJssQuotationController {
 		if (readingFolder == null)
 			throw new OsirisValidationException("readingFolder");
 
+		Responsable currentUser = employeeService.getCurrentMyJssUser();
+		if (currentUser != null && !currentUser.getMail().getId().equals(readingFolder.getMail().getId()))
+			throw new OsirisValidationException("readingFolder");
+
 		readingFolderService.deleteReadingFolder(readingFolder);
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/reading-folders")
+	@JsonView({ JacksonViews.MyJssListView.class })
 	public ResponseEntity<List<ReadingFolder>> getReadingFolders(HttpServletRequest request)
 			throws OsirisValidationException {
 		detectFlood(request);
 		return new ResponseEntity<List<ReadingFolder>>(readingFolderService.getAvailableReadingFolders(),
-				HttpStatus.OK);
-	}
-
-	@GetMapping(inputEntryPoint + "/reading-folder/image")
-	public ResponseEntity<ReadingFolder> getFirstPostImageForReadingFolder(@RequestParam Integer idReadingFolder,
-			HttpServletRequest request)
-			throws OsirisValidationException {
-		detectFlood(request);
-		ReadingFolder readingFolder = readingFolderService.getReadingFolder(idReadingFolder);
-		if (readingFolder == null)
-			throw new OsirisValidationException("readingFolder");
-		return new ResponseEntity<ReadingFolder>(readingFolderService.getFirstPostImage(readingFolder),
 				HttpStatus.OK);
 	}
 

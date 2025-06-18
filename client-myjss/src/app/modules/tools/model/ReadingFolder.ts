@@ -1,7 +1,7 @@
-import { Media } from "./Media";
+import { Post } from "./Post";
 
 export interface ReadingFolder {
   id: number;
   label: string;
-  media: Media;
+  posts: Post[];
 }

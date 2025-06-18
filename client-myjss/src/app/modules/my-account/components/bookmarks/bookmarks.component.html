@@ -39,6 +39,10 @@
                 </article>
               </div>
             </div>
+            <div *ngIf="!bookmarkPosts || bookmarkPosts.length==0" class="col-12">
+              <p>Aucun article
+              </p>
+            </div>
           </div>
         </div>
       </div>

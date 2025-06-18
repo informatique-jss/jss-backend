@@ -52,7 +52,6 @@ import com.jss.osiris.modules.myjss.wordpress.model.Subscription;
 import com.jss.osiris.modules.myjss.wordpress.model.Tag;
 import com.jss.osiris.modules.myjss.wordpress.service.AssoMailAuthorService;
 import com.jss.osiris.modules.myjss.wordpress.service.AssoMailJssCategoryService;
-import com.jss.osiris.modules.myjss.wordpress.service.AssoMailPostService;
 import com.jss.osiris.modules.myjss.wordpress.service.AssoMailTagService;
 import com.jss.osiris.modules.myjss.wordpress.service.AuthorService;
 import com.jss.osiris.modules.myjss.wordpress.service.CategoryService;
@@ -154,9 +153,6 @@ public class WordpressController {
 
 	@Autowired
 	AssoMailJssCategoryService assoMailJssCategoryService;
-
-	@Autowired
-	AssoMailPostService assoMailPostService;
 
 	@Autowired
 	EmployeeService employeeService;
@@ -274,12 +270,12 @@ public class WordpressController {
 			HttpServletRequest request) throws OsirisException {
 
 		detectFlood(request);
-		ReadingFolder readingFolder = null;
-		if (idReadingFolder != null)
-			readingFolder = readingFolderService.getReadingFolder(idReadingFolder);
+		ReadingFolder readingFolder = readingFolderService.getReadingFolder(idReadingFolder);
 
-		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
-				Sort.by(Sort.Direction.DESC, "date"));
+		if (readingFolder == null)
+			throw new OsirisValidationException("readingFolder");
+
+		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size));
 
 		return new ResponseEntity<Page<Post>>(
 				postService.getBookmarkPostsByReadingFolderForCurrentUser(readingFolder, pageable),

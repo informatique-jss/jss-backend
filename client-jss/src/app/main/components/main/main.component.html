@@ -35,35 +35,7 @@
                       <div class="row ms-0 pb-1 align-items-center">
                         <a (click)="openCategoryPosts(post.jssCategories[0], $event)"
                           class="badge bg-info rounded-pill col-auto me-2 px-1">{{post.jssCategories[0].name}}</a>
-                            <a type="button" *ngIf="currentUser && readingFolders && readingFolders.length>0"
-                              class="rounded-outline-icon rounded-circle fs-8 d-flex align-items-center justify-content-center ms-2"
-                              [ngbPopover]="popoverContentTpl" popoverTitle="" placement="end" triggers="manual"
-                              #p="ngbPopover" popoverClass="custom-popover"
-                              (click)="post.isBookmarked ? unBookmarkPost(post) : p.open()">
-                              <i [ngClass]="{'bi-bookmark': !post.isBookmarked,
-                                'bi-bookmark-fill text-dark': post.isBookmarked,
-                                'text-transparent': !post.isBookmarked}">
-                              </i>
-                            </a>
-
-                            <ng-template #popoverContentTpl>
-                              <div class="list-group w-100">
-                                <button *ngFor="let folder of readingFolders" type="button"
-                                  (click)="handleBookmarkPost(post)"
-                                  class="list-group-item list-group-item-action text-truncate text-start py-2 px-3">
-                                  {{ folder.label }}
-                                </button>
-                              </div>
-                            </ng-template>
-
-                        <a *ngIf="currentUser && (!readingFolders || readingFolders.length==0)"
-                          class="rounded-outline-icon rounded-circle fs-8 d-flex align-items-center justify-content-center ms-2"
-                          (click)="handleBookmarkPost(post)">
-                          <i [ngClass]="{'bi-bookmark': !post.isBookmarked,
-                                'bi-bookmark-fill text-dark': post.isBookmarked,
-                                'text-transparent': !post.isBookmarked}">
-                          </i>
-                        </a>
+                        <bookmark [post]="post"></bookmark>
                       </div>
                       <h6 class="mb-0 ">
                         <a class="card-text-truncate" (click)="openPost(post, $event)">{{post.titleText}} <img
@@ -88,36 +60,9 @@
                     <div class="row pb-1 ms-0 align-items-center">
                       <a (click)="openCategoryPosts(lastPosts[0].jssCategories[0], $event)"
                         class="badge bg-info rounded-pill col-auto me-2 px-1">{{lastPosts[0].jssCategories[0].name}}</a>
-                      <a type="button" *ngIf="currentUser && readingFolders && readingFolders.length>0"
-                              class="rounded-outline-icon rounded-circle fs-8 d-flex align-items-center justify-content-center ms-2"
-                              [ngbPopover]="popoverContentTpl" popoverTitle="" placement="end" triggers="manual"
-                              #p="ngbPopover" popoverClass="custom-popover"
-                              (click)="lastPosts[0].isBookmarked ? unBookmarkPost(lastPosts[0]) : p.open()">
-                              <i [ngClass]="{'bi-bookmark': !lastPosts[0].isBookmarked,
-                                'bi-bookmark-fill text-dark': lastPosts[0].isBookmarked,
-                                'text-transparent': !lastPosts[0].isBookmarked}">
-                              </i>
-                            </a>
-
-                            <ng-template #popoverContentTpl>
-                              <div class="list-group w-100">
-                                <button *ngFor="let folder of readingFolders" type="button"
-                                  (click)="handleBookmarkPost(lastPosts[0])"
-                                  class="list-group-item list-group-item-action text-truncate text-start py-2 px-3">
-                                  {{ folder.label }}
-                                </button>
-                              </div>
-                            </ng-template>
-
-                        <a *ngIf="currentUser && (!readingFolders || readingFolders.length==0)"
-                          class="rounded-outline-icon rounded-circle fs-8 d-flex align-items-center justify-content-center ms-2"
-                          (click)="handleBookmarkPost(lastPosts[0])">
-                          <i [ngClass]="{'bi-bookmark': !lastPosts[0].isBookmarked,
-                                'bi-bookmark-fill text-dark': lastPosts[0].isBookmarked,
-                                'text-transparent': !lastPosts[0].isBookmarked}">
-                          </i>
-                        </a>
+                      <bookmark [post]="lastPosts[0]"></bookmark>
                     </div>
+
                     <h2>
                       <a class="card-title-truncate"
                         (click)="openPost(lastPosts[0], $event)"><span>{{lastPosts[0].titleText}}</span> <img
@@ -160,35 +105,7 @@
                       <div class="row align-items-center ms-0 mb-1">
                         <a (click)="openCategoryPosts(post.jssCategories[0], $event)"
                           class="badge bg-info rounded-pill px-1 col-auto me-2 mb-0">{{post.jssCategories[0].name}}</a>
-                        <a type="button" *ngIf="currentUser && readingFolders && readingFolders.length>0"
-                              class="rounded-outline-icon rounded-circle fs-8 d-flex align-items-center justify-content-center ms-2"
-                              [ngbPopover]="popoverContentTpl" popoverTitle="" placement="end" triggers="manual"
-                              #p="ngbPopover" popoverClass="custom-popover"
-                              (click)="post.isBookmarked ? unBookmarkPost(post) : p.open()">
-                              <i [ngClass]="{'bi-bookmark': !post.isBookmarked,
-                                'bi-bookmark-fill text-dark': post.isBookmarked,
-                                'text-transparent': !post.isBookmarked}">
-                              </i>
-                            </a>
-
-                            <ng-template #popoverContentTpl>
-                              <div class="list-group w-100">
-                                <button *ngFor="let folder of readingFolders" type="button"
-                                  (click)="handleBookmarkPost(post)"
-                                  class="list-group-item list-group-item-action text-truncate text-start py-2 px-3">
-                                  {{ folder.label }}
-                                </button>
-                              </div>
-                            </ng-template>
-
-                        <a *ngIf="currentUser && (!readingFolders || readingFolders.length==0)"
-                          class="rounded-outline-icon rounded-circle fs-8 d-flex align-items-center justify-content-center ms-2"
-                          (click)="handleBookmarkPost(post)">
-                          <i [ngClass]="{'bi-bookmark': !post.isBookmarked,
-                                'bi-bookmark-fill text-dark': post.isBookmarked,
-                                'text-transparent': !post.isBookmarked}">
-                          </i>
-                        </a>
+                        <bookmark [post]="post"></bookmark>
                       </div>
                       <h4>
                         <a class="card-text-truncate" (click)="openPost(post, $event)"> <img *ngIf="post.isPremium"
@@ -731,35 +648,7 @@
               <div class="row pb-1 px-2 align-items-center">
                 <a (click)="openCategoryPosts(post.jssCategories[0], $event)"
                   class="badge bg-info rounded-pill px-1 col-auto me-2">{{post.jssCategories[0].name}}</a>
-                <a type="button" *ngIf="currentUser && readingFolders && readingFolders.length>0"
-                              class="rounded-outline-icon rounded-circle fs-8 d-flex align-items-center justify-content-center ms-2"
-                              [ngbPopover]="popoverContentTpl" popoverTitle="" placement="end" triggers="manual"
-                              #p="ngbPopover" popoverClass="custom-popover"
-                              (click)="post.isBookmarked ? unBookmarkPost(post) : p.open()">
-                              <i [ngClass]="{'bi-bookmark': !post.isBookmarked,
-                                'bi-bookmark-fill text-dark': post.isBookmarked,
-                                'text-transparent': !post.isBookmarked}">
-                              </i>
-                            </a>
-
-                            <ng-template #popoverContentTpl>
-                              <div class="list-group w-100">
-                                <button *ngFor="let folder of readingFolders" type="button"
-                                  (click)="handleBookmarkPost(post)"
-                                  class="list-group-item list-group-item-action text-truncate text-start py-2 px-3">
-                                  {{ folder.label }}
-                                </button>
-                              </div>
-                            </ng-template>
-
-                        <a *ngIf="currentUser && (!readingFolders || readingFolders.length==0)"
-                          class="rounded-outline-icon rounded-circle fs-8 d-flex align-items-center justify-content-center ms-2"
-                          (click)="handleBookmarkPost(post)">
-                          <i [ngClass]="{'bi-bookmark': !post.isBookmarked,
-                                'bi-bookmark-fill text-dark': post.isBookmarked,
-                                'text-transparent': !post.isBookmarked}">
-                          </i>
-                        </a>
+                <bookmark [post]="post"></bookmark>
               </div>
               <h4>
                 <a class="card-text-truncate" (click)="openPost(post, $event)"> <img *ngIf="post.isPremium" class="pe-0"

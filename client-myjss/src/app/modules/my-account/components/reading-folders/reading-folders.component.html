@@ -11,8 +11,10 @@
     </div>
     <div class="row g-3">
       <div class="col-12 col-md-6 col-lg-4 col-xl-3" *ngFor="let folder of readingFolders; let i = index">
-        <div class="reading-folder-card position-relative text-white rounded overflow-hidden p-3"
-          [ngStyle]="{'background-image': 'url(' + (folder.media && folder.media.urlFull ? folder.media.urlFull : folder.media&&folder.media.urlThumbnail ? folder.media.urlThumbnail: '/assets/images/image-story-1898.png') + ')'}"
+        <div class="reading-folder-card position-relative text-white rounded overflow-hidden p-3" [ngStyle]="{'background-image': 'url(' +
+        (folder.posts && folder.posts.length>0 && folder.posts[0].media && folder.posts[0].media.urlFull ?
+          folder.posts[0].media.urlFull : folder.posts && folder.posts.length>0 && folder.posts[0].media && folder.posts[0].media.urlThumbnail ?
+           folder.posts[0].media.urlThumbnail : '/assets/images/image-story-1898.png') + ')'}"
           (click)="openReadingFolder($event, folder)">
           <h5 class="folder-title m-0">{{ folder.label }}</h5>
           <button *ngIf="folder.id !== -1" class="btn btn-sm position-absolute top-0 end-0 m-2"

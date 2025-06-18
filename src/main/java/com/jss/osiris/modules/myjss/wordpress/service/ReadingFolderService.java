@@ -14,5 +14,6 @@ public interface ReadingFolderService {
 
     public void deleteReadingFolder(ReadingFolder readingFolder);
 
-    public ReadingFolder getFirstPostImage(ReadingFolder readingFolder);
+    public ReadingFolder initReadingFolderForCurrentUser();
+
 }

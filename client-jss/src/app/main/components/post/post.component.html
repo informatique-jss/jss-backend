@@ -46,12 +46,13 @@
             </div>
 
             <div class="col-auto mt-0 position-relative">
-              <button *ngIf="currentUser && (!readingFolders || readingFolders.length==0)" class="btn btn-primary"
-                (click)="post.isBookmarked ? unBookmarkPost(post) : bookmarkPost(post, undefined)"><i [ngClass]="{'bi-bookmark': !post.isBookmarked,
+              <button *ngIf="currentUser && (!readingFolders || (readingFolders&&readingFolders.length<=1))"
+                class="btn btn-primary"
+                (click)="post.isBookmarked ? unBookmarkPost(post) : bookmarkPost(post, readingFolders[0])"><i [ngClass]="{'bi-bookmark': !post.isBookmarked,
                                 'bi-bookmark-fill text-dark': post.isBookmarked,
                                 'text-transparent': !post.isBookmarked}" class="bi me-2"></i>Enregistrer</button>
 
-              <div *ngIf="currentUser && readingFolders && readingFolders.length>0" class="dropdown nav"
+              <div *ngIf="currentUser && readingFolders && readingFolders.length>1" class="dropdown nav"
                 [ngClass]="{ show: dropdownReadingFolder }">
                 <a role="button" class="d-flex align-items-center p-0 user-account"
                   (click)="post.isBookmarked ? unBookmarkPost(post) : toggleBookmark($event)"

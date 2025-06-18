@@ -4,7 +4,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
 import { GenericInputComponent } from "../../../miscellaneous/components/forms/generic-input/generic-input.component";
-import { Media } from '../../../tools/model/Media';
 import { ReadingFolder } from '../../../tools/model/ReadingFolder';
 import { ReadingFolderService } from '../../../tools/services/reading.folder.service';
 
@@ -17,7 +16,6 @@ import { ReadingFolderService } from '../../../tools/services/reading.folder.ser
 })
 export class ReadingFoldersComponent implements OnInit {
 
-  allBookmarksFolder: ReadingFolder = { id: -1, label: 'Tous les articles', media: {} as Media };
   readingFolders: ReadingFolder[] = [];
   newReadingFolder: ReadingFolder = {} as ReadingFolder;
 
@@ -39,15 +37,8 @@ export class ReadingFoldersComponent implements OnInit {
 
   fetchReadingFolders() {
     this.readingFolderService.getReadingFolders().subscribe(response => {
-      this.readingFolders.push(this.allBookmarksFolder);
       if (response)
         this.readingFolders.push(...response);
-      if (this.readingFolders.length > 1)
-        for (let folder of this.readingFolders.slice(1))
-          this.readingFolderService.getFirstPostImageForReadingFolder(folder).subscribe(readingFolder => {
-            if (readingFolder)
-              folder = readingFolder;
-          });
     });
   }
 
