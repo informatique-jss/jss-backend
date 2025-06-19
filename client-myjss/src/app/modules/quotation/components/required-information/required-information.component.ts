@@ -96,6 +96,7 @@ export class RequiredInformationComponent implements OnInit {
   quotation: IQuotation | undefined;
 
   affaire: Affaire = { isIndividual: false } as Affaire;
+  editorData: string = "toto";
 
   noticeTypes: NoticeType[] | undefined;
   noticeTypeFamilies: NoticeTypeFamily[] | undefined;
@@ -110,6 +111,8 @@ export class RequiredInformationComponent implements OnInit {
 
   checkedOnce = false;
   isBrowser = false;
+
+  activeId = 3;
 
   SERVICE_FIELD_TYPE_TEXT = SERVICE_FIELD_TYPE_TEXT;
   SERVICE_FIELD_TYPE_INTEGER = SERVICE_FIELD_TYPE_INTEGER;
@@ -209,6 +212,7 @@ export class RequiredInformationComponent implements OnInit {
               let i = 0;
               for (let provision of serv.provisions) {
                 if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_ANNOUNCEMENT) {
+                  this.activeId = 11;
                   provision.order = ++i;
                   if (!this.selectedRedaction[asso.services.indexOf(serv)]) {
                     this.selectedRedaction[asso.services.indexOf(serv)] = [];
@@ -220,6 +224,7 @@ export class RequiredInformationComponent implements OnInit {
                   }
                 } else if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_DOMICILIATION) {
                   if (!provision.domiciliation) {
+                    this.activeId = 2;
                     provision.domiciliation = {} as Domiciliation;
                   }
                 }
@@ -337,7 +342,6 @@ export class RequiredInformationComponent implements OnInit {
         return this.serviceService.addOrUpdateService(this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex]).pipe(tap(response => {
           this.appService.hideLoadingSpinner();
         }));
-
       } else {
         if (this.quotation.isQuotation) {
           this.quotationService.setCurrentDraftQuotation(this.quotation);
@@ -547,4 +551,19 @@ export class RequiredInformationComponent implements OnInit {
       domiciliation.legalGardianPhones.splice(domiciliation.legalGardianPhones.indexOf(phone), 1);
   }
 
+  hasMandatoryDocuments(assos: AssoServiceDocument[]) {
+    if (assos)
+      for (let asso of assos)
+        if (asso.isMandatory)
+          return true;
+    return false;
+  }
+
+  hasNonMandatoryDocuments(assos: AssoServiceDocument[]) {
+    if (assos)
+      for (let asso of assos)
+        if (!asso.isMandatory)
+          return true;
+    return false;
+  }
 }

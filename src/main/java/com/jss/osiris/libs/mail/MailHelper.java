@@ -795,6 +795,20 @@ public class MailHelper {
                 CustomerMail.TEMPLATE_SEND_CANDIDACY_CONFIRMATION);
     }
 
+    public void sendConfirmationQuotationCreationMyJss(String mail, Quotation quotation) throws OsirisException {
+        sendCustomerMailForMyJssMail(mail, null,
+                constantService.getStringSalesSharedMailbox(),
+                "Confirmation de la création de votre devis n°" + quotation.getId(),
+                CustomerMail.TEMPLATE_SEND_QUOTATION_CREATION);
+    }
+
+    public void sendConfirmationOrderCreationMyJss(String mail, CustomerOrder customerOrder) throws OsirisException {
+        sendCustomerMailForMyJssMail(mail, null,
+                constantService.getStringSalesSharedMailbox(),
+                "Confirmation de la création de votre commande n°" + customerOrder.getId(),
+                CustomerMail.TEMPLATE_SEND_ORDER_CREATION);
+    }
+
     public void sendConfirmationDemoMyJss(String mailAdress) throws OsirisException {
         sendCustomerMailForMyJssMail(mailAdress, null,
                 constantService.getStringMyJssDemoRequestMail(), "Confirmation de votre demande de démo",

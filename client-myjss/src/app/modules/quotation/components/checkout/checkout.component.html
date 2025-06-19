@@ -235,29 +235,34 @@
               <div class="mb-3">
                 <generic-input (onFormChange)="saveDraftQuotation()"
                   [(model)]="quotation.responsable.tiers.denomination" label="Dénomination" [form]="documentForm"
-                  propertyName="tiersFirstname" [isMandatory]="true" [isDisabled]="false" type="text">
+                  propertyName="tiersFirstname" [isMandatory]="!quotation.responsable.tiers.isIndividual"
+                  [isDisabled]="false" type="text">
                 </generic-input>
               </div>
               <div class="row mt-3">
                 <generic-input (onFormChange)="saveDraftQuotation()" class="col"
                   [(model)]="quotation.responsable.tiers.address" label="Adresse" [form]="documentForm"
-                  propertyName="tiersAdress" [isMandatory]="true" [isDisabled]="false" type="text">
+                  propertyName="tiersAdress" [isMandatory]="!quotation.responsable.tiers.isIndividual"
+                  [isDisabled]="false" type="text">
                 </generic-input>
               </div>
               <div class="row g-3 mt-3">
                 <generic-input (onFormChange)="saveDraftQuotation()" class="col-md-4"
                   [(model)]="quotation.responsable.tiers.postalCode" label="Code postal" [form]="documentForm"
-                  propertyName="tiersPostalCode" [isMandatory]="true" (onFormBlur)="findCityForTiers()"
-                  [isDisabled]="false" [maxLength]="10" (change)="computeQuotationPrice(false)">
+                  propertyName="tiersPostalCode" [isMandatory]="!quotation.responsable.tiers.isIndividual"
+                  (onFormBlur)="findCityForTiers()" [isDisabled]="false" [maxLength]="10"
+                  (change)="computeQuotationPrice(false)">
                 </generic-input>
                 <div>
                   <autocomplete-city [(model)]="quotation.responsable.tiers.city" [form]="documentForm"
-                    [modelCountry]="quotation.responsable.tiers.country" [isMandatory]="true" label="Ville"
+                    [modelCountry]="quotation.responsable.tiers.country"
+                    [isMandatory]="!quotation.responsable.tiers.isIndividual" label="Ville"
                     propertyName="autocompleteTiersCity"
                     (onFormChange)="prepareForPricingAndCompute()"></autocomplete-city>
                 </div>
                 <select-country class="col-md-4" [(model)]="quotation.responsable.tiers.country" label="Pays"
-                  [form]="documentForm" propertyName="tiersCountry" [isMandatory]="true" [isDisabled]="false"
+                  [form]="documentForm" propertyName="tiersCountry"
+                  [isMandatory]="!quotation.responsable.tiers.isIndividual" [isDisabled]="false"
                   (onFormChange)="prepareForPricingAndCompute()">
                 </select-country>
               </div>
@@ -379,14 +384,14 @@
                 </li>
               </ul>
 
-              <generic-input class="col-md-6 mt-3" [(model)]="mailToConfirm" label="Votre adresse mail"
-                [form]="documentForm" propertyName="respMail" [isMandatory]="true" [isDisabled]="false" type="email"
-                [icon]="'mail'">
+              <generic-input class="col-md-6 mt-3" [(model)]="quotation.responsable.mail.mail"
+                label="Votre adresse mail" [form]="documentForm" propertyName="respMail" [isMandatory]="true"
+                [isDisabled]="false" type="email" [icon]="'mail'">
               </generic-input>
-              <generic-input (onFormChange)="saveDraftQuotation()" class="col-md-6 mt-3"
-                [(model)]="quotation.responsable.mail.mail" label="Confirmez votre adresse mail" [form]="documentForm"
-                propertyName="confirmationRespMail" [isMandatory]="true" [isDisabled]="false" type="email"
-                [icon]="'mail'" [isAutocompleteAvailable]="false" [canPaste]="false">
+              <generic-input (onFormChange)="saveDraftQuotation()" class="col-md-6 mt-3" [(model)]="mailToConfirm"
+                label="Confirmez votre adresse mail" [form]="documentForm" propertyName="confirmationRespMail"
+                [isMandatory]="true" [isDisabled]="false" type="email" [icon]="'mail'" [isAutocompleteAvailable]="false"
+                [canPaste]="false">
               </generic-input>
             </div>
           </ng-template>

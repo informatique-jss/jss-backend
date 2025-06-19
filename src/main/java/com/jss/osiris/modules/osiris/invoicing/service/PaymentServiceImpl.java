@@ -1746,7 +1746,7 @@ public class PaymentServiceImpl implements PaymentService {
         image.setAddress(
                 paymentCbEntryPoint + "/order/deposit?customerOrderId=" + customerOrder.getId() + "&mail=" + mail);
         image.setData(pictureHelper
-                .getPictureAsBase64String(qrCodeHelper.getQrCode(image.getAddress(), 150)));
+                .getPictureAsBase64String(qrCodeHelper.getQrCode(image.getAddress(), 250)));
         return image;
     }
 
@@ -1757,7 +1757,7 @@ public class PaymentServiceImpl implements PaymentService {
         image.setAddress(
                 paymentCbEntryPoint + "/quotation/deposit?quotationId=" + quotation.getId() + "&mail=" + mail);
         image.setData(pictureHelper
-                .getPictureAsBase64String(qrCodeHelper.getQrCode(image.getAddress(), 150)));
+                .getPictureAsBase64String(qrCodeHelper.getQrCode(image.getAddress(), 250)));
         return image;
     }
 

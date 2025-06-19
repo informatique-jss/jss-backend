@@ -249,8 +249,9 @@ export class CheckoutComponent implements OnInit {
 
 
   isOrderPossible() {
+    console.log(this.documentForm);
     if (this.documentForm.invalid) {
-      this.appService.displayToast("Il manque des informations obligatoires pour pouvoir passer commande", true, "Validation de commande impossible", 5000);
+      this.appService.displayToast("Il manque des informations obligatoires pour pouvoir valider " + (this.quotation!.isQuotation ? "le devis" : "la commande"), true, "Validation de commande impossible", 5000);
       return false;
     }
     if (!this.currentUser && this.quotation!.responsable!.mail.mail != this.mailToConfirm) {
