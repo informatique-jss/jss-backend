@@ -13,17 +13,19 @@ import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.Post;
 import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
+import com.jss.osiris.modules.myjss.wordpress.model.ReadingFolder;
 import com.jss.osiris.modules.myjss.wordpress.model.Serie;
 import com.jss.osiris.modules.myjss.wordpress.model.Tag;
 
 public interface PostService {
         public Post addOrUpdatePostFromWordpress(Post post) throws OsirisException;
 
-        public void updateBookmarkPost(Post post);
+        public void updateBookmarkPost(Post post, ReadingFolder readingFolder);
 
         public void deleteBookmarkPost(Post post);
 
-        public Page<Post> getBookmarkPostsForCurrentUser(Pageable pageableRequest);
+        public Page<Post> getBookmarkPostsByReadingFolderForCurrentUser(ReadingFolder readingFolder,
+                        Pageable pageableRequest);
 
         public Page<Post> getJssCategoryPosts(Pageable pageableRequest) throws OsirisException;
 

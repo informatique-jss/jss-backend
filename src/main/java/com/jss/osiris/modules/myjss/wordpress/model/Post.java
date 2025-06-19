@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.jss.osiris.libs.jackson.JacksonLocalDateTimeDeserializer;
@@ -175,11 +174,6 @@ public class Post implements IId, Serializable {
     @JoinTable(name = "asso_post_related", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_post_related"))
     @JsonView(JacksonViews.MyJssDetailedView.class)
     private List<Post> relatedPosts;
-
-    @OneToMany(mappedBy = "post")
-    @JsonIgnoreProperties(value = { "post" }, allowSetters = true)
-    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
-    private List<AssoMailPost> assoMailPosts;
 
     @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     @IndexedField
@@ -519,14 +513,6 @@ public class Post implements IId, Serializable {
 
     public void setAmazonMusicLinkUrl(String amazonMusicLinkUrl) {
         this.amazonMusicLinkUrl = amazonMusicLinkUrl;
-    }
-
-    public List<AssoMailPost> getAssoMailPosts() {
-        return assoMailPosts;
-    }
-
-    public void setAssoMailPosts(List<AssoMailPost> assoMailPosts) {
-        this.assoMailPosts = assoMailPosts;
     }
 
     public Boolean getIsBookmarked() {

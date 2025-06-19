@@ -12,6 +12,7 @@ import { Tag } from '../../model/Tag';
 import { LoginService } from '../../services/login.service';
 import { PostService } from '../../services/post.service';
 import { TagService } from '../../services/tag.service';
+import { BookmarkComponent } from "../bookmark/bookmark.component";
 import { GenericHubComponent } from '../generic-hub/generic-hub.component';
 import { GenericInputComponent } from '../generic-input/generic-input.component';
 import { SelectPublishingDepartmentComponent } from '../select-publishing-department/select-publishing-department.component';
@@ -20,7 +21,7 @@ import { SelectPublishingDepartmentComponent } from '../select-publishing-depart
   selector: 'department-hub',
   templateUrl: './department-hub.component.html',
   styleUrls: ['./department-hub.component.css'],
-  imports: [SHARED_IMPORTS, GenericInputComponent, SelectPublishingDepartmentComponent, NgbTooltipModule],
+  imports: [SHARED_IMPORTS, GenericInputComponent, SelectPublishingDepartmentComponent, NgbTooltipModule, BookmarkComponent],
   standalone: true
 })
 export class DepartmentHubComponent extends GenericHubComponent<PublishingDepartment> implements OnInit {
@@ -32,7 +33,7 @@ export class DepartmentHubComponent extends GenericHubComponent<PublishingDepart
 
   constructor(private tagService: TagService, postService: PostService, loginService: LoginService, appService: AppService, formBuilder: FormBuilder, activeRoute: ActivatedRoute
   ) {
-    super(appService, formBuilder, activeRoute, postService, loginService);
+    super(appService, formBuilder, activeRoute, postService, loginService,);
   }
 
   override ngOnInit(): void {

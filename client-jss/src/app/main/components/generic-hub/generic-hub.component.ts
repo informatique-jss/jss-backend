@@ -37,7 +37,7 @@ export abstract class GenericHubComponent<T extends { id: number }> implements O
     protected formBuilder: FormBuilder,
     protected activeRoute: ActivatedRoute,
     protected postService: PostService,
-    protected loginService: LoginService
+    protected loginService: LoginService,
   ) { }
 
   ngOnInit() {
@@ -84,20 +84,6 @@ export abstract class GenericHubComponent<T extends { id: number }> implements O
         if (data)
           this.mostSeenPostsByEntityType = data.content;
       });
-  }
-
-  unBookmarkPost(post: Post) {
-    this.postService.deleteAssoMailPost(post).subscribe(response => {
-      if (response)
-        post.isBookmarked = false;
-    });
-  }
-
-  bookmarkPost(post: Post) {
-    this.postService.addAssoMailPost(post).subscribe(response => {
-      if (response)
-        post.isBookmarked = true;
-    });
   }
 
   searchForPosts() {

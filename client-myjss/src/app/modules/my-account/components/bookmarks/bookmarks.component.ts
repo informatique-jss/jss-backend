@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
@@ -20,33 +21,39 @@ export class BookmarksComponent implements OnInit {
   @Input() mail: string | undefined;
   @Input() validationToken: string | null = null;
   bookmarkPosts: Post[] = [] as Array<Post>;
+  idReadingFolder: number | undefined;
 
-  constructor(private postService: PostService, private appService: AppService) { }
+  constructor(private postService: PostService, private appService: AppService,
+    private activeRoute: ActivatedRoute,
+  ) { }
 
   ngOnInit() {
-    this.fetchBookmarkPosts();
+    if (this.activeRoute.snapshot.params['idReadingFolder'])
+      this.idReadingFolder = this.activeRoute.snapshot.params['idReadingFolder'];
+    this.fetchBookmarkPostsByReadingFolder();
   }
 
-  fetchBookmarkPosts() {
-    this.postService.getBookmarkPostsByMail(0, 15).subscribe(data => {
-      if (data)
-        this.bookmarkPosts = data.content;
-
-    });
+  fetchBookmarkPostsByReadingFolder() {
+    if (this.idReadingFolder)
+      this.postService.getBookmarkPostsByMailAndReadingFolders(this.idReadingFolder, 0, 15).subscribe(data => {
+        if (data)
+          this.bookmarkPosts = data.content;
+      });
   }
 
   unBookmarkPost(post: Post) {
-    this.postService.deleteAssoMailPost(post).subscribe(response => {
+    this.postService.deleteBookmarkPost(post).subscribe(response => {
       if (response)
         post.isBookmarked = false;
     });
   }
 
   bookmarkPost(post: Post) {
-    this.postService.addAssoMailPost(post).subscribe(response => {
-      if (response)
-        post.isBookmarked = true;
-    });
+    if (this.idReadingFolder)
+      this.postService.addBookmarkPost(post, this.idReadingFolder).subscribe(response => {
+        if (response)
+          post.isBookmarked = true;
+      });
   }
 
   openPost(post: Post, event: any) {
@@ -60,4 +67,5 @@ export class BookmarksComponent implements OnInit {
   openTagPosts(tag: Tag, event: any) {
     this.appService.openJssRoute(event, "post/tag/" + tag.slug, undefined);
   }
+
 }

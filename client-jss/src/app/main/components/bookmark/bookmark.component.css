@@ -1,0 +1,10 @@
+  .custom-display {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+  }
+
+  :host {
+    display: inline-flex;
+    width: auto;
+  }
