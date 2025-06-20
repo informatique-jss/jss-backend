@@ -102,27 +102,46 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
         Boolean canSeeNewspaper = false;
 
+        canSeeNewspaper = isResponsableHasFullValidSubscription(responsable, subscriptions);
+
+        if (!canSeeNewspaper) {
+            for (Subscription subscription : subscriptions) {
+                switch (subscription.getSubscriptionType()) {
+                    case Subscription.NEWSPAPER_KIOSK_BUY:
+                        if (subscription.getNewspaper().getId().equals(newspaper.getId()))
+                            canSeeNewspaper = true;
+                        break;
+                }
+                if (canSeeNewspaper)
+                    break;
+            }
+        }
+
+        return canSeeNewspaper;
+    }
+
+    @Override
+    public boolean isResponsableHasFullValidSubscription(Responsable responsable, List<Subscription> subscriptions) {
+
+        Boolean hasFullSubscriptionValid = false;
+
         for (Subscription subscription : subscriptions) {
             switch (subscription.getSubscriptionType()) {
                 case Subscription.ANNUAL_SUBSCRIPTION, Subscription.ENTERPRISE_ANNUAL_SUBSCRIPTION:
                     if (subscription.getStartDate().isBefore(LocalDate.now())
                             && LocalDate.now().isBefore(subscription.getEndDate()))
-                        canSeeNewspaper = true;
+                        hasFullSubscriptionValid = true;
                     break;
                 case Subscription.MONTHLY_SUBSCRIPTION:
                     if (subscription.getStartDate().isBefore(LocalDate.now())
                             && LocalDate.now().isBefore(subscription.getEndDate()))
-                        canSeeNewspaper = true;
-                    break;
-                case Subscription.NEWSPAPER_KIOSK_BUY:
-                    if (subscription.getNewspaper().getId().equals(newspaper.getId()))
-                        canSeeNewspaper = true;
+                        hasFullSubscriptionValid = true;
                     break;
             }
-            if (canSeeNewspaper)
+            if (hasFullSubscriptionValid)
                 break;
         }
 
-        return canSeeNewspaper;
+        return hasFullSubscriptionValid;
     }
 }

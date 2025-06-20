@@ -22,4 +22,6 @@ public interface SubscriptionService {
         public Integer getRemainingPostToShareForCurrentMonth(Responsable signedInUser);
 
         public boolean canResponsableSeeKioskNewspaper(Responsable responsable, Newspaper newspaper);
+
+        public boolean isResponsableHasFullValidSubscription(Responsable responsable, List<Subscription> subscriptions);
 }

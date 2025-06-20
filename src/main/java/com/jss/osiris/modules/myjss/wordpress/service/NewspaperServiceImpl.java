@@ -3,7 +3,6 @@ package com.jss.osiris.modules.myjss.wordpress.service;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,23 +55,7 @@ public class NewspaperServiceImpl implements NewspaperService {
 
         List<Subscription> subscriptions = subscriptionService.getSubscriptionsForMail(responsable.getMail());
 
-        Boolean canSeeNewspaper = false;
-
-        for (Subscription subscription : subscriptions) {
-            switch (subscription.getSubscriptionType()) {
-                case Subscription.ANNUAL_SUBSCRIPTION, Subscription.ENTERPRISE_ANNUAL_SUBSCRIPTION:
-                    if (subscription.getStartDate().isBefore(LocalDate.now())
-                            && LocalDate.now().isBefore(subscription.getEndDate()))
-                        canSeeNewspaper = true;
-                    break;
-                case Subscription.MONTHLY_SUBSCRIPTION:
-                    if (subscription.getStartDate().isBefore(LocalDate.now())
-                            && LocalDate.now().isBefore(subscription.getEndDate()))
-                        canSeeNewspaper = true;
-                    break;
-            }
-        }
-        return canSeeNewspaper;
+        return subscriptionService.isResponsableHasFullValidSubscription(responsable, subscriptions);
     }
 
     @Override
