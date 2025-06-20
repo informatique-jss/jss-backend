@@ -126,22 +126,16 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         Boolean hasFullSubscriptionValid = false;
 
         for (Subscription subscription : subscriptions) {
-            switch (subscription.getSubscriptionType()) {
-                case Subscription.ANNUAL_SUBSCRIPTION, Subscription.ENTERPRISE_ANNUAL_SUBSCRIPTION:
-                    if (subscription.getStartDate().isBefore(LocalDate.now())
-                            && LocalDate.now().isBefore(subscription.getEndDate()))
-                        hasFullSubscriptionValid = true;
-                    break;
-                case Subscription.MONTHLY_SUBSCRIPTION:
-                    if (subscription.getStartDate().isBefore(LocalDate.now())
-                            && LocalDate.now().isBefore(subscription.getEndDate()))
-                        hasFullSubscriptionValid = true;
-                    break;
+            if (subscription.getSubscriptionType().equals(Subscription.ANNUAL_SUBSCRIPTION)
+                    || subscription.getSubscriptionType().equals(Subscription.ENTERPRISE_ANNUAL_SUBSCRIPTION)
+                    || subscription.getSubscriptionType().equals(Subscription.MONTHLY_SUBSCRIPTION)) {
+                if (subscription.getStartDate().isBefore(LocalDate.now())
+                        && LocalDate.now().isBefore(subscription.getEndDate()))
+                    hasFullSubscriptionValid = true;
             }
             if (hasFullSubscriptionValid)
                 break;
         }
-
         return hasFullSubscriptionValid;
     }
 }
