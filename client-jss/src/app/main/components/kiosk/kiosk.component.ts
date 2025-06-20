@@ -36,11 +36,11 @@ export class KioskComponent implements OnInit {
         this.newspaperService.canSeeAllNewspapersOfKiosk().subscribe(canSeeAll => {
           if (canSeeAll == true) {
             this.isSubscribed = canSeeAll;
-            if (!this.isSubscribed) {
-              this.newspaperService.getSeeableNewspapersForCurrentUser().subscribe(ids => {
-                this.newspaperIdsSeeableByUser = ids;
-              });
-            }
+          }
+          if (!this.isSubscribed) {
+            this.newspaperService.getSeeableNewspapersForCurrentUser().subscribe(ids => {
+              this.newspaperIdsSeeableByUser = ids;
+            });
           }
         })
       }
