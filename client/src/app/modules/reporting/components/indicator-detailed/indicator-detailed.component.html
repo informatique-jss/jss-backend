@@ -5,7 +5,7 @@
       (onFormChange)="refreshIndicator()"></select-indicator>
   </div>
 </div>
-<div class="dashboard-container mat-elevation-z4" *ngIf="selectedIndicator">
+<div class="dashboard-container mat-elevation-z4" *ngIf="selectedIndicator && this.dataSource.data">
   <mat-drawer-container class="drawer-container" autosize style="height: 153vh;">
     <mat-drawer mode="side" opened class="drawer">
       <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
