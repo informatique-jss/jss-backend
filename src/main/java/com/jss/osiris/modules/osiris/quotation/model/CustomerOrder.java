@@ -15,6 +15,7 @@ import com.jss.osiris.libs.jackson.JacksonLocalDateTimeGmtSerializer;
 import com.jss.osiris.libs.jackson.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.modules.osiris.crm.model.Voucher;
 import com.jss.osiris.modules.osiris.invoicing.model.ICreatedDate;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoicingBlockage;
@@ -292,6 +293,12 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private LocalDateTime productionEffectiveDateTime;
+
+	@ManyToOne
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class,
+			JacksonViews.MyJssDetailedView.class })
+	@JoinColumn(name = "id_voucher")
+	private Voucher voucher;
 
 	public Integer getId() {
 		return id;
@@ -652,6 +659,14 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public void setProductionEffectiveDateTime(LocalDateTime productionEffectiveDateTime) {
 		this.productionEffectiveDateTime = productionEffectiveDateTime;
+	}
+
+	public Voucher getVoucher() {
+		return voucher;
+	}
+
+	public void setVoucher(Voucher voucher) {
+		this.voucher = voucher;
 	}
 
 }

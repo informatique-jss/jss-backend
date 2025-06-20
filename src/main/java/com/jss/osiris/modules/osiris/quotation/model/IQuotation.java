@@ -3,6 +3,7 @@ package com.jss.osiris.modules.osiris.quotation.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.jss.osiris.modules.osiris.crm.model.Voucher;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
@@ -69,4 +70,6 @@ public interface IQuotation extends IId, IAttachment, IDocument {
 	public void setServiceFamilyGroup(ServiceFamilyGroup serviceFamilyGroup);
 
 	public Boolean getIsHasNotifications();
+
+	public Voucher getVoucher();
 }

@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { QUOTATION_STATUS_SENT_TO_CUSTOMER } from 'src/app/libs/Constants';
 import { formatDateTimeForSortTable } from 'src/app/libs/FormatHelper';
 import { instanceOfCustomerOrder, instanceOfQuotation } from 'src/app/libs/TypeHelper';
+import { VoucherService } from 'src/app/modules/crm/services/voucher.service';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { DocumentTypeService } from 'src/app/modules/miscellaneous/services/document.type.service';
 import { Employee } from 'src/app/modules/profile/model/Employee';
@@ -17,6 +18,7 @@ import { DocumentType } from '../../../miscellaneous/model/DocumentType';
 import { SortTableAction } from '../../../miscellaneous/model/SortTableAction';
 import { ResponsableService } from '../../../tiers/services/responsable.service';
 import { Confrere } from '../../model/Confrere';
+import { CustomerOrder } from '../../model/CustomerOrder';
 import { IQuotation } from '../../model/IQuotation';
 import { OrderingSearchResult } from '../../model/OrderingSearchResult';
 import { QuotationSearchResult } from '../../model/QuotationSearchResult';
@@ -70,6 +72,7 @@ export class OrderingCustomerComponent implements OnInit {
     private orderingSearchResultService: OrderingSearchResultService,
     private quotationSearchResultService: QuotationSearchResultService,
     private quotationService: QuotationService,
+    private voucherService: VoucherService,
     public specialOfferDialog: MatDialog) { }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -202,5 +205,17 @@ export class OrderingCustomerComponent implements OnInit {
     this.quotationService.associateCustomerOrderToQuotation(customerOrder.entityId, this.quotation.id).subscribe(response => {
       this.appService.openRoute(null, '/quotation/' + this.quotation.id, null);
     })
+  }
+
+  checkValidityVoucher() {
+    if (this.quotation && this.quotation.voucher) {
+      this.voucherService.applyVoucher(this.quotation as CustomerOrder, this.quotation.voucher).subscribe(response => {
+        if (response && this.quotation) {
+          this.quotation.voucher = response;
+          this.appService.displaySnackBar("Le code de réduction utilisé est valide", false, 5000);
+        }
+        else this.appService.displaySnackBar("Le code de réduction utilisé est inactif", true, 5000);
+      });
+    }
   }
 }

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.ValidationHelper;
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.jackson.JacksonViews;
@@ -28,12 +29,16 @@ import com.jss.osiris.modules.osiris.crm.model.Candidacy;
 import com.jss.osiris.modules.osiris.crm.model.Comment;
 import com.jss.osiris.modules.osiris.crm.model.CommentSearch;
 import com.jss.osiris.modules.osiris.crm.model.CommunicationPreference;
+import com.jss.osiris.modules.osiris.crm.model.Voucher;
 import com.jss.osiris.modules.osiris.crm.model.Webinar;
 import com.jss.osiris.modules.osiris.crm.service.CandidacyService;
 import com.jss.osiris.modules.osiris.crm.service.CommentService;
 import com.jss.osiris.modules.osiris.crm.service.CommunicationPreferenceService;
+import com.jss.osiris.modules.osiris.crm.service.VoucherService;
 import com.jss.osiris.modules.osiris.crm.service.WebinarService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 
 @RestController
 public class CrmController {
@@ -57,6 +62,12 @@ public class CrmController {
 
         @Autowired
         CandidacyService candidacyService;
+
+        @Autowired
+        VoucherService voucherService;
+
+        @Autowired
+        CustomerOrderService customerOrderService;
 
         @JsonView(JacksonViews.MyJssDetailedView.class)
         @GetMapping(inputEntryPoint + "/communication-preferences/communication-preference")
@@ -321,5 +332,75 @@ public class CrmController {
 
                 candidacyService.markCandidacyAsTreated(candidacy);
                 return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+        }
+
+        @GetMapping(inputEntryPoint + "/vouchers")
+        @JsonView(JacksonViews.OsirisListView.class)
+        public ResponseEntity<List<Voucher>> getVouchers() {
+                return new ResponseEntity<List<Voucher>>(voucherService.getVouchers(), HttpStatus.OK);
+        }
+
+        @GetMapping(inputEntryPoint + "/vouchers/active")
+        @JsonView(JacksonViews.OsirisListView.class)
+        public ResponseEntity<List<Voucher>> getActiveVouchers() {
+                return new ResponseEntity<List<Voucher>>(voucherService.getActiveVouchers(), HttpStatus.OK);
+        }
+
+        @PostMapping(inputEntryPoint + "/voucher")
+        @JsonView({ JacksonViews.OsirisListView.class })
+        public ResponseEntity<Voucher> addOrUpdateVoucher(
+                        @RequestBody Voucher voucher) throws OsirisValidationException, OsirisException {
+                if (voucher == null || (voucher.getDiscountRate() == null && voucher.getDiscountAmount() == null))
+                        throw new OsirisValidationException("amountVoucher");
+                if (voucher.getId() != null)
+                        validationHelper.validateReferential(voucher, true, "Voucher");
+                validationHelper.validateString(voucher.getCode(), true, "code");
+                validationHelper.validateBigDecimal(voucher.getDiscountAmount(), false, "discountAmount");
+
+                return new ResponseEntity<Voucher>(voucherService.addOrUpdateVoucher(voucher), HttpStatus.OK);
+        }
+
+        @GetMapping(inputEntryPoint + "/voucher/delete")
+        @JsonView(JacksonViews.OsirisListView.class)
+        public ResponseEntity<Boolean> deleteVoucher(@RequestParam Integer idVoucher)
+                        throws OsirisValidationException {
+                Voucher voucher = voucherService.getVoucher(idVoucher);
+
+                if (voucher == null)
+                        throw new OsirisValidationException("voucher");
+                voucherService.deleteVoucher(voucher);
+                return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+        }
+
+        @GetMapping(inputEntryPoint + "/vouchers/search")
+        public ResponseEntity<List<Voucher>> getVouchersFromCode(@RequestParam String code)
+                        throws OsirisClientMessageException, OsirisValidationException, OsirisException {
+                if (code == null)
+                        throw new OsirisValidationException("codeVoucher");
+                return new ResponseEntity<List<Voucher>>(
+                                voucherService.getVouchersFromCode(code.trim().replaceAll(" ", "")),
+                                HttpStatus.OK);
+        }
+
+        @GetMapping(inputEntryPoint + "/voucher/apply")
+        @JsonView(JacksonViews.MyJssDetailedView.class)
+        public ResponseEntity<Voucher> checkVoucherValidity(@RequestParam Integer customerOrderId,
+                        @RequestParam String voucherCode)
+                        throws OsirisValidationException {
+                Voucher voucher = null;
+                CustomerOrder customerOrder = null;
+                if (voucherCode != null)
+                        voucher = voucherService.getVoucherByCode(voucherCode);
+                if (voucher == null)
+                        throw new OsirisValidationException("voucher");
+
+                if (customerOrderId != null)
+                        customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+
+                if (customerOrder == null)
+                        throw new OsirisValidationException("customerOrder");
+
+                return new ResponseEntity<Voucher>(voucherService.checkVoucherValidity(customerOrder, voucher),
+                                HttpStatus.OK);
         }
 }

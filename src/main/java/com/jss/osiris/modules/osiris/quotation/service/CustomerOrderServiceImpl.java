@@ -57,6 +57,7 @@ import com.jss.osiris.modules.myjss.wordpress.service.AssoProvisionPostNewspaper
 import com.jss.osiris.modules.myjss.wordpress.service.NewspaperService;
 import com.jss.osiris.modules.myjss.wordpress.service.PostService;
 import com.jss.osiris.modules.myjss.wordpress.service.SubscriptionService;
+import com.jss.osiris.modules.osiris.crm.model.Voucher;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceLabelResult;
@@ -1880,6 +1881,14 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         if (isValidation != null && isValidation) {
             addOrUpdateCustomerOrderStatus(order, CustomerOrderStatus.BEING_PROCESSED, true);
+            if (order.getVoucher() != null && order.getCustomerOrderStatus().getCode()
+                    .equals(CustomerOrderStatus.BEING_PROCESSED)) {
+                if (order.getVoucher().getResponsables() != null)
+                    order.getVoucher().getResponsables().add(order.getResponsable());
+                else
+                    order.getVoucher().setResponsables(List.of(order.getResponsable()));
+                simpleAddOrUpdate(order);
+            }
             if (isOnlyJssAnnouncement(order, true)) {
                 quotationValidationHelper.validateQuotationAndCustomerOrder(order, null);
                 autoBilledProvisions(order);
@@ -2139,5 +2148,30 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     }
                 }
             }
+    }
+
+    @Override
+    public List<CustomerOrder> getCustomerOrdersByVoucherAndResponsable(Voucher voucher, Responsable responsable) {
+        List<CustomerOrder> voucheredOrders = new ArrayList<>();
+        voucheredOrders = customerOrderRepository.findByVoucherAndResponsable(voucher, responsable);
+        return voucheredOrders;
+    }
+
+    @Override
+    public List<CustomerOrder> getCustomerOrdersByVoucher(Voucher voucher) {
+        List<CustomerOrder> voucheredOrders = new ArrayList<>();
+        voucheredOrders = customerOrderRepository.findByVoucher(voucher);
+        return voucheredOrders;
+    }
+
+    @Override
+    public CustomerOrder computeVoucheredPriceOnOrder(CustomerOrder customerOrder, Voucher voucher)
+            throws OsirisClientMessageException, OsirisValidationException, OsirisException {
+        customerOrder.setVoucher(voucher);
+        pricingHelper.getAndSetInvoiceItemsForQuotation(customerOrder, true);
+        customerOrder = simpleAddOrUpdate(customerOrder);
+        for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders())
+            serviceService.populateTransientField(assoAffaireOrder.getServices());
+        return customerOrder;
     }
 }

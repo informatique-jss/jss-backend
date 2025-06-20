@@ -70,6 +70,7 @@ import { AutocompleteServiceTypeComponent } from '../forms/autocomplete-service-
 import { AutocompleteSirenComponent } from '../forms/autocomplete-siren/autocomplete-siren.component';
 import { AutocompleteSiretComponent } from '../forms/autocomplete-siret/autocomplete-siret.component';
 import { AutocompleteTiersIndividualComponent } from '../forms/autocomplete-tiers-individual/autocomplete-tiers-individual.component';
+import { AutocompleteVoucherComponent } from '../forms/autocomplete-voucher/autocomplete-voucher.component';
 import { ChipsAttachmentTypeComponent } from '../forms/chips-attachment-type/chips-attachment-type.component';
 import { ChipsCityComponent } from '../forms/chips-city/chips-city.component';
 import { ChipsCompetitorComponent } from '../forms/chips-competitor/chips-competitor.component';
@@ -590,7 +591,8 @@ const routes: Routes = [
     SelectIncidentCauseComponent,
     SelectIncidentTypeComponent,
     SelectNoticeTypeComponent,
-    SelectNoticeTemplateComponent
+    SelectNoticeTemplateComponent,
+    AutocompleteVoucherComponent
   ],
   exports: [
     HistoryComponent,
@@ -851,7 +853,8 @@ const routes: Routes = [
     SelectIncidentCauseComponent,
     SelectIncidentTypeComponent,
     SelectNoticeTypeComponent,
-    SelectNoticeTemplateComponent
+    SelectNoticeTemplateComponent,
+    AutocompleteVoucherComponent
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

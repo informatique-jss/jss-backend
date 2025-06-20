@@ -37,6 +37,8 @@ import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
+import com.jss.osiris.modules.osiris.crm.model.Voucher;
+import com.jss.osiris.modules.osiris.crm.service.VoucherService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoicingBlockage;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
@@ -176,6 +178,7 @@ import com.jss.osiris.modules.osiris.quotation.service.TransfertFundsTypeService
 import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.FormaliteGuichetUniqueService;
 import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.GuichetUniqueDelegateService;
 import com.jss.osiris.modules.osiris.quotation.service.infoGreffe.FormaliteInfogreffeService;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
 import com.jss.osiris.modules.osiris.tiers.service.TiersService;
 
@@ -396,6 +399,9 @@ public class QuotationController {
 
   @Autowired
   InvoicingBlockageService invoicingBlockageService;
+
+  @Autowired
+  VoucherService voucherService;
 
   @GetMapping(inputEntryPoint + "/service-field-types")
   public ResponseEntity<List<ServiceFieldType>> getServiceFieldTypes() {
@@ -1913,7 +1919,6 @@ public class QuotationController {
         && quotationService.checkValidationIdQuotation(customerOrder.getValidationId())
         && customerOrder.getId() == null)
       throw new OsirisValidationException("Save order already in progress");
-    // assoServiceFieldTypeService.addOrUpdateServiceFieldType(customerOrder) ;
     else
       return new ResponseEntity<CustomerOrder>(customerOrderService.addOrUpdateCustomerOrderFromUser(customerOrder),
           HttpStatus.OK);
@@ -2915,5 +2920,23 @@ public class QuotationController {
   @GetMapping(inputEntryPoint + "/customer-order/assign/invoicing/auto")
   public ResponseEntity<CustomerOrder> assignNewCustomerOrderToBilled() {
     return new ResponseEntity<CustomerOrder>(customerOrderService.assignNewCustomerOrderToBilled(), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/customer-orders/voucher")
+  public ResponseEntity<List<CustomerOrder>> getCustomerOrdersByVoucherAndResponsable(@RequestParam Integer idVoucher,
+      @RequestParam Integer idResponsable) throws OsirisValidationException {
+
+    Voucher voucher = voucherService.getVoucher(idVoucher);
+
+    if (voucher == null)
+      throw new OsirisValidationException("voucher");
+
+    Responsable responsable = responsableService.getResponsable(idResponsable);
+
+    if (responsable == null)
+      throw new OsirisValidationException("responsable");
+
+    return new ResponseEntity<List<CustomerOrder>>(
+        customerOrderService.getCustomerOrdersByVoucherAndResponsable(voucher, responsable), HttpStatus.OK);
   }
 }

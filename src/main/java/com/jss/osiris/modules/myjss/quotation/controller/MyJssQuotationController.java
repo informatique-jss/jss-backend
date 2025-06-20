@@ -47,6 +47,8 @@ import com.jss.osiris.modules.myjss.wordpress.model.Subscription;
 import com.jss.osiris.modules.myjss.wordpress.service.NewspaperService;
 import com.jss.osiris.modules.myjss.wordpress.service.PostService;
 import com.jss.osiris.modules.osiris.crm.model.Candidacy;
+import com.jss.osiris.modules.osiris.crm.model.Voucher;
+import com.jss.osiris.modules.osiris.crm.service.VoucherService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.ActiveDirectoryGroup;
@@ -237,6 +239,9 @@ public class MyJssQuotationController {
 
 	@Autowired
 	NewspaperService newspaperService;
+
+	@Autowired
+	VoucherService voucherService;
 
 	private final ConcurrentHashMap<String, AtomicLong> requestCount = new ConcurrentHashMap<>();
 	private final long rateLimit = 1000;
@@ -1558,6 +1563,38 @@ public class MyJssQuotationController {
 				HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/voucher/apply")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<Voucher> checkVoucherValidity(@RequestParam String voucherCode,
+			HttpServletRequest request) throws OsirisValidationException {
+		detectFlood(request);
+		if (voucherCode == null)
+			throw new OsirisValidationException("voucher");
+
+		return new ResponseEntity<Voucher>(voucherService.checkVoucherMyJssValidity(voucherCode),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/voucher/pricing")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<CustomerOrder> applyVoucherPricingOnOrder(@RequestParam Integer customerOrderId,
+			@RequestParam(required = false) Integer voucherId,
+			HttpServletRequest request) throws OsirisClientMessageException, OsirisException {
+		detectFlood(request);
+		CustomerOrder customerOrder = null;
+		customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+
+		if (customerOrder == null)
+			throw new OsirisValidationException("customerOrder");
+		Voucher voucher = null;
+		if (voucherId != null)
+			voucher = voucherService.getVoucher(voucherId);
+
+		return new ResponseEntity<CustomerOrder>(
+				customerOrderService.computeVoucheredPriceOnOrder(customerOrder, voucher),
+				HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/service-types/provisions")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<List<Service>> getServiceForServiceTypeAndAffaire(@RequestParam List<Integer> serviceTypeIds,
@@ -1668,4 +1705,5 @@ public class MyJssQuotationController {
 						idArticle),
 				HttpStatus.OK);
 	}
+
 }

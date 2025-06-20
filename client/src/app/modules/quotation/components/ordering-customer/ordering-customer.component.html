@@ -32,10 +32,19 @@
               <avatar-chip *ngIf="quotation.responsable" [employee]="quotation.responsable.salesEmployee"
                 [disableEmployeeDialog]="true"></avatar-chip>
             </td>
+          </fieldset>
+        </tr>
+        <tr>
+          <fieldset [disabled]="editMode==false" class="fieldset-no-border">
             <td>
               <chips-special-offers [(model)]="quotation.specialOffers" [form]="orderingCustomerForm"
                 propertyName="specialOffer" [isDisabled]="!editMode">
               </chips-special-offers>
+            </td>
+            <td>
+              <autocomplete-voucher [(model)]="quotation.voucher" [form]="orderingCustomerForm" propertyName="voucher"
+                label="Coupon de réduction" [isDisabled]="!editMode"
+                (onOptionSelected)="checkValidityVoucher()"></autocomplete-voucher>
             </td>
           </fieldset>
         </tr>

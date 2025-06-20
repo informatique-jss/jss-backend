@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.jackson.JacksonLocalDateSerializer;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.modules.osiris.crm.model.Voucher;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.City;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Civility;
@@ -230,6 +231,11 @@ public class Responsable implements IAttachment, IId {
 
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Integer numberOfGiftPostsPerMonth;
+
+	@ManyToMany(mappedBy = "responsables")
+	@JsonIgnoreProperties(value = { "responsables" }, allowSetters = true)
+	@JsonView({ JacksonViews.OsirisDetailedView.class, JacksonViews.OsirisListView.class })
+	private List<Voucher> vouchers;
 
 	public Tiers getTiers() {
 		return tiers;
@@ -598,4 +604,13 @@ public class Responsable implements IAttachment, IId {
 	public void setNumberOfGiftPostsPerMonth(Integer numberOfPostsSharingAuthorized) {
 		this.numberOfGiftPostsPerMonth = numberOfPostsSharingAuthorized;
 	}
+
+	public List<Voucher> getVouchers() {
+		return vouchers;
+	}
+
+	public void setVouchers(List<Voucher> vouchers) {
+		this.vouchers = vouchers;
+	}
+
 }

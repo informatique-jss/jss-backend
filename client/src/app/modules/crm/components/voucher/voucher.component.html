@@ -1,0 +1,19 @@
+<div class="mat-elevation-z2 form-div">
+  <div class=" full-width">
+    <table class="full-width table-fixed-layout table-bilan">
+      <tr>
+        <td class="fab-td-button">
+          <button mat-mini-fab color="warn" matTooltip="Créer un coupon" (click)="createVoucher()" class="add-button">
+            <mat-icon>add</mat-icon>
+          </button>
+        </td>
+
+      </tr>
+    </table>
+
+    <sort-table [actions]="tableActionVoucher" [columns]="displayedColumnsVoucher" [values]="vouchers"
+      tableName="vouchers" *ngIf="displayedColumnsVoucher && displayedColumnsVoucher.length>0 "
+      [displayTotalLines]="true">
+    </sort-table>
+  </div>
+</div>

@@ -1,0 +1,7 @@
+<sort-table [columns]="displayedColumnsVoucher" [values]="responsableVouchers" tableName="vouchers"
+  *ngIf="displayedColumnsVoucher && displayedColumnsVoucher.length>0 " [displayTotalLines]="true">
+</sort-table>
+
+<sort-table [columns]="displayedColumnsOrders" [values]="responsableOrders" tableName="orders"
+  *ngIf="displayedColumnsOrders && displayedColumnsOrders.length>0 " [displayTotalLines]="true">
+</sort-table>

@@ -1,0 +1,21 @@
+<h1 mat-dialog-title>Saisie d'un coupon</h1>
+<div mat-dialog-content>
+  <generic-input [(model)]="voucher.code" label="Code du coupon" [form]="voucherForm" propertyName="code"
+    [isMandatory]="true" [isDisabled]="false" type="string"></generic-input>
+  <generic-input [(model)]="voucher.discountAmount" label="Montant de la réduction" [form]="voucherForm"
+    propertyName="discountAmount" [isMandatory]="false" [isDisabled]="false" type="number"></generic-input>
+  <generic-input [(model)]="voucher.discountRate" label="Pourcentage de réduction" [form]="voucherForm"
+    propertyName="discountPercentage" [isMandatory]="false" [isDisabled]="false" type="number"></generic-input>
+  <generic-datepicker [(model)]="voucher.startDate" label="Début de validité" [form]="voucherForm"
+    propertyName="startDate" [isMandatory]="false" [isDisabled]="false"></generic-datepicker>
+  <generic-datepicker [(model)]="voucher.endDate" label="Fin de validité" [form]="voucherForm" propertyName="endDate"
+    [isMandatory]="false" [isDisabled]="false"></generic-datepicker>
+  <generic-input [(model)]="voucher.perUserLimit" label="Nombre d'utilisation par personne" [form]="voucherForm"
+    propertyName="perUserLimit" [isMandatory]="true" [isDisabled]="false" type="number"></generic-input>
+  <generic-input [(model)]="voucher.totalLimit" label="Nombre d'utilisation totale" [form]="voucherForm"
+    propertyName="totalLimit" [isMandatory]="true" [isDisabled]="false" type="number"></generic-input>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="accent" (click)="onClose()">Annuler</button>
+  <button mat-raised-button color="warn" (click)="onConfirm()">Valider</button>
+</div>

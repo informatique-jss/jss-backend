@@ -33,6 +33,7 @@ import { TiersListComponent } from '../tiers-list/tiers-list.component';
 import { PrincipalComponent } from '../tiers-main/tiers-main.component';
 import { VisitPrepaCustomerOrdersResponsibleComponent } from '../visit-prepa-customer-orders-responsible/visit-prepa-customer-orders-responsible.component';
 import { VisitPrepaTiersResponsibleInfoComponent } from '../visit-prepa-tiers-responsible-info/visit-prepa-tiers-responsible-info.component';
+import { VouchersListComponent } from '../vouchers-list/vouchers-list.component';
 import { TiersComponent } from './tiers.component';
 
 const routes: Routes = [
@@ -82,6 +83,7 @@ const routes: Routes = [
     RffListComponent,
     VisitPrepaTiersResponsibleInfoComponent,
     VisitPrepaCustomerOrdersResponsibleComponent,
+    VouchersListComponent
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }

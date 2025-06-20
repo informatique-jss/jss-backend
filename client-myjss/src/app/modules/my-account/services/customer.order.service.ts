@@ -4,6 +4,7 @@ import { AppRestService } from '../../main/services/appRest.service';
 import { IQuotation } from '../../quotation/model/IQuotation';
 import { CustomerOrder } from '../model/CustomerOrder';
 import { Document } from '../model/Document';
+import { Voucher } from '../model/Voucher';
 
 @Injectable({
   providedIn: 'root'
@@ -43,6 +44,13 @@ export class CustomerOrderService extends AppRestService<CustomerOrder> {
 
   completePricingOfOrder(customerOrder: CustomerOrder, isEmergency: boolean) {
     return this.postItem(new HttpParams().set("isEmergency", isEmergency), 'order/pricing', customerOrder);
+  }
+
+  applyVoucherPricingOnOrder(customerOrder: CustomerOrder, voucher?: Voucher) {
+    let params = new HttpParams().set("customerOrderId", customerOrder.id);
+    if (voucher && voucher.id)
+      params = params.set("voucherId", voucher.id);
+    return this.get(params, 'voucher/pricing');
   }
 
   setEmergencyOnOrder(orderId: number, isEmergency: boolean) {

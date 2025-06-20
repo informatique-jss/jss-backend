@@ -825,10 +825,32 @@ public class PricingHelper {
                         invoiceItem.getPreTaxPrice().multiply(assoSpecialOfferBillingType.getDiscountRate())
                                 .divide(oneHundredValue).multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN)
                                 .divide(oneHundredValue));
+        }
+        if (quotation.getVoucher() != null) {
+            // TODO créer un invoice item pour les coupons avec discount amount
+            if (quotation.getVoucher().getDiscountAmount() != null
+                    && quotation.getVoucher().getDiscountAmount().compareTo(zeroValue) > 0) {
+                BigDecimal voucherDiscount = quotation.getVoucher().getDiscountAmount()
+                        .multiply(oneHundredValue)
+                        .setScale(0, RoundingMode.HALF_EVEN)
+                        .divide(oneHundredValue);
+
+                BigDecimal existingDiscount = invoiceItem.getDiscountAmount() != null
+                        ? invoiceItem.getDiscountAmount()
+                        : zeroValue;
+
+                invoiceItem.setDiscountAmount(existingDiscount.add(voucherDiscount));
+            }
+            if (quotation.getVoucher().getDiscountRate() != null
+                    && quotation.getVoucher().getDiscountRate().compareTo(zeroValue) > 0) {
+                invoiceItem.setDiscountAmount(
+                        invoiceItem.getPreTaxPrice().multiply(quotation.getVoucher().getDiscountRate())
+                                .divide(oneHundredValue).multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN)
+                                .divide(oneHundredValue));
+            }
         } else {
             invoiceItem.setDiscountAmount(zeroValue);
         }
-
         invoiceItem.setVat(invoiceItem.getBillingItem().getBillingType().getVat());
         vatService.completeVatOnInvoiceItem(invoiceItem, quotation);
     }

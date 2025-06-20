@@ -9,6 +9,7 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.modules.osiris.crm.model.Voucher;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoicingBlockage;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
@@ -190,4 +191,10 @@ public interface CustomerOrderService {
                         throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException,
                         OsirisException;
 
+        public List<CustomerOrder> getCustomerOrdersByVoucherAndResponsable(Voucher voucher, Responsable responsable);
+
+        public List<CustomerOrder> getCustomerOrdersByVoucher(Voucher voucher);
+
+        public CustomerOrder computeVoucheredPriceOnOrder(CustomerOrder customerOrder, Voucher voucher)
+                        throws OsirisClientMessageException, OsirisValidationException, OsirisException;
 }

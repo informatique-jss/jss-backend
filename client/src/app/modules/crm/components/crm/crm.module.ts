@@ -10,6 +10,8 @@ import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/mi
 import { CandidacyComponent } from '../candidacy/candidacy.component';
 import { CommunicationPreferenceComponent } from '../communication-preference/communication-preference.component';
 import { MyjssCommentManagementComponent } from '../myjss-comment-management/myjss-comment-management.component';
+import { NewVoucherDialogComponent } from '../new-voucher-dialog/new-voucher-dialog.component';
+import { VoucherComponent } from '../voucher/voucher.component';
 import { WebinarParticipantComponent } from '../webinar-participant/webinar-participant.component';
 import { CrmComponent } from './crm.component';
 
@@ -36,7 +38,9 @@ const routes: Routes = [
     CommunicationPreferenceComponent,
     MyjssCommentManagementComponent,
     WebinarParticipantComponent,
-    CandidacyComponent
+    CandidacyComponent,
+    VoucherComponent,
+    NewVoucherDialogComponent
   ],
   exports: [
     CommunicationPreferenceComponent,
