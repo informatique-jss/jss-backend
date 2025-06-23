@@ -529,8 +529,7 @@ export class CheckoutComponent implements OnInit {
     if (this.quotation) {
       this.quotation.voucher = {} as Voucher;
       if (this.quotation.isQuotation)
-        //TODO
-        this.quotationService.completePricingOfQuotation(this.quotation as Quotation, false).subscribe(response => {
+        this.quotationService.applyVoucherPricingOnQuotation(this.quotation as Quotation, undefined).subscribe(response => {
           if (response) {
             this.quotation = response;
             this.finalizePricingAnswer();
