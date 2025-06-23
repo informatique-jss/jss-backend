@@ -499,14 +499,14 @@ export class CheckoutComponent implements OnInit {
       this.appService.displayToast("Veuillez vous connecter pour utiliser un coupon de réduction", true, "Connexion", 5000);
 
     if (this.quotation && this.currentUser && this.quotation.voucher) {
-      this.voucherService.applyVoucher(this.quotation.voucher).subscribe(response => {
+      this.voucherService.checkValidityVoucher(this.quotation.voucher).subscribe(response => {
         if (response && this.quotation) {
           this.voucher = response;
           if (this.quotation.isQuotation) {
-            //TODO
-            this.quotationService.completePricingOfQuotation(this.quotation as Quotation, false).subscribe(response => {
+            this.quotationService.applyVoucherPricingOnQuotation(this.quotation as Quotation, this.voucher).subscribe(response => {
               if (response) {
                 this.quotation = response;
+                this.finalizePricingAnswer();
                 this.appService.displayToast("Le code de réduction a été appliqué", false, "", 5000);
               }
             });

@@ -12,7 +12,7 @@ export class VoucherService extends AppRestService<Voucher> {
     super(http, "quotation");
   }
 
-  applyVoucher(voucher: Voucher) {
+  checkValidityVoucher(voucher: Voucher) {
     return this.get(new HttpParams().set("voucherCode", voucher.code), "voucher/apply");
   }
 }

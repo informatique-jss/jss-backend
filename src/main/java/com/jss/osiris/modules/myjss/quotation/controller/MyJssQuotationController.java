@@ -1575,7 +1575,7 @@ public class MyJssQuotationController {
 				HttpStatus.OK);
 	}
 
-	@GetMapping(inputEntryPoint + "/voucher/pricing")
+	@GetMapping(inputEntryPoint + "/voucher/order/pricing")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<CustomerOrder> applyVoucherPricingOnOrder(@RequestParam Integer customerOrderId,
 			@RequestParam(required = false) Integer voucherId,
@@ -1592,6 +1592,26 @@ public class MyJssQuotationController {
 
 		return new ResponseEntity<CustomerOrder>(
 				customerOrderService.computeVoucheredPriceOnOrder(customerOrder, voucher),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/voucher/quotation/pricing")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<Quotation> applyVoucherPricingOnQuotation(@RequestParam Integer quotationId,
+			@RequestParam(required = false) Integer voucherId,
+			HttpServletRequest request) throws OsirisClientMessageException, OsirisException {
+		detectFlood(request);
+		Quotation quotation = null;
+		quotation = quotationService.getQuotation(quotationId);
+
+		if (quotation == null)
+			throw new OsirisValidationException("quotation");
+		Voucher voucher = null;
+		if (voucherId != null)
+			voucher = voucherService.getVoucher(voucherId);
+
+		return new ResponseEntity<Quotation>(
+				quotationService.computeVoucheredPriceOnQuotation(quotation, voucher),
 				HttpStatus.OK);
 	}
 

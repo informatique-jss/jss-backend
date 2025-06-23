@@ -50,7 +50,7 @@ export class CustomerOrderService extends AppRestService<CustomerOrder> {
     let params = new HttpParams().set("customerOrderId", customerOrder.id);
     if (voucher && voucher.id)
       params = params.set("voucherId", voucher.id);
-    return this.get(params, 'voucher/pricing');
+    return this.get(params, 'voucher/order/pricing');
   }
 
   setEmergencyOnOrder(orderId: number, isEmergency: boolean) {

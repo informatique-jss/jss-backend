@@ -5,6 +5,7 @@ import { AppRestService } from '../../main/services/appRest.service';
 import { IQuotation } from '../../quotation/model/IQuotation';
 import { Document } from '../model/Document';
 import { Quotation } from '../model/Quotation';
+import { Voucher } from '../model/Voucher';
 
 @Injectable({
   providedIn: 'root'
@@ -32,6 +33,13 @@ export class QuotationService extends AppRestService<Quotation> {
 
   saveFinalQuotation(quotation: Quotation, isValidation: boolean) {
     return this.postItem(new HttpParams().set("isValidation", isValidation), 'quotation/save-order', quotation);
+  }
+
+  applyVoucherPricingOnQuotation(quotation: Quotation, voucher?: Voucher) {
+    let params = new HttpParams().set("quotationId", quotation.id);
+    if (voucher && voucher.id)
+      params = params.set("voucherId", voucher.id);
+    return this.get(params, 'voucher/quotation/pricing');
   }
 
   completePricingOfQuotation(quotation: Quotation, isEmergency: boolean) {

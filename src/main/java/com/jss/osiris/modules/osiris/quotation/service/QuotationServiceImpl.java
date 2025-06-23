@@ -36,6 +36,7 @@ import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
 import com.jss.osiris.modules.myjss.quotation.service.MyJssQuotationDelegate;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingRecordService;
+import com.jss.osiris.modules.osiris.crm.model.Voucher;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
@@ -889,5 +890,16 @@ public class QuotationServiceImpl implements QuotationService {
         quotation = getQuotation(quotation.getId());
         pricingHelper.getAndSetInvoiceItemsForQuotation(quotation, true);
         return true;
+    }
+
+    @Override
+    public Quotation computeVoucheredPriceOnQuotation(Quotation quotation, Voucher voucher)
+            throws OsirisClientMessageException, OsirisValidationException, OsirisException {
+        quotation.setVoucher(voucher);
+        pricingHelper.getAndSetInvoiceItemsForQuotation(quotation, true);
+        quotation = addOrUpdateQuotation(quotation);
+        for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders())
+            serviceService.populateTransientField(assoAffaireOrder.getServices());
+        return quotation;
     }
 }
