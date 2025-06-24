@@ -6,7 +6,8 @@
         <h2 class="h4 mb-0">Liste de lecture</h2>
       </div>
 
-      <button type="button" class="btn btn-outline-dark" (click)="openCreationModal()"> <i class="bi bi-plus-lg"></i>
+      <button type="button" class="btn btn-outline-dark" (click)="openCreationModal(creationModal)"> <i
+          class="bi bi-plus-lg"></i>
         Ajouter un dossier de lecture </button>
     </div>
     <div class="row g-3">
@@ -18,10 +19,10 @@
           (click)="openReadingFolder($event, folder)">
           <h5 class="folder-title m-0">{{ folder.label }}</h5>
           <button *ngIf="folder.id !== -1" class="btn btn-sm position-absolute top-0 end-0 m-2"
-            (click)=" openDeletionModal(folder); $event.stopPropagation();">
+            (click)=" openDeletionModal(deletionModal,folder); $event.stopPropagation();">
             <i class="ai-cross"></i>
           </button>
-        </div>²
+        </div>
       </div>
     </div>
   </div>

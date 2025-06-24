@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
@@ -22,9 +22,6 @@ export class ReadingFoldersComponent implements OnInit {
 
   folderToDelete: ReadingFolder | undefined;
   readingFolderForm!: FormGroup;
-
-  @ViewChild('creationModal') creationModal!: TemplateRef<any>;
-  @ViewChild('deletionModal') deletionModal!: TemplateRef<any>;
 
   constructor(private readingFolderService: ReadingFolderService,
     private appService: AppService,
@@ -50,13 +47,13 @@ export class ReadingFoldersComponent implements OnInit {
     });
   }
 
-  openDeletionModal(folder: ReadingFolder) {
+  openDeletionModal(content: any, folder: ReadingFolder) {
     this.folderToDelete = folder;
-    this.modalService.open(this.deletionModal);
+    this.modalService.open(content, { centered: true, size: 'md' });
   }
 
-  openCreationModal() {
-    this.modalService.open(this.creationModal);
+  openCreationModal(content: any) {
+    this.modalService.open(content, { centered: true, size: 'md' });
   }
 
   createReadingFolder() {
