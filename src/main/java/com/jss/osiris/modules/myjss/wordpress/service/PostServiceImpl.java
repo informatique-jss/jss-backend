@@ -244,8 +244,9 @@ public class PostServiceImpl implements PostService {
         if (!post.getReadingFolders().isEmpty())
             for (ReadingFolder folder : post.getReadingFolders())
                 if (folder.getMail() != null && folder.getMail().getId().equals(responsable.getMail().getId())) {
-                    folder.getPosts().remove(post);
-                    readingFolderService.addOrUpdateReadingFolder(folder, responsable);
+                    post.getReadingFolders().remove(folder);
+                    addOrUpdatePost(post);
+                    return;
                 }
     }
 
@@ -268,9 +269,13 @@ public class PostServiceImpl implements PostService {
         reformatQuotes(post);
         reformatFootnotes(post);
 
-        postRepository.save(computePost(post));
+        addOrUpdatePost(computePost(post));
         batchService.declareNewBatch(Batch.REINDEX_POST, post.getId());
         return post;
+    }
+
+    private Post addOrUpdatePost(Post post) {
+        return postRepository.save(post);
     }
 
     /**
@@ -849,7 +854,7 @@ public class PostServiceImpl implements PostService {
     public void cancelPost(Post post) {
         post = getPost(post.getId());
         post.setIsCancelled(true);
-        postRepository.save(post);
+        addOrUpdatePost(post);
     }
 
     private Post computePost(Post post) {
