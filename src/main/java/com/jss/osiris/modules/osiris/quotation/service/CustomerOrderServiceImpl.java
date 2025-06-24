@@ -114,7 +114,6 @@ import com.jss.osiris.modules.osiris.tiers.service.TiersService;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.servlet.http.HttpServletRequest;
 
 @org.springframework.stereotype.Service
 public class CustomerOrderServiceImpl implements CustomerOrderService {
@@ -375,14 +374,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 customerOrder.setCustomerOrderOrigin(constantService.getCustomerOrderOriginOsiris());
         }
 
-        // Set default customer order assignation to sales employee if not set
-        if (customerOrder.getAssignedTo() == null && customerOrder.getResponsable() != null)
-            if (customerOrder.getResponsable().getDefaultCustomerOrderEmployee() != null)
-                customerOrder.setAssignedTo(customerOrder.getResponsable().getDefaultCustomerOrderEmployee());
-            else
-                customerOrder
-                        .setAssignedTo(customerOrder.getResponsable().getTiers().getDefaultCustomerOrderEmployee());
-
         if (customerOrder.getIsGifted() == null)
             customerOrder.setIsGifted(false);
 
@@ -433,7 +424,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         customerOrder = simpleAddOrUpdate(customerOrder);
 
         // Generate first comment
-        // TODO : generate it when go from draft to in progress
         if (isFromUser && customerOrder.getResponsable() != null && isNewCustomerOrder) {
             String comment = "";
             Tiers tiers = customerOrder.getResponsable().getTiers();
@@ -871,14 +861,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             salesEmployeeId.add(0);
         }
 
-        ArrayList<Integer> assignedToEmployeeId = new ArrayList<Integer>();
-        if (orderingSearch.getAssignedToEmployee() != null) {
-            for (Employee employee : employeeService.getMyHolidaymaker(orderingSearch.getAssignedToEmployee()))
-                assignedToEmployeeId.add(employee.getId());
-        } else {
-            assignedToEmployeeId.add(0);
-        }
-
         ArrayList<Integer> customerOrderId = new ArrayList<Integer>();
         if (orderingSearch.getCustomerOrders() != null && orderingSearch.getCustomerOrders().size() > 0) {
             for (Tiers tiers : orderingSearch.getCustomerOrders())
@@ -919,7 +901,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             orderingSearch.setRecurringValidityDate(LocalDate.of(1949, 1, 1));
 
         List<OrderingSearchResult> customerOrders = customerOrderRepository.findCustomerOrders(
-                salesEmployeeId, assignedToEmployeeId,
+                salesEmployeeId,
                 statusId,
                 orderingSearch.getStartDate().withHour(0).withMinute(0),
                 orderingSearch.getEndDate().withHour(23).withMinute(59), customerOrderId, affaireId,
@@ -946,8 +928,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         CustomerOrderStatus statusOpen = customerOrderStatusService
                 .getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT);
-        CustomerOrder customerOrder = new CustomerOrder(quotation.getAssignedTo(),
-                quotation.getResponsable().getTiers(),
+        CustomerOrder customerOrder = new CustomerOrder(quotation.getResponsable().getTiers(),
                 quotation.getResponsable(),
                 /* quotation.getConfrere(), */ quotation.getSpecialOffers(), LocalDateTime.now(), statusOpen,
                 quotation.getDescription(), null,
@@ -1013,7 +994,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     if (service.getAssoServiceDocuments() != null)
                         for (AssoServiceDocument assoServiceDocument : service.getAssoServiceDocuments()) {
                             assoServiceDocument.setId(null);
-                            assoServiceDocument.setAttachments(null); // TODO AGN ...
+                            assoServiceDocument.setAttachments(null);
                         }
                     if (service.getAssoServiceFieldTypes() != null && service.getAssoServiceFieldTypes().size() > 0)
                         for (AssoServiceFieldType assoServiceFieldType : service.getAssoServiceFieldTypes()) {
@@ -1403,14 +1384,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void updateAssignedToForCustomerOrder(CustomerOrder customerOrder, Employee employee)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
-        customerOrder.setAssignedTo(employee);
-        addOrUpdateCustomerOrder(customerOrder, true, false);
-    }
-
-    @Override
     public List<OrderingSearchResult> searchByQuotationId(Integer idQuotation) {
         OrderingSearch search = new OrderingSearch();
         search.setIdQuotation(idQuotation);
@@ -1486,8 +1459,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         CustomerOrderStatus statusOpen = customerOrderStatusService
                 .getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT);
-        CustomerOrder customerOrder = new CustomerOrder(customerOrderRecurring.getAssignedTo(),
-                customerOrderRecurring.getResponsable().getTiers(),
+        CustomerOrder customerOrder = new CustomerOrder(customerOrderRecurring.getResponsable().getTiers(),
                 customerOrderRecurring.getResponsable(),
                 /* customerOrderRecurring.getConfrere(), */customerOrderRecurring.getSpecialOffers(),
                 LocalDateTime.now(),
@@ -1856,36 +1828,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             return customerOrderRepository.searchOrders(responsables, customerOrderStatus);
         }
         return null;
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public CustomerOrder saveCustomerOrderFromMyJss(CustomerOrder order, Boolean isValidation,
-            HttpServletRequest request)
-            throws OsirisClientMessageException, OsirisValidationException, OsirisException {
-        if (order.getAssoAffaireOrders() != null)
-            for (AssoAffaireOrder asso : order.getAssoAffaireOrders())
-                if (asso.getAffaire() != null && asso.getAffaire().getId() == null)
-                    affaireService.addOrUpdateAffaire(asso.getAffaire());
-
-        myJssQuotationDelegate.saveNewMailsOnAffaire(order);
-
-        order.setResponsable(employeeService.getCurrentMyJssUser());
-        order.setCustomerOrderOrigin(constantService.getCustomerOrderOriginMyJss());
-        order.setCustomerOrderStatus(
-                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT));
-        quotationValidationHelper.completeIQuotationDocuments(order, true);
-        myJssQuotationDelegate.populateBooleansOfProvisions(order);
-        order = addOrUpdateCustomerOrder(order, true, false);
-
-        if (isValidation != null && isValidation) {
-            addOrUpdateCustomerOrderStatus(order, CustomerOrderStatus.BEING_PROCESSED, true);
-            if (isOnlyJssAnnouncement(order, true)) {
-                quotationValidationHelper.validateQuotationAndCustomerOrder(order, null);
-                autoBilledProvisions(order);
-            }
-        }
-        return order;
     }
 
     @Override

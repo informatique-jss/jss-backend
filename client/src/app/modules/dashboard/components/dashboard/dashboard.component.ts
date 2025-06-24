@@ -61,8 +61,6 @@ export class DashboardComponent implements OnInit {
 
   AFFAIRE_IN_PROGRESS = "Mes prestations en cours";
   AFFAIRE_TO_DO = "Mes prestations à faire";
-  AFFAIRE_RESPONSIBLE_TO_DO = "Mes prestations en responsabilité à faire";
-  AFFAIRE_RESPONSIBLE_IN_PROGRESS = "Mes prestations en responsabilité en cours";
   AFFAIRE_SIMPLE_PROVISION_WAITING_AUTHORITY = "Mes formalités simples en attente de l'autorité compétente"
   AFFAIRE_SIMPLE_PROVISION_AUTHORITY_REJECTED = "Mes formalités rejetées par l'AC"
   AFFAIRE_SIMPLE_PROVISION_AUTHORITY_VALIDATED = "Mes formalités validées par l'AC"
@@ -73,8 +71,6 @@ export class DashboardComponent implements OnInit {
 
   affaireSearchInProgress: AffaireSearch = {} as AffaireSearch;
   affaireSearchToDo: AffaireSearch = {} as AffaireSearch;
-  affaireSearchResponsibleInProgress: AffaireSearch = {} as AffaireSearch;
-  affaireSearchResponsibleToDo: AffaireSearch = {} as AffaireSearch;
   affaireSearchWaitingAuthority: AffaireSearch = {} as AffaireSearch;
   affaireSearcAuthorityRejected: AffaireSearch = {} as AffaireSearch;
   affaireSearcAuthorityValidated: AffaireSearch = {} as AffaireSearch;
@@ -120,8 +116,7 @@ export class DashboardComponent implements OnInit {
   PROVISION_BOARD = "Suivi d'équipe";
 
   allItems: Array<string> = [this.QUOTATION_REFUSED, this.PAYMENT_TO_ASSOCIATE, this.INVOICE_TO_ASSOCIATE, this.QUOTATION_TO_VERIFY,
-  this.QUOTATION_OPEN, this.ORDER_TO_BILLED, this.ORDER_BEING_PROCESSED, this.ORDERS_AWAITING_DEPOSIT, this.ORDER_OPEN, this.ALL_ORDER_OPEN,
-  this.AFFAIRE_RESPONSIBLE_IN_PROGRESS, this.AFFAIRE_RESPONSIBLE_TO_DO, this.AFFAIRE_SIMPLE_PROVISION_WAITING_AUTHORITY,
+  this.QUOTATION_OPEN, this.ORDER_TO_BILLED, this.ORDER_BEING_PROCESSED, this.ORDERS_AWAITING_DEPOSIT, this.ORDER_OPEN, this.ALL_ORDER_OPEN, this.AFFAIRE_SIMPLE_PROVISION_WAITING_AUTHORITY,
   this.AFFAIRE_SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT, this.AFFAIRE_IN_PROGRESS, this.AFFAIRE_TO_DO, this.QUOTATION_SENT, this.AFFAIRE_DOCUMENT_AUTHORITY_TECHNICAL_BLOCKING,
   this.PROVISION_BOARD, this.AFFAIRE_SIMPLE_PROVISION_AUTHORITY_REJECTED, this.AFFAIRE_SIMPLE_PROVISION_AUTHORITY_VALIDATED, this.AFFAIRE_WAITING_FINAL_DOCUMENT_AUTHORITY, this.AFFAIRE_MISSING_ATTACHMENT_QUERY_TO_MANUALLY_REMINDER, this.ORDER_GROUP_TAGGED_WITH_COMMENT].sort((a, b) => a.localeCompare(b));
 
@@ -180,12 +175,6 @@ export class DashboardComponent implements OnInit {
         this.affaireSearchToDo.assignedTo = this.currentEmployee;
         this.affaireSearchToDo.status = this.statusTypes.filter(stauts => stauts.isOpenState);
 
-        this.affaireSearchResponsibleInProgress.responsible = this.currentEmployee;
-        this.affaireSearchResponsibleInProgress.status = this.statusTypes.filter(stauts => stauts.isOpenState);
-
-        this.affaireSearchResponsibleToDo.responsible = this.currentEmployee;
-        this.affaireSearchResponsibleToDo.status = this.statusTypes.filter(stauts => stauts.isOpenState);
-
         this.affaireSearchWaitingDocument.assignedTo = this.currentEmployee;
         this.affaireSearchWaitingDocument.status = this.simpleProvisionStatus.filter(stauts => stauts.code == SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT);
         this.affaireSearchWaitingDocument.status.push(...this.formaliteStatus.filter(stauts => stauts.code == FORMALITE_STATUS_WAITING_DOCUMENT));
@@ -210,39 +199,39 @@ export class DashboardComponent implements OnInit {
         this.affaireWaitingFinalDocumentAuthority.status = [];
         this.affaireWaitingFinalDocumentAuthority.status.push(...this.formaliteStatus.filter(stauts => stauts.code == FORMALITE_WAITING_FINAL_DOCUMENT_AUTHORITY), ...this.simpleProvisionStatus.filter(stauts => stauts.code == SIMPLE_PROVISION_WAITING_FINAL_DOCUMENT_AUTHORITY));
 
-        this.orderingSearchOpen.assignedToEmployee = this.currentEmployee!;
+        this.orderingSearchOpen.salesEmployee = this.currentEmployee!;
         this.orderingSearchOpen.customerOrderStatus = [this.customerOrderStatusService.getCustomerStatusByCode(this.customerOrderStatus, CUSTOMER_ORDER_STATUS_OPEN)!];
 
         this.orderingSearchAllOpen.customerOrderStatus = [this.customerOrderStatusService.getCustomerStatusByCode(this.customerOrderStatus, CUSTOMER_ORDER_STATUS_OPEN)!];
 
-        this.orderingSearchBeingProcessed.assignedToEmployee = this.currentEmployee!;
+        this.orderingSearchBeingProcessed.salesEmployee = this.currentEmployee!;
         this.orderingSearchBeingProcessed.customerOrderStatus = [this.customerOrderStatusService.getCustomerStatusByCode(this.customerOrderStatus, CUSTOMER_ORDER_STATUS_BEING_PROCESSED)!];
 
-        this.orderingSearchToAwaitingDeposit.assignedToEmployee = this.currentEmployee!;
+        this.orderingSearchToAwaitingDeposit.salesEmployee = this.currentEmployee!;
         this.orderingSearchToAwaitingDeposit.customerOrderStatus = [this.customerOrderStatusService.getCustomerStatusByCode(this.customerOrderStatus, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT)!];
 
         this.orderingSearchToBilled.customerOrderStatus = [this.customerOrderStatusService.getCustomerStatusByCode(this.customerOrderStatus, CUSTOMER_ORDER_STATUS_TO_BILLED)!];
 
-        this.orderingSearchTagged.assignedToEmployee = this.currentEmployee!;
+        this.orderingSearchTagged.salesEmployee = this.currentEmployee!;
         this.activeDirectoryGroupService.getActiveDirectoryGroups().subscribe(response => {
           let activeDirectoryGroups = response;
           for (let activeDirectoryGroup of activeDirectoryGroups) {
-            if (this.orderingSearchTagged.assignedToEmployee.adPath.includes(activeDirectoryGroup.activeDirectoryPath))
+            if (this.orderingSearchTagged.salesEmployee.adPath.includes(activeDirectoryGroup.activeDirectoryPath))
               this.orderingSearchTagged.activeDirectoryGroup = activeDirectoryGroup;
           }
         });
         this.orderingSearchTagged.isOnlyDisplayUnread = true;
 
-        this.quotationSearchOpen.assignedToEmployee = this.currentEmployee!;
+        this.quotationSearchOpen.salesEmployee = this.currentEmployee!;
         this.quotationSearchOpen.quotationStatus = [this.quotationStatusService.getQuotationStatusByCode(this.quotationStatus, QUOTATION_STATUS_OPEN)!];
 
-        this.quotationSearchToVerify.assignedToEmployee = this.currentEmployee!;
+        this.quotationSearchToVerify.salesEmployee = this.currentEmployee!;
         this.quotationSearchToVerify.quotationStatus = [this.quotationStatusService.getQuotationStatusByCode(this.quotationStatus, QUOTATION_STATUS_TO_VERIFY)!];
 
-        this.quotationSearchRefused.assignedToEmployee = this.currentEmployee!;
+        this.quotationSearchRefused.salesEmployee = this.currentEmployee!;
         this.quotationSearchRefused.quotationStatus = [this.quotationStatusService.getQuotationStatusByCode(this.quotationStatus, QUOTATION_STATUS_REFUSED_BY_CUSTOMER)!];
 
-        this.quotationSearchSent.assignedToEmployee = this.currentEmployee!;
+        this.quotationSearchSent.salesEmployee = this.currentEmployee!;
         this.quotationSearchSent.quotationStatus = [this.quotationStatusService.getQuotationStatusByCode(this.quotationStatus, QUOTATION_STATUS_SENT_TO_CUSTOMER)!];
 
         this.invoiceSearchToAssociate.invoiceStatus = [this.constantService.getInvoiceStatusSend()];

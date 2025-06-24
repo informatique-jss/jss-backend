@@ -5,7 +5,6 @@ export interface QuotationSearchResult {
   quotationStatus: string;
   createdDate: Date;
   salesEmployeeId: number;
-  assignedToEmployeeId: number;
   quotationDescription: string;
   quotationId: number;
   responsableId: number;

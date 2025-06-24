@@ -14,8 +14,6 @@ public class ActeDepositServiceImpl implements ActeDepositService {
 
     @Override
     public void declareActeDepositOnGuichetUnique(Formalite formalite) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'declareActeDepositOnGuichetUnique'");
     }
 
 }

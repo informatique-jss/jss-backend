@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT } from 'src/app/libs/Constants';
 import { formatDateForSortTable, formatDateTimeForSortTable, formatEurosForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
@@ -9,7 +8,6 @@ import { EmployeeService } from 'src/app/modules/profile/services/employee.servi
 import { Tiers } from 'src/app/modules/tiers/model/Tiers';
 import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
-import { CustomerOrderStatus } from '../../model/CustomerOrderStatus';
 import { OrderingSearchTagged } from '../../model/OrderingSearchTagged';
 import { OrderingSearchTaggedResult } from '../../model/OrderingSearchTaggedResult';
 import { CustomerOrderStatusService } from '../../services/customer.order.status.service';
@@ -65,7 +63,6 @@ export class OrderingListTaggedComponent implements OnInit {
       this.availableColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix TTC", valueFonction: formatEurosForSortTable } as SortTableColumn<OrderingSearchTaggedResult>);
       this.availableColumns.push({ id: "depositTotalAmount", fieldName: "depositTotalAmount", label: "Acompte versé", valueFonction: formatEurosForSortTable } as SortTableColumn<OrderingSearchTaggedResult>);
       this.availableColumns.push({ id: "salesEmployee", fieldName: "salesEmployeeId", label: "Commercial", displayAsEmployee: true } as SortTableColumn<OrderingSearchTaggedResult>);
-      this.availableColumns.push({ id: "assignedToEmployee", fieldName: "assignedToEmployeeId", label: "Assignée à", displayAsEmployee: true } as SortTableColumn<OrderingSearchTaggedResult>);
       this.availableColumns.push({ id: "lastStatusUpdate", fieldName: "lastStatusUpdate", label: "Mise à jour", valueFonction: formatDateTimeForSortTable } as SortTableColumn<OrderingSearchTaggedResult>);
       this.availableColumns.push({ id: "activeDirectoryGroupLabel", fieldName: "activeDirectoryGroupLabel", label: "Groupe taggé" } as SortTableColumn<OrderingSearchTaggedResult>);
       this.setColumns();

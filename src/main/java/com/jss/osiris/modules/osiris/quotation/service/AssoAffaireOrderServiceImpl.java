@@ -191,15 +191,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void updateAssignedToForAsso(AssoAffaireOrder asso, Employee employee) throws OsirisException {
-        asso.setAssignedTo(employee);
-        assoAffaireOrderRepository.save(asso);
-        if (asso.getCustomerOrder() != null)
-            batchService.declareNewBatch(Batch.REINDEX_ASSO_AFFAIRE_ORDER, asso.getId());
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
     public void reindexAffaires() throws OsirisException {
         List<AssoAffaireOrder> affaires = getAssoAffaireOrders();
         if (affaires != null)
@@ -213,7 +204,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
             Boolean isFromUser)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         // Complete domiciliation end date
-        int nbrAssignation = 0;
         Employee currentEmployee = null;
         Employee maxWeightEmployee = null;
         Integer maxWeight = -1000000000;
@@ -584,7 +574,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                     provision.setAssignedTo(employee);
                     if (currentEmployee == null || !currentEmployee.getId().equals(employee.getId())) {
                         currentEmployee = employee;
-                        nbrAssignation++;
                     }
 
                     // Handle weight
@@ -596,13 +585,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 }
             }
         }
-        if (nbrAssignation == 1 && assoAffaireOrder.getAssignedTo() == null)
-            assoAffaireOrder.setAssignedTo(currentEmployee);
 
         if (maxWeightEmployee != null) {
-            if (assoAffaireOrder.getAssignedTo() == null)
-                assoAffaireOrder.setAssignedTo(maxWeightEmployee);
-
             for (Service service : assoAffaireOrder.getServices())
                 for (Provision provision : service.getProvisions())
                     if (provision.getId() == null)
@@ -616,7 +600,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     public ArrayList<AssoAffaireOrderSearchResult> searchForAsso(AffaireSearch affaireSearch) {
         ArrayList<Integer> statusId = null;
         ArrayList<Integer> assignedId = null;
-        ArrayList<Integer> responsibleId = null;
         Integer affaireId = null;
 
         statusId = new ArrayList<Integer>();
@@ -632,13 +615,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
             assignedId.add(affaireSearch.getAssignedTo().getId());
         } else {
             assignedId.add(0);
-        }
-
-        responsibleId = new ArrayList<Integer>();
-        if (affaireSearch.getResponsible() != null) {
-            responsibleId.add(affaireSearch.getResponsible().getId());
-        } else {
-            responsibleId.add(0);
         }
 
         Integer commercialId = 0;
@@ -681,8 +657,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         if (affaireSearch.getIsMissingQueriesToManualRemind() == null)
             affaireSearch.setIsMissingQueriesToManualRemind(false);
 
-        return assoAffaireOrderRepository.findAsso(responsibleId,
-                assignedId, affaireSearch.getLabel(),
+        return assoAffaireOrderRepository.findAsso(assignedId, affaireSearch.getLabel(),
                 statusId, excludedCustomerOrderStatusCode, customerOrderId, waitedCompetentAuthorityId, affaireId,
                 affaireSearch.getIsMissingQueriesToManualRemind(),
                 simpleProvisionStatusService

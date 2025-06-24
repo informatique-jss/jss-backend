@@ -85,11 +85,6 @@ export class ServiceSidePanelDetailsComponent implements OnInit {
     return this.affaireNotification[affaire.id];
   }
 
-  updateAssignedToForAffaire(employee: any, asso: AssoAffaireOrder) {
-    this.assoAffaireOrderService.updateAssignedToForAsso(asso, employee).subscribe(response => {
-    });
-  }
-
   displayAffaire(event: any, asso: AssoAffaireOrder) {
     this.appService.openRoute({ ctrlKey: true }, '/affaire/' + asso.affaire.id, null);
   }

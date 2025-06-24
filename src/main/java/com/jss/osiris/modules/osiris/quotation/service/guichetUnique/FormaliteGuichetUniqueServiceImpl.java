@@ -538,8 +538,6 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             throws OsirisException, OsirisClientMessageException,
             OsirisValidationException, OsirisDuplicateException {
         Invoice invoice = new Invoice();
-        // invoice.setCompetentAuthority(constantService.getCompetentAuthorityInpi());
-        // TODO : refonte
         invoice.setProvider(constantService.getCompetentAuthorityInpi().getProvider());
         invoice.setCustomerOrderForInboundInvoice(provision.getService().getAssoAffaireOrder().getCustomerOrder());
         invoice.setManualAccountingDocumentNumber(cart.getMipOrderNum() + "/" +

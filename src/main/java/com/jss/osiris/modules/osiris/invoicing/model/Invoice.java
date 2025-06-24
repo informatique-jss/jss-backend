@@ -100,13 +100,6 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	@IndexedField
 	private Responsable responsable;
 
-	// @ManyToOne(fetch = FetchType.LAZY)
-	// @JoinColumn(name = "id_competent_authority")
-	// @JsonIgnoreProperties(value = { "departments", "cities", "regions" },
-	// allowSetters = true)
-	// private CompetentAuthority competentAuthority;
-	// TODO refonte
-
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_provider")
 	private Provider provider;

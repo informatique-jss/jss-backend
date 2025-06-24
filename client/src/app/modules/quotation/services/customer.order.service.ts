@@ -9,7 +9,6 @@ import { Announcement } from '../model/Announcement';
 import { CustomerOrder } from '../model/CustomerOrder';
 import { IQuotation } from '../model/IQuotation';
 import { Invoice } from '../model/Invoice';
-import { Quotation } from '../model/Quotation';
 
 @Injectable({
   providedIn: 'root'
@@ -52,14 +51,6 @@ export class CustomerOrderService extends AppRestService<IQuotation> {
     if (competentAuthority)
       params = params.set("competentAuthorityId", competentAuthority.id + "");
     return this.get(params, "customer-order/print/label");
-  }
-
-  updateAssignedToForCustomerOrder(customerOrder: CustomerOrder, employee: Employee) {
-    return this.get(new HttpParams().set("customerOrderId", customerOrder.id).set("employeeId", employee.id), "customer-order/assign");
-  }
-
-  updateAssignedToForQuotation(quotation: Quotation, employee: Employee) {
-    return this.get(new HttpParams().set("quotationId", quotation.id).set("employeeId", employee.id), "quotation/assign");
   }
 
   offerCustomerOrder(customerOrder: CustomerOrder) {

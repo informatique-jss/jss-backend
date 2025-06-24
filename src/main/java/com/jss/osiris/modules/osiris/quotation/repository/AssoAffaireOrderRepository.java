@@ -26,7 +26,6 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         +
                         " r.firstname || ' '||r.lastname as responsableLabel," +
                         " cf.label as confrereLabel," +
-                        " e1.id as responsibleId," +
                         " e2.id as assignedToId," +
                         " pf.label ||' - '||pt.label as provisionTypeLabel," +
                         " coalesce(ans.label,fs.label,doms.label, sps.label) as statusLabel," +
@@ -51,7 +50,6 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         " left join city ci on ci.id = a.id_city" +
                         " left join responsable r on r.id = c.id_responsable" +
                         " left join tiers t2 on r.id_tiers = t2.id" +
-                        " left join employee e1 on e1.id = asso.id_employee" +
                         " left join employee e2 on e2.id = p.id_employee" +
                         " left join provision_type pt on pt.id = p.id_provision_type" +
                         " left join provision_family_type pf on pf.id = pt.id_provision_family_type" +
@@ -81,7 +79,7 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         +
                         "  or audit.entity_id=sp.id and audit.entity = 'SimpleProvision' and audit.field_name = 'simpleProvisionStatus' "
                         +
-                        " where (COALESCE(:customerOrder)!=0 or cs.code not in (:excludedCustomerOrderStatusCode)) and (COALESCE(:responsible)=0 or asso.id_employee in (:responsible))"
+                        " where (COALESCE(:customerOrder)!=0 or cs.code not in (:excludedCustomerOrderStatusCode))  "
                         + " and ( COALESCE(:customerOrder)=0 or r.id in (:customerOrder)  )"
                         +
                         " and ( :waitedCompetentAuthorityId =0 or sp.id_waited_competent_authority =:waitedCompetentAuthorityId) "
@@ -101,12 +99,11 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         "  t2.denomination, t2.firstname , t2.lastname,  " +
                         "  r.firstname , r.lastname, asso.id, " +
                         "  a.address ,a.postal_Code ,ci.label ,c.created_date,c.production_effective_date_time,  " +
-                        "  cf.label,e1.id,e2.id , pf.label ,pt.label,ans.label,fs.label,doms.label,  sps.label, "
+                        "  cf.label,e2.id , pf.label ,pt.label,ans.label,fs.label,doms.label,  sps.label, "
                         +
                         " asso.id_customer_order,p.is_emergency,p.id  ,sp_ca.label,ca.label " +
                         "")
-        ArrayList<AssoAffaireOrderSearchResult> findAsso(@Param("responsible") List<Integer> responsibleIds,
-                        @Param("assignedTo") List<Integer> assignedToIds,
+        ArrayList<AssoAffaireOrderSearchResult> findAsso(@Param("assignedTo") List<Integer> assignedToIds,
                         @Param("label") String label, @Param("status") ArrayList<Integer> status,
                         @Param("excludedCustomerOrderStatusCode") List<String> excludedCustomerOrderStatusCode,
                         @Param("customerOrder") List<Integer> customerOrder,

@@ -13,8 +13,6 @@ public interface QuotationSearchResult {
 
     public Integer getSalesEmployeeId();
 
-    public Integer getAssignedToEmployeeId();
-
     public String getQuotationDescription();
 
     public Integer getQuotationId();
