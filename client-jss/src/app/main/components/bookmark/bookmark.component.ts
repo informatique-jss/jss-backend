@@ -20,6 +20,7 @@ export class BookmarkComponent implements OnInit {
   currentUser: Responsable | undefined;
   readingFolders: ReadingFolder[] = [];
   @Input() post: Post | undefined;
+  @Input() isSinglePost: boolean = false;
 
   constructor(private postService: PostService,
     private loginService: LoginService,

@@ -242,13 +242,18 @@ public class WordpressController {
 		if (post == null)
 			throw new OsirisValidationException("post");
 
+		Responsable responsable = employeeService.getCurrentMyJssUser();
+		if (responsable == null || responsable.getMail() == null)
+			throw new OsirisValidationException("responsable");
+
 		ReadingFolder readingFolder = null;
 		if (idReadingFolder != null)
 			readingFolder = readingFolderService.getReadingFolder(idReadingFolder);
-
-		postService.updateBookmarkPost(post, readingFolder);
-
-		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+		if (readingFolder != null && readingFolder.getMail().getId().equals(responsable.getMail().getId())) {
+			postService.updateBookmarkPost(post, readingFolder, responsable);
+			return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+		}
+		return new ResponseEntity<Boolean>(false, HttpStatus.BAD_REQUEST);
 	}
 
 	@GetMapping(inputEntryPoint + "/post/bookmark/delete")
@@ -263,7 +268,11 @@ public class WordpressController {
 		if (post == null)
 			throw new OsirisValidationException("post");
 
-		postService.deleteBookmarkPost(post);
+		Responsable responsable = employeeService.getCurrentMyJssUser();
+		if (responsable == null)
+			throw new OsirisValidationException("responsable");
+
+		postService.deleteBookmarkPost(post, responsable);
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 
@@ -281,10 +290,14 @@ public class WordpressController {
 		if (readingFolder == null)
 			throw new OsirisValidationException("readingFolder");
 
+		Responsable responsable = employeeService.getCurrentMyJssUser();
+		if (responsable == null)
+			throw new OsirisValidationException("responsable");
+
 		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size));
 
 		return new ResponseEntity<Page<Post>>(
-				postService.getBookmarkPostsByReadingFolderForCurrentUser(readingFolder, pageable),
+				postService.getBookmarkPostsByReadingFolderForCurrentUser(readingFolder, responsable, pageable),
 				HttpStatus.OK);
 	}
 

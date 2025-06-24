@@ -1680,10 +1680,16 @@ public class MyJssQuotationController {
 			HttpServletRequest request)
 			throws OsirisValidationException {
 		detectFlood(request);
+
+		Responsable responsable = employeeService.getCurrentMyJssUser();
+		if (responsable == null)
+			throw new OsirisValidationException("responsable");
+
 		if (readingFolder.getLabel() != null && readingFolder.getLabel().trim().length() > 0)
 			validationHelper.validateString(readingFolder.getLabel(), null, "readingFolderLabel");
 
-		return new ResponseEntity<ReadingFolder>(readingFolderService.addOrUpdateReadingFolder(readingFolder),
+		return new ResponseEntity<ReadingFolder>(
+				readingFolderService.addOrUpdateReadingFolder(readingFolder, responsable),
 				HttpStatus.OK);
 	}
 
@@ -1710,8 +1716,13 @@ public class MyJssQuotationController {
 	public ResponseEntity<List<ReadingFolder>> getReadingFolders(HttpServletRequest request)
 			throws OsirisValidationException {
 		detectFlood(request);
-		return new ResponseEntity<List<ReadingFolder>>(readingFolderService.getAvailableReadingFolders(),
+
+		Responsable responsable = employeeService.getCurrentMyJssUser();
+		if (responsable == null)
+			throw new OsirisValidationException("responsable");
+
+		return new ResponseEntity<List<ReadingFolder>>(
+				readingFolderService.getAvailableReadingFoldersByResponsable(responsable),
 				HttpStatus.OK);
 	}
-
 }

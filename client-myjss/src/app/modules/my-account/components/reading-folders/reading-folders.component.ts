@@ -5,6 +5,7 @@ import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
 import { GenericInputComponent } from "../../../miscellaneous/components/forms/generic-input/generic-input.component";
 import { ReadingFolder } from '../../../tools/model/ReadingFolder';
+import { PostService } from '../../../tools/services/post.service';
 import { ReadingFolderService } from '../../../tools/services/reading.folder.service';
 
 @Component({
@@ -28,7 +29,8 @@ export class ReadingFoldersComponent implements OnInit {
   constructor(private readingFolderService: ReadingFolderService,
     private appService: AppService,
     private formBuilder: FormBuilder,
-    private modalService: NgbModal,) { }
+    private modalService: NgbModal,
+    private postService: PostService) { }
 
   ngOnInit() {
     this.readingFolderForm = this.formBuilder.group({});
@@ -37,8 +39,14 @@ export class ReadingFoldersComponent implements OnInit {
 
   fetchReadingFolders() {
     this.readingFolderService.getReadingFolders().subscribe(response => {
-      if (response)
-        this.readingFolders.push(...response);
+      if (response) {
+        this.readingFolders = response;
+        for (let readingFolder of this.readingFolders)
+          this.postService.getBookmarkPostsByMailAndReadingFolders(readingFolder.id, 0, 1).subscribe(response => {
+            if (response)
+              readingFolder.posts = response.content;
+          });
+      }
     });
   }
 

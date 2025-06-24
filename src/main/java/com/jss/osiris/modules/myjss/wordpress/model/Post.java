@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.jss.osiris.libs.jackson.JacksonLocalDateTimeDeserializer;
@@ -158,6 +159,11 @@ public class Post implements IId, Serializable {
     @IndexedField
     @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private List<Tag> postTags;
+
+    @ManyToMany(mappedBy = "posts")
+    @JsonIgnoreProperties(value = { "posts" }, allowSetters = true)
+    @JsonIgnore
+    private List<ReadingFolder> readingFolders;
 
     @ManyToMany
     @JoinTable(name = "asso_post_serie", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_serie"))
@@ -531,4 +537,11 @@ public class Post implements IId, Serializable {
         this.contentText = contentText;
     }
 
+    public List<ReadingFolder> getReadingFolders() {
+        return readingFolders;
+    }
+
+    public void setReadingFolders(List<ReadingFolder> readingFolders) {
+        this.readingFolders = readingFolders;
+    }
 }

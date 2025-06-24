@@ -29,6 +29,7 @@ import { PostService } from '../../services/post.service';
 import { ReadingFolderService } from '../../services/reading.folder.service';
 import { SubscriptionService } from '../../services/subscription.service';
 import { AvatarComponent } from '../avatar/avatar.component';
+import { BookmarkComponent } from "../bookmark/bookmark.component";
 import { GenericInputComponent } from '../generic-input/generic-input.component';
 import { GenericTextareaComponent } from '../generic-textarea/generic-textarea.component';
 import { NewsletterComponent } from "../newsletter/newsletter.component";
@@ -39,7 +40,7 @@ declare var tns: any;
   selector: 'app-post',
   templateUrl: './post.component.html',
   styleUrls: ['./post.component.css'],
-  imports: [SHARED_IMPORTS, TrustHtmlPipe, AvatarComponent, GenericInputComponent, GenericTextareaComponent, NewsletterComponent],
+  imports: [SHARED_IMPORTS, TrustHtmlPipe, AvatarComponent, GenericInputComponent, GenericTextareaComponent, NewsletterComponent, BookmarkComponent],
   standalone: true
 })
 export class PostComponent implements OnInit, AfterViewInit {
@@ -173,22 +174,6 @@ export class PostComponent implements OnInit, AfterViewInit {
     })
   }
 
-  unBookmarkPost(post: Post) {
-    this.postService.deleteBookmarkPost(post).subscribe(response => {
-      if (response)
-        post.isBookmarked = false;
-    });
-  }
-
-  bookmarkPost(post: Post, readingFolder?: ReadingFolder) {
-    this.postService.addBookmarkPost(post, readingFolder).subscribe(response => {
-      if (response) {
-        post.isBookmarked = true;
-        this.dropdownReadingFolder = false;
-      }
-    });
-  }
-
   fetchReadingFolder() {
     this.readingFolderService.getReadingFolders().subscribe(response => {
       if (response)
@@ -197,16 +182,10 @@ export class PostComponent implements OnInit, AfterViewInit {
   }
 
   dropdownOpen = false;
-  dropdownReadingFolder = false;
 
   toggleDropdown(event: Event): void {
     event.preventDefault();
     this.dropdownOpen = !this.dropdownOpen;
-  }
-
-  toggleBookmark(event: Event): void {
-    event.preventDefault();
-    this.dropdownReadingFolder = !this.dropdownReadingFolder;
   }
 
   fetchMostSeenPosts() {

@@ -38,7 +38,6 @@ public class ReadingFolder implements Serializable {
     @JoinColumn(name = "id_mail", nullable = false)
     private Mail mail;
 
-    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "asso_reading_folder_post", joinColumns = @JoinColumn(name = "id_reading_folder"), inverseJoinColumns = @JoinColumn(name = "id_post"))
     private List<Post> posts;

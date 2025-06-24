@@ -1,6 +1,5 @@
 package com.jss.osiris.modules.myjss.wordpress.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,17 +20,14 @@ public class ReadingFolderServiceImpl implements ReadingFolderService {
     EmployeeService employeeService;
 
     @Override
-    public ReadingFolder addOrUpdateReadingFolder(ReadingFolder readingFolder) {
-        Responsable responsable = employeeService.getCurrentMyJssUser();
-        if (responsable != null)
-            readingFolder.setMail(responsable.getMail());
+    public ReadingFolder addOrUpdateReadingFolder(ReadingFolder readingFolder, Responsable responsable) {
+        readingFolder.setMail(responsable.getMail());
         return readingFolderRepository.save(readingFolder);
     }
 
     @Override
-    public List<ReadingFolder> getAvailableReadingFolders() {
-        Responsable responsable = employeeService.getCurrentMyJssUser();
-        if (responsable != null)
+    public List<ReadingFolder> getAvailableReadingFoldersByResponsable(Responsable responsable) {
+        if (responsable.getMail() != null)
             return readingFolderRepository.findByMail(responsable.getMail());
         return null;
     }
@@ -49,13 +45,8 @@ public class ReadingFolderServiceImpl implements ReadingFolderService {
 
     @Override
     public void deleteReadingFolder(ReadingFolder readingFolder) {
-        Responsable responsable = employeeService.getCurrentMyJssUser();
-        if (responsable != null) {
-            if (readingFolder.getId() != null
-                    && readingFolder.getMail().getId().equals(responsable.getMail().getId())) {
-                readingFolderRepository.delete(readingFolder);
-            }
-        }
+        readingFolderRepository.delete(readingFolder);
+
     }
 
     @Override
@@ -64,14 +55,14 @@ public class ReadingFolderServiceImpl implements ReadingFolderService {
         ReadingFolder readingFolder = null;
 
         if (responsable != null && responsable.getMail() != null) {
-            if (this.getAvailableReadingFolders() == null || this.getAvailableReadingFolders().size() == 0) {
+            if (this.getAvailableReadingFoldersByResponsable(responsable) == null
+                    || this.getAvailableReadingFoldersByResponsable(responsable).size() == 0) {
                 readingFolder = new ReadingFolder();
                 readingFolder.setLabel("Tous les articles");
                 readingFolder.setMail(responsable.getMail());
-                readingFolder.setPosts(new ArrayList<>());
-                return addOrUpdateReadingFolder(readingFolder);
+                return addOrUpdateReadingFolder(readingFolder, responsable);
             } else
-                return this.getAvailableReadingFolders().get(0);
+                return this.getAvailableReadingFoldersByResponsable(responsable).get(0);
         }
         return readingFolder;
     }

@@ -227,34 +227,30 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void updateBookmarkPost(Post post, ReadingFolder readingFolder) {
-        Responsable responsable = employeeService.getCurrentMyJssUser();
-        if (responsable != null) {
-            if (readingFolder != null && readingFolder.getMail().getId().equals(responsable.getMail().getId()))
+    public void updateBookmarkPost(Post post, ReadingFolder readingFolder, Responsable responsable) {
+        if (!readingFolder.getPosts().isEmpty())
+            readingFolder.getPosts().add(post);
+        else {
+            readingFolder = readingFolderService.initReadingFolderForCurrentUser();
+            if (readingFolder != null)
                 readingFolder.getPosts().add(post);
-
-            else {
-                readingFolder = readingFolderService.initReadingFolderForCurrentUser();
-                if (readingFolder != null)
-                    readingFolder.getPosts().add(post);
-            }
         }
-        readingFolderService.addOrUpdateReadingFolder(readingFolder);
+        readingFolderService.addOrUpdateReadingFolder(readingFolder, responsable);
+
     }
 
     @Override
-    public void deleteBookmarkPost(Post post) {
-        Responsable responsable = employeeService.getCurrentMyJssUser();
-        if (responsable != null) {
-            List<ReadingFolder> readingFoldersOfUser = readingFolderService.getAvailableReadingFolders();
+    public void deleteBookmarkPost(Post post, Responsable responsable) {
 
-            for (ReadingFolder readingFolderUser : readingFoldersOfUser) {
-                boolean removed = readingFolderUser.getPosts()
-                        .removeIf(postOfReadingFolder -> post.getId().equals(postOfReadingFolder.getId()));
+        List<ReadingFolder> readingFoldersOfUser = readingFolderService
+                .getAvailableReadingFoldersByResponsable(responsable);
 
-                if (removed) {
-                    readingFolderService.addOrUpdateReadingFolder(readingFolderUser);
-                }
+        for (ReadingFolder readingFolderUser : readingFoldersOfUser) {
+            boolean removed = readingFolderUser.getPosts()
+                    .removeIf(postOfReadingFolder -> post.getId().equals(postOfReadingFolder.getId()));
+
+            if (removed) {
+                readingFolderService.addOrUpdateReadingFolder(readingFolderUser, responsable);
             }
         }
     }
@@ -464,11 +460,11 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<Post> getBookmarkPostsByReadingFolderForCurrentUser(ReadingFolder readingFolder,
-            Pageable pageableRequest) {
-        Responsable responsable = employeeService.getCurrentMyJssUser();
+            Responsable responsable, Pageable pageableRequest) {
+
         Page<Post> bookmarkedPosts = null;
 
-        if (responsable != null && responsable.getMail() != null)
+        if (responsable.getMail() != null)
             bookmarkedPosts = readingFolderRepository.findBookmarkPostsByReadingFolderId(readingFolder.getId(),
                     pageableRequest);
 
