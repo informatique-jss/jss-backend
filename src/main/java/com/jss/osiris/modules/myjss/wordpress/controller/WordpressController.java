@@ -3,6 +3,7 @@ package com.jss.osiris.modules.myjss.wordpress.controller;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,6 +45,7 @@ import com.jss.osiris.modules.myjss.wordpress.model.Author;
 import com.jss.osiris.modules.myjss.wordpress.model.Category;
 import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
+import com.jss.osiris.modules.myjss.wordpress.model.Newspaper;
 import com.jss.osiris.modules.myjss.wordpress.model.Post;
 import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
 import com.jss.osiris.modules.myjss.wordpress.model.ReadingFolder;
@@ -57,6 +59,7 @@ import com.jss.osiris.modules.myjss.wordpress.service.AuthorService;
 import com.jss.osiris.modules.myjss.wordpress.service.CategoryService;
 import com.jss.osiris.modules.myjss.wordpress.service.JssCategoryService;
 import com.jss.osiris.modules.myjss.wordpress.service.MyJssCategoryService;
+import com.jss.osiris.modules.myjss.wordpress.service.NewspaperService;
 import com.jss.osiris.modules.myjss.wordpress.service.PostService;
 import com.jss.osiris.modules.myjss.wordpress.service.PostViewService;
 import com.jss.osiris.modules.myjss.wordpress.service.PublishingDepartmentService;
@@ -155,10 +158,13 @@ public class WordpressController {
 	AssoMailJssCategoryService assoMailJssCategoryService;
 
 	@Autowired
-	EmployeeService employeeService;
+	ReadingFolderService readingFolderService;
 
 	@Autowired
-	ReadingFolderService readingFolderService;
+	NewspaperService newspaperService;
+
+	@Autowired
+	EmployeeService employeeService;
 
 	// Crawler user-agents
 	private static final List<String> CRAWLER_USER_AGENTS = Arrays.asList("Googlebot", "Bingbot", "Slurp",
@@ -1319,6 +1325,98 @@ public class WordpressController {
 		return new ResponseEntity<Integer>(
 				subscriptionService.getRemainingPostToShareForCurrentMonth(currentUser),
 				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/newspapers/year")
+	public ResponseEntity<List<Newspaper>> getNewspapersForYear(HttpServletRequest request, Integer year)
+			throws OsirisValidationException, IOException {
+
+		detectFlood(request);
+
+		return new ResponseEntity<List<Newspaper>>(newspaperService.getNewspaperForYear(year), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/newspapers/can-see-all-newpapers")
+	public ResponseEntity<Boolean> canSeeAllNewspapersOfKiosk(HttpServletRequest request)
+			throws OsirisValidationException, IOException {
+
+		detectFlood(request);
+
+		Responsable responsable = employeeService.getCurrentMyJssUser();
+
+		if (responsable == null) {
+			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+		}
+
+		return new ResponseEntity<Boolean>(newspaperService.canSeeAllNewspapersOfKiosk(responsable), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/newspapers/list-seeable-newpapers")
+	public ResponseEntity<List<Integer>> getSeeableNewspapersForCurrentUser(HttpServletRequest request)
+			throws OsirisValidationException, IOException {
+
+		detectFlood(request);
+
+		Responsable responsable = employeeService.getCurrentMyJssUser();
+
+		if (responsable == null) {
+			return new ResponseEntity<List<Integer>>(new ArrayList<>(), HttpStatus.OK);
+		}
+
+		return new ResponseEntity<List<Integer>>(newspaperService.getSeeableNewspapersForResponsable(responsable),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/newspaper/download")
+	public ResponseEntity<byte[]> getPdfForUser(@RequestParam("newspaperId") Integer newspaperId)
+			throws OsirisValidationException, OsirisException {
+		byte[] data = null;
+		HttpHeaders headers = null;
+		boolean canSeeFullNewspaper = false;
+
+		Newspaper newspaper = newspaperService.getNewspaper(newspaperId);
+
+		if (newspaper == null)
+			throw new OsirisValidationException("Journal non trouvée");
+
+		Responsable currentUser = employeeService.getCurrentMyJssUser();
+
+		if (currentUser != null && subscriptionService.canResponsableSeeKioskNewspaper(currentUser, newspaper)) {
+			canSeeFullNewspaper = true;
+		}
+
+		File file;
+		if (canSeeFullNewspaper) {
+			file = Paths.get(newspaper.getUploadedFullFile().getPath()).toFile();
+		} else {
+			file = Paths.get(newspaper.getUploadedCutFile().getPath()).toFile();
+		}
+
+		if (file != null) {
+			try {
+				data = Files.readAllBytes(file.toPath());
+			} catch (IOException e) {
+				throw new OsirisException(e, "Unable to read file " + file.getAbsolutePath());
+			}
+
+			headers = new HttpHeaders();
+			headers.setContentLength(data.length);
+			headers.add("filename",
+					"JSS n°" + newspaper.getNewspaperIssueNumber() + (canSeeFullNewspaper ? "" : "_extrait") + ".pdf");
+			headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
+
+			// Compute content type
+			String mimeType = null;
+			try {
+				mimeType = Files.probeContentType(file.toPath());
+			} catch (IOException e) {
+				throw new OsirisException(e, "Unable to read file " + file.getAbsolutePath());
+			}
+			if (mimeType == null)
+				mimeType = "application/pdf";
+			headers.set("content-type", mimeType);
+		}
+		return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
 	}
 
 	private ResponseEntity<String> detectFlood(HttpServletRequest request) {

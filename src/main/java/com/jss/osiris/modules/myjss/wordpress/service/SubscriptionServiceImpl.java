@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.mail.MailHelper;
+import com.jss.osiris.modules.myjss.wordpress.model.Newspaper;
 import com.jss.osiris.modules.myjss.wordpress.model.Post;
 import com.jss.osiris.modules.myjss.wordpress.model.Subscription;
 import com.jss.osiris.modules.myjss.wordpress.repository.SubscriptionRepository;
@@ -95,4 +96,46 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                 Subscription.SHARED_POST_SUBSCRIPTION);
     }
 
+    @Override
+    public boolean canResponsableSeeKioskNewspaper(Responsable responsable, Newspaper newspaper) {
+        List<Subscription> subscriptions = getSubscriptionsForMail(responsable.getMail());
+
+        Boolean canSeeNewspaper = false;
+
+        canSeeNewspaper = isResponsableHasFullValidSubscription(responsable, subscriptions);
+
+        if (!canSeeNewspaper) {
+            for (Subscription subscription : subscriptions) {
+                switch (subscription.getSubscriptionType()) {
+                    case Subscription.NEWSPAPER_KIOSK_BUY:
+                        if (subscription.getNewspaper().getId().equals(newspaper.getId()))
+                            canSeeNewspaper = true;
+                        break;
+                }
+                if (canSeeNewspaper)
+                    break;
+            }
+        }
+
+        return canSeeNewspaper;
+    }
+
+    @Override
+    public boolean isResponsableHasFullValidSubscription(Responsable responsable, List<Subscription> subscriptions) {
+
+        Boolean hasFullSubscriptionValid = false;
+
+        for (Subscription subscription : subscriptions) {
+            if (subscription.getSubscriptionType().equals(Subscription.ANNUAL_SUBSCRIPTION)
+                    || subscription.getSubscriptionType().equals(Subscription.ENTERPRISE_ANNUAL_SUBSCRIPTION)
+                    || subscription.getSubscriptionType().equals(Subscription.MONTHLY_SUBSCRIPTION)) {
+                if (subscription.getStartDate().isBefore(LocalDate.now())
+                        && LocalDate.now().isBefore(subscription.getEndDate()))
+                    hasFullSubscriptionValid = true;
+            }
+            if (hasFullSubscriptionValid)
+                break;
+        }
+        return hasFullSubscriptionValid;
+    }
 }

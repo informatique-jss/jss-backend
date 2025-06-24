@@ -10,6 +10,7 @@ import com.jss.osiris.libs.TiersValidationHelper;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Phone;
@@ -17,6 +18,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentTypeService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
+import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.controller.QuotationValidationHelper;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
@@ -79,14 +81,30 @@ public class MyJssQuotationDelegate {
     @Autowired
     AffaireService affaireService;
 
+    @Autowired
+    EmployeeService employeeService;
+
+    @Autowired
+    MailHelper mailHelper;
+
     @Transactional(rollbackFor = Exception.class)
     public IQuotation validateAndCreateQuotation(IQuotation quotation, Boolean isValidation) throws OsirisException {
 
         Responsable responsable = null;
         if (quotation.getResponsable() != null && quotation.getResponsable().getMail() != null) {
             responsable = responsableService.getResponsableByMail(quotation.getResponsable().getMail().getMail());
-            if (responsable != null)
+            if (responsable != null) {
                 quotation.setResponsable(responsable);
+                if (employeeService.getCurrentMyJssUser() != null) {
+                    // User create IQuotation but not connected => send a mail
+                    if (quotation.getIsQuotation())
+                        mailHelper.sendConfirmationQuotationCreationMyJss(
+                                quotation.getResponsable().getMail().getMail(), (Quotation) quotation);
+                    else
+                        mailHelper.sendConfirmationOrderCreationMyJss(quotation.getResponsable().getMail().getMail(),
+                                (CustomerOrder) quotation);
+                }
+            }
 
             else {
                 mailService.populateMailId(quotation.getResponsable().getMail());
@@ -152,6 +170,9 @@ public class MyJssQuotationDelegate {
         for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders()) {
             if (asso.getAffaire().getMails() != null) {
                 for (Mail mail : asso.getAffaire().getMails()) {
+                    if (mail.getMail() == null)
+                        continue;
+
                     Affaire originalAffaire = affaireService.getAffaire(asso.getAffaire().getId());
                     boolean found = false;
                     if (originalAffaire.getMails() != null) {
