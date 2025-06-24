@@ -55,7 +55,7 @@ public class ReadingFolderServiceImpl implements ReadingFolderService {
             if (this.getAvailableReadingFoldersByResponsable(responsable) == null
                     || this.getAvailableReadingFoldersByResponsable(responsable).size() == 0) {
                 readingFolder = new ReadingFolder();
-                readingFolder.setLabel("Tous les articles");
+                readingFolder.setLabel("Mes favoris");
                 readingFolder.setMail(responsable.getMail());
                 return addOrUpdateReadingFolder(readingFolder, responsable);
             } else

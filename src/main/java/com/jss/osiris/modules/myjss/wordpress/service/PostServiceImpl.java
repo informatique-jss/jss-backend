@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -241,13 +242,22 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void deleteBookmarkPost(Post post, Responsable responsable) {
-        if (!post.getReadingFolders().isEmpty())
-            for (ReadingFolder folder : post.getReadingFolders())
-                if (folder.getMail() != null && folder.getMail().getId().equals(responsable.getMail().getId())) {
-                    post.getReadingFolders().remove(folder);
-                    addOrUpdatePost(post);
-                    return;
-                }
+        if (post.getReadingFolders().isEmpty())
+            return;
+
+        Iterator<ReadingFolder> iterator = post.getReadingFolders().iterator();
+        while (iterator.hasNext()) {
+            ReadingFolder folder = iterator.next();
+            if (folder.getMail() != null &&
+                    folder.getMail().getId().equals(responsable.getMail().getId())) {
+
+                iterator.remove();
+
+                folder.getPosts().remove(post);
+                addOrUpdatePost(post);
+                return;
+            }
+        }
     }
 
     @Override

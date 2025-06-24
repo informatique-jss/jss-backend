@@ -13,6 +13,7 @@ import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -160,9 +161,8 @@ public class Post implements IId, Serializable {
     @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private List<Tag> postTags;
 
-    @ManyToMany(mappedBy = "posts")
+    @ManyToMany(mappedBy = "posts", cascade = CascadeType.REMOVE)
     @JsonIgnoreProperties(value = { "posts" }, allowSetters = true)
-    @JsonIgnore
     private List<ReadingFolder> readingFolders;
 
     @ManyToMany
