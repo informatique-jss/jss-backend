@@ -228,7 +228,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void updateBookmarkPost(Post post, ReadingFolder readingFolder, Responsable responsable) {
-        if (!readingFolder.getPosts().isEmpty())
+        if (readingFolder.getPosts() != null)
             readingFolder.getPosts().add(post);
         else {
             readingFolder = readingFolderService.initReadingFolderForCurrentUser();
@@ -241,18 +241,12 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void deleteBookmarkPost(Post post, Responsable responsable) {
-
-        List<ReadingFolder> readingFoldersOfUser = readingFolderService
-                .getAvailableReadingFoldersByResponsable(responsable);
-
-        for (ReadingFolder readingFolderUser : readingFoldersOfUser) {
-            boolean removed = readingFolderUser.getPosts()
-                    .removeIf(postOfReadingFolder -> post.getId().equals(postOfReadingFolder.getId()));
-
-            if (removed) {
-                readingFolderService.addOrUpdateReadingFolder(readingFolderUser, responsable);
-            }
-        }
+        if (!post.getReadingFolders().isEmpty())
+            for (ReadingFolder folder : post.getReadingFolders())
+                if (folder.getMail() != null && folder.getMail().getId().equals(responsable.getMail().getId())) {
+                    folder.getPosts().remove(post);
+                    readingFolderService.addOrUpdateReadingFolder(folder, responsable);
+                }
     }
 
     @Override
