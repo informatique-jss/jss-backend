@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
-import com.jss.osiris.modules.osiris.profile.model.Employee;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -65,10 +64,6 @@ public class AssoAffaireOrder implements Serializable, IId {
 	@JsonIgnoreProperties(value = { "assoAffaireOrders" }, allowSetters = true)
 	private Quotation quotation;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_employee")
-	private Employee assignedTo;
-
 	@OneToMany(targetEntity = Service.class, mappedBy = "assoAffaireOrder", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "assoAffaireOrder" }, allowSetters = true)
 	@IndexedField
@@ -91,14 +86,6 @@ public class AssoAffaireOrder implements Serializable, IId {
 
 	public void setCustomerOrder(CustomerOrder customerOrder) {
 		this.customerOrder = customerOrder;
-	}
-
-	public Employee getAssignedTo() {
-		return assignedTo;
-	}
-
-	public void setAssignedTo(Employee assignedTo) {
-		this.assignedTo = assignedTo;
 	}
 
 	public Integer getId() {

@@ -86,7 +86,6 @@ export class ProvisionListComponent implements OnInit {
       this.availableColumns.push({ id: "tiers", fieldName: "tiersLabel", label: "Tiers", colorWarnFunction: (element: AssoAffaireOrderSearchResult) => { return element.isEmergency } } as SortTableColumn<AssoAffaireOrderSearchResult>);
       this.availableColumns.push({ id: "responsable", fieldName: "responsableLabel", label: "Responsable", colorWarnFunction: (element: AssoAffaireOrderSearchResult) => { return element.isEmergency } } as SortTableColumn<AssoAffaireOrderSearchResult>);
       this.availableColumns.push({ id: "confrere", fieldName: "confrereLabel", label: "Confrère", colorWarnFunction: (element: AssoAffaireOrderSearchResult) => { return element.isEmergency } } as SortTableColumn<AssoAffaireOrderSearchResult>);
-      this.availableColumns.push({ id: "responsible", fieldName: "responsibleId", label: "Responsable de l'affaire", displayAsEmployee: true } as SortTableColumn<AssoAffaireOrderSearchResult>);
       this.availableColumns.push({ id: "assignedTo", fieldName: "assignedToId", label: "Assignée à", displayAsEmployee: true } as SortTableColumn<AssoAffaireOrderSearchResult>);
       this.availableColumns.push({ id: "provisionType", fieldName: "provisionTypeLabel", isShrinkColumn: true, label: "Prestation", colorWarnFunction: (element: AssoAffaireOrderSearchResult) => { return element.isEmergency } } as SortTableColumn<AssoAffaireOrderSearchResult>);
       this.availableColumns.push({ id: "status", fieldName: "statusLabel", label: "Statut", colorWarnFunction: (element: AssoAffaireOrderSearchResult) => { return element.isEmergency } } as SortTableColumn<AssoAffaireOrderSearchResult>);
@@ -134,7 +133,6 @@ export class ProvisionListComponent implements OnInit {
     if (this.affaireSearch && this.affaireSearchForm.valid && (
       this.affaireSearch.assignedTo
       || this.affaireSearch.label
-      || this.affaireSearch.responsible
       || this.affaireSearch.status
       || this.affaireSearch.customerOrders
       || this.affaireSearch.affaire

@@ -176,12 +176,6 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
       })
   }
 
-  updateAssignedToForAffaire(employee: any, asso: AssoAffaireOrder) {
-    this.assoAffaireOrderService.updateAssignedToForAsso(asso, employee).subscribe(response => {
-    });
-    this.refreshAffaire();
-  }
-
   updateAssignedToForProvision(employee: any, provision: Provision) {
     this.provisionService.updateAssignedToForProvision(provision, employee).subscribe(response => {
       this.refreshAffaire();

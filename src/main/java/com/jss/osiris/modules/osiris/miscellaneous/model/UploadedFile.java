@@ -98,5 +98,4 @@ public class UploadedFile implements Serializable, IId {
 	public void setSize(Long size) {
 		this.size = size;
 	}
-
 }

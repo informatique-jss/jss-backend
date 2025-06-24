@@ -93,9 +93,6 @@
             {{getAffaireFromAssoAffaireOrder(asso)}}
           </mat-panel-title>
           <mat-panel-description>
-            <avatar-chip *ngIf="asso.assignedTo" [employee]="asso.assignedTo"
-              (onChangeAssigne)="updateAssignedToForAffaire($event,asso)">
-            </avatar-chip>
             <mat-icon color="accent" matTooltip="Ajouter une notification sur cette affaire"
               (click)="addNewNotificationOnAffaire(asso.affaire);$event.stopPropagation();"
               [matBadge]="getNotificationForAffaire(asso.affaire).length" *ngIf="canDisplayNotifications()"
@@ -109,12 +106,6 @@
           </mat-panel-description>
         </mat-expansion-panel-header>
         <add-affaire [affaire]="asso.affaire" [editMode]="false"></add-affaire>
-        <div *ngIf="asso && asso.id ">
-          <autocomplete-employee [(model)]="asso.assignedTo" [form]="orderForm" propertyName="assignedTo"
-            [isMandatory]="true" [isDisabled]="false" label="Affaire assignée à"
-            (onOptionSelected)="updateAssignedToForAffaire($event,asso)">
-          </autocomplete-employee>
-        </div>
       </mat-expansion-panel>
       <ng-container *ngFor="let service of asso.services;let indexService = index">
         <service-side-panel-details (triggerRefreshEntity)="triggerRefreshEntityFn()" [isExpanded]="indexService==0"

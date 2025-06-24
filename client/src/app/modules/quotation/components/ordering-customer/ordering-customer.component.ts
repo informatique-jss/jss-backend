@@ -7,7 +7,6 @@ import { instanceOfCustomerOrder, instanceOfQuotation } from 'src/app/libs/TypeH
 import { VoucherService } from 'src/app/modules/crm/services/voucher.service';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { DocumentTypeService } from 'src/app/modules/miscellaneous/services/document.type.service';
-import { Employee } from 'src/app/modules/profile/model/Employee';
 import { TiersService } from 'src/app/modules/tiers/services/tiers.service';
 import { IndexEntityService } from 'src/app/routing/search/index.entity.service';
 import { formatEurosForSortTable } from '../../../../libs/FormatHelper';
@@ -188,17 +187,6 @@ export class OrderingCustomerComponent implements OnInit {
 
   openRoute(event: any, link: string) {
     this.appService.openRoute(event, link, null);
-  }
-
-  updateAssignedToForCustomerOrder(employee: Employee) {
-    if (this.editMode)
-      return;
-    if (instanceOfCustomerOrder(this.quotation))
-      this.customerOrderService.updateAssignedToForCustomerOrder(this.quotation, employee).subscribe(response => {
-      });
-    if (instanceOfQuotation(this.quotation))
-      this.customerOrderService.updateAssignedToForQuotation(this.quotation, employee).subscribe(response => {
-      });
   }
 
   selectCustomerOrderOnQuotation(customerOrder: IndexEntity) {

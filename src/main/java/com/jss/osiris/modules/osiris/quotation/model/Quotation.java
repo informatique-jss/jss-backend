@@ -18,7 +18,6 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.SpecialOffer;
-import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 import jakarta.persistence.CascadeType;
@@ -54,11 +53,6 @@ public class Quotation implements IQuotation {
 	private Integer id;
 
 	private Integer validationId;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_assigned_to")
-	@IndexedField
-	private Employee assignedTo;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable")
@@ -314,14 +308,6 @@ public class Quotation implements IQuotation {
 
 	public void setQuotationLabel(String quotationLabel) {
 		this.quotationLabel = quotationLabel;
-	}
-
-	public Employee getAssignedTo() {
-		return assignedTo;
-	}
-
-	public void setAssignedTo(Employee assignedTo) {
-		this.assignedTo = assignedTo;
 	}
 
 	public CustomerOrderOrigin getCustomerOrderOrigin() {

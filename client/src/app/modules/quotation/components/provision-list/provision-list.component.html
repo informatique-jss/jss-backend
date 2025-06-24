@@ -8,11 +8,6 @@
           </autocomplete-employee>
         </td>
         <td>
-          <autocomplete-employee [(model)]="affaireSearch.responsible" label="Responsable" [form]="affaireSearchForm"
-            [isMandatory]="false" propertyName="responsible" [isMandatory]="false">
-          </autocomplete-employee>
-        </td>
-        <td>
           <autocomplete-employee [(model)]="affaireSearch.assignedTo" label="Assigné à" [form]="affaireSearchForm"
             [isMandatory]="false" propertyName="assignedTo" [isMandatory]="false"
             [defaultEmployee]="bookmark?undefined:currentEmployee">

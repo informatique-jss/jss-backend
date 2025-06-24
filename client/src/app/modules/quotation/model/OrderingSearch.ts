@@ -7,7 +7,6 @@ export interface OrderingSearch {
   startDate: Date | undefined;
   endDate: Date | undefined;
   salesEmployee: Employee;
-  assignedToEmployee: Employee;
   customerOrderStatus: CustomerOrderStatus[];
   customerOrders: Tiers[];
   affaire: Affaire;

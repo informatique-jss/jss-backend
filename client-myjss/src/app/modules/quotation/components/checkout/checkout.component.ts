@@ -345,6 +345,7 @@ export class CheckoutComponent implements OnInit {
       this.documentService.getDocumentForResponsable(this.currentUser.id).subscribe(response => {
         if (this.quotation) {
           this.quotation.documents = [];
+          this.quotation.responsable = user;
           for (let doc of response) {
             if (doc.documentType.id == this.constantService.getDocumentTypeBilling().id
               || doc.documentType.id == this.constantService.getDocumentTypeDigital().id
@@ -353,6 +354,10 @@ export class CheckoutComponent implements OnInit {
               this.quotation.documents.push(doc);
           }
           this.sortDocuments(this.quotation.documents);
+          if (!this.currentUser)
+            this.quotationService.setCurrentDraftQuotation(this.quotation);
+          else
+            this.quotationService.saveQuotation(this.quotation, false).subscribe();
         }
       })
   }

@@ -55,10 +55,6 @@ public interface QuotationService {
         public void sendReminderForQuotation(Quotation quotation)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
-        public void updateAssignedToForQuotation(Quotation quotation, Employee employee)
-                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
-                        OsirisDuplicateException;
-
         public List<QuotationSearchResult> searchByCustomerOrderId(Integer idCustomerOrder);
 
         public boolean getIsOpenedQuotation(IQuotation quotation);

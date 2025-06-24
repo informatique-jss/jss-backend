@@ -112,7 +112,6 @@ public class Responsable implements IAttachment, IId {
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
 			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
-
 	private Employee salesEmployee;
 
 	@ManyToOne(fetch = FetchType.LAZY)

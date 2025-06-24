@@ -196,10 +196,6 @@ public class QuotationServiceImpl implements QuotationService {
                 mailService.populateMailIds(document.getMailsClient());
             }
 
-        // Set default customer order assignation to sales employee if not set
-        if (quotation.getAssignedTo() == null && quotation.getResponsable() != null)
-            quotation.setAssignedTo(quotation.getResponsable().getDefaultCustomerOrderEmployee());
-
         // Complete provisions
         boolean oneNewProvision = false;
         boolean computePrice = false;
@@ -345,14 +341,6 @@ public class QuotationServiceImpl implements QuotationService {
             salesEmployeeId.add(0);
         }
 
-        ArrayList<Integer> assignedToEmployeeId = new ArrayList<Integer>();
-        if (quotationSearch.getAssignedToEmployee() != null) {
-            for (Employee employee : employeeService.getMyHolidaymaker(quotationSearch.getAssignedToEmployee()))
-                assignedToEmployeeId.add(employee.getId());
-        } else {
-            assignedToEmployeeId.add(0);
-        }
-
         ArrayList<Integer> customerOrderId = new ArrayList<Integer>();
         if (quotationSearch.getCustomerOrders() != null && quotationSearch.getCustomerOrders().size() > 0) {
             for (Tiers tiers : quotationSearch.getCustomerOrders())
@@ -376,7 +364,7 @@ public class QuotationServiceImpl implements QuotationService {
             quotationSearch.setEndDate(LocalDateTime.now().plusYears(100));
 
         return quotationRepository.findQuotations(
-                salesEmployeeId, assignedToEmployeeId,
+                salesEmployeeId,
                 statusId,
                 quotationSearch.getStartDate().withHour(0).withMinute(0),
                 quotationSearch.getEndDate().withHour(23).withMinute(59), customerOrderId, affaireId, 0);
@@ -591,16 +579,9 @@ public class QuotationServiceImpl implements QuotationService {
     }
 
     @Override
-    public void updateAssignedToForQuotation(Quotation quotation, Employee employee)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
-        quotation.setAssignedTo(employee);
-        addOrUpdateQuotation(quotation);
-    }
-
-    @Override
     public List<QuotationSearchResult> searchByCustomerOrderId(Integer idCustomerOrder) {
         return quotationRepository.findQuotations(
-                Arrays.asList(0), Arrays.asList(0), Arrays.asList(0), LocalDateTime.now().minusYears(100),
+                Arrays.asList(0), Arrays.asList(0), LocalDateTime.now().minusYears(100),
                 LocalDateTime.now().plusYears(100), Arrays.asList(0), Arrays.asList(0), idCustomerOrder);
     }
 
@@ -768,7 +749,8 @@ public class QuotationServiceImpl implements QuotationService {
                 if (asso.getAffaire() != null && asso.getAffaire().getId() == null)
                     affaireService.addOrUpdateAffaire(asso.getAffaire());
 
-        quotation.setResponsable(employeeService.getCurrentMyJssUser());
+        if (quotation.getResponsable() == null)
+            quotation.setResponsable(employeeService.getCurrentMyJssUser());
         quotation.setCustomerOrderOrigin(constantService.getCustomerOrderOriginMyJss());
         quotation.setQuotationStatus(
                 quotationStatusService.getQuotationStatusByCode(CustomerOrderStatus.DRAFT));

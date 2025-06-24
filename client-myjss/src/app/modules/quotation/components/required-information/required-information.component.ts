@@ -210,9 +210,10 @@ export class RequiredInformationComponent implements OnInit {
           for (let serv of asso.services) {
             if (serv.provisions && serv.provisions.length > 0) {
               let i = 0;
+              let index = 0;
               for (let provision of serv.provisions) {
                 if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_ANNOUNCEMENT) {
-                  this.activeId = 11;
+                  this.activeId = parseInt('1' + index);
                   provision.order = ++i;
                   if (!this.selectedRedaction[asso.services.indexOf(serv)]) {
                     this.selectedRedaction[asso.services.indexOf(serv)] = [];
@@ -228,6 +229,7 @@ export class RequiredInformationComponent implements OnInit {
                     provision.domiciliation = {} as Domiciliation;
                   }
                 }
+                index++;
               }
             }
 

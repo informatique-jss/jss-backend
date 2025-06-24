@@ -739,7 +739,7 @@ public class MailHelper {
                             + mailComputeResult.getRecipientsMailTo().get(0).getMail());
         }
 
-        mail.setReplyTo(customerOrder.getAssignedTo());
+        mail.setReplyTo(customerOrder.getResponsable().getSalesEmployee());
         mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(mailComputeResult);
         mail.setMailTemplate(CustomerMail.TEMPLATE_WAITING_DEPOSIT);
@@ -878,7 +878,7 @@ public class MailHelper {
         CustomerMail mail = new CustomerMail();
         mail.setQuotation(quotation);
         mail.setHeaderPicture("images/mails/waiting-quotation-validation.jpg");
-        mail.setReplyTo(quotation.getAssignedTo());
+        mail.setReplyTo(quotation.getResponsable().getSalesEmployee());
         mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(mailComputeHelper.computeMailForQuotationMail(quotation));
 
@@ -914,7 +914,7 @@ public class MailHelper {
         mail.setCustomerOrder(customerOrder);
         mail.setHeaderPicture("images/mails/quotation-validated.png");
         mail.setMailTemplate(CustomerMail.TEMPLATE_QUOTATION_VALIDATED);
-        mail.setReplyTo(quotation.getAssignedTo());
+        mail.setReplyTo(quotation.getResponsable().getSalesEmployee());
         mail.setSendToMe(false);
         mail.setMailComputeResult(mailComputeHelper.computeMailForQuotationCreationConfirmation(quotation));
         mail.setSubject(
@@ -929,7 +929,7 @@ public class MailHelper {
         mail.setCustomerOrder(customerOrder);
         mail.setHeaderPicture("images/mails/customer-order-in-progress.png");
         mail.setMailTemplate(CustomerMail.TEMPLATE_CUSTOMER_ORDER_IN_PROGRESS);
-        mail.setReplyTo(customerOrder.getAssignedTo());
+        mail.setReplyTo(customerOrder.getResponsable().getSalesEmployee());
         mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(mailComputeHelper.computeMailForCustomerOrderCreationConfirmation(customerOrder));
         mail.setSubject(
@@ -964,7 +964,7 @@ public class MailHelper {
         if (provision != null) {
             mail.setReplyTo(provision.getAssignedTo());
         } else {
-            mail.setReplyTo(asso.getAssignedTo());
+            mail.setReplyTo(customerOrder.getResponsable().getSalesEmployee());
         }
         mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(mailComputeResult);
@@ -1092,7 +1092,7 @@ public class MailHelper {
             return;
 
         mail.setProvision(currentProvision);
-        mail.setReplyTo(customerOrder.getAssignedTo());
+        mail.setReplyTo(customerOrder.getResponsable().getSalesEmployee());
         mail.setSendToMe(false);
         mail.setMailComputeResult(mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(customerOrder));
         mail.setSubject("Publication de vos comptes annuels - "
@@ -1212,7 +1212,7 @@ public class MailHelper {
             }
 
         mail.setAttachments(attachments);
-        mail.setReplyTo(asso.getAssignedTo());
+        mail.setReplyTo(customerOrder.getResponsable().getSalesEmployee());
         mail.setSendToMe(sendToMe);
         mail.setProvision(provision);
         mail.setMailComputeResult(mailComputeHelper.computeMailForSendAnnouncementToConfrere(announcement));
@@ -1246,7 +1246,7 @@ public class MailHelper {
             }
 
         mail.setAttachments(attachments);
-        mail.setReplyTo(asso.getAssignedTo());
+        mail.setReplyTo(customerOrder.getResponsable().getSalesEmployee());
         mail.setSendToMe(sendToMe);
         mail.setProvision(provision);
         mail.setMailComputeResult(mailComputeHelper.computeMailForSendAnnouncementToConfrere(announcement));
@@ -1388,7 +1388,7 @@ public class MailHelper {
         CustomerMail mail = new CustomerMail();
         mail.setMailTemplate(CustomerMail.TEMPLATE_REQUEST_RIB);
         mail.setHeaderPicture("images/mails/request-rib.png");
-        mail.setReplyTo(assoAffaireOrder.getCustomerOrder().getAssignedTo());
+        mail.setReplyTo(assoAffaireOrder.getCustomerOrder().getResponsable().getSalesEmployee());
         mail.setSendToMe(false);
         MailComputeResult mailComputeResult = new MailComputeResult();
         mailComputeResult.setRecipientsMailTo(new ArrayList<Mail>());
@@ -1430,7 +1430,8 @@ public class MailHelper {
 
         Employee sendToEmployee = query.getEmployeeSentBy();
         if (sendToEmployee == null)
-            sendToEmployee = query.getService().getAssoAffaireOrder().getAssignedTo();
+            sendToEmployee = query.getService().getAssoAffaireOrder().getCustomerOrder().getResponsable()
+                    .getSalesEmployee();
 
         mail.setReplyTo((Employee) sendToEmployee);
         mail.setSendToMe(query.getSendToMe());

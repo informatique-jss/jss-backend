@@ -217,7 +217,7 @@ public class MyJssQuotationController {
 	DashboardUserStatisticsService dashboardUserStatisticsService;
 
 	@Autowired
-	MyJssQuotationDelegate quotationDelegate;
+	MyJssQuotationDelegate myJssQuotationDelegate;
 
 	@Autowired
 	DomiciliationContractTypeService contractTypeService;
@@ -1495,7 +1495,7 @@ public class MyJssQuotationController {
 		detectFlood(request);
 
 		return new ResponseEntity<Quotation>(
-				(Quotation) quotationDelegate.validateAndCreateQuotation(quotation, isValidation),
+				(Quotation) myJssQuotationDelegate.validateAndCreateQuotation(quotation, isValidation),
 				HttpStatus.OK);
 	}
 
@@ -1508,7 +1508,7 @@ public class MyJssQuotationController {
 		detectFlood(request);
 
 		return new ResponseEntity<CustomerOrder>(
-				(CustomerOrder) quotationDelegate.validateAndCreateQuotation(order, isValidation),
+				(CustomerOrder) myJssQuotationDelegate.validateAndCreateQuotation(order, isValidation),
 				HttpStatus.OK);
 	}
 
@@ -1534,7 +1534,7 @@ public class MyJssQuotationController {
 			}
 		}
 		return new ResponseEntity<CustomerOrder>(
-				customerOrderService.saveCustomerOrderFromMyJss(order, isValidation, request),
+				myJssQuotationDelegate.saveCustomerOrderFromMyJss(order, isValidation, request),
 				HttpStatus.OK);
 	}
 

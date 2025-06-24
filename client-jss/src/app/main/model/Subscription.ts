@@ -4,6 +4,7 @@ export const ENTERPRISE_ANNUAL_SUBSCRIPTION: string = "ENTERPRISE_ANNUAL_SUBSCRI
 export const MONTHLY_SUBSCRIPTION: string = "MONTHLY_SUBSCRIPTION";
 export const ONE_POST_SUBSCRIPTION: string = "ONE_POST_SUBSCRIPTION";
 export const SHARED_POST_SUBSCRIPTION: string = "SHARED_POST_SUBSCRIPTION";
+export const NEWSPAPER_KIOSK_BUY: string = "NEWSPAPER_KIOSK_BUY";
 
 export interface Subscription {
   id: number;
