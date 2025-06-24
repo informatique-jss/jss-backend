@@ -2011,7 +2011,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if (subscriptionType.equals(Subscription.NEWSPAPER_KIOSK_BUY)
                 || subscriptionType.equals(Subscription.ONE_POST_SUBSCRIPTION)) {
             assoProvisionPostNewspaper.setProvision(serviceSubscription.getProvisions().get(0));
-            assoProvisionPostNewspaperService.addOrUpdateAssoMailPost(assoProvisionPostNewspaper);
         }
 
         customerOrder.setResponsable(constantService.getResponsableDummyCustomerFrance());
