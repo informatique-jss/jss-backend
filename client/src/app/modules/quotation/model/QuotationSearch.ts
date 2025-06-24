@@ -7,7 +7,6 @@ export interface QuotationSearch {
   startDate: Date | undefined;
   endDate: Date | undefined;
   salesEmployee: Employee;
-  assignedToEmployee: Employee;
   quotationStatus: QuotationStatus[];
   customerOrders: Tiers[];
   affaires: Affaire[];

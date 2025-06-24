@@ -3,18 +3,6 @@
     <div class="full-width">
       <table class="full-width">
         <tr>
-          <td>
-            <div>
-              <autocomplete-employee [(model)]="quotation.assignedTo" [form]="orderingCustomerForm"
-                propertyName="assignedTo" [isMandatory]="false" [isDisabled]="false" label="Commande assignée à"
-                (onOptionSelected)="updateAssignedToForCustomerOrder($event)">
-              </autocomplete-employee>
-            </div>
-          </td>
-        </tr>
-      </table>
-      <table class="full-width">
-        <tr>
           <fieldset [disabled]="editMode==false" class="fieldset-no-border">
             <td style="vertical-align: middle;">
               <autocomplete-responsable [(model)]="searchedResponsable" [form]="orderingCustomerForm"
@@ -22,12 +10,6 @@
                 fieldToCheckAgainstForValidation="entityId"
                 (onOptionSelected)="fillResponsable($event)"></autocomplete-responsable>
             </td>
-            <!--td *ngIf="!searchedResponsable" style="vertical-align: middle;">
-              <autocomplete-confrere label="Confrère" [(model)]="quotation.confrere" [form]="orderingCustomerForm"
-                [isMandatory]="false"
-                propertyName="confrere" [isDisabled]="!editMode" (onOptionSelected)="fillConfrere($event)">
-              </autocomplete-confrere>
-            </td> // TODO : refonte -->
             <td style="vertical-align: middle;">
               <avatar-chip *ngIf="quotation.responsable" [employee]="quotation.responsable.salesEmployee"
                 [disableEmployeeDialog]="true"></avatar-chip>

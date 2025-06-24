@@ -89,11 +89,6 @@ export class OrderSidePanelDetailsComponent implements OnInit {
     return this.affaireNotification[affaire.id];
   }
 
-  updateAssignedToForAffaire(employee: any, asso: AssoAffaireOrder) {
-    this.assoAffaireOrderService.updateAssignedToForAsso(asso, employee).subscribe(response => {
-    });
-  }
-
   canDisplayNotifications() {
     return this.habilitationService.canDisplayNotifications();
   }

@@ -166,8 +166,6 @@ public class QuotationValidationHelper {
                                         quotationQuotation.getQuotationStatus().getCode().equals(QuotationStatus.DRAFT);
                 }
 
-                validationHelper.validateReferential(quotation.getAssignedTo(), false, "AssignedTo");
-
                 if (targetStatusCode != null) {
                         IWorkflowElement status = null;
                         if (quotation instanceof CustomerOrder) {

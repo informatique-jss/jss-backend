@@ -10,7 +10,6 @@ import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 
 public class AffaireSearch {
 
-    private Employee responsible;
     private Employee assignedTo;
     private String label;
     private ArrayList<IWorkflowElement> status;
@@ -28,14 +27,6 @@ public class AffaireSearch {
 
     public void setCustomerOrders(List<Tiers> customerOrders) {
         this.customerOrders = customerOrders;
-    }
-
-    public Employee getResponsible() {
-        return responsible;
-    }
-
-    public void setResponsible(Employee responsible) {
-        this.responsible = responsible;
     }
 
     public Employee getAssignedTo() {

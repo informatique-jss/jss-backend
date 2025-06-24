@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.TiersValidationHelper;
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
@@ -38,6 +39,8 @@ import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
 import com.jss.osiris.modules.osiris.tiers.service.TiersService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @org.springframework.stereotype.Service
 public class MyJssQuotationDelegate {
@@ -88,6 +91,35 @@ public class MyJssQuotationDelegate {
     MailHelper mailHelper;
 
     @Transactional(rollbackFor = Exception.class)
+    public CustomerOrder saveCustomerOrderFromMyJss(CustomerOrder order, Boolean isValidation,
+            HttpServletRequest request)
+            throws OsirisClientMessageException, OsirisValidationException, OsirisException {
+        if (order.getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder asso : order.getAssoAffaireOrders())
+                if (asso.getAffaire() != null && asso.getAffaire().getId() == null)
+                    affaireService.addOrUpdateAffaire(asso.getAffaire());
+
+        saveNewMailsOnAffaire(order);
+
+        order.setResponsable(employeeService.getCurrentMyJssUser());
+        order.setCustomerOrderOrigin(constantService.getCustomerOrderOriginMyJss());
+        order.setCustomerOrderStatus(
+                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT));
+        quotationValidationHelper.completeIQuotationDocuments(order, true);
+        populateBooleansOfProvisions(order);
+        order = customerOrderService.addOrUpdateCustomerOrder(order, true, false);
+
+        if (isValidation != null && isValidation) {
+            customerOrderService.addOrUpdateCustomerOrderStatus(order, CustomerOrderStatus.BEING_PROCESSED, true);
+            if (customerOrderService.isOnlyJssAnnouncement(order, true)) {
+                quotationValidationHelper.validateQuotationAndCustomerOrder(order, null);
+                customerOrderService.autoBilledProvisions(order);
+            }
+        }
+        return order;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
     public IQuotation validateAndCreateQuotation(IQuotation quotation, Boolean isValidation) throws OsirisException {
 
         Responsable responsable = null;
@@ -95,7 +127,7 @@ public class MyJssQuotationDelegate {
             responsable = responsableService.getResponsableByMail(quotation.getResponsable().getMail().getMail());
             if (responsable != null) {
                 quotation.setResponsable(responsable);
-                if (employeeService.getCurrentMyJssUser() != null) {
+                if (employeeService.getCurrentMyJssUser() == null) {
                     // User create IQuotation but not connected => send a mail
                     if (quotation.getIsQuotation())
                         mailHelper.sendConfirmationQuotationCreationMyJss(
@@ -285,9 +317,12 @@ public class MyJssQuotationDelegate {
                                 provision.setIsFormalityAdditionalDeclaration(false);
                                 provision.setIsLogo(false);
                                 provision.setIsNantissementDeposit(false);
-                                provision.setIsPublicationFlag(false);
-                                provision.setIsPublicationPaper(false);
-                                provision.setIsPublicationReceipt(false);
+                                if (provision.getIsPublicationFlag() == null)
+                                    provision.setIsPublicationFlag(false);
+                                if (provision.getIsPublicationPaper() == null)
+                                    provision.setIsPublicationPaper(false);
+                                if (provision.getIsPublicationReceipt() == null)
+                                    provision.setIsPublicationReceipt(false);
                                 provision.setIsRegisterInitials(false);
                                 provision.setIsRegisterPurchase(false);
                                 provision.setIsRegisterShippingCosts(false);
@@ -298,8 +333,10 @@ public class MyJssQuotationDelegate {
                                 provision.setIsTreatmentMultipleModiciation(false);
                                 provision.setIsVacationMultipleModification(false);
                                 provision.setIsVacationUpdateBeneficialOwners(false);
-                                // TODO : delete after modif in front
-                                provision.setIsRedactedByJss(false);
+                                if (provision.getIsRedactedByJss() == null)
+                                    provision.setIsRedactedByJss(false);
+                                if (provision.getIsEmergency() == null)
+                                    provision.setIsEmergency(false);
                             }
 
     }

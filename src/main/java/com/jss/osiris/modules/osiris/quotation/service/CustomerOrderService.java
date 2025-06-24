@@ -29,8 +29,6 @@ import com.jss.osiris.modules.osiris.quotation.model.OrderingSearchTagged;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 public interface CustomerOrderService {
         public CustomerOrder getCustomerOrder(Integer id);
 
@@ -118,10 +116,6 @@ public interface CustomerOrderService {
                         boolean printLetters, boolean printRegisteredLetter)
                         throws OsirisException, OsirisClientMessageException;
 
-        public void updateAssignedToForCustomerOrder(CustomerOrder customerOrder, Employee employee)
-                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
-                        OsirisDuplicateException;
-
         public List<OrderingSearchResult> searchByQuotationId(Integer idQuotation);
 
         public List<OrderingSearchResult> searchByCustomerOrderParentRecurringId(Integer idCustomerOrder);
@@ -148,10 +142,6 @@ public interface CustomerOrderService {
 
         public List<CustomerOrder> searchOrders(List<CustomerOrderStatus> customerOrderStatus,
                         List<Responsable> responsables);
-
-        public CustomerOrder saveCustomerOrderFromMyJss(CustomerOrder order, Boolean isValidation,
-                        HttpServletRequest request)
-                        throws OsirisClientMessageException, OsirisValidationException, OsirisException;
 
         public List<CustomerOrder> completeAdditionnalInformationForCustomerOrders(List<CustomerOrder> customerOrders)
                         throws OsirisException;

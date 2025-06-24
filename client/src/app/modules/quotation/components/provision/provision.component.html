@@ -33,9 +33,6 @@
             matBadgeColor="warn" matBadgeSize="small" class="pointer">notifications</mat-icon>
         </mat-panel-title>
         <mat-panel-description>
-          <avatar-chip *ngIf="asso.assignedTo" [employee]="asso.assignedTo"
-            (onChangeAssigne)="updateAssignedToForAffaire($event,asso)">
-          </avatar-chip>
           <mat-icon color="accent" matTooltip="Voir/éditer l'affaire"
             (click)="displayAffaire($event);$event.stopPropagation();"
             (auxclick)="displayAffaire($event);$event.stopPropagation();" class="pointer status-text">
@@ -44,12 +41,6 @@
         </mat-panel-description>
       </mat-expansion-panel-header>
       <add-affaire [affaire]="asso.affaire" [editMode]="false"></add-affaire>
-      <div *ngIf="asso && asso.id ">
-        <autocomplete-employee [(model)]="asso.assignedTo" [form]="affaireForm" propertyName="assignedTo"
-          [isMandatory]="true" [isDisabled]="false" label="Affaire assignée à"
-          (onOptionSelected)="updateAssignedToForAffaire($event,asso)">
-        </autocomplete-employee>
-      </div>
     </mat-expansion-panel>
   </mat-accordion>
 </div>
@@ -90,7 +81,7 @@
           <mat-panel-description style="height:40px">
             <span class="status-text"
               *ngIf="getActiveWorkflowElementsForProvisionFn(provision)">{{getActiveWorkflowElementsForProvisionFn(provision).label}}</span>
-            <avatar-chip *ngIf="asso.assignedTo" [employee]="provision.assignedTo"
+            <avatar-chip [employee]="provision.assignedTo"
               (onChangeAssigne)="updateAssignedToForProvision($event, provision)">
             </avatar-chip>
             <ng-template></ng-template>
