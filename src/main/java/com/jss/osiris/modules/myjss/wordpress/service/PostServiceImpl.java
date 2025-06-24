@@ -459,8 +459,7 @@ public class PostServiceImpl implements PostService {
         Page<Post> bookmarkedPosts = null;
 
         if (responsable.getMail() != null)
-            bookmarkedPosts = readingFolderRepository.findBookmarkPostsByReadingFolderId(readingFolder.getId(),
-                    pageableRequest);
+            bookmarkedPosts = postRepository.findByReadingFolders(readingFolder, pageableRequest);
 
         if (bookmarkedPosts != null)
             for (Post post : bookmarkedPosts.getContent())

@@ -21,9 +21,10 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(indexes = { @Index(name = "idx_reading_folder", columnList = "id", unique = true),
+@Table(indexes = {
         @Index(name = "idx_reading_folder_mail", columnList = "id_mail"),
 })
+
 public class ReadingFolder implements Serializable {
     @Id
     @SequenceGenerator(name = "reading_folder_sequence", sequenceName = "reading_folder_sequence", allocationSize = 1)

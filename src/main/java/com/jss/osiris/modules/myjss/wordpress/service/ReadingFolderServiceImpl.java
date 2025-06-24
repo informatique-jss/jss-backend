@@ -34,12 +34,9 @@ public class ReadingFolderServiceImpl implements ReadingFolderService {
 
     @Override
     public ReadingFolder getReadingFolder(Integer readingFolderId) {
-        Responsable responsable = employeeService.getCurrentMyJssUser();
-        if (responsable != null) {
-            Optional<ReadingFolder> readingFolder = readingFolderRepository.findById(readingFolderId);
-            if (readingFolder.isPresent())
-                return readingFolder.get();
-        }
+        Optional<ReadingFolder> readingFolder = readingFolderRepository.findById(readingFolderId);
+        if (readingFolder.isPresent())
+            return readingFolder.get();
         return null;
     }
 

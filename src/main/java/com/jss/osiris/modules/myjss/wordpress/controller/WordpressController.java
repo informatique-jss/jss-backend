@@ -230,7 +230,6 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/post/bookmark/add")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<Boolean> addBookmarkPost(@RequestParam Integer idPost,
 			@RequestParam(required = false) Integer idReadingFolder,
 			HttpServletRequest request) throws OsirisException {
@@ -257,7 +256,6 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/post/bookmark/delete")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<Boolean> deleteBookmarkPost(@RequestParam Integer idPost,
 			HttpServletRequest request) throws OsirisException {
 
@@ -277,7 +275,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/post/bookmark/all")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Page<Post>> getBookmarkPostsForCurrentUser(
 			@RequestParam Integer idReadingFolder,
 			@RequestParam(defaultValue = "0") int page,
@@ -294,7 +292,8 @@ public class WordpressController {
 		if (responsable == null)
 			throw new OsirisValidationException("responsable");
 
-		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size));
+		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
+				Sort.by(Sort.Direction.DESC, "date"));
 
 		return new ResponseEntity<Page<Post>>(
 				postService.getBookmarkPostsByReadingFolderForCurrentUser(readingFolder, responsable, pageable),

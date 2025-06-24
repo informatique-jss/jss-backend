@@ -16,6 +16,7 @@ import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.Post;
 import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
+import com.jss.osiris.modules.myjss.wordpress.model.ReadingFolder;
 import com.jss.osiris.modules.myjss.wordpress.model.Serie;
 import com.jss.osiris.modules.myjss.wordpress.model.Tag;
 
@@ -126,6 +127,10 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
                         + "where (:myJssCategory member of p.myJssCategories) and p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP "
                         + " ")
         List<Post> searchPostsByMyJssCategory(@Param("myJssCategory") MyJssCategory myJssCategory,
+                        Pageable pageable);
+
+        @Query("SELECT p FROM Post p WHERE :readingFolder MEMBER OF p.readingFolders")
+        Page<Post> findByReadingFolders(@Param(value = "readingFolder") ReadingFolder readingFolder,
                         Pageable pageable);
 
 }

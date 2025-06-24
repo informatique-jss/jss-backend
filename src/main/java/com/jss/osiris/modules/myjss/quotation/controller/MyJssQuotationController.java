@@ -1688,13 +1688,16 @@ public class MyJssQuotationController {
 		if (readingFolder.getLabel() != null && readingFolder.getLabel().trim().length() > 0)
 			validationHelper.validateString(readingFolder.getLabel(), null, "readingFolderLabel");
 
+		if (readingFolder.getMail() != null && !readingFolder.getMail().getId().equals(responsable.getMail().getId()))
+			return new ResponseEntity<ReadingFolder>(null, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+
 		return new ResponseEntity<ReadingFolder>(
 				readingFolderService.addOrUpdateReadingFolder(readingFolder, responsable),
 				HttpStatus.OK);
+
 	}
 
 	@GetMapping(inputEntryPoint + "/reading-folder/delete")
-	@JsonView({ JacksonViews.MyJssDetailedView.class })
 	public ResponseEntity<Boolean> deleteReadingFolder(@RequestParam Integer idReadingFolder,
 			HttpServletRequest request)
 			throws OsirisValidationException {
@@ -1707,8 +1710,11 @@ public class MyJssQuotationController {
 		if (currentUser != null && !currentUser.getMail().getId().equals(readingFolder.getMail().getId()))
 			throw new OsirisValidationException("readingFolder");
 
-		readingFolderService.deleteReadingFolder(readingFolder);
-		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+		if (readingFolder.getMail() != null && readingFolder.getMail().getId().equals(currentUser.getMail().getId())) {
+			readingFolderService.deleteReadingFolder(readingFolder);
+			return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+		}
+		return new ResponseEntity<Boolean>(false, HttpStatus.BAD_REQUEST);
 	}
 
 	@GetMapping(inputEntryPoint + "/reading-folders")

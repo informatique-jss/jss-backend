@@ -16,9 +16,6 @@ public interface ReadingFolderRepository extends QueryCacheCrudRepository<Readin
 
     List<ReadingFolder> findByMail(Mail mail);
 
-    @Query("SELECT p FROM ReadingFolder rf JOIN rf.posts p WHERE rf.id = :readingFolderId ORDER BY p.date DESC")
-    Page<Post> findBookmarkPostsByReadingFolderId(@Param("readingFolderId") Integer readingFolderId, Pageable pageable);
-
     @Query("SELECT rf.posts FROM ReadingFolder rf WHERE rf.mail = :mail")
     Page<Post> findBookmarkPostsByMail(@Param("mail") Mail mail, Pageable pageable);
 
