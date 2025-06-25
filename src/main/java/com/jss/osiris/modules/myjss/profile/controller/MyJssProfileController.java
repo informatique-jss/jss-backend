@@ -12,11 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -141,17 +137,7 @@ public class MyJssProfileController {
 	}
 
 	public void authenticateUser(Responsable responsable, HttpServletRequest request) {
-		Authentication authentication = new UsernamePasswordAuthenticationToken(responsable.getId(), null,
-				AuthorityUtils.createAuthorityList(ActiveDirectoryHelper.MYJSS_USER_GROUP));
-
-		SecurityContext securityContext = SecurityContextHolder.getContext();
-		securityContext.setAuthentication(authentication);
-
-		HttpSession session = request.getSession(true);
-		session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
-
-		responsable.setLoginTokenExpirationDateTime(LocalDateTime.now().minusSeconds(1));
-		responsableService.addOrUpdateResponsable(responsable);
+		userScopeService.authenticateUser(responsable, request);
 	}
 
 	@GetMapping(inputEntryPoint + "/login/roles")

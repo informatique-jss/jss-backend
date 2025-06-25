@@ -30,6 +30,7 @@ const routesMyAccount = [
       { path: 'affaire/edit/order/:id/:idOrder', loadComponent: () => import('./modules/my-account/components/edit-affaire/edit-affaire.component').then(m => m.EditAffaireComponent) },
       { path: 'affaire/edit/quotation/:id/:idQuotation', loadComponent: () => import('./modules/my-account/components/edit-affaire/edit-affaire.component').then(m => m.EditAffaireComponent) },
       { path: 'settings', loadComponent: () => import('./modules/my-account/components/user-settings/user-settings.component').then(m => m.UserSettingsComponent) },
+      { path: 'associated-settings', loadComponent: () => import('./modules/my-account/components/user-settings/user-settings.component').then(m => m.UserSettingsComponent) },
       { path: 'settings/:idResponsable', loadComponent: () => import('./modules/my-account/components/user-settings/user-settings.component').then(m => m.UserSettingsComponent) },
       { path: 'settings/address/edit/:idResponsable', loadComponent: () => import('./modules/my-account/components/edit-address/edit-address.component').then(m => m.EditAddressComponent) },
       { path: 'subscription', loadComponent: () => import('./modules/my-account/components/subscriptions/subscriptions.component').then(m => m.SubscriptionsComponent) },

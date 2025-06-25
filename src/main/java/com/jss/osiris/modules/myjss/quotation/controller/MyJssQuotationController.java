@@ -1501,7 +1501,7 @@ public class MyJssQuotationController {
 		detectFlood(request);
 
 		return new ResponseEntity<Quotation>(
-				(Quotation) myJssQuotationDelegate.validateAndCreateQuotation(quotation, isValidation),
+				(Quotation) myJssQuotationDelegate.validateAndCreateQuotation(quotation, isValidation, request),
 				HttpStatus.OK);
 	}
 
@@ -1514,7 +1514,7 @@ public class MyJssQuotationController {
 		detectFlood(request);
 
 		return new ResponseEntity<CustomerOrder>(
-				(CustomerOrder) myJssQuotationDelegate.validateAndCreateQuotation(order, isValidation),
+				(CustomerOrder) myJssQuotationDelegate.validateAndCreateQuotation(order, isValidation, request),
 				HttpStatus.OK);
 	}
 
@@ -1565,7 +1565,8 @@ public class MyJssQuotationController {
 				myJssQuotationValidationHelper.validateAffaire(asso.getAffaire());
 			}
 		}
-		return new ResponseEntity<Quotation>(quotationService.saveQuotationFromMyJss(order, isValidation, request),
+		return new ResponseEntity<Quotation>(
+				myJssQuotationDelegate.saveQuotationFromMyJss(order, isValidation, request),
 				HttpStatus.OK);
 	}
 

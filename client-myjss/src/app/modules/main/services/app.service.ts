@@ -6,6 +6,7 @@ import { Toast } from '../../../libs/toast/Toast';
 import { MenuItem } from '../../general/model/MenuItem';
 import { AccountMenuItem, MAIN_ITEM_ACCOUNT, MAIN_ITEM_DASHBOARD } from '../../my-account/model/AccountMenuItem';
 import { ResponsableService } from '../../profile/services/responsable.service';
+import { UserScopeService } from '../../profile/services/user.scope.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +21,7 @@ export class AppService {
   constructor(
     private router: Router,
     private responsableService: ResponsableService,
+    private userScopeService: UserScopeService
   ) { }
 
   showLoadingSpinner(): void {
@@ -93,6 +95,11 @@ export class AppService {
     this.responsableService.getPotentialUserScope().subscribe(response => {
       if (response.length > 1)
         menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Vue d'ensemble", iconClass: "ai-grid", route: "/account/scope" } as AccountMenuItem);
+    })
+
+    this.userScopeService.getUserScope().subscribe(response => {
+      if (response.length > 1)
+        menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Mes comptes associés", iconClass: "ai-link", route: "/account/associated-settings" } as AccountMenuItem);
     })
     return menuItem;
   }

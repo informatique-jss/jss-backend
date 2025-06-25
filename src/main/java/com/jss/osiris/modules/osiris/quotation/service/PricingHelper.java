@@ -228,8 +228,8 @@ public class PricingHelper {
         } else if (billingItem.getBillingType().getId()
                 .equals(constantService.getBillingTypePublicationPaper().getId())) {
             Integer nbr = getPublicationPaperNbr(provision);
-            if (nbr > 0) {
-                Confrere confrere = provision.getAnnouncement().getConfrere();
+            Confrere confrere = provision.getAnnouncement().getConfrere();
+            if (nbr > 0 && confrere != null) {
                 invoiceItem.setLabel(invoiceItem.getLabel() + " (quantité : " + nbr + ")");
 
                 invoiceItem.setPreTaxPrice(

@@ -212,7 +212,9 @@ export class CheckoutComponent implements OnInit {
             if (response && response.id) {
               this.cleanStorageData();
               this.appService.hideLoadingSpinner();
-              this.appService.openRoute(undefined, "account/quotations/details/" + response.id, undefined);
+              this.loginService.refreshUserRoles().subscribe(role => {
+                this.appService.openRoute(undefined, "account/quotations/details/" + response.id, undefined);
+              });
             }
           });
         else
@@ -220,7 +222,9 @@ export class CheckoutComponent implements OnInit {
             if (response && response.id) {
               this.cleanStorageData();
               this.appService.hideLoadingSpinner();
-              this.appService.openRoute(undefined, "account/orders/details/" + response.id, undefined);
+              this.loginService.refreshUserRoles().subscribe(role => {
+                this.appService.openRoute(undefined, "account/orders/details/" + response.id, undefined);
+              });
             }
           });
       }
@@ -333,16 +337,9 @@ export class CheckoutComponent implements OnInit {
     if (this.currentUser)
       this.documentService.getDocumentForResponsable(this.currentUser.id).subscribe(response => {
         if (this.quotation) {
-          this.quotation.documents = [];
           this.quotation.responsable = user;
-          for (let doc of response) {
-            if (doc.documentType.id == this.constantService.getDocumentTypeBilling().id
-              || doc.documentType.id == this.constantService.getDocumentTypeDigital().id
-              || doc.documentType.id == this.constantService.getDocumentTypePaper().id
-            )
-              this.quotation.documents.push(doc);
-          }
-          this.sortDocuments(this.quotation.documents);
+          this.quotation.documents = [];
+          this.initEmptyDocuments();
           if (!this.currentUser)
             this.quotationService.setCurrentDraftQuotation(this.quotation);
           else

@@ -70,8 +70,6 @@ import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 import com.jss.osiris.modules.osiris.tiers.service.TiersService;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 @org.springframework.stereotype.Service
 public class QuotationServiceImpl implements QuotationService {
 
@@ -737,31 +735,6 @@ public class QuotationServiceImpl implements QuotationService {
     @Override
     public List<Quotation> findQuotationByResponsable(Responsable responsable) {
         return quotationRepository.findByResponsable(responsable);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public Quotation saveQuotationFromMyJss(Quotation quotation, Boolean isValidation, HttpServletRequest request)
-            throws OsirisClientMessageException, OsirisValidationException, OsirisException {
-        if (quotation.getAssoAffaireOrders() != null)
-            for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders())
-                if (asso.getAffaire() != null && asso.getAffaire().getId() == null)
-                    affaireService.addOrUpdateAffaire(asso.getAffaire());
-
-        if (quotation.getResponsable() == null)
-            quotation.setResponsable(employeeService.getCurrentMyJssUser());
-        quotation.setCustomerOrderOrigin(constantService.getCustomerOrderOriginMyJss());
-        quotation.setQuotationStatus(
-                quotationStatusService.getQuotationStatusByCode(CustomerOrderStatus.DRAFT));
-        quotationValidationHelper.completeIQuotationDocuments(quotation, false);
-        myJssQuotationDelegate.populateBooleansOfProvisions(quotation);
-        quotation = addOrUpdateQuotationFromUser(quotation);
-
-        if (isValidation != null && isValidation)
-            addOrUpdateQuotationStatus(quotation, QuotationStatus.TO_VERIFY);
-
-        return quotation;
-
     }
 
     public List<Quotation> completeAdditionnalInformationForQuotations(List<Quotation> quotations)
