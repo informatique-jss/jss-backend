@@ -16,16 +16,11 @@ import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.Post;
 import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
+import com.jss.osiris.modules.myjss.wordpress.model.ReadingFolder;
 import com.jss.osiris.modules.myjss.wordpress.model.Serie;
 import com.jss.osiris.modules.myjss.wordpress.model.Tag;
-import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 
 public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> {
-
-        @Query("SELECT p from Post p join p.assoMailPosts a"
-                        + " WHERE p.isCancelled =:isCancelled AND a.mail= :mail ")
-        Page<Post> findBookmarkedPostsByMail(@Param("isCancelled") Boolean isCancelled, @Param("mail") Mail mail,
-                        Pageable pageableRequest);
 
         @Query("select p from Post p where p.isCancelled =:isCancelled and p.date<=CURRENT_TIMESTAMP and p.date>:consultationDate and ((:jssCategory IS NOT NULL AND :jssCategory MEMBER OF p.jssCategories) OR (:jssCategory IS NULL AND size(p.jssCategories) > 0))")
         Page<Post> findByJssCategoriesAndIsCancelled(@Param("jssCategory") JssCategory jssCategory,
@@ -44,9 +39,10 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
 
         @Query("select p from Post p where id not in :postFetchedId AND p.date<=CURRENT_TIMESTAMP ")
         List<Post> findPostExcludIds(@Param("postFetchedId") List<Integer> postFetchedId);
- 
+
         @Query("select p from Post p join p.postViews v where p.isCancelled = false and size(p.jssCategories) > 0 and v.day >= :oneWeekAgo and :category MEMBER OF p.postCategories group by p.id order by sum(v.count) desc ")
-        Page<Post> findJssCategoryPostTendency(@Param("oneWeekAgo") LocalDate oneWeekAgo,  @Param("category") Category category, Pageable pageable);
+        Page<Post> findJssCategoryPostTendency(@Param("oneWeekAgo") LocalDate oneWeekAgo,
+                        @Param("category") Category category, Pageable pageable);
 
         @Query("select p.id from Post p join p.postViews v where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and size(p.myJssCategories) > 0 and v.day >= :oneWeekAgo group by p.id order by sum(v.count) desc ")
         List<Integer> findMyJssCategoryPostTendency(@Param("oneWeekAgo") LocalDate oneWeekAgo,
@@ -131,6 +127,10 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
                         + "where (:myJssCategory member of p.myJssCategories) and p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP "
                         + " ")
         List<Post> searchPostsByMyJssCategory(@Param("myJssCategory") MyJssCategory myJssCategory,
+                        Pageable pageable);
+
+        @Query("SELECT p FROM Post p WHERE :readingFolder MEMBER OF p.readingFolders")
+        Page<Post> findByReadingFolders(@Param(value = "readingFolder") ReadingFolder readingFolder,
                         Pageable pageable);
 
 }

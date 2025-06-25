@@ -1,0 +1,52 @@
+<a type="button" *ngIf="post && !isSinglePost && currentUser && readingFolders && readingFolders.length>1"
+  class="custom-display rounded-outline-icon rounded-circle fs-8 d-flex align-items-center justify-content-center ms-2"
+  [ngbPopover]="popoverContentTpl" popoverTitle="" placement="end" triggers="manual" #p="ngbPopover"
+  popoverClass="custom-popover" (click)="post.isBookmarked ? unBookmarkPost(post) : p.open()">
+  <i [ngClass]="{'bi-bookmark': !post.isBookmarked,
+                                'bi-bookmark-fill text-dark': post.isBookmarked,
+                                'text-transparent': !post.isBookmarked}">
+  </i>
+</a>
+
+<a *ngIf="post && isSinglePost && currentUser && readingFolders && readingFolders.length>1" role="button"
+  class="d-flex align-items-center p-0 user-account" [ngbPopover]="popoverContentTpl" popoverTitle="" placement="end"
+  triggers="manual" #p="ngbPopover" popoverClass="custom-popover"
+  (click)="post.isBookmarked ? unBookmarkPost(post) : p.open()">
+
+  <div class="d-none d-md-block">
+    <div class="btn btn-primary"><i class="me-1" [ngClass]="{'bi-bookmark ': !post.isBookmarked,
+                                'bi-bookmark-fill text-dark ': post.isBookmarked,
+                                'text-transparent ': !post.isBookmarked}">
+      </i>Enregistrer</div>
+  </div>
+</a>
+
+<ng-template #popoverContentTpl>
+  <div class="list-group w-100" *ngIf="post">
+    <button *ngFor="let folder of readingFolders" type="button" (click)="handleBookmarkPost(post, folder)"
+      class="list-group-item list-group-item-action text-truncate text-start py-2 px-3">
+      {{ folder.label }}
+    </button>
+  </div>
+</ng-template>
+
+<a *ngIf="post && !isSinglePost && currentUser && (!readingFolders || (readingFolders && readingFolders.length<=1))"
+  class="custom-display rounded-outline-icon rounded-circle fs-8 d-flex align-items-center justify-content-center ms-2"
+  (click)="handleBookmarkPost(post, readingFolders ? readingFolders[0]: undefined)">
+  <i [ngClass]="{'bi-bookmark': !post.isBookmarked,
+                                'bi-bookmark-fill text-dark': post.isBookmarked,
+                                'text-transparent': !post.isBookmarked}">
+  </i>
+</a>
+
+<a *ngIf="post && isSinglePost && currentUser && readingFolders && readingFolders.length<=1" role="button"
+  class="d-flex align-items-center p-0 user-account"
+  (click)="handleBookmarkPost(post, readingFolders ? readingFolders[0]: undefined)">
+
+  <div class="d-none d-md-block">
+    <div class="btn btn-primary "><i class="me-1" [ngClass]="{'bi-bookmark ': !post.isBookmarked,
+                                'bi-bookmark-fill text-dark ': post.isBookmarked,
+                                'text-transparent ': !post.isBookmarked}">
+      </i>Enregistrer</div>
+  </div>
+</a>
