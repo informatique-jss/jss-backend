@@ -44,12 +44,8 @@
               <button *ngIf="currentUser" class="btn btn-primary" (click)="openOfferPostModal(givePostModal)"><i
                   class="bi bi-gift me-2"></i>Offrir cet article</button>
             </div>
-            <div class="col-auto mt-0" *ngIf="currentUser">
-              <button *ngIf="currentUser" class="btn btn-primary"
-                (click)="post.isBookmarked ? unBookmarkPost(post) : bookmarkPost(post)"><i [ngClass]="{'bi-bookmark': !post.isBookmarked,
-                                'bi-bookmark-fill text-dark': post.isBookmarked,
-                                'text-transparent': !post.isBookmarked}" class="bi  me-2"></i>Enregistrer</button>
-            </div>
+            <bookmark [post]="post" [isSinglePost]="true" class="mt-0"></bookmark>
+
             <div class="col-auto mt-0">
               <!-- Share dropdown -->
               <div class="dropdown nav" [ngClass]="{ show: dropdownOpen }">

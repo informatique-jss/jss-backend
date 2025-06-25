@@ -13,6 +13,7 @@ import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -160,6 +161,10 @@ public class Post implements IId, Serializable {
     @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private List<Tag> postTags;
 
+    @ManyToMany(mappedBy = "posts", cascade = CascadeType.REMOVE)
+    @JsonIgnoreProperties(value = { "posts" }, allowSetters = true)
+    private List<ReadingFolder> readingFolders;
+
     @ManyToMany
     @JoinTable(name = "asso_post_serie", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_serie"))
     @IndexedField
@@ -175,11 +180,6 @@ public class Post implements IId, Serializable {
     @JoinTable(name = "asso_post_related", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_post_related"))
     @JsonView(JacksonViews.MyJssDetailedView.class)
     private List<Post> relatedPosts;
-
-    @OneToMany(mappedBy = "post")
-    @JsonIgnoreProperties(value = { "post" }, allowSetters = true)
-    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
-    private List<AssoMailPost> assoMailPosts;
 
     @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     @IndexedField
@@ -521,14 +521,6 @@ public class Post implements IId, Serializable {
         this.amazonMusicLinkUrl = amazonMusicLinkUrl;
     }
 
-    public List<AssoMailPost> getAssoMailPosts() {
-        return assoMailPosts;
-    }
-
-    public void setAssoMailPosts(List<AssoMailPost> assoMailPosts) {
-        this.assoMailPosts = assoMailPosts;
-    }
-
     public Boolean getIsBookmarked() {
         return isBookmarked;
     }
@@ -545,4 +537,11 @@ public class Post implements IId, Serializable {
         this.contentText = contentText;
     }
 
+    public List<ReadingFolder> getReadingFolders() {
+        return readingFolders;
+    }
+
+    public void setReadingFolders(List<ReadingFolder> readingFolders) {
+        this.readingFolders = readingFolders;
+    }
 }
