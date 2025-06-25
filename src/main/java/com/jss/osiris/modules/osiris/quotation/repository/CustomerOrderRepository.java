@@ -204,4 +204,9 @@ public interface CustomerOrderRepository
         @Query("select c from CustomerOrder c where invoicingEmployee is null and c.customerOrderStatus=:customerOrderStatusToBilled ")
         List<CustomerOrder> findNewCustomerOrderToBilled(CustomerOrderStatus customerOrderStatusToBilled,
                         Pageable pageableRequest);
+
+        @Query(value = "select c from CustomerOrder c where customerOrderStatus=:customerOrderStatus and createdDate<:dateLimit ")
+        List<CustomerOrder> findCustomerOrderOlderThanDate(
+                        @Param("customerOrderStatus") CustomerOrderStatus customerOrderStatus,
+                        @Param("dateLimit") LocalDateTime dateLimit);
 }

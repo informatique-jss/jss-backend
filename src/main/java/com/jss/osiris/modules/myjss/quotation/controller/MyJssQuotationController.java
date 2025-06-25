@@ -656,6 +656,12 @@ public class MyJssQuotationController {
 						.canSeeQuotation(assoServiceDocument.getService().getAssoAffaireOrder().getQuotation()))
 			return new ResponseEntity<AssoServiceDocument>(assoServiceDocument, new HttpHeaders(), HttpStatus.OK);
 
+		if (assoServiceDocument != null
+				&& assoServiceDocument.getService().getAssoAffaireOrder().getCustomerOrder() != null
+				&& myJssQuotationValidationHelper
+						.canSeeQuotation(assoServiceDocument.getService().getAssoAffaireOrder().getCustomerOrder()))
+			return new ResponseEntity<AssoServiceDocument>(assoServiceDocument, new HttpHeaders(), HttpStatus.OK);
+
 		return new ResponseEntity<AssoServiceDocument>(null, new HttpHeaders(), HttpStatus.OK);
 	}
 
@@ -1556,6 +1562,36 @@ public class MyJssQuotationController {
 		}
 		return new ResponseEntity<Quotation>(quotationService.saveQuotationFromMyJss(order, isValidation, request),
 				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/quotation/cancel")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<Boolean> cancelQuotation(Integer quotationId, HttpServletRequest request)
+			throws OsirisValidationException, OsirisException {
+		detectFlood(request);
+
+		Quotation quotation = quotationService.getQuotation(quotationId);
+		if (quotation == null || !myJssQuotationValidationHelper.canSeeQuotation(quotation))
+			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+
+		quotationService.addOrUpdateQuotationStatus(quotation, QuotationStatus.ABANDONED);
+
+		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/order/cancel")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<Boolean> cancelCustomerOrder(Integer customerOrderId, HttpServletRequest request)
+			throws OsirisValidationException, OsirisException {
+		detectFlood(request);
+
+		CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+		if (customerOrder == null || !myJssQuotationValidationHelper.canSeeQuotation(customerOrder))
+			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+
+		customerOrderService.addOrUpdateCustomerOrderStatus(customerOrder, CustomerOrderStatus.ABANDONED, true);
+
+		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/service-types/provisions")

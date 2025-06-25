@@ -872,4 +872,16 @@ public class QuotationServiceImpl implements QuotationService {
         pricingHelper.getAndSetInvoiceItemsForQuotation(quotation, true);
         return true;
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void purgeQuotations() throws OsirisException {
+        List<Quotation> quotations = quotationRepository.findQuotationOlderThanDate(
+                quotationStatusService.getQuotationStatusByCode(QuotationStatus.DRAFT),
+                LocalDateTime.now().minusMonths(3));
+
+        if (quotations != null)
+            for (Quotation quotation : quotations)
+                batchService.declareNewBatch(Batch.PURGE_QUOTATION, quotation.getId());
+    }
 }

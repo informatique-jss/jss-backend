@@ -90,4 +90,8 @@ public interface QuotationRepository extends QueryCacheCrudRepository<Quotation,
                         "    and (0 in :status or  c.quotationStatus.id in :status) order by c.createdDate desc ")
         List<Quotation> searchQuotation(List<Integer> commercials,
                         List<Integer> status);
+
+        @Query(value = "select q from Quotation q where quotationStatus=:quotationStatus and createdDate<:dateLimit ")
+        List<Quotation> findQuotationOlderThanDate(@Param("quotationStatus") QuotationStatus quotationStatus,
+                        @Param("dateLimit") LocalDateTime dateLimit);
 }

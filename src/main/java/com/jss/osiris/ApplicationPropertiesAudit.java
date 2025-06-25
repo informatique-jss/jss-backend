@@ -41,6 +41,7 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("schedulling.log.osiris.competent.authority.reminder");
         isOk = isOk && checkProperty("schedulling.guichet.unique.refresh.update.last.hour");
         isOk = isOk && checkProperty("schedulling.guichet.unique.refresh.opened");
+        isOk = isOk && checkProperty("schedulling.mail.purge.iquotation.draft");
         isOk = isOk && checkProperty("schedulling.central.pay.payment.request.validation.check");
         isOk = isOk && checkProperty("azure.form.recognizer.invoice.check");
         isOk = isOk && checkProperty("ldap.dc.level.0");

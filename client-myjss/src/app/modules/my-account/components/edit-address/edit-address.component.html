@@ -216,7 +216,7 @@
         </ng-template>
       </li>
       <li [ngbNavItem]="3">
-        <button ngbNavLink>Documents numériques</button>
+        <button ngbNavLink>Documents papiers</button>
         <ng-template ngbNavContent>
           <ng-container *ngFor="let document of documents ">
             <ng-container *ngIf="document.documentType.code == documentTypePaper.code ">

@@ -100,4 +100,6 @@ public interface QuotationService {
 
         public Boolean setDocumentOnOrder(Quotation quotation, Document document)
                         throws OsirisClientMessageException, OsirisValidationException, OsirisException;
+
+        public void purgeQuotations() throws OsirisException;
 }

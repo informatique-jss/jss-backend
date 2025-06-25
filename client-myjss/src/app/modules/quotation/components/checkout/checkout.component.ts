@@ -121,7 +121,7 @@ export class CheckoutComponent implements OnInit {
     private serviceService: ServiceService,
     private userScopeService: UserScopeService,
     private documentService: DocumentService,
-    private cityService: CityService
+    private cityService: CityService,
   ) { }
 
   async ngOnInit() {
@@ -211,6 +211,7 @@ export class CheckoutComponent implements OnInit {
           this.quotationService.saveFinalQuotation(this.quotation as Quotation, !isDraft).subscribe(response => {
             if (response && response.id) {
               this.cleanStorageData();
+              this.appService.hideLoadingSpinner();
               this.appService.openRoute(undefined, "account/quotations/details/" + response.id, undefined);
             }
           });
@@ -218,10 +219,10 @@ export class CheckoutComponent implements OnInit {
           this.orderService.saveFinalOrder(this.quotation as CustomerOrder, !isDraft).subscribe(response => {
             if (response && response.id) {
               this.cleanStorageData();
+              this.appService.hideLoadingSpinner();
               this.appService.openRoute(undefined, "account/orders/details/" + response.id, undefined);
             }
           });
-        this.appService.hideLoadingSpinner();
       }
     } else {
       if (this.quotation.isQuotation)
@@ -251,15 +252,15 @@ export class CheckoutComponent implements OnInit {
   isOrderPossible() {
     console.log(this.documentForm);
     if (this.documentForm.invalid) {
-      this.appService.displayToast("Il manque des informations obligatoires pour pouvoir valider " + (this.quotation!.isQuotation ? "le devis" : "la commande"), true, "Validation de commande impossible", 5000);
+      this.appService.displayToast("Il manque des informations obligatoires pour pouvoir valider " + (this.quotation!.isQuotation ? "le devis" : "la commande"), true, "Validation de " + (this.quotation!.isQuotation ? "devis" : "commande") + " impossible", 5000);
       return false;
     }
     if (!this.currentUser && this.quotation!.responsable!.mail.mail != this.mailToConfirm) {
-      this.appService.displayToast("Les deux e-mails renseignés ne sont pas identiques !", true, "Validation de commande impossible", 5000);
+      this.appService.displayToast("Les deux e-mails renseignés ne sont pas identiques !", true, "Validation de " + (this.quotation!.isQuotation ? "devis" : "commande") + " impossible", 5000);
       return false;
     }
     if (!this.acceptDocs || !this.acceptTerms) {
-      this.appService.displayToast("Vous devez accepter les conditions ci-dessus pour pouvoir passer commande", true, "Validation de commande impossible", 5000);
+      this.appService.displayToast("Vous devez accepter les conditions ci-dessus pour pouvoir valider " + (this.quotation!.isQuotation ? "le devis" : "la commande"), true, "Validation de " + (this.quotation!.isQuotation ? "devis" : "commande") + " impossible", 5000);
       return false;
     }
     return true;

@@ -2081,4 +2081,16 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 }
             }
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void purgeCustomerOrders() throws OsirisException {
+        List<CustomerOrder> orders = customerOrderRepository.findCustomerOrderOlderThanDate(
+                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT),
+                LocalDateTime.now().minusMonths(3));
+
+        if (orders != null)
+            for (CustomerOrder order : orders)
+                batchService.declareNewBatch(Batch.PURGE_CUSTOMER_ORDER, order.getId());
+    }
 }

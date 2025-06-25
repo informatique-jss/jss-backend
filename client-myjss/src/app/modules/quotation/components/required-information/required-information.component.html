@@ -6,7 +6,7 @@
     <div class="row mb-5">
       <!-- Show card with ngFor -->
       <div *ngFor="let asso of quotation.assoAffaireOrders;let indexAsso = index" class="col-12 col-sm-6 col-lg-4 my-2">
-        <div class="white-card card rounded-1 d-flex flex-column h-100 p-4 "
+        <div class="white-card card rounded-1 d-flex flex-column h-100 p-4 " *ngIf="asso.affaire"
           [ngClass]="{'selected': selectedAssoIndex == indexAsso}" (click)="selectCard(indexAsso, $event)">
           <div class="row d-flex flex-row align-items-center">
             <i class="ai-briefcase col-1"></i>
@@ -36,7 +36,8 @@
   </section>
 
   <section>
-    <div class="pb-3 row align-items-center" *ngIf="selectedAssoIndex!=null && selectedServiceIndex!=null">
+    <div class="pb-3 row align-items-center"
+      *ngIf="selectedAssoIndex!=null && selectedServiceIndex!=null && quotation.assoAffaireOrders[selectedAssoIndex].affaire">
       <strong class="col-auto">
         <span>
           {{quotation.assoAffaireOrders[selectedAssoIndex].affaire.siret?(quotation.assoAffaireOrders[selectedAssoIndex].affaire.siret

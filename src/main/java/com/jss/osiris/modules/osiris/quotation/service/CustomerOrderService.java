@@ -180,4 +180,6 @@ public interface CustomerOrderService {
                         throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException,
                         OsirisException;
 
+        public void purgeCustomerOrders() throws OsirisException;
+
 }

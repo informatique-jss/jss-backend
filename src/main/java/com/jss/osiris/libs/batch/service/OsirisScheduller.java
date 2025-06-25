@@ -167,6 +167,14 @@ public class OsirisScheduller {
 			batchService.declareNewBatch(Batch.PURGE_NOTIFICATION, null);
 	}
 
+	@Scheduled(cron = "${schedulling.mail.purge.iquotation.draft}")
+	private void purgeIQuotation() throws OsirisException {
+		if (nodeService.shouldIBatch()) {
+			quotationService.purgeQuotations();
+			customerOrderService.purgeCustomerOrders();
+		}
+	}
+
 	@Scheduled(cron = "${schedulling.log.purge}")
 	private void purgeLogs() throws OsirisException {
 		if (nodeService.shouldIBatch())

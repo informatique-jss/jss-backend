@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.quotation.service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.charset.Charset;
@@ -12,8 +13,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpRequestExecution;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -159,7 +164,10 @@ public class CentralPayDelegateServiceImpl implements CentralPayDelegateService 
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
 
-        ResponseEntity<CentralPayPaymentRequest> res = new RestTemplate().postForEntity(
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.getInterceptors().add(new BufferingClientHttpRequestInterceptor());
+
+        ResponseEntity<CentralPayPaymentRequest> res = restTemplate.postForEntity(
                 centralPayEndpoint + paymentRequestUrl,
                 request,
                 CentralPayPaymentRequest.class);
@@ -168,5 +176,15 @@ public class CentralPayDelegateServiceImpl implements CentralPayDelegateService 
             return res.getBody();
         }
         return null;
+    }
+
+    private class BufferingClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
+        @Override
+        public ClientHttpResponse intercept(
+                HttpRequest request, byte[] body,
+                ClientHttpRequestExecution execution) throws IOException {
+
+            return execution.execute(request, body); // rien d’autre
+        }
     }
 }

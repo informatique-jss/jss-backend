@@ -123,18 +123,14 @@ public class MyJssQuotationDelegate {
     public IQuotation validateAndCreateQuotation(IQuotation quotation, Boolean isValidation) throws OsirisException {
 
         Responsable responsable = null;
+        Boolean hasToSendConfirmation = false;
         if (quotation.getResponsable() != null && quotation.getResponsable().getMail() != null) {
             responsable = responsableService.getResponsableByMail(quotation.getResponsable().getMail().getMail());
             if (responsable != null) {
                 quotation.setResponsable(responsable);
                 if (employeeService.getCurrentMyJssUser() == null) {
                     // User create IQuotation but not connected => send a mail
-                    if (quotation.getIsQuotation())
-                        mailHelper.sendConfirmationQuotationCreationMyJss(
-                                quotation.getResponsable().getMail().getMail(), (Quotation) quotation);
-                    else
-                        mailHelper.sendConfirmationOrderCreationMyJss(quotation.getResponsable().getMail().getMail(),
-                                (CustomerOrder) quotation);
+                    hasToSendConfirmation = true;
                 }
             }
 
@@ -193,6 +189,14 @@ public class MyJssQuotationDelegate {
                 quotation = quotationService.addOrUpdateQuotationStatus((Quotation) quotation,
                         QuotationStatus.TO_VERIFY);
         }
+
+        if (hasToSendConfirmation)
+            if (quotation.getIsQuotation())
+                mailHelper.sendConfirmationQuotationCreationMyJss(
+                        quotation.getResponsable().getMail().getMail(), (Quotation) quotation);
+            else
+                mailHelper.sendConfirmationOrderCreationMyJss(quotation.getResponsable().getMail().getMail(),
+                        (CustomerOrder) quotation);
 
         return quotation;
     }
