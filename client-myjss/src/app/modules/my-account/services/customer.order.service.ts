@@ -4,7 +4,6 @@ import { AppRestService } from '../../main/services/appRest.service';
 import { IQuotation } from '../../quotation/model/IQuotation';
 import { CustomerOrder } from '../model/CustomerOrder';
 import { Document } from '../model/Document';
-import { Voucher } from '../model/Voucher';
 
 @Injectable({
   providedIn: 'root'
@@ -50,11 +49,16 @@ export class CustomerOrderService extends AppRestService<CustomerOrder> {
     return this.postItem(new HttpParams().set("isEmergency", isEmergency), 'order/pricing', customerOrder);
   }
 
-  applyVoucherPricingOnOrder(customerOrder: CustomerOrder, voucher?: Voucher) {
-    let params = new HttpParams().set("customerOrderId", customerOrder.id);
-    if (voucher && voucher.id)
-      params = params.set("voucherId", voucher.id);
-    return this.get(params, 'voucher/order/pricing');
+  applyVoucherPricingOnOrder(customerOrder: CustomerOrder, voucherCode: string) {
+    return this.get(new HttpParams().set("customerOrderId", customerOrder.id).set("voucherCode", voucherCode), 'voucher/order/pricing');
+  }
+
+  completeVoucheredPricingOfOrder(customerOrder: CustomerOrder, voucherCode: string) {
+    return this.postItem(new HttpParams().set("voucherCode", voucherCode), 'voucher/order/pricing', customerOrder);
+  }
+
+  removeVoucher(customerOrder: CustomerOrder) {
+    return this.get(new HttpParams().set("customerOrderId", customerOrder.id), 'voucher/delete/order');
   }
 
   setEmergencyOnOrder(orderId: number, isEmergency: boolean) {

@@ -850,6 +850,15 @@ public class QuotationServiceImpl implements QuotationService {
     @Override
     public Quotation computeVoucheredPriceOnQuotation(Quotation quotation, Voucher voucher)
             throws OsirisClientMessageException, OsirisValidationException, OsirisException {
+        Responsable responsable = null;
+
+        responsable = employeeService.getCurrentMyJssUser();
+        if (responsable != null && voucher != null)
+
+            if (voucher.getStartDate() != null && voucher.getStartDate().isAfter(LocalDate.now())
+                    || (voucher.getEndDate() != null && voucher.getEndDate().isBefore(LocalDate.now())))
+                return quotation;
+
         quotation.setVoucher(voucher);
         pricingHelper.getAndSetInvoiceItemsForQuotation(quotation, true);
         quotation = addOrUpdateQuotation(quotation);
@@ -867,5 +876,16 @@ public class QuotationServiceImpl implements QuotationService {
         if (quotations != null)
             for (Quotation quotation : quotations)
                 batchService.declareNewBatch(Batch.PURGE_QUOTATION, quotation.getId());
+    }
+
+    @Override
+    public Quotation deleteVoucheredPriceOnQuotation(Quotation quotation)
+            throws OsirisClientMessageException, OsirisValidationException, OsirisException {
+        quotation.setVoucher(null);
+        pricingHelper.getAndSetInvoiceItemsForQuotation(quotation, true);
+        quotation = addOrUpdateQuotation(quotation);
+        for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders())
+            serviceService.populateTransientField(assoAffaireOrder.getServices());
+        return quotation;
     }
 }

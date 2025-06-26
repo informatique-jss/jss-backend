@@ -206,7 +206,9 @@ public interface CustomerOrderRepository
         List<CustomerOrder> findNewCustomerOrderToBilled(CustomerOrderStatus customerOrderStatusToBilled,
                         Pageable pageableRequest);
 
-        List<CustomerOrder> findByVoucherAndResponsable(Voucher voucher, Responsable responsable);
+        @Query("select c from CustomerOrder c where c.customerOrderStatus<>:statusAbandonned AND (:responsable IS NULL OR c.responsable = :responsable) and voucher=:voucher")
+        List<CustomerOrder> findByVoucherAndResponsable(Voucher voucher, Responsable responsable,
+                        CustomerOrderStatus statusAbandonned);
 
         List<CustomerOrder> findByVoucher(Voucher voucher);
 
@@ -214,4 +216,5 @@ public interface CustomerOrderRepository
         List<CustomerOrder> findCustomerOrderOlderThanDate(
                         @Param("customerOrderStatus") CustomerOrderStatus customerOrderStatus,
                         @Param("dateLimit") LocalDateTime dateLimit);
+
 }

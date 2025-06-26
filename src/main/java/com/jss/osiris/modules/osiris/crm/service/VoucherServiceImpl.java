@@ -8,10 +8,15 @@ import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
+import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.osiris.crm.model.Voucher;
 import com.jss.osiris.modules.osiris.crm.repository.VoucherRepository;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
@@ -28,13 +33,11 @@ public class VoucherServiceImpl implements VoucherService {
     EmployeeService employeeService;
 
     @Override
-    public List<Voucher> getVouchers() {
-        return IterableUtils.toList(voucherRepository.findAll());
-    }
-
-    @Override
-    public List<Voucher> getActiveVouchers() {
-        return IterableUtils.toList(voucherRepository.findActiveVouchers());
+    public List<Voucher> getVouchers(Boolean isDisplayOnlyActiveVouchers) {
+        if (isDisplayOnlyActiveVouchers)
+            return voucherRepository.findActiveVouchers();
+        else
+            return IterableUtils.toList(voucherRepository.findAll());
     }
 
     @Override
@@ -56,7 +59,14 @@ public class VoucherServiceImpl implements VoucherService {
     }
 
     @Override
-    public void deleteVoucher(Voucher voucher) {
+    public void deleteVoucher(Voucher voucher)
+            throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException, OsirisException {
+        if (!voucher.getCustomerOrders().isEmpty()) {
+            for (CustomerOrder order : voucher.getCustomerOrders()) {
+                order.setVoucher(null);
+                customerOrderService.addOrUpdateCustomerOrder(order, false, false);
+            }
+        }
         voucherRepository.delete(voucher);
     }
 
@@ -66,55 +76,31 @@ public class VoucherServiceImpl implements VoucherService {
     }
 
     @Override
-    public Voucher checkVoucherMyJssValidity(String voucherCode) {
-        Voucher voucher = null;
+    public Voucher checkVoucherValidity(IQuotation quotation) {
         Integer voucherUsesPerResponsable = null;
         Integer voucherUsesTotal = null;
         Responsable responsable = null;
-
-        if (voucherCode != null) {
-            voucher = getVoucherByCode(voucherCode);
-            responsable = employeeService.getCurrentMyJssUser();
-            if (responsable != null && voucher != null) {
-                voucherUsesPerResponsable = customerOrderService.getCustomerOrdersByVoucherAndResponsable(voucher,
-                        responsable).size();
-                voucherUsesTotal = customerOrderService.getCustomerOrdersByVoucher(voucher).size();
-
-                if (voucher.getStartDate() != null && voucher.getStartDate().isAfter(LocalDate.now())
-                        || (voucher.getEndDate() != null && voucher.getEndDate().isBefore(LocalDate.now()))
-                        || (voucher.getPerUserLimit() != null && voucherUsesPerResponsable >= voucher.getPerUserLimit())
-                        || (voucher.getTotalLimit() != null && voucherUsesTotal >= voucher.getTotalLimit()))
-                    return null;
-                return voucher;
+        Voucher voucher = getVoucherByCode(quotation.getVoucher().getCode());
+        if (quotation.getResponsable() != null)
+            responsable = quotation.getResponsable();
+        if (responsable != null) {
+            if (!quotation.getIsQuotation()) {
+                voucherUsesPerResponsable = customerOrderService
+                        .getCustomerOrdersByVoucherAndResponsable(voucher, quotation.getResponsable()).size();
+                voucherUsesTotal = customerOrderService.getCustomerOrdersByVoucherAndResponsable(voucher, null).size();
             }
-        }
-        return null;
-    }
-
-    @Override
-    public Voucher checkVoucherValidity(CustomerOrder customerOrder, Voucher voucher) {
-        Integer voucherUsesPerResponsable = null;
-        Integer voucherUsesTotal = null;
-        if (customerOrder.getResponsable() != null) {
-            voucherUsesPerResponsable = customerOrderService
-                    .getCustomerOrdersByVoucherAndResponsable(voucher, customerOrder.getResponsable()).size();
-            voucherUsesTotal = customerOrderService.getCustomerOrdersByVoucher(voucher).size();
-
             if (voucher.getStartDate() != null && voucher.getStartDate().isAfter(LocalDate.now())
                     || (voucher.getEndDate() != null && voucher.getEndDate().isBefore(LocalDate.now()))
                     || (voucher.getPerUserLimit() != null && voucherUsesPerResponsable >= voucher.getPerUserLimit())
                     || (voucher.getTotalLimit() != null && voucherUsesTotal >= voucher.getTotalLimit()))
                 return null;
+
+            if (voucher.getResponsables() != null)
+                voucher.getResponsables().add(responsable);
+            else
+                voucher.setResponsables(List.of(responsable));
             return voucher;
         }
         return null;
     }
-
-    // TODO après validation myjss order en cours, lié responsable au voucher
-    private void applyVoucher(CustomerOrder order) {
-        if (order.getVoucher() != null) {
-
-        }
-    }
-
 }

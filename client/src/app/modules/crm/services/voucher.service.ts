@@ -1,7 +1,6 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { AppRestService } from "src/app/services/appRest.service";
-import { CustomerOrder } from '../../quotation/model/CustomerOrder';
 import { Voucher } from "../model/Voucher";
 
 @Injectable({
@@ -21,12 +20,8 @@ export class VoucherService extends AppRestService<Voucher> {
     return this.get(new HttpParams().set("idVoucher", id), "voucher")
   }
 
-  getAllVouchers() {
-    return this.getList(new HttpParams(), "vouchers");
-  }
-
-  getActiveVouchers() {
-    return this.getList(new HttpParams(), "vouchers/active");
+  getAllVouchers(isDisplayOnlyActiveVouchers: boolean) {
+    return this.getList(new HttpParams().set("isDisplayOnlyActiveVouchers", isDisplayOnlyActiveVouchers), "vouchers");
   }
 
   deleteVoucher(voucher: Voucher) {
@@ -35,9 +30,5 @@ export class VoucherService extends AppRestService<Voucher> {
 
   getVouchersBySearchCode(code: string) {
     return this.getList(new HttpParams().set("code", code), "vouchers/search");
-  }
-
-  applyVoucher(customerOrder: CustomerOrder, voucher: Voucher) {
-    return this.get(new HttpParams().set("customerOrderId", customerOrder.id).set("voucherCode", voucher.code), "voucher/apply");
   }
 }

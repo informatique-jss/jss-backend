@@ -6,7 +6,6 @@ import { Voucher } from '../../crm/model/Voucher';
 import { InvoicingBlockage } from '../../invoicing/model/InvoicingBlockage';
 import { CompetentAuthority } from '../../miscellaneous/model/CompetentAuthority';
 import { Employee } from '../../profile/model/Employee';
-import { Responsable } from '../../tiers/model/Responsable';
 import { Announcement } from '../model/Announcement';
 import { CustomerOrder } from '../model/CustomerOrder';
 import { IQuotation } from '../model/IQuotation';
@@ -100,7 +99,7 @@ export class CustomerOrderService extends AppRestService<IQuotation> {
     return this.get(new HttpParams(), "customer-order/assign/invoicing/auto");
   }
 
-  getCustomerOrdersByVoucherAndResponsable(voucher: Voucher, responsable: Responsable) {
-    return this.getList(new HttpParams().set("idVoucher", voucher.id).set("idResponsable", responsable.id), 'customer-orders/voucher') as Observable<CustomerOrder[]>;
+  getCustomerOrdersByVoucher(voucher: Voucher) {
+    return this.getList(new HttpParams().set("idVoucher", voucher.id), 'customer-orders/voucher') as Observable<CustomerOrder[]>;
   }
 }

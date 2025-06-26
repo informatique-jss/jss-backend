@@ -30,6 +30,8 @@ import com.jss.osiris.modules.osiris.quotation.model.OrderingSearchTagged;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 public interface CustomerOrderService {
         public CustomerOrder getCustomerOrder(Integer id);
 
@@ -183,11 +185,15 @@ public interface CustomerOrderService {
 
         public List<CustomerOrder> getCustomerOrdersByVoucherAndResponsable(Voucher voucher, Responsable responsable);
 
-        public List<CustomerOrder> getCustomerOrdersByVoucher(Voucher voucher);
-
         public CustomerOrder computeVoucheredPriceOnOrder(CustomerOrder customerOrder, Voucher voucher)
                         throws OsirisClientMessageException, OsirisValidationException, OsirisException;
 
         public void purgeCustomerOrders() throws OsirisException;
 
+        public CustomerOrder deleteVoucheredPriceOnOrder(CustomerOrder customerOrder)
+                        throws OsirisClientMessageException, OsirisValidationException, OsirisException;
+
+        public CustomerOrder saveCustomerOrderFromMyJss(CustomerOrder order, Boolean isValidation,
+                        HttpServletRequest request)
+                        throws OsirisClientMessageException, OsirisValidationException, OsirisException;
 }

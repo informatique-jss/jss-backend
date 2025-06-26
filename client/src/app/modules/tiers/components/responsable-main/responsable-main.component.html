@@ -247,12 +247,7 @@
             <accounting-record [responsableToDisplay]="selectedResponsable"></accounting-record>
           </ng-template>
         </mat-tab>
-        <mat-tab label="Coupons" *ngIf="selectedResponsable">
-          <ng-template matTabContent>
-            <vouchers-list [responsableToDisplay]="selectedResponsable"></vouchers-list>
-          </ng-template>
-        </mat-tab>
-        <mat-tab label="RFF" *ngIf="rffSearch && rffSearch.responsable  ">
+        <mat-tab label="RFF" *ngIf="rffSearch && rffSearch.responsable">
           <ng-template matTabContent>
             <div class="mat-elevation-z2 form-div">
               <rff-list [rffSearch]="rffSearch" [isForTiersIntegration]="true"></rff-list>

@@ -101,4 +101,7 @@ public interface QuotationService {
                         throws OsirisClientMessageException, OsirisValidationException, OsirisException;
 
         public void purgeQuotations() throws OsirisException;
+
+        public Quotation deleteVoucheredPriceOnQuotation(Quotation quotation)
+                        throws OsirisClientMessageException, OsirisValidationException, OsirisException;
 }

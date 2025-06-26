@@ -285,9 +285,10 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	private LocalDateTime productionEffectiveDateTime;
 
 	@ManyToOne
-	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class,
+	@JsonView({ JacksonViews.OsirisDetailedView.class,
 			JacksonViews.MyJssDetailedView.class })
 	@JoinColumn(name = "id_voucher")
+	@JsonIgnoreProperties(value = { "customeOrders" }, allowSetters = true)
 	private Voucher voucher;
 
 	public Integer getId() {

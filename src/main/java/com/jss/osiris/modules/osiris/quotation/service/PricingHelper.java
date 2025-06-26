@@ -15,6 +15,8 @@ import com.jss.osiris.libs.audit.service.AuditService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.modules.osiris.crm.model.Voucher;
+import com.jss.osiris.modules.osiris.crm.service.VoucherService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceItemService;
@@ -88,6 +90,9 @@ public class PricingHelper {
 
     @Autowired
     AssoAffaireOrderService assoAffaireOrderService;
+
+    @Autowired
+    VoucherService voucherService;
 
     @Transactional
     public IQuotation getAndSetInvoiceItemsForQuotationForFront(IQuotation quotation, boolean persistInvoiceItem)
@@ -823,10 +828,16 @@ public class PricingHelper {
                     && assoSpecialOfferBillingType.getDiscountRate().compareTo(zeroValue) > 0)
                 invoiceItem.setDiscountAmount(
                         invoiceItem.getPreTaxPrice().multiply(assoSpecialOfferBillingType.getDiscountRate())
-                                .divide(oneHundredValue).multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN)
+                                .divide(oneHundredValue).multiply(oneHundredValue)
+                                .setScale(0, RoundingMode.HALF_EVEN)
                                 .divide(oneHundredValue));
         }
-        if (quotation.getVoucher() != null) {
+        if (quotation.getVoucher() != null && invoiceItem.getBillingItem() != null
+                && invoiceItem.getBillingItem().getBillingType() != null &&
+                invoiceItem.getBillingItem().getBillingType().getIsVacation() != null
+                && invoiceItem.getBillingItem().getBillingType().getIsVacation()
+                && invoiceItem.getBillingItem().getBillingType().getIsTraitement() != null
+                && invoiceItem.getBillingItem().getBillingType().getIsTraitement()) {
             // TODO créer un invoice item pour les coupons avec discount amount
             if (quotation.getVoucher().getDiscountAmount() != null
                     && quotation.getVoucher().getDiscountAmount().compareTo(zeroValue) > 0) {
@@ -868,6 +879,15 @@ public class PricingHelper {
         quotation = getAndSetInvoiceItemsForQuotation(quotation, false);
 
         quotation.setResponsable(null);
+        return quotation;
+    }
+
+    public IQuotation completeVoucheredPricingOfIQuotation(IQuotation quotation, Voucher voucher)
+            throws OsirisClientMessageException, OsirisValidationException, OsirisException {
+        quotation.setVoucher(voucher);
+        voucher = voucherService.checkVoucherValidity(quotation);
+        if (voucher != null)
+            quotation = getAndSetInvoiceItemsForQuotation(quotation, false);
         return quotation;
     }
 }

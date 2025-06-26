@@ -69,6 +69,7 @@ export class OrderingListComponent implements OnInit {
       this.availableColumns.push({ id: "tiersLabel", fieldName: "tiersLabel", label: "Tiers" } as SortTableColumn<OrderingSearchResult>);
       this.availableColumns.push({ id: "customerOrderLabel", fieldName: "customerOrderLabel", label: "Donneur d'ordre" } as SortTableColumn<OrderingSearchResult>);
       this.availableColumns.push({ id: "totalPrice", fieldName: "totalPrice", label: "Prix TTC", valueFonction: formatEurosForSortTable } as SortTableColumn<OrderingSearchResult>);
+      this.availableColumns.push({ id: "voucher", fieldName: "voucher.code", label: "Coupon appliqué" } as SortTableColumn<OrderingSearchResult>);
       this.availableColumns.push({ id: "depositTotalAmount", fieldName: "depositTotalAmount", label: "Acompte versé", valueFonction: formatEurosForSortTable } as SortTableColumn<OrderingSearchResult>);
       this.availableColumns.push({ id: "salesEmployee", fieldName: "salesEmployeeId", label: "Commercial", displayAsEmployee: true } as SortTableColumn<OrderingSearchResult>);
       this.availableColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Création", valueFonction: formatDateForSortTable } as SortTableColumn<OrderingSearchResult>);

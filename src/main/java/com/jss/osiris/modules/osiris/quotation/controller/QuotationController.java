@@ -178,7 +178,6 @@ import com.jss.osiris.modules.osiris.quotation.service.TransfertFundsTypeService
 import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.FormaliteGuichetUniqueService;
 import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.GuichetUniqueDelegateService;
 import com.jss.osiris.modules.osiris.quotation.service.infoGreffe.FormaliteInfogreffeService;
-import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
 import com.jss.osiris.modules.osiris.tiers.service.TiersService;
 
@@ -2873,20 +2872,16 @@ public class QuotationController {
   }
 
   @GetMapping(inputEntryPoint + "/customer-orders/voucher")
-  public ResponseEntity<List<CustomerOrder>> getCustomerOrdersByVoucherAndResponsable(@RequestParam Integer idVoucher,
-      @RequestParam Integer idResponsable) throws OsirisValidationException {
+  @JsonView(JacksonViews.OsirisListView.class)
+  public ResponseEntity<List<CustomerOrder>> getCustomerOrdersByVoucher(@RequestParam Integer idVoucher)
+      throws OsirisValidationException {
 
     Voucher voucher = voucherService.getVoucher(idVoucher);
 
     if (voucher == null)
       throw new OsirisValidationException("voucher");
 
-    Responsable responsable = responsableService.getResponsable(idResponsable);
-
-    if (responsable == null)
-      throw new OsirisValidationException("responsable");
-
     return new ResponseEntity<List<CustomerOrder>>(
-        customerOrderService.getCustomerOrdersByVoucherAndResponsable(voucher, responsable), HttpStatus.OK);
+        customerOrderService.getCustomerOrdersByVoucherAndResponsable(voucher, null), HttpStatus.OK);
   }
 }

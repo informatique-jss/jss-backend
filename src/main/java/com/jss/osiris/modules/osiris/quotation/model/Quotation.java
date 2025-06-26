@@ -178,7 +178,8 @@ public class Quotation implements IQuotation {
 	private LocalDate princingEffectiveDate;
 
 	@ManyToOne
-	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	@JoinColumn(name = "id_voucher")
 	private Voucher voucher;
 

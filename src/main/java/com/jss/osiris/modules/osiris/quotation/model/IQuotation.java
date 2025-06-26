@@ -67,4 +67,6 @@ public interface IQuotation extends IId, IAttachment, IDocument {
 	public Boolean getIsHasNotifications();
 
 	public Voucher getVoucher();
+
+	public void setVoucher(Voucher voucher);
 }

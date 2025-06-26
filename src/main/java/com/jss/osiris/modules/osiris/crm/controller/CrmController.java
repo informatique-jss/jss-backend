@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.jackson.JacksonViews;
@@ -37,7 +38,6 @@ import com.jss.osiris.modules.osiris.crm.service.CommunicationPreferenceService;
 import com.jss.osiris.modules.osiris.crm.service.VoucherService;
 import com.jss.osiris.modules.osiris.crm.service.WebinarService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
-import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 
 @RestController
@@ -336,14 +336,9 @@ public class CrmController {
 
         @GetMapping(inputEntryPoint + "/vouchers")
         @JsonView(JacksonViews.OsirisListView.class)
-        public ResponseEntity<List<Voucher>> getVouchers() {
-                return new ResponseEntity<List<Voucher>>(voucherService.getVouchers(), HttpStatus.OK);
-        }
-
-        @GetMapping(inputEntryPoint + "/vouchers/active")
-        @JsonView(JacksonViews.OsirisListView.class)
-        public ResponseEntity<List<Voucher>> getActiveVouchers() {
-                return new ResponseEntity<List<Voucher>>(voucherService.getActiveVouchers(), HttpStatus.OK);
+        public ResponseEntity<List<Voucher>> getVouchers(@RequestParam Boolean isDisplayOnlyActiveVouchers) {
+                return new ResponseEntity<List<Voucher>>(voucherService.getVouchers(isDisplayOnlyActiveVouchers),
+                                HttpStatus.OK);
         }
 
         @PostMapping(inputEntryPoint + "/voucher")
@@ -361,9 +356,8 @@ public class CrmController {
         }
 
         @GetMapping(inputEntryPoint + "/voucher/delete")
-        @JsonView(JacksonViews.OsirisListView.class)
         public ResponseEntity<Boolean> deleteVoucher(@RequestParam Integer idVoucher)
-                        throws OsirisValidationException {
+                        throws OsirisClientMessageException, OsirisDuplicateException, OsirisException {
                 Voucher voucher = voucherService.getVoucher(idVoucher);
 
                 if (voucher == null)
@@ -373,34 +367,13 @@ public class CrmController {
         }
 
         @GetMapping(inputEntryPoint + "/vouchers/search")
+        @JsonView(JacksonViews.OsirisListView.class)
         public ResponseEntity<List<Voucher>> getVouchersFromCode(@RequestParam String code)
                         throws OsirisClientMessageException, OsirisValidationException, OsirisException {
                 if (code == null)
                         throw new OsirisValidationException("codeVoucher");
                 return new ResponseEntity<List<Voucher>>(
                                 voucherService.getVouchersFromCode(code.trim().replaceAll(" ", "")),
-                                HttpStatus.OK);
-        }
-
-        @GetMapping(inputEntryPoint + "/voucher/apply")
-        @JsonView(JacksonViews.MyJssDetailedView.class)
-        public ResponseEntity<Voucher> checkVoucherValidity(@RequestParam Integer customerOrderId,
-                        @RequestParam String voucherCode)
-                        throws OsirisValidationException {
-                Voucher voucher = null;
-                CustomerOrder customerOrder = null;
-                if (voucherCode != null)
-                        voucher = voucherService.getVoucherByCode(voucherCode);
-                if (voucher == null)
-                        throw new OsirisValidationException("voucher");
-
-                if (customerOrderId != null)
-                        customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
-
-                if (customerOrder == null)
-                        throw new OsirisValidationException("customerOrder");
-
-                return new ResponseEntity<Voucher>(voucherService.checkVoucherValidity(customerOrder, voucher),
                                 HttpStatus.OK);
         }
 }

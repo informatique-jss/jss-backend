@@ -35,30 +35,28 @@ public class Voucher implements Serializable, IId {
     @JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class })
     private String code;
 
-    @JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class })
+    @JsonView({ JacksonViews.OsirisListView.class })
     private LocalDate startDate;
-    @JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class })
+    @JsonView({ JacksonViews.OsirisListView.class })
     private LocalDate endDate;
-    @JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class })
+    @JsonView({ JacksonViews.OsirisListView.class })
     private BigDecimal discountRate;
-    @JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class })
+    @JsonView({ JacksonViews.OsirisListView.class })
     private Integer totalLimit;
-    @JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class })
+    @JsonView({ JacksonViews.OsirisListView.class })
     private Integer perUserLimit;
 
     @Column(columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 2)
-    @JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class })
+    @JsonView({ JacksonViews.OsirisListView.class })
     private BigDecimal discountAmount;
 
     @ManyToMany
     @JoinTable(name = "asso_voucher_responsable", joinColumns = @JoinColumn(name = "id_voucher"), inverseJoinColumns = @JoinColumn(name = "id_responseble"))
     @JsonIgnoreProperties(value = { "vouchers" }, allowSetters = true)
-    @JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class })
     private List<Responsable> responsables;
 
     @OneToMany(mappedBy = "voucher")
     @JsonIgnoreProperties(value = { "voucher" }, allowSetters = true)
-    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private List<CustomerOrder> customerOrders;
 
     public Integer getId() {

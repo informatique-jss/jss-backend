@@ -10,10 +10,10 @@
     propertyName="startDate" [isMandatory]="false" [isDisabled]="false"></generic-datepicker>
   <generic-datepicker [(model)]="voucher.endDate" label="Fin de validité" [form]="voucherForm" propertyName="endDate"
     [isMandatory]="false" [isDisabled]="false"></generic-datepicker>
-  <generic-input [(model)]="voucher.perUserLimit" label="Nombre d'utilisation par personne" [form]="voucherForm"
-    propertyName="perUserLimit" [isMandatory]="true" [isDisabled]="false" type="number"></generic-input>
+  <generic-input [(model)]="voucher.perUserLimit" label="Nombre d'utilisation par responsable" [form]="voucherForm"
+    propertyName="perUserLimit" [isMandatory]="false" [isDisabled]="false" type="number"></generic-input>
   <generic-input [(model)]="voucher.totalLimit" label="Nombre d'utilisation totale" [form]="voucherForm"
-    propertyName="totalLimit" [isMandatory]="true" [isDisabled]="false" type="number"></generic-input>
+    propertyName="totalLimit" [isMandatory]="false" [isDisabled]="false" type="number"></generic-input>
 </div>
 <div mat-dialog-actions align="end">
   <button mat-raised-button color="accent" (click)="onClose()">Annuler</button>

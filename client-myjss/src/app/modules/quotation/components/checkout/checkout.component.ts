@@ -28,7 +28,6 @@ import { CustomerOrderService } from '../../../my-account/services/customer.orde
 import { DocumentService } from '../../../my-account/services/document.service';
 import { QuotationService } from '../../../my-account/services/quotation.service';
 import { ServiceService } from '../../../my-account/services/service.service';
-import { VoucherService } from '../../../my-account/services/voucher.service';
 import { Phone } from '../../../profile/model/Phone';
 import { Responsable } from '../../../profile/model/Responsable';
 import { Tiers } from '../../../profile/model/Tiers';
@@ -104,8 +103,7 @@ export class CheckoutComponent implements OnInit {
   subscriptionType: string | undefined;
   isPriceReductionForSubscription: boolean = false;
   idArticle: number | undefined;
-  voucher: Voucher | undefined;
-
+  voucherCode: string | undefined;
 
   capitalizeName = capitalizeName;
 
@@ -125,8 +123,7 @@ export class CheckoutComponent implements OnInit {
     private serviceService: ServiceService,
     private userScopeService: UserScopeService,
     private documentService: DocumentService,
-    private cityService: CityService,
-    private voucherService: VoucherService,
+    private cityService: CityService
 
   ) { }
 
@@ -184,15 +181,11 @@ export class CheckoutComponent implements OnInit {
       if (this.quotationService.getCurrentDraftQuotationId()) {
         this.quotationService.getQuotation(parseInt(this.quotationService.getCurrentDraftQuotationId()!)).subscribe(response => {
           this.quotation = response;
-          if (!this.quotation.voucher)
-            this.quotation.voucher = {} as Voucher;
           this.prepareForPricingAndCompute(true);
         });
       } else if (this.orderService.getCurrentDraftOrderId()) {
         this.orderService.getCustomerOrder(parseInt(this.orderService.getCurrentDraftOrderId()!)).subscribe(response => {
           this.quotation = response;
-          if (!this.quotation.voucher)
-            this.quotation.voucher = {} as Voucher;
           this.prepareForPricingAndCompute(true);
         });
       }
@@ -213,6 +206,7 @@ export class CheckoutComponent implements OnInit {
   }
 
   saveOrder(isDraft: boolean) {
+    console.log(this.documentForm);
     if (!this.quotation)
       return;
 
@@ -268,7 +262,7 @@ export class CheckoutComponent implements OnInit {
 
   isOrderPossible() {
     if (this.documentForm.invalid) {
-      this.appService.displayToast("Il manque des informations obligatoires pour pouvoir valider " + (this.quotation!.isQuotation ? "le devis" : "la commande"), true, "Validation de " + (this.quotation!.isQuotation ? "devis" : "commande") + " impossible", 5000);
+      this.appService.displayToast("Il manque des informations obligatoires pour pouvoir valider " + (this.quotation!.isQuotation ? "le devis" : "la commande"), true, "Validation de commande impossible", 5000);
       return false;
     }
     if (!this.currentUser && this.quotation!.responsable!.mail.mail != this.mailToConfirm) {
@@ -498,50 +492,64 @@ export class CheckoutComponent implements OnInit {
   }
 
   applyVoucher() {
-    if (!this.currentUser)
-      this.appService.displayToast("Veuillez vous connecter pour utiliser un coupon de réduction", true, "Connexion", 5000);
-
-    if (this.quotation && this.currentUser && this.quotation.voucher) {
-      this.voucherService.checkValidityVoucher(this.quotation.voucher).subscribe(response => {
-        if (response && this.quotation) {
-          this.voucher = response;
-          if (this.quotation.isQuotation) {
-            this.quotationService.applyVoucherPricingOnQuotation(this.quotation as Quotation, this.voucher).subscribe(response => {
-              if (response) {
-                this.quotation = response;
-                this.finalizePricingAnswer();
+    if (this.quotation && this.voucherCode && this.voucherCode.trim().length > 0) {
+      if (this.currentUser)
+        if (this.quotation.isQuotation) {
+          this.quotationService.applyVoucherPricingOnQuotation(this.quotation as Quotation, this.voucherCode.toUpperCase()).subscribe(response => {
+            if (response) {
+              this.quotation = response;
+              this.finalizePricingAnswer();
+              if (this.discountAmountTotal && this.discountAmountTotal > 0)
                 this.appService.displayToast("Le code de réduction a été appliqué", false, "", 5000);
-              }
-            });
-          } else {
-            this.orderService.applyVoucherPricingOnOrder(this.quotation as CustomerOrder, this.voucher).subscribe(response => {
-              if (response) {
-                this.quotation = response;
-                this.finalizePricingAnswer();
+            }
+            else this.appService.displayToast("Le code de réduction utilisé n'existe pas ou a déjà été utilisé", true, "Code de réduction invalide", 5000);
+          });
+        } else {
+          this.orderService.applyVoucherPricingOnOrder(this.quotation as CustomerOrder, this.voucherCode.toUpperCase()).subscribe(response => {
+            if (response) {
+              this.quotation = response;
+              this.prepareForPricingAndCompute();
+              if (this.discountAmountTotal && this.discountAmountTotal > 0)
                 this.appService.displayToast("Le code de réduction a été appliqué", false, "", 5000);
-              }
-            });
-          }
+            }
+            else this.appService.displayToast("Le code de réduction utilisé n'existe pas ou a déjà été utilisé", true, "Code de réduction invalide", 5000);
+          });
         }
-        else this.appService.displayToast("Le code de réduction utilisé n'existe pas ou a déjà été utilisé", true, "Code de réduction invalide", 5000);
-      });
+      else {
+        if (this.quotation.isQuotation) {
+          this.quotationPriceObservableRef = this.quotationService.completeVoucheredPricingOfQuotation(this.quotation as Quotation, this.voucherCode.toUpperCase()).subscribe(response => {
+            if (response) {
+              this.quotation = response;
+              this.finalizePricingAnswer();
+            }
+          });
+        } else {
+          this.quotationPriceObservableRef = this.orderService.completeVoucheredPricingOfOrder(this.quotation as CustomerOrder, this.voucherCode.toUpperCase()).subscribe(response => {
+            if (response) {
+              this.quotation = response;
+              this.finalizePricingAnswer();
+            }
+          });
+        }
+      }
     }
   }
 
   deleteVoucherPricing() {
-    if (this.quotation) {
+    if (this.quotation && this.quotation.voucher) {
       this.quotation.voucher = {} as Voucher;
+      this.voucherCode = "";
       if (this.quotation.isQuotation)
-        this.quotationService.applyVoucherPricingOnQuotation(this.quotation as Quotation, undefined).subscribe(response => {
+        this.quotationService.removeVoucher(this.quotation as Quotation).subscribe(response => {
           if (response) {
             this.quotation = response;
             this.finalizePricingAnswer();
           }
         });
-      else this.orderService.applyVoucherPricingOnOrder(this.quotation as CustomerOrder, undefined).subscribe(response => {
+      else this.orderService.removeVoucher(this.quotation as CustomerOrder).subscribe(response => {
         if (response) {
           this.quotation = response;
-          this.finalizePricingAnswer();
+          this.prepareForPricingAndCompute();
         }
       });
     }
