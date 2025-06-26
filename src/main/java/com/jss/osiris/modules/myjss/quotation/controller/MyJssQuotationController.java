@@ -1684,6 +1684,7 @@ public class MyJssQuotationController {
 		return new ResponseEntity<Quotation>(
 				quotationService.computeVoucheredPriceOnQuotation(quotation, voucher),
 				HttpStatus.OK);
+	}
 
 	@GetMapping(inputEntryPoint + "/quotation/cancel")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
@@ -1851,8 +1852,7 @@ public class MyJssQuotationController {
 
 	@GetMapping(inputEntryPoint + "/reading-folder/delete")
 	public ResponseEntity<Boolean> deleteReadingFolder(@RequestParam Integer idReadingFolder,
-			HttpServletRequest request)
-			throws OsirisValidationException {
+			HttpServletRequest request) throws OsirisValidationException {
 		detectFlood(request);
 		ReadingFolder readingFolder = readingFolderService.getReadingFolder(idReadingFolder);
 		if (readingFolder == null)
