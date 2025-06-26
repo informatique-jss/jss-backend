@@ -25,16 +25,25 @@ export class LoginService extends AppRestService<Responsable> {
   logUser(userId: number, aToken: string) {
     return new Observable<Boolean>(observer => {
       this.get(new HttpParams().set("userId", userId).set("aToken", aToken), "login").subscribe(response => {
-        this.getUserRoles().subscribe(response => {
-          let roles = [];
-          for (let role of response as any) {
-            roles.push(role["authority"]);
-          }
-          localStorage.setItem('roles', JSON.stringify(roles));
-          this.currentUserChange.next(true);
+        this.refreshUserRoles().subscribe(response => {
           observer.next(true);
           observer.complete();
         })
+      })
+    })
+  }
+
+  refreshUserRoles() {
+    return new Observable<Boolean>(observer => {
+      this.getUserRoles().subscribe(response => {
+        let roles = [];
+        for (let role of response as any) {
+          roles.push(role["authority"]);
+        }
+        localStorage.setItem('roles', JSON.stringify(roles));
+        this.currentUserChange.next(true);
+        observer.next(true);
+        observer.complete();
       })
     })
   }

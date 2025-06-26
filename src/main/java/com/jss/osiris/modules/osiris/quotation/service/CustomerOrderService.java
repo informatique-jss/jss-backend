@@ -187,4 +187,7 @@ public interface CustomerOrderService {
 
         public CustomerOrder computeVoucheredPriceOnOrder(CustomerOrder customerOrder, Voucher voucher)
                         throws OsirisClientMessageException, OsirisValidationException, OsirisException;
+
+        public void purgeCustomerOrders() throws OsirisException;
+
 }

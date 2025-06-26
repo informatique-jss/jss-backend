@@ -1,0 +1,68 @@
+<section class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4 my-4">
+  <div class="card-body">
+    <div class="d-flex justify-content-between flex-wrap gap-2 mt-sm-n1 pb-4 mb-0 mb-lg-1 mb-xl-3">
+      <div class="d-flex align-items-center">
+        <i class="bi-bookmark-fill text-dark rounded-circle lead pe-1 me-2"></i>
+        <h2 class="h4 mb-0">Liste de lecture</h2>
+      </div>
+
+      <button type="button" class="btn btn-outline-dark" (click)="openCreationModal(creationModal)"> <i
+          class="bi bi-plus-lg"></i>
+        Ajouter un dossier de lecture </button>
+    </div>
+    <div class="row g-3">
+      <div class="col-12 col-md-6 col-lg-4 col-xl-3" *ngFor="let folder of readingFolders; let i = index">
+        <div class="reading-folder-card position-relative text-white rounded overflow-hidden p-3" [ngStyle]="{'background-image': 'url(' +
+        (folder.posts && folder.posts.length>0 && folder.posts[0].media && folder.posts[0].media.urlFull ?
+          folder.posts[0].media.urlFull : folder.posts && folder.posts.length>0 && folder.posts[0].media && folder.posts[0].media.urlThumbnail ?
+           folder.posts[0].media.urlThumbnail : '/assets/images/image-story-1898.png') + ')'}"
+          (click)="openReadingFolder($event, folder)">
+          <h5 class="folder-title m-0">{{ folder.label }}</h5>
+          <button *ngIf="folder.id !== -1" class="btn btn-sm position-absolute top-0 end-0 m-2"
+            (click)=" openDeletionModal(deletionModal,folder); $event.stopPropagation();">
+            <i class="ai-cross"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- Modal de suppression -->
+<ng-template #deletionModal let-modal>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="confirmBackModalLabel">Confirmation de suppression </h5>
+      <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Fermer"></button>
+    </div>
+    <div class="modal-body">
+      Êtes-vous sûr de vouloir supprimer ce dossier de lecture ?
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Annuler</button>
+      <button type="button" class="btn btn-danger ms-2"
+        (click)="deleteReadingFolder(folderToDelete!); modal.dismiss()">Confirmer</button>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Modal de création -->
+<ng-template #creationModal let-modal>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="creationModalLabel">Création d'un nouveau dossier de lecture </h5>
+      <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Fermer"></button>
+    </div>
+    <div class="modal-body">
+      <generic-input class="mt-4" [(model)]="newReadingFolder.label" label="" [form]="readingFolderForm"
+        propertyName="newReadingFolder" [isMandatory]="true" [isDisabled]="false" [isDisplayLabel]="true"
+        [isDisplayLabel]="false"></generic-input>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Annuler</button>
+      <button type="button" class="btn btn-danger ms-2"
+        (click)="createReadingFolder();modal.dismiss()">Confirmer</button>
+    </div>
+  </div>
+</ng-template>

@@ -6,6 +6,7 @@ import { Toast } from '../../../libs/toast/Toast';
 import { MenuItem } from '../../general/model/MenuItem';
 import { AccountMenuItem, MAIN_ITEM_ACCOUNT, MAIN_ITEM_DASHBOARD } from '../../my-account/model/AccountMenuItem';
 import { ResponsableService } from '../../profile/services/responsable.service';
+import { UserScopeService } from '../../profile/services/user.scope.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +21,7 @@ export class AppService {
   constructor(
     private router: Router,
     private responsableService: ResponsableService,
+    private userScopeService: UserScopeService
   ) { }
 
   showLoadingSpinner(): void {
@@ -81,7 +83,7 @@ export class AppService {
   getAllAccountMenuItems(): AccountMenuItem[] {
     let menuItem = [] as AccountMenuItem[];
     menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Mon compte", iconClass: "ai-user-check", route: "/account/settings" } as AccountMenuItem);
-    menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Suivis", iconClass: "ai-bookmark", route: "/account/bookmarks" } as AccountMenuItem);
+    menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Suivis", iconClass: "ai-bookmark", route: "/account/reading-folders" } as AccountMenuItem);
     menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Relevé de compte", iconClass: "ai-wallet", route: "/account/closure" } as AccountMenuItem);
     menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Newsletter et alertes", iconClass: "ai-messages", route: "/account/communication-preference" } as AccountMenuItem);
     menuItem.push({ mainItem: MAIN_ITEM_DASHBOARD, label: "Tableau de bord", iconClass: "ai-chart", route: "/account/overview" } as AccountMenuItem);
@@ -93,6 +95,11 @@ export class AppService {
     this.responsableService.getPotentialUserScope().subscribe(response => {
       if (response.length > 1)
         menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Vue d'ensemble", iconClass: "ai-grid", route: "/account/scope" } as AccountMenuItem);
+    })
+
+    this.userScopeService.getUserScope().subscribe(response => {
+      if (response.length > 1)
+        menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Mes comptes associés", iconClass: "ai-link", route: "/account/associated-settings" } as AccountMenuItem);
     })
     return menuItem;
   }

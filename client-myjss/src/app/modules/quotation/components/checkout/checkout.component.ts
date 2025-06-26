@@ -127,6 +127,7 @@ export class CheckoutComponent implements OnInit {
     private documentService: DocumentService,
     private cityService: CityService,
     private voucherService: VoucherService,
+
   ) { }
 
   async ngOnInit() {
@@ -223,17 +224,22 @@ export class CheckoutComponent implements OnInit {
           this.quotationService.saveFinalQuotation(this.quotation as Quotation, !isDraft).subscribe(response => {
             if (response && response.id) {
               this.cleanStorageData();
-              this.appService.openRoute(undefined, "account/quotations/details/" + response.id, undefined);
+              this.appService.hideLoadingSpinner();
+              this.loginService.refreshUserRoles().subscribe(role => {
+                this.appService.openRoute(undefined, "account/quotations/details/" + response.id, undefined);
+              });
             }
           });
         else
           this.orderService.saveFinalOrder(this.quotation as CustomerOrder, !isDraft).subscribe(response => {
             if (response && response.id) {
               this.cleanStorageData();
-              this.appService.openRoute(undefined, "account/orders/details/" + response.id, undefined);
+              this.appService.hideLoadingSpinner();
+              this.loginService.refreshUserRoles().subscribe(role => {
+                this.appService.openRoute(undefined, "account/orders/details/" + response.id, undefined);
+              });
             }
           });
-        this.appService.hideLoadingSpinner();
       }
     } else {
       if (this.quotation.isQuotation)
@@ -262,16 +268,15 @@ export class CheckoutComponent implements OnInit {
 
   isOrderPossible() {
     if (this.documentForm.invalid) {
-      console.log(this.documentForm);
-      this.appService.displayToast("Il manque des informations obligatoires pour pouvoir valider " + (this.quotation!.isQuotation ? "le devis" : "la commande"), true, "Validation de commande impossible", 5000);
+      this.appService.displayToast("Il manque des informations obligatoires pour pouvoir valider " + (this.quotation!.isQuotation ? "le devis" : "la commande"), true, "Validation de " + (this.quotation!.isQuotation ? "devis" : "commande") + " impossible", 5000);
       return false;
     }
     if (!this.currentUser && this.quotation!.responsable!.mail.mail != this.mailToConfirm) {
-      this.appService.displayToast("Les deux e-mails renseignés ne sont pas identiques !", true, "Validation de commande impossible", 5000);
+      this.appService.displayToast("Les deux e-mails renseignés ne sont pas identiques !", true, "Validation de " + (this.quotation!.isQuotation ? "devis" : "commande") + " impossible", 5000);
       return false;
     }
     if (!this.acceptDocs || !this.acceptTerms) {
-      this.appService.displayToast("Vous devez accepter les conditions ci-dessus pour pouvoir passer commande", true, "Validation de commande impossible", 5000);
+      this.appService.displayToast("Vous devez accepter les conditions ci-dessus pour pouvoir valider " + (this.quotation!.isQuotation ? "le devis" : "la commande"), true, "Validation de " + (this.quotation!.isQuotation ? "devis" : "commande") + " impossible", 5000);
       return false;
     }
     return true;
@@ -344,16 +349,9 @@ export class CheckoutComponent implements OnInit {
     if (this.currentUser)
       this.documentService.getDocumentForResponsable(this.currentUser.id).subscribe(response => {
         if (this.quotation) {
-          this.quotation.documents = [];
           this.quotation.responsable = user;
-          for (let doc of response) {
-            if (doc.documentType.id == this.constantService.getDocumentTypeBilling().id
-              || doc.documentType.id == this.constantService.getDocumentTypeDigital().id
-              || doc.documentType.id == this.constantService.getDocumentTypePaper().id
-            )
-              this.quotation.documents.push(doc);
-          }
-          this.sortDocuments(this.quotation.documents);
+          this.quotation.documents = [];
+          this.initEmptyDocuments();
           if (!this.currentUser)
             this.quotationService.setCurrentDraftQuotation(this.quotation);
           else

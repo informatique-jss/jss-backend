@@ -58,7 +58,7 @@ export class QuotationComponent implements OnInit {
         this.customerOrderService.setCurrentDraftOrder(this.customerOrder);
 
         this.appService.hideLoadingSpinner();
-        this.appService.openRoute(event, "/quotation/checkout/", true);
+        this.appService.openRoute(event, "/quotation/checkout/", undefined);
       });
     }
 
@@ -84,6 +84,20 @@ export class QuotationComponent implements OnInit {
 
   cleanStorageData() {
     this.cleanModal(this.cleanModalView);
+  }
+
+  finalCancel() {
+    if (this.quotationService.getCurrentDraftQuotationId()) {
+      this.quotationService.cancelQuotation(parseInt(this.quotationService.getCurrentDraftQuotationId()!)).subscribe(response => {
+        this.finalCleanStorageData();
+      })
+    } else if (this.customerOrderService.getCurrentDraftOrderId()) {
+      this.customerOrderService.cancelCustomerOrder(parseInt(this.customerOrderService.getCurrentDraftOrderId()!)).subscribe(response => {
+        this.finalCleanStorageData();
+      })
+    } else {
+      this.finalCleanStorageData();
+    }
   }
 
   finalCleanStorageData() {

@@ -12,6 +12,7 @@ import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.MailHelper;
+import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Phone;
@@ -90,6 +91,9 @@ public class MyJssQuotationDelegate {
     @Autowired
     MailHelper mailHelper;
 
+    @Autowired
+    UserScopeService userScopeService;
+
     @Transactional(rollbackFor = Exception.class)
     public CustomerOrder saveCustomerOrderFromMyJss(CustomerOrder order, Boolean isValidation,
             HttpServletRequest request)
@@ -101,7 +105,24 @@ public class MyJssQuotationDelegate {
 
         saveNewMailsOnAffaire(order);
 
-        order.setResponsable(employeeService.getCurrentMyJssUser());
+        if (order.getResponsable() != null
+                && !order.getResponsable().getId().equals(employeeService.getCurrentMyJssUser().getId())) {
+            List<Responsable> responsables = userScopeService.getPotentialUserScope();
+            Boolean found = false;
+            if (responsables != null) {
+                for (Responsable responsable : responsables) {
+                    if (responsable.getId().equals(order.getResponsable().getId())) {
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            if (!found)
+                order.setResponsable(employeeService.getCurrentMyJssUser());
+        } else {
+            order.setResponsable(employeeService.getCurrentMyJssUser());
+        }
+
         order.setCustomerOrderOrigin(constantService.getCustomerOrderOriginMyJss());
         order.setCustomerOrderStatus(
                 customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT));
@@ -120,21 +141,62 @@ public class MyJssQuotationDelegate {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public IQuotation validateAndCreateQuotation(IQuotation quotation, Boolean isValidation) throws OsirisException {
+    public Quotation saveQuotationFromMyJss(Quotation quotation, Boolean isValidation, HttpServletRequest request)
+            throws OsirisClientMessageException, OsirisValidationException, OsirisException {
+        if (quotation.getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders())
+                if (asso.getAffaire() != null && asso.getAffaire().getId() == null)
+                    affaireService.addOrUpdateAffaire(asso.getAffaire());
+
+        saveNewMailsOnAffaire(quotation);
+
+        if (quotation.getResponsable() != null
+                && !quotation.getResponsable().getId().equals(employeeService.getCurrentMyJssUser().getId())) {
+            List<Responsable> responsables = userScopeService.getPotentialUserScope();
+            Boolean found = false;
+            if (responsables != null) {
+                for (Responsable responsable : responsables) {
+                    if (responsable.getId().equals(quotation.getResponsable().getId())) {
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            if (!found)
+                quotation.setResponsable(employeeService.getCurrentMyJssUser());
+        } else {
+            quotation.setResponsable(employeeService.getCurrentMyJssUser());
+        }
+
+        quotation.setCustomerOrderOrigin(constantService.getCustomerOrderOriginMyJss());
+        quotation.setQuotationStatus(
+                quotationStatusService.getQuotationStatusByCode(CustomerOrderStatus.DRAFT));
+        quotationValidationHelper.completeIQuotationDocuments(quotation, false);
+        populateBooleansOfProvisions(quotation);
+        quotation = quotationService.addOrUpdateQuotationFromUser(quotation);
+
+        if (isValidation != null && isValidation)
+            quotationService.addOrUpdateQuotationStatus(quotation, QuotationStatus.TO_VERIFY);
+
+        return quotation;
+
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public IQuotation validateAndCreateQuotation(IQuotation quotation, Boolean isValidation, HttpServletRequest request)
+            throws OsirisException {
 
         Responsable responsable = null;
+        Boolean hasToSendConfirmation = false;
+        Boolean shouldConnectUserAtTheEnd = true;
         if (quotation.getResponsable() != null && quotation.getResponsable().getMail() != null) {
             responsable = responsableService.getResponsableByMail(quotation.getResponsable().getMail().getMail());
             if (responsable != null) {
                 quotation.setResponsable(responsable);
                 if (employeeService.getCurrentMyJssUser() == null) {
                     // User create IQuotation but not connected => send a mail
-                    if (quotation.getIsQuotation())
-                        mailHelper.sendConfirmationQuotationCreationMyJss(
-                                quotation.getResponsable().getMail().getMail(), (Quotation) quotation);
-                    else
-                        mailHelper.sendConfirmationOrderCreationMyJss(quotation.getResponsable().getMail().getMail(),
-                                (CustomerOrder) quotation);
+                    hasToSendConfirmation = true;
+                    shouldConnectUserAtTheEnd = false;
                 }
             }
 
@@ -191,6 +253,16 @@ public class MyJssQuotationDelegate {
                         QuotationStatus.TO_VERIFY);
         }
 
+        if (hasToSendConfirmation)
+            if (quotation.getIsQuotation())
+                mailHelper.sendConfirmationQuotationCreationMyJss(
+                        quotation.getResponsable().getMail().getMail(), (Quotation) quotation);
+            else
+                mailHelper.sendConfirmationOrderCreationMyJss(quotation.getResponsable().getMail().getMail(),
+                        (CustomerOrder) quotation);
+
+        if (shouldConnectUserAtTheEnd)
+            userScopeService.authenticateUser(quotation.getResponsable(), request);
         return quotation;
     }
 

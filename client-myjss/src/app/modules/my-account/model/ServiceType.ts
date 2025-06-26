@@ -12,4 +12,5 @@ export interface ServiceType {
   isRequiringNewUnregisteredAffaire: boolean;
   hasAnnouncement: boolean;
   hasOnlyAnnouncement: boolean;
+  serviceTypeLinked: ServiceType;
 }

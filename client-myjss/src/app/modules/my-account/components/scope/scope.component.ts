@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { capitalizeName } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { PlatformService } from '../../../main/services/platform.service';
 import { Responsable } from '../../../profile/model/Responsable';
 import { Tiers } from '../../../profile/model/Tiers';
 import { UserScope } from '../../../profile/model/UserScope';
@@ -27,7 +28,8 @@ export class ScopeComponent implements OnInit {
   constructor(
     private responsableService: ResponsableService,
     private loginService: LoginService,
-    private userScopeService: UserScopeService
+    private userScopeService: UserScopeService,
+    private platformService: PlatformService
   ) { }
 
   capitalizeName = capitalizeName;
@@ -118,6 +120,8 @@ export class ScopeComponent implements OnInit {
         scopeResponsables.push(scope.responsableViewed);
     this.userScopeService.addToUsersScope(scopeResponsables).subscribe(response => {
       this.initCurrentScope();
+      if (this.platformService.isBrowser())
+        this.platformService.getNativeWindow()!.location.reload();
     });
   }
 

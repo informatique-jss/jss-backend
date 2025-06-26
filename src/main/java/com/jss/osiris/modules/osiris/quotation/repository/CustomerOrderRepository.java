@@ -209,4 +209,9 @@ public interface CustomerOrderRepository
         List<CustomerOrder> findByVoucherAndResponsable(Voucher voucher, Responsable responsable);
 
         List<CustomerOrder> findByVoucher(Voucher voucher);
+
+        @Query(value = "select c from CustomerOrder c where customerOrderStatus=:customerOrderStatus and createdDate<:dateLimit ")
+        List<CustomerOrder> findCustomerOrderOlderThanDate(
+                        @Param("customerOrderStatus") CustomerOrderStatus customerOrderStatus,
+                        @Param("dateLimit") LocalDateTime dateLimit);
 }

@@ -92,6 +92,11 @@ public class ServiceType implements Serializable, IId {
 	@JsonView(JacksonViews.MyJssListView.class)
 	private Boolean isMergeable;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+	@JoinColumn(name = "id_service_type_linked")
+	private ServiceType serviceTypeLinked;
+
 	public Integer getId() {
 		return id;
 	}
@@ -226,6 +231,14 @@ public class ServiceType implements Serializable, IId {
 
 	public void setIsMergeable(Boolean isMergeable) {
 		this.isMergeable = isMergeable;
+	}
+
+	public ServiceType getServiceTypeLinked() {
+		return serviceTypeLinked;
+	}
+
+	public void setServiceTypeLinked(ServiceType serviceTypeLinked) {
+		this.serviceTypeLinked = serviceTypeLinked;
 	}
 
 }

@@ -115,6 +115,7 @@ import com.jss.osiris.modules.osiris.tiers.service.TiersService;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.servlet.http.HttpServletRequest;
 
 @org.springframework.stereotype.Service
 public class CustomerOrderServiceImpl implements CustomerOrderService {
@@ -2144,5 +2145,16 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders())
             serviceService.populateTransientField(assoAffaireOrder.getServices());
         return customerOrder;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void purgeCustomerOrders() throws OsirisException {
+        List<CustomerOrder> orders = customerOrderRepository.findCustomerOrderOlderThanDate(
+                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT),
+                LocalDateTime.now().minusMonths(3));
+
+        if (orders != null)
+            for (CustomerOrder order : orders)
+                batchService.declareNewBatch(Batch.PURGE_CUSTOMER_ORDER, order.getId());
     }
 }

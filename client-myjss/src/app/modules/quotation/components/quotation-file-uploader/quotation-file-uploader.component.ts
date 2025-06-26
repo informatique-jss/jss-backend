@@ -70,12 +70,12 @@ export class QuotationFileUploaderComponent implements OnInit {
   }
 
   updateUploadProgress(event: any) {
-    const state = this.uploadStateMap.get(event.id);
-    if (state) {
-      state.progress = event.progress;
-      state.isUploading = event.progress < 100;
-      state.isComplete = event.progress === 100;
-    }
+    if (this.uploadStateMap)
+      this.uploadStateMap.forEach(state => {
+        state.progress = event.progress;
+        state.isUploading = event.progress < 100;
+        state.isComplete = event.progress === 100;
+      })
   }
 
   onUploadComplete(uploadedFileIds: any) {

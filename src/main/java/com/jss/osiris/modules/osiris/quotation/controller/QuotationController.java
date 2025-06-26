@@ -753,6 +753,7 @@ public class QuotationController {
     validationHelper.validateString(serviceType.getCustomLabel(), false, 250, "customLabel");
     validationHelper.validateReferential(serviceType.getServiceFamily(), true, "serviceFamily");
     validationHelper.validateBigDecimal(serviceType.getDefaultDeboursPrice(), false, "defaultDeboursPrice");
+    validationHelper.validateReferential(serviceType.getServiceTypeLinked(), false, "serviceTypeLinked");
     validationHelper.validateBigDecimal(serviceType.getDefaultDeboursPriceNonTaxable(), false,
         "defaultDeboursPriceNonTaxable");
 

@@ -71,8 +71,6 @@ import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 import com.jss.osiris.modules.osiris.tiers.service.TiersService;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 @org.springframework.stereotype.Service
 public class QuotationServiceImpl implements QuotationService {
 
@@ -740,31 +738,6 @@ public class QuotationServiceImpl implements QuotationService {
         return quotationRepository.findByResponsable(responsable);
     }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public Quotation saveQuotationFromMyJss(Quotation quotation, Boolean isValidation, HttpServletRequest request)
-            throws OsirisClientMessageException, OsirisValidationException, OsirisException {
-        if (quotation.getAssoAffaireOrders() != null)
-            for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders())
-                if (asso.getAffaire() != null && asso.getAffaire().getId() == null)
-                    affaireService.addOrUpdateAffaire(asso.getAffaire());
-
-        if (quotation.getResponsable() == null)
-            quotation.setResponsable(employeeService.getCurrentMyJssUser());
-        quotation.setCustomerOrderOrigin(constantService.getCustomerOrderOriginMyJss());
-        quotation.setQuotationStatus(
-                quotationStatusService.getQuotationStatusByCode(CustomerOrderStatus.DRAFT));
-        quotationValidationHelper.completeIQuotationDocuments(quotation, false);
-        myJssQuotationDelegate.populateBooleansOfProvisions(quotation);
-        quotation = addOrUpdateQuotationFromUser(quotation);
-
-        if (isValidation != null && isValidation)
-            addOrUpdateQuotationStatus(quotation, QuotationStatus.TO_VERIFY);
-
-        return quotation;
-
-    }
-
     public List<Quotation> completeAdditionnalInformationForQuotations(List<Quotation> quotations)
             throws OsirisException {
         if (quotations != null && quotations.size() > 0) {
@@ -883,5 +856,16 @@ public class QuotationServiceImpl implements QuotationService {
         for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders())
             serviceService.populateTransientField(assoAffaireOrder.getServices());
         return quotation;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void purgeQuotations() throws OsirisException {
+        List<Quotation> quotations = quotationRepository.findQuotationOlderThanDate(
+                quotationStatusService.getQuotationStatusByCode(QuotationStatus.DRAFT),
+                LocalDateTime.now().minusMonths(3));
+
+        if (quotations != null)
+            for (Quotation quotation : quotations)
+                batchService.declareNewBatch(Batch.PURGE_QUOTATION, quotation.getId());
     }
 }

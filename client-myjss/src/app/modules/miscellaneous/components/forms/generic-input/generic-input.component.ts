@@ -82,10 +82,6 @@ export class GenericInputComponent extends GenericFormComponent implements OnIni
     }
   }
 
-  getPreviewActionLinkFunction(entity: any): string[] | undefined {
-    return undefined;
-  }
-
   onEnterTrigger(event: Event): void {
     event.preventDefault();
     event.stopPropagation();

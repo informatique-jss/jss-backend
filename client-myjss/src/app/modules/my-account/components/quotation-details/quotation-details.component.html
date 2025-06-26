@@ -99,7 +99,8 @@
   </div>
 
   <div ngbAccordion [closeOthers]="true" *ngIf="selectedAssoAffaireOrder.services">
-    <div ngbAccordionItem *ngFor="let service of selectedAssoAffaireOrder.services; let index =index"
+    <div ngbAccordionItem [collapsed]="index!=0"
+      *ngFor="let service of selectedAssoAffaireOrder.services; let index =index"
       (show)="loadServiceDetails(service,false)">
       <h2 ngbAccordionHeader>
         <button ngbAccordionButton class="border-top">
@@ -136,11 +137,65 @@
                     <div class="ps-2">Vous pouvez téléverser ci-dessous les documents nécessaires au traitement du
                       service</div>
                   </div>
+                  <h5 class="pt-3">Pièces obligatoires</h5>
                   <div class="list-group">
                     <ng-container *ngFor="let assoServiceDocument of service.assoServiceDocuments;let index = index">
                       <div class="list-group-item list-group-item-action flex-column align-items-start py-3 "
                         [ngClass]="{'border-top-1':index>0}" style="border-width: 2px;"
                         *ngIf="assoServiceDocument.isMandatory">
+                        <div class="d-flex flex-wrap w-100 justify-content-between">
+                          <h6>{{assoServiceDocument.typeDocument.customLabel}}</h6>
+                        </div>
+                        <p class="fs-sm  "
+                          *ngIf="assoServiceDocument.formalisteComment && assoServiceDocument.formalisteComment.length>0">
+                          {{assoServiceDocument.formalisteComment}}</p>
+                        <div class="mb-2 mb-md-3 row  " *ngIf="canEditQuotation">
+                          <div class="col-md-12">
+                            <single-upload [entity]="assoServiceDocument"
+                              (endOfUpload)="refreshCurrentAssoAffaireOrder()"
+                              [entityType]="ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType" [isDirectUpload]="true"
+                              [attachmentType]="assoServiceDocument.typeDocument.attachmentType"
+                              [typeDocument]="assoServiceDocument.typeDocument"></single-upload>
+                          </div>
+                        </div>
+                        <div class="table-responsive"
+                          *ngIf="assoServiceDocument.attachments && assoServiceDocument.attachments.length>0">
+                          <table class="table table-hover mb-0">
+                            <thead>
+                              <tr>
+                                <th style="width: 5%;">#</th>
+                                <th>Nom</th>
+                                <th class="d-none d-md-table-cell" style="width: 20%;">Type</th>
+                                <th class="d-none d-lg-table-cell" style="width: 20%;">Date de dépôt</th>
+                                <th style="width: 10%;"></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let attachment of assoServiceDocument.attachments; let i = index">
+                                <th scope="row">{{i + 1}}</th>
+                                <td class="text-wrap" style="min-width: 150px;">{{attachment.description}}</td>
+                                <td class="d-none d-md-table-cell">{{attachment.attachmentType.label}}</td>
+                                <td class="d-none d-lg-table-cell">{{attachment.creatDateTime | date:'dd/MM/yyyy'}}</td>
+                                <td>
+                                  <button type="button" class="btn btn-secondary btn-icon btn-sm"
+                                    aria-label="Télécharger" placement="right" ngbTooltip="Télécharger"
+                                    (click)="downloadAttachment(attachment)">
+                                    <i class="ai-download"></i>
+                                  </button>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </ng-container>
+                  </div>
+                  <h5 class="pt-3">Pièces optionnelles</h5>
+                  <div class="list-group">
+                    <ng-container *ngFor="let assoServiceDocument of service.assoServiceDocuments;let index = index">
+                      <div class="list-group-item list-group-item-action flex-column align-items-start py-3 "
+                        [ngClass]="{'border-top-1':index>0}" style="border-width: 2px;"
+                        *ngIf="!assoServiceDocument.isMandatory">
                         <div class="d-flex flex-wrap w-100 justify-content-between">
                           <h6>{{assoServiceDocument.typeDocument.customLabel}}</h6>
                         </div>

@@ -46,12 +46,14 @@
               <button type="button" class="btn btn-secondary dropdown-toggle" ngbDropdownToggle aria-haspopup="true"
                 aria-expanded="false">
                 <i class="ai-briefcase me-2"></i>
-                {{capitalizeName(currentUser.firstname+ ' '+currentUser.lastname)}}
+                {{currentUser.tiers.id}} - {{currentUser.tiers.denomination}} - {{capitalizeName(currentUser.firstname+
+                ' '+currentUser.lastname)}}
               </button>
               <div ngbDropdownMenu class="dropdown-menu my-1">
                 <label class=" dropdown-item" *ngFor="let scope of userScope">
                   <a class="dropdown-item" style="cursor: pointer;" (click)="changeCurrentUser(scope) ">
-                    {{capitalizeName(scope.firstname+ ' '+scope.lastname)}}
+                    {{scope.tiers.id}} - {{scope.tiers.denomination}} - {{capitalizeName(scope.firstname+ '
+                    '+scope.lastname)}}
                   </a>
                 </label>
               </div>
@@ -227,10 +229,6 @@
             </div>
             <ng-container *ngIf="!quotation.responsable.tiers.isIndividual">
               <div class="mb-3">
-                <!-- <generic-input (onFormChange)="saveDraftQuotation()" [(model)]="quotation.responsable.tiers.firstname" label="R.C.S de /!\ TODO /!\"
-            [form]="documentForm" propertyName="tiersFirstname" [isMandatory]="true" [isDisabled]="false"
-            type="text">
-          </generic-input> -->
               </div>
               <div class="mb-3">
                 <generic-input (onFormChange)="saveDraftQuotation()"

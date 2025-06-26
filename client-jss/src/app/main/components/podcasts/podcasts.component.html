@@ -37,7 +37,7 @@
 
                 <div *ngIf="postsByEntityType && postsByEntityType.length>0">
                   <div *ngFor="let post of postsByEntityType">
-                    <div class="card border h-100 my-3" *ngIf="post && post.media">
+                    <div class="card border h-100 my-3" *ngIf="post  ">
                       <div class="row row-cols-md-auto m-2 d-flex align-items-center g-1 g-md-2">
                         <a class="col-auto ps-0 btn-dark rounded-circle btn-circle-md fs-4"
                           (click)="togglePlayPodcast(post)"><i
@@ -46,17 +46,20 @@
                           <!-- Listen podcast in.. button -->
                           <button type="button" class="btn col-auto bg-light text-secondary"
                             (click)="toggleListenDropdown($event, post.id)"
-                            [attr.aria-expanded]="openedListenDropdownPostId === post.id">
+                            [attr.aria-expanded]="openedListenDropdownPostId === post.id"
+                            *ngIf="post.deezerLinkUrl || post.applePodcastLinkUrl || post.spotifyLinkUrl">
                             Écouter <i class="bi-arrow-up-right"></i>
                           </button>
                           <!-- Listen podcast in .. Dropdown menu -->
-                          <div class="dropdown-menu p-1" [ngClass]="{ show: openedListenDropdownPostId === post.id }">
+                          <div class="dropdown-menu p-1 podcast-menu"
+                            [ngClass]="{ show: openedListenDropdownPostId === post.id }">
                             <ul class="list-unstyled d-flex  inline-row gap-2 align-items-center mb-0">
-                              <li *ngIf="post.deezerLinkUrl"><a [href]="post.deezerLinkUrl"><img
+                              <li *ngIf="post.deezerLinkUrl"><a [href]="post.deezerLinkUrl" target="_blank"><img
                                     src="assets/images/icon/deezer.svg" alt="Deezer"></a></li>
-                              <li *ngIf="post.applePodcastLinkUrl"><a [href]="post.applePodcastLinkUrl"><img
-                                    src="assets/images/icon/apple-podcasts.svg" alt="Apple Podcasts"></a></li>
-                              <li *ngIf="post.spotifyLinkUrl"><a [href]="post.spotifyLinkUrl"><img
+                              <li *ngIf="post.applePodcastLinkUrl"><a [href]="post.applePodcastLinkUrl"
+                                  target="_blank"><img src="assets/images/icon/apple-podcasts.svg"
+                                    alt="Apple Podcasts"></a></li>
+                              <li *ngIf="post.spotifyLinkUrl"><a [href]="post.spotifyLinkUrl" target="_blank"><img
                                     src="assets/images/icon/spotify.svg" alt="Spotify"></a></li>
                             </ul>
                           </div>

@@ -5,6 +5,7 @@ import { combineLatest } from 'rxjs';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
 import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
+import { GenericToggleComponent } from '../../../miscellaneous/components/forms/generic-toggle/generic-toggle.component';
 import { ServiceType } from '../../../my-account/model/ServiceType';
 import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
 import { QuotationService } from '../../../my-account/services/quotation.service';
@@ -20,7 +21,7 @@ import { ServiceFamilyService } from '../../services/service.family.service';
   templateUrl: './services-selection.component.html',
   styleUrls: ['./services-selection.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, GenericInputComponent, NgbNavModule]
+  imports: [SHARED_IMPORTS, GenericInputComponent, NgbNavModule, GenericToggleComponent]
 })
 export class ServicesSelectionComponent implements OnInit {
 
@@ -32,6 +33,7 @@ export class ServicesSelectionComponent implements OnInit {
   quotation: IQuotation | undefined;
   currentUser: Responsable | undefined;
   applyToAllAffaires: boolean = false;
+  serviceLinkToggles: boolean[] = [];
 
   constructor(
     private formBuilder: FormBuilder,
@@ -105,21 +107,43 @@ export class ServicesSelectionComponent implements OnInit {
 
   selecteServiceFamily(serviceFamily: ServiceFamily) {
     this.selectedServiceFamily = serviceFamily;
+    this.serviceLinkToggles = [];
+    if (this.selectedServiceFamily.services)
+      for (let i = 0; i < this.selectedServiceFamily.services.length; i++)
+        this.serviceLinkToggles[i] = false;
   }
 
   addServiceToCurrentAffaire(service: ServiceType) {
     if (this.applyToAllAffaires) {
       if (this.quotation && this.quotation.assoAffaireOrders) {
         for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++) {
-          this.selectedServiceTypes[i].push(service);
+          if (this.selectedServiceTypes[i].indexOf(service) < 0)
+            this.selectedServiceTypes[i].push(service);
         }
       }
     } else {
       if (this.selectedAssoIndex != null && this.selectedAssoIndex >= 0) {
         if (!this.selectedServiceTypes[this.selectedAssoIndex])
           this.selectedServiceTypes[this.selectedAssoIndex] = [];
-        this.selectedServiceTypes[this.selectedAssoIndex].push(service);
+        if (this.selectedServiceTypes[this.selectedAssoIndex].indexOf(service) < 0)
+          this.selectedServiceTypes[this.selectedAssoIndex].push(service);
       }
+    }
+  }
+
+  isServiceSelected(service: ServiceType) {
+    if (this.selectedServiceTypes && this.selectedAssoIndex != undefined)
+      return this.selectedServiceTypes[this.selectedAssoIndex].indexOf(service) >= 0;
+    return false;
+  }
+
+  selectLinkedServiceInstead(isSelected: any, serviceType: ServiceType) {
+    if (isSelected) {
+      this.removeServiceFromCurrentAffaire(serviceType);
+      this.addServiceToCurrentAffaire(serviceType.serviceTypeLinked);
+    } else {
+      this.removeServiceFromCurrentAffaire(serviceType.serviceTypeLinked);
+      this.addServiceToCurrentAffaire(serviceType);
     }
   }
 
@@ -140,9 +164,15 @@ export class ServicesSelectionComponent implements OnInit {
   }
 
   getServiceIndexInCurrentAffaire(service: ServiceType): number {
-    if (this.quotation && this.selectedAssoIndex != null && this.selectedServiceTypes.length > 0)
-      if (this.selectedServiceTypes[this.selectedAssoIndex] != null)
+    if (this.quotation && this.selectedAssoIndex != null && this.selectedServiceTypes.length > 0) {
+      if (this.selectedServiceTypes[this.selectedAssoIndex] != null) {
+        if (this.selectedServiceTypes[this.selectedAssoIndex].indexOf(service) >= 0)
+          return this.selectedServiceTypes[this.selectedAssoIndex].indexOf(service);
+        if (service.serviceTypeLinked)
+          return this.selectedServiceTypes[this.selectedAssoIndex].indexOf(service.serviceTypeLinked);
         return this.selectedServiceTypes[this.selectedAssoIndex].indexOf(service);
+      }
+    }
     return -1;
   }
 

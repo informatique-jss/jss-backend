@@ -23,6 +23,10 @@ export class QuotationService extends AppRestService<Quotation> {
     return this.get(new HttpParams().set("quotationId", quotationId), 'quotation');
   }
 
+  cancelQuotation(quotationId: number) {
+    return this.get(new HttpParams().set("quotationId", quotationId), 'quotation/cancel');
+  }
+
   getQuotationForCustomerOrder(idCustomerOrder: number) {
     return this.get(new HttpParams().set("idCustomerOrder", idCustomerOrder), 'order/quotation');
   }

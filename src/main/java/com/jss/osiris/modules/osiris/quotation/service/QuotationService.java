@@ -18,8 +18,6 @@ import com.jss.osiris.modules.osiris.quotation.model.QuotationSearchResult;
 import com.jss.osiris.modules.osiris.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 public interface QuotationService {
         public Quotation getQuotation(Integer id);
 
@@ -85,9 +83,6 @@ public interface QuotationService {
 
         public List<Quotation> findQuotationByResponsable(Responsable responsable);
 
-        public Quotation saveQuotationFromMyJss(Quotation order, Boolean isValidation, HttpServletRequest request)
-                        throws OsirisClientMessageException, OsirisValidationException, OsirisException;
-
         public List<Quotation> completeAdditionnalInformationForQuotations(List<Quotation> customerOrders)
                         throws OsirisException;
 
@@ -104,4 +99,6 @@ public interface QuotationService {
 
         public Quotation computeVoucheredPriceOnQuotation(Quotation quotation, Voucher voucher)
                         throws OsirisClientMessageException, OsirisValidationException, OsirisException;
+
+        public void purgeQuotations() throws OsirisException;
 }

@@ -43,9 +43,11 @@ import com.jss.osiris.modules.myjss.quotation.service.DashboardUserStatisticsSer
 import com.jss.osiris.modules.myjss.quotation.service.MyJssQuotationDelegate;
 import com.jss.osiris.modules.myjss.wordpress.model.Newspaper;
 import com.jss.osiris.modules.myjss.wordpress.model.Post;
+import com.jss.osiris.modules.myjss.wordpress.model.ReadingFolder;
 import com.jss.osiris.modules.myjss.wordpress.model.Subscription;
 import com.jss.osiris.modules.myjss.wordpress.service.NewspaperService;
 import com.jss.osiris.modules.myjss.wordpress.service.PostService;
+import com.jss.osiris.modules.myjss.wordpress.service.ReadingFolderService;
 import com.jss.osiris.modules.osiris.crm.model.Candidacy;
 import com.jss.osiris.modules.osiris.crm.model.Voucher;
 import com.jss.osiris.modules.osiris.crm.service.VoucherService;
@@ -242,6 +244,8 @@ public class MyJssQuotationController {
 
 	@Autowired
 	VoucherService voucherService;
+	@Autowired
+	ReadingFolderService readingFolderService;
 
 	private final ConcurrentHashMap<String, AtomicLong> requestCount = new ConcurrentHashMap<>();
 	private final long rateLimit = 1000;
@@ -659,6 +663,12 @@ public class MyJssQuotationController {
 		if (assoServiceDocument != null && assoServiceDocument.getService().getAssoAffaireOrder().getQuotation() != null
 				&& myJssQuotationValidationHelper
 						.canSeeQuotation(assoServiceDocument.getService().getAssoAffaireOrder().getQuotation()))
+			return new ResponseEntity<AssoServiceDocument>(assoServiceDocument, new HttpHeaders(), HttpStatus.OK);
+
+		if (assoServiceDocument != null
+				&& assoServiceDocument.getService().getAssoAffaireOrder().getCustomerOrder() != null
+				&& myJssQuotationValidationHelper
+						.canSeeQuotation(assoServiceDocument.getService().getAssoAffaireOrder().getCustomerOrder()))
 			return new ResponseEntity<AssoServiceDocument>(assoServiceDocument, new HttpHeaders(), HttpStatus.OK);
 
 		return new ResponseEntity<AssoServiceDocument>(null, new HttpHeaders(), HttpStatus.OK);
@@ -1495,7 +1505,7 @@ public class MyJssQuotationController {
 		detectFlood(request);
 
 		return new ResponseEntity<Quotation>(
-				(Quotation) myJssQuotationDelegate.validateAndCreateQuotation(quotation, isValidation),
+				(Quotation) myJssQuotationDelegate.validateAndCreateQuotation(quotation, isValidation, request),
 				HttpStatus.OK);
 	}
 
@@ -1508,7 +1518,7 @@ public class MyJssQuotationController {
 		detectFlood(request);
 
 		return new ResponseEntity<CustomerOrder>(
-				(CustomerOrder) myJssQuotationDelegate.validateAndCreateQuotation(order, isValidation),
+				(CustomerOrder) myJssQuotationDelegate.validateAndCreateQuotation(order, isValidation, request),
 				HttpStatus.OK);
 	}
 
@@ -1559,7 +1569,8 @@ public class MyJssQuotationController {
 				myJssQuotationValidationHelper.validateAffaire(asso.getAffaire());
 			}
 		}
-		return new ResponseEntity<Quotation>(quotationService.saveQuotationFromMyJss(order, isValidation, request),
+		return new ResponseEntity<Quotation>(
+				myJssQuotationDelegate.saveQuotationFromMyJss(order, isValidation, request),
 				HttpStatus.OK);
 	}
 
@@ -1613,6 +1624,35 @@ public class MyJssQuotationController {
 		return new ResponseEntity<Quotation>(
 				quotationService.computeVoucheredPriceOnQuotation(quotation, voucher),
 				HttpStatus.OK);
+
+	@GetMapping(inputEntryPoint + "/quotation/cancel")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<Boolean> cancelQuotation(Integer quotationId, HttpServletRequest request)
+			throws OsirisValidationException, OsirisException {
+		detectFlood(request);
+
+		Quotation quotation = quotationService.getQuotation(quotationId);
+		if (quotation == null || !myJssQuotationValidationHelper.canSeeQuotation(quotation))
+			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+
+		quotationService.addOrUpdateQuotationStatus(quotation, QuotationStatus.ABANDONED);
+
+		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/order/cancel")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<Boolean> cancelCustomerOrder(Integer customerOrderId, HttpServletRequest request)
+			throws OsirisValidationException, OsirisException {
+		detectFlood(request);
+
+		CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+		if (customerOrder == null || !myJssQuotationValidationHelper.canSeeQuotation(customerOrder))
+			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+
+		customerOrderService.addOrUpdateCustomerOrderStatus(customerOrder, CustomerOrderStatus.ABANDONED, true);
+
+		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/service-types/provisions")
@@ -1726,4 +1766,61 @@ public class MyJssQuotationController {
 				HttpStatus.OK);
 	}
 
+	@PostMapping(inputEntryPoint + "/reading-folder")
+	@JsonView({ JacksonViews.MyJssDetailedView.class })
+	public ResponseEntity<ReadingFolder> addOrUpdateReadingFolder(@RequestBody ReadingFolder readingFolder,
+			HttpServletRequest request)
+			throws OsirisValidationException {
+		detectFlood(request);
+
+		Responsable responsable = employeeService.getCurrentMyJssUser();
+		if (responsable == null)
+			throw new OsirisValidationException("responsable");
+
+		if (readingFolder.getLabel() != null && readingFolder.getLabel().trim().length() > 0)
+			validationHelper.validateString(readingFolder.getLabel(), null, "readingFolderLabel");
+
+		if (readingFolder.getMail() != null && !readingFolder.getMail().getId().equals(responsable.getMail().getId()))
+			return new ResponseEntity<ReadingFolder>(null, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+
+		return new ResponseEntity<ReadingFolder>(
+				readingFolderService.addOrUpdateReadingFolder(readingFolder, responsable),
+				HttpStatus.OK);
+
+	}
+
+	@GetMapping(inputEntryPoint + "/reading-folder/delete")
+	public ResponseEntity<Boolean> deleteReadingFolder(@RequestParam Integer idReadingFolder,
+			HttpServletRequest request)
+			throws OsirisValidationException {
+		detectFlood(request);
+		ReadingFolder readingFolder = readingFolderService.getReadingFolder(idReadingFolder);
+		if (readingFolder == null)
+			throw new OsirisValidationException("readingFolder");
+
+		Responsable currentUser = employeeService.getCurrentMyJssUser();
+		if (currentUser != null && !currentUser.getMail().getId().equals(readingFolder.getMail().getId()))
+			throw new OsirisValidationException("readingFolder");
+
+		if (readingFolder.getMail() != null && readingFolder.getMail().getId().equals(currentUser.getMail().getId())) {
+			readingFolderService.deleteReadingFolder(readingFolder);
+			return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+		}
+		return new ResponseEntity<Boolean>(false, HttpStatus.BAD_REQUEST);
+	}
+
+	@GetMapping(inputEntryPoint + "/reading-folders")
+	@JsonView({ JacksonViews.MyJssListView.class })
+	public ResponseEntity<List<ReadingFolder>> getReadingFolders(HttpServletRequest request)
+			throws OsirisValidationException {
+		detectFlood(request);
+
+		Responsable responsable = employeeService.getCurrentMyJssUser();
+		if (responsable == null)
+			throw new OsirisValidationException("responsable");
+
+		return new ResponseEntity<List<ReadingFolder>>(
+				readingFolderService.getAvailableReadingFoldersByResponsable(responsable),
+				HttpStatus.OK);
+	}
 }
