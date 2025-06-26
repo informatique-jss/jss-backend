@@ -41,7 +41,7 @@ export class SubscriptionComponent implements OnInit {
 
     }
 
-    this.appService.openMyJssRoute(event, "/quotation/" + subscriptionType + "/" + isPriceReduction + "/" + idArticle, true);
+    this.appService.openMyJssRoute(event, "/quotation/subscription/" + subscriptionType + "/" + isPriceReduction + "/" + idArticle, true);
   }
 
   openToast($event: MouseEvent) {

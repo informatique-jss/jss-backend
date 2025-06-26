@@ -16,6 +16,10 @@ export class ReadingFolderService extends AppRestService<ReadingFolder> {
     return this.getList(new HttpParams(), "reading-folders");
   }
 
+  getReadingFolder(idReadingFolder: number) {
+    return this.get(new HttpParams().set("idReadingFolder", idReadingFolder), "reading-folder");
+  }
+
   createReadingFolder(readingFolder: ReadingFolder) {
     return this.postItem(new HttpParams(), "reading-folder", readingFolder);
   }

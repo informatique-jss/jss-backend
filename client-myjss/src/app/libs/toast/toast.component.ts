@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { NgbToastModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppService } from '../../modules/main/services/app.service';
 import { SHARED_IMPORTS } from '../SharedImports';
@@ -14,6 +14,7 @@ import { Toast } from './Toast';
 export class ToastComponent implements OnInit {
 
   toasts: Toast[] = [];
+  @Input() displayLight: boolean = false;
 
   constructor(private appService: AppService) {
     this.toasts = appService.toasts;

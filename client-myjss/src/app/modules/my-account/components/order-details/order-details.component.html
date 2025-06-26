@@ -1,6 +1,18 @@
 <div class="d-flex align-items-center mb-4" *ngIf="order">
   <h1 class="h2 mb-0 me-3">Commande {{order.id}}</h1> <span class="badge bg-opacity-10   "
     [ngClass]="getClassForCustomerOrderStatus(order)">{{getCustomerOrderStatusLabel(order)}}</span>
+  <div class="ms-auto">
+    <a class="btn btn-sm me-2 btn-primary" role="button" (click)="resumeDraft($event)"
+      *ngIf=" order && order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_OPEN">
+      <i class="ai-edit-alt ms-n1 me-2"></i>
+      Reprendre le brouillon
+    </a>
+    <a class="btn btn-sm btn-primary" role="button" (click)="cancelDraft($event)"
+      *ngIf=" order && order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_OPEN">
+      <i class="ai-trash ms-n1 me-2"></i>
+      Abandonner
+    </a>
+  </div>
 </div>
 <div class="alert alert-danger d-flex align-items-center mb-0 mb-2" role="alert"
   *ngIf="order && order.customerOrderStatus && order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT">

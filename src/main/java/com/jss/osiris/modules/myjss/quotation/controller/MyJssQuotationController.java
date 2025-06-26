@@ -1768,4 +1768,26 @@ public class MyJssQuotationController {
 				readingFolderService.getAvailableReadingFoldersByResponsable(responsable),
 				HttpStatus.OK);
 	}
+
+	@GetMapping(inputEntryPoint + "/reading-folder")
+	@JsonView({ JacksonViews.MyJssListView.class })
+	public ResponseEntity<ReadingFolder> getReadingFolder(Integer idReadingFolder, HttpServletRequest request)
+			throws OsirisValidationException {
+		detectFlood(request);
+
+		Responsable responsable = employeeService.getCurrentMyJssUser();
+		if (responsable == null)
+			throw new OsirisValidationException("responsable");
+
+		ReadingFolder readingFolder = readingFolderService.getReadingFolder(idReadingFolder);
+		if (readingFolder == null)
+			throw new OsirisValidationException("reading folder");
+
+		if (!readingFolder.getMail().getMail().equals(responsable.getMail().getMail()))
+			throw new OsirisValidationException("responsableMail");
+
+		return new ResponseEntity<ReadingFolder>(
+				readingFolderService.getReadingFolder(idReadingFolder),
+				HttpStatus.OK);
+	}
 }

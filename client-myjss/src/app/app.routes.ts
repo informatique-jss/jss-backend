@@ -71,8 +71,12 @@ const routesQuotation = [
       { path: 'checkout', component: CheckoutComponent },
     ]
   }, {
-    path: 'quotation/:subscription-type/:is-price-reduction/:id-article',
+    path: 'quotation/subscription/:subscription-type/:is-price-reduction/:id-article',
     loadComponent: () => import('./modules/quotation/components/quotation/quotation.component').then(m => m.QuotationComponent),
+  }, {
+    path: 'quotation/resume/quotation/:idQuotation', component: QuotationComponent,
+  }, {
+    path: 'quotation/resume/order/:idOrder', component: QuotationComponent,
   }
 ];
 

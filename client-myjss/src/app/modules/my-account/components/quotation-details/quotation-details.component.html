@@ -1,6 +1,18 @@
 <div class="d-flex align-items-center mb-4" *ngIf="quotation">
   <h1 class="h2 mb-0 me-3">Devis {{quotation.id}}</h1> <span class="badge bg-opacity-10   "
     [ngClass]="getClassForQuotationStatus(quotation)">{{getQuotationStatusLabel(quotation)}}</span>
+  <div class="ms-auto">
+    <a class="btn btn-sm  me-2 btn-primary" role="button" (click)="resumeDraft($event)"
+      *ngIf=" quotation && quotation.quotationStatus.code == QUOTATION_STATUS_OPEN">
+      <i class="ai-edit-alt ms-n1 me-2"></i>
+      Reprendre le brouillon
+    </a>
+    <a class="btn btn-sm btn-primary" role="button" (click)="cancelDraft($event)"
+      *ngIf=" quotation && quotation.quotationStatus.code == QUOTATION_STATUS_OPEN">
+      <i class="ai-trash ms-n1 me-2"></i>
+      Abandonner
+    </a>
+  </div>
 </div>
 <div class="alert alert-info d-flex mb-2" role="alert"
   *ngIf="associatedCustomerOrder && quotation && quotation.quotationStatus.code == QUOTATION_STATUS_VALIDATED_BY_CUSTOMER">

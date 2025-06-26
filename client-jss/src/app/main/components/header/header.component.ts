@@ -76,7 +76,7 @@ export class HeaderComponent implements OnInit {
     });
     this.jssCategoryService.getAvailableJssCategories().subscribe(categories => {
       this.categories = categories.sort((a: JssCategory, b: JssCategory) => b.categoryOrder - a.categoryOrder);
-      this.categoriesByOrder = this.categories.slice(0, 3);
+      this.categoriesByOrder = this.categories.slice(0, 4);
     });
   }
 

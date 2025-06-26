@@ -40,7 +40,8 @@
         </div>
 
         <!-- Search button -->
-        <div class="me-3 me-lg-4 ms-auto" *ngIf="currentUser && actualUrl.includes('account')"
+        <div class="me-3 me-lg-4 ms-auto"
+          *ngIf="currentUser && (actualUrl.includes('account') || actualUrl.includes('quotation'))"
           (click)="displaySearchModal()">
           <a class="nav-link fs-4 p-2 mx-sm-1" style="cursor: pointer;" ngbTooltip="Rechercher" placement="right"
             aria-label="Search2">
@@ -59,20 +60,20 @@
             </div>
           </a>
           <div ngbDropdownMenu class="dropdown-menu dropdown-menu-end my-1">
-            <h6 class="dropdown-header fs-xs fw-medium text-body-secondary text-uppercase pb-1">Mon compte
-            </h6>
-            <ng-container *ngFor="let item of myAccountItems">
-              <a class="dropdown-item" [routerLink]="item.route" *ngIf="item.mainItem==MAIN_ITEM_ACCOUNT">
-                <i class=" fs-lg opacity-70 me-2" [ngClass]="item.iconClass"></i>
-                {{item.label}}
-              </a>
-            </ng-container>
-            <div class="dropdown-divider"></div>
             <h6 class="dropdown-header fs-xs fw-medium text-body-secondary text-uppercase pb-1">Tableau de
               bord</h6>
             <ng-container *ngFor="let item of myAccountItems">
               <a class="dropdown-item" [routerLink]="item.route" *ngIf="item.mainItem==MAIN_ITEM_DASHBOARD">
                 <i class="fs-lg opacity-70 me-2" [ngClass]="item.iconClass"></i>
+                {{item.label}}
+              </a>
+            </ng-container>
+            <div class="dropdown-divider"></div>
+            <h6 class="dropdown-header fs-xs fw-medium text-body-secondary text-uppercase pb-1">Mon compte
+            </h6>
+            <ng-container *ngFor="let item of myAccountItems">
+              <a class="dropdown-item" [routerLink]="item.route" *ngIf="item.mainItem==MAIN_ITEM_ACCOUNT">
+                <i class=" fs-lg opacity-70 me-2" [ngClass]="item.iconClass"></i>
                 {{item.label}}
               </a>
             </ng-container>

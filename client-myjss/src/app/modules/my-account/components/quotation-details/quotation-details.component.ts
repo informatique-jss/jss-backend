@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { NgbAccordionModule, NgbDropdownModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
-import { ASSO_SERVICE_DOCUMENT_ENTITY_TYPE, INVOICING_PAYMENT_LIMIT_REFUND_EUROS, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_VALIDATED_BY_CUSTOMER, SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
+import { ASSO_SERVICE_DOCUMENT_ENTITY_TYPE, INVOICING_PAYMENT_LIMIT_REFUND_EUROS, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_VALIDATED_BY_CUSTOMER, SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
 import { capitalizeName, getListMails, getListPhones } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
@@ -88,15 +88,21 @@ export class QuotationDetailsComponent implements OnInit {
   SERVICE_FIELD_TYPE_DATE = SERVICE_FIELD_TYPE_DATE;
   SERVICE_FIELD_TYPE_SELECT = SERVICE_FIELD_TYPE_SELECT;
   QUOTATION_STATUS_VALIDATED_BY_CUSTOMER = QUOTATION_STATUS_VALIDATED_BY_CUSTOMER;
+  QUOTATION_STATUS_OPEN = QUOTATION_STATUS_OPEN;
 
   ngOnInit() {
     this.billingLabelTypeCodeAffaire = this.constantService.getBillingLabelTypeCodeAffaire();
     this.quotationDetailsForm = this.formBuilder.group({});
 
+    this.refreshQuotation();
+  }
+
+  refreshQuotation() {
     this.quotationService.getQuotation(this.activatedRoute.snapshot.params['id']).subscribe(response => {
       this.quotation = response;
       this.canEditQuotation = this.quotation.quotationStatus.code != QUOTATION_STATUS_VALIDATED_BY_CUSTOMER
         && this.quotation.quotationStatus.code != QUOTATION_STATUS_ABANDONED && this.quotation.quotationStatus.code != QUOTATION_STATUS_REFUSED_BY_CUSTOMER;
+      this.appService.hideLoadingSpinner();
       this.loadQuotationDetails();
     })
   }
@@ -127,7 +133,7 @@ export class QuotationDetailsComponent implements OnInit {
       this.invoiceSummary = response;
       if (this.invoiceSummary.remainingToPay && Math.abs(this.invoiceSummary.remainingToPay) > INVOICING_PAYMENT_LIMIT_REFUND_EUROS
         && this.quotation && this.canEditQuotation)
-        this.displayPayButton = true;
+        this.displayPayButton = this.quotation.quotationStatus.code == QUOTATION_STATUS_SENT_TO_CUSTOMER;
     })
     this.customerOrderService.getCustomerOrderForQuotation(this.quotation.id).subscribe(response => {
       if (response && response.id)
@@ -222,6 +228,20 @@ export class QuotationDetailsComponent implements OnInit {
         this.attachementService.getAttachmentsForProvisionOfService(service).subscribe(response => {
           this.quotationAttachments[service.id] = response;
         })
+    }
+  }
+
+  resumeDraft(event: any) {
+    if (this.quotation && this.quotation.id)
+      this.appService.openRoute(event, "quotation/resume/quotation/" + this.quotation.id, undefined);
+  }
+
+  cancelDraft(event: any) {
+    if (this.quotation && this.quotation.id) {
+      this.appService.showLoadingSpinner();
+      this.quotationService.cancelQuotation(this.quotation.id).subscribe(response => {
+        this.refreshQuotation();
+      });
     }
   }
 }
