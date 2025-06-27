@@ -499,59 +499,60 @@
                     information à remplir pour ce service, vous pouvez cliquer sur le bouton étape suivante.</span>
                   <ng-container
                     *ngFor="let assoServiceFieldType of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes; let i = index">
-
-                    <!-- TEXT -->
-                    <div class="col-12 col-md-6 col-lg-4"
-                      *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_TEXT">
-                      <generic-input [(model)]="assoServiceFieldType.stringValue"
-                        [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
-                        [form]="informationForm" [propertyName]="'stringFieldType'+i"
-                        [isMandatory]="assoServiceFieldType.isMandatory" [maxLength]="255">
-                      </generic-input>
-                    </div>
-
-                    <!-- TEXTAREA -->
-                    <div class="col-12 "
-                      *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_TEXTAREA">
-                      <generic-textarea [(model)]="assoServiceFieldType.textAreaValue"
-                        [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
-                        [form]="informationForm" [maxLength]="255" [propertyName]="'textAreaFieldType'+i"
-                        [isMandatory]="assoServiceFieldType.isMandatory">
-                      </generic-textarea>
-                    </div>
-
-                    <!-- DATE -->
-                    <div class="col-12 col-md-6 col-lg-4"
-                      *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_DATE">
-                      <div class="form-group w-auto">
-                        <generic-date-picker [(model)]="assoServiceFieldType.dateValue"
+                    <ng-container *ngIf="isDisplayDependantField(assoServiceFieldType)">
+                      <!-- TEXT -->
+                      <div class="col-12 col-md-6 col-lg-4"
+                        *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_TEXT">
+                        <generic-input [(model)]="assoServiceFieldType.stringValue"
                           [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
-                          [form]="informationForm" [propertyName]="'dateFieldType'+i"
-                          [isMandatory]="assoServiceFieldType.isMandatory">
-                        </generic-date-picker>
+                          [form]="informationForm" [propertyName]="'stringFieldType'+i"
+                          [isMandatory]="assoServiceFieldType.isMandatory" [maxLength]="255">
+                        </generic-input>
                       </div>
-                    </div>
 
-                    <!-- INTEGER -->
-                    <div class="col-12 col-md-6 col-lg-4"
-                      *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_INTEGER">
-                      <generic-input [(model)]="assoServiceFieldType.integerValue"
-                        [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
-                        [form]="informationForm" [propertyName]="'integerFieldType'+i"
-                        [isMandatory]="assoServiceFieldType.isMandatory" type="number">
-                      </generic-input>
-                    </div>
+                      <!-- TEXTAREA -->
+                      <div class="col-12 "
+                        *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_TEXTAREA">
+                        <generic-textarea [(model)]="assoServiceFieldType.textAreaValue"
+                          [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
+                          [form]="informationForm" [maxLength]="255" [propertyName]="'textAreaFieldType'+i"
+                          [isMandatory]="assoServiceFieldType.isMandatory">
+                        </generic-textarea>
+                      </div>
 
-                    <!-- SELECT -->
-                    <div class="col-12 col-md-6 col-lg-4"
-                      *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_SELECT">
-                      <select-value-service-field-type [(model)]="assoServiceFieldType.selectValue"
-                        [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
-                        [form]="informationForm" [propertyName]="'selectFieldType'+i"
-                        [serviceFieldType]="assoServiceFieldType.serviceFieldType"
-                        [isMandatory]="assoServiceFieldType.isMandatory">
-                      </select-value-service-field-type>
-                    </div>
+                      <!-- DATE -->
+                      <div class="col-12 col-md-6 col-lg-4"
+                        *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_DATE">
+                        <div class="form-group w-auto">
+                          <generic-date-picker [(model)]="assoServiceFieldType.dateValue"
+                            [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
+                            [form]="informationForm" [propertyName]="'dateFieldType'+i"
+                            [isMandatory]="assoServiceFieldType.isMandatory">
+                          </generic-date-picker>
+                        </div>
+                      </div>
+
+                      <!-- INTEGER -->
+                      <div class="col-12 col-md-6 col-lg-4"
+                        *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_INTEGER">
+                        <generic-input [(model)]="assoServiceFieldType.integerValue"
+                          [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
+                          [form]="informationForm" [propertyName]="'integerFieldType'+i"
+                          [isMandatory]="assoServiceFieldType.isMandatory" type="number">
+                        </generic-input>
+                      </div>
+
+                      <!-- SELECT -->
+                      <div class="col-12 col-md-6 col-lg-4"
+                        *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_SELECT">
+                        <select-value-service-field-type [(model)]="assoServiceFieldType.selectValue"
+                          [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
+                          [form]="informationForm" [propertyName]="'selectFieldType'+i"
+                          [serviceFieldType]="assoServiceFieldType.serviceFieldType"
+                          [isMandatory]="assoServiceFieldType.isMandatory">
+                        </select-value-service-field-type>
+                      </div>
+                    </ng-container>
                   </ng-container>
                 </div>
               </div>

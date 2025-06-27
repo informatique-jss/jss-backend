@@ -6,6 +6,8 @@ import { PlatformService } from '../../../main/services/platform.service';
 import { DoubleButtonsComponent } from '../../../miscellaneous/components/double-buttons/double-buttons.component';
 import { GenericSwiperComponent } from '../../../miscellaneous/components/generic-swiper/generic-swiper.component';
 import { OurClientsComponent } from '../../../miscellaneous/components/our-clients/our-clients.component';
+import { QuotationType, order, quotation } from '../../../quotation/model/QuotationType';
+import { ServiceFamilyGroup } from '../../../quotation/model/ServiceFamilyGroup';
 import { Post } from '../../../tools/model/Post';
 import { PostService } from '../../../tools/services/post.service';
 import { DescriptionMyAccountComponent } from '../description-my-account/description-my-account.component';
@@ -22,6 +24,10 @@ export class DomiciliationComponent implements OnInit {
 
   tendencyPosts: Post[] = [];
 
+  serviceFamilyGroupOther: ServiceFamilyGroup | undefined;
+  quotationTypeOrder: QuotationType = order;
+  quotationTypeQuotation: QuotationType = quotation;
+
   constructor(private appService: AppService,
     private postService: PostService,
     private constantService: ConstantService,
@@ -29,6 +35,7 @@ export class DomiciliationComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.serviceFamilyGroupOther = this.constantService.getServiceFamilyGroupOther();
     this.postService.getTopPostByMyJssCategory(0, this.constantService.getMyJssCategoryDomiciliation()).subscribe(response => {
       if (response && response.content && response.content.length > 0) {
         this.tendencyPosts = response.content;

@@ -1862,6 +1862,22 @@
           </tr>
           <tr>
             <td>
+              <select-service-family-group [(model)]="constant.serviceFamilyGroupFormality
+              " label="Groupe de famille de service - Formalités" [form]="constantForm"
+                propertyName="serviceFamilyGroupFormality" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-service-family-group>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-service-family-group [(model)]="constant.serviceFamilyGroupOther
+              " label="Groupe de famille de service - Autres" [form]="constantForm"
+                propertyName="serviceFamilyGroupOther" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-service-family-group>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <generic-input [(model)]="constant.stringMyJssDemoRequestMail"
                 label="Mail de redirection Jss - Demande de Démo" [form]="constantForm"
                 propertyName="mailJssDemoRequest" [isMandatory]="true" [isDisabled]="!editMode"

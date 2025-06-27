@@ -1520,7 +1520,7 @@ public class MyJssQuotationController {
 
 	@PostMapping(inputEntryPoint + "/order/user/save")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
-	public ResponseEntity<CustomerOrder> saveCustomerOrderFromMyJss(@RequestBody CustomerOrder order,
+	public ResponseEntity<Integer> saveCustomerOrderFromMyJss(@RequestBody CustomerOrder order,
 			@RequestParam Boolean isValidation,
 			HttpServletRequest request)
 			throws OsirisValidationException, OsirisException {
@@ -1539,14 +1539,14 @@ public class MyJssQuotationController {
 				myJssQuotationValidationHelper.validateAffaire(asso.getAffaire());
 			}
 		}
-		return new ResponseEntity<CustomerOrder>(
-				myJssQuotationDelegate.saveCustomerOrderFromMyJss(order, isValidation, request),
+		return new ResponseEntity<Integer>(
+				myJssQuotationDelegate.saveCustomerOrderFromMyJss(order, isValidation, request).getId(),
 				HttpStatus.OK);
 	}
 
 	@PostMapping(inputEntryPoint + "/quotation/user/save")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
-	public ResponseEntity<Quotation> saveQuotationFromMyJss(@RequestBody Quotation order,
+	public ResponseEntity<Integer> saveQuotationFromMyJss(@RequestBody Quotation order,
 			@RequestParam Boolean isValidation,
 			HttpServletRequest request)
 			throws OsirisValidationException, OsirisException {
@@ -1565,8 +1565,8 @@ public class MyJssQuotationController {
 				myJssQuotationValidationHelper.validateAffaire(asso.getAffaire());
 			}
 		}
-		return new ResponseEntity<Quotation>(
-				myJssQuotationDelegate.saveQuotationFromMyJss(order, isValidation, request),
+		return new ResponseEntity<Integer>(
+				myJssQuotationDelegate.saveQuotationFromMyJss(order, isValidation, request).getId(),
 				HttpStatus.OK);
 	}
 

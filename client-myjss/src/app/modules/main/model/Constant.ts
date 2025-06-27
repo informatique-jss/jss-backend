@@ -45,5 +45,6 @@ export interface Constant {
   serviceTypeMonthlySubscription: ServiceType;
   serviceTypeKioskNewspaperBuy: ServiceType;
   serviceTypeUniqueArticleBuy: ServiceType;
-
+  serviceFamilyGroupFormality: ServiceFamilyGroup;
+  serviceFamilyGroupOther: ServiceFamilyGroup;
 }

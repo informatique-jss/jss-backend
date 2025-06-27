@@ -9,7 +9,11 @@
         <p class="text-body fs-lg mb-5 text-white">Publiez vos annonces légales en quelques clics 24/7 sur MyJSS notre
           plateforme sécurisée.</p>
         <double-buttons class="text-grey" orderActionLabel=" Publier une annonce légale"
-          quotationActionLabel="Demander un devis" linkLabel="Consulter les annonces légales" [isLightButtons]="true">
+          [orderActionRoute]="'quotation/new/'+serviceFamilyGroupAnnouncement!.id+'/'+quotationTypeOrder.id"
+          quotationActionLabel="Demander un devis"
+          [quotationActionRoute]="'quotation/new/'+serviceFamilyGroupAnnouncement!.id+'/'+quotationTypeQuotation.id"
+          linkLabel="Consulter les annonces légales" linkRoute="announcement/search" [linkRouteToJssMedia]='true'
+          [isLightButtons]="true">
         </double-buttons>
       </div>
     </div>

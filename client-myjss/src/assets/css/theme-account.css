@@ -9486,6 +9486,11 @@ html.theme-account[data-bs-theme=light] {
   background-color: rgba(var(--ar-success-rgb), var(--ar-bg-opacity)) !important;
 }
 
+.theme-account .bg-ok {
+  --ar-bg-opacity: 0;
+  background-color: #edcb50 !important;
+}
+
 .theme-account .bg-info {
   --ar-bg-opacity: 1;
   background-color: rgba(var(--ar-info-rgb), var(--ar-bg-opacity)) !important;

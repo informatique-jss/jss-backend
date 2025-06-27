@@ -30,6 +30,7 @@ import { SelectValueServiceFieldTypeComponent } from '../../../miscellaneous/com
 import { Affaire } from '../../../my-account/model/Affaire';
 import { Announcement } from '../../../my-account/model/Announcement';
 import { AssoServiceDocument } from '../../../my-account/model/AssoServiceDocument';
+import { AssoServiceFieldType } from '../../../my-account/model/AssoServiceFieldType';
 import { Provision } from '../../../my-account/model/Provision';
 import { Service } from '../../../my-account/model/Service';
 import { AssoServiceDocumentService } from '../../../my-account/services/asso.service.document.service';
@@ -342,7 +343,6 @@ export class RequiredInformationComponent implements OnInit {
       if (this.currentUser) {
         this.appService.showLoadingSpinner();
         return this.serviceService.addOrUpdateService(this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex]).pipe(tap(response => {
-          this.appService.hideLoadingSpinner();
         }));
       } else {
         if (this.quotation.isQuotation) {
@@ -367,7 +367,9 @@ export class RequiredInformationComponent implements OnInit {
     }
 
     if (newAssoIndex < 0) {
-      this.saveFieldsValue();
+      this.saveFieldsValue().subscribe(response => {
+        this.appService.hideLoadingSpinner();
+      });
       this.goBackQuotationModale(this.confirmBackModal);
       return;
     }
@@ -381,13 +383,16 @@ export class RequiredInformationComponent implements OnInit {
     if (newAssoIndex >= this.quotation.assoAffaireOrders.length) {
       this.saveFieldsValue().subscribe(response => {
         let r = response;
+        this.appService.hideLoadingSpinner();
         this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[3]);
         this.appService.openRoute(undefined, "quotation/checkout", undefined);
       });
       return;
     }
 
-    this.saveFieldsValue().subscribe();
+    this.saveFieldsValue().subscribe(res => {
+      this.appService.hideLoadingSpinner();
+    });
     this.selectedAssoIndex = null;
     this.selectedServiceIndex = null;
 
@@ -403,7 +408,6 @@ export class RequiredInformationComponent implements OnInit {
     }
 
     this.goBackModalInstance = this.modalService.open(content, {
-      backdrop: 'static',
     });
 
     this.goBackModalInstance.result.finally(() => {
@@ -429,7 +433,9 @@ export class RequiredInformationComponent implements OnInit {
       if (this.quotation && this.quotation.assoAffaireOrders)
         for (let asso of this.quotation.assoAffaireOrders)
           asso.services = [];
-      this.saveFieldsValue();
+      this.saveFieldsValue().subscribe(response => {
+        this.appService.hideLoadingSpinner();
+      });
       this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);
       this.appService.openRoute(undefined, "quotation/services-selection", undefined);
     }
@@ -567,5 +573,38 @@ export class RequiredInformationComponent implements OnInit {
         if (!asso.isMandatory)
           return true;
     return false;
+  }
+
+  isDisplayDependantField(assoField: AssoServiceFieldType) {
+    if (this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined) {
+      let service = this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex];
+      if (service && service.serviceTypes) {
+        for (let serviceType of service.serviceTypes) {
+          if (serviceType.assoServiceTypeFieldTypes) {
+            for (let assoServiceTypeFieldType of serviceType.assoServiceTypeFieldTypes) {
+              if (assoServiceTypeFieldType.serviceFieldType.id == assoField.serviceFieldType.id) {
+                if (!assoServiceTypeFieldType.serviceFieldTypeDependancy || !assoServiceTypeFieldType.serviceFieldTypeDependancyValue)
+                  return true;
+
+                let valueToCheck = assoServiceTypeFieldType.serviceFieldTypeDependancyValue;
+
+                // browse all field to check
+                for (let assoFieldToCheck of service.assoServiceFieldTypes) {
+                  if (assoFieldToCheck.serviceFieldType.id == assoServiceTypeFieldType.serviceFieldTypeDependancy.id) {
+                    if (assoFieldToCheck.integerValue + "" == valueToCheck
+                      || assoFieldToCheck.selectValue && assoFieldToCheck.selectValue.value == valueToCheck
+                      || assoFieldToCheck.stringValue == valueToCheck
+                      || assoFieldToCheck.textAreaValue == valueToCheck)
+                      return true;
+                    return false;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    return true;
   }
 }
