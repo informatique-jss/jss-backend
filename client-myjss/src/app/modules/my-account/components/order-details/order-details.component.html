@@ -536,7 +536,7 @@
             </span>
           </div>
           <div class="d-flex align-items-center fs-sm text-dark pb-1 mb-2"
-            *ngIf="this.invoiceSummary && this.invoiceSummary.remainingToPay>0">
+            *ngIf="this.invoiceSummary && this.invoiceSummary.remainingToPay!=undefined">
             <span class="ms-2">
               <h6>Retant dû</h6>
             </span>
