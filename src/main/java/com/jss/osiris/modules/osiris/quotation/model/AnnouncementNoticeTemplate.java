@@ -43,7 +43,7 @@ public class AnnouncementNoticeTemplate implements Serializable, IId {
 	private List<ProvisionFamilyType> provisionFamilyTypes;
 
 	@ManyToMany
-	@JoinTable(name = "asso_announcement_notice_template_announcement_notice_template_fragment", joinColumns = @JoinColumn(name = "id_announcement_notice_template"), inverseJoinColumns = @JoinColumn(name = "id_announcement_notice_template_fragment"))
+	@JoinTable(name = "asso_announcement_notice_template_announcement_fragment", joinColumns = @JoinColumn(name = "id_announcement_notice_template"), inverseJoinColumns = @JoinColumn(name = "id_announcement_notice_template_fragment"))
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private List<AnnouncementNoticeTemplateFragment> announcementNoticeTemplateFragments;
 
