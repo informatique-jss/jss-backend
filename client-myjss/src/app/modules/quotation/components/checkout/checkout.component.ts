@@ -28,6 +28,7 @@ import { CustomerOrderService } from '../../../my-account/services/customer.orde
 import { DocumentService } from '../../../my-account/services/document.service';
 import { QuotationService } from '../../../my-account/services/quotation.service';
 import { ServiceService } from '../../../my-account/services/service.service';
+import { VoucherService } from '../../../my-account/services/voucher.service';
 import { Phone } from '../../../profile/model/Phone';
 import { Responsable } from '../../../profile/model/Responsable';
 import { Tiers } from '../../../profile/model/Tiers';
@@ -123,14 +124,12 @@ export class CheckoutComponent implements OnInit {
     private serviceService: ServiceService,
     private userScopeService: UserScopeService,
     private documentService: DocumentService,
-    private cityService: CityService
+    private cityService: CityService,
+    private voucherService: VoucherService
 
   ) { }
 
   async ngOnInit() {
-    this.quotation = {
-      voucher: { code: '' }
-    } as Quotation;
     this.serviceTypeAnnualSubscription = this.constantService.getServiceTypeAnnualSubscription();
     this.serviceTypeEnterpriseAnnualSubscription = this.constantService.getServiceTypeEnterpriseAnnualSubscription();
     this.serviceTypeMonthlySubscription = this.constantService.getServiceTypeMonthlySubscription();
@@ -206,7 +205,6 @@ export class CheckoutComponent implements OnInit {
   }
 
   saveOrder(isDraft: boolean) {
-    console.log(this.documentForm);
     if (!this.quotation)
       return;
 
@@ -495,40 +493,22 @@ export class CheckoutComponent implements OnInit {
     if (this.quotation && this.voucherCode && this.voucherCode.trim().length > 0) {
       if (this.currentUser)
         if (this.quotation.isQuotation) {
-          this.quotationService.applyVoucherPricingOnQuotation(this.quotation as Quotation, this.voucherCode.toUpperCase()).subscribe(response => {
-            if (response) {
-              this.quotation = response;
-              this.finalizePricingAnswer();
-              if (this.discountAmountTotal && this.discountAmountTotal > 0)
-                this.appService.displayToast("Le code de réduction a été appliqué", false, "", 5000);
-            }
-            else this.appService.displayToast("Le code de réduction utilisé n'existe pas ou a déjà été utilisé", true, "Code de réduction invalide", 5000);
+          this.voucherService.checkVoucherQuotationForUser(this.quotation as Quotation, this.voucherCode.toUpperCase()).subscribe(response => {
+            this.getResponsableLabelIQuotation(response);
           });
         } else {
-          this.orderService.applyVoucherPricingOnOrder(this.quotation as CustomerOrder, this.voucherCode.toUpperCase()).subscribe(response => {
-            if (response) {
-              this.quotation = response;
-              this.prepareForPricingAndCompute();
-              if (this.discountAmountTotal && this.discountAmountTotal > 0)
-                this.appService.displayToast("Le code de réduction a été appliqué", false, "", 5000);
-            }
-            else this.appService.displayToast("Le code de réduction utilisé n'existe pas ou a déjà été utilisé", true, "Code de réduction invalide", 5000);
+          this.voucherService.checkVoucherOrderForUser(this.quotation as CustomerOrder, this.voucherCode.toUpperCase()).subscribe(response => {
+            this.getResponsableLabelIQuotation(response);
           });
         }
       else {
         if (this.quotation.isQuotation) {
-          this.quotationPriceObservableRef = this.quotationService.completeVoucheredPricingOfQuotation(this.quotation as Quotation, this.voucherCode.toUpperCase()).subscribe(response => {
-            if (response) {
-              this.quotation = response;
-              this.finalizePricingAnswer();
-            }
+          this.quotationPriceObservableRef = this.voucherService.checkVoucherQuotation(this.quotation as Quotation, this.voucherCode.toUpperCase()).subscribe(response => {
+            this.getResponsableLabelIQuotation(response);
           });
         } else {
-          this.quotationPriceObservableRef = this.orderService.completeVoucheredPricingOfOrder(this.quotation as CustomerOrder, this.voucherCode.toUpperCase()).subscribe(response => {
-            if (response) {
-              this.quotation = response;
-              this.finalizePricingAnswer();
-            }
+          this.quotationPriceObservableRef = this.voucherService.checkVoucherOrder(this.quotation as CustomerOrder, this.voucherCode.toUpperCase()).subscribe(response => {
+            this.getResponsableLabelIQuotation(response);
           });
         }
       }
@@ -539,20 +519,21 @@ export class CheckoutComponent implements OnInit {
     if (this.quotation && this.quotation.voucher) {
       this.quotation.voucher = {} as Voucher;
       this.voucherCode = "";
-      if (this.quotation.isQuotation)
-        this.quotationService.removeVoucher(this.quotation as Quotation).subscribe(response => {
-          if (response) {
-            this.quotation = response;
-            this.finalizePricingAnswer();
-          }
-        });
-      else this.orderService.removeVoucher(this.quotation as CustomerOrder).subscribe(response => {
-        if (response) {
-          this.quotation = response;
-          this.prepareForPricingAndCompute();
-        }
-      });
+      if (this.currentUser)
+        if (this.quotation.isQuotation)
+          this.voucherService.removeVoucherQuotation(this.quotation as Quotation).subscribe();
+        else this.voucherService.removeVoucherOrder(this.quotation as CustomerOrder).subscribe();
+      this.prepareForPricingAndCompute();
     }
+  }
+
+  getResponsableLabelIQuotation(response: any) {
+    if (response && this.quotation) {
+      this.quotation.voucher = response;
+      this.prepareForPricingAndCompute();
+      this.appService.displayToast("Le code de réduction a été appliqué", false, "", 5000);
+    }
+    else this.appService.displayToast("Le code de réduction utilisé n'existe pas ou a déjà été utilisé", true, "Code de réduction invalide", 5000);
   }
 
   deleteService(serviceIndex: number, assoIndex: number) {

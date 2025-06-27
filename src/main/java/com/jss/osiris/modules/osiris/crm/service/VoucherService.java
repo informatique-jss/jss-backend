@@ -10,18 +10,23 @@ import com.jss.osiris.modules.osiris.crm.model.Voucher;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
 
 public interface VoucherService {
-    public List<Voucher> getVouchers(Boolean isDisplayOnlyActiveVouchers);
+        public List<Voucher> getVouchers(Boolean isDisplayOnlyActiveVouchers);
 
-    public Voucher getVoucher(Integer id);
+        public Voucher getVoucher(Integer id);
 
-    public Voucher getVoucherByCode(String code);
+        public Voucher getVoucherByCode(String code);
 
-    public Voucher addOrUpdateVoucher(Voucher voucher);
+        public Voucher addOrUpdateVoucher(Voucher voucher);
 
-    public void deleteVoucher(Voucher voucher)
-            throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException, OsirisException;
+        public void deleteVoucher(Voucher voucher)
+                        throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException,
+                        OsirisException;
 
-    public Voucher checkVoucherValidity(IQuotation quotation);
+        public Voucher checkVoucherValidity(IQuotation quotation, Voucher voucher)
+                        throws OsirisClientMessageException, OsirisValidationException, OsirisException;
 
-    public List<Voucher> getVouchersFromCode(String code);
+        public List<Voucher> getVouchersFromCode(String code);
+
+        public Boolean deleteVoucheredPriceOnIQuotation(IQuotation quotation)
+                        throws OsirisClientMessageException, OsirisValidationException, OsirisException;
 }

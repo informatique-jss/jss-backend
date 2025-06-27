@@ -1576,39 +1576,38 @@ public class MyJssQuotationController {
 
 	@GetMapping(inputEntryPoint + "/voucher/delete/order")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
-	public ResponseEntity<CustomerOrder> removeVoucherCustomerOrder(@RequestParam Integer customerOrderId,
+	public ResponseEntity<Boolean> removeVoucherCustomerOrder(@RequestParam Integer customerOrderId,
 			HttpServletRequest request) throws OsirisClientMessageException, OsirisException {
 		detectFlood(request);
 		CustomerOrder customerOrder = null;
 		customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
 
 		if (customerOrder == null || customerOrder.getVoucher() == null)
-			throw new OsirisValidationException("customerOrder");
+			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
 
-		return new ResponseEntity<CustomerOrder>(
-				customerOrderService.deleteVoucheredPriceOnOrder(customerOrder),
+		return new ResponseEntity<Boolean>(voucherService.deleteVoucheredPriceOnIQuotation(customerOrder),
 				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/voucher/delete/quotation")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
-	public ResponseEntity<Quotation> removeVoucherQuotation(@RequestParam Integer quotationId,
+	public ResponseEntity<Boolean> removeVoucherQuotation(@RequestParam Integer quotationId,
 			HttpServletRequest request) throws OsirisClientMessageException, OsirisException {
 		detectFlood(request);
 		Quotation quotation = null;
 		quotation = quotationService.getQuotation(quotationId);
 
 		if (quotation == null || quotation.getVoucher() == null)
-			throw new OsirisValidationException("quotation");
+			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
 
-		return new ResponseEntity<Quotation>(
-				quotationService.deleteVoucheredPriceOnQuotation(quotation),
+		return new ResponseEntity<Boolean>(
+				voucherService.deleteVoucheredPriceOnIQuotation(quotation),
 				HttpStatus.OK);
 	}
 
-	@GetMapping(inputEntryPoint + "/voucher/order/apply")
+	@GetMapping(inputEntryPoint + "/voucher/order-user/apply")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
-	public ResponseEntity<CustomerOrder> applyVoucherPricingOnOrder(@RequestParam Integer customerOrderId,
+	public ResponseEntity<Voucher> checkAndApplyVoucherOnOrder(@RequestParam Integer customerOrderId,
 			@RequestParam String voucherCode,
 			HttpServletRequest request) throws OsirisClientMessageException, OsirisException {
 		detectFlood(request);
@@ -1624,14 +1623,14 @@ public class MyJssQuotationController {
 		if (voucherCode == null)
 			throw new OsirisValidationException("voucher");
 
-		return new ResponseEntity<CustomerOrder>(
-				customerOrderService.computeVoucheredPriceOnOrder(customerOrder, voucher),
+		return new ResponseEntity<Voucher>(
+				voucherService.checkVoucherValidity(customerOrder, voucher),
 				HttpStatus.OK);
 	}
 
-	@PostMapping(inputEntryPoint + "/voucher/order/pricing")
+	@PostMapping(inputEntryPoint + "/voucher/order/apply")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
-	public ResponseEntity<CustomerOrder> completeVoucheredPricingOfOrder(@RequestBody CustomerOrder customerOrder,
+	public ResponseEntity<Voucher> checkAndApplyVoucherOnOrder(@RequestBody CustomerOrder customerOrder,
 			@RequestParam String voucherCode, HttpServletRequest request)
 			throws OsirisValidationException, OsirisException {
 		detectFlood(request);
@@ -1643,14 +1642,14 @@ public class MyJssQuotationController {
 		if (voucher == null)
 			throw new OsirisValidationException("voucher");
 
-		return new ResponseEntity<CustomerOrder>(customerOrderService.completeAdditionnalInformationForCustomerOrder(
-				(CustomerOrder) pricingHelper.completeVoucheredPricingOfIQuotation(customerOrder, voucher)),
+		return new ResponseEntity<Voucher>(
+				voucherService.checkVoucherValidity(customerOrder, voucher),
 				HttpStatus.OK);
 	}
 
-	@PostMapping(inputEntryPoint + "/voucher/quotation/pricing")
+	@PostMapping(inputEntryPoint + "/voucher/quotation/apply")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
-	public ResponseEntity<Quotation> completeVoucheredPricingOfQuotation(@RequestBody Quotation quotation,
+	public ResponseEntity<Voucher> checkAndApplyVoucherOnQuotation(@RequestBody Quotation quotation,
 			@RequestParam String voucherCode, HttpServletRequest request)
 			throws OsirisValidationException, OsirisException {
 		detectFlood(request);
@@ -1662,14 +1661,14 @@ public class MyJssQuotationController {
 		if (voucher == null)
 			throw new OsirisValidationException("voucher");
 
-		return new ResponseEntity<Quotation>(quotationService.completeAdditionnalInformationForQuotation(
-				(Quotation) pricingHelper.completeVoucheredPricingOfIQuotation(quotation, voucher)), HttpStatus.OK);
+		return new ResponseEntity<Voucher>(voucherService.checkVoucherValidity(quotation, voucher),
+				HttpStatus.OK);
 	}
 
-	@GetMapping(inputEntryPoint + "/voucher/quotation/apply")
+	@GetMapping(inputEntryPoint + "/voucher/quotation-user/apply")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
-	public ResponseEntity<Quotation> applyVoucherPricingOnQuotation(@RequestParam Integer quotationId,
-			@RequestParam(required = false) Integer voucherId,
+	public ResponseEntity<Voucher> checkAndApplyVoucherOnQuotation(@RequestParam Integer quotationId,
+			@RequestParam String voucherCode,
 			HttpServletRequest request) throws OsirisClientMessageException, OsirisException {
 		detectFlood(request);
 		Quotation quotation = null;
@@ -1678,11 +1677,12 @@ public class MyJssQuotationController {
 		if (quotation == null)
 			throw new OsirisValidationException("quotation");
 		Voucher voucher = null;
-		if (voucherId != null)
-			voucher = voucherService.getVoucher(voucherId);
-
-		return new ResponseEntity<Quotation>(
-				quotationService.computeVoucheredPriceOnQuotation(quotation, voucher),
+		if (voucherCode != null)
+			voucher = voucherService.getVoucherByCode(voucherCode);
+		if (voucher == null)
+			throw new OsirisValidationException("voucher");
+		return new ResponseEntity<Voucher>(
+				voucherService.checkVoucherValidity(quotation, voucher),
 				HttpStatus.OK);
 	}
 

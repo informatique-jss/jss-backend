@@ -5,19 +5,20 @@ import { AppService } from 'src/app/services/app.service';
 import { Voucher } from '../../model/Voucher';
 
 @Component({
-  selector: 'app-new-voucher-dialog',
+  selector: 'new-voucher-dialog',
   templateUrl: './new-voucher-dialog.component.html',
   styleUrls: ['./new-voucher-dialog.component.css']
 })
 export class NewVoucherDialogComponent implements OnInit {
   constructor(public dialogRef: MatDialogRef<NewVoucherDialogComponent>, private formBuilder: FormBuilder,
-    private appService: AppService
+    private appService: AppService,
   ) { }
 
   voucher: Voucher = {} as Voucher;
   voucherForm = this.formBuilder.group({});
 
   ngOnInit() {
+
   }
 
   onConfirm(): void {

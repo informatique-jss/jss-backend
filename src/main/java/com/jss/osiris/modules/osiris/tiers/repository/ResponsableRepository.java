@@ -146,4 +146,7 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
                         @Param("withNonNullTurnover") Boolean withNonNullTurnover);
 
         Responsable findFirst1ByMail_MailIgnoreCase(String mail);
+
+        List<Responsable> findByLastnameContainingIgnoreCase(String lastname);
+
 }

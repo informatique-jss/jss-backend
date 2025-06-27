@@ -82,6 +82,7 @@ import { ChipsPaymentTypeComponent } from '../forms/chips-payment-type/chips-pay
 import { ChipsPhoneComponent } from '../forms/chips-phone/chips-phone.component';
 import { ChipsPrincipalAccountingAccountComponent } from '../forms/chips-principal-accounting-account/chips-principal-accounting-account.component';
 import { ChipsProvisionFamilyTypeComponent } from '../forms/chips-provision-family/chips-provision-family.component';
+import { ChipsResponsableComponent } from '../forms/chips-responsable/chips-responsable.component';
 import { ChipsServiceTypeComponent } from '../forms/chips-service-type/chips-service-type.component';
 import { ChipsSpecialOffersComponent } from '../forms/chips-special-offers/chips-special-offers.component';
 import { ChipsTypeDocumentComponent } from '../forms/chips-type-document/chips-type-document.component';
@@ -592,7 +593,8 @@ const routes: Routes = [
     SelectIncidentTypeComponent,
     SelectNoticeTypeComponent,
     SelectNoticeTemplateComponent,
-    AutocompleteVoucherComponent
+    AutocompleteVoucherComponent,
+    ChipsResponsableComponent
   ],
   exports: [
     HistoryComponent,
@@ -854,7 +856,8 @@ const routes: Routes = [
     SelectIncidentTypeComponent,
     SelectNoticeTypeComponent,
     SelectNoticeTemplateComponent,
-    AutocompleteVoucherComponent
+    AutocompleteVoucherComponent,
+    ChipsResponsableComponent
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

@@ -36,7 +36,6 @@ import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
 import com.jss.osiris.modules.myjss.quotation.service.MyJssQuotationDelegate;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingRecordService;
-import com.jss.osiris.modules.osiris.crm.model.Voucher;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
@@ -847,26 +846,6 @@ public class QuotationServiceImpl implements QuotationService {
         return true;
     }
 
-    @Override
-    public Quotation computeVoucheredPriceOnQuotation(Quotation quotation, Voucher voucher)
-            throws OsirisClientMessageException, OsirisValidationException, OsirisException {
-        Responsable responsable = null;
-
-        responsable = employeeService.getCurrentMyJssUser();
-        if (responsable != null && voucher != null)
-
-            if (voucher.getStartDate() != null && voucher.getStartDate().isAfter(LocalDate.now())
-                    || (voucher.getEndDate() != null && voucher.getEndDate().isBefore(LocalDate.now())))
-                return quotation;
-
-        quotation.setVoucher(voucher);
-        pricingHelper.getAndSetInvoiceItemsForQuotation(quotation, true);
-        quotation = addOrUpdateQuotation(quotation);
-        for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders())
-            serviceService.populateTransientField(assoAffaireOrder.getServices());
-        return quotation;
-    }
-
     @Transactional(rollbackFor = Exception.class)
     public void purgeQuotations() throws OsirisException {
         List<Quotation> quotations = quotationRepository.findQuotationOlderThanDate(
@@ -876,16 +855,5 @@ public class QuotationServiceImpl implements QuotationService {
         if (quotations != null)
             for (Quotation quotation : quotations)
                 batchService.declareNewBatch(Batch.PURGE_QUOTATION, quotation.getId());
-    }
-
-    @Override
-    public Quotation deleteVoucheredPriceOnQuotation(Quotation quotation)
-            throws OsirisClientMessageException, OsirisValidationException, OsirisException {
-        quotation.setVoucher(null);
-        pricingHelper.getAndSetInvoiceItemsForQuotation(quotation, true);
-        quotation = addOrUpdateQuotation(quotation);
-        for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders())
-            serviceService.populateTransientField(assoAffaireOrder.getServices());
-        return quotation;
     }
 }

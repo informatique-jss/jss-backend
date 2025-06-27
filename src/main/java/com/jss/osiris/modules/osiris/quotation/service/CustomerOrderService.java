@@ -46,6 +46,8 @@ public interface CustomerOrderService {
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 
+        public CustomerOrder simpleAddOrUpdate(CustomerOrder customerOrder);
+
         public CustomerOrder addOrUpdateCustomerOrderFromUser(CustomerOrder customerOrder)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
@@ -185,13 +187,7 @@ public interface CustomerOrderService {
 
         public List<CustomerOrder> getCustomerOrdersByVoucherAndResponsable(Voucher voucher, Responsable responsable);
 
-        public CustomerOrder computeVoucheredPriceOnOrder(CustomerOrder customerOrder, Voucher voucher)
-                        throws OsirisClientMessageException, OsirisValidationException, OsirisException;
-
         public void purgeCustomerOrders() throws OsirisException;
-
-        public CustomerOrder deleteVoucheredPriceOnOrder(CustomerOrder customerOrder)
-                        throws OsirisClientMessageException, OsirisValidationException, OsirisException;
 
         public CustomerOrder saveCustomerOrderFromMyJss(CustomerOrder order, Boolean isValidation,
                         HttpServletRequest request)

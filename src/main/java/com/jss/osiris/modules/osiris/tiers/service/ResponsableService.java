@@ -12,7 +12,7 @@ import com.jss.osiris.modules.osiris.tiers.model.TiersSearch;
 public interface ResponsableService {
     public Responsable addOrUpdateResponsable(Responsable responsable);
 
-    public List<Responsable> getResponsables();
+    public List<Responsable> getResponsables(String searchValue);
 
     public Responsable getResponsable(Integer id);
 

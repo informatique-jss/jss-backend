@@ -78,11 +78,13 @@ export class VoucherComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(dialogResult => {
-      if (dialogResult)
+      if (dialogResult) {
+        dialogResult.code = dialogResult.code.toUpperCase();
         this.voucherService.addOrUpdateVoucher(dialogResult).subscribe(response => {
           if (response)
             this.getAllVouchers();
         });
+      }
     });
   }
 
