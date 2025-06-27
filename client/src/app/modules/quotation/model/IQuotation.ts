@@ -1,3 +1,4 @@
+import { Voucher } from "../../crm/model/Voucher";
 import { CustomerOrderOrigin } from "../../miscellaneous/model/CustomerOrderOrigin";
 import { IAttachment } from "../../miscellaneous/model/IAttachment";
 import { IDocument } from "../../miscellaneous/model/IDocument";
@@ -26,4 +27,5 @@ export interface IQuotation extends IAttachment, IDocument {
   affairesList: string;
   servicesList: string;
   isHasNotifications: boolean;
+  voucher: Voucher;
 }

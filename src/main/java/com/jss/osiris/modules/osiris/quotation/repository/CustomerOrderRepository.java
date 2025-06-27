@@ -12,6 +12,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.libs.QueryCacheCrudRepository;
+import com.jss.osiris.modules.osiris.crm.model.Voucher;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
@@ -205,8 +206,15 @@ public interface CustomerOrderRepository
         List<CustomerOrder> findNewCustomerOrderToBilled(CustomerOrderStatus customerOrderStatusToBilled,
                         Pageable pageableRequest);
 
+        @Query("select c from CustomerOrder c where c.customerOrderStatus<>:statusAbandonned AND (:responsable IS NULL OR c.responsable = :responsable) and voucher=:voucher")
+        List<CustomerOrder> findByVoucherAndResponsable(Voucher voucher, Responsable responsable,
+                        CustomerOrderStatus statusAbandonned);
+
+        List<CustomerOrder> findByVoucher(Voucher voucher);
+
         @Query(value = "select c from CustomerOrder c where customerOrderStatus=:customerOrderStatus and createdDate<:dateLimit ")
         List<CustomerOrder> findCustomerOrderOlderThanDate(
                         @Param("customerOrderStatus") CustomerOrderStatus customerOrderStatus,
                         @Param("dateLimit") LocalDateTime dateLimit);
+
 }

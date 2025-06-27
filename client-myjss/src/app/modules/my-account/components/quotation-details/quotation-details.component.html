@@ -475,15 +475,6 @@
               <h6>{{invoiceSummary.totalPrice| currency:'EUR' }}</h6>
             </span>
           </div>
-          <div class="d-flex align-items-center fs-sm text-dark pb-1 mb-2"
-            *ngIf="this.invoiceSummary && this.invoiceSummary.remainingToPay>0">
-            <span class="ms-2">
-              <h6>Retant dû</h6>
-            </span>
-            <span class="ms-auto">
-              <h6>{{invoiceSummary.remainingToPay| currency:'EUR' }}</h6>
-            </span>
-          </div>
         </div>
       </div>
     </div>

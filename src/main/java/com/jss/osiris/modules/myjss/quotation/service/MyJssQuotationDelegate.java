@@ -240,11 +240,8 @@ public class MyJssQuotationDelegate {
             if (isValidation) {
                 quotation = customerOrderService.addOrUpdateCustomerOrderStatus((CustomerOrder) quotation,
                         CustomerOrderStatus.BEING_PROCESSED, true);
-                if (customerOrderService.isOnlyJssAnnouncement((CustomerOrder) quotation, true)) {
-                    // quotationValidationHelper.validateQuotationAndCustomerOrder(customerOrder,
-                    // CustomerOrderStatus.TO_BILLED);
+                if (customerOrderService.isOnlyJssAnnouncement((CustomerOrder) quotation, true))
                     customerOrderService.autoBilledProvisions((CustomerOrder) quotation);
-                }
             }
         }
         if (quotation.getIsQuotation()) {

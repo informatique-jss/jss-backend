@@ -19,7 +19,6 @@ import { Confrere } from '../../model/Confrere';
 import { IQuotation } from '../../model/IQuotation';
 import { OrderingSearchResult } from '../../model/OrderingSearchResult';
 import { QuotationSearchResult } from '../../model/QuotationSearchResult';
-import { CustomerOrderService } from '../../services/customer.order.service';
 import { OrderingSearchResultService } from '../../services/ordering.search.result.service';
 import { QuotationSearchResultService } from '../../services/quotation.search.result.service';
 import { QuotationService } from '../../services/quotation.service';
@@ -65,7 +64,6 @@ export class OrderingCustomerComponent implements OnInit {
     private responsableService: ResponsableService,
     private indexEntityService: IndexEntityService,
     protected documentTypeService: DocumentTypeService,
-    private customerOrderService: CustomerOrderService,
     private orderingSearchResultService: OrderingSearchResultService,
     private quotationSearchResultService: QuotationSearchResultService,
     private quotationService: QuotationService,
@@ -191,4 +189,5 @@ export class OrderingCustomerComponent implements OnInit {
       this.appService.openRoute(null, '/quotation/' + this.quotation.id, null);
     })
   }
+
 }

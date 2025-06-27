@@ -468,7 +468,7 @@
       <h3 class="h6 mb-0 me-3 mt-3 text-blue">Destinataires de la facture</h3>
     </div>
     <div class="form-check">
-      <generic-toggle *ngIf="quotation!.assoAffaireOrders.length == 1" [(model)]="document.isRecipientAffaire"
+      <generic-toggle *ngIf="quotation!.assoAffaireOrders.length==1" [(model)]="document.isRecipientAffaire"
         label="L'envoyer à mon client" [form]="documentForm" propertyName="isRecipientAffaireBilling"
         [isMandatory]="false">
       </generic-toggle>
@@ -677,12 +677,26 @@
         </div>
 
         <div class="border-top pt-4 mb-3">
-          <div class="input-group input-group-sm border-dashed">
-            <input class="form-control text-uppercase" type="text" placeholder="Code de réduction">
-            <button class="btn btn-secondary" type="button" (click)="applyCoupon()">Appliquer</button>
+          <div class="input-group input-group-sm border-dashed ">
+            <input class="form-control text-uppercase" [(ngModel)]="voucherCode" type="text"
+              placeholder="Code de réduction">
+            <div *ngIf="isComputingPrice && voucherCode && voucherCode.length>0"
+              class="spinner-border spinner-border-sm" role="status">
+              <span class="visually-hidden"></span>
+            </div>
+            <button class="btn btn-secondary" type="button" (click)="applyVoucher()">Appliquer</button>
           </div>
         </div>
         <ul class="list-unstyled pt-3 mb-0">
+          <li *ngIf="quotation && quotation.voucher && quotation.voucher.id"
+            class="d-flex justify-content-between mb-2">
+            Code appliqué : {{quotation.voucher.code}}
+            <br>
+            Réduction appliquée : {{discountAmountTotal |currency:'EUR'}}
+            <a class="nav-link fs-xl p-2" (click)="deleteVoucherPricing()">
+              <i class="ai-trash"></i>
+            </a>
+          </li>
           <li class="d-flex justify-content-between mb-2">
             Sous-total:
             <div *ngIf="isComputingPrice" class="spinner-border spinner-border-sm" role="status">

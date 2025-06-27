@@ -70,6 +70,7 @@ import { AutocompleteServiceTypeComponent } from '../forms/autocomplete-service-
 import { AutocompleteSirenComponent } from '../forms/autocomplete-siren/autocomplete-siren.component';
 import { AutocompleteSiretComponent } from '../forms/autocomplete-siret/autocomplete-siret.component';
 import { AutocompleteTiersIndividualComponent } from '../forms/autocomplete-tiers-individual/autocomplete-tiers-individual.component';
+import { AutocompleteVoucherComponent } from '../forms/autocomplete-voucher/autocomplete-voucher.component';
 import { ChipsAttachmentTypeComponent } from '../forms/chips-attachment-type/chips-attachment-type.component';
 import { ChipsCityComponent } from '../forms/chips-city/chips-city.component';
 import { ChipsCompetitorComponent } from '../forms/chips-competitor/chips-competitor.component';
@@ -81,6 +82,7 @@ import { ChipsPaymentTypeComponent } from '../forms/chips-payment-type/chips-pay
 import { ChipsPhoneComponent } from '../forms/chips-phone/chips-phone.component';
 import { ChipsPrincipalAccountingAccountComponent } from '../forms/chips-principal-accounting-account/chips-principal-accounting-account.component';
 import { ChipsProvisionFamilyTypeComponent } from '../forms/chips-provision-family/chips-provision-family.component';
+import { ChipsResponsableComponent } from '../forms/chips-responsable/chips-responsable.component';
 import { ChipsServiceTypeComponent } from '../forms/chips-service-type/chips-service-type.component';
 import { ChipsSpecialOffersComponent } from '../forms/chips-special-offers/chips-special-offers.component';
 import { ChipsTypeDocumentComponent } from '../forms/chips-type-document/chips-type-document.component';
@@ -590,7 +592,9 @@ const routes: Routes = [
     SelectIncidentCauseComponent,
     SelectIncidentTypeComponent,
     SelectNoticeTypeComponent,
-    SelectNoticeTemplateComponent
+    SelectNoticeTemplateComponent,
+    AutocompleteVoucherComponent,
+    ChipsResponsableComponent
   ],
   exports: [
     HistoryComponent,
@@ -851,7 +855,9 @@ const routes: Routes = [
     SelectIncidentCauseComponent,
     SelectIncidentTypeComponent,
     SelectNoticeTypeComponent,
-    SelectNoticeTemplateComponent
+    SelectNoticeTemplateComponent,
+    AutocompleteVoucherComponent,
+    ChipsResponsableComponent
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

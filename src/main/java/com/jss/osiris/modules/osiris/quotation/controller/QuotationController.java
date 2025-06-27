@@ -37,6 +37,8 @@ import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
+import com.jss.osiris.modules.osiris.crm.model.Voucher;
+import com.jss.osiris.modules.osiris.crm.service.VoucherService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoicingBlockage;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
@@ -396,6 +398,9 @@ public class QuotationController {
 
   @Autowired
   InvoicingBlockageService invoicingBlockageService;
+
+  @Autowired
+  VoucherService voucherService;
 
   @GetMapping(inputEntryPoint + "/service-field-types")
   public ResponseEntity<List<ServiceFieldType>> getServiceFieldTypes() {
@@ -1863,7 +1868,6 @@ public class QuotationController {
         && quotationService.checkValidationIdQuotation(customerOrder.getValidationId())
         && customerOrder.getId() == null)
       throw new OsirisValidationException("Save order already in progress");
-    // assoServiceFieldTypeService.addOrUpdateServiceFieldType(customerOrder) ;
     else
       return new ResponseEntity<CustomerOrder>(customerOrderService.addOrUpdateCustomerOrderFromUser(customerOrder),
           HttpStatus.OK);
@@ -2865,5 +2869,19 @@ public class QuotationController {
   @GetMapping(inputEntryPoint + "/customer-order/assign/invoicing/auto")
   public ResponseEntity<CustomerOrder> assignNewCustomerOrderToBilled() {
     return new ResponseEntity<CustomerOrder>(customerOrderService.assignNewCustomerOrderToBilled(), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/customer-orders/voucher")
+  @JsonView(JacksonViews.OsirisListView.class)
+  public ResponseEntity<List<CustomerOrder>> getCustomerOrdersByVoucher(@RequestParam Integer idVoucher)
+      throws OsirisValidationException {
+
+    Voucher voucher = voucherService.getVoucher(idVoucher);
+
+    if (voucher == null)
+      throw new OsirisValidationException("voucher");
+
+    return new ResponseEntity<List<CustomerOrder>>(
+        customerOrderService.getCustomerOrdersByVoucherAndResponsable(voucher, null), HttpStatus.OK);
   }
 }

@@ -13,6 +13,7 @@ import com.jss.osiris.libs.jackson.JacksonLocalDateTimeDeserializer;
 import com.jss.osiris.libs.jackson.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.modules.osiris.crm.model.Voucher;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
@@ -175,6 +176,12 @@ public class Quotation implements IQuotation {
 	public Boolean isHasNotifications;
 
 	private LocalDate princingEffectiveDate;
+
+	@ManyToOne
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class,
+			JacksonViews.OsirisDetailedView.class })
+	@JoinColumn(name = "id_voucher")
+	private Voucher voucher;
 
 	public Integer getId() {
 		return id;
@@ -390,6 +397,14 @@ public class Quotation implements IQuotation {
 
 	public void setPrincingEffectiveDate(LocalDate princingEffectiveDate) {
 		this.princingEffectiveDate = princingEffectiveDate;
+	}
+
+	public Voucher getVoucher() {
+		return voucher;
+	}
+
+	public void setVoucher(Voucher voucher) {
+		this.voucher = voucher;
 	}
 
 }

@@ -57,3 +57,9 @@ hr {
 .accordion-button:not(.collapsed) {
   color: #2C4057 !important;
 }
+
+
+.spinner-border {
+  margin-right: 5px;
+  margin-top: 10px;
+}

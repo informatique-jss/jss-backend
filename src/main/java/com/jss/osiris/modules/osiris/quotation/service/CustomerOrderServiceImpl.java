@@ -57,6 +57,8 @@ import com.jss.osiris.modules.myjss.wordpress.service.AssoProvisionPostNewspaper
 import com.jss.osiris.modules.myjss.wordpress.service.NewspaperService;
 import com.jss.osiris.modules.myjss.wordpress.service.PostService;
 import com.jss.osiris.modules.myjss.wordpress.service.SubscriptionService;
+import com.jss.osiris.modules.osiris.crm.model.Voucher;
+import com.jss.osiris.modules.osiris.crm.service.VoucherService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceLabelResult;
@@ -255,6 +257,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Autowired
     AnnouncementService announcementService;
+
+    @Autowired
+    VoucherService voucherService;
 
     private CustomerOrder simpleAddOrUpdate(CustomerOrder customerOrder) {
         return customerOrderRepository.save(customerOrder);
@@ -2083,6 +2088,14 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
+    public List<CustomerOrder> getCustomerOrdersByVoucherAndResponsable(Voucher voucher, Responsable responsable) {
+        List<CustomerOrder> voucheredOrders = new ArrayList<>();
+        CustomerOrderStatus statusAbandonned = customerOrderStatusService
+                .getCustomerOrderStatusByCode(CustomerOrderStatus.ABANDONED);
+        voucheredOrders = customerOrderRepository.findByVoucherAndResponsable(voucher, responsable, statusAbandonned);
+        return voucheredOrders;
+    }
+
     @Transactional(rollbackFor = Exception.class)
     public void purgeCustomerOrders() throws OsirisException {
         List<CustomerOrder> orders = customerOrderRepository.findCustomerOrderOlderThanDate(

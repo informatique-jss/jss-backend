@@ -1,5 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { AppRestService } from 'src/app/services/appRest.service';
 import { Responsable } from '../model/Responsable';
 
@@ -18,5 +19,9 @@ export class ResponsableService extends AppRestService<Responsable> {
 
   applyParametersDocumentToQuotation(idDocumentType: number, idResponsable: number) {
     return this.get(new HttpParams().set("idResponsable", idResponsable).set("idDocumentType", idDocumentType), "quotation/document/apply", "Les éléments des commandes et devis ont bien été mis à jour", "Erreur lors de l'application des paramètres");
+  }
+
+  getResponsables(value: string): Observable<Responsable[]> {
+    return this.getList(new HttpParams().set("searchedValue", value), "responsable/search");
   }
 }

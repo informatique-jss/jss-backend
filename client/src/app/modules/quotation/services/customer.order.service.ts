@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AppRestService } from 'src/app/services/appRest.service';
+import { Voucher } from '../../crm/model/Voucher';
 import { InvoicingBlockage } from '../../invoicing/model/InvoicingBlockage';
 import { CompetentAuthority } from '../../miscellaneous/model/CompetentAuthority';
 import { Employee } from '../../profile/model/Employee';
@@ -96,5 +97,9 @@ export class CustomerOrderService extends AppRestService<IQuotation> {
 
   assignNewCustomerOrderToBilled() {
     return this.get(new HttpParams(), "customer-order/assign/invoicing/auto");
+  }
+
+  getCustomerOrdersByVoucher(voucher: Voucher) {
+    return this.getList(new HttpParams().set("idVoucher", voucher.id), 'customer-orders/voucher') as Observable<CustomerOrder[]>;
   }
 }
