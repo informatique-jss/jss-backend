@@ -677,9 +677,7 @@
         </div>
 
         <div class="border-top pt-4 mb-3">
-          <div *ngIf="quotation && quotation.voucher && (!quotation.voucher.code || quotation.voucher.code.length==0)
-            && (!voucherCode || (voucherCode && voucherCode.length==0))"
-            class="input-group input-group-sm border-dashed ">
+          <div class="input-group input-group-sm border-dashed ">
             <input class="form-control text-uppercase" [(ngModel)]="voucherCode" type="text"
               placeholder="Code de réduction">
             <div *ngIf="isComputingPrice && voucherCode && voucherCode.length>0"
