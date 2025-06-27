@@ -30,8 +30,6 @@ import com.jss.osiris.modules.osiris.quotation.model.OrderingSearchTagged;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 public interface CustomerOrderService {
         public CustomerOrder getCustomerOrder(Integer id);
 
@@ -45,8 +43,6 @@ public interface CustomerOrderService {
                         boolean checkAllProvisionEnded)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
-
-        public CustomerOrder simpleAddOrUpdate(CustomerOrder customerOrder);
 
         public CustomerOrder addOrUpdateCustomerOrderFromUser(CustomerOrder customerOrder)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
@@ -188,8 +184,4 @@ public interface CustomerOrderService {
         public List<CustomerOrder> getCustomerOrdersByVoucherAndResponsable(Voucher voucher, Responsable responsable);
 
         public void purgeCustomerOrders() throws OsirisException;
-
-        public CustomerOrder saveCustomerOrderFromMyJss(CustomerOrder order, Boolean isValidation,
-                        HttpServletRequest request)
-                        throws OsirisClientMessageException, OsirisValidationException, OsirisException;
 }

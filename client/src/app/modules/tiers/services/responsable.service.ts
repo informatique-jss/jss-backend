@@ -22,6 +22,6 @@ export class ResponsableService extends AppRestService<Responsable> {
   }
 
   getResponsables(value: string): Observable<Responsable[]> {
-    return this.getListCached(new HttpParams().set("searchedValue", value), "responsable/search");
+    return this.getList(new HttpParams().set("searchedValue", value), "responsable/search");
   }
 }

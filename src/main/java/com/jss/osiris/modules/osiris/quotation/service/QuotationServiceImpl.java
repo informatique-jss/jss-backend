@@ -846,6 +846,7 @@ public class QuotationServiceImpl implements QuotationService {
         return true;
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void purgeQuotations() throws OsirisException {
         List<Quotation> quotations = quotationRepository.findQuotationOlderThanDate(

@@ -468,7 +468,7 @@
       <h3 class="h6 mb-0 me-3 mt-3 text-blue">Destinataires de la facture</h3>
     </div>
     <div class="form-check">
-      <generic-toggle *ngIf="quotation!.assoAffaireOrders!.length==1" [(model)]="document.isRecipientAffaire"
+      <generic-toggle *ngIf="quotation!.assoAffaireOrders.length==1" [(model)]="document.isRecipientAffaire"
         label="L'envoyer à mon client" [form]="documentForm" propertyName="isRecipientAffaireBilling"
         [isMandatory]="false">
       </generic-toggle>

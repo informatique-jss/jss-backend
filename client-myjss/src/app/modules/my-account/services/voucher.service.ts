@@ -27,10 +27,6 @@ export class VoucherService extends AppRestService<Voucher> {
     return this.get(new HttpParams().set("customerOrderId", customerOrder.id), 'voucher/delete/order');
   }
 
-  getVouchersBySearchCode(code: string) {
-    return this.getList(new HttpParams().set("code", code), "vouchers/search");
-  }
-
   checkVoucherOrderForUser(customerOrder: CustomerOrder, voucherCode: string) {
     return this.get(new HttpParams().set("customerOrderId", customerOrder.id).set("voucherCode", voucherCode), "voucher/order-user/apply");
   }

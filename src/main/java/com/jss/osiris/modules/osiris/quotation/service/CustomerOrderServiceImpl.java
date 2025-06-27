@@ -116,7 +116,6 @@ import com.jss.osiris.modules.osiris.tiers.service.TiersService;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.servlet.http.HttpServletRequest;
 
 @org.springframework.stereotype.Service
 public class CustomerOrderServiceImpl implements CustomerOrderService {
@@ -262,8 +261,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Autowired
     VoucherService voucherService;
 
-    @Override
-    public CustomerOrder simpleAddOrUpdate(CustomerOrder customerOrder) {
+    private CustomerOrder simpleAddOrUpdate(CustomerOrder customerOrder) {
         return customerOrderRepository.save(customerOrder);
     }
 
@@ -1835,36 +1833,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             return customerOrderRepository.searchOrders(responsables, customerOrderStatus);
         }
         return null;
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public CustomerOrder saveCustomerOrderFromMyJss(CustomerOrder order, Boolean isValidation,
-            HttpServletRequest request)
-            throws OsirisClientMessageException, OsirisValidationException, OsirisException {
-        if (order.getAssoAffaireOrders() != null)
-            for (AssoAffaireOrder asso : order.getAssoAffaireOrders())
-                if (asso.getAffaire() != null && asso.getAffaire().getId() == null)
-                    affaireService.addOrUpdateAffaire(asso.getAffaire());
-
-        myJssQuotationDelegate.saveNewMailsOnAffaire(order);
-
-        order.setResponsable(employeeService.getCurrentMyJssUser());
-        order.setCustomerOrderOrigin(constantService.getCustomerOrderOriginMyJss());
-        order.setCustomerOrderStatus(
-                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT));
-        quotationValidationHelper.completeIQuotationDocuments(order, true);
-        myJssQuotationDelegate.populateBooleansOfProvisions(order);
-        order = addOrUpdateCustomerOrder(order, true, false);
-
-        if (isValidation != null && isValidation) {
-            addOrUpdateCustomerOrderStatus(order, CustomerOrderStatus.BEING_PROCESSED, true);
-            if (isOnlyJssAnnouncement(order, true)) {
-                quotationValidationHelper.validateQuotationAndCustomerOrder(order, null);
-                autoBilledProvisions(order);
-            }
-        }
-        return order;
     }
 
     @Override

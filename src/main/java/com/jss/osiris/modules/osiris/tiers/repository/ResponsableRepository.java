@@ -147,6 +147,7 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
 
         Responsable findFirst1ByMail_MailIgnoreCase(String mail);
 
-        List<Responsable> findByLastnameContainingIgnoreCase(String lastname);
+        List<Responsable> findByLastnameContainingIgnoreCaseOrFirstnameContainingIgnoreCase(String lastname,
+                        String firstname);
 
 }

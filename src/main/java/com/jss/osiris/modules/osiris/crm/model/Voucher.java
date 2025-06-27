@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
-import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 import jakarta.persistence.Column;
@@ -20,7 +19,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 
 @Entity
@@ -51,13 +49,11 @@ public class Voucher implements Serializable, IId {
     private BigDecimal discountAmount;
 
     @ManyToMany
-    @JoinTable(name = "asso_voucher_responsable", joinColumns = @JoinColumn(name = "id_voucher"), inverseJoinColumns = @JoinColumn(name = "id_responseble"))
+    @JoinTable(name = "asso_voucher_responsable", joinColumns = @JoinColumn(name = "id_voucher"), inverseJoinColumns = @JoinColumn(name = "id_responsable"))
     @JsonIgnoreProperties(value = { "vouchers" }, allowSetters = true)
     private List<Responsable> responsables;
 
-    @OneToMany(mappedBy = "voucher")
-    @JsonIgnoreProperties(value = { "voucher" }, allowSetters = true)
-    private List<CustomerOrder> customerOrders;
+    private Boolean isCancelled;
 
     public Integer getId() {
         return id;
@@ -123,20 +119,20 @@ public class Voucher implements Serializable, IId {
         this.responsables = responsables;
     }
 
-    public List<CustomerOrder> getCustomerOrders() {
-        return customerOrders;
-    }
-
-    public void setCustomerOrders(List<CustomerOrder> customerOrders) {
-        this.customerOrders = customerOrders;
-    }
-
     public BigDecimal getDiscountRate() {
         return discountRate;
     }
 
     public void setDiscountRate(BigDecimal discountRate) {
         this.discountRate = discountRate;
+    }
+
+    public Boolean getIsCancelled() {
+        return isCancelled;
+    }
+
+    public void setIsCancelled(Boolean isCancelled) {
+        this.isCancelled = isCancelled;
     }
 
 }

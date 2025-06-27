@@ -10,8 +10,8 @@ import com.jss.osiris.modules.osiris.crm.model.Voucher;
 public interface VoucherRepository extends QueryCacheCrudRepository<Voucher, Integer> {
     Voucher findByCode(String code);
 
-    @Query("select v from Voucher v where (startDate is null OR startDate <= CURRENT_DATE) AND (endDate is null OR endDate >= CURRENT_DATE)")
+    @Query("select v from Voucher v where (startDate is null OR startDate <= CURRENT_DATE) AND (endDate is null OR endDate >= CURRENT_DATE) and isCancelled=false")
     List<Voucher> findActiveVouchers();
 
-    List<Voucher> findByCodeContainingIgnoreCase(String code);
+    List<Voucher> findByCodeContainingIgnoreCaseAndIsCancelled(String code, Boolean isCancelled);
 }

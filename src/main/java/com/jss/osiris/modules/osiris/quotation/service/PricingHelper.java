@@ -833,23 +833,23 @@ public class PricingHelper {
         }
         if (quotation.getVoucher() != null && invoiceItem.getBillingItem() != null
                 && invoiceItem.getBillingItem().getBillingType() != null
-                && (Boolean.TRUE.equals(invoiceItem.getBillingItem().getBillingType().getIsVacation()))
-                || Boolean.TRUE.equals(invoiceItem.getBillingItem().getBillingType().getIsTraitement())) {
+                && (Boolean.TRUE.equals(invoiceItem.getBillingItem().getBillingType().getIsVacation())
+                        || Boolean.TRUE.equals(invoiceItem.getBillingItem().getBillingType().getIsTraitement()))) {
             // TODO créer un invoice item pour les coupons avec discount amount + condition
             // istraitement et isvacation ko
-            if (quotation.getVoucher().getDiscountAmount() != null
-                    && quotation.getVoucher().getDiscountAmount().compareTo(zeroValue) > 0) {
-                BigDecimal voucherDiscount = quotation.getVoucher().getDiscountAmount()
-                        .multiply(oneHundredValue)
-                        .setScale(0, RoundingMode.HALF_EVEN)
-                        .divide(oneHundredValue);
+            // if (quotation.getVoucher().getDiscountAmount() != null
+            // && quotation.getVoucher().getDiscountAmount().compareTo(zeroValue) > 0) {
+            // BigDecimal voucherDiscount = quotation.getVoucher().getDiscountAmount()
+            // .multiply(oneHundredValue)
+            // .setScale(0, RoundingMode.HALF_EVEN)
+            // .divide(oneHundredValue);
 
-                BigDecimal existingDiscount = invoiceItem.getDiscountAmount() != null
-                        ? invoiceItem.getDiscountAmount()
-                        : zeroValue;
+            // BigDecimal existingDiscount = invoiceItem.getDiscountAmount() != null
+            // ? invoiceItem.getDiscountAmount()
+            // : zeroValue;
 
-                invoiceItem.setDiscountAmount(existingDiscount.add(voucherDiscount));
-            }
+            // invoiceItem.setDiscountAmount(existingDiscount.add(voucherDiscount));
+            // }
             if (quotation.getVoucher().getDiscountRate() != null
                     && quotation.getVoucher().getDiscountRate().compareTo(zeroValue) > 0) {
                 invoiceItem.setDiscountAmount(

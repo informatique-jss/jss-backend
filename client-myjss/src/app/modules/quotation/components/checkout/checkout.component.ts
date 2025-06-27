@@ -260,7 +260,7 @@ export class CheckoutComponent implements OnInit {
 
   isOrderPossible() {
     if (this.documentForm.invalid) {
-      this.appService.displayToast("Il manque des informations obligatoires pour pouvoir valider " + (this.quotation!.isQuotation ? "le devis" : "la commande"), true, "Validation de commande impossible", 5000);
+      this.appService.displayToast("Il manque des informations obligatoires pour pouvoir valider " + (this.quotation!.isQuotation ? "le devis" : "la commande"), true, "Validation de " + (this.quotation!.isQuotation ? "devis" : "commande") + " impossible", 5000);
       return false;
     }
     if (!this.currentUser && this.quotation!.responsable!.mail.mail != this.mailToConfirm) {
@@ -491,24 +491,25 @@ export class CheckoutComponent implements OnInit {
 
   applyVoucher() {
     if (this.quotation && this.voucherCode && this.voucherCode.trim().length > 0) {
+      this.voucherCode = this.voucherCode.trim().toUpperCase();
       if (this.currentUser)
         if (this.quotation.isQuotation) {
-          this.voucherService.checkVoucherQuotationForUser(this.quotation as Quotation, this.voucherCode.toUpperCase()).subscribe(response => {
-            this.getResponsableLabelIQuotation(response);
+          this.voucherService.checkVoucherQuotationForUser(this.quotation as Quotation, this.voucherCode).subscribe(response => {
+            this.setVoucherAndComputePricing(response);
           });
         } else {
-          this.voucherService.checkVoucherOrderForUser(this.quotation as CustomerOrder, this.voucherCode.toUpperCase()).subscribe(response => {
-            this.getResponsableLabelIQuotation(response);
+          this.voucherService.checkVoucherOrderForUser(this.quotation as CustomerOrder, this.voucherCode).subscribe(response => {
+            this.setVoucherAndComputePricing(response);
           });
         }
       else {
         if (this.quotation.isQuotation) {
-          this.quotationPriceObservableRef = this.voucherService.checkVoucherQuotation(this.quotation as Quotation, this.voucherCode.toUpperCase()).subscribe(response => {
-            this.getResponsableLabelIQuotation(response);
+          this.quotationPriceObservableRef = this.voucherService.checkVoucherQuotation(this.quotation as Quotation, this.voucherCode).subscribe(response => {
+            this.setVoucherAndComputePricing(response);
           });
         } else {
-          this.quotationPriceObservableRef = this.voucherService.checkVoucherOrder(this.quotation as CustomerOrder, this.voucherCode.toUpperCase()).subscribe(response => {
-            this.getResponsableLabelIQuotation(response);
+          this.quotationPriceObservableRef = this.voucherService.checkVoucherOrder(this.quotation as CustomerOrder, this.voucherCode).subscribe(response => {
+            this.setVoucherAndComputePricing(response);
           });
         }
       }
@@ -527,9 +528,9 @@ export class CheckoutComponent implements OnInit {
     }
   }
 
-  getResponsableLabelIQuotation(response: any) {
-    if (response && this.quotation) {
-      this.quotation.voucher = response;
+  setVoucherAndComputePricing(quotation: Voucher) {
+    if (quotation && this.quotation) {
+      this.quotation.voucher = quotation;
       this.prepareForPricingAndCompute();
       this.appService.displayToast("Le code de réduction a été appliqué", false, "", 5000);
     }
