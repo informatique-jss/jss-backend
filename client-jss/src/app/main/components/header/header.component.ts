@@ -72,11 +72,25 @@ export class HeaderComponent implements OnInit {
       this.currentUser = response;
     })
     this.departmentService.getAvailablePublishingDepartments().subscribe(departments => {
-      this.departments = departments.sort((a, b) => a.code.localeCompare(b.code));
+      this.departments = departments
+        .slice()
+        .sort((a, b) => {
+          const aCode = parseInt(a.code);
+          const bCode = parseInt(b.code);
+
+          const aValid = !isNaN(aCode);
+          const bValid = !isNaN(bCode);
+
+          if (!aValid && !bValid) return 0;
+          if (!aValid) return 1;
+          if (!bValid) return -1;
+
+          return aCode - bCode;
+        });
     });
     this.jssCategoryService.getAvailableJssCategories().subscribe(categories => {
       this.categories = categories.sort((a: JssCategory, b: JssCategory) => b.categoryOrder - a.categoryOrder);
-      this.categoriesByOrder = this.categories.slice(0, 3);
+      this.categoriesByOrder = this.categories.slice(0, 4);
     });
   }
 

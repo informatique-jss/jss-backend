@@ -547,6 +547,10 @@ public interface ConstantService {
 
     public ServiceFamilyGroup getServiceFamilyGroupAnnouncement() throws OsirisException;
 
+    public ServiceFamilyGroup getServiceFamilyGroupFormality() throws OsirisException;
+
+    public ServiceFamilyGroup getServiceFamilyGroupOther() throws OsirisException;
+
     public String getStringMyJssDemoRequestMail() throws OsirisException;
 
     public String getStringMyJssWebinarRequestMail() throws OsirisException;

@@ -67,7 +67,7 @@ public class ServiceType implements Serializable, IId {
 
 	@OneToMany(mappedBy = "serviceType", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "serviceType" }, allowSetters = true)
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class })
 	private List<AssoServiceTypeFieldType> assoServiceTypeFieldTypes;
 
 	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })

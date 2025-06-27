@@ -69,11 +69,16 @@ const routesQuotation = [
         loadComponent: () => import('./modules/quotation/components/required-information/required-information.component').then(m => m.RequiredInformationComponent),
       },
       { path: 'checkout', component: CheckoutComponent },
+      { path: 'new/:idFamilyGroup/:idQuotationType', component: IdentificationComponent },
     ]
   }, {
-    path: 'quotation/:subscription-type/:is-price-reduction/:id-article',
+    path: 'quotation/subscription/:subscription-type/:is-price-reduction/:id-article',
     loadComponent: () => import('./modules/quotation/components/quotation/quotation.component').then(m => m.QuotationComponent),
-  }
+  }, {
+    path: 'quotation/resume/quotation/:idQuotation', component: QuotationComponent,
+  }, {
+    path: 'quotation/resume/order/:idOrder', component: QuotationComponent,
+  },
 ];
 
 const routesCompany = [

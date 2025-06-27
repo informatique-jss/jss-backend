@@ -1039,7 +1039,18 @@ public class Constant implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_service_family_group_announcement")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private ServiceFamilyGroup serviceFamilyGroupAnnouncement;
+
+	@ManyToOne
+	@JoinColumn(name = "id_service_family_group_other")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	private ServiceFamilyGroup serviceFamilyGroupOther;
+
+	@ManyToOne
+	@JoinColumn(name = "id_service_family_group_formality")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	private ServiceFamilyGroup serviceFamilyGroupFormality;
 
 	private String stringMyJssDemoRequestMail;
 	private String stringMyJssWebinarRequestMail;
@@ -3018,6 +3029,22 @@ public class Constant implements Serializable, IId {
 
 	public void setAccountingJournalSituation(AccountingJournal accountingJournalSituation) {
 		this.accountingJournalSituation = accountingJournalSituation;
+	}
+
+	public ServiceFamilyGroup getServiceFamilyGroupOther() {
+		return serviceFamilyGroupOther;
+	}
+
+	public void setServiceFamilyGroupOther(ServiceFamilyGroup serviceFamilyGroupOther) {
+		this.serviceFamilyGroupOther = serviceFamilyGroupOther;
+	}
+
+	public ServiceFamilyGroup getServiceFamilyGroupFormality() {
+		return serviceFamilyGroupFormality;
+	}
+
+	public void setServiceFamilyGroupFormality(ServiceFamilyGroup serviceFamilyGroupFormality) {
+		this.serviceFamilyGroupFormality = serviceFamilyGroupFormality;
 	}
 
 }

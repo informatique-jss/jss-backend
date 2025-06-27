@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
@@ -15,15 +15,24 @@ import { TagService } from '../../services/tag.service';
 import { BookmarkComponent } from '../bookmark/bookmark.component';
 import { GenericHubComponent } from '../generic-hub/generic-hub.component';
 import { GenericInputComponent } from '../generic-input/generic-input.component';
+import { SelectJssCategoryComponent } from '../select-jss-category/select-jss-category.component';
 
 @Component({
   selector: 'category-hub',
-  templateUrl: './../generic-hub/generic-hub.component.html',
-  styleUrls: ['./../generic-hub/generic-hub.component.css'],
-  imports: [SHARED_IMPORTS, GenericInputComponent, NgbTooltipModule, BookmarkComponent],
+  templateUrl: './category-hub.component.html',
+  styleUrls: ['./category-hub.component.css'],
+  imports: [SHARED_IMPORTS, GenericInputComponent, NgbTooltipModule, BookmarkComponent, SelectJssCategoryComponent],
   standalone: true
 })
 export class CategoryHubComponent extends GenericHubComponent<JssCategory> implements OnInit {
+
+  selectedCategory: JssCategory | undefined;
+  @Output() jssCategoryChange = new EventEmitter<JssCategory>();
+
+  override ngOnInit(): void {
+    this.selectedCategory = this.selectedEntityType;
+    super.ngOnInit();
+  }
 
   constructor(private tagService: TagService, postService: PostService, loginService: LoginService, appService: AppService, formBuilder: FormBuilder, activeRoute: ActivatedRoute
   ) {
@@ -39,5 +48,20 @@ export class CategoryHubComponent extends GenericHubComponent<JssCategory> imple
 
   override getMostSeenPostByEntityType(selectedEntityType: JssCategory, page: number, pageSize: number): Observable<PagedContent<Post>> {
     return this.postService.getMostSeenPostByJssCategory(selectedEntityType, page, pageSize);
+  }
+
+  override searchForPosts() {
+    if (this.searchText || this.selectedCategory) {
+      this.selectedEntityType = this.selectedCategory;
+      this.jssCategoryChange.emit(this.selectedCategory);
+      clearTimeout(this.debounce);
+      this.searchResults = [];
+
+      this.debounce = setTimeout(() => {
+        this.fetchPosts(0);
+        this.fetchTags();
+        this.fetchMostSeenPosts();
+      }, 500);
+    }
   }
 }

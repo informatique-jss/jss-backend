@@ -1,6 +1,6 @@
+import { Service } from "./Service";
 import { ServiceFieldType } from "./ServiceFieldType";
 import { ServiceTypeFieldTypePossibleValue } from "./ServiceTypeFieldTypePossibleValue";
-import { Service } from "./Service";
 
 export interface AssoServiceFieldType {
   id: number;

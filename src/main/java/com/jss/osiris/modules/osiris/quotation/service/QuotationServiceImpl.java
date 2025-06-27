@@ -419,7 +419,7 @@ public class QuotationServiceImpl implements QuotationService {
         if (remainingToPay.compareTo(BigDecimal.ZERO) > 0) {
             CentralPayPaymentRequest paymentRequest = centralPayDelegateService.generatePayPaymentRequest(
                     remainingToPay, mail,
-                    quotation.getId() + "", subject);
+                    quotation.getId() + "", subject, true);
 
             centralPayPaymentRequestService.declareNewCentralPayPaymentRequest(paymentRequest.getPaymentRequestId(),
                     null, quotation);

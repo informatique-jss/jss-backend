@@ -82,24 +82,22 @@ export class AppService {
 
   getAllAccountMenuItems(): AccountMenuItem[] {
     let menuItem = [] as AccountMenuItem[];
-    menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Mon compte", iconClass: "ai-user-check", route: "/account/settings" } as AccountMenuItem);
-    menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Suivis", iconClass: "ai-bookmark", route: "/account/reading-folders" } as AccountMenuItem);
-    menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Relevé de compte", iconClass: "ai-wallet", route: "/account/closure" } as AccountMenuItem);
-    menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Newsletter et alertes", iconClass: "ai-messages", route: "/account/communication-preference" } as AccountMenuItem);
-    menuItem.push({ mainItem: MAIN_ITEM_DASHBOARD, label: "Tableau de bord", iconClass: "ai-chart", route: "/account/overview" } as AccountMenuItem);
-    menuItem.push({ mainItem: MAIN_ITEM_DASHBOARD, label: "Devis", iconClass: "ai-slider", route: "/account/quotations" } as AccountMenuItem);
-    menuItem.push({ mainItem: MAIN_ITEM_DASHBOARD, label: "Commandes", iconClass: "ai-cart", route: "/account/orders" } as AccountMenuItem);
-    menuItem.push({ mainItem: MAIN_ITEM_DASHBOARD, label: "Affaires", iconClass: "ai-briefcase", route: "/account/affaires" } as AccountMenuItem);
-
-    // Display only if I have more than one responsible potential
-    this.responsableService.getPotentialUserScope().subscribe(response => {
-      if (response.length > 1)
-        menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Vue d'ensemble", iconClass: "ai-grid", route: "/account/scope" } as AccountMenuItem);
-    })
-
     this.userScopeService.getUserScope().subscribe(response => {
-      if (response.length > 1)
-        menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Mes comptes associés", iconClass: "ai-link", route: "/account/associated-settings" } as AccountMenuItem);
+      this.responsableService.getPotentialUserScope().subscribe(responseScope => {
+        menuItem.push({ mainItem: MAIN_ITEM_DASHBOARD, label: "Vue d'ensemble", iconClass: "ai-chart", route: "/account/overview" } as AccountMenuItem);
+        menuItem.push({ mainItem: MAIN_ITEM_DASHBOARD, label: "Devis", iconClass: "ai-slider", route: "/account/quotations" } as AccountMenuItem);
+        menuItem.push({ mainItem: MAIN_ITEM_DASHBOARD, label: "Commandes", iconClass: "ai-cart", route: "/account/orders" } as AccountMenuItem);
+        menuItem.push({ mainItem: MAIN_ITEM_DASHBOARD, label: "Relevé de compte", iconClass: "ai-wallet", route: "/account/closure" } as AccountMenuItem);
+        menuItem.push({ mainItem: MAIN_ITEM_DASHBOARD, label: "Affaires", iconClass: "ai-briefcase", route: "/account/affaires" } as AccountMenuItem);
+        menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Mon compte", iconClass: "ai-user-check", route: "/account/settings" } as AccountMenuItem);
+        if (response.length > 1)
+          menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Mes comptes associés", iconClass: "ai-link", route: "/account/associated-settings" } as AccountMenuItem);
+        // Display only if I have more than one responsible potential
+        if (responseScope.length > 1)
+          menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Périmètre", iconClass: "ai-grid", route: "/account/scope" } as AccountMenuItem);
+        menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Contenu suivis", iconClass: "ai-bookmark", route: "/account/reading-folders" } as AccountMenuItem);
+        menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Newsletter et alertes", iconClass: "ai-messages", route: "/account/communication-preference" } as AccountMenuItem);
+      })
     })
     return menuItem;
   }
@@ -138,7 +136,7 @@ export class AppService {
     menuItem.push({ label: "Nos fiches pratiques", iconClass: "ai-wallet", route: "/tools/practical-sheets" } as MenuItem);
     menuItem.push({ label: "Pièces obligatoires", iconClass: "ai-user-check", route: "/tools/mandatory-documents" } as MenuItem);
     menuItem.push({ label: "Webinaires", iconClass: "ai-chart", route: "/tools/webinars" } as MenuItem);
-    menuItem.push({ label: "Nos exclus", iconClass: "ai-slider", route: "/tools/exclusives" } as MenuItem);
+    //menuItem.push({ label: "Nos exclus", iconClass: "ai-slider", route: "/tools/exclusives" } as MenuItem);
 
     return menuItem;
   }

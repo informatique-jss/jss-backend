@@ -1166,7 +1166,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if (remainingToPay.compareTo(zeroValue) > 0) {
             CentralPayPaymentRequest paymentRequest = centralPayDelegateService.generatePayPaymentRequest(
                     remainingToPay, mail,
-                    customerOrder.getId() + "", subject);
+                    customerOrder.getId() + "", subject, false);
 
             centralPayPaymentRequestService.declareNewCentralPayPaymentRequest(paymentRequest.getPaymentRequestId(),
                     customerOrder, null);

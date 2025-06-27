@@ -4,5 +4,6 @@
 <div>
   <main-footer *ngIf="isDisplayFooter()"></main-footer>
 </div>
-<toast style="display: block; position: fixed; bottom: 20px; right: 20px;" class="z-3"></toast>
+<toast style="display: block; position: fixed; bottom: 20px; right: 20px;" [displayLight]="isDisplayLightHeader()"
+  class="z-3"></toast>
 <loading></loading>

@@ -1,5 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { MenuItem } from '../../general/model/MenuItem';
 import { AppRestService } from '../../main/services/appRest.service';
 import { IQuotation } from '../../quotation/model/IQuotation';
@@ -30,8 +31,8 @@ export class QuotationService extends AppRestService<Quotation> {
     return this.get(new HttpParams().set("idCustomerOrder", idCustomerOrder), 'order/quotation');
   }
 
-  saveQuotation(quotation: IQuotation, isValidation: boolean) {
-    return this.postItem(new HttpParams().set("isValidation", isValidation), 'quotation/user/save', quotation);
+  saveQuotation(quotation: IQuotation, isValidation: boolean): Observable<number> {
+    return this.postItem(new HttpParams().set("isValidation", isValidation), 'quotation/user/save', quotation) as any as Observable<number>;
   }
 
   saveFinalQuotation(quotation: Quotation, isValidation: boolean) {

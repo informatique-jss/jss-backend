@@ -6,6 +6,8 @@ import { PlatformService } from '../../../main/services/platform.service';
 import { DoubleButtonsComponent } from '../../../miscellaneous/components/double-buttons/double-buttons.component';
 import { GenericSwiperComponent } from '../../../miscellaneous/components/generic-swiper/generic-swiper.component';
 import { OurClientsComponent } from '../../../miscellaneous/components/our-clients/our-clients.component';
+import { QuotationType, order, quotation } from '../../../quotation/model/QuotationType';
+import { ServiceFamilyGroup } from '../../../quotation/model/ServiceFamilyGroup';
 import { MyJssCategory } from '../../../tools/model/MyJssCategory';
 import { Post } from '../../../tools/model/Post';
 import { PostService } from '../../../tools/services/post.service';
@@ -23,6 +25,9 @@ export class FormalityComponent implements OnInit {
   tendencyPosts: Post[] = [] as Array<Post>;
   myJssCategoryFormality!: MyJssCategory;
   carouselFormalityPosts: Post[] = [];
+  serviceFamilyGroupFormality: ServiceFamilyGroup | undefined;
+  quotationTypeOrder: QuotationType = order;
+  quotationTypeQuotation: QuotationType = quotation;
 
   constructor(private appService: AppService,
     private constantService: ConstantService,
@@ -31,6 +36,7 @@ export class FormalityComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.serviceFamilyGroupFormality = this.constantService.getServiceFamilyGroupFormality();
     this.myJssCategoryFormality = this.constantService.getMyJssCategoryFormality();
     this.postService.getPinnedPostByMyJssCategory(0, this.myJssCategoryFormality).subscribe(posts => {
       if (posts && posts.content)

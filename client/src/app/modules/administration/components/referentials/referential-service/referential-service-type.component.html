@@ -235,7 +235,16 @@
                 [propertyName]="'isMandatoryField'+index+deleteIndex" [isDisabled]="!editMode"></generic-toggle>
             </td>
             <td>
-
+              <select-service-field-type [(model)]="assoServiceFieldType.serviceFieldTypeDependancy"
+                [propertyName]="'serviceFieldTypeDependancy'+index+deleteIndex" [form]="entityForm"
+                [isMandatory]="false" label="Type de champ en dépendance"
+                [isDisabled]="!editMode"></select-service-field-type>
+            </td>
+            <td *ngIf="assoServiceFieldType.serviceFieldTypeDependancy">
+              <generic-input [(model)]="assoServiceFieldType.serviceFieldTypeDependancyValue"
+                label="Valeur d'affichage de la dépendance" [form]="entityForm"
+                [propertyName]="'serviceFieldTypeDependancyValue'+index+deleteIndex" [isMandatory]="true"
+                [isDisabled]="!editMode"></generic-input>
             </td>
             <td>
               <button *ngIf="editMode" (click)="deleteFieldType(assoServiceFieldType)" mat-raised-button color="accent">

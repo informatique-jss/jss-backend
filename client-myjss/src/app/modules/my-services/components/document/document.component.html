@@ -8,7 +8,11 @@
       <div class="col-md-6 col-xl-5 offset-xl-1">
         <p class="text-body fs-lg mb-5 text-white">Tous les documents juridiques disponibles auprès des tribunaux de
           commerce en quelques clics !</p>
-        <double-buttons orderActionLabel="Commander des documents" quotationActionLabel="Demander un devis">
+        <double-buttons class="text-grey" orderActionLabel=" Commander des documents"
+          [orderActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeOrder.id"
+          quotationActionLabel="Demander un devis"
+          [quotationActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeQuotation.id"
+          [isLightButtons]="true">
         </double-buttons>
       </div>
     </div>

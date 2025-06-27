@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { NgbAccordionModule, NgbDropdownModule, NgbNavModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
-import { ASSO_SERVICE_DOCUMENT_ENTITY_TYPE, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, INVOICING_PAYMENT_LIMIT_REFUND_EUROS, SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
+import { ASSO_SERVICE_DOCUMENT_ENTITY_TYPE, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, INVOICING_PAYMENT_LIMIT_REFUND_EUROS, SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
 import { capitalizeName, getListMails, getListPhones } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { TrustHtmlPipe } from '../../../../libs/TrustHtmlPipe';
@@ -109,6 +109,7 @@ export class OrderDetailsComponent implements OnInit {
   SERVICE_FIELD_TYPE_TEXTAREA = SERVICE_FIELD_TYPE_TEXTAREA;
   SERVICE_FIELD_TYPE_DATE = SERVICE_FIELD_TYPE_DATE;
   SERVICE_FIELD_TYPE_SELECT = SERVICE_FIELD_TYPE_SELECT;
+  CUSTOMER_ORDER_STATUS_OPEN = CUSTOMER_ORDER_STATUS_OPEN;
 
   ngOnInit() {
     this.orderDetailsForm = this.formBuilder.group({});
@@ -116,8 +117,13 @@ export class OrderDetailsComponent implements OnInit {
     this.paymentTypeCb = this.constantService.getPaymentTypeCB();
     this.billingLabelTypeCodeAffaire = this.constantService.getBillingLabelTypeCodeAffaire();
 
+    this.refreshOrder();
+  }
+
+  refreshOrder() {
     this.customerOrderService.getCustomerOrder(this.activatedRoute.snapshot.params['id']).subscribe(response => {
       this.order = response;
+      this.appService.hideLoadingSpinner();
       this.loadOrderDetails();
     })
   }
@@ -277,5 +283,19 @@ export class OrderDetailsComponent implements OnInit {
 
   displayMyInformation(service: Service) {
     return service.assoServiceFieldTypes && service.assoServiceFieldTypes.find(a => a.isMandatory);
+  }
+
+  resumeDraft(event: any) {
+    if (this.order && this.order.id)
+      this.appService.openRoute(event, "quotation/resume/order/" + this.order.id, undefined);
+  }
+
+  cancelDraft(event: any) {
+    if (this.order && this.order.id) {
+      this.appService.showLoadingSpinner();
+      this.customerOrderService.cancelCustomerOrder(this.order.id).subscribe(response => {
+        this.refreshOrder();
+      });
+    }
   }
 }

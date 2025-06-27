@@ -11,14 +11,26 @@ import { AppService } from '../../../main/services/app.service';
 })
 export class DoubleButtonsComponent implements OnInit {
   @Input() orderActionLabel: string = "";
+  @Input() orderActionRoute: string = "";
   @Input() quotationActionLabel: string = "";
+  @Input() quotationActionRoute: string = "";
   @Input() linkLabel: string = "";
+  @Input() linkRoute: string = "";
+  @Input() linkRouteToJssMedia: boolean = false;
   @Input() isLightButtons: boolean = true;
   constructor(private appService: AppService) { }
 
   ngOnInit() {
   }
-  openRoute(event: any) {
-    this.appService.openRoute(event, '', undefined);
+
+  openRoute(event: any, route: string) {
+    this.appService.openRoute(event, route, undefined);
+  }
+
+  openRouteForLink(event: any, route: string) {
+    if (this.linkRouteToJssMedia) {
+      this.appService.openJssRoute(event, route, undefined);
+    } else
+      this.openRoute(event, route);
   }
 }

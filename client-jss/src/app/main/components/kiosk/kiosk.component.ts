@@ -77,6 +77,6 @@ export class KioskComponent implements OnInit {
   }
 
   buyNewspaper(newspaperId: number) {
-    this.appService.openMyJssRoute(event, "/quotation/" + NEWSPAPER_KIOSK_BUY + "/" + false + "/" + newspaperId, true);
+    this.appService.openMyJssRoute(event, "/quotation/subscription/" + NEWSPAPER_KIOSK_BUY + "/" + false + "/" + newspaperId, true);
   }
 }
