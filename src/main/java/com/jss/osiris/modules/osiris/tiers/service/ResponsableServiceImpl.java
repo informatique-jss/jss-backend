@@ -60,7 +60,8 @@ public class ResponsableServiceImpl implements ResponsableService {
         if (searchedValue == null || searchedValue.trim().length() <= 2)
             return null;
 
-        return responsableRepository.findByLastnameContainingIgnoreCaseOrFirstnameContainingIgnoreCase(searchedValue);
+        return responsableRepository.findByLastnameContainingIgnoreCaseOrFirstnameContainingIgnoreCase(searchedValue,
+                searchedValue);
     }
 
     @Override
