@@ -92,6 +92,12 @@ public class ServiceType implements Serializable, IId {
 	@JsonView(JacksonViews.MyJssListView.class)
 	private Boolean isMergeable;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_announcement_notice_template")
+	@JsonIgnoreProperties(value = { "provisionFamilyTypes" }, allowSetters = true)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	private AnnouncementNoticeTemplate announcementNoticeTemplate;
+
 	public Integer getId() {
 		return id;
 	}
@@ -228,4 +234,11 @@ public class ServiceType implements Serializable, IId {
 		this.isMergeable = isMergeable;
 	}
 
+	public AnnouncementNoticeTemplate getAnnouncementNoticeTemplate() {
+		return announcementNoticeTemplate;
+	}
+
+	public void setAnnouncementNoticeTemplate(AnnouncementNoticeTemplate announcementNoticeTemplate) {
+		this.announcementNoticeTemplate = announcementNoticeTemplate;
+	}
 }

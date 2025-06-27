@@ -3,6 +3,8 @@ package com.jss.osiris.modules.osiris.quotation.model;
 import java.io.Serializable;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
 import jakarta.persistence.Column;
@@ -23,18 +25,27 @@ public class AnnouncementNoticeTemplate implements Serializable, IId {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "announcement_notice_template_sequence")
 	private Integer id;
 
-	@Column(nullable = false, length = 100)
+	@Column(nullable = false, length = 250)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String label;
 
 	@Column(nullable = false, length = 40)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String code;
 
 	@Column(columnDefinition = "TEXT")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String text;
 
 	@ManyToMany
 	@JoinTable(name = "asso_annoucement_notice_template_provision_type", joinColumns = @JoinColumn(name = "id_announcement_notice_template"), inverseJoinColumns = @JoinColumn(name = "id_provision_family_type"))
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private List<ProvisionFamilyType> provisionFamilyTypes;
+
+	@ManyToMany
+	@JoinTable(name = "asso_announcement_notice_template_announcement_notice_template_fragment", joinColumns = @JoinColumn(name = "id_announcement_notice_template"), inverseJoinColumns = @JoinColumn(name = "id_announcement_notice_template_fragment"))
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	private List<AnnouncementNoticeTemplateFragment> announcementNoticeTemplateFragments;
 
 	public Integer getId() {
 		return id;
@@ -76,4 +87,12 @@ public class AnnouncementNoticeTemplate implements Serializable, IId {
 		this.provisionFamilyTypes = provisionFamilyTypes;
 	}
 
+	public List<AnnouncementNoticeTemplateFragment> getAnnouncementNoticeTemplateFragments() {
+		return announcementNoticeTemplateFragments;
+	}
+
+	public void setAnnouncementNoticeTemplateFragments(
+			List<AnnouncementNoticeTemplateFragment> announcementNoticeTemplateFragments) {
+		this.announcementNoticeTemplateFragments = announcementNoticeTemplateFragments;
+	}
 }

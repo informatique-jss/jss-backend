@@ -151,7 +151,8 @@
                       [isDisabled]="false"></generic-textarea>
                   </div> -->
                 </div>
-                <notice-template [template]="assoServiceProvitionType.noticeTemplate"></notice-template>
+                <notice-template
+                  [service]="quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex]"></notice-template>
 
               </div>
 

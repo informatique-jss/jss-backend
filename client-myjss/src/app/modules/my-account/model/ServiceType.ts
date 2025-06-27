@@ -1,3 +1,4 @@
+import { AnnouncementNoticeTemplate } from "../../quotation/model/AnnouncementNoticeTemplate";
 import { AssoServiceTypeDocument } from "./AssoServiceTypeDocument";
 import { AssoServiceTypeFieldType } from "./AssoServiceTypeFieldType";
 
@@ -12,4 +13,5 @@ export interface ServiceType {
   isRequiringNewUnregisteredAffaire: boolean;
   hasAnnouncement: boolean;
   hasOnlyAnnouncement: boolean;
+  announcementNoticeTemplate: AnnouncementNoticeTemplate;
 }
