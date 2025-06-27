@@ -14,6 +14,9 @@
     propertyName="perUserLimit" [isMandatory]="false" [isDisabled]="false" type="number"></generic-input>
   <generic-input [(model)]="voucher.totalLimit" label="Nombre d'utilisation totale" [form]="voucherForm"
     propertyName="totalLimit" [isMandatory]="false" [isDisabled]="false" type="number"></generic-input>
+  <chips-responsable [(model)]="voucher.responsables" label="Responsables" [form]="voucherForm"
+    propertyName="responsables" [isMandatory]="false"></chips-responsable>
+
 </div>
 <div mat-dialog-actions align="end">
   <button mat-raised-button color="accent" (click)="onClose()">Annuler</button>

@@ -262,7 +262,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Autowired
     VoucherService voucherService;
 
-    private CustomerOrder simpleAddOrUpdate(CustomerOrder customerOrder) {
+    @Override
+    public CustomerOrder simpleAddOrUpdate(CustomerOrder customerOrder) {
         return customerOrderRepository.save(customerOrder);
     }
 
@@ -420,10 +421,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                             }
                 }
             }
-
-        // check voucher validity before pricing
-        if (customerOrder.getVoucher() != null && voucherService.checkVoucherValidity(customerOrder) == null)
-            customerOrder.setVoucher(null);
 
         if (oneNewProvision || isNewCustomerOrder)
             customerOrder = simpleAddOrUpdate(customerOrder);
@@ -1862,14 +1859,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         if (isValidation != null && isValidation) {
             addOrUpdateCustomerOrderStatus(order, CustomerOrderStatus.BEING_PROCESSED, true);
-            if (order.getVoucher() != null && order.getCustomerOrderStatus().getCode()
-                    .equals(CustomerOrderStatus.BEING_PROCESSED)) {
-                if (order.getVoucher().getResponsables() != null)
-                    order.getVoucher().getResponsables().add(order.getResponsable());
-                else
-                    order.getVoucher().setResponsables(List.of(order.getResponsable()));
-                simpleAddOrUpdate(order);
-            }
             if (isOnlyJssAnnouncement(order, true)) {
                 quotationValidationHelper.validateQuotationAndCustomerOrder(order, null);
                 autoBilledProvisions(order);
@@ -2139,33 +2128,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         return voucheredOrders;
     }
 
-    @Override
-    public CustomerOrder computeVoucheredPriceOnOrder(CustomerOrder customerOrder, Voucher voucher)
-            throws OsirisClientMessageException, OsirisValidationException, OsirisException {
-        Integer voucherUsesPerResponsable = null;
-        Integer voucherUsesTotal = null;
-        Responsable responsable = null;
-
-        responsable = employeeService.getCurrentMyJssUser();
-        if (responsable != null && voucher != null)
-            voucherUsesPerResponsable = getCustomerOrdersByVoucherAndResponsable(voucher,
-                    responsable).size();
-        voucherUsesTotal = getCustomerOrdersByVoucherAndResponsable(voucher, null).size();
-
-        if (voucher.getStartDate() != null && voucher.getStartDate().isAfter(LocalDate.now())
-                || (voucher.getEndDate() != null && voucher.getEndDate().isBefore(LocalDate.now()))
-                || (voucher.getPerUserLimit() != null && voucherUsesPerResponsable >= voucher.getPerUserLimit())
-                || (voucher.getTotalLimit() != null && voucherUsesTotal >= voucher.getTotalLimit()))
-            return customerOrder;
-
-        customerOrder.setVoucher(voucher);
-        pricingHelper.getAndSetInvoiceItemsForQuotation(customerOrder, true);
-        customerOrder = simpleAddOrUpdate(customerOrder);
-        for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders())
-            serviceService.populateTransientField(assoAffaireOrder.getServices());
-        return customerOrder;
-    }
-
     @Transactional(rollbackFor = Exception.class)
     public void purgeCustomerOrders() throws OsirisException {
         List<CustomerOrder> orders = customerOrderRepository.findCustomerOrderOlderThanDate(
@@ -2175,16 +2137,5 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if (orders != null)
             for (CustomerOrder order : orders)
                 batchService.declareNewBatch(Batch.PURGE_CUSTOMER_ORDER, order.getId());
-    }
-
-    @Override
-    public CustomerOrder deleteVoucheredPriceOnOrder(CustomerOrder customerOrder)
-            throws OsirisClientMessageException, OsirisValidationException, OsirisException {
-        customerOrder.setVoucher(null);
-        pricingHelper.getAndSetInvoiceItemsForQuotation(customerOrder, true);
-        customerOrder = simpleAddOrUpdate(customerOrder);
-        for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders())
-            serviceService.populateTransientField(assoAffaireOrder.getServices());
-        return customerOrder;
     }
 }

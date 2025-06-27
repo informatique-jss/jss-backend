@@ -39,18 +39,6 @@ export class QuotationService extends AppRestService<Quotation> {
     return this.postItem(new HttpParams().set("isValidation", isValidation), 'quotation/save-order', quotation);
   }
 
-  applyVoucherPricingOnQuotation(quotation: Quotation, voucherCode: string) {
-    return this.get(new HttpParams().set("quotationId", quotation.id).set("voucherCode", voucherCode), 'voucher/quotation/pricing');
-  }
-
-  completeVoucheredPricingOfQuotation(quotation: Quotation, voucherCode: string) {
-    return this.postItem(new HttpParams().set("voucherCode", voucherCode), 'voucher/quotation/pricing', quotation);
-  }
-
-  removeVoucher(quotation: Quotation) {
-    return this.get(new HttpParams().set("quotationId", quotation.id), 'voucher/delete/quotation');
-  }
-
   completePricingOfQuotation(quotation: Quotation, isEmergency: boolean) {
     return this.postItem(new HttpParams().set("isEmergency", isEmergency), 'quotation/pricing', quotation);
   }

@@ -50,18 +50,6 @@ export class CustomerOrderService extends AppRestService<CustomerOrder> {
     return this.postItem(new HttpParams().set("isEmergency", isEmergency), 'order/pricing', customerOrder);
   }
 
-  applyVoucherPricingOnOrder(customerOrder: CustomerOrder, voucherCode: string) {
-    return this.get(new HttpParams().set("customerOrderId", customerOrder.id).set("voucherCode", voucherCode), 'voucher/order/pricing');
-  }
-
-  completeVoucheredPricingOfOrder(customerOrder: CustomerOrder, voucherCode: string) {
-    return this.postItem(new HttpParams().set("voucherCode", voucherCode), 'voucher/order/pricing', customerOrder);
-  }
-
-  removeVoucher(customerOrder: CustomerOrder) {
-    return this.get(new HttpParams().set("customerOrderId", customerOrder.id), 'voucher/delete/order');
-  }
-
   setEmergencyOnOrder(orderId: number, isEmergency: boolean) {
     return this.get(new HttpParams().set("orderId", orderId).set("isEmergency", isEmergency), 'order/emergency');
   }

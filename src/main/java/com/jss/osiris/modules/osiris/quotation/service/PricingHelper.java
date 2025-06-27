@@ -15,7 +15,6 @@ import com.jss.osiris.libs.audit.service.AuditService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
-import com.jss.osiris.modules.osiris.crm.model.Voucher;
 import com.jss.osiris.modules.osiris.crm.service.VoucherService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
@@ -833,12 +832,11 @@ public class PricingHelper {
                                 .divide(oneHundredValue));
         }
         if (quotation.getVoucher() != null && invoiceItem.getBillingItem() != null
-                && invoiceItem.getBillingItem().getBillingType() != null &&
-                invoiceItem.getBillingItem().getBillingType().getIsVacation() != null
-                && invoiceItem.getBillingItem().getBillingType().getIsVacation()
-                && invoiceItem.getBillingItem().getBillingType().getIsTraitement() != null
-                && invoiceItem.getBillingItem().getBillingType().getIsTraitement()) {
-            // TODO créer un invoice item pour les coupons avec discount amount
+                && invoiceItem.getBillingItem().getBillingType() != null
+                && (Boolean.TRUE.equals(invoiceItem.getBillingItem().getBillingType().getIsVacation()))
+                || Boolean.TRUE.equals(invoiceItem.getBillingItem().getBillingType().getIsTraitement())) {
+            // TODO créer un invoice item pour les coupons avec discount amount + condition
+            // istraitement et isvacation ko
             if (quotation.getVoucher().getDiscountAmount() != null
                     && quotation.getVoucher().getDiscountAmount().compareTo(zeroValue) > 0) {
                 BigDecimal voucherDiscount = quotation.getVoucher().getDiscountAmount()
@@ -879,15 +877,6 @@ public class PricingHelper {
         quotation = getAndSetInvoiceItemsForQuotation(quotation, false);
 
         quotation.setResponsable(null);
-        return quotation;
-    }
-
-    public IQuotation completeVoucheredPricingOfIQuotation(IQuotation quotation, Voucher voucher)
-            throws OsirisClientMessageException, OsirisValidationException, OsirisException {
-        quotation.setVoucher(voucher);
-        voucher = voucherService.checkVoucherValidity(quotation);
-        if (voucher != null)
-            quotation = getAndSetInvoiceItemsForQuotation(quotation, false);
         return quotation;
     }
 }

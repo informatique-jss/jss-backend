@@ -6,7 +6,6 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
-import com.jss.osiris.modules.osiris.crm.model.Voucher;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
@@ -97,11 +96,5 @@ public interface QuotationService {
         public Boolean setDocumentOnOrder(Quotation quotation, Document document)
                         throws OsirisClientMessageException, OsirisValidationException, OsirisException;
 
-        public Quotation computeVoucheredPriceOnQuotation(Quotation quotation, Voucher voucher)
-                        throws OsirisClientMessageException, OsirisValidationException, OsirisException;
-
         public void purgeQuotations() throws OsirisException;
-
-        public Quotation deleteVoucheredPriceOnQuotation(Quotation quotation)
-                        throws OsirisClientMessageException, OsirisValidationException, OsirisException;
 }

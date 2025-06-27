@@ -57,3 +57,15 @@ hr {
 .accordion-button:not(.collapsed) {
   color: #2C4057 !important;
 }
+
+
+.spinner-border {
+  display: inline-block;
+  width: var(--ar-spinner-width);
+  height: var(--ar-spinner-height);
+  vertical-align: var(--ar-spinner-vertical-align);
+  margin-right:5px;
+  margin-top:10px;
+  border-radius: 50% !important;
+  animation: var(--ar-spinner-animation-speed) linear infinite var(--ar-spinner-animation-name);
+}
