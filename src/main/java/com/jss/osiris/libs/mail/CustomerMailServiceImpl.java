@@ -480,6 +480,8 @@ public class CustomerMailServiceImpl implements CustomerMailService {
                     canSend = true;
                 if (address.toString().toLowerCase().contains("@haas-avocats.com"))
                     canSend = true;
+                if (address.toString().toLowerCase().contains("telecoq@gmail.com"))
+                    canSend = true;
             }
         }
         try {

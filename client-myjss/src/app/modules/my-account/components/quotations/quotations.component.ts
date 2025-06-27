@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbAccordionModule, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
-import { CUSTOMER_ORDER_STATUS_ABANDONED, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_QUOTATION_WAITING_CONFRERE, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, QUOTATION_STATUS_VALIDATED_BY_CUSTOMER } from '../../../../libs/Constants';
+import { QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_QUOTATION_WAITING_CONFRERE, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, QUOTATION_STATUS_VALIDATED_BY_CUSTOMER } from '../../../../libs/Constants';
 import { capitalizeName } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
@@ -249,7 +249,5 @@ export function getClassForQuotationStatus(quotation: Quotation) {
     return "bg-danger text-danger";
   if (quotation.quotationStatus.code == QUOTATION_STATUS_ABANDONED)
     return "bg-dark text-dark";
-  if (quotation.quotationStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED)
-    return "bg-danger text-danger";
-  return "bg-light text-light";
+  return "bg-dark text-light";
 }

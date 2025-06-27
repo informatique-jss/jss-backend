@@ -86,7 +86,7 @@ export class PostComponent implements OnInit, AfterViewInit {
     private loginService: LoginService,
     private modalService: NgbModal,
     private cdr: ChangeDetectorRef,
-    private readingFolderService: ReadingFolderService
+    private readingFolderService: ReadingFolderService,
   ) { }
 
   getTimeReading = getTimeReading;
@@ -100,6 +100,19 @@ export class PostComponent implements OnInit, AfterViewInit {
     this.newCommentForm = this.formBuilder.group({});
     this.giftForm = this.formBuilder.group({});
 
+    this.activatedRoute.params.subscribe(() => {
+      this.refreshPost();
+    });
+
+    this.refreshPost();
+
+    this.progressSubscription = this.audioService.progressObservable.subscribe(item => {
+      this.progress = item;
+      this.cdr.detectChanges();
+    });
+  }
+
+  refreshPost() {
     this.validationToken = this.activatedRoute.snapshot.params['token'];
     if (this.validationToken) {
       let mail = this.activatedRoute.snapshot.params['mail'];
@@ -125,11 +138,6 @@ export class PostComponent implements OnInit, AfterViewInit {
     this.cancelReply()
     this.fetchMostSeenPosts();
     this.fetchReadingFolder();
-
-    this.progressSubscription = this.audioService.progressObservable.subscribe(item => {
-      this.progress = item;
-      this.cdr.detectChanges();
-    });
   }
 
   private fetchNextPrevArticleAndComments(post: Post) {
@@ -358,7 +366,7 @@ export class PostComponent implements OnInit, AfterViewInit {
   };
 
   subscribeToOnePost(event: any, idArticle: number) {
-    this.appService.openMyJssRoute(event, "/quotation/" + ONE_POST_SUBSCRIPTION + "/" + false + "/" + idArticle, true);
+    this.appService.openMyJssRoute(event, "/quotation/subscription/" + ONE_POST_SUBSCRIPTION + "/" + false + "/" + idArticle, true);
   }
 
   readArticle(): void {

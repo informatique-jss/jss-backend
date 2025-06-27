@@ -238,18 +238,18 @@ export class CheckoutComponent implements OnInit {
     } else {
       if (this.quotation.isQuotation)
         this.quotationService.saveQuotation(this.quotation, !isDraft).subscribe(response => {
-          if (response && response.id) {
+          if (response) {
             this.cleanStorageData();
             this.appService.hideLoadingSpinner();
-            this.appService.openRoute(undefined, "account/quotations/details/" + response.id, undefined);
+            this.appService.openRoute(undefined, "account/quotations/details/" + response, undefined);
           }
         })
       else
         this.orderService.saveOrder(this.quotation, !isDraft).subscribe(response => {
-          if (response && response.id) {
+          if (response) {
             this.cleanStorageData();
             this.appService.hideLoadingSpinner();
-            this.appService.openRoute(undefined, "account/orders/details/" + response.id, undefined);
+            this.appService.openRoute(undefined, "account/orders/details/" + response, undefined);
           }
         })
     }

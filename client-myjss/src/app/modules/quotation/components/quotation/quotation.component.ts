@@ -25,10 +25,11 @@ export class QuotationComponent implements OnInit {
 
   maxAccessibleStepIndex: number | null = null;
 
-
   subscriptionType: any;
   isPriceReductionForSubscription: any;
   idArticle: any;
+  idOrder: number | undefined;
+  idQuotation: number | undefined;
 
   customerOrder: CustomerOrder | undefined;
 
@@ -46,12 +47,20 @@ export class QuotationComponent implements OnInit {
     this.subscriptionType = this.activatedRoute.snapshot.params['subscription-type'];
     this.isPriceReductionForSubscription = this.activatedRoute.snapshot.params['is-price-reduction'];
     this.idArticle = this.activatedRoute.snapshot.params['id-article'];
+    this.idOrder = this.activatedRoute.snapshot.params['idOrder'];
+    this.idQuotation = this.activatedRoute.snapshot.params['idQuotation'];
+
+    this.myJssQuotationItems = this.appService.getAllQuotationMenuItems();
 
     if (this.idArticle == "null") {
       this.idArticle = null;
     }
 
-    if (this.subscriptionType) {
+    if (this.idQuotation || this.idOrder) {
+      this.quotationService.cleanStorageData();
+      this.idQuotation ? this.quotationService.setCurrentDraftQuotationId(this.idQuotation) : this.customerOrderService.setCurrentDraftOrderId(this.idOrder!);
+      this.quotationService.setCurrentDraftQuotationStep(this.myJssQuotationItems[2]);
+    } else if (this.subscriptionType) {
       this.appService.showLoadingSpinner();
       this.customerOrderService.getCustomerOrderForSubscription(this.subscriptionType, this.isPriceReductionForSubscription, this.idArticle).subscribe(computedCustomerOrder => {
         this.customerOrder = computedCustomerOrder;
@@ -64,7 +73,6 @@ export class QuotationComponent implements OnInit {
 
     this.maxAccessibleStepIndex = parseInt(this.quotationService.getCurrentDraftQuotationStep() != null ? this.quotationService.getCurrentDraftQuotationStep()! : "0");
 
-    this.myJssQuotationItems = this.appService.getAllQuotationMenuItems();
     if (this.quotationService.getCurrentDraftQuotationStep() && this.router.url.indexOf(this.quotationService.getCurrentDraftQuotationStep()!) < 0) {
       this.appService.openRoute(undefined, this.quotationService.getCurrentDraftQuotationStep()!, undefined);
     } else {
@@ -73,13 +81,14 @@ export class QuotationComponent implements OnInit {
       } else {
         this.selectedTab = this.myJssQuotationItems[0];
       }
-
-      this.router.events.subscribe(url => {
-        if (url instanceof NavigationEnd) {
-          this.matchRoute(url.url);
-        }
-      });
     }
+
+    this.router.events.subscribe(url => {
+      if (url instanceof NavigationEnd) {
+        this.matchRoute(url.url);
+      }
+    });
+
   }
 
   cleanStorageData() {
@@ -88,11 +97,15 @@ export class QuotationComponent implements OnInit {
 
   finalCancel() {
     if (this.quotationService.getCurrentDraftQuotationId()) {
+      this.appService.showLoadingSpinner();
       this.quotationService.cancelQuotation(parseInt(this.quotationService.getCurrentDraftQuotationId()!)).subscribe(response => {
+        this.appService.hideLoadingSpinner();
         this.finalCleanStorageData();
       })
     } else if (this.customerOrderService.getCurrentDraftOrderId()) {
+      this.appService.showLoadingSpinner();
       this.customerOrderService.cancelCustomerOrder(parseInt(this.customerOrderService.getCurrentDraftOrderId()!)).subscribe(response => {
+        this.appService.hideLoadingSpinner();
         this.finalCleanStorageData();
       })
     } else {
@@ -111,7 +124,6 @@ export class QuotationComponent implements OnInit {
     }
 
     this.cleanModalInstance = this.modalService2.open(content, {
-      backdrop: 'static',
     });
 
     this.cleanModalInstance.result.finally(() => {

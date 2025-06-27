@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbAccordionModule, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
-import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_PAYED, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT } from '../../../../libs/Constants';
+import { CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_PAYED, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT } from '../../../../libs/Constants';
 import { capitalizeName, formatDateFrance } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
@@ -232,8 +232,10 @@ export function getClassForCustomerOrderStatus(order: CustomerOrder) {
   if (order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED && order.isPayed)
     return "bg-success text-success";
   if (order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)
-    return "bg-dark text-dark";
-  return "bg-light text-light";
+    return "bg-ok text-dark";
+  if (order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED)
+    return "bg-danger text-danger";
+  return "bg-dark text-light";
 }
 
 export function getCustomerOrderBillingMailList(mailComputeResult: MailComputeResult) {

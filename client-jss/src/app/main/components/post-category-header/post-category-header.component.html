@@ -20,5 +20,6 @@
     </div>
   </div>
 
-  <category-hub [selectedEntityType]="selectedJssCategory"></category-hub>
+  <category-hub [selectedEntityType]="selectedJssCategory"
+    (jssCategoryChange)="updateSelectedCategory($event)"></category-hub>
 </div>

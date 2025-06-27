@@ -1524,7 +1524,7 @@ public class MyJssQuotationController {
 
 	@PostMapping(inputEntryPoint + "/order/user/save")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
-	public ResponseEntity<CustomerOrder> saveCustomerOrderFromMyJss(@RequestBody CustomerOrder order,
+	public ResponseEntity<Integer> saveCustomerOrderFromMyJss(@RequestBody CustomerOrder order,
 			@RequestParam Boolean isValidation,
 			HttpServletRequest request)
 			throws OsirisValidationException, OsirisException {
@@ -1543,14 +1543,14 @@ public class MyJssQuotationController {
 				myJssQuotationValidationHelper.validateAffaire(asso.getAffaire());
 			}
 		}
-		return new ResponseEntity<CustomerOrder>(
-				myJssQuotationDelegate.saveCustomerOrderFromMyJss(order, isValidation, request),
+		return new ResponseEntity<Integer>(
+				myJssQuotationDelegate.saveCustomerOrderFromMyJss(order, isValidation, request).getId(),
 				HttpStatus.OK);
 	}
 
 	@PostMapping(inputEntryPoint + "/quotation/user/save")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
-	public ResponseEntity<Quotation> saveQuotationFromMyJss(@RequestBody Quotation order,
+	public ResponseEntity<Integer> saveQuotationFromMyJss(@RequestBody Quotation order,
 			@RequestParam Boolean isValidation,
 			HttpServletRequest request)
 			throws OsirisValidationException, OsirisException {
@@ -1569,8 +1569,8 @@ public class MyJssQuotationController {
 				myJssQuotationValidationHelper.validateAffaire(asso.getAffaire());
 			}
 		}
-		return new ResponseEntity<Quotation>(
-				myJssQuotationDelegate.saveQuotationFromMyJss(order, isValidation, request),
+		return new ResponseEntity<Integer>(
+				myJssQuotationDelegate.saveQuotationFromMyJss(order, isValidation, request).getId(),
 				HttpStatus.OK);
 	}
 
@@ -1881,6 +1881,28 @@ public class MyJssQuotationController {
 
 		return new ResponseEntity<List<ReadingFolder>>(
 				readingFolderService.getAvailableReadingFoldersByResponsable(responsable),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/reading-folder")
+	@JsonView({ JacksonViews.MyJssListView.class })
+	public ResponseEntity<ReadingFolder> getReadingFolder(Integer idReadingFolder, HttpServletRequest request)
+			throws OsirisValidationException {
+		detectFlood(request);
+
+		Responsable responsable = employeeService.getCurrentMyJssUser();
+		if (responsable == null)
+			throw new OsirisValidationException("responsable");
+
+		ReadingFolder readingFolder = readingFolderService.getReadingFolder(idReadingFolder);
+		if (readingFolder == null)
+			throw new OsirisValidationException("reading folder");
+
+		if (!readingFolder.getMail().getMail().equals(responsable.getMail().getMail()))
+			throw new OsirisValidationException("responsableMail");
+
+		return new ResponseEntity<ReadingFolder>(
+				readingFolderService.getReadingFolder(idReadingFolder),
 				HttpStatus.OK);
 	}
 }

@@ -146,6 +146,7 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("outlook.default.url");
         isOk = isOk && checkProperty("microsoft.host");
         isOk = isOk && checkProperty("jss.media.entry.point");
+        isOk = isOk && checkProperty("my.jss.entry.point");
 
         if (!isOk)
             System.exit(-1);

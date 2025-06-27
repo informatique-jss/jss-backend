@@ -147,6 +147,7 @@ public class UserScopeServiceImpl implements UserScopeService {
         HttpSession session = request.getSession(true);
         session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
 
+        responsable = responsableService.getResponsable(responsable.getId());
         responsable.setLoginTokenExpirationDateTime(LocalDateTime.now().minusSeconds(1));
         responsableService.addOrUpdateResponsable(responsable);
     }

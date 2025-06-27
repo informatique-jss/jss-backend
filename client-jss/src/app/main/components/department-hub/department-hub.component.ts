@@ -25,10 +25,7 @@ import { SelectPublishingDepartmentComponent } from '../select-publishing-depart
   standalone: true
 })
 export class DepartmentHubComponent extends GenericHubComponent<PublishingDepartment> implements OnInit {
-  isLoading: boolean = false;
   selectedPublishingDepartment: PublishingDepartment | undefined;
-  publishingDepartments: PublishingDepartment[] = [];
-
   @Output() departmentChange = new EventEmitter<PublishingDepartment>();
 
   constructor(private tagService: TagService, postService: PostService, loginService: LoginService, appService: AppService, formBuilder: FormBuilder, activeRoute: ActivatedRoute

@@ -6,6 +6,8 @@ import { PlatformService } from '../../../main/services/platform.service';
 import { DoubleButtonsComponent } from '../../../miscellaneous/components/double-buttons/double-buttons.component';
 import { GenericSwiperComponent } from '../../../miscellaneous/components/generic-swiper/generic-swiper.component';
 import { OurClientsComponent } from '../../../miscellaneous/components/our-clients/our-clients.component';
+import { order, quotation, QuotationType } from '../../../quotation/model/QuotationType';
+import { ServiceFamilyGroup } from '../../../quotation/model/ServiceFamilyGroup';
 import { MyJssCategory } from '../../../tools/model/MyJssCategory';
 import { Post } from '../../../tools/model/Post';
 import { PostService } from '../../../tools/services/post.service';
@@ -23,6 +25,9 @@ export class AnnouncementComponent implements OnInit {
   myJssCategoryAnnouncement!: MyJssCategory;
   carouselAnnouncementPosts: Post[] = [];
   tendencyPosts: Post[] = [];
+  serviceFamilyGroupAnnouncement: ServiceFamilyGroup | undefined;
+  quotationTypeOrder: QuotationType = order;
+  quotationTypeQuotation: QuotationType = quotation;
 
   constructor(private appService: AppService,
     private constantService: ConstantService,
@@ -31,6 +36,7 @@ export class AnnouncementComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.serviceFamilyGroupAnnouncement = this.constantService.getServiceFamilyGroupAnnouncement();
     this.myJssCategoryAnnouncement = this.constantService.getMyJssCategoryAnnouncement();
     this.postService.getTopPostByMyJssCategory(0, this.constantService.getMyJssCategoryAnnouncement()).subscribe(response => {
       if (response && response.content && response.content.length > 0) {

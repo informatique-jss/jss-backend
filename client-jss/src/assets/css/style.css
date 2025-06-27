@@ -11873,12 +11873,12 @@ dl, ol, ul {
 }
 
 .image-hover-style-1 img {
-  transform: scale(1);
-  transition: all .3s ease-in-out;
+  /* transform: scale(1);
+  transition: all .3s ease-in-out; */
 }
 
 .image-hover-style-1 img:hover {
-  transform: scale(1.03);
+  /* transform: scale(1.03); */
 }
 
 blockquote {
@@ -12746,7 +12746,7 @@ blockquote p {
 }
 
 .blog-style5 .post-img-wrap:hover .post-img {
-  transform: scale(1.07);
+  /* transform: scale(1.07); */
 }
 
 .blog-style5 .post-img-wrap .post-img {
@@ -12755,7 +12755,7 @@ blockquote p {
   -o-object-fit: cover;
   object-fit: cover;
   transition: all 0.3s ease-in-out;
-  transform: scale(1);
+  /* transform: scale(1); */
   position: relative;
   z-index: 1;
 }

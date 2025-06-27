@@ -51,7 +51,7 @@ public class Payment implements Serializable, IId, ICreatedDate {
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
 	@IndexedField
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
 	private Integer id;
 
 	@IndexedField
@@ -59,17 +59,17 @@ public class Payment implements Serializable, IId, ICreatedDate {
 
 	@Column(nullable = false, columnDefinition = "TEXT")
 	@IndexedField
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
 	private String label;
 
 	@Column(nullable = false)
 	@IndexedField
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
 	private LocalDateTime paymentDate;
 
 	@Column(nullable = false, columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 2)
 	@IndexedField
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
 	private BigDecimal paymentAmount;
 
 	@OneToMany(mappedBy = "payment")
@@ -117,7 +117,7 @@ public class Payment implements Serializable, IId, ICreatedDate {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_payment_type")
 	@IndexedField
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
 	private PaymentType paymentType;
 
 	@ManyToOne(fetch = FetchType.LAZY)

@@ -43,6 +43,9 @@ public class CentralPayDelegateServiceImpl implements CentralPayDelegateService 
     @Value("${central.pay.api.password}")
     private String centralPayPassword;
 
+    @Value("${my.jss.entry.point}")
+    private String myJssEntryPoint;
+
     private String paymentRequestUrl = "/paymentRequest";
     private String transactiontUrl = "/transaction";
     private String paymentRequestCancelUrl = "/cancel";
@@ -140,7 +143,7 @@ public class CentralPayDelegateServiceImpl implements CentralPayDelegateService 
 
     @Override
     public CentralPayPaymentRequest generatePayPaymentRequest(BigDecimal amount, String mail, String entityId,
-            String subject) {
+            String subject, boolean isQuotation) {
         SSLHelper.disableCertificateValidation();
         HttpHeaders headers = createHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
@@ -167,10 +170,21 @@ public class CentralPayDelegateServiceImpl implements CentralPayDelegateService 
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.getInterceptors().add(new BufferingClientHttpRequestInterceptor());
 
-        ResponseEntity<CentralPayPaymentRequest> res = restTemplate.postForEntity(
-                centralPayEndpoint + paymentRequestUrl,
-                request,
-                CentralPayPaymentRequest.class);
+        ResponseEntity<CentralPayPaymentRequest> res;
+        if (isQuotation)
+            res = restTemplate.postForEntity(
+                    centralPayEndpoint + paymentRequestUrl + "?delay=5&urlRedirect=" + myJssEntryPoint
+                            + "/quotations/details/"
+                            + entityId,
+                    request,
+                    CentralPayPaymentRequest.class);
+        else
+            res = restTemplate.postForEntity(
+                    centralPayEndpoint + paymentRequestUrl + "?delay=5&urlRedirect=" + myJssEntryPoint
+                            + "/orders/details/"
+                            + entityId,
+                    request,
+                    CentralPayPaymentRequest.class);
 
         if (res.getBody() != null) {
             return res.getBody();
