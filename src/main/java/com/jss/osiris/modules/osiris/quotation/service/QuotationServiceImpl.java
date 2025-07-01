@@ -857,4 +857,10 @@ public class QuotationServiceImpl implements QuotationService {
             for (Quotation quotation : quotations)
                 batchService.declareNewBatch(Batch.PURGE_QUOTATION, quotation.getId());
     }
+
+    @Override
+    public List<Quotation> getQuotationByAffaire(Affaire affaire) {
+        return quotationRepository.findQuotationByAffaireAndQuotationStatus(affaire,
+                quotationStatusService.getQuotationStatusByCode(QuotationStatus.SENT_TO_CUSTOMER));
+    }
 }

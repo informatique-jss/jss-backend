@@ -2106,4 +2106,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             for (CustomerOrder order : orders)
                 batchService.declareNewBatch(Batch.PURGE_CUSTOMER_ORDER, order.getId());
     }
+
+    @Override
+    public Integer getNewOrderIdCreatedFromQuotation(Quotation quotation) {
+        CustomerOrder lastCustomerOrder = customerOrderRepository.findTopByQuotationsOrderByIdDesc(quotation);
+        if (lastCustomerOrder != null)
+            return lastCustomerOrder.getId();
+        else
+            return null;
+    }
 }

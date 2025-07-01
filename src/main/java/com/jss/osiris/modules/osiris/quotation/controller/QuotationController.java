@@ -2884,4 +2884,30 @@ public class QuotationController {
     return new ResponseEntity<List<CustomerOrder>>(
         customerOrderService.getCustomerOrdersByVoucherAndResponsable(voucher, null), HttpStatus.OK);
   }
+
+  @GetMapping(inputEntryPoint + "/quotations/affaire")
+  @JsonView(JacksonViews.OsirisListView.class)
+  public ResponseEntity<List<Quotation>> getQuotationByAffaire(@RequestParam Integer idAffaire)
+      throws OsirisValidationException {
+
+    Affaire affaire = affaireService.getAffaire(idAffaire);
+
+    if (affaire == null)
+      throw new OsirisValidationException("affaire");
+
+    return new ResponseEntity<List<Quotation>>(
+        quotationService.getQuotationByAffaire(affaire), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/customer-order/id-quotation")
+  public ResponseEntity<Integer> getNewOrderIdCreatedFromQuotation(@RequestParam Integer idQuotation)
+      throws OsirisValidationException {
+
+    Quotation quotation = quotationService.getQuotation(idQuotation);
+    if (quotation == null)
+      throw new OsirisValidationException("quotation");
+
+    return new ResponseEntity<Integer>(
+        customerOrderService.getNewOrderIdCreatedFromQuotation(quotation), HttpStatus.OK);
+  }
 }

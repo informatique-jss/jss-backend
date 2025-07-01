@@ -18,6 +18,7 @@ import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.IOrderingSearchTaggedResult;
 import com.jss.osiris.modules.osiris.quotation.model.OrderingSearchResult;
+import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 import jakarta.persistence.QueryHint;
@@ -216,5 +217,7 @@ public interface CustomerOrderRepository
         List<CustomerOrder> findCustomerOrderOlderThanDate(
                         @Param("customerOrderStatus") CustomerOrderStatus customerOrderStatus,
                         @Param("dateLimit") LocalDateTime dateLimit);
+
+        CustomerOrder findTopByQuotationsOrderByIdDesc(Quotation quotation);
 
 }
