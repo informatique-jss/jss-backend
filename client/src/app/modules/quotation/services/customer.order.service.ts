@@ -102,4 +102,9 @@ export class CustomerOrderService extends AppRestService<IQuotation> {
   getCustomerOrdersByVoucher(voucher: Voucher) {
     return this.getList(new HttpParams().set("idVoucher", voucher.id), 'customer-orders/voucher') as Observable<CustomerOrder[]>;
   }
+
+  getIsOrderFromQuotation(order: CustomerOrder) {
+    return this.get(new HttpParams().set("customerOrderId", order.id), "customer-order/is-from-quotation");
+  }
+
 }

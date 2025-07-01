@@ -40,7 +40,6 @@ import { Provision } from '../../model/Provision';
 import { QuotationStatus } from '../../model/QuotationStatus';
 import { Service } from '../../model/Service';
 import { VatBase } from '../../model/VatBase';
-import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
 import { CustomerOrderService } from '../../services/customer.order.service';
 import { CustomerOrderStatusService } from '../../services/customer.order.status.service';
 import { OrderingSearchResultService } from '../../services/ordering.search.result.service';
@@ -107,6 +106,9 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   saveObservableSubscription: Subscription = new Subscription;
   customerOrderInvoices: InvoiceSearchResult[] | undefined;
 
+  isOrderLinkedToQuotation: boolean = false;
+  isCreateConfirmed = true;
+
   constructor(private appService: AppService,
     private quotationService: QuotationService,
     private customerOrderService: CustomerOrderService,
@@ -126,7 +128,6 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     public customerOrderWorkflowDialog: MatDialog,
     private formBuilder: FormBuilder,
     private constantService: ConstantService,
-    private assoAffaireOrderService: AssoAffaireOrderService,
     protected searchService: SearchService,
     private provisionService: ProvisionService,
     private orderingSearchResultService: OrderingSearchResultService,
@@ -360,27 +361,23 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     return this.instanceOfCustomerOrder ? this.customerOrderStatusList : this.quotationStatusList;
   }
 
-  createProvision(service: Service): Provision {
-    if (!this.habilitationService.canByPassProvisionLockOnBilledOrder())
-      if (instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
-        this.displaySnakBarLockProvision();
-        return {} as Provision;
-      }
-    if (service && !service.provisions)
-      service.provisions = [] as Array<Provision>;
-    let provision = {} as Provision;
-    service.provisions.push(provision);
-    this.generateInvoiceItem();
-    return provision;
-  }
-
-  createService(asso: AssoAffaireOrder) {
+  async createService(asso: AssoAffaireOrder) {
     if (!this.habilitationService.canByPassProvisionLockOnBilledOrder())
       if (instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
         this.displaySnakBarLockProvision();
       }
     if (asso && !asso.services)
       asso.services = [] as Array<Service>;
+
+
+    this.isCreateConfirmed = true;
+    if (!this.quotation.isQuotation) {
+      this.isCreateConfirmed = await this.checkIsOrderFromQuotation();
+    }
+
+    if (!this.isCreateConfirmed) {
+      return;
+    }
 
     let dialogRef = this.selectAttachmentTypeDialog.open(SelectMultiServiceTypeDialogComponent, {
       width: '50%',
@@ -392,6 +389,62 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
         asso.services.push(...response);
         this.generateInvoiceItem();
       }
+    });
+  }
+
+  async createProvision(service: Service): Promise<Provision | undefined> {
+    if (!this.habilitationService.canByPassProvisionLockOnBilledOrder()) {
+      if (instanceOfCustomerOrder(this.quotation) &&
+        this.quotation.customerOrderStatus &&
+        (this.quotation.customerOrderStatus.code === CUSTOMER_ORDER_STATUS_TO_BILLED ||
+          this.quotation.customerOrderStatus.code === CUSTOMER_ORDER_STATUS_BILLED)) {
+        this.displaySnakBarLockProvision();
+        return {} as Provision;
+      }
+    }
+
+    this.isCreateConfirmed = true;
+    if (!this.quotation.isQuotation) {
+      this.isCreateConfirmed = await this.checkIsOrderFromQuotation();
+    }
+
+    if (!this.isCreateConfirmed) {
+      return {} as Provision;
+    }
+
+    if (service && !service.provisions) {
+      service.provisions = [] as Array<Provision>;
+    }
+
+    const provision = {} as Provision;
+    service.provisions.push(provision);
+    this.generateInvoiceItem();
+    return provision;
+  }
+
+  checkIsOrderFromQuotation(): Promise<boolean> {
+    return new Promise<boolean>((resolve) => {
+      this.customerOrderService.getIsOrderFromQuotation(this.quotation as CustomerOrder).subscribe((response: any) => {
+        this.isOrderLinkedToQuotation = response;
+
+        if (this.isOrderLinkedToQuotation === true) {
+          const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+            maxWidth: "400px",
+            data: {
+              title: "Modification du devis de la commande",
+              content: "L'ajout d'une prestation impactera le devis initial lié à cette commande. Souhaitez-vous continuer ? ",
+              closeActionText: "Annuler",
+              validationActionText: "Confirmer"
+            }
+          });
+
+          dialogRef.afterClosed().subscribe(userConfirmed => {
+            resolve(!!userConfirmed);
+          });
+        } else {
+          resolve(true);
+        }
+      });
     });
   }
 

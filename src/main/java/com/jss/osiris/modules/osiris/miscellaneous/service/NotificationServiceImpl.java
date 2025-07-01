@@ -298,6 +298,12 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
+    public void notifyQuotationModified(CustomerOrder customerOrder) {
+        generateNewNotification(employeeService.getCurrentEmployee(), customerOrder.getResponsable().getSalesEmployee(),
+                Notification.MODIFIED_QUOTATION, false, null, null, customerOrder, null);
+    }
+
+    @Override
     public void notifyAttachmentAddToService(Service service, Attachment attachment) throws OsirisException {
         CustomerOrder order = service.getAssoAffaireOrder().getCustomerOrder();
         List<Integer> employeeIdAlreadyNotified = new ArrayList<Integer>();
