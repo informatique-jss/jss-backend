@@ -184,4 +184,6 @@ public interface CustomerOrderService {
         public List<CustomerOrder> getCustomerOrdersByVoucherAndResponsable(Voucher voucher, Responsable responsable);
 
         public void purgeCustomerOrders() throws OsirisException;
+
+        public Integer getNewOrderIdCreatedFromQuotation(Quotation quotation);
 }

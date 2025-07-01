@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.libs.QueryCacheCrudRepository;
+import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.QuotationSearchResult;
 import com.jss.osiris.modules.osiris.quotation.model.QuotationStatus;
@@ -94,4 +95,8 @@ public interface QuotationRepository extends QueryCacheCrudRepository<Quotation,
         @Query(value = "select q from Quotation q where quotationStatus=:quotationStatus and createdDate<:dateLimit ")
         List<Quotation> findQuotationOlderThanDate(@Param("quotationStatus") QuotationStatus quotationStatus,
                         @Param("dateLimit") LocalDateTime dateLimit);
+
+        @Query(value = "select q from Quotation q join q.assoAffaireOrders a where a.affaire=:affaire and q.quotationStatus=:status")
+        List<Quotation> findQuotationByAffaireAndQuotationStatus(@Param("affaire") Affaire affaire,
+                        @Param("status") QuotationStatus status);
 }

@@ -30,6 +30,7 @@ import { Notification } from '../../../../modules/miscellaneous/model/Notificati
 import { HabilitationsService } from '../../../../services/habilitations.service';
 import { InvoiceSearchResult } from '../../../invoicing/model/InvoiceSearchResult';
 import { InvoiceSearchResultService } from '../../../invoicing/services/invoice.search.result.service';
+import { SuggestedQuotationsDialogComponent } from '../../../miscellaneous/components/forms/suggested-quotations-dialog/suggested-quotations-dialog.component';
 import { WorkflowDialogComponent } from '../../../miscellaneous/components/workflow-dialog/workflow-dialog.component';
 import { Affaire } from '../../model/Affaire';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
@@ -37,10 +38,10 @@ import { CustomerOrder } from '../../model/CustomerOrder';
 import { CustomerOrderStatus } from '../../model/CustomerOrderStatus';
 import { OrderingSearch } from '../../model/OrderingSearch';
 import { Provision } from '../../model/Provision';
+import { Quotation } from '../../model/Quotation';
 import { QuotationStatus } from '../../model/QuotationStatus';
 import { Service } from '../../model/Service';
 import { VatBase } from '../../model/VatBase';
-import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
 import { CustomerOrderService } from '../../services/customer.order.service';
 import { CustomerOrderStatusService } from '../../services/customer.order.status.service';
 import { OrderingSearchResultService } from '../../services/ordering.search.result.service';
@@ -106,6 +107,8 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
   saveObservableSubscription: Subscription = new Subscription;
   customerOrderInvoices: InvoiceSearchResult[] | undefined;
+  suggestedQuotations: Quotation[] | undefined;
+  suggestedQuotationSelected: Quotation | undefined;
 
   constructor(private appService: AppService,
     private quotationService: QuotationService,
@@ -124,9 +127,9 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     public quotationWorkflowDialog: MatDialog,
     public orderSimilaritiesDialog: MatDialog,
     public customerOrderWorkflowDialog: MatDialog,
+    public suggestedQuotationDialog: MatDialog,
     private formBuilder: FormBuilder,
     private constantService: ConstantService,
-    private assoAffaireOrderService: AssoAffaireOrderService,
     protected searchService: SearchService,
     private provisionService: ProvisionService,
     private orderingSearchResultService: OrderingSearchResultService,
@@ -492,10 +495,17 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
               return;
             }
 
-
         let asso = {} as AssoAffaireOrder;
         asso.affaire = response;
         asso.services = [] as Array<Service>;
+
+        this.quotationService.getQuotationByAffaire(asso.affaire).subscribe(response => {
+          if (response && response.length > 0) {
+            this.suggestedQuotations = response as Quotation[];
+            this.openSuggestedQuotationDialog();
+          }
+        });
+
         if (!this.quotation.assoAffaireOrders)
           this.quotation.assoAffaireOrders = [] as Array<AssoAffaireOrder>;
 
@@ -531,6 +541,30 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
         });
       }
     })
+  }
+
+  openSuggestedQuotationDialog() {
+    this.suggestedQuotationSelected = {} as Quotation;
+    let dialogQuotation = this.suggestedQuotationDialog.open(SuggestedQuotationsDialogComponent, {
+      width: '100%'
+    });
+    if (this.suggestedQuotations)
+      dialogQuotation.componentInstance.suggestedQuotations = this.suggestedQuotations;
+    dialogQuotation.afterClosed().subscribe(response => {
+      if (response && response != null) {
+        this.suggestedQuotationSelected = response;
+        this.quotationService.updateQuotationStatus(this.suggestedQuotationSelected as IQuotation, VALIDATED_BY_CUSTOMER).subscribe(response => {
+          if (response) {
+            this.appService.displaySnackBar("Devis validé, la commande a été créée", true, 10);
+            this.editMode = false;
+            this.customerOrderService.getNewOrderIdCreatedFromQuotation(response.id).subscribe(response => {
+              if (response)
+                this.appService.openRoute(null, '/order/' + response, null);
+            });
+          }
+        });
+      }
+    });
   }
 
   displayQuotationWorkflowDialog() {
