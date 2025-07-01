@@ -26,6 +26,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.AffaireSearch;
@@ -135,6 +136,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     @Autowired
     ConfrereService confrereService;
 
+    @Autowired
+    NotificationService notificationService;
+
     @Override
     public List<AssoAffaireOrder> getAssoAffaireOrders() {
         return IterableUtils.toList(assoAffaireOrderRepository.findAll());
@@ -207,9 +211,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         Employee currentEmployee = null;
         Employee maxWeightEmployee = null;
         Integer maxWeight = -1000000000;
+        Boolean oneNewProvision = false;
 
         for (Service service : assoAffaireOrder.getServices()) {
-
             service.setAssoAffaireOrder(assoAffaireOrder);
 
             if (service.getAssoServiceDocuments() != null)
@@ -223,6 +227,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
             for (Provision provision : service.getProvisions()) {
                 provision.setService(service);
+
+                if (provision.getId() == null)
+                    oneNewProvision = true;
 
                 if (provision.getAttachments() != null)
                     for (Attachment attachment : provision.getAttachments()) {
@@ -585,6 +592,11 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 }
             }
         }
+
+        CustomerOrder tempOrder = customerOrderService.getCustomerOrder(assoAffaireOrder.getCustomerOrder().getId());
+        if (oneNewProvision && tempOrder != null && tempOrder.getQuotations() != null
+                && !tempOrder.getQuotations().isEmpty())
+            notificationService.notifyQuotationModified(assoAffaireOrder.getCustomerOrder());
 
         if (maxWeightEmployee != null) {
             for (Service service : assoAffaireOrder.getServices())

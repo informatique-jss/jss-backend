@@ -2884,4 +2884,15 @@ public class QuotationController {
     return new ResponseEntity<List<CustomerOrder>>(
         customerOrderService.getCustomerOrdersByVoucherAndResponsable(voucher, null), HttpStatus.OK);
   }
+
+  @GetMapping(inputEntryPoint + "/customer-order/is-from-quotation")
+  public ResponseEntity<Boolean> getIsOrderFromQuotation(@RequestParam Integer customerOrderId)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+    if (customerOrder == null)
+      throw new OsirisValidationException("customerOrder");
+
+    return new ResponseEntity<Boolean>(customerOrderService.getIsOrderFromQuotation(customerOrder), HttpStatus.OK);
+  }
 }
