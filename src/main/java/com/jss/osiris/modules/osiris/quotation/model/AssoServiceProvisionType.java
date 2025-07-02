@@ -73,6 +73,8 @@ public class AssoServiceProvisionType implements Serializable, IId {
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private AnnouncementNoticeTemplate announcementNoticeTemplate;
 
+	private Boolean isPriority;
+
 	public Integer getId() {
 		return id;
 	}
@@ -167,6 +169,14 @@ public class AssoServiceProvisionType implements Serializable, IId {
 
 	public void setAnnouncementNoticeTemplate(AnnouncementNoticeTemplate announcementNoticeTemplate) {
 		this.announcementNoticeTemplate = announcementNoticeTemplate;
+	}
+
+	public Boolean getIsPriority() {
+		return isPriority;
+	}
+
+	public void setIsPriority(Boolean isPriority) {
+		this.isPriority = isPriority;
 	}
 
 }

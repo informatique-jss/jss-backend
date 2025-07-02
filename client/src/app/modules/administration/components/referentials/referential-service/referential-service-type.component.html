@@ -130,6 +130,11 @@
                   [isDisabled]="!editMode" type="number"></generic-input>
               </td>
               <td>
+                <generic-toggle [(model)]="assoServiceProvisionType.isPriority" label="Est prioritaire ?"
+                  [form]="entityForm" [propertyName]="'priority'+index+deleteIndex" [isMandatory]="false"
+                  [isDisabled]="!editMode"></generic-toggle>
+              </td>
+              <td>
                 <generic-input [(model)]="assoServiceProvisionType.minEmployee" label="Nombre minimal de salariés"
                   [form]="entityForm" [propertyName]="'minEmployee'+index+deleteIndex" [isMandatory]="false"
                   matTooltipShowDelay="1000" [isDisabled]="!editMode"

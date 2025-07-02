@@ -36,14 +36,14 @@ import { MissingAttachmentQueryService } from 'src/app/modules/quotation/service
 import { ProvisionService } from 'src/app/modules/quotation/services/provision.service';
 import { SimpleProvisionStatusService } from 'src/app/modules/quotation/services/simple.provision.status.service';
 import { AppService } from 'src/app/services/app.service';
-import { HabilitationsService } from 'src/app/services/habilitations.service';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
 import { AssoAffaireOrderService } from '../../../quotation/services/asso.affaire.order.service';
 import { SwimlaneType } from '../../model/SwimlaneType';
+import { AssignNewOrderDialogComponent } from '../assign-new-order-dialog/assign-new-order-dialog.component';
 import { KanbanComponent } from '../kanban/kanban.component';
 
 @Component({
-  selector: 'app-provision-kanban',
+  selector: 'provision-kanban',
   templateUrl: './provision-kanban.component.html',
   styleUrls: ['./provision-kanban.component.css'],
   viewProviders: [MatExpansionPanel]
@@ -84,6 +84,7 @@ export class ProvisionKanbanComponent extends KanbanComponent<Provision, IWorkfl
     public workflowDialog: MatDialog,
     public confirmationDialog: MatDialog,
     public attachmentsDialog: MatDialog,
+    public assignNewOrderDialog: MatDialog,
     public chooseCompetentAuthorityDialog: MatDialog,
     private affaireService: AffaireService,
     private missingAttachmentMailDialog: MatDialog,
@@ -92,7 +93,6 @@ export class ProvisionKanbanComponent extends KanbanComponent<Provision, IWorkfl
     private orderService: CustomerOrderService,
     private customerOrderStatusService: CustomerOrderStatusService,
     private assoAffaireOrderService: AssoAffaireOrderService,
-    private habilitationService: HabilitationsService
   ) {
     super();
   }
@@ -108,6 +108,7 @@ export class ProvisionKanbanComponent extends KanbanComponent<Provision, IWorkfl
     this.swimlaneTypes.push({ fieldName: "service.serviceLabelToDisplay", fieldValueFunction: undefined, label: "Service", valueFonction: undefined });
     this.swimlaneTypes.push({ fieldName: "service.assoAffaireOrder.affaire.id", label: "Affaire", valueFonction: (provision: Provision) => { return provision.service.assoAffaireOrder.affaire.denomination ? provision.service.assoAffaireOrder.affaire.denomination : (provision.service.assoAffaireOrder.affaire.firstname + ' ' + provision.service.assoAffaireOrder.affaire.lastname) }, fieldValueFunction: undefined });
     this.swimlaneTypes.push({ fieldName: "service.assoAffaireOrder.customerOrder.createdDate", label: "Semaine", valueFonction: (provision: Provision) => { return formatDateFrance(this.getStartOfWeek(provision.service.assoAffaireOrder.customerOrder.createdDate)) }, fieldValueFunction: (provision: Provision) => { return formatDateFrance(this.getStartOfWeek(provision.service.assoAffaireOrder.customerOrder.createdDate)) } });
+    this.swimlaneTypes.push({ fieldName: "service.assoAffaireOrder.customerOrder.id", label: "Commande", valueFonction: (provision: Provision) => { return "Commande " + provision.service.assoAffaireOrder.customerOrder.id }, fieldValueFunction: undefined });
     this.selectedSwimlaneType = this.swimlaneTypes[0];
 
     combineLatest([
@@ -445,5 +446,17 @@ export class ProvisionKanbanComponent extends KanbanComponent<Provision, IWorkfl
     this.provisionService.updateProvisionStatus(provision.id, status.code).subscribe(res => {
       this.fetchEntityAndOpenPanel(provision, true, false);
     })
+  }
+
+  assignNewCustomerOrder() {
+    const dialogRef = this.assignNewOrderDialog.open(AssignNewOrderDialogComponent, {
+      width: "50%"
+    });
+
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      if (dialogResult) {
+        this.startFilter();
+      }
+    });
   }
 }

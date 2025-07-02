@@ -3,7 +3,10 @@
   <input class="form-control d-none" type="file" (change)="onFileSelected($event)" #fileInput>
   <h6>Choisissez un fichier ou déposez-le ici</h6>
   <i class="ai-upload fs-1 mb-3"></i>
-  <p class="max-size">Formats acceptés : PDF, JPEG, PNG, jusqu'à {{MAX_SIZE_UPLOAD_FILES_IN_MO}} Mo</p>
+  <p *ngIf="!forcedFileExtension" class="max-size">Formats acceptés : PDF, JPEG, PNG, jusqu'à
+    {{MAX_SIZE_UPLOAD_FILES_IN_MO}} Mo</p>
+  <p *ngIf="forcedFileExtension" class="max-size">Formats acceptés : {{forcedFileExtension}} jusqu'à
+    {{MAX_SIZE_UPLOAD_FILES_IN_MO}} Mo</p>
   <label class="btn btn-outline-secondary m-auto rounded-1">Parcourir</label>
 </div>
 <div *ngIf="files && files.length>0 && !isDirectUpload">

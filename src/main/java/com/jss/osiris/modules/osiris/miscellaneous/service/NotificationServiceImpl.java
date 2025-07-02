@@ -129,6 +129,9 @@ public class NotificationServiceImpl implements NotificationService {
     private void generateNewNotification(Employee fromEmployee, Employee toEmployee, String notificationType,
             boolean showPopup, Service service, Provision provision, CustomerOrder customerOrder, Candidacy candidacy) {
 
+        if (toEmployee == null)
+            return;
+
         List<Notification> existingNotification = null;
         if (service != null)
             existingNotification = notificationRepository

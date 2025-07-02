@@ -271,17 +271,19 @@ public class ServiceServiceImpl implements ServiceService {
                     .toList();
 
             if (provisionTypeMergeable != null && provisionTypeMergeable.size() > 0) {
+                Boolean isPriority = sortassoServiceProvisionTypesByComplexity(assoServiceProvisionTypes);
                 if (!screenType.equals(ProvisionScreenType.ANNOUNCEMENT) || provisionTypeMergeable.size() == 1) {
                     Provision announcementProvision = completeNoticesFromAnnouncementProvision(
                             generateProvisionFromProvisionType(provisionTypeMergeable.get(0).getProvisionType(),
-                                    service),
+                                    service, provisionTypeMergeable.get(0), isPriority),
                             provisionTypeMergeable, affaire);
                     announcementProvision.setIsRedactedByJss(true);
                     newProvisions.add(announcementProvision);
                 } else {
                     Provision announcementProvision = completeNoticesFromAnnouncementProvision(
                             generateProvisionFromProvisionType(
-                                    this.constantService.getProvisionTypeCharacterAnnouncement(), service),
+                                    this.constantService.getProvisionTypeCharacterAnnouncement(), service,
+                                    assoServiceProvisionTypes.get(0), assoServiceProvisionTypes.get(0).getIsPriority()),
                             provisionTypeMergeable, affaire);
                     announcementProvision.setIsRedactedByJss(true);
                     newProvisions.add(announcementProvision);
@@ -298,7 +300,7 @@ public class ServiceServiceImpl implements ServiceService {
                 if (provisionTypeNonMergeable != null && provisionTypeNonMergeable.size() > 0) {
                     Provision announcementProvision = completeNoticesFromAnnouncementProvision(
                             generateProvisionFromProvisionType(assoServiceProvisionType.getProvisionType(),
-                                    service),
+                                    service, assoServiceProvisionType, assoServiceProvisionType.getIsPriority()),
                             provisionTypeNonMergeable, affaire);
                     announcementProvision.setIsRedactedByJss(true);
                     newProvisions.add(announcementProvision);
@@ -307,6 +309,25 @@ public class ServiceServiceImpl implements ServiceService {
 
         }
         return newProvisions;
+    }
+
+    private boolean sortassoServiceProvisionTypesByComplexity(
+            List<AssoServiceProvisionType> assoServiceProvisionTypes) {
+        if (assoServiceProvisionTypes != null) {
+            assoServiceProvisionTypes.sort(new Comparator<AssoServiceProvisionType>() {
+                @Override
+                public int compare(AssoServiceProvisionType arg0, AssoServiceProvisionType arg1) {
+                    return arg1.getComplexity().compareTo(arg0.getComplexity());
+                }
+            });
+
+            for (AssoServiceProvisionType asso : assoServiceProvisionTypes) {
+                if (asso.getIsPriority()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private Provision completeNoticesFromAnnouncementProvision(Provision provision,
@@ -354,15 +375,22 @@ public class ServiceServiceImpl implements ServiceService {
         return provision;
     }
 
-    private Provision generateProvisionFromProvisionType(ProvisionType provisionType, Service service)
+    private Provision generateProvisionFromProvisionType(ProvisionType provisionType, Service service,
+            AssoServiceProvisionType assoServiceProvisionType, Boolean isPriority)
             throws OsirisException {
         Provision provision = new Provision();
         if (provisionType != null) {
             provision.setProvisionFamilyType(provisionType.getProvisionFamilyType());
             provision.setProvisionType(provisionType);
             provision.setService(service);
+
+            provision.setComplexity(assoServiceProvisionType.getComplexity());
             if (provision.getComplexity() == null)
                 provision.setComplexity(4);
+
+            provision.setIsPriority(isPriority);
+            if (provision.getIsPriority() == null)
+                provision.setIsPriority(false);
             provision.setIsLogo(false);
             provision.setIsRedactedByJss(false);
             provision.setIsBaloPackage(false);
@@ -464,7 +492,8 @@ public class ServiceServiceImpl implements ServiceService {
 
                 if (shouldAdd) {
                     provisions.add(
-                            generateProvisionFromProvisionType(assoServiceProvisionType.getProvisionType(), service));
+                            generateProvisionFromProvisionType(assoServiceProvisionType.getProvisionType(), service,
+                                    assoServiceProvisionType, assoServiceProvisionType.getIsPriority()));
                 }
             }
         return provisions;

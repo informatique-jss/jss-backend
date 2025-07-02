@@ -25,7 +25,7 @@ import { KanbanComponent } from '../kanban/kanban.component';
 
 
 @Component({
-  selector: 'app-order-kaban',
+  selector: 'order-kaban',
   templateUrl: './order-kaban.component.html',
   styleUrls: ['./order-kaban.component.css']
 })

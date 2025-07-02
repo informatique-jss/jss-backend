@@ -19,4 +19,6 @@ public interface EmployeeRepository extends QueryCacheCrudRepository<Employee, I
     @Query(nativeQuery = true, value = "select e.* from asso_employee_backup a join employee e on a.id_employee = e.id where id_employee_backup = :employeeId")
     @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
     List<Employee> getMyHolidaymaker(@Param("employeeId") Integer employeeId);
+
+    List<Employee> findByAdPathContainingAndIsActive(String result, Boolean isActive);
 }

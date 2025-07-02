@@ -30,7 +30,8 @@ public class ServiceType implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "asso_service_type_sequence", sequenceName = "asso_service_type_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "asso_service_type_sequence")
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class,
+			JacksonViews.OsirisListView.class })
 	private Integer id;
 
 	@Column(nullable = false)
@@ -41,10 +42,12 @@ public class ServiceType implements Serializable, IId {
 	private String label;
 
 	@IndexedField
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class,
+			JacksonViews.OsirisListView.class })
 	private String customLabel;
 
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class,
+			JacksonViews.OsirisListView.class })
 	private String code;
 
 	@Column(columnDefinition = "TEXT")
@@ -54,6 +57,7 @@ public class ServiceType implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_service_family")
 	@IndexedField
+	@JsonView({ JacksonViews.OsirisListView.class })
 	private ServiceFamily serviceFamily;
 
 	@OneToMany(mappedBy = "serviceType", cascade = CascadeType.ALL, orphanRemoval = true)

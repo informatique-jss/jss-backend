@@ -268,6 +268,7 @@ import { SelectServiceFamilyComponent } from '../forms/select-service-family/sel
 import { SelectServiceFieldDataTypeComponent } from '../forms/select-service-field-data-type/select-service-field-data-type.component';
 import { SelectServiceFieldTypeComponent } from '../forms/select-service-field-type/select-service-field-type.component';
 import { SelectServiceTypeComponent } from '../forms/select-service-type/select-service-type.component';
+import { SelectSingleEmployeeComponent } from '../forms/select-single-employee/select-single-employee.component';
 import { SelectSpecialOfferComponent } from '../forms/select-special-offer/select-special-offer.component';
 import { SelectSubscriptionPeriodComponent } from '../forms/select-subscription-period/select-subscription-period.component';
 import { SelectTiersCategoryComponent } from '../forms/select-tiers-category/select-tiers-category.component';
@@ -594,7 +595,8 @@ const routes: Routes = [
     SelectNoticeTypeComponent,
     SelectNoticeTemplateComponent,
     AutocompleteVoucherComponent,
-    ChipsResponsableComponent
+    ChipsResponsableComponent,
+    SelectSingleEmployeeComponent
   ],
   exports: [
     HistoryComponent,
@@ -857,7 +859,8 @@ const routes: Routes = [
     SelectNoticeTypeComponent,
     SelectNoticeTemplateComponent,
     AutocompleteVoucherComponent,
-    ChipsResponsableComponent
+    ChipsResponsableComponent,
+    SelectSingleEmployeeComponent
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

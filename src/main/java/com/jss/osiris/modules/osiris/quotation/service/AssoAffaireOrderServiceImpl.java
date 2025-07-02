@@ -135,6 +135,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     @Autowired
     ConfrereService confrereService;
 
+    @Autowired
+    CustomerOrderAssignationService customerOrderAssignationService;
+
     @Override
     public List<AssoAffaireOrder> getAssoAffaireOrders() {
         return IterableUtils.toList(assoAffaireOrderRepository.findAll());
@@ -572,7 +575,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                         }
                     }
                     provision.setAssignedTo(employee);
-                    if (currentEmployee == null || !currentEmployee.getId().equals(employee.getId())) {
+                    if (currentEmployee == null ||
+                            !currentEmployee.getId().equals(employee.getId())) {
                         currentEmployee = employee;
                     }
 
@@ -583,6 +587,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                         maxWeightEmployee = employee;
                     }
                 }
+
+                customerOrderAssignationService.assignNewProvisionToUser(provision);
             }
         }
 
