@@ -1861,7 +1861,9 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/service-field-types")
-	public ResponseEntity<List<ServiceFieldType>> getServiceFieldTypes() {
+	public ResponseEntity<List<ServiceFieldType>> getServiceFieldTypes(HttpServletRequest request) {
+		detectFlood(request);
+
 		return new ResponseEntity<List<ServiceFieldType>>(serviceFieldTypeService.getServiceFieldTypes(),
 				HttpStatus.OK);
 	}
