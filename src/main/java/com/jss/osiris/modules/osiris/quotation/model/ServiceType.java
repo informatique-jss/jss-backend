@@ -62,6 +62,7 @@ public class ServiceType implements Serializable, IId {
 
 	@OneToMany(mappedBy = "serviceType", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "serviceType" }, allowSetters = true)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private List<AssoServiceProvisionType> assoServiceProvisionTypes;
 
 	@OneToMany(mappedBy = "serviceType", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -96,7 +97,6 @@ public class ServiceType implements Serializable, IId {
 	@JsonView(JacksonViews.MyJssListView.class)
 	private Boolean isMergeable;
 
-	@ManyToOne(fetch = FetchType.LAZY)
 	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
 	@JoinColumn(name = "id_service_type_linked")
 	private ServiceType serviceTypeLinked;
@@ -244,5 +244,4 @@ public class ServiceType implements Serializable, IId {
 	public void setServiceTypeLinked(ServiceType serviceTypeLinked) {
 		this.serviceTypeLinked = serviceTypeLinked;
 	}
-
 }

@@ -1,9 +1,9 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ChangeEvent, CKEditorModule } from '@ckeditor/ckeditor5-angular';
-import { NgbModal, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbNavChangeEvent, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { Alignment, Bold, ClassicEditor, Essentials, Font, GeneralHtmlSupport, Indent, IndentBlock, Italic, Link, List, Mention, Paragraph, PasteFromOffice, RemoveFormat, Underline, Undo } from 'ckeditor5';
-import { combineLatest, of, tap } from 'rxjs';
+import { combineLatest, of, Subscription, tap } from 'rxjs';
 import { PROVISION_SCREEN_TYPE_ANNOUNCEMENT, PROVISION_SCREEN_TYPE_DOMICILIATION, SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
 import { validateEmail, validateFrenchPhone, validateInternationalPhone } from '../../../../libs/CustomFormsValidatorsHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
@@ -46,12 +46,14 @@ import { Domiciliation } from '../../model/Domiciliation';
 import { DomiciliationContractType } from '../../model/DomiciliationContractType';
 import { IQuotation } from '../../model/IQuotation';
 import { MailRedirectionType } from '../../model/MailRedirectionType';
+import { NoticeTemplateDescription } from '../../model/NoticeTemplateDescription';
 import { NoticeType } from '../../model/NoticeType';
 import { NoticeTypeFamily } from '../../model/NoticeTypeFamily';
 import { ServiceFamily } from '../../model/ServiceFamily';
 import { CityService } from '../../services/city.service';
 import { CivilityService } from '../../services/civility.service';
 import { DepartmentService } from '../../services/department.service';
+import { NoticeTemplateService } from '../../services/notice.template.service';
 import { NoticeTypeFamilyService } from '../../services/notice.type.family.service';
 import { NoticeTypeService } from '../../services/notice.type.service';
 import { QuotationFileUploaderComponent } from '../quotation-file-uploader/quotation-file-uploader.component';
@@ -81,8 +83,7 @@ import { QuotationFileUploaderComponent } from '../quotation-file-uploader/quota
     SelectCountryComponent,
     SelectCivilityComponent,
     CKEditorModule,
-    NgbNavModule
-  ]
+    NgbNavModule]
 })
 export class RequiredInformationComponent implements OnInit {
 
@@ -97,7 +98,6 @@ export class RequiredInformationComponent implements OnInit {
   quotation: IQuotation | undefined;
 
   affaire: Affaire = { isIndividual: false } as Affaire;
-  editorData: string = "toto";
 
   noticeTypes: NoticeType[] | undefined;
   noticeTypeFamilies: NoticeTypeFamily[] | undefined;
@@ -135,9 +135,14 @@ export class RequiredInformationComponent implements OnInit {
 
   ckEditorHeader = ClassicEditor;
 
+  noticeTemplateDescriptionSubscription: Subscription = new Subscription;
+  noticeTemplateDescription: NoticeTemplateDescription;
+
   goBackModalInstance: any | undefined;
 
   currentTab: string = 'documents';
+
+  isUsingTemplate: boolean = true;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -153,8 +158,11 @@ export class RequiredInformationComponent implements OnInit {
     private civilityService: CivilityService,
     private constantService: ConstantService,
     private cityService: CityService,
+    private noticeTemplateService: NoticeTemplateService,
     private modalService: NgbModal,
-  ) { }
+  ) {
+    this.noticeTemplateDescription = noticeTemplateService.getNoticeTemplateDescription()
+  }
 
 
   informationForm!: FormGroup;
@@ -162,6 +170,12 @@ export class RequiredInformationComponent implements OnInit {
   parseInt = parseInt;
 
   async ngOnInit() {
+    this.noticeTemplateDescriptionSubscription = this.noticeTemplateService.noticeTemplateDescriptionObservable.subscribe(item => {
+      if (item && item.isShowNoticeTemplate && this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined && item.announcementOrder != undefined
+        && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[item.announcementOrder].announcement) {
+        this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[item.announcementOrder].announcement!.notice = item.displayText;
+      }
+    });
     this.mailRedirectionTypeOther = this.constantService.getMailRedirectionTypeOther();
     this.domiciliationContractTypeRouteEmailAndMail = this.constantService.getDomiciliationContractTypeRouteEmailAndMail();
     this.domiciliationContractTypeRouteMail = this.constantService.getDomiciliationContractTypeRouteMail();
@@ -200,7 +214,9 @@ export class RequiredInformationComponent implements OnInit {
         this.initIndexesAndServiceType();
       }
     }
+    this.emitServiceChange();
   }
+
 
   initIndexesAndServiceType() {
     if (this.quotation && this.quotation.assoAffaireOrders && this.quotation.assoAffaireOrders.length > 0) {
@@ -244,6 +260,8 @@ export class RequiredInformationComponent implements OnInit {
           }
         }
       }
+
+      this.changeProvisionNoticeTemplateDesciption({ nextId: this.activeId } as NgbNavChangeEvent);
 
       if (this.quotation.assoAffaireOrders[this.selectedAssoIndex].services && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services.length > 0) {
         this.selectedServiceIndex = 0;
@@ -340,6 +358,9 @@ export class RequiredInformationComponent implements OnInit {
 
   saveFieldsValue() {
     if (this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined) {
+      if (this.noticeTemplateDescription.announcementOrder)
+        this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[this.noticeTemplateDescription.announcementOrder].announcement!.notice = this.noticeTemplateDescription.displayText;
+
       if (this.currentUser) {
         this.appService.showLoadingSpinner();
         return this.serviceService.addOrUpdateService(this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex]).pipe(tap(response => {
@@ -379,6 +400,8 @@ export class RequiredInformationComponent implements OnInit {
       newAssoIndex = newAssoIndex + 1;
       newServiceIndex = 0;
     }
+
+    this.emitServiceChange();
 
     if (newAssoIndex >= this.quotation.assoAffaireOrders.length) {
       this.saveFieldsValue().subscribe(response => {
@@ -573,6 +596,39 @@ export class RequiredInformationComponent implements OnInit {
         if (!asso.isMandatory)
           return true;
     return false;
+  }
+
+  private emitServiceChange() {
+    if (this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined)
+      this.noticeTemplateDescription.service = this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex];
+    this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
+  }
+
+  changeIsShowNoticeTemplate(event: Boolean, isRedactedByJss: boolean) {
+    if (isRedactedByJss) {
+      this.noticeTemplateDescription.isShowNoticeTemplate = false;
+      this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
+    } else {
+      this.noticeTemplateDescription.isShowNoticeTemplate = event as boolean;
+      this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
+    }
+  }
+
+  changeProvisionNoticeTemplateDesciption(ngbEvent: NgbNavChangeEvent) {
+    let destId = ngbEvent.nextId as number;
+    let originId = ngbEvent.activeId as number;
+
+    // if id is > 10 and first char begins with 1 then its an announcement tab
+    if (destId >= 10) {
+      this.noticeTemplateDescription.announcementOrder = this.parseInt(destId.toString().substring(1));
+      this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
+    } else if (originId >= 10) {
+      this.noticeTemplateDescription.announcementOrder = this.parseInt(originId.toString().substring(1));
+      this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
+    }
+    if (destId < 10) {
+      this.changeIsShowNoticeTemplate(false, true);
+    }
   }
 
   isDisplayDependantField(assoField: AssoServiceFieldType) {

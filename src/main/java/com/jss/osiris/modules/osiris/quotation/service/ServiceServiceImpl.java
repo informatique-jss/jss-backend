@@ -337,7 +337,6 @@ public class ServiceServiceImpl implements ServiceService {
         String noticeTemplate = "";
         List<Integer> noticeTypeIds = new ArrayList<>();
         List<Integer> noticeTypeFamilyIds = new ArrayList<>();
-        List<Integer> noticeTemplateIds = new ArrayList<>();
 
         Announcement announcement = new Announcement();
         announcement.setIsHeader(false);
@@ -361,11 +360,6 @@ public class ServiceServiceImpl implements ServiceService {
                         && !noticeTypeIds.contains(asso.getNoticeType().getId())) {
                     noticeTypes.add(asso.getNoticeType());
                     noticeTypeIds.add(asso.getNoticeType().getId());
-                }
-                if (asso.getNoticeTemplate() != null
-                        && !noticeTemplateIds.contains(asso.getNoticeTemplate().getId())) {
-                    noticeTemplateIds.add(asso.getNoticeTemplate().getId());
-                    noticeTemplate += asso.getNoticeTemplate().getText();
                 }
             }
             if (noticeTypeFamilies.size() == 1) {

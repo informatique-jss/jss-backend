@@ -113,6 +113,7 @@ import com.jss.osiris.modules.osiris.quotation.service.PricingHelper;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
 import com.jss.osiris.modules.osiris.quotation.service.ServiceFamilyGroupService;
 import com.jss.osiris.modules.osiris.quotation.service.ServiceFamilyService;
+import com.jss.osiris.modules.osiris.quotation.service.ServiceFieldTypeService;
 import com.jss.osiris.modules.osiris.quotation.service.ServiceService;
 import com.jss.osiris.modules.osiris.quotation.service.ServiceTypeService;
 import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.referentials.TypeDocumentService;
@@ -243,7 +244,11 @@ public class MyJssQuotationController {
 	NewspaperService newspaperService;
 
 	@Autowired
+	ServiceFieldTypeService serviceFieldTypeService;
+
+	@Autowired
 	VoucherService voucherService;
+
 	@Autowired
 	ReadingFolderService readingFolderService;
 
@@ -1852,6 +1857,14 @@ public class MyJssQuotationController {
 		return new ResponseEntity<CustomerOrder>(
 				customerOrderService.getCustomerOrderForSubscription(subscriptionType, isPriceReductionForSubscription,
 						idArticle),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/service-field-types")
+	public ResponseEntity<List<ServiceFieldType>> getServiceFieldTypes(HttpServletRequest request) {
+		detectFlood(request);
+
+		return new ResponseEntity<List<ServiceFieldType>>(serviceFieldTypeService.getServiceFieldTypes(),
 				HttpStatus.OK);
 	}
 

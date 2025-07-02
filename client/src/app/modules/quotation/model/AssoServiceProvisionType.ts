@@ -14,7 +14,7 @@ export interface AssoServiceProvisionType {
   customerMessageWhenAdded: string;
   noticeType: NoticeType;
   noticeTypeFamily: NoticeTypeFamily;
-  noticeTemplate: AnnouncementNoticeTemplate;
   complexity: number;
+  announcementNoticeTemplate: AnnouncementNoticeTemplate;
   isPriority: boolean;
 }
