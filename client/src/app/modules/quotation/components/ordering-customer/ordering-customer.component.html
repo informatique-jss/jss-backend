@@ -55,6 +55,12 @@
               {{quotation.responsable.tiers.postalCode}}
               {{quotation.responsable.tiers.city?quotation.responsable.tiers.city.label:""}}
               {{quotation.responsable.tiers.country?quotation.responsable.tiers.country.label:""}}</span></td>
+          <td style="vertical-align: middle;"><span *ngIf="billingDocument && billingDocument.billingLabel">Libellé de
+              facturation :
+              {{billingDocument.billingLabel}}</span>
+            <span *ngIf="billingDocument && billingDocument.commandNumber">Numéro de commande annuelle :
+              {{billingDocument.commandNumber}}</span>
+          </td>
         </tr>
       </table>
       <mat-divider class="margin-mat-divider"></mat-divider>

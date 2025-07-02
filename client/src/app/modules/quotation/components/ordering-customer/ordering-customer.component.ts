@@ -5,6 +5,7 @@ import { QUOTATION_STATUS_SENT_TO_CUSTOMER } from 'src/app/libs/Constants';
 import { formatDateTimeForSortTable } from 'src/app/libs/FormatHelper';
 import { instanceOfCustomerOrder, instanceOfQuotation } from 'src/app/libs/TypeHelper';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
+import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { DocumentTypeService } from 'src/app/modules/miscellaneous/services/document.type.service';
 import { TiersService } from 'src/app/modules/tiers/services/tiers.service';
 import { IndexEntityService } from 'src/app/routing/search/index.entity.service';
@@ -67,6 +68,7 @@ export class OrderingCustomerComponent implements OnInit {
     private orderingSearchResultService: OrderingSearchResultService,
     private quotationSearchResultService: QuotationSearchResultService,
     private quotationService: QuotationService,
+    private constantService: ConstantService,
     public specialOfferDialog: MatDialog) { }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -158,6 +160,11 @@ export class OrderingCustomerComponent implements OnInit {
   fillResponsable(responsable: IndexEntity) {
     this.responsableService.getResponsable(responsable.entityId).subscribe(response => {
       this.quotation.responsable = response;
+      if (this.quotation.responsable && this.quotation.responsable.documents) {
+        for (let doc of this.quotation.responsable.documents)
+          if (doc.documentType.code === this.constantService.getDocumentTypeBilling().code)
+            this.billingDocument = doc;
+      }
       this.setDocument();
     });
     this.tiersService.getTiersByResponsable(responsable.entityId).subscribe(response => {
