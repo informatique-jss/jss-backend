@@ -81,6 +81,7 @@ import com.jss.osiris.modules.osiris.quotation.model.BuildingDomiciliation;
 import com.jss.osiris.modules.osiris.quotation.model.CharacterPrice;
 import com.jss.osiris.modules.osiris.quotation.model.Confrere;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderAssignation;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.DebourDel;
@@ -140,6 +141,7 @@ import com.jss.osiris.modules.osiris.quotation.service.BankTransfertService;
 import com.jss.osiris.modules.osiris.quotation.service.BuildingDomiciliationService;
 import com.jss.osiris.modules.osiris.quotation.service.CharacterPriceService;
 import com.jss.osiris.modules.osiris.quotation.service.ConfrereService;
+import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderAssignationService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderCommentService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderStatusService;
@@ -401,6 +403,9 @@ public class QuotationController {
 
   @Autowired
   VoucherService voucherService;
+
+  @Autowired
+  CustomerOrderAssignationService customerOrderAssignationService;
 
   @GetMapping(inputEntryPoint + "/service-field-types")
   public ResponseEntity<List<ServiceFieldType>> getServiceFieldTypes() {
@@ -736,6 +741,12 @@ public class QuotationController {
         HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/service-types/complete")
+  public ResponseEntity<List<ServiceType>> getServiceTypesComplete() {
+    return new ResponseEntity<List<ServiceType>>(serviceTypeService.getServiceTypes(), HttpStatus.OK);
+  }
+
+  @JsonView(JacksonViews.OsirisListView.class)
   @GetMapping(inputEntryPoint + "/service-types")
   public ResponseEntity<List<ServiceType>> getServiceTypes() {
     return new ResponseEntity<List<ServiceType>>(serviceTypeService.getServiceTypes(), HttpStatus.OK);
@@ -2883,5 +2894,102 @@ public class QuotationController {
 
     return new ResponseEntity<List<CustomerOrder>>(
         customerOrderService.getCustomerOrdersByVoucherAndResponsable(voucher, null), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/customer-order-assignation/update")
+  @PreAuthorize(ActiveDirectoryHelper.TEAM_RESPONSIBLE)
+  public ResponseEntity<Boolean> updateCustomerOrderAssignation(Integer idCustomerOrderAssignation,
+      @RequestParam(required = false) Integer idEmployee)
+      throws OsirisValidationException {
+
+    CustomerOrderAssignation customerOrderAssignation = customerOrderAssignationService
+        .getCustomerOrderAssignation(idCustomerOrderAssignation);
+
+    if (customerOrderAssignation == null)
+      throw new OsirisValidationException("customerOrderAssignation");
+
+    Employee employee = null;
+    if (idEmployee != null) {
+      employee = employeeService.getEmployee(idEmployee);
+      if (employee == null)
+        throw new OsirisValidationException("employee");
+    }
+
+    customerOrderAssignationService.addOrUpdateCustomerOrderAssignation(customerOrderAssignation, employee);
+
+    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/customer-order-assignation/assign/immediatly")
+  @PreAuthorize(ActiveDirectoryHelper.TEAM_RESPONSIBLE)
+  public ResponseEntity<Boolean> assignImmediatlyOrder(Integer idCustomerOrder)
+      throws OsirisException {
+
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(idCustomerOrder);
+
+    if (customerOrder == null)
+      throw new OsirisValidationException("customerOrder");
+
+    customerOrderAssignationService.assignImmediatlyOrder(customerOrder);
+
+    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/assign/new/fond/priority")
+  @JsonView(JacksonViews.OsirisListView.class)
+  public ResponseEntity<Integer> getNextPriorityOrderForFond() throws OsirisException {
+    return new ResponseEntity<Integer>(customerOrderAssignationService.getNextOrderForFond(true, null, false),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/assign/new/common/priority")
+  @JsonView(JacksonViews.OsirisListView.class)
+  public ResponseEntity<Integer> getNextPriorityOrderForCommon(Integer complexity) throws OsirisException {
+    return new ResponseEntity<Integer>(customerOrderAssignationService.getNextOrderForCommon(true, complexity, false),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/assign/new/fond")
+  @JsonView(JacksonViews.OsirisListView.class)
+  public ResponseEntity<Integer> getNextOrderForFond(Integer complexity) throws OsirisException {
+    return new ResponseEntity<Integer>(customerOrderAssignationService.getNextOrderForFond(false, complexity, false),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/assign/new/common")
+  @JsonView(JacksonViews.OsirisListView.class)
+  public ResponseEntity<Integer> getNextOrderForCommon(Integer complexity) throws OsirisException {
+    return new ResponseEntity<Integer>(customerOrderAssignationService.getNextOrderForCommon(false, complexity, false),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/assign/fond/type")
+  @JsonView(JacksonViews.OsirisListView.class)
+  public ResponseEntity<String> getFondTypeToUse(Integer complexity) throws OsirisException {
+    return new ResponseEntity<String>(customerOrderAssignationService.getFondTypeToUse(complexity),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/team/employees")
+  @JsonView(JacksonViews.OsirisListView.class)
+  public ResponseEntity<List<Employee>> findTeamEmployee(Integer idEmployee) throws OsirisException {
+    Employee employee = employeeService.getEmployee(idEmployee);
+
+    if (employee == null)
+      throw new OsirisValidationException("employee");
+
+    return new ResponseEntity<List<Employee>>(employeeService.findEmployeesInTheSameOU(employee), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/assign/fond/order")
+  @JsonView(JacksonViews.OsirisListView.class)
+  public ResponseEntity<List<CustomerOrder>> getOrdersToAssignForFond(Integer idTeamEmployee) throws OsirisException {
+    Employee employee = employeeService.getEmployee(idTeamEmployee);
+
+    if (employee == null)
+      throw new OsirisValidationException("employee");
+
+    return new ResponseEntity<List<CustomerOrder>>(customerOrderAssignationService.getOrdersToAssignForFond(employee),
+        HttpStatus.OK);
   }
 }

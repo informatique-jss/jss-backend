@@ -48,17 +48,20 @@ public class TiersValidationHelper {
                 throw new OsirisValidationException("IntercommunityVat");
         }
 
-        // validationHelper.validateReferential(tiers.getTiersCategory(), true,
-        // "TiersCategory");
+        validationHelper.validateReferential(tiers.getTiersCategory(), false, "TiersCategory");
         validationHelper.validateReferential(tiers.getSalesEmployee(), true,
                 "SalesEmployee");
-        validationHelper.validateReferential(tiers.getDefaultCustomerOrderEmployee(),
-                false,
-                "DefaultCustomerOrderEmployee");
+
         validationHelper.validateReferential(tiers.getFormalisteEmployee(), false,
                 "FormalisteEmployee");
+        if (tiers.getFormalisteEmployee() == null)
+            tiers.setFormalisteEmployee(constantService.getEmployeeProductionDirector());
+
         validationHelper.validateReferential(tiers.getInsertionEmployee(), false,
                 "InsertionEmployee");
+        if (tiers.getInsertionEmployee() == null)
+            tiers.setInsertionEmployee(constantService.getEmployeeProductionDirector());
+
         validationHelper.validateReferential(tiers.getLanguage(), true, "Language");
         validationHelper.validateReferential(tiers.getDeliveryService(), true,
                 "DeliveryService");
@@ -198,10 +201,15 @@ public class TiersValidationHelper {
                 validationHelper.validateReferential(responsable.getTiersType(), true, "TiersType");
                 validationHelper.validateReferential(responsable.getTiersCategory(), false, "TiersCategory");
                 validationHelper.validateReferential(responsable.getSalesEmployee(), true, "SalesEmployee");
-                validationHelper.validateReferential(responsable.getDefaultCustomerOrderEmployee(), false,
-                        "DefaultCustomerOrderEmployee");
+
                 validationHelper.validateReferential(responsable.getFormalisteEmployee(), false, "FormalisteEmployee");
+                if (responsable.getFormalisteEmployee() == null)
+                    responsable.setFormalisteEmployee(constantService.getEmployeeProductionDirector());
+
                 validationHelper.validateReferential(responsable.getInsertionEmployee(), false, "InsertionEmployee");
+                if (responsable.getInsertionEmployee() == null)
+                    responsable.setInsertionEmployee(constantService.getEmployeeProductionDirector());
+
                 validationHelper.validateReferential(responsable.getLanguage(), true, "Language");
                 validationHelper.validateString(responsable.getAddress(), false, 100, "Address");
                 validationHelper.validateReferential(responsable.getCountry(), false, "Country");

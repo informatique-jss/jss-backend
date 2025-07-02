@@ -86,6 +86,7 @@ import com.jss.osiris.modules.osiris.quotation.controller.QuotationValidationHel
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.AnnouncementStatus;
+import com.jss.osiris.modules.osiris.quotation.model.AssignationType;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceFieldType;
@@ -261,6 +262,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Autowired
     VoucherService voucherService;
 
+    @Autowired
+    CustomerOrderAssignationService customerOrderAssignationService;
+
     private CustomerOrder simpleAddOrUpdate(CustomerOrder customerOrder) {
         return customerOrderRepository.save(customerOrder);
     }
@@ -297,69 +301,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     public void markCustomerOrderAsPayed(CustomerOrder customerOrder, boolean isPayed)
             throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException, OsirisException {
         customerOrder.setIsPayed(isPayed);
-        for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
-            for (Service service : asso.getServices()) {
-                if (isJssSubscriptionService(service)) {
-                    saveSubscription(service);
-                }
-            }
-        }
+        subscriptionService.saveSubscription(customerOrder);
 
         addOrUpdateCustomerOrder(customerOrder, false, false);
-    }
-
-    private Subscription saveSubscription(Service service) throws OsirisException {
-        Subscription newSubscription = new Subscription();
-        newSubscription.setSubcriptionMail(service.getAssoAffaireOrder()
-                .getCustomerOrder().getResponsable().getMail());
-
-        if (service.getServiceTypes().get(0).getId()
-                .equals(constantService.getServiceTypeAnnualSubscription().getId())) {
-            newSubscription.setSubscriptionType(Subscription.ANNUAL_SUBSCRIPTION);
-
-        } else if (service.getServiceTypes().get(0).getId().equals(constantService
-                .getServiceTypeEnterpriseAnnualSubscription().getId())) {
-            newSubscription.setSubscriptionType(Subscription.ENTERPRISE_ANNUAL_SUBSCRIPTION);
-
-        } else if (service.getServiceTypes().get(0).getId().equals(constantService
-                .getServiceTypeMonthlySubscription().getId())) {
-            newSubscription.setSubscriptionType(Subscription.MONTHLY_SUBSCRIPTION);
-
-        } else if (service.getServiceTypes().get(0).getId().equals(constantService
-                .getServiceTypeKioskNewspaperBuy().getId())) {
-            newSubscription.setSubscriptionType(Subscription.NEWSPAPER_KIOSK_BUY);
-
-            AssoProvisionPostNewspaper assoProvisionPostNewspaper = assoProvisionPostNewspaperService
-                    .getAssoProvisionPostNewspaperByProvision(service.getProvisions().get(0));
-            if (assoProvisionPostNewspaper != null)
-                newSubscription.setPost(assoProvisionPostNewspaper.getPost());
-
-        } else if (service.getServiceTypes().get(0).getId().equals(constantService
-                .getServiceTypeUniqueArticleBuy().getId())) {
-            newSubscription.setSubscriptionType(Subscription.ONE_POST_SUBSCRIPTION);
-
-            AssoProvisionPostNewspaper assoProvisionPostNewspaper = assoProvisionPostNewspaperService
-                    .getAssoProvisionPostNewspaperByProvision(service.getProvisions().get(0));
-            if (assoProvisionPostNewspaper != null)
-                newSubscription.setNewspaper(assoProvisionPostNewspaper.getNewspaper());
-        }
-
-        if (service.getAssoAffaireOrder().getCustomerOrder().getIsRecurring()) {
-            newSubscription.setStartDate(service.getAssoAffaireOrder().getCustomerOrder().getRecurringStartDate());
-            newSubscription.setEndDate(service.getAssoAffaireOrder().getCustomerOrder().getRecurringEndDate());
-        }
-
-        return subscriptionService.addOrUpdateSubscription(newSubscription);
-    }
-
-    private boolean isJssSubscriptionService(Service service) throws OsirisException {
-        Integer subscriptionType = service.getServiceTypes().get(0).getId();
-
-        return subscriptionType.equals(constantService.getServiceTypeAnnualSubscription().getId())
-                || subscriptionType.equals(constantService.getServiceTypeEnterpriseAnnualSubscription().getId())
-                || subscriptionType.equals(constantService.getServiceTypeMonthlySubscription().getId())
-                || subscriptionType.equals(constantService.getServiceTypeKioskNewspaperBuy().getId())
-                || subscriptionType.equals(constantService.getServiceTypeUniqueArticleBuy().getId());
     }
 
     @Override
@@ -457,6 +401,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             simpleAddOrUpdate(customerOrder);
         }
 
+        customerOrderAssignationService.completeAssignationForCustomerOrder(customerOrder);
         batchService.declareNewBatch(Batch.REINDEX_CUSTOMER_ORDER, customerOrder.getId());
         return customerOrder;
     }
@@ -1680,6 +1625,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if (affaireLabels.size() > 0)
             customerOrder.setAffairesList(String.join(" / ", affaireLabels));
         customerOrder.setServicesList(String.join(" / ", serviceLabels));
+        customerOrder.setIsPriority(customerOrderAssignationService.isPriorityOrder(customerOrder));
         return customerOrder;
     }
 
@@ -2105,5 +2051,26 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if (orders != null)
             for (CustomerOrder order : orders)
                 batchService.declareNewBatch(Batch.PURGE_CUSTOMER_ORDER, order.getId());
+    }
+
+    @Override
+    public List<CustomerOrder> findCustomerOrderByFormalisteAssigned(List<Employee> employees,
+            CustomerOrderStatus customerOrderStatus, Employee assignedUser, AssignationType assignationType) {
+        return customerOrderRepository.findCustomerOrderByFormalisteAndStatusAssigned(employees, customerOrderStatus,
+                assignedUser, assignationType);
+    }
+
+    @Override
+    public List<CustomerOrder> findCustomerOrderByPubliscisteAssigned(List<Employee> employees,
+            CustomerOrderStatus customerOrderStatus, Employee assignedUser, AssignationType assignationType) {
+        return customerOrderRepository.findCustomerOrderByPubliscisteAndStatusAssigned(employees, customerOrderStatus,
+                assignedUser, assignationType);
+    }
+
+    @Override
+    public List<CustomerOrder> findCustomerOrderByForcedEmployeeAssigned(List<Employee> employees,
+            CustomerOrderStatus customerOrderStatus, Employee assignedUser) {
+        return customerOrderRepository.findCustomerOrderByForcedEmployeeAndStatusAssigned(employees,
+                customerOrderStatus, assignedUser);
     }
 }

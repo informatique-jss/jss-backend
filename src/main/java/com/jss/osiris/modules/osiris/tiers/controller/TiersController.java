@@ -229,10 +229,6 @@ public class TiersController {
     if (rff == null)
       throw new OsirisValidationException("Rff");
 
-    // if (amount == null || amount <= 0f || amount > (rff.getRffFormalite() +
-    // rff.getRffInsertion()))
-    // throw new OsirisValidationException("Rff");
-
     if (rff.getIsCancelled() == true || rff.getIsSent() || rff.getInvoices() != null && rff.getInvoices().size() > 0)
       throw new OsirisValidationException("Rff");
 

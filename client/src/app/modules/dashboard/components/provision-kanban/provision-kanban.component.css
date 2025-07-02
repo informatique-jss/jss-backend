@@ -2,6 +2,10 @@
   padding-top: 18px;
 }
 
+.fab-td-button {
+  width: 35px;
+}
+
 .filter-bar {
   display: flex;
   gap: 16px;

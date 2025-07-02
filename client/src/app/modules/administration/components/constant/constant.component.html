@@ -1012,6 +1012,22 @@
             </td>
           </tr>
           <tr>
+            <td>
+              <select-assignation-type [(model)]="constant.assignationTypePublisciste"
+                label="Assignation par défaut - Publisciste" [form]="constantForm"
+                propertyName="assignationTypePublisciste" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-assignation-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-assignation-type [(model)]="constant.assignationTypeFormaliste"
+                label="Assignation par défaut - Formaliste" [form]="constantForm"
+                propertyName="assignationTypeFormaliste" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-assignation-type>
+            </td>
+          </tr>
+          <tr>
           <tr>
             <td>
               <select-customer-order-origin [(model)]="constant.customerOrderOriginWebSite"
@@ -1696,7 +1712,21 @@
           <tr>
             <td>
               <select-provision-family [(model)]="constant.provisionFamilyTypeDeposit"
-                label="Famille de service - Dépôt" [form]="constantForm" propertyName="provisionFamilyTypeDeposit"
+                label="Famille de prestation - Dépôt" [form]="constantForm" propertyName="provisionFamilyTypeDeposit"
+                [isMandatory]="true" [isDisabled]="!editMode"></select-provision-family>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-provision-family [(model)]="constant.provisionFamilyTypeBalo" label="Famille de prestation - BALO"
+                [form]="constantForm" propertyName="provisionFamilyTypeBalo" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-provision-family>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-provision-family [(model)]="constant.provisionFamilyTypeBodacc"
+                label="Famille de prestation - BODACC" [form]="constantForm" propertyName="provisionFamilyTypeBodacc"
                 [isMandatory]="true" [isDisabled]="!editMode"></select-provision-family>
             </td>
           </tr>

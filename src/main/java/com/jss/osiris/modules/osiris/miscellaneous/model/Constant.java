@@ -546,6 +546,14 @@ public class Constant implements Serializable, IId {
 	private AssignationType assignationTypeEmployee;
 
 	@ManyToOne
+	@JoinColumn(name = "id_assignation_type_formaliste")
+	private AssignationType assignationTypeFormaliste;
+
+	@ManyToOne
+	@JoinColumn(name = "id_assignation_type_publisciste")
+	private AssignationType assignationTypePublisciste;
+
+	@ManyToOne
 	@JoinColumn(name = "id_employee_billing_responsible")
 	private Employee employeeBillingResponsible;
 
@@ -926,6 +934,14 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_provision_family_type_deposit")
 	private ProvisionFamilyType provisionFamilyTypeDeposit;
+
+	@ManyToOne
+	@JoinColumn(name = "id_provision_family_type_bodacc")
+	private ProvisionFamilyType provisionFamilyTypeBodacc;
+
+	@ManyToOne
+	@JoinColumn(name = "id_provision_family_type_balo")
+	private ProvisionFamilyType provisionFamilyTypeBalo;
 
 	@ManyToOne
 	@JoinColumn(name = "id_provision_family_type_abonnement")
@@ -3045,6 +3061,38 @@ public class Constant implements Serializable, IId {
 
 	public void setServiceFamilyGroupFormality(ServiceFamilyGroup serviceFamilyGroupFormality) {
 		this.serviceFamilyGroupFormality = serviceFamilyGroupFormality;
+	}
+
+	public AssignationType getAssignationTypeFormaliste() {
+		return assignationTypeFormaliste;
+	}
+
+	public void setAssignationTypeFormaliste(AssignationType assignationTypeFormaliste) {
+		this.assignationTypeFormaliste = assignationTypeFormaliste;
+	}
+
+	public AssignationType getAssignationTypePublisciste() {
+		return assignationTypePublisciste;
+	}
+
+	public void setAssignationTypePublisciste(AssignationType assignationTypePublisciste) {
+		this.assignationTypePublisciste = assignationTypePublisciste;
+	}
+
+	public ProvisionFamilyType getProvisionFamilyTypeBodacc() {
+		return provisionFamilyTypeBodacc;
+	}
+
+	public void setProvisionFamilyTypeBodacc(ProvisionFamilyType provisionFamilyTypeBodacc) {
+		this.provisionFamilyTypeBodacc = provisionFamilyTypeBodacc;
+	}
+
+	public ProvisionFamilyType getProvisionFamilyTypeBalo() {
+		return provisionFamilyTypeBalo;
+	}
+
+	public void setProvisionFamilyTypeBalo(ProvisionFamilyType provisionFamilyTypeBalo) {
+		this.provisionFamilyTypeBalo = provisionFamilyTypeBalo;
 	}
 
 }

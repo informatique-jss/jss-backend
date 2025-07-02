@@ -257,8 +257,12 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	@Transient
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
-			JacksonViews.OsirisDetailedView.class })
+			JacksonViews.OsirisDetailedView.class, JacksonViews.OsirisListView.class, })
 	private Boolean hasMissingInformations;
+
+	@Transient
+	@JsonView({ JacksonViews.OsirisDetailedView.class, JacksonViews.OsirisListView.class, })
+	private Boolean isPriority;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_service_family_group")
@@ -289,6 +293,10 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 			JacksonViews.MyJssDetailedView.class })
 	@JoinColumn(name = "id_voucher")
 	private Voucher voucher;
+
+	@JsonView({ JacksonViews.OsirisListView.class })
+	@OneToMany(targetEntity = CustomerOrderAssignation.class, mappedBy = "customerOrder")
+	private List<CustomerOrderAssignation> customerOrderAssignations;
 
 	public Integer getId() {
 		return id;
@@ -649,6 +657,22 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public void setVoucher(Voucher voucher) {
 		this.voucher = voucher;
+	}
+
+	public List<CustomerOrderAssignation> getCustomerOrderAssignations() {
+		return customerOrderAssignations;
+	}
+
+	public void setCustomerOrderAssignations(List<CustomerOrderAssignation> customerOrderAssignations) {
+		this.customerOrderAssignations = customerOrderAssignations;
+	}
+
+	public Boolean getIsPriority() {
+		return isPriority;
+	}
+
+	public void setIsPriority(Boolean isPriority) {
+		this.isPriority = isPriority;
 	}
 
 }

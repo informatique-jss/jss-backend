@@ -68,6 +68,8 @@ public class AssoServiceProvisionType implements Serializable, IId {
 	// 1 hard => 3 easy
 	private Integer complexity;
 
+	private Boolean isPriority;
+
 	public Integer getId() {
 		return id;
 	}
@@ -162,6 +164,14 @@ public class AssoServiceProvisionType implements Serializable, IId {
 
 	public void setComplexity(Integer complexity) {
 		this.complexity = complexity;
+	}
+
+	public Boolean getIsPriority() {
+		return isPriority;
+	}
+
+	public void setIsPriority(Boolean isPriority) {
+		this.isPriority = isPriority;
 	}
 
 }

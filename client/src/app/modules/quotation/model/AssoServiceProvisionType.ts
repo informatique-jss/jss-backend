@@ -16,4 +16,5 @@ export interface AssoServiceProvisionType {
   noticeTypeFamily: NoticeTypeFamily;
   noticeTemplate: AnnouncementNoticeTemplate;
   complexity: number;
+  isPriority: boolean;
 }

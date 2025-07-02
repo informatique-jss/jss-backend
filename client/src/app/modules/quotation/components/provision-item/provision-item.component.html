@@ -15,13 +15,18 @@
     </td>
     <td>
       <generic-input [(model)]="provision.complexity" label="Complexité" [form]="provisionItemForm"
-        propertyName="complexity" [isMandatory]="true" [isDisabled]="!editMode || !canUpdateComplexity()" type='number'
-        type="type"></generic-input>
+        propertyName="complexity" [isMandatory]="true" [isDisabled]="!editMode || !canUpdateComplexity()"
+        type='number'></generic-input>
+    </td>
+    <td>
+      <generic-toggle [(model)]="provision.isPriority" label="Est prioritaire ?" [form]="provisionItemForm"
+        propertyName="isPriority" [isMandatory]="false"
+        [isDisabled]="!editMode || !canUpdateComplexity()"></generic-toggle>
     </td>
     <td *ngIf="instanceOfCustomerOrder && provision && provision.id">
     <td colspan="2">
       <autocomplete-employee [(model)]="provision.assignedTo" [form]="provisionItemForm" propertyName="assignedTo"
-        [isMandatory]="true" [isDisabled]="false" label="Prestation assignée à"
+        [isMandatory]="false" [isDisabled]="false" label="Prestation assignée à"
         (onOptionSelected)="updateAssignedToForProvision($event,provision)">
       </autocomplete-employee>
     </td>

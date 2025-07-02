@@ -6,10 +6,14 @@ import { ServiceType } from '../model/ServiceType';
 @Injectable({
   providedIn: 'root'
 })
-export class ServiceTypeService extends AppRestService<ServiceType>{
+export class ServiceTypeService extends AppRestService<ServiceType> {
 
   constructor(http: HttpClient) {
     super(http, "quotation");
+  }
+
+  getServiceTypesComplete() {
+    return this.getList(new HttpParams(), "service-types/complete");
   }
 
   getServiceTypes() {

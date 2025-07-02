@@ -30,6 +30,8 @@ public interface AssoAffaireOrderSearchResult {
 
 	public Boolean getIsEmergency();
 
+	public Boolean getIsPriority();
+
 	public String getWaitedCompetentAuthorityLabel();
 
 	public String getCompetentAuthorityLabel();

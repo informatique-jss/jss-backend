@@ -18,6 +18,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.InvoicingSummary;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
+import com.jss.osiris.modules.osiris.quotation.model.AssignationType;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
@@ -184,4 +185,15 @@ public interface CustomerOrderService {
         public List<CustomerOrder> getCustomerOrdersByVoucherAndResponsable(Voucher voucher, Responsable responsable);
 
         public void purgeCustomerOrders() throws OsirisException;
+
+        public List<CustomerOrder> findCustomerOrderByFormalisteAssigned(List<Employee> employees,
+                        CustomerOrderStatus customerOrderStatus, Employee assignedUser,
+                        AssignationType assignationType);
+
+        public List<CustomerOrder> findCustomerOrderByPubliscisteAssigned(List<Employee> employees,
+                        CustomerOrderStatus customerOrderStatus, Employee assignedUser,
+                        AssignationType assignationType);
+
+        public List<CustomerOrder> findCustomerOrderByForcedEmployeeAssigned(List<Employee> employees,
+                        CustomerOrderStatus customerOrderStatus, Employee assignedUser);
 }

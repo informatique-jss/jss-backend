@@ -5,21 +5,25 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.mail.MailHelper;
+import com.jss.osiris.modules.myjss.wordpress.model.AssoProvisionPostNewspaper;
 import com.jss.osiris.modules.myjss.wordpress.model.Newspaper;
 import com.jss.osiris.modules.myjss.wordpress.model.Post;
 import com.jss.osiris.modules.myjss.wordpress.model.Subscription;
 import com.jss.osiris.modules.myjss.wordpress.repository.SubscriptionRepository;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
+import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
+import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 import jakarta.transaction.Transactional;
 
-@Service
+@org.springframework.stereotype.Service
 public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Autowired
@@ -30,6 +34,12 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Autowired
     private MailHelper mailHelper;
+
+    @Autowired
+    ConstantService constantService;
+
+    @Autowired
+    AssoProvisionPostNewspaperService assoProvisionPostNewspaperService;
 
     @Override
     public List<Subscription> getSubscriptionsForMail(Mail mail) {
@@ -137,5 +147,68 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                 break;
         }
         return hasFullSubscriptionValid;
+    }
+
+    @Override
+    public void saveSubscription(CustomerOrder customerOrder) throws OsirisException {
+        for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
+            for (Service service : asso.getServices()) {
+                if (isJssSubscriptionService(service)) {
+                    Subscription newSubscription = new Subscription();
+                    newSubscription.setSubcriptionMail(service.getAssoAffaireOrder()
+                            .getCustomerOrder().getResponsable().getMail());
+
+                    if (service.getServiceTypes().get(0).getId()
+                            .equals(constantService.getServiceTypeAnnualSubscription().getId())) {
+                        newSubscription.setSubscriptionType(Subscription.ANNUAL_SUBSCRIPTION);
+
+                    } else if (service.getServiceTypes().get(0).getId().equals(constantService
+                            .getServiceTypeEnterpriseAnnualSubscription().getId())) {
+                        newSubscription.setSubscriptionType(Subscription.ENTERPRISE_ANNUAL_SUBSCRIPTION);
+
+                    } else if (service.getServiceTypes().get(0).getId().equals(constantService
+                            .getServiceTypeMonthlySubscription().getId())) {
+                        newSubscription.setSubscriptionType(Subscription.MONTHLY_SUBSCRIPTION);
+
+                    } else if (service.getServiceTypes().get(0).getId().equals(constantService
+                            .getServiceTypeKioskNewspaperBuy().getId())) {
+                        newSubscription.setSubscriptionType(Subscription.NEWSPAPER_KIOSK_BUY);
+
+                        AssoProvisionPostNewspaper assoProvisionPostNewspaper = assoProvisionPostNewspaperService
+                                .getAssoProvisionPostNewspaperByProvision(service.getProvisions().get(0));
+                        if (assoProvisionPostNewspaper != null)
+                            newSubscription.setPost(assoProvisionPostNewspaper.getPost());
+
+                    } else if (service.getServiceTypes().get(0).getId().equals(constantService
+                            .getServiceTypeUniqueArticleBuy().getId())) {
+                        newSubscription.setSubscriptionType(Subscription.ONE_POST_SUBSCRIPTION);
+
+                        AssoProvisionPostNewspaper assoProvisionPostNewspaper = assoProvisionPostNewspaperService
+                                .getAssoProvisionPostNewspaperByProvision(service.getProvisions().get(0));
+                        if (assoProvisionPostNewspaper != null)
+                            newSubscription.setNewspaper(assoProvisionPostNewspaper.getNewspaper());
+                    }
+
+                    if (service.getAssoAffaireOrder().getCustomerOrder().getIsRecurring()) {
+                        newSubscription
+                                .setStartDate(service.getAssoAffaireOrder().getCustomerOrder().getRecurringStartDate());
+                        newSubscription
+                                .setEndDate(service.getAssoAffaireOrder().getCustomerOrder().getRecurringEndDate());
+                    }
+
+                    addOrUpdateSubscription(newSubscription);
+                }
+            }
+        }
+    }
+
+    private boolean isJssSubscriptionService(Service service) throws OsirisException {
+        Integer subscriptionType = service.getServiceTypes().get(0).getId();
+
+        return subscriptionType.equals(constantService.getServiceTypeAnnualSubscription().getId())
+                || subscriptionType.equals(constantService.getServiceTypeEnterpriseAnnualSubscription().getId())
+                || subscriptionType.equals(constantService.getServiceTypeMonthlySubscription().getId())
+                || subscriptionType.equals(constantService.getServiceTypeKioskNewspaperBuy().getId())
+                || subscriptionType.equals(constantService.getServiceTypeUniqueArticleBuy().getId());
     }
 }

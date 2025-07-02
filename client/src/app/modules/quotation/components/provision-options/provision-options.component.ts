@@ -110,6 +110,7 @@ export class ProvisionOptionsComponent implements OnInit {
       if (!this.provision.isComplexeFile) this.provision.isComplexeFile = false;
       if (!this.provision.isBilan) this.provision.isBilan = false;
       if (!this.provision.isEmergency) this.provision.isEmergency = false;
+      if (!this.provision.isPriority) this.provision.isPriority = false;
       if (!this.provision.isComplexeFile) this.provision.isComplexeFile = false;
       if (!this.provision.isDocumentScanning) this.provision.isDocumentScanning = false;
       if (!this.provision.isRneUpdate) this.provision.isRneUpdate = false;

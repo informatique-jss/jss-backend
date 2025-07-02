@@ -337,4 +337,8 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
   canDisplayNotifications() {
     return this.habilitationService.canDisplayNotifications();
   }
+
+  canChooseProductionEmployeeOnITiers() {
+    return this.habilitationService.canChooseProductionEmployeeOnITiers();
+  }
 }

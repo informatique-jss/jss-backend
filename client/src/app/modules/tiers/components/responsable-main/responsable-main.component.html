@@ -81,19 +81,14 @@
                     </autocomplete-employee>
                   </td>
                   <td>
-                    <autocomplete-employee [(model)]="selectedResponsable.defaultCustomerOrderEmployee"
-                      [isDisabled]="!editMode" label="Assignation par défaut des commandes" [form]="principalForm"
-                      propertyName="defaultCustomerOrderEmployee" [isMandatory]="false"></autocomplete-employee>
-                  </td>
-                  <td>
                     <autocomplete-employee [(model)]="selectedResponsable.formalisteEmployee" label="Formaliste"
-                      [isDisabled]="!editMode" [form]="principalForm" propertyName="formalisteEmployee"
-                      [isDisabled]="!editMode">
+                      [form]="principalForm" propertyName="formalisteEmployee"
+                      [isDisabled]="!editMode || !canChooseProductionEmployeeOnITiers()">
                     </autocomplete-employee>
                   <td>
                     <autocomplete-employee [(model)]="selectedResponsable.insertionEmployee" label="Publiciste"
-                      [isDisabled]="!editMode" [form]="principalForm" propertyName="insertionEmployee"
-                      [isDisabled]="!editMode">
+                      [isDisabled]="!editMode || !canChooseProductionEmployeeOnITiers()" [form]="principalForm"
+                      propertyName="insertionEmployee">
                     </autocomplete-employee>
                   </td>
                 </tr>

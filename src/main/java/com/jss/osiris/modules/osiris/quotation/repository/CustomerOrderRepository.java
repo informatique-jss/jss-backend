@@ -13,7 +13,9 @@ import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.osiris.crm.model.Voucher;
+import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
+import com.jss.osiris.modules.osiris.quotation.model.AssignationType;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.IOrderingSearchTaggedResult;
@@ -216,5 +218,19 @@ public interface CustomerOrderRepository
         List<CustomerOrder> findCustomerOrderOlderThanDate(
                         @Param("customerOrderStatus") CustomerOrderStatus customerOrderStatus,
                         @Param("dateLimit") LocalDateTime dateLimit);
+
+        @Query("select c from CustomerOrder c join c.responsable r join c.customerOrderAssignations a where a.assignationType=:assignationType and r.formalisteEmployee in (:employees) and c.customerOrderStatus=:customerOrderStatus and a.isAssigned=false and (:assignedUser is null or a.employee = :assignedUser)  order by c.productionEffectiveDateTime")
+        List<CustomerOrder> findCustomerOrderByFormalisteAndStatusAssigned(List<Employee> employees,
+                        CustomerOrderStatus customerOrderStatus, Employee assignedUser,
+                        AssignationType assignationType);
+
+        @Query("select c from CustomerOrder c join c.responsable r join c.customerOrderAssignations a where a.assignationType=:assignationType and r.insertionEmployee in (:employees) and c.customerOrderStatus=:customerOrderStatus and a.isAssigned=false and (:assignedUser is null or a.employee = :assignedUser)  order by c.productionEffectiveDateTime")
+        List<CustomerOrder> findCustomerOrderByPubliscisteAndStatusAssigned(List<Employee> employees,
+                        CustomerOrderStatus customerOrderStatus, Employee assignedUser,
+                        AssignationType assignationType);
+
+        @Query("select c from CustomerOrder c join c.customerOrderAssignations a where a.employee in (:employees) and c.customerOrderStatus=:customerOrderStatus and a.isAssigned=false and (:assignedUser is null or a.employee = :assignedUser)  order by c.productionEffectiveDateTime")
+        List<CustomerOrder> findCustomerOrderByForcedEmployeeAndStatusAssigned(List<Employee> employees,
+                        CustomerOrderStatus customerOrderStatus, Employee assignedUser);
 
 }
