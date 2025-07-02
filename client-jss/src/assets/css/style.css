@@ -11873,12 +11873,12 @@ dl, ol, ul {
 }
 
 .image-hover-style-1 img {
-  transform: scale(1);
-  transition: all .3s ease-in-out;
+  /* transform: scale(1);
+  transition: all .3s ease-in-out; */
 }
 
 .image-hover-style-1 img:hover {
-  transform: scale(1.03);
+  /* transform: scale(1.03); */
 }
 
 blockquote {
@@ -12746,7 +12746,7 @@ blockquote p {
 }
 
 .blog-style5 .post-img-wrap:hover .post-img {
-  transform: scale(1.07);
+  /* transform: scale(1.07); */
 }
 
 .blog-style5 .post-img-wrap .post-img {
@@ -12755,7 +12755,7 @@ blockquote p {
   -o-object-fit: cover;
   object-fit: cover;
   transition: all 0.3s ease-in-out;
-  transform: scale(1);
+  /* transform: scale(1); */
   position: relative;
   z-index: 1;
 }
@@ -13721,4 +13721,50 @@ img[class^="wp-image-"] {
   height: 0;
   background: transparent;
   border: none;
+}
+
+.custom-drop {
+  width: 100%;
+  min-width: inherit;
+  padding: 0;
+  border-radius: 0.375rem;
+  overflow: hidden;
+}
+
+.dropdown-item-custom {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  font-weight: 400;
+  color: var(--ar-primary);
+  text-align: left !important;
+  text-decoration: none;
+  white-space: nowrap;
+  background-color: transparent;
+  border: 0;
+  border-radius: 0;
+}
+
+.dropdown-item-custom:hover,
+.dropdown-item-custom:focus {
+  background-color: var(--ar-primary);
+  color: var(--ar-secondary);
+}
+
+::ng-deep .custom-popover .popover-header {
+  border-bottom: none;
+  background-color: transparent;
+  font-weight: 600;
+}
+
+::ng-deep .custom-popover .popover-body {
+  padding: 0;
+}
+
+.custom-popover.popover {
+  border-radius: 0.75rem !important;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  border: none;
+  padding: 0.5rem;
 }

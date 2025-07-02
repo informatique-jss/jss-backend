@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { validateSiret } from '../../../../libs/CustomFormsValidatorsHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
@@ -57,6 +58,8 @@ export class IdentificationComponent implements OnInit {
   currentUser: Responsable | undefined;
 
   currentDraftStep: string | null = null;
+  idFamilyGroup: number | undefined;
+  idQuotationType: number | undefined;
 
   constructor(private formBuilder: FormBuilder,
     private serviceFamilyGroupService: ServiceFamilyGroupService,
@@ -66,23 +69,29 @@ export class IdentificationComponent implements OnInit {
     private orderService: CustomerOrderService,
     private loginService: LoginService,
     private appService: AppService,
-    private cityService: CityService
+    private cityService: CityService,
+    private activatedRoute: ActivatedRoute
   ) { }
 
   idenficationForm!: FormGroup;
 
-  ngOnInit() {
+  async ngOnInit() {
     this.idenficationForm = this.formBuilder.group({
       quotationType: []
     });
 
+    this.idFamilyGroup = this.activatedRoute.snapshot.params['idFamilyGroup'];
+    this.idQuotationType = this.activatedRoute.snapshot.params['idQuotationType'];
+
     this.currentDraftStep = this.quotationService.getCurrentDraftQuotationStep();
 
-    this.serviceFamilyGroupService.getServiceFamilyGroups().subscribe(response => this.familyGroupService = response);
-    this.loginService.getCurrentUser().subscribe(response => {
-      this.currentUser = response;
-      this.initIQuotation();
-    })
+    this.serviceFamilyGroupService.getServiceFamilyGroups().subscribe(response => {
+      this.familyGroupService = response;
+      this.loginService.getCurrentUser().subscribe(response => {
+        this.currentUser = response;
+        this.initIQuotation();
+      })
+    });
     this.initIQuotation();
   }
 
@@ -99,35 +108,43 @@ export class IdentificationComponent implements OnInit {
   }
 
   initIQuotation() {
-    if (this.currentUser) {
-      if (this.quotationService.getCurrentDraftQuotationId()) {
-        this.quotationService.getQuotation(parseInt(this.quotationService.getCurrentDraftQuotationId()!)).subscribe(response => {
-          this.quotation = response;
+    if (this.idFamilyGroup && this.idQuotationType) {
+      this.quotationService.cleanStorageData();
+      this.selectedQuotationType = this.idQuotationType == order.id ? order : quotation;
+      this.changeQuotationType();
+      this.selectFamilyGroupService(this.familyGroupService.find(group => group.id == this.idFamilyGroup)!);
+    }
+    else {
+      if (this.currentUser) {
+        if (this.quotationService.getCurrentDraftQuotationId()) {
+          this.quotationService.getQuotation(parseInt(this.quotationService.getCurrentDraftQuotationId()!)).subscribe(response => {
+            this.quotation = response;
+            this.refreshIsRegisteredAffaire();
+            this.recomputeAffaireType();
+          });
+          return;
+        } else if (this.orderService.getCurrentDraftOrderId()) {
+          this.orderService.getCustomerOrder(parseInt(this.orderService.getCurrentDraftOrderId()!)).subscribe(response => {
+            this.selectedQuotationType = order;
+            this.quotation = response
+            this.refreshIsRegisteredAffaire();
+            this.recomputeAffaireType();
+          });
+          return;
+        }
+      } else {
+        if (this.quotationService.getCurrentDraftQuotation()) {
+          this.quotation = this.quotationService.getCurrentDraftQuotation()!;
           this.refreshIsRegisteredAffaire();
           this.recomputeAffaireType();
-        });
-        return;
-      } else if (this.orderService.getCurrentDraftOrderId()) {
-        this.orderService.getCustomerOrder(parseInt(this.orderService.getCurrentDraftOrderId()!)).subscribe(response => {
+          return;
+        } else if (this.orderService.getCurrentDraftOrder()) {
           this.selectedQuotationType = order;
-          this.quotation = response
+          this.quotation = this.orderService.getCurrentDraftOrder()!;
           this.refreshIsRegisteredAffaire();
           this.recomputeAffaireType();
-        });
-        return;
-      }
-    } else {
-      if (this.quotationService.getCurrentDraftQuotation()) {
-        this.quotation = this.quotationService.getCurrentDraftQuotation()!;
-        this.refreshIsRegisteredAffaire();
-        this.recomputeAffaireType();
-        return;
-      } else if (this.orderService.getCurrentDraftOrder()) {
-        this.selectedQuotationType = order;
-        this.quotation = this.orderService.getCurrentDraftOrder()!;
-        this.refreshIsRegisteredAffaire();
-        this.recomputeAffaireType();
-        return;
+          return;
+        }
       }
     }
   }
@@ -236,18 +253,16 @@ export class IdentificationComponent implements OnInit {
         if (this.selectedQuotationType.id == quotation.id) {
           this.quotation.isQuotation = true;
           this.quotationService.saveQuotation(this.quotation, false).subscribe(response => {
-            this.quotation = response;
             this.appService.hideLoadingSpinner();
-            this.quotationService.setCurrentDraftQuotationId(this.quotation.id);
+            this.quotationService.setCurrentDraftQuotationId(response);
             this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);
             this.appService.openRoute(undefined, "quotation/services-selection", undefined);
           })
         } else if (this.selectedQuotationType.id == order.id) {
           this.quotation.isQuotation = false;
           this.orderService.saveOrder(this.quotation, false).subscribe(response => {
-            this.quotation = response;
             this.appService.hideLoadingSpinner();
-            this.orderService.setCurrentDraftOrderId(this.quotation.id);
+            this.orderService.setCurrentDraftOrderId(response);
             this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);
             this.appService.openRoute(undefined, "quotation/services-selection", undefined);
           })

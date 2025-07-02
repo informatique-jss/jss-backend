@@ -1,7 +1,7 @@
 <div class="d-flex align-items-center mb-4">
   <h1 class="h2 mb-0">Commandes</h1>
   <div class="ms-auto">
-    <div ngbDropdown class="btn-group dropdown" style="margin-right: 10px;">
+    <div ngbDropdown [autoClose]="'outside'" class="btn-group dropdown" style="margin-right: 10px;">
       <button type="button" class="btn btn-outline-secondary dropdown-toggle" ngbDropdownToggle aria-haspopup="true"
         aria-expanded="false">
         <i class="ai-filter me-2"></i>
@@ -97,7 +97,7 @@
               <div class="container-fluid">
                 <div class="row g-2 w-100">
 
-                  <div class="col-12 col-sm-2">
+                  <div class="col-12 col-sm-2 d-flex align-items-center flex-column">
                     <div class="fs-sm text-body-secondary fw-bold text-center">
                       n°{{order.id}}
                       <i class="ai-triangle-alert fs-base text-danger ms-2" style="-webkit-text-stroke: 1px;"

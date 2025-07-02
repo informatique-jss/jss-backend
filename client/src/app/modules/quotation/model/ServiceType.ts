@@ -18,4 +18,5 @@ export interface ServiceType {
   defaultDeboursPriceNonTaxable: number;
   suspiciousMarkup: number;
   isMergeable: boolean;
+  serviceTypeLinked: ServiceType;
 }

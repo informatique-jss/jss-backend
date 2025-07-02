@@ -37,6 +37,8 @@ import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
+import com.jss.osiris.modules.osiris.crm.model.Voucher;
+import com.jss.osiris.modules.osiris.crm.service.VoucherService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoicingBlockage;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
@@ -397,6 +399,9 @@ public class QuotationController {
   @Autowired
   InvoicingBlockageService invoicingBlockageService;
 
+  @Autowired
+  VoucherService voucherService;
+
   @GetMapping(inputEntryPoint + "/service-field-types")
   public ResponseEntity<List<ServiceFieldType>> getServiceFieldTypes() {
     return new ResponseEntity<List<ServiceFieldType>>(serviceFieldTypeService.getServiceFieldTypes(), HttpStatus.OK);
@@ -747,6 +752,7 @@ public class QuotationController {
     validationHelper.validateString(serviceType.getCustomLabel(), false, 250, "customLabel");
     validationHelper.validateReferential(serviceType.getServiceFamily(), true, "serviceFamily");
     validationHelper.validateBigDecimal(serviceType.getDefaultDeboursPrice(), false, "defaultDeboursPrice");
+    validationHelper.validateReferential(serviceType.getServiceTypeLinked(), false, "serviceTypeLinked");
     validationHelper.validateBigDecimal(serviceType.getDefaultDeboursPriceNonTaxable(), false,
         "defaultDeboursPriceNonTaxable");
 
@@ -1167,38 +1173,6 @@ public class QuotationController {
     return new ResponseEntity<Boolean>(provisionService.deleteProvision(provision), HttpStatus.OK);
   }
 
-  @GetMapping(inputEntryPoint + "/asso/affaire/order/assignedTo")
-  public ResponseEntity<Boolean> updateAssignedToForAsso(@RequestParam Integer assoId,
-      @RequestParam Integer employeeId) throws OsirisValidationException, OsirisException {
-    AssoAffaireOrder asso = assoAffaireOrderService.getAssoAffaireOrder(assoId);
-    if (asso == null)
-      throw new OsirisValidationException("asso");
-
-    Employee employee = employeeService.getEmployee(employeeId);
-    if (employee == null)
-      throw new OsirisValidationException("employee");
-
-    assoAffaireOrderService.updateAssignedToForAsso(asso, employee);
-    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
-  }
-
-  @GetMapping(inputEntryPoint + "/customer-order/assign")
-  public ResponseEntity<Boolean> updateAssignedToForCustomerOrder(@RequestParam Integer customerOrderId,
-      @RequestParam Integer employeeId)
-      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
-
-    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
-    if (customerOrder == null)
-      throw new OsirisValidationException("customerOrder");
-
-    Employee employee = employeeService.getEmployee(employeeId);
-    if (employee == null)
-      throw new OsirisValidationException("employee");
-
-    customerOrderService.updateAssignedToForCustomerOrder(customerOrder, employee);
-    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
-  }
-
   @GetMapping(inputEntryPoint + "/customer-order/offer")
   public ResponseEntity<Boolean> offerCustomerOrder(@RequestParam Integer customerOrderId)
       throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
@@ -1211,29 +1185,11 @@ public class QuotationController {
     return new ResponseEntity<Boolean>(true, HttpStatus.OK);
   }
 
-  @GetMapping(inputEntryPoint + "/quotation/assign")
-  public ResponseEntity<Boolean> updateAssignedToForQuotation(@RequestParam Integer quotationId,
-      @RequestParam Integer employeeId)
-      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
-
-    Quotation quotation = quotationService.getQuotation(quotationId);
-    if (quotation == null)
-      throw new OsirisValidationException("quotationId");
-
-    Employee employee = employeeService.getEmployee(employeeId);
-    if (employee == null)
-      throw new OsirisValidationException("employee");
-
-    quotationService.updateAssignedToForQuotation(quotation, employee);
-    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
-  }
-
   @PostMapping(inputEntryPoint + "/asso/affaire/order/search")
   public ResponseEntity<ArrayList<AssoAffaireOrderSearchResult>> searchForAsso(
       @RequestBody AffaireSearch affaireSearch) throws OsirisValidationException {
 
     if (affaireSearch.getLabel() == null
-        && affaireSearch.getAssignedTo() == null && affaireSearch.getResponsible() == null
         && affaireSearch.getStatus() == null && affaireSearch.getCustomerOrders() == null
         && affaireSearch.getAffaire() == null && affaireSearch.getWaitedCompetentAuthority() == null
         && affaireSearch.getCommercial() == null && affaireSearch.getFormaliteGuichetUniqueStatus() == null)
@@ -1254,7 +1210,6 @@ public class QuotationController {
       throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
     validationHelper.validateReferential(assoAffaireOrder, true, "assoAffaireOrder");
     validationHelper.validateReferential(assoAffaireOrder.getAffaire(), true, "Affaire");
-    validationHelper.validateReferential(assoAffaireOrder.getAssignedTo(), true, "AssignedTo");
     validationHelper.validateReferential(assoAffaireOrder.getCustomerOrder(), true, "CustomerOrder");
 
     if (assoAffaireOrder.getServices() == null)
@@ -1913,7 +1868,6 @@ public class QuotationController {
         && quotationService.checkValidationIdQuotation(customerOrder.getValidationId())
         && customerOrder.getId() == null)
       throw new OsirisValidationException("Save order already in progress");
-    // assoServiceFieldTypeService.addOrUpdateServiceFieldType(customerOrder) ;
     else
       return new ResponseEntity<CustomerOrder>(customerOrderService.addOrUpdateCustomerOrderFromUser(customerOrder),
           HttpStatus.OK);
@@ -2915,5 +2869,19 @@ public class QuotationController {
   @GetMapping(inputEntryPoint + "/customer-order/assign/invoicing/auto")
   public ResponseEntity<CustomerOrder> assignNewCustomerOrderToBilled() {
     return new ResponseEntity<CustomerOrder>(customerOrderService.assignNewCustomerOrderToBilled(), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/customer-orders/voucher")
+  @JsonView(JacksonViews.OsirisListView.class)
+  public ResponseEntity<List<CustomerOrder>> getCustomerOrdersByVoucher(@RequestParam Integer idVoucher)
+      throws OsirisValidationException {
+
+    Voucher voucher = voucherService.getVoucher(idVoucher);
+
+    if (voucher == null)
+      throw new OsirisValidationException("voucher");
+
+    return new ResponseEntity<List<CustomerOrder>>(
+        customerOrderService.getCustomerOrdersByVoucherAndResponsable(voucher, null), HttpStatus.OK);
   }
 }

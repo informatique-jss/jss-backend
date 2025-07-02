@@ -14,4 +14,5 @@ export interface ServiceType {
   hasAnnouncement: boolean;
   hasOnlyAnnouncement: boolean;
   announcementNoticeTemplate: AnnouncementNoticeTemplate;
+  serviceTypeLinked: ServiceType;
 }

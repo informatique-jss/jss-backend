@@ -1,0 +1,35 @@
+.reading-folder-card {
+  min-height: 160px;
+  background-size: cover;
+  background-position: center;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-end;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    opacity: 0.95;
+  }
+}
+
+.reading-folder-card button {
+  transition: background-color 0.2s ease;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background-color: var(--ar-secondary);
+  }
+}
+
+.folder-title {
+  background: rgba(0, 0, 0, 0.5);
+  color: var(--ar-secondary);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+}

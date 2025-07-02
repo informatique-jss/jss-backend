@@ -9,6 +9,7 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.modules.osiris.crm.model.Voucher;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoicingBlockage;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
@@ -28,8 +29,6 @@ import com.jss.osiris.modules.osiris.quotation.model.OrderingSearchResult;
 import com.jss.osiris.modules.osiris.quotation.model.OrderingSearchTagged;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
-
-import jakarta.servlet.http.HttpServletRequest;
 
 public interface CustomerOrderService {
         public CustomerOrder getCustomerOrder(Integer id);
@@ -118,10 +117,6 @@ public interface CustomerOrderService {
                         boolean printLetters, boolean printRegisteredLetter)
                         throws OsirisException, OsirisClientMessageException;
 
-        public void updateAssignedToForCustomerOrder(CustomerOrder customerOrder, Employee employee)
-                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
-                        OsirisDuplicateException;
-
         public List<OrderingSearchResult> searchByQuotationId(Integer idQuotation);
 
         public List<OrderingSearchResult> searchByCustomerOrderParentRecurringId(Integer idCustomerOrder);
@@ -148,10 +143,6 @@ public interface CustomerOrderService {
 
         public List<CustomerOrder> searchOrders(List<CustomerOrderStatus> customerOrderStatus,
                         List<Responsable> responsables);
-
-        public CustomerOrder saveCustomerOrderFromMyJss(CustomerOrder order, Boolean isValidation,
-                        HttpServletRequest request)
-                        throws OsirisClientMessageException, OsirisValidationException, OsirisException;
 
         public List<CustomerOrder> completeAdditionnalInformationForCustomerOrders(List<CustomerOrder> customerOrders)
                         throws OsirisException;
@@ -190,4 +181,7 @@ public interface CustomerOrderService {
                         throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException,
                         OsirisException;
 
+        public List<CustomerOrder> getCustomerOrdersByVoucherAndResponsable(Voucher voucher, Responsable responsable);
+
+        public void purgeCustomerOrders() throws OsirisException;
 }

@@ -69,27 +69,32 @@
                 [isDisabled]="!editMode"></select-service-family>
             </td>
           </tr>
-          <table class="full-width">
-            <tr>
-              <td>
-                <generic-input [(model)]="selectedEntity.defaultDeboursPrice"
-                  label="Montant par défaut des débours (HT)" [form]="entityForm" propertyName="defaultDeboursPrice"
-                  [isMandatory]="false" [isDisabled]="!editMode" type="number" step="0.01"></generic-input>
-              </td>
-              <td>
-                <generic-input [(model)]="selectedEntity.defaultDeboursPriceNonTaxable"
-                  label="Montant par défaut des débours non taxables (HT)" [form]="entityForm"
-                  propertyName="defaultDeboursPriceNonTaxable" [isMandatory]="false" [isDisabled]="!editMode"
-                  type="number" step="0.01"></generic-input>
-              </td>
-              <td>
-                <generic-input [(model)]="selectedEntity.suspiciousMarkup"
-                  label="Majoration du prix pour les créances douteuses (%)" [form]="entityForm"
-                  propertyName="suspiciousMarkup" [isMandatory]="false" [isDisabled]="!editMode" type="number"
-                  step="1"></generic-input>
-              </td>
-            </tr>
-          </table>
+        </table>
+        <table class="full-width">
+          <tr>
+            <td>
+              <generic-input [(model)]="selectedEntity.defaultDeboursPrice" label="Montant par défaut des débours (HT)"
+                [form]="entityForm" propertyName="defaultDeboursPrice" [isMandatory]="false" [isDisabled]="!editMode"
+                type="number" step="0.01"></generic-input>
+            </td>
+            <td>
+              <generic-input [(model)]="selectedEntity.defaultDeboursPriceNonTaxable"
+                label="Montant par défaut des débours non taxables (HT)" [form]="entityForm"
+                propertyName="defaultDeboursPriceNonTaxable" [isMandatory]="false" [isDisabled]="!editMode"
+                type="number" step="0.01"></generic-input>
+            </td>
+            <td>
+              <autocomplete-service-type [(model)]="selectedEntity.serviceTypeLinked" [form]="entityForm"
+                propertyName="serviceTypeLinked" [isMandatory]="false" label="Service type de formalité associé"
+                [isDisabled]="!editMode"></autocomplete-service-type>
+            </td>
+            <td>
+              <generic-input [(model)]="selectedEntity.suspiciousMarkup"
+                label="Majoration du prix pour les créances douteuses (%)" [form]="entityForm"
+                propertyName="suspiciousMarkup" [isMandatory]="false" [isDisabled]="!editMode" type="number"
+                step="1"></generic-input>
+            </td>
+          </tr>
         </table>
         <p>Prestations du service</p>
         <ng-container
@@ -230,7 +235,16 @@
                 [propertyName]="'isMandatoryField'+index+deleteIndex" [isDisabled]="!editMode"></generic-toggle>
             </td>
             <td>
-
+              <select-service-field-type [(model)]="assoServiceFieldType.serviceFieldTypeDependancy"
+                [propertyName]="'serviceFieldTypeDependancy'+index+deleteIndex" [form]="entityForm"
+                [isMandatory]="false" label="Type de champ en dépendance"
+                [isDisabled]="!editMode"></select-service-field-type>
+            </td>
+            <td *ngIf="assoServiceFieldType.serviceFieldTypeDependancy">
+              <generic-input [(model)]="assoServiceFieldType.serviceFieldTypeDependancyValue"
+                label="Valeur d'affichage de la dépendance" [form]="entityForm"
+                [propertyName]="'serviceFieldTypeDependancyValue'+index+deleteIndex" [isMandatory]="true"
+                [isDisabled]="!editMode"></generic-input>
             </td>
             <td>
               <button *ngIf="editMode" (click)="deleteFieldType(assoServiceFieldType)" mat-raised-button color="accent">

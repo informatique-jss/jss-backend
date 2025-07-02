@@ -2,8 +2,8 @@
   <div [formGroup]="form!" class="needs-validation">
     <label [for]="'fl-text'+uniqueId" *ngIf="isDisplayLabel && label!=null && label!=undefined && label.length>0"
       class="form-label">{{label}}</label>
-    <input class="form-control form-control" [min]="minDate" [max]="maxDate" [id]="'fl-text'+uniqueId"
-      (change)="dateChange()" [required]="isMandatory" [formControlName]="propertyName" [placeholder]="label"
-      (blur)="blurForm()" type="date">
+    <input class="form-control form-control" [min]="getDateFormated(minDate)" [max]="getDateFormated(maxDate)"
+      [id]="'fl-text'+uniqueId" (change)="dateChange()" [required]="isMandatory" [formControlName]="propertyName"
+      [placeholder]="label" (blur)="blurForm()" type="date">
   </div>
 </div>

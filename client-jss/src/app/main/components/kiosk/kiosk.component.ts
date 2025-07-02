@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
+import { AppService } from '../../../services/app.service';
 import { Newspaper } from '../../model/Newspaper';
 import { Responsable } from '../../model/Responsable';
+import { NEWSPAPER_KIOSK_BUY } from '../../model/Subscription';
 import { LoginService } from '../../services/login.service';
 import { NewspaperService } from '../../services/newspaper.service';
 import { NewsletterComponent } from "../newsletter/newsletter.component";
@@ -27,7 +29,8 @@ export class KioskComponent implements OnInit {
 
   constructor(
     private newspaperService: NewspaperService,
-    private loginService: LoginService) { }
+    private loginService: LoginService,
+    private appService: AppService) { }
 
   ngOnInit() {
     this.loginService.getCurrentUser().subscribe(res => {
@@ -71,5 +74,9 @@ export class KioskComponent implements OnInit {
 
   openExtract(newspaperId: number) {
     this.newspaperService.getPdfForUser(newspaperId);
+  }
+
+  buyNewspaper(newspaperId: number) {
+    this.appService.openMyJssRoute(event, "/quotation/subscription/" + NEWSPAPER_KIOSK_BUY + "/" + false + "/" + newspaperId, true);
   }
 }

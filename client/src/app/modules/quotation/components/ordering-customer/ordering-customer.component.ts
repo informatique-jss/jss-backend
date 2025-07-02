@@ -6,7 +6,6 @@ import { formatDateTimeForSortTable } from 'src/app/libs/FormatHelper';
 import { instanceOfCustomerOrder, instanceOfQuotation } from 'src/app/libs/TypeHelper';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { DocumentTypeService } from 'src/app/modules/miscellaneous/services/document.type.service';
-import { Employee } from 'src/app/modules/profile/model/Employee';
 import { TiersService } from 'src/app/modules/tiers/services/tiers.service';
 import { IndexEntityService } from 'src/app/routing/search/index.entity.service';
 import { formatEurosForSortTable } from '../../../../libs/FormatHelper';
@@ -20,7 +19,6 @@ import { Confrere } from '../../model/Confrere';
 import { IQuotation } from '../../model/IQuotation';
 import { OrderingSearchResult } from '../../model/OrderingSearchResult';
 import { QuotationSearchResult } from '../../model/QuotationSearchResult';
-import { CustomerOrderService } from '../../services/customer.order.service';
 import { OrderingSearchResultService } from '../../services/ordering.search.result.service';
 import { QuotationSearchResultService } from '../../services/quotation.search.result.service';
 import { QuotationService } from '../../services/quotation.service';
@@ -66,7 +64,6 @@ export class OrderingCustomerComponent implements OnInit {
     private responsableService: ResponsableService,
     private indexEntityService: IndexEntityService,
     protected documentTypeService: DocumentTypeService,
-    private customerOrderService: CustomerOrderService,
     private orderingSearchResultService: OrderingSearchResultService,
     private quotationSearchResultService: QuotationSearchResultService,
     private quotationService: QuotationService,
@@ -187,20 +184,10 @@ export class OrderingCustomerComponent implements OnInit {
     this.appService.openRoute(event, link, null);
   }
 
-  updateAssignedToForCustomerOrder(employee: Employee) {
-    if (this.editMode)
-      return;
-    if (instanceOfCustomerOrder(this.quotation))
-      this.customerOrderService.updateAssignedToForCustomerOrder(this.quotation, employee).subscribe(response => {
-      });
-    if (instanceOfQuotation(this.quotation))
-      this.customerOrderService.updateAssignedToForQuotation(this.quotation, employee).subscribe(response => {
-      });
-  }
-
   selectCustomerOrderOnQuotation(customerOrder: IndexEntity) {
     this.quotationService.associateCustomerOrderToQuotation(customerOrder.entityId, this.quotation.id).subscribe(response => {
       this.appService.openRoute(null, '/quotation/' + this.quotation.id, null);
     })
   }
+
 }

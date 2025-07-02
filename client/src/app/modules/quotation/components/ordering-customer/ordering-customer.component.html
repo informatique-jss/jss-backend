@@ -3,18 +3,6 @@
     <div class="full-width">
       <table class="full-width">
         <tr>
-          <td>
-            <div>
-              <autocomplete-employee [(model)]="quotation.assignedTo" [form]="orderingCustomerForm"
-                propertyName="assignedTo" [isMandatory]="false" [isDisabled]="false" label="Commande assignée à"
-                (onOptionSelected)="updateAssignedToForCustomerOrder($event)">
-              </autocomplete-employee>
-            </div>
-          </td>
-        </tr>
-      </table>
-      <table class="full-width">
-        <tr>
           <fieldset [disabled]="editMode==false" class="fieldset-no-border">
             <td style="vertical-align: middle;">
               <autocomplete-responsable [(model)]="searchedResponsable" [form]="orderingCustomerForm"
@@ -22,20 +10,22 @@
                 fieldToCheckAgainstForValidation="entityId"
                 (onOptionSelected)="fillResponsable($event)"></autocomplete-responsable>
             </td>
-            <!--td *ngIf="!searchedResponsable" style="vertical-align: middle;">
-              <autocomplete-confrere label="Confrère" [(model)]="quotation.confrere" [form]="orderingCustomerForm"
-                [isMandatory]="false"
-                propertyName="confrere" [isDisabled]="!editMode" (onOptionSelected)="fillConfrere($event)">
-              </autocomplete-confrere>
-            </td> // TODO : refonte -->
             <td style="vertical-align: middle;">
               <avatar-chip *ngIf="quotation.responsable" [employee]="quotation.responsable.salesEmployee"
                 [disableEmployeeDialog]="true"></avatar-chip>
             </td>
+          </fieldset>
+        </tr>
+        <tr>
+          <fieldset [disabled]="editMode==false" class="fieldset-no-border">
             <td>
               <chips-special-offers [(model)]="quotation.specialOffers" [form]="orderingCustomerForm"
                 propertyName="specialOffer" [isDisabled]="!editMode">
               </chips-special-offers>
+            </td>
+            <td>
+              <autocomplete-voucher [(model)]="quotation.voucher" [form]="orderingCustomerForm" propertyName="voucher"
+                label="Coupon de réduction" [isDisabled]="!editMode"></autocomplete-voucher>
             </td>
           </fieldset>
         </tr>
@@ -43,9 +33,9 @@
       <table class="full-width" *ngIf="quotation.description">
         <tr>
           <td>
-            <generic-input [(model)]="quotation.description" label="Description de la demande"
-              [form]="orderingCustomerForm" propertyName="description" [isMandatory]="false"
-              [isDisabled]="true"></generic-input>
+            <generic-textarea [(model)]="quotation.description" label="Description de la demande"
+              [form]="orderingCustomerForm" propertyName="description" [isMandatory]="false" [isDisabled]="true"
+              [numberOfLines]="4"></generic-textarea>
           </td>
         </tr>
       </table>

@@ -393,6 +393,8 @@ public class AttachmentServiceImpl implements AttachmentService {
     public Attachment addOrUpdateAttachment(Attachment attachment) {
         if (attachment != null && attachment.getIsAlreadySent() == null)
             attachment.setIsAlreadySent(false);
+        if (attachment != null && attachment.getIsDisabled() == null)
+            attachment.setIsDisabled(false);
 
         return attachmentRepository.save(attachment);
     }

@@ -29,6 +29,10 @@ export class PostCategoryHeaderComponent implements OnInit {
   isFollowed: Boolean = false;
   currentUser: Responsable | undefined;
 
+  updateSelectedCategory(jssCategory: JssCategory) {
+    this.selectedJssCategory = jssCategory;
+  }
+
   ngOnInit() {
     let slug = this.activeRoute.snapshot.params['slug'];
     if (slug) {

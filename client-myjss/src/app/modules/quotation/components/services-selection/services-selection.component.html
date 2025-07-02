@@ -35,7 +35,8 @@
               class="btn rounded-pill mt-3 ms-3 col-auto pill"
               [ngClass]="{'btn-secondary': selectedAssoIndex == indexAsso,'btn-outline-primary':selectedAssoIndex != indexAsso}"
               (click)="removeServiceFromCurrentAffaire(serviceType);$event.stopPropagation()">
-              {{serviceType.customLabel?serviceType.customLabel : serviceType.label }} <i class="ai-cross ms-2"></i>
+              {{serviceType.customLabel?serviceType.customLabel : serviceType.label }} {{serviceType.id}} <i
+                class="ai-cross ms-2"></i>
             </a>
           </div>
         </div>
@@ -85,6 +86,11 @@
                         (click)="addServiceToCurrentAffaire(service)"
                         *ngIf="getServiceIndexInCurrentAffaire(service)<0">
                       <label class="form-check-label" [for]="'ex-check-'+indexService">{{service.customLabel }}</label>
+                      <generic-toggle [(model)]="serviceLinkToggles[indexService]"
+                        *ngIf="service.serviceTypeLinked && isServiceSelected(service)"
+                        (onToggleChange)="selectLinkedServiceInstead($event, service)"
+                        label="Besoin d'inclure aussi la formalité ?" [form]="servicesForm"
+                        [propertyName]="'serviceLinkToggles'+indexService" [isDisabled]="false"></generic-toggle>
                     </div>
                   </ng-container>
                 </div>

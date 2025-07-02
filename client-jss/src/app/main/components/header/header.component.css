@@ -12,6 +12,7 @@
 
 .custom-drop {
   background-color: #1C2D41;
+  min-width: 230px;
 }
 
 .dropdown-menu .dropdown-item:hover {

@@ -70,8 +70,6 @@ import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 import com.jss.osiris.modules.osiris.tiers.service.TiersService;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 @org.springframework.stereotype.Service
 public class QuotationServiceImpl implements QuotationService {
 
@@ -194,10 +192,6 @@ public class QuotationServiceImpl implements QuotationService {
                 mailService.populateMailIds(document.getMailsAffaire());
                 mailService.populateMailIds(document.getMailsClient());
             }
-
-        // Set default customer order assignation to sales employee if not set
-        if (quotation.getAssignedTo() == null && quotation.getResponsable() != null)
-            quotation.setAssignedTo(quotation.getResponsable().getDefaultCustomerOrderEmployee());
 
         // Complete provisions
         boolean oneNewProvision = false;
@@ -344,14 +338,6 @@ public class QuotationServiceImpl implements QuotationService {
             salesEmployeeId.add(0);
         }
 
-        ArrayList<Integer> assignedToEmployeeId = new ArrayList<Integer>();
-        if (quotationSearch.getAssignedToEmployee() != null) {
-            for (Employee employee : employeeService.getMyHolidaymaker(quotationSearch.getAssignedToEmployee()))
-                assignedToEmployeeId.add(employee.getId());
-        } else {
-            assignedToEmployeeId.add(0);
-        }
-
         ArrayList<Integer> customerOrderId = new ArrayList<Integer>();
         if (quotationSearch.getCustomerOrders() != null && quotationSearch.getCustomerOrders().size() > 0) {
             for (Tiers tiers : quotationSearch.getCustomerOrders())
@@ -375,7 +361,7 @@ public class QuotationServiceImpl implements QuotationService {
             quotationSearch.setEndDate(LocalDateTime.now().plusYears(100));
 
         return quotationRepository.findQuotations(
-                salesEmployeeId, assignedToEmployeeId,
+                salesEmployeeId,
                 statusId,
                 quotationSearch.getStartDate().withHour(0).withMinute(0),
                 quotationSearch.getEndDate().withHour(23).withMinute(59), customerOrderId, affaireId, 0);
@@ -432,7 +418,7 @@ public class QuotationServiceImpl implements QuotationService {
         if (remainingToPay.compareTo(BigDecimal.ZERO) > 0) {
             CentralPayPaymentRequest paymentRequest = centralPayDelegateService.generatePayPaymentRequest(
                     remainingToPay, mail,
-                    quotation.getId() + "", subject);
+                    quotation.getId() + "", subject, true);
 
             centralPayPaymentRequestService.declareNewCentralPayPaymentRequest(paymentRequest.getPaymentRequestId(),
                     null, quotation);
@@ -590,16 +576,9 @@ public class QuotationServiceImpl implements QuotationService {
     }
 
     @Override
-    public void updateAssignedToForQuotation(Quotation quotation, Employee employee)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
-        quotation.setAssignedTo(employee);
-        addOrUpdateQuotation(quotation);
-    }
-
-    @Override
     public List<QuotationSearchResult> searchByCustomerOrderId(Integer idCustomerOrder) {
         return quotationRepository.findQuotations(
-                Arrays.asList(0), Arrays.asList(0), Arrays.asList(0), LocalDateTime.now().minusYears(100),
+                Arrays.asList(0), Arrays.asList(0), LocalDateTime.now().minusYears(100),
                 LocalDateTime.now().plusYears(100), Arrays.asList(0), Arrays.asList(0), idCustomerOrder);
     }
 
@@ -758,30 +737,6 @@ public class QuotationServiceImpl implements QuotationService {
         return quotationRepository.findByResponsable(responsable);
     }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public Quotation saveQuotationFromMyJss(Quotation quotation, Boolean isValidation, HttpServletRequest request)
-            throws OsirisClientMessageException, OsirisValidationException, OsirisException {
-        if (quotation.getAssoAffaireOrders() != null)
-            for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders())
-                if (asso.getAffaire() != null && asso.getAffaire().getId() == null)
-                    affaireService.addOrUpdateAffaire(asso.getAffaire());
-
-        quotation.setResponsable(employeeService.getCurrentMyJssUser());
-        quotation.setCustomerOrderOrigin(constantService.getCustomerOrderOriginMyJss());
-        quotation.setQuotationStatus(
-                quotationStatusService.getQuotationStatusByCode(CustomerOrderStatus.DRAFT));
-        quotationValidationHelper.completeIQuotationDocuments(quotation, false);
-        myJssQuotationDelegate.populateBooleansOfProvisions(quotation);
-        quotation = addOrUpdateQuotationFromUser(quotation);
-
-        if (isValidation != null && isValidation)
-            addOrUpdateQuotationStatus(quotation, QuotationStatus.TO_VERIFY);
-
-        return quotation;
-
-    }
-
     public List<Quotation> completeAdditionnalInformationForQuotations(List<Quotation> quotations)
             throws OsirisException {
         if (quotations != null && quotations.size() > 0) {
@@ -889,5 +844,17 @@ public class QuotationServiceImpl implements QuotationService {
         quotation = getQuotation(quotation.getId());
         pricingHelper.getAndSetInvoiceItemsForQuotation(quotation, true);
         return true;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void purgeQuotations() throws OsirisException {
+        List<Quotation> quotations = quotationRepository.findQuotationOlderThanDate(
+                quotationStatusService.getQuotationStatusByCode(QuotationStatus.DRAFT),
+                LocalDateTime.now().minusMonths(3));
+
+        if (quotations != null)
+            for (Quotation quotation : quotations)
+                batchService.declareNewBatch(Batch.PURGE_QUOTATION, quotation.getId());
     }
 }

@@ -7,10 +7,14 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.jackson.JacksonLocalDateSerializer;
+import com.jss.osiris.libs.jackson.JacksonLocalDateTimeDeserializer;
+import com.jss.osiris.libs.jackson.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.modules.osiris.crm.model.Voucher;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.City;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Civility;
@@ -111,7 +115,6 @@ public class Responsable implements IAttachment, IId {
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
 			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
-
 	private Employee salesEmployee;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -226,10 +229,17 @@ public class Responsable implements IAttachment, IId {
 	@Column(length = 1024)
 	private String loginToken;
 
+	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
+	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
 	private LocalDateTime loginTokenExpirationDateTime;
 
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Integer numberOfGiftPostsPerMonth;
+
+	@ManyToMany(mappedBy = "responsables")
+	@JsonIgnoreProperties(value = { "responsables" }, allowSetters = true)
+	@JsonView({ JacksonViews.OsirisDetailedView.class, JacksonViews.OsirisListView.class })
+	private List<Voucher> vouchers;
 
 	public Tiers getTiers() {
 		return tiers;
@@ -598,4 +608,13 @@ public class Responsable implements IAttachment, IId {
 	public void setNumberOfGiftPostsPerMonth(Integer numberOfPostsSharingAuthorized) {
 		this.numberOfGiftPostsPerMonth = numberOfPostsSharingAuthorized;
 	}
+
+	public List<Voucher> getVouchers() {
+		return vouchers;
+	}
+
+	public void setVouchers(List<Voucher> vouchers) {
+		this.vouchers = vouchers;
+	}
+
 }

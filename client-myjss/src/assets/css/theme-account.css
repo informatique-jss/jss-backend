@@ -6696,7 +6696,7 @@ html.theme-account[data-bs-theme=light] {
   width: var(--ar-spinner-width);
   height: var(--ar-spinner-height);
   vertical-align: var(--ar-spinner-vertical-align);
-  border-radius: 50%;
+  border-radius: 50% !important;
   animation: var(--ar-spinner-animation-speed) linear infinite var(--ar-spinner-animation-name);
 }
 
@@ -9484,6 +9484,11 @@ html.theme-account[data-bs-theme=light] {
 .theme-account .bg-success {
   --ar-bg-opacity: 1;
   background-color: rgba(var(--ar-success-rgb), var(--ar-bg-opacity)) !important;
+}
+
+.theme-account .bg-ok {
+  --ar-bg-opacity: 0;
+  background-color: #edcb50 !important;
 }
 
 .theme-account .bg-info {

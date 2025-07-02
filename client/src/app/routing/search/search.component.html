@@ -87,8 +87,9 @@
                           {{entity.text.tiers.lastname}}</span><span
                           *ngIf="entity.text.responsable!=null">{{entity.text.responsable.firstname}}
                           {{entity.text.responsable.lastname}}</span>
-                        <br>Commercial <span *ngIf="entity.text.assignedTo!=null">{{entity.text.assignedTo.firstname}}
-                          {{entity.text.assignedTo.lastname}}</span>
+                        <br>Commercial <span
+                          *ngIf="entity.text.responsable.salesEmployee!=null">{{entity.text.responsable.salesEmployee.firstname}}
+                          {{entity.text.responsable.salesEmployee.lastname}}</span>
                       </mat-card-subtitle>
                       <mat-icon color="accent" class="mat-card-icon">request_quote</mat-icon>
                       <ng-container [ngTemplateOutlet]="cardDates"
@@ -110,8 +111,9 @@
                           {{entity.text.tiers.lastname}}</span><span
                           *ngIf="entity.text.responsable!=null">{{entity.text.responsable.firstname}}
                           {{entity.text.responsable.lastname}}</span>
-                        <br>Commercial <span *ngIf="entity.text.assignedTo!=null">{{entity.text.assignedTo.firstname}}
-                          {{entity.text.assignedTo.lastname}}</span>
+                        <br>Commercial <span
+                          *ngIf="entity.text.responsable.salesEmployee!=null">{{entity.text.responsable.salesEmployee.firstname}}
+                          {{entity.text.responsable.salesEmployee.lastname}}</span>
                       </mat-card-subtitle>
                       <mat-icon color="accent" class="mat-card-icon">request_quote</mat-icon>
                       <ng-container [ngTemplateOutlet]="cardDates"

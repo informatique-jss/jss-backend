@@ -46,14 +46,8 @@
                           <div class="d-flex flex-wrap gap-1">
                             <a *ngFor="let tag of post.postTags" (click)="openTagPosts(tag, $event)"
                               class="badge bg-info rounded-pill px-2">{{ tag.name }}</a>
-                            <a *ngIf="currentUser"
-                              class="rounded-outline-icon rounded-circle fs-8 d-flex align-items-center justify-content-center ms-2"
-                              (click)="post.isBookmarked ? unBookmarkPost(post) : bookmarkPost(post)">
-                              <i [ngClass]="{'bi-bookmark': !post.isBookmarked,
-                                'bi-bookmark-fill text-dark': post.isBookmarked,
-                                'text-transparent': !post.isBookmarked}">
-                              </i>
-                            </a>
+
+                            <bookmark [post]="post"></bookmark>
                           </div>
                         </div>
                         <h4>
@@ -97,14 +91,8 @@
                           <div class="d-flex flex-wrap">
                             <a *ngFor="let tag of post.postTags.slice(0,8)" (click)="openTagPosts(tag, $event)"
                               class="badge bg-info rounded-pill px-2">{{ tag.name }}</a>
-                            <a *ngIf="currentUser"
-                              class="rounded-outline-icon rounded-circle fs-8 d-flex align-items-center justify-content-center ms-2"
-                              (click)="post.isBookmarked ? unBookmarkPost(post) : bookmarkPost(post)">
-                              <i [ngClass]="{'bi-bookmark': !post.isBookmarked,
-                                'bi-bookmark-fill text-dark': post.isBookmarked,
-                                'text-transparent': !post.isBookmarked}">
-                              </i>
-                            </a>
+
+                            <bookmark [post]="post"></bookmark>
                           </div>
                           <h4>
                             <a class="card-text-truncate" (click)="openPost(post, $event)"> <img *ngIf="post.isPremium"
@@ -151,14 +139,8 @@
                           <div class="d-flex flex-wrap gap-1">
                             <a *ngFor="let tag of post.postTags" (click)="openTagPosts(tag, $event)"
                               class="badge bg-info rounded-pill px-2">{{ tag.name }}</a>
-                            <a *ngIf="currentUser"
-                              class="rounded-outline-icon rounded-circle fs-8 d-flex align-items-center justify-content-center ms-2"
-                              (click)="post.isBookmarked ? unBookmarkPost(post) : bookmarkPost(post)">
-                              <i [ngClass]="{'bi-bookmark': !post.isBookmarked,
-                                'bi-bookmark-fill text-dark': post.isBookmarked,
-                                'text-transparent': !post.isBookmarked}">
-                              </i>
-                            </a>
+
+                            <bookmark [post]="post"></bookmark>
                           </div>
                         </div>
                         <h4>
@@ -197,17 +179,11 @@
                       </div>
                       <div class="card-body  d-md-flex align-items-center">
                         <div class="card-flex-content">
-                          <div class="d-flex flex-wrap">
+                          <div class="d-flex flex-wrap gap-1">
                             <a *ngFor="let tag of post.postTags" (click)="openTagPosts(tag, $event)"
                               class="badge bg-info rounded-pill px-2">{{ tag.name }}</a>
-                            <a *ngIf="currentUser"
-                              class="rounded-outline-icon rounded-circle fs-8 d-flex align-items-center justify-content-center ms-2"
-                              (click)="post.isBookmarked ? unBookmarkPost(post) : bookmarkPost(post)">
-                              <i [ngClass]="{'bi-bookmark': !post.isBookmarked,
-                                'bi-bookmark-fill text-dark': post.isBookmarked,
-                                'text-transparent': !post.isBookmarked}">
-                              </i>
-                            </a>
+
+                            <bookmark [post]="post"></bookmark>
                           </div>
                           <h4>
                             <a class="card-text-truncate" (click)="openPost(post, $event)"> <img *ngIf="post.isPremium"

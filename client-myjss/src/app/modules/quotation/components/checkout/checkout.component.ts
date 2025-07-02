@@ -23,10 +23,12 @@ import { Document } from '../../../my-account/model/Document';
 import { DocumentType } from '../../../my-account/model/DocumentType';
 import { Quotation } from '../../../my-account/model/Quotation';
 import { ServiceType } from '../../../my-account/model/ServiceType';
+import { Voucher } from '../../../my-account/model/Voucher';
 import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
 import { DocumentService } from '../../../my-account/services/document.service';
 import { QuotationService } from '../../../my-account/services/quotation.service';
 import { ServiceService } from '../../../my-account/services/service.service';
+import { VoucherService } from '../../../my-account/services/voucher.service';
 import { Phone } from '../../../profile/model/Phone';
 import { Responsable } from '../../../profile/model/Responsable';
 import { Tiers } from '../../../profile/model/Tiers';
@@ -60,6 +62,7 @@ export class CheckoutComponent implements OnInit {
   totalPrice: number = 0;
   totalPriceWithoutVat: number = 0;
   totalVatPrice: number = 0;
+  discountAmountTotal: number = 0;
 
   isMobile: boolean = false;
   isCartOpen: boolean = false;
@@ -101,7 +104,7 @@ export class CheckoutComponent implements OnInit {
   subscriptionType: string | undefined;
   isPriceReductionForSubscription: boolean = false;
   idArticle: number | undefined;
-
+  voucherCode: string | undefined;
 
   capitalizeName = capitalizeName;
 
@@ -121,7 +124,9 @@ export class CheckoutComponent implements OnInit {
     private serviceService: ServiceService,
     private userScopeService: UserScopeService,
     private documentService: DocumentService,
-    private cityService: CityService
+    private cityService: CityService,
+    private voucherService: VoucherService
+
   ) { }
 
   async ngOnInit() {
@@ -211,33 +216,38 @@ export class CheckoutComponent implements OnInit {
           this.quotationService.saveFinalQuotation(this.quotation as Quotation, !isDraft).subscribe(response => {
             if (response && response.id) {
               this.cleanStorageData();
-              this.appService.openRoute(undefined, "account/quotations/details/" + response.id, undefined);
+              this.appService.hideLoadingSpinner();
+              this.loginService.refreshUserRoles().subscribe(role => {
+                this.appService.openRoute(undefined, "account/quotations/details/" + response.id, undefined);
+              });
             }
           });
         else
           this.orderService.saveFinalOrder(this.quotation as CustomerOrder, !isDraft).subscribe(response => {
             if (response && response.id) {
               this.cleanStorageData();
-              this.appService.openRoute(undefined, "account/orders/details/" + response.id, undefined);
+              this.appService.hideLoadingSpinner();
+              this.loginService.refreshUserRoles().subscribe(role => {
+                this.appService.openRoute(undefined, "account/orders/details/" + response.id, undefined);
+              });
             }
           });
-        this.appService.hideLoadingSpinner();
       }
     } else {
       if (this.quotation.isQuotation)
         this.quotationService.saveQuotation(this.quotation, !isDraft).subscribe(response => {
-          if (response && response.id) {
+          if (response) {
             this.cleanStorageData();
             this.appService.hideLoadingSpinner();
-            this.appService.openRoute(undefined, "account/quotations/details/" + response.id, undefined);
+            this.appService.openRoute(undefined, "account/quotations/details/" + response, undefined);
           }
         })
       else
         this.orderService.saveOrder(this.quotation, !isDraft).subscribe(response => {
-          if (response && response.id) {
+          if (response) {
             this.cleanStorageData();
             this.appService.hideLoadingSpinner();
-            this.appService.openRoute(undefined, "account/orders/details/" + response.id, undefined);
+            this.appService.openRoute(undefined, "account/orders/details/" + response, undefined);
           }
         })
     }
@@ -249,17 +259,16 @@ export class CheckoutComponent implements OnInit {
 
 
   isOrderPossible() {
-    console.log(this.documentForm);
     if (this.documentForm.invalid) {
-      this.appService.displayToast("Il manque des informations obligatoires pour pouvoir valider " + (this.quotation!.isQuotation ? "le devis" : "la commande"), true, "Validation de commande impossible", 5000);
+      this.appService.displayToast("Il manque des informations obligatoires pour pouvoir valider " + (this.quotation!.isQuotation ? "le devis" : "la commande"), true, "Validation de " + (this.quotation!.isQuotation ? "devis" : "commande") + " impossible", 5000);
       return false;
     }
     if (!this.currentUser && this.quotation!.responsable!.mail.mail != this.mailToConfirm) {
-      this.appService.displayToast("Les deux e-mails renseignés ne sont pas identiques !", true, "Validation de commande impossible", 5000);
+      this.appService.displayToast("Les deux e-mails renseignés ne sont pas identiques !", true, "Validation de " + (this.quotation!.isQuotation ? "devis" : "commande") + " impossible", 5000);
       return false;
     }
     if (!this.acceptDocs || !this.acceptTerms) {
-      this.appService.displayToast("Vous devez accepter les conditions ci-dessus pour pouvoir passer commande", true, "Validation de commande impossible", 5000);
+      this.appService.displayToast("Vous devez accepter les conditions ci-dessus pour pouvoir valider " + (this.quotation!.isQuotation ? "le devis" : "la commande"), true, "Validation de " + (this.quotation!.isQuotation ? "devis" : "commande") + " impossible", 5000);
       return false;
     }
     return true;
@@ -332,15 +341,13 @@ export class CheckoutComponent implements OnInit {
     if (this.currentUser)
       this.documentService.getDocumentForResponsable(this.currentUser.id).subscribe(response => {
         if (this.quotation) {
+          this.quotation.responsable = user;
           this.quotation.documents = [];
-          for (let doc of response) {
-            if (doc.documentType.id == this.constantService.getDocumentTypeBilling().id
-              || doc.documentType.id == this.constantService.getDocumentTypeDigital().id
-              || doc.documentType.id == this.constantService.getDocumentTypePaper().id
-            )
-              this.quotation.documents.push(doc);
-          }
-          this.sortDocuments(this.quotation.documents);
+          this.initEmptyDocuments();
+          if (!this.currentUser)
+            this.quotationService.setCurrentDraftQuotation(this.quotation);
+          else
+            this.quotationService.saveQuotation(this.quotation, false).subscribe();
         }
       })
   }
@@ -431,11 +438,13 @@ export class CheckoutComponent implements OnInit {
       this.totalPriceWithoutVat = 0;
       this.totalVatPrice = 0;
       this.totalPrice = 0;
+      this.discountAmountTotal = 0;
       for (let asso of this.quotation.assoAffaireOrders)
         for (let service of asso.services) {
           this.totalPriceWithoutVat += service.servicePreTaxPrice;
           this.totalVatPrice += service.serviceVatPrice;
           this.totalPrice += service.serviceTotalPrice;
+          this.discountAmountTotal += service.serviceDiscountAmount;
         }
     }
   }
@@ -480,8 +489,52 @@ export class CheckoutComponent implements OnInit {
     }
   }
 
-  applyCoupon() {
-    this.appService.displayToast("Le code de réduction utilisé n'existe pas ou a déjà été utilisé", true, "Code de réduction invalide", 5000);
+  applyVoucher() {
+    if (this.quotation && this.voucherCode && this.voucherCode.trim().length > 0) {
+      this.voucherCode = this.voucherCode.trim().toUpperCase();
+      if (this.currentUser)
+        if (this.quotation.isQuotation) {
+          this.voucherService.checkVoucherQuotationForUser(this.quotation as Quotation, this.voucherCode).subscribe(response => {
+            this.setVoucherAndComputePricing(response);
+          });
+        } else {
+          this.voucherService.checkVoucherOrderForUser(this.quotation as CustomerOrder, this.voucherCode).subscribe(response => {
+            this.setVoucherAndComputePricing(response);
+          });
+        }
+      else {
+        if (this.quotation.isQuotation) {
+          this.quotationPriceObservableRef = this.voucherService.checkVoucherQuotation(this.quotation as Quotation, this.voucherCode).subscribe(response => {
+            this.setVoucherAndComputePricing(response);
+          });
+        } else {
+          this.quotationPriceObservableRef = this.voucherService.checkVoucherOrder(this.quotation as CustomerOrder, this.voucherCode).subscribe(response => {
+            this.setVoucherAndComputePricing(response);
+          });
+        }
+      }
+    }
+  }
+
+  deleteVoucherPricing() {
+    if (this.quotation && this.quotation.voucher) {
+      this.quotation.voucher = {} as Voucher;
+      this.voucherCode = "";
+      if (this.currentUser)
+        if (this.quotation.isQuotation)
+          this.voucherService.removeVoucherQuotation(this.quotation as Quotation).subscribe();
+        else this.voucherService.removeVoucherOrder(this.quotation as CustomerOrder).subscribe();
+      this.prepareForPricingAndCompute();
+    }
+  }
+
+  setVoucherAndComputePricing(quotation: Voucher) {
+    if (quotation && this.quotation) {
+      this.quotation.voucher = quotation;
+      this.prepareForPricingAndCompute();
+      this.appService.displayToast("Le code de réduction a été appliqué", false, "", 5000);
+    }
+    else this.appService.displayToast("Le code de réduction utilisé n'existe pas ou a déjà été utilisé", true, "Code de réduction invalide", 5000);
   }
 
   deleteService(serviceIndex: number, assoIndex: number) {

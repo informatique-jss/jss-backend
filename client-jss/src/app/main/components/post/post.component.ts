@@ -18,6 +18,7 @@ import { Mail } from '../../model/Mail';
 import { PagedContent } from '../../model/PagedContent';
 import { Pagination } from '../../model/Pagination';
 import { Post } from '../../model/Post';
+import { ReadingFolder } from '../../model/ReadingFolder';
 import { Responsable } from '../../model/Responsable';
 import { ONE_POST_SUBSCRIPTION } from '../../model/Subscription';
 import { Tag } from '../../model/Tag';
@@ -25,8 +26,10 @@ import { AudioPlayerService } from '../../services/audio.player.service';
 import { CommentService } from '../../services/comment.service';
 import { LoginService } from '../../services/login.service';
 import { PostService } from '../../services/post.service';
+import { ReadingFolderService } from '../../services/reading.folder.service';
 import { SubscriptionService } from '../../services/subscription.service';
 import { AvatarComponent } from '../avatar/avatar.component';
+import { BookmarkComponent } from "../bookmark/bookmark.component";
 import { GenericInputComponent } from '../generic-input/generic-input.component';
 import { GenericTextareaComponent } from '../generic-textarea/generic-textarea.component';
 import { NewsletterComponent } from "../newsletter/newsletter.component";
@@ -37,7 +40,7 @@ declare var tns: any;
   selector: 'app-post',
   templateUrl: './post.component.html',
   styleUrls: ['./post.component.css'],
-  imports: [SHARED_IMPORTS, TrustHtmlPipe, AvatarComponent, GenericInputComponent, GenericTextareaComponent, NewsletterComponent],
+  imports: [SHARED_IMPORTS, TrustHtmlPipe, AvatarComponent, GenericInputComponent, GenericTextareaComponent, NewsletterComponent, BookmarkComponent],
   standalone: true
 })
 export class PostComponent implements OnInit, AfterViewInit {
@@ -63,7 +66,7 @@ export class PostComponent implements OnInit, AfterViewInit {
   audioUrl: string | undefined;
   progress: number = 0;
   progressSubscription: Subscription = new Subscription;
-
+  readingFolders: ReadingFolder[] = [];
   recipientMail: string | undefined;
 
   currentUser: Responsable | undefined;
@@ -83,6 +86,7 @@ export class PostComponent implements OnInit, AfterViewInit {
     private loginService: LoginService,
     private modalService: NgbModal,
     private cdr: ChangeDetectorRef,
+    private readingFolderService: ReadingFolderService,
   ) { }
 
   getTimeReading = getTimeReading;
@@ -96,6 +100,19 @@ export class PostComponent implements OnInit, AfterViewInit {
     this.newCommentForm = this.formBuilder.group({});
     this.giftForm = this.formBuilder.group({});
 
+    this.activatedRoute.params.subscribe(() => {
+      this.refreshPost();
+    });
+
+    this.refreshPost();
+
+    this.progressSubscription = this.audioService.progressObservable.subscribe(item => {
+      this.progress = item;
+      this.cdr.detectChanges();
+    });
+  }
+
+  refreshPost() {
     this.validationToken = this.activatedRoute.snapshot.params['token'];
     if (this.validationToken) {
       let mail = this.activatedRoute.snapshot.params['mail'];
@@ -120,11 +137,7 @@ export class PostComponent implements OnInit, AfterViewInit {
 
     this.cancelReply()
     this.fetchMostSeenPosts();
-
-    this.progressSubscription = this.audioService.progressObservable.subscribe(item => {
-      this.progress = item;
-      this.cdr.detectChanges();
-    });
+    this.fetchReadingFolder();
   }
 
   private fetchNextPrevArticleAndComments(post: Post) {
@@ -169,17 +182,10 @@ export class PostComponent implements OnInit, AfterViewInit {
     })
   }
 
-  unBookmarkPost(post: Post) {
-    this.postService.deleteAssoMailPost(post).subscribe(response => {
+  fetchReadingFolder() {
+    this.readingFolderService.getReadingFolders().subscribe(response => {
       if (response)
-        post.isBookmarked = false;
-    });
-  }
-
-  bookmarkPost(post: Post) {
-    this.postService.addAssoMailPost(post).subscribe(response => {
-      if (response)
-        post.isBookmarked = true;
+        this.readingFolders.push(...response);
     });
   }
 
@@ -360,7 +366,7 @@ export class PostComponent implements OnInit, AfterViewInit {
   };
 
   subscribeToOnePost(event: any, idArticle: number) {
-    this.appService.openMyJssRoute(event, "/quotation/" + ONE_POST_SUBSCRIPTION + "/" + false + "/" + idArticle, true);
+    this.appService.openMyJssRoute(event, "/quotation/subscription/" + ONE_POST_SUBSCRIPTION + "/" + false + "/" + idArticle, true);
   }
 
   readArticle(): void {

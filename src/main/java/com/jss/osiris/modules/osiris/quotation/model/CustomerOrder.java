@@ -15,6 +15,7 @@ import com.jss.osiris.libs.jackson.JacksonLocalDateTimeGmtSerializer;
 import com.jss.osiris.libs.jackson.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.modules.osiris.crm.model.Voucher;
 import com.jss.osiris.modules.osiris.invoicing.model.ICreatedDate;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoicingBlockage;
@@ -57,7 +58,7 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	public CustomerOrder() {
 	}
 
-	public CustomerOrder(Employee assignedTo, Tiers tiers, Responsable responsable, /* Confrere confrere, */
+	public CustomerOrder(Tiers tiers, Responsable responsable, /* Confrere confrere, */
 			List<SpecialOffer> specialOffers, LocalDateTime createdDate, CustomerOrderStatus customerOrderStatus,
 			String description, List<Attachment> attachments,
 			List<Document> documents,
@@ -65,10 +66,7 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 			List<Quotation> quotations, Boolean isQuotation,
 			List<Invoice> invoices, List<CustomerOrderComment> customerOrderComments,
 			CustomerOrderOrigin customerOrderOrigin) {
-		this.assignedTo = assignedTo;
 		this.responsable = responsable;
-		// this.confrere = confrere;
-		// TODO refonte
 		this.specialOffers = specialOffers;
 		this.createdDate = createdDate;
 		this.customerOrderStatus = customerOrderStatus;
@@ -93,11 +91,6 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	private Integer id;
 
 	private Integer validationId;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_assigned_to")
-	@IndexedField
-	private Employee assignedTo;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable")
@@ -148,9 +141,7 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	@OneToMany(mappedBy = "customerOrder")
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
-	@JsonView({ JacksonViews.OsirisDetailedView.class, JacksonViews.MyJssDetailedView.class }) // TODO : remove and use
-																								// lazy loading for
-																								// attachments
+	@JsonView({ JacksonViews.OsirisDetailedView.class, JacksonViews.MyJssDetailedView.class })
 	private List<Attachment> attachments;
 
 	@OneToMany(targetEntity = Document.class, mappedBy = "customerOrder", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -293,6 +284,12 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private LocalDateTime productionEffectiveDateTime;
 
+	@ManyToOne
+	@JsonView({ JacksonViews.OsirisDetailedView.class,
+			JacksonViews.MyJssDetailedView.class })
+	@JoinColumn(name = "id_voucher")
+	private Voucher voucher;
+
 	public Integer getId() {
 		return id;
 	}
@@ -427,14 +424,6 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public void setProviderInvoices(List<Invoice> providerInvoices) {
 		this.providerInvoices = providerInvoices;
-	}
-
-	public Employee getAssignedTo() {
-		return assignedTo;
-	}
-
-	public void setAssignedTo(Employee assignedTo) {
-		this.assignedTo = assignedTo;
 	}
 
 	public CustomerOrderOrigin getCustomerOrderOrigin() {
@@ -652,6 +641,14 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public void setProductionEffectiveDateTime(LocalDateTime productionEffectiveDateTime) {
 		this.productionEffectiveDateTime = productionEffectiveDateTime;
+	}
+
+	public Voucher getVoucher() {
+		return voucher;
+	}
+
+	public void setVoucher(Voucher voucher) {
+		this.voucher = voucher;
 	}
 
 }

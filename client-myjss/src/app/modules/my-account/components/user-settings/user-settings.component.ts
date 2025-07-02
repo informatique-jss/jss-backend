@@ -41,6 +41,8 @@ export class UserSettingsComponent implements OnInit {
   billingLabelTypeCustomer!: BillingLabelType;
   billingLabelTypeOther!: BillingLabelType;
 
+  isDisplayAssociatedSettings: boolean = false;
+
   constructor(
     private loginService: LoginService,
     private formBuilder: FormBuilder,
@@ -49,7 +51,8 @@ export class UserSettingsComponent implements OnInit {
     private documentService: DocumentService,
     private appService: AppService,
     private activatedRoute: ActivatedRoute,
-    private userPreferenceService: UserPreferenceService
+    private userPreferenceService: UserPreferenceService,
+
   ) { }
 
   capitalizeName = capitalizeName;
@@ -68,30 +71,44 @@ export class UserSettingsComponent implements OnInit {
     this.billingLabelTypeOther = this.constantService.getBillingLabelTypeOther();
 
     this.idResponsable = this.activatedRoute.snapshot.params['idResponsable'];
-    this.userScopeService.getUserScope().subscribe(response => {
-      this.userScope = [];
-      if (response)
-        for (let scope of response)
-          this.userScope.push(scope.responsableViewed);
 
-      this.loginService.getCurrentUser().subscribe(response => {
-        if (this.userScope)
-          for (let scope of this.userScope)
-            if (!this.idResponsable) {
-              let bookmark = this.userPreferenceService.getUserSearchBookmark("settings-current-responsable");
-              if (bookmark != null && scope.id == parseInt(bookmark))
-                this.changeCurrentUser(scope);
-              else {
-                this.changeCurrentUser(scope);
-                break;
+    if (this.activatedRoute.snapshot.url && this.activatedRoute.snapshot.url[0].path == "associated-settings")
+      this.isDisplayAssociatedSettings = true;
+
+
+    if (this.isDisplayAssociatedSettings) {
+      this.loginService.getCurrentUser().subscribe(currentUser => {
+        this.userScopeService.getUserScope().subscribe(response => {
+          this.userScope = [];
+          if (response)
+            for (let scope of response)
+              if (currentUser.id != scope.responsableViewed.id)
+                this.userScope.push(scope.responsableViewed);
+
+          if (this.userScope)
+            for (let scope of this.userScope)
+              if (!this.idResponsable) {
+                let bookmark = this.userPreferenceService.getUserSearchBookmark("settings-current-responsable");
+                if (bookmark != null && scope.id == parseInt(bookmark))
+                  this.changeCurrentUser(scope);
+                else {
+                  this.changeCurrentUser(scope);
+                  break;
+                }
+              } else {
+                if (scope.id == this.idResponsable)
+                  this.changeCurrentUser(scope);
               }
-            } else {
-              if (scope.id == this.idResponsable)
-                this.changeCurrentUser(scope);
-            }
 
+        })
       })
-    })
+    } else {
+      this.userScope = [];
+      this.loginService.getCurrentUser().subscribe(response => {
+        this.userScope = [response];
+        this.changeCurrentUser(this.userScope[0]);
+      });
+    }
   }
 
   changeCurrentUser(user: Responsable) {

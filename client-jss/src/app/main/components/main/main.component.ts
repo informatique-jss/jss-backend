@@ -18,6 +18,7 @@ import { LoginService } from '../../services/login.service';
 import { PostService } from '../../services/post.service';
 import { SerieService } from '../../services/serie.service';
 import { TagService } from '../../services/tag.service';
+import { BookmarkComponent } from "../bookmark/bookmark.component";
 
 declare var tns: any;
 
@@ -26,7 +27,7 @@ declare var tns: any;
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, NgbTooltipModule]
+  imports: [SHARED_IMPORTS, NgbTooltipModule, BookmarkComponent]
 })
 export class MainComponent implements OnInit {
 
@@ -40,7 +41,6 @@ export class MainComponent implements OnInit {
   podcasts: Post[] = [];
   series: Serie[] = [];
   tagTendencies: Tag[] = [];
-
   mail: string = '';
 
   firstCategory!: JssCategory;
@@ -60,7 +60,6 @@ export class MainComponent implements OnInit {
     private tagService: TagService,
     private audioService: AudioPlayerService
   ) { }
-
 
   ngOnInit() {
     this.firstCategory = this.constantService.getJssCategoryHomepageFirstHighlighted();
@@ -88,7 +87,6 @@ export class MainComponent implements OnInit {
 
     // Fetch posts by category
     this.fillPostsForCategories();
-
     //Fetch most viewed posts
     this.postService.getMostViewedPosts(0, 5).subscribe(pagedPosts => {
       if (pagedPosts.content) {
@@ -188,21 +186,6 @@ export class MainComponent implements OnInit {
           this.economyTopPosts = pagedPosts.content;
       })
     }
-  }
-
-  unBookmarkPost(post: Post) {
-    this.postService.deleteAssoMailPost(post).subscribe(response => {
-      if (response)
-        post.isBookmarked = false;
-    });
-  }
-
-  bookmarkPost(post: Post) {
-    this.postService.addAssoMailPost(post).subscribe(response => {
-      if (response)
-        post.isBookmarked = true;
-    });
-
   }
 
   followSerie(serieToFollow: Serie, event: MouseEvent) {

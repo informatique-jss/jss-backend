@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
+import { formatDateIso } from '../../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../../libs/SharedImports';
 import { GenericFormComponent } from '../generic-form.components';
 
@@ -46,5 +47,15 @@ export class GenericDatePickerComponent extends GenericFormComponent implements 
 
   dateChange() {
     this.onDateChange.emit(this.model);
+  }
+
+  getPreviewActionLinkFunction(entity: any): string[] | undefined {
+    return undefined;
+  }
+
+  getDateFormated(date: Date | undefined): string {
+    if (date)
+      return formatDateIso(date);
+    return "";
   }
 }

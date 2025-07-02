@@ -3,6 +3,7 @@ package com.jss.osiris.modules.osiris.quotation.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.jss.osiris.modules.osiris.crm.model.Voucher;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
@@ -10,7 +11,6 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.IAttachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IDocument;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 import com.jss.osiris.modules.osiris.miscellaneous.model.SpecialOffer;
-import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 public interface IQuotation extends IId, IAttachment, IDocument {
@@ -19,10 +19,6 @@ public interface IQuotation extends IId, IAttachment, IDocument {
 	public void setId(Integer id);
 
 	public Integer getValidationId();
-
-	public Employee getAssignedTo();
-
-	public void setAssignedTo(Employee assignedTo);
 
 	public Responsable getResponsable();
 
@@ -69,4 +65,8 @@ public interface IQuotation extends IId, IAttachment, IDocument {
 	public void setServiceFamilyGroup(ServiceFamilyGroup serviceFamilyGroup);
 
 	public Boolean getIsHasNotifications();
+
+	public Voucher getVoucher();
+
+	public void setVoucher(Voucher voucher);
 }

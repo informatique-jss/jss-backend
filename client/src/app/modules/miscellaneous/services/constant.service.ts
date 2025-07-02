@@ -972,8 +972,17 @@ export class ConstantService extends AppRestService<Constant> {
   getServiceTypeSecondaryCenterOpeningAlAndFormality() {
     return this.constant.serviceTypeSecondaryCenterOpeningAlAndFormality;
   }
+
   getServiceFamilyGroupAnnouncement() {
     return this.constant.serviceFamilyGroupAnnouncement;
+  }
+
+  getServiceFamilyGroupFormality() {
+    return this.constant.serviceFamilyGroupFormality;
+  }
+
+  getServiceFamilyGroupOther() {
+    return this.constant.serviceFamilyGroupOther;
   }
 
   getStringMyJssDemoRequestMail() {

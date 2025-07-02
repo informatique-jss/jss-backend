@@ -12,6 +12,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.libs.QueryCacheCrudRepository;
+import com.jss.osiris.modules.osiris.crm.model.Voucher;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
@@ -75,14 +76,12 @@ public interface CustomerOrderRepository
                         + " and ( :isDisplayOnlyParentRecurringCustomerOrder =false or co.is_recurring = true)"
                         + " and ( :idCustomerOrderParentRecurring =0 or co.id_customer_order_parent_recurring = :idCustomerOrderParentRecurring)"
                         + " and ( :idCustomerOrderChildRecurring =0 or co.id = (select id_customer_order_parent_recurring from customer_order where id =:idCustomerOrderChildRecurring))"
-                        + " and ( COALESCE(:assignedToEmployee) =0 or co.id_assigned_to in (:assignedToEmployee))"
                         + " and ( COALESCE(:salesEmployee) =0 or  r.id_commercial in (:salesEmployee)  or  t2.id_commercial in (:salesEmployee))"
                         + " and ( COALESCE(:customerOrder)=0 or  r.id in (:customerOrder) or t2.id in (:customerOrder))"
                         + " and ( COALESCE(:affaire)=0 or af.id =:affaire )"
                         + " group by r.id, r.firstname,origin.label,  r.lastname,  t2.denomination, t2.firstname, t2.lastname, cos.label, "
-                        + " co.created_date, co.production_effective_date_time, r.id_commercial, t2.id_commercial, co.id, r.id, t2.id,  co.description,co.id_assigned_to ")
+                        + " co.created_date, co.production_effective_date_time, r.id_commercial, t2.id_commercial, co.id, r.id, t2.id,  co.description ")
         List<OrderingSearchResult> findCustomerOrders(@Param("salesEmployee") List<Integer> salesEmployee,
-                        @Param("assignedToEmployee") List<Integer> assignedToEmployee,
                         @Param("customerOrderStatus") List<Integer> customerOrderStatus,
                         @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                         @Param("customerOrder") List<Integer> customerOrder, @Param("affaire") Integer affaire,
@@ -206,4 +205,16 @@ public interface CustomerOrderRepository
         @Query("select c from CustomerOrder c where invoicingEmployee is null and c.customerOrderStatus=:customerOrderStatusToBilled ")
         List<CustomerOrder> findNewCustomerOrderToBilled(CustomerOrderStatus customerOrderStatusToBilled,
                         Pageable pageableRequest);
+
+        @Query("select c from CustomerOrder c where c.customerOrderStatus<>:statusAbandonned AND (:responsable IS NULL OR c.responsable = :responsable) and voucher=:voucher")
+        List<CustomerOrder> findByVoucherAndResponsable(Voucher voucher, Responsable responsable,
+                        CustomerOrderStatus statusAbandonned);
+
+        List<CustomerOrder> findByVoucher(Voucher voucher);
+
+        @Query(value = "select c from CustomerOrder c where customerOrderStatus=:customerOrderStatus and createdDate<:dateLimit ")
+        List<CustomerOrder> findCustomerOrderOlderThanDate(
+                        @Param("customerOrderStatus") CustomerOrderStatus customerOrderStatus,
+                        @Param("dateLimit") LocalDateTime dateLimit);
+
 }

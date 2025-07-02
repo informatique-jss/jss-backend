@@ -1,11 +1,14 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
 import { Author } from '../../../tools/model/Author';
 import { Post } from '../../../tools/model/Post';
+import { ReadingFolder } from '../../../tools/model/ReadingFolder';
 import { Tag } from '../../../tools/model/Tag';
 import { PostService } from '../../../tools/services/post.service';
+import { ReadingFolderService } from '../../../tools/services/reading.folder.service';
 
 @Component({
   selector: 'app-bookmarks',
@@ -20,33 +23,45 @@ export class BookmarksComponent implements OnInit {
   @Input() mail: string | undefined;
   @Input() validationToken: string | null = null;
   bookmarkPosts: Post[] = [] as Array<Post>;
+  idReadingFolder: number | undefined;
+  readingFolder: ReadingFolder | undefined;
 
-  constructor(private postService: PostService, private appService: AppService) { }
+  constructor(private postService: PostService, private appService: AppService,
+    private activeRoute: ActivatedRoute, private readingFolderService: ReadingFolderService
+  ) { }
 
   ngOnInit() {
-    this.fetchBookmarkPosts();
+    if (this.activeRoute.snapshot.params['idReadingFolder']) {
+      this.idReadingFolder = this.activeRoute.snapshot.params['idReadingFolder'];
+      if (this.idReadingFolder)
+        this.readingFolderService.getReadingFolder(this.idReadingFolder).subscribe(response => {
+          this.readingFolder = response;
+        })
+    }
+    this.fetchBookmarkPostsByReadingFolder();
   }
 
-  fetchBookmarkPosts() {
-    this.postService.getBookmarkPostsByMail(0, 15).subscribe(data => {
-      if (data)
-        this.bookmarkPosts = data.content;
-
-    });
+  fetchBookmarkPostsByReadingFolder() {
+    if (this.idReadingFolder)
+      this.postService.getBookmarkPostsByMailAndReadingFolders(this.idReadingFolder, 0, 15).subscribe(data => {
+        if (data)
+          this.bookmarkPosts = data.content;
+      });
   }
 
   unBookmarkPost(post: Post) {
-    this.postService.deleteAssoMailPost(post).subscribe(response => {
+    this.postService.deleteBookmarkPost(post).subscribe(response => {
       if (response)
         post.isBookmarked = false;
     });
   }
 
   bookmarkPost(post: Post) {
-    this.postService.addAssoMailPost(post).subscribe(response => {
-      if (response)
-        post.isBookmarked = true;
-    });
+    if (this.idReadingFolder)
+      this.postService.addBookmarkPost(post, this.idReadingFolder).subscribe(response => {
+        if (response)
+          post.isBookmarked = true;
+      });
   }
 
   openPost(post: Post, event: any) {
@@ -60,4 +75,5 @@ export class BookmarksComponent implements OnInit {
   openTagPosts(tag: Tag, event: any) {
     this.appService.openJssRoute(event, "post/tag/" + tag.slug, undefined);
   }
+
 }

@@ -56,8 +56,12 @@ public class ResponsableServiceImpl implements ResponsableService {
     }
 
     @Override
-    public List<Responsable> getResponsables() {
-        return IterableUtils.toList(responsableRepository.findAll());
+    public List<Responsable> getResponsables(String searchedValue) {
+        if (searchedValue == null || searchedValue.trim().length() <= 2)
+            return null;
+
+        return responsableRepository.findByLastnameContainingIgnoreCaseOrFirstnameContainingIgnoreCase(searchedValue,
+                searchedValue);
     }
 
     @Override

@@ -52,7 +52,6 @@ export class RecurringChildOrderingListComponent implements OnInit {
       this.displayedColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire(s)", isShrinkColumn: true } as SortTableColumn<OrderingSearchResult>);
       this.displayedColumns.push({ id: "serviceTypeLabel", fieldName: "serviceTypeLabel", label: "Service(s)", isShrinkColumn: true } as SortTableColumn<OrderingSearchResult>);
       this.displayedColumns.push({ id: "customerOrderStatus", fieldName: "customerOrderStatus", label: "Statut" } as SortTableColumn<OrderingSearchResult>);
-      this.displayedColumns.push({ id: "assignedToEmployee", fieldName: "assignedToEmployeeId", label: "Assignée à", displayAsEmployee: true } as SortTableColumn<OrderingSearchResult>);
       this.displayedColumns.push({ id: "recurringStartDate", fieldName: "recurringStartDate", label: "Début", valueFonction: formatDateForSortTable } as SortTableColumn<OrderingSearchResult>);
       this.displayedColumns.push({ id: "recurringEndDate", fieldName: "recurringEndDate", label: "Fin", valueFonction: formatDateForSortTable } as SortTableColumn<OrderingSearchResult>);
       this.displayedColumns.push({ id: "lastStatusUpdate", fieldName: "lastStatusUpdate", label: "Mise à jour", valueFonction: formatDateTimeForSortTable } as SortTableColumn<OrderingSearchResult>);

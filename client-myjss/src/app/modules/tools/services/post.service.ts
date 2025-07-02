@@ -43,15 +43,15 @@ export class PostService extends AppRestService<Post> {
     });
   }
 
-  getBookmarkPostsByMail(page: number, size: number) {
-    return this.getPagedList(new HttpParams().set("page", page).set("size", size), "post/bookmark/all");
+  getBookmarkPostsByMailAndReadingFolders(idReadingFolder: number, page: number, size: number) {
+    return this.getPagedList(new HttpParams().set("idReadingFolder", idReadingFolder).set("page", page).set("size", size), "post/bookmark/all");
   }
 
-  addAssoMailPost(post: Post): Observable<boolean> {
-    return this.get(new HttpParams().set("idPost", post.id), "post/bookmark/add") as any as Observable<boolean>;
+  addBookmarkPost(post: Post, idReadingFolder: number): Observable<boolean> {
+    return this.get(new HttpParams().set("idPost", post.id).set("idReadingFolder", idReadingFolder), "post/bookmark/add") as any as Observable<boolean>;
   }
 
-  deleteAssoMailPost(post: Post) {
+  deleteBookmarkPost(post: Post) {
     return this.get(new HttpParams().set("idPost", post.id), "post/bookmark/delete") as any as Observable<boolean>;
   }
 

@@ -60,7 +60,7 @@ public class Service implements Serializable, IId {
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
 			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
-	@JsonIgnoreProperties(value = { "assoServiceTypeDocuments", "assoServiceTypeFieldTypes",
+	@JsonIgnoreProperties(value = { "assoServiceTypeDocuments",
 			"assoServiceProvisionTypes" }, allowSetters = true)
 	private List<ServiceType> serviceTypes;
 

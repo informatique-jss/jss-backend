@@ -15,6 +15,7 @@ import com.jss.osiris.libs.audit.service.AuditService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.modules.osiris.crm.service.VoucherService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceItemService;
@@ -88,6 +89,9 @@ public class PricingHelper {
 
     @Autowired
     AssoAffaireOrderService assoAffaireOrderService;
+
+    @Autowired
+    VoucherService voucherService;
 
     @Transactional
     public IQuotation getAndSetInvoiceItemsForQuotationForFront(IQuotation quotation, boolean persistInvoiceItem)
@@ -228,8 +232,8 @@ public class PricingHelper {
         } else if (billingItem.getBillingType().getId()
                 .equals(constantService.getBillingTypePublicationPaper().getId())) {
             Integer nbr = getPublicationPaperNbr(provision);
-            if (nbr > 0) {
-                Confrere confrere = provision.getAnnouncement().getConfrere();
+            Confrere confrere = provision.getAnnouncement().getConfrere();
+            if (nbr > 0 && confrere != null) {
                 invoiceItem.setLabel(invoiceItem.getLabel() + " (quantité : " + nbr + ")");
 
                 invoiceItem.setPreTaxPrice(
@@ -823,12 +827,39 @@ public class PricingHelper {
                     && assoSpecialOfferBillingType.getDiscountRate().compareTo(zeroValue) > 0)
                 invoiceItem.setDiscountAmount(
                         invoiceItem.getPreTaxPrice().multiply(assoSpecialOfferBillingType.getDiscountRate())
+                                .divide(oneHundredValue).multiply(oneHundredValue)
+                                .setScale(0, RoundingMode.HALF_EVEN)
+                                .divide(oneHundredValue));
+        }
+        if (quotation.getVoucher() != null && invoiceItem.getBillingItem() != null
+                && invoiceItem.getBillingItem().getBillingType() != null
+                && (Boolean.TRUE.equals(invoiceItem.getBillingItem().getBillingType().getIsVacation())
+                        || Boolean.TRUE.equals(invoiceItem.getBillingItem().getBillingType().getIsTraitement()))) {
+            // TODO créer un invoice item pour les coupons avec discount amount + condition
+            // istraitement et isvacation ko
+            // if (quotation.getVoucher().getDiscountAmount() != null
+            // && quotation.getVoucher().getDiscountAmount().compareTo(zeroValue) > 0) {
+            // BigDecimal voucherDiscount = quotation.getVoucher().getDiscountAmount()
+            // .multiply(oneHundredValue)
+            // .setScale(0, RoundingMode.HALF_EVEN)
+            // .divide(oneHundredValue);
+
+            // BigDecimal existingDiscount = invoiceItem.getDiscountAmount() != null
+            // ? invoiceItem.getDiscountAmount()
+            // : zeroValue;
+
+            // invoiceItem.setDiscountAmount(existingDiscount.add(voucherDiscount));
+            // }
+            if (quotation.getVoucher().getDiscountRate() != null
+                    && quotation.getVoucher().getDiscountRate().compareTo(zeroValue) > 0) {
+                invoiceItem.setDiscountAmount(
+                        invoiceItem.getPreTaxPrice().multiply(quotation.getVoucher().getDiscountRate())
                                 .divide(oneHundredValue).multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN)
                                 .divide(oneHundredValue));
+            }
         } else {
             invoiceItem.setDiscountAmount(zeroValue);
         }
-
         invoiceItem.setVat(invoiceItem.getBillingItem().getBillingType().getVat());
         vatService.completeVatOnInvoiceItem(invoiceItem, quotation);
     }

@@ -1,5 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { AppRestService } from '../../main/services/appRest.service';
 import { IQuotation } from '../../quotation/model/IQuotation';
 import { CustomerOrder } from '../model/CustomerOrder';
@@ -21,6 +22,10 @@ export class CustomerOrderService extends AppRestService<CustomerOrder> {
     return this.get(new HttpParams().set("customerOrderId", customerOrderId), 'order');
   }
 
+  cancelCustomerOrder(customerOrderId: number) {
+    return this.get(new HttpParams().set("customerOrderId", customerOrderId), 'order/cancel');
+  }
+
   getCustomerOrdersForAffaireAndCurrentUser(idAffaire: number) {
     return this.getList(new HttpParams().set("idAffaire", idAffaire), 'order/search/affaire');
   }
@@ -33,8 +38,8 @@ export class CustomerOrderService extends AppRestService<CustomerOrder> {
     return this.get(new HttpParams().set("idQuotation", idQuotation), 'quotation/order');
   }
 
-  saveOrder(order: IQuotation, isValidation: boolean) {
-    return this.postItem(new HttpParams().set("isValidation", isValidation), 'order/user/save', order);
+  saveOrder(order: IQuotation, isValidation: boolean): Observable<number> {
+    return this.postItem(new HttpParams().set("isValidation", isValidation), 'order/user/save', order) as any as Observable<number>;
   }
 
   saveFinalOrder(order: CustomerOrder, isValidation: boolean) {

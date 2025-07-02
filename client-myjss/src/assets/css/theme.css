@@ -15109,11 +15109,11 @@ iframe {
 }
 
 ::-moz-selection {
-  background: var(--ar-user-selection-color);
+  /* background: var(--ar-user-selection-color); */
 }
 
 ::selection {
-  background: var(--ar-user-selection-color);
+  /* background: var(--ar-user-selection-color); */
 }
 
 b,

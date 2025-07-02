@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.quotation.service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.charset.Charset;
@@ -12,8 +13,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpRequestExecution;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -37,6 +42,9 @@ public class CentralPayDelegateServiceImpl implements CentralPayDelegateService 
 
     @Value("${central.pay.api.password}")
     private String centralPayPassword;
+
+    @Value("${my.jss.entry.point}")
+    private String myJssEntryPoint;
 
     private String paymentRequestUrl = "/paymentRequest";
     private String transactiontUrl = "/transaction";
@@ -135,7 +143,7 @@ public class CentralPayDelegateServiceImpl implements CentralPayDelegateService 
 
     @Override
     public CentralPayPaymentRequest generatePayPaymentRequest(BigDecimal amount, String mail, String entityId,
-            String subject) {
+            String subject, boolean isQuotation) {
         SSLHelper.disableCertificateValidation();
         HttpHeaders headers = createHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
@@ -159,14 +167,38 @@ public class CentralPayDelegateServiceImpl implements CentralPayDelegateService 
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
 
-        ResponseEntity<CentralPayPaymentRequest> res = new RestTemplate().postForEntity(
-                centralPayEndpoint + paymentRequestUrl,
-                request,
-                CentralPayPaymentRequest.class);
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.getInterceptors().add(new BufferingClientHttpRequestInterceptor());
+
+        ResponseEntity<CentralPayPaymentRequest> res;
+        if (isQuotation)
+            res = restTemplate.postForEntity(
+                    centralPayEndpoint + paymentRequestUrl + "?delay=5&urlRedirect=" + myJssEntryPoint
+                            + "/quotations/details/"
+                            + entityId,
+                    request,
+                    CentralPayPaymentRequest.class);
+        else
+            res = restTemplate.postForEntity(
+                    centralPayEndpoint + paymentRequestUrl + "?delay=5&urlRedirect=" + myJssEntryPoint
+                            + "/orders/details/"
+                            + entityId,
+                    request,
+                    CentralPayPaymentRequest.class);
 
         if (res.getBody() != null) {
             return res.getBody();
         }
         return null;
+    }
+
+    private class BufferingClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
+        @Override
+        public ClientHttpResponse intercept(
+                HttpRequest request, byte[] body,
+                ClientHttpRequestExecution execution) throws IOException {
+
+            return execution.execute(request, body); // rien d’autre
+        }
     }
 }

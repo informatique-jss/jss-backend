@@ -1,6 +1,18 @@
 <div class="d-flex align-items-center mb-4" *ngIf="quotation">
   <h1 class="h2 mb-0 me-3">Devis {{quotation.id}}</h1> <span class="badge bg-opacity-10   "
     [ngClass]="getClassForQuotationStatus(quotation)">{{getQuotationStatusLabel(quotation)}}</span>
+  <div class="ms-auto">
+    <a class="btn btn-sm  me-2 btn-primary" role="button" (click)="resumeDraft($event)"
+      *ngIf=" quotation && quotation.quotationStatus.code == QUOTATION_STATUS_OPEN">
+      <i class="ai-edit-alt ms-n1 me-2"></i>
+      Reprendre le brouillon
+    </a>
+    <a class="btn btn-sm btn-primary" role="button" (click)="cancelDraft($event)"
+      *ngIf=" quotation && quotation.quotationStatus.code == QUOTATION_STATUS_OPEN">
+      <i class="ai-trash ms-n1 me-2"></i>
+      Abandonner
+    </a>
+  </div>
 </div>
 <div class="alert alert-info d-flex mb-2" role="alert"
   *ngIf="associatedCustomerOrder && quotation && quotation.quotationStatus.code == QUOTATION_STATUS_VALIDATED_BY_CUSTOMER">
@@ -9,7 +21,7 @@
       (click)="openOrderDetails($event ,associatedCustomerOrder);$event.stopPropagation();">{{associatedCustomerOrder.id}}</a>
   </div>
 </div>
-<div class="d-flex align-items-center mb-4"
+<div class="d-flex flex-column flex-md-row align-items-center mb-4"
   *ngIf="quotation && quotationAssoAffaireOrders && quotationAssoAffaireOrders.length>1 && selectedAssoAffaireOrder">
   <div class="ms-auto">
     <div ngbDropdown class="btn-group dropdown" style="margin-right: 10px;">
@@ -37,7 +49,7 @@
 </div>
 <section class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4 mb-4" *ngIf="quotation && selectedAssoAffaireOrder">
   <div class="card-body">
-    <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-0 mb-lg-1 mb-xl-3">
+    <div class="d-flex flex-column flex-md-row align-items-center mt-sm-n1 pb-4 mb-0 mb-lg-1 mb-xl-3">
       <i class="ai-briefcase text-primary lead pe-1 me-2"></i>
       <h2 class="h4 mb-0">
         Affaire :
@@ -55,7 +67,7 @@
           *ngIf="(!selectedAssoAffaireOrder.affaire.mails || selectedAssoAffaireOrder.affaire.mails.length==0)">&nbsp;le
           mail</span>
       </a>
-      <ng-template #just_edit_affaire> <a class="btn btn-sm  ms-auto btn-secondary" role="button"
+      <ng-template #just_edit_affaire> <a class="btn btn-sm  mt-3 mt-md-0 ms-md-auto btn-secondary" role="button"
           (click)="editAffaireDetails(selectedAssoAffaireOrder.affaire, $event)">
           <i class="ai-edit ms-n1 me-2"></i>
           Modifier
@@ -99,7 +111,8 @@
   </div>
 
   <div ngbAccordion [closeOthers]="true" *ngIf="selectedAssoAffaireOrder.services">
-    <div ngbAccordionItem *ngFor="let service of selectedAssoAffaireOrder.services; let index =index"
+    <div ngbAccordionItem [collapsed]="index!=0"
+      *ngFor="let service of selectedAssoAffaireOrder.services; let index =index"
       (show)="loadServiceDetails(service,false)">
       <h2 ngbAccordionHeader>
         <button ngbAccordionButton class="border-top">
@@ -136,11 +149,65 @@
                     <div class="ps-2">Vous pouvez téléverser ci-dessous les documents nécessaires au traitement du
                       service</div>
                   </div>
+                  <h5 class="pt-3">Pièces obligatoires</h5>
                   <div class="list-group">
                     <ng-container *ngFor="let assoServiceDocument of service.assoServiceDocuments;let index = index">
                       <div class="list-group-item list-group-item-action flex-column align-items-start py-3 "
                         [ngClass]="{'border-top-1':index>0}" style="border-width: 2px;"
                         *ngIf="assoServiceDocument.isMandatory">
+                        <div class="d-flex flex-wrap w-100 justify-content-between">
+                          <h6>{{assoServiceDocument.typeDocument.customLabel}}</h6>
+                        </div>
+                        <p class="fs-sm  "
+                          *ngIf="assoServiceDocument.formalisteComment && assoServiceDocument.formalisteComment.length>0">
+                          {{assoServiceDocument.formalisteComment}}</p>
+                        <div class="mb-2 mb-md-3 row  " *ngIf="canEditQuotation">
+                          <div class="col-md-12">
+                            <single-upload [entity]="assoServiceDocument"
+                              (endOfUpload)="refreshCurrentAssoAffaireOrder()"
+                              [entityType]="ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType" [isDirectUpload]="true"
+                              [attachmentType]="assoServiceDocument.typeDocument.attachmentType"
+                              [typeDocument]="assoServiceDocument.typeDocument"></single-upload>
+                          </div>
+                        </div>
+                        <div class="table-responsive"
+                          *ngIf="assoServiceDocument.attachments && assoServiceDocument.attachments.length>0">
+                          <table class="table table-hover mb-0">
+                            <thead>
+                              <tr>
+                                <th style="width: 5%;">#</th>
+                                <th>Nom</th>
+                                <th class="d-none d-md-table-cell" style="width: 20%;">Type</th>
+                                <th class="d-none d-lg-table-cell" style="width: 20%;">Date de dépôt</th>
+                                <th style="width: 10%;"></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let attachment of assoServiceDocument.attachments; let i = index">
+                                <th scope="row">{{i + 1}}</th>
+                                <td class="text-wrap" style="min-width: 150px;">{{attachment.description}}</td>
+                                <td class="d-none d-md-table-cell">{{attachment.attachmentType.label}}</td>
+                                <td class="d-none d-lg-table-cell">{{attachment.creatDateTime | date:'dd/MM/yyyy'}}</td>
+                                <td>
+                                  <button type="button" class="btn btn-secondary btn-icon btn-sm"
+                                    aria-label="Télécharger" placement="right" ngbTooltip="Télécharger"
+                                    (click)="downloadAttachment(attachment)">
+                                    <i class="ai-download"></i>
+                                  </button>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </ng-container>
+                  </div>
+                  <h5 class="pt-3">Pièces optionnelles</h5>
+                  <div class="list-group">
+                    <ng-container *ngFor="let assoServiceDocument of service.assoServiceDocuments;let index = index">
+                      <div class="list-group-item list-group-item-action flex-column align-items-start py-3 "
+                        [ngClass]="{'border-top-1':index>0}" style="border-width: 2px;"
+                        *ngIf="!assoServiceDocument.isMandatory">
                         <div class="d-flex flex-wrap w-100 justify-content-between">
                           <h6>{{assoServiceDocument.typeDocument.customLabel}}</h6>
                         </div>
@@ -297,10 +364,11 @@
   <section class="col">
     <div class="card h-100 border-0 py-1 p-md-2 p-xl-3 p-xxl-4">
       <div class="card-body">
-        <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-1 mb-lg-2">
+        <div class="d-flex flex-column flex-md-row align-items-center mt-sm-n1 pb-4 mb-1 mb-lg-2">
           <i class="ai-map-pin text-primary lead pe-1 me-2"></i>
           <h2 class="h4 mb-0">Adresses</h2>
-          <a class="btn btn-sm btn-secondary ms-auto" (click)="editAddress($event)" *ngIf="canEditQuotation">
+          <a class="btn btn-sm btn-secondary mt-3 mt-md-0 ms-md-auto" (click)="editAddress($event)"
+            *ngIf="canEditQuotation">
             <i class="ai-edit ms-n1 me-2"></i>
             Modifier
           </a>
@@ -365,11 +433,11 @@
   <section class="col">
     <div class="card h-100 border-0 py-1 p-md-2 p-xl-3 p-xxl-4">
       <div class="card-body">
-        <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-1 mb-lg-2">
+        <div class="d-flex flex-column flex-md-row align-items-center mt-sm-n1 pb-4 mb-1 mb-lg-2">
           <i class="ai-wallet text-primary lead pe-1 me-2"></i>
           <h2 class="h4 mb-0">Facturation</h2>
-          <a class="btn btn-sm btn-secondary ms-auto" *ngIf="quotation && invoiceSummary && displayPayButton"
-            (click)="payQuotation($event)">
+          <a class="btn btn-sm btn-secondary mt-3 mt-md-0 ms-md-auto"
+            *ngIf="quotation && invoiceSummary && displayPayButton" (click)="payQuotation($event)">
             <i class="ai-cart ms-n1 me-2"></i>Payer un acompte
           </a>
         </div>

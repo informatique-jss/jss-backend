@@ -1,3 +1,4 @@
+import { Voucher } from "../../crm/model/Voucher";
 import { City } from "../../miscellaneous/model/City";
 import { Civility } from "../../miscellaneous/model/Civility";
 import { Country } from "../../miscellaneous/model/Country";
@@ -49,4 +50,5 @@ export interface Responsable extends IDocument, IAttachment {
   rffBic: string;
   rffMail: string;
   numberOfGiftPostsPerMonth: number;
+  vouchers: Voucher[];
 }

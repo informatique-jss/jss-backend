@@ -295,6 +295,8 @@ export interface Constant {
   accountingAccountClassTiers: AccountingAccountClass;
   serviceFamilyImmatriculationAlAndFormality: ServiceFamily;
   serviceFamilyGroupAnnouncement: ServiceFamilyGroup;
+  serviceFamilyGroupFormality: ServiceFamilyGroup;
+  serviceFamilyGroupOther: ServiceFamilyGroup;
   stringMyJssDemoRequestMail: string;
   stringMyJssWebinarRequestMail: string;
   stringMyJssContactFormRequestMail: string;

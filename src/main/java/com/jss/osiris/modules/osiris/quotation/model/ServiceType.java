@@ -67,7 +67,7 @@ public class ServiceType implements Serializable, IId {
 
 	@OneToMany(mappedBy = "serviceType", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "serviceType" }, allowSetters = true)
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class })
 	private List<AssoServiceTypeFieldType> assoServiceTypeFieldTypes;
 
 	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
@@ -97,6 +97,10 @@ public class ServiceType implements Serializable, IId {
 	@JsonIgnoreProperties(value = { "provisionFamilyTypes" }, allowSetters = true)
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private AnnouncementNoticeTemplate announcementNoticeTemplate;
+
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+	@JoinColumn(name = "id_service_type_linked")
+	private ServiceType serviceTypeLinked;
 
 	public Integer getId() {
 		return id;
@@ -240,5 +244,13 @@ public class ServiceType implements Serializable, IId {
 
 	public void setAnnouncementNoticeTemplate(AnnouncementNoticeTemplate announcementNoticeTemplate) {
 		this.announcementNoticeTemplate = announcementNoticeTemplate;
+	}
+
+	public ServiceType getServiceTypeLinked() {
+		return serviceTypeLinked;
+	}
+
+	public void setServiceTypeLinked(ServiceType serviceTypeLinked) {
+		this.serviceTypeLinked = serviceTypeLinked;
 	}
 }

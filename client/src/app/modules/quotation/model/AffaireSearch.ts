@@ -6,7 +6,6 @@ import { Affaire } from './Affaire';
 import { Status } from './guichet-unique/referentials/Status';
 
 export interface AffaireSearch {
-  responsible: Employee | undefined;
   assignedTo: Employee | undefined;
   label: string | undefined;
   status: IWorkflowElement<any>[];
