@@ -14,10 +14,6 @@
   z-index: 1;
 }
 
-.right-border {
-  border-right: 1px solid var(--ar-gray-500);
-}
-
 :host ::ng-deep .ck.ck-editor__main>.ck-editor__editable:not(.ck-focused) {
   min-height: 200px;
 }

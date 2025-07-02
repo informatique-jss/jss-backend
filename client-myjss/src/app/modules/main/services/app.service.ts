@@ -53,9 +53,7 @@ export class AppService {
     if (event && (event.ctrlKey || event.button && event.button == "1")) {
       window.open(location.origin + "/" + route, "_blank");
     } else {
-      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-        this.router.navigate(['/' + route])
-      });
+      this.router.navigate(['/' + route])
       if (sameWindowEndFonction)
         sameWindowEndFonction();
     }

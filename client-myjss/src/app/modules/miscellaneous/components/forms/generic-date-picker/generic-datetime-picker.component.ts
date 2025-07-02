@@ -47,8 +47,4 @@ export class GenericDatePickerComponent extends GenericFormComponent implements 
   dateChange() {
     this.onDateChange.emit(this.model);
   }
-
-  getPreviewActionLinkFunction(entity: any): string[] | undefined {
-    return undefined;
-  }
 }

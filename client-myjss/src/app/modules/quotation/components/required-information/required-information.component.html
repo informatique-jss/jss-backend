@@ -1,4 +1,4 @@
-<div class="container d-flex flex-column min-vh-100 pb-5" *ngIf="quotation">
+<div class="container d-flex flex-column min-vh-100" *ngIf="quotation">
 
   <section>
     <p class="sub-title">Sélectionnez une affaire</p>
@@ -54,11 +54,12 @@
 
     <ng-container *ngIf="selectedAssoIndex!=null && selectedServiceIndex!=null && quotation.assoAffaireOrders[selectedAssoIndex] &&
        quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex]">
-      <ul ngbNav #nav="ngbNav" [activeId]="activeId" class="nav-tabs">
+      <ul ngbNav #nav="ngbNav" [activeId]="activeId" class="nav-tabs"
+        (navChange)="changeProvisionNoticeTemplateDesciption($event)">
 
         <ng-container
-          *ngFor="let provision of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].provisions; let index = index">
-          <li [ngbNavItem]="parseInt('1'+index)"
+          *ngFor="let provision of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].provisions; let provisionIndex = index">
+          <li [ngbNavItem]="parseInt('1'+provisionIndex)"
             *ngIf="provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_ANNOUNCEMENT && provision.announcement">
             <button ngbNavLink>Annonce légale {{ provision.order && provision.order>1 ? provision.order : '' }}
             </button>
@@ -72,7 +73,7 @@
                       <select-string [types]="selectionRedaction" label="Publier l'annonce au JSS ?"
                         [isMandatory]="false" [form]="informationForm"
                         [propertyName]="'selectionRedaction'+provision.order"
-                        [(model)]="selectedRedaction[selectedServiceIndex][index]"
+                        [(model)]="selectedRedaction[selectedServiceIndex][provisionIndex]"
                         (selectionChange)="changeDoNotGenerateAnnouncement($event, provision)">
                       </select-string>
                     </div>
@@ -92,86 +93,45 @@
               <!-- announcement form : Option -->
               <div *ngIf="isDoNotGenerateAnnouncement" class="quotation-container mb-2">
                 <h6><i class="ai-grid me-2"></i>Option</h6>
-                <div class="d-flex flex-wrap gap-4 align-items-center">
+                <div class="row g-4 align-items-center">
 
-                  <div class="form-check form-switch d-flex m-0 pe-md-5 pe-2 right-border">
+                  <div class="col-6 form-check form-switch">
                     <generic-toggle [(model)]="provision.isRedactedByJss" label="Confier la rédaction au JSS"
-                      [form]="informationForm" [propertyName]="'isRedactedByJss'+provision.order"
-                      [isDisabled]="false"></generic-toggle>
+                      [form]="informationForm" [propertyName]="'isRedactedByJss'+provision.order" [isDisabled]="false"
+                      (onToggleChange)="changeIsShowNoticeTemplate(false, provision.isRedactedByJss)"></generic-toggle>
                   </div>
 
-                  <div *ngIf="!provision.isRedactedByJss"
-                    class="form-check form-switch d-flex m-0 pe-md-5 pe-2 right-border">
-                    <generic-toggle [(model)]="isUsingTemplate" label="Utiliser les modèles proposés pour la rédaction"
-                      [form]="informationForm" [propertyName]="'isUsingTemplate'+provision.order"
-                      [isDisabled]="false"></generic-toggle>
-                  </div>
-
-                  <div class="form-check form-switch d-flex ms-md-4 m-0" *ngIf="provision.isRedactedByJss">
+                  <div class="col-6 form-check form-switch" *ngIf="provision.isRedactedByJss">
                     <generic-toggle [(model)]="provision.announcement.isProofReadingDocument"
                       label="Recevoir une épreuve de relecture avant publication" [form]="informationForm"
                       [propertyName]="'isProofReadingDocument'+provision.order" [isDisabled]="false"></generic-toggle>
                   </div>
-                </div>
-              </div>
 
-
-              <!-- announcement form : template form -->
-              <div *ngIf="!provision.isRedactedByJss && isUsingTemplate" class="quotation-container mb-5">
-
-                <div class="row">
-                  <div class="col-md-3">
-
-                    <!-- Toggle relecture -->
-                    <div class="form-check  d-flex align-items-center mb-4" style="padding-left: 0px;">
-                      <generic-toggle [(model)]="provision.announcement.isReReadByJss" label="Relecture par le JSS"
-                        [form]="informationForm" [propertyName]="'isReReadByJss'+provision.order"
-                        [isDisabled]="false"></generic-toggle>
+                  <div class="row">
+                    <div *ngIf="!provision.isRedactedByJss" class="col-6 form-check form-switch">
+                      <generic-toggle [(model)]="isUsingTemplate"
+                        label="Utiliser les modèles proposés pour la rédaction" [form]="informationForm"
+                        [propertyName]="'isUsingTemplate'+provision.order" [isDisabled]="false"
+                        (onToggleChange)="changeIsShowNoticeTemplate($event, provision.isRedactedByJss)"></generic-toggle>
                     </div>
-
-                    <!-- Département -->
-                    <!-- <div class="mb-3" *ngIf="departments">
-                      <select-department [(model)]="provision.announcement.department"
-                        label="Département de publication" [form]="informationForm"
-                        [propertyName]="'department'+provision.order" [isMandatory]="false"
-                        [isDisabled]="false"></select-department>
-                    </div> -->
-
-                    <!-- Rubrique -->
-                    <!-- <div class="mb-3" *ngIf="noticeTypeFamilies">
-                      <select-notice-type-family [(model)]="provision.announcement.noticeTypeFamily"
-                        label="Rubrique de publication" [form]="informationForm"
-                        [propertyName]="'noticeTypeFamily'+provision.order" [isMandatory]="false"
-                        [isDisabled]="false"></select-notice-type-family>
-                    </div> -->
                   </div>
-                  <!-- <div>
-                    <generic-textarea [(model)]="assoServiceProvitionType.noticeTemplate" [form]="informationForm"
-                      [propertyName]="'noticeTemplate'+provision.order" [isMandatory]="false"
-                      [isDisabled]="false"></generic-textarea>
-                  </div> -->
                 </div>
-                <notice-template
-                  [service]="quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex]"></notice-template>
+                <hr>
 
-              </div>
-
-              <!-- announcement form : text area -->
-              <div *ngIf="provision.isDoNotGenerateAnnouncement && !provision.isRedactedByJss && !isUsingTemplate"
-                class="quotation-container mb-5">
-
-                <div class="row">
-                  <div class="col-md-3">
+                <!-- announcement form : text area -->
+                <div class="row pt-3">
+                  <div *ngIf="provision.isDoNotGenerateAnnouncement && !provision.isRedactedByJss" [ngClass]="{'col-md-3' : !provision.isRedactedByJss && !isUsingTemplate,
+                   'row row-cols-4 px-4': !provision.isRedactedByJss && isUsingTemplate}">
 
                     <!-- Toggle relecture -->
-                    <div class="form-check  d-flex align-items-center mb-4" style="padding-left: 0px;">
+                    <div class="col form-check align-items-start mb-4 px-3" style="padding-left: 0px;">
                       <generic-toggle [(model)]="provision.announcement.isReReadByJss" label="Relecture par le JSS"
                         [form]="informationForm" [propertyName]="'isReReadByJss'+provision.order"
                         [isDisabled]="false"></generic-toggle>
                     </div>
 
                     <!-- Département -->
-                    <div class="mb-3" *ngIf="departments">
+                    <div class="col mb-3 align-items-start" *ngIf="departments">
                       <select-department [(model)]="provision.announcement.department"
                         label="Département de publication" [form]="informationForm"
                         [propertyName]="'department'+provision.order" [isMandatory]="false"
@@ -179,7 +139,7 @@
                     </div>
 
                     <!-- Rubrique -->
-                    <div class="mb-3" *ngIf="noticeTypeFamilies">
+                    <div class="col mb-3 align-items-start" *ngIf="noticeTypeFamilies">
                       <select-notice-type-family [(model)]="provision.announcement.noticeTypeFamily"
                         label="Rubrique de publication" [form]="informationForm"
                         [propertyName]="'noticeTypeFamily'+provision.order" [isMandatory]="false"
@@ -187,7 +147,8 @@
                     </div>
 
                     <!-- Sous-rubrique -->
-                    <div class="mb-3" *ngIf="provision.announcement.noticeTypeFamily && noticeTypes">
+                    <div class="col mb-3 align-items-start"
+                      *ngIf="provision.announcement.noticeTypeFamily && noticeTypes">
                       <select-multiple-notice-type [(model)]="provision.announcement.noticeTypes"
                         label="Sous-rubrique(s) de publication" [form]="informationForm"
                         [noticeTypeFamily]="provision.announcement.noticeTypeFamily"
@@ -196,7 +157,8 @@
                     </div>
                   </div>
 
-                  <div class="col-md-9">
+                  <div *ngIf="provision.isDoNotGenerateAnnouncement && !provision.isRedactedByJss && !isUsingTemplate"
+                    class="col-md-9">
                     <label for="announcementTextarea" class="form-label">Texte de l'annonce</label>
                     <ckeditor id="announcementTextarea" [editor]="ckEditorHeader" [config]="config"
                       (ready)="onEditorReady($event, provision)" (change)="onNoticeChange($event, provision)">
@@ -642,7 +604,7 @@
 
 
   <div
-    class="position-fixed bottom-0 start-0 w-100 bg-light shadow-sm p-3 m-0 d-flex justify-content-between align-items-center z-3">
+    class="position-fixed bottom-0 start-0 w-100 bg-light shadow-sm p-3 m-0 d-flex justify-content-between align-items-center z-1030">
     <button type="button" class="btn btn-secondary rounded-1 mx-5 d-flex align-items-center"
       (click)="moveToService((selectedServiceIndex-1), selectedAssoIndex)"
       *ngIf="selectedServiceIndex!=null && selectedAssoIndex!=null">
