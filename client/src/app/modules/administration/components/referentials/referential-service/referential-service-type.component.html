@@ -174,9 +174,9 @@
               </td>
               <td
                 *ngIf="assoServiceProvisionType.noticeTypeFamily && assoServiceProvisionType.provisionType.provisionFamilyType">
-                <select-notice-template [(model)]="assoServiceProvisionType.noticeTemplate" label="Modèle d'annonce"
-                  [form]="entityForm" [propertyName]="'noticeTemplate'+index+deleteIndex" [isMandatory]="false"
-                  [isDisabled]="!editMode"
+                <select-notice-template [(model)]="assoServiceProvisionType.announcementNoticeTemplate"
+                  label="Modèle d'annonce" [form]="entityForm" [propertyName]="'noticeTemplate'+index+deleteIndex"
+                  [isMandatory]="false" [isDisabled]="!editMode"
                   [filteredProvisionFamilyType]="assoServiceProvisionType.provisionType.provisionFamilyType"></select-notice-template>
               </td>
             </tr>

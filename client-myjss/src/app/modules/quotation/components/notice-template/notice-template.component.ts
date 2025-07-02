@@ -71,8 +71,15 @@ export class NoticeTemplateComponent implements OnInit {
   ngOnInit(): void {
     this.form = this.fb.group({});
 
+    this.templates = [];
     if (this.service) {
-      this.templates = this.service?.serviceTypes.map(st => st.announcementNoticeTemplate) ?? [];
+      if (this.service && this.service.serviceTypes)
+        for (let st of this.service.serviceTypes)
+          if (st.assoServiceProvisionTypes)
+            for (let asso of st.assoServiceProvisionTypes)
+              if (asso.announcementNoticeTemplate)
+                this.templates.push(asso.announcementNoticeTemplate);
+
       this.fragmentsFound = this.templates.flatMap(template => template.announcementNoticeTemplateFragments);
       this.displayText = this.templates.map(t => t.text).join('');
       this.displayTextOriginal = this.displayText;
@@ -142,7 +149,7 @@ export class NoticeTemplateComponent implements OnInit {
         let fragmentFound = this.fragmentsFound.find(fragment => fragment.code == fragmentPart);
         if (fragmentFound) {
           selectionFragmentsFounds.push(fragmentFound);
-          this.fragmentBordersColorsMap.set(fragmentFound.code, this.usableColors[i]);
+          this.fragmentBordersColorsMap.set(fragmentFound.code, this.usableColors[i % 5]);
         }
       }
       this.fragmentSelection.push(selectionFragmentsFounds);
