@@ -69,8 +69,7 @@ public class AssoServiceProvisionType implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_announcement_notice_template")
-	@JsonIgnoreProperties(value = { "provisionFamilyTypes",
-			"announcementNoticeTemplateFragments" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "provisionFamilyTypes" }, allowSetters = true)
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private AnnouncementNoticeTemplate announcementNoticeTemplate;
 
