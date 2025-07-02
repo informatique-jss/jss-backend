@@ -340,9 +340,6 @@ public class ServiceServiceImpl implements ServiceService {
                     noticeTypes.add(asso.getNoticeType());
                     noticeTypeIds.add(asso.getNoticeType().getId());
                 }
-                if (asso.getNoticeTemplate() != null) {
-                    noticeTemplate += asso.getNoticeTemplate();
-                }
             }
             if (noticeTypeFamilies.size() == 1) {
                 provision.getAnnouncement()

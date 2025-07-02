@@ -58,6 +58,7 @@ public class ServiceType implements Serializable, IId {
 
 	@OneToMany(mappedBy = "serviceType", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "serviceType" }, allowSetters = true)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private List<AssoServiceProvisionType> assoServiceProvisionTypes;
 
 	@OneToMany(mappedBy = "serviceType", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -91,12 +92,6 @@ public class ServiceType implements Serializable, IId {
 
 	@JsonView(JacksonViews.MyJssListView.class)
 	private Boolean isMergeable;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_announcement_notice_template")
-	@JsonIgnoreProperties(value = { "provisionFamilyTypes" }, allowSetters = true)
-	@JsonView(JacksonViews.MyJssDetailedView.class)
-	private AnnouncementNoticeTemplate announcementNoticeTemplate;
 
 	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
 	@JoinColumn(name = "id_service_type_linked")
@@ -236,14 +231,6 @@ public class ServiceType implements Serializable, IId {
 
 	public void setIsMergeable(Boolean isMergeable) {
 		this.isMergeable = isMergeable;
-	}
-
-	public AnnouncementNoticeTemplate getAnnouncementNoticeTemplate() {
-		return announcementNoticeTemplate;
-	}
-
-	public void setAnnouncementNoticeTemplate(AnnouncementNoticeTemplate announcementNoticeTemplate) {
-		this.announcementNoticeTemplate = announcementNoticeTemplate;
 	}
 
 	public ServiceType getServiceTypeLinked() {
