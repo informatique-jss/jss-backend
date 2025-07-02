@@ -1280,7 +1280,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private void generateInvoiceForCentralPayPayment(CentralPayPaymentRequest centralPayPaymentRequest,
-            Payment payment, Invoice targetInvoice, CustomerOrder targetCustomerOrder)
+            Payment payment, List<Invoice> targetInvoices, List<CustomerOrder> targetCustomerOrders)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
 
         Invoice invoice = new Invoice();
@@ -1297,18 +1297,20 @@ public class PaymentServiceImpl implements PaymentService {
         invoiceItem.setIsGifted(false);
         invoiceItem.setIsOverridePrice(false);
 
-        if (targetCustomerOrder == null && targetInvoice == null)
+        if ((targetCustomerOrders == null || targetCustomerOrders.size() == 0)
+                && (targetInvoices == null || targetInvoices.size() == 0))
             throw new OsirisException(null,
                     "No target invoice and customer order set for central pay invoice generation");
 
         String invoiceLabel = "";
-        if (targetCustomerOrder != null) {
-            invoiceLabel = "Commission CentralPay - Commande n°" + targetCustomerOrder.getId();
+        if (targetCustomerOrders != null) {
+            invoiceLabel = "Commission CentralPay - Commande n°" + targetCustomerOrders.get(0).getId();
             invoiceItem.setLabel(
-                    "Commission CentralPay - Paiement d'acompte pour la commande n°" + targetCustomerOrder.getId());
+                    "Commission CentralPay - Paiement d'acompte pour la commande n°"
+                            + targetCustomerOrders.get(0).getId());
         } else {
-            invoiceLabel = "Commission CentralPay - Facture n°" + targetInvoice.getId();
-            invoiceItem.setLabel("Commission CentralPay - Paiement pour la facture " + targetInvoice.getId());
+            invoiceLabel = "Commission CentralPay - Facture n°" + targetInvoices.get(0).getId();
+            invoiceItem.setLabel("Commission CentralPay - Paiement pour la facture " + targetInvoices.get(0).getId());
         }
 
         CentralPayTransaction transaction = centralPayDelegateService.getTransaction(centralPayPaymentRequest);
@@ -1335,26 +1337,25 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public Payment generateDepositOnCustomerOrderForCbPayment(CustomerOrder customerOrder,
+    public Payment generateDepositOnCustomerOrderForCbPayment(List<CustomerOrder> customerOrders,
             CentralPayPaymentRequest centralPayPaymentRequest)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
-        customerOrder = customerOrderService.getCustomerOrder(customerOrder.getId());
         // Generate payment to materialize CB payment
-        Payment payment = generateCentralPayPayment(centralPayPaymentRequest, true, null, customerOrder);
-        generateInvoiceForCentralPayPayment(centralPayPaymentRequest, payment, null, customerOrder);
-        associateInboundPaymentAndCustomerOrders(payment, Arrays.asList(customerOrder), null, null,
+        Payment payment = generateCentralPayPayment(centralPayPaymentRequest, true, null, customerOrders);
+        generateInvoiceForCentralPayPayment(centralPayPaymentRequest, payment, null, customerOrders);
+        associateInboundPaymentAndCustomerOrders(payment, customerOrders, null, null,
                 payment.getPaymentAmount(), false);
         return payment;
     }
 
     @Override
-    public void generatePaymentOnInvoiceForCbPayment(Invoice invoice,
+    public void generatePaymentOnInvoiceForCbPayment(List<Invoice> invoices,
             CentralPayPaymentRequest centralPayPaymentRequest)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         // Generate payment to materialize CB payment
-        Payment payment = generateCentralPayPayment(centralPayPaymentRequest, true, invoice, null);
-        generateInvoiceForCentralPayPayment(centralPayPaymentRequest, payment, invoice, null);
-        associateInboundPaymentAndInvoices(payment, Arrays.asList(invoice), null, false);
+        Payment payment = generateCentralPayPayment(centralPayPaymentRequest, true, invoices, null);
+        generateInvoiceForCentralPayPayment(centralPayPaymentRequest, payment, invoices, null);
+        associateInboundPaymentAndInvoices(payment, invoices, null, false);
     }
 
     @Override
@@ -1369,7 +1370,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private Payment generateCentralPayPayment(CentralPayPaymentRequest centralPayPaymentRequest, boolean isForDepostit,
-            Invoice invoice, CustomerOrder customerOrder)
+            List<Invoice> invoices, List<CustomerOrder> customerOrders)
             throws OsirisException {
         Payment payment = new Payment();
         payment.setIsExternallyAssociated(false);
@@ -1377,9 +1378,17 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setLabel(centralPayPaymentRequest.getDescription());
 
         // Compute DO label
-        CustomerOrder labelledCustomerOrder = customerOrder;
-        if (invoice != null && invoice.getCustomerOrder() != null)
-            labelledCustomerOrder = invoice.getCustomerOrder();
+        CustomerOrder labelledCustomerOrder = null;
+        if (customerOrders != null && customerOrders.size() > 0)
+            labelledCustomerOrder = customerOrders.get(0);
+
+        if (invoices != null && invoices.size() > 0)
+            for (Invoice invoice : invoices) {
+                if (invoice.getCustomerOrder() != null) {
+                    labelledCustomerOrder = invoice.getCustomerOrder();
+                    break;
+                }
+            }
 
         if (labelledCustomerOrder != null) {
             InvoiceLabelResult labelResult = invoiceHelper.computeInvoiceLabelResult(
@@ -1392,7 +1401,6 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setPaymentDate(centralPayPaymentRequest.getCreationDate());
         payment.setPaymentType(constantService.getPaymentTypeCB());
         payment.setIsCancelled(isForDepostit);
-        payment.setInvoice(invoice);
         payment.setSourceAccountingAccount(constantService.getAccountingAccountBankCentralPay());
         payment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
         addOrUpdatePayment(payment);

@@ -1049,101 +1049,102 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String getCardPaymentLinkForCustomerOrderDeposit(CustomerOrder customerOrder, String mail, String subject)
+    public String getCardPaymentLinkForCustomerOrderDeposit(List<CustomerOrder> customerOrders, String mail,
+            String subject)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
-        customerOrder = getCustomerOrder(customerOrder.getId());
-        return getCardPaymentLinkForCustomerOrderPayment(customerOrder, mail, subject);
+        return getCardPaymentLinkForCustomerOrderPayment(customerOrders, mail, subject);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String getCardPaymentLinkForPaymentInvoice(CustomerOrder customerOrder, String mail, String subject)
+    public String getCardPaymentLinkForPaymentInvoice(List<CustomerOrder> customerOrders, String mail, String subject)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
-        customerOrder = getCustomerOrder(customerOrder.getId());
-        return getCardPaymentLinkForCustomerOrderPayment(customerOrder, mail, subject);
+        return getCardPaymentLinkForCustomerOrderPayment(customerOrders, mail, subject);
     }
 
-    private String getCardPaymentLinkForCustomerOrderPayment(CustomerOrder customerOrder, String mail, String subject)
+    private String getCardPaymentLinkForCustomerOrderPayment(List<CustomerOrder> customerOrders, String mail,
+            String subject)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
-
-        if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.ABANDONED))
-            throw new OsirisException(null, "Impossible to pay an cancelled customer order n°" + customerOrder.getId());
-
-        com.jss.osiris.modules.osiris.quotation.model.CentralPayPaymentRequest request = centralPayPaymentRequestService
-                .getCentralPayPaymentRequestByCustomerOrder(customerOrder);
-
-        if (request != null) {
-            CentralPayPaymentRequest centralPayPaymentRequest = centralPayDelegateService
-                    .getPaymentRequest(request.getPaymentRequestId());
-
-            if (centralPayPaymentRequest != null) {
-                if (centralPayPaymentRequest.getPaymentRequestStatus().equals(CentralPayPaymentRequest.ACTIVE)) {
-                    centralPayDelegateService.cancelPaymentRequest(request.getPaymentRequestId());
-                    centralPayPaymentRequestService.deleteCentralPayPaymentRequest(request);
-                }
-
-                if (centralPayPaymentRequest.getPaymentRequestStatus().equals(CentralPayPaymentRequest.CLOSED)
-                        && centralPayPaymentRequest.getPaymentStatus().equals(CentralPayPaymentRequest.PAID)) {
-                    return "ok";
-                }
-            }
-        }
+        if (customerOrders == null || customerOrders.size() == 0)
+            throw new OsirisException("no customer orders provided");
 
         BigDecimal remainingToPay = new BigDecimal(0);
+        for (CustomerOrder customerOrder : customerOrders) {
+            customerOrder = getCustomerOrder(customerOrder.getId());
+            if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.ABANDONED))
+                throw new OsirisException(null,
+                        "Impossible to pay an cancelled customer order n°" + customerOrder.getId());
 
-        if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED)) {
-            if (customerOrder.getInvoices() != null)
-                for (Invoice invoice : customerOrder.getInvoices())
-                    if (invoice.getInvoiceStatus().getId()
-                            .equals(constantService.getInvoiceStatusSend().getId())) {
-                        remainingToPay = invoiceService.getRemainingAmountToPayForInvoice(invoice);
-                        break;
-                    }
-        } else {
-            remainingToPay = getRemainingAmountToPayForCustomerOrder(customerOrder);
+            if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED)) {
+                if (customerOrder.getInvoices() != null)
+                    for (Invoice invoice : customerOrder.getInvoices())
+                        if (invoice.getInvoiceStatus().getId()
+                                .equals(constantService.getInvoiceStatusSend().getId())) {
+                            remainingToPay = remainingToPay
+                                    .add(invoiceService.getRemainingAmountToPayForInvoice(invoice));
+                            break;
+                        }
+            } else {
+                remainingToPay = remainingToPay.add(getRemainingAmountToPayForCustomerOrder(customerOrder));
+            }
         }
 
         if (remainingToPay.compareTo(zeroValue) > 0) {
             CentralPayPaymentRequest paymentRequest = centralPayDelegateService.generatePayPaymentRequest(
                     remainingToPay, mail,
-                    customerOrder.getId() + "", subject, false);
+                    String.join(", ",
+                            customerOrders.stream().map(c -> c.getId().toString()).collect(Collectors.toList())),
+                    subject, false);
 
             centralPayPaymentRequestService.declareNewCentralPayPaymentRequest(paymentRequest.getPaymentRequestId(),
-                    customerOrder, null);
+                    customerOrders, null);
             return paymentRequest.getBreakdowns().get(0).getEndpoint();
         } else {
-            throw new OsirisException(null, "Nothing to pay on customer order n°" + customerOrder.getId());
+            throw new OsirisException(null, "Nothing to pay on customer order n°" + String.join(", ",
+                    customerOrders.stream().map(c -> c.getId().toString()).collect(Collectors.toList())));
         }
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean validateCardPaymentLinkForCustomerOrder(CustomerOrder customerOrder,
+    public Boolean validateCardPaymentLinkForCustomerOrder(List<CustomerOrder> customerOrders,
             com.jss.osiris.modules.osiris.quotation.model.CentralPayPaymentRequest request)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
-        customerOrder = getCustomerOrder(customerOrder.getId());
 
         if (request != null) {
             CentralPayPaymentRequest centralPayPaymentRequest = centralPayDelegateService
                     .getPaymentRequest(request.getPaymentRequestId());
 
-            if (centralPayPaymentRequest != null) {
+            if (centralPayPaymentRequest != null && customerOrders != null) {
                 if (centralPayPaymentRequest.getPaymentRequestStatus().equals(CentralPayPaymentRequest.CLOSED)
                         && centralPayPaymentRequest.getPaymentStatus().equals(CentralPayPaymentRequest.PAID)) {
 
-                    if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED)) {
-                        if (customerOrder.getInvoices() != null)
-                            for (Invoice invoice : customerOrder.getInvoices())
-                                if (invoice.getInvoiceStatus().getId()
-                                        .equals(constantService.getInvoiceStatusSend().getId())) {
-                                    paymentService.generatePaymentOnInvoiceForCbPayment(invoice,
-                                            centralPayPaymentRequest);
-                                    break;
-                                }
-                    } else {
-                        paymentService.generateDepositOnCustomerOrderForCbPayment(customerOrder,
+                    List<Invoice> invoicesToPay = new ArrayList<Invoice>();
+                    List<CustomerOrder> customerOrdersToPay = new ArrayList<CustomerOrder>();
+                    for (CustomerOrder customerOrder : customerOrders) {
+                        customerOrder = getCustomerOrder(customerOrder.getId());
+                        if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED)) {
+                            if (customerOrder.getInvoices() != null)
+                                for (Invoice invoice : customerOrder.getInvoices())
+                                    if (invoice.getInvoiceStatus().getId()
+                                            .equals(constantService.getInvoiceStatusSend().getId())) {
+                                        invoicesToPay.add(invoice);
+                                        break;
+                                    }
+                        } else {
+                            customerOrdersToPay.add(customerOrder);
+                        }
+
+                    }
+
+                    if (invoicesToPay != null && invoicesToPay.size() > 0) {
+                        paymentService.generatePaymentOnInvoiceForCbPayment(invoicesToPay, centralPayPaymentRequest);
+                    } else if (customerOrdersToPay != null && customerOrdersToPay.size() > 0) {
+                        paymentService.generateDepositOnCustomerOrderForCbPayment(customerOrdersToPay,
                                 centralPayPaymentRequest);
-                        unlockCustomerOrderFromDeposit(customerOrder);
+
+                        for (CustomerOrder orderToUnlock : customerOrders)
+                            unlockCustomerOrderFromDeposit(orderToUnlock);
                     }
                 }
 

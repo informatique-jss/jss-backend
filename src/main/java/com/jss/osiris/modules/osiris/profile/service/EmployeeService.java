@@ -30,7 +30,7 @@ public interface EmployeeService {
 
     public boolean modifyResponsablePassword(Responsable responsable, String newPassword) throws OsirisException;
 
-    public void sendTokenToResponsable(Responsable responsable) throws OsirisException;
+    public void sendTokenToResponsable(Responsable responsable, String overrideMail) throws OsirisException;
 
     public List<Employee> findEmployeesInTheSameOU(Employee employee);
 }

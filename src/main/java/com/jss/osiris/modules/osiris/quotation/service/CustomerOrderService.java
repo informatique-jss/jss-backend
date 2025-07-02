@@ -89,11 +89,12 @@ public interface CustomerOrderService {
         public void sendInvoiceMail(CustomerOrder customerOrder)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
-        public String getCardPaymentLinkForCustomerOrderDeposit(CustomerOrder customerOrder, String mail,
+        public String getCardPaymentLinkForCustomerOrderDeposit(List<CustomerOrder> customerOrders, String mail,
                         String subject)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
-        public String getCardPaymentLinkForPaymentInvoice(CustomerOrder customerOrder, String mail, String subject)
+        public String getCardPaymentLinkForPaymentInvoice(List<CustomerOrder> customerOrders, String mail,
+                        String subject)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
         public void sendRemindersForCustomerOrderDeposit() throws OsirisException;
@@ -106,7 +107,7 @@ public interface CustomerOrderService {
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 
-        public Boolean validateCardPaymentLinkForCustomerOrder(CustomerOrder customerOrder,
+        public Boolean validateCardPaymentLinkForCustomerOrder(List<CustomerOrder> customerOrders,
                         com.jss.osiris.modules.osiris.quotation.model.CentralPayPaymentRequest request)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;

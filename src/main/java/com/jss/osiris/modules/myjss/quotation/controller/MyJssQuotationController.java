@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -1945,5 +1946,26 @@ public class MyJssQuotationController {
 		return new ResponseEntity<ReadingFolder>(
 				readingFolderService.getReadingFolder(idReadingFolder),
 				HttpStatus.OK);
+	}
+
+	@PostMapping(inputEntryPoint + "/payment/cb/invoice")
+	public ResponseEntity<String> getCardPaymentLinkForPaymentInvoices(@RequestBody List<Integer> customerOrderIds)
+			throws OsirisClientMessageException, OsirisException {
+		List<CustomerOrder> orders = new ArrayList<CustomerOrder>();
+		for (Integer orderId : customerOrderIds) {
+			CustomerOrder customerOrder = customerOrderService.getCustomerOrder(orderId);
+			if (customerOrder == null)
+				throw new OsirisValidationException("customerOrder");
+			orders.add(customerOrder);
+		}
+
+		Responsable currentUser = employeeService.getCurrentMyJssUser();
+		if (currentUser == null)
+			throw new OsirisValidationException("currentUser");
+
+		String link = customerOrderService.getCardPaymentLinkForPaymentInvoice(orders, currentUser.getMail().getMail(),
+				"Paiement de la facture pour la commande n°" + String.join(", ",
+						orders.stream().map(c -> c.getId().toString()).collect(Collectors.toList())));
+		return new ResponseEntity<>("{\"link\":\"" + link + "\"}", HttpStatus.OK);
 	}
 }

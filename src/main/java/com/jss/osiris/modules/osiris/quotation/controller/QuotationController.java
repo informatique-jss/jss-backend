@@ -2046,7 +2046,7 @@ public class QuotationController {
                 "Nous sommes désolé, mais ce numéro de commande est inconnue.", null, "Bonne journée !"),
             HttpStatus.INTERNAL_SERVER_ERROR);
 
-      String link = customerOrderService.getCardPaymentLinkForCustomerOrderDeposit(customerOrder, mail,
+      String link = customerOrderService.getCardPaymentLinkForCustomerOrderDeposit(Arrays.asList(customerOrder), mail,
           "Paiement de l'acompte pour la commande n°" + customerOrderId);
       if (link.startsWith("http")) {
         HttpHeaders headers = new HttpHeaders();
@@ -2083,7 +2083,7 @@ public class QuotationController {
                 "Nous sommes désolé, mais ce numéro de commande est inconnue.", null, "Bonne journée !"),
             HttpStatus.INTERNAL_SERVER_ERROR);
 
-      String link = customerOrderService.getCardPaymentLinkForPaymentInvoice(customerOrder, mail,
+      String link = customerOrderService.getCardPaymentLinkForPaymentInvoice(Arrays.asList(customerOrder), mail,
           "Paiement de la facture pour la commande n°" + customerOrderId);
       if (link.startsWith("http")) {
         HttpHeaders headers = new HttpHeaders();

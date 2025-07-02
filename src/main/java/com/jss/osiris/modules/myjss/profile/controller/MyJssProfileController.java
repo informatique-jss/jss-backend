@@ -85,12 +85,21 @@ public class MyJssProfileController {
 		if (isFlood != null)
 			return isFlood;
 
-		Responsable responsable = responsableService.getResponsableByMail(mail);
+		Responsable responsable;
+		String overrideMail = null;
+
+		if (mail.contains("#") && mail.endsWith("@jss.fr")) {
+			String[] mailToken = mail.split("#");
+			responsable = responsableService.getResponsable(Integer.parseInt(mailToken[0]));
+			overrideMail = mailToken[1];
+		} else {
+			responsable = responsableService.getResponsableByMail(mail);
+		}
 
 		if (responsable == null)
 			return new ResponseEntity<String>("", HttpStatus.OK);
 
-		employeeService.sendTokenToResponsable(responsable);
+		employeeService.sendTokenToResponsable(responsable, overrideMail);
 		return new ResponseEntity<String>("", HttpStatus.OK);
 	}
 

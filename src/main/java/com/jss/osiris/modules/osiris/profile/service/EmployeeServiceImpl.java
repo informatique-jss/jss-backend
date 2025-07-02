@@ -207,7 +207,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public void sendTokenToResponsable(Responsable responsable) throws OsirisException {
+    public void sendTokenToResponsable(Responsable responsable, String overrideMail) throws OsirisException {
         responsable = responsableService.getResponsable(responsable.getId());
 
         byte bytes[] = new byte[512];
@@ -216,7 +216,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         responsable.setLoginToken(token);
         responsable.setLoginTokenExpirationDateTime(LocalDateTime.now().plusMinutes(TOKEN_EXPIRATION_LENGTH_MINUTES));
-        mailHelper.sendNewTokenMail(responsable);
+        mailHelper.sendNewTokenMail(responsable, overrideMail);
     }
 
     @Override

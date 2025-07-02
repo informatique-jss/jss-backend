@@ -390,7 +390,7 @@ public class QuotationServiceImpl implements QuotationService {
         if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.VALIDATED_BY_CUSTOMER))
             if (quotation.getCustomerOrders() != null && quotation.getCustomerOrders().size() > 0)
                 return customerOrderService
-                        .getCardPaymentLinkForCustomerOrderDeposit(quotation.getCustomerOrders().get(0), mail, subject);
+                        .getCardPaymentLinkForCustomerOrderDeposit(quotation.getCustomerOrders(), mail, subject);
             else
                 return "ok";
 
@@ -445,7 +445,7 @@ public class QuotationServiceImpl implements QuotationService {
                             .equals(QuotationStatus.SENT_TO_CUSTOMER)) {
                         unlockQuotationFromDeposit(quotation);
                         paymentService.generateDepositOnCustomerOrderForCbPayment(
-                                quotation.getCustomerOrders().get(0), centralPayPaymentRequest);
+                                quotation.getCustomerOrders(), centralPayPaymentRequest);
                     }
                 }
                 if (centralPayPaymentRequest.getCreationDate().isBefore(LocalDateTime.now().minusMinutes(5))) {

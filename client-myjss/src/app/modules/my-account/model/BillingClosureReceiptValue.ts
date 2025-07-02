@@ -10,4 +10,6 @@ export interface BillingClosureReceiptValue {
   responsable: Responsable;
   affaireLists: string;
   serviceLists: string;
+  idInvoice: number;
+  idCustomerOrder: number;
 }
