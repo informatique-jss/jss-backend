@@ -27,9 +27,11 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.PhoneService;
+import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.AffaireSearch;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.AnnouncementStatus;
+import com.jss.osiris.modules.osiris.quotation.model.AssignationType;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrderSearchResult;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceDocument;
@@ -205,9 +207,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
             Boolean isFromUser)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         // Complete domiciliation end date
-        // Employee currentEmployee = null;
-        // Employee maxWeightEmployee = null;
-        // Integer maxWeight = -1000000000;
+        Employee currentEmployee = null;
+        Employee maxWeightEmployee = null;
+        Integer maxWeight = -1000000000;
 
         for (Service service : assoAffaireOrder.getServices()) {
 
@@ -553,52 +555,49 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 }
 
                 // Set proper assignation regarding provision item configuration
-                // if (provision.getAssignedTo() == null && customerOrder instanceof
-                // CustomerOrder) {
-                // Employee employee = provision.getProvisionType().getDefaultEmployee();
-                //
-                // if (provision.getProvisionType().getAssignationType() != null) {
-                // if (provision.getProvisionType().getAssignationType().getCode()
-                // .equals(AssignationType.FORMALISTE)) {
-                // if (customerOrder.getResponsable().getFormalisteEmployee() != null)
-                // employee = customerOrder.getResponsable().getFormalisteEmployee();
-                // else if (customerOrder.getResponsable().getTiers().getFormalisteEmployee() !=
-                // null)
-                // employee = customerOrder.getResponsable().getTiers().getFormalisteEmployee();
-                // }
-                // if (provision.getProvisionType().getAssignationType().getCode()
-                // .equals(AssignationType.PUBLICISTE)) {
-                // if (customerOrder.getResponsable().getInsertionEmployee() != null)
-                // employee = customerOrder.getResponsable().getInsertionEmployee();
-                // else if (customerOrder.getResponsable().getTiers().getInsertionEmployee() !=
-                // null)
-                // employee = customerOrder.getResponsable().getTiers().getInsertionEmployee();
-                // }
-                // }
-                // provision.setAssignedTo(employee);
-                // if (currentEmployee == null ||
-                // !currentEmployee.getId().equals(employee.getId())) {
-                // currentEmployee = employee;
-                // }
-                //
-                // // Handle weight
-                // if (provision.getProvisionType().getAssignationWeight() != null
-                // && provision.getProvisionType().getAssignationWeight() > maxWeight) {
-                // maxWeight = provision.getProvisionType().getAssignationWeight();
-                // maxWeightEmployee = employee;
-                // }
-                // }
+                if (provision.getAssignedTo() == null && customerOrder instanceof CustomerOrder) {
+                    Employee employee = provision.getProvisionType().getDefaultEmployee();
+
+                    if (provision.getProvisionType().getAssignationType() != null) {
+                        if (provision.getProvisionType().getAssignationType().getCode()
+                                .equals(AssignationType.FORMALISTE)) {
+                            if (customerOrder.getResponsable().getFormalisteEmployee() != null)
+                                employee = customerOrder.getResponsable().getFormalisteEmployee();
+                            else if (customerOrder.getResponsable().getTiers().getFormalisteEmployee() != null)
+                                employee = customerOrder.getResponsable().getTiers().getFormalisteEmployee();
+                        }
+                        if (provision.getProvisionType().getAssignationType().getCode()
+                                .equals(AssignationType.PUBLICISTE)) {
+                            if (customerOrder.getResponsable().getInsertionEmployee() != null)
+                                employee = customerOrder.getResponsable().getInsertionEmployee();
+                            else if (customerOrder.getResponsable().getTiers().getInsertionEmployee() != null)
+                                employee = customerOrder.getResponsable().getTiers().getInsertionEmployee();
+                        }
+                    }
+                    provision.setAssignedTo(employee);
+                    if (currentEmployee == null ||
+                            !currentEmployee.getId().equals(employee.getId())) {
+                        currentEmployee = employee;
+                    }
+
+                    // Handle weight
+                    if (provision.getProvisionType().getAssignationWeight() != null
+                            && provision.getProvisionType().getAssignationWeight() > maxWeight) {
+                        maxWeight = provision.getProvisionType().getAssignationWeight();
+                        maxWeightEmployee = employee;
+                    }
+                }
 
                 customerOrderAssignationService.assignNewProvisionToUser(provision);
             }
         }
 
-        // if (maxWeightEmployee != null) {
-        // for (Service service : assoAffaireOrder.getServices())
-        // for (Provision provision : service.getProvisions())
-        // if (provision.getId() == null)
-        // provision.setAssignedTo(maxWeightEmployee);
-        // }
+        if (maxWeightEmployee != null) {
+            for (Service service : assoAffaireOrder.getServices())
+                for (Provision provision : service.getProvisions())
+                    if (provision.getId() == null)
+                        provision.setAssignedTo(maxWeightEmployee);
+        }
 
         return assoAffaireOrder;
     }
