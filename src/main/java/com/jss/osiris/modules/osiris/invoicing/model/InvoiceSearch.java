@@ -16,6 +16,7 @@ public class InvoiceSearch {
     private List<Tiers> customerOrders;
     private Integer invoiceId;
     private Integer customerOrderId;
+    public Integer affaireId;
     private Employee salesEmployee;
 
     public LocalDateTime getStartDate() {
@@ -96,6 +97,14 @@ public class InvoiceSearch {
 
     public void setSalesEmployee(Employee salesEmployee) {
         this.salesEmployee = salesEmployee;
+    }
+
+    public Integer getAffaireId() {
+        return affaireId;
+    }
+
+    public void setAffaireId(Integer affaireId) {
+        this.affaireId = affaireId;
     }
 
 }
