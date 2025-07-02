@@ -71,6 +71,10 @@ dependencies {
 
 }
  
+ processResources {
+    exclude 'hazelcast.xml'
+}
+
 group = 'com.jss.osiris'
 version = '25-beta1' 
 description = 'Outil Sympa, Interactif, Révolutionnairement Intuitif et Simple'
