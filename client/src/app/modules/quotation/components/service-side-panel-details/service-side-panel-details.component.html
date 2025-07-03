@@ -104,10 +104,10 @@
     </mat-expansion-panel>
   </mat-accordion>
   <div class="custom-panel" style="margin-bottom: 15px;" *ngIf="service">
-    <div class="field-row" *ngIf="service.servicePrice">
+    <div class="field-row" *ngIf="service.serviceTotalPrice">
       <div class="label">Montant du service</div>
       <div class="value">
-        {{service.servicePrice | currency:'EUR'}}
+        {{service.serviceTotalPrice | currency:'EUR'}}
       </div>
     </div>
     <div class="field-row" *ngIf="service.lastMissingAttachmentQueryDateTime">

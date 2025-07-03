@@ -18,6 +18,6 @@ export interface Service {
   assoServiceFieldTypes: AssoServiceFieldType[];
   hasMissingInformations: boolean;
   serviceStatus: string;
-  servicePrice: number;
+  serviceTotalPrice: number;
   lastMissingAttachmentQueryDateTime: Date;
 }
