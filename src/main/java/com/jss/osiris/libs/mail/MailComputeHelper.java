@@ -49,36 +49,36 @@ public class MailComputeHelper {
 
     public MailComputeResult computeMailForGenericDigitalDocument(IQuotation quotation)
             throws OsirisException, OsirisClientMessageException {
-        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false);
+        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false, false);
     }
 
     public MailComputeResult computeMailForMissingAttachmentQueryToCustomer(IQuotation quotation)
             throws OsirisException, OsirisClientMessageException {
-        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), true);
+        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), true, false);
     }
 
     public MailComputeResult computeMailForQuotationMail(IQuotation quotation)
             throws OsirisException, OsirisClientMessageException {
-        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false);
+        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false, false);
     }
 
     public MailComputeResult computeMailForQuotationCreationConfirmation(IQuotation quotation)
             throws OsirisException, OsirisClientMessageException {
-        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false);
+        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false, false);
     }
 
     public MailComputeResult computeMailForCustomerOrderCreationConfirmation(IQuotation quotation)
             throws OsirisException, OsirisClientMessageException {
-        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false);
+        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false, false);
     }
 
     public MailComputeResult computeMailForDepositRequest(IQuotation quotation)
             throws OsirisException, OsirisClientMessageException {
-        return computeMailForDocument(quotation, constantService.getDocumentTypeBilling(), false);
+        return computeMailForDocument(quotation, constantService.getDocumentTypeBilling(), false, false);
     }
 
     @Transactional(rollbackOn = Exception.class)
-    public MailComputeResult computeMailForCustomerOrderFinalizationAndInvoice(IQuotation quotation)
+    public MailComputeResult computeMailForCustomerOrderFinalizationAndInvoice(IQuotation quotation, Boolean isReminder)
             throws OsirisException, OsirisClientMessageException {
         if (quotation.getId() != null) {
             IQuotation fetchedQuotation = customerOrderService.getCustomerOrder(quotation.getId());
@@ -87,27 +87,27 @@ public class MailComputeHelper {
             if (fetchedQuotation != null)
                 quotation = fetchedQuotation;
         }
-        return computeMailForDocument(quotation, constantService.getDocumentTypeBilling(), false);
+        return computeMailForDocument(quotation, constantService.getDocumentTypeBilling(), false, isReminder);
     }
 
     public MailComputeResult computeMailForPublicationReceipt(IQuotation quotation)
             throws OsirisException, OsirisClientMessageException {
-        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false);
+        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false, false);
     }
 
     public MailComputeResult computeMailForReadingProof(IQuotation quotation)
             throws OsirisException, OsirisClientMessageException {
-        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false);
+        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false, false);
     }
 
     public MailComputeResult computeMailForPublicationFlag(IQuotation quotation)
             throws OsirisException, OsirisClientMessageException {
-        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false);
+        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false, false);
     }
 
     public MailComputeResult computeMailForSendNumericAttachment(IQuotation quotation)
             throws OsirisException, OsirisClientMessageException {
-        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false);
+        return computeMailForDocument(quotation, constantService.getDocumentTypeDigital(), false, false);
     }
 
     public MailComputeResult computeMailForBillingClosure(Tiers tiers, Responsable responsable)
@@ -140,7 +140,7 @@ public class MailComputeHelper {
     }
 
     private MailComputeResult computeMailForDocument(IQuotation quotation, DocumentType documentType,
-            boolean isForcedClient)
+            boolean isForcedClient, boolean isReminder)
             throws OsirisException, OsirisClientMessageException {
 
         if (quotation == null)
@@ -169,7 +169,14 @@ public class MailComputeHelper {
 
         if (quotationDocument != null) {
             boolean hasAlreadyAddMails = false;
-            if (quotationDocument.getIsRecipientAffaire() && !isForcedClient) {
+            if (isReminder && quotationDocument.getReminderMail() != null) {
+                mailComputeResult.getRecipientsMailTo().add(quotationDocument.getReminderMail());
+                mailComputeResult.setMailToClientOrigin("mails de relance");
+            }
+
+            if ((quotationDocument.getIsRecipientAffaire() && !isForcedClient && !isReminder)
+                    || (quotationDocument.getIsRecipientAffaire() && !isForcedClient && isReminder
+                            && quotationDocument.getReminderMail() == null)) {
                 mailComputeResult.setIsSendToAffaire(true);
                 if (quotationDocument.getMailsAffaire() != null && quotationDocument.getMailsAffaire().size() > 0) {
                     mailComputeResult.getRecipientsMailTo().addAll(quotationDocument.getMailsAffaire());
@@ -189,9 +196,12 @@ public class MailComputeHelper {
                     throw new OsirisClientMessageException("Aucun mail trouvé pour l'affaire");
             }
 
-            if (quotationDocument.getIsRecipientClient()
+            if (((quotationDocument.getIsRecipientClient()
                     || !quotationDocument.getIsRecipientClient() && !quotationDocument.getIsRecipientAffaire()
-                    || isForcedClient) {
+                    || isForcedClient) && !isReminder)
+                    || ((quotationDocument.getIsRecipientClient()
+                            || !quotationDocument.getIsRecipientClient() && !quotationDocument.getIsRecipientAffaire()
+                            || isForcedClient) && isReminder && quotationDocument.getReminderMail() == null)) {
                 hasAlreadyAddMails = false;
                 mailComputeResult.setIsSendToClient(true);
                 if (quotationDocument.getMailsClient() != null
@@ -220,7 +230,6 @@ public class MailComputeHelper {
                     mailComputeResult.setMailToClientOrigin("mails du tiers");
                 } else
                     throw new OsirisClientMessageException("Aucun mail trouvé pour le client");
-
             }
         }
         return mailComputeResult;
@@ -278,7 +287,9 @@ public class MailComputeHelper {
                         .equals(constantService.getBillingClosureRecipientTypeOther().getId())) {
             mailComputeResult.getRecipientsMailTo().addAll(billingClosureDocument.getMailsClient());
             mailComputeResult.setMailToClientOrigin("mails Autres du paramétrage du relevé de compte");
-        } else if (responsable != null
+        } else if (billingClosureDocument.getReminderMail() != null)
+            mailComputeResult.getRecipientsMailTo().add(billingClosureDocument.getReminderMail());
+        else if (responsable != null
                 && responsable.getMail() != null) {
             mailComputeResult.getRecipientsMailTo().add(responsable.getMail());
             mailComputeResult.setMailToClientOrigin("mail du responsable");

@@ -14,6 +14,7 @@ export interface Document {
   mailsClient: Mail[];
   addToClientMailList: boolean;
   mailsAffaire: Mail[];
+  reminderMail: Mail;
   addToAffaireMailList: boolean;
   billingLabelType: BillingLabelType;
   billingLabel: string;

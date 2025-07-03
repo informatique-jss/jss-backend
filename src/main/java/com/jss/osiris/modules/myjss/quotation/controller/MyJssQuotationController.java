@@ -75,6 +75,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.DepartmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.LanguageService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.LegalFormService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.controller.QuotationValidationHelper;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
@@ -252,6 +253,9 @@ public class MyJssQuotationController {
 
 	@Autowired
 	ReadingFolderService readingFolderService;
+
+	@Autowired
+	MailService mailService;
 
 	private final ConcurrentHashMap<String, AtomicLong> requestCount = new ConcurrentHashMap<>();
 	private final long rateLimit = 1000;
@@ -1078,6 +1082,7 @@ public class MyJssQuotationController {
 				currentDocument.setIsRecipientAffaire(document.getIsRecipientAffaire());
 				currentDocument.setMailsAffaire(document.getMailsAffaire());
 				currentDocument.setMailsClient(document.getMailsClient());
+				currentDocument.setReminderMail(mailService.populateMailId(document.getReminderMail()));
 				currentDocument.setAddToAffaireMailList(document.getAddToAffaireMailList());
 				currentDocument.setAddToClientMailList(document.getAddToClientMailList());
 				currentDocument.setBillingLabelType(document.getBillingLabelType());

@@ -92,7 +92,7 @@ public class MyJssInvoicingController {
 			return new ResponseEntity<MailComputeResult>(new MailComputeResult(), HttpStatus.OK);
 
 		return new ResponseEntity<MailComputeResult>(
-				mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(customerOrder),
+				mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(customerOrder, false),
 				HttpStatus.OK);
 	}
 
@@ -150,7 +150,7 @@ public class MyJssInvoicingController {
 			return new ResponseEntity<MailComputeResult>(new MailComputeResult(), HttpStatus.OK);
 
 		return new ResponseEntity<MailComputeResult>(
-				mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(quotation),
+				mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(quotation, false),
 				HttpStatus.OK);
 	}
 
