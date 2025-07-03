@@ -83,7 +83,7 @@
                       <div class="mt-auto mb-auto">{{mail.mail}}</div>
                       <div>
                         <button type="button" class="btn btn-danger btn-icon btn-sm me-3" aria-label="Supprimer"
-                          placement="right" ngbTooltip="Supprimer" (click)="deleteMail(mail, document, true)">
+                          placement="right" ngbTooltip="Supprimer" (click)="deleteMail(mail, document, true, false)">
                           <i class="ai-cross"></i>
                         </button>
                       </div>
@@ -109,7 +109,7 @@
                       <div class="mt-auto mb-auto">{{mail.mail}}</div>
                       <div>
                         <button type="button" class="btn btn-danger btn-icon btn-sm me-3" aria-label="Supprimer"
-                          placement="right" ngbTooltip="Supprimer" (click)="deleteMail(mail, document, false)">
+                          placement="right" ngbTooltip="Supprimer" (click)="deleteMail(mail, document, false, false)">
                           <i class="ai-cross"></i>
                         </button>
                       </div>
@@ -119,6 +119,26 @@
                 <generic-input *ngIf="document.addToClientMailList && document.isRecipientClient" class="mt-4"
                   [(model)]="newMailBillingClient" label="Nouveau mail (entrer pour valider)" [form]="documentForm"
                   propertyName="newMailBillingClient" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="true"
+                  [icon]="'mail'" [isDisplayLabel]="false" (onEnter)="addMail(document, false)"></generic-input>
+
+                <ul class="list-group mt-1 mb-3"
+                  *ngIf="document.reminderMail &&document.reminderMail.mail && document.reminderMail.mail.length>0">
+                  <li class="list-group-item">
+                    <div class="d-flex flex-wrap w-100 justify-content-between">
+                      <div class="mt-auto mb-auto">{{document.reminderMail.mail}}</div>
+                      <div>
+                        <button type="button" class="btn btn-danger btn-icon btn-sm me-3" aria-label="Supprimer"
+                          placement="right" ngbTooltip="Supprimer"
+                          (click)="deleteMail(document.reminderMail, document, false, true)">
+                          <i class="ai-cross"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+                <generic-input class="mt-4" [(model)]="newReminderMail"
+                  label="Mail de relance pour les factures (entrer pour valider)" [form]="documentForm"
+                  propertyName="reminderMail" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="true"
                   [icon]="'mail'" [isDisplayLabel]="false" (onEnter)="addMail(document, false)"></generic-input>
               </div>
               <div class="d-flex align-items-center pb-1 mb-2">
@@ -175,7 +195,7 @@
                     <div class="mt-auto mb-auto">{{mail.mail}}</div>
                     <div>
                       <button type="button" class="btn btn-danger btn-icon btn-sm me-3" aria-label="Supprimer"
-                        placement="right" ngbTooltip="Supprimer" (click)="deleteMail(mail, document, true)">
+                        placement="right" ngbTooltip="Supprimer" (click)="deleteMail(mail, document, true, false)">
                         <i class="ai-cross"></i>
                       </button>
                     </div>
@@ -200,7 +220,7 @@
                     <div class="mt-auto mb-auto">{{mail.mail}}</div>
                     <div>
                       <button type="button" class="btn btn-danger btn-icon btn-sm me-3" aria-label="Supprimer"
-                        placement="right" ngbTooltip="Supprimer" (click)="deleteMail(mail, document, false)">
+                        placement="right" ngbTooltip="Supprimer" (click)="deleteMail(mail, document, false, false)">
                         <i class="ai-cross"></i>
                       </button>
                     </div>

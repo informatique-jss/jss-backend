@@ -38,6 +38,7 @@ export class EditAddressComponent implements OnInit {
 
   newMailBillingAffaire: string = "";
   newMailBillingClient: string = "";
+  newReminderMail: string = "";
 
   newMailDigitalAffaire: string = "";
   newMailDigitalClient: string = "";
@@ -157,12 +158,14 @@ export class EditAddressComponent implements OnInit {
       this.appService.openRoute(null, "account/settings/" + this.idResponsable, undefined);
   }
 
-  deleteMail(mail: Mail, document: Document, isAffaire: boolean) {
+  deleteMail(mail: Mail, document: Document, isAffaire: boolean, isReminder: boolean) {
     if (document)
       if (isAffaire)
         document.mailsAffaire.splice(document.mailsAffaire.indexOf(mail), 1);
-      else
-        document.mailsClient.splice(document.mailsClient.indexOf(mail), 1);
+    if (!isAffaire && isReminder)
+      document.reminderMail = {} as Mail;
+    else if (!isAffaire && !isReminder)
+      document.mailsClient.splice(document.mailsClient.indexOf(mail), 1);
   }
 
   addMail(document: Document, isAffaire: boolean) {
@@ -181,6 +184,13 @@ export class EditAddressComponent implements OnInit {
           document.mailsClient = [];
         document.mailsClient.push(mail);
         this.newMailBillingClient = "";
+      } else if (this.newReminderMail && validateEmail(this.newReminderMail)) {
+        let mail = {} as Mail;
+        mail.mail = this.newReminderMail;
+        if (!document.reminderMail)
+          document.reminderMail = {} as Mail;
+        document.reminderMail = mail;
+        this.newReminderMail = "";
       }
   }
 

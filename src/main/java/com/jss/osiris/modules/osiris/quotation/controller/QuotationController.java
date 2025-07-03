@@ -970,7 +970,7 @@ public class QuotationController {
   public ResponseEntity<MailComputeResult> computeMailForBilling(
       @RequestBody CustomerOrder quotation) throws OsirisException, OsirisClientMessageException {
     return new ResponseEntity<MailComputeResult>(
-        mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(quotation),
+        mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(quotation, false),
         HttpStatus.OK);
   }
 
@@ -1070,7 +1070,7 @@ public class QuotationController {
       throw new OsirisValidationException("customerOrder");
     try {
       MailComputeResult mailComputeResult = mailComputeHelper
-          .computeMailForCustomerOrderFinalizationAndInvoice(customerOrder);
+          .computeMailForCustomerOrderFinalizationAndInvoice(customerOrder, false);
       if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
         throw new OsirisValidationException("MailTo");
       customerOrderService.generateInvoiceMail(customerOrder);
@@ -1088,7 +1088,7 @@ public class QuotationController {
       throw new OsirisValidationException("customerOrder");
     try {
       MailComputeResult mailComputeResult = mailComputeHelper
-          .computeMailForCustomerOrderFinalizationAndInvoice(customerOrder);
+          .computeMailForCustomerOrderFinalizationAndInvoice(customerOrder, true);
       if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
         throw new OsirisValidationException("MailTo");
       customerOrderService.sendInvoiceMail(customerOrder);

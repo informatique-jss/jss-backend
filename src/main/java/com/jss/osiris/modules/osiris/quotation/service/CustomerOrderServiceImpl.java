@@ -332,6 +332,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             for (Document document : customerOrder.getDocuments()) {
                 mailService.populateMailIds(document.getMailsAffaire());
                 mailService.populateMailIds(document.getMailsClient());
+                mailService.populateMailId(document.getReminderMail());
                 document.setCustomerOrder(customerOrder);
             }
 

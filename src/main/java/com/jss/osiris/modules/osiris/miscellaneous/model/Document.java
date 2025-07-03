@@ -115,6 +115,11 @@ public class Document implements Serializable, IId {
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private List<Mail> mailsAffaire;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_reminder_mail")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	private Mail reminderMail;
+
 	private Boolean isResponsableOnBilling;
 
 	@JsonView(JacksonViews.MyJssDetailedView.class)
@@ -203,6 +208,14 @@ public class Document implements Serializable, IId {
 
 	public Confrere getConfrere() {
 		return confrere;
+	}
+
+	public Mail getReminderMail() {
+		return reminderMail;
+	}
+
+	public void setReminderMail(Mail reminderMail) {
+		this.reminderMail = reminderMail;
 	}
 
 	public void setConfrere(Confrere confrere) {

@@ -438,7 +438,7 @@ public class MailHelper {
                 && (mail.getCustomerOrder() != null || mail.getQuotation() != null))
             ctx.setVariable("mailComputeResultInvoice",
                     mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(
-                            mail.getCustomerOrder() != null ? mail.getCustomerOrder() : mail.getQuotation()));
+                            mail.getCustomerOrder() != null ? mail.getCustomerOrder() : mail.getQuotation(), false));
         ctx.setVariable("attachments", mail.getAttachments());
         ctx.setVariable("provision", mail.getProvision());
         ctx.setVariable("tiers", mail.getTiers());
@@ -1094,7 +1094,8 @@ public class MailHelper {
         mail.setProvision(currentProvision);
         mail.setReplyTo(customerOrder.getResponsable().getSalesEmployee());
         mail.setSendToMe(false);
-        mail.setMailComputeResult(mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(customerOrder));
+        mail.setMailComputeResult(
+                mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(customerOrder, false));
         mail.setSubject("Publication de vos comptes annuels - "
                 + getCustomerOrderAffaireLabel(customerOrder, currentProvision.getService().getAssoAffaireOrder()));
         customerMailService.addMailToQueue(mail);
@@ -1261,7 +1262,8 @@ public class MailHelper {
 
         CustomerMail mail = new CustomerMail();
         mail.setCustomerOrder(customerOrder);
-        mail.setMailComputeResult(mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(customerOrder));
+        mail.setMailComputeResult(
+                mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(customerOrder, false));
 
         List<Attachment> attachments = new ArrayList<Attachment>();
         List<Integer> attachmentTypeIdsDone = new ArrayList<Integer>();
@@ -1505,7 +1507,8 @@ public class MailHelper {
 
         CustomerMail mail = new CustomerMail();
         mail.setCustomerOrder(customerOrder);
-        mail.setMailComputeResult(mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(customerOrder));
+        mail.setMailComputeResult(
+                mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(customerOrder, false));
 
         List<Attachment> attachments = new ArrayList<Attachment>();
         List<Integer> attachmentTypeIdsDone = new ArrayList<Integer>();
