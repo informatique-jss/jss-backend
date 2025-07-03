@@ -235,7 +235,7 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Boolean isGifted;
 
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
 	@Column(name = "is_payed")
 	private Boolean isPayed;
 

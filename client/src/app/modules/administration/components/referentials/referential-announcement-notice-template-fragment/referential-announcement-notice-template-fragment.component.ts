@@ -1,21 +1,20 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { ChangeEvent } from '@ckeditor/ckeditor5-angular';
 import { Alignment, Bold, ClassicEditor, Clipboard, Essentials, Font, GeneralHtmlSupport, Indent, IndentBlock, Italic, Link, List, Mention, Paragraph, PasteFromOffice, RemoveFormat, Underline, Undo } from 'ckeditor5';
 import { Observable } from 'rxjs';
-import { AnnouncementNoticeTemplate } from 'src/app/modules/quotation/model/AnnouncementNoticeTemplate';
 import { AnnouncementNoticeTemplateFragment } from 'src/app/modules/quotation/model/AnnouncementNoticeTemplateFragment';
-import { AnnouncementNoticeTemplateService } from 'src/app/modules/quotation/services/announcement.notice.template.service';
+import { AnnouncementNoticeTemplateFragmentService } from 'src/app/modules/quotation/services/announcement.notice.template.fragment.service';
 import { AppService } from 'src/app/services/app.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({
-  selector: 'referential-announcement-notice-template',
-  templateUrl: 'referential-announcement-notice-template.component.html',
-  styleUrls: ['referential-announcement-notice-template.component.css']
+  selector: 'referential-announcement-notice-template-fragment',
+  templateUrl: './referential-announcement-notice-template-fragment.component.html',
+  styleUrls: ['./../generic-referential/generic-referential.component.css']
 })
-export class ReferentialAnnouncementNoticeTemplateComponent extends GenericReferentialComponent<AnnouncementNoticeTemplate> implements OnInit {
-  constructor(private announcementNoticeTemplateService: AnnouncementNoticeTemplateService,
+export class ReferentialAnnouncementNoticeTemplateFragmentComponent extends GenericReferentialComponent<AnnouncementNoticeTemplateFragment> implements OnInit {
+  constructor(private announcementNoticeTemplateFragmentService: AnnouncementNoticeTemplateFragmentService,
     private formBuilder2: FormBuilder,
     private appService2: AppService,) {
     super(formBuilder2, appService2);
@@ -23,9 +22,12 @@ export class ReferentialAnnouncementNoticeTemplateComponent extends GenericRefer
 
   initialNoticeValue: string = '';
 
-  entityForm2 = this.formBuilder2.group({
-    notice: ['', Validators.required]
-  })
+  getAddOrUpdateObservable(): Observable<AnnouncementNoticeTemplateFragment> {
+    return this.announcementNoticeTemplateFragmentService.addOrUpdateAnnouncementNoticeTemplateFragment(this.selectedEntity!);
+  }
+  getGetObservable(): Observable<AnnouncementNoticeTemplateFragment[]> {
+    return this.announcementNoticeTemplateFragmentService.getAnnouncementNoticeTemplateFragments();
+  }
 
   ngOnInit() {
     this.setDataTable();
@@ -35,21 +37,12 @@ export class ReferentialAnnouncementNoticeTemplateComponent extends GenericRefer
       this.addEventSubscription = this.addEvent.subscribe(() => this.addEntity());
     if (this.cloneEvent)
       this.cloneEventSubscription = this.cloneEvent.subscribe(() => this.cloneEntity());
-    if (this.selectedEntity && !this.selectedEntity.announcementNoticeTemplateFragments)
-      this.selectedEntity.announcementNoticeTemplateFragments = [];
   }
 
-  selectEntity(element: AnnouncementNoticeTemplate) {
+  selectEntity(element: AnnouncementNoticeTemplateFragment) {
     this.selectedEntity = element;
     this.initialNoticeValue = this.selectedEntity.text
     this.selectedEntityChange.emit(this.selectedEntity);
-  }
-
-  getAddOrUpdateObservable(): Observable<AnnouncementNoticeTemplate> {
-    return this.announcementNoticeTemplateService.addOrUpdateAnnouncementNoticeTemplate(this.selectedEntity!);
-  }
-  getGetObservable(): Observable<AnnouncementNoticeTemplate[]> {
-    return this.announcementNoticeTemplateService.getAnnouncementNoticeTemplates();
   }
 
   ckEditorNotice = ClassicEditor;
@@ -75,21 +68,5 @@ export class ReferentialAnnouncementNoticeTemplateComponent extends GenericRefer
   onNoticeChange(event: ChangeEvent) {
     if (this.selectedEntity)
       this.selectedEntity.text = event.editor.getData();
-  }
-
-  addFragment() {
-    if (this.selectedEntity) {
-      if (!this.selectedEntity.announcementNoticeTemplateFragments)
-        this.selectedEntity.announcementNoticeTemplateFragments = [];
-      this.selectedEntity.announcementNoticeTemplateFragments.push({} as AnnouncementNoticeTemplateFragment);
-    }
-  }
-
-  deleteFragment(fragment: AnnouncementNoticeTemplateFragment) {
-    if (this.selectedEntity) {
-      if (this.selectedEntity.announcementNoticeTemplateFragments && this.selectedEntity.announcementNoticeTemplateFragments.indexOf(fragment) >= 0) {
-        this.selectedEntity.announcementNoticeTemplateFragments.splice(this.selectedEntity.announcementNoticeTemplateFragments.indexOf(fragment), 1);
-      }
-    }
   }
 }

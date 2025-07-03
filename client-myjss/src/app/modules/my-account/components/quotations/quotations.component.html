@@ -238,8 +238,8 @@
                       </div>
 
                       <!-- Bloc : Bouton avis -->
-                      <div class="col-sm-6 col-lg-3 text-sm-end align-self-start" *ngIf="quotation.quotationStatus.code === QUOTATION_STATUS_VALIDATED_BY_CUSTOMER
-               || quotation.quotationStatus.code === QUOTATION_STATUS_REFUSED_BY_CUSTOMER">
+                      <div class="col-sm-6 col-lg-3 text-sm-end align-self-start" *ngIf="false && (quotation.quotationStatus.code === QUOTATION_STATUS_VALIDATED_BY_CUSTOMER
+               || quotation.quotationStatus.code === QUOTATION_STATUS_REFUSED_BY_CUSTOMER)">
                         <button class="btn btn-sm btn-outline-primary w-100 w-sm-auto" type="button">
                           <i class="ai-star me-2 ms-n1"></i>Laisser un avis
                         </button>

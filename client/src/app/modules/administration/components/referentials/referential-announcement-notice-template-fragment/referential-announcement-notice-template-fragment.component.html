@@ -12,26 +12,32 @@
   </div>
 </div>
 <div class="mat-elevation-z2 form-div" *ngIf="selectedEntity ">
-  <form [formGroup]="entityForm2">
+  <form [formGroup]="entityForm">
     <div class="full-width">
       <fieldset [disabled]="editMode==false" class="fieldset-no-border">
         <table class="full-width">
           <tr *ngIf="selectedEntity.id">
             <td>
-              <generic-input [(model)]="selectedEntity.id" label="Identifiant technique" [form]="entityForm2"
+              <generic-input [(model)]="selectedEntity.id" label="Identifiant technique" [form]="entityForm"
                 propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
             </td>
           </tr>
           <tr>
             <td>
-              <generic-input [(model)]="selectedEntity.code" label="Codification" [maxLength]="40" [form]="entityForm2"
+              <generic-input [(model)]="selectedEntity.code" label="Codification" [maxLength]="40" [form]="entityForm"
                 propertyName="code" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
             </td>
           </tr>
           <tr>
             <td>
               <generic-input [(model)]="selectedEntity.label" label="Nom fonctionnel" [maxLength]="100"
-                [form]="entityForm2" propertyName="label" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
+                [form]="entityForm" propertyName="label" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-toggle [(model)]="selectedEntity.isMultiple" label="Est multiple ?" [form]="entityForm"
+                propertyName="isMultiple" [isDisabled]="!editMode"></generic-toggle>
             </td>
           </tr>
           <tr>
@@ -42,33 +48,6 @@
               </div>
               <ckeditor *ngIf="editMode" [editor]="ckEditorNotice" [config]="config" [data]="initialNoticeValue"
                 (change)="onNoticeChange($event)"></ckeditor>
-            </td>
-          </tr>
-        </table>
-        <mat-divider></mat-divider>
-        <p>Fragments associés</p>
-        <table class="full-width">
-          <tr
-            *ngFor="let announcementNoticeTemplateFragment of selectedEntity.announcementNoticeTemplateFragments; let index = index">
-            <td>
-              <select-announcement-notice-template-fragment
-                [(model)]="selectedEntity.announcementNoticeTemplateFragments[index]" label="Fragment"
-                [form]="entityForm2" [propertyName]="'announcementNoticeTemplateFragment'+index" [isMandatory]="true"
-                [isDisabled]="!editMode"></select-announcement-notice-template-fragment>
-            </td>
-            <td>
-              <button *ngIf="editMode" (click)="deleteFragment(announcementNoticeTemplateFragment)" mat-raised-button
-                color="accent">
-                <mat-icon>delete</mat-icon>
-              </button>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width">
-          <tr>
-            <td>
-              <button *ngIf="editMode" (click)="addFragment()" mat-raised-button color="accent">Ajouter un
-                fragment</button>
             </td>
           </tr>
         </table>

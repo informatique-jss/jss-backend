@@ -2,3 +2,12 @@
   background-color: #F6F9FC;
   padding: 2rem;
 }
+
+.btn-fixed-width {
+  min-width: 300px;
+}
+
+.btn-wrap {
+  white-space: normal;
+  text-align: center;
+}

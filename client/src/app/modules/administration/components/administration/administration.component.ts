@@ -64,6 +64,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
   WEEK_DAY_REFERENTIAL = "Jours de la semaine";
   CHARACTER_PRICE_REFERENTIAL = "Prix du caractère";
   ANNOUNCEMENT_NOTICE_TEMPLATE_REFERENTIAL = "Modèle d'annonce";
+  ANNOUNCEMENT_NOTICE_TEMPLATE_FRAGMENT_REFERENTIAL = "Fragment de modèle d'annonce";
   BILLING_ITEM_REFERENTIAL = "Poste de facturation";
   BILLING_TYPE_REFERENTIAL = "Famille de poste de facturation";
   CITY_REFERENTIAL = "Ville";
@@ -149,6 +150,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     this.referentials.push(this.CHARACTER_PRICE_REFERENTIAL);
     this.referentials.push(this.NOTICE_TYPE);
     this.referentials.push(this.ANNOUNCEMENT_NOTICE_TEMPLATE_REFERENTIAL);
+    this.referentials.push(this.ANNOUNCEMENT_NOTICE_TEMPLATE_FRAGMENT_REFERENTIAL);
     this.referentials.push(this.BILLING_ITEM_REFERENTIAL);
     this.referentials.push(this.BILLING_TYPE_REFERENTIAL);
     this.referentials.push(this.DEPARTMENT_REFERENTIAL);

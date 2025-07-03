@@ -1532,7 +1532,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
             List<Responsable> responsablesToFilter = userScopeService.getUserCurrentScopeResponsables();
 
-            if (customerOrderStatusToFilter.size() > 0 && responsablesToFilter != null
+            if (responsablesToFilter != null
                     && responsablesToFilter.size() > 0) {
 
                 Order order = new Order(Direction.DESC, "createdDate");
@@ -1544,7 +1544,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     order = new Order(Direction.ASC, "customerOrderStatus");
 
                 Sort sort = Sort.by(Arrays.asList(order));
-                Pageable pageableRequest = PageRequest.of(page, 50, sort);
+                Pageable pageableRequest = PageRequest.of(page, 10, sort);
                 return completeAdditionnalInformationForCustomerOrders(
                         customerOrderRepository.searchOrdersForCurrentUser(responsablesToFilter,
                                 customerOrderStatusToFilter, pageableRequest, customerOrderStatusBilled, displayPayed));

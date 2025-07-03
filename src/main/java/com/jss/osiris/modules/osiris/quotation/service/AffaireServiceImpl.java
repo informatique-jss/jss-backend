@@ -630,7 +630,7 @@ public class AffaireServiceImpl implements AffaireService {
             orderLastname = new Order(Direction.DESC, "lastname");
         }
         Sort sort = Sort.by(Arrays.asList(orderDenomination, orderLastname, orderFirstname));
-        Pageable pageableRequest = PageRequest.of(page, 50, sort);
+        Pageable pageableRequest = PageRequest.of(page, 10, sort);
         return affaireRepository.getAffairesForResponsables(pageableRequest, responsables, searchText, idAffaire);
     }
 

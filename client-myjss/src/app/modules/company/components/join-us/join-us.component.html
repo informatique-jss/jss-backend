@@ -55,49 +55,46 @@
 </section>
 
 <!-- Modal for spontaneous Application -->
-<div class="modal fade" tabindex="-1" aria-labelledby="spontaneousApplicationModalLabel" aria-hidden="true"
-  #spontaneousApplicationModal>
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header  d-flex flex-column">
-        <h5 id="spontaneousApplicationModalLabel">Formulaire de Candidature</h5>
-        <p>Pour nous faire parvenir votre candidature spontanée, remplissez ce formulaire et
-          téléchargez
-          votre CV.</p>
-      </div>
-      <div class="modal-body">
-        <form class="needs-validation row" novalidate>
-          <div class="col-12">
-            <generic-input class="form-control form-control-lg" [(model)]="newCandidacy.mail.mail" placeholder="E-mail*"
-              label="E-mail*" [form]="applicationForm" propertyName="mail" [isMandatory]="true" [isDisabled]="false"
-              [maxLength]="250" type="email"></generic-input>
-          </div>
-          <div class="col-12">
-            <generic-input class="form-control form-control-lg" [(model)]="newCandidacy.searchedJob"
-              label="Poste recherché" placeholder="Poste recherché" [form]="applicationForm" propertyName="searchedJob"
-              [isMandatory]="false" [isDisabled]="false" [maxLength]="250" type="text"></generic-input>
-          </div>
-        </form>
+<ng-template #spontaneousApplicationModal let-modal>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 id="spontaneousApplicationModalLabel">Formulaire de Candidature</h5>
+      <p>Pour nous faire parvenir votre candidature spontanée, remplissez ce formulaire et
+        téléchargez
+        votre CV.</p>
+    </div>
+    <div class="modal-body">
+      <form class="needs-validation row" novalidate>
         <div class="col-12">
-          <generic-textarea class="form-control form-control-lg" [(model)]="newCandidacy.message" label="Message*"
-            [form]="applicationForm" propertyName="message" [isMandatory]="true" [isDisabled]="false"
-            [numberOfLines]="4"></generic-textarea>
+          <generic-input class="form-control form-control-lg" [(model)]="newCandidacy.mail.mail" placeholder="E-mail*"
+            label="E-mail*" [form]="applicationForm" propertyName="mail" [isMandatory]="true" [isDisabled]="false"
+            [maxLength]="250" type="email"></generic-input>
         </div>
-        <div class="mb-2 row">
-          <div class="col-12">
-            <single-upload [entity]="newCandidacy" [attachmentType]="attachmentTypeApplicationCv"
-              (endOfUpload)="refreshForm($event)" [entityType]="APPLICATION_CV_ENTITY_TYPE.entityType"
-              [isDirectUpload]="false"></single-upload>
-          </div>
+        <div class="col-12">
+          <generic-input class="form-control form-control-lg" [(model)]="newCandidacy.searchedJob"
+            label="Poste recherché" placeholder="Poste recherché" [form]="applicationForm" propertyName="searchedJob"
+            [isMandatory]="false" [isDisabled]="false" [maxLength]="250" type="text"></generic-input>
         </div>
+      </form>
+      <div class="col-12">
+        <generic-textarea class="form-control form-control-lg" [(model)]="newCandidacy.message" label="Message*"
+          [form]="applicationForm" propertyName="message" [isMandatory]="true" [isDisabled]="false"
+          [numberOfLines]="4"></generic-textarea>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="col-12 btn btn-light btn-secondary ms-2" (click)="sendApplication()">Envoyer ma
-          candidature</button>
+      <div class="mb-2 row">
+        <div class="col-12">
+          <single-upload [entity]="newCandidacy" [attachmentType]="attachmentTypeApplicationCv"
+            (endOfUpload)="refreshForm($event)" [entityType]="APPLICATION_CV_ENTITY_TYPE.entityType"
+            [isDirectUpload]="false"></single-upload>
+        </div>
       </div>
     </div>
+    <div class="modal-footer">
+      <button type="button" class="col-12 btn btn-light btn-secondary ms-2" (click)="sendApplication()">Envoyer ma
+        candidature</button>
+    </div>
   </div>
-</div>
+</ng-template>
 
 <section class="container py-5 my-5">
   <div class="row">
@@ -213,21 +210,20 @@
       </div>
     </ng-template>
   </generic-swiper>
+</section>
 
-  <!-- Modal Bootstrap -->
-  <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" data-bs-backdrop="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body d-flex justify-content-center align-items-center">
-          <img #modalImage id="modal-image" class="img-fluid w-100" src="" alt="Image">
-        </div>
-      </div>
+<!-- Modal for spontaneous Application -->
+<ng-template #imageModal let-modal>
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="btn-close" style="color : white" aria-label="Close"
+        (click)="closeApplicationModal()"></button>
+    </div>
+    <div class="modal-body">
+      <img #modalImage id="modal-image" class="img-fluid w-100" [src]="currentImageLink" alt="Image">
     </div>
   </div>
-</section>
+</ng-template>
 
 
 <!-- Tools-->
@@ -303,7 +299,8 @@
           <img src="assets/img/societe/fullfilling-workplace/image_02.png" class="card-img-top" alt="Card image">
           <div class="card-body">
             <h4 class="card-title">Une équipe bienveillante</h4>
-            <p class="card-text">Rejoignez une équipe accueillante et engagée où la bienveillance et la passion sont au
+            <p class="card-text">Rejoignez une équipe accueillante et engagée où la bienveillance et la passion sont
+              au
               cœur de notre culture d’entreprise.</p>
           </div>
         </div>
@@ -313,7 +310,8 @@
           <img src="assets/img/societe/fullfilling-workplace/image_03.png" class="card-img-top" alt="Card image">
           <div class="card-body">
             <h4 class="card-title">Fruits frais chaque semaine</h4>
-            <p class="card-text">Chaque semaine, des corbeilles de fruits frais sont mises à disposition pour une touche
+            <p class="card-text">Chaque semaine, des corbeilles de fruits frais sont mises à disposition pour une
+              touche
               de fraîcheur et d’énergie.</p>
           </div>
         </div>
@@ -345,7 +343,8 @@
           <img src="assets/img/societe/fullfilling-workplace/image_06.png" class="card-img-top" alt="Card image">
           <div class="card-body">
             <h4 class="card-title">Charte de télétravail</h4>
-            <p class="card-text">Profitez d’un rythme de travail souple avec 1 jour de télétravail par semaine et 1 jour
+            <p class="card-text">Profitez d’un rythme de travail souple avec 1 jour de télétravail par semaine et 1
+              jour
               flottant par mois à poser quand vous le souhaitez.</p>
           </div>
         </div>

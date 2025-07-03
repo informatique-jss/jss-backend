@@ -214,7 +214,6 @@ export class RequiredInformationComponent implements OnInit {
         this.initIndexesAndServiceType();
       }
     }
-    this.emitServiceChange();
   }
 
 
@@ -266,6 +265,7 @@ export class RequiredInformationComponent implements OnInit {
       if (this.quotation.assoAffaireOrders[this.selectedAssoIndex].services && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services.length > 0) {
         this.selectedServiceIndex = 0;
       }
+      this.emitServiceChange();
     }
   }
 
@@ -358,24 +358,33 @@ export class RequiredInformationComponent implements OnInit {
 
   saveFieldsValue() {
     if (this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined) {
+      if (this.informationForm) {
+        this.informationForm.markAllAsTouched();
+        if (!this.informationForm.valid) {
+          this.appService.displayToast("Veuillez remplir les champs obligatoires", true, "Champs obligatoires", 5);
+          return of(false);
+        }
+      }
+
       if (this.noticeTemplateDescription.announcementOrder)
         this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[this.noticeTemplateDescription.announcementOrder].announcement!.notice = this.noticeTemplateDescription.displayText;
 
       if (this.currentUser) {
         this.appService.showLoadingSpinner();
-        return this.serviceService.addOrUpdateService(this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex]).pipe(tap(response => {
+        this.serviceService.addOrUpdateService(this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex]).pipe(tap(response => {
         }));
+        return of(true);
       } else {
         if (this.quotation.isQuotation) {
           this.quotationService.setCurrentDraftQuotation(this.quotation);
-          return of({} as Service);
+          return of(true);
         } else {
           this.orderService.setCurrentDraftOrder(this.quotation);
-          return of({} as Service);
+          return of(true);
         }
       }
     }
-    return of({} as Service);
+    return of(true);
   }
 
   moveToService(newServiceIndex: number, newAssoIndex: number) {
@@ -388,9 +397,6 @@ export class RequiredInformationComponent implements OnInit {
     }
 
     if (newAssoIndex < 0) {
-      this.saveFieldsValue().subscribe(response => {
-        this.appService.hideLoadingSpinner();
-      });
       this.goBackQuotationModale(this.confirmBackModal);
       return;
     }
@@ -405,16 +411,19 @@ export class RequiredInformationComponent implements OnInit {
 
     if (newAssoIndex >= this.quotation.assoAffaireOrders.length) {
       this.saveFieldsValue().subscribe(response => {
-        let r = response;
         this.appService.hideLoadingSpinner();
+        if (!response)
+          return;
         this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[3]);
         this.appService.openRoute(undefined, "quotation/checkout", undefined);
       });
       return;
     }
 
-    this.saveFieldsValue().subscribe(res => {
+    this.saveFieldsValue().subscribe(response => {
       this.appService.hideLoadingSpinner();
+      if (!response)
+        return;
     });
     this.selectedAssoIndex = null;
     this.selectedServiceIndex = null;
@@ -619,10 +628,10 @@ export class RequiredInformationComponent implements OnInit {
     let originId = ngbEvent.activeId as number;
 
     // if id is > 10 and first char begins with 1 then its an announcement tab
-    if (destId >= 10) {
+    if (destId >= 10 && destId < 20) {
       this.noticeTemplateDescription.announcementOrder = this.parseInt(destId.toString().substring(1));
       this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
-    } else if (originId >= 10) {
+    } else if (originId >= 10 && destId < 20) {
       this.noticeTemplateDescription.announcementOrder = this.parseInt(originId.toString().substring(1));
       this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
     }

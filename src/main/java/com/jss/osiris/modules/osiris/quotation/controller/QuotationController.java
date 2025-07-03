@@ -65,6 +65,7 @@ import com.jss.osiris.modules.osiris.quotation.model.AffaireSearch;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.AnnouncementListSearch;
 import com.jss.osiris.modules.osiris.quotation.model.AnnouncementNoticeTemplate;
+import com.jss.osiris.modules.osiris.quotation.model.AnnouncementNoticeTemplateFragment;
 import com.jss.osiris.modules.osiris.quotation.model.AnnouncementSearch;
 import com.jss.osiris.modules.osiris.quotation.model.AnnouncementSearchResult;
 import com.jss.osiris.modules.osiris.quotation.model.AnnouncementStatus;
@@ -130,6 +131,7 @@ import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.ValidationReq
 import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.FormaliteInfogreffe;
 import com.jss.osiris.modules.osiris.quotation.service.ActTypeService;
 import com.jss.osiris.modules.osiris.quotation.service.AffaireService;
+import com.jss.osiris.modules.osiris.quotation.service.AnnouncementNoticeTemplateFragmentService;
 import com.jss.osiris.modules.osiris.quotation.service.AnnouncementNoticeTemplateService;
 import com.jss.osiris.modules.osiris.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.osiris.quotation.service.AnnouncementStatusService;
@@ -313,6 +315,9 @@ public class QuotationController {
 
   @Autowired
   DomiciliationStatusService domiciliationStatusService;
+
+  @Autowired
+  AnnouncementNoticeTemplateFragmentService announcementNoticeTemplateFragmentService;
 
   @Autowired
   DomiciliationService domiciliationService;
@@ -2991,5 +2996,26 @@ public class QuotationController {
 
     return new ResponseEntity<List<CustomerOrder>>(customerOrderAssignationService.getOrdersToAssignForFond(employee),
         HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/announcement-notice-template-fragment")
+  public ResponseEntity<List<AnnouncementNoticeTemplateFragment>> getAnnouncementNoticeTemplateFragments() {
+    return new ResponseEntity<List<AnnouncementNoticeTemplateFragment>>(
+        announcementNoticeTemplateFragmentService.getAnnouncementNoticeTemplateFragments(), HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/announcement-notice-template-fragment")
+  public ResponseEntity<AnnouncementNoticeTemplateFragment> addOrUpdateAnnouncementNoticeTemplateFragment(
+      @RequestBody AnnouncementNoticeTemplateFragment announcementNoticeTemplateFragments)
+      throws OsirisValidationException, OsirisException {
+    if (announcementNoticeTemplateFragments.getId() != null)
+      validationHelper.validateReferential(announcementNoticeTemplateFragments, true,
+          "announcementNoticeTemplateFragments");
+    validationHelper.validateString(announcementNoticeTemplateFragments.getCode(), true, "code");
+    validationHelper.validateString(announcementNoticeTemplateFragments.getLabel(), true, "label");
+    validationHelper.validateString(announcementNoticeTemplateFragments.getText(), true, "text");
+
+    return new ResponseEntity<AnnouncementNoticeTemplateFragment>(announcementNoticeTemplateFragmentService
+        .addOrUpdateAnnouncementNoticeTemplateFragment(announcementNoticeTemplateFragments), HttpStatus.OK);
   }
 }

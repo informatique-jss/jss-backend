@@ -227,6 +227,12 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
             for (Provision provision : service.getProvisions()) {
                 provision.setService(service);
 
+                if (provision.getComplexity() == null)
+                    provision.setComplexity(4);
+
+                if (provision.getIsPriority() == null)
+                    provision.setIsPriority(false);
+
                 if (provision.getAttachments() != null)
                     for (Attachment attachment : provision.getAttachments()) {
                         attachment.setProvision(provision);

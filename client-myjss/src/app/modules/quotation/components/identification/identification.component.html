@@ -12,9 +12,12 @@
   </section>
 
   <section class="quotation-container">
-    <div>
-      <h6><i class="ai-pen pe-2"></i>Pour quel service ?</h6>
-      <div *ngFor="let serviceFamily of familyGroupService" class="btn btn-outline-secondary m-2"
+    <div class="d-flex flex-column flex-md-row flex-sm-wrap align-items-start">
+      <h6 class="w-100 mb-2">
+        <i class="ai-pen pe-2"></i>Pour quel service ?
+      </h6>
+      <div *ngFor="let serviceFamily of familyGroupService"
+        class="btn btn-outline-secondary m-1 w-100 w-sm-auto  btn-wrap"
         [class.active]="quotation.serviceFamilyGroup && serviceFamily.id == quotation.serviceFamilyGroup.id"
         (click)="selectFamilyGroupService(serviceFamily)">
         {{serviceFamily.customLabel}}</div>

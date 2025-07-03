@@ -53,6 +53,7 @@ import com.jss.osiris.modules.osiris.crm.model.Candidacy;
 import com.jss.osiris.modules.osiris.crm.model.Voucher;
 import com.jss.osiris.modules.osiris.crm.service.VoucherService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
+import com.jss.osiris.modules.osiris.invoicing.model.Payment;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
@@ -1745,9 +1746,16 @@ public class MyJssQuotationController {
 		if (customerOrder == null || !myJssQuotationValidationHelper.canSeeQuotation(customerOrder))
 			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
 
+		// cancel only if it's payment free
+		if (customerOrder.getPayments() != null && customerOrder.getPayments().size() > 0)
+			for (Payment payment : customerOrder.getPayments())
+				if (!payment.getIsCancelled())
+					return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+
 		customerOrderService.addOrUpdateCustomerOrderStatus(customerOrder, CustomerOrderStatus.ABANDONED, true);
 
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+
 	}
 
 	@GetMapping(inputEntryPoint + "/service-types/provisions")

@@ -824,7 +824,7 @@ public class MailHelper {
     public void sendConfirmationContactFormMyJss(String mailAdress) throws OsirisException {
         sendCustomerMailForMyJssMail(mailAdress, null,
                 constantService.getStringMyJssContactFormRequestMail(),
-                "Confirmation de la réception de votre demande de contribution",
+                "Confirmation de la réception de votre demande de contact",
                 CustomerMail.TEMPLATE_SEND_CONTACT_CONFIRMATION);
     }
 

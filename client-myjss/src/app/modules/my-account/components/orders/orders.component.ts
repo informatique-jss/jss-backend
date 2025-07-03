@@ -100,10 +100,12 @@ export class OrdersComponent implements OnInit {
     if (this.currentSearchRef)
       this.currentSearchRef.unsubscribe();
 
+    this.appService.showLoadingSpinner();
     this.currentSearchRef = this.customerOrderService.searchOrdersForCurrentUser(status, this.currentPage, this.currentSort).subscribe(response => {
+      this.appService.hideLoadingSpinner();
       if (response) {
         this.orders.push(...response);
-        if (response.length < 50)
+        if (response.length < 10)
           this.hideSeeMore = true;
       }
       this.isFirstLoading = false;

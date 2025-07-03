@@ -109,10 +109,12 @@ export class QuotationsComponent implements OnInit {
     if (this.currentSearchRef)
       this.currentSearchRef.unsubscribe();
 
+    this.appService.showLoadingSpinner();
     this.currentSearchRef = this.quotationService.searchQuotationsForCurrentUser(status, this.currentPage, this.currentSort).subscribe(response => {
+      this.appService.hideLoadingSpinner();
       this.quotations.push(...response);
       this.isFirstLoading = false;
-      if (response.length < 50)
+      if (response.length < 10)
         this.hideSeeMore = true;
     })
   }

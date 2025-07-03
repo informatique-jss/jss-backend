@@ -105,7 +105,7 @@ public class MyJssQuotationDelegate {
 
         saveNewMailsOnAffaire(order);
 
-        if (order.getResponsable() != null
+        if (order.getResponsable() != null && order.getResponsable().getId() != null
                 && !order.getResponsable().getId().equals(employeeService.getCurrentMyJssUser().getId())) {
             List<Responsable> responsables = userScopeService.getPotentialUserScope();
             Boolean found = false;
@@ -209,6 +209,9 @@ public class MyJssQuotationDelegate {
                     throw new OsirisValidationException("Tiers");
                 } else {
                     tiersService.addOrUpdateTiers(quotation.getResponsable().getTiers());
+                    List<Responsable> userScope = userScopeService.getPotentialUserScope(quotation.getResponsable());
+                    if (userScope != null && userScope.size() > 0)
+                        userScopeService.addResponsableToCurrentUserScope(userScope, quotation.getResponsable());
                 }
             }
         }

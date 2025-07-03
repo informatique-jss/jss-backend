@@ -656,7 +656,7 @@ public class QuotationServiceImpl implements QuotationService {
                     order = new Order(Direction.ASC, "customerOrderStatus");
 
                 Sort sort = Sort.by(Arrays.asList(order));
-                Pageable pageableRequest = PageRequest.of(page, 50, sort);
+                Pageable pageableRequest = PageRequest.of(page, 10, sort);
                 return populateTransientField(quotationRepository.searchQuotationsForCurrentUser(responsablesToFilter,
                         quotationStatusToFilter, pageableRequest));
             }
