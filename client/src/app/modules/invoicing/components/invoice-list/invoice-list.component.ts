@@ -197,25 +197,6 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
     this.appService.openRoute(event, 'invoicing/add/null', null);
   }
 
-  // downloadAllFiles() {
-  //   let count = 0;
-  //   let selectedAttachmentIds = [] as Array<number>;
-  //   if (this.invoices)
-  //     for (let invoice of this.invoices) {
-  //       this.invoiceService.getInvoiceById(invoice.invoiceId).subscribe(completeInvoice => {
-  //         if (completeInvoice.attachments) {
-  //           for (let attachement of completeInvoice.attachments) {
-  //             if (attachement.attachmentType.id == this.constantService.getAttachmentTypeInvoice().id && count < 200) {
-  //               selectedAttachmentIds.push(attachement.id);
-  //               this.uploadAttachmentService.downloadAttachment(attachement);
-  //               count++;
-  //             }
-  //           }
-  //         }
-  //       })
-  //     }
-  // }
-
   downloadAllFiles() {
     let count = 0;
     let selectedAttachmentIds: number[] = [];
@@ -239,7 +220,7 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
           }
         }
 
-        if (selectedAttachmentIds.length >= 2) {
+        if (selectedAttachmentIds.length > 1) {
           this.uploadAttachmentService.downloadAttachmentsAsZip(selectedAttachmentIds);
         } else if (selectedAttachmentIds.length == 1) {
           let tmpAttachment = { id: selectedAttachmentIds[0] } as Attachment;
