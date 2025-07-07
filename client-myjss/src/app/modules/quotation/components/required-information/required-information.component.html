@@ -68,7 +68,7 @@
               <div class="quotation-container">
                 <h6><i class="ai-circle-info me-2"></i>Information</h6>
                 <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-                  <div class="col-md-5">
+                  <div class="col-md-5" *ngIf="!isOnlyAnnouncement">
                     <label class="col-form-label" for="announcementPublicationDate">Publication souhaitée*</label>
                     <div class="col">
                       <select-string [types]="selectionRedaction" [isMandatory]="false" [form]="informationForm"
@@ -95,20 +95,20 @@
                 <h6><i class="ai-grid me-2"></i>Option</h6>
                 <div class="row g-4 align-items-center">
 
-                  <div class="col-6 form-check form-switch">
+                  <div class="col-12 col-lg-6 form-check form-switch">
                     <generic-toggle [(model)]="provision.isRedactedByJss" label="Confier la rédaction au JSS"
                       [form]="informationForm" [propertyName]="'isRedactedByJss'+provision.order" [isDisabled]="false"
                       (onToggleChange)="changeIsShowNoticeTemplate(false, provision.isRedactedByJss)"></generic-toggle>
                   </div>
 
-                  <div class="col-6 form-check form-switch" *ngIf="provision.isRedactedByJss">
+                  <div class="col-12 col-lg-6 form-check form-switch" *ngIf="provision.isRedactedByJss">
                     <generic-toggle [(model)]="provision.announcement.isProofReadingDocument"
                       label="Recevoir une épreuve de relecture avant publication" [form]="informationForm"
                       [propertyName]="'isProofReadingDocument'+provision.order" [isDisabled]="false"></generic-toggle>
                   </div>
 
                   <div class="row">
-                    <div *ngIf="!provision.isRedactedByJss" class="col-6 form-check form-switch">
+                    <div *ngIf="!provision.isRedactedByJss" class="col-12 col-lg-6 form-check form-switch">
                       <generic-toggle [(model)]="isUsingTemplate"
                         label="Utiliser les modèles proposés pour la rédaction" [form]="informationForm"
                         [propertyName]="'isUsingTemplate'+provision.order" [isDisabled]="false"
@@ -124,14 +124,14 @@
                    'row row-cols-4 px-4': !provision.isRedactedByJss && isUsingTemplate}">
 
                     <!-- Toggle relecture -->
-                    <div class="col form-check align-items-start mb-4 px-3" style="padding-left: 0px;">
+                    <div class="col-12 col-lg-3 form-check align-items-start mb-4 px-3" style="padding-left: 0px;">
                       <generic-toggle [(model)]="provision.announcement.isReReadByJss" label="Relecture par le JSS"
                         [form]="informationForm" [propertyName]="'isReReadByJss'+provision.order"
                         [isDisabled]="false"></generic-toggle>
                     </div>
 
                     <!-- Département -->
-                    <div class="col mb-3 align-items-start" *ngIf="departments">
+                    <div class="col-12 col-lg-3 mb-3 align-items-start" *ngIf="departments">
                       <select-department [(model)]="provision.announcement.department"
                         label="Département de publication" [form]="informationForm"
                         [propertyName]="'department'+provision.order" [isMandatory]="true"
@@ -139,7 +139,7 @@
                     </div>
 
                     <!-- Rubrique -->
-                    <div class="col mb-3 align-items-start" *ngIf="noticeTypeFamilies">
+                    <div class="col-12 col-lg-3 mb-3 align-items-start" *ngIf="noticeTypeFamilies">
                       <select-notice-type-family [(model)]="provision.announcement.noticeTypeFamily"
                         label="Rubrique de publication" [form]="informationForm"
                         [propertyName]="'noticeTypeFamily'+provision.order" [isMandatory]="true"
@@ -147,7 +147,7 @@
                     </div>
 
                     <!-- Sous-rubrique -->
-                    <div class="col mb-3 align-items-start"
+                    <div class="col-12 col-lg-3 mb-3 align-items-start"
                       *ngIf="provision.announcement.noticeTypeFamily && noticeTypes">
                       <select-multiple-notice-type [(model)]="provision.announcement.noticeTypes"
                         label="Sous-rubrique(s) de publication" [form]="informationForm"

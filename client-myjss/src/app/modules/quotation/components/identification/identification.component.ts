@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { validateSiret } from '../../../../libs/CustomFormsValidatorsHelper';
+import { validateSiren, validateSiret } from '../../../../libs/CustomFormsValidatorsHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
 import { ConstantService } from '../../../main/services/constant.service';
@@ -208,7 +208,7 @@ export class IdentificationComponent implements OnInit {
   }
 
   effectiveSearchSiret(indexAsso: number) {
-    if (this.siretSearched && validateSiret(this.siretSearched)) {
+    if (this.siretSearched && (validateSiret(this.siretSearched) || validateSiren(this.siretSearched))) {
       this.loadingSiretSearch = true;
       this.affaireService.getAffaireBySiret(this.siretSearched).subscribe(response => {
         this.loadingSiretSearch = false;

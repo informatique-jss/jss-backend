@@ -63,13 +63,14 @@ public class UserScopeServiceImpl implements UserScopeService {
             if (responsablesToAdd != null && responsablesToAdd.size() > 0)
                 for (Responsable responsableToAdd : responsablesToAdd) {
                     List<Responsable> potentialScope = getPotentialUserScope();
-                    for (Responsable potentialResponsable : potentialScope)
-                        if (potentialResponsable.getId().equals(responsableToAdd.getId())) {
-                            UserScope newScope = new UserScope();
-                            newScope.setResponsable(responsable);
-                            newScope.setResponsableViewed(responsableToAdd);
-                            addOrUpdateUserScope(newScope);
-                        }
+                    if (potentialScope != null)
+                        for (Responsable potentialResponsable : potentialScope)
+                            if (potentialResponsable.getId().equals(responsableToAdd.getId())) {
+                                UserScope newScope = new UserScope();
+                                newScope.setResponsable(responsable);
+                                newScope.setResponsableViewed(responsableToAdd);
+                                addOrUpdateUserScope(newScope);
+                            }
                 }
         }
     }

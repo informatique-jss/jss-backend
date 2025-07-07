@@ -860,14 +860,19 @@ public class MyJssQuotationController {
 
 	@GetMapping(inputEntryPoint + "/affaire/siret")
 	@JsonView(JacksonViews.MyJssListView.class)
-	public ResponseEntity<List<Affaire>> getAffaireBySiret(@RequestParam String siret, HttpServletRequest request)
+	public ResponseEntity<List<Affaire>> getAffaireBySiretOrSiren(@RequestParam String siretOrSiren,
+			HttpServletRequest request)
 			throws OsirisClientMessageException, OsirisException {
 		detectFlood(request);
-		if (siret == null)
+		if (siretOrSiren == null)
 			throw new OsirisValidationException("id");
-		validationHelper.validateSiret(siret);
 
-		return new ResponseEntity<List<Affaire>>(affaireService.getAffairesFromSiret(siret.trim().replaceAll(" ", "")),
+		if (siretOrSiren == null || !validationHelper.validateSiret(siretOrSiren.trim().replaceAll(" ", ""))
+				&& !validationHelper.validateSiren(siretOrSiren.trim().replaceAll(" ", "")))
+			return new ResponseEntity<List<Affaire>>(new ArrayList<Affaire>(), HttpStatus.OK);
+
+		return new ResponseEntity<List<Affaire>>(
+				affaireService.getAffairesFromSiret(siretOrSiren.trim().replaceAll(" ", "")),
 				HttpStatus.OK);
 	}
 

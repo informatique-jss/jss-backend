@@ -114,6 +114,7 @@ export class RequiredInformationComponent implements OnInit {
   isBrowser = false;
 
   activeId = 3;
+  isOnlyAnnouncement = true;
 
   SERVICE_FIELD_TYPE_TEXT = SERVICE_FIELD_TYPE_TEXT;
   SERVICE_FIELD_TYPE_INTEGER = SERVICE_FIELD_TYPE_INTEGER;
@@ -239,7 +240,10 @@ export class RequiredInformationComponent implements OnInit {
                     provision.announcement = {} as Announcement;
                     provision.isRedactedByJss = true;
                   }
-                } else if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_DOMICILIATION) {
+                } else {
+                  this.isOnlyAnnouncement = false;
+                }
+                if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_DOMICILIATION) {
                   if (!provision.domiciliation) {
                     this.activeId = 2;
                     provision.domiciliation = {} as Domiciliation;
@@ -458,6 +462,8 @@ export class RequiredInformationComponent implements OnInit {
               promises.push(this.serviceService.deleteService(service));
       combineLatest(promises).subscribe(response => {
         this.appService.hideLoadingSpinner();
+        this.noticeTemplateDescription = {} as NoticeTemplateDescription;
+        this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
         this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);
         this.appService.openRoute(undefined, "quotation/services-selection", undefined);
       })

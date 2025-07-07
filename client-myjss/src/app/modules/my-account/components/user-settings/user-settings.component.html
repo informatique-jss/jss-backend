@@ -263,12 +263,18 @@
                   <div class="form-check" [formGroup]="documentForm">
                     <input class="form-check-input" type="checkbox" id="paper-isRecipientAffaire" [disabled]="true"
                       [(ngModel)]="document.isRecipientAffaire" [ngModelOptions]="{standalone: true}">
-                    <label class="form-check-label" for="paper-isRecipientAffaire">Les envoyer à l'affaire</label>
+                    <label class="form-check-label" for="paper-isRecipientAffaire">Les envoyer à l'affaire<span
+                        *ngIf="document.affaireRecipient"> à
+                        {{document.affaireRecipient}}</span><span *ngIf="document.affaireAddress"> au
+                        {{document.affaireAddress}}</span></label>
                   </div>
                   <div class="form-check" [formGroup]="documentForm">
                     <input class="form-check-input" type="checkbox" id="paper-isRecipientClient" [disabled]="true"
                       [(ngModel)]="document.isRecipientClient" [ngModelOptions]="{standalone: true}">
-                    <label class="form-check-label" for="paper-isRecipientClient">Me les envoyer</label>
+                    <label class="form-check-label" for="paper-isRecipientClient">Me les envoyer<span
+                        *ngIf="document.clientRecipient"> à
+                        {{document.clientRecipient}}</span><span *ngIf="document.clientAddress"> au
+                        {{document.clientAddress}}</span></label>
                   </div>
                 </div>
               </ng-container>

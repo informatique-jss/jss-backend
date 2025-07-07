@@ -20,6 +20,7 @@ export class OverviewComponent implements OnInit {
 
   currentUser: Responsable | undefined;
   statistics: DashboardUserStatistics | undefined;
+  isLoadingStats: boolean = false;
 
   constructor(private route: ActivatedRoute,
     private appService: AppService,
@@ -39,7 +40,9 @@ export class OverviewComponent implements OnInit {
       }
     });
 
+    this.isLoadingStats = true;
     this.dashboardUserStatisticsService.getDashboardUserStatistics().subscribe(response => {
+      this.isLoadingStats = false;
       this.statistics = response;
     })
 

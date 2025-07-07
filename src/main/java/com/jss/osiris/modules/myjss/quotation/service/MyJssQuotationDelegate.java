@@ -348,7 +348,20 @@ public class MyJssQuotationDelegate {
         quotation.getResponsable().getTiers().getDocuments().add(receiptDocument);
 
         quotation.getResponsable().getTiers().setIsNewTiers(true);
-        quotation.getResponsable().getTiers().setIsIndividual(false);
+
+        if (quotation.getResponsable().getTiers().getIsIndividual() == null)
+            quotation.getResponsable().getTiers().setIsIndividual(false);
+
+        if (quotation.getResponsable().getTiers().getIsIndividual()) {
+            quotation.getResponsable().getTiers().setCivility(quotation.getResponsable().getCivility());
+            quotation.getResponsable().getTiers().setFirstname(quotation.getResponsable().getFirstname());
+            quotation.getResponsable().getTiers().setLastname(quotation.getResponsable().getLastname());
+            quotation.getResponsable().getTiers().setAddress(quotation.getResponsable().getAddress());
+            quotation.getResponsable().getTiers().setCountry(quotation.getResponsable().getCountry());
+            quotation.getResponsable().getTiers().setPostalCode(quotation.getResponsable().getPostalCode());
+            quotation.getResponsable().getTiers().setCity(quotation.getResponsable().getCity());
+        }
+
         quotation.getResponsable().getTiers().setTiersType(constantService.getTiersTypeClient());
         quotation.getResponsable().getTiers().setTiersType(constantService.getTiersTypeClient());
         quotation.getResponsable().getTiers().setSalesEmployee(constantService.getEmployeeSalesDirector());

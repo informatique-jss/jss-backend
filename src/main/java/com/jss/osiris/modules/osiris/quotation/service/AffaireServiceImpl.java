@@ -207,6 +207,9 @@ public class AffaireServiceImpl implements AffaireService {
 
     @Override
     public List<Affaire> getAffairesFromSiren(String siren) throws OsirisException, OsirisClientMessageException {
+        // List<Affaire> existingAffaires = affaireRepository.findBySiren(siren);
+        // if (existingAffaires != null && existingAffaires.size() == 1)
+        // return existingAffaires;
         List<RneCompany> rneCompanies = rneDelegateService.getCompanyBySiren(siren);
         List<Affaire> affaires = new ArrayList<Affaire>();
         if (rneCompanies != null && rneCompanies.size() > 0)
@@ -222,9 +225,12 @@ public class AffaireServiceImpl implements AffaireService {
             return Arrays.asList(affaire);
         List<RneCompany> rneCompanies = rneDelegateService.getCompanyBySiret(siret);
         List<Affaire> affaires = new ArrayList<Affaire>();
-        if (rneCompanies != null && rneCompanies.size() > 0)
+        if (rneCompanies != null && rneCompanies.size() > 0) {
             for (RneCompany rneCompany : rneCompanies)
                 affaires.add(getAffaireFromRneCompany(rneCompany, siret));
+        } else {
+            return getAffairesFromSiren(siret);
+        }
         return affaires;
     }
 
