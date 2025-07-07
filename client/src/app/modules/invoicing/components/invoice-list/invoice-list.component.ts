@@ -1,7 +1,8 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { Subject } from 'rxjs';
+import { forkJoin, Subject } from 'rxjs';
 import { formatDateForSortTable, formatDateTimeForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
+import { Attachment } from 'src/app/modules/miscellaneous/model/Attachment';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
@@ -196,20 +197,57 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
     this.appService.openRoute(event, 'invoicing/add/null', null);
   }
 
+  // downloadAllFiles() {
+  //   let count = 0;
+  //   let selectedAttachmentIds = [] as Array<number>;
+  //   if (this.invoices)
+  //     for (let invoice of this.invoices) {
+  //       this.invoiceService.getInvoiceById(invoice.invoiceId).subscribe(completeInvoice => {
+  //         if (completeInvoice.attachments) {
+  //           for (let attachement of completeInvoice.attachments) {
+  //             if (attachement.attachmentType.id == this.constantService.getAttachmentTypeInvoice().id && count < 200) {
+  //               selectedAttachmentIds.push(attachement.id);
+  //               this.uploadAttachmentService.downloadAttachment(attachement);
+  //               count++;
+  //             }
+  //           }
+  //         }
+  //       })
+  //     }
+  // }
+
   downloadAllFiles() {
     let count = 0;
-    if (this.invoices)
-      for (let invoice of this.invoices) {
-        this.invoiceService.getInvoiceById(invoice.invoiceId).subscribe(completeInvoice => {
+    let selectedAttachmentIds: number[] = [];
+    console.log("test");
+    if (this.invoices && this.invoices.length > 0) {
+      let selectedInvoices = [];
+
+      for (let invoice of this.invoices)
+        selectedInvoices.push(this.invoiceService.getInvoiceById(invoice.invoiceId));
+
+
+      forkJoin(selectedInvoices).subscribe(allInvoices => {
+        for (let completeInvoice of allInvoices) {
           if (completeInvoice.attachments) {
             for (let attachement of completeInvoice.attachments) {
-              if (attachement.attachmentType.id == this.constantService.getAttachmentTypeInvoice().id && count < 200) {
-                this.uploadAttachmentService.downloadAttachment(attachement);
+              if (attachement.attachmentType.id === this.constantService.getAttachmentTypeInvoice().id && count < 200) {
+                selectedAttachmentIds.push(attachement.id);
                 count++;
               }
             }
           }
-        })
-      }
+        }
+
+        if (selectedAttachmentIds.length >= 2) {
+          this.uploadAttachmentService.downloadAttachmentsAsZip(selectedAttachmentIds);
+        } else if (selectedAttachmentIds.length == 1) {
+          let tmpAttachment = { id: selectedAttachmentIds[0] } as Attachment;
+          this.uploadAttachmentService.downloadAttachment(tmpAttachment);
+        }
+        else
+          this.appService.displaySnackBar("Aucun fichier à télécharger", false, 10)
+      });
+    }
   }
 }

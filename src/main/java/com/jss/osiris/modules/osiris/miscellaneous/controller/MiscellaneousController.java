@@ -1,16 +1,21 @@
 package com.jss.osiris.modules.osiris.miscellaneous.controller;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
@@ -1303,6 +1308,61 @@ public class MiscellaneousController {
             headers.set("content-type", mimeType);
         }
         return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/attachment/download-all")
+    @Transactional
+    public ResponseEntity<byte[]> downloadAllAttachments(@RequestParam("ids") List<Integer> ids)
+            throws OsirisValidationException, OsirisException {
+
+        ByteArrayOutputStream zipOutputStream = new ByteArrayOutputStream();
+
+        try (ZipOutputStream zos = new ZipOutputStream(zipOutputStream)) {
+
+            for (Integer idAttachment : ids) {
+                Attachment attachment = attachmentService.getAttachment(idAttachment);
+
+                if (attachment == null || attachment.getUploadedFile() == null
+                        || attachment.getUploadedFile().getPath() == null) {
+                    throw new OsirisValidationException(
+                            "Attachment or UploadedFile or Path is null for ID: " + idAttachment);
+                }
+
+                File file = new File(attachment.getUploadedFile().getPath());
+
+                if (!file.exists()) {
+                    throw new OsirisValidationException("File does not exist: " + file.getAbsolutePath());
+                }
+
+                try (FileInputStream fis = new FileInputStream(file)) {
+                    ZipEntry zipEntry = new ZipEntry(attachment.getUploadedFile().getFilename());
+                    zos.putNextEntry(zipEntry);
+
+                    byte[] buffer = new byte[4096];
+                    int len;
+                    while ((len = fis.read(buffer)) > 0) {
+                        zos.write(buffer, 0, len);
+                    }
+                    zos.closeEntry();
+                } catch (IOException e) {
+                    throw new OsirisException(e, "Unable to process file: " + file.getAbsolutePath());
+                }
+            }
+            zos.finish();
+
+        } catch (IOException e) {
+            throw new OsirisException(e, "Unable to generate ZIP file");
+        }
+
+        byte[] zipBytes = zipOutputStream.toByteArray();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("filename", "factures.zip");
+        headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
+        headers.setContentLength(zipBytes.length);
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
+        return new ResponseEntity<>(zipBytes, headers, HttpStatus.OK);
     }
 
     @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
