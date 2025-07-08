@@ -33,6 +33,7 @@ import { AssoServiceDocument } from '../../../my-account/model/AssoServiceDocume
 import { AssoServiceFieldType } from '../../../my-account/model/AssoServiceFieldType';
 import { Provision } from '../../../my-account/model/Provision';
 import { Service } from '../../../my-account/model/Service';
+import { ServiceType } from '../../../my-account/model/ServiceType';
 import { AssoServiceDocumentService } from '../../../my-account/services/asso.service.document.service';
 import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
 import { QuotationService } from '../../../my-account/services/quotation.service';
@@ -677,5 +678,27 @@ export class RequiredInformationComponent implements OnInit {
       }
     }
     return true;
+  }
+
+  isDisplayFieldForServiceType(assoServiceFieldType: AssoServiceFieldType, currentServiceType: ServiceType, isLastIndex: boolean) {
+    let alreadyFoundIds = [];
+    if (this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].serviceTypes) {
+      for (let serviceType of this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].serviceTypes) {
+        if (serviceType.assoServiceTypeFieldTypes) {
+          for (let serviceTypeAssoFieldType of serviceType.assoServiceTypeFieldTypes) {
+            if (alreadyFoundIds.indexOf(assoServiceFieldType.serviceFieldType.id) >= 0)
+              return false;
+            alreadyFoundIds.push(serviceTypeAssoFieldType.serviceFieldType.id);
+            if (serviceTypeAssoFieldType.serviceFieldType.id == assoServiceFieldType.serviceFieldType.id)
+              if (serviceType.id == currentServiceType.id) {
+                return true;
+              }
+          }
+        }
+      }
+    }
+    if (isLastIndex && alreadyFoundIds.indexOf(assoServiceFieldType.serviceFieldType.id) < 0)
+      return true;
+    return false;
   }
 }

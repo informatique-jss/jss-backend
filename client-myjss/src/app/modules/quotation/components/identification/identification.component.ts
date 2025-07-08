@@ -85,7 +85,7 @@ export class IdentificationComponent implements OnInit {
 
     this.currentDraftStep = this.quotationService.getCurrentDraftQuotationStep();
 
-    this.serviceFamilyGroupService.getServiceFamilyGroups().subscribe(response => {
+    await this.serviceFamilyGroupService.getServiceFamilyGroups().subscribe(response => {
       this.familyGroupService = response;
       this.loginService.getCurrentUser().subscribe(response => {
         this.currentUser = response;

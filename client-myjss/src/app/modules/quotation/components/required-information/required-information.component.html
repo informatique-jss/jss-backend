@@ -512,18 +512,18 @@
                       *ngIf="quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].serviceTypes.length>1 &&  serviceType.assoServiceTypeFieldTypes.length>0">
                       {{serviceType.label}}
                     </h6>
-                    <ng-container *ngFor="let assoFieldOfServiceType of serviceType.assoServiceTypeFieldTypes">
+                    <ng-container
+                      *ngFor="let assoServiceFieldType of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes; let i = index">
                       <ng-container
-                        *ngFor="let assoServiceFieldType of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes; let i = index">
-                        <ng-container
-                          *ngIf="isDisplayDependantField(assoServiceFieldType) && assoFieldOfServiceType.serviceFieldType.id==assoServiceFieldType.serviceFieldType.id">
+                        *ngIf="isDisplayFieldForServiceType(assoServiceFieldType, serviceType,serviceTypeIndex==quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].serviceTypes.length-1)">
+                        <ng-container *ngIf="isDisplayDependantField(assoServiceFieldType)">
                           <!-- TEXT -->
                           <div class="col-12 col-md-6 col-lg-4"
                             *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_TEXT">
                             <generic-input [(model)]="assoServiceFieldType.stringValue"
                               [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
-                              [form]="informationForm" [propertyName]="'stringFieldType'+i"
-                              [isMandatory]="assoServiceFieldType.isMandatory" [maxLength]="255">
+                              [form]="informationForm" [propertyName]="'stringFieldType'+i" [isMandatory]="false"
+                              [maxLength]="255">
                             </generic-input>
                           </div>
 
@@ -533,7 +533,7 @@
                             <generic-textarea [(model)]="assoServiceFieldType.textAreaValue"
                               [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
                               [form]="informationForm" [maxLength]="255" [propertyName]="'textAreaFieldType'+i"
-                              [isMandatory]="assoServiceFieldType.isMandatory">
+                              [isMandatory]="false">
                             </generic-textarea>
                           </div>
 
@@ -543,8 +543,7 @@
                             <div class="form-group w-auto">
                               <generic-date-picker [(model)]="assoServiceFieldType.dateValue"
                                 [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
-                                [form]="informationForm" [propertyName]="'dateFieldType'+i"
-                                [isMandatory]="assoServiceFieldType.isMandatory">
+                                [form]="informationForm" [propertyName]="'dateFieldType'+i" [isMandatory]="false">
                               </generic-date-picker>
                             </div>
                           </div>
@@ -554,8 +553,8 @@
                             *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_INTEGER">
                             <generic-input [(model)]="assoServiceFieldType.integerValue"
                               [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
-                              [form]="informationForm" [propertyName]="'integerFieldType'+i"
-                              [isMandatory]="assoServiceFieldType.isMandatory" type="number">
+                              [form]="informationForm" [propertyName]="'integerFieldType'+i" [isMandatory]="false"
+                              type="number">
                             </generic-input>
                           </div>
 
@@ -565,8 +564,7 @@
                             <select-value-service-field-type [(model)]="assoServiceFieldType.selectValue"
                               [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
                               [form]="informationForm" [propertyName]="'selectFieldType'+i"
-                              [serviceFieldType]="assoServiceFieldType.serviceFieldType"
-                              [isMandatory]="assoServiceFieldType.isMandatory">
+                              [serviceFieldType]="assoServiceFieldType.serviceFieldType" [isMandatory]="false">
                             </select-value-service-field-type>
                           </div>
                         </ng-container>

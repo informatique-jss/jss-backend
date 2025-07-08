@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { NgbAccordionModule, NgbDropdownModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAccordionModule, NgbDropdownModule, NgbModal, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { ASSO_SERVICE_DOCUMENT_ENTITY_TYPE, INVOICING_PAYMENT_LIMIT_REFUND_EUROS, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_VALIDATED_BY_CUSTOMER, SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
 import { capitalizeName, getListMails, getListPhones } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
@@ -39,6 +39,9 @@ import { getClassForQuotationStatus, getQuotationStatusLabel } from '../quotatio
 })
 export class QuotationDetailsComponent implements OnInit {
 
+  @ViewChild('validatedQuotationModal') validatedQuotationModal!: TemplateRef<any>;
+  validatedQuotationModalInstance: any | undefined;
+
   quotation: Quotation | undefined;
 
   quotationAssoAffaireOrders: AssoAffaireOrder[] = [];
@@ -75,6 +78,7 @@ export class QuotationDetailsComponent implements OnInit {
     private formBuilder: FormBuilder,
     private customerOrderService: CustomerOrderService,
     private serviceService: ServiceService,
+    private modalService: NgbModal,
   ) { }
 
   capitalizeName = capitalizeName;
@@ -136,8 +140,11 @@ export class QuotationDetailsComponent implements OnInit {
         this.displayPayButton = this.quotation.quotationStatus.code == QUOTATION_STATUS_SENT_TO_CUSTOMER;
     })
     this.customerOrderService.getCustomerOrderForQuotation(this.quotation.id).subscribe(response => {
-      if (response && response.id)
+      if (response && response.id) {
         this.associatedCustomerOrder = response;
+        if (this.associatedCustomerOrder)
+          this.openValidatedQuotationModal();
+      }
     })
   }
 
@@ -243,5 +250,18 @@ export class QuotationDetailsComponent implements OnInit {
         this.refreshQuotation();
       });
     }
+  }
+
+  openValidatedQuotationModal() {
+    if (this.validatedQuotationModalInstance) {
+      return;
+    }
+
+    this.validatedQuotationModalInstance = this.modalService.open(this.validatedQuotationModal, {
+    });
+
+    this.validatedQuotationModalInstance.result.finally(() => {
+      this.validatedQuotationModalInstance = undefined;
+    });
   }
 }
