@@ -219,6 +219,8 @@ public class QuotationServiceImpl implements QuotationService {
             quotation.setValidationToken(UUID.randomUUID().toString());
             quotation = quotationRepository.save(quotation);
         }
+        if (!isNewQuotation)
+            quotation.setUpdatedDate(LocalDateTime.now());
 
         if (oneNewProvision)
             quotation = quotationRepository.save(quotation);
