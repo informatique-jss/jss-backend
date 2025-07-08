@@ -3,7 +3,8 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { INCIDENT_REPORT_TO_COMPLETE } from 'src/app/libs/Constants';
 import { formatDateFrance } from 'src/app/libs/FormatHelper';
-import { KanbanComponent } from 'src/app/modules/dashboard/components/kanban/kanban.component';
+import { INCIDENT_REPORTING_KANBAN, KanbanComponent } from 'src/app/modules/dashboard/components/kanban/kanban.component';
+import { KanbanView } from 'src/app/modules/dashboard/model/KanbanView';
 import { SwimlaneType } from 'src/app/modules/dashboard/model/SwimlaneType';
 import { getResponsableLabelIQuotation, getTiersLabelIQuotation } from 'src/app/modules/invoicing/components/invoice-tools';
 import { WorkflowDialogComponent } from 'src/app/modules/miscellaneous/components/workflow-dialog/workflow-dialog.component';
@@ -16,6 +17,7 @@ import { AssoAffaireOrderService } from 'src/app/modules/quotation/services/asso
 import { CustomerOrderService } from 'src/app/modules/quotation/services/customer.order.service';
 import { CustomerOrderStatusService } from 'src/app/modules/quotation/services/customer.order.status.service';
 import { AppService } from 'src/app/services/app.service';
+import { RestUserPreferenceService } from 'src/app/services/rest.user.preference.service';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
 import { IncidentReport } from '../../model/IncidentReport';
 import { IncidentReportStatus } from '../../model/IncidentReportStatus';
@@ -40,6 +42,7 @@ export class IncidentReportingComponent extends KanbanComponent<IncidentReport, 
     private formBuilder: FormBuilder,
     private appService: AppService,
     private userPreferenceService: UserPreferenceService,
+    private restUserPreferenceService2: RestUserPreferenceService,
     public invidentWorkflowDialog: MatDialog,
     private incidentReportStatusService: IncidentReportStatusService,
     private incidentReportService: IncidentReportService,
@@ -48,7 +51,7 @@ export class IncidentReportingComponent extends KanbanComponent<IncidentReport, 
     private assoAffaireOrderService: AssoAffaireOrderService,
     private employeeService: EmployeeService
   ) {
-    super();
+    super(restUserPreferenceService2);
   }
 
   kanbanForm = this.formBuilder.group({});
@@ -117,10 +120,18 @@ export class IncidentReportingComponent extends KanbanComponent<IncidentReport, 
       this.panelOpen = true;
   }
 
-  saveUserPreferencesOnApplyFilter() {
-    this.userPreferenceService.setUserSearchBookmark(this.statusSelected.map(status => status.id), "kanban-cri-status");
-    this.userPreferenceService.setUserSearchBookmark((this.employeesSelected != undefined && this.employeesSelected.length > 0) ? this.employeesSelected : null, "kanban-cri-employee");
-    this.userPreferenceService.setUserSearchBookmark(this.selectedSwimlaneType, "kanban-cri-swimline-type");
+  setKanbanView(kanbanView: KanbanView<IncidentReport, IncidentReportStatus>): void {
+    this.statusSelected = kanbanView.status;
+    this.employeesSelected = kanbanView.employees;
+    this.selectedSwimlaneType = kanbanView.swimlaneType;
+  }
+
+  getKanbanView(): KanbanView<IncidentReport, IncidentReportStatus> {
+    return { status: this.statusSelected, employees: this.employeesSelected, swimlaneType: this.selectedSwimlaneType } as KanbanView<IncidentReport, IncidentReportStatus>;
+  }
+
+  getKanbanComponentViewCode(): string {
+    return INCIDENT_REPORTING_KANBAN;
   }
 
   findEntities() {

@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,11 +21,13 @@ import { InvoicingModule } from 'src/app/modules/invoicing/components/invoicing/
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { QuotationModule } from 'src/app/modules/quotation/components/quotation/quotation.module';
 import { AssignNewOrderDialogComponent } from '../assign-new-order-dialog/assign-new-order-dialog.component';
+import { CustomViewsComponent } from '../custom-views/custom-views.component';
 import { OrderKabanComponent } from '../order-kaban/order-kaban.component';
 import { ProvisionAffectationKanbanComponent } from '../provision-affectation-kanban/provision-affectation-kanban.component';
 import { ProvisionBoardComponent } from '../provision-board/provision-board.component';
 import { ProvisionKanbanComponent } from '../provision-kanban/provision-kanban.component';
 import { QuotationKanbanComponent } from '../quotation-kanban/quotation-kanban.component';
+import { SaveCurrentViewDialog } from '../save-current-view-dialog/save-current-view-dialog.component';
 import { DashboardComponent } from './dashboard.component';
 
 const routes: Routes = [
@@ -54,6 +57,7 @@ const routes: Routes = [
     InvoicingModule,
     QuotationModule,
     AdministrationModule,
+    MatDialogModule,
   ],
   declarations: [
     DashboardComponent,
@@ -62,7 +66,9 @@ const routes: Routes = [
     QuotationKanbanComponent,
     AssignNewOrderDialogComponent,
     ProvisionKanbanComponent,
-    ProvisionAffectationKanbanComponent
+    ProvisionAffectationKanbanComponent,
+    CustomViewsComponent,
+    SaveCurrentViewDialog
   ],
   exports: [
   ],
