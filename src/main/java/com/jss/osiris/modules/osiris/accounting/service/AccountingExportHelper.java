@@ -1151,10 +1151,9 @@ public class AccountingExportHelper {
                                 currentCell.setCellValue("");
                                 currentCell.setCellStyle(recordCellStyle);
                                 currentCell = currentRow.createCell(currentColumn++);
-                                currentCell.setCellValue(
-                                                accountingRecord.getInvoiceId() != null
-                                                                ? accountingRecord.getInvoiceId() + ""
-                                                                : accountingRecord.getManualAccountingDocumentNumber());
+                                currentCell.setCellValue(accountingRecord.getManualAccountingDocumentNumber() != null
+                                                ? accountingRecord.getManualAccountingDocumentNumber()
+                                                : accountingRecord.getInvoiceId() + "");
                                 currentCell.setCellStyle(recordCellStyle);
                                 currentCell = currentRow.createCell(currentColumn++);
                                 if (accountingRecord.getLetteringNumber() != null) {
