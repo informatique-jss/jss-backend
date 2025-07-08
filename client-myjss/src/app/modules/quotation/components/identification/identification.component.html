@@ -225,10 +225,11 @@
   <div class="row justify-content-end m-0" *ngIf="quotation.serviceFamilyGroup">
     <a class="col-md-auto p-md-4" (click)="addAffaire()"><strong>Ajouter une affaire</strong></a>
   </div>
-  <div class="row position-fixed bottom-0 start-0 w-100 bg-light shadow-sm p-3 m-0 justify-content-end"
-    *ngIf="quotation.serviceFamilyGroup">
-    <button type="button" class="btn btn-secondary rounded-1 col-auto mx-5" *ngIf="canStartQuotation()"
-      (click)="startQuotation()">
-      Démarrer<i class="ai-arrow-right ms-2"></i></button>
+  <div
+    class="position-fixed bottom-0 start-0 w-100 bg-light shadow-sm p-3 m-0 d-flex justify-content-end align-items-center z-1030">
+    <button type="button" class="btn btn-secondary rounded-1  mx-0 mx-sm-5 d-flex align-items-center"
+      *ngIf="canStartQuotation()" (click)="startQuotation()"> <span class="me-2">Démarrer</span>
+      <i class="ai-arrow-right d-none d-sm-inline"></i>
+    </button>
   </div>
 </div>

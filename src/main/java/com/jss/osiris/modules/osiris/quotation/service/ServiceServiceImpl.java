@@ -768,12 +768,14 @@ public class ServiceServiceImpl implements ServiceService {
                     currentPriority = provision.getAnnouncement().getAnnouncementStatus().getServicePriority();
                     currentStatus = provision.getAnnouncement().getAnnouncementStatus().getLabel();
                 } else if (provision.getSimpleProvision() != null && provision.getSimpleProvision()
-                        .getSimpleProvisionStatus().getServicePriority() > currentPriority) {
+                        .getSimpleProvisionStatus() != null && provision.getSimpleProvision()
+                                .getSimpleProvisionStatus().getServicePriority() > currentPriority) {
                     currentPriority = provision.getSimpleProvision().getSimpleProvisionStatus()
                             .getServicePriority();
                     currentStatus = provision.getSimpleProvision().getSimpleProvisionStatus().getLabel();
-                } else if (provision.getFormalite() != null && provision.getFormalite().getFormaliteStatus()
-                        .getServicePriority() > currentPriority) {
+                } else if (provision.getFormalite() != null && provision.getFormalite().getFormaliteStatus() != null
+                        && provision.getFormalite().getFormaliteStatus()
+                                .getServicePriority() > currentPriority) {
                     currentPriority = provision.getFormalite().getFormaliteStatus().getServicePriority();
                     currentStatus = provision.getFormalite().getFormaliteStatus().getLabel();
                     if (provision.getFormalite().getFormaliteStatus().getCode()
@@ -782,6 +784,7 @@ public class ServiceServiceImpl implements ServiceService {
                                 .getFormaliteStatusByCode(FormaliteStatus.FORMALITE_WAITING_DOCUMENT_AUTHORITY)
                                 .getLabel();
                 } else if (provision.getDomiciliation() != null
+                        && provision.getDomiciliation().getDomiciliationStatus() != null
                         && provision.getDomiciliation().getDomiciliationStatus()
                                 .getServicePriority() > currentPriority) {
                     currentPriority = provision.getDomiciliation().getDomiciliationStatus().getServicePriority();

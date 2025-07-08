@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { NgbAccordionModule, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_QUOTATION_WAITING_CONFRERE, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, QUOTATION_STATUS_VALIDATED_BY_CUSTOMER } from '../../../../libs/Constants';
@@ -66,6 +67,7 @@ export class QuotationsComponent implements OnInit {
     private mailComputeResultService: MailComputeResultService,
     private userPreferenceService: UserPreferenceService,
     private userScopeService: UserScopeService,
+    private activatedRoute: ActivatedRoute
   ) { }
 
   getQuotationStatusLabel = getQuotationStatusLabel;
@@ -86,6 +88,22 @@ export class QuotationsComponent implements OnInit {
     }
 
     this.setBookmark();
+
+    let inputSearchStatus = this.activatedRoute.snapshot.params['statusCode'];
+    if (inputSearchStatus) {
+      this.statusFilterOpen = false;
+      this.statusFilterToVerify = false;
+      this.statusFilterWaitingConfrere = false;
+      this.statusFilterSendToCustomer = false;
+      this.statusFilterValidatedByCustomer = false;
+      this.statusFilterRefusedByCustomer = false;
+      this.statusFilterAbandonned = false;
+
+      if (inputSearchStatus == QUOTATION_STATUS_SENT_TO_CUSTOMER)
+        this.statusFilterSendToCustomer = true;
+      if (inputSearchStatus == QUOTATION_STATUS_OPEN)
+        this.statusFilterOpen = true;
+    }
 
     let status: string[] = [];
     if (this.statusFilterOpen)

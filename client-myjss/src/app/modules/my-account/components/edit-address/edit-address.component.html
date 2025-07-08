@@ -55,6 +55,7 @@
                     [disabled]="lockBillingLabel " [ngModelOptions]="{standalone: true}">
                   <label class="form-check-label" for="billing-isBillingOther">Libeller à un tiers <i
                       style="cursor: pointer;" class="ai-circle-info"
+                      *ngIf="document.billingLabelType.id==billingLabelTypeOther.id"
                       ngbTooltip="Si vous choisissez cette option vous serez recontacté par nos équipes pour déterminer l'adresse à utiliser"></i></label>
                 </div>
               </div>

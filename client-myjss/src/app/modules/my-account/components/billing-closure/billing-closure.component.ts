@@ -62,10 +62,14 @@ export class BillingClosureComponent implements OnInit {
 
   refreshClosure() {
     let promises = [];
+    let doneIds = [];
+    this.receiptValues = [];
+    this.isFirstLoading = true;
     if (this.userScope) {
       for (let id in this.userScopeSelected) {
-        if (this.userScopeSelected[id]) {
-          promises.push(this.billingClosureService.getBillingClosureReceiptValueForResponsable(parseInt(id), false));
+        if (this.userScopeSelected[id] && doneIds.indexOf(id) < 0) {
+          promises.push(this.billingClosureService.getBillingClosureReceiptValueForResponsable(parseInt(id), false, this.currentSort == 'createdDateDesc'));
+          doneIds.push(id);
         }
       }
 
@@ -169,6 +173,8 @@ export class BillingClosureComponent implements OnInit {
 
   changeSort(sortType: string) {
     this.currentSort = sortType;
+    if (this.currentSort.indexOf('createdDate') >= 0)
+      this.refreshClosure();
   }
 
   getTotalSolde(affaire: string | undefined, responsable: Responsable | undefined) {

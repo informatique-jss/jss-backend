@@ -313,25 +313,27 @@ public class PricingHelper {
         // First one => double price for base
         if (quotation instanceof CustomerOrder && provision.getDomiciliation() != null && quotation.getId() != null) {
             CustomerOrder customerOrder = customerOrderService.getCustomerOrder(quotation.getId());
-            CustomerOrder masterCustomerOrder = (customerOrder.getIsRecurring() != null
-                    && customerOrder.getIsRecurring()) ? customerOrder
-                            : customerOrder.getCustomerOrderParentRecurring();
-            if (masterCustomerOrder != null && masterCustomerOrder.getCustomerOrderFrequency() != null)
-                if (billingItem.getBillingType().getId()
-                        .equals(constantService.getBillingTypeDomiciliationContractTypeKeepMail().getId())
-                        || billingItem.getBillingType().getId()
-                                .equals(constantService.getBillingTypeDomiciliationContractTypeRouteEmail().getId())
-                        || billingItem.getBillingType().getId()
-                                .equals(constantService.getBillingTypeDomiciliationContractTypeRouteEmailAndMail()
-                                        .getId())
-                        || billingItem.getBillingType().getId()
-                                .equals(constantService.getBillingTypeDomiciliationContractTypeRouteMail().getId()))
-                    invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice().multiply(
-                            BigDecimal.valueOf(masterCustomerOrder.getCustomerOrderFrequency().getMonthNumber())));
+            if (customerOrder != null) {
+                CustomerOrder masterCustomerOrder = (customerOrder.getIsRecurring() != null
+                        && customerOrder.getIsRecurring()) ? customerOrder
+                                : customerOrder.getCustomerOrderParentRecurring();
+                if (masterCustomerOrder != null && masterCustomerOrder.getCustomerOrderFrequency() != null)
+                    if (billingItem.getBillingType().getId()
+                            .equals(constantService.getBillingTypeDomiciliationContractTypeKeepMail().getId())
+                            || billingItem.getBillingType().getId()
+                                    .equals(constantService.getBillingTypeDomiciliationContractTypeRouteEmail().getId())
+                            || billingItem.getBillingType().getId()
+                                    .equals(constantService.getBillingTypeDomiciliationContractTypeRouteEmailAndMail()
+                                            .getId())
+                            || billingItem.getBillingType().getId()
+                                    .equals(constantService.getBillingTypeDomiciliationContractTypeRouteMail().getId()))
+                        invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice().multiply(
+                                BigDecimal.valueOf(masterCustomerOrder.getCustomerOrderFrequency().getMonthNumber())));
 
-            if (customerOrder.getIsRecurring() != null && customerOrder.getIsRecurring()
-                    && invoiceItem.getPreTaxPrice() != null)
-                invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice().multiply(new BigDecimal(2)));
+                if (customerOrder.getIsRecurring() != null && customerOrder.getIsRecurring()
+                        && invoiceItem.getPreTaxPrice() != null)
+                    invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice().multiply(new BigDecimal(2)));
+            }
         }
 
         if (invoiceItem.getPreTaxPrice() != null)

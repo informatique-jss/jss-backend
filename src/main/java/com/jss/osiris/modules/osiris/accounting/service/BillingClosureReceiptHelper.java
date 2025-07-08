@@ -183,15 +183,14 @@ public class BillingClosureReceiptHelper {
         // Find customer orders
         ArrayList<Responsable> responsableList = new ArrayList<Responsable>();
 
-        if (tiers != null && tiers.getResponsables() != null) {
+        if (responsable != null) {
+            responsableList.add(responsable);
+        } else if (tiers != null && tiers.getResponsables() != null) {
             values.add(new BillingClosureReceiptValue(
                     tiers.getDenomination() != null ? tiers.getDenomination()
                             : (tiers.getFirstname() + " " + tiers.getLastname())));
             for (Responsable responsableOfTiers : tiers.getResponsables())
                 responsableList.add(responsableOfTiers);
-        }
-        if (responsable != null) {
-            responsableList.add(responsable);
         }
 
         List<CustomerOrder> customerOrders = customerOrderService

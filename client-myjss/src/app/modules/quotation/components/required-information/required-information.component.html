@@ -55,7 +55,7 @@
 
     <ng-container *ngIf="selectedAssoIndex!=null && selectedServiceIndex!=null && quotation.assoAffaireOrders[selectedAssoIndex] &&
        quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex]">
-      <ul ngbNav #nav="ngbNav" [activeId]="activeId" class="nav-tabs"
+      <ul ngbNav #nav="ngbNav" [activeId]="activeId" class="nav-tabs flex-nowrap"
         (navChange)="changeProvisionNoticeTemplateDesciption($event)">
 
         <ng-container
@@ -115,23 +115,22 @@
                         (onToggleChange)="changeIsShowNoticeTemplate($event, provision.isRedactedByJss)"></generic-toggle>
                     </div>
                   </div>
+                  <div class="row" *ngIf="  !provision.isRedactedByJss">
+                    <div class="col-12 col-lg-6 form-check form-switch">
+                      <generic-toggle [(model)]="provision.announcement.isReReadByJss" label="Relecture par le JSS"
+                        [form]="informationForm" [propertyName]="'isReReadByJss'+provision.order"
+                        [isDisabled]="false"></generic-toggle>
+                    </div>
+                  </div>
                 </div>
                 <hr>
 
                 <!-- announcement form : text area -->
                 <div class="row pt-3">
-                  <div *ngIf="provision.isDoNotGenerateAnnouncement && !provision.isRedactedByJss" [ngClass]="{'col-md-3' : !provision.isRedactedByJss && !isUsingTemplate,
-                   'row row-cols-4 px-4': !provision.isRedactedByJss && isUsingTemplate}">
-
-                    <!-- Toggle relecture -->
-                    <div class="col-12 col-lg-3 form-check align-items-start mb-4 px-3" style="padding-left: 0px;">
-                      <generic-toggle [(model)]="provision.announcement.isReReadByJss" label="Relecture par le JSS"
-                        [form]="informationForm" [propertyName]="'isReReadByJss'+provision.order"
-                        [isDisabled]="false"></generic-toggle>
-                    </div>
+                  <div *ngIf="  !provision.isRedactedByJss" class="col-12 row row-cols-4 px-4">
 
                     <!-- Département -->
-                    <div class="col-12 col-lg-3 mb-3 align-items-start" *ngIf="departments">
+                    <div class="col-12 col-lg-4 mb-3 align-items-start">
                       <select-department [(model)]="provision.announcement.department"
                         label="Département de publication" [form]="informationForm"
                         [propertyName]="'department'+provision.order" [isMandatory]="true"
@@ -139,7 +138,7 @@
                     </div>
 
                     <!-- Rubrique -->
-                    <div class="col-12 col-lg-3 mb-3 align-items-start" *ngIf="noticeTypeFamilies">
+                    <div class="col-12 col-lg-4 mb-3 align-items-start">
                       <select-notice-type-family [(model)]="provision.announcement.noticeTypeFamily"
                         label="Rubrique de publication" [form]="informationForm"
                         [propertyName]="'noticeTypeFamily'+provision.order" [isMandatory]="true"
@@ -147,7 +146,7 @@
                     </div>
 
                     <!-- Sous-rubrique -->
-                    <div class="col-12 col-lg-3 mb-3 align-items-start"
+                    <div class="col-12 col-lg-4 mb-3 align-items-start"
                       *ngIf="provision.announcement.noticeTypeFamily && noticeTypes">
                       <select-multiple-notice-type [(model)]="provision.announcement.noticeTypes"
                         label="Sous-rubrique(s) de publication" [form]="informationForm"
@@ -158,7 +157,7 @@
                   </div>
 
                   <div *ngIf="provision.isDoNotGenerateAnnouncement && !provision.isRedactedByJss && !isUsingTemplate"
-                    class="col-md-9">
+                    class="col-12">
                     <label for="announcementTextarea" class="form-label">Texte de l'annonce</label>
                     <ckeditor id="announcementTextarea" [editor]="ckEditorHeader" [config]="config"
                       (ready)="onEditorReady($event, provision)" (change)="onNoticeChange($event, provision)">
@@ -614,18 +613,18 @@
 
   <div
     class="position-fixed bottom-0 start-0 w-100 bg-light shadow-sm p-3 m-0 d-flex justify-content-between align-items-center z-1030">
-    <button type="button" class="btn btn-secondary rounded-1 mx-5 d-flex align-items-center"
+    <button type="button" class="btn btn-secondary rounded-1 mx-0 mx-sm-5 d-flex align-items-center"
       (click)="moveToService((selectedServiceIndex-1), selectedAssoIndex)"
       *ngIf="selectedServiceIndex!=null && selectedAssoIndex!=null">
-      <i class="ai-arrow-left"></i>
-      <span class="d-none d-sm-inline ms-2">Étape précédente </span>
+      <i class="ai-arrow-left d-none d-sm-inline"></i>
+      <span class="ms-2 ms-lg-2">Étape précédente </span>
     </button>
 
-    <button type="button" class="btn btn-secondary rounded-1 mx-5 d-flex align-items-center"
+    <button type="button" class="btn btn-secondary rounded-1  mx-0 mx-sm-5 d-flex align-items-center"
       *ngIf="canSaveQuotation() && selectedServiceIndex!=null && selectedAssoIndex!=null"
-      (click)="moveToService((selectedServiceIndex+1), selectedAssoIndex)"> <span class="d-sm-inline me-2">Étape
+      (click)="moveToService((selectedServiceIndex+1), selectedAssoIndex)"> <span class="me-2">Étape
         suivante</span>
-      <i class="ai-arrow-right"></i>
+      <i class="ai-arrow-right d-none d-sm-inline"></i>
     </button>
   </div>
 </div>

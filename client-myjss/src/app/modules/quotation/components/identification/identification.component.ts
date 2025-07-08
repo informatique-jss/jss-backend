@@ -212,7 +212,7 @@ export class IdentificationComponent implements OnInit {
       this.loadingSiretSearch = true;
       this.affaireService.getAffaireBySiret(this.siretSearched).subscribe(response => {
         this.loadingSiretSearch = false;
-        if (response && response.length == 1) {
+        if (response && response.length == 1 && response[0].siret) {
           this.quotation.assoAffaireOrders[indexAsso].affaire = response[0];
           this.siretSearched = "";
         }
