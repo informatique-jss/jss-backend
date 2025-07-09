@@ -76,6 +76,8 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.DepartmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.LanguageService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.LegalFormService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.controller.QuotationValidationHelper;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
@@ -154,6 +156,12 @@ public class MyJssQuotationController {
 
 	@Autowired
 	TypeDocumentService typeDocumentService;
+
+	@Autowired
+	MailService mailService;
+
+	@Autowired
+	PhoneService phoneService;
 
 	@Autowired
 	AttachmentTypeService attachmentTypeService;
@@ -860,14 +868,19 @@ public class MyJssQuotationController {
 
 	@GetMapping(inputEntryPoint + "/affaire/siret")
 	@JsonView(JacksonViews.MyJssListView.class)
-	public ResponseEntity<List<Affaire>> getAffaireBySiret(@RequestParam String siret, HttpServletRequest request)
+	public ResponseEntity<List<Affaire>> getAffaireBySiretOrSiren(@RequestParam String siretOrSiren,
+			HttpServletRequest request)
 			throws OsirisClientMessageException, OsirisException {
 		detectFlood(request);
-		if (siret == null)
+		if (siretOrSiren == null)
 			throw new OsirisValidationException("id");
-		validationHelper.validateSiret(siret);
 
-		return new ResponseEntity<List<Affaire>>(affaireService.getAffairesFromSiret(siret.trim().replaceAll(" ", "")),
+		if (siretOrSiren == null || !validationHelper.validateSiret(siretOrSiren.trim().replaceAll(" ", ""))
+				&& !validationHelper.validateSiren(siretOrSiren.trim().replaceAll(" ", "")))
+			return new ResponseEntity<List<Affaire>>(new ArrayList<Affaire>(), HttpStatus.OK);
+
+		return new ResponseEntity<List<Affaire>>(
+				affaireService.getAffairesFromSiret(siretOrSiren.trim().replaceAll(" ", "")),
 				HttpStatus.OK);
 	}
 
@@ -1295,8 +1308,14 @@ public class MyJssQuotationController {
 									.setIsProofReadingDocument(
 											provisionIn.getAnnouncement().getIsProofReadingDocument());
 						}
-						if (provision.getDomiciliation() != null) {
-							provision = provisionIn;
+						if (provisionIn.getDomiciliation() != null) {
+							if (provision.getDomiciliation().getMails() != null)
+								mailService.populateMailIds(provisionIn.getDomiciliation().getMails());
+							if (provision.getDomiciliation().getLegalGardianMails() != null)
+								mailService.populateMailIds(provisionIn.getDomiciliation().getLegalGardianMails());
+							if (provision.getDomiciliation().getLegalGardianPhones() != null)
+								phoneService.populatePhoneIds(provisionIn.getDomiciliation().getLegalGardianPhones());
+							provision.setDomiciliation(provisionIn.getDomiciliation());
 						}
 					}
 				}

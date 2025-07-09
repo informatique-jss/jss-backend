@@ -715,6 +715,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
             addOrUpdateCustomerOrderStatus(customerOrder, CustomerOrderStatus.BEING_PROCESSED, false);
+
+            if (isOnlyJssAnnouncement(customerOrder, true)) {
+                quotationValidationHelper.validateQuotationAndCustomerOrder(customerOrder, null);
+                autoBilledProvisions(customerOrder);
+            }
         }
 
         return customerOrder;
@@ -1030,6 +1035,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     }
                 }
             }
+
+        addOrUpdateCustomerOrderStatusFromUser(customerOrder2, CustomerOrderStatus.BEING_PROCESSED);
         return customerOrder2;
     }
 
@@ -1990,7 +1997,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     public void autoBilledProvisions(CustomerOrder customerOrder)
             throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException, OsirisException {
         if (customerOrder.getCustomerOrderStatus() != null && customerOrder.getCustomerOrderStatus().getCode()
-                .equals(CustomerOrderStatus.BEING_PROCESSED))
+                .equals(CustomerOrderStatus.BEING_PROCESSED) && isOnlyJssAnnouncement(customerOrder, true))
             if (customerOrder.getAssoAffaireOrders() != null) {
                 for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
                     if (asso.getServices() != null) {

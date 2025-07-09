@@ -83,7 +83,8 @@ public class CustomerOrderAssignationServiceImpl implements CustomerOrderAssigna
                             if (service.getProvisions() != null)
                                 for (Provision provision : service.getProvisions()) {
                                     if (provision.getProvisionType() != null && provision.getProvisionType()
-                                            .getAssignationType().getId().equals(assignationType.getId())
+                                            .getAssignationType() != null && provision.getProvisionType()
+                                                    .getAssignationType().getId().equals(assignationType.getId())
                                             && !assignationTypesToDefine.contains(assignationType)) {
                                         assignationTypesToDefine.add(assignationType);
 

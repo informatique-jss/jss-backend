@@ -480,3 +480,21 @@
     </div>
   </section>
 </div>
+
+
+<ng-template #validatedQuotationModal let-modal>
+  <div>
+    <div class="modal-header">
+      <h5 class="modal-title" id="confirmBackModalLabel">Devis validé</h5>
+      <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Fermer"></button>
+    </div>
+    <div class="modal-body">Ce devis est validé, voulez-vous consulter plutôt la commande associée ?
+    </div>
+    <div class="modal-footer" *ngIf="associatedCustomerOrder">
+      <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Annuler</button>
+      <button type="button" class="btn btn-danger ms-2"
+        (click)="openOrderDetails($event ,associatedCustomerOrder);$event.stopPropagation();modal.dismiss()">Voir la
+        commande</button>
+    </div>
+  </div>
+</ng-template>

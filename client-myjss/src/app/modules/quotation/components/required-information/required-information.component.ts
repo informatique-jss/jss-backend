@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ChangeEvent, CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { NgbModal, NgbNavChangeEvent, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { Alignment, Bold, ClassicEditor, Essentials, Font, GeneralHtmlSupport, Indent, IndentBlock, Italic, Link, List, Mention, Paragraph, PasteFromOffice, RemoveFormat, Underline, Undo } from 'ckeditor5';
-import { combineLatest, of, Subscription, tap } from 'rxjs';
+import { combineLatest, Observable, of, Subscription } from 'rxjs';
 import { PROVISION_SCREEN_TYPE_ANNOUNCEMENT, PROVISION_SCREEN_TYPE_DOMICILIATION, SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
 import { validateEmail, validateFrenchPhone, validateInternationalPhone } from '../../../../libs/CustomFormsValidatorsHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
@@ -33,6 +33,7 @@ import { AssoServiceDocument } from '../../../my-account/model/AssoServiceDocume
 import { AssoServiceFieldType } from '../../../my-account/model/AssoServiceFieldType';
 import { Provision } from '../../../my-account/model/Provision';
 import { Service } from '../../../my-account/model/Service';
+import { ServiceType } from '../../../my-account/model/ServiceType';
 import { AssoServiceDocumentService } from '../../../my-account/services/asso.service.document.service';
 import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
 import { QuotationService } from '../../../my-account/services/quotation.service';
@@ -114,6 +115,7 @@ export class RequiredInformationComponent implements OnInit {
   isBrowser = false;
 
   activeId = 3;
+  isOnlyAnnouncement = true;
 
   SERVICE_FIELD_TYPE_TEXT = SERVICE_FIELD_TYPE_TEXT;
   SERVICE_FIELD_TYPE_INTEGER = SERVICE_FIELD_TYPE_INTEGER;
@@ -142,7 +144,7 @@ export class RequiredInformationComponent implements OnInit {
 
   currentTab: string = 'documents';
 
-  isUsingTemplate: boolean = true;
+  isUsingTemplate: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -239,7 +241,10 @@ export class RequiredInformationComponent implements OnInit {
                     provision.announcement = {} as Announcement;
                     provision.isRedactedByJss = true;
                   }
-                } else if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_DOMICILIATION) {
+                } else {
+                  this.isOnlyAnnouncement = false;
+                }
+                if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_DOMICILIATION) {
                   if (!provision.domiciliation) {
                     this.activeId = 2;
                     provision.domiciliation = {} as Domiciliation;
@@ -366,14 +371,12 @@ export class RequiredInformationComponent implements OnInit {
         }
       }
 
-      if (this.noticeTemplateDescription.announcementOrder)
+      if (this.noticeTemplateDescription.announcementOrder && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[this.noticeTemplateDescription.announcementOrder])
         this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[this.noticeTemplateDescription.announcementOrder].announcement!.notice = this.noticeTemplateDescription.displayText;
 
       if (this.currentUser) {
         this.appService.showLoadingSpinner();
-        this.serviceService.addOrUpdateService(this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex]).pipe(tap(response => {
-        }));
-        return of(true);
+        return this.serviceService.addOrUpdateService(this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex]) as any as Observable<boolean>;
       } else {
         if (this.quotation.isQuotation) {
           this.quotationService.setCurrentDraftQuotation(this.quotation);
@@ -458,6 +461,8 @@ export class RequiredInformationComponent implements OnInit {
               promises.push(this.serviceService.deleteService(service));
       combineLatest(promises).subscribe(response => {
         this.appService.hideLoadingSpinner();
+        this.noticeTemplateDescription = {} as NoticeTemplateDescription;
+        this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
         this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);
         this.appService.openRoute(undefined, "quotation/services-selection", undefined);
       })
@@ -671,5 +676,27 @@ export class RequiredInformationComponent implements OnInit {
       }
     }
     return true;
+  }
+
+  isDisplayFieldForServiceType(assoServiceFieldType: AssoServiceFieldType, currentServiceType: ServiceType, isLastIndex: boolean) {
+    let alreadyFoundIds = [];
+    if (this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].serviceTypes) {
+      for (let serviceType of this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].serviceTypes) {
+        if (serviceType.assoServiceTypeFieldTypes) {
+          for (let serviceTypeAssoFieldType of serviceType.assoServiceTypeFieldTypes) {
+            if (alreadyFoundIds.indexOf(assoServiceFieldType.serviceFieldType.id) >= 0)
+              return false;
+            alreadyFoundIds.push(serviceTypeAssoFieldType.serviceFieldType.id);
+            if (serviceTypeAssoFieldType.serviceFieldType.id == assoServiceFieldType.serviceFieldType.id)
+              if (serviceType.id == currentServiceType.id) {
+                return true;
+              }
+          }
+        }
+      }
+    }
+    if (isLastIndex && alreadyFoundIds.indexOf(assoServiceFieldType.serviceFieldType.id) < 0)
+      return true;
+    return false;
   }
 }

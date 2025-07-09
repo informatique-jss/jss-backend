@@ -202,6 +202,7 @@ public class ServiceServiceImpl implements ServiceService {
         ArrayList<String> typeDocumentCodes = new ArrayList<String>();
         ArrayList<AssoServiceFieldType> assoServiceFieldTypes = new ArrayList<AssoServiceFieldType>();
         ArrayList<Integer> serviceFieldTypeIds = new ArrayList<Integer>();
+        Boolean alreadyHasFurtherInformationServiceFieldType = false;
 
         ArrayList<AssoServiceProvisionType> assoServiceProvisionTypes = new ArrayList<AssoServiceProvisionType>();
 
@@ -235,6 +236,12 @@ public class ServiceServiceImpl implements ServiceService {
                                     .contains(assoServiceTypeFieldType.getServiceFieldType().getId())) {
                         serviceFieldTypeIds.add(assoServiceTypeFieldType.getServiceFieldType().getId());
                         assoServiceFieldTypes.add(newAssoServiceFieldType);
+
+                        if (!alreadyHasFurtherInformationServiceFieldType
+                                && newAssoServiceFieldType.getServiceFieldType().getId()
+                                        .equals(constantService.getFurtherInformationServiceFieldType().getId()))
+                            alreadyHasFurtherInformationServiceFieldType = true;
+
                     }
                 }
         }
@@ -246,11 +253,13 @@ public class ServiceServiceImpl implements ServiceService {
             service.setProvisions(mergeProvisionTypes(assoServiceProvisionTypes, service, affaire));
 
         // Always add further information field
-        AssoServiceFieldType newAssoServiceFieldType = new AssoServiceFieldType();
-        newAssoServiceFieldType.setIsMandatory(false);
-        newAssoServiceFieldType.setService(service);
-        newAssoServiceFieldType.setServiceFieldType(constantService.getFurtherInformationServiceFieldType());
-        assoServiceFieldTypes.add(newAssoServiceFieldType);
+        if (!alreadyHasFurtherInformationServiceFieldType) {
+            AssoServiceFieldType newAssoServiceFieldType = new AssoServiceFieldType();
+            newAssoServiceFieldType.setIsMandatory(false);
+            newAssoServiceFieldType.setService(service);
+            newAssoServiceFieldType.setServiceFieldType(constantService.getFurtherInformationServiceFieldType());
+            assoServiceFieldTypes.add(newAssoServiceFieldType);
+        }
 
         service.setAssoServiceFieldTypes(assoServiceFieldTypes);
         service.setAssoServiceDocuments(assoServiceDocuments);
@@ -759,12 +768,14 @@ public class ServiceServiceImpl implements ServiceService {
                     currentPriority = provision.getAnnouncement().getAnnouncementStatus().getServicePriority();
                     currentStatus = provision.getAnnouncement().getAnnouncementStatus().getLabel();
                 } else if (provision.getSimpleProvision() != null && provision.getSimpleProvision()
-                        .getSimpleProvisionStatus().getServicePriority() > currentPriority) {
+                        .getSimpleProvisionStatus() != null && provision.getSimpleProvision()
+                                .getSimpleProvisionStatus().getServicePriority() > currentPriority) {
                     currentPriority = provision.getSimpleProvision().getSimpleProvisionStatus()
                             .getServicePriority();
                     currentStatus = provision.getSimpleProvision().getSimpleProvisionStatus().getLabel();
-                } else if (provision.getFormalite() != null && provision.getFormalite().getFormaliteStatus()
-                        .getServicePriority() > currentPriority) {
+                } else if (provision.getFormalite() != null && provision.getFormalite().getFormaliteStatus() != null
+                        && provision.getFormalite().getFormaliteStatus()
+                                .getServicePriority() > currentPriority) {
                     currentPriority = provision.getFormalite().getFormaliteStatus().getServicePriority();
                     currentStatus = provision.getFormalite().getFormaliteStatus().getLabel();
                     if (provision.getFormalite().getFormaliteStatus().getCode()
@@ -773,6 +784,7 @@ public class ServiceServiceImpl implements ServiceService {
                                 .getFormaliteStatusByCode(FormaliteStatus.FORMALITE_WAITING_DOCUMENT_AUTHORITY)
                                 .getLabel();
                 } else if (provision.getDomiciliation() != null
+                        && provision.getDomiciliation().getDomiciliationStatus() != null
                         && provision.getDomiciliation().getDomiciliationStatus()
                                 .getServicePriority() > currentPriority) {
                     currentPriority = provision.getDomiciliation().getDomiciliationStatus().getServicePriority();

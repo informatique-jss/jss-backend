@@ -6,9 +6,11 @@
       [compareWith]="compareWithId" (blur)="blurForm()" [disabled]="isDisabled"
       [class.is-invalid]="form.get(propertyName)?.invalid && form.get(propertyName)?.touched"
       [class.is-valid]="form.get(propertyName)?.valid && form.get(propertyName)?.touched">
-      <option *ngFor="let type of types" [ngValue]="type" [disabled]="type.isDisabled">
-        {{ displayLabel(type) }}
-      </option>
+      <ng-container *ngFor="let type of types">
+        <option [ngValue]="type" *ngIf="!type.isDisabled">
+          {{ displayLabel(type) }}
+        </option>
+      </ng-container>
     </select>
     <i class="ai-chevron-down chevron"></i>
   </div>

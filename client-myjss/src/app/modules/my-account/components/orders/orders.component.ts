@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { NgbAccordionModule, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_PAYED, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT } from '../../../../libs/Constants';
@@ -62,6 +63,7 @@ export class OrdersComponent implements OnInit {
     private mailComputeResultService: MailComputeResultService,
     private userPreferenceService: UserPreferenceService,
     private userScopeService: UserScopeService,
+    private activatedRoute: ActivatedRoute
   ) { }
 
   ngOnInit() {
@@ -79,6 +81,24 @@ export class OrdersComponent implements OnInit {
     }
 
     this.setBookmark();
+
+    let inputSearchStatus = this.activatedRoute.snapshot.params['statusCode'];
+    if (inputSearchStatus) {
+      this.statusFilterOpen = false;
+      this.statusFilterWaitingDeposit = false;
+      this.statusFilterBeingProcessed = false;
+      this.statusFilterBilled = false;
+      this.statusFilterToBilled = false;
+      this.statusFilterPayed = false;
+
+      if (inputSearchStatus == CUSTOMER_ORDER_STATUS_BEING_PROCESSED)
+        this.statusFilterBeingProcessed = true;
+      if (inputSearchStatus == CUSTOMER_ORDER_STATUS_OPEN)
+        this.statusFilterOpen = true;
+      if (inputSearchStatus == CUSTOMER_ORDER_STATUS_BILLED)
+        this.statusFilterBilled = true;
+    }
+
 
     let status: string[] = [];
     if (this.statusFilterOpen)
