@@ -39,6 +39,8 @@ export abstract class KanbanComponent<T, U extends IWorkflowElement<T>> {
 
   kanbanViews: Array<KanbanView<T, U>> | undefined;
 
+  quotationKanbanCode = this.getKanbanComponentViewCode();
+
   constructor(private restUserPreferenceService: RestUserPreferenceService) { }
 
   applyFilter(isOnlyFilterText = false) {
@@ -83,7 +85,6 @@ export abstract class KanbanComponent<T, U extends IWorkflowElement<T>> {
   abstract setKanbanView(kanbanView: KanbanView<T, U>): void; // pour dire à l'enfant quelle KanbanView enregistrer dans le composant pour qu'il affiche la vue avec les bons filtres
   abstract getKanbanView(): KanbanView<T, U>; // c'est lui qui va valoriser le kanbanView au niveau de l'enfant pour dire au parent quoi enregistrer
   abstract getKanbanComponentViewCode(): string; // Pour que le parent sache sur quelle vue il doit appliquer les filtres (quotation, provision etc.)
-
 
   filterCard() {
     let i = 0;

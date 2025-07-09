@@ -2,7 +2,6 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { IWorkflowElement } from 'src/app/modules/miscellaneous/model/IWorkflowElement';
-import { AppService } from 'src/app/services/app.service';
 import { RestUserPreferenceService } from '../../../../services/rest.user.preference.service';
 import { KanbanView } from '../../model/KanbanView';
 
@@ -15,7 +14,6 @@ export class SaveCurrentViewDialog<T, U extends IWorkflowElement<T>> implements 
 
   constructor(private restUserPreferenceService: RestUserPreferenceService,
     public dialogRef: MatDialogRef<SaveCurrentViewDialog<T, U>>,
-    private appService: AppService,
     private formBuilder: FormBuilder
   ) { }
 
@@ -24,28 +22,12 @@ export class SaveCurrentViewDialog<T, U extends IWorkflowElement<T>> implements 
   @Output() viewLabelEmitter: EventEmitter<string> = new EventEmitter<string>();
   viewLabel: string | undefined;
 
-  isLoading = false;
-
   kanbanForm = this.formBuilder.group({});
 
   ngOnInit() {
   }
 
   onConfirm(): void {
-    // if (this.viewLabel) {
-    //   if (this.componentToSaveViewCode) {
-    //     this.restUserPreferenceService.getUserPreferenceValue(this.componentToSaveViewCode + "_" + CUSTOM_USER_PREFERENCE).subscribe(jsonValue => {
-    //       let kanbanViews: KanbanView<T, U>[] = JSON.parse(jsonValue);
-    //       if (this.kanbanViewToSave) {
-    //         this.kanbanViewToSave.label = this.viewLabel!;
-    //         kanbanViews.push(this.kanbanViewToSave);
-    //         this.restUserPreferenceService.setUserPreference(kanbanViews, this.componentToSaveViewCode + "_" + CUSTOM_USER_PREFERENCE).subscribe();
-    //       }
-    //     });
-    //   } 
-    // } else {
-    //   this.appService.displaySnackBar("Veuillez renseigner un nom à la vue que vous souhaitez enregister", true, 3000);
-    // }
     this.dialogRef.close(this.viewLabel);
   }
 

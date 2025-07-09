@@ -21,7 +21,6 @@ import { InvoicingModule } from 'src/app/modules/invoicing/components/invoicing/
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { QuotationModule } from 'src/app/modules/quotation/components/quotation/quotation.module';
 import { AssignNewOrderDialogComponent } from '../assign-new-order-dialog/assign-new-order-dialog.component';
-import { CustomViewsComponent } from '../custom-views/custom-views.component';
 import { OrderKabanComponent } from '../order-kaban/order-kaban.component';
 import { ProvisionAffectationKanbanComponent } from '../provision-affectation-kanban/provision-affectation-kanban.component';
 import { ProvisionBoardComponent } from '../provision-board/provision-board.component';
@@ -67,8 +66,7 @@ const routes: Routes = [
     AssignNewOrderDialogComponent,
     ProvisionKanbanComponent,
     ProvisionAffectationKanbanComponent,
-    CustomViewsComponent,
-    SaveCurrentViewDialog
+    SaveCurrentViewDialog,
   ],
   exports: [
   ],

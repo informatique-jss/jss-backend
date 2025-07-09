@@ -1,16 +1,16 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { SaveCurrentViewDialog } from 'src/app/modules/dashboard/components/save-current-view-dialog/save-current-view-dialog.component';
+import { KanbanView } from 'src/app/modules/dashboard/model/KanbanView';
+import { CUSTOM_USER_PREFERENCE } from 'src/app/modules/dashboard/model/UserPreference';
 import { IWorkflowElement } from 'src/app/modules/miscellaneous/model/IWorkflowElement';
 import { AppService } from 'src/app/services/app.service';
 import { RestUserPreferenceService } from '../../../../services/rest.user.preference.service';
-import { KanbanView } from '../../model/KanbanView';
-import { CUSTOM_USER_PREFERENCE } from '../../model/UserPreference';
-import { SaveCurrentViewDialog } from '../save-current-view-dialog/save-current-view-dialog.component';
 
 @Component({
   selector: 'custom-views',
   templateUrl: './custom-views.component.html',
-  styleUrls: ['./custom-views.component.css']
+  styleUrls: ['./custom-views.component.css'],
 })
 export class CustomViewsComponent<T, U extends IWorkflowElement<T>> implements OnInit {
 
@@ -53,7 +53,8 @@ export class CustomViewsComponent<T, U extends IWorkflowElement<T>> implements O
 
   saveCurrentView() {
     const dialogRef = this.saveCurrentViewDialog.open(SaveCurrentViewDialog, {
-      width: "50%"
+      width: "50%",
+      height: "20%",
     });
 
     dialogRef.afterClosed().subscribe(dialogResult => {
@@ -78,12 +79,13 @@ export class CustomViewsComponent<T, U extends IWorkflowElement<T>> implements O
 
   deleteView(indexViewToDelete: number, event: Event) {
     event.preventDefault();
-    if (indexViewToDelete) {
+    if (indexViewToDelete >= 0) {
       if (this.componentToSaveViewCode) {
         this.restUserPreferenceService.getUserPreferenceValue(this.componentToSaveViewCode + "_" + CUSTOM_USER_PREFERENCE).subscribe(jsonValue => {
           let kanbanViews: KanbanView<T, U>[] = JSON.parse(jsonValue);
           kanbanViews.splice(indexViewToDelete);
           this.restUserPreferenceService.setUserPreference(JSON.stringify(kanbanViews), this.componentToSaveViewCode + "_" + CUSTOM_USER_PREFERENCE).subscribe(res => {
+            this.appService.displaySnackBar("Suppression de la vue effectuée avec succès !", true, 300);
             this.updateKanbanViewsList();
           });
         });

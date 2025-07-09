@@ -5,7 +5,7 @@ import { INCIDENT_REPORT_TO_COMPLETE } from 'src/app/libs/Constants';
 import { formatDateFrance } from 'src/app/libs/FormatHelper';
 import { INCIDENT_REPORTING_KANBAN, KanbanComponent } from 'src/app/modules/dashboard/components/kanban/kanban.component';
 import { KanbanView } from 'src/app/modules/dashboard/model/KanbanView';
-import { SwimlaneType } from 'src/app/modules/dashboard/model/SwimlaneType';
+import { DEFAULT_USER_PREFERENCE } from 'src/app/modules/dashboard/model/UserPreference';
 import { getResponsableLabelIQuotation, getTiersLabelIQuotation } from 'src/app/modules/invoicing/components/invoice-tools';
 import { WorkflowDialogComponent } from 'src/app/modules/miscellaneous/components/workflow-dialog/workflow-dialog.component';
 import { IWorkflowElement } from 'src/app/modules/miscellaneous/model/IWorkflowElement';
@@ -71,32 +71,16 @@ export class IncidentReportingComponent extends KanbanComponent<IncidentReport, 
         this.possibleEntityStatus = response;
 
         // Retrieve bookmark
-        let bookmarkpossibleEntityStatusIds = this.userPreferenceService.getUserSearchBookmark("kanban-cri-status") as number[];
-        if (bookmarkpossibleEntityStatusIds) {
-          for (let bookmarkpossibleEntityStatusId of bookmarkpossibleEntityStatusIds)
-            for (let orderStatu of this.possibleEntityStatus!)
-              if (bookmarkpossibleEntityStatusId == orderStatu.id)
-                this.statusSelected.push(orderStatu);
-        } else {
-          this.statusSelected = [... this.possibleEntityStatus];
-        }
-
-        let bookmarkOrderEmployees = this.userPreferenceService.getUserSearchBookmark("kanban-cri-employee") as Employee[];
-        if (bookmarkOrderEmployees && bookmarkOrderEmployees.length > 0)
-          this.employeesSelected = bookmarkOrderEmployees;
-        else if (this.currentEmployee) {
-          this.employeesSelected = [this.currentEmployee];
-        } else
-          this.employeesSelected = [];
-
-        let bookmarkSwimlaneType = this.userPreferenceService.getUserSearchBookmark("kanban-cri-swimline-type") as SwimlaneType<CustomerOrder>;
-        if (bookmarkSwimlaneType) {
-          for (let swimlaneType of this.swimlaneTypes)
-            if (swimlaneType.fieldName == bookmarkSwimlaneType.fieldName)
-              this.selectedSwimlaneType = swimlaneType;
-        } else {
-          this.selectedSwimlaneType = this.swimlaneTypes[0];
-        }
+        this.restUserPreferenceService2.getUserPreferenceValue(this.getKanbanComponentViewCode() + "_" + DEFAULT_USER_PREFERENCE).subscribe(kanbanViewString => {
+          if (kanbanViewString) {
+            let kabanView: KanbanView<IncidentReport, IncidentReportStatus>[] = JSON.parse(kanbanViewString);
+            //default view so only one KanbanView
+            for (let orderStatus of kabanView[0].status)
+              this.statusSelected.push(orderStatus);
+            this.employeesSelected = kabanView[0].employees;
+            this.selectedSwimlaneType = kabanView[0].swimlaneType ? kabanView[0].swimlaneType : this.swimlaneTypes[0];
+          }
+        });
 
         if (this.possibleEntityStatus && this.statusSelected) {
           this.startFilter();
@@ -121,13 +105,14 @@ export class IncidentReportingComponent extends KanbanComponent<IncidentReport, 
   }
 
   setKanbanView(kanbanView: KanbanView<IncidentReport, IncidentReportStatus>): void {
+    this.labelViewSelected = kanbanView.label;
     this.statusSelected = kanbanView.status;
     this.employeesSelected = kanbanView.employees;
     this.selectedSwimlaneType = kanbanView.swimlaneType;
   }
 
   getKanbanView(): KanbanView<IncidentReport, IncidentReportStatus> {
-    return { status: this.statusSelected, employees: this.employeesSelected, swimlaneType: this.selectedSwimlaneType } as KanbanView<IncidentReport, IncidentReportStatus>;
+    return { label: this.labelViewSelected, status: this.statusSelected, employees: this.employeesSelected, swimlaneType: this.selectedSwimlaneType } as KanbanView<IncidentReport, IncidentReportStatus>;
   }
 
   getKanbanComponentViewCode(): string {

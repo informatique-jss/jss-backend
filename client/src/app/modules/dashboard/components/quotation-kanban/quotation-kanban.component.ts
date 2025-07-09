@@ -34,8 +34,6 @@ export class QuotationKanbanComponent extends KanbanComponent<Quotation, Quotati
   adGroupSales = this.constantService.getActiveDirectoryGroupSales();
   quotationNotification: Notification[] | undefined;
 
-  quotationKanbanCode = QUOTATION_KANBAN;
-
   constructor(
     private quotationStatusService: QuotationStatusService,
     private formBuilder: FormBuilder,
@@ -72,42 +70,14 @@ export class QuotationKanbanComponent extends KanbanComponent<Quotation, Quotati
       this.statusSelected = [];
 
       // Retrieve bookmark
-      // TODO : faire boucler sur le select pour qu'ils soient selectionnés
-      this.restUserPreferenceService2.getUserPreferenceValue(QUOTATION_KANBAN + "_" + DEFAULT_USER_PREFERENCE).subscribe(kanbanViewString => {
+      this.restUserPreferenceService2.getUserPreferenceValue(this.getKanbanComponentViewCode() + "_" + DEFAULT_USER_PREFERENCE).subscribe(kanbanViewString => {
         if (kanbanViewString) {
           let kabanView: KanbanView<Quotation, QuotationStatus>[] = JSON.parse(kanbanViewString);
           //default view so only one KanbanView
           for (let orderStatus of kabanView[0].status)
             this.statusSelected.push(orderStatus);
-
-
           this.employeesSelected = kabanView[0].employees;
-          // for (let swimlaneType of this.swimlaneTypes)
-          //   if (swimlaneType.fieldName == jsonRes.fieldName)
           this.selectedSwimlaneType = kabanView[0].swimlaneType ? kabanView[0].swimlaneType : this.swimlaneTypes[0];
-          // } else {
-          //   this.selectedSwimlaneType = this.swimlaneTypes[0];
-          // }
-
-        }
-      });
-
-      this.restUserPreferenceService2.getUserPreferenceValue("kanban-quotation-employee").subscribe(bookmarkOrderEmployees => {
-        if (bookmarkOrderEmployees) {
-          let jsonRes = JSON.parse(bookmarkOrderEmployees);
-          this.employeesSelected = jsonRes;
-        }
-      });
-
-      this.restUserPreferenceService2.getUserPreferenceValue("kanban-quotation-swimline-type").subscribe(bookmarkSwimlaneType => {
-        if (bookmarkSwimlaneType) {
-          let jsonRes = JSON.parse(bookmarkSwimlaneType);
-          // TODO : check if ok
-          for (let swimlaneType of this.swimlaneTypes)
-            if (swimlaneType.fieldName == jsonRes.fieldName)
-              this.selectedSwimlaneType = swimlaneType;
-        } else {
-          this.selectedSwimlaneType = this.swimlaneTypes[0];
         }
       });
 

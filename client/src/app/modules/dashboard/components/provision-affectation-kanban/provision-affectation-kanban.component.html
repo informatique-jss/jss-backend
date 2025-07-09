@@ -96,6 +96,12 @@
       *ngIf="selectedSwimlaneType && swimlaneType.fieldName==selectedSwimlaneType.fieldName">check</mat-icon>{{swimlaneType.label}}
   </div>
   <mat-divider></mat-divider>
+  <div mat-menu-item class="pointer" [matMenuTriggerFor]="customViews" (click)="expandAll()">Gestion des vues</div>
+  <mat-menu #customViews="matMenu">
+    <custom-views [componentToSaveViewCode]="quotationKanbanCode" [currentView]="getKanbanView()"
+      (selectedViewEmitter)="setKanbanView($event)"></custom-views>
+  </mat-menu>
+  <mat-divider></mat-divider>
   <div mat-menu-item class="pointer" (click)="expandAll()">Déplier tout </div>
   <div mat-menu-item class="pointer" (click)="collapseAll()">Replier tout </div>
 </mat-menu>

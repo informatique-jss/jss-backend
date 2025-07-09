@@ -22,6 +22,7 @@ import { getResponsableLabelIQuotation, getTiersLabelIQuotation } from '../../..
 import { CustomerOrderAssignationService } from '../../../quotation/services/customer.assignation.service';
 import { AffectationEmployee } from '../../model/AffectationEmployee';
 import { KanbanView } from '../../model/KanbanView';
+import { DEFAULT_USER_PREFERENCE } from '../../model/UserPreference';
 import { AffectationEmployeeService } from '../../services/affectation.employee.service';
 import { KanbanComponent, PROVISION_AFFECTATION_KANBAN } from '../kanban/kanban.component';
 
@@ -101,22 +102,12 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
         }
 
         if (fetchBookmark) {
-          this.restUserPreferenceService2.getUserPreferenceValue("kanban-affectation-employee").subscribe(bookmarkOrderEmployees => {
-            if (bookmarkOrderEmployees) {
-              let jsonRes = JSON.parse(bookmarkOrderEmployees);
-              this.employeesSelected = jsonRes;
-            }
-          });
-
-          this.restUserPreferenceService2.getUserPreferenceValue("kanban-affectation-swimline-type").subscribe(bookmarkSwimlaneType => {
-            if (bookmarkSwimlaneType) {
-              let jsonRes = JSON.parse(bookmarkSwimlaneType);
-              // TODO : check if ok
-              for (let swimlaneType of this.swimlaneTypes)
-                if (swimlaneType.fieldName == jsonRes.fieldName)
-                  this.selectedSwimlaneType = swimlaneType;
-            } else {
-              this.selectedSwimlaneType = this.swimlaneTypes[0];
+          this.restUserPreferenceService2.getUserPreferenceValue(this.getKanbanComponentViewCode() + "_" + DEFAULT_USER_PREFERENCE).subscribe(kanbanViewString => {
+            if (kanbanViewString) {
+              let kabanView: KanbanView<CustomerOrder, AffectationEmployee<CustomerOrder>>[] = JSON.parse(kanbanViewString);
+              //default view so only one KanbanView
+              this.employeesSelected = kabanView[0].employees[0];
+              this.selectedSwimlaneType = kabanView[0].swimlaneType ? kabanView[0].swimlaneType : this.swimlaneTypes[0];
             }
           });
 
@@ -165,12 +156,14 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
   }
 
   setKanbanView(kanbanView: KanbanView<CustomerOrder, AffectationEmployee<CustomerOrder>>): void {
+    this.labelViewSelected = kanbanView.label;
     this.statusSelected = kanbanView.status;
+    this.employeesSelected = kanbanView.employees[0];
     this.selectedSwimlaneType = kanbanView.swimlaneType;
   }
 
   getKanbanView(): KanbanView<CustomerOrder, AffectationEmployee<CustomerOrder>> {
-    return { status: this.statusSelected, swimlaneType: this.selectedSwimlaneType } as KanbanView<CustomerOrder, AffectationEmployee<CustomerOrder>>;
+    return { label: this.labelViewSelected, status: this.statusSelected, employees: [this.employeesSelected], swimlaneType: this.selectedSwimlaneType } as KanbanView<CustomerOrder, AffectationEmployee<CustomerOrder>>;
   }
 
   getKanbanComponentViewCode(): string {

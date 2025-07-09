@@ -21,7 +21,8 @@ import { Notification } from '../../../../modules/miscellaneous/model/Notificati
 import { getResponsableLabelIQuotation, getTiersLabelIQuotation } from '../../../invoicing/components/invoice-tools';
 import { CustomerOrderStatusService } from '../../../quotation/services/customer.order.status.service';
 import { KanbanView } from '../../model/KanbanView';
-import { KanbanComponent, QUOTATION_KANBAN } from '../kanban/kanban.component';
+import { DEFAULT_USER_PREFERENCE } from '../../model/UserPreference';
+import { KanbanComponent, ORDER_KANBAN } from '../kanban/kanban.component';
 
 
 @Component({
@@ -74,34 +75,14 @@ export class OrderKabanComponent extends KanbanComponent<CustomerOrder, Customer
       this.statusSelected = [];
 
       // Retrieve bookmark
-      this.restUserPreferenceService2.getUserPreferenceValue("kanban-order-status").subscribe(bookmarkpossibleEntityStatusIds => {
-        // TODO : test if works
-        if (bookmarkpossibleEntityStatusIds) {
-          let jsonRes = JSON.parse(bookmarkpossibleEntityStatusIds);
-          for (let bookmarkpossibleEntityStatusId of jsonRes)
-            for (let orderStatus of this.possibleEntityStatus!)
-              if (bookmarkpossibleEntityStatusId == orderStatus.id)
-                this.statusSelected.push(orderStatus);
-        }
-      });
-
-      this.restUserPreferenceService2.getUserPreferenceValue("kanban-order-employee").subscribe(bookmarkOrderEmployees => {
-        if (bookmarkOrderEmployees) {
-          // TODO : check if ok
-          let jsonRes = JSON.parse(bookmarkOrderEmployees);
-          this.employeesSelected = jsonRes;
-        }
-      });
-
-      this.restUserPreferenceService2.getUserPreferenceValue("kanban-order-swimline-type").subscribe(bookmarkSwimlaneType => {
-        if (bookmarkSwimlaneType) {
-          let jsonRes = JSON.parse(bookmarkSwimlaneType);
-          // TODO : check if ok
-          for (let swimlaneType of this.swimlaneTypes)
-            if (swimlaneType.fieldName == jsonRes.fieldName)
-              this.selectedSwimlaneType = swimlaneType;
-        } else {
-          this.selectedSwimlaneType = this.swimlaneTypes[0];
+      this.restUserPreferenceService2.getUserPreferenceValue(this.getKanbanComponentViewCode() + "_" + DEFAULT_USER_PREFERENCE).subscribe(kanbanViewString => {
+        if (kanbanViewString) {
+          let kabanView: KanbanView<CustomerOrder, CustomerOrderStatus>[] = JSON.parse(kanbanViewString);
+          //default view so only one KanbanView
+          for (let orderStatus of kabanView[0].status)
+            this.statusSelected.push(orderStatus);
+          this.employeesSelected = kabanView[0].employees;
+          this.selectedSwimlaneType = kabanView[0].swimlaneType ? kabanView[0].swimlaneType : this.swimlaneTypes[0];
         }
       });
 
@@ -150,17 +131,18 @@ export class OrderKabanComponent extends KanbanComponent<CustomerOrder, Customer
   }
 
   setKanbanView(kanbanView: KanbanView<CustomerOrder, CustomerOrderStatus>): void {
+    this.labelViewSelected = kanbanView.label;
     this.statusSelected = kanbanView.status;
     this.employeesSelected = kanbanView.employees;
     this.selectedSwimlaneType = kanbanView.swimlaneType;
   }
 
   getKanbanView(): KanbanView<CustomerOrder, CustomerOrderStatus> {
-    return { status: this.statusSelected, employees: this.employeesSelected, swimlaneType: this.selectedSwimlaneType } as KanbanView<CustomerOrder, CustomerOrderStatus>;
+    return { label: this.labelViewSelected, status: this.statusSelected, employees: this.employeesSelected, swimlaneType: this.selectedSwimlaneType } as KanbanView<CustomerOrder, CustomerOrderStatus>;
   }
 
   getKanbanComponentViewCode(): string {
-    return QUOTATION_KANBAN;
+    return ORDER_KANBAN;
   }
 
   findEntities() {
