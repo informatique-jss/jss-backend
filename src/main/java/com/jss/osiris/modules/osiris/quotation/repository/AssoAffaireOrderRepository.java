@@ -83,7 +83,7 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         " where (COALESCE(:customerOrder)!=0 or cs.code not in (:excludedCustomerOrderStatusCode))  "
                         + " and ( COALESCE(:customerOrder)=0 or r.id in (:customerOrder)  )"
                         +
-                        " and ( :waitedCompetentAuthorityId =0 or sp.id_waited_competent_authority =:waitedCompetentAuthorityId) "
+                        " and ( :waitedCompetentAuthorityId =0 or coalesce(sp.id_waited_competent_authority, fo.id_waited_competent_authority) =:waitedCompetentAuthorityId) "
                         +
                         " and ( :affaireId =0 or a.id =:affaireId) " +
                         " and ( :isMissingQueriesToManualRemind = false or ma.id is not null) " +
