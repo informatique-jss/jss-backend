@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { NgbAccordionModule, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAccordionModule, NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_QUOTATION_WAITING_CONFRERE, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, QUOTATION_STATUS_VALIDATED_BY_CUSTOMER } from '../../../../libs/Constants';
 import { capitalizeName } from '../../../../libs/FormatHelper';
@@ -30,6 +30,9 @@ declare var bootstrap: any;
 })
 export class QuotationsComponent implements OnInit {
 
+  @ViewChild('cancelQuotationModal') cancelQuotationModal!: TemplateRef<any>;
+  cancelQuotationModalInstance: any | undefined;
+
   statusFilterOpen: boolean = false;
   statusFilterToVerify: boolean = false;
   statusFilterWaitingConfrere: boolean = false;
@@ -56,6 +59,7 @@ export class QuotationsComponent implements OnInit {
 
   QUOTATION_STATUS_REFUSED_BY_CUSTOMER = QUOTATION_STATUS_REFUSED_BY_CUSTOMER;
   QUOTATION_STATUS_VALIDATED_BY_CUSTOMER = QUOTATION_STATUS_VALIDATED_BY_CUSTOMER;
+  QUOTATION_STATUS_OPEN = QUOTATION_STATUS_OPEN;
 
   currentSearchRef: Subscription | undefined;
 
@@ -67,7 +71,8 @@ export class QuotationsComponent implements OnInit {
     private mailComputeResultService: MailComputeResultService,
     private userPreferenceService: UserPreferenceService,
     private userScopeService: UserScopeService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private modalService: NgbModal
   ) { }
 
   getQuotationStatusLabel = getQuotationStatusLabel;
@@ -181,6 +186,32 @@ export class QuotationsComponent implements OnInit {
 
   getQuotationValidityDate(quotation: Quotation) {
     return new Date(new Date(quotation.createdDate).getFullYear(), 11, 31);
+  }
+
+
+  quotationToCancel: Quotation | undefined;
+  finalCancelDraft(event: any) {
+    if (this.quotationToCancel && this.quotationToCancel.id) {
+      this.appService.showLoadingSpinner();
+      this.quotationService.cancelQuotation(this.quotationToCancel.id).subscribe(response => {
+        this.quotationToCancel = undefined;
+        this.refreshQuotations();
+      });
+    }
+  }
+
+  cancelDraft(quotation: Quotation) {
+    if (this.cancelQuotationModalInstance) {
+      return;
+    }
+
+    this.quotationToCancel = quotation;
+    this.cancelQuotationModalInstance = this.modalService.open(this.cancelQuotationModal, {
+    });
+
+    this.cancelQuotationModalInstance.result.finally(() => {
+      this.cancelQuotationModalInstance = undefined;
+    });
   }
 
   setBookmark() {

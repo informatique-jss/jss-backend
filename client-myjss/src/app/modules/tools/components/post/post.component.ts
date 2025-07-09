@@ -18,6 +18,8 @@ import { GenericSwiperComponent } from '../../../miscellaneous/components/generi
 import { Pagination } from '../../../miscellaneous/model/Pagination';
 import { Responsable } from '../../../profile/model/Responsable';
 import { LoginService } from '../../../profile/services/login.service';
+import { QUOTATION_TYPE_ORDER, QUOTATION_TYPE_QUOTATION, QuotationType } from '../../../quotation/model/QuotationType';
+import { ServiceFamilyGroup } from '../../../quotation/model/ServiceFamilyGroup';
 import { Comment } from '../../model/Comment';
 import { MyJssCategory } from '../../model/MyJssCategory';
 import { Post } from '../../model/Post';
@@ -66,6 +68,12 @@ export class PostComponent implements OnInit, AfterViewInit {
   myJssCategoryDocument!: MyJssCategory;
   myJssCategoryDomiciliation!: MyJssCategory;
 
+  quotationTypeOrder: QuotationType = QUOTATION_TYPE_ORDER;
+  quotationTypeQuotation: QuotationType = QUOTATION_TYPE_QUOTATION;
+  serviceFamilyGroupAnnouncement: ServiceFamilyGroup | undefined;
+  serviceFamilyGroupFormality: ServiceFamilyGroup | undefined;
+  serviceFamilyGroupOther: ServiceFamilyGroup | undefined;
+
   constructor(
     private activatedRoute: ActivatedRoute,
     private postService: PostService,
@@ -85,6 +93,10 @@ export class PostComponent implements OnInit, AfterViewInit {
     this.myJssCategoryApostille = this.constantService.getMyJssCategoryApostille();
     this.myJssCategoryDocument = this.constantService.getMyJssCategoryDocument();
     this.myJssCategoryDomiciliation = this.constantService.getMyJssCategoryDomiciliation();
+
+    this.serviceFamilyGroupAnnouncement = this.constantService.getServiceFamilyGroupAnnouncement();
+    this.serviceFamilyGroupFormality = this.constantService.getServiceFamilyGroupFormality();
+    this.serviceFamilyGroupOther = this.constantService.getServiceFamilyGroupOther();
 
     this.createCommentForm = this.formBuilder.group({});
 

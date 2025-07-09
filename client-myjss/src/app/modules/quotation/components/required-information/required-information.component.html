@@ -108,7 +108,9 @@
                   </div>
 
                   <div class="row">
-                    <div *ngIf="!provision.isRedactedByJss" class="col-12 col-lg-6 form-check form-switch">
+                    <div
+                      *ngIf="!provision.isRedactedByJss && hasOneTemplate( quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])"
+                      class="col-12 col-lg-6 form-check form-switch">
                       <generic-toggle [(model)]="isUsingTemplate"
                         label="Utiliser les modèles proposés pour la rédaction" [form]="informationForm"
                         [propertyName]="'isUsingTemplate'+provision.order" [isDisabled]="false"
@@ -156,8 +158,7 @@
                     </div>
                   </div>
 
-                  <div *ngIf="provision.isDoNotGenerateAnnouncement && !provision.isRedactedByJss && !isUsingTemplate"
-                    class="col-12">
+                  <div *ngIf=" !provision.isRedactedByJss && !isUsingTemplate" class="col-12">
                     <label for="announcementTextarea" class="form-label">Texte de l'annonce</label>
                     <ckeditor id="announcementTextarea" [editor]="ckEditorHeader" [config]="config"
                       (ready)="onEditorReady($event, provision)" (change)="onNoticeChange($event, provision)">

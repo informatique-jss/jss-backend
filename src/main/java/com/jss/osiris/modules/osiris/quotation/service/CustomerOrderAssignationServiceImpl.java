@@ -61,6 +61,10 @@ public class CustomerOrderAssignationServiceImpl implements CustomerOrderAssigna
         return null;
     }
 
+    private List<CustomerOrderAssignation> getCustomerOrderAssignationForCustomerOrder(Integer customerOrder) {
+        return customerOrderAssignationRepository.findByCustomerOrder_Id(customerOrder);
+    }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public CustomerOrderAssignation addOrUpdateCustomerOrderAssignation(
@@ -74,6 +78,17 @@ public class CustomerOrderAssignationServiceImpl implements CustomerOrderAssigna
     public void completeAssignationForCustomerOrder(CustomerOrder customerOrder) throws OsirisException {
         List<AssignationType> assignationTypes = assignationTypeService.getAssignationTypes();
         List<AssignationType> assignationTypesToDefine = new ArrayList<AssignationType>();
+        List<AssignationType> existingAssignationTypes = null;
+
+        List<CustomerOrderAssignation> currentCustomerOrderAssignation = getCustomerOrderAssignationForCustomerOrder(
+                customerOrder.getId());
+        if (currentCustomerOrderAssignation != null)
+            existingAssignationTypes = currentCustomerOrderAssignation.stream()
+                    .map(CustomerOrderAssignation::getAssignationType).toList();
+
+        if (existingAssignationTypes == null)
+            existingAssignationTypes = new ArrayList<AssignationType>();
+
         Employee assignationEmployeeToAdd = null;
         for (AssignationType assignationType : assignationTypes) {
             if (customerOrder.getAssoAffaireOrders() != null)
@@ -85,6 +100,8 @@ public class CustomerOrderAssignationServiceImpl implements CustomerOrderAssigna
                                     if (provision.getProvisionType() != null && provision.getProvisionType()
                                             .getAssignationType() != null && provision.getProvisionType()
                                                     .getAssignationType().getId().equals(assignationType.getId())
+                                            && !existingAssignationTypes.stream().map(AssignationType::getId).toList()
+                                                    .contains(assignationType.getId())
                                             && !assignationTypesToDefine.contains(assignationType)) {
                                         assignationTypesToDefine.add(assignationType);
 

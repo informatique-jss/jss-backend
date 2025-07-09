@@ -628,6 +628,18 @@ export class RequiredInformationComponent implements OnInit {
     }
   }
 
+  hasOneTemplate(service: Service) {
+    if (service) {
+      if (service && service.serviceTypes)
+        for (let st of service.serviceTypes)
+          if (st.assoServiceProvisionTypes)
+            for (let asso of st.assoServiceProvisionTypes)
+              if (asso.announcementNoticeTemplate)
+                return true;
+    }
+    return false;
+  }
+
   changeProvisionNoticeTemplateDesciption(ngbEvent: NgbNavChangeEvent) {
     let destId = ngbEvent.nextId as number;
     let originId = ngbEvent.activeId as number;

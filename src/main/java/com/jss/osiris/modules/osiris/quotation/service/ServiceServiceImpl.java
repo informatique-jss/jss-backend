@@ -681,11 +681,27 @@ public class ServiceServiceImpl implements ServiceService {
                 removeUnusedAssoServiceDocument(service);
 
                 if (service.getProvisions() != null)
-                    for (Provision provision : service.getProvisions())
+                    for (Provision provision : service.getProvisions()) {
                         if (provision.getAnnouncement() != null
                                 && provision.getAnnouncement().getConfrere() != null)
                             service.setConfrereLabel(
-                                    "publié par " + provision.getAnnouncement().getConfrere().getLabel());
+                                    "publié sur " + provision.getAnnouncement().getConfrere().getLabel());
+
+                        if (provision.getSimpleProvision() != null
+                                && provision.getSimpleProvision().getSimpleProvisionStatus() != null
+                                && provision.getSimpleProvision().getSimpleProvisionStatus().getCode()
+                                        .equals(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY)
+                                && provision.getSimpleProvision().getWaitedCompetentAuthority() != null)
+                            service.setWaitingAcLabel(
+                                    provision.getSimpleProvision().getWaitedCompetentAuthority().getLabel());
+
+                        if (provision.getFormalite() != null && provision.getFormalite().getFormaliteStatus() != null
+                                && provision.getFormalite().getFormaliteStatus().getCode()
+                                        .equals(FormaliteStatus.FORMALITE_WAITING_DOCUMENT_AUTHORITY)
+                                && provision.getFormalite().getWaitedCompetentAuthority() != null)
+                            service.setWaitingAcLabel(
+                                    provision.getFormalite().getWaitedCompetentAuthority().getLabel());
+                    }
             }
         return services;
     }

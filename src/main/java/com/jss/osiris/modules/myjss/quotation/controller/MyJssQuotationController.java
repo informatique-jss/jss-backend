@@ -90,6 +90,7 @@ import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
+import com.jss.osiris.modules.osiris.quotation.model.IWorkflowElement;
 import com.jss.osiris.modules.osiris.quotation.model.MailRedirectionType;
 import com.jss.osiris.modules.osiris.quotation.model.NoticeType;
 import com.jss.osiris.modules.osiris.quotation.model.NoticeTypeFamily;
@@ -1294,6 +1295,10 @@ public class MyJssQuotationController {
 		if (canUpdateProvision) {
 			for (Provision provision : serviceFetched.getProvisions()) {
 				for (Provision provisionIn : service.getProvisions()) {
+					IWorkflowElement status = getProvisionStatus(provision);
+					if (status != null && !status.getIsOpenState())
+						return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+
 					if (provision.getId().equals(provisionIn.getId())) {
 						if (provision.getAnnouncement() != null) {
 							provision.getAnnouncement().setNotice(provisionIn.getAnnouncement().getNotice());
@@ -1309,11 +1314,11 @@ public class MyJssQuotationController {
 											provisionIn.getAnnouncement().getIsProofReadingDocument());
 						}
 						if (provisionIn.getDomiciliation() != null) {
-							if (provision.getDomiciliation().getMails() != null)
+							if (provisionIn.getDomiciliation().getMails() != null)
 								mailService.populateMailIds(provisionIn.getDomiciliation().getMails());
-							if (provision.getDomiciliation().getLegalGardianMails() != null)
+							if (provisionIn.getDomiciliation().getLegalGardianMails() != null)
 								mailService.populateMailIds(provisionIn.getDomiciliation().getLegalGardianMails());
-							if (provision.getDomiciliation().getLegalGardianPhones() != null)
+							if (provisionIn.getDomiciliation().getLegalGardianPhones() != null)
 								phoneService.populatePhoneIds(provisionIn.getDomiciliation().getLegalGardianPhones());
 							provision.setDomiciliation(provisionIn.getDomiciliation());
 						}
@@ -1325,7 +1330,18 @@ public class MyJssQuotationController {
 		serviceService.addOrUpdateServiceFromUser(serviceFetched);
 
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+	}
 
+	private IWorkflowElement getProvisionStatus(Provision provision) {
+		if (provision.getAnnouncement() != null)
+			return provision.getAnnouncement().getAnnouncementStatus();
+		if (provision.getDomiciliation() != null)
+			return provision.getDomiciliation().getDomiciliationStatus();
+		if (provision.getFormalite() != null)
+			return provision.getFormalite().getFormaliteStatus();
+		if (provision.getSimpleProvision() != null)
+			return provision.getSimpleProvision().getSimpleProvisionStatus();
+		return null;
 	}
 
 	@GetMapping(inputEntryPoint + "/services")

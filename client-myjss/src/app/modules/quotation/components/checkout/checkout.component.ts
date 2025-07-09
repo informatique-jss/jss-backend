@@ -220,6 +220,8 @@ export class CheckoutComponent implements OnInit {
               this.loginService.refreshUserRoles().subscribe(role => {
                 this.appService.openRoute(undefined, "account/quotations/details/" + response.id, undefined);
               });
+            } else {
+              this.rerouteToHomePage();
             }
           });
         else
@@ -230,6 +232,8 @@ export class CheckoutComponent implements OnInit {
               this.loginService.refreshUserRoles().subscribe(role => {
                 this.appService.openRoute(undefined, "account/orders/details/" + response.id, undefined);
               });
+            } else {
+              this.rerouteToHomePage();
             }
           });
       }
@@ -253,6 +257,12 @@ export class CheckoutComponent implements OnInit {
     }
   }
 
+  rerouteToHomePage() {
+    this.appService.hideLoadingSpinner();
+    this.appService.openRoute(undefined, "/", undefined);
+    this.appService.displayToast("Votre demande a bien été prise en compte", false, "Demande enregistrée", 5000);
+  }
+
   cleanStorageData() {
     this.quotationService.cleanStorageData();
   }
@@ -268,7 +278,7 @@ export class CheckoutComponent implements OnInit {
       return false;
     }
     if (!this.acceptDocs || !this.acceptTerms) {
-      this.appService.displayToast("Vous devez accepter les conditions ci-dessus pour pouvoir valider " + (this.quotation!.isQuotation ? "le devis" : "la commande"), true, "Validation de " + (this.quotation!.isQuotation ? "devis" : "commande") + " impossible", 5000);
+      this.appService.displayToast("Vous devez accepter les conditions ci-dessus pour pouvoir valider " + (this.quotation!.isQuotation ? "le devis" : "la commande"), true, "Validation de " + (this.quotation!.isQuotation ? "devis" : "commande") + " impossible", 50000);
       return false;
     }
     return true;

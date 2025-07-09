@@ -150,38 +150,6 @@ public class AffaireServiceImpl implements AffaireService {
         if (affaire.getSiret() != null)
             affaire.setSiret(affaire.getSiret().toUpperCase().replaceAll(" ", ""));
 
-        // Check duplicate
-
-        if (affaire.getId() == null) {
-            List<Affaire> affairesDuplicates = new ArrayList<Affaire>();
-            if (affaire.getSiret() != null && affaire.getSiret().length() > 0) {
-                Affaire affaireSameSiret = affaireRepository.findBySiret(affaire.getSiret());
-                if (affaireSameSiret != null)
-                    affairesDuplicates.add(affaireSameSiret);
-            }
-            if (affairesDuplicates.size() == 0) {
-                if (affaire.getIsIndividual() != null && affaire.getIsIndividual() == true)
-                    affairesDuplicates = affaireRepository.findByPostalCodeAndName(affaire.getPostalCode(),
-                            affaire.getFirstname(), affaire.getLastname());
-                else
-                    affairesDuplicates = affaireRepository.findByPostalCodeAndDenomination(affaire.getPostalCode(),
-                            affaire.getDenomination());
-            }
-
-            if (affairesDuplicates.size() > 0) {
-                boolean authorize = false;
-                // If current affaire is not registered and found affaires got SIRET =>
-                // authorize it
-                if (affaire.getIsUnregistered())
-                    for (Affaire affaireDuplicate : affairesDuplicates)
-                        if (affaireDuplicate.getSiren() != null || affaireDuplicate.getSiret() != null)
-                            authorize = true;
-
-                if (!authorize)
-                    throw new OsirisDuplicateException(affairesDuplicates.stream().map(Affaire::getId).toList());
-            }
-        }
-
         // If mails already exists, get their ids
         if (affaire != null && affaire.getMails() != null && affaire.getMails().size() > 0)
             mailService.populateMailIds(affaire.getMails());
@@ -295,6 +263,8 @@ public class AffaireServiceImpl implements AffaireService {
             affaire.setPostalCode(null);
             affaire.setShareCapital(null);
         }
+
+        affaire.setSiren(rneCompany.getSiren());
 
         if (rneCompany != null && rneCompany.getFormality() != null && rneCompany.getFormality().getContent() != null
                 && rneCompany.getFormality().getContent().getPersonneMorale() != null

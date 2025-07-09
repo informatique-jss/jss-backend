@@ -107,7 +107,7 @@ public class MyJssQuotationDelegate {
 
         if (order.getResponsable() != null && order.getResponsable().getId() != null
                 && !order.getResponsable().getId().equals(employeeService.getCurrentMyJssUser().getId())) {
-            List<Responsable> responsables = userScopeService.getPotentialUserScope();
+            List<Responsable> responsables = userScopeService.getUserCurrentScopeResponsables();
             Boolean found = false;
             if (responsables != null) {
                 for (Responsable responsable : responsables) {
@@ -119,6 +119,8 @@ public class MyJssQuotationDelegate {
             }
             if (!found)
                 order.setResponsable(employeeService.getCurrentMyJssUser());
+            else
+                order.setResponsable(responsableService.getResponsable(order.getResponsable().getId()));
         } else {
             order.setResponsable(employeeService.getCurrentMyJssUser());
         }
@@ -266,6 +268,8 @@ public class MyJssQuotationDelegate {
 
         if (shouldConnectUserAtTheEnd)
             userScopeService.authenticateUser(quotation.getResponsable(), request);
+        else
+            return null;
         return quotation;
     }
 
