@@ -6,6 +6,7 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderAssignation;
+import com.jss.osiris.modules.osiris.quotation.model.ICustomerOrderAssignationStatistics;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 
 public interface CustomerOrderAssignationService {
@@ -35,4 +36,6 @@ public interface CustomerOrderAssignationService {
         public List<CustomerOrder> getOrdersToAssignForFond(Employee employee) throws OsirisException;
 
         public boolean isPriorityOrder(CustomerOrder customerOrder) throws OsirisException;
+
+        public List<ICustomerOrderAssignationStatistics> getCustomerOrderAssignationStatistics();
 }

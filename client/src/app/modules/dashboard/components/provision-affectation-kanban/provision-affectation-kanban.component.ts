@@ -3,14 +3,16 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, of } from 'rxjs';
 import { CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN } from 'src/app/libs/Constants';
-import { formatDateFrance } from 'src/app/libs/FormatHelper';
+import { formatDateForSortTable, formatDateFrance } from 'src/app/libs/FormatHelper';
 import { WorkflowDialogComponent } from 'src/app/modules/miscellaneous/components/workflow-dialog/workflow-dialog.component';
+import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { NotificationService } from 'src/app/modules/miscellaneous/services/notification.service';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
 import { PrintLabelDialogComponent } from 'src/app/modules/quotation/components/print-label-dialog/print-label-dialog.component';
 import { CustomerOrder } from 'src/app/modules/quotation/model/CustomerOrder';
+import { CustomerOrderAssignationStatistics } from 'src/app/modules/quotation/model/CustomerOrderAssignationStatistics';
 import { AssoAffaireOrderService } from 'src/app/modules/quotation/services/asso.affaire.order.service';
 import { CustomerOrderService } from 'src/app/modules/quotation/services/customer.order.service';
 import { QuotationService } from 'src/app/modules/quotation/services/quotation.service';
@@ -39,6 +41,9 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
   adInsertions = this.constantService.getActiveDirectoryGroupInsertions();
   orderNotification: Notification[] | undefined;
   defaultAffectation: AffectationEmployee<CustomerOrder> = { id: 0, code: 'NOT_ASSIGNED', firstname: 'A affecter', lastname: '', label: 'A affecter', } as AffectationEmployee<CustomerOrder>;
+
+  displayedColumns: SortTableColumn<CustomerOrderAssignationStatistics>[] = [];
+  assignationStatistics: CustomerOrderAssignationStatistics[] = [];
 
   constructor(
     private orderService: CustomerOrderService,
@@ -78,6 +83,22 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
       this.employeesSelected = currentEmployee;
       this.initStatus(true, false, false);
     });
+
+
+    if (this.habilitationService.canAddAssignOrderForProduction()) {
+      this.displayedColumns = [];
+      this.displayedColumns.push({ id: "idEmployee", fieldName: "idEmployee", label: "Fond", displayAsEmployee: true } as SortTableColumn<CustomerOrderAssignationStatistics>);
+      this.displayedColumns.push({ id: "productionDate", fieldName: "productionDate", label: "Date production", valueFonction: formatDateForSortTable } as SortTableColumn<CustomerOrderAssignationStatistics>);
+      this.displayedColumns.push({ id: "number", fieldName: "number", label: "Nombre de commandes" } as SortTableColumn<CustomerOrderAssignationStatistics>);
+
+      this.customerOrderAssignationService.getCustomerOrderAssignationStatistics().subscribe(response => {
+        this.assignationStatistics = response.sort((a, b) => {
+          const dateA = a.productionDate ? new Date(a.productionDate).getTime() : Number.NEGATIVE_INFINITY;
+          const dateB = b.productionDate ? new Date(b.productionDate).getTime() : Number.NEGATIVE_INFINITY;
+          return dateA - dateB;
+        });
+      })
+    }
   }
 
   initStatus(fetchBookmark: boolean, applyFilter: boolean, isOnlyFilterText: boolean) {
@@ -132,8 +153,8 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
     this.appService.addPersonnalNotification(() => this.orderNotification = undefined, this.orderNotification, this.selectedEntity!, undefined, undefined, undefined, undefined, undefined, undefined, undefined);
   }
 
-  canDisplayNotifications() {
-    return this.habilitationService.canDisplayNotifications();
+  canAddAssignOrderForProduction() {
+    return this.habilitationService.canAddAssignOrderForProduction();
   }
 
   fetchEntityAndOpenPanel(task: CustomerOrder, refreshColumn: boolean = false, openPanel = true) {
@@ -195,9 +216,9 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
   getCustomerOrderAssignationForCurrentEmployee(entity: CustomerOrder) {
     if (entity && entity.customerOrderAssignations && this.employeesSelected)
       for (let assignation of entity.customerOrderAssignations) {
-        if (this.employeesSelected.adPath.indexOf("Formalites") >= 0 && assignation.assignationType.id == this.constantService.getAssignationTypeFormaliste().id)
+        if ((this.employeesSelected.adPath.indexOf("Formalites") >= 0 || this.employeesSelected.adPath.indexOf("Informatique") >= 0) && assignation.assignationType.id == this.constantService.getAssignationTypeFormaliste().id)
           return assignation;
-        if (this.employeesSelected.adPath.indexOf("Insertions") >= 0 && assignation.assignationType.id == this.constantService.getAssignationTypePublisciste().id)
+        if ((this.employeesSelected.adPath.indexOf("Insertions") >= 0 || this.employeesSelected.adPath.indexOf("Informatique") >= 0) && assignation.assignationType.id == this.constantService.getAssignationTypePublisciste().id)
           return assignation;
       }
     return undefined;

@@ -86,6 +86,15 @@
   </div>
 </ng-container>
 
+<div class="mat-elevation-z2 form-div " *ngIf="canAddAssignOrderForProduction()">
+  <div class=" full-width">
+    <sort-table [columns]="displayedColumns" [values]="assignationStatistics" tableName="Statistiques d'assignation"
+      [noMaxHeight]="false" [noPaddingBottom]="false" [isSmallerHeight]="false"
+      *ngIf="displayedColumns && displayedColumns.length>0 ">
+    </sort-table>
+  </div>
+</div>
+
 <mat-menu #menu="matMenu" style="max-width: 100%;">
   <div mat-menu-item>
     <span>Regrouper par : </span>
@@ -118,7 +127,7 @@
       <mat-icon color="accent" matTooltip="Ajouter une notification sur cette commande" mat-fab color="accent"
         [matBadge]="getNotificationForCustomerOrder().length"
         [matBadgeHidden]="getNotificationForCustomerOrder().length<=0" matBadgePosition="below after"
-        matBadgeColor="warn" matBadgeSize="small" class="pointer" *ngIf="  canDisplayNotifications() "
+        matBadgeColor="warn" matBadgeSize="small" class="pointer"
         (click)="addNewNotification();$event.stopPropagation();">notifications</mat-icon>
       <span class="spacer"></span>
       <button mat-icon-button [matMenuTriggerFor]="menu">

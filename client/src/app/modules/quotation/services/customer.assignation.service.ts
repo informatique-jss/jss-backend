@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AppRestService } from 'src/app/services/appRest.service';
 import { CustomerOrderAssignation } from '../model/CustomerOrderAssignation';
+import { CustomerOrderAssignationStatistics } from '../model/CustomerOrderAssignationStatistics';
 
 @Injectable({
   providedIn: 'root'
@@ -42,5 +43,9 @@ export class CustomerOrderAssignationService extends AppRestService<CustomerOrde
 
   getFondTypeToUse(complexity: number) {
     return this.get(new HttpParams().set("complexity", complexity), "assign/fond/type") as any as Observable<any>;
+  }
+
+  getCustomerOrderAssignationStatistics() {
+    return this.getList(new HttpParams(), "assign/statistics") as any as Observable<CustomerOrderAssignationStatistics[]>;
   }
 }

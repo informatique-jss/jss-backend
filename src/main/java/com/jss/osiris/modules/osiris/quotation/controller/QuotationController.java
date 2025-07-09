@@ -94,6 +94,7 @@ import com.jss.osiris.modules.osiris.quotation.model.DomiciliationStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Formalite;
 import com.jss.osiris.modules.osiris.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.osiris.quotation.model.FundType;
+import com.jss.osiris.modules.osiris.quotation.model.ICustomerOrderAssignationStatistics;
 import com.jss.osiris.modules.osiris.quotation.model.IOrderingSearchTaggedResult;
 import com.jss.osiris.modules.osiris.quotation.model.IPaperSetResult;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
@@ -2972,6 +2973,14 @@ public class QuotationController {
   @JsonView(JacksonViews.OsirisListView.class)
   public ResponseEntity<String> getFondTypeToUse(Integer complexity) throws OsirisException {
     return new ResponseEntity<String>(customerOrderAssignationService.getFondTypeToUse(complexity),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/assign/statistics")
+  public ResponseEntity<List<ICustomerOrderAssignationStatistics>> getCustomerOrderAssignationStatistics(
+      Integer complexity) throws OsirisException {
+    return new ResponseEntity<List<ICustomerOrderAssignationStatistics>>(
+        customerOrderAssignationService.getCustomerOrderAssignationStatistics(),
         HttpStatus.OK);
   }
 

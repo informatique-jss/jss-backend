@@ -17,6 +17,7 @@ import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderAssignation;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
+import com.jss.osiris.modules.osiris.quotation.model.ICustomerOrderAssignationStatistics;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.repository.CustomerOrderAssignationRepository;
@@ -435,5 +436,11 @@ public class CustomerOrderAssignationServiceImpl implements CustomerOrderAssigna
                 assignationType));
 
         return customerOrderService.completeAdditionnalInformationForCustomerOrders(orders);
+    }
+
+    @Override
+    public List<ICustomerOrderAssignationStatistics> getCustomerOrderAssignationStatistics() {
+        return customerOrderAssignationRepository.getCustomerOrderAssignationStatistics(
+                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.BEING_PROCESSED).getId());
     }
 }
