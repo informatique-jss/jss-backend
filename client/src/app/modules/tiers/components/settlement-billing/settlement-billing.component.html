@@ -102,6 +102,12 @@
                   [form]="settlementBillingForm" propertyName="isResponsableOnBilling"></generic-toggle>
               </td>
             </tr>
+            <tr>
+              <td>
+                <generic-toggle [(model)]="billingDocument.isCbLinkDisabled" label="Désactiver le QR code de paiement ?"
+                  [form]="settlementBillingForm" propertyName="isCbLinkDisabled"></generic-toggle>
+              </td>
+            </tr>
           </table>
           <table class="full-width">
             <tr>

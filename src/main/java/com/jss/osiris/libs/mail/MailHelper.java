@@ -1293,9 +1293,10 @@ public class MailHelper {
                     || invoiceCo.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusPayed().getId()))
                 invoice = invoiceCo;
 
-        mail.setCbLink(
-                paymentCbEntryPoint + "/order/invoice?customerOrderId=" + mail.getCustomerOrder().getId() + "&mail="
-                        + mail.getMailComputeResult().getRecipientsMailTo().get(0).getMail());
+        if (mail.getMailComputeResult() != null && !mail.getMailComputeResult().getIsCbLinkDisabled())
+            mail.setCbLink(
+                    paymentCbEntryPoint + "/order/invoice?customerOrderId=" + mail.getCustomerOrder().getId() + "&mail="
+                            + mail.getMailComputeResult().getRecipientsMailTo().get(0).getMail());
 
         if (invoice != null)
             mail.setSubject(

@@ -222,6 +222,14 @@ public class MailComputeHelper {
                     throw new OsirisClientMessageException("Aucun mail trouvé pour le client");
 
             }
+            if (quotationDocument.getDocumentType().getId().equals(constantService.getDocumentTypeBilling().getId())
+                    && (quotationDocument.getIsCbLinkDisabled() == null
+                            || (quotationDocument.getIsCbLinkDisabled() != null
+                                    && !quotationDocument.getIsCbLinkDisabled())))
+                mailComputeResult.setIsCbLinkDisabled(false);
+            else if (quotationDocument.getDocumentType().getId()
+                    .equals(constantService.getDocumentTypeBilling().getId()))
+                mailComputeResult.setIsCbLinkDisabled(true);
         }
         return mailComputeResult;
     }

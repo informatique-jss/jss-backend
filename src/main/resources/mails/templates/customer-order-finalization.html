@@ -236,7 +236,8 @@
                                                                         th:text="${invoice.id}"></span><br />IBAN /
                                                                     BIC : <span th:text="${ibanJss}"></span> / <span
                                                                         th:text="${bicJss}"></span></p>
-                                                                <p>➡️ <strong>Carte bancaire</strong> en flashant le QR
+                                                                <p th:if="${cbLink!=null}">➡️ <strong>Carte
+                                                                        bancaire</strong> en flashant le QR
                                                                     Code ci-dessous ou en cliquant <a
                                                                         th:href="${cbLink}" target="_blank">ici</a>.</p>
                                                             </td>
