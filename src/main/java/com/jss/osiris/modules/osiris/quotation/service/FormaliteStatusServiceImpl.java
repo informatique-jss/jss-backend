@@ -120,6 +120,8 @@ public class FormaliteStatusServiceImpl implements FormaliteStatusService {
                 setSuccessor(FormaliteStatus.FORMALITE_WAITING_FINAL_DOCUMENT_AUTHORITY,
                                 FormaliteStatus.FORMALITE_DONE);
 
+                setPredecessor(FormaliteStatus.FORMALITE_IN_PROGRESS,
+                                FormaliteStatus.FORMALITE_NEW);
                 setPredecessor(FormaliteStatus.FORMALITE_WAITING_DOCUMENT_AUTHORITY,
                                 FormaliteStatus.FORMALITE_IN_PROGRESS);
                 setPredecessor(FormaliteStatus.FORMALITE_WAITING_DOCUMENT,
