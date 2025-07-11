@@ -455,7 +455,7 @@ public class GeneratePdfDelegate {
                 .compareTo(zeroValue) > 0)
             ctx.setVariable("discountTotal", invoiceHelper.getDiscountTotal(invoice));
 
-        // Group debouts for asso invoice item debours
+        // Group debours for asso invoice item debours
         if (customerOrder != null) {
             List<AssoAffaireOrder> assos = new ArrayList<AssoAffaireOrder>();
             if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0)
