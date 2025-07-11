@@ -4,6 +4,7 @@
   <select-paper-set-type [(model)]="selectedPaperSetType" label="Type d'action à réaliser" [form]="serviceTypeForm"
     propertyName="selectedPaperSetType" [isMandatory]="true" [isDisabled]="false"
     [excludedPaperSetTypes]="excludedPaperSetTypes"></select-paper-set-type>
+  <p>Choisissez l'autorité compétente liée à cette action :</p>
   <autocomplete-competent-authority [(model)]="newPaperSet.competentAuthority" [form]="serviceTypeForm"
     propertyName="competentAuthority" [isMandatory]="false"
     label="Autorité compétente"></autocomplete-competent-authority>
