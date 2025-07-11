@@ -4,6 +4,9 @@
   <select-paper-set-type [(model)]="selectedPaperSetType" label="Type d'action à réaliser" [form]="serviceTypeForm"
     propertyName="selectedPaperSetType" [isMandatory]="true" [isDisabled]="false"
     [excludedPaperSetTypes]="excludedPaperSetTypes"></select-paper-set-type>
+  <autocomplete-competent-authority [(model)]="newPaperSet.competentAuthority" [form]="serviceTypeForm"
+    propertyName="competentAuthority" [isMandatory]="false"
+    label="Autorité compétente"></autocomplete-competent-authority>
 </div>
 <div mat-dialog-content style="margin-top : 15px">
   <generic-textarea [(model)]="newPaperSet.creationComment" label="Commentaire" [form]="serviceTypeForm"
