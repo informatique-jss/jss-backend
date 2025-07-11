@@ -191,17 +191,17 @@ export class MissingAttachmentMailDialogComponent implements OnInit {
         this.missingAttachmentQuery.assoServiceDocument = this.selectedAssoServiceDocument;
       if (this.selectedAssoServiceFieldType.length > 0)
         this.missingAttachmentQuery.assoServiceFieldType = this.selectedAssoServiceFieldType;
-      if (this.multipleUploadComponent && this.multipleUploadComponent.files && this.multipleUploadComponent.files.length > 0)
+      if (this.multipleUploadComponent && this.multipleUploadComponent.files && this.multipleUploadComponent.files.length > 0) {
         this.isWaitingForAttachmentToUpload = true;
+      }
       this.dialogRef.close(this.missingAttachmentQueryService.generateMissingAttachmentMail(this.missingAttachmentQuery, this.isWaitingForAttachmentToUpload).subscribe(response => {
         if (response && this.multipleUploadComponent && this.multipleUploadComponent.files && this.multipleUploadComponent.files.length > 0) {
           this.missingAttachmentQuery = response;
           this.entity.id = response.id;
           this.multipleUploadComponent.uploadFiles();
+          this.missingAttachmentQuery.attachments = this.multipleUploadComponent.files;
           this.missingAttachmentQueryService.sendMissingAttachmentQueryWithUploadedFiles(this.missingAttachmentQuery).subscribe();
         }
-        if (response)
-          this.closeDialog();
       }));
     }
   }
