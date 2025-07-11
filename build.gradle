@@ -24,6 +24,14 @@ tasks.withType(JavaCompile) {
     options.compilerArgs << "-parameters"
 }
 
+def excludeHazelcast = project.hasProperty('excludeHazelcast') && project.excludeHazelcast == 'true'
+
+tasks.named('processResources') {
+    if (excludeHazelcast) {
+        exclude 'hazelcast.xml'
+    }
+}
+
 dependencies {
     // Spring
     implementation 'org.springframework.boot:spring-boot-starter-web:3.2.4'

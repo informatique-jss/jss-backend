@@ -176,7 +176,7 @@ public class AffaireServiceImpl implements AffaireService {
     @Override
     public List<Affaire> getAffairesFromSiren(String siren) throws OsirisException, OsirisClientMessageException {
         List<Affaire> existingAffaires = affaireRepository.findBySiren(siren);
-        if (existingAffaires != null && existingAffaires.size() == 1)
+        if (existingAffaires != null)
             return existingAffaires;
         List<RneCompany> rneCompanies = rneDelegateService.getCompanyBySiren(siren);
         List<Affaire> affaires = new ArrayList<Affaire>();

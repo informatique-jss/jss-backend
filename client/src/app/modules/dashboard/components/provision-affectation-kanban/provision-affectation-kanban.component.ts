@@ -153,10 +153,6 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
     this.appService.addPersonnalNotification(() => this.orderNotification = undefined, this.orderNotification, this.selectedEntity!, undefined, undefined, undefined, undefined, undefined, undefined, undefined);
   }
 
-  canAddAssignOrderForProduction() {
-    return this.habilitationService.canAddAssignOrderForProduction();
-  }
-
   fetchEntityAndOpenPanel(task: CustomerOrder, refreshColumn: boolean = false, openPanel = true) {
     this.selectedEntity = null;
     this.orderService.getSingleCustomerOrder(task.id).subscribe(response => {
@@ -232,6 +228,9 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
 
   changeEntityStatus(entity: CustomerOrder, toStatus: AffectationEmployee<CustomerOrder>): void {
     if (!this.possibleEntityStatus)
+      return;
+
+    if (!this.habilitationService.canAddAssignOrderForProduction())
       return;
 
     let assignation = this.getCustomerOrderAssignationForCurrentEmployee(entity);
@@ -314,6 +313,12 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
         this.initStatus(false, true, isOnlyFilterText);
       }, 100);
     }
+  }
+
+  override isValidDropTarget(targetLabel: string): boolean {
+    if (!this.habilitationService.canAddAssignOrderForProduction())
+      return false;
+    return super.isValidDropTarget(targetLabel);
   }
 
 }

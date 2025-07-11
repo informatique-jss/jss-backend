@@ -402,6 +402,14 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         }
 
         customerOrderAssignationService.completeAssignationForCustomerOrder(customerOrder);
+
+        // In progress when created in Osiris
+        if (isNewCustomerOrder
+                && customerOrder.getCustomerOrderOrigin().getId()
+                        .equals(constantService.getCustomerOrderOriginOsiris().getId())
+                && customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.DRAFT))
+            addOrUpdateCustomerOrderStatus(customerOrder, CustomerOrderStatus.BEING_PROCESSED, isFromUser);
+
         batchService.declareNewBatch(Batch.REINDEX_CUSTOMER_ORDER, customerOrder.getId());
         return customerOrder;
     }

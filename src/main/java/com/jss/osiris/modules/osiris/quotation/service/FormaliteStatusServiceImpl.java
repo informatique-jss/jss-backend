@@ -55,7 +55,7 @@ public class FormaliteStatusServiceImpl implements FormaliteStatusService {
                                 "hourglass_top", false,
                                 false,
                                 AggregateStatus.AGGREGATE_STATUS_WAITING, 20);
-                updateStatus(FormaliteStatus.FORMALITE_WAITING_LINKED_PROVISION, "En attente de prestation liée",
+                updateStatus(FormaliteStatus.FORMALITE_WAITING_LINKED_PROVISION, "En attente d'une autre prestation",
                                 "link", false,
                                 false,
                                 AggregateStatus.AGGREGATE_STATUS_WAITING, 6);

@@ -453,7 +453,4 @@ export class DashboardComponent implements OnInit {
     this.index = this.userPreferenceService.getUserTabsSelectionIndex('dashboard');
   }
 
-  canAddAssignOrderForProduction() {
-    return this.habilitationsService.canAddAssignOrderForProduction();
-  }
 }

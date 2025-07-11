@@ -135,6 +135,7 @@ export const routes: Routes = [
       ...routesQuotation,
       ...routesCompany,
       ...routesTools,
+      { path: 'beta_access', loadComponent: () => import('./modules/profile/components/beta/beta.component').then(m => m.BetaComponent) },
     ]
   }
 ];

@@ -75,6 +75,7 @@ public class Confrere implements IId, Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_journal_type")
+	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private JournalType journalType;
 
 	@Column(length = 200)
