@@ -72,6 +72,8 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
   ngOnInit() {
     this.appService.changeHeaderTitle("Tableau de bord");
 
+    this.swimlaneTypes.push({ fieldName: "responsable.formalisteEmployee.id", label: "Formaliste", valueFonction: ((order: CustomerOrder) => (order.responsable && order.responsable.formalisteEmployee ? (order.responsable.formalisteEmployee.firstname + ' ' + order.responsable.formalisteEmployee.lastname) : '')), fieldValueFunction: undefined });
+    this.swimlaneTypes.push({ fieldName: "responsable.insertionEmployee.id", label: "Publisciste", valueFonction: ((order: CustomerOrder) => (order.responsable && order.responsable.insertionEmployee ? (order.responsable.insertionEmployee.firstname + ' ' + order.responsable.insertionEmployee.lastname) : '')), fieldValueFunction: undefined });
     this.swimlaneTypes.push({ fieldName: "responsable.salesEmployee.id", label: "Commercial", valueFonction: ((order: CustomerOrder) => (order.responsable && order.responsable.salesEmployee ? (order.responsable.salesEmployee.firstname + ' ' + order.responsable.salesEmployee.lastname) : '')), fieldValueFunction: undefined });
     this.swimlaneTypes.push({ fieldName: "responsable.id", label: "Responsable", valueFonction: (order: CustomerOrder) => { return this.getResponsableLabelIQuotation(order) }, fieldValueFunction: undefined });
     this.swimlaneTypes.push({ fieldName: "responsable.tiers.id", label: "Tiers", valueFonction: (order: CustomerOrder) => { return this.getTiersLabelIQuotation(order) }, fieldValueFunction: undefined });

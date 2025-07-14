@@ -2,6 +2,7 @@ package com.jss.osiris.modules.osiris.quotation.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -434,6 +435,13 @@ public class CustomerOrderAssignationServiceImpl implements CustomerOrderAssigna
                 employeeService.findEmployeesInTheSameOU(employee),
                 customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.BEING_PROCESSED), null,
                 assignationType));
+
+        orders.sort(new Comparator<CustomerOrder>() {
+            @Override
+            public int compare(CustomerOrder c0, CustomerOrder c1) {
+                return c0.getProductionEffectiveDateTime().compareTo(c1.getProductionEffectiveDateTime());
+            }
+        });
 
         return customerOrderService.completeAdditionnalInformationForCustomerOrders(orders);
     }

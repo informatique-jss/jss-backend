@@ -510,7 +510,10 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Transactional(rollbackFor = Exception.class)
     public Service modifyServiceType(List<ServiceType> serviceTypes, Service service) throws OsirisException {
+        String newLabel = service.getCustomLabel();
         service = getService(service.getId());
+        if (newLabel != null)
+            service.setCustomLabel(newLabel);
 
         ArrayList<AssoServiceFieldType> assoToDelete = new ArrayList<AssoServiceFieldType>();
         ArrayList<Integer> serviceTypeIds = new ArrayList<Integer>();

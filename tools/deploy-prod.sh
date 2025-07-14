@@ -15,8 +15,8 @@ scp build/libs/*-*.jar osiris@app4.osiris.jss.fr:/appli/osiris/osiris.jar
 ssh -t osiris@app4.osiris.jss.fr 'sudo  /usr/bin/systemctl start osiris.service;exit'
 
 ssh -t cache@cache1.osiris.jss.fr 'sudo  /usr/bin/systemctl stop cache.service;exit'
-ssh -t cache@cache1.osiris.jss.fr 'sudo  /usr/bin/systemctl start cache.service;exit'
 ssh -t cache@cache2.osiris.jss.fr 'sudo  /usr/bin/systemctl stop cache.service;exit'
+ssh -t cache@cache1.osiris.jss.fr 'sudo  /usr/bin/systemctl start cache.service;exit'
 ssh -t cache@cache2.osiris.jss.fr 'sudo  /usr/bin/systemctl start cache.service;exit'
 
 cd client

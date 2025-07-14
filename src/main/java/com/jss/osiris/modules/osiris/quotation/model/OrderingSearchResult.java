@@ -16,8 +16,6 @@ public interface OrderingSearchResult {
 
     public Integer getSalesEmployeeId();
 
-    public Integer getAssignedToEmployeeId();
-
     public String getCustomerOrderDescription();
 
     public Integer getCustomerOrderId();
