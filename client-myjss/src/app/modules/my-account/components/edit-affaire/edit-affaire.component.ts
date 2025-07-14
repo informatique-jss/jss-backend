@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { AppService } from '../../../../libs/app.service';
 import { validateEmail, validateFrenchPhone, validateInternationalPhone } from '../../../../libs/CustomFormsValidatorsHelper';
 import { capitalizeName, getListMails, getListPhones } from '../../../../libs/FormatHelper';
-import { Mail } from '../../../profile/model/Mail';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { Mail } from '../../../general/model/Mail';
+import { AppService } from '../../../main/services/app.service';
+import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { Phone } from '../../../profile/model/Phone';
 import { Affaire } from '../../model/Affaire';
 import { AffaireService } from '../../services/affaire.service';
@@ -12,14 +14,19 @@ import { AffaireService } from '../../services/affaire.service';
 @Component({
   selector: 'app-edit-affaire',
   templateUrl: './edit-affaire.component.html',
-  styleUrls: ['./edit-affaire.component.css']
+  styleUrls: ['./edit-affaire.component.css'],
+  standalone: true,
+  imports: [SHARED_IMPORTS, GenericInputComponent]
 })
 export class EditAffaireComponent implements OnInit {
 
   affaire: Affaire | undefined;
-  editAffaireForm = this.formBuilder.group({});
+  editAffaireForm!: FormGroup;
   newMail: string = "";
   newPhone: string = "";
+
+  idOrder: number | undefined;
+  idQuotation: number | undefined;
 
   constructor(private activatedRoute: ActivatedRoute,
     private affaireService: AffaireService,
@@ -32,6 +39,10 @@ export class EditAffaireComponent implements OnInit {
   getListPhones = getListPhones;
 
   ngOnInit() {
+    this.idOrder = this.activatedRoute.snapshot.params['idOrder'];
+    this.idQuotation = this.activatedRoute.snapshot.params['idQuotation'];
+
+    this.editAffaireForm = this.formBuilder.group({});
     this.affaireService.getAffaire(this.activatedRoute.snapshot.params['id']).subscribe(response => {
       this.affaire = response;
     })
@@ -72,12 +83,17 @@ export class EditAffaireComponent implements OnInit {
   saveAffaire() {
     if (this.affaire)
       this.affaireService.addOrUpdateAffaire(this.affaire).subscribe(response => {
-        this.appService.openRoute(null, "account/orders/details/" + this.activatedRoute.snapshot.params['idOrder'], undefined);
+        this.goBackAffaire();
       })
   }
 
-  cancelAffaire() {
-    this.appService.openRoute(null, "account/orders/details/" + this.activatedRoute.snapshot.params['idOrder'], undefined);
+  goBackAffaire() {
+    if (this.idOrder) {
+      this.appService.openRoute(null, "account/orders/details/" + this.idOrder, undefined);
+    }
+    if (this.idQuotation) {
+      this.appService.openRoute(null, "account/quotations/details/" + this.idQuotation, undefined);
+    }
   }
 
 }

@@ -30,25 +30,13 @@ export class ServiceService extends AppRestService<Service> {
     return this.get(new HttpParams().set("serviceTypeId", serviceType.id).set("idAffaire", affaire.id), "service-type/provision");
   }
 
-  getServiceForMultiServiceTypesAndAffaire(serviceTypes: ServiceType[], affaire: Affaire) {
-    return this.postItem(new HttpParams().set("idAffaire", affaire.id), "service-types/provisions", serviceTypes);
+  getServiceForMultiServiceTypesAndAffaire(serviceTypes: ServiceType[], customLabel: string | undefined, affaire: Affaire) {
+    const ids = serviceTypes.map(st => st.id).join(',');
+    return this.getList(new HttpParams().set("customLabel", customLabel + "").set("serviceTypeIds", ids).set("idAffaire", affaire.id + ""), "service-types/provisions");
   }
 
-  modifyServiceType(service: Service, serviceType: ServiceType) {
-
-    return this.get(new HttpParams().set("serviceTypeId", serviceType.id).set("serviceId", service.id), "service/modify");
-  }
-
-  getServiceLabel(service: Service, displayGroupAndFamily: boolean, serviceTypeOther: ServiceType) {
-    let label = "";
-    if (service && service.serviceType) {
-      if (displayGroupAndFamily)
-        label = service.serviceType.serviceFamily.serviceFamilyGroup.label + " - ";
-      label += service.serviceType.label
-      if (service.serviceType.id == serviceTypeOther.id && service.customLabel && service.customLabel.trim().length > 0)
-        return service.customLabel;
-    }
-    return label;
+  modifyServiceType(service: Service, serviceTypes: ServiceType[]) {
+    return this.get(new HttpParams().set("serviceTypeIds", serviceTypes.map(st => st.id).join(',')).set("serviceId", service.id), "service/modify");
   }
 
 }

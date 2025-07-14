@@ -11,7 +11,7 @@ public interface CentralPayDelegateService {
         public CentralPayPaymentRequest cancelPaymentRequest(String centralPayPaymentRequestId);
 
         public CentralPayPaymentRequest generatePayPaymentRequest(BigDecimal amount, String mail, String entityId,
-                        String subject);
+                        String subject, boolean isQuotation);
 
         public CentralPayPaymentRequest getPaymentRequest(String centralPayPaymentRequestId) throws OsirisException;
 

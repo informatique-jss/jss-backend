@@ -92,7 +92,7 @@ public class ProvisionServiceImpl implements ProvisionService {
         return provisionRepository.getDashboardEmployee(employeeIds,
                 customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.ABANDONED).getId(),
                 customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.WAITING_DEPOSIT).getId(),
-                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.OPEN).getId());
+                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT).getId());
     }
 
     @Override

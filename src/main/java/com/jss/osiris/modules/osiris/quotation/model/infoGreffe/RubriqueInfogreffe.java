@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.quotation.model.infoGreffe;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -16,7 +17,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 
 @Entity
-public class RubriqueInfogreffe {
+public class RubriqueInfogreffe implements Serializable {
     @Id
     @SequenceGenerator(name = "rubrique_montant_formalite_infogreffe_sequence", sequenceName = "rubrique_montant_formalite_infogreffe_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "rubrique_montant_formalite_infogreffe_sequence")

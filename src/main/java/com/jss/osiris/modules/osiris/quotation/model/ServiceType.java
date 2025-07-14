@@ -30,53 +30,59 @@ public class ServiceType implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "asso_service_type_sequence", sequenceName = "asso_service_type_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "asso_service_type_sequence")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class,
+			JacksonViews.OsirisListView.class })
 	private Integer id;
 
 	@Column(nullable = false)
 	@IndexedField
-	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisListView.class,
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 	private String label;
 
 	@IndexedField
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class,
+			JacksonViews.OsirisListView.class })
 	private String customLabel;
 
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class,
+			JacksonViews.OsirisListView.class })
 	private String code;
 
 	@Column(columnDefinition = "TEXT")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class })
 	private String comment;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_service_family")
 	@IndexedField
+	@JsonView({ JacksonViews.OsirisListView.class })
 	private ServiceFamily serviceFamily;
 
 	@OneToMany(mappedBy = "serviceType", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "serviceType" }, allowSetters = true)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private List<AssoServiceProvisionType> assoServiceProvisionTypes;
 
 	@OneToMany(mappedBy = "serviceType", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "serviceType" }, allowSetters = true)
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private List<AssoServiceTypeDocument> assoServiceTypeDocuments;
 
 	@OneToMany(mappedBy = "serviceType", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "serviceType" }, allowSetters = true)
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class })
 	private List<AssoServiceTypeFieldType> assoServiceTypeFieldTypes;
 
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
 	private Boolean isRequiringNewUnregisteredAffaire;
 
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
 	@Transient
 	private Boolean hasAnnouncement;
 
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
 	@Transient
 	private Boolean hasOnlyAnnouncement;
 
@@ -87,6 +93,13 @@ public class ServiceType implements Serializable, IId {
 	private BigDecimal defaultDeboursPriceNonTaxable;
 
 	private Integer suspiciousMarkup;
+
+	@JsonView(JacksonViews.MyJssListView.class)
+	private Boolean isMergeable;
+
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+	@JoinColumn(name = "id_service_type_linked")
+	private ServiceType serviceTypeLinked;
 
 	public Integer getId() {
 		return id;
@@ -216,4 +229,19 @@ public class ServiceType implements Serializable, IId {
 		this.suspiciousMarkup = suspiciousMarkup;
 	}
 
+	public Boolean getIsMergeable() {
+		return isMergeable;
+	}
+
+	public void setIsMergeable(Boolean isMergeable) {
+		this.isMergeable = isMergeable;
+	}
+
+	public ServiceType getServiceTypeLinked() {
+		return serviceTypeLinked;
+	}
+
+	public void setServiceTypeLinked(ServiceType serviceTypeLinked) {
+		this.serviceTypeLinked = serviceTypeLinked;
+	}
 }

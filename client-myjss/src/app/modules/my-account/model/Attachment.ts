@@ -7,5 +7,6 @@ export interface Attachment {
   attachmentType: AttachmentType;
   typeDocument: TypeDocument;
   creatDateTime: Date;
+  attachmentDate: Date;
 }
 

@@ -160,8 +160,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         if (letterInvoice(invoice)) {
             invoice.setInvoiceStatus(constantService.getInvoiceStatusPayed());
             if (invoice.getCustomerOrder() != null) {
-                invoice.getCustomerOrder().setIsPayed(true);
-                customerOrderService.addOrUpdateCustomerOrder(invoice.getCustomerOrder(), false, false);
+                customerOrderService.markCustomerOrderAsPayed(invoice.getCustomerOrder(), true);
             }
             invoiceService.addOrUpdateInvoice(invoice);
         }
@@ -293,8 +292,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
             }
         invoice.setInvoiceStatus(constantService.getInvoiceStatusSend());
         if (invoice.getCustomerOrder() != null) {
-            invoice.getCustomerOrder().setIsPayed(false);
-            customerOrderService.addOrUpdateCustomerOrder(invoice.getCustomerOrder(), false, false);
+            customerOrderService.markCustomerOrderAsPayed(invoice.getCustomerOrder(), false);
         }
         invoiceService.addOrUpdateInvoice(invoice);
     }

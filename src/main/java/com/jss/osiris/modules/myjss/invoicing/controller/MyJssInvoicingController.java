@@ -53,7 +53,7 @@ public class MyJssInvoicingController {
 	@Autowired
 	MyJssQuotationValidationHelper myJssQuotationValidationHelper;
 
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@GetMapping(inputEntryPoint + "/invoice/label/compute/order")
 	public ResponseEntity<InvoiceLabelResult> computeInvoiceLabelForCustomerOrder(@RequestParam Integer customerOrderId)
 			throws OsirisException {
@@ -67,7 +67,7 @@ public class MyJssInvoicingController {
 				responsableService.getResponsable(customerOrder.getResponsable().getId())), HttpStatus.OK);
 	}
 
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@GetMapping(inputEntryPoint + "/invoice/label/physical/compute/order")
 	public ResponseEntity<InvoiceLabelResult> computePhysicalMailComputeResultForBillingForCustomerOrder(
 			@RequestParam Integer customerOrderId)
@@ -81,7 +81,7 @@ public class MyJssInvoicingController {
 				HttpStatus.OK);
 	}
 
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@GetMapping(inputEntryPoint + "/mail/billing/compute/order")
 	public ResponseEntity<MailComputeResult> getMailComputeResultForBillingForCustomerOrder(
 			@RequestParam Integer customerOrderId)
@@ -96,7 +96,7 @@ public class MyJssInvoicingController {
 				HttpStatus.OK);
 	}
 
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@GetMapping(inputEntryPoint + "/mail/digital/compute/order")
 	public ResponseEntity<MailComputeResult> getMailComputeResultForDigitalForCustomerOrder(
 			@RequestParam Integer customerOrderId)
@@ -111,7 +111,7 @@ public class MyJssInvoicingController {
 				HttpStatus.OK);
 	}
 
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@GetMapping(inputEntryPoint + "/invoice/label/compute/quotation")
 	public ResponseEntity<InvoiceLabelResult> computeInvoiceLabelForQuotation(@RequestParam Integer quotationId)
 			throws OsirisException {
@@ -125,7 +125,7 @@ public class MyJssInvoicingController {
 				responsableService.getResponsable(quotation.getResponsable().getId())), HttpStatus.OK);
 	}
 
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@GetMapping(inputEntryPoint + "/invoice/label/physical/compute/quotation")
 	public ResponseEntity<InvoiceLabelResult> computePhysicalMailComputeResultForBillingForQuotation(
 			@RequestParam Integer quotationId)
@@ -139,7 +139,7 @@ public class MyJssInvoicingController {
 				HttpStatus.OK);
 	}
 
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@GetMapping(inputEntryPoint + "/mail/billing/compute/quotation")
 	public ResponseEntity<MailComputeResult> getMailComputeResultForBillingForQuotation(
 			@RequestParam Integer quotationId)
@@ -154,7 +154,7 @@ public class MyJssInvoicingController {
 				HttpStatus.OK);
 	}
 
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@GetMapping(inputEntryPoint + "/mail/digital/compute/quotation")
 	public ResponseEntity<MailComputeResult> getMailComputeResultForDigitalForQuotation(
 			@RequestParam Integer quotationId)
@@ -169,7 +169,7 @@ public class MyJssInvoicingController {
 				HttpStatus.OK);
 	}
 
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	@GetMapping(inputEntryPoint + "/order/list")
 	public ResponseEntity<List<Payment>> getApplicablePaymentsForCustomerOrder(
 			@RequestParam Integer customerOrderId) throws OsirisException {
@@ -183,7 +183,7 @@ public class MyJssInvoicingController {
 				HttpStatus.OK);
 	}
 
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@GetMapping(inputEntryPoint + "/invoice/summary/order")
 	public ResponseEntity<InvoicingSummary> getInvoicingSummaryForCustomerOrder(
 			@RequestParam Integer customerOrderId) throws OsirisException {
@@ -196,7 +196,7 @@ public class MyJssInvoicingController {
 				customerOrderService.getInvoicingSummaryForIQuotation(customerOrder), HttpStatus.OK);
 	}
 
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@GetMapping(inputEntryPoint + "/invoice/summary/quotation")
 	public ResponseEntity<InvoicingSummary> getInvoicingSummaryForQuotation(
 			@RequestParam Integer quotationId) throws OsirisException {

@@ -23,7 +23,7 @@ import { SwimlaneType } from '../../model/SwimlaneType';
 import { KanbanComponent } from '../kanban/kanban.component';
 
 @Component({
-  selector: 'app-quotation-kanban',
+  selector: 'quotation-kanban',
   templateUrl: './quotation-kanban.component.html',
   styleUrls: ['./quotation-kanban.component.css']
 })

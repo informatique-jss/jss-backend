@@ -1,0 +1,189 @@
+<header class="fixed-top jss-navbar "
+  [ngClass]="{'jss-navbar-light': isForQuotationNavbar,'theme-account': isForQuotationNavbar}">
+  <div class="container mt-3">
+    <div class="row navbar d-flex justify-content-between align-items-center">
+
+      <!-- Mobile menu toggler (Hamburger) -->
+      <div class="col-4 d-flex justify-content-start">
+        <button class="navbar-toggler" id="navToggler" type="button" aria-label="Toggle navigation"
+          (click)="isNavbarCollapsed = !isNavbarCollapsed">
+          <span class="text-body h6"></span>
+          <span class="navbar-toggler-icon" [ngClass]="{'navbar-toggler-icon-light': isForQuotationNavbar}"></span>
+        </button>
+      </div>
+
+      <!-- Logo -->
+      <div class="col-4 d-flex justify-content-center">
+        <a href="">
+          <img ui-sref='' [src]="isForQuotationNavbar? logoJssDark: logoJss" />
+        </a>
+      </div>
+
+
+      <!-- User not signed in state.   -->
+      <div class="col-4 d-flex justify-content-end align-items-center">
+        <!-- 'Sign In' button visible only on medium to large screens (d-md-block) -->
+        <div *ngIf="!currentUser || !currentUser.id" class="d-none d-md-block">
+          <a class="btn col-md-auto btn-sm"
+            [ngClass]="{'btn-outline-light': !isForQuotationNavbar, 'btn-outline-dark': isForQuotationNavbar}"
+            [routerLink]="['/account/signin']" rel="noopener">
+            Se connecter
+          </a>
+        </div>
+
+        <!-- 'Sign In' icon visible only on small screens (d-md-none) -->
+        <div *ngIf="!currentUser || !currentUser.id" class="d-block d-md-none">
+          <a class="btn col-md-auto btn-sm" [routerLink]="['/account/signin']" rel="noopener">
+            <img [src]="anonymousConnexion" />
+          </a>
+
+        </div>
+
+        <!-- Search button -->
+        <div class="me-3 me-lg-4 ms-auto"
+          *ngIf="currentUser && (actualUrl.includes('account') || actualUrl.includes('quotation'))"
+          (click)="displaySearchModal()">
+          <a class="nav-link fs-4 p-2 mx-sm-1" style="cursor: pointer;" ngbTooltip="Rechercher" placement="right"
+            aria-label="Search2">
+            <i class="ai-search"></i>
+          </a>
+        </div>
+        <!-- User signed in state. Account dropdown on screens > 576px -->
+        <div ngbDropdown class="dropdown nav " *ngIf="currentUser && currentUser.id">
+          <a ngbDropdownToggle class="d-flex align-items-center p-0 user-account" aria-expanded="false">
+            <avatar class="avatar-select" [user]="currentUser" [size]="48"></avatar>
+            <div class="ps-2 d-none d-md-block">
+              <div class="fs-xs lh-1 opacity-60">Bonjour,</div>
+              <div class="fs-sm  ">{{capitalizeName(currentUser.firstname + " "
+                +currentUser.lastname)}}
+              </div>
+            </div>
+          </a>
+          <div ngbDropdownMenu class="dropdown-menu dropdown-menu-end my-1">
+            <h6 class="dropdown-header fs-xs fw-medium text-body-secondary text-uppercase pb-1">Tableau de
+              bord</h6>
+            <ng-container *ngFor="let item of myAccountItems">
+              <a class="dropdown-item" [routerLink]="item.route" *ngIf="item.mainItem==MAIN_ITEM_DASHBOARD">
+                <i class="fs-lg opacity-70 me-2" [ngClass]="item.iconClass"></i>
+                {{item.label}}
+              </a>
+            </ng-container>
+            <div class="dropdown-divider"></div>
+            <h6 class="dropdown-header fs-xs fw-medium text-body-secondary text-uppercase pb-1">Mon compte
+            </h6>
+            <ng-container *ngFor="let item of myAccountItems">
+              <a class="dropdown-item" [routerLink]="item.route" *ngIf="item.mainItem==MAIN_ITEM_ACCOUNT">
+                <i class=" fs-lg opacity-70 me-2" [ngClass]="item.iconClass"></i>
+                {{item.label}}
+              </a>
+            </ng-container>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item btn-outline-light" [routerLink]="'/account/signout'">
+              Se déconnecter
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr style="margin-bottom: 0rem">
+
+    <!-- Navbar collapsed with all page presentation -->
+    <div class="navbar align-items-start">
+      <div [ngbCollapse]="isNavbarCollapsed" class="collapse " id="navbarCollapse">
+        <div class="d-flex flex-column w-100">
+          <ul class="navbar-nav navbar-nav-scroll flex-column" style="--ar-scroll-height: 520px; overflow: hidden;">
+            <li class="nav-item dropdown d-block col col-md-auto" ngbDropdown>
+              <a class="nav-link  " ngbDropdownToggle aria-expanded="false">Services</a>
+              <ul ngbDropdownMenu>
+                <li *ngFor="let service of services"><a class="dropdown-item" [routerLink]="service.route"
+                    (click)="attempToCloseNavbar(true,null)">
+                    {{service.label}}</a></li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown col col-md-auto" ngbDropdown>
+              <a class="nav-link  " ngbDropdownToggle>La
+                société</a>
+              <ul ngbDropdownMenu>
+                <li *ngFor="let item of companyItems"><a class="dropdown-item" [routerLink]="item.route"
+                    (click)="attempToCloseNavbar(true,null)">
+                    {{item.label}}</a></li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown col col-md-auto" ngbDropdown>
+              <a class="nav-link  " ngbDropdownToggle aria-expanded="false">Outils</a>
+              <ul ngbDropdownMenu>
+                <li *ngFor="let tool of tools"><a class="dropdown-item" [routerLink]="tool.route"
+                    (click)="attempToCloseNavbar(true,null)">
+                    {{tool.label}}</a></li>
+              </ul>
+            </li>
+            <li class="nav-item col col-md-auto">
+              <a class="nav-link " style="cursor: pointer;" [routerLink]="'quotation/identification'"
+                (click)="attempToCloseNavbar(true,null)">Commande /
+                Devis</a>
+            </li>
+            <li class="nav-item col col-md-auto">
+              <a class="nav-link " style="cursor: pointer;" [routerLink]="'demo'"
+                (click)="attempToCloseNavbar(true,null)">Démo</a>
+            </li>
+            <li class="nav-item col col-md-auto">
+              <a class="nav-link " style="cursor: pointer;" [routerLink]="'contact'"
+                (click)="attempToCloseNavbar(true,null)">Contact</a>
+            </li>
+            <li class="nav-item col col-md-auto">
+              <a class="nav-link " style="cursor: pointer;" (click)="openJssRoute($event)">Journal Spécial des
+                Sociétés</a>
+            </li>
+          </ul>
+        </div>
+        <hr>
+      </div>
+    </div>
+
+
+    <div *ngIf="isDisplaySecondHeader()" class="row d-none d-lg-block">
+      <!-- Navbar collapse (Main navigation) -->
+      <nav class="align-items-center navbar-expand" id="navbarNav">
+        <ul class="navbar-nav navbar-nav-scroll justify-content-between" style="--ar-scroll-height: 520px;">
+          <li class="nav-item dropdown d-block col col-md-auto">
+            <a class="nav-link dropdown-toggle" aria-expanded="false">Services</a>
+            <ul class="dropdown-menu">
+              <li *ngFor="let service of services"><a class="dropdown-item" [routerLink]="service.route">
+                  {{service.label}}</a></li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown col col-md-auto">
+            <a class="nav-link dropdown-toggle" aria-expanded="false">La société</a>
+            <ul class="dropdown-menu">
+              <li *ngFor="let item of companyItems"><a class="dropdown-item" [routerLink]="item.route">
+                  {{item.label}}</a></li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown col col-md-auto">
+            <a class="nav-link dropdown-toggle" aria-expanded="false">Outils</a>
+            <ul class="dropdown-menu">
+              <li *ngFor="let tool of tools"><a class="dropdown-item" [routerLink]="tool.route">
+                  {{tool.label}}</a></li>
+            </ul>
+          </li>
+          <li class="nav-item col col-md-auto">
+            <a class="nav-link " style="cursor: pointer;" [routerLink]="'quotation/identification'">Commande / Devis</a>
+          </li>
+          <li class="nav-item col col-md-auto">
+            <a class="nav-link " style="cursor: pointer;" [routerLink]="'demo'">Démo</a>
+          </li>
+          <li class="nav-item col col-md-auto">
+            <a class="nav-link " style="cursor: pointer;" [routerLink]="'prices'">Tarifs</a>
+          </li>
+          <li class="nav-item col col-md-auto">
+            <a class="nav-link " style="cursor: pointer;" [routerLink]="'contact'">Contact</a>
+          </li>
+          <li class="nav-item col col-md-auto">
+            <a class="nav-link " style="cursor: pointer;" (click)="openJssRoute($event)">Journal Spécial des
+              Sociétés</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,31 @@
+<div class="mat-elevation-z2 form-div">
+  <div class=" full-width">
+    <table class="full-width table-fixed-layout table-bilan">
+      <tr>
+        <td class="toggle-td">
+          <generic-toggle [(model)]="isDisplayOnlyActiveVouchers"
+            label="Afficher uniquement les coupons actifs/valides ?" [form]="vouchersForm"
+            propertyName="isDisplayActiveVoucher" (modelChange)="getAllVouchers()"></generic-toggle>
+        </td>
+
+        <td class="fab-td-button">
+          <button mat-mini-fab color="warn" matTooltip="Créer un coupon" (click)="createVoucher()" class="add-button">
+            <mat-icon>add</mat-icon>
+          </button>
+        </td>
+      </tr>
+    </table>
+
+    <sort-table [actions]="tableActionVoucher" [columns]="displayedColumnsVoucher" [values]="vouchers"
+      tableName="vouchers" *ngIf="displayedColumnsVoucher && displayedColumnsVoucher.length>0 "
+      (onRowClick)="openOrdersUsingVoucher($event)" [displayTotalLines]="true">
+    </sort-table>
+
+    <div *ngIf="selectedVoucher&& displayedColumnsOrdersOfVoucher && displayedColumnsOrdersOfVoucher.length>0">
+      <h4>Commandes et responsables utilisant le coupon : {{selectedVoucher.code}}</h4>
+      <sort-table [columns]="displayedColumnsOrdersOfVoucher" [values]="ordersUsedBySelectedVoucher" tableName="orders"
+        [displayTotalLines]="true">
+      </sort-table>
+    </div>
+  </div>
+</div>

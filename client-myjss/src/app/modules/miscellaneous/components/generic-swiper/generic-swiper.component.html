@@ -1,0 +1,38 @@
+<section>
+  <div class="container overflow-hidden py-5 my-5">
+    <div class="row justify-content-between">
+      <div class="col">
+        <p>{{subtitle}}</p>
+        <h2 class="h1 pb-3 mb-lg-4 text-white">{{title}}</h2>
+      </div>
+      <div class="col-auto ms-auto d-flex justify-content-end align-items-end"
+        *ngIf="items && items.length>slidesPerView">
+        <div class="d-md-block d-none pb-3 mb-lg-4 ">
+          <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle m-2" (click)="slidePrev()"
+            aria-label="Previous slide">
+            <i class="ai-arrow-left"></i>
+          </a>
+          <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle m-2" (click)="slideNext()"
+            aria-label="Next slide">
+            <i class="ai-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-0">
+      <div class="col-3 d-lg-block d-none" *ngIf="firstFixedImg">
+        <div class="card border-0" [ngStyle]="{'width.px': slideWidth, 'height.px': maxHeight-48}">
+          <!-- We substract 48px that are always presents as padding bottom for the slides that we dont want for the img -->
+          <img [src]="firstFixedImg" class="card object-fit-cover" alt="Card image">
+        </div>
+      </div>
+      <swiper-container #genericSwiper class="genericSwiper" [ngClass]="{'col-9' : firstFixedImg }" init="false"
+        *ngIf="isBrowser()">
+        <swiper-slide *ngFor="let item of items" class="pb-5">
+          <ng-container *ngTemplateOutlet="templateRef; context: { $implicit: item }"></ng-container>
+        </swiper-slide>
+      </swiper-container>
+    </div>
+  </div>
+</section>

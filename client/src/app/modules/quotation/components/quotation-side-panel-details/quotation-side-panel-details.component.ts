@@ -7,7 +7,7 @@ import { getAffaireFromAssoAffaireOrder, getCustomerOrderNameForTiers, getServic
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { NotificationService } from 'src/app/modules/miscellaneous/services/notification.service';
 import { Employee } from 'src/app/modules/profile/model/Employee';
-import { SelectServiceTypeDialogComponent } from 'src/app/modules/quotation/components/select-service-type-dialog/select-service-type-dialog.component';
+import { SelectMultiServiceTypeDialogComponent } from 'src/app/modules/quotation/components/select-multi-service-type-dialog/select-multi-service-type-dialog.component';
 import { Affaire } from 'src/app/modules/quotation/model/Affaire';
 import { AssoAffaireOrder } from 'src/app/modules/quotation/model/AssoAffaireOrder';
 import { Quotation } from 'src/app/modules/quotation/model/Quotation';
@@ -108,11 +108,6 @@ export class QuotationSidePanelDetailsComponent implements OnInit {
     return this.affaireNotification[affaire.id];
   }
 
-  updateAssignedToForAffaire(employee: any, asso: AssoAffaireOrder) {
-    this.assoAffaireOrderService.updateAssignedToForAsso(asso, employee).subscribe(response => {
-    });
-  }
-
   canDisplayNotifications() {
     return this.habilitationService.canDisplayNotifications();
   }
@@ -167,7 +162,7 @@ export class QuotationSidePanelDetailsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(dialogResult => {
       if (dialogResult && service) {
-        const dialogRef2 = this.selectServiceTypeDialog.open(SelectServiceTypeDialogComponent, {
+        const dialogRef2 = this.selectServiceTypeDialog.open(SelectMultiServiceTypeDialogComponent, {
           width: "50%",
         });
         dialogRef2.componentInstance.isJustSelectServiceType = true;

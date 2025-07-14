@@ -9,38 +9,44 @@ import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 public class BillingClosureReceiptValue {
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private LocalDateTime eventDateTime;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private String eventDateString;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private String eventDescription;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private String eventCbLink;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private BigDecimal creditAmount;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private BigDecimal debitAmount;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private boolean displayBottomBorder;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private LocalDate directDebitTransfertDate;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private Responsable responsable;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private String affaireLists;
 
-    @JsonView(JacksonViews.MyJssView.class)
+    @JsonView(JacksonViews.MyJssListView.class)
     private String serviceLists;
+
+    @JsonView(JacksonViews.MyJssListView.class)
+    private Integer idInvoice;
+
+    @JsonView(JacksonViews.MyJssListView.class)
+    private Integer idCustomerOrder;
 
     public BillingClosureReceiptValue() {
     }
@@ -139,6 +145,22 @@ public class BillingClosureReceiptValue {
 
     public void setAffaireLists(String affaireLists) {
         this.affaireLists = affaireLists;
+    }
+
+    public Integer getIdInvoice() {
+        return idInvoice;
+    }
+
+    public void setIdInvoice(Integer idInvoice) {
+        this.idInvoice = idInvoice;
+    }
+
+    public Integer getIdCustomerOrder() {
+        return idCustomerOrder;
+    }
+
+    public void setIdCustomerOrder(Integer idCustomerOrder) {
+        this.idCustomerOrder = idCustomerOrder;
     }
 
 }

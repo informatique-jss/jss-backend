@@ -624,7 +624,31 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setFixedRate(60 * 1000);
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
-            batchSettings.setIsOnlyOneJob(true);
+            batchSettings.setIsOnlyOneJob(false);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.MISCELLANEOUS));
+            addOrUpdateBatchSettings(batchSettings);
+        }
+        if (getByCode(Batch.PURGE_QUOTATION) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.PURGE_QUOTATION);
+            batchSettings.setLabel("Purge des devis brouillons");
+            batchSettings.setFixedRate(5 * 60 * 1000);
+            batchSettings.setQueueSize(1);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.MISCELLANEOUS));
+            addOrUpdateBatchSettings(batchSettings);
+        }
+        if (getByCode(Batch.PURGE_CUSTOMER_ORDER) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.PURGE_CUSTOMER_ORDER);
+            batchSettings.setLabel("Purge des commandes brouillons");
+            batchSettings.setFixedRate(5 * 60 * 1000);
+            batchSettings.setQueueSize(1);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
             batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.MISCELLANEOUS));
             addOrUpdateBatchSettings(batchSettings);

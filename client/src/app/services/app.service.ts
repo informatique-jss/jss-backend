@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
+import { environment } from 'src/environments/environment';
 import { Notification } from '../../app/modules/miscellaneous/model/Notification';
 import { AddNotificationDialogComponent } from '../modules/miscellaneous/components/add-notification-dialog/add-notification-dialog.component';
 import { NotificationService } from '../modules/miscellaneous/services/notification.service';
@@ -74,6 +75,16 @@ export class AppService {
       if (sameWindowEndFonction)
         sameWindowEndFonction();
     }
+    return;
+  }
+
+  /**
+   * Open given route to MyJss website on a new tab
+   * @param route  : route to open
+   * @returns
+   */
+  openMyJssRoute(route: string) {
+    window.open(environment.frontendMyJSSUrl + route, "_blank");
     return;
   }
 

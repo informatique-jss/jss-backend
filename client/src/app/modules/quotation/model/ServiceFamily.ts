@@ -5,6 +5,9 @@ export interface ServiceFamily {
   code: string;
   label: string;
   customLabel: string;
+  myJssIcon: string;
   comment: string;
   serviceFamilyGroup: ServiceFamilyGroup;
+  myJssOrder: number;
+  hideInMyJssMandatoryDocument: boolean;
 }

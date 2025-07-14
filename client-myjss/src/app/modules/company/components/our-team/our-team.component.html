@@ -1,0 +1,62 @@
+<section class="container mb-5">
+  <div class="row pt-md-2 pt-lg-3 pt-xl-4 ">
+    <div class="col-md-6">
+      <h1 class="h1 pe-xxl-5 me-xl-4 mb-md-0 text-white">Derrière le JSS, des talents avant tout</h1>
+    </div>
+
+    <div class="col-md-6 col-xl-5 offset-xl-1">
+      <p class="text-body fs-lg mb-5 text-white">Nos équipes sont notre plus grande force.<br />
+        Chaque collaborateur apporte son expertise, son énergie et sa motivation pour nous faire avancer.<br />
+        L’humain est au cœur de notre réussite, c’est pourquoi nous cultivons une équipe engagée, passionnée et tournée
+        vers l’avenir.<br />
+        Découvrez les visages qui font vivre JSS au quotidien.
+      </p>
+    </div>
+  </div>
+</section>
+<div>
+</div>
+
+<section class="pb-5 my-5">
+  <div class="jarallax" data-jarallax>
+    <div class="jarallax-img" style="background-image: url(assets/img/societe/our_team_banner.png);">
+    </div>
+  </div>
+</section>
+
+<section class="container overflow-hidden py-5 my-5">
+  <div class="row">
+    <p>NOS ÉQUIPES </p>
+    <h2 class="h1 pb-3 mb-lg-4 text-white">Découvrez nos talents par métier</h2>
+  </div>
+  <section class="container py-5 mb-lg-3 mb-xl-4 mt-xl-3 my-xxl-5">
+    <div class="row">
+      <div class="col-2">
+        <ul class="nav nav-tabs flex-column" role="tablist">
+          <li class="nav-item" *ngFor="let dept of departments">
+            <div class="nav-link" [class.active]="dept == selectedTab" (click)="selectedTab = dept">
+              <i class="fi-home me-2"></i>
+              {{ dept.name }}
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="col-10" data-simplebar>
+        <div *ngIf="staff[selectedTab.key]" class="mb-4 mb-lg-5 pb-4 px-3">
+          <div class="row row-cols-lg-4 flex-lg-wrap gy-lg-5 mx-n3">
+            <div class="col" *ngFor="let person of staff[selectedTab.key]">
+              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
+                <img class="rounded-circle" [src]="'assets/images/team/' + selectedTab.key + '/' + person.photo"
+                  width="120" [alt]="person.firstname">
+                <h3 class="h5 pt-4 mb-1">{{ person.firstname }} {{ person.lastname }}</h3>
+                <p class="text-body-secondary mb-0">{{ person.title }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </section>
+</section>

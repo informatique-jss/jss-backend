@@ -1,0 +1,161 @@
+<h1 class="h2 my-2">Newsletter et alertes</h1>
+
+<section class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4" *ngIf="!communicationPreference">
+  <div class="card-body">
+    <p class="card-text placeholder-glow">
+      <span class="placeholder placeholder-sm col-7 me-2"></span>
+      <span class="placeholder placeholder-sm col-4"></span>
+      <span class="placeholder placeholder-sm col-4 me-2"></span>
+      <span class="placeholder placeholder-sm col-6"></span>
+      <span class="placeholder placeholder-sm col-8"></span>
+    </p>
+  </div>
+</section>
+
+<section class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4 mb-4" *ngIf="communicationPreference">
+  <div class="card-body">
+    <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-0 mb-lg-1 mb-xl-3">
+      <i class="ai-messages text-primary lead pe-1 me-2"></i>
+      <h2 class="h4 mb-0">Abonnements aux newsletters</h2>
+    </div>
+    <div class="d-md-flex align-items-center">
+      <div class="d-sm-flex align-items-center">
+        <div class="pt-3 pt-sm-0 ps-sm-3">
+          <div class="text-body-secondary fw-medium d-flex flex-wrap flex-sm-nowrap align-items-center">
+            <div class="container my-2">
+
+              <form [formGroup]="communicationPreferenceForm" class="form-group">
+
+                <!-- Toggle for "Newsletter du journal JSS" -->
+                <generic-toggle [(model)]="communicationPreference.isSubscribedToNewspaperNewletter"
+                  label="Recevoir la newsletter du journal JSS" [form]="communicationPreferenceForm"
+                  (click)="toggleNewspaperNewsletter()" propertyName="isSubscribedToNewspaperNewletter">
+                </generic-toggle>
+
+                <!-- Toggle for "Newsletter marketing de MyJSS" -->
+                <generic-toggle [(model)]="communicationPreference.isSubscribedToCorporateNewsletter"
+                  label="Newsletter marketing de MyJSS" [form]="communicationPreferenceForm"
+                  (click)="toggleCorporateNewsletter()" propertyName="isSubscribedToCorporateNewsletter">
+                </generic-toggle>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4 mb-4 "
+  *ngIf="followedAuthors && followedAuthors.length>0 || followedJssCategories && followedJssCategories.length>0 || followedTags && followedTags.length>0">
+  <div class="card-body">
+    <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-0 mb-lg-1 mb-xl-3">
+      <i class="ai-bell text-primary lead pe-1 me-2"></i>
+      <h2 class="h4 mb-0">Mes alertes</h2>
+    </div>
+
+    <ul ngbNav #nav="ngbNav" [activeId]="displayedTab" class="nav-tabs">
+      <li [ngbNavItem]="0" *ngIf="followedAuthors && followedAuthors.length>0">
+        <button ngbNavLink>Rédacteurs</button>
+        <ng-template ngbNavContent>
+          <ul class="list-group list-group-flush custom-list-group">
+            <li *ngFor="let author of followedAuthors"
+              class="list-group-item d-flex justify-content-between align-items-center border-0 border-bottom">
+              <span>{{ author.name }}</span>
+              <div class="d-none d-sm-flex gap-2">
+                <button type="button" class="btn btn-outline-dark" (click)="openAuthorNewPosts($event, author)">
+                  Voir les news
+                </button>
+                <button type="button" class="btn btn-outline-dark fixed-width-btn"
+                  [ngClass]="isFollowedAuthor[author.id] ? 'btn-follow text-white' :''"
+                  (click)="isFollowedAuthor[author.id] ? unfollowAuthor(author) : followAuthor(author)">
+                  <i class="pe-1 bi" [ngClass]="isFollowedAuthor[author.id] ? 'bi-check-lg' : 'bi-plus-lg'"></i>
+                  {{ isFollowedAuthor[author.id] ? 'Suivi' : 'Suivre' }}
+                </button>
+              </div>
+              <div class="d-flex d-sm-none gap-2">
+                <button type="button" class="btn btn-outline-dark btn-icon-sm" (click)="openAuthorNewPosts($event,
+                  author)">
+                  <i class="bi bi-eye"></i>
+                </button>
+                <button type="button" class="btn btn-outline-dark btn-icon-sm"
+                  [ngClass]="isFollowedAuthor[author.id] ? 'btn-follow text-white' :''"
+                  (click)="isFollowedAuthor[author.id] ? unfollowAuthor(author) : followAuthor(author)">
+                  <i class="bi" [ngClass]="isFollowedAuthor[author.id] ? 'bi-check-lg' : 'bi-plus-lg'"></i>
+                </button>
+              </div>
+            </li>
+          </ul>
+        </ng-template>
+      </li>
+      <li [ngbNavItem]="1" *ngIf="followedJssCategories && followedJssCategories.length>0">
+        <button ngbNavLink>Catégories</button>
+        <ng-template ngbNavContent>
+          <ul class="list-group list-group-flush custom-list-group">
+            <li *ngFor="let jssCategory of followedJssCategories"
+              class="list-group-item d-flex justify-content-between align-items-center border-0 border-bottom">
+              <span> {{jssCategory.name}}</span>
+              <div class="d-none d-sm-flex gap-2">
+                <button type="button" class="btn btn-outline-dark"
+                  (click)="openJssCategoryNewPosts($event, jssCategory)">
+                  Voir les news
+                </button>
+                <button type="button" class="btn btn-outline-dark fixed-width-btn"
+                  [ngClass]="isFollowedJssCategory[jssCategory.id] ? 'btn-follow text-white' :''"
+                  (click)="isFollowedJssCategory[jssCategory.id] ? unfollowJssCategory(jssCategory) : followJssCategory(jssCategory)">
+                  <i class="pe-1 bi"
+                    [ngClass]="isFollowedJssCategory[jssCategory.id] ? 'bi-check-lg' : 'bi-plus-lg'"></i>
+                  {{ isFollowedJssCategory[jssCategory.id] ? 'Suivi' : 'Suivre' }}
+                </button>
+              </div>
+              <div class="d-flex d-sm-none gap-2">
+                <button type="button" class="btn btn-outline-dark btn-icon-sm"
+                  (click)="openJssCategoryNewPosts($event, jssCategory)">
+                  <i class="bi bi-eye"></i>
+                </button>
+                <button type="button" class="btn btn-outline-dark btn-icon-sm"
+                  [ngClass]="isFollowedJssCategory[jssCategory.id] ? 'btn-follow text-white' :''"
+                  (click)="isFollowedJssCategory[jssCategory.id] ? unfollowJssCategory(jssCategory) : followJssCategory(jssCategory)">
+                  <i class="bi" [ngClass]="isFollowedJssCategory[jssCategory.id] ? 'bi-check-lg' : 'bi-plus-lg'"></i>
+                </button>
+              </div>
+            </li>
+          </ul>
+        </ng-template>
+      </li>
+      <li [ngbNavItem]="2" *ngIf="followedTags && followedTags.length>0">
+        <button ngbNavLink>Tags</button>
+        <ng-template ngbNavContent>
+          <ul class="list-group list-group-flush custom-list-group">
+            <li *ngFor="let tag of followedTags"
+              class="list-group-item d-flex justify-content-between align-items-center border-0 border-bottom">
+              <span>{{tag.name}}</span>
+              <div class="d-none d-sm-flex gap-2">
+                <button type="button" class="btn btn-outline-dark" (click)="openTagNewPosts($event,tag)">
+                  Voir les news
+                </button>
+                <button type="button" class="btn btn-outline-dark fixed-width-btn"
+                  [ngClass]="isFollowedTag[tag.id] ? 'btn-follow text-white' :''"
+                  (click)="isFollowedTag[tag.id] ? unfollowTag(tag) : followTag(tag)">
+                  <i class="pe-1 bi" [ngClass]="isFollowedTag[tag.id] ? 'bi-check-lg' : 'bi-plus-lg'"></i>
+                  {{ isFollowedTag[tag.id] ? 'Suivi' : 'Suivre' }}
+                </button>
+              </div>
+              <div class="d-flex d-sm-none gap-2">
+                <button type="button" class="btn btn-outline-dark btn-icon-sm" (click)="openTagNewPosts($event,tag)">
+                  <i class="bi bi-eye"></i>
+                </button>
+                <button type="button" class="btn btn-outline-dark btn-icon-sm"
+                  [ngClass]="isFollowedTag[tag.id] ? 'btn-follow text-white' :''"
+                  (click)="isFollowedTag[tag.id] ? unfollowTag(tag) : followTag(tag)">
+                  <i class="bi" [ngClass]="isFollowedTag[tag.id] ? 'bi-check-lg' : 'bi-plus-lg'"></i>
+                </button>
+              </div>
+            </li>
+          </ul>
+        </ng-template>
+      </li>
+    </ul>
+    <div [ngbNavOutlet]="nav" class="mt-2"></div>
+  </div>
+</section>

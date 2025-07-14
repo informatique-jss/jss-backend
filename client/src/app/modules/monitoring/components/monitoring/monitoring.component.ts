@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core'; 
-import { MatTabChangeEvent } from '@angular/material/tabs'; 
+import { Component, OnInit } from '@angular/core';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from '../../../../services/habilitations.service';
 import { UserPreferenceService } from '../../../../services/user.preference.service';
@@ -13,17 +13,17 @@ import { BatchSettings } from '../../model/BatchSettings';
 export class MonitoringComponent implements OnInit {
 
   constructor(
-    private habilitationsService: HabilitationsService, 
+    private habilitationsService: HabilitationsService,
     private appService: AppService,
-    private userPreferenceService: UserPreferenceService 
+    private userPreferenceService: UserPreferenceService
   ) { }
 
   batchSettingsSelected: BatchSettings | undefined;
   selectedTabIndex = 0;
 
   ngOnInit() {
-    this.appService.changeHeaderTitle("Supervision"); 
-    this.restoreTab(); 
+    this.appService.changeHeaderTitle("Supervision");
+    this.restoreTab();
   }
 
   canDisplayExtendentMonitoring() {

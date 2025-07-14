@@ -1,7 +1,13 @@
 import { Directive, EventEmitter, HostListener, Input, Output } from "@angular/core";
+import { PlatformService } from "../modules/main/services/platform.service";
 
-@Directive({ selector: '[copy-clipboard]' })
+@Directive({
+  selector: '[copy-clipboard]',
+  standalone: true
+})
 export class CopyClipboardDirective {
+
+  constructor(private platformService: PlatformService) { }
 
   @Input("copy-clipboard")
   public payload: string = "";
@@ -11,6 +17,9 @@ export class CopyClipboardDirective {
 
   @HostListener("click", ["$event"])
   public onClick(event: MouseEvent): void {
+    if (!this.platformService.isBrowser()) {
+      return;
+    }
 
     event.preventDefault();
     if (!this.payload)
@@ -25,7 +34,13 @@ export class CopyClipboardDirective {
     };
 
     document.addEventListener("copy", listener, false)
-    document.execCommand("copy");
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(this.payload).then(() => {
+        this.copied.emit(this.payload);
+      });
+    } else {
+      document.execCommand("copy");
+    }
     document.removeEventListener("copy", listener, false);
   }
 }

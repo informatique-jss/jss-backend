@@ -1,7 +1,7 @@
 import { EntityType } from "../modules/miscellaneous/model/EntityType";
 
 // Quotation status
-export const QUOTATION_STATUS_OPEN = "OPEN";
+export const QUOTATION_STATUS_OPEN = "DRAFT";
 export const QUOTATION_STATUS_ABANDONED = "ABANDONED";
 export const QUOTATION_STATUS_QUOTATION_WAITING_CONFRERE = "QUOTATION_WAITING_CONFRERE";
 export const QUOTATION_STATUS_TO_VERIFY = "TO_VERIFY";
@@ -10,7 +10,7 @@ export const QUOTATION_STATUS_SENT_TO_CUSTOMER = "SENT_TO_CUSTOMER";
 export const QUOTATION_STATUS_VALIDATED_BY_CUSTOMER = "VALIDATED_BY_CUSTOMER";
 
 // Customer order status
-export const CUSTOMER_ORDER_STATUS_OPEN = "OPEN";
+export const CUSTOMER_ORDER_STATUS_OPEN = "DRAFT";
 export const CUSTOMER_ORDER_STATUS_ABANDONED = "ABANDONED";
 export const CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT = "WAITING_DEPOSIT";
 export const CUSTOMER_ORDER_STATUS_TO_BILLED = "TO_BILLED";
@@ -28,6 +28,13 @@ export const SERVICE_FIELD_TYPE_SELECT = "SERVICE_FIELD_TYPE_SELECT";
 export const MAX_SIZE_UPLOAD_FILES = 10485760;
 export const INVOICING_PAYMENT_LIMIT_REFUND_EUROS: number = 2;
 export const ASSO_SERVICE_DOCUMENT_ENTITY_TYPE: EntityType = { entityType: 'AssoServiceDocument', tabName: 'Documents du service', entryPoint: 'quotation/service' };
+export const APPLICATION_CV_ENTITY_TYPE: EntityType = { entityType: 'Candidacy', tabName: 'Candidature CV', entryPoint: 'application/cv' };
 
 export const JSS_IBAN = "FR76 3000 4007 9900 0257 1438 960"
 export const JSS_BIC = "BNPAFRPPXXX"
+
+// Screen types
+export const PROVISION_SCREEN_TYPE_DOMICILIATION = "DOMICILIATION";
+export const PROVISION_SCREEN_TYPE_ANNOUNCEMENT = "ANNOUNCEMENT";
+export const PROVISION_SCREEN_TYPE_FORMALITE = "FORMALITE";
+export const PROVISION_SCREEN_TYPE_STANDARD = "STANDARD";

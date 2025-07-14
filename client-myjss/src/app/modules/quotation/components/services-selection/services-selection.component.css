@@ -1,0 +1,23 @@
+.col.with-right-border {
+  border-right: 1px solid var(--ar-gray-500);
+}
+
+.nav-tabs, .nav-item {
+  margin-bottom: 0%;
+}
+
+.tab-content {
+  margin-top: 0% !important;
+}
+
+.service-item {
+  width: 330px !important;
+}
+
+.btn.btn-outline-primary:hover {
+  color: var(--ar-secondary) !important;
+}
+
+.btn.btn-secondary {
+  color: var(--ar-primary) !important;
+}

@@ -1,14 +1,15 @@
 import { HttpClient, HttpContext, HttpContextToken, HttpEvent, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { PagedContent } from '../main/model/PagedContent';
 
 @Injectable({
   providedIn: 'root'
 })
 export abstract class AppRestService<T> {
 
-  public static serverUrl: string = environment.backendUrl;
+  public static serverUrl: string = environment.backendUrl + "myjss/";
 
   cache: any;
 
@@ -17,6 +18,7 @@ export abstract class AppRestService<T> {
 
   successfulToken: HttpContextToken<string> = new HttpContextToken<string>(() => "");
   errorToken: HttpContextToken<string> = new HttpContextToken<string>(() => "");
+  doNotRedirectOnNonAuthenticatedToken: HttpContextToken<string> = new HttpContextToken<string>(() => "");
 
   /**
    * Use it carrefully ! Cache is clientside and is cleared only at each website refresh.
@@ -49,6 +51,12 @@ export abstract class AppRestService<T> {
     this.setCache(params, api, undefined);
   }
 
+  getPagedList(params: HttpParams, api: string, successfulMessage: string = "", errorMessage: string = ""): Observable<PagedContent<T>> {
+    let context: HttpContext = new HttpContext();
+    context.set(this.successfulToken, successfulMessage).set(this.errorToken, errorMessage);
+    return this._http.get(AppRestService.serverUrl + this.entryPoint + "/" + api, { params, context }) as Observable<PagedContent<T>>;
+  }
+
   getList(params: HttpParams, api: string, successfulMessage: string = "", errorMessage: string = ""): Observable<T[]> {
     let context: HttpContext = new HttpContext();
     context.set(this.successfulToken, successfulMessage).set(this.errorToken, errorMessage);
@@ -74,9 +82,9 @@ export abstract class AppRestService<T> {
     return this._http.get(AppRestService.serverUrl + this.entryPoint + "/" + api, { params, context }) as Observable<T>;
   }
 
-  get(params: HttpParams, api: string, successfulMessage: string = "", errorMessage: string = ""): Observable<T> {
+  get(params: HttpParams, api: string, successfulMessage: string = "", errorMessage: string = "", doNotRedirectOnNonAuthenticated: boolean = false): Observable<T> {
     let context: HttpContext = new HttpContext();
-    context.set(this.successfulToken, successfulMessage).set(this.errorToken, errorMessage);
+    context.set(this.successfulToken, successfulMessage).set(this.errorToken, errorMessage).set(this.doNotRedirectOnNonAuthenticatedToken, doNotRedirectOnNonAuthenticated + "");
     return this._http.get(AppRestService.serverUrl + this.entryPoint + "/" + api, { params, context }) as Observable<T>;
   }
 
@@ -96,57 +104,6 @@ export abstract class AppRestService<T> {
     let context: HttpContext = new HttpContext();
     context.set(this.successfulToken, successfulMessage).set(this.errorToken, errorMessage);
     return this._http.post(AppRestService.serverUrl + this.entryPoint + "/" + api, item, { params, context }) as Observable<T>;
-  }
-
-  downloadPost(api: string, item: T, successfulMessage: string = "", errorMessage: string = "") {
-    let context: HttpContext = new HttpContext();
-    context.set(this.successfulToken, successfulMessage).set(this.errorToken, errorMessage);
-    this._http.post(AppRestService.serverUrl + this.entryPoint + "/" + api, item, { responseType: 'blob' as 'arraybuffer', observe: 'response', context }).subscribe(
-      (response: any) => {
-        let dataType = response.type;
-        let binaryData = [];
-        binaryData.push(response.body);
-        let downloadLink = document.createElement('a');
-        downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, { type: dataType }));
-        if (response.headers.get("filename"))
-          downloadLink.setAttribute('download', response.headers.get("filename"));
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-      }
-    )
-  }
-
-  downloadGet(params: HttpParams, api: string, successfulMessage: string = "", errorMessage: string = "") {
-    let context: HttpContext = new HttpContext();
-    context.set(this.successfulToken, successfulMessage).set(this.errorToken, errorMessage);
-    this._http.get(AppRestService.serverUrl + this.entryPoint + "/" + api, { params, responseType: 'blob' as 'arraybuffer', observe: 'response', context }).subscribe(
-      (response: any) => {
-        let dataType = response.type;
-        let binaryData = [];
-        binaryData.push(response.body);
-        let downloadLink = document.createElement('a');
-        downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, { type: dataType }));
-        if (response.headers.get("filename"))
-          downloadLink.setAttribute('download', response.headers.get("filename"));
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-      }
-    )
-  }
-
-  previewFileGet(params: HttpParams, api: string, successfulMessage: string = "", errorMessage: string = "") {
-    let context: HttpContext = new HttpContext();
-    context.set(this.successfulToken, successfulMessage).set(this.errorToken, errorMessage);
-    this._http.get(AppRestService.serverUrl + this.entryPoint + "/" + api, { params, responseType: 'blob' as 'arraybuffer', observe: 'response', context }).subscribe(
-      (response: any) => {
-        let dataType = response.type;
-        let binaryData = [];
-        binaryData.push(response.body);
-        let url = window.URL.createObjectURL(new Blob(binaryData, { type: response.headers.get("content-type") }));
-        window.open(url, '_blank');
-        return of(url);
-      }
-    )
   }
 
   previewFileUrl(params: HttpParams, api: string, successfulMessage: string = "", errorMessage: string = ""): any {
@@ -187,4 +144,23 @@ export abstract class AppRestService<T> {
     return stringParams;
   }
 
+  downloadGet(params: HttpParams, api: string, fallbackFilename: string = "", successfulMessage: string = "", errorMessage: string = "") {
+    let context: HttpContext = new HttpContext();
+    context.set(this.successfulToken, successfulMessage).set(this.errorToken, errorMessage);
+    this._http.get(AppRestService.serverUrl + this.entryPoint + "/" + api, { params, responseType: 'blob' as 'arraybuffer', observe: 'response', context }).subscribe(
+      (response: any) => {
+        let dataType = response.type;
+        let binaryData = [];
+        binaryData.push(response.body);
+        let downloadLink = document.createElement('a');
+        downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, { type: dataType }));
+        if (response.headers.get("filename"))
+          downloadLink.setAttribute('download', response.headers.get("filename"));
+        else if (fallbackFilename)
+          downloadLink.setAttribute('download', fallbackFilename);
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+      }
+    )
+  }
 }

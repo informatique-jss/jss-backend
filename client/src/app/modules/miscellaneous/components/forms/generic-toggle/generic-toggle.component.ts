@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { GenericFormComponent } from '../generic-form.components';
 import { AppService } from 'src/app/services/app.service';
+import { GenericFormComponent } from '../generic-form.components';
 
 @Component({
   selector: 'generic-toggle',

@@ -38,6 +38,9 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
 import com.jss.osiris.libs.mail.model.VatMail;
+import com.jss.osiris.modules.myjss.crm.model.WebinarParticipant;
+import com.jss.osiris.modules.myjss.wordpress.model.Subscription;
+import com.jss.osiris.modules.osiris.crm.model.Candidacy;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceHelper;
@@ -49,6 +52,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
@@ -105,6 +109,9 @@ public class MailHelper {
     @Value("${jss.bic}")
     private String bicJss;
 
+    @Value("${jss.media.entry.point}")
+    private String jssMediaEntryPoint;
+
     private JavaMailSender javaMailSender;
 
     public static final String EMAIL_TEMPLATE_ENCODING = "UTF-8";
@@ -147,7 +154,10 @@ public class MailHelper {
     MailComputeHelper mailComputeHelper;
 
     @Autowired
-    CustomerMailService mailService;
+    CustomerMailService customerMailService;
+
+    @Autowired
+    MailService mailService;
 
     @Autowired
     ResponsableService responsableService;
@@ -236,10 +246,10 @@ public class MailHelper {
             if (mail.getCopyToMail() != null)
                 message.addCc(mail.getCopyToMail());
 
-            if (mail.getCopyToMe() != null && mail.getCopyToMe() && mail.getSendToMeEmployee() != null)
+            if (mail.getCopyToMe() != null && mail.getCopyToMe())
                 message.addCc(mail.getSendToMeEmployee().getMail());
 
-            if (mail.getSendToMe() != null && mail.getSendToMe() && mail.getSendToMeEmployee() != null) {
+            if (mail.getSendToMe() != null && mail.getSendToMe()) {
                 message.addTo(mail.getSendToMeEmployee().getMail());
             } else {
                 if (mail.getMailComputeResult().getRecipientsMailTo() == null
@@ -486,8 +496,7 @@ public class MailHelper {
             } else
                 ctx.setVariable("assoServiceFieldTypes", null);
 
-            ctx.setVariable("serviceLabel",
-                    serviceService.getServiceLabel(mail.getMissingAttachmentQuery().getService()));
+            ctx.setVariable("serviceLabel", mail.getMissingAttachmentQuery().getService().getServiceLabelToDisplay());
         }
 
         ctx.setVariable("isLastReminder", mail.getIsLastReminder() != null && mail.getIsLastReminder());
@@ -504,6 +513,11 @@ public class MailHelper {
                             + mail.getResponsable().getLoginToken());
         }
 
+        if (mail.getSubscription() != null) {
+            ctx.setVariable("postLink", jssMediaEntryPoint + "/posts/" + mail.getSubscription().getValidationToken()
+                    + "/" + mail.getSubscription().getSubscriptionOfferedMail());
+            ctx.setVariable("responsable", mail.getSubscription().getSubcriptionMail().getResponsables().get(0));
+        }
     }
 
     private String getCustomerOrderAffaireLabel(IQuotation customerOrder, AssoAffaireOrder asso) {
@@ -725,7 +739,7 @@ public class MailHelper {
                             + mailComputeResult.getRecipientsMailTo().get(0).getMail());
         }
 
-        mail.setReplyTo(customerOrder.getAssignedTo());
+        mail.setReplyTo(customerOrder.getResponsable().getSalesEmployee());
         mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(mailComputeResult);
         mail.setMailTemplate(CustomerMail.TEMPLATE_WAITING_DEPOSIT);
@@ -733,7 +747,123 @@ public class MailHelper {
         mail.setSubject("Attente d'acompte - Votre commande n°" + customerOrder.getId() + " - "
                 + getCustomerOrderAffaireLabel(customerOrder, null));
 
-        mailService.addMailToQueue(mail);
+        customerMailService.addMailToQueue(mail);
+    }
+
+    private void sendCustomerMailForMyJssMail(String mailAdress, String explaination, String replyMail, String subject,
+            String template)
+            throws OsirisException {
+        CustomerMail customerMail = new CustomerMail();
+        if (replyMail != null)
+            customerMail.setReplyToMail(replyMail);
+        if (subject != null)
+            customerMail.setSubject(subject);
+        if (template != null)
+            customerMail.setMailTemplate(template);
+        customerMail.setHeaderPicture("images/mails/quotation-validated.png");
+        MailComputeResult mailComputeResult = new MailComputeResult();
+        Mail mail = new Mail();
+        if (mailAdress != null)
+            mail.setMail(mailAdress);
+        mail = mailService.populateMailId(mail);
+        mailComputeResult.setRecipientsMailTo(List.of(mail));
+        mailComputeResult.setRecipientsMailCc(new ArrayList<Mail>());
+        mailComputeResult.setIsSendToClient(false);
+        mailComputeResult.setIsSendToAffaire(false);
+        if (explaination != null)
+            customerMail.setExplaination(explaination);
+        customerMail.setMailComputeResult(mailComputeResult);
+        customerMail.setSendToMe(false);
+        customerMailService.addMailToQueue(customerMail);
+    }
+
+    public void sendConfirmationSubscriptionWebinarMyJss(WebinarParticipant webinarParticipant) throws OsirisException {
+        sendCustomerMailForMyJssMail(webinarParticipant.getMail().getMail(), null,
+                constantService.getStringMyJssWebinarRequestMail(), "Confirmation d'inscription au webinaire",
+                CustomerMail.TEMPLATE_SEND_WEBINAR_SUBSCRIPTION);
+    }
+
+    public void sendConfirmationSubscriptionWebinarReplayMyJss(String mail) throws OsirisException {
+        sendCustomerMailForMyJssMail(mail, null,
+                constantService.getStringMyJssWebinarRequestMail(), "Confirmation de demande de replay du webinaire",
+                CustomerMail.TEMPLATE_SEND_WEBINAR_REPLAY);
+    }
+
+    public void sendConfirmationCandidacyMyJss(Candidacy candidacy) throws OsirisException {
+        sendCustomerMailForMyJssMail(candidacy.getMail().getMail(), null,
+                constantService.getEmployeeCandidacyResponsible().getMail(), "Confirmation de candidature",
+                CustomerMail.TEMPLATE_SEND_CANDIDACY_CONFIRMATION);
+    }
+
+    public void sendConfirmationQuotationCreationMyJss(String mail, Quotation quotation) throws OsirisException {
+        sendCustomerMailForMyJssMail(mail, null,
+                constantService.getStringSalesSharedMailbox(),
+                "Confirmation de la création de votre devis n°" + quotation.getId(),
+                CustomerMail.TEMPLATE_SEND_QUOTATION_CREATION);
+    }
+
+    public void sendConfirmationOrderCreationMyJss(String mail, CustomerOrder customerOrder) throws OsirisException {
+        sendCustomerMailForMyJssMail(mail, null,
+                constantService.getStringSalesSharedMailbox(),
+                "Confirmation de la création de votre commande n°" + customerOrder.getId(),
+                CustomerMail.TEMPLATE_SEND_ORDER_CREATION);
+    }
+
+    public void sendConfirmationDemoMyJss(String mailAdress) throws OsirisException {
+        sendCustomerMailForMyJssMail(mailAdress, null,
+                constantService.getStringMyJssDemoRequestMail(), "Confirmation de votre demande de démo",
+                CustomerMail.TEMPLATE_SEND_DEMO_CONFIRMATION);
+    }
+
+    public void sendConfirmationPricesMyJss(String mailAdress) throws OsirisException {
+        sendCustomerMailForMyJssMail(mailAdress, null,
+                constantService.getStringMyJssContactFormRequestMail(), "Confirmation de votre demande de tarifs",
+                CustomerMail.TEMPLATE_SEND_PRICES_CONFIRMATION);
+    }
+
+    public void sendConfirmationContactFormMyJss(String mailAdress) throws OsirisException {
+        sendCustomerMailForMyJssMail(mailAdress, null,
+                constantService.getStringMyJssContactFormRequestMail(),
+                "Confirmation de la réception de votre demande de contact",
+                CustomerMail.TEMPLATE_SEND_CONTACT_CONFIRMATION);
+    }
+
+    public void sendCustomerDemoRequestToCommercial(String mailAdress, String firstName, String lastName,
+            String phoneNumber) throws OsirisException {
+        String explaination = firstName + " " + lastName + " - " + mailAdress;
+        sendCustomerMailForMyJssMail(constantService.getStringMyJssDemoRequestMail(), explaination,
+                constantService.getStringMyJssDemoRequestMail(),
+                "Notification de demande de démo client",
+                CustomerMail.TEMPLATE_SEND_DEMO_REQUEST);
+    }
+
+    public void sendCustomerWebinarRequestToWebinarManager(String mailAdress) throws OsirisException {
+        String explaination = mailAdress;
+        sendCustomerMailForMyJssMail(constantService.getStringMyJssWebinarRequestMail(), explaination,
+                constantService.getStringMyJssWebinarRequestMail(),
+                "Notification de demande de replay du webinaire",
+                CustomerMail.TEMPLATE_SEND_REPLAY_WEBINAR_REQUEST);
+    }
+
+    public void sendContactFormNotificationMail(String mailAdress, String firstName, String lastName,
+            String phoneNumber,
+            String message) throws OsirisException {
+        String explaination = firstName + " " + lastName + " - "
+                + (phoneNumber != null && phoneNumber.length() > 0 ? phoneNumber + " - " : "") + mailAdress + " : "
+                + message;
+        sendCustomerMailForMyJssMail(constantService.getStringMyJssContactFormRequestMail(), explaination,
+                constantService.getStringMyJssContactFormRequestMail(),
+                "Notification d'une contribution d'un lecteur",
+                CustomerMail.TEMPLATE_SEND_CONTACT_REQUEST);
+    }
+
+    public void sendCustomerPricesRequestToCommercial(String mailAdress, String firstName, String lastName,
+            String phoneNumber) throws OsirisException {
+        String explaination = firstName + " " + lastName + " - " + mailAdress;
+        sendCustomerMailForMyJssMail(constantService.getStringMyJssDemoRequestMail(), explaination,
+                constantService.getStringMyJssDemoRequestMail(),
+                "Notification de demande de tarif",
+                CustomerMail.TEMPLATE_SEND_PRICES_REQUEST);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -748,7 +878,7 @@ public class MailHelper {
         CustomerMail mail = new CustomerMail();
         mail.setQuotation(quotation);
         mail.setHeaderPicture("images/mails/waiting-quotation-validation.jpg");
-        mail.setReplyTo(quotation.getAssignedTo());
+        mail.setReplyTo(quotation.getResponsable().getSalesEmployee());
         mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(mailComputeHelper.computeMailForQuotationMail(quotation));
 
@@ -773,7 +903,7 @@ public class MailHelper {
                 "Votre demande de devis n°" + quotation.getId() + " - "
                         + getCustomerOrderAffaireLabel(quotation, null));
 
-        mailService.addMailToQueue(mail);
+        customerMailService.addMailToQueue(mail);
     }
 
     public void sendCustomerOrderCreationConfirmationOnQuotationValidation(Quotation quotation,
@@ -784,13 +914,13 @@ public class MailHelper {
         mail.setCustomerOrder(customerOrder);
         mail.setHeaderPicture("images/mails/quotation-validated.png");
         mail.setMailTemplate(CustomerMail.TEMPLATE_QUOTATION_VALIDATED);
-        mail.setReplyTo(quotation.getAssignedTo());
+        mail.setReplyTo(quotation.getResponsable().getSalesEmployee());
         mail.setSendToMe(false);
         mail.setMailComputeResult(mailComputeHelper.computeMailForQuotationCreationConfirmation(quotation));
         mail.setSubject(
                 "Validation de votre devis n°" + quotation.getId() + " - "
                         + getCustomerOrderAffaireLabel(quotation, null));
-        mailService.addMailToQueue(mail);
+        customerMailService.addMailToQueue(mail);
     }
 
     public void sendCustomerOrderInProgressToCustomer(CustomerOrder customerOrder, boolean sendToMe)
@@ -799,13 +929,13 @@ public class MailHelper {
         mail.setCustomerOrder(customerOrder);
         mail.setHeaderPicture("images/mails/customer-order-in-progress.png");
         mail.setMailTemplate(CustomerMail.TEMPLATE_CUSTOMER_ORDER_IN_PROGRESS);
-        mail.setReplyTo(customerOrder.getAssignedTo());
+        mail.setReplyTo(customerOrder.getResponsable().getSalesEmployee());
         mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(mailComputeHelper.computeMailForCustomerOrderCreationConfirmation(customerOrder));
         mail.setSubject(
                 "Votre commande n°" + customerOrder.getId() + " - " + getCustomerOrderAffaireLabel(customerOrder, null)
                         + " est en cours de traitement");
-        mailService.addMailToQueue(mail);
+        customerMailService.addMailToQueue(mail);
     }
 
     @Transactional
@@ -834,13 +964,13 @@ public class MailHelper {
         if (provision != null) {
             mail.setReplyTo(provision.getAssignedTo());
         } else {
-            mail.setReplyTo(asso.getAssignedTo());
+            mail.setReplyTo(customerOrder.getResponsable().getSalesEmployee());
         }
         mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(mailComputeResult);
         mail.setSubject("Vos pièces numériques - commande n°" + customerOrder.getId() + " - "
                 + getCustomerOrderAffaireLabel(customerOrder, null));
-        mailService.addMailToQueue(mail);
+        customerMailService.addMailToQueue(mail);
     }
 
     public void sendPublicationReceiptToCustomer(CustomerOrder customerOrder, boolean sendToMe,
@@ -891,7 +1021,7 @@ public class MailHelper {
         mail.setMailComputeResult(mailComputeHelper.computeMailForPublicationReceipt(customerOrder));
         mail.setSubject("Attestation de parution - commande n°" + customerOrder.getId() + " - "
                 + getCustomerOrderAffaireLabel(customerOrder, currentProvision.getService().getAssoAffaireOrder()));
-        mailService.addMailToQueue(mail);
+        customerMailService.addMailToQueue(mail);
     }
 
     public void sendProofReadingToCustomer(CustomerOrder customerOrder, boolean sendToMe, Announcement announcement,
@@ -936,7 +1066,7 @@ public class MailHelper {
         mail.setMailComputeResult(mailComputeHelper.computeMailForReadingProof(customerOrder));
         mail.setSubject("BAT à valider concernant la commande n°" + customerOrder.getId() + " - "
                 + getCustomerOrderAffaireLabel(customerOrder, currentProvision.getService().getAssoAffaireOrder()));
-        mailService.addMailToQueue(mail);
+        customerMailService.addMailToQueue(mail);
     }
 
     public void sendReminderToCustomerForBilanPublication(Announcement announcement, CustomerOrder customerOrder)
@@ -962,12 +1092,12 @@ public class MailHelper {
             return;
 
         mail.setProvision(currentProvision);
-        mail.setReplyTo(customerOrder.getAssignedTo());
+        mail.setReplyTo(customerOrder.getResponsable().getSalesEmployee());
         mail.setSendToMe(false);
         mail.setMailComputeResult(mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(customerOrder));
         mail.setSubject("Publication de vos comptes annuels - "
                 + getCustomerOrderAffaireLabel(customerOrder, currentProvision.getService().getAssoAffaireOrder()));
-        mailService.addMailToQueue(mail);
+        customerMailService.addMailToQueue(mail);
     }
 
     public void sendPublicationFlagToCustomer(CustomerOrder customerOrder, boolean sendToMe, Announcement announcement)
@@ -1017,7 +1147,7 @@ public class MailHelper {
         mail.setMailComputeResult(mailComputeHelper.computeMailForPublicationReceipt(customerOrder));
         mail.setSubject("Témoin de parution - commande n°" + customerOrder.getId() + " - "
                 + getCustomerOrderAffaireLabel(customerOrder, currentProvision.getService().getAssoAffaireOrder()));
-        mailService.addMailToQueue(mail);
+        customerMailService.addMailToQueue(mail);
     }
 
     public void sendAnnouncementRequestToConfrere(CustomerOrder customerOrder, AssoAffaireOrder asso,
@@ -1055,7 +1185,7 @@ public class MailHelper {
         if (isReminder)
             mail.setSubject("Relance attestation de parution pour notre commande n°" + customerOrder.getId() + " - "
                     + getCustomerOrderAffaireLabel(customerOrder, asso));
-        mailService.addMailToQueue(mail);
+        customerMailService.addMailToQueue(mail);
     }
 
     public void sendAnnouncementErratumToConfrere(CustomerOrder customerOrder, AssoAffaireOrder asso,
@@ -1082,14 +1212,14 @@ public class MailHelper {
             }
 
         mail.setAttachments(attachments);
-        mail.setReplyTo(asso.getAssignedTo());
+        mail.setReplyTo(customerOrder.getResponsable().getSalesEmployee());
         mail.setSendToMe(sendToMe);
         mail.setProvision(provision);
         mail.setMailComputeResult(mailComputeHelper.computeMailForSendAnnouncementToConfrere(announcement));
         mail.setSubject(
                 "Erratum - modification d'insertion légale pour notre commande n°" + customerOrder.getId() + " - "
                         + getCustomerOrderAffaireLabel(customerOrder, asso));
-        mailService.addMailToQueue(mail);
+        customerMailService.addMailToQueue(mail);
     }
 
     public void sendConfrereReminderProviderInvoice(CustomerOrder customerOrder, AssoAffaireOrder asso,
@@ -1116,13 +1246,13 @@ public class MailHelper {
             }
 
         mail.setAttachments(attachments);
-        mail.setReplyTo(asso.getAssignedTo());
+        mail.setReplyTo(customerOrder.getResponsable().getSalesEmployee());
         mail.setSendToMe(sendToMe);
         mail.setProvision(provision);
         mail.setMailComputeResult(mailComputeHelper.computeMailForSendAnnouncementToConfrere(announcement));
         mail.setSubject("Relance facture - commande n°" + customerOrder.getId() + " - "
                 + getCustomerOrderAffaireLabel(customerOrder, asso));
-        mailService.addMailToQueue(mail);
+        customerMailService.addMailToQueue(mail);
     }
 
     public void sendCustomerOrderFinalisationToCustomer(CustomerOrder customerOrder, boolean sendToMe,
@@ -1176,7 +1306,7 @@ public class MailHelper {
                     "Votre facture concernant la commande n°" + customerOrder.getId() + " - "
                             + getCustomerOrderAffaireLabel(customerOrder, null));
 
-        mailService.addMailToQueue(mail);
+        customerMailService.addMailToQueue(mail);
     }
 
     public void sendBillingClosureToCustomer(List<Attachment> attachments, Tiers tiers, Responsable responsable,
@@ -1196,10 +1326,10 @@ public class MailHelper {
         mail.setTiers(tiers);
         mail.setResponsable(responsable);
 
-        mailService.addMailToQueue(mail);
+        customerMailService.addMailToQueue(mail);
     }
 
-    public void sendNewTokenMail(Responsable responsable) throws OsirisException {
+    public void sendNewTokenMail(Responsable responsable, String overrideMail) throws OsirisException {
         CustomerMail mail = new CustomerMail();
         mail.setMailTemplate(CustomerMail.TEMPLATE_SEND_TOKEN);
         mail.setHeaderPicture("images/mails/renew-password.png");
@@ -1209,12 +1339,36 @@ public class MailHelper {
         MailComputeResult mailComputeResult = new MailComputeResult();
         mailComputeResult.setRecipientsMailTo(new ArrayList<Mail>());
 
-        mailComputeResult.getRecipientsMailTo().add(responsable.getMail());
+        if (overrideMail != null) {
+            Mail overrideMailObject = new Mail();
+            overrideMailObject.setMail(overrideMail);
+            mailService.populateMailId(overrideMailObject);
+            mailComputeResult.getRecipientsMailTo().add(overrideMailObject);
+        } else
+            mailComputeResult.getRecipientsMailTo().add(responsable.getMail());
         mail.setMailComputeResult(mailComputeResult);
 
         mail.setSubject("Votre lien de connexion à MyJSS");
 
-        mailService.addMailToQueue(mail);
+        customerMailService.addMailToQueue(mail);
+    }
+
+    public void sendGiftedPost(Subscription subscription) throws OsirisException {
+        CustomerMail mail = new CustomerMail();
+        mail.setMailTemplate(CustomerMail.TEMPLATE_SEND_GIFTED_POST);
+        mail.setReplyToMail(constantService.getStringMyJssContactFormRequestMail() + "");
+        mail.setSendToMe(false);
+        mail.setSubscription(subscription);
+
+        MailComputeResult mailComputeResult = new MailComputeResult();
+        mailComputeResult.setRecipientsMailTo(new ArrayList<Mail>());
+
+        mailComputeResult.getRecipientsMailTo().add(subscription.getSubscriptionOfferedMail());
+        mail.setMailComputeResult(mailComputeResult);
+
+        mail.setSubject("Votre article offert");
+
+        customerMailService.addMailToQueue(mail);
     }
 
     public void sendNewPasswordMail(Responsable responsable, String password) throws OsirisException { // TODO delete
@@ -1233,14 +1387,14 @@ public class MailHelper {
 
         mail.setSubject("Votre nouveau mot de passe");
 
-        mailService.addMailToQueue(mail);
+        customerMailService.addMailToQueue(mail);
     }
 
     public void sendRibRequestToAffaire(Affaire affaire, AssoAffaireOrder assoAffaireOrder) throws OsirisException {
         CustomerMail mail = new CustomerMail();
         mail.setMailTemplate(CustomerMail.TEMPLATE_REQUEST_RIB);
         mail.setHeaderPicture("images/mails/request-rib.png");
-        mail.setReplyTo(assoAffaireOrder.getCustomerOrder().getAssignedTo());
+        mail.setReplyTo(assoAffaireOrder.getCustomerOrder().getResponsable().getSalesEmployee());
         mail.setSendToMe(false);
         MailComputeResult mailComputeResult = new MailComputeResult();
         mailComputeResult.setRecipientsMailTo(new ArrayList<Mail>());
@@ -1251,7 +1405,7 @@ public class MailHelper {
         mail.setSubject("Demande de RIB concernant la commande n°" + assoAffaireOrder.getCustomerOrder().getId() + " - "
                 + getCustomerOrderAffaireLabel(assoAffaireOrder.getCustomerOrder(), assoAffaireOrder));
 
-        mailService.addMailToQueue(mail);
+        customerMailService.addMailToQueue(mail);
     }
 
     public void sendRffToCustomer(Rff rff, boolean sendToMe) throws OsirisException, OsirisClientMessageException {
@@ -1265,7 +1419,7 @@ public class MailHelper {
         mail.setTiers(rff.getTiers());
         mail.setMailTemplate(CustomerMail.TEMPLATE_SEND_RFF);
 
-        mailService.addMailToQueue(mail);
+        customerMailService.addMailToQueue(mail);
     }
 
     public void sendMissingAttachmentQueryToCustomer(MissingAttachmentQuery query, Boolean isLastReminder)
@@ -1282,7 +1436,8 @@ public class MailHelper {
 
         Employee sendToEmployee = query.getEmployeeSentBy();
         if (sendToEmployee == null)
-            sendToEmployee = query.getService().getAssoAffaireOrder().getAssignedTo();
+            sendToEmployee = query.getService().getAssoAffaireOrder().getCustomerOrder().getResponsable()
+                    .getSalesEmployee();
 
         mail.setReplyTo((Employee) sendToEmployee);
         mail.setSendToMe(query.getSendToMe());
@@ -1327,7 +1482,7 @@ public class MailHelper {
         mail.setSubject("Pièces manquantes concernant la commande n°" + customerOrder.getId() + " - "
                 + getCustomerOrderAffaireLabel(customerOrder, null));
 
-        mailService.addMailToQueue(mail);
+        customerMailService.addMailToQueue(mail);
     }
 
     public void sendQuotationCreationConfirmationToCustomer(Quotation quotation)
@@ -1342,7 +1497,7 @@ public class MailHelper {
         mail.setSubject(
                 "Validation de votre devis n°" + quotation.getId() + " - "
                         + getCustomerOrderAffaireLabel(quotation, null));
-        mailService.addMailToQueue(mail);
+        customerMailService.addMailToQueue(mail);
     }
 
     public void sendCreditNoteToCustomer(CustomerOrder customerOrder, boolean sendToMe, Invoice creditNote)
@@ -1382,7 +1537,7 @@ public class MailHelper {
                     "Votre avoir concernant la commande n°" + customerOrder.getId() + " - "
                             + getCustomerOrderAffaireLabel(customerOrder, null));
 
-        mailService.addMailToQueue(mail);
+        customerMailService.addMailToQueue(mail);
     }
 
     public void sendCompetentAuthorityMailForReminder(Employee employee, CompetentAuthority competentAuthority,
@@ -1414,8 +1569,6 @@ public class MailHelper {
                     + provision.getProvisionFamilyType().getLabel();
             label += " / "
                     + provision.getProvisionType().getLabel();
-            label += " / "
-                    + provision.getService().getServiceType().getServiceFamily().getServiceFamilyGroup().getLabel();
 
             if (provision.getFormalite() != null && provision.getFormalite().getFormalitesGuichetUnique() != null) {
                 ArrayList<String> liasseList = new ArrayList<String>();
@@ -1436,7 +1589,7 @@ public class MailHelper {
         mail.setExplaination(String.join("removeme", provisionDetails));
         mail.setSubject(competentAuthority.getLabel() + " - Dossier en attente de validation");
 
-        mailService.addMailToQueue(mail);
+        customerMailService.addMailToQueue(mail);
     }
 
     public void sendCustomerOrderAttachmentOnFinalisationToCustomer(CustomerOrder customerOrder, boolean sendToMe)

@@ -8,8 +8,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.osiris.crm.model.Candidacy;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Notification;
 import com.jss.osiris.modules.osiris.miscellaneous.repository.NotificationRepository;
@@ -21,10 +21,6 @@ import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
-import com.jss.osiris.modules.osiris.quotation.service.ProvisionService;
-import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
-import com.jss.osiris.modules.osiris.quotation.service.ServiceService;
-import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.referentials.FormaliteGuichetUniqueStatusService;
 import com.jss.osiris.modules.osiris.reporting.model.IncidentReport;
 
 @org.springframework.stereotype.Service
@@ -37,29 +33,15 @@ public class NotificationServiceImpl implements NotificationService {
     EmployeeService employeeService;
 
     @Autowired
-    ActiveDirectoryHelper activeDirectoryHelper;
-
-    @Autowired
-    QuotationService quotationService;
+    CustomerOrderService customerOrderService;
 
     @Autowired
     ConstantService constantService;
 
-    @Autowired
-    ProvisionService provisionService;
-
-    @Autowired
-    ServiceService serviceService;
-
-    @Autowired
-    FormaliteGuichetUniqueStatusService statusService;
-
-    @Autowired
-    CustomerOrderService customerOrderService;
-
     @Override
     public List<Notification> getNotificationsForCurrentEmployee(Boolean displayFuture, Boolean displayRead,
-            List<String> notificationTypes, Boolean onlyForNumber, Boolean completeAdditionnalInformation) {
+            List<String> notificationTypes, Boolean onlyForNumber, Boolean completeAdditionnalInformation)
+            throws OsirisException {
         Employee currentEmployee = (Employee) employeeService.getCurrentEmployee();
         if (currentEmployee == null)
             return null;
@@ -85,7 +67,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     private List<Notification> completeNotifications(List<Notification> notifications,
-            Boolean completeAdditionnalInformation) {
+            Boolean completeAdditionnalInformation) throws OsirisException {
         if (notifications != null) {
             List<Notification> ouNotifications = new ArrayList<Notification>();
             for (Notification notificationIn : notifications) {
@@ -145,7 +127,10 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     private void generateNewNotification(Employee fromEmployee, Employee toEmployee, String notificationType,
-            boolean showPopup, Service service, Provision provision, CustomerOrder customerOrder) {
+            boolean showPopup, Service service, Provision provision, CustomerOrder customerOrder, Candidacy candidacy) {
+
+        if (toEmployee == null)
+            return;
 
         List<Notification> existingNotification = null;
         if (service != null)
@@ -160,6 +145,9 @@ public class NotificationServiceImpl implements NotificationService {
             existingNotification = notificationRepository
                     .findByEmployeeAndNotificationTypeAndCustomerOrder(toEmployee, notificationType, customerOrder);
 
+        else if (candidacy != null)
+            existingNotification = notificationRepository.findByEmployeeAndNotificationTypeAndCandidacy(toEmployee,
+                    notificationType, candidacy);
         else
             return;
 
@@ -177,6 +165,7 @@ public class NotificationServiceImpl implements NotificationService {
                 notification.setProvision(provision);
                 notification.setService(service);
                 notification.setNotificationType(notificationType);
+                notification.setCandidacy(candidacy);
             } else {
                 notification.setUpdatedBy(fromEmployee);
                 notification.setUpdatedDateTime(LocalDateTime.now());
@@ -217,7 +206,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public List<Notification> getNotificationsForCustomerOrder(Integer customerOrderId) {
+    public List<Notification> getNotificationsForCustomerOrder(Integer customerOrderId) throws OsirisException {
         return completeNotifications(notificationRepository.findByEmployees(
                 employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, false,
                 getNotificationTypesToHideForCurrentUser(), getAllNotificationTypes()).stream()
@@ -226,7 +215,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public List<Notification> getNotificationsForQuotation(Integer quotationId) {
+    public List<Notification> getNotificationsForQuotation(Integer quotationId) throws OsirisException {
         return completeNotifications(notificationRepository.findByEmployees(
                 employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, false,
                 getNotificationTypesToHideForCurrentUser(), getAllNotificationTypes()).stream()
@@ -235,7 +224,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public List<Notification> getNotificationsForService(Integer serviceId) {
+    public List<Notification> getNotificationsForService(Integer serviceId) throws OsirisException {
         return completeNotifications(notificationRepository.findByEmployees(
                 employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, false,
                 getNotificationTypesToHideForCurrentUser(), getAllNotificationTypes()).stream()
@@ -244,7 +233,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public List<Notification> getNotificationsForProvision(Integer provisionId) {
+    public List<Notification> getNotificationsForProvision(Integer provisionId) throws OsirisException {
         return completeNotifications(notificationRepository.findByEmployees(
                 employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, false,
                 getNotificationTypesToHideForCurrentUser(), getAllNotificationTypes()).stream()
@@ -253,7 +242,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public List<Notification> getNotificationsForInvoice(Integer invoiceId) {
+    public List<Notification> getNotificationsForInvoice(Integer invoiceId) throws OsirisException {
         return completeNotifications(notificationRepository.findByEmployees(
                 employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, false,
                 getNotificationTypesToHideForCurrentUser(), getAllNotificationTypes()).stream()
@@ -262,7 +251,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public List<Notification> getNotificationsForAffaire(Integer affaireId) {
+    public List<Notification> getNotificationsForAffaire(Integer affaireId) throws OsirisException {
         return completeNotifications(notificationRepository.findByEmployees(
                 employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, false,
                 getNotificationTypesToHideForCurrentUser(), getAllNotificationTypes()).stream()
@@ -271,7 +260,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public List<Notification> getNotificationsForTiers(Integer tiersId) {
+    public List<Notification> getNotificationsForTiers(Integer tiersId) throws OsirisException {
         return completeNotifications(notificationRepository.findByEmployees(
                 employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, false,
                 getNotificationTypesToHideForCurrentUser(), getAllNotificationTypes()).stream()
@@ -280,7 +269,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public List<Notification> getNotificationsForResponsable(Integer responsableId) {
+    public List<Notification> getNotificationsForResponsable(Integer responsableId) throws OsirisException {
         return completeNotifications(notificationRepository.findByEmployees(
                 employeeService.getMyHolidaymaker(employeeService.getCurrentEmployee()), true, false,
                 getNotificationTypesToHideForCurrentUser(), getAllNotificationTypes()).stream()
@@ -299,7 +288,7 @@ public class NotificationServiceImpl implements NotificationService {
                         return;
 
                     generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
-                            Notification.PROVISION_ADD_ATTACHMENT, false, null, provision, null);
+                            Notification.PROVISION_ADD_ATTACHMENT, false, null, provision, null, null);
                 }
             }
         }
@@ -308,7 +297,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public void notifyIncidentReportAsked(IncidentReport incident) throws OsirisException {
         generateNewNotification(incident.getInitiatedBy(), incident.getAssignedTo(), Notification.INCIDENT_REPORT_ASKED,
-                false, null, incident.getProvision(), null);
+                false, null, incident.getProvision(), null, null);
     }
 
     @Override
@@ -328,7 +317,7 @@ public class NotificationServiceImpl implements NotificationService {
                             return;
 
                         generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
-                                Notification.SERVICE_ADD_ATTACHMENT, false, service, null, null);
+                                Notification.SERVICE_ADD_ATTACHMENT, false, service, null, null, null);
                     }
                 }
             }
@@ -358,7 +347,7 @@ public class NotificationServiceImpl implements NotificationService {
 
                                         generateNewNotification(employeeService.getCurrentEmployee(),
                                                 provision.getAssignedTo(),
-                                                Notification.ORDER_ADD_ATTACHMENT, false, null, null, order);
+                                                Notification.ORDER_ADD_ATTACHMENT, false, null, null, order, null);
                                     }
                                 }
                             }
@@ -398,7 +387,7 @@ public class NotificationServiceImpl implements NotificationService {
             if (order != null && (order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)
                     || order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.TO_BILLED))) {
                 generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
-                        Notification.PROVISION_GUICHET_UNIQUE_STATUS_VALIDATED, false, null, provision, null);
+                        Notification.PROVISION_GUICHET_UNIQUE_STATUS_VALIDATED, false, null, provision, null, null);
             }
         }
     }
@@ -411,7 +400,7 @@ public class NotificationServiceImpl implements NotificationService {
             if (order != null && (order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)
                     || order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.TO_BILLED))) {
                 generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
-                        Notification.PROVISION_GUICHET_UNIQUE_STATUS_REFUSED, false, null, provision, null);
+                        Notification.PROVISION_GUICHET_UNIQUE_STATUS_REFUSED, false, null, provision, null, null);
             }
         }
     }
@@ -424,9 +413,15 @@ public class NotificationServiceImpl implements NotificationService {
             if (order != null && (order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)
                     || order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.TO_BILLED))) {
                 generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
-                        Notification.PROVISION_GUICHET_UNIQUE_STATUS_SIGNED, false, null, provision, null);
+                        Notification.PROVISION_GUICHET_UNIQUE_STATUS_SIGNED, false, null, provision, null, null);
             }
         }
+    }
+
+    @Override
+    public void notifyNewCandidacy(Candidacy candidacy) throws OsirisException {
+        generateNewNotification(null, constantService.getEmployeeCandidacyResponsible(),
+                Notification.NEW_CANDIDACY_RECEIVED, false, null, null, null, candidacy);
     }
 
     public Notification cloneNotification(Notification original) {

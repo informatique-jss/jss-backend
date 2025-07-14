@@ -81,19 +81,14 @@
                     </autocomplete-employee>
                   </td>
                   <td>
-                    <autocomplete-employee [(model)]="selectedResponsable.defaultCustomerOrderEmployee"
-                      [isDisabled]="!editMode" label="Assignation par défaut des commandes" [form]="principalForm"
-                      propertyName="defaultCustomerOrderEmployee" [isMandatory]="false"></autocomplete-employee>
-                  </td>
-                  <td>
                     <autocomplete-employee [(model)]="selectedResponsable.formalisteEmployee" label="Formaliste"
-                      [isDisabled]="!editMode" [form]="principalForm" propertyName="formalisteEmployee"
-                      [isDisabled]="!editMode">
+                      [form]="principalForm" propertyName="formalisteEmployee"
+                      [isDisabled]="!editMode || !canChooseProductionEmployeeOnITiers()">
                     </autocomplete-employee>
                   <td>
                     <autocomplete-employee [(model)]="selectedResponsable.insertionEmployee" label="Publiciste"
-                      [isDisabled]="!editMode" [form]="principalForm" propertyName="insertionEmployee"
-                      [isDisabled]="!editMode">
+                      [isDisabled]="!editMode || !canChooseProductionEmployeeOnITiers()" [form]="principalForm"
+                      propertyName="insertionEmployee">
                     </autocomplete-employee>
                   </td>
                 </tr>
@@ -115,6 +110,12 @@
                     <generic-input [(model)]="selectedResponsable.loginWeb" label="Numéro de compte JSS.FR"
                       [form]="principalForm" propertyName="loginWeb" [isMandatory]="false"
                       [isDisabled]="true"></generic-input>
+                  </td>
+                  <td>
+                    <generic-input [(model)]="selectedResponsable.numberOfGiftPostsPerMonth"
+                      label="Nombre d'articles offrables par mois" [form]="principalForm"
+                      propertyName="numberOfGiftPostsPerMonth" [isMandatory]="false" [isDisabled]="!editMode"
+                      type="number"></generic-input>
                   </td>
                   <td>
                     <generic-toggle [(model)]="selectedResponsable.canViewAllTiersInWeb"
@@ -241,7 +242,7 @@
             <accounting-record [responsableToDisplay]="selectedResponsable"></accounting-record>
           </ng-template>
         </mat-tab>
-        <mat-tab label="RFF" *ngIf="rffSearch && rffSearch.responsable  ">
+        <mat-tab label="RFF" *ngIf="rffSearch && rffSearch.responsable">
           <ng-template matTabContent>
             <div class="mat-elevation-z2 form-div">
               <rff-list [rffSearch]="rffSearch" [isForTiersIntegration]="true"></rff-list>
@@ -261,6 +262,13 @@
         <mat-tab label="Historique" *ngIf="selectedResponsable?.id!=null && selectedResponsable?.id!=undefined">
           <ng-template matTabContent>
             <history [entity]="selectedResponsable" [entityType]="RESPONSABLE_ENTITY_TYPE"></history>
+          </ng-template>
+        </mat-tab>
+        <mat-tab label="Préférences de communication" *ngIf="selectedResponsable && selectedResponsable.id">
+          <ng-template matTabContent>
+            <div class="mat-elevation-z2 form-div">
+              <communication-preference [responsable]="selectedResponsable"></communication-preference>
+            </div>
           </ng-template>
         </mat-tab>
       </mat-tab-group>

@@ -238,7 +238,7 @@ public class GeneratePdfDelegate {
 
             if (customerOrder.getAssoAffaireOrders() != null)
                 for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
-                    signatureEmployee = asso.getAssignedTo();
+                    signatureEmployee = customerOrder.getResponsable().getSalesEmployee();
                     affaireLabels.add((asso.getAffaire().getDenomination() != null ? asso.getAffaire().getDenomination()
                             : (asso.getAffaire().getCivility().getLabel() + " " + asso.getAffaire().getFirstname() + " "
                                     + asso.getAffaire().getLastname()))

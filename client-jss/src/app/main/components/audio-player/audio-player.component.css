@@ -1,0 +1,36 @@
+/*---------------  Scroll title --------------- */
+
+@keyframes scroll-left {
+    0% {
+        transform: translateX(0%);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+.animate-scroll {
+    animation: scroll-left 10s linear infinite;
+}
+
+.text-white .text-nowrap a {
+    color: var(--ar-secondary) !important;
+}
+
+
+/* --------------- Volume dropdown --------------- */
+.vertical-range {
+    width: 6px;
+    height: 100px;
+    padding: 0;
+    margin: 0 auto;
+    display: block;
+}
+
+.dropdown-menu {
+    width: auto !important;
+    min-width: 40px;
+    padding: 0.5rem;
+    text-align: center;
+}

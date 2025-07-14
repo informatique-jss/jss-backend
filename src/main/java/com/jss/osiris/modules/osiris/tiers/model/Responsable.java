@@ -7,10 +7,14 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.jackson.JacksonLocalDateSerializer;
+import com.jss.osiris.libs.jackson.JacksonLocalDateTimeDeserializer;
+import com.jss.osiris.libs.jackson.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.modules.osiris.crm.model.Voucher;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.City;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Civility;
@@ -50,7 +54,8 @@ public class Responsable implements IAttachment, IId {
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
 	@IndexedField
-	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisListView.class,
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 	private Integer id;
 
@@ -58,7 +63,8 @@ public class Responsable implements IAttachment, IId {
 	@JoinColumn(name = "id_tiers")
 	@IndexedField
 	@JsonIgnoreProperties(value = { "responsables", "attachments" }, allowSetters = true)
-	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisListView.class,
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 	private Tiers tiers;
 
@@ -85,31 +91,31 @@ public class Responsable implements IAttachment, IId {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_civility")
 	@IndexedField
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
 	private Civility civility;
 
 	@Column(length = 40)
 	@IndexedField
-	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisListView.class,
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
+
 	private String firstname;
 
 	@Column(length = 40)
 	@IndexedField
-	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisListView.class,
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 	private String lastname;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_commercial")
 	@IndexedField
-	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisListView.class,
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 	private Employee salesEmployee;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_default_customer_order_employee")
-	private Employee defaultCustomerOrderEmployee;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_formaliste")
@@ -146,6 +152,7 @@ public class Responsable implements IAttachment, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_country")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Country country;
 
 	@Column(length = 40)
@@ -163,7 +170,7 @@ public class Responsable implements IAttachment, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_mail")
-	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private Mail mail;
 
 	// TODO : remove after new webstie
@@ -173,12 +180,13 @@ public class Responsable implements IAttachment, IId {
 
 	@ManyToMany
 	@JoinTable(name = "asso_responsable_phone", joinColumns = @JoinColumn(name = "id_tiers"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
-	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private List<Phone> phones;
 
 	@OneToMany(mappedBy = "responsable", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "mailsCCResponsableClient", "mailsCCResponsableAffaire",
 			"responsable" }, allowSetters = true)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private List<Document> documents;
 
 	@OneToMany(mappedBy = "responsable")
@@ -217,7 +225,17 @@ public class Responsable implements IAttachment, IId {
 	@Column(length = 1024)
 	private String loginToken;
 
+	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
+	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
 	private LocalDateTime loginTokenExpirationDateTime;
+
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	private Integer numberOfGiftPostsPerMonth;
+
+	@ManyToMany(mappedBy = "responsables")
+	@JsonIgnoreProperties(value = { "responsables" }, allowSetters = true)
+	@JsonView({ JacksonViews.OsirisDetailedView.class, JacksonViews.OsirisListView.class })
+	private List<Voucher> vouchers;
 
 	public Tiers getTiers() {
 		return tiers;
@@ -507,14 +525,6 @@ public class Responsable implements IAttachment, IId {
 		this.canViewAllTiersInWeb = canViewAllTiersInWeb;
 	}
 
-	public Employee getDefaultCustomerOrderEmployee() {
-		return defaultCustomerOrderEmployee;
-	}
-
-	public void setDefaultCustomerOrderEmployee(Employee defaultCustomerOrderEmployee) {
-		this.defaultCustomerOrderEmployee = defaultCustomerOrderEmployee;
-	}
-
 	public String getIntercommunityVat() {
 		if (getTiers() != null)
 			return getTiers().getIntercommunityVat();
@@ -577,6 +587,22 @@ public class Responsable implements IAttachment, IId {
 
 	public void setMails(List<Mail> mails) {
 		this.mails = mails;
+	}
+
+	public Integer getNumberOfGiftPostsPerMonth() {
+		return numberOfGiftPostsPerMonth;
+	}
+
+	public void setNumberOfGiftPostsPerMonth(Integer numberOfPostsSharingAuthorized) {
+		this.numberOfGiftPostsPerMonth = numberOfPostsSharingAuthorized;
+	}
+
+	public List<Voucher> getVouchers() {
+		return vouchers;
+	}
+
+	public void setVouchers(List<Voucher> vouchers) {
+		this.vouchers = vouchers;
 	}
 
 }

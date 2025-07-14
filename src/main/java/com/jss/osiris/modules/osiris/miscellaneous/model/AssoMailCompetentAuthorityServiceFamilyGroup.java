@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.miscellaneous.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.jss.osiris.modules.osiris.quotation.model.ServiceFamilyGroup;
@@ -16,7 +17,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 
 @Entity
-public class AssoMailCompetentAuthorityServiceFamilyGroup {
+public class AssoMailCompetentAuthorityServiceFamilyGroup implements Serializable {
 
     @Id
     @SequenceGenerator(name = "asso_mail_competent_authority_service_family_group_sequence", sequenceName = "asso_mail_competent_authority_service_family_group_sequence", allocationSize = 1)

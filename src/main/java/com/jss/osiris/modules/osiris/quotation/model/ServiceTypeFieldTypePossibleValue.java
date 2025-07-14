@@ -21,14 +21,14 @@ public class ServiceTypeFieldTypePossibleValue implements Serializable, IId {
     @Id
     @SequenceGenerator(name = "service_type_field_type_possible_value_sequence", sequenceName = "service_type_field_type_possible_value_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "service_type_field_type_possible_value_sequence")
-    @JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
+    @JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_service_field_type")
     private ServiceFieldType serviceFieldType;
 
-    @JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
+    @JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
     private String value;
 
     public Integer getId() {

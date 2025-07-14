@@ -12,7 +12,10 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.libs.QueryCacheCrudRepository;
+import com.jss.osiris.modules.osiris.crm.model.Voucher;
+import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
+import com.jss.osiris.modules.osiris.quotation.model.AssignationType;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.IOrderingSearchTaggedResult;
@@ -32,13 +35,12 @@ public interface CustomerOrderRepository
                         + " co.created_date as createdDate,"
                         + " co.last_status_update as lastStatusUpdate,"
                         + " coalesce( r.id_commercial ,t2.id_commercial) as salesEmployeeId,"
-                        + " co.id_assigned_to as assignedToEmployeeId,"
                         + " co.id as customerOrderId,"
                         + " r.id as responsableId,"
                         + " min(quotation.id_quotation) as quotationId,"
                         + " t2.id as tiersId,"
                         + " origin.label as customerOrderOriginLabel,"
-                        + " STRING_AGG(DISTINCT case when service.custom_label is null then st.label else service.custom_label  end,', ') as serviceTypeLabel,"
+                        + " STRING_AGG(DISTINCT service.service_label_to_display,', ') as serviceTypeLabel,"
                         + " sum(COALESCE(i.pre_tax_price,0)+COALESCE(i.vat_price,0)-COALESCE(i.discount_amount,0)) as totalPrice ,"
                         + " (select sum(COALESCE(payment.payment_amount,0)) from  payment where payment.id_customer_order = co.id and payment.is_cancelled=false ) as depositTotalAmount ,"
                         + " STRING_AGG(DISTINCT case when af.denomination is not null and af.denomination!='' then af.denomination else af.firstname || ' '||af.lastname end  || ' ('||city.label ||')' ,', ' ) as affaireLabel,"
@@ -57,7 +59,6 @@ public interface CustomerOrderRepository
                         + " left join asso_quotation_customer_order quotation on quotation.id_customer_order = co.id"
                         + " left join asso_affaire_order asso on asso.id_customer_order = co.id"
                         + " left join service on service.id_asso_affaire_order = asso.id"
-                        + " left join service_type st on st.id = service.id_service_type"
                         + " left join provision on provision.id_service = service.id"
                         + " left join invoice_item i on i.id_provision = provision.id"
                         + " left join affaire af on af.id = asso.id_affaire"
@@ -75,14 +76,12 @@ public interface CustomerOrderRepository
                         + " and ( :isDisplayOnlyParentRecurringCustomerOrder =false or co.is_recurring = true)"
                         + " and ( :idCustomerOrderParentRecurring =0 or co.id_customer_order_parent_recurring = :idCustomerOrderParentRecurring)"
                         + " and ( :idCustomerOrderChildRecurring =0 or co.id = (select id_customer_order_parent_recurring from customer_order where id =:idCustomerOrderChildRecurring))"
-                        + " and ( COALESCE(:assignedToEmployee) =0 or co.id_assigned_to in (:assignedToEmployee))"
                         + " and ( COALESCE(:salesEmployee) =0 or  r.id_commercial in (:salesEmployee)  or  t2.id_commercial in (:salesEmployee))"
                         + " and ( COALESCE(:customerOrder)=0 or  r.id in (:customerOrder) or t2.id in (:customerOrder))"
                         + " and ( COALESCE(:affaire)=0 or af.id =:affaire )"
                         + " group by r.id, r.firstname,origin.label,  r.lastname,  t2.denomination, t2.firstname, t2.lastname, cos.label, "
-                        + " co.created_date, co.production_effective_date_time, r.id_commercial, t2.id_commercial, co.id, r.id, t2.id,  co.description,co.id_assigned_to ")
+                        + " co.created_date, co.production_effective_date_time, r.id_commercial, t2.id_commercial, co.id, r.id, t2.id,  co.description ")
         List<OrderingSearchResult> findCustomerOrders(@Param("salesEmployee") List<Integer> salesEmployee,
-                        @Param("assignedToEmployee") List<Integer> assignedToEmployee,
                         @Param("customerOrderStatus") List<Integer> customerOrderStatus,
                         @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                         @Param("customerOrder") List<Integer> customerOrder, @Param("affaire") Integer affaire,
@@ -99,13 +98,12 @@ public interface CustomerOrderRepository
                         + " co.created_date as createdDate,"
                         + " co.last_status_update as lastStatusUpdate,"
                         + " coalesce( r.id_commercial ,t2.id_commercial) as salesEmployeeId,"
-                        + " co.id_assigned_to as assignedToEmployeeId,"
                         + " co.id as customerOrderId,"
                         + " r.id as responsableId,"
                         + " min(quotation.id_quotation) as quotationId,"
                         + " t2.id as tiersId,"
                         + " origin.label as customerOrderOriginLabel,"
-                        + " STRING_AGG(DISTINCT case when service.custom_label is null then st.label else service.custom_label  end,', ') as serviceTypeLabel,"
+                        + " STRING_AGG(DISTINCT service.service_label_to_display,', ') as serviceTypeLabel,"
                         + " sum(COALESCE(i.pre_tax_price,0)+COALESCE(i.vat_price,0)-COALESCE(i.discount_amount,0)) as totalPrice ,"
                         + " (select sum(COALESCE(payment.payment_amount,0)) from  payment where payment.id_customer_order = co.id and payment.is_cancelled=false ) as depositTotalAmount ,"
                         + " STRING_AGG(DISTINCT case when af.denomination is not null and af.denomination!='' then af.denomination else af.firstname || ' '||af.lastname end  || ' ('||city.label ||')' ,', ' ) as affaireLabel,"
@@ -125,7 +123,6 @@ public interface CustomerOrderRepository
                         + " left join asso_quotation_customer_order quotation on quotation.id_customer_order = co.id"
                         + " left join asso_affaire_order asso on asso.id_customer_order = co.id"
                         + " left join service on service.id_asso_affaire_order = asso.id"
-                        + " left join service_type st on st.id = service.id_service_type"
                         + " left join provision on provision.id_service = service.id"
                         + " left join invoice_item i on i.id_provision = provision.id"
                         + " left join affaire af on af.id = asso.id_affaire"
@@ -146,7 +143,7 @@ public interface CustomerOrderRepository
                         + " where grp2.id =:activeDirectoryGroupId and asso_grp2.id_customer_order_comment = com.id) ) "
                         + " and ( :isDisplayOnlyUnread and COALESCE(com.is_read,false)=false or :isDisplayOnlyUnread=false) "
                         + " group by   r.id, r.firstname,origin.label,  r.lastname,  t2.denomination, t2.firstname, t2.lastname, cos.label, "
-                        + " co.created_date,co.production_effective_date_time,  r.id_commercial,  t2.id_commercial, co.id, r.id,  t2.id,   co.description,co.id_assigned_to ")
+                        + " co.created_date,co.production_effective_date_time,  r.id_commercial,  t2.id_commercial, co.id, r.id,  t2.id,   co.description ")
         List<IOrderingSearchTaggedResult> findTaggedCustomerOrders(
                         @Param("customerOrderStatus") List<Integer> customerOrderStatus,
                         @Param("salesEmployee") List<Integer> salesEmployee,
@@ -206,4 +203,30 @@ public interface CustomerOrderRepository
         @Query("select c from CustomerOrder c where invoicingEmployee is null and c.customerOrderStatus=:customerOrderStatusToBilled ")
         List<CustomerOrder> findNewCustomerOrderToBilled(CustomerOrderStatus customerOrderStatusToBilled,
                         Pageable pageableRequest);
+
+        @Query("select c from CustomerOrder c where c.customerOrderStatus<>:statusAbandonned AND (:responsable IS NULL OR c.responsable = :responsable) and voucher=:voucher")
+        List<CustomerOrder> findByVoucherAndResponsable(Voucher voucher, Responsable responsable,
+                        CustomerOrderStatus statusAbandonned);
+
+        List<CustomerOrder> findByVoucher(Voucher voucher);
+
+        @Query(value = "select c from CustomerOrder c where customerOrderStatus=:customerOrderStatus and createdDate<:dateLimit ")
+        List<CustomerOrder> findCustomerOrderOlderThanDate(
+                        @Param("customerOrderStatus") CustomerOrderStatus customerOrderStatus,
+                        @Param("dateLimit") LocalDateTime dateLimit);
+
+        @Query("select c from CustomerOrder c join c.responsable r join c.customerOrderAssignations a where a.assignationType=:assignationType and r.formalisteEmployee in (:employees) and c.customerOrderStatus=:customerOrderStatus and a.isAssigned=false and (:assignedUser is null or a.employee = :assignedUser)  order by c.productionEffectiveDateTime")
+        List<CustomerOrder> findCustomerOrderByFormalisteAndStatusAssigned(List<Employee> employees,
+                        CustomerOrderStatus customerOrderStatus, Employee assignedUser,
+                        AssignationType assignationType);
+
+        @Query("select c from CustomerOrder c join c.responsable r join c.customerOrderAssignations a where a.assignationType=:assignationType and r.insertionEmployee in (:employees) and c.customerOrderStatus=:customerOrderStatus and a.isAssigned=false and (:assignedUser is null or a.employee = :assignedUser)  order by c.productionEffectiveDateTime")
+        List<CustomerOrder> findCustomerOrderByPubliscisteAndStatusAssigned(List<Employee> employees,
+                        CustomerOrderStatus customerOrderStatus, Employee assignedUser,
+                        AssignationType assignationType);
+
+        @Query("select c from CustomerOrder c join c.customerOrderAssignations a where a.employee in (:employees) and c.customerOrderStatus=:customerOrderStatus and a.isAssigned=false and (:assignedUser is null or a.employee = :assignedUser)  order by c.productionEffectiveDateTime")
+        List<CustomerOrder> findCustomerOrderByForcedEmployeeAndStatusAssigned(List<Employee> employees,
+                        CustomerOrderStatus customerOrderStatus, Employee assignedUser);
+
 }

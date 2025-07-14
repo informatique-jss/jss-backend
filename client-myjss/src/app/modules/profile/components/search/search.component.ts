@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
-import { AppService } from '../../../../libs/app.service';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { AppService } from '../../../main/services/app.service';
 import { EntityType } from '../../../miscellaneous/model/EntityType';
 import { IndexEntity } from '../../model/IndexEntity';
 import { IndexEntityService } from '../../services/index.entity.service';
@@ -14,9 +16,12 @@ export const INVOICE_ENTITY_TYPE: EntityType = { entityType: 'Invoice', tabName:
 @Component({
   selector: 'search',
   templateUrl: './search.component.html',
-  styleUrls: ['./search.component.css']
+  styleUrls: ['./search.component.css'],
+  standalone: true,
+  imports: [SHARED_IMPORTS]
 })
 export class SearchComponent implements OnInit {
+  @ViewChild('inputSearch') searchInput!: ElementRef<HTMLInputElement>;
 
   searchText: string = "";
   entities: IndexEntity[] | undefined;
@@ -33,6 +38,7 @@ export class SearchComponent implements OnInit {
   constructor(
     private indexEntityService: IndexEntityService,
     private appService: AppService,
+    public activeModal: NgbActiveModal
   ) { }
 
   ngOnInit() {
@@ -41,6 +47,12 @@ export class SearchComponent implements OnInit {
   ngOnDestroy() {
     if (this.searchObservableRef)
       this.searchObservableRef.unsubscribe();
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.searchInput?.nativeElement.focus();
+    }, 200);
   }
 
   searchEntities() {
@@ -61,7 +73,7 @@ export class SearchComponent implements OnInit {
       this.searchObservableRef.unsubscribe();
 
     this.searchInProgress = true;
-    if (this.searchText && this.searchText.length > 2)
+    if (this.searchText && this.searchText.length > 2) {
       this.searchObservableRef = this.indexEntityService.globalSearchForEntity(this.searchText).subscribe(response => {
         this.entities = [];
         for (let foundEntity of response) {
@@ -72,18 +84,27 @@ export class SearchComponent implements OnInit {
         }
         this.searchInProgress = false;
       })
+    } else {
+      this.searchInProgress = false;
+    }
   }
 
   openCustomerOrder(event: any, orderId: number) {
     this.appService.openRoute(event, "account/orders/details/" + orderId, undefined);
+    this.searchText = '';
+    this.activeModal.close();
   }
 
   openQuotation(event: any, quotation: IndexEntity) {
     this.appService.openRoute(event, "account/quotations/details/" + quotation.entityId, undefined);
+    this.searchText = '';
+    this.activeModal.close();
   }
 
   openAffaire(event: any, affaire: IndexEntity) {
     this.appService.openRoute(event, "account/affaires/" + affaire.entityId, undefined);
+    this.searchText = '';
+    this.activeModal.close();
   }
 
 }

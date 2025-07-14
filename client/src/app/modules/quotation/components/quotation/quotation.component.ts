@@ -13,11 +13,9 @@ import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components
 import { IWorkflowElement } from 'src/app/modules/miscellaneous/model/IWorkflowElement';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { NotificationService } from 'src/app/modules/miscellaneous/services/notification.service';
-import { Employee } from 'src/app/modules/profile/model/Employee';
 import { IncidentReport } from 'src/app/modules/reporting/model/IncidentReport';
 import { IncidentReportService } from 'src/app/modules/reporting/services/incident.report.service';
 import { BillingLabelType } from 'src/app/modules/tiers/model/BillingLabelType';
-import { Responsable } from 'src/app/modules/tiers/model/Responsable';
 import { Tiers } from 'src/app/modules/tiers/model/Tiers';
 import { EntityType } from 'src/app/routing/search/EntityType';
 import { CUSTOMER_ORDER_ENTITY_TYPE, QUOTATION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
@@ -52,7 +50,6 @@ import { QuotationService } from '../../services/quotation.service';
 import { ServiceService } from '../../services/service.service';
 import { ValidationIdQuotationService } from '../../services/validation-id.quotation.service';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
-import { ChooseAssignedUserDialogComponent } from '../choose-assigned-user-dialog/choose-assigned-user-dialog.component';
 import { OrderSimilaritiesDialogComponent } from '../order-similarities-dialog/order-similarities-dialog.component';
 import { OrderingCustomerComponent } from '../ordering-customer/ordering-customer.component';
 import { PrintLabelDialogComponent } from '../print-label-dialog/print-label-dialog.component';
@@ -61,7 +58,6 @@ import { ProvisionComponent } from '../provision/provision.component';
 import { QuotationAbandonReasonDialog } from '../quotation-abandon-reason-dialog/quotation-abandon-reason-dialog';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
 import { SelectMultiServiceTypeDialogComponent } from '../select-multi-service-type-dialog/select-multi-service-type-dialog.component';
-import { SelectServiceTypeDialogComponent } from '../select-service-type-dialog/select-service-type-dialog.component';
 import { IQuotation } from './../../model/IQuotation';
 
 @Component({
@@ -146,10 +142,6 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
   quotationForm = this.formBuilder.group({});
 
-  getServiceLabel(service: Service) {
-    return this.serviceService.getServiceLabel(service, false, this.constantService.getServiceTypeOther());
-  }
-
   ngAfterContentChecked(): void {
     this.changeDetectorRef.detectChanges();
   }
@@ -181,7 +173,6 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
             this.appService.changeHeaderTitle("Commande " + this.quotation.id + " du " + formatDateFrance(this.quotation.createdDate) + " - " +
               (this.quotation.customerOrderStatus != null ? this.quotation.customerOrderStatus.label : "") + (this.quotation.isGifted ? (" - Offerte") : ""));
           this.setOpenStatus();
-          this.checkAffaireAssignation();
           this.updateDocumentsEvent.next(this.quotation);
 
           this.restoreTab();
@@ -271,62 +262,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     this.invoiceSearchResultService.getInvoiceForCustomerOrder({ id: this.idQuotation } as CustomerOrder).subscribe(response => this.customerOrderInvoices = response);
   }
 
-  updateAssignedToForAffaire(employee: Employee, asso: AssoAffaireOrder) {
-    this.assoAffaireOrderService.updateAssignedToForAsso(asso, employee).subscribe(response => {
-      asso.assignedTo = employee;
-    });
-  }
-
   updateAssignedToForProvision(employee: any, provision: Provision) {
     this.provisionService.updateAssignedToForProvision(provision, employee).subscribe(response => {
       provision.assignedTo = employee;
     });
-  }
-
-  checkAffaireAssignation() {
-    let userList: Employee[] = [] as Array<Employee>;
-    if (this.quotation && this.instanceOfCustomerOrder && this.quotation.assoAffaireOrders && this.quotation.assoAffaireOrders.length > 0)
-      for (let asso of this.quotation.assoAffaireOrders)
-        if (asso.affaire && asso.services && !asso.assignedTo) {
-          let found = false;
-          for (let service of asso.services)
-            for (let provision of service.provisions) {
-              for (let employee of userList) {
-                if (provision.assignedTo && provision.assignedTo.id == employee.id)
-                  found = true;
-              }
-              if (!found && provision.assignedTo)
-                userList.push(provision.assignedTo);
-            }
-          if (userList.length == 0) {
-            let responsable: Responsable | undefined = this.quotation.responsable;
-            if (responsable) {
-              if (responsable.formalisteEmployee)
-                userList.push(responsable.formalisteEmployee);
-              else if (responsable.tiers.formalisteEmployee)
-                userList.push(responsable.tiers.formalisteEmployee);
-              if (responsable.insertionEmployee)
-                userList.push(responsable.insertionEmployee);
-              else if (responsable.tiers.insertionEmployee)
-                userList.push(responsable.tiers.insertionEmployee);
-            }
-          }
-          let chooseUserDialogRef = this.chooseUserDialog.open(ChooseAssignedUserDialogComponent, {
-            width: '100%'
-          });
-          chooseUserDialogRef.componentInstance.userList = userList;
-          chooseUserDialogRef.componentInstance.text = "Veuillez choisir l'utilisateur à assigner à l'affaire " + (asso.affaire.denomination ? asso.affaire.denomination : (asso.affaire.firstname + " " + asso.affaire.lastname));
-          chooseUserDialogRef.componentInstance.title = "Assigner un utilisateur";
-          chooseUserDialogRef.afterClosed().subscribe(response => {
-            if (response)
-              this.updateAssignedToForAffaire(response, asso);
-            this.customerOrderService.getCustomerOrder(this.quotation.id).subscribe(response => {
-              this.quotation = response;
-              this.checkAffaireAssignation();
-            })
-          })
-          return;
-        }
   }
 
   saveQuotation(): boolean {
@@ -450,10 +389,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
     dialogRef.afterClosed().subscribe(response => {
       if (response != null) {
-        asso.services.push(response);
+        asso.services.push(...response);
         this.generateInvoiceItem();
       }
-    })
+    });
   }
 
   deleteService(asso: AssoAffaireOrder, service: Service) {
@@ -505,7 +444,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
     dialogRef.afterClosed().subscribe(dialogResult => {
       if (dialogResult && service) {
-        const dialogRef2 = this.selectServiceTypeDialog.open(SelectServiceTypeDialogComponent, {
+        const dialogRef2 = this.selectServiceTypeDialog.open(SelectMultiServiceTypeDialogComponent, {
           width: "50%",
         });
         dialogRef2.componentInstance.isJustSelectServiceType = true;
@@ -1081,7 +1020,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     if (provision.announcement && provision.announcement.department)
       label += " - Département " + provision.announcement.department.code;
     if (!doNotDisplayService)
-      label = this.serviceService.getServiceLabel(service, false, this.constantService.getServiceTypeOther()) + " - " + label;
+      label = service.serviceLabelToDisplay + " - " + label;
     return label;
   }
 

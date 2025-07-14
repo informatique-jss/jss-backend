@@ -1,0 +1,397 @@
+<!-- Page container-->
+<section class="container pt-5 mt-5">
+
+  <!-- Breadcrumb-->
+  <nav aria-label="breadcrumb">
+    <ol class="pt-lg-5 pb-lg-4 pb-2 breadcrumb">
+      <li class="breadcrumb-item"><a routerLink="/">Accueil</a></li>
+      <li class="breadcrumb-item"><a routerLink="/tools">Outils</a></li>
+      <li class="breadcrumb-item"><a routerLink="/tools/practical-sheets">Nos fiches pratiques</a>
+      </li>
+      <li class="breadcrumb-item"><a><span *ngIf="post">{{ post.titleText }}</span></a>
+      </li>
+    </ol>
+  </nav>
+
+  <div class="accordion-item border-top mb-0" *ngIf="!post">
+    <div class="accordion-header">
+      <p class="card-text placeholder-glow">
+        <span class="placeholder placeholder-sm col-7 me-2"></span>
+        <span class="placeholder placeholder-sm col-4"></span>
+        <span class="placeholder placeholder-sm col-4 me-2"></span>
+        <span class="placeholder placeholder-sm col-6"></span>
+        <span class="placeholder placeholder-sm col-8"></span>
+      </p>
+    </div>
+  </div>
+
+  <div class="row " *ngIf="post">
+    <div class="col-lg-9 col-xl-8 pe-lg-4 pe-xl-0">
+
+      <!-- Post title + post meta -->
+      <h1 class="pb-2 pb-lg-3">{{post.titleText}}</h1>
+      <div class="d-flex flex-wrap align-items-center justify-content-between border-bottom mb-4">
+        <div class="d-flex align-items-center mb-4 me-4">
+          <span class="fs-sm me-2">Par :</span>
+          <div class="position-relative fw-semibold p-0" data-scroll data-scroll-offset="80">
+            {{post.fullAuthor.name}}
+            <span class="d-block position-absolute start-0 bottom-0 w-100"
+              style="background-color: currentColor; height: 1px;"></span>
+          </div>
+        </div>
+        <div class="d-flex align-items-center mb-4">
+          <span class="fs-sm me-2">Partager le post:</span>
+          <div class="d-flex">
+            <a class="nav-link p-2 me-2" (click)="shareOnLinkedin()" title="LinkedIn" aria-label="LinkedIn">
+              <i class="ai-linkedin fs-sm"></i>
+            </a>
+            <a class="nav-link p-2 me-2" (click)="shareOnInstagram()" title="Instagram" aria-label="Instagram">
+              <i class="ai-instagram"></i>
+            </a>
+            <a class="nav-link p-2 me-2" (click)="shareOnFacebook()" title="Facebook" aria-label="Facebook">
+              <i class="ai-facebook"></i>
+            </a>
+            <a class="nav-link p-2" (click)="shareByMail()" title="mail" aria-label="mail">
+              <i class="ai-mail"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lire l'article avec Play/Pause et contrôler la vitesse -->
+      <!-- Audio player for article text with controls -->
+      <div class="rounded-1 text-secondary bg-secondary text-color my-4">
+        <div class="p-2">
+          <h4 class="text-secondary" style="cursor: pointer;" (click)="togglePlayPause()">
+            <i class="bi mx-2" [class]="isPlaying ? 'ai-pause' : 'ai-play-filled'"></i>
+            Ecouter l'article
+          </h4>
+          <div class="mx-2 mt-3" *ngIf="isPlaying">
+            <label class="" for="speedControl">Vitesse : </label>
+            <span class="">{{ speechRate }}x</span>
+            <input type="range" class="form-range" min="0.5" max="2" step="0.1" id="speedControl"
+              [(ngModel)]="speechRate" (input)="updateSpeed()">
+          </div>
+        </div>
+      </div>
+
+      <!-- Post content -->
+      <span class="fs-lg pt-2 pt-sm-3" [innerHTML]="post.contentText| trustHtml"></span>
+
+      <!-- Submit a formality or contact us -->
+      <div class="mb-3" *ngIf="isPostContainsMyJssCategory(myJssCategoryFormality)">
+        <double-buttons class="text-grey" orderActionLabel=" Déposer une formalité"
+          [orderActionRoute]="'quotation/new/'+serviceFamilyGroupFormality!.id+'/'+quotationTypeOrder.id"
+          quotationActionLabel="Demander un devis"
+          [quotationActionRoute]="'quotation/new/'+serviceFamilyGroupFormality!.id+'/'+quotationTypeQuotation.id"
+          [isLightButtons]="true">
+        </double-buttons>
+      </div>
+      <div class="mb-3" *ngIf="isPostContainsMyJssCategory(myJssCategoryAnnouncement)">
+        <double-buttons class="text-grey" orderActionLabel=" Publier une annonce légale"
+          [orderActionRoute]="'quotation/new/'+serviceFamilyGroupAnnouncement!.id+'/'+quotationTypeOrder.id"
+          quotationActionLabel="Demander un devis"
+          [quotationActionRoute]="'quotation/new/'+serviceFamilyGroupAnnouncement!.id+'/'+quotationTypeQuotation.id"
+          linkLabel="Consulter les annonces légales" linkRoute="announcement/search" [linkRouteToJssMedia]='true'
+          [isLightButtons]="true">
+        </double-buttons>
+      </div>
+      <div class="mb-3" *ngIf="isPostContainsMyJssCategory(myJssCategoryApostille)">
+        <double-buttons class="text-grey" orderActionLabel=" Demander une apostille ou légalisation"
+          [orderActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeOrder.id"
+          quotationActionLabel="Demander un devis"
+          [quotationActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeQuotation.id"
+          [isLightButtons]="true">
+        </double-buttons>
+      </div>
+      <div class="mb-3" *ngIf="isPostContainsMyJssCategory(myJssCategoryDomiciliation)">
+        <double-buttons class="text-grey" orderActionLabel=" Domicilier mon entreprise"
+          [orderActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeOrder.id"
+          quotationActionLabel="Demander un devis"
+          [quotationActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeQuotation.id"
+          linkLabel="Bien choisir la domiciliation d'entreprise" [isLightButtons]="true">
+        </double-buttons>
+      </div>
+      <div class="mb-3" *ngIf="isPostContainsMyJssCategory(myJssCategoryDocument)">
+        <double-buttons class="text-grey" orderActionLabel=" Commander des documents"
+          [orderActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeOrder.id"
+          quotationActionLabel="Demander un devis"
+          [quotationActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeQuotation.id"
+          [isLightButtons]="true">
+        </double-buttons>
+      </div>
+
+      <!-- Tags -->
+      <div class="d-flex flex-wrap pb-5 pt-3 pt-md-4 pt-xl-5 mt-xl-n2" *ngIf="post.postTags && post.postTags.length>0">
+        <h3 class="h6 py-1 mb-0 me-4">Tags associés :</h3>
+        <div *ngFor="let tag of post.postTags">
+          <a class="nav-link fs-sm py-1 px-0 me-3" style="cursor: pointer;"
+            [routerLink]="'/tools/practical-sheets/'+tag.slug">
+            <span class="text-primary">#</span>{{tag.name}}
+          </a>
+        </div>
+      </div>
+
+      <!-- Author widget -->
+      <div class="border-top border-bottom py-4" id="author">
+        <div class="d-flex align-items-start py-2">
+          <img class="d-block rounded-circle mb-3" [src]="post.fullAuthor.avatar_url_size_96" width="56"
+            alt="Author image">
+          <div class="d-md-flex w-100 ps-4">
+            <div style="max-width: 26rem;">
+              <h3 class="h5 mb-2">{{post.fullAuthor.name}}</h3>
+              <p class="fs-sm mb-0">{{post.fullAuthor.description}}</p>
+            </div>
+            <div class="pt-4 pt-md-0 ps-md-4 ms-md-auto">
+              <h3 class="h5">Partager le post:</h3>
+              <div class="d-flex">
+                <a class="nav-link p-2 me-2" (click)="shareOnLinkedin()" title="Linkedin" aria-label="Linkedin">
+                  <i class="ai-linkedin fs-sm"></i>
+                </a>
+                <a class="nav-link p-2 me-2" (click)="shareOnInstagram()" title="Instagram" aria-label="Instagram">
+                  <i class="ai-instagram"></i>
+                </a>
+                <a class="nav-link p-2 me-2" (click)="shareOnFacebook()" title="Facebook" aria-label="Facebook">
+                  <i class="ai-facebook"></i>
+                </a>
+                <a class="nav-link p-2" (click)="shareByMail()" title="Mail" aria-label="Mail">
+                  <i class="ai-mail"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-3 offset-xl-1  mt-4 mt-lg-0 d-block d-lg-none">
+        <ng-container [ngTemplateOutlet]="asideColumn"></ng-container>
+      </div>
+
+      <!-- Comments -->
+      <div class="pt-4 pt-xl-5 my-4" id="comments">
+        <h2 class="h1 py-lg-1 py-xl-3" *ngIf="!commentsPagination.totalElements">0 Commentaire </h2>
+        <h2 class="h1 py-lg-1 py-xl-3" *ngIf="commentsPagination.totalElements">{{commentsPagination.totalElements <= 1
+            ? commentsPagination.totalElements + " Commentaire" : commentsPagination.totalElements + " Commentaires" }}
+            </h2>
+            <div class="pt-2 pb-4" *ngIf="commentsPagination.totalElements!=0">
+
+              <!-- Comment -->
+              <div *ngFor="let comment of comments" [attr.id]="comment.id">
+                <div class="py-4 mt-2 mb-4 border-bottom">
+                  <div>
+                    <div class="d-flex align-items-center pb-1 mb-3">
+                      <avatar class="avatar-select rounded-circle" [user]="getResponsableNames(comment)" [size]="50"
+                        [centerAvatar]="true" alt="Comment author"></avatar>
+                      <div class="ps-3">
+                        <h6 class="mb-0">{{comment.authorFirstName}} {{comment.authorLastNameInitials}}.</h6>
+                        <span class="fs-sm text-body-secondary">{{comment.creationDate | date:'dd/MM/yyyy'}}</span>
+                      </div>
+                    </div>
+                    <p class="pb-2 mb-0">{{comment.content}}</p>
+                    <button class="nav-link fs-sm fw-semibold px-0 py-2 " type="button" (click)="replyComment(comment)">
+                      Répondre
+                      <i class="ai-redo fs-xl ms-2"></i>
+                    </button>
+                  </div>
+
+                  <!-- Comment reply -->
+                  <div *ngIf="comment.childrenComments && comment.childrenComments.length > 0">
+                    <div *ngFor="let children of comment.childrenComments" [attr.id]="children.id"
+                      class="card card-body border-0 my-3">
+                      <div class="d-flex align-items-center pb-1 mb-3">
+                        <avatar class="avatar-select rounded-circle" [user]="getResponsableNames(children)" [size]="50"
+                          [centerAvatar]="true" alt="Comment author"></avatar>
+                        <div class="ps-3">
+                          <h6 class="mb-0">{{children.authorFirstName}}
+                            {{children.authorLastNameInitials}}.
+                          </h6>
+                          <span class="fs-sm text-body-secondary">{{children.creationDate|
+                            date:'dd/MM/yyyy'}}</span>
+                        </div>
+                      </div>
+                      <p class="mb-0"><b
+                          class="fw-bold text-decoration-none citing-author">&commat;{{comment.authorFirstName}}
+                          {{children.authorLastNameInitials}}. </b>{{children.content}}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row d-flex justify-content-center align-items-center">
+                <a *ngIf="commentsPagination.totalElements>commentsPagination.pageSize && commentsPagination.totalElements-comments.length > 0"
+                  class="d-flex justify-content-center gap-2 cursor-pointer nav-link p-2" (click)="showMoreComments()">
+                  <span class="fw-semibold">Voir
+                    plus</span><span>({{commentsPagination.totalElements-comments.length}})</span>
+                  <i class="ai-circle-arrow-down fs-xl ms-2"></i>
+                </a>
+                <a *ngIf="commentsPagination.totalElements>commentsPagination.pageSize && commentsPagination.totalElements-comments.length <= 0"
+                  class="d-flex justify-content-center gap-2 cursor-pointer nav-link p-2" (click)="showLessComments()">
+                  <span class="fw-semibold">Voir moins</span>
+                  <i class="ai-circle-arrow-up fs-xl ms-2"></i>
+                </a>
+              </div>
+            </div>
+
+            <!-- Comment form user not connected -->
+            <div *ngIf="!currentUser" id="commentForm"
+              class="card border-0 pt-2 p-md-2 p-xl-3 p-xxl-4 mt-5 mt-md-0 mb-4">
+              <div class="card-body">
+                <div class="row justify-content-between align-items-center">
+                  <h2 class="col-8 pb-2 pb-lg-3 pb-xl-4" *ngIf="!newCommentParent.id">Laisser un commentaire</h2>
+                  <h2 class="col-8 pb-2 pb-lg-3 pb-xl-4" *ngIf="newCommentParent.id">Répondre à
+                    {{newCommentParent.authorFirstName}} {{newCommentParent.authorLastNameInitials}}.</h2>
+                  <div class=" col-4 d-inline-flex justify-content-end pb-2 pb-lg-3 pb-xl-4"
+                    *ngIf="newCommentParent.id">
+                    <a type="button" aria-label="Close" class="fs-sm" (click)="cancelReply()">
+                      Annuler la réponse
+                    </a>
+                  </div>
+                </div>
+                <p>Votre adresse e-mail et votre nom de famille ne seront pas publiée. Les champs obligatoires sont
+                  indiqués avec *</p>
+                <form class="row needs-validation g-4" novalidate>
+                  <div class="col-sm-4">
+                    <generic-input [(model)]="newComment.authorFirstName" label="Prénom*" [form]="createCommentForm"
+                      propertyName="firstname" [isMandatory]="true" [isDisabled]="false"
+                      [isDisplayLabel]="true"></generic-input>
+                  </div>
+                  <div class="col-sm-4">
+                    <generic-input [(model)]="newComment.authorLastName" label="Nom" [form]="createCommentForm"
+                      propertyName="lastname" [isMandatory]="false" [isDisabled]="false"
+                      [isDisplayLabel]="true"></generic-input>
+                  </div>
+                  <div class="col-sm-4">
+                    <generic-input [(model)]="newComment.mail.mail" label="Email*" [form]="createCommentForm"
+                      propertyName="mail" [isMandatory]="true" [isDisabled]="false"
+                      [isDisplayLabel]="true"></generic-input>
+                  </div>
+                  <div class="col-12">
+                    <generic-textarea [(model)]="newComment.content" label="Commentaire*" [form]="createCommentForm"
+                      propertyName="comment" [isMandatory]="true" [isDisabled]="false"
+                      [numberOfLines]="5"></generic-textarea>
+                  </div>
+                  <div class="col-12">
+                    <button class="btn btn-primary" type="submit" (click)="postComment()">Publier</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <!-- Comment form user connected -->
+            <div *ngIf="currentUser" id="commentForm"
+              class="card border-0 pt-2 p-md-2 p-xl-3 p-xxl-4 mt-5 mt-md-0 mb-4">
+              <div class="card-body">
+                <div class="row justify-content-between align-items-center">
+                  <h2 class="col-8 pb-2 pb-lg-3 pb-xl-4" *ngIf="!newCommentParent.id">Laisser un commentaire</h2>
+                  <h2 class="col-8 pb-2 pb-lg-3 pb-xl-4" *ngIf="newCommentParent.id">Répondre à
+                    {{newCommentParent.authorFirstName}} {{newCommentParent.authorLastNameInitials}}.</h2>
+                  <div class=" col-4 d-inline-flex justify-content-end pb-2 pb-lg-3 pb-xl-4"
+                    *ngIf="newCommentParent.id">
+                    <a type="button" aria-label="Close" class="fs-sm" (click)="cancelReply()">
+                      Annuler la réponse
+                    </a>
+                  </div>
+                </div>
+                <p>Votre adresse e-mail et votre nom de famille ne seront pas publiée. Les champs obligatoires sont
+                  indiqués avec *</p>
+                <form class="row needs-validation g-4" novalidate>
+                  <div class="col-12">
+                    <generic-textarea [(model)]="newComment.content" label="Commentaire*" [form]="createCommentForm"
+                      propertyName="comment" [isMandatory]="true" [isDisabled]="false"
+                      [numberOfLines]="5"></generic-textarea>
+                  </div>
+                  <div class="col-12">
+                    <button class="btn btn-primary" type="submit" (click)="postComment()">Publier</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+      </div>
+    </div>
+
+
+    <!-- Sidebar (offcanvas on sreens < 992px) -->
+    <aside class="col-lg-3 offset-xl-1  mt-4 mt-lg-0 d-none d-lg-block">
+      <ng-container [ngTemplateOutlet]="asideColumn"></ng-container>
+    </aside>
+  </div>
+</section>
+
+
+<!-- Related articles (carousel) -->
+<generic-swiper *ngIf="relatedPosts && relatedPosts[0]" [items]="relatedPosts" subtitle="" title="Articles associés">
+  <ng-template let-relatedPost>
+    <!-- Post -->
+    <article>
+      <div class="position-relative">
+        <img class="rounded-5"
+          [src]="relatedPost.media && relatedPost.media.urlLarge ? relatedPost.media.urlLarge : relatedPost.media.urlFull"
+          alt="Post image">
+        <h3 class="h4 mt-4 mb-0">
+          <a class="stretched-link" style="cursor: pointer;"
+            (click)="openPost(relatedPost, $event)">{{relatedPost.titleText}}</a>
+        </h3>
+      </div>
+    </article>
+  </ng-template>
+</generic-swiper>
+
+<newsletter></newsletter>
+<div class="my-4 py-4"></div>
+
+<ng-template #asideColumn>
+  <div id="sidebar" *ngIf="post">
+
+    <div class="offcanvas-body">
+      <h4 *ngIf="hotPosts[0] && hotPosts[1]" class="pt-1 pt-lg-0 mt-lg-n2">Populaires :</h4>
+      <div class="mb-lg-5 mb-4">
+        <article *ngIf="hotPosts[0]" class="position-relative pb-2 mb-3 mb-lg-4">
+          <img class="rounded-5" (click)="openPost(hotPosts[0], $event)"
+            [src]="hotPosts[0].media.urlLarge ? hotPosts[0].media.urlLarge : hotPosts[0].media.urlFull"
+            alt="Post image">
+          <h5 class="h6 mt-3 mb-0">
+            <a class="stretched-link" (click)="openPost(hotPosts[0], $event)">{{hotPosts[0].titleText}}</a>
+          </h5>
+        </article>
+        <article *ngIf="hotPosts[1]" class="position-relative pb-2 mb-3 mb-lg-4">
+          <img class="rounded-5" (click)="openPost(hotPosts[1], $event)"
+            [src]="hotPosts[1].media.urlLarge ? hotPosts[1].media.urlLarge : hotPosts[1].media.urlFull"
+            alt="Post image">
+          <h5 class="h6 mt-3 mb-0">
+            <a class="stretched-link" (click)="openPost(hotPosts[1], $event)">{{hotPosts[1].titleText}}</a>
+          </h5>
+        </article>
+      </div>
+
+      <!-- Recent posts -->
+      <h4 class="pt-3 pt-lg-1 mb-4">Recents :</h4>
+      <ul class="list-unstyled mb-lg-5 mb-4">
+        <li class="border-bottom pb-3 mb-3" *ngIf="recentPosts[0]">
+          <span class="h6 mb-0">
+            <a (click)="openPost(recentPosts[0], $event)">{{recentPosts[0].titleText}}</a>
+          </span>
+        </li>
+        <li class="border-bottom pb-3 mb-3" *ngIf="recentPosts[1]">
+          <span class="h6 mb-0">
+            <a (click)="openPost(recentPosts[1], $event)">{{recentPosts[1].titleText}}</a>
+          </span>
+        </li>
+        <li class="border-bottom pb-3 mb-3" *ngIf="recentPosts[2]">
+          <span class="h6 mb-0">
+            <a (click)="openPost(recentPosts[2], $event)">{{recentPosts[2].titleText}}</a>
+          </span>
+        </li>
+        <li class="border-bottom pb-3" *ngIf="recentPosts[3]">
+          <span class="h6 mb-0">
+            <a (click)="openPost(recentPosts[3], $event)">{{recentPosts[3].titleText}}</a>
+          </span>
+        </li>
+      </ul>
+
+      <!-- Relevant tags -->
+      <h4 class="pt-3 pt-lg-1 mb-4" *ngIf="post.postTags && post.postTags[0]">Tags associés :</h4>
+      <div class="d-flex flex-wrap mt-n3 ms-n3 mb-lg-5 mb-4 pb-3 pb-lg-0">
+        <span *ngFor="let tag of post.postTags" class="badge border text-nav fs-sm mt-3 ms-3" style="cursor: pointer;"
+          [routerLink]="'/tools/practical-sheets/'+tag.slug">{{tag.name}}</span>
+      </div>
+    </div>
+  </div>
+</ng-template>

@@ -14,8 +14,6 @@ public interface AssoAffaireOrderSearchResult {
 
 	public String getConfrereLabel();
 
-	public String getResponsibleId();
-
 	public String getAssignedToId();
 
 	public String getProvisionTypeLabel();
@@ -31,6 +29,8 @@ public interface AssoAffaireOrderSearchResult {
 	public String getProvisionId();
 
 	public Boolean getIsEmergency();
+
+	public Boolean getIsPriority();
 
 	public String getWaitedCompetentAuthorityLabel();
 

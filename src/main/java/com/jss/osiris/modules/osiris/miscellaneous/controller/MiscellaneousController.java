@@ -35,9 +35,10 @@ import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.modules.myjss.wordpress.model.Category;
+import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
 import com.jss.osiris.modules.myjss.wordpress.service.CategoryService;
 import com.jss.osiris.modules.myjss.wordpress.service.PostService;
-import com.jss.osiris.modules.osiris.accounting.service.AccountingAccountService;
+import com.jss.osiris.modules.myjss.wordpress.service.PublishingDepartmentService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
@@ -112,7 +113,6 @@ import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDocument;
 import com.jss.osiris.modules.osiris.quotation.service.AffaireService;
-import com.jss.osiris.modules.osiris.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.osiris.quotation.service.AssoAffaireOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.BankTransfertService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
@@ -205,9 +205,6 @@ public class MiscellaneousController {
     ProviderService providerService;
 
     @Autowired
-    AccountingAccountService accountingAccountService;
-
-    @Autowired
     PaymentService paymentService;
 
     @Autowired
@@ -241,9 +238,6 @@ public class MiscellaneousController {
     EmployeeService employeeService;
 
     @Autowired
-    ActiveDirectoryHelper activeDirectoryHelper;
-
-    @Autowired
     RefundService refundService;
 
     @Autowired
@@ -274,10 +268,10 @@ public class MiscellaneousController {
     CategoryService categoryService;
 
     @Autowired
-    AnnouncementService announcementService;
+    PostService postService;
 
     @Autowired
-    PostService postService;
+    PublishingDepartmentService publishingDepartmentService;
 
     @GetMapping(inputEntryPoint + "/categories")
     public ResponseEntity<List<Category>> getCategories() {
@@ -387,7 +381,7 @@ public class MiscellaneousController {
     @JsonView(JacksonViews.OsirisListView.class)
     public ResponseEntity<List<Notification>> getNotifications(@RequestParam Boolean displayFuture,
             @RequestParam Boolean displayRead,
-            @RequestParam(required = false) List<String> notificationTypes) {
+            @RequestParam(required = false) List<String> notificationTypes) throws OsirisException {
         return new ResponseEntity<List<Notification>>(
                 notificationService.getNotificationsForCurrentEmployee(displayFuture, displayRead,
                         notificationTypes, false, true),
@@ -396,7 +390,7 @@ public class MiscellaneousController {
 
     @GetMapping(inputEntryPoint + "/notifications/nbr")
     public ResponseEntity<Integer> getNotificationsNumber(@RequestParam Boolean displayFuture,
-            @RequestParam Boolean displayRead) {
+            @RequestParam Boolean displayRead) throws OsirisException {
         List<Notification> notifications = notificationService.getNotificationsForCurrentEmployee(displayFuture,
                 displayRead, null,
                 true, true);
@@ -405,7 +399,8 @@ public class MiscellaneousController {
 
     @GetMapping(inputEntryPoint + "/notifications/customer-order")
     @JsonView(JacksonViews.OsirisListView.class)
-    public ResponseEntity<List<Notification>> getNotificationsForCustomerOrder(@RequestParam Integer customerOrderId) {
+    public ResponseEntity<List<Notification>> getNotificationsForCustomerOrder(@RequestParam Integer customerOrderId)
+            throws OsirisException {
         return new ResponseEntity<List<Notification>>(
                 notificationService.getNotificationsForCustomerOrder(customerOrderId),
                 HttpStatus.OK);
@@ -413,7 +408,8 @@ public class MiscellaneousController {
 
     @GetMapping(inputEntryPoint + "/notifications/quotation")
     @JsonView(JacksonViews.OsirisListView.class)
-    public ResponseEntity<List<Notification>> getNotificationsForQuotation(@RequestParam Integer quotationId) {
+    public ResponseEntity<List<Notification>> getNotificationsForQuotation(@RequestParam Integer quotationId)
+            throws OsirisException {
         return new ResponseEntity<List<Notification>>(
                 notificationService.getNotificationsForQuotation(quotationId),
                 HttpStatus.OK);
@@ -421,7 +417,8 @@ public class MiscellaneousController {
 
     @GetMapping(inputEntryPoint + "/notifications/provision")
     @JsonView(JacksonViews.OsirisListView.class)
-    public ResponseEntity<List<Notification>> getNotificationsForProvision(@RequestParam Integer provisionId) {
+    public ResponseEntity<List<Notification>> getNotificationsForProvision(@RequestParam Integer provisionId)
+            throws OsirisException {
         return new ResponseEntity<List<Notification>>(
                 notificationService.getNotificationsForProvision(provisionId),
                 HttpStatus.OK);
@@ -429,7 +426,8 @@ public class MiscellaneousController {
 
     @GetMapping(inputEntryPoint + "/notifications/invoice")
     @JsonView(JacksonViews.OsirisListView.class)
-    public ResponseEntity<List<Notification>> getNotificationsForInvoice(@RequestParam Integer invoiceId) {
+    public ResponseEntity<List<Notification>> getNotificationsForInvoice(@RequestParam Integer invoiceId)
+            throws OsirisException {
         return new ResponseEntity<List<Notification>>(
                 notificationService.getNotificationsForInvoice(invoiceId),
                 HttpStatus.OK);
@@ -437,7 +435,8 @@ public class MiscellaneousController {
 
     @GetMapping(inputEntryPoint + "/notifications/service")
     @JsonView(JacksonViews.OsirisListView.class)
-    public ResponseEntity<List<Notification>> getNotificationsForService(@RequestParam Integer serviceId) {
+    public ResponseEntity<List<Notification>> getNotificationsForService(@RequestParam Integer serviceId)
+            throws OsirisException {
         return new ResponseEntity<List<Notification>>(
                 notificationService.getNotificationsForService(serviceId),
                 HttpStatus.OK);
@@ -445,7 +444,8 @@ public class MiscellaneousController {
 
     @GetMapping(inputEntryPoint + "/notifications/affaire")
     @JsonView(JacksonViews.OsirisListView.class)
-    public ResponseEntity<List<Notification>> getNotificationsForAffaire(@RequestParam Integer affaireId) {
+    public ResponseEntity<List<Notification>> getNotificationsForAffaire(@RequestParam Integer affaireId)
+            throws OsirisException {
         return new ResponseEntity<List<Notification>>(
                 notificationService.getNotificationsForAffaire(affaireId),
                 HttpStatus.OK);
@@ -453,7 +453,8 @@ public class MiscellaneousController {
 
     @GetMapping(inputEntryPoint + "/notifications/tiers")
     @JsonView(JacksonViews.OsirisListView.class)
-    public ResponseEntity<List<Notification>> getNotificationsForTiers(@RequestParam Integer tiersId) {
+    public ResponseEntity<List<Notification>> getNotificationsForTiers(@RequestParam Integer tiersId)
+            throws OsirisException {
         return new ResponseEntity<List<Notification>>(
                 notificationService.getNotificationsForTiers(tiersId),
                 HttpStatus.OK);
@@ -461,7 +462,8 @@ public class MiscellaneousController {
 
     @GetMapping(inputEntryPoint + "/notifications/responsable")
     @JsonView(JacksonViews.OsirisListView.class)
-    public ResponseEntity<List<Notification>> getNotificationsForResponsable(@RequestParam Integer responsableId) {
+    public ResponseEntity<List<Notification>> getNotificationsForResponsable(@RequestParam Integer responsableId)
+            throws OsirisException {
         return new ResponseEntity<List<Notification>>(
                 notificationService.getNotificationsForResponsable(responsableId),
                 HttpStatus.OK);
@@ -685,6 +687,12 @@ public class MiscellaneousController {
                 "CompetentAuthorityTypeInsee");
 
         return new ResponseEntity<Constant>(constantService.addOrUpdateConstant(constant), HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/publishing-departments")
+    public ResponseEntity<List<PublishingDepartment>> getAvailableDepartments() {
+        return new ResponseEntity<List<PublishingDepartment>>(publishingDepartmentService.getAvailableDepartments(),
+                HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/providers")

@@ -8,11 +8,6 @@
             [isDisabled]="false" [defaultCodesSelected]="defaultStatusFilter"></select-customer-order-status>
         </td>
         <td>
-          <autocomplete-employee [(model)]="orderingSearchTagged.assignedToEmployee" label="Assignée à"
-            [form]="orderingSearchTaggedForm" propertyName="assignedToEmployee" [isMandatory]="false">
-          </autocomplete-employee>
-        </td>
-        <td>
           <select-active-directory-group [(model)]="orderingSearchTagged.activeDirectoryGroup" label="Groupe taggé"
             [form]="orderingSearchTaggedForm" propertyName="activeDirectoryGroup"
             [isMandatory]="false"></select-active-directory-group>

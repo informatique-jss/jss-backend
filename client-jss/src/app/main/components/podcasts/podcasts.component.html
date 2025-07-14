@@ -1,0 +1,156 @@
+<div class="container">
+  <div class="bg-container">
+    <div class="w-100 justify-content-between">
+      <div class="container header-hub-bg d-flex align-items-center">
+        <div class="row w-100">
+          <div class="col-12 ">
+            <div class="d-flex align-items-center gap-3 flex-wrap">
+              <h3 class="section-widget-title m-0 ms-2">Podcast</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <ng-container *ngIf="categoryPodcast">
+    <div class="bg-container">
+      <div class="w-100 justify-content-between mb-3">
+        <div class="container">
+          <div class="row">
+
+            <!---------------------Left column-------------------->
+            <div class="col-md-8">
+              <img src="/assets/images/raide-comme-la-justice-hub-img.svg" class="w-100" />
+
+              <div class="row p-0">
+                <div *ngIf="!postsByEntityType || postsByEntityType.length == 0" class="pb-3">
+                  <div class="panel-loader">
+                    <div class="skeleton skeleton-header"></div>
+                    <div class="skeleton skeleton-line"></div>
+                    <div class="skeleton skeleton-line"></div>
+                    <div class="skeleton skeleton-line short"></div>
+                    <div class="skeleton skeleton-block"></div>
+                  </div>
+                </div>
+
+                <div *ngIf="postsByEntityType && postsByEntityType.length>0">
+                  <div *ngFor="let post of postsByEntityType">
+                    <div class="card border h-100 my-3" *ngIf="post  ">
+                      <div class="row row-cols-md-auto m-2 d-flex align-items-center g-1 g-md-2">
+                        <a class="col-auto ps-0 btn-dark rounded-circle btn-circle-md fs-4"
+                          (click)="togglePlayPodcast(post)"><i
+                            [ngClass]="isPlayingPodcast(post) ? 'bi-pause-fill' : 'bi-play-fill'"></i></a>
+                        <div class="col-auto dropdown" [ngClass]="{ show: openedListenDropdownPostId === post.id }">
+                          <!-- Listen podcast in.. button -->
+                          <button type="button" class="btn col-auto bg-light text-secondary"
+                            (click)="toggleListenDropdown($event, post.id)"
+                            [attr.aria-expanded]="openedListenDropdownPostId === post.id"
+                            *ngIf="post.deezerLinkUrl || post.applePodcastLinkUrl || post.spotifyLinkUrl">
+                            Écouter <i class="bi-arrow-up-right"></i>
+                          </button>
+                          <!-- Listen podcast in .. Dropdown menu -->
+                          <div class="dropdown-menu p-1 podcast-menu"
+                            [ngClass]="{ show: openedListenDropdownPostId === post.id }">
+                            <ul class="list-unstyled d-flex  inline-row gap-2 align-items-center mb-0">
+                              <li *ngIf="post.deezerLinkUrl"><a [href]="post.deezerLinkUrl" target="_blank"><img
+                                    src="assets/images/icon/deezer.svg" alt="Deezer"></a></li>
+                              <li *ngIf="post.applePodcastLinkUrl"><a [href]="post.applePodcastLinkUrl"
+                                  target="_blank"><img src="assets/images/icon/apple-podcasts.svg"
+                                    alt="Apple Podcasts"></a></li>
+                              <li *ngIf="post.spotifyLinkUrl"><a [href]="post.spotifyLinkUrl" target="_blank"><img
+                                    src="assets/images/icon/spotify.svg" alt="Spotify"></a></li>
+                            </ul>
+                          </div>
+                        </div>
+                        <span class="col-auto small text fs-9 border-end">
+                          Publié le {{post.date | date:'EEEE d MMMM'}}</span>
+                        <span class="col-auto small text fs-9">Durée {{post.mediaTimeLength | duration}}</span>
+                      </div>
+                      <div class="card-body">
+                        <div class="row pb-1 px-2 align-items-center" *ngIf="post.postTags">
+                          <div class="d-flex flex-wrap gap-1">
+                          </div>
+                        </div>
+                        <h4 class="card-text-truncate pb-2"> <img *ngIf="post.isPremium" class="pe-0"
+                            src="/assets/images/premium-icon.svg">
+                          {{post.titleText}}
+                        </h4>
+                        <p class="">{{post.excerptText}} </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!---------------------Right column---------------------->
+            <div class="col-md-4">
+              <div class="card mb-3 border border-light p-3">
+                <div class="wrapper">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="section-title-block d-flex pb-3">
+                        <h3 class="section-widget-title">Tags liés</h3>
+
+                      </div>
+                    </div>
+                  </div>
+                  <ul class="tag-cloud list-inline">
+                    <li *ngFor="let tag of tagsByEntityType.slice(0,8)" class="list-inline-item pb-1"><a
+                        class="btn bg-light text-secondary bg-hover-danger text-hover-white bg-hover-secondary text-hover-white"
+                        (click)="openTagPosts(tag,$event)">{{tag.name}}</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Les plus vus -->
+              <div class="mb-3 border border-light card">
+                <div class="wrapper p-3">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="section-title-block d-flex">
+                        <h3 class="section-widget-title">Les plus vus</h3>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tab-content" id="tab-content">
+                    <div *ngFor="let post of mostSeenPostsByEntityType; let index = index"
+                      class="row align-items-center my-3">
+                      <div class="col-auto digits pe-2">
+                        {{index+1}}.
+                      </div>
+                      <div class="col counter-post-item card-title-truncate ps-2">
+                        <a (click)="openPost(post, $event)" class="title-most-seen">{{post.titleText}}</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Newsletter -->
+              <div class="border border-light card p-3 mb-3 bg-secondary">
+                <div class="wrapper text-white">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="section-title-block d-flex ">
+                        <h3 class="text-white">Au cœur de l'actualité !</h3>
+                      </div>
+                    </div>
+                  </div>
+                  <p>Infos locales, analyses et enquêtes : restez informé(e) sans limite.</p>
+                  <div class="row align-items-center">
+                    <div class="btn btn-yellow">S'abonner
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

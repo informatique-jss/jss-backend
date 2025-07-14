@@ -1,0 +1,28 @@
+.card-info img {
+  max-height: 600px;
+
+}
+
+.bg-yellow-color {
+  background-color: var(--ar-tertiary) !important;
+  background: url('/assets/images/background.svg') no-repeat center,
+    url('/assets/images/background2.svg') no-repeat center;
+  background-size: contain, contain;
+  background-position: left center, right center;
+}
+
+
+.bg-yellow-custom::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('/assets/images/background.svg') no-repeat left center,
+    url('/assets/images/background2.svg') no-repeat right center;
+  background-size: contain, contain;
+  background-position: left center, right center;
+  filter: brightness(0.2);
+  z-index: -1;
+}

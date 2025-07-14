@@ -1,0 +1,12 @@
+<div *ngFor="let toast of toasts">
+  <ngb-toast [delay]="toast.delay ? toast.delay : 5000">
+    <ng-template ngbToastHeader>
+      <div class="me-auto">
+        <i class="bi-x-octagon-fill me-2" *ngIf="toast.isError"></i>
+        <i class="bi-info-circle-fill me-2" *ngIf="!toast.isError"></i>
+        {{toast.title}}
+      </div>
+    </ng-template>
+    <div>{{toast.message}}</div>
+  </ngb-toast>
+</div>

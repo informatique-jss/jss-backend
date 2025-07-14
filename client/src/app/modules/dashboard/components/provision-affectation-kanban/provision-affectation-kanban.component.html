@@ -1,0 +1,160 @@
+<div class="filter-bar">
+  <div class="kanban-box-settings">
+    <mat-icon color="accent" class="pointer" [matMenuTriggerFor]="menu">settings</mat-icon>
+  </div>
+  <div class=" full-width">
+    <table class="full-width table-fixed-layout">
+      <tr>
+        <td>
+          <generic-input [(model)]="filterText" label="Rechercher" [form]="kanbanForm" propertyName="filterText"
+            [isMandatory]="false" [isDisabled]="false" (onFormChange)="startFilter(true)"
+            [displayClearField]="true"></generic-input>
+        </td>
+        <td>
+          <select-single-employee [(model)]="employeesSelected" label="Collaborateur" [form]="kanbanForm"
+            propertyName="employeesSelected" [isMandatory]="false" [isDisabled]="false"
+            [filteredAdGroups]="[adFormalistes,adInsertions]" [addProductionDirector]="true"></select-single-employee>
+        </td>
+        <td class="fab-td-button">
+          <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="startFilter()" class="add-button">
+            <mat-icon>search</mat-icon>
+          </button>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<div class="kanban-container top-container">
+  <div *ngFor="let status of statusSelected" class="kanban-column">
+    <h3 style="margin: 0px; text-align: center;"><span [matBadge]="status.id?getNumberOfEntitiesByStatus(status):0"
+        [matBadgeHidden]="!status.id ||getNumberOfEntitiesByStatus(status)==0" matBadgePosition="after"
+        matBadgeSize="small">{{ status.firstname + ' '+status.lastname }}</span></h3>
+  </div>
+</div>
+<ng-container *ngFor="let swimlane of swimlanes">
+  <div class="swimlane" *ngIf="swimlane.totalItems>0">
+    <h3 style="margin: 0px;">
+    </h3>
+    <div class="swimlane-header" (click)="swimlane.isCollapsed=!swimlane.isCollapsed">
+      <span>{{ swimlane.label }} ({{swimlane.totalItems}} commande{{swimlane.totalItems>1?'s':''}})</span>
+      <mat-icon [class.rotated]="!swimlane.isCollapsed">expand_more</mat-icon>
+    </div>
+    <div class="kanban-container" *ngIf="!swimlane.isCollapsed">
+      <div *ngFor="let status of swimlane.status" class="kanban-column">
+        <div cdkDropList [cdkDropListData]="status.entities" class="task-list"
+          [id]="'list-'+statusId.indexOf(status.label+'-' + swimlane.id + '')"
+          [cdkDropListConnectedTo]="getConnectedDropLists(swimlane)" [ngClass]="{
+           'drop-valid': isValidDropTarget(status.label!),
+           'drop-invalid': activeDraggedStatusId !== null && !isValidDropTarget(status.label!)
+         }" (cdkDropListDropped)="drop($event)">
+          <div *ngFor="let order of status.entities" cdkDrag class="task-card"
+            [ngClass]="{'card-priority':order.isPriority}" (cdkDragStarted)="onDragStarted(status.id!,order)"
+            (cdkDragEnded)="onDragEnded()" (click)="fetchEntityAndOpenPanel(order)">
+            <div class="card-content">
+              <strong>{{order.affairesList}} </strong> <mat-icon color="warn"
+                *ngIf="order.isHasNotifications">notifications</mat-icon>
+              <p>{{order.servicesList}}</p>
+            </div>
+            <div class="card-footer">
+              <div class="card-ticket">
+                {{ order.id }} - {{getResponsableLabelIQuotation(order)}} - {{getTiersLabelIQuotation(order)}}
+                <br /> le {{formatDateFrance(order.createdDate)}}
+              </div>
+              <div class="card-avatar">
+                <avatar class="avatar-select" [employee]="order.responsable?.salesEmployee" [size]="20">
+                </avatar>
+              </div>
+            </div>
+            <ng-template cdkDragPreview>
+              <div class="task-card drag-preview">
+                <div class="card-content">
+                  <strong>{{order.affairesList}} </strong>
+                  <p>{{order.servicesList}}</p>
+                </div>
+                <div class="card-footer">
+                  <div class="card-ticket pointer" (click)="openOrder($event, order);$event.stopPropagation()">
+                    {{ order.id }}
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<div class="mat-elevation-z2 form-div ">
+  <div class=" full-width">
+    <sort-table [columns]="displayedColumns" [values]="assignationStatistics" tableName="Statistiques d'assignation"
+      [noMaxHeight]="false" [noPaddingBottom]="false" [isSmallerHeight]="false"
+      *ngIf="displayedColumns && displayedColumns.length>0 ">
+    </sort-table>
+  </div>
+</div>
+
+<mat-menu #menu="matMenu" style="max-width: 100%;">
+  <div mat-menu-item>
+    <span>Regrouper par : </span>
+  </div>
+  <div mat-menu-item *ngFor="let swimlaneType of swimlaneTypes"
+    (click)="selectedSwimlaneType=swimlaneType;startFilter(true)" class="pointer">
+    <mat-icon
+      *ngIf="selectedSwimlaneType && swimlaneType.fieldName==selectedSwimlaneType.fieldName">check</mat-icon>{{swimlaneType.label}}
+  </div>
+  <mat-divider></mat-divider>
+  <div mat-menu-item class="pointer" (click)="expandAll()">Déplier tout </div>
+  <div mat-menu-item class="pointer" (click)="collapseAll()">Replier tout </div>
+</mat-menu>
+
+<div class="side-panel" *ngIf="panelOpen">
+  <div *ngIf="!selectedEntity">
+    <div class="panel-loader">
+      <div class="skeleton skeleton-header"></div>
+      <div class="skeleton skeleton-line"></div>
+      <div class="skeleton skeleton-line"></div>
+      <div class="skeleton skeleton-line short"></div>
+      <div class="skeleton skeleton-block"></div>
+    </div>
+  </div>
+  <div *ngIf="selectedEntity">
+    <div class="panel-header">
+      <span class="task-id pointer" (click)="openOrder($event, selectedEntity)">{{selectedEntity.id}} -
+        {{selectedEntity.customerOrderStatus.label}} <mat-icon color="accent"
+          class="small-mat-icon">open_in_new</mat-icon></span>
+      <mat-icon color="accent" matTooltip="Ajouter une notification sur cette commande" mat-fab color="accent"
+        [matBadge]="getNotificationForCustomerOrder().length"
+        [matBadgeHidden]="getNotificationForCustomerOrder().length<=0" matBadgePosition="below after"
+        matBadgeColor="warn" matBadgeSize="small" class="pointer"
+        (click)="addNewNotification();$event.stopPropagation();">notifications</mat-icon>
+      <span class="spacer"></span>
+      <button mat-icon-button [matMenuTriggerFor]="menu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="generateCustomerOrderCreationConfirmationToCustomer()">
+          <span>Recevoir le mail de confirmation de la commande</span>
+        </button>
+        <button mat-menu-item (click)="generateInvoiceMail()">
+          <span>Recevoir le mail de facturation</span>
+        </button>
+        <button mat-menu-item (click)="generateMailingLabel()">
+          <span>Imprimer une étiquette/lettre postale</span>
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item (click)="generateMailingLabel()" *ngIf=" canReinitInvoicing()"
+          (click)="reinitInvoicing()">
+          <span>Réinitialiser la facturation</span>
+        </button>
+      </mat-menu>
+      <button mat-icon-button (click)="panelOpen = false">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <h2 class="panel-title">{{selectedEntity.affairesList}}</h2>
+
+    <order-side-panel-details [selectedEntity]="selectedEntity" [possibleEntityStatus]="possibleEntityStatus!"
+      (triggerRefreshEntity)="fetchEntityAndOpenPanel(this.selectedEntity!, false, false)"></order-side-panel-details>
+  </div>

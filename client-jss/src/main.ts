@@ -1,11 +1,12 @@
-import { enableProdMode } from '@angular/core';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-import { AppModule } from './app/app.module';
-import { environment } from './environments/environment';
+/// <reference types="@angular/localize" />
 
-if (environment.production) {
-  enableProdMode();
-}
+import { registerLocaleData } from '@angular/common';
+import localeFr from '@angular/common/locales/fr';
+import { bootstrapApplication } from '@angular/platform-browser';
+import { AppComponent } from './app/app.component';
+import { appConfig } from './app/app.config';
 
-platformBrowserDynamic().bootstrapModule(AppModule)
-  .catch(err => console.error(err));
+registerLocaleData(localeFr, 'fr');
+
+bootstrapApplication(AppComponent, appConfig)
+  .catch((err) => console.error(err));

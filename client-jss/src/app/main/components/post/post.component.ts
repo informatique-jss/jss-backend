@@ -1,57 +1,156 @@
-import { AfterViewInit, Component, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Observable, Subscription } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import { MY_JSS_SUBSCRIBE_ROUTE } from '../../../libs/Constants';
+import { MY_JSS_SIGN_IN_ROUTE } from '../../../libs/Constants';
+import { validateEmail } from '../../../libs/CustomFormsValidatorsHelper';
 import { getTimeReading } from '../../../libs/FormatHelper';
+import { SHARED_IMPORTS } from '../../../libs/SharedImports';
+import { TrustHtmlPipe } from '../../../libs/TrustHtmlPipe';
 import { AppService } from '../../../services/app.service';
+import { PlatformService } from '../../../services/platform.service';
 import { Author } from '../../model/Author';
-import { MyJssCategory } from '../../model/MyJssCategory';
+import { Comment } from '../../model/Comment';
+import { JssCategory } from '../../model/JssCategory';
+import { Mail } from '../../model/Mail';
+import { PagedContent } from '../../model/PagedContent';
+import { Pagination } from '../../model/Pagination';
 import { Post } from '../../model/Post';
+import { ReadingFolder } from '../../model/ReadingFolder';
+import { Responsable } from '../../model/Responsable';
+import { ONE_POST_SUBSCRIPTION } from '../../model/Subscription';
 import { Tag } from '../../model/Tag';
+import { AudioPlayerService } from '../../services/audio.player.service';
+import { CommentService } from '../../services/comment.service';
+import { LoginService } from '../../services/login.service';
 import { PostService } from '../../services/post.service';
+import { ReadingFolderService } from '../../services/reading.folder.service';
+import { SubscriptionService } from '../../services/subscription.service';
+import { AvatarComponent } from '../avatar/avatar.component';
+import { BookmarkComponent } from "../bookmark/bookmark.component";
+import { GenericInputComponent } from '../generic-input/generic-input.component';
+import { GenericTextareaComponent } from '../generic-textarea/generic-textarea.component';
+import { NewsletterComponent } from "../newsletter/newsletter.component";
 
 declare var tns: any;
 
 @Component({
   selector: 'app-post',
   templateUrl: './post.component.html',
-  styleUrls: ['./post.component.css']
+  styleUrls: ['./post.component.css'],
+  imports: [SHARED_IMPORTS, TrustHtmlPipe, AvatarComponent, GenericInputComponent, GenericTextareaComponent, NewsletterComponent, BookmarkComponent],
+  standalone: true
 })
 export class PostComponent implements OnInit, AfterViewInit {
 
   slug: string | undefined;
+  validationToken: string | undefined;
   post: Post | undefined;
   nextPost: Post | undefined;
   previousPost: Post | undefined;
+  commentsPagination: Pagination = {} as Pagination;
+
+  comments: Comment[] = [];
+  newComment: Comment = {} as Comment;
+  newCommentParent: Comment = {} as Comment;
+
+  pageSize: number = 10; // computed
+
+  mostSeenPostsByEntityType: Post[] = [] as Array<Post>;
 
   speechSynthesisUtterance: SpeechSynthesisUtterance | undefined;
   speechRate: number = 1;
   isPlaying: boolean | undefined;
   audioUrl: string | undefined;
+  progress: number = 0;
+  progressSubscription: Subscription = new Subscription;
+  readingFolders: ReadingFolder[] = [];
+  recipientMail: string | undefined;
+
+  currentUser: Responsable | undefined;
+
+  numberOfSharingPostRemaining: number = 0;
 
   @ViewChildren('sliderPage') sliderPage!: QueryList<any>;
 
   constructor(private activatedRoute: ActivatedRoute,
+    private formBuilder: FormBuilder,
     private postService: PostService,
     private appService: AppService,
+    private platformService: PlatformService,
+    private audioService: AudioPlayerService,
+    private commentService: CommentService,
+    private subscriptionService: SubscriptionService,
+    private loginService: LoginService,
+    private modalService: NgbModal,
+    private cdr: ChangeDetectorRef,
+    private readingFolderService: ReadingFolderService,
   ) { }
 
   getTimeReading = getTimeReading;
 
+  giftForm!: FormGroup;
+  newCommentForm!: FormGroup;
+
   ngOnInit() {
-    this.slug = this.activatedRoute.snapshot.params['slug'];
-    if (this.slug)
-      this.postService.getPostBySlug(this.slug).subscribe(post => {
+    this.loginService.getCurrentUser().subscribe(res => this.currentUser = res);
+
+    this.newCommentForm = this.formBuilder.group({});
+    this.giftForm = this.formBuilder.group({});
+
+    this.activatedRoute.params.subscribe(() => {
+      this.refreshPost();
+    });
+
+    this.refreshPost();
+
+    this.progressSubscription = this.audioService.progressObservable.subscribe(item => {
+      this.progress = item;
+      this.cdr.detectChanges();
+    });
+  }
+
+  refreshPost() {
+    this.validationToken = this.activatedRoute.snapshot.params['token'];
+    if (this.validationToken) {
+      let mail = this.activatedRoute.snapshot.params['mail'];
+      this.postService.getOfferedPostByToken(this.validationToken, mail).subscribe(post => {
         this.post = post;
         if (this.post) {
-          this.postService.getNextArticle(this.post).subscribe(response => this.nextPost = response);
-          this.postService.getPreviousArticle(this.post).subscribe(response => this.previousPost = response);
+          this.fetchNextPrevArticleAndComments(this.post);
         }
-      })
+      });
+
+    } else {
+      this.slug = this.activatedRoute.snapshot.params['slug'];
+      if (this.slug) {
+        this.postService.getPostBySlug(this.slug).subscribe(post => {
+          this.post = post;
+          if (this.post) {
+            this.fetchNextPrevArticleAndComments(this.post);
+          }
+        })
+      }
+    }
+
+    this.cancelReply()
+    this.fetchMostSeenPosts();
+    this.fetchReadingFolder();
+  }
+
+  private fetchNextPrevArticleAndComments(post: Post) {
+    this.postService.getNextArticle(post).subscribe(response => this.nextPost = response);
+    this.postService.getPreviousArticle(post).subscribe(response => this.previousPost = response);
+    this.fetchComments(0);
   }
 
   ngOnDestroy() {
-    window.speechSynthesis.pause();
+    const win = this.platformService.getNativeWindow();
+
+    if (win)
+      win.speechSynthesis.pause();
     this.isPlaying = undefined;
   }
 
@@ -83,62 +182,196 @@ export class PostComponent implements OnInit, AfterViewInit {
     })
   }
 
+  fetchReadingFolder() {
+    this.readingFolderService.getReadingFolders().subscribe(response => {
+      if (response)
+        this.readingFolders.push(...response);
+    });
+  }
+
+  dropdownOpen = false;
+
+  toggleDropdown(event: Event): void {
+    event.preventDefault();
+    this.dropdownOpen = !this.dropdownOpen;
+  }
+
+  fetchMostSeenPosts() {
+    this.getMostSeenPosts(0, 5).subscribe(data => {
+      if (data)
+        this.mostSeenPostsByEntityType = data.content;
+    });
+  }
+
+  getMostSeenPosts(page: number, pageSize: number): Observable<PagedContent<Post>> {
+    return this.postService.getMostViewedPosts(page, pageSize);
+  }
+
+  fetchComments(page: number) {
+    if (this.post) {
+      this.activatedRoute.fragment.subscribe(fragment => {
+        if (fragment) this.pageSize = 1000000;
+        this.commentService.getParentCommentsForPost(this.post!.id, page, this.pageSize).subscribe(data => {
+          if (page == 0) {
+            this.comments = data.content;
+          } else {
+            this.comments = this.comments.concat(data.content);
+          }
+
+          if (fragment && this.platformService.isBrowser()) {
+            setTimeout(() => {
+              document.getElementById(fragment)?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }, 0);
+          }
+          this.commentsPagination = data.page;
+        });
+      });
+    }
+  }
+
+  cancelReply() {
+    this.newComment = { mail: {} as Mail } as Comment;
+    this.newCommentParent = {} as Comment;
+  }
+
+  postComment() {
+    if (this.post && this.newComment.content.trim()) {
+      if (this.currentUser) {
+        if (this.currentUser.firstname)
+          this.newComment.authorFirstName = this.currentUser.firstname;
+        if (this.currentUser.lastname)
+          this.newComment.authorLastName = this.currentUser.lastname;
+
+        this.newComment.mail = this.currentUser.mail;
+      }
+
+      this.commentService.addOrUpdateComment(this.newComment, this.newCommentParent.id, this.post.id).subscribe(() => {
+        this.fetchComments(0);
+      });
+    } else if (!this.newComment.content.trim())
+      this.appService.displayToast("Vous ne pouvez pas publier un commentaire sans contenu", true, "Contenu vide", 5000);
+    this.cancelReply();
+  }
+
+  replyComment(comment: Comment) {
+    this.newComment = { mail: {} as Mail } as Comment;
+    this.newCommentParent = comment;
+    // Scroll to new comment form
+    this.scrollToView("commentForm");
+  }
+
+  scrollToView(anchorId: string) {
+    if (this.platformService.isServer())
+      return;
+    const element = this.platformService.getNativeDocument()!.getElementById(anchorId);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+  }
+
+  showMoreComments() {
+    this.fetchComments(this.commentsPagination.pageNumber + 1);
+  }
+
+  showLessComments() {
+    this.fetchComments(0);
+  }
+
+  getResponsableNames(comment: Comment): Responsable {
+    return { firstname: comment?.authorFirstName || '', lastname: comment?.authorLastNameInitials || '' } as Responsable;
+  }
+
   openPost(post: Post, event: any) {
     this.appService.openRoute(event, "post/" + post.slug, undefined);
   }
 
   openAuthorPosts(author: Author, event: any) {
-    this.appService.openRoute(event, "author/" + author.slug, undefined);
+    this.appService.openRoute(event, "post/author/" + author.slug, undefined);
   }
 
-  openCategoryPosts(category: MyJssCategory, event: any) {
-    this.appService.openRoute(event, "category/" + category.slug, undefined);
+  openCategoryPosts(category: JssCategory, event: any) {
+    this.appService.openRoute(event, "post/category/" + category.slug, undefined);
   }
 
   openTagPosts(tag: Tag, event: any) {
-    this.appService.openRoute(event, "tag/" + tag.slug, undefined);
+    this.appService.openRoute(event, "post/tag/" + tag.slug, undefined);
   }
 
   shareOnFacebook() {
-    if (this.post) {
+    const win = this.platformService.getNativeWindow();
+    if (this.post && win) {
       let url = environment.frontendUrl + "post/" + this.post.slug;
-      window.open("https://www.facebook.com/sharer/sharer.php?u=" + url, "_blank");
+      win.open("https://www.facebook.com/sharer/sharer.php?u=" + url, "_blank");
     }
   }
 
   shareOnLinkedin() {
-    if (this.post) {
+    const win = this.platformService.getNativeWindow();
+    if (this.post && win) {
       let url = environment.frontendUrl + "post/" + this.post.slug;
-      window.open("https://www.linkedin.com/shareArticle?mini=true&url=" + url + "&title=" + this.extractContent(this.post.titleText) + "&summary=" + this.extractContent(this.post.excerptText), "_blank");
+      win.open("https://www.linkedin.com/shareArticle?mini=true&url=" + url + "&title=" + this.extractContent(this.post.titleText) + "&summary=" + this.extractContent(this.post.excerptText), "_blank");
     }
   }
 
-  shareOnTwitter() {
-    if (this.post) {
-      let url = environment.frontendUrl + "post/" + this.post.slug;
-      window.open("https://twitter.com/intent/tweet?text=" + this.extractContent(this.post.titleText) + "&url=" + url, "_blank");
-    }
+  shareOnInstagram() {
+    this.appService.openInstagramJssPage();
   }
 
   shareByMail() {
-    if (this.post) {
+    const win = this.platformService.getNativeWindow();
+    if (this.post && win) {
       let url = environment.frontendUrl + "post/" + this.post.slug;
-      window.open('mailto:?subject=Découvrez cet article intéressant sur JSS.FR&body=Bonjour,%0A%0AJe voulais vous partager cet article :%0A%0A' + this.extractContent(this.post.titleText) + '%0A' + url + '%0A%0ABonne lecture!', "_blank");
+      win.open('mailto:?subject=Découvrez cet article intéressant sur JSS.FR&body=Bonjour,%0A%0AJe voulais vous partager cet article :%0A%0A' + this.extractContent(this.post.titleText) + '%0A' + url + '%0A%0ABonne lecture!', "_blank");
+    }
+  }
+
+  openSignIn(event: any) {
+    this.appService.openMyJssRoute(event, MY_JSS_SIGN_IN_ROUTE, false);
+  }
+
+  openOfferPostModal(content: any) {
+    this.subscriptionService.getNumberOfRemainingPostsToShareForCurrentMonth().subscribe(res => {
+      if (res != null) {
+        this.numberOfSharingPostRemaining = res;
+        this.modalService.open(content, { centered: true, size: 'md' });
+      } else {
+        this.appService.displayToast("Vous n'êtes pas autorisé à partager des articles", true, "Partage impossible", 5000);
+      }
+    });
+  }
+
+  givePost(modalRef: any, post: Post) {
+    if (!this.recipientMail || !validateEmail(this.recipientMail)) {
+      this.appService.displayToast("Merci de renseigner une adresse mail valide", true, "Adresse mail invalide", 5000)
+
+    } else {
+      this.subscriptionService.givePost(post.id, this.recipientMail).subscribe(res => {
+        if (res) {
+          modalRef.close();
+          this.giftForm.reset();
+          this.appService.displayToast("L'article a bien été partagé à l'adresse mail indiquée !", false, "Article partagé", 5000)
+        }
+      });
     }
   }
 
   extractContent(s: string) {
-    var span = document.createElement('span');
-    span.innerHTML = s;
-    return span.textContent || span.innerText;
+    const doc = this.platformService.getNativeDocument();
+    if (doc) {
+      var span = doc.createElement('span');
+      span.innerHTML = s;
+      return span.textContent || span.innerText;
+    }
+    return '';
   };
 
-  openSubscribe(event: any) {
-    this.appService.openMyJssRoute(event, MY_JSS_SUBSCRIBE_ROUTE);
+  subscribeToOnePost(event: any, idArticle: number) {
+    this.appService.openMyJssRoute(event, "/quotation/subscription/" + ONE_POST_SUBSCRIPTION + "/" + false + "/" + idArticle, true);
   }
 
   readArticle(): void {
-    if (this.post && this.post.contentText) {
+    const win = this.platformService.getNativeWindow();
+    if (this.post && this.post.contentText && win) {
       const articleText = this.extractContent(this.post.contentText);
 
       this.speechSynthesisUtterance = new SpeechSynthesisUtterance();
@@ -147,27 +380,52 @@ export class PostComponent implements OnInit, AfterViewInit {
       this.speechSynthesisUtterance.rate = this.speechRate;
       this.speechSynthesisUtterance.pitch = 1.4;
 
-      window.speechSynthesis.speak(this.speechSynthesisUtterance);
+      win.speechSynthesis.speak(this.speechSynthesisUtterance);
     }
   }
 
-  togglePlayPause(): void {
-    if (this.isPlaying === undefined) {
-      this.readArticle();
-      this.isPlaying = true;
-    } else if (this.isPlaying == false) {
-      window.speechSynthesis.resume();
-      this.isPlaying = true;
+  togglePlayPause(post: Post) {
+    if (this.audioService.currentPost && this.audioService.currentPost.id == post.id && this.isPlaying) {
+      this.audioService.togglePlayPause();
+      this.isPlaying = this.audioService.getIsPlaying();
     } else {
-      window.speechSynthesis.pause();
-      this.isPlaying = false;
+      this.audioService.loadTrack(post.id);
+      this.isPlaying = true;
     }
   }
+
+  changeSpeechRate() {
+    this.audioService.changeSpeechRate();
+    this.speechRate = this.audioService.getSpeechRate();
+  }
+
 
   updateSpeed(): void {
-    if (this.speechSynthesisUtterance) {
+    const win = this.platformService.getNativeWindow();
+    if (this.speechSynthesisUtterance && win) {
       this.speechSynthesisUtterance.rate = this.speechRate;
-      window.speechSynthesis.speak(this.speechSynthesisUtterance);
+      win.speechSynthesis.speak(this.speechSynthesisUtterance);
     }
   }
+
+  getIsPlaying(post: Post) {
+    return this.audioService.isPlayingPost(post);
+  }
+
+
+  getDuration() {
+    return this.audioService.getDuration();
+  }
+
+  getCurrentTime() {
+    return this.audioService.getCurrentTime();
+  }
+
+
+  onSeek(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this.audioService.seekTo(+value);
+  }
+
+
 }

@@ -5,7 +5,6 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -16,6 +15,7 @@ import com.jss.osiris.libs.audit.service.AuditService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.modules.osiris.crm.service.VoucherService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceItemService;
@@ -24,13 +24,10 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.BillingItem;
 import com.jss.osiris.modules.osiris.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.osiris.miscellaneous.service.BillingItemService;
-import com.jss.osiris.modules.osiris.miscellaneous.service.CityService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
-import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.SpecialOfferService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.VatService;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
-import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CharacterPrice;
 import com.jss.osiris.modules.osiris.quotation.model.Confrere;
@@ -40,13 +37,10 @@ import com.jss.osiris.modules.osiris.quotation.model.DomiciliationFee;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
 import com.jss.osiris.modules.osiris.quotation.model.NoticeType;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
-import com.jss.osiris.modules.osiris.quotation.model.ProvisionScreenType;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionType;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
-import com.jss.osiris.modules.osiris.quotation.model.ServiceTypeChosen;
-import com.jss.osiris.modules.osiris.quotation.model.UserCustomerOrder;
-import com.jss.osiris.modules.osiris.tiers.model.Responsable;
+import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 
 @org.springframework.stereotype.Service
 public class PricingHelper {
@@ -73,16 +67,7 @@ public class PricingHelper {
     InvoiceItemService invoiceItemService;
 
     @Autowired
-    DocumentService documentService;
-
-    @Autowired
     VatService vatService;
-
-    @Autowired
-    CityService cityService;
-
-    @Autowired
-    ProvisionService provisionService;
 
     @Autowired
     AuditService auditService;
@@ -104,6 +89,9 @@ public class PricingHelper {
 
     @Autowired
     AssoAffaireOrderService assoAffaireOrderService;
+
+    @Autowired
+    VoucherService voucherService;
 
     @Transactional
     public IQuotation getAndSetInvoiceItemsForQuotationForFront(IQuotation quotation, boolean persistInvoiceItem)
@@ -244,8 +232,8 @@ public class PricingHelper {
         } else if (billingItem.getBillingType().getId()
                 .equals(constantService.getBillingTypePublicationPaper().getId())) {
             Integer nbr = getPublicationPaperNbr(provision);
-            if (nbr > 0) {
-                Confrere confrere = provision.getAnnouncement().getConfrere();
+            Confrere confrere = provision.getAnnouncement().getConfrere();
+            if (nbr > 0 && confrere != null) {
                 invoiceItem.setLabel(invoiceItem.getLabel() + " (quantité : " + nbr + ")");
 
                 invoiceItem.setPreTaxPrice(
@@ -297,14 +285,26 @@ public class PricingHelper {
                         (confrere.getShippingCosts() != null ? BigDecimal.valueOf(confrere.getShippingCosts())
                                 : zeroValue).multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN)
                                 .divide(oneHundredValue));
-        } else if (invoiceItem.getId() == null && billingItem.getBillingType().getIsDebour()) {
-            if (billingItem.getBillingType().getIsNonTaxable() == false
-                    && provision.getService().getServiceType().getDefaultDeboursPrice() != null) {
-                invoiceItem.setPreTaxPrice(provision.getService().getServiceType().getDefaultDeboursPrice());
-            } else if (billingItem.getBillingType().getIsNonTaxable() == true
-                    && provision.getService().getServiceType().getDefaultDeboursPriceNonTaxable() != null) {
-                invoiceItem.setPreTaxPrice(provision.getService().getServiceType().getDefaultDeboursPriceNonTaxable());
-            }
+        } else if (billingItem.getBillingType().getIsDebour()
+                && !provision.getService().getServiceTypes().isEmpty()) {
+            if (invoiceItem.getPreTaxPrice() == null || invoiceItem.getPreTaxPrice().equals(zeroValue))
+                for (ServiceType serviceType : provision.getService().getServiceTypes()) {
+                    if (billingItem.getBillingType().getIsNonTaxable() == false
+                            && serviceType.getDefaultDeboursPrice() != null) {
+                        if (invoiceItem.getPreTaxPrice() == null)
+                            invoiceItem.setPreTaxPrice(serviceType.getDefaultDeboursPrice());
+                        else
+                            invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice()
+                                    .add(serviceType.getDefaultDeboursPrice()));
+                    } else if (billingItem.getBillingType().getIsNonTaxable() == true
+                            && serviceType.getDefaultDeboursPriceNonTaxable() != null) {
+                        if (invoiceItem.getPreTaxPrice() == null)
+                            invoiceItem.setPreTaxPrice(serviceType.getDefaultDeboursPriceNonTaxable());
+                        else
+                            invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice()
+                                    .add(serviceType.getDefaultDeboursPriceNonTaxable()));
+                    }
+                }
         } else {
             invoiceItem.setPreTaxPrice(billingItem.getPreTaxPrice());
         }
@@ -313,25 +313,27 @@ public class PricingHelper {
         // First one => double price for base
         if (quotation instanceof CustomerOrder && provision.getDomiciliation() != null && quotation.getId() != null) {
             CustomerOrder customerOrder = customerOrderService.getCustomerOrder(quotation.getId());
-            CustomerOrder masterCustomerOrder = (customerOrder.getIsRecurring() != null
-                    && customerOrder.getIsRecurring()) ? customerOrder
-                            : customerOrder.getCustomerOrderParentRecurring();
-            if (masterCustomerOrder != null && masterCustomerOrder.getCustomerOrderFrequency() != null)
-                if (billingItem.getBillingType().getId()
-                        .equals(constantService.getBillingTypeDomiciliationContractTypeKeepMail().getId())
-                        || billingItem.getBillingType().getId()
-                                .equals(constantService.getBillingTypeDomiciliationContractTypeRouteEmail().getId())
-                        || billingItem.getBillingType().getId()
-                                .equals(constantService.getBillingTypeDomiciliationContractTypeRouteEmailAndMail()
-                                        .getId())
-                        || billingItem.getBillingType().getId()
-                                .equals(constantService.getBillingTypeDomiciliationContractTypeRouteMail().getId()))
-                    invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice().multiply(
-                            BigDecimal.valueOf(masterCustomerOrder.getCustomerOrderFrequency().getMonthNumber())));
+            if (customerOrder != null) {
+                CustomerOrder masterCustomerOrder = (customerOrder.getIsRecurring() != null
+                        && customerOrder.getIsRecurring()) ? customerOrder
+                                : customerOrder.getCustomerOrderParentRecurring();
+                if (masterCustomerOrder != null && masterCustomerOrder.getCustomerOrderFrequency() != null)
+                    if (billingItem.getBillingType().getId()
+                            .equals(constantService.getBillingTypeDomiciliationContractTypeKeepMail().getId())
+                            || billingItem.getBillingType().getId()
+                                    .equals(constantService.getBillingTypeDomiciliationContractTypeRouteEmail().getId())
+                            || billingItem.getBillingType().getId()
+                                    .equals(constantService.getBillingTypeDomiciliationContractTypeRouteEmailAndMail()
+                                            .getId())
+                            || billingItem.getBillingType().getId()
+                                    .equals(constantService.getBillingTypeDomiciliationContractTypeRouteMail().getId()))
+                        invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice().multiply(
+                                BigDecimal.valueOf(masterCustomerOrder.getCustomerOrderFrequency().getMonthNumber())));
 
-            if (customerOrder.getIsRecurring() != null && customerOrder.getIsRecurring()
-                    && invoiceItem.getPreTaxPrice() != null)
-                invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice().multiply(new BigDecimal(2)));
+                if (customerOrder.getIsRecurring() != null && customerOrder.getIsRecurring()
+                        && invoiceItem.getPreTaxPrice() != null)
+                    invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice().multiply(new BigDecimal(2)));
+            }
         }
 
         if (invoiceItem.getPreTaxPrice() != null)
@@ -827,108 +829,56 @@ public class PricingHelper {
                     && assoSpecialOfferBillingType.getDiscountRate().compareTo(zeroValue) > 0)
                 invoiceItem.setDiscountAmount(
                         invoiceItem.getPreTaxPrice().multiply(assoSpecialOfferBillingType.getDiscountRate())
+                                .divide(oneHundredValue).multiply(oneHundredValue)
+                                .setScale(0, RoundingMode.HALF_EVEN)
+                                .divide(oneHundredValue));
+        }
+        if (quotation.getVoucher() != null && invoiceItem.getBillingItem() != null
+                && invoiceItem.getBillingItem().getBillingType() != null
+                && (Boolean.TRUE.equals(invoiceItem.getBillingItem().getBillingType().getIsVacation())
+                        || Boolean.TRUE.equals(invoiceItem.getBillingItem().getBillingType().getIsTraitement()))) {
+            // TODO créer un invoice item pour les coupons avec discount amount + condition
+            // istraitement et isvacation ko
+            // if (quotation.getVoucher().getDiscountAmount() != null
+            // && quotation.getVoucher().getDiscountAmount().compareTo(zeroValue) > 0) {
+            // BigDecimal voucherDiscount = quotation.getVoucher().getDiscountAmount()
+            // .multiply(oneHundredValue)
+            // .setScale(0, RoundingMode.HALF_EVEN)
+            // .divide(oneHundredValue);
+
+            // BigDecimal existingDiscount = invoiceItem.getDiscountAmount() != null
+            // ? invoiceItem.getDiscountAmount()
+            // : zeroValue;
+
+            // invoiceItem.setDiscountAmount(existingDiscount.add(voucherDiscount));
+            // }
+            if (quotation.getVoucher().getDiscountRate() != null
+                    && quotation.getVoucher().getDiscountRate().compareTo(zeroValue) > 0) {
+                invoiceItem.setDiscountAmount(
+                        invoiceItem.getPreTaxPrice().multiply(quotation.getVoucher().getDiscountRate())
                                 .divide(oneHundredValue).multiply(oneHundredValue).setScale(0, RoundingMode.HALF_EVEN)
                                 .divide(oneHundredValue));
+            }
         } else {
             invoiceItem.setDiscountAmount(zeroValue);
         }
-
         invoiceItem.setVat(invoiceItem.getBillingItem().getBillingType().getVat());
         vatService.completeVatOnInvoiceItem(invoiceItem, quotation);
     }
 
-    public UserCustomerOrder completePricingOfUserCustomerOrder(UserCustomerOrder order)
+    public IQuotation completePricingOfIQuotation(IQuotation quotation, Boolean isEmergency)
             throws OsirisClientMessageException, OsirisValidationException, OsirisException {
-        CustomerOrder customerOrder = new CustomerOrder();
-        Responsable user = employeeService.getCurrentMyJssUser();
-        ProvisionScreenType provisionScreenTypeAnnouncement = constantService.getProvisionScreenTypeAnnouncement();
-        if (user == null)
-            user = constantService.getResponsableDummyCustomerFrance();
-
-        customerOrder.setResponsable(user);
-        customerOrder.setAssoAffaireOrders(new ArrayList<AssoAffaireOrder>());
-        customerOrder.getAssoAffaireOrders().add(new AssoAffaireOrder());
-        customerOrder.getAssoAffaireOrders().get(0).setAffaire(order.getServiceTypes().get(0).getAffaire());
-
-        if (user.getTiers() != null && user.getTiers().getSpecialOffers() != null)
-            customerOrder.setSpecialOffers(user.getTiers().getSpecialOffers());
-
-        List<InvoiceItem> invoiceItemsToConsider = new ArrayList<InvoiceItem>();
-
-        for (ServiceTypeChosen serviceTypeChosen : order.getServiceTypes()) {
-            serviceTypeChosen.setService(serviceTypeService.getServiceType(serviceTypeChosen.getService().getId()));
-            Service service = serviceService.getServiceForMultiServiceTypesAndAffaire(
-                    Arrays.asList(serviceTypeChosen.getService()), serviceTypeChosen.getAffaire());
-
-            if (order.getIsEmergency() != null && order.getIsEmergency() && service.getProvisions() != null
-                    && service.getProvisions().size() > 0
-                    && order.getServiceTypes().indexOf(serviceTypeChosen) == 0)
-                service.getProvisions().get(0).setIsEmergency(true);
-
-            if (service != null && service.getProvisions() != null)
-                for (Provision provision : service.getProvisions()) {
-                    // map announcement
-                    if (provision.getProvisionType().getProvisionScreenType().getId()
-                            .equals(provisionScreenTypeAnnouncement.getId())) {
-                        provision.setAnnouncement(new Announcement());
-                        if (serviceTypeChosen.getAnnouncementProofReading() != null
-                                && serviceTypeChosen.getAnnouncementProofReading())
-                            provision.getAnnouncement().setIsProofReadingDocument(true);
-
-                        if (serviceTypeChosen.getAnnouncementNoticeType() != null)
-                            provision.getAnnouncement()
-                                    .setNoticeTypes(Arrays.asList(serviceTypeChosen.getAnnouncementNoticeType()));
-
-                        if (serviceTypeChosen.getAnnouncementNoticeFamily() != null)
-                            provision.getAnnouncement()
-                                    .setNoticeTypeFamily(serviceTypeChosen.getAnnouncementNoticeFamily());
-
-                        if (serviceTypeChosen.getAnnouncementNotice() != null
-                                && (serviceTypeChosen.getAnnouncementRedactedByJss() == null
-                                        || serviceTypeChosen.getAnnouncementRedactedByJss()))
-                            provision.getAnnouncement().setNotice(serviceTypeChosen.getAnnouncementNotice());
-                        ;
-
-                        if (serviceTypeChosen.getAnnouncementPublicationDate() != null)
-                            provision.getAnnouncement()
-                                    .setPublicationDate(serviceTypeChosen.getAnnouncementPublicationDate());
-
-                        if (serviceTypeChosen.getAnnouncementRedactedByJss() != null
-                                && serviceTypeChosen.getAnnouncementRedactedByJss())
-                            provision.setIsRedactedByJss(true);
-                    }
-
-                    setInvoiceItemsForProvision(provision, customerOrder, false);
-                    invoiceItemsToConsider.addAll(provision.getInvoiceItems());
-                }
-            serviceTypeChosen.setDiscountedAmount(assoAffaireOrderService.getServicePrice(service, true, false));
-            serviceTypeChosen.setPreTaxPrice(assoAffaireOrderService.getServicePrice(service, false, false));
+        if (quotation.getAssoAffaireOrders() != null && quotation.getAssoAffaireOrders().size() > 0
+                && quotation.getAssoAffaireOrders().get(0).getServices() != null
+                && quotation.getAssoAffaireOrders().get(0).getServices().size() > 0
+                && quotation.getAssoAffaireOrders().get(0).getServices().get(0).getProvisions() != null
+                && quotation.getAssoAffaireOrders().get(0).getServices().get(0).getProvisions().size() > 0) {
+            quotation.getAssoAffaireOrders().get(0).getServices().get(0).getProvisions().get(0)
+                    .setIsEmergency(isEmergency);
         }
+        quotation = getAndSetInvoiceItemsForQuotation(quotation, false);
 
-        BigDecimal discountTotal = new BigDecimal(0);
-        BigDecimal preTaxPriceTotal = new BigDecimal(0);
-        BigDecimal vatTotal = new BigDecimal(0);
-        if (invoiceItemsToConsider != null)
-            for (InvoiceItem invoiceItem : invoiceItemsToConsider) {
-                if (invoiceItem.getPreTaxPriceReinvoiced() != null) {
-                    preTaxPriceTotal = preTaxPriceTotal
-                            .add(invoiceItem.getPreTaxPriceReinvoiced());
-                } else if (invoiceItem.getPreTaxPrice() != null) {
-                    preTaxPriceTotal = preTaxPriceTotal.add(invoiceItem.getPreTaxPrice());
-                }
-
-                if (invoiceItem.getVatPrice() != null) {
-                    vatTotal = vatTotal.add(invoiceItem.getVatPrice());
-                }
-                if (invoiceItem.getDiscountAmount() != null) {
-                    discountTotal = discountTotal.add(invoiceItem.getDiscountAmount());
-                }
-            }
-
-        order.setPreTaxPrice(preTaxPriceTotal.subtract(discountTotal));
-        order.setTotalPrice(preTaxPriceTotal.add(vatTotal).subtract(discountTotal));
-        order.setVatPrice(vatTotal);
-
-        return order;
+        quotation.setResponsable(null);
+        return quotation;
     }
 }

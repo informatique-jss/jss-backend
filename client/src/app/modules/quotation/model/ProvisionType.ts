@@ -18,5 +18,7 @@ export interface ProvisionType extends IReferential {
   isDisplayActeDepositScreen: boolean;
   isDisplayAnnualAccountScreen: boolean;
   isRecurring: boolean;
+  isMergeable: boolean;
   recurringFrequency: CustomerOrderFrequency;
+
 }

@@ -17,6 +17,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule, Routes } from '@angular/router';
+import { CrmModule } from 'src/app/modules/crm/components/crm/crm.module';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { SpecialOffersDialogComponent } from 'src/app/modules/miscellaneous/components/special-offers-dialog/special-offers-dialog.component';
 import { AccountingModule } from '../../../accounting/components/accounting/accounting.module';
@@ -67,6 +68,7 @@ const routes: Routes = [
     InvoicingModule,
     MatBadgeModule,
     ReportingModule,
+    CrmModule,
     QuotationModule,
   ],
   declarations: [TiersComponent,

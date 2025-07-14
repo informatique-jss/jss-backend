@@ -1,0 +1,148 @@
+<footer [ngClass]="{ 'footer': !isInNavbar }" class="pt-4">
+  <div class="container">
+
+    <!-- First column for liens utiles & localisation -->
+    <div class="row justify-content-start mx-2">
+      <!-- SERVICES, LA SOCIÉTÉ, OUTILS, LIENS UTILES & LOCALISATION (responsive) -->
+      <div *ngIf="!isInNavbar" class="col-12 col-xl-6 ms-0 ps-0">
+        <div class="d-flex justify-content-between flex-column flex-md-row">
+
+          <!-- SERVICES -->
+          <div class="col-auto me-md-4">
+            <div class="footer-title py-4">
+              SERVICES
+            </div>
+            <p *ngFor="let service of services">
+              <a class="nav-link myjss-nav-link" style="cursor: pointer;"
+                [routerLink]="service.route">{{service.label}}</a>
+            </p>
+          </div>
+
+          <!-- LA SOCIÉTÉ -->
+          <div *ngIf="!isInNavbar" class="col-auto me-md-4">
+            <div class="footer-title py-4">
+              LA SOCIÉTÉ
+            </div>
+            <p *ngFor="let companyItem of companyItems">
+              <a class="nav-link myjss-nav-link" style="cursor: pointer;"
+                [routerLink]="companyItem.route">{{companyItem.label}}</a>
+            </p>
+          </div>
+
+          <!-- OUTILS -->
+          <div *ngIf="!isInNavbar" class="col-auto me-md-4">
+            <div class="footer-title py-4">
+              OUTILS
+            </div>
+            <p *ngFor="let tool of tools">
+              <a class="nav-link myjss-nav-link" style="cursor: pointer;" [routerLink]="tool.route">{{tool.label}}</a>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-xl-6 ms-0 ps-0">
+        <div class="d-flex justify-content-between flex-column flex-md-row">
+          <!-- LIENS UTILES -->
+          <div class="col-auto me-md-4">
+            <div class="footer-title py-4">
+              LIENS UTILES
+            </div>
+            <p>
+              <a class="nav-link myjss-nav-link" style="cursor: pointer;" (click)="$event"
+                routerLink="quotation">Commande / Devis</a>
+            </p>
+            <p>
+              <a class="nav-link myjss-nav-link" style="cursor: pointer;" (click)="$event" routerLink="demo">Démo</a>
+            </p>
+            <p>
+              <a class="nav-link myjss-nav-link" style="cursor: pointer;" (click)="$event"
+                routerLink="prices">Tarifs</a>
+            </p>
+            <p>
+              <a class="nav-link myjss-nav-link" style="cursor: pointer;" (click)="$event"
+                routerLink="newsletter">Newsletter</a>
+            </p>
+            <p>
+              <a class="nav-link myjss-nav-link" style="cursor: pointer;" (click)="$event"
+                routerLink="contact">Contact</a>
+            </p>
+            <hr>
+            <p>
+              <a class="nav-link myjss-nav-link" style="cursor: pointer;" (click)="openJssRoute($event)"
+                routerLink="/">Journal
+                Spécial des Sociétés</a>
+            </p>
+          </div>
+
+          <!-- LOCALISATION -->
+          <div class="col-auto me-md-4">
+            <div class="footer-title py-4">
+              LOCALISATION
+            </div>
+            <div class="footer-body">
+              <p class="mb-0">10 Bd Haussmann,</p>
+              <p>75009 Paris</p>
+              <a class="mb-0" href="mailto:contact@jss.fr">contact&#64;jss.fr</a>
+              <p>01 47 03 10 10</p>
+              <hr>
+              <p class="mb-0">lun-ven : 9h00 - 12h30</p>
+              <p>14h00 - 18h00</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Second column for the image (responsive) -->
+      <div *ngIf="isInNavbar" class="col-12 col-md-6 d-none d-lg-block">
+        <img [src]="map" class="w-100" alt="Map" />
+      </div>
+    </div>
+
+    <!-- Footer with logo, social media and payments -->
+    <div *ngIf="!isInNavbar" class="mb-4 pt-5">
+      <div class="row d-flex justify-content-between align-items-center mx-2">
+        <div class="col d-flex align-items-center justify-content-start">
+          <a href="" class="me-4 d-none d-sm-block">
+            <img [src]="logoJss" />
+          </a>
+          <div class="col d-flex align-items-center me-2">
+            <a class="btn btn-icon btn-sm btn-secondary btn-linkedin rounded-circle mx-2 ms-sm-0 me-sm-3"
+              (click)="openLinkedin()" aria-label="LinkedIn">
+              <i class="ai-linkedin"></i>
+            </a>
+            <a class="btn btn-icon btn-sm btn-secondary btn-facebook rounded-circle mx-2 ms-sm-0 me-sm-3"
+              (click)="openFacebook()" aria-label="Facebook">
+              <i class="ai-facebook"></i>
+            </a>
+            <a class="btn btn-icon btn-sm btn-secondary btn-instagram rounded-circle mx-2 ms-sm-0 me-sm-3"
+              (click)="openInstagram()" aria-label="Instagram">
+              <i class="ai-instagram"></i>
+            </a>
+          </div>
+        </div>
+        <div class="col-2 d-none d-sm-block">
+          <img [src]="paymentMethods" alt="Payment Methods" />
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-8">
+          <div class="row">
+            <p class="col-auto fs-sm mb-1 footers-footer" routerLink="/privacy-policy">Politique de confidentialité</p>
+            <p class="col-auto fs-sm mb-1 footers-footer" routerLink="/disclaimer">Mentions
+              légales</p>
+            <p class="col-auto fs-sm mb-1 footers-footer" routerLink="/terms">CGU</p>
+          </div>
+        </div>
+        <div class="col-4">
+          <p class="col-auto fs-sm mb-1 footers-footer" style="cursor: auto;">© 2025 Tous droits réservés <a
+              style="text-decoration: none;" href="#">Journal Spécial des
+              Sociétés</a></p>
+        </div>
+      </div>
+      <!-- <div class="row">
+        <p class="col-auto fs-sm footers-footer">Modifier mes choix de cookies</p>
+      </div> -->
+    </div>
+  </div>
+</footer>

@@ -1,10 +1,28 @@
-import { Mail } from "../modules/profile/model/Mail";
+import { Mail } from "../modules/general/model/Mail";
 import { Phone } from "../modules/profile/model/Phone";
 
 export function capitalizeName(name: string): string {
-  if (name)
-    return name.toLowerCase().replace(/\b(\w)/g, s => s.toUpperCase());
-  return "";
+  if (!name) return "";
+
+  const lowerCaseWords = new Set([
+    "de", "du", "des", "le", "la", "les", "l'", "d'", "au", "aux", "et"
+  ]);
+
+  return name
+    .toLocaleLowerCase("fr-FR")
+    .split(/(\s+|-)/)
+    .map((word, index, arr) => {
+      const trimmed = word.trim();
+      const isSeparator = /^\s+|-$/u.test(word);
+      if (isSeparator || trimmed === "") return word;
+
+      const isFirst = index === 0 || /^\s*[-]/.test(arr[index - 1]);
+
+      if (!isFirst && lowerCaseWords.has(trimmed)) return trimmed;
+
+      return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+    })
+    .join("");
 }
 
 export function getListMails(mails: Mail[]) {
@@ -51,4 +69,31 @@ export function formatDate(date: Date) {
     padTo2Digits(date.getMonth() + 1),
     date.getFullYear(),
   ].join('-');
+}
+
+export function formatDateIso(date: Date) {
+  date = new Date(date);
+  return [
+    date.getFullYear(),
+    padTo2Digits(date.getMonth() + 1),
+    padTo2Digits(date.getDate()),
+  ].join('-');
+}
+
+export function toIsoString(date: Date) {
+  const pad = function (num: number) {
+    return (num < 10 ? '0' : '') + num;
+  };
+
+  return date.getFullYear() +
+    '-' + pad(date.getMonth() + 1) +
+    '-' + pad(date.getDate()) +
+    'T' + pad(date.getHours()) +
+    ':' + pad(date.getMinutes()) +
+    ':' + pad(date.getSeconds()) +
+    '.000Z';
+}
+
+export function getTimeReading(html: string): string {
+  return Math.ceil(html.replace(/<[^>]+>/g, '').split(' ').length / 220) + " min";
 }

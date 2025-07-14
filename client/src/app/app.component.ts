@@ -1,4 +1,3 @@
-import { CdkDragEnd, Point } from '@angular/cdk/drag-drop';
 import { Component, HostListener } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
@@ -8,7 +7,6 @@ import { ConstantService } from './modules/miscellaneous/services/constant.servi
 import { LoginDialogComponent } from './routing/login-dialog/login-dialog.component';
 import { LoginService } from './routing/login-dialog/login.service';
 import { AppService } from './services/app.service';
-import { Note } from './services/model/Note';
 import { SearchService } from './services/search.service';
 import { UserPreferenceService } from './services/user.preference.service';
 
@@ -20,11 +18,6 @@ import { UserPreferenceService } from './services/user.preference.service';
 
 export class AppComponent {
   title: string = 'OSIRIS';
-
-  userNotes: Note[] = [] as Array<Note>;
-  userNotesSubscription: Subscription = new Subscription;
-  currentUserNotePosition: Point = { x: 0, y: 0 };
-  displayEditNote: boolean = false;
 
   sidenavOpenState: boolean = true;
   sidenavOpenStateSubscription: Subscription = new Subscription;
@@ -43,7 +36,6 @@ export class AppComponent {
   groups: string[] = [] as Array<string>;
 
   ngOnInit() {
-    this.restoreNoteTablePosition();
     this.constantService.initConstant();
     this.sidenavOpenStateSubscription = this.appService.sidenavOpenStateObservable.subscribe(item => this.sidenavOpenState = item);
     this.loggedStateSubscription = this.loginService.loggedStateObservable.subscribe(item => {
@@ -62,7 +54,6 @@ export class AppComponent {
   ngOnDestroy() {
     this.sidenavOpenStateSubscription.unsubscribe();
     this.loggedStateSubscription.unsubscribe();
-    this.userNotesSubscription.unsubscribe();
   }
 
   @HostListener('window:keyup', ['$event'])
@@ -71,19 +62,6 @@ export class AppComponent {
       this.searchService.openSearch();
     if (event != undefined && event != null && event.code != null && event != undefined && event.code == SAVE_KEY_CODE)
       this.appService.triggerSaveEvent();
-  }
-
-  dropNoteTable(event: CdkDragEnd) {
-    this.userPreferenceService.setUserNoteTablePosition(event.source.getFreeDragPosition());
-  }
-
-  restoreNoteTablePosition() {
-    this.currentUserNotePosition = this.userPreferenceService.getUserNoteTablePosition();
-  }
-
-  restoreDefaultNoteTablePosition() {
-    this.userPreferenceService.setUserNoteTablePosition({ x: 0, y: 0 });
-    this.restoreNoteTablePosition();
   }
 
   openRoute(event: any, link: string) {

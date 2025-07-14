@@ -207,7 +207,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public void sendTokenToResponsable(Responsable responsable) throws OsirisException {
+    public void sendTokenToResponsable(Responsable responsable, String overrideMail) throws OsirisException {
         responsable = responsableService.getResponsable(responsable.getId());
 
         byte bytes[] = new byte[512];
@@ -216,7 +216,19 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         responsable.setLoginToken(token);
         responsable.setLoginTokenExpirationDateTime(LocalDateTime.now().plusMinutes(TOKEN_EXPIRATION_LENGTH_MINUTES));
-        mailHelper.sendNewTokenMail(responsable);
+        mailHelper.sendNewTokenMail(responsable, overrideMail);
+    }
+
+    @Override
+    public List<Employee> findEmployeesInTheSameOU(Employee employee) {
+        List<Employee> employees = new ArrayList<Employee>();
+        if (employee != null) {
+            int firstCommaIndex = employee.getAdPath().indexOf(',');
+            String result = (firstCommaIndex != -1) ? employee.getAdPath().substring(firstCommaIndex + 1)
+                    : employee.getAdPath();
+            employees = employeeRepository.findByAdPathContainingAndIsActive(result, true);
+        }
+        return employees;
     }
 
 }

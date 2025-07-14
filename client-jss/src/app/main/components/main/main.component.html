@@ -1,5 +1,683 @@
-<trend></trend>
-<new-articles></new-articles>
-<body-articles></body-articles>
-<!-- Back to top -->
-<div class="back-top"><i class="bi bi-arrow-up-short"></i></div>
+<div class="container my-4 position-relative text-center d-none d-md-block">
+  <img src="/assets/images/homepage/bandeauJss.svg" class="img-fluid w-100" alt="Top image" />
+  <a class="btn btn-yellow position-absolute start-55 top-50 translate-middle pointer" (click)="openMyJss($event)">
+    Essayer dès maintenant
+  </a>
+</div>
+
+<div class="container">
+  <!--/// Blog Area /// -->
+  <div class="bg-container">
+    <div class="blog-area">
+      <div class="row">
+        <div class="col-lg-8 col-12">
+          <div *ngIf="!lastPosts || lastPosts.length == 0">
+            <div class="panel-loader">
+              <div class="skeleton skeleton-header"></div>
+              <div class="skeleton skeleton-line"></div>
+              <div class="skeleton skeleton-line"></div>
+              <div class="skeleton skeleton-line short"></div>
+              <div class="skeleton skeleton-block"></div>
+            </div>
+          </div>
+          <!-- Top posts -->
+          <div *ngIf="lastPosts && lastPosts.length>0" class="row">
+            <div class="row">
+              <div class="col-lg-4 col-md-6">
+                <article *ngFor="let post of lastPosts | slice:1:3" class="blog-style4">
+                  <div class="card border-0">
+                    <div class="blog-post-image image-hover-style-1">
+                      <a (click)="openPost(post, $event)"> <img class="lazyload" *ngIf="post && post.media"
+                          [src]="post.media.urlMediumLarge!=null ? post.media.urlMediumLarge : post.media.urlFull!=null ? post.media.urlFull : '' "
+                          [alt]="post.media.alt_text" class="w-100"></a>
+                    </div>
+                    <div class="card-body px-0">
+                      <div class="row ms-0 pb-1 align-items-center">
+                        <a (click)="openCategoryPosts(post.jssCategories[0], $event)"
+                          class="badge bg-info rounded-pill col-auto me-2 px-1">{{post.jssCategories[0].name}}</a>
+                        <bookmark [post]="post"></bookmark>
+                      </div>
+                      <h6 class="mb-0 ">
+                        <a class="card-text-truncate" (click)="openPost(post, $event)">{{post.titleText}} <img
+                            *ngIf="post.isPremium" class="pe-0" src="/assets/images/premium-icon.svg">
+                        </a>
+                      </h6>
+                    </div>
+                  </div>
+                </article>
+              </div>
+              <div class="col-lg-8 col-md-12">
+                <article class="blog-style3 border-0 card position-relative">
+                  <!-- Adding the d-flex class to the feature-image so it doesn't cover the rest of the card -->
+                  <div class="feature-image d-flex">
+                    <div class="image-frame image-hover-style-1">
+                      <a (click)="openPost(lastPosts[0], $event)"> <img *ngIf="lastPosts[0].media" class="lazyload"
+                          [src]="lastPosts[0].media.urlMediumLarge!=null ? lastPosts[0].media.urlMediumLarge : lastPosts[0].media.urlFull"
+                          [alt]="lastPosts[0].media.alt_text" class="w-100"></a>
+                    </div>
+                  </div>
+                  <div class="card-body px-0">
+                    <div class="row pb-1 ms-0 align-items-center">
+                      <a (click)="openCategoryPosts(lastPosts[0].jssCategories[0], $event)"
+                        class="badge bg-info rounded-pill col-auto me-2 px-1">{{lastPosts[0].jssCategories[0].name}}</a>
+                      <bookmark [post]="lastPosts[0]"></bookmark>
+                    </div>
+
+                    <h2>
+                      <a class="card-title-truncate"
+                        (click)="openPost(lastPosts[0], $event)"><span>{{lastPosts[0].titleText}}</span> <img
+                          *ngIf="lastPosts[0].isPremium" class="pe-0" src="/assets/images/premium-icon.svg"></a>
+                    </h2>
+                    <p class="card-text-truncate">{{lastPosts[0].excerptText}}
+                    </p>
+                  </div>
+                </article>
+              </div>
+            </div>
+            <hr>
+
+            <!-- Fil info -->
+            <div class="row pt-3">
+              <div class="col-md-12">
+                <div class="section-title-block d-flex">
+                  <h3 class="section-widget-title">Le fil info</h3>
+                  <a href="category.html" class="text-uppercase section-title-link">
+                    Voir tous
+                    <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M1.5 13.5h17.79l-5.445 6.54a1.502 1.502 0 102.31 1.92l7.5-9a1.78 1.78 0 00.135-.226c0-.075.075-.12.105-.195A1.5 1.5 0 0024 12a1.499 1.499 0 00-.105-.54c0-.075-.075-.12-.105-.195a1.766 1.766 0 00-.135-.225l-7.5-9A1.499 1.499 0 0015 1.5a1.5 1.5 0 00-1.155 2.46l5.445 6.54H1.5a1.5 1.5 0 100 3z">
+                      </path>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+              <div *ngFor="let post of lastPosts | slice:3:10">
+                <article data-aos="fade-up" class="blog-style2 card my-3">
+                  <div class="feature-image order-1 order-lg-0">
+                    <div class="image-frame image-hover-style-1">
+                      <a (click)="openPost(post, $event)"> <img class="lazyload" *ngIf="post.media"
+                          [src]="post.media.urlLarge!=null ? post.media.urlLarge : post.media.urlFull"
+                          [alt]="post.media.alt_text" class="w-100"></a>
+                    </div>
+                  </div>
+                  <div data-aos="fade-in" class="card-body d-flex flex-column flex-lg-row align-items-stretch p-0">
+                    <div class="order-0 order-lg-1">
+                      <div class="row align-items-center ms-0 mb-1">
+                        <a (click)="openCategoryPosts(post.jssCategories[0], $event)"
+                          class="badge bg-info rounded-pill px-1 col-auto me-2 mb-0">{{post.jssCategories[0].name}}</a>
+                        <bookmark [post]="post"></bookmark>
+                      </div>
+                      <h4>
+                        <a class="card-text-truncate" (click)="openPost(post, $event)"> <img *ngIf="post.isPremium"
+                            class="col-auto pe-1" src="/assets/images/premium-icon.svg">{{post.titleText}}</a>
+                      </h4>
+                      <div class="">
+                        <div class="card-truncate-6-line">{{post.excerptText}}
+                        </div>
+                      </div>
+                      <div class="row align-items-center">
+                        <div class="col-lg-6">
+                          <div class="author-block">
+                            <ul class="avatar list-inline mb-0">
+                              <li class="list-inline-item align-items-center"><a class="fs-9"
+                                  (click)="openAuthorPosts(post.fullAuthor, $event)"><img
+                                    [src]="post.fullAuthor.avatar_url_size_24" [alt]="post.fullAuthor.name"
+                                    placement="top" [ngbTooltip]="post.fullAuthor.name">
+                                  {{post.fullAuthor.name}}</a></li>
+                            </ul>
+                          </div>
+                        </div>
+                        <div class="col-lg-6"> <span class="date-info fs-9 float-lg-end">
+                            <span>Publié le {{post.date | date:'EEEE d MMMM'}}</span>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+                <hr *ngIf="post !== lastPosts[lastPosts.length-1]">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- section to the right -->
+        <div class="col-lg-4 col-12">
+          <!-- Newsletter -->
+          <div class="border border-light bg-newsletter card p-3 mb-3">
+            <div class="wrapper">
+              <h3>Newletter</h3>
+              <p>Recevez gratuitement un concentré d'actualité chaque semaine.</p>
+              <form class="subscription-from">
+                <div class="input-group">
+                  <label class="form-label fs-base" for="email"></label>
+                  <input class="form-control" type="email" placeholder="E-mail" [(ngModel)]="mail" name="email" required
+                    id="email">
+                  <button class="btn btn-secondary" type="button" (click)="registerEmail(mail)">S'inscrire</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- Ile-de-france -->
+          <div *ngIf="idf" class="mb-3 border border-light card">
+            <div class="wrapper p-3">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="section-title-block d-flex pb-3">
+                    <h3 class="section-widget-title">île-de-France</h3>
+                    <a class="text-uppercase section-title-link" [routerLink]="'/post/department/'+idf.code">
+                      Voir tous
+                      <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                          d="M1.5 13.5h17.79l-5.445 6.54a1.502 1.502 0 102.31 1.92l7.5-9a1.78 1.78 0 00.135-.226c0-.075.075-.12.105-.195A1.5 1.5 0 0024 12a1.499 1.499 0 00-.105-.54c0-.075-.075-.12-.105-.195a1.766 1.766 0 00-.135-.225l-7.5-9A1.499 1.499 0 0015 1.5a1.5 1.5 0 00-1.155 2.46l5.445 6.54H1.5a1.5 1.5 0 100 3z">
+                        </path>
+                      </svg>
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <article *ngFor="let post of ileDeFrancePosts"
+                class=" blog-style5 d-flex d-md-block d-xl-flex align-items-center mb-3">
+                <a (click)="openPost(post, $event)">
+                  <div class="post-img-wrap position-relative overflow-hidden">
+                    <img *ngIf="post.media" class="lazyload post-img"
+                      [src]="post.media.urlMedium!=null ? post.media.urlMedium : post.media.urlFull"
+                      [alt]="post.media.alt_text">
+                  </div>
+                </a>
+                <div class="post-content pt-md-2 pt-xl-0 pt-0">
+                  <h6 class="post-title card-text-truncate"><a (click)="openPost(post, $event)">{{post.titleText}}</a>
+                  </h6>
+                  <div class="post-meta">
+                    <span class="date-info small">
+                      <span>Publié le {{post.date | date:'EEEE d MMMM'}}</span>
+                    </span>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+
+          <!-- Podcast -->
+          <div *ngIf="podcasts[0]" class="border border-light card p-3 mb-3">
+            <div class="wrapper">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="section-title-block d-flex">
+                    <h3>Podcast</h3>
+                    <a href="category.html" class="text-uppercase section-title-link">
+                      Voir tout
+                      <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                          d="M1.5 13.5h17.79l-5.445 6.54a1.502 1.502 0 102.31 1.92l7.5-9a1.78 1.78 0 00.135-.226c0-.075.075-.12.105-.195A1.5 1.5 0 0024 12a1.499 1.499 0 00-.105-.54c0-.075-.075-.12-.105-.195a1.766 1.766 0 00-.135-.225l-7.5-9A1.499 1.499 0 0015 1.5a1.5 1.5 0 00-1.155 2.46l5.445 6.54H1.5a1.5 1.5 0 100 3z">
+                        </path>
+                      </svg>
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <p>Écoutez le dernier épisode de notre podcast Raide comme la Justice.</p>
+              <div class="card bg-secondary">
+                <div class="card-body">
+
+                  <!-- Line 1 : image + title -->
+                  <div class="d-flex align-items-center mb-2 row flex-row">
+                    <img src="assets/images/homepage/raide-comme-la-justice.png" alt="raide-comme-la-justice image"
+                      class="img-fluid h-100 col-4" style="max-width: 70px; object-fit: contain;" />
+
+                    <div class="col p-0">
+                      <h6 class="card-truncate-1-line mb-0 flex-grow-1 text-light fs-7">
+                        {{podcasts[0].titleText}}
+                      </h6>
+                      <p class="mb-0 text-light fs-8">Raide comme la Justice</p>
+                    </div>
+                  </div>
+
+                  <!-- Line 2 : button + date -->
+                  <div class="d-flex align-items-center">
+                    <a class="btn-light btn-sm rounded-circle btn-circle fs-7"
+                      (click)="togglePlayPodcast(podcasts[0])"><i
+                        [ngClass]="isPlayingPodcast(podcasts[0]) ? 'bi-pause-fill' : 'bi-play-fill'"></i></a>
+                    <span class="small text-light fs-9 ms-2">Publié le {{podcasts[0].date | date: 'dd/MM/yyyy'}} à
+                      {{podcasts[0].date | date: 'HH:mm'}}</span>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Most Seen -->
+          <div class="mb-3 border border-light card">
+            <div class="wrapper p-3">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="section-title-block d-flex">
+                    <h3 class="section-widget-title">Les plus vus</h3>
+                    <a href="category.html" class="text-uppercase section-title-link">
+                      Voir tous
+                      <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                          d="M1.5 13.5h17.79l-5.445 6.54a1.502 1.502 0 102.31 1.92l7.5-9a1.78 1.78 0 00.135-.226c0-.075.075-.12.105-.195A1.5 1.5 0 0024 12a1.499 1.499 0 00-.105-.54c0-.075-.075-.12-.105-.195a1.766 1.766 0 00-.135-.225l-7.5-9A1.499 1.499 0 0015 1.5a1.5 1.5 0 00-1.155 2.46l5.445 6.54H1.5a1.5 1.5 0 100 3z">
+                        </path>
+                      </svg>
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <div class="tab-content" id="tab-content">
+                <div *ngFor="let post of mostViewedPosts; let index = index" class="row align-items-center my-3">
+                  <div class="col-auto digits pe-2">
+                    {{index+1}}.
+                  </div>
+                  <div class="col counter-post-item card-title-truncate ps-2">
+                    <a (click)="openPost(post, $event)" class="title-most-seen">{{post.titleText}}</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tag tendencies  -->
+          <div class="card mb-3 border border-light p-3">
+            <div class="wrapper">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="section-title-block d-flex">
+                    <h3 class="section-widget-title">Tendances</h3>
+                    <a routerLink="/post/tendency" class="text-uppercase section-title-link">
+                      Voir tous
+                      <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                          d="M1.5 13.5h17.79l-5.445 6.54a1.502 1.502 0 102.31 1.92l7.5-9a1.78 1.78 0 00.135-.226c0-.075.075-.12.105-.195A1.5 1.5 0 0024 12a1.499 1.499 0 00-.105-.54c0-.075-.075-.12-.105-.195a1.766 1.766 0 00-.135-.225l-7.5-9A1.499 1.499 0 0015 1.5a1.5 1.5 0 00-1.155 2.46l5.445 6.54H1.5a1.5 1.5 0 100 3z">
+                        </path>
+                      </svg>
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <ul class="tag-cloud list-inline">
+                <li *ngFor="let tag of tagTendencies.slice(0,10)" class="list-inline-item pb-1"><a
+                    class="btn bg-light text-secondary bg-hover-danger text-hover-white bg-hover-secondary text-hover-white"
+                    [routerLink]="'/post/tag/'+tag.slug">{{tag.name}}</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Au coeur de l'actualité ! -->
+          <div class="border border-light card p-3 mb-3 bg-secondary">
+            <div class="wrapper text-white">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="section-title-block d-flex ">
+                    <h3 class="text-white">Au cœur de l'actualité !</h3>
+                  </div>
+                </div>
+              </div>
+              <p>Infos locales, analyses et enquêtes : restez informé(e) sans limite.</p>
+              <div class="row align-items-center" routerLink="/subscription">
+                <div class="btn btn-yellow">S'abonner
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <hr>
+
+      <!-- L'actualité par catégories -->
+      <div class="blog-area py-5">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="section-title-block d-flex pb-3">
+                <h3 class="section-widget-title">L’actualité par catégories</h3>
+              </div>
+            </div>
+            <div *ngIf="!justiceTopPosts || justiceTopPosts.length == 0" class="col-md-6 col-lg-4 pb-3">
+              <div class="panel-loader">
+                <div class="skeleton skeleton-header"></div>
+                <div class="skeleton skeleton-line"></div>
+                <div class="skeleton skeleton-line"></div>
+                <div class="skeleton skeleton-line short"></div>
+                <div class="skeleton skeleton-block"></div>
+              </div>
+            </div>
+            <div *ngIf="justiceTopPosts && justiceTopPosts.length>0" class="col-md-6 col-lg-4 pb-3">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="section-title-block d-flex pb-3">
+                    <h3 class="section-widget-title text-uppercase"> {{
+                      firstCategory.name }}
+                    </h3>
+                  </div>
+                </div>
+              </div>
+              <article *ngFor="let post of justiceTopPosts" class="blog-style5 d-flex align-items-center mb-3">
+                <a (click)="openPost(post, $event)">
+                  <div class="post-img-wrap position-relative overflow-hidden">
+                    <img *ngIf="post.media" class="lazyload post-img"
+                      [src]="post.media.urlMedium!=null ? post.media.urlMedium : post.media.urlFull"
+                      [alt]="post.media.alt_text">
+                  </div>
+                </a>
+                <div class="post-content">
+                  <h6 class="post-title card-text-truncate"><a (click)="openPost(post, $event)">{{post.titleText}}</a>
+                  </h6>
+                  <div class="post-meta">
+                    <span class="date-info small">
+                      <span>Publié le {{post.date | date:'EEEE d MMMM'}}</span>
+                    </span>
+                  </div>
+                </div>
+              </article>
+              <div class="row">
+                <div class="col mt-3">
+                  <a *ngIf="firstCategory" (click)="openCategoryPosts(firstCategory, $event)"
+                    class="text-uppercase section-title-link">
+                    Voir tous
+                    <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M1.5 13.5h17.79l-5.445 6.54a1.502 1.502 0 102.31 1.92l7.5-9a1.78 1.78 0 00.135-.226c0-.075.075-.12.105-.195A1.5 1.5 0 0024 12a1.499 1.499 0 00-.105-.54c0-.075-.075-.12-.105-.195a1.766 1.766 0 00-.135-.225l-7.5-9A1.499 1.499 0 0015 1.5a1.5 1.5 0 00-1.155 2.46l5.445 6.54H1.5a1.5 1.5 0 100 3z">
+                      </path>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="!lawTopPosts || lawTopPosts.length == 0" class="col-md-6 col-lg-4 pb-3">
+              <div class="panel-loader">
+                <div class="skeleton skeleton-header"></div>
+                <div class="skeleton skeleton-line"></div>
+                <div class="skeleton skeleton-line"></div>
+                <div class="skeleton skeleton-line short"></div>
+                <div class="skeleton skeleton-block"></div>
+              </div>
+            </div>
+            <div *ngIf="lawTopPosts && lawTopPosts.length>0" class="col-md-6 col-lg-4 pb-3">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="section-title-block d-flex pb-3">
+                    <h3 class="section-widget-title text-uppercase"> {{
+                      secondCategory.name }}
+                    </h3>
+                  </div>
+                </div>
+              </div>
+              <article *ngFor="let post of lawTopPosts" class="blog-style5 d-flex align-items-center mb-3">
+                <a (click)="openPost(post, $event)">
+                  <div class="post-img-wrap position-relative overflow-hidden">
+                    <img *ngIf="post.media" class="lazyload post-img"
+                      [src]="post.media.urlMedium!=null ? post.media.urlMedium : post.media.urlFull"
+                      [alt]="post.media.alt_text">
+                  </div>
+                </a>
+                <div class="post-content">
+                  <h6 class="post-title card-text-truncate"><a (click)="openPost(post, $event)">{{post.titleText}}</a>
+                  </h6>
+                  <div class="post-meta">
+                    <span class="date-info small">
+                      <span>Publié le {{post.date | date:'EEEE d MMMM'}}</span>
+                    </span>
+                  </div>
+                </div>
+              </article>
+              <div class="row">
+                <div class="col mt-3">
+                  <a *ngIf="secondCategory" (click)="openCategoryPosts(secondCategory, $event)"
+                    class="text-uppercase section-title-link">
+                    Voir tous
+                    <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M1.5 13.5h17.79l-5.445 6.54a1.502 1.502 0 102.31 1.92l7.5-9a1.78 1.78 0 00.135-.226c0-.075.075-.12.105-.195A1.5 1.5 0 0024 12a1.499 1.499 0 00-.105-.54c0-.075-.075-.12-.105-.195a1.766 1.766 0 00-.135-.225l-7.5-9A1.499 1.499 0 0015 1.5a1.5 1.5 0 00-1.155 2.46l5.445 6.54H1.5a1.5 1.5 0 100 3z">
+                      </path>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="!economyTopPosts || economyTopPosts.length == 0" class="col-md-6 col-lg-4 pb-3">
+              <div class="panel-loader">
+                <div class="skeleton skeleton-header"></div>
+                <div class="skeleton skeleton-line"></div>
+                <div class="skeleton skeleton-line"></div>
+                <div class="skeleton skeleton-line short"></div>
+                <div class="skeleton skeleton-block"></div>
+              </div>
+            </div>
+            <div *ngIf="economyTopPosts && economyTopPosts.length>0" class="col-md-6 col-lg-4 pb-3">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="section-title-block d-flex pb-3">
+                    <h3 class="section-widget-title text-uppercase"> {{
+                      thirdCategory.name }}
+                    </h3>
+                  </div>
+                </div>
+              </div>
+              <article *ngFor="let post of economyTopPosts" class="blog-style5 d-flex align-items-center mb-3">
+                <a (click)="openPost(post, $event)">
+                  <div class="post-img-wrap position-relative overflow-hidden">
+                    <img *ngIf="post.media" class="lazyload post-img"
+                      [src]="post.media.urlMedium!=null ? post.media.urlMedium : post.media.urlFull"
+                      [alt]="post.media.alt_text">
+                    <img *ngIf="!post.media" class="lazyload post-img" src="assets/images/blog-img.jpg"
+                      alt="placeholder-image">
+                  </div>
+                </a>
+                <div class="post-content">
+                  <h6 class="post-title card-text-truncate"><a (click)="openPost(post, $event)">{{post.titleText}}</a>
+                  </h6>
+                  <div class="post-meta">
+                    <span class="date-info small">
+                      <span>Publié le {{post.date | date:'EEEE d MMMM'}}</span>
+                    </span>
+                  </div>
+                </div>
+              </article>
+              <div class="row">
+                <div class="col mt-3">
+                  <a *ngIf="thirdCategory" (click)="openCategoryPosts(thirdCategory, $event)"
+                    class="text-uppercase section-title-link">
+                    Voir tous
+                    <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M1.5 13.5h17.79l-5.445 6.54a1.502 1.502 0 102.31 1.92l7.5-9a1.78 1.78 0 00.135-.226c0-.075.075-.12.105-.195A1.5 1.5 0 0024 12a1.499 1.499 0 00-.105-.54c0-.075-.075-.12-.105-.195a1.766 1.766 0 00-.135-.225l-7.5-9A1.499 1.499 0 0015 1.5a1.5 1.5 0 00-1.155 2.46l5.445 6.54H1.5a1.5 1.5 0 100 3z">
+                      </path>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <hr>
+
+        <!-- Podcast Raide comme la justice -->
+        <div class="blog-area">
+          <div class="col-md-12">
+            <div class="section-title-block d-flex pb-3">
+              <h3 class="section-widget-title">Podcast Raide comme la justice</h3>
+              <a (click)="openPodcastPosts($event)" class="text-uppercase section-title-link">
+                Voir tous
+                <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M1.5 13.5h17.79l-5.445 6.54a1.502 1.502 0 102.31 1.92l7.5-9a1.78 1.78 0 00.135-.226c0-.075.075-.12.105-.195A1.5 1.5 0 0024 12a1.499 1.499 0 00-.105-.54c0-.075-.075-.12-.105-.195a1.766 1.766 0 00-.135-.225l-7.5-9A1.499 1.499 0 0015 1.5a1.5 1.5 0 00-1.155 2.46l5.445 6.54H1.5a1.5 1.5 0 100 3z">
+                  </path>
+                </svg>
+              </a>
+            </div>
+          </div>
+          <div *ngIf="!podcasts || podcasts.length == 0" class="pb-3">
+            <div class="panel-loader">
+              <div class="skeleton skeleton-header"></div>
+              <div class="skeleton skeleton-line"></div>
+              <div class="skeleton skeleton-line"></div>
+              <div class="skeleton skeleton-line short"></div>
+              <div class="skeleton skeleton-block"></div>
+            </div>
+          </div>
+          <div *ngIf="podcasts && podcasts.length>0" class="row">
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-none d-sm-block">
+              <div class="image-hover-style-1">
+                <a (click)="openPodcastPosts($event)"> <img class="lazyload"
+                    src="assets/images/homepage/raide-comme-la-justice.png" alt="raide-comme-la-justice image"
+                    class="w-100"></a>
+              </div>
+            </div>
+            <div *ngFor="let podcast of podcasts" class="col-12 col-sm-6 col-md-4 col-lg-3 mb-2 mb-md-0">
+              <div class="card h-100 bg-light-blue border-0 my-2 my-sm-0">
+                <div class="card-body d-flex flex-column align-items-center text-center justify-content-between">
+                  <h6 class="text-uppercase fs-8">Podcast</h6>
+                  <h4><a>{{podcast.titleText}}</a></h4>
+                  <a class="btn btn-outline-dark my-3 px-5" (click)="togglePlayPodcast(podcast)"><i
+                      [ngClass]="isPlayingPodcast(podcast) ? 'bi-pause-fill' : 'bi-play-fill'"></i>
+                    Écouter</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <hr>
+
+        <!-- Les dossiers -->
+        <div class="row p-0">
+          <div class="col-md-12">
+            <div class="section-title-block d-flex pb-3">
+              <h3 class="section-widget-title">Les dossiers</h3>
+            </div>
+          </div>
+          <div *ngIf="!series || series.length == 0" class="pb-3">
+            <div class="panel-loader">
+              <div class="skeleton skeleton-header"></div>
+              <div class="skeleton skeleton-line"></div>
+              <div class="skeleton skeleton-line"></div>
+              <div class="skeleton skeleton-line short"></div>
+              <div class="skeleton skeleton-block"></div>
+            </div>
+          </div>
+          <div *ngIf="series && series.length>0" class="row p-0">
+            <div class="col-lg-8 col-md-12">
+              <article class="border-0 card">
+                <div class="card-img p-2">
+                  <div class="image-frame image-hover-style-1">
+                    <a (click)="openSeriePosts(series[0], $event)"> <img *ngIf="series[0].picture" class="lazyload"
+                        [src]="series[0].picture.urlFull" alt="image" class="w-100"></a>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div class="row pb-1 align-items-center m-0">
+
+                  </div>
+                  <h2><a class="card-title-truncate" (click)="openSeriePosts(series[0], $event)">
+                      {{series[0].titleText}}</a>
+                  </h2>
+                  <p class="card-text-truncate">{{series[0].excerptText}}
+                  </p>
+                </div>
+              </article>
+            </div>
+            <div class="col-lg-4 col-md-6 pt-2">
+              <article *ngFor="let serie of series | slice:1:6" class="blog-style5 d-flex align-items-center mb-3">
+                <a (click)="openSeriePosts(serie, $event)">
+                  <div class="post-img-wrap position-relative overflow-hidden">
+                    <img *ngIf="serie.picture" class="lazyload post-img"
+                      [src]="serie.picture.urlMedium!=null ? serie.picture.urlMedium : serie.picture.urlFull"
+                      [alt]="serie.picture.alt_text">
+                  </div>
+                </a>
+                <div class="post-content">
+                  <h6 class="post-title card-text-truncate"><a
+                      (click)="openSeriePosts(serie, $event)">{{serie.titleText}}</a>
+                  </h6>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section contribute -->
+    <div class="bg-secondary d-flex flex-column align-items-center mb-5">
+      <div class="row p-3">
+        <h1 class="text-white">Mettez votre plume au service de l’info !</h1>
+      </div>
+      <div class="row px-3">
+        <p class="gray-400">Vous avez une analyse, une enquête ou une opinion à partager ? Contribuez et
+          rejoignez notre
+          communauté de rédacteurs.</p>
+      </div>
+      <div class="row">
+        <a class="btn btn-light-blue my-3 px-5" routerLink="/contribute">Devenir contributeur</a>
+      </div>
+    </div>
+
+    <!-- Pinned posts -->
+    <div class="row p-0" *ngIf="!pinnedPosts ||  pinnedPosts.length>0">
+      <div class="col-md-12">
+        <div class="section-title-block d-flex pb-3">
+          <h3 class="section-widget-title">La sélection de la rédaction</h3>
+        </div>
+      </div>
+      <div *ngIf="!pinnedPosts" class="pb-3">
+        <div class="panel-loader">
+          <div class="skeleton skeleton-header"></div>
+          <div class="skeleton skeleton-line"></div>
+          <div class="skeleton skeleton-line"></div>
+          <div class="skeleton skeleton-line short"></div>
+          <div class="skeleton skeleton-block"></div>
+        </div>
+      </div>
+      <div *ngIf="pinnedPosts && pinnedPosts.length>0" class="row p-0 fixed-size-img-posts">
+        <div *ngFor="let post of pinnedPosts" class="col-12 col-md-4 mb-2">
+          <article class="border-0 card h-100">
+            <div class="card-img px-2 d-flex">
+              <div class="image-hover-style-1 w-100">
+                <a (click)="openPost(post, $event)"> <img *ngIf="post.media" class="lazyload"
+                    [src]="post.media.urlMediumLarge!=null ? post.media.urlMediumLarge : post.media.urlFull"
+                    [alt]="post.media.alt_text" class="w-100"> </a>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="row pb-1 px-2 align-items-center">
+                <a (click)="openCategoryPosts(post.jssCategories[0], $event)"
+                  class="badge bg-info rounded-pill px-1 col-auto me-2">{{post.jssCategories[0].name}}</a>
+                <bookmark [post]="post"></bookmark>
+              </div>
+              <h4>
+                <a class="card-text-truncate" (click)="openPost(post, $event)"> <img *ngIf="post.isPremium" class="pe-0"
+                    src="/assets/images/premium-icon.svg">
+                  {{post.titleText}}</a>
+              </h4>
+              <p class="card-text-truncate mb-0">{{post.excerptText}}
+              </p>
+            </div>
+            <div class="row align-items-center px-2">
+              <div class="col-lg-6">
+                <div class="author-block">
+                  <ul class="avatar list-inline mb-0">
+                    <li class="list-inline-item"><a class="fs-9" (click)="openAuthorPosts(post.fullAuthor, $event)"><img
+                          [src]="post.fullAuthor.avatar_url_size_24" [alt]="post.fullAuthor.name" placement="top"
+                          [ngbTooltip]="post.fullAuthor.name">
+                        {{post.fullAuthor.name}}</a></li>
+                  </ul>
+                </div>
+              </div>
+              <div class="col-lg-6"> <span class="date-info fs-9 float-lg-end">
+                  <span>Publié le {{post.date | date:'EEEE d MMMM'}}</span>
+                </span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+    <!-- <newsletter></newsletter> -->
+  </div>
+</div>

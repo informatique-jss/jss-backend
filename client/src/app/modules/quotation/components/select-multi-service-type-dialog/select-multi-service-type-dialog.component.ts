@@ -4,7 +4,6 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Affaire } from '../../model/Affaire';
 import { ServiceType } from '../../model/ServiceType';
 import { ServiceService } from '../../services/service.service';
-import { SelectServiceTypeDialogComponent } from '../select-service-type-dialog/select-service-type-dialog.component';
 
 @Component({
   selector: 'select-multi-service-type-dialog',
@@ -16,12 +15,13 @@ export class SelectMultiServiceTypeDialogComponent implements OnInit {
   affaire: Affaire | undefined;
   selectedServiceTypes: ServiceType[] | undefined;
   customerComment: string | undefined;
+  customLabel: string | undefined;
   isJustSelectServiceType: boolean = false;
 
   constructor(private formBuilder: FormBuilder,
     private dialog: MatDialog,
     private serviceService: ServiceService,
-    public dialogRef: MatDialogRef<SelectServiceTypeDialogComponent>
+    public dialogRef: MatDialogRef<SelectMultiServiceTypeDialogComponent>
   ) { }
 
   serviceTypeForm = this.formBuilder.group({});
@@ -38,10 +38,10 @@ export class SelectMultiServiceTypeDialogComponent implements OnInit {
 
   generateService() {
     if (this.selectedServiceTypes && this.affaire)
-      this.serviceService.getServiceForMultiServiceTypesAndAffaire(this.selectedServiceTypes, this.affaire).subscribe(response => {
-        if (this.customerComment)
-          response.customerComment = this.customerComment;
-        this.dialogRef.close(response);
+      this.serviceService.getServiceForMultiServiceTypesAndAffaire(this.selectedServiceTypes, this.customLabel, this.affaire).subscribe(response => {
+        if (response) {
+          this.dialogRef.close(response);
+        }
       })
   }
 

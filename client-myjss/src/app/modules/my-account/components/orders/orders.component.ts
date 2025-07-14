@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { AppService } from '../../../../libs/app.service';
-import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_PAYED, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT } from '../../../../libs/Constants';
+import { ActivatedRoute } from '@angular/router';
+import { NgbAccordionModule, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { Subscription } from 'rxjs';
+import { CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_PAYED, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT } from '../../../../libs/Constants';
 import { capitalizeName, formatDateFrance } from '../../../../libs/FormatHelper';
-import { UserPreferenceService } from '../../../../libs/user.preference.service';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { AppService } from '../../../main/services/app.service';
+import { UserPreferenceService } from '../../../main/services/user.preference.service';
 import { UserScope } from '../../../profile/model/UserScope';
 import { UserScopeService } from '../../../profile/services/user.scope.service';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
@@ -20,7 +24,9 @@ declare var bootstrap: any;
 @Component({
   selector: 'app-orders',
   templateUrl: './orders.component.html',
-  styleUrls: ['./orders.component.css']
+  styleUrls: ['./orders.component.css'],
+  standalone: true,
+  imports: [SHARED_IMPORTS, NgbDropdownModule, NgbAccordionModule]
 })
 export class OrdersComponent implements OnInit {
 
@@ -47,6 +53,7 @@ export class OrdersComponent implements OnInit {
   ordersAssoAffaireOrders: AssoAffaireOrder[][] = [];
   ordersInvoiceLabelResult: InvoiceLabelResult[] = [];
   ordersMailComputeResult: MailComputeResult[] = [];
+  currentSearchRef: Subscription | undefined;
 
   constructor(
     private customerOrderService: CustomerOrderService,
@@ -56,6 +63,7 @@ export class OrdersComponent implements OnInit {
     private mailComputeResultService: MailComputeResultService,
     private userPreferenceService: UserPreferenceService,
     private userScopeService: UserScopeService,
+    private activatedRoute: ActivatedRoute
   ) { }
 
   ngOnInit() {
@@ -74,6 +82,24 @@ export class OrdersComponent implements OnInit {
 
     this.setBookmark();
 
+    let inputSearchStatus = this.activatedRoute.snapshot.params['statusCode'];
+    if (inputSearchStatus) {
+      this.statusFilterOpen = false;
+      this.statusFilterWaitingDeposit = false;
+      this.statusFilterBeingProcessed = false;
+      this.statusFilterBilled = false;
+      this.statusFilterToBilled = false;
+      this.statusFilterPayed = false;
+
+      if (inputSearchStatus == CUSTOMER_ORDER_STATUS_BEING_PROCESSED)
+        this.statusFilterBeingProcessed = true;
+      if (inputSearchStatus == CUSTOMER_ORDER_STATUS_OPEN)
+        this.statusFilterOpen = true;
+      if (inputSearchStatus == CUSTOMER_ORDER_STATUS_BILLED)
+        this.statusFilterBilled = true;
+    }
+
+
     let status: string[] = [];
     if (this.statusFilterOpen)
       status.push(CUSTOMER_ORDER_STATUS_OPEN);
@@ -91,14 +117,18 @@ export class OrdersComponent implements OnInit {
     if (this.currentPage == 0)
       this.isFirstLoading = true;
 
-    this.customerOrderService.searchOrdersForCurrentUser(status, this.currentPage, this.currentSort).subscribe(response => {
+    if (this.currentSearchRef)
+      this.currentSearchRef.unsubscribe();
+
+    this.appService.showLoadingSpinner();
+    this.currentSearchRef = this.customerOrderService.searchOrdersForCurrentUser(status, this.currentPage, this.currentSort).subscribe(response => {
+      this.appService.hideLoadingSpinner();
       if (response) {
         this.orders.push(...response);
-        if (response.length < 51)
+        if (response.length < 10)
           this.hideSeeMore = true;
       }
       this.isFirstLoading = false;
-      initTooltips();
     })
   }
 
@@ -122,11 +152,10 @@ export class OrdersComponent implements OnInit {
     this.refreshOrders();
   }
 
-  loadOrderDetails(event: any, order: CustomerOrder) {
+  loadOrderDetails(order: CustomerOrder) {
     if (!this.ordersAssoAffaireOrders[order.id]) {
       this.assoAffaireOrderService.getAssoAffaireOrdersForCustomerOrder(order).subscribe(response => {
         this.ordersAssoAffaireOrders[order.id] = response;
-        initTooltips();
       })
       this.invoiceLabelResultService.getInvoiceLabelComputeResultForCustomerOrder(order.id).subscribe(response => {
         this.ordersInvoiceLabelResult[order.id] = response;
@@ -225,23 +254,10 @@ export function getClassForCustomerOrderStatus(order: CustomerOrder) {
   if (order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED && order.isPayed)
     return "bg-success text-success";
   if (order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)
-    return "bg-dark text-dark";
-  return "bg-light text-light";
-}
-
-export function initTooltips(forcedPlacement: string = 'right') {
-  setTimeout(() => {
-    try {
-      if (bootstrap == undefined)
-        return;
-    } catch {
-      return;
-    }
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-      return new bootstrap.Tooltip(tooltipTriggerEl, { placement: forcedPlacement })
-    })
-  }, 0);
+    return "bg-ok text-dark";
+  if (order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED)
+    return "bg-danger text-danger";
+  return "bg-dark text-light";
 }
 
 export function getCustomerOrderBillingMailList(mailComputeResult: MailComputeResult) {

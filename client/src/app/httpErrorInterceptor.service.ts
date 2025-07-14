@@ -2,6 +2,7 @@ import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest
 import { Injectable } from '@angular/core';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 import { LoginService } from './routing/login-dialog/login.service';
 import { AppService } from './services/app.service';
 
@@ -15,7 +16,8 @@ export class HttpErrorInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
     request = request.clone({
-      withCredentials: true
+      withCredentials: true,
+      headers: request.headers.set("domain", "osiris" + (environment.production ? '_PROD' : '_REC'))
     });
 
     return next.handle(request).pipe(

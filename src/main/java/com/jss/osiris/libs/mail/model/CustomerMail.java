@@ -1,10 +1,12 @@
 package com.jss.osiris.libs.mail.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jss.osiris.modules.myjss.wordpress.model.Subscription;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
@@ -40,7 +42,7 @@ import jakarta.persistence.Table;
         @Index(name = "idx_customer_mail_customer_order", columnList = "id_customer_order"),
         @Index(name = "idx_customer_mail_competent_authority", columnList = "id_competent_authority"),
         @Index(name = "idx_customer_mail_confrere", columnList = "id_confrere") })
-public class CustomerMail {
+public class CustomerMail implements Serializable {
 
     public static String TEMPLATE_WAITING_DEPOSIT = "waiting-deposit";
     public static String TEMPLATE_WAITING_QUOTATION_VALIDATION = "waiting-quotation-validation";
@@ -62,9 +64,22 @@ public class CustomerMail {
     public static String TEMPLATE_MISSING_ATTACHMENT = "missing-attachment";
     public static String TEMPLATE_RENEW_PASSWORD = "renew-password"; // TODO : delete
     public static String TEMPLATE_SEND_TOKEN = "send-token";
+    public static String TEMPLATE_SEND_GIFTED_POST = "send-gifted-post";
     public static String TEMPLATE_REQUEST_RIB = "request-rib";
     public static String TEMPLATE_SEND_RFF = "send-rff";
     public static String TEMPLATE_SEND_COMPETENT_AUTHORITY_REMINDER = "send-competent-authority-reminder";
+    public static String TEMPLATE_SEND_WEBINAR_SUBSCRIPTION = "send-webinar-subscription";
+    public static String TEMPLATE_SEND_WEBINAR_REPLAY = "send-webinar-replay";
+    public static String TEMPLATE_SEND_DEMO_CONFIRMATION = "send-demo-confirmation";
+    public static String TEMPLATE_SEND_PRICES_CONFIRMATION = "send-prices-confirmation";
+    public static String TEMPLATE_SEND_DEMO_REQUEST = "send-demo-request";
+    public static String TEMPLATE_SEND_REPLAY_WEBINAR_REQUEST = "send-replay-webinar-request";
+    public static String TEMPLATE_SEND_CONTACT_CONFIRMATION = "send-contact-confirmation";
+    public static String TEMPLATE_SEND_CONTACT_REQUEST = "send-contact-request";
+    public static String TEMPLATE_SEND_PRICES_REQUEST = "send-prices-request";
+    public static String TEMPLATE_SEND_CANDIDACY_CONFIRMATION = "send-candidacy-confirmation";
+    public static String TEMPLATE_SEND_QUOTATION_CREATION = "send-quotation-creation";
+    public static String TEMPLATE_SEND_ORDER_CREATION = "send-order-creation";
 
     @Id
     @SequenceGenerator(name = "customer_mail_sequence", sequenceName = "customer_mail_sequence", allocationSize = 1)
@@ -157,6 +172,10 @@ public class CustomerMail {
     private Boolean isCancelled;
 
     private Boolean isLastReminder;
+
+    @ManyToOne
+    @JoinColumn(name = "id_subscription")
+    private Subscription subscription;
 
     public Integer getId() {
         return id;
@@ -555,12 +574,56 @@ public class CustomerMail {
         TEMPLATE_SEND_COMPETENT_AUTHORITY_REMINDER = tEMPLATE_SEND_COMPETENT_AUTHORITY_REMINDER;
     }
 
+    public static String getTEMPLATE_SEND_WEBINAR_SUBSCRIPTION() {
+        return TEMPLATE_SEND_WEBINAR_SUBSCRIPTION;
+    }
+
+    public static void setTEMPLATE_SEND_WEBINAR_SUBSCRIPTION(
+            String tEMPLATE_SEND_WEBINAR_SUBSCRIPTION) {
+        TEMPLATE_SEND_WEBINAR_SUBSCRIPTION = tEMPLATE_SEND_WEBINAR_SUBSCRIPTION;
+    }
+
+    public static void setTEMPLATE_SEND_DEMO_CONFIRMATION(
+            String tEMPLATE_SEND_DEMO_CONFIRMATION) {
+        TEMPLATE_SEND_DEMO_CONFIRMATION = tEMPLATE_SEND_DEMO_CONFIRMATION;
+    }
+
+    public static String getTEMPLATE_SEND_DEMO_CONFIRMATION() {
+        return TEMPLATE_SEND_DEMO_CONFIRMATION;
+    }
+
+    public static void setTEMPLATE_SEND_CONTACT_CONFIRMATION(
+            String tEMPLATE_SEND_CONTACT_CONFIRMATION) {
+        TEMPLATE_SEND_CONTACT_CONFIRMATION = tEMPLATE_SEND_CONTACT_CONFIRMATION;
+    }
+
+    public static String getTEMPLATE_SEND_CONTACT_CONFIRMATION() {
+        return TEMPLATE_SEND_CONTACT_CONFIRMATION;
+    }
+
+    public static void setTEMPLATE_SEND_CONTACT_REQUEST(
+            String tEMPLATE_SEND_CONTACT_REQUEST) {
+        TEMPLATE_SEND_CONTACT_REQUEST = tEMPLATE_SEND_CONTACT_REQUEST;
+    }
+
+    public static String getTEMPLATE_SEND_CONTACT_REQUEST() {
+        return TEMPLATE_SEND_CONTACT_REQUEST;
+    }
+
     public String getCopyToMail() {
         return copyToMail;
     }
 
     public void setCopyToMail(String copyToMail) {
         this.copyToMail = copyToMail;
+    }
+
+    public Subscription getSubscription() {
+        return subscription;
+    }
+
+    public void setSubscription(Subscription subscription) {
+        this.subscription = subscription;
     }
 
 }

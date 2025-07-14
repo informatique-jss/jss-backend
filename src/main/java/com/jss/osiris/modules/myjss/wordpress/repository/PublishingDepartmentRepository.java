@@ -9,4 +9,6 @@ public interface PublishingDepartmentRepository extends QueryCacheCrudRepository
 
     List<PublishingDepartment> findAllByOrderByCode();
 
+    PublishingDepartment findByCode(String code);
+
 }

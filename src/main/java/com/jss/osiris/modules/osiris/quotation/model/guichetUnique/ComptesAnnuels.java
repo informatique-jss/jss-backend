@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.quotation.model.guichetUnique;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 import com.jss.osiris.libs.search.model.DoNotAudit;
@@ -17,7 +18,7 @@ import jakarta.persistence.SequenceGenerator;
 
 @Entity
 @DoNotAudit
-public class ComptesAnnuels {
+public class ComptesAnnuels implements Serializable {
     @Id
     @SequenceGenerator(name = "guichet_unique_comptes_annuels_sequence", sequenceName = "guichet_unique_comptes_annuels_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "guichet_unique_comptes_annuels_sequence")

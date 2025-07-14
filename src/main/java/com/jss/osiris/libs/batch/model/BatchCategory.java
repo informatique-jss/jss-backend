@@ -1,5 +1,7 @@
 package com.jss.osiris.libs.batch.model;
 
+import java.io.Serializable;
+
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
 import jakarta.persistence.Column;
@@ -10,7 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 
 @Entity
-public class BatchCategory implements IId {
+public class BatchCategory implements IId, Serializable {
 
     public static String GUICHET_UNIQUE = "GUICHET_UNIQUE";
     public static String INFOGREFFE = "INFOGREFFE";

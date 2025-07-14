@@ -1,0 +1,50 @@
+.border-left {
+  border-left: 1px solid #858C97;
+}
+
+.nav-item-podcast {
+  padding-top: 0.8rem;
+}
+
+.header-area {
+  background-color: white;
+}
+
+.custom-drop {
+  background-color: #1C2D41;
+  min-width: 230px;
+}
+
+.dropdown-menu .dropdown-item:hover {
+  background-color: #CCE1FA;
+  color: #1C2D41;
+}
+
+.btn-fixed-secondary {
+  max-height: 45px;
+}
+
+.btn-fixed-secondary:hover {
+  background-color: #1C2D41;
+  color: var(--ar-tertiary-bg);
+}
+
+.btn-yellow:hover {
+  color: var(--ar-primary);
+}
+
+.btn-yellow-burger:hover {
+  color: var(--ar-tertiary-bg);
+}
+
+.header-navbar-bottom .navbar-nav>li:first-child>a {
+  padding-left: 1rem !important;
+}
+
+.dropdown-header {
+  color: var(--ar-secondary) !important;
+}
+
+.navbar-nav .nav-link.active {
+  color: #CCE1FA !important;
+}

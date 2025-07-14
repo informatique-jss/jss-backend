@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.quotation.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -35,7 +36,7 @@ import jakarta.persistence.SequenceGenerator;
 
 @Entity
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Confrere implements IId {
+public class Confrere implements IId, Serializable {
 
 	@Id
 	@SequenceGenerator(name = "confrere_sequence", sequenceName = "confrere_sequence", allocationSize = 1)
@@ -74,6 +75,7 @@ public class Confrere implements IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_journal_type")
+	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private JournalType journalType;
 
 	@Column(length = 200)

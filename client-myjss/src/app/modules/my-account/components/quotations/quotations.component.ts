@@ -1,8 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { AppService } from '../../../../libs/app.service';
-import { CUSTOMER_ORDER_STATUS_ABANDONED, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_QUOTATION_WAITING_CONFRERE, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, QUOTATION_STATUS_VALIDATED_BY_CUSTOMER } from '../../../../libs/Constants';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { NgbAccordionModule, NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Subscription } from 'rxjs';
+import { QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_QUOTATION_WAITING_CONFRERE, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, QUOTATION_STATUS_VALIDATED_BY_CUSTOMER } from '../../../../libs/Constants';
 import { capitalizeName } from '../../../../libs/FormatHelper';
-import { UserPreferenceService } from '../../../../libs/user.preference.service';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { AppService } from '../../../main/services/app.service';
+import { UserPreferenceService } from '../../../main/services/user.preference.service';
 import { UserScope } from '../../../profile/model/UserScope';
 import { UserScopeService } from '../../../profile/services/user.scope.service';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
@@ -20,9 +24,14 @@ declare var bootstrap: any;
 @Component({
   selector: 'app-quotations',
   templateUrl: './quotations.component.html',
-  styleUrls: ['./quotations.component.css']
+  styleUrls: ['./quotations.component.css'],
+  standalone: true,
+  imports: [SHARED_IMPORTS, NgbDropdownModule, NgbAccordionModule]
 })
 export class QuotationsComponent implements OnInit {
+
+  @ViewChild('cancelQuotationModal') cancelQuotationModal!: TemplateRef<any>;
+  cancelQuotationModalInstance: any | undefined;
 
   statusFilterOpen: boolean = false;
   statusFilterToVerify: boolean = false;
@@ -50,6 +59,9 @@ export class QuotationsComponent implements OnInit {
 
   QUOTATION_STATUS_REFUSED_BY_CUSTOMER = QUOTATION_STATUS_REFUSED_BY_CUSTOMER;
   QUOTATION_STATUS_VALIDATED_BY_CUSTOMER = QUOTATION_STATUS_VALIDATED_BY_CUSTOMER;
+  QUOTATION_STATUS_OPEN = QUOTATION_STATUS_OPEN;
+
+  currentSearchRef: Subscription | undefined;
 
   constructor(
     private quotationService: QuotationService,
@@ -59,6 +71,8 @@ export class QuotationsComponent implements OnInit {
     private mailComputeResultService: MailComputeResultService,
     private userPreferenceService: UserPreferenceService,
     private userScopeService: UserScopeService,
+    private activatedRoute: ActivatedRoute,
+    private modalService: NgbModal
   ) { }
 
   getQuotationStatusLabel = getQuotationStatusLabel;
@@ -80,6 +94,22 @@ export class QuotationsComponent implements OnInit {
 
     this.setBookmark();
 
+    let inputSearchStatus = this.activatedRoute.snapshot.params['statusCode'];
+    if (inputSearchStatus) {
+      this.statusFilterOpen = false;
+      this.statusFilterToVerify = false;
+      this.statusFilterWaitingConfrere = false;
+      this.statusFilterSendToCustomer = false;
+      this.statusFilterValidatedByCustomer = false;
+      this.statusFilterRefusedByCustomer = false;
+      this.statusFilterAbandonned = false;
+
+      if (inputSearchStatus == QUOTATION_STATUS_SENT_TO_CUSTOMER)
+        this.statusFilterSendToCustomer = true;
+      if (inputSearchStatus == QUOTATION_STATUS_OPEN)
+        this.statusFilterOpen = true;
+    }
+
     let status: string[] = [];
     if (this.statusFilterOpen)
       status.push(QUOTATION_STATUS_OPEN);
@@ -99,11 +129,15 @@ export class QuotationsComponent implements OnInit {
     if (this.currentPage == 0)
       this.isFirstLoading = true;
 
-    this.quotationService.searchQuotationsForCurrentUser(status, this.currentPage, this.currentSort).subscribe(response => {
+    if (this.currentSearchRef)
+      this.currentSearchRef.unsubscribe();
+
+    this.appService.showLoadingSpinner();
+    this.currentSearchRef = this.quotationService.searchQuotationsForCurrentUser(status, this.currentPage, this.currentSort).subscribe(response => {
+      this.appService.hideLoadingSpinner();
       this.quotations.push(...response);
       this.isFirstLoading = false;
-      this.initTooltips();
-      if (response.length < 51)
+      if (response.length < 10)
         this.hideSeeMore = true;
     })
   }
@@ -128,11 +162,10 @@ export class QuotationsComponent implements OnInit {
     this.refreshQuotations();
   }
 
-  loadQuotationDetails(event: any, quotation: Quotation) {
+  loadQuotationDetails(quotation: Quotation) {
     if (!this.quotationsAssoAffaireOrders[quotation.id]) {
       this.assoAffaireOrderService.getAssoAffaireOrdersForQuotation(quotation).subscribe(response => {
         this.quotationsAssoAffaireOrders[quotation.id] = response;
-        this.initTooltips();
       })
       this.invoiceLabelResultService.getInvoiceLabelComputeResultForQuotation(quotation.id).subscribe(response => {
         this.quotationsInvoiceLabelResult[quotation.id] = response;
@@ -141,15 +174,6 @@ export class QuotationsComponent implements OnInit {
         this.quotationsMailComputeResult[quotation.id] = response;
       })
     }
-  }
-
-  initTooltips() {
-    setTimeout(() => {
-      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-      var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl, { placement: "right" })
-      })
-    }, 0);
   }
 
   getQuotationBillingMailList(quotation: Quotation) {
@@ -162,6 +186,32 @@ export class QuotationsComponent implements OnInit {
 
   getQuotationValidityDate(quotation: Quotation) {
     return new Date(new Date(quotation.createdDate).getFullYear(), 11, 31);
+  }
+
+
+  quotationToCancel: Quotation | undefined;
+  finalCancelDraft(event: any) {
+    if (this.quotationToCancel && this.quotationToCancel.id) {
+      this.appService.showLoadingSpinner();
+      this.quotationService.cancelQuotation(this.quotationToCancel.id).subscribe(response => {
+        this.quotationToCancel = undefined;
+        this.refreshQuotations();
+      });
+    }
+  }
+
+  cancelDraft(quotation: Quotation) {
+    if (this.cancelQuotationModalInstance) {
+      return;
+    }
+
+    this.quotationToCancel = quotation;
+    this.cancelQuotationModalInstance = this.modalService.open(this.cancelQuotationModal, {
+    });
+
+    this.cancelQuotationModalInstance.result.finally(() => {
+      this.cancelQuotationModalInstance = undefined;
+    });
   }
 
   setBookmark() {
@@ -250,7 +300,5 @@ export function getClassForQuotationStatus(quotation: Quotation) {
     return "bg-danger text-danger";
   if (quotation.quotationStatus.code == QUOTATION_STATUS_ABANDONED)
     return "bg-dark text-dark";
-  if (quotation.quotationStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED)
-    return "bg-danger text-danger";
-  return "bg-light text-light";
+  return "bg-dark text-light";
 }

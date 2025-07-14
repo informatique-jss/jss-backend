@@ -1,0 +1,19 @@
+.border-end {
+  border-color: var(--bs-gray-300);
+}
+
+.border-left-red {
+  border-left: solid 3px #FF5757;
+}
+
+.post-player-bg {
+  background-color: #ECF5FF;
+}
+
+.btn-yellow:hover {
+  color: var(--bs-gray-700) !important;
+}
+
+.btn-check:focus+.btn-secondary, .btn-secondary:focus {
+  color: var(--ar-primary);
+}

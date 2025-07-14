@@ -1,0 +1,383 @@
+<section class="container my-5 py-5">
+  <div class="row pt-md-2 pt-lg-3 pt-xl-4 pb-lg-2 pb-xl-3">
+    <div class="col-md-6">
+      <h1 class="h1 pe-xxl-5 me-xl-4 mb-md-0 text-white">Participez à notre aventure !</h1>
+    </div>
+    <div class="col-md-6 col-xl-5 offset-xl-1">
+      <p class="text-body fs-lg mb-5 text-white">Journal d’annonces légales parisien historique et prestataire en
+        formalités légales, le JSS est un des leaders dans son domaine.<br />
+        Vous cherchez un environnement dynamique où votre talent fera la différence ? <br />
+        Découvrez nos opportunités et participez à notre aventure !
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="pb-3 pb-5">
+  <div class="jarallax" data-jarallax>
+    <div class="jarallax-img" style="background-image: url(assets/img/societe/join_us_banner.png);">
+    </div>
+  </div>
+</section>
+
+<section class="container overflow-hidden py-5 my-5">
+  <div class="row">
+    <h2 class="h1 pb-3 mb-lg-4 text-white">Rejoignez le JSS</h2>
+  </div>
+  <div class="card-info">
+    <div class="row g-4">
+      <div class="col-md-7 order-md-1">
+        <img class="object-fit-cover w-100 h-100 rounded-3" src="assets/img/societe/join_us_talent.png" alt="Image">
+      </div>
+      <div class="col-md-5 order-md-2">
+        <div class="d-flex flex-column h-100 card border-0 rounded-3 pt-5 px-4 px-lg-5">
+          <h2 class="mb-xl-4">Du talent, de l’engagement et un esprit d’équipe</h2>
+          <p class="mb-4 mb-xl-5">Au JSS, nous croyons que la réussite passe avant tout par des équipes soudées et
+            engagées.<br />
+            Ici, chacun a son rôle à jouer et l’opportunité d’apporter sa pierre à l’édifice.
+          </p>
+          <p class="mb-4 mb-xl-5">Nous évoluons dans un environnement exigeant, bienveillant et stimulant où chaque défi
+            est une occasion d’apprendre et d’innover.
+          </p>
+          <p class="mb-4 mb-xl-5"> Si vous avez à coeur de fournir un service de qualité, de participer à la vie des
+            sociétés et de croitre
+            avec nous, postulez !
+          </p>
+          <div class="col-auto pb-4">
+            <button type="button" class="btn btn-light btn-secondary" (click)="openApplicationModal()">
+              Candidature spontanée <i class="ai-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Modal for spontaneous Application -->
+<ng-template #spontaneousApplicationModal let-modal>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 id="spontaneousApplicationModalLabel">Formulaire de Candidature</h5>
+      <p>Pour nous faire parvenir votre candidature spontanée, remplissez ce formulaire et
+        téléchargez
+        votre CV.</p>
+    </div>
+    <div class="modal-body">
+      <form class="needs-validation row" novalidate>
+        <div class="col-12">
+          <generic-input class="form-control form-control-lg" [(model)]="newCandidacy.mail.mail" placeholder="E-mail*"
+            label="E-mail*" [form]="applicationForm" propertyName="mail" [isMandatory]="true" [isDisabled]="false"
+            [maxLength]="250" type="email"></generic-input>
+        </div>
+        <div class="col-12">
+          <generic-input class="form-control form-control-lg" [(model)]="newCandidacy.searchedJob"
+            label="Poste recherché" placeholder="Poste recherché" [form]="applicationForm" propertyName="searchedJob"
+            [isMandatory]="false" [isDisabled]="false" [maxLength]="250" type="text"></generic-input>
+        </div>
+      </form>
+      <div class="col-12">
+        <generic-textarea class="form-control form-control-lg" [(model)]="newCandidacy.message" label="Message*"
+          [form]="applicationForm" propertyName="message" [isMandatory]="true" [isDisabled]="false"
+          [numberOfLines]="4"></generic-textarea>
+      </div>
+      <div class="mb-2 row">
+        <div class="col-12">
+          <single-upload [entity]="newCandidacy" [attachmentType]="attachmentTypeApplicationCv"
+            (endOfUpload)="refreshForm($event)" [entityType]="APPLICATION_CV_ENTITY_TYPE.entityType"
+            [isDirectUpload]="false"></single-upload>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="col-12 btn btn-light btn-secondary ms-2" (click)="sendApplication()">Envoyer ma
+        candidature</button>
+    </div>
+  </div>
+</ng-template>
+
+<section class="container py-5 my-5">
+  <div class="row">
+    <h2 class="h1 pb-3 mb-lg-4 text-white">Zoom sur nos services</h2>
+  </div>
+  <div class="row">
+    <div class="row row-cols-1 row-cols-sm-2 g-4">
+      <!-- FORMALITÉS -->
+      <div class="col">
+        <div class="card h-100 border-0 rounded-5">
+          <div class="card-body">
+            <h3 class="h4">Formalités</h3>
+            <p class="mb-0">Les formalistes conseillent les clients, relisent les actes, renseignent les autorités
+              compétentes et suivent les demandes.</p>
+          </div>
+        </div>
+      </div>
+      <!-- ANNONCE -->
+      <div class="col">
+        <div class="card h-100 border-0 rounded-5">
+          <div class="card-body">
+            <h3 class="h4">Annonce</h3>
+            <p class="mb-0">Les publicistes conseillent les clients, rédigent, relisent puis publient les annonces
+              légales.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 ">
+      <!-- COMMERCIAL -->
+      <div class="col">
+        <div class="card h-100 border-0 rounded-5">
+          <div class="card-body">
+            <h3 class="h4">Commercial</h3>
+            <p class="mb-0">Les chargés de clientèle sont en contact quotidien avec les clients et prospects.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- MARKETING ET COMMUNICATION -->
+      <div class="col">
+        <div class="card h-100 border-0 rounded-5">
+          <div class="card-body">
+            <h3 class="h4">Marketing et Communication</h3>
+            <p class="mb-0">La communication interne comme externe avec passion.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- REDACTION -->
+      <div class="col">
+        <div class="card h-100 border-0 rounded-5">
+          <div class="card-body">
+            <h3 class="h4">Redaction</h3>
+            <p class="mb-0">Les journalistes du Journal Spécial des Sociétés traitent de l’actualité de la vie du droit
+              et du chiffre avec curiosité et talent.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+      <!-- COMPTABILITÉ -->
+      <div class="col  order-md-1  order-1">
+        <div class="card h-100 border-0 rounded-5">
+          <div class="card-body">
+            <h3 class="h4">Comptabilité</h3>
+            <p class="mb-0">Les comptables s’assurent de la bonne tenue de nos livres de comptes.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- YELLOW BLOC -->
+      <div class="col  order-md-2  order-3">
+        <div class="card h-100 border-0 rounded-5 yellow-card">
+          <div class="card-body text-center">
+            <h2 class="blue-title">Une cohésion entre les équipes pour offrir le meilleur accompagnement</h2>
+          </div>
+        </div>
+      </div>
+
+      <!-- INFORMATIQUE -->
+      <div class="col  order-md-3  order-2">
+        <div class="card h-100 border-0 rounded-5">
+          <div class="card-body">
+            <h3 class="h4">Informatique</h3>
+            <p class="mb-0">L’équipe informatique améliore sans cesse nos outils pour offrir une experience toujours
+              plus qualitative aux clients comme aux salariés du JSS.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="container overflow-hidden py-5 my-5">
+  <generic-swiper [items]="images" title="Un espace de travail ouvert et inspirant">
+    <ng-template let-image>
+      <div class="card-wrapper">
+        <div class="d-flex align-items-stretch h-100">
+          <a class="d-block gallery-item card-hover zoom-effect h-100 w-100 position-relative"
+            (click)="openImageModal(image)" data-bs-toggle="modal" data-bs-target="#imageModal">
+            <div
+              class="d-flex justify-content-center align-items-center position-absolute top-0 start-0 w-100 h-100 rounded-5 overflow-hidden z-2 opacity-0">
+              <i class="ai-zoom-in fs-2 text-white position-relative z-2"></i>
+            </div>
+            <div class="zoom-effect-wrapper rounded-5 h-100 w-100">
+              <img class="zoom-effect-img w-100 h-100 object-fit-cover" [src]="image" alt="Inspiring workplace images">
+            </div>
+          </a>
+        </div>
+      </div>
+    </ng-template>
+  </generic-swiper>
+</section>
+
+<!-- Modal for spontaneous Application -->
+<ng-template #imageModal let-modal>
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="btn-close" style="color : white" aria-label="Close"
+        (click)="closeApplicationModal()"></button>
+    </div>
+    <div class="modal-body">
+      <img #modalImage id="modal-image" class="img-fluid w-100" [src]="currentImageLink" alt="Image">
+    </div>
+  </div>
+</ng-template>
+
+
+<!-- Tools-->
+<section class="container overflow-hidden my-md-3 my-lg-2 my-xl-4 my-xxl-5">
+  <div class="row justify-content-between">
+    <div class="col">
+      <h2 class="h1 pb-3 mb-lg-4 text-white">Une infrastructure performante </h2>
+    </div>
+  </div>
+  <div class="row align-items-center my-2 py-2 py-sm-4 py-lg-5 my-xxl-2">
+    <div class="col position-relative mx-auto" style="max-width: 510px;">
+      <img class="d-block d-dark-mode-none" src="assets/img/societe/circle-gray-1.png"
+        style="animation: rotate-cw 100s linear infinite;" alt="Circle">
+      <img class="d-none d-dark-mode-block" src="assets/img/societe/circle-light-1.png"
+        style="animation: rotate-cw 100s linear infinite;" alt="Circle">
+      <img class="d-block d-dark-mode-none position-absolute top-0 start-0" src="assets/img/societe/circle-gray-2.png"
+        style="animation: rotate-ccw 50s linear infinite;" alt="Circle">
+      <img class="d-none d-dark-mode-block position-absolute top-0 start-0" src="assets/img/societe/circle-light-2.png"
+        style="animation: rotate-ccw 50s linear infinite;" alt="Circle">
+      <img class="position-absolute top-0 start-0 z-2" src="assets/img/societe/join_us_logo.png" alt="Icon">
+    </div>
+    <div class="col-md-5 text-center text-md-start pe-md-5 pe-lg-0 pe-xxl-4 ps-xl-5 mb-5 mb-md-0 m-md-3">
+      <h2 class="h1 pb-3 pb-xl-2 mb-lg-4 mb-xl-5">L'écosystème technique qui soutient notre innovation</h2>
+      <p>Nous utilisons une stack technique moderne et performante, conçue pour garantir la fiabilité, la sécurité et
+        l'évolutivité de nos services, tout en anticipant les besoins futurs.</p>
+      <ul class="list-unstyled mb-4 mb-xl-5">
+        <li class="d-flex pb-2 mb-1">
+          <span class="bg-primary mt-2 me-2 checkbox-custom"></span>
+          Back-end : Java 17, Spring Boot, PostgreSQL
+        </li>
+        <li class="d-flex pb-2 mb-1">
+          <span class="bg-primary mt-2 me-2 checkbox-custom"></span>
+          Front-end : Angular 16
+        </li>
+        <li class="d-flex pb-2 mb-1">
+          <span class="bg-primary yellow-card mt-2 me-2 checkbox-custom"></span>
+          Infrastructure : On premise
+        </li>
+        <li class="d-flex pb-2 mb-1">
+          <span class="bg-primary yellow-card mt-2 me-2 checkbox-custom"></span>
+          Sécurité : OAuth
+        </li>
+        <li class="d-flex pb-2 mb-1  " style="text-align: left;">
+          <span class="bg-primary yellow-card mt-2 me-2 checkbox-custom"></span>
+          Bureautique : Teams, Microsoft Office, Windows
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- Un cadre epanouissant -->
+<section class="white-tranlucid-bg">
+  <div class="container py-5 my-5">
+    <div class="row justify-content-between">
+      <div class="col">
+        <h2 class="h1 pb-3 mb-lg-4 text-white">Un cadre épanouissant</h2>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12 col-lg-4 mb-4">
+        <div class="card h-100">
+          <img src="assets/img/societe/fullfilling-workplace/image_01.png" class="card-img-top" alt="Card image">
+          <div class="card-body">
+            <h4 class="card-title">Événements toute l’année</h4>
+            <p class="card-text">La Com’ remue ciel et terre pour animer le quotidien des salariés : déjeuner,
+              teambuilding, animations...Rien n’est trop beau pour être heureux au bureau.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-lg-4 mb-4">
+        <div class="card h-100">
+          <img src="assets/img/societe/fullfilling-workplace/image_02.png" class="card-img-top" alt="Card image">
+          <div class="card-body">
+            <h4 class="card-title">Une équipe bienveillante</h4>
+            <p class="card-text">Rejoignez une équipe accueillante et engagée où la bienveillance et la passion sont
+              au
+              cœur de notre culture d’entreprise.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-lg-4 mb-4">
+        <div class="card h-100">
+          <img src="assets/img/societe/fullfilling-workplace/image_03.png" class="card-img-top" alt="Card image">
+          <div class="card-body">
+            <h4 class="card-title">Fruits frais chaque semaine</h4>
+            <p class="card-text">Chaque semaine, des corbeilles de fruits frais sont mises à disposition pour une
+              touche
+              de fraîcheur et d’énergie.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row mb-4">
+      <div class="col-12 col-lg-4 mb-4">
+        <div class="card h-100">
+          <img src="assets/img/societe/fullfilling-workplace/image_04.png" class="card-img-top" alt="Card image">
+          <div class="card-body">
+            <h4 class="card-title">Participation à tous les transports</h4>
+            <p class="card-text">Nous prenons en charge une partie des transports en commun et versons également une
+              indemnité kilométrique vélo (IKV) pour les trajets du domicile au bureau.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-lg-4 mb-4">
+        <div class="card h-100">
+          <img src="assets/img/societe/fullfilling-workplace/image_05.png" class="card-img-top" alt="Card image">
+          <div class="card-body">
+            <h4 class="card-title">Bureaux au cœur de Paris</h4>
+            <p class="card-text">Nos bureaux haussmanniens situés en plein cœur de Paris dans le quartier d’Opéra
+              offrent un environnement stimulant et dynamique.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-lg-4 mb-4">
+        <div class="card h-100">
+          <img src="assets/img/societe/fullfilling-workplace/image_06.png" class="card-img-top" alt="Card image">
+          <div class="card-body">
+            <h4 class="card-title">Charte de télétravail</h4>
+            <p class="card-text">Profitez d’un rythme de travail souple avec 1 jour de télétravail par semaine et 1
+              jour
+              flottant par mois à poser quand vous le souhaitez.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row mb-4">
+      <div class="col-12 col-lg-4 mb-4">
+        <div class="card h-100">
+          <img src="assets/img/societe/fullfilling-workplace/image_07.png" class="card-img-top" alt="Card image">
+          <div class="card-body">
+            <h4 class="card-title">Carte ticket restaurant </h4>
+            <p class="card-text">Nous prenons soin de votre pause déjeuner avec une carte tickets restaurant Edenred à
+              utiliser quand vous le souhaitez.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-lg-4 mb-4">
+        <div class="card h-100">
+          <img src="assets/img/societe/fullfilling-workplace/image_08.png" class="card-img-top" alt="Card image">
+          <div class="card-body">
+            <h4 class="card-title">Mutuelle de qualité</h4>
+            <p class="card-text">Bénéficiez d’une mutuelle avantageuse, prise en charge en partie par le JSS pour un
+              accès facilité aux soins.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-lg-4 mb-4">
+        <div class="card yellow-card h-100 d-flex align-items-center justify-content-center">
+          <div class="text-center">
+            <h2 class="blue-title py-5 py-lg-3 px-5">Un environnement de travail respecté et respectueux</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

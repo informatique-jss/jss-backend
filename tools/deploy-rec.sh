@@ -1,12 +1,14 @@
 cd ..
 rm build/libs/*
-gradle bootJar
+gradle bootJar -PexcludeHazelcast=true
 ssh -t osiris@app-rec1.osiris.jss.fr 'sudo  /usr/bin/systemctl stop osiris.service;exit'
 scp build/libs/*-*.jar osiris@app-rec1.osiris.jss.fr:/appli/osiris/osiris.jar
 ssh -t osiris@app-rec1.osiris.jss.fr 'sudo  /usr/bin/systemctl start osiris.service;exit'
 ssh -t osiris@app-rec2.osiris.jss.fr 'sudo  /usr/bin/systemctl stop osiris.service;exit'
 scp build/libs/*-*.jar osiris@app-rec2.osiris.jss.fr:/appli/osiris/osiris.jar
 ssh -t osiris@app-rec2.osiris.jss.fr 'sudo  /usr/bin/systemctl start osiris.service;exit'
+ssh -t cache@cache-rec1.osiris.jss.fr 'sudo  /usr/bin/systemctl stop cache.service;exit'
+ssh -t cache@cache-rec1.osiris.jss.fr 'sudo  /usr/bin/systemctl start cache.service;exit'
 
 cd client
 npm install  --legacy-peer-deps

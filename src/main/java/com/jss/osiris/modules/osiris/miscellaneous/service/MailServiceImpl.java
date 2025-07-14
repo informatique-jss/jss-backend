@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 import com.jss.osiris.modules.osiris.miscellaneous.repository.MailRepository;
 
@@ -14,6 +15,9 @@ public class MailServiceImpl implements MailService {
 
     @Autowired
     MailRepository mailRepository;
+
+    @Autowired
+    MailHelper mailHelper;
 
     @Override
     public List<Mail> findMails(String mail) {
@@ -50,7 +54,7 @@ public class MailServiceImpl implements MailService {
         if (mail != null)
             if (mail.getId() == null) {
                 List<Mail> existingMails = findMails(mail.getMail());
-                if (existingMails != null && existingMails.size() == 1) {
+                if (existingMails != null && existingMails.size() >= 1) {
                     mail.setId(existingMails.get(0).getId());
                 }
                 mailRepository.save(mail);

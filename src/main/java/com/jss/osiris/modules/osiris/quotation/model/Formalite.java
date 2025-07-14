@@ -1,4 +1,5 @@
 package com.jss.osiris.modules.osiris.quotation.model;
+import java.io.Serializable;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.FormaliteInfogreffe;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -29,11 +31,12 @@ import jakarta.persistence.Table;
 @Table(indexes = { @Index(name = "idx_formalite_status", columnList = "id_formalite_status"),
         @Index(name = "idx_formalite_id_waited_competent_authority", columnList = "id_waited_competent_authority"),
 })
-public class Formalite implements IId {
+public class Formalite implements IId, Serializable {
 
     @Id
     @SequenceGenerator(name = "formalite_sequence", sequenceName = "formalite_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "formalite_sequence")
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -62,6 +65,10 @@ public class Formalite implements IId {
     @OneToMany(mappedBy = "formalite")
     @JsonIgnore
     private List<Provision> provision;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "id_acte_deposit")
+    private ActeDeposit acteDeposit;
 
     public Integer getId() {
         return id;

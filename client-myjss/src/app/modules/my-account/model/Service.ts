@@ -1,18 +1,23 @@
 import { AssoServiceDocument } from "./AssoServiceDocument";
 import { AssoServiceFieldType } from "./AssoServiceFieldType";
 import { IAttachment } from "./IAttachment";
+import { Provision } from "./Provision";
 import { ServiceType } from "./ServiceType";
 
 export interface Service extends IAttachment {
   id: number;
-  serviceType: ServiceType;
+  serviceTypes: ServiceType[];
   assoServiceDocuments: AssoServiceDocument[];
-  customLabel: string;
-  customerComment: string;
   assoServiceFieldTypes: AssoServiceFieldType[];
   hasMissingInformations: boolean;
   serviceStatus: string;
-  servicePrice: number;
+  serviceTotalPrice: number;
+  servicePreTaxPrice: number;
+  serviceVatPrice: number;
+  serviceDiscountAmount: number;
   confrereLabel: string;
+  waitingAcLabel: string;
   lastMissingAttachmentQueryDateTime: Date;
+  provisions: Provision[];
+  serviceLabelToDisplay: string;
 }

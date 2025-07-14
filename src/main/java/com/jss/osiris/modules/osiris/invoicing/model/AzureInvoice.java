@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.invoicing.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -25,7 +26,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(indexes = {
         @Index(name = "idx_azure_invoice_manual_document_number", columnList = "id_competent_authority,invoiceId") })
-public class AzureInvoice {
+public class AzureInvoice implements Serializable {
 
     @Id
     @SequenceGenerator(name = "azure_invoice_sequence", sequenceName = "azure_invoice_sequence", allocationSize = 1)

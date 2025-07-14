@@ -1,0 +1,51 @@
+<section class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4 my-4">
+  <div class="card-body">
+    <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-0 mb-lg-1 mb-xl-3">
+      <i class="bi-bookmark-fill text-dark rounded-circle lead pe-1 me-2"></i>
+      <h2 class="h4 mb-0">Liste de lecture {{readingFolder?readingFolder.label:''}} </h2>
+    </div>
+    <div class="d-md-flex align-items-center">
+      <div class="d-sm-flex align-items-center">
+        <div class="pt-3 pt-sm-0 ps-sm-3">
+          <div class="text-body-secondary fw-medium d-flex flex-wrap flex-sm-nowrap align-iteems-center">
+            <div class="container my-4">
+              <div *ngFor="let post of bookmarkPosts" class="col-12 mb-2">
+                <article class="row g-0 border-0 mb-5">
+                  <img class="col-sm-5 col-lg-4 rounded-5 post-image" (click)="openPost(post, $event)"
+                    [src]="post.media && post.media.urlLarge ? post.media.urlLarge : (post.media && post.media.urlFull ? post.media.urlFull : 'assets/img/blog/list/01.jpg')"
+                    alt="Post image">
+                  <div class="col-sm-7 col-lg-8">
+                    <div class="pt-4 pb-sm-4 ps-sm-4 pe-lg-4">
+                      <h3>
+                        <a class="card-title-truncate cursor-pointer"
+                          (click)="openPost(post, $event)">{{post.titleText}}</a>
+                      </h3>
+                      <p class="card-text-truncate">{{post.excerptText}}</p>
+                      <div class="d-flex flex-wrap align-items-center mt-n2">
+                        <span class="fs-sm text-body-secondary mt-2">Publié le {{post.date | date:'EEEE d MMMM'}}</span>
+                        <span class="fs-xs opacity-20 mt-2 mx-3">|</span>
+                        <a *ngFor="let tag of post.postTags" (click)="openTagPosts(tag, $event)"
+                          class="badge text-nav fs-xs border mt-2 me-2">{{tag.slug}}</a>
+                        <a class="cursor-pointer rounded-outline-icon rounded-circle fs-8 d-flex align-items-center justify-content-center ms-2  "
+                          (click)="post.isBookmarked ? unBookmarkPost(post) : bookmarkPost(post)">
+                          <i [ngClass]="{'bi-bookmark': !post.isBookmarked,
+                                'bi-bookmark-fill text-dark': post.isBookmarked,
+                                'text-transparent': !post.isBookmarked}">
+                          </i>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              </div>
+            </div>
+            <div *ngIf="!bookmarkPosts || bookmarkPosts.length==0" class="col-12">
+              <p>Aucun article
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

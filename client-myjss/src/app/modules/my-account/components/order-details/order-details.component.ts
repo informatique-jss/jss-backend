@@ -1,22 +1,29 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { AppService } from '../../../../libs/app.service';
-import { ConstantService } from '../../../../libs/constant.service';
-import { CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, ASSO_SERVICE_DOCUMENT_ENTITY_TYPE, CUSTOMER_ORDER_STATUS_BILLED, INVOICING_PAYMENT_LIMIT_REFUND_EUROS, SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
+import { NgbAccordionModule, NgbDropdownModule, NgbNavModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { ASSO_SERVICE_DOCUMENT_ENTITY_TYPE, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, INVOICING_PAYMENT_LIMIT_REFUND_EUROS, SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
 import { capitalizeName, getListMails, getListPhones } from '../../../../libs/FormatHelper';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { TrustHtmlPipe } from '../../../../libs/TrustHtmlPipe';
+import { AppService } from '../../../main/services/app.service';
+import { ConstantService } from '../../../main/services/constant.service';
+import { AvatarComponent } from '../../../miscellaneous/components/avatar/avatar.component';
+import { SingleUploadComponent } from '../../../miscellaneous/components/forms/single-upload/single-upload.component';
 import { Employee } from '../../../profile/model/Employee';
 import { Responsable } from '../../../profile/model/Responsable';
 import { LoginService } from '../../../profile/services/login.service';
 import { Affaire } from '../../model/Affaire';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
 import { Attachment } from '../../model/Attachment';
+import { BillingLabelType } from '../../model/BillingLabelType';
 import { CustomerOrder } from '../../model/CustomerOrder';
 import { CustomerOrderComment } from '../../model/CustomerOrderComment';
 import { InvoiceLabelResult } from '../../model/InvoiceLabelResult';
 import { InvoicingSummary } from '../../model/InvoicingSummary';
 import { MailComputeResult } from '../../model/MailComputeResult';
 import { Payment } from '../../model/Payment';
+import { PaymentType } from '../../model/PaymentType';
 import { Quotation } from '../../model/Quotation';
 import { Service } from '../../model/Service';
 import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
@@ -30,12 +37,14 @@ import { PaymentService } from '../../services/payment.service';
 import { QuotationService } from '../../services/quotation.service';
 import { ServiceService } from '../../services/service.service';
 import { UploadAttachmentService } from '../../services/upload.attachment.service';
-import { getClassForCustomerOrderStatus, getCustomerOrderBillingMailList, getCustomerOrderStatusLabel, getLastMissingAttachmentQueryDateLabel, initTooltips } from '../orders/orders.component';
+import { getClassForCustomerOrderStatus, getCustomerOrderBillingMailList, getCustomerOrderStatusLabel, getLastMissingAttachmentQueryDateLabel } from '../orders/orders.component';
 
 @Component({
   selector: 'app-order-details',
   templateUrl: './order-details.component.html',
-  styleUrls: ['./order-details.component.css']
+  styleUrls: ['./order-details.component.css'],
+  standalone: true,
+  imports: [SHARED_IMPORTS, SingleUploadComponent, AvatarComponent, TrustHtmlPipe, NgbTooltipModule, NgbDropdownModule, NgbAccordionModule, NgbNavModule]
 })
 export class OrderDetailsComponent implements OnInit {
 
@@ -51,11 +60,12 @@ export class OrderDetailsComponent implements OnInit {
   orderPayments: Payment[] | undefined;
   CUSTOMER_ORDER_STATUS_BILLED = CUSTOMER_ORDER_STATUS_BILLED;
   CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT = CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT;
-  paymentTypeCb = this.constantService.getPaymentTypeCB();
-  billingLabelTypeCodeAffaire = this.constantService.getBillingLabelTypeCodeAffaire();
+  paymentTypeCb!: PaymentType;
+  billingLabelTypeCodeAffaire!: BillingLabelType;
   serviceProvisionAttachments: Attachment[][] = [];
   currentUser: Responsable | undefined;
   associatedQuotation: Quotation | undefined;
+  dislayAlreadyFilledAttachment = false;
 
   selectedAssoAffaireOrder: AssoAffaireOrder | undefined;
   ASSO_SERVICE_DOCUMENT_ENTITY_TYPE = ASSO_SERVICE_DOCUMENT_ENTITY_TYPE;
@@ -65,7 +75,7 @@ export class OrderDetailsComponent implements OnInit {
   newCustomerOrderComment: CustomerOrderComment = {} as CustomerOrderComment;
 
   displayPayButton: boolean = false;
-  orderDetailsForm = this.formBuilder.group({});
+  orderDetailsForm!: FormGroup;
 
   jssEmployee: Employee = { firstname: 'Journal', lastname: 'Spécial des Sociétés', title: '' } as Employee;
   currentDate = new Date();
@@ -100,10 +110,22 @@ export class OrderDetailsComponent implements OnInit {
   SERVICE_FIELD_TYPE_TEXTAREA = SERVICE_FIELD_TYPE_TEXTAREA;
   SERVICE_FIELD_TYPE_DATE = SERVICE_FIELD_TYPE_DATE;
   SERVICE_FIELD_TYPE_SELECT = SERVICE_FIELD_TYPE_SELECT;
+  CUSTOMER_ORDER_STATUS_OPEN = CUSTOMER_ORDER_STATUS_OPEN;
 
   ngOnInit() {
+    this.orderDetailsForm = this.formBuilder.group({});
+
+    this.paymentTypeCb = this.constantService.getPaymentTypeCB();
+    this.billingLabelTypeCodeAffaire = this.constantService.getBillingLabelTypeCodeAffaire();
+
+    this.refreshOrder();
+  }
+
+  refreshOrder() {
+    this.dislayAlreadyFilledAttachment = false;
     this.customerOrderService.getCustomerOrder(this.activatedRoute.snapshot.params['id']).subscribe(response => {
       this.order = response;
+      this.appService.hideLoadingSpinner();
       this.loadOrderDetails();
     })
   }
@@ -119,7 +141,6 @@ export class OrderDetailsComponent implements OnInit {
         if (this.ordersAssoAffaireOrders[0].services && this.ordersAssoAffaireOrders[0].services.length > 0)
           this.loadServiceDetails(this.ordersAssoAffaireOrders[0].services[0], false);
       }
-      initTooltips();
     })
     this.invoiceLabelResultService.getInvoiceLabelComputeResultForCustomerOrder(this.order.id).subscribe(response => {
       this.orderInvoiceLabelResult = response;
@@ -135,7 +156,6 @@ export class OrderDetailsComponent implements OnInit {
     })
     this.paymentService.getApplicablePaymentsForCustomerOrder(this.order).subscribe(response => {
       this.orderPayments = response;
-      initTooltips();
     })
     this.invoicingSummaryService.getInvoicingSummaryForCustomerOrder(this.order.id).subscribe(response => {
       this.invoiceSummary = response;
@@ -149,6 +169,11 @@ export class OrderDetailsComponent implements OnInit {
         this.associatedQuotation = response;
     })
   }
+
+  toggleDislayAlreadyFilledAttachment() {
+    this.dislayAlreadyFilledAttachment = !this.dislayAlreadyFilledAttachment;
+  }
+
 
   getCustomerOrderBillingMailList() {
     if (this.order && this.orderMailComputeResult)
@@ -171,7 +196,6 @@ export class OrderDetailsComponent implements OnInit {
       if (!this.serviceProvisionAttachments[service.id] || forceLoad)
         this.attachementService.getAttachmentsForProvisionOfService(service).subscribe(response => {
           this.serviceProvisionAttachments[service.id] = response;
-          initTooltips();
         })
     }
   }
@@ -204,13 +228,12 @@ export class OrderDetailsComponent implements OnInit {
           for (let asso of this.ordersAssoAffaireOrders)
             if (asso.id == this.selectedAssoAffaireOrder.id)
               this.changeAffaire(asso);
-        initTooltips();
       })
   }
 
   editAffaireDetails(affaire: Affaire, event: any) {
     if (this.order)
-      this.appService.openRoute(event, "account/affaire/edit/" + affaire.id + "/" + this.order.id, undefined);
+      this.appService.openRoute(event, "account/affaire/edit/order/" + affaire.id + "/" + this.order.id, undefined);
   }
 
   editAddress(event: any) {
@@ -232,7 +255,6 @@ export class OrderDetailsComponent implements OnInit {
     if (this.order)
       this.customerOrderCommentService.getCustomerOrderCommentsForCustomer(this.order.id).subscribe(response => {
         this.customerOrderComments = response;
-        initTooltips();
       })
   }
 
@@ -256,9 +278,31 @@ export class OrderDetailsComponent implements OnInit {
   }
 
   saveFieldsValue(service: Service) {
-    this.serviceService.addOrUpdateServiceFields(service).subscribe(response => {
+    this.serviceService.addOrUpdateService(service).subscribe(response => {
       this.appService.displayToast("Vos informations complémentaires ont bien été enrengistrées", false, "Succès", 15000);
       this.refreshCurrentAssoAffaireOrder();
     })
+  }
+
+  displayMyDoc(service: Service) {
+    return service.assoServiceDocuments && service.assoServiceDocuments.find(a => a.isMandatory);
+  }
+
+  displayMyInformation(service: Service) {
+    return service.assoServiceFieldTypes && service.assoServiceFieldTypes.find(a => a.isMandatory);
+  }
+
+  resumeDraft(event: any) {
+    if (this.order && this.order.id)
+      this.appService.openRoute(event, "quotation/resume/order/" + this.order.id, undefined);
+  }
+
+  cancelDraft(event: any) {
+    if (this.order && this.order.id) {
+      this.appService.showLoadingSpinner();
+      this.customerOrderService.cancelCustomerOrder(this.order.id).subscribe(response => {
+        this.refreshOrder();
+      });
+    }
   }
 }

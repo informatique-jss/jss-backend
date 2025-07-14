@@ -3,9 +3,9 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { Observable, map, startWith } from 'rxjs';
 import { PrincipalAccountingAccount } from 'src/app/modules/accounting/model/PrincipalAccountingAccount';
-import { AppService } from 'src/app/services/app.service';
 import { PrincipalAccountingAccountService } from '../../../../accounting/services/principal.accounting.account.service';
 import { GenericChipsComponent } from '../generic-chips/generic-chips.component';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'chips-principal-accounting-account',

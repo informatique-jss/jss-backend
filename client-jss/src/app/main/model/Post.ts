@@ -1,7 +1,7 @@
 import { Author } from "./Author";
 import { Category } from "./Category";
+import { JssCategory } from "./JssCategory";
 import { Media } from "./Media";
-import { MyJssCategory } from "./MyJssCategory";
 import { PublishingDepartment } from "./PublishingDepartment";
 import { Tag } from "./Tag";
 
@@ -15,16 +15,21 @@ export interface Post {
   slug: string;
   podcastUrl: string;
   videoUrl: string;
-  sticky: boolean;
+  isSticky: boolean;
+  applePodcastLinkUrl: string;
+  spotifyLinkUrl: string;
+  deezerLinkUrl: string;
+  amazonMusicLinkUrl: string;
+  isBookmarked: boolean;
   relatedPosts: Post[];
   mediaTimeLength: number;
 
   // Computed field
   fullAuthor: Author;
-  myJssCategories: MyJssCategory[];
+  jssCategories: JssCategory[];
   postCategories: Category[];
   departments: PublishingDepartment[];
   postTags: Tag[];
   media: Media;
-  premium: boolean;
+  isPremium: boolean;
 }

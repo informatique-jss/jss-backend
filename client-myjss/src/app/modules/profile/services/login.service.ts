@@ -1,8 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { AppService } from '../../../libs/app.service';
-import { AppRestService } from '../../../libs/appRest.service';
+import { AppService } from '../../main/services/app.service';
+import { AppRestService } from '../../main/services/appRest.service';
 import { Responsable } from '../model/Responsable';
 
 export const ADMINISTRATEURS: string = 'ROLE_OSIRIS_ADMINISTRATEURS';
@@ -25,16 +25,25 @@ export class LoginService extends AppRestService<Responsable> {
   logUser(userId: number, aToken: string) {
     return new Observable<Boolean>(observer => {
       this.get(new HttpParams().set("userId", userId).set("aToken", aToken), "login").subscribe(response => {
-        this.getUserRoles().subscribe(response => {
-          let roles = [];
-          for (let role of response as any) {
-            roles.push(role["authority"]);
-          }
-          localStorage.setItem('roles', JSON.stringify(roles));
-          this.currentUserChange.next(true);
-          observer.next();
+        this.refreshUserRoles().subscribe(response => {
+          observer.next(true);
           observer.complete();
         })
+      })
+    })
+  }
+
+  refreshUserRoles() {
+    return new Observable<Boolean>(observer => {
+      this.getUserRoles().subscribe(response => {
+        let roles = [];
+        for (let role of response as any) {
+          roles.push(role["authority"]);
+        }
+        localStorage.setItem('roles', JSON.stringify(roles));
+        this.currentUserChange.next(true);
+        observer.next(true);
+        observer.complete();
       })
     })
   }
@@ -48,7 +57,7 @@ export class LoginService extends AppRestService<Responsable> {
     return new Observable<Boolean>(observer => {
       this.get(new HttpParams(), 'login/signout', "Vous avez été déconnecté").subscribe(response => {
         this.currentUserChange.next(false);
-        observer.next();
+        observer.next(true);
         observer.complete();
       })
     })
@@ -61,7 +70,7 @@ export class LoginService extends AppRestService<Responsable> {
   getCurrentUser(forceFetch: boolean = false, getFromCache: boolean = false): Observable<Responsable> {
     return new Observable<Responsable>(observer => {
       if (!forceFetch && (getFromCache || this.currentUser)) {
-        observer.next(this.currentUser);
+        observer.next(this.currentUser!);
         observer.complete();
       } else {
         this.get(new HttpParams(), "user", "", "", true).subscribe(response => {

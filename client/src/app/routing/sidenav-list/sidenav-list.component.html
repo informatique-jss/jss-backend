@@ -10,6 +10,10 @@
     [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/tiers' )>=0}">
     <mat-icon>group</mat-icon> <span>Tiers / Responsables</span>
   </a>
+  <a mat-list-item routerLink="/crm" *ngIf="canViewCrmModule()"
+    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/crm' )>=0}">
+    <mat-icon>how_to_reg</mat-icon> <span>CRM</span>
+  </a>
   <a mat-list-item routerLink="/confrere/null" *ngIf="canViewConfrereModule()"
     [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/confrere' )>=0}">
     <mat-icon>share</mat-icon> <span>Confreres</span>

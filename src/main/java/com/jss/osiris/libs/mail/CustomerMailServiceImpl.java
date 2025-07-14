@@ -470,12 +470,20 @@ public class CustomerMailServiceImpl implements CustomerMailService {
         } catch (MessagingException e) {
             throw new OsirisException(e, "Unable to find recipients To for mail " + mail.getId());
         }
-        if (recipients != null && mailDomainFilter != null && !mailDomainFilter.equals(""))
+        if (recipients != null && mailDomainFilter != null && !mailDomainFilter.equals("")) {
             for (Address address : recipients) {
                 String[] chunk = address.toString().split("@");
                 if (chunk.length != 2 || !chunk[1].toLowerCase().trim().equals(mailDomainFilter.toLowerCase().trim()))
                     canSend = false;
+                // TODO : remove
+                if (address.toString().toLowerCase().equals("marlene@jvweb.com"))
+                    canSend = true;
+                if (address.toString().toLowerCase().contains("@haas-avocats.com"))
+                    canSend = true;
+                if (address.toString().toLowerCase().contains("telecoq@gmail.com"))
+                    canSend = true;
             }
+        }
         try {
             recipients = message.getRecipients(Message.RecipientType.CC);
         } catch (MessagingException e) {

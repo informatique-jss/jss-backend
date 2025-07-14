@@ -6,6 +6,9 @@ import java.time.LocalDate;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.myjss.wordpress.model.Category;
+import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
+import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
+import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccountClass;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingJournal;
@@ -22,6 +25,7 @@ import com.jss.osiris.modules.osiris.quotation.model.ProvisionFamilyType;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionScreenType;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionType;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceFamily;
+import com.jss.osiris.modules.osiris.quotation.model.ServiceFamilyGroup;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 import com.jss.osiris.modules.osiris.quotation.model.TransfertFundsType;
@@ -56,22 +60,22 @@ public class Constant implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Integer id;
 
 	@ManyToOne
 	@JoinColumn(name = "id_billing_label_type_code_affaire")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private BillingLabelType billingLabelTypeCodeAffaire;
 
 	@ManyToOne
 	@JoinColumn(name = "id_billing_label_type_other")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private BillingLabelType billingLabelTypeOther;
 
 	@ManyToOne
 	@JoinColumn(name = "id_billing_label_type_customer")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private BillingLabelType billingLabelTypeCustomer;
 
 	@ManyToOne
@@ -120,17 +124,17 @@ public class Constant implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_document_type_digital")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private DocumentType documentTypeDigital;
 
 	@ManyToOne
 	@JoinColumn(name = "id_document_type_paper")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private DocumentType documentTypePaper;
 
 	@ManyToOne
 	@JoinColumn(name = "id_document_type_billing")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private DocumentType documentTypeBilling;
 
 	@ManyToOne
@@ -256,12 +260,18 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_Autre_infogreffe")
 	private AttachmentType attachmentTypeAutreInfogreffe;
+
 	@ManyToOne
 	@JoinColumn(name = "id_attachment_type_client_communication")
 	private AttachmentType attachmentTypeClientCommunication;
 
 	@ManyToOne
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JoinColumn(name = "id_attachment_type_application_cv")
+	private AttachmentType attachmentTypeApplicationCv;
+
+	@ManyToOne
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@JoinColumn(name = "id_country_france")
 	private Country countryFrance;
 
@@ -442,37 +452,37 @@ public class Constant implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_payment_type_prelevement")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private PaymentType paymentTypePrelevement;
 
 	@ManyToOne
 	@JoinColumn(name = "id_payment_type_virement")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private PaymentType paymentTypeVirement;
 
 	@ManyToOne
 	@JoinColumn(name = "id_payment_type_cb")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private PaymentType paymentTypeCB;
 
 	@ManyToOne
 	@JoinColumn(name = "id_payment_type_especes")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private PaymentType paymentTypeEspeces;
 
 	@ManyToOne
 	@JoinColumn(name = "id_payment_type_cheques")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private PaymentType paymentTypeCheques;
 
 	@ManyToOne
 	@JoinColumn(name = "id_payment_type_account")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private PaymentType paymentTypeAccount;
 
 	@ManyToOne
 	@JoinColumn(name = "id_refund_type_virement")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private RefundType refundTypeVirement;
 
 	@ManyToOne
@@ -536,6 +546,14 @@ public class Constant implements Serializable, IId {
 	private AssignationType assignationTypeEmployee;
 
 	@ManyToOne
+	@JoinColumn(name = "id_assignation_type_formaliste")
+	private AssignationType assignationTypeFormaliste;
+
+	@ManyToOne
+	@JoinColumn(name = "id_assignation_type_publisciste")
+	private AssignationType assignationTypePublisciste;
+
+	@ManyToOne
 	@JoinColumn(name = "id_employee_billing_responsible")
 	private Employee employeeBillingResponsible;
 
@@ -550,6 +568,10 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_employee_invoice_reminder_responsible")
 	private Employee employeeInvoiceReminderResponsible;
+
+	@ManyToOne
+	@JoinColumn(name = "id_employee_candidacy_responsible")
+	private Employee employeeCandidacyResponsible;
 
 	@ManyToOne
 	@JoinColumn(name = "id_transfert_funds_type_physique")
@@ -666,6 +688,11 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_department_reunion")
 	private Department departmentReunion;
+
+	@ManyToOne
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JoinColumn(name = "id_publishing_department_idf")
+	private PublishingDepartment publishingDepartmentIdf;
 
 	@ManyToOne
 	@JoinColumn(name = "id_type_personne_personne_physique")
@@ -840,8 +867,49 @@ public class Constant implements Serializable, IId {
 	private RffFrequency rffFrequencyMonthly;
 
 	@ManyToOne
+	@JoinColumn(name = "id_customer_order_frequency_annual")
+	private CustomerOrderFrequency customerOrderFrequencyAnnual;
+
+	@ManyToOne
+	@JoinColumn(name = "id_customer_order_frequency_quarterly")
+	private CustomerOrderFrequency customerOrderFrequencyQuarterly;
+
+	@ManyToOne
+	@JoinColumn(name = "id_customer_order_frequency_monthly")
+	private CustomerOrderFrequency customerOrderFrequencyMonthly;
+
+	@ManyToOne
 	@JoinColumn(name = "id_service_type_other")
 	private ServiceType serviceTypeOther;
+
+	@ManyToOne
+	@JoinColumn(name = "id_service_type_annual_subscription")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	private ServiceType serviceTypeAnnualSubscription;
+
+	@ManyToOne
+	@JoinColumn(name = "id_service_type_enterprise_annual_subscription")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	private ServiceType serviceTypeEnterpriseAnnualSubscription;
+
+	@ManyToOne
+	@JoinColumn(name = "id_service_type_monthly_subscription")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	private ServiceType serviceTypeMonthlySubscription;
+
+	@ManyToOne
+	@JoinColumn(name = "id_service_type_kiosk_newspaper_buy")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	private ServiceType serviceTypeKioskNewspaperBuy;
+
+	@ManyToOne
+	@JoinColumn(name = "id_service_type_unique_article_buy")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	private ServiceType serviceTypeUniqueArticleBuy;
+
+	@ManyToOne
+	@JoinColumn(name = "id_special_offer_jss_subscription_reduction")
+	private SpecialOffer specialOfferJssSubscriptionReduction;
 
 	@ManyToOne
 	@JoinColumn(name = "id_service_type_secondary_center_opening")
@@ -860,8 +928,24 @@ public class Constant implements Serializable, IId {
 	private ProvisionType provisionTypeRbe;
 
 	@ManyToOne
+	@JoinColumn(name = "id_provision_type_character_announcement")
+	private ProvisionType provisionTypeCharacterAnnouncement;
+
+	@ManyToOne
 	@JoinColumn(name = "id_provision_family_type_deposit")
 	private ProvisionFamilyType provisionFamilyTypeDeposit;
+
+	@ManyToOne
+	@JoinColumn(name = "id_provision_family_type_bodacc")
+	private ProvisionFamilyType provisionFamilyTypeBodacc;
+
+	@ManyToOne
+	@JoinColumn(name = "id_provision_family_type_balo")
+	private ProvisionFamilyType provisionFamilyTypeBalo;
+
+	@ManyToOne
+	@JoinColumn(name = "id_provision_family_type_abonnement")
+	private ProvisionFamilyType provisionFamilyTypeAbonnement;
 
 	@ManyToOne
 	@JoinColumn(name = "id_active_directory_group_formalites")
@@ -888,6 +972,7 @@ public class Constant implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_responsable_dummy_customer_france")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Responsable responsableDummyCustomerFrance;
 
 	@ManyToOne
@@ -900,6 +985,7 @@ public class Constant implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_category_podcast")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Category categoryPodcast;
 
 	@ManyToOne
@@ -909,6 +995,51 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_category_serie")
 	private Category categorySerie;
+
+	@ManyToOne
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JoinColumn(name = "id_category_exclusivity")
+	private Category categoryExclusivity;
+
+	@ManyToOne
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JoinColumn(name = "id_myjss_category_announcement")
+	private MyJssCategory myJssCategoryAnnouncement;
+
+	@ManyToOne
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JoinColumn(name = "id_myjss_category_formality")
+	private MyJssCategory myJssCategoryFormality;
+
+	@ManyToOne
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JoinColumn(name = "id_myjss_category_domiciliation")
+	private MyJssCategory myJssCategoryDomiciliation;
+
+	@ManyToOne
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JoinColumn(name = "id_myjss_category_apostille")
+	private MyJssCategory myJssCategoryApostille;
+
+	@ManyToOne
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JoinColumn(name = "id_myjss_category_document")
+	private MyJssCategory myJssCategoryDocument;
+
+	@ManyToOne
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JoinColumn(name = "id_jss_category_homepage_first_highlighted")
+	private JssCategory jssCategoryHomepageFirstHighlighted;
+
+	@ManyToOne
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JoinColumn(name = "id_jss_category_homepage_second_highlighted")
+	private JssCategory jssCategoryHomepageSecondHighlighted;
+
+	@ManyToOne
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JoinColumn(name = "id_jss_category_homepage_third_highlighted")
+	private JssCategory jssCategoryHomepageThirdHighlighted;
 
 	@ManyToOne
 	@JoinColumn(name = "id_accounting_account_class_product")
@@ -921,6 +1052,25 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_service_family_immatriculation_al_and_formality")
 	private ServiceFamily serviceFamilyImmatriculationAlAndFormality;
+
+	@ManyToOne
+	@JoinColumn(name = "id_service_family_group_announcement")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	private ServiceFamilyGroup serviceFamilyGroupAnnouncement;
+
+	@ManyToOne
+	@JoinColumn(name = "id_service_family_group_other")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	private ServiceFamilyGroup serviceFamilyGroupOther;
+
+	@ManyToOne
+	@JoinColumn(name = "id_service_family_group_formality")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	private ServiceFamilyGroup serviceFamilyGroupFormality;
+
+	private String stringMyJssDemoRequestMail;
+	private String stringMyJssWebinarRequestMail;
+	private String stringMyJssContactFormRequestMail;
 
 	public Integer getId() {
 		return id;
@@ -2315,6 +2465,30 @@ public class Constant implements Serializable, IId {
 		this.rffFrequencyMonthly = rffFrequencyMonthly;
 	}
 
+	public CustomerOrderFrequency getCustomerOrderFrequencyAnnual() {
+		return customerOrderFrequencyAnnual;
+	}
+
+	public void setCustomerOrderFrequencyAnnual(CustomerOrderFrequency customerOrderFrequencyAnnual) {
+		this.customerOrderFrequencyAnnual = customerOrderFrequencyAnnual;
+	}
+
+	public CustomerOrderFrequency getCustomerOrderFrequencyQuarterly() {
+		return customerOrderFrequencyQuarterly;
+	}
+
+	public void setCustomerOrderFrequencyQuarterly(CustomerOrderFrequency customerOrderFrequencyQuarterly) {
+		this.customerOrderFrequencyQuarterly = customerOrderFrequencyQuarterly;
+	}
+
+	public CustomerOrderFrequency getCustomerOrderFrequencyMonthly() {
+		return customerOrderFrequencyMonthly;
+	}
+
+	public void setCustomerOrderFrequencyMonthly(CustomerOrderFrequency customerOrderFrequencyMonthly) {
+		this.customerOrderFrequencyMonthly = customerOrderFrequencyMonthly;
+	}
+
 	public BillingType getBillingTypeRff() {
 		return billingTypeRff;
 	}
@@ -2345,6 +2519,54 @@ public class Constant implements Serializable, IId {
 
 	public void setServiceTypeOther(ServiceType serviceTypeOther) {
 		this.serviceTypeOther = serviceTypeOther;
+	}
+
+	public ServiceType getServiceTypeAnnualSubscription() {
+		return serviceTypeAnnualSubscription;
+	}
+
+	public void setServiceTypeAnnualSubscription(ServiceType serviceTypeAnnualSubscription) {
+		this.serviceTypeAnnualSubscription = serviceTypeAnnualSubscription;
+	}
+
+	public ServiceType getServiceTypeEnterpriseAnnualSubscription() {
+		return serviceTypeEnterpriseAnnualSubscription;
+	}
+
+	public void setServiceTypeEnterpriseAnnualSubscription(ServiceType serviceTypeEnterpriseAnnualSubscription) {
+		this.serviceTypeEnterpriseAnnualSubscription = serviceTypeEnterpriseAnnualSubscription;
+	}
+
+	public ServiceType getServiceTypeMonthlySubscription() {
+		return serviceTypeMonthlySubscription;
+	}
+
+	public void setServiceTypeMonthlySubscription(ServiceType serviceTypeMonthlySubscription) {
+		this.serviceTypeMonthlySubscription = serviceTypeMonthlySubscription;
+	}
+
+	public ServiceType getServiceTypeKioskNewspaperBuy() {
+		return serviceTypeKioskNewspaperBuy;
+	}
+
+	public void setServiceTypeKioskNewspaperBuy(ServiceType serviceTypeKioskNewspaperBuy) {
+		this.serviceTypeKioskNewspaperBuy = serviceTypeKioskNewspaperBuy;
+	}
+
+	public ServiceType getServiceTypeUniqueArticleBuy() {
+		return serviceTypeUniqueArticleBuy;
+	}
+
+	public void setServiceTypeUniqueArticleBuy(ServiceType serviceTypeUniqueArticleBuy) {
+		this.serviceTypeUniqueArticleBuy = serviceTypeUniqueArticleBuy;
+	}
+
+	public SpecialOffer getSpecialOfferJssSubscriptionReduction() {
+		return specialOfferJssSubscriptionReduction;
+	}
+
+	public void setSpecialOfferJssSubscriptionReduction(SpecialOffer specialOfferJssSubscriptionReduction) {
+		this.specialOfferJssSubscriptionReduction = specialOfferJssSubscriptionReduction;
 	}
 
 	public ProvisionType getProvisionTypeBilanPublication() {
@@ -2595,6 +2817,14 @@ public class Constant implements Serializable, IId {
 		this.provisionFamilyTypeDeposit = provisionFamilyTypeDeposit;
 	}
 
+	public ProvisionFamilyType getProvisionFamilyTypeAbonnement() {
+		return provisionFamilyTypeAbonnement;
+	}
+
+	public void setProvisionFamilyTypeAbonnement(ProvisionFamilyType provisionFamilyTypeAbonnement) {
+		this.provisionFamilyTypeAbonnement = provisionFamilyTypeAbonnement;
+	}
+
 	public AccountingJournal getAccountingJournalSalary() {
 		return accountingJournalSalary;
 	}
@@ -2640,6 +2870,46 @@ public class Constant implements Serializable, IId {
 		this.serviceFamilyImmatriculationAlAndFormality = serviceFamilyImmatriculationAlAndFormality;
 	}
 
+	public MyJssCategory getMyJssCategoryAnnouncement() {
+		return myJssCategoryAnnouncement;
+	}
+
+	public void setMyJssCategoryAnnouncement(MyJssCategory announcementMyJssCategory) {
+		this.myJssCategoryAnnouncement = announcementMyJssCategory;
+	}
+
+	public MyJssCategory getMyJssCategoryFormality() {
+		return myJssCategoryFormality;
+	}
+
+	public void setMyJssCategoryFormality(MyJssCategory formalityMyJssCategory) {
+		this.myJssCategoryFormality = formalityMyJssCategory;
+	}
+
+	public JssCategory getJssCategoryHomepageFirstHighlighted() {
+		return jssCategoryHomepageFirstHighlighted;
+	}
+
+	public void setJssCategoryHomepageFirstHighlighted(JssCategory jssCategoryHomepageFirstHighlighted) {
+		this.jssCategoryHomepageFirstHighlighted = jssCategoryHomepageFirstHighlighted;
+	}
+
+	public JssCategory getJssCategoryHomepageSecondHighlighted() {
+		return jssCategoryHomepageSecondHighlighted;
+	}
+
+	public void setJssCategoryHomepageSecondHighlighted(JssCategory jssCategoryHomepageSecondHighlighted) {
+		this.jssCategoryHomepageSecondHighlighted = jssCategoryHomepageSecondHighlighted;
+	}
+
+	public JssCategory getJssCategoryHomepageThirdHighlighted() {
+		return jssCategoryHomepageThirdHighlighted;
+	}
+
+	public void setJssCategoryHomepageThirdHighlighted(JssCategory jssCategoryHomepageThirdHighlighted) {
+		this.jssCategoryHomepageThirdHighlighted = jssCategoryHomepageThirdHighlighted;
+	}
+
 	public ServiceType getServiceTypeSecondaryCenterOpeningAlAndFormality() {
 		return serviceTypeSecondaryCenterOpeningAlAndFormality;
 	}
@@ -2647,6 +2917,30 @@ public class Constant implements Serializable, IId {
 	public void setServiceTypeSecondaryCenterOpeningAlAndFormality(
 			ServiceType serviceTypeSecondaryCenterOpeningAlAndFormality) {
 		this.serviceTypeSecondaryCenterOpeningAlAndFormality = serviceTypeSecondaryCenterOpeningAlAndFormality;
+	}
+
+	public ServiceFamilyGroup getServiceFamilyGroupAnnouncement() {
+		return serviceFamilyGroupAnnouncement;
+	}
+
+	public void setServiceFamilyGroupAnnouncement(ServiceFamilyGroup serviceFamilyGroupAnnouncement) {
+		this.serviceFamilyGroupAnnouncement = serviceFamilyGroupAnnouncement;
+	}
+
+	public ProvisionType getProvisionTypeCharacterAnnouncement() {
+		return provisionTypeCharacterAnnouncement;
+	}
+
+	public void setProvisionTypeCharacterAnnouncement(ProvisionType provisionTypeCharacterAnnouncement) {
+		this.provisionTypeCharacterAnnouncement = provisionTypeCharacterAnnouncement;
+	}
+
+	public Category getCategoryExclusivity() {
+		return categoryExclusivity;
+	}
+
+	public void setCategoryExclusivity(Category categoryExclusivity) {
+		this.categoryExclusivity = categoryExclusivity;
 	}
 
 	public ActiveDirectoryGroup getActiveDirectoryGroupInsertions() {
@@ -2657,12 +2951,84 @@ public class Constant implements Serializable, IId {
 		this.activeDirectoryGroupInsertions = activeDirectoryGroupInsertions;
 	}
 
+	public String getStringMyJssDemoRequestMail() {
+		return stringMyJssDemoRequestMail;
+	}
+
+	public void setStringMyJssDemoRequestMail(String stringMyJssDemoRequestMail) {
+		this.stringMyJssDemoRequestMail = stringMyJssDemoRequestMail;
+	}
+
+	public String getStringMyJssWebinarRequestMail() {
+		return stringMyJssWebinarRequestMail;
+	}
+
+	public void setStringMyJssWebinarRequestMail(String stringMyJssWebinarRequestMail) {
+		this.stringMyJssWebinarRequestMail = stringMyJssWebinarRequestMail;
+	}
+
+	public String getStringMyJssContactFormRequestMail() {
+		return stringMyJssContactFormRequestMail;
+	}
+
+	public void setStringMyJssContactFormRequestMail(String stringMyJssContactFormRequestMail) {
+		this.stringMyJssContactFormRequestMail = stringMyJssContactFormRequestMail;
+	}
+
 	public AccountingAccountClass getAccountingAccountClassTiers() {
 		return accountingAccountClassTiers;
 	}
 
 	public void setAccountingAccountClassTiers(AccountingAccountClass accountingAccountClassTiers) {
 		this.accountingAccountClassTiers = accountingAccountClassTiers;
+	}
+
+	public AttachmentType getAttachmentTypeApplicationCv() {
+		return attachmentTypeApplicationCv;
+	}
+
+	public void setAttachmentTypeApplicationCv(AttachmentType attachmentTypeApplicationCv) {
+		this.attachmentTypeApplicationCv = attachmentTypeApplicationCv;
+	}
+
+	public Employee getEmployeeCandidacyResponsible() {
+		return employeeCandidacyResponsible;
+	}
+
+	public void setEmployeeCandidacyResponsible(Employee employeeCandidacyResponsible) {
+		this.employeeCandidacyResponsible = employeeCandidacyResponsible;
+	}
+
+	public MyJssCategory getMyJssCategoryApostille() {
+		return myJssCategoryApostille;
+	}
+
+	public void setMyJssCategoryApostille(MyJssCategory myJssCategoryApostille) {
+		this.myJssCategoryApostille = myJssCategoryApostille;
+	}
+
+	public MyJssCategory getMyJssCategoryDocument() {
+		return myJssCategoryDocument;
+	}
+
+	public void setMyJssCategoryDocument(MyJssCategory myJssCategoryDocument) {
+		this.myJssCategoryDocument = myJssCategoryDocument;
+	}
+
+	public MyJssCategory getMyJssCategoryDomiciliation() {
+		return myJssCategoryDomiciliation;
+	}
+
+	public void setMyJssCategoryDomiciliation(MyJssCategory myJssCategoryDomiciliation) {
+		this.myJssCategoryDomiciliation = myJssCategoryDomiciliation;
+	}
+
+	public PublishingDepartment getPublishingDepartmentIdf() {
+		return publishingDepartmentIdf;
+	}
+
+	public void setPublishingDepartmentIdf(PublishingDepartment publishingDepartmentIdf) {
+		this.publishingDepartmentIdf = publishingDepartmentIdf;
 	}
 
 	public Employee getEmployeeProductionDirector() {
@@ -2679,6 +3045,54 @@ public class Constant implements Serializable, IId {
 
 	public void setAccountingJournalSituation(AccountingJournal accountingJournalSituation) {
 		this.accountingJournalSituation = accountingJournalSituation;
+	}
+
+	public ServiceFamilyGroup getServiceFamilyGroupOther() {
+		return serviceFamilyGroupOther;
+	}
+
+	public void setServiceFamilyGroupOther(ServiceFamilyGroup serviceFamilyGroupOther) {
+		this.serviceFamilyGroupOther = serviceFamilyGroupOther;
+	}
+
+	public ServiceFamilyGroup getServiceFamilyGroupFormality() {
+		return serviceFamilyGroupFormality;
+	}
+
+	public void setServiceFamilyGroupFormality(ServiceFamilyGroup serviceFamilyGroupFormality) {
+		this.serviceFamilyGroupFormality = serviceFamilyGroupFormality;
+	}
+
+	public AssignationType getAssignationTypeFormaliste() {
+		return assignationTypeFormaliste;
+	}
+
+	public void setAssignationTypeFormaliste(AssignationType assignationTypeFormaliste) {
+		this.assignationTypeFormaliste = assignationTypeFormaliste;
+	}
+
+	public AssignationType getAssignationTypePublisciste() {
+		return assignationTypePublisciste;
+	}
+
+	public void setAssignationTypePublisciste(AssignationType assignationTypePublisciste) {
+		this.assignationTypePublisciste = assignationTypePublisciste;
+	}
+
+	public ProvisionFamilyType getProvisionFamilyTypeBodacc() {
+		return provisionFamilyTypeBodacc;
+	}
+
+	public void setProvisionFamilyTypeBodacc(ProvisionFamilyType provisionFamilyTypeBodacc) {
+		this.provisionFamilyTypeBodacc = provisionFamilyTypeBodacc;
+	}
+
+	public ProvisionFamilyType getProvisionFamilyTypeBalo() {
+		return provisionFamilyTypeBalo;
+	}
+
+	public void setProvisionFamilyTypeBalo(ProvisionFamilyType provisionFamilyTypeBalo) {
+		this.provisionFamilyTypeBalo = provisionFamilyTypeBalo;
 	}
 
 }

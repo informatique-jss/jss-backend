@@ -12,5 +12,7 @@ public interface UploadedFileService {
 
     public UploadedFile createUploadedFile(String filename, String absoluteFilePath) throws OsirisException;
 
+    public Boolean definitivelyDeleteUploadedFile(UploadedFile uploadedFile);
+
     public void deleteUploadedFile(UploadedFile uploadedFile);
 }

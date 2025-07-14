@@ -1,0 +1,14 @@
+<div class="d-flex flex-column flex-md-row">
+  <button type="button" (click)="openRoute($event, orderActionRoute)" class="btn me-md-3 mb-2 mb-md-0 rounded-1"
+    [ngClass]="isLightButtons ? 'btn-light': 'btn-secondary'">{{orderActionLabel}}
+    <i class="ai-arrow-right ms-2"></i>
+  </button>
+  <button type="button" (click)="openRoute($event, quotationActionRoute)" class="btn mb-2 mb-md-0 rounded-1"
+    [ngClass]="isLightButtons ? 'btn-outline-light': 'btn-outline-dark'">{{quotationActionLabel}}
+    <i class="ai-arrow-right ms-2"></i>
+  </button>
+</div>
+<div class="mt-4" *ngIf="linkLabel && linkLabel.length>0">
+  <a (click)="openRouteForLink($event, linkRoute)"
+    [ngClass]="isLightButtons ? 'text-white': 'text-blue'">{{linkLabel}}</a>
+</div>

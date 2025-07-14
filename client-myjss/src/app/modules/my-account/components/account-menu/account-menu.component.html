@@ -1,31 +1,29 @@
 <div class="position-lg-sticky top-0" *ngIf="currentUser">
   <div class="d-none d-lg-block" style="padding-top: 105px;"></div>
   <div class="offcanvas-lg offcanvas-start" id="sidebarAccount">
-    <button class="btn-close position-absolute top-0 end-0 mt-3 me-3 d-lg-none" type="button"
-      data-bs-dismiss="offcanvas" data-bs-target="#sidebarAccount" aria-label="Close"></button>
-    <div class="offcanvas-body">
+    <div c lass="offcanvas-body">
       <div class="pb-2 pb-lg-0 mb-4 mb-lg-5">
         <avatar class="avatar-select" [user]="currentUser" [size]="70" [centerAvatar]="false"></avatar>
         <h3 class="h5 mb-1">{{capitalizeName(currentUser.firstname + " " +currentUser.lastname)}}</h3>
         <p class="fs-sm text-body-secondary mb-0">{{currentUser.mail.mail}}</p>
       </div>
       <nav class="nav flex-column pb-2 pb-lg-4 mb-3">
-        <h4 class="fs-xs fw-medium text-body-secondary text-uppercase pb-1 mb-2">Mon compte</h4>
+        <h4 class="fs-xs fw-medium text-body-secondary text-uppercase pb-1 mb-2">Tableau de bord</h4>
         <ng-container *ngFor="let menuItem of menuItems">
-          <a class="nav-link fw-semibold py-2 px-0"
+          <a class="nav-link fw-semibold py-2 px-0 nav-link-active"
             [ngClass]="{'active':  getCurrentRoute().indexOf(menuItem.route)>=0}" [routerLink]="menuItem.route"
-            *ngIf="menuItem.mainItem==MAIN_ITEM_ACCOUNT">
+            *ngIf="menuItem.mainItem==MAIN_ITEM_DASHBOARD">
             <i class="fs-5 opacity-60 me-2" [ngClass]="menuItem.iconClass"></i>
             {{menuItem.label}}
           </a>
         </ng-container>
       </nav>
       <nav class="nav flex-column pb-2 pb-lg-4 mb-1">
-        <h4 class="fs-xs fw-medium text-body-secondary text-uppercase pb-1 mb-2">Tableau de bord</h4>
+        <h4 class="fs-xs fw-medium text-body-secondary text-uppercase pb-1 mb-2">Mon compte</h4>
         <ng-container *ngFor="let menuItem of menuItems">
-          <a class="nav-link fw-semibold py-2 px-0 "
+          <a class="nav-link fw-semibold py-2 px-0 nav-link-active "
             [ngClass]="{'active':  getCurrentRoute().indexOf(menuItem.route)>=0}" [routerLink]="menuItem.route"
-            *ngIf="menuItem.mainItem==MAIN_ITEM_DASHBOARD">
+            *ngIf="menuItem.mainItem==MAIN_ITEM_ACCOUNT">
             <i class="fs-5 opacity-60 me-2" [ngClass]="menuItem.iconClass"></i>
             {{menuItem.label}}
           </a>

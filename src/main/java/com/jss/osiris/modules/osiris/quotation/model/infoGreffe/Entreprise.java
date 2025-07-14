@@ -1,5 +1,7 @@
 package com.jss.osiris.modules.osiris.quotation.model.infoGreffe;
 
+import java.io.Serializable;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -8,7 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 @Entity(name = "InfogreffeEntreprise")
-public class Entreprise {
+public class Entreprise implements Serializable {
 
     @Id
     private String siren;

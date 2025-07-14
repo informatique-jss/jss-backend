@@ -58,6 +58,13 @@
           </tr>
           <tr>
             <td>
+              <generic-toggle [(model)]="selectedEntity.isDocumentDateRequired"
+                label="Demander la date du document au client ?" [form]="entityForm"
+                propertyName="isDocumentDateRequired"></generic-toggle>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <generic-toggle [(model)]="selectedEntity.isHiddenFromUser" label="Cacher ce type à l'utilisateur ?"
                 [form]="entityForm" propertyName="isHiddenFromUser"></generic-toggle>
             </td>

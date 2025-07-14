@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.quotation.model.infoGreffe;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -16,7 +17,7 @@ import jakarta.persistence.SequenceGenerator;
 
 @Entity
 @DoNotAudit
-public class MontantFormalite {
+public class MontantFormalite implements Serializable {
     @Id
     @SequenceGenerator(name = "montant_formalite_infogreffe_sequence", sequenceName = "montant_formalite_infogreffe_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "montant_formalite_infogreffe_sequence")

@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  backendUrl: "http://server.jss.fr/",
-  frontendUrl: "http://jss.fr/",
-  frontendMyJssUrl: "http://my.jss.fr/"
+  backendUrl: "https://server.jss.fr/",
+  frontendUrl: "https://beta.jss.fr/",
+  frontendMyJssUrl: "https://my.jss.fr"
 };

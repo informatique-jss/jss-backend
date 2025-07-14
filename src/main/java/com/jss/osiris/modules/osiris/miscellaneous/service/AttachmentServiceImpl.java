@@ -3,7 +3,9 @@ package com.jss.osiris.modules.osiris.miscellaneous.service;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -29,6 +31,8 @@ import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingRecordService;
+import com.jss.osiris.modules.osiris.crm.model.Candidacy;
+import com.jss.osiris.modules.osiris.crm.service.CandidacyService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
@@ -138,6 +142,9 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Autowired
     EmployeeService employeeService;
 
+    @Autowired
+    CandidacyService candidacyService;
+
     @Override
     public List<Attachment> getAttachments() {
         return IterableUtils.toList(attachmentRepository.findAll());
@@ -200,9 +207,7 @@ public class AttachmentServiceImpl implements AttachmentService {
             if (attachments != null && attachments.size() > 0) {
                 for (Attachment attachment : attachments) {
                     if (attachment.getAttachmentType().getCode().equals(attachmentType.getCode())) {
-                        storageFileService.deleteFile(attachment.getUploadedFile().getPath());
-                        uploadedFileService.deleteUploadedFile(attachment.getUploadedFile());
-                        deleteAttachment(attachment);
+                        definitivelyDeleteAttachment(attachment);
                     }
                 }
             }
@@ -243,6 +248,12 @@ public class AttachmentServiceImpl implements AttachmentService {
             if (quotation == null)
                 return new ArrayList<Attachment>();
             attachment.setQuotation(quotation);
+        } else if (entityType.equals(Candidacy.class.getSimpleName())) {
+            filename = filename + "_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+            Candidacy candidacy = candidacyService.getCandidacy(idEntity);
+            if (candidacy == null)
+                return new ArrayList<Attachment>();
+            attachment.setCandidacy(candidacy);
         } else if (entityType.equals(TypeDocument.class.getSimpleName())) {
             TypeDocument typeDocumentAttachment = typeDocumentService.getTypeDocumentByCode(codeEntity);
             if (typeDocumentAttachment == null)
@@ -347,17 +358,43 @@ public class AttachmentServiceImpl implements AttachmentService {
         return getAttachmentForEntityType(entityType, idEntity, codeEntity);
     }
 
-    @Override
-    public void deleteAttachment(Attachment attachment) {
+    private void deleteAttachment(Attachment attachment) {
         if (attachment != null) {
             attachmentRepository.delete(attachment);
         }
     }
 
     @Override
+    @Transactional
+    public Boolean modifyAttachmentDate(LocalDate attachmentDate, Integer idAttachment) {
+
+        Attachment attachmentToModify = attachmentRepository.findById(idAttachment).get();
+
+        if (attachmentToModify != null && attachmentDate != null) {
+            attachmentToModify.setAttachmentDate(attachmentDate);
+            attachmentRepository.save(attachmentToModify);
+            return true;
+        }
+
+        return false;
+    }
+
+    public Boolean definitivelyDeleteAttachment(Attachment attachment) {
+        Boolean isDelete = uploadedFileService.definitivelyDeleteUploadedFile(attachment.getUploadedFile());
+        if (isDelete) {
+            deleteAttachment(attachment);
+            uploadedFileService.deleteUploadedFile(attachment.getUploadedFile());
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public Attachment addOrUpdateAttachment(Attachment attachment) {
         if (attachment != null && attachment.getIsAlreadySent() == null)
             attachment.setIsAlreadySent(false);
+        if (attachment != null && attachment.getIsDisabled() == null)
+            attachment.setIsDisabled(false);
 
         return attachmentRepository.save(attachment);
     }
@@ -397,6 +434,8 @@ public class AttachmentServiceImpl implements AttachmentService {
             attachments = attachmentRepository.findByTypeDocumentCode(codeEntity);
         } else if (entityType.equals(MissingAttachmentQuery.class.getSimpleName())) {
             attachments = attachmentRepository.findByMissingAttachmentQuery(idEntity);
+        } else if (entityType.equals(Candidacy.class.getSimpleName())) {
+            attachments = attachmentRepository.findByCandidacyId(idEntity);
         }
         return attachments;
     }

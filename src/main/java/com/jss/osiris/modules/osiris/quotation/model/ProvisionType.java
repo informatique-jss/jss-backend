@@ -31,6 +31,7 @@ public class ProvisionType implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "provision_type_sequence", sequenceName = "provision_type_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "provision_type_sequence")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Integer id;
 
 	@Column(nullable = false, length = 255)
@@ -52,6 +53,7 @@ public class ProvisionType implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_provision_screen_type")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private ProvisionScreenType provisionScreenType;
 
 	private Boolean isDisplayActeDepositScreen;
@@ -76,6 +78,8 @@ public class ProvisionType implements Serializable, IId {
 	private CustomerOrderFrequency recurringFrequency;
 
 	private Boolean isRecurring;
+
+	private Boolean isMergeable;
 
 	public Integer getId() {
 		return id;
@@ -188,6 +192,14 @@ public class ProvisionType implements Serializable, IId {
 
 	public void setIsRecurring(Boolean isRecurring) {
 		this.isRecurring = isRecurring;
+	}
+
+	public Boolean getIsMergeable() {
+		return isMergeable;
+	}
+
+	public void setIsMergeable(Boolean isMergeable) {
+		this.isMergeable = isMergeable;
 	}
 
 }

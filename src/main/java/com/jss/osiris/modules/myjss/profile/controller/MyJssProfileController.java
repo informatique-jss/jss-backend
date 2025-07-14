@@ -12,11 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -77,7 +73,7 @@ public class MyJssProfileController {
 	private int floodFlushDelayMinute = 1;
 
 	@GetMapping(inputEntryPoint + "/user")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<Responsable> getMyUsername() throws OsirisClientMessageException {
 		return new ResponseEntity<Responsable>(employeeService.getCurrentMyJssUser(), HttpStatus.OK);
 	}
@@ -89,12 +85,21 @@ public class MyJssProfileController {
 		if (isFlood != null)
 			return isFlood;
 
-		Responsable responsable = responsableService.getResponsableByMail(mail);
+		Responsable responsable;
+		String overrideMail = null;
+
+		if (mail.contains("#") && mail.endsWith("@jss.fr")) {
+			String[] mailToken = mail.split("#");
+			responsable = responsableService.getResponsable(Integer.parseInt(mailToken[0]));
+			overrideMail = mailToken[1];
+		} else {
+			responsable = responsableService.getResponsableByMail(mail);
+		}
 
 		if (responsable == null)
 			return new ResponseEntity<String>("", HttpStatus.OK);
 
-		employeeService.sendTokenToResponsable(responsable);
+		employeeService.sendTokenToResponsable(responsable, overrideMail);
 		return new ResponseEntity<String>("", HttpStatus.OK);
 	}
 
@@ -141,17 +146,7 @@ public class MyJssProfileController {
 	}
 
 	public void authenticateUser(Responsable responsable, HttpServletRequest request) {
-		Authentication authentication = new UsernamePasswordAuthenticationToken(responsable.getId(), null,
-				AuthorityUtils.createAuthorityList(ActiveDirectoryHelper.MYJSS_USER_GROUP));
-
-		SecurityContext securityContext = SecurityContextHolder.getContext();
-		securityContext.setAuthentication(authentication);
-
-		HttpSession session = request.getSession(true);
-		session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
-
-		responsable.setLoginTokenExpirationDateTime(LocalDateTime.now().minusSeconds(1));
-		responsableService.addOrUpdateResponsable(responsable);
+		userScopeService.authenticateUser(responsable, request);
 	}
 
 	@GetMapping(inputEntryPoint + "/login/roles")
@@ -161,13 +156,13 @@ public class MyJssProfileController {
 	}
 
 	@GetMapping(inputEntryPoint + "/user/scope")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<List<UserScope>> getUserScope() {
 		return new ResponseEntity<List<UserScope>>(userScopeService.getUserScope(), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/user/scope/possible")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<List<Responsable>> getPotentialUserScope() {
 		return new ResponseEntity<List<Responsable>>(userScopeService.getPotentialUserScope(), HttpStatus.OK);
 	}
@@ -205,7 +200,7 @@ public class MyJssProfileController {
 	}
 
 	@GetMapping(inputEntryPoint + "/search/global")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<IndexEntity>> globalSearchForEntity(@RequestParam String searchText)
 			throws OsirisException {
 		if (searchText != null && searchText.length() > 2)
@@ -215,7 +210,7 @@ public class MyJssProfileController {
 	}
 
 	@GetMapping(inputEntryPoint + "/responsable")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<Responsable> getResponsable(@RequestParam Integer idResponsable)
 			throws OsirisClientMessageException {
 		Responsable responsable = responsableService.getResponsable(idResponsable);

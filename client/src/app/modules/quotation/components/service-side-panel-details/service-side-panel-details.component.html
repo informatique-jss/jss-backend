@@ -4,9 +4,6 @@
       {{getAffaireFromAssoAffaireOrder(service.assoAffaireOrder)}}
     </mat-panel-title>
     <mat-panel-description>
-      <avatar-chip *ngIf="service.assoAffaireOrder.assignedTo" [employee]="service.assoAffaireOrder.assignedTo"
-        (onChangeAssigne)="updateAssignedToForAffaire($event,service.assoAffaireOrder)">
-      </avatar-chip>
       <mat-icon color="accent" matTooltip="Ajouter une notification sur cette affaire"
         (click)="addNewNotificationOnAffaire(service.assoAffaireOrder.affaire);$event.stopPropagation();"
         [matBadge]="getNotificationForAffaire(service.assoAffaireOrder.affaire).length"
@@ -23,17 +20,11 @@
     </mat-panel-description>
   </mat-expansion-panel-header>
   <add-affaire [affaire]="service.assoAffaireOrder.affaire" [editMode]="false"></add-affaire>
-  <div *ngIf="service.assoAffaireOrder && service.assoAffaireOrder.id ">
-    <autocomplete-employee [(model)]="service.assoAffaireOrder.assignedTo" [form]="serviceForm"
-      propertyName="assignedTo" [isMandatory]="true" [isDisabled]="false" label="Affaire assignée à"
-      (onOptionSelected)="updateAssignedToForAffaire($event,service.assoAffaireOrder)">
-    </autocomplete-employee>
-  </div>
 </mat-expansion-panel>
 <mat-expansion-panel *ngIf="service" [expanded]="isExpanded">
   <mat-expansion-panel-header>
     <mat-panel-title>
-      Détails du service {{service.customLabel}}
+      Détails du service {{service.serviceLabelToDisplay}}
     </mat-panel-title>
     <mat-panel-description>
       <mat-icon *ngIf="service.hasMissingInformations" color="warn"

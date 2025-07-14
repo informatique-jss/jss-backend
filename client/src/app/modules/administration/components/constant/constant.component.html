@@ -412,6 +412,15 @@
           </tr>
           <tr>
             <td>
+              <select-attachment-type [(model)]="constant.attachmentTypeApplicationCv"
+                label="Type de pièce-jointe - candidature CV" [form]="constantForm"
+                propertyName="attachmentTypeApplicationCv" [isMandatory]="true" [isDisabled]="!editMode"
+                [byPassAttachmentHiddenFilter]="true">
+              </select-attachment-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <autocomplete-country [(model)]="constant.countryFrance" [form]="constantForm" label="Pays - France"
                 propertyName="countryFrance" [isMandatory]="true" [isDisabled]="!editMode"></autocomplete-country>
             </td>
@@ -1003,6 +1012,22 @@
             </td>
           </tr>
           <tr>
+            <td>
+              <select-assignation-type [(model)]="constant.assignationTypePublisciste"
+                label="Assignation par défaut - Publisciste" [form]="constantForm"
+                propertyName="assignationTypePublisciste" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-assignation-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-assignation-type [(model)]="constant.assignationTypeFormaliste"
+                label="Assignation par défaut - Formaliste" [form]="constantForm"
+                propertyName="assignationTypeFormaliste" [isMandatory]="true" [isDisabled]="!editMode">
+              </select-assignation-type>
+            </td>
+          </tr>
+          <tr>
           <tr>
             <td>
               <select-customer-order-origin [(model)]="constant.customerOrderOriginWebSite"
@@ -1060,6 +1085,13 @@
               <autocomplete-employee [(model)]="constant.employeeInvoiceReminderResponsible" [form]="constantForm"
                 propertyName="employeeInvoiceReminderResponsible" [isMandatory]="true" [isDisabled]="!editMode"
                 label="Employé Responsable du recouvrement"></autocomplete-employee>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-employee [(model)]="constant.employeeCandidacyResponsible" [form]="constantForm"
+                propertyName="employeeCandidacyResponsible" [isMandatory]="true" [isDisabled]="!editMode"
+                label="Employé Responsable des recrutements"></autocomplete-employee>
             </td>
           </tr>
           <tr>
@@ -1273,6 +1305,14 @@
               <select-department [(model)]="constant.departmentReunion" label="Département - Réunion"
                 [form]="constantForm" propertyName="departmentReunion" [isMandatory]="true" [isDisabled]="!editMode">
               </select-department>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-publishing-department [(model)]="constant.publishingDepartmentIdf" label="Région - Ile de France"
+                [form]="constantForm" propertyName="publishingDepartmentIdf" [isMandatory]="true"
+                [isDisabled]="!editMode">
+              </select-publishing-department>
             </td>
           </tr>
           <tr>
@@ -1554,9 +1594,78 @@
           </tr>
           <tr>
             <td>
+              <select-customer-order-frequency [(model)]="constant.customerOrderFrequencyAnnual"
+                label="Périodicité de la commande - Annuelle" [form]="constantForm"
+                propertyName="customerOrderFrequencyAnnual " [isMandatory]="true"
+                [isDisabled]="!editMode"></select-customer-order-frequency>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-customer-order-frequency [(model)]="constant.customerOrderFrequencyQuarterly"
+                label="Périodicité de la commande - Trimestiel" [form]="constantForm"
+                propertyName="customerOrderFrequencyQuarterly " [isMandatory]="true"
+                [isDisabled]="!editMode"></select-customer-order-frequency>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-customer-order-frequency [(model)]="constant.customerOrderFrequencyMonthly"
+                label="Périodicité de la commande - Mensuel" [form]="constantForm"
+                propertyName="customerOrderFrequencyMonthly " [isMandatory]="true"
+                [isDisabled]="!editMode"></select-customer-order-frequency>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <autocomplete-service-type [(model)]="constant.serviceTypeOther" [form]="constantForm"
                 propertyName="serviceTypeOther" [isMandatory]="true" label="Service - Autre"
                 [isDisabled]="!editMode"></autocomplete-service-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-service-type [(model)]="constant.serviceTypeAnnualSubscription" [form]="constantForm"
+                propertyName="serviceTypeAnnualSubscription" [isMandatory]="true"
+                label="Service - Achat abonnement annuel" [isDisabled]="!editMode"></autocomplete-service-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-service-type [(model)]="constant.serviceTypeEnterpriseAnnualSubscription"
+                [form]="constantForm" propertyName="serviceTypeEnterpriseAnnualSubscription" [isMandatory]="true"
+                label="Service - Achat abonnement annuel entreprise"
+                [isDisabled]="!editMode"></autocomplete-service-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-service-type [(model)]="constant.serviceTypeMonthlySubscription" [form]="constantForm"
+                propertyName="serviceTypeMonthlySubscription" [isMandatory]="true"
+                label="Service - Achat abonnemet mensuel" [isDisabled]="!editMode"></autocomplete-service-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-service-type [(model)]="constant.serviceTypeKioskNewspaperBuy" [form]="constantForm"
+                propertyName="serviceTypeKioskNewspaperBuy" [isMandatory]="true"
+                label="Service - Achat d'un article du kiosque" [isDisabled]="!editMode"></autocomplete-service-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-service-type [(model)]="constant.serviceTypeUniqueArticleBuy" [form]="constantForm"
+                propertyName="serviceTypeUniqueArticleBuy" [isMandatory]="true"
+                label="Service - Achat d'un article du JSS" [isDisabled]="!editMode"></autocomplete-service-type>
+            </td>
+          </tr>
+          <tr>
+          <tr>
+            <td>
+              <select-special-offer [(model)]="constant.specialOfferJssSubscriptionReduction"
+                label="Offre spéciale - Abonnement JSS média" [form]="constantForm"
+                propertyName="specialOfferJssSubscriptionReduction" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-special-offer>
             </td>
           </tr>
           <tr>
@@ -1592,13 +1701,32 @@
                 propertyName="provisionTypeRbe" [isMandatory]="true" [isDisabled]="!editMode"></select-provision-type>
             </td>
           </tr>
-
-
+          <tr>
+            <td><select-provision-type [(model)]="constant.provisionTypeCharacterAnnouncement"
+                label="Type de prestation - Annonce légale au caractère" [form]="constantForm"
+                propertyName="provisionTypeCharacterAnnouncement" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-provision-type>
+            </td>
+          </tr>
           <tr>
           <tr>
             <td>
               <select-provision-family [(model)]="constant.provisionFamilyTypeDeposit"
-                label="Famille de service - Dépôt" [form]="constantForm" propertyName="provisionFamilyTypeDeposit"
+                label="Famille de prestation - Dépôt" [form]="constantForm" propertyName="provisionFamilyTypeDeposit"
+                [isMandatory]="true" [isDisabled]="!editMode"></select-provision-family>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-provision-family [(model)]="constant.provisionFamilyTypeBalo" label="Famille de prestation - BALO"
+                [form]="constantForm" propertyName="provisionFamilyTypeBalo" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-provision-family>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-provision-family [(model)]="constant.provisionFamilyTypeBodacc"
+                label="Famille de prestation - BODACC" [form]="constantForm" propertyName="provisionFamilyTypeBodacc"
                 [isMandatory]="true" [isDisabled]="!editMode"></select-provision-family>
             </td>
           </tr>
@@ -1655,6 +1783,77 @@
           </tr>
           <tr>
             <td>
+              <select-category [(model)]="constant.categoryExclusivity" label="Categorie Wordpress - Exclusivité"
+                [form]="constantForm" propertyName="categoryExclusivity" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-category>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-myjss-category [(model)]="constant.myJssCategoryAnnouncement"
+                label="Catégorie MyJss - Annonces légales" [form]="constantForm"
+                propertyName="myJssCategoryAnnouncement" [isMandatory]="false"
+                [isDisabled]="!editMode"></select-myjss-category>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-myjss-category [(model)]="constant.myJssCategoryFormality"
+                label="Catégorie MyJss - Formalités légales" [form]="constantForm" propertyName="myJssCategoryFormality"
+                [isMandatory]="false" [isDisabled]="!editMode"></select-myjss-category>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-myjss-category [(model)]="constant.myJssCategoryDomiciliation"
+                label="Catégorie MyJss - Domicialiation" [form]="constantForm" propertyName="myJssCategoryDomiciliation"
+                [isMandatory]="false" [isDisabled]="!editMode"></select-myjss-category>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-myjss-category [(model)]="constant.myJssCategoryApostille" label="Catégorie MyJss - Apostilles"
+                [form]="constantForm" propertyName="myJssCategoryApostille" [isMandatory]="false"
+                [isDisabled]="!editMode"></select-myjss-category>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-myjss-category [(model)]="constant.myJssCategoryDocument"
+                label="Catégorie MyJss - Fourniture de documents" [form]="constantForm"
+                propertyName="myJssCategoryDocument" [isMandatory]="false"
+                [isDisabled]="!editMode"></select-myjss-category>
+            </td>
+          </tr>
+          <tr>
+          <tr>
+            <td>
+              <select-jss-category [(model)]="constant.jssCategoryHomepageFirstHighlighted"
+                label="Catégorie Jss - 1ère catégorie mise en avant" [form]="constantForm"
+                propertyName="jssCategoryHomepageFirstHighlighted" [isMandatory]="false"
+                [isDisabled]="!editMode"></select-jss-category>
+            </td>
+          </tr>
+          <tr>
+          <tr>
+            <td>
+              <select-jss-category [(model)]="constant.jssCategoryHomepageSecondHighlighted"
+                label="Catégorie Jss - 2ème catégorie mise en avant" [form]="constantForm"
+                propertyName="jssCategoryHomepageSecondHighlighted" [isMandatory]="false"
+                [isDisabled]="!editMode"></select-jss-category>
+            </td>
+          </tr>
+          <tr>
+          <tr>
+            <td>
+              <select-jss-category [(model)]="constant.jssCategoryHomepageThirdHighlighted"
+                label="Catégorie Jss - 3ème catégorie mise en avant" [form]="constantForm"
+                propertyName="jssCategoryHomepageThirdHighlighted" [isMandatory]="false"
+                [isDisabled]="!editMode"></select-jss-category>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-accounting-account-class [(model)]="constant.accountingAccountClassProduct"
                 label="Classe comptable - Produits" [form]="constantForm" propertyName="accountingAccountClassProduct"
                 [isMandatory]="true" [isDisabled]="!editMode"></select-accounting-account-class>
@@ -1681,6 +1880,54 @@
                 label="Service type - Ouverture d'établissement secondaire - AL et Formalité" [form]="constantForm"
                 propertyName="serviceTypeSecondaryCenterOpeningAlAndFormality" [isMandatory]="true"
                 [isDisabled]="!editMode"></select-service-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-service-family-group [(model)]="constant.serviceFamilyGroupAnnouncement
+              " label="Groupe de famille de service - Annonces légales" [form]="constantForm"
+                propertyName="serviceFamilyGroupAnnouncement" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-service-family-group>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-service-family-group [(model)]="constant.serviceFamilyGroupFormality
+              " label="Groupe de famille de service - Formalités" [form]="constantForm"
+                propertyName="serviceFamilyGroupFormality" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-service-family-group>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-service-family-group [(model)]="constant.serviceFamilyGroupOther
+              " label="Groupe de famille de service - Autres" [form]="constantForm"
+                propertyName="serviceFamilyGroupOther" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-service-family-group>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-input [(model)]="constant.stringMyJssDemoRequestMail"
+                label="Mail de redirection Jss - Demande de Démo" [form]="constantForm"
+                propertyName="mailJssDemoRequest" [isMandatory]="true" [isDisabled]="!editMode"
+                [maxLength]="255"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-input [(model)]="constant.stringMyJssWebinarRequestMail"
+                label="Mail de redirection Jss - Inscription webinaire" [form]="constantForm"
+                propertyName="mailJssWebinarRequest" [isMandatory]="true" [isDisabled]="!editMode"
+                [maxLength]="255"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-input [(model)]="constant.stringMyJssContactFormRequestMail"
+                label="Mail de redirection Jss - Demande de contact" [form]="constantForm"
+                propertyName="stringMyJssContactFormRequestMail" [isMandatory]="true" [isDisabled]="!editMode"
+                [maxLength]="255"></generic-input>
             </td>
           </tr>
         </table>

@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
@@ -20,6 +21,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
@@ -34,12 +37,14 @@ public class Service implements Serializable, IId {
 	@SequenceGenerator(name = "service_sequence", sequenceName = "service_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "service_sequence")
 	@IndexedField
-	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	private Integer id;
 
 	@OneToMany(targetEntity = Provision.class, mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "service" }, allowSetters = true)
-	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	@IndexedField
 	private List<Provision> provisions;
 
@@ -49,18 +54,18 @@ public class Service implements Serializable, IId {
 	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private AssoAffaireOrder assoAffaireOrder;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_service_type")
-	@IndexedField
-	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisListView.class,
+	@ManyToMany
+	@JoinTable(name = "asso_service_service_type", joinColumns = @JoinColumn(name = "id_service"), inverseJoinColumns = @JoinColumn(name = "id_service_type"))
+	@JsonProperty(value = "serviceTypes")
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
-	@JsonIgnoreProperties(value = { "assoServiceTypeDocuments", "assoServiceTypeFieldTypes",
-			"assoServiceProvisionTypes" }, allowSetters = true)
-	private ServiceType serviceType;
+	@JsonIgnoreProperties(value = { "assoServiceTypeDocuments" }, allowSetters = true)
+	private List<ServiceType> serviceTypes;
 
 	@OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "service" }, allowSetters = true)
-	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private List<AssoServiceDocument> assoServiceDocuments;
 
 	@OneToMany(targetEntity = MissingAttachmentQuery.class, mappedBy = "service", fetch = FetchType.LAZY)
@@ -69,36 +74,63 @@ public class Service implements Serializable, IId {
 
 	@OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "service" }, allowSetters = true)
-	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private List<AssoServiceFieldType> assoServiceFieldTypes;
 
-	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisListView.class,
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 	private String customLabel;
 
 	@Column(columnDefinition = "TEXT")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
 	private String customerComment;
 
 	@Transient
-	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	private boolean hasMissingInformations;
 
 	@Transient
-	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	private String serviceStatus;
 
 	@Transient
-	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
-	private BigDecimal servicePrice;
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisDetailedView.class })
+	private BigDecimal serviceTotalPrice;
 
 	@Transient
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisDetailedView.class })
+	private BigDecimal servicePreTaxPrice;
+
+	@Transient
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisDetailedView.class })
+	private BigDecimal serviceVatPrice;
+
+	@Transient
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisDetailedView.class })
+	private BigDecimal serviceDiscountAmount;
+
+	@Transient
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String confrereLabel;
 
 	@Transient
-	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	private String waitingAcLabel;
+
+	@Transient
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private LocalDateTime lastMissingAttachmentQueryDateTime;
+
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+	@Column(length = 2000)
+	private String serviceLabelToDisplay;
 
 	public Integer getId() {
 		return id;
@@ -122,22 +154,6 @@ public class Service implements Serializable, IId {
 
 	public void setAssoAffaireOrder(AssoAffaireOrder assoAffaireOrder) {
 		this.assoAffaireOrder = assoAffaireOrder;
-	}
-
-	public String getCustomLabel() {
-		return customLabel;
-	}
-
-	public void setCustomLabel(String customLabel) {
-		this.customLabel = customLabel;
-	}
-
-	public ServiceType getServiceType() {
-		return serviceType;
-	}
-
-	public void setServiceType(ServiceType serviceType) {
-		this.serviceType = serviceType;
 	}
 
 	public String getCustomerComment() {
@@ -188,12 +204,12 @@ public class Service implements Serializable, IId {
 		this.serviceStatus = serviceStatus;
 	}
 
-	public BigDecimal getServicePrice() {
-		return servicePrice;
+	public BigDecimal getServiceTotalPrice() {
+		return serviceTotalPrice;
 	}
 
-	public void setServicePrice(BigDecimal servicePrice) {
-		this.servicePrice = servicePrice;
+	public void setServiceTotalPrice(BigDecimal servicePrice) {
+		this.serviceTotalPrice = servicePrice;
 	}
 
 	public String getConfrereLabel() {
@@ -210,6 +226,62 @@ public class Service implements Serializable, IId {
 
 	public void setLastMissingAttachmentQueryDateTime(LocalDateTime lastMissingAttachmentQueryDateTime) {
 		this.lastMissingAttachmentQueryDateTime = lastMissingAttachmentQueryDateTime;
+	}
+
+	public String getCustomLabel() {
+		return customLabel;
+	}
+
+	public void setCustomLabel(String customLabel) {
+		this.customLabel = customLabel;
+	}
+
+	public String getServiceLabelToDisplay() {
+		return serviceLabelToDisplay;
+	}
+
+	public void setServiceLabelToDisplay(String serviceLabelToDisplay) {
+		this.serviceLabelToDisplay = serviceLabelToDisplay;
+	}
+
+	public List<ServiceType> getServiceTypes() {
+		return serviceTypes;
+	}
+
+	public void setServiceTypes(List<ServiceType> serviceTypes) {
+		this.serviceTypes = serviceTypes;
+	}
+
+	public BigDecimal getServicePreTaxPrice() {
+		return servicePreTaxPrice;
+	}
+
+	public void setServicePreTaxPrice(BigDecimal servicePreTaxPrice) {
+		this.servicePreTaxPrice = servicePreTaxPrice;
+	}
+
+	public BigDecimal getServiceVatPrice() {
+		return serviceVatPrice;
+	}
+
+	public void setServiceVatPrice(BigDecimal serviceVatPrice) {
+		this.serviceVatPrice = serviceVatPrice;
+	}
+
+	public BigDecimal getServiceDiscountAmount() {
+		return serviceDiscountAmount;
+	}
+
+	public void setServiceDiscountAmount(BigDecimal serviceDiscountAmount) {
+		this.serviceDiscountAmount = serviceDiscountAmount;
+	}
+
+	public String getWaitingAcLabel() {
+		return waitingAcLabel;
+	}
+
+	public void setWaitingAcLabel(String waitingAcLabel) {
+		this.waitingAcLabel = waitingAcLabel;
 	}
 
 }

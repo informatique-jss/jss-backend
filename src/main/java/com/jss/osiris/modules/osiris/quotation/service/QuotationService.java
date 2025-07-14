@@ -6,6 +6,7 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
@@ -51,10 +52,6 @@ public interface QuotationService {
         public void sendReminderForQuotation(Quotation quotation)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
-        public void updateAssignedToForQuotation(Quotation quotation, Employee employee)
-                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
-                        OsirisDuplicateException;
-
         public List<QuotationSearchResult> searchByCustomerOrderId(Integer idCustomerOrder);
 
         public boolean getIsOpenedQuotation(IQuotation quotation);
@@ -85,10 +82,19 @@ public interface QuotationService {
 
         public List<Quotation> findQuotationByResponsable(Responsable responsable);
 
-        public List<Quotation> completeAdditionnalInformationForQuotations(List<Quotation> customerOrders);
+        public List<Quotation> completeAdditionnalInformationForQuotations(List<Quotation> customerOrders)
+                        throws OsirisException;
 
-        public List<Quotation> searchQuotation(List<Employee> commercials, List<QuotationStatus> status);
+        public List<Quotation> searchQuotation(List<Employee> commercials, List<QuotationStatus> status)
+                        throws OsirisException;
 
-        public Quotation completeAdditionnalInformationForQuotation(Quotation customerOrder);
+        public Quotation completeAdditionnalInformationForQuotation(Quotation customerOrder) throws OsirisException;
 
+        public Boolean setEmergencyOnQuotation(Quotation quotation, Boolean isEnabled)
+                        throws OsirisClientMessageException, OsirisValidationException, OsirisException;
+
+        public Boolean setDocumentOnOrder(Quotation quotation, Document document)
+                        throws OsirisClientMessageException, OsirisValidationException, OsirisException;
+
+        public void purgeQuotations() throws OsirisException;
 }

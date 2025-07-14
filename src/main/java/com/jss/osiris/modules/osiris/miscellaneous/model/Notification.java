@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
+import com.jss.osiris.modules.osiris.crm.model.Candidacy;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
@@ -41,12 +42,13 @@ public class Notification implements Serializable, IId {
   public static String PROVISION_GUICHET_UNIQUE_STATUS_VALIDATED = "PROVISION_GUICHET_UNIQUE_STATUS_VALIDATED";
   public static String PROVISION_GUICHET_UNIQUE_STATUS_REFUSED = "PROVISION_GUICHET_UNIQUE_STATUS_REFUSED";
   public static String PROVISION_GUICHET_UNIQUE_STATUS_SIGNED = "PROVISION_GUICHET_UNIQUE_STATUS_SIGNED";
+  public static String NEW_CANDIDACY_RECEIVED = "NEW_CANDIDACY_RECEIVED";
   public static String INCIDENT_REPORT_ASKED = "INCIDENT_REPORT_ASKED";
 
   public static List<String> notificationTypes = Arrays.asList(PROVISION_ADD_ATTACHMENT, SERVICE_ADD_ATTACHMENT,
       ORDER_ADD_ATTACHMENT, PROVISION_GUICHET_UNIQUE_STATUS_VALIDATED, PROVISION_GUICHET_UNIQUE_STATUS_REFUSED,
       PROVISION_GUICHET_UNIQUE_STATUS_SIGNED,
-      PERSONNAL, INCIDENT_REPORT_ASKED);
+      PERSONNAL, NEW_CANDIDACY_RECEIVED, INCIDENT_REPORT_ASKED);
 
   @Id
   @SequenceGenerator(name = "notification_sequence", sequenceName = "notification_sequence", allocationSize = 1)
@@ -129,6 +131,11 @@ public class Notification implements Serializable, IId {
   @JoinColumn(name = "id_affaire")
   @JsonView(JacksonViews.OsirisListView.class)
   private Affaire affaire;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "id_candidacy")
+  @JsonView(JacksonViews.OsirisListView.class)
+  private Candidacy candidacy;
 
   public Integer getId() {
     return id;
@@ -336,6 +343,14 @@ public class Notification implements Serializable, IId {
 
   public static void setPROVISION_GUICHET_UNIQUE_STATUS_VALIDATED(String pROVISION_GUICHET_UNIQUE_STATUS_VALIDATED) {
     PROVISION_GUICHET_UNIQUE_STATUS_VALIDATED = pROVISION_GUICHET_UNIQUE_STATUS_VALIDATED;
+  }
+
+  public Candidacy getCandidacy() {
+    return candidacy;
+  }
+
+  public void setCandidacy(Candidacy candidacy) {
+    this.candidacy = candidacy;
   }
 
 }

@@ -8,6 +8,12 @@
           propertyName="selectedServiceType" [isMandatory]="true" [isDisabled]="false"></chips-service-type>
       </td>
     </tr>
+    <tr>
+      <td>
+        <generic-input [(model)]="customLabel" label="Libellé personnalisé" [form]="serviceTypeForm"
+          propertyName="customLabel" [isMandatory]="false" [maxLength]="2000"></generic-input>
+      </td>
+    </tr>
     <tr *ngIf="!isJustSelectServiceType">
       <td>
         <generic-textarea [(model)]="customerComment" label="Commentaire client" [form]="serviceTypeForm"

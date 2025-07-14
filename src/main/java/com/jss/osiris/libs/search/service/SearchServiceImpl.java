@@ -8,10 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.repository.IndexEntityRepository;
 import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
 import com.jss.osiris.modules.myjss.quotation.controller.MyJssQuotationValidationHelper;
+import com.jss.osiris.modules.myjss.wordpress.model.Post;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
@@ -103,6 +105,11 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
+    public List<IndexEntity> getPostByKeyword(String searchedValue) {
+        return searchForEntities(searchedValue, Post.class.getSimpleName(), false);
+    }
+
+    @Override
     public List<IndexEntity> getIndividualTiersByKeyword(String searchedValue) {
         List<IndexEntity> tiers = searchForEntities(searchedValue, Tiers.class.getSimpleName(), false);
         List<IndexEntity> outTiers = new ArrayList<IndexEntity>();
@@ -116,7 +123,7 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
-    public List<IndexEntity> searchEntitiesForCustomer(String searchString) {
+    public List<IndexEntity> searchEntitiesForCustomer(String searchString) throws OsirisException {
         List<IndexEntity> entities = new ArrayList<IndexEntity>();
         List<IndexEntity> authorizedEntities = new ArrayList<IndexEntity>();
         List<Responsable> userResponsableScope = userScopeService.getUserCurrentScopeResponsables();
@@ -159,11 +166,15 @@ public class SearchServiceImpl implements SearchService {
                     List<CustomerOrder> customerOrders = customerOrderService
                             .searchOrdersForCurrentUserAndAffaire(affaireService.getAffaire(indexEntity.getEntityId()));
                     if (customerOrders != null && customerOrders.size() > 0)
-                        authorizedEntities.add(indexEntity);
+                        for (CustomerOrder customerOrder : customerOrders) {
+                            if (myJssQuotationValidationHelper.canSeeQuotation(customerOrder)) {
+                                authorizedEntities.add(indexEntity);
+                            }
+                        }
                 }
             }
         }
 
-        return entities;
+        return authorizedEntities;
     }
 }

@@ -1,10 +1,8 @@
 import { Component, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
+import { MatDialogRef } from '@angular/material/dialog';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
 import { Service } from '../../model/Service';
-import { ServiceService } from '../../services/service.service';
 
 @Component({
   selector: 'app-select-service-dialog',
@@ -18,17 +16,10 @@ export class SelectServiceDialogComponent implements OnInit {
   currentService: Service | undefined;
 
   constructor(private formBuilder: FormBuilder,
-    private dialog: MatDialog,
-    private serviceService: ServiceService,
-    private constantService: ConstantService,
     public dialogRef: MatDialogRef<SelectServiceDialogComponent>
   ) { }
 
   serviceTypeForm = this.formBuilder.group({});
-
-  getServiceLabel(service: Service) {
-    return this.serviceService.getServiceLabel(service, false, this.constantService.getServiceTypeOther());
-  }
 
   ngOnInit() {
   }

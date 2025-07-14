@@ -33,9 +33,6 @@
             matBadgeColor="warn" matBadgeSize="small" class="pointer">notifications</mat-icon>
         </mat-panel-title>
         <mat-panel-description>
-          <avatar-chip *ngIf="asso.assignedTo" [employee]="asso.assignedTo"
-            (onChangeAssigne)="updateAssignedToForAffaire($event,asso)">
-          </avatar-chip>
           <mat-icon color="accent" matTooltip="Voir/éditer l'affaire"
             (click)="displayAffaire($event);$event.stopPropagation();"
             (auxclick)="displayAffaire($event);$event.stopPropagation();" class="pointer status-text">
@@ -44,12 +41,6 @@
         </mat-panel-description>
       </mat-expansion-panel-header>
       <add-affaire [affaire]="asso.affaire" [editMode]="false"></add-affaire>
-      <div *ngIf="asso && asso.id ">
-        <autocomplete-employee [(model)]="asso.assignedTo" [form]="affaireForm" propertyName="assignedTo"
-          [isMandatory]="true" [isDisabled]="false" label="Affaire assignée à"
-          (onOptionSelected)="updateAssignedToForAffaire($event,asso)">
-        </autocomplete-employee>
-      </div>
     </mat-expansion-panel>
   </mat-accordion>
 </div>
@@ -58,7 +49,7 @@
     <mat-accordion multi>
       <mat-expansion-panel expanded="false" class="service-tab ">
         <mat-expansion-panel-header>
-          <mat-panel-title>Service - {{getServiceLabel(service)}}
+          <mat-panel-title>Service - {{service.serviceLabelToDisplay}}
           </mat-panel-title>
           <mat-panel-description style="height:40px">
             <mat-icon color="accent" *ngIf="!editMode && service.id" matTooltip="Modifier le type de service"
@@ -85,12 +76,12 @@
         (afterExpand)="onExpandedChange(provision.id)" [expanded]=" provision.id==inputProvisionId">
         <mat-expansion-panel-header>
           <mat-panel-title>
-            {{computeServiceLabel(service, true)}} {{computeProvisionLabel(service, provision, true)}}
+            {{computeProvisionLabel(service, provision, true)}}
           </mat-panel-title>
           <mat-panel-description style="height:40px">
             <span class="status-text"
               *ngIf="getActiveWorkflowElementsForProvisionFn(provision)">{{getActiveWorkflowElementsForProvisionFn(provision).label}}</span>
-            <avatar-chip *ngIf="asso.assignedTo" [employee]="provision.assignedTo"
+            <avatar-chip [employee]="provision.assignedTo"
               (onChangeAssigne)="updateAssignedToForProvision($event, provision)">
             </avatar-chip>
             <ng-template></ng-template>
@@ -121,7 +112,7 @@
   <div class="fab-extended-button-containter"><button mat-fab extended color="primary"
       (click)="createProvision(service)" *ngIf="editMode">
       <mat-icon>work</mat-icon>
-      Ajouter une prestation pour le service {{getServiceLabel(service)}}
+      Ajouter une prestation pour le service {{service.serviceLabelToDisplay}}
     </button></div>
 </ng-container>
 <div class="fab-extended-button-containter"><button mat-fab extended color="primary" (click)="createService(asso)"
@@ -150,7 +141,7 @@
     <ng-container *ngFor="let service of asso.services">
       <button mat-menu-item [matMenuTriggerFor]="menu3" (mouseover)="setCurrentProvisionWorkflow(provision)"
         *ngFor="let provision of service.provisions"><span
-          style="color:#c4ae8b">{{computeServiceLabel(service,false)}}</span>
+          style="color:#c4ae8b">{{service.serviceLabelToDisplay}}</span>
         {{computeProvisionLabel(service, provision, true)}}</button>
     </ng-container>
   </mat-menu>
@@ -198,14 +189,14 @@
     <mat-divider></mat-divider>
     <ng-container *ngFor="let service of asso.services">
       <button mat-menu-item (click)="sendMissingAttachmentMail(service)">
-        <span>Demander des pièces manquantes pour le service {{getServiceLabel(service)}}</span>
+        <span>Demander des pièces manquantes pour le service {{service.serviceLabelToDisplay}}</span>
       </button>
     </ng-container>
     <mat-divider></mat-divider>
     <ng-container *ngFor="let service of asso.services">
       <button mat-menu-item [matMenuTriggerFor]="menu4" (mouseover)="setCurrentProvisionWorkflow(provision)"
         *ngFor="let provision of service.provisions"><span
-          style="color:#c4ae8b">{{computeServiceLabel(service,false)}}</span>
+          style="color:#c4ae8b">{{service.serviceLabelToDisplay}}</span>
         {{computeProvisionLabel(service, provision, true)}}</button>
     </ng-container>
   </mat-menu>
@@ -216,7 +207,7 @@
   </button>
   <mat-divider></mat-divider>
   <button mat-menu-item (click)="sendMissingAttachmentMail(asso.services[0])" *ngIf="onlyOneProvision()">
-    <span>Demander des pièces manquantes pour le service {{getServiceLabel(asso.services[0])}}</span>
+    <span>Demander des pièces manquantes pour le service {{asso.services[0].serviceLabelToDisplay}}</span>
   </button>
   <mat-divider></mat-divider>
   <button mat-menu-item
@@ -275,7 +266,7 @@
     <ng-container *ngFor="let service of asso.services">
       <button mat-menu-item [matMenuTriggerFor]="menu6" (mouseover)="setCurrentProvisionWorkflow(provision)"
         *ngFor="let provision of service.provisions"><span
-          style="color:#c4ae8b">{{computeServiceLabel(service,false)}}</span>
+          style="color:#c4ae8b">{{service.serviceLabelToDisplay}}</span>
         {{computeProvisionLabel(service, provision, true)}}</button>
     </ng-container>
   </mat-menu>

@@ -146,10 +146,10 @@
             <th:block th:each="service : ${asso.services}">
                 <tr>
                     <td style="padding-top: 20px; text-align : center" colspan="2">
-                        <strong><span th:if="${service.customLabel!=null}"
-                                th:text="${service.customLabel}"></span></strong>
-                        <strong><span th:if="${service.customLabel==null}"
-                                th:text="${service.serviceType.label}"></span></strong>
+                        <strong><span th:if="${service.serviceLabelToDisplay!=null}"
+                                th:text="${service.serviceLabelToDisplay}"></span></strong>
+                        <strong><span th:if="${service.serviceLabelToDisplay==null}"
+                                th:text="${service.serviceLabelToDisplay}"></span></strong>
                     </td>
                 </tr>
                 <th:block th:each="invoiceItem : ${service.provisions[0].invoiceItemsGrouped}"

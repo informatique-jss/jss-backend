@@ -8,7 +8,7 @@ import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components
 import { Attachment } from 'src/app/modules/miscellaneous/model/Attachment';
 import { IAttachment } from 'src/app/modules/miscellaneous/model/IAttachment';
 import { NotificationService } from 'src/app/modules/miscellaneous/services/notification.service';
-import { SelectServiceTypeDialogComponent } from 'src/app/modules/quotation/components/select-service-type-dialog/select-service-type-dialog.component';
+import { SelectMultiServiceTypeDialogComponent } from 'src/app/modules/quotation/components/select-multi-service-type-dialog/select-multi-service-type-dialog.component';
 import { Affaire } from 'src/app/modules/quotation/model/Affaire';
 import { AssoAffaireOrder } from 'src/app/modules/quotation/model/AssoAffaireOrder';
 import { Provision } from 'src/app/modules/quotation/model/Provision';
@@ -85,11 +85,6 @@ export class ServiceSidePanelDetailsComponent implements OnInit {
     return this.affaireNotification[affaire.id];
   }
 
-  updateAssignedToForAffaire(employee: any, asso: AssoAffaireOrder) {
-    this.assoAffaireOrderService.updateAssignedToForAsso(asso, employee).subscribe(response => {
-    });
-  }
-
   displayAffaire(event: any, asso: AssoAffaireOrder) {
     this.appService.openRoute({ ctrlKey: true }, '/affaire/' + asso.affaire.id, null);
   }
@@ -145,7 +140,7 @@ export class ServiceSidePanelDetailsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(dialogResult => {
       if (dialogResult && service) {
-        const dialogRef2 = this.selectServiceTypeDialog.open(SelectServiceTypeDialogComponent, {
+        const dialogRef2 = this.selectServiceTypeDialog.open(SelectMultiServiceTypeDialogComponent, {
           width: "50%",
         });
         dialogRef2.componentInstance.isJustSelectServiceType = true;
@@ -159,6 +154,7 @@ export class ServiceSidePanelDetailsComponent implements OnInit {
       }
     });
   }
+
 
 
 }

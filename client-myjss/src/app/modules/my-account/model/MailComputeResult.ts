@@ -1,4 +1,4 @@
-import { Mail } from "../../profile/model/Mail";
+import { Mail } from "../../general/model/Mail";
 
 export interface MailComputeResult {
   recipientsMailTo: Mail[];

@@ -1,133 +1,100 @@
-<!-- =======================
-Inner intro START -->
-<section class="pt-4">
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-9 mx-auto text-center py-5">
-        <span>Rechercher des annonces légales</span>
-        <h2 class="display-5">JSS SPEL</h2>
-        <span class="lead" *ngIf="searchResults && searchResults.length>0">{{searchResults.length}}
-          résultat{{searchResults.length>1?'s':''}} trouvé{{searchResults.length>1?'s':''}}</span>
-        <!-- Search -->
-        <div class="row">
-          <div class="col-8 mx-auto">
-            <form class="input-group mt-4">
-              <input class="form-control form-control-lg border-primary" type="search"
-                placeholder="Denomination, SIREN ou mot-clé" aria-label="Rechercher" [(ngModel)]="searchText"
-                [ngModelOptions]="{standalone: true}">
-              <button class="btn btn-primary btn-lg m-0" type="submit" (click)="searchForAnnouncement()">
-                <span class="d-none d-md-block"><span class="spinner-border spinner-border-sm me-2" role="status"
-                    aria-hidden="true" *ngIf="searchInProgress"></span>Rechercher</span>
-                <i class="d-block d-md-none fas fa-search"></i></button>
-            </form>
+<section class="pt-4 container">
+  <div class="bg-container">
+    <div class="col-lg-9 mx-auto text-center">
+      <div class="bg-container">
+        <div class="w-100 justify-content-between">
+          <div class="header-hub-bg d-flex align-items-center rounded-1">
+            <div class="row w-100 ">
+              <div class="col-12">
+                <h3 class="section-widget-title m-0">Consulter une annonce légale</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12 col-md-8 mx-auto">
+          <div
+            class="w-100 my-3 input-group d-flex flex-column flex-md-row justify-content-between mt-0 align-items-stretch">
+            <div class="col-12 col-md-8 position-relative mb-2 mb-md-0 flex-fill">
+              <generic-input class="w-100 h-100" [(model)]="searchText" label="Dénomination, SIREN ou mot-clé"
+                [form]="searchAnnouncementForm" propertyName="searchText" [isMandatory]="false" [isDisabled]="false"
+                [isDisplayLabel]="false" [icon]="'search'">
+              </generic-input>
+              <div class="input-icons-wrapper">
+                <div *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status">
+                  <span class="visually-hidden">chargement...</span>
+                </div>
+                <button *ngIf="searchText" class="btn btn-link p-0 m-0 clear-icon-btn" (click)="clearSearch()"
+                  type="button">
+                  <i class="bi bi-x-lg fs-6"></i>
+                </button>
+              </div>
+            </div>
+            <div class="col-12 col-md-4">
+              <button class="btn search-btn btn-lg m-0 w-100 w-md-auto rounded-1 ms-md-2" type="submit"
+                (click)="searchForAnnouncement()">
+                <span class="d-md-block">Rechercher</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
-<!-- =======================
-Inner intro END -->
 
-<!-- =======================
-Main content START -->
-<section class="position-relative pt-0" *ngIf="searchResults && searchResults.length>0">
-  <div class="container">
-    <div class="row">
-      <!-- Main Post START -->
-      <div class="col-lg-9 mx-auto">
-        <!-- Card item START -->
-        <div class="card border rounded-3 up-hover p-4 mb-4" *ngFor="let announcement of searchResults">
-          <div class="row g-3">
-            <div>
-              <!-- Categories -->
-              <a class="badge text-bg-warning mb-2 margin-category btn-primary-soft" style="margin-right: 8px;"><i
-                  class="fas fa-circle me-2 small fw-bold"></i>{{announcement.noticeTypeFamily.label}}</a>
-              <ng-container *ngIf="announcement.noticeTypes!=null">
-                <a *ngFor="let noticeType of announcement.noticeTypes" style="margin-right: 8px;"
-                  class="badge text-bg-primary mb-2 margin-category btn-primary-soft"><i
-                    class="fas fa-circle me-2 small fw-bold"></i>{{noticeType.label}}</a>
-              </ng-container>
-              <!-- Title -->
-              <h3 class="card-title">
-                <a style="cursor: pointer;" (click)="openAnnouncement(announcement, $event)"
-                  class="btn-link text-reset stretched-link">{{announcement.affaireLabel}}</a>
-              </h3>
-              <!-- Card info -->
-              <ul class="nav nav-divider align-items-center d-none d-sm-inline-block">
-                <li class="nav-item" *ngIf="announcement.affaireSiren && announcement.affaireSiren.length>0">
-                  <div class="nav-link">
-                    <div class="d-flex align-items-center position-relative">
-                      <span>{{announcement.affaireSiren}}</span>
-                    </div>
+    <section class="position-relative pt-0" *ngIf="searchResults && searchResults.length>0">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-9 mx-auto">
+            <div class="card border rounded-2 up-hover p-4 mb-4" *ngFor="let announcement of searchResults">
+              <div class="row g-3">
+                <div>
+                  <div class="d-flex flex-wrap gap-1">
+                    <a *ngIf="announcement.noticeTypeFamily"
+                      class="badge tag-custom-dark mb-2 me-1 margin-category">{{announcement.noticeTypeFamily.label}}</a>
+                    <ng-container *ngIf="announcement.noticeTypes!=null">
+                      <a *ngFor="let noticeType of announcement.noticeTypes"
+                        class="badge tag-custom-light mb-2 me-1 margin-category">{{noticeType.label}}</a>
+                    </ng-container>
                   </div>
-                </li>
-                <li class="nav-item">{{announcement.department.label}} ({{announcement.department.code}})</li>
-                <li class="nav-item">{{announcement.publicationDate | date:'EEEE d MMMM'}}</li>
-              </ul>
+                  <h3 class="card-title">
+                    <a style="cursor: pointer;" (click)="openAnnouncement(announcement, $event)"
+                      class="btn-link text-reset stretched-link">{{announcement.affaireLabel}}</a>
+                  </h3>
+                  <ul class="nav nav-divider align-items-center d-none d-sm-inline-block">
+                    <li class="nav-item" *ngIf="announcement.affaireSiren && announcement.affaireSiren.length>0">
+                      {{announcement.affaireSiren}} <span class="mt-2 me-2 bullet-point-custom"></span>
+                      {{announcement.department.label}} ({{announcement.department.code}})
+                      {{announcement.publicationDate | date:'EEEE d MMMM y'}}
+                    </li>
+                    <li class="nav-item"></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel-loader" *ngIf="isLoading">
+              <div class="skeleton skeleton-header"></div>
+              <div class="skeleton skeleton-line"></div>
+              <div class="skeleton skeleton-line"></div>
+              <div class="skeleton skeleton-line short"></div>
+              <div class="skeleton skeleton-block"></div>
+            </div>
+
+            <div class="col-12 text-center mt-5" *ngIf="!isLoading">
+              <button type="button" class="btn btn-primary-soft" *ngIf="displayLoadMoreButton"
+                (click)="getNextAnnouncements()">Voir
+                + d'annonces <i class="bi bi-arrow-down-circle ms-2 align-middle"></i></button>
             </div>
           </div>
         </div>
-        <!-- Card item END -->
-
-        <!-- Load more -->
-        <div class="col-12 text-center mt-5">
-          <button type="button" class="btn btn-primary-soft  " *ngIf="displayLoadMoreButton"
-            (click)="getNextAnnouncements()">Voir
-            + d'annonces <i class="bi bi-arrow-down-circle ms-2 align-middle"></i></button>
-        </div>
       </div>
-      <!-- Main Post END -->
-    </div> <!-- Row end -->
-  </div>
-</section>
-<section class="position-relative pt-0" *ngIf="!searchResults">
-  <div class="container">
-    <div class="row">
-      <!-- Main Post START -->
-      <div class="col-lg-9 mx-auto">
-        <!-- Card item START -->
-        <div class="card border rounded-3 up-hover p-4 mb-4" *ngFor="let announcement of announcements">
-          <div class="row g-3">
-            <div>
-              <!-- Categories -->
-              <a class="badge text-bg-warning mb-2 margin-category btn-primary-soft" style="margin-right: 8px;"><i
-                  class="fas fa-circle me-2 small fw-bold"></i>{{announcement.noticeTypeFamily.label}}</a>
-              <ng-container *ngIf="announcement.noticeTypes!=null">
-                <a *ngFor="let noticeType of announcement.noticeTypes" style="margin-right: 8px;"
-                  class="badge text-bg-primary mb-2 margin-category btn-primary-soft"><i
-                    class="fas fa-circle me-2 small fw-bold"></i>{{noticeType.label}}</a>
-              </ng-container>
-              <!-- Title -->
-              <h3 class="card-title">
-                <a style="cursor: pointer;" (click)="openAnnouncement(announcement,  $event)"
-                  class="btn-link text-reset stretched-link">{{announcement.affaireLabel}}</a>
-              </h3>
-              <!-- Card info -->
-              <ul class="nav nav-divider align-items-center d-none d-sm-inline-block">
-                <li class="nav-item" *ngIf="announcement.affaireSiren && announcement.affaireSiren.length>0">
-                  <div class="nav-link">
-                    <div class="d-flex align-items-center position-relative">
-                      <span>{{announcement.affaireSiren}}</span>
-                    </div>
-                  </div>
-                </li>
-                <li class="nav-item">{{announcement.department.label}} ({{announcement.department.code}})</li>
-                <li class="nav-item">{{announcement.publicationDate | date:'EEEE d MMMM'}}</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <!-- Card item END -->
+    </section>
 
-        <!-- Load more -->
-        <div class="col-12 text-center mt-5">
-          <button type="button" class="btn btn-primary-soft  " *ngIf="displayLoadMoreButton"
-            (click)="getNextAnnouncements()">Voir
-            + d'annonces <i class="bi bi-arrow-down-circle ms-2 align-middle"></i></button>
-        </div>
-      </div>
-      <!-- Main Post END -->
-    </div> <!-- Row end -->
+    <section class="position-relative pt-0"
+      *ngIf="searchText && searchText.length>2 && !isLoading && isClickedOnce && (!searchResults || searchResults.length==0)">
+      <p class="text-center">Aucun résultat trouvé</p>
+    </section>
   </div>
 </section>

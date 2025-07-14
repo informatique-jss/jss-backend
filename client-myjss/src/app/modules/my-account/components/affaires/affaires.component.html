@@ -4,22 +4,22 @@
     <div style="margin-right: 10px;"><generic-input [(model)]="searchText" label="SIRET / Dénomination"
         [form]="affaireForm" propertyName="searchText" [isMandatory]="false" [isDisabled]="false" icon="search"
         [isDisplayLabel]="false" (onFormChange)="changeFilter()"></generic-input></div>
-    <div class="btn-group dropdown">
-      <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"
-        aria-haspopup="true" aria-expanded="false">
+    <div ngbDropdown class="btn-group dropdown">
+      <button type="button" class="btn btn-outline-secondary dropdown-toggle" ngbDropdownToggle aria-haspopup="true"
+        aria-expanded="false">
         <i class="ai-bar-chart-3 me-2"></i>
         Trier par
       </button>
-      <div class="dropdown-menu my-1">
+      <div ngbDropdownMenu class="dropdown-menu my-1">
         <a class="dropdown-item" style="cursor: pointer;" (click)="changeSort('nameAsc');$event.stopPropagation();">
           <i class="ai-bar-chart-3 me-2"></i>
           Dans l'ordre alphabétique
           <i class="ai-check me-2" *ngIf="currentSort=='nameAsc'"></i>
         </a>
         <a class="dropdown-item" style="cursor: pointer;" (click)="changeSort('nameDesc');$event.stopPropagation();">
-          <i class="ai-time me-2"></i>
+          <i class="ai-bar-chart-1 me-2"></i>
           Dans l'ordre anti-alphabétique
-          <i class="ai-bar-chart-1 me-2" *ngIf="currentSort=='nameDesc'"></i>
+          <i class="ai-check me-2" *ngIf="currentSort=='nameDesc'"></i>
         </a>
       </div>
     </div>
@@ -35,9 +35,11 @@
 
     <!-- Orders accordion -->
     <div class="accordion accordion-alt accordion-orders" id="affaires">
-      <div class="accordion-item border-top mb-0" *ngIf="isFirstLoading ">
-        <div class="accordion-header">
-          <p class="card-text placeholder-glow">
+
+      <!-- Placeholder au chargement -->
+      <div class="accordion-item border-top mb-3" *ngIf="isFirstLoading">
+        <div class="card shadow-sm p-4">
+          <p class="card-text placeholder-glow mb-0">
             <span class="placeholder placeholder-sm col-7 me-2"></span>
             <span class="placeholder placeholder-sm col-4"></span>
             <span class="placeholder placeholder-sm col-4 me-2"></span>
@@ -47,144 +49,162 @@
         </div>
       </div>
 
-      <!-- Affaire -->
-      <ng-container *ngFor="let affaire of affaires">
-        <div class="accordion-item border-top mb-0">
-          <div class="accordion-header">
-            <a class="accordion-button d-flex fs-4 fw-normal text-decoration-none py-3 collapsed" href="#"
-              [attr.data-bs-target]="'#affaire'+affaire.id" data-bs-toggle="collapse" aria-expanded="false"
-              [attr.aria-controls]="'#affaire'+affaire.id">
-              <div class="d-flex justify-content-between w-100">
-                <div class="me-3 me-sm-4 w-25">
-                  <div class="fs-sm text-body-secondary">n°{{affaire.id}}</div>
-                </div>
-                <div class="me-3 me-sm-4 w-25">
-                  <div class="d-none d-sm-block fs-sm text-body-secondary mb-2">Dénomination</div>
-                  <div class="fs-sm fw-medium text-dark">
-                    {{affaire.denomination?affaire.denomination:(affaire.firstname+'
-                    '+affaire.lastname) }}</div>
-                </div>
-                <div class="me-3 me-sm-4 w-25">
-                  <div class="d-none d-sm-block fs-sm text-body-secondary mb-2" *ngIf="affaire.siret">SIRET</div>
-                  <div class="fs-sm fw-medium text-dark">
-                    {{affaire.siret }}</div>
-                </div>
-                <div class="me-3 me-sm-4 w-25">
-                  <div class="fs-sm text-body-secondary mb-2">Ville</div>
-                  <div class="fs-sm fw-medium text-dark">{{affaire.city?affaire.city.label : ''}}</div>
-                </div>
-              </div>
-            </a>
-          </div>
-          <div class="accordion-collapse collapse" [id]="'affaire'+affaire.id" data-bs-parent="#affaires"
-            (show.bs.collapse)="loadAffaireDetails($event, affaire)">
-            <div class="accordion-body">
-              <div class="accordion-item border-top mb-0" *ngIf="!ordersAffaire[affaire.id]">
-                <div class="accordion-header">
-                  <p class="card-text placeholder-glow">
-                    <span class="placeholder placeholder-sm col-7 me-2"></span>
-                    <span class="placeholder placeholder-sm col-4"></span>
-                    <span class="placeholder placeholder-sm col-4 me-2"></span>
-                    <span class="placeholder placeholder-sm col-6"></span>
-                    <span class="placeholder placeholder-sm col-8"></span>
-                  </p>
+      <div ngbAccordion>
+        <div ngbAccordionItem *ngFor="let affaire of affaires" (show)="loadAffaireDetails( affaire)">
+          <h2 ngbAccordionHeader>
+            <button ngbAccordionButton class="border-top">
+              <div class="container-fluid ">
+                <div class="row g-2 w-100">
+
+                  <div class="col-12 col-sm-2">
+                    <div class="fs-sm text-body-secondary fw-bold text-center">n°{{affaire.id}}
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-4">
+                    <div class="d-none d-sm-block fs-sm text-body-secondary mb-2  ">Dénomination</div>
+                    <div class="fs-sm fw-medium text-dark"> {{ affaire.denomination ? affaire.denomination :
+                      (affaire.firstname + ' ' + affaire.lastname) }}</div>
+                  </div>
+                  <div class="col-12 col-sm-3">
+                    <div class="d-none d-sm-block fs-sm text-body-secondary mb-2">SIRET</div>
+                    <div class="fs-sm fw-medium text-dark">{{ affaire.siret }}</div>
+                  </div>
+                  <div class="col-12 col-sm-3">
+                    <div class="fs-sm text-body-secondary mb-2">Ville</div>
+                    <div class="fs-sm fw-medium text-dark">{{ affaire.city?affaire.city.label : '' }}</div>
+                  </div>
                 </div>
               </div>
-              <div class="table-responsive pt-1" *ngIf="ordersAffaire[affaire.id]">
-                <ul class="nav nav-tabs" role="tablist">
-                  <li class="nav-item">
-                    <a [attr.href]="'#orders'+affaire.id" class="nav-link active" data-bs-toggle="tab" role="tab">
-                      Commandes
-                    </a>
-                  </li>
-                  <li class="nav-item"
-                    *ngIf="this.attachmentsAffaire[affaire.id] && this.attachmentsAffaire[affaire.id].length>0">
-                    <a [attr.href]="'#availableDocs'+affaire.id" class="nav-link" data-bs-toggle="tab" role="tab">
-                      Documents disponibles
-                    </a>
-                  </li>
-                </ul>
-                <div class="tab-content">
-                  <div class="tab-pane fade show active" [attr.id]="'orders'+affaire.id" role="tabpanel">
-                    <div class="list-group">
-                      <div
-                        class=" list-group-item list-group-item-action d-flex fs-4 fw-normal text-decoration-none py-3"
-                        *ngFor="let order of ordersAffaire[affaire.id]">
-                        <div class="d-flex justify-content-between w-100">
-                          <div class="me-3 me-sm-4" style="width: 28%;">
-                            <div class="fs-sm text-body-secondary">n°{{order.id}} <i
-                                class="ai-triangle-alert fs-base text-danger ms-2" style="-webkit-text-stroke: 1px;"
-                                data-bs-toggle="tooltip" data-bs-placement="right" *ngIf="order.hasMissingInformations"
-                                title="Des renseignements complémentaires sont nécessaires : veuillez vous reporter au détail de la commande"></i>
+            </button>
+          </h2>
+          <div ngbAccordionCollapse>
+            <div ngbAccordionBody>
+              <ng-template>
+                <div class="accordion-body p-0">
+
+                  <!-- Placeholder chargement détail -->
+                  <div *ngIf="!ordersAffaire[affaire.id]" class="p-4">
+                    <p class="card-text placeholder-glow mb-0">
+                      <span class="placeholder placeholder-sm col-7 me-2"></span>
+                      <span class="placeholder placeholder-sm col-4"></span>
+                      <span class="placeholder placeholder-sm col-4 me-2"></span>
+                      <span class="placeholder placeholder-sm col-6"></span>
+                      <span class="placeholder placeholder-sm col-8"></span>
+                    </p>
+                  </div>
+
+
+                  <!-- Contenu des onglets -->
+                  <ul ngbNav #nav="ngbNav" [activeId]="1" class="nav-tabs">
+                    <li [ngbNavItem]="1">
+                      <button ngbNavLink>Commandes</button>
+                      <ng-template ngbNavContent>
+                        <div class="d-flex flex-column gap-3">
+                          <div *ngFor="let order of ordersAffaire[affaire.id]" class="card  p-3">
+                            <div class="container-fluid p-0">
+                              <div class="row g-2 w-100">
+
+                                <div class="col-12 col-sm-2 d-flex flex-column align-items-center">
+                                  <div class="fs-sm text-body-secondary fw-bold text-center">
+                                    n°{{order.id}}
+                                    <i class="ai-triangle-alert fs-base text-danger ms-2"
+                                      style="-webkit-text-stroke: 1px;" placement="right"
+                                      *ngIf="order.hasMissingInformations"
+                                      ngbTooltip="Des renseignements complémentaires sont nécessaires : veuillez vous reporter au détail de la commande"></i>
+                                  </div>
+                                  <span class="badge bg-opacity-10 fs-xs text-wrap mt-2"
+                                    [ngClass]="getClassForCustomerOrderStatus(order)" style="white-space: normal;">
+                                    {{getCustomerOrderStatusLabel(order)}}
+                                  </span>
+                                </div>
+
+                                <div class="col-12 col-sm-2" *ngIf="  order.responsable">
+                                  <div class="fs-sm text-body-secondary fw-bold mb-1">Responsable</div>
+                                  <div class="fs-sm fw-medium text-dark">
+                                    {{capitalizeName(order.responsable.firstname + ' ' + order.responsable.lastname)}}
+                                  </div>
+                                </div>
+
+                                <div class="col-12 col-sm-2">
+                                  <div class="fs-sm text-body-secondary fw-bold mb-1">Date de commande</div>
+                                  <div class="fs-sm fw-medium text-dark">
+                                    {{order.createdDate | date:'dd/MM/yyyy'}}
+                                  </div>
+                                </div>
+
+                                <div class="col-12 col-sm-3">
+                                  <div class="fs-sm text-body-secondary fw-bold mb-1">Affaire</div>
+                                  <div class="fs-sm fw-medium text-dark">
+                                    {{capitalizeName(order.affairesList)}}
+                                  </div>
+                                </div>
+
+                                <div class="col-12 col-sm-3">
+                                  <div class="fs-sm text-body-secondary fw-bold mb-1">Services</div>
+                                  <div class="fs-sm fw-medium text-dark">
+                                    {{order.servicesList}}
+                                  </div>
+                                </div>
+
+                              </div>
                             </div>
-                            <span class="badge bg-opacity-10  fs-xs"
-                              [ngClass]="getClassForCustomerOrderStatus(order)">{{getCustomerOrderStatusLabel(order)}}</span>
-                            <button type="button" class="btn btn-link py-1 px-0 mt-2"
-                              (click)="openOrderDetails($event ,order);$event.stopPropagation();">
-                              <i class="ai-file-text me-2"></i>
-                              Détails de la commande
-                            </button>
-                          </div>
-                          <div class="me-3 me-sm-4" style="width: 15%;">
-                            <div class="d-none d-sm-block fs-sm text-body-secondary mb-2  ">Date de commande</div>
-                            <div class="d-sm-none fs-sm text-body-secondary mb-2">Date</div>
-                            <div class="fs-sm fw-medium text-dark">{{order.createdDate| date:'dd/MM/yyyy'}}</div>
-                          </div>
-                          <div class="me-3 me-sm-4" style="width: 20%;">
-                            <div class="fs-sm text-body-secondary mb-2">Affaire</div>
-                            <div class="fs-sm fw-medium text-dark">{{capitalizeName(order.affairesList)}}</div>
-                          </div>
-                          <div class="me-3 me-sm-4" style="width: 37%;">
-                            <div class="fs-sm text-body-secondary mb-2">Services</div>
-                            <div class="fs-sm fw-medium text-dark">{{order.servicesList}}</div>
                           </div>
                         </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="tab-pane fade w-100" [attr.id]="'availableDocs'+affaire.id" role="tabpanel">
-                    <div class="table-responsive">
-                      <table class="table table-hover">
-                        <thead>
-                          <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Nom</th>
-                            <th scope="col">Type</th>
-                            <th scope="col">Date de dépot</th>
-                            <th scope="col"></th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr *ngFor="let attachment of this.attachmentsAffaire[affaire.id]; let index = index">
-                            <th scope="row">{{index+1}}</th>
-                            <td>{{attachment.description}}</td>
-                            <td>{{attachment.attachmentType.label}}</td>
-                            <td>{{attachment.creatDateTime | date:'dd/MM/yyyy'}}</td>
-                            <td><button type="button" class="btn btn-secondary btn-icon btn-sm" aria-label="Télécharger"
-                                data-bs-toggle="tooltip" data-bs-placement="right" title="Télécharger"
-                                (click)="downloadAttachment(attachment)">
-                                <i class="ai-download"></i>
-                              </button></td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
+                      </ng-template>
+                    </li>
+                    <li [ngbNavItem]="2"
+                      *ngIf="attachmentsAffaire[affaire.id] && attachmentsAffaire[affaire.id].length > 0">
+                      <button ngbNavLink>Documents disponibles</button>
+                      <ng-template ngbNavContent>
+                        <div class="table-responsive">
+                          <table class="table table-hover mb-0">
+                            <thead>
+                              <tr>
+                                <th style="width: 5%;">#</th>
+                                <th>Nom</th>
+                                <th class="d-none d-md-table-cell" style="width: 20%;">Type</th>
+                                <th class="d-none d-lg-table-cell" style="width: 20%;">Date de dépôt</th>
+                                <th style="width: 10%;"></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let attachment of attachmentsAffaire[affaire.id]; let i = index">
+                                <th scope="row">{{i + 1}}</th>
+                                <td class="text-wrap" style="min-width: 150px;">{{attachment.description}}</td>
+                                <td class="d-none d-md-table-cell">{{attachment.attachmentType.label}}</td>
+                                <td class="d-none d-lg-table-cell">{{attachment.creatDateTime | date:'dd/MM/yyyy'}}</td>
+                                <td>
+                                  <button type="button" class="btn btn-secondary btn-icon btn-sm"
+                                    aria-label="Télécharger" placement="right" ngbTooltip="Télécharger"
+                                    (click)="downloadAttachment(attachment)">
+                                    <i class="ai-download"></i>
+                                  </button>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </ng-template>
+                    </li>
+                  </ul>
+
+                  <div [ngbNavOutlet]="nav" class="mt-2"></div>
+
                 </div>
-              </div>
+              </ng-template>
             </div>
           </div>
         </div>
-      </ng-container>
-    </div>
+      </div>
 
-    <!-- Pagination -->
-    <div class="d-sm-flex align-items-center pt-4 pt-sm-5" *ngIf="!hideSeeMore">
-      <nav class="order-sm-2 ms-sm-auto">
-      </nav>
-      <button class="btn btn-primary w-100 w-sm-auto order-sm-1 ms-sm-auto me-sm-n5" type="button" (click)="loadMore()">
-        <i class="ai-chevrons-down me-2 ms-n1"></i>
-        Voir plus</button>
+      <!-- Pagination -->
+      <div class="d-sm-flex align-items-center pt-4 pt-sm-5" *ngIf="!hideSeeMore">
+        <nav class="order-sm-2 ms-sm-auto">
+        </nav>
+        <button class="btn btn-primary w-100 w-sm-auto order-sm-1 ms-sm-auto me-sm-n5" type="button"
+          (click)="loadMore()">
+          <i class="ai-chevrons-down me-2 ms-n1"></i>
+          Voir plus</button>
+      </div>
     </div>
   </div>
-</div>

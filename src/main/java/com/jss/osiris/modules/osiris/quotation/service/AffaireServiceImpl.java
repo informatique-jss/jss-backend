@@ -150,38 +150,6 @@ public class AffaireServiceImpl implements AffaireService {
         if (affaire.getSiret() != null)
             affaire.setSiret(affaire.getSiret().toUpperCase().replaceAll(" ", ""));
 
-        // Check duplicate
-
-        if (affaire.getId() == null) {
-            List<Affaire> affairesDuplicates = new ArrayList<Affaire>();
-            if (affaire.getSiret() != null && affaire.getSiret().length() > 0) {
-                Affaire affaireSameSiret = affaireRepository.findBySiret(affaire.getSiret());
-                if (affaireSameSiret != null)
-                    affairesDuplicates.add(affaireSameSiret);
-            }
-            if (affairesDuplicates.size() == 0) {
-                if (affaire.getIsIndividual() != null && affaire.getIsIndividual() == true)
-                    affairesDuplicates = affaireRepository.findByPostalCodeAndName(affaire.getPostalCode(),
-                            affaire.getFirstname(), affaire.getLastname());
-                else
-                    affairesDuplicates = affaireRepository.findByPostalCodeAndDenomination(affaire.getPostalCode(),
-                            affaire.getDenomination());
-            }
-
-            if (affairesDuplicates.size() > 0) {
-                boolean authorize = false;
-                // If current affaire is not registered and found affaires got SIRET =>
-                // authorize it
-                if (affaire.getIsUnregistered())
-                    for (Affaire affaireDuplicate : affairesDuplicates)
-                        if (affaireDuplicate.getSiren() != null || affaireDuplicate.getSiret() != null)
-                            authorize = true;
-
-                if (!authorize)
-                    throw new OsirisDuplicateException(affairesDuplicates.stream().map(Affaire::getId).toList());
-            }
-        }
-
         // If mails already exists, get their ids
         if (affaire != null && affaire.getMails() != null && affaire.getMails().size() > 0)
             mailService.populateMailIds(affaire.getMails());
@@ -207,6 +175,9 @@ public class AffaireServiceImpl implements AffaireService {
 
     @Override
     public List<Affaire> getAffairesFromSiren(String siren) throws OsirisException, OsirisClientMessageException {
+        List<Affaire> existingAffaires = affaireRepository.findBySiren(siren);
+        if (existingAffaires != null)
+            return existingAffaires;
         List<RneCompany> rneCompanies = rneDelegateService.getCompanyBySiren(siren);
         List<Affaire> affaires = new ArrayList<Affaire>();
         if (rneCompanies != null && rneCompanies.size() > 0)
@@ -222,9 +193,12 @@ public class AffaireServiceImpl implements AffaireService {
             return Arrays.asList(affaire);
         List<RneCompany> rneCompanies = rneDelegateService.getCompanyBySiret(siret);
         List<Affaire> affaires = new ArrayList<Affaire>();
-        if (rneCompanies != null && rneCompanies.size() > 0)
+        if (rneCompanies != null && rneCompanies.size() > 0) {
             for (RneCompany rneCompany : rneCompanies)
                 affaires.add(getAffaireFromRneCompany(rneCompany, siret));
+        } else {
+            return getAffairesFromSiren(siret);
+        }
         return affaires;
     }
 
@@ -289,6 +263,8 @@ public class AffaireServiceImpl implements AffaireService {
             affaire.setPostalCode(null);
             affaire.setShareCapital(null);
         }
+
+        affaire.setSiren(rneCompany.getSiren());
 
         if (rneCompany != null && rneCompany.getFormality() != null && rneCompany.getFormality().getContent() != null
                 && rneCompany.getFormality().getContent().getPersonneMorale() != null
@@ -630,12 +606,12 @@ public class AffaireServiceImpl implements AffaireService {
             orderLastname = new Order(Direction.DESC, "lastname");
         }
         Sort sort = Sort.by(Arrays.asList(orderDenomination, orderLastname, orderFirstname));
-        Pageable pageableRequest = PageRequest.of(page, 50, sort);
+        Pageable pageableRequest = PageRequest.of(page, 10, sort);
         return affaireRepository.getAffairesForResponsables(pageableRequest, responsables, searchText, idAffaire);
     }
 
     @Override
-    public List<Attachment> getAttachmentsForAffaire(Affaire affaire) {
+    public List<Attachment> getAttachmentsForAffaire(Affaire affaire) throws OsirisException {
         List<Attachment> attachments = new ArrayList<Attachment>();
         List<CustomerOrder> customerOrders = customerOrderService.searchOrdersForCurrentUserAndAffaire(affaire);
 

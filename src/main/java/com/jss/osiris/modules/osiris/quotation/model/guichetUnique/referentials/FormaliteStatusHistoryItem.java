@@ -1,5 +1,7 @@
 package com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.DoNotAudit;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.FormaliteGuichetUnique;
@@ -16,7 +18,7 @@ import jakarta.persistence.Table;
 @DoNotAudit
 @Table(indexes = {
         @Index(name = "idx_status_history_formalite", columnList = "id_formalite_guichet_unique") })
-public class FormaliteStatusHistoryItem {
+public class FormaliteStatusHistoryItem implements Serializable {
     @Id
     private long id;
 

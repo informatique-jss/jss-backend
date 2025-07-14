@@ -1,5 +1,7 @@
 package com.jss.osiris.modules.osiris.quotation.model.guichetUnique;
 
+import java.io.Serializable;
+
 import com.jss.osiris.libs.search.model.DoNotAudit;
 
 import jakarta.persistence.Entity;
@@ -10,7 +12,7 @@ import jakarta.persistence.SequenceGenerator;
 
 @Entity
 @DoNotAudit
-public class Partenaire {
+public class Partenaire implements Serializable {
 
     @Id
     @SequenceGenerator(name = "guichet_unique_partenaire_sequence", sequenceName = "guichet_unique_partenaire_sequence", allocationSize = 1)

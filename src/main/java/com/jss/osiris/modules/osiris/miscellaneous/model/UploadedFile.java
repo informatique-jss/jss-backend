@@ -26,6 +26,7 @@ public class UploadedFile implements Serializable, IId {
 	private Integer id;
 
 	private String filename;
+
 	@Column(columnDefinition = "TEXT")
 	private String path;
 
@@ -33,13 +34,13 @@ public class UploadedFile implements Serializable, IId {
 
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
 	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
-	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
 	private LocalDateTime creationDate;
 
-	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
 	private String createdBy;
 
-	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.OsirisDetailedView.class })
 	private Long size;
 
 	public Integer getId() {
@@ -97,5 +98,4 @@ public class UploadedFile implements Serializable, IId {
 	public void setSize(Long size) {
 		this.size = size;
 	}
-
 }

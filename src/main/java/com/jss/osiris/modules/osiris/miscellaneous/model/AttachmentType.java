@@ -18,15 +18,17 @@ public class AttachmentType implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "attachment_type_sequence", sequenceName = "attachment_type_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "attachment_type_sequence")
-	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	private Integer id;
 
 	@Column(nullable = false, length = 100)
-	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	private String label;
 
 	@Column(nullable = false, length = 20)
-	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private String code;
 
 	@Column(length = 400)
@@ -37,6 +39,9 @@ public class AttachmentType implements Serializable, IId {
 	private Boolean isToSentOnFinalizationMail;
 
 	private Boolean isHiddenFromUser;
+
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
+	private Boolean isDocumentDateRequired;
 
 	public Integer getId() {
 		return id;
@@ -92,6 +97,14 @@ public class AttachmentType implements Serializable, IId {
 
 	public void setIsHiddenFromUser(Boolean isHiddenFromUser) {
 		this.isHiddenFromUser = isHiddenFromUser;
+	}
+
+	public Boolean getIsDocumentDateRequired() {
+		return isDocumentDateRequired;
+	}
+
+	public void setIsDocumentDateRequired(Boolean isDocumentDateRequired) {
+		this.isDocumentDateRequired = isDocumentDateRequired;
 	}
 
 }

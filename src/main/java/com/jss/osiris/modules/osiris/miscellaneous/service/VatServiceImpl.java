@@ -228,7 +228,7 @@ public class VatServiceImpl implements VatService {
             if (customerOrder.getCity() == null)
                 throw new OsirisClientMessageException(
                         "Ville non trouvée dans l'adresse du donneur d'ordre de la commande");
-            city = cityService.getCity(customerOrder.getCity().getId());
+            city = customerOrder.getCity();
         } else if (billingDocument.getBillingLabelType().getId()
                 .equals(constantService.getBillingLabelTypeCodeAffaire().getId())
                 && quotation.getAssoAffaireOrders() != null && quotation.getAssoAffaireOrders().size() > 0) {
@@ -245,6 +245,9 @@ public class VatServiceImpl implements VatService {
             if (city != null && city.getId() != null)
                 city = cityService.getCity(city.getId());
         }
+
+        if (city != null)
+            city = cityService.getCity(city.getId());
 
         return city;
     }

@@ -9,18 +9,26 @@ import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 
 public interface ServiceService {
-    public Service getService(Integer id);
+        public Service getService(Integer id);
 
-    public Service addOrUpdateService(Service service);
+        public Service addOrUpdateServiceFromUser(Service service) throws OsirisException;
 
-    public Boolean deleteService(Service service);
+        public Service addOrUpdateService(Service service) throws OsirisException;
 
-    public Service modifyServiceType(ServiceType serviceType, Service service);
+        public Boolean addOrUpdateServices(List<ServiceType> services, Integer assoAffaireOrderId,
+                        String customLabel, Affaire affaire) throws OsirisException;
 
-    public String getServiceLabel(Service service) throws OsirisException;
+        public Boolean deleteServiceFromUser(Service service);
 
-    public Service getServiceForMultiServiceTypesAndAffaire(List<ServiceType> serviceTypes, Affaire affaire)
-            throws OsirisException;
+        public Service modifyServiceType(List<ServiceType> serviceType, Service service) throws OsirisException;
 
-    public List<Attachment> getAttachmentsForProvisionOfService(Service service);
+        public List<Service> generateServiceInstanceFromMultiServiceTypes(List<ServiceType> serviceTypes,
+                        String customLabel, Affaire affaire) throws OsirisException;
+
+        public List<Attachment> getAttachmentsForProvisionOfService(Service service) throws OsirisException;
+
+        public boolean isServiceHasMissingInformations(Service service);
+
+        public List<Service> populateTransientField(List<Service> services) throws OsirisException;
+
 }

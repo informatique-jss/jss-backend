@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.quotation.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import com.jss.osiris.modules.osiris.miscellaneous.model.BillingType;
@@ -13,7 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 @Entity
-public class DebourDel {
+public class DebourDel implements Serializable {
 
     @Id
     private Integer id;

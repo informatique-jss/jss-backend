@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AppRestService } from '../../../libs/appRest.service';
+import { AppRestService } from '../../main/services/appRest.service';
 import { Affaire } from '../model/Affaire';
 
 @Injectable({
@@ -16,8 +16,8 @@ export class AffaireService extends AppRestService<Affaire> {
     return this.getById("affaire", affaireId);
   }
 
-  getAffaireBySiret(siret: string) {
-    return this.getList(new HttpParams().set("siret", siret), "affaire/siret", undefined, "Le service du RNE n'est pas disponible pour le moment. Veuillez réessayer dans quelques instants");
+  getAffaireBySiret(siretOrSiren: string) {
+    return this.getList(new HttpParams().set("siretOrSiren", siretOrSiren), "affaire/siret", undefined, "Le service du RNE n'est pas disponible pour le moment. Veuillez réessayer dans quelques instants");
   }
 
   addOrUpdateAffaire(affaire: Affaire) {

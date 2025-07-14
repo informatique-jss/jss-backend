@@ -2,94 +2,29 @@
 <html lang="fr">
 
 <head>
-  <title>JSS - Journal Spécial des Sociétés</title>
-
-  <!-- Meta Tags -->
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover">
   <meta name="author" content="JSS">
   <meta name="description" content="JSS - Journal Spécial des Sociétés">
+  <meta name="robots" content="noindex">
   <base href="/">
-
-  <!-- Dark mode -->
-  <script>
-    const storedTheme = localStorage.getItem('theme')
-
-    const getPreferredTheme = () => {
-      if (storedTheme) {
-        return storedTheme
-      }
-      return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'light'
-    }
-
-    const setTheme = function (theme) {
-      if (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        document.documentElement.setAttribute('data-bs-theme', 'dark')
-      } else {
-        document.documentElement.setAttribute('data-bs-theme', theme)
-      }
-    }
-
-    setTheme(getPreferredTheme())
-
-    window.addEventListener('DOMContentLoaded', () => {
-      var el = document.querySelector('.theme-icon-active');
-      if (el != 'undefined' && el != null) {
-        const showActiveTheme = theme => {
-          const activeThemeIcon = document.querySelector('.theme-icon-active use')
-          const btnToActive = document.querySelector(`[data-bs-theme-value="${theme}"]`)
-          const svgOfActiveBtn = btnToActive.querySelector('.mode-switch use').getAttribute('href')
-
-          document.querySelectorAll('[data-bs-theme-value]').forEach(element => {
-            element.classList.remove('active')
-          })
-
-          btnToActive.classList.add('active')
-          activeThemeIcon.setAttribute('href', svgOfActiveBtn)
-        }
-
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-          if (storedTheme !== 'light' || storedTheme !== 'dark') {
-            setTheme(getPreferredTheme())
-          }
-        })
-
-        showActiveTheme(getPreferredTheme())
-
-        document.querySelectorAll('[data-bs-theme-value]')
-          .forEach(toggle => {
-            toggle.addEventListener('click', () => {
-              const theme = toggle.getAttribute('data-bs-theme-value')
-              localStorage.setItem('theme', theme)
-              setTheme(theme)
-              showActiveTheme(theme)
-            })
-          })
-
-      }
-    })
-
-    const scrollToElement = function (id) {
-      const element = document.getElementById(id);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
-
-  </script>
-
+  <!-- Title -->
+  <title>JSS - Journal Spécial des Sociétés</title>
   <!-- Favicon -->
-  <link rel="shortcut icon" href="assets/images/favicon.ico">
-
-  <!-- Google Font -->
+  <link rel="icon" href="assets/images/favicon-32x32.png">
   <link rel="preconnect" href="https://fonts.gstatic.com">
-  <link
-    href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;700&family=Rubik:wght@400;500;700&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700&family=Open+Sans&display=swap" rel="stylesheet">
 
+  <!-- Font icons -->
+  <link rel="stylesheet" href="assets/icons/around-icons.min.css">
 </head>
 
 <body>
+  <!-- Google Tag Manager (noscript) TODO : integrate with cookie validation -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MQRHV8GR" height="0" width="0"
+      style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
   <app-root></app-root>
 </body>
 

@@ -56,8 +56,12 @@ public class ResponsableServiceImpl implements ResponsableService {
     }
 
     @Override
-    public List<Responsable> getResponsables() {
-        return IterableUtils.toList(responsableRepository.findAll());
+    public List<Responsable> getResponsables(String searchedValue) {
+        if (searchedValue == null || searchedValue.trim().length() <= 2)
+            return null;
+
+        return responsableRepository.findByLastnameContainingIgnoreCaseOrFirstnameContainingIgnoreCase(searchedValue,
+                searchedValue);
     }
 
     @Override
@@ -158,8 +162,8 @@ public class ResponsableServiceImpl implements ResponsableService {
 
         if (tiersSearch.getWithNonNullTurnover() == null)
             tiersSearch.setWithNonNullTurnover(false);
- 
-        return responsableRepository.searchResponsable(tiersId, responsableId, salesEmployeeId, tiersSearch.getMail(), 
+
+        return responsableRepository.searchResponsable(tiersId, responsableId, salesEmployeeId, tiersSearch.getMail(),
                 tiersSearch.getStartDate().atTime(0, 0),
                 tiersSearch.getEndDate().atTime(23, 59, 59), tiersSearch.getLabel(),
                 constantService.getConfrereJssSpel().getId(),

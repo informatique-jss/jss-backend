@@ -1,0 +1,7 @@
+<form [formGroup]="form!" class="form-check row d-flex flex-row">
+  <div *ngFor="let type of types" class="col pe-5 col-auto">
+    <input class="form-check-input" [formControlName]="propertyName" type="radio" [id]="type.id" [value]="type"
+      [required]="isMandatory" [checked]="model && model.id === type.id">
+    <label class="form-check-label" [for]="type.id"> {{type.label}}</label>
+  </div>
+</form>

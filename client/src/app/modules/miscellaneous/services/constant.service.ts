@@ -221,6 +221,10 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.attachmentTypeClientCommunication;
   }
 
+  getAttachmentTypeApplicationCv() {
+    return this.constant.attachmentTypeApplicationCv;
+  }
+
   getCountryFrance() {
     return this.constant.countryFrance;
   }
@@ -369,9 +373,22 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.provisionTypeRbe;
   }
 
+  getProvisionTypeCharacterAnnouncement() {
+    return this.constant.provisionTypeCharacterAnnouncement;
+  }
+
   getProvisionFamilyTypeDeposit() {
     return this.constant.provisionFamilyTypeDeposit;
   }
+
+  getProvisionFamilyTypeBalo() {
+    return this.constant.provisionFamilyTypeBalo;
+  }
+
+  getProvisionFamilyTypeBodacc() {
+    return this.constant.provisionFamilyTypeBodacc;
+  }
+
   getBillingTypeInfogreffeDebour() {
     return this.constant.billingTypeInfogreffeDebour;
   }
@@ -522,6 +539,14 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.assignationTypeEmployee;
   }
 
+  getAssignationTypeFormaliste() {
+    return this.constant.assignationTypeFormaliste;
+  }
+
+  getAssignationTypePublisciste() {
+    return this.constant.assignationTypePublisciste;
+  }
+
   getEmployeeBillingResponsible() {
     return this.constant.employeeBillingResponsible;
   }
@@ -540,6 +565,10 @@ export class ConstantService extends AppRestService<Constant> {
 
   getEmployeeInvoiceReminderResponsible() {
     return this.constant.employeeInvoiceReminderResponsible;
+  }
+
+  getEmployeeCandidacyResponsible() {
+    return this.constant.employeeCandidacyResponsible;
   }
 
   getTransfertFundsTypePhysique() {
@@ -818,8 +847,44 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.rffFrequencyMonthly;
   }
 
+  getCustomerOrderFrequencyAnnual() {
+    return this.constant.customerOrderFrequencyAnnual;
+  }
+
+  getCustomerOrderFrequencyQuarterly() {
+    return this.constant.customerOrderFrequencyQuarterly;
+  }
+
+  getCustomerOrderFrequencyMonthly() {
+    return this.constant.customerOrderFrequencyMonthly;
+  }
+
   getServiceTypeOther() {
     return this.constant.serviceTypeOther;
+  }
+
+  getServiceTypeAnnualSubscription() {
+    return this.constant.serviceTypeAnnualSubscription;
+  }
+
+  getServiceTypeEnterpriseAnnualSubscription() {
+    return this.constant.serviceTypeEnterpriseAnnualSubscription;
+  }
+
+  getServiceTypeMonthlySubscription() {
+    return this.constant.serviceTypeMonthlySubscription;
+  }
+
+  getServiceTypeKioskNewspaperBuy() {
+    return this.constant.serviceTypeKioskNewspaperBuy;
+  }
+
+  getServiceTypeUniqueArticleBuy() {
+    return this.constant.serviceTypeUniqueArticleBuy;
+  }
+
+  getSpecialOfferJssSubscriptionReduction() {
+    return this.constant.specialOfferJssSubscriptionReduction;
   }
 
   getDateAccountingClosureForAll() {
@@ -873,6 +938,42 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.categorySerie;
   }
 
+  getCategoryExclusivity() {
+    return this.constant.categoryExclusivity;
+  }
+
+  getMyJssCategoryAnnouncement() {
+    return this.constant.myJssCategoryAnnouncement;
+  }
+
+  getMyJssCategoryFormality() {
+    return this.constant.myJssCategoryFormality;
+  }
+
+  getMyJssCategoryDomiciliation() {
+    return this.constant.myJssCategoryDomiciliation;
+  }
+
+  getMyJssCategoryApostille() {
+    return this.constant.myJssCategoryApostille;
+  }
+
+  getMyJssCategoryDocument() {
+    return this.constant.myJssCategoryDocument;
+  }
+
+  getJssCategoryHomepageFirstHighlighted() {
+    return this.constant.jssCategoryHomepageFirstHighlighted;
+  }
+
+  getJssCategoryHomepageSecondHighlighted() {
+    return this.constant.jssCategoryHomepageSecondHighlighted;
+  }
+
+  getJssCategoryHomepageThirdHighlighted() {
+    return this.constant.jssCategoryHomepageThirdHighlighted;
+  }
+
   getAccountingAccountClassProduct() {
     return this.constant.accountingAccountClassProduct;
   }
@@ -887,5 +988,33 @@ export class ConstantService extends AppRestService<Constant> {
 
   getServiceTypeSecondaryCenterOpeningAlAndFormality() {
     return this.constant.serviceTypeSecondaryCenterOpeningAlAndFormality;
+  }
+
+  getServiceFamilyGroupAnnouncement() {
+    return this.constant.serviceFamilyGroupAnnouncement;
+  }
+
+  getServiceFamilyGroupFormality() {
+    return this.constant.serviceFamilyGroupFormality;
+  }
+
+  getServiceFamilyGroupOther() {
+    return this.constant.serviceFamilyGroupOther;
+  }
+
+  getStringMyJssDemoRequestMail() {
+    return this.constant.stringMyJssDemoRequestMail;
+  }
+
+  getStringMyJssWebinarRequestMail() {
+    return this.constant.stringMyJssWebinarRequestMail;
+  }
+
+  getStringMyJssContactFormRequestMail() {
+    return this.constant.stringMyJssContactFormRequestMail;
+  }
+
+  getPublishingDepartmentIdf() {
+    return this.constant.publishingDepartmentIdf;
   }
 }

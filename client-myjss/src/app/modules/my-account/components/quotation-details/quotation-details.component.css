@@ -5,3 +5,17 @@
 .border-top-1 {
   border-top-width: 1px !important;
 }
+
+.accordion {
+  --ar-accordion-border-radius: 0px !important;
+}
+
+.accordion-item {
+  border-radius: 0px;
+  background-color: var(--primary-color);
+}
+
+.accordion-button {
+  /* Same as cad-body, to be aligned with it */
+  padding: 2.375rem 2.375rem;
+}

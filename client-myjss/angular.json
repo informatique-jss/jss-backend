@@ -3,13 +3,9 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "myjss": {
+    "client-myjss": {
       "projectType": "application",
-      "schematics": {
-        "@schematics/angular:component": {
-          "style": "scss"
-        }
-      },
+      "schematics": {},
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -17,63 +13,39 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/myjss",
+            "outputPath": "dist",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
-              "zone.js"
+              "zone.js",
+              "@angular/localize/init"
             ],
             "tsConfig": "tsconfig.app.json",
-            "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss",
+              "src/assets/css/styles.scss",
+              "src/assets/icons/bootstrap-icons.css",
+              "src/assets/icons/around-icons.min.css",
               {
                 "input": "src/assets/css/swiper.min.css",
                 "inject": true,
                 "bundleName": "swiper.min.css"
               },
-              {
-                "input": "src/assets/css/theme.min.css",
-                "inject": true,
-                "bundleName": "theme.min.css"
-              }
+              "src/assets/css/theme.css",
+              "src/assets/css/theme-account.css"
             ],
-            "scripts": [
-              {
-                "input": "src/assets/vendor/cleave.js/dist/cleave.min.js",
-                "inject": true,
-                "bundleName": "cleave.min.js"
-              },
-              {
-                "input": "src/assets/js/theme-switcher.js",
-                "inject": true,
-                "bundleName": "theme-switcher.js"
-              },
-              {
-                "input": "src/assets/js/swiper.min.js",
-                "inject": true,
-                "bundleName": "swiper.min.js"
-              }
-            ]
+            "scripts": [],
+            "server": "src/main.server.ts",
+            "outputMode": "server",
+            "ssr": {
+              "entry": "src/server.ts"
+            }
           },
           "configurations": {
             "production": {
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
-                }
-              ],
               "outputHashing": "all",
               "fileReplacements": [
                 {
@@ -83,18 +55,6 @@
               ]
             },
             "recette": {
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "100mb",
-                  "maximumError": "200mb"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "10240kb",
-                  "maximumError": "40960kb"
-                }
-              ],
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -115,10 +75,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "myjss:build:production"
+              "buildTarget": "client-myjss:build:production"
             },
             "development": {
-              "buildTarget": "myjss:build:development"
+              "buildTarget": "client-myjss:build:development"
             }
           },
           "defaultConfiguration": "development",
@@ -127,26 +87,23 @@
           }
         },
         "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
-          "options": {
-            "buildTarget": "myjss:build"
-          }
+          "builder": "@angular-devkit/build-angular:extract-i18n"
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "polyfills": [
               "zone.js",
-              "zone.js/testing"
+              "zone.js/testing",
+              "@angular/localize/init"
             ],
             "tsConfig": "tsconfig.spec.json",
-            "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.css"
             ],
             "scripts": []
           }

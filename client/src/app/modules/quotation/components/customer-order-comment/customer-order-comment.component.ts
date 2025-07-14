@@ -13,7 +13,6 @@ import { CustomerOrder } from '../../model/CustomerOrder';
 import { CustomerOrderComment } from '../../model/CustomerOrderComment';
 import { Provision } from '../../model/Provision';
 import { Quotation } from '../../model/Quotation';
-import { Service } from '../../model/Service';
 import { CustomerOrderCommentService } from '../../services/customer.order.comment.service';
 import { ServiceService } from '../../services/service.service';
 
@@ -131,24 +130,13 @@ export class CustomerOrderCommentComponent implements OnInit {
   }
 
   getProvisionLabel(provision: Provision) {
-    return this.computeServiceLabel(provision.service, false) + " - " + this.computeProvisionLabel(provision);
-  }
-
-  getServiceLabel(service: Service) {
-    return this.serviceService.getServiceLabel(service, false, this.constantService.getServiceTypeOther());
+    return provision.service.serviceLabelToDisplay + " - " + this.computeProvisionLabel(provision);
   }
 
   computeProvisionLabel(provision: Provision): string {
     let label = provision.provisionType.label;
     if (provision.announcement && provision.announcement.department)
       label += " - Département " + provision.announcement.department.code;
-    return label;
-  }
-
-  computeServiceLabel(service: Service, doNotDisplayService: boolean): string {
-    let label = '';
-    if (!doNotDisplayService)
-      label = this.getServiceLabel(service) + label;
     return label;
   }
 

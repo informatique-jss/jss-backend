@@ -2,14 +2,35 @@
   <div class="kanban-box-settings">
     <mat-icon color="accent" class="pointer" [matMenuTriggerFor]="menu">settings</mat-icon>
   </div>
-  <generic-input [(model)]="filterText" label="Rechercher" [form]="kanbanForm" propertyName="filterText"
-    [isMandatory]="false" [isDisabled]="false" (onFormChange)="startFilter(true)"
-    [displayClearField]="true"></generic-input>
-  <select-provision-stauts [(model)]="statusSelected" label="Statut" [form]="kanbanForm" (onFormChange)="startFilter()"
-    propertyName="statusSelected" [isMandatory]="false" [isDisabled]="false"></select-provision-stauts>
-  <select-employee [(model)]="employeesSelected" label="Collaborateur" [form]="kanbanForm"
-    propertyName="employeesSelected" [isMandatory]="false" [isDisabled]="false"
-    [filteredAdGroups]="[adGroupFormalistes, adGroupInsertions]" (onFormChange)="startFilter()"></select-employee>
+  <div class=" full-width">
+    <table class="full-width table-fixed-layout">
+      <tr>
+        <td>
+          <generic-input [(model)]="filterText" label="Rechercher" [form]="kanbanForm" propertyName="filterText"
+            [isMandatory]="false" [isDisabled]="false" (onFormChange)="startFilter(true)"
+            [displayClearField]="true"></generic-input>
+        </td>
+        <td>
+          <select-provision-stauts [(model)]="statusSelected" label="Statut" [form]="kanbanForm"
+            propertyName="statusSelected" [isMandatory]="false" [isDisabled]="false"></select-provision-stauts>
+        </td>
+        <td>
+          <select-employee [(model)]="employeesSelected" label="Collaborateur" [form]="kanbanForm"
+            propertyName="employeesSelected" [isMandatory]="false" [isDisabled]="false"
+            [filteredAdGroups]="[adGroupFormalistes, adGroupInsertions]"></select-employee>
+        </td>
+        <td>
+          <button mat-raised-button color="accent" (click)="assignNewCustomerOrder()">M'attribuer une nouvelle
+            commande </button>
+        </td>
+        <td class="fab-td-button">
+          <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="startFilter()" class="add-button">
+            <mat-icon>search</mat-icon>
+          </button>
+        </td>
+      </tr>
+    </table>
+  </div>
 </div>
 
 <div class="kanban-container top-container">
@@ -36,8 +57,8 @@
            'drop-invalid': activeDraggedStatusId !== null && !isValidDropTarget(status.label!)
          }" (cdkDropListDropped)="drop($event)">
           <div *ngFor="let provision of status.entities" cdkDrag class="task-card"
-            (cdkDragStarted)="onDragStarted(status.id!, provision)" (cdkDragEnded)="onDragEnded()"
-            (click)="fetchEntityAndOpenPanel(provision)">
+            [ngClass]="{'card-priority':provision.isPriority}" (cdkDragStarted)="onDragStarted(status.id!, provision)"
+            (cdkDragEnded)="onDragEnded()" (click)="fetchEntityAndOpenPanel(provision)">
             <div class="card-content">
               <strong>{{provision.service.assoAffaireOrder.affaire.denomination
                 ?provision.service.assoAffaireOrder.affaire.denomination :
@@ -46,7 +67,7 @@
               {{provision.service.assoAffaireOrder.affaire.city ? (' - ' +
               provision.service.assoAffaireOrder.affaire.city.label)
               :''}}
-              <p>{{provision.service.customLabel}}</p>
+              <p>{{provision.service.serviceLabelToDisplay}}</p>
               <p>{{provision.provisionType.label}}</p>
             </div>
             <div class="card-footer">
@@ -63,13 +84,13 @@
               </div>
             </div>
             <ng-template cdkDragPreview>
-              <div class="task-card drag-preview">
+              <div class="task-card drag-preview" [ngClass]="{'card-priority':provision.isPriority}">
                 <div class="card-content">
                   <strong>{{provision.service.assoAffaireOrder.affaire.denomination
                     ?provision.service.assoAffaireOrder.affaire.denomination :
                     (provision.service.assoAffaireOrder.affaire.firstname + '
                     '+provision.service.assoAffaireOrder.affaire.lastname)}} </strong>
-                  <p>{{provision.service.customLabel}}</p>
+                  <p>{{provision.service.serviceLabelToDisplay}}</p>
                   <p>{{provision.provisionType.label}}</p>
                 </div>
                 <div class="card-footer">
@@ -124,7 +145,7 @@
           <span>Envoyer une demande de RIB à l'affaire</span>
         </button>
         <button mat-menu-item (click)="sendMissingAttachmentMail(selectedEntity.service)">
-          <span>Demander des pièces manquantes pour le service {{selectedEntity.service.customLabel}}</span>
+          <span>Demander des pièces manquantes pour le service {{selectedEntity.service.serviceLabelToDisplay}}</span>
         </button>
         <mat-divider></mat-divider>
         <button mat-menu-item

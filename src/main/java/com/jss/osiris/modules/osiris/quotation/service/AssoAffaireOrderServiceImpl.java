@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,21 +17,17 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
-import com.jss.osiris.libs.mail.MailHelper;
-import com.jss.osiris.modules.osiris.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
-import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
-import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.AffaireSearch;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.AnnouncementStatus;
@@ -41,6 +36,7 @@ import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrderSearchResult;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceFieldType;
+import com.jss.osiris.modules.osiris.quotation.model.Confrere;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Domiciliation;
@@ -49,7 +45,6 @@ import com.jss.osiris.modules.osiris.quotation.model.Formalite;
 import com.jss.osiris.modules.osiris.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
 import com.jss.osiris.modules.osiris.quotation.model.IWorkflowElement;
-import com.jss.osiris.modules.osiris.quotation.model.MissingAttachmentQuery;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
@@ -70,9 +65,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
     @Autowired
     AssoAffaireOrderRepository assoAffaireOrderRepository;
-
-    @Autowired
-    EmployeeService employeeService;
 
     @Autowired
     FormaliteStatusService formaliteStatusService;
@@ -105,16 +97,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     InvoiceItemService invoiceItemService;
 
     @Autowired
-    MailHelper mailHelper;
-
-    @Autowired
     AttachmentService attachmentService;
-
-    @Autowired
-    BankTransfertService bankTransfertService;
-
-    @Autowired
-    AccountingRecordService accountingRecordService;
 
     @Autowired
     ProvisionService provisionService;
@@ -144,7 +127,16 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     ServiceService serviceService;
 
     @Autowired
+    ServiceTypeService serviceTypeService;
+
+    @Autowired
     QuotationService quotationService;
+
+    @Autowired
+    ConfrereService confrereService;
+
+    @Autowired
+    CustomerOrderAssignationService customerOrderAssignationService;
 
     @Override
     public List<AssoAffaireOrder> getAssoAffaireOrders() {
@@ -185,22 +177,19 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
             }
         }
 
-        assoAffaireOrder = completeAssoAffaireOrder(assoAffaireOrder, assoAffaireOrder.getCustomerOrder(), true);
+        assoAffaireOrder = completeAssoAffaireOrder(assoAffaireOrder,
+                assoAffaireOrder.getCustomerOrder() != null ? assoAffaireOrder.getCustomerOrder()
+                        : assoAffaireOrder.getQuotation(),
+                true);
         assoAffaireOrder.setCustomerOrder(assoAffaireOrder.getCustomerOrder());
+        assoAffaireOrder.setQuotation(assoAffaireOrder.getQuotation());
         AssoAffaireOrder affaireSaved = assoAffaireOrderRepository.save(assoAffaireOrder);
         if (affaireSaved.getCustomerOrder() != null)
             batchService.declareNewBatch(Batch.REINDEX_ASSO_AFFAIRE_ORDER, affaireSaved.getId());
-        customerOrderService.checkAllProvisionEnded(assoAffaireOrder.getCustomerOrder());
-        return affaireSaved;
-    }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void updateAssignedToForAsso(AssoAffaireOrder asso, Employee employee) throws OsirisException {
-        asso.setAssignedTo(employee);
-        assoAffaireOrderRepository.save(asso);
-        if (asso.getCustomerOrder() != null)
-            batchService.declareNewBatch(Batch.REINDEX_ASSO_AFFAIRE_ORDER, asso.getId());
+        if (assoAffaireOrder.getCustomerOrder() != null)
+            customerOrderService.checkAllProvisionEnded(assoAffaireOrder.getCustomerOrder());
+        return affaireSaved;
     }
 
     @Override
@@ -218,7 +207,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
             Boolean isFromUser)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         // Complete domiciliation end date
-        int nbrAssignation = 0;
         Employee currentEmployee = null;
         Employee maxWeightEmployee = null;
         Integer maxWeight = -1000000000;
@@ -226,6 +214,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         for (Service service : assoAffaireOrder.getServices()) {
 
             service.setAssoAffaireOrder(assoAffaireOrder);
+
             if (service.getAssoServiceDocuments() != null)
                 for (AssoServiceDocument assoServiceDocument : service.getAssoServiceDocuments())
                     assoServiceDocument.setService(service);
@@ -237,6 +226,12 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
             for (Provision provision : service.getProvisions()) {
                 provision.setService(service);
+
+                if (provision.getComplexity() == null)
+                    provision.setComplexity(4);
+
+                if (provision.getIsPriority() == null)
+                    provision.setIsPriority(false);
 
                 if (provision.getAttachments() != null)
                     for (Attachment attachment : provision.getAttachments()) {
@@ -420,10 +415,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                         announcement.setAnnouncementStatus(announcementStatusService
                                 .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_NEW));
 
-                    if (announcement.getDocuments() != null)
-                        for (Document document : announcement.getDocuments())
-                            document.setAnnouncement(announcement);
-
                     boolean publicationProofFound = false;
                     if (announcement != null) {
                         if (provision.getAttachments() != null && provision.getAttachments().size() > 0)
@@ -434,6 +425,15 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                                     publicationProofFound = true;
                                     break;
                                 }
+                    }
+
+                    Confrere confrere = null;
+                    if (announcement.getDepartment() != null) {
+                        confrere = confrereService
+                                .searchConfrereFilteredByDepartmentAndName(announcement.getDepartment(), "")
+                                .get(0);
+                        if (confrere != null)
+                            announcement.setConfrere(confrere);
                     }
 
                     // Handle status change
@@ -481,7 +481,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                                 if (currentAnnouncement.getAnnouncementStatus().getId()
                                         .equals(announcement.getAnnouncementStatus().getId()))
-                                    generateWord = !currentAnnouncement.getNotice().equals(announcement.getNotice());
+                                    generateWord = !currentAnnouncement.getNotice()
+                                            .equals(announcement.getNotice());
                             }
 
                             if (generateWord)
@@ -580,9 +581,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                         }
                     }
                     provision.setAssignedTo(employee);
-                    if (currentEmployee == null || !currentEmployee.getId().equals(employee.getId())) {
+                    if (currentEmployee == null ||
+                            !currentEmployee.getId().equals(employee.getId())) {
                         currentEmployee = employee;
-                        nbrAssignation++;
                     }
 
                     // Handle weight
@@ -592,15 +593,12 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                         maxWeightEmployee = employee;
                     }
                 }
+
+                customerOrderAssignationService.assignNewProvisionToUser(provision);
             }
         }
-        if (nbrAssignation == 1 && assoAffaireOrder.getAssignedTo() == null)
-            assoAffaireOrder.setAssignedTo(currentEmployee);
 
         if (maxWeightEmployee != null) {
-            if (assoAffaireOrder.getAssignedTo() == null)
-                assoAffaireOrder.setAssignedTo(maxWeightEmployee);
-
             for (Service service : assoAffaireOrder.getServices())
                 for (Provision provision : service.getProvisions())
                     if (provision.getId() == null)
@@ -614,7 +612,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     public ArrayList<AssoAffaireOrderSearchResult> searchForAsso(AffaireSearch affaireSearch) {
         ArrayList<Integer> statusId = null;
         ArrayList<Integer> assignedId = null;
-        ArrayList<Integer> responsibleId = null;
         Integer affaireId = null;
 
         statusId = new ArrayList<Integer>();
@@ -630,13 +627,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
             assignedId.add(affaireSearch.getAssignedTo().getId());
         } else {
             assignedId.add(0);
-        }
-
-        responsibleId = new ArrayList<Integer>();
-        if (affaireSearch.getResponsible() != null) {
-            responsibleId.add(affaireSearch.getResponsible().getId());
-        } else {
-            responsibleId.add(0);
         }
 
         Integer commercialId = 0;
@@ -672,15 +662,14 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
             formaliteInfogreffeStatusCode = affaireSearch.getFormaliteInfogreffeStatusCode();
 
         ArrayList<String> excludedCustomerOrderStatusCode = new ArrayList<String>();
-        excludedCustomerOrderStatusCode.add(CustomerOrderStatus.OPEN);
+        excludedCustomerOrderStatusCode.add(CustomerOrderStatus.DRAFT);
         excludedCustomerOrderStatusCode.add(CustomerOrderStatus.WAITING_DEPOSIT);
         excludedCustomerOrderStatusCode.add(CustomerOrderStatus.ABANDONED);
 
         if (affaireSearch.getIsMissingQueriesToManualRemind() == null)
             affaireSearch.setIsMissingQueriesToManualRemind(false);
 
-        return assoAffaireOrderRepository.findAsso(responsibleId,
-                assignedId, affaireSearch.getLabel(),
+        return assoAffaireOrderRepository.findAsso(assignedId, affaireSearch.getLabel(),
                 statusId, excludedCustomerOrderStatusCode, customerOrderId, waitedCompetentAuthorityId, affaireId,
                 affaireSearch.getIsMissingQueriesToManualRemind(),
                 simpleProvisionStatusService
@@ -705,175 +694,14 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         return populateTransientField(assoAffaireOrderRepository.findByQuotationOrderByAffaire(quotation));
     }
 
-    private List<AssoAffaireOrder> populateTransientField(List<AssoAffaireOrder> assoAffaireOrders)
+    @Override
+    public List<AssoAffaireOrder> populateTransientField(List<AssoAffaireOrder> assoAffaireOrders)
             throws OsirisException {
         if (assoAffaireOrders != null && assoAffaireOrders.size() > 0)
             for (AssoAffaireOrder assoAffaireOrder : assoAffaireOrders) {
                 if (assoAffaireOrder.getServices() != null)
-                    for (Service service : assoAffaireOrder.getServices()) {
-                        service.setHasMissingInformations(false);
-                        if (isServiceHasMissingInformations(service)) {
-                            service.setHasMissingInformations(true);
-
-                            service.getMissingAttachmentQueries().sort(new Comparator<MissingAttachmentQuery>() {
-
-                                @Override
-                                public int compare(MissingAttachmentQuery o1, MissingAttachmentQuery o2) {
-                                    if (o1 != null && o2 == null)
-                                        return 1;
-                                    if (o1 == null && o2 != null)
-                                        return -1;
-                                    if (o1 == null && o2 == null)
-                                        return 0;
-                                    if (o1 != null && o2 != null)
-                                        return o2.getCreatedDateTime().compareTo(o1.getCreatedDateTime());
-                                    return 0;
-                                }
-                            });
-                            service.setLastMissingAttachmentQueryDateTime(
-                                    service.getMissingAttachmentQueries().get(0).getCreatedDateTime()); // TODO : quand
-                                                                                                        // les alertes
-                                                                                                        // de mails
-                                                                                                        // affaire + rib
-                                                                                                        // affaire
-                                                                                                        // seront
-                                                                                                        // intégrées,
-                                                                                                        // mettre cette
-                                                                                                        // date à la
-                                                                                                        // date de
-                                                                                                        // création de
-                                                                                                        // la commande
-                        }
-                        service.setServiceStatus(getServiceStatusLabel(service));
-                        service.setServicePrice(getServicePrice(service, true, true));
-                        if (service.getServicePrice().compareTo(new BigDecimal(0)) <= 0f)
-                            service.setServicePrice(null);
-                        removeDisabledAttachments(service);
-                        removePublicationFlagAssoServiceDocument(service);
-
-                        if (service.getProvisions() != null)
-                            for (Provision provision : service.getProvisions())
-                                if (provision.getAnnouncement() != null
-                                        && provision.getAnnouncement().getConfrere() != null)
-                                    service.setConfrereLabel(
-                                            "publié par " + provision.getAnnouncement().getConfrere().getLabel());
-                    }
+                    serviceService.populateTransientField(assoAffaireOrder.getServices());
             }
-
         return assoAffaireOrders;
-    }
-
-    private void removeDisabledAttachments(Service service) {
-        if (service != null && service.getAssoServiceDocuments() != null)
-            for (AssoServiceDocument asso : service.getAssoServiceDocuments()) {
-                List<Attachment> attachmentsToRemove = new ArrayList<Attachment>();
-                if (asso.getAttachments() != null) {
-                    for (Attachment attachment : asso.getAttachments()) {
-                        if (attachment.getIsDisabled() != null && attachment.getIsDisabled())
-                            attachmentsToRemove.add(attachment);
-                    }
-                    if (attachmentsToRemove.size() > 0) {
-                        asso.getAttachments().removeAll(attachmentsToRemove);
-                    }
-                }
-            }
-    }
-
-    private void removePublicationFlagAssoServiceDocument(Service service) throws OsirisException {
-        // When published in the same service, do not ask for publication flag, JSS will
-        // provide it
-        if (service != null && service.getProvisions() != null) {
-            boolean asAnnouncement = false;
-            for (Provision provision : service.getProvisions()) {
-                if (provision.getAnnouncement() != null)
-                    asAnnouncement = true;
-                break;
-            }
-
-            if (asAnnouncement && service.getAssoServiceDocuments() != null) {
-                for (AssoServiceDocument assoServiceDocument : service.getAssoServiceDocuments()) {
-                    if (assoServiceDocument.getTypeDocument().getAttachmentType() != null
-                            && assoServiceDocument.getTypeDocument().getAttachmentType().getId()
-                                    .equals(constantService.getAttachmentTypePublicationFlag().getId())) {
-                        assoServiceDocument.setIsMandatory(false);
-                    }
-                }
-            }
-        }
-    }
-
-    @Override
-    public boolean isServiceHasMissingInformations(Service service) {
-        if (service.getMissingAttachmentQueries() != null
-                && service.getMissingAttachmentQueries().size() > 0) {
-            if (service.getProvisions() != null)
-                for (Provision provision : service.getProvisions()) {
-                    if (provision.getSimpleProvision() != null
-                            && provision.getSimpleProvision().getSimpleProvisionStatus().getCode()
-                                    .equals(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT)
-                            ||
-                            provision.getFormalite() != null
-                                    && provision.getFormalite().getFormaliteStatus().getCode()
-                                            .equals(FormaliteStatus.FORMALITE_WAITING_DOCUMENT)) {
-                        return true;
-                    }
-                }
-        }
-        return false;
-    }
-
-    private String getServiceStatusLabel(Service service) {
-        Integer currentPriority = -1;
-        String currentStatus = "";
-        if (service.getProvisions() != null)
-            for (Provision provision : service.getProvisions()) {
-                if (provision.getAnnouncement() != null && provision.getAnnouncement().getAnnouncementStatus()
-                        .getServicePriority() > currentPriority) {
-                    currentPriority = provision.getAnnouncement().getAnnouncementStatus().getServicePriority();
-                    currentStatus = provision.getAnnouncement().getAnnouncementStatus().getLabel();
-                } else if (provision.getSimpleProvision() != null && provision.getSimpleProvision()
-                        .getSimpleProvisionStatus().getServicePriority() > currentPriority) {
-                    currentPriority = provision.getSimpleProvision().getSimpleProvisionStatus()
-                            .getServicePriority();
-                    currentStatus = provision.getSimpleProvision().getSimpleProvisionStatus().getLabel();
-                } else if (provision.getFormalite() != null && provision.getFormalite().getFormaliteStatus()
-                        .getServicePriority() > currentPriority) {
-                    currentPriority = provision.getFormalite().getFormaliteStatus().getServicePriority();
-                    currentStatus = provision.getFormalite().getFormaliteStatus().getLabel();
-                    if (provision.getFormalite().getFormaliteStatus().getCode()
-                            .equals(FormaliteStatus.FORMALITE_AUTHORITY_REJECTED))
-                        currentStatus = formaliteStatusService
-                                .getFormaliteStatusByCode(FormaliteStatus.FORMALITE_WAITING_DOCUMENT_AUTHORITY)
-                                .getLabel();
-                } else if (provision.getDomiciliation() != null
-                        && provision.getDomiciliation().getDomiciliationStatus()
-                                .getServicePriority() > currentPriority) {
-                    currentPriority = provision.getDomiciliation().getDomiciliationStatus().getServicePriority();
-                    currentStatus = provision.getDomiciliation().getDomiciliationStatus().getLabel();
-                }
-            }
-        return currentStatus;
-    }
-
-    @Override
-    public BigDecimal getServicePrice(Service service, boolean withDiscount, boolean withVat) {
-        BigDecimal totalPrice = new BigDecimal(0);
-        if (service.getProvisions() != null)
-            for (Provision provision : service.getProvisions()) {
-                if (provision.getInvoiceItems() != null) {
-                    for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {
-                        if (invoiceItem.getPreTaxPriceReinvoiced() != null)
-                            totalPrice = totalPrice.add(invoiceItem.getPreTaxPriceReinvoiced());
-                        else if (invoiceItem.getPreTaxPrice() != null)
-                            totalPrice = totalPrice.add(invoiceItem.getPreTaxPrice());
-
-                        if (withDiscount && invoiceItem.getDiscountAmount() != null)
-                            totalPrice = totalPrice.subtract(invoiceItem.getDiscountAmount());
-                        if (withVat && invoiceItem.getVatPrice() != null)
-                            totalPrice = totalPrice.add(invoiceItem.getVatPrice());
-                    }
-                }
-            }
-        return totalPrice;
     }
 }

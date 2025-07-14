@@ -37,6 +37,6 @@ public interface AffaireService {
 
         public List<Affaire> getAffairesForCurrentUser(Integer page, String sortBy, String searchText);
 
-        public List<Attachment> getAttachmentsForAffaire(Affaire affaire);
+        public List<Attachment> getAttachmentsForAffaire(Affaire affaire) throws OsirisException;
 
 }

@@ -7,7 +7,7 @@ import { DeliveryService } from 'src/app/modules/miscellaneous/model/DeliverySer
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { DeliveryServiceService } from 'src/app/modules/miscellaneous/services/delivery.service.service';
-import { AppService } from '../../../../services/app.service';
+import { HabilitationsService } from 'src/app/services/habilitations.service';
 import { Tiers } from '../../model/Tiers';
 import { TiersType } from '../../model/TiersType';
 
@@ -30,7 +30,7 @@ export class PrincipalComponent implements OnInit {
   constructor(private formBuilder: UntypedFormBuilder,
     private deliveryServiceService: DeliveryServiceService,
     private constantService: ConstantService,
-    private appService: AppService,
+    private habilitationService: HabilitationsService,
     private cityService: CityService) { }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -114,5 +114,9 @@ export class PrincipalComponent implements OnInit {
   getFormStatus(): boolean {
     this.principalForm.markAllAsTouched();
     return this.principalForm.valid;
+  }
+
+  canChooseProductionEmployeeOnITiers() {
+    return this.habilitationService.canChooseProductionEmployeeOnITiers();
   }
 }

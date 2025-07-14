@@ -44,7 +44,8 @@ public class Provision implements IId, IAttachment {
 	@Id
 	@SequenceGenerator(name = "provision_sequence", sequenceName = "provision_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "provision_sequence")
-	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class,
+			JacksonViews.MyJssDetailedView.class })
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -57,24 +58,28 @@ public class Provision implements IId, IAttachment {
 	@JsonIgnoreProperties(value = { "defaultCompetentAuthorityServiceProvider" }, allowSetters = true)
 	@JoinColumn(name = "id_provision_type")
 	@IndexedField
-	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	private ProvisionType provisionType;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_provision_family_type")
 	@IndexedField
-	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class,
+			JacksonViews.MyJssDetailedView.class })
 	private ProvisionFamilyType provisionFamilyType;
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_domiciliation")
-	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	private Domiciliation domiciliation;
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_announcement")
 	@IndexedField
-	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	private Announcement announcement;
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -107,13 +112,13 @@ public class Provision implements IId, IAttachment {
 	private Boolean isLogo;
 
 	@Column(nullable = false)
+	@JsonView({ JacksonViews.MyJssDetailedView.class })
 	private Boolean isRedactedByJss;
 
 	@Column(nullable = false)
 	private Boolean isBaloPackage;
 
 	private Boolean isBaloPublicationFlag;
-
 	private Boolean isBaloNormalization;
 
 	@Column(nullable = false)
@@ -186,6 +191,7 @@ public class Provision implements IId, IAttachment {
 	private Boolean isDocumentScanning;
 
 	@Column(nullable = false)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Boolean isEmergency;
 
 	@Column(nullable = false)
@@ -203,10 +209,12 @@ public class Provision implements IId, IAttachment {
 	@Column(nullable = false)
 	private Boolean isSupplyFullBeCopy;
 
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	private Boolean isDoNotGenerateAnnouncement;
+
 	@OneToMany(targetEntity = Attachment.class, mappedBy = "provision", cascade = CascadeType.REMOVE)
 	@JsonIgnoreProperties(value = { "provision", "invoice" }, allowSetters = true)
-	@JsonView({ JacksonViews.OsirisDetailedView.class }) // TODO : remove and use attachment getter in attachment
-															// component
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private List<Attachment> attachments;
 
 	@OneToMany(targetEntity = Invoice.class, mappedBy = "provision")
@@ -228,6 +236,9 @@ public class Provision implements IId, IAttachment {
 
 	// 1 hard => 3 easy
 	private Integer complexity;
+
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
+	private Boolean isPriority;
 
 	public Integer getId() {
 		return id;
@@ -637,11 +648,27 @@ public class Provision implements IId, IAttachment {
 		this.invoiceItemsGrouped = invoiceItemsGrouped;
 	}
 
+	public Boolean getIsDoNotGenerateAnnouncement() {
+		return isDoNotGenerateAnnouncement;
+	}
+
+	public void setIsDoNotGenerateAnnouncement(Boolean isDoNotGenerateAnnouncement) {
+		this.isDoNotGenerateAnnouncement = isDoNotGenerateAnnouncement;
+	}
+
 	public Integer getComplexity() {
 		return complexity;
 	}
 
 	public void setComplexity(Integer complexity) {
 		this.complexity = complexity;
+	}
+
+	public Boolean getIsPriority() {
+		return isPriority;
+	}
+
+	public void setIsPriority(Boolean isPriority) {
+		this.isPriority = isPriority;
 	}
 }

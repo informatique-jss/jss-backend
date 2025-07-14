@@ -1,9 +1,12 @@
 package com.jss.osiris.modules.myjss.wordpress.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.jss.osiris.libs.jackson.JacksonLocalDateTimeDeserializer;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 
 import jakarta.persistence.Entity;
@@ -14,10 +17,13 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Transient;
 
 @Entity
-public class Media {
+public class Media implements Serializable {
     @Id
     private Integer id;
+
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private Integer author;
+
     @JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
     private LocalDateTime date;
 
@@ -30,14 +36,29 @@ public class Media {
     private String source_url;
 
     private String media_type;
+
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private String alt_text;
+
+    @IndexedField
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private String urlFull;
+
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private String urlLarge;
+
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private String urlMedium;
+
+    @IndexedField
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private String urlMediumLarge;
 
     @IndexedField
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private String urlThumbnail;
+
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private Integer length;
 
     @ManyToOne(fetch = FetchType.LAZY)

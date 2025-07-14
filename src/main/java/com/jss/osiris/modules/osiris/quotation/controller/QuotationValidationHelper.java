@@ -82,6 +82,47 @@ public class QuotationValidationHelper {
         @Autowired
         ActiveDirectoryHelper activeDirectoryHelper;
 
+        public void validateAffaire(Affaire affaire) throws OsirisValidationException, OsirisException {
+                validationHelper.validateReferential(affaire.getCountry(), true, "Country");
+                validationHelper.validateReferential(affaire.getMainActivity(), false, "MainActivity");
+                validationHelper.validateReferential(affaire.getLegalForm(), false, "LegalForm");
+                validationHelper.validateReferential(affaire.getCompetentAuthority(), false, "CompetentAuthority");
+                validationHelper.validateString(affaire.getExternalReference(), false, 60, "ExternalReference");
+                validationHelper.validateString(affaire.getIntercommunityVat(), false, 20, "IntercommunityVat");
+                if (affaire.getCountry() != null
+                                && affaire.getCountry().getId().equals(constantService.getCountryFrance().getId()))
+                        validationHelper.validateString(affaire.getPostalCode(), true, 10, "PostalCode");
+                validationHelper.validateString(affaire.getCedexComplement(), false, 20, "CedexComplement");
+                validationHelper.validateString(affaire.getAddress(), true, 100, "Address");
+                validationHelper.validateReferential(affaire.getCity(), true, "City");
+
+                if (affaire.getIsIndividual()) {
+                        validationHelper.validateReferential(affaire.getCivility(), true, "Civility");
+                        validationHelper.validateString(affaire.getFirstname(), true, 40, "Firstname");
+                        validationHelper.validateString(affaire.getLastname(), true, 40, "Lastname");
+                        affaire.setDenomination(null);
+                        if (affaire.getLastname() != null)
+                                affaire.setLastname(affaire.getLastname().toUpperCase());
+
+                } else {
+                        validationHelper.validateString(affaire.getDenomination(), true, 150, "Denomination");
+                        affaire.setFirstname(null);
+                        affaire.setLastname(null);
+                        if (affaire.getRna() != null
+                                        && !validationHelper.validateRna(
+                                                        affaire.getRna().toUpperCase().replaceAll(" ", "")))
+                                throw new OsirisValidationException("RNA");
+                        if (affaire.getSiren() != null
+                                        && !validationHelper.validateSiren(
+                                                        affaire.getSiren().toUpperCase().replaceAll(" ", "")))
+                                throw new OsirisValidationException("SIREN");
+                        if (affaire.getSiret() != null
+                                        && !validationHelper.validateSiret(
+                                                        affaire.getSiret().toUpperCase().replaceAll(" ", "")))
+                                throw new OsirisValidationException("SIRET");
+                }
+        }
+
         @Transactional(rollbackFor = Exception.class)
         public void validateQuotationAndCustomerOrder(IQuotation quotation, String targetStatusCode)
                         throws OsirisValidationException, OsirisException, OsirisClientMessageException {
@@ -89,9 +130,9 @@ public class QuotationValidationHelper {
 
                 if (targetStatusCode != null) {
                         // Is for status update, override input quotation with database one
-                        if (quotation instanceof CustomerOrder)
+                        if (!quotation.getIsQuotation())
                                 quotation = customerOrderService.getCustomerOrder(quotation.getId());
-                        if (quotation instanceof Quotation)
+                        if (quotation.getIsQuotation())
                                 quotation = quotationService.getQuotation(quotation.getId());
                 }
 
@@ -109,31 +150,21 @@ public class QuotationValidationHelper {
                 if (quotation.getCustomerOrderOrigin() == null)
                         quotation.setCustomerOrderOrigin(constantService.getCustomerOrderOriginOsiris());
 
-                if (targetStatusCode != null) {
-                        // Is for status update, override input quotation with database one
-                        if (quotation instanceof CustomerOrder)
-                                quotation = customerOrderService.getCustomerOrder(quotation.getId());
-                        if (quotation instanceof Quotation)
-                                quotation = quotationService.getQuotation(quotation.getId());
-                }
-
                 if (quotation instanceof CustomerOrder) {
                         CustomerOrder customerOrder = (CustomerOrder) quotation;
                         isOpen = customerOrder.getCustomerOrderStatus() == null ||
                                         customerOrder.getCustomerOrderStatus().getCode()
-                                                        .equals(CustomerOrderStatus.OPEN);
+                                                        .equals(CustomerOrderStatus.DRAFT);
 
                         if (targetStatusCode != null)
-                                isOpen = targetStatusCode.equals(CustomerOrderStatus.OPEN);
+                                isOpen = targetStatusCode.equals(CustomerOrderStatus.DRAFT);
                 }
 
                 if (quotation instanceof Quotation) {
                         Quotation quotationQuotation = (Quotation) quotation;
                         isOpen = quotationQuotation.getQuotationStatus() == null ||
-                                        quotationQuotation.getQuotationStatus().getCode().equals(QuotationStatus.OPEN);
+                                        quotationQuotation.getQuotationStatus().getCode().equals(QuotationStatus.DRAFT);
                 }
-
-                validationHelper.validateReferential(quotation.getAssignedTo(), false, "AssignedTo");
 
                 if (targetStatusCode != null) {
                         IWorkflowElement status = null;
@@ -192,58 +223,7 @@ public class QuotationValidationHelper {
                         throw new OsirisClientMessageException(
                                         "Il n'est pas possible d'utiliser un responsable inactif !");
 
-                // Generate missing documents
-                Document billingDocument = documentService
-                                .getBillingDocument(quotation.getResponsable().getDocuments());
-                if (documentService.getBillingDocument(quotation.getDocuments()) == null && billingDocument != null) {
-                        billingDocument = documentService.cloneOrMergeDocument(billingDocument, null);
-                        billingDocument.setTiers(null);
-                        billingDocument.setResponsable(null);
-                        billingDocument.setConfrere(null);
-                        if (isCustomerOrder)
-                                billingDocument.setCustomerOrder((CustomerOrder) quotation);
-                        else
-                                billingDocument.setQuotation((Quotation) quotation);
-                        if (quotation.getDocuments() == null)
-                                quotation.setDocuments(new ArrayList<Document>());
-                        quotation.getDocuments().add(billingDocument);
-                }
-
-                Document digitalDocument = documentService.getDocumentByDocumentType(
-                                quotation.getResponsable().getDocuments(),
-                                constantService.getDocumentTypeDigital());
-                if (documentService.getDocumentByDocumentType(quotation.getDocuments(),
-                                constantService.getDocumentTypeDigital()) == null && digitalDocument != null) {
-                        digitalDocument = documentService.cloneOrMergeDocument(digitalDocument, null);
-                        digitalDocument.setTiers(null);
-                        digitalDocument.setResponsable(null);
-                        digitalDocument.setConfrere(null);
-                        if (isCustomerOrder)
-                                digitalDocument.setCustomerOrder((CustomerOrder) quotation);
-                        else
-                                digitalDocument.setQuotation((Quotation) quotation);
-                        if (quotation.getDocuments() == null)
-                                quotation.setDocuments(new ArrayList<Document>());
-                        quotation.getDocuments().add(digitalDocument);
-                }
-
-                Document paperDocument = documentService.getDocumentByDocumentType(
-                                quotation.getResponsable().getDocuments(),
-                                constantService.getDocumentTypePaper());
-                if (documentService.getDocumentByDocumentType(quotation.getDocuments(),
-                                constantService.getDocumentTypePaper()) == null && paperDocument != null) {
-                        paperDocument = documentService.cloneOrMergeDocument(paperDocument, null);
-                        paperDocument.setTiers(null);
-                        paperDocument.setResponsable(null);
-                        paperDocument.setConfrere(null);
-                        if (isCustomerOrder)
-                                paperDocument.setCustomerOrder((CustomerOrder) quotation);
-                        else
-                                paperDocument.setQuotation((Quotation) quotation);
-                        if (quotation.getDocuments() == null)
-                                quotation.setDocuments(new ArrayList<Document>());
-                        quotation.getDocuments().add(paperDocument);
-                }
+                completeIQuotationDocuments(quotation, isCustomerOrder);
 
                 // Do not check anything from website with no provision, a human will correct if
                 // after
@@ -273,45 +253,7 @@ public class QuotationValidationHelper {
 
                 if (quotation.getDocuments() != null && quotation.getDocuments().size() > 0) {
                         for (Document document : quotation.getDocuments()) {
-
-                                validationHelper.validateReferential(document.getDocumentType(), true, "DocumentType");
-
-                                if (document.getMailsAffaire() != null
-                                                && !validationHelper.validateMailList(document.getMailsAffaire()))
-                                        throw new OsirisValidationException("MailsAffaire");
-                                if (document.getMailsClient() != null && document.getMailsClient() != null
-                                                && document.getMailsClient().size() > 0)
-                                        if (!validationHelper.validateMailList(document.getMailsClient()))
-                                                throw new OsirisValidationException("MailsClient");
-
-                                validationHelper.validateString(document.getAffaireAddress(), false, 200,
-                                                "AffaireAddress");
-                                validationHelper.validateString(document.getClientAddress(), false, 100,
-                                                "ClientAddress");
-                                validationHelper.validateString(document.getAffaireRecipient(), false, 100,
-                                                "AffaireRecipient");
-                                validationHelper.validateString(document.getClientRecipient(), false, 200,
-                                                "ClientRecipient");
-                                validationHelper.validateString(document.getCommandNumber(),
-                                                document.getIsCommandNumberMandatory() != null
-                                                                && document.getIsCommandNumberMandatory(),
-                                                40,
-                                                "CommandNumber");
-                                validationHelper.validateReferential(document.getPaymentDeadlineType(), false,
-                                                "PaymentDeadlineType");
-                                validationHelper.validateReferential(document.getRefundType(), false, "RefundType");
-                                validationHelper.validateIban(document.getRefundIBAN(), false, "RefundIBAN");
-                                validationHelper.validateBic(document.getRefundBic(), false, "RefundBic");
-                                validationHelper.validateReferential(document.getBillingClosureType(), false,
-                                                "BillingClosureType");
-                                validationHelper.validateReferential(document.getBillingClosureRecipientType(), false,
-                                                "BillingClosureRecipientType");
-
-                                if (document.getIsRecipientAffaire() == null)
-                                        document.setIsRecipientAffaire(false);
-                                if (document.getIsRecipientClient() == null)
-                                        document.setIsRecipientClient(false);
-
+                                validateDocument(document);
                         }
                 }
 
@@ -337,8 +279,8 @@ public class QuotationValidationHelper {
 
                                 for (Service service : assoAffaireOrder.getServices())
                                         for (Provision provision : service.getProvisions()) {
-                                                validateProvision(provision, targetStatusCode, isCustomerOrder,
-                                                                quotation);
+                                                validateProvision(provision, isCustomerOrder,
+                                                                quotation, false);
 
                                                 // Check unique frequency in all customer order
                                                 if (provision.getProvisionType().getIsRecurring() != null
@@ -375,7 +317,7 @@ public class QuotationValidationHelper {
                 }
 
                 if (quotation.getAssoAffaireOrders().size() > 1) {
-                        billingDocument = documentService.getBillingDocument(quotation.getDocuments());
+                        Document billingDocument = documentService.getBillingDocument(quotation.getDocuments());
                         // If recipient affaire and no override, we can't determine what affaire to use
                         if (billingDocument != null && billingDocument.getIsRecipientAffaire()
                                         && (billingDocument.getMailsAffaire() == null
@@ -385,20 +327,65 @@ public class QuotationValidationHelper {
 
         }
 
-        @Transactional
-        public void validateProvisionTransactionnal(Provision provision, String targetStatusCode,
-                        CustomerOrder customerOrder)
+        @Transactional(rollbackFor = Exception.class)
+        public Document validateDocument(Document document)
                         throws OsirisValidationException, OsirisException, OsirisClientMessageException {
-                validateProvision(provision, targetStatusCode, true,
-                                customerOrderService.getCustomerOrder(customerOrder.getId()));
+                validationHelper.validateReferential(document.getDocumentType(), true, "DocumentType");
+
+                if (document.getMailsAffaire() != null
+                                && !validationHelper.validateMailList(document.getMailsAffaire()))
+                        throw new OsirisValidationException("MailsAffaire");
+                if (document.getMailsClient() != null && document.getMailsClient() != null
+                                && document.getMailsClient().size() > 0)
+                        if (!validationHelper.validateMailList(document.getMailsClient()))
+                                throw new OsirisValidationException("MailsClient");
+
+                validationHelper.validateString(document.getAffaireAddress(), false, 200,
+                                "AffaireAddress");
+                validationHelper.validateString(document.getClientAddress(), false, 100,
+                                "ClientAddress");
+                validationHelper.validateString(document.getAffaireRecipient(), false, 100,
+                                "AffaireRecipient");
+                validationHelper.validateString(document.getClientRecipient(), false, 200,
+                                "ClientRecipient");
+                validationHelper.validateString(document.getCommandNumber(),
+                                document.getIsCommandNumberMandatory() != null
+                                                && document.getIsCommandNumberMandatory(),
+                                40,
+                                "CommandNumber");
+                validationHelper.validateReferential(document.getPaymentDeadlineType(), false,
+                                "PaymentDeadlineType");
+                validationHelper.validateReferential(document.getRefundType(), false, "RefundType");
+                validationHelper.validateIban(document.getRefundIBAN(), false, "RefundIBAN");
+                validationHelper.validateBic(document.getRefundBic(), false, "RefundBic");
+                validationHelper.validateReferential(document.getBillingClosureType(), false,
+                                "BillingClosureType");
+                validationHelper.validateReferential(document.getBillingClosureRecipientType(), false,
+                                "BillingClosureRecipientType");
+
+                if (document.getIsRecipientAffaire() == null)
+                        document.setIsRecipientAffaire(false);
+                if (document.getIsRecipientClient() == null)
+                        document.setIsRecipientClient(false);
+
+                return document;
         }
 
-        private void validateProvision(Provision provision, String targetStatusCode, boolean isCustomerOrder,
-                        IQuotation quotation)
+        @Transactional
+        public void validateProvisionTransactionnal(Provision provision,
+                        IQuotation iQuotation, Boolean isByPassMandatoryFields)
+                        throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+                validateProvision(provision, !iQuotation.getIsQuotation(), iQuotation, isByPassMandatoryFields);
+        }
+
+        private void validateProvision(Provision provision, boolean isCustomerOrder,
+                        IQuotation quotation, Boolean isByPassMandatoryFields)
                         throws OsirisValidationException, OsirisException, OsirisClientMessageException {
 
-                validationHelper.validateReferential(provision.getProvisionFamilyType(), true, "Famille de prestation");
-                validationHelper.validateReferential(provision.getProvisionType(), true, "Type de prestation");
+                validationHelper.validateReferential(provision.getProvisionFamilyType(),
+                                !isByPassMandatoryFields, "Famille de prestation");
+                validationHelper.validateReferential(provision.getProvisionType(), !isByPassMandatoryFields,
+                                "Type de prestation");
 
                 if (quotation.getId() == null && !quotation.getCustomerOrderOrigin().getId()
                                 .equals(constantService.getCustomerOrderOriginOsiris().getId()))
@@ -434,6 +421,18 @@ public class QuotationValidationHelper {
                         validationHelper.validateString(domiciliation.getAccountingRecordDomiciliation(),
                                         false, 600,
                                         "AccountingRecordDomiciliation");
+
+                        validationHelper.validateString(domiciliation.getAccountingDocumentsConservationAddress(),
+                                        false, 60, "AccountingDocumentsConservationAddress");
+                        validationHelper.validateString(domiciliation.getAccountingDocumentsConservationPostalCode(),
+                                        false, 10, "AccountingDocumentsConservationPostalCode");
+                        validationHelper.validateString(
+                                        domiciliation.getAccountingDocumentsConservationCedexComplement(), false, 20,
+                                        "AccountingDocumentsConservationCedexComplement");
+                        validationHelper.validateReferential(domiciliation.getAccountingDocumentsConservationCity(),
+                                        false, "AccountingDocumentsConservationCity");
+                        validationHelper.validateReferential(domiciliation.getAccountingDocumentsConservationCountry(),
+                                        false, "AccountingDocumentsConservationCountry");
 
                         if (domiciliation.isLegalPerson()) {
                                 if ((domiciliation.getLegalGardianSiren() == null
@@ -506,7 +505,7 @@ public class QuotationValidationHelper {
                         // Do not verify date when quotation has started
                         if (isCustomerOrder) {
                                 CustomerOrderStatus status = ((CustomerOrder) quotation).getCustomerOrderStatus();
-                                if (status != null && (status.getCode().equals(CustomerOrderStatus.OPEN)
+                                if (status != null && (status.getCode().equals(CustomerOrderStatus.DRAFT)
                                                 || status.getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT)
                                                 || status.getCode().equals(CustomerOrderStatus.ABANDONED)))
                                         publicationDateVerification = null;
@@ -544,25 +543,36 @@ public class QuotationValidationHelper {
                                                         || announcement.getAnnouncementStatus().getCode().equals(
                                                                         AnnouncementStatus.ANNOUNCEMENT_DONE));
 
-                        validationHelper.validateDateMin(announcement.getPublicationDate(), verifyAnnouncement,
+                        if (!isCustomerOrder || ((CustomerOrder) quotation).getCustomerOrderStatus() == null
+                                        || ((CustomerOrder) quotation).getCustomerOrderStatus().getCode()
+                                                        .equals(CustomerOrderStatus.DRAFT))
+                                verifyAnnouncement = false;
+
+                        validationHelper.validateDateMin(announcement.getPublicationDate(),
+                                        !isByPassMandatoryFields && verifyAnnouncement,
                                         publicationDateVerification,
                                         "Date de publication de l'annonce");
-                        validationHelper.validateReferential(announcement.getDepartment(), verifyAnnouncement,
+                        validationHelper.validateReferential(announcement.getDepartment(),
+                                        !isByPassMandatoryFields && verifyAnnouncement,
                                         "Department");
-                        validationHelper.validateReferential(announcement.getConfrere(), verifyAnnouncement,
+                        validationHelper.validateReferential(announcement.getConfrere(),
+                                        !isByPassMandatoryFields && verifyAnnouncement,
                                         "Confrere");
-                        validationHelper.validateReferential(announcement.getNoticeTypeFamily(), verifyAnnouncement,
+                        validationHelper.validateReferential(announcement.getNoticeTypeFamily(),
+                                        !isByPassMandatoryFields && verifyAnnouncement,
                                         "NoticeTypeFamily");
-                        if (verifyAnnouncement && (announcement.getNoticeTypes() == null
+                        if ((!isByPassMandatoryFields && verifyAnnouncement) && (announcement.getNoticeTypes() == null
                                         || announcement.getNoticeTypes().size() == 0))
                                 throw new OsirisValidationException("NoticeTypes");
 
                         if (announcement.getNoticeTypes() != null)
                                 for (NoticeType noticeType : announcement.getNoticeTypes()) {
-                                        validationHelper.validateReferential(noticeType, verifyAnnouncement,
+                                        validationHelper.validateReferential(noticeType,
+                                                        !isByPassMandatoryFields && verifyAnnouncement,
                                                         "noticeType");
                                 }
-                        validationHelper.validateString(announcement.getNotice(), verifyAnnouncement, "Notice");
+                        validationHelper.validateString(announcement.getNotice(),
+                                        !isByPassMandatoryFields && verifyAnnouncement, "Notice");
 
                         if (announcement.getAnnouncementStatus() != null && (announcement.getAnnouncementStatus()
                                         .getCode()
@@ -628,5 +638,60 @@ public class QuotationValidationHelper {
                                         "WaitedCompetentAuthority");
                 }
 
+        }
+
+        public void completeIQuotationDocuments(IQuotation quotation, boolean isCustomerOrder) throws OsirisException {
+                // Generate missing documents
+                Document billingDocument = documentService
+                                .getBillingDocument(quotation.getResponsable().getDocuments());
+                if (documentService.getBillingDocument(quotation.getDocuments()) == null && billingDocument != null) {
+                        billingDocument = documentService.cloneOrMergeDocument(billingDocument, null);
+                        billingDocument.setTiers(null);
+                        billingDocument.setResponsable(null);
+                        billingDocument.setConfrere(null);
+                        if (isCustomerOrder)
+                                billingDocument.setCustomerOrder((CustomerOrder) quotation);
+                        else
+                                billingDocument.setQuotation((Quotation) quotation);
+                        if (quotation.getDocuments() == null)
+                                quotation.setDocuments(new ArrayList<Document>());
+                        quotation.getDocuments().add(billingDocument);
+                }
+
+                Document digitalDocument = documentService.getDocumentByDocumentType(
+                                quotation.getResponsable().getDocuments(),
+                                constantService.getDocumentTypeDigital());
+                if (documentService.getDocumentByDocumentType(quotation.getDocuments(),
+                                constantService.getDocumentTypeDigital()) == null && digitalDocument != null) {
+                        digitalDocument = documentService.cloneOrMergeDocument(digitalDocument, null);
+                        digitalDocument.setTiers(null);
+                        digitalDocument.setResponsable(null);
+                        digitalDocument.setConfrere(null);
+                        if (isCustomerOrder)
+                                digitalDocument.setCustomerOrder((CustomerOrder) quotation);
+                        else
+                                digitalDocument.setQuotation((Quotation) quotation);
+                        if (quotation.getDocuments() == null)
+                                quotation.setDocuments(new ArrayList<Document>());
+                        quotation.getDocuments().add(digitalDocument);
+                }
+
+                Document paperDocument = documentService.getDocumentByDocumentType(
+                                quotation.getResponsable().getDocuments(),
+                                constantService.getDocumentTypePaper());
+                if (documentService.getDocumentByDocumentType(quotation.getDocuments(),
+                                constantService.getDocumentTypePaper()) == null && paperDocument != null) {
+                        paperDocument = documentService.cloneOrMergeDocument(paperDocument, null);
+                        paperDocument.setTiers(null);
+                        paperDocument.setResponsable(null);
+                        paperDocument.setConfrere(null);
+                        if (isCustomerOrder)
+                                paperDocument.setCustomerOrder((CustomerOrder) quotation);
+                        else
+                                paperDocument.setQuotation((Quotation) quotation);
+                        if (quotation.getDocuments() == null)
+                                quotation.setDocuments(new ArrayList<Document>());
+                        quotation.getDocuments().add(paperDocument);
+                }
         }
 }

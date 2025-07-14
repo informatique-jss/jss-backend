@@ -85,7 +85,6 @@ import { SelectDocumentTypeDialogComponent } from '../select-document-type-dialo
 import { SelectMultiServiceTypeDialogComponent } from '../select-multi-service-type-dialog/select-multi-service-type-dialog.component';
 import { SelectPaperSetTypeDialogComponent } from '../select-paper-set-type-dialog/select-paper-set-type-dialog.component';
 import { SelectServiceDialogComponent } from '../select-service-dialog/select-service-dialog.component';
-import { SelectServiceTypeDialogComponent } from '../select-service-type-dialog/select-service-type-dialog.component';
 import { ServiceSidePanelDetailsComponent } from '../service-side-panel-details/service-side-panel-details.component';
 import { ServiceComponent } from '../service/service.component';
 import { SimpleProvisionComponent } from '../simple-provision/simple-provision.component';
@@ -180,7 +179,6 @@ const routes: Routes = [
     DebourComponent,
     ActeDepositComponent,
     ServiceComponent,
-    SelectServiceTypeDialogComponent,
     SelectServiceDialogComponent,
     SelectDocumentTypeDialogComponent,
     MissingAttachmentQueriesComponent,

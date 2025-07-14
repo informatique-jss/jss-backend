@@ -1,3 +1,4 @@
+import { Voucher } from "../../crm/model/Voucher";
 import { City } from "../../miscellaneous/model/City";
 import { Civility } from "../../miscellaneous/model/Civility";
 import { Country } from "../../miscellaneous/model/Country";
@@ -31,7 +32,6 @@ export interface Responsable extends IDocument, IAttachment {
   canViewAllTiersInWeb: boolean;
   idAs400: string;
   salesEmployee: Employee | undefined;
-  defaultCustomerOrderEmployee: Employee | undefined;
   formalisteEmployee: Employee | undefined;
   insertionEmployee: Employee | undefined;
   mailRecipient: string | null;
@@ -48,4 +48,6 @@ export interface Responsable extends IDocument, IAttachment {
   rffIban: string;
   rffBic: string;
   rffMail: string;
+  numberOfGiftPostsPerMonth: number;
+  vouchers: Voucher[];
 }

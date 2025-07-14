@@ -3,6 +3,9 @@ package com.jss.osiris.modules.osiris.quotation.model;
 import java.io.Serializable;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.FormeJuridique;
@@ -50,11 +53,27 @@ public class AssoServiceProvisionType implements Serializable, IId {
 	private Integer minEmployee;
 	private Integer maxEmployee;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_notice_type")
+	private NoticeType noticeType;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_notice_type_family")
+	private NoticeTypeFamily noticeTypeFamily;
+
 	@Column(length = 400)
 	private String customerMessageWhenAdded;
 
 	// 1 hard => 3 easy
 	private Integer complexity;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_announcement_notice_template")
+	@JsonIgnoreProperties(value = { "provisionFamilyTypes" }, allowSetters = true)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	private AnnouncementNoticeTemplate announcementNoticeTemplate;
+
+	private Boolean isPriority;
 
 	public Integer getId() {
 		return id;
@@ -120,12 +139,44 @@ public class AssoServiceProvisionType implements Serializable, IId {
 		this.serviceType = serviceType;
 	}
 
+	public NoticeType getNoticeType() {
+		return noticeType;
+	}
+
+	public void setNoticeType(NoticeType noticeType) {
+		this.noticeType = noticeType;
+	}
+
+	public NoticeTypeFamily getNoticeTypeFamily() {
+		return noticeTypeFamily;
+	}
+
+	public void setNoticeTypeFamily(NoticeTypeFamily noticeTypeFamily) {
+		this.noticeTypeFamily = noticeTypeFamily;
+	}
+
 	public Integer getComplexity() {
 		return complexity;
 	}
 
 	public void setComplexity(Integer complexity) {
 		this.complexity = complexity;
+	}
+
+	public AnnouncementNoticeTemplate getAnnouncementNoticeTemplate() {
+		return announcementNoticeTemplate;
+	}
+
+	public void setAnnouncementNoticeTemplate(AnnouncementNoticeTemplate announcementNoticeTemplate) {
+		this.announcementNoticeTemplate = announcementNoticeTemplate;
+	}
+
+	public Boolean getIsPriority() {
+		return isPriority;
+	}
+
+	public void setIsPriority(Boolean isPriority) {
+		this.isPriority = isPriority;
 	}
 
 }

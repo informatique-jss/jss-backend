@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.quotation.model;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -33,7 +34,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 
 @Entity
-public class Domiciliation implements IId {
+public class Domiciliation implements IId, Serializable {
 
 	public static String DOMICILIATION_CONTRACT_TEMPLATE_FRENCH = "domiciliation-french";
 	public static String DOMICILIATION_CONTRACT_TEMPLATE_BILINGUAL = "domiciliation-bilingual";
@@ -41,10 +42,12 @@ public class Domiciliation implements IId {
 	@Id
 	@SequenceGenerator(name = "domiciliation_sequence", sequenceName = "domiciliation_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "domiciliation_sequence")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_domiciliation_contract_type")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private DomiciliationContractType domiciliationContractType;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -58,130 +61,189 @@ public class Domiciliation implements IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_building_domiciliation")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private BuildingDomiciliation buildingDomiciliation;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_mail_redirectionType")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private MailRedirectionType mailRedirectionType;
 
 	@Column(length = 60)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String address;
 
 	@Column(length = 10)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String postalCode;
 
 	@Column(length = 20)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String cedexComplement;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@JoinColumn(name = "id_city")
 	private City city;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@JoinColumn(name = "id_country")
 	private Country country;
 
 	@ManyToMany
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@JoinTable(name = "asso_domiciliation_mail", joinColumns = @JoinColumn(name = "id_domiciliation"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
 	private List<Mail> mails;
 
 	@Column(length = 60)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String mailRecipient;
 
 	@Column(columnDefinition = "TEXT")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String activityDescription;
 
 	@Column(length = 60)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String activityMailRecipient;
 
 	@Column(length = 60)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String activityAddress;
 
 	@Column(length = 10)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String activityPostalCode;
 
 	@Column(length = 20)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String acitivityCedexComplement;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_activity_city")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private City activityCity;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_activity_country")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Country activityCountry;
 
 	@ManyToMany
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@JoinTable(name = "asso_domiciliation_activity_mail", joinColumns = @JoinColumn(name = "id_domiciliation"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
 	private List<Mail> activityMails;
 
 	@Column(length = 600)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String accountingRecordDomiciliation;
 
 	@JsonProperty(value = "isLegalPerson")
 	@Column(nullable = false)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Boolean isLegalPerson;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@JoinColumn(name = "id_civility")
 	private Civility legalGardianCivility;
 
 	@Column(length = 20)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String legalGardianFirstname;
 
 	@Column(length = 20)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String legalGardianLastname;
 
 	@JsonSerialize(using = JacksonLocalDateSerializer.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private LocalDate legalGardianBirthdate;
 
 	@Column(length = 60)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String legalGardianPlaceOfBirth;
 
 	@Column(length = 30)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String legalGardianJob;
 
 	@Column(length = 9)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String legalGardianSiren;
 
 	@Column(length = 60)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String legalGardianDenomination;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@JoinColumn(name = "id_legal_guardian_form")
 	private LegalForm legalGardianLegalForm;
 
 	@Column(length = 60)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String legalGardianMailRecipient;
 
 	@Column(length = 60)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String legalGardianAddress;
 
 	@Column(length = 10)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String legalGardianPostalCode;
 
 	@Column(length = 20)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String legalGardianCedexComplement;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@JoinColumn(name = "id_legal_guardian_city")
 	private City legalGardianCity;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@JoinColumn(name = "id_legal_gardian_country")
 	private Country legalGardianCountry;
 
 	@ManyToMany
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@JoinTable(name = "asso_domiciliation_legal_guardian_mail", joinColumns = @JoinColumn(name = "id_domiciliation"), inverseJoinColumns = @JoinColumn(name = "id_mail"))
 	private List<Mail> legalGardianMails;
 
 	@ManyToMany
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@JoinTable(name = "asso_domiciliation_legal_guardian_phone", joinColumns = @JoinColumn(name = "id_domiciliation"), inverseJoinColumns = @JoinColumn(name = "id_phone"))
 	private List<Phone> legalGardianPhones;
 
 	@OneToMany(mappedBy = "domiciliation", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "domiciliation" }, allowSetters = true)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private List<DomiciliationFee> domiciliationFees;
+
+	@Column(length = 60)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	private String accountingDocumentsConservationAddress;
+
+	@Column(length = 10)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	private String accountingDocumentsConservationPostalCode;
+
+	@Column(length = 20)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	private String accountingDocumentsConservationCedexComplement;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JoinColumn(name = "id_accounting_documents_conservation_city")
+	private City accountingDocumentsConservationCity;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JoinColumn(name = "id_accounting_documents_conservation_country")
+	private Country accountingDocumentsConservationCountry;
 
 	public Integer getId() {
 		return id;
@@ -517,6 +579,47 @@ public class Domiciliation implements IId {
 
 	public void setDomiciliationFees(List<DomiciliationFee> domiciliationFees) {
 		this.domiciliationFees = domiciliationFees;
+	}
+
+	public String getAccountingDocumentsConservationAddress() {
+		return accountingDocumentsConservationAddress;
+	}
+
+	public void setAccountingDocumentsConservationAddress(String accountingDocumentsConservationAddress) {
+		this.accountingDocumentsConservationAddress = accountingDocumentsConservationAddress;
+	}
+
+	public String getAccountingDocumentsConservationPostalCode() {
+		return accountingDocumentsConservationPostalCode;
+	}
+
+	public void setAccountingDocumentsConservationPostalCode(String accountingDocumentsConservationPostalCode) {
+		this.accountingDocumentsConservationPostalCode = accountingDocumentsConservationPostalCode;
+	}
+
+	public String getAccountingDocumentsConservationCedexComplement() {
+		return accountingDocumentsConservationCedexComplement;
+	}
+
+	public void setAccountingDocumentsConservationCedexComplement(
+			String accountingDocumentsConservationCedexComplement) {
+		this.accountingDocumentsConservationCedexComplement = accountingDocumentsConservationCedexComplement;
+	}
+
+	public City getAccountingDocumentsConservationCity() {
+		return accountingDocumentsConservationCity;
+	}
+
+	public void setAccountingDocumentsConservationCity(City accountingDocumentsConservationCity) {
+		this.accountingDocumentsConservationCity = accountingDocumentsConservationCity;
+	}
+
+	public Country getAccountingDocumentsConservationCountry() {
+		return accountingDocumentsConservationCountry;
+	}
+
+	public void setAccountingDocumentsConservationCountry(Country accountingDocumentsConservationCountry) {
+		this.accountingDocumentsConservationCountry = accountingDocumentsConservationCountry;
 	}
 
 }

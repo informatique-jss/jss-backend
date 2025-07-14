@@ -2,6 +2,7 @@ package com.jss.osiris.libs.search.service;
 
 import java.util.List;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.search.model.IndexEntity;
 
 public interface SearchService {
@@ -17,5 +18,7 @@ public interface SearchService {
 
     public List<IndexEntity> getIndividualTiersByKeyword(String searchedValue);
 
-    public List<IndexEntity> searchEntitiesForCustomer(String searchString);
+    public List<IndexEntity> searchEntitiesForCustomer(String searchString) throws OsirisException;
+
+    public List<IndexEntity> getPostByKeyword(String searchedValue);
 }

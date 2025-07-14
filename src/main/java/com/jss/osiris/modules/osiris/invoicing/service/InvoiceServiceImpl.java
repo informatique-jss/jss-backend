@@ -217,13 +217,6 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         // Associate invoice to invoice item
         for (InvoiceItem invoiceItem : invoice.getInvoiceItems()) {
-            // If we got an AC with direct charge, force no VAT
-            // if (invoice.getProvider() != null && invoice.getCompetentAuthority() != null
-            // &&
-            // invoice.getCompetentAuthority().getCompetentAuthorityType().getIsDirectCharge())
-            // invoiceItem.setVat(constantService.getVatZero());
-            // TODO refonte
-
             vatService.completeVatOnInvoiceItem(invoiceItem, invoice);
             invoiceItem.setInvoice(invoice);
             invoiceItemService.addOrUpdateInvoiceItem(invoiceItem);
@@ -648,8 +641,6 @@ public class InvoiceServiceImpl implements InvoiceService {
         newInvoice.setBillingLabelType(invoice.getBillingLabelType());
         newInvoice.setCedexComplement(invoice.getCedexComplement());
         newInvoice.setCommandNumber(invoice.getCommandNumber());
-        // newInvoice.setCompetentAuthority(invoice.getCompetentAuthority());
-        // TODO refonte
         newInvoice.setCreatedDate(LocalDateTime.now());
         newInvoice.setDueDate(invoice.getDueDate());
         newInvoice.setIsCommandNumberMandatory(invoice.getIsCommandNumberMandatory());

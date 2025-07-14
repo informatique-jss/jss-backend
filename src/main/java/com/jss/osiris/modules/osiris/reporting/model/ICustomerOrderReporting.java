@@ -6,11 +6,17 @@ public interface ICustomerOrderReporting {
 
     String getCustomerOrderStatusLabel();
 
-    String getCustomerOrderAssignedEmployee();
-
     String getAggregateProvisionTypeLabel();
 
     String getLastReminderDate();
 
     String getCustomerOrderCreator();
+
+    String getCustomerOrderCreatedDateYear();
+
+    String getCustomerOrderCreatedDateMonth();
+
+    String getCustomerOrderCreatedDateDay();
+
+    String getCustomerOrderCreatedDateWeek();
 }

@@ -20,7 +20,6 @@ import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisLog;
 import com.jss.osiris.libs.exception.OsirisValidationException;
-import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
@@ -89,9 +88,6 @@ public class BillingClosureReceiptHelper {
 
     @Autowired
     MailHelper mailHelper;
-
-    @Autowired
-    CustomerMailService customerMailService;
 
     @Autowired
     ServiceService serviceService;
@@ -187,15 +183,14 @@ public class BillingClosureReceiptHelper {
         // Find customer orders
         ArrayList<Responsable> responsableList = new ArrayList<Responsable>();
 
-        if (tiers != null && tiers.getResponsables() != null) {
+        if (responsable != null) {
+            responsableList.add(responsable);
+        } else if (tiers != null && tiers.getResponsables() != null) {
             values.add(new BillingClosureReceiptValue(
                     tiers.getDenomination() != null ? tiers.getDenomination()
                             : (tiers.getFirstname() + " " + tiers.getLastname())));
             for (Responsable responsableOfTiers : tiers.getResponsables())
                 responsableList.add(responsableOfTiers);
-        }
-        if (responsable != null) {
-            responsableList.add(responsable);
         }
 
         List<CustomerOrder> customerOrders = customerOrderService
@@ -345,6 +340,9 @@ public class BillingClosureReceiptHelper {
         value.setCreditAmount(null);
         value.setEventDateTime(invoice.getCreatedDate());
         value.setResponsable(invoice.getResponsable());
+        value.setIdInvoice(invoice.getId());
+        if (invoice.getCustomerOrder() != null)
+            value.setIdCustomerOrder(invoice.getCustomerOrder().getId());
         value.setEventDateString(invoice.getCreatedDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         value.setEventDescription("Facture n°" + invoice.getId());
         if (invoice.getManualPaymentType() != null
@@ -397,6 +395,7 @@ public class BillingClosureReceiptHelper {
         value.setDebitAmount(null);
         value.setCreditAmount(payment.getPaymentAmount());
         value.setResponsable(customerOrder.getResponsable());
+        value.setIdCustomerOrder(customerOrder.getId());
         value.setEventDateTime(payment.getPaymentDate());
         value.setEventDateString(payment.getPaymentDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
@@ -419,10 +418,15 @@ public class BillingClosureReceiptHelper {
         BillingClosureReceiptValue value = new BillingClosureReceiptValue();
         value.setDisplayBottomBorder(displayBottomBorder);
         value.setDebitAmount(null);
-        if (payment.getInvoice() != null)
+        if (payment.getInvoice() != null) {
             value.setResponsable(payment.getInvoice().getResponsable());
-        else if (payment.getCustomerOrder() != null)
+            value.setIdInvoice(payment.getInvoice().getId());
+            if (payment.getInvoice().getCustomerOrder() != null)
+                value.setIdCustomerOrder(payment.getInvoice().getCustomerOrder().getId());
+        } else if (payment.getCustomerOrder() != null) {
             value.setResponsable(payment.getCustomerOrder().getResponsable());
+            value.setIdCustomerOrder(payment.getCustomerOrder().getId());
+        }
         value.setCreditAmount(payment.getPaymentAmount());
         value.setEventDateTime(payment.getPaymentDate());
         value.setEventDateString(payment.getPaymentDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
@@ -450,7 +454,7 @@ public class BillingClosureReceiptHelper {
                 && customerOrder.getAssoAffaireOrders().size() > 0)
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
                 for (Service service : asso.getServices())
-                    serviceLabels.add(serviceService.getServiceLabel(service));
+                    serviceLabels.add(service.getServiceLabelToDisplay());
 
                 Document billingDocument = documentService.getBillingDocument(customerOrder.getDocuments());
                 // Add annual reference if defined

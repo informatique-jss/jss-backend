@@ -8,11 +8,6 @@
           </autocomplete-employee>
         </td>
         <td>
-          <autocomplete-employee [(model)]="orderingSearch.assignedToEmployee" label="Assignée à"
-            [form]="orderingSearchForm" propertyName="assignedToEmployee" [isMandatory]="false">
-          </autocomplete-employee>
-        </td>
-        <td>
           <autocomplete-affaire [(model)]="orderingSearch.affaire" [form]="orderingSearchForm" propertyName="affaire"
             [isMandatory]="false" (onOptionSelected)="fillAffaire($event)" label="Affaire"></autocomplete-affaire>
         </td>

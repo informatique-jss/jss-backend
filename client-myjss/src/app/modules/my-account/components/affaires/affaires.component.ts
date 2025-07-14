@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { AppService } from '../../../../libs/app.service';
+import { NgbAccordionModule, NgbDropdownModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { capitalizeName } from '../../../../libs/FormatHelper';
-import { UserPreferenceService } from '../../../../libs/user.preference.service';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { AppService } from '../../../main/services/app.service';
+import { UserPreferenceService } from '../../../main/services/user.preference.service';
+import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { Affaire } from '../../model/Affaire';
 import { Attachment } from '../../model/Attachment';
 import { CustomerOrder } from '../../model/CustomerOrder';
@@ -11,12 +14,14 @@ import { AffaireService } from '../../services/affaire.service';
 import { AttachmentService } from '../../services/attachment.service';
 import { CustomerOrderService } from '../../services/customer.order.service';
 import { UploadAttachmentService } from '../../services/upload.attachment.service';
-import { getClassForCustomerOrderStatus, getCustomerOrderStatusLabel, initTooltips } from '../orders/orders.component';
+import { getClassForCustomerOrderStatus, getCustomerOrderStatusLabel } from '../orders/orders.component';
 
 @Component({
   selector: 'app-affaires',
   templateUrl: './affaires.component.html',
-  styleUrls: ['./affaires.component.css']
+  styleUrls: ['./affaires.component.css'],
+  standalone: true,
+  imports: [SHARED_IMPORTS, GenericInputComponent, NgbDropdownModule, NgbAccordionModule, NgbNavModule]
 })
 export class AffairesComponent implements OnInit {
 
@@ -35,7 +40,7 @@ export class AffairesComponent implements OnInit {
 
   ordersAffaire: CustomerOrder[][] = [];
   attachmentsAffaire: Attachment[][] = [];
-  affaireForm = this.formBuilder.group({});
+  affaireForm!: FormGroup;
 
   inputIdAffaire: number | undefined;
 
@@ -51,6 +56,7 @@ export class AffairesComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.affaireForm = this.formBuilder.group({});
     this.inputIdAffaire = this.activatedRoute.snapshot.params['idAffaire'];
     if (this.inputIdAffaire && this.inputIdAffaire > 0) {
       this.searchText = this.inputIdAffaire + "";
@@ -65,14 +71,15 @@ export class AffairesComponent implements OnInit {
     if (this.currentPage == 0)
       this.isFirstLoading = true;
 
+    this.appService.showLoadingSpinner();
     this.affaireService.searchAffairesForCurrentUser(this.searchText, this.currentPage, this.currentSort).subscribe(response => {
+      this.appService.hideLoadingSpinner();
       if (response) {
         this.affaires.push(...response);
-        if (response.length < 51)
+        if (response.length < 10)
           this.hideSeeMore = true;
       }
       this.isFirstLoading = false;
-      initTooltips();
     })
   }
 
@@ -101,11 +108,10 @@ export class AffairesComponent implements OnInit {
     this.refreshAffaires();
   }
 
-  loadAffaireDetails(event: any, affaire: Affaire) {
+  loadAffaireDetails(affaire: Affaire) {
     if (!this.ordersAffaire[affaire.id]) {
       this.customerOrderService.getCustomerOrdersForAffaireAndCurrentUser(affaire.id).subscribe(response => {
         this.ordersAffaire[affaire.id] = response;
-        initTooltips();
       })
       this.attachmentService.getAttachmentsForAffaire(affaire.id).subscribe(response => {
         this.attachmentsAffaire[affaire.id] = response;

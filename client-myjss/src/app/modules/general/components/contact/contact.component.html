@@ -1,0 +1,196 @@
+<section class="pt-5 mt-5 container">
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb">
+    <ol class="pt-lg-5 pb-lg-4 pb-2 breadcrumb">
+      <li class="breadcrumb-item"><a routerLink="/">Accueil</a></li>
+      <li class="breadcrumb-item"><a routerLink="/contact">Contact</a></li>
+    </ol>
+  </nav>
+</section>
+
+<section class="container my-5">
+  <div class="row align-items-center pb-lg-2 pb-xl-3">
+    <div class="col-6 d-flex align-items-center">
+      <h1 class="h1 pe-xxl-5 me-xl-4 mb-0 text-white">Contact</h1>
+    </div>
+    <div class="col-6 d-flex align-items-center">
+      <p class="text-body fs-lg mb-0 text-white">Retrouvez-nous au cœur de Paris ou écrivez-nous !
+      </p>
+    </div>
+  </div>
+</section>
+<section>
+  <div class="jarallax jarallax-size overflow-hidden z-2" data-img-size="contain" data-speed="0.5">
+    <div class="jarallax-img " style="background-image: url('assets/img/others/contact-jarallax.jpg'); "></div>
+  </div>
+</section>
+<section class="container my-5">
+  <div class="pb-sm-3 pt-4">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 pt-2 justify-content-between">
+
+      <div class="col-auto pb-2">
+        <h4 class="mb-lg-4">Adresse</h4>
+        <p class="fs-lg fw-medium pb-3 mb-3">10 Bd Haussmann,<br />75009 Paris</p>
+      </div>
+
+      <div class="col-auto pb-2">
+        <h4 class="mb-lg-4">Téléphone</h4>
+        <ul class="list-unstyled mb-0">
+          <li class="pb-1 mb-2">
+            <span class="d-block fs-sm text-body-secondary mb-1">Standard</span>
+            <p class="fs-lg">01 47 03 10 10</p>
+          </li>
+        </ul>
+      </div>
+
+      <div class="col-auto pb-2">
+        <h4 class="mb-lg-4">Horaires</h4>
+        <ul class="list-unstyled mb-0">
+          <li class="pb-1 mb-2">
+            <span class="d-block fs-sm text-body-secondary mb-1">lun - ven</span>
+            <div class="d-flex align-items-center">
+              <span class="fs-lg fw-medium text-body-secondary" style="padding-right: 7px;">9h00</span>
+              <span class="border-top mx-4" style="width: 36px; height: 1px;"></span>
+              <span class="fs-lg fw-medium text-body-secondary">12h30</span>
+            </div>
+            <div class="d-flex align-items-center">
+              <span class="text-body-secondary fs-lg fw-medium">14h00 </span>
+              <span class="border-top mx-4" style="width: 36px; height: 1px;"></span>
+              <span class="text-body-secondary fs-lg fw-medium">18h00</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="col-auto pb-2">
+        <h4 class="mb-lg-4">Email</h4>
+        <p class="fs-lg">{{emailJss}}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="border-top pb-sm-3 pt-4">
+    <div class="row g-4 pt-2">
+      <div class="col-md-6 pb-2">
+        <h4 class="mb-lg-6">Transports publics
+          les plus proches</h4>
+        <p class="fs-lg fw-medium pb-3 mb-3">Métro [ lignes 3, 7, 8 ,9 ] et RER A</p>
+        <p class="fs-lg fw-medium pb-3 mb-3">Train Saint-Lazare [ 16 minutes à pied ]</p>
+        <p class="fs-lg fw-medium pb-3 mb-3">Bus Richelieu - Drouot - Mairie du 9e [ 39, 74, 85 ]</p>
+      </div>
+
+      <div class="col-md-6 pb-2">
+        <h4 class="mb-lg-4">Parking</h4>
+        <ul class="list-unstyled mb-0">
+          <li class="pb-1 mb-2">
+            <p class="fs-lg">Garage à proximité</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="jarallax overflow-hidden z-2" data-speed="0.5">
+    <div class="jarallax-img" style="background-image: url('assets/images/map.png');"></div>
+  </div>
+</section>
+
+<section class="container pt-5 pb-lg-2 pb-xl-4 py-xxl-5 my-5">
+  <div class="row pb-1 pb-sm-3 pb-lg-4 d-flex align-items-center">
+    <div class="col-lg-6 pe-xxl-4">
+      <h2 class="h2 pe-xxl-5 me-xl-4 mb-md-0 text-white">Besoin d'infos ? On vous répond !
+      </h2>
+      <p>Vous avez une question ou besoin d’éclaircissements ? Remplissez ce formulaire et notre équipe vous répondra
+        au plus vite. À très bientôt !</p>
+
+      <form class="needs-validation row" novalidate>
+        <div class="col-sm-6">
+          <generic-input class="form-control form-control-lg" [(model)]="firstName" label="Prénom*"
+            placeholder="Prénom*" [form]="contactForm" propertyName="firstname" [isMandatory]="true"
+            [isDisabled]="false" [maxLength]="50" type="text"></generic-input>
+        </div>
+        <div class="col-sm-6">
+          <generic-input class="form-control form-control-lg" [(model)]="lastName" placeholder="Nom*" label="Nom*"
+            [form]="contactForm" propertyName="lastname" [isMandatory]="true" [isDisabled]="false" [maxLength]="50"
+            type="text"></generic-input>
+        </div>
+        <div class="col-sm-12">
+          <generic-input class="form-control form-control-lg" [(model)]="mail" placeholder="E-mail professionnel*"
+            label="E-mail professionnel*" [form]="contactForm" propertyName="mail" [isMandatory]="true"
+            [isDisabled]="false" [maxLength]="250" type="email"></generic-input>
+        </div>
+        <div class="col-sm-12">
+          <generic-textarea class="form-control form-control-lg" [(model)]="message" label="Message*"
+            [form]="contactForm" propertyName="message" [isMandatory]="true" [isDisabled]="false" [maxLength]="250"
+            [numberOfLines]="4"></generic-textarea>
+        </div>
+        <div class="col-12">
+          <div class="form-check mb-4">
+            <input class="form-check-input" type="checkbox" id="cgv" [(ngModel)]="isConditionAccepted"
+              name="isConditionAccepted" required>
+            <label class="form-check-label" for="cgv">J’accepte d’être contacté.e par le Journal Spécial des
+              Sociétés
+              à des fins d’information et de marketing conformément à la Politique de Confidentialité*
+            </label>
+          </div>
+        </div>
+        <div class=" col-sm-12 pt-lg-5 pt-md-4 pt-sm-3 pt-2">
+          <button class=" btn btn-lg btn-primary w-100" (click)="subscribeFormContact($event)">Envoyer ma
+            demande</button>
+        </div>
+      </form>
+    </div>
+    <div class="col-lg-6 mt-5">
+      <div class="row g-4">
+        <div class="col-12 col-md-6">
+          <div class="card h-100 border-0 rounded-5 ">
+            <div class="card-body pb-3">
+              <img src="assets/img/icons/assistance_dedie.svg" class="w-25" alt="Icon">
+              <h3 class="h4 text-white mt-3">Assistance dédiée</h3>
+              <p class="mb-0">Nos équipes spécialisées sont à votre disposition pour vous conseiller, par téléphone ou
+                par
+                e-mail. Bénéficiez d'un accompagnement précis et personnalisé !
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-6">
+          <div class="card bg-card-green h-100 border-0 rounded-5">
+            <div class="card-body pb-3">
+              <img src="assets/img/icons/couverture_nationale.svg" class="w-25" alt="Icon">
+              <h3 class="h4 text-white mt-3">Couverture nationale</h3>
+              <p class="mb-0">Le JSS publie des annonces judiciaires et légales et gère des formalités dans toute la
+                France.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-6">
+          <div class="card bg-card-green h-100 border-0 rounded-5 ">
+            <div class="card-body pb-3">
+              <img src="assets/img/icons/expertise_reconnue.svg" class="w-25" alt="Icon">
+              <h3 class="h4 text-white mt-3">Expertise sur mesure</h3>
+              <p class="mb-0">Le savoir-faire du JSS est basé sur plus de 125 années d’expertise et se distingue par une
+                adaptation constante aux évolutions règlementaires et technologiques.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-6">
+          <div class="card h-100 border-0 rounded-5 ">
+            <div class="card-body pb-3">
+              <img src="assets/img/icons/Tarifs_avantageux.svg" class="w-25" alt="Icon">
+              <h3 class="h4 text-white mt-3">Actualités</h3>
+              <p class="mb-0">Retrouvez l’ensemble des actualités de la Vie du Droit et du Chiffre dans le Journal
+                Spécial des Sociétés.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>

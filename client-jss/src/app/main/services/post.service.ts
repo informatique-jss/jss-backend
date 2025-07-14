@@ -1,36 +1,50 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { AppRestService } from '../../services/appRest.service';
 import { Author } from '../model/Author';
+import { Category } from '../model/Category';
+import { JssCategory } from '../model/JssCategory';
 import { Media } from '../model/Media';
-import { MyJssCategory } from '../model/MyJssCategory';
+import { PagedContent } from '../model/PagedContent';
 import { Post } from '../model/Post';
 import { PublishingDepartment } from '../model/PublishingDepartment';
+import { ReadingFolder } from '../model/ReadingFolder';
+import { Serie } from '../model/Serie';
 import { Tag } from '../model/Tag';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class PostService extends AppRestService<Post> {
 
+  private readonly defaultImage = '/assets/images/blog-img.jpg';
+  private readonly authorImage = '/assets/images/author-img.jpg';
+
   constructor(http: HttpClient) {
     super(http, "wordpress");
   }
 
-  getTopPost(page: number) {
-    return this.getList(new HttpParams().set("page", page), "posts/top");
+  getTopPost(page: number, pageSize: number) {
+    return this.getPagedList(new HttpParams().set("page", page).set("size", pageSize), "posts/jss/top");
   }
 
-  getPostsTendency() {
-    return this.getList(new HttpParams(), "posts/tendency");
+  getPostsTendency(page: number, size: number, searchText: string) {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+    if (searchText)
+      params = params.set('searchText', searchText);
+    return this.getPagedList(params, "posts/jss/tendency");
   }
 
   getPostBySlug(slug: string) {
     return this.get(new HttpParams().set("slug", slug), "posts/slug");
   }
 
-  getPostSerieBySlug(slug: string) {
-    return this.getList(new HttpParams().set("slug", slug), "posts/serie/slug");
+  getOfferedPostByToken(validationToken: string, mail: string) {
+    return this.get(new HttpParams().set("validationToken", validationToken).set("mail", mail), "posts/slug/token");
   }
 
   completeMediaInPosts(posts: Post[]) {
@@ -52,28 +66,141 @@ export class PostService extends AppRestService<Post> {
     });
   }
 
-  getTopPostByMyJssCategory(page: number, myJssCategory: MyJssCategory) {
-    return this.getList(new HttpParams().set("page", page).set("categoryId", myJssCategory.id), "posts/top/myjss-category");
+  addBookmarkPost(post: Post, readingFolder?: ReadingFolder) {
+    let params = new HttpParams()
+      .set("idPost", post.id)
+    if (readingFolder)
+      params = params.set('idReadingFolder', readingFolder.id);
+    return this.get(params, "post/bookmark/add");
   }
 
-  getTopPostByTag(page: number, tag: Tag) {
-    return this.getList(new HttpParams().set("page", page).set("tagId", tag.id), "posts/top/tag");
+  deleteBookmarkPost(post: Post) {
+    return this.get(new HttpParams().set("idPost", post.id), "post/bookmark/delete");
   }
 
-  getTopPostByDepartment(page: number, department: PublishingDepartment) {
-    return this.getList(new HttpParams().set("page", page).set("departmentId", department.id), "posts/top/department");
+  getTopPostByJssCategory(page: number, size: number, jssCategory: JssCategory) {
+    return this.getPagedList(new HttpParams().set("page", page).set("size", size).set("categoryId", jssCategory.id), "posts/top/jss-category");
   }
 
-  getTopPostByAuthor(page: number, author: Author) {
-    return this.getList(new HttpParams().set("page", page).set("authorId", author.id), "posts/top/author");
+  getAllPostsByJssCategory(jssCategory: JssCategory, page: number, size: number, searchText: string, isDisplayNewPosts: boolean): Observable<PagedContent<Post>> {
+    let params = new HttpParams()
+      .set('categoryId', jssCategory.id.toString())
+      .set('page', page.toString())
+      .set('size', size.toString())
+      .set('isDisplayNewPosts', isDisplayNewPosts);
+    if (searchText)
+      params = params.set('searchText', searchText);
+    return this.getPagedList(params, "posts/all/jss-category", "", "");
   }
 
-  getTopPostInterview(page: number) {
-    return this.getList(new HttpParams().set("page", page), "posts/top/interview");
+  getAllPostsByCategory(category: Category, page: number, size: number): Observable<PagedContent<Post>> {
+    let params = new HttpParams()
+      .set('categoryId', category.id.toString())
+      .set('page', page.toString())
+      .set('size', size.toString());
+    return this.getPagedList(params, "posts/all/category", "", "");
   }
 
-  getTopPostPodcast(page: number) {
-    return this.getList(new HttpParams().set("page", page), "posts/top/podcast");
+  getAllPostsByTag(tag: Tag, page: number, size: number, searchText: string, isDisplayNewPosts: boolean): Observable<PagedContent<Post>> {
+    let params = new HttpParams()
+      .set('tagSlug', tag.slug)
+      .set('page', page.toString())
+      .set('size', size.toString())
+      .set('isDisplayNewPosts', isDisplayNewPosts);
+    if (searchText)
+      params = params.set('searchText', searchText);
+    return this.getPagedList(params, "posts/all/tag", "", "");
+  }
+
+  getAllPostsByAuthor(author: Author, page: number, size: number, searchText: string, isDisplayNewPosts: boolean): Observable<PagedContent<Post>> {
+    let params = new HttpParams()
+      .set('authorSlug', author.slug)
+      .set('page', page.toString())
+      .set('size', size.toString())
+      .set('isDisplayNewPosts', isDisplayNewPosts);
+    if (searchText)
+      params = params.set('searchText', searchText);
+    return this.getPagedList(params, "posts/all/author", "", "");
+  }
+
+  getAllPostsBySerie(serie: Serie, page: number, size: number, searchText: string): Observable<PagedContent<Post>> {
+    let params = new HttpParams()
+      .set('serieSlug', serie.slug)
+      .set('page', page.toString())
+      .set('size', size.toString());
+    if (searchText)
+      params = params.set('searchText', searchText);
+    return this.getPagedList(params, "posts/all/serie", "", "");
+  }
+
+  getAllPostsByPublishingDepartment(department: PublishingDepartment, page: number, size: number, searchText: string): Observable<PagedContent<Post>> {
+    let params = new HttpParams()
+      .set('departmentCode', department.code)
+      .set('page', page.toString())
+      .set('size', size.toString());
+    if (searchText)
+      params = params.set('searchText', searchText);
+    return this.getPagedList(params, "posts/all/publishing-department", "", "");
+  }
+
+  getMostSeenPostByJssCategory(jssCategory: JssCategory, page: number, size: number): Observable<PagedContent<Post>> {
+    let params = new HttpParams()
+      .set('jssCategoryId', jssCategory.id.toString())
+      .set('page', page.toString())
+      .set('size', size.toString());
+    return this.getPagedList(params, "posts/jss-category/most-seen", "", "");
+  }
+
+  getMostSeenPostByTag(tag: Tag, page: number, size: number): Observable<PagedContent<Post>> {
+    let params = new HttpParams()
+      .set('tagSlug', tag.slug)
+      .set('page', page.toString())
+      .set('size', size.toString());
+    return this.getPagedList(params, "posts/tag/most-seen", "", "");
+  }
+
+  getMostSeenPostByAuthor(author: Author, page: number, size: number): Observable<PagedContent<Post>> {
+    let params = new HttpParams()
+      .set('authorSlug', author.slug)
+      .set('page', page.toString())
+      .set('size', size.toString());
+    return this.getPagedList(params, "posts/author/most-seen", "", "");
+  }
+
+  getMostSeenPostBySerie(serie: Serie, page: number, size: number): Observable<PagedContent<Post>> {
+    let params = new HttpParams()
+      .set('serieSlug', serie.slug)
+      .set('page', page.toString())
+      .set('size', size.toString());
+    return this.getPagedList(params, "posts/serie/most-seen", "", "");
+  }
+
+  getMostSeenPostByPublishingDepartment(department: PublishingDepartment, page: number, size: number): Observable<PagedContent<Post>> {
+    let params = new HttpParams()
+      .set('departmentCode', department.code)
+      .set('page', page.toString())
+      .set('size', size.toString());
+    return this.getPagedList(params, "posts/publishing-department/most-seen", "", "");
+  }
+
+  getIleDeFranceTopPost(page: number, size: number) {
+    return this.getPagedList(new HttpParams().set("page", page).set("size", size), "posts/top/department/all");
+  }
+
+  getTopPostByDepartment(page: number, size: number, department: PublishingDepartment) {
+    return this.getPagedList(new HttpParams().set("page", page).set("size", size).set("departmentCode", department.code), "posts/top/department");
+  }
+
+  getTopPostPodcast(page: number, size: number) {
+    return this.getPagedList(new HttpParams().set("page", page).set("size", size), "posts/top/podcast");
+  }
+
+  getMostViewedPosts(page: number, size: number) {
+    return this.getPagedList(new HttpParams().set("page", page).set("size", size), "posts/most-seen");
+  }
+
+  getPinnedPosts(page: number, size: number) {
+    return this.getPagedList(new HttpParams().set("page", page).set("size", size), "posts/pinned");
   }
 
   getNextArticle(post: Post) {
@@ -84,4 +211,7 @@ export class PostService extends AppRestService<Post> {
     return this.get(new HttpParams().set("idPost", post.id), "post/previous");
   }
 
+  getPostById(idPost: number) {
+    return this.get(new HttpParams().set("idPost", idPost), "post/get");
+  }
 }

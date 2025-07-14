@@ -16,8 +16,6 @@ public interface BankTransfertSearchResult {
 
     public Boolean getIsAlreadyExported();
 
-    public Boolean getIsMatched();
-
     public Boolean getIsSelectedForExport();
 
     public String getInvoiceBillingLabel();
@@ -26,4 +24,5 @@ public interface BankTransfertSearchResult {
 
     public String getComment();
 
+    public Boolean getIsMatched();
 }

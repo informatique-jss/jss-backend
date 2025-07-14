@@ -14,7 +14,7 @@
           <ng-container *ngFor="let service of asso.services ">
             <tr *ngIf="service  ">
               <td class="affaire " colspan="2">
-                <strong>{{getServiceLabel(service)}}</strong>
+                <strong>{{service.serviceLabelToDisplay}}</strong>
               </td>
             </tr>
             <ng-container *ngFor="let provision of service.provisions">
@@ -149,9 +149,6 @@
                               {{asso.affaire.city.label}}
                             </mat-panel-title>
                             <mat-panel-description>
-                              <avatar-chip *ngIf="asso.assignedTo && asso.id" [employee]="asso.assignedTo"
-                                (onChangeAssigne)="updateAssignedToForAffaire($event,asso)">
-                              </avatar-chip>
                               <mat-icon color="accent" matTooltip="Voir/éditer l'affaire"
                                 (click)="displayAffaire($event, asso.affaire);$event.stopPropagation();"
                                 (auxclick)="displayAffaire($event, asso.affaire);$event.stopPropagation();"
@@ -161,12 +158,6 @@
                             </mat-panel-description>
                           </mat-expansion-panel-header>
                           <add-affaire [affaire]="asso.affaire" [editMode]="false"></add-affaire>
-                          <div *ngIf="asso && asso.id && instanceOfCustomerOrder">
-                            <autocomplete-employee [(model)]="asso.assignedTo" [form]="quotationForm"
-                              propertyName="assignedTo" [isMandatory]="true" [isDisabled]="false"
-                              label="Affaire assignée à" (onOptionSelected)="updateAssignedToForAffaire($event,asso)">
-                            </autocomplete-employee>
-                          </div>
                         </mat-expansion-panel>
                       </mat-accordion>
                     </div>
@@ -175,7 +166,7 @@
                         <mat-accordion multi>
                           <mat-expansion-panel expanded="false" class="service-tab ">
                             <mat-expansion-panel-header>
-                              <mat-panel-title>Service - {{getServiceLabel(service)}}
+                              <mat-panel-title>Service - {{service.serviceLabelToDisplay}}
                               </mat-panel-title>
                               <mat-panel-description style="height:40px">
                                 <mat-icon color="accent" *ngIf="!editMode && service.id"
@@ -209,7 +200,7 @@
                               </mat-panel-title>
                               <span class="status-text"
                                 *ngIf="instanceOfCustomerOrderFn(quotation) && getActiveWorkflowElementsForProvision(provision)">{{getActiveWorkflowElementsForProvision(provision).label}}</span>
-                              <avatar-chip *ngIf="asso.assignedTo" [employee]="provision.assignedTo"
+                              <avatar-chip [employee]="provision.assignedTo"
                                 (onChangeAssigne)="updateAssignedToForProvision($event, provision)">
                               </avatar-chip>
                               <ng-template></ng-template>
@@ -249,7 +240,7 @@
                       <div class="fab-extended-button-containter"><button mat-fab extended color="primary"
                           *ngIf="editMode" (click)="createProvision(service)">
                           <mat-icon>work</mat-icon>
-                          Ajouter une prestation pour le service {{getServiceLabel(service)}}
+                          Ajouter une prestation pour le service {{service.serviceLabelToDisplay}}
                         </button></div>
                     </ng-container>
                     <div class="fab-extended-button-containter"><button mat-fab extended color="primary"

@@ -1,7 +1,7 @@
 import { HttpClient, HttpEvent, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { AppRestService } from '../../../libs/appRest.service';
+import { AppRestService } from '../../main/services/appRest.service';
 import { Attachment } from '../model/Attachment';
 import { AttachmentType } from '../model/AttachmentType';
 import { IAttachment } from '../model/IAttachment';

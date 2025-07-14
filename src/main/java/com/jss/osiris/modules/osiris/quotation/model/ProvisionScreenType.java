@@ -2,6 +2,8 @@ package com.jss.osiris.modules.osiris.quotation.model;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
 import jakarta.persistence.Column;
@@ -27,6 +29,7 @@ public class ProvisionScreenType implements Serializable, IId {
     @Column(nullable = false)
     private String label;
 
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private String code;
 
     public Integer getId() {

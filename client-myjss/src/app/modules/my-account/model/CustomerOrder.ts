@@ -1,10 +1,8 @@
-import { Responsable } from "../../profile/model/Responsable";
 import { SpecialOffer } from "../../profile/model/SpecialOffer";
+import { IQuotation } from "../../quotation/model/IQuotation";
 import { CustomerOrderStatus } from "./CustomerOrderStatus";
 
-export interface CustomerOrder {
-  id: number;
-  responsable: Responsable | undefined;
+export interface CustomerOrder extends IQuotation {
   specialOffers: SpecialOffer[] | undefined;
   createdDate: Date;
   description: string;

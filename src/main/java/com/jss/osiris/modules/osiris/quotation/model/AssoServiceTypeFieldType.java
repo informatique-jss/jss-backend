@@ -25,7 +25,7 @@ public class AssoServiceTypeFieldType implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "asso_service_type_field_type_sequence", sequenceName = "asso_service_type_field_type_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "asso_service_type_field_type_sequence")
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -36,8 +36,17 @@ public class AssoServiceTypeFieldType implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_service_type_field_type")
 	@IndexedField
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
 	private ServiceFieldType serviceFieldType;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_service_type_field_type_dependancy")
+	@IndexedField
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+	private ServiceFieldType serviceFieldTypeDependancy;
+
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+	private String serviceFieldTypeDependancyValue;
 
 	private Boolean isMandatory;
 
@@ -71,6 +80,22 @@ public class AssoServiceTypeFieldType implements Serializable, IId {
 
 	public void setIsMandatory(Boolean isMandatory) {
 		this.isMandatory = isMandatory;
+	}
+
+	public ServiceFieldType getServiceFieldTypeDependancy() {
+		return serviceFieldTypeDependancy;
+	}
+
+	public void setServiceFieldTypeDependancy(ServiceFieldType serviceFieldTypeDependancy) {
+		this.serviceFieldTypeDependancy = serviceFieldTypeDependancy;
+	}
+
+	public String getServiceFieldTypeDependancyValue() {
+		return serviceFieldTypeDependancyValue;
+	}
+
+	public void setServiceFieldTypeDependancyValue(String serviceFieldTypeDependancyValue) {
+		this.serviceFieldTypeDependancyValue = serviceFieldTypeDependancyValue;
 	}
 
 }

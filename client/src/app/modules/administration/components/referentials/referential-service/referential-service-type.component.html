@@ -57,32 +57,44 @@
           </tr>
           <tr>
             <td>
+              <generic-toggle [(model)]="selectedEntity.isMergeable"
+                label="Peut être fusionné à d'autres services fusionnables" [form]="entityForm"
+                propertyName="isMergeable" [isDisabled]="!editMode"></generic-toggle>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-service-family [(model)]="selectedEntity.serviceFamily" label="Famille de service"
                 [form]="entityForm" propertyName="serviceFamily" [isMandatory]="true"
                 [isDisabled]="!editMode"></select-service-family>
             </td>
           </tr>
-          <table class="full-width">
-            <tr>
-              <td>
-                <generic-input [(model)]="selectedEntity.defaultDeboursPrice"
-                  label="Montant par défaut des débours (HT)" [form]="entityForm" propertyName="defaultDeboursPrice"
-                  [isMandatory]="false" [isDisabled]="!editMode" type="number" step="0.01"></generic-input>
-              </td>
-              <td>
-                <generic-input [(model)]="selectedEntity.defaultDeboursPriceNonTaxable"
-                  label="Montant par défaut des débours non taxables (HT)" [form]="entityForm"
-                  propertyName="defaultDeboursPriceNonTaxable" [isMandatory]="false" [isDisabled]="!editMode"
-                  type="number" step="0.01"></generic-input>
-              </td>
-              <td>
-                <generic-input [(model)]="selectedEntity.suspiciousMarkup"
-                  label="Majoration du prix pour les créances douteuses (%)" [form]="entityForm"
-                  propertyName="suspiciousMarkup" [isMandatory]="false" [isDisabled]="!editMode" type="number"
-                  step="1"></generic-input>
-              </td>
-            </tr>
-          </table>
+        </table>
+        <table class="full-width">
+          <tr>
+            <td>
+              <generic-input [(model)]="selectedEntity.defaultDeboursPrice" label="Montant par défaut des débours (HT)"
+                [form]="entityForm" propertyName="defaultDeboursPrice" [isMandatory]="false" [isDisabled]="!editMode"
+                type="number" step="0.01"></generic-input>
+            </td>
+            <td>
+              <generic-input [(model)]="selectedEntity.defaultDeboursPriceNonTaxable"
+                label="Montant par défaut des débours non taxables (HT)" [form]="entityForm"
+                propertyName="defaultDeboursPriceNonTaxable" [isMandatory]="false" [isDisabled]="!editMode"
+                type="number" step="0.01"></generic-input>
+            </td>
+            <td>
+              <autocomplete-service-type [(model)]="selectedEntity.serviceTypeLinked" [form]="entityForm"
+                propertyName="serviceTypeLinked" [isMandatory]="false" label="Service type de formalité associé"
+                [isDisabled]="!editMode"></autocomplete-service-type>
+            </td>
+            <td>
+              <generic-input [(model)]="selectedEntity.suspiciousMarkup"
+                label="Majoration du prix pour les créances douteuses (%)" [form]="entityForm"
+                propertyName="suspiciousMarkup" [isMandatory]="false" [isDisabled]="!editMode" type="number"
+                step="1"></generic-input>
+            </td>
+          </tr>
         </table>
         <p>Prestations du service</p>
         <ng-container
@@ -118,6 +130,11 @@
                   [isDisabled]="!editMode" type="number"></generic-input>
               </td>
               <td>
+                <generic-toggle [(model)]="assoServiceProvisionType.isPriority" label="Est prioritaire ?"
+                  [form]="entityForm" [propertyName]="'priority'+index+deleteIndex" [isMandatory]="false"
+                  [isDisabled]="!editMode"></generic-toggle>
+              </td>
+              <td>
                 <generic-input [(model)]="assoServiceProvisionType.minEmployee" label="Nombre minimal de salariés"
                   [form]="entityForm" [propertyName]="'minEmployee'+index+deleteIndex" [isMandatory]="false"
                   matTooltipShowDelay="1000" [isDisabled]="!editMode"
@@ -142,6 +159,30 @@
                   color="accent">
                   <mat-icon>delete</mat-icon>
                 </button>
+              </td>
+            </tr>
+          </table>
+          <table class="full-width"
+            *ngIf="assoServiceProvisionType.provisionType && assoServiceProvisionType.provisionType.provisionScreenType.code==PROVISION_SCREEN_TYPE_ANNOUNCEMENT">
+            <tr>
+              <td>
+                <select-notice-family (onFormChange)="changeProvisionFamilyType(assoServiceProvisionType);"
+                  [(model)]="assoServiceProvisionType.noticeTypeFamily" label="Rubrique" [form]="entityForm"
+                  [propertyName]="'noticeTypeFamily'+index+deleteIndex" [isMandatory]="false" [isDisabled]="!editMode">
+                </select-notice-family>
+              </td>
+              <td *ngIf="assoServiceProvisionType.noticeTypeFamily">
+                <select-notice-type [(model)]="assoServiceProvisionType.noticeType" label="Sous-rubrique"
+                  [form]="entityForm" [propertyName]="'noticeType'+index+deleteIndex" [isMandatory]="false"
+                  [isDisabled]="!editMode"
+                  [filteredNoticeTypeFamily]="assoServiceProvisionType.noticeTypeFamily"></select-notice-type>
+              </td>
+              <td
+                *ngIf="assoServiceProvisionType.noticeTypeFamily && assoServiceProvisionType.provisionType.provisionFamilyType">
+                <select-notice-template [(model)]="assoServiceProvisionType.announcementNoticeTemplate"
+                  label="Modèle d'annonce" [form]="entityForm" [propertyName]="'noticeTemplate'+index+deleteIndex"
+                  [isMandatory]="false" [isDisabled]="!editMode"
+                  [filteredProvisionFamilyType]="assoServiceProvisionType.provisionType.provisionFamilyType"></select-notice-template>
               </td>
             </tr>
           </table>
@@ -199,7 +240,16 @@
                 [propertyName]="'isMandatoryField'+index+deleteIndex" [isDisabled]="!editMode"></generic-toggle>
             </td>
             <td>
-
+              <select-service-field-type [(model)]="assoServiceFieldType.serviceFieldTypeDependancy"
+                [propertyName]="'serviceFieldTypeDependancy'+index+deleteIndex" [form]="entityForm"
+                [isMandatory]="false" label="Type de champ en dépendance"
+                [isDisabled]="!editMode"></select-service-field-type>
+            </td>
+            <td *ngIf="assoServiceFieldType.serviceFieldTypeDependancy">
+              <generic-input [(model)]="assoServiceFieldType.serviceFieldTypeDependancyValue"
+                label="Valeur d'affichage de la dépendance" [form]="entityForm"
+                [propertyName]="'serviceFieldTypeDependancyValue'+index+deleteIndex" [isMandatory]="true"
+                [isDisabled]="!editMode"></generic-input>
             </td>
             <td>
               <button *ngIf="editMode" (click)="deleteFieldType(assoServiceFieldType)" mat-raised-button color="accent">

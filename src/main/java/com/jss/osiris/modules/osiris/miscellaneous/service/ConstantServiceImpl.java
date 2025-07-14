@@ -1,17 +1,15 @@
 package com.jss.osiris.modules.osiris.miscellaneous.service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 
-import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.myjss.wordpress.model.Category;
+import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
+import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
+import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccountClass;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingJournal;
@@ -24,6 +22,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.osiris.miscellaneous.model.CompetentAuthorityType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Constant;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Country;
+import com.jss.osiris.modules.osiris.miscellaneous.model.CustomerOrderFrequency;
 import com.jss.osiris.modules.osiris.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.osiris.miscellaneous.model.DeliveryService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Department;
@@ -32,8 +31,8 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Language;
 import com.jss.osiris.modules.osiris.miscellaneous.model.LegalForm;
 import com.jss.osiris.modules.osiris.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Provider;
+import com.jss.osiris.modules.osiris.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Vat;
-import com.jss.osiris.modules.osiris.miscellaneous.repository.ConstantRepository;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.ActType;
 import com.jss.osiris.modules.osiris.quotation.model.AssignationType;
@@ -45,6 +44,7 @@ import com.jss.osiris.modules.osiris.quotation.model.ProvisionFamilyType;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionScreenType;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionType;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceFamily;
+import com.jss.osiris.modules.osiris.quotation.model.ServiceFamilyGroup;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 import com.jss.osiris.modules.osiris.quotation.model.TransfertFundsType;
@@ -67,47 +67,17 @@ import com.jss.osiris.modules.osiris.tiers.model.TiersType;
 public class ConstantServiceImpl implements ConstantService {
 
     @Autowired
-    ConstantRepository constantRepository;
+    ConstantServiceProxyImpl constantServiceProxy;
 
-    LocalDateTime lastFetchedConstant = null;
-    Constant cachedConstant = null;
+    @Override
+    public Constant addOrUpdateConstant(
+            Constant constant) throws OsirisException {
+        return constantServiceProxy.addOrUpdateConstant(constant);
+    }
 
     @Override
     public Constant getConstants() throws OsirisException {
-        // TODO : erreur proxy, sur pricingHelper par exemple...
-        /*
-         * if (cachedConstant == null || lastFetchedConstant == null
-         * || lastFetchedConstant.isBefore(LocalDateTime.now().minusSeconds(5))) {
-         * List<Constant> constants =
-         * IterableUtils.toList(constantRepository.findAll());
-         * if (constants == null || constants.size() != 1)
-         * throw new OsirisException(null, "Constants not defined or multiple");
-         * cachedConstant = (Constant) Hibernate.unproxy(constants.get(0));
-         * lastFetchedConstant = LocalDateTime.now();
-         * }
-         * return cachedConstant;
-         */
-        List<Constant> constants = IterableUtils.toList(constantRepository.findAll());
-        if (constants == null || constants.size() != 1)
-            throw new OsirisException(null, "Constants not defined or multiple");
-        return constants.get(0);
-    }
-
-    @Override
-    public Constant getConstant(Integer id) {
-        Optional<Constant> constant = constantRepository.findById(id);
-        if (constant.isPresent())
-            return constant.get();
-        return null;
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public Constant addOrUpdateConstant(
-            Constant constant) throws OsirisException {
-        cachedConstant = null;
-        lastFetchedConstant = null;
-        return constantRepository.save(constant);
+        return constantServiceProxy.getConstants();
     }
 
     @Override
@@ -346,6 +316,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public AttachmentType getAttachmentTypeApplicationCv() throws OsirisException {
+        return getConstants().getAttachmentTypeApplicationCv();
+    }
+
+    @Override
     public Country getCountryFrance() throws OsirisException {
         return getConstants().getCountryFrance();
     }
@@ -526,8 +501,28 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public ProvisionType getProvisionTypeCharacterAnnouncement() throws OsirisException {
+        return getConstants().getProvisionTypeCharacterAnnouncement();
+    }
+
+    @Override
     public ProvisionFamilyType getProvisionFamilyTypeDeposit() throws OsirisException {
         return getConstants().getProvisionFamilyTypeDeposit();
+    }
+
+    @Override
+    public ProvisionFamilyType getProvisionFamilyTypeBodacc() throws OsirisException {
+        return getConstants().getProvisionFamilyTypeBodacc();
+    }
+
+    @Override
+    public ProvisionFamilyType getProvisionFamilyTypeBalo() throws OsirisException {
+        return getConstants().getProvisionFamilyTypeBalo();
+    }
+
+    @Override
+    public ProvisionFamilyType getProvisionFamilyTypeAbonnement() throws OsirisException {
+        return getConstants().getProvisionFamilyTypeAbonnement();
     }
 
     @Override
@@ -721,6 +716,16 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public AssignationType getAssignationTypePublisciste() throws OsirisException {
+        return getConstants().getAssignationTypePublisciste();
+    }
+
+    @Override
+    public AssignationType getAssignationTypeFormaliste() throws OsirisException {
+        return getConstants().getAssignationTypeFormaliste();
+    }
+
+    @Override
     public Employee getEmployeeBillingResponsible() throws OsirisException {
         return getConstants().getEmployeeBillingResponsible();
     }
@@ -743,6 +748,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public Employee getEmployeeInvoiceReminderResponsible() throws OsirisException {
         return getConstants().getEmployeeInvoiceReminderResponsible();
+    }
+
+    @Override
+    public Employee getEmployeeCandidacyResponsible() throws OsirisException {
+        return getConstants().getEmployeeCandidacyResponsible();
     }
 
     @Override
@@ -888,6 +898,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public Department getDepartmentReunion() throws OsirisException {
         return getConstants().getDepartmentReunion();
+    }
+
+    @Override
+    public PublishingDepartment getPublishingDepartmentIdf() throws OsirisException {
+        return getConstants().getPublishingDepartmentIdf();
     }
 
     @Override
@@ -1096,6 +1111,21 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public CustomerOrderFrequency getCustomerOrderFrequencyAnnual() throws OsirisException {
+        return getConstants().getCustomerOrderFrequencyAnnual();
+    }
+
+    @Override
+    public CustomerOrderFrequency getCustomerOrderFrequencyMonthly() throws OsirisException {
+        return getConstants().getCustomerOrderFrequencyMonthly();
+    }
+
+    @Override
+    public CustomerOrderFrequency getCustomerOrderFrequencyQuarterly() throws OsirisException {
+        return getConstants().getCustomerOrderFrequencyQuarterly();
+    }
+
+    @Override
     public ServiceType getServiceTypeOther() throws OsirisException {
         return getConstants().getServiceTypeOther();
     }
@@ -1103,6 +1133,36 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public ServiceType getServiceTypeSecondaryCenterOpeningAlAndFormality() throws OsirisException {
         return getConstants().getServiceTypeSecondaryCenterOpeningAlAndFormality();
+    }
+
+    @Override
+    public ServiceType getServiceTypeAnnualSubscription() throws OsirisException {
+        return getConstants().getServiceTypeAnnualSubscription();
+    }
+
+    @Override
+    public ServiceType getServiceTypeEnterpriseAnnualSubscription() throws OsirisException {
+        return getConstants().getServiceTypeEnterpriseAnnualSubscription();
+    }
+
+    @Override
+    public ServiceType getServiceTypeMonthlySubscription() throws OsirisException {
+        return getConstants().getServiceTypeMonthlySubscription();
+    }
+
+    @Override
+    public ServiceType getServiceTypeKioskNewspaperBuy() throws OsirisException {
+        return getConstants().getServiceTypeKioskNewspaperBuy();
+    }
+
+    @Override
+    public ServiceType getServiceTypeUniqueArticleBuy() throws OsirisException {
+        return getConstants().getServiceTypeUniqueArticleBuy();
+    }
+
+    @Override
+    public SpecialOffer getSpecialOfferJssSubscriptionReduction() throws OsirisException {
+        return getConstants().getSpecialOfferJssSubscriptionReduction();
     }
 
     @Override
@@ -1181,6 +1241,51 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public Category getCategoryExclusivity() throws OsirisException {
+        return this.getConstants().getCategoryExclusivity();
+    }
+
+    @Override
+    public MyJssCategory getMyJssCategoryAnnouncement() throws OsirisException {
+        return this.getConstants().getMyJssCategoryAnnouncement();
+    }
+
+    @Override
+    public MyJssCategory getMyJssCategoryFormality() throws OsirisException {
+        return this.getConstants().getMyJssCategoryFormality();
+    }
+
+    @Override
+    public MyJssCategory getMyJssCategoryDomiciliation() throws OsirisException {
+        return this.getConstants().getMyJssCategoryDomiciliation();
+    }
+
+    @Override
+    public MyJssCategory getMyJssCategoryApostille() throws OsirisException {
+        return this.getConstants().getMyJssCategoryApostille();
+    }
+
+    @Override
+    public MyJssCategory getMyJssCategoryDocument() throws OsirisException {
+        return this.getConstants().getMyJssCategoryDocument();
+    }
+
+    @Override
+    public JssCategory getJssCategoryHomepageFirstHighlighted() throws OsirisException {
+        return this.getConstants().getJssCategoryHomepageFirstHighlighted();
+    }
+
+    @Override
+    public JssCategory getJssCategoryHomepageSecondHighlighted() throws OsirisException {
+        return this.getConstants().getJssCategoryHomepageSecondHighlighted();
+    }
+
+    @Override
+    public JssCategory getJssCategoryHomepageThirdHighlighted() throws OsirisException {
+        return this.getConstants().getJssCategoryHomepageThirdHighlighted();
+    }
+
+    @Override
     public AccountingAccountClass getAccountingAccountClassProduct() throws OsirisException {
         return this.getConstants().getAccountingAccountClassProduct();
     }
@@ -1193,5 +1298,35 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public ServiceFamily getServiceFamilyImmatriculationAlAndFormality() throws OsirisException {
         return this.getConstants().getServiceFamilyImmatriculationAlAndFormality();
+    }
+
+    @Override
+    public ServiceFamilyGroup getServiceFamilyGroupAnnouncement() throws OsirisException {
+        return this.getConstants().getServiceFamilyGroupAnnouncement();
+    }
+
+    @Override
+    public ServiceFamilyGroup getServiceFamilyGroupFormality() throws OsirisException {
+        return this.getConstants().getServiceFamilyGroupFormality();
+    }
+
+    @Override
+    public ServiceFamilyGroup getServiceFamilyGroupOther() throws OsirisException {
+        return this.getConstants().getServiceFamilyGroupOther();
+    }
+
+    @Override
+    public String getStringMyJssWebinarRequestMail() throws OsirisException {
+        return this.getConstants().getStringMyJssWebinarRequestMail();
+    }
+
+    @Override
+    public String getStringMyJssDemoRequestMail() throws OsirisException {
+        return this.getConstants().getStringMyJssDemoRequestMail();
+    }
+
+    @Override
+    public String getStringMyJssContactFormRequestMail() throws OsirisException {
+        return this.getConstants().getStringMyJssContactFormRequestMail();
     }
 }

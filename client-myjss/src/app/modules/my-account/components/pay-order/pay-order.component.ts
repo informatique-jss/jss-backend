@@ -1,25 +1,31 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
-import { AppService } from '../../../../libs/app.service';
+import { NgbNavModule, NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 import { JSS_BIC, JSS_IBAN } from '../../../../libs/Constants';
+import { CopyClipboardDirective } from '../../../../libs/CopyClipboard.directive';
 import { validateEmail } from '../../../../libs/CustomFormsValidatorsHelper';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { AppService } from '../../../main/services/app.service';
+import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { InvoicingSummary } from '../../model/InvoicingSummary';
 import { MailComputeResult } from '../../model/MailComputeResult';
 import { MyJssImage } from '../../model/MyJssImage';
 import { InvoicingSummaryService } from '../../services/invoicing.summary.service';
 import { MailComputeResultService } from '../../services/mail.compute.result.service';
 import { MyJssImageService } from '../../services/my.jss.image.service';
-import { initTooltips } from '../orders/orders.component';
 
 @Component({
   selector: 'app-pay-order',
   templateUrl: './pay-order.component.html',
-  styleUrls: ['./pay-order.component.css']
+  styleUrls: ['./pay-order.component.css'],
+  standalone: true,
+  imports: [SHARED_IMPORTS, GenericInputComponent, CopyClipboardDirective, NgbNavModule, NgbTooltip]
 })
 export class PayOrderComponent implements OnInit {
   idOrder: number | undefined;
+  idQuotation: number | undefined;
   invoiceSummary: InvoicingSummary | undefined;
   qrCodeRecourse: SafeResourceUrl | undefined;
   qrCodeImage: MyJssImage | undefined;
@@ -36,9 +42,10 @@ export class PayOrderComponent implements OnInit {
     private sanitizer: DomSanitizer,
     private appService: AppService,) { }
 
-  payOrderForm = this.formBuilder.group({});
+  payOrderForm!: FormGroup;
 
   ngOnInit() {
+    this.payOrderForm = this.formBuilder.group({});
     this.idOrder = this.activatedRoute.snapshot.params['idOrder'];
     if (this.idOrder) {
       this.mailComputeResultService.getMailComputeResultForBillingForCustomerOrder(this.idOrder).subscribe(response => {
@@ -49,23 +56,24 @@ export class PayOrderComponent implements OnInit {
       })
       this.invoicingSummaryService.getInvoicingSummaryForCustomerOrder(this.idOrder).subscribe(response => {
         this.invoiceSummary = response;
-        initTooltips();
       })
     }
   }
 
   cancelPay() {
-    this.appService.openRoute(null, "account/orders/details/" + this.idOrder, undefined);
+    if (this.idOrder)
+      this.appService.openRoute(null, "account/orders/details/" + this.idOrder, undefined);
   }
 
   refreshQrCode() {
-    if (this.defaultMail && this.defaultMail.length > 0 && validateEmail(this.defaultMail) && this.idOrder)
-      this.myJssImageService.downloadQrCode(this.idOrder, this.defaultMail).subscribe(response => {
-        this.qrCodeImage = response;
-        this.qrCodeRecourse = this.sanitizer.bypassSecurityTrustResourceUrl('data:image/jpg;base64,' + this.qrCodeImage.data);
-      })
-    else
-      this.qrCodeRecourse = undefined;
+    if (this.defaultMail && this.defaultMail.length > 0 && validateEmail(this.defaultMail))
+      if (this.idOrder)
+        this.myJssImageService.downloadQrCodeForOrder(this.idOrder, this.defaultMail).subscribe(response => {
+          this.qrCodeImage = response;
+          this.qrCodeRecourse = this.sanitizer.bypassSecurityTrustResourceUrl('data:image/jpg;base64,' + this.qrCodeImage.data);
+        })
+      else
+        this.qrCodeRecourse = undefined;
   }
 
   payedCb() {

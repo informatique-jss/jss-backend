@@ -88,9 +88,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   AccountingBalanceHelper accountingBalanceHelper;
 
   @Autowired
-  AccountingRecordGenerationService accountingRecordGenerationService;
-
-  @Autowired
   PaymentService paymentService;
 
   @Autowired
@@ -105,6 +102,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
       return this.ACCOUNTING_RECORD_TABLE_NAME;
     return this.CLOSED_ACCOUNTING_RECORD_TABLE_NAME;
   }
+
+  @Autowired
+  AccountingRecordGenerationService accountingRecordGenerationService;
 
   @Override
   public AccountingRecord getAccountingRecord(Integer id) {

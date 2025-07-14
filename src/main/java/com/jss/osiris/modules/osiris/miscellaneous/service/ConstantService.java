@@ -4,6 +4,9 @@ import java.time.LocalDate;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.myjss.wordpress.model.Category;
+import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
+import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
+import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccountClass;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingJournal;
@@ -16,6 +19,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.osiris.miscellaneous.model.CompetentAuthorityType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Constant;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Country;
+import com.jss.osiris.modules.osiris.miscellaneous.model.CustomerOrderFrequency;
 import com.jss.osiris.modules.osiris.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.osiris.miscellaneous.model.DeliveryService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Department;
@@ -24,6 +28,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Language;
 import com.jss.osiris.modules.osiris.miscellaneous.model.LegalForm;
 import com.jss.osiris.modules.osiris.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Provider;
+import com.jss.osiris.modules.osiris.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Vat;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.ActType;
@@ -36,6 +41,7 @@ import com.jss.osiris.modules.osiris.quotation.model.ProvisionFamilyType;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionScreenType;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionType;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceFamily;
+import com.jss.osiris.modules.osiris.quotation.model.ServiceFamilyGroup;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 import com.jss.osiris.modules.osiris.quotation.model.TransfertFundsType;
@@ -56,8 +62,6 @@ import com.jss.osiris.modules.osiris.tiers.model.TiersType;
 
 public interface ConstantService {
     public Constant getConstants() throws OsirisException;
-
-    public Constant getConstant(Integer id) throws OsirisException;
 
     public Constant addOrUpdateConstant(Constant constant) throws OsirisException;
 
@@ -159,6 +163,8 @@ public interface ConstantService {
 
     public AttachmentType getAttachmentTypeClientCommunication() throws OsirisException;
 
+    public AttachmentType getAttachmentTypeApplicationCv() throws OsirisException;
+
     public Country getCountryFrance() throws OsirisException;
 
     public Country getCountryMonaco() throws OsirisException;
@@ -231,7 +237,15 @@ public interface ConstantService {
 
     public ProvisionType getProvisionTypeRbe() throws OsirisException;
 
+    public ProvisionType getProvisionTypeCharacterAnnouncement() throws OsirisException;
+
     public ProvisionFamilyType getProvisionFamilyTypeDeposit() throws OsirisException;
+
+    public ProvisionFamilyType getProvisionFamilyTypeBalo() throws OsirisException;
+
+    public ProvisionFamilyType getProvisionFamilyTypeBodacc() throws OsirisException;
+
+    public ProvisionFamilyType getProvisionFamilyTypeAbonnement() throws OsirisException;
 
     public BillingType getBillingTypeInfogreffeDebour() throws OsirisException;
 
@@ -309,6 +323,10 @@ public interface ConstantService {
 
     public AssignationType getAssignationTypeEmployee() throws OsirisException;
 
+    public AssignationType getAssignationTypePublisciste() throws OsirisException;
+
+    public AssignationType getAssignationTypeFormaliste() throws OsirisException;
+
     public Employee getEmployeeBillingResponsible() throws OsirisException;
 
     public Employee getEmployeeProductionDirector() throws OsirisException;
@@ -318,6 +336,8 @@ public interface ConstantService {
     public Employee getEmployeeSalesDirector() throws OsirisException;
 
     public Employee getEmployeeInvoiceReminderResponsible() throws OsirisException;
+
+    public Employee getEmployeeCandidacyResponsible() throws OsirisException;
 
     public TransfertFundsType getTransfertFundsTypePhysique() throws OsirisException;
 
@@ -376,6 +396,8 @@ public interface ConstantService {
     public Department getDepartmentGuadeloupe() throws OsirisException;
 
     public Department getDepartmentReunion() throws OsirisException;
+
+    public PublishingDepartment getPublishingDepartmentIdf() throws OsirisException;
 
     public TypePersonne getTypePersonnePersonnePhysique() throws OsirisException;
 
@@ -459,7 +481,25 @@ public interface ConstantService {
 
     public RffFrequency getRffFrequencyQuarterly() throws OsirisException;
 
+    public CustomerOrderFrequency getCustomerOrderFrequencyAnnual() throws OsirisException;
+
+    public CustomerOrderFrequency getCustomerOrderFrequencyMonthly() throws OsirisException;
+
+    public CustomerOrderFrequency getCustomerOrderFrequencyQuarterly() throws OsirisException;
+
     public ServiceType getServiceTypeOther() throws OsirisException;
+
+    public ServiceType getServiceTypeAnnualSubscription() throws OsirisException;
+
+    public ServiceType getServiceTypeEnterpriseAnnualSubscription() throws OsirisException;
+
+    public ServiceType getServiceTypeMonthlySubscription() throws OsirisException;
+
+    public ServiceType getServiceTypeKioskNewspaperBuy() throws OsirisException;
+
+    public ServiceType getServiceTypeUniqueArticleBuy() throws OsirisException;
+
+    public SpecialOffer getSpecialOfferJssSubscriptionReduction() throws OsirisException;
 
     public ServiceType getServiceTypeSecondaryCenterOpeningAlAndFormality() throws OsirisException;
 
@@ -489,9 +529,39 @@ public interface ConstantService {
 
     public Category getCategorySerie() throws OsirisException;
 
+    public Category getCategoryExclusivity() throws OsirisException;
+
+    public MyJssCategory getMyJssCategoryAnnouncement() throws OsirisException;
+
+    public MyJssCategory getMyJssCategoryFormality() throws OsirisException;
+
+    public MyJssCategory getMyJssCategoryDomiciliation() throws OsirisException;
+
+    public MyJssCategory getMyJssCategoryApostille() throws OsirisException;
+
+    public MyJssCategory getMyJssCategoryDocument() throws OsirisException;
+
+    public JssCategory getJssCategoryHomepageFirstHighlighted() throws OsirisException;
+
+    public JssCategory getJssCategoryHomepageSecondHighlighted() throws OsirisException;
+
+    public JssCategory getJssCategoryHomepageThirdHighlighted() throws OsirisException;
+
     public AccountingAccountClass getAccountingAccountClassProduct() throws OsirisException;
 
     public AccountingAccountClass getAccountingAccountClassTiers() throws OsirisException;
 
     public ServiceFamily getServiceFamilyImmatriculationAlAndFormality() throws OsirisException;
+
+    public ServiceFamilyGroup getServiceFamilyGroupAnnouncement() throws OsirisException;
+
+    public ServiceFamilyGroup getServiceFamilyGroupFormality() throws OsirisException;
+
+    public ServiceFamilyGroup getServiceFamilyGroupOther() throws OsirisException;
+
+    public String getStringMyJssDemoRequestMail() throws OsirisException;
+
+    public String getStringMyJssWebinarRequestMail() throws OsirisException;
+
+    public String getStringMyJssContactFormRequestMail() throws OsirisException;
 }

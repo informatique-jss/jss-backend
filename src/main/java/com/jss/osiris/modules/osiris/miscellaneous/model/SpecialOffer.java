@@ -21,19 +21,19 @@ public class SpecialOffer implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "special_offer_sequence", sequenceName = "special_offer_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "special_offer_sequence")
-	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private Integer id;
 
 	@Column(nullable = false, length = 100)
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String label;
 
 	@Column(nullable = false, length = 100)
-	@JsonView({ JacksonViews.MyJssView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private String customLabel;
 
 	@Column(nullable = false, length = 20)
-	@JsonView(JacksonViews.MyJssView.class)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String code;
 
 	@OneToMany(targetEntity = AssoSpecialOfferBillingType.class, mappedBy = "specialOffer")

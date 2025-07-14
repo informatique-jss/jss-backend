@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.quotation.model.guichetUnique;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -16,7 +17,7 @@ import jakarta.persistence.ManyToOne;
 
 @Entity
 @DoNotAudit
-public class GuichetUniqueAttachment {
+public class GuichetUniqueAttachment implements Serializable {
     @Id
     private Integer id;
 

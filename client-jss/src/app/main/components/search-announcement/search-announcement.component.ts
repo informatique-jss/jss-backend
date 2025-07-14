@@ -1,36 +1,42 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
+import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { AppService } from '../../../services/app.service';
 import { Announcement } from '../../model/Announcement';
 import { AnnouncementService } from '../../services/announcement.service';
+import { GenericInputComponent } from "../generic-input/generic-input.component";
 
 @Component({
-  selector: 'app-search-announcement',
+  selector: 'search-announcement',
   templateUrl: './search-announcement.component.html',
-  styleUrls: ['./search-announcement.component.css']
+  styleUrls: ['./search-announcement.component.css'],
+  imports: [SHARED_IMPORTS, GenericInputComponent],
+  standalone: true
 })
 export class SearchAnnouncementComponent implements OnInit {
-
-  page: number = 0;
-  announcements: Announcement[] = [];
-  searchResults: Announcement[] | undefined;
-  displayLoadMoreButton: boolean = true;
-  searchText: string = "";
-
-  searchObservableRef: Subscription | undefined;
   debounce: any;
-  searchInProgress: boolean = false;
+  isLoading: boolean = false;
+  searchObservableRef: Subscription | undefined;
+  page: number = 0;
+  pageSize: number = 10;
+  searchResults: Announcement[] | undefined;
+  displayLoadMoreButton: boolean = false;
+  searchText: string = "";
+  searchAnnouncementForm!: FormGroup;
+  isClickedOnce: boolean = false;
 
   constructor(
-    private activatedRoute: ActivatedRoute,
     private appService: AppService,
-    private announcementService: AnnouncementService
+    private announcementService: AnnouncementService,
+    private formBuilder: FormBuilder
   ) { }
 
+
   ngOnInit() {
-    this.fetchNextAnnouncements();
+    this.searchAnnouncementForm = this.formBuilder.group({});
   }
+
 
   getNextAnnouncements() {
     this.page++;
@@ -42,42 +48,55 @@ export class SearchAnnouncementComponent implements OnInit {
   }
 
   fetchNextAnnouncements() {
-    if (this.searchText && this.searchText.length > 2) {
-      this.globalSearch();
-    } else
-      this.announcementService.getTopAnnouncement(this.page).subscribe(announcements => {
-        if (announcements && announcements.length > 0) {
-          this.announcements.push(...announcements);
-        } else {
+    this.isLoading = true;
+    if (this.searchText && this.searchText.length > 2)
+      this.announcementService.getTopAnnouncementSearch(this.page, this.pageSize, this.searchText).subscribe(response => {
+        if (!this.searchResults)
+          this.searchResults = [];
+        this.searchResults.push(...response.content);
+
+        if (!this.searchResults || response.page.totalElements <= this.searchResults.length)
           this.displayLoadMoreButton = false;
-        }
+        this.isLoading = false;
       });
   }
 
-  searchForAnnouncement() {
-    this.searchInProgress = true;
-    clearTimeout(this.debounce);
+  clearSearch() {
+    this.searchText = '';
     this.searchResults = [];
-    this.page = 0;
-    this.debounce = setTimeout(() => {
-      this.globalSearch();
-    }, 500);
+    this.isLoading = false;
+    this.displayLoadMoreButton = false;
+    this.isClickedOnce = false;
   }
 
-  globalSearch() {
+  searchForAnnouncement() {
+    if (this.searchText && this.searchText.length > 2) {
+      this.isLoading = true;
+      this.isClickedOnce = true;
+      clearTimeout(this.debounce);
+      this.searchResults = [];
+      this.page = 0;
+      this.debounce = setTimeout(() => {
+        this.searchAnnouncement();
+      }, 500);
+    }
+  }
+
+  searchAnnouncement() {
     if (this.searchObservableRef)
       this.searchObservableRef.unsubscribe();
 
-    this.searchInProgress = true;
+    this.isLoading = true;
     if (this.searchText && this.searchText.length > 2)
-      this.searchObservableRef = this.announcementService.getTopAnnouncementSearch(this.page, this.searchText, this.searchText, this.searchText).subscribe(response => {
-        if (!this.searchResults)
-          this.searchResults = [];
-        this.searchResults.push(...response);
-        this.searchInProgress = false;
-
-        if (!response || response.length == 0)
-          this.displayLoadMoreButton = false;
+      this.searchObservableRef = this.announcementService.getTopAnnouncementSearch(this.page, this.pageSize, this.searchText).subscribe(response => {
+        if (response && response.content && response.content.length > 0) {
+          if (!this.searchResults)
+            this.searchResults = [];
+          this.searchResults.push(...response.content);
+        }
+        if (this.searchResults && response.page.totalElements > this.searchResults.length)
+          this.displayLoadMoreButton = true;
+        this.isLoading = false;
       })
   }
 }

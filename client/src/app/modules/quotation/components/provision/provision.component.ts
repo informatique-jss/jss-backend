@@ -40,7 +40,6 @@ import { ProvisionItemComponent } from '../provision-item/provision-item.compone
 import { MissingAttachmentMailDialogComponent } from '../select-attachment-type-dialog/missing-attachment-mail-dialog.component';
 import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-dialog.component';
 import { SelectMultiServiceTypeDialogComponent } from '../select-multi-service-type-dialog/select-multi-service-type-dialog.component';
-import { SelectServiceTypeDialogComponent } from '../select-service-type-dialog/select-service-type-dialog.component';
 
 @Component({
   selector: 'provision',
@@ -101,10 +100,6 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   ) { }
 
   affaireForm = this.formBuilder.group({});
-
-  getServiceLabel(service: Service) {
-    return this.serviceService.getServiceLabel(service, false, this.constantService.getServiceTypeOther());
-  }
 
   ngOnInit() {
     this.appService.changeHeaderTitle("Prestation");
@@ -181,12 +176,6 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
       })
   }
 
-  updateAssignedToForAffaire(employee: any, asso: AssoAffaireOrder) {
-    this.assoAffaireOrderService.updateAssignedToForAsso(asso, employee).subscribe(response => {
-    });
-    this.refreshAffaire();
-  }
-
   updateAssignedToForProvision(employee: any, provision: Provision) {
     this.provisionService.updateAssignedToForProvision(provision, employee).subscribe(response => {
       this.refreshAffaire();
@@ -228,7 +217,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
 
     dialogRef.afterClosed().subscribe(dialogResult => {
       if (dialogResult && service) {
-        const dialogRef2 = this.selectServiceTypeDialog.open(SelectServiceTypeDialogComponent, {
+        const dialogRef2 = this.selectServiceTypeDialog.open(SelectMultiServiceTypeDialogComponent, {
           width: "50%",
         });
         dialogRef2.componentInstance.isJustSelectServiceType = true;
@@ -331,7 +320,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
 
     if (provisionStatus && this.affaireForm.valid) {
       this.editMode = false;
-      this.assoAffaireOrderService.updateAsso(this.asso).subscribe(response => {
+      this.assoAffaireOrderService.updateAsso(this.asso, false).subscribe(response => {
         this.asso = response;
         this.appService.openRoute(null, '/provision/' + this.idAffaire, null);
       })
@@ -715,14 +704,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     if (provision.announcement && provision.announcement.department)
       label += " - Département " + provision.announcement.department.code;
     if (!doNotDisplayService)
-      label = this.serviceService.getServiceLabel(service, false, this.constantService.getServiceTypeOther()) + " - " + label;
-    return label;
-  }
-
-  computeServiceLabel(service: Service, doNotDisplayService: boolean): string {
-    let label = '';
-    if (!doNotDisplayService)
-      label = this.getServiceLabel(service) + " - " + label;
+      label = service.serviceLabelToDisplay + " - " + label;
     return label;
   }
 

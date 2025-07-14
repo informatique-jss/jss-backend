@@ -2,6 +2,8 @@ package com.jss.osiris.modules.osiris.quotation.model;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
 import jakarta.persistence.Column;
@@ -17,12 +19,15 @@ public class DomiciliationContractType implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "domiciliation_contract_type_sequence", sequenceName = "domiciliation_contract_type_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "domiciliation_contract_type_sequence")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Integer id;
 
 	@Column(nullable = false, length = 100)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String label;
 
 	@Column(length = 100)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String englishLabel;
 
 	@Column(nullable = false, length = 20)

@@ -26,12 +26,11 @@ public interface QuotationRepository extends QueryCacheCrudRepository<Quotation,
                         + " co.created_date as createdDate,"
                         + " co.last_status_update as lastStatusUpdate,"
                         + "  t2.id_commercial as salesEmployeeId,"
-                        + " co.id_assigned_to as assignedToEmployeeId,"
                         + " co.id as quotationId,"
                         + " r.id as responsableId,"
                         + " t2.id as tiersId,"
                         + " origin.label as customerOrderOriginLabel,"
-                        + " STRING_AGG(DISTINCT case when service.custom_label is null then st.label else service.custom_label  end,', ') as serviceTypeLabel,"
+                        + " STRING_AGG(DISTINCT service.service_label_to_display,', ') as serviceTypeLabel,"
                         + " sum(COALESCE(i.pre_tax_price,0)+COALESCE(i.vat_price,0)-COALESCE(i.discount_amount,0)) as totalPrice ,"
                         + " STRING_AGG(DISTINCT case when af.denomination is not null and af.denomination!='' then af.denomination else af.firstname || ' '||af.lastname end  || ' ('||city.label ||')' ,', ') as affaireLabel,"
                         + " co.description as quotationDescription"
@@ -40,7 +39,6 @@ public interface QuotationRepository extends QueryCacheCrudRepository<Quotation,
                         + " join quotation_status cos on cos.id = co.id_quotation_status"
                         + " left join asso_affaire_order asso on asso.id_quotation = co.id"
                         + " left join service on service.id_asso_affaire_order = asso.id"
-                        + " left join service_type st on st.id = service.id_service_type"
                         + " left join provision on provision.id_service = service.id"
                         + " left join invoice_item i on i.id_provision = provision.id"
                         + " left join affaire af on af.id = asso.id_affaire"
@@ -51,14 +49,12 @@ public interface QuotationRepository extends QueryCacheCrudRepository<Quotation,
                         + " where ( COALESCE(:customerOrderStatus) =0 or co.id_quotation_status in (:customerOrderStatus)) "
                         + " and co.created_date>=:startDate and co.created_date<=:endDate "
                         + " and ( :idCustomerOrder =0 or asso_co.id_customer_order = :idCustomerOrder)"
-                        + " and ( COALESCE(:assignedToEmployee) =0 or co.id_assigned_to in (:assignedToEmployee))"
                         + " and ( COALESCE(:salesEmployee) =0 or r.id_commercial in (:salesEmployee)  or  t2.id_commercial in (:salesEmployee))"
                         + " and ( COALESCE(:customerOrder)=0 or r.id in (:customerOrder) )"
                         + " and ( COALESCE(:affaire)=0 or af.id in (:affaire) )"
                         + " group by  r.id,origin.label, r.firstname, r.lastname,  t2.denomination, t2.firstname, t2.lastname, cos.label, "
-                        + " co.created_date,  r.id_commercial, t2.id_commercial, co.id, r.id, t2.id, co.description,co.id_assigned_to ")
+                        + " co.created_date,  r.id_commercial, t2.id_commercial, co.id, r.id, t2.id, co.description ")
         List<QuotationSearchResult> findQuotations(@Param("salesEmployee") List<Integer> salesEmployee,
-                        @Param("assignedToEmployee") List<Integer> assignedToEmployee,
                         @Param("customerOrderStatus") List<Integer> customerOrderStatus,
                         @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                         @Param("customerOrder") List<Integer> customerOrder, @Param("affaire") List<Integer> affaire,
@@ -93,4 +89,8 @@ public interface QuotationRepository extends QueryCacheCrudRepository<Quotation,
                         "    and (0 in :status or  c.quotationStatus.id in :status) order by c.createdDate desc ")
         List<Quotation> searchQuotation(List<Integer> commercials,
                         List<Integer> status);
+
+        @Query(value = "select q from Quotation q where quotationStatus=:quotationStatus and createdDate<:dateLimit ")
+        List<Quotation> findQuotationOlderThanDate(@Param("quotationStatus") QuotationStatus quotationStatus,
+                        @Param("dateLimit") LocalDateTime dateLimit);
 }

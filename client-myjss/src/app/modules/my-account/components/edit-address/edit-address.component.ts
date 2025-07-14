@@ -1,20 +1,27 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { AppService } from '../../../../libs/app.service';
-import { ConstantService } from '../../../../libs/constant.service';
+import { NgbNavModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { validateEmail } from '../../../../libs/CustomFormsValidatorsHelper';
 import { capitalizeName } from '../../../../libs/FormatHelper';
-import { Mail } from '../../../profile/model/Mail';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { Mail } from '../../../general/model/Mail';
+import { AppService } from '../../../main/services/app.service';
+import { ConstantService } from '../../../main/services/constant.service';
+import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { Responsable } from '../../../profile/model/Responsable';
 import { ResponsableService } from '../../../profile/services/responsable.service';
+import { BillingLabelType } from '../../model/BillingLabelType';
 import { Document } from '../../model/Document';
+import { DocumentType } from '../../model/DocumentType';
 import { DocumentService } from '../../services/document.service';
 
 @Component({
   selector: 'app-edit-address',
   templateUrl: './edit-address.component.html',
-  styleUrls: ['./edit-address.component.css']
+  styleUrls: ['./edit-address.component.css'],
+  standalone: true,
+  imports: [SHARED_IMPORTS, GenericInputComponent, NgbNavModule, NgbTooltipModule]
 })
 export class EditAddressComponent implements OnInit {
 
@@ -22,16 +29,10 @@ export class EditAddressComponent implements OnInit {
   idQuotation: number | undefined;
   idResponsable: number | undefined;
   documents: Document[] | undefined;
-  documentForm = this.formBuilder.group({});
+
   responsable: Responsable | undefined;
 
-  documentTypeBilling = this.constantService.getDocumentTypeBilling();
-  documentTypeDigital = this.constantService.getDocumentTypeDigital();
-  documentTypePaper = this.constantService.getDocumentTypePaper();
-
-  billingLabelTypeAffaire = this.constantService.getBillingLabelTypeCodeAffaire();
-  billingLabelTypeCustomer = this.constantService.getBillingLabelTypeCustomer();
-  billingLabelTypeOther = this.constantService.getBillingLabelTypeOther();
+  documentForm!: FormGroup;
 
   lockBillingLabel: boolean = false;
 
@@ -40,6 +41,13 @@ export class EditAddressComponent implements OnInit {
 
   newMailDigitalAffaire: string = "";
   newMailDigitalClient: string = "";
+
+  documentTypeBilling!: DocumentType;
+  documentTypeDigital!: DocumentType;
+  documentTypePaper!: DocumentType;
+  billingLabelTypeAffaire!: BillingLabelType;
+  billingLabelTypeCustomer!: BillingLabelType;
+  billingLabelTypeOther!: BillingLabelType;
 
   constructor(private activatedRoute: ActivatedRoute,
     private formBuilder: FormBuilder,
@@ -51,6 +59,16 @@ export class EditAddressComponent implements OnInit {
   capitalizeName = capitalizeName;
 
   ngOnInit() {
+    this.documentForm = this.formBuilder.group({});
+
+    this.documentTypeBilling = this.constantService.getDocumentTypeBilling();
+    this.documentTypeDigital = this.constantService.getDocumentTypeDigital();
+    this.documentTypePaper = this.constantService.getDocumentTypePaper();
+
+    this.billingLabelTypeAffaire = this.constantService.getBillingLabelTypeCodeAffaire();
+    this.billingLabelTypeCustomer = this.constantService.getBillingLabelTypeCustomer();
+    this.billingLabelTypeOther = this.constantService.getBillingLabelTypeOther();
+
     this.idOrder = this.activatedRoute.snapshot.params['idOrder'];
     this.idQuotation = this.activatedRoute.snapshot.params['idQuotation'];
     this.idResponsable = this.activatedRoute.snapshot.params['idResponsable'];

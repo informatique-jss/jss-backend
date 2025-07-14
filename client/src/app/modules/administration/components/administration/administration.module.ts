@@ -34,6 +34,7 @@ import { ReferentialAccountingAccountComponent } from '../referentials/referenti
 import { ReferentialAccountingJournalComponent } from '../referentials/referential-accounting-journal/referential-accounting-journal.component';
 import { ReferentialActTypeComponent } from '../referentials/referential-act-type/referential-act-type.component';
 import { ReferentialActiveDirectoryGroupComponent } from '../referentials/referential-active-directory-group/referential-active-directory-group.component';
+import { ReferentialAnnouncementNoticeTemplateFragmentComponent } from '../referentials/referential-announcement-notice-template-fragment/referential-announcement-notice-template-fragment.component';
 import { ReferentialAnnouncementNoticeTemplateComponent } from '../referentials/referential-announcement-notice-template/referential-announcement-notice-template.component';
 import { ReferentialAttachmentTypeComponent } from '../referentials/referential-attachment-type/referential-attachment-type.component';
 import { ReferentialBillingClosureRecipientTypeComponent } from '../referentials/referential-billing-closure-recipient-type/referential-billing-closure-recipient-type.component';
@@ -210,6 +211,7 @@ const routes: Routes = [
     ReferentialIncidentResponsibilityComponent,
     ReferentialIncidentCauseComponent,
     ReferentialIncidentTypeComponent,
+    ReferentialAnnouncementNoticeTemplateFragmentComponent,
   ], exports: [LogComponent,
     CompetentAuthorityComponent,
     ProviderComponent

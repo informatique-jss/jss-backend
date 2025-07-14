@@ -9,7 +9,7 @@ import { BatchSettings } from '../model/BatchSettings';
 @Injectable({
   providedIn: 'root'
 })
-export class BatchService extends AppRestService<Batch>{
+export class BatchService extends AppRestService<Batch> {
 
   constructor(http: HttpClient) {
     super(http, "batch");
@@ -26,7 +26,7 @@ export class BatchService extends AppRestService<Batch>{
   declareNewBatch(batchSettings: BatchSettings, entityId: number) {
     let httpParams = new HttpParams().set("batchSettingsId", batchSettings.id);
     if (entityId)
-      httpParams.set("entityId", entityId);
+      httpParams = httpParams.set("entityId", entityId);
     return this.postItem(httpParams, "batch/new");
   }
 }

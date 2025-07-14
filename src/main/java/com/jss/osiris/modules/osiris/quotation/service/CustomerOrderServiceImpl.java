@@ -11,7 +11,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -51,6 +50,15 @@ import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.myjss.profile.controller.MyJssProfileController;
 import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
+import com.jss.osiris.modules.myjss.quotation.service.MyJssQuotationDelegate;
+import com.jss.osiris.modules.myjss.wordpress.model.AssoProvisionPostNewspaper;
+import com.jss.osiris.modules.myjss.wordpress.model.Subscription;
+import com.jss.osiris.modules.myjss.wordpress.service.AssoProvisionPostNewspaperService;
+import com.jss.osiris.modules.myjss.wordpress.service.NewspaperService;
+import com.jss.osiris.modules.myjss.wordpress.service.PostService;
+import com.jss.osiris.modules.myjss.wordpress.service.SubscriptionService;
+import com.jss.osiris.modules.osiris.crm.model.Voucher;
+import com.jss.osiris.modules.osiris.crm.service.VoucherService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceLabelResult;
@@ -64,9 +72,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.InvoicingSummary;
-import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Notification;
-import com.jss.osiris.modules.osiris.miscellaneous.model.Phone;
 import com.jss.osiris.modules.osiris.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.CompetentAuthorityService;
@@ -76,9 +82,11 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
+import com.jss.osiris.modules.osiris.quotation.controller.QuotationValidationHelper;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.AnnouncementStatus;
+import com.jss.osiris.modules.osiris.quotation.model.AssignationType;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceFieldType;
@@ -95,13 +103,11 @@ import com.jss.osiris.modules.osiris.quotation.model.OrderingSearchResult;
 import com.jss.osiris.modules.osiris.quotation.model.OrderingSearchTagged;
 import com.jss.osiris.modules.osiris.quotation.model.PaperSet;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
-import com.jss.osiris.modules.osiris.quotation.model.ProvisionScreenType;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
-import com.jss.osiris.modules.osiris.quotation.model.ServiceTypeChosen;
+import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 import com.jss.osiris.modules.osiris.quotation.model.SimpleProvision;
 import com.jss.osiris.modules.osiris.quotation.model.SimpleProvisionStatus;
-import com.jss.osiris.modules.osiris.quotation.model.UserCustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.centralPay.CentralPayPaymentRequest;
 import com.jss.osiris.modules.osiris.quotation.repository.CustomerOrderRepository;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
@@ -111,7 +117,6 @@ import com.jss.osiris.modules.osiris.tiers.service.TiersService;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.servlet.http.HttpServletRequest;
 
 @org.springframework.stereotype.Service
 public class CustomerOrderServiceImpl implements CustomerOrderService {
@@ -230,6 +235,36 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Autowired
     MyJssProfileController myJssProfileController;
 
+    @Autowired
+    ProvisionService provisionService;
+
+    @Autowired
+    AssoProvisionPostNewspaperService assoProvisionPostNewspaperService;
+
+    @Autowired
+    PostService postService;
+
+    @Autowired
+    NewspaperService newspaperService;
+
+    @Autowired
+    SubscriptionService subscriptionService;
+
+    @Autowired
+    QuotationValidationHelper quotationValidationHelper;
+
+    @Autowired
+    MyJssQuotationDelegate myJssQuotationDelegate;
+
+    @Autowired
+    AnnouncementService announcementService;
+
+    @Autowired
+    VoucherService voucherService;
+
+    @Autowired
+    CustomerOrderAssignationService customerOrderAssignationService;
+
     private CustomerOrder simpleAddOrUpdate(CustomerOrder customerOrder) {
         return customerOrderRepository.save(customerOrder);
     }
@@ -263,6 +298,15 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
+    public void markCustomerOrderAsPayed(CustomerOrder customerOrder, boolean isPayed)
+            throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException, OsirisException {
+        customerOrder.setIsPayed(isPayed);
+        subscriptionService.saveSubscription(customerOrder);
+
+        addOrUpdateCustomerOrder(customerOrder, false, false);
+    }
+
+    @Override
     public CustomerOrder addOrUpdateCustomerOrder(CustomerOrder customerOrder, boolean isFromUser,
             boolean checkAllProvisionEnded)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
@@ -278,14 +322,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             else
                 customerOrder.setCustomerOrderOrigin(constantService.getCustomerOrderOriginOsiris());
         }
-
-        // Set default customer order assignation to sales employee if not set
-        if (customerOrder.getAssignedTo() == null)
-            if (customerOrder.getResponsable().getDefaultCustomerOrderEmployee() != null)
-                customerOrder.setAssignedTo(customerOrder.getResponsable().getDefaultCustomerOrderEmployee());
-            else
-                customerOrder
-                        .setAssignedTo(customerOrder.getResponsable().getTiers().getDefaultCustomerOrderEmployee());
 
         if (customerOrder.getIsGifted() == null)
             customerOrder.setIsGifted(false);
@@ -308,27 +344,36 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         // Complete provisions
         boolean oneNewProvision = false;
+        boolean computePrice = false;
         if (customerOrder.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
                 assoAffaireOrder.setCustomerOrder(customerOrder);
-                assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, customerOrder, isFromUser);
-                if (assoAffaireOrder.getId() != null)
-                    batchService.declareNewBatch(Batch.REINDEX_ASSO_AFFAIRE_ORDER, assoAffaireOrder.getId());
-                for (Service service : assoAffaireOrder.getServices())
-                    for (Provision provision : service.getProvisions())
-                        if (provision.getId() == null)
-                            oneNewProvision = true;
+                if (assoAffaireOrder.getId() == null)
+                    oneNewProvision = true;
+                if (assoAffaireOrder.getServices() != null && assoAffaireOrder.getServices().size() > 0) {
+                    assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, customerOrder, isFromUser);
+                    if (assoAffaireOrder.getId() != null)
+                        batchService.declareNewBatch(Batch.REINDEX_ASSO_AFFAIRE_ORDER, assoAffaireOrder.getId());
+                    for (Service service : assoAffaireOrder.getServices())
+                        if (service.getProvisions() != null && service.getProvisions().size() > 0)
+                            for (Provision provision : service.getProvisions()) {
+                                computePrice = true;
+                                if (provision.getId() == null)
+                                    oneNewProvision = true;
+                            }
+                }
             }
 
-        if (oneNewProvision)
+        if (oneNewProvision || isNewCustomerOrder)
             customerOrder = simpleAddOrUpdate(customerOrder);
 
-        pricingHelper.getAndSetInvoiceItemsForQuotation(customerOrder, true);
+        if (computePrice)
+            pricingHelper.getAndSetInvoiceItemsForQuotation(customerOrder, true);
 
         customerOrder = simpleAddOrUpdate(customerOrder);
 
         // Generate first comment
-        if (isNewCustomerOrder && isFromUser) {
+        if (isFromUser && customerOrder.getResponsable() != null && isNewCustomerOrder) {
             String comment = "";
             Tiers tiers = customerOrder.getResponsable().getTiers();
             if (tiers != null && (tiers.getInstructions() != null || tiers.getObservations() != null)) {
@@ -344,7 +389,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         customerOrder = getCustomerOrder(customerOrder.getId());
 
-        if (checkAllProvisionEnded)
+        if (computePrice && checkAllProvisionEnded)
             checkAllProvisionEnded(customerOrder);
 
         // Generate recurring
@@ -355,6 +400,15 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     .plusMonths(customerOrder.getCustomerOrderFrequency().getMonthNumber()).minusDays(1));
             simpleAddOrUpdate(customerOrder);
         }
+
+        customerOrderAssignationService.completeAssignationForCustomerOrder(customerOrder);
+
+        // In progress when created in Osiris
+        if (isNewCustomerOrder
+                && customerOrder.getCustomerOrderOrigin().getId()
+                        .equals(constantService.getCustomerOrderOriginOsiris().getId())
+                && customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.DRAFT))
+            addOrUpdateCustomerOrderStatus(customerOrder, CustomerOrderStatus.BEING_PROCESSED, isFromUser);
 
         batchService.declareNewBatch(Batch.REINDEX_CUSTOMER_ORDER, customerOrder.getId());
         return customerOrder;
@@ -404,17 +458,27 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         return true;
     }
 
-    private boolean isOnlyJssAnnouncement(CustomerOrder customerOrder) throws OsirisException {
+    @Override
+    public boolean isOnlyJssAnnouncement(CustomerOrder customerOrder, Boolean isReadyForBilling)
+            throws OsirisException {
         if (!isOnlyAnnouncement(customerOrder))
             return false;
 
         if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
                 for (Service service : asso.getServices())
-                    for (Provision provision : service.getProvisions())
+                    for (Provision provision : service.getProvisions()) {
                         if (provision.getAnnouncement() != null && !provision.getAnnouncement().getConfrere().getId()
                                 .equals(constantService.getConfrereJssSpel().getId()))
                             return false;
+                        if (isReadyForBilling && provision.getAnnouncement() != null
+                                && (provision.getIsRedactedByJss() || provision.getAnnouncement().getNotice() == null
+                                        || provision.getAnnouncement().getNotice().length() == 0
+                                        || provision.getAnnouncement().getPublicationDate() == null
+                                        || provision.getAnnouncement().getNoticeTypeFamily() == null
+                                        || provision.getAnnouncement().getNoticeTypes().isEmpty()))
+                            return false;
+                    }
         return true;
     }
 
@@ -426,7 +490,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         boolean checkAllProvisionEnded = false;
 
         // Determine if deposit is mandatory or not
-        if ((customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.OPEN)
+        if ((customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.DRAFT)
                 || customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED))
                 && (targetStatusCode.equals(CustomerOrderStatus.BEING_PROCESSED)
                         || targetStatusCode.equals(CustomerOrderStatus.WAITING_DEPOSIT))) {
@@ -484,7 +548,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 customerOrder.setPrincingEffectiveDate(LocalDate.now());
             // Auto billed for JSS Announcement only customer order
             if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)
-                    && isOnlyJssAnnouncement(customerOrder)
+                    && isOnlyJssAnnouncement(customerOrder, false)
                     && getRemainingAmountToPayForCustomerOrder(customerOrder).compareTo(zeroValue) >= 0) {
                 targetStatusCode = CustomerOrderStatus.BILLED;
             }
@@ -503,6 +567,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     }
                 }
             }
+
             // save once customer order to recompute invoice item before set it in stone...
             this.addOrUpdateCustomerOrder(customerOrder, true, checkAllProvisionEnded);
 
@@ -658,6 +723,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
             addOrUpdateCustomerOrderStatus(customerOrder, CustomerOrderStatus.BEING_PROCESSED, false);
+
+            if (isOnlyJssAnnouncement(customerOrder, true)) {
+                quotationValidationHelper.validateQuotationAndCustomerOrder(customerOrder, null);
+                autoBilledProvisions(customerOrder);
+            }
         }
 
         return customerOrder;
@@ -754,14 +824,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             salesEmployeeId.add(0);
         }
 
-        ArrayList<Integer> assignedToEmployeeId = new ArrayList<Integer>();
-        if (orderingSearch.getAssignedToEmployee() != null) {
-            for (Employee employee : employeeService.getMyHolidaymaker(orderingSearch.getAssignedToEmployee()))
-                assignedToEmployeeId.add(employee.getId());
-        } else {
-            assignedToEmployeeId.add(0);
-        }
-
         ArrayList<Integer> customerOrderId = new ArrayList<Integer>();
         if (orderingSearch.getCustomerOrders() != null && orderingSearch.getCustomerOrders().size() > 0) {
             for (Tiers tiers : orderingSearch.getCustomerOrders())
@@ -802,7 +864,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             orderingSearch.setRecurringValidityDate(LocalDate.of(1949, 1, 1));
 
         List<OrderingSearchResult> customerOrders = customerOrderRepository.findCustomerOrders(
-                salesEmployeeId, assignedToEmployeeId,
+                salesEmployeeId,
                 statusId,
                 orderingSearch.getStartDate().withHour(0).withMinute(0),
                 orderingSearch.getEndDate().withHour(23).withMinute(59), customerOrderId, affaireId,
@@ -828,9 +890,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     public CustomerOrder createNewCustomerOrderFromQuotation(Quotation quotation)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         CustomerOrderStatus statusOpen = customerOrderStatusService
-                .getCustomerOrderStatusByCode(CustomerOrderStatus.OPEN);
-        CustomerOrder customerOrder = new CustomerOrder(quotation.getAssignedTo(),
-                quotation.getResponsable().getTiers(),
+                .getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT);
+        CustomerOrder customerOrder = new CustomerOrder(quotation.getResponsable().getTiers(),
                 quotation.getResponsable(),
                 /* quotation.getConfrere(), */ quotation.getSpecialOffers(), LocalDateTime.now(), statusOpen,
                 quotation.getDescription(), null,
@@ -896,7 +957,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     if (service.getAssoServiceDocuments() != null)
                         for (AssoServiceDocument assoServiceDocument : service.getAssoServiceDocuments()) {
                             assoServiceDocument.setId(null);
-                            assoServiceDocument.setAttachments(null); // TODO AGN ...
+                            assoServiceDocument.setAttachments(null);
                         }
                     if (service.getAssoServiceFieldTypes() != null && service.getAssoServiceFieldTypes().size() > 0)
                         for (AssoServiceFieldType assoServiceFieldType : service.getAssoServiceFieldTypes()) {
@@ -906,9 +967,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         provision.setId(null);
                         if (provision.getAnnouncement() != null) {
                             provision.getAnnouncement().setId(null);
-                            if (provision.getAnnouncement().getDocuments() != null)
-                                for (Document document : provision.getAnnouncement().getDocuments())
-                                    document.setId(null);
                         }
                         if (provision.getFormalite() != null) {
                             provision.getFormalite().setId(null);
@@ -985,6 +1043,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     }
                 }
             }
+
+        addOrUpdateCustomerOrderStatusFromUser(customerOrder2, CustomerOrderStatus.BEING_PROCESSED);
         return customerOrder2;
     }
 
@@ -1004,101 +1064,102 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String getCardPaymentLinkForCustomerOrderDeposit(CustomerOrder customerOrder, String mail, String subject)
+    public String getCardPaymentLinkForCustomerOrderDeposit(List<CustomerOrder> customerOrders, String mail,
+            String subject)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
-        customerOrder = getCustomerOrder(customerOrder.getId());
-        return getCardPaymentLinkForCustomerOrderPayment(customerOrder, mail, subject);
+        return getCardPaymentLinkForCustomerOrderPayment(customerOrders, mail, subject);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public String getCardPaymentLinkForPaymentInvoice(CustomerOrder customerOrder, String mail, String subject)
+    public String getCardPaymentLinkForPaymentInvoice(List<CustomerOrder> customerOrders, String mail, String subject)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
-        customerOrder = getCustomerOrder(customerOrder.getId());
-        return getCardPaymentLinkForCustomerOrderPayment(customerOrder, mail, subject);
+        return getCardPaymentLinkForCustomerOrderPayment(customerOrders, mail, subject);
     }
 
-    private String getCardPaymentLinkForCustomerOrderPayment(CustomerOrder customerOrder, String mail, String subject)
+    private String getCardPaymentLinkForCustomerOrderPayment(List<CustomerOrder> customerOrders, String mail,
+            String subject)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
-
-        if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.ABANDONED))
-            throw new OsirisException(null, "Impossible to pay an cancelled customer order n°" + customerOrder.getId());
-
-        com.jss.osiris.modules.osiris.quotation.model.CentralPayPaymentRequest request = centralPayPaymentRequestService
-                .getCentralPayPaymentRequestByCustomerOrder(customerOrder);
-
-        if (request != null) {
-            CentralPayPaymentRequest centralPayPaymentRequest = centralPayDelegateService
-                    .getPaymentRequest(request.getPaymentRequestId());
-
-            if (centralPayPaymentRequest != null) {
-                if (centralPayPaymentRequest.getPaymentRequestStatus().equals(CentralPayPaymentRequest.ACTIVE)) {
-                    centralPayDelegateService.cancelPaymentRequest(request.getPaymentRequestId());
-                    centralPayPaymentRequestService.deleteCentralPayPaymentRequest(request);
-                }
-
-                if (centralPayPaymentRequest.getPaymentRequestStatus().equals(CentralPayPaymentRequest.CLOSED)
-                        && centralPayPaymentRequest.getPaymentStatus().equals(CentralPayPaymentRequest.PAID)) {
-                    return "ok";
-                }
-            }
-        }
+        if (customerOrders == null || customerOrders.size() == 0)
+            throw new OsirisException("no customer orders provided");
 
         BigDecimal remainingToPay = new BigDecimal(0);
+        for (CustomerOrder customerOrder : customerOrders) {
+            customerOrder = getCustomerOrder(customerOrder.getId());
+            if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.ABANDONED))
+                throw new OsirisException(null,
+                        "Impossible to pay an cancelled customer order n°" + customerOrder.getId());
 
-        if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED)) {
-            if (customerOrder.getInvoices() != null)
-                for (Invoice invoice : customerOrder.getInvoices())
-                    if (invoice.getInvoiceStatus().getId()
-                            .equals(constantService.getInvoiceStatusSend().getId())) {
-                        remainingToPay = invoiceService.getRemainingAmountToPayForInvoice(invoice);
-                        break;
-                    }
-        } else {
-            remainingToPay = getRemainingAmountToPayForCustomerOrder(customerOrder);
+            if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED)) {
+                if (customerOrder.getInvoices() != null)
+                    for (Invoice invoice : customerOrder.getInvoices())
+                        if (invoice.getInvoiceStatus().getId()
+                                .equals(constantService.getInvoiceStatusSend().getId())) {
+                            remainingToPay = remainingToPay
+                                    .add(invoiceService.getRemainingAmountToPayForInvoice(invoice));
+                            break;
+                        }
+            } else {
+                remainingToPay = remainingToPay.add(getRemainingAmountToPayForCustomerOrder(customerOrder));
+            }
         }
 
         if (remainingToPay.compareTo(zeroValue) > 0) {
             CentralPayPaymentRequest paymentRequest = centralPayDelegateService.generatePayPaymentRequest(
                     remainingToPay, mail,
-                    customerOrder.getId() + "", subject);
+                    String.join(", ",
+                            customerOrders.stream().map(c -> c.getId().toString()).collect(Collectors.toList())),
+                    subject, false);
 
             centralPayPaymentRequestService.declareNewCentralPayPaymentRequest(paymentRequest.getPaymentRequestId(),
-                    customerOrder, null);
+                    customerOrders, null);
             return paymentRequest.getBreakdowns().get(0).getEndpoint();
         } else {
-            throw new OsirisException(null, "Nothing to pay on customer order n°" + customerOrder.getId());
+            throw new OsirisException(null, "Nothing to pay on customer order n°" + String.join(", ",
+                    customerOrders.stream().map(c -> c.getId().toString()).collect(Collectors.toList())));
         }
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean validateCardPaymentLinkForCustomerOrder(CustomerOrder customerOrder,
+    public Boolean validateCardPaymentLinkForCustomerOrder(List<CustomerOrder> customerOrders,
             com.jss.osiris.modules.osiris.quotation.model.CentralPayPaymentRequest request)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
-        customerOrder = getCustomerOrder(customerOrder.getId());
 
         if (request != null) {
             CentralPayPaymentRequest centralPayPaymentRequest = centralPayDelegateService
                     .getPaymentRequest(request.getPaymentRequestId());
 
-            if (centralPayPaymentRequest != null) {
+            if (centralPayPaymentRequest != null && customerOrders != null) {
                 if (centralPayPaymentRequest.getPaymentRequestStatus().equals(CentralPayPaymentRequest.CLOSED)
                         && centralPayPaymentRequest.getPaymentStatus().equals(CentralPayPaymentRequest.PAID)) {
 
-                    if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED)) {
-                        if (customerOrder.getInvoices() != null)
-                            for (Invoice invoice : customerOrder.getInvoices())
-                                if (invoice.getInvoiceStatus().getId()
-                                        .equals(constantService.getInvoiceStatusSend().getId())) {
-                                    paymentService.generatePaymentOnInvoiceForCbPayment(invoice,
-                                            centralPayPaymentRequest);
-                                    break;
-                                }
-                    } else {
-                        paymentService.generateDepositOnCustomerOrderForCbPayment(customerOrder,
+                    List<Invoice> invoicesToPay = new ArrayList<Invoice>();
+                    List<CustomerOrder> customerOrdersToPay = new ArrayList<CustomerOrder>();
+                    for (CustomerOrder customerOrder : customerOrders) {
+                        customerOrder = getCustomerOrder(customerOrder.getId());
+                        if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED)) {
+                            if (customerOrder.getInvoices() != null)
+                                for (Invoice invoice : customerOrder.getInvoices())
+                                    if (invoice.getInvoiceStatus().getId()
+                                            .equals(constantService.getInvoiceStatusSend().getId())) {
+                                        invoicesToPay.add(invoice);
+                                        break;
+                                    }
+                        } else {
+                            customerOrdersToPay.add(customerOrder);
+                        }
+
+                    }
+
+                    if (invoicesToPay != null && invoicesToPay.size() > 0) {
+                        paymentService.generatePaymentOnInvoiceForCbPayment(invoicesToPay, centralPayPaymentRequest);
+                    } else if (customerOrdersToPay != null && customerOrdersToPay.size() > 0) {
+                        paymentService.generateDepositOnCustomerOrderForCbPayment(customerOrdersToPay,
                                 centralPayPaymentRequest);
-                        unlockCustomerOrderFromDeposit(customerOrder);
+
+                        for (CustomerOrder orderToUnlock : customerOrders)
+                            unlockCustomerOrderFromDeposit(orderToUnlock);
                     }
                 }
 
@@ -1289,14 +1350,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void updateAssignedToForCustomerOrder(CustomerOrder customerOrder, Employee employee)
-            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
-        customerOrder.setAssignedTo(employee);
-        addOrUpdateCustomerOrder(customerOrder, true, false);
-    }
-
-    @Override
     public List<OrderingSearchResult> searchByQuotationId(Integer idQuotation) {
         OrderingSearch search = new OrderingSearch();
         search.setIdQuotation(idQuotation);
@@ -1324,7 +1377,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         List<CustomerOrder> allActiveRecuringCustomerOrders = customerOrderRepository
                 .findAllActiveRecurringCustomerOrders(
-                        customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.OPEN),
+                        customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT),
                         customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.WAITING_DEPOSIT),
                         customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.ABANDONED));
 
@@ -1358,43 +1411,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     newChild.setCustomerOrderParentRecurring(customerOrder);
                     addOrUpdateCustomerOrder(newChild, false, false);
                     addOrUpdateCustomerOrderStatus(newChild, CustomerOrderStatus.BEING_PROCESSED, false);
+                    newChild = getCustomerOrder(newChild.getId());
 
-                    if (customerOrder.getIsRecurringAutomaticallyBilled()) {
-                        newChild = getCustomerOrder(newChild.getId());
-                        if (newChild.getCustomerOrderStatus() != null && newChild.getCustomerOrderStatus().getCode()
-                                .equals(CustomerOrderStatus.BEING_PROCESSED)) {
-                            if (newChild.getAssoAffaireOrders() != null) {
-                                for (AssoAffaireOrder asso : newChild.getAssoAffaireOrders()) {
-                                    if (asso.getServices() != null) {
-                                        for (Service service : asso.getServices()) {
-                                            if (service.getProvisions() != null) {
-                                                for (Provision provision : service.getProvisions()) {
-                                                    if (provision.getSimpleProvision() != null) {
-                                                        SimpleProvision simpleProvision = provision
-                                                                .getSimpleProvision();
-                                                        simpleProvision
-                                                                .setSimpleProvisionStatus(simpleProvisionStatusService
-                                                                        .getSimpleProvisionStatusByCode(
-                                                                                SimpleProvisionStatus.SIMPLE_PROVISION_DONE));
-                                                        simpleProvisionService
-                                                                .addOrUpdateSimpleProvision(simpleProvision);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            newChild = getCustomerOrder(newChild.getId());
-                            try {
-                                addOrUpdateCustomerOrder(newChild, false, true); // Put to billed if all ended
-                            } catch (Exception e) {
-                                if (!(e instanceof OsirisClientMessageException
-                                        || e instanceof OsirisValidationException))
-                                    throw e;
-                            }
-                        }
-                    }
+                    if (customerOrder.getIsRecurringAutomaticallyBilled() != null
+                            && customerOrder.getIsRecurringAutomaticallyBilled())
+                        autoBilledProvisions(newChild);
                 }
             }
         }
@@ -1403,9 +1424,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     private CustomerOrder createNewCustomerOrderFromRecurringCustomerOrder(CustomerOrder customerOrderRecurring)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         CustomerOrderStatus statusOpen = customerOrderStatusService
-                .getCustomerOrderStatusByCode(CustomerOrderStatus.OPEN);
-        CustomerOrder customerOrder = new CustomerOrder(customerOrderRecurring.getAssignedTo(),
-                customerOrderRecurring.getResponsable().getTiers(),
+                .getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT);
+        CustomerOrder customerOrder = new CustomerOrder(customerOrderRecurring.getResponsable().getTiers(),
                 customerOrderRecurring.getResponsable(),
                 /* customerOrderRecurring.getConfrere(), */customerOrderRecurring.getSpecialOffers(),
                 LocalDateTime.now(),
@@ -1470,9 +1490,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                             provision.getAnnouncement().setId(null);
                             provision.getAnnouncement().setAnnouncementStatus(announcementStatusService
                                     .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_NEW));
-                            if (provision.getAnnouncement().getDocuments() != null)
-                                for (Document document : provision.getAnnouncement().getDocuments())
-                                    document.setId(null);
                         }
                         if (provision.getFormalite() != null) {
                             provision.getFormalite().setFormaliteStatus(
@@ -1508,7 +1525,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     public List<CustomerOrder> searchOrdersForCurrentUser(List<String> customerOrderStatus, Integer page,
-            String sortBy) {
+            String sortBy) throws OsirisException {
         List<CustomerOrderStatus> customerOrderStatusToFilter = new ArrayList<CustomerOrderStatus>();
         boolean displayPayed = false;
 
@@ -1530,7 +1547,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
             List<Responsable> responsablesToFilter = userScopeService.getUserCurrentScopeResponsables();
 
-            if (customerOrderStatusToFilter.size() > 0 && responsablesToFilter != null
+            if (responsablesToFilter != null
                     && responsablesToFilter.size() > 0) {
 
                 Order order = new Order(Direction.DESC, "createdDate");
@@ -1542,7 +1559,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     order = new Order(Direction.ASC, "customerOrderStatus");
 
                 Sort sort = Sort.by(Arrays.asList(order));
-                Pageable pageableRequest = PageRequest.of(page, 50, sort);
+                Pageable pageableRequest = PageRequest.of(page, 10, sort);
                 return completeAdditionnalInformationForCustomerOrders(
                         customerOrderRepository.searchOrdersForCurrentUser(responsablesToFilter,
                                 customerOrderStatusToFilter, pageableRequest, customerOrderStatusBilled, displayPayed));
@@ -1552,7 +1569,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         return null;
     }
 
-    public List<CustomerOrder> searchOrdersForCurrentUserAndAffaire(Affaire affaire) {
+    public List<CustomerOrder> searchOrdersForCurrentUserAndAffaire(Affaire affaire) throws OsirisException {
         List<Responsable> responsablesToFilter = userScopeService.getUserCurrentScopeResponsables();
         CustomerOrderStatus statusAbandonned = customerOrderStatusService
                 .getCustomerOrderStatusByCode(CustomerOrderStatus.ABANDONED);
@@ -1566,7 +1583,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
-    public List<CustomerOrder> completeAdditionnalInformationForCustomerOrders(List<CustomerOrder> customerOrders) {
+    public List<CustomerOrder> completeAdditionnalInformationForCustomerOrders(List<CustomerOrder> customerOrders)
+            throws OsirisException {
         if (customerOrders != null && customerOrders.size() > 0) {
             List<Notification> notifications = notificationService.getNotificationsForCurrentEmployee(true, false, null,
                     false, false);
@@ -1587,39 +1605,43 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
-    public CustomerOrder completeAdditionnalInformationForCustomerOrder(CustomerOrder customerOrder) {
+    public CustomerOrder completeAdditionnalInformationForCustomerOrder(CustomerOrder customerOrder)
+            throws OsirisException {
         List<String> affaireLabels = new ArrayList<String>();
         List<String> serviceLabels = new ArrayList<String>();
         customerOrder.setHasMissingInformations(false);
-        if (customerOrder.getAssoAffaireOrders() != null)
+        if (customerOrder.getAssoAffaireOrders() != null) {
+            assoAffaireOrderService.populateTransientField(customerOrder.getAssoAffaireOrders());
             for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
-                String affaireDenomination = assoAffaireOrder.getAffaire().getDenomination();
-                if (affaireDenomination == null || affaireDenomination.length() == 0)
-                    affaireDenomination = assoAffaireOrder.getAffaire().getFirstname() + " "
-                            + assoAffaireOrder.getAffaire().getLastname();
-                if (affaireLabels.indexOf(affaireDenomination) < 0)
-                    affaireLabels.add(affaireDenomination);
+                if (assoAffaireOrder.getAffaire() != null) {
+                    String affaireDenomination = assoAffaireOrder.getAffaire().getDenomination();
+                    if (affaireDenomination == null || affaireDenomination.length() == 0)
+                        affaireDenomination = assoAffaireOrder.getAffaire().getFirstname() + " "
+                                + assoAffaireOrder.getAffaire().getLastname();
+                    if (affaireLabels.indexOf(affaireDenomination) < 0)
+                        affaireLabels.add(affaireDenomination);
+                }
 
                 if (assoAffaireOrder.getServices() != null && assoAffaireOrder.getServices().size() > 0)
                     for (Service service : assoAffaireOrder.getServices()) {
-                        String serviceLabel = service.getCustomLabel();
-                        if (serviceLabel == null || serviceLabel.length() == 0)
-                            serviceLabel = service.getServiceType().getLabel();
+                        String serviceLabel = service.getServiceLabelToDisplay();
                         if (serviceLabels.indexOf(serviceLabel) < 0)
                             serviceLabels.add(serviceLabel);
                     }
 
                 if (assoAffaireOrder.getServices() != null)
                     for (Service service : assoAffaireOrder.getServices()) {
-                        if (assoAffaireOrderService.isServiceHasMissingInformations(service)) {
+                        if (serviceService.isServiceHasMissingInformations(service)) {
                             customerOrder.setHasMissingInformations(true);
                         }
                     }
             }
+        }
 
         if (affaireLabels.size() > 0)
             customerOrder.setAffairesList(String.join(" / ", affaireLabels));
         customerOrder.setServicesList(String.join(" / ", serviceLabels));
+        customerOrder.setIsPriority(customerOrderAssignationService.isPriorityOrder(customerOrder));
         return customerOrder;
     }
 
@@ -1776,204 +1798,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public UserCustomerOrder saveOrderOfUserCustomerOrder(UserCustomerOrder order, HttpServletRequest request)
-            throws OsirisClientMessageException, OsirisValidationException, OsirisException {
-        CustomerOrder customerOrder = new CustomerOrder();
-        Responsable user = employeeService.getCurrentMyJssUser();
-        ProvisionScreenType provisionScreenTypeAnnouncement = constantService.getProvisionScreenTypeAnnouncement();
-        Boolean shouldAuthenticate = false;
-        if (user == null) {
-            user = generateTiersAndResponsableFromUserCustomerOrder(order);
-            shouldAuthenticate = true;
-        }
-
-        customerOrder.setResponsable(user);
-
-        HashMap<Integer, AssoAffaireOrder> assoAffaireOrders = new HashMap<Integer, AssoAffaireOrder>();
-
-        for (ServiceTypeChosen serviceTypeChosen : order.getServiceTypes()) {
-            serviceTypeChosen.setService(serviceTypeService.getServiceType(serviceTypeChosen.getService().getId()));
-
-            // Generate affaire
-            if (serviceTypeChosen.getAffaire().getId() == null) {
-                serviceTypeChosen.setAffaire(affaireService.addOrUpdateAffaire(serviceTypeChosen.getAffaire()));
-            }
-
-            Service service = serviceService.getServiceForMultiServiceTypesAndAffaire(
-                    Arrays.asList(serviceTypeChosen.getService()), serviceTypeChosen.getAffaire());
-
-            if (assoAffaireOrders.get(serviceTypeChosen.getAffaire().getId()) == null) {
-                AssoAffaireOrder asso = new AssoAffaireOrder();
-                asso.setAffaire(serviceTypeChosen.getAffaire());
-                asso.setServices(new ArrayList<Service>());
-                assoAffaireOrders.put(serviceTypeChosen.getAffaire().getId(), asso);
-            }
-
-            if (order.getIsEmergency() != null && order.getIsEmergency() && service.getProvisions() != null
-                    && service.getProvisions().size() > 0
-                    && order.getServiceTypes().indexOf(serviceTypeChosen) == 0)
-                service.getProvisions().get(0).setIsEmergency(true);
-
-            if (service != null && service.getProvisions() != null)
-                for (Provision provision : service.getProvisions()) {
-                    // map announcement
-                    if (provision.getProvisionType().getProvisionScreenType().getId()
-                            .equals(provisionScreenTypeAnnouncement.getId())) {
-                        provision.setAnnouncement(new Announcement());
-                        if (serviceTypeChosen.getAnnouncementProofReading() != null
-                                && serviceTypeChosen.getAnnouncementProofReading())
-                            provision.getAnnouncement().setIsProofReadingDocument(true);
-
-                        if (serviceTypeChosen.getAnnouncementNoticeType() != null)
-                            provision.getAnnouncement()
-                                    .setNoticeTypes(Arrays.asList(serviceTypeChosen.getAnnouncementNoticeType()));
-
-                        if (serviceTypeChosen.getAnnouncementNoticeFamily() != null)
-                            provision.getAnnouncement()
-                                    .setNoticeTypeFamily(serviceTypeChosen.getAnnouncementNoticeFamily());
-
-                        if (serviceTypeChosen.getAnnouncementNotice() != null
-                                && serviceTypeChosen.getAnnouncementProofReading())
-                            provision.getAnnouncement().setNotice(serviceTypeChosen.getAnnouncementNotice());
-                        ;
-
-                        if (serviceTypeChosen.getAnnouncementPublicationDate() != null)
-                            provision.getAnnouncement()
-                                    .setPublicationDate(serviceTypeChosen.getAnnouncementPublicationDate());
-
-                        if (serviceTypeChosen.getAnnouncementRedactedByJss() != null
-                                && serviceTypeChosen.getAnnouncementRedactedByJss())
-                            provision.setIsRedactedByJss(true);
-                    }
-                }
-            assoAffaireOrders.get(serviceTypeChosen.getAffaire().getId()).getServices().add(service);
-        }
-
-        customerOrder.setAssoAffaireOrders(new ArrayList<AssoAffaireOrder>());
-        for (Integer affaireId : assoAffaireOrders.keySet())
-            customerOrder.getAssoAffaireOrders().add(assoAffaireOrders.get(affaireId));
-
-        if (user.getTiers() != null && user.getTiers().getSpecialOffers() != null) {
-            List<SpecialOffer> specialOffers = null;
-            if (user.getTiers().getSpecialOffers() != null && user.getTiers().getSpecialOffers().size() > 0) {
-                specialOffers = user.getTiers().getSpecialOffers();
-                customerOrder.setSpecialOffers(new ArrayList<SpecialOffer>());
-                for (SpecialOffer specialOffer : specialOffers)
-                    customerOrder.getSpecialOffers().add(specialOffer);
-            }
-        }
-
-        customerOrder.setDocuments(new ArrayList<Document>());
-        customerOrder.getDocuments().add(documentService.cloneOrMergeDocument(order.getBillingDocument(), null));
-        customerOrder.getDocuments().add(documentService.cloneOrMergeDocument(order.getDigitalDocument(), null));
-        customerOrder.getDocuments().add(documentService.cloneOrMergeDocument(order.getPaperDocument(), null));
-
-        customerOrder.setCustomerOrderStatus(
-                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.OPEN));
-        addOrUpdateCustomerOrder(customerOrder, true, false);
-        order.setOrderId(customerOrder.getId());
-
-        if (!order.getIsDraft())
-            addOrUpdateCustomerOrderStatus(customerOrder, CustomerOrderStatus.BEING_PROCESSED, true);
-
-        if (shouldAuthenticate)
-            myJssProfileController.authenticateUser(user, request);
-
-        return order;
-    }
-
-    private Responsable generateTiersAndResponsableFromUserCustomerOrder(UserCustomerOrder userCustomerOrder)
-            throws OsirisException {
-        Responsable responsable = new Responsable();
-        responsable.setIsActive(true);
-        responsable.setIsBouclette(true);
-        responsable.setCivility(userCustomerOrder.getResponsableCivility());
-        responsable.setFirstname(userCustomerOrder.getResponsableFirstname());
-        responsable.setLastname(userCustomerOrder.getResponsableLastname());
-        Mail mail = new Mail();
-        mail.setMail(userCustomerOrder.getResponsableMail());
-        responsable.setMail(mail);
-        responsable.setTiersType(constantService.getTiersTypeClient());
-        responsable.setSalesEmployee(constantService.getEmployeeSalesDirector());
-        if (userCustomerOrder.getResponsablePhone() != null) {
-            Phone phone = new Phone();
-            phone.setPhoneNumber(userCustomerOrder.getResponsablePhone());
-            responsable.setPhones(new ArrayList<Phone>());
-            responsable.getPhones().add(phone);
-        }
-
-        userCustomerOrder.getBillingDocument().setDocumentType(constantService.getDocumentTypeBilling());
-        userCustomerOrder.getDigitalDocument().setDocumentType(constantService.getDocumentTypeDigital());
-        userCustomerOrder.getPaperDocument().setDocumentType(constantService.getDocumentTypePaper());
-
-        responsable.setDocuments(new ArrayList<Document>());
-        responsable.getDocuments()
-                .add(documentService.cloneOrMergeDocument(userCustomerOrder.getBillingDocument(), null));
-        responsable.getDocuments()
-                .add(documentService.cloneOrMergeDocument(userCustomerOrder.getDigitalDocument(), null));
-        responsable.getDocuments()
-                .add(documentService.cloneOrMergeDocument(userCustomerOrder.getPaperDocument(), null));
-
-        Tiers tiers = new Tiers();
-        tiers.setIsNewTiers(true);
-        if (userCustomerOrder.getCustomerIsIndividual() != null && userCustomerOrder.getCustomerIsIndividual()) {
-            tiers.setIsIndividual(true);
-            tiers.setFirstname(responsable.getFirstname());
-            tiers.setLastname(responsable.getLastname());
-        } else {
-            tiers.setIsIndividual(false);
-            tiers.setDenomination(userCustomerOrder.getCustomerDenomination());
-        }
-        tiers.setTiersType(constantService.getTiersTypeClient());
-        tiers.setSalesEmployee(constantService.getEmployeeSalesDirector());
-        tiers.setAddress(userCustomerOrder.getCustomerAddress());
-        tiers.setCity(userCustomerOrder.getCustomerCity());
-        tiers.setCountry(userCustomerOrder.getCustomerCountry());
-        tiers.setSiret(userCustomerOrder.getSiret());
-        tiers.setPostalCode(userCustomerOrder.getCustomerPostalCode());
-        tiers.setIsSepaMandateReceived(false);
-        tiers.setLanguage(constantService.getLanguageFrench());
-
-        tiers.setPaymentType(constantService.getPaymentTypeCB());
-
-        tiers.setDocuments(new ArrayList<Document>());
-        tiers.getDocuments().add(documentService.cloneOrMergeDocument(userCustomerOrder.getBillingDocument(), null));
-        tiers.getDocuments().add(documentService.cloneOrMergeDocument(userCustomerOrder.getDigitalDocument(), null));
-        tiers.getDocuments().add(documentService.cloneOrMergeDocument(userCustomerOrder.getPaperDocument(), null));
-
-        Document documentDunning = new Document();
-        documentDunning.setPaymentDeadlineType(constantService.getPaymentDeadLineType30());
-        documentDunning.setIsRecipientAffaire(false);
-        documentDunning.setIsRecipientClient(false);
-        documentDunning.setDocumentType(constantService.getDocumentTypeDunning());
-        tiers.setIsProvisionalPaymentMandatory(true);
-        tiers.getDocuments().add(documentDunning);
-
-        Document receiptDocument = new Document();
-        receiptDocument.setBillingClosureRecipientType(constantService.getBillingClosureRecipientTypeClient());
-        receiptDocument.setIsRecipientAffaire(false);
-        receiptDocument.setIsRecipientClient(false);
-        receiptDocument.setDocumentType(constantService.getDocumentTypeBillingClosure());
-        receiptDocument.setBillingClosureType(constantService.getBillingClosureTypeAffaire());
-        tiers.getDocuments().add(receiptDocument);
-
-        tiers.setResponsables(new ArrayList<Responsable>());
-        responsable.setTiers(tiers);
-        tiers.getResponsables().add(responsable);
-
-        tiersService.addOrUpdateTiers(tiers);
-        return responsableService.getResponsable(responsable.getId());
-    }
-
-    @Override
     public List<CustomerOrder> findCustomerOrderByResponsable(Responsable responsable) {
         return customerOrderRepository.findByResponsable(responsable);
     }
 
     @Override
     public List<CustomerOrder> searchCustomerOrders(List<Employee> commercials,
-            List<CustomerOrderStatus> status, List<Employee> invoicingEmployees) {
+            List<CustomerOrderStatus> status, List<Employee> invoicingEmployees) throws OsirisException {
 
         List<Integer> commercialIds = (commercials != null && commercials.size() > 0)
                 ? commercials.stream().map(Employee::getId).collect(Collectors.toList())
@@ -2000,6 +1831,24 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
+    public Boolean setEmergencyOnOrder(CustomerOrder customerOrder, Boolean isEnabled)
+            throws OsirisClientMessageException, OsirisValidationException, OsirisException {
+        if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0
+                && customerOrder.getAssoAffaireOrders().get(0).getServices() != null
+                && customerOrder.getAssoAffaireOrders().get(0).getServices().size() > 0
+                && customerOrder.getAssoAffaireOrders().get(0).getServices().get(0).getProvisions() != null
+                && customerOrder.getAssoAffaireOrders().get(0).getServices().get(0).getProvisions().size() > 0) {
+            customerOrder.getAssoAffaireOrders().get(0).getServices().get(0).getProvisions().get(0)
+                    .setIsEmergency(isEnabled);
+            provisionService.addOrUpdateProvision(
+                    customerOrder.getAssoAffaireOrders().get(0).getServices().get(0).getProvisions().get(0));
+            customerOrder = getCustomerOrder(customerOrder.getId());
+            pricingHelper.getAndSetInvoiceItemsForQuotation(customerOrder, true);
+            return true;
+        }
+        return false;
+    }
+
     @Transactional(rollbackFor = Exception.class)
     public void assignInvoicingEmployee(CustomerOrder customerOrder, Employee employee)
             throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException, OsirisException {
@@ -2009,6 +1858,18 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    public Boolean setDocumentOnOrder(CustomerOrder customerOrder, Document document)
+            throws OsirisClientMessageException, OsirisValidationException, OsirisException {
+        if (customerOrder.getDocuments() == null)
+            customerOrder.setDocuments(new ArrayList<Document>());
+
+        document.setCustomerOrder(customerOrder);
+        documentService.addOrUpdateDocument(document);
+
+        customerOrder = getCustomerOrder(customerOrder.getId());
+        return true;
+    }
+
     public void modifyInvoicingBlockage(CustomerOrder customerOrder, InvoicingBlockage invoicingBlockage)
             throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException, OsirisException {
         customerOrder.setInvoicingBlockage(invoicingBlockage);
@@ -2016,7 +1877,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
-    public InvoicingStatistics getInvoicingStatistics() {
+    public InvoicingStatistics getInvoicingStatistics() throws OsirisException {
         List<CustomerOrder> customerOrders = searchCustomerOrders(null, Arrays.asList(
                 customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.TO_BILLED)), null);
         InvoicingStatistics stats = new InvoicingStatistics();
@@ -2052,4 +1913,180 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         }
     }
 
+    @Override
+    public CustomerOrder getCustomerOrderForSubscription(String subscriptionType,
+            Boolean isPriceReductionForSubscription, Integer idArticle) throws OsirisException {
+
+        ServiceType serviceTypeSubscription = null;
+
+        CustomerOrder customerOrder = new CustomerOrder();
+        boolean isRecurring = false;
+        AssoProvisionPostNewspaper assoProvisionPostNewspaper = new AssoProvisionPostNewspaper();
+
+        switch (subscriptionType) {
+            case Subscription.ANNUAL_SUBSCRIPTION:
+                serviceTypeSubscription = constantService.getServiceTypeAnnualSubscription();
+                customerOrder.setRecurringPeriodStartDate(LocalDate.now());
+                customerOrder.setRecurringPeriodEndDate(LocalDate.now().plusYears(1));
+                customerOrder.setCustomerOrderFrequency(constantService.getCustomerOrderFrequencyAnnual());
+                isRecurring = true;
+                break;
+
+            case Subscription.ENTERPRISE_ANNUAL_SUBSCRIPTION:
+                serviceTypeSubscription = constantService.getServiceTypeEnterpriseAnnualSubscription();
+                customerOrder.setRecurringPeriodStartDate(LocalDate.now());
+                customerOrder.setRecurringPeriodEndDate(LocalDate.now().plusYears(1));
+                customerOrder.setCustomerOrderFrequency(constantService.getCustomerOrderFrequencyAnnual());
+                isRecurring = true;
+                break;
+
+            case Subscription.MONTHLY_SUBSCRIPTION:
+                serviceTypeSubscription = constantService.getServiceTypeMonthlySubscription();
+                customerOrder.setRecurringPeriodStartDate(LocalDate.now());
+                customerOrder.setRecurringPeriodEndDate(LocalDate.now().plusMonths(1));
+                customerOrder.setCustomerOrderFrequency(constantService.getCustomerOrderFrequencyMonthly());
+                isRecurring = true;
+                break;
+
+            case Subscription.ONE_POST_SUBSCRIPTION:
+                serviceTypeSubscription = constantService.getServiceTypeUniqueArticleBuy();
+
+                assoProvisionPostNewspaper.setPost(postService.getPost(idArticle));
+                break;
+
+            case Subscription.NEWSPAPER_KIOSK_BUY:
+                serviceTypeSubscription = constantService.getServiceTypeKioskNewspaperBuy();
+
+                assoProvisionPostNewspaper.setNewspaper(newspaperService.getNewspaper(idArticle));
+                break;
+
+            default:
+                return customerOrder;
+        }
+
+        if (isRecurring) {
+            customerOrder.setIsRecurring(true);
+            customerOrder.setRecurringStartDate(LocalDate.now());
+            customerOrder.setRecurringEndDate(LocalDate.now().plusYears(200));
+            customerOrder.setIsRecurringAutomaticallyBilled(true);
+        }
+
+        Service serviceSubscription = serviceService
+                .generateServiceInstanceFromMultiServiceTypes(Arrays.asList(serviceTypeSubscription), null, null)
+                .getFirst();
+
+        if (subscriptionType.equals(Subscription.NEWSPAPER_KIOSK_BUY)
+                || subscriptionType.equals(Subscription.ONE_POST_SUBSCRIPTION)) {
+            assoProvisionPostNewspaper.setProvision(serviceSubscription.getProvisions().get(0));
+        }
+
+        customerOrder.setResponsable(constantService.getResponsableDummyCustomerFrance());
+
+        AssoAffaireOrder assoAffaireOrder = new AssoAffaireOrder();
+        assoAffaireOrder.setCustomerOrder(customerOrder);
+        assoAffaireOrder.setServices(Arrays.asList(serviceSubscription));
+
+        customerOrder.setAssoAffaireOrders(Arrays.asList(assoAffaireOrder));
+
+        List<SpecialOffer> specialOffers = new ArrayList<>();
+        if (isPriceReductionForSubscription) {
+            specialOffers.add(constantService.getSpecialOfferJssSubscriptionReduction());
+        }
+        customerOrder.setSpecialOffers(specialOffers);
+        pricingHelper.getAndSetInvoiceItemsForQuotation(customerOrder, false);
+
+        customerOrder.setResponsable(null);
+        customerOrder.setIsQuotation(false);
+
+        return customerOrder;
+    }
+
+    @Override
+    public void autoBilledProvisions(CustomerOrder customerOrder)
+            throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException, OsirisException {
+        if (customerOrder.getCustomerOrderStatus() != null && customerOrder.getCustomerOrderStatus().getCode()
+                .equals(CustomerOrderStatus.BEING_PROCESSED) && isOnlyJssAnnouncement(customerOrder, true))
+            if (customerOrder.getAssoAffaireOrders() != null) {
+                for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
+                    if (asso.getServices() != null) {
+                        for (Service service : asso.getServices()) {
+                            if (service.getProvisions() != null) {
+                                for (Provision provision : service.getProvisions()) {
+                                    if (provision.getSimpleProvision() != null) {
+                                        SimpleProvision simpleProvision = provision
+                                                .getSimpleProvision();
+                                        simpleProvision
+                                                .setSimpleProvisionStatus(simpleProvisionStatusService
+                                                        .getSimpleProvisionStatusByCode(
+                                                                SimpleProvisionStatus.SIMPLE_PROVISION_DONE));
+                                        simpleProvisionService
+                                                .addOrUpdateSimpleProvision(simpleProvision);
+                                    }
+                                    if (provision.getAnnouncement() != null) {
+                                        provision.getAnnouncement()
+                                                .setAnnouncementStatus(announcementStatusService
+                                                        .getAnnouncementStatusByCode(
+                                                                AnnouncementStatus.ANNOUNCEMENT_DONE));
+                                        provisionService.addOrUpdateProvision(provision);
+                                        announcementService.generateAndStorePublicationReceipt(
+                                                provision.getAnnouncement(),
+                                                provision);
+                                    }
+                                }
+                            }
+                        }
+                        customerOrder = getCustomerOrder(customerOrder.getId());
+                        try {
+                            addOrUpdateCustomerOrder(customerOrder, false, true); // Put to billed if all
+                                                                                  // ended
+                        } catch (Exception e) {
+                            if (!(e instanceof OsirisClientMessageException
+                                    || e instanceof OsirisValidationException))
+                                throw e;
+                        }
+                    }
+                }
+            }
+    }
+
+    @Override
+    public List<CustomerOrder> getCustomerOrdersByVoucherAndResponsable(Voucher voucher, Responsable responsable) {
+        List<CustomerOrder> voucheredOrders = new ArrayList<>();
+        CustomerOrderStatus statusAbandonned = customerOrderStatusService
+                .getCustomerOrderStatusByCode(CustomerOrderStatus.ABANDONED);
+        voucheredOrders = customerOrderRepository.findByVoucherAndResponsable(voucher, responsable, statusAbandonned);
+        return voucheredOrders;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void purgeCustomerOrders() throws OsirisException {
+        List<CustomerOrder> orders = customerOrderRepository.findCustomerOrderOlderThanDate(
+                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT),
+                LocalDateTime.now().minusMonths(3));
+
+        if (orders != null)
+            for (CustomerOrder order : orders)
+                batchService.declareNewBatch(Batch.PURGE_CUSTOMER_ORDER, order.getId());
+    }
+
+    @Override
+    public List<CustomerOrder> findCustomerOrderByFormalisteAssigned(List<Employee> employees,
+            CustomerOrderStatus customerOrderStatus, Employee assignedUser, AssignationType assignationType) {
+        return customerOrderRepository.findCustomerOrderByFormalisteAndStatusAssigned(employees, customerOrderStatus,
+                assignedUser, assignationType);
+    }
+
+    @Override
+    public List<CustomerOrder> findCustomerOrderByPubliscisteAssigned(List<Employee> employees,
+            CustomerOrderStatus customerOrderStatus, Employee assignedUser, AssignationType assignationType) {
+        return customerOrderRepository.findCustomerOrderByPubliscisteAndStatusAssigned(employees, customerOrderStatus,
+                assignedUser, assignationType);
+    }
+
+    @Override
+    public List<CustomerOrder> findCustomerOrderByForcedEmployeeAssigned(List<Employee> employees,
+            CustomerOrderStatus customerOrderStatus, Employee assignedUser) {
+        return customerOrderRepository.findCustomerOrderByForcedEmployeeAndStatusAssigned(employees,
+                customerOrderStatus, assignedUser);
+    }
 }

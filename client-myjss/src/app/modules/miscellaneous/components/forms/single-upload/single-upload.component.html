@@ -1,7 +1,17 @@
-<input class="form-control" type="file" #fileDropRef id="fileDropRef" (change)="fileBrowseHandler($event.target)">
-<div class="progress mb-3 mt-2" *ngIf="progress/files.length*100">
-  <div class="progress-bar fw-semibold" role="progressbar" style="width: 45%"
-    [attr.aria-valuenow]="progress/files.length*100" aria-valuemin="0" aria-valuemax="100">
-    {{progress/files.length*100}}%
+<div class="h-100 rounded-1 download-card p-4 d-flex flex-column align-items-center justify-content-center"
+  (click)="onCardClick()" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)" (drop)="onDrop($event)">
+  <input class="form-control d-none" type="file" (change)="onFileSelected($event)" #fileInput
+    [attr.accept]="'.'+forcedFileExtension">
+  <h6>Choisissez un fichier ou déposez-le ici</h6>
+  <i class="ai-upload fs-1 mb-3"></i>
+  <p *ngIf="!forcedFileExtension" class="max-size">Formats acceptés : PDF, JPEG, PNG, jusqu'à
+    {{MAX_SIZE_UPLOAD_FILES_IN_MO}}</p>
+  <p *ngIf="forcedFileExtension" class="max-size">Formats acceptés : {{forcedFileExtension.toUpperCase()}} jusqu'à
+    {{MAX_SIZE_UPLOAD_FILES_IN_MO}}</p>
+  <label class="btn btn-outline-secondary m-auto rounded-1">Parcourir</label>
+</div>
+<div *ngIf="files && files.length>0 && !isDirectUpload">
+  <div *ngFor="let file of files">
+    {{ file?.name }} ({{ formatBytes(file?.size,1) }})
   </div>
 </div>

@@ -3,18 +3,6 @@
     <div class="full-width">
       <table class="full-width">
         <tr>
-          <td>
-            <div>
-              <autocomplete-employee [(model)]="quotation.assignedTo" [form]="orderingCustomerForm"
-                propertyName="assignedTo" [isMandatory]="false" [isDisabled]="false" label="Commande assignée à"
-                (onOptionSelected)="updateAssignedToForCustomerOrder($event)">
-              </autocomplete-employee>
-            </div>
-          </td>
-        </tr>
-      </table>
-      <table class="full-width">
-        <tr>
           <fieldset [disabled]="editMode==false" class="fieldset-no-border">
             <td style="vertical-align: middle;">
               <autocomplete-responsable [(model)]="searchedResponsable" [form]="orderingCustomerForm"
@@ -22,20 +10,22 @@
                 fieldToCheckAgainstForValidation="entityId"
                 (onOptionSelected)="fillResponsable($event)"></autocomplete-responsable>
             </td>
-            <!--td *ngIf="!searchedResponsable" style="vertical-align: middle;">
-              <autocomplete-confrere label="Confrère" [(model)]="quotation.confrere" [form]="orderingCustomerForm"
-                [isMandatory]="false"
-                propertyName="confrere" [isDisabled]="!editMode" (onOptionSelected)="fillConfrere($event)">
-              </autocomplete-confrere>
-            </td> // TODO : refonte -->
             <td style="vertical-align: middle;">
               <avatar-chip *ngIf="quotation.responsable" [employee]="quotation.responsable.salesEmployee"
                 [disableEmployeeDialog]="true"></avatar-chip>
             </td>
+          </fieldset>
+        </tr>
+        <tr>
+          <fieldset [disabled]="editMode==false" class="fieldset-no-border">
             <td>
               <chips-special-offers [(model)]="quotation.specialOffers" [form]="orderingCustomerForm"
                 propertyName="specialOffer" [isDisabled]="!editMode">
               </chips-special-offers>
+            </td>
+            <td>
+              <autocomplete-voucher [(model)]="quotation.voucher" [form]="orderingCustomerForm" propertyName="voucher"
+                label="Coupon de réduction" [isDisabled]="!editMode"></autocomplete-voucher>
             </td>
           </fieldset>
         </tr>
@@ -65,6 +55,21 @@
               {{quotation.responsable.tiers.postalCode}}
               {{quotation.responsable.tiers.city?quotation.responsable.tiers.city.label:""}}
               {{quotation.responsable.tiers.country?quotation.responsable.tiers.country.label:""}}</span></td>
+        </tr>
+      </table>
+      <table class="full-width"
+        *ngIf="quotation && instanceOfCustomerOrder(quotation) &&  quotation.customerOrderAssignations && canAddAssignOrderForProduction()">
+        <tr>
+          <td *ngFor="let customerOrderAssignation of quotation.customerOrderAssignations">
+            <autocomplete-employee [(model)]="customerOrderAssignation.employee" [form]="orderingCustomerForm"
+              [propertyName]="'assignedTo'+customerOrderAssignation.id" [isMandatory]="false" [isDisabled]="false"
+              [label]="customerOrderAssignation.assignationType.label"
+              (onOptionSelected)="updateAssignedToFor($event,customerOrderAssignation)">
+            </autocomplete-employee>
+          </td>
+          <td>
+            <button mat-raised-button color="accent" (click)="assignImmediatlyOrder()">Assigner immédiatement</button>
+          </td>
         </tr>
       </table>
       <mat-divider class="margin-mat-divider"></mat-divider>

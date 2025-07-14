@@ -1,14 +1,19 @@
 package com.jss.osiris.modules.myjss.wordpress.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.jss.osiris.libs.jackson.JacksonLocalDateTimeDeserializer;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -23,15 +28,23 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
 @Entity
-@Table(indexes = { @Index(name = "idx_post_slug", columnList = "slug", unique = true) })
-public class Post implements IId {
+@Table(indexes = { @Index(name = "idx_post_slug", columnList = "slug", unique = true),
+        @Index(name = "idx_post_author", columnList = "id_author"),
+        @Index(name = "idx_post_publication_date", columnList = "date")
+})
+public class Post implements IId, Serializable {
     @Id
+    @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.MyJssDetailedView.class,
+            JacksonViews.MyJssListView.class })
     private Integer id;
 
     @Transient
     private AcfPost acf;
 
     private Integer author;
+
+    @Transient
+    private Integer[] jss_category;
 
     @Transient
     private Integer[] myjss_category;
@@ -41,20 +54,32 @@ public class Post implements IId {
 
     @Transient
     private Content title;
+
+    @Transient
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+    private Boolean isBookmarked;
+
     @Column(columnDefinition = "TEXT")
     @IndexedField
+    @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.MyJssListView.class,
+            JacksonViews.MyJssDetailedView.class })
     private String titleText;
 
     @Transient
     private Content excerpt;
+
     @Column(columnDefinition = "TEXT")
     @IndexedField
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private String excerptText;
 
     @JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
     @IndexedField
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private LocalDateTime date;
+
     @JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
+    @JsonView({ JacksonViews.MyJssDetailedView.class })
     private LocalDateTime modified;
 
     @Transient
@@ -67,63 +92,107 @@ public class Post implements IId {
     private Integer featured_media;
 
     @IndexedField
+    @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.MyJssListView.class,
+            JacksonViews.MyJssDetailedView.class })
     private String slug;
-    private boolean sticky;
+
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+    private Boolean isSticky;
+
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+    private String applePodcastLinkUrl;
+
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+    private String spotifyLinkUrl;
+
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+    private String deezerLinkUrl;
+
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+    private String amazonMusicLinkUrl;
 
     @Transient
     private Integer[] tags;
 
     @Transient
     private Content content;
+
     @Column(columnDefinition = "TEXT")
     @IndexedField
+    private String originalContentText;
+
+    @Transient
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private String contentText;
 
     // Computed field
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_author")
     @IndexedField
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private Author fullAuthor;
 
     @ManyToMany
-    @JoinTable(name = "asso_post_my_jss_category", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_my_jss_category"))
+    @JoinTable(name = "asso_post_jss_category", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_jss_category"))
     @IndexedField
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+    private List<JssCategory> jssCategories;
+
+    @ManyToMany
+    @JoinTable(name = "asso_post_myjss_category", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_myjss_category"))
+    @IndexedField
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private List<MyJssCategory> myJssCategories;
 
     @ManyToMany
     @JoinTable(name = "asso_post_category", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_category"))
+    @IndexedField
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private List<Category> postCategories;
 
     @ManyToMany
     @JoinTable(name = "asso_post_publishing_department", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_publishing_department"))
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private List<PublishingDepartment> departments;
 
     @ManyToMany
     @JoinTable(name = "asso_post_tag", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_tag"))
     @IndexedField
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private List<Tag> postTags;
+
+    @ManyToMany(mappedBy = "posts", cascade = CascadeType.REMOVE)
+    @JsonIgnoreProperties(value = { "posts" }, allowSetters = true)
+    private List<ReadingFolder> readingFolders;
 
     @ManyToMany
     @JoinTable(name = "asso_post_serie", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_serie"))
+    @IndexedField
     private List<Serie> postSerie;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_media")
     @IndexedField
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private Media media;
 
     @ManyToMany
     @JoinTable(name = "asso_post_related", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_post_related"))
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private List<Post> relatedPosts;
 
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+    @IndexedField
     private Boolean isPremium;
 
     private Integer premiumPercentage;
 
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private String podcastUrl;
 
     private String videoUrl;
 
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private Integer mediaTimeLength;
 
     private Boolean isCancelled;
@@ -156,12 +225,12 @@ public class Post implements IId {
         this.author = author;
     }
 
-    public Integer[] getMyjss_category() {
-        return myjss_category;
+    public Integer[] getJss_category() {
+        return jss_category;
     }
 
-    public void setMyjss_category(Integer[] myjss_category) {
-        this.myjss_category = myjss_category;
+    public void setJss_category(Integer[] jss_category) {
+        this.jss_category = jss_category;
     }
 
     public Content getTitle() {
@@ -220,14 +289,6 @@ public class Post implements IId {
         this.slug = slug;
     }
 
-    public boolean isSticky() {
-        return sticky;
-    }
-
-    public void setSticky(boolean sticky) {
-        this.sticky = sticky;
-    }
-
     public Integer[] getTags() {
         return tags;
     }
@@ -276,12 +337,12 @@ public class Post implements IId {
         this.excerptText = excerptText;
     }
 
-    public List<MyJssCategory> getMyJssCategories() {
-        return myJssCategories;
+    public List<JssCategory> getJssCategories() {
+        return jssCategories;
     }
 
-    public void setMyJssCategories(List<MyJssCategory> myJssCategories) {
-        this.myJssCategories = myJssCategories;
+    public void setJssCategories(List<JssCategory> jssCategories) {
+        this.jssCategories = jssCategories;
     }
 
     public List<PublishingDepartment> getDepartments() {
@@ -300,12 +361,12 @@ public class Post implements IId {
         this.postTags = postTags;
     }
 
-    public String getContentText() {
-        return contentText;
+    public String getOriginalContentText() {
+        return originalContentText;
     }
 
-    public void setContentText(String contentText) {
-        this.contentText = contentText;
+    public void setOriginalContentText(String originalContentText) {
+        this.originalContentText = originalContentText;
     }
 
     public Integer[] getCategories() {
@@ -404,4 +465,83 @@ public class Post implements IId {
         this.isPremium = isPremium;
     }
 
+    public List<MyJssCategory> getMyJssCategories() {
+        return myJssCategories;
+    }
+
+    public void setMyJssCategories(List<MyJssCategory> myJssCategories) {
+        this.myJssCategories = myJssCategories;
+    }
+
+    public Integer[] getMyjss_category() {
+        return myjss_category;
+    }
+
+    public void setMyjss_category(Integer[] myjss_category) {
+        this.myjss_category = myjss_category;
+    }
+
+    public Boolean getIsSticky() {
+        return isSticky;
+    }
+
+    public void setIsSticky(Boolean isSticky) {
+        this.isSticky = isSticky;
+    }
+
+    public String getApplePodcastLinkUrl() {
+        return applePodcastLinkUrl;
+    }
+
+    public void setApplePodcastLinkUrl(String applePodcastLinkUrl) {
+        this.applePodcastLinkUrl = applePodcastLinkUrl;
+    }
+
+    public String getSpotifyLinkUrl() {
+        return spotifyLinkUrl;
+    }
+
+    public void setSpotifyLinkUrl(String spotifyLinkUrl) {
+        this.spotifyLinkUrl = spotifyLinkUrl;
+    }
+
+    public String getDeezerLinkUrl() {
+        return deezerLinkUrl;
+    }
+
+    public void setDeezerLinkUrl(String deezerLinkUrl) {
+        this.deezerLinkUrl = deezerLinkUrl;
+    }
+
+    public String getAmazonMusicLinkUrl() {
+        return amazonMusicLinkUrl;
+    }
+
+    public void setAmazonMusicLinkUrl(String amazonMusicLinkUrl) {
+        this.amazonMusicLinkUrl = amazonMusicLinkUrl;
+    }
+
+    public Boolean getIsBookmarked() {
+        return isBookmarked;
+    }
+
+    public void setIsBookmarked(Boolean isBookmarked) {
+        this.isBookmarked = isBookmarked;
+    }
+
+    public String getContentText() {
+        return contentText;
+    }
+
+    public void setContentText(String contentText) {
+        this.contentText = contentText;
+    }
+
+    public List<ReadingFolder> getReadingFolders() {
+        return readingFolders;
+    }
+
+    public void setReadingFolders(List<ReadingFolder> readingFolders) {
+        this.readingFolders = readingFolders;
+    }
 }

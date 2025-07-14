@@ -4,9 +4,9 @@ import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors
 @Directive()
 export abstract class GenericFormComponent implements OnInit {
   /**
-   * The model of input property
-   * Mandatory
-   */
+  * The model of input property
+  * Mandatory
+  */
   @Input() model: any | undefined;
   @Output() modelChange: EventEmitter<any> = new EventEmitter<any>();
   /**
@@ -73,6 +73,9 @@ export abstract class GenericFormComponent implements OnInit {
         this.form?.get(this.propertyName)?.enable();
       }
     }
+    if (changes['isMandatory'] && this.form) {
+      this.form.get(this.propertyName)?.updateValueAndValidity();
+    }
     if (this.form && (!changes['customValidators'] || Object.keys(changes).length > 1)) {
       this.form.get(this.propertyName)?.updateValueAndValidity();
       this.form.get(this.propertyName)?.markAllAsTouched();
@@ -91,7 +94,7 @@ export abstract class GenericFormComponent implements OnInit {
   ngOnInit() {
     this.uniqueId = Math.round(Math.random() * 1000000000);
     if (this.form != undefined) {
-      this.form.addControl(this.propertyName, this.formBuilder.control({ value: '', disabled: this.isDisabled }));
+      this.form.addControl(this.propertyName, this.formBuilder.control({ value: '', disabled: this.isDisabled }, this.customValidators));
       this.form.addValidators(this.checkField());
       if (this.isDisabled) {
         this.form?.get(this.propertyName)?.disable();
@@ -124,7 +127,6 @@ export abstract class GenericFormComponent implements OnInit {
             notFilled: this.propertyName
           };
         }
-        this.form!.get(this.propertyName)!.setErrors(null);
       }
       return null;
     };
@@ -137,4 +139,5 @@ export abstract class GenericFormComponent implements OnInit {
       return object;
     return "";
   }
+
 }
