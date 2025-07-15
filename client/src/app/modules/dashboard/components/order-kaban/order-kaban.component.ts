@@ -34,6 +34,7 @@ export class OrderKabanComponent extends KanbanComponent<CustomerOrder, Customer
   employeesSelected: Employee[] = [];
   filterText: string = '';
   adGroupSales = this.constantService.getActiveDirectoryGroupSales();
+  directionGroupSales = this.constantService.getActiveDirectoryGroupDirection();
   orderNotification: Notification[] | undefined;
 
   constructor(

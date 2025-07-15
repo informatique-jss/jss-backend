@@ -1,7 +1,6 @@
 package com.jss.osiris.modules.osiris.quotation.model;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -86,12 +85,6 @@ public class ServiceType implements Serializable, IId {
 	@Transient
 	private Boolean hasOnlyAnnouncement;
 
-	@Column(columnDefinition = "NUMERIC(15,2)", precision = 10, scale = 2)
-	private BigDecimal defaultDeboursPrice;
-
-	@Column(columnDefinition = "NUMERIC(15,2)", precision = 10, scale = 2)
-	private BigDecimal defaultDeboursPriceNonTaxable;
-
 	private Integer suspiciousMarkup;
 
 	@JsonView(JacksonViews.MyJssListView.class)
@@ -100,6 +93,8 @@ public class ServiceType implements Serializable, IId {
 	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
 	@JoinColumn(name = "id_service_type_linked")
 	private ServiceType serviceTypeLinked;
+
+	private Boolean hideInMyJss;
 
 	public Integer getId() {
 		return id;
@@ -189,22 +184,6 @@ public class ServiceType implements Serializable, IId {
 		this.isRequiringNewUnregisteredAffaire = isRequiringNewUnregisteredAffaire;
 	}
 
-	public BigDecimal getDefaultDeboursPrice() {
-		return defaultDeboursPrice;
-	}
-
-	public void setDefaultDeboursPrice(BigDecimal defaultDeboursPrice) {
-		this.defaultDeboursPrice = defaultDeboursPrice;
-	}
-
-	public BigDecimal getDefaultDeboursPriceNonTaxable() {
-		return defaultDeboursPriceNonTaxable;
-	}
-
-	public void setDefaultDeboursPriceNonTaxable(BigDecimal defaultDeboursPriceNonTaxable) {
-		this.defaultDeboursPriceNonTaxable = defaultDeboursPriceNonTaxable;
-	}
-
 	public Boolean getHasAnnouncement() {
 		return hasAnnouncement;
 	}
@@ -243,5 +222,13 @@ public class ServiceType implements Serializable, IId {
 
 	public void setServiceTypeLinked(ServiceType serviceTypeLinked) {
 		this.serviceTypeLinked = serviceTypeLinked;
+	}
+
+	public Boolean getHideInMyJss() {
+		return hideInMyJss;
+	}
+
+	public void setHideInMyJss(Boolean hideInMyJss) {
+		this.hideInMyJss = hideInMyJss;
 	}
 }

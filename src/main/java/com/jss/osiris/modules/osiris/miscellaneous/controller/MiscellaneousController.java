@@ -551,8 +551,6 @@ public class MiscellaneousController {
     @PostMapping(inputEntryPoint + "/constant")
     public ResponseEntity<Constant> addOrUpdateConstant(
             @RequestBody Constant constant) throws OsirisException, OsirisValidationException {
-        if (constant.getId() != null)
-            validationHelper.validateReferential(constant, true, "constant");
         validationHelper.validateReferential(constant.getBillingLabelTypeCodeAffaire(), true,
                 "BillingLabelTypeCodeAffaire");
         validationHelper.validateReferential(constant.getFurtherInformationServiceFieldType(), true,

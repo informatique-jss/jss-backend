@@ -1417,7 +1417,7 @@ public class MyJssQuotationController {
 		ServiceFamily serviceFamily = serviceFamilyService.getServiceFamily(idServiceFamily);
 		if (serviceFamily == null)
 			return new ResponseEntity<List<ServiceType>>(new ArrayList<ServiceType>(), HttpStatus.OK);
-		return new ResponseEntity<List<ServiceType>>(serviceTypeService.getServiceTypesForFamily(serviceFamily),
+		return new ResponseEntity<List<ServiceType>>(serviceTypeService.getServiceTypesForFamilyForMyJss(serviceFamily),
 				HttpStatus.OK);
 	}
 

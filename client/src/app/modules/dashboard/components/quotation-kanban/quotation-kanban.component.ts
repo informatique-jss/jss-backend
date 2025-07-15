@@ -32,6 +32,7 @@ export class QuotationKanbanComponent extends KanbanComponent<Quotation, Quotati
   employeesSelected: Employee[] = [];
   filterText: string = '';
   adGroupSales = this.constantService.getActiveDirectoryGroupSales();
+  directionGroupSales = this.constantService.getActiveDirectoryGroupDirection();
   quotationNotification: Notification[] | undefined;
 
   constructor(
