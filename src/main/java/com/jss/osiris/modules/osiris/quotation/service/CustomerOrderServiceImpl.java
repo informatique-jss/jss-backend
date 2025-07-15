@@ -342,6 +342,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             customerOrder.setCustomerOrderParentRecurring(currentCustomerOrder.getCustomerOrderParentRecurring());
         }
 
+        if (isNewCustomerOrder)
+            customerOrder = simpleAddOrUpdate(customerOrder);
+
         // Complete provisions
         boolean oneNewProvision = false;
         boolean computePrice = false;
@@ -364,7 +367,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 }
             }
 
-        if (oneNewProvision || isNewCustomerOrder)
+        if (oneNewProvision && !isNewCustomerOrder)
             customerOrder = simpleAddOrUpdate(customerOrder);
 
         if (computePrice)

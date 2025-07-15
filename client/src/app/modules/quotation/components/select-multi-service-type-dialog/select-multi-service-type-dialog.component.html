@@ -8,7 +8,7 @@
           propertyName="selectedServiceType" [isMandatory]="true" [isDisabled]="false"></chips-service-type>
       </td>
     </tr>
-    <tr>
+    <tr *ngIf="!isJustSelectServiceType">
       <td>
         <generic-input [(model)]="customLabel" label="Libellé personnalisé" [form]="serviceTypeForm"
           propertyName="customLabel" [isMandatory]="false" [maxLength]="2000"></generic-input>
