@@ -78,7 +78,7 @@
   padding: 10px;
   background: white;
   border-radius: 5px;
-  min-width: 200px;
+  min-width: 150px;
   min-height: 98%;
   transition: background 0.3s ease;
 }
@@ -111,7 +111,7 @@
   font-size: 14px;
   cursor: grab;
   min-height: 80px;
-  min-width: 200px;
+  min-width: 150px;
 }
 
 .card-content {
@@ -228,4 +228,13 @@
 
 .card-priority {
   background-color: #f3c5c0;
+}
+
+.wrapper-div {
+  position: relative;
+  overflow-y: auto;
+}
+
+.wrapper-max-height {
+  max-height: calc(100vh - 240px);
 }

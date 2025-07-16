@@ -325,7 +325,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void notifyAttachmentAddToCustomerorder(CustomerOrder order, Attachment attachment) throws OsirisException {
+    public void notifyAttachmentAddToCustomerOrder(CustomerOrder order, Attachment attachment) throws OsirisException {
         List<Integer> employeeIdAlreadyNotified = new ArrayList<Integer>();
         if (order != null && order.getAssoAffaireOrders() != null) {
             for (AssoAffaireOrder asso : order.getAssoAffaireOrders())
@@ -353,6 +353,12 @@ public class NotificationServiceImpl implements NotificationService {
                             }
                         }
         }
+    }
+
+    @Override
+    public void notifyImmediateAffactationOfOrder(CustomerOrder customerOrder) throws OsirisException {
+        generateNewNotification(employeeService.getCurrentEmployee(), constantService.getEmployeeProductionDirector(),
+                Notification.ORDER_IMMEDIATLY_AFFECTED, false, null, null, customerOrder, null);
     }
 
     private boolean isProvisionClosed(Provision provision) {

@@ -1206,7 +1206,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     && customerOrder.getCreatedDate().isBefore(LocalDateTime.now().minusDays(3 * 7))) {
                 toSend = true;
                 customerOrder.setSecondReminderDateTime(LocalDateTime.now());
-            } else if (customerOrder.getCreatedDate().isBefore(LocalDateTime.now().minusDays(6 * 7))) {
+            } else if (customerOrder.getCreatedDate().isBefore(LocalDateTime.now().minusDays(5 * 7))) {
                 toSend = true;
                 customerOrder.setThirdReminderDateTime(LocalDateTime.now());
             }

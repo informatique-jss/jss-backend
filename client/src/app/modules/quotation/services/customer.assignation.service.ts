@@ -45,7 +45,11 @@ export class CustomerOrderAssignationService extends AppRestService<CustomerOrde
     return this.get(new HttpParams().set("complexity", complexity), "assign/fond/type") as any as Observable<any>;
   }
 
-  getCustomerOrderAssignationStatistics() {
-    return this.getList(new HttpParams(), "assign/statistics") as any as Observable<CustomerOrderAssignationStatistics[]>;
+  getCustomerOrderAssignationStatisticsForFormalistes() {
+    return this.getList(new HttpParams(), "assign/statistics/formaliste") as any as Observable<CustomerOrderAssignationStatistics[]>;
+  }
+
+  getCustomerOrderAssignationStatisticsForInsertions() {
+    return this.getList(new HttpParams(), "assign/statistics/insertion") as any as Observable<CustomerOrderAssignationStatistics[]>;
   }
 }

@@ -115,13 +115,14 @@
               </td>
               <td>
                 <generic-input [(model)]="assoServiceProvisionType.defaultDeboursPrice"
-                  label="Montant par défaut des débours (HT)" [form]="entityForm" propertyName="defaultDeboursPrice"
-                  [isMandatory]="false" [isDisabled]="!editMode" type="number" step="0.01"></generic-input>
+                  label="Montant par défaut des débours (HT)" [form]="entityForm"
+                  [propertyName]="'defaultDeboursPrice'+index" [isMandatory]="false" [isDisabled]="!editMode"
+                  type="number" step="0.01"></generic-input>
               </td>
               <td>
                 <generic-input [(model)]="assoServiceProvisionType.defaultDeboursPriceNonTaxable"
                   label="Montant par défaut des débours non taxables (HT)" [form]="entityForm"
-                  propertyName="defaultDeboursPriceNonTaxable" [isMandatory]="false" [isDisabled]="!editMode"
+                  [propertyName]="'defaultDeboursPriceNonTaxable'+index" [isMandatory]="false" [isDisabled]="!editMode"
                   type="number" step="0.01"></generic-input>
               </td>
             </tr>

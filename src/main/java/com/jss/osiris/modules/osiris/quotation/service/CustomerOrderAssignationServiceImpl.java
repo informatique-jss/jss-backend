@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.AssignationType;
@@ -46,6 +47,9 @@ public class CustomerOrderAssignationServiceImpl implements CustomerOrderAssigna
 
     @Autowired
     CustomerOrderStatusService customerOrderStatusService;
+
+    @Autowired
+    NotificationService notificationService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -415,6 +419,8 @@ public class CustomerOrderAssignationServiceImpl implements CustomerOrderAssigna
                         for (Provision provision : service.getProvisions()) {
                             assignNewProvisionToUser(provision);
                         }
+
+        notificationService.notifyImmediateAffactationOfOrder(customerOrder);
     }
 
     @Override
@@ -447,8 +453,14 @@ public class CustomerOrderAssignationServiceImpl implements CustomerOrderAssigna
     }
 
     @Override
-    public List<ICustomerOrderAssignationStatistics> getCustomerOrderAssignationStatistics() {
-        return customerOrderAssignationRepository.getCustomerOrderAssignationStatistics(
+    public List<ICustomerOrderAssignationStatistics> getCustomerOrderAssignationStatisticsForFormalistes() {
+        return customerOrderAssignationRepository.getCustomerOrderAssignationStatisticsForFormalistes(
+                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.BEING_PROCESSED).getId());
+    }
+
+    @Override
+    public List<ICustomerOrderAssignationStatistics> getCustomerOrderAssignationStatisticsForInsertions() {
+        return customerOrderAssignationRepository.getCustomerOrderAssignationStatisticsForInsertions(
                 customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.BEING_PROCESSED).getId());
     }
 }

@@ -36,6 +36,7 @@ import com.jss.osiris.modules.osiris.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.Confrere;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderAssignation;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Domiciliation;
 import com.jss.osiris.modules.osiris.quotation.model.DomiciliationStatus;
@@ -206,6 +207,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         // Complete domiciliation end date
         for (Service service : assoAffaireOrder.getServices()) {
+            service.setAssoAffaireOrder(assoAffaireOrder);
+            serviceService.addOrUpdateService(service);
 
             if (service.getAssoServiceDocuments() != null)
                 for (AssoServiceDocument assoServiceDocument : service.getAssoServiceDocuments())
@@ -224,6 +227,24 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                 if (provision.getIsPriority() == null)
                     provision.setIsPriority(false);
+
+                // Check proper assignation
+                if (customerOrder instanceof CustomerOrder && getProvisionStatus(provision) != null
+                        && !getProvisionStatus(provision).getIsOpenState()) {
+                    if (provision.getAssignedTo() == null)
+                        throw new OsirisClientMessageException("Impossible de démarrer une prestation non assignée");
+
+                    if (((CustomerOrder) customerOrder).getCustomerOrderAssignations() != null) {
+                        for (CustomerOrderAssignation assignation : ((CustomerOrder) customerOrder)
+                                .getCustomerOrderAssignations())
+                            if (assignation.getAssignationType().getId().equals(provision.getProvisionType()
+                                    .getAssignationType().getId())
+                                    && (assignation.getIsAssigned() == null || assignation.getIsAssigned() == false))
+                                throw new OsirisClientMessageException(
+                                        "Impossible de démarrer une commande non assignée");
+
+                    }
+                }
 
                 if (provision.getAttachments() != null)
                     for (Attachment attachment : provision.getAttachments()) {
@@ -555,11 +576,21 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 customerOrderAssignationService.assignNewProvisionToUser(provision);
             }
 
-            service.setAssoAffaireOrder(assoAffaireOrder);
-            serviceService.addOrUpdateService(service);
         }
 
         return assoAffaireOrder;
+    }
+
+    private IWorkflowElement getProvisionStatus(Provision provision) {
+        if (provision.getAnnouncement() != null)
+            return provision.getAnnouncement().getAnnouncementStatus();
+        if (provision.getFormalite() != null)
+            return provision.getFormalite().getFormaliteStatus();
+        if (provision.getSimpleProvision() != null)
+            return provision.getSimpleProvision().getSimpleProvisionStatus();
+        if (provision.getDomiciliation() != null)
+            return provision.getDomiciliation().getDomiciliationStatus();
+        return null;
     }
 
     @Override
