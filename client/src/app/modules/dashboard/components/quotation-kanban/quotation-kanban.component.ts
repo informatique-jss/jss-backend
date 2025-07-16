@@ -67,7 +67,7 @@ export class QuotationKanbanComponent extends KanbanComponent<Quotation, Quotati
     this.selectedSwimlaneType = this.swimlaneTypes[0];
 
     this.quotationStatusService.getQuotationStatus().subscribe(response => {
-      this.possibleEntityStatus = response;
+      this.possibleEntityStatus = response.filter(t => t.code != "OPEN");;
       this.statusSelected = [];
 
       // Retrieve bookmark

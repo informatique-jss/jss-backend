@@ -2504,11 +2504,13 @@ public class QuotationController {
 
       // Put empty partner center when id is set to null
       if (formalites != null && formalites.size() > 0)
-        for (FormaliteGuichetUnique formalite : formalites)
+        for (FormaliteGuichetUnique formalite : formalites) {
           if (formalite.getValidationsRequests() != null && formalite.getValidationsRequests().size() > 0)
             for (ValidationRequest validationRequest : formalite.getValidationsRequests())
               if (validationRequest.getPartnerCenter() != null && validationRequest.getPartner().getId() == null)
                 validationRequest.setPartnerCenter(null);
+          formaliteGuichetUniqueService.addOrUpdateFormaliteGuichetUnique(formalite);
+        }
     }
 
     return new ResponseEntity<List<FormaliteGuichetUnique>>(formalites, HttpStatus.OK);
@@ -2977,11 +2979,19 @@ public class QuotationController {
         HttpStatus.OK);
   }
 
-  @GetMapping(inputEntryPoint + "/assign/statistics")
-  public ResponseEntity<List<ICustomerOrderAssignationStatistics>> getCustomerOrderAssignationStatistics(
+  @GetMapping(inputEntryPoint + "/assign/statistics/formaliste")
+  public ResponseEntity<List<ICustomerOrderAssignationStatistics>> getCustomerOrderAssignationStatisticsForFormalistes(
       Integer complexity) throws OsirisException {
     return new ResponseEntity<List<ICustomerOrderAssignationStatistics>>(
-        customerOrderAssignationService.getCustomerOrderAssignationStatistics(),
+        customerOrderAssignationService.getCustomerOrderAssignationStatisticsForFormalistes(),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/assign/statistics/insertion")
+  public ResponseEntity<List<ICustomerOrderAssignationStatistics>> getCustomerOrderAssignationStatisticsForInsertions(
+      Integer complexity) throws OsirisException {
+    return new ResponseEntity<List<ICustomerOrderAssignationStatistics>>(
+        customerOrderAssignationService.getCustomerOrderAssignationStatisticsForInsertions(),
         HttpStatus.OK);
   }
 

@@ -18,7 +18,7 @@ public interface CustomerOrderAssignationRepository
                         "         select " +
                         " 	e.id as idEmployee , " +
                         " 	to_char( c.production_effective_date_time, 'YYYY-MM-DD') as productionDate, " +
-                        " 	count(*) as number " +
+                        " 	count(distinct c.id) as number   " +
                         " from " +
                         " 	customer_order c " +
                         " left join customer_order_assignation c2 on " +
@@ -36,6 +36,31 @@ public interface CustomerOrderAssignationRepository
                         " 	e.id , " +
                         " 	to_char(c.production_effective_date_time, 'YYYY-MM-DD') " +
                         "")
-        List<ICustomerOrderAssignationStatistics> getCustomerOrderAssignationStatistics(
+        List<ICustomerOrderAssignationStatistics> getCustomerOrderAssignationStatisticsForFormalistes(
+                        @Param("inProgressCustomerOrderStatusId") Integer inProgressCustomerOrderStatusId);
+
+        @Query(nativeQuery = true, value = "" +
+                        "         select " +
+                        " 	e.id as idEmployee , " +
+                        " 	to_char( c.production_effective_date_time, 'YYYY-MM-DD') as productionDate, " +
+                        " 	count(distinct c.id) as number   " +
+                        " from " +
+                        " 	customer_order c " +
+                        " left join customer_order_assignation c2 on " +
+                        " 	c2.id_customer_order = c.id " +
+                        " join responsable r on " +
+                        " 	r.id = c.id_responsable " +
+                        " join employee e on " +
+                        " 	e.id = r.id_insertion " +
+                        " where " +
+                        " 	(c2.id is null " +
+                        " 		or c2.id_employee is null " +
+                        " 		or coalesce(c2.is_assigned, false) = false) " +
+                        " 	and c.id_customer_order_status = :inProgressCustomerOrderStatusId " +
+                        " group by " +
+                        " 	e.id , " +
+                        " 	to_char(c.production_effective_date_time, 'YYYY-MM-DD') " +
+                        "")
+        List<ICustomerOrderAssignationStatistics> getCustomerOrderAssignationStatisticsForInsertions(
                         @Param("inProgressCustomerOrderStatusId") Integer inProgressCustomerOrderStatusId);
 }

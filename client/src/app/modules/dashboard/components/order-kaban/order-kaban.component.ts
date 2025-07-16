@@ -70,7 +70,7 @@ export class OrderKabanComponent extends KanbanComponent<CustomerOrder, Customer
     this.selectedSwimlaneType = this.swimlaneTypes[0];
 
     this.customerOrderStatusService.getCustomerOrderStatus().subscribe(response => {
-      this.possibleEntityStatus = response;
+      this.possibleEntityStatus = response.filter(t => t.code != "OPEN");;
       this.statusSelected = [];
 
       // Retrieve bookmark
