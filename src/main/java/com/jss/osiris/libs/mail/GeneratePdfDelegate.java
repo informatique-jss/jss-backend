@@ -409,6 +409,16 @@ public class GeneratePdfDelegate {
         ctx.setVariable("responsableOnBilling", quotation.getResponsable().getFirstname() + " "
                 + quotation.getResponsable().getLastname());
         ctx.setVariable("assos", quotation.getAssoAffaireOrders());
+
+        Boolean hasDocuments = null;
+        if (!quotation.getAssoAffaireOrders().isEmpty())
+            hasDocuments = quotation.getAssoAffaireOrders().stream()
+                    .filter(asso -> asso.getServices() != null)
+                    .flatMap(asso -> asso.getServices().stream())
+                    .anyMatch(service -> service.getAssoServiceDocuments() != null
+                            && !service.getAssoServiceDocuments().isEmpty());
+        ctx.setVariable("hasDocuments", hasDocuments);
+
         ctx.setVariable("quotation", quotation);
         ctx.setVariable("quotationCreatedDate", quotation.getCreatedDate().format(DateTimeFormatter
                 .ofPattern("dd/MM/yyyy")));
