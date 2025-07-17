@@ -73,17 +73,6 @@
         <table class="full-width">
           <tr>
             <td>
-              <generic-input [(model)]="selectedEntity.defaultDeboursPrice" label="Montant par défaut des débours (HT)"
-                [form]="entityForm" propertyName="defaultDeboursPrice" [isMandatory]="false" [isDisabled]="!editMode"
-                type="number" step="0.01"></generic-input>
-            </td>
-            <td>
-              <generic-input [(model)]="selectedEntity.defaultDeboursPriceNonTaxable"
-                label="Montant par défaut des débours non taxables (HT)" [form]="entityForm"
-                propertyName="defaultDeboursPriceNonTaxable" [isMandatory]="false" [isDisabled]="!editMode"
-                type="number" step="0.01"></generic-input>
-            </td>
-            <td>
               <autocomplete-service-type [(model)]="selectedEntity.serviceTypeLinked" [form]="entityForm"
                 propertyName="serviceTypeLinked" [isMandatory]="false" label="Service type de formalité associé"
                 [isDisabled]="!editMode"></autocomplete-service-type>
@@ -93,6 +82,10 @@
                 label="Majoration du prix pour les créances douteuses (%)" [form]="entityForm"
                 propertyName="suspiciousMarkup" [isMandatory]="false" [isDisabled]="!editMode" type="number"
                 step="1"></generic-input>
+            </td>
+            <td>
+              <generic-toggle [(model)]="selectedEntity.hideInMyJss" label="Cacher dans MyJSS ?" [form]="entityForm"
+                propertyName="hideInMyJss" [isDisabled]="!editMode"></generic-toggle>
             </td>
           </tr>
         </table>
@@ -119,6 +112,18 @@
                   [form]="entityForm" [propertyName]="'formeJuridique'+index+deleteIndex" [isMandatory]="false"
                   [isDisabled]="!editMode" matTooltipShowDelay="1000"
                   matTooltip="Formes juridiques nécessaires pour appliquer la prestation"></chips-forme-juridique>
+              </td>
+              <td>
+                <generic-input [(model)]="assoServiceProvisionType.defaultDeboursPrice"
+                  label="Montant par défaut des débours (HT)" [form]="entityForm"
+                  [propertyName]="'defaultDeboursPrice'+index" [isMandatory]="false" [isDisabled]="!editMode"
+                  type="number" step="0.01"></generic-input>
+              </td>
+              <td>
+                <generic-input [(model)]="assoServiceProvisionType.defaultDeboursPriceNonTaxable"
+                  label="Montant par défaut des débours non taxables (HT)" [form]="entityForm"
+                  [propertyName]="'defaultDeboursPriceNonTaxable'+index" [isMandatory]="false" [isDisabled]="!editMode"
+                  type="number" step="0.01"></generic-input>
               </td>
             </tr>
           </table>

@@ -106,8 +106,10 @@ public class ServiceServiceImpl implements ServiceService {
     @Override
     public Service addOrUpdateService(Service service) throws OsirisException {
         computeServiceLabel(service);
-        if (service.getCustomLabel() != null && service.getCustomLabel().trim().length() == 0)
-            service.setCustomLabel(null);
+        if (service.getCustomLabel() != null) {
+            if (service.getCustomLabel().trim().length() == 0)
+                service.setCustomLabel(null);
+        }
 
         if (service.getAssoAffaireOrder().getCustomerOrder() != null)
             batchService.declareNewBatch(Batch.REINDEX_ASSO_AFFAIRE_ORDER, service.getAssoAffaireOrder().getId());
@@ -510,11 +512,7 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Transactional(rollbackFor = Exception.class)
     public Service modifyServiceType(List<ServiceType> serviceTypes, Service service) throws OsirisException {
-        String newLabel = service.getCustomLabel();
         service = getService(service.getId());
-        if (newLabel != null)
-            service.setCustomLabel(newLabel);
-
         ArrayList<AssoServiceFieldType> assoToDelete = new ArrayList<AssoServiceFieldType>();
         ArrayList<Integer> serviceTypeIds = new ArrayList<Integer>();
 
@@ -597,7 +595,7 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     private Service computeServiceLabel(Service service) {
-        if (service != null) {
+        if (service != null && service.getServiceTypes() != null) {
             if (service.getCustomLabel() == null || service.getCustomLabel().length() == 0)
                 service.setServiceLabelToDisplay(String.join(" / ", service.getServiceTypes().stream()
                         .map(s -> s.getCustomLabel()).collect(Collectors.toList())));

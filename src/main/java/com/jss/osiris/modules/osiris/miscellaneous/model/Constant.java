@@ -952,6 +952,10 @@ public class Constant implements Serializable, IId {
 	private ActiveDirectoryGroup activeDirectoryGroupFormalites;
 
 	@ManyToOne
+	@JoinColumn(name = "id_active_directory_group_direction")
+	private ActiveDirectoryGroup activeDirectoryGroupDirection;
+
+	@ManyToOne
 	@JoinColumn(name = "id_active_directory_group_insertions")
 	private ActiveDirectoryGroup activeDirectoryGroupInsertions;
 
@@ -3093,6 +3097,14 @@ public class Constant implements Serializable, IId {
 
 	public void setProvisionFamilyTypeBalo(ProvisionFamilyType provisionFamilyTypeBalo) {
 		this.provisionFamilyTypeBalo = provisionFamilyTypeBalo;
+	}
+
+	public ActiveDirectoryGroup getActiveDirectoryGroupDirection() {
+		return activeDirectoryGroupDirection;
+	}
+
+	public void setActiveDirectoryGroupDirection(ActiveDirectoryGroup activeDirectoryGroupDirection) {
+		this.activeDirectoryGroupDirection = activeDirectoryGroupDirection;
 	}
 
 }

@@ -47,7 +47,6 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Department;
-import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.osiris.miscellaneous.model.WeekDay;
 import com.jss.osiris.modules.osiris.miscellaneous.service.CityService;
@@ -768,10 +767,7 @@ public class QuotationController {
     validationHelper.validateString(serviceType.getLabel(), true, 250, "label");
     validationHelper.validateString(serviceType.getCustomLabel(), false, 250, "customLabel");
     validationHelper.validateReferential(serviceType.getServiceFamily(), true, "serviceFamily");
-    validationHelper.validateBigDecimal(serviceType.getDefaultDeboursPrice(), false, "defaultDeboursPrice");
     validationHelper.validateReferential(serviceType.getServiceTypeLinked(), false, "serviceTypeLinked");
-    validationHelper.validateBigDecimal(serviceType.getDefaultDeboursPriceNonTaxable(), false,
-        "defaultDeboursPriceNonTaxable");
 
     if (serviceType.getAssoServiceProvisionTypes() != null) {
       for (AssoServiceProvisionType assoServiceProvisionType : serviceType.getAssoServiceProvisionTypes()) {
@@ -780,6 +776,10 @@ public class QuotationController {
         validationHelper.validateInteger(assoServiceProvisionType.getMinEmployee(), false, "minEmployee");
         validationHelper.validateString(assoServiceProvisionType.getCustomerMessageWhenAdded(), false,
             "customerMessageWhenAdded");
+        validationHelper.validateBigDecimal(assoServiceProvisionType.getDefaultDeboursPrice(), false,
+            "defaultDeboursPrice");
+        validationHelper.validateBigDecimal(assoServiceProvisionType.getDefaultDeboursPriceNonTaxable(), false,
+            "defaultDeboursPriceNonTaxable");
       }
     }
 
@@ -1521,41 +1521,6 @@ public class QuotationController {
     if (confrere.getSpecialOffers() != null) {
       for (SpecialOffer specialOffer : confrere.getSpecialOffers()) {
         validationHelper.validateReferential(specialOffer, false, "specialOffer");
-      }
-    }
-
-    if (confrere.getDocuments() != null && confrere.getDocuments().size() > 0) {
-      for (Document document : confrere.getDocuments()) {
-
-        validationHelper.validateReferential(document.getDocumentType(), true, "DocumentType");
-
-        if (document.getMailsAffaire() != null && !validationHelper.validateMailList(document.getMailsAffaire()))
-          throw new OsirisValidationException("MailsAffaire");
-        if (document.getMailsClient() != null && document.getMailsClient() != null
-            && document.getMailsClient().size() > 0)
-          if (!validationHelper.validateMailList(document.getMailsClient()))
-            throw new OsirisValidationException("MailsClient");
-
-        validationHelper.validateString(document.getAffaireAddress(), false, 200, "AffaireAddress");
-        validationHelper.validateString(document.getClientAddress(), false, 200, "ClientAddress");
-        validationHelper.validateString(document.getBillingAddress(), false, 200, "BillingAddress");
-        validationHelper.validateString(document.getBillingLabel(), false, 200, "BillingLabel");
-        validationHelper.validateString(document.getAffaireRecipient(), false, 200, "AffaireRecipient");
-        validationHelper.validateString(document.getClientRecipient(), false, 200, "ClientRecipient");
-        validationHelper.validateString(document.getCommandNumber(), false, 40, "CommandNumber");
-        validationHelper.validateReferential(document.getPaymentDeadlineType(), false, "PaymentDeadlineType");
-        validationHelper.validateReferential(document.getRefundType(), false, "RefundType");
-        validationHelper.validateIban(document.getRefundIBAN(), false, "RefundIBAN");
-        validationHelper.validateBic(document.getRefundBic(), false, "RefundBic");
-        validationHelper.validateReferential(document.getBillingClosureType(), false, "BillingClosureType");
-        validationHelper.validateReferential(document.getBillingClosureRecipientType(), false,
-            "BillingClosureRecipientType");
-
-        if (document.getIsRecipientAffaire() == null)
-          document.setIsRecipientAffaire(false);
-        if (document.getIsRecipientClient() == null)
-          document.setIsRecipientClient(false);
-
       }
     }
 
@@ -2503,11 +2468,13 @@ public class QuotationController {
 
       // Put empty partner center when id is set to null
       if (formalites != null && formalites.size() > 0)
-        for (FormaliteGuichetUnique formalite : formalites)
+        for (FormaliteGuichetUnique formalite : formalites) {
           if (formalite.getValidationsRequests() != null && formalite.getValidationsRequests().size() > 0)
             for (ValidationRequest validationRequest : formalite.getValidationsRequests())
               if (validationRequest.getPartnerCenter() != null && validationRequest.getPartner().getId() == null)
                 validationRequest.setPartnerCenter(null);
+          formaliteGuichetUniqueService.addOrUpdateFormaliteGuichetUnique(formalite);
+        }
     }
 
     return new ResponseEntity<List<FormaliteGuichetUnique>>(formalites, HttpStatus.OK);
@@ -2976,11 +2943,19 @@ public class QuotationController {
         HttpStatus.OK);
   }
 
-  @GetMapping(inputEntryPoint + "/assign/statistics")
-  public ResponseEntity<List<ICustomerOrderAssignationStatistics>> getCustomerOrderAssignationStatistics(
+  @GetMapping(inputEntryPoint + "/assign/statistics/formaliste")
+  public ResponseEntity<List<ICustomerOrderAssignationStatistics>> getCustomerOrderAssignationStatisticsForFormalistes(
       Integer complexity) throws OsirisException {
     return new ResponseEntity<List<ICustomerOrderAssignationStatistics>>(
-        customerOrderAssignationService.getCustomerOrderAssignationStatistics(),
+        customerOrderAssignationService.getCustomerOrderAssignationStatisticsForFormalistes(),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/assign/statistics/insertion")
+  public ResponseEntity<List<ICustomerOrderAssignationStatistics>> getCustomerOrderAssignationStatisticsForInsertions(
+      Integer complexity) throws OsirisException {
+    return new ResponseEntity<List<ICustomerOrderAssignationStatistics>>(
+        customerOrderAssignationService.getCustomerOrderAssignationStatisticsForInsertions(),
         HttpStatus.OK);
   }
 

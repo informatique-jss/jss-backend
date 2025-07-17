@@ -342,6 +342,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             customerOrder.setCustomerOrderParentRecurring(currentCustomerOrder.getCustomerOrderParentRecurring());
         }
 
+        if (isNewCustomerOrder)
+            customerOrder = simpleAddOrUpdate(customerOrder);
+
         // Complete provisions
         boolean oneNewProvision = false;
         boolean computePrice = false;
@@ -364,7 +367,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 }
             }
 
-        if (oneNewProvision || isNewCustomerOrder)
+        if (oneNewProvision && !isNewCustomerOrder)
             customerOrder = simpleAddOrUpdate(customerOrder);
 
         if (computePrice)
@@ -1203,7 +1206,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     && customerOrder.getCreatedDate().isBefore(LocalDateTime.now().minusDays(3 * 7))) {
                 toSend = true;
                 customerOrder.setSecondReminderDateTime(LocalDateTime.now());
-            } else if (customerOrder.getCreatedDate().isBefore(LocalDateTime.now().minusDays(6 * 7))) {
+            } else if (customerOrder.getCreatedDate().isBefore(LocalDateTime.now().minusDays(5 * 7))) {
                 toSend = true;
                 customerOrder.setThirdReminderDateTime(LocalDateTime.now());
             }
@@ -2084,9 +2087,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
-    public List<CustomerOrder> findCustomerOrderByForcedEmployeeAssigned(List<Employee> employees,
-            CustomerOrderStatus customerOrderStatus, Employee assignedUser) {
-        return customerOrderRepository.findCustomerOrderByForcedEmployeeAndStatusAssigned(employees,
-                customerOrderStatus, assignedUser);
+    public List<CustomerOrder> findCustomerOrderByForcedEmployeeAssigned(CustomerOrderStatus customerOrderStatus,
+            Employee assignedUser) {
+        return customerOrderRepository.findCustomerOrderByForcedEmployeeAndStatusAssigned(customerOrderStatus,
+                assignedUser);
     }
 }

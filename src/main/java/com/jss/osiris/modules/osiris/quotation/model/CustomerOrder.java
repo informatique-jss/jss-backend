@@ -10,8 +10,6 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.jackson.JacksonLocalDateTimeDeserializer;
-import com.jss.osiris.libs.jackson.JacksonLocalDateTimeGmtDeserializer;
-import com.jss.osiris.libs.jackson.JacksonLocalDateTimeGmtSerializer;
 import com.jss.osiris.libs.jackson.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
@@ -178,16 +176,16 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 			"childrenPayments" }, allowSetters = true)
 	private List<Payment> payments;
 
-	@JsonDeserialize(using = JacksonLocalDateTimeGmtDeserializer.class)
-	@JsonSerialize(using = JacksonLocalDateTimeGmtSerializer.class)
+	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
+	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
 	private LocalDateTime firstReminderDateTime;
 
-	@JsonDeserialize(using = JacksonLocalDateTimeGmtDeserializer.class)
-	@JsonSerialize(using = JacksonLocalDateTimeGmtSerializer.class)
+	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
+	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
 	private LocalDateTime secondReminderDateTime;
 
-	@JsonDeserialize(using = JacksonLocalDateTimeGmtDeserializer.class)
-	@JsonSerialize(using = JacksonLocalDateTimeGmtSerializer.class)
+	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
+	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
 	private LocalDateTime thirdReminderDateTime;
 
 	@OneToMany(targetEntity = Invoice.class, mappedBy = "customerOrderForInboundInvoice")

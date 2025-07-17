@@ -45,7 +45,7 @@ public class CustomerOrderStatusServiceImpl implements CustomerOrderStatusServic
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateStatusReferential() throws OsirisException {
-        updateStatus(CustomerOrderStatus.DRAFT, "Ouvert", "auto_awesome");
+        updateStatus(CustomerOrderStatus.DRAFT, "Brouillon", "auto_awesome");
         updateStatus(CustomerOrderStatus.BEING_PROCESSED, "En cours de traitement", "groups_2");
         updateStatus(CustomerOrderStatus.WAITING_DEPOSIT, "En attente d'acompte", "hourglass_top");
         updateStatus(CustomerOrderStatus.TO_BILLED, "A facturer", "pending");

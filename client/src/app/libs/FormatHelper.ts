@@ -13,6 +13,15 @@ export function formatDate(date: Date) {
   ].join('-');
 }
 
+export function formatDateUs(date: Date) {
+  date = new Date(date);
+  return [
+    date.getFullYear(),
+    padTo2Digits(date.getMonth() + 1),
+    padTo2Digits(date.getDate()),
+  ].join('-');
+}
+
 export function toIsoString(date: Date) {
   const pad = function (num: number) {
     return (num < 10 ? '0' : '') + num;

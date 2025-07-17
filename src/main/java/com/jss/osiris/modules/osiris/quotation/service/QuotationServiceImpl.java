@@ -193,6 +193,9 @@ public class QuotationServiceImpl implements QuotationService {
                 mailService.populateMailIds(document.getMailsClient());
             }
 
+        if (quotation.getId() == null)
+            quotation = quotationRepository.save(quotation);
+
         // Complete provisions
         boolean oneNewProvision = false;
         boolean computePrice = false;

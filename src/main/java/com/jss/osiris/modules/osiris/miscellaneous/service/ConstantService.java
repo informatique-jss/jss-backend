@@ -505,6 +505,8 @@ public interface ConstantService {
 
     public ActiveDirectoryGroup getActiveDirectoryGroupFormalites() throws OsirisException;
 
+    public ActiveDirectoryGroup getActiveDirectoryGroupDirection() throws OsirisException;
+
     public ActiveDirectoryGroup getActiveDirectoryGroupInsertions() throws OsirisException;
 
     public ActiveDirectoryGroup getActiveDirectoryGroupSales() throws OsirisException;

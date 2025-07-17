@@ -3,11 +3,13 @@
     <tr>
       <td>
         <generic-input [(model)]="service.customLabel" label="Libellé du service" [form]="serviceForm"
-          propertyName="customLabel" [isMandatory]="false" [maxLength]="250"></generic-input>
+          propertyName="customLabel" [isMandatory]="false" [maxLength]="250" [isDisabled]="!editMode"></generic-input>
       </td>
     </tr>
-    <tr *ngIf="service.customerComment ">
-      <td>Commentaire client : {{service.customerComment}}
+    <tr>
+      <td>
+        <generic-textarea [(model)]="service.customerComment" label="Commentaire client" [form]="serviceForm"
+          propertyName="customerComment" [isMandatory]="false" [isDisabled]="!editMode"></generic-textarea>
       </td>
     </tr>
   </table>

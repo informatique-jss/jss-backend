@@ -130,6 +130,7 @@ public class Service implements Serializable, IId {
 
 	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
 	@Column(length = 2000)
+	@IndexedField
 	private String serviceLabelToDisplay;
 
 	public Integer getId() {
