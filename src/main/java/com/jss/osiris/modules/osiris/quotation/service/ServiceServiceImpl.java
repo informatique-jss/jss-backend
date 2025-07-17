@@ -595,7 +595,7 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     private Service computeServiceLabel(Service service) {
-        if (service != null) {
+        if (service != null && service.getServiceTypes() != null) {
             if (service.getCustomLabel() == null || service.getCustomLabel().length() == 0)
                 service.setServiceLabelToDisplay(String.join(" / ", service.getServiceTypes().stream()
                         .map(s -> s.getCustomLabel()).collect(Collectors.toList())));
