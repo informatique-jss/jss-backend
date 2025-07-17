@@ -266,24 +266,36 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                     // If mails already exists, get their ids
                     if (domiciliation != null && domiciliation.getMails() != null
-                            && domiciliation.getMails().size() > 0)
+                            && domiciliation.getMails().size() > 0) {
+                        domiciliation
+                                .setMails(domiciliation.getMails().stream().filter(m -> m.getMail() != null).toList());
                         mailService.populateMailIds(domiciliation.getMails());
+                    }
 
                     // If mails already exists, get their ids
                     if (domiciliation != null && domiciliation.getActivityMails() != null
-                            && domiciliation.getActivityMails().size() > 0)
+                            && domiciliation.getActivityMails().size() > 0) {
+                        domiciliation.setActivityMails(
+                                domiciliation.getActivityMails().stream().filter(m -> m.getMail() != null).toList());
                         mailService.populateMailIds(domiciliation.getActivityMails());
+                    }
 
                     // If mails already exists, get their ids
                     if (domiciliation != null
                             && domiciliation.getLegalGardianMails() != null
-                            && domiciliation.getLegalGardianMails().size() > 0)
+                            && domiciliation.getLegalGardianMails().size() > 0) {
+                        domiciliation.setLegalGardianMails(domiciliation.getLegalGardianMails().stream()
+                                .filter(m -> m.getMail() != null).toList());
                         mailService.populateMailIds(domiciliation.getLegalGardianMails());
+                    }
 
                     if (domiciliation != null
                             && domiciliation.getLegalGardianPhones() != null
-                            && domiciliation.getLegalGardianPhones().size() > 0)
+                            && domiciliation.getLegalGardianPhones().size() > 0) {
+                        domiciliation.setLegalGardianPhones(domiciliation.getLegalGardianPhones().stream()
+                                .filter(m -> m.getPhoneNumber() != null).toList());
                         phoneService.populatePhoneIds(domiciliation.getLegalGardianPhones());
+                    }
 
                 }
 
@@ -404,6 +416,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 if (provision.getAnnouncement() != null) {
                     Announcement announcement = provision.getAnnouncement();
 
+                    if (announcement.getId() == null)
+                        provision.setIsPublicationFlag(true);
+
                     announcementService.completeAnnouncementWithAffaire(assoAffaireOrder);
                     if (announcement.getIsHeader() == null)
                         announcement.setIsHeader(false);
@@ -492,10 +507,13 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                                 Announcement currentAnnouncement = announcementService
                                         .getAnnouncement(provision.getAnnouncement().getId());
 
-                                if (currentAnnouncement.getAnnouncementStatus().getId()
-                                        .equals(announcement.getAnnouncementStatus().getId()))
-                                    generateWord = !currentAnnouncement.getNotice()
-                                            .equals(announcement.getNotice());
+                                if (announcement.getIsAnnouncementAlreadySentToConfrere() != null
+                                        && announcement.getIsAnnouncementAlreadySentToConfrere()) {
+                                    if (currentAnnouncement.getAnnouncementStatus().getId()
+                                            .equals(announcement.getAnnouncementStatus().getId()))
+                                        generateWord = !currentAnnouncement.getNotice()
+                                                .equals(announcement.getNotice());
+                                }
                             }
 
                             if (generateWord)

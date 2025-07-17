@@ -2087,9 +2087,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
-    public List<CustomerOrder> findCustomerOrderByForcedEmployeeAssigned(List<Employee> employees,
-            CustomerOrderStatus customerOrderStatus, Employee assignedUser) {
-        return customerOrderRepository.findCustomerOrderByForcedEmployeeAndStatusAssigned(employees,
-                customerOrderStatus, assignedUser);
+    public List<CustomerOrder> findCustomerOrderByForcedEmployeeAssigned(CustomerOrderStatus customerOrderStatus,
+            Employee assignedUser) {
+        return customerOrderRepository.findCustomerOrderByForcedEmployeeAndStatusAssigned(customerOrderStatus,
+                assignedUser);
     }
 }

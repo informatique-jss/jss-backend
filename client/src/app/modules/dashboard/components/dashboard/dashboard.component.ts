@@ -309,6 +309,10 @@ export class DashboardComponent implements OnInit {
     return this.habilitationsService.canViewLogModule();
   }
 
+  canAddAssignOrderForProduction() {
+    return this.habilitationsService.canAddAssignOrderForProduction();
+  }
+
   updateCheckboxes() {
     for (let checkbox of this.checkboxes) {
       let found = false;

@@ -37,7 +37,9 @@ public interface CustomerOrderAssignationService {
 
         public boolean isPriorityOrder(CustomerOrder customerOrder) throws OsirisException;
 
-        public List<ICustomerOrderAssignationStatistics> getCustomerOrderAssignationStatisticsForFormalistes();
+        public List<ICustomerOrderAssignationStatistics> getCustomerOrderAssignationStatisticsForFormalistes()
+                        throws OsirisException;
 
-        public List<ICustomerOrderAssignationStatistics> getCustomerOrderAssignationStatisticsForInsertions();
+        public List<ICustomerOrderAssignationStatistics> getCustomerOrderAssignationStatisticsForInsertions()
+                        throws OsirisException;
 }

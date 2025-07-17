@@ -195,6 +195,6 @@ public interface CustomerOrderService {
                         CustomerOrderStatus customerOrderStatus, Employee assignedUser,
                         AssignationType assignationType);
 
-        public List<CustomerOrder> findCustomerOrderByForcedEmployeeAssigned(List<Employee> employees,
-                        CustomerOrderStatus customerOrderStatus, Employee assignedUser);
+        public List<CustomerOrder> findCustomerOrderByForcedEmployeeAssigned(CustomerOrderStatus customerOrderStatus,
+                        Employee assignedUser);
 }
