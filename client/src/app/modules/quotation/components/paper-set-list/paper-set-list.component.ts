@@ -45,6 +45,7 @@ export class PaperSetListComponent implements OnInit {
     this.displayedColumns.push({ id: "paperSetTypeLabel", fieldName: "paperSetTypeLabel", label: "Action à réaliser" } as SortTableColumn<PaperSetResult>);
     this.displayedColumns.push({ id: "customerOrderId", fieldName: "customerOrderId", label: "N° commande" } as SortTableColumn<PaperSetResult>);
     this.displayedColumns.push({ id: "customerOrderStatus", fieldName: "customerOrderStatus", label: "Statut commande" } as SortTableColumn<PaperSetResult>);
+    this.displayedColumns.push({ id: "competentAuthorityLabel", fieldName: "competentAuthorityLabel", label: "Autorité compétente" } as SortTableColumn<PaperSetResult>);
     this.displayedColumns.push({ id: "tiersLabel", fieldName: "tiersLabel", label: "Tiers" } as SortTableColumn<PaperSetResult>);
     this.displayedColumns.push({ id: "responsableLabel", fieldName: "responsableLabel", label: "Responsable" } as SortTableColumn<PaperSetResult>);
     this.displayedColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire(s)" } as SortTableColumn<PaperSetResult>);
