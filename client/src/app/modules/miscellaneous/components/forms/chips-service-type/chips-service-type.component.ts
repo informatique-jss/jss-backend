@@ -6,6 +6,8 @@ import { map, startWith } from 'rxjs/operators';
 import { ServiceType } from 'src/app/modules/quotation/model/ServiceType';
 import { ServiceTypeService } from 'src/app/modules/quotation/services/service.type.service';
 import { AppService } from 'src/app/services/app.service';
+import { HabilitationsService } from 'src/app/services/habilitations.service';
+import { ConstantService } from '../../../services/constant.service';
 import { GenericChipsComponent } from '../generic-chips/generic-chips.component';
 
 @Component({
@@ -19,8 +21,8 @@ export class ChipsServiceTypeComponent extends GenericChipsComponent<ServiceType
   filteredServiceTypes: Observable<ServiceType[]> | undefined;
   @ViewChild('serviceTypeInput') serviceTypeInput: ElementRef<HTMLInputElement> | undefined;
 
-  constructor(private formBuild: UntypedFormBuilder,
-    private serviceTypeService: ServiceTypeService, private appService3: AppService) {
+  constructor(private formBuild: UntypedFormBuilder, private habilitationService: HabilitationsService,
+    private serviceTypeService: ServiceTypeService, private appService3: AppService, private constantService: ConstantService) {
     super(formBuild, appService3)
   }
 
@@ -49,7 +51,9 @@ export class ChipsServiceTypeComponent extends GenericChipsComponent<ServiceType
 
   private _filterByName(inputList: any, value: string): any {
     const filterValue = (value != undefined && value.toLowerCase != undefined) ? value.toLowerCase() : "";
-    return inputList.filter((input: any) => input.label != undefined && input.label.toLowerCase().includes(filterValue));
+    return inputList.filter((input: any) => input.label != undefined
+      && input.label.toLowerCase().includes(filterValue)
+      && (input.id != this.constantService.getServiceTypeOther().id || this.habilitationService.canAddServiceTypeOther()));
   }
 
   addServiceType(event: MatAutocompleteSelectedEvent): void {

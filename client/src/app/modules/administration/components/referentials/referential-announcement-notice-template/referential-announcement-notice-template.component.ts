@@ -4,6 +4,7 @@ import { ChangeEvent } from '@ckeditor/ckeditor5-angular';
 import { Alignment, Bold, ClassicEditor, Clipboard, Essentials, Font, GeneralHtmlSupport, Indent, IndentBlock, Italic, Link, List, Mention, Paragraph, PasteFromOffice, RemoveFormat, Underline, Undo } from 'ckeditor5';
 import { Observable } from 'rxjs';
 import { AnnouncementNoticeTemplate } from 'src/app/modules/quotation/model/AnnouncementNoticeTemplate';
+import { AnnouncementNoticeTemplateFragment } from 'src/app/modules/quotation/model/AnnouncementNoticeTemplateFragment';
 import { AnnouncementNoticeTemplateService } from 'src/app/modules/quotation/services/announcement.notice.template.service';
 import { AppService } from 'src/app/services/app.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
@@ -34,6 +35,8 @@ export class ReferentialAnnouncementNoticeTemplateComponent extends GenericRefer
       this.addEventSubscription = this.addEvent.subscribe(() => this.addEntity());
     if (this.cloneEvent)
       this.cloneEventSubscription = this.cloneEvent.subscribe(() => this.cloneEntity());
+    if (this.selectedEntity && !this.selectedEntity.announcementNoticeTemplateFragments)
+      this.selectedEntity.announcementNoticeTemplateFragments = [];
   }
 
   selectEntity(element: AnnouncementNoticeTemplate) {
@@ -72,5 +75,21 @@ export class ReferentialAnnouncementNoticeTemplateComponent extends GenericRefer
   onNoticeChange(event: ChangeEvent) {
     if (this.selectedEntity)
       this.selectedEntity.text = event.editor.getData();
+  }
+
+  addFragment() {
+    if (this.selectedEntity) {
+      if (!this.selectedEntity.announcementNoticeTemplateFragments)
+        this.selectedEntity.announcementNoticeTemplateFragments = [];
+      this.selectedEntity.announcementNoticeTemplateFragments.push({} as AnnouncementNoticeTemplateFragment);
+    }
+  }
+
+  deleteFragment(fragment: AnnouncementNoticeTemplateFragment) {
+    if (this.selectedEntity) {
+      if (this.selectedEntity.announcementNoticeTemplateFragments && this.selectedEntity.announcementNoticeTemplateFragments.indexOf(fragment) >= 0) {
+        this.selectedEntity.announcementNoticeTemplateFragments.splice(this.selectedEntity.announcementNoticeTemplateFragments.indexOf(fragment), 1);
+      }
+    }
   }
 }

@@ -824,7 +824,7 @@ public class MailHelper {
     public void sendConfirmationContactFormMyJss(String mailAdress) throws OsirisException {
         sendCustomerMailForMyJssMail(mailAdress, null,
                 constantService.getStringMyJssContactFormRequestMail(),
-                "Confirmation de la réception de votre demande de contribution",
+                "Confirmation de la réception de votre demande de contact",
                 CustomerMail.TEMPLATE_SEND_CONTACT_CONFIRMATION);
     }
 
@@ -1329,7 +1329,7 @@ public class MailHelper {
         customerMailService.addMailToQueue(mail);
     }
 
-    public void sendNewTokenMail(Responsable responsable) throws OsirisException {
+    public void sendNewTokenMail(Responsable responsable, String overrideMail) throws OsirisException {
         CustomerMail mail = new CustomerMail();
         mail.setMailTemplate(CustomerMail.TEMPLATE_SEND_TOKEN);
         mail.setHeaderPicture("images/mails/renew-password.png");
@@ -1339,7 +1339,13 @@ public class MailHelper {
         MailComputeResult mailComputeResult = new MailComputeResult();
         mailComputeResult.setRecipientsMailTo(new ArrayList<Mail>());
 
-        mailComputeResult.getRecipientsMailTo().add(responsable.getMail());
+        if (overrideMail != null) {
+            Mail overrideMailObject = new Mail();
+            overrideMailObject.setMail(overrideMail);
+            mailService.populateMailId(overrideMailObject);
+            mailComputeResult.getRecipientsMailTo().add(overrideMailObject);
+        } else
+            mailComputeResult.getRecipientsMailTo().add(responsable.getMail());
         mail.setMailComputeResult(mailComputeResult);
 
         mail.setSubject("Votre lien de connexion à MyJSS");

@@ -511,6 +511,16 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public ProvisionFamilyType getProvisionFamilyTypeBodacc() throws OsirisException {
+        return getConstants().getProvisionFamilyTypeBodacc();
+    }
+
+    @Override
+    public ProvisionFamilyType getProvisionFamilyTypeBalo() throws OsirisException {
+        return getConstants().getProvisionFamilyTypeBalo();
+    }
+
+    @Override
     public ProvisionFamilyType getProvisionFamilyTypeAbonnement() throws OsirisException {
         return getConstants().getProvisionFamilyTypeAbonnement();
     }
@@ -703,6 +713,16 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public AssignationType getAssignationTypeEmployee() throws OsirisException {
         return getConstants().getAssignationTypeEmployee();
+    }
+
+    @Override
+    public AssignationType getAssignationTypePublisciste() throws OsirisException {
+        return getConstants().getAssignationTypePublisciste();
+    }
+
+    @Override
+    public AssignationType getAssignationTypeFormaliste() throws OsirisException {
+        return getConstants().getAssignationTypeFormaliste();
     }
 
     @Override
@@ -1168,6 +1188,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public ActiveDirectoryGroup getActiveDirectoryGroupFormalites() throws OsirisException {
         return this.getConstants().getActiveDirectoryGroupFormalites();
+    }
+
+    @Override
+    public ActiveDirectoryGroup getActiveDirectoryGroupDirection() throws OsirisException {
+        return this.getConstants().getActiveDirectoryGroupDirection();
     }
 
     @Override

@@ -1,5 +1,6 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { APPLICATION_CV_ENTITY_TYPE } from '../../../../libs/Constants';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { Mail } from '../../../general/model/Mail';
@@ -33,7 +34,8 @@ export class JoinUsComponent implements OnInit {
   ];
 
   @ViewChild('modalImage') modalImageRef!: ElementRef<HTMLImageElement>;
-  @ViewChild('spontaneousApplicationModal') spontaneousApplicationModal!: ElementRef<HTMLElement>;
+  @ViewChild('imageModal') imageModal!: ElementRef<HTMLImageElement>;
+  @ViewChild('spontaneousApplicationModal') spontaneousApplicationModal!: TemplateRef<any>;
   @ViewChild(SingleUploadComponent) singleUploadComponent: SingleUploadComponent | undefined;
 
   APPLICATION_CV_ENTITY_TYPE = APPLICATION_CV_ENTITY_TYPE;
@@ -41,12 +43,15 @@ export class JoinUsComponent implements OnInit {
   newCandidacy: Candidacy = { mail: {} as Mail } as Candidacy;
   modalInstance: any;
   applicationForm!: FormGroup;
+  applicationlInstance: any | undefined;
+  currentImageLink: string = "";
 
   constructor(private formBuilder: FormBuilder,
     private constantService: ConstantService,
     private candidacyService: CandidacyService,
     private appService: AppService,
-    private platformService: PlatformService
+    private platformService: PlatformService,
+    private modalService: NgbModal,
   ) { }
 
   ngOnInit() {
@@ -65,10 +70,18 @@ export class JoinUsComponent implements OnInit {
   }
 
   openImageModal(imageUrl: string): void {
-    this.applicationForm.reset();
-    if (this.modalImageRef) {
-      this.modalImageRef.nativeElement.src = imageUrl;
+    this.currentImageLink = imageUrl;
+    if (this.applicationlInstance) {
+      return;
     }
+
+    this.applicationlInstance = this.modalService.open(this.imageModal, {
+      fullscreen: true
+    });
+
+    this.applicationlInstance.result.finally(() => {
+      this.applicationlInstance = undefined;
+    });
   }
 
   sendApplication() {
@@ -99,13 +112,21 @@ export class JoinUsComponent implements OnInit {
   }
 
   closeApplicationModal() {
-    if (this.modalInstance)
-      this.modalInstance.hide();
+    if (this.applicationlInstance)
+      this.applicationlInstance.close();
   }
 
   openApplicationModal() {
-    const modalElement = this.spontaneousApplicationModal.nativeElement;
-    this.modalInstance = new (window as any).bootstrap.Modal(modalElement);
-    this.modalInstance.show();
+    if (this.applicationlInstance) {
+      return;
+    }
+
+    this.applicationlInstance = this.modalService.open(this.spontaneousApplicationModal, {
+      size: "lg"
+    });
+
+    this.applicationlInstance.result.finally(() => {
+      this.applicationlInstance = undefined;
+    });
   }
 }

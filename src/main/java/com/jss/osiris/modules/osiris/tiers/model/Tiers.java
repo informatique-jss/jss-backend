@@ -157,10 +157,6 @@ public class Tiers implements IAttachment, IId {
 	private Employee salesEmployee;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_default_customer_order_employee")
-	private Employee defaultCustomerOrderEmployee;
-
-	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_formaliste")
 	private Employee formalisteEmployee;
 
@@ -621,14 +617,6 @@ public class Tiers implements IAttachment, IId {
 
 	public void setSepaMandateSignatureDate(LocalDate sepaMandateSignatureDate) {
 		this.sepaMandateSignatureDate = sepaMandateSignatureDate;
-	}
-
-	public Employee getDefaultCustomerOrderEmployee() {
-		return defaultCustomerOrderEmployee;
-	}
-
-	public void setDefaultCustomerOrderEmployee(Employee defaultCustomerOrderEmployee) {
-		this.defaultCustomerOrderEmployee = defaultCustomerOrderEmployee;
 	}
 
 	public String getLabel() {

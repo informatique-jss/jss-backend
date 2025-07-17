@@ -13,11 +13,15 @@ public interface UserScopeService {
 
     public List<Responsable> getPotentialUserScope();
 
+    public List<Responsable> getPotentialUserScope(Responsable responsable);
+
     public List<UserScope> getUserScope();
 
     public List<Responsable> getUserCurrentScopeResponsables();
 
     public void addResponsableToCurrentUserScope(List<Responsable> responsablesToAdd);
+
+    public void addResponsableToCurrentUserScope(List<Responsable> responsablesToAdd, Responsable responsable);
 
     public void authenticateUser(Responsable responsable, HttpServletRequest request);
 }

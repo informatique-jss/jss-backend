@@ -51,6 +51,11 @@ public class UserScopeServiceImpl implements UserScopeService {
     @Transactional(rollbackFor = Exception.class)
     public void addResponsableToCurrentUserScope(List<Responsable> responsablesToAdd) {
         Responsable responsable = employeeService.getCurrentMyJssUser();
+        addResponsableToCurrentUserScope(responsablesToAdd, responsable);
+    }
+
+    @Override
+    public void addResponsableToCurrentUserScope(List<Responsable> responsablesToAdd, Responsable responsable) {
         if (responsable != null) {
             List<UserScope> existingScope = userScopeRepository.findByResponsable(responsable);
             userScopeRepository.deleteAll(existingScope);
@@ -58,13 +63,14 @@ public class UserScopeServiceImpl implements UserScopeService {
             if (responsablesToAdd != null && responsablesToAdd.size() > 0)
                 for (Responsable responsableToAdd : responsablesToAdd) {
                     List<Responsable> potentialScope = getPotentialUserScope();
-                    for (Responsable potentialResponsable : potentialScope)
-                        if (potentialResponsable.getId().equals(responsableToAdd.getId())) {
-                            UserScope newScope = new UserScope();
-                            newScope.setResponsable(responsable);
-                            newScope.setResponsableViewed(responsableToAdd);
-                            addOrUpdateUserScope(newScope);
-                        }
+                    if (potentialScope != null)
+                        for (Responsable potentialResponsable : potentialScope)
+                            if (potentialResponsable.getId().equals(responsableToAdd.getId())) {
+                                UserScope newScope = new UserScope();
+                                newScope.setResponsable(responsable);
+                                newScope.setResponsableViewed(responsableToAdd);
+                                addOrUpdateUserScope(newScope);
+                            }
                 }
         }
     }
@@ -72,6 +78,11 @@ public class UserScopeServiceImpl implements UserScopeService {
     @Override
     public List<Responsable> getPotentialUserScope() {
         Responsable responsable = employeeService.getCurrentMyJssUser();
+        return getPotentialUserScope(responsable);
+    }
+
+    @Override
+    public List<Responsable> getPotentialUserScope(Responsable responsable) {
         if (responsable != null) {
             List<Integer> potentialUserScopeIds = userScopeRepository
                     .getPotentialUserScope(responsable.getMail().getId());

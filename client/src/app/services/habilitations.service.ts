@@ -11,6 +11,18 @@ export class HabilitationsService {
   ) {
   }
 
+  canAddAssignOrderForProduction() {
+    return this.loginService.hasGroup([TEAM_RESPONSIBLE]);
+  }
+
+  canAddServiceTypeOther() {
+    return this.loginService.hasGroup([ADMINISTRATEURS]);
+  }
+
+  canChooseProductionEmployeeOnITiers() {
+    return this.loginService.hasGroup([ADMINISTRATEURS]);
+  }
+
   canUpdateComplexity() {
     return this.loginService.hasGroup([TEAM_RESPONSIBLE]);
   }
@@ -21,10 +33,6 @@ export class HabilitationsService {
 
   canDisplayManagementFieldsInIncidentReport() {
     return this.loginService.hasGroup([ADMINISTRATEURS])
-  }
-
-  canDisplayKanban() {
-    return true;
   }
 
   canViewIndicatorModule() {

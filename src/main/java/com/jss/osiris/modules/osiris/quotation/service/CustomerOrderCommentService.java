@@ -25,4 +25,5 @@ public interface CustomerOrderCommentService {
     public List<CustomerOrderComment> getCustomerOrderCommentForQuotation(Quotation quotation);
 
     public List<CustomerOrderComment> getCustomerOrderCommentForProvision(Provision provision);
+
 }

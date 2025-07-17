@@ -63,6 +63,21 @@
           </td>
         </tr>
       </table>
+      <table class="full-width"
+        *ngIf="quotation && instanceOfCustomerOrder(quotation) &&  quotation.customerOrderAssignations && canAddAssignOrderForProduction()">
+        <tr>
+          <td *ngFor="let customerOrderAssignation of quotation.customerOrderAssignations">
+            <autocomplete-employee [(model)]="customerOrderAssignation.employee" [form]="orderingCustomerForm"
+              [propertyName]="'assignedTo'+customerOrderAssignation.id" [isMandatory]="false" [isDisabled]="false"
+              [label]="customerOrderAssignation.assignationType.label"
+              (onOptionSelected)="updateAssignedToFor($event,customerOrderAssignation)">
+            </autocomplete-employee>
+          </td>
+          <td>
+            <button mat-raised-button color="accent" (click)="assignImmediatlyOrder()">Assigner immédiatement</button>
+          </td>
+        </tr>
+      </table>
       <mat-divider class="margin-mat-divider"></mat-divider>
       <fieldset [disabled]="editMode==false" class="fieldset-no-border">
         <table class="full-width" *ngIf="quotation && instanceOfCustomerOrder(quotation)">

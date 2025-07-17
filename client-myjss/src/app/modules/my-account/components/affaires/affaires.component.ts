@@ -71,10 +71,12 @@ export class AffairesComponent implements OnInit {
     if (this.currentPage == 0)
       this.isFirstLoading = true;
 
+    this.appService.showLoadingSpinner();
     this.affaireService.searchAffairesForCurrentUser(this.searchText, this.currentPage, this.currentSort).subscribe(response => {
+      this.appService.hideLoadingSpinner();
       if (response) {
         this.affaires.push(...response);
-        if (response.length < 51)
+        if (response.length < 10)
           this.hideSeeMore = true;
       }
       this.isFirstLoading = false;

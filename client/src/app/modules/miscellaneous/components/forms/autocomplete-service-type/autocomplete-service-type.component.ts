@@ -31,7 +31,7 @@ export class AutocompleteServiceTypeComponent extends GenericLocalAutocompleteCo
   }
 
   initTypes(): void {
-    this.serviceTypeService.getServiceTypes().subscribe(response => {
+    this.serviceTypeService.getServiceTypesComplete().subscribe(response => {
       this.types = response;
     });
   }

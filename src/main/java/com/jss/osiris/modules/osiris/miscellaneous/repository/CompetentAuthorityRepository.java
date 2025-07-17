@@ -44,7 +44,8 @@ public interface CompetentAuthorityRepository extends QueryCacheCrudRepository<C
                         " from provision p " +
                         " join service s on s.id = p.id_service join asso_affaire_order aao on aao.id = s.id_asso_affaire_order join customer_order co on co.id = aao.id_customer_order "
                         +
-                        " join service_type st on st.id  = s.id_service_type  " +
+                        " join asso_service_service_type ast on ast.id_service  = s.id join service_type st on st.id=ast.id_service_type  "
+                        +
                         " join service_family sf on sf.id = st.id_service_family  " +
                         " left join formalite f on f.id = p.id_formalite  " +
                         " left join simple_provision sp  on sp.id = p.id_simple_provision " +

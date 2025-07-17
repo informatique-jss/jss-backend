@@ -1,19 +1,25 @@
 import { ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Subscription } from 'rxjs';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { MenuItem } from '../../../general/model/MenuItem';
 import { AppService } from '../../../main/services/app.service';
 import { CustomerOrder } from '../../../my-account/model/CustomerOrder';
+import { Service } from '../../../my-account/model/Service';
 import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
 import { QuotationService } from '../../../my-account/services/quotation.service';
+import { NoticeTemplateDescription } from '../../model/NoticeTemplateDescription';
+import { NoticeTemplateService } from '../../services/notice.template.service';
+import { NoticeTemplateComponent } from '../notice-template/notice-template.component';
 
 @Component({
   selector: 'app-quotation',
   templateUrl: './quotation.component.html',
   styleUrls: ['./quotation.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS]
+  imports: [SHARED_IMPORTS, NoticeTemplateComponent]
 })
 export class QuotationComponent implements OnInit {
   myJssQuotationItems!: MenuItem[];
@@ -22,6 +28,15 @@ export class QuotationComponent implements OnInit {
 
   selectedTab: MenuItem | null = null;
   cleanModalInstance: any | undefined;
+
+  noticeTemplateDescription: NoticeTemplateDescription | undefined;
+  noticeTemplateDescriptionSubscription: Subscription = new Subscription;
+
+  selectedServiceInRequiredInformation: Service | undefined;
+  isShowNoticeTemplate: boolean = false;
+  isNoticeTemplateReadyToBeShown: boolean = false;
+
+  form!: FormGroup;
 
   maxAccessibleStepIndex: number | null = null;
 
@@ -41,6 +56,7 @@ export class QuotationComponent implements OnInit {
     public modalService2: NgbModal,
     private activatedRoute: ActivatedRoute,
     private customerOrderService: CustomerOrderService,
+    private noticeTemplateService: NoticeTemplateService,
   ) { }
 
   ngOnInit() {
@@ -83,12 +99,23 @@ export class QuotationComponent implements OnInit {
       }
     }
 
+    this.noticeTemplateDescriptionSubscription = this.noticeTemplateService.noticeTemplateDescriptionObservable.subscribe(item => {
+      if (item) {
+        this.noticeTemplateDescription = item;
+        if (this.noticeTemplateDescription.service) {
+          this.isNoticeTemplateReadyToBeShown = true;
+          this.selectedServiceInRequiredInformation = this.noticeTemplateDescription.service;
+        }
+
+        this.isShowNoticeTemplate = item.isShowNoticeTemplate;
+      }
+    });
+
     this.router.events.subscribe(url => {
       if (url instanceof NavigationEnd) {
         this.matchRoute(url.url);
       }
     });
-
   }
 
   cleanStorageData() {
@@ -115,7 +142,9 @@ export class QuotationComponent implements OnInit {
 
   finalCleanStorageData() {
     this.quotationService.cleanStorageData();
-    this.appService.openRoute(undefined, "quotation/identification", undefined);
+    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      this.appService.openRoute(undefined, "quotation/identification", undefined);
+    });
   }
 
   cleanModal(content: TemplateRef<any>) {
@@ -156,7 +185,6 @@ export class QuotationComponent implements OnInit {
       this.appService.openRoute(undefined, item.route, undefined);
     }
   }
-
 
   ngAfterContentChecked(): void {
     this.changeDetectorRef.detectChanges();

@@ -7,7 +7,7 @@ import { GenericSelectComponent } from '../generic-select/generic-select.compone
 
 @Component({
   selector: 'select-building-domiciliation',
-  templateUrl: '../generic-select/generic-select.component.html',
+  templateUrl: './select-building-domiciliation.component.html',
   styleUrls: ['../generic-select/generic-select.component.css'],
   standalone: true,
   imports: [SHARED_IMPORTS]

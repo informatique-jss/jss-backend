@@ -64,18 +64,15 @@
                 [form]="principalForm" propertyName="salesEmployee" [isMandatory]="true"></autocomplete-employee>
             </td>
             <td>
-              <autocomplete-employee [(model)]="tiers.defaultCustomerOrderEmployee" [isDisabled]="!editMode"
-                label="Assignation par défaut des commandes" [form]="principalForm"
-                propertyName="defaultCustomerOrderEmployee" [isMandatory]="false"></autocomplete-employee>
-            </td>
-            <td>
-              <autocomplete-employee [(model)]="tiers.formalisteEmployee" [isDisabled]="!editMode" label="Formaliste"
-                [isDisabled]="!editMode" [form]="principalForm" propertyName="formalisteEmployee">
+              <autocomplete-employee *ngIf="!editMode || canChooseProductionEmployeeOnITiers()"
+                [(model)]="tiers.formalisteEmployee" [isDisabled]="!editMode" label="Formaliste"
+                [isDisabled]="!editMode " [form]="principalForm" propertyName="formalisteEmployee">
               </autocomplete-employee>
             </td>
             <td>
-              <autocomplete-employee [(model)]="tiers.insertionEmployee" [isDisabled]="!editMode" label="Publiciste"
-                [isDisabled]="!editMode" [form]="principalForm" propertyName="insertionEmployee">
+              <autocomplete-employee *ngIf="!editMode || canChooseProductionEmployeeOnITiers()"
+                [(model)]="tiers.insertionEmployee" [isDisabled]="!editMode" label="Publiciste"
+                [isDisabled]="!editMode  " [form]="principalForm" propertyName="insertionEmployee">
               </autocomplete-employee>
             </td>
           </tr>

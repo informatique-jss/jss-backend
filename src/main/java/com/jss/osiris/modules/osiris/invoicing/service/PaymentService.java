@@ -104,12 +104,12 @@ public interface PaymentService {
         public void refundPayment(Payment payment, Tiers tiers, Affaire affaire)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException;
 
-        public Payment generateDepositOnCustomerOrderForCbPayment(CustomerOrder customerOrder,
+        public Payment generateDepositOnCustomerOrderForCbPayment(List<CustomerOrder> customerOrders,
                         CentralPayPaymentRequest centralPayPaymentRequest)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 
-        public void generatePaymentOnInvoiceForCbPayment(Invoice invoice,
+        public void generatePaymentOnInvoiceForCbPayment(List<Invoice> invoices,
                         CentralPayPaymentRequest centralPayPaymentRequest)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;

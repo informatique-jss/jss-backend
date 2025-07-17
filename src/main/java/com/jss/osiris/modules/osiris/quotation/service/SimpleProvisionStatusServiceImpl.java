@@ -56,7 +56,7 @@ public class SimpleProvisionStatusServiceImpl implements SimpleProvisionStatusSe
                                 false,
                                 AggregateStatus.AGGREGATE_STATUS_WAITING, 20);
                 updateStatus(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_LINKED_PROVISION,
-                                "En attente de prestation liée",
+                                "En attente d'une autre prestation",
                                 "link", false,
                                 false,
                                 AggregateStatus.AGGREGATE_STATUS_WAITING, 6);

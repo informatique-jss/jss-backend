@@ -19,7 +19,8 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(indexes = { @Index(name = "idx_user_scope_responsable", columnList = "id_responsable") })
+@Table(indexes = { @Index(name = "idx_user_scope_responsable", columnList = "id_responsable"),
+        @Index(name = "idx_user_scope_responsable_viewed", columnList = "id_responsable,id_responsable_viewed", unique = true) })
 public class UserScope implements Serializable, IId {
     @Id
     @SequenceGenerator(name = "user_scope_sequence", sequenceName = "user_scope_sequence", allocationSize = 1)

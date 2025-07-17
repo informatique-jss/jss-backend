@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -52,6 +53,7 @@ import com.jss.osiris.modules.osiris.crm.model.Candidacy;
 import com.jss.osiris.modules.osiris.crm.model.Voucher;
 import com.jss.osiris.modules.osiris.crm.service.VoucherService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
+import com.jss.osiris.modules.osiris.invoicing.model.Payment;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
@@ -74,6 +76,8 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.DepartmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.LanguageService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.LegalFormService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.controller.QuotationValidationHelper;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
@@ -86,6 +90,7 @@ import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
+import com.jss.osiris.modules.osiris.quotation.model.IWorkflowElement;
 import com.jss.osiris.modules.osiris.quotation.model.MailRedirectionType;
 import com.jss.osiris.modules.osiris.quotation.model.NoticeType;
 import com.jss.osiris.modules.osiris.quotation.model.NoticeTypeFamily;
@@ -113,6 +118,7 @@ import com.jss.osiris.modules.osiris.quotation.service.PricingHelper;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
 import com.jss.osiris.modules.osiris.quotation.service.ServiceFamilyGroupService;
 import com.jss.osiris.modules.osiris.quotation.service.ServiceFamilyService;
+import com.jss.osiris.modules.osiris.quotation.service.ServiceFieldTypeService;
 import com.jss.osiris.modules.osiris.quotation.service.ServiceService;
 import com.jss.osiris.modules.osiris.quotation.service.ServiceTypeService;
 import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.referentials.TypeDocumentService;
@@ -151,6 +157,12 @@ public class MyJssQuotationController {
 
 	@Autowired
 	TypeDocumentService typeDocumentService;
+
+	@Autowired
+	MailService mailService;
+
+	@Autowired
+	PhoneService phoneService;
 
 	@Autowired
 	AttachmentTypeService attachmentTypeService;
@@ -243,7 +255,11 @@ public class MyJssQuotationController {
 	NewspaperService newspaperService;
 
 	@Autowired
+	ServiceFieldTypeService serviceFieldTypeService;
+
+	@Autowired
 	VoucherService voucherService;
+
 	@Autowired
 	ReadingFolderService readingFolderService;
 
@@ -853,14 +869,19 @@ public class MyJssQuotationController {
 
 	@GetMapping(inputEntryPoint + "/affaire/siret")
 	@JsonView(JacksonViews.MyJssListView.class)
-	public ResponseEntity<List<Affaire>> getAffaireBySiret(@RequestParam String siret, HttpServletRequest request)
+	public ResponseEntity<List<Affaire>> getAffaireBySiretOrSiren(@RequestParam String siretOrSiren,
+			HttpServletRequest request)
 			throws OsirisClientMessageException, OsirisException {
 		detectFlood(request);
-		if (siret == null)
+		if (siretOrSiren == null)
 			throw new OsirisValidationException("id");
-		validationHelper.validateSiret(siret);
 
-		return new ResponseEntity<List<Affaire>>(affaireService.getAffairesFromSiret(siret.trim().replaceAll(" ", "")),
+		if (siretOrSiren == null || !validationHelper.validateSiret(siretOrSiren.trim().replaceAll(" ", ""))
+				&& !validationHelper.validateSiren(siretOrSiren.trim().replaceAll(" ", "")))
+			return new ResponseEntity<List<Affaire>>(new ArrayList<Affaire>(), HttpStatus.OK);
+
+		return new ResponseEntity<List<Affaire>>(
+				affaireService.getAffairesFromSiret(siretOrSiren.trim().replaceAll(" ", "")),
 				HttpStatus.OK);
 	}
 
@@ -1274,6 +1295,10 @@ public class MyJssQuotationController {
 		if (canUpdateProvision) {
 			for (Provision provision : serviceFetched.getProvisions()) {
 				for (Provision provisionIn : service.getProvisions()) {
+					IWorkflowElement status = getProvisionStatus(provision);
+					if (status != null && !status.getIsOpenState())
+						return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+
 					if (provision.getId().equals(provisionIn.getId())) {
 						if (provision.getAnnouncement() != null) {
 							provision.getAnnouncement().setNotice(provisionIn.getAnnouncement().getNotice());
@@ -1288,8 +1313,14 @@ public class MyJssQuotationController {
 									.setIsProofReadingDocument(
 											provisionIn.getAnnouncement().getIsProofReadingDocument());
 						}
-						if (provision.getDomiciliation() != null) {
-							provision = provisionIn;
+						if (provisionIn.getDomiciliation() != null) {
+							if (provisionIn.getDomiciliation().getMails() != null)
+								mailService.populateMailIds(provisionIn.getDomiciliation().getMails());
+							if (provisionIn.getDomiciliation().getLegalGardianMails() != null)
+								mailService.populateMailIds(provisionIn.getDomiciliation().getLegalGardianMails());
+							if (provisionIn.getDomiciliation().getLegalGardianPhones() != null)
+								phoneService.populatePhoneIds(provisionIn.getDomiciliation().getLegalGardianPhones());
+							provision.setDomiciliation(provisionIn.getDomiciliation());
 						}
 					}
 				}
@@ -1299,7 +1330,18 @@ public class MyJssQuotationController {
 		serviceService.addOrUpdateServiceFromUser(serviceFetched);
 
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+	}
 
+	private IWorkflowElement getProvisionStatus(Provision provision) {
+		if (provision.getAnnouncement() != null)
+			return provision.getAnnouncement().getAnnouncementStatus();
+		if (provision.getDomiciliation() != null)
+			return provision.getDomiciliation().getDomiciliationStatus();
+		if (provision.getFormalite() != null)
+			return provision.getFormalite().getFormaliteStatus();
+		if (provision.getSimpleProvision() != null)
+			return provision.getSimpleProvision().getSimpleProvisionStatus();
+		return null;
 	}
 
 	@GetMapping(inputEntryPoint + "/services")
@@ -1375,7 +1417,7 @@ public class MyJssQuotationController {
 		ServiceFamily serviceFamily = serviceFamilyService.getServiceFamily(idServiceFamily);
 		if (serviceFamily == null)
 			return new ResponseEntity<List<ServiceType>>(new ArrayList<ServiceType>(), HttpStatus.OK);
-		return new ResponseEntity<List<ServiceType>>(serviceTypeService.getServiceTypesForFamily(serviceFamily),
+		return new ResponseEntity<List<ServiceType>>(serviceTypeService.getServiceTypesForFamilyForMyJss(serviceFamily),
 				HttpStatus.OK);
 	}
 
@@ -1739,9 +1781,16 @@ public class MyJssQuotationController {
 		if (customerOrder == null || !myJssQuotationValidationHelper.canSeeQuotation(customerOrder))
 			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
 
+		// cancel only if it's payment free
+		if (customerOrder.getPayments() != null && customerOrder.getPayments().size() > 0)
+			for (Payment payment : customerOrder.getPayments())
+				if (!payment.getIsCancelled())
+					return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+
 		customerOrderService.addOrUpdateCustomerOrderStatus(customerOrder, CustomerOrderStatus.ABANDONED, true);
 
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+
 	}
 
 	@GetMapping(inputEntryPoint + "/service-types/provisions")
@@ -1855,6 +1904,14 @@ public class MyJssQuotationController {
 				HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/service-field-types")
+	public ResponseEntity<List<ServiceFieldType>> getServiceFieldTypes(HttpServletRequest request) {
+		detectFlood(request);
+
+		return new ResponseEntity<List<ServiceFieldType>>(serviceFieldTypeService.getServiceFieldTypes(),
+				HttpStatus.OK);
+	}
+
 	@PostMapping(inputEntryPoint + "/reading-folder")
 	@JsonView({ JacksonViews.MyJssDetailedView.class })
 	public ResponseEntity<ReadingFolder> addOrUpdateReadingFolder(@RequestBody ReadingFolder readingFolder,
@@ -1932,5 +1989,26 @@ public class MyJssQuotationController {
 		return new ResponseEntity<ReadingFolder>(
 				readingFolderService.getReadingFolder(idReadingFolder),
 				HttpStatus.OK);
+	}
+
+	@PostMapping(inputEntryPoint + "/payment/cb/invoice")
+	public ResponseEntity<String> getCardPaymentLinkForPaymentInvoices(@RequestBody List<Integer> customerOrderIds)
+			throws OsirisClientMessageException, OsirisException {
+		List<CustomerOrder> orders = new ArrayList<CustomerOrder>();
+		for (Integer orderId : customerOrderIds) {
+			CustomerOrder customerOrder = customerOrderService.getCustomerOrder(orderId);
+			if (customerOrder == null)
+				throw new OsirisValidationException("customerOrder");
+			orders.add(customerOrder);
+		}
+
+		Responsable currentUser = employeeService.getCurrentMyJssUser();
+		if (currentUser == null)
+			throw new OsirisValidationException("currentUser");
+
+		String link = customerOrderService.getCardPaymentLinkForPaymentInvoice(orders, currentUser.getMail().getMail(),
+				"Paiement de la facture pour la commande n°" + String.join(", ",
+						orders.stream().map(c -> c.getId().toString()).collect(Collectors.toList())));
+		return new ResponseEntity<>("{\"link\":\"" + link + "\"}", HttpStatus.OK);
 	}
 }

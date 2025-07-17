@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { BuildingDomiciliation } from 'src/app/modules/quotation/model/BuildingDomiciliation';
 import { BuildingDomiciliationService } from 'src/app/modules/quotation/services/building.domiciliation.service';
-import { GenericSelectComponent } from '../generic-select/generic-select.component';
 import { AppService } from 'src/app/services/app.service';
+import { GenericSelectComponent } from '../generic-select/generic-select.component';
 
 
 @Component({
@@ -24,4 +24,5 @@ export class SelectBuildingDomicilationComponent extends GenericSelectComponent<
       this.types = response;
     })
   }
+
 }

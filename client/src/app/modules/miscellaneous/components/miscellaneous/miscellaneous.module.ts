@@ -203,6 +203,7 @@ import { RadioGroupTransfertFundsComponent } from '../forms/radio-group-transfer
 import { SelectAccountingAccountClassComponent } from '../forms/select-accounting-account-class/select-accounting-account-class.component';
 import { SelectAccountingJournalComponent } from '../forms/select-accounting-journal/select-accounting-journal.component';
 import { SelectActiveDirectoryGroupComponent } from '../forms/select-active-directory-group/select-active-directory-group.component';
+import { SelectAnnouncementNoticeTemplateFragmentComponent } from '../forms/select-announcement-notice-template-fragment/select-announcement-notice-template-fragment';
 import { SelectAssignationTypeComponent } from '../forms/select-assignation-type/select-assignation-type.component';
 import { SelectAttachmentTypeComponent } from '../forms/select-attachment-type/select-attachment-type.component';
 import { SelectBatchCategoryComponent } from '../forms/select-batch-category/select-batch-category.component';
@@ -268,6 +269,7 @@ import { SelectServiceFamilyComponent } from '../forms/select-service-family/sel
 import { SelectServiceFieldDataTypeComponent } from '../forms/select-service-field-data-type/select-service-field-data-type.component';
 import { SelectServiceFieldTypeComponent } from '../forms/select-service-field-type/select-service-field-type.component';
 import { SelectServiceTypeComponent } from '../forms/select-service-type/select-service-type.component';
+import { SelectSingleEmployeeComponent } from '../forms/select-single-employee/select-single-employee.component';
 import { SelectSpecialOfferComponent } from '../forms/select-special-offer/select-special-offer.component';
 import { SelectSubscriptionPeriodComponent } from '../forms/select-subscription-period/select-subscription-period.component';
 import { SelectTiersCategoryComponent } from '../forms/select-tiers-category/select-tiers-category.component';
@@ -594,7 +596,9 @@ const routes: Routes = [
     SelectNoticeTypeComponent,
     SelectNoticeTemplateComponent,
     AutocompleteVoucherComponent,
-    ChipsResponsableComponent
+    ChipsResponsableComponent,
+    SelectSingleEmployeeComponent,
+    SelectAnnouncementNoticeTemplateFragmentComponent
   ],
   exports: [
     HistoryComponent,
@@ -857,7 +861,9 @@ const routes: Routes = [
     SelectNoticeTypeComponent,
     SelectNoticeTemplateComponent,
     AutocompleteVoucherComponent,
-    ChipsResponsableComponent
+    ChipsResponsableComponent,
+    SelectSingleEmployeeComponent,
+    SelectAnnouncementNoticeTemplateFragmentComponent
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

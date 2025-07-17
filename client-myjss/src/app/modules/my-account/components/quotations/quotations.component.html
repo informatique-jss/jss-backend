@@ -206,9 +206,14 @@
                             <span class="placeholder placeholder-sm col-4"></span>
                           </p>
                         </div>
-                        <button type="button" class="btn btn-link btn-sm px-0 mt-2"
+                        <button type="button" class="btn btn-link btn-sm px-2 mt-2 hover-bg-light "
                           (click)="openQuotationDetails($event, quotation); $event.stopPropagation();">
                           <i class="ai-file-text me-2"></i>Détails du devis
+                        </button>
+                        <button type="button" class="btn btn-link btn-sm px-2 mt-2 hover-bg-light "
+                          *ngIf="quotation.quotationStatus.code==QUOTATION_STATUS_OPEN"
+                          (click)="cancelDraft(quotation); $event.stopPropagation();">
+                          <i class="ai-file-text me-2"></i>Abandonner
                         </button>
                       </div>
 
@@ -238,8 +243,8 @@
                       </div>
 
                       <!-- Bloc : Bouton avis -->
-                      <div class="col-sm-6 col-lg-3 text-sm-end align-self-start" *ngIf="quotation.quotationStatus.code === QUOTATION_STATUS_VALIDATED_BY_CUSTOMER
-               || quotation.quotationStatus.code === QUOTATION_STATUS_REFUSED_BY_CUSTOMER">
+                      <div class="col-sm-6 col-lg-3 text-sm-end align-self-start" *ngIf="false && (quotation.quotationStatus.code === QUOTATION_STATUS_VALIDATED_BY_CUSTOMER
+               || quotation.quotationStatus.code === QUOTATION_STATUS_REFUSED_BY_CUSTOMER)">
                         <button class="btn btn-sm btn-outline-primary w-100 w-sm-auto" type="button">
                           <i class="ai-star me-2 ms-n1"></i>Laisser un avis
                         </button>
@@ -281,3 +286,19 @@
     </div>
   </div>
 </div>
+
+<ng-template #cancelQuotationModal let-modal>
+  <div>
+    <div class="modal-header">
+      <h5 class="modal-title" id="cancelQuotationModal">Abandonner le devis</h5>
+      <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Fermer"></button>
+    </div>
+    <div class="modal-body">Êtes-vous sûr de vouloir abandonner ce devis ?
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Annuler</button>
+      <button type="button" class="btn btn-danger ms-2"
+        (click)="finalCancelDraft($event );$event.stopPropagation();modal.dismiss()">Abandonner</button>
+    </div>
+  </div>
+</ng-template>

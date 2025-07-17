@@ -24,6 +24,14 @@ tasks.withType(JavaCompile) {
     options.compilerArgs << "-parameters"
 }
 
+def excludeHazelcast = project.hasProperty('excludeHazelcast') && project.excludeHazelcast == 'true'
+
+tasks.named('processResources') {
+    if (excludeHazelcast) {
+        exclude 'hazelcast.xml'
+    }
+}
+
 dependencies {
     // Spring
     implementation 'org.springframework.boot:spring-boot-starter-web:3.2.4'
@@ -72,7 +80,7 @@ dependencies {
 }
  
 group = 'com.jss.osiris'
-version = '25-beta1' 
+version = '25' 
 description = 'Outil Sympa, Interactif, Révolutionnairement Intuitif et Simple'
 sourceCompatibility = '17'
 targetCompatibility = '17'

@@ -308,7 +308,7 @@ public class AttachmentServiceImpl implements AttachmentService {
             // Notify user only if not a mail and by a Osiris user
             if (!attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeAutomaticMail().getId())
                     && employeeService.getCurrentEmployee() != null)
-                notificationService.notifyAttachmentAddToCustomerorder(customerOrder, attachment);
+                notificationService.notifyAttachmentAddToCustomerOrder(customerOrder, attachment);
         } else if (entityType.equals(Invoice.class.getSimpleName())) {
             Invoice invoice = invoiceService.getInvoice(idEntity);
             if (invoice == null)

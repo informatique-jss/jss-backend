@@ -105,9 +105,9 @@ public class MyJssQuotationDelegate {
 
         saveNewMailsOnAffaire(order);
 
-        if (order.getResponsable() != null
+        if (order.getResponsable() != null && order.getResponsable().getId() != null
                 && !order.getResponsable().getId().equals(employeeService.getCurrentMyJssUser().getId())) {
-            List<Responsable> responsables = userScopeService.getPotentialUserScope();
+            List<Responsable> responsables = userScopeService.getUserCurrentScopeResponsables();
             Boolean found = false;
             if (responsables != null) {
                 for (Responsable responsable : responsables) {
@@ -119,6 +119,8 @@ public class MyJssQuotationDelegate {
             }
             if (!found)
                 order.setResponsable(employeeService.getCurrentMyJssUser());
+            else
+                order.setResponsable(responsableService.getResponsable(order.getResponsable().getId()));
         } else {
             order.setResponsable(employeeService.getCurrentMyJssUser());
         }
@@ -209,6 +211,9 @@ public class MyJssQuotationDelegate {
                     throw new OsirisValidationException("Tiers");
                 } else {
                     tiersService.addOrUpdateTiers(quotation.getResponsable().getTiers());
+                    List<Responsable> userScope = userScopeService.getPotentialUserScope(quotation.getResponsable());
+                    if (userScope != null && userScope.size() > 0)
+                        userScopeService.addResponsableToCurrentUserScope(userScope, quotation.getResponsable());
                 }
             }
         }
@@ -263,6 +268,8 @@ public class MyJssQuotationDelegate {
 
         if (shouldConnectUserAtTheEnd)
             userScopeService.authenticateUser(quotation.getResponsable(), request);
+        else
+            return null;
         return quotation;
     }
 
@@ -345,7 +352,20 @@ public class MyJssQuotationDelegate {
         quotation.getResponsable().getTiers().getDocuments().add(receiptDocument);
 
         quotation.getResponsable().getTiers().setIsNewTiers(true);
-        quotation.getResponsable().getTiers().setIsIndividual(false);
+
+        if (quotation.getResponsable().getTiers().getIsIndividual() == null)
+            quotation.getResponsable().getTiers().setIsIndividual(false);
+
+        if (quotation.getResponsable().getTiers().getIsIndividual()) {
+            quotation.getResponsable().getTiers().setCivility(quotation.getResponsable().getCivility());
+            quotation.getResponsable().getTiers().setFirstname(quotation.getResponsable().getFirstname());
+            quotation.getResponsable().getTiers().setLastname(quotation.getResponsable().getLastname());
+            quotation.getResponsable().getTiers().setAddress(quotation.getResponsable().getAddress());
+            quotation.getResponsable().getTiers().setCountry(quotation.getResponsable().getCountry());
+            quotation.getResponsable().getTiers().setPostalCode(quotation.getResponsable().getPostalCode());
+            quotation.getResponsable().getTiers().setCity(quotation.getResponsable().getCity());
+        }
+
         quotation.getResponsable().getTiers().setTiersType(constantService.getTiersTypeClient());
         quotation.getResponsable().getTiers().setTiersType(constantService.getTiersTypeClient());
         quotation.getResponsable().getTiers().setSalesEmployee(constantService.getEmployeeSalesDirector());

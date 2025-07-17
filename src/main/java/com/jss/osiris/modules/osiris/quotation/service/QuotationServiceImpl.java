@@ -193,6 +193,9 @@ public class QuotationServiceImpl implements QuotationService {
                 mailService.populateMailIds(document.getMailsClient());
             }
 
+        if (quotation.getId() == null)
+            quotation = quotationRepository.save(quotation);
+
         // Complete provisions
         boolean oneNewProvision = false;
         boolean computePrice = false;
@@ -390,7 +393,7 @@ public class QuotationServiceImpl implements QuotationService {
         if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.VALIDATED_BY_CUSTOMER))
             if (quotation.getCustomerOrders() != null && quotation.getCustomerOrders().size() > 0)
                 return customerOrderService
-                        .getCardPaymentLinkForCustomerOrderDeposit(quotation.getCustomerOrders().get(0), mail, subject);
+                        .getCardPaymentLinkForCustomerOrderDeposit(quotation.getCustomerOrders(), mail, subject);
             else
                 return "ok";
 
@@ -445,7 +448,7 @@ public class QuotationServiceImpl implements QuotationService {
                             .equals(QuotationStatus.SENT_TO_CUSTOMER)) {
                         unlockQuotationFromDeposit(quotation);
                         paymentService.generateDepositOnCustomerOrderForCbPayment(
-                                quotation.getCustomerOrders().get(0), centralPayPaymentRequest);
+                                quotation.getCustomerOrders(), centralPayPaymentRequest);
                     }
                 }
                 if (centralPayPaymentRequest.getCreationDate().isBefore(LocalDateTime.now().minusMinutes(5))) {
@@ -656,7 +659,7 @@ public class QuotationServiceImpl implements QuotationService {
                     order = new Order(Direction.ASC, "customerOrderStatus");
 
                 Sort sort = Sort.by(Arrays.asList(order));
-                Pageable pageableRequest = PageRequest.of(page, 50, sort);
+                Pageable pageableRequest = PageRequest.of(page, 10, sort);
                 return populateTransientField(quotationRepository.searchQuotationsForCurrentUser(responsablesToFilter,
                         quotationStatusToFilter, pageableRequest));
             }

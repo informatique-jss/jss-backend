@@ -8,4 +8,5 @@ export interface BuildingDomiciliation extends IReferential {
   cedexComplement: string;
   city: City;
   country: Country;
+  isDisabled: boolean;
 }

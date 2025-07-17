@@ -85,4 +85,8 @@ export class CustomerOrderService extends AppRestService<CustomerOrder> {
       return JSON.parse(localStorage.getItem('current-draft-order')!) as CustomerOrder;
     return undefined;
   }
+
+  getCardPaymentLinkForPaymentInvoices(customerOrderIds: number[]) {
+    return this.postItem(new HttpParams(), "payment/cb/invoice", customerOrderIds) as any as Observable<any>;
+  }
 }

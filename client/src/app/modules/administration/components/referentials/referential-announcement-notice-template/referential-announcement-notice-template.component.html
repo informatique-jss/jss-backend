@@ -36,20 +36,39 @@
           </tr>
           <tr>
             <td>
-              <chips-provision-family label="Familles de prestations associées"
-                [(model)]="selectedEntity.provisionFamilyTypes" [form]="entityForm2" propertyName="provisionFamilyTypes"
-                [isMandatory]="false" [isDisabled]="!editMode">
-              </chips-provision-family>
-            </td>
-          </tr>
-          <tr>
-            <td>
               <div *ngIf="!editMode">
                 <p>Texte :</p>
                 <span [innerHTML]="selectedEntity.text| trustHtml" class="no-font"></span>
               </div>
               <ckeditor *ngIf="editMode" [editor]="ckEditorNotice" [config]="config" [data]="initialNoticeValue"
                 (change)="onNoticeChange($event)"></ckeditor>
+            </td>
+          </tr>
+        </table>
+        <mat-divider></mat-divider>
+        <p>Fragments associés</p>
+        <table class="full-width">
+          <tr
+            *ngFor="let announcementNoticeTemplateFragment of selectedEntity.announcementNoticeTemplateFragments; let index = index">
+            <td>
+              <select-announcement-notice-template-fragment
+                [(model)]="selectedEntity.announcementNoticeTemplateFragments[index]" label="Fragment"
+                [form]="entityForm2" [propertyName]="'announcementNoticeTemplateFragment'+index" [isMandatory]="true"
+                [isDisabled]="!editMode"></select-announcement-notice-template-fragment>
+            </td>
+            <td>
+              <button *ngIf="editMode" (click)="deleteFragment(announcementNoticeTemplateFragment)" mat-raised-button
+                color="accent">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </tr>
+        </table>
+        <table class="full-width">
+          <tr>
+            <td>
+              <button *ngIf="editMode" (click)="addFragment()" mat-raised-button color="accent">Ajouter un
+                fragment</button>
             </td>
           </tr>
         </table>

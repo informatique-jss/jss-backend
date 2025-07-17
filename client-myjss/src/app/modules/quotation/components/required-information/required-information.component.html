@@ -1,4 +1,4 @@
-<div class="container d-flex flex-column min-vh-100 pb-5" *ngIf="quotation">
+<div class="container d-flex flex-column min-vh-100" *ngIf="quotation">
 
   <section>
     <p class="sub-title">Sélectionnez une affaire</p>
@@ -55,11 +55,12 @@
 
     <ng-container *ngIf="selectedAssoIndex!=null && selectedServiceIndex!=null && quotation.assoAffaireOrders[selectedAssoIndex] &&
        quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex]">
-      <ul ngbNav #nav="ngbNav" [activeId]="activeId" class="nav-tabs">
+      <ul ngbNav #nav="ngbNav" [activeId]="activeId" class="nav-tabs flex-nowrap"
+        (navChange)="changeProvisionNoticeTemplateDesciption($event)">
 
         <ng-container
-          *ngFor="let provision of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].provisions; let index = index">
-          <li [ngbNavItem]="parseInt('1'+index)"
+          *ngFor="let provision of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].provisions; let provisionIndex = index">
+          <li [ngbNavItem]="parseInt('1'+provisionIndex)"
             *ngIf="provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_ANNOUNCEMENT && provision.announcement">
             <button ngbNavLink>Annonce légale {{ provision.order && provision.order>1 ? provision.order : '' }}
             </button>
@@ -67,12 +68,12 @@
               <div class="quotation-container">
                 <h6><i class="ai-circle-info me-2"></i>Information</h6>
                 <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-                  <div class="col-md-5">
+                  <div class="col-md-5" *ngIf="!isOnlyAnnouncement">
                     <label class="col-form-label" for="announcementPublicationDate">Publication souhaitée*</label>
                     <div class="col">
                       <select-string [types]="selectionRedaction" [isMandatory]="false" [form]="informationForm"
                         [propertyName]="'selectionRedaction'+provision.order"
-                        [(model)]="selectedRedaction[selectedServiceIndex][index]"
+                        [(model)]="selectedRedaction[selectedServiceIndex][provisionIndex]"
                         (selectionChange)="changeDoNotGenerateAnnouncement($event, provision)">
                       </select-string>
                     </div>
@@ -92,64 +93,72 @@
               <!-- announcement form : Option -->
               <div *ngIf="isDoNotGenerateAnnouncement" class="quotation-container mb-2">
                 <h6><i class="ai-grid me-2"></i>Option</h6>
-                <div class="d-flex flex-wrap gap-4 align-items-center">
+                <div class="row g-4 align-items-center">
 
-                  <div class="form-check form-switch d-flex m-0 pe-md-5 pe-2 right-border">
+                  <div class="col-12 col-lg-6 form-check form-switch">
                     <generic-toggle [(model)]="provision.isRedactedByJss" label="Confier la rédaction au JSS"
-                      [form]="informationForm" [propertyName]="'isRedactedByJss'+provision.order"
-                      [isDisabled]="false"></generic-toggle>
+                      [form]="informationForm" [propertyName]="'isRedactedByJss'+provision.order" [isDisabled]="false"
+                      (onToggleChange)="changeIsShowNoticeTemplate(false, provision.isRedactedByJss)"></generic-toggle>
                   </div>
 
-                  <div class="form-check form-switch d-flex ms-md-4 m-0" *ngIf="provision.isRedactedByJss">
+                  <div class="col-12 col-lg-6 form-check form-switch" *ngIf="provision.isRedactedByJss">
                     <generic-toggle [(model)]="provision.announcement.isProofReadingDocument"
                       label="Recevoir une épreuve de relecture avant publication" [form]="informationForm"
                       [propertyName]="'isProofReadingDocument'+provision.order" [isDisabled]="false"></generic-toggle>
                   </div>
-                </div>
-              </div>
 
-
-              <!-- announcement form : text area -->
-              <div *ngIf="provision.isDoNotGenerateAnnouncement && !provision.isRedactedByJss"
-                class="quotation-container mb-5">
-
-                <div class="row">
-                  <div class="col-md-3">
-
-                    <!-- Toggle relecture -->
-                    <div class="form-check  d-flex align-items-center mb-4" style="padding-left: 0px;">
+                  <div class="row">
+                    <div
+                      *ngIf="!provision.isRedactedByJss && hasOneTemplate( quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])"
+                      class="col-12 col-lg-6 form-check form-switch">
+                      <generic-toggle [(model)]="isUsingTemplate"
+                        label="Utiliser les modèles proposés pour la rédaction" [form]="informationForm"
+                        [propertyName]="'isUsingTemplate'+provision.order" [isDisabled]="false"
+                        (onToggleChange)="changeIsShowNoticeTemplate($event, provision.isRedactedByJss)"></generic-toggle>
+                    </div>
+                  </div>
+                  <div class="row" *ngIf="  !provision.isRedactedByJss">
+                    <div class="col-12 col-lg-6 form-check form-switch">
                       <generic-toggle [(model)]="provision.announcement.isReReadByJss" label="Relecture par le JSS"
                         [form]="informationForm" [propertyName]="'isReReadByJss'+provision.order"
                         [isDisabled]="false"></generic-toggle>
                     </div>
+                  </div>
+                </div>
+                <hr>
+
+                <!-- announcement form : text area -->
+                <div class="row pt-3">
+                  <div *ngIf="  !provision.isRedactedByJss" class="col-12 row row-cols-4 px-4">
 
                     <!-- Département -->
-                    <div class="mb-3" *ngIf="departments">
+                    <div class="col-12 col-lg-4 mb-3 align-items-start">
                       <select-department [(model)]="provision.announcement.department"
                         label="Département de publication" [form]="informationForm"
-                        [propertyName]="'department'+provision.order" [isMandatory]="false"
+                        [propertyName]="'department'+provision.order" [isMandatory]="true"
                         [isDisabled]="false"></select-department>
                     </div>
 
                     <!-- Rubrique -->
-                    <div class="mb-3" *ngIf="noticeTypeFamilies">
+                    <div class="col-12 col-lg-4 mb-3 align-items-start">
                       <select-notice-type-family [(model)]="provision.announcement.noticeTypeFamily"
                         label="Rubrique de publication" [form]="informationForm"
-                        [propertyName]="'noticeTypeFamily'+provision.order" [isMandatory]="false"
+                        [propertyName]="'noticeTypeFamily'+provision.order" [isMandatory]="true"
                         [isDisabled]="false"></select-notice-type-family>
                     </div>
 
                     <!-- Sous-rubrique -->
-                    <div class="mb-3" *ngIf="provision.announcement.noticeTypeFamily && noticeTypes">
+                    <div class="col-12 col-lg-4 mb-3 align-items-start"
+                      *ngIf="provision.announcement.noticeTypeFamily && noticeTypes">
                       <select-multiple-notice-type [(model)]="provision.announcement.noticeTypes"
                         label="Sous-rubrique(s) de publication" [form]="informationForm"
                         [noticeTypeFamily]="provision.announcement.noticeTypeFamily"
-                        [propertyName]="'noticeTypes'+provision.order" [isMandatory]="false"
+                        [propertyName]="'noticeTypes'+provision.order" [isMandatory]="true"
                         [isDisabled]="false"></select-multiple-notice-type>
                     </div>
                   </div>
 
-                  <div class="col-md-9">
+                  <div *ngIf=" !provision.isRedactedByJss && !isUsingTemplate" class="col-12">
                     <label for="announcementTextarea" class="form-label">Texte de l'annonce</label>
                     <ckeditor id="announcementTextarea" [editor]="ckEditorHeader" [config]="config"
                       (ready)="onEditorReady($event, provision)" (change)="onNoticeChange($event, provision)">
@@ -498,60 +507,68 @@
                     *ngIf="quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes.length ==0">Aucune
                     information à remplir pour ce service, vous pouvez cliquer sur le bouton étape suivante.</span>
                   <ng-container
-                    *ngFor="let assoServiceFieldType of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes; let i = index">
-                    <ng-container *ngIf="isDisplayDependantField(assoServiceFieldType)">
-                      <!-- TEXT -->
-                      <div class="col-12 col-md-6 col-lg-4"
-                        *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_TEXT">
-                        <generic-input [(model)]="assoServiceFieldType.stringValue"
-                          [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
-                          [form]="informationForm" [propertyName]="'stringFieldType'+i"
-                          [isMandatory]="assoServiceFieldType.isMandatory" [maxLength]="255">
-                        </generic-input>
-                      </div>
+                    *ngFor="let serviceType of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].serviceTypes;let serviceTypeIndex = index">
+                    <h6 class="mb-0" [ngClass]="{'mt-5':serviceTypeIndex>0}"
+                      *ngIf="quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].serviceTypes.length>1 &&  serviceType.assoServiceTypeFieldTypes.length>0">
+                      {{serviceType.label}}
+                    </h6>
+                    <ng-container
+                      *ngFor="let assoServiceFieldType of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes; let i = index">
+                      <ng-container
+                        *ngIf="isDisplayFieldForServiceType(assoServiceFieldType, serviceType,serviceTypeIndex==quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].serviceTypes.length-1)">
+                        <ng-container *ngIf="isDisplayDependantField(assoServiceFieldType)">
+                          <!-- TEXT -->
+                          <div class="col-12 col-md-6 col-lg-4"
+                            *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_TEXT">
+                            <generic-input [(model)]="assoServiceFieldType.stringValue"
+                              [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
+                              [form]="informationForm" [propertyName]="'stringFieldType'+i" [isMandatory]="false"
+                              [maxLength]="255">
+                            </generic-input>
+                          </div>
 
-                      <!-- TEXTAREA -->
-                      <div class="col-12 "
-                        *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_TEXTAREA">
-                        <generic-textarea [(model)]="assoServiceFieldType.textAreaValue"
-                          [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
-                          [form]="informationForm" [maxLength]="255" [propertyName]="'textAreaFieldType'+i"
-                          [isMandatory]="assoServiceFieldType.isMandatory">
-                        </generic-textarea>
-                      </div>
+                          <!-- TEXTAREA -->
+                          <div class="col-12 "
+                            *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_TEXTAREA">
+                            <generic-textarea [(model)]="assoServiceFieldType.textAreaValue"
+                              [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
+                              [form]="informationForm" [maxLength]="255" [propertyName]="'textAreaFieldType'+i"
+                              [isMandatory]="false">
+                            </generic-textarea>
+                          </div>
 
-                      <!-- DATE -->
-                      <div class="col-12 col-md-6 col-lg-4"
-                        *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_DATE">
-                        <div class="form-group w-auto">
-                          <generic-date-picker [(model)]="assoServiceFieldType.dateValue"
-                            [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
-                            [form]="informationForm" [propertyName]="'dateFieldType'+i"
-                            [isMandatory]="assoServiceFieldType.isMandatory">
-                          </generic-date-picker>
-                        </div>
-                      </div>
+                          <!-- DATE -->
+                          <div class="col-12 col-md-6 col-lg-4"
+                            *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_DATE">
+                            <div class="form-group w-auto">
+                              <generic-date-picker [(model)]="assoServiceFieldType.dateValue"
+                                [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
+                                [form]="informationForm" [propertyName]="'dateFieldType'+i" [isMandatory]="false">
+                              </generic-date-picker>
+                            </div>
+                          </div>
 
-                      <!-- INTEGER -->
-                      <div class="col-12 col-md-6 col-lg-4"
-                        *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_INTEGER">
-                        <generic-input [(model)]="assoServiceFieldType.integerValue"
-                          [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
-                          [form]="informationForm" [propertyName]="'integerFieldType'+i"
-                          [isMandatory]="assoServiceFieldType.isMandatory" type="number">
-                        </generic-input>
-                      </div>
+                          <!-- INTEGER -->
+                          <div class="col-12 col-md-6 col-lg-4"
+                            *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_INTEGER">
+                            <generic-input [(model)]="assoServiceFieldType.integerValue"
+                              [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
+                              [form]="informationForm" [propertyName]="'integerFieldType'+i" [isMandatory]="false"
+                              type="number">
+                            </generic-input>
+                          </div>
 
-                      <!-- SELECT -->
-                      <div class="col-12 col-md-6 col-lg-4"
-                        *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_SELECT">
-                        <select-value-service-field-type [(model)]="assoServiceFieldType.selectValue"
-                          [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
-                          [form]="informationForm" [propertyName]="'selectFieldType'+i"
-                          [serviceFieldType]="assoServiceFieldType.serviceFieldType"
-                          [isMandatory]="assoServiceFieldType.isMandatory">
-                        </select-value-service-field-type>
-                      </div>
+                          <!-- SELECT -->
+                          <div class="col-12 col-md-6 col-lg-4"
+                            *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_SELECT">
+                            <select-value-service-field-type [(model)]="assoServiceFieldType.selectValue"
+                              [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
+                              [form]="informationForm" [propertyName]="'selectFieldType'+i"
+                              [serviceFieldType]="assoServiceFieldType.serviceFieldType" [isMandatory]="false">
+                            </select-value-service-field-type>
+                          </div>
+                        </ng-container>
+                      </ng-container>
                     </ng-container>
                   </ng-container>
                 </div>
@@ -596,19 +613,19 @@
 
 
   <div
-    class="position-fixed bottom-0 start-0 w-100 bg-light shadow-sm p-3 m-0 d-flex justify-content-between align-items-center z-3">
-    <button type="button" class="btn btn-secondary rounded-1 mx-5 d-flex align-items-center"
+    class="position-fixed bottom-0 start-0 w-100 bg-light shadow-sm p-3 m-0 d-flex justify-content-between align-items-center z-1030">
+    <button type="button" class="btn btn-secondary rounded-1 mx-0 mx-sm-5 d-flex align-items-center"
       (click)="moveToService((selectedServiceIndex-1), selectedAssoIndex)"
       *ngIf="selectedServiceIndex!=null && selectedAssoIndex!=null">
-      <i class="ai-arrow-left"></i>
-      <span class="d-none d-sm-inline ms-2">Étape précédente </span>
+      <i class="ai-arrow-left d-none d-sm-inline"></i>
+      <span class="ms-2 ms-lg-2">Étape précédente </span>
     </button>
 
-    <button type="button" class="btn btn-secondary rounded-1 mx-5 d-flex align-items-center"
+    <button type="button" class="btn btn-secondary rounded-1  mx-0 mx-sm-5 d-flex align-items-center"
       *ngIf="canSaveQuotation() && selectedServiceIndex!=null && selectedAssoIndex!=null"
-      (click)="moveToService((selectedServiceIndex+1), selectedAssoIndex)"> <span class="d-sm-inline me-2">Étape
+      (click)="moveToService((selectedServiceIndex+1), selectedAssoIndex)"> <span class="me-2">Étape
         suivante</span>
-      <i class="ai-arrow-right"></i>
+      <i class="ai-arrow-right d-none d-sm-inline"></i>
     </button>
   </div>
 </div>

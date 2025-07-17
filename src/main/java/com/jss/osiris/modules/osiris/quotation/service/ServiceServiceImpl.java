@@ -106,8 +106,10 @@ public class ServiceServiceImpl implements ServiceService {
     @Override
     public Service addOrUpdateService(Service service) throws OsirisException {
         computeServiceLabel(service);
-        if (service.getCustomLabel() != null && service.getCustomLabel().trim().length() == 0)
-            service.setCustomLabel(null);
+        if (service.getCustomLabel() != null) {
+            if (service.getCustomLabel().trim().length() == 0)
+                service.setCustomLabel(null);
+        }
 
         if (service.getAssoAffaireOrder().getCustomerOrder() != null)
             batchService.declareNewBatch(Batch.REINDEX_ASSO_AFFAIRE_ORDER, service.getAssoAffaireOrder().getId());
@@ -202,6 +204,7 @@ public class ServiceServiceImpl implements ServiceService {
         ArrayList<String> typeDocumentCodes = new ArrayList<String>();
         ArrayList<AssoServiceFieldType> assoServiceFieldTypes = new ArrayList<AssoServiceFieldType>();
         ArrayList<Integer> serviceFieldTypeIds = new ArrayList<Integer>();
+        Boolean alreadyHasFurtherInformationServiceFieldType = false;
 
         ArrayList<AssoServiceProvisionType> assoServiceProvisionTypes = new ArrayList<AssoServiceProvisionType>();
 
@@ -235,6 +238,12 @@ public class ServiceServiceImpl implements ServiceService {
                                     .contains(assoServiceTypeFieldType.getServiceFieldType().getId())) {
                         serviceFieldTypeIds.add(assoServiceTypeFieldType.getServiceFieldType().getId());
                         assoServiceFieldTypes.add(newAssoServiceFieldType);
+
+                        if (!alreadyHasFurtherInformationServiceFieldType
+                                && newAssoServiceFieldType.getServiceFieldType().getId()
+                                        .equals(constantService.getFurtherInformationServiceFieldType().getId()))
+                            alreadyHasFurtherInformationServiceFieldType = true;
+
                     }
                 }
         }
@@ -246,11 +255,13 @@ public class ServiceServiceImpl implements ServiceService {
             service.setProvisions(mergeProvisionTypes(assoServiceProvisionTypes, service, affaire));
 
         // Always add further information field
-        AssoServiceFieldType newAssoServiceFieldType = new AssoServiceFieldType();
-        newAssoServiceFieldType.setIsMandatory(false);
-        newAssoServiceFieldType.setService(service);
-        newAssoServiceFieldType.setServiceFieldType(constantService.getFurtherInformationServiceFieldType());
-        assoServiceFieldTypes.add(newAssoServiceFieldType);
+        if (!alreadyHasFurtherInformationServiceFieldType) {
+            AssoServiceFieldType newAssoServiceFieldType = new AssoServiceFieldType();
+            newAssoServiceFieldType.setIsMandatory(false);
+            newAssoServiceFieldType.setService(service);
+            newAssoServiceFieldType.setServiceFieldType(constantService.getFurtherInformationServiceFieldType());
+            assoServiceFieldTypes.add(newAssoServiceFieldType);
+        }
 
         service.setAssoServiceFieldTypes(assoServiceFieldTypes);
         service.setAssoServiceDocuments(assoServiceDocuments);
@@ -271,17 +282,19 @@ public class ServiceServiceImpl implements ServiceService {
                     .toList();
 
             if (provisionTypeMergeable != null && provisionTypeMergeable.size() > 0) {
+                Boolean isPriority = sortassoServiceProvisionTypesByComplexity(assoServiceProvisionTypes);
                 if (!screenType.equals(ProvisionScreenType.ANNOUNCEMENT) || provisionTypeMergeable.size() == 1) {
                     Provision announcementProvision = completeNoticesFromAnnouncementProvision(
                             generateProvisionFromProvisionType(provisionTypeMergeable.get(0).getProvisionType(),
-                                    service),
+                                    service, provisionTypeMergeable.get(0), isPriority),
                             provisionTypeMergeable, affaire);
                     announcementProvision.setIsRedactedByJss(true);
                     newProvisions.add(announcementProvision);
                 } else {
                     Provision announcementProvision = completeNoticesFromAnnouncementProvision(
                             generateProvisionFromProvisionType(
-                                    this.constantService.getProvisionTypeCharacterAnnouncement(), service),
+                                    this.constantService.getProvisionTypeCharacterAnnouncement(), service,
+                                    assoServiceProvisionTypes.get(0), assoServiceProvisionTypes.get(0).getIsPriority()),
                             provisionTypeMergeable, affaire);
                     announcementProvision.setIsRedactedByJss(true);
                     newProvisions.add(announcementProvision);
@@ -298,7 +311,7 @@ public class ServiceServiceImpl implements ServiceService {
                 if (provisionTypeNonMergeable != null && provisionTypeNonMergeable.size() > 0) {
                     Provision announcementProvision = completeNoticesFromAnnouncementProvision(
                             generateProvisionFromProvisionType(assoServiceProvisionType.getProvisionType(),
-                                    service),
+                                    service, assoServiceProvisionType, assoServiceProvisionType.getIsPriority()),
                             provisionTypeNonMergeable, affaire);
                     announcementProvision.setIsRedactedByJss(true);
                     newProvisions.add(announcementProvision);
@@ -309,6 +322,25 @@ public class ServiceServiceImpl implements ServiceService {
         return newProvisions;
     }
 
+    private boolean sortassoServiceProvisionTypesByComplexity(
+            List<AssoServiceProvisionType> assoServiceProvisionTypes) {
+        if (assoServiceProvisionTypes != null) {
+            assoServiceProvisionTypes.sort(new Comparator<AssoServiceProvisionType>() {
+                @Override
+                public int compare(AssoServiceProvisionType arg0, AssoServiceProvisionType arg1) {
+                    return arg1.getComplexity().compareTo(arg0.getComplexity());
+                }
+            });
+
+            for (AssoServiceProvisionType asso : assoServiceProvisionTypes) {
+                if (asso.getIsPriority()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     private Provision completeNoticesFromAnnouncementProvision(Provision provision,
             List<AssoServiceProvisionType> assoAnnouncementMergeable, Affaire affaire) throws OsirisException {
         List<NoticeType> noticeTypes = new ArrayList<>();
@@ -316,7 +348,6 @@ public class ServiceServiceImpl implements ServiceService {
         String noticeTemplate = "";
         List<Integer> noticeTypeIds = new ArrayList<>();
         List<Integer> noticeTypeFamilyIds = new ArrayList<>();
-        List<Integer> noticeTemplateIds = new ArrayList<>();
 
         Announcement announcement = new Announcement();
         announcement.setIsHeader(false);
@@ -341,11 +372,6 @@ public class ServiceServiceImpl implements ServiceService {
                     noticeTypes.add(asso.getNoticeType());
                     noticeTypeIds.add(asso.getNoticeType().getId());
                 }
-                if (asso.getNoticeTemplate() != null
-                        && !noticeTemplateIds.contains(asso.getNoticeTemplate().getId())) {
-                    noticeTemplateIds.add(asso.getNoticeTemplate().getId());
-                    noticeTemplate += asso.getNoticeTemplate().getText();
-                }
             }
             if (noticeTypeFamilies.size() == 1) {
                 provision.getAnnouncement()
@@ -360,15 +386,22 @@ public class ServiceServiceImpl implements ServiceService {
         return provision;
     }
 
-    private Provision generateProvisionFromProvisionType(ProvisionType provisionType, Service service)
+    private Provision generateProvisionFromProvisionType(ProvisionType provisionType, Service service,
+            AssoServiceProvisionType assoServiceProvisionType, Boolean isPriority)
             throws OsirisException {
         Provision provision = new Provision();
         if (provisionType != null) {
             provision.setProvisionFamilyType(provisionType.getProvisionFamilyType());
             provision.setProvisionType(provisionType);
             provision.setService(service);
+
+            provision.setComplexity(assoServiceProvisionType.getComplexity());
             if (provision.getComplexity() == null)
                 provision.setComplexity(4);
+
+            provision.setIsPriority(isPriority);
+            if (provision.getIsPriority() == null)
+                provision.setIsPriority(false);
             provision.setIsLogo(false);
             provision.setIsRedactedByJss(false);
             provision.setIsBaloPackage(false);
@@ -470,7 +503,8 @@ public class ServiceServiceImpl implements ServiceService {
 
                 if (shouldAdd) {
                     provisions.add(
-                            generateProvisionFromProvisionType(assoServiceProvisionType.getProvisionType(), service));
+                            generateProvisionFromProvisionType(assoServiceProvisionType.getProvisionType(), service,
+                                    assoServiceProvisionType, assoServiceProvisionType.getIsPriority()));
                 }
             }
         return provisions;
@@ -479,7 +513,6 @@ public class ServiceServiceImpl implements ServiceService {
     @Transactional(rollbackFor = Exception.class)
     public Service modifyServiceType(List<ServiceType> serviceTypes, Service service) throws OsirisException {
         service = getService(service.getId());
-
         ArrayList<AssoServiceFieldType> assoToDelete = new ArrayList<AssoServiceFieldType>();
         ArrayList<Integer> serviceTypeIds = new ArrayList<Integer>();
 
@@ -562,7 +595,7 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     private Service computeServiceLabel(Service service) {
-        if (service != null) {
+        if (service != null && service.getServiceTypes() != null) {
             if (service.getCustomLabel() == null || service.getCustomLabel().length() == 0)
                 service.setServiceLabelToDisplay(String.join(" / ", service.getServiceTypes().stream()
                         .map(s -> s.getCustomLabel()).collect(Collectors.toList())));
@@ -649,11 +682,27 @@ public class ServiceServiceImpl implements ServiceService {
                 removeUnusedAssoServiceDocument(service);
 
                 if (service.getProvisions() != null)
-                    for (Provision provision : service.getProvisions())
+                    for (Provision provision : service.getProvisions()) {
                         if (provision.getAnnouncement() != null
                                 && provision.getAnnouncement().getConfrere() != null)
                             service.setConfrereLabel(
-                                    "publié par " + provision.getAnnouncement().getConfrere().getLabel());
+                                    "publié sur " + provision.getAnnouncement().getConfrere().getLabel());
+
+                        if (provision.getSimpleProvision() != null
+                                && provision.getSimpleProvision().getSimpleProvisionStatus() != null
+                                && provision.getSimpleProvision().getSimpleProvisionStatus().getCode()
+                                        .equals(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY)
+                                && provision.getSimpleProvision().getWaitedCompetentAuthority() != null)
+                            service.setWaitingAcLabel(
+                                    provision.getSimpleProvision().getWaitedCompetentAuthority().getLabel());
+
+                        if (provision.getFormalite() != null && provision.getFormalite().getFormaliteStatus() != null
+                                && provision.getFormalite().getFormaliteStatus().getCode()
+                                        .equals(FormaliteStatus.FORMALITE_WAITING_DOCUMENT_AUTHORITY)
+                                && provision.getFormalite().getWaitedCompetentAuthority() != null)
+                            service.setWaitingAcLabel(
+                                    provision.getFormalite().getWaitedCompetentAuthority().getLabel());
+                    }
             }
         return services;
     }
@@ -736,12 +785,14 @@ public class ServiceServiceImpl implements ServiceService {
                     currentPriority = provision.getAnnouncement().getAnnouncementStatus().getServicePriority();
                     currentStatus = provision.getAnnouncement().getAnnouncementStatus().getLabel();
                 } else if (provision.getSimpleProvision() != null && provision.getSimpleProvision()
-                        .getSimpleProvisionStatus().getServicePriority() > currentPriority) {
+                        .getSimpleProvisionStatus() != null && provision.getSimpleProvision()
+                                .getSimpleProvisionStatus().getServicePriority() > currentPriority) {
                     currentPriority = provision.getSimpleProvision().getSimpleProvisionStatus()
                             .getServicePriority();
                     currentStatus = provision.getSimpleProvision().getSimpleProvisionStatus().getLabel();
-                } else if (provision.getFormalite() != null && provision.getFormalite().getFormaliteStatus()
-                        .getServicePriority() > currentPriority) {
+                } else if (provision.getFormalite() != null && provision.getFormalite().getFormaliteStatus() != null
+                        && provision.getFormalite().getFormaliteStatus()
+                                .getServicePriority() > currentPriority) {
                     currentPriority = provision.getFormalite().getFormaliteStatus().getServicePriority();
                     currentStatus = provision.getFormalite().getFormaliteStatus().getLabel();
                     if (provision.getFormalite().getFormaliteStatus().getCode()
@@ -750,6 +801,7 @@ public class ServiceServiceImpl implements ServiceService {
                                 .getFormaliteStatusByCode(FormaliteStatus.FORMALITE_WAITING_DOCUMENT_AUTHORITY)
                                 .getLabel();
                 } else if (provision.getDomiciliation() != null
+                        && provision.getDomiciliation().getDomiciliationStatus() != null
                         && provision.getDomiciliation().getDomiciliationStatus()
                                 .getServicePriority() > currentPriority) {
                     currentPriority = provision.getDomiciliation().getDomiciliationStatus().getServicePriority();

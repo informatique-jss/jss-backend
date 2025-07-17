@@ -4,13 +4,17 @@ import { combineLatest } from 'rxjs';
 import { capitalizeName } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { TrustHtmlPipe } from '../../../../libs/TrustHtmlPipe';
+import { AppService } from '../../../main/services/app.service';
+import { PlatformService } from '../../../main/services/platform.service';
 import { Responsable } from '../../../profile/model/Responsable';
 import { UserScope } from '../../../profile/model/UserScope';
 import { LoginService } from '../../../profile/services/login.service';
 import { UserScopeService } from '../../../profile/services/user.scope.service';
 import { Affaire } from '../../model/Affaire';
 import { BillingClosureReceiptValue } from '../../model/BillingClosureReceiptValue';
+import { CustomerOrder } from '../../model/CustomerOrder';
 import { BillingClosureService } from '../../services/billing.closure.service';
+import { CustomerOrderService } from '../../services/customer.order.service';
 
 @Component({
   selector: 'app-billing-closure',
@@ -27,6 +31,8 @@ export class BillingClosureComponent implements OnInit {
   receiptValues: BillingClosureReceiptValue[] | undefined;
   currentSort: string = "createdDateAsc";
   isFirstLoading: boolean = true;
+  orderToPayInCb: number[] = [];
+  totalToPayCb: number = 0;
 
   capitalizeName = capitalizeName;
 
@@ -34,6 +40,9 @@ export class BillingClosureComponent implements OnInit {
     private userScopeService: UserScopeService,
     private loginService: LoginService,
     private billingClosureService: BillingClosureService,
+    private customerOrderService: CustomerOrderService,
+    private platformService: PlatformService,
+    private appService: AppService
   ) { }
 
   ngOnInit() {
@@ -53,10 +62,14 @@ export class BillingClosureComponent implements OnInit {
 
   refreshClosure() {
     let promises = [];
+    let doneIds = [];
+    this.receiptValues = [];
+    this.isFirstLoading = true;
     if (this.userScope) {
       for (let id in this.userScopeSelected) {
-        if (this.userScopeSelected[id]) {
-          promises.push(this.billingClosureService.getBillingClosureReceiptValueForResponsable(parseInt(id), false));
+        if (this.userScopeSelected[id] && doneIds.indexOf(id) < 0) {
+          promises.push(this.billingClosureService.getBillingClosureReceiptValueForResponsable(parseInt(id), false, this.currentSort == 'createdDateDesc'));
+          doneIds.push(id);
         }
       }
 
@@ -160,6 +173,8 @@ export class BillingClosureComponent implements OnInit {
 
   changeSort(sortType: string) {
     this.currentSort = sortType;
+    if (this.currentSort.indexOf('createdDate') >= 0)
+      this.refreshClosure();
   }
 
   getTotalSolde(affaire: string | undefined, responsable: Responsable | undefined) {
@@ -173,6 +188,37 @@ export class BillingClosureComponent implements OnInit {
             solde -= value.debitAmount;
       }
     return solde;
+  }
+
+  downloadInvoice(idCustomerOrder: number) {
+    this.customerOrderService.downloadInvoice({ id: idCustomerOrder } as CustomerOrder);
+  }
+
+  addToPayCb(receiptValue: BillingClosureReceiptValue) {
+    if (this.orderToPayInCb && this.orderToPayInCb.indexOf(receiptValue.idCustomerOrder) < 0) {
+      this.orderToPayInCb.push(receiptValue.idCustomerOrder);
+      this.totalToPayCb += receiptValue.debitAmount;
+    }
+  }
+
+  removeFromPayCb(receiptValue: BillingClosureReceiptValue) {
+    if (this.orderToPayInCb && this.orderToPayInCb.indexOf(receiptValue.idCustomerOrder) >= 0) {
+      this.orderToPayInCb.splice(this.orderToPayInCb.indexOf(receiptValue.idCustomerOrder));
+      this.totalToPayCb -= receiptValue.debitAmount;
+    }
+  }
+
+  payCb() {
+    if (this.orderToPayInCb) {
+      this.appService.showLoadingSpinner();
+      this.customerOrderService.getCardPaymentLinkForPaymentInvoices(this.orderToPayInCb).subscribe(link => {
+        this.appService.hideLoadingSpinner();
+        if (this.platformService.isBrowser())
+          this.platformService.getNativeWindow()!.open(link.link, "_blank");
+        this.orderToPayInCb = [];
+        this.totalToPayCb = 0;
+      });
+    }
   }
 
 }

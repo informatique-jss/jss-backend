@@ -65,6 +65,7 @@ import com.jss.osiris.modules.osiris.quotation.model.AffaireSearch;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.AnnouncementListSearch;
 import com.jss.osiris.modules.osiris.quotation.model.AnnouncementNoticeTemplate;
+import com.jss.osiris.modules.osiris.quotation.model.AnnouncementNoticeTemplateFragment;
 import com.jss.osiris.modules.osiris.quotation.model.AnnouncementSearch;
 import com.jss.osiris.modules.osiris.quotation.model.AnnouncementSearchResult;
 import com.jss.osiris.modules.osiris.quotation.model.AnnouncementStatus;
@@ -81,6 +82,7 @@ import com.jss.osiris.modules.osiris.quotation.model.BuildingDomiciliation;
 import com.jss.osiris.modules.osiris.quotation.model.CharacterPrice;
 import com.jss.osiris.modules.osiris.quotation.model.Confrere;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderAssignation;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.DebourDel;
@@ -92,6 +94,7 @@ import com.jss.osiris.modules.osiris.quotation.model.DomiciliationStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Formalite;
 import com.jss.osiris.modules.osiris.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.osiris.quotation.model.FundType;
+import com.jss.osiris.modules.osiris.quotation.model.ICustomerOrderAssignationStatistics;
 import com.jss.osiris.modules.osiris.quotation.model.IOrderingSearchTaggedResult;
 import com.jss.osiris.modules.osiris.quotation.model.IPaperSetResult;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
@@ -129,6 +132,7 @@ import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.ValidationReq
 import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.FormaliteInfogreffe;
 import com.jss.osiris.modules.osiris.quotation.service.ActTypeService;
 import com.jss.osiris.modules.osiris.quotation.service.AffaireService;
+import com.jss.osiris.modules.osiris.quotation.service.AnnouncementNoticeTemplateFragmentService;
 import com.jss.osiris.modules.osiris.quotation.service.AnnouncementNoticeTemplateService;
 import com.jss.osiris.modules.osiris.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.osiris.quotation.service.AnnouncementStatusService;
@@ -140,6 +144,7 @@ import com.jss.osiris.modules.osiris.quotation.service.BankTransfertService;
 import com.jss.osiris.modules.osiris.quotation.service.BuildingDomiciliationService;
 import com.jss.osiris.modules.osiris.quotation.service.CharacterPriceService;
 import com.jss.osiris.modules.osiris.quotation.service.ConfrereService;
+import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderAssignationService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderCommentService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderStatusService;
@@ -313,6 +318,9 @@ public class QuotationController {
   DomiciliationStatusService domiciliationStatusService;
 
   @Autowired
+  AnnouncementNoticeTemplateFragmentService announcementNoticeTemplateFragmentService;
+
+  @Autowired
   DomiciliationService domiciliationService;
 
   @Autowired
@@ -401,6 +409,9 @@ public class QuotationController {
 
   @Autowired
   VoucherService voucherService;
+
+  @Autowired
+  CustomerOrderAssignationService customerOrderAssignationService;
 
   @GetMapping(inputEntryPoint + "/service-field-types")
   public ResponseEntity<List<ServiceFieldType>> getServiceFieldTypes() {
@@ -736,6 +747,12 @@ public class QuotationController {
         HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/service-types/complete")
+  public ResponseEntity<List<ServiceType>> getServiceTypesComplete() {
+    return new ResponseEntity<List<ServiceType>>(serviceTypeService.getServiceTypes(), HttpStatus.OK);
+  }
+
+  @JsonView(JacksonViews.OsirisListView.class)
   @GetMapping(inputEntryPoint + "/service-types")
   public ResponseEntity<List<ServiceType>> getServiceTypes() {
     return new ResponseEntity<List<ServiceType>>(serviceTypeService.getServiceTypes(), HttpStatus.OK);
@@ -751,10 +768,7 @@ public class QuotationController {
     validationHelper.validateString(serviceType.getLabel(), true, 250, "label");
     validationHelper.validateString(serviceType.getCustomLabel(), false, 250, "customLabel");
     validationHelper.validateReferential(serviceType.getServiceFamily(), true, "serviceFamily");
-    validationHelper.validateBigDecimal(serviceType.getDefaultDeboursPrice(), false, "defaultDeboursPrice");
     validationHelper.validateReferential(serviceType.getServiceTypeLinked(), false, "serviceTypeLinked");
-    validationHelper.validateBigDecimal(serviceType.getDefaultDeboursPriceNonTaxable(), false,
-        "defaultDeboursPriceNonTaxable");
 
     if (serviceType.getAssoServiceProvisionTypes() != null) {
       for (AssoServiceProvisionType assoServiceProvisionType : serviceType.getAssoServiceProvisionTypes()) {
@@ -763,6 +777,10 @@ public class QuotationController {
         validationHelper.validateInteger(assoServiceProvisionType.getMinEmployee(), false, "minEmployee");
         validationHelper.validateString(assoServiceProvisionType.getCustomerMessageWhenAdded(), false,
             "customerMessageWhenAdded");
+        validationHelper.validateBigDecimal(assoServiceProvisionType.getDefaultDeboursPrice(), false,
+            "defaultDeboursPrice");
+        validationHelper.validateBigDecimal(assoServiceProvisionType.getDefaultDeboursPriceNonTaxable(), false,
+            "defaultDeboursPriceNonTaxable");
       }
     }
 
@@ -2035,7 +2053,7 @@ public class QuotationController {
                 "Nous sommes désolé, mais ce numéro de commande est inconnue.", null, "Bonne journée !"),
             HttpStatus.INTERNAL_SERVER_ERROR);
 
-      String link = customerOrderService.getCardPaymentLinkForCustomerOrderDeposit(customerOrder, mail,
+      String link = customerOrderService.getCardPaymentLinkForCustomerOrderDeposit(Arrays.asList(customerOrder), mail,
           "Paiement de l'acompte pour la commande n°" + customerOrderId);
       if (link.startsWith("http")) {
         HttpHeaders headers = new HttpHeaders();
@@ -2072,7 +2090,7 @@ public class QuotationController {
                 "Nous sommes désolé, mais ce numéro de commande est inconnue.", null, "Bonne journée !"),
             HttpStatus.INTERNAL_SERVER_ERROR);
 
-      String link = customerOrderService.getCardPaymentLinkForPaymentInvoice(customerOrder, mail,
+      String link = customerOrderService.getCardPaymentLinkForPaymentInvoice(Arrays.asList(customerOrder), mail,
           "Paiement de la facture pour la commande n°" + customerOrderId);
       if (link.startsWith("http")) {
         HttpHeaders headers = new HttpHeaders();
@@ -2486,11 +2504,13 @@ public class QuotationController {
 
       // Put empty partner center when id is set to null
       if (formalites != null && formalites.size() > 0)
-        for (FormaliteGuichetUnique formalite : formalites)
+        for (FormaliteGuichetUnique formalite : formalites) {
           if (formalite.getValidationsRequests() != null && formalite.getValidationsRequests().size() > 0)
             for (ValidationRequest validationRequest : formalite.getValidationsRequests())
               if (validationRequest.getPartnerCenter() != null && validationRequest.getPartner().getId() == null)
                 validationRequest.setPartnerCenter(null);
+          formaliteGuichetUniqueService.addOrUpdateFormaliteGuichetUnique(formalite);
+        }
     }
 
     return new ResponseEntity<List<FormaliteGuichetUnique>>(formalites, HttpStatus.OK);
@@ -2883,5 +2903,139 @@ public class QuotationController {
 
     return new ResponseEntity<List<CustomerOrder>>(
         customerOrderService.getCustomerOrdersByVoucherAndResponsable(voucher, null), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/customer-order-assignation/update")
+  @PreAuthorize(ActiveDirectoryHelper.TEAM_RESPONSIBLE)
+  public ResponseEntity<Boolean> updateCustomerOrderAssignation(Integer idCustomerOrderAssignation,
+      @RequestParam(required = false) Integer idEmployee)
+      throws OsirisValidationException {
+
+    CustomerOrderAssignation customerOrderAssignation = customerOrderAssignationService
+        .getCustomerOrderAssignation(idCustomerOrderAssignation);
+
+    if (customerOrderAssignation == null)
+      throw new OsirisValidationException("customerOrderAssignation");
+
+    Employee employee = null;
+    if (idEmployee != null) {
+      employee = employeeService.getEmployee(idEmployee);
+      if (employee == null)
+        throw new OsirisValidationException("employee");
+    }
+
+    customerOrderAssignationService.addOrUpdateCustomerOrderAssignation(customerOrderAssignation, employee);
+
+    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/customer-order-assignation/assign/immediatly")
+  @PreAuthorize(ActiveDirectoryHelper.TEAM_RESPONSIBLE)
+  public ResponseEntity<Boolean> assignImmediatlyOrder(Integer idCustomerOrder)
+      throws OsirisException {
+
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(idCustomerOrder);
+
+    if (customerOrder == null)
+      throw new OsirisValidationException("customerOrder");
+
+    customerOrderAssignationService.assignImmediatlyOrder(customerOrder);
+
+    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/assign/new/fond/priority")
+  @JsonView(JacksonViews.OsirisListView.class)
+  public ResponseEntity<Integer> getNextPriorityOrderForFond() throws OsirisException {
+    return new ResponseEntity<Integer>(customerOrderAssignationService.getNextOrderForFond(true, null, false),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/assign/new/common/priority")
+  @JsonView(JacksonViews.OsirisListView.class)
+  public ResponseEntity<Integer> getNextPriorityOrderForCommon(Integer complexity) throws OsirisException {
+    return new ResponseEntity<Integer>(customerOrderAssignationService.getNextOrderForCommon(true, complexity, false),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/assign/new/fond")
+  @JsonView(JacksonViews.OsirisListView.class)
+  public ResponseEntity<Integer> getNextOrderForFond(Integer complexity) throws OsirisException {
+    return new ResponseEntity<Integer>(customerOrderAssignationService.getNextOrderForFond(false, complexity, false),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/assign/new/common")
+  @JsonView(JacksonViews.OsirisListView.class)
+  public ResponseEntity<Integer> getNextOrderForCommon(Integer complexity) throws OsirisException {
+    return new ResponseEntity<Integer>(customerOrderAssignationService.getNextOrderForCommon(false, complexity, false),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/assign/fond/type")
+  @JsonView(JacksonViews.OsirisListView.class)
+  public ResponseEntity<String> getFondTypeToUse(Integer complexity) throws OsirisException {
+    return new ResponseEntity<String>(customerOrderAssignationService.getFondTypeToUse(complexity),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/assign/statistics/formaliste")
+  public ResponseEntity<List<ICustomerOrderAssignationStatistics>> getCustomerOrderAssignationStatisticsForFormalistes(
+      Integer complexity) throws OsirisException {
+    return new ResponseEntity<List<ICustomerOrderAssignationStatistics>>(
+        customerOrderAssignationService.getCustomerOrderAssignationStatisticsForFormalistes(),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/assign/statistics/insertion")
+  public ResponseEntity<List<ICustomerOrderAssignationStatistics>> getCustomerOrderAssignationStatisticsForInsertions(
+      Integer complexity) throws OsirisException {
+    return new ResponseEntity<List<ICustomerOrderAssignationStatistics>>(
+        customerOrderAssignationService.getCustomerOrderAssignationStatisticsForInsertions(),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/team/employees")
+  @JsonView(JacksonViews.OsirisListView.class)
+  public ResponseEntity<List<Employee>> findTeamEmployee(Integer idEmployee) throws OsirisException {
+    Employee employee = employeeService.getEmployee(idEmployee);
+
+    if (employee == null)
+      throw new OsirisValidationException("employee");
+
+    return new ResponseEntity<List<Employee>>(employeeService.findEmployeesInTheSameOU(employee), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/assign/fond/order")
+  @JsonView(JacksonViews.OsirisListView.class)
+  public ResponseEntity<List<CustomerOrder>> getOrdersToAssignForFond(Integer idTeamEmployee) throws OsirisException {
+    Employee employee = employeeService.getEmployee(idTeamEmployee);
+
+    if (employee == null)
+      throw new OsirisValidationException("employee");
+
+    return new ResponseEntity<List<CustomerOrder>>(customerOrderAssignationService.getOrdersToAssignForFond(employee),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/announcement-notice-template-fragment")
+  public ResponseEntity<List<AnnouncementNoticeTemplateFragment>> getAnnouncementNoticeTemplateFragments() {
+    return new ResponseEntity<List<AnnouncementNoticeTemplateFragment>>(
+        announcementNoticeTemplateFragmentService.getAnnouncementNoticeTemplateFragments(), HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/announcement-notice-template-fragment")
+  public ResponseEntity<AnnouncementNoticeTemplateFragment> addOrUpdateAnnouncementNoticeTemplateFragment(
+      @RequestBody AnnouncementNoticeTemplateFragment announcementNoticeTemplateFragments)
+      throws OsirisValidationException, OsirisException {
+    if (announcementNoticeTemplateFragments.getId() != null)
+      validationHelper.validateReferential(announcementNoticeTemplateFragments, true,
+          "announcementNoticeTemplateFragments");
+    validationHelper.validateString(announcementNoticeTemplateFragments.getCode(), true, "code");
+    validationHelper.validateString(announcementNoticeTemplateFragments.getLabel(), true, "label");
+    validationHelper.validateString(announcementNoticeTemplateFragments.getText(), true, "text");
+
+    return new ResponseEntity<AnnouncementNoticeTemplateFragment>(announcementNoticeTemplateFragmentService
+        .addOrUpdateAnnouncementNoticeTemplateFragment(announcementNoticeTemplateFragments), HttpStatus.OK);
   }
 }

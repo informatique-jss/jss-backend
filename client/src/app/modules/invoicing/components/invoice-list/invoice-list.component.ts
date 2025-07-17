@@ -31,6 +31,7 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
   @Input() isForDashboard: boolean = false;
   @Input() isForTiersIntegration: boolean = false;
   @Input() isForPaymentAssocationIntegration: boolean = false;
+
   invoices: InvoiceSearchResult[] | undefined;
   availableColumns: SortTableColumn<InvoiceSearchResult>[] = [];
   columnToDisplayOnDashboard: string[] = ["description", "affaires", "invoicePayer", "totalPrice"];

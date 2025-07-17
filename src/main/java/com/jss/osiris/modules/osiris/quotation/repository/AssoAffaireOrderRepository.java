@@ -30,10 +30,11 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         " pf.label ||' - '||pt.label as provisionTypeLabel," +
                         " coalesce(ans.label,fs.label,doms.label, sps.label) as statusLabel," +
                         " asso.id_customer_order as customerOrderId," +
-                        " STRING_AGG(DISTINCT case when service.custom_label is null then st.label else service.custom_label  end,', ') as serviceTypeLabel,"
+                        " STRING_AGG(DISTINCT service.service_label_to_display,', ') as serviceTypeLabel,"
                         +
                         " asso.id as assoId," +
                         " p.is_emergency as isEmergency," +
+                        " p.is_priority as isPriority," +
                         " p.id as provisionId, " +
                         " max(audit.datetime) as provisionStatusDatetime, " +
                         " c.production_effective_date_time as provisionCreatedDatetime,c.created_date as createdDate, "
@@ -45,7 +46,6 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         " join customer_order c on c.id = asso.id_customer_order" +
                         " join customer_order_status cs on cs.id = c.id_customer_order_status" +
                         " join service on service.id_asso_affaire_order = asso.id" +
-                        " join service_type st on st.id = service.id_service_type" +
                         " join provision p on p.id_service = service.id" +
                         " left join city ci on ci.id = a.id_city" +
                         " left join responsable r on r.id = c.id_responsable" +
@@ -101,7 +101,7 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         "  a.address ,a.postal_Code ,ci.label ,c.created_date,c.production_effective_date_time,  " +
                         "  cf.label,e2.id , pf.label ,pt.label,ans.label,fs.label,doms.label,  sps.label, "
                         +
-                        " asso.id_customer_order,p.is_emergency,p.id  ,sp_ca.label,ca.label " +
+                        " asso.id_customer_order,p.is_emergency,p.is_priority,p.id  ,sp_ca.label,ca.label " +
                         "")
         ArrayList<AssoAffaireOrderSearchResult> findAsso(@Param("assignedTo") List<Integer> assignedToIds,
                         @Param("label") String label, @Param("status") ArrayList<Integer> status,

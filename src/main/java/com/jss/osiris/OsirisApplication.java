@@ -84,7 +84,7 @@ public class OsirisApplication {
 		}
 
 		ClientConfig clientConfig = new ClientConfig();
-		clientConfig.getNetworkConfig().addAddress(clusterAdresse);
+		clientConfig.getNetworkConfig().addAddress(clusterAdresse.split("\\s*,\\s*"));
 		clientConfig.setClusterName(clusterName);
 		clientConfig.setInstanceName("hzInstance1");
 		return HazelcastClient.newHazelcastClient(clientConfig);
