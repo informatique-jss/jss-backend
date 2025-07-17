@@ -228,6 +228,10 @@ public class PricingHelper {
                     invoiceItem.setLabel(
                             invoiceItem.getLabel() + " - " + provision.getAnnouncement().getDepartment().getCode());
 
+                if (provision.getAnnouncement().getConfrere() != null)
+                    invoiceItem.setLabel(
+                            invoiceItem.getLabel() + " - " + provision.getAnnouncement().getConfrere().getLabel());
+
             } else {
                 invoiceItem.setPreTaxPrice(zeroValue);
             }
