@@ -49,7 +49,7 @@ public class Notification implements Serializable, IId {
   public static List<String> notificationTypes = Arrays.asList(PROVISION_ADD_ATTACHMENT, SERVICE_ADD_ATTACHMENT,
       ORDER_ADD_ATTACHMENT, PROVISION_GUICHET_UNIQUE_STATUS_VALIDATED, PROVISION_GUICHET_UNIQUE_STATUS_REFUSED,
       PROVISION_GUICHET_UNIQUE_STATUS_SIGNED,
-      PERSONNAL, NEW_CANDIDACY_RECEIVED, INCIDENT_REPORT_ASKED);
+      PERSONNAL, NEW_CANDIDACY_RECEIVED, INCIDENT_REPORT_ASKED, ORDER_IMMEDIATLY_AFFECTED);
 
   @Id
   @SequenceGenerator(name = "notification_sequence", sequenceName = "notification_sequence", allocationSize = 1)
