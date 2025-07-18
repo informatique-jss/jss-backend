@@ -1,14 +1,18 @@
 <div
   *ngIf="entity &&  (instanceOfIAttachmentCode(entity) && entity.code || (!instanceOfIAttachmentCode(entity) && entity.id))">
   <form [formGroup]="attachmentForm" *ngIf="entity">
-    <div class="full-width container" *ngIf="files==null ||files.length==0 ">
+    <div class="full-width container" *ngIf="files==null ||files.length==0 " [ngClass]="{'small-size' : smallSize}">
       <input class="pointer" type="file" #fileDropRef id="fileDropRef" (change)="fileBrowseHandler($event.target)"
         multiple />
-      <mat-icon color="accent" class="mat-icon-upload" color="warn">file_upload</mat-icon>
-      <h3>Glissez/déposez vos fichiers ici</h3>
-      <h3>ou</h3>
-      <label for="fileDropRef" class="upload-label" color="warn">Recherchez sur votre ordinateur</label>
-      <p class="max-size">(10 Mo max.)</p>
+      <ng-container *ngIf="!smallSize">
+        <mat-icon color="accent" class="mat-icon-upload" color="warn">file_upload</mat-icon>
+        <h3>Glissez/déposez vos fichiers ici</h3>
+        <h3>ou</h3>
+        <label for="fileDropRef" class="upload-label" color="warn">Recherchez sur votre ordinateur</label>
+        <p class="max-size">(10 Mo max.)</p>
+      </ng-container>
+      <label *ngIf="smallSize" for="fileDropRef" class="upload-label" color="warn">Recherchez sur votre
+        ordinateur</label>
     </div>
     <table class="full-width" style="min-width: 600px;" *ngIf="!isDirectUpload">
       <tr>

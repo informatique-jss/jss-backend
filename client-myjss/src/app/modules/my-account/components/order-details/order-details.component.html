@@ -572,9 +572,9 @@
             </span>
           </div>
         </div>
-        <div class="text-center pt-1 pt-sm-2">
+        <div class="text-center pt-1 pt-sm-2" *ngIf="order && !order.isGifted">
           <a class="btn btn-sm btn-secondary ms-auto"
-            *ngIf="order && order.customerOrderStatus.code ==CUSTOMER_ORDER_STATUS_BILLED" (click)="downloadInvoice()">
+            *ngIf=" order.customerOrderStatus.code ==CUSTOMER_ORDER_STATUS_BILLED" (click)="downloadInvoice()">
             <i class="ai-note ms-n1 me-2"></i>
             <span>Télécharger la facture</span>
           </a>

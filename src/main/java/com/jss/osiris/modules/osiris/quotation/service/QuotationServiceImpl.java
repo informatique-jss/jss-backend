@@ -37,6 +37,7 @@ import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
 import com.jss.osiris.modules.myjss.quotation.service.MyJssQuotationDelegate;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
+import com.jss.osiris.modules.osiris.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.CustomerOrderOrigin;
@@ -146,9 +147,6 @@ public class QuotationServiceImpl implements QuotationService {
     AttachmentService attachmentService;
 
     @Autowired
-    UserScopeService userScopeService;
-
-    @Autowired
     QuotationValidationHelper quotationValidationHelper;
 
     @Autowired
@@ -156,6 +154,12 @@ public class QuotationServiceImpl implements QuotationService {
 
     @Autowired
     AffaireService affaireService;
+
+    @Autowired
+    InvoiceItemService invoiceItemService;
+
+    @Autowired
+    UserScopeService userScopeService;
 
     @Override
     public Quotation getQuotation(Integer id) {
@@ -172,6 +176,10 @@ public class QuotationServiceImpl implements QuotationService {
         if (quotation.isPresent())
             return quotation.get();
         return null;
+    }
+
+    private Quotation simpleAddOrUpdateQuotation(Quotation quotation) {
+        return quotationRepository.save(quotation);
     }
 
     @Override
@@ -193,46 +201,25 @@ public class QuotationServiceImpl implements QuotationService {
                 mailService.populateMailIds(document.getMailsClient());
             }
 
-        if (quotation.getId() == null)
-            quotation = quotationRepository.save(quotation);
-
         // Complete provisions
-        boolean oneNewProvision = false;
-        boolean computePrice = false;
         if (quotation.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
                 assoAffaireOrder.setQuotation(quotation);
                 if (assoAffaireOrder.getId() == null)
-                    oneNewProvision = true;
-                if (assoAffaireOrder.getServices() != null && assoAffaireOrder.getServices().size() > 0) {
-                    assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, quotation, true);
-                    for (Service service : assoAffaireOrder.getServices())
-                        if (service.getProvisions() != null && service.getProvisions().size() > 0) {
-                            computePrice = true;
-                            for (Provision provision : service.getProvisions())
-                                if (provision.getId() == null)
-                                    oneNewProvision = true;
-                        }
-                }
+                    if (assoAffaireOrder.getServices() != null && assoAffaireOrder.getServices().size() > 0) {
+                        assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, quotation, true);
+                    }
             }
 
         boolean isNewQuotation = quotation.getId() == null;
         if (isNewQuotation) {
             quotation.setCreatedDate(LocalDateTime.now());
             quotation.setValidationToken(UUID.randomUUID().toString());
-            quotation = quotationRepository.save(quotation);
         }
+        quotation = quotationRepository.save(quotation);
 
-        if (oneNewProvision)
-            quotation = quotationRepository.save(quotation);
-
-        if (computePrice) {
-            pricingHelper.getAndSetInvoiceItemsForQuotation(quotation, true);
-            quotation = quotationRepository.save(quotation);
-        }
-
-        if (!oneNewProvision && !computePrice && !isNewQuotation)
-            quotation = quotationRepository.save(quotation);
+        pricingHelper.getAndSetInvoiceItemsForQuotation(quotation, true);
+        quotation = quotationRepository.save(quotation);
 
         quotation = getQuotation(quotation.getId());
 
@@ -645,7 +632,7 @@ public class QuotationServiceImpl implements QuotationService {
                     quotationStatusToFilter.add(customerOrderStatusFetched);
             }
 
-            List<Responsable> responsablesToFilter = userScopeService.getUserCurrentScopeResponsables();
+            List<Responsable> responsablesToFilter = Arrays.asList(employeeService.getCurrentMyJssUser());
 
             if (quotationStatusToFilter.size() > 0 && responsablesToFilter != null
                     && responsablesToFilter.size() > 0) {
@@ -859,5 +846,37 @@ public class QuotationServiceImpl implements QuotationService {
         if (quotations != null)
             for (Quotation quotation : quotations)
                 batchService.declareNewBatch(Batch.PURGE_QUOTATION, quotation.getId());
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void reinitInvoicing(Quotation quotation)
+            throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
+        quotation = getQuotation(quotation.getId());
+        if (quotation.getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders())
+                for (Service service : asso.getServices())
+                    for (Provision provision : service.getProvisions())
+                        if (provision.getInvoiceItems() != null) {
+                            for (InvoiceItem invoiceItem : provision.getInvoiceItems())
+                                invoiceItemService.deleteInvoiceItem(invoiceItem);
+                            provision.setInvoiceItems(null);
+                        }
+
+        addOrUpdateQuotation(getQuotation(quotation.getId()));
+    }
+
+    @Override
+    @Transactional
+    public void switchResponsable(Quotation quotation, Responsable responsable) {
+        quotation = getQuotation(quotation.getId());
+        List<Responsable> userScope = userScopeService.getPotentialUserScope();
+
+        if (userScope != null)
+            for (Responsable scope : userScope)
+                if (scope.getId().equals(responsable.getId())) {
+                    quotation.setResponsable(responsable);
+                    simpleAddOrUpdateQuotation(quotation);
+                }
     }
 }

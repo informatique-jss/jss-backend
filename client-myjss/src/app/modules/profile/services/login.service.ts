@@ -33,6 +33,18 @@ export class LoginService extends AppRestService<Responsable> {
     })
   }
 
+  switchUser(newUserId: number) {
+    return new Observable<Boolean>(observer => {
+      this.get(new HttpParams().set("newUserId", newUserId), "switch").subscribe(response => {
+        this.currentUser = undefined;
+        this.refreshUserRoles().subscribe(response => {
+          observer.next(true);
+          observer.complete();
+        })
+      })
+    })
+  }
+
   refreshUserRoles() {
     return new Observable<Boolean>(observer => {
       this.getUserRoles().subscribe(response => {

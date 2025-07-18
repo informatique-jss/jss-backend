@@ -7,8 +7,6 @@ import { capitalizeName } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
 import { UserPreferenceService } from '../../../main/services/user.preference.service';
-import { UserScope } from '../../../profile/model/UserScope';
-import { UserScopeService } from '../../../profile/services/user.scope.service';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
 import { InvoiceLabelResult } from '../../model/InvoiceLabelResult';
 import { MailComputeResult } from '../../model/MailComputeResult';
@@ -49,8 +47,6 @@ export class QuotationsComponent implements OnInit {
   hideSeeMore: boolean = false;
   isFirstLoading: boolean = false;
 
-  currentScope: UserScope[] = [];
-
   capitalizeName = capitalizeName;
 
   quotationsAssoAffaireOrders: AssoAffaireOrder[][] = [];
@@ -70,7 +66,6 @@ export class QuotationsComponent implements OnInit {
     private invoiceLabelResultService: InvoiceLabelResultService,
     private mailComputeResultService: MailComputeResultService,
     private userPreferenceService: UserPreferenceService,
-    private userScopeService: UserScopeService,
     private activatedRoute: ActivatedRoute,
     private modalService: NgbModal
   ) { }
@@ -79,9 +74,6 @@ export class QuotationsComponent implements OnInit {
   getClassForQuotationStatus = getClassForQuotationStatus;
 
   ngOnInit() {
-    this.userScopeService.getUserScope().subscribe(response => {
-      this.currentScope = response;
-    })
     this.retrieveBookmark();
     this.refreshQuotations();
   }
@@ -195,6 +187,8 @@ export class QuotationsComponent implements OnInit {
       this.appService.showLoadingSpinner();
       this.quotationService.cancelQuotation(this.quotationToCancel.id).subscribe(response => {
         this.quotationToCancel = undefined;
+        this.currentPage = 0;
+        this.quotations = [];
         this.refreshQuotations();
       });
     }

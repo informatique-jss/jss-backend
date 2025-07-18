@@ -97,4 +97,10 @@ public interface QuotationService {
                         throws OsirisClientMessageException, OsirisValidationException, OsirisException;
 
         public void purgeQuotations() throws OsirisException;
+
+        public void reinitInvoicing(Quotation quotation)
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
+                        OsirisDuplicateException;
+
+        public void switchResponsable(Quotation quotation, Responsable responsable);
 }

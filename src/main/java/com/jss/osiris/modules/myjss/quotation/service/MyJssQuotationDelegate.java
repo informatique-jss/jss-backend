@@ -41,6 +41,8 @@ import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
 import com.jss.osiris.modules.osiris.tiers.service.TiersService;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.servlet.http.HttpServletRequest;
 
 @org.springframework.stereotype.Service
@@ -94,6 +96,9 @@ public class MyJssQuotationDelegate {
     @Autowired
     UserScopeService userScopeService;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @Transactional(rollbackFor = Exception.class)
     public CustomerOrder saveCustomerOrderFromMyJss(CustomerOrder order, Boolean isValidation,
             HttpServletRequest request)
@@ -107,7 +112,7 @@ public class MyJssQuotationDelegate {
 
         if (order.getResponsable() != null && order.getResponsable().getId() != null
                 && !order.getResponsable().getId().equals(employeeService.getCurrentMyJssUser().getId())) {
-            List<Responsable> responsables = userScopeService.getUserCurrentScopeResponsables();
+            List<Responsable> responsables = userScopeService.getPotentialUserScope();
             Boolean found = false;
             if (responsables != null) {
                 for (Responsable responsable : responsables) {
@@ -133,6 +138,11 @@ public class MyJssQuotationDelegate {
         order = customerOrderService.addOrUpdateCustomerOrder(order, true, false);
 
         if (isValidation != null && isValidation) {
+            order = customerOrderService.getCustomerOrder(order.getId());
+            customerOrderService.reinitInvoicing(order);
+            entityManager.flush();
+            entityManager.clear();
+
             customerOrderService.addOrUpdateCustomerOrderStatus(order, CustomerOrderStatus.BEING_PROCESSED, true);
             if (customerOrderService.isOnlyJssAnnouncement(order, true)) {
                 quotationValidationHelper.validateQuotationAndCustomerOrder(order, null);
@@ -177,8 +187,14 @@ public class MyJssQuotationDelegate {
         populateBooleansOfProvisions(quotation);
         quotation = quotationService.addOrUpdateQuotationFromUser(quotation);
 
-        if (isValidation != null && isValidation)
+        if (isValidation != null && isValidation) {
+            quotation = quotationService.getQuotation(quotation.getId());
+            entityManager.flush();
+            entityManager.clear();
+
+            quotationService.reinitInvoicing(quotation);
             quotationService.addOrUpdateQuotationStatus(quotation, QuotationStatus.TO_VERIFY);
+        }
 
         return quotation;
 
@@ -211,9 +227,6 @@ public class MyJssQuotationDelegate {
                     throw new OsirisValidationException("Tiers");
                 } else {
                     tiersService.addOrUpdateTiers(quotation.getResponsable().getTiers());
-                    List<Responsable> userScope = userScopeService.getPotentialUserScope(quotation.getResponsable());
-                    if (userScope != null && userScope.size() > 0)
-                        userScopeService.addResponsableToCurrentUserScope(userScope, quotation.getResponsable());
                 }
             }
         }
