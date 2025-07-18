@@ -2312,18 +2312,6 @@ public class QuotationController {
           throw new OsirisValidationException("assoServiceFieldTypeItem");
       }
 
-    MailComputeResult mailComputeResult = new MailComputeResult();
-    if (assoServiceDocument != null)
-      mailComputeResult = mailComputeHelper
-          .computeMailForPublicationReceipt(assoServiceDocument.getService().getAssoAffaireOrder().getCustomerOrder());
-
-    if (assoServiceFieldType != null)
-      mailComputeResult = mailComputeHelper
-          .computeMailForPublicationReceipt(assoServiceFieldType.getService().getAssoAffaireOrder().getCustomerOrder());
-
-    if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
-      throw new OsirisValidationException("MailTo");
-
     return new ResponseEntity<MissingAttachmentQuery>(
         missingAttachmentQueryService.sendMissingAttachmentQueryToCustomer(query, false,
             isWaitingForAttachmentToUpload),
