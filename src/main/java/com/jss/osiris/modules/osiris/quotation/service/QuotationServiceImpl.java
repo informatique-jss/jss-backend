@@ -436,6 +436,10 @@ public class QuotationServiceImpl implements QuotationService {
                         unlockQuotationFromDeposit(quotation);
                         paymentService.generateDepositOnCustomerOrderForCbPayment(
                                 quotation.getCustomerOrders(), centralPayPaymentRequest);
+                    } else if (quotation.getQuotationStatus().getCode().equals(QuotationStatus.VALIDATED_BY_CUSTOMER)
+                            && quotation.getCustomerOrders() != null) {
+                        customerOrderService.validateCardPaymentLinkForCustomerOrder(quotation.getCustomerOrders(),
+                                request);
                     }
                 }
                 if (centralPayPaymentRequest.getCreationDate().isBefore(LocalDateTime.now().minusMinutes(5))) {

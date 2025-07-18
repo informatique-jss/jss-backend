@@ -593,7 +593,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                 customerOrderAssignationService.assignNewProvisionToUser(provision);
             }
-
+            serviceService.addOrUpdateService(service);
         }
 
         return assoAffaireOrder;
