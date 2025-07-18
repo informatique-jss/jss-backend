@@ -20,9 +20,10 @@
   </div>
 </div>
 
-<div class="wrapper-div wrapper-max-height">
+<div class="wrapper-div wrapper-max-height  ">
   <div class="kanban-container top-container">
-    <div *ngFor="let status of statusSelected" class="kanban-column">
+    <div *ngFor="let status of statusSelected ;let indexStatus = index" class="kanban-column"
+      [ngClass]="{'first-column':indexStatus==0}">
       <h3 style="margin: 0px; text-align: center;"><span [matBadge]="status.id?getNumberOfEntitiesByStatus(status):0"
           [matBadgeHidden]="!status.id ||getNumberOfEntitiesByStatus(status)==0" matBadgePosition="after"
           matBadgeSize="small">{{ status.firstname + ' '+status.lastname }}</span></h3>
@@ -37,7 +38,8 @@
         <mat-icon [class.rotated]="!swimlane.isCollapsed">expand_more</mat-icon>
       </div>
       <div class="kanban-container" *ngIf="!swimlane.isCollapsed">
-        <div *ngFor="let status of swimlane.status" class="kanban-column">
+        <div *ngFor="let status of swimlane.status;let indexStatus = index" class="kanban-column"
+          [ngClass]="{'first-column':indexStatus==0}">
           <div cdkDropList [cdkDropListData]="status.entities" class="task-list"
             [id]="'list-'+statusId.indexOf(status.label+'-' + swimlane.id + '')"
             [cdkDropListConnectedTo]="getConnectedDropLists(swimlane)" [ngClass]="{
@@ -48,14 +50,13 @@
               [ngClass]="{'card-priority':order.isPriority}" (cdkDragStarted)="onDragStarted(status.id!,order)"
               (cdkDragEnded)="onDragEnded()" (click)="fetchEntityAndOpenPanel(order)">
               <div class="card-content">
-                <strong>{{order.affairesList}} </strong> <mat-icon color="warn"
-                  *ngIf="order.isHasNotifications">notifications</mat-icon>
-                <p>{{order.servicesList}}</p>
+                <strong>{{getFrenchDateWithoutYear(order.productionEffectiveDateTime)}} - {{order.servicesList}}
+                </strong> <mat-icon color="warn" *ngIf="true ||order.isHasNotifications">notifications</mat-icon>
+                <p style="margin-bottom: 0px;">{{getTiersLabelIQuotation(order)}}</p>
               </div>
               <div class="card-footer">
                 <div class="card-ticket">
-                  {{ order.id }} - {{getResponsableLabelIQuotation(order)}} - {{getTiersLabelIQuotation(order)}}
-                  <br /> le {{formatDateFrance(order.productionEffectiveDateTime)}}
+                  {{ order.id }} - {{order.affairesList}}
                 </div>
                 <div class="card-avatar">
                   <avatar class="avatar-select" [employee]="order.responsable?.salesEmployee" [size]="20">
@@ -65,12 +66,13 @@
               <ng-template cdkDragPreview>
                 <div class="task-card drag-preview">
                   <div class="card-content">
-                    <strong>{{order.affairesList}} </strong>
-                    <p>{{order.servicesList}}</p>
+                    <strong>{{getFrenchDateWithoutYear(order.productionEffectiveDateTime)}} - {{order.servicesList}}
+                    </strong> <mat-icon color="warn" *ngIf="order.isHasNotifications">notifications</mat-icon>
+                    <p style="margin-bottom: 0px;">{{getTiersLabelIQuotation(order)}}</p>
                   </div>
                   <div class="card-footer">
-                    <div class="card-ticket pointer" (click)="openOrder($event, order);$event.stopPropagation()">
-                      {{ order.id }}
+                    <div class="card-ticket">
+                      {{ order.id }} - {{order.affairesList}}
                     </div>
                   </div>
                 </div>
@@ -80,12 +82,23 @@
         </div>
       </div>
     </div>
+    <div #bottom></div>
   </ng-container>
 
-  <h2>Formalités</h2>
-  <div echarts [options]="chartOptions" class="chart" style="height: 400px;"></div>
-  <h2>Insertions</h2>
-  <div echarts [options]="chartOptions2" class="chart" style="height: 400px;"></div>
+  <ng-container *ngIf="isDisplayStatistics">
+    <h2>Formalités</h2>
+    <div echarts [options]="chartOptions" class="chart" style="height: 400px;"></div>
+    <h2>Insertions</h2>
+    <div echarts [options]="chartOptions2" class="chart" style="height: 400px;"></div>
+  </ng-container>
+
+  <button matTooltip="Atteindre le bas de page" mat-fab color="accent" class="fab-button" (click)="scrollDown()">
+    <mat-icon>keyboard_double_arrow_down</mat-icon>
+  </button>
+  <button matTooltip="Afficher les statistiques" mat-fab color="accent" class="second-fab-button"
+    (click)="displayStatistics()">
+    <mat-icon>bar_chart</mat-icon>
+  </button>
 </div>
 
 <mat-menu #menu="matMenu" style="max-width: 100%;">

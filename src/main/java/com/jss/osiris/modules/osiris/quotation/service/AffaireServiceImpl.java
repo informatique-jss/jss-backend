@@ -161,6 +161,15 @@ public class AffaireServiceImpl implements AffaireService {
 
         Affaire affaireSaved = affaireRepository.save(affaire);
         batchService.declareNewBatch(Batch.REINDEX_AFFAIRE, affaire.getId());
+        if (affaire.getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder assoAffaireOrder : affaire.getAssoAffaireOrders()) {
+                if (assoAffaireOrder.getCustomerOrder() != null)
+                    batchService.declareNewBatch(Batch.REINDEX_CUSTOMER_ORDER,
+                            assoAffaireOrder.getCustomerOrder().getId());
+                if (assoAffaireOrder.getQuotation() != null)
+                    batchService.declareNewBatch(Batch.REINDEX_QUOTATION, assoAffaireOrder.getQuotation().getId());
+            }
+
         return affaireSaved;
     }
 

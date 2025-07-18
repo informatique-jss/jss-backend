@@ -88,7 +88,11 @@ public interface QuotationService {
         public List<Quotation> searchQuotation(List<Employee> commercials, List<QuotationStatus> status)
                         throws OsirisException;
 
-        public Quotation completeAdditionnalInformationForQuotation(Quotation customerOrder) throws OsirisException;
+        public Quotation completeAdditionnalInformationForQuotation(Quotation quotation)
+                        throws OsirisException;
+
+        public Quotation completeAdditionnalInformationForQuotationWhenIndexing(Quotation customerOrder)
+                        throws OsirisException;
 
         public Boolean setEmergencyOnQuotation(Quotation quotation, Boolean isEnabled)
                         throws OsirisClientMessageException, OsirisValidationException, OsirisException;

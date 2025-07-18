@@ -111,10 +111,16 @@ public class ServiceServiceImpl implements ServiceService {
                 service.setCustomLabel(null);
         }
 
-        if (service.getAssoAffaireOrder().getCustomerOrder() != null)
-            batchService.declareNewBatch(Batch.REINDEX_ASSO_AFFAIRE_ORDER, service.getAssoAffaireOrder().getId());
+        serviceRepository.save(service);
 
-        return serviceRepository.save(service);
+        if (service.getAssoAffaireOrder().getCustomerOrder() != null) {
+            batchService.declareNewBatch(Batch.REINDEX_ASSO_AFFAIRE_ORDER, service.getAssoAffaireOrder().getId());
+            batchService.declareNewBatch(Batch.REINDEX_CUSTOMER_ORDER,
+                    service.getAssoAffaireOrder().getCustomerOrder().getId());
+        } else if (service.getAssoAffaireOrder().getQuotation() != null)
+            batchService.declareNewBatch(Batch.REINDEX_QUOTATION, service.getAssoAffaireOrder().getQuotation().getId());
+
+        return service;
     }
 
     @Override
@@ -137,7 +143,7 @@ public class ServiceServiceImpl implements ServiceService {
         return true;
     }
 
-    private void linkNewServiceWithAsso(Service newService) {
+    private void linkNewServiceWithAsso(Service newService) throws OsirisException {
         for (AssoServiceDocument assoServiceDocument : newService.getAssoServiceDocuments()) {
             assoServiceDocument.setService(newService);
             assoServiceDocumentService.addOrUpdateAssoServiceDocument(assoServiceDocument);
@@ -585,7 +591,9 @@ public class ServiceServiceImpl implements ServiceService {
 
             List<Provision> newProvisions = getProvisionsFromServiceType(serviceType,
                     service.getAssoAffaireOrder().getAffaire(), service);
-            newProvisions.forEach(provision -> provisionService.addOrUpdateProvision(provision));
+
+            for (Provision provision : newProvisions)
+                provisionService.addOrUpdateProvision(provision);
             service.getProvisions().addAll(newProvisions);
         }
 

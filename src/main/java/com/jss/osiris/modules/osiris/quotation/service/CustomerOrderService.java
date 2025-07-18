@@ -146,10 +146,13 @@ public interface CustomerOrderService {
         public List<CustomerOrder> searchOrders(List<CustomerOrderStatus> customerOrderStatus,
                         List<Responsable> responsables);
 
+        public CustomerOrder completeAdditionnalInformationForCustomerOrder(CustomerOrder customerOrder)
+                        throws OsirisException;
+
         public List<CustomerOrder> completeAdditionnalInformationForCustomerOrders(List<CustomerOrder> customerOrders)
                         throws OsirisException;
 
-        public CustomerOrder completeAdditionnalInformationForCustomerOrder(CustomerOrder customerOrder)
+        public CustomerOrder completeAdditionnalInformationForCustomerOrderWhenIndexing(CustomerOrder customerOrder)
                         throws OsirisException;
 
         public List<CustomerOrder> searchCustomerOrders(List<Employee> commercials,

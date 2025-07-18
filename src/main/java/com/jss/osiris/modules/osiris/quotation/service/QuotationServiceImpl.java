@@ -24,6 +24,10 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule;
+import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule.Feature;
 import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
@@ -31,8 +35,14 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.libs.jackson.JacksonLocalDateDeserializer;
+import com.jss.osiris.libs.jackson.JacksonLocalDateSerializer;
+import com.jss.osiris.libs.jackson.JacksonLocalDateTimeSerializer;
+import com.jss.osiris.libs.jackson.JacksonTimestampMillisecondDeserializer;
 import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailHelper;
+import com.jss.osiris.libs.search.model.IndexEntity;
+import com.jss.osiris.libs.search.service.SearchService;
 import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
 import com.jss.osiris.modules.myjss.quotation.service.MyJssQuotationDelegate;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingRecordService;
@@ -58,6 +68,7 @@ import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderTransient;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
@@ -160,6 +171,9 @@ public class QuotationServiceImpl implements QuotationService {
 
     @Autowired
     UserScopeService userScopeService;
+
+    @Autowired
+    SearchService searchService;
 
     @Override
     public Quotation getQuotation(Integer id) {
@@ -730,9 +744,31 @@ public class QuotationServiceImpl implements QuotationService {
         return quotationRepository.findByResponsable(responsable);
     }
 
+    @Override
+    public Quotation completeAdditionnalInformationForQuotation(Quotation quotation)
+            throws OsirisException {
+        return completeAdditionnalInformationForQuotations(Arrays.asList(quotation)).get(0);
+    }
+
     public List<Quotation> completeAdditionnalInformationForQuotations(List<Quotation> quotations)
             throws OsirisException {
         if (quotations != null && quotations.size() > 0) {
+
+            // Prepare indexation usage
+            List<IndexEntity> indexEntities = searchService.searchForEntitiesByIds(
+                    quotations.stream().map(Quotation::getId).toList(), Quotation.class.getSimpleName());
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            SimpleModule simpleModule = new SimpleModule("SimpleModule");
+            simpleModule.addSerializer(LocalDateTime.class, new JacksonLocalDateTimeSerializer());
+            simpleModule.addSerializer(LocalDate.class, new JacksonLocalDateSerializer());
+            simpleModule.addDeserializer(LocalDateTime.class, new JacksonTimestampMillisecondDeserializer());
+            simpleModule.addDeserializer(LocalDate.class, new JacksonLocalDateDeserializer());
+            objectMapper.registerModule(simpleModule);
+            Hibernate5JakartaModule module = new Hibernate5JakartaModule();
+            module.enable(Feature.FORCE_LAZY_LOADING);
+            objectMapper.registerModule(module);
+
             List<Notification> notifications = notificationService.getNotificationsForCurrentEmployee(true, false, null,
                     false, false);
 
@@ -740,11 +776,27 @@ public class QuotationServiceImpl implements QuotationService {
                 notifications = notifications.stream().filter(n -> n.getQuotation() != null).toList();
 
             for (Quotation quotation : quotations) {
-                completeAdditionnalInformationForQuotation(quotation);
                 if (notifications != null)
                     notifications.stream().filter(n -> n.getQuotation().getId().equals(quotation.getId()))
                             .findFirst()
                             .ifPresent(n -> quotation.setIsHasNotifications(true));
+
+                if (indexEntities != null) {
+                    indexEntities.stream().filter(n -> n.getEntityId().equals(quotation.getId())).findFirst()
+                            .ifPresent(c -> {
+                                CustomerOrderTransient indexOrder = null;
+                                try {
+                                    indexOrder = objectMapper.readValue(c.getText(), CustomerOrderTransient.class);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                if (indexOrder != null) {
+                                    quotation.setAffairesList(indexOrder.getAffairesList());
+                                    quotation.setServicesList(indexOrder.getServicesList());
+                                    quotation.setHasMissingInformations(indexOrder.getHasMissingInformations());
+                                }
+                            });
+                }
             }
         }
 
@@ -752,7 +804,8 @@ public class QuotationServiceImpl implements QuotationService {
     }
 
     @Override
-    public Quotation completeAdditionnalInformationForQuotation(Quotation quotation) throws OsirisException {
+    public Quotation completeAdditionnalInformationForQuotationWhenIndexing(Quotation quotation)
+            throws OsirisException {
         List<String> affaireLabels = new ArrayList<String>();
         List<String> serviceLabels = new ArrayList<String>();
         quotation.setHasMissingInformations(false);
@@ -882,4 +935,5 @@ public class QuotationServiceImpl implements QuotationService {
                     simpleAddOrUpdateQuotation(quotation);
                 }
     }
+
 }

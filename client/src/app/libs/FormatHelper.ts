@@ -68,14 +68,19 @@ export function formatDateHourFrance(dateInput: Date) {
   return `${day}/${month}/${year} ${hours}:${minutes}`;
 }
 
-export function formatDateFrance(date: Date) {
+export function formatDateFrance(date: Date, withYear: Boolean = true) {
   if (!(date instanceof Date))
     date = new Date(date);
-  return [
+
+  let component = [
     padTo2Digits(date.getDate()),
     padTo2Digits(date.getMonth() + 1),
-    date.getFullYear(),
-  ].join('/');
+  ];
+
+  if (withYear)
+    component.push(date.getFullYear() + "");
+
+  return component.join('/');
 }
 
 export function formatDateTimeFrance(date: Date) {

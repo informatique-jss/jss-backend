@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { EChartsOption } from 'echarts';
@@ -34,7 +34,7 @@ import { KanbanComponent } from '../kanban/kanban.component';
   styleUrls: ['./provision-affectation-kanban.component.css']
 })
 export class ProvisionAffectationKanbanComponent extends KanbanComponent<CustomerOrder, AffectationEmployee<CustomerOrder>> implements OnInit {
-
+  @ViewChild('bottom') private bottom!: ElementRef;
   employeesSelected: Employee | undefined;
   filterText: string = '';
   adFormalistes = this.constantService.getActiveDirectoryGroupFormalites();
@@ -48,6 +48,9 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
   chartOptions: EChartsOption = {};
   chartOptions2: EChartsOption = {};
   allEmployees: Employee[] = [];
+
+  isDisplayStatistics: boolean = false;
+
 
   constructor(
     private orderService: CustomerOrderService,
@@ -105,8 +108,10 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
         })
       })
     })
+  }
 
-
+  getFrenchDateWithoutYear(date: Date) {
+    return formatDateFrance(date, false);
   }
 
   initStatus(fetchBookmark: boolean, applyFilter: boolean, isOnlyFilterText: boolean) {
@@ -429,4 +434,11 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
     };
   }
 
+  displayStatistics() {
+    this.isDisplayStatistics = !this.isDisplayStatistics;
+  }
+
+  scrollDown() {
+    this.bottom!.nativeElement.scrollIntoView({ behavior: 'smooth' });
+  }
 }
