@@ -33,11 +33,13 @@ import { GuichetUniqueStatusComponent } from '../../guichet-unique-status/guiche
 import { ActeDepositComponent } from '../acte-deposit/acte-deposit.component';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
 import { AddAffaireComponent } from '../add-affaire/add-affaire.component';
+import { AddBeneficialOwnerComponent } from '../add-beneficial-owner/add-beneficial-owner.component';
 import { AddIncidentReportComponent } from '../add-incident-report/add-incident-report.component';
 import { AffaireListComponent } from '../affaire-list/affaire-list.component';
 import { AffaireComponent } from '../affaire/affaire.component';
 import { AnnouncementListComponent } from '../announcement-list/announcement-list.component';
 import { AnnouncementComponent } from '../announcement/announcement.component';
+import { BeneficialOwnerComponent } from '../beneficial-owner/beneficial-owner.component';
 import { ChooseAssignedUserDialogComponent } from '../choose-assigned-user-dialog/choose-assigned-user-dialog.component';
 import { ChooseCompetentAuthorityDialogComponent } from '../choose-competent-authority-dialog/choose-competent-authority-dialog.component';
 import { CustomerOrderCommentComponent } from '../customer-order-comment/customer-order-comment.component';
@@ -202,6 +204,8 @@ const routes: Routes = [
     IncidentReportListComponent,
     AddIncidentReportComponent,
     InvoiceListComponent,
+    BeneficialOwnerComponent,
+    AddBeneficialOwnerComponent
   ],
   exports: [
     OrderingListComponent,

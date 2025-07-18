@@ -1,7 +1,7 @@
-import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatTabChangeEvent } from '@angular/material/tabs';
+import { MatTabChangeEvent, MatTabGroup } from '@angular/material/tabs';
 import { Subject } from 'rxjs';
 import { FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY, GUICHET_UNIQUE_BASE_URL, GUICHET_UNIQUE_STATUS_AMENDMENT_PENDING, GUICHET_UNIQUE_STATUS_AMENDMENT_SIGNATURE_PENDING, INFOGREFFE_BASE_URL } from 'src/app/libs/Constants';
 import { Dictionnary } from 'src/app/libs/Dictionnary';
@@ -24,6 +24,7 @@ import { FormaliteInfogreffe } from '../../model/infogreffe/FormaliteInfogreffe'
 import { IQuotation } from '../../model/IQuotation';
 import { Provision } from '../../model/Provision';
 import { FormaliteStatusService } from '../../services/formalite.status.service';
+import { AddBeneficialOwnerComponent } from '../add-beneficial-owner/add-beneficial-owner.component';
 import { FormaliteAssociateDialog } from '../formalite-associate-dialog/formalite-associate-dialog';
 
 @Component({
@@ -42,6 +43,8 @@ export class FormaliteComponent implements OnInit {
   @Input() quotation: IQuotation | undefined;
   @Output() provisionChange: EventEmitter<Provision> = new EventEmitter<Provision>();
 
+  @ViewChild('tabGroup') tabGroup!: MatTabGroup;
+  @ViewChild('addBeneficialOwner') addBeneficialOwnerComponent!: AddBeneficialOwnerComponent;
 
   FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY = FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY;
   PROVISION_ENTITY_TYPE = PROVISION_ENTITY_TYPE;
@@ -51,6 +54,7 @@ export class FormaliteComponent implements OnInit {
 
   competentAuthorityInpi = this.constantService.getCompetentAuthorityInpi();
   competentAuthorityInfogreffe = this.constantService.getCompetentAuthorityInfogreffe();
+  provisionTypeRbe = this.constantService.getProvisionTypeRbe();
 
   formaliteStatus: FormaliteStatus[] | undefined;
   displayedColumns: SortTableColumn<FormaliteGuichetUnique | FormaliteInfogreffe>[] = [] as Array<SortTableColumn<FormaliteGuichetUnique | FormaliteInfogreffe>>;
@@ -127,6 +131,18 @@ export class FormaliteComponent implements OnInit {
     } as SortTableAction<FormaliteGuichetUnique | FormaliteInfogreffe>);
 
     this.setFormaliteTableData();
+  }
+
+  handleEditBeneficialOwner(owner: any) {
+    const index = this.tabGroup._tabs.toArray().findIndex((tab: { textLabel: string; }) =>
+      tab.textLabel.trim() === 'Formulaire Bénéficiaire effectif'
+    );
+    if (index !== -1) {
+      this.index = index;
+      setTimeout(() => {
+        this.addBeneficialOwnerComponent.loadBeneficialOwnerForEdit(owner);
+      }, 100);
+    }
   }
 
   getLastEvenementOfFormaliteInfogreffe(formaliteInfogreffe: FormaliteInfogreffe): EvenementInfogreffe | null {

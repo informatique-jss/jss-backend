@@ -2,6 +2,7 @@ package com.jss.osiris.modules.osiris.quotation.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.nio.file.Files;
 import java.time.LocalDate;
@@ -37,6 +38,8 @@ import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
+import com.jss.osiris.modules.osiris.beneficialOwner.model.BeneficialOwner;
+import com.jss.osiris.modules.osiris.beneficialOwner.service.BeneficialOwnerService;
 import com.jss.osiris.modules.osiris.crm.model.Voucher;
 import com.jss.osiris.modules.osiris.crm.service.VoucherService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
@@ -411,6 +414,9 @@ public class QuotationController {
 
   @Autowired
   CustomerOrderAssignationService customerOrderAssignationService;
+
+  @Autowired
+  BeneficialOwnerService beneficialOwnerService;
 
   @GetMapping(inputEntryPoint + "/service-field-types")
   public ResponseEntity<List<ServiceFieldType>> getServiceFieldTypes() {
@@ -3001,5 +3007,56 @@ public class QuotationController {
 
     return new ResponseEntity<AnnouncementNoticeTemplateFragment>(announcementNoticeTemplateFragmentService
         .addOrUpdateAnnouncementNoticeTemplateFragment(announcementNoticeTemplateFragments), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/beneficial-owners")
+  public ResponseEntity<List<BeneficialOwner>> getBeneficialOwners(@RequestParam Integer idAffaire)
+      throws OsirisValidationException {
+    Affaire affaire = affaireService.getAffaire(idAffaire);
+    if (affaire == null)
+      throw new OsirisValidationException("affaire");
+
+    return new ResponseEntity<List<BeneficialOwner>>(beneficialOwnerService.getBeneficialOwnersByAffaire(affaire),
+        HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/beneficial-owner")
+  public ResponseEntity<BeneficialOwner> addOrUpdateBeneficialOwner(
+      @RequestBody BeneficialOwner beneficialOwner)
+      throws OsirisValidationException, OsirisException {
+    if (beneficialOwner.getId() != null)
+      validationHelper.validateReferential(beneficialOwner, true,
+          "beneficialOwner");
+
+    if (beneficialOwner.getVotingRights().getVotingTotalPercentage() == null
+        && beneficialOwner.getShareHolding().getShareTotalPercentage() == null) {
+      throw new OsirisValidationException(
+          "shareTotalPercentage");
+    }
+
+    BigDecimal total = BigDecimal.ZERO;
+    if (beneficialOwner.getShareHolding().getShareTotalPercentage() != null)
+      total = total.add(beneficialOwner.getShareHolding().getShareTotalPercentage());
+    if (beneficialOwner.getVotingRights().getVotingTotalPercentage() != null)
+      total = total.add(beneficialOwner.getVotingRights().getVotingTotalPercentage());
+
+    if (total.compareTo(BigDecimal.valueOf(100)) > 0) {
+      throw new OsirisValidationException("shareTotalPercentage");
+    }
+
+    return new ResponseEntity<BeneficialOwner>(beneficialOwnerService.addOrUpdateBeneficialOwner(beneficialOwner),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/beneficial-owner/delete")
+  public ResponseEntity<Boolean> deleteBeneficialOwner(@RequestParam Integer beneficialOwnerId)
+      throws OsirisValidationException {
+
+    BeneficialOwner beneficialOwner = beneficialOwnerService.getBeneficialOwner(beneficialOwnerId);
+    if (beneficialOwner == null)
+      throw new OsirisValidationException("beneficialOwner");
+
+    return new ResponseEntity<Boolean>(beneficialOwnerService.deleteBeneficialOwner(beneficialOwner),
+        HttpStatus.OK);
   }
 }

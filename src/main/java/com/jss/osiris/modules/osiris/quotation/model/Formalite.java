@@ -1,6 +1,6 @@
 package com.jss.osiris.modules.osiris.quotation.model;
-import java.io.Serializable;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -116,6 +116,14 @@ public class Formalite implements IId, Serializable {
 
     public void setFormalitesInfogreffe(List<FormaliteInfogreffe> formalitesInfogreffe) {
         this.formalitesInfogreffe = formalitesInfogreffe;
+    }
+
+    public ActeDeposit getActeDeposit() {
+        return acteDeposit;
+    }
+
+    public void setActeDeposit(ActeDeposit acteDeposit) {
+        this.acteDeposit = acteDeposit;
     }
 
 }
