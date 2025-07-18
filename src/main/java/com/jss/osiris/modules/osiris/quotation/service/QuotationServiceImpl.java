@@ -205,10 +205,9 @@ public class QuotationServiceImpl implements QuotationService {
         if (quotation.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
                 assoAffaireOrder.setQuotation(quotation);
-                if (assoAffaireOrder.getId() == null)
-                    if (assoAffaireOrder.getServices() != null && assoAffaireOrder.getServices().size() > 0) {
-                        assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, quotation, true);
-                    }
+                if (assoAffaireOrder.getServices() != null && assoAffaireOrder.getServices().size() > 0) {
+                    assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, quotation, true);
+                }
             }
 
         boolean isNewQuotation = quotation.getId() == null;

@@ -349,16 +349,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if (customerOrder.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
                 assoAffaireOrder.setCustomerOrder(customerOrder);
-                if (assoAffaireOrder.getId() == null)
-                    if (assoAffaireOrder.getServices() != null && assoAffaireOrder.getServices().size() > 0) {
-                        assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, customerOrder, isFromUser);
-                        if (assoAffaireOrder.getId() != null)
-                            batchService.declareNewBatch(Batch.REINDEX_ASSO_AFFAIRE_ORDER, assoAffaireOrder.getId());
-                    }
+                if (assoAffaireOrder.getServices() != null && assoAffaireOrder.getServices().size() > 0) {
+                    assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, customerOrder, isFromUser);
+                    if (assoAffaireOrder.getId() != null)
+                        batchService.declareNewBatch(Batch.REINDEX_ASSO_AFFAIRE_ORDER, assoAffaireOrder.getId());
+                }
             }
-
-        if (!isNewCustomerOrder)
-            customerOrder = simpleAddOrUpdate(customerOrder);
 
         pricingHelper.getAndSetInvoiceItemsForQuotation(customerOrder, true);
 

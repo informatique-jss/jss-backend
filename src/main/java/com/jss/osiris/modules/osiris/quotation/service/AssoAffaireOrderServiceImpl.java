@@ -219,6 +219,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 for (AssoServiceFieldType assoServiceFieldType : service.getAssoServiceFieldTypes())
                     assoServiceFieldType.setService(service);
 
+            serviceService.addOrUpdateService(service);
+
             for (Provision provision : service.getProvisions()) {
                 provision.setService(service);
 
@@ -593,7 +595,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                 customerOrderAssignationService.assignNewProvisionToUser(provision);
             }
-            serviceService.addOrUpdateService(service);
         }
 
         return assoAffaireOrder;
