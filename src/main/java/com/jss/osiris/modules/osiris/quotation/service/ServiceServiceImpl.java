@@ -514,14 +514,12 @@ public class ServiceServiceImpl implements ServiceService {
     public Service modifyServiceType(List<ServiceType> serviceTypes, Service service) throws OsirisException {
         service = getService(service.getId());
         ArrayList<AssoServiceFieldType> assoToDelete = new ArrayList<AssoServiceFieldType>();
-        ArrayList<Integer> serviceTypeIds = new ArrayList<Integer>();
 
         for (ServiceType serviceType : serviceTypes) {
             serviceType = serviceTypeService.getServiceType(serviceType.getId());
-            if (!serviceTypeIds.contains(serviceType.getId())) {
-                serviceTypeIds.add(serviceType.getId());
-                service.getServiceTypes().add(serviceType);
-            }
+            service.setServiceTypes(serviceTypes);
+            service.setCustomLabel(null);
+            service.setServiceLabelToDisplay(null);
 
             for (AssoServiceTypeFieldType serviceTypeFieldType : serviceType.getAssoServiceTypeFieldTypes()) {
                 boolean found = false;

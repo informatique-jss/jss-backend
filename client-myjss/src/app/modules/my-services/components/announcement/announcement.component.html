@@ -74,8 +74,12 @@
             <span class="fs-xs fw-semibold text-blue text-uppercase">Annonce légale</span>
           </div>
           <h2 class="h2 secondary-heading pb-2 pb-sm-3 ">N'attendez plus et accédez à nos solutions</h2>
-          <double-buttons orderActionLabel=" Publier une annonce légale" quotationActionLabel="Demander un devis"
-            linkLabel="Consulter une annonce légale" [isLightButtons]="false">
+          <double-buttons class="text-grey" orderActionLabel=" Publier une annonce légale"
+            [orderActionRoute]="'quotation/new/'+serviceFamilyGroupAnnouncement!.id+'/'+quotationTypeOrder.id"
+            quotationActionLabel="Demander un devis"
+            [quotationActionRoute]="'quotation/new/'+serviceFamilyGroupAnnouncement!.id+'/'+quotationTypeQuotation.id"
+            linkLabel="Consulter les annonces légales" linkRoute="announcement/search" [linkRouteToJssMedia]='true'
+            [isLightButtons]="true">
           </double-buttons>
         </div>
       </div>

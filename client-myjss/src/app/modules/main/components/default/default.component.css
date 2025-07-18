@@ -1,6 +1,6 @@
 .support-button {
   position: fixed;
-  bottom: 16px;
+  bottom: 66px;
   right: 20px;
   z-index: 1050;
   background-color: var(--ar-primary);

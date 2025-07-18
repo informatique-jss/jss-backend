@@ -77,6 +77,30 @@
                 {{item.label}}
               </a>
             </ng-container>
+            <ng-container *ngIf="userScope && userScope.length>0">
+              <div class="dropdown-divider"></div>
+              <div ngbDropdown class="dropstart" [open]="dropdownOpen" (mouseenter)="dropdownOpen = true"
+                (mouseleave)="dropdownOpen = false">
+                <a class="dropdown-item dropdown-toggle" ngbDropdownToggle>
+                  <i class="fs-lg opacity-70 me-2 bi bi-person-switch"></i>
+                  Changer de compte
+                </a>
+                <div ngbDropdownMenu class="dropdown-menu p-2"
+                  style="min-width: 250px; max-height: 300px; overflow-y: auto;">
+                  <ng-container *ngFor="let group of groupedAccounts">
+                    <div
+                      class="dropdown-header dropdown-header-sub text-uppercase text-body-secondary fs-xs fw-semibold pt-2">
+                      {{ group.denomination }}
+                    </div>
+                    <ng-container *ngFor="let account of group.accounts">
+                      <a class="dropdown-item ps-4" (click)="switchAccount(account)">
+                        {{ account.firstname}} {{account.lastname }}
+                      </a>
+                    </ng-container>
+                  </ng-container>
+                </div>
+              </div>
+            </ng-container>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item btn-outline-light" [routerLink]="'/account/signout'">
               Se déconnecter

@@ -1560,6 +1560,42 @@ public class MyJssQuotationController {
 				HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/quotation/switch/responsable")
+	public ResponseEntity<Boolean> switchResponsableForQuotation(Integer idQuotation, Integer newResponsable,
+			HttpServletRequest request)
+			throws OsirisValidationException, OsirisException {
+		detectFlood(request);
+
+		Quotation quotation = quotationService.getQuotation(idQuotation);
+		if (quotation == null)
+			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+
+		Responsable responsable = responsableService.getResponsable(newResponsable);
+		if (responsable == null)
+			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+
+		quotationService.switchResponsable(quotation, responsable);
+		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/order/switch/responsable")
+	public ResponseEntity<Boolean> switchResponsableForOrder(Integer idOrder, Integer newResponsable,
+			HttpServletRequest request)
+			throws OsirisValidationException, OsirisException {
+		detectFlood(request);
+
+		CustomerOrder order = customerOrderService.getCustomerOrder(idOrder);
+		if (order == null)
+			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+
+		Responsable responsable = responsableService.getResponsable(newResponsable);
+		if (responsable == null)
+			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+
+		customerOrderService.switchResponsable(order, responsable);
+		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+	}
+
 	@PostMapping(inputEntryPoint + "/order/save-order")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<CustomerOrder> saveCutomerOrder(@RequestBody CustomerOrder order,

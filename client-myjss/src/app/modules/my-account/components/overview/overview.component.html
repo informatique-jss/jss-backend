@@ -23,8 +23,7 @@
         </div>
       </div>
       <div class="col-md-4 col-sm-6" *ngIf="statistics.invoiceToPay && statistics.invoiceToPay>0">
-        <div class="h-100 bg-secondary rounded-3 text-center p-4 stat-card"
-          [routerLink]="'/account/orders/search/'+CUSTOMER_ORDER_STATUS_BILLED">
+        <div class="h-100 bg-secondary rounded-3 text-center p-4 stat-card" routerLink="/account/closure">
           <h2 class="h6 pb-2 mb-1">Facture en attente de paiement</h2>
           <div class="h2 text-primary mb-2">{{statistics.invoiceToPay}}</div>
         </div>

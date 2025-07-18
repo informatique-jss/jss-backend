@@ -105,13 +105,14 @@ public class PricingHelper {
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         if (quotation.getAssoAffaireOrders() != null) {
             for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
-                for (Service service : assoAffaireOrder.getServices())
-                    for (Provision provision : service.getProvisions()) {
-                        provision.setService(service);
-                        service.setAssoAffaireOrder(assoAffaireOrder);
-                        if (provision.getProvisionType() != null && provision.getProvisionType().getId() != null)
-                            setInvoiceItemsForProvision(provision, quotation, persistInvoiceItem);
-                    }
+                if (assoAffaireOrder.getServices() != null)
+                    for (Service service : assoAffaireOrder.getServices())
+                        for (Provision provision : service.getProvisions()) {
+                            provision.setService(service);
+                            service.setAssoAffaireOrder(assoAffaireOrder);
+                            if (provision.getProvisionType() != null && provision.getProvisionType().getId() != null)
+                                setInvoiceItemsForProvision(provision, quotation, persistInvoiceItem);
+                        }
             }
         }
         return quotation;

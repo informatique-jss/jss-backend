@@ -197,4 +197,6 @@ public interface CustomerOrderService {
 
         public List<CustomerOrder> findCustomerOrderByForcedEmployeeAssigned(CustomerOrderStatus customerOrderStatus,
                         Employee assignedUser);
+
+        public void switchResponsable(CustomerOrder order, Responsable responsable);
 }

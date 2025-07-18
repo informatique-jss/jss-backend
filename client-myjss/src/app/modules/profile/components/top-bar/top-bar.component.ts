@@ -7,8 +7,11 @@ import { MenuItem } from '../../../general/model/MenuItem';
 import { AppService } from '../../../main/services/app.service';
 import { AvatarComponent } from '../../../miscellaneous/components/avatar/avatar.component';
 import { AccountMenuItem, MAIN_ITEM_ACCOUNT, MAIN_ITEM_DASHBOARD } from '../../../my-account/model/AccountMenuItem';
+import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
+import { QuotationService } from '../../../my-account/services/quotation.service';
 import { Responsable } from '../../model/Responsable';
 import { LoginService } from '../../services/login.service';
+import { ResponsableService } from '../../services/responsable.service';
 import { SearchComponent } from '../search/search.component';
 
 declare var bootstrap: any;
@@ -18,7 +21,7 @@ declare var bootstrap: any;
   templateUrl: './top-bar.component.html',
   styleUrls: ['./top-bar.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, AvatarComponent, NgbDropdownModule, NgbCollapseModule]
+  imports: [SHARED_IMPORTS, AvatarComponent, NgbDropdownModule, NgbCollapseModule, NgbDropdownModule]
 })
 export class TopBarComponent implements OnInit {
 
@@ -31,6 +34,9 @@ export class TopBarComponent implements OnInit {
   anonymousConnexion: string = '/assets/images/anonymous.svg';
 
   currentUser: Responsable | undefined;
+  dropdownOpen = false;
+  userScope: Responsable[] = [];
+  groupedAccounts: { denomination: string, accounts: Responsable[] }[] = [];
 
   searchModalInstance: any | undefined;
 
@@ -49,7 +55,10 @@ export class TopBarComponent implements OnInit {
     private appService: AppService,
     private router: Router,
     private eRef: ElementRef,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private responsableService: ResponsableService,
+    private quotationService: QuotationService,
+    private orderService: CustomerOrderService
   ) { }
 
   capitalizeName = capitalizeName;
@@ -80,6 +89,64 @@ export class TopBarComponent implements OnInit {
   refreshCurrentUser() {
     this.loginService.getCurrentUser().subscribe(response => {
       this.currentUser = response;
+
+      this.responsableService.getPotentialUserScope().subscribe(response => {
+        this.userScope = response.filter(u => u.id != this.currentUser!.id);
+
+        const groupedMap = new Map<string, Responsable[]>();
+
+        for (const responsable of this.userScope) {
+          const key = responsable.tiers.denomination ? responsable.tiers.denomination : (responsable.tiers.firstname + ' ' + responsable.tiers.lastname);
+          if (!groupedMap.has(key)) {
+            groupedMap.set(key, []);
+          }
+          groupedMap.get(key)!.push(responsable);
+        }
+
+        this.groupedAccounts = Array.from(groupedMap.entries())
+          .map(([denomination, accounts]) => ({
+            denomination,
+            accounts: accounts.sort((a, b) => {
+              const aFirst = (a.firstname || '').toLowerCase();
+              const bFirst = (b.firstname || '').toLowerCase();
+              const aLast = (a.lastname || '').toLowerCase();
+              const bLast = (b.lastname || '').toLowerCase();
+
+              return aFirst.localeCompare(bFirst) || aLast.localeCompare(bLast);
+            }),
+          }))
+          .sort((a, b) => a.denomination.localeCompare(b.denomination));
+      })
+    });
+  }
+
+  switchAccount(account: Responsable) {
+    this.appService.showLoadingSpinner();
+    this.loginService.switchUser(account.id).subscribe(response => {
+      // switch current quotation
+      if (this.quotationService.getCurrentDraftQuotationId() || this.orderService.getCurrentDraftOrderId()) {
+        this.loginService.getCurrentUser().subscribe(currentUser => {
+          if (this.quotationService.getCurrentDraftQuotationId()) {
+            this.quotationService.switchResponsableForQuotation(parseInt(this.quotationService.getCurrentDraftQuotationId()!), account).subscribe(response => {
+              this.refreshAfterSwitch();
+            });
+          } else if (this.orderService.getCurrentDraftOrderId()) {
+            this.orderService.switchResponsableForOrder(parseInt(this.orderService.getCurrentDraftOrderId()!), account).subscribe(response => {
+              this.refreshAfterSwitch();
+            });
+          }
+        });
+      } else {
+        this.refreshAfterSwitch();
+      }
+    })
+  }
+
+  refreshAfterSwitch() {
+    const currentUrl = this.router.url;
+    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      this.appService.hideLoadingSpinner();
+      this.router.navigate([currentUrl]);
     });
   }
 
