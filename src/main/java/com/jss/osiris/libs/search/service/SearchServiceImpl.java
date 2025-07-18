@@ -86,6 +86,11 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
+    public List<IndexEntity> searchForEntitiesByIds(List<Integer> ids, String entityTypeToSearch) {
+        return indexEntityRepository.searchForEntitiesByIdsAndEntityType(ids, entityTypeToSearch);
+    }
+
+    @Override
     public List<IndexEntity> getActifResponsableByKeyword(String searchedValue, Boolean onlyActive) {
         List<IndexEntity> responsables = searchForEntities(searchedValue, Responsable.class.getSimpleName(), false);
         if (!onlyActive)

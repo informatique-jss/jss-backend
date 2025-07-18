@@ -48,6 +48,8 @@ import com.jss.osiris.libs.jackson.JacksonTimestampMillisecondDeserializer;
 import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
+import com.jss.osiris.libs.search.model.IndexEntity;
+import com.jss.osiris.libs.search.service.SearchService;
 import com.jss.osiris.modules.myjss.profile.controller.MyJssProfileController;
 import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
 import com.jss.osiris.modules.myjss.quotation.service.MyJssQuotationDelegate;
@@ -93,6 +95,7 @@ import com.jss.osiris.modules.osiris.quotation.model.AssoServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderTransient;
 import com.jss.osiris.modules.osiris.quotation.model.DomiciliationStatus;
 import com.jss.osiris.modules.osiris.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.osiris.quotation.model.IOrderingSearchTaggedResult;
@@ -264,6 +267,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Autowired
     CustomerOrderAssignationService customerOrderAssignationService;
+
+    @Autowired
+    SearchService searchService;
 
     private CustomerOrder simpleAddOrUpdate(CustomerOrder customerOrder) {
         return customerOrderRepository.save(customerOrder);
@@ -1571,6 +1577,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
+    public CustomerOrder completeAdditionnalInformationForCustomerOrder(CustomerOrder customerOrder)
+            throws OsirisException {
+        return completeAdditionnalInformationForCustomerOrders(Arrays.asList(customerOrder)).get(0);
+    }
+
+    @Override
     public List<CustomerOrder> completeAdditionnalInformationForCustomerOrders(List<CustomerOrder> customerOrders)
             throws OsirisException {
         if (customerOrders != null && customerOrders.size() > 0) {
@@ -1580,12 +1592,43 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             if (notifications != null)
                 notifications = notifications.stream().filter(n -> n.getCustomerOrder() != null).toList();
 
+            // Prepare indexation usage
+            List<IndexEntity> indexEntities = searchService.searchForEntitiesByIds(
+                    customerOrders.stream().map(CustomerOrder::getId).toList(), CustomerOrder.class.getSimpleName());
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            SimpleModule simpleModule = new SimpleModule("SimpleModule");
+            simpleModule.addSerializer(LocalDateTime.class, new JacksonLocalDateTimeSerializer());
+            simpleModule.addSerializer(LocalDate.class, new JacksonLocalDateSerializer());
+            simpleModule.addDeserializer(LocalDateTime.class, new JacksonTimestampMillisecondDeserializer());
+            simpleModule.addDeserializer(LocalDate.class, new JacksonLocalDateDeserializer());
+            objectMapper.registerModule(simpleModule);
+            Hibernate5JakartaModule module = new Hibernate5JakartaModule();
+            module.enable(Feature.FORCE_LAZY_LOADING);
+            objectMapper.registerModule(module);
+
             for (CustomerOrder customerOrder : customerOrders) {
-                completeAdditionnalInformationForCustomerOrder(customerOrder);
                 if (notifications != null)
                     notifications.stream().filter(n -> n.getCustomerOrder().getId().equals(customerOrder.getId()))
                             .findFirst()
                             .ifPresent(n -> customerOrder.setIsHasNotifications(true));
+
+                if (indexEntities != null) {
+                    indexEntities.stream().filter(n -> n.getEntityId().equals(customerOrder.getId())).findFirst()
+                            .ifPresent(c -> {
+                                CustomerOrderTransient indexOrder = null;
+                                try {
+                                    indexOrder = objectMapper.readValue(c.getText(), CustomerOrderTransient.class);
+                                } catch (Exception e) {
+                                }
+                                if (indexOrder != null) {
+                                    customerOrder.setAffairesList(indexOrder.getAffairesList());
+                                    customerOrder.setServicesList(indexOrder.getServicesList());
+                                    customerOrder.setHasMissingInformations(indexOrder.getHasMissingInformations());
+                                    customerOrder.setIsPriority(customerOrder.getIsPriority());
+                                }
+                            });
+                }
             }
         }
 
@@ -1593,7 +1636,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
-    public CustomerOrder completeAdditionnalInformationForCustomerOrder(CustomerOrder customerOrder)
+    public CustomerOrder completeAdditionnalInformationForCustomerOrderWhenIndexing(CustomerOrder customerOrder)
             throws OsirisException {
         List<String> affaireLabels = new ArrayList<String>();
         List<String> serviceLabels = new ArrayList<String>();

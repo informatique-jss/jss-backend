@@ -146,7 +146,7 @@ public class CustomerOrderAssignationServiceImpl implements CustomerOrderAssigna
     }
 
     @Override
-    public void assignNewProvisionToUser(Provision provision) {
+    public void assignNewProvisionToUser(Provision provision) throws OsirisException {
         if (provision != null && provision.getAssignedTo() == null && provision.getProvisionType() != null
                 && provision.getProvisionType().getAssignationType() != null) {
             if (provision.getService().getAssoAffaireOrder().getCustomerOrder() != null && provision.getService()
@@ -319,7 +319,8 @@ public class CustomerOrderAssignationServiceImpl implements CustomerOrderAssigna
         return null;
     }
 
-    private void assignToEmployee(CustomerOrderAssignation customerOrderAssignation, Employee currentEmployee) {
+    private void assignToEmployee(CustomerOrderAssignation customerOrderAssignation, Employee currentEmployee)
+            throws OsirisException {
         customerOrderAssignation.setEmployee(currentEmployee);
         customerOrderAssignation.setIsAssigned(true);
         addOrUpdateCustomerOrderAssignation(customerOrderAssignation);

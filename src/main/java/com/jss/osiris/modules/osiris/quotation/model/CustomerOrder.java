@@ -242,23 +242,27 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	private List<CustomerOrderComment> customerOrderComments;
 
 	@Transient
+	@IndexedField
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
 			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 	private String affairesList;
 
 	@Transient
+	@IndexedField
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
 			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 	private String servicesList;
 
 	@Transient
+	@IndexedField
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
 			JacksonViews.OsirisDetailedView.class, JacksonViews.OsirisListView.class, })
 	private Boolean hasMissingInformations;
 
 	@Transient
+	@IndexedField
 	@JsonView({ JacksonViews.OsirisDetailedView.class, JacksonViews.OsirisListView.class, })
 	private Boolean isPriority;
 
