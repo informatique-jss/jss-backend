@@ -26,6 +26,7 @@ export interface Document {
   billingLabelType: BillingLabelType;
   isResponsableOnBilling: boolean;
   isCommandNumberMandatory: boolean;
+  isCbLinkDisabled: boolean;
   commandNumber: string;
   paymentDeadlineType: PaymentDeadlineType;
   refundType: RefundType;
