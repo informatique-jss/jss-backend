@@ -379,8 +379,6 @@ public class MailHelper {
 
         IQuotation quotation = mail.getCustomerOrder() != null ? mail.getCustomerOrder() : mail.getQuotation();
         if (quotation != null) {
-            ctx.setVariable("customerName", getCustomerName(quotation));
-
             AssoAffaireOrder assoAffaireOrderToUse = null;
             if (mail.getProvision() != null)
                 if (quotation.getAssoAffaireOrders() != null)
@@ -392,6 +390,12 @@ public class MailHelper {
                                     break outerloop;
                                 }
 
+            if (mail.getMailComputeResult() != null && mail.getMailComputeResult().getIsSendToAffaire()
+                    && (mail.getMailTemplate().equals(CustomerMail.TEMPLATE_CUSTOMER_ORDER_FINALIZATION)
+                            || mail.getMailTemplate().equals(CustomerMail.TEMPLATE_INVOICE_REMINDER)))
+                ctx.setVariable("customerName", getCustomerOrderAffaireLabel(quotation, assoAffaireOrderToUse));
+            else
+                ctx.setVariable("customerName", getCustomerName(quotation));
             ctx.setVariable("affaireLabel", getCustomerOrderAffaireLabel(quotation, assoAffaireOrderToUse));
             ctx.setVariable("affaireLabelDetails",
                     getCustomerOrderAffaireDetailLabel(quotation, assoAffaireOrderToUse));
