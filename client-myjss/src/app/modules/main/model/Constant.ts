@@ -2,6 +2,7 @@ import { AttachmentType } from "../../my-account/model/AttachmentType";
 import { BillingLabelType } from "../../my-account/model/BillingLabelType";
 import { DocumentType } from "../../my-account/model/DocumentType";
 import { PaymentType } from "../../my-account/model/PaymentType";
+import { ProvisionType } from "../../my-account/model/ProvisionType";
 import { ServiceType } from "../../my-account/model/ServiceType";
 import { Country } from "../../profile/model/Country";
 import { Responsable } from "../../profile/model/Responsable";
@@ -47,4 +48,5 @@ export interface Constant {
   serviceTypeUniqueArticleBuy: ServiceType;
   serviceFamilyGroupFormality: ServiceFamilyGroup;
   serviceFamilyGroupOther: ServiceFamilyGroup;
+  provisionTypeRbe: ProvisionType;
 }

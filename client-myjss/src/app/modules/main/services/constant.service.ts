@@ -188,6 +188,10 @@ export class ConstantService extends AppRestService<Constant> {
   getServiceTypeUniqueArticleBuy() {
     return this.constant.serviceTypeUniqueArticleBuy;
   }
+
+  getProvisionTypeRbe() {
+    return this.constant.provisionTypeRbe;
+  }
 }
 
 @Injectable({ providedIn: 'root' })
