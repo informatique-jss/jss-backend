@@ -215,21 +215,28 @@ public class QuotationServiceImpl implements QuotationService {
                 mailService.populateMailIds(document.getMailsClient());
             }
 
+        boolean isNewQuotation = quotation.getId() == null;
+        if (isNewQuotation) {
+            quotation.setCreatedDate(LocalDateTime.now());
+            quotation.setValidationToken(UUID.randomUUID().toString());
+            quotation = quotationRepository.save(quotation);
+        }
+
         // Complete provisions
         if (quotation.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
                 assoAffaireOrder.setQuotation(quotation);
                 if (assoAffaireOrder.getServices() != null && assoAffaireOrder.getServices().size() > 0) {
                     assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, quotation, true);
+                    for (Service service : assoAffaireOrder.getServices())
+                        if (service.getProvisions() != null)
+                            for (Provision provision : service.getProvisions())
+                                if (provision.getId() == null && !isNewQuotation) {
+                                    provision.setService(service);
+                                    provisionService.addOrUpdateProvision(provision);
+                                }
                 }
             }
-
-        boolean isNewQuotation = quotation.getId() == null;
-        if (isNewQuotation) {
-            quotation.setCreatedDate(LocalDateTime.now());
-            quotation.setValidationToken(UUID.randomUUID().toString());
-        }
-        quotation = quotationRepository.save(quotation);
 
         pricingHelper.getAndSetInvoiceItemsForQuotation(quotation, true);
         quotation = quotationRepository.save(quotation);
