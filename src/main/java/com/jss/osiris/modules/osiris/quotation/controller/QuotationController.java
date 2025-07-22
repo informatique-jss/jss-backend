@@ -1169,14 +1169,17 @@ public class QuotationController {
 
   @GetMapping(inputEntryPoint + "/provision/assignedTo")
   public ResponseEntity<Boolean> updateAssignedToForProvision(@RequestParam Integer provisionId,
-      @RequestParam Integer employeeId) throws OsirisValidationException {
+      @RequestParam(required = false) Integer employeeId) throws OsirisValidationException {
     Provision provision = provisionService.getProvision(provisionId);
     if (provision == null)
       throw new OsirisValidationException("provision");
 
-    Employee employee = employeeService.getEmployee(employeeId);
-    if (employee == null)
-      throw new OsirisValidationException("employee");
+    Employee employee = null;
+    if (employeeId != null) {
+      employee = employeeService.getEmployee(employeeId);
+      if (employee == null)
+        throw new OsirisValidationException("employee");
+    }
 
     provisionService.updateAssignedToForProvision(provision, employee);
     return new ResponseEntity<Boolean>(true, HttpStatus.OK);
