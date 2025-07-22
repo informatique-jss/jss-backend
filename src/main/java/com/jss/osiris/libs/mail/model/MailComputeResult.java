@@ -35,6 +35,7 @@ public class MailComputeResult implements Serializable {
 
     Boolean isSendToClient;
     Boolean isSendToAffaire;
+    Boolean isCbLinkDisabled;
     String mailToClientOrigin;
     String mailToAffaireOrigin;
     String mailCcAffaireOrigin;
@@ -110,6 +111,14 @@ public class MailComputeResult implements Serializable {
 
     public void setRecipientsMailCc(List<Mail> recipientsMailCc) {
         this.recipientsMailCc = recipientsMailCc;
+    }
+
+    public Boolean getIsCbLinkDisabled() {
+        return isCbLinkDisabled;
+    }
+
+    public void setIsCbLinkDisabled(Boolean isCbLink) {
+        this.isCbLinkDisabled = isCbLink;
     }
 
 }
