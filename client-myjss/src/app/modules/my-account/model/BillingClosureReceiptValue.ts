@@ -6,6 +6,7 @@ export interface BillingClosureReceiptValue {
   eventCbLink: string;
   creditAmount: number;
   debitAmount: number;
+  remainingDebitAmount: number;
   directDebitTransfertDate: Date;
   responsable: Responsable;
   affaireLists: string;

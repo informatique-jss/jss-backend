@@ -186,6 +186,8 @@ export class QuotationsComponent implements OnInit {
     if (this.quotationToCancel && this.quotationToCancel.id) {
       this.appService.showLoadingSpinner();
       this.quotationService.cancelQuotation(this.quotationToCancel.id).subscribe(response => {
+        if (this.quotationService.getCurrentDraftQuotationId() && parseInt(this.quotationService.getCurrentDraftQuotationId()!) == this.quotationToCancel!.id)
+          this.quotationService.cleanStorageData();
         this.quotationToCancel = undefined;
         this.currentPage = 0;
         this.quotations = [];

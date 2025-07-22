@@ -354,7 +354,7 @@ export class RequiredInformationComponent implements OnInit {
   }
 
   canSaveQuotation() {
-    if (this.quotation)
+    if (this.quotation && this.quotation.assoAffaireOrders)
       for (let asso of this.quotation.assoAffaireOrders)
         if (!asso.services || asso.services.length == 0)
           return false;

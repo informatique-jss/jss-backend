@@ -301,8 +301,9 @@ public class PricingHelper {
                         if (serviceType.getAssoServiceProvisionTypes() != null)
                             for (AssoServiceProvisionType assoServiceProvisionType : serviceType
                                     .getAssoServiceProvisionTypes())
-                                if (assoServiceProvisionType.getProvisionType().getId()
-                                        .equals(provision.getProvisionType().getId()))
+                                if (assoServiceProvisionType.getProvisionType() != null
+                                        && assoServiceProvisionType.getProvisionType().getId()
+                                                .equals(provision.getProvisionType().getId()))
                                     if (billingItem.getBillingType().getIsNonTaxable() == false
                                             && assoServiceProvisionType.getDefaultDeboursPrice() != null) {
                                         if (invoiceItem.getPreTaxPrice() == null)
