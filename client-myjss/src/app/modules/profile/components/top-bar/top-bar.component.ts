@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbCollapseModule, NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { capitalizeName } from '../../../../libs/FormatHelper';
@@ -58,7 +58,8 @@ export class TopBarComponent implements OnInit {
     private modalService: NgbModal,
     private responsableService: ResponsableService,
     private quotationService: QuotationService,
-    private orderService: CustomerOrderService
+    private orderService: CustomerOrderService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   capitalizeName = capitalizeName;
@@ -89,6 +90,7 @@ export class TopBarComponent implements OnInit {
   refreshCurrentUser() {
     this.loginService.getCurrentUser().subscribe(response => {
       this.currentUser = response;
+      this.cdr.detectChanges();
 
       this.responsableService.getPotentialUserScope().subscribe(response => {
         this.userScope = response.filter(u => u.id != this.currentUser!.id);
