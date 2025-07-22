@@ -422,6 +422,8 @@ export class RequiredInformationComponent implements OnInit {
         if (!response)
           return;
         this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[3]);
+        this.noticeTemplateDescription.isShowNoticeTemplate = false;
+        this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
         this.appService.openRoute(undefined, "quotation/checkout", undefined);
       });
       return;
