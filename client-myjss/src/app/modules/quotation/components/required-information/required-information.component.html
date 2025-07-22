@@ -23,9 +23,7 @@
        'btn-secondary': indexAsso == selectedAssoIndex && indexService == selectedServiceIndex,
        'btn-outline-primary': indexAsso != selectedAssoIndex || indexService != selectedServiceIndex
      }" class="btn rounded-pill mt-2 ms-1 mt-md-3 ms-md-0 col-auto pill text-wrap text-break">
-
               {{ service.serviceLabelToDisplay }}
-
               <i *ngIf="indexAsso == selectedAssoIndex && indexService == selectedServiceIndex"
                 class="ai-circle-arrow-right ms-2"></i>
             </a>
@@ -48,7 +46,7 @@
           quotation.assoAffaireOrders[selectedAssoIndex].affaire.lastname) }}
           - {{quotation.assoAffaireOrders[selectedAssoIndex].affaire.address}}</span>
       </strong>
-      <a class="btn btn-secondary rounded-pill mt-2 ms-0 mt-md-3 ms-md-0 col-auto pill text-wrap text-break fs-xs"
+      <a class="btn btn-secondary rounded-pill mt-2 ms-0 ms-md-0 col-auto pill text-wrap text-break fs-xs"
         *ngIf="quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex]">
         {{quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].serviceLabelToDisplay }}
       </a>

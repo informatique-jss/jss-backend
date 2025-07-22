@@ -130,6 +130,10 @@ export class HeaderComponent implements OnInit {
     this.appService.openMyJssRoute(undefined, item.route, false);
   }
 
+  openMyJssRouteUrl(item: string) {
+    this.appService.openMyJssRoute(undefined, item, false);
+  }
+
   disconnect() {
     this.loginService.signOut().subscribe(response => {
       this.currentUser = undefined;

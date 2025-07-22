@@ -60,6 +60,10 @@
             </div>
           </a>
           <div ngbDropdownMenu class="dropdown-menu dropdown-menu-end my-1">
+            <a class="dropdown-item" [routerLink]="'quotation/identification'">
+              <i class="fs-lg opacity-70 me-2 ai-circle-plus"></i>
+              Nouvelle commande
+            </a>
             <h6 class="dropdown-header fs-xs fw-medium text-body-secondary text-uppercase pb-1">Tableau de
               bord</h6>
             <ng-container *ngFor="let item of myAccountItems">
