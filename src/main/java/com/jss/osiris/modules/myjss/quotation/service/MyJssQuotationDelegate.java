@@ -41,8 +41,6 @@ import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
 import com.jss.osiris.modules.osiris.tiers.service.TiersService;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import jakarta.servlet.http.HttpServletRequest;
 
 @org.springframework.stereotype.Service
@@ -96,9 +94,6 @@ public class MyJssQuotationDelegate {
     @Autowired
     UserScopeService userScopeService;
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
     @Transactional(rollbackFor = Exception.class)
     public CustomerOrder saveCustomerOrderFromMyJss(CustomerOrder order, Boolean isValidation,
             HttpServletRequest request)
@@ -140,8 +135,6 @@ public class MyJssQuotationDelegate {
         if (isValidation != null && isValidation) {
             order = customerOrderService.getCustomerOrder(order.getId());
             customerOrderService.reinitInvoicing(order);
-            entityManager.flush();
-            entityManager.clear();
 
             customerOrderService.addOrUpdateCustomerOrderStatus(order, CustomerOrderStatus.BEING_PROCESSED, true);
             if (customerOrderService.isOnlyJssAnnouncement(order, true)) {
@@ -189,8 +182,6 @@ public class MyJssQuotationDelegate {
 
         if (isValidation != null && isValidation) {
             quotation = quotationService.getQuotation(quotation.getId());
-            entityManager.flush();
-            entityManager.clear();
 
             quotationService.reinitInvoicing(quotation);
             quotationService.addOrUpdateQuotationStatus(quotation, QuotationStatus.TO_VERIFY);
