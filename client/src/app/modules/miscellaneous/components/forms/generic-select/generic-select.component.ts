@@ -34,7 +34,7 @@ export abstract class GenericSelectComponent<T> extends GenericFormComponent imp
   }
 
   changeSelection(event: T) {
-    this.selectionChange.emit(event);
+    //this.selectionChange.emit(event);
   }
 
   abstract initTypes(): void;

@@ -1632,7 +1632,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                                     customerOrder.setAffairesList(indexOrder.getAffairesList());
                                     customerOrder.setServicesList(indexOrder.getServicesList());
                                     customerOrder.setHasMissingInformations(indexOrder.getHasMissingInformations());
-                                    customerOrder.setIsPriority(customerOrder.getIsPriority());
+                                    customerOrder.setIsPriority(indexOrder.getIsPriority());
                                 }
                             });
                 }
