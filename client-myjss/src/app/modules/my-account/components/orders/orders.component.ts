@@ -16,6 +16,7 @@ import { AssoAffaireOrderService } from '../../services/asso.affaire.order.servi
 import { CustomerOrderService } from '../../services/customer.order.service';
 import { InvoiceLabelResultService } from '../../services/invoice.label.result.service';
 import { MailComputeResultService } from '../../services/mail.compute.result.service';
+import { QuotationService } from '../../services/quotation.service';
 
 declare var bootstrap: any;
 
@@ -62,7 +63,8 @@ export class OrdersComponent implements OnInit {
     private mailComputeResultService: MailComputeResultService,
     private userPreferenceService: UserPreferenceService,
     private activatedRoute: ActivatedRoute,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private quotationService: QuotationService
   ) { }
 
   ngOnInit() {
@@ -172,6 +174,8 @@ export class OrdersComponent implements OnInit {
     if (this.quotationToCancel && this.quotationToCancel.id) {
       this.appService.showLoadingSpinner();
       this.customerOrderService.cancelCustomerOrder(this.quotationToCancel.id).subscribe(response => {
+        if (this.customerOrderService.getCurrentDraftOrderId() && parseInt(this.customerOrderService.getCurrentDraftOrderId()!) == this.quotationToCancel!.id)
+          this.quotationService.cleanStorageData();
         this.quotationToCancel = undefined;
         this.currentPage = 0;
         this.orders = [];

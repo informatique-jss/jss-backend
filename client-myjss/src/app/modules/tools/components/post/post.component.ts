@@ -100,16 +100,12 @@ export class PostComponent implements OnInit, AfterViewInit {
 
     this.createCommentForm = this.formBuilder.group({});
 
-    this.slug = this.activatedRoute.snapshot.params['slug'];
-
     this.loginService.getCurrentUser().subscribe(res => this.currentUser = res);
-    if (this.slug) {
-      this.postService.getPostBySlug(this.slug).subscribe(post => {
-        this.post = post;
-        this.fetchComments(0);
-      })
-      this.cancelReply()
-    }
+
+    this.activatedRoute.params.subscribe(() => {
+      this.refreshPost();
+    });
+    this.refreshPost();
 
     this.postService.getMostSeenPosts().subscribe(posts => {
       this.hotPosts = posts;
@@ -119,6 +115,17 @@ export class PostComponent implements OnInit, AfterViewInit {
       this.recentPosts = posts;
     });
 
+  }
+
+  refreshPost() {
+    this.slug = this.activatedRoute.snapshot.params['slug'];
+    if (this.slug) {
+      this.postService.getPostBySlug(this.slug).subscribe(post => {
+        this.post = post;
+        this.fetchComments(0);
+      })
+      this.cancelReply();
+    }
   }
 
   ngOnDestroy() {

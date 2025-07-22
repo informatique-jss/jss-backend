@@ -151,14 +151,20 @@ export class BillingClosureComponent implements OnInit {
   addToPayCb(receiptValue: BillingClosureReceiptValue) {
     if (this.orderToPayInCb && this.orderToPayInCb.indexOf(receiptValue.idCustomerOrder) < 0 && receiptValue.debitAmount) {
       this.orderToPayInCb.push(receiptValue.idCustomerOrder);
-      this.totalToPayCb += receiptValue.debitAmount;
+      if (receiptValue.remainingDebitAmount)
+        this.totalToPayCb += receiptValue.remainingDebitAmount;
+      else
+        this.totalToPayCb += receiptValue.debitAmount;
     }
   }
 
   removeFromPayCb(receiptValue: BillingClosureReceiptValue) {
     if (this.orderToPayInCb && this.orderToPayInCb.indexOf(receiptValue.idCustomerOrder) >= 0 && receiptValue.debitAmount) {
       this.orderToPayInCb.splice(this.orderToPayInCb.indexOf(receiptValue.idCustomerOrder));
-      this.totalToPayCb -= receiptValue.debitAmount;
+      if (receiptValue.remainingDebitAmount)
+        this.totalToPayCb -= receiptValue.remainingDebitAmount;
+      else
+        this.totalToPayCb -= receiptValue.debitAmount;
     }
   }
 
