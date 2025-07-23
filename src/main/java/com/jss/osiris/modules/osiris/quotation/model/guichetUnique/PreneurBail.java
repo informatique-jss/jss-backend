@@ -9,6 +9,7 @@ import com.jss.osiris.libs.search.model.DoNotAudit;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypePersonne;
 
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -21,6 +22,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 
 @Entity
+@Cacheable(false)
 @DoNotAudit
 public class PreneurBail implements Serializable, IId {
 

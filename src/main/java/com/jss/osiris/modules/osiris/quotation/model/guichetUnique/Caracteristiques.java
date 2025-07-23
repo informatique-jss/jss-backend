@@ -5,6 +5,7 @@ import java.io.Serializable;
 import com.jss.osiris.libs.search.model.DoNotAudit;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 
 @Entity
+@Cacheable(false)
 @DoNotAudit
 public class Caracteristiques implements Serializable, IId {
 

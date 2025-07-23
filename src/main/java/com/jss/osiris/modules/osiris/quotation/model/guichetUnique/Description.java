@@ -12,6 +12,7 @@ import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.OrigineFusionScission;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDeStatuts;
 
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -24,6 +25,7 @@ import jakarta.persistence.SequenceGenerator;
 
 @Entity
 @DoNotAudit
+@Cacheable(false)
 public class Description implements Serializable, IId {
 
     @Id
