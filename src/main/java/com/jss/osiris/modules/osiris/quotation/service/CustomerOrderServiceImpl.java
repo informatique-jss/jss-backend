@@ -469,8 +469,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
                 for (Service service : asso.getServices())
                     for (Provision provision : service.getProvisions()) {
-                        if (provision.getAnnouncement() != null && !provision.getAnnouncement().getConfrere().getId()
-                                .equals(constantService.getConfrereJssSpel().getId()))
+                        if (provision.getAnnouncement().getConfrere() == null || provision.getAnnouncement() != null
+                                && !provision.getAnnouncement().getConfrere().getId()
+                                        .equals(constantService.getConfrereJssSpel().getId()))
                             return false;
                         if (isReadyForBilling && provision.getAnnouncement() != null
                                 && (provision.getIsRedactedByJss() || provision.getAnnouncement().getNotice() == null

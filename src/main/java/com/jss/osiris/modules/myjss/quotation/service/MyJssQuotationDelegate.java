@@ -130,16 +130,17 @@ public class MyJssQuotationDelegate {
         CustomerOrder fetchOrder = null;
         if (order.getId() == null) {
             order.setResponsable(newResponsable);
+            populateBooleansOfProvisions(order);
             quotationValidationHelper.completeIQuotationDocuments(order, true);
             order.setCustomerOrderOrigin(constantService.getCustomerOrderOriginMyJss());
             order.setCustomerOrderStatus(
                     customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT));
-            populateBooleansOfProvisions(order);
             fetchOrder = customerOrderService.addOrUpdateCustomerOrder(order, true, false);
         } else
             fetchOrder = customerOrderService.getCustomerOrder(order.getId());
 
-        if (fetchOrder.getResponsable() == null || fetchOrder.getResponsable().getId().equals(newResponsable.getId())) {
+        if (fetchOrder.getResponsable() == null
+                || !fetchOrder.getResponsable().getId().equals(newResponsable.getId())) {
             fetchOrder.setResponsable(newResponsable);
             fetchOrder = customerOrderService.addOrUpdateCustomerOrder(fetchOrder, true, false);
         }
@@ -186,19 +187,19 @@ public class MyJssQuotationDelegate {
 
         Quotation fetchQuotation = null;
         if (quotation.getId() == null) {
+            populateBooleansOfProvisions(quotation);
             quotation.setResponsable(newResponsable);
             quotationValidationHelper.completeIQuotationDocuments(quotation, false);
             quotation.setCustomerOrderOrigin(constantService.getCustomerOrderOriginMyJss());
             quotation.setQuotationStatus(quotationStatusService.getQuotationStatusByCode(QuotationStatus.DRAFT));
-            populateBooleansOfProvisions(quotation);
             fetchQuotation = quotationService.addOrUpdateQuotation(quotation);
         } else
             fetchQuotation = quotationService.getQuotation(quotation.getId());
 
         if (fetchQuotation.getResponsable() == null
-                || fetchQuotation.getResponsable().getId().equals(newResponsable.getId())) {
+                || !fetchQuotation.getResponsable().getId().equals(newResponsable.getId())) {
             fetchQuotation.setResponsable(newResponsable);
-            fetchQuotation = quotationService.addOrUpdateQuotationFromUser(quotation);
+            fetchQuotation = quotationService.addOrUpdateQuotationFromUser(fetchQuotation);
         }
 
         if (isValidation != null && isValidation) {
