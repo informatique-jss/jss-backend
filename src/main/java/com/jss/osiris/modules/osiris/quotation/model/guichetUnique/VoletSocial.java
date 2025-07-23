@@ -13,6 +13,7 @@ import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.SituationVisAVisMsa;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.StatutExerciceActiviteSimultan;
 
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -27,6 +28,7 @@ import jakarta.persistence.SequenceGenerator;
 
 @Entity
 @DoNotAudit
+@Cacheable(false)
 public class VoletSocial implements Serializable, IId {
 
     @Id

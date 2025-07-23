@@ -14,6 +14,7 @@ import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.StatutPourLaFormalite;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDePersonne;
 
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,6 +30,7 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
 @Entity
+@Cacheable(false)
 @DoNotAudit
 @Table(indexes = {
         @Index(name = "idx_pouvoir_composition", columnList = "id_composition"),

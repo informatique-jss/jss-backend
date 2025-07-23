@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hazelcast.core.HazelcastInstance;
-
 @RestController
 @CrossOrigin
 @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
@@ -17,9 +15,6 @@ public class CacheController {
 
 	@Autowired
 	private CacheManager cacheManager;
-
-	@Autowired
-	HazelcastInstance hazelcastInstance;
 
 	@Autowired
 	SessionFactory sessionFactory;
@@ -34,13 +29,6 @@ public class CacheController {
 			if (cache != null)
 				cache.clear();
 		});
-
-		// Clear Hazelcast maps
-		for (var distObj : hazelcastInstance.getDistributedObjects()) {
-			if (distObj instanceof com.hazelcast.map.IMap<?, ?> map) {
-				map.clear();
-			}
-		}
 
 		// Clear Hibernate 2nd level cache
 		sessionFactory.getCache().evictAllRegions();

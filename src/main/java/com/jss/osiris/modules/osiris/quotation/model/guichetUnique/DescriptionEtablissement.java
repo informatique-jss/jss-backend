@@ -3,6 +3,7 @@ package com.jss.osiris.modules.osiris.quotation.model.guichetUnique;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -21,6 +22,7 @@ import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.
 
 @Entity
 @DoNotAudit
+@Cacheable(false)
 public class DescriptionEtablissement implements Serializable, IId {
 
     @Id
