@@ -9,7 +9,6 @@ import java.util.Optional;
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -86,9 +85,6 @@ public class TiersServiceImpl implements TiersService {
     @Autowired
     IndexEntityService indexEntityService;
 
-    @Autowired
-    CacheManager cacheManager;
-
     @Override
     @Transactional
     public Tiers getTiersFromUser(Integer id) {
@@ -129,12 +125,6 @@ public class TiersServiceImpl implements TiersService {
         // Find duplicate Responsable
         if (tiers.getResponsables() != null && tiers.getResponsables().size() > 0) {
             for (Responsable responsable : tiers.getResponsables()) {
-
-                // Remove MyJSS scope cache
-                if (cacheManager.getCache("potential-user-scope") != null && responsable.getId() != null)
-                    cacheManager.getCache("potential-user-scope").evict(responsable.getId());
-                if (cacheManager.getCache("user-scope") != null && responsable.getId() != null)
-                    cacheManager.getCache("user-scope").evict(responsable.getId());
 
                 if (responsable.getId() == null) {
                     List<Responsable> responsablesDuplicates = new ArrayList<Responsable>();

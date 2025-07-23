@@ -751,12 +751,15 @@ public class QuotationServiceImpl implements QuotationService {
     }
 
     @Override
-    public Quotation completeAdditionnalInformationForQuotation(Quotation quotation)
+    public Quotation completeAdditionnalInformationForQuotation(Quotation quotation,
+            Boolean populationAssoAffaireOrderTransientField)
             throws OsirisException {
-        return completeAdditionnalInformationForQuotations(Arrays.asList(quotation)).get(0);
+        return completeAdditionnalInformationForQuotations(Arrays.asList(quotation),
+                populationAssoAffaireOrderTransientField).get(0);
     }
 
-    public List<Quotation> completeAdditionnalInformationForQuotations(List<Quotation> quotations)
+    public List<Quotation> completeAdditionnalInformationForQuotations(List<Quotation> quotations,
+            Boolean populationAssoAffaireOrderTransientField)
             throws OsirisException {
         if (quotations != null && quotations.size() > 0) {
 
@@ -786,6 +789,9 @@ public class QuotationServiceImpl implements QuotationService {
                     notifications.stream().filter(n -> n.getQuotation().getId().equals(quotation.getId()))
                             .findFirst()
                             .ifPresent(n -> quotation.setIsHasNotifications(true));
+
+                if (populationAssoAffaireOrderTransientField)
+                    assoAffaireOrderService.populateTransientField(quotation.getAssoAffaireOrders());
 
                 if (indexEntities != null) {
                     indexEntities.stream().filter(n -> n.getEntityId().equals(quotation.getId())).findFirst()
@@ -860,7 +866,7 @@ public class QuotationServiceImpl implements QuotationService {
                 : Arrays.asList(0);
 
         return completeAdditionnalInformationForQuotations(
-                quotationRepository.searchQuotation(commercialIds, statusIds));
+                quotationRepository.searchQuotation(commercialIds, statusIds), false);
     }
 
     @Override

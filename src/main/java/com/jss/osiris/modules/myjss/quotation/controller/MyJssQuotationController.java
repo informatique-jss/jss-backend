@@ -467,7 +467,8 @@ public class MyJssQuotationController {
 		if (quotation == null || !myJssQuotationValidationHelper.canSeeQuotation(quotation))
 			return new ResponseEntity<Quotation>(new Quotation(), HttpStatus.OK);
 
-		return new ResponseEntity<Quotation>(quotationService.completeAdditionnalInformationForQuotation(quotation),
+		return new ResponseEntity<Quotation>(
+				quotationService.completeAdditionnalInformationForQuotation(quotation, true),
 				HttpStatus.OK);
 	}
 
@@ -1543,7 +1544,7 @@ public class MyJssQuotationController {
 			return new ResponseEntity<Quotation>(null);
 
 		return new ResponseEntity<Quotation>(quotationService.completeAdditionnalInformationForQuotation(
-				(Quotation) pricingHelper.completePricingOfIQuotation(quotation, isEmergency)), HttpStatus.OK);
+				(Quotation) pricingHelper.completePricingOfIQuotation(quotation, isEmergency), true), HttpStatus.OK);
 	}
 
 	@PostMapping(inputEntryPoint + "/quotation/save-order")
