@@ -389,7 +389,8 @@ public class MyJssQuotationController {
 			return new ResponseEntity<CustomerOrder>(new CustomerOrder(), HttpStatus.OK);
 
 		return new ResponseEntity<CustomerOrder>(
-				customerOrderService.completeAdditionnalInformationForCustomerOrder(customerOrder), HttpStatus.OK);
+				customerOrderService.completeAdditionnalInformationForCustomerOrder(customerOrder, true),
+				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/order/emergency")
@@ -1527,7 +1528,7 @@ public class MyJssQuotationController {
 
 		return new ResponseEntity<CustomerOrder>(
 				customerOrderService.completeAdditionnalInformationForCustomerOrder(
-						(CustomerOrder) pricingHelper.completePricingOfIQuotation(customerOrder, isEmergency)),
+						(CustomerOrder) pricingHelper.completePricingOfIQuotation(customerOrder, isEmergency), true),
 				HttpStatus.OK);
 	}
 
