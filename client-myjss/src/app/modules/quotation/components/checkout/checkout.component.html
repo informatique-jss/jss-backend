@@ -40,26 +40,6 @@
             </div>
           </div>
         </div>
-        <div class="d-flex align-items-center mb-4" *ngIf="userScope && userScope.length>1 && currentUser">
-          <div>
-            <div ngbDropdown class="btn-group dropdown" style="margin-right: 10px;">
-              <button type="button" class="btn btn-secondary dropdown-toggle" ngbDropdownToggle aria-haspopup="true"
-                aria-expanded="false">
-                <i class="ai-briefcase me-2"></i>
-                {{currentUser.tiers.id}} - {{currentUser.tiers.denomination}} - {{capitalizeName(currentUser.firstname+
-                ' '+currentUser.lastname)}}
-              </button>
-              <div ngbDropdownMenu class="dropdown-menu my-1">
-                <label class=" dropdown-item" *ngFor="let scope of userScope">
-                  <a class="dropdown-item" style="cursor: pointer;" (click)="changeCurrentUser(scope) ">
-                    {{scope.tiers.id}} - {{scope.tiers.denomination}} - {{capitalizeName(scope.firstname+ '
-                    '+scope.lastname)}}
-                  </a>
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
 
         <!-- Quick message -->
         <div class="row" *ngIf="quotation && quotation.assoAffaireOrders && quotation.assoAffaireOrders[0] && quotation.assoAffaireOrders[0].services

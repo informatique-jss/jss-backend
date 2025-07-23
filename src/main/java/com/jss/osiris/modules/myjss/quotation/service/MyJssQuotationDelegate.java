@@ -105,6 +105,8 @@ public class MyJssQuotationDelegate {
 
         saveNewMailsOnAffaire(order);
 
+        Responsable newResponsable = order.getResponsable();
+
         if (order.getResponsable() != null && order.getResponsable().getId() != null
                 && !order.getResponsable().getId().equals(employeeService.getCurrentMyJssUser().getId())) {
             List<Responsable> responsables = userScopeService.getPotentialUserScope();
@@ -118,25 +120,32 @@ public class MyJssQuotationDelegate {
                 }
             }
             if (!found)
-                order.setResponsable(employeeService.getCurrentMyJssUser());
+                newResponsable = employeeService.getCurrentMyJssUser();
             else
-                order.setResponsable(responsableService.getResponsable(order.getResponsable().getId()));
+                newResponsable = responsableService.getResponsable(order.getResponsable().getId());
         } else {
-            order.setResponsable(employeeService.getCurrentMyJssUser());
+            newResponsable = employeeService.getCurrentMyJssUser();
         }
 
-        order.setCustomerOrderOrigin(constantService.getCustomerOrderOriginMyJss());
-        order.setCustomerOrderStatus(
-                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT));
-        quotationValidationHelper.completeIQuotationDocuments(order, true);
-        populateBooleansOfProvisions(order);
-        order = customerOrderService.addOrUpdateCustomerOrder(order, true, false);
+        CustomerOrder fetchOrder = null;
+        if (order.getId() == null) {
+            order.setResponsable(newResponsable);
+            quotationValidationHelper.completeIQuotationDocuments(order, true);
+            order.setCustomerOrderOrigin(constantService.getCustomerOrderOriginMyJss());
+            order.setCustomerOrderStatus(
+                    customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT));
+            populateBooleansOfProvisions(order);
+            fetchOrder = customerOrderService.addOrUpdateCustomerOrder(order, true, false);
+        } else
+            fetchOrder = customerOrderService.getCustomerOrder(order.getId());
+
+        if (fetchOrder.getResponsable() == null || fetchOrder.getResponsable().getId().equals(newResponsable.getId())) {
+            fetchOrder.setResponsable(newResponsable);
+            fetchOrder = customerOrderService.addOrUpdateCustomerOrder(fetchOrder, true, false);
+        }
 
         if (isValidation != null && isValidation) {
-            order = customerOrderService.getCustomerOrder(order.getId());
-            customerOrderService.reinitInvoicing(order);
-
-            customerOrderService.addOrUpdateCustomerOrderStatus(order, CustomerOrderStatus.BEING_PROCESSED, true);
+            customerOrderService.addOrUpdateCustomerOrderStatus(fetchOrder, CustomerOrderStatus.BEING_PROCESSED, true);
             if (customerOrderService.isOnlyJssAnnouncement(order, true)) {
                 quotationValidationHelper.validateQuotationAndCustomerOrder(order, null);
                 customerOrderService.autoBilledProvisions(order);
@@ -155,6 +164,8 @@ public class MyJssQuotationDelegate {
 
         saveNewMailsOnAffaire(quotation);
 
+        Responsable newResponsable = quotation.getResponsable();
+
         if (quotation.getResponsable() != null
                 && !quotation.getResponsable().getId().equals(employeeService.getCurrentMyJssUser().getId())) {
             List<Responsable> responsables = userScopeService.getPotentialUserScope();
@@ -168,22 +179,29 @@ public class MyJssQuotationDelegate {
                 }
             }
             if (!found)
-                quotation.setResponsable(employeeService.getCurrentMyJssUser());
+                newResponsable = employeeService.getCurrentMyJssUser();
         } else {
-            quotation.setResponsable(employeeService.getCurrentMyJssUser());
+            newResponsable = employeeService.getCurrentMyJssUser();
         }
 
-        quotation.setCustomerOrderOrigin(constantService.getCustomerOrderOriginMyJss());
-        quotation.setQuotationStatus(
-                quotationStatusService.getQuotationStatusByCode(CustomerOrderStatus.DRAFT));
-        quotationValidationHelper.completeIQuotationDocuments(quotation, false);
-        populateBooleansOfProvisions(quotation);
-        quotation = quotationService.addOrUpdateQuotationFromUser(quotation);
+        Quotation fetchQuotation = null;
+        if (quotation.getId() == null) {
+            quotation.setResponsable(newResponsable);
+            quotationValidationHelper.completeIQuotationDocuments(quotation, false);
+            quotation.setCustomerOrderOrigin(constantService.getCustomerOrderOriginMyJss());
+            quotation.setQuotationStatus(quotationStatusService.getQuotationStatusByCode(QuotationStatus.DRAFT));
+            populateBooleansOfProvisions(quotation);
+            fetchQuotation = quotationService.addOrUpdateQuotation(quotation);
+        } else
+            fetchQuotation = quotationService.getQuotation(quotation.getId());
+
+        if (fetchQuotation.getResponsable() == null
+                || fetchQuotation.getResponsable().getId().equals(newResponsable.getId())) {
+            fetchQuotation.setResponsable(newResponsable);
+            fetchQuotation = quotationService.addOrUpdateQuotationFromUser(quotation);
+        }
 
         if (isValidation != null && isValidation) {
-            quotation = quotationService.getQuotation(quotation.getId());
-
-            quotationService.reinitInvoicing(quotation);
             quotationService.addOrUpdateQuotationStatus(quotation, QuotationStatus.TO_VERIFY);
         }
 
