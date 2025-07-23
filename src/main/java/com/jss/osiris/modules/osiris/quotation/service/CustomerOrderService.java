@@ -146,10 +146,12 @@ public interface CustomerOrderService {
         public List<CustomerOrder> searchOrders(List<CustomerOrderStatus> customerOrderStatus,
                         List<Responsable> responsables);
 
-        public CustomerOrder completeAdditionnalInformationForCustomerOrder(CustomerOrder customerOrder)
+        public CustomerOrder completeAdditionnalInformationForCustomerOrder(CustomerOrder customerOrder,
+                        Boolean populationAssoAffaireOrderTransientField)
                         throws OsirisException;
 
-        public List<CustomerOrder> completeAdditionnalInformationForCustomerOrders(List<CustomerOrder> customerOrders)
+        public List<CustomerOrder> completeAdditionnalInformationForCustomerOrders(List<CustomerOrder> customerOrders,
+                        Boolean populationAssoAffaireOrderTransientField)
                         throws OsirisException;
 
         public CustomerOrder completeAdditionnalInformationForCustomerOrderWhenIndexing(CustomerOrder customerOrder)

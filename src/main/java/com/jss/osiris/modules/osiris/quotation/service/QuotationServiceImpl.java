@@ -253,11 +253,10 @@ public class QuotationServiceImpl implements QuotationService {
             else
                 quotation.setCustomerOrderOrigin(constantService.getCustomerOrderOriginOsiris());
 
-            /*
-             * if (quotation.getCustomerOrderOrigin().getId()
-             * .equals(constantService.getCustomerOrderOriginWebSite().getId()))
-             * mailHelper.sendQuotationCreationConfirmationToCustomer(quotation);
-             */
+            if (quotation.getCustomerOrderOrigin().getId()
+                    .equals(constantService.getCustomerOrderOriginMyJss().getId()))
+                mailHelper.sendQuotationCreationConfirmationToCustomer(quotation);
+
         }
         return quotation;
     }

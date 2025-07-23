@@ -108,7 +108,7 @@ export class ServicesSelectionComponent implements OnInit {
         if (family.services)
           for (let ser of family.services)
             if (ser.id == service.id)
-              return family.label;
+              return family.customLabel ? family.customLabel : family.label;
     return "";
   }
 

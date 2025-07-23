@@ -1563,7 +1563,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 Pageable pageableRequest = PageRequest.of(page, 10, sort);
                 return completeAdditionnalInformationForCustomerOrders(
                         customerOrderRepository.searchOrdersForCurrentUser(responsablesToFilter,
-                                customerOrderStatusToFilter, pageableRequest, customerOrderStatusBilled, displayPayed));
+                                customerOrderStatusToFilter, pageableRequest, customerOrderStatusBilled, displayPayed),
+                        false);
             }
         }
 
@@ -1576,21 +1577,23 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 .getCustomerOrderStatusByCode(CustomerOrderStatus.ABANDONED);
 
         if (responsablesToFilter != null && responsablesToFilter.size() > 0) {
-            return completeAdditionnalInformationForCustomerOrders(
-                    customerOrderRepository.searchOrdersForCurrentUserAndAffaire(responsablesToFilter, affaire,
-                            statusAbandonned));
+            return completeAdditionnalInformationForCustomerOrders(customerOrderRepository
+                    .searchOrdersForCurrentUserAndAffaire(responsablesToFilter, affaire, statusAbandonned), false);
         }
         return null;
     }
 
     @Override
-    public CustomerOrder completeAdditionnalInformationForCustomerOrder(CustomerOrder customerOrder)
+    public CustomerOrder completeAdditionnalInformationForCustomerOrder(CustomerOrder customerOrder,
+            Boolean populationAssoAffaireOrderTransientField)
             throws OsirisException {
-        return completeAdditionnalInformationForCustomerOrders(Arrays.asList(customerOrder)).get(0);
+        return completeAdditionnalInformationForCustomerOrders(Arrays.asList(customerOrder),
+                populationAssoAffaireOrderTransientField).get(0);
     }
 
     @Override
-    public List<CustomerOrder> completeAdditionnalInformationForCustomerOrders(List<CustomerOrder> customerOrders)
+    public List<CustomerOrder> completeAdditionnalInformationForCustomerOrders(List<CustomerOrder> customerOrders,
+            Boolean populationAssoAffaireOrderTransientField)
             throws OsirisException {
         if (customerOrders != null && customerOrders.size() > 0) {
             List<Notification> notifications = notificationService.getNotificationsForCurrentEmployee(true, false, null,
@@ -1619,6 +1622,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     notifications.stream().filter(n -> n.getCustomerOrder().getId().equals(customerOrder.getId()))
                             .findFirst()
                             .ifPresent(n -> customerOrder.setIsHasNotifications(true));
+
+                if (populationAssoAffaireOrderTransientField)
+                    assoAffaireOrderService.populateTransientField(customerOrder.getAssoAffaireOrders());
 
                 if (indexEntities != null) {
                     indexEntities.stream().filter(n -> n.getEntityId().equals(customerOrder.getId())).findFirst()
@@ -1865,7 +1871,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         }
 
         return completeAdditionnalInformationForCustomerOrders(
-                customerOrderRepository.searchCustomerOrders(commercialIds, statusIds, invoicingEmployeesIds));
+                customerOrderRepository.searchCustomerOrders(commercialIds, statusIds, invoicingEmployeesIds), false);
     }
 
     @Override

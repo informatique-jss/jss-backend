@@ -87,10 +87,10 @@ public class NotificationServiceImpl implements NotificationService {
                 }
                 if (notification.getCustomerOrder() != null && completeAdditionnalInformation) {
                     notification.getCustomerOrder().setServicesList(customerOrderService
-                            .completeAdditionnalInformationForCustomerOrder(notification.getCustomerOrder())
+                            .completeAdditionnalInformationForCustomerOrder(notification.getCustomerOrder(), false)
                             .getServicesList());
                     notification.getCustomerOrder().setAffairesList(customerOrderService
-                            .completeAdditionnalInformationForCustomerOrder(notification.getCustomerOrder())
+                            .completeAdditionnalInformationForCustomerOrder(notification.getCustomerOrder(), false)
                             .getAffairesList());
                 }
                 ouNotifications.add(notification);

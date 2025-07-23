@@ -290,10 +290,13 @@ public class PricingHelper {
                                 .divide(oneHundredValue));
         } else if (billingItem.getBillingType().getIsDebour()
                 && !provision.getService().getServiceTypes().isEmpty()) {
-            if (quotation instanceof Quotation || ((CustomerOrder) quotation).getCustomerOrderStatus() != null
-                    && ((CustomerOrder) quotation).getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.DRAFT))
+            if (quotation instanceof Quotation || ((CustomerOrder) quotation).getCustomerOrderStatus() == null
+                    || ((CustomerOrder) quotation).getCustomerOrderStatus() != null
+                            && ((CustomerOrder) quotation).getCustomerOrderStatus().getCode()
+                                    .equals(CustomerOrderStatus.DRAFT))
                 if (invoiceItem.getPreTaxPrice() == null || invoiceItem.getPreTaxPrice().equals(zeroValue))
                     for (ServiceType serviceType : provision.getService().getServiceTypes()) {
+                        serviceType = serviceTypeService.getServiceType(serviceType.getId());
                         if (serviceType.getAssoServiceProvisionTypes() != null)
                             for (AssoServiceProvisionType assoServiceProvisionType : serviceType
                                     .getAssoServiceProvisionTypes())

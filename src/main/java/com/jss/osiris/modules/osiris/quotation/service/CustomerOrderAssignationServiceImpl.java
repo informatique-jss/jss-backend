@@ -449,7 +449,7 @@ public class CustomerOrderAssignationServiceImpl implements CustomerOrderAssigna
             }
         });
 
-        return customerOrderService.completeAdditionnalInformationForCustomerOrders(orders);
+        return customerOrderService.completeAdditionnalInformationForCustomerOrders(orders, false);
     }
 
     @Override
