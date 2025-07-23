@@ -99,7 +99,6 @@ export class CheckoutComponent implements OnInit {
   quotationPriceObservableRef: Subscription | undefined;
 
   mailToConfirm: string | undefined;
-  userScope: Responsable[] | undefined;
 
   subscriptionType: string | undefined;
   isPriceReductionForSubscription: boolean = false;
@@ -158,11 +157,6 @@ export class CheckoutComponent implements OnInit {
     if (!this.currentUser)
       this.initIQuotation();
 
-    this.responsableService.getPotentialUserScope().subscribe(response => {
-      this.userScope = [];
-      if (response)
-        this.userScope = response;
-    })
   }
 
   ngOnDestroy() {
