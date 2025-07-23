@@ -6,6 +6,7 @@ import { MY_JSS_HOME_ROUTE, MY_JSS_NEW_ANNOUNCEMENT_ROUTE, MY_JSS_NEW_FORMALITY_
 import { capitalizeName } from '../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { AppService } from '../../../services/app.service';
+import { PlatformService } from '../../../services/platform.service';
 import { AccountMenuItem, MAIN_ITEM_ACCOUNT, MAIN_ITEM_DASHBOARD } from '../../model/AccountMenuItem';
 import { IndexEntity } from '../../model/IndexEntity';
 import { JssCategory } from '../../model/JssCategory';
@@ -63,14 +64,16 @@ export class HeaderComponent implements OnInit {
     private loginService: LoginService,
     private modalService: NgbModal,
     private eRef: ElementRef,
+    private plaformService: PlatformService
   ) { }
 
   ngOnInit() {
     this.myAccountItems = this.appService.getAllAccountMenuItems();
 
-    this.loginService.getCurrentUser().subscribe(response => {
-      this.currentUser = response;
-    })
+    if (this.plaformService.isBrowser())
+      this.loginService.getCurrentUser().subscribe(response => {
+        this.currentUser = response;
+      })
     this.departmentService.getAvailablePublishingDepartments().subscribe(departments => {
       this.departments = departments
         .slice()
