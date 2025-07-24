@@ -51,16 +51,15 @@
               (cdkDragEnded)="onDragEnded()" (click)="fetchEntityAndOpenPanel(order)">
               <div class="card-content">
                 <strong>{{getFrenchDateWithoutYear(order.productionEffectiveDateTime)}} - {{order.servicesList}}
-                </strong> <mat-icon color="warn" *ngIf="true ||order.isHasNotifications">notifications</mat-icon>
+                </strong> <mat-icon color="warn" *ngIf="order.isHasNotifications">notifications</mat-icon>
                 <p style="margin-bottom: 0px;">{{getTiersLabelIQuotation(order)}}</p>
               </div>
               <div class="card-footer">
                 <div class="card-ticket">
                   {{ order.id }} - {{order.affairesList}}
                 </div>
-                <div class="card-avatar">
-                  <avatar class="avatar-select" [employee]="order.responsable?.salesEmployee" [size]="20">
-                  </avatar>
+                <div matBadgePosition="below after" [matBadgeColor]="getComplexityColor(order)" matBadgeSize="small"
+                  [matBadge]="order.complexity" style="margin-right: 10px;">
                 </div>
               </div>
               <ng-template cdkDragPreview>

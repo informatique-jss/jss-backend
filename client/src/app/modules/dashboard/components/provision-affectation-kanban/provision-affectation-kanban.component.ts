@@ -63,7 +63,6 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
     public confirmationDialog: MatDialog,
     public selectServiceTypeDialog: MatDialog,
     public quotationWorkflowDialog: MatDialog,
-    private habilitationsService: HabilitationsService,
     private assoAffaireOrderService: AssoAffaireOrderService,
     private notificationService: NotificationService,
     private habilitationService: HabilitationsService,
@@ -117,26 +116,33 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
   initStatus(fetchBookmark: boolean, applyFilter: boolean, isOnlyFilterText: boolean) {
     if (this.employeesSelected)
       this.affectationEmployeeService.findTeamEmployee(this.employeesSelected).subscribe(response => {
-        this.possibleEntityStatus = [this.defaultAffectation];
-        this.statusSelected = [this.defaultAffectation];
-        for (let status of response) {
-          this.possibleEntityStatus.push(this.updateEmployeeCompleted(status));
-          this.statusSelected.push(this.updateEmployeeCompleted(status));
-        }
+        if (this.habilitationService.canAddAssignOrderForProduction()) {
+          this.possibleEntityStatus = [this.defaultAffectation];
+          this.statusSelected = [this.defaultAffectation];
 
-        for (let status of this.possibleEntityStatus) {
-          status.predecessors = this.possibleEntityStatus;
-          status.successors = this.possibleEntityStatus;
-        }
+          for (let status of response) {
+            this.possibleEntityStatus.push(this.updateEmployeeCompleted(status));
+            this.statusSelected.push(this.updateEmployeeCompleted(status));
+          }
 
-        for (let status of this.statusSelected) {
-          status.predecessors = this.possibleEntityStatus;
-          status.successors = this.possibleEntityStatus;
+
+          for (let status of this.possibleEntityStatus) {
+            status.predecessors = this.possibleEntityStatus;
+            status.successors = this.possibleEntityStatus;
+          }
+
+          for (let status of this.statusSelected) {
+            status.predecessors = this.possibleEntityStatus;
+            status.successors = this.possibleEntityStatus;
+          }
+        } else {
+          this.possibleEntityStatus = [this.updateEmployeeCompleted(this.employeesSelected as AffectationEmployee<CustomerOrder>)];
+          this.statusSelected = [this.updateEmployeeCompleted(this.employeesSelected as AffectationEmployee<CustomerOrder>)];
         }
 
         if (fetchBookmark) {
           let bookmarkOrderEmployees = this.userPreferenceService.getUserSearchBookmark("kanban-affectation-employee") as Employee;
-          if (bookmarkOrderEmployees)
+          if (bookmarkOrderEmployees && this.habilitationService.canAddAssignOrderForProduction())
             this.employeesSelected = bookmarkOrderEmployees;
 
           let bookmarkSwimlaneType = this.userPreferenceService.getUserSearchBookmark("kanban-affectation-swimline-type") as SwimlaneType<CustomerOrder>;
@@ -195,7 +201,7 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
 
   findEntities() {
     if (this.employeesSelected)
-      return this.orderService.getOrdersToAssignForFond(this.employeesSelected) as any as Observable<CustomerOrder[]>;
+      return this.orderService.getOrdersToAssignForFond(this.employeesSelected, !this.habilitationService.canAddAssignOrderForProduction()) as any as Observable<CustomerOrder[]>;
     return of([] as CustomerOrder[]);
   }
 
@@ -292,7 +298,7 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
   }
 
   canReinitInvoicing() {
-    return this.habilitationsService.canReinitInvoicing();
+    return this.habilitationService.canReinitInvoicing();
   }
 
   reinitInvoicing() {
@@ -440,5 +446,13 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
 
   scrollDown() {
     this.bottom!.nativeElement.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  getComplexityColor(order: CustomerOrder) {
+    if (order.complexity == 1)
+      return 'warn';
+    if (order.complexity == 2)
+      return 'accent';
+    return 'primary';
   }
 }
