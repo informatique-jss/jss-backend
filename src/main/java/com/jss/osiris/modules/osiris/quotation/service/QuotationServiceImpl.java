@@ -245,7 +245,7 @@ public class QuotationServiceImpl implements QuotationService {
 
         batchService.declareNewBatch(Batch.REINDEX_QUOTATION, quotation.getId());
 
-        if (isNewQuotation) {
+        if (isNewQuotation && quotation.getCustomerOrderOrigin() == null) {
             List<CustomerOrderOrigin> origins = customerOrderOriginService
                     .getByUsername(activeDirectoryHelper.getCurrentUsername());
             if (origins != null && origins.size() == 1)
