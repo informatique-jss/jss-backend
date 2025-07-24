@@ -48,3 +48,8 @@ export interface Constant {
   serviceFamilyGroupFormality: ServiceFamilyGroup;
   serviceFamilyGroupOther: ServiceFamilyGroup;
 }
+
+
+export const globalConstantCache: {
+  data: Constant | undefined;
+} = { data: undefined };

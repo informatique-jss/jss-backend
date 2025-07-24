@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.DoNotAudit;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -20,6 +21,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @DoNotAudit
+@Cacheable(false)
 @Table(indexes = {
         @Index(name = "idx_mineur_volet_social", columnList = "id_volet_social") })
 public class Mineur implements Serializable, IId {

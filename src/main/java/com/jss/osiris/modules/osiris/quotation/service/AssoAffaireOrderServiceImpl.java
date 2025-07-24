@@ -236,7 +236,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                 // Check proper assignation
                 if (customerOrder instanceof CustomerOrder && getProvisionStatus(provision) != null
-                        && !getProvisionStatus(provision).getIsOpenState()) {
+                        && !getProvisionStatus(provision).getIsOpenState() && isFromUser) {
                     if (provision.getAssignedTo() == null)
                         throw new OsirisClientMessageException("Impossible de démarrer une prestation non assignée");
 

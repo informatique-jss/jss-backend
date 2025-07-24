@@ -5,6 +5,7 @@ import { capitalizeName } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { MenuItem } from '../../../general/model/MenuItem';
 import { AppService } from '../../../main/services/app.service';
+import { PlatformService } from '../../../main/services/platform.service';
 import { AvatarComponent } from '../../../miscellaneous/components/avatar/avatar.component';
 import { AccountMenuItem, MAIN_ITEM_ACCOUNT, MAIN_ITEM_DASHBOARD } from '../../../my-account/model/AccountMenuItem';
 import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
@@ -59,7 +60,8 @@ export class TopBarComponent implements OnInit {
     private responsableService: ResponsableService,
     private quotationService: QuotationService,
     private orderService: CustomerOrderService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private platformService: PlatformService
   ) { }
 
   capitalizeName = capitalizeName;
@@ -70,12 +72,13 @@ export class TopBarComponent implements OnInit {
     this.companyItems = this.appService.getAllCompanyMenuItems();
     this.tools = this.appService.getAllToolsMenuItems();
     this.myAccountItems = this.appService.getAllAccountMenuItems();
-    this.loginService.currentUserChangeMessage.subscribe(response => {
-      if (!response)
-        this.currentUser = undefined;
-      else
-        this.refreshCurrentUser()
-    });
+    if (this.platformService.isBrowser())
+      this.loginService.currentUserChangeMessage.subscribe(response => {
+        if (!response)
+          this.currentUser = undefined;
+        else
+          this.refreshCurrentUser()
+      });
   }
 
   isDisplaySecondHeader() {

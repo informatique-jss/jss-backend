@@ -2625,7 +2625,8 @@ public class QuotationController {
       throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
 
     return new ResponseEntity<CustomerOrder>(
-        customerOrderService.completeAdditionnalInformationForCustomerOrder(customerOrderService.getCustomerOrder(id)),
+        customerOrderService.completeAdditionnalInformationForCustomerOrder(customerOrderService.getCustomerOrder(id),
+            false),
         HttpStatus.OK);
   }
 
@@ -2707,7 +2708,7 @@ public class QuotationController {
       throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
 
     return new ResponseEntity<Quotation>(
-        quotationService.completeAdditionnalInformationForQuotation(quotationService.getQuotation(id)),
+        quotationService.completeAdditionnalInformationForQuotation(quotationService.getQuotation(id), false),
         HttpStatus.OK);
   }
 

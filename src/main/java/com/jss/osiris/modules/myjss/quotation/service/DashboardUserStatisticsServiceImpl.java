@@ -91,7 +91,7 @@ public class DashboardUserStatisticsServiceImpl implements DashboardUserStatisti
             statistics.setCustomerOrderRequieringAttention(0);
             if (customerOrderInProgress != null && customerOrderInProgress.size() > 0) {
                 customerOrderInProgress = customerOrderService
-                        .completeAdditionnalInformationForCustomerOrders(customerOrderInProgress);
+                        .completeAdditionnalInformationForCustomerOrders(customerOrderInProgress, false);
                 for (CustomerOrder customerOrder : customerOrderInProgress)
                     if (customerOrder.getHasMissingInformations() != null && customerOrder.getHasMissingInformations())
                         statistics.setCustomerOrderRequieringAttention(

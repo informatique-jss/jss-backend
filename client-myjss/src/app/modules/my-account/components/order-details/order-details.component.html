@@ -17,7 +17,7 @@
 <div class="alert alert-danger d-flex  flex-column flex-md-row align-items-center mb-0 mb-2" role="alert"
   *ngIf="order && order.customerOrderStatus && order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT">
   <i class="ai-circle-info fs-xl"></i>
-  <div class="ps-2">La commande ne pourra pas être traitée tant que l'acompte est impayé</div>
+  <div class="ps-2">Payez votre acompte pour lancer le traitement de votre commande !</div>
   <a class="btn btn-sm btn-secondary  mt-3 mt-md-0" *ngIf="order  && displayPayButton"
     (click)="payCustomerOrder($event)">
     <i class="ai-cart ms-n1 me-2"></i>
