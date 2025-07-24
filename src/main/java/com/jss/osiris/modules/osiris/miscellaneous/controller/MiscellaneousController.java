@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -522,11 +521,6 @@ public class MiscellaneousController {
         List<Employee> backupEmployee = null;
         if (employee != null) {
             backupEmployee = employeeService.getMyHolidaymaker((Employee) employee);
-
-            if (notification.getNotificationType().equals(Notification.PERSONNAL)) {
-                backupEmployee = new ArrayList<Employee>();
-                backupEmployee.add((Employee) employee);
-            }
 
             boolean found = false;
 

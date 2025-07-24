@@ -2964,13 +2964,15 @@ public class QuotationController {
 
   @GetMapping(inputEntryPoint + "/assign/fond/order")
   @JsonView(JacksonViews.OsirisListView.class)
-  public ResponseEntity<List<CustomerOrder>> getOrdersToAssignForFond(Integer idTeamEmployee) throws OsirisException {
+  public ResponseEntity<List<CustomerOrder>> getOrdersToAssignForFond(Integer idTeamEmployee, boolean onlyCurrentUser)
+      throws OsirisException {
     Employee employee = employeeService.getEmployee(idTeamEmployee);
 
     if (employee == null)
       throw new OsirisValidationException("employee");
 
-    return new ResponseEntity<List<CustomerOrder>>(customerOrderAssignationService.getOrdersToAssignForFond(employee),
+    return new ResponseEntity<List<CustomerOrder>>(
+        customerOrderAssignationService.getOrdersToAssignForFond(employee, onlyCurrentUser),
         HttpStatus.OK);
   }
 

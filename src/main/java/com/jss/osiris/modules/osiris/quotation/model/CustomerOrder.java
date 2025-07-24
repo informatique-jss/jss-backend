@@ -266,6 +266,11 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@JsonView({ JacksonViews.OsirisDetailedView.class, JacksonViews.OsirisListView.class, })
 	private Boolean isPriority;
 
+	@Transient
+	@IndexedField
+	@JsonView({ JacksonViews.OsirisDetailedView.class, JacksonViews.OsirisListView.class, })
+	private Integer complexity;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_service_family_group")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
@@ -675,6 +680,14 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public void setIsPriority(Boolean isPriority) {
 		this.isPriority = isPriority;
+	}
+
+	public Integer getComplexity() {
+		return complexity;
+	}
+
+	public void setComplexity(Integer complexity) {
+		this.complexity = complexity;
 	}
 
 }

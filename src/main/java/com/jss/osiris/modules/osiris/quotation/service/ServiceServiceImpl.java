@@ -604,7 +604,7 @@ public class ServiceServiceImpl implements ServiceService {
         if (service != null && service.getServiceTypes() != null) {
             if (service.getCustomLabel() == null || service.getCustomLabel().length() == 0)
                 service.setServiceLabelToDisplay(String.join(" / ", service.getServiceTypes().stream()
-                        .map(s -> s.getCustomLabel()).collect(Collectors.toList())));
+                        .map(s -> s.getLabel()).collect(Collectors.toList())));
             else
                 service.setServiceLabelToDisplay(service.getCustomLabel());
 

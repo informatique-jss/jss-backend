@@ -1640,6 +1640,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                                     customerOrder.setServicesList(indexOrder.getServicesList());
                                     customerOrder.setHasMissingInformations(indexOrder.getHasMissingInformations());
                                     customerOrder.setIsPriority(indexOrder.getIsPriority());
+                                    customerOrder.setComplexity(indexOrder.getComplexity());
                                 }
                             });
                 }
@@ -1687,6 +1688,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             customerOrder.setAffairesList(String.join(" / ", affaireLabels));
         customerOrder.setServicesList(String.join(" / ", serviceLabels));
         customerOrder.setIsPriority(customerOrderAssignationService.isPriorityOrder(customerOrder));
+        customerOrder.setComplexity(getComplexity(customerOrder));
         return customerOrder;
     }
 
@@ -2147,5 +2149,19 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     order.setResponsable(responsable);
                     simpleAddOrUpdate(order);
                 }
+    }
+
+    @Override
+    public Integer getComplexity(CustomerOrder customerOrder) throws OsirisException {
+        Integer complexity = 4;
+        if (customerOrder.getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders())
+                if (assoAffaireOrder.getServices() != null)
+                    for (Service service : assoAffaireOrder.getServices())
+                        if (service.getProvisions() != null)
+                            for (Provision provision : service.getProvisions())
+                                if (provision.getComplexity() != null && provision.getComplexity() < complexity)
+                                    complexity = provision.getComplexity();
+        return complexity;
     }
 }
