@@ -241,6 +241,7 @@ public class MyJssQuotationDelegate {
             }
         }
 
+        quotation.setCustomerOrderOrigin(constantService.getCustomerOrderOriginMyJss());
         populateBooleansOfProvisions(quotation);
 
         // Save new affaire
