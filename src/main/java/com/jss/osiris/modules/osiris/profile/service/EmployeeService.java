@@ -33,4 +33,6 @@ public interface EmployeeService {
     public void sendTokenToResponsable(Responsable responsable, String overrideMail) throws OsirisException;
 
     public List<Employee> findEmployeesInTheSameOU(Employee employee);
+
+    public List<Integer> getPotentialUserScope(Integer idMail);
 }

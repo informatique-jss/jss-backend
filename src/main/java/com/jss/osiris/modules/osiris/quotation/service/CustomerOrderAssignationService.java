@@ -21,7 +21,7 @@ public interface CustomerOrderAssignationService {
 
         public void completeAssignationForCustomerOrder(CustomerOrder customerOrder) throws OsirisException;
 
-        public void assignNewProvisionToUser(Provision provision);
+        public void assignNewProvisionToUser(Provision provision) throws OsirisException;
 
         public Integer getNextOrderForFond(boolean isPriority, Integer complexity, Boolean byPassAssignation)
                         throws OsirisException;

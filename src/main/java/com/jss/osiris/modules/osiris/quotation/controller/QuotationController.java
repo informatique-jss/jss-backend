@@ -1175,14 +1175,17 @@ public class QuotationController {
 
   @GetMapping(inputEntryPoint + "/provision/assignedTo")
   public ResponseEntity<Boolean> updateAssignedToForProvision(@RequestParam Integer provisionId,
-      @RequestParam Integer employeeId) throws OsirisValidationException {
+      @RequestParam(required = false) Integer employeeId) throws OsirisValidationException {
     Provision provision = provisionService.getProvision(provisionId);
     if (provision == null)
       throw new OsirisValidationException("provision");
 
-    Employee employee = employeeService.getEmployee(employeeId);
-    if (employee == null)
-      throw new OsirisValidationException("employee");
+    Employee employee = null;
+    if (employeeId != null) {
+      employee = employeeService.getEmployee(employeeId);
+      if (employee == null)
+        throw new OsirisValidationException("employee");
+    }
 
     provisionService.updateAssignedToForProvision(provision, employee);
     return new ResponseEntity<Boolean>(true, HttpStatus.OK);
@@ -2318,18 +2321,6 @@ public class QuotationController {
           throw new OsirisValidationException("assoServiceFieldTypeItem");
       }
 
-    MailComputeResult mailComputeResult = new MailComputeResult();
-    if (assoServiceDocument != null)
-      mailComputeResult = mailComputeHelper
-          .computeMailForPublicationReceipt(assoServiceDocument.getService().getAssoAffaireOrder().getCustomerOrder());
-
-    if (assoServiceFieldType != null)
-      mailComputeResult = mailComputeHelper
-          .computeMailForPublicationReceipt(assoServiceFieldType.getService().getAssoAffaireOrder().getCustomerOrder());
-
-    if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
-      throw new OsirisValidationException("MailTo");
-
     return new ResponseEntity<MissingAttachmentQuery>(
         missingAttachmentQueryService.sendMissingAttachmentQueryToCustomer(query, false,
             isWaitingForAttachmentToUpload),
@@ -2640,7 +2631,8 @@ public class QuotationController {
       throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
 
     return new ResponseEntity<CustomerOrder>(
-        customerOrderService.completeAdditionnalInformationForCustomerOrder(customerOrderService.getCustomerOrder(id)),
+        customerOrderService.completeAdditionnalInformationForCustomerOrder(customerOrderService.getCustomerOrder(id),
+            false),
         HttpStatus.OK);
   }
 
@@ -2722,7 +2714,7 @@ public class QuotationController {
       throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
 
     return new ResponseEntity<Quotation>(
-        quotationService.completeAdditionnalInformationForQuotation(quotationService.getQuotation(id)),
+        quotationService.completeAdditionnalInformationForQuotation(quotationService.getQuotation(id), false),
         HttpStatus.OK);
   }
 

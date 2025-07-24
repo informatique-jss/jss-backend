@@ -75,7 +75,7 @@
             <td>
               <autocomplete-service-type [(model)]="selectedEntity.serviceTypeLinked" [form]="entityForm"
                 propertyName="serviceTypeLinked" [isMandatory]="false" label="Service type de formalité associé"
-                [isDisabled]="!editMode"></autocomplete-service-type>
+                [isDisabled]="!editMode" [displayCode]="true"></autocomplete-service-type>
             </td>
             <td>
               <generic-input [(model)]="selectedEntity.suspiciousMarkup"
@@ -187,7 +187,8 @@
                 <select-notice-template [(model)]="assoServiceProvisionType.announcementNoticeTemplate"
                   label="Modèle d'annonce" [form]="entityForm" [propertyName]="'noticeTemplate'+index+deleteIndex"
                   [isMandatory]="false" [isDisabled]="!editMode"
-                  [filteredProvisionFamilyType]="assoServiceProvisionType.provisionType.provisionFamilyType"></select-notice-template>
+                  [filteredProvisionFamilyType]="assoServiceProvisionType.provisionType.provisionFamilyType"
+                  [displayCode]="true"></select-notice-template>
               </td>
             </tr>
           </table>

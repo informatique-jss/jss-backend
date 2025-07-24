@@ -11,11 +11,11 @@ import org.springframework.stereotype.Service;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.repository.IndexEntityRepository;
-import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
 import com.jss.osiris.modules.myjss.quotation.controller.MyJssQuotationValidationHelper;
 import com.jss.osiris.modules.myjss.wordpress.model.Post;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
+import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
@@ -49,7 +49,7 @@ public class SearchServiceImpl implements SearchService {
     AffaireService affaireService;
 
     @Autowired
-    UserScopeService userScopeService;
+    EmployeeService employeeService;
 
     @Override
     public List<IndexEntity> searchForEntities(String search) {
@@ -83,6 +83,11 @@ public class SearchServiceImpl implements SearchService {
     @Override
     public List<IndexEntity> searchForEntitiesById(Integer id, List<String> entityTypeToSearch) {
         return indexEntityRepository.searchForEntitiesByIdAndEntityType(id, entityTypeToSearch);
+    }
+
+    @Override
+    public List<IndexEntity> searchForEntitiesByIds(List<Integer> ids, String entityTypeToSearch) {
+        return indexEntityRepository.searchForEntitiesByIdsAndEntityType(ids, entityTypeToSearch);
     }
 
     @Override
@@ -126,7 +131,7 @@ public class SearchServiceImpl implements SearchService {
     public List<IndexEntity> searchEntitiesForCustomer(String searchString) throws OsirisException {
         List<IndexEntity> entities = new ArrayList<IndexEntity>();
         List<IndexEntity> authorizedEntities = new ArrayList<IndexEntity>();
-        List<Responsable> userResponsableScope = userScopeService.getUserCurrentScopeResponsables();
+        Responsable currentUser = employeeService.getCurrentMyJssUser();
         try {
             entities = indexEntityRepository.searchForEntitiesByIdAndEntityType(Integer.parseInt(searchString.trim()),
                     Arrays.asList(Invoice.class.getSimpleName(), CustomerOrder.class.getSimpleName(),
@@ -156,10 +161,8 @@ public class SearchServiceImpl implements SearchService {
                 if (indexEntity.getEntityType().equals(Invoice.class.getSimpleName())) {
                     Invoice invoice = invoiceService.getInvoice(indexEntity.getEntityId());
                     if (invoice != null && invoice.getResponsable() != null && invoice.getCustomerOrder() != null) {
-                        for (Responsable responsable : userResponsableScope) {
-                            if (responsable.getId().equals(invoice.getResponsable().getId()))
-                                authorizedEntities.add(indexEntity);
-                        }
+                        if (currentUser.getId().equals(invoice.getResponsable().getId()))
+                            authorizedEntities.add(indexEntity);
                     }
                 }
                 if (indexEntity.getEntityType().equals(Affaire.class.getSimpleName())) {

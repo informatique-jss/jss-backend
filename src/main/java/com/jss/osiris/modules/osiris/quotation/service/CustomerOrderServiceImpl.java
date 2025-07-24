@@ -48,6 +48,8 @@ import com.jss.osiris.libs.jackson.JacksonTimestampMillisecondDeserializer;
 import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
+import com.jss.osiris.libs.search.model.IndexEntity;
+import com.jss.osiris.libs.search.service.SearchService;
 import com.jss.osiris.modules.myjss.profile.controller.MyJssProfileController;
 import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
 import com.jss.osiris.modules.myjss.quotation.service.MyJssQuotationDelegate;
@@ -93,6 +95,7 @@ import com.jss.osiris.modules.osiris.quotation.model.AssoServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderTransient;
 import com.jss.osiris.modules.osiris.quotation.model.DomiciliationStatus;
 import com.jss.osiris.modules.osiris.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.osiris.quotation.model.IOrderingSearchTaggedResult;
@@ -215,9 +218,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     CustomerOrderCommentService customerOrderCommentService;
 
     @Autowired
-    UserScopeService userScopeService;
-
-    @Autowired
     ServiceTypeService serviceTypeService;
 
     @Autowired
@@ -263,7 +263,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     VoucherService voucherService;
 
     @Autowired
+    UserScopeService userScopeService;
+
+    @Autowired
     CustomerOrderAssignationService customerOrderAssignationService;
+
+    @Autowired
+    SearchService searchService;
 
     private CustomerOrder simpleAddOrUpdate(CustomerOrder customerOrder) {
         return customerOrderRepository.save(customerOrder);
@@ -346,32 +352,24 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             customerOrder = simpleAddOrUpdate(customerOrder);
 
         // Complete provisions
-        boolean oneNewProvision = false;
-        boolean computePrice = false;
         if (customerOrder.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders()) {
                 assoAffaireOrder.setCustomerOrder(customerOrder);
-                if (assoAffaireOrder.getId() == null)
-                    oneNewProvision = true;
                 if (assoAffaireOrder.getServices() != null && assoAffaireOrder.getServices().size() > 0) {
                     assoAffaireOrderService.completeAssoAffaireOrder(assoAffaireOrder, customerOrder, isFromUser);
                     if (assoAffaireOrder.getId() != null)
                         batchService.declareNewBatch(Batch.REINDEX_ASSO_AFFAIRE_ORDER, assoAffaireOrder.getId());
                     for (Service service : assoAffaireOrder.getServices())
-                        if (service.getProvisions() != null && service.getProvisions().size() > 0)
-                            for (Provision provision : service.getProvisions()) {
-                                computePrice = true;
-                                if (provision.getId() == null)
-                                    oneNewProvision = true;
-                            }
+                        if (service.getProvisions() != null)
+                            for (Provision provision : service.getProvisions())
+                                if (provision.getId() == null && !isNewCustomerOrder) {
+                                    provision.setService(service);
+                                    provisionService.addOrUpdateProvision(provision);
+                                }
                 }
             }
 
-        if (oneNewProvision && !isNewCustomerOrder)
-            customerOrder = simpleAddOrUpdate(customerOrder);
-
-        if (computePrice)
-            pricingHelper.getAndSetInvoiceItemsForQuotation(customerOrder, true);
+        pricingHelper.getAndSetInvoiceItemsForQuotation(customerOrder, true);
 
         customerOrder = simpleAddOrUpdate(customerOrder);
 
@@ -392,7 +390,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
         customerOrder = getCustomerOrder(customerOrder.getId());
 
-        if (computePrice && checkAllProvisionEnded)
+        if (checkAllProvisionEnded)
             checkAllProvisionEnded(customerOrder);
 
         // Generate recurring
@@ -471,8 +469,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
                 for (Service service : asso.getServices())
                     for (Provision provision : service.getProvisions()) {
-                        if (provision.getAnnouncement() != null && !provision.getAnnouncement().getConfrere().getId()
-                                .equals(constantService.getConfrereJssSpel().getId()))
+                        if (provision.getAnnouncement().getConfrere() == null || provision.getAnnouncement() != null
+                                && !provision.getAnnouncement().getConfrere().getId()
+                                        .equals(constantService.getConfrereJssSpel().getId()))
                             return false;
                         if (isReadyForBilling && provision.getAnnouncement() != null
                                 && (provision.getIsRedactedByJss() || provision.getAnnouncement().getNotice() == null
@@ -1548,7 +1547,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             CustomerOrderStatus customerOrderStatusBilled = customerOrderStatusService
                     .getCustomerOrderStatusByCode(CustomerOrderStatus.BILLED);
 
-            List<Responsable> responsablesToFilter = userScopeService.getUserCurrentScopeResponsables();
+            List<Responsable> responsablesToFilter = Arrays.asList(employeeService.getCurrentMyJssUser());
 
             if (responsablesToFilter != null
                     && responsablesToFilter.size() > 0) {
@@ -1565,7 +1564,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 Pageable pageableRequest = PageRequest.of(page, 10, sort);
                 return completeAdditionnalInformationForCustomerOrders(
                         customerOrderRepository.searchOrdersForCurrentUser(responsablesToFilter,
-                                customerOrderStatusToFilter, pageableRequest, customerOrderStatusBilled, displayPayed));
+                                customerOrderStatusToFilter, pageableRequest, customerOrderStatusBilled, displayPayed),
+                        false);
             }
         }
 
@@ -1573,20 +1573,28 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     public List<CustomerOrder> searchOrdersForCurrentUserAndAffaire(Affaire affaire) throws OsirisException {
-        List<Responsable> responsablesToFilter = userScopeService.getUserCurrentScopeResponsables();
+        List<Responsable> responsablesToFilter = Arrays.asList(employeeService.getCurrentMyJssUser());
         CustomerOrderStatus statusAbandonned = customerOrderStatusService
                 .getCustomerOrderStatusByCode(CustomerOrderStatus.ABANDONED);
 
         if (responsablesToFilter != null && responsablesToFilter.size() > 0) {
-            return completeAdditionnalInformationForCustomerOrders(
-                    customerOrderRepository.searchOrdersForCurrentUserAndAffaire(responsablesToFilter, affaire,
-                            statusAbandonned));
+            return completeAdditionnalInformationForCustomerOrders(customerOrderRepository
+                    .searchOrdersForCurrentUserAndAffaire(responsablesToFilter, affaire, statusAbandonned), false);
         }
         return null;
     }
 
     @Override
-    public List<CustomerOrder> completeAdditionnalInformationForCustomerOrders(List<CustomerOrder> customerOrders)
+    public CustomerOrder completeAdditionnalInformationForCustomerOrder(CustomerOrder customerOrder,
+            Boolean populationAssoAffaireOrderTransientField)
+            throws OsirisException {
+        return completeAdditionnalInformationForCustomerOrders(Arrays.asList(customerOrder),
+                populationAssoAffaireOrderTransientField).get(0);
+    }
+
+    @Override
+    public List<CustomerOrder> completeAdditionnalInformationForCustomerOrders(List<CustomerOrder> customerOrders,
+            Boolean populationAssoAffaireOrderTransientField)
             throws OsirisException {
         if (customerOrders != null && customerOrders.size() > 0) {
             List<Notification> notifications = notificationService.getNotificationsForCurrentEmployee(true, false, null,
@@ -1595,12 +1603,46 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             if (notifications != null)
                 notifications = notifications.stream().filter(n -> n.getCustomerOrder() != null).toList();
 
+            // Prepare indexation usage
+            List<IndexEntity> indexEntities = searchService.searchForEntitiesByIds(
+                    customerOrders.stream().map(CustomerOrder::getId).toList(), CustomerOrder.class.getSimpleName());
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            SimpleModule simpleModule = new SimpleModule("SimpleModule");
+            simpleModule.addSerializer(LocalDateTime.class, new JacksonLocalDateTimeSerializer());
+            simpleModule.addSerializer(LocalDate.class, new JacksonLocalDateSerializer());
+            simpleModule.addDeserializer(LocalDateTime.class, new JacksonTimestampMillisecondDeserializer());
+            simpleModule.addDeserializer(LocalDate.class, new JacksonLocalDateDeserializer());
+            objectMapper.registerModule(simpleModule);
+            Hibernate5JakartaModule module = new Hibernate5JakartaModule();
+            module.enable(Feature.FORCE_LAZY_LOADING);
+            objectMapper.registerModule(module);
+
             for (CustomerOrder customerOrder : customerOrders) {
-                completeAdditionnalInformationForCustomerOrder(customerOrder);
                 if (notifications != null)
                     notifications.stream().filter(n -> n.getCustomerOrder().getId().equals(customerOrder.getId()))
                             .findFirst()
                             .ifPresent(n -> customerOrder.setIsHasNotifications(true));
+
+                if (populationAssoAffaireOrderTransientField)
+                    assoAffaireOrderService.populateTransientField(customerOrder.getAssoAffaireOrders());
+
+                if (indexEntities != null) {
+                    indexEntities.stream().filter(n -> n.getEntityId().equals(customerOrder.getId())).findFirst()
+                            .ifPresent(c -> {
+                                CustomerOrderTransient indexOrder = null;
+                                try {
+                                    indexOrder = objectMapper.readValue(c.getText(), CustomerOrderTransient.class);
+                                } catch (Exception e) {
+                                }
+                                if (indexOrder != null) {
+                                    customerOrder.setAffairesList(indexOrder.getAffairesList());
+                                    customerOrder.setServicesList(indexOrder.getServicesList());
+                                    customerOrder.setHasMissingInformations(indexOrder.getHasMissingInformations());
+                                    customerOrder.setIsPriority(indexOrder.getIsPriority());
+                                }
+                            });
+                }
             }
         }
 
@@ -1608,7 +1650,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
-    public CustomerOrder completeAdditionnalInformationForCustomerOrder(CustomerOrder customerOrder)
+    public CustomerOrder completeAdditionnalInformationForCustomerOrderWhenIndexing(CustomerOrder customerOrder)
             throws OsirisException {
         List<String> affaireLabels = new ArrayList<String>();
         List<String> serviceLabels = new ArrayList<String>();
@@ -1830,7 +1872,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         }
 
         return completeAdditionnalInformationForCustomerOrders(
-                customerOrderRepository.searchCustomerOrders(commercialIds, statusIds, invoicingEmployeesIds));
+                customerOrderRepository.searchCustomerOrders(commercialIds, statusIds, invoicingEmployeesIds), false);
     }
 
     @Override
@@ -2091,5 +2133,19 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             Employee assignedUser) {
         return customerOrderRepository.findCustomerOrderByForcedEmployeeAndStatusAssigned(customerOrderStatus,
                 assignedUser);
+    }
+
+    @Override
+    @Transactional
+    public void switchResponsable(CustomerOrder order, Responsable responsable) {
+        order = getCustomerOrder(order.getId());
+        List<Responsable> userScope = userScopeService.getPotentialUserScope();
+
+        if (userScope != null)
+            for (Responsable scope : userScope)
+                if (scope.getId().equals(responsable.getId())) {
+                    order.setResponsable(responsable);
+                    simpleAddOrUpdate(order);
+                }
     }
 }

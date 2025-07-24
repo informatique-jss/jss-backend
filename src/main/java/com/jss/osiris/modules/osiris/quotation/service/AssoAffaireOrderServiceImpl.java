@@ -183,8 +183,10 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         assoAffaireOrder.setCustomerOrder(assoAffaireOrder.getCustomerOrder());
         assoAffaireOrder.setQuotation(assoAffaireOrder.getQuotation());
         AssoAffaireOrder affaireSaved = assoAffaireOrderRepository.save(assoAffaireOrder);
-        if (affaireSaved.getCustomerOrder() != null)
+        if (affaireSaved.getCustomerOrder() != null) {
             batchService.declareNewBatch(Batch.REINDEX_ASSO_AFFAIRE_ORDER, affaireSaved.getId());
+            batchService.declareNewBatch(Batch.REINDEX_CUSTOMER_ORDER, affaireSaved.getCustomerOrder().getId());
+        }
 
         if (assoAffaireOrder.getCustomerOrder() != null)
             customerOrderService.checkAllProvisionEnded(assoAffaireOrder.getCustomerOrder());
@@ -197,8 +199,10 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         List<AssoAffaireOrder> affaires = getAssoAffaireOrders();
         if (affaires != null)
             for (AssoAffaireOrder asso : affaires)
-                if (asso.getCustomerOrder() != null)
+                if (asso.getCustomerOrder() != null) {
                     batchService.declareNewBatch(Batch.REINDEX_ASSO_AFFAIRE_ORDER, asso.getId());
+                    batchService.declareNewBatch(Batch.REINDEX_CUSTOMER_ORDER, asso.getCustomerOrder().getId());
+                }
     }
 
     @Override
@@ -219,6 +223,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 for (AssoServiceFieldType assoServiceFieldType : service.getAssoServiceFieldTypes())
                     assoServiceFieldType.setService(service);
 
+            serviceService.addOrUpdateService(service);
+
             for (Provision provision : service.getProvisions()) {
                 provision.setService(service);
 
@@ -230,7 +236,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                 // Check proper assignation
                 if (customerOrder instanceof CustomerOrder && getProvisionStatus(provision) != null
-                        && !getProvisionStatus(provision).getIsOpenState()) {
+                        && !getProvisionStatus(provision).getIsOpenState() && isFromUser) {
                     if (provision.getAssignedTo() == null)
                         throw new OsirisClientMessageException("Impossible de démarrer une prestation non assignée");
 
@@ -593,7 +599,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                 customerOrderAssignationService.assignNewProvisionToUser(provision);
             }
-
         }
 
         return assoAffaireOrder;

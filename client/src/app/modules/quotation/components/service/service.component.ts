@@ -6,6 +6,7 @@ import { instanceOfQuotation } from 'src/app/libs/TypeHelper';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { EditCommentDialogComponent } from 'src/app/modules/miscellaneous/components/edit-comment-dialog.component/edit-comment-dialog-component.component';
 import { Attachment } from 'src/app/modules/miscellaneous/model/Attachment';
+import { IAttachment } from 'src/app/modules/miscellaneous/model/IAttachment';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { UploadAttachmentService } from 'src/app/modules/miscellaneous/services/upload.attachment.service';
 import { ASSO_SERVICE_DOCUMENT_ENTITY_TYPE } from 'src/app/routing/search/search.component';
@@ -37,6 +38,8 @@ export class ServiceComponent implements OnInit {
   SERVICE_FIELD_TYPE_TEXTAREA = SERVICE_FIELD_TYPE_TEXTAREA;
   SERVICE_FIELD_TYPE_SELECT = SERVICE_FIELD_TYPE_SELECT;
 
+  serviceAttachments: IAttachment = { id: 1, attachments: [] as Attachment[] } as IAttachment;
+
   constructor(
     private formBuilder: FormBuilder,
     public editCommentDialog: MatDialog,
@@ -58,12 +61,14 @@ export class ServiceComponent implements OnInit {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.service && this.service) {
-      if (this.service.assoServiceDocuments && this.service.assoServiceDocuments.length > 0)
+      if (this.service.assoServiceDocuments && this.service.assoServiceDocuments.length > 0) {
         this.service.assoServiceDocuments.sort((a: AssoServiceDocument, b: AssoServiceDocument) => {
-          let aLabel = ((a.isMandatory) ? "0" : "1") + a.typeDocument.customLabel;
-          let bLabel = ((b.isMandatory) ? "0" : "1") + b.typeDocument.customLabel;
-          return aLabel.localeCompare(bLabel)
+          return a.typeDocument.customLabel.localeCompare(b.typeDocument.customLabel)
         });
+        this.serviceAttachments = { id: 1, attachments: [] as Attachment[] } as IAttachment;
+        for (let doc of this.service.assoServiceDocuments)
+          this.serviceAttachments.attachments.push(...doc.attachments);
+      }
     }
   }
 

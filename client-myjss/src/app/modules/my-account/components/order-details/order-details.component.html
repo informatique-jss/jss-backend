@@ -17,7 +17,7 @@
 <div class="alert alert-danger d-flex  flex-column flex-md-row align-items-center mb-0 mb-2" role="alert"
   *ngIf="order && order.customerOrderStatus && order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT">
   <i class="ai-circle-info fs-xl"></i>
-  <div class="ps-2">La commande ne pourra pas être traitée tant que l'acompte est impayé</div>
+  <div class="ps-2">Payez votre acompte pour lancer le traitement de votre commande !</div>
   <a class="btn btn-sm btn-secondary  mt-3 mt-md-0" *ngIf="order  && displayPayButton"
     (click)="payCustomerOrder($event)">
     <i class="ai-cart ms-n1 me-2"></i>
@@ -482,7 +482,7 @@
       <div class="card-body">
         <div class="d-flex flex-column flex-md-row align-items-center align-items-center mt-sm-n1 pb-4 mb-1 mb-lg-2">
           <i class="ai-wallet text-primary lead pe-1 me-2"></i>
-          <h2 class="h4 mb-0">Facturation</h2>
+          <h2 class="h4 mb-0">Facturation <span *ngIf="order && order.isGifted">- Offerte</span></h2>
           <a class="btn btn-sm btn-secondary mt-3 mt-md-0 ms-md-auto"
             *ngIf="order && invoiceSummary && displayPayButton" (click)="payCustomerOrder($event)">
             <i class="ai-cart ms-n1 me-2"></i>
@@ -572,9 +572,9 @@
             </span>
           </div>
         </div>
-        <div class="text-center pt-1 pt-sm-2">
+        <div class="text-center pt-1 pt-sm-2" *ngIf="order && !order.isGifted">
           <a class="btn btn-sm btn-secondary ms-auto"
-            *ngIf="order && order.customerOrderStatus.code ==CUSTOMER_ORDER_STATUS_BILLED" (click)="downloadInvoice()">
+            *ngIf=" order.customerOrderStatus.code ==CUSTOMER_ORDER_STATUS_BILLED" (click)="downloadInvoice()">
             <i class="ai-note ms-n1 me-2"></i>
             <span>Télécharger la facture</span>
           </a>

@@ -9,6 +9,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.CodePays;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeVoie;
 
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,6 +25,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @DoNotAudit
+@Cacheable(false)
 @Table(indexes = {
         @Index(name = "idx_immeuble_option_fiscale", columnList = "id_option_fiscale"),
         @Index(name = "idx_immeuble_option_fiscales", columnList = "id_options_fiscales") })

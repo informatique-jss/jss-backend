@@ -24,7 +24,6 @@ import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
-import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.City;
 import com.jss.osiris.modules.osiris.miscellaneous.model.CompetentAuthority;
@@ -33,6 +32,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.CompetentAuthoritySer
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.PhoneService;
+import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
@@ -93,13 +93,13 @@ public class AffaireServiceImpl implements AffaireService {
     BatchService batchService;
 
     @Autowired
-    UserScopeService userScopeService;
-
-    @Autowired
     CustomerOrderService customerOrderService;
 
     @Autowired
     ServiceService serviceService;
+
+    @Autowired
+    EmployeeService employeeService;
 
     @Override
     public List<Affaire> getAffaires() {
@@ -161,6 +161,15 @@ public class AffaireServiceImpl implements AffaireService {
 
         Affaire affaireSaved = affaireRepository.save(affaire);
         batchService.declareNewBatch(Batch.REINDEX_AFFAIRE, affaire.getId());
+        if (affaire.getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder assoAffaireOrder : affaire.getAssoAffaireOrders()) {
+                if (assoAffaireOrder.getCustomerOrder() != null)
+                    batchService.declareNewBatch(Batch.REINDEX_CUSTOMER_ORDER,
+                            assoAffaireOrder.getCustomerOrder().getId());
+                if (assoAffaireOrder.getQuotation() != null)
+                    batchService.declareNewBatch(Batch.REINDEX_QUOTATION, assoAffaireOrder.getQuotation().getId());
+            }
+
         return affaireSaved;
     }
 
@@ -585,7 +594,7 @@ public class AffaireServiceImpl implements AffaireService {
 
     @Override
     public List<Affaire> getAffairesForCurrentUser(Integer page, String sortBy, String searchText) {
-        List<Responsable> responsables = userScopeService.getUserCurrentScopeResponsables();
+        List<Responsable> responsables = Arrays.asList(employeeService.getCurrentMyJssUser());
         if (responsables == null || responsables.size() == 0)
             return new ArrayList<Affaire>();
 

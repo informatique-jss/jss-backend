@@ -14,7 +14,10 @@ export class ProvisionService extends AppRestService<Provision> {
   }
 
   updateAssignedToForProvision(provision: Provision, employee: Employee) {
-    return this.getList(new HttpParams().set("provisionId", provision.id).set("employeeId", employee.id), "provision/assignedTo");
+    let params = new HttpParams().set("provisionId", provision.id);
+    if (employee)
+      params = params.set("employeeId", employee.id);
+    return this.getList(params, "provision/assignedTo");
   }
 
   deleteProvision(provision: Provision) {
