@@ -213,8 +213,9 @@ représentant légal de la société" [form]="addBeneficialOwnerForm"
       </td>
     </tr>
   </table>
-  <button *ngIf="editMode==true" matTooltip="Ajouter le bénéficiaire" mat-mini-fab color="warn" class="mini-fab-add"
-    (click)="addBeneficialOwner()">
+  <button *ngIf="editMode==true"
+    [matTooltip]="newBeneficialOwner.id ? 'Modifier le bénéficiaire' : 'Ajouter le bénéficiaire'" mat-mini-fab
+    color="warn" class="mini-fab-add" (click)="addBeneficialOwner()">
     <mat-icon>add</mat-icon>
   </button>
 </fieldset>

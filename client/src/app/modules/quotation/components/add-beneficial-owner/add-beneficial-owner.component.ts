@@ -78,7 +78,11 @@ export class AddBeneficialOwnerComponent implements OnInit {
         if (response) {
           if (this.formalite)
             this.formalite.beneficialOwners.push(response);
-          this.appService.displaySnackBar("Le bénéficiaire effectif a bien été créé", false, 15);
+          if (!this.newBeneficialOwner.id)
+            this.appService.displaySnackBar("Le bénéficiaire effectif a bien été créé", false, 15);
+          else
+            this.appService.displaySnackBar("Le bénéficiaire effectif a bien été mis à jour", false, 15);
+
           this.addBeneficialOwnerForm.reset();
         }
       });

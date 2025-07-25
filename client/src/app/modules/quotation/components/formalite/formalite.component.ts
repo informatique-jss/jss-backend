@@ -136,18 +136,6 @@ export class FormaliteComponent implements OnInit {
     this.setFormaliteTableData();
   }
 
-  // handleEditBeneficialOwner(owner: any) {
-  //   const index = this.tabGroup._tabs.toArray().findIndex((tab: { textLabel: string; }) =>
-  //     tab.textLabel.trim() === 'Ajout de bénéficiaire effectif'
-  //   );
-  //   if (index !== -1) {
-  //     this.index = index;
-  //     setTimeout(() => {
-  //       this.addBeneficialOwnerComponent.loadBeneficialOwnerForEdit(owner);
-  //     }, 100);
-  //   }
-  // }
-
   handleEditBeneficialOwner(owner: BeneficialOwner) {
     const targetIndex = this.tabGroup._tabs.toArray().findIndex(tab =>
       tab.textLabel.trim() === 'Ajout de bénéficiaire effectif'
@@ -157,8 +145,7 @@ export class FormaliteComponent implements OnInit {
       this.selectedOwner = owner;
 
       if (this.index === targetIndex) {
-        // On est déjà sur le bon tab => forcer un rafraîchissement
-        this.index = 0; // Ou un autre index temporaire
+        this.index = 0;
         setTimeout(() => {
           this.index = targetIndex;
         });
