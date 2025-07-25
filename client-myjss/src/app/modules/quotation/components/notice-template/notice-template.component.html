@@ -78,8 +78,8 @@
             </div>
 
             <select-announcement-notice-template-fragment *ngIf="selections.length>1" [types]="selections"
-              [(model)]="selectedFragments[i]" label="Selectionner" [form]="form"
-              [propertyName]="'select_'+selections[0].code"
+              [(model)]="selectedFragments[i]" (modelChange)="onFragmentSelectionChange($event, i)" label="Selectionner"
+              [form]="form" [propertyName]="'select_'+selections[0].code"
               [isMandatory]="false"></select-announcement-notice-template-fragment>
 
             <generic-toggle *ngIf="selections.length==1" (onFormChange)="changeToggleValue($event, i)"

@@ -14,7 +14,7 @@ export class NoticeTemplateService extends AppRestService<AnnouncementNoticeTemp
 
   constructor(http: HttpClient) {
     super(http, "quotation");
-    this.noticeTemplateDescription = { service: undefined, isShowNoticeTemplate: false, displayText: "" } as any as NoticeTemplateDescription;
+    this.noticeTemplateDescription = { service: undefined, isShowNoticeTemplate: false, displayText: "", isUsingTemplate: false } as any as NoticeTemplateDescription;
   }
 
   private noticeTemplateDescriptionSubject: BehaviorSubject<NoticeTemplateDescription | undefined> = new BehaviorSubject<NoticeTemplateDescription | undefined>(undefined);
