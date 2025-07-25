@@ -8,6 +8,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.City;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Country;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
+import com.jss.osiris.modules.osiris.quotation.model.Formalite;
 
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -49,6 +50,11 @@ public class BeneficialOwner implements Serializable, IId {
     @JoinColumn(name = "id_affaire")
     @JsonIgnoreProperties(value = { "beneficialOwners" }, allowSetters = true)
     private Affaire affaire;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_formalite")
+    @JsonIgnoreProperties(value = { "beneficialOwners" }, allowSetters = true)
+    private Formalite formalite;
 
     @Embedded
     private ShareHolding shareHolding;
@@ -175,6 +181,14 @@ public class BeneficialOwner implements Serializable, IId {
 
     public void setAffaire(Affaire affaire) {
         this.affaire = affaire;
+    }
+
+    public Formalite getFormalite() {
+        return formalite;
+    }
+
+    public void setFormalite(Formalite formalite) {
+        this.formalite = formalite;
     }
 
 }

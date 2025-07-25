@@ -15,6 +15,7 @@ import { HabilitationsService } from '../../../../services/habilitations.service
 import { UserPreferenceService } from '../../../../services/user.preference.service';
 import { ConstantService } from '../../../miscellaneous/services/constant.service';
 import { Affaire } from '../../model/Affaire';
+import { BeneficialOwner } from '../../model/beneficial-owner/BeneficialOwner';
 import { Formalite } from '../../model/Formalite';
 import { FormaliteDialogChoose } from '../../model/FormaliteDialogChoose';
 import { FormaliteStatus } from '../../model/FormaliteStatus';
@@ -62,6 +63,8 @@ export class FormaliteComponent implements OnInit {
   tableAction: SortTableAction<FormaliteGuichetUnique | FormaliteInfogreffe>[] = [] as Array<SortTableAction<FormaliteGuichetUnique | FormaliteInfogreffe>>;
   searchText: string | undefined;
   refreshFormalityTable: Subject<void> = new Subject<void>();
+
+  selectedOwner: BeneficialOwner | undefined;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -133,15 +136,35 @@ export class FormaliteComponent implements OnInit {
     this.setFormaliteTableData();
   }
 
-  handleEditBeneficialOwner(owner: any) {
-    const index = this.tabGroup._tabs.toArray().findIndex((tab: { textLabel: string; }) =>
-      tab.textLabel.trim() === 'Formulaire Bénéficiaire effectif'
+  // handleEditBeneficialOwner(owner: any) {
+  //   const index = this.tabGroup._tabs.toArray().findIndex((tab: { textLabel: string; }) =>
+  //     tab.textLabel.trim() === 'Ajout de bénéficiaire effectif'
+  //   );
+  //   if (index !== -1) {
+  //     this.index = index;
+  //     setTimeout(() => {
+  //       this.addBeneficialOwnerComponent.loadBeneficialOwnerForEdit(owner);
+  //     }, 100);
+  //   }
+  // }
+
+  handleEditBeneficialOwner(owner: BeneficialOwner) {
+    const targetIndex = this.tabGroup._tabs.toArray().findIndex(tab =>
+      tab.textLabel.trim() === 'Ajout de bénéficiaire effectif'
     );
-    if (index !== -1) {
-      this.index = index;
-      setTimeout(() => {
-        this.addBeneficialOwnerComponent.loadBeneficialOwnerForEdit(owner);
-      }, 100);
+
+    if (targetIndex !== -1) {
+      this.selectedOwner = owner;
+
+      if (this.index === targetIndex) {
+        // On est déjà sur le bon tab => forcer un rafraîchissement
+        this.index = 0; // Ou un autre index temporaire
+        setTimeout(() => {
+          this.index = targetIndex;
+        });
+      } else {
+        this.index = targetIndex;
+      }
     }
   }
 
@@ -228,6 +251,12 @@ export class FormaliteComponent implements OnInit {
   index: number = 0;
   onTabChange(event: MatTabChangeEvent) {
     this.userPreferenceService.setUserTabsSelectionIndex('formalite', event.index);
+
+    const selectedTab = this.tabGroup._tabs.toArray()[event.index];
+    if (selectedTab?.textLabel.trim() === 'Ajout de bénéficiaire effectif' && this.selectedOwner) {
+      this.addBeneficialOwnerComponent.loadBeneficialOwnerForEdit(this.selectedOwner);
+      this.selectedOwner = undefined;
+    }
   }
 
   restoreTab() {

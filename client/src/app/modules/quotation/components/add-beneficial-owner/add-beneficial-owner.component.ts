@@ -3,6 +3,10 @@ import { FormBuilder } from '@angular/forms';
 import { AppService } from 'src/app/services/app.service';
 import { Affaire } from '../../model/Affaire';
 import { BeneficialOwner } from '../../model/beneficial-owner/BeneficialOwner';
+import { OtherControls } from '../../model/beneficial-owner/OtherControls';
+import { ShareHolding } from '../../model/beneficial-owner/ShareHolding';
+import { VotingRights } from '../../model/beneficial-owner/VotingRights';
+import { Formalite } from '../../model/Formalite';
 import { BeneficialOwnerService } from '../../services/beneficial.owner.service';
 
 @Component({
@@ -13,6 +17,7 @@ import { BeneficialOwnerService } from '../../services/beneficial.owner.service'
 export class AddBeneficialOwnerComponent implements OnInit {
   @Input() editMode: boolean = false;
   @Input() affaire: Affaire | undefined;
+  @Input() formalite: Formalite | undefined;
   newBeneficialOwner: BeneficialOwner = { shareHolding: {}, votingRights: {}, otherControls: {} } as BeneficialOwner;
   hasControls: boolean = false;
 
@@ -33,6 +38,12 @@ export class AddBeneficialOwnerComponent implements OnInit {
 
   loadBeneficialOwnerForEdit(owner: BeneficialOwner) {
     this.newBeneficialOwner = owner;
+    if (!this.newBeneficialOwner.otherControls)
+      this.newBeneficialOwner.otherControls = {} as OtherControls;
+    if (!this.newBeneficialOwner.shareHolding)
+      this.newBeneficialOwner.shareHolding = {} as ShareHolding;
+    if (!this.newBeneficialOwner.votingRights)
+      this.newBeneficialOwner.votingRights = {} as VotingRights;
   }
 
   onSelectShareHolding(isDirect: boolean) {
@@ -62,9 +73,12 @@ export class AddBeneficialOwnerComponent implements OnInit {
       }
 
       this.newBeneficialOwner.affaire = this.affaire;
+
       this.beneficialOwnerService.addOrUpdateBeneficialOwner(this.newBeneficialOwner).subscribe(response => {
         if (response) {
-          this.appService.displaySnackBar("Le bénéficiaire effectif a bien été ajouté à l'affaire", false, 15);
+          if (this.formalite)
+            this.formalite.beneficialOwners.push(response);
+          this.appService.displaySnackBar("Le bénéficiaire effectif a bien été créé", false, 15);
           this.addBeneficialOwnerForm.reset();
         }
       });
