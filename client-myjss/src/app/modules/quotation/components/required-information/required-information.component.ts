@@ -144,8 +144,6 @@ export class RequiredInformationComponent implements OnInit {
 
   currentTab: string = 'documents';
 
-  isUsingTemplate: boolean = false;
-
   constructor(
     private formBuilder: FormBuilder,
     private appService: AppService,
@@ -371,7 +369,7 @@ export class RequiredInformationComponent implements OnInit {
         }
 
         for (let provision of this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions)
-          if (provision && provision.announcement && !provision.isRedactedByJss && !this.isUsingTemplate && (!provision.announcement || !provision.announcement.notice || provision.announcement.notice.length == 0)) {
+          if (provision && provision.announcement && !provision.isRedactedByJss && this.noticeTemplateDescription.isUsingTemplate && (!provision.announcement || !provision.announcement.notice || provision.announcement.notice.length == 0)) {
             this.appService.displayToast("Veuillez remplir le texte de l'annonce légale", true, "Champs obligatoires", 5000);
             return of(false);
           }
