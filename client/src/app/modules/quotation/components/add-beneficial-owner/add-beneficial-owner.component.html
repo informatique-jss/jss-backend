@@ -78,7 +78,7 @@
     <tr *ngIf="newBeneficialOwner.shareHolding.isIndirectShare">
       <td>
         <generic-input [(model)]="newBeneficialOwner.shareHolding.shareTotalCoOwnerShip"
-          label="Détention par le biais d'une indivision (en %)" [form]="addBeneficialOwnerForm"
+          label="Détention via indivision (en %)" [form]="addBeneficialOwnerForm"
           propertyName="shareHoldingTotalCoOwnerShip" [isMandatory]="false" type="number"
           [maxLength]="4"></generic-input>
       </td>
@@ -93,9 +93,11 @@
           [form]="addBeneficialOwnerForm" propertyName="shareHoldingBareCoOwnership" [isMandatory]="false" type="number"
           [maxLength]="4"></generic-input>
       </td>
+    </tr>
+    <tr *ngIf="newBeneficialOwner.shareHolding.isIndirectShare">
       <td>
         <generic-input [(model)]="newBeneficialOwner.shareHolding.shareTotalLegalEntites"
-          label="Détention par le biais d'une ou plusieurs personnes morales (en %)" [form]="addBeneficialOwnerForm"
+          label="Détention via personnes morales (en %)" [form]="addBeneficialOwnerForm"
           propertyName="shareHoldingTotalLegalEntites" [isMandatory]="false" type="number"
           [maxLength]="4"></generic-input>
       </td>
@@ -148,7 +150,7 @@
     <tr *ngIf="newBeneficialOwner.votingRights.isIndirectVoting">
       <td>
         <generic-input [(model)]="newBeneficialOwner.votingRights.votingTotalCoOwnerShip"
-          label="Détention par le biais d'une indivision (en %)" [form]="addBeneficialOwnerForm"
+          label="Détention via indivision (en %)" [form]="addBeneficialOwnerForm"
           propertyName="votingRightsTotalCoOwnerShip" [isMandatory]="false" type="number"
           [maxLength]="4"></generic-input>
       </td>
@@ -163,9 +165,11 @@
           [form]="addBeneficialOwnerForm" propertyName="votingRightsBareCoOwnership" [isMandatory]="false" type="number"
           [maxLength]="4"></generic-input>
       </td>
+    </tr>
+    <tr *ngIf="newBeneficialOwner.shareHolding.isIndirectShare">
       <td>
         <generic-input [(model)]="newBeneficialOwner.votingRights.votingTotalLegalEntites"
-          label="Détention par le biais d'une ou plusieurs personnes morales (en %)" [form]="addBeneficialOwnerForm"
+          label="Détention via personnes morales (en %)" [form]="addBeneficialOwnerForm"
           propertyName="votingRightsTotalLegalEntites" [isMandatory]="false" type="number"
           [maxLength]="4"></generic-input>
       </td>
@@ -209,7 +213,7 @@ représentant légal de la société" [form]="addBeneficialOwnerForm"
       </td>
     </tr>
   </table>
-  <button *ngIf="editMode==true" matTooltip="Ajouter le bénéficiaire" mat-fab color="warn"
+  <button *ngIf="editMode==true" matTooltip="Ajouter le bénéficiaire" mat-mini-fab color="warn" class="mini-fab-add"
     (click)="addBeneficialOwner()">
     <mat-icon>add</mat-icon>
   </button>

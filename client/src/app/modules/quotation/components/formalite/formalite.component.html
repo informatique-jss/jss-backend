@@ -46,7 +46,7 @@
       <beneficial-owner [editMode]="editMode" [affaire]="affaire"
         (editBeneficialOwner)="handleEditBeneficialOwner($event)"></beneficial-owner>
     </mat-tab>
-    <mat-tab label="Formulaire Bénéficiaire effectif"
+    <mat-tab label="Ajout d'un bénéficiaire effectif"
       *ngIf="provision && provision.provisionType && provision.provisionType.code == provisionTypeRbe.code">
       <add-beneficial-owner #addBeneficialOwner [editMode]="editMode" [affaire]="affaire"></add-beneficial-owner>
     </mat-tab>

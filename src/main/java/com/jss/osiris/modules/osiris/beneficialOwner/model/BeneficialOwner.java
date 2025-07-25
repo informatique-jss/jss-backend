@@ -34,8 +34,15 @@ public class BeneficialOwner implements Serializable, IId {
     private LocalDate birthDate;
     private String residenceAddress;
     private String postalCode;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_city")
     private City city;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_country")
     private Country country;
+
     private LocalDate creationDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
