@@ -39,3 +39,39 @@
 .user-account {
   text-decoration: unset !important;
 }
+
+.dropdown-header {
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  color: #6c757d;
+  margin-top: 0.25rem;
+}
+
+.dropdown-item.ps-4 {
+  padding-left: 1.5rem !important;
+}
+
+.dropdown-menu .dropdown-item {
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.dropdown-menu .dropdown-item:hover {
+  background-color: #f1f1f1;
+  color: #212529;
+}
+
+.dropdown-menu .dropdown-item {
+  border-left: 3px solid transparent;
+  padding-left: 1.5rem;
+  transition: background-color 0.2s, border-left-color 0.2s;
+}
+
+.dropdown-menu .dropdown-item:hover {
+  background-color: #f8f9fa;
+  border-left-color: var(--ar-secondary);
+}
+
+.dropdown-menu .dropdown-header-sub {
+  border-bottom: 1px solid #dee2e6;
+  margin-bottom: 0.5rem;
+}

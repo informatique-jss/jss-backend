@@ -405,8 +405,6 @@ public class AccountingController {
             AccountingRecord fetchRecord = accountingRecordService.getAccountingRecord(record);
             if (fetchRecord == null)
                 throw new OsirisValidationException("fetchRecord");
-            if (fetchRecord.getLetteringNumber() != null)
-                throw new OsirisValidationException("letteringNumber");
             if (fetchRecord.getIsFromAs400() != null && fetchRecord.getIsFromAs400())
                 as400Found = true;
             fetchRecords.add(fetchRecord);

@@ -409,9 +409,21 @@ public class GeneratePdfDelegate {
         ctx.setVariable("responsableOnBilling", quotation.getResponsable().getFirstname() + " "
                 + quotation.getResponsable().getLastname());
         ctx.setVariable("assos", quotation.getAssoAffaireOrders());
+
+        Boolean hasDocuments = null;
+        if (!quotation.getAssoAffaireOrders().isEmpty())
+            hasDocuments = quotation.getAssoAffaireOrders().stream()
+                    .filter(asso -> asso.getServices() != null)
+                    .flatMap(asso -> asso.getServices().stream())
+                    .anyMatch(service -> service.getAssoServiceDocuments() != null
+                            && !service.getAssoServiceDocuments().isEmpty());
+        ctx.setVariable("hasDocuments", hasDocuments);
+
         ctx.setVariable("quotation", quotation);
-        ctx.setVariable("quotationCreatedDate", quotation.getCreatedDate().format(DateTimeFormatter
-                .ofPattern("dd/MM/yyyy")));
+
+        if (quotation.getCreatedDate() != null)
+            ctx.setVariable("quotationCreatedDate", quotation.getCreatedDate().format(DateTimeFormatter
+                    .ofPattern("dd/MM/yyyy")));
         ctx.setVariable("endOfYearDateString",
                 LocalDate.now().withMonth(12).withDayOfMonth(31).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
@@ -455,7 +467,7 @@ public class GeneratePdfDelegate {
                 .compareTo(zeroValue) > 0)
             ctx.setVariable("discountTotal", invoiceHelper.getDiscountTotal(invoice));
 
-        // Group debouts for asso invoice item debours
+        // Group debours for asso invoice item debours
         if (customerOrder != null) {
             List<AssoAffaireOrder> assos = new ArrayList<AssoAffaireOrder>();
             if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0)

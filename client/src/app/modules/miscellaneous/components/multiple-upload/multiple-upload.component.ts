@@ -28,6 +28,7 @@ export class MultipleUploadComponent implements OnInit {
   files: any[] = [];
   progress: number = 0;
   isSending = false;
+  @Input() smallSize = false;
   @Input() replaceExistingAttachementType = false;
   @Input() hideUploadButton = false;
   @Input() forcedAttachmentType: AttachmentType | undefined;

@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { MenuItem } from '../../general/model/MenuItem';
 import { AppRestService } from '../../main/services/appRest.service';
+import { Responsable } from '../../profile/model/Responsable';
 import { IQuotation } from '../../quotation/model/IQuotation';
 import { Document } from '../model/Document';
 import { Quotation } from '../model/Quotation';
@@ -37,6 +38,10 @@ export class QuotationService extends AppRestService<Quotation> {
 
   saveFinalQuotation(quotation: Quotation, isValidation: boolean) {
     return this.postItem(new HttpParams().set("isValidation", isValidation), 'quotation/save-order', quotation);
+  }
+
+  switchResponsableForQuotation(idQuotation: number, newResponsable: Responsable) {
+    return this.get(new HttpParams().set("idQuotation", idQuotation).set("newResponsable", newResponsable.id), 'quotation/switch/responsable');
   }
 
   completePricingOfQuotation(quotation: Quotation, isEmergency: boolean) {

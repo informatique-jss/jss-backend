@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { SHARED_IMPORTS } from '../../../../../libs/SharedImports';
-import { order, quotation, QuotationType } from '../../../../quotation/model/QuotationType';
+import { QUOTATION_TYPE_ORDER, QUOTATION_TYPE_QUOTATION, QuotationType } from '../../../../quotation/model/QuotationType';
 import { GenericRadioGroupComponent } from '../generic-radio-group/generic-radio-group.component';
 
 @Component({
@@ -20,6 +20,6 @@ export class RadioGroupQuotationTypeComponent extends GenericRadioGroupComponent
   }
 
   initTypes(): void {
-    this.types.push(quotation, order);
+    this.types.push(QUOTATION_TYPE_QUOTATION, QUOTATION_TYPE_ORDER);
   }
 }

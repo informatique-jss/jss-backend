@@ -174,14 +174,14 @@ public class CentralPayDelegateServiceImpl implements CentralPayDelegateService 
         if (isQuotation)
             res = restTemplate.postForEntity(
                     centralPayEndpoint + paymentRequestUrl + "?delay=5&urlRedirect=" + myJssEntryPoint
-                            + "/quotations/details/"
-                            + entityId,
+                            + "/quotations/details/" + entityId + "&urlOnCanceled=" + myJssEntryPoint
+                            + "/quotations/details/" + entityId,
                     request,
                     CentralPayPaymentRequest.class);
         else
             res = restTemplate.postForEntity(
                     centralPayEndpoint + paymentRequestUrl + "?delay=5&urlRedirect=" + myJssEntryPoint
-                            + "/orders/details/"
+                            + "/orders/details/" + entityId + "&urlRedirect=" + myJssEntryPoint + "/orders/details/"
                             + entityId,
                     request,
                     CentralPayPaymentRequest.class);
@@ -198,7 +198,7 @@ public class CentralPayDelegateServiceImpl implements CentralPayDelegateService 
                 HttpRequest request, byte[] body,
                 ClientHttpRequestExecution execution) throws IOException {
 
-            return execution.execute(request, body); // rien d’autre
+            return execution.execute(request, body);
         }
     }
 }

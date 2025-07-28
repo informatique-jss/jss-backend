@@ -24,6 +24,14 @@ tasks.withType(JavaCompile) {
     options.compilerArgs << "-parameters"
 }
 
+def excludeHazelcast = project.hasProperty('excludeHazelcast') && project.excludeHazelcast == 'true'
+
+tasks.named('processResources') {
+    if (excludeHazelcast) {
+        exclude 'infinispan.xml'
+    }
+}
+
 dependencies {
     // Spring
     implementation 'org.springframework.boot:spring-boot-starter-web:3.2.4'
@@ -33,12 +41,9 @@ dependencies {
     implementation 'org.springframework.ldap:spring-ldap-core:3.2.2'
     implementation 'org.springframework.security:spring-security-ldap:6.2.3'
     implementation 'org.springframework.boot:spring-boot-starter-mail:3.2.4'
-    implementation 'org.springframework.boot:spring-boot-starter-cache:3.2.4'
-    implementation 'com.hazelcast:hazelcast:5.5.0'
-    implementation 'com.hazelcast:hazelcast-spring:5.5.0'
-    implementation 'javax.cache:cache-api:1.1.1'
-    implementation 'com.hazelcast:hazelcast-hibernate53:5.2.0'
-
+    implementation 'org.infinispan:infinispan-spring6-embedded:15.2.5.Final'
+    implementation 'org.infinispan:infinispan-hibernate-cache-v62:15.2.5.Final'
+    implementation 'javax.transaction:javax.transaction-api:1.3'    
     // Database  
     implementation 'org.hibernate.orm:hibernate-c3p0:6.4.4.Final'
 	implementation 'org.postgresql:postgresql:42.7.3' 
@@ -71,12 +76,8 @@ dependencies {
 
 }
  
- processResources {
-    exclude 'hazelcast.xml'
-}
-
 group = 'com.jss.osiris'
-version = '25-beta1' 
+version = '25' 
 description = 'Outil Sympa, Interactif, Révolutionnairement Intuitif et Simple'
 sourceCompatibility = '17'
 targetCompatibility = '17'

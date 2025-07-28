@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
-import { NgbDropdownModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownModule, NgbNavModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { capitalizeName, getListMails, getListPhones } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
@@ -11,7 +10,6 @@ import { AvatarComponent } from '../../../miscellaneous/components/avatar/avatar
 import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { Responsable } from '../../../profile/model/Responsable';
 import { LoginService } from '../../../profile/services/login.service';
-import { UserScopeService } from '../../../profile/services/user.scope.service';
 import { BillingLabelType } from '../../model/BillingLabelType';
 import { Document } from '../../model/Document';
 import { DocumentType } from '../../model/DocumentType';
@@ -22,7 +20,7 @@ import { DocumentService } from '../../services/document.service';
   templateUrl: './user-settings.component.html',
   styleUrls: ['./user-settings.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, GenericInputComponent, AvatarComponent, NgbDropdownModule, NgbNavModule]
+  imports: [SHARED_IMPORTS, GenericInputComponent, AvatarComponent, NgbDropdownModule, NgbNavModule, NgbTooltipModule]
 })
 export class UserSettingsComponent implements OnInit {
 
@@ -41,16 +39,12 @@ export class UserSettingsComponent implements OnInit {
   billingLabelTypeCustomer!: BillingLabelType;
   billingLabelTypeOther!: BillingLabelType;
 
-  isDisplayAssociatedSettings: boolean = false;
-
   constructor(
     private loginService: LoginService,
     private formBuilder: FormBuilder,
     private constantService: ConstantService,
-    private userScopeService: UserScopeService,
     private documentService: DocumentService,
     private appService: AppService,
-    private activatedRoute: ActivatedRoute,
     private userPreferenceService: UserPreferenceService,
 
   ) { }
@@ -70,45 +64,11 @@ export class UserSettingsComponent implements OnInit {
     this.billingLabelTypeCustomer = this.constantService.getBillingLabelTypeCustomer();
     this.billingLabelTypeOther = this.constantService.getBillingLabelTypeOther();
 
-    this.idResponsable = this.activatedRoute.snapshot.params['idResponsable'];
-
-    if (this.activatedRoute.snapshot.url && this.activatedRoute.snapshot.url[0].path == "associated-settings")
-      this.isDisplayAssociatedSettings = true;
-
-
-    if (this.isDisplayAssociatedSettings) {
-      this.loginService.getCurrentUser().subscribe(currentUser => {
-        this.userScopeService.getUserScope().subscribe(response => {
-          this.userScope = [];
-          if (response)
-            for (let scope of response)
-              if (currentUser.id != scope.responsableViewed.id)
-                this.userScope.push(scope.responsableViewed);
-
-          if (this.userScope)
-            for (let scope of this.userScope)
-              if (!this.idResponsable) {
-                let bookmark = this.userPreferenceService.getUserSearchBookmark("settings-current-responsable");
-                if (bookmark != null && scope.id == parseInt(bookmark))
-                  this.changeCurrentUser(scope);
-                else {
-                  this.changeCurrentUser(scope);
-                  break;
-                }
-              } else {
-                if (scope.id == this.idResponsable)
-                  this.changeCurrentUser(scope);
-              }
-
-        })
-      })
-    } else {
-      this.userScope = [];
-      this.loginService.getCurrentUser().subscribe(response => {
-        this.userScope = [response];
-        this.changeCurrentUser(this.userScope[0]);
-      });
-    }
+    this.userScope = [];
+    this.loginService.getCurrentUser().subscribe(response => {
+      this.userScope = [response];
+      this.changeCurrentUser(this.userScope[0]);
+    });
   }
 
   changeCurrentUser(user: Responsable) {

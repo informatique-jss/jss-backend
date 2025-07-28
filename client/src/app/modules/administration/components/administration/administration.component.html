@@ -197,6 +197,12 @@
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
           [cloneEvent]="cloneEvent.asObservable()">
         </referential-announcement-notice-template>
+        <referential-announcement-notice-template-fragment
+          *ngIf="selectedReferential==ANNOUNCEMENT_NOTICE_TEMPLATE_FRAGMENT_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
+        </referential-announcement-notice-template-fragment>
         <referential-billing-item *ngIf="selectedReferential==BILLING_ITEM_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"

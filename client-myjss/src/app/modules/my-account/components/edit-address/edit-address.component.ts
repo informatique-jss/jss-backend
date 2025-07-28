@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbNavModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { validateEmail } from '../../../../libs/CustomFormsValidatorsHelper';
 import { capitalizeName } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
@@ -21,7 +21,7 @@ import { DocumentService } from '../../services/document.service';
   templateUrl: './edit-address.component.html',
   styleUrls: ['./edit-address.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, GenericInputComponent, NgbNavModule]
+  imports: [SHARED_IMPORTS, GenericInputComponent, NgbNavModule, NgbTooltipModule]
 })
 export class EditAddressComponent implements OnInit {
 
@@ -144,7 +144,7 @@ export class EditAddressComponent implements OnInit {
 
       if (this.idResponsable)
         this.documentService.addOrUpdateDocumentsForResponsable(this.documents).subscribe(response => {
-          this.appService.openRoute(null, "account/settings/" + this.idResponsable, undefined);
+          this.appService.openRoute(null, "account/settings", undefined);
         })
     }
   }

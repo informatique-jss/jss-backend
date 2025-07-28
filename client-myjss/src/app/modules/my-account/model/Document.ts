@@ -27,4 +27,8 @@ export interface Document {
   isCommandNumberMandatory: boolean;
   commandNumber: string;
   externalReference: string;
+  clientAddress: string;
+  affaireAddress: string;
+  clientRecipient: string;
+  affaireRecipient: string;
 }

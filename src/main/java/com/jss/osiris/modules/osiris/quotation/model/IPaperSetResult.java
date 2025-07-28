@@ -15,6 +15,8 @@ public interface IPaperSetResult {
 
 	String getCustomerOrderStatus();
 
+	String getCompetentAuthorityLabel();
+
 	String getTiersLabel();
 
 	String getTiersId();

@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.jackson.JacksonViews;
-import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
 import com.jss.osiris.modules.myjss.quotation.controller.MyJssQuotationValidationHelper;
 import com.jss.osiris.modules.osiris.accounting.model.BillingClosureReceiptValue;
 import com.jss.osiris.modules.osiris.accounting.service.BillingClosureReceiptHelper;
@@ -25,9 +24,6 @@ import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
 public class MyJssTiersController {
 
 	private static final String inputEntryPoint = "/myjss/tiers";
-
-	@Autowired
-	UserScopeService userScopeService;
 
 	@Autowired
 	ResponsableService responsableService;
@@ -41,7 +37,8 @@ public class MyJssTiersController {
 	@JsonView(JacksonViews.MyJssListView.class)
 	@GetMapping(inputEntryPoint + "/billing-closure")
 	public ResponseEntity<List<BillingClosureReceiptValue>> getBillingClosureReceiptValueForResponsable(
-			@RequestParam Integer responsableId, @RequestParam boolean isOrderingByEventDate)
+			@RequestParam Integer responsableId, @RequestParam boolean isOrderingByEventDate,
+			@RequestParam boolean isDesc)
 			throws OsirisException {
 
 		Responsable responsable = responsableService.getResponsable(responsableId);
@@ -62,7 +59,10 @@ public class MyJssTiersController {
 					return 1;
 				if (o1.getEventDateTime() == null && o2.getEventDateTime() == null)
 					return 0;
-				return o1.getEventDateTime().isAfter(o2.getEventDateTime()) ? 1 : -1;
+				if (isDesc)
+					return o1.getEventDateTime().isAfter(o2.getEventDateTime()) ? 1 : -1;
+				else
+					return o1.getEventDateTime().isAfter(o2.getEventDateTime()) ? -1 : 1;
 			}
 		});
 

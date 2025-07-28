@@ -22,8 +22,4 @@ export class SelectAnnouncementNoticeTemplateFragmentComponent extends GenericSe
   override initTypes(): void {
     this.types = this.types;
   }
-
-  override compareWithId = (o1: any, o2: any) => {
-    return o1 == o2;
-  }
 }

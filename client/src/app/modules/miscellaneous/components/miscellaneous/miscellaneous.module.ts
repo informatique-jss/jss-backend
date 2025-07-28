@@ -203,6 +203,7 @@ import { RadioGroupTransfertFundsComponent } from '../forms/radio-group-transfer
 import { SelectAccountingAccountClassComponent } from '../forms/select-accounting-account-class/select-accounting-account-class.component';
 import { SelectAccountingJournalComponent } from '../forms/select-accounting-journal/select-accounting-journal.component';
 import { SelectActiveDirectoryGroupComponent } from '../forms/select-active-directory-group/select-active-directory-group.component';
+import { SelectAnnouncementNoticeTemplateFragmentComponent } from '../forms/select-announcement-notice-template-fragment/select-announcement-notice-template-fragment';
 import { SelectAssignationTypeComponent } from '../forms/select-assignation-type/select-assignation-type.component';
 import { SelectAttachmentTypeComponent } from '../forms/select-attachment-type/select-attachment-type.component';
 import { SelectBatchCategoryComponent } from '../forms/select-batch-category/select-batch-category.component';
@@ -596,7 +597,8 @@ const routes: Routes = [
     SelectNoticeTemplateComponent,
     AutocompleteVoucherComponent,
     ChipsResponsableComponent,
-    SelectSingleEmployeeComponent
+    SelectSingleEmployeeComponent,
+    SelectAnnouncementNoticeTemplateFragmentComponent
   ],
   exports: [
     HistoryComponent,
@@ -860,7 +862,8 @@ const routes: Routes = [
     SelectNoticeTemplateComponent,
     AutocompleteVoucherComponent,
     ChipsResponsableComponent,
-    SelectSingleEmployeeComponent
+    SelectSingleEmployeeComponent,
+    SelectAnnouncementNoticeTemplateFragmentComponent
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

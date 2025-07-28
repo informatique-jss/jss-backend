@@ -436,9 +436,16 @@ public class MailHelper {
 
         if (mail.getMailTemplate().equals(CustomerMail.TEMPLATE_CUSTOMER_ORDER_IN_PROGRESS)
                 && (mail.getCustomerOrder() != null || mail.getQuotation() != null))
-            ctx.setVariable("mailComputeResultInvoice",
-                    mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(
-                            mail.getCustomerOrder() != null ? mail.getCustomerOrder() : mail.getQuotation(), false));
+            try {
+                MailComputeResult mailComputeResultInvoice = mailComputeHelper
+                        .computeMailForCustomerOrderFinalizationAndInvoice(
+                                mail.getCustomerOrder() != null ? mail.getCustomerOrder() : mail.getQuotation(), false);
+                if (mailComputeResultInvoice != null)
+                    ctx.setVariable("mailComputeResultInvoice", mailComputeResultInvoice);
+            } catch (OsirisClientMessageException e) {
+                // We catch the exception so the mail is still sent even if the adress of the
+                // Affaire is not set
+            }
         ctx.setVariable("attachments", mail.getAttachments());
         ctx.setVariable("provision", mail.getProvision());
         ctx.setVariable("tiers", mail.getTiers());
@@ -449,7 +456,9 @@ public class MailHelper {
 
         if (mail.getProvision() != null && mail.getProvision().getAnnouncement() != null
                 && mail.getProvision().getAnnouncement().getIsAnnouncementAlreadySentToConfrere() != null
-                && mail.getProvision().getAnnouncement().getIsAnnouncementAlreadySentToConfrere()) {
+                && mail.getProvision().getAnnouncement().getIsAnnouncementAlreadySentToConfrere())
+
+        {
             ctx.setVariable("sentDateToConfrere", mail.getProvision().getAnnouncement()
                     .getFirstConfrereSentMailDateTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy à HH:mm")));
         }
@@ -475,6 +484,7 @@ public class MailHelper {
         }
 
         if (quotation != null)
+
             setQuotationPrice(quotation, ctx);
 
         if (mail.getMissingAttachmentQuery() != null) {
@@ -824,7 +834,7 @@ public class MailHelper {
     public void sendConfirmationContactFormMyJss(String mailAdress) throws OsirisException {
         sendCustomerMailForMyJssMail(mailAdress, null,
                 constantService.getStringMyJssContactFormRequestMail(),
-                "Confirmation de la réception de votre demande de contribution",
+                "Confirmation de la réception de votre demande de contact",
                 CustomerMail.TEMPLATE_SEND_CONTACT_CONFIRMATION);
     }
 

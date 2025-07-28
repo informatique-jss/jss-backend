@@ -45,7 +45,7 @@ public class QuotationStatusServiceImpl implements QuotationStatusService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateStatusReferential() throws OsirisException {
-        updateStatus(QuotationStatus.DRAFT, "Ouvert", "auto_awesome");
+        updateStatus(QuotationStatus.DRAFT, "Brouillon", "auto_awesome");
         updateStatus(QuotationStatus.TO_VERIFY, "A vérifier", "search");
         updateStatus(QuotationStatus.QUOTATION_WAITING_CONFRERE, "En attente du confrère", "supervisor_account");
         updateStatus(QuotationStatus.SENT_TO_CUSTOMER, "Envoyé au client", "outgoing_mail");

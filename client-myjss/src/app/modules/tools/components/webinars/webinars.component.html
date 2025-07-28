@@ -26,7 +26,7 @@
         </h2>
       </div>
 
-      <div class="col-lg-8 col-xl-7 offset-xl-1">
+      <div class="col-lg-8 col-xl-7 offset-xl-1" *ngIf="displayForm">
         <form class="needs-validation row g-4" #formRef novalidate>
           <div class="col-sm-6">
             <generic-input class="form-control form-control-lg" [(model)]="webinarParticipant.firstname" label="Prénom*"
