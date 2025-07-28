@@ -201,13 +201,11 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
   downloadAllFiles() {
     let count = 0;
     let selectedAttachmentIds: number[] = [];
-    console.log("test");
     if (this.invoices && this.invoices.length > 0) {
       let selectedInvoices = [];
 
       for (let invoice of this.invoices)
         selectedInvoices.push(this.invoiceService.getInvoiceById(invoice.invoiceId));
-
 
       forkJoin(selectedInvoices).subscribe(allInvoices => {
         for (let completeInvoice of allInvoices) {
@@ -222,7 +220,7 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
         }
 
         if (selectedAttachmentIds.length > 1) {
-          this.uploadAttachmentService.downloadAttachmentsAsZip(selectedAttachmentIds);
+          this.uploadAttachmentService.downloadInvoiceAttachmentsAsZip(selectedAttachmentIds);
         } else if (selectedAttachmentIds.length == 1) {
           let tmpAttachment = { id: selectedAttachmentIds[0] } as Attachment;
           this.uploadAttachmentService.downloadAttachment(tmpAttachment);
