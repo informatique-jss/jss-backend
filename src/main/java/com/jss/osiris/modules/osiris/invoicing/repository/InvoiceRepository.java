@@ -69,6 +69,7 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
                         + " and  ( COALESCE(:customerOrderId)=0 or c.id in (:customerOrderId)) "
                         + " and  ( COALESCE(:customerOrderForInboundInvoiceId)=0 or i.id_customer_order_for_inbound_invoice in (:customerOrderForInboundInvoiceId)) "
                         + " and  ( COALESCE(:invoiceId)=0 or i.id in (:invoiceId)) "
+                        + " and  ( COALESCE(:affaireId)=0 or af.id in (:affaireId)) "
                         + " and  ( COALESCE(:customerOrderIds) =0 or t.id in (:customerOrderIds) or r1.id in (:customerOrderIds) or pro.id in (:customerOrderIds)  ) "
                         + " and (:minAmount is null or total_price>=CAST(CAST(:minAmount as text) as numeric(15, 2)) ) "
                         + " and  ( COALESCE(:salesEmployeeId) =0 or t.id_commercial=:salesEmployeeId or r1.id_commercial=:salesEmployeeId ) "
@@ -85,6 +86,7 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
                         @Param("invoiceId") Integer invoiceId,
                         @Param("customerOrderId") Integer customerOrderId,
                         @Param("customerOrderIds") List<Integer> customerOrderIds,
+                        @Param("affaireId") Integer affaireId,
                         @Param("salesEmployeeId") Integer salesEmployeeId,
                         @Param("customerOrderForInboundInvoiceId") Integer customerOrderForInboundInvoiceId,
                         @Param("invoicingDocumentTypeId") Integer invoicingDocumentTypeId);

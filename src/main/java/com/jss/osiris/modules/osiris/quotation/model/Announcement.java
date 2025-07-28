@@ -86,9 +86,11 @@ public class Announcement implements IId {
 	private String noticeHeader;
 
 	@Column(nullable = false)
+	@JsonView({ JacksonViews.MyJssDetailedView.class })
 	private Boolean isHeader;
 
 	@Column(nullable = false)
+	@JsonView({ JacksonViews.MyJssDetailedView.class })
 	private Boolean isHeaderFree;
 
 	@Column(nullable = false)

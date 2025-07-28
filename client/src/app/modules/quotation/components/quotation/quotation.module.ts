@@ -27,6 +27,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule, Routes } from '@angular/router';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { DirectDebitTransfertListComponent } from 'src/app/modules/invoicing/components/direct-debit-transfert-list/direct-debit-transfert-list.component';
+import { InvoiceListComponent } from 'src/app/modules/invoicing/components/invoice-list/invoice-list.component';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { GuichetUniqueStatusComponent } from '../../guichet-unique-status/guichet-unique-status.component';
 import { ActeDepositComponent } from '../acte-deposit/acte-deposit.component';
@@ -199,7 +200,8 @@ const routes: Routes = [
     OrderSidePanelDetailsComponent,
     ServiceSidePanelDetailsComponent,
     IncidentReportListComponent,
-    AddIncidentReportComponent
+    AddIncidentReportComponent,
+    InvoiceListComponent,
   ],
   exports: [
     OrderingListComponent,
@@ -221,7 +223,8 @@ const routes: Routes = [
     OrderSidePanelDetailsComponent,
     ServiceSidePanelDetailsComponent,
     AddIncidentReportComponent,
-    IncidentReportListComponent
+    IncidentReportListComponent,
+    InvoiceListComponent,
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }

@@ -105,6 +105,8 @@ public class MyJssQuotationDelegate {
 
         saveNewMailsOnAffaire(order);
 
+        Responsable newResponsable = order.getResponsable();
+
         if (order.getResponsable() != null && order.getResponsable().getId() != null
                 && !order.getResponsable().getId().equals(employeeService.getCurrentMyJssUser().getId())) {
             List<Responsable> responsables = userScopeService.getPotentialUserScope();
@@ -118,20 +120,33 @@ public class MyJssQuotationDelegate {
                 }
             }
             if (!found)
-                order.setResponsable(employeeService.getCurrentMyJssUser());
+                newResponsable = employeeService.getCurrentMyJssUser();
+            else
+                newResponsable = responsableService.getResponsable(order.getResponsable().getId());
         } else {
-            order.setResponsable(employeeService.getCurrentMyJssUser());
+            newResponsable = employeeService.getCurrentMyJssUser();
         }
 
-        order.setCustomerOrderOrigin(constantService.getCustomerOrderOriginMyJss());
-        order.setCustomerOrderStatus(
-                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT));
-        quotationValidationHelper.completeIQuotationDocuments(order, true);
-        populateBooleansOfProvisions(order);
-        order = customerOrderService.addOrUpdateCustomerOrder(order, true, false);
+        CustomerOrder fetchOrder = null;
+        if (order.getId() == null) {
+            order.setResponsable(newResponsable);
+            populateBooleansOfProvisions(order);
+            quotationValidationHelper.completeIQuotationDocuments(order, true);
+            order.setCustomerOrderOrigin(constantService.getCustomerOrderOriginMyJss());
+            order.setCustomerOrderStatus(
+                    customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT));
+            fetchOrder = customerOrderService.addOrUpdateCustomerOrder(order, true, false);
+        } else
+            fetchOrder = customerOrderService.getCustomerOrder(order.getId());
+
+        if (fetchOrder.getResponsable() == null
+                || !fetchOrder.getResponsable().getId().equals(newResponsable.getId())) {
+            fetchOrder.setResponsable(newResponsable);
+            fetchOrder = customerOrderService.addOrUpdateCustomerOrder(fetchOrder, true, false);
+        }
 
         if (isValidation != null && isValidation) {
-            customerOrderService.addOrUpdateCustomerOrderStatus(order, CustomerOrderStatus.BEING_PROCESSED, true);
+            customerOrderService.addOrUpdateCustomerOrderStatus(fetchOrder, CustomerOrderStatus.BEING_PROCESSED, true);
             if (customerOrderService.isOnlyJssAnnouncement(order, true)) {
                 quotationValidationHelper.validateQuotationAndCustomerOrder(order, null);
                 customerOrderService.autoBilledProvisions(order);
@@ -150,6 +165,8 @@ public class MyJssQuotationDelegate {
 
         saveNewMailsOnAffaire(quotation);
 
+        Responsable newResponsable = quotation.getResponsable();
+
         if (quotation.getResponsable() != null
                 && !quotation.getResponsable().getId().equals(employeeService.getCurrentMyJssUser().getId())) {
             List<Responsable> responsables = userScopeService.getPotentialUserScope();
@@ -163,20 +180,31 @@ public class MyJssQuotationDelegate {
                 }
             }
             if (!found)
-                quotation.setResponsable(employeeService.getCurrentMyJssUser());
+                newResponsable = employeeService.getCurrentMyJssUser();
         } else {
-            quotation.setResponsable(employeeService.getCurrentMyJssUser());
+            newResponsable = employeeService.getCurrentMyJssUser();
         }
 
-        quotation.setCustomerOrderOrigin(constantService.getCustomerOrderOriginMyJss());
-        quotation.setQuotationStatus(
-                quotationStatusService.getQuotationStatusByCode(CustomerOrderStatus.DRAFT));
-        quotationValidationHelper.completeIQuotationDocuments(quotation, false);
-        populateBooleansOfProvisions(quotation);
-        quotation = quotationService.addOrUpdateQuotationFromUser(quotation);
+        Quotation fetchQuotation = null;
+        if (quotation.getId() == null) {
+            populateBooleansOfProvisions(quotation);
+            quotation.setResponsable(newResponsable);
+            quotationValidationHelper.completeIQuotationDocuments(quotation, false);
+            quotation.setCustomerOrderOrigin(constantService.getCustomerOrderOriginMyJss());
+            quotation.setQuotationStatus(quotationStatusService.getQuotationStatusByCode(QuotationStatus.DRAFT));
+            fetchQuotation = quotationService.addOrUpdateQuotation(quotation);
+        } else
+            fetchQuotation = quotationService.getQuotation(quotation.getId());
 
-        if (isValidation != null && isValidation)
+        if (fetchQuotation.getResponsable() == null
+                || !fetchQuotation.getResponsable().getId().equals(newResponsable.getId())) {
+            fetchQuotation.setResponsable(newResponsable);
+            fetchQuotation = quotationService.addOrUpdateQuotationFromUser(fetchQuotation);
+        }
+
+        if (isValidation != null && isValidation) {
             quotationService.addOrUpdateQuotationStatus(quotation, QuotationStatus.TO_VERIFY);
+        }
 
         return quotation;
 
@@ -209,13 +237,11 @@ public class MyJssQuotationDelegate {
                     throw new OsirisValidationException("Tiers");
                 } else {
                     tiersService.addOrUpdateTiers(quotation.getResponsable().getTiers());
-                    List<Responsable> userScope = userScopeService.getPotentialUserScope(quotation.getResponsable());
-                    if (userScope != null && userScope.size() > 0)
-                        userScopeService.addResponsableToCurrentUserScope(userScope, quotation.getResponsable());
                 }
             }
         }
 
+        quotation.setCustomerOrderOrigin(constantService.getCustomerOrderOriginMyJss());
         populateBooleansOfProvisions(quotation);
 
         // Save new affaire
@@ -266,6 +292,8 @@ public class MyJssQuotationDelegate {
 
         if (shouldConnectUserAtTheEnd)
             userScopeService.authenticateUser(quotation.getResponsable(), request);
+        else
+            return null;
         return quotation;
     }
 
@@ -348,7 +376,20 @@ public class MyJssQuotationDelegate {
         quotation.getResponsable().getTiers().getDocuments().add(receiptDocument);
 
         quotation.getResponsable().getTiers().setIsNewTiers(true);
-        quotation.getResponsable().getTiers().setIsIndividual(false);
+
+        if (quotation.getResponsable().getTiers().getIsIndividual() == null)
+            quotation.getResponsable().getTiers().setIsIndividual(false);
+
+        if (quotation.getResponsable().getTiers().getIsIndividual()) {
+            quotation.getResponsable().getTiers().setCivility(quotation.getResponsable().getCivility());
+            quotation.getResponsable().getTiers().setFirstname(quotation.getResponsable().getFirstname());
+            quotation.getResponsable().getTiers().setLastname(quotation.getResponsable().getLastname());
+            quotation.getResponsable().getTiers().setAddress(quotation.getResponsable().getAddress());
+            quotation.getResponsable().getTiers().setCountry(quotation.getResponsable().getCountry());
+            quotation.getResponsable().getTiers().setPostalCode(quotation.getResponsable().getPostalCode());
+            quotation.getResponsable().getTiers().setCity(quotation.getResponsable().getCity());
+        }
+
         quotation.getResponsable().getTiers().setTiersType(constantService.getTiersTypeClient());
         quotation.getResponsable().getTiers().setTiersType(constantService.getTiersTypeClient());
         quotation.getResponsable().getTiers().setSalesEmployee(constantService.getEmployeeSalesDirector());

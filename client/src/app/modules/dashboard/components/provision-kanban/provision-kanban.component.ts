@@ -193,7 +193,7 @@ export class ProvisionKanbanComponent extends KanbanComponent<Provision, IWorkfl
     this.isDisplayOrderLevel = true;
     this.customerOrderFetched = undefined;
     this.customerOrderStatusService.getCustomerOrderStatus().subscribe(response => {
-      this.possibleEntityStatusCustomerOrder = response;
+      this.possibleEntityStatusCustomerOrder = response.filter(t => t.code != "OPEN");;
       this.orderService.getSingleCustomerOrder(task.service.assoAffaireOrder.customerOrder.id).subscribe(response => {
         this.customerOrderFetched = response as CustomerOrder;
 

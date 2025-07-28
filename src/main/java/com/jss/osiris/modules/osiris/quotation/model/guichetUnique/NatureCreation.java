@@ -8,6 +8,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.FormeJuridique;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeExploitation;
 
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -19,6 +20,7 @@ import jakarta.persistence.SequenceGenerator;
 
 @Entity
 @DoNotAudit
+@Cacheable(false)
 public class NatureCreation implements Serializable, IId {
     @Id
     @SequenceGenerator(name = "guichet_unique_sequence", sequenceName = "guichet_unique_sequence", allocationSize = 1)

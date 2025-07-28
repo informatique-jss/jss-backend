@@ -80,27 +80,43 @@
 
       <!-- Submit a formality or contact us -->
       <div class="mb-3" *ngIf="isPostContainsMyJssCategory(myJssCategoryFormality)">
-        <double-buttons orderActionLabel=" Déposer une formalité" quotationActionLabel="Demander un devis"
+        <double-buttons class="text-grey" orderActionLabel=" Déposer une formalité"
+          [orderActionRoute]="'quotation/new/'+serviceFamilyGroupFormality!.id+'/'+quotationTypeOrder.id"
+          quotationActionLabel="Demander un devis"
+          [quotationActionRoute]="'quotation/new/'+serviceFamilyGroupFormality!.id+'/'+quotationTypeQuotation.id"
           [isLightButtons]="true">
         </double-buttons>
       </div>
       <div class="mb-3" *ngIf="isPostContainsMyJssCategory(myJssCategoryAnnouncement)">
-        <double-buttons orderActionLabel=" Publier une annonce légale" quotationActionLabel="Demander un devis"
+        <double-buttons class="text-grey" orderActionLabel=" Publier une annonce légale"
+          [orderActionRoute]="'quotation/new/'+serviceFamilyGroupAnnouncement!.id+'/'+quotationTypeOrder.id"
+          quotationActionLabel="Demander un devis"
+          [quotationActionRoute]="'quotation/new/'+serviceFamilyGroupAnnouncement!.id+'/'+quotationTypeQuotation.id"
+          linkLabel="Consulter les annonces légales" linkRoute="announcement/search" [linkRouteToJssMedia]='true'
           [isLightButtons]="true">
         </double-buttons>
       </div>
       <div class="mb-3" *ngIf="isPostContainsMyJssCategory(myJssCategoryApostille)">
-        <double-buttons orderActionLabel=" Demander une apostille ou légalisation"
-          quotationActionLabel="Demander un devis" [isLightButtons]="true">
-        </double-buttons>
-      </div>
-      <div class="mb-3" *ngIf="isPostContainsMyJssCategory(myJssCategoryDomiciliation)">
-        <double-buttons orderActionLabel=" Domicilier mon entreprise" quotationActionLabel="Demander un devis"
+        <double-buttons class="text-grey" orderActionLabel=" Demander une apostille ou légalisation"
+          [orderActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeOrder.id"
+          quotationActionLabel="Demander un devis"
+          [quotationActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeQuotation.id"
           [isLightButtons]="true">
         </double-buttons>
       </div>
+      <div class="mb-3" *ngIf="isPostContainsMyJssCategory(myJssCategoryDomiciliation)">
+        <double-buttons class="text-grey" orderActionLabel=" Domicilier mon entreprise"
+          [orderActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeOrder.id"
+          quotationActionLabel="Demander un devis"
+          [quotationActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeQuotation.id"
+          linkLabel="Bien choisir la domiciliation d'entreprise" [isLightButtons]="true">
+        </double-buttons>
+      </div>
       <div class="mb-3" *ngIf="isPostContainsMyJssCategory(myJssCategoryDocument)">
-        <double-buttons orderActionLabel=" Commander des documents" quotationActionLabel="Demander un devis"
+        <double-buttons class="text-grey" orderActionLabel=" Commander des documents"
+          [orderActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeOrder.id"
+          quotationActionLabel="Demander un devis"
+          [quotationActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeQuotation.id"
           [isLightButtons]="true">
         </double-buttons>
       </div>
@@ -145,6 +161,10 @@
             </div>
           </div>
         </div>
+      </div>
+
+      <div class="col-lg-3 offset-xl-1  mt-4 mt-lg-0 d-block d-lg-none">
+        <ng-container [ngTemplateOutlet]="asideColumn"></ng-container>
       </div>
 
       <!-- Comments -->
@@ -289,63 +309,8 @@
 
 
     <!-- Sidebar (offcanvas on sreens < 992px) -->
-    <aside class="col-lg-3 offset-xl-1">
-      <div class="offcanvas-lg offcanvas-end" id="sidebar">
-
-        <div class="offcanvas-body">
-          <h4 *ngIf="hotPosts[0] && hotPosts[1]" class="pt-1 pt-lg-0 mt-lg-n2">Populaires :</h4>
-          <div class="mb-lg-5 mb-4">
-            <article *ngIf="hotPosts[0]" class="position-relative pb-2 mb-3 mb-lg-4">
-              <img class="rounded-5" (click)="openPost(hotPosts[0], $event)"
-                [src]="hotPosts[0].media.urlLarge ? hotPosts[0].media.urlLarge : hotPosts[0].media.urlFull"
-                alt="Post image">
-              <h5 class="h6 mt-3 mb-0">
-                <a class="stretched-link" (click)="openPost(hotPosts[0], $event)">{{hotPosts[0].titleText}}</a>
-              </h5>
-            </article>
-            <article *ngIf="hotPosts[1]" class="position-relative pb-2 mb-3 mb-lg-4">
-              <img class="rounded-5" (click)="openPost(hotPosts[1], $event)"
-                [src]="hotPosts[1].media.urlLarge ? hotPosts[1].media.urlLarge : hotPosts[1].media.urlFull"
-                alt="Post image">
-              <h5 class="h6 mt-3 mb-0">
-                <a class="stretched-link" (click)="openPost(hotPosts[1], $event)">{{hotPosts[1].titleText}}</a>
-              </h5>
-            </article>
-          </div>
-
-          <!-- Recent posts -->
-          <h4 class="pt-3 pt-lg-1 mb-4">Recents :</h4>
-          <ul class="list-unstyled mb-lg-5 mb-4">
-            <li class="border-bottom pb-3 mb-3" *ngIf="recentPosts[0]">
-              <span class="h6 mb-0">
-                <a (click)="openPost(recentPosts[0], $event)">{{recentPosts[0].titleText}}</a>
-              </span>
-            </li>
-            <li class="border-bottom pb-3 mb-3" *ngIf="recentPosts[1]">
-              <span class="h6 mb-0">
-                <a (click)="openPost(recentPosts[1], $event)">{{recentPosts[1].titleText}}</a>
-              </span>
-            </li>
-            <li class="border-bottom pb-3 mb-3" *ngIf="recentPosts[2]">
-              <span class="h6 mb-0">
-                <a (click)="openPost(recentPosts[2], $event)">{{recentPosts[2].titleText}}</a>
-              </span>
-            </li>
-            <li class="border-bottom pb-3" *ngIf="recentPosts[3]">
-              <span class="h6 mb-0">
-                <a (click)="openPost(recentPosts[3], $event)">{{recentPosts[3].titleText}}</a>
-              </span>
-            </li>
-          </ul>
-
-          <!-- Relevant tags -->
-          <h4 class="pt-3 pt-lg-1 mb-4" *ngIf="post.postTags && post.postTags[0]">Tags associés :</h4>
-          <div class="d-flex flex-wrap mt-n3 ms-n3 mb-lg-5 mb-4 pb-3 pb-lg-0">
-            <span *ngFor="let tag of post.postTags" class="badge border text-nav fs-sm mt-3 ms-3"
-              style="cursor: pointer;" [routerLink]="'/tools/practical-sheets/'+tag.slug">{{tag.name}}</span>
-          </div>
-        </div>
-      </div>
+    <aside class="col-lg-3 offset-xl-1  mt-4 mt-lg-0 d-none d-lg-block">
+      <ng-container [ngTemplateOutlet]="asideColumn"></ng-container>
     </aside>
   </div>
 </section>
@@ -371,3 +336,62 @@
 
 <newsletter></newsletter>
 <div class="my-4 py-4"></div>
+
+<ng-template #asideColumn>
+  <div id="sidebar" *ngIf="post">
+
+    <div class="offcanvas-body">
+      <h4 *ngIf="hotPosts[0] && hotPosts[1]" class="pt-1 pt-lg-0 mt-lg-n2">Populaires :</h4>
+      <div class="mb-lg-5 mb-4">
+        <article *ngIf="hotPosts[0]" class="position-relative pb-2 mb-3 mb-lg-4">
+          <img class="rounded-5" (click)="openPost(hotPosts[0], $event)"
+            [src]="hotPosts[0].media.urlLarge ? hotPosts[0].media.urlLarge : hotPosts[0].media.urlFull"
+            alt="Post image">
+          <h5 class="h6 mt-3 mb-0">
+            <a class="stretched-link" (click)="openPost(hotPosts[0], $event)">{{hotPosts[0].titleText}}</a>
+          </h5>
+        </article>
+        <article *ngIf="hotPosts[1]" class="position-relative pb-2 mb-3 mb-lg-4">
+          <img class="rounded-5" (click)="openPost(hotPosts[1], $event)"
+            [src]="hotPosts[1].media.urlLarge ? hotPosts[1].media.urlLarge : hotPosts[1].media.urlFull"
+            alt="Post image">
+          <h5 class="h6 mt-3 mb-0">
+            <a class="stretched-link" (click)="openPost(hotPosts[1], $event)">{{hotPosts[1].titleText}}</a>
+          </h5>
+        </article>
+      </div>
+
+      <!-- Recent posts -->
+      <h4 class="pt-3 pt-lg-1 mb-4">Récents :</h4>
+      <ul class="list-unstyled mb-lg-5 mb-4">
+        <li class="border-bottom pb-3 mb-3" *ngIf="recentPosts[0]">
+          <span class="h6 mb-0">
+            <a (click)="openPost(recentPosts[0], $event)">{{recentPosts[0].titleText}}</a>
+          </span>
+        </li>
+        <li class="border-bottom pb-3 mb-3" *ngIf="recentPosts[1]">
+          <span class="h6 mb-0">
+            <a (click)="openPost(recentPosts[1], $event)">{{recentPosts[1].titleText}}</a>
+          </span>
+        </li>
+        <li class="border-bottom pb-3 mb-3" *ngIf="recentPosts[2]">
+          <span class="h6 mb-0">
+            <a (click)="openPost(recentPosts[2], $event)">{{recentPosts[2].titleText}}</a>
+          </span>
+        </li>
+        <li class="border-bottom pb-3" *ngIf="recentPosts[3]">
+          <span class="h6 mb-0">
+            <a (click)="openPost(recentPosts[3], $event)">{{recentPosts[3].titleText}}</a>
+          </span>
+        </li>
+      </ul>
+
+      <!-- Relevant tags -->
+      <h4 class="pt-3 pt-lg-1 mb-4" *ngIf="post.postTags && post.postTags[0]">Tags associés :</h4>
+      <div class="d-flex flex-wrap mt-n3 ms-n3 mb-lg-5 mb-4 pb-3 pb-lg-0">
+        <span *ngFor="let tag of post.postTags" class="badge border text-nav fs-sm mt-3 ms-3" style="cursor: pointer;"
+          [routerLink]="'/tools/practical-sheets/'+tag.slug">{{tag.name}}</span>
+      </div>
+    </div>
+  </div>
+</ng-template>

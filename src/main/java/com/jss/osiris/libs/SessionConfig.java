@@ -50,6 +50,9 @@ public class SessionConfig {
                 String domainHeader = request.getHeader("domain");
                 String cookieName = getCookieNameForHost(domainHeader);
 
+                if (cookieName == null)
+                    return new CookieHttpSessionIdResolver();
+
                 DefaultCookieSerializer serializer = new DefaultCookieSerializer();
                 serializer.setCookieName(cookieName);
 
@@ -73,7 +76,7 @@ public class SessionConfig {
                         cookieName += "_REC";
                     return cookieName;
                 }
-                return "DEFAULTSESSION";
+                return null;
             }
 
         };

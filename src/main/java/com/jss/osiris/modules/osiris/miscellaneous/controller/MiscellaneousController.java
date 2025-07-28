@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -528,11 +527,6 @@ public class MiscellaneousController {
         if (employee != null) {
             backupEmployee = employeeService.getMyHolidaymaker((Employee) employee);
 
-            if (notification.getNotificationType().equals(Notification.PERSONNAL)) {
-                backupEmployee = new ArrayList<Employee>();
-                backupEmployee.add((Employee) employee);
-            }
-
             boolean found = false;
 
             if (backupEmployee != null)
@@ -556,8 +550,6 @@ public class MiscellaneousController {
     @PostMapping(inputEntryPoint + "/constant")
     public ResponseEntity<Constant> addOrUpdateConstant(
             @RequestBody Constant constant) throws OsirisException, OsirisValidationException {
-        if (constant.getId() != null)
-            validationHelper.validateReferential(constant, true, "constant");
         validationHelper.validateReferential(constant.getBillingLabelTypeCodeAffaire(), true,
                 "BillingLabelTypeCodeAffaire");
         validationHelper.validateReferential(constant.getFurtherInformationServiceFieldType(), true,

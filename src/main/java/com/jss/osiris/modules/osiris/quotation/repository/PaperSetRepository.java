@@ -19,6 +19,7 @@ public interface PaperSetRepository extends QueryCacheCrudRepository<PaperSet, I
                         " 	pst.label as paperSetTypeLabel, " +
                         " 	co.id as customerOrderId, " +
                         " 	cos.label as customerOrderStatus, " +
+                        "       ca.label as competentAuthorityLabel, " +
                         " 	coalesce(t.denomination, " +
                         " 	concat(t.firstname, " +
                         " 	' ', " +
@@ -67,10 +68,12 @@ public interface PaperSetRepository extends QueryCacheCrudRepository<PaperSet, I
                         " 	r.id = co.id_responsable " +
                         " left join tiers t on " +
                         " 	t.id = r.id_tiers" +
+                        " left join competent_authority ca on " +
+                        "       ps.id_competent_authority = ca.id" +
                         " join service s on " +
                         " 	s.id_asso_affaire_order = aao.id " +
-                        " join service_type st on " +
-                        " 	st.id = s.id_service_type " +
+                        " join  asso_service_service_type ast on ast.id_service  = s.id join service_type st on st.id=ast.id_service_type "
+                        +
                         " left join audit a on a.entity_id = ps.id and a.entity = 'PaperSet' " +
                         " left join employee e on e.username = a.username " +
                         " 	where (:isDisplayCancelled or ps.is_cancelled=:isDisplayCancelled) " +
@@ -84,6 +87,7 @@ public interface PaperSetRepository extends QueryCacheCrudRepository<PaperSet, I
                         " 	pst.label, " +
                         " 	co.id, " +
                         " 	cos.label, " +
+                        "       ca.label, " +
                         " 	coalesce(t.denomination, " +
                         " 	concat(t.firstname, " +
                         " 	' ', " +

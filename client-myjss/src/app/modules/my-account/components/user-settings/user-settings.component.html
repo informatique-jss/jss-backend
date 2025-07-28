@@ -132,7 +132,7 @@
                     <label class="form-check-label" for="billing-isBillingOther">Libeller à un tiers <i
                         *ngIf="document.billingLabelType.id == billingLabelTypeOther.id && !document.billingAddress"
                         style="cursor: pointer;" class="ai-circle-info"
-                        ngbTooltip="Nos équipes vont vous recontacter pour déterminer l’adresse à utiliser"></i></label>
+                        ngbTooltip="Nos équipes vont vous recontacter pour déterminer l'adresse à utiliser"></i></label>
                   </div>
                 </div>
                 <generic-input [(model)]="document.externalReference" label="Vos références à rappeler"
@@ -263,12 +263,48 @@
                   <div class="form-check" [formGroup]="documentForm">
                     <input class="form-check-input" type="checkbox" id="paper-isRecipientAffaire" [disabled]="true"
                       [(ngModel)]="document.isRecipientAffaire" [ngModelOptions]="{standalone: true}">
-                    <label class="form-check-label" for="paper-isRecipientAffaire">Les envoyer à l'affaire</label>
+                    <label class="form-check-label" for="paper-isRecipientAffaire">Les envoyer à l'affaire </label>
                   </div>
                   <div class="form-check" [formGroup]="documentForm">
                     <input class="form-check-input" type="checkbox" id="paper-isRecipientClient" [disabled]="true"
                       [(ngModel)]="document.isRecipientClient" [ngModelOptions]="{standalone: true}">
-                    <label class="form-check-label" for="paper-isRecipientClient">Me les envoyer</label>
+                    <label class="form-check-label" for="paper-isRecipientClient">Me les envoyer </label>
+                  </div>
+                  <div *ngIf="document.clientRecipient || document.clientAddress" class="pt-3">
+                    <div class="row mb-2">
+                      <strong class="col-12 col-lg-3 ">
+                        Destinataire
+                      </strong>
+                      <div class="col-12 col-lg-9">
+                        {{document.clientRecipient}}
+                      </div>
+                    </div>
+                    <div class="row mb-2">
+                      <strong class="col-12 col-lg-3 ">
+                        Adresse
+                      </strong>
+                      <div class="col-12 col-lg-9">
+                        {{document.clientAddress}}
+                      </div>
+                    </div>
+                  </div>
+                  <div *ngIf="document.affaireRecipient || document.affaireAddress" class="pt-3">
+                    <div class="row mb-2">
+                      <strong class="col-12 col-lg-3 ">
+                        Destinataire
+                      </strong>
+                      <div class="col-12 col-lg-9">
+                        {{document.affaireRecipient}}
+                      </div>
+                    </div>
+                    <div class="row mb-2">
+                      <strong class="col-12 col-lg-3 ">
+                        Adresse
+                      </strong>
+                      <div class="col-12 col-lg-9">
+                        {{document.affaireAddress}}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </ng-container>

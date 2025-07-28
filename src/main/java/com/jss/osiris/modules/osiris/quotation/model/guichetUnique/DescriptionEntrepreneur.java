@@ -15,6 +15,7 @@ import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.SituationMatrimoniale;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.StatutVisAVisFormalite;
 
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -28,6 +29,7 @@ import jakarta.persistence.SequenceGenerator;
 
 @Entity
 @DoNotAudit
+@Cacheable(false)
 public class DescriptionEntrepreneur implements Serializable, IId {
 
     @Id

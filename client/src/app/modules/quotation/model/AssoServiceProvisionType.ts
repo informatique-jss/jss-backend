@@ -17,4 +17,6 @@ export interface AssoServiceProvisionType {
   complexity: number;
   announcementNoticeTemplate: AnnouncementNoticeTemplate;
   isPriority: boolean;
+  defaultDeboursPrice: number;
+  defaultDeboursPriceNonTaxable: number;
 }

@@ -76,6 +76,8 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.DepartmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.LanguageService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.LegalFormService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.controller.QuotationValidationHelper;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
@@ -88,6 +90,7 @@ import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.DomiciliationContractType;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
+import com.jss.osiris.modules.osiris.quotation.model.IWorkflowElement;
 import com.jss.osiris.modules.osiris.quotation.model.MailRedirectionType;
 import com.jss.osiris.modules.osiris.quotation.model.NoticeType;
 import com.jss.osiris.modules.osiris.quotation.model.NoticeTypeFamily;
@@ -154,6 +157,12 @@ public class MyJssQuotationController {
 
 	@Autowired
 	TypeDocumentService typeDocumentService;
+
+	@Autowired
+	MailService mailService;
+
+	@Autowired
+	PhoneService phoneService;
 
 	@Autowired
 	AttachmentTypeService attachmentTypeService;
@@ -380,7 +389,8 @@ public class MyJssQuotationController {
 			return new ResponseEntity<CustomerOrder>(new CustomerOrder(), HttpStatus.OK);
 
 		return new ResponseEntity<CustomerOrder>(
-				customerOrderService.completeAdditionnalInformationForCustomerOrder(customerOrder), HttpStatus.OK);
+				customerOrderService.completeAdditionnalInformationForCustomerOrder(customerOrder, true),
+				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/order/emergency")
@@ -457,7 +467,8 @@ public class MyJssQuotationController {
 		if (quotation == null || !myJssQuotationValidationHelper.canSeeQuotation(quotation))
 			return new ResponseEntity<Quotation>(new Quotation(), HttpStatus.OK);
 
-		return new ResponseEntity<Quotation>(quotationService.completeAdditionnalInformationForQuotation(quotation),
+		return new ResponseEntity<Quotation>(
+				quotationService.completeAdditionnalInformationForQuotation(quotation, true),
 				HttpStatus.OK);
 	}
 
@@ -860,14 +871,19 @@ public class MyJssQuotationController {
 
 	@GetMapping(inputEntryPoint + "/affaire/siret")
 	@JsonView(JacksonViews.MyJssListView.class)
-	public ResponseEntity<List<Affaire>> getAffaireBySiret(@RequestParam String siret, HttpServletRequest request)
+	public ResponseEntity<List<Affaire>> getAffaireBySiretOrSiren(@RequestParam String siretOrSiren,
+			HttpServletRequest request)
 			throws OsirisClientMessageException, OsirisException {
 		detectFlood(request);
-		if (siret == null)
+		if (siretOrSiren == null)
 			throw new OsirisValidationException("id");
-		validationHelper.validateSiret(siret);
 
-		return new ResponseEntity<List<Affaire>>(affaireService.getAffairesFromSiret(siret.trim().replaceAll(" ", "")),
+		if (siretOrSiren == null || !validationHelper.validateSiret(siretOrSiren.trim().replaceAll(" ", ""))
+				&& !validationHelper.validateSiren(siretOrSiren.trim().replaceAll(" ", "")))
+			return new ResponseEntity<List<Affaire>>(new ArrayList<Affaire>(), HttpStatus.OK);
+
+		return new ResponseEntity<List<Affaire>>(
+				affaireService.getAffairesFromSiret(siretOrSiren.trim().replaceAll(" ", "")),
 				HttpStatus.OK);
 	}
 
@@ -1281,6 +1297,10 @@ public class MyJssQuotationController {
 		if (canUpdateProvision) {
 			for (Provision provision : serviceFetched.getProvisions()) {
 				for (Provision provisionIn : service.getProvisions()) {
+					IWorkflowElement status = getProvisionStatus(provision);
+					if (status != null && !status.getIsOpenState())
+						return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+
 					if (provision.getId().equals(provisionIn.getId())) {
 						if (provision.getAnnouncement() != null) {
 							provision.getAnnouncement().setNotice(provisionIn.getAnnouncement().getNotice());
@@ -1295,8 +1315,14 @@ public class MyJssQuotationController {
 									.setIsProofReadingDocument(
 											provisionIn.getAnnouncement().getIsProofReadingDocument());
 						}
-						if (provision.getDomiciliation() != null) {
-							provision = provisionIn;
+						if (provisionIn.getDomiciliation() != null) {
+							if (provisionIn.getDomiciliation().getMails() != null)
+								mailService.populateMailIds(provisionIn.getDomiciliation().getMails());
+							if (provisionIn.getDomiciliation().getLegalGardianMails() != null)
+								mailService.populateMailIds(provisionIn.getDomiciliation().getLegalGardianMails());
+							if (provisionIn.getDomiciliation().getLegalGardianPhones() != null)
+								phoneService.populatePhoneIds(provisionIn.getDomiciliation().getLegalGardianPhones());
+							provision.setDomiciliation(provisionIn.getDomiciliation());
 						}
 					}
 				}
@@ -1306,7 +1332,18 @@ public class MyJssQuotationController {
 		serviceService.addOrUpdateServiceFromUser(serviceFetched);
 
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+	}
 
+	private IWorkflowElement getProvisionStatus(Provision provision) {
+		if (provision.getAnnouncement() != null)
+			return provision.getAnnouncement().getAnnouncementStatus();
+		if (provision.getDomiciliation() != null)
+			return provision.getDomiciliation().getDomiciliationStatus();
+		if (provision.getFormalite() != null)
+			return provision.getFormalite().getFormaliteStatus();
+		if (provision.getSimpleProvision() != null)
+			return provision.getSimpleProvision().getSimpleProvisionStatus();
+		return null;
 	}
 
 	@GetMapping(inputEntryPoint + "/services")
@@ -1382,7 +1419,7 @@ public class MyJssQuotationController {
 		ServiceFamily serviceFamily = serviceFamilyService.getServiceFamily(idServiceFamily);
 		if (serviceFamily == null)
 			return new ResponseEntity<List<ServiceType>>(new ArrayList<ServiceType>(), HttpStatus.OK);
-		return new ResponseEntity<List<ServiceType>>(serviceTypeService.getServiceTypesForFamily(serviceFamily),
+		return new ResponseEntity<List<ServiceType>>(serviceTypeService.getServiceTypesForFamilyForMyJss(serviceFamily),
 				HttpStatus.OK);
 	}
 
@@ -1492,7 +1529,7 @@ public class MyJssQuotationController {
 
 		return new ResponseEntity<CustomerOrder>(
 				customerOrderService.completeAdditionnalInformationForCustomerOrder(
-						(CustomerOrder) pricingHelper.completePricingOfIQuotation(customerOrder, isEmergency)),
+						(CustomerOrder) pricingHelper.completePricingOfIQuotation(customerOrder, isEmergency), true),
 				HttpStatus.OK);
 	}
 
@@ -1507,7 +1544,7 @@ public class MyJssQuotationController {
 			return new ResponseEntity<Quotation>(null);
 
 		return new ResponseEntity<Quotation>(quotationService.completeAdditionnalInformationForQuotation(
-				(Quotation) pricingHelper.completePricingOfIQuotation(quotation, isEmergency)), HttpStatus.OK);
+				(Quotation) pricingHelper.completePricingOfIQuotation(quotation, isEmergency), true), HttpStatus.OK);
 	}
 
 	@PostMapping(inputEntryPoint + "/quotation/save-order")
@@ -1523,6 +1560,42 @@ public class MyJssQuotationController {
 		return new ResponseEntity<Quotation>(
 				(Quotation) myJssQuotationDelegate.validateAndCreateQuotation(quotation, isValidation, request),
 				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/quotation/switch/responsable")
+	public ResponseEntity<Boolean> switchResponsableForQuotation(Integer idQuotation, Integer newResponsable,
+			HttpServletRequest request)
+			throws OsirisValidationException, OsirisException {
+		detectFlood(request);
+
+		Quotation quotation = quotationService.getQuotation(idQuotation);
+		if (quotation == null)
+			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+
+		Responsable responsable = responsableService.getResponsable(newResponsable);
+		if (responsable == null)
+			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+
+		quotationService.switchResponsable(quotation, responsable);
+		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/order/switch/responsable")
+	public ResponseEntity<Boolean> switchResponsableForOrder(Integer idOrder, Integer newResponsable,
+			HttpServletRequest request)
+			throws OsirisValidationException, OsirisException {
+		detectFlood(request);
+
+		CustomerOrder order = customerOrderService.getCustomerOrder(idOrder);
+		if (order == null)
+			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+
+		Responsable responsable = responsableService.getResponsable(newResponsable);
+		if (responsable == null)
+			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+
+		customerOrderService.switchResponsable(order, responsable);
+		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 
 	@PostMapping(inputEntryPoint + "/order/save-order")

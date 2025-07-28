@@ -4,5 +4,5 @@ export interface QuotationType {
   label: string;
 }
 
-export const quotation: QuotationType = { id: 1, code: "QUOTATION", label: "Un devis" };
-export const order: QuotationType = { id: 2, code: "ORDER", label: "Une commande" };
+export const QUOTATION_TYPE_QUOTATION: QuotationType = { id: 1, code: "QUOTATION", label: "Un devis" };
+export const QUOTATION_TYPE_ORDER: QuotationType = { id: 2, code: "ORDER", label: "Une commande" };

@@ -29,7 +29,7 @@ public class Mail implements Serializable, IId {
 			JacksonViews.OsirisDetailedView.class })
 	private Integer id;
 
-	@Column(nullable = false)
+	@Column(nullable = false, unique = true)
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 	private String mail;

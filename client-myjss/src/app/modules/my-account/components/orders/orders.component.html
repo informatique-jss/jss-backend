@@ -109,14 +109,6 @@
                       {{getCustomerOrderStatusLabel(order)}}
                     </span>
                   </div>
-
-                  <div class="col-12 col-sm-2" *ngIf="currentScope && currentScope.length > 1 && order.responsable">
-                    <div class="fs-sm text-body-secondary fw-bold mb-1">Responsable</div>
-                    <div class="fs-sm fw-medium text-dark">
-                      {{capitalizeName(order.responsable.firstname + ' ' + order.responsable.lastname)}}
-                    </div>
-                  </div>
-
                   <div class="col-12 col-sm-2">
                     <div class="fs-sm text-body-secondary fw-bold mb-1">Date de commande</div>
                     <div class="fs-sm fw-medium text-dark">
@@ -223,9 +215,14 @@
                             <span class="placeholder placeholder-sm col-4"></span>
                           </p>
                         </div>
-                        <button type="button" class="btn btn-link btn-sm px-0 mt-2"
+                        <button type="button" class="btn btn-link btn-sm px-2 mt-2 hover-bg-light "
                           (click)="openOrderDetails($event, order); $event.stopPropagation();">
                           <i class="ai-file-text me-2"></i>Détails de la commande
+                        </button>
+                        <button type="button" class="btn btn-link btn-sm px-2 mt-2 hover-bg-light "
+                          *ngIf="order.customerOrderStatus.code==CUSTOMER_ORDER_STATUS_DRAFT"
+                          (click)="cancelDraft(order); $event.stopPropagation();">
+                          <i class="ai-file-text me-2"></i>Abandonner
                         </button>
                       </div>
 
@@ -299,3 +296,19 @@
       </div>
     </div>
   </div>
+
+  <ng-template #cancelQuotationModal let-modal>
+    <div>
+      <div class="modal-header">
+        <h5 class="modal-title" id="cancelQuotationModal">Abandonner la commande</h5>
+        <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Fermer"></button>
+      </div>
+      <div class="modal-body">Êtes-vous sûr de vouloir abandonner cette commande ?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Annuler</button>
+        <button type="button" class="btn btn-danger ms-2"
+          (click)="finalCancelDraft($event );$event.stopPropagation();modal.dismiss()">Abandonner</button>
+      </div>
+    </div>
+  </ng-template>

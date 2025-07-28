@@ -8,6 +8,9 @@
         <p class="fs-sm text-body-secondary mb-0">{{currentUser.mail.mail}}</p>
       </div>
       <nav class="nav flex-column pb-2 pb-lg-4 mb-3">
+        <a class="nav-link fw-semibold py-2 px-0 nav-link-active pb-1 mb-3"
+          [routerLink]="'../quotation/identification'">
+          <i class="fs-5 opacity-60 me-2 ai-circle-plus"></i> Nouvelle commande </a>
         <h4 class="fs-xs fw-medium text-body-secondary text-uppercase pb-1 mb-2">Tableau de bord</h4>
         <ng-container *ngFor="let menuItem of menuItems">
           <a class="nav-link fw-semibold py-2 px-0 nav-link-active"

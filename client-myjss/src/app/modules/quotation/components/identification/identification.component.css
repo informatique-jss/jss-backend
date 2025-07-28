@@ -11,3 +11,8 @@
   white-space: normal;
   text-align: center;
 }
+
+.btn-service-family:checked+.btn-service-family, :not(.btn-check)+.btn-service-family:active, .btn-service-family:first-child:active, .btn-service-family.active, .btn-service-family.show {
+  background-color: #ECF5FF;
+  border-color: #2C4057;
+}

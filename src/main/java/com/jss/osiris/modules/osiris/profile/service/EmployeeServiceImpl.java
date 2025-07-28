@@ -231,4 +231,9 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employees;
     }
 
+    @Override
+    public List<Integer> getPotentialUserScope(Integer idMail) {
+        return employeeRepository.getPotentialUserScope(idMail);
+    }
+
 }
