@@ -152,11 +152,11 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     let url: UrlSegment[] = this.activatedRoute.snapshot.url;
 
     this.quotationStatusService.getQuotationStatus().subscribe(response => {
-      this.quotationStatusList = response;
+      this.quotationStatusList = response.filter(t => t.code != "OPEN");;
     })
 
     this.customerOrderStatusService.getCustomerOrderStatus().subscribe(response => {
-      this.customerOrderStatusList = response;
+      this.customerOrderStatusList = response.filter(t => t.code != "OPEN");;
     })
 
     // Load by order
@@ -505,7 +505,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
         orderingSearch.affaire = asso.affaire;
         orderingSearch.customerOrderStatus = [];
         let d = new Date();
-        d.setDate(d.getDate() - 3);
+        d.setDate(d.getDate() - 15);
         orderingSearch.startDate = d;
         if (this.customerOrderStatusList)
           for (let status of this.customerOrderStatusList)

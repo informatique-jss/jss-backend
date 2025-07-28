@@ -38,7 +38,7 @@ public class MailServiceImpl implements MailService {
     public List<Mail> populateMailIds(List<Mail> mails) {
         if (mails != null)
             for (Mail mail : mails) {
-                if (mail.getId() == null) {
+                if (mail.getId() == null && mail.getMail() != null && !mail.getMail().equals("")) {
                     List<Mail> existingMails = findMails(mail.getMail());
                     if (existingMails != null && existingMails.size() == 1) {
                         mail.setId(existingMails.get(0).getId());
@@ -52,7 +52,7 @@ public class MailServiceImpl implements MailService {
     @Override
     public Mail populateMailId(Mail mail) {
         if (mail != null)
-            if (mail.getId() == null) {
+            if (mail.getId() == null && mail.getMail() != null && !mail.getMail().equals("")) {
                 List<Mail> existingMails = findMails(mail.getMail());
                 if (existingMails != null && existingMails.size() >= 1) {
                     mail.setId(existingMails.get(0).getId());

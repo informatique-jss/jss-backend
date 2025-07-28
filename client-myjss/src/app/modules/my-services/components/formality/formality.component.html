@@ -74,7 +74,10 @@
             <span class="fs-xs fw-semibold text-blue text-uppercase">Formalité légale</span>
           </div>
           <h2 class="h2 secondary-heading pb-2 pb-sm-3 ">N'attendez plus et accédez à nos solutions</h2>
-          <double-buttons orderActionLabel="Déposer une formalité" quotationActionLabel="Demander un devis"
+          <double-buttons class="text-grey" orderActionLabel=" Déposer une formalité"
+            [orderActionRoute]="'quotation/new/'+serviceFamilyGroupFormality!.id+'/'+quotationTypeOrder.id"
+            quotationActionLabel="Demander un devis"
+            [quotationActionRoute]="'quotation/new/'+serviceFamilyGroupFormality!.id+'/'+quotationTypeQuotation.id"
             [isLightButtons]="false">
           </double-buttons>
         </div>

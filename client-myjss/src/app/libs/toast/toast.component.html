@@ -1,7 +1,7 @@
 <div *ngFor="let toast of toasts">
   <ngb-toast [delay]="toast.delay ? toast.delay : 5000">
     <ng-template ngbToastHeader>
-      <div class="me-auto text-white" [ngClass]="{'text-white':!displayLight}">
+      <div class="me-auto text-white">
         <i class="bi-x-octagon-fill me-2" *ngIf="toast.isError"></i>
         <i class="bi-info-circle-fill me-2" *ngIf="!toast.isError"></i>
         {{toast.title}}

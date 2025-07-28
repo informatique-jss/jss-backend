@@ -142,7 +142,9 @@ export class QuotationComponent implements OnInit {
 
   finalCleanStorageData() {
     this.quotationService.cleanStorageData();
-    this.appService.openRoute(undefined, "quotation/identification", undefined);
+    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      this.appService.openRoute(undefined, "quotation/identification", undefined);
+    });
   }
 
   cleanModal(content: TemplateRef<any>) {

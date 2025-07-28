@@ -69,9 +69,6 @@ public class ResponsableServiceImpl implements ResponsableService {
         Optional<Responsable> responsable = responsableRepository.findById(id);
         if (responsable.isPresent())
             return responsable.get();
-        if (responsable.isPresent()) {
-            return responsable.get();
-        }
         return null;
     }
 

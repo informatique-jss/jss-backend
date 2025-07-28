@@ -17,7 +17,7 @@
         <i class="ai-pen pe-2"></i>Pour quel service ?
       </h6>
       <div *ngFor="let serviceFamily of familyGroupService"
-        class="btn btn-outline-secondary m-1 w-100 w-sm-auto  btn-wrap"
+        class="btn btn-outline-secondary m-1 w-100 w-sm-auto  btn-wrap btn-service-family"
         [class.active]="quotation.serviceFamilyGroup && serviceFamily.id == quotation.serviceFamilyGroup.id"
         (click)="selectFamilyGroupService(serviceFamily)">
         {{serviceFamily.customLabel}}</div>
@@ -75,14 +75,16 @@
           </generic-toggle>
         </div>
         <!-- Choose affaire by SIRET -->
-        <div *ngIf="isRegisteredAffaire[indexAsso]">
-          <p class="mb-1 mt-4 ms-1">Indiquez le SIRET</p>
-          <div class="w-100"
+        <div *ngIf="isRegisteredAffaire[indexAsso] ">
+          <ng-container
             *ngIf="this.quotation.assoAffaireOrders[indexAsso].affaire && !this.quotation.assoAffaireOrders[indexAsso].affaire.id">
-            <generic-input [(model)]=" siretSearched" label="Indiquez le SIRET" [form]="idenficationForm"
-              propertyName="siretSearched" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="false"
-              (onFormChange)="searchSiret(indexAsso)" [icon]="'search'"></generic-input>
-          </div>
+            <p class="mb-1 mt-4 ms-1">Indiquez le SIREN/SIRET</p>
+            <div class="w-100">
+              <generic-input [(model)]=" siretSearched" label="Indiquez le SIREN/SIRET" [form]="idenficationForm"
+                propertyName="siretSearched" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="false"
+                (onFormChange)="searchSiret(indexAsso)" [icon]="'search'"></generic-input>
+            </div>
+          </ng-container>
           <div class="w-100"
             *ngIf="loadingSiretSearch && (!this.quotation.assoAffaireOrders[indexAsso].affaire || ! this.quotation.assoAffaireOrders[indexAsso].affaire.id)">
             <p class="card-text placeholder-glow">
@@ -96,49 +98,49 @@
           <div
             *ngIf="this.quotation.assoAffaireOrders[indexAsso].affaire && this.quotation.assoAffaireOrders[indexAsso].affaire.id">
             <div class="card rounded-1 px-4 py-3">
-              <div class="row my-1">
-                <strong class="col-2 ">
+              <div class="row mb-2">
+                <strong class="col-12 col-lg-3 ">
                   Denomination
                 </strong>
-                <div class="col-10">
-                  <div *ngIf="!this.quotation.assoAffaireOrders[indexAsso].affaire.isIndividual">
+                <div class="col-12 col-lg-9">
+                  <ng-container *ngIf="!this.quotation.assoAffaireOrders[indexAsso].affaire.isIndividual">
                     {{this.quotation.assoAffaireOrders[indexAsso].affaire.denomination }}
-                  </div>
-                  <div *ngIf="this.quotation.assoAffaireOrders[indexAsso].affaire.isIndividual">
+                  </ng-container>
+                  <ng-container *ngIf="this.quotation.assoAffaireOrders[indexAsso].affaire.isIndividual">
                     {{this.quotation.assoAffaireOrders[indexAsso].affaire.firstname }}
                     {{this.quotation.assoAffaireOrders[indexAsso].affaire.lastname}}
-                  </div>
+                  </ng-container>
                 </div>
               </div>
-              <div class="row my-1">
-                <strong class="col-2 ">
+              <div class="row mb-2">
+                <strong class="col-12 col-lg-3 ">
                   Pays
                 </strong>
-                <div class="col-10" *ngIf="this.quotation.assoAffaireOrders[indexAsso].affaire.country">
+                <div class="col-12 col-lg-9" *ngIf="this.quotation.assoAffaireOrders[indexAsso].affaire.country">
                   {{this.quotation.assoAffaireOrders[indexAsso].affaire.country.label }}
                 </div>
               </div>
-              <div class="row my-1">
-                <strong class="col-2 ">
+              <div class="row mb-2">
+                <strong class="col-12 col-lg-3">
                   Adresse
                 </strong>
-                <div class="col-10">
+                <div class="col-12 col-lg-9">
                   {{this.quotation.assoAffaireOrders[indexAsso].affaire.address }}
                 </div>
               </div>
-              <div class="row my-1">
-                <strong class="col-2 ">
+              <div class="row mb-2">
+                <strong class="col-12 col-lg-3 ">
                   Code postal
                 </strong>
-                <div class="col-10">
+                <div class="col-12 col-lg-9">
                   {{this.quotation.assoAffaireOrders[indexAsso].affaire.postalCode }}
                 </div>
               </div>
-              <div class="row my-1">
-                <strong class="col-2 ">
+              <div class="row mb-2">
+                <strong class="col-12 col-lg-3 ">
                   Ville
                 </strong>
-                <div class="col-10" *ngIf="this.quotation.assoAffaireOrders[indexAsso].affaire.city.label">
+                <div class="col-12 col-lg-9" *ngIf="this.quotation.assoAffaireOrders[indexAsso].affaire.city.label">
                   {{this.quotation.assoAffaireOrders[indexAsso].affaire.city.label }}
                 </div>
               </div>
@@ -221,12 +223,13 @@
     </div>
   </div>
   <div class="row justify-content-end m-0" *ngIf="quotation.serviceFamilyGroup">
-    <a class="col-md-auto p-md-4" (click)="addAffaire()"><strong>Ajouter</strong></a>
+    <a class="col-md-auto p-md-4" (click)="addAffaire()"><strong>Ajouter une affaire</strong></a>
   </div>
-  <div class="row position-fixed bottom-0 start-0 w-100 bg-light shadow-sm p-3 m-0 justify-content-end"
-    *ngIf="quotation.serviceFamilyGroup">
-    <button type="button" class="btn btn-secondary rounded-1 col-auto mx-5" *ngIf="canStartQuotation()"
-      (click)="startQuotation()">
-      Démarrer<i class="ai-arrow-right ms-2"></i></button>
+  <div
+    class="position-fixed bottom-0 start-0 w-100 bg-light shadow-sm p-3 m-0 d-flex justify-content-end align-items-center z-1030">
+    <button type="button" class="btn btn-secondary rounded-1  mx-0 mx-sm-5 d-flex align-items-center"
+      *ngIf="canStartQuotation()" (click)="startQuotation()"> <span class="me-2">Démarrer</span>
+      <i class="ai-arrow-right d-none d-sm-inline"></i>
+    </button>
   </div>
 </div>

@@ -16,6 +16,7 @@ import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.RegimeImpositionBenefices2;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.RegimeImpositionTVA;
 
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -29,6 +30,7 @@ import jakarta.persistence.SequenceGenerator;
 
 @Entity
 @DoNotAudit
+@Cacheable(false)
 public class OptionsFiscales implements Serializable, IId {
 
     @Id

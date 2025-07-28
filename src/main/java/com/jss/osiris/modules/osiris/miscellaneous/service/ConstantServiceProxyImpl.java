@@ -5,8 +5,6 @@ import java.util.List;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +21,6 @@ public class ConstantServiceProxyImpl {
     LocalDateTime lastFetchedConstant = null;
     Constant cachedConstant = null;
 
-    @Cacheable("getConstants")
     public Constant getConstants() throws OsirisException {
         List<Constant> constants = IterableUtils.toList(constantRepository.findAll());
         if (constants == null || constants.size() != 1)
@@ -31,7 +28,6 @@ public class ConstantServiceProxyImpl {
         return constants.get(0);
     }
 
-    @CacheEvict("getConstants")
     @Transactional(rollbackFor = Exception.class)
     public Constant addOrUpdateConstant(Constant constant) throws OsirisException {
         return constantRepository.save(constant);

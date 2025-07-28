@@ -32,6 +32,7 @@ export class QuotationKanbanComponent extends KanbanComponent<Quotation, Quotati
   employeesSelected: Employee[] = [];
   filterText: string = '';
   adGroupSales = this.constantService.getActiveDirectoryGroupSales();
+  directionGroupSales = this.constantService.getActiveDirectoryGroupDirection();
   quotationNotification: Notification[] | undefined;
 
   constructor(
@@ -66,7 +67,7 @@ export class QuotationKanbanComponent extends KanbanComponent<Quotation, Quotati
     this.selectedSwimlaneType = this.swimlaneTypes[0];
 
     this.quotationStatusService.getQuotationStatus().subscribe(response => {
-      this.possibleEntityStatus = response;
+      this.possibleEntityStatus = response.filter(t => t.code != "OPEN");;
       this.statusSelected = [];
 
       // Retrieve bookmark

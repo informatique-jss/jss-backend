@@ -4,8 +4,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.orm.jpa.HibernatePropertiesCustomizer;
-import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -15,14 +13,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.hazelcast.client.HazelcastClient;
-import com.hazelcast.client.config.ClientConfig;
-import com.hazelcast.config.ClasspathXmlConfig;
-import com.hazelcast.config.Config;
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.spring.cache.HazelcastCacheManager;
-import com.jss.osiris.libs.JsonSerializingCacheManager;
 import com.jss.osiris.libs.jackson.JacksonPageSerializer;
 
 @SpringBootApplication
@@ -73,38 +63,4 @@ public class OsirisApplication {
 		module.addSerializer(PageImpl.class, new JacksonPageSerializer());
 		return module;
 	}
-
-	@Bean
-	public HazelcastInstance hazelcastInstance() {
-		if (devMode) {
-			Config config = new ClasspathXmlConfig("hazelcast.xml");
-			HazelcastInstance instance = Hazelcast.newHazelcastInstance(config);
-			instance.getCluster().getMembers();
-			return instance;
-		}
-
-		ClientConfig clientConfig = new ClientConfig();
-		clientConfig.getNetworkConfig().addAddress(clusterAdresse);
-		clientConfig.setClusterName(clusterName);
-		clientConfig.setInstanceName("hzInstance1");
-		return HazelcastClient.newHazelcastClient(clientConfig);
-	}
-
-	@Bean
-	public HibernatePropertiesCustomizer hibernatePropertiesCustomizer(HazelcastInstance hazelcastInstance) {
-		if (devMode)
-			return props -> {
-			};
-
-		return props -> {
-			props.put("hazelcast.instance", hazelcastInstance);
-		};
-	}
-
-	@Bean
-	public CacheManager cacheManager(HazelcastInstance hazelcastInstance) {
-		HazelcastCacheManager hazelcastCacheManager = new HazelcastCacheManager(hazelcastInstance);
-		return new JsonSerializingCacheManager(hazelcastCacheManager);
-	}
-
 }

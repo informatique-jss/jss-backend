@@ -151,7 +151,7 @@ public class Quotation implements IQuotation {
 	private CustomerOrderOrigin customerOrderOrigin;
 
 	@OneToMany(targetEntity = CustomerOrderComment.class, mappedBy = "quotation", cascade = CascadeType.REMOVE)
-	@JsonIgnoreProperties(value = { "quotation" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "quotation", "provision" }, allowSetters = true)
 	private List<CustomerOrderComment> customerOrderComments;
 
 	@Transient

@@ -25,6 +25,7 @@ export interface CustomerOrder extends IQuotation {
   isPayed: boolean;
   affairesList: string;
   servicesList: string;
+  complexity: number;
   isPriority: boolean;
   invoicingBlockage: InvoicingBlockage;
   invoicingEmployee: Employee;

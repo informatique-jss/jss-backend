@@ -81,14 +81,14 @@
                     </autocomplete-employee>
                   </td>
                   <td>
-                    <autocomplete-employee [(model)]="selectedResponsable.formalisteEmployee" label="Formaliste"
-                      [form]="principalForm" propertyName="formalisteEmployee"
-                      [isDisabled]="!editMode || !canChooseProductionEmployeeOnITiers()">
+                    <autocomplete-employee *ngIf="!editMode || canChooseProductionEmployeeOnITiers()"
+                      [(model)]="selectedResponsable.formalisteEmployee" label="Formaliste" [form]="principalForm"
+                      propertyName="formalisteEmployee" [isDisabled]="!editMode ">
                     </autocomplete-employee>
                   <td>
-                    <autocomplete-employee [(model)]="selectedResponsable.insertionEmployee" label="Publiciste"
-                      [isDisabled]="!editMode || !canChooseProductionEmployeeOnITiers()" [form]="principalForm"
-                      propertyName="insertionEmployee">
+                    <autocomplete-employee *ngIf="!editMode || canChooseProductionEmployeeOnITiers()"
+                      [(model)]="selectedResponsable.insertionEmployee" label="Publiciste" [isDisabled]="!editMode  "
+                      [form]="principalForm" propertyName="insertionEmployee">
                     </autocomplete-employee>
                   </td>
                 </tr>

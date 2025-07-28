@@ -92,12 +92,19 @@ public class Document implements Serializable, IId {
 	private Boolean isRecipientAffaire;
 
 	@Column(length = 200)
+	@JsonView({ JacksonViews.MyJssDetailedView.class })
 	private String affaireAddress;
+
 	@Column(length = 200)
+	@JsonView({ JacksonViews.MyJssDetailedView.class })
 	private String affaireRecipient;
+
 	@Column(length = 200)
+	@JsonView({ JacksonViews.MyJssDetailedView.class })
 	private String clientAddress;
+
 	@Column(length = 200)
+	@JsonView({ JacksonViews.MyJssDetailedView.class })
 	private String clientRecipient;
 
 	@ManyToOne(fetch = FetchType.LAZY)

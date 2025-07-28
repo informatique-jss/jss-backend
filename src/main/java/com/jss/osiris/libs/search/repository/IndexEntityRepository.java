@@ -52,6 +52,10 @@ public interface IndexEntityRepository extends QueryCacheCrudRepository<IndexEnt
         List<IndexEntity> searchForEntitiesByIdAndEntityType(@Param("id") Integer id,
                         @Param("entityTypeToSearch") List<String> entityTypeToSearch);
 
+        @Query("select e from IndexEntity e where e.entityType = :entityTypeToSearch and entityId in (:ids)")
+        List<IndexEntity> searchForEntitiesByIdsAndEntityType(@Param("ids") List<Integer> ids,
+                        @Param("entityTypeToSearch") String entityTypeToSearch);
+
         @Query("select e from IndexEntity e where  entityId = :id")
         List<IndexEntity> searchForEntitiesById(@Param("id") Integer id);
 }

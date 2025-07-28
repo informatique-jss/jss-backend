@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.quotation.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -74,6 +75,12 @@ public class AssoServiceProvisionType implements Serializable, IId {
 	private AnnouncementNoticeTemplate announcementNoticeTemplate;
 
 	private Boolean isPriority;
+
+	@Column(columnDefinition = "NUMERIC(15,2)", precision = 10, scale = 2)
+	private BigDecimal defaultDeboursPrice;
+
+	@Column(columnDefinition = "NUMERIC(15,2)", precision = 10, scale = 2)
+	private BigDecimal defaultDeboursPriceNonTaxable;
 
 	public Integer getId() {
 		return id;
@@ -177,6 +184,22 @@ public class AssoServiceProvisionType implements Serializable, IId {
 
 	public void setIsPriority(Boolean isPriority) {
 		this.isPriority = isPriority;
+	}
+
+	public BigDecimal getDefaultDeboursPrice() {
+		return defaultDeboursPrice;
+	}
+
+	public void setDefaultDeboursPrice(BigDecimal defaultDeboursPrice) {
+		this.defaultDeboursPrice = defaultDeboursPrice;
+	}
+
+	public BigDecimal getDefaultDeboursPriceNonTaxable() {
+		return defaultDeboursPriceNonTaxable;
+	}
+
+	public void setDefaultDeboursPriceNonTaxable(BigDecimal defaultDeboursPriceNonTaxable) {
+		this.defaultDeboursPriceNonTaxable = defaultDeboursPriceNonTaxable;
 	}
 
 }

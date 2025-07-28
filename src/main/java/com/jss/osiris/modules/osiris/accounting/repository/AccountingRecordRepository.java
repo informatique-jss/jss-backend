@@ -567,7 +567,8 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         " from invoice i  " +
                         " join asso_affaire_order aao on aao.id_customer_order = i.customer_order_id " +
                         " join service s on s.id_asso_affaire_order  = aao.id " +
-                        " left join service_type st on st.id = s.id_service_type and st.suspicious_markup>0 " +
+                        " left join  asso_service_service_type ast on ast.id_service  = s.id left join service_type st on st.id=ast.id_service_type and st.suspicious_markup>0 "
+                        +
                         " join affaire af on af.id = aao.id_affaire " +
                         " where i.id_invoice_status = :idInvoiceSend " +
                         " group by i.id " +
@@ -613,7 +614,8 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         " from invoice i  " +
                         " join asso_affaire_order aao on aao.id_customer_order = i.customer_order_id " +
                         " join service s on s.id_asso_affaire_order  = aao.id " +
-                        " left join service_type st on st.id = s.id_service_type and st.suspicious_markup>0 " +
+                        " left join  asso_service_service_type ast on ast.id_service  = s.id left join service_type st on st.id=ast.id_service_type and st.suspicious_markup>0 "
+                        +
                         " left join payment p on p.id_invoice  = i.id and p.is_cancelled  = false " +
                         " join affaire af on af.id = aao.id_affaire " +
                         " where i.id_invoice_status = :idInvoiceSend " +

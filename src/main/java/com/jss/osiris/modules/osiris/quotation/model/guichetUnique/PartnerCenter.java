@@ -4,11 +4,13 @@ import java.io.Serializable;
 
 import com.jss.osiris.libs.search.model.DoNotAudit;
 
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
 @Entity
 @DoNotAudit
+@Cacheable(false)
 public class PartnerCenter implements Serializable {
 
     @Id

@@ -17,7 +17,7 @@
 <div class="alert alert-danger d-flex  flex-column flex-md-row align-items-center mb-0 mb-2" role="alert"
   *ngIf="order && order.customerOrderStatus && order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT">
   <i class="ai-circle-info fs-xl"></i>
-  <div class="ps-2">La commande ne pourra pas être traitée tant que l'acompte est impayé</div>
+  <div class="ps-2">Payez votre acompte pour lancer le traitement de votre commande !</div>
   <a class="btn btn-sm btn-secondary  mt-3 mt-md-0" *ngIf="order  && displayPayButton"
     (click)="payCustomerOrder($event)">
     <i class="ai-cart ms-n1 me-2"></i>
@@ -123,19 +123,15 @@
       *ngFor="let service of selectedAssoAffaireOrder.services; let index =index"
       (show)="loadServiceDetails(service,false)">
       <h2 ngbAccordionHeader>
-        <button ngbAccordionButton class="border-top">
+        <button ngbAccordionButton class="border-top flex-column">
           <div class="row d-flex justify-content-between align-items-center w-100">
             <div class="col-md-auto col-md-10 order-1">
               <h4 class="h6 mb-2">
                 <a>{{service.serviceLabelToDisplay}}</a>
               </h4>
-              <div class="text-body-secondary fs-sm">
+              <div class="text-body-secondary fs-sm pb-1">
                 <span class="badge bg-info bg-opacity-10 text-info fs-xs">{{service.serviceStatus}}</span>
               </div>
-            </div>
-            <div class="col-md-auto col order-md-2 order-2 " *ngIf="service.confrereLabel">
-              <div class="fs-sm text-body-secondary">{{service.confrereLabel}}</div>
-              <!-- TODO : ajouter le lien vers le SPEL jss ou autre-->
             </div>
             <div class="col-md-auto col order-md-3 order-3 "
               *ngIf="serviceProvisionAttachments[service.id] && serviceProvisionAttachments[service.id].length>0">
@@ -156,14 +152,25 @@
               </div>
             </div>
           </div>
+          <div class="row d-flex justify-content-between align-items-center w-100">
+            <div class="col-md-auto col order-md-2 order-2 " *ngIf="service.confrereLabel">
+              <div class="fs-sm text-body-secondary">{{service.confrereLabel}}</div>
+              <!-- TODO : ajouter le lien vers le SPEL jss ou autre-->
+            </div>
+          </div>
+          <div class="row d-flex justify-content-between align-items-center w-100">
+            <div class="col-md-auto col order-md-2 order-2 " *ngIf="service.waitingAcLabel">
+              <div class="fs-sm text-body-secondary">En attente de {{service.waitingAcLabel}}</div>
+            </div>
+          </div>
         </button>
       </h2>
       <div ngbAccordionCollapse>
         <div ngbAccordionBody>
           <ng-template>
-            <ul ngbNav #nav="ngbNav" [activeId]="1" class="nav-tabs">
+            <ul ngbNav #nav="ngbNav" [activeId]="0" class="nav-tabs  justify-content-center">
               <li [ngbNavItem]="1" *ngIf="service.assoServiceDocuments && service.assoServiceDocuments.length>0">
-                <button ngbNavLink>Mes documents</button>
+                <button ngbNavLink>Déposer des documents</button>
                 <ng-template ngbNavContent>
                   <div class="alert alert-info d-flex mb-0 mb-2" role="alert">
                     <i class="ai-circle-info fs-xl"></i>
@@ -175,7 +182,7 @@
                     <ng-container *ngFor="let assoServiceDocument of service.assoServiceDocuments;let index = index">
                       <div class="list-group-item list-group-item-action flex-column align-items-start py-3 "
                         [ngClass]="{'border-top-1':index>0}" style="border-width: 2px;"
-                        *ngIf="assoServiceDocument.isMandatory">
+                        *ngIf="assoServiceDocument.isMandatory && (!assoServiceDocument.attachments || assoServiceDocument.attachments.length==0 || dislayAlreadyFilledAttachment)">
                         <div class="d-flex flex-wrap w-100 justify-content-between">
                           <h6>{{assoServiceDocument.typeDocument.customLabel}}</h6>
                         </div>
@@ -184,7 +191,7 @@
                           {{assoServiceDocument.formalisteComment}}</p>
                         <div class="mb-2 mb-md-3 row  ">
                           <div class="col-md-12">
-                            <single-upload [entity]="assoServiceDocument"
+                            <single-upload [entity]="assoServiceDocument" forcedFileExtension="PDF"
                               (endOfUpload)="refreshCurrentAssoAffaireOrder()"
                               [entityType]="ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType" [isDirectUpload]="true"
                               [attachmentType]="assoServiceDocument.typeDocument.attachmentType"
@@ -222,13 +229,23 @@
                         </div>
                       </div>
                     </ng-container>
+                    <div class="text-center pt-3" *ngIf="!dislayAlreadyFilledAttachment">
+                      <i class="ai-circle-plus text-info small text-decoration-none mx-1"></i>
+                      <a class="text-info small text-decoration-none"
+                        (click)="toggleDislayAlreadyFilledAttachment()">Voir les pièces déjà renseignées</a>
+                    </div>
+                    <div class="text-center pt-3" *ngIf="dislayAlreadyFilledAttachment">
+                      <i class="ai-circle-minus text-info small text-decoration-none mx-1"></i>
+                      <a class="text-info small text-decoration-none"
+                        (click)="toggleDislayAlreadyFilledAttachment()">Masquer les pièces déjà renseignées</a>
+                    </div>
                   </div>
                   <h5 class="pt-3">Pièces optionnelles</h5>
                   <div class="list-group">
                     <ng-container *ngFor="let assoServiceDocument of service.assoServiceDocuments;let index = index">
                       <div class="list-group-item list-group-item-action flex-column align-items-start py-3 "
                         [ngClass]="{'border-top-1':index>0}" style="border-width: 2px;"
-                        *ngIf="!assoServiceDocument.isMandatory">
+                        *ngIf="!assoServiceDocument.isMandatory && (!assoServiceDocument.attachments || assoServiceDocument.attachments.length==0 || dislayAlreadyFilledAttachment)">
                         <div class="d-flex flex-wrap w-100 justify-content-between">
                           <h6>{{assoServiceDocument.typeDocument.customLabel}}</h6>
                         </div>
@@ -237,7 +254,7 @@
                           {{assoServiceDocument.formalisteComment}}</p>
                         <div class="mb-2 mb-md-3 row  ">
                           <div class="col-md-12">
-                            <single-upload [entity]="assoServiceDocument"
+                            <single-upload [entity]="assoServiceDocument" forcedFileExtension="PDF"
                               (endOfUpload)="refreshCurrentAssoAffaireOrder()"
                               [entityType]="ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType" [isDirectUpload]="true"
                               [attachmentType]="assoServiceDocument.typeDocument.attachmentType"
@@ -275,11 +292,21 @@
                         </div>
                       </div>
                     </ng-container>
+                    <div class="text-center pt-3" *ngIf="!dislayAlreadyFilledAttachment">
+                      <i class="ai-circle-plus text-info small text-decoration-none mx-1"></i>
+                      <a class="text-info small text-decoration-none"
+                        (click)="toggleDislayAlreadyFilledAttachment()">Voir les pièces déjà renseignées</a>
+                    </div>
+                    <div class="text-center pt-3" *ngIf="dislayAlreadyFilledAttachment">
+                      <i class="ai-circle-minus text-info small text-decoration-none mx-1"></i>
+                      <a class="text-info small text-decoration-none"
+                        (click)="toggleDislayAlreadyFilledAttachment()">Masquer les pièces déjà renseignées</a>
+                    </div>
                   </div>
                 </ng-template>
               </li>
               <li [ngbNavItem]="2" *ngIf="service.assoServiceFieldTypes && service.assoServiceFieldTypes.length>0">
-                <button ngbNavLink>Mes informations complémentaires</button>
+                <button ngbNavLink>Indiquer des informations</button>
                 <ng-template ngbNavContent>
                   <div class="alert alert-info d-flex mb-2" role="alert">
                     <i class="ai-circle-info fs-xl"></i>
@@ -455,7 +482,7 @@
       <div class="card-body">
         <div class="d-flex flex-column flex-md-row align-items-center align-items-center mt-sm-n1 pb-4 mb-1 mb-lg-2">
           <i class="ai-wallet text-primary lead pe-1 me-2"></i>
-          <h2 class="h4 mb-0">Facturation</h2>
+          <h2 class="h4 mb-0">Facturation <span *ngIf="order && order.isGifted">- Offerte</span></h2>
           <a class="btn btn-sm btn-secondary mt-3 mt-md-0 ms-md-auto"
             *ngIf="order && invoiceSummary && displayPayButton" (click)="payCustomerOrder($event)">
             <i class="ai-cart ms-n1 me-2"></i>
@@ -545,9 +572,9 @@
             </span>
           </div>
         </div>
-        <div class="text-center pt-1 pt-sm-2">
+        <div class="text-center pt-1 pt-sm-2" *ngIf="order && !order.isGifted">
           <a class="btn btn-sm btn-secondary ms-auto"
-            *ngIf="order && order.customerOrderStatus.code ==CUSTOMER_ORDER_STATUS_BILLED" (click)="downloadInvoice()">
+            *ngIf=" order.customerOrderStatus.code ==CUSTOMER_ORDER_STATUS_BILLED" (click)="downloadInvoice()">
             <i class="ai-note ms-n1 me-2"></i>
             <span>Télécharger la facture</span>
           </a>

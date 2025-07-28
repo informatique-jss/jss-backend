@@ -1,13 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { NgbAccordionModule, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { NgbAccordionModule, NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_PAYED, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT } from '../../../../libs/Constants';
 import { capitalizeName, formatDateFrance } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
 import { UserPreferenceService } from '../../../main/services/user.preference.service';
-import { UserScope } from '../../../profile/model/UserScope';
-import { UserScopeService } from '../../../profile/services/user.scope.service';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
 import { CustomerOrder } from '../../model/CustomerOrder';
 import { InvoiceLabelResult } from '../../model/InvoiceLabelResult';
@@ -17,6 +16,7 @@ import { AssoAffaireOrderService } from '../../services/asso.affaire.order.servi
 import { CustomerOrderService } from '../../services/customer.order.service';
 import { InvoiceLabelResultService } from '../../services/invoice.label.result.service';
 import { MailComputeResultService } from '../../services/mail.compute.result.service';
+import { QuotationService } from '../../services/quotation.service';
 
 declare var bootstrap: any;
 
@@ -28,6 +28,8 @@ declare var bootstrap: any;
   imports: [SHARED_IMPORTS, NgbDropdownModule, NgbAccordionModule]
 })
 export class OrdersComponent implements OnInit {
+  @ViewChild('cancelQuotationModal') cancelQuotationModal!: TemplateRef<any>;
+  cancelQuotationModalInstance: any | undefined;
 
   statusFilterOpen: boolean = false;
   statusFilterWaitingDeposit: boolean = false;
@@ -44,10 +46,9 @@ export class OrdersComponent implements OnInit {
   hideSeeMore: boolean = false;
   isFirstLoading: boolean = false;
 
-  currentScope: UserScope[] = [];
-
   capitalizeName = capitalizeName;
   CUSTOMER_ORDER_STATUS_BILLED = CUSTOMER_ORDER_STATUS_BILLED;
+  CUSTOMER_ORDER_STATUS_DRAFT = CUSTOMER_ORDER_STATUS_OPEN;
 
   ordersAssoAffaireOrders: AssoAffaireOrder[][] = [];
   ordersInvoiceLabelResult: InvoiceLabelResult[] = [];
@@ -61,15 +62,14 @@ export class OrdersComponent implements OnInit {
     private invoiceLabelResultService: InvoiceLabelResultService,
     private mailComputeResultService: MailComputeResultService,
     private userPreferenceService: UserPreferenceService,
-    private userScopeService: UserScopeService,
+    private activatedRoute: ActivatedRoute,
+    private modalService: NgbModal,
+    private quotationService: QuotationService
   ) { }
 
   ngOnInit() {
     this.retrieveBookmark();
     this.refreshOrders();
-    this.userScopeService.getUserScope().subscribe(response => {
-      this.currentScope = response;
-    })
   }
 
   refreshOrders() {
@@ -79,6 +79,24 @@ export class OrdersComponent implements OnInit {
     }
 
     this.setBookmark();
+
+    let inputSearchStatus = this.activatedRoute.snapshot.params['statusCode'];
+    if (inputSearchStatus) {
+      this.statusFilterOpen = false;
+      this.statusFilterWaitingDeposit = false;
+      this.statusFilterBeingProcessed = false;
+      this.statusFilterBilled = false;
+      this.statusFilterToBilled = false;
+      this.statusFilterPayed = false;
+
+      if (inputSearchStatus == CUSTOMER_ORDER_STATUS_BEING_PROCESSED)
+        this.statusFilterBeingProcessed = true;
+      if (inputSearchStatus == CUSTOMER_ORDER_STATUS_OPEN)
+        this.statusFilterOpen = true;
+      if (inputSearchStatus == CUSTOMER_ORDER_STATUS_BILLED)
+        this.statusFilterBilled = true;
+    }
+
 
     let status: string[] = [];
     if (this.statusFilterOpen)
@@ -148,6 +166,36 @@ export class OrdersComponent implements OnInit {
 
   openOrderDetails(event: any, order: CustomerOrder) {
     this.appService.openRoute(event, "account/orders/details/" + order.id, undefined);
+  }
+
+
+  quotationToCancel: CustomerOrder | undefined;
+  finalCancelDraft(event: any) {
+    if (this.quotationToCancel && this.quotationToCancel.id) {
+      this.appService.showLoadingSpinner();
+      this.customerOrderService.cancelCustomerOrder(this.quotationToCancel.id).subscribe(response => {
+        if (this.customerOrderService.getCurrentDraftOrderId() && parseInt(this.customerOrderService.getCurrentDraftOrderId()!) == this.quotationToCancel!.id)
+          this.quotationService.cleanStorageData();
+        this.quotationToCancel = undefined;
+        this.currentPage = 0;
+        this.orders = [];
+        this.refreshOrders();
+      });
+    }
+  }
+
+  cancelDraft(order: CustomerOrder) {
+    if (this.cancelQuotationModalInstance) {
+      return;
+    }
+
+    this.quotationToCancel = order;
+    this.cancelQuotationModalInstance = this.modalService.open(this.cancelQuotationModal, {
+    });
+
+    this.cancelQuotationModalInstance.result.finally(() => {
+      this.cancelQuotationModalInstance = undefined;
+    });
   }
 
   setBookmark() {

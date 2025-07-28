@@ -34,8 +34,7 @@ export class AvatarChipComponent implements OnInit {
       changeEmployeeDialogRef.componentInstance.closeActionText = "Annuler";
       changeEmployeeDialogRef.componentInstance.validationActionText = "Affecter";
       changeEmployeeDialogRef.afterClosed().subscribe(response => {
-        if (response)
-          this.onChangeAssigne.emit(response);
+        this.onChangeAssigne.emit(response);
       })
     }
   }
