@@ -42,6 +42,9 @@ export class QuotationDetailsComponent implements OnInit {
   @ViewChild('validatedQuotationModal') validatedQuotationModal!: TemplateRef<any>;
   validatedQuotationModalInstance: any | undefined;
 
+  @ViewChild('cancelQuotationModal') cancelQuotationModal!: TemplateRef<any>;
+  cancelQuotationModalInstance: any | undefined;
+
   quotation: Quotation | undefined;
 
   quotationAssoAffaireOrders: AssoAffaireOrder[] = [];
@@ -62,6 +65,7 @@ export class QuotationDetailsComponent implements OnInit {
   displayPayButton: boolean = false;
   quotationDetailsForm!: FormGroup;
 
+  dislayAlreadyFilledAttachment = false;
   canEditQuotation: boolean = false;
 
   constructor(
@@ -102,6 +106,7 @@ export class QuotationDetailsComponent implements OnInit {
   }
 
   refreshQuotation() {
+    this.dislayAlreadyFilledAttachment = false;
     this.quotationService.getQuotation(this.activatedRoute.snapshot.params['id']).subscribe(response => {
       this.quotation = response;
       this.canEditQuotation = this.quotation.quotationStatus.code != QUOTATION_STATUS_VALIDATED_BY_CUSTOMER
@@ -195,6 +200,10 @@ export class QuotationDetailsComponent implements OnInit {
       })
   }
 
+  toggleDislayAlreadyFilledAttachment() {
+    this.dislayAlreadyFilledAttachment = !this.dislayAlreadyFilledAttachment;
+  }
+
   editAffaireDetails(affaire: Affaire, event: any) {
     if (this.quotation)
       this.appService.openRoute(event, "account/affaire/edit/quotation/" + affaire.id + "/" + this.quotation.id, undefined);
@@ -243,13 +252,26 @@ export class QuotationDetailsComponent implements OnInit {
       this.appService.openRoute(event, "quotation/resume/quotation/" + this.quotation.id, undefined);
   }
 
-  cancelDraft(event: any) {
+  finalCancelDraft(event: any) {
     if (this.quotation && this.quotation.id) {
       this.appService.showLoadingSpinner();
       this.quotationService.cancelQuotation(this.quotation.id).subscribe(response => {
         this.refreshQuotation();
       });
     }
+  }
+
+  cancelDraft() {
+    if (this.cancelQuotationModalInstance) {
+      return;
+    }
+
+    this.cancelQuotationModalInstance = this.modalService.open(this.cancelQuotationModal, {
+    });
+
+    this.cancelQuotationModalInstance.result.finally(() => {
+      this.cancelQuotationModalInstance = undefined;
+    });
   }
 
   openValidatedQuotationModal() {

@@ -25,7 +25,7 @@ export class SingleUploadComponent implements OnInit {
   @Output() endOfUpload: EventEmitter<any> = new EventEmitter<any>();
   @Output() progressChange = new EventEmitter<any>();
   @Output() isErrorChange = new EventEmitter<boolean>();
-  @Input() forcedFileExtension: string | undefined;
+  @Input() forcedFileExtension: string = '';
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
@@ -53,6 +53,9 @@ export class SingleUploadComponent implements OnInit {
     private uploadAttachmentService: UploadAttachmentService) { }
 
   ngOnInit() {
+    if (this.forcedFileExtension)
+      this.forcedFileExtension = this.forcedFileExtension.toLowerCase();
+
     this.attachmentForm = this.formBuilder.group({
       attachmentType: ['', Validators.required],
       filename: ['', Validators.required],

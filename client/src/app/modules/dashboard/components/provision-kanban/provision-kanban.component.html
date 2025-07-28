@@ -57,8 +57,8 @@
            'drop-invalid': activeDraggedStatusId !== null && !isValidDropTarget(status.label!)
          }" (cdkDropListDropped)="drop($event)">
           <div *ngFor="let provision of status.entities" cdkDrag class="task-card"
-            (cdkDragStarted)="onDragStarted(status.id!, provision)" (cdkDragEnded)="onDragEnded()"
-            (click)="fetchEntityAndOpenPanel(provision)">
+            [ngClass]="{'card-priority':provision.isPriority}" (cdkDragStarted)="onDragStarted(status.id!, provision)"
+            (cdkDragEnded)="onDragEnded()" (click)="fetchEntityAndOpenPanel(provision)">
             <div class="card-content">
               <strong>{{provision.service.assoAffaireOrder.affaire.denomination
                 ?provision.service.assoAffaireOrder.affaire.denomination :
@@ -84,7 +84,7 @@
               </div>
             </div>
             <ng-template cdkDragPreview>
-              <div class="task-card drag-preview">
+              <div class="task-card drag-preview" [ngClass]="{'card-priority':provision.isPriority}">
                 <div class="card-content">
                   <strong>{{provision.service.assoAffaireOrder.affaire.denomination
                     ?provision.service.assoAffaireOrder.affaire.denomination :

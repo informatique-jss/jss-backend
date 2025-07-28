@@ -32,6 +32,7 @@ import { Announcement } from '../../../my-account/model/Announcement';
 import { AssoServiceDocument } from '../../../my-account/model/AssoServiceDocument';
 import { AssoServiceFieldType } from '../../../my-account/model/AssoServiceFieldType';
 import { Provision } from '../../../my-account/model/Provision';
+import { ProvisionType } from '../../../my-account/model/ProvisionType';
 import { Service } from '../../../my-account/model/Service';
 import { ServiceType } from '../../../my-account/model/ServiceType';
 import { AssoServiceDocumentService } from '../../../my-account/services/asso.service.document.service';
@@ -43,6 +44,7 @@ import { Department } from '../../../profile/model/Department';
 import { Phone } from '../../../profile/model/Phone';
 import { Responsable } from '../../../profile/model/Responsable';
 import { LoginService } from '../../../profile/services/login.service';
+import { BeneficialOwner } from '../../model/BeneficialOwner';
 import { Domiciliation } from '../../model/Domiciliation';
 import { DomiciliationContractType } from '../../model/DomiciliationContractType';
 import { IQuotation } from '../../model/IQuotation';
@@ -125,6 +127,9 @@ export class RequiredInformationComponent implements OnInit {
   PROVISION_SCREEN_TYPE_DOMICILIATION = PROVISION_SCREEN_TYPE_DOMICILIATION;
   PROVISION_SCREEN_TYPE_ANNOUNCEMENT = PROVISION_SCREEN_TYPE_ANNOUNCEMENT;
 
+  provisionTypeRbe!: ProvisionType;
+  modifiedBeneficialOwners: BeneficialOwner[] = [{} as BeneficialOwner];
+
   mailRedirectionTypeOther!: MailRedirectionType;
   domiciliationContractTypeRouteEmailAndMail!: DomiciliationContractType
   domiciliationContractTypeRouteMail!: DomiciliationContractType
@@ -166,12 +171,13 @@ export class RequiredInformationComponent implements OnInit {
     this.noticeTemplateDescription = noticeTemplateService.getNoticeTemplateDescription()
   }
 
-
   informationForm!: FormGroup;
 
   parseInt = parseInt;
 
   async ngOnInit() {
+    this.provisionTypeRbe = this.constantService.getProvisionTypeRbe();
+
     this.noticeTemplateDescriptionSubscription = this.noticeTemplateService.noticeTemplateDescriptionObservable.subscribe(item => {
       if (item && item.isShowNoticeTemplate && this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined && item.announcementOrder != undefined
         && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[item.announcementOrder].announcement) {
@@ -354,7 +360,7 @@ export class RequiredInformationComponent implements OnInit {
   }
 
   canSaveQuotation() {
-    if (this.quotation)
+    if (this.quotation && this.quotation.assoAffaireOrders)
       for (let asso of this.quotation.assoAffaireOrders)
         if (!asso.services || asso.services.length == 0)
           return false;
@@ -366,9 +372,15 @@ export class RequiredInformationComponent implements OnInit {
       if (this.informationForm) {
         this.informationForm.markAllAsTouched();
         if (!this.informationForm.valid) {
-          this.appService.displayToast("Veuillez remplir les champs obligatoires", true, "Champs obligatoires", 5);
+          this.appService.displayToast("Veuillez remplir les champs obligatoires", true, "Champs obligatoires", 5000);
           return of(false);
         }
+
+        for (let provision of this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions)
+          if (provision && provision.announcement && !provision.isRedactedByJss && !this.isUsingTemplate && (!provision.announcement.notice || provision.announcement.notice.length == 0)) {
+            this.appService.displayToast("Veuillez remplir le texte de l'annonce légale", true, "Champs obligatoires", 5000);
+            return of(false);
+          }
       }
 
       if (this.noticeTemplateDescription.announcementOrder && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[this.noticeTemplateDescription.announcementOrder])
@@ -390,6 +402,7 @@ export class RequiredInformationComponent implements OnInit {
     return of(true);
   }
 
+  // TODO : connet to back to save the list of modifiedBeneficialOwners when Pierre has finished the back end
   moveToService(newServiceIndex: number, newAssoIndex: number) {
     if (!this.quotation)
       return;
@@ -628,6 +641,18 @@ export class RequiredInformationComponent implements OnInit {
     }
   }
 
+  hasOneTemplate(service: Service) {
+    if (service) {
+      if (service && service.serviceTypes)
+        for (let st of service.serviceTypes)
+          if (st.assoServiceProvisionTypes)
+            for (let asso of st.assoServiceProvisionTypes)
+              if (asso.announcementNoticeTemplate)
+                return true;
+    }
+    return false;
+  }
+
   changeProvisionNoticeTemplateDesciption(ngbEvent: NgbNavChangeEvent) {
     let destId = ngbEvent.nextId as number;
     let originId = ngbEvent.activeId as number;
@@ -698,5 +723,13 @@ export class RequiredInformationComponent implements OnInit {
     if (isLastIndex && alreadyFoundIds.indexOf(assoServiceFieldType.serviceFieldType.id) < 0)
       return true;
     return false;
+  }
+
+  addBeneficialOwner() {
+    this.modifiedBeneficialOwners.push({} as BeneficialOwner);
+  }
+
+  deleteLastBeneficialOwner() {
+    this.modifiedBeneficialOwners.pop();
   }
 }

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Activation Beta</title>
+  <script>
+    // Pose le cookie beta_access=true valable 7 jours sur tout le domaine
+    function setCookie(name, value, days) {
+      const expires = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString();
+      document.cookie = name + "=" + value + "; expires=" + expires + "; path=/; Secure; SameSite=Lax";
+    }
+
+    setCookie("beta_access", "true", 60);
+
+    // Redirige vers la racine
+    window.location.href = "/";
+  </script>
+</head>
+
+<body>
+  <p>Activation en cours, veuillez patienter...</p>
+</body>
+
+</html>

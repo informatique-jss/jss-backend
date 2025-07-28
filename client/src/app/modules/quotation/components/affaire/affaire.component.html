@@ -25,6 +25,12 @@
       </provision-list>
     </ng-template>
   </mat-tab>
+  <mat-tab label="Factures" *ngIf="affaire && affaire.id">
+    <ng-template matTabContent>
+      <invoice-list class="integration-component" *ngIf="this.invoiceSearch.affaireId" [invoiceSearch]="invoiceSearch"
+        [isForTiersIntegration]="true"></invoice-list>
+    </ng-template>
+  </mat-tab>
   <mat-tab label="Suivi" *ngIf="affaire && affaire.id">
     <ng-template matTabContent>
       <tiers-followup [affaire]="affaire" [editMode]="true"></tiers-followup>

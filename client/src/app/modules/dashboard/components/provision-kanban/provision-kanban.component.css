@@ -267,3 +267,7 @@
     font-weight: bold;
   }
 }
+
+.card-priority {
+  background-color: #f3c5c0;
+}

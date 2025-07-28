@@ -13,7 +13,8 @@ public interface MissingAttachmentQueryService {
 
         public List<MissingAttachmentQuery> getMissingAttachmentQueriesByIdService(Integer idService);
 
-        public MissingAttachmentQuery addOrUpdateMissingAttachmentQuery(MissingAttachmentQuery missingAttachmentQuery);
+        public MissingAttachmentQuery addOrUpdateMissingAttachmentQuery(MissingAttachmentQuery missingAttachmentQuery)
+                        throws OsirisException;
 
         public MissingAttachmentQuery sendMissingAttachmentQueryToCustomer(MissingAttachmentQuery query,
                         boolean isForcedReminder, Boolean isWaitingForAttachmentToUpload)

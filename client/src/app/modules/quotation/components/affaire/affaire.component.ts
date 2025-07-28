@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { InvoiceSearch } from 'src/app/modules/invoicing/model/InvoiceSearch';
 import { NotificationService } from 'src/app/modules/miscellaneous/services/notification.service';
 import { HabilitationsService } from 'src/app/services/habilitations.service';
 import { AFFAIRE_ENTITY_TYPE } from '../../../../routing/search/search.component';
@@ -29,7 +30,7 @@ export class AffaireComponent implements OnInit {
   orderingSearch: OrderingSearch = {} as OrderingSearch;
   quotationSearch: QuotationSearch = {} as QuotationSearch;
   provisionSearch: AffaireSearch = {} as AffaireSearch;
-
+  invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
   saveObservableSubscription: Subscription = new Subscription;
 
   constructor(
@@ -53,6 +54,7 @@ export class AffaireComponent implements OnInit {
           this.quotationSearch.affaires = [this.affaire];
           this.appService.changeHeaderTitle("Affaire - " + (this.affaire.denomination ? this.affaire.denomination : this.affaire.firstname + " " + this.affaire.lastname));
           this.provisionSearch.affaire = this.affaire;
+          this.invoiceSearch.affaireId = this.affaire.id;
         }
       })
 

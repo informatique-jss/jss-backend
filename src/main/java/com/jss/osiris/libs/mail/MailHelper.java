@@ -435,10 +435,18 @@ public class MailHelper {
         ctx.setVariable("cbLink", mail.getCbLink());
 
         if (mail.getMailTemplate().equals(CustomerMail.TEMPLATE_CUSTOMER_ORDER_IN_PROGRESS)
-                && (mail.getCustomerOrder() != null || mail.getQuotation() != null))
-            ctx.setVariable("mailComputeResultInvoice",
-                    mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(
-                            mail.getCustomerOrder() != null ? mail.getCustomerOrder() : mail.getQuotation()));
+                && (mail.getCustomerOrder() != null || mail.getQuotation() != null)) {
+            try {
+                MailComputeResult mailComputeResultInvoice = mailComputeHelper
+                        .computeMailForCustomerOrderFinalizationAndInvoice(
+                                mail.getCustomerOrder() != null ? mail.getCustomerOrder() : mail.getQuotation());
+                if (mailComputeResultInvoice != null)
+                    ctx.setVariable("mailComputeResultInvoice", mailComputeResultInvoice);
+            } catch (OsirisClientMessageException e) {
+                // We catch the exception so the mail is still sent even if the adress of the
+                // Affaire is not set
+            }
+        }
         ctx.setVariable("attachments", mail.getAttachments());
         ctx.setVariable("provision", mail.getProvision());
         ctx.setVariable("tiers", mail.getTiers());

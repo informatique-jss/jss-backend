@@ -32,7 +32,6 @@ import { BankTransfertListComponent } from '../bank-transfert-list/bank-transfer
 import { DirectDebitTransfertListComponent } from '../direct-debit-transfert-list/direct-debit-transfert-list.component';
 import { EditAmountInvoiceItemDialogComponent } from "../edit-amount-invoice-item-dialog/edit-amount-invoice-item-dialog.component";
 import { InvoiceDetailsComponent } from "../invoice-details/invoice-details.component";
-import { InvoiceListComponent } from "../invoice-list/invoice-list.component";
 import { InvoicePaymentTableComponent } from "../invoice-payment-table/invoice-payment-table.component";
 import { InvoicePaymentComponent } from "../invoice-payment/invoice-payment.component";
 import { KanbanInvoicingComponent } from "../kanban-invoicing/kanban-invoicing.component";
@@ -84,7 +83,6 @@ const routes: Routes = [
     MatTableExporterModule,
   ],
   declarations: [InvoiceComponent,
-    InvoiceListComponent,
     InvoiceDetailsComponent,
     InvoicePaymentTableComponent,
     InvoicePaymentComponent,
@@ -103,7 +101,6 @@ const routes: Routes = [
     OfxMatchingComponent,
     KanbanInvoicingComponent,
   ], exports: [
-    InvoiceListComponent,
     InvoicePaymentTableComponent,
     RefundListComponent,
     ReceiptReconciliationComponent,

@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Resolve } from '@angular/router';
 import { Observable, of, tap } from 'rxjs';
-import { Constant } from '../model/Constant';
+import { Constant, globalConstantCache } from '../model/Constant';
 import { AppRestService } from './appRest.service';
 import { PlatformService } from './platform.service';
 
@@ -22,6 +22,17 @@ export class ConstantService extends AppRestService<Constant> {
   }
 
   initConstant() {
+    if (this.platformService.isServer()) {
+      if (globalConstantCache.data) {
+        this.constant = globalConstantCache.data;
+        return;
+      }
+    }
+
+    if (this.constant && this.constant.id) {
+      return;
+    }
+
     if (this.platformService.isBrowser() && this.platformService.getNativeLocalStorage()!.getItem('constants') != null) {
       let a = this.platformService.getNativeLocalStorage()!.getItem('constants');
       this.constant = JSON.parse(a!) as Constant;
@@ -29,12 +40,20 @@ export class ConstantService extends AppRestService<Constant> {
 
     this.getConstants().subscribe(response => {
       this.constant = response;
+      globalConstantCache.data = response;
       if (this.platformService.isBrowser())
         this.platformService.getNativeLocalStorage()!.setItem('constants', JSON.stringify(this.constant));
     });
   }
 
   initConstantFromResolver(): Observable<Constant> {
+    if (this.platformService.isServer()) {
+      if (globalConstantCache.data) {
+        this.constant = globalConstantCache.data;
+        return of(this.constant);
+      }
+    }
+
     if (this.constant && this.constant.id) {
       return of(this.constant);
     }
@@ -50,6 +69,7 @@ export class ConstantService extends AppRestService<Constant> {
     return this.getConstants().pipe(
       tap(response => {
         this.constant = response;
+        globalConstantCache.data = response;
         if (this.platformService.isBrowser()) {
           this.platformService.getNativeLocalStorage()?.setItem('constants', JSON.stringify(this.constant));
         }
@@ -187,6 +207,10 @@ export class ConstantService extends AppRestService<Constant> {
 
   getServiceTypeUniqueArticleBuy() {
     return this.constant.serviceTypeUniqueArticleBuy;
+  }
+
+  getProvisionTypeRbe() {
+    return this.constant.provisionTypeRbe;
   }
 }
 

@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AppRestService } from '../../main/services/appRest.service';
+import { Responsable } from '../../profile/model/Responsable';
 import { IQuotation } from '../../quotation/model/IQuotation';
 import { CustomerOrder } from '../model/CustomerOrder';
 import { Document } from '../model/Document';
@@ -44,6 +45,10 @@ export class CustomerOrderService extends AppRestService<CustomerOrder> {
 
   saveFinalOrder(order: CustomerOrder, isValidation: boolean) {
     return this.postItem(new HttpParams().set("isValidation", isValidation), 'order/save-order', order);
+  }
+
+  switchResponsableForOrder(idOrder: number, newResponsable: Responsable) {
+    return this.get(new HttpParams().set("idOrder", idOrder).set("newResponsable", newResponsable.id), 'order/switch/responsable');
   }
 
   completePricingOfOrder(customerOrder: CustomerOrder, isEmergency: boolean) {

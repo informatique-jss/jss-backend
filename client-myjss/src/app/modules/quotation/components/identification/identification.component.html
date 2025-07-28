@@ -78,9 +78,9 @@
         <div *ngIf="isRegisteredAffaire[indexAsso] ">
           <ng-container
             *ngIf="this.quotation.assoAffaireOrders[indexAsso].affaire && !this.quotation.assoAffaireOrders[indexAsso].affaire.id">
-            <p class="mb-1 mt-4 ms-1">Indiquez le SIRET</p>
+            <p class="mb-1 mt-4 ms-1">Indiquez le SIREN/SIRET</p>
             <div class="w-100">
-              <generic-input [(model)]=" siretSearched" label="Indiquez le SIRET" [form]="idenficationForm"
+              <generic-input [(model)]=" siretSearched" label="Indiquez le SIREN/SIRET" [form]="idenficationForm"
                 propertyName="siretSearched" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="false"
                 (onFormChange)="searchSiret(indexAsso)" [icon]="'search'"></generic-input>
             </div>

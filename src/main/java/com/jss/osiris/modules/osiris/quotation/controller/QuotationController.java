@@ -47,7 +47,6 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Department;
-import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.osiris.miscellaneous.model.WeekDay;
 import com.jss.osiris.modules.osiris.miscellaneous.service.CityService;
@@ -94,6 +93,7 @@ import com.jss.osiris.modules.osiris.quotation.model.DomiciliationStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Formalite;
 import com.jss.osiris.modules.osiris.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.osiris.quotation.model.FundType;
+import com.jss.osiris.modules.osiris.quotation.model.ICustomerOrderAssignationStatistics;
 import com.jss.osiris.modules.osiris.quotation.model.IOrderingSearchTaggedResult;
 import com.jss.osiris.modules.osiris.quotation.model.IPaperSetResult;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
@@ -767,10 +767,7 @@ public class QuotationController {
     validationHelper.validateString(serviceType.getLabel(), true, 250, "label");
     validationHelper.validateString(serviceType.getCustomLabel(), false, 250, "customLabel");
     validationHelper.validateReferential(serviceType.getServiceFamily(), true, "serviceFamily");
-    validationHelper.validateBigDecimal(serviceType.getDefaultDeboursPrice(), false, "defaultDeboursPrice");
     validationHelper.validateReferential(serviceType.getServiceTypeLinked(), false, "serviceTypeLinked");
-    validationHelper.validateBigDecimal(serviceType.getDefaultDeboursPriceNonTaxable(), false,
-        "defaultDeboursPriceNonTaxable");
 
     if (serviceType.getAssoServiceProvisionTypes() != null) {
       for (AssoServiceProvisionType assoServiceProvisionType : serviceType.getAssoServiceProvisionTypes()) {
@@ -779,6 +776,10 @@ public class QuotationController {
         validationHelper.validateInteger(assoServiceProvisionType.getMinEmployee(), false, "minEmployee");
         validationHelper.validateString(assoServiceProvisionType.getCustomerMessageWhenAdded(), false,
             "customerMessageWhenAdded");
+        validationHelper.validateBigDecimal(assoServiceProvisionType.getDefaultDeboursPrice(), false,
+            "defaultDeboursPrice");
+        validationHelper.validateBigDecimal(assoServiceProvisionType.getDefaultDeboursPriceNonTaxable(), false,
+            "defaultDeboursPriceNonTaxable");
       }
     }
 
@@ -1168,14 +1169,17 @@ public class QuotationController {
 
   @GetMapping(inputEntryPoint + "/provision/assignedTo")
   public ResponseEntity<Boolean> updateAssignedToForProvision(@RequestParam Integer provisionId,
-      @RequestParam Integer employeeId) throws OsirisValidationException {
+      @RequestParam(required = false) Integer employeeId) throws OsirisValidationException {
     Provision provision = provisionService.getProvision(provisionId);
     if (provision == null)
       throw new OsirisValidationException("provision");
 
-    Employee employee = employeeService.getEmployee(employeeId);
-    if (employee == null)
-      throw new OsirisValidationException("employee");
+    Employee employee = null;
+    if (employeeId != null) {
+      employee = employeeService.getEmployee(employeeId);
+      if (employee == null)
+        throw new OsirisValidationException("employee");
+    }
 
     provisionService.updateAssignedToForProvision(provision, employee);
     return new ResponseEntity<Boolean>(true, HttpStatus.OK);
@@ -1520,41 +1524,6 @@ public class QuotationController {
     if (confrere.getSpecialOffers() != null) {
       for (SpecialOffer specialOffer : confrere.getSpecialOffers()) {
         validationHelper.validateReferential(specialOffer, false, "specialOffer");
-      }
-    }
-
-    if (confrere.getDocuments() != null && confrere.getDocuments().size() > 0) {
-      for (Document document : confrere.getDocuments()) {
-
-        validationHelper.validateReferential(document.getDocumentType(), true, "DocumentType");
-
-        if (document.getMailsAffaire() != null && !validationHelper.validateMailList(document.getMailsAffaire()))
-          throw new OsirisValidationException("MailsAffaire");
-        if (document.getMailsClient() != null && document.getMailsClient() != null
-            && document.getMailsClient().size() > 0)
-          if (!validationHelper.validateMailList(document.getMailsClient()))
-            throw new OsirisValidationException("MailsClient");
-
-        validationHelper.validateString(document.getAffaireAddress(), false, 200, "AffaireAddress");
-        validationHelper.validateString(document.getClientAddress(), false, 200, "ClientAddress");
-        validationHelper.validateString(document.getBillingAddress(), false, 200, "BillingAddress");
-        validationHelper.validateString(document.getBillingLabel(), false, 200, "BillingLabel");
-        validationHelper.validateString(document.getAffaireRecipient(), false, 200, "AffaireRecipient");
-        validationHelper.validateString(document.getClientRecipient(), false, 200, "ClientRecipient");
-        validationHelper.validateString(document.getCommandNumber(), false, 40, "CommandNumber");
-        validationHelper.validateReferential(document.getPaymentDeadlineType(), false, "PaymentDeadlineType");
-        validationHelper.validateReferential(document.getRefundType(), false, "RefundType");
-        validationHelper.validateIban(document.getRefundIBAN(), false, "RefundIBAN");
-        validationHelper.validateBic(document.getRefundBic(), false, "RefundBic");
-        validationHelper.validateReferential(document.getBillingClosureType(), false, "BillingClosureType");
-        validationHelper.validateReferential(document.getBillingClosureRecipientType(), false,
-            "BillingClosureRecipientType");
-
-        if (document.getIsRecipientAffaire() == null)
-          document.setIsRecipientAffaire(false);
-        if (document.getIsRecipientClient() == null)
-          document.setIsRecipientClient(false);
-
       }
     }
 
@@ -2346,18 +2315,6 @@ public class QuotationController {
           throw new OsirisValidationException("assoServiceFieldTypeItem");
       }
 
-    MailComputeResult mailComputeResult = new MailComputeResult();
-    if (assoServiceDocument != null)
-      mailComputeResult = mailComputeHelper
-          .computeMailForPublicationReceipt(assoServiceDocument.getService().getAssoAffaireOrder().getCustomerOrder());
-
-    if (assoServiceFieldType != null)
-      mailComputeResult = mailComputeHelper
-          .computeMailForPublicationReceipt(assoServiceFieldType.getService().getAssoAffaireOrder().getCustomerOrder());
-
-    if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
-      throw new OsirisValidationException("MailTo");
-
     return new ResponseEntity<MissingAttachmentQuery>(
         missingAttachmentQueryService.sendMissingAttachmentQueryToCustomer(query, false,
             isWaitingForAttachmentToUpload),
@@ -2502,11 +2459,13 @@ public class QuotationController {
 
       // Put empty partner center when id is set to null
       if (formalites != null && formalites.size() > 0)
-        for (FormaliteGuichetUnique formalite : formalites)
+        for (FormaliteGuichetUnique formalite : formalites) {
           if (formalite.getValidationsRequests() != null && formalite.getValidationsRequests().size() > 0)
             for (ValidationRequest validationRequest : formalite.getValidationsRequests())
               if (validationRequest.getPartnerCenter() != null && validationRequest.getPartner().getId() == null)
                 validationRequest.setPartnerCenter(null);
+          formaliteGuichetUniqueService.addOrUpdateFormaliteGuichetUnique(formalite);
+        }
     }
 
     return new ResponseEntity<List<FormaliteGuichetUnique>>(formalites, HttpStatus.OK);
@@ -2666,7 +2625,8 @@ public class QuotationController {
       throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
 
     return new ResponseEntity<CustomerOrder>(
-        customerOrderService.completeAdditionnalInformationForCustomerOrder(customerOrderService.getCustomerOrder(id)),
+        customerOrderService.completeAdditionnalInformationForCustomerOrder(customerOrderService.getCustomerOrder(id),
+            false),
         HttpStatus.OK);
   }
 
@@ -2748,7 +2708,7 @@ public class QuotationController {
       throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
 
     return new ResponseEntity<Quotation>(
-        quotationService.completeAdditionnalInformationForQuotation(quotationService.getQuotation(id)),
+        quotationService.completeAdditionnalInformationForQuotation(quotationService.getQuotation(id), false),
         HttpStatus.OK);
   }
 
@@ -2975,6 +2935,22 @@ public class QuotationController {
         HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/assign/statistics/formaliste")
+  public ResponseEntity<List<ICustomerOrderAssignationStatistics>> getCustomerOrderAssignationStatisticsForFormalistes(
+      Integer complexity) throws OsirisException {
+    return new ResponseEntity<List<ICustomerOrderAssignationStatistics>>(
+        customerOrderAssignationService.getCustomerOrderAssignationStatisticsForFormalistes(),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/assign/statistics/insertion")
+  public ResponseEntity<List<ICustomerOrderAssignationStatistics>> getCustomerOrderAssignationStatisticsForInsertions(
+      Integer complexity) throws OsirisException {
+    return new ResponseEntity<List<ICustomerOrderAssignationStatistics>>(
+        customerOrderAssignationService.getCustomerOrderAssignationStatisticsForInsertions(),
+        HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/team/employees")
   @JsonView(JacksonViews.OsirisListView.class)
   public ResponseEntity<List<Employee>> findTeamEmployee(Integer idEmployee) throws OsirisException {
@@ -2988,13 +2964,15 @@ public class QuotationController {
 
   @GetMapping(inputEntryPoint + "/assign/fond/order")
   @JsonView(JacksonViews.OsirisListView.class)
-  public ResponseEntity<List<CustomerOrder>> getOrdersToAssignForFond(Integer idTeamEmployee) throws OsirisException {
+  public ResponseEntity<List<CustomerOrder>> getOrdersToAssignForFond(Integer idTeamEmployee, boolean onlyCurrentUser)
+      throws OsirisException {
     Employee employee = employeeService.getEmployee(idTeamEmployee);
 
     if (employee == null)
       throw new OsirisValidationException("employee");
 
-    return new ResponseEntity<List<CustomerOrder>>(customerOrderAssignationService.getOrdersToAssignForFond(employee),
+    return new ResponseEntity<List<CustomerOrder>>(
+        customerOrderAssignationService.getOrdersToAssignForFond(employee, onlyCurrentUser),
         HttpStatus.OK);
   }
 

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
@@ -174,6 +175,10 @@ public class Affaire implements IId, IAttachment {
 	@OneToMany(mappedBy = "affaire")
 	@JsonIgnoreProperties(value = { "affaire" }, allowSetters = true)
 	private List<TiersFollowup> tiersFollowups;
+
+	@OneToMany(mappedBy = "affaire")
+	@JsonIgnore
+	private List<AssoAffaireOrder> assoAffaireOrders;
 
 	@OneToMany(mappedBy = "affaire", fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "affaire" }, allowSetters = true)
@@ -452,6 +457,14 @@ public class Affaire implements IId, IAttachment {
 
 	public void setIsMainOffice(Boolean isMainOffice) {
 		this.isMainOffice = isMainOffice;
+	}
+
+	public List<AssoAffaireOrder> getAssoAffaireOrders() {
+		return assoAffaireOrders;
+	}
+
+	public void setAssoAffaireOrders(List<AssoAffaireOrder> assoAffaireOrders) {
+		this.assoAffaireOrders = assoAffaireOrders;
 	}
 
 }

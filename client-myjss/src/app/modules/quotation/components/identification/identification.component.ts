@@ -20,7 +20,7 @@ import { Responsable } from '../../../profile/model/Responsable';
 import { LoginService } from '../../../profile/services/login.service';
 import { AffaireType, individual, notIndividual } from '../../model/AffaireType';
 import { IQuotation } from '../../model/IQuotation';
-import { order, quotation, QuotationType } from '../../model/QuotationType';
+import { QUOTATION_TYPE_ORDER, QUOTATION_TYPE_QUOTATION, QuotationType } from '../../model/QuotationType';
 import { ServiceFamilyGroup } from '../../model/ServiceFamilyGroup';
 import { CityService } from '../../services/city.service';
 import { ServiceFamilyGroupService } from '../../services/service.family.group.service';
@@ -40,7 +40,7 @@ import { ServiceFamilyGroupService } from '../../services/service.family.group.s
 })
 export class IdentificationComponent implements OnInit {
 
-  selectedQuotationType: QuotationType = quotation;
+  selectedQuotationType: QuotationType = QUOTATION_TYPE_QUOTATION;
   familyGroupService: ServiceFamilyGroup[] = [];
 
   quotation: IQuotation = {} as IQuotation;
@@ -110,7 +110,7 @@ export class IdentificationComponent implements OnInit {
   initIQuotation() {
     if (this.idFamilyGroup && this.idQuotationType) {
       this.quotationService.cleanStorageData();
-      this.selectedQuotationType = this.idQuotationType == order.id ? order : quotation;
+      this.selectedQuotationType = this.idQuotationType == QUOTATION_TYPE_ORDER.id ? QUOTATION_TYPE_ORDER : QUOTATION_TYPE_QUOTATION;
       this.changeQuotationType();
       this.selectFamilyGroupService(this.familyGroupService.find(group => group.id == this.idFamilyGroup)!);
     }
@@ -125,7 +125,7 @@ export class IdentificationComponent implements OnInit {
           return;
         } else if (this.orderService.getCurrentDraftOrderId()) {
           this.orderService.getCustomerOrder(parseInt(this.orderService.getCurrentDraftOrderId()!)).subscribe(response => {
-            this.selectedQuotationType = order;
+            this.selectedQuotationType = QUOTATION_TYPE_ORDER;
             this.quotation = response
             this.refreshIsRegisteredAffaire();
             this.recomputeAffaireType();
@@ -139,7 +139,7 @@ export class IdentificationComponent implements OnInit {
           this.recomputeAffaireType();
           return;
         } else if (this.orderService.getCurrentDraftOrder()) {
-          this.selectedQuotationType = order;
+          this.selectedQuotationType = QUOTATION_TYPE_ORDER;
           this.quotation = this.orderService.getCurrentDraftOrder()!;
           this.refreshIsRegisteredAffaire();
           this.recomputeAffaireType();
@@ -151,7 +151,7 @@ export class IdentificationComponent implements OnInit {
 
   changeQuotationType() {
     if (this.quotation) {
-      if (this.selectedQuotationType.id == quotation.id)
+      if (this.selectedQuotationType.id == QUOTATION_TYPE_QUOTATION.id)
         this.quotation.isQuotation = true;
       else {
         this.quotation.isQuotation = false;
@@ -215,6 +215,8 @@ export class IdentificationComponent implements OnInit {
         if (response && response.length == 1 && response[0].siret) {
           this.quotation.assoAffaireOrders[indexAsso].affaire = response[0];
           this.siretSearched = "";
+        } else if (response && response.length > 1) {
+          this.appService.displayToast("Plusieurs SIRET existent pour ce SIREN. Merci de préciser le SIRET souhaité", true, "SIRET multiples", 5000);
         }
       })
     }
@@ -250,7 +252,7 @@ export class IdentificationComponent implements OnInit {
     this.appService.showLoadingSpinner();
     if (this.selectedQuotationType)
       if (this.currentUser) {
-        if (this.selectedQuotationType.id == quotation.id) {
+        if (this.selectedQuotationType.id == QUOTATION_TYPE_QUOTATION.id) {
           this.quotation.isQuotation = true;
           this.quotationService.saveQuotation(this.quotation, false).subscribe(response => {
             this.appService.hideLoadingSpinner();
@@ -258,7 +260,7 @@ export class IdentificationComponent implements OnInit {
             this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);
             this.appService.openRoute(undefined, "quotation/services-selection", undefined);
           })
-        } else if (this.selectedQuotationType.id == order.id) {
+        } else if (this.selectedQuotationType.id == QUOTATION_TYPE_ORDER.id) {
           this.quotation.isQuotation = false;
           this.orderService.saveOrder(this.quotation, false).subscribe(response => {
             this.appService.hideLoadingSpinner();
@@ -268,10 +270,10 @@ export class IdentificationComponent implements OnInit {
           })
         }
       } else {
-        if (this.selectedQuotationType.id == quotation.id) {
+        if (this.selectedQuotationType.id == QUOTATION_TYPE_QUOTATION.id) {
           this.quotation.isQuotation = true;
           this.quotationService.setCurrentDraftQuotation(this.quotation);
-        } else if (this.selectedQuotationType.id == order.id) {
+        } else if (this.selectedQuotationType.id == QUOTATION_TYPE_ORDER.id) {
           this.quotation.isQuotation = false;
           this.orderService.setCurrentDraftOrder(this.quotation);
         }

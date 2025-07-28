@@ -5,12 +5,14 @@ import java.io.Serializable;
 import com.jss.osiris.libs.search.model.DoNotAudit;
 import com.jss.osiris.modules.osiris.miscellaneous.model.ICode;
 
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
 @Entity
 @DoNotAudit
+@Cacheable(false)
 public class ValidationsRequestStatus implements Serializable, ICode {
 
     public static String MSA_ACCEPTATION_PENDING = "MSA_ACCEPTATION_PENDING";

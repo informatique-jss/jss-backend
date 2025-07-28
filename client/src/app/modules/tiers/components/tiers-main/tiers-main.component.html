@@ -64,15 +64,15 @@
                 [form]="principalForm" propertyName="salesEmployee" [isMandatory]="true"></autocomplete-employee>
             </td>
             <td>
-              <autocomplete-employee [(model)]="tiers.formalisteEmployee" [isDisabled]="!editMode" label="Formaliste"
-                [isDisabled]="!editMode || !canChooseProductionEmployeeOnITiers()" [form]="principalForm"
-                propertyName="formalisteEmployee">
+              <autocomplete-employee *ngIf="!editMode || canChooseProductionEmployeeOnITiers()"
+                [(model)]="tiers.formalisteEmployee" [isDisabled]="!editMode" label="Formaliste"
+                [isDisabled]="!editMode " [form]="principalForm" propertyName="formalisteEmployee">
               </autocomplete-employee>
             </td>
             <td>
-              <autocomplete-employee [(model)]="tiers.insertionEmployee" [isDisabled]="!editMode" label="Publiciste"
-                [isDisabled]="!editMode || !canChooseProductionEmployeeOnITiers()" [form]="principalForm"
-                propertyName="insertionEmployee">
+              <autocomplete-employee *ngIf="!editMode || canChooseProductionEmployeeOnITiers()"
+                [(model)]="tiers.insertionEmployee" [isDisabled]="!editMode" label="Publiciste"
+                [isDisabled]="!editMode  " [form]="principalForm" propertyName="insertionEmployee">
               </autocomplete-employee>
             </td>
           </tr>
