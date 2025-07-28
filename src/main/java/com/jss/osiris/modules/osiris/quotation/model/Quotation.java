@@ -80,7 +80,7 @@ public class Quotation implements IQuotation {
 	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
 	@IndexedField
 	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
-	private LocalDateTime updatedDate;
+	private LocalDateTime effectiveDate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_quotation_status")
@@ -413,12 +413,12 @@ public class Quotation implements IQuotation {
 		this.voucher = voucher;
 	}
 
-	public LocalDateTime getUpdatedDate() {
-		return updatedDate;
+	public LocalDateTime getEffectiveDate() {
+		return effectiveDate;
 	}
 
-	public void setUpdatedDate(LocalDateTime updatedDate) {
-		this.updatedDate = updatedDate;
+	public void setEffectiveDate(LocalDateTime effectiveDate) {
+		this.effectiveDate = effectiveDate;
 	}
 
 }

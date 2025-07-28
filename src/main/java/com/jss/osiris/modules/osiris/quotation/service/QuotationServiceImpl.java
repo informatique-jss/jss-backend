@@ -221,8 +221,6 @@ public class QuotationServiceImpl implements QuotationService {
             quotation.setValidationToken(UUID.randomUUID().toString());
             quotation = quotationRepository.save(quotation);
         }
-        if (!isNewQuotation)
-            quotation.setUpdatedDate(LocalDateTime.now());
 
         // Complete provisions
         if (quotation.getAssoAffaireOrders() != null)
@@ -275,6 +273,7 @@ public class QuotationServiceImpl implements QuotationService {
         // Target SENT TO CUSTOMER : notify users and customer
         if (targetQuotationStatus.getCode().equals(QuotationStatus.SENT_TO_CUSTOMER)) {
             // save to recompute invoice item before sent it to customer
+            quotation.setEffectiveDate(LocalDateTime.now());
             quotation = this.addOrUpdateQuotation(quotation);
 
             generateQuotationPdf(quotation);
