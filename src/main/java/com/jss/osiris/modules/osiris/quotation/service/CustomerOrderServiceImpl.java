@@ -318,6 +318,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
 
         boolean isNewCustomerOrder = customerOrder.getId() == null;
+        boolean hasNewAsso = false;
 
         if (isNewCustomerOrder)
             customerOrder.setCreatedDate(LocalDateTime.now());
@@ -348,7 +349,14 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             customerOrder.setCustomerOrderParentRecurring(currentCustomerOrder.getCustomerOrderParentRecurring());
         }
 
-        if (isNewCustomerOrder)
+        if (customerOrder.getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+                if (asso.getId() == null) {
+                    hasNewAsso = true;
+                    break;
+                }
+
+        if (isNewCustomerOrder || hasNewAsso)
             customerOrder = simpleAddOrUpdate(customerOrder);
 
         // Complete provisions

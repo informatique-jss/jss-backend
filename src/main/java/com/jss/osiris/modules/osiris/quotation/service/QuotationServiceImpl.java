@@ -216,11 +216,21 @@ public class QuotationServiceImpl implements QuotationService {
             }
 
         boolean isNewQuotation = quotation.getId() == null;
+        boolean hasNewAsso = false;
+
+        if (quotation.getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders())
+                if (asso.getId() == null) {
+                    hasNewAsso = true;
+                    break;
+                }
         if (isNewQuotation) {
             quotation.setCreatedDate(LocalDateTime.now());
             quotation.setValidationToken(UUID.randomUUID().toString());
-            quotation = quotationRepository.save(quotation);
         }
+
+        if (isNewQuotation || hasNewAsso)
+            quotation = quotationRepository.save(quotation);
 
         // Complete provisions
         if (quotation.getAssoAffaireOrders() != null)

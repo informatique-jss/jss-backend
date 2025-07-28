@@ -426,7 +426,7 @@ public class PricingHelper {
                                 } else
                                     tempInvoiceItem = invoiceItemProvision;
 
-                                if (tempInvoiceItem.getOriginProviderInvoice() != null)
+                                if (tempInvoiceItem == null || tempInvoiceItem.getOriginProviderInvoice() != null)
                                     continue;
 
                                 if (invoiceItemProvision.getBillingItem() != null
