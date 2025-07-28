@@ -223,13 +223,13 @@ public class MailComputeHelper {
 
             }
             if (quotationDocument.getDocumentType().getId().equals(constantService.getDocumentTypeBilling().getId())
-                    && (quotationDocument.getIsCbLinkDisabled() == null
-                            || (quotationDocument.getIsCbLinkDisabled() != null
-                                    && !quotationDocument.getIsCbLinkDisabled())))
-                mailComputeResult.setIsCbLinkDisabled(false);
+                    && (quotationDocument.getIsQrCodePaymentDisabled() == null
+                            || (quotationDocument.getIsQrCodePaymentDisabled() != null
+                                    && !quotationDocument.getIsQrCodePaymentDisabled())))
+                mailComputeResult.setIsQrCodePaymentDisabled(false);
             else if (quotationDocument.getDocumentType().getId()
                     .equals(constantService.getDocumentTypeBilling().getId()))
-                mailComputeResult.setIsCbLinkDisabled(true);
+                mailComputeResult.setIsQrCodePaymentDisabled(true);
         }
         return mailComputeResult;
     }

@@ -35,7 +35,7 @@ public class MailComputeResult implements Serializable {
 
     Boolean isSendToClient;
     Boolean isSendToAffaire;
-    Boolean isCbLinkDisabled;
+    Boolean isQrCodePaymentDisabled;
     String mailToClientOrigin;
     String mailToAffaireOrigin;
     String mailCcAffaireOrigin;
@@ -113,12 +113,12 @@ public class MailComputeResult implements Serializable {
         this.recipientsMailCc = recipientsMailCc;
     }
 
-    public Boolean getIsCbLinkDisabled() {
-        return isCbLinkDisabled;
+    public Boolean getIsQrCodePaymentDisabled() {
+        return isQrCodePaymentDisabled;
     }
 
-    public void setIsCbLinkDisabled(Boolean isCbLink) {
-        this.isCbLinkDisabled = isCbLink;
+    public void setIsQrCodePaymentDisabled(Boolean isQrCodePaymentDisabled) {
+        this.isQrCodePaymentDisabled = isQrCodePaymentDisabled;
     }
 
 }

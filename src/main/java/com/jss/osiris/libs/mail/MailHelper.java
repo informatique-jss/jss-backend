@@ -279,7 +279,9 @@ public class MailHelper {
                 message.addInline("headerPicture", imageSourceQuotationHeader, PNG_MIME);
 
                 // QR Code
-                if (mail.getCbLink() != null) {
+                if (mail.getCbLink() != null && mail.getMailComputeResult() != null
+                        && (mail.getMailComputeResult().getIsQrCodePaymentDisabled() == null
+                                || !mail.getMailComputeResult().getIsQrCodePaymentDisabled())) {
                     final InputStreamSource imageSourceQrCode = new ByteArrayResource(
                             qrCodeHelper.getQrCode(mail.getCbLink(), 150));
                     message.addInline("qrCodePicture", imageSourceQrCode, PNG_MIME);
@@ -433,6 +435,10 @@ public class MailHelper {
         ctx.setVariable("ibanJss", ibanJss);
         ctx.setVariable("bicJss", bicJss);
         ctx.setVariable("cbLink", mail.getCbLink());
+        ctx.setVariable("isQrCodePaymentDisabled",
+                mail.getMailComputeResult().getIsQrCodePaymentDisabled()
+                        ? mail.getMailComputeResult().getIsQrCodePaymentDisabled()
+                        : false);
 
         if (mail.getMailTemplate().equals(CustomerMail.TEMPLATE_CUSTOMER_ORDER_IN_PROGRESS)
                 && (mail.getCustomerOrder() != null || mail.getQuotation() != null)) {
@@ -1301,7 +1307,7 @@ public class MailHelper {
                     || invoiceCo.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusPayed().getId()))
                 invoice = invoiceCo;
 
-        if (mail.getMailComputeResult() != null && !mail.getMailComputeResult().getIsCbLinkDisabled())
+        if (mail.getMailComputeResult() != null)
             mail.setCbLink(
                     paymentCbEntryPoint + "/order/invoice?customerOrderId=" + mail.getCustomerOrder().getId() + "&mail="
                             + mail.getMailComputeResult().getRecipientsMailTo().get(0).getMail());

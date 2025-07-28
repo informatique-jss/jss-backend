@@ -124,7 +124,7 @@ public class Document implements Serializable, IId {
 
 	private Boolean isResponsableOnBilling;
 
-	private Boolean isCbLinkDisabled;
+	private Boolean isQrCodePaymentDisabled;
 
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Boolean isCommandNumberMandatory;
@@ -474,11 +474,11 @@ public class Document implements Serializable, IId {
 		this.addToAffaireMailList = addToAffaireMailList;
 	}
 
-	public Boolean getIsCbLinkDisabled() {
-		return isCbLinkDisabled;
+	public Boolean getIsQrCodePaymentDisabled() {
+		return isQrCodePaymentDisabled;
 	}
 
-	public void setIsCbLinkDisabled(Boolean isBilledWithCbLink) {
-		this.isCbLinkDisabled = isBilledWithCbLink;
+	public void setIsQrCodePaymentDisabled(Boolean isQrCodePaymentDisabled) {
+		this.isQrCodePaymentDisabled = isQrCodePaymentDisabled;
 	}
 }
