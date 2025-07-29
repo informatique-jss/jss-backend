@@ -44,7 +44,6 @@ import { Department } from '../../../profile/model/Department';
 import { Phone } from '../../../profile/model/Phone';
 import { Responsable } from '../../../profile/model/Responsable';
 import { LoginService } from '../../../profile/services/login.service';
-import { BeneficialOwner } from '../../model/BeneficialOwner';
 import { Domiciliation } from '../../model/Domiciliation';
 import { DomiciliationContractType } from '../../model/DomiciliationContractType';
 import { IQuotation } from '../../model/IQuotation';
@@ -59,6 +58,7 @@ import { DepartmentService } from '../../services/department.service';
 import { NoticeTemplateService } from '../../services/notice.template.service';
 import { NoticeTypeFamilyService } from '../../services/notice.type.family.service';
 import { NoticeTypeService } from '../../services/notice.type.service';
+import { BeneficialOwnerFormComponent } from '../beneficial-owner-form/beneficial-owner-form.component';
 import { QuotationFileUploaderComponent } from '../quotation-file-uploader/quotation-file-uploader.component';
 
 @Component({
@@ -85,12 +85,14 @@ import { QuotationFileUploaderComponent } from '../quotation-file-uploader/quota
     SelectBuildingDomiciliationComponent,
     SelectCountryComponent,
     SelectCivilityComponent,
+    BeneficialOwnerFormComponent,
     CKEditorModule,
     NgbNavModule]
 })
 export class RequiredInformationComponent implements OnInit {
 
   @ViewChild('confirmBackModal') confirmBackModal!: TemplateRef<any>;
+  @ViewChild('beneficialOwnerForm') beneficialOwnerForm!: BeneficialOwnerFormComponent;
 
   CONFIER_ANNONCE_AU_JSS: string = "Confier l'annonce légale au JSS";
 
@@ -128,7 +130,6 @@ export class RequiredInformationComponent implements OnInit {
   PROVISION_SCREEN_TYPE_ANNOUNCEMENT = PROVISION_SCREEN_TYPE_ANNOUNCEMENT;
 
   provisionTypeRbe!: ProvisionType;
-  modifiedBeneficialOwners: BeneficialOwner[] = [{} as BeneficialOwner];
 
   mailRedirectionTypeOther!: MailRedirectionType;
   domiciliationContractTypeRouteEmailAndMail!: DomiciliationContractType
@@ -402,7 +403,6 @@ export class RequiredInformationComponent implements OnInit {
     return of(true);
   }
 
-  // TODO : connet to back to save the list of modifiedBeneficialOwners when Pierre has finished the back end
   moveToService(newServiceIndex: number, newAssoIndex: number) {
     if (!this.quotation)
       return;
@@ -426,13 +426,18 @@ export class RequiredInformationComponent implements OnInit {
     this.emitServiceChange();
 
     if (newAssoIndex >= this.quotation.assoAffaireOrders.length) {
-      this.saveFieldsValue().subscribe(response => {
+      let promises = [];
+      promises.push(this.saveFieldsValue());
+      if (this.beneficialOwnerForm)
+        promises.push(this.beneficialOwnerForm.updateBeneficialOwners());
+
+      combineLatest(promises).subscribe(response => {
         this.appService.hideLoadingSpinner();
         if (!response)
           return;
         this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[3]);
         this.appService.openRoute(undefined, "quotation/checkout", undefined);
-      });
+      })
       return;
     }
 
@@ -723,13 +728,5 @@ export class RequiredInformationComponent implements OnInit {
     if (isLastIndex && alreadyFoundIds.indexOf(assoServiceFieldType.serviceFieldType.id) < 0)
       return true;
     return false;
-  }
-
-  addBeneficialOwner() {
-    this.modifiedBeneficialOwners.push({} as BeneficialOwner);
-  }
-
-  deleteLastBeneficialOwner() {
-    this.modifiedBeneficialOwners.pop();
   }
 }
