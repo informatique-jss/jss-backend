@@ -146,7 +146,7 @@ public class CustomerOrderAssignationServiceImpl implements CustomerOrderAssigna
     }
 
     @Override
-    public void assignNewProvisionToUser(Provision provision) {
+    public void assignNewProvisionToUser(Provision provision) throws OsirisException {
         if (provision != null && provision.getAssignedTo() == null && provision.getProvisionType() != null
                 && provision.getProvisionType().getAssignationType() != null) {
             if (provision.getService().getAssoAffaireOrder().getCustomerOrder() != null && provision.getService()
@@ -171,14 +171,25 @@ public class CustomerOrderAssignationServiceImpl implements CustomerOrderAssigna
             throws OsirisException {
         Employee currentEmployee = employeeService.getCurrentEmployee();
 
+        // Forced employee
+        AssignationType assignationType = constantService.getAssignationTypeEmployee();
+        List<CustomerOrder> customerOrders = customerOrderService.findCustomerOrderByForcedEmployeeAssigned(
+                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.BEING_PROCESSED),
+                currentEmployee);
+
+        Integer foundCustomerOrder = findInOrdersAndAssignEmployee(customerOrders, assignationType, isPriority, true,
+                null, byPassAssignation);
+        if (foundCustomerOrder != null)
+            return foundCustomerOrder;
+
         // Formaliste
-        AssignationType assignationType = constantService.getAssignationTypeFormaliste();
-        List<CustomerOrder> customerOrders = customerOrderService.findCustomerOrderByFormalisteAssigned(
+        assignationType = constantService.getAssignationTypeFormaliste();
+        customerOrders = customerOrderService.findCustomerOrderByFormalisteAssigned(
                 employeeService.findEmployeesInTheSameOU(currentEmployee),
                 customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.BEING_PROCESSED),
                 currentEmployee, assignationType);
 
-        Integer foundCustomerOrder = findInOrdersAndAssignEmployee(customerOrders, assignationType, isPriority, true,
+        foundCustomerOrder = findInOrdersAndAssignEmployee(customerOrders, assignationType, isPriority, true,
                 null, byPassAssignation);
         if (foundCustomerOrder != null)
             return foundCustomerOrder;
@@ -189,18 +200,6 @@ public class CustomerOrderAssignationServiceImpl implements CustomerOrderAssigna
                 employeeService.findEmployeesInTheSameOU(currentEmployee),
                 customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.BEING_PROCESSED),
                 currentEmployee, assignationType);
-
-        foundCustomerOrder = findInOrdersAndAssignEmployee(customerOrders, assignationType, isPriority, true,
-                null, byPassAssignation);
-        if (foundCustomerOrder != null)
-            return foundCustomerOrder;
-
-        // Forced employee
-        assignationType = constantService.getAssignationTypeEmployee();
-        customerOrders = customerOrderService.findCustomerOrderByForcedEmployeeAssigned(
-                employeeService.findEmployeesInTheSameOU(currentEmployee),
-                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.BEING_PROCESSED),
-                currentEmployee);
 
         foundCustomerOrder = findInOrdersAndAssignEmployee(customerOrders, assignationType, isPriority, true,
                 null, byPassAssignation);
@@ -219,6 +218,17 @@ public class CustomerOrderAssignationServiceImpl implements CustomerOrderAssigna
         AssignationType assignationType = null;
         List<CustomerOrder> customerOrders = null;
         Integer foundCustomerOrder = null;
+
+        // Forced employee
+        assignationType = constantService.getAssignationTypeEmployee();
+        customerOrders = customerOrderService.findCustomerOrderByForcedEmployeeAssigned(
+                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.BEING_PROCESSED),
+                currentUser);
+
+        foundCustomerOrder = findInOrdersAndAssignEmployee(customerOrders, assignationType, isPriority, true,
+                complexity, byPassAssignation);
+        if (foundCustomerOrder != null)
+            return foundCustomerOrder;
 
         // Formaliste
         if (currentUser.getAdPath().contains("Formalites")) {
@@ -246,17 +256,6 @@ public class CustomerOrderAssignationServiceImpl implements CustomerOrderAssigna
             if (foundCustomerOrder != null)
                 return foundCustomerOrder;
         }
-
-        // Forced employee
-        assignationType = constantService.getAssignationTypeEmployee();
-        customerOrders = customerOrderService.findCustomerOrderByForcedEmployeeAssigned(productionDirector,
-                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.BEING_PROCESSED),
-                null);
-
-        foundCustomerOrder = findInOrdersAndAssignEmployee(customerOrders, assignationType, isPriority, true,
-                complexity, byPassAssignation);
-        if (foundCustomerOrder != null)
-            return foundCustomerOrder;
 
         return null;
     }
@@ -320,7 +319,8 @@ public class CustomerOrderAssignationServiceImpl implements CustomerOrderAssigna
         return null;
     }
 
-    private void assignToEmployee(CustomerOrderAssignation customerOrderAssignation, Employee currentEmployee) {
+    private void assignToEmployee(CustomerOrderAssignation customerOrderAssignation, Employee currentEmployee)
+            throws OsirisException {
         customerOrderAssignation.setEmployee(currentEmployee);
         customerOrderAssignation.setIsAssigned(true);
         addOrUpdateCustomerOrderAssignation(customerOrderAssignation);
@@ -449,18 +449,22 @@ public class CustomerOrderAssignationServiceImpl implements CustomerOrderAssigna
             }
         });
 
-        return customerOrderService.completeAdditionnalInformationForCustomerOrders(orders);
+        return customerOrderService.completeAdditionnalInformationForCustomerOrders(orders, false);
     }
 
     @Override
-    public List<ICustomerOrderAssignationStatistics> getCustomerOrderAssignationStatisticsForFormalistes() {
+    public List<ICustomerOrderAssignationStatistics> getCustomerOrderAssignationStatisticsForFormalistes()
+            throws OsirisException {
         return customerOrderAssignationRepository.getCustomerOrderAssignationStatisticsForFormalistes(
-                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.BEING_PROCESSED).getId());
+                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.BEING_PROCESSED).getId(),
+                constantService.getAssignationTypeFormaliste().getId());
     }
 
     @Override
-    public List<ICustomerOrderAssignationStatistics> getCustomerOrderAssignationStatisticsForInsertions() {
+    public List<ICustomerOrderAssignationStatistics> getCustomerOrderAssignationStatisticsForInsertions()
+            throws OsirisException {
         return customerOrderAssignationRepository.getCustomerOrderAssignationStatisticsForInsertions(
-                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.BEING_PROCESSED).getId());
+                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.BEING_PROCESSED).getId(),
+                constantService.getAssignationTypePublisciste().getId());
     }
 }

@@ -1,5 +1,6 @@
 import { CompetentAuthority } from '../../miscellaneous/model/CompetentAuthority';
 import { ActeDeposit } from './ActeDeposit';
+import { BeneficialOwner } from './beneficial-owner/BeneficialOwner';
 import { FormaliteStatus } from './FormaliteStatus';
 import { FormaliteGuichetUnique } from './guichet-unique/FormaliteGuichetUnique';
 import { FormaliteInfogreffe } from './infogreffe/FormaliteInfogreffe';
@@ -11,5 +12,6 @@ export interface Formalite {
   formalitesGuichetUnique: FormaliteGuichetUnique[];
   formalitesInfogreffe: FormaliteInfogreffe[];
   acteDeposit: ActeDeposit;
+  beneficialOwners: BeneficialOwner[];
 }
 

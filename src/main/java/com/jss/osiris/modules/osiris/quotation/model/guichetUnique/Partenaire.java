@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import com.jss.osiris.libs.search.model.DoNotAudit;
 
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,6 +13,7 @@ import jakarta.persistence.SequenceGenerator;
 
 @Entity
 @DoNotAudit
+@Cacheable(false)
 public class Partenaire implements Serializable {
 
     @Id

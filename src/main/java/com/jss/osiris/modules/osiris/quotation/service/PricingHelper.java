@@ -105,13 +105,14 @@ public class PricingHelper {
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         if (quotation.getAssoAffaireOrders() != null) {
             for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
-                for (Service service : assoAffaireOrder.getServices())
-                    for (Provision provision : service.getProvisions()) {
-                        provision.setService(service);
-                        service.setAssoAffaireOrder(assoAffaireOrder);
-                        if (provision.getProvisionType() != null && provision.getProvisionType().getId() != null)
-                            setInvoiceItemsForProvision(provision, quotation, persistInvoiceItem);
-                    }
+                if (assoAffaireOrder.getServices() != null)
+                    for (Service service : assoAffaireOrder.getServices())
+                        for (Provision provision : service.getProvisions()) {
+                            provision.setService(service);
+                            service.setAssoAffaireOrder(assoAffaireOrder);
+                            if (provision.getProvisionType() != null && provision.getProvisionType().getId() != null)
+                                setInvoiceItemsForProvision(provision, quotation, persistInvoiceItem);
+                        }
             }
         }
         return quotation;
@@ -228,6 +229,10 @@ public class PricingHelper {
                     invoiceItem.setLabel(
                             invoiceItem.getLabel() + " - " + provision.getAnnouncement().getDepartment().getCode());
 
+                if (provision.getAnnouncement().getConfrere() != null)
+                    invoiceItem.setLabel(
+                            invoiceItem.getLabel() + " - " + provision.getAnnouncement().getConfrere().getLabel());
+
             } else {
                 invoiceItem.setPreTaxPrice(zeroValue);
             }
@@ -289,15 +294,19 @@ public class PricingHelper {
                                 .divide(oneHundredValue));
         } else if (billingItem.getBillingType().getIsDebour()
                 && !provision.getService().getServiceTypes().isEmpty()) {
-            if (quotation instanceof Quotation || ((CustomerOrder) quotation).getCustomerOrderStatus() != null
-                    && ((CustomerOrder) quotation).getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.DRAFT))
+            if (quotation instanceof Quotation || ((CustomerOrder) quotation).getCustomerOrderStatus() == null
+                    || ((CustomerOrder) quotation).getCustomerOrderStatus() != null
+                            && ((CustomerOrder) quotation).getCustomerOrderStatus().getCode()
+                                    .equals(CustomerOrderStatus.DRAFT))
                 if (invoiceItem.getPreTaxPrice() == null || invoiceItem.getPreTaxPrice().equals(zeroValue))
                     for (ServiceType serviceType : provision.getService().getServiceTypes()) {
+                        serviceType = serviceTypeService.getServiceType(serviceType.getId());
                         if (serviceType.getAssoServiceProvisionTypes() != null)
                             for (AssoServiceProvisionType assoServiceProvisionType : serviceType
                                     .getAssoServiceProvisionTypes())
-                                if (assoServiceProvisionType.getProvisionType().getId()
-                                        .equals(provision.getProvisionType().getId()))
+                                if (assoServiceProvisionType.getProvisionType() != null
+                                        && assoServiceProvisionType.getProvisionType().getId()
+                                                .equals(provision.getProvisionType().getId()))
                                     if (billingItem.getBillingType().getIsNonTaxable() == false
                                             && assoServiceProvisionType.getDefaultDeboursPrice() != null) {
                                         if (invoiceItem.getPreTaxPrice() == null)

@@ -15,6 +15,7 @@ export class SelectNoticeTemplateComponent extends GenericSelectComponent<Announ
   types: AnnouncementNoticeTemplate[] = [] as Array<AnnouncementNoticeTemplate>;
 
   @Input() filteredProvisionFamilyType: ProvisionFamilyType | undefined;
+  @Input() displayCode: boolean = false;
 
   constructor(private formBuild: UntypedFormBuilder, private noticeTemplateService: AnnouncementNoticeTemplateService, private appService3: AppService) {
     super(formBuild, appService3)
@@ -29,5 +30,12 @@ export class SelectNoticeTemplateComponent extends GenericSelectComponent<Announ
   hasMatchingProvisionFamily(type: any): boolean {
     if (!this.filteredProvisionFamilyType || !type.provisionFamilyTypes) return true;
     return type.provisionFamilyTypes.some((t: any) => this.filteredProvisionFamilyType && t.id === this.filteredProvisionFamilyType.id);
+  }
+
+  displayLabel(object: any): string {
+    let label = super.displayLabel(object);
+    if (this.displayCode && object.code)
+      label += " (" + object.code + ")";
+    return label;
   }
 }

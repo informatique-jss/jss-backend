@@ -9,6 +9,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.NatureDomaine;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.StatutDomaine;
 
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,6 +25,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @DoNotAudit
+@Cacheable(false)
 @Table(indexes = {
         @Index(name = "idx_nom_domaine_autre_etablissement", columnList = "id_autres_etablissement"),
         @Index(name = "idx_nom_domaine_etablissement_principal", columnList = "id_etablissement_principal") })

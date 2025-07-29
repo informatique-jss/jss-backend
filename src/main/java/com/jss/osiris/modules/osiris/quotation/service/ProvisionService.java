@@ -21,7 +21,7 @@ public interface ProvisionService {
 
     public List<ProvisionBoardResult> getDashboardEmployee(List<Employee> employees);
 
-    public Provision addOrUpdateProvision(Provision provision);
+    public Provision addOrUpdateProvision(Provision provision) throws OsirisException;
 
     public File getRegistrationActPdf(Provision provision) throws OsirisException;
 

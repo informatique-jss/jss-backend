@@ -1,15 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
-import { combineLatest } from 'rxjs';
 import { capitalizeName } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { TrustHtmlPipe } from '../../../../libs/TrustHtmlPipe';
 import { AppService } from '../../../main/services/app.service';
 import { PlatformService } from '../../../main/services/platform.service';
 import { Responsable } from '../../../profile/model/Responsable';
-import { UserScope } from '../../../profile/model/UserScope';
 import { LoginService } from '../../../profile/services/login.service';
-import { UserScopeService } from '../../../profile/services/user.scope.service';
 import { Affaire } from '../../model/Affaire';
 import { BillingClosureReceiptValue } from '../../model/BillingClosureReceiptValue';
 import { CustomerOrder } from '../../model/CustomerOrder';
@@ -25,9 +22,7 @@ import { CustomerOrderService } from '../../services/customer.order.service';
 })
 export class BillingClosureComponent implements OnInit {
 
-  userScope: UserScope[] | undefined;
   currentUser: Responsable | undefined;
-  userScopeSelected: boolean[] = [];
   receiptValues: BillingClosureReceiptValue[] | undefined;
   currentSort: string = "createdDateAsc";
   isFirstLoading: boolean = true;
@@ -37,7 +32,6 @@ export class BillingClosureComponent implements OnInit {
   capitalizeName = capitalizeName;
 
   constructor(
-    private userScopeService: UserScopeService,
     private loginService: LoginService,
     private billingClosureService: BillingClosureService,
     private customerOrderService: CustomerOrderService,
@@ -46,52 +40,27 @@ export class BillingClosureComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.userScopeService.getUserScope().subscribe(response => {
-      this.userScope = response;
-      this.loginService.getCurrentUser().subscribe(currentUser => {
-        this.currentUser = currentUser;
-        if (this.userScope)
-          for (let scope of this.userScope)
-            this.userScopeSelected[scope.responsableViewed.id] = false;
-        if (this.currentUser)
-          this.userScopeSelected[this.currentUser.id] = true;
-        this.refreshClosure();
-      })
+    this.loginService.getCurrentUser().subscribe(currentUser => {
+      this.currentUser = currentUser;
+      this.refreshClosure();
     })
   }
 
   refreshClosure() {
-    let promises = [];
-    let doneIds = [];
     this.receiptValues = [];
     this.isFirstLoading = true;
-    if (this.userScope) {
-      for (let id in this.userScopeSelected) {
-        if (this.userScopeSelected[id] && doneIds.indexOf(id) < 0) {
-          promises.push(this.billingClosureService.getBillingClosureReceiptValueForResponsable(parseInt(id), false, this.currentSort == 'createdDateDesc'));
-          doneIds.push(id);
-        }
-      }
-
-      if (promises.length == 0)
-        this.isFirstLoading = false;
-
-      combineLatest(promises).subscribe(response => {
+    if (this.currentUser)
+      this.billingClosureService.getBillingClosureReceiptValueForResponsable(this.currentUser.id, false, this.currentSort == 'createdDateDesc').subscribe(values => {
         this.receiptValues = [];
-        if (response)
-          for (let billingClosureValues of response)
-            this.receiptValues.push(...billingClosureValues.filter((b: BillingClosureReceiptValue) => b.eventDateTime));
+        if (values)
+          this.receiptValues = values.filter((b: BillingClosureReceiptValue) => b.eventDateTime);
 
         this.allAffaires = [];
         this.allResponsables = [];
         this.getAllAffaire();
         this.getAllResponsables();
         this.isFirstLoading = false;
-      })
-    }
-
-
-    // this.setBookmark();
+      });
   }
 
 
@@ -99,21 +68,6 @@ export class BillingClosureComponent implements OnInit {
     this.receiptValues = [];
     this.isFirstLoading = true;
     this.refreshClosure();
-  }
-
-  selectAll() {
-    if (this.userScopeSelected)
-      for (let selected in this.userScopeSelected)
-        this.userScopeSelected[selected] = true;
-    this.changeFilter();
-  }
-
-  unselectAll() {
-    if (this.userScopeSelected)
-      for (let selected in this.userScopeSelected)
-        this.userScopeSelected[selected] = false;
-    this.receiptValues = [];
-    this.isFirstLoading = false;
   }
 
   getResponsableLabel(value: BillingClosureReceiptValue) {
@@ -195,16 +149,22 @@ export class BillingClosureComponent implements OnInit {
   }
 
   addToPayCb(receiptValue: BillingClosureReceiptValue) {
-    if (this.orderToPayInCb && this.orderToPayInCb.indexOf(receiptValue.idCustomerOrder) < 0) {
+    if (this.orderToPayInCb && this.orderToPayInCb.indexOf(receiptValue.idCustomerOrder) < 0 && receiptValue.debitAmount) {
       this.orderToPayInCb.push(receiptValue.idCustomerOrder);
-      this.totalToPayCb += receiptValue.debitAmount;
+      if (receiptValue.remainingDebitAmount)
+        this.totalToPayCb += receiptValue.remainingDebitAmount;
+      else
+        this.totalToPayCb += receiptValue.debitAmount;
     }
   }
 
   removeFromPayCb(receiptValue: BillingClosureReceiptValue) {
-    if (this.orderToPayInCb && this.orderToPayInCb.indexOf(receiptValue.idCustomerOrder) >= 0) {
+    if (this.orderToPayInCb && this.orderToPayInCb.indexOf(receiptValue.idCustomerOrder) >= 0 && receiptValue.debitAmount) {
       this.orderToPayInCb.splice(this.orderToPayInCb.indexOf(receiptValue.idCustomerOrder));
-      this.totalToPayCb -= receiptValue.debitAmount;
+      if (receiptValue.remainingDebitAmount)
+        this.totalToPayCb -= receiptValue.remainingDebitAmount;
+      else
+        this.totalToPayCb -= receiptValue.debitAmount;
     }
   }
 

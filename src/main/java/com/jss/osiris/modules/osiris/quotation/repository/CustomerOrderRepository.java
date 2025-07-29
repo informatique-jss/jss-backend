@@ -225,8 +225,8 @@ public interface CustomerOrderRepository
                         CustomerOrderStatus customerOrderStatus, Employee assignedUser,
                         AssignationType assignationType);
 
-        @Query("select c from CustomerOrder c join c.customerOrderAssignations a where a.employee in (:employees) and c.customerOrderStatus=:customerOrderStatus and a.isAssigned=false and (:assignedUser is null or a.employee = :assignedUser)  order by c.productionEffectiveDateTime")
-        List<CustomerOrder> findCustomerOrderByForcedEmployeeAndStatusAssigned(List<Employee> employees,
-                        CustomerOrderStatus customerOrderStatus, Employee assignedUser);
+        @Query("select c from CustomerOrder c join c.customerOrderAssignations a where  c.customerOrderStatus=:customerOrderStatus and a.isAssigned=false and  a.employee = :assignedUser  order by c.productionEffectiveDateTime")
+        List<CustomerOrder> findCustomerOrderByForcedEmployeeAndStatusAssigned(CustomerOrderStatus customerOrderStatus,
+                        Employee assignedUser);
 
 }

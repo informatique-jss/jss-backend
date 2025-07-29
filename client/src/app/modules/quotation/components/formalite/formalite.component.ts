@@ -1,7 +1,7 @@
-import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatTabChangeEvent } from '@angular/material/tabs';
+import { MatTabChangeEvent, MatTabGroup } from '@angular/material/tabs';
 import { Subject } from 'rxjs';
 import { FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY, GUICHET_UNIQUE_BASE_URL, GUICHET_UNIQUE_STATUS_AMENDMENT_PENDING, GUICHET_UNIQUE_STATUS_AMENDMENT_SIGNATURE_PENDING, INFOGREFFE_BASE_URL } from 'src/app/libs/Constants';
 import { Dictionnary } from 'src/app/libs/Dictionnary';
@@ -15,6 +15,7 @@ import { HabilitationsService } from '../../../../services/habilitations.service
 import { UserPreferenceService } from '../../../../services/user.preference.service';
 import { ConstantService } from '../../../miscellaneous/services/constant.service';
 import { Affaire } from '../../model/Affaire';
+import { BeneficialOwner } from '../../model/beneficial-owner/BeneficialOwner';
 import { Formalite } from '../../model/Formalite';
 import { FormaliteDialogChoose } from '../../model/FormaliteDialogChoose';
 import { FormaliteStatus } from '../../model/FormaliteStatus';
@@ -24,6 +25,7 @@ import { FormaliteInfogreffe } from '../../model/infogreffe/FormaliteInfogreffe'
 import { IQuotation } from '../../model/IQuotation';
 import { Provision } from '../../model/Provision';
 import { FormaliteStatusService } from '../../services/formalite.status.service';
+import { AddBeneficialOwnerComponent } from '../add-beneficial-owner/add-beneficial-owner.component';
 import { FormaliteAssociateDialog } from '../formalite-associate-dialog/formalite-associate-dialog';
 
 @Component({
@@ -42,6 +44,8 @@ export class FormaliteComponent implements OnInit {
   @Input() quotation: IQuotation | undefined;
   @Output() provisionChange: EventEmitter<Provision> = new EventEmitter<Provision>();
 
+  @ViewChild('tabGroup') tabGroup!: MatTabGroup;
+  @ViewChild('addBeneficialOwner') addBeneficialOwnerComponent!: AddBeneficialOwnerComponent;
 
   FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY = FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY;
   PROVISION_ENTITY_TYPE = PROVISION_ENTITY_TYPE;
@@ -51,6 +55,7 @@ export class FormaliteComponent implements OnInit {
 
   competentAuthorityInpi = this.constantService.getCompetentAuthorityInpi();
   competentAuthorityInfogreffe = this.constantService.getCompetentAuthorityInfogreffe();
+  provisionTypeRbe = this.constantService.getProvisionTypeRbe();
 
   formaliteStatus: FormaliteStatus[] | undefined;
   displayedColumns: SortTableColumn<FormaliteGuichetUnique | FormaliteInfogreffe>[] = [] as Array<SortTableColumn<FormaliteGuichetUnique | FormaliteInfogreffe>>;
@@ -58,6 +63,8 @@ export class FormaliteComponent implements OnInit {
   tableAction: SortTableAction<FormaliteGuichetUnique | FormaliteInfogreffe>[] = [] as Array<SortTableAction<FormaliteGuichetUnique | FormaliteInfogreffe>>;
   searchText: string | undefined;
   refreshFormalityTable: Subject<void> = new Subject<void>();
+
+  selectedOwner: BeneficialOwner | undefined;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -127,6 +134,25 @@ export class FormaliteComponent implements OnInit {
     } as SortTableAction<FormaliteGuichetUnique | FormaliteInfogreffe>);
 
     this.setFormaliteTableData();
+  }
+
+  handleEditBeneficialOwner(owner: BeneficialOwner) {
+    const targetIndex = this.tabGroup._tabs.toArray().findIndex(tab =>
+      tab.textLabel.trim() === 'Ajout de bénéficiaire effectif'
+    );
+
+    if (targetIndex !== -1) {
+      this.selectedOwner = owner;
+
+      if (this.index === targetIndex) {
+        this.index = 0;
+        setTimeout(() => {
+          this.index = targetIndex;
+        });
+      } else {
+        this.index = targetIndex;
+      }
+    }
   }
 
   getLastEvenementOfFormaliteInfogreffe(formaliteInfogreffe: FormaliteInfogreffe): EvenementInfogreffe | null {
@@ -212,6 +238,12 @@ export class FormaliteComponent implements OnInit {
   index: number = 0;
   onTabChange(event: MatTabChangeEvent) {
     this.userPreferenceService.setUserTabsSelectionIndex('formalite', event.index);
+
+    const selectedTab = this.tabGroup._tabs.toArray()[event.index];
+    if (selectedTab?.textLabel.trim() === 'Ajout de bénéficiaire effectif' && this.selectedOwner) {
+      this.addBeneficialOwnerComponent.loadBeneficialOwnerForEdit(this.selectedOwner);
+      this.selectedOwner = undefined;
+    }
   }
 
   restoreTab() {

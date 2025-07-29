@@ -1,0 +1,7 @@
+<div class=" form-div mat-elevation-z2">
+  <div class=" full-width">
+    <sort-table [actions]="tableActions" [columns]="displayedColumns" [values]="beneficialOwners"
+      tableName="beneficialOwners" *ngIf="displayedColumns && displayedColumns.length>0 " [displayTotalLines]="true">
+    </sort-table>
+  </div>
+</div>

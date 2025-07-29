@@ -146,10 +146,15 @@ public interface CustomerOrderService {
         public List<CustomerOrder> searchOrders(List<CustomerOrderStatus> customerOrderStatus,
                         List<Responsable> responsables);
 
-        public List<CustomerOrder> completeAdditionnalInformationForCustomerOrders(List<CustomerOrder> customerOrders)
+        public CustomerOrder completeAdditionnalInformationForCustomerOrder(CustomerOrder customerOrder,
+                        Boolean populationAssoAffaireOrderTransientField)
                         throws OsirisException;
 
-        public CustomerOrder completeAdditionnalInformationForCustomerOrder(CustomerOrder customerOrder)
+        public List<CustomerOrder> completeAdditionnalInformationForCustomerOrders(List<CustomerOrder> customerOrders,
+                        Boolean populationAssoAffaireOrderTransientField)
+                        throws OsirisException;
+
+        public CustomerOrder completeAdditionnalInformationForCustomerOrderWhenIndexing(CustomerOrder customerOrder)
                         throws OsirisException;
 
         public List<CustomerOrder> searchCustomerOrders(List<Employee> commercials,
@@ -195,6 +200,8 @@ public interface CustomerOrderService {
                         CustomerOrderStatus customerOrderStatus, Employee assignedUser,
                         AssignationType assignationType);
 
-        public List<CustomerOrder> findCustomerOrderByForcedEmployeeAssigned(List<Employee> employees,
-                        CustomerOrderStatus customerOrderStatus, Employee assignedUser);
+        public List<CustomerOrder> findCustomerOrderByForcedEmployeeAssigned(CustomerOrderStatus customerOrderStatus,
+                        Employee assignedUser);
+
+        public void switchResponsable(CustomerOrder order, Responsable responsable);
 }

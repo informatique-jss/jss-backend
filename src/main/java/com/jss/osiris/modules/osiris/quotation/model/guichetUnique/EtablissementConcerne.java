@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.DoNotAudit;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,6 +23,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @DoNotAudit
+@Cacheable(false)
 @Table(indexes = {
         @Index(name = "idx_etablissement_concerne_lien_entreprise", columnList = "id_lien_entreprise"),
         @Index(name = "idx_etablissement_concerne_pouvoir", columnList = "id_pouvoir") })

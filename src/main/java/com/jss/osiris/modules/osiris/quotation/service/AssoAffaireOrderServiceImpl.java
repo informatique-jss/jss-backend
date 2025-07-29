@@ -17,6 +17,8 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.modules.osiris.beneficialOwner.model.BeneficialOwner;
+import com.jss.osiris.modules.osiris.beneficialOwner.service.BeneficialOwnerService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
@@ -137,6 +139,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     @Autowired
     CustomerOrderAssignationService customerOrderAssignationService;
 
+    @Autowired
+    BeneficialOwnerService beneficialOwnerService;
+
     @Override
     public List<AssoAffaireOrder> getAssoAffaireOrders() {
         return IterableUtils.toList(assoAffaireOrderRepository.findAll());
@@ -183,8 +188,10 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         assoAffaireOrder.setCustomerOrder(assoAffaireOrder.getCustomerOrder());
         assoAffaireOrder.setQuotation(assoAffaireOrder.getQuotation());
         AssoAffaireOrder affaireSaved = assoAffaireOrderRepository.save(assoAffaireOrder);
-        if (affaireSaved.getCustomerOrder() != null)
+        if (affaireSaved.getCustomerOrder() != null) {
             batchService.declareNewBatch(Batch.REINDEX_ASSO_AFFAIRE_ORDER, affaireSaved.getId());
+            batchService.declareNewBatch(Batch.REINDEX_CUSTOMER_ORDER, affaireSaved.getCustomerOrder().getId());
+        }
 
         if (assoAffaireOrder.getCustomerOrder() != null)
             customerOrderService.checkAllProvisionEnded(assoAffaireOrder.getCustomerOrder());
@@ -197,8 +204,10 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         List<AssoAffaireOrder> affaires = getAssoAffaireOrders();
         if (affaires != null)
             for (AssoAffaireOrder asso : affaires)
-                if (asso.getCustomerOrder() != null)
+                if (asso.getCustomerOrder() != null) {
                     batchService.declareNewBatch(Batch.REINDEX_ASSO_AFFAIRE_ORDER, asso.getId());
+                    batchService.declareNewBatch(Batch.REINDEX_CUSTOMER_ORDER, asso.getCustomerOrder().getId());
+                }
     }
 
     @Override
@@ -219,6 +228,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 for (AssoServiceFieldType assoServiceFieldType : service.getAssoServiceFieldTypes())
                     assoServiceFieldType.setService(service);
 
+            serviceService.addOrUpdateService(service);
+
             for (Provision provision : service.getProvisions()) {
                 provision.setService(service);
 
@@ -230,7 +241,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                 // Check proper assignation
                 if (customerOrder instanceof CustomerOrder && getProvisionStatus(provision) != null
-                        && !getProvisionStatus(provision).getIsOpenState()) {
+                        && !getProvisionStatus(provision).getIsOpenState() && isFromUser) {
                     if (provision.getAssignedTo() == null)
                         throw new OsirisClientMessageException("Impossible de démarrer une prestation non assignée");
 
@@ -266,24 +277,36 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                     // If mails already exists, get their ids
                     if (domiciliation != null && domiciliation.getMails() != null
-                            && domiciliation.getMails().size() > 0)
+                            && domiciliation.getMails().size() > 0) {
+                        domiciliation
+                                .setMails(domiciliation.getMails().stream().filter(m -> m.getMail() != null).toList());
                         mailService.populateMailIds(domiciliation.getMails());
+                    }
 
                     // If mails already exists, get their ids
                     if (domiciliation != null && domiciliation.getActivityMails() != null
-                            && domiciliation.getActivityMails().size() > 0)
+                            && domiciliation.getActivityMails().size() > 0) {
+                        domiciliation.setActivityMails(
+                                domiciliation.getActivityMails().stream().filter(m -> m.getMail() != null).toList());
                         mailService.populateMailIds(domiciliation.getActivityMails());
+                    }
 
                     // If mails already exists, get their ids
                     if (domiciliation != null
                             && domiciliation.getLegalGardianMails() != null
-                            && domiciliation.getLegalGardianMails().size() > 0)
+                            && domiciliation.getLegalGardianMails().size() > 0) {
+                        domiciliation.setLegalGardianMails(domiciliation.getLegalGardianMails().stream()
+                                .filter(m -> m.getMail() != null).toList());
                         mailService.populateMailIds(domiciliation.getLegalGardianMails());
+                    }
 
                     if (domiciliation != null
                             && domiciliation.getLegalGardianPhones() != null
-                            && domiciliation.getLegalGardianPhones().size() > 0)
+                            && domiciliation.getLegalGardianPhones().size() > 0) {
+                        domiciliation.setLegalGardianPhones(domiciliation.getLegalGardianPhones().stream()
+                                .filter(m -> m.getPhoneNumber() != null).toList());
                         phoneService.populatePhoneIds(domiciliation.getLegalGardianPhones());
+                    }
 
                 }
 
@@ -398,11 +421,23 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                                             .addOrUpdateFormaliteInfogreffe(formaliteInfogreffe);
                                 }
                             }
+
+                        if (formalite.getBeneficialOwners() != null && formalite.getBeneficialOwners().size() > 0)
+                            for (BeneficialOwner beneficialOwner : formalite
+                                    .getBeneficialOwners()) {
+                                if (beneficialOwner.getFormalite() == null) {
+                                    beneficialOwner.setFormalite(formalite);
+                                    beneficialOwnerService.addOrUpdateBeneficialOwner(beneficialOwner);
+                                }
+                            }
                     }
                 }
 
                 if (provision.getAnnouncement() != null) {
                     Announcement announcement = provision.getAnnouncement();
+
+                    if (announcement.getId() == null)
+                        provision.setIsPublicationFlag(true);
 
                     announcementService.completeAnnouncementWithAffaire(assoAffaireOrder);
                     if (announcement.getIsHeader() == null)
@@ -492,10 +527,13 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                                 Announcement currentAnnouncement = announcementService
                                         .getAnnouncement(provision.getAnnouncement().getId());
 
-                                if (currentAnnouncement.getAnnouncementStatus().getId()
-                                        .equals(announcement.getAnnouncementStatus().getId()))
-                                    generateWord = !currentAnnouncement.getNotice()
-                                            .equals(announcement.getNotice());
+                                if (announcement.getIsAnnouncementAlreadySentToConfrere() != null
+                                        && announcement.getIsAnnouncementAlreadySentToConfrere()) {
+                                    if (currentAnnouncement.getAnnouncementStatus().getId()
+                                            .equals(announcement.getAnnouncementStatus().getId()))
+                                        generateWord = !currentAnnouncement.getNotice()
+                                                .equals(announcement.getNotice());
+                                }
                             }
 
                             if (generateWord)
@@ -575,7 +613,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                 customerOrderAssignationService.assignNewProvisionToUser(provision);
             }
-
         }
 
         return assoAffaireOrder;

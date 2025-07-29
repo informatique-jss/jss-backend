@@ -360,7 +360,7 @@ export class RequiredInformationComponent implements OnInit {
   }
 
   canSaveQuotation() {
-    if (this.quotation)
+    if (this.quotation && this.quotation.assoAffaireOrders)
       for (let asso of this.quotation.assoAffaireOrders)
         if (!asso.services || asso.services.length == 0)
           return false;
@@ -372,9 +372,15 @@ export class RequiredInformationComponent implements OnInit {
       if (this.informationForm) {
         this.informationForm.markAllAsTouched();
         if (!this.informationForm.valid) {
-          this.appService.displayToast("Veuillez remplir les champs obligatoires", true, "Champs obligatoires", 5);
+          this.appService.displayToast("Veuillez remplir les champs obligatoires", true, "Champs obligatoires", 5000);
           return of(false);
         }
+
+        for (let provision of this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions)
+          if (provision && provision.announcement && !provision.isRedactedByJss && !this.isUsingTemplate && (!provision.announcement.notice || provision.announcement.notice.length == 0)) {
+            this.appService.displayToast("Veuillez remplir le texte de l'annonce légale", true, "Champs obligatoires", 5000);
+            return of(false);
+          }
       }
 
       if (this.noticeTemplateDescription.announcementOrder && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[this.noticeTemplateDescription.announcementOrder])

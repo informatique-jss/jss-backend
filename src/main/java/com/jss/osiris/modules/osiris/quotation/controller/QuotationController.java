@@ -2,6 +2,7 @@ package com.jss.osiris.modules.osiris.quotation.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.nio.file.Files;
 import java.time.LocalDate;
@@ -37,6 +38,8 @@ import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
+import com.jss.osiris.modules.osiris.beneficialOwner.model.BeneficialOwner;
+import com.jss.osiris.modules.osiris.beneficialOwner.service.BeneficialOwnerService;
 import com.jss.osiris.modules.osiris.crm.model.Voucher;
 import com.jss.osiris.modules.osiris.crm.service.VoucherService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
@@ -47,7 +50,6 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Department;
-import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.osiris.miscellaneous.model.WeekDay;
 import com.jss.osiris.modules.osiris.miscellaneous.service.CityService;
@@ -412,6 +414,9 @@ public class QuotationController {
 
   @Autowired
   CustomerOrderAssignationService customerOrderAssignationService;
+
+  @Autowired
+  BeneficialOwnerService beneficialOwnerService;
 
   @GetMapping(inputEntryPoint + "/service-field-types")
   public ResponseEntity<List<ServiceFieldType>> getServiceFieldTypes() {
@@ -1170,14 +1175,17 @@ public class QuotationController {
 
   @GetMapping(inputEntryPoint + "/provision/assignedTo")
   public ResponseEntity<Boolean> updateAssignedToForProvision(@RequestParam Integer provisionId,
-      @RequestParam Integer employeeId) throws OsirisValidationException {
+      @RequestParam(required = false) Integer employeeId) throws OsirisValidationException {
     Provision provision = provisionService.getProvision(provisionId);
     if (provision == null)
       throw new OsirisValidationException("provision");
 
-    Employee employee = employeeService.getEmployee(employeeId);
-    if (employee == null)
-      throw new OsirisValidationException("employee");
+    Employee employee = null;
+    if (employeeId != null) {
+      employee = employeeService.getEmployee(employeeId);
+      if (employee == null)
+        throw new OsirisValidationException("employee");
+    }
 
     provisionService.updateAssignedToForProvision(provision, employee);
     return new ResponseEntity<Boolean>(true, HttpStatus.OK);
@@ -1522,41 +1530,6 @@ public class QuotationController {
     if (confrere.getSpecialOffers() != null) {
       for (SpecialOffer specialOffer : confrere.getSpecialOffers()) {
         validationHelper.validateReferential(specialOffer, false, "specialOffer");
-      }
-    }
-
-    if (confrere.getDocuments() != null && confrere.getDocuments().size() > 0) {
-      for (Document document : confrere.getDocuments()) {
-
-        validationHelper.validateReferential(document.getDocumentType(), true, "DocumentType");
-
-        if (document.getMailsAffaire() != null && !validationHelper.validateMailList(document.getMailsAffaire()))
-          throw new OsirisValidationException("MailsAffaire");
-        if (document.getMailsClient() != null && document.getMailsClient() != null
-            && document.getMailsClient().size() > 0)
-          if (!validationHelper.validateMailList(document.getMailsClient()))
-            throw new OsirisValidationException("MailsClient");
-
-        validationHelper.validateString(document.getAffaireAddress(), false, 200, "AffaireAddress");
-        validationHelper.validateString(document.getClientAddress(), false, 200, "ClientAddress");
-        validationHelper.validateString(document.getBillingAddress(), false, 200, "BillingAddress");
-        validationHelper.validateString(document.getBillingLabel(), false, 200, "BillingLabel");
-        validationHelper.validateString(document.getAffaireRecipient(), false, 200, "AffaireRecipient");
-        validationHelper.validateString(document.getClientRecipient(), false, 200, "ClientRecipient");
-        validationHelper.validateString(document.getCommandNumber(), false, 40, "CommandNumber");
-        validationHelper.validateReferential(document.getPaymentDeadlineType(), false, "PaymentDeadlineType");
-        validationHelper.validateReferential(document.getRefundType(), false, "RefundType");
-        validationHelper.validateIban(document.getRefundIBAN(), false, "RefundIBAN");
-        validationHelper.validateBic(document.getRefundBic(), false, "RefundBic");
-        validationHelper.validateReferential(document.getBillingClosureType(), false, "BillingClosureType");
-        validationHelper.validateReferential(document.getBillingClosureRecipientType(), false,
-            "BillingClosureRecipientType");
-
-        if (document.getIsRecipientAffaire() == null)
-          document.setIsRecipientAffaire(false);
-        if (document.getIsRecipientClient() == null)
-          document.setIsRecipientClient(false);
-
       }
     }
 
@@ -2348,18 +2321,6 @@ public class QuotationController {
           throw new OsirisValidationException("assoServiceFieldTypeItem");
       }
 
-    MailComputeResult mailComputeResult = new MailComputeResult();
-    if (assoServiceDocument != null)
-      mailComputeResult = mailComputeHelper
-          .computeMailForPublicationReceipt(assoServiceDocument.getService().getAssoAffaireOrder().getCustomerOrder());
-
-    if (assoServiceFieldType != null)
-      mailComputeResult = mailComputeHelper
-          .computeMailForPublicationReceipt(assoServiceFieldType.getService().getAssoAffaireOrder().getCustomerOrder());
-
-    if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
-      throw new OsirisValidationException("MailTo");
-
     return new ResponseEntity<MissingAttachmentQuery>(
         missingAttachmentQueryService.sendMissingAttachmentQueryToCustomer(query, false,
             isWaitingForAttachmentToUpload),
@@ -2670,7 +2631,8 @@ public class QuotationController {
       throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
 
     return new ResponseEntity<CustomerOrder>(
-        customerOrderService.completeAdditionnalInformationForCustomerOrder(customerOrderService.getCustomerOrder(id)),
+        customerOrderService.completeAdditionnalInformationForCustomerOrder(customerOrderService.getCustomerOrder(id),
+            false),
         HttpStatus.OK);
   }
 
@@ -2752,7 +2714,7 @@ public class QuotationController {
       throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
 
     return new ResponseEntity<Quotation>(
-        quotationService.completeAdditionnalInformationForQuotation(quotationService.getQuotation(id)),
+        quotationService.completeAdditionnalInformationForQuotation(quotationService.getQuotation(id), false),
         HttpStatus.OK);
   }
 
@@ -3037,5 +2999,56 @@ public class QuotationController {
 
     return new ResponseEntity<AnnouncementNoticeTemplateFragment>(announcementNoticeTemplateFragmentService
         .addOrUpdateAnnouncementNoticeTemplateFragment(announcementNoticeTemplateFragments), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/beneficial-owners")
+  public ResponseEntity<List<BeneficialOwner>> getBeneficialOwners(@RequestParam Integer idAffaire)
+      throws OsirisValidationException {
+    Affaire affaire = affaireService.getAffaire(idAffaire);
+    if (affaire == null)
+      throw new OsirisValidationException("affaire");
+
+    return new ResponseEntity<List<BeneficialOwner>>(beneficialOwnerService.getBeneficialOwnersByAffaire(affaire),
+        HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/beneficial-owner")
+  public ResponseEntity<BeneficialOwner> addOrUpdateBeneficialOwner(
+      @RequestBody BeneficialOwner beneficialOwner)
+      throws OsirisValidationException, OsirisException {
+    if (beneficialOwner.getId() != null)
+      validationHelper.validateReferential(beneficialOwner, true,
+          "beneficialOwner");
+
+    if (beneficialOwner.getVotingRights().getVotingTotalPercentage() == null
+        && beneficialOwner.getShareHolding().getShareTotalPercentage() == null) {
+      throw new OsirisValidationException(
+          "shareTotalPercentage");
+    }
+
+    BigDecimal total = BigDecimal.ZERO;
+    if (beneficialOwner.getShareHolding().getShareTotalPercentage() != null)
+      total = total.add(beneficialOwner.getShareHolding().getShareTotalPercentage());
+    if (beneficialOwner.getVotingRights().getVotingTotalPercentage() != null)
+      total = total.add(beneficialOwner.getVotingRights().getVotingTotalPercentage());
+
+    if (total.compareTo(BigDecimal.valueOf(100)) > 0) {
+      throw new OsirisValidationException("shareTotalPercentage");
+    }
+
+    return new ResponseEntity<BeneficialOwner>(beneficialOwnerService.addOrUpdateBeneficialOwner(beneficialOwner),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/beneficial-owner/delete")
+  public ResponseEntity<Boolean> deleteBeneficialOwner(@RequestParam Integer beneficialOwnerId)
+      throws OsirisValidationException {
+
+    BeneficialOwner beneficialOwner = beneficialOwnerService.getBeneficialOwner(beneficialOwnerId);
+    if (beneficialOwner == null)
+      throw new OsirisValidationException("beneficialOwner");
+
+    return new ResponseEntity<Boolean>(beneficialOwnerService.deleteBeneficialOwner(beneficialOwner),
+        HttpStatus.OK);
   }
 }

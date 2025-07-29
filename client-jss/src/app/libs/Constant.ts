@@ -13,5 +13,8 @@ export interface Constant {
   categoryArticle: Category;
   categorySerie: Category;
   categoryExclusivity: Category;
-
 }
+
+export const globalConstantCache: {
+  data: Constant | undefined;
+} = { data: undefined };

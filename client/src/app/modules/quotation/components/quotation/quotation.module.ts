@@ -27,16 +27,19 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule, Routes } from '@angular/router';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { DirectDebitTransfertListComponent } from 'src/app/modules/invoicing/components/direct-debit-transfert-list/direct-debit-transfert-list.component';
+import { InvoiceListComponent } from 'src/app/modules/invoicing/components/invoice-list/invoice-list.component';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { GuichetUniqueStatusComponent } from '../../guichet-unique-status/guichet-unique-status.component';
 import { ActeDepositComponent } from '../acte-deposit/acte-deposit.component';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
 import { AddAffaireComponent } from '../add-affaire/add-affaire.component';
+import { AddBeneficialOwnerComponent } from '../add-beneficial-owner/add-beneficial-owner.component';
 import { AddIncidentReportComponent } from '../add-incident-report/add-incident-report.component';
 import { AffaireListComponent } from '../affaire-list/affaire-list.component';
 import { AffaireComponent } from '../affaire/affaire.component';
 import { AnnouncementListComponent } from '../announcement-list/announcement-list.component';
 import { AnnouncementComponent } from '../announcement/announcement.component';
+import { BeneficialOwnerComponent } from '../beneficial-owner/beneficial-owner.component';
 import { ChooseAssignedUserDialogComponent } from '../choose-assigned-user-dialog/choose-assigned-user-dialog.component';
 import { ChooseCompetentAuthorityDialogComponent } from '../choose-competent-authority-dialog/choose-competent-authority-dialog.component';
 import { CustomerOrderCommentComponent } from '../customer-order-comment/customer-order-comment.component';
@@ -199,7 +202,10 @@ const routes: Routes = [
     OrderSidePanelDetailsComponent,
     ServiceSidePanelDetailsComponent,
     IncidentReportListComponent,
-    AddIncidentReportComponent
+    AddIncidentReportComponent,
+    InvoiceListComponent,
+    BeneficialOwnerComponent,
+    AddBeneficialOwnerComponent
   ],
   exports: [
     OrderingListComponent,
@@ -221,7 +227,8 @@ const routes: Routes = [
     OrderSidePanelDetailsComponent,
     ServiceSidePanelDetailsComponent,
     AddIncidentReportComponent,
-    IncidentReportListComponent
+    IncidentReportListComponent,
+    InvoiceListComponent,
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }

@@ -92,7 +92,7 @@ public class CentralPayPaymentRequestServiceImpl implements CentralPayPaymentReq
     public void checkPaymentRequest(CentralPayPaymentRequest request)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         if (request != null) {
-            if (request.getCustomerOrders() != null) {
+            if (request.getCustomerOrders() != null && request.getCustomerOrders().size() > 0) {
                 if (customerOrderService.validateCardPaymentLinkForCustomerOrder(request.getCustomerOrders(),
                         request))
                     deleteCentralPayPaymentRequest(request);

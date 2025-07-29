@@ -211,7 +211,7 @@
                                                                 <p>Nous vous confirmons le traitement de votre commande.
                                                                 </p>
                                                                 <p>Elle sera traitée dans les meilleurs délais par nos
-                                                                    équipes
+                                                                    équipes.
                                                                 </p>
                                                                 <p>Sauf avis contraire et immédiat de votre part, la
                                                                     facture sera établie au nom de <span
@@ -219,10 +219,18 @@
                                                                     à l'adresse <span
                                                                         th:text="${invoiceLabelResult.billingLabelAddress}"></span>,
                                                                     <span
-                                                                        th:text="${invoiceLabelResult.billingLabelCity.label}"></span>,
-                                                                    et sera transmise, à l'adresse suivante <span
-                                                                        style="color:rgb(35, 61, 86);; text-decoration:none"><span
-                                                                            th:text="${mailComputeResultInvoice.recipientsMailTo[0].mail}"></span></span>
+                                                                        th:text="${invoiceLabelResult.billingLabelCity.label}"></span>
+                                                                    <span th:if="${mailComputeResultInvoice!=null}">, et
+                                                                        sera transmise, à l'adresse suivante <span
+                                                                            style="color:rgb(35, 61, 86);; text-decoration:none"><span
+                                                                                th:text="${mailComputeResultInvoice.recipientsMailTo[0].mail}"></span></span></span>
+                                                                    <span th:if="${mailComputeResultInvoice==null}">.
+                                                                        <strong>
+                                                                            Nous n'avons pas votre adresse mail de
+                                                                            transmission de la facture, merci de nous la
+                                                                            fournir.
+                                                                        </strong>
+                                                                    </span>
                                                                 </p>
                                                             </td>
                                                         </tr>

@@ -50,3 +50,8 @@ export interface Constant {
   serviceFamilyGroupOther: ServiceFamilyGroup;
   provisionTypeRbe: ProvisionType;
 }
+
+
+export const globalConstantCache: {
+  data: Constant | undefined;
+} = { data: undefined };

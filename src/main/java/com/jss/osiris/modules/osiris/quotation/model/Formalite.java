@@ -1,6 +1,6 @@
 package com.jss.osiris.modules.osiris.quotation.model;
-import java.io.Serializable;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.modules.osiris.beneficialOwner.model.BeneficialOwner;
 import com.jss.osiris.modules.osiris.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.FormaliteGuichetUnique;
@@ -70,6 +71,11 @@ public class Formalite implements IId, Serializable {
     @JoinColumn(name = "id_acte_deposit")
     private ActeDeposit acteDeposit;
 
+    @OneToMany(mappedBy = "formalite")
+    @IndexedField
+    @JsonView({ JacksonViews.OsirisDetailedView.class })
+    private List<BeneficialOwner> beneficialOwners;
+
     public Integer getId() {
         return id;
     }
@@ -116,6 +122,22 @@ public class Formalite implements IId, Serializable {
 
     public void setFormalitesInfogreffe(List<FormaliteInfogreffe> formalitesInfogreffe) {
         this.formalitesInfogreffe = formalitesInfogreffe;
+    }
+
+    public ActeDeposit getActeDeposit() {
+        return acteDeposit;
+    }
+
+    public void setActeDeposit(ActeDeposit acteDeposit) {
+        this.acteDeposit = acteDeposit;
+    }
+
+    public List<BeneficialOwner> getBeneficialOwners() {
+        return beneficialOwners;
+    }
+
+    public void setBeneficialOwners(List<BeneficialOwner> beneficialOwners) {
+        this.beneficialOwners = beneficialOwners;
     }
 
 }

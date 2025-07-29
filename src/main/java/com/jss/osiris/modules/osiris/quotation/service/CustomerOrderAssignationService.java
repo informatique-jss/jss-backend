@@ -21,7 +21,7 @@ public interface CustomerOrderAssignationService {
 
         public void completeAssignationForCustomerOrder(CustomerOrder customerOrder) throws OsirisException;
 
-        public void assignNewProvisionToUser(Provision provision);
+        public void assignNewProvisionToUser(Provision provision) throws OsirisException;
 
         public Integer getNextOrderForFond(boolean isPriority, Integer complexity, Boolean byPassAssignation)
                         throws OsirisException;
@@ -37,7 +37,9 @@ public interface CustomerOrderAssignationService {
 
         public boolean isPriorityOrder(CustomerOrder customerOrder) throws OsirisException;
 
-        public List<ICustomerOrderAssignationStatistics> getCustomerOrderAssignationStatisticsForFormalistes();
+        public List<ICustomerOrderAssignationStatistics> getCustomerOrderAssignationStatisticsForFormalistes()
+                        throws OsirisException;
 
-        public List<ICustomerOrderAssignationStatistics> getCustomerOrderAssignationStatisticsForInsertions();
+        public List<ICustomerOrderAssignationStatistics> getCustomerOrderAssignationStatisticsForInsertions()
+                        throws OsirisException;
 }

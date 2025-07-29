@@ -1,0 +1,221 @@
+<fieldset [disabled]="editMode==false" class="fieldset-no-border">
+
+  <h4>Déclaration relative aux bénéficiaires effectifs (personnes physiques) d'une société</h4>
+  <table class="full-width" *ngIf="newBeneficialOwner">
+    <tr>
+      <td>
+        <generic-datepicker [(model)]=" newBeneficialOwner.creationDate" label="Date d'effet"
+          [form]="addBeneficialOwnerForm" propertyName="creationDate" [isMandatory]="true"></generic-datepicker>
+      </td>
+      <td>
+        <generic-input [(model)]="newBeneficialOwner.birthName" label="Nom de naissance" [form]="addBeneficialOwnerForm"
+          propertyName="birthName" [isMandatory]="true" [maxLength]="30"></generic-input>
+      </td>
+      <td>
+        <generic-input [(model)]="newBeneficialOwner.usedName" label="Nom d'usage" [form]="addBeneficialOwnerForm"
+          propertyName="usedName" [isMandatory]="true" [maxLength]="30"></generic-input>
+      </td>
+      <td>
+        <generic-input [(model)]="newBeneficialOwner.firstNames" label="Prénoms" [form]="addBeneficialOwnerForm"
+          propertyName="firstNames" [isMandatory]="true" [maxLength]="30"></generic-input>
+      </td>
+      <td>
+        <generic-input [(model)]="newBeneficialOwner.nationality" label="nationalité" [form]="addBeneficialOwnerForm"
+          propertyName="nationality" [isMandatory]="false" [maxLength]="30"></generic-input>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <generic-input [(model)]="newBeneficialOwner.residenceAddress" label="Adresse domicile"
+          [form]="addBeneficialOwnerForm" propertyName="residenceAddress" [isMandatory]="false"
+          [maxLength]="30"></generic-input>
+      </td>
+      <td>
+        <autocomplete-country [(model)]="newBeneficialOwner.country" [form]="addBeneficialOwnerForm"
+          propertyName="countryBE" label="Pays" [isMandatory]="true"></autocomplete-country>
+      </td>
+      <td>
+        <autocomplete-city [(model)]="newBeneficialOwner.city" [modelCountry]="newBeneficialOwner.country"
+          [form]="addBeneficialOwnerForm" propertyName="cityBE" [isMandatory]="false"
+          label="Commune"></autocomplete-city>
+      </td>
+    </tr>
+    <br>
+    <p>Modalités du contrôle exercé par le bénéficiaire effectif sur la société : </p>
+    <!-- DETENTION DE CAPITAL -->
+    <tr>
+      <td>
+        <generic-toggle [(model)]="newBeneficialOwner.shareHolding.shareHoldsMoreThan25Percent"
+          label="Détention de plus de 25% du capital" [form]="addBeneficialOwnerForm"
+          propertyName="shareHoldingHoldsMoreThan25Percent"></generic-toggle>
+      </td>
+    </tr>
+    <tr *ngIf="newBeneficialOwner.shareHolding.shareHoldsMoreThan25Percent">
+      <td>
+        <generic-input [(model)]="newBeneficialOwner.shareHolding.shareTotalPercentage" label="Pourcentage total détenu"
+          [form]="addBeneficialOwnerForm" propertyName="shareHoldingTotalPercentage" [isMandatory]="true" type="number"
+          [maxLength]="4"></generic-input>
+      </td>
+      <mat-radio-group [value]="newBeneficialOwner.shareHolding.isDirectShare"
+        (change)="onSelectShareHolding($event.value)">
+        <mat-radio-button [value]="true">Détention directe</mat-radio-button>
+        <mat-radio-button [value]="false">Détention indirecte</mat-radio-button>
+      </mat-radio-group>
+    </tr>
+
+    <tr *ngIf="newBeneficialOwner.shareHolding.isDirectShare">
+      <td>
+        <generic-input [(model)]="newBeneficialOwner.shareHolding.shareFullOwnership" label="Pleine propriété (en %)"
+          [form]="addBeneficialOwnerForm" propertyName="shareHoldingFullOwnership" [isMandatory]="true" type="number"
+          [maxLength]="4"></generic-input>
+      </td>
+      <td>
+        <generic-input [(model)]="newBeneficialOwner.shareHolding.shareBareOwnership" label="Nue propriété (en %)"
+          [form]="addBeneficialOwnerForm" propertyName="shareHoldingBareOwnership" [isMandatory]="true" type="number"
+          [maxLength]="4"></generic-input>
+      </td>
+    </tr>
+    <tr *ngIf="newBeneficialOwner.shareHolding.isIndirectShare">
+      <td>
+        <generic-input [(model)]="newBeneficialOwner.shareHolding.shareTotalCoOwnerShip"
+          label="Détention via indivision (en %)" [form]="addBeneficialOwnerForm"
+          propertyName="shareHoldingTotalCoOwnerShip" [isMandatory]="false" type="number"
+          [maxLength]="4"></generic-input>
+      </td>
+      <td>
+        <generic-input [(model)]="newBeneficialOwner.shareHolding.shareFullCoOwnership"
+          label="dont en pleine propriété (en %)" [form]="addBeneficialOwnerForm"
+          propertyName="shareHoldingFullCoOwnership" [isMandatory]="false" type="number"
+          [maxLength]="4"></generic-input>
+      </td>
+      <td>
+        <generic-input [(model)]="newBeneficialOwner.shareHolding.shareBareCoOwnership" label="Nue-propriété (en %)"
+          [form]="addBeneficialOwnerForm" propertyName="shareHoldingBareCoOwnership" [isMandatory]="false" type="number"
+          [maxLength]="4"></generic-input>
+      </td>
+    </tr>
+    <tr *ngIf="newBeneficialOwner.shareHolding.isIndirectShare">
+      <td>
+        <generic-input [(model)]="newBeneficialOwner.shareHolding.shareTotalLegalEntites"
+          label="Détention via personnes morales (en %)" [form]="addBeneficialOwnerForm"
+          propertyName="shareHoldingTotalLegalEntites" [isMandatory]="false" type="number"
+          [maxLength]="4"></generic-input>
+      </td>
+      <td>
+        <generic-input [(model)]="newBeneficialOwner.shareHolding.shareFullLegalEntities"
+          label="dont en pleine propriété (en %)" [form]="addBeneficialOwnerForm"
+          propertyName="shareHoldingFullLegalEntities" [isMandatory]="false" type="number"
+          [maxLength]="4"></generic-input>
+      </td>
+      <td>
+        <generic-input [(model)]="newBeneficialOwner.shareHolding.shareBareLegalEntities" label="Nue-propriété (en %)"
+          [form]="addBeneficialOwnerForm" propertyName="shareHoldingBareLegalEntities" [isMandatory]="false"
+          type="number" [maxLength]="4"></generic-input>
+      </td>
+    </tr>
+
+    <!-- DROITS DE VOTES -->
+    <tr>
+      <td>
+        <generic-toggle [(model)]="newBeneficialOwner.votingRights.votingHoldsMoreThan25Percent"
+          label="Détention de plus de 25% des droits de vote" [form]="addBeneficialOwnerForm"
+          propertyName="votingRightsHoldsMoreThan25Percent"></generic-toggle>
+      </td>
+    </tr>
+
+    <tr *ngIf="newBeneficialOwner.votingRights.votingHoldsMoreThan25Percent">
+      <td>
+        <generic-input [(model)]="newBeneficialOwner.votingRights.votingTotalPercentage"
+          label="Pourcentage total détenu" [form]="addBeneficialOwnerForm" propertyName="votingRightsTotalPercentage"
+          [isMandatory]="true" type="number" [maxLength]="4"></generic-input>
+      </td>
+      <mat-radio-group [value]="newBeneficialOwner.votingRights.isDirectVoting"
+        (change)="onSelectVotingRights($event.value)">
+        <mat-radio-button [value]="true">Détention directe</mat-radio-button>
+        <mat-radio-button [value]="false">Détention indirecte</mat-radio-button>
+      </mat-radio-group>
+    </tr>
+    <tr *ngIf="newBeneficialOwner.votingRights.isDirectVoting">
+      <td>
+        <generic-input [(model)]="newBeneficialOwner.votingRights.votingFullOwnership" label="Pleine propriété (en %)"
+          [form]="addBeneficialOwnerForm" propertyName="votingRightsFullOwnership" [isMandatory]="true" type="number"
+          [maxLength]="4" min="0" max="100"></generic-input>
+      </td>
+      <td>
+        <generic-input [(model)]="newBeneficialOwner.votingRights.votingBareOwnership" label="Nue propriété (en %)"
+          [form]="addBeneficialOwnerForm" propertyName="votingRightsBareOwnership" [isMandatory]="true" type="number"
+          [maxLength]="4"></generic-input>
+      </td>
+    </tr>
+    <tr *ngIf="newBeneficialOwner.votingRights.isIndirectVoting">
+      <td>
+        <generic-input [(model)]="newBeneficialOwner.votingRights.votingTotalCoOwnerShip"
+          label="Détention via indivision (en %)" [form]="addBeneficialOwnerForm"
+          propertyName="votingRightsTotalCoOwnerShip" [isMandatory]="false" type="number"
+          [maxLength]="4"></generic-input>
+      </td>
+      <td>
+        <generic-input [(model)]="newBeneficialOwner.votingRights.votingFullCoOwnership"
+          label="dont en pleine propriété (en %)" [form]="addBeneficialOwnerForm"
+          propertyName="votingRightsFullCoOwnership" [isMandatory]="false" type="number"
+          [maxLength]="4"></generic-input>
+      </td>
+      <td>
+        <generic-input [(model)]="newBeneficialOwner.votingRights.votingBareCoOwnership" label="Nue-propriété (en %)"
+          [form]="addBeneficialOwnerForm" propertyName="votingRightsBareCoOwnership" [isMandatory]="false" type="number"
+          [maxLength]="4"></generic-input>
+      </td>
+    </tr>
+    <tr *ngIf="newBeneficialOwner.shareHolding.isIndirectShare">
+      <td>
+        <generic-input [(model)]="newBeneficialOwner.votingRights.votingTotalLegalEntites"
+          label="Détention via personnes morales (en %)" [form]="addBeneficialOwnerForm"
+          propertyName="votingRightsTotalLegalEntites" [isMandatory]="false" type="number"
+          [maxLength]="4"></generic-input>
+      </td>
+      <td>
+        <generic-input [(model)]="newBeneficialOwner.votingRights.votingFullLegalEntities"
+          label="dont en pleine propriété (en %)" [form]="addBeneficialOwnerForm"
+          propertyName="votingRightsFullLegalEntities" [isMandatory]="false" type="number"
+          [maxLength]="4"></generic-input>
+      </td>
+      <td>
+        <generic-input [(model)]="newBeneficialOwner.votingRights.votingBareLegalEntities" label="Nue-propriété (en %)"
+          [form]="addBeneficialOwnerForm" propertyName="votingRightsBareLegalEntities" [isMandatory]="false"
+          type="number" [maxLength]="4"></generic-input>
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <generic-toggle [(model)]="hasControls"
+          label="Exercice par tout autre moyen d'un pouvoir de contrôle sur la société déclarante :"
+          [form]="addBeneficialOwnerForm" propertyName="hasControls"></generic-toggle>
+      </td>
+    </tr>
+    <tr *ngIf="hasControls">
+      <td>
+        <generic-toggle [(model)]="newBeneficialOwner.otherControls.controlsGeneralMeetings" label="Détermination en fait, par les droits de vote dont il dispose, des décisions dans les
+assemblées générales de la société déclarante" [form]="addBeneficialOwnerForm"
+          propertyName="controlsGeneralMeetings"></generic-toggle>
+      </td>
+      <td>
+        <generic-toggle [(model)]="newBeneficialOwner.otherControls.hasPowerToAppointOrRemoveManagement" label="Détention du pouvoir de nommer ou de révoquer la majorité des membres des organes
+d’administration, de direction ou de surveillance de la société déclarante" [form]="addBeneficialOwnerForm"
+          propertyName="hasPowerToAppointOrRemoveManagement"></generic-toggle>
+      </td>
+    </tr>
+    <tr *ngIf="!hasControls">
+      <td>
+        <generic-toggle [(model)]="newBeneficialOwner.otherControls.isLegalRepresentative" label="A défaut de choix de l’une des options figurant ci-dessus, le bénéficiaire effectif est le
+représentant légal de la société" [form]="addBeneficialOwnerForm"
+          propertyName="isLegalRepresentative"></generic-toggle>
+      </td>
+    </tr>
+  </table>
+  <button *ngIf="editMode==true"
+    [matTooltip]="newBeneficialOwner.id ? 'Modifier le bénéficiaire' : 'Ajouter le bénéficiaire'" mat-mini-fab
+    color="warn" class="mini-fab-add" (click)="addBeneficialOwner()">
+    <mat-icon>add</mat-icon>
+  </button>
+</fieldset>

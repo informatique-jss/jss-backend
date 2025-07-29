@@ -33,7 +33,7 @@ import { Phone } from '../../../profile/model/Phone';
 import { Responsable } from '../../../profile/model/Responsable';
 import { Tiers } from '../../../profile/model/Tiers';
 import { LoginService } from '../../../profile/services/login.service';
-import { UserScopeService } from '../../../profile/services/user.scope.service';
+import { ResponsableService } from '../../../profile/services/responsable.service';
 import { IQuotation } from '../../model/IQuotation';
 import { CityService } from '../../services/city.service';
 
@@ -99,7 +99,6 @@ export class CheckoutComponent implements OnInit {
   quotationPriceObservableRef: Subscription | undefined;
 
   mailToConfirm: string | undefined;
-  userScope: Responsable[] | undefined;
 
   subscriptionType: string | undefined;
   isPriceReductionForSubscription: boolean = false;
@@ -122,10 +121,10 @@ export class CheckoutComponent implements OnInit {
     private appService: AppService,
     private constantService: ConstantService,
     private serviceService: ServiceService,
-    private userScopeService: UserScopeService,
     private documentService: DocumentService,
     private cityService: CityService,
-    private voucherService: VoucherService
+    private voucherService: VoucherService,
+    private responsableService: ResponsableService
 
   ) { }
 
@@ -158,12 +157,6 @@ export class CheckoutComponent implements OnInit {
     if (!this.currentUser)
       this.initIQuotation();
 
-    this.userScopeService.getUserScope().subscribe(response => {
-      this.userScope = [];
-      if (response)
-        for (let scope of response)
-          this.userScope.push(scope.responsableViewed);
-    })
   }
 
   ngOnDestroy() {
@@ -221,6 +214,7 @@ export class CheckoutComponent implements OnInit {
                 this.appService.openRoute(undefined, "account/quotations/details/" + response.id, undefined);
               });
             } else {
+              this.cleanStorageData();
               this.rerouteToHomePage();
             }
           });
@@ -233,6 +227,7 @@ export class CheckoutComponent implements OnInit {
                 this.appService.openRoute(undefined, "account/orders/details/" + response.id, undefined);
               });
             } else {
+              this.cleanStorageData();
               this.rerouteToHomePage();
             }
           });

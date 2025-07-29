@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
@@ -51,6 +53,9 @@ public class ProvisionServiceImpl implements ProvisionService {
     @Autowired
     AssoAffaireOrderService assoAffaireOrderService;
 
+    @Autowired
+    BatchService batchService;
+
     @Override
     public Provision getProvision(Integer id) {
         Optional<Provision> provision = provisionRepository.findById(id);
@@ -60,8 +65,19 @@ public class ProvisionServiceImpl implements ProvisionService {
     }
 
     @Override
-    public Provision addOrUpdateProvision(Provision provision) {
-        return provisionRepository.save(provision);
+    public Provision addOrUpdateProvision(Provision provision) throws OsirisException {
+        provisionRepository.save(provision);
+
+        if (provision.getService().getAssoAffaireOrder().getCustomerOrder() != null) {
+            batchService.declareNewBatch(Batch.REINDEX_ASSO_AFFAIRE_ORDER,
+                    provision.getService().getAssoAffaireOrder().getId());
+            batchService.declareNewBatch(Batch.REINDEX_CUSTOMER_ORDER,
+                    provision.getService().getAssoAffaireOrder().getCustomerOrder().getId());
+        } else if (provision.getService().getAssoAffaireOrder().getQuotation() != null)
+            batchService.declareNewBatch(Batch.REINDEX_QUOTATION,
+                    provision.getService().getAssoAffaireOrder().getQuotation().getId());
+
+        return provision;
     }
 
     @Override

@@ -505,7 +505,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
         orderingSearch.affaire = asso.affaire;
         orderingSearch.customerOrderStatus = [];
         let d = new Date();
-        d.setDate(d.getDate() - 3);
+        d.setDate(d.getDate() - 15);
         orderingSearch.startDate = d;
         if (this.customerOrderStatusList)
           for (let status of this.customerOrderStatusList)

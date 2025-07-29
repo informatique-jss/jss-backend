@@ -84,8 +84,17 @@ public class MissingAttachmentQueryServiceImpl implements MissingAttachmentQuery
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public MissingAttachmentQuery addOrUpdateMissingAttachmentQuery(MissingAttachmentQuery missingAttachmentQuery) {
-        return missingAttachmentQueryRepository.save(missingAttachmentQuery);
+    public MissingAttachmentQuery addOrUpdateMissingAttachmentQuery(MissingAttachmentQuery missingAttachmentQuery)
+            throws OsirisException {
+        missingAttachmentQueryRepository.save(missingAttachmentQuery);
+
+        if (missingAttachmentQuery.getService().getAssoAffaireOrder().getCustomerOrder() != null) {
+            batchService.declareNewBatch(Batch.REINDEX_ASSO_AFFAIRE_ORDER,
+                    missingAttachmentQuery.getService().getAssoAffaireOrder().getId());
+            batchService.declareNewBatch(Batch.REINDEX_CUSTOMER_ORDER,
+                    missingAttachmentQuery.getService().getAssoAffaireOrder().getCustomerOrder().getId());
+        }
+        return missingAttachmentQuery;
     }
 
     @Transactional(rollbackFor = Exception.class)
