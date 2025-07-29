@@ -380,6 +380,15 @@ export class ConstantService extends AppRestService<Constant> {
   getProvisionFamilyTypeDeposit() {
     return this.constant.provisionFamilyTypeDeposit;
   }
+
+  getProvisionFamilyTypeBalo() {
+    return this.constant.provisionFamilyTypeBalo;
+  }
+
+  getProvisionFamilyTypeBodacc() {
+    return this.constant.provisionFamilyTypeBodacc;
+  }
+
   getBillingTypeInfogreffeDebour() {
     return this.constant.billingTypeInfogreffeDebour;
   }
@@ -528,6 +537,14 @@ export class ConstantService extends AppRestService<Constant> {
 
   getAssignationTypeEmployee() {
     return this.constant.assignationTypeEmployee;
+  }
+
+  getAssignationTypeFormaliste() {
+    return this.constant.assignationTypeFormaliste;
+  }
+
+  getAssignationTypePublisciste() {
+    return this.constant.assignationTypePublisciste;
   }
 
   getEmployeeBillingResponsible() {
@@ -880,6 +897,10 @@ export class ConstantService extends AppRestService<Constant> {
 
   getActiveDirectoryGroupFormalites() {
     return this.constant.activeDirectoryGroupFormalites;
+  }
+
+  getActiveDirectoryGroupDirection() {
+    return this.constant.activeDirectoryGroupDirection;
   }
 
   getActiveDirectoryGroupInsertions() {

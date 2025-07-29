@@ -1,16 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
-import { combineLatest } from 'rxjs';
 import { capitalizeName } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { TrustHtmlPipe } from '../../../../libs/TrustHtmlPipe';
+import { AppService } from '../../../main/services/app.service';
+import { PlatformService } from '../../../main/services/platform.service';
 import { Responsable } from '../../../profile/model/Responsable';
-import { UserScope } from '../../../profile/model/UserScope';
 import { LoginService } from '../../../profile/services/login.service';
-import { UserScopeService } from '../../../profile/services/user.scope.service';
 import { Affaire } from '../../model/Affaire';
 import { BillingClosureReceiptValue } from '../../model/BillingClosureReceiptValue';
+import { CustomerOrder } from '../../model/CustomerOrder';
 import { BillingClosureService } from '../../services/billing.closure.service';
+import { CustomerOrderService } from '../../services/customer.order.service';
 
 @Component({
   selector: 'app-billing-closure',
@@ -21,64 +22,45 @@ import { BillingClosureService } from '../../services/billing.closure.service';
 })
 export class BillingClosureComponent implements OnInit {
 
-  userScope: UserScope[] | undefined;
   currentUser: Responsable | undefined;
-  userScopeSelected: boolean[] = [];
   receiptValues: BillingClosureReceiptValue[] | undefined;
   currentSort: string = "createdDateAsc";
   isFirstLoading: boolean = true;
+  orderToPayInCb: number[] = [];
+  totalToPayCb: number = 0;
 
   capitalizeName = capitalizeName;
 
   constructor(
-    private userScopeService: UserScopeService,
     private loginService: LoginService,
     private billingClosureService: BillingClosureService,
+    private customerOrderService: CustomerOrderService,
+    private platformService: PlatformService,
+    private appService: AppService
   ) { }
 
   ngOnInit() {
-    this.userScopeService.getUserScope().subscribe(response => {
-      this.userScope = response;
-      this.loginService.getCurrentUser().subscribe(currentUser => {
-        this.currentUser = currentUser;
-        if (this.userScope)
-          for (let scope of this.userScope)
-            this.userScopeSelected[scope.responsableViewed.id] = false;
-        if (this.currentUser)
-          this.userScopeSelected[this.currentUser.id] = true;
-        this.refreshClosure();
-      })
+    this.loginService.getCurrentUser().subscribe(currentUser => {
+      this.currentUser = currentUser;
+      this.refreshClosure();
     })
   }
 
   refreshClosure() {
-    let promises = [];
-    if (this.userScope) {
-      for (let id in this.userScopeSelected) {
-        if (this.userScopeSelected[id]) {
-          promises.push(this.billingClosureService.getBillingClosureReceiptValueForResponsable(parseInt(id), false));
-        }
-      }
-
-      if (promises.length == 0)
-        this.isFirstLoading = false;
-
-      combineLatest(promises).subscribe(response => {
+    this.receiptValues = [];
+    this.isFirstLoading = true;
+    if (this.currentUser)
+      this.billingClosureService.getBillingClosureReceiptValueForResponsable(this.currentUser.id, false, this.currentSort == 'createdDateDesc').subscribe(values => {
         this.receiptValues = [];
-        if (response)
-          for (let billingClosureValues of response)
-            this.receiptValues.push(...billingClosureValues.filter((b: BillingClosureReceiptValue) => b.eventDateTime));
+        if (values)
+          this.receiptValues = values.filter((b: BillingClosureReceiptValue) => b.eventDateTime);
 
         this.allAffaires = [];
         this.allResponsables = [];
         this.getAllAffaire();
         this.getAllResponsables();
         this.isFirstLoading = false;
-      })
-    }
-
-
-    // this.setBookmark();
+      });
   }
 
 
@@ -86,21 +68,6 @@ export class BillingClosureComponent implements OnInit {
     this.receiptValues = [];
     this.isFirstLoading = true;
     this.refreshClosure();
-  }
-
-  selectAll() {
-    if (this.userScopeSelected)
-      for (let selected in this.userScopeSelected)
-        this.userScopeSelected[selected] = true;
-    this.changeFilter();
-  }
-
-  unselectAll() {
-    if (this.userScopeSelected)
-      for (let selected in this.userScopeSelected)
-        this.userScopeSelected[selected] = false;
-    this.receiptValues = [];
-    this.isFirstLoading = false;
   }
 
   getResponsableLabel(value: BillingClosureReceiptValue) {
@@ -160,6 +127,8 @@ export class BillingClosureComponent implements OnInit {
 
   changeSort(sortType: string) {
     this.currentSort = sortType;
+    if (this.currentSort.indexOf('createdDate') >= 0)
+      this.refreshClosure();
   }
 
   getTotalSolde(affaire: string | undefined, responsable: Responsable | undefined) {
@@ -173,6 +142,43 @@ export class BillingClosureComponent implements OnInit {
             solde -= value.debitAmount;
       }
     return solde;
+  }
+
+  downloadInvoice(idCustomerOrder: number) {
+    this.customerOrderService.downloadInvoice({ id: idCustomerOrder } as CustomerOrder);
+  }
+
+  addToPayCb(receiptValue: BillingClosureReceiptValue) {
+    if (this.orderToPayInCb && this.orderToPayInCb.indexOf(receiptValue.idCustomerOrder) < 0 && receiptValue.debitAmount) {
+      this.orderToPayInCb.push(receiptValue.idCustomerOrder);
+      if (receiptValue.remainingDebitAmount)
+        this.totalToPayCb += receiptValue.remainingDebitAmount;
+      else
+        this.totalToPayCb += receiptValue.debitAmount;
+    }
+  }
+
+  removeFromPayCb(receiptValue: BillingClosureReceiptValue) {
+    if (this.orderToPayInCb && this.orderToPayInCb.indexOf(receiptValue.idCustomerOrder) >= 0 && receiptValue.debitAmount) {
+      this.orderToPayInCb.splice(this.orderToPayInCb.indexOf(receiptValue.idCustomerOrder));
+      if (receiptValue.remainingDebitAmount)
+        this.totalToPayCb -= receiptValue.remainingDebitAmount;
+      else
+        this.totalToPayCb -= receiptValue.debitAmount;
+    }
+  }
+
+  payCb() {
+    if (this.orderToPayInCb) {
+      this.appService.showLoadingSpinner();
+      this.customerOrderService.getCardPaymentLinkForPaymentInvoices(this.orderToPayInCb).subscribe(link => {
+        this.appService.hideLoadingSpinner();
+        if (this.platformService.isBrowser())
+          this.platformService.getNativeWindow()!.open(link.link, "_blank");
+        this.orderToPayInCb = [];
+        this.totalToPayCb = 0;
+      });
+    }
   }
 
 }

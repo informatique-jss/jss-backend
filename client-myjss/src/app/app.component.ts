@@ -5,6 +5,7 @@ import { filter } from 'rxjs';
 import { SHARED_IMPORTS } from './libs/SharedImports';
 import { ConstantService } from './modules/main/services/constant.service';
 import { GtmService } from './modules/main/services/gtm.service';
+import { PlatformService } from './modules/main/services/platform.service';
 import { Responsable } from './modules/profile/model/Responsable';
 import { LoginService } from './modules/profile/services/login.service';
 
@@ -26,6 +27,7 @@ export class AppComponent {
     private constantService: ConstantService,
     private loginService: LoginService,
     private gtm: GtmService,
+    private plaformService: PlatformService
   ) {
   }
 
@@ -35,12 +37,13 @@ export class AppComponent {
     //Init Google tag manager if in browser
     this.gtm.init();
 
-    this.loginService.currentUserChangeMessage.subscribe(response => {
-      if (!response)
-        this.currentUser = undefined;
-      else
-        this.refreshCurrentUser()
-    });
+    if (this.plaformService.isBrowser())
+      this.loginService.currentUserChangeMessage.subscribe(response => {
+        if (!response)
+          this.currentUser = undefined;
+        else
+          this.refreshCurrentUser()
+      });
 
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))

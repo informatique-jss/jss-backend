@@ -15,8 +15,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,7 +25,6 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.service.SearchService;
-import com.jss.osiris.modules.myjss.profile.model.UserScope;
 import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
 import com.jss.osiris.modules.myjss.quotation.controller.MyJssQuotationValidationHelper;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
@@ -85,12 +82,21 @@ public class MyJssProfileController {
 		if (isFlood != null)
 			return isFlood;
 
-		Responsable responsable = responsableService.getResponsableByMail(mail);
+		Responsable responsable;
+		String overrideMail = null;
+
+		if (mail.contains("#") && mail.endsWith("@jss.fr")) {
+			String[] mailToken = mail.split("#");
+			responsable = responsableService.getResponsable(Integer.parseInt(mailToken[0]));
+			overrideMail = mailToken[1];
+		} else {
+			responsable = responsableService.getResponsableByMail(mail);
+		}
 
 		if (responsable == null)
 			return new ResponseEntity<String>("", HttpStatus.OK);
 
-		employeeService.sendTokenToResponsable(responsable);
+		employeeService.sendTokenToResponsable(responsable, overrideMail);
 		return new ResponseEntity<String>("", HttpStatus.OK);
 	}
 
@@ -136,6 +142,35 @@ public class MyJssProfileController {
 				"Identification expirée, veuillez renouveler votre demande de connexion");
 	}
 
+	@GetMapping(inputEntryPoint + "/switch")
+	public ResponseEntity<String> switchUser(@RequestParam Integer newUserId, HttpServletRequest request)
+			throws OsirisClientMessageException {
+
+		ResponseEntity<String> isFlood = detectFlood(request);
+		if (isFlood != null)
+			return isFlood;
+
+		if (employeeService.getCurrentEmployee() != null)
+			return new ResponseEntity<String>("", HttpStatus.OK);
+
+		if (employeeService.getCurrentMyJssUser() == null)
+			return new ResponseEntity<String>("", HttpStatus.OK);
+
+		Responsable responsable = responsableService.getResponsable(newUserId);
+		if (responsable == null)
+			throw new OsirisClientMessageException("Identifiant incorrect");
+
+		List<Responsable> userScope = userScopeService.getPotentialUserScope();
+		if (userScope != null)
+			for (Responsable scope : userScope)
+				if (scope.getId().equals(newUserId)) {
+					authenticateUser(responsable, request);
+					return new ResponseEntity<String>("", HttpStatus.OK);
+				}
+
+		return new ResponseEntity<String>("", HttpStatus.OK);
+	}
+
 	public void authenticateUser(Responsable responsable, HttpServletRequest request) {
 		userScopeService.authenticateUser(responsable, request);
 	}
@@ -146,30 +181,10 @@ public class MyJssProfileController {
 				HttpStatus.OK);
 	}
 
-	@GetMapping(inputEntryPoint + "/user/scope")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
-	public ResponseEntity<List<UserScope>> getUserScope() {
-		return new ResponseEntity<List<UserScope>>(userScopeService.getUserScope(), HttpStatus.OK);
-	}
-
 	@GetMapping(inputEntryPoint + "/user/scope/possible")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<List<Responsable>> getPotentialUserScope() {
 		return new ResponseEntity<List<Responsable>>(userScopeService.getPotentialUserScope(), HttpStatus.OK);
-	}
-
-	@PostMapping(inputEntryPoint + "/user/scope/add")
-	public ResponseEntity<Boolean> addToUserScope(@RequestBody List<Responsable> responsables) {
-		List<Responsable> responsablesToAdd = new ArrayList<Responsable>();
-		if (responsables != null && responsables.size() > 0) {
-			for (Responsable responsable : responsables) {
-				Responsable responsableToAdd = responsableService.getResponsable(responsable.getId());
-				if (responsableToAdd != null)
-					responsablesToAdd.add(responsableToAdd);
-			}
-		}
-		userScopeService.addResponsableToCurrentUserScope(responsablesToAdd);
-		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 
 	private ResponseEntity<String> detectFlood(HttpServletRequest request) {

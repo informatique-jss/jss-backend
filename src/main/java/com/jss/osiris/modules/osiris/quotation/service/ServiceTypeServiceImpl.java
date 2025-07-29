@@ -76,8 +76,8 @@ public class ServiceTypeServiceImpl implements ServiceTypeService {
     }
 
     @Override
-    public List<ServiceType> getServiceTypesForFamily(ServiceFamily serviceFamily) throws OsirisException {
-        List<ServiceType> serviceTypes = serviceTypeRepository.findByServiceFamily(serviceFamily);
+    public List<ServiceType> getServiceTypesForFamilyForMyJss(ServiceFamily serviceFamily) throws OsirisException {
+        List<ServiceType> serviceTypes = serviceTypeRepository.findByServiceFamilyForMyJss(serviceFamily);
         ProvisionScreenType provisionScreenTypeAnnouncement = constantService.getProvisionScreenTypeAnnouncement();
         if (serviceTypes != null)
             for (ServiceType serviceType : serviceTypes) {

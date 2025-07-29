@@ -5,6 +5,7 @@ import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jss.osiris.libs.search.model.DoNotAudit;
 
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,6 +14,7 @@ import jakarta.persistence.SequenceGenerator;
 
 @Entity
 @DoNotAudit
+@Cacheable(false)
 public class Pagination implements Serializable {
     @Id
     @SequenceGenerator(name = "guichet_unique_pagination_sequence", sequenceName = "guichet_unique_pagination_sequence", allocationSize = 1)

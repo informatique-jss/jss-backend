@@ -25,9 +25,6 @@ public interface CustomerOrderReportingRepository extends CrudRepository<Quotati
                         " select " +
                         " co.id as id, " +
                         " cos2.label as customerOrderStatusLabel, " +
-                        " concat(e.firstname, " +
-                        " ' ', " +
-                        " e.lastname) as customerOrderAssignedEmployee, " +
                         " array_to_string(array[ " +
                         " case " +
                         " when sum(case when pft.code like 'B%' then 1 else 0 end)>0 then 'Formalité' " +
@@ -60,14 +57,9 @@ public interface CustomerOrderReportingRepository extends CrudRepository<Quotati
                         " p.id_service = service.id " +
                         " left join provision_family_type pft on " +
                         " pft.id = p.id_provision_family_type " +
-                        " left join employee e on " +
-                        " e.id = co.id_assigned_to " +
                         " group by " +
                         " co.id, " +
                         " cos2.label, " +
-                        " concat(e.firstname, " +
-                        " ' ', " +
-                        " e.lastname) , " +
                         " co.id, " +
                         " adt.username, " +
                         " to_char(adt.datetime, 'YYYY')  , " +

@@ -2,8 +2,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { CustomerOrderStatus } from 'src/app/modules/quotation/model/CustomerOrderStatus';
 import { CustomerOrderStatusService } from 'src/app/modules/quotation/services/customer.order.status.service';
-import { GenericMultipleSelectComponent } from '../generic-select/generic-multiple-select.component';
 import { AppService } from 'src/app/services/app.service';
+import { GenericMultipleSelectComponent } from '../generic-select/generic-multiple-select.component';
 
 @Component({
   selector: 'select-customer-order-status',
@@ -26,7 +26,7 @@ export class SelectCustomerOrderStatusComponent extends GenericMultipleSelectCom
 
   initTypes(): void {
     this.customerOrderStatusService.getCustomerOrderStatus().subscribe(response => {
-      this.types = response;
+      this.types = response.filter(t => t.code != "OPEN");
       if (this.defaultCodesSelected) {
         this.model = [];
         for (let type of this.types) {

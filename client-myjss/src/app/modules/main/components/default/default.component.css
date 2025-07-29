@@ -1,0 +1,20 @@
+.support-button {
+  position: fixed;
+  bottom: 66px;
+  right: 20px;
+  z-index: 1050;
+  background-color: var(--ar-primary);
+  color: var(--ar-secondary);
+  padding: 10px 16px;
+  border-radius: 30px;
+  text-decoration: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.support-button:hover {
+  background-color: var(--ar-secondary);
+  text-decoration: none;
+  color: var(--ar-primary);
+}

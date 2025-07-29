@@ -2,8 +2,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { QuotationStatus } from 'src/app/modules/quotation/model/QuotationStatus';
 import { QuotationStatusService } from 'src/app/modules/quotation/services/quotation-status.service';
-import { GenericMultipleSelectComponent } from '../generic-select/generic-multiple-select.component';
 import { AppService } from 'src/app/services/app.service';
+import { GenericMultipleSelectComponent } from '../generic-select/generic-multiple-select.component';
 
 @Component({
   selector: 'select-quotation-status',
@@ -26,7 +26,7 @@ export class SelectQuotationStatusComponent extends GenericMultipleSelectCompone
 
   initTypes(): void {
     this.quotationStatusService.getQuotationStatus().subscribe(response => {
-      this.types = response;
+      this.types = response.filter(t => t.code != "OPEN");;
       if (this.defaultCodesSelected) {
         this.model = [];
         for (let type of this.types) {

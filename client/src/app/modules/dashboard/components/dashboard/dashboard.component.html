@@ -1,85 +1,103 @@
 <div>
-  <div class=" full-width">
-    <div class="dashboard-box-settings">
-      <mat-icon color="accent" class="pointer" [matMenuTriggerFor]="menu">settings</mat-icon>
-    </div>
-  </div>
-  <div class="dashboard-container" cdkDropListGroup [ngStyle]="{ '--box-width': boxWidth, '--box-height': boxHeight }">
-    <div cdkDropList (cdkDropListEntered)="onDropListEntered($event)" (cdkDropListDropped)="onDropListDropped()">
-    </div>
-    <div cdkDropList (cdkDropListEntered)="onDropListEntered($event)" (cdkDropListDropped)="onDropListDropped()"
-      *ngFor="let item of items">
-      <div cdkDrag class="dashboard-box">
-        <div class="dashboard-toolbar">
-          <div class="dashboard-title">{{item}}</div>
-          <div class="dashboard-box-delete">
-            <mat-icon color="accent" matTooltip="Masquer le widget" (click)="toggleDisplay(item)">delete</mat-icon>
-          </div>
-          <div class="dashboard-box-handle" cdkDragHandle>
-            <mat-icon color="accent" matTooltip="Déplacer le widget">zoom_out_map</mat-icon>
-          </div>
-        </div><ordering-list class="dashboard-box-component" *ngIf="item==ORDERS_AWAITING_DEPOSIT"
-          [orderingSearch]="orderingSearchToAwaitingDeposit" [isForDashboard]="true"></ordering-list>
-        <provision-list class="dashboard-box-component" *ngIf="item==AFFAIRE_IN_PROGRESS"
-          [affaireSearch]="affaireSearchInProgress" [isForDashboard]="true"></provision-list>
-        <provision-list class="dashboard-box-component" *ngIf="item==AFFAIRE_SIMPLE_PROVISION_AUTHORITY_REJECTED"
-          [affaireSearch]="affaireSearcAuthorityRejected" [isForDashboard]="true"></provision-list>
-        <provision-list class="dashboard-box-component" *ngIf="item==AFFAIRE_SIMPLE_PROVISION_AUTHORITY_VALIDATED"
-          [affaireSearch]="affaireSearcAuthorityValidated" [isForDashboard]="true"></provision-list>
-        <provision-list class="dashboard-box-component" *ngIf="item==AFFAIRE_WAITING_FINAL_DOCUMENT_AUTHORITY"
-          [affaireSearch]="affaireWaitingFinalDocumentAuthority" [isForDashboard]="true"></provision-list>
-        <provision-list class="dashboard-box-component" *ngIf="item==AFFAIRE_DOCUMENT_AUTHORITY_TECHNICAL_BLOCKING"
-          [affaireSearch]="affairTechnicalBlockingAuthority" [isForDashboard]="true"></provision-list>
-        <provision-list class="dashboard-box-component" *ngIf="item==AFFAIRE_TO_DO" [affaireSearch]="affaireSearchToDo"
-          [isForDashboard]="true"></provision-list>
-        <provision-list class="dashboard-box-component" *ngIf="item==AFFAIRE_SIMPLE_PROVISION_WAITING_AUTHORITY"
-          [affaireSearch]="affaireSearchWaitingAuthority" [isForDashboard]="true"></provision-list>
-        <provision-list class="dashboard-box-component" *ngIf="item==AFFAIRE_SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT"
-          [affaireSearch]="affaireSearchWaitingDocument" [isForDashboard]="true"></provision-list>
-        <provision-list class="dashboard-box-component"
-          *ngIf="item==AFFAIRE_MISSING_ATTACHMENT_QUERY_TO_MANUALLY_REMINDER"
-          [affaireSearch]="affaireSearchMissingAttachmentQueryManually" [isForDashboard]="true"></provision-list>
-        <ordering-list class="dashboard-box-component" *ngIf="item==ORDER_OPEN" [orderingSearch]="orderingSearchOpen"
-          [isForDashboard]="true"></ordering-list>
-        <ordering-list class="dashboard-box-component" *ngIf="item==ALL_ORDER_OPEN"
-          [orderingSearch]="orderingSearchAllOpen" [isForDashboard]="true"></ordering-list>
-        <ordering-list class="dashboard-box-component" *ngIf="item==ORDER_BEING_PROCESSED"
-          [orderingSearch]="orderingSearchBeingProcessed" [isForDashboard]="true"></ordering-list>
-        <ordering-list class="dashboard-box-component" *ngIf="item==ORDER_TO_BILLED"
-          [orderingSearch]="orderingSearchToBilled" [isForDashboard]="true"></ordering-list>
-        <ordering-list-tagged class="dashboard-box-component" *ngIf="item==ORDER_GROUP_TAGGED_WITH_COMMENT"
-          [orderingSearchTagged]="orderingSearchTagged" [isForDashboard]="true"></ordering-list-tagged>
-        <quotation-list class="dashboard-box-component" *ngIf="item==QUOTATION_OPEN"
-          [quotationSearch]="quotationSearchOpen" [isForDashboard]="true"></quotation-list>
-        <quotation-list class="dashboard-box-component" *ngIf="item==QUOTATION_TO_VERIFY"
-          [quotationSearch]="quotationSearchToVerify" [isForDashboard]="true"></quotation-list>
-        <quotation-list class="dashboard-box-component" *ngIf="item==QUOTATION_REFUSED"
-          [quotationSearch]="quotationSearchRefused" [isForDashboard]="true"></quotation-list>
-        <quotation-list class="dashboard-box-component" *ngIf="item==QUOTATION_SENT"
-          [quotationSearch]="quotationSearchSent" [isForDashboard]="true"></quotation-list>
-        <invoice-list class="dashboard-box-component" *ngIf="item==INVOICE_TO_ASSOCIATE"
-          [invoiceSearch]="invoiceSearchToAssociate" [isForDashboard]="true"></invoice-list>
-        <payment-list class="dashboard-box-component" *ngIf="item==PAYMENT_TO_ASSOCIATE"
-          [paymentSearch]="paymentSearchToAssociate" [isForDashboard]="true"></payment-list>
-        <refund-list class="dashboard-box-component" *ngIf="item==REFUND_TO_EMIT" [refundSearch]="refundSearchToEmit"
-          [isForDashboard]="true"></refund-list>
-        <log class="dashboard-box-component" *ngIf="item==LOG_TO_REVIEW && canViewLogModule()" [isForDashboard]="true">
-        </log>
-        <provision-board class="dashboard-box-component" *ngIf="item==PROVISION_BOARD"></provision-board>
+  <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
+    <mat-tab label="Tableaux de bord">
+      <div class=" full-width">
+        <div class="dashboard-box-settings">
+          <mat-icon color="accent" class="pointer" [matMenuTriggerFor]="menu">settings</mat-icon>
+        </div>
       </div>
-    </div>
-  </div>
+      <div class="dashboard-container" cdkDropListGroup
+        [ngStyle]="{ '--box-width': boxWidth, '--box-height': boxHeight }">
+        <div cdkDropList (cdkDropListEntered)="onDropListEntered($event)" (cdkDropListDropped)="onDropListDropped()">
+        </div>
+        <div cdkDropList (cdkDropListEntered)="onDropListEntered($event)" (cdkDropListDropped)="onDropListDropped()"
+          *ngFor="let item of items">
+          <div cdkDrag class="dashboard-box">
+            <div class="dashboard-toolbar">
+              <div class="dashboard-title">{{item}}</div>
+              <div class="dashboard-box-delete">
+                <mat-icon color="accent" matTooltip="Masquer le widget" (click)="toggleDisplay(item)">delete</mat-icon>
+              </div>
+              <div class="dashboard-box-handle" cdkDragHandle>
+                <mat-icon color="accent" matTooltip="Déplacer le widget">zoom_out_map</mat-icon>
+              </div>
+            </div><ordering-list class="dashboard-box-component" *ngIf="item==ORDERS_AWAITING_DEPOSIT"
+              [orderingSearch]="orderingSearchToAwaitingDeposit" [isForDashboard]="true"></ordering-list>
+            <provision-list class="dashboard-box-component" *ngIf="item==AFFAIRE_IN_PROGRESS"
+              [affaireSearch]="affaireSearchInProgress" [isForDashboard]="true"></provision-list>
+            <provision-list class="dashboard-box-component" *ngIf="item==AFFAIRE_SIMPLE_PROVISION_AUTHORITY_REJECTED"
+              [affaireSearch]="affaireSearcAuthorityRejected" [isForDashboard]="true"></provision-list>
+            <provision-list class="dashboard-box-component" *ngIf="item==AFFAIRE_SIMPLE_PROVISION_AUTHORITY_VALIDATED"
+              [affaireSearch]="affaireSearcAuthorityValidated" [isForDashboard]="true"></provision-list>
+            <provision-list class="dashboard-box-component" *ngIf="item==AFFAIRE_WAITING_FINAL_DOCUMENT_AUTHORITY"
+              [affaireSearch]="affaireWaitingFinalDocumentAuthority" [isForDashboard]="true"></provision-list>
+            <provision-list class="dashboard-box-component" *ngIf="item==AFFAIRE_DOCUMENT_AUTHORITY_TECHNICAL_BLOCKING"
+              [affaireSearch]="affairTechnicalBlockingAuthority" [isForDashboard]="true"></provision-list>
+            <provision-list class="dashboard-box-component" *ngIf="item==AFFAIRE_TO_DO"
+              [affaireSearch]="affaireSearchToDo" [isForDashboard]="true"></provision-list>
+            <provision-list class="dashboard-box-component" *ngIf="item==AFFAIRE_SIMPLE_PROVISION_WAITING_AUTHORITY"
+              [affaireSearch]="affaireSearchWaitingAuthority" [isForDashboard]="true"></provision-list>
+            <provision-list class="dashboard-box-component"
+              *ngIf="item==AFFAIRE_SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT"
+              [affaireSearch]="affaireSearchWaitingDocument" [isForDashboard]="true"></provision-list>
+            <provision-list class="dashboard-box-component"
+              *ngIf="item==AFFAIRE_MISSING_ATTACHMENT_QUERY_TO_MANUALLY_REMINDER"
+              [affaireSearch]="affaireSearchMissingAttachmentQueryManually" [isForDashboard]="true"></provision-list>
+            <ordering-list class="dashboard-box-component" *ngIf="item==ORDER_OPEN"
+              [orderingSearch]="orderingSearchOpen" [isForDashboard]="true"></ordering-list>
+            <ordering-list class="dashboard-box-component" *ngIf="item==ALL_ORDER_OPEN"
+              [orderingSearch]="orderingSearchAllOpen" [isForDashboard]="true"></ordering-list>
+            <ordering-list class="dashboard-box-component" *ngIf="item==ORDER_BEING_PROCESSED"
+              [orderingSearch]="orderingSearchBeingProcessed" [isForDashboard]="true"></ordering-list>
+            <ordering-list class="dashboard-box-component" *ngIf="item==ORDER_TO_BILLED"
+              [orderingSearch]="orderingSearchToBilled" [isForDashboard]="true"></ordering-list>
+            <ordering-list-tagged class="dashboard-box-component" *ngIf="item==ORDER_GROUP_TAGGED_WITH_COMMENT"
+              [orderingSearchTagged]="orderingSearchTagged" [isForDashboard]="true"></ordering-list-tagged>
+            <quotation-list class="dashboard-box-component" *ngIf="item==QUOTATION_OPEN"
+              [quotationSearch]="quotationSearchOpen" [isForDashboard]="true"></quotation-list>
+            <quotation-list class="dashboard-box-component" *ngIf="item==QUOTATION_TO_VERIFY"
+              [quotationSearch]="quotationSearchToVerify" [isForDashboard]="true"></quotation-list>
+            <quotation-list class="dashboard-box-component" *ngIf="item==QUOTATION_REFUSED"
+              [quotationSearch]="quotationSearchRefused" [isForDashboard]="true"></quotation-list>
+            <quotation-list class="dashboard-box-component" *ngIf="item==QUOTATION_SENT"
+              [quotationSearch]="quotationSearchSent" [isForDashboard]="true"></quotation-list>
+            <invoice-list class="dashboard-box-component" *ngIf="item==INVOICE_TO_ASSOCIATE"
+              [invoiceSearch]="invoiceSearchToAssociate" [isForDashboard]="true"></invoice-list>
+            <payment-list class="dashboard-box-component" *ngIf="item==PAYMENT_TO_ASSOCIATE"
+              [paymentSearch]="paymentSearchToAssociate" [isForDashboard]="true"></payment-list>
+            <refund-list class="dashboard-box-component" *ngIf="item==REFUND_TO_EMIT"
+              [refundSearch]="refundSearchToEmit" [isForDashboard]="true"></refund-list>
+            <log class="dashboard-box-component" *ngIf="item==LOG_TO_REVIEW && canViewLogModule()"
+              [isForDashboard]="true">
+            </log>
+            <provision-board class="dashboard-box-component" *ngIf="item==PROVISION_BOARD"></provision-board>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+    <mat-tab label="Devis">
+      <ng-template matTabContent>
+        <quotation-kanban></quotation-kanban>
+      </ng-template>
+    </mat-tab>
+    <mat-tab label="Commandes">
+      <ng-template matTabContent>
+        <order-kaban></order-kaban>
+      </ng-template>
+    </mat-tab>
+    <mat-tab label="Prestations">
+      <ng-template matTabContent>
+        <provision-kanban></provision-kanban>
+      </ng-template>
+    </mat-tab>
+    <mat-tab label="Affectation">
+      <ng-template matTabContent>
+        <provision-affectation-kanban></provision-affectation-kanban>
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
 </div>
 <mat-menu #menu="matMenu" style="max-width: 100%;">
-  <div mat-menu-item *ngIf="canDisplayKanban()" routerLink="/dashboard/kanban/order">
-    <span>Kanban commande</span>
-  </div>
-  <div mat-menu-item *ngIf="canDisplayKanban()" routerLink="/dashboard/kanban/quotation">
-    <span>Kanban devis</span>
-  </div>
-  <div mat-menu-item *ngIf="canDisplayKanban()" routerLink="/dashboard/kanban/provision">
-    <span>Kanban prestation</span>
-  </div>
   <mat-divider></mat-divider>
   <div mat-menu-item *ngFor="let checkbox of checkboxes">
     <mat-checkbox [(ngModel)]="checkbox.value" (click)="toggleDisplay(checkbox.id);$event.stopPropagation()">

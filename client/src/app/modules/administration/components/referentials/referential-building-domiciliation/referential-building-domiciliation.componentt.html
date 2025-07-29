@@ -63,6 +63,10 @@
                 label="Pays" [isDisabled]="!editMode" [isMandatory]="true" [isDisabled]="!editMode">
               </autocomplete-country>
             </td>
+            <td>
+              <generic-toggle [(model)]="selectedEntity.isDisabled" label="Est désactivé ?" [form]="entityForm"
+                propertyName="isDisabled" [isDisabled]="!editMode"></generic-toggle>
+            </td>
           </tr>
         </table>
       </fieldset>

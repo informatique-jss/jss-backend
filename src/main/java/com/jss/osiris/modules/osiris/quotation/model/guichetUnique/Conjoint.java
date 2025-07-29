@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import com.jss.osiris.libs.search.model.DoNotAudit;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -17,6 +18,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 
 @Entity
+@Cacheable(false)
 @DoNotAudit
 public class Conjoint implements Serializable, IId {
     @Id

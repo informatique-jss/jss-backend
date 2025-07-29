@@ -87,10 +87,10 @@ public class NotificationServiceImpl implements NotificationService {
                 }
                 if (notification.getCustomerOrder() != null && completeAdditionnalInformation) {
                     notification.getCustomerOrder().setServicesList(customerOrderService
-                            .completeAdditionnalInformationForCustomerOrder(notification.getCustomerOrder())
+                            .completeAdditionnalInformationForCustomerOrder(notification.getCustomerOrder(), false)
                             .getServicesList());
                     notification.getCustomerOrder().setAffairesList(customerOrderService
-                            .completeAdditionnalInformationForCustomerOrder(notification.getCustomerOrder())
+                            .completeAdditionnalInformationForCustomerOrder(notification.getCustomerOrder(), false)
                             .getAffairesList());
                 }
                 ouNotifications.add(notification);
@@ -128,6 +128,9 @@ public class NotificationServiceImpl implements NotificationService {
 
     private void generateNewNotification(Employee fromEmployee, Employee toEmployee, String notificationType,
             boolean showPopup, Service service, Provision provision, CustomerOrder customerOrder, Candidacy candidacy) {
+
+        if (toEmployee == null)
+            return;
 
         List<Notification> existingNotification = null;
         if (service != null)
@@ -305,7 +308,7 @@ public class NotificationServiceImpl implements NotificationService {
                 && (order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)
                         || order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.TO_BILLED))) {
             for (Provision provision : service.getProvisions()) {
-                if (!isProvisionClosed(provision) && !isProvisionOpen(provision)
+                if (!isProvisionClosed(provision) && !isProvisionOpen(provision) && provision.getAssignedTo() != null
                         && !employeeIdAlreadyNotified.contains(provision.getAssignedTo().getId())) {
                     if (provision.getAssignedTo() != null) {
                         employeeIdAlreadyNotified.add(provision.getAssignedTo().getId());
@@ -322,7 +325,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void notifyAttachmentAddToCustomerorder(CustomerOrder order, Attachment attachment) throws OsirisException {
+    public void notifyAttachmentAddToCustomerOrder(CustomerOrder order, Attachment attachment) throws OsirisException {
         List<Integer> employeeIdAlreadyNotified = new ArrayList<Integer>();
         if (order != null && order.getAssoAffaireOrders() != null) {
             for (AssoAffaireOrder asso : order.getAssoAffaireOrders())
@@ -334,6 +337,7 @@ public class NotificationServiceImpl implements NotificationService {
                                                 .equals(CustomerOrderStatus.TO_BILLED))) {
                             for (Provision provision : service.getProvisions()) {
                                 if (!isProvisionClosed(provision) && !isProvisionOpen(provision)
+                                        && provision.getAssignedTo() != null
                                         && !employeeIdAlreadyNotified.contains(provision.getAssignedTo().getId())) {
                                     if (provision.getAssignedTo() != null) {
                                         employeeIdAlreadyNotified.add(provision.getAssignedTo().getId());
@@ -352,26 +356,32 @@ public class NotificationServiceImpl implements NotificationService {
         }
     }
 
+    @Override
+    public void notifyImmediateAffactationOfOrder(CustomerOrder customerOrder) throws OsirisException {
+        generateNewNotification(employeeService.getCurrentEmployee(), constantService.getEmployeeProductionDirector(),
+                Notification.ORDER_IMMEDIATLY_AFFECTED, false, null, null, customerOrder, null);
+    }
+
     private boolean isProvisionClosed(Provision provision) {
-        if (provision.getAnnouncement() != null)
+        if (provision.getAnnouncement() != null && provision.getAnnouncement().getAnnouncementStatus() != null)
             return provision.getAnnouncement().getAnnouncementStatus().getIsCloseState();
-        if (provision.getSimpleProvision() != null)
+        if (provision.getSimpleProvision() != null && provision.getSimpleProvision().getSimpleProvisionStatus() != null)
             return provision.getSimpleProvision().getSimpleProvisionStatus().getIsCloseState();
-        if (provision.getFormalite() != null)
+        if (provision.getFormalite() != null && provision.getFormalite().getFormaliteStatus() != null)
             return provision.getFormalite().getFormaliteStatus().getIsCloseState();
-        if (provision.getDomiciliation() != null)
+        if (provision.getDomiciliation() != null && provision.getDomiciliation().getDomiciliationStatus() != null)
             return provision.getDomiciliation().getDomiciliationStatus().getIsCloseState();
         return false;
     }
 
     private boolean isProvisionOpen(Provision provision) {
-        if (provision.getAnnouncement() != null)
+        if (provision.getAnnouncement() != null && provision.getAnnouncement().getAnnouncementStatus() != null)
             return provision.getAnnouncement().getAnnouncementStatus().getIsOpenState();
-        if (provision.getSimpleProvision() != null)
+        if (provision.getSimpleProvision() != null && provision.getSimpleProvision().getSimpleProvisionStatus() != null)
             return provision.getSimpleProvision().getSimpleProvisionStatus().getIsOpenState();
-        if (provision.getFormalite() != null)
+        if (provision.getFormalite() != null && provision.getFormalite().getFormaliteStatus() != null)
             return provision.getFormalite().getFormaliteStatus().getIsOpenState();
-        if (provision.getDomiciliation() != null)
+        if (provision.getDomiciliation() != null && provision.getDomiciliation().getDomiciliationStatus() != null)
             return provision.getDomiciliation().getDomiciliationStatus().getIsOpenState();
         return false;
     }

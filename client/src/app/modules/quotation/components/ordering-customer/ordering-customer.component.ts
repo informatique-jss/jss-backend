@@ -5,9 +5,12 @@ import { QUOTATION_STATUS_SENT_TO_CUSTOMER } from 'src/app/libs/Constants';
 import { formatDateTimeForSortTable } from 'src/app/libs/FormatHelper';
 import { instanceOfCustomerOrder, instanceOfQuotation } from 'src/app/libs/TypeHelper';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
+import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { DocumentTypeService } from 'src/app/modules/miscellaneous/services/document.type.service';
+import { Employee } from 'src/app/modules/profile/model/Employee';
 import { TiersService } from 'src/app/modules/tiers/services/tiers.service';
 import { IndexEntityService } from 'src/app/routing/search/index.entity.service';
+import { HabilitationsService } from 'src/app/services/habilitations.service';
 import { formatEurosForSortTable } from '../../../../libs/FormatHelper';
 import { IndexEntity } from '../../../../routing/search/IndexEntity';
 import { AppService } from '../../../../services/app.service';
@@ -16,9 +19,11 @@ import { DocumentType } from '../../../miscellaneous/model/DocumentType';
 import { SortTableAction } from '../../../miscellaneous/model/SortTableAction';
 import { ResponsableService } from '../../../tiers/services/responsable.service';
 import { Confrere } from '../../model/Confrere';
+import { CustomerOrderAssignation } from '../../model/CustomerOrderAssignation';
 import { IQuotation } from '../../model/IQuotation';
 import { OrderingSearchResult } from '../../model/OrderingSearchResult';
 import { QuotationSearchResult } from '../../model/QuotationSearchResult';
+import { CustomerOrderAssignationService } from '../../services/customer.assignation.service';
 import { OrderingSearchResultService } from '../../services/ordering.search.result.service';
 import { QuotationSearchResultService } from '../../services/quotation.search.result.service';
 import { QuotationService } from '../../services/quotation.service';
@@ -66,7 +71,10 @@ export class OrderingCustomerComponent implements OnInit {
     protected documentTypeService: DocumentTypeService,
     private orderingSearchResultService: OrderingSearchResultService,
     private quotationSearchResultService: QuotationSearchResultService,
+    private habilitationService: HabilitationsService,
     private quotationService: QuotationService,
+    private constantService: ConstantService,
+    private customerOrderAssignationService: CustomerOrderAssignationService,
     public specialOfferDialog: MatDialog) { }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -158,6 +166,11 @@ export class OrderingCustomerComponent implements OnInit {
   fillResponsable(responsable: IndexEntity) {
     this.responsableService.getResponsable(responsable.entityId).subscribe(response => {
       this.quotation.responsable = response;
+      if (this.quotation.responsable && this.quotation.responsable.documents) {
+        for (let doc of this.quotation.responsable.documents)
+          if (doc.documentType.code === this.constantService.getDocumentTypeBilling().code)
+            this.billingDocument = doc;
+      }
       this.setDocument();
     });
     this.tiersService.getTiersByResponsable(responsable.entityId).subscribe(response => {
@@ -188,6 +201,20 @@ export class OrderingCustomerComponent implements OnInit {
     this.quotationService.associateCustomerOrderToQuotation(customerOrder.entityId, this.quotation.id).subscribe(response => {
       this.appService.openRoute(null, '/quotation/' + this.quotation.id, null);
     })
+  }
+
+  canAddAssignOrderForProduction() {
+    return this.habilitationService.canAddAssignOrderForProduction();
+  }
+
+  updateAssignedToFor(employee: Employee, customerOrderAssignation: CustomerOrderAssignation) {
+    this.customerOrderAssignationService.updateCustomerOrderAssignation(customerOrderAssignation.id, employee.id).subscribe();
+  }
+
+  assignImmediatlyOrder() {
+    this.customerOrderAssignationService.assignImmediatlyOrder(this.quotation.id).subscribe(response => {
+      this.appService.openRoute(null, 'order/' + this.quotation.id, null);
+    });
   }
 
 }

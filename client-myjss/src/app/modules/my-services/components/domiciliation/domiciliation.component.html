@@ -47,7 +47,10 @@
             <span class="fs-xs fw-semibold text-blue text-uppercase">Domiciliation</span>
           </div>
           <h2 class="h2 secondary-heading pb-2 pb-sm-3 ">N'attendez plus et accédez à nos solutions</h2>
-          <double-buttons orderActionLabel="Domicilier mon entreprise" quotationActionLabel="Demander un devis"
+          <double-buttons class="text-grey" orderActionLabel=" Domicilier mon entreprise"
+            [orderActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeOrder.id"
+            quotationActionLabel="Demander un devis"
+            [quotationActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeQuotation.id"
             linkLabel="Bien choisir la domiciliation d'entreprise" [isLightButtons]="false">
           </double-buttons>
         </div>

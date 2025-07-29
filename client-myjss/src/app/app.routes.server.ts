@@ -33,6 +33,8 @@ export const serverRoutes: ServerRoute[] = [
   { path: 'tools/webinars', renderMode: RenderMode.Prerender },
   { path: 'account', renderMode: RenderMode.Client },
   { path: 'account/:subroute', renderMode: RenderMode.Client },
+
+  { path: 'beta_access', renderMode: RenderMode.Client },
   {
     path: '**',
     renderMode: RenderMode.Server

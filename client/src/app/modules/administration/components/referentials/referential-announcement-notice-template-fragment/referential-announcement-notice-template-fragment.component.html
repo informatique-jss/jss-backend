@@ -1,0 +1,79 @@
+<div>
+  <div>
+    <mat-form-field class="full-width">
+      <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
+    </mat-form-field>
+  </div>
+  <div class="table-container-scroll">
+    <sort-table [columns]="displayedColumns" (onRowClick)="selectEntity($event)" [values]="entities"
+      [noMaxHeight]="true" [noPaddingBottom]="true" tableName="Référentiel " [idRowSelected]="idRowSelected"
+      [filterText]="searchText">
+    </sort-table>
+  </div>
+</div>
+<div class="mat-elevation-z2 form-div" *ngIf="selectedEntity ">
+  <form [formGroup]="entityForm">
+    <div class="full-width">
+      <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+        <table class="full-width">
+          <tr *ngIf="selectedEntity.id">
+            <td>
+              <generic-input [(model)]="selectedEntity.id" label="Identifiant technique" [form]="entityForm"
+                propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-input [(model)]="selectedEntity.code" label="Codification" [maxLength]="40" [form]="entityForm"
+                propertyName="code" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-input [(model)]="selectedEntity.label" label="Nom fonctionnel" [maxLength]="100"
+                [form]="entityForm" propertyName="label" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-toggle [(model)]="selectedEntity.isMultiple" label="Est multiple ?" [form]="entityForm"
+                propertyName="isMultiple" [isDisabled]="!editMode"></generic-toggle>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div *ngIf="!editMode">
+                <p>Texte :</p>
+                <span [innerHTML]="selectedEntity.text| trustHtml" class="no-font"></span>
+              </div>
+              <ckeditor *ngIf="editMode" [editor]="ckEditorNotice" [config]="config" [data]="initialNoticeValue"
+                (change)="onNoticeChange($event)"></ckeditor>
+            </td>
+          </tr>
+        </table>
+      </fieldset>
+    </div>
+  </form>
+</div>
+<div>
+  <p>Liste des mots-clés disponibles :</p>
+  <ul>
+    <li>&#123;prenom&#125;</li>
+    <li>&#123;nom&#125;</li>
+    <li>&#123;civilite&#125;</li>
+    <li>&#123;adresse&#125;</li>
+    <li>&#123;denomination&#125;</li>
+    <li>&#123;sigle&#125;</li>
+    <li>&#123;ville&#125;</li>
+    <li>&#123;departement&#125;</li>
+    <li>&#123;codePostal&#125;</li>
+    <li>&#123;activitePrincipale&#125;</li>
+    <li>&#123;capitalSocial&#125;</li>
+    <li>&#123;formeJuridique&#125;</li>
+    <li>&#123;autoriteCompetenteDenomination&#125;</li>
+    <li>&#123;autoriteCompetenteVille&#125;</li>
+    <li>&#123;siren&#125;</li>
+    <li>&#123;siret&#125;</li>
+    <li>&#123;rna&#125;</li>
+  </ul>
+</div>

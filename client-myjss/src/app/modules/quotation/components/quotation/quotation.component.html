@@ -23,12 +23,16 @@
 <!-- Content Section -->
 <div class="tab-content">
   <div>
-    <div class="tab-pane">
+    <div class="tab-pane mb-5">
       <router-outlet></router-outlet>
+      <div class="container">
+        <notice-template *ngIf="isNoticeTemplateReadyToBeShown"
+          [hidden]="!selectedServiceInRequiredInformation || !isShowNoticeTemplate"
+          [service]="selectedServiceInRequiredInformation"></notice-template>
+      </div>
     </div>
   </div>
 </div>
-
 
 <!-- Modal de confirmation -->
 <ng-template #cleanModal let-modal>

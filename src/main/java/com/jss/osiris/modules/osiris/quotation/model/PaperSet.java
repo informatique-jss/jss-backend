@@ -3,6 +3,7 @@ package com.jss.osiris.modules.osiris.quotation.model;
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jss.osiris.modules.osiris.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 import com.jss.osiris.modules.osiris.miscellaneous.model.PaperSetType;
 
@@ -32,6 +33,11 @@ public class PaperSet implements Serializable, IId {
 	@JoinColumn(name = "id_customer_order")
 	@JsonIgnoreProperties(value = { "paperSets" }, allowSetters = true)
 	private CustomerOrder customerOrder;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_competent_authority")
+	@JsonIgnoreProperties(value = { "paperSets" }, allowSetters = true)
+	private CompetentAuthority competentAuthority;
 
 	private Integer locationNumber;
 
@@ -107,6 +113,14 @@ public class PaperSet implements Serializable, IId {
 
 	public void setValidationComment(String validationComment) {
 		this.validationComment = validationComment;
+	}
+
+	public CompetentAuthority getCompetentAuthority() {
+		return competentAuthority;
+	}
+
+	public void setCompetentAuthority(CompetentAuthority competentAuthority) {
+		this.competentAuthority = competentAuthority;
 	}
 
 }

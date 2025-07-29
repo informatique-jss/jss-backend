@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Department;
-import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.osiris.quotation.model.Confrere;
@@ -68,17 +67,6 @@ public class ConfrereServiceImpl implements ConfrereService {
         if (confrere != null && confrere.getPhones() != null
                 && confrere.getPhones().size() > 0) {
             phoneService.populatePhoneIds(confrere.getPhones());
-        }
-
-        // If document mails already exists, get their ids
-        if (confrere.getDocuments() != null && confrere.getDocuments().size() > 0) {
-            for (Document document : confrere.getDocuments()) {
-                document.setConfrere(confrere);
-                if (document.getMailsAffaire() != null && document.getMailsAffaire().size() > 0)
-                    mailService.populateMailIds(document.getMailsAffaire());
-                if (document.getMailsClient() != null && document.getMailsClient().size() > 0)
-                    mailService.populateMailIds(document.getMailsClient());
-            }
         }
 
         return confrereRepository.save(confrere);

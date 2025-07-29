@@ -435,10 +435,18 @@ public class MailHelper {
         ctx.setVariable("cbLink", mail.getCbLink());
 
         if (mail.getMailTemplate().equals(CustomerMail.TEMPLATE_CUSTOMER_ORDER_IN_PROGRESS)
-                && (mail.getCustomerOrder() != null || mail.getQuotation() != null))
-            ctx.setVariable("mailComputeResultInvoice",
-                    mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(
-                            mail.getCustomerOrder() != null ? mail.getCustomerOrder() : mail.getQuotation()));
+                && (mail.getCustomerOrder() != null || mail.getQuotation() != null)) {
+            try {
+                MailComputeResult mailComputeResultInvoice = mailComputeHelper
+                        .computeMailForCustomerOrderFinalizationAndInvoice(
+                                mail.getCustomerOrder() != null ? mail.getCustomerOrder() : mail.getQuotation());
+                if (mailComputeResultInvoice != null)
+                    ctx.setVariable("mailComputeResultInvoice", mailComputeResultInvoice);
+            } catch (OsirisClientMessageException e) {
+                // We catch the exception so the mail is still sent even if the adress of the
+                // Affaire is not set
+            }
+        }
         ctx.setVariable("attachments", mail.getAttachments());
         ctx.setVariable("provision", mail.getProvision());
         ctx.setVariable("tiers", mail.getTiers());
@@ -824,7 +832,7 @@ public class MailHelper {
     public void sendConfirmationContactFormMyJss(String mailAdress) throws OsirisException {
         sendCustomerMailForMyJssMail(mailAdress, null,
                 constantService.getStringMyJssContactFormRequestMail(),
-                "Confirmation de la réception de votre demande de contribution",
+                "Confirmation de la réception de votre demande de contact",
                 CustomerMail.TEMPLATE_SEND_CONTACT_CONFIRMATION);
     }
 
@@ -1329,7 +1337,7 @@ public class MailHelper {
         customerMailService.addMailToQueue(mail);
     }
 
-    public void sendNewTokenMail(Responsable responsable) throws OsirisException {
+    public void sendNewTokenMail(Responsable responsable, String overrideMail) throws OsirisException {
         CustomerMail mail = new CustomerMail();
         mail.setMailTemplate(CustomerMail.TEMPLATE_SEND_TOKEN);
         mail.setHeaderPicture("images/mails/renew-password.png");
@@ -1339,7 +1347,13 @@ public class MailHelper {
         MailComputeResult mailComputeResult = new MailComputeResult();
         mailComputeResult.setRecipientsMailTo(new ArrayList<Mail>());
 
-        mailComputeResult.getRecipientsMailTo().add(responsable.getMail());
+        if (overrideMail != null) {
+            Mail overrideMailObject = new Mail();
+            overrideMailObject.setMail(overrideMail);
+            mailService.populateMailId(overrideMailObject);
+            mailComputeResult.getRecipientsMailTo().add(overrideMailObject);
+        } else
+            mailComputeResult.getRecipientsMailTo().add(responsable.getMail());
         mail.setMailComputeResult(mailComputeResult);
 
         mail.setSubject("Votre lien de connexion à MyJSS");

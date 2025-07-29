@@ -8,11 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.exception.OsirisException;
-import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
 import com.jss.osiris.modules.myjss.quotation.controller.model.DashboardUserStatistics;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
@@ -27,7 +27,7 @@ import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 public class DashboardUserStatisticsServiceImpl implements DashboardUserStatisticsService {
 
     @Autowired
-    UserScopeService userScopeService;
+    EmployeeService employeeService;
 
     @Autowired
     QuotationService quotationService;
@@ -50,7 +50,7 @@ public class DashboardUserStatisticsServiceImpl implements DashboardUserStatisti
     @Override
     public DashboardUserStatistics getDashboardUserStatistics() throws OsirisException {
         DashboardUserStatistics statistics = new DashboardUserStatistics();
-        List<Responsable> listResponsables = userScopeService.getUserCurrentScopeResponsables();
+        List<Responsable> listResponsables = Arrays.asList(employeeService.getCurrentMyJssUser());
 
         if (listResponsables != null && listResponsables.size() > 0) {
 
@@ -91,7 +91,7 @@ public class DashboardUserStatisticsServiceImpl implements DashboardUserStatisti
             statistics.setCustomerOrderRequieringAttention(0);
             if (customerOrderInProgress != null && customerOrderInProgress.size() > 0) {
                 customerOrderInProgress = customerOrderService
-                        .completeAdditionnalInformationForCustomerOrders(customerOrderInProgress);
+                        .completeAdditionnalInformationForCustomerOrders(customerOrderInProgress, false);
                 for (CustomerOrder customerOrder : customerOrderInProgress)
                     if (customerOrder.getHasMissingInformations() != null && customerOrder.getHasMissingInformations())
                         statistics.setCustomerOrderRequieringAttention(

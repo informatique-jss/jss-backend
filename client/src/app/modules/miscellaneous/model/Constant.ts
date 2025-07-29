@@ -178,6 +178,8 @@ export interface Constant {
   actTypeSeing: ActType;
   actTypeAuthentic: ActType;
   assignationTypeEmployee: AssignationType;
+  assignationTypeFormaliste: AssignationType;
+  assignationTypePublisciste: AssignationType;
   employeeBillingResponsible: Employee;
   employeeMailResponsible: Employee;
   employeeInvoiceReminderResponsible: Employee;
@@ -267,6 +269,8 @@ export interface Constant {
   provisionTypeBilanPublication: ProvisionType;
   provisionTypeRegistrationAct: ProvisionType;
   provisionFamilyTypeDeposit: ProvisionFamilyType;
+  provisionFamilyTypeBalo: ProvisionFamilyType;
+  provisionFamilyTypeBodacc: ProvisionFamilyType;
   provisionTypeRbe: ProvisionType;
   provisionTypeCharacterAnnouncement: ProvisionType;
   dateAccountingClosureForAll: Date;
@@ -275,6 +279,7 @@ export interface Constant {
   activeDirectoryGroupInsertions: ActiveDirectoryGroup;
   activeDirectoryGroupFacturation: ActiveDirectoryGroup;
   activeDirectoryGroupSales: ActiveDirectoryGroup;
+  activeDirectoryGroupDirection: ActiveDirectoryGroup;
   furtherInformationServiceFieldType: ServiceFieldType;
   responsableDummyCustomerFrance: Responsable;
   provisionScreenTypeAnnouncement: ProvisionScreenType;

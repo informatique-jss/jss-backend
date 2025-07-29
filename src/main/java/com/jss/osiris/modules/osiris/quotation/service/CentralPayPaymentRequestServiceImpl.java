@@ -61,18 +61,13 @@ public class CentralPayPaymentRequestServiceImpl implements CentralPayPaymentReq
     }
 
     @Override
-    public void declareNewCentralPayPaymentRequest(String paymentRequestId, CustomerOrder customerOrder,
+    public void declareNewCentralPayPaymentRequest(String paymentRequestId, List<CustomerOrder> customerOrders,
             Quotation quotation) {
         CentralPayPaymentRequest request = new CentralPayPaymentRequest();
-        request.setCustomerOrder(customerOrder);
+        request.setCustomerOrders(customerOrders);
         request.setPaymentRequestId(paymentRequestId);
         request.setQuotation(quotation);
         addOrUpdateCentralPayPaymentRequest(request);
-    }
-
-    @Override
-    public CentralPayPaymentRequest getCentralPayPaymentRequestByCustomerOrder(CustomerOrder customerOrder) {
-        return centralPayPaymentRequestRepository.findByCustomerOrder(customerOrder);
     }
 
     @Override
@@ -97,8 +92,8 @@ public class CentralPayPaymentRequestServiceImpl implements CentralPayPaymentReq
     public void checkPaymentRequest(CentralPayPaymentRequest request)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         if (request != null) {
-            if (request.getCustomerOrder() != null) {
-                if (customerOrderService.validateCardPaymentLinkForCustomerOrder(request.getCustomerOrder(),
+            if (request.getCustomerOrders() != null && request.getCustomerOrders().size() > 0) {
+                if (customerOrderService.validateCardPaymentLinkForCustomerOrder(request.getCustomerOrders(),
                         request))
                     deleteCentralPayPaymentRequest(request);
             } else if (request.getQuotation() != null) {

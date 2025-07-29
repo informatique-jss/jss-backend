@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_SENT_TO_CUSTOMER } from '../../../../libs/Constants';
 import { capitalizeName } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
@@ -20,6 +21,13 @@ export class OverviewComponent implements OnInit {
 
   currentUser: Responsable | undefined;
   statistics: DashboardUserStatistics | undefined;
+  isLoadingStats: boolean = false;
+
+  QUOTATION_STATUS_SENT_TO_CUSTOMER = QUOTATION_STATUS_SENT_TO_CUSTOMER;
+  QUOTATION_STATUS_OPEN = QUOTATION_STATUS_OPEN;
+  CUSTOMER_ORDER_STATUS_OPEN = CUSTOMER_ORDER_STATUS_OPEN;
+  CUSTOMER_ORDER_STATUS_BILLED = CUSTOMER_ORDER_STATUS_BILLED;
+  CUSTOMER_ORDER_STATUS_BEING_PROCESSED = CUSTOMER_ORDER_STATUS_BEING_PROCESSED;
 
   constructor(private route: ActivatedRoute,
     private appService: AppService,
@@ -39,7 +47,9 @@ export class OverviewComponent implements OnInit {
       }
     });
 
+    this.isLoadingStats = true;
     this.dashboardUserStatisticsService.getDashboardUserStatistics().subscribe(response => {
+      this.isLoadingStats = false;
       this.statistics = response;
     })
 

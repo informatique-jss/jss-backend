@@ -25,6 +25,7 @@ export class SingleUploadComponent implements OnInit {
   @Output() endOfUpload: EventEmitter<any> = new EventEmitter<any>();
   @Output() progressChange = new EventEmitter<any>();
   @Output() isErrorChange = new EventEmitter<boolean>();
+  @Input() forcedFileExtension: string = '';
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
@@ -52,6 +53,9 @@ export class SingleUploadComponent implements OnInit {
     private uploadAttachmentService: UploadAttachmentService) { }
 
   ngOnInit() {
+    if (this.forcedFileExtension)
+      this.forcedFileExtension = this.forcedFileExtension.toLowerCase();
+
     this.attachmentForm = this.formBuilder.group({
       attachmentType: ['', Validators.required],
       filename: ['', Validators.required],
@@ -78,6 +82,15 @@ export class SingleUploadComponent implements OnInit {
           this.appService.displayToast("Taille maximale d'import limitée à 10 Mo", true, "Erreur", 15);
           break;
         }
+
+        if (this.forcedFileExtension) {
+          var extensionRegexp = /(?:\.([^.]+))?$/;
+          if (!extensionRegexp.exec(file.name)![1] || extensionRegexp.exec(file.name)![1].toLowerCase() != this.forcedFileExtension.toLowerCase()) {
+            this.files = [];
+            this.appService.displayToast("Le fichier doit être au format " + this.forcedFileExtension.toUpperCase(), true, "Erreur", 15);
+          }
+        }
+
       }
     }
   }

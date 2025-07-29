@@ -83,13 +83,19 @@ public interface QuotationService {
 
         public List<Quotation> findQuotationByResponsable(Responsable responsable);
 
-        public List<Quotation> completeAdditionnalInformationForQuotations(List<Quotation> customerOrders)
+        public List<Quotation> completeAdditionnalInformationForQuotations(List<Quotation> customerOrders,
+                        Boolean populationAssoAffaireOrderTransientField)
                         throws OsirisException;
 
         public List<Quotation> searchQuotation(List<Employee> commercials, List<QuotationStatus> status)
                         throws OsirisException;
 
-        public Quotation completeAdditionnalInformationForQuotation(Quotation customerOrder) throws OsirisException;
+        public Quotation completeAdditionnalInformationForQuotation(Quotation quotation,
+                        Boolean populationAssoAffaireOrderTransientField)
+                        throws OsirisException;
+
+        public Quotation completeAdditionnalInformationForQuotationWhenIndexing(Quotation customerOrder)
+                        throws OsirisException;
 
         public Boolean setEmergencyOnQuotation(Quotation quotation, Boolean isEnabled)
                         throws OsirisClientMessageException, OsirisValidationException, OsirisException;
@@ -100,4 +106,10 @@ public interface QuotationService {
         public void purgeQuotations() throws OsirisException;
 
         public List<Quotation> getQuotationByAffaire(Affaire affaire);
+
+        public void reinitInvoicing(Quotation quotation)
+                        throws OsirisException, OsirisClientMessageException, OsirisValidationException,
+                        OsirisDuplicateException;
+
+        public void switchResponsable(Quotation quotation, Responsable responsable);
 }

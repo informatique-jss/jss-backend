@@ -16,6 +16,7 @@ export interface Service extends IAttachment {
   serviceVatPrice: number;
   serviceDiscountAmount: number;
   confrereLabel: string;
+  waitingAcLabel: string;
   lastMissingAttachmentQueryDateTime: Date;
   provisions: Provision[];
   serviceLabelToDisplay: string;

@@ -10012,6 +10012,10 @@ textarea.form-control-lg {
   z-index: 10 !important;
 }
 
+.z-1030 {
+  z-index: 1030 !important;
+}
+
 .bg-size-cover {
   background-size: cover !important;
 }

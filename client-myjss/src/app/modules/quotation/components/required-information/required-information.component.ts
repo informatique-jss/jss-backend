@@ -1,9 +1,9 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ChangeEvent, CKEditorModule } from '@ckeditor/ckeditor5-angular';
-import { NgbModal, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbNavChangeEvent, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { Alignment, Bold, ClassicEditor, Essentials, Font, GeneralHtmlSupport, Indent, IndentBlock, Italic, Link, List, Mention, Paragraph, PasteFromOffice, RemoveFormat, Underline, Undo } from 'ckeditor5';
-import { combineLatest, of, tap } from 'rxjs';
+import { combineLatest, Observable, of, Subscription } from 'rxjs';
 import { PROVISION_SCREEN_TYPE_ANNOUNCEMENT, PROVISION_SCREEN_TYPE_DOMICILIATION, SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
 import { validateEmail, validateFrenchPhone, validateInternationalPhone } from '../../../../libs/CustomFormsValidatorsHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
@@ -32,7 +32,9 @@ import { Announcement } from '../../../my-account/model/Announcement';
 import { AssoServiceDocument } from '../../../my-account/model/AssoServiceDocument';
 import { AssoServiceFieldType } from '../../../my-account/model/AssoServiceFieldType';
 import { Provision } from '../../../my-account/model/Provision';
+import { ProvisionType } from '../../../my-account/model/ProvisionType';
 import { Service } from '../../../my-account/model/Service';
+import { ServiceType } from '../../../my-account/model/ServiceType';
 import { AssoServiceDocumentService } from '../../../my-account/services/asso.service.document.service';
 import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
 import { QuotationService } from '../../../my-account/services/quotation.service';
@@ -42,16 +44,19 @@ import { Department } from '../../../profile/model/Department';
 import { Phone } from '../../../profile/model/Phone';
 import { Responsable } from '../../../profile/model/Responsable';
 import { LoginService } from '../../../profile/services/login.service';
+import { BeneficialOwner } from '../../model/BeneficialOwner';
 import { Domiciliation } from '../../model/Domiciliation';
 import { DomiciliationContractType } from '../../model/DomiciliationContractType';
 import { IQuotation } from '../../model/IQuotation';
 import { MailRedirectionType } from '../../model/MailRedirectionType';
+import { NoticeTemplateDescription } from '../../model/NoticeTemplateDescription';
 import { NoticeType } from '../../model/NoticeType';
 import { NoticeTypeFamily } from '../../model/NoticeTypeFamily';
 import { ServiceFamily } from '../../model/ServiceFamily';
 import { CityService } from '../../services/city.service';
 import { CivilityService } from '../../services/civility.service';
 import { DepartmentService } from '../../services/department.service';
+import { NoticeTemplateService } from '../../services/notice.template.service';
 import { NoticeTypeFamilyService } from '../../services/notice.type.family.service';
 import { NoticeTypeService } from '../../services/notice.type.service';
 import { QuotationFileUploaderComponent } from '../quotation-file-uploader/quotation-file-uploader.component';
@@ -81,8 +86,7 @@ import { QuotationFileUploaderComponent } from '../quotation-file-uploader/quota
     SelectCountryComponent,
     SelectCivilityComponent,
     CKEditorModule,
-    NgbNavModule
-  ]
+    NgbNavModule]
 })
 export class RequiredInformationComponent implements OnInit {
 
@@ -97,7 +101,6 @@ export class RequiredInformationComponent implements OnInit {
   quotation: IQuotation | undefined;
 
   affaire: Affaire = { isIndividual: false } as Affaire;
-  editorData: string = "toto";
 
   noticeTypes: NoticeType[] | undefined;
   noticeTypeFamilies: NoticeTypeFamily[] | undefined;
@@ -114,6 +117,7 @@ export class RequiredInformationComponent implements OnInit {
   isBrowser = false;
 
   activeId = 3;
+  isOnlyAnnouncement = true;
 
   SERVICE_FIELD_TYPE_TEXT = SERVICE_FIELD_TYPE_TEXT;
   SERVICE_FIELD_TYPE_INTEGER = SERVICE_FIELD_TYPE_INTEGER;
@@ -122,6 +126,9 @@ export class RequiredInformationComponent implements OnInit {
   SERVICE_FIELD_TYPE_SELECT = SERVICE_FIELD_TYPE_SELECT;
   PROVISION_SCREEN_TYPE_DOMICILIATION = PROVISION_SCREEN_TYPE_DOMICILIATION;
   PROVISION_SCREEN_TYPE_ANNOUNCEMENT = PROVISION_SCREEN_TYPE_ANNOUNCEMENT;
+
+  provisionTypeRbe!: ProvisionType;
+  modifiedBeneficialOwners: BeneficialOwner[] = [{} as BeneficialOwner];
 
   mailRedirectionTypeOther!: MailRedirectionType;
   domiciliationContractTypeRouteEmailAndMail!: DomiciliationContractType
@@ -135,9 +142,14 @@ export class RequiredInformationComponent implements OnInit {
 
   ckEditorHeader = ClassicEditor;
 
+  noticeTemplateDescriptionSubscription: Subscription = new Subscription;
+  noticeTemplateDescription: NoticeTemplateDescription;
+
   goBackModalInstance: any | undefined;
 
   currentTab: string = 'documents';
+
+  isUsingTemplate: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -153,15 +165,25 @@ export class RequiredInformationComponent implements OnInit {
     private civilityService: CivilityService,
     private constantService: ConstantService,
     private cityService: CityService,
+    private noticeTemplateService: NoticeTemplateService,
     private modalService: NgbModal,
-  ) { }
-
+  ) {
+    this.noticeTemplateDescription = noticeTemplateService.getNoticeTemplateDescription()
+  }
 
   informationForm!: FormGroup;
 
   parseInt = parseInt;
 
   async ngOnInit() {
+    this.provisionTypeRbe = this.constantService.getProvisionTypeRbe();
+
+    this.noticeTemplateDescriptionSubscription = this.noticeTemplateService.noticeTemplateDescriptionObservable.subscribe(item => {
+      if (item && item.isShowNoticeTemplate && this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined && item.announcementOrder != undefined
+        && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[item.announcementOrder].announcement) {
+        this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[item.announcementOrder].announcement!.notice = item.displayText;
+      }
+    });
     this.mailRedirectionTypeOther = this.constantService.getMailRedirectionTypeOther();
     this.domiciliationContractTypeRouteEmailAndMail = this.constantService.getDomiciliationContractTypeRouteEmailAndMail();
     this.domiciliationContractTypeRouteMail = this.constantService.getDomiciliationContractTypeRouteMail();
@@ -202,6 +224,7 @@ export class RequiredInformationComponent implements OnInit {
     }
   }
 
+
   initIndexesAndServiceType() {
     if (this.quotation && this.quotation.assoAffaireOrders && this.quotation.assoAffaireOrders.length > 0) {
       this.selectedAssoIndex = 0;
@@ -224,7 +247,10 @@ export class RequiredInformationComponent implements OnInit {
                     provision.announcement = {} as Announcement;
                     provision.isRedactedByJss = true;
                   }
-                } else if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_DOMICILIATION) {
+                } else {
+                  this.isOnlyAnnouncement = false;
+                }
+                if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_DOMICILIATION) {
                   if (!provision.domiciliation) {
                     this.activeId = 2;
                     provision.domiciliation = {} as Domiciliation;
@@ -245,9 +271,12 @@ export class RequiredInformationComponent implements OnInit {
         }
       }
 
+      this.changeProvisionNoticeTemplateDesciption({ nextId: this.activeId } as NgbNavChangeEvent);
+
       if (this.quotation.assoAffaireOrders[this.selectedAssoIndex].services && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services.length > 0) {
         this.selectedServiceIndex = 0;
       }
+      this.emitServiceChange();
     }
   }
 
@@ -331,7 +360,7 @@ export class RequiredInformationComponent implements OnInit {
   }
 
   canSaveQuotation() {
-    if (this.quotation)
+    if (this.quotation && this.quotation.assoAffaireOrders)
       for (let asso of this.quotation.assoAffaireOrders)
         if (!asso.services || asso.services.length == 0)
           return false;
@@ -340,23 +369,40 @@ export class RequiredInformationComponent implements OnInit {
 
   saveFieldsValue() {
     if (this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined) {
+      if (this.informationForm) {
+        this.informationForm.markAllAsTouched();
+        if (!this.informationForm.valid) {
+          this.appService.displayToast("Veuillez remplir les champs obligatoires", true, "Champs obligatoires", 5000);
+          return of(false);
+        }
+
+        for (let provision of this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions)
+          if (provision && provision.announcement && !provision.isRedactedByJss && !this.isUsingTemplate && (!provision.announcement.notice || provision.announcement.notice.length == 0)) {
+            this.appService.displayToast("Veuillez remplir le texte de l'annonce légale", true, "Champs obligatoires", 5000);
+            return of(false);
+          }
+      }
+
+      if (this.noticeTemplateDescription.announcementOrder && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[this.noticeTemplateDescription.announcementOrder])
+        this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[this.noticeTemplateDescription.announcementOrder].announcement!.notice = this.noticeTemplateDescription.displayText;
+
       if (this.currentUser) {
         this.appService.showLoadingSpinner();
-        return this.serviceService.addOrUpdateService(this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex]).pipe(tap(response => {
-        }));
+        return this.serviceService.addOrUpdateService(this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex]) as any as Observable<boolean>;
       } else {
         if (this.quotation.isQuotation) {
           this.quotationService.setCurrentDraftQuotation(this.quotation);
-          return of({} as Service);
+          return of(true);
         } else {
           this.orderService.setCurrentDraftOrder(this.quotation);
-          return of({} as Service);
+          return of(true);
         }
       }
     }
-    return of({} as Service);
+    return of(true);
   }
 
+  // TODO : connet to back to save the list of modifiedBeneficialOwners when Pierre has finished the back end
   moveToService(newServiceIndex: number, newAssoIndex: number) {
     if (!this.quotation)
       return;
@@ -367,9 +413,6 @@ export class RequiredInformationComponent implements OnInit {
     }
 
     if (newAssoIndex < 0) {
-      this.saveFieldsValue().subscribe(response => {
-        this.appService.hideLoadingSpinner();
-      });
       this.goBackQuotationModale(this.confirmBackModal);
       return;
     }
@@ -380,18 +423,23 @@ export class RequiredInformationComponent implements OnInit {
       newServiceIndex = 0;
     }
 
+    this.emitServiceChange();
+
     if (newAssoIndex >= this.quotation.assoAffaireOrders.length) {
       this.saveFieldsValue().subscribe(response => {
-        let r = response;
         this.appService.hideLoadingSpinner();
+        if (!response)
+          return;
         this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[3]);
         this.appService.openRoute(undefined, "quotation/checkout", undefined);
       });
       return;
     }
 
-    this.saveFieldsValue().subscribe(res => {
+    this.saveFieldsValue().subscribe(response => {
       this.appService.hideLoadingSpinner();
+      if (!response)
+        return;
     });
     this.selectedAssoIndex = null;
     this.selectedServiceIndex = null;
@@ -426,6 +474,8 @@ export class RequiredInformationComponent implements OnInit {
               promises.push(this.serviceService.deleteService(service));
       combineLatest(promises).subscribe(response => {
         this.appService.hideLoadingSpinner();
+        this.noticeTemplateDescription = {} as NoticeTemplateDescription;
+        this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
         this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);
         this.appService.openRoute(undefined, "quotation/services-selection", undefined);
       })
@@ -575,6 +625,51 @@ export class RequiredInformationComponent implements OnInit {
     return false;
   }
 
+  private emitServiceChange() {
+    if (this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined)
+      this.noticeTemplateDescription.service = this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex];
+    this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
+  }
+
+  changeIsShowNoticeTemplate(event: Boolean, isRedactedByJss: boolean) {
+    if (isRedactedByJss) {
+      this.noticeTemplateDescription.isShowNoticeTemplate = false;
+      this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
+    } else {
+      this.noticeTemplateDescription.isShowNoticeTemplate = event as boolean;
+      this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
+    }
+  }
+
+  hasOneTemplate(service: Service) {
+    if (service) {
+      if (service && service.serviceTypes)
+        for (let st of service.serviceTypes)
+          if (st.assoServiceProvisionTypes)
+            for (let asso of st.assoServiceProvisionTypes)
+              if (asso.announcementNoticeTemplate)
+                return true;
+    }
+    return false;
+  }
+
+  changeProvisionNoticeTemplateDesciption(ngbEvent: NgbNavChangeEvent) {
+    let destId = ngbEvent.nextId as number;
+    let originId = ngbEvent.activeId as number;
+
+    // if id is > 10 and first char begins with 1 then its an announcement tab
+    if (destId >= 10 && destId < 20) {
+      this.noticeTemplateDescription.announcementOrder = this.parseInt(destId.toString().substring(1));
+      this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
+    } else if (originId >= 10 && destId < 20) {
+      this.noticeTemplateDescription.announcementOrder = this.parseInt(originId.toString().substring(1));
+      this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
+    }
+    if (destId < 10) {
+      this.changeIsShowNoticeTemplate(false, true);
+    }
+  }
+
   isDisplayDependantField(assoField: AssoServiceFieldType) {
     if (this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined) {
       let service = this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex];
@@ -606,5 +701,35 @@ export class RequiredInformationComponent implements OnInit {
       }
     }
     return true;
+  }
+
+  isDisplayFieldForServiceType(assoServiceFieldType: AssoServiceFieldType, currentServiceType: ServiceType, isLastIndex: boolean) {
+    let alreadyFoundIds = [];
+    if (this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].serviceTypes) {
+      for (let serviceType of this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].serviceTypes) {
+        if (serviceType.assoServiceTypeFieldTypes) {
+          for (let serviceTypeAssoFieldType of serviceType.assoServiceTypeFieldTypes) {
+            if (alreadyFoundIds.indexOf(assoServiceFieldType.serviceFieldType.id) >= 0)
+              return false;
+            alreadyFoundIds.push(serviceTypeAssoFieldType.serviceFieldType.id);
+            if (serviceTypeAssoFieldType.serviceFieldType.id == assoServiceFieldType.serviceFieldType.id)
+              if (serviceType.id == currentServiceType.id) {
+                return true;
+              }
+          }
+        }
+      }
+    }
+    if (isLastIndex && alreadyFoundIds.indexOf(assoServiceFieldType.serviceFieldType.id) < 0)
+      return true;
+    return false;
+  }
+
+  addBeneficialOwner() {
+    this.modifiedBeneficialOwners.push({} as BeneficialOwner);
+  }
+
+  deleteLastBeneficialOwner() {
+    this.modifiedBeneficialOwners.pop();
   }
 }
