@@ -204,4 +204,6 @@ public interface CustomerOrderService {
                         Employee assignedUser);
 
         public void switchResponsable(CustomerOrder order, Responsable responsable);
+
+        public Integer getComplexity(CustomerOrder customerOrder) throws OsirisException;
 }

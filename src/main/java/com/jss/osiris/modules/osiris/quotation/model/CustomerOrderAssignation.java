@@ -41,6 +41,7 @@ public class CustomerOrderAssignation {
     @JsonView({ JacksonViews.OsirisListView.class })
     private Employee employee;
 
+    @JsonView({ JacksonViews.OsirisListView.class })
     private Boolean isAssigned;
 
     public Integer getId() {

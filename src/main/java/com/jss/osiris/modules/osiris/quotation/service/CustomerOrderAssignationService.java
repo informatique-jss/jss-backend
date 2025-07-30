@@ -33,7 +33,8 @@ public interface CustomerOrderAssignationService {
 
         public void assignImmediatlyOrder(CustomerOrder customerOrder) throws OsirisException;
 
-        public List<CustomerOrder> getOrdersToAssignForFond(Employee employee) throws OsirisException;
+        public List<CustomerOrder> getOrdersToAssignForFond(Employee employee, boolean onlyCurrentUser)
+                        throws OsirisException;
 
         public boolean isPriorityOrder(CustomerOrder customerOrder) throws OsirisException;
 

@@ -9,6 +9,7 @@ public class CustomerOrderTransient {
     private String servicesList;
     private Boolean hasMissingInformations;
     private Boolean isPriority;
+    private Integer complexity;
 
     public String getAffairesList() {
         return affairesList;
@@ -48,6 +49,14 @@ public class CustomerOrderTransient {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getComplexity() {
+        return complexity;
+    }
+
+    public void setComplexity(Integer complexity) {
+        this.complexity = complexity;
     }
 
 }

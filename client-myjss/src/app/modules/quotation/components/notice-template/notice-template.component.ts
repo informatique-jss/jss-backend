@@ -42,7 +42,7 @@ export class NoticeTemplateComponent implements OnInit {
   selectedFragments: (AnnouncementNoticeTemplateFragment | undefined)[] = [];
   fragmentInstancesMap = new Map<string, AnnouncementNoticeTemplateFragment[]>();
   fragmentBordersColorsMap = new Map<string, string>();
-  usableColors: string[] = ["rgb(28 45 65)", "rgb(237 80 80)", "rgb(63 202 144)", "rgb(243 227 202)", "rgb(246 249 252)"];
+  usableColors: string[] = ["#1c2d41", "#ed5050", "#3fca90", "#f3e3ca", "#3687d8"];
 
   fragmentSelection: AnnouncementNoticeTemplateFragment[][] = [];
   placeholdersMap = new Map<string, ServiceFieldType[]>();
@@ -191,7 +191,7 @@ export class NoticeTemplateComponent implements OnInit {
             fragmentTextToReplace = this.findAndReplacePlaceholders(fragmentFound, fragmentTextToReplace, this.placeholdersMap.get(fragmentFound.code) ?? [], i);
             i++;
           }
-          text = text.replace(new RegExp(`\\[\\s*${fragmentFound.code}\\s*\\]`), `<div style="border: 2px solid ${this.fragmentBordersColorsMap.get(fragmentFound.code)}; border-radius: 4px; padding:0.15rem; margin:0.2rem;">` + fragmentTextToReplace + "</div>");
+          text = text.replace(new RegExp(`\\[\\s*${fragmentFound.code}\\s*\\]`), `<div id="fragment-${fragmentFound.code}" class="fragment-box ${this.getFragmentClass(fragmentFound.code)}">` + fragmentTextToReplace + "</div>");
         }
       }
     }
@@ -218,12 +218,19 @@ export class NoticeTemplateComponent implements OnInit {
     for (let fragment of this.fragmentsFound) {
       if (this.selectedFragments.includes(fragment)) {
         text = text.replace(this.getRegexDoublePipeNearCode(fragment.code), "ou");
-        text = text.replace(new RegExp(fragment.code, 'g'), fragment.label);
+        text = text.replace(new RegExp(`(?<!["=])\\b${fragment.code}\\b(?!["])`, 'g'), fragment.label); // replacing all fragments but the one in the HTML tags (<...>)
       } else {
+        // We first isolate the fragments from the ||
         text = text.replace(this.getRegexDoublePipeNearCode(fragment.code), "");
-        text = text.replace(new RegExp(fragment.code, 'g'), "");
+        // Then we replace the code by the label
+        text = text.replace(new RegExp(`(\\b${fragment.code}\\b)`, 'g'), "");
       }
     }
+
+    // Replace multiple consecutive <br> tags with only the first and the last
+    text = text.replace(/<p>(\s|&nbsp;|<br\s*\/?>)*<\/p>/gi, '');
+    text = text.replace(/(<br\s*\/?>\s*(?:&nbsp;)?\s*){3,}/gi, '<br><br>');
+
 
     this.displayText = text;
   }
@@ -235,9 +242,30 @@ export class NoticeTemplateComponent implements OnInit {
     // Regex :
     // - (\\|\\|.{0,3}CODE) → || followed by up to 4 characters, then the code
     // - (CODE.{0,3}\\|\\|) → code followed by up to 4 characters, then ||
-    const pattern = `(\\|\\|.{0,3}${escapedCode})|(${escapedCode}.{0,3}\\|\\|)`;
+    const pattern = `(\\|\\|.{0,3}\\b${escapedCode}\\b)|(\\b${escapedCode}\\b.{0,3}\\|\\|)`;
 
     return new RegExp(pattern, 'g');
+  }
+
+  /**
+  Returns the name of the CSS class corresponding to the fragment's color.
+  */
+  private getFragmentClass(code: string): string {
+    const color = this.fragmentBordersColorsMap.get(code);
+    if (!color) return 'fragment-box';
+
+    // Sanitizes the color name to generate a valid class (e.g., #FF0000 -> ff0000)
+    const safeColor = color.replace('#', '').toLowerCase();
+    return `fragment-border-${safeColor}`;
+  }
+
+  private scrollToFragment(code: string): void {
+    setTimeout(() => {
+      const el = document.getElementById(`fragment-${code}`);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100); // Timeout so the DOM is well up to date
   }
 
   private replaceControleNamesWithText(controlName: string, placeholder: ServiceFieldType, fragmentCode: string, text: string) {
@@ -277,9 +305,15 @@ export class NoticeTemplateComponent implements OnInit {
     return fragmentInstance !== undefined ? `${baseName}_i${fragmentInstance}` : baseName;
   }
 
+  onFragmentSelectionChange(fragment: AnnouncementNoticeTemplateFragment, index: number) {
+    this.selectedFragments[index] = fragment;
+    this.scrollToFragment(fragment.code);
+  }
+
   changeToggleValue(event: any, index: number) {
     if (event && this.fragmentSelection[index]) {
       this.selectedFragments.splice(index, 1, this.fragmentSelection[index][0]);
+      this.scrollToFragment(this.fragmentSelection[index][0].code);
     } else {
       this.selectedFragments.splice(index, 1, undefined);
     }

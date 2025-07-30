@@ -63,7 +63,6 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
     public confirmationDialog: MatDialog,
     public selectServiceTypeDialog: MatDialog,
     public quotationWorkflowDialog: MatDialog,
-    private habilitationsService: HabilitationsService,
     private assoAffaireOrderService: AssoAffaireOrderService,
     private notificationService: NotificationService,
     private habilitationService: HabilitationsService,
@@ -81,6 +80,7 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
 
     this.swimlaneTypes.push({ fieldName: "productionEffectiveDateTime", label: "Date", valueFonction: ((order: CustomerOrder) => formatDateUs(order.productionEffectiveDateTime)), fieldValueFunction: ((order: CustomerOrder) => formatDateUs(order.productionEffectiveDateTime)) });
     this.swimlaneTypes.push({ fieldName: "responsable.formalisteEmployee.id", label: "Formaliste", valueFonction: ((order: CustomerOrder) => (order.responsable && order.responsable.formalisteEmployee ? (order.responsable.formalisteEmployee.firstname + ' ' + order.responsable.formalisteEmployee.lastname) : '')), fieldValueFunction: undefined });
+    this.swimlaneTypes.push({ fieldName: "customerOrderAssignations", label: "Assignation", valueFonction: ((order: CustomerOrder) => (order.customerOrderAssignations ? order.customerOrderAssignations.filter(a => !a.isAssigned).map(a => a.assignationType.label).join(" / ") : '')), fieldValueFunction: ((order: CustomerOrder) => (order.customerOrderAssignations ? order.customerOrderAssignations.filter(a => !a.isAssigned).map(a => a.assignationType.label).join(" / ") : '')) });
     this.swimlaneTypes.push({ fieldName: "responsable.insertionEmployee.id", label: "Publisciste", valueFonction: ((order: CustomerOrder) => (order.responsable && order.responsable.insertionEmployee ? (order.responsable.insertionEmployee.firstname + ' ' + order.responsable.insertionEmployee.lastname) : '')), fieldValueFunction: undefined });
     this.swimlaneTypes.push({ fieldName: "isPriority", label: "Prioritaire", valueFonction: ((order: CustomerOrder) => (order.isPriority ? 'Est prioritaire' : 'Non prioritaire')), fieldValueFunction: undefined });
     this.swimlaneTypes.push({ fieldName: "responsable.salesEmployee.id", label: "Commercial", valueFonction: ((order: CustomerOrder) => (order.responsable && order.responsable.salesEmployee ? (order.responsable.salesEmployee.firstname + ' ' + order.responsable.salesEmployee.lastname) : '')), fieldValueFunction: undefined });
@@ -117,26 +117,33 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
   initStatus(fetchBookmark: boolean, applyFilter: boolean, isOnlyFilterText: boolean) {
     if (this.employeesSelected)
       this.affectationEmployeeService.findTeamEmployee(this.employeesSelected).subscribe(response => {
-        this.possibleEntityStatus = [this.defaultAffectation];
-        this.statusSelected = [this.defaultAffectation];
-        for (let status of response) {
-          this.possibleEntityStatus.push(this.updateEmployeeCompleted(status));
-          this.statusSelected.push(this.updateEmployeeCompleted(status));
-        }
+        if (this.habilitationService.canAddAssignOrderForProduction()) {
+          this.possibleEntityStatus = [this.defaultAffectation];
+          this.statusSelected = [this.defaultAffectation];
 
-        for (let status of this.possibleEntityStatus) {
-          status.predecessors = this.possibleEntityStatus;
-          status.successors = this.possibleEntityStatus;
-        }
+          for (let status of response) {
+            this.possibleEntityStatus.push(this.updateEmployeeCompleted(status));
+            this.statusSelected.push(this.updateEmployeeCompleted(status));
+          }
 
-        for (let status of this.statusSelected) {
-          status.predecessors = this.possibleEntityStatus;
-          status.successors = this.possibleEntityStatus;
+
+          for (let status of this.possibleEntityStatus) {
+            status.predecessors = this.possibleEntityStatus;
+            status.successors = this.possibleEntityStatus;
+          }
+
+          for (let status of this.statusSelected) {
+            status.predecessors = this.possibleEntityStatus;
+            status.successors = this.possibleEntityStatus;
+          }
+        } else {
+          this.possibleEntityStatus = [this.updateEmployeeCompleted(this.employeesSelected as AffectationEmployee<CustomerOrder>)];
+          this.statusSelected = [this.updateEmployeeCompleted(this.employeesSelected as AffectationEmployee<CustomerOrder>)];
         }
 
         if (fetchBookmark) {
           let bookmarkOrderEmployees = this.userPreferenceService.getUserSearchBookmark("kanban-affectation-employee") as Employee;
-          if (bookmarkOrderEmployees)
+          if (bookmarkOrderEmployees && this.habilitationService.canAddAssignOrderForProduction())
             this.employeesSelected = bookmarkOrderEmployees;
 
           let bookmarkSwimlaneType = this.userPreferenceService.getUserSearchBookmark("kanban-affectation-swimline-type") as SwimlaneType<CustomerOrder>;
@@ -195,7 +202,7 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
 
   findEntities() {
     if (this.employeesSelected)
-      return this.orderService.getOrdersToAssignForFond(this.employeesSelected) as any as Observable<CustomerOrder[]>;
+      return this.orderService.getOrdersToAssignForFond(this.employeesSelected, !this.habilitationService.canAddAssignOrderForProduction()) as any as Observable<CustomerOrder[]>;
     return of([] as CustomerOrder[]);
   }
 
@@ -292,7 +299,7 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
   }
 
   canReinitInvoicing() {
-    return this.habilitationsService.canReinitInvoicing();
+    return this.habilitationService.canReinitInvoicing();
   }
 
   reinitInvoicing() {
@@ -440,5 +447,13 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
 
   scrollDown() {
     this.bottom!.nativeElement.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  getComplexityColor(order: CustomerOrder) {
+    if (order.complexity == 1)
+      return 'warn';
+    if (order.complexity == 2)
+      return 'accent';
+    return 'primary';
   }
 }

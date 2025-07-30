@@ -270,7 +270,7 @@ public class CustomerOrderAssignationServiceImpl implements CustomerOrderAssigna
                 // Get complexity
                 Integer customerOrderComplexity = 4;
                 if (complexity != null)
-                    customerOrderComplexity = getComplexity(customerOrder);
+                    customerOrderComplexity = customerOrderService.getComplexity(customerOrder);
 
                 for (CustomerOrderAssignation customerOrderAssignation : customerOrder.getCustomerOrderAssignations()) {
                     if (customerOrderAssignation.getAssignationType().getId().equals(assignationType.getId())
@@ -294,7 +294,7 @@ public class CustomerOrderAssignationServiceImpl implements CustomerOrderAssigna
                 // Get complexity
                 Integer customerOrderComplexity = 4;
                 if (complexity != null)
-                    customerOrderComplexity = getComplexity(customerOrder);
+                    customerOrderComplexity = customerOrderService.getComplexity(customerOrder);
 
                 if (complexity != null) {
                     for (CustomerOrderAssignation customerOrderAssignation : customerOrder
@@ -348,19 +348,6 @@ public class CustomerOrderAssignationServiceImpl implements CustomerOrderAssigna
                                         || isOnlyAl(customerOrder))
                                     return true;
         return false;
-    }
-
-    private Integer getComplexity(CustomerOrder customerOrder) throws OsirisException {
-        Integer complexity = 4;
-        if (customerOrder.getAssoAffaireOrders() != null)
-            for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders())
-                if (assoAffaireOrder.getServices() != null)
-                    for (Service service : assoAffaireOrder.getServices())
-                        if (service.getProvisions() != null)
-                            for (Provision provision : service.getProvisions())
-                                if (provision.getComplexity() != null && provision.getComplexity() < complexity)
-                                    complexity = provision.getComplexity();
-        return complexity;
     }
 
     private boolean isOnlyAl(CustomerOrder customerOrder) throws OsirisException {
@@ -425,21 +412,24 @@ public class CustomerOrderAssignationServiceImpl implements CustomerOrderAssigna
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public List<CustomerOrder> getOrdersToAssignForFond(Employee employee) throws OsirisException {
+    public List<CustomerOrder> getOrdersToAssignForFond(Employee employee, boolean onlyCurrentUser)
+            throws OsirisException {
         List<CustomerOrder> orders = new ArrayList<CustomerOrder>();
 
         // Formaliste
         AssignationType assignationType = constantService.getAssignationTypeFormaliste();
         orders.addAll(customerOrderService.findCustomerOrderByFormalisteAssigned(
                 employeeService.findEmployeesInTheSameOU(employee),
-                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.BEING_PROCESSED), null,
+                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.BEING_PROCESSED),
+                onlyCurrentUser ? employeeService.getCurrentEmployee() : null,
                 assignationType));
 
         // Announcement
         assignationType = constantService.getAssignationTypePublisciste();
         orders.addAll(customerOrderService.findCustomerOrderByPubliscisteAssigned(
                 employeeService.findEmployeesInTheSameOU(employee),
-                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.BEING_PROCESSED), null,
+                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.BEING_PROCESSED),
+                onlyCurrentUser ? employeeService.getCurrentEmployee() : null,
                 assignationType));
 
         orders.sort(new Comparator<CustomerOrder>() {

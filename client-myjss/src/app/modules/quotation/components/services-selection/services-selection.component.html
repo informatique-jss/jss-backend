@@ -35,7 +35,7 @@
               class="btn rounded-pill mt-2 ms-1 mt-md-3 ms-md-0 col-auto pill text-wrap text-break"
               [ngClass]="{'btn-secondary': selectedAssoIndex == indexAsso,'btn-outline-primary':selectedAssoIndex != indexAsso}"
               (click)="removeServiceFromCurrentAffaire(serviceType);$event.stopPropagation()">
-              {{getFamilyLabelForService(serviceType)}} - {{serviceType.label }} <i class="ai-cross ms-2"></i>
+              {{getFamilyLabelForService(serviceType)}} - {{serviceType.customLabel }} <i class="ai-cross ms-2"></i>
             </a>
           </div>
         </div>
