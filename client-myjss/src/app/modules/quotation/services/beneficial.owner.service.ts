@@ -14,11 +14,11 @@ export class BeneficialOwnerService extends AppRestService<BeneficialOwner> {
   }
 
   addOrUpdateBeneficialOwner(beneficialOwner: BeneficialOwner, provision: Provision) {
-    return this.postItem(new HttpParams().set("idProvision", provision.id), "beneficial-owner", beneficialOwner);
+    return this.postItem(new HttpParams().set("idProvision", provision.id), "beneficial-owner-provision", beneficialOwner);
   }
 
-  getBeneficialOwners(provision: Provision) {
-    return this.getList(new HttpParams().set("idProvision", provision.id), "beneficial-owners");
+  getBeneficialOwnersByProvision(provision: Provision) {
+    return this.getList(new HttpParams().set("idProvision", provision.id), "beneficial-owners-provision");
   }
 
   deleteBeneficialOwner(beneficialOwner: BeneficialOwner) {

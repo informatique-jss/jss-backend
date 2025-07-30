@@ -82,7 +82,7 @@ export class BeneficialOwnerFormComponent implements OnInit {
 
   refreshBeneficialOwnersList(res: any) {
     if (res)
-      this.beneficialOwnerService.getBeneficialOwners(this.provision!).subscribe(beneficialOwners => {
+      this.beneficialOwnerService.getBeneficialOwnersByProvision(this.provision!).subscribe(beneficialOwners => {
         this.modifiedBeneficialOwners = beneficialOwners;
       });
   }

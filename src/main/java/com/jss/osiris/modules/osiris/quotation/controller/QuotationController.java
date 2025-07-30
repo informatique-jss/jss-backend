@@ -3054,6 +3054,40 @@ public class QuotationController {
         HttpStatus.OK);
   }
 
+  @PostMapping(inputEntryPoint + "/beneficial-owner-provision")
+  public ResponseEntity<BeneficialOwner> addOrUpdateBeneficialOwner(@RequestParam Integer idProvision,
+      @RequestBody BeneficialOwner beneficialOwner)
+      throws OsirisValidationException, OsirisException {
+
+    Provision provision = provisionService.getProvision(idProvision);
+    if (provision == null || provision.getFormalite() == null)
+      throw new OsirisValidationException("provision");
+
+    if (beneficialOwner.getId() != null)
+      validationHelper.validateReferential(beneficialOwner, true,
+          "beneficialOwner");
+
+    if (beneficialOwner.getVotingRights().getVotingTotalPercentage() == null
+        && beneficialOwner.getShareHolding().getShareTotalPercentage() == null) {
+      throw new OsirisValidationException(
+          "shareTotalPercentage");
+    }
+
+    BigDecimal total = BigDecimal.ZERO;
+    if (beneficialOwner.getShareHolding().getShareTotalPercentage() != null)
+      total = total.add(beneficialOwner.getShareHolding().getShareTotalPercentage());
+    if (beneficialOwner.getVotingRights().getVotingTotalPercentage() != null)
+      total = total.add(beneficialOwner.getVotingRights().getVotingTotalPercentage());
+
+    if (total.compareTo(BigDecimal.valueOf(100)) > 0) {
+      throw new OsirisValidationException("shareTotalPercentage");
+    }
+
+    return new ResponseEntity<BeneficialOwner>(
+        beneficialOwnerService.addOrUpdateBeneficialOwnerToFormalite(beneficialOwner, provision.getFormalite()),
+        HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/beneficial-owner/delete")
   public ResponseEntity<Boolean> deleteBeneficialOwner(@RequestParam Integer beneficialOwnerId)
       throws OsirisValidationException {
