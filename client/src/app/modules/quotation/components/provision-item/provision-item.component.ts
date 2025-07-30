@@ -161,6 +161,9 @@ export class ProvisionItemComponent implements OnInit {
       if (!this.provision.complexity)
         this.provision.complexity = 4;
 
+      if (!this.provision.isPriority)
+        this.provision.isPriority = false;
+
       this.selectedProvisionTypeChange.emit();
     }
   }

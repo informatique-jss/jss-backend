@@ -2,6 +2,10 @@
   padding-top: 18px;
 }
 
+.fab-td-button {
+  width: 35px;
+}
+
 .filter-bar {
   display: flex;
   gap: 16px;
@@ -262,4 +266,8 @@
   mat-expansion-panel-header {
     font-weight: bold;
   }
+}
+
+.card-priority {
+  background-color: #f3c5c0;
 }

@@ -14,11 +14,12 @@ const routesMyAccount = [
       { path: 'overview', loadComponent: () => import('./modules/my-account/components/overview/overview.component').then(m => m.OverviewComponent) },
       { path: 'reading-folders', loadComponent: () => import('./modules/my-account/components/reading-folders/reading-folders.component').then(m => m.ReadingFoldersComponent) },
       { path: 'reading-folders/:idReadingFolder', loadComponent: () => import('./modules/my-account/components/bookmarks/bookmarks.component').then(m => m.BookmarksComponent) },
-      { path: 'scope', loadComponent: () => import('./modules/my-account/components/scope/scope.component').then(m => m.ScopeComponent) },
       { path: 'closure', loadComponent: () => import('./modules/my-account/components/billing-closure/billing-closure.component').then(m => m.BillingClosureComponent) },
       { path: 'communication-preference', loadComponent: () => import('./modules/my-account/components/communication-preference/communication-preference.component').then(m => m.CommunicationPreferenceComponent) },
       { path: 'quotations', loadComponent: () => import('./modules/my-account/components/quotations/quotations.component').then(m => m.QuotationsComponent) },
+      { path: 'quotations/search/:statusCode', loadComponent: () => import('./modules/my-account/components/quotations/quotations.component').then(m => m.QuotationsComponent) },
       { path: 'orders', loadComponent: () => import('./modules/my-account/components/orders/orders.component').then(m => m.OrdersComponent) },
+      { path: 'orders/search/:statusCode', loadComponent: () => import('./modules/my-account/components/orders/orders.component').then(m => m.OrdersComponent) },
       { path: 'orders/details/:id', loadComponent: () => import('./modules/my-account/components/order-details/order-details.component').then(m => m.OrderDetailsComponent) },
       { path: 'order/address/edit/:idOrder', loadComponent: () => import('./modules/my-account/components/edit-address/edit-address.component').then(m => m.EditAddressComponent) },
       { path: 'order/pay/:idOrder', loadComponent: () => import('./modules/my-account/components/pay-order/pay-order.component').then(m => m.PayOrderComponent) },
@@ -30,8 +31,6 @@ const routesMyAccount = [
       { path: 'affaire/edit/order/:id/:idOrder', loadComponent: () => import('./modules/my-account/components/edit-affaire/edit-affaire.component').then(m => m.EditAffaireComponent) },
       { path: 'affaire/edit/quotation/:id/:idQuotation', loadComponent: () => import('./modules/my-account/components/edit-affaire/edit-affaire.component').then(m => m.EditAffaireComponent) },
       { path: 'settings', loadComponent: () => import('./modules/my-account/components/user-settings/user-settings.component').then(m => m.UserSettingsComponent) },
-      { path: 'associated-settings', loadComponent: () => import('./modules/my-account/components/user-settings/user-settings.component').then(m => m.UserSettingsComponent) },
-      { path: 'settings/:idResponsable', loadComponent: () => import('./modules/my-account/components/user-settings/user-settings.component').then(m => m.UserSettingsComponent) },
       { path: 'settings/address/edit/:idResponsable', loadComponent: () => import('./modules/my-account/components/edit-address/edit-address.component').then(m => m.EditAddressComponent) },
       { path: 'subscription', loadComponent: () => import('./modules/my-account/components/subscriptions/subscriptions.component').then(m => m.SubscriptionsComponent) },
       { path: 'appointment', loadComponent: () => import('./modules/my-account/components/appointment/appointment.component').then(m => m.AppointmentComponent) },
@@ -133,6 +132,7 @@ export const routes: Routes = [
       ...routesQuotation,
       ...routesCompany,
       ...routesTools,
+      { path: 'beta_access', loadComponent: () => import('./modules/profile/components/beta/beta.component').then(m => m.BetaComponent) },
     ]
   }
 ];

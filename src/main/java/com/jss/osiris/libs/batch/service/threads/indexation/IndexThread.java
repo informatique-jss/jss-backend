@@ -20,7 +20,7 @@ public abstract class IndexThread implements IOsirisThread {
 
         public abstract String getBatchCode();
 
-        public abstract IId getEntity(Integer entityId);
+        public abstract IId getEntity(Integer entityId) throws OsirisException;
 
         @Transactional(rollbackFor = Exception.class)
         public void executeTask(Integer entityId)

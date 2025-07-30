@@ -2,8 +2,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { ServiceType } from 'src/app/modules/quotation/model/ServiceType';
 import { ServiceTypeService } from 'src/app/modules/quotation/services/service.type.service';
-import { GenericSelectComponent } from '../generic-select/generic-select.component';
 import { AppService } from 'src/app/services/app.service';
+import { GenericSelectComponent } from '../generic-select/generic-select.component';
 
 @Component({
   selector: 'select-service-type',
@@ -20,7 +20,7 @@ export class SelectServiceTypeComponent extends GenericSelectComponent<ServiceTy
   }
 
   initTypes(): void {
-    this.serviceTypeService.getServiceTypes().subscribe(response => {
+    this.serviceTypeService.getServiceTypesComplete().subscribe(response => {
       this.types = response;
     })
   }

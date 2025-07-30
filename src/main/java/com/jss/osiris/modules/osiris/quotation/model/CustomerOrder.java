@@ -10,8 +10,6 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.jss.osiris.libs.jackson.JacksonLocalDateTimeDeserializer;
-import com.jss.osiris.libs.jackson.JacksonLocalDateTimeGmtDeserializer;
-import com.jss.osiris.libs.jackson.JacksonLocalDateTimeGmtSerializer;
 import com.jss.osiris.libs.jackson.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
@@ -178,16 +176,16 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 			"childrenPayments" }, allowSetters = true)
 	private List<Payment> payments;
 
-	@JsonDeserialize(using = JacksonLocalDateTimeGmtDeserializer.class)
-	@JsonSerialize(using = JacksonLocalDateTimeGmtSerializer.class)
+	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
+	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
 	private LocalDateTime firstReminderDateTime;
 
-	@JsonDeserialize(using = JacksonLocalDateTimeGmtDeserializer.class)
-	@JsonSerialize(using = JacksonLocalDateTimeGmtSerializer.class)
+	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
+	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
 	private LocalDateTime secondReminderDateTime;
 
-	@JsonDeserialize(using = JacksonLocalDateTimeGmtDeserializer.class)
-	@JsonSerialize(using = JacksonLocalDateTimeGmtSerializer.class)
+	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
+	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
 	private LocalDateTime thirdReminderDateTime;
 
 	@OneToMany(targetEntity = Invoice.class, mappedBy = "customerOrderForInboundInvoice")
@@ -235,7 +233,7 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Boolean isGifted;
 
-	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
 	@Column(name = "is_payed")
 	private Boolean isPayed;
 
@@ -244,21 +242,34 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	private List<CustomerOrderComment> customerOrderComments;
 
 	@Transient
+	@IndexedField
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
 			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 	private String affairesList;
 
 	@Transient
+	@IndexedField
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
 			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
 	private String servicesList;
 
 	@Transient
+	@IndexedField
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
-			JacksonViews.OsirisDetailedView.class })
+			JacksonViews.OsirisDetailedView.class, JacksonViews.OsirisListView.class, })
 	private Boolean hasMissingInformations;
+
+	@Transient
+	@IndexedField
+	@JsonView({ JacksonViews.OsirisDetailedView.class, JacksonViews.OsirisListView.class, })
+	private Boolean isPriority;
+
+	@Transient
+	@IndexedField
+	@JsonView({ JacksonViews.OsirisDetailedView.class, JacksonViews.OsirisListView.class, })
+	private Integer complexity;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_service_family_group")
@@ -289,6 +300,10 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 			JacksonViews.MyJssDetailedView.class })
 	@JoinColumn(name = "id_voucher")
 	private Voucher voucher;
+
+	@JsonView({ JacksonViews.OsirisListView.class })
+	@OneToMany(targetEntity = CustomerOrderAssignation.class, mappedBy = "customerOrder")
+	private List<CustomerOrderAssignation> customerOrderAssignations;
 
 	public Integer getId() {
 		return id;
@@ -649,6 +664,30 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public void setVoucher(Voucher voucher) {
 		this.voucher = voucher;
+	}
+
+	public List<CustomerOrderAssignation> getCustomerOrderAssignations() {
+		return customerOrderAssignations;
+	}
+
+	public void setCustomerOrderAssignations(List<CustomerOrderAssignation> customerOrderAssignations) {
+		this.customerOrderAssignations = customerOrderAssignations;
+	}
+
+	public Boolean getIsPriority() {
+		return isPriority;
+	}
+
+	public void setIsPriority(Boolean isPriority) {
+		this.isPriority = isPriority;
+	}
+
+	public Integer getComplexity() {
+		return complexity;
+	}
+
+	public void setComplexity(Integer complexity) {
+		this.complexity = complexity;
 	}
 
 }

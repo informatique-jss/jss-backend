@@ -53,6 +53,9 @@ public class BuildingDomiciliation implements Serializable, IId {
 	@JoinColumn(name = "id_country")
 	private Country country;
 
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	private Boolean isDisabled;
+
 	public Integer getId() {
 		return id;
 	}
@@ -115,6 +118,14 @@ public class BuildingDomiciliation implements Serializable, IId {
 
 	public void setCedexComplement(String cedexComplement) {
 		this.cedexComplement = cedexComplement;
+	}
+
+	public Boolean getIsDisabled() {
+		return isDisabled;
+	}
+
+	public void setIsDisabled(Boolean isDisabled) {
+		this.isDisabled = isDisabled;
 	}
 
 }

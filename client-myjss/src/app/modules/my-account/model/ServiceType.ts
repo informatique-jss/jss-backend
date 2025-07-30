@@ -1,3 +1,4 @@
+import { AssoServiceProvisionType } from "./AssoServiceProvisionType";
 import { AssoServiceTypeDocument } from "./AssoServiceTypeDocument";
 import { AssoServiceTypeFieldType } from "./AssoServiceTypeFieldType";
 
@@ -9,6 +10,7 @@ export interface ServiceType {
   comment: string;
   assoServiceTypeDocuments: AssoServiceTypeDocument[];
   assoServiceTypeFieldTypes: AssoServiceTypeFieldType[];
+  assoServiceProvisionTypes: AssoServiceProvisionType[];
   isRequiringNewUnregisteredAffaire: boolean;
   hasAnnouncement: boolean;
   hasOnlyAnnouncement: boolean;

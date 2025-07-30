@@ -17,7 +17,7 @@ export class GenericToggleComponent extends GenericFormComponent implements OnIn
   * Indicate if the field is required or not in the formgroup provided
   * Default : false
   */
-  @Input() override isMandatory: boolean = true;
+  @Input() override isMandatory: boolean = false;
 
   /**
   * Hint to display

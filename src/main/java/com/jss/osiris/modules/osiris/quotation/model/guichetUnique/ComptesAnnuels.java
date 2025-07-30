@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 
 import com.jss.osiris.libs.search.model.DoNotAudit;
 
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,6 +18,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 
 @Entity
+@Cacheable(false)
 @DoNotAudit
 public class ComptesAnnuels implements Serializable {
     @Id

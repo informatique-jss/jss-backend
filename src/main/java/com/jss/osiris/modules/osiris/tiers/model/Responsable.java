@@ -118,10 +118,6 @@ public class Responsable implements IAttachment, IId {
 	private Employee salesEmployee;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_default_customer_order_employee")
-	private Employee defaultCustomerOrderEmployee;
-
-	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_formaliste")
 	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private Employee formalisteEmployee;
@@ -527,14 +523,6 @@ public class Responsable implements IAttachment, IId {
 
 	public void setCanViewAllTiersInWeb(Boolean canViewAllTiersInWeb) {
 		this.canViewAllTiersInWeb = canViewAllTiersInWeb;
-	}
-
-	public Employee getDefaultCustomerOrderEmployee() {
-		return defaultCustomerOrderEmployee;
-	}
-
-	public void setDefaultCustomerOrderEmployee(Employee defaultCustomerOrderEmployee) {
-		this.defaultCustomerOrderEmployee = defaultCustomerOrderEmployee;
 	}
 
 	public String getIntercommunityVat() {

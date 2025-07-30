@@ -28,6 +28,9 @@ public class BillingClosureReceiptValue {
     private BigDecimal debitAmount;
 
     @JsonView(JacksonViews.MyJssListView.class)
+    private BigDecimal remainingDebitAmount;
+
+    @JsonView(JacksonViews.MyJssListView.class)
     private boolean displayBottomBorder;
 
     @JsonView(JacksonViews.MyJssListView.class)
@@ -41,6 +44,12 @@ public class BillingClosureReceiptValue {
 
     @JsonView(JacksonViews.MyJssListView.class)
     private String serviceLists;
+
+    @JsonView(JacksonViews.MyJssListView.class)
+    private Integer idInvoice;
+
+    @JsonView(JacksonViews.MyJssListView.class)
+    private Integer idCustomerOrder;
 
     public BillingClosureReceiptValue() {
     }
@@ -139,6 +148,30 @@ public class BillingClosureReceiptValue {
 
     public void setAffaireLists(String affaireLists) {
         this.affaireLists = affaireLists;
+    }
+
+    public Integer getIdInvoice() {
+        return idInvoice;
+    }
+
+    public void setIdInvoice(Integer idInvoice) {
+        this.idInvoice = idInvoice;
+    }
+
+    public Integer getIdCustomerOrder() {
+        return idCustomerOrder;
+    }
+
+    public void setIdCustomerOrder(Integer idCustomerOrder) {
+        this.idCustomerOrder = idCustomerOrder;
+    }
+
+    public BigDecimal getRemainingDebitAmount() {
+        return remainingDebitAmount;
+    }
+
+    public void setRemainingDebitAmount(BigDecimal remainingDebitAmount) {
+        this.remainingDebitAmount = remainingDebitAmount;
     }
 
 }

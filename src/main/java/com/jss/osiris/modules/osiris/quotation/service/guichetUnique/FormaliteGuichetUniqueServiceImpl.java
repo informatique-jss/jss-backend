@@ -850,6 +850,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                 newProvision.setIsCorrespondenceFees(false);
                 newProvision.setIsSupplyFullBeCopy(false);
                 newProvision.setFormalite(newFormalite);
+                newProvision.setService(currentService);
                 provisionService.addOrUpdateProvision(newProvision);
                 currentService.getProvisions().add(newProvision);
                 serviceService.addOrUpdateService(currentService);

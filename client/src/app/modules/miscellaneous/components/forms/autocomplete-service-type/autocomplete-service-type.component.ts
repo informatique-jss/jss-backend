@@ -1,4 +1,4 @@
-import { Component, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { ServiceType } from 'src/app/modules/quotation/model/ServiceType';
 import { ServiceTypeService } from 'src/app/modules/quotation/services/service.type.service';
@@ -14,6 +14,7 @@ import { GenericLocalAutocompleteComponent } from '../generic-local-autocomplete
 export class AutocompleteServiceTypeComponent extends GenericLocalAutocompleteComponent<ServiceType> implements OnInit {
 
   types: ServiceType[] = [] as Array<ServiceType>;
+  @Input() displayCode: boolean = false;
 
   constructor(private formBuild: UntypedFormBuilder, private serviceTypeService: ServiceTypeService,
     private constantService: ConstantService, private appService3: AppService) {
@@ -31,7 +32,7 @@ export class AutocompleteServiceTypeComponent extends GenericLocalAutocompleteCo
   }
 
   initTypes(): void {
-    this.serviceTypeService.getServiceTypes().subscribe(response => {
+    this.serviceTypeService.getServiceTypesComplete().subscribe(response => {
       this.types = response;
     });
   }
@@ -43,6 +44,8 @@ export class AutocompleteServiceTypeComponent extends GenericLocalAutocompleteCo
         label += object.serviceFamily.serviceFamilyGroup.label + " - ";
       label += object.label;
     }
+    if (this.displayCode && object.code)
+      label += " (" + object.code + ")";
     return label;
   }
 }

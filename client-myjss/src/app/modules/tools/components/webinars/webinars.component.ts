@@ -19,6 +19,7 @@ export class WebinarsComponent implements OnInit {
   webinarParticipant: WebinarParticipant = { mail: {} as Mail } as WebinarParticipant;
   isConditionAccepted: boolean = false;
   replayMail: string = "";
+  displayForm: boolean = true;
 
   webinarsForm!: FormGroup;
 
@@ -51,8 +52,8 @@ export class WebinarsComponent implements OnInit {
         this.webinarsForm.reset();
         this.isConditionAccepted = false;
         this.webinarParticipant = { mail: {} as Mail } as WebinarParticipant;
-        if (this.formRef)
-          this.formRef.nativeElement.classList.remove("was-validated");
+        this.displayForm = false;
+        setTimeout(() => this.displayForm = true, 0);
       }
     });
   }

@@ -5,5 +5,6 @@ export interface ServiceFieldType {
   code: string;
   label: string;
   dataType: string;
+  value: string; // Only for client purposes
   serviceFieldTypePossibleValues: ServiceTypeFieldTypePossibleValue[];
 }

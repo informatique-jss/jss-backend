@@ -22,7 +22,7 @@ export interface Provision extends IAttachment {
   provisionType: ProvisionType;
   invoiceItems: InvoiceItem[]
   service: Service;
-  assignedTo: Employee;
+  assignedTo: Employee | undefined;
   isLogo: boolean;
   isRedactedByJss: boolean;
   isBaloPackage: boolean;
@@ -62,5 +62,6 @@ export interface Provision extends IAttachment {
   payments: Payment[];
   lastCompetentAuthorityReminderDateTime: Date;
   complexity: number;
+  isPriority: boolean;
   customerOrderComments: CustomerOrderComment[];
 }

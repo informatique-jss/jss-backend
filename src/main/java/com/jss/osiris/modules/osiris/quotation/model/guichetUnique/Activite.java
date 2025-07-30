@@ -16,6 +16,7 @@ import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.StatutPraticien;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TotalitePartie;
 
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -32,6 +33,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @DoNotAudit
+@Cacheable(false)
 @Table(indexes = {
         @Index(name = "idx_activite_autre_etablissement", columnList = "id_autres_etablissement"),
         @Index(name = "idx_activite_etablissement_principal", columnList = "id_etablissement_principal") })

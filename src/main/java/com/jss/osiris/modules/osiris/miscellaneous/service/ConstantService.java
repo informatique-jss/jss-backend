@@ -241,6 +241,10 @@ public interface ConstantService {
 
     public ProvisionFamilyType getProvisionFamilyTypeDeposit() throws OsirisException;
 
+    public ProvisionFamilyType getProvisionFamilyTypeBalo() throws OsirisException;
+
+    public ProvisionFamilyType getProvisionFamilyTypeBodacc() throws OsirisException;
+
     public ProvisionFamilyType getProvisionFamilyTypeAbonnement() throws OsirisException;
 
     public BillingType getBillingTypeInfogreffeDebour() throws OsirisException;
@@ -318,6 +322,10 @@ public interface ConstantService {
     public ActType getActTypeAuthentic() throws OsirisException;
 
     public AssignationType getAssignationTypeEmployee() throws OsirisException;
+
+    public AssignationType getAssignationTypePublisciste() throws OsirisException;
+
+    public AssignationType getAssignationTypeFormaliste() throws OsirisException;
 
     public Employee getEmployeeBillingResponsible() throws OsirisException;
 
@@ -496,6 +504,8 @@ public interface ConstantService {
     public ServiceType getServiceTypeSecondaryCenterOpeningAlAndFormality() throws OsirisException;
 
     public ActiveDirectoryGroup getActiveDirectoryGroupFormalites() throws OsirisException;
+
+    public ActiveDirectoryGroup getActiveDirectoryGroupDirection() throws OsirisException;
 
     public ActiveDirectoryGroup getActiveDirectoryGroupInsertions() throws OsirisException;
 

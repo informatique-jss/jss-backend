@@ -237,6 +237,9 @@ public class Provision implements IId, IAttachment {
 	// 1 hard => 3 easy
 	private Integer complexity;
 
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
+	private Boolean isPriority;
+
 	public Integer getId() {
 		return id;
 	}
@@ -659,5 +662,13 @@ public class Provision implements IId, IAttachment {
 
 	public void setComplexity(Integer complexity) {
 		this.complexity = complexity;
+	}
+
+	public Boolean getIsPriority() {
+		return isPriority;
+	}
+
+	public void setIsPriority(Boolean isPriority) {
+		this.isPriority = isPriority;
 	}
 }

@@ -26,6 +26,10 @@ export class NewVoucherDialogComponent implements OnInit {
       this.appService.displaySnackBar("Veuillez renseigner un montant ou un poucentage de réduction", true, 3000);
       return;
     }
+    if (this.voucher.discountAmount && this.voucher.discountRate) {
+      this.appService.displaySnackBar("Veuillez choisir entre un montant de réduction et un pourcentage", true, 3000);
+      return;
+    }
     if (!this.voucher.code || this.voucher.code.trim().length == 0) {
       this.appService.displaySnackBar("Veuillez renseigner un code d'utilisation du coupon", true, 3000);
       return;

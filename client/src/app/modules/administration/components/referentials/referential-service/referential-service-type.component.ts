@@ -34,8 +34,9 @@ export class ReferentialServiceTypeComponent extends GenericReferentialComponent
   getAddOrUpdateObservable(): Observable<ServiceType> {
     return this.serviceService.addOrUpdateServiceType(this.selectedEntity!);
   }
+
   getGetObservable(): Observable<ServiceType[]> {
-    return this.serviceService.getServiceTypes();
+    return this.serviceService.getServiceTypesComplete();
   }
 
   addProvisionType() {

@@ -40,6 +40,7 @@ public class ProvisionType implements Serializable, IId {
 	private String label;
 
 	@Column(nullable = false, length = 20)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String code;
 
 	@ManyToOne(fetch = FetchType.LAZY)

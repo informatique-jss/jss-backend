@@ -80,7 +80,7 @@
               *ngIf="isExpanded(serviceType.id) && serviceType.assoServiceTypeDocuments && serviceType.assoServiceTypeDocuments.length>0">
               <h6 *ngIf="hasMandatoryDocuments">Documents obligatoires</h6>
               <ng-container *ngFor="let item of  serviceType.assoServiceTypeDocuments">
-                <div class="col-4 g-2" *ngIf="item.isMandatory">
+                <div class="col-12 col-md-4 g-2" *ngIf="item.isMandatory">
                   <li class="d-flex pb-2 mb-1">
                     <span class="bg-primary mt-2 checkbox-custom"></span>
                     <span class="text-decoration-none text-gray">{{item.typeDocument.customLabel}}</span>
@@ -92,7 +92,7 @@
               *ngIf="isExpanded(serviceType.id) && serviceType.assoServiceTypeDocuments && serviceType.assoServiceTypeDocuments.length>0">
               <h6 *ngIf="hasNonMandatoryDocuments">Documents optionnels</h6>
               <ng-container *ngFor="let item of  serviceType.assoServiceTypeDocuments">
-                <div class="col-4 g-2" *ngIf="!item.isMandatory">
+                <div class="col-12 col-md-4 g-2" *ngIf="!item.isMandatory">
                   <li class="d-flex pb-2 mb-1">
                     <span class="bg-primary mt-2 checkbox-custom"></span>
                     <span class="text-decoration-none text-gray">{{item.typeDocument.customLabel}}</span>
@@ -105,7 +105,7 @@
             <ng-container
               *ngIf="isExpanded(serviceType.id) && serviceType.assoServiceTypeFieldTypes && serviceType.assoServiceTypeFieldTypes.length>0">
               <h6>Informations complementaires</h6>
-              <div class="col-4 g-2" *ngFor="let item of  serviceType.assoServiceTypeFieldTypes">
+              <div class="col-12 col-md-4 g-2" *ngFor="let item of  serviceType.assoServiceTypeFieldTypes">
                 <li class="d-flex pb-2 mb-1">
                   <span class="bg-primary mt-2 checkbox-custom"></span>
                   <span class="text-decoration-none text-gray">{{item.serviceFieldType.label}} <span

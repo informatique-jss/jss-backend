@@ -183,15 +183,14 @@ public class BillingClosureReceiptHelper {
         // Find customer orders
         ArrayList<Responsable> responsableList = new ArrayList<Responsable>();
 
-        if (tiers != null && tiers.getResponsables() != null) {
+        if (responsable != null) {
+            responsableList.add(responsable);
+        } else if (tiers != null && tiers.getResponsables() != null) {
             values.add(new BillingClosureReceiptValue(
                     tiers.getDenomination() != null ? tiers.getDenomination()
                             : (tiers.getFirstname() + " " + tiers.getLastname())));
             for (Responsable responsableOfTiers : tiers.getResponsables())
                 responsableList.add(responsableOfTiers);
-        }
-        if (responsable != null) {
-            responsableList.add(responsable);
         }
 
         List<CustomerOrder> customerOrders = customerOrderService
@@ -338,9 +337,13 @@ public class BillingClosureReceiptHelper {
         BillingClosureReceiptValue value = new BillingClosureReceiptValue();
         value.setDisplayBottomBorder(true);
         value.setDebitAmount(invoice.getTotalPrice());
+        value.setRemainingDebitAmount(invoiceService.getRemainingAmountToPayForInvoice(invoice));
         value.setCreditAmount(null);
         value.setEventDateTime(invoice.getCreatedDate());
         value.setResponsable(invoice.getResponsable());
+        value.setIdInvoice(invoice.getId());
+        if (invoice.getCustomerOrder() != null)
+            value.setIdCustomerOrder(invoice.getCustomerOrder().getId());
         value.setEventDateString(invoice.getCreatedDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         value.setEventDescription("Facture n°" + invoice.getId());
         if (invoice.getManualPaymentType() != null
@@ -393,6 +396,7 @@ public class BillingClosureReceiptHelper {
         value.setDebitAmount(null);
         value.setCreditAmount(payment.getPaymentAmount());
         value.setResponsable(customerOrder.getResponsable());
+        value.setIdCustomerOrder(customerOrder.getId());
         value.setEventDateTime(payment.getPaymentDate());
         value.setEventDateString(payment.getPaymentDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
@@ -415,10 +419,15 @@ public class BillingClosureReceiptHelper {
         BillingClosureReceiptValue value = new BillingClosureReceiptValue();
         value.setDisplayBottomBorder(displayBottomBorder);
         value.setDebitAmount(null);
-        if (payment.getInvoice() != null)
+        if (payment.getInvoice() != null) {
             value.setResponsable(payment.getInvoice().getResponsable());
-        else if (payment.getCustomerOrder() != null)
+            value.setIdInvoice(payment.getInvoice().getId());
+            if (payment.getInvoice().getCustomerOrder() != null)
+                value.setIdCustomerOrder(payment.getInvoice().getCustomerOrder().getId());
+        } else if (payment.getCustomerOrder() != null) {
             value.setResponsable(payment.getCustomerOrder().getResponsable());
+            value.setIdCustomerOrder(payment.getCustomerOrder().getId());
+        }
         value.setCreditAmount(payment.getPaymentAmount());
         value.setEventDateTime(payment.getPaymentDate());
         value.setEventDateString(payment.getPaymentDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));

@@ -1,7 +1,6 @@
 package com.jss.osiris.modules.osiris.quotation.model;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -30,7 +29,8 @@ public class ServiceType implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "asso_service_type_sequence", sequenceName = "asso_service_type_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "asso_service_type_sequence")
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class,
+			JacksonViews.OsirisListView.class })
 	private Integer id;
 
 	@Column(nullable = false)
@@ -41,10 +41,12 @@ public class ServiceType implements Serializable, IId {
 	private String label;
 
 	@IndexedField
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class,
+			JacksonViews.OsirisListView.class })
 	private String customLabel;
 
-	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class,
+			JacksonViews.OsirisListView.class })
 	private String code;
 
 	@Column(columnDefinition = "TEXT")
@@ -54,10 +56,12 @@ public class ServiceType implements Serializable, IId {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_service_family")
 	@IndexedField
+	@JsonView({ JacksonViews.OsirisListView.class })
 	private ServiceFamily serviceFamily;
 
 	@OneToMany(mappedBy = "serviceType", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "serviceType" }, allowSetters = true)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private List<AssoServiceProvisionType> assoServiceProvisionTypes;
 
 	@OneToMany(mappedBy = "serviceType", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -81,21 +85,16 @@ public class ServiceType implements Serializable, IId {
 	@Transient
 	private Boolean hasOnlyAnnouncement;
 
-	@Column(columnDefinition = "NUMERIC(15,2)", precision = 10, scale = 2)
-	private BigDecimal defaultDeboursPrice;
-
-	@Column(columnDefinition = "NUMERIC(15,2)", precision = 10, scale = 2)
-	private BigDecimal defaultDeboursPriceNonTaxable;
-
 	private Integer suspiciousMarkup;
 
 	@JsonView(JacksonViews.MyJssListView.class)
 	private Boolean isMergeable;
 
-	@ManyToOne(fetch = FetchType.LAZY)
 	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
 	@JoinColumn(name = "id_service_type_linked")
 	private ServiceType serviceTypeLinked;
+
+	private Boolean hideInMyJss;
 
 	public Integer getId() {
 		return id;
@@ -185,22 +184,6 @@ public class ServiceType implements Serializable, IId {
 		this.isRequiringNewUnregisteredAffaire = isRequiringNewUnregisteredAffaire;
 	}
 
-	public BigDecimal getDefaultDeboursPrice() {
-		return defaultDeboursPrice;
-	}
-
-	public void setDefaultDeboursPrice(BigDecimal defaultDeboursPrice) {
-		this.defaultDeboursPrice = defaultDeboursPrice;
-	}
-
-	public BigDecimal getDefaultDeboursPriceNonTaxable() {
-		return defaultDeboursPriceNonTaxable;
-	}
-
-	public void setDefaultDeboursPriceNonTaxable(BigDecimal defaultDeboursPriceNonTaxable) {
-		this.defaultDeboursPriceNonTaxable = defaultDeboursPriceNonTaxable;
-	}
-
 	public Boolean getHasAnnouncement() {
 		return hasAnnouncement;
 	}
@@ -241,4 +224,11 @@ public class ServiceType implements Serializable, IId {
 		this.serviceTypeLinked = serviceTypeLinked;
 	}
 
+	public Boolean getHideInMyJss() {
+		return hideInMyJss;
+	}
+
+	public void setHideInMyJss(Boolean hideInMyJss) {
+		this.hideInMyJss = hideInMyJss;
+	}
 }

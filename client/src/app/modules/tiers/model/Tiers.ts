@@ -46,7 +46,6 @@ export interface Tiers extends IDocument, IAttachment {
   rffInsertionRate: number;
   idAs400: string;
   salesEmployee: Employee | undefined;
-  defaultCustomerOrderEmployee: Employee | undefined;
   formalisteEmployee: Employee | undefined;
   insertionEmployee: Employee | undefined;
   mailRecipient: string | null;

@@ -5,8 +5,6 @@ import { environment } from '../../../../environments/environment';
 import { Toast } from '../../../libs/toast/Toast';
 import { MenuItem } from '../../general/model/MenuItem';
 import { AccountMenuItem, MAIN_ITEM_ACCOUNT, MAIN_ITEM_DASHBOARD } from '../../my-account/model/AccountMenuItem';
-import { ResponsableService } from '../../profile/services/responsable.service';
-import { UserScopeService } from '../../profile/services/user.scope.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,8 +18,6 @@ export class AppService {
 
   constructor(
     private router: Router,
-    private responsableService: ResponsableService,
-    private userScopeService: UserScopeService
   ) { }
 
   showLoadingSpinner(): void {
@@ -55,9 +51,7 @@ export class AppService {
     if (event && (event.ctrlKey || event.button && event.button == "1")) {
       window.open(location.origin + "/" + route, "_blank");
     } else {
-      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-        this.router.navigate(['/' + route])
-      });
+      this.router.navigate(['/' + route])
       if (sameWindowEndFonction)
         sameWindowEndFonction();
     }
@@ -82,23 +76,14 @@ export class AppService {
 
   getAllAccountMenuItems(): AccountMenuItem[] {
     let menuItem = [] as AccountMenuItem[];
-    this.userScopeService.getUserScope().subscribe(response => {
-      this.responsableService.getPotentialUserScope().subscribe(responseScope => {
-        menuItem.push({ mainItem: MAIN_ITEM_DASHBOARD, label: "Vue d'ensemble", iconClass: "ai-chart", route: "/account/overview" } as AccountMenuItem);
-        menuItem.push({ mainItem: MAIN_ITEM_DASHBOARD, label: "Devis", iconClass: "ai-slider", route: "/account/quotations" } as AccountMenuItem);
-        menuItem.push({ mainItem: MAIN_ITEM_DASHBOARD, label: "Commandes", iconClass: "ai-cart", route: "/account/orders" } as AccountMenuItem);
-        menuItem.push({ mainItem: MAIN_ITEM_DASHBOARD, label: "Relevé de compte", iconClass: "ai-wallet", route: "/account/closure" } as AccountMenuItem);
-        menuItem.push({ mainItem: MAIN_ITEM_DASHBOARD, label: "Affaires", iconClass: "ai-briefcase", route: "/account/affaires" } as AccountMenuItem);
-        menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Mon compte", iconClass: "ai-user-check", route: "/account/settings" } as AccountMenuItem);
-        if (response.length > 1)
-          menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Mes comptes associés", iconClass: "ai-link", route: "/account/associated-settings" } as AccountMenuItem);
-        // Display only if I have more than one responsible potential
-        if (responseScope.length > 1)
-          menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Périmètre", iconClass: "ai-grid", route: "/account/scope" } as AccountMenuItem);
-        menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Contenu suivis", iconClass: "ai-bookmark", route: "/account/reading-folders" } as AccountMenuItem);
-        menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Newsletter et alertes", iconClass: "ai-messages", route: "/account/communication-preference" } as AccountMenuItem);
-      })
-    })
+    menuItem.push({ mainItem: MAIN_ITEM_DASHBOARD, label: "Vue d'ensemble", iconClass: "ai-chart", route: "/account/overview" } as AccountMenuItem);
+    menuItem.push({ mainItem: MAIN_ITEM_DASHBOARD, label: "Devis", iconClass: "ai-slider", route: "/account/quotations" } as AccountMenuItem);
+    menuItem.push({ mainItem: MAIN_ITEM_DASHBOARD, label: "Commandes", iconClass: "ai-cart", route: "/account/orders" } as AccountMenuItem);
+    menuItem.push({ mainItem: MAIN_ITEM_DASHBOARD, label: "Relevé de compte", iconClass: "ai-wallet", route: "/account/closure" } as AccountMenuItem);
+    menuItem.push({ mainItem: MAIN_ITEM_DASHBOARD, label: "Affaires", iconClass: "ai-briefcase", route: "/account/affaires" } as AccountMenuItem);
+    menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Mon compte", iconClass: "ai-user-check", route: "/account/settings" } as AccountMenuItem);
+    menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Contenu suivis", iconClass: "ai-bookmark", route: "/account/reading-folders" } as AccountMenuItem);
+    menuItem.push({ mainItem: MAIN_ITEM_ACCOUNT, label: "Newsletter et alertes", iconClass: "ai-messages", route: "/account/communication-preference" } as AccountMenuItem);
     return menuItem;
   }
 

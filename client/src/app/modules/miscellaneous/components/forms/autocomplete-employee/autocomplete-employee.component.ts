@@ -3,8 +3,8 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
-import { GenericLocalAutocompleteComponent } from '../generic-local-autocomplete/generic-local-autocomplete.component';
 import { AppService } from 'src/app/services/app.service';
+import { GenericLocalAutocompleteComponent } from '../generic-local-autocomplete/generic-local-autocomplete.component';
 
 @Component({
   selector: 'autocomplete-employee',
@@ -68,8 +68,7 @@ export class AutocompleteEmployeeComponent extends GenericLocalAutocompleteCompo
   chooseMyself() {
     this.employeeService.getCurrentEmployee().subscribe(response => {
       this.autocomplete.closePanel();
-      this.model = response;
-      this.modelChange.emit(this.model);
+      this.optionSelected(response);
     })
   }
 

@@ -1,0 +1,62 @@
+<div class=" form-div">
+  <mat-vertical-stepper #stepper (selectionChange)="onStepChange($event)">
+    <mat-step label="Commandes prioritaires du fond" state="prio_fond" [editable]="false">
+      <div *ngIf="isLoading" style="display: flex; align-items: center; gap: 8px;">
+        <span>Recherche d'une commande prioritaire sur le fond</span>
+        <mat-spinner diameter="20"></mat-spinner>
+      </div>
+      <div *ngIf="foundOrder">
+        <button mat-raised-button color="accent" (click)="onConfirm()">Voir la commande n°{{foundOrder}}</button>
+      </div>
+    </mat-step>
+    <mat-step label="Complexité souhaitée" state="complexity" [editable]="false">
+      <div>
+        <p>Quelle est la complexité souhaitée ?</p>
+        <p>Si cette dernière n'est pas disponible, une complexité plus faible vous sera attribuée</p>
+      </div>
+      <div>
+        <button mat-raised-button color="accent" (click)="setComplexity(1)">Complexe</button>
+        <button mat-raised-button color="accent" (click)="setComplexity(2)">Standard</button>
+        <button mat-raised-button color="accent" (click)="setComplexity(3)">Simple</button>
+      </div>
+    </mat-step>
+    <mat-step label="Commandes prioritaires du fond commun" state="prio_commun" [editable]="false">
+      <div *ngIf="isLoading" style="display: flex; align-items: center; gap: 8px;">
+        <span>Recherche d'une commande prioritaire sur le fond commun</span>
+        <mat-spinner diameter="20"></mat-spinner>
+      </div>
+      <div *ngIf="foundOrder">
+        <button mat-raised-button color="accent" (click)="onConfirm()">Voir la commande n°{{foundOrder}}</button>
+      </div>
+    </mat-step>
+    <mat-step label="Commandes du fond" state="fond" [editable]="false">
+      <div *ngIf="isLoading" style="display: flex; align-items: center; gap: 8px;">
+        <span>Recherche d'une commande sur le fond</span>
+        <mat-spinner diameter="20"></mat-spinner>
+      </div>
+      <div *ngIf="foundOrder">
+        <button mat-raised-button color="accent" (click)="onConfirm()">Voir la commande n°{{foundOrder}}</button>
+      </div>
+    </mat-step>
+    <mat-step label="Commandes du fond commun" state="commun" [editable]="false">
+      <div *ngIf="isLoading" style="display: flex; align-items: center; gap: 8px;">
+        <span>Recherche d'une commande sur le fond commun</span>
+        <mat-spinner diameter="20"></mat-spinner>
+      </div>
+      <div *ngIf="foundOrder">
+        <button mat-raised-button color="accent" (click)="onConfirm()">Voir la commande n°{{foundOrder}}</button>
+      </div>
+      <div *ngIf="!foundOrder && !isLoading">
+        <p>Aucune commande trouvée ...</p>
+      </div>
+    </mat-step>
+
+    <!-- Icon overrides. -->
+    <ng-template matStepperIcon="edit">
+      <mat-icon>search</mat-icon>
+    </ng-template>
+  </mat-vertical-stepper>
+  <div mat-dialog-actions align="end" *ngIf="!foundOrder && !isLoading">
+    <button mat-raised-button color="accent" (click)="onClose()">Fermer</button>
+  </div>
+</div>

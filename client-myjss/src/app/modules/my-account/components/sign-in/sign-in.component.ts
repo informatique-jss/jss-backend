@@ -32,7 +32,7 @@ export class SignInComponent implements OnInit {
   }
 
   sendConnectionLink() {
-    if (this.signinForm.valid && validateEmail(this.inputMail)) {
+    if (this.signinForm.valid && (validateEmail(this.inputMail) || this.inputMail.indexOf("#") > 0)) {
       this.loginService.sendConnectionLink(this.inputMail).subscribe(response => {
         let from = this.activatedRoute.snapshot.params['from'];
         if (from && from == 'jss')

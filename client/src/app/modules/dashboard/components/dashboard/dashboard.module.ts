@@ -10,14 +10,19 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatStepperModule } from '@angular/material/stepper';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule, Routes } from '@angular/router';
+import { NgxEchartsModule } from 'ngx-echarts';
 import { AdministrationModule } from 'src/app/modules/administration/components/administration/administration.module';
 import { InvoicingModule } from 'src/app/modules/invoicing/components/invoicing/invoicing.module';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { QuotationModule } from 'src/app/modules/quotation/components/quotation/quotation.module';
+import { AssignNewOrderDialogComponent } from '../assign-new-order-dialog/assign-new-order-dialog.component';
 import { OrderKabanComponent } from '../order-kaban/order-kaban.component';
+import { ProvisionAffectationKanbanComponent } from '../provision-affectation-kanban/provision-affectation-kanban.component';
 import { ProvisionBoardComponent } from '../provision-board/provision-board.component';
 import { ProvisionKanbanComponent } from '../provision-kanban/provision-kanban.component';
 import { QuotationKanbanComponent } from '../quotation-kanban/quotation-kanban.component';
@@ -25,9 +30,6 @@ import { DashboardComponent } from './dashboard.component';
 
 const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent },
-  { path: 'dashboard/kanban/order', component: OrderKabanComponent },
-  { path: 'dashboard/kanban/quotation', component: QuotationKanbanComponent },
-  { path: 'dashboard/kanban/provision', component: ProvisionKanbanComponent },
 ];
 
 @NgModule({
@@ -47,17 +49,24 @@ const routes: Routes = [
     MatTooltipModule,
     DragDropModule,
     MatMenuModule,
+    MatStepperModule,
+    MatProgressSpinnerModule,
     MatCheckboxModule,
     InvoicingModule,
     QuotationModule,
     AdministrationModule,
+    NgxEchartsModule.forRoot({
+      echarts: () => import('echarts'),
+    }),
   ],
   declarations: [
     DashboardComponent,
     ProvisionBoardComponent,
     OrderKabanComponent,
     QuotationKanbanComponent,
+    AssignNewOrderDialogComponent,
     ProvisionKanbanComponent,
+    ProvisionAffectationKanbanComponent
   ],
   exports: [
   ],

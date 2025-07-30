@@ -53,7 +53,10 @@
                   <input class="form-check-input" type="radio" id="billing-isBillingOther"
                     [(ngModel)]="document.billingLabelType" [value]="billingLabelTypeOther"
                     [disabled]="lockBillingLabel " [ngModelOptions]="{standalone: true}">
-                  <label class="form-check-label" for="billing-isBillingOther">Libeller à un tiers</label>
+                  <label class="form-check-label" for="billing-isBillingOther">Libeller à un tiers <i
+                      style="cursor: pointer;" class="ai-circle-info"
+                      *ngIf="document.billingLabelType.id==billingLabelTypeOther.id"
+                      ngbTooltip="Si vous choisissez cette option vous serez recontacté par nos équipes pour déterminer l'adresse à utiliser"></i></label>
                 </div>
               </div>
               <div class="d-flex align-items-center pb-1 mb-2">

@@ -7,6 +7,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.CodeRolePersonneQualifiee;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.OptionJQPA;
 
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,6 +20,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 
 @Entity
+@Cacheable(false)
 @DoNotAudit
 public class Jqpa implements Serializable, IId {
 

@@ -1,6 +1,6 @@
 <h1 class="h2 mb-4">Tableau de bord</h1>
 
-<div class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4" *ngIf="statistics">
+<div class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4" *ngIf="statistics && !isLoadingStats">
   <div class="card-body">
     <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-0 mb-lg-1 mb-xl-3">
       <i class="ai-chart text-primary lead pe-1 me-2"></i>
@@ -9,46 +9,102 @@
     <!-- Stats -->
     <div class="row g-3 g-xl-4">
       <div class="col-md-4 col-sm-6" *ngIf="statistics.customerOrderInProgress && statistics.customerOrderInProgress>0">
-        <div class="h-100 bg-secondary rounded-3 text-center p-4">
+        <div class="h-100 bg-secondary rounded-3 text-center p-4 stat-card"
+          [routerLink]="'/account/orders/search/'+CUSTOMER_ORDER_STATUS_BEING_PROCESSED">
           <h2 class="h6 pb-2 mb-1">Commandes en cours</h2>
           <div class="h2 text-primary mb-2">{{statistics.customerOrderInProgress}}</div>
         </div>
       </div>
       <div class="col-md-4 col-sm-6" *ngIf="statistics.quotationToValidate && statistics.quotationToValidate>0">
-        <div class="h-100 bg-secondary rounded-3 text-center p-4">
+        <div class="h-100 bg-secondary rounded-3 text-center p-4 stat-card"
+          [routerLink]="'/account/quotations/search/'+QUOTATION_STATUS_SENT_TO_CUSTOMER">
           <h2 class="h6 pb-2 mb-1">Devis à valider</h2>
           <div class="h2 text-primary mb-2">{{statistics.quotationToValidate}}</div>
         </div>
       </div>
       <div class="col-md-4 col-sm-6" *ngIf="statistics.invoiceToPay && statistics.invoiceToPay>0">
-        <div class="h-100 bg-secondary rounded-3 text-center p-4">
+        <div class="h-100 bg-secondary rounded-3 text-center p-4 stat-card" routerLink="/account/closure">
           <h2 class="h6 pb-2 mb-1">Facture en attente de paiement</h2>
           <div class="h2 text-primary mb-2">{{statistics.invoiceToPay}}</div>
         </div>
       </div>
-      <div class="col-md-4 col-sm-6" *ngIf="statistics.invoiceAfterDueDate && statistics.invoiceAfterDueDate>0">
-        <div class="h-100 bg-secondary rounded-3 text-center p-4">
+      <!-- <div class="col-md-4 col-sm-6" *ngIf="statistics.invoiceAfterDueDate && statistics.invoiceAfterDueDate>0">
+        <div class="h-100 bg-secondary rounded-3 text-center p-4 stat-card">
           <h2 class="h6 pb-2 mb-1">Facture en retard de paiement</h2>
           <div class="h2 text-primary mb-2">{{statistics.invoiceAfterDueDate}}</div>
         </div>
-      </div>
-      <div class="col-md-4 col-sm-6"
+      </div> -->
+      <!-- <div class="col-md-4 col-sm-6"
         *ngIf="statistics.customerOrderRequieringAttention && statistics.customerOrderRequieringAttention>0">
-        <div class="h-100 bg-secondary rounded-3 text-center p-4">
+        <div class="h-100 bg-secondary rounded-3 text-center p-4 stat-card"
+          [routerLink]="'/account/quotations/search/'+QUOTATION_STATUS_SENT_TO_CUSTOMER">
           <h2 class="h6 pb-2 mb-1">Commandes qui requièrent votre attention</h2>
           <div class="h2 text-primary mb-2">{{statistics.customerOrderRequieringAttention}}</div>
         </div>
-      </div>
+      </div> -->
       <div class="col-md-4 col-sm-6" *ngIf="statistics.customerOrderDraft && statistics.customerOrderDraft>0">
-        <div class="h-100 bg-secondary rounded-3 text-center p-4">
+        <div class="h-100 bg-secondary rounded-3 text-center p-4 stat-card"
+          [routerLink]="'/account/orders/search/'+CUSTOMER_ORDER_STATUS_OPEN">
           <h2 class="h6 pb-2 mb-1">Brouillons de commandes </h2>
           <div class="h2 text-primary mb-2">{{statistics.customerOrderDraft}}</div>
         </div>
       </div>
       <div class="col-md-4 col-sm-6" *ngIf="statistics.quotationDraft && statistics.quotationDraft>0">
-        <div class="h-100 bg-secondary rounded-3 text-center p-4">
+        <div class="h-100 bg-secondary rounded-3 text-center p-4 stat-card"
+          [routerLink]="'/account/quotations/search/'+QUOTATION_STATUS_OPEN">
           <h2 class="h6 pb-2 mb-1">Brouillons de devis </h2>
           <div class="h2 text-primary mb-2">{{statistics.quotationDraft}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4" *ngIf="isLoadingStats">
+  <div class="card-body">
+    <div class="d-flex align-items-center mt-sm-n1 pb-4 mb-0 mb-lg-1 mb-xl-3">
+      <i class="ai-chart text-primary lead pe-1 me-2"></i>
+      <h2 class="h4 mb-0">Mes statistiques</h2>
+    </div>
+    <!-- Stats -->
+    <div class="row g-3 g-xl-4">
+      <div class="col-md-4 col-sm-6">
+        <div class="h-100 bg-secondary rounded-3 text-center p-4">
+          <div class="h2 text-primary mb-2">
+            <p class="card-text placeholder-glow">
+              <span class="placeholder placeholder-sm col-7 me-2"></span>
+              <span class="placeholder placeholder-sm col-4"></span>
+              <span class="placeholder placeholder-sm col-4 me-2"></span>
+              <span class="placeholder placeholder-sm col-6"></span>
+              <span class="placeholder placeholder-sm col-8"></span>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 col-sm-6">
+        <div class="h-100 bg-secondary rounded-3 text-center p-4">
+          <div class="h2 text-primary mb-2">
+            <p class="card-text placeholder-glow">
+              <span class="placeholder placeholder-sm col-7 me-2"></span>
+              <span class="placeholder placeholder-sm col-4"></span>
+              <span class="placeholder placeholder-sm col-4 me-2"></span>
+              <span class="placeholder placeholder-sm col-6"></span>
+              <span class="placeholder placeholder-sm col-8"></span>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 col-sm-6">
+        <div class="h-100 bg-secondary rounded-3 text-center p-4">
+          <div class="h2 text-primary mb-2">
+            <p class="card-text placeholder-glow">
+              <span class="placeholder placeholder-sm col-7 me-2"></span>
+              <span class="placeholder placeholder-sm col-4"></span>
+              <span class="placeholder placeholder-sm col-4 me-2"></span>
+              <span class="placeholder placeholder-sm col-6"></span>
+              <span class="placeholder placeholder-sm col-8"></span>
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -81,9 +137,9 @@
         <div class="col-md-8 mb-4 mb-md-0">
           <table class="table mb-0">
             <tbody>
-              <tr *ngIf="currentUser.phones && currentUser.phones.length>0">
+              <tr *ngIf="currentUser && currentUser.salesEmployee && currentUser.salesEmployee.phoneNumber">
                 <td class="border-0 text-body-secondary py-1 px-0"><i class="ai-phone me-1"></i>Téléphone</td>
-                <td class="border-0 text-dark fw-medium py-1 ps-3">{{currentUser.phones.join(" / ")}}
+                <td class="border-0 text-dark fw-medium py-1 ps-3">{{currentUser.salesEmployee.phoneNumber}}
                 </td>
               </tr>
               <tr>

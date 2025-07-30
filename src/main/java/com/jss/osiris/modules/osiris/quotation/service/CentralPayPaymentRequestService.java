@@ -20,7 +20,7 @@ public interface CentralPayPaymentRequestService {
 
         public void deleteCentralPayPaymentRequest(CentralPayPaymentRequest centralPayPaymentRequest);
 
-        public void declareNewCentralPayPaymentRequest(String paymentRequestId, CustomerOrder customerOrder,
+        public void declareNewCentralPayPaymentRequest(String paymentRequestId, List<CustomerOrder> customerOrders,
                         Quotation quotation);
 
         public void checkAllPaymentRequests()
@@ -30,8 +30,6 @@ public interface CentralPayPaymentRequestService {
         public void checkPaymentRequest(CentralPayPaymentRequest request)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
-
-        public CentralPayPaymentRequest getCentralPayPaymentRequestByCustomerOrder(CustomerOrder customerOrder);
 
         public CentralPayPaymentRequest getCentralPayPaymentRequestByQuotation(Quotation quotation);
 }

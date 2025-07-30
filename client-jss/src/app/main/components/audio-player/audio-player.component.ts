@@ -24,7 +24,6 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
   progress: number = 0;
   progressSubscription: Subscription = new Subscription;
 
-
   menuDropdownOpen = false;
 
   volumePreviousValue: number = 0.5;
@@ -40,8 +39,7 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
     this.progressSubscription = this.audioPlayerService.progressObservable.subscribe(item => {
       this.progress = item;
       this.cdr.detectChanges();
-    }
-    );
+    });
   }
 
   ngAfterViewInit(): void {

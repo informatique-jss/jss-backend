@@ -7,12 +7,14 @@ import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.DoNotAudit;
 import com.jss.osiris.modules.osiris.miscellaneous.model.ICode;
 
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
 @Entity
 @DoNotAudit
+@Cacheable(false)
 public class FormeExerciceActivitePrincipal implements Serializable, ICode {
     public FormeExerciceActivitePrincipal(String code) {
         this.code = code;
