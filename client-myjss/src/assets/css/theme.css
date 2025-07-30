@@ -20457,3 +20457,32 @@ ng-autocomplete .autocomplete-container b {
 .border-input {
   border: var(--ar-border-width) var(--ar-border-style) var(--ar-gray-500) !important;
 }
+
+/* Classes for announcement tempaltes */
+.fragment-box {
+  border-radius: 4px;
+  padding: 0.15rem;
+  margin: 0.2rem;
+  border: 2px solid transparent;
+}
+
+/* WARNING : the names of the classes has to be modified if the usableColors array of the notice-template component changes. They always have to be ISO */
+.fragment-border-1c2d41 {
+  border-color: #1c2d41;
+}
+
+.fragment-border-ed5050 {
+  border-color: #ed5050;
+}
+
+.fragment-border-3fca90 {
+  border-color: #3fca90;
+}
+
+.fragment-border-f3e3ca {
+  border-color: #f3e3ca;
+}
+
+.fragment-border-3687d8 {
+  border-color: #3687d8;
+}
