@@ -691,8 +691,7 @@ public class ServiceServiceImpl implements ServiceService {
                     for (Provision provision : service.getProvisions()) {
                         if (provision.getAnnouncement() != null
                                 && provision.getAnnouncement().getConfrere() != null)
-                            service.setConfrereLabel(
-                                    "publié sur " + provision.getAnnouncement().getConfrere().getLabel());
+                            service.setConfrereLabel(provision.getAnnouncement().getConfrere().getLabel());
 
                         if (provision.getSimpleProvision() != null
                                 && provision.getSimpleProvision().getSimpleProvisionStatus() != null
