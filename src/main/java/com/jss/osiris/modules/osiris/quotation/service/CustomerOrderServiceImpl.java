@@ -2125,15 +2125,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
-    public Integer getNewOrderIdCreatedFromQuotation(Quotation quotation) {
-        CustomerOrder lastCustomerOrder = customerOrderRepository.findTopByQuotationsOrderByIdDesc(quotation);
-        if (lastCustomerOrder != null)
-            return lastCustomerOrder.getId();
-        else
-            return null;
-    }
-
-    @Override
     public List<CustomerOrder> findCustomerOrderByFormalisteAssigned(List<Employee> employees,
             CustomerOrderStatus customerOrderStatus, Employee assignedUser, AssignationType assignationType) {
         return customerOrderRepository.findCustomerOrderByFormalisteAndStatusAssigned(employees, customerOrderStatus,

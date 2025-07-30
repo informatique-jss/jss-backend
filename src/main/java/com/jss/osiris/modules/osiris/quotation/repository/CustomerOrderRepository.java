@@ -20,7 +20,6 @@ import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.IOrderingSearchTaggedResult;
 import com.jss.osiris.modules.osiris.quotation.model.OrderingSearchResult;
-import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 import jakarta.persistence.QueryHint;
@@ -215,8 +214,6 @@ public interface CustomerOrderRepository
         List<CustomerOrder> findCustomerOrderOlderThanDate(
                         @Param("customerOrderStatus") CustomerOrderStatus customerOrderStatus,
                         @Param("dateLimit") LocalDateTime dateLimit);
-
-        CustomerOrder findTopByQuotationsOrderByIdDesc(Quotation quotation);
 
         @Query("select c from CustomerOrder c join c.responsable r join c.customerOrderAssignations a where a.assignationType=:assignationType and r.formalisteEmployee in (:employees) and c.customerOrderStatus=:customerOrderStatus and a.isAssigned=false and (:assignedUser is null or a.employee = :assignedUser)  order by c.productionEffectiveDateTime")
         List<CustomerOrder> findCustomerOrderByFormalisteAndStatusAssigned(List<Employee> employees,

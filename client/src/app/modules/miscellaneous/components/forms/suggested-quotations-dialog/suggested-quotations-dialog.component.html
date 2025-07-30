@@ -4,6 +4,8 @@
   <sort-table [columns]="quotationColumns" (onRowClick)="chooseQuotation($event)" [values]="suggestedQuotations"
     [noPaddingBottom]="true" [noMaxHeight]="true" tableName="Devis en attente de validation"
     [isSmallestHeight]="true"></sort-table>
+
+  <quotation-list></quotation-list>
   <p *ngIf="outQuotation"> Devis sélectionné :
     {{outQuotation.id}}</p>
 

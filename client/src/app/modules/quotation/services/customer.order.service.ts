@@ -10,6 +10,7 @@ import { Announcement } from '../model/Announcement';
 import { CustomerOrder } from '../model/CustomerOrder';
 import { IQuotation } from '../model/IQuotation';
 import { Invoice } from '../model/Invoice';
+import { Quotation } from '../model/Quotation';
 
 @Injectable({
   providedIn: 'root'
@@ -103,10 +104,11 @@ export class CustomerOrderService extends AppRestService<IQuotation> {
     return this.getList(new HttpParams().set("idVoucher", voucher.id), 'customer-orders/voucher') as Observable<CustomerOrder[]>;
   }
 
-  getNewOrderIdCreatedFromQuotation(idQuotation: number) {
-    return this.get(new HttpParams().set("idQuotation", idQuotation), "customer-order/id-quotation");
-  }
   getOrdersToAssignForFond(teamEmployee: Employee, onlyCurrentUser: boolean) {
     return this.getList(new HttpParams().set("idTeamEmployee", teamEmployee.id).set("onlyCurrentUser", onlyCurrentUser), "assign/fond/order");
+  }
+
+  createOrderFromSuggestedQuotation(quotation: Quotation) {
+    return this.get(new HttpParams().set("idQuotation", quotation.id), "customer-order/suggested-quotation");
   }
 }

@@ -72,7 +72,6 @@ import { ProvisionPaymentComponent } from '../provision-payment/provision-paymen
 import { ProvisionSidePanelDetailsComponent } from '../provision-side-panel-details/provision-side-panel-details.component';
 import { ProvisionComponent } from '../provision/provision.component';
 import { QuotationAbandonReasonDialog } from '../quotation-abandon-reason-dialog/quotation-abandon-reason-dialog';
-import { QuotationListComponent } from '../quotation-list/quotation-list.component';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
 import { QuotationSidePanelDetailsComponent } from '../quotation-side-panel-details/quotation-side-panel-details.component';
 import { RecurringChildOrderingListComponent } from '../recurring-child-ordering-list/recurring-child-ordering-list.component';
@@ -147,7 +146,7 @@ const routes: Routes = [
     AddAffaireDialogComponent,
     ProvisionItemComponent,
     InvoiceManagementComponent,
-    QuotationListComponent,
+    // QuotationListComponent,
     ChooseAssignedUserDialogComponent,
     ProvisionListComponent,
     ProvisionComponent,
@@ -206,7 +205,7 @@ const routes: Routes = [
   exports: [
     OrderingListComponent,
     ProvisionListComponent,
-    QuotationListComponent,
+    // QuotationListComponent,
     OrderingListComponent,
     PaymentListComponent,
     AnnouncementListComponent,

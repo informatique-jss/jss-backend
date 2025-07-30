@@ -29,6 +29,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { MatTableExporterModule } from 'mat-table-exporter';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { TrustHtmlPipe } from 'src/app/libs/TrustHtmlPipe';
+import { QuotationListComponent } from 'src/app/modules/quotation/components/quotation-list/quotation-list.component';
 import { AdministrationComponent } from '../../../administration/components/administration/administration.component';
 import { AddNotificationDialogComponent } from '../add-notification-dialog/add-notification-dialog.component';
 import { AddressingComponent } from '../addressing/addressing.component';
@@ -600,7 +601,8 @@ const routes: Routes = [
     ChipsResponsableComponent,
     SuggestedQuotationsDialogComponent,
     SelectSingleEmployeeComponent,
-    SelectAnnouncementNoticeTemplateFragmentComponent
+    SelectAnnouncementNoticeTemplateFragmentComponent,
+    QuotationListComponent
   ],
   exports: [
     HistoryComponent,
@@ -866,7 +868,8 @@ const routes: Routes = [
     ChipsResponsableComponent,
     SuggestedQuotationsDialogComponent,
     SelectSingleEmployeeComponent,
-    SelectAnnouncementNoticeTemplateFragmentComponent
+    SelectAnnouncementNoticeTemplateFragmentComponent,
+    QuotationListComponent
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

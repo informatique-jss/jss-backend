@@ -544,7 +544,6 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   }
 
   openSuggestedQuotationDialog() {
-    this.suggestedQuotationSelected = {} as Quotation;
     let dialogQuotation = this.suggestedQuotationDialog.open(SuggestedQuotationsDialogComponent, {
       width: '100%'
     });
@@ -552,15 +551,11 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
       dialogQuotation.componentInstance.suggestedQuotations = this.suggestedQuotations;
     dialogQuotation.afterClosed().subscribe(response => {
       if (response && response != null) {
-        this.suggestedQuotationSelected = response;
-        this.quotationService.updateQuotationStatus(this.suggestedQuotationSelected as IQuotation, VALIDATED_BY_CUSTOMER).subscribe(response => {
+        this.customerOrderService.createOrderFromSuggestedQuotation(response).subscribe(response => {
           if (response) {
-            this.appService.displaySnackBar("Devis validé, la commande a été créée", true, 10);
+            this.appService.displaySnackBar("La commande associée au devis a été créée", true, 10);
             this.editMode = false;
-            this.customerOrderService.getNewOrderIdCreatedFromQuotation(response.id).subscribe(response => {
-              if (response)
-                this.appService.openRoute(null, '/order/' + response, null);
-            });
+            this.appService.openRoute(null, '/order/' + response.id, null);
           }
         });
       }

@@ -1910,6 +1910,21 @@ public class QuotationController {
         HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/customer-order/suggested-quotation")
+  public ResponseEntity<CustomerOrder> createCustomerOrderFromSuggestedQuotation(@RequestParam Integer idQuotation)
+      throws OsirisValidationException, OsirisClientMessageException, OsirisException {
+    Quotation quotation = quotationService.getQuotation(idQuotation);
+
+    if (quotation == null)
+      throw new OsirisValidationException("quotation not found");
+
+    validateQuotationAndCustomerOrder(quotation);
+
+    return new ResponseEntity<CustomerOrder>(customerOrderService.createNewCustomerOrderFromQuotation(quotation),
+        HttpStatus.OK);
+
+  }
+
   private void validateQuotationAndCustomerOrder(IQuotation quotation)
       throws OsirisValidationException, OsirisException, OsirisClientMessageException {
     quotationValidationHelper.validateQuotationAndCustomerOrder(quotation, null);
@@ -2873,18 +2888,6 @@ public class QuotationController {
 
     return new ResponseEntity<List<Quotation>>(
         quotationService.getQuotationByAffaire(affaire), HttpStatus.OK);
-  }
-
-  @GetMapping(inputEntryPoint + "/customer-order/id-quotation")
-  public ResponseEntity<Integer> getNewOrderIdCreatedFromQuotation(@RequestParam Integer idQuotation)
-      throws OsirisValidationException {
-
-    Quotation quotation = quotationService.getQuotation(idQuotation);
-    if (quotation == null)
-      throw new OsirisValidationException("quotation");
-
-    return new ResponseEntity<Integer>(
-        customerOrderService.getNewOrderIdCreatedFromQuotation(quotation), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/customer-order-assignation/update")

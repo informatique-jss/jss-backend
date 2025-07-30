@@ -192,8 +192,6 @@ public interface CustomerOrderService {
 
         public void purgeCustomerOrders() throws OsirisException;
 
-        public Integer getNewOrderIdCreatedFromQuotation(Quotation quotation);
-
         public List<CustomerOrder> findCustomerOrderByFormalisteAssigned(List<Employee> employees,
                         CustomerOrderStatus customerOrderStatus, Employee assignedUser,
                         AssignationType assignationType);
