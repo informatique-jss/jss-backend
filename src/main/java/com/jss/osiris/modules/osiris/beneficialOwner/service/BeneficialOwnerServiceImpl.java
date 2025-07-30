@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.jss.osiris.modules.osiris.beneficialOwner.model.BeneficialOwner;
 import com.jss.osiris.modules.osiris.beneficialOwner.repository.BeneficialOwnerRepository;
-import com.jss.osiris.modules.osiris.quotation.model.Affaire;
+import com.jss.osiris.modules.osiris.quotation.model.Formalite;
 
 @Service
 public class BeneficialOwnerServiceImpl implements BeneficialOwnerService {
@@ -30,8 +30,8 @@ public class BeneficialOwnerServiceImpl implements BeneficialOwnerService {
     }
 
     @Override
-    public List<BeneficialOwner> getBeneficialOwnersByAffaire(Affaire affaire) {
-        return beneficialOwnerRepository.findBeneficialOwnersByAffaire(affaire);
+    public List<BeneficialOwner> getBeneficialOwnersByFormalite(Formalite formalite) {
+        return beneficialOwnerRepository.findBeneficialOwnersByFormalite(formalite);
     }
 
     @Override

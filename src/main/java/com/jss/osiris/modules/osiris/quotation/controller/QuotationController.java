@@ -3002,13 +3002,25 @@ public class QuotationController {
   }
 
   @GetMapping(inputEntryPoint + "/beneficial-owners")
-  public ResponseEntity<List<BeneficialOwner>> getBeneficialOwners(@RequestParam Integer idAffaire)
+  public ResponseEntity<List<BeneficialOwner>> getBeneficialOwners(@RequestParam Integer idFormalite)
       throws OsirisValidationException {
-    Affaire affaire = affaireService.getAffaire(idAffaire);
-    if (affaire == null)
-      throw new OsirisValidationException("affaire");
+    Formalite formalite = formaliteService.getFormalite(idFormalite);
+    if (formalite == null)
+      throw new OsirisValidationException("formalite");
 
-    return new ResponseEntity<List<BeneficialOwner>>(beneficialOwnerService.getBeneficialOwnersByAffaire(affaire),
+    return new ResponseEntity<List<BeneficialOwner>>(beneficialOwnerService.getBeneficialOwnersByFormalite(formalite),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/beneficial-owners-provision")
+  public ResponseEntity<List<BeneficialOwner>> getBeneficialOwnersByProvision(@RequestParam Integer idProvision)
+      throws OsirisValidationException {
+    Provision provision = provisionService.getProvision(idProvision);
+    if (provision == null || provision.getFormalite() == null)
+      throw new OsirisValidationException("provision");
+
+    return new ResponseEntity<List<BeneficialOwner>>(
+        beneficialOwnerService.getBeneficialOwnersByFormalite(provision.getFormalite()),
         HttpStatus.OK);
   }
 
