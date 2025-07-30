@@ -18,14 +18,15 @@ import { CustomerOrderService } from 'src/app/modules/quotation/services/custome
 import { QuotationService } from 'src/app/modules/quotation/services/quotation.service';
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from 'src/app/services/habilitations.service';
-import { UserPreferenceService } from 'src/app/services/user.preference.service';
+import { RestUserPreferenceService } from 'src/app/services/rest.user.preference.service';
 import { Notification } from '../../../../modules/miscellaneous/model/Notification';
 import { getResponsableLabelIQuotation, getTiersLabelIQuotation } from '../../../invoicing/components/invoice-tools';
 import { CustomerOrderAssignationService } from '../../../quotation/services/customer.assignation.service';
 import { AffectationEmployee } from '../../model/AffectationEmployee';
-import { SwimlaneType } from '../../model/SwimlaneType';
+import { KanbanView } from '../../model/KanbanView';
+import { DEFAULT_USER_PREFERENCE } from '../../model/UserPreference';
 import { AffectationEmployeeService } from '../../services/affectation.employee.service';
-import { KanbanComponent } from '../kanban/kanban.component';
+import { KanbanComponent, PROVISION_AFFECTATION_KANBAN } from '../kanban/kanban.component';
 
 
 @Component({
@@ -57,7 +58,7 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
     private formBuilder: FormBuilder,
     private appService: AppService,
     private constantService: ConstantService,
-    private userPreferenceService: UserPreferenceService,
+    private restUserPreferenceService2: RestUserPreferenceService,
     private quotationService: QuotationService,
     public mailLabelDialog: MatDialog,
     public confirmationDialog: MatDialog,
@@ -70,7 +71,7 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
     private employeeService: EmployeeService,
     private customerOrderAssignationService: CustomerOrderAssignationService
   ) {
-    super();
+    super(restUserPreferenceService2);
   }
 
   kanbanForm = this.formBuilder.group({});
@@ -142,23 +143,20 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
         }
 
         if (fetchBookmark) {
-          let bookmarkOrderEmployees = this.userPreferenceService.getUserSearchBookmark("kanban-affectation-employee") as Employee;
-          if (bookmarkOrderEmployees && this.habilitationService.canAddAssignOrderForProduction())
-            this.employeesSelected = bookmarkOrderEmployees;
+          this.restUserPreferenceService2.getUserPreferenceValue(this.getKanbanComponentViewCode() + "_" + DEFAULT_USER_PREFERENCE).subscribe(kanbanViewString => {
+            if (kanbanViewString) {
+              let kabanView: KanbanView<CustomerOrder, AffectationEmployee<CustomerOrder>>[] = JSON.parse(kanbanViewString);
+              //default view so only one KanbanView
+              if (this.habilitationService.canAddAssignOrderForProduction())
+                this.employeesSelected = kabanView[0].employees[0];
+              this.selectedSwimlaneType = kabanView[0].swimlaneType ? kabanView[0].swimlaneType : this.swimlaneTypes[0];
+            }
+          });
 
-          let bookmarkSwimlaneType = this.userPreferenceService.getUserSearchBookmark("kanban-affectation-swimline-type") as SwimlaneType<CustomerOrder>;
-          if (bookmarkSwimlaneType) {
-            for (let swimlaneType of this.swimlaneTypes)
-              if (swimlaneType.fieldName == bookmarkSwimlaneType.fieldName)
-                this.selectedSwimlaneType = swimlaneType;
-          } else {
-            this.selectedSwimlaneType = this.swimlaneTypes[0];
-          }
+          if (applyFilter)
+            this.applyFilter(isOnlyFilterText);
         }
-
-        if (applyFilter)
-          this.applyFilter(isOnlyFilterText);
-      })
+      });
   }
 
   getNotificationForCustomerOrder() {
@@ -195,9 +193,19 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
       this.panelOpen = true;
   }
 
-  saveUserPreferencesOnApplyFilter() {
-    this.userPreferenceService.setUserSearchBookmark((this.employeesSelected != undefined) ? this.employeesSelected : null, "kanban-affectation-employee");
-    this.userPreferenceService.setUserSearchBookmark(this.selectedSwimlaneType, "kanban-affectation-swimline-type");
+  setKanbanView(kanbanView: KanbanView<CustomerOrder, AffectationEmployee<CustomerOrder>>): void {
+    this.labelViewSelected = kanbanView.label;
+    this.statusSelected = kanbanView.status;
+    this.employeesSelected = kanbanView.employees[0];
+    this.selectedSwimlaneType = kanbanView.swimlaneType;
+  }
+
+  getKanbanView(): KanbanView<CustomerOrder, AffectationEmployee<CustomerOrder>> {
+    return { label: this.labelViewSelected, status: this.statusSelected, employees: [this.employeesSelected], swimlaneType: this.selectedSwimlaneType } as KanbanView<CustomerOrder, AffectationEmployee<CustomerOrder>>;
+  }
+
+  getKanbanComponentViewCode(): string {
+    return PROVISION_AFFECTATION_KANBAN;
   }
 
   findEntities() {

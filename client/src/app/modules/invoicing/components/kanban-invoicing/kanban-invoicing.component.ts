@@ -3,8 +3,9 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_BILLED } from 'src/app/libs/Constants';
 import { formatDateFrance } from 'src/app/libs/FormatHelper';
-import { KanbanComponent } from 'src/app/modules/dashboard/components/kanban/kanban.component';
-import { SwimlaneType } from 'src/app/modules/dashboard/model/SwimlaneType';
+import { INVOICING_KANBAN, KanbanComponent } from 'src/app/modules/dashboard/components/kanban/kanban.component';
+import { KanbanView } from 'src/app/modules/dashboard/model/KanbanView';
+import { DEFAULT_USER_PREFERENCE } from 'src/app/modules/dashboard/model/UserPreference';
 import { WorkflowDialogComponent } from 'src/app/modules/miscellaneous/components/workflow-dialog/workflow-dialog.component';
 import { IWorkflowElement } from 'src/app/modules/miscellaneous/model/IWorkflowElement';
 import { NotificationService } from 'src/app/modules/miscellaneous/services/notification.service';
@@ -18,6 +19,7 @@ import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from 'src/app/services/habilitations.service';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
 import { Notification } from '../../../../modules/miscellaneous/model/Notification';
+import { RestUserPreferenceService } from '../../../../services/rest.user.preference.service';
 import { InvoicingBlockage } from '../../model/InvoicingBlockage';
 import { InvocingStatistics } from '../../model/InvoicingStatistics';
 import { InvoicingBlockageService } from '../../services/invoicing.blockage.service';
@@ -42,6 +44,7 @@ export class KanbanInvoicingComponent extends KanbanComponent<CustomerOrder, Inv
     private formBuilder: FormBuilder,
     private appService: AppService,
     private userPreferenceService: UserPreferenceService,
+    private restUserPreferenceService2: RestUserPreferenceService,
     private quotationService: QuotationService,
     public mailLabelDialog: MatDialog,
     public confirmationDialog: MatDialog,
@@ -54,7 +57,7 @@ export class KanbanInvoicingComponent extends KanbanComponent<CustomerOrder, Inv
     private invoicingBlockageService: InvoicingBlockageService,
     private invocingStatisticsService: InvocingStatisticsService
   ) {
-    super();
+    super(restUserPreferenceService2);
   }
 
   kanbanForm = this.formBuilder.group({});
@@ -76,24 +79,17 @@ export class KanbanInvoicingComponent extends KanbanComponent<CustomerOrder, Inv
         status.successors = this.possibleEntityStatus;
       }
 
-
       // Retrieve bookmark
       this.statusSelected = [... this.possibleEntityStatus];
 
-      let bookmarkOrderEmployees = this.userPreferenceService.getUserSearchBookmark("kanban-invoicing-employee") as Employee[];
-      if (bookmarkOrderEmployees && bookmarkOrderEmployees.length > 0)
-        this.employeesSelected = bookmarkOrderEmployees;
-      else
-        this.employeesSelected = [];
-
-      let bookmarkSwimlaneType = this.userPreferenceService.getUserSearchBookmark("kanban-invoicing-swimline-type") as SwimlaneType<CustomerOrder>;
-      if (bookmarkSwimlaneType) {
-        for (let swimlaneType of this.swimlaneTypes)
-          if (swimlaneType.fieldName == bookmarkSwimlaneType.fieldName)
-            this.selectedSwimlaneType = swimlaneType;
-      } else {
-        this.selectedSwimlaneType = this.swimlaneTypes[0];
-      }
+      this.restUserPreferenceService2.getUserPreferenceValue(this.getKanbanComponentViewCode() + "_" + DEFAULT_USER_PREFERENCE).subscribe(kanbanViewString => {
+        if (kanbanViewString) {
+          let kabanView: KanbanView<CustomerOrder, InvoicingBlockage>[] = JSON.parse(kanbanViewString);
+          //default view so only one KanbanView
+          this.employeesSelected = kabanView[0].employees;
+          this.selectedSwimlaneType = kabanView[0].swimlaneType ? kabanView[0].swimlaneType : this.swimlaneTypes[0];
+        }
+      });
 
       if (this.possibleEntityStatus && this.statusSelected) {
         this.startFilter();
@@ -143,9 +139,19 @@ export class KanbanInvoicingComponent extends KanbanComponent<CustomerOrder, Inv
       this.panelOpen = true;
   }
 
-  saveUserPreferencesOnApplyFilter() {
-    this.userPreferenceService.setUserSearchBookmark((this.employeesSelected != undefined && this.employeesSelected.length > 0) ? this.employeesSelected : null, "kanban-invoicing-employee");
-    this.userPreferenceService.setUserSearchBookmark(this.selectedSwimlaneType, "kanban-invoicing-swimline-type");
+  setKanbanView(kanbanView: KanbanView<CustomerOrder, InvoicingBlockage>): void {
+    this.labelViewSelected = kanbanView.label;
+    this.statusSelected = kanbanView.status;
+    this.employeesSelected = kanbanView.employees;
+    this.selectedSwimlaneType = kanbanView.swimlaneType;
+  }
+
+  getKanbanView(): KanbanView<CustomerOrder, InvoicingBlockage> {
+    return { label: this.labelViewSelected, status: this.statusSelected, employees: this.employeesSelected, swimlaneType: this.selectedSwimlaneType } as KanbanView<CustomerOrder, InvoicingBlockage>;
+  }
+
+  getKanbanComponentViewCode(): string {
+    return INVOICING_KANBAN;
   }
 
   findEntities() {
@@ -246,6 +252,4 @@ export class KanbanInvoicingComponent extends KanbanComponent<CustomerOrder, Inv
         this.appService.displaySnackBar("Il n'y a plus de commande à facturer ⛱️", false, 10);
     })
   }
-
-
 }

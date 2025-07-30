@@ -1,0 +1,8 @@
+<button mat-menu-item (click)="saveCurrentView()">Sauvegarder la vue actuelle</button>
+<mat-divider></mat-divider>
+<div mat-menu-item *ngFor="let kanbanView of kanbanViews; let index=index" (click)="selectView(kanbanView)"
+  class="pointer">
+  <mat-icon (click)="deleteView(index, $event)">delete</mat-icon>
+  {{kanbanView.label}}
+  <mat-icon *ngIf="currentView && currentView.label==kanbanView.label">check</mat-icon>
+</div>
