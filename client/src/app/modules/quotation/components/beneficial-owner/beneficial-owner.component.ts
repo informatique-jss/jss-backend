@@ -28,8 +28,8 @@ export class BeneficialOwnerComponent implements OnInit {
   constructor(private beneficiaOwnerService: BeneficialOwnerService) { }
 
   ngOnInit() {
-    if (this.affaire)
-      this.beneficiaOwnerService.getBeneficialOwners(this.affaire).subscribe(response => { this.beneficialOwners = response });
+    if (this.formalite)
+      this.beneficiaOwnerService.getBeneficialOwners(this.formalite).subscribe(response => { this.beneficialOwners = response });
     this.displayedColumns = [];
     this.displayedColumns.push({ id: "id", fieldName: "id", label: "identifiant BE" } as SortTableColumn<BeneficialOwner>);
     this.displayedColumns.push({ id: "usedName", fieldName: "usedName", label: "Nom d'usage" } as SortTableColumn<BeneficialOwner>);
@@ -64,8 +64,8 @@ export class BeneficialOwnerComponent implements OnInit {
       actionIcon: 'delete', actionName: "Supprimer le BE", actionClick: (column: SortTableAction<BeneficialOwner>, element: BeneficialOwner, event: any) => {
         if (this.editMode && element)
           this.beneficiaOwnerService.deleteBeneficialOwner(element).subscribe(response => {
-            if (this.affaire)
-              this.beneficiaOwnerService.getBeneficialOwners(this.affaire).subscribe(response => { this.beneficialOwners = response });
+            if (this.formalite)
+              this.beneficiaOwnerService.getBeneficialOwners(this.formalite).subscribe(response => { this.beneficialOwners = response });
             if (this.formalite)
               this.formalite.beneficialOwners.splice(this.formalite.beneficialOwners.indexOf(element));
           });
