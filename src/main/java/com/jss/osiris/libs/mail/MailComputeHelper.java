@@ -222,6 +222,14 @@ public class MailComputeHelper {
                     throw new OsirisClientMessageException("Aucun mail trouvé pour le client");
 
             }
+            if (quotationDocument.getDocumentType().getId().equals(constantService.getDocumentTypeBilling().getId())
+                    && (quotationDocument.getIsQrCodePaymentDisabled() == null
+                            || (quotationDocument.getIsQrCodePaymentDisabled() != null
+                                    && !quotationDocument.getIsQrCodePaymentDisabled())))
+                mailComputeResult.setIsQrCodePaymentDisabled(false);
+            else if (quotationDocument.getDocumentType().getId()
+                    .equals(constantService.getDocumentTypeBilling().getId()))
+                mailComputeResult.setIsQrCodePaymentDisabled(true);
         }
         return mailComputeResult;
     }

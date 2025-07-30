@@ -236,9 +236,32 @@
                                                                         th:text="${invoice.id}"></span><br />IBAN /
                                                                     BIC : <span th:text="${ibanJss}"></span> / <span
                                                                         th:text="${bicJss}"></span></p>
-                                                                <p>➡️ <strong>Carte bancaire</strong> en flashant le QR
+                                                                <p th:if="${cbLink!=null && !isQrCodePaymentDisabled}">
+                                                                    ➡️ <strong>Carte
+                                                                        bancaire</strong> en flashant le QR
                                                                     Code ci-dessous ou en cliquant <a
                                                                         th:href="${cbLink}" target="_blank">ici</a>.</p>
+                                                                <p th:if="${cbLink!=null && isQrCodePaymentDisabled}">➡️
+                                                                    <strong>Carte
+                                                                        bancaire</strong> en cliquant <a
+                                                                        th:href="${cbLink}" target="_blank">ici</a>.
+                                                                </p>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                    <table class="image_block block-5" width="100%" border="0"
+                                                        cellpadding="0" cellspacing="0" role="presentation"
+                                                        th:if="${cbLink!=null  && !isQrCodePaymentDisabled}"
+                                                        style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                                        <tr>
+                                                            <td class="pad"
+                                                                style="width:100%;padding-right:0px;padding-left:0px;padding-top:0px;">
+                                                                <div class="alignment" align="center"
+                                                                    style="line-height:10px"><img src="sample.png"
+                                                                        th:src="|cid:${qrCodePicture}|"
+                                                                        style="display: block; height: auto; border: 0;  "
+                                                                        alt="" title="" />
+                                                                </div>
                                                             </td>
                                                         </tr>
                                                     </table>
