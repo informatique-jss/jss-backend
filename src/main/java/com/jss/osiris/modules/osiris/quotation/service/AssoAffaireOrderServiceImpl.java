@@ -17,6 +17,8 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.modules.osiris.beneficialOwner.model.BeneficialOwner;
+import com.jss.osiris.modules.osiris.beneficialOwner.service.BeneficialOwnerService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
@@ -136,6 +138,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
     @Autowired
     CustomerOrderAssignationService customerOrderAssignationService;
+
+    @Autowired
+    BeneficialOwnerService beneficialOwnerService;
 
     @Override
     public List<AssoAffaireOrder> getAssoAffaireOrders() {
@@ -414,6 +419,15 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                                     formaliteInfogreffe.setFormalite(formalite);
                                     formaliteInfogreffeService
                                             .addOrUpdateFormaliteInfogreffe(formaliteInfogreffe);
+                                }
+                            }
+
+                        if (formalite.getBeneficialOwners() != null && formalite.getBeneficialOwners().size() > 0)
+                            for (BeneficialOwner beneficialOwner : formalite
+                                    .getBeneficialOwners()) {
+                                if (beneficialOwner.getFormalite() == null) {
+                                    beneficialOwner.setFormalite(formalite);
+                                    beneficialOwnerService.addOrUpdateBeneficialOwner(beneficialOwner);
                                 }
                             }
                     }
