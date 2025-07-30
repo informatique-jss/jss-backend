@@ -47,7 +47,10 @@
           </div>
           <h2 class="h2 secondary-heading pb-2 pb-sm-3  ">N'attendez plus et accédez à nos
             solutions</h2>
-          <double-buttons orderActionLabel="Commander des documents" quotationActionLabel="Demander un devis"
+          <double-buttons class="text-grey" orderActionLabel=" Commander des documents"
+            [orderActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeOrder.id"
+            quotationActionLabel="Demander un devis"
+            [quotationActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeQuotation.id"
             [isLightButtons]="false">
           </double-buttons>
         </div>

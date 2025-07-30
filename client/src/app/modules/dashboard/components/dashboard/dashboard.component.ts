@@ -2,7 +2,7 @@ import { CdkDragEnter, CdkDropList, DragRef, moveItemInArray } from '@angular/cd
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { combineLatest, map } from 'rxjs';
-import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, FORMALITE_AUTHORITY_REJECTED, FORMALITE_AUTHORITY_TECHNICAL_BLOCKING, FORMALITE_AUTHORITY_VALIDATED, FORMALITE_STATUS_WAITING_DOCUMENT, FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY, FORMALITE_WAITING_FINAL_DOCUMENT_AUTHORITY, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY, SIMPLE_PROVISION_WAITING_FINAL_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
+import { ANNOUNCEMENT_WAITING_CONFRERE_INVOICE, CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, FORMALITE_AUTHORITY_REJECTED, FORMALITE_AUTHORITY_TECHNICAL_BLOCKING, FORMALITE_AUTHORITY_VALIDATED, FORMALITE_STATUS_WAITING_DOCUMENT, FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY, FORMALITE_WAITING_FINAL_DOCUMENT_AUTHORITY, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY, SIMPLE_PROVISION_WAITING_FINAL_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
 import { InvoiceSearch } from 'src/app/modules/invoicing/model/InvoiceSearch';
 import { PaymentSearch } from 'src/app/modules/invoicing/model/PaymentSearch';
 import { RefundSearch } from 'src/app/modules/invoicing/model/RefundSearch';
@@ -173,7 +173,7 @@ export class DashboardComponent implements OnInit {
         this.quotationStatus = response.quotationStatus;
 
         this.affaireSearchInProgress.assignedTo = this.currentEmployee;
-        this.affaireSearchInProgress.status = this.statusTypes.filter(stauts => !stauts.isOpenState && !stauts.isCloseState);
+        this.affaireSearchInProgress.status = this.statusTypes.filter(stauts => !stauts.isOpenState && !stauts.isCloseState && stauts.code != ANNOUNCEMENT_WAITING_CONFRERE_INVOICE);
 
         this.affaireSearchToDo.assignedTo = this.currentEmployee;
         this.affaireSearchToDo.status = this.statusTypes.filter(stauts => stauts.isOpenState);
@@ -307,6 +307,10 @@ export class DashboardComponent implements OnInit {
 
   canViewLogModule(): boolean {
     return this.habilitationsService.canViewLogModule();
+  }
+
+  canAddAssignOrderForProduction() {
+    return this.habilitationsService.canAddAssignOrderForProduction();
   }
 
   updateCheckboxes() {
@@ -453,7 +457,4 @@ export class DashboardComponent implements OnInit {
     this.index = this.userPreferenceService.getUserTabsSelectionIndex('dashboard');
   }
 
-  canAddAssignOrderForProduction() {
-    return this.habilitationsService.canAddAssignOrderForProduction();
-  }
 }

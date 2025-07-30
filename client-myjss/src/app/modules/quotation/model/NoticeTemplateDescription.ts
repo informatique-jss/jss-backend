@@ -5,4 +5,5 @@ export interface NoticeTemplateDescription {
   isShowNoticeTemplate: boolean;
   displayText: string;
   announcementOrder: number;
+  isUsingTemplate: Boolean;
 }

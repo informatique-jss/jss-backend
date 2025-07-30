@@ -14,7 +14,7 @@
   <mat-autocomplete autoActiveFirstOption #autoComplete="matAutocomplete" [displayWith]="displayLabel"
     (optionSelected)="addServiceType($event)">
     <mat-option *ngFor="let serviceType of filteredServiceTypes | async" [value]="serviceType">
-      {{displayLabel(serviceType)}}
+      {{serviceType.serviceFamily.label}} - {{displayLabel(serviceType)}}
     </mat-option>
   </mat-autocomplete>
 </mat-form-field>

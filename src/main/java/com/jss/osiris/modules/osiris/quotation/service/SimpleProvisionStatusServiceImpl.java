@@ -56,7 +56,7 @@ public class SimpleProvisionStatusServiceImpl implements SimpleProvisionStatusSe
                                 false,
                                 AggregateStatus.AGGREGATE_STATUS_WAITING, 20);
                 updateStatus(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_LINKED_PROVISION,
-                                "En attente de prestation liée",
+                                "En attente d'une autre prestation",
                                 "link", false,
                                 false,
                                 AggregateStatus.AGGREGATE_STATUS_WAITING, 6);
@@ -93,6 +93,8 @@ public class SimpleProvisionStatusServiceImpl implements SimpleProvisionStatusSe
                 setSuccessor(SimpleProvisionStatus.SIMPLE_PROVISION_IN_PROGRESS,
                                 SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_LINKED_PROVISION);
 
+                setPredecessor(SimpleProvisionStatus.SIMPLE_PROVISION_IN_PROGRESS,
+                                SimpleProvisionStatus.SIMPLE_PROVISION_NEW);
                 setPredecessor(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY,
                                 SimpleProvisionStatus.SIMPLE_PROVISION_IN_PROGRESS);
                 setPredecessor(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT,

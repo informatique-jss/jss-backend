@@ -337,6 +337,7 @@ public class BillingClosureReceiptHelper {
         BillingClosureReceiptValue value = new BillingClosureReceiptValue();
         value.setDisplayBottomBorder(true);
         value.setDebitAmount(invoice.getTotalPrice());
+        value.setRemainingDebitAmount(invoiceService.getRemainingAmountToPayForInvoice(invoice));
         value.setCreditAmount(null);
         value.setEventDateTime(invoice.getCreatedDate());
         value.setResponsable(invoice.getResponsable());

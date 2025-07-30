@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { EChartsOption } from 'echarts';
 import { Observable, of } from 'rxjs';
 import { CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN } from 'src/app/libs/Constants';
-import { formatDateFrance } from 'src/app/libs/FormatHelper';
+import { formatDateFrance, formatDateUs } from 'src/app/libs/FormatHelper';
 import { WorkflowDialogComponent } from 'src/app/modules/miscellaneous/components/workflow-dialog/workflow-dialog.component';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { NotificationService } from 'src/app/modules/miscellaneous/services/notification.service';
@@ -11,6 +12,7 @@ import { Employee } from 'src/app/modules/profile/model/Employee';
 import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
 import { PrintLabelDialogComponent } from 'src/app/modules/quotation/components/print-label-dialog/print-label-dialog.component';
 import { CustomerOrder } from 'src/app/modules/quotation/model/CustomerOrder';
+import { CustomerOrderAssignationStatistics } from 'src/app/modules/quotation/model/CustomerOrderAssignationStatistics';
 import { AssoAffaireOrderService } from 'src/app/modules/quotation/services/asso.affaire.order.service';
 import { CustomerOrderService } from 'src/app/modules/quotation/services/customer.order.service';
 import { QuotationService } from 'src/app/modules/quotation/services/quotation.service';
@@ -33,13 +35,23 @@ import { KanbanComponent, PROVISION_AFFECTATION_KANBAN } from '../kanban/kanban.
   styleUrls: ['./provision-affectation-kanban.component.css']
 })
 export class ProvisionAffectationKanbanComponent extends KanbanComponent<CustomerOrder, AffectationEmployee<CustomerOrder>> implements OnInit {
-
+  @ViewChild('bottom') private bottom!: ElementRef;
   employeesSelected: Employee | undefined;
   filterText: string = '';
   adFormalistes = this.constantService.getActiveDirectoryGroupFormalites();
   adInsertions = this.constantService.getActiveDirectoryGroupInsertions();
   orderNotification: Notification[] | undefined;
   defaultAffectation: AffectationEmployee<CustomerOrder> = { id: 0, code: 'NOT_ASSIGNED', firstname: 'A affecter', lastname: '', label: 'A affecter', } as AffectationEmployee<CustomerOrder>;
+
+  assignationStatisticsFormalite: CustomerOrderAssignationStatistics[] = [];
+  assignationStatisticsInsertions: CustomerOrderAssignationStatistics[] = [];
+
+  chartOptions: EChartsOption = {};
+  chartOptions2: EChartsOption = {};
+  allEmployees: Employee[] = [];
+
+  isDisplayStatistics: boolean = false;
+
 
   constructor(
     private orderService: CustomerOrderService,
@@ -52,7 +64,6 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
     public confirmationDialog: MatDialog,
     public selectServiceTypeDialog: MatDialog,
     public quotationWorkflowDialog: MatDialog,
-    private habilitationsService: HabilitationsService,
     private assoAffaireOrderService: AssoAffaireOrderService,
     private notificationService: NotificationService,
     private habilitationService: HabilitationsService,
@@ -68,6 +79,11 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
   ngOnInit() {
     this.appService.changeHeaderTitle("Tableau de bord");
 
+    this.swimlaneTypes.push({ fieldName: "productionEffectiveDateTime", label: "Date", valueFonction: ((order: CustomerOrder) => formatDateUs(order.productionEffectiveDateTime)), fieldValueFunction: ((order: CustomerOrder) => formatDateUs(order.productionEffectiveDateTime)) });
+    this.swimlaneTypes.push({ fieldName: "responsable.formalisteEmployee.id", label: "Formaliste", valueFonction: ((order: CustomerOrder) => (order.responsable && order.responsable.formalisteEmployee ? (order.responsable.formalisteEmployee.firstname + ' ' + order.responsable.formalisteEmployee.lastname) : '')), fieldValueFunction: undefined });
+    this.swimlaneTypes.push({ fieldName: "customerOrderAssignations", label: "Assignation", valueFonction: ((order: CustomerOrder) => (order.customerOrderAssignations ? order.customerOrderAssignations.filter(a => !a.isAssigned).map(a => a.assignationType.label).join(" / ") : '')), fieldValueFunction: ((order: CustomerOrder) => (order.customerOrderAssignations ? order.customerOrderAssignations.filter(a => !a.isAssigned).map(a => a.assignationType.label).join(" / ") : '')) });
+    this.swimlaneTypes.push({ fieldName: "responsable.insertionEmployee.id", label: "Publisciste", valueFonction: ((order: CustomerOrder) => (order.responsable && order.responsable.insertionEmployee ? (order.responsable.insertionEmployee.firstname + ' ' + order.responsable.insertionEmployee.lastname) : '')), fieldValueFunction: undefined });
+    this.swimlaneTypes.push({ fieldName: "isPriority", label: "Prioritaire", valueFonction: ((order: CustomerOrder) => (order.isPriority ? 'Est prioritaire' : 'Non prioritaire')), fieldValueFunction: undefined });
     this.swimlaneTypes.push({ fieldName: "responsable.salesEmployee.id", label: "Commercial", valueFonction: ((order: CustomerOrder) => (order.responsable && order.responsable.salesEmployee ? (order.responsable.salesEmployee.firstname + ' ' + order.responsable.salesEmployee.lastname) : '')), fieldValueFunction: undefined });
     this.swimlaneTypes.push({ fieldName: "responsable.id", label: "Responsable", valueFonction: (order: CustomerOrder) => { return this.getResponsableLabelIQuotation(order) }, fieldValueFunction: undefined });
     this.swimlaneTypes.push({ fieldName: "responsable.tiers.id", label: "Tiers", valueFonction: (order: CustomerOrder) => { return this.getTiersLabelIQuotation(order) }, fieldValueFunction: undefined });
@@ -79,26 +95,51 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
       this.employeesSelected = currentEmployee;
       this.initStatus(true, false, false);
     });
+
+
+    this.customerOrderAssignationService.getCustomerOrderAssignationStatisticsForFormalistes().subscribe(response => {
+      this.employeeService.getEmployees().subscribe(allEmployee => {
+        this.allEmployees = allEmployee;
+        this.assignationStatisticsFormalite = response;
+        this.generateChartFormalite();
+
+        this.customerOrderAssignationService.getCustomerOrderAssignationStatisticsForInsertions().subscribe(responseI => {
+          this.assignationStatisticsInsertions = responseI;
+          this.generateChartInsertions();
+        })
+      })
+    })
+  }
+
+  getFrenchDateWithoutYear(date: Date) {
+    return formatDateFrance(date, false);
   }
 
   initStatus(fetchBookmark: boolean, applyFilter: boolean, isOnlyFilterText: boolean) {
     if (this.employeesSelected)
       this.affectationEmployeeService.findTeamEmployee(this.employeesSelected).subscribe(response => {
-        this.possibleEntityStatus = [this.defaultAffectation];
-        this.statusSelected = [this.defaultAffectation];
-        for (let status of response) {
-          this.possibleEntityStatus.push(this.updateEmployeeCompleted(status));
-          this.statusSelected.push(this.updateEmployeeCompleted(status));
-        }
+        if (this.habilitationService.canAddAssignOrderForProduction()) {
+          this.possibleEntityStatus = [this.defaultAffectation];
+          this.statusSelected = [this.defaultAffectation];
 
-        for (let status of this.possibleEntityStatus) {
-          status.predecessors = this.possibleEntityStatus;
-          status.successors = this.possibleEntityStatus;
-        }
+          for (let status of response) {
+            this.possibleEntityStatus.push(this.updateEmployeeCompleted(status));
+            this.statusSelected.push(this.updateEmployeeCompleted(status));
+          }
 
-        for (let status of this.statusSelected) {
-          status.predecessors = this.possibleEntityStatus;
-          status.successors = this.possibleEntityStatus;
+
+          for (let status of this.possibleEntityStatus) {
+            status.predecessors = this.possibleEntityStatus;
+            status.successors = this.possibleEntityStatus;
+          }
+
+          for (let status of this.statusSelected) {
+            status.predecessors = this.possibleEntityStatus;
+            status.successors = this.possibleEntityStatus;
+          }
+        } else {
+          this.possibleEntityStatus = [this.updateEmployeeCompleted(this.employeesSelected as AffectationEmployee<CustomerOrder>)];
+          this.statusSelected = [this.updateEmployeeCompleted(this.employeesSelected as AffectationEmployee<CustomerOrder>)];
         }
 
         if (fetchBookmark) {
@@ -106,7 +147,8 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
             if (kanbanViewString) {
               let kabanView: KanbanView<CustomerOrder, AffectationEmployee<CustomerOrder>>[] = JSON.parse(kanbanViewString);
               //default view so only one KanbanView
-              this.employeesSelected = kabanView[0].employees[0];
+              if (this.habilitationService.canAddAssignOrderForProduction())
+                this.employeesSelected = kabanView[0].employees[0];
               this.selectedSwimlaneType = kabanView[0].swimlaneType ? kabanView[0].swimlaneType : this.swimlaneTypes[0];
             }
           });
@@ -127,10 +169,6 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
 
   addNewNotification() {
     this.appService.addPersonnalNotification(() => this.orderNotification = undefined, this.orderNotification, this.selectedEntity!, undefined, undefined, undefined, undefined, undefined, undefined, undefined);
-  }
-
-  canDisplayNotifications() {
-    return this.habilitationService.canDisplayNotifications();
   }
 
   fetchEntityAndOpenPanel(task: CustomerOrder, refreshColumn: boolean = false, openPanel = true) {
@@ -172,7 +210,7 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
 
   findEntities() {
     if (this.employeesSelected)
-      return this.orderService.getOrdersToAssignForFond(this.employeesSelected) as any as Observable<CustomerOrder[]>;
+      return this.orderService.getOrdersToAssignForFond(this.employeesSelected, !this.habilitationService.canAddAssignOrderForProduction()) as any as Observable<CustomerOrder[]>;
     return of([] as CustomerOrder[]);
   }
 
@@ -194,7 +232,7 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
   }
 
   updateEmployeeCompleted(employee: AffectationEmployee<CustomerOrder>) {
-    employee.label = employee.firstname + ' ' + employee.lastname;
+    employee.label = employee.firstname.replace("-", "") + ' ' + employee.lastname;
     employee.code = employee.lastname;
     return employee;
   }
@@ -202,9 +240,9 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
   getCustomerOrderAssignationForCurrentEmployee(entity: CustomerOrder) {
     if (entity && entity.customerOrderAssignations && this.employeesSelected)
       for (let assignation of entity.customerOrderAssignations) {
-        if (this.employeesSelected.adPath.indexOf("Formalites") >= 0 && assignation.assignationType.id == this.constantService.getAssignationTypeFormaliste().id)
+        if ((this.employeesSelected.adPath.indexOf("Formalites") >= 0 || this.employeesSelected.adPath.indexOf("Informatique") >= 0) && assignation.assignationType.id == this.constantService.getAssignationTypeFormaliste().id)
           return assignation;
-        if (this.employeesSelected.adPath.indexOf("Insertions") >= 0 && assignation.assignationType.id == this.constantService.getAssignationTypePublisciste().id)
+        if ((this.employeesSelected.adPath.indexOf("Insertions") >= 0 || this.employeesSelected.adPath.indexOf("Informatique") >= 0) && assignation.assignationType.id == this.constantService.getAssignationTypePublisciste().id)
           return assignation;
       }
     return undefined;
@@ -218,6 +256,9 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
 
   changeEntityStatus(entity: CustomerOrder, toStatus: AffectationEmployee<CustomerOrder>): void {
     if (!this.possibleEntityStatus)
+      return;
+
+    if (!this.habilitationService.canAddAssignOrderForProduction())
       return;
 
     let assignation = this.getCustomerOrderAssignationForCurrentEmployee(entity);
@@ -266,7 +307,7 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
   }
 
   canReinitInvoicing() {
-    return this.habilitationsService.canReinitInvoicing();
+    return this.habilitationService.canReinitInvoicing();
   }
 
   reinitInvoicing() {
@@ -302,4 +343,125 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
     }
   }
 
+  override isValidDropTarget(targetLabel: string): boolean {
+    if (!this.habilitationService.canAddAssignOrderForProduction())
+      return false;
+    return super.isValidDropTarget(targetLabel);
+  }
+
+  generateChartFormalite() {
+    if (!this.assignationStatisticsFormalite?.length) return;
+
+    // Obtenir les dates de production distinctes triées
+    const dates = Array.from(
+      new Set(this.assignationStatisticsFormalite.map(d => new Date(d.productionDate).toISOString().split('T')[0]))
+    ).sort();
+
+    // Obtenir tous les employés distincts
+    const employees = Array.from(
+      new Set(this.assignationStatisticsFormalite.map(d => this.allEmployees.find(a => d.idEmployee == a.id)!.firstname))
+    );
+
+    // Préparer les séries : une série par employé
+    const series = employees.map(employee => ({
+      name: employee,
+      type: 'bar',
+      stack: 'total',
+      data: dates.map(date => {
+        const item = this.assignationStatisticsFormalite.find(d =>
+          this.allEmployees.find(a => d.idEmployee == a.id)!.firstname === employee &&
+          new Date(d.productionDate).toISOString().split('T')[0] === date
+        );
+        return item?.number ?? 0;
+      }),
+    })) as any;
+
+    this.chartOptions = {
+      tooltip: { trigger: 'axis' },
+      legend: { data: employees },
+      xAxis: {
+        type: 'category',
+        data: dates,
+        axisLabel: { rotate: 45 },
+      },
+      yAxis: {
+        type: 'value',
+      },
+      toolbox: {
+        feature: {
+          saveAsImage: {
+            show: true,
+            name: this.employeesSelected ? this.employeesSelected.lastname : "doe"
+          }
+        }
+      },
+      series,
+    };
+  }
+
+  generateChartInsertions() {
+    if (!this.assignationStatisticsInsertions?.length) return;
+
+    // Obtenir les dates de production distinctes triées
+    const dates = Array.from(
+      new Set(this.assignationStatisticsInsertions.map(d => new Date(d.productionDate).toISOString().split('T')[0]))
+    ).sort();
+
+    // Obtenir tous les employés distincts
+    const employees = Array.from(
+      new Set(this.assignationStatisticsInsertions.map(d => this.allEmployees.find(a => d.idEmployee == a.id)!.firstname))
+    );
+
+    // Préparer les séries : une série par employé
+    const series = employees.map(employee => ({
+      name: employee,
+      type: 'bar',
+      stack: 'total',
+      data: dates.map(date => {
+        const item = this.assignationStatisticsInsertions.find(d =>
+          this.allEmployees.find(a => d.idEmployee == a.id)!.firstname === employee &&
+          new Date(d.productionDate).toISOString().split('T')[0] === date
+        );
+        return item?.number ?? 0;
+      }),
+    })) as any;
+
+    this.chartOptions2 = {
+      tooltip: { trigger: 'axis' },
+      legend: { data: employees },
+      xAxis: {
+        type: 'category',
+        data: dates,
+        axisLabel: { rotate: 45 },
+      },
+      yAxis: {
+        type: 'value',
+      },
+      toolbox: {
+        feature: {
+          saveAsImage: {
+            show: true,
+            name: this.employeesSelected ? this.employeesSelected.lastname : "doe"
+          }
+        }
+      },
+      series,
+    };
+  }
+
+  displayStatistics() {
+    this.isDisplayStatistics = !this.isDisplayStatistics;
+  }
+
+  scrollDown() {
+    this.bottom!.nativeElement.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  getComplexityColor(order: CustomerOrder) {
+    if (order.complexity == 1)
+      return 'warn';
+    if (order.complexity == 2)
+      return 'accent';
+    return 'primary';
+  }
 }

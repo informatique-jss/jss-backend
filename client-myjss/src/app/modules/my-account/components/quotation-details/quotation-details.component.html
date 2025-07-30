@@ -7,7 +7,7 @@
       <i class="ai-edit-alt ms-n1 me-2"></i>
       Reprendre le brouillon
     </a>
-    <a class="btn btn-sm btn-primary" role="button" (click)="cancelDraft($event)"
+    <a class="btn btn-sm btn-primary" role="button" (click)="cancelDraft()"
       *ngIf=" quotation && quotation.quotationStatus.code == QUOTATION_STATUS_OPEN">
       <i class="ai-trash ms-n1 me-2"></i>
       Abandonner
@@ -140,9 +140,9 @@
       <div ngbAccordionCollapse>
         <div ngbAccordionBody>
           <ng-template>
-            <ul ngbNav #nav="ngbNav" [activeId]="1" class="nav-tabs">
+            <ul ngbNav #nav="ngbNav" [activeId]="0" class="nav-tabs  justify-content-center">
               <li [ngbNavItem]="1" *ngIf="service.assoServiceDocuments && service.assoServiceDocuments.length>0">
-                <button ngbNavLink>Mes documents</button>
+                <button ngbNavLink>Déposer des documents</button>
                 <ng-template ngbNavContent>
                   <div class="alert alert-info d-flex mb-0 mb-2" role="alert" *ngIf="canEditQuotation">
                     <i class="ai-circle-info fs-xl"></i>
@@ -163,7 +163,7 @@
                           {{assoServiceDocument.formalisteComment}}</p>
                         <div class="mb-2 mb-md-3 row  " *ngIf="canEditQuotation">
                           <div class="col-md-12">
-                            <single-upload [entity]="assoServiceDocument"
+                            <single-upload [entity]="assoServiceDocument" forcedFileExtension="PDF"
                               (endOfUpload)="refreshCurrentAssoAffaireOrder()"
                               [entityType]="ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType" [isDirectUpload]="true"
                               [attachmentType]="assoServiceDocument.typeDocument.attachmentType"
@@ -201,6 +201,16 @@
                         </div>
                       </div>
                     </ng-container>
+                    <div class="text-center pt-3" *ngIf="!dislayAlreadyFilledAttachment">
+                      <i class="ai-circle-plus text-info small text-decoration-none mx-1"></i>
+                      <a class="text-info small text-decoration-none"
+                        (click)="toggleDislayAlreadyFilledAttachment()">Voir les pièces déjà renseignées</a>
+                    </div>
+                    <div class="text-center pt-3" *ngIf="dislayAlreadyFilledAttachment">
+                      <i class="ai-circle-minus text-info small text-decoration-none mx-1"></i>
+                      <a class="text-info small text-decoration-none"
+                        (click)="toggleDislayAlreadyFilledAttachment()">Masquer les pièces déjà renseignées</a>
+                    </div>
                   </div>
                   <h5 class="pt-3">Pièces optionnelles</h5>
                   <div class="list-group">
@@ -216,7 +226,7 @@
                           {{assoServiceDocument.formalisteComment}}</p>
                         <div class="mb-2 mb-md-3 row  " *ngIf="canEditQuotation">
                           <div class="col-md-12">
-                            <single-upload [entity]="assoServiceDocument"
+                            <single-upload [entity]="assoServiceDocument" forcedFileExtension="PDF"
                               (endOfUpload)="refreshCurrentAssoAffaireOrder()"
                               [entityType]="ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType" [isDirectUpload]="true"
                               [attachmentType]="assoServiceDocument.typeDocument.attachmentType"
@@ -254,11 +264,21 @@
                         </div>
                       </div>
                     </ng-container>
+                    <div class="text-center pt-3" *ngIf="!dislayAlreadyFilledAttachment">
+                      <i class="ai-circle-plus text-info small text-decoration-none mx-1"></i>
+                      <a class="text-info small text-decoration-none"
+                        (click)="toggleDislayAlreadyFilledAttachment()">Voir les pièces déjà renseignées</a>
+                    </div>
+                    <div class="text-center pt-3" *ngIf="dislayAlreadyFilledAttachment">
+                      <i class="ai-circle-minus text-info small text-decoration-none mx-1"></i>
+                      <a class="text-info small text-decoration-none"
+                        (click)="toggleDislayAlreadyFilledAttachment()">Masquer les pièces déjà renseignées</a>
+                    </div>
                   </div>
                 </ng-template>
               </li>
               <li [ngbNavItem]="2" *ngIf=" service.assoServiceFieldTypes && service.assoServiceFieldTypes.length>0">
-                <button ngbNavLink>Mes informations complémentaires</button>
+                <button ngbNavLink>Indiquer des informations</button>
                 <ng-template ngbNavContent>
                   <div class="alert alert-info d-flex mb-2" role="alert">
                     <i class="ai-circle-info fs-xl"></i>
@@ -485,7 +505,7 @@
 <ng-template #validatedQuotationModal let-modal>
   <div>
     <div class="modal-header">
-      <h5 class="modal-title" id="confirmBackModalLabel">Devis validé</h5>
+      <h5 class="modal-title" id="validatedQuotationModal">Devis validé</h5>
       <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Fermer"></button>
     </div>
     <div class="modal-body">Ce devis est validé, voulez-vous consulter plutôt la commande associée ?
@@ -495,6 +515,22 @@
       <button type="button" class="btn btn-danger ms-2"
         (click)="openOrderDetails($event ,associatedCustomerOrder);$event.stopPropagation();modal.dismiss()">Voir la
         commande</button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #cancelQuotationModal let-modal>
+  <div>
+    <div class="modal-header">
+      <h5 class="modal-title" id="cancelQuotationModal">Abandonner le devis</h5>
+      <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Fermer"></button>
+    </div>
+    <div class="modal-body">Êtes-vous sûr de vouloir abandonner ce devis ?
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Annuler</button>
+      <button type="button" class="btn btn-danger ms-2"
+        (click)="finalCancelDraft($event );$event.stopPropagation();modal.dismiss()">Abandonner</button>
     </div>
   </div>
 </ng-template>

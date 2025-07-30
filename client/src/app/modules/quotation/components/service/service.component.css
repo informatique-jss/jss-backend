@@ -1,5 +1,5 @@
 .document-card {
-  width: 350px;
+  width: 100%;
   margin-right: 15px;
   margin-bottom: 15px;
 }
@@ -11,4 +11,50 @@
 .attachment-cards {
   display: flex;
   flex-wrap: wrap;
+}
+
+.document-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr 3fr auto;
+  grid-template-columns: 25% 20% 35% 20%;
+  align-items: center;
+  gap: 16px;
+  padding: 8px;
+}
+
+.doc-info {
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+.doc-type {
+  font-weight: 600;
+}
+
+.doc-comment {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.doc-attachments {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.attachment-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.doc-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pointer {
+  cursor: pointer;
 }

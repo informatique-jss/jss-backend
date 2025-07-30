@@ -5,6 +5,7 @@ import java.io.Serializable;
 import com.jss.osiris.libs.search.model.DoNotAudit;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -17,6 +18,7 @@ import jakarta.persistence.SequenceGenerator;
 
 @Entity
 @DoNotAudit
+@Cacheable(false)
 public class EntreprisesIntervenant implements Serializable, IId {
 
     @Id

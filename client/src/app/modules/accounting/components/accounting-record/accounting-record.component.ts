@@ -121,7 +121,7 @@ export class AccountingRecordComponent implements OnInit {
           if (element) {
             if (!this.toLetteredValues)
               this.toLetteredValues = [];
-            if (this.toLetteredValues.indexOf(element) < 0 && element.letteringNumber == null)
+            if (this.toLetteredValues.indexOf(element) < 0)
               this.toLetteredValues.push(element);
             this.refreshLetteringTable.next();
           }

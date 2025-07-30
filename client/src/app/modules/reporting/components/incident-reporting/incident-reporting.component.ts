@@ -175,7 +175,7 @@ export class IncidentReportingComponent extends KanbanComponent<IncidentReport, 
     this.isDisplayOrderLevel = true;
     this.customerOrderFetched = undefined;
     this.customerOrderStatusService.getCustomerOrderStatus().subscribe(response => {
-      this.possibleEntityStatusCustomerOrder = response;
+      this.possibleEntityStatusCustomerOrder = response.filter(t => t.code != "OPEN"); // TODO remove web new website up, and every where this filter is put + line in QuotationStatus / CustomerOrderStatus
       this.orderService.getSingleCustomerOrder(task.customerOrder.id).subscribe(response => {
         this.customerOrderFetched = response as CustomerOrder;
 

@@ -6,7 +6,7 @@ import { PlatformService } from '../../../main/services/platform.service';
 import { DoubleButtonsComponent } from '../../../miscellaneous/components/double-buttons/double-buttons.component';
 import { GenericSwiperComponent } from '../../../miscellaneous/components/generic-swiper/generic-swiper.component';
 import { OurClientsComponent } from '../../../miscellaneous/components/our-clients/our-clients.component';
-import { QuotationType, order, quotation } from '../../../quotation/model/QuotationType';
+import { QUOTATION_TYPE_ORDER, QUOTATION_TYPE_QUOTATION, QuotationType } from '../../../quotation/model/QuotationType';
 import { ServiceFamilyGroup } from '../../../quotation/model/ServiceFamilyGroup';
 import { Post } from '../../../tools/model/Post';
 import { PostService } from '../../../tools/services/post.service';
@@ -24,8 +24,8 @@ export class ApostilleComponent implements OnInit {
   tendencyPosts: Post[] = [];
 
   serviceFamilyGroupOther: ServiceFamilyGroup | undefined;
-  quotationTypeOrder: QuotationType = order;
-  quotationTypeQuotation: QuotationType = quotation;
+  quotationTypeOrder: QuotationType = QUOTATION_TYPE_ORDER;
+  quotationTypeQuotation: QuotationType = QUOTATION_TYPE_QUOTATION;
 
   constructor(private appService: AppService,
     private postService: PostService,

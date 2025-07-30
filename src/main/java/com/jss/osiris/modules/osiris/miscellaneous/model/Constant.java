@@ -925,6 +925,7 @@ public class Constant implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_provision_type_rbe")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private ProvisionType provisionTypeRbe;
 
 	@ManyToOne
@@ -950,6 +951,10 @@ public class Constant implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_active_directory_group_formalites")
 	private ActiveDirectoryGroup activeDirectoryGroupFormalites;
+
+	@ManyToOne
+	@JoinColumn(name = "id_active_directory_group_direction")
+	private ActiveDirectoryGroup activeDirectoryGroupDirection;
 
 	@ManyToOne
 	@JoinColumn(name = "id_active_directory_group_insertions")
@@ -3093,6 +3098,14 @@ public class Constant implements Serializable, IId {
 
 	public void setProvisionFamilyTypeBalo(ProvisionFamilyType provisionFamilyTypeBalo) {
 		this.provisionFamilyTypeBalo = provisionFamilyTypeBalo;
+	}
+
+	public ActiveDirectoryGroup getActiveDirectoryGroupDirection() {
+		return activeDirectoryGroupDirection;
+	}
+
+	public void setActiveDirectoryGroupDirection(ActiveDirectoryGroup activeDirectoryGroupDirection) {
+		this.activeDirectoryGroupDirection = activeDirectoryGroupDirection;
 	}
 
 }

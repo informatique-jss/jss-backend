@@ -8,8 +8,8 @@
   <select-quotation-status [(model)]="statusSelected" label="Statut" [form]="kanbanForm" (onFormChange)="startFilter()"
     propertyName="statusSelected" [isMandatory]="false" [isDisabled]="false"></select-quotation-status>
   <select-employee [(model)]="employeesSelected" label="Collaborateur" [form]="kanbanForm"
-    propertyName="employeesSelected" [isMandatory]="false" [isDisabled]="false" [filteredAdGroups]="[adGroupSales]"
-    (onFormChange)="startFilter()"></select-employee>
+    propertyName="employeesSelected" [isMandatory]="false" [isDisabled]="false"
+    [filteredAdGroups]="[adGroupSales,directionGroupSales]" (onFormChange)="startFilter()"></select-employee>
 </div>
 
 <div class="kanban-container top-container">

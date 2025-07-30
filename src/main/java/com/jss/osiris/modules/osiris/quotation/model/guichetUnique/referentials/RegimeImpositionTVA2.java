@@ -5,11 +5,13 @@ import java.io.Serializable;
 import com.jss.osiris.libs.search.model.DoNotAudit;
 import com.jss.osiris.modules.osiris.miscellaneous.model.ICode;
 
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
 @Entity
 @DoNotAudit
+@Cacheable(false)
 public class RegimeImpositionTVA2 implements Serializable, ICode {
     public RegimeImpositionTVA2(String code) {
         this.code = code;

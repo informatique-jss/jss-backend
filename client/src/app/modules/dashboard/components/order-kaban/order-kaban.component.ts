@@ -36,6 +36,7 @@ export class OrderKabanComponent extends KanbanComponent<CustomerOrder, Customer
   employeesSelected: Employee[] = [];
   filterText: string = '';
   adGroupSales = this.constantService.getActiveDirectoryGroupSales();
+  directionGroupSales = this.constantService.getActiveDirectoryGroupDirection();
   orderNotification: Notification[] | undefined;
 
   constructor(
@@ -71,7 +72,7 @@ export class OrderKabanComponent extends KanbanComponent<CustomerOrder, Customer
     this.selectedSwimlaneType = this.swimlaneTypes[0];
 
     this.customerOrderStatusService.getCustomerOrderStatus().subscribe(response => {
-      this.possibleEntityStatus = response;
+      this.possibleEntityStatus = response.filter(t => t.code != "OPEN");;
       this.statusSelected = [];
 
       // Retrieve bookmark

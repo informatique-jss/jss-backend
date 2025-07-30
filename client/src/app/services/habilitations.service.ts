@@ -32,7 +32,7 @@ export class HabilitationsService {
   }
 
   canDisplayManagementFieldsInIncidentReport() {
-    return this.loginService.hasGroup([ADMINISTRATEURS])
+    return this.loginService.hasGroup([TEAM_RESPONSIBLE])
   }
 
   canViewIndicatorModule() {
@@ -61,7 +61,7 @@ export class HabilitationsService {
   }
 
   canUpdateIncidentResponsibility() {
-    return this.loginService.hasGroup([ADMINISTRATEURS])
+    return this.loginService.hasGroup([TEAM_RESPONSIBLE])
   }
 
   canViewDashboardModule() {

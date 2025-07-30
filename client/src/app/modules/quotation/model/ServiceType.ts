@@ -14,9 +14,8 @@ export interface ServiceType {
   assoServiceTypeDocuments: AssoServiceTypeDocument[];
   assoServiceTypeFieldTypes: AssoServiceTypeFieldType[];
   isRequiringNewUnregisteredAffaire: boolean;
-  defaultDeboursPrice: number;
-  defaultDeboursPriceNonTaxable: number;
   suspiciousMarkup: number;
   isMergeable: boolean;
+  hideInMyJss: boolean;
   serviceTypeLinked: ServiceType;
 }

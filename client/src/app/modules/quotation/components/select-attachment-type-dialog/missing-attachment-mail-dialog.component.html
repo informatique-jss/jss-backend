@@ -95,7 +95,7 @@
     [hideUploadButton]="true"></multiple-upload>
 </div>
 <mat-card-content>
-  <div *ngIf="missingAttachmentQuery.attachments && missingAttachmentQuery.attachments.length>0">
+  <div *ngIf=" missingAttachmentQuery.attachments && missingAttachmentQuery.attachments.length>0">
     <div *ngFor="let attachment of missingAttachmentQuery.attachments">
       <ng-container *ngIf="!attachment.isDisabled">
         {{attachment.uploadedFile.filename }}

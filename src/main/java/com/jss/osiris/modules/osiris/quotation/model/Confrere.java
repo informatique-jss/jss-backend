@@ -11,7 +11,6 @@ import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.miscellaneous.model.City;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Country;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Department;
-import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Phone;
@@ -20,7 +19,6 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.osiris.miscellaneous.model.WeekDay;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -31,7 +29,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 
 @Entity
@@ -75,6 +72,7 @@ public class Confrere implements IId, Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_journal_type")
+	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private JournalType journalType;
 
 	@Column(length = 200)
@@ -126,10 +124,6 @@ public class Confrere implements IId, Serializable {
 
 	@Column(columnDefinition = "TEXT")
 	private String observations;
-
-	@OneToMany(mappedBy = "confrere", cascade = CascadeType.ALL, orphanRemoval = true)
-	@JsonIgnoreProperties(value = { "confrere" }, allowSetters = true)
-	private List<Document> documents;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_provider")
@@ -353,14 +347,6 @@ public class Confrere implements IId, Serializable {
 
 	public void setObservations(String observations) {
 		this.observations = observations;
-	}
-
-	public List<Document> getDocuments() {
-		return documents;
-	}
-
-	public void setDocuments(List<Document> documents) {
-		this.documents = documents;
 	}
 
 	public Provider getProvider() {

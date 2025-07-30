@@ -16,6 +16,7 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule, Routes } from '@angular/router';
+import { NgxEchartsModule } from 'ngx-echarts';
 import { AdministrationModule } from 'src/app/modules/administration/components/administration/administration.module';
 import { InvoicingModule } from 'src/app/modules/invoicing/components/invoicing/invoicing.module';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
@@ -57,6 +58,9 @@ const routes: Routes = [
     QuotationModule,
     AdministrationModule,
     MatDialogModule,
+    NgxEchartsModule.forRoot({
+      echarts: () => import('echarts'),
+    }),
   ],
   declarations: [
     DashboardComponent,

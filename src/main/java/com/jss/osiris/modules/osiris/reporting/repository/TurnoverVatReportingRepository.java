@@ -83,7 +83,7 @@ public interface TurnoverVatReportingRepository extends CrudRepository<Quotation
                         " e1.username = a1.username " +
                         " left join customer_order co on co.id = i.customer_order_id " +
                         " left join employee e2 on " +
-                        " e2.id = co.id_assigned_to " +
+                        " e2.id = t2.id_commercial " +
                         " group by " +
                         " date_trunc('year', " +
                         " i.created_date), " +
