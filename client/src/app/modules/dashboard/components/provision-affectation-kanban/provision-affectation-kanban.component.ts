@@ -232,9 +232,9 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
   getCustomerOrderAssignationForCurrentEmployee(entity: CustomerOrder) {
     if (entity && entity.customerOrderAssignations && this.employeesSelected)
       for (let assignation of entity.customerOrderAssignations) {
-        if ((this.employeesSelected.adPath.indexOf("Formalites") >= 0 || this.employeesSelected.adPath.indexOf("Informatique") >= 0) && assignation.assignationType.id == this.constantService.getAssignationTypeFormaliste().id)
+        if ((this.employeesSelected.adPath.indexOf(this.constantService.getActiveDirectoryGroupFormalites().activeDirectoryPath) >= 0 || this.employeesSelected.adPath.indexOf("Informatique") >= 0) && assignation.assignationType.id == this.constantService.getAssignationTypeFormaliste().id)
           return assignation;
-        if ((this.employeesSelected.adPath.indexOf("Insertions") >= 0 || this.employeesSelected.adPath.indexOf("Informatique") >= 0) && assignation.assignationType.id == this.constantService.getAssignationTypePublisciste().id)
+        if ((this.employeesSelected.adPath.indexOf(this.constantService.getActiveDirectoryGroupInsertions().activeDirectoryPath) >= 0 || this.employeesSelected.adPath.indexOf("Informatique") >= 0) && assignation.assignationType.id == this.constantService.getAssignationTypePublisciste().id)
           return assignation;
       }
     return undefined;
