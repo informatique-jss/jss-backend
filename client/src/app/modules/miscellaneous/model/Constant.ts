@@ -279,6 +279,7 @@ export interface Constant {
   activeDirectoryGroupInsertions: ActiveDirectoryGroup;
   activeDirectoryGroupFacturation: ActiveDirectoryGroup;
   activeDirectoryGroupSales: ActiveDirectoryGroup;
+  activeDirectoryGroupDirection: ActiveDirectoryGroup;
   furtherInformationServiceFieldType: ServiceFieldType;
   responsableDummyCustomerFrance: Responsable;
   provisionScreenTypeAnnouncement: ProvisionScreenType;

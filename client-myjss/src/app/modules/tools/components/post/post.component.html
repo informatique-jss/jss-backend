@@ -80,27 +80,43 @@
 
       <!-- Submit a formality or contact us -->
       <div class="mb-3" *ngIf="isPostContainsMyJssCategory(myJssCategoryFormality)">
-        <double-buttons orderActionLabel=" Déposer une formalité" quotationActionLabel="Demander un devis"
+        <double-buttons class="text-grey" orderActionLabel=" Déposer une formalité"
+          [orderActionRoute]="'quotation/new/'+serviceFamilyGroupFormality!.id+'/'+quotationTypeOrder.id"
+          quotationActionLabel="Demander un devis"
+          [quotationActionRoute]="'quotation/new/'+serviceFamilyGroupFormality!.id+'/'+quotationTypeQuotation.id"
           [isLightButtons]="true">
         </double-buttons>
       </div>
       <div class="mb-3" *ngIf="isPostContainsMyJssCategory(myJssCategoryAnnouncement)">
-        <double-buttons orderActionLabel=" Publier une annonce légale" quotationActionLabel="Demander un devis"
+        <double-buttons class="text-grey" orderActionLabel=" Publier une annonce légale"
+          [orderActionRoute]="'quotation/new/'+serviceFamilyGroupAnnouncement!.id+'/'+quotationTypeOrder.id"
+          quotationActionLabel="Demander un devis"
+          [quotationActionRoute]="'quotation/new/'+serviceFamilyGroupAnnouncement!.id+'/'+quotationTypeQuotation.id"
+          linkLabel="Consulter les annonces légales" linkRoute="announcement/search" [linkRouteToJssMedia]='true'
           [isLightButtons]="true">
         </double-buttons>
       </div>
       <div class="mb-3" *ngIf="isPostContainsMyJssCategory(myJssCategoryApostille)">
-        <double-buttons orderActionLabel=" Demander une apostille ou légalisation"
-          quotationActionLabel="Demander un devis" [isLightButtons]="true">
-        </double-buttons>
-      </div>
-      <div class="mb-3" *ngIf="isPostContainsMyJssCategory(myJssCategoryDomiciliation)">
-        <double-buttons orderActionLabel=" Domicilier mon entreprise" quotationActionLabel="Demander un devis"
+        <double-buttons class="text-grey" orderActionLabel=" Demander une apostille ou légalisation"
+          [orderActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeOrder.id"
+          quotationActionLabel="Demander un devis"
+          [quotationActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeQuotation.id"
           [isLightButtons]="true">
         </double-buttons>
       </div>
+      <div class="mb-3" *ngIf="isPostContainsMyJssCategory(myJssCategoryDomiciliation)">
+        <double-buttons class="text-grey" orderActionLabel=" Domicilier mon entreprise"
+          [orderActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeOrder.id"
+          quotationActionLabel="Demander un devis"
+          [quotationActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeQuotation.id"
+          linkLabel="Bien choisir la domiciliation d'entreprise" [isLightButtons]="true">
+        </double-buttons>
+      </div>
       <div class="mb-3" *ngIf="isPostContainsMyJssCategory(myJssCategoryDocument)">
-        <double-buttons orderActionLabel=" Commander des documents" quotationActionLabel="Demander un devis"
+        <double-buttons class="text-grey" orderActionLabel=" Commander des documents"
+          [orderActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeOrder.id"
+          quotationActionLabel="Demander un devis"
+          [quotationActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeQuotation.id"
           [isLightButtons]="true">
         </double-buttons>
       </div>
@@ -346,7 +362,7 @@
       </div>
 
       <!-- Recent posts -->
-      <h4 class="pt-3 pt-lg-1 mb-4">Recents :</h4>
+      <h4 class="pt-3 pt-lg-1 mb-4">Récents :</h4>
       <ul class="list-unstyled mb-lg-5 mb-4">
         <li class="border-bottom pb-3 mb-3" *ngIf="recentPosts[0]">
           <span class="h6 mb-0">

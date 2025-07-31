@@ -136,7 +136,7 @@ public class QuotationValidationHelper {
                                 quotation = quotationService.getQuotation(quotation.getId());
                 }
 
-                if (quotation.getId() == null) {
+                if (quotation.getId() == null && quotation.getCustomerOrderOrigin() == null) {
                         quotation.setCreatedDate(LocalDateTime.now());
 
                         List<CustomerOrderOrigin> origins = customerOrderOriginService
@@ -490,7 +490,10 @@ public class QuotationValidationHelper {
                         if (announcement.getId() != null) {
                                 currentAnnouncement = announcementService.getAnnouncement(announcement.getId());
                         } else if (!quotation.getCustomerOrderOrigin().getId()
-                                        .equals(constantService.getCustomerOrderOriginOldWebSite().getId())) {
+                                        .equals(constantService.getCustomerOrderOriginOldWebSite().getId())
+                                        && !quotation.getCustomerOrderOrigin().getId()
+                                                        .equals(constantService.getCustomerOrderOriginMyJss()
+                                                                        .getId())) {
                                 // By default, if not from webstite, always redacted by JSS if option exists
                                 ProvisionType provisionType = provisionTypeService
                                                 .getProvisionType(provision.getProvisionType().getId());

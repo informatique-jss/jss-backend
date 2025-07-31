@@ -65,7 +65,7 @@ export class AssignNewOrderDialogComponent implements OnInit {
                 }
               })
             }
-          if (fond.type = 'COMMON') {
+          if (fond.type == 'COMMON') {
             this.nextStep();
             this.isLoading = true;
             this.customerOrderAssignationService.getNextOrderForCommon(this.complexity).subscribe(common => {

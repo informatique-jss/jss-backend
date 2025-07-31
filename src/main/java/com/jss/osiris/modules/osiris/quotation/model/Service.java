@@ -121,11 +121,16 @@ public class Service implements Serializable, IId {
 	private String confrereLabel;
 
 	@Transient
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	private String waitingAcLabel;
+
+	@Transient
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private LocalDateTime lastMissingAttachmentQueryDateTime;
 
 	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
 	@Column(length = 2000)
+	@IndexedField
 	private String serviceLabelToDisplay;
 
 	public Integer getId() {
@@ -270,6 +275,14 @@ public class Service implements Serializable, IId {
 
 	public void setServiceDiscountAmount(BigDecimal serviceDiscountAmount) {
 		this.serviceDiscountAmount = serviceDiscountAmount;
+	}
+
+	public String getWaitingAcLabel() {
+		return waitingAcLabel;
+	}
+
+	public void setWaitingAcLabel(String waitingAcLabel) {
+		this.waitingAcLabel = waitingAcLabel;
 	}
 
 }

@@ -137,7 +137,9 @@ export const Dictionnary = {
   "PROVISION_GUICHET_UNIQUE_STATUS_REFUSED": "Liasse GU rejetée",
   "PROVISION_GUICHET_UNIQUE_STATUS_SIGNED": "Liasse GU signée",
   "NEW_CANDIDACY_RECEIVED": "Nouvelle candidature reçue",
-  "INCIDENT_REPORT_ASKED": "Nouveau CRI à remplir"
+  "INCIDENT_REPORT_ASKED": "Nouveau CRI à remplir",
+  "ORDER_IMMEDIATLY_AFFECTED": "Commande affectée immédiatement",
+  "ORDER_ADD_COMMENT_MYJSS": "Nouveau commentaire client"
 };
 
 

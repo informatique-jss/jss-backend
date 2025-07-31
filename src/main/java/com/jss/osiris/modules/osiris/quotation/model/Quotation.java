@@ -76,6 +76,12 @@ public class Quotation implements IQuotation {
 			JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private LocalDateTime createdDate;
 
+	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
+	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
+	@IndexedField
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
+	private LocalDateTime effectiveDate;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_quotation_status")
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
@@ -145,7 +151,7 @@ public class Quotation implements IQuotation {
 	private CustomerOrderOrigin customerOrderOrigin;
 
 	@OneToMany(targetEntity = CustomerOrderComment.class, mappedBy = "quotation", cascade = CascadeType.REMOVE)
-	@JsonIgnoreProperties(value = { "quotation" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "quotation", "provision" }, allowSetters = true)
 	private List<CustomerOrderComment> customerOrderComments;
 
 	@Transient
@@ -405,6 +411,14 @@ public class Quotation implements IQuotation {
 
 	public void setVoucher(Voucher voucher) {
 		this.voucher = voucher;
+	}
+
+	public LocalDateTime getEffectiveDate() {
+		return effectiveDate;
+	}
+
+	public void setEffectiveDate(LocalDateTime effectiveDate) {
+		this.effectiveDate = effectiveDate;
 	}
 
 }

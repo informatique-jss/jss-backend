@@ -12,6 +12,8 @@ public interface SearchService {
 
     public List<IndexEntity> searchForEntitiesById(Integer id, List<String> entityTypeToSearch);
 
+    public List<IndexEntity> searchForEntitiesByIds(List<Integer> ids, String entityTypeToSearch);
+
     public List<IndexEntity> getActifResponsableByKeyword(String searchedValue, Boolean onlyActive);
 
     public List<IndexEntity> getCustomerOrdersByKeyword(String searchedValue);

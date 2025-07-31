@@ -68,6 +68,7 @@ import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.osiris.quotation.service.AssoAffaireOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.osiris.quotation.service.ProvisionService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
 import com.jss.osiris.modules.osiris.quotation.service.ServiceService;
 import com.jss.osiris.modules.osiris.quotation.service.infoGreffe.FormaliteInfogreffeService;
@@ -170,6 +171,9 @@ public class MailHelper {
 
     @Autowired
     GeneratePdfDelegate generatePdfDelegate;
+
+    @Autowired
+    ProvisionService provisionService;
 
     @Bean
     public TemplateEngine emailTemplateEngine() {
@@ -439,10 +443,18 @@ public class MailHelper {
         ctx.setVariable("cbLink", mail.getCbLink());
 
         if (mail.getMailTemplate().equals(CustomerMail.TEMPLATE_CUSTOMER_ORDER_IN_PROGRESS)
-                && (mail.getCustomerOrder() != null || mail.getQuotation() != null))
-            ctx.setVariable("mailComputeResultInvoice",
-                    mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(
-                            mail.getCustomerOrder() != null ? mail.getCustomerOrder() : mail.getQuotation()));
+                && (mail.getCustomerOrder() != null || mail.getQuotation() != null)) {
+            try {
+                MailComputeResult mailComputeResultInvoice = mailComputeHelper
+                        .computeMailForCustomerOrderFinalizationAndInvoice(
+                                mail.getCustomerOrder() != null ? mail.getCustomerOrder() : mail.getQuotation());
+                if (mailComputeResultInvoice != null)
+                    ctx.setVariable("mailComputeResultInvoice", mailComputeResultInvoice);
+            } catch (OsirisClientMessageException e) {
+                // We catch the exception so the mail is still sent even if the adress of the
+                // Affaire is not set
+            }
+        }
         ctx.setVariable("attachments", mail.getAttachments());
         ctx.setVariable("provision", mail.getProvision());
         ctx.setVariable("tiers", mail.getTiers());
@@ -996,8 +1008,10 @@ public class MailHelper {
                             currentProvision = provision;
                         }
 
-        if (currentProvision == null)
+        if (currentProvision == null || currentProvision.getId() == null)
             return;
+
+        currentProvision = provisionService.getProvision(currentProvision.getId());
 
         List<Attachment> attachments = new ArrayList<Attachment>();
         if (currentProvision.getAttachments() != null) {
@@ -1250,7 +1264,10 @@ public class MailHelper {
             }
 
         mail.setAttachments(attachments);
-        mail.setReplyTo(customerOrder.getResponsable().getSalesEmployee());
+        if (provision.getAssignedTo() != null)
+            mail.setReplyTo(provision.getAssignedTo());
+        else
+            mail.setReplyTo(customerOrder.getResponsable().getSalesEmployee());
         mail.setSendToMe(sendToMe);
         mail.setProvision(provision);
         mail.setMailComputeResult(mailComputeHelper.computeMailForSendAnnouncementToConfrere(announcement));

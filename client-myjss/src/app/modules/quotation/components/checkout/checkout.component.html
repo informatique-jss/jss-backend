@@ -40,26 +40,6 @@
             </div>
           </div>
         </div>
-        <div class="d-flex align-items-center mb-4" *ngIf="userScope && userScope.length>1 && currentUser">
-          <div class="ms-auto">
-            <div ngbDropdown class="btn-group dropdown" style="margin-right: 10px;">
-              <button type="button" class="btn btn-secondary dropdown-toggle" ngbDropdownToggle aria-haspopup="true"
-                aria-expanded="false">
-                <i class="ai-briefcase me-2"></i>
-                {{currentUser.tiers.id}} - {{currentUser.tiers.denomination}} - {{capitalizeName(currentUser.firstname+
-                ' '+currentUser.lastname)}}
-              </button>
-              <div ngbDropdownMenu class="dropdown-menu my-1">
-                <label class=" dropdown-item" *ngFor="let scope of userScope">
-                  <a class="dropdown-item" style="cursor: pointer;" (click)="changeCurrentUser(scope) ">
-                    {{scope.tiers.id}} - {{scope.tiers.denomination}} - {{capitalizeName(scope.firstname+ '
-                    '+scope.lastname)}}
-                  </a>
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
 
         <!-- Quick message -->
         <div class="row" *ngIf="quotation && quotation.assoAffaireOrders && quotation.assoAffaireOrders[0] && quotation.assoAffaireOrders[0].services
@@ -638,6 +618,7 @@
   <div class="row">
     <div class="col-12 px-0">
       <div class="card shadow px-4 ms-lg-5 pt-1" *ngIf="quotation">
+        <h4 class="pt-3">{{quotation.isQuotation ? 'Devis' : 'Commande'}}</h4>
         <!-- Items -->
         <div *ngFor="let asso of quotation.assoAffaireOrders; let assoIndex = index">
           <div *ngFor="let service of asso.services; let serviceIndex = index" class="row">

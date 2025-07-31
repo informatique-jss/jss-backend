@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { AppService } from '../../main/services/app.service';
 import { AppRestService } from '../../main/services/appRest.service';
+import { QuotationService } from '../../my-account/services/quotation.service';
 import { Responsable } from '../model/Responsable';
 
 export const ADMINISTRATEURS: string = 'ROLE_OSIRIS_ADMINISTRATEURS';
@@ -14,7 +15,7 @@ export const ACCOUNTING_RESPONSIBLE: string = 'ROLE_OSIRIS_RESPONSABLE_COMPTABIL
 })
 export class LoginService extends AppRestService<Responsable> {
 
-  constructor(http: HttpClient, private appService: AppService) {
+  constructor(http: HttpClient, private appService: AppService, private quotationService: QuotationService) {
     super(http, "profile");
   }
 
@@ -25,6 +26,19 @@ export class LoginService extends AppRestService<Responsable> {
   logUser(userId: number, aToken: string) {
     return new Observable<Boolean>(observer => {
       this.get(new HttpParams().set("userId", userId).set("aToken", aToken), "login").subscribe(response => {
+        this.quotationService.cleanStorageData();
+        this.refreshUserRoles().subscribe(response => {
+          observer.next(true);
+          observer.complete();
+        })
+      })
+    })
+  }
+
+  switchUser(newUserId: number) {
+    return new Observable<Boolean>(observer => {
+      this.get(new HttpParams().set("newUserId", newUserId), "switch").subscribe(response => {
+        this.currentUser = undefined;
         this.refreshUserRoles().subscribe(response => {
           observer.next(true);
           observer.complete();

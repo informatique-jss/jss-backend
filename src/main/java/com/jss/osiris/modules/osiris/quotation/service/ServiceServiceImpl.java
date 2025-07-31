@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,13 +107,21 @@ public class ServiceServiceImpl implements ServiceService {
     @Override
     public Service addOrUpdateService(Service service) throws OsirisException {
         computeServiceLabel(service);
-        if (service.getCustomLabel() != null && service.getCustomLabel().trim().length() == 0)
-            service.setCustomLabel(null);
+        if (service.getCustomLabel() != null) {
+            if (service.getCustomLabel().trim().length() == 0)
+                service.setCustomLabel(null);
+        }
 
-        if (service.getAssoAffaireOrder().getCustomerOrder() != null)
+        serviceRepository.save(service);
+
+        if (service.getAssoAffaireOrder().getCustomerOrder() != null) {
             batchService.declareNewBatch(Batch.REINDEX_ASSO_AFFAIRE_ORDER, service.getAssoAffaireOrder().getId());
+            batchService.declareNewBatch(Batch.REINDEX_CUSTOMER_ORDER,
+                    service.getAssoAffaireOrder().getCustomerOrder().getId());
+        } else if (service.getAssoAffaireOrder().getQuotation() != null)
+            batchService.declareNewBatch(Batch.REINDEX_QUOTATION, service.getAssoAffaireOrder().getQuotation().getId());
 
-        return serviceRepository.save(service);
+        return service;
     }
 
     @Override
@@ -135,7 +144,7 @@ public class ServiceServiceImpl implements ServiceService {
         return true;
     }
 
-    private void linkNewServiceWithAsso(Service newService) {
+    private void linkNewServiceWithAsso(Service newService) throws OsirisException {
         for (AssoServiceDocument assoServiceDocument : newService.getAssoServiceDocuments()) {
             assoServiceDocument.setService(newService);
             assoServiceDocumentService.addOrUpdateAssoServiceDocument(assoServiceDocument);
@@ -271,48 +280,56 @@ public class ServiceServiceImpl implements ServiceService {
             Service service, Affaire affaire) throws OsirisException {
         List<Provision> newProvisions = new ArrayList<Provision>();
 
-        for (String screenType : Arrays.asList(ProvisionScreenType.DOMICILIATION, ProvisionScreenType.FORMALITE,
-                ProvisionScreenType.STANDARD, ProvisionScreenType.ANNOUNCEMENT)) {
+        Set<ProvisionType> possibleProvisionTypes = assoServiceProvisionTypes.stream()
+                .map(a -> a.getProvisionType()).collect(Collectors.toSet());
+
+        for (ProvisionType provisionTypePossible : possibleProvisionTypes) {
 
             List<AssoServiceProvisionType> provisionTypeMergeable = assoServiceProvisionTypes.stream()
-                    .filter(s -> s.getProvisionType().getIsMergeable() != null && s.getProvisionType().getIsMergeable()
-                            && s.getProvisionType().getProvisionScreenType().getCode().equals(screenType))
+                    .filter(s -> Boolean.TRUE.equals(s.getProvisionType().getIsMergeable())
+                            && s.getProvisionType().getId().equals(provisionTypePossible.getId()))
                     .toList();
 
             if (provisionTypeMergeable != null && provisionTypeMergeable.size() > 0) {
-                Boolean isPriority = sortassoServiceProvisionTypesByComplexity(assoServiceProvisionTypes);
-                if (!screenType.equals(ProvisionScreenType.ANNOUNCEMENT) || provisionTypeMergeable.size() == 1) {
-                    Provision announcementProvision = completeNoticesFromAnnouncementProvision(
-                            generateProvisionFromProvisionType(provisionTypeMergeable.get(0).getProvisionType(),
-                                    service, provisionTypeMergeable.get(0), isPriority),
+                Boolean isPriority = getPriorityFromAssoServiceProvisionTypesList(assoServiceProvisionTypes);
+                Provision mergeableProvision = generateProvisionFromProvisionType(
+                        provisionTypeMergeable.get(0).getProvisionType(),
+                        service, provisionTypeMergeable.get(0), isPriority);
+
+                if (provisionTypePossible.getProvisionScreenType().getCode().equals(ProvisionScreenType.ANNOUNCEMENT)) {
+                    if (provisionTypeMergeable.size() > 1) {
+                        mergeableProvision = generateProvisionFromProvisionType(
+                                this.constantService.getProvisionTypeCharacterAnnouncement(), service,
+                                assoServiceProvisionTypes.get(0), assoServiceProvisionTypes.get(0).getIsPriority());
+                    }
+
+                    mergeableProvision = completeNoticesFromAnnouncementProvision(mergeableProvision,
                             provisionTypeMergeable, affaire);
-                    announcementProvision.setIsRedactedByJss(true);
-                    newProvisions.add(announcementProvision);
-                } else {
-                    Provision announcementProvision = completeNoticesFromAnnouncementProvision(
-                            generateProvisionFromProvisionType(
-                                    this.constantService.getProvisionTypeCharacterAnnouncement(), service,
-                                    assoServiceProvisionTypes.get(0), assoServiceProvisionTypes.get(0).getIsPriority()),
-                            provisionTypeMergeable, affaire);
-                    announcementProvision.setIsRedactedByJss(true);
-                    newProvisions.add(announcementProvision);
+                    mergeableProvision.setIsRedactedByJss(true);
                 }
+
+                newProvisions.add(mergeableProvision);
             }
 
             List<AssoServiceProvisionType> provisionTypeNonMergeable = assoServiceProvisionTypes.stream()
                     .filter(s -> (s.getProvisionType().getIsMergeable() == null
                             || !s.getProvisionType().getIsMergeable())
-                            && s.getProvisionType().getProvisionScreenType().getCode().equals(screenType))
+                            && s.getProvisionType().getId().equals(provisionTypePossible.getId()))
                     .toList();
 
             for (AssoServiceProvisionType assoServiceProvisionType : provisionTypeNonMergeable) {
                 if (provisionTypeNonMergeable != null && provisionTypeNonMergeable.size() > 0) {
-                    Provision announcementProvision = completeNoticesFromAnnouncementProvision(
-                            generateProvisionFromProvisionType(assoServiceProvisionType.getProvisionType(),
-                                    service, assoServiceProvisionType, assoServiceProvisionType.getIsPriority()),
-                            provisionTypeNonMergeable, affaire);
-                    announcementProvision.setIsRedactedByJss(true);
-                    newProvisions.add(announcementProvision);
+                    Provision nonMergeableProvision = generateProvisionFromProvisionType(
+                            assoServiceProvisionType.getProvisionType(),
+                            service, assoServiceProvisionType, assoServiceProvisionType.getIsPriority());
+
+                    if (nonMergeableProvision.getProvisionType().getProvisionScreenType().getCode()
+                            .equals(ProvisionScreenType.ANNOUNCEMENT)) {
+                        completeNoticesFromAnnouncementProvision(nonMergeableProvision, provisionTypeNonMergeable,
+                                affaire);
+                        nonMergeableProvision.setIsRedactedByJss(true);
+                    }
+                    newProvisions.add(nonMergeableProvision);
                 }
             }
 
@@ -320,7 +337,7 @@ public class ServiceServiceImpl implements ServiceService {
         return newProvisions;
     }
 
-    private boolean sortassoServiceProvisionTypesByComplexity(
+    private boolean getPriorityFromAssoServiceProvisionTypesList(
             List<AssoServiceProvisionType> assoServiceProvisionTypes) {
         if (assoServiceProvisionTypes != null) {
             assoServiceProvisionTypes.sort(new Comparator<AssoServiceProvisionType>() {
@@ -511,16 +528,13 @@ public class ServiceServiceImpl implements ServiceService {
     @Transactional(rollbackFor = Exception.class)
     public Service modifyServiceType(List<ServiceType> serviceTypes, Service service) throws OsirisException {
         service = getService(service.getId());
-
         ArrayList<AssoServiceFieldType> assoToDelete = new ArrayList<AssoServiceFieldType>();
-        ArrayList<Integer> serviceTypeIds = new ArrayList<Integer>();
 
         for (ServiceType serviceType : serviceTypes) {
             serviceType = serviceTypeService.getServiceType(serviceType.getId());
-            if (!serviceTypeIds.contains(serviceType.getId())) {
-                serviceTypeIds.add(serviceType.getId());
-                service.getServiceTypes().add(serviceType);
-            }
+            service.setServiceTypes(serviceTypes);
+            service.setCustomLabel(null);
+            service.setServiceLabelToDisplay(null);
 
             for (AssoServiceTypeFieldType serviceTypeFieldType : serviceType.getAssoServiceTypeFieldTypes()) {
                 boolean found = false;
@@ -586,7 +600,9 @@ public class ServiceServiceImpl implements ServiceService {
 
             List<Provision> newProvisions = getProvisionsFromServiceType(serviceType,
                     service.getAssoAffaireOrder().getAffaire(), service);
-            newProvisions.forEach(provision -> provisionService.addOrUpdateProvision(provision));
+
+            for (Provision provision : newProvisions)
+                provisionService.addOrUpdateProvision(provision);
             service.getProvisions().addAll(newProvisions);
         }
 
@@ -594,10 +610,10 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     private Service computeServiceLabel(Service service) {
-        if (service != null) {
+        if (service != null && service.getServiceTypes() != null) {
             if (service.getCustomLabel() == null || service.getCustomLabel().length() == 0)
                 service.setServiceLabelToDisplay(String.join(" / ", service.getServiceTypes().stream()
-                        .map(s -> s.getCustomLabel()).collect(Collectors.toList())));
+                        .map(s -> s.getLabel()).collect(Collectors.toList())));
             else
                 service.setServiceLabelToDisplay(service.getCustomLabel());
 
@@ -681,11 +697,27 @@ public class ServiceServiceImpl implements ServiceService {
                 removeUnusedAssoServiceDocument(service);
 
                 if (service.getProvisions() != null)
-                    for (Provision provision : service.getProvisions())
+                    for (Provision provision : service.getProvisions()) {
                         if (provision.getAnnouncement() != null
                                 && provision.getAnnouncement().getConfrere() != null)
                             service.setConfrereLabel(
-                                    "publié par " + provision.getAnnouncement().getConfrere().getLabel());
+                                    "publié sur " + provision.getAnnouncement().getConfrere().getLabel());
+
+                        if (provision.getSimpleProvision() != null
+                                && provision.getSimpleProvision().getSimpleProvisionStatus() != null
+                                && provision.getSimpleProvision().getSimpleProvisionStatus().getCode()
+                                        .equals(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY)
+                                && provision.getSimpleProvision().getWaitedCompetentAuthority() != null)
+                            service.setWaitingAcLabel(
+                                    provision.getSimpleProvision().getWaitedCompetentAuthority().getLabel());
+
+                        if (provision.getFormalite() != null && provision.getFormalite().getFormaliteStatus() != null
+                                && provision.getFormalite().getFormaliteStatus().getCode()
+                                        .equals(FormaliteStatus.FORMALITE_WAITING_DOCUMENT_AUTHORITY)
+                                && provision.getFormalite().getWaitedCompetentAuthority() != null)
+                            service.setWaitingAcLabel(
+                                    provision.getFormalite().getWaitedCompetentAuthority().getLabel());
+                    }
             }
         return services;
     }

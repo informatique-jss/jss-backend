@@ -143,7 +143,7 @@ export class EditAddressComponent implements OnInit {
 
       if (this.idResponsable)
         this.documentService.addOrUpdateDocumentsForResponsable(this.documents).subscribe(response => {
-          this.appService.openRoute(null, "account/settings/" + this.idResponsable, undefined);
+          this.appService.openRoute(null, "account/settings", undefined);
         })
     }
   }

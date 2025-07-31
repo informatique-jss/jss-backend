@@ -4,6 +4,7 @@ export interface PaperSetResult {
   paperSetTypeLabel: string;
   customerOrderId: number;
   customerOrderStatus: string;
+  CompetentAuthorityLabel: string;
   tiersLabel: string;
   tiersId: string;
   responsableLabel: string;

@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.jackson.JacksonViews;
-import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
 import com.jss.osiris.modules.myjss.quotation.controller.MyJssQuotationValidationHelper;
 import com.jss.osiris.modules.osiris.accounting.model.BillingClosureReceiptValue;
 import com.jss.osiris.modules.osiris.accounting.service.BillingClosureReceiptHelper;
@@ -25,9 +24,6 @@ import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
 public class MyJssTiersController {
 
 	private static final String inputEntryPoint = "/myjss/tiers";
-
-	@Autowired
-	UserScopeService userScopeService;
 
 	@Autowired
 	ResponsableService responsableService;

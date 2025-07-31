@@ -1434,11 +1434,6 @@ public class WordpressController {
 	private ResponseEntity<String> detectFlood(HttpServletRequest request) {
 		if (lastFloodFlush.isBefore(LocalDateTime.now().minusMinutes(floodFlushDelayMinute)))
 			requestCount.clear();
-		else
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-			}
 
 		String ipAddress = request.getRemoteAddr();
 		AtomicLong count = requestCount.computeIfAbsent(ipAddress, k -> new AtomicLong());

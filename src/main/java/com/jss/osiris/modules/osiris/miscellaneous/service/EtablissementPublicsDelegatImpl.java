@@ -134,7 +134,6 @@ public class EtablissementPublicsDelegatImpl implements EtablissementPublicsDele
             ArrayList<Mail> mails = new ArrayList<Mail>();
             mails.add(mail);
             competentAuthority.setMails(mailService.populateMailIds(mails));
-            ;
         }
 
         if (organisme.getProperties().getTelephone() != null
