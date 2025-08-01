@@ -396,9 +396,21 @@ public class MailHelper {
 
             if (mail.getMailComputeResult() != null && mail.getMailComputeResult().getIsSendToAffaire()
                     && (mail.getMailTemplate().equals(CustomerMail.TEMPLATE_CUSTOMER_ORDER_FINALIZATION)
-                            || mail.getMailTemplate().equals(CustomerMail.TEMPLATE_INVOICE_REMINDER)))
-                ctx.setVariable("customerName", getCustomerOrderAffaireLabel(quotation, assoAffaireOrderToUse));
-            else
+                            || mail.getMailTemplate().equals(CustomerMail.TEMPLATE_INVOICE_REMINDER))
+                    && quotation.getAssoAffaireOrders() != null && quotation.getAssoAffaireOrders().size() > 0) {
+                if (quotation.getAssoAffaireOrders().get(0).getAffaire().getIsIndividual()
+                        && quotation.getAssoAffaireOrders().get(0).getAffaire().getLastname() != null
+                        && quotation.getAssoAffaireOrders().get(0).getAffaire().getFirstname() != null)
+                    ctx.setVariable("customerName", quotation.getAssoAffaireOrders().get(0).getAffaire().getFirstname()
+                            + ' ' + quotation.getAssoAffaireOrders().get(0).getAffaire().getLastname());
+
+                else if (mail.getMailComputeResult() != null && mail.getMailComputeResult().getIsSendToAffaire()
+                        && (mail.getMailTemplate().equals(CustomerMail.TEMPLATE_CUSTOMER_ORDER_FINALIZATION)
+                                || mail.getMailTemplate().equals(CustomerMail.TEMPLATE_INVOICE_REMINDER))
+                        && (!assoAffaireOrderToUse.getAffaire().getIsIndividual()
+                                || assoAffaireOrderToUse.getAffaire().getIsIndividual() == null))
+                    ctx.setVariable("customerName", "");
+            } else
                 ctx.setVariable("customerName", getCustomerName(quotation));
             ctx.setVariable("affaireLabel", getCustomerOrderAffaireLabel(quotation, assoAffaireOrderToUse));
             ctx.setVariable("affaireLabelDetails",
