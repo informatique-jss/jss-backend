@@ -871,7 +871,7 @@ public class MyJssQuotationController {
 
 	@GetMapping(inputEntryPoint + "/affaire/siret")
 	@JsonView(JacksonViews.MyJssListView.class)
-	public ResponseEntity<List<Affaire>> getAffaireBySiretOrSiren(@RequestParam String siretOrSiren,
+	public ResponseEntity<Page<Affaire>> getAffaireBySiretOrSiren(@RequestParam String siretOrSiren,
 			HttpServletRequest request)
 			throws OsirisClientMessageException, OsirisException {
 		detectFlood(request);
@@ -880,11 +880,12 @@ public class MyJssQuotationController {
 
 		if (siretOrSiren == null || !validationHelper.validateSiret(siretOrSiren.trim().replaceAll(" ", ""))
 				&& !validationHelper.validateSiren(siretOrSiren.trim().replaceAll(" ", "")))
-			return new ResponseEntity<List<Affaire>>(new ArrayList<Affaire>(), HttpStatus.OK);
+			return new ResponseEntity<Page<Affaire>>(Page.empty(), HttpStatus.OK);
 
-		return new ResponseEntity<List<Affaire>>(
-				affaireService.getAffairesFromSiret(siretOrSiren.trim().replaceAll(" ", "")),
-				HttpStatus.OK);
+		List<Affaire> affaires = affaireService.getAffairesFromSiret(siretOrSiren.trim().replaceAll(" ", ""));
+		PageRequest newPageRequest = PageRequest.of(0, Math.max(affaires.size(), 1));
+		Page<Affaire> pageResult = new PageImpl<>(affaires, newPageRequest, affaires.size());
+		return new ResponseEntity<Page<Affaire>>(pageResult, HttpStatus.OK);
 	}
 
 	@PostMapping(inputEntryPoint + "/affaire")

@@ -184,9 +184,9 @@ public class AffaireServiceImpl implements AffaireService {
 
     @Override
     public List<Affaire> getAffairesFromSiren(String siren) throws OsirisException, OsirisClientMessageException {
-        List<Affaire> existingAffaires = affaireRepository.findBySiren(siren);
-        if (existingAffaires != null && existingAffaires.size() > 0)
-            return existingAffaires;
+        // List<Affaire> existingAffaires = affaireRepository.findBySiren(siren);
+        // if (existingAffaires != null && existingAffaires.size() > 0)
+        // return existingAffaires;
         List<RneCompany> rneCompanies = rneDelegateService.getCompanyBySiren(siren);
         List<Affaire> affaires = new ArrayList<Affaire>();
         if (rneCompanies != null && rneCompanies.size() > 0)
@@ -197,11 +197,11 @@ public class AffaireServiceImpl implements AffaireService {
 
     @Override
     public List<Affaire> getAffairesFromSiret(String siret) throws OsirisException, OsirisClientMessageException {
-        Affaire affaire = affaireRepository.findBySiret(siret);
-        if (affaire != null)
-            return Arrays.asList(affaire);
+        List<Affaire> affaires = affaireRepository.findAllBySiret(siret);
+        if (affaires != null && affaires.size() > 0)
+            return affaires;
         List<RneCompany> rneCompanies = rneDelegateService.getCompanyBySiret(siret);
-        List<Affaire> affaires = new ArrayList<Affaire>();
+        affaires = new ArrayList<Affaire>();
         if (rneCompanies != null && rneCompanies.size() > 0) {
             for (RneCompany rneCompany : rneCompanies)
                 affaires.add(getAffaireFromRneCompany(rneCompany, siret));
@@ -286,6 +286,11 @@ public class AffaireServiceImpl implements AffaireService {
         if (affaire.getSiret() == null && personneMorale.getEtablissementPrincipal() != null
                 && personneMorale.getEtablissementPrincipal().getDescriptionEtablissement() != null)
             affaire.setSiret(personneMorale.getEtablissementPrincipal().getDescriptionEtablissement().getSiret());
+
+        if (affaire.getSiret() == null && personneMorale.getAutresEtablissements() != null
+                && personneMorale.getAutresEtablissements().size() > 0
+                && personneMorale.getAutresEtablissements().get(0).getDescriptionEtablissement() != null)
+            affaire.setSiret(personneMorale.getAutresEtablissements().get(0).getDescriptionEtablissement().getSiret());
 
         AdresseDomicile address = getAddressFromRneCompany(rneCompany, affaire.getSiren(), affaire.getSiret());
         if (address != null && address != null) {
