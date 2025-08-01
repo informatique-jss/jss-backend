@@ -49,7 +49,6 @@ export class QuotationListComponent implements OnInit {
       if (!this.isForDashboard && !this.isForTiersIntegration)
         this.appService.changeHeaderTitle("Devis");
 
-
       this.availableColumns = [];
       this.availableColumns.push({ id: "id", fieldName: "quotationId", label: "N° du devis" } as SortTableColumn<QuotationSearchResult>);
       this.availableColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateForSortTable } as SortTableColumn<QuotationSearchResult>);
