@@ -57,12 +57,13 @@
               <div class="fs-sm  ">{{capitalizeName(currentUser.firstname + " "
                 +currentUser.lastname)}}
               </div>
+              <div class="fs-sm  " *ngIf="userScope && userScope.length>0">{{currentUser.tiers.denomination}}</div>
             </div>
           </a>
           <div ngbDropdownMenu class="dropdown-menu dropdown-menu-end my-1">
             <a class="dropdown-item" [routerLink]="'quotation/identification'">
               <i class="fs-lg opacity-70 me-2 ai-circle-plus"></i>
-              Nouvelle commande
+              Nouvelle demande
             </a>
             <h6 class="dropdown-header fs-xs fw-medium text-body-secondary text-uppercase pb-1">Tableau de
               bord</h6>
