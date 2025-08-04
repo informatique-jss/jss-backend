@@ -110,13 +110,13 @@
     </mat-accordion>
   </div>
   <div class="fab-extended-button-containter"><button mat-fab extended color="primary"
-      (click)="createProvision(service)" *ngIf="editMode">
+      (click)="createProvision(service)" *ngIf="editMode && hasQuotation!=undefined">
       <mat-icon>work</mat-icon>
       Ajouter une prestation pour le service {{service.serviceLabelToDisplay}}
     </button></div>
 </ng-container>
-<div class="fab-extended-button-containter"><button mat-fab extended color="primary" (click)="createService(asso)"
-    *ngIf="editMode">
+<div class=" fab-extended-button-containter"><button mat-fab extended color="primary" (click)="createService(asso)"
+    *ngIf="editMode && hasQuotation!=undefined">
     <mat-icon>room_service</mat-icon>
     Ajouter un service
   </button></div>
