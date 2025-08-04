@@ -52,9 +52,9 @@ export class UploadAttachmentService extends AppRestService<IAttachment> {
     this.downloadGet(new HttpParams().set("idAttachment", attachment.id + ""), "attachment/download", (attachment && attachment.uploadedFile && attachment.uploadedFile.filename) ? attachment.uploadedFile.filename : attachment.id + "");
   }
 
-  downloadInvoiceAttachmentsAsZip(attachmentIds: number[]) {
+  downloadInvoiceAttachmentsAsZip(invoiceIds: number[]) {
     let params = new HttpParams();
-    attachmentIds.forEach(id => {
+    invoiceIds.forEach(id => {
       params = params.append('ids', id.toString());
     });
 

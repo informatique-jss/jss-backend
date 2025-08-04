@@ -1,8 +1,7 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { forkJoin, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { formatDateForSortTable, formatDateTimeForSortTable, formatEurosForSortTable } from 'src/app/libs/FormatHelper';
-import { Attachment } from 'src/app/modules/miscellaneous/model/Attachment';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
@@ -199,35 +198,28 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
   }
 
   downloadAllFiles() {
+
     let count = 0;
-    let selectedAttachmentIds: number[] = [];
+    let invoiceIds: number[] = [];
     if (this.invoices && this.invoices.length > 0) {
-      let selectedInvoices = [];
-
       for (let invoice of this.invoices)
-        selectedInvoices.push(this.invoiceService.getInvoiceById(invoice.invoiceId));
-
-      forkJoin(selectedInvoices).subscribe(allInvoices => {
-        for (let completeInvoice of allInvoices) {
-          if (completeInvoice.attachments) {
-            for (let attachement of completeInvoice.attachments) {
-              if (attachement.attachmentType.id === this.constantService.getAttachmentTypeInvoice().id && count < 200) {
-                selectedAttachmentIds.push(attachement.id);
-                count++;
-              }
-            }
-          }
+        if (count < 200) {
+          invoiceIds.push(invoice.invoiceId);
+          count++;
         }
 
-        if (selectedAttachmentIds.length > 1) {
-          this.uploadAttachmentService.downloadInvoiceAttachmentsAsZip(selectedAttachmentIds);
-        } else if (selectedAttachmentIds.length == 1) {
-          let tmpAttachment = { id: selectedAttachmentIds[0] } as Attachment;
-          this.uploadAttachmentService.downloadAttachment(tmpAttachment);
-        }
-        else
-          this.appService.displaySnackBar("Aucun fichier à télécharger", false, 10)
-      });
+      if (invoiceIds.length > 1) {
+        this.uploadAttachmentService.downloadInvoiceAttachmentsAsZip(invoiceIds);
+      } else if (invoiceIds.length == 1) {
+        this.invoiceService.getInvoiceById(invoiceIds[0]).subscribe(response => {
+          if (response && response.attachments)
+            for (let attachement of response.attachments)
+              if (attachement.attachmentType.id === this.constantService.getAttachmentTypeInvoice().id)
+                this.uploadAttachmentService.downloadAttachment(attachement);
+        });
+      }
+      else
+        this.appService.displaySnackBar("Aucun fichier à télécharger", false, 10)
     }
   }
 }
