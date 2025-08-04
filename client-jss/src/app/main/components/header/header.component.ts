@@ -64,7 +64,7 @@ export class HeaderComponent implements OnInit {
     private loginService: LoginService,
     private modalService: NgbModal,
     private eRef: ElementRef,
-    private plaformService: PlatformService
+    private plaformService: PlatformService,
   ) { }
 
   ngOnInit() {
