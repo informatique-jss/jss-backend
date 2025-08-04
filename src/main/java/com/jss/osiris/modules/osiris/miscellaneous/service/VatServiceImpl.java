@@ -20,6 +20,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.DepartmentVatSetting;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Vat;
 import com.jss.osiris.modules.osiris.miscellaneous.repository.VatRepository;
+import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
@@ -44,6 +45,9 @@ public class VatServiceImpl implements VatService {
 
     @Autowired
     CityService cityService;
+
+    @Autowired
+    EmployeeService employeeService;
 
     @Override
     public List<Vat> getVats() {
@@ -234,9 +238,15 @@ public class VatServiceImpl implements VatService {
                 && quotation.getAssoAffaireOrders() != null && quotation.getAssoAffaireOrders().size() > 0) {
             Affaire affaire = quotation.getAssoAffaireOrders().get(0).getAffaire();
             city = affaire.getCity();
+            // TODO : to remove
+            // If MyJSS, due to lack of city quality, do not block the user, use customer
+            // order instead
             if (affaire.getCity() == null)
-                throw new OsirisClientMessageException(
-                        "Ville non trouvée dans l'adresse de l'affaire " + affaire.getDenomination());
+                if (employeeService.getCurrentMyJssUser() != null && customerOrder.getCity() != null) {
+                    city = customerOrder.getCity();
+                } else
+                    throw new OsirisClientMessageException(
+                            "Ville non trouvée dans l'adresse de l'affaire " + affaire.getDenomination());
         } else {
             if (billingDocument.getBillingLabelCity() == null)
                 throw new OsirisClientMessageException(

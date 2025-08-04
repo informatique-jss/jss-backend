@@ -4,14 +4,19 @@
   </p>
 
   <section class="quotation-container">
-    <h6><i class="ai-wallet pe-2"></i>Type de demande</h6>
-    <!-- TODO : use the onFormChange instead of the change. Could not manage to make it work for now -->
-    <radio-group-quotation-type [(model)]="selectedQuotationType" [form]="idenficationForm"
-      [isDisabled]="quotation.id!=undefined" propertyName="quotationType"
-      (change)="changeQuotationType()"></radio-group-quotation-type>
+    <div class="d-flex flex-column flex-md-row flex-sm-wrap align-items-start">
+      <h6 class="w-100 mb-3">
+        <i class="ai-wallet pe-2"></i>Quel type de demande souhaitez-vous ?
+      </h6>
+      <div *ngFor="let quotationType of quotationTypes"
+        class="btn btn-outline-secondary m-1 w-100 w-sm-auto  btn-wrap btn-service-family"
+        [class.active]="selectedQuotationType && selectedQuotationType.id == quotationType.id"
+        (click)="changeQuotationType(quotationType)">
+        {{quotationType.label}}</div>
+    </div>
   </section>
 
-  <section class="quotation-container">
+  <section class="quotation-container" *ngIf="selectedQuotationType">
     <div class="d-flex flex-column flex-md-row flex-sm-wrap align-items-start">
       <h6 class="w-100 mb-2">
         <i class="ai-pen pe-2"></i>Pour quel service ?
@@ -24,7 +29,7 @@
     </div>
   </section>
 
-  <div *ngIf="quotation.serviceFamilyGroup">
+  <div *ngIf="quotation.serviceFamilyGroup && selectedQuotationType">
     <div class="quotation-container" *ngFor="let asso of quotation.assoAffaireOrders; let indexAsso = index">
       <div class="row d-flex align-items-center pb-md-3 m-0" (click)=" openPanel(indexAsso)" style="cursor: pointer;">
         <div class="col-auto p-0">
@@ -78,11 +83,14 @@
         <div *ngIf="isRegisteredAffaire[indexAsso] ">
           <ng-container
             *ngIf="this.quotation.assoAffaireOrders[indexAsso].affaire && !this.quotation.assoAffaireOrders[indexAsso].affaire.id">
-            <p class="mb-1 mt-4 ms-1">Indiquez le SIREN/SIRET</p>
+            <!-- <p class="mb-1 mt-4 ms-1">Indiquez le SIREN/SIRET</p> -->
             <div class="w-100">
-              <generic-input [(model)]=" siretSearched" label="Indiquez le SIREN/SIRET" [form]="idenficationForm"
+              <!--generic-input [(model)]=" siretSearched" label="Indiquez le SIREN/SIRET" [form]="idenficationForm"
                 propertyName="siretSearched" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="false"
-                (onFormChange)="searchSiret(indexAsso)" [icon]="'search'"></generic-input>
+                (onFormChange)="searchSiret(indexAsso)" [icon]="'search'"></generic-input-->
+              <autocomplete-siret [(model)]="siretSearched" [form]="idenficationForm" [isMandatory]="true"
+                label="Indiquez le SIREN/SIRET" propertyName="siretSearched"
+                (onOptionSelected)="selectSiret($event,indexAsso )"></autocomplete-siret>
             </div>
           </ng-container>
           <div class="w-100"
@@ -140,7 +148,7 @@
                 <strong class="col-12 col-lg-3 ">
                   Ville
                 </strong>
-                <div class="col-12 col-lg-9" *ngIf="this.quotation.assoAffaireOrders[indexAsso].affaire.city.label">
+                <div class="col-12 col-lg-9" *ngIf="this.quotation.assoAffaireOrders[indexAsso].affaire.city">
                   {{this.quotation.assoAffaireOrders[indexAsso].affaire.city.label }}
                 </div>
               </div>

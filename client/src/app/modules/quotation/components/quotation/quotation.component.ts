@@ -172,7 +172,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
           this.quotation = response;
           if (instanceOfCustomerOrder(this.quotation) && !this.isForIntegration)
             this.appService.changeHeaderTitle("Commande " + this.quotation.id + " du " + formatDateFrance(this.quotation.createdDate) + " - " +
-              (this.quotation.customerOrderStatus != null ? this.quotation.customerOrderStatus.label : "") + (this.quotation.isGifted ? (" - Offerte") : ""));
+              (this.quotation.customerOrderStatus != null ? this.quotation.customerOrderStatus.label : "") + (this.quotation.isGifted ? (" - Offerte") : "") + (this.quotation.customerOrderOrigin && this.quotation.customerOrderOrigin.id == this.constantService.getCustomerOrderOriginMyJss().id ? (" - MyJSS") : ""));
           this.setOpenStatus();
           this.updateDocumentsEvent.next(this.quotation);
 

@@ -1,15 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { validateSiren, validateSiret } from '../../../../libs/CustomFormsValidatorsHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
 import { ConstantService } from '../../../main/services/constant.service';
 import { AutocompleteCityComponent } from '../../../miscellaneous/components/forms/autocomplete-city/autocomplete-city.component';
+import { AutocompleteSiretComponent } from '../../../miscellaneous/components/forms/autocomplete-siret/autocomplete-siret.component';
 import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { GenericToggleComponent } from '../../../miscellaneous/components/forms/generic-toggle/generic-toggle.component';
 import { RadioGroupAffaireTypeComponent } from '../../../miscellaneous/components/forms/radio-group-affaire-type/radio-group-affaire-type.component';
-import { RadioGroupQuotationTypeComponent } from '../../../miscellaneous/components/forms/radio-group-quotation-type/radio-group-quotation-type.component';
 import { SelectCountryComponent } from '../../../miscellaneous/components/forms/select-country/select-country.component';
 import { Affaire } from '../../../my-account/model/Affaire';
 import { AssoAffaireOrder } from '../../../my-account/model/AssoAffaireOrder';
@@ -32,16 +31,17 @@ import { ServiceFamilyGroupService } from '../../services/service.family.group.s
   standalone: true,
   imports: [SHARED_IMPORTS,
     GenericInputComponent,
-    RadioGroupQuotationTypeComponent,
     RadioGroupAffaireTypeComponent,
+    AutocompleteSiretComponent,
     SelectCountryComponent,
     GenericToggleComponent,
     AutocompleteCityComponent]
 })
 export class IdentificationComponent implements OnInit {
 
-  selectedQuotationType: QuotationType = QUOTATION_TYPE_QUOTATION;
+  selectedQuotationType: QuotationType | undefined;
   familyGroupService: ServiceFamilyGroup[] = [];
+  quotationTypes: QuotationType[] = [QUOTATION_TYPE_ORDER, QUOTATION_TYPE_QUOTATION];
 
   quotation: IQuotation = {} as IQuotation;
   isRegisteredAffaire: Boolean[] = [];
@@ -111,7 +111,6 @@ export class IdentificationComponent implements OnInit {
     if (this.idFamilyGroup && this.idQuotationType) {
       this.quotationService.cleanStorageData();
       this.selectedQuotationType = this.idQuotationType == QUOTATION_TYPE_ORDER.id ? QUOTATION_TYPE_ORDER : QUOTATION_TYPE_QUOTATION;
-      this.changeQuotationType();
       this.selectFamilyGroupService(this.familyGroupService.find(group => group.id == this.idFamilyGroup)!);
     }
     else {
@@ -149,8 +148,9 @@ export class IdentificationComponent implements OnInit {
     }
   }
 
-  changeQuotationType() {
+  changeQuotationType(quotationType: QuotationType) {
     if (this.quotation) {
+      this.selectedQuotationType = quotationType;
       if (this.selectedQuotationType.id == QUOTATION_TYPE_QUOTATION.id)
         this.quotation.isQuotation = true;
       else {
@@ -200,25 +200,32 @@ export class IdentificationComponent implements OnInit {
       this.quotation.serviceFamilyGroup = undefined;
   }
 
-  searchSiret(indexAsso: number) {
-    clearTimeout(this.debounce);
-    this.debounce = setTimeout(() => {
-      this.effectiveSearchSiret(indexAsso);
-    }, 500);
-  }
+  /* searchSiret(indexAsso: number) {
+     clearTimeout(this.debounce);
+     this.debounce = setTimeout(() => {
+       this.effectiveSearchSiret(indexAsso);
+     }, 500);
+   }
 
-  effectiveSearchSiret(indexAsso: number) {
-    if (this.siretSearched && (validateSiret(this.siretSearched) || validateSiren(this.siretSearched))) {
-      this.loadingSiretSearch = true;
-      this.affaireService.getAffaireBySiret(this.siretSearched).subscribe(response => {
-        this.loadingSiretSearch = false;
-        if (response && response.length == 1 && response[0].siret) {
-          this.quotation.assoAffaireOrders[indexAsso].affaire = response[0];
-          this.siretSearched = "";
-        } else if (response && response.length > 1) {
-          this.appService.displayToast("Plusieurs SIRET existent pour ce SIREN. Merci de préciser le SIRET souhaité", true, "SIRET multiples", 5000);
-        }
-      })
+   effectiveSearchSiret(indexAsso: number) {
+     if (this.siretSearched && (validateSiret(this.siretSearched) || validateSiren(this.siretSearched))) {
+       this.loadingSiretSearch = true;
+       this.affaireService.getAffaireBySiret(this.siretSearched).subscribe(response => {
+         this.loadingSiretSearch = false;
+         if (response && response.length == 1 && response[0].siret) {
+           this.quotation.assoAffaireOrders[indexAsso].affaire = response[0];
+           this.siretSearched = "";
+         } else if (response && response.length > 1) {
+           this.appService.displayToast("Plusieurs SIRET existent pour ce SIREN. Merci de préciser le SIRET souhaité", true, "SIRET multiples", 5000);
+         }
+       })
+     }
+   }*/
+
+  selectSiret(affaire: Affaire, indexAsso: number) {
+    if (affaire) {
+      this.quotation.assoAffaireOrders[indexAsso].affaire = affaire;
+      this.siretSearched = "";
     }
   }
 

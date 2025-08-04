@@ -363,6 +363,15 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
+    public void notifyCommentFromMyJssAddToCustomerOrder(CustomerOrder order)
+            throws OsirisException {
+        if (order.getResponsable() != null && order.getResponsable().getSalesEmployee() != null
+                && employeeService.getCurrentMyJssUser() != null)
+            generateNewNotification(null, order.getResponsable().getSalesEmployee(),
+                    Notification.ORDER_ADD_COMMENT_MYJSS, false, null, null, order, null);
+    }
+
+    @Override
     public void notifyImmediateAffactationOfOrder(CustomerOrder customerOrder) throws OsirisException {
         generateNewNotification(employeeService.getCurrentEmployee(), constantService.getEmployeeProductionDirector(),
                 Notification.ORDER_IMMEDIATLY_AFFECTED, false, null, null, customerOrder, null);
