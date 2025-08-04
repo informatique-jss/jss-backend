@@ -8,6 +8,7 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
+import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
@@ -103,6 +104,8 @@ public interface QuotationService {
                         throws OsirisClientMessageException, OsirisValidationException, OsirisException;
 
         public void purgeQuotations() throws OsirisException;
+
+        public List<Quotation> getQuotationByAffaire(Affaire affaire);
 
         public void reinitInvoicing(Quotation quotation)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
