@@ -2124,14 +2124,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 batchService.declareNewBatch(Batch.PURGE_CUSTOMER_ORDER, order.getId());
     }
 
-    @Override
-    public Boolean getIsOrderFromQuotation(CustomerOrder customerOrder) {
-        if (customerOrder.getQuotations() != null && !customerOrder.getQuotations().isEmpty())
-            return true;
-        else
-            return false;
-    }
-
     public List<CustomerOrder> findCustomerOrderByFormalisteAssigned(List<Employee> employees,
             CustomerOrderStatus customerOrderStatus, Employee assignedUser, AssignationType assignationType) {
         return customerOrderRepository.findCustomerOrderByFormalisteAndStatusAssigned(employees, customerOrderStatus,

@@ -8,7 +8,6 @@ import { ANNOUNCEMENT_PUBLISHED, ANNOUNCEMENT_STATUS_DONE, ANNOUNCEMENT_STATUS_I
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { WorkflowDialogComponent } from 'src/app/modules/miscellaneous/components/workflow-dialog/workflow-dialog.component';
 import { NotificationService } from 'src/app/modules/miscellaneous/services/notification.service';
-import { CustomerOrder } from 'src/app/modules/quotation/model/CustomerOrder';
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from 'src/app/services/habilitations.service';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
@@ -29,12 +28,12 @@ import { AffaireService } from '../../services/affaire.service';
 import { AnnouncementService } from '../../services/announcement.service';
 import { AnnouncementStatusService } from '../../services/announcement.status.service';
 import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
-import { CustomerOrderService } from '../../services/customer.order.service';
 import { DomiciliationStatusService } from '../../services/domiciliation-status.service';
 import { DomiciliationService } from '../../services/domiciliation.service';
 import { FormaliteStatusService } from '../../services/formalite.status.service';
 import { MissingAttachmentQueryService } from '../../services/missing-attachment-query.service';
 import { ProvisionService } from '../../services/provision.service';
+import { QuotationSearchResultService } from '../../services/quotation.search.result.service';
 import { ServiceService } from '../../services/service.service';
 import { SimpleProvisionStatusService } from '../../services/simple.provision.status.service';
 import { ChooseCompetentAuthorityDialogComponent } from '../choose-competent-authority-dialog/choose-competent-authority-dialog.component';
@@ -71,8 +70,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   saveObservableSubscription: Subscription = new Subscription;
 
   currentProvisionWorkflow: Provision | undefined;
-  isOrderLinkedToQuotation: boolean = false;
-  isCreateConfirmed = true;
+  hasQuotation: boolean | undefined;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -101,7 +99,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     private domiciliationService: DomiciliationService,
     private habilitationService: HabilitationsService,
     private notificationService: NotificationService,
-    private customerOrderService: CustomerOrderService
+    private quotationSearchResultService: QuotationSearchResultService
   ) { }
 
   affaireForm = this.formBuilder.group({});
@@ -175,10 +173,16 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     if (promise)
       promise.subscribe(response => {
         this.asso = response;
+        this.quotationSearchResultService.getQuotationsForCustomerOrder(this.asso.customerOrder).subscribe(response => {
+          if (response)
+            this.hasQuotation = true;
+          else this.hasQuotation = false;
+        });
+
         this.idAffaire = this.asso.id;
         if (this.asso.affaire)
           this.appService.changeHeaderTitle("Prestation - " + (this.asso.affaire.denomination ? this.asso.affaire.denomination : (this.asso.affaire.firstname + " " + this.asso.affaire.lastname)));
-      })
+      });
   }
 
   updateAssignedToForProvision(employee: any, provision: Provision) {
@@ -240,7 +244,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     });
   }
 
-  async createService(asso: AssoAffaireOrder) {
+  createService(asso: AssoAffaireOrder) {
     if (!this.habilitationService.canByPassProvisionLockOnBilledOrder())
       if (this.asso.customerOrder.customerOrderStatus && (this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
         this.displaySnakBarLockProvision();
@@ -248,24 +252,31 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     if (asso && !asso.services)
       asso.services = [] as Array<Service>;
 
-    this.isCreateConfirmed = true;
-    if (!this.asso.customerOrder) {
-      this.isCreateConfirmed = await this.checkIsOrderFromQuotation();
+    if (this.asso.customerOrder && this.hasQuotation) {
+      const dialogConfirm = this.confirmationDialog.open(ConfirmDialogComponent, {
+        maxWidth: "400px",
+        data: {
+          title: "Modification du devis de la commande",
+          content: "L'ajout d'une prestation impactera le devis initial lié à cette commande. Souhaitez-vous continuer ? ",
+          closeActionText: "Annuler",
+          validationActionText: "Confirmer"
+        }
+      });
+
+      dialogConfirm.afterClosed().subscribe(userConfirmed => {
+        if (userConfirmed) {
+          let dialogRef = this.selectAttachmentTypeDialog.open(SelectMultiServiceTypeDialogComponent, {
+            width: '50%',
+          });
+          dialogRef.componentInstance.affaire = asso.affaire;
+
+          dialogRef.afterClosed().subscribe(response => {
+            if (response != null)
+              asso.services.push(...response);
+          });
+        }
+      });
     }
-
-    if (!this.isCreateConfirmed) {
-      return;
-    }
-
-    let dialogRef = this.selectAttachmentTypeDialog.open(SelectMultiServiceTypeDialogComponent, {
-      width: '50%',
-    });
-    dialogRef.componentInstance.affaire = asso.affaire;
-
-    dialogRef.afterClosed().subscribe(response => {
-      if (response != null)
-        asso.services.push(...response);
-    });
   }
 
   deleteProvision(service: Service, provision: Provision) {
@@ -292,54 +303,34 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     service.provisions.splice(service.provisions.indexOf(provision), 1);
   }
 
-  async createProvision(service: Service): Promise<Provision | undefined> {
+  createProvision(service: Service): Provision {
     if (!this.habilitationService.canByPassProvisionLockOnBilledOrder())
       if (this.asso.customerOrder.customerOrderStatus && (this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
         this.displaySnakBarLockProvision();
         return {} as Provision;
       }
-
-    this.isCreateConfirmed = true;
-    if (this.asso.customerOrder) {
-      this.isCreateConfirmed = await this.checkIsOrderFromQuotation();
-    }
-
-    if (!this.isCreateConfirmed) {
-      return {} as Provision;
-    }
-
-    if (service && !service.provisions) {
-      service.provisions = [] as Array<Provision>;
-    }
     let provision = {} as Provision;
-    service.provisions.push(provision);
-    return provision;
-  }
-
-  checkIsOrderFromQuotation(): Promise<boolean> {
-    return new Promise<boolean>((resolve) => {
-      this.customerOrderService.getIsOrderFromQuotation(this.asso.customerOrder as CustomerOrder).subscribe((response: any) => {
-        this.isOrderLinkedToQuotation = response;
-
-        if (this.isOrderLinkedToQuotation === true) {
-          const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
-            maxWidth: "400px",
-            data: {
-              title: "Modification du devis de la commande",
-              content: "L'ajout d'une prestation impactera le devis initial lié à cette commande. Souhaitez-vous continuer ? ",
-              closeActionText: "Annuler",
-              validationActionText: "Confirmer"
-            }
-          });
-
-          dialogRef.afterClosed().subscribe(userConfirmed => {
-            resolve(!!userConfirmed);
-          });
-        } else {
-          resolve(true);
+    if (this.asso.customerOrder && this.hasQuotation) {
+      const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+        maxWidth: "400px",
+        data: {
+          title: "Modification du devis de la commande",
+          content: "L'ajout d'une prestation impactera le devis initial lié à cette commande. Souhaitez-vous continuer ? ",
+          closeActionText: "Annuler",
+          validationActionText: "Confirmer"
         }
       });
-    });
+
+      dialogRef.afterClosed().subscribe(userConfirmed => {
+        if (userConfirmed) {
+          if (service && !service.provisions) {
+            service.provisions = [] as Array<Provision>;
+          }
+          service.provisions.push(provision);
+        }
+      });
+    }
+    return provision;
   }
 
   duplicateProvision(service: Service, provision: Provision): Provision {

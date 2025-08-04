@@ -2861,17 +2861,6 @@ public class QuotationController {
         customerOrderService.getCustomerOrdersByVoucherAndResponsable(voucher, null), HttpStatus.OK);
   }
 
-  @GetMapping(inputEntryPoint + "/customer-order/is-from-quotation")
-  public ResponseEntity<Boolean> getIsOrderFromQuotation(@RequestParam Integer customerOrderId)
-      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
-
-    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
-    if (customerOrder == null)
-      throw new OsirisValidationException("customerOrder");
-
-    return new ResponseEntity<Boolean>(customerOrderService.getIsOrderFromQuotation(customerOrder), HttpStatus.OK);
-  }
-
   @GetMapping(inputEntryPoint + "/customer-order-assignation/update")
   @PreAuthorize(ActiveDirectoryHelper.TEAM_RESPONSIBLE)
   public ResponseEntity<Boolean> updateCustomerOrderAssignation(Integer idCustomerOrderAssignation,

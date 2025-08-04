@@ -103,10 +103,6 @@ export class CustomerOrderService extends AppRestService<IQuotation> {
     return this.getList(new HttpParams().set("idVoucher", voucher.id), 'customer-orders/voucher') as Observable<CustomerOrder[]>;
   }
 
-  getIsOrderFromQuotation(order: CustomerOrder) {
-    return this.get(new HttpParams().set("customerOrderId", order.id), "customer-order/is-from-quotation");
-  }
-
   getOrdersToAssignForFond(teamEmployee: Employee, onlyCurrentUser: boolean) {
     return this.getList(new HttpParams().set("idTeamEmployee", teamEmployee.id).set("onlyCurrentUser", onlyCurrentUser), "assign/fond/order");
   }
