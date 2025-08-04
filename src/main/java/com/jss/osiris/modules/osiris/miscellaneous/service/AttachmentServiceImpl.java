@@ -1,6 +1,8 @@
 package com.jss.osiris.modules.osiris.miscellaneous.service;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
@@ -11,6 +13,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -511,5 +515,59 @@ public class AttachmentServiceImpl implements AttachmentService {
             }
         }
         return cleanName.toString();
+    }
+
+    public byte[] downloadAllAttachments(List<Invoice> invoices) throws OsirisException {
+        List<Integer> attachmentIds = new ArrayList<Integer>();
+
+        if (invoices != null && invoices.size() > 0)
+            for (Invoice invoice : invoices)
+                if (invoice != null && invoice.getAttachments() != null && invoice.getAttachments().size() > 0)
+                    for (Attachment attachment : invoice.getAttachments())
+                        if (attachment.getAttachmentType().getId()
+                                .equals(constantService.getAttachmentTypeInvoice().getId()))
+                            attachmentIds.add(attachment.getId());
+
+        ByteArrayOutputStream zipOutputStream = new ByteArrayOutputStream();
+
+        try (
+                ZipOutputStream zos = new ZipOutputStream(zipOutputStream)) {
+
+            for (Integer idAttachment : attachmentIds) {
+                Attachment attachment = getAttachment(idAttachment);
+
+                if (attachment == null || attachment.getUploadedFile() == null
+                        || attachment.getUploadedFile().getPath() == null) {
+                    throw new OsirisValidationException(
+                            "Attachment or UploadedFile or Path is null for ID: " + idAttachment);
+                }
+
+                File file = new File(attachment.getUploadedFile().getPath());
+
+                if (!file.exists()) {
+                    throw new OsirisValidationException("File does not exist: " + file.getAbsolutePath());
+                }
+
+                try (FileInputStream fis = new FileInputStream(file)) {
+                    ZipEntry zipEntry = new ZipEntry(attachment.getUploadedFile().getFilename());
+                    zos.putNextEntry(zipEntry);
+
+                    byte[] buffer = new byte[4096];
+                    int len;
+                    while ((len = fis.read(buffer)) > 0) {
+                        zos.write(buffer, 0, len);
+                    }
+                    zos.closeEntry();
+                } catch (IOException e) {
+                    throw new OsirisException(e, "Unable to process file: " + file.getAbsolutePath());
+                }
+            }
+            zos.finish();
+
+        } catch (IOException e) {
+            throw new OsirisException(e, "Unable to generate ZIP file");
+        }
+
+        return zipOutputStream.toByteArray();
     }
 }
