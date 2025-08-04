@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { QUOTATION_STATUS_OPEN, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY } from 'src/app/libs/Constants';
 import { formatDateForSortTable, formatEurosForSortTable, toIsoString } from 'src/app/libs/FormatHelper';
@@ -25,7 +25,10 @@ export class QuotationListComponent implements OnInit {
   @Input() quotationSearch: QuotationSearch = {} as QuotationSearch;
   @Input() isForDashboard: boolean = false;
   @Input() isForTiersIntegration: boolean = false;
+  @Input() isForSuggestion: boolean = false;
   quotations: QuotationSearchResult[] | undefined;
+  selectedQuotation: QuotationSearchResult | undefined;
+  @Output() selectedQuotationChange: EventEmitter<QuotationSearchResult> = new EventEmitter<QuotationSearchResult>();
   availableColumns: SortTableColumn<QuotationSearchResult>[] = [];
   columnToDisplayOnDashboard: string[] = ["id", "customerOrderName", "quotationStatus", "affaireLabel", "serviceTypeLabel", "createdDate"];
   displayedColumns: SortTableColumn<QuotationSearchResult>[] = [];
@@ -78,10 +81,14 @@ export class QuotationListComponent implements OnInit {
           }
           this.searchOrders();
         })
-      } else {
+      }
+      else if (this.isForSuggestion)
+        this.searchOrders();
+
+      else {
         this.bookmark = this.userPreferenceService.getUserSearchBookmark("quotations") as QuotationSearch;
 
-        if (this.bookmark && !this.isForDashboard && !this.isForTiersIntegration) {
+        if (this.bookmark && !this.isForDashboard && !this.isForTiersIntegration && !this.isForSuggestion) {
           this.quotationSearch = this.bookmark;
           if (this.quotationSearch.startDate)
             this.quotationSearch.startDate = new Date(this.quotationSearch.startDate);
@@ -90,7 +97,6 @@ export class QuotationListComponent implements OnInit {
           this.searchOrders();
         }
       }
-
     });
   }
 
@@ -160,4 +166,11 @@ export class QuotationListComponent implements OnInit {
       })
     }
   }
+
+  chooseQuotation(element: QuotationSearchResult) {
+    if (element)
+      this.selectedQuotation = element;
+    this.selectedQuotationChange.emit(this.selectedQuotation);
+  }
+
 }

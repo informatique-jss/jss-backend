@@ -10,7 +10,6 @@ import { Announcement } from '../model/Announcement';
 import { CustomerOrder } from '../model/CustomerOrder';
 import { IQuotation } from '../model/IQuotation';
 import { Invoice } from '../model/Invoice';
-import { Quotation } from '../model/Quotation';
 
 @Injectable({
   providedIn: 'root'
@@ -108,7 +107,7 @@ export class CustomerOrderService extends AppRestService<IQuotation> {
     return this.getList(new HttpParams().set("idTeamEmployee", teamEmployee.id).set("onlyCurrentUser", onlyCurrentUser), "assign/fond/order");
   }
 
-  createOrderFromSuggestedQuotation(quotation: Quotation) {
-    return this.get(new HttpParams().set("idQuotation", quotation.id), "customer-order/suggested-quotation");
+  createOrderFromSuggestedQuotation(quotationId: number) {
+    return this.get(new HttpParams().set("idQuotation", quotationId), "customer-order/suggested-quotation");
   }
 }

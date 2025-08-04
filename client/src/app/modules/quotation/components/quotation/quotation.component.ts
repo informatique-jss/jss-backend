@@ -38,7 +38,6 @@ import { CustomerOrder } from '../../model/CustomerOrder';
 import { CustomerOrderStatus } from '../../model/CustomerOrderStatus';
 import { OrderingSearch } from '../../model/OrderingSearch';
 import { Provision } from '../../model/Provision';
-import { Quotation } from '../../model/Quotation';
 import { QuotationStatus } from '../../model/QuotationStatus';
 import { Service } from '../../model/Service';
 import { VatBase } from '../../model/VatBase';
@@ -107,8 +106,8 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
   saveObservableSubscription: Subscription = new Subscription;
   customerOrderInvoices: InvoiceSearchResult[] | undefined;
-  suggestedQuotations: Quotation[] | undefined;
-  suggestedQuotationSelected: Quotation | undefined;
+  hasSuggestedQuotations: boolean = false;
+  selectedAffaire: Affaire | undefined;
 
   constructor(private appService: AppService,
     private quotationService: QuotationService,
@@ -497,14 +496,8 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
         let asso = {} as AssoAffaireOrder;
         asso.affaire = response;
+        this.selectedAffaire = response;
         asso.services = [] as Array<Service>;
-
-        this.quotationService.getQuotationByAffaire(asso.affaire).subscribe(response => {
-          if (response && response.length > 0) {
-            this.suggestedQuotations = response as Quotation[];
-            this.openSuggestedQuotationDialog();
-          }
-        });
 
         if (!this.quotation.assoAffaireOrders)
           this.quotation.assoAffaireOrders = [] as Array<AssoAffaireOrder>;
@@ -533,7 +526,15 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
                 this.quotation.assoAffaireOrders.push(asso);
                 this.selectedTabIndex = 1;
               }
+              //After checking suggested orders, check suggested quotation with same affaire
+              this.quotationService.getQuotationByAffaire(asso.affaire).subscribe(response => {
+                if (response && response.length > 0) {
+                  this.hasSuggestedQuotations = true;
+                  this.openSuggestedQuotationDialog();
+                }
+              });
             });
+
           } else {
             this.quotation.assoAffaireOrders.push(asso);
             this.selectedTabIndex = 1;
@@ -547,11 +548,11 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     let dialogQuotation = this.suggestedQuotationDialog.open(SuggestedQuotationsDialogComponent, {
       width: '100%'
     });
-    if (this.suggestedQuotations)
-      dialogQuotation.componentInstance.suggestedQuotations = this.suggestedQuotations;
+    if (this.hasSuggestedQuotations)
+      dialogQuotation.componentInstance.selectedAffaire = this.selectedAffaire;
     dialogQuotation.afterClosed().subscribe(response => {
       if (response && response != null) {
-        this.customerOrderService.createOrderFromSuggestedQuotation(response).subscribe(response => {
+        this.customerOrderService.createOrderFromSuggestedQuotation(response.quotationId).subscribe(response => {
           if (response) {
             this.appService.displaySnackBar("La commande associée au devis a été créée", true, 10);
             this.editMode = false;

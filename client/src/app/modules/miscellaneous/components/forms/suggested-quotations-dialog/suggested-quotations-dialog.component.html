@@ -1,13 +1,11 @@
 <mat-dialog-content class="mat-content">
   <h2>Attention, il existe plusieurs devis envoyés au client pour cette affaire</h2>
-  <h3>Vous pouvez choisir l'un des devis ci-dessous pour le valider et créer automatiquement la commande associée</h3>
-  <sort-table [columns]="quotationColumns" (onRowClick)="chooseQuotation($event)" [values]="suggestedQuotations"
-    [noPaddingBottom]="true" [noMaxHeight]="true" tableName="Devis en attente de validation"
-    [isSmallestHeight]="true"></sort-table>
+  <h3>Vous pouvez choisir l'un des devis ci-dessous pour créer automatiquement la commande associée</h3>
 
-  <quotation-list></quotation-list>
-  <p *ngIf="outQuotation"> Devis sélectionné :
-    {{outQuotation.id}}</p>
+  <quotation-list [quotationSearch]="quotationSearch" [isForSuggestion]="true"
+    (selectedQuotationChange)="changeSelectedQuotation($event)"></quotation-list>
+  <p> Devis sélectionné :
+    {{selectedQuotation.quotationId}}</p>
 
   <button mat-raised-button color="accent" (click)="onClose()">Fermer</button>
   <button mat-raised-button color="warn" (click)="onConfirm()">Confirmer</button>
