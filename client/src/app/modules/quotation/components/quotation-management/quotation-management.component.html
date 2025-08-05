@@ -90,6 +90,13 @@
                       propertyName="isResponsableOnBilling"></generic-toggle>
                   </td>
                 </tr>
+                <tr>
+                  <td>
+                    <generic-toggle [(model)]="billingDocument.isQrCodePaymentDisabled"
+                      label="Désactiver le QR code de paiement ?" [form]="quotationManagementForm"
+                      propertyName="isQrCodePaymentDisabled"></generic-toggle>
+                  </td>
+                </tr>
               </table>
               <table class="full-width">
                 <tr>
