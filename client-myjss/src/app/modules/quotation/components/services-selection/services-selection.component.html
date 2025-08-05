@@ -27,7 +27,8 @@
               {{asso.affaire.siret?(asso.affaire.siret + ' - '):''}}{{
               asso.affaire.denomination
               ?asso.affaire.denomination : (asso.affaire.firstname+ ' ' +
-              asso.affaire.lastname) }} - {{asso.affaire.address}}</h6>
+              asso.affaire.lastname) }} - {{asso.affaire.address + ' ' + asso.affaire.city.label }}
+              {{asso.affaire.city.postalCode ? ' '+ asso.affaire.city.postalCode : ''}}</h6>
           </div>
           <div class="row align-items-center">
             <!-- Les boutons pills -->
