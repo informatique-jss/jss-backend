@@ -216,11 +216,21 @@ public class QuotationServiceImpl implements QuotationService {
             }
 
         boolean isNewQuotation = quotation.getId() == null;
+        boolean hasNewAsso = false;
+
+        if (quotation.getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders())
+                if (asso.getId() == null) {
+                    hasNewAsso = true;
+                    break;
+                }
         if (isNewQuotation) {
             quotation.setCreatedDate(LocalDateTime.now());
             quotation.setValidationToken(UUID.randomUUID().toString());
-            quotation = quotationRepository.save(quotation);
         }
+
+        if (isNewQuotation || hasNewAsso)
+            quotation = quotationRepository.save(quotation);
 
         // Complete provisions
         if (quotation.getAssoAffaireOrders() != null)
@@ -273,6 +283,7 @@ public class QuotationServiceImpl implements QuotationService {
         // Target SENT TO CUSTOMER : notify users and customer
         if (targetQuotationStatus.getCode().equals(QuotationStatus.SENT_TO_CUSTOMER)) {
             // save to recompute invoice item before sent it to customer
+            quotation.setEffectiveDate(LocalDateTime.now());
             quotation = this.addOrUpdateQuotation(quotation);
 
             generateQuotationPdf(quotation);

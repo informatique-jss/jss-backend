@@ -132,6 +132,10 @@ export class InvoiceManagementComponent implements OnInit {
     return this.habilitationsService.canMovePaymentToWaitingAccount();
   }
 
+  canChangeInvoicingResponsible() {
+    return this.habilitationsService.canChangeInvoicingResponsible();
+  }
+
   itemChange(invoiceItem: InvoiceItem) {
     invoiceItem.isOverridePrice = true;
     this.invoiceItemChange.emit();

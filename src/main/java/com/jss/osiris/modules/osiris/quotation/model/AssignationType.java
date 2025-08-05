@@ -27,6 +27,7 @@ public class AssignationType implements Serializable, IId {
 	private Integer id;
 
 	@Column(nullable = false)
+	@JsonView({ JacksonViews.OsirisListView.class })
 	private String label;
 
 	private String code;

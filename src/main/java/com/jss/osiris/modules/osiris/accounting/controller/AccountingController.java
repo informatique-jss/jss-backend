@@ -411,7 +411,7 @@ public class AccountingController {
         }
 
         if (!as400Found && !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ADMINISTRATEUR_GROUP)
-                && !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING)
+                && !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_GROUP)
                 && !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP))
             throw new OsirisValidationException("as400Found");
 

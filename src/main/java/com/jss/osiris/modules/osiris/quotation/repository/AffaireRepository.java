@@ -33,4 +33,6 @@ public interface AffaireRepository extends QueryCacheCrudRepository<Affaire, Int
         List<Affaire> getAffairesForResponsables(Pageable pageableRequest,
                         @Param("responsables") List<Responsable> responsables, @Param("searchText") String searchText,
                         @Param("idAffaire") Integer idAffaire);
+
+        List<Affaire> findAllBySiret(String siret);
 }
