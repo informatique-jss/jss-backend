@@ -87,6 +87,8 @@ public class MailComputeHelper {
             if (fetchedQuotation != null)
                 quotation = fetchedQuotation;
         }
+        // TODO retirer isreminder ici et faire une seule methode compute avec mail
+        // relance si facture et qu'en cas de typedocument factu vérifier dans le if ?
         if (!isReminder)
             return computeMailForDocument(quotation, constantService.getDocumentTypeBilling(), false);
         else
