@@ -8,21 +8,37 @@ import jakarta.persistence.Embeddable;
 public class VotingRights {
 
     private Boolean votingHoldsMoreThan25Percent;
+
     private BigDecimal votingTotalPercentage;
+
     private Boolean isDirectVoting;
+
     private BigDecimal votingFullOwnership;
+
     private BigDecimal votingBareOwnership;
+
     private BigDecimal usufruct;
+
     private Boolean isIndirectVoting;
+
     private Boolean votingThroughCoOwnership;
+
     private BigDecimal votingTotalCoOwnerShip;
+
     private BigDecimal votingFullCoOwnership;
+
     private BigDecimal votingBareCoOwnership;
+
     private BigDecimal usufructCoOwnerShip;
+
     private Boolean votingThroughLegalEntities;
+
     private BigDecimal votingTotalLegalEntites;
+
     private BigDecimal votingFullLegalEntities;
+
     private BigDecimal votingBareLegalEntities;
+
     private BigDecimal usufructLegalEntities;
 
     public Boolean getVotingHoldsMoreThan25Percent() {

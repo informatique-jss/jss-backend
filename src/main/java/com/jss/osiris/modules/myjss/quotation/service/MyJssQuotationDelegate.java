@@ -282,6 +282,17 @@ public class MyJssQuotationDelegate {
                         QuotationStatus.TO_VERIFY);
         }
 
+        for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders()) {
+            for (Service service : asso.getServices()) {
+                for (Provision provision : service.getProvisions()) {
+                    if (provision.getProvisionType().getId().equals(constantService.getProvisionTypeRbe().getId())
+                            && provision.getFormalite() != null) {
+                        provision.getFormalite().setBeneficialOwners(provision.getBeneficialOwners());
+                    }
+                }
+            }
+        }
+
         if (hasToSendConfirmation)
             if (quotation.getIsQuotation())
                 mailHelper.sendConfirmationQuotationCreationMyJss(

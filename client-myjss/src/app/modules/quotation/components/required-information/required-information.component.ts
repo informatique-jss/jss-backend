@@ -389,6 +389,13 @@ export class RequiredInformationComponent implements OnInit {
         this.appService.showLoadingSpinner();
         return this.serviceService.addOrUpdateService(this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex]) as any as Observable<boolean>;
       } else {
+
+        if (this.beneficialOwnerForm)
+          for (let i = 0; i < this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions.length; i++)
+            if (this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[i].provisionType.id == this.constantService.getProvisionTypeRbe().id)
+              this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[i].beneficialOwners = this.beneficialOwnerForm.modifiedBeneficialOwners;
+
+
         if (this.quotation.isQuotation) {
           this.quotationService.setCurrentDraftQuotation(this.quotation);
           return of(true);
@@ -426,9 +433,8 @@ export class RequiredInformationComponent implements OnInit {
     if (newAssoIndex >= this.quotation.assoAffaireOrders.length) {
       let promises = [];
       promises.push(this.saveFieldsValue());
-      if (this.beneficialOwnerForm)
+      if (this.beneficialOwnerForm && this.currentUser)
         promises.push(this.beneficialOwnerForm.updateBeneficialOwners());
-
       combineLatest(promises).subscribe(response => {
         this.appService.hideLoadingSpinner();
         if (!response)

@@ -5,9 +5,21 @@ import jakarta.persistence.Embeddable;
 @Embeddable
 public class OtherControls {
 
+    private boolean isOtherMeansForControl;
+
     private boolean controlsGeneralMeetings;
+
     private boolean hasPowerToAppointOrRemoveManagement;
+
     private boolean isLegalRepresentative;
+
+    public boolean isOtherMeansForControl() {
+        return isOtherMeansForControl;
+    }
+
+    public void setOtherMeansForControl(boolean isOtherMeansForControl) {
+        this.isOtherMeansForControl = isOtherMeansForControl;
+    }
 
     public boolean isControlsGeneralMeetings() {
         return controlsGeneralMeetings;

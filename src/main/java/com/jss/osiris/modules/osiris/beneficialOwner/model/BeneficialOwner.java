@@ -29,11 +29,25 @@ public class BeneficialOwner implements Serializable, IId {
     private Integer id;
 
     private String birthName;
+
     private String usedName;
+
     private String firstNames;
+
+    private String pseudonym;
+
     private String nationality;
+
     private LocalDate birthDate;
+
+    private String birthDepartement;
+
+    private City birthCity;
+
+    private Country birthCountry;
+
     private String residenceAddress;
+
     private String postalCode;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -58,8 +72,10 @@ public class BeneficialOwner implements Serializable, IId {
 
     @Embedded
     private ShareHolding shareHolding;
+
     @Embedded
     private VotingRights votingRights;
+
     @Embedded
     private OtherControls otherControls;
 
@@ -95,6 +111,14 @@ public class BeneficialOwner implements Serializable, IId {
         this.firstNames = firstNames;
     }
 
+    public String getPseudonym() {
+        return pseudonym;
+    }
+
+    public void setPseudonym(String pseudonym) {
+        this.pseudonym = pseudonym;
+    }
+
     public String getNationality() {
         return nationality;
     }
@@ -109,6 +133,30 @@ public class BeneficialOwner implements Serializable, IId {
 
     public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
+    }
+
+    public String getBirthDepartement() {
+        return birthDepartement;
+    }
+
+    public void setBirthDepartement(String birthDepartement) {
+        this.birthDepartement = birthDepartement;
+    }
+
+    public City getBirthCity() {
+        return birthCity;
+    }
+
+    public void setBirthCity(City birthCity) {
+        this.birthCity = birthCity;
+    }
+
+    public Country getBirthCountry() {
+        return birthCountry;
+    }
+
+    public void setBirthCountry(Country birthCountry) {
+        this.birthCountry = birthCountry;
     }
 
     public String getResidenceAddress() {

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.modules.osiris.beneficialOwner.model.BeneficialOwner;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
@@ -239,6 +240,11 @@ public class Provision implements IId, IAttachment {
 
 	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private Boolean isPriority;
+
+	@Transient
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class,
+			JacksonViews.MyJssDetailedView.class })
+	private List<BeneficialOwner> beneficialOwners; // Only for non connected user : transient value with backend
 
 	public Integer getId() {
 		return id;
@@ -670,5 +676,13 @@ public class Provision implements IId, IAttachment {
 
 	public void setIsPriority(Boolean isPriority) {
 		this.isPriority = isPriority;
+	}
+
+	public List<BeneficialOwner> getBeneficialOwners() {
+		return beneficialOwners;
+	}
+
+	public void setBeneficialOwners(List<BeneficialOwner> beneficialOwners) {
+		this.beneficialOwners = beneficialOwners;
 	}
 }

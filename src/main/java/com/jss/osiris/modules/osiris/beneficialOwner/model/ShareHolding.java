@@ -8,18 +8,31 @@ import jakarta.persistence.Embeddable;
 public class ShareHolding {
 
     private Boolean shareHoldsMoreThan25Percent;
+
     private BigDecimal shareTotalPercentage;
+
     private Boolean isDirectShare;
+
     private BigDecimal shareFullOwnership;
+
     private BigDecimal shareBareOwnership;
+
     private Boolean isIndirectShare;
+
     private Boolean shareThroughCoOwnership;
+
     private BigDecimal shareTotalCoOwnerShip;
+
     private BigDecimal shareFullCoOwnership;
+
     private BigDecimal shareBareCoOwnership;
+
     private Boolean shareThroughLegalEntities;
+
     private BigDecimal shareTotalLegalEntites;
+
     private BigDecimal shareFullLegalEntities;
+
     private BigDecimal shareBareLegalEntities;
 
     public Boolean getShareHoldsMoreThan25Percent() {

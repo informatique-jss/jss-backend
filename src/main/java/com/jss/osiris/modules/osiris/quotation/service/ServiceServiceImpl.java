@@ -708,6 +708,10 @@ public class ServiceServiceImpl implements ServiceService {
                                 && provision.getFormalite().getWaitedCompetentAuthority() != null)
                             service.setWaitingAcLabel(
                                     provision.getFormalite().getWaitedCompetentAuthority().getLabel());
+
+                        if (provision.getProvisionType().getId().equals(constantService.getProvisionTypeRbe().getId())
+                                && provision.getFormalite() != null)
+                            provision.getFormalite().setBeneficialOwners(provision.getBeneficialOwners());
                     }
             }
         return services;

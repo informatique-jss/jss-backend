@@ -9,6 +9,8 @@ import { GenericToggleComponent } from '../../../miscellaneous/components/forms/
 import { SelectCountryComponent } from '../../../miscellaneous/components/forms/select-country/select-country.component';
 import { Provision } from '../../../my-account/model/Provision';
 import { City } from '../../../profile/model/City';
+import { Responsable } from '../../../profile/model/Responsable';
+import { LoginService } from '../../../profile/services/login.service';
 import { BeneficialOwner } from '../../model/BeneficialOwner';
 import { OtherControls } from '../../model/OtherControls';
 import { ShareHolding } from '../../model/ShareHolding';
@@ -32,29 +34,35 @@ export class BeneficialOwnerFormComponent implements OnInit {
 
   @Input() provision: Provision | undefined;
 
-  modifiedBeneficialOwners: BeneficialOwner[] = [this.getEmptyBeneficialOwner()];
+  currentUser: Responsable | undefined;
+
+  modifiedBeneficialOwners: BeneficialOwner[] = [];
 
   constructor(
     private formBuilder: FormBuilder,
     private beneficialOwnerService: BeneficialOwnerService,
+    private loginService: LoginService,
   ) { }
 
   beneficialOwnerForm!: FormGroup;
 
   ngOnInit() {
+    this.loginService.getCurrentUser().subscribe(response => {
+      this.currentUser = response;
+    })
+
     this.beneficialOwnerForm = this.formBuilder.group({});
-    this.refreshBeneficialOwnersList(this.provision);
+    this.refreshBeneficialOwnersList();
   }
 
-  updateBeneficialOwners(): Observable<boolean> {
-    return new Observable<boolean>(observer => {
+  updateBeneficialOwners(): Observable<Provision> {
+    return new Observable<Provision>(observer => {
       let promises = [];
       for (let beneficialOwner of this.modifiedBeneficialOwners)
-        if (this.provision)
-          promises.push(this.beneficialOwnerService.addOrUpdateBeneficialOwner(beneficialOwner, this.provision));
+        promises.push(this.beneficialOwnerService.addOrUpdateBeneficialOwner(beneficialOwner, this.provision!));
 
       combineLatest(promises).subscribe(res => {
-        observer.next(true);
+        observer.next(this.provision!);
         observer.complete;
       });
     })
@@ -67,7 +75,8 @@ export class BeneficialOwnerFormComponent implements OnInit {
   saveBeneficialOwner(beneficialOwner: BeneficialOwner) {
     if (this.provision) {
       this.beneficialOwnerService.addOrUpdateBeneficialOwner(beneficialOwner, this.provision).subscribe(res => {
-        this.refreshBeneficialOwnersList(res);
+        if (res)
+          this.refreshBeneficialOwnersList();
       });
     }
   }
@@ -75,16 +84,21 @@ export class BeneficialOwnerFormComponent implements OnInit {
   deleteLastBeneficialOwner(beneficialOwner: BeneficialOwner) {
     if (this.provision) {
       this.beneficialOwnerService.deleteBeneficialOwner(beneficialOwner).subscribe(res => {
-        this.refreshBeneficialOwnersList(res);
+        if (res)
+          this.refreshBeneficialOwnersList();
       });
     }
   }
 
-  refreshBeneficialOwnersList(res: any) {
-    if (res)
+  refreshBeneficialOwnersList() {
+    if (this.currentUser) {
       this.beneficialOwnerService.getBeneficialOwnersByProvision(this.provision!).subscribe(beneficialOwners => {
         this.modifiedBeneficialOwners = beneficialOwners;
       });
+    } else {
+      if (this.provision && this.provision.beneficialOwners != null && this.provision.beneficialOwners.length != 0)
+        this.modifiedBeneficialOwners = this.provision.beneficialOwners;
+    }
   }
 
   getEmptyBeneficialOwner(): BeneficialOwner {
