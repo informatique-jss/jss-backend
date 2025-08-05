@@ -284,8 +284,8 @@ public class MailHelper {
 
                 // QR Code
                 if (mail.getCbLink() != null && mail.getMailComputeResult() != null
-                        && (mail.getMailComputeResult().getIsQrCodePaymentDisabled() == null
-                                || !mail.getMailComputeResult().getIsQrCodePaymentDisabled())) {
+                        && (mail.getIsQrCodePaymentDisabled() == null
+                                || !mail.getIsQrCodePaymentDisabled())) {
                     final InputStreamSource imageSourceQrCode = new ByteArrayResource(
                             qrCodeHelper.getQrCode(mail.getCbLink(), 150));
                     message.addInline("qrCodePicture", imageSourceQrCode, PNG_MIME);
@@ -440,8 +440,8 @@ public class MailHelper {
         ctx.setVariable("bicJss", bicJss);
         ctx.setVariable("cbLink", mail.getCbLink());
         ctx.setVariable("isQrCodePaymentDisabled",
-                mail.getMailComputeResult().getIsQrCodePaymentDisabled()
-                        ? mail.getMailComputeResult().getIsQrCodePaymentDisabled()
+                mail.getIsQrCodePaymentDisabled()
+                        ? mail.getIsQrCodePaymentDisabled()
                         : false);
 
         if (mail.getMailTemplate().equals(CustomerMail.TEMPLATE_CUSTOMER_ORDER_IN_PROGRESS)
@@ -1309,6 +1309,20 @@ public class MailHelper {
             mail.setMailTemplate(CustomerMail.TEMPLATE_INVOICE_REMINDER);
 
         mail.setIsLastReminder(isLastReminder);
+
+        if (customerOrder.getDocuments() != null && customerOrder.getDocuments().size() > 0) {
+            for (Document document : customerOrder.getDocuments())
+                if (document.getDocumentType().getId().equals(constantService.getDocumentTypeBilling().getId())
+                        && (document.getIsQrCodePaymentDisabled() == null
+                                || (document.getIsQrCodePaymentDisabled() != null
+                                        && !document.getIsQrCodePaymentDisabled())))
+                    mail.setIsQrCodePaymentDisabled(false);
+                else if (document.getDocumentType().getId()
+                        .equals(constantService.getDocumentTypeBilling().getId())) {
+                    mail.setIsQrCodePaymentDisabled(true);
+                    break;
+                }
+        }
 
         Invoice invoice = null;
         for (Invoice invoiceCo : mail.getCustomerOrder().getInvoices())
