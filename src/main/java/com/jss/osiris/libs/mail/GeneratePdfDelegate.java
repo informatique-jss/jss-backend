@@ -420,10 +420,11 @@ public class GeneratePdfDelegate {
         ctx.setVariable("hasDocuments", hasDocuments);
 
         ctx.setVariable("quotation", quotation);
-
-        if (quotation.getCreatedDate() != null)
-            ctx.setVariable("quotationCreatedDate", quotation.getCreatedDate().format(DateTimeFormatter
-                    .ofPattern("dd/MM/yyyy")));
+        ctx.setVariable("quotationCreatedDate",
+                quotation.getEffectiveDate() != null ? quotation.getEffectiveDate().format(DateTimeFormatter
+                        .ofPattern("dd/MM/yyyy"))
+                        : quotation.getCreatedDate().format(DateTimeFormatter
+                                .ofPattern("dd/MM/yyyy")));
         ctx.setVariable("endOfYearDateString",
                 LocalDate.now().withMonth(12).withDayOfMonth(31).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 

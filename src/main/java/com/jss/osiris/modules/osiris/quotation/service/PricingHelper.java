@@ -298,7 +298,7 @@ public class PricingHelper {
                     || ((CustomerOrder) quotation).getCustomerOrderStatus() != null
                             && ((CustomerOrder) quotation).getCustomerOrderStatus().getCode()
                                     .equals(CustomerOrderStatus.DRAFT))
-                if (invoiceItem.getPreTaxPrice() == null || invoiceItem.getPreTaxPrice().equals(zeroValue))
+                if (invoiceItem.getPreTaxPrice() == null)
                     for (ServiceType serviceType : provision.getService().getServiceTypes()) {
                         serviceType = serviceTypeService.getServiceType(serviceType.getId());
                         if (serviceType.getAssoServiceProvisionTypes() != null)
@@ -430,7 +430,7 @@ public class PricingHelper {
                                 } else
                                     tempInvoiceItem = invoiceItemProvision;
 
-                                if (tempInvoiceItem.getOriginProviderInvoice() != null)
+                                if (tempInvoiceItem == null || tempInvoiceItem.getOriginProviderInvoice() != null)
                                     continue;
 
                                 if (invoiceItemProvision.getBillingItem() != null

@@ -68,6 +68,7 @@ import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.osiris.quotation.service.AssoAffaireOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.osiris.quotation.service.ProvisionService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
 import com.jss.osiris.modules.osiris.quotation.service.ServiceService;
 import com.jss.osiris.modules.osiris.quotation.service.infoGreffe.FormaliteInfogreffeService;
@@ -170,6 +171,9 @@ public class MailHelper {
 
     @Autowired
     GeneratePdfDelegate generatePdfDelegate;
+
+    @Autowired
+    ProvisionService provisionService;
 
     @Bean
     public TemplateEngine emailTemplateEngine() {
@@ -1002,8 +1006,10 @@ public class MailHelper {
                             currentProvision = provision;
                         }
 
-        if (currentProvision == null)
+        if (currentProvision == null || currentProvision.getId() == null)
             return;
+
+        currentProvision = provisionService.getProvision(currentProvision.getId());
 
         List<Attachment> attachments = new ArrayList<Attachment>();
         if (currentProvision.getAttachments() != null) {
@@ -1257,7 +1263,10 @@ public class MailHelper {
             }
 
         mail.setAttachments(attachments);
-        mail.setReplyTo(customerOrder.getResponsable().getSalesEmployee());
+        if (provision.getAssignedTo() != null)
+            mail.setReplyTo(provision.getAssignedTo());
+        else
+            mail.setReplyTo(customerOrder.getResponsable().getSalesEmployee());
         mail.setSendToMe(sendToMe);
         mail.setProvision(provision);
         mail.setMailComputeResult(mailComputeHelper.computeMailForSendAnnouncementToConfrere(announcement));

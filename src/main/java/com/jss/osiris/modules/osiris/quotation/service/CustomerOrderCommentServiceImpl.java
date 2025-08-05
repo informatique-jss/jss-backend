@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.miscellaneous.model.ActiveDirectoryGroup;
+import com.jss.osiris.modules.osiris.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
@@ -27,6 +29,9 @@ public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentServ
 
     @Autowired
     EmployeeService employeeService;
+
+    @Autowired
+    NotificationService notificationService;
 
     @Override
     public List<CustomerOrderComment> getCustomerOrderComments() {
@@ -64,7 +69,8 @@ public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentServ
     }
 
     @Override
-    public CustomerOrderComment createCustomerOrderComment(CustomerOrder customerOrder, String contentComment) {
+    public CustomerOrderComment createCustomerOrderComment(CustomerOrder customerOrder, String contentComment)
+            throws OsirisException {
         CustomerOrderComment customerOrderComment = new CustomerOrderComment();
         customerOrderComment.setCustomerOrder(customerOrder);
         customerOrderComment.setComment(contentComment);
@@ -74,6 +80,7 @@ public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentServ
             customerOrderComment.setEmployee(employee);
         else {
             customerOrderComment.setCurrentCustomer(employeeService.getCurrentMyJssUser());
+            notificationService.notifyCommentFromMyJssAddToCustomerOrder(customerOrder);
         }
         customerOrderComment.setCreatedDateTime(LocalDateTime.now());
         customerOrderComment.setIsRead(false);

@@ -80,6 +80,7 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
 
     this.swimlaneTypes.push({ fieldName: "productionEffectiveDateTime", label: "Date", valueFonction: ((order: CustomerOrder) => formatDateUs(order.productionEffectiveDateTime)), fieldValueFunction: ((order: CustomerOrder) => formatDateUs(order.productionEffectiveDateTime)) });
     this.swimlaneTypes.push({ fieldName: "responsable.formalisteEmployee.id", label: "Formaliste", valueFonction: ((order: CustomerOrder) => (order.responsable && order.responsable.formalisteEmployee ? (order.responsable.formalisteEmployee.firstname + ' ' + order.responsable.formalisteEmployee.lastname) : '')), fieldValueFunction: undefined });
+    this.swimlaneTypes.push({ fieldName: "customerOrderAssignations", label: "Assignation", valueFonction: ((order: CustomerOrder) => (order.customerOrderAssignations ? order.customerOrderAssignations.filter(a => !a.isAssigned).map(a => a.assignationType.label).join(" / ") : '')), fieldValueFunction: ((order: CustomerOrder) => (order.customerOrderAssignations ? order.customerOrderAssignations.filter(a => !a.isAssigned).map(a => a.assignationType.label).join(" / ") : '')) });
     this.swimlaneTypes.push({ fieldName: "responsable.insertionEmployee.id", label: "Publisciste", valueFonction: ((order: CustomerOrder) => (order.responsable && order.responsable.insertionEmployee ? (order.responsable.insertionEmployee.firstname + ' ' + order.responsable.insertionEmployee.lastname) : '')), fieldValueFunction: undefined });
     this.swimlaneTypes.push({ fieldName: "isPriority", label: "Prioritaire", valueFonction: ((order: CustomerOrder) => (order.isPriority ? 'Est prioritaire' : 'Non prioritaire')), fieldValueFunction: undefined });
     this.swimlaneTypes.push({ fieldName: "responsable.salesEmployee.id", label: "Commercial", valueFonction: ((order: CustomerOrder) => (order.responsable && order.responsable.salesEmployee ? (order.responsable.salesEmployee.firstname + ' ' + order.responsable.salesEmployee.lastname) : '')), fieldValueFunction: undefined });
@@ -231,9 +232,9 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
   getCustomerOrderAssignationForCurrentEmployee(entity: CustomerOrder) {
     if (entity && entity.customerOrderAssignations && this.employeesSelected)
       for (let assignation of entity.customerOrderAssignations) {
-        if ((this.employeesSelected.adPath.indexOf("Formalites") >= 0 || this.employeesSelected.adPath.indexOf("Informatique") >= 0) && assignation.assignationType.id == this.constantService.getAssignationTypeFormaliste().id)
+        if ((this.employeesSelected.adPath.indexOf(this.constantService.getActiveDirectoryGroupFormalites().activeDirectoryPath) >= 0 || this.employeesSelected.adPath.indexOf("Informatique") >= 0) && assignation.assignationType.id == this.constantService.getAssignationTypeFormaliste().id)
           return assignation;
-        if ((this.employeesSelected.adPath.indexOf("Insertions") >= 0 || this.employeesSelected.adPath.indexOf("Informatique") >= 0) && assignation.assignationType.id == this.constantService.getAssignationTypePublisciste().id)
+        if ((this.employeesSelected.adPath.indexOf(this.constantService.getActiveDirectoryGroupInsertions().activeDirectoryPath) >= 0 || this.employeesSelected.adPath.indexOf("Informatique") >= 0) && assignation.assignationType.id == this.constantService.getAssignationTypePublisciste().id)
           return assignation;
       }
     return undefined;
