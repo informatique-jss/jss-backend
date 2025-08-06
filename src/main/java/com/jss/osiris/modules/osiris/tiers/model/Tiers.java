@@ -116,6 +116,7 @@ public class Tiers implements IAttachment, IId {
 	@Column(length = 100)
 	private String rffMail;
 
+	@JsonView({ JacksonViews.MyJssDetailedView.class })
 	@Column(nullable = false)
 	private Boolean isProvisionalPaymentMandatory;
 

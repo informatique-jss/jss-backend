@@ -57,6 +57,7 @@ export class QuotationsComponent implements OnInit {
   QUOTATION_STATUS_VALIDATED_BY_CUSTOMER = QUOTATION_STATUS_VALIDATED_BY_CUSTOMER;
   QUOTATION_STATUS_OPEN = QUOTATION_STATUS_OPEN;
 
+
   currentSearchRef: Subscription | undefined;
 
   constructor(
@@ -276,6 +277,8 @@ export function getQuotationStatusLabel(quotation: Quotation) {
       return "En attente de votre validation";
     if (quotation.quotationStatus.code == QUOTATION_STATUS_TO_VERIFY)
       return "En cours de vérification";
+    if (quotation.quotationStatus.code == QUOTATION_STATUS_VALIDATED_BY_CUSTOMER)
+      return "Validé";
     return quotation.quotationStatus.label;
   }
   return "";
