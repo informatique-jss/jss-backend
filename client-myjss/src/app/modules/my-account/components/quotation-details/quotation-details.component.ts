@@ -45,6 +45,9 @@ export class QuotationDetailsComponent implements OnInit {
   @ViewChild('cancelQuotationModal') cancelQuotationModal!: TemplateRef<any>;
   cancelQuotationModalInstance: any | undefined;
 
+  @ViewChild('validateNewQuotationModal') validateNewQuotationModal!: TemplateRef<any>;
+  validateNewQuotationModalInstance: any | undefined;
+
   quotation: Quotation | undefined;
 
   quotationAssoAffaireOrders: AssoAffaireOrder[] = [];
@@ -97,6 +100,7 @@ export class QuotationDetailsComponent implements OnInit {
   SERVICE_FIELD_TYPE_SELECT = SERVICE_FIELD_TYPE_SELECT;
   QUOTATION_STATUS_VALIDATED_BY_CUSTOMER = QUOTATION_STATUS_VALIDATED_BY_CUSTOMER;
   QUOTATION_STATUS_OPEN = QUOTATION_STATUS_OPEN;
+  QUOTATION_STATUS_SENT_TO_CUSTOMER = QUOTATION_STATUS_SENT_TO_CUSTOMER;
 
   ngOnInit() {
     this.billingLabelTypeCodeAffaire = this.constantService.getBillingLabelTypeCodeAffaire();
@@ -272,6 +276,28 @@ export class QuotationDetailsComponent implements OnInit {
     this.cancelQuotationModalInstance.result.finally(() => {
       this.cancelQuotationModalInstance = undefined;
     });
+  }
+
+  openNewQuotationValidationModal() {
+    if (this.validateNewQuotationModalInstance) {
+      return;
+    }
+
+    this.validateNewQuotationModalInstance = this.modalService.open(this.validateNewQuotationModal, {
+    });
+
+    this.validateNewQuotationModalInstance.result.finally(() => {
+      this.validateNewQuotationModalInstance = undefined;
+    });
+  }
+
+  sendQuotationValidation(event: any) {
+    if (this.quotation && this.quotation.id) {
+      this.appService.showLoadingSpinner();
+      this.quotationService.validateQuotation(this.quotation.id).subscribe(response => {
+        this.refreshQuotation();
+      });
+    }
   }
 
   openValidatedQuotationModal() {
