@@ -15773,7 +15773,7 @@ html:not([dir=rtl]) .range-slider-ui.noUi-horizontal .noUi-handle {
 .theme-account .credit-card-icon {
   width: 40px;
   height: 26px;
-  background-image: url(../img/credit-cards.png);
+  background-image: url(../img/configuration/credit-cards.png);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: 0 0;

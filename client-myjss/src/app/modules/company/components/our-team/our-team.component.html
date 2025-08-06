@@ -19,7 +19,7 @@
 
 <section class="pb-5 my-5">
   <div class="jarallax" data-jarallax>
-    <div class="jarallax-img" style="background-image: url(assets/img/societe/our_team_banner.png);">
+    <div class="jarallax-img" style="background-image: url(assets/img/societe/team/our_team_banner.png);">
     </div>
   </div>
 </section>
@@ -46,7 +46,7 @@
           <div class="row row-cols-lg-4 flex-lg-wrap gy-lg-5 mx-n3">
             <div class="col" *ngFor="let person of staff[selectedTab.key]">
               <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
-                <img class="rounded-circle" [src]="'assets/images/team/' + selectedTab.key + '/' + person.photo"
+                <img class="rounded-circle" [src]="'assets/img/societe/team/' + selectedTab.key + '/' + person.photo"
                   width="120" [alt]="person.firstname">
                 <h3 class="h5 pt-4 mb-1">{{ person.firstname }} {{ person.lastname }}</h3>
                 <p class="text-body-secondary mb-0">{{ person.title }}</p>

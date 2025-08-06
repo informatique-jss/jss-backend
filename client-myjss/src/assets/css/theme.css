@@ -720,7 +720,7 @@ progress {
 
   /* background-image usage to add multiple SVG images */
   background-image:
-    url('../images/background.svg');
+    url('../img/others/background/background.svg');
 
   /* Positionning of both images */
   background-position: top;
@@ -737,7 +737,7 @@ progress {
 
   /* background-image usage to add multiple SVG images */
   background-image:
-    url('../images/Background-quotation.svg');
+    url('../img/others/background/Background-quotation.svg');
 
   /* Positionning of both images */
   background-position: top;
@@ -756,7 +756,7 @@ progress {
   width: 100%;
   height: 100%;
   background-image:
-    url('../images/background2.svg');
+    url('../img/others/background/background2.svg');
   background-position: top, 2541px;
   background-repeat: no-repeat, repeat-y;
   background-size: cover, cover;
@@ -8155,6 +8155,10 @@ textarea.form-control-lg {
   top: 50% !important;
 }
 
+.top-80 {
+  top: 80% !important;
+}
+
 .top-100 {
   top: 100% !important;
 }
@@ -8412,6 +8416,10 @@ textarea.form-control-lg {
 
 .min-vw-100 {
   min-width: 100vw !important;
+}
+
+.h-5 {
+  height: 5% !important;
 }
 
 .h-25 {
@@ -15901,7 +15909,7 @@ html:not([dir=rtl]) .range-slider-ui.noUi-horizontal .noUi-handle {
 .credit-card-icon {
   width: 40px;
   height: 26px;
-  background-image: url(../img/credit-cards.png);
+  background-image: url(../img/configuration/credit-cards.png);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: 0 0;

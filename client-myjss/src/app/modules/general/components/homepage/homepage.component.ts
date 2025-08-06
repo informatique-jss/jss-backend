@@ -17,12 +17,12 @@ import { NewsletterComponent } from '../newsletter/newsletter.component';
 })
 export class HomepageComponent implements OnInit {
 
-  annoncesLegalesPicto: string = "assets/pictos/Annonces.svg"
-  formalitesPicto: string = "assets/pictos/Formalités.svg"
-  apostilleLegaPicto: string = "assets/pictos/Apostille&Légalisation.svg"
-  domiciliationPicto: string = "assets/pictos/Domiciliation.svg"
-  fournitureDocumentsPicto: string = "assets/pictos/Fourniture-documents.svg"
-  logoJss: string = '/assets/images/white-logo.svg';
+  annoncesLegalesPicto: string = "assets/img/icons/Annonces.svg"
+  formalitesPicto: string = "assets/img/icons/Formalite.svg"
+  apostilleLegaPicto: string = "assets/img/icons/Apostille.svg"
+  domiciliationPicto: string = "assets/img/icons/Domiciliation.svg"
+  fournitureDocumentsPicto: string = "assets/img/icons/Fourniture_documents.svg"
+  logoJss: string = '/assets/img/others/myjss-logos/white-logo.svg';
   videoParis: string = 'assets/videos/paris-home-video.webm'
 
   tendencyPosts: Post[] = [];
