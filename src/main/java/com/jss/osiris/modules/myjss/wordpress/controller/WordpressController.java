@@ -1174,6 +1174,17 @@ public class WordpressController {
 				announcementService.getAnnouncementSearch(searchText, pageable), HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/announcement/last-seven-days")
+	@JsonView(JacksonViews.MyJssListView.class)
+	public ResponseEntity<List<Announcement>> getLastSevenDaysAnnouncements(HttpServletRequest request)
+			throws OsirisException {
+
+		detectFlood(request);
+
+		return new ResponseEntity<List<Announcement>>(
+				announcementService.getLastSevenDaysAnnouncements(), HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/announcement/unique")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<Announcement> getAnnouncement(@RequestParam Integer announcementId,
