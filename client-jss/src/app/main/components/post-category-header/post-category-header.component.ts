@@ -58,25 +58,6 @@ export class PostCategoryHeaderComponent implements OnInit {
     });
   }
 
-  // ngOnInit() {
-  //   let slug = this.activeRoute.snapshot.params['slug'];
-  //   if (slug) {
-  //     this.jssCategoryService.getJssCategoryBySlug(slug).subscribe(response => {
-  //       if (response) {
-  //         this.selectedJssCategory = response;
-  //         this.assoMailJssCategoryService.getAssoMailJssCategory(this.selectedJssCategory).subscribe(response => {
-  //           if (response) {
-  //             this.isFollowed = true;
-  //           }
-  //         });
-  //       }
-  //     });
-  //     this.loginService.getCurrentUser().subscribe(response => {
-  //       this.currentUser = response;
-  //     });
-  //   }
-  // }
-
   followJssCategory() {
     if (this.selectedJssCategory) {
       this.assoMailJssCategoryService.followJssCategory(this.selectedJssCategory).subscribe(response => {
