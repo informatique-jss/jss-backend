@@ -59,7 +59,8 @@ export class CategoryHubComponent extends GenericHubComponent<JssCategory> imple
   override searchForPosts() {
     if (this.searchText || this.selectedCategory) {
       this.selectedEntityType = this.selectedCategory;
-      this.jssCategoryChange.emit(this.selectedCategory);
+      if (this.selectedCategory)
+        this.openCategoryPosts(this.selectedCategory, undefined);
       clearTimeout(this.debounce);
       this.searchResults = [];
 

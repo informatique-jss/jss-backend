@@ -7,6 +7,7 @@ import { Author } from '../../model/Author';
 import { JssCategory } from '../../model/JssCategory';
 import { PagedContent } from '../../model/PagedContent';
 import { Post } from '../../model/Post';
+import { PublishingDepartment } from '../../model/PublishingDepartment';
 import { Responsable } from '../../model/Responsable';
 import { Tag } from '../../model/Tag';
 import { LoginService } from '../../services/login.service';
@@ -136,5 +137,8 @@ export abstract class GenericHubComponent<T extends { id: number }> implements O
 
   openTagPosts(tag: Tag, event: any) {
     this.appService.openRoute(event, "post/tag/" + tag.slug, undefined);
+  }
+  openDepartmentPosts(department: PublishingDepartment, event: any) {
+    this.appService.openRoute(event, "post/department/" + department.code, undefined);
   }
 }

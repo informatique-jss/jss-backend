@@ -60,7 +60,8 @@ export class DepartmentHubComponent extends GenericHubComponent<PublishingDepart
   override searchForPosts() {
     if (this.searchText || this.selectedPublishingDepartment) {
       this.selectedEntityType = this.selectedPublishingDepartment;
-      this.departmentChange.emit(this.selectedPublishingDepartment);
+      if (this.selectedPublishingDepartment)
+        this.openDepartmentPosts(this.selectedPublishingDepartment, undefined);
       clearTimeout(this.debounce);
       this.searchResults = [];
 
