@@ -3,3 +3,8 @@
   object-fit: cover;
   border-radius: 1rem;
 }
+
+.btn {
+  border: none;
+  color: var(--ar-secondary-color) !important;
+}

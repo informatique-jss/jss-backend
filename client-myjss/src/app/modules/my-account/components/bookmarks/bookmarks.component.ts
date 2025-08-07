@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
@@ -27,7 +28,8 @@ export class BookmarksComponent implements OnInit {
   readingFolder: ReadingFolder | undefined;
 
   constructor(private postService: PostService, private appService: AppService,
-    private activeRoute: ActivatedRoute, private readingFolderService: ReadingFolderService
+    private activeRoute: ActivatedRoute, private readingFolderService: ReadingFolderService,
+    private location: Location,
   ) { }
 
   ngOnInit() {
@@ -74,6 +76,10 @@ export class BookmarksComponent implements OnInit {
 
   openTagPosts(tag: Tag, event: any) {
     this.appService.openJssRoute(event, "post/tag/" + tag.slug, undefined);
+  }
+
+  goBack() {
+    this.location.back();
   }
 
 }
