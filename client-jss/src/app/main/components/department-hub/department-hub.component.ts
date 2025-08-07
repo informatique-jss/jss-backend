@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
@@ -36,6 +36,12 @@ export class DepartmentHubComponent extends GenericHubComponent<PublishingDepart
   override ngOnInit(): void {
     this.selectedPublishingDepartment = this.selectedEntityType;
     super.ngOnInit();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['selectedEntityType'] && !changes['selectedEntityType'].firstChange)
+      this.selectedPublishingDepartment = changes['selectedEntityType'].currentValue;
+
   }
 
   override getAllPostByEntityType(selectedEntityType: PublishingDepartment, page: number, pageSize: number, searchText: string): Observable<PagedContent<Post>> {

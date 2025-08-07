@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
@@ -32,6 +32,12 @@ export class CategoryHubComponent extends GenericHubComponent<JssCategory> imple
   override ngOnInit(): void {
     this.selectedCategory = this.selectedEntityType;
     super.ngOnInit();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['selectedEntityType'] && !changes['selectedEntityType'].firstChange)
+      this.selectedCategory = changes['selectedEntityType'].currentValue;
+
   }
 
   constructor(private tagService: TagService, postService: PostService, loginService: LoginService, appService: AppService, formBuilder: FormBuilder, activeRoute: ActivatedRoute

@@ -33,26 +33,51 @@ export class PostCategoryHeaderComponent implements OnInit {
     this.selectedJssCategory = jssCategory;
   }
 
+
   ngOnInit() {
-    let slug = this.activeRoute.snapshot.params['slug'];
-    if (slug) {
-      this.jssCategoryService.getJssCategoryBySlug(slug).subscribe(response => {
-        if (response) {
-          this.selectedJssCategory = response;
-          this.assoMailJssCategoryService.getAssoMailJssCategory(this.selectedJssCategory).subscribe(response => {
-            if (response) {
-              this.isFollowed = true;
-            }
-          });
-        }
-      });
-      this.loginService.getCurrentUser().subscribe(response => {
-        this.currentUser = response;
-      });
-    }
+    this.activeRoute.params.subscribe(params => {
+      const slug = params['slug'];
+      if (slug) {
+        this.jssCategoryService.getJssCategoryBySlug(slug).subscribe(response => {
+          if (response) {
+            this.selectedJssCategory = response;
+            this.assoMailJssCategoryService.getAssoMailJssCategory(this.selectedJssCategory).subscribe(response => {
+              if (response) {
+                this.isFollowed = true;
+              } else {
+                this.isFollowed = false;
+              }
+            });
+          }
+        });
+      }
+    });
+
+    this.loginService.getCurrentUser().subscribe(response => {
+      this.currentUser = response;
+    });
   }
 
-  followAuthor() {
+  // ngOnInit() {
+  //   let slug = this.activeRoute.snapshot.params['slug'];
+  //   if (slug) {
+  //     this.jssCategoryService.getJssCategoryBySlug(slug).subscribe(response => {
+  //       if (response) {
+  //         this.selectedJssCategory = response;
+  //         this.assoMailJssCategoryService.getAssoMailJssCategory(this.selectedJssCategory).subscribe(response => {
+  //           if (response) {
+  //             this.isFollowed = true;
+  //           }
+  //         });
+  //       }
+  //     });
+  //     this.loginService.getCurrentUser().subscribe(response => {
+  //       this.currentUser = response;
+  //     });
+  //   }
+  // }
+
+  followJssCategory() {
     if (this.selectedJssCategory) {
       this.assoMailJssCategoryService.followJssCategory(this.selectedJssCategory).subscribe(response => {
         if (response) {
@@ -64,7 +89,7 @@ export class PostCategoryHeaderComponent implements OnInit {
       this.appService.displayToast("Veuillez vous connecter", true, "Une erreur s’est produite...", 3000);
   }
 
-  unfollowAuthor() {
+  unfollowJssCategory() {
     if (this.isFollowed && this.selectedJssCategory) {
       this.assoMailJssCategoryService.unfollowJssCategory(this.selectedJssCategory).subscribe(response => {
         if (response)
