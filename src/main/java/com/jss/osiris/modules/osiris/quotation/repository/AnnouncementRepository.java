@@ -122,4 +122,5 @@ public interface AnnouncementRepository extends QueryCacheCrudRepository<Announc
                         @Param("announcementStatus") List<AnnouncementStatus> announcementStatus,
                         @Param("confrere") Confrere confrere,
                         Pageable pageable);
+
 }

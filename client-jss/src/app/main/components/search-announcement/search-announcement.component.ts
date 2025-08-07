@@ -35,6 +35,9 @@ export class SearchAnnouncementComponent implements OnInit {
 
   ngOnInit() {
     this.searchAnnouncementForm = this.formBuilder.group({});
+    this.announcementService.getLastSevenDaysAnnouncements().subscribe(res => {
+      this.searchResults = res;
+    })
   }
 
 
