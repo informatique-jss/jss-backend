@@ -21,12 +21,15 @@ export class PostDepartmentHeaderComponent implements OnInit {
   selectedDepartment: PublishingDepartment | undefined;
 
   ngOnInit() {
-    let code = this.activeRoute.snapshot.params['code'];
-    if (code)
-      this.departmentService.getPublishingDepartmentByCode(code).subscribe(response => {
-        if (response)
-          this.selectedDepartment = response;
-      });
+    this.activeRoute.params.subscribe(params => {
+      const code = params['code'];
+      if (code) {
+        this.departmentService.getPublishingDepartmentByCode(code).subscribe(response => {
+          if (response)
+            this.selectedDepartment = response;
+        });
+      }
+    });
   }
 
   updateSelectedDepartment(department: PublishingDepartment) {
