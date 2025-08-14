@@ -108,7 +108,7 @@ export function getObjectPropertybyString(element: any, propertyPath: string) {
   var a = propertyPath.split('.');
   for (var i = 0, n = a.length; i < n; ++i) {
     var k = a[i];
-    if (typeof element === "object" && k in element) {
+    if (element != null && typeof element === "object" && k in element) {
       element = element[k];
     } else {
       return;
