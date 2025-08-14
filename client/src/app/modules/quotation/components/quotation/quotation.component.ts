@@ -30,6 +30,7 @@ import { Notification } from '../../../../modules/miscellaneous/model/Notificati
 import { HabilitationsService } from '../../../../services/habilitations.service';
 import { InvoiceSearchResult } from '../../../invoicing/model/InvoiceSearchResult';
 import { InvoiceSearchResultService } from '../../../invoicing/services/invoice.search.result.service';
+import { SuggestedQuotationsDialogComponent } from '../../../miscellaneous/components/forms/suggested-quotations-dialog/suggested-quotations-dialog.component';
 import { WorkflowDialogComponent } from '../../../miscellaneous/components/workflow-dialog/workflow-dialog.component';
 import { Affaire } from '../../model/Affaire';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
@@ -40,7 +41,6 @@ import { Provision } from '../../model/Provision';
 import { QuotationStatus } from '../../model/QuotationStatus';
 import { Service } from '../../model/Service';
 import { VatBase } from '../../model/VatBase';
-import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
 import { CustomerOrderService } from '../../services/customer.order.service';
 import { CustomerOrderStatusService } from '../../services/customer.order.status.service';
 import { OrderingSearchResultService } from '../../services/ordering.search.result.service';
@@ -106,6 +106,8 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
   saveObservableSubscription: Subscription = new Subscription;
   customerOrderInvoices: InvoiceSearchResult[] | undefined;
+  hasSuggestedQuotations: boolean = false;
+  selectedAffaire: Affaire | undefined;
 
   constructor(private appService: AppService,
     private quotationService: QuotationService,
@@ -124,9 +126,9 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     public quotationWorkflowDialog: MatDialog,
     public orderSimilaritiesDialog: MatDialog,
     public customerOrderWorkflowDialog: MatDialog,
+    public suggestedQuotationDialog: MatDialog,
     private formBuilder: FormBuilder,
     private constantService: ConstantService,
-    private assoAffaireOrderService: AssoAffaireOrderService,
     protected searchService: SearchService,
     private provisionService: ProvisionService,
     private orderingSearchResultService: OrderingSearchResultService,
@@ -492,10 +494,11 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
               return;
             }
 
-
         let asso = {} as AssoAffaireOrder;
         asso.affaire = response;
+        this.selectedAffaire = response;
         asso.services = [] as Array<Service>;
+
         if (!this.quotation.assoAffaireOrders)
           this.quotation.assoAffaireOrders = [] as Array<AssoAffaireOrder>;
 
@@ -523,7 +526,15 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
                 this.quotation.assoAffaireOrders.push(asso);
                 this.selectedTabIndex = 1;
               }
+              //After checking suggested orders, check suggested quotation with same affaire
+              this.quotationService.getQuotationByAffaire(asso.affaire).subscribe(response => {
+                if (response && response.length > 0) {
+                  this.hasSuggestedQuotations = true;
+                  this.openSuggestedQuotationDialog();
+                }
+              });
             });
+
           } else {
             this.quotation.assoAffaireOrders.push(asso);
             this.selectedTabIndex = 1;
@@ -531,6 +542,25 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
         });
       }
     })
+  }
+
+  openSuggestedQuotationDialog() {
+    let dialogQuotation = this.suggestedQuotationDialog.open(SuggestedQuotationsDialogComponent, {
+      width: '100%'
+    });
+    if (this.hasSuggestedQuotations)
+      dialogQuotation.componentInstance.selectedAffaire = this.selectedAffaire;
+    dialogQuotation.afterClosed().subscribe(response => {
+      if (response && response != null) {
+        this.customerOrderService.createOrderFromSuggestedQuotation(response.quotationId).subscribe(response => {
+          if (response) {
+            this.appService.displaySnackBar("La commande associée au devis a été créée", true, 10);
+            this.editMode = false;
+            this.appService.openRoute(null, '/order/' + response.id, null);
+          }
+        });
+      }
+    });
   }
 
   displayQuotationWorkflowDialog() {

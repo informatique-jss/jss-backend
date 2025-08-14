@@ -928,6 +928,12 @@ public class QuotationServiceImpl implements QuotationService {
     }
 
     @Override
+    public List<Quotation> getQuotationByAffaire(Affaire affaire) {
+        return quotationRepository.findQuotationByAffaireAndQuotationStatus(affaire,
+                quotationStatusService.getQuotationStatusByCode(QuotationStatus.SENT_TO_CUSTOMER));
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void reinitInvoicing(Quotation quotation)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
