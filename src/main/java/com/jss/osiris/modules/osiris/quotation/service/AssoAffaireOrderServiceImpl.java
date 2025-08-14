@@ -26,7 +26,9 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.PhoneService;
+import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.AffaireSearch;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.AnnouncementStatus;
@@ -135,6 +137,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     ConfrereService confrereService;
 
     @Autowired
+    NotificationService notificationService;
+
+    @Autowired
     CustomerOrderAssignationService customerOrderAssignationService;
 
     @Override
@@ -210,6 +215,11 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
             Boolean isFromUser)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         // Complete domiciliation end date
+        Employee currentEmployee = null;
+        Employee maxWeightEmployee = null;
+        Integer maxWeight = -1000000000;
+        Boolean oneNewProvision = false;
+
         for (Service service : assoAffaireOrder.getServices()) {
             service.setAssoAffaireOrder(assoAffaireOrder);
             serviceService.addOrUpdateService(service);
@@ -228,6 +238,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
             for (Provision provision : service.getProvisions()) {
                 provision.setService(service);
 
+                if (provision.getId() == null)
+                    oneNewProvision = true;
                 if (provision.getComplexity() == null)
                     provision.setComplexity(4);
 
@@ -599,6 +611,18 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                 customerOrderAssignationService.assignNewProvisionToUser(provision);
             }
+        }
+
+        CustomerOrder tempOrder = customerOrderService.getCustomerOrder(assoAffaireOrder.getCustomerOrder().getId());
+        if (oneNewProvision && tempOrder != null && tempOrder.getQuotations() != null
+                && !tempOrder.getQuotations().isEmpty())
+            notificationService.notifyQuotationModified(assoAffaireOrder.getCustomerOrder());
+
+        if (maxWeightEmployee != null) {
+            for (Service service : assoAffaireOrder.getServices())
+                for (Provision provision : service.getProvisions())
+                    if (provision.getId() == null)
+                        provision.setAssignedTo(maxWeightEmployee);
         }
 
         return assoAffaireOrder;
