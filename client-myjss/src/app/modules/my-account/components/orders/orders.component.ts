@@ -2,7 +2,7 @@ import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbAccordionModule, NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
-import { CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_PAYED, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT } from '../../../../libs/Constants';
+import { CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_PAYED, CUSTOMER_ORDER_STATUS_REQUIRE_ATTENTION, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT } from '../../../../libs/Constants';
 import { capitalizeName, formatDateFrance } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
@@ -37,6 +37,7 @@ export class OrdersComponent implements OnInit {
   statusFilterBilled: boolean = false;
   statusFilterToBilled: boolean = false;
   statusFilterPayed: boolean = false;
+  withMissingAttachment: boolean = false;
 
   currentSort: string = "createdDateDesc";
   currentPage: number = 0;
@@ -88,6 +89,7 @@ export class OrdersComponent implements OnInit {
       this.statusFilterBilled = false;
       this.statusFilterToBilled = false;
       this.statusFilterPayed = false;
+      this.withMissingAttachment = false;
 
       if (inputSearchStatus == CUSTOMER_ORDER_STATUS_BEING_PROCESSED)
         this.statusFilterBeingProcessed = true;
@@ -95,6 +97,10 @@ export class OrdersComponent implements OnInit {
         this.statusFilterOpen = true;
       if (inputSearchStatus == CUSTOMER_ORDER_STATUS_BILLED)
         this.statusFilterBilled = true;
+      if (inputSearchStatus == CUSTOMER_ORDER_STATUS_REQUIRE_ATTENTION) {
+        this.statusFilterBeingProcessed = true;
+        this.withMissingAttachment = true;
+      }
     }
 
 
@@ -119,7 +125,7 @@ export class OrdersComponent implements OnInit {
       this.currentSearchRef.unsubscribe();
 
     this.appService.showLoadingSpinner();
-    this.currentSearchRef = this.customerOrderService.searchOrdersForCurrentUser(status, this.currentPage, this.currentSort).subscribe(response => {
+    this.currentSearchRef = this.customerOrderService.searchOrdersForCurrentUser(status, this.withMissingAttachment, this.currentPage, this.currentSort).subscribe(response => {
       this.appService.hideLoadingSpinner();
       if (response) {
         this.orders.push(...response);
@@ -205,6 +211,7 @@ export class OrdersComponent implements OnInit {
     this.userPreferenceService.setUserSearchBookmark(this.statusFilterBilled, "order-statusFilterBilled");
     this.userPreferenceService.setUserSearchBookmark(this.statusFilterToBilled, "order-statusFilterToBilled");
     this.userPreferenceService.setUserSearchBookmark(this.statusFilterPayed, "order-statusFilterPayed");
+    this.userPreferenceService.setUserSearchBookmark(this.withMissingAttachment, "order-withMissingAttachment");
     this.userPreferenceService.setUserSearchBookmark(this.currentSort, "order-currentSort");
   }
 
@@ -244,6 +251,9 @@ export class OrdersComponent implements OnInit {
     if (this.userPreferenceService.getUserSearchBookmark("order-statusFilterPayed")) {
       this.statusFilterPayed = true;
       atLeastOne = true;
+    }
+    if (this.userPreferenceService.getUserSearchBookmark("order-withMissingAttachment")) {
+      this.withMissingAttachment = true;
     }
 
     if (!atLeastOne)

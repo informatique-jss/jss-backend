@@ -28,11 +28,11 @@ export class TopBarComponent implements OnInit {
 
   @Input() isForQuotationNavbar: boolean = false;
 
-  logoJss: string = '/assets/images/white-logo-myjss.svg';
-  logoJssDark: string = '/assets/images/dark-logo-myjss.svg';
-  paymentMethods: string = '/assets/images/payment-methods.png';
-  map: string = '/assets/images/map.png';
-  anonymousConnexion: string = '/assets/images/anonymous.svg';
+  logoJss: string = '/assets/img/others/myjss-logos/white-logo-myjss.svg';
+  logoJssDark: string = '/assets/img/others/myjss-logos/dark-logo-myjss.svg';
+  paymentMethods: string = '/assets/img/others/payment-methods.png';
+  map: string = '/assets/img/others/map.png';
+  anonymousConnexion: string = '/assets/img/others/anonymous.svg';
 
   currentUser: Responsable | undefined;
   dropdownOpen = false;
@@ -79,6 +79,10 @@ export class TopBarComponent implements OnInit {
         else
           this.refreshCurrentUser()
       });
+  }
+
+  isHiddeConnectedButton() {
+    return this.router.url.indexOf("account/signin") >= 0;
   }
 
   isDisplaySecondHeader() {

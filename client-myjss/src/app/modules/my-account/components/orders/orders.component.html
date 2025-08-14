@@ -38,6 +38,14 @@
             (change)="changeFilter()">
           Payée
         </label>
+        <label class=" dropdown-item">
+          <hr class="dropdown-divider">
+        </label>
+        <label class=" dropdown-item">
+          <input class="form-check-input me-2" type="checkbox" value="" [(ngModel)]="withMissingAttachment"
+            (change)="changeFilter()">
+          Qui requière mon attention
+        </label>
       </div>
     </div>
     <div ngbDropdown class="btn-group dropdown ">
@@ -188,7 +196,7 @@
 
                         <!-- Prix -->
                         <div class="mt-2 mt-sm-0 ps-sm-3 text-sm-end text-start" *ngIf="service.serviceTotalPrice">
-                          <div class="fs-sm text-body-secondary mb-1">Total</div>
+                          <div class="fs-sm text-body-secondary mb-1">Prix estimatif</div>
                           <div class="fs-sm fw-medium text-dark">
                             {{ service.serviceTotalPrice | currency:'EUR' }}
                           </div>

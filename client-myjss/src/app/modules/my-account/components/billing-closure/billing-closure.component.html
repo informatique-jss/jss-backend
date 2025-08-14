@@ -5,14 +5,6 @@
     <div ngbDropdown class="btn-group dropdown">
       <button type="button" class="btn btn-outline-secondary dropdown-toggle" ngbDropdownToggle aria-haspopup="true"
         aria-expanded="false">
-        <i class="ai-filter me-2"></i>
-        Filtrer
-      </button>
-    </div>
-
-    <div ngbDropdown class="btn-group dropdown">
-      <button type="button" class="btn btn-outline-secondary dropdown-toggle" ngbDropdownToggle aria-haspopup="true"
-        aria-expanded="false">
         <i class="ai-bar-chart-3 me-2"></i>
         Trier par
       </button>
@@ -50,7 +42,7 @@
         Actions
       </button>
       <div ngbDropdownMenu class="dropdown-menu my-1">
-        <a href="#" class="dropdown-item">
+        <a class="dropdown-item pointer" (click)="exportReceipt()">
           <i class="ai-download me-2"></i>
           Exporter en Excel <!-- TODO -->
         </a>

@@ -276,6 +276,7 @@ public class PostServiceImpl implements PostService {
         modifyPodcastUrls(post);
         modifyVideoUrls(post);
         modifyHrefToOpenInNewTab(post);
+        modifyImgSrc(post);
         reformatQuotes(post);
         reformatFootnotes(post);
 
@@ -351,6 +352,33 @@ public class PostServiceImpl implements PostService {
                 insertions++;
             }
         }
+    }
+
+    /**
+     * Changing HTML to redirect picture to NAS
+     * 
+     * @param post
+     */
+    private void modifyImgSrc(Post post) {
+        String content = post.getOriginalContentText();
+
+        // Pattern qui capture chaque balise <img ...>
+        Pattern imgTagPattern = Pattern.compile("<img\\b[^>]*>", Pattern.CASE_INSENSITIVE);
+        Matcher imgMatcher = imgTagPattern.matcher(content);
+
+        StringBuffer sb = new StringBuffer();
+        while (imgMatcher.find()) {
+            String imgTag = imgMatcher.group();
+
+            String updatedImgTag = imgTag
+                    .replaceAll("(src=\")" + wordpressMediaBaseUrl, "$1" + apacheMediaBaseUrl)
+                    .replaceAll("(srcset=\")" + wordpressMediaBaseUrl, "$1" + apacheMediaBaseUrl);
+
+            imgMatcher.appendReplacement(sb, Matcher.quoteReplacement(updatedImgTag));
+        }
+        imgMatcher.appendTail(sb);
+
+        post.setOriginalContentText(sb.toString());
     }
 
     /**
