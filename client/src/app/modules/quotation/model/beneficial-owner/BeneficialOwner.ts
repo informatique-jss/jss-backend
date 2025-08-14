@@ -1,6 +1,7 @@
-import { Affaire } from "../../my-account/model/Affaire";
-import { City } from "../../profile/model/City";
-import { Country } from "../../profile/model/Country";
+import { City } from "src/app/modules/miscellaneous/model/City";
+import { Country } from "src/app/modules/miscellaneous/model/Country";
+import { Affaire } from "../Affaire";
+import { Formalite } from "../Formalite";
 import { OtherControls } from "./OtherControls";
 import { ShareHolding } from "./ShareHolding";
 import { VotingRights } from "./VotingRights";
@@ -11,12 +12,8 @@ export interface BeneficialOwner {
   birthName: string;
   usedName: string;
   firstNames: string;
-  pseudonym: string;
   nationality: string;
   birthDate: Date;
-  birthDepartement: number;
-  birthCity: string;
-  birthCountry: Country;
   residenceAddress: string;
   postalCode: string;
   city: City;
@@ -26,5 +23,6 @@ export interface BeneficialOwner {
   votingRights: VotingRights;
   otherControls: OtherControls;
   affaire: Affaire;
+  formalite: Formalite;
 }
 

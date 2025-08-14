@@ -14,7 +14,6 @@ public interface CustomerOrderReportingRepository extends CrudRepository<Quotati
                         " select " +
                         " count(distinct id) as nbrCustomerOrder, " +
                         " customerOrderStatusLabel, " +
-                        " customerOrderAssignedEmployee, " +
                         " aggregateProvisionTypeLabel, " +
                         " lastReminderDate, " +
                         " customerOrderCreator, " +
@@ -69,7 +68,6 @@ public interface CustomerOrderReportingRepository extends CrudRepository<Quotati
                         " ) t " +
                         " group by " +
                         " customerOrderStatusLabel, " +
-                        " customerOrderAssignedEmployee, " +
                         " aggregateProvisionTypeLabel, " +
                         " lastReminderDate, " +
                         " customerOrderCreator ," +
