@@ -291,7 +291,8 @@ public class MyJssQuotationController {
 	@PostMapping(inputEntryPoint + "/order/search/current")
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<CustomerOrder>> searchOrdersForCurrentUser(
-			@RequestBody List<String> customerOrderStatus, @RequestParam Integer page, @RequestParam String sortBy)
+			@RequestBody List<String> customerOrderStatus, @RequestParam boolean withMissingAttachment,
+			@RequestParam Integer page, @RequestParam String sortBy)
 			throws OsirisException {
 		if (customerOrderStatus == null || customerOrderStatus.size() == 0)
 			return new ResponseEntity<List<CustomerOrder>>(new ArrayList<CustomerOrder>(), HttpStatus.OK);
@@ -304,7 +305,9 @@ public class MyJssQuotationController {
 			sortBy = "createdDateDesc";
 
 		return new ResponseEntity<List<CustomerOrder>>(
-				customerOrderService.searchOrdersForCurrentUser(customerOrderStatus, page, sortBy), HttpStatus.OK);
+				customerOrderService.searchOrdersForCurrentUser(customerOrderStatus, withMissingAttachment, page,
+						sortBy),
+				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/order/search/affaire")

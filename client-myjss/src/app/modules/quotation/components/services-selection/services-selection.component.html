@@ -82,14 +82,13 @@
                         (click)="removeServiceFromCurrentAffaire(service)"
                         *ngIf="getServiceIndexInCurrentAffaire(service)>=0" checked>
                       <input class="form-check-input" type="checkbox" [id]="'ex-check-'+indexService"
-                        (click)="addServiceToCurrentAffaire(service)"
+                        (click)="addServiceToCurrentAffaire(service, indexService)"
                         *ngIf="getServiceIndexInCurrentAffaire(service)<0">
                       <label class="form-check-label" [for]="'ex-check-'+indexService">{{service.customLabel }}</label>
-                      <generic-toggle [(model)]="serviceLinkToggles[indexService]"
+                      <generic-toggle [(model)]="serviceLinkToggles[selectedAssoIndex][service.id]"
                         *ngIf="service.serviceTypeLinked && isServiceSelected(service)"
-                        (onToggleChange)="selectLinkedServiceInstead($event, service)"
                         label="Besoin d'inclure aussi la formalité ?" [form]="servicesForm"
-                        [propertyName]="'serviceLinkToggles'+indexService" [isDisabled]="false"></generic-toggle>
+                        [propertyName]="'serviceLinkToggles'+service.id" [isDisabled]="false"></generic-toggle>
                     </div>
                   </ng-container>
                 </div>

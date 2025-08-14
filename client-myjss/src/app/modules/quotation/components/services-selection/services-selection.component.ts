@@ -33,7 +33,7 @@ export class ServicesSelectionComponent implements OnInit {
   quotation: IQuotation | undefined;
   currentUser: Responsable | undefined;
   applyToAllAffaires: boolean = false;
-  serviceLinkToggles: boolean[] = [];
+  serviceLinkToggles: boolean[][] = [];
 
   constructor(
     private formBuilder: FormBuilder,
@@ -83,6 +83,12 @@ export class ServicesSelectionComponent implements OnInit {
   }
 
   refreshServices() {
+    this.serviceLinkToggles = [];
+    if (this.quotation && this.quotation.assoAffaireOrders)
+      for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++) {
+        this.serviceLinkToggles[i] = [];
+      }
+
     this.selectedAssoIndex = 0;
     if (this.quotation && this.quotation.serviceFamilyGroup)
       this.serviceFamilyService.getServiceFamiliesForFamilyGroup(this.quotation.serviceFamilyGroup.id).subscribe(response => {
@@ -118,18 +124,16 @@ export class ServicesSelectionComponent implements OnInit {
 
   selecteServiceFamily(serviceFamily: ServiceFamily) {
     this.selectedServiceFamily = serviceFamily;
-    this.serviceLinkToggles = [];
-    if (this.selectedServiceFamily.services)
-      for (let i = 0; i < this.selectedServiceFamily.services.length; i++)
-        this.serviceLinkToggles[i] = false;
   }
 
-  addServiceToCurrentAffaire(service: ServiceType) {
+  addServiceToCurrentAffaire(service: ServiceType, indexService: number) {
     if (this.applyToAllAffaires) {
       if (this.quotation && this.quotation.assoAffaireOrders) {
         for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++) {
-          if (this.selectedServiceTypes[i].indexOf(service) < 0)
+          if (this.selectedServiceTypes[i].indexOf(service) < 0) {
             this.selectedServiceTypes[i].push(service);
+            this.serviceLinkToggles[i][service.id] = false;
+          }
         }
       }
     } else {
@@ -138,6 +142,7 @@ export class ServicesSelectionComponent implements OnInit {
           this.selectedServiceTypes[this.selectedAssoIndex] = [];
         if (this.selectedServiceTypes[this.selectedAssoIndex].indexOf(service) < 0)
           this.selectedServiceTypes[this.selectedAssoIndex].push(service);
+        this.serviceLinkToggles[this.selectedAssoIndex][service.id] = false;
       }
     }
   }
@@ -146,16 +151,6 @@ export class ServicesSelectionComponent implements OnInit {
     if (this.selectedServiceTypes && this.selectedAssoIndex != undefined)
       return this.selectedServiceTypes[this.selectedAssoIndex].indexOf(service) >= 0;
     return false;
-  }
-
-  selectLinkedServiceInstead(isSelected: any, serviceType: ServiceType) {
-    if (isSelected) {
-      this.removeServiceFromCurrentAffaire(serviceType);
-      this.addServiceToCurrentAffaire(serviceType.serviceTypeLinked);
-    } else {
-      this.removeServiceFromCurrentAffaire(serviceType.serviceTypeLinked);
-      this.addServiceToCurrentAffaire(serviceType);
-    }
   }
 
   removeServiceFromCurrentAffaire(service: ServiceType) {
@@ -201,7 +196,7 @@ export class ServicesSelectionComponent implements OnInit {
       if (!this.currentUser) {
         let promises = [];
         for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++) {
-          promises.push(this.serviceService.getServiceForServiceType(this.selectedServiceTypes[i], this.quotation.assoAffaireOrders[i].affaire.city));
+          promises.push(this.serviceService.getServiceForServiceType(this.getServiceListForAsso(i), this.quotation.assoAffaireOrders[i].affaire.city));
         }
         combineLatest(promises).subscribe(response => {
           for (let i = 0; i < this.quotation!.assoAffaireOrders.length; i++) {
@@ -221,7 +216,7 @@ export class ServicesSelectionComponent implements OnInit {
       } else {
         let promises = [];
         for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++) {
-          promises.push(this.serviceService.addOrUpdateServices(this.selectedServiceTypes[i], this.quotation.assoAffaireOrders[i].id));
+          promises.push(this.serviceService.addOrUpdateServices(this.getServiceListForAsso(i), this.quotation.assoAffaireOrders[i].id));
         }
         combineLatest(promises).subscribe(response => {
           this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[2]);
@@ -230,6 +225,19 @@ export class ServicesSelectionComponent implements OnInit {
         });
       }
     }
+  }
+
+  getServiceListForAsso(indexAssoAffaireOrder: number) {
+    let outList = [];
+    if (this.selectedServiceTypes && this.selectedServiceTypes[indexAssoAffaireOrder]) {
+      for (let j = 0; j < this.selectedServiceTypes[indexAssoAffaireOrder].length; j++) {
+        if (this.serviceLinkToggles && this.serviceLinkToggles[indexAssoAffaireOrder] && this.serviceLinkToggles[indexAssoAffaireOrder][this.selectedServiceTypes[indexAssoAffaireOrder][j].id])
+          outList.push(this.selectedServiceTypes[indexAssoAffaireOrder][j].serviceTypeLinked);
+        else
+          outList.push(this.selectedServiceTypes[indexAssoAffaireOrder][j]);
+      }
+    }
+    return outList;
   }
 
   goBackQuotation() {

@@ -15,4 +15,8 @@ export class BillingClosureService extends AppRestService<BillingClosureReceiptV
   getBillingClosureReceiptValueForResponsable(responsableId: number, isOrderingByEventDate: boolean, isDesc: boolean) {
     return this.getList(new HttpParams().set("responsableId", responsableId).set("isOrderingByEventDate", isOrderingByEventDate).set("isDesc", isDesc), "billing-closure");
   }
+
+  downloadBillingClosureReceiptValueForResponsable(responsableId: number) {
+    return this.downloadGet(new HttpParams().set("responsableId", responsableId), "billing-closure/download");
+  }
 }

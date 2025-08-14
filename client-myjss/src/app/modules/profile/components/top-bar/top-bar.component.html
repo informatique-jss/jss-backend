@@ -23,7 +23,7 @@
       <!-- User not signed in state.   -->
       <div class="col-4 d-flex justify-content-end align-items-center">
         <!-- 'Sign In' button visible only on medium to large screens (d-md-block) -->
-        <div *ngIf="!currentUser || !currentUser.id" class="d-none d-md-block">
+        <div *ngIf="(!currentUser || !currentUser.id) && !isHiddeConnectedButton()" class="d-none d-md-block">
           <a class="btn col-md-auto btn-sm"
             [ngClass]="{'btn-outline-light': !isForQuotationNavbar, 'btn-outline-dark': isForQuotationNavbar}"
             [routerLink]="['/account/signin']" rel="noopener">

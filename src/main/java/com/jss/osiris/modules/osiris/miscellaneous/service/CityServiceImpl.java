@@ -81,7 +81,15 @@ public class CityServiceImpl implements CityService {
     public Page<City> getCitiesByLabelAndCountryAndPostalCode(String label, Integer countryId, String postalCode,
             Pageable pageable) {
         Country country = countryService.getCountry(countryId);
-        return cityRepository.findByLabelContainingIgnoreCaseAndCountryAndPostalCodeContainingIgnoreCase(label, country,
+        Page<City> cities = cityRepository.findByLabelContainingIgnoreCaseAndCountryAndPostalCodeContainingIgnoreCase(
+                label, country,
+                postalCode, pageable);
+
+        if (cities.getNumberOfElements() > 0 || !label.contains("-"))
+            return cities;
+
+        return cityRepository.findByLabelContainingIgnoreCaseAndCountryAndPostalCodeContainingIgnoreCase(
+                label.replaceAll("-", " "), country,
                 postalCode, pageable);
     }
 

@@ -1535,7 +1535,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         return customerOrder2;
     }
 
-    public List<CustomerOrder> searchOrdersForCurrentUser(List<String> customerOrderStatus, Integer page,
+    public List<CustomerOrder> searchOrdersForCurrentUser(List<String> customerOrderStatus,
+            Boolean withMissingAttachment, Integer page,
             String sortBy) throws OsirisException {
         List<CustomerOrderStatus> customerOrderStatusToFilter = new ArrayList<CustomerOrderStatus>();
         boolean displayPayed = false;
@@ -1573,7 +1574,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 Pageable pageableRequest = PageRequest.of(page, 10, sort);
                 return completeAdditionnalInformationForCustomerOrders(
                         customerOrderRepository.searchOrdersForCurrentUser(responsablesToFilter,
-                                customerOrderStatusToFilter, pageableRequest, customerOrderStatusBilled, displayPayed),
+                                customerOrderStatusToFilter, pageableRequest, customerOrderStatusBilled, displayPayed,
+                                withMissingAttachment, AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT,
+                                FormaliteStatus.FORMALITE_WAITING_DOCUMENT,
+                                SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT),
                         false);
             }
         }
@@ -1845,10 +1849,14 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     public List<CustomerOrder> searchOrders(List<CustomerOrderStatus> customerOrderStatus,
+            Boolean withMissingAttachment,
             List<Responsable> responsables) {
         if (customerOrderStatus != null && customerOrderStatus.size() > 0 && customerOrderStatus.size() > 0
                 && responsables != null && responsables.size() > 0) {
-            return customerOrderRepository.searchOrders(responsables, customerOrderStatus);
+            return customerOrderRepository.searchOrders(responsables, customerOrderStatus,
+                    withMissingAttachment, AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT,
+                    FormaliteStatus.FORMALITE_WAITING_DOCUMENT,
+                    SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT);
         }
         return null;
     }
