@@ -86,6 +86,7 @@ public class Responsable implements IAttachment, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_responsable_category")
+	@JsonView({ JacksonViews.OsirisListView.class })
 	private TiersCategory tiersCategory;
 
 	@ManyToOne(fetch = FetchType.LAZY)

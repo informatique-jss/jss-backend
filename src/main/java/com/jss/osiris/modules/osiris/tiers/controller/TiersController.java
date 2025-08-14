@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.tiers.controller;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.jackson.JacksonViews;
+import com.jss.osiris.libs.jackson.JacksonViews.OsirisDetailedView;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
@@ -501,11 +503,6 @@ public class TiersController {
         HttpStatus.OK);
   }
 
-  @GetMapping(inputEntryPoint + "/tiers")
-  public ResponseEntity<Tiers> getTiersById(@RequestParam Integer id) {
-    return new ResponseEntity<Tiers>(tiersService.getTiersFromUser(id), HttpStatus.OK);
-  }
-
   @GetMapping(inputEntryPoint + "/tiers/delete")
   public ResponseEntity<Boolean> deleteTiers(@RequestParam Integer idTiers)
       throws OsirisValidationException, OsirisClientMessageException, OsirisException, OsirisDuplicateException {
@@ -589,4 +586,29 @@ public class TiersController {
   public ResponseEntity<List<Responsable>> getResponsables(@RequestParam String searchedValue) {
     return new ResponseEntity<List<Responsable>>(responsableService.getResponsables(searchedValue), HttpStatus.OK);
   }
+
+  /*
+   * |============================================================================
+   * |______________________METHODS FOR OSIRIS V2_________________________________
+   * |============================================================================
+   */
+
+  @GetMapping(inputEntryPoint + "/tiers")
+  @JsonView(OsirisDetailedView.class)
+  public ResponseEntity<Tiers> getTiersById(@RequestParam Integer id) {
+    return new ResponseEntity<Tiers>(tiersService.getTiersFromUser(id), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/responsables")
+  @JsonView(JacksonViews.OsirisListView.class)
+  public ResponseEntity<List<Responsable>> getResponsablesByTiers(@RequestParam Integer idTiers) {
+
+    if (tiersService.getTiers(idTiers) == null) {
+      return new ResponseEntity<List<Responsable>>(new ArrayList<>(), HttpStatus.OK);
+    }
+
+    return new ResponseEntity<List<Responsable>>(
+        responsableService.getResponsablesByTiers(tiersService.getTiers(idTiers)), HttpStatus.OK);
+  }
+
 }
