@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
@@ -34,6 +34,12 @@ export class CategoryHubComponent extends GenericHubComponent<JssCategory> imple
     super.ngOnInit();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['selectedEntityType'] && !changes['selectedEntityType'].firstChange)
+      this.selectedCategory = changes['selectedEntityType'].currentValue;
+
+  }
+
   constructor(private tagService: TagService, postService: PostService, loginService: LoginService, appService: AppService, formBuilder: FormBuilder, activeRoute: ActivatedRoute
   ) {
     super(appService, formBuilder, activeRoute, postService, loginService,);
@@ -53,7 +59,8 @@ export class CategoryHubComponent extends GenericHubComponent<JssCategory> imple
   override searchForPosts() {
     if (this.searchText || this.selectedCategory) {
       this.selectedEntityType = this.selectedCategory;
-      this.jssCategoryChange.emit(this.selectedCategory);
+      if (this.selectedCategory)
+        this.openCategoryPosts(this.selectedCategory, undefined);
       clearTimeout(this.debounce);
       this.searchResults = [];
 
