@@ -25,12 +25,12 @@ import { CandidacyService } from '../../services/candidacy.service';
 export class JoinUsComponent implements OnInit {
 
   images: string[] = [
-    "assets/img/societe/join_us_caroussel1.png",
-    "assets/img/societe/join_us_caroussel2.png",
-    "assets/img/societe/join_us_caroussel3.png",
-    "assets/img/societe/join_us_caroussel1.png",
-    "assets/img/societe/join_us_caroussel2.png",
-    "assets/img/societe/join_us_caroussel3.png",
+    "assets/img/myjss-services/apostilles/myjss_occupe_tout.jpg",
+    "assets/img/societe/join-us/team.jpg",
+    "assets/img/societe/join-us/join_us_caroussel3.png",
+    "assets/img/myjss-services/apostilles/myjss_occupe_tout.jpg",
+    "assets/img/societe/join-us/team.jpg",
+    "assets/img/societe/join-us/join_us_caroussel3.png",
   ];
 
   @ViewChild('modalImage') modalImageRef!: ElementRef<HTMLImageElement>;
