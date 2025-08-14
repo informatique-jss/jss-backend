@@ -16,12 +16,13 @@ import { CustomerOrderService } from 'src/app/modules/quotation/services/custome
 import { QuotationService } from 'src/app/modules/quotation/services/quotation.service';
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from 'src/app/services/habilitations.service';
-import { UserPreferenceService } from 'src/app/services/user.preference.service';
+import { RestUserPreferenceService } from 'src/app/services/rest.user.preference.service';
 import { Notification } from '../../../../modules/miscellaneous/model/Notification';
 import { getResponsableLabelIQuotation, getTiersLabelIQuotation } from '../../../invoicing/components/invoice-tools';
 import { CustomerOrderStatusService } from '../../../quotation/services/customer.order.status.service';
-import { SwimlaneType } from '../../model/SwimlaneType';
-import { KanbanComponent } from '../kanban/kanban.component';
+import { KanbanView } from '../../model/KanbanView';
+import { DEFAULT_USER_PREFERENCE } from '../../model/UserPreference';
+import { KanbanComponent, ORDER_KANBAN } from '../kanban/kanban.component';
 
 
 @Component({
@@ -30,6 +31,7 @@ import { KanbanComponent } from '../kanban/kanban.component';
   styleUrls: ['./order-kaban.component.css']
 })
 export class OrderKabanComponent extends KanbanComponent<CustomerOrder, CustomerOrderStatus> implements OnInit {
+
 
   employeesSelected: Employee[] = [];
   filterText: string = '';
@@ -43,7 +45,7 @@ export class OrderKabanComponent extends KanbanComponent<CustomerOrder, Customer
     private formBuilder: FormBuilder,
     private appService: AppService,
     private constantService: ConstantService,
-    private userPreferenceService: UserPreferenceService,
+    private restUserPreferenceService2: RestUserPreferenceService,
     private quotationService: QuotationService,
     public mailLabelDialog: MatDialog,
     public confirmationDialog: MatDialog,
@@ -54,7 +56,7 @@ export class OrderKabanComponent extends KanbanComponent<CustomerOrder, Customer
     private notificationService: NotificationService,
     private habilitationService: HabilitationsService
   ) {
-    super();
+    super(restUserPreferenceService2);
   }
 
   kanbanForm = this.formBuilder.group({});
@@ -74,25 +76,16 @@ export class OrderKabanComponent extends KanbanComponent<CustomerOrder, Customer
       this.statusSelected = [];
 
       // Retrieve bookmark
-      let bookmarkpossibleEntityStatusIds = this.userPreferenceService.getUserSearchBookmark("kanban-order-status") as number[];
-      if (bookmarkpossibleEntityStatusIds)
-        for (let bookmarkpossibleEntityStatusId of bookmarkpossibleEntityStatusIds)
-          for (let orderStatu of this.possibleEntityStatus!)
-            if (bookmarkpossibleEntityStatusId == orderStatu.id)
-              this.statusSelected.push(orderStatu);
-
-      let bookmarkOrderEmployees = this.userPreferenceService.getUserSearchBookmark("kanban-order-employee") as Employee[];
-      if (bookmarkOrderEmployees && bookmarkOrderEmployees.length > 0)
-        this.employeesSelected = bookmarkOrderEmployees;
-
-      let bookmarkSwimlaneType = this.userPreferenceService.getUserSearchBookmark("kanban-order-swimline-type") as SwimlaneType<CustomerOrder>;
-      if (bookmarkSwimlaneType) {
-        for (let swimlaneType of this.swimlaneTypes)
-          if (swimlaneType.fieldName == bookmarkSwimlaneType.fieldName)
-            this.selectedSwimlaneType = swimlaneType;
-      } else {
-        this.selectedSwimlaneType = this.swimlaneTypes[0];
-      }
+      this.restUserPreferenceService2.getUserPreferenceValue(this.getKanbanComponentViewCode() + "_" + DEFAULT_USER_PREFERENCE).subscribe(kanbanViewString => {
+        if (kanbanViewString) {
+          let kabanView: KanbanView<CustomerOrder, CustomerOrderStatus>[] = JSON.parse(kanbanViewString);
+          //default view so only one KanbanView
+          for (let orderStatus of kabanView[0].status)
+            this.statusSelected.push(orderStatus);
+          this.employeesSelected = kabanView[0].employees;
+          this.selectedSwimlaneType = kabanView[0].swimlaneType ? kabanView[0].swimlaneType : this.swimlaneTypes[0];
+        }
+      });
 
       if (this.possibleEntityStatus && this.statusSelected) {
         this.startFilter();
@@ -138,10 +131,19 @@ export class OrderKabanComponent extends KanbanComponent<CustomerOrder, Customer
       this.panelOpen = true;
   }
 
-  saveUserPreferencesOnApplyFilter() {
-    this.userPreferenceService.setUserSearchBookmark(this.statusSelected.map(status => status.id), "kanban-order-status");
-    this.userPreferenceService.setUserSearchBookmark((this.employeesSelected != undefined && this.employeesSelected.length > 0) ? this.employeesSelected : null, "kanban-order-employee");
-    this.userPreferenceService.setUserSearchBookmark(this.selectedSwimlaneType, "kanban-order-swimline-type");
+  setKanbanView(kanbanView: KanbanView<CustomerOrder, CustomerOrderStatus>): void {
+    this.labelViewSelected = kanbanView.label;
+    this.statusSelected = kanbanView.status;
+    this.employeesSelected = kanbanView.employees;
+    this.selectedSwimlaneType = kanbanView.swimlaneType;
+  }
+
+  getKanbanView(): KanbanView<CustomerOrder, CustomerOrderStatus> {
+    return { label: this.labelViewSelected, status: this.statusSelected, employees: this.employeesSelected, swimlaneType: this.selectedSwimlaneType } as KanbanView<CustomerOrder, CustomerOrderStatus>;
+  }
+
+  getKanbanComponentViewCode(): string {
+    return ORDER_KANBAN;
   }
 
   findEntities() {
