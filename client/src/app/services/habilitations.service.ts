@@ -27,6 +27,10 @@ export class HabilitationsService {
     return this.loginService.hasGroup([ADMINISTRATEURS]);
   }
 
+  canRepairAccounts() {
+    return this.loginService.hasGroup([ADMINISTRATEURS]);
+  }
+
   canUpdateComplexity() {
     return this.loginService.hasGroup([TEAM_RESPONSIBLE]);
   }

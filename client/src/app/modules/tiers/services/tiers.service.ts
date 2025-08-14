@@ -28,6 +28,10 @@ export class TiersService extends AppRestService<Tiers> {
     return this.get(new HttpParams().set("idTiers", tiers.id), "tiers/delete", "Tiers supprimé avec succès");
   }
 
+  repairTierAccounts(tiers: Tiers) {
+    return this.get(new HttpParams().set("idTiers", tiers.id), "tiers/account/repair", "Comptes réparés");
+  }
+
   addOrUpdateTiers(tiers: Tiers) {
     return this.addOrUpdate(new HttpParams(), "tiers", tiers, "Tiers enregistré", "Erreur lors de l'enregistrement du tiers");
   }
