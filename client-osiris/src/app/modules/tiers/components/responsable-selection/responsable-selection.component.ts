@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbPagination, NgbPaginationNext, NgbPaginationPrevious } from '@ng-bootstrap/ng-bootstrap';
 import { NgIcon } from '@ng-icons/core';
@@ -60,6 +60,8 @@ export class ResponsableSelectionComponent implements OnInit {
         public tableService: TableService<Responsable>,
         private responsableService: ResponsableService,
         private tiersService: TiersService,
+        private cdr: ChangeDetectorRef,
+
     ) {
         this.users$ = this.tableService.items$
         this.total$ = this.tableService.total$
@@ -69,7 +71,6 @@ export class ResponsableSelectionComponent implements OnInit {
         this.tiersService.getSelectedTiers().subscribe(tiersId => {
             if (tiersId) {
                 this.responsableService.getResponsablesByTiers(tiersId).subscribe(res => {
-                    this.responsableService.setSelectedResponsables(res);
                     this.users = res;
                     this.tableService.setItems(this.users, 4);
                 });
@@ -79,11 +80,22 @@ export class ResponsableSelectionComponent implements OnInit {
 
     toggleAllSelection() {
         this.tableService.setAllSelection(this.selectAll);
+        this.tableService.items$.subscribe(items => {
+            // TODO : lorsque modifié le add et remplacé par un set, faire (idem dans les méthodes plus bas) :
+            // this.responsableService.setSelectedResponsables(this.tableService.getSelectedItems());
+            if (this.selectAll)
+                this.responsableService.addSelectedResponsables(items);
+            else
+                this.responsableService.removeSelectedResponsables(items);
+        }).unsubscribe();
+
     }
 
     toggleSingleSelection() {
         this.tableService.items$.subscribe(items => {
             this.selectAll = items.every((item: any) => item.selected);
+            this.responsableService.addSelectedResponsables(items.filter(r => r.selected));
+            this.responsableService.removeSelectedResponsables(items.filter(r => !r.selected));
         }).unsubscribe();
     }
 

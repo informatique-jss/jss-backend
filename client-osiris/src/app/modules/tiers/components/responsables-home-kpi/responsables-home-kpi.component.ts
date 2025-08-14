@@ -1,9 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, OnChanges, OnInit } from '@angular/core';
 import { NgIcon } from '@ng-icons/core';
+import { Subscription } from 'rxjs';
 import { getColor } from '../../../../libs/inspinia/utils/color-utils';
 import { AnalyticStatisticWidgetComponent } from '../../../main/components/analytic-statistic-widget/analytic-statistic-widget.component';
 import { ApexchartComponent } from '../../../main/components/apexchart/apexchart.component';
 import { AnalyticStatsType } from '../../../main/model/AnalyticStatsType';
+import { Responsable } from '../../../profile/model/Responsable';
+import { ResponsableService } from '../../services/responsable.service';
 
 @Component({
   selector: 'responsables-home-kpi',
@@ -15,7 +18,7 @@ import { AnalyticStatsType } from '../../../main/model/AnalyticStatsType';
   standalone: true,
   templateUrl: './responsables-home-kpi.component.html',
 })
-export class ResponsablesHomeKpiComponent {
+export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
 
   graphsHeight: number = 220;
 
@@ -204,12 +207,35 @@ export class ResponsablesHomeKpiComponent {
     redrawOnWindowResize: true, // ← aussi
   })
 
+  selectedResponsablesSubscription: Subscription = new Subscription;
+
+  selectedResponsables: Responsable[] = [];
+
   // TODO : first try to init chart after timeout
   // ngAfterViewInit() {
   //   setTimeout(() => {
   //     window.dispatchEvent(new Event('resize'));
   //   }, 250);
   // }
+
+  constructor(
+    private responsableService: ResponsableService,
+  ) {
+
+  }
+
+  ngOnInit() {
+    this.selectedResponsablesSubscription = this.responsableService.getSelectedResponsables().subscribe(respos => {
+      this.selectedResponsables = respos;
+
+    })
+  }
+
+  ngOnChanges() {
+    // this.responsableService.getSelectedResponsables().subscribe(respos => {
+    //   this.selectedResponsables = respos;
+    // })
+  }
 }
 
 function generateRandomData(count: number, min: number, max: number): number[] {

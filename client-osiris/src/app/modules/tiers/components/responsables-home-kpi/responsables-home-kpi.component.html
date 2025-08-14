@@ -13,6 +13,7 @@
         <div class="card-header justify-content-between border-dashed">
           <h4 class="card-title mb-0">Comparatifs des CA</h4>
           <div class="d-flex flex-wrap gap-1">
+            @for(respo of selectedResponsables; track respo.id){<p>{{respo.lastname}}</p>}
             <a href="javascript:void(0);" class="btn btn-sm btn-secondary">
               <ng-icon name="tablerDownload" class="me-1" />
               Export CSV
