@@ -95,6 +95,9 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     @Autowired
     BatchService batchService;
 
+    @Autowired
+    ConfrereService confrereService;
+
     @Override
     public List<Announcement> getAnnouncements() {
         return IterableUtils.toList(announcementRepository.findAll());
@@ -903,21 +906,31 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         announcementStatus
                 .add(announcementStatusService.getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_DONE));
 
-        return populateAffaireLabel(
+        List<Announcement> announcements = populateAffaireLabel(
                 announcementRepository.searchAnnouncementForWebSite(searchText, customerOrderStatusExcluded,
                         announcementStatus, constantService.getConfrereJssSpel(),
-                        pageableRequest));
+                        pageableRequest).getContent());
+
+        return new PageImpl<>(announcements);
     }
 
     @Override
     public Announcement getAnnouncementForWebSite(Announcement announcement) throws OsirisException {
         announcement = getAnnouncement(announcement.getId());
-        return populateAffaireLabel(new PageImpl<>(List.of(announcement))).getContent().get(0);
+        return populateAffaireLabel(List.of(announcement)).get(0);
     }
 
-    private Page<Announcement> populateAffaireLabel(Page<Announcement> announcements) {
+    @Override
+    public List<Announcement> getLastSevenDaysAnnouncements() throws OsirisException {
+        return populateAffaireLabel(announcementRepository.getAnnouncementByStatusPublicationDateAndConfrere(
+                List.of(announcementStatusService
+                        .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_DONE)),
+                LocalDate.now().minusDays(7), LocalDate.now(), constantService.getConfrereJssSpel()));
+    }
+
+    private List<Announcement> populateAffaireLabel(List<Announcement> announcements) {
         if (announcements != null)
-            for (Announcement announcement : announcements.toList()) {
+            for (Announcement announcement : announcements) {
                 if (announcement.getProvisions() != null && announcement.getProvisions().size() > 0)
                     if (announcement.getProvisions().get(0).getService() != null)
                         if (announcement.getProvisions().get(0).getService().getAssoAffaireOrder() != null)
