@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.osiris.tiers.model.IResponsableSearchResult;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
+import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 
 public interface ResponsableRepository extends QueryCacheCrudRepository<Responsable, Integer> {
 
@@ -149,5 +150,13 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
 
         List<Responsable> findByLastnameContainingIgnoreCaseOrFirstnameContainingIgnoreCase(String lastname,
                         String firstname);
+
+        /*
+         * |============================================================================
+         * |______________________METHODS FOR OSIRIS V2_________________________________
+         * |============================================================================
+         */
+
+        List<Responsable> findByTiers(Tiers tiers);
 
 }

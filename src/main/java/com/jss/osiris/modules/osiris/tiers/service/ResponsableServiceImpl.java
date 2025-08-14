@@ -25,6 +25,7 @@ import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
 import com.jss.osiris.modules.osiris.tiers.model.IResponsableSearchResult;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
+import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 import com.jss.osiris.modules.osiris.tiers.model.TiersSearch;
 import com.jss.osiris.modules.osiris.tiers.repository.ResponsableRepository;
 
@@ -62,6 +63,11 @@ public class ResponsableServiceImpl implements ResponsableService {
 
         return responsableRepository.findByLastnameContainingIgnoreCaseOrFirstnameContainingIgnoreCase(searchedValue,
                 searchedValue);
+    }
+
+    @Override
+    public List<Responsable> getResponsablesByTiers(Tiers tiers) {
+        return responsableRepository.findByTiers(tiers);
     }
 
     @Override

@@ -5,6 +5,8 @@ import { ConstantsResolver } from './modules/main/services/constant.service';
 
 const routesCrm = [
   { path: 'home', loadComponent: () => import('./modules/crm/components/crm/crm.component').then(m => m.CrmComponent) },
+  { path: 'tiers/:idTiers', loadComponent: () => import('./modules/tiers/tiers-responsables.component').then(m => m.TiersResponsablesComponent) },
+  { path: 'crm', loadComponent: () => import('./modules/crm/components/crm/crm.component').then(m => m.CrmComponent) },
 ];
 
 export const routes: Routes = [

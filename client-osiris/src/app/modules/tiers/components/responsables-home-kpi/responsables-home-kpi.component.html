@@ -1,0 +1,61 @@
+<div class="card">
+  <div class="card-body p-0">
+    <div class="row g-0">
+      <div class="col-xxl-2 order-2 order-xxl-1">
+        @for (kpi of kpisLeft; track $index) {
+        <div class="col-lg-6 col-xl-6 col-xxl-12">
+          <app-analytic-statistic-widget [stat]="kpi" />
+        </div>
+        }
+      </div>
+
+      <div class="col-xxl-8 order-1 order-xxl-2 border-start border-dashed ">
+        <div class="card-header justify-content-between border-dashed">
+          <h4 class="card-title mb-0">Comparatifs des CA</h4>
+          <div class="d-flex flex-wrap gap-1">
+            <a href="javascript:void(0);" class="btn btn-sm btn-secondary">
+              <ng-icon name="tablerDownload" class="me-1" />
+              Export CSV
+            </a>
+          </div>
+        </div>
+        <div class="card-body w-100 z-0">
+          <div dir="ltr">
+            <div>
+              <h4 class="card-title mb-0  w-100">CA HT vs CA HT N-1 </h4>
+              @if(analyticChartOptions){
+              <div>
+                <app-apexchart [getOptions]="analyticChartOptions" />
+              </div>
+              }
+            </div>
+            <div>
+              <h4 class="card-title mb-0">CA HT et HD vs CA HT et HD N-1 </h4>
+              @if(analyticChartOptions){
+              <div>
+                <app-apexchart [getOptions]="analyticChartOptions" />
+              </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xxl-2 order-3">
+        <div class="row g-0">
+          @for (kpi of kpisRight; track $index) {
+          <div class="col-lg-6 col-xl-6 col-xxl-12">
+            <app-analytic-statistic-widget [stat]="kpi" />
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+    <div class="row g-0">
+      @for (kpi of kpisDown; track $index) {
+      <div class="col">
+        <app-analytic-statistic-widget [stat]="kpi" />
+      </div>
+      }
+    </div>
+  </div>
+</div>

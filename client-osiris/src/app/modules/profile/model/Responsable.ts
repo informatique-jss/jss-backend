@@ -1,3 +1,4 @@
+import { TiersCategory } from "./TiersCategory";
 
 export interface Responsable {
   id: number;
@@ -8,4 +9,6 @@ export interface Responsable {
   postalCode: string;
   cedexComplement: string;
   documents: Document[];
+  selected: boolean;
+  tiersCategory: TiersCategory;
 }
