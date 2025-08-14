@@ -173,6 +173,8 @@ public class CustomerMail implements Serializable {
 
     private Boolean isLastReminder;
 
+    private Boolean isQrCodePaymentDisabled;
+
     @ManyToOne
     @JoinColumn(name = "id_subscription")
     private Subscription subscription;
@@ -626,4 +628,11 @@ public class CustomerMail implements Serializable {
         this.subscription = subscription;
     }
 
+    public Boolean getIsQrCodePaymentDisabled() {
+        return isQrCodePaymentDisabled;
+    }
+
+    public void setIsQrCodePaymentDisabled(Boolean isQrCodePaymentDisabled) {
+        this.isQrCodePaymentDisabled = isQrCodePaymentDisabled;
+    }
 }
