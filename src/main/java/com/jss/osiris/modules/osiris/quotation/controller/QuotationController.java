@@ -2500,7 +2500,9 @@ public class QuotationController {
             for (ValidationRequest validationRequest : formalite.getValidationsRequests())
               if (validationRequest.getPartnerCenter() != null && validationRequest.getPartner().getId() == null)
                 validationRequest.setPartnerCenter(null);
-          formaliteGuichetUniqueService.addOrUpdateFormaliteGuichetUnique(formalite);
+
+          if (formaliteGuichetUniqueService.getFormaliteGuichetUnique(formalite.getId()) == null)
+            formaliteGuichetUniqueService.addOrUpdateFormaliteGuichetUnique(formalite);
         }
     }
 

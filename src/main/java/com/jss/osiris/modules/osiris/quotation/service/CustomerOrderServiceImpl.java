@@ -306,10 +306,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Override
     public void markCustomerOrderAsPayed(CustomerOrder customerOrder, boolean isPayed)
             throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException, OsirisException {
+        customerOrder = getCustomerOrder(customerOrder.getId());
         customerOrder.setIsPayed(isPayed);
         subscriptionService.saveSubscription(customerOrder);
 
-        addOrUpdateCustomerOrder(customerOrder, false, false);
+        simpleAddOrUpdate(customerOrder);
     }
 
     @Override
