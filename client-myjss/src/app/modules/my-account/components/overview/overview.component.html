@@ -34,14 +34,14 @@
           <div class="h2 text-primary mb-2">{{statistics.invoiceAfterDueDate}}</div>
         </div>
       </div> -->
-      <!-- <div class="col-md-4 col-sm-6"
+      <div class="col-md-4 col-sm-6"
         *ngIf="statistics.customerOrderRequieringAttention && statistics.customerOrderRequieringAttention>0">
         <div class="h-100 bg-secondary rounded-3 text-center p-4 stat-card"
-          [routerLink]="'/account/quotations/search/'+QUOTATION_STATUS_SENT_TO_CUSTOMER">
+          [routerLink]="'/account/orders/search/'+CUSTOMER_ORDER_STATUS_REQUIRE_ATTENTION">
           <h2 class="h6 pb-2 mb-1">Commandes qui requièrent votre attention</h2>
           <div class="h2 text-primary mb-2">{{statistics.customerOrderRequieringAttention}}</div>
         </div>
-      </div> -->
+      </div>
       <div class="col-md-4 col-sm-6" *ngIf="statistics.customerOrderDraft && statistics.customerOrderDraft>0">
         <div class="h-100 bg-secondary rounded-3 text-center p-4 stat-card"
           [routerLink]="'/account/orders/search/'+CUSTOMER_ORDER_STATUS_OPEN">

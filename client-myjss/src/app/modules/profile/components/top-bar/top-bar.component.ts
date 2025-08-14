@@ -81,6 +81,10 @@ export class TopBarComponent implements OnInit {
       });
   }
 
+  isHiddeConnectedButton() {
+    return this.router.url.indexOf("account/signin") >= 0;
+  }
+
   isDisplaySecondHeader() {
     let url: String = this.router.url;
     if (url)

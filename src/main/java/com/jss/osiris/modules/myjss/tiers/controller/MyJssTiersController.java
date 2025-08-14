@@ -1,10 +1,17 @@
 package com.jss.osiris.modules.myjss.tiers.controller;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.myjss.quotation.controller.MyJssQuotationValidationHelper;
 import com.jss.osiris.modules.osiris.accounting.model.BillingClosureReceiptValue;
@@ -67,6 +75,39 @@ public class MyJssTiersController {
 		});
 
 		return new ResponseEntity<List<BillingClosureReceiptValue>>(values, HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/billing-closure/download")
+	public ResponseEntity<byte[]> downloadBillingClosureReceiptValueForResponsable(@RequestParam Integer responsableId)
+			throws OsirisValidationException, OsirisException {
+		byte[] data = null;
+		HttpHeaders headers = null;
+
+		Responsable responsable = responsableService.getResponsable(responsableId);
+
+		if (responsable == null || !myJssQuotationValidationHelper.canSeeResponsable(responsable))
+			return new ResponseEntity<byte[]>(data, HttpStatus.OK);
+
+		File export = billingClosureReceiptHelper.getReceiptExport(responsable);
+
+		if (export != null) {
+			try {
+				data = Files.readAllBytes(export.toPath());
+			} catch (IOException e) {
+				throw new OsirisException(e, "Unable to read file " + export.toPath());
+			}
+
+			headers = new HttpHeaders();
+			headers.add("filename", "Relevé de compte - "
+					+ LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + ".xlsx");
+			headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
+			headers.setContentLength(data.length);
+			headers.set("content-type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+
+			export.delete();
+
+		}
+		return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
 	}
 
 }

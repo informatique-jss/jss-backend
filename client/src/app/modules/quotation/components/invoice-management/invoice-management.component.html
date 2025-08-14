@@ -24,7 +24,7 @@
         <tr>
           <td>
             <autocomplete-employee [(model)]="quotation.invoicingEmployee" [form]="invoiceManagementForm"
-              propertyName="invoicingEmployee" [isMandatory]="false" [isDisabled]="false"
+              propertyName="invoicingEmployee" [isMandatory]="false" [isDisabled]="!canChangeInvoicingResponsible()"
               label="Responsable de la facturation"
               (onOptionSelected)="assignInvoicingEmployee($event)"></autocomplete-employee>
           </td>

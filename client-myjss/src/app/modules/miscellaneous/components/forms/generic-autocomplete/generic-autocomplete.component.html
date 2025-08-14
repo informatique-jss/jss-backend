@@ -3,14 +3,15 @@
     <label [for]="'fl-text'+uniqueId" *ngIf="isDisplayLabel && label && label.length>0"
       class="form-label">{{label}}</label>
     <div>
-      <ng-autocomplete [data]="filteredTypes" [searchKeyword]="'label'" [placeholder]="label" [attr.name]="propertyName"
-        [initialValue]="selectedItem" (selected)='optionSelected($event)' (inputChanged)='onChangeSearch($event)'
-        [itemTemplate]="itemTemplate" [notFoundTemplate]="notFoundTemplate" [minQueryLength]="expectedMinLengthInput"
-        [debounceTime]="200" (scrolledToEnd)="fetchNextPage()" #autoComp [historyIdentifier]="propertyName"
-        historyHeading="Choix récents" [isLoading]="isLoading" [disabled]="isDisabled"></ng-autocomplete>
+      <ng-autocomplete [data]="filteredTypes" [searchKeyword]="searchKeyword" [placeholder]="label"
+        [attr.name]="propertyName" [initialValue]="selectedItem" (selected)='optionSelected($event)'
+        (inputChanged)='onChangeSearch($event)' [itemTemplate]="itemTemplate" [notFoundTemplate]="notFoundTemplate"
+        [minQueryLength]="expectedMinLengthInput" [debounceTime]="debounceTime" (scrolledToEnd)="fetchNextPage()"
+        #autoComp [historyIdentifier]="propertyName" historyHeading="Choix récents" [isLoading]="isLoading"
+        [disabled]="isDisabled"></ng-autocomplete>
     </div>
     <ng-template #itemTemplate let-item>
-      <a [innerHTML]="item.label"></a>
+      <a [innerHTML]="displayLabel(item)"></a>
     </ng-template>
     <ng-template #notFoundTemplate let-notFound>
       <div innerHTML="Aucun résultat trouvé"></div>

@@ -32,4 +32,7 @@ export interface Affaire {
   paymentIban: string;
   paymentBic: string;
   isIndividual: boolean;
+
+  // only for autocomplete purpose
+  sirenOrSiret: string;
 }
