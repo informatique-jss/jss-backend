@@ -1094,7 +1094,7 @@ public class QuotationController {
       throw new OsirisValidationException("customerOrder");
     try {
       MailComputeResult mailComputeResult = mailComputeHelper
-          .computeMailForCustomerOrderFinalizationAndInvoice(customerOrder, true);
+          .computeMailForCustomerOrderFinalizationAndInvoice(customerOrder, false);
       if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
         throw new OsirisValidationException("MailTo");
       customerOrderService.sendInvoiceMail(customerOrder);

@@ -87,8 +87,6 @@ public class MailComputeHelper {
             if (fetchedQuotation != null)
                 quotation = fetchedQuotation;
         }
-        // TODO retirer isreminder ici et faire une seule methode compute avec mail
-        // relance si facture et qu'en cas de typedocument factu vérifier dans le if ?
         if (!isReminder)
             return computeMailForDocument(quotation, constantService.getDocumentTypeBilling(), false);
         else
@@ -200,14 +198,8 @@ public class MailComputeHelper {
 
         if (quotationDocument != null) {
             boolean hasAlreadyAddMails = false;
-            if (quotationDocument.getReminderMail() != null) {
-                mailComputeResult.getRecipientsMailTo().add(quotationDocument.getReminderMail());
-                mailComputeResult.setMailToClientOrigin("mails de relance");
-            }
-
             if ((quotationDocument.getIsRecipientAffaire() && !isForcedClient)
-                    || (quotationDocument.getIsRecipientAffaire() && !isForcedClient
-                            && quotationDocument.getReminderMail() == null)) {
+                    || (quotationDocument.getIsRecipientAffaire() && !isForcedClient)) {
                 mailComputeResult.setIsSendToAffaire(true);
                 if (quotationDocument.getMailsAffaire() != null && quotationDocument.getMailsAffaire().size() > 0) {
                     mailComputeResult.getRecipientsMailTo().addAll(quotationDocument.getMailsAffaire());
@@ -232,7 +224,7 @@ public class MailComputeHelper {
                     || isForcedClient))
                     || ((quotationDocument.getIsRecipientClient()
                             || !quotationDocument.getIsRecipientClient() && !quotationDocument.getIsRecipientAffaire()
-                            || isForcedClient) && quotationDocument.getReminderMail() == null)) {
+                            || isForcedClient))) {
                 hasAlreadyAddMails = false;
                 mailComputeResult.setIsSendToClient(true);
                 if (quotationDocument.getMailsClient() != null
@@ -318,9 +310,7 @@ public class MailComputeHelper {
                         .equals(constantService.getBillingClosureRecipientTypeOther().getId())) {
             mailComputeResult.getRecipientsMailTo().addAll(billingClosureDocument.getMailsClient());
             mailComputeResult.setMailToClientOrigin("mails Autres du paramétrage du relevé de compte");
-        } else if (billingClosureDocument.getReminderMail() != null)
-            mailComputeResult.getRecipientsMailTo().add(billingClosureDocument.getReminderMail());
-        else if (responsable != null
+        } else if (responsable != null
                 && responsable.getMail() != null) {
             mailComputeResult.getRecipientsMailTo().add(responsable.getMail());
             mailComputeResult.setMailToClientOrigin("mail du responsable");

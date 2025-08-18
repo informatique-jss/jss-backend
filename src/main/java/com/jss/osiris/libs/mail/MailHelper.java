@@ -1282,7 +1282,8 @@ public class MailHelper {
         CustomerMail mail = new CustomerMail();
         mail.setCustomerOrder(customerOrder);
         mail.setMailComputeResult(
-                mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(customerOrder, false));
+                mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(customerOrder,
+                        isReminder || isLastReminder));
 
         List<Attachment> attachments = new ArrayList<Attachment>();
         List<Integer> attachmentTypeIdsDone = new ArrayList<Integer>();
