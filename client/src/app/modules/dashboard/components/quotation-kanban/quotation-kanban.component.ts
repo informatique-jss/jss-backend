@@ -8,7 +8,6 @@ import { IWorkflowElement } from 'src/app/modules/miscellaneous/model/IWorkflowE
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { NotificationService } from 'src/app/modules/miscellaneous/services/notification.service';
 import { Employee } from 'src/app/modules/profile/model/Employee';
-import { CustomerOrder } from 'src/app/modules/quotation/model/CustomerOrder';
 import { Quotation } from 'src/app/modules/quotation/model/Quotation';
 import { QuotationStatus } from 'src/app/modules/quotation/model/QuotationStatus';
 import { AssoAffaireOrderService } from 'src/app/modules/quotation/services/asso.affaire.order.service';
@@ -16,11 +15,12 @@ import { QuotationStatusService } from 'src/app/modules/quotation/services/quota
 import { QuotationService } from 'src/app/modules/quotation/services/quotation.service';
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from 'src/app/services/habilitations.service';
-import { UserPreferenceService } from 'src/app/services/user.preference.service';
+import { RestUserPreferenceService } from 'src/app/services/rest.user.preference.service';
 import { Notification } from '../../../../modules/miscellaneous/model/Notification';
 import { getResponsableLabelIQuotation, getTiersLabelIQuotation } from '../../../invoicing/components/invoice-tools';
-import { SwimlaneType } from '../../model/SwimlaneType';
-import { KanbanComponent } from '../kanban/kanban.component';
+import { KanbanView } from '../../model/KanbanView';
+import { DEFAULT_USER_PREFERENCE } from '../../model/UserPreference';
+import { KanbanComponent, QUOTATION_KANBAN } from '../kanban/kanban.component';
 
 @Component({
   selector: 'quotation-kanban',
@@ -40,7 +40,7 @@ export class QuotationKanbanComponent extends KanbanComponent<Quotation, Quotati
     private formBuilder: FormBuilder,
     private appService: AppService,
     private constantService: ConstantService,
-    private userPreferenceService: UserPreferenceService,
+    private restUserPreferenceService2: RestUserPreferenceService,
     private quotationService: QuotationService,
     public mailLabelDialog: MatDialog,
     public confirmationDialog: MatDialog,
@@ -51,7 +51,7 @@ export class QuotationKanbanComponent extends KanbanComponent<Quotation, Quotati
     private notificationService: NotificationService,
     private habilitationService: HabilitationsService
   ) {
-    super();
+    super(restUserPreferenceService2);
   }
 
   kanbanForm = this.formBuilder.group({});
@@ -71,25 +71,16 @@ export class QuotationKanbanComponent extends KanbanComponent<Quotation, Quotati
       this.statusSelected = [];
 
       // Retrieve bookmark
-      let bookmarkpossibleEntityStatusIds = this.userPreferenceService.getUserSearchBookmark("kanban-quotation-status") as number[];
-      if (bookmarkpossibleEntityStatusIds)
-        for (let bookmarkpossibleEntityStatusId of bookmarkpossibleEntityStatusIds)
-          for (let orderStatu of this.possibleEntityStatus!)
-            if (bookmarkpossibleEntityStatusId == orderStatu.id)
-              this.statusSelected.push(orderStatu);
-
-      let bookmarkOrderEmployees = this.userPreferenceService.getUserSearchBookmark("kanban-quotation-employee") as Employee[];
-      if (bookmarkOrderEmployees && bookmarkOrderEmployees.length > 0)
-        this.employeesSelected = bookmarkOrderEmployees;
-
-      let bookmarkSwimlaneType = this.userPreferenceService.getUserSearchBookmark("kanban-quotation-swimline-type") as SwimlaneType<CustomerOrder>;
-      if (bookmarkSwimlaneType) {
-        for (let swimlaneType of this.swimlaneTypes)
-          if (swimlaneType.fieldName == bookmarkSwimlaneType.fieldName)
-            this.selectedSwimlaneType = swimlaneType;
-      } else {
-        this.selectedSwimlaneType = this.swimlaneTypes[0];
-      }
+      this.restUserPreferenceService2.getUserPreferenceValue(this.getKanbanComponentViewCode() + "_" + DEFAULT_USER_PREFERENCE).subscribe(kanbanViewString => {
+        if (kanbanViewString) {
+          let kabanView: KanbanView<Quotation, QuotationStatus>[] = JSON.parse(kanbanViewString);
+          //default view so only one KanbanView
+          for (let orderStatus of kabanView[0].status)
+            this.statusSelected.push(orderStatus);
+          this.employeesSelected = kabanView[0].employees;
+          this.selectedSwimlaneType = kabanView[0].swimlaneType ? kabanView[0].swimlaneType : this.swimlaneTypes[0];
+        }
+      });
 
       if (this.possibleEntityStatus && this.statusSelected) {
         this.startFilter();
@@ -135,10 +126,19 @@ export class QuotationKanbanComponent extends KanbanComponent<Quotation, Quotati
       this.panelOpen = true;
   }
 
-  saveUserPreferencesOnApplyFilter() {
-    this.userPreferenceService.setUserSearchBookmark(this.statusSelected.map(status => status.id), "kanban-quotation-status");
-    this.userPreferenceService.setUserSearchBookmark((this.employeesSelected != undefined && this.employeesSelected.length > 0) ? this.employeesSelected : null, "kanban-quotation-employee");
-    this.userPreferenceService.setUserSearchBookmark(this.selectedSwimlaneType, "kanban-quotation-swimline-type");
+  setKanbanView(kanbanView: KanbanView<Quotation, QuotationStatus>): void {
+    this.labelViewSelected = kanbanView.label;
+    this.statusSelected = kanbanView.status;
+    this.employeesSelected = kanbanView.employees;
+    this.selectedSwimlaneType = kanbanView.swimlaneType;
+  }
+
+  getKanbanView(): KanbanView<Quotation, QuotationStatus> {
+    return { label: this.labelViewSelected, status: this.statusSelected, employees: this.employeesSelected, swimlaneType: this.selectedSwimlaneType } as KanbanView<Quotation, QuotationStatus>;
+  }
+
+  getKanbanComponentViewCode(): string {
+    return QUOTATION_KANBAN;
   }
 
   findEntities() {
@@ -153,7 +153,6 @@ export class QuotationKanbanComponent extends KanbanComponent<Quotation, Quotati
     this.changeQuotationStatus(entity, toStatus);
   }
 
-
   getResponsableLabelIQuotation = getResponsableLabelIQuotation;
   getTiersLabelIQuotation = getTiersLabelIQuotation;
   formatDateFrance = formatDateFrance;
@@ -161,7 +160,6 @@ export class QuotationKanbanComponent extends KanbanComponent<Quotation, Quotati
   openQuotation(event: any, order: Quotation) {
     this.appService.openRoute(event, 'quotation/' + order.id, undefined);
   }
-
 
   generateQuotationConfirmationToCustomer() {
     if (this.selectedEntity)

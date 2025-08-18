@@ -40,6 +40,7 @@ import { BarChartComponent } from '../bar-chart/bar-chart.component';
 import { ChipsStatusComponent } from '../chips-status/chips-status.component';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { ConfrereDialogComponent } from '../confreres-dialog/confreres-dialog.component';
+import { CustomViewsComponent } from '../custom-views/custom-views.component';
 import { EditCommentDialogComponent } from '../edit-comment-dialog.component/edit-comment-dialog-component.component';
 import { EmployeeDialogComponent } from '../employee-dialog/employee-dialog.component';
 import { AutocompleteAccountingAccountComponent } from '../forms/autocomplete-accounting-account/autocomplete-accounting-account.component';
@@ -599,6 +600,7 @@ const routes: Routes = [
     ChipsResponsableComponent,
     SelectSingleEmployeeComponent,
     SelectAnnouncementNoticeTemplateFragmentComponent,
+    CustomViewsComponent,
   ],
   exports: [
     HistoryComponent,
@@ -864,6 +866,7 @@ const routes: Routes = [
     ChipsResponsableComponent,
     SelectSingleEmployeeComponent,
     SelectAnnouncementNoticeTemplateFragmentComponent,
+    CustomViewsComponent
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent
