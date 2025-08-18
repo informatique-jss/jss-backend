@@ -49,4 +49,6 @@ public interface AttachmentService {
         public List<Attachment> findByDocumentAssocieInfogreffe(DocumentAssocieInfogreffe documentAssocieInfogreffe);
 
         public Attachment cleanAttachmentForDelete(Attachment attachment);
+
+        public byte[] downloadAllInvoicesAsZip(List<Integer> invoicesIds) throws OsirisException;
 }

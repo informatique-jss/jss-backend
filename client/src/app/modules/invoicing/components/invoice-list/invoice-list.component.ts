@@ -198,19 +198,24 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
   }
 
   downloadAllFiles() {
-    let count = 0;
-    if (this.invoices)
-      for (let invoice of this.invoices) {
-        this.invoiceService.getInvoiceById(invoice.invoiceId).subscribe(completeInvoice => {
-          if (completeInvoice.attachments) {
-            for (let attachement of completeInvoice.attachments) {
-              if (attachement.attachmentType.id == this.constantService.getAttachmentTypeInvoice().id && count < 200) {
+
+    let invoiceIds: number[] = [];
+    if (this.invoices && this.invoices.length > 0) {
+      for (let invoice of this.invoices)
+        invoiceIds.push(invoice.invoiceId);
+
+      if (invoiceIds.length > 1) {
+        this.uploadAttachmentService.downloadInvoiceAttachmentsAsZip(invoiceIds);
+      } else if (invoiceIds.length == 1) {
+        this.invoiceService.getInvoiceById(invoiceIds[0]).subscribe(response => {
+          if (response && response.attachments)
+            for (let attachement of response.attachments)
+              if (attachement.attachmentType.id === this.constantService.getAttachmentTypeInvoice().id)
                 this.uploadAttachmentService.downloadAttachment(attachement);
-                count++;
-              }
-            }
-          }
-        })
+        });
       }
+      else
+        this.appService.displaySnackBar("Aucun fichier à télécharger", false, 10)
+    }
   }
 }
