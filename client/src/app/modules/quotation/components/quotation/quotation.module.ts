@@ -72,6 +72,7 @@ import { ProvisionPaymentComponent } from '../provision-payment/provision-paymen
 import { ProvisionSidePanelDetailsComponent } from '../provision-side-panel-details/provision-side-panel-details.component';
 import { ProvisionComponent } from '../provision/provision.component';
 import { QuotationAbandonReasonDialog } from '../quotation-abandon-reason-dialog/quotation-abandon-reason-dialog';
+import { QuotationListComponent } from '../quotation-list/quotation-list.component';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
 import { QuotationSidePanelDetailsComponent } from '../quotation-side-panel-details/quotation-side-panel-details.component';
 import { RecurringChildOrderingListComponent } from '../recurring-child-ordering-list/recurring-child-ordering-list.component';
@@ -88,6 +89,7 @@ import { SelectServiceDialogComponent } from '../select-service-dialog/select-se
 import { ServiceSidePanelDetailsComponent } from '../service-side-panel-details/service-side-panel-details.component';
 import { ServiceComponent } from '../service/service.component';
 import { SimpleProvisionComponent } from '../simple-provision/simple-provision.component';
+import { SuggestedQuotationsDialogComponent } from '../suggested-quotations-dialog/suggested-quotations-dialog.component';
 import { QuotationComponent } from './quotation.component';
 
 const routes: Routes = [
@@ -146,7 +148,7 @@ const routes: Routes = [
     AddAffaireDialogComponent,
     ProvisionItemComponent,
     InvoiceManagementComponent,
-    // QuotationListComponent,
+    QuotationListComponent,
     ChooseAssignedUserDialogComponent,
     ProvisionListComponent,
     ProvisionComponent,
@@ -201,11 +203,12 @@ const routes: Routes = [
     IncidentReportListComponent,
     AddIncidentReportComponent,
     InvoiceListComponent,
+    SuggestedQuotationsDialogComponent
   ],
   exports: [
     OrderingListComponent,
     ProvisionListComponent,
-    // QuotationListComponent,
+    QuotationListComponent,
     OrderingListComponent,
     PaymentListComponent,
     AnnouncementListComponent,

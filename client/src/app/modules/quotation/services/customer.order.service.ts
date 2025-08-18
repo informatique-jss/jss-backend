@@ -107,7 +107,4 @@ export class CustomerOrderService extends AppRestService<IQuotation> {
     return this.getList(new HttpParams().set("idTeamEmployee", teamEmployee.id).set("onlyCurrentUser", onlyCurrentUser), "assign/fond/order");
   }
 
-  createOrderFromSuggestedQuotation(quotationId: number) {
-    return this.get(new HttpParams().set("idQuotation", quotationId), "customer-order/suggested-quotation");
-  }
 }

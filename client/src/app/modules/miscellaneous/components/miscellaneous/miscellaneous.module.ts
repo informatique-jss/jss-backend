@@ -29,7 +29,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { MatTableExporterModule } from 'mat-table-exporter';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { TrustHtmlPipe } from 'src/app/libs/TrustHtmlPipe';
-import { QuotationListComponent } from 'src/app/modules/quotation/components/quotation-list/quotation-list.component';
 import { AdministrationComponent } from '../../../administration/components/administration/administration.component';
 import { AddNotificationDialogComponent } from '../add-notification-dialog/add-notification-dialog.component';
 import { AddressingComponent } from '../addressing/addressing.component';
@@ -281,7 +280,6 @@ import { SelectVatCollectionTypeComponent } from '../forms/select-vat-collection
 import { SelectVatComponent } from '../forms/select-vat/select-vat.component';
 import { SelectWebinarComponent } from '../forms/select-webinar/select-webinar.component';
 import { SingleChipsMailComponent } from '../forms/single-chips-mail/single-chips-mail.component';
-import { SuggestedQuotationsDialogComponent } from '../forms/suggested-quotations-dialog/suggested-quotations-dialog.component';
 import { GaugeChartComponent } from '../gauge-chart/gauge-chart.component';
 import { GradeComponent } from '../grade/grade.component';
 import { HistoryComponent } from '../history/history.component';
@@ -599,10 +597,8 @@ const routes: Routes = [
     SelectNoticeTemplateComponent,
     AutocompleteVoucherComponent,
     ChipsResponsableComponent,
-    SuggestedQuotationsDialogComponent,
     SelectSingleEmployeeComponent,
     SelectAnnouncementNoticeTemplateFragmentComponent,
-    QuotationListComponent
   ],
   exports: [
     HistoryComponent,
@@ -866,10 +862,8 @@ const routes: Routes = [
     SelectNoticeTemplateComponent,
     AutocompleteVoucherComponent,
     ChipsResponsableComponent,
-    SuggestedQuotationsDialogComponent,
     SelectSingleEmployeeComponent,
     SelectAnnouncementNoticeTemplateFragmentComponent,
-    QuotationListComponent
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

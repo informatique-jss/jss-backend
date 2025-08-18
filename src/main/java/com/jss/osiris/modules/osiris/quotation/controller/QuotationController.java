@@ -1910,21 +1910,6 @@ public class QuotationController {
         HttpStatus.OK);
   }
 
-  @GetMapping(inputEntryPoint + "/customer-order/suggested-quotation")
-  public ResponseEntity<CustomerOrder> createCustomerOrderFromSuggestedQuotation(@RequestParam Integer idQuotation)
-      throws OsirisValidationException, OsirisClientMessageException, OsirisException {
-    Quotation quotation = quotationService.getQuotation(idQuotation);
-
-    if (quotation == null)
-      throw new OsirisValidationException("quotation not found");
-
-    validateQuotationAndCustomerOrder(quotation);
-
-    return new ResponseEntity<CustomerOrder>(customerOrderService.createNewCustomerOrderFromQuotation(quotation),
-        HttpStatus.OK);
-
-  }
-
   private void validateQuotationAndCustomerOrder(IQuotation quotation)
       throws OsirisValidationException, OsirisException, OsirisClientMessageException {
     quotationValidationHelper.validateQuotationAndCustomerOrder(quotation, null);

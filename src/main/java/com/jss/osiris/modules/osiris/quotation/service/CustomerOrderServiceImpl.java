@@ -1054,10 +1054,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 }
             }
 
-        if (quotation.getCustomerOrders() == null)
-            quotation.setCustomerOrders(new ArrayList<CustomerOrder>());
-        quotation.getCustomerOrders().add(customerOrder2);
-
         addOrUpdateCustomerOrderStatusFromUser(customerOrder2, CustomerOrderStatus.BEING_PROCESSED);
         return customerOrder2;
     }

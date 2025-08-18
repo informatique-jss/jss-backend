@@ -3,9 +3,8 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { QUOTATION_STATUS_SENT_TO_CUSTOMER } from 'src/app/libs/Constants';
 import { Affaire } from 'src/app/modules/quotation/model/Affaire';
 import { QuotationSearch } from 'src/app/modules/quotation/model/QuotationSearch';
-import { QuotationSearchResult } from 'src/app/modules/quotation/model/QuotationSearchResult';
 import { QuotationStatus } from 'src/app/modules/quotation/model/QuotationStatus';
-import { QuotationStatusService } from '../../../../quotation/services/quotation-status.service';
+import { QuotationStatusService } from '../../services/quotation-status.service';
 
 @Component({
   selector: 'suggested-quotations-dialog',
@@ -15,7 +14,6 @@ import { QuotationStatusService } from '../../../../quotation/services/quotation
 export class SuggestedQuotationsDialogComponent implements OnInit {
 
   @Input() selectedAffaire: Affaire | undefined;
-  selectedQuotation = {} as QuotationSearchResult;
   quotationSearch: QuotationSearch = {} as QuotationSearch;
 
   QUOTATION_STATUS_SENT_TO_CUSTOMER = QUOTATION_STATUS_SENT_TO_CUSTOMER;
@@ -36,12 +34,8 @@ export class SuggestedQuotationsDialogComponent implements OnInit {
     }
   }
 
-  changeSelectedQuotation(element: any) {
-    this.selectedQuotation = element;
-  }
-
   onConfirm(): void {
-    this.suggestionsDialogRef.close(this.selectedQuotation);
+    this.suggestionsDialogRef.close();
   }
 
   onClose(): void {
