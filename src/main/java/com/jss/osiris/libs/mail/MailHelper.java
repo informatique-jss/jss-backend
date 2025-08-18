@@ -283,7 +283,9 @@ public class MailHelper {
                 message.addInline("headerPicture", imageSourceQuotationHeader, PNG_MIME);
 
                 // QR Code
-                if (mail.getCbLink() != null) {
+                if (mail.getCbLink() != null && mail.getMailComputeResult() != null
+                        && (mail.getIsQrCodePaymentDisabled() == null
+                                || !mail.getIsQrCodePaymentDisabled())) {
                     final InputStreamSource imageSourceQrCode = new ByteArrayResource(
                             qrCodeHelper.getQrCode(mail.getCbLink(), 150));
                     message.addInline("qrCodePicture", imageSourceQrCode, PNG_MIME);
@@ -455,6 +457,10 @@ public class MailHelper {
         ctx.setVariable("ibanJss", ibanJss);
         ctx.setVariable("bicJss", bicJss);
         ctx.setVariable("cbLink", mail.getCbLink());
+        ctx.setVariable("isQrCodePaymentDisabled",
+                mail.getIsQrCodePaymentDisabled()
+                        ? mail.getIsQrCodePaymentDisabled()
+                        : false);
 
         if (mail.getMailTemplate().equals(CustomerMail.TEMPLATE_CUSTOMER_ORDER_IN_PROGRESS)
                 && (mail.getCustomerOrder() != null || mail.getQuotation() != null))
@@ -1327,15 +1333,30 @@ public class MailHelper {
 
         mail.setIsLastReminder(isLastReminder);
 
+        if (customerOrder.getDocuments() != null && customerOrder.getDocuments().size() > 0) {
+            for (Document document : customerOrder.getDocuments())
+                if (document.getDocumentType().getId().equals(constantService.getDocumentTypeBilling().getId())
+                        && (document.getIsQrCodePaymentDisabled() == null
+                                || (document.getIsQrCodePaymentDisabled() != null
+                                        && !document.getIsQrCodePaymentDisabled())))
+                    mail.setIsQrCodePaymentDisabled(false);
+                else if (document.getDocumentType().getId()
+                        .equals(constantService.getDocumentTypeBilling().getId())) {
+                    mail.setIsQrCodePaymentDisabled(true);
+                    break;
+                }
+        }
+
         Invoice invoice = null;
         for (Invoice invoiceCo : mail.getCustomerOrder().getInvoices())
             if (invoiceCo.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId())
                     || invoiceCo.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusPayed().getId()))
                 invoice = invoiceCo;
 
-        mail.setCbLink(
-                paymentCbEntryPoint + "/order/invoice?customerOrderId=" + mail.getCustomerOrder().getId() + "&mail="
-                        + mail.getMailComputeResult().getRecipientsMailTo().get(0).getMail());
+        if (mail.getMailComputeResult() != null)
+            mail.setCbLink(
+                    paymentCbEntryPoint + "/order/invoice?customerOrderId=" + mail.getCustomerOrder().getId() + "&mail="
+                            + mail.getMailComputeResult().getRecipientsMailTo().get(0).getMail());
 
         if (invoice != null)
             mail.setSubject(
