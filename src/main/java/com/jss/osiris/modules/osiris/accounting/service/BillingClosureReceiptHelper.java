@@ -45,6 +45,8 @@ import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
+import com.jss.osiris.modules.osiris.accounting.model.AccountingRecordSearch;
+import com.jss.osiris.modules.osiris.accounting.model.AccountingRecordSearchResult;
 import com.jss.osiris.modules.osiris.accounting.model.BillingClosureReceiptValue;
 import com.jss.osiris.modules.osiris.invoicing.model.ICreatedDate;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
@@ -112,6 +114,9 @@ public class BillingClosureReceiptHelper {
 
     @Autowired
     ServiceService serviceService;
+
+    @Autowired
+    AccountingRecordService accountingRecordService;
 
     public File getBillingClosureReceiptFile(Integer tiersId, Integer responsableId, boolean downloadFile)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
@@ -349,6 +354,20 @@ public class BillingClosureReceiptHelper {
             if (!hadSomeValues)
                 values.remove(values.size() - 1);
         }
+
+        // Add as400 values
+        if (tiers != null) {
+            AccountingRecordSearch search = new AccountingRecordSearch();
+            search.setAccountingAccount(tiers.getAccountingAccountCustomer());
+            search.setIsFromAs400(true);
+            search.setHideLettered(true);
+
+            List<AccountingRecordSearchResult> results = accountingRecordService.searchAccountingRecords(search, true);
+            if (results != null)
+                for (AccountingRecordSearchResult result : results)
+                    values.add(getBillingClosureReceiptValueForAs400(result));
+        }
+
         return values;
     }
 
@@ -429,6 +448,24 @@ public class BillingClosureReceiptHelper {
         // getAllAffairesLabelForCustomerOrder(customerOrder)).replaceAll("&",
         // "<![CDATA[&]]>");
         // }
+        value.setEventDescription(description);
+
+        return value;
+    }
+
+    private BillingClosureReceiptValue getBillingClosureReceiptValueForAs400(
+            AccountingRecordSearchResult accountingRecord) {
+        BillingClosureReceiptValue value = new BillingClosureReceiptValue();
+        value.setDisplayBottomBorder(false);
+        value.setDebitAmount(accountingRecord.getDebitAmount());
+        value.setCreditAmount(accountingRecord.getCreditAmount());
+        value.setResponsable(null);
+        value.setIdCustomerOrder(null);
+        value.setEventDateTime(accountingRecord.getOperationDateTime());
+        value.setEventDateString(
+                accountingRecord.getOperationDateTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+
+        String description = accountingRecord.getLabel().replaceAll("&", "<![CDATA[&]]>");
         value.setEventDescription(description);
 
         return value;

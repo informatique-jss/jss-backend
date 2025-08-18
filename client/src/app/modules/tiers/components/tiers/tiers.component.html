@@ -109,7 +109,11 @@
   *ngIf="editMode==false &&  tiers.id" (click)="printLabel()">
   <mat-icon>print</mat-icon>
 </button>
-<button matTooltip="Ajouter une notification sur ce tiers" mat-fab color="accent" class="sixth-fab-button"
+<button matTooltip="Redresser les comptes" mat-fab color="accent" class="sixth-fab-button"
+  *ngIf="editMode==false &&  tiers.id && canRepairAccounts()" (click)="repairAccounts()">
+  <mat-icon>build</mat-icon>
+</button>
+<button matTooltip="Ajouter une notification sur ce tiers" mat-fab color="accent" class="second-fab-button"
   (click)="addNewNotification()" *ngIf="editMode==false &&  tiers.id && canDisplayNotifications()"
   [matBadge]="getNotificationForTiers().length" [matBadgeHidden]="getNotificationForTiers().length<=0"
   matBadgePosition="below after" matBadgeColor="warn">

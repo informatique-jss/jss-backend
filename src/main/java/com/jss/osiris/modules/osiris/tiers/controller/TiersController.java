@@ -25,6 +25,7 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.jackson.JacksonViews.OsirisDetailedView;
+import com.jss.osiris.modules.osiris.accounting.service.AccountingRepairHelper;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
@@ -164,6 +165,9 @@ public class TiersController {
 
   @Autowired
   ProviderService providerService;
+
+  @Autowired
+  AccountingRepairHelper accountingRepairHelper;
 
   @GetMapping(inputEntryPoint + "/rff-frequencies")
   public ResponseEntity<List<RffFrequency>> getRffFrequencies() {
@@ -514,6 +518,22 @@ public class TiersController {
       throw new OsirisValidationException("tiers");
 
     return new ResponseEntity<Boolean>(tiersService.deleteTiers(tiers), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/tiers/account/repair")
+  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+  public ResponseEntity<Boolean> repairTierAccounts(@RequestParam Integer idTiers)
+      throws OsirisValidationException, OsirisClientMessageException, OsirisException, OsirisDuplicateException {
+    if (idTiers == null)
+      throw new OsirisValidationException("idTiers");
+
+    Tiers tiers = tiersService.getTiers(idTiers);
+    if (tiers == null)
+      throw new OsirisValidationException("tiers");
+
+    accountingRepairHelper.repairTierAccounts(tiers);
+
+    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/responsable/search")

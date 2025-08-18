@@ -142,6 +142,10 @@ public class AccountingRecord implements Serializable, IId {
 
 	private Boolean isManual;
 
+	private Integer letteringNumberOld;
+
+	private LocalDateTime letteringDateTimeOld;
+
 	public Integer getId() {
 		return id;
 	}
@@ -364,6 +368,22 @@ public class AccountingRecord implements Serializable, IId {
 
 	public void setIsManual(Boolean isManual) {
 		this.isManual = isManual;
+	}
+
+	public Integer getLetteringNumberOld() {
+		return letteringNumberOld;
+	}
+
+	public void setLetteringNumberOld(Integer letteringNumberOld) {
+		this.letteringNumberOld = letteringNumberOld;
+	}
+
+	public LocalDateTime getLetteringDateTimeOld() {
+		return letteringDateTimeOld;
+	}
+
+	public void setLetteringDateTimeOld(LocalDateTime letteringDateTimeOld) {
+		this.letteringDateTimeOld = letteringDateTimeOld;
 	}
 
 }
