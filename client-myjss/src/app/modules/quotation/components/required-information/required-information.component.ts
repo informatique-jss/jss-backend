@@ -44,7 +44,6 @@ import { Department } from '../../../profile/model/Department';
 import { Phone } from '../../../profile/model/Phone';
 import { Responsable } from '../../../profile/model/Responsable';
 import { LoginService } from '../../../profile/services/login.service';
-import { BeneficialOwner } from '../../model/BeneficialOwner';
 import { Domiciliation } from '../../model/Domiciliation';
 import { DomiciliationContractType } from '../../model/DomiciliationContractType';
 import { IQuotation } from '../../model/IQuotation';
@@ -128,7 +127,6 @@ export class RequiredInformationComponent implements OnInit {
   PROVISION_SCREEN_TYPE_ANNOUNCEMENT = PROVISION_SCREEN_TYPE_ANNOUNCEMENT;
 
   provisionTypeRbe!: ProvisionType;
-  modifiedBeneficialOwners: BeneficialOwner[] = [{} as BeneficialOwner];
 
   mailRedirectionTypeOther!: MailRedirectionType;
   domiciliationContractTypeRouteEmailAndMail!: DomiciliationContractType
@@ -725,11 +723,4 @@ export class RequiredInformationComponent implements OnInit {
     return false;
   }
 
-  addBeneficialOwner() {
-    this.modifiedBeneficialOwners.push({} as BeneficialOwner);
-  }
-
-  deleteLastBeneficialOwner() {
-    this.modifiedBeneficialOwners.pop();
-  }
 }
