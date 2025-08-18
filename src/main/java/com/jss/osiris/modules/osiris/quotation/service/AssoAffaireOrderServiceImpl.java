@@ -28,7 +28,6 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.PhoneService;
-import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.AffaireSearch;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.AnnouncementStatus;
@@ -214,10 +213,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     public AssoAffaireOrder completeAssoAffaireOrder(AssoAffaireOrder assoAffaireOrder, IQuotation customerOrder,
             Boolean isFromUser)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
-        // Complete domiciliation end date
-        Employee currentEmployee = null;
-        Employee maxWeightEmployee = null;
-        Integer maxWeight = -1000000000;
         Boolean oneNewProvision = false;
 
         for (Service service : assoAffaireOrder.getServices()) {
@@ -613,17 +608,10 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
             }
         }
 
-        CustomerOrder tempOrder = customerOrderService.getCustomerOrder(assoAffaireOrder.getCustomerOrder().getId());
-        if (oneNewProvision && tempOrder != null && tempOrder.getQuotations() != null
-                && !tempOrder.getQuotations().isEmpty())
+        if (oneNewProvision && customerOrder != null && customerOrder instanceof CustomerOrder
+                && ((CustomerOrder) customerOrder).getQuotations() != null
+                && ((CustomerOrder) customerOrder).getQuotations().size() > 0)
             notificationService.notifyQuotationModified(assoAffaireOrder.getCustomerOrder());
-
-        if (maxWeightEmployee != null) {
-            for (Service service : assoAffaireOrder.getServices())
-                for (Provision provision : service.getProvisions())
-                    if (provision.getId() == null)
-                        provision.setAssignedTo(maxWeightEmployee);
-        }
 
         return assoAffaireOrder;
     }
