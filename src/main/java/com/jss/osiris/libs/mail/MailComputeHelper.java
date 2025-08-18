@@ -92,8 +92,7 @@ public class MailComputeHelper {
         if (!isReminder)
             return computeMailForDocument(quotation, constantService.getDocumentTypeBilling(), false);
         else
-            return computeReminderMailForDocument(quotation, constantService.getDocumentTypeBilling(), false,
-                    isReminder);
+            return computeReminderMailForDocument(quotation, constantService.getDocumentTypeBilling());
     }
 
     public MailComputeResult computeMailForPublicationReceipt(IQuotation quotation)
@@ -145,8 +144,7 @@ public class MailComputeHelper {
         return computeMailForConfrereAnnouncementRequest(announcement);
     }
 
-    private MailComputeResult computeReminderMailForDocument(IQuotation quotation, DocumentType documentType,
-            boolean isForcedClient, Boolean isReminder)
+    private MailComputeResult computeReminderMailForDocument(IQuotation quotation, DocumentType documentType)
             throws OsirisException, OsirisClientMessageException {
 
         if (quotation == null)
@@ -161,85 +159,14 @@ public class MailComputeHelper {
         mailComputeResult.setRecipientsMailCc(new ArrayList<Mail>());
         mailComputeResult.setIsSendToClient(false);
         mailComputeResult.setIsSendToAffaire(false);
-
         Document quotationDocument = documentService.getDocumentByDocumentType(quotation.getDocuments(), documentType);
-        Responsable responsable = quotation.getResponsable();
-
-        if (quotationDocument == null)
-            throw new OsirisException(null,
-                    "Document " + documentType.getLabel() + " not found in IQuoation " + quotation.getId());
-
-        if (responsable == null)
-            throw new OsirisException(null,
-                    "Customer order not found for IQuoation " + quotation.getId());
-
-        if (quotationDocument != null) {
-            boolean hasAlreadyAddMails = false;
-            if (isReminder && quotationDocument.getReminderMail() != null) {
-                mailComputeResult.getRecipientsMailTo().add(quotationDocument.getReminderMail());
-                mailComputeResult.setMailToClientOrigin("mails de relance");
-                hasAlreadyAddMails = true;
-            }
-
-            if ((quotationDocument.getIsRecipientAffaire() && !isForcedClient && !isReminder)
-                    || (quotationDocument.getIsRecipientAffaire() && !isForcedClient && isReminder
-                            && quotationDocument.getReminderMail() == null)) {
-                mailComputeResult.setIsSendToAffaire(true);
-                if (!hasAlreadyAddMails && quotationDocument.getMailsAffaire() != null
-                        && quotationDocument.getMailsAffaire().size() > 0) {
-                    mailComputeResult.getRecipientsMailTo().addAll(quotationDocument.getMailsAffaire());
-                    mailComputeResult.setMailToAffaireOrigin("mails indiqués dans la commande");
-                    hasAlreadyAddMails = true;
-                }
-
-                if (hasAlreadyAddMails && !quotationDocument.getAddToAffaireMailList()) {
-                    // do nothing
-                } else if (quotation.getAssoAffaireOrders() != null && quotation.getAssoAffaireOrders().size() > 0
-                        && quotation.getAssoAffaireOrders().get(0).getAffaire().getMails() != null
-                        && quotation.getAssoAffaireOrders().get(0).getAffaire().getMails().size() > 0) {
-                    mailComputeResult.getRecipientsMailTo()
-                            .addAll(quotation.getAssoAffaireOrders().get(0).getAffaire().getMails());
-                    mailComputeResult.setMailToAffaireOrigin("mails indiqués sur l'affaire");
-                } else
-                    throw new OsirisClientMessageException("Aucun mail trouvé pour l'affaire");
-            }
-
-            if (((quotationDocument.getIsRecipientClient()
-                    || !quotationDocument.getIsRecipientClient() && !quotationDocument.getIsRecipientAffaire()
-                    || isForcedClient) && !isReminder)
-                    || ((quotationDocument.getIsRecipientClient()
-                            || !quotationDocument.getIsRecipientClient() && !quotationDocument.getIsRecipientAffaire()
-                            || isForcedClient) && isReminder && quotationDocument.getReminderMail() == null)) {
-                hasAlreadyAddMails = false;
-                mailComputeResult.setIsSendToClient(true);
-                if (quotationDocument.getMailsClient() != null
-                        && quotationDocument.getMailsClient().size() > 0) {
-                    mailComputeResult.getRecipientsMailTo().addAll(quotationDocument.getMailsClient());
-                    mailComputeResult.setMailToClientOrigin("mails indiqués dans la commande");
-                    hasAlreadyAddMails = true;
-                }
-
-                if (isForcedClient) {
-                    if (quotationDocument.getMailsAffaire() != null && quotationDocument.getMailsAffaire().size() > 0) {
-                        mailComputeResult.getRecipientsMailTo().addAll(quotationDocument.getMailsAffaire());
-                    }
-                }
-                if (hasAlreadyAddMails && !quotationDocument.getAddToClientMailList()) {
-                    // do nothing
-                } else if (responsable.getMail() != null) {
-                    mailComputeResult.getRecipientsMailTo().add(responsable.getMail());
-                    mailComputeResult.setMailToClientOrigin("mail du responsable");
-                } else if (responsable.getTiers().getMails() != null
-                        && responsable.getTiers().getMails().size() > 0) {
-                    mailComputeResult.getRecipientsMailTo().addAll(responsable.getTiers().getMails());
-                    mailComputeResult.setMailToClientOrigin("mails du tiers associé au responsable");
-                } else if (responsable.getMail() != null) {
-                    mailComputeResult.getRecipientsMailTo().add(responsable.getMail());
-                    mailComputeResult.setMailToClientOrigin("mails du tiers");
-                } else
-                    throw new OsirisClientMessageException("Aucun mail trouvé pour le client");
-            }
+        if (quotationDocument.getReminderMail() != null) {
+            mailComputeResult.getRecipientsMailTo().add(quotationDocument.getReminderMail());
+            mailComputeResult.setMailToClientOrigin("mails de relance");
+        } else {
+            return computeMailForDocument(quotation, constantService.getDocumentTypeBilling(), false);
         }
+
         return mailComputeResult;
     }
 

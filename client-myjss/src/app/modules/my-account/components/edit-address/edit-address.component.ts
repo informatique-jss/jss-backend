@@ -158,14 +158,17 @@ export class EditAddressComponent implements OnInit {
       this.appService.openRoute(null, "account/settings/" + this.idResponsable, undefined);
   }
 
-  deleteMail(mail: Mail, document: Document, isAffaire: boolean, isReminder: boolean) {
+  deleteMail(mail: Mail, document: Document, isAffaire: boolean) {
     if (document)
       if (isAffaire)
         document.mailsAffaire.splice(document.mailsAffaire.indexOf(mail), 1);
-    if (!isAffaire && isReminder)
+      else
+        document.mailsClient.splice(document.mailsClient.indexOf(mail), 1);
+  }
+
+  deleteMailReminder(mail: Mail, document: Document) {
+    if (document)
       document.reminderMail = {} as Mail;
-    else if (!isAffaire && !isReminder)
-      document.mailsClient.splice(document.mailsClient.indexOf(mail), 1);
   }
 
   addMail(document: Document, isAffaire: boolean) {
