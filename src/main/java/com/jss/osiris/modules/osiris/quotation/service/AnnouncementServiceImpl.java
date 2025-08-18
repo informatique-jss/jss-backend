@@ -15,7 +15,9 @@ import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.itextpdf.text.pdf.PdfReader;
@@ -23,6 +25,7 @@ import com.itextpdf.text.pdf.parser.PdfReaderContentParser;
 import com.itextpdf.text.pdf.parser.SimpleTextExtractionStrategy;
 import com.itextpdf.text.pdf.parser.TextExtractionStrategy;
 import com.jss.osiris.libs.PictureHelper;
+import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.WordGenerationHelper;
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
@@ -894,7 +897,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public Page<Announcement> getAnnouncementSearch(String searchText, Pageable pageableRequest)
+    public Page<Announcement> getAnnouncementSearch(String searchText, LocalDate startDate, Pageable pageableRequest)
             throws OsirisException {
         List<CustomerOrderStatus> customerOrderStatusExcluded = new ArrayList<CustomerOrderStatus>();
         customerOrderStatusExcluded
@@ -906,9 +909,12 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         announcementStatus
                 .add(announcementStatusService.getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_DONE));
 
+        if (startDate == null)
+            startDate = LocalDate.now().minusYears(100);
+
         List<Announcement> announcements = populateAffaireLabel(
                 announcementRepository.searchAnnouncementForWebSite(searchText, customerOrderStatusExcluded,
-                        announcementStatus, constantService.getConfrereJssSpel(),
+                        announcementStatus, startDate, constantService.getConfrereJssSpel(),
                         pageableRequest).getContent());
 
         return new PageImpl<>(announcements);
@@ -922,10 +928,9 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Override
     public List<Announcement> getLastSevenDaysAnnouncements() throws OsirisException {
-        return populateAffaireLabel(announcementRepository.getAnnouncementByStatusPublicationDateAndConfrere(
-                List.of(announcementStatusService
-                        .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_DONE)),
-                LocalDate.now().minusDays(7), LocalDate.now(), constantService.getConfrereJssSpel()));
+        Pageable pageable = PageRequest.of(0, ValidationHelper.limitPageSize(100),
+                Sort.by(Sort.Direction.DESC, "publicationDate"));
+        return getAnnouncementSearch("", LocalDate.now().minusDays(7), pageable).getContent();
     }
 
     private List<Announcement> populateAffaireLabel(List<Announcement> announcements) {

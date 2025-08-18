@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.quotation.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -97,7 +98,8 @@ public interface AnnouncementService {
         public void sendReminderToCustomerForBilanPublication(Announcement announcement)
                         throws OsirisException, OsirisClientMessageException;
 
-        public Page<Announcement> getAnnouncementSearch(String searchText, Pageable pageableRequest)
+        public Page<Announcement> getAnnouncementSearch(String searchText, LocalDate startDate,
+                        Pageable pageableRequest)
                         throws OsirisException;
 
         public Announcement getAnnouncementForWebSite(Announcement announcement) throws OsirisException;
