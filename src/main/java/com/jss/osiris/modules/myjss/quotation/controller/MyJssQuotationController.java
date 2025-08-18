@@ -1099,6 +1099,7 @@ public class MyJssQuotationController {
 				currentDocument.setIsRecipientAffaire(document.getIsRecipientAffaire());
 				currentDocument.setMailsAffaire(document.getMailsAffaire());
 				currentDocument.setMailsClient(document.getMailsClient());
+				currentDocument.setReminderMail(mailService.populateMailId(document.getReminderMail()));
 				currentDocument.setAddToAffaireMailList(document.getAddToAffaireMailList());
 				currentDocument.setAddToClientMailList(document.getAddToClientMailList());
 				currentDocument.setBillingLabelType(document.getBillingLabelType());

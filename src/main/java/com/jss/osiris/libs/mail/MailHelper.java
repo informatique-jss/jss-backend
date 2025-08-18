@@ -439,18 +439,17 @@ public class MailHelper {
         ctx.setVariable("cbLink", mail.getCbLink());
 
         if (mail.getMailTemplate().equals(CustomerMail.TEMPLATE_CUSTOMER_ORDER_IN_PROGRESS)
-                && (mail.getCustomerOrder() != null || mail.getQuotation() != null)) {
+                && (mail.getCustomerOrder() != null || mail.getQuotation() != null))
             try {
                 MailComputeResult mailComputeResultInvoice = mailComputeHelper
                         .computeMailForCustomerOrderFinalizationAndInvoice(
-                                mail.getCustomerOrder() != null ? mail.getCustomerOrder() : mail.getQuotation());
+                                mail.getCustomerOrder() != null ? mail.getCustomerOrder() : mail.getQuotation(), false);
                 if (mailComputeResultInvoice != null)
                     ctx.setVariable("mailComputeResultInvoice", mailComputeResultInvoice);
             } catch (OsirisClientMessageException e) {
                 // We catch the exception so the mail is still sent even if the adress of the
                 // Affaire is not set
             }
-        }
         ctx.setVariable("attachments", mail.getAttachments());
         ctx.setVariable("provision", mail.getProvision());
         ctx.setVariable("tiers", mail.getTiers());
@@ -461,7 +460,9 @@ public class MailHelper {
 
         if (mail.getProvision() != null && mail.getProvision().getAnnouncement() != null
                 && mail.getProvision().getAnnouncement().getIsAnnouncementAlreadySentToConfrere() != null
-                && mail.getProvision().getAnnouncement().getIsAnnouncementAlreadySentToConfrere()) {
+                && mail.getProvision().getAnnouncement().getIsAnnouncementAlreadySentToConfrere())
+
+        {
             ctx.setVariable("sentDateToConfrere", mail.getProvision().getAnnouncement()
                     .getFirstConfrereSentMailDateTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy à HH:mm")));
         }
@@ -487,6 +488,7 @@ public class MailHelper {
         }
 
         if (quotation != null)
+
             setQuotationPrice(quotation, ctx);
 
         if (mail.getMissingAttachmentQuery() != null) {
@@ -1108,7 +1110,8 @@ public class MailHelper {
         mail.setProvision(currentProvision);
         mail.setReplyTo(customerOrder.getResponsable().getSalesEmployee());
         mail.setSendToMe(false);
-        mail.setMailComputeResult(mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(customerOrder));
+        mail.setMailComputeResult(
+                mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(customerOrder, false));
         mail.setSubject("Publication de vos comptes annuels - "
                 + getCustomerOrderAffaireLabel(customerOrder, currentProvision.getService().getAssoAffaireOrder()));
         customerMailService.addMailToQueue(mail);
@@ -1278,7 +1281,9 @@ public class MailHelper {
 
         CustomerMail mail = new CustomerMail();
         mail.setCustomerOrder(customerOrder);
-        mail.setMailComputeResult(mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(customerOrder));
+        mail.setMailComputeResult(
+                mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(customerOrder,
+                        isReminder || isLastReminder));
 
         List<Attachment> attachments = new ArrayList<Attachment>();
         List<Integer> attachmentTypeIdsDone = new ArrayList<Integer>();
@@ -1522,7 +1527,8 @@ public class MailHelper {
 
         CustomerMail mail = new CustomerMail();
         mail.setCustomerOrder(customerOrder);
-        mail.setMailComputeResult(mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(customerOrder));
+        mail.setMailComputeResult(
+                mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(customerOrder, false));
 
         List<Attachment> attachments = new ArrayList<Attachment>();
         List<Integer> attachmentTypeIdsDone = new ArrayList<Integer>();

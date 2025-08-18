@@ -117,6 +117,15 @@
             </tr>
           </table>
           <addressing [editMode]="editMode" [document]="billingDocument "></addressing>
+          <table class="full-width">
+            <tr>
+              <td>
+                <single-chips-mail label="Mails" [(model)]="billingDocument.reminderMail" [form]="settlementBillingForm"
+                  propertyName="reminderMail" label="Adresse mail de relance pour facturation"
+                  [isDisabled]="!editMode"></single-chips-mail>
+              </td>
+            </tr>
+          </table>
         </mat-expansion-panel>
         <mat-expansion-panel *ngIf="instanceOfTiers(tiers) && !instanceOfResponsable(tiers)">
           <mat-expansion-panel-header>
