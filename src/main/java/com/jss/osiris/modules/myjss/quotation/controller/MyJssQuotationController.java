@@ -291,7 +291,8 @@ public class MyJssQuotationController {
 	@PostMapping(inputEntryPoint + "/order/search/current")
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<CustomerOrder>> searchOrdersForCurrentUser(
-			@RequestBody List<String> customerOrderStatus, @RequestParam Integer page, @RequestParam String sortBy)
+			@RequestBody List<String> customerOrderStatus, @RequestParam boolean withMissingAttachment,
+			@RequestParam Integer page, @RequestParam String sortBy)
 			throws OsirisException {
 		if (customerOrderStatus == null || customerOrderStatus.size() == 0)
 			return new ResponseEntity<List<CustomerOrder>>(new ArrayList<CustomerOrder>(), HttpStatus.OK);
@@ -304,7 +305,9 @@ public class MyJssQuotationController {
 			sortBy = "createdDateDesc";
 
 		return new ResponseEntity<List<CustomerOrder>>(
-				customerOrderService.searchOrdersForCurrentUser(customerOrderStatus, page, sortBy), HttpStatus.OK);
+				customerOrderService.searchOrdersForCurrentUser(customerOrderStatus, withMissingAttachment, page,
+						sortBy),
+				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/order/search/affaire")
@@ -871,7 +874,7 @@ public class MyJssQuotationController {
 
 	@GetMapping(inputEntryPoint + "/affaire/siret")
 	@JsonView(JacksonViews.MyJssListView.class)
-	public ResponseEntity<List<Affaire>> getAffaireBySiretOrSiren(@RequestParam String siretOrSiren,
+	public ResponseEntity<Page<Affaire>> getAffaireBySiretOrSiren(@RequestParam String siretOrSiren,
 			HttpServletRequest request)
 			throws OsirisClientMessageException, OsirisException {
 		detectFlood(request);
@@ -880,11 +883,12 @@ public class MyJssQuotationController {
 
 		if (siretOrSiren == null || !validationHelper.validateSiret(siretOrSiren.trim().replaceAll(" ", ""))
 				&& !validationHelper.validateSiren(siretOrSiren.trim().replaceAll(" ", "")))
-			return new ResponseEntity<List<Affaire>>(new ArrayList<Affaire>(), HttpStatus.OK);
+			return new ResponseEntity<Page<Affaire>>(Page.empty(), HttpStatus.OK);
 
-		return new ResponseEntity<List<Affaire>>(
-				affaireService.getAffairesFromSiret(siretOrSiren.trim().replaceAll(" ", "")),
-				HttpStatus.OK);
+		List<Affaire> affaires = affaireService.getAffairesFromSiret(siretOrSiren.trim().replaceAll(" ", ""));
+		PageRequest newPageRequest = PageRequest.of(0, Math.max(affaires.size(), 1));
+		Page<Affaire> pageResult = new PageImpl<>(affaires, newPageRequest, affaires.size());
+		return new ResponseEntity<Page<Affaire>>(pageResult, HttpStatus.OK);
 	}
 
 	@PostMapping(inputEntryPoint + "/affaire")
@@ -1095,6 +1099,7 @@ public class MyJssQuotationController {
 				currentDocument.setIsRecipientAffaire(document.getIsRecipientAffaire());
 				currentDocument.setMailsAffaire(document.getMailsAffaire());
 				currentDocument.setMailsClient(document.getMailsClient());
+				currentDocument.setReminderMail(mailService.populateMailId(document.getReminderMail()));
 				currentDocument.setAddToAffaireMailList(document.getAddToAffaireMailList());
 				currentDocument.setAddToClientMailList(document.getAddToClientMailList());
 				currentDocument.setBillingLabelType(document.getBillingLabelType());
@@ -1805,6 +1810,21 @@ public class MyJssQuotationController {
 			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
 
 		quotationService.addOrUpdateQuotationStatus(quotation, QuotationStatus.ABANDONED);
+
+		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/quotation/validate")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<Boolean> validateQuotation(Integer quotationId, HttpServletRequest request)
+			throws OsirisValidationException, OsirisException {
+		detectFlood(request);
+
+		Quotation quotation = quotationService.getQuotation(quotationId);
+		if (quotation == null || !myJssQuotationValidationHelper.canSeeQuotation(quotation))
+			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+
+		quotationService.addOrUpdateQuotationStatus(quotation, QuotationStatus.VALIDATED_BY_CUSTOMER);
 
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}

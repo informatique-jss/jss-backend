@@ -3,6 +3,11 @@ package com.jss.osiris.modules.osiris.accounting.service;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -11,8 +16,24 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.GlobalExceptionHandler;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
@@ -24,6 +45,8 @@ import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.mail.model.MailComputeResult;
+import com.jss.osiris.modules.osiris.accounting.model.AccountingRecordSearch;
+import com.jss.osiris.modules.osiris.accounting.model.AccountingRecordSearchResult;
 import com.jss.osiris.modules.osiris.accounting.model.BillingClosureReceiptValue;
 import com.jss.osiris.modules.osiris.invoicing.model.ICreatedDate;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
@@ -91,6 +114,9 @@ public class BillingClosureReceiptHelper {
 
     @Autowired
     ServiceService serviceService;
+
+    @Autowired
+    AccountingRecordService accountingRecordService;
 
     public File getBillingClosureReceiptFile(Integer tiersId, Integer responsableId, boolean downloadFile)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
@@ -197,7 +223,7 @@ public class BillingClosureReceiptHelper {
                 .searchOrders(customerOrderStatusService.getCustomerOrderStatus().stream()
                         .filter(status -> !status.getCode().equals(CustomerOrderStatus.BILLED) &&
                                 !status.getCode().equals(CustomerOrderStatus.ABANDONED))
-                        .collect(Collectors.toList()), null);
+                        .collect(Collectors.toList()), false, null);
 
         // Find invoices
         for (Responsable responsableToCheck : responsableList) {
@@ -328,6 +354,20 @@ public class BillingClosureReceiptHelper {
             if (!hadSomeValues)
                 values.remove(values.size() - 1);
         }
+
+        // Add as400 values
+        if (tiers != null) {
+            AccountingRecordSearch search = new AccountingRecordSearch();
+            search.setAccountingAccount(tiers.getAccountingAccountCustomer());
+            search.setIsFromAs400(true);
+            search.setHideLettered(true);
+
+            List<AccountingRecordSearchResult> results = accountingRecordService.searchAccountingRecords(search, true);
+            if (results != null)
+                for (AccountingRecordSearchResult result : results)
+                    values.add(getBillingClosureReceiptValueForAs400(result));
+        }
+
         return values;
     }
 
@@ -380,7 +420,7 @@ public class BillingClosureReceiptHelper {
             value.setEventDescription(String.join("", eventDescriptions));
 
             MailComputeResult mailComputeResult = mailComputeHelper
-                    .computeMailForCustomerOrderFinalizationAndInvoice(invoice.getCustomerOrder());
+                    .computeMailForCustomerOrderFinalizationAndInvoice(invoice.getCustomerOrder(), false);
             value.setEventCbLink(paymentCbEntryPoint + "/order/invoice?mail="
                     + mailComputeResult.getRecipientsMailTo().get(0).getMail() + "&customerOrderId="
                     + invoice.getCustomerOrder().getId());
@@ -408,6 +448,24 @@ public class BillingClosureReceiptHelper {
         // getAllAffairesLabelForCustomerOrder(customerOrder)).replaceAll("&",
         // "<![CDATA[&]]>");
         // }
+        value.setEventDescription(description);
+
+        return value;
+    }
+
+    private BillingClosureReceiptValue getBillingClosureReceiptValueForAs400(
+            AccountingRecordSearchResult accountingRecord) {
+        BillingClosureReceiptValue value = new BillingClosureReceiptValue();
+        value.setDisplayBottomBorder(false);
+        value.setDebitAmount(accountingRecord.getDebitAmount());
+        value.setCreditAmount(accountingRecord.getCreditAmount());
+        value.setResponsable(null);
+        value.setIdCustomerOrder(null);
+        value.setEventDateTime(accountingRecord.getOperationDateTime());
+        value.setEventDateString(
+                accountingRecord.getOperationDateTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+
+        String description = accountingRecord.getLabel().replaceAll("&", "<![CDATA[&]]>");
         value.setEventDescription(description);
 
         return value;
@@ -509,5 +567,273 @@ public class BillingClosureReceiptHelper {
                                     + (tiers != null ? tiers.getId() : responsable.getId())),
                     OsirisLog.UNHANDLED_LOG);
         }
+    }
+
+    private void cleanBeforeMergeOnValidCells(XSSFSheet sheet, CellRangeAddress region, XSSFCellStyle cellStyle) {
+        for (int rowNum = region.getFirstRow(); rowNum <= region.getLastRow(); rowNum++) {
+            XSSFRow row = sheet.getRow(rowNum);
+            if (row == null) {
+                row = sheet.createRow(rowNum);
+            }
+            for (int colNum = region.getFirstColumn(); colNum <= region.getLastColumn(); colNum++) {
+                XSSFCell currentCell = row.getCell(colNum);
+                if (currentCell == null) {
+                    currentCell = row.createCell(colNum);
+                }
+                currentCell.setCellStyle(cellStyle);
+            }
+        }
+    }
+
+    @Transactional
+    public File getReceiptExport(Responsable responsable) throws OsirisException {
+        responsable = responsableService.getResponsable(responsable.getId());
+
+        List<BillingClosureReceiptValue> values = generateBillingClosureValuesForITiers(responsable.getTiers(),
+                responsable, true, true, true);
+
+        values.sort(new Comparator<BillingClosureReceiptValue>() {
+            @Override
+            public int compare(BillingClosureReceiptValue o1, BillingClosureReceiptValue o2) {
+                if (o2.getEventDateTime() == null && o1.getEventDateTime() != null)
+                    return -1;
+                if (o2.getEventDateTime() != null && o1.getEventDateTime() == null)
+                    return 1;
+                if (o1.getEventDateTime() == null && o2.getEventDateTime() == null)
+                    return 0;
+                return o1.getEventDateTime().isAfter(o2.getEventDateTime()) ? -1 : 1;
+            }
+        });
+
+        return getReceiptExport(values, responsable);
+    }
+
+    private File getReceiptExport(List<BillingClosureReceiptValue> receiptValues, Responsable responsable)
+            throws OsirisException {
+        XSSFWorkbook wb = new XSSFWorkbook();
+
+        // Define style
+        // Title
+        XSSFCellStyle titleCellStyle = wb.createCellStyle();
+        titleCellStyle.setAlignment(HorizontalAlignment.CENTER);
+        titleCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        XSSFFont titleFont = wb.createFont();
+        titleFont.setBold(true);
+        XSSFColor titleColor = new XSSFColor();
+        titleColor.setARGBHex("0000FF");
+        titleFont.setColor(titleColor);
+        titleFont.setFontHeight(14);
+        titleCellStyle.setFont(titleFont);
+        titleCellStyle.setBorderBottom(BorderStyle.THIN);
+        titleCellStyle.setBorderTop(BorderStyle.THIN);
+        titleCellStyle.setBorderRight(BorderStyle.THIN);
+        titleCellStyle.setBorderLeft(BorderStyle.THIN);
+
+        // Header
+        XSSFCellStyle headerCellStyle = wb.createCellStyle();
+        headerCellStyle.setAlignment(HorizontalAlignment.CENTER);
+        headerCellStyle.setBorderBottom(BorderStyle.THIN);
+        headerCellStyle.setBorderTop(BorderStyle.THIN);
+        headerCellStyle.setBorderRight(BorderStyle.THIN);
+        headerCellStyle.setBorderLeft(BorderStyle.THIN);
+        String rgbS = "FFFF99";
+        byte[] rgbB;
+        try {
+            rgbB = Hex.decodeHex(rgbS);
+        } catch (DecoderException e) {
+            try {
+                wb.close();
+            } catch (IOException e2) {
+                throw new OsirisException(e, "Unable to close workbook");
+            }
+            throw new OsirisException(e, "Unable to decode color " + rgbS);
+        }
+        XSSFColor color = new XSSFColor(rgbB, null);
+        headerCellStyle.setFillForegroundColor(color);
+        headerCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+        // Record line
+        XSSFCellStyle recordCellStyle = wb.createCellStyle();
+        recordCellStyle.setBorderBottom(BorderStyle.THIN);
+        recordCellStyle.setBorderTop(BorderStyle.THIN);
+        recordCellStyle.setBorderRight(BorderStyle.THIN);
+        recordCellStyle.setBorderLeft(BorderStyle.THIN);
+
+        // Debit / credit cells
+        XSSFCellStyle styleCurrency = wb.createCellStyle();
+        styleCurrency.setBorderBottom(BorderStyle.THIN);
+        styleCurrency.setBorderTop(BorderStyle.THIN);
+        styleCurrency.setBorderRight(BorderStyle.THIN);
+        styleCurrency.setBorderLeft(BorderStyle.THIN);
+        styleCurrency.setDataFormat((short) 8);
+
+        // Date cells
+        XSSFCellStyle styleDate = wb.createCellStyle();
+        styleDate.setBorderBottom(BorderStyle.THIN);
+        styleDate.setBorderTop(BorderStyle.THIN);
+        styleDate.setBorderRight(BorderStyle.THIN);
+        styleDate.setBorderLeft(BorderStyle.THIN);
+        CreationHelper createHelper = wb.getCreationHelper();
+        styleDate.setDataFormat(createHelper.createDataFormat().getFormat("dd/mm/yyyy"));
+
+        XSSFSheet currentSheet = wb.createSheet("Relevé");
+
+        // Title
+        int currentLine = 0;
+
+        XSSFRow currentRow = currentSheet.createRow(currentLine++);
+        XSSFCell currentCell = currentRow.createCell(0);
+        currentCell.setCellValue(responsable.getTiers().getDenomination() + " - " + responsable.getFirstname() + " "
+                + responsable.getLastname() + " - "
+                + LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+
+        CellRangeAddress region = new CellRangeAddress(0, 1, 0, 7);
+        cleanBeforeMergeOnValidCells(currentSheet, region, titleCellStyle);
+        currentSheet.addMergedRegion(region);
+        currentLine++;
+
+        // Header
+        currentRow = currentSheet.createRow(currentLine++);
+        int currentColumn = 0;
+
+        currentCell = currentRow.createCell(currentColumn++);
+        currentCell.setCellValue("Date");
+        currentCell.setCellStyle(headerCellStyle);
+        currentCell = currentRow.createCell(currentColumn++);
+        currentCell.setCellValue("Affaire");
+        currentCell.setCellStyle(headerCellStyle);
+        currentCell = currentRow.createCell(currentColumn++);
+        currentCell.setCellValue("Description");
+        currentCell.setCellStyle(headerCellStyle);
+        currentCell = currentRow.createCell(currentColumn++);
+        currentCell.setCellValue("Services");
+        currentCell.setCellStyle(headerCellStyle);
+        currentCell = currentRow.createCell(currentColumn++);
+        currentCell.setCellValue("Facture");
+        currentCell.setCellStyle(headerCellStyle);
+        currentCell = currentRow.createCell(currentColumn++);
+        currentCell.setCellValue("Commande");
+        currentCell.setCellStyle(headerCellStyle);
+        currentCell = currentRow.createCell(currentColumn++);
+        currentCell.setCellValue("Débit");
+        currentCell.setCellStyle(headerCellStyle);
+        currentCell = currentRow.createCell(currentColumn++);
+        currentCell.setCellValue("Crédit");
+        currentCell.setCellStyle(headerCellStyle);
+        currentCell = currentRow.createCell(currentColumn++);
+
+        // Each record
+
+        BigDecimal debit = new BigDecimal(0f);
+        BigDecimal credit = new BigDecimal(0f);
+        if (receiptValues != null) {
+            for (BillingClosureReceiptValue receiptValue : receiptValues) {
+
+                if (receiptValue.getEventDateTime() == null)
+                    continue;
+
+                currentRow = currentSheet.createRow(currentLine++);
+                currentColumn = 0;
+                currentCell = currentRow.createCell(currentColumn++);
+                if (receiptValue.getEventDateTime() != null)
+                    currentCell.setCellValue(
+                            receiptValue.getEventDateTime().toLocalDate());
+                currentCell.setCellStyle(styleDate);
+                currentCell = currentRow.createCell(currentColumn++);
+                currentCell.setCellValue(receiptValue.getAffaireLists());
+                currentCell.setCellStyle(recordCellStyle);
+                currentCell = currentRow.createCell(currentColumn++);
+                currentCell.setCellValue(receiptValue.getEventDescription());
+                currentCell.setCellStyle(recordCellStyle);
+                currentCell = currentRow.createCell(currentColumn++);
+                currentCell.setCellValue(receiptValue.getServiceLists());
+                currentCell.setCellStyle(recordCellStyle);
+                currentCell = currentRow.createCell(currentColumn++);
+                currentCell.setCellValue(receiptValue.getIdInvoice() + "");
+                currentCell.setCellStyle(recordCellStyle);
+                currentCell = currentRow.createCell(currentColumn++);
+                currentCell.setCellValue(receiptValue.getIdCustomerOrder() + "");
+                currentCell.setCellStyle(recordCellStyle);
+                currentCell = currentRow.createCell(currentColumn++);
+                if (receiptValue.getDebitAmount() != null) {
+                    currentCell.setCellValue(receiptValue.getDebitAmount()
+                            .setScale(2, RoundingMode.HALF_EVEN).doubleValue());
+                    debit = debit.add(receiptValue.getDebitAmount());
+                }
+                currentCell.setCellStyle(styleCurrency);
+                currentCell = currentRow.createCell(currentColumn++);
+                if (receiptValue.getCreditAmount() != null) {
+                    credit = credit.add(receiptValue.getCreditAmount());
+                    currentCell.setCellValue(receiptValue.getCreditAmount()
+                            .setScale(2, RoundingMode.HALF_EVEN).doubleValue());
+                }
+                currentCell.setCellStyle(styleCurrency);
+            }
+        }
+
+        // Accumulation
+        currentRow = currentSheet.createRow(currentLine++);
+        currentColumn = 5;
+        currentCell = currentRow.createCell(currentColumn++);
+        currentCell.setCellValue("Total");
+        currentCell.setCellStyle(recordCellStyle);
+        currentCell = currentRow.createCell(currentColumn++);
+        currentCell.setCellValue(debit.setScale(2, RoundingMode.HALF_EVEN).doubleValue());
+        currentCell.setCellStyle(styleCurrency);
+        currentCell = currentRow.createCell(currentColumn++);
+        currentCell.setCellValue(credit.setScale(2, RoundingMode.HALF_EVEN).doubleValue());
+        currentCell.setCellStyle(styleCurrency);
+
+        // Balance
+        currentRow = currentSheet.createRow(currentLine++);
+        currentColumn = 5;
+        currentCell = currentRow.createCell(currentColumn++);
+        currentCell.setCellValue("Solde");
+        currentCell.setCellStyle(recordCellStyle);
+        currentCell = currentRow.createCell(currentColumn++);
+        if ((credit.subtract(debit)).compareTo(new BigDecimal(0)) < 0)
+            currentCell.setCellValue(
+                    credit.subtract(debit).setScale(2, RoundingMode.HALF_EVEN).abs()
+                            .doubleValue());
+        else
+            currentCell.setCellValue("");
+        currentCell.setCellStyle(styleCurrency);
+        currentCell = currentRow.createCell(currentColumn++);
+        if ((credit.subtract(debit).compareTo(new BigDecimal(0))) > 0)
+            currentCell.setCellValue(
+                    credit.subtract(debit).setScale(2, RoundingMode.HALF_EVEN).abs()
+                            .doubleValue());
+        else
+            currentCell.setCellValue("");
+        currentCell.setCellStyle(styleCurrency);
+
+        // autosize
+        for (int i = 0; i < 11; i++)
+            currentSheet.autoSizeColumn(i, true);
+
+        File file;
+        FileOutputStream outputStream;
+        try {
+            file = File.createTempFile("Relevé de compte - " + createHelper.createDataFormat().getFormat("dd-mm-yyyy"),
+                    "xlsx");
+            outputStream = new FileOutputStream(file);
+        } catch (IOException e) {
+            try {
+                wb.close();
+            } catch (IOException e2) {
+                throw new OsirisException(e, "Unable to close excel file");
+            }
+            throw new OsirisException(e, "Unable to create temp file");
+        }
+
+        try {
+            wb.write(outputStream);
+            wb.close();
+            outputStream.close();
+        } catch (IOException e) {
+            throw new OsirisException(e, "Unable to save excel file");
+        }
+
+        return file;
     }
 }

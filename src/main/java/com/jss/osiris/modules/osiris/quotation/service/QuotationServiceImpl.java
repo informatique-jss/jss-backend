@@ -283,6 +283,7 @@ public class QuotationServiceImpl implements QuotationService {
         // Target SENT TO CUSTOMER : notify users and customer
         if (targetQuotationStatus.getCode().equals(QuotationStatus.SENT_TO_CUSTOMER)) {
             // save to recompute invoice item before sent it to customer
+            quotation.setEffectiveDate(LocalDateTime.now());
             quotation = this.addOrUpdateQuotation(quotation);
 
             generateQuotationPdf(quotation);
@@ -924,6 +925,12 @@ public class QuotationServiceImpl implements QuotationService {
         if (quotations != null)
             for (Quotation quotation : quotations)
                 batchService.declareNewBatch(Batch.PURGE_QUOTATION, quotation.getId());
+    }
+
+    @Override
+    public List<Quotation> getQuotationByAffaire(Affaire affaire) {
+        return quotationRepository.findQuotationByAffaireAndQuotationStatus(affaire,
+                quotationStatusService.getQuotationStatusByCode(QuotationStatus.SENT_TO_CUSTOMER));
     }
 
     @Override

@@ -30,6 +30,7 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
   @ViewChild('inputField') input: ElementRef | undefined;
 
   expectedMinLengthInput: number = 3;
+  debounceTime = 200;
 
   filteredTypes: T[] = [];
 
@@ -40,6 +41,8 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
   searchValue: string = '';
   page: number = 0;
   pageSize: number = 10;
+
+  searchKeyword = 'label';
 
   selectedItem: T | undefined;
   constructor(private formBuilder3: UntypedFormBuilder) {

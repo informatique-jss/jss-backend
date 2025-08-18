@@ -976,7 +976,7 @@ public class QuotationController {
   public ResponseEntity<MailComputeResult> computeMailForBilling(
       @RequestBody CustomerOrder quotation) throws OsirisException, OsirisClientMessageException {
     return new ResponseEntity<MailComputeResult>(
-        mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(quotation),
+        mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(quotation, false),
         HttpStatus.OK);
   }
 
@@ -1076,7 +1076,7 @@ public class QuotationController {
       throw new OsirisValidationException("customerOrder");
     try {
       MailComputeResult mailComputeResult = mailComputeHelper
-          .computeMailForCustomerOrderFinalizationAndInvoice(customerOrder);
+          .computeMailForCustomerOrderFinalizationAndInvoice(customerOrder, false);
       if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
         throw new OsirisValidationException("MailTo");
       customerOrderService.generateInvoiceMail(customerOrder);
@@ -1094,7 +1094,7 @@ public class QuotationController {
       throw new OsirisValidationException("customerOrder");
     try {
       MailComputeResult mailComputeResult = mailComputeHelper
-          .computeMailForCustomerOrderFinalizationAndInvoice(customerOrder);
+          .computeMailForCustomerOrderFinalizationAndInvoice(customerOrder, false);
       if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
         throw new OsirisValidationException("MailTo");
       customerOrderService.sendInvoiceMail(customerOrder);
@@ -2464,7 +2464,9 @@ public class QuotationController {
             for (ValidationRequest validationRequest : formalite.getValidationsRequests())
               if (validationRequest.getPartnerCenter() != null && validationRequest.getPartner().getId() == null)
                 validationRequest.setPartnerCenter(null);
-          formaliteGuichetUniqueService.addOrUpdateFormaliteGuichetUnique(formalite);
+
+          if (formaliteGuichetUniqueService.getFormaliteGuichetUnique(formalite.getId()) == null)
+            formaliteGuichetUniqueService.addOrUpdateFormaliteGuichetUnique(formalite);
         }
     }
 
@@ -2859,6 +2861,20 @@ public class QuotationController {
 
     return new ResponseEntity<List<CustomerOrder>>(
         customerOrderService.getCustomerOrdersByVoucherAndResponsable(voucher, null), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/quotations/affaire")
+  @JsonView(JacksonViews.OsirisListView.class)
+  public ResponseEntity<List<Quotation>> getQuotationByAffaire(@RequestParam Integer idAffaire)
+      throws OsirisValidationException {
+
+    Affaire affaire = affaireService.getAffaire(idAffaire);
+
+    if (affaire == null)
+      throw new OsirisValidationException("affaire");
+
+    return new ResponseEntity<List<Quotation>>(
+        quotationService.getQuotationByAffaire(affaire), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/customer-order-assignation/update")

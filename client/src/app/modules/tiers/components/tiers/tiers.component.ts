@@ -276,4 +276,12 @@ export class TiersComponent implements OnInit, AfterContentChecked {
   canDisplayNotifications() {
     return this.habilitationService.canDisplayNotifications();
   }
+
+  canRepairAccounts() {
+    return this.habilitationService.canRepairAccounts();
+  }
+
+  repairAccounts() {
+    this.tiersService.repairTierAccounts(this.tiers).subscribe();
+  }
 }

@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -279,48 +280,56 @@ public class ServiceServiceImpl implements ServiceService {
             Service service, Affaire affaire) throws OsirisException {
         List<Provision> newProvisions = new ArrayList<Provision>();
 
-        for (String screenType : Arrays.asList(ProvisionScreenType.DOMICILIATION, ProvisionScreenType.FORMALITE,
-                ProvisionScreenType.STANDARD, ProvisionScreenType.ANNOUNCEMENT)) {
+        Set<ProvisionType> possibleProvisionTypes = assoServiceProvisionTypes.stream()
+                .map(a -> a.getProvisionType()).collect(Collectors.toSet());
+
+        for (ProvisionType provisionTypePossible : possibleProvisionTypes) {
 
             List<AssoServiceProvisionType> provisionTypeMergeable = assoServiceProvisionTypes.stream()
-                    .filter(s -> s.getProvisionType().getIsMergeable() != null && s.getProvisionType().getIsMergeable()
-                            && s.getProvisionType().getProvisionScreenType().getCode().equals(screenType))
+                    .filter(s -> Boolean.TRUE.equals(s.getProvisionType().getIsMergeable())
+                            && s.getProvisionType().getId().equals(provisionTypePossible.getId()))
                     .toList();
 
             if (provisionTypeMergeable != null && provisionTypeMergeable.size() > 0) {
-                Boolean isPriority = sortassoServiceProvisionTypesByComplexity(assoServiceProvisionTypes);
-                if (!screenType.equals(ProvisionScreenType.ANNOUNCEMENT) || provisionTypeMergeable.size() == 1) {
-                    Provision announcementProvision = completeNoticesFromAnnouncementProvision(
-                            generateProvisionFromProvisionType(provisionTypeMergeable.get(0).getProvisionType(),
-                                    service, provisionTypeMergeable.get(0), isPriority),
+                Boolean isPriority = getPriorityFromAssoServiceProvisionTypesList(assoServiceProvisionTypes);
+                Provision mergeableProvision = generateProvisionFromProvisionType(
+                        provisionTypeMergeable.get(0).getProvisionType(),
+                        service, provisionTypeMergeable.get(0), isPriority);
+
+                if (provisionTypePossible.getProvisionScreenType().getCode().equals(ProvisionScreenType.ANNOUNCEMENT)) {
+                    if (provisionTypeMergeable.size() > 1) {
+                        mergeableProvision = generateProvisionFromProvisionType(
+                                this.constantService.getProvisionTypeCharacterAnnouncement(), service,
+                                assoServiceProvisionTypes.get(0), assoServiceProvisionTypes.get(0).getIsPriority());
+                    }
+
+                    mergeableProvision = completeNoticesFromAnnouncementProvision(mergeableProvision,
                             provisionTypeMergeable, affaire);
-                    announcementProvision.setIsRedactedByJss(true);
-                    newProvisions.add(announcementProvision);
-                } else {
-                    Provision announcementProvision = completeNoticesFromAnnouncementProvision(
-                            generateProvisionFromProvisionType(
-                                    this.constantService.getProvisionTypeCharacterAnnouncement(), service,
-                                    assoServiceProvisionTypes.get(0), assoServiceProvisionTypes.get(0).getIsPriority()),
-                            provisionTypeMergeable, affaire);
-                    announcementProvision.setIsRedactedByJss(true);
-                    newProvisions.add(announcementProvision);
+                    mergeableProvision.setIsRedactedByJss(true);
                 }
+
+                newProvisions.add(mergeableProvision);
             }
 
             List<AssoServiceProvisionType> provisionTypeNonMergeable = assoServiceProvisionTypes.stream()
                     .filter(s -> (s.getProvisionType().getIsMergeable() == null
                             || !s.getProvisionType().getIsMergeable())
-                            && s.getProvisionType().getProvisionScreenType().getCode().equals(screenType))
+                            && s.getProvisionType().getId().equals(provisionTypePossible.getId()))
                     .toList();
 
             for (AssoServiceProvisionType assoServiceProvisionType : provisionTypeNonMergeable) {
                 if (provisionTypeNonMergeable != null && provisionTypeNonMergeable.size() > 0) {
-                    Provision announcementProvision = completeNoticesFromAnnouncementProvision(
-                            generateProvisionFromProvisionType(assoServiceProvisionType.getProvisionType(),
-                                    service, assoServiceProvisionType, assoServiceProvisionType.getIsPriority()),
-                            provisionTypeNonMergeable, affaire);
-                    announcementProvision.setIsRedactedByJss(true);
-                    newProvisions.add(announcementProvision);
+                    Provision nonMergeableProvision = generateProvisionFromProvisionType(
+                            assoServiceProvisionType.getProvisionType(),
+                            service, assoServiceProvisionType, assoServiceProvisionType.getIsPriority());
+
+                    if (nonMergeableProvision.getProvisionType().getProvisionScreenType().getCode()
+                            .equals(ProvisionScreenType.ANNOUNCEMENT)) {
+                        completeNoticesFromAnnouncementProvision(nonMergeableProvision, provisionTypeNonMergeable,
+                                affaire);
+                        nonMergeableProvision.setIsRedactedByJss(true);
+                    }
+                    newProvisions.add(nonMergeableProvision);
                 }
             }
 
@@ -328,7 +337,7 @@ public class ServiceServiceImpl implements ServiceService {
         return newProvisions;
     }
 
-    private boolean sortassoServiceProvisionTypesByComplexity(
+    private boolean getPriorityFromAssoServiceProvisionTypesList(
             List<AssoServiceProvisionType> assoServiceProvisionTypes) {
         if (assoServiceProvisionTypes != null) {
             assoServiceProvisionTypes.sort(new Comparator<AssoServiceProvisionType>() {

@@ -13,7 +13,8 @@
             <h6 class="col m-0"> {{asso.affaire.siret?(asso.affaire.siret + ' - '):''}}{{
               asso.affaire.denomination
               ?asso.affaire.denomination : (asso.affaire.firstname+ ' ' +
-              asso.affaire.lastname) }} - {{asso.affaire.address}}</h6>
+              asso.affaire.lastname) }} - {{asso.affaire.address + ' ' + asso.affaire.city.label }}
+              {{asso.affaire.city.postalCode ? ' '+ asso.affaire.city.postalCode : ''}}</h6>
           </div>
 
           <div class="row align-items-center" *ngIf="asso.services">
@@ -44,7 +45,11 @@
           ?quotation.assoAffaireOrders[selectedAssoIndex].affaire.denomination :
           (quotation.assoAffaireOrders[selectedAssoIndex].affaire.firstname+ ' ' +
           quotation.assoAffaireOrders[selectedAssoIndex].affaire.lastname) }}
-          - {{quotation.assoAffaireOrders[selectedAssoIndex].affaire.address}}</span>
+          - {{quotation.assoAffaireOrders[selectedAssoIndex].affaire.address + ' '+
+          quotation.assoAffaireOrders[selectedAssoIndex].affaire.city.label }}
+          {{quotation.assoAffaireOrders[selectedAssoIndex].affaire.city.postalCode ?
+          ' '+ quotation.assoAffaireOrders[selectedAssoIndex].affaire.city.postalCode : ''}}
+        </span>
       </strong>
       <a class="btn btn-secondary rounded-pill mt-2 ms-0 ms-md-0 col-auto pill text-wrap text-break fs-xs"
         *ngIf="quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex]">

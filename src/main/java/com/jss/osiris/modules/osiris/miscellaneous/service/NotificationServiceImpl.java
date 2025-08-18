@@ -301,6 +301,12 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
+    public void notifyQuotationModified(CustomerOrder customerOrder) {
+        generateNewNotification(employeeService.getCurrentEmployee(), customerOrder.getResponsable().getSalesEmployee(),
+                Notification.MODIFIED_QUOTATION, false, null, null, customerOrder, null);
+    }
+
+    @Override
     public void notifyAttachmentAddToService(Service service, Attachment attachment) throws OsirisException {
         CustomerOrder order = service.getAssoAffaireOrder().getCustomerOrder();
         List<Integer> employeeIdAlreadyNotified = new ArrayList<Integer>();
@@ -354,6 +360,15 @@ public class NotificationServiceImpl implements NotificationService {
                             }
                         }
         }
+    }
+
+    @Override
+    public void notifyCommentFromMyJssAddToCustomerOrder(CustomerOrder order)
+            throws OsirisException {
+        if (order.getResponsable() != null && order.getResponsable().getSalesEmployee() != null
+                && employeeService.getCurrentMyJssUser() != null)
+            generateNewNotification(null, order.getResponsable().getSalesEmployee(),
+                    Notification.ORDER_ADD_COMMENT_MYJSS, false, null, null, order, null);
     }
 
     @Override

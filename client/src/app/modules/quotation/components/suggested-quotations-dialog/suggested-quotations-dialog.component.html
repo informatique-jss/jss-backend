@@ -1,0 +1,10 @@
+<mat-dialog-content class="mat-content">
+  <h2>Attention, il existe plusieurs devis envoyés au client pour cette affaire</h2>
+  <h3>Vérifiez qu'aucun devis ne correspond à l'affaire qui est en train d'être créée</h3>
+
+  <quotation-list [quotationSearch]="quotationSearch" [isForTiersIntegration]="true"
+    *ngIf=" quotationSearch && quotationSearch.quotationStatus"></quotation-list>
+
+  <button mat-raised-button color="accent" (click)="onClose()">Fermer</button>
+  <button mat-raised-button color="warn" (click)="onConfirm()">Confirmer</button>
+</mat-dialog-content>

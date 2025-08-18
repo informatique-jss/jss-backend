@@ -237,8 +237,6 @@
                                                                         <span
                                                                             th:text="${assoServiceDocument.typeDocument.customLabel}"></span>
                                                                         <span
-                                                                            th:if="${assoServiceDocument.isMandatory==false}">(facultatif)</span>
-                                                                        <span
                                                                             th:if="${assoServiceDocument.formalisteComment!=null}">
                                                                             - <span
                                                                                 th:text="${assoServiceDocument.formalisteComment}"></span></span>
@@ -253,8 +251,6 @@
                                                                         th:each="assoServiceFieldType : ${assoServiceFieldTypes}">
                                                                         <span
                                                                             th:text="${assoServiceFieldType.serviceFieldType.label}"></span>
-                                                                        <span
-                                                                            th:if="${assoServiceFieldType.isMandatory==false}">(facultatif)</span>
                                                                         <span
                                                                             th:if="${assoServiceFieldType.formalisteComment!=null}">
                                                                             - <span

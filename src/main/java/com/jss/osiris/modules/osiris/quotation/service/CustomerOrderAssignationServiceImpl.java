@@ -1,9 +1,12 @@
 package com.jss.osiris.modules.osiris.quotation.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -219,6 +222,53 @@ public class CustomerOrderAssignationServiceImpl implements CustomerOrderAssigna
         List<CustomerOrder> customerOrders = null;
         Integer foundCustomerOrder = null;
 
+        // If I'm not the most updated found, do not assign priority orders
+        if (isPriority) {
+            List<ICustomerOrderAssignationStatistics> statistics = getCustomerOrderAssignationStatisticsForFormalistes();
+            if (statistics != null) {
+
+                Map<Integer, LocalDate> employeeToEarliestDate = new HashMap<>();
+
+                for (ICustomerOrderAssignationStatistics stat : statistics) {
+                    Integer idEmployee = stat.getIdEmployee();
+                    LocalDate date = stat.getProductionDate();
+
+                    if (!employeeToEarliestDate.containsKey(idEmployee)) {
+                        employeeToEarliestDate.put(idEmployee, date);
+                    } else {
+                        LocalDate currentMin = employeeToEarliestDate.get(idEmployee);
+                        if (date.isBefore(currentMin)) {
+                            employeeToEarliestDate.put(idEmployee, date);
+                        }
+                    }
+                }
+
+                Integer newerFoundId = null;
+                LocalDate maxOfMinDates = null;
+
+                for (Map.Entry<Integer, LocalDate> entry : employeeToEarliestDate.entrySet()) {
+                    Integer id = entry.getKey();
+                    LocalDate minDate = entry.getValue();
+
+                    if (maxOfMinDates == null || minDate.isAfter(maxOfMinDates)) {
+                        maxOfMinDates = minDate;
+                        newerFoundId = id;
+                    }
+                }
+
+                boolean found = false;
+                for (Employee employee : employeeService.findEmployeesInTheSameOU(currentUser)) {
+                    if (employee.getId().equals(newerFoundId)) {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found)
+                    return null;
+            }
+        }
+
         // Forced employee
         assignationType = constantService.getAssignationTypeEmployee();
         customerOrders = customerOrderService.findCustomerOrderByForcedEmployeeAssigned(
@@ -231,7 +281,8 @@ public class CustomerOrderAssignationServiceImpl implements CustomerOrderAssigna
             return foundCustomerOrder;
 
         // Formaliste
-        if (currentUser.getAdPath().contains("Formalites")) {
+        if (currentUser.getAdPath()
+                .contains(constantService.getActiveDirectoryGroupFormalites().getActiveDirectoryPath())) {
             assignationType = constantService.getAssignationTypeFormaliste();
             customerOrders = customerOrderService.findCustomerOrderByFormalisteAssigned(
                     productionDirector,
@@ -245,7 +296,8 @@ public class CustomerOrderAssignationServiceImpl implements CustomerOrderAssigna
         }
 
         // Announcement
-        if (currentUser.getAdPath().contains("Insertions")) {
+        if (currentUser.getAdPath()
+                .contains(constantService.getActiveDirectoryGroupInsertions().getActiveDirectoryPath())) {
             assignationType = constantService.getAssignationTypePublisciste();
             customerOrders = customerOrderService.findCustomerOrderByPubliscisteAssigned(productionDirector,
                     customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.BEING_PROCESSED), null,
@@ -279,8 +331,24 @@ public class CustomerOrderAssignationServiceImpl implements CustomerOrderAssigna
                                 && customerOrderAssignation.getEmployee().getId().equals(currentEmployee.getId())) {
                             if (!checkIsPriority || isPriorityOrder(customerOrder)) {
                                 if (complexity == null || customerOrderComplexity == complexity) {
-                                    if (!byPassAssignation)
+                                    if (!byPassAssignation) {
                                         assignToEmployee(customerOrderAssignation, currentEmployee);
+
+                                        // If formalité and insertion not set, assign both
+                                        if (assignationType.getId()
+                                                .equals(constantService.getAssignationTypeFormaliste().getId())) {
+                                            for (CustomerOrderAssignation customerOrderAssignationForInsertion : customerOrder
+                                                    .getCustomerOrderAssignations()) {
+                                                if (customerOrderAssignationForInsertion.getAssignationType().getId()
+                                                        .equals(constantService.getAssignationTypePublisciste().getId())
+                                                        && Boolean.FALSE.equals(
+                                                                customerOrderAssignationForInsertion.getIsAssigned()))
+                                                    assignToEmployee(customerOrderAssignationForInsertion,
+                                                            currentEmployee);
+
+                                            }
+                                        }
+                                    }
                                     return customerOrder.getId();
                                 }
                             }
@@ -305,8 +373,27 @@ public class CustomerOrderAssignationServiceImpl implements CustomerOrderAssigna
                                     && customerOrderAssignation.getEmployee().getId().equals(currentEmployee.getId())) {
                                 if (!checkIsPriority || isPriorityOrder(customerOrder)) {
                                     if (complexity == null || customerOrderComplexity > complexity) {
-                                        if (!byPassAssignation)
+                                        if (!byPassAssignation) {
                                             assignToEmployee(customerOrderAssignation, currentEmployee);
+
+                                            // If formalité and insertion not set, assign both
+                                            if (assignationType.getId()
+                                                    .equals(constantService.getAssignationTypeFormaliste().getId())) {
+                                                for (CustomerOrderAssignation customerOrderAssignationForInsertion : customerOrder
+                                                        .getCustomerOrderAssignations()) {
+                                                    if (customerOrderAssignationForInsertion.getAssignationType()
+                                                            .getId()
+                                                            .equals(constantService.getAssignationTypePublisciste()
+                                                                    .getId())
+                                                            && Boolean.FALSE.equals(
+                                                                    customerOrderAssignationForInsertion
+                                                                            .getIsAssigned()))
+                                                        assignToEmployee(customerOrderAssignationForInsertion,
+                                                                currentEmployee);
+
+                                                }
+                                            }
+                                        }
                                         return customerOrder.getId();
                                     }
                                 }

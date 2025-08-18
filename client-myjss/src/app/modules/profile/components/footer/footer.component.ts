@@ -12,9 +12,9 @@ import { AppService } from '../../../main/services/app.service';
 })
 export class FooterComponent implements OnInit {
 
-  logoJss: string = '/assets/images/white-logo-myjss.svg';
-  paymentMethods: string = '/assets/images/payment-methods.png';
-  map: string = '/assets/images/map.png';
+  logoJss: string = '/assets/img/others/myjss-logos/white-logo-myjss.svg';
+  paymentMethods: string = '/assets/img/others/payment-methods.png';
+  map: string = '/assets/img/others/map.png';
 
   @Input() isInNavbar: boolean = false;
 

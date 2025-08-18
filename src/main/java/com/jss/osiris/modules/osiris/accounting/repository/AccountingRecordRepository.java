@@ -652,4 +652,49 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         " ")
         List<SuspiciousInvoiceResult> getSuspiciousInvoiceByTiers(LocalDate accountingDate, Integer idInvoiceSend);
 
+        @Query(value = "" +
+                        " with let as (select lettering_number  " +
+                        " from accounting_record ar  " +
+                        " where id_accounting_account  in (:accountingAccountIds) and lettering_number is not null " +
+                        " group by lettering_number  " +
+                        " having abs(round(sum(coalesce(credit_amount,0))-sum(coalesce(debit_amount,0)),1))<0.1) , " +
+                        " pay1 as (select p.* " +
+                        " from payment p join invoice i on i.id = p.id_invoice " +
+                        " where i.id_invoice_status =83 " +
+                        " and p.is_cancelled =false), " +
+                        " inv as (select *  " +
+                        " from invoice i  " +
+                        " where i.id_invoice_status  = 83 " +
+                        " ), " +
+                        " pay2 as ( " +
+                        " select p.* " +
+                        " from payment p " +
+                        " join customer_order co on co.id = p.id_customer_order " +
+                        " join responsable r on r.id = co.id_responsable " +
+                        " join tiers t on t.id = r.id_tiers " +
+                        " where p.is_cancelled = false and (t.id_accounting_account_deposit  in (:accountingAccountIds) or t.id_accounting_account_provider  in (:accountingAccountIds) ) "
+                        +
+                        " ), " +
+                        " pay as (select * from pay1 union select * from pay2),                 " +
+                        " cor as ( " +
+                        " select id, label , debit_amount , credit_amount , id_invoice , lettering_number , lettering_date_time  "
+                        +
+                        " from accounting_record ar  " +
+                        " where id_accounting_account  in (:accountingAccountIds) " +
+                        " and (lettering_number  is null or lettering_number not in (select lettering_number from let)) "
+                        +
+                        " and ( coalesce(is_from_as400,false) = false  and (ar.id_payment  in (select id from pay) or ar.id_invoice in (select id from inv))  "
+                        +
+                        " or  coalesce(is_from_as400,false) = true and lettering_number is null " +
+                        " )) " +
+                        " select ar.* " +
+                        " from accounting_record ar " +
+                        " where  id_accounting_account  in (:accountingAccountIds) " +
+                        " and id not in (select id from cor)  " +
+                        " and (lettering_number is null or lettering_number not in (select lettering_number from let))              "
+                        +
+                        "  ", nativeQuery = true)
+        List<AccountingRecord> getAccountingRecordToRepairs(
+                        @Param("accountingAccountIds") List<Integer> accountingAccountIds);
+
 }
