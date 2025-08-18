@@ -598,7 +598,7 @@ const routes: Routes = [
     AutocompleteVoucherComponent,
     ChipsResponsableComponent,
     SelectSingleEmployeeComponent,
-    SelectAnnouncementNoticeTemplateFragmentComponent
+    SelectAnnouncementNoticeTemplateFragmentComponent,
   ],
   exports: [
     HistoryComponent,
@@ -863,7 +863,7 @@ const routes: Routes = [
     AutocompleteVoucherComponent,
     ChipsResponsableComponent,
     SelectSingleEmployeeComponent,
-    SelectAnnouncementNoticeTemplateFragmentComponent
+    SelectAnnouncementNoticeTemplateFragmentComponent,
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

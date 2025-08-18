@@ -49,7 +49,6 @@ export class QuotationListComponent implements OnInit {
       if (!this.isForDashboard && !this.isForTiersIntegration)
         this.appService.changeHeaderTitle("Devis");
 
-
       this.availableColumns = [];
       this.availableColumns.push({ id: "id", fieldName: "quotationId", label: "N° du devis" } as SortTableColumn<QuotationSearchResult>);
       this.availableColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateForSortTable } as SortTableColumn<QuotationSearchResult>);
@@ -79,7 +78,9 @@ export class QuotationListComponent implements OnInit {
           }
           this.searchOrders();
         })
-      } else {
+      }
+
+      else {
         this.bookmark = this.userPreferenceService.getUserSearchBookmark("quotations") as QuotationSearch;
 
         if (this.bookmark && !this.isForDashboard && !this.isForTiersIntegration) {
@@ -91,7 +92,6 @@ export class QuotationListComponent implements OnInit {
           this.searchOrders();
         }
       }
-
     });
   }
 
@@ -161,4 +161,5 @@ export class QuotationListComponent implements OnInit {
       })
     }
   }
+
 }

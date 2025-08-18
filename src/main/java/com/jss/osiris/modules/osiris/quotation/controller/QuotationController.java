@@ -2863,6 +2863,20 @@ public class QuotationController {
         customerOrderService.getCustomerOrdersByVoucherAndResponsable(voucher, null), HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/quotations/affaire")
+  @JsonView(JacksonViews.OsirisListView.class)
+  public ResponseEntity<List<Quotation>> getQuotationByAffaire(@RequestParam Integer idAffaire)
+      throws OsirisValidationException {
+
+    Affaire affaire = affaireService.getAffaire(idAffaire);
+
+    if (affaire == null)
+      throw new OsirisValidationException("affaire");
+
+    return new ResponseEntity<List<Quotation>>(
+        quotationService.getQuotationByAffaire(affaire), HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/customer-order-assignation/update")
   @PreAuthorize(ActiveDirectoryHelper.TEAM_RESPONSIBLE)
   public ResponseEntity<Boolean> updateCustomerOrderAssignation(Integer idCustomerOrderAssignation,

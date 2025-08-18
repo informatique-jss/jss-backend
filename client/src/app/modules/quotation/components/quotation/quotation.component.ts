@@ -58,6 +58,7 @@ import { ProvisionComponent } from '../provision/provision.component';
 import { QuotationAbandonReasonDialog } from '../quotation-abandon-reason-dialog/quotation-abandon-reason-dialog';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
 import { SelectMultiServiceTypeDialogComponent } from '../select-multi-service-type-dialog/select-multi-service-type-dialog.component';
+import { SuggestedQuotationsDialogComponent } from '../suggested-quotations-dialog/suggested-quotations-dialog.component';
 import { IQuotation } from './../../model/IQuotation';
 
 @Component({
@@ -126,6 +127,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     public quotationWorkflowDialog: MatDialog,
     public orderSimilaritiesDialog: MatDialog,
     public customerOrderWorkflowDialog: MatDialog,
+    public suggestedQuotationDialog: MatDialog,
     private formBuilder: FormBuilder,
     private constantService: ConstantService,
     protected searchService: SearchService,
@@ -536,10 +538,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
               return;
             }
 
-
         let asso = {} as AssoAffaireOrder;
         asso.affaire = response;
         asso.services = [] as Array<Service>;
+
         if (!this.quotation.assoAffaireOrders)
           this.quotation.assoAffaireOrders = [] as Array<AssoAffaireOrder>;
 
@@ -567,7 +569,13 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
                 this.quotation.assoAffaireOrders.push(asso);
                 this.selectedTabIndex = 1;
               }
+              //After checking suggested orders, check suggested quotation with same affaire
+              this.quotationService.getQuotationByAffaire(asso.affaire).subscribe(response => {
+                if (response && response.length > 0)
+                  this.openSuggestedQuotationDialog(asso);
+              });
             });
+
           } else {
             this.quotation.assoAffaireOrders.push(asso);
             this.selectedTabIndex = 1;
@@ -575,6 +583,13 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
         });
       }
     })
+  }
+
+  openSuggestedQuotationDialog(asso: AssoAffaireOrder) {
+    let dialogQuotation = this.suggestedQuotationDialog.open(SuggestedQuotationsDialogComponent, {
+      width: '100%'
+    });
+    dialogQuotation.componentInstance.selectedAffaire = asso.affaire;
   }
 
   displayQuotationWorkflowDialog() {

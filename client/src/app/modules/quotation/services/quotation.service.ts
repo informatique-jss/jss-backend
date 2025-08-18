@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AppRestService } from 'src/app/services/appRest.service';
+import { Affaire } from '../model/Affaire';
 import { Announcement } from '../model/Announcement';
 import { CustomerOrder } from '../model/CustomerOrder';
 import { IQuotation } from '../model/IQuotation';
@@ -64,4 +65,7 @@ export class QuotationService extends AppRestService<IQuotation> {
     return this.getById("quotation/single", idCustomerOrder);
   }
 
+  getQuotationByAffaire(affaire: Affaire) {
+    return this.getList(new HttpParams().set("idAffaire", affaire.id), 'quotations/affaire');
+  }
 }
