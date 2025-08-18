@@ -152,7 +152,7 @@
                   <div class="row border-left-red ms-0 ps-1 py-1">
                     <a *ngFor="let relatedPost of post.relatedPosts.slice(0, 3)" (click)="openPost(relatedPost, $event)"
                       class="card-truncate-1">
-                      <h6 class="m-0 p-1"><img *ngIf="post.isPremium" class="px-0 me-1"
+                      <h6 class="m-0 p-1"><img *ngIf="relatedPost.isPremium" class="px-0 me-1"
                           src="/assets/images/premium-icon.svg"> &#9632; {{relatedPost.titleText}}</h6>
                     </a>
                   </div>
