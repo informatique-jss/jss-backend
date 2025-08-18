@@ -10,7 +10,6 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
-import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.PiecesJointe;
@@ -51,5 +50,5 @@ public interface AttachmentService {
 
         public Attachment cleanAttachmentForDelete(Attachment attachment);
 
-        public byte[] downloadAllAttachments(List<Invoice> invoices) throws OsirisException;
+        public byte[] downloadAllInvoicesAsZip(List<Integer> invoicesIds) throws OsirisException;
 }

@@ -53,11 +53,6 @@ export class UploadAttachmentService extends AppRestService<IAttachment> {
   }
 
   downloadInvoiceAttachmentsAsZip(invoiceIds: number[]) {
-    let params = new HttpParams();
-    invoiceIds.forEach(id => {
-      params = params.append('ids', id.toString());
-    });
-
-    this.downloadGet(params, "attachment/download-all", "attachments.zip");
+    this.downloadPost(new HttpParams(), "attachment/download-all", invoiceIds as any);
   }
 }

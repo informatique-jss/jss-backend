@@ -199,14 +199,10 @@ export class InvoiceListComponent implements OnInit, AfterContentChecked {
 
   downloadAllFiles() {
 
-    let count = 0;
     let invoiceIds: number[] = [];
     if (this.invoices && this.invoices.length > 0) {
       for (let invoice of this.invoices)
-        if (count < 200) {
-          invoiceIds.push(invoice.invoiceId);
-          count++;
-        }
+        invoiceIds.push(invoice.invoiceId);
 
       if (invoiceIds.length > 1) {
         this.uploadAttachmentService.downloadInvoiceAttachmentsAsZip(invoiceIds);

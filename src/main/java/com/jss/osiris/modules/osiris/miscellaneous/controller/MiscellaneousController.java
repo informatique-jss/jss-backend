@@ -4,11 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -1301,24 +1298,14 @@ public class MiscellaneousController {
         return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
     }
 
-    @GetMapping(inputEntryPoint + "/attachment/download-all")
-    @Transactional
-    public ResponseEntity<byte[]> downloadAllAttachments(@RequestParam("ids") List<Integer> invoiceIds)
+    @PostMapping(inputEntryPoint + "/attachment/download-all")
+    public ResponseEntity<byte[]> downloadAllAttachments(@RequestBody List<Integer> invoiceIds)
             throws OsirisValidationException, OsirisException {
 
         if (invoiceIds == null)
             throw new OsirisValidationException("invoiceIds");
 
-        Set<Integer> uniqueInvoiceIds = new HashSet<>(invoiceIds);
-        List<Invoice> invoices = new ArrayList<Invoice>();
-
-        if (uniqueInvoiceIds != null && uniqueInvoiceIds.size() > 0) {
-            for (Integer id : uniqueInvoiceIds) {
-                invoices.add(invoiceService.getInvoice(id));
-            }
-        }
-
-        byte[] zipBytes = attachmentService.downloadAllAttachments(invoices);
+        byte[] zipBytes = attachmentService.downloadAllInvoicesAsZip(invoiceIds);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("filename", "factures.zip");

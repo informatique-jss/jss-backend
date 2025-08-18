@@ -11,8 +11,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -517,7 +519,18 @@ public class AttachmentServiceImpl implements AttachmentService {
         return cleanName.toString();
     }
 
-    public byte[] downloadAllAttachments(List<Invoice> invoices) throws OsirisException {
+    @Transactional(rollbackFor = Exception.class)
+    public byte[] downloadAllInvoicesAsZip(List<Integer> invoiceIds) throws OsirisException {
+        Set<Integer> uniqueInvoiceIds = new HashSet<>(invoiceIds);
+        List<Invoice> invoices = new ArrayList<Invoice>();
+        byte[] outArray = null;
+
+        if (uniqueInvoiceIds != null && uniqueInvoiceIds.size() > 0) {
+            for (Integer id : uniqueInvoiceIds) {
+                invoices.add(invoiceService.getInvoice(id));
+            }
+        }
+
         List<Integer> attachmentIds = new ArrayList<Integer>();
 
         if (invoices != null && invoices.size() > 0)
@@ -548,7 +561,8 @@ public class AttachmentServiceImpl implements AttachmentService {
                     throw new OsirisValidationException("File does not exist: " + file.getAbsolutePath());
                 }
 
-                try (FileInputStream fis = new FileInputStream(file)) {
+                try {
+                    FileInputStream fis = new FileInputStream(file);
                     ZipEntry zipEntry = new ZipEntry(attachment.getUploadedFile().getFilename());
                     zos.putNextEntry(zipEntry);
 
@@ -558,16 +572,19 @@ public class AttachmentServiceImpl implements AttachmentService {
                         zos.write(buffer, 0, len);
                     }
                     zos.closeEntry();
+                    fis.close();
                 } catch (IOException e) {
                     throw new OsirisException(e, "Unable to process file: " + file.getAbsolutePath());
                 }
             }
             zos.finish();
 
+            outArray = zipOutputStream.toByteArray();
+            zipOutputStream.close();
         } catch (IOException e) {
             throw new OsirisException(e, "Unable to generate ZIP file");
         }
 
-        return zipOutputStream.toByteArray();
+        return outArray;
     }
 }
