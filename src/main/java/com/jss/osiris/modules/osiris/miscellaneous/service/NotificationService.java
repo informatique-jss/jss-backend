@@ -67,5 +67,7 @@ public interface NotificationService {
 
         public void notifyIncidentReportAsked(IncidentReport incident) throws OsirisException;
 
+        public void notifyQuotationModified(CustomerOrder customerOrder);
+
         public void notifyImmediateAffactationOfOrder(CustomerOrder customerOrder) throws OsirisException;
 }

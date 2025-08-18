@@ -26,6 +26,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.osiris.quotation.model.AffaireSearch;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
@@ -135,6 +136,9 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     ConfrereService confrereService;
 
     @Autowired
+    NotificationService notificationService;
+
+    @Autowired
     CustomerOrderAssignationService customerOrderAssignationService;
 
     @Override
@@ -209,7 +213,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     public AssoAffaireOrder completeAssoAffaireOrder(AssoAffaireOrder assoAffaireOrder, IQuotation customerOrder,
             Boolean isFromUser)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
-        // Complete domiciliation end date
+        Boolean oneNewProvision = false;
+
         for (Service service : assoAffaireOrder.getServices()) {
             service.setAssoAffaireOrder(assoAffaireOrder);
             serviceService.addOrUpdateService(service);
@@ -228,6 +233,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
             for (Provision provision : service.getProvisions()) {
                 provision.setService(service);
 
+                if (provision.getId() == null)
+                    oneNewProvision = true;
                 if (provision.getComplexity() == null)
                     provision.setComplexity(4);
 
@@ -600,6 +607,11 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 customerOrderAssignationService.assignNewProvisionToUser(provision);
             }
         }
+
+        if (oneNewProvision && customerOrder != null && customerOrder instanceof CustomerOrder
+                && ((CustomerOrder) customerOrder).getQuotations() != null
+                && ((CustomerOrder) customerOrder).getQuotations().size() > 0)
+            notificationService.notifyQuotationModified(assoAffaireOrder.getCustomerOrder());
 
         return assoAffaireOrder;
     }

@@ -2133,7 +2133,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 batchService.declareNewBatch(Batch.PURGE_CUSTOMER_ORDER, order.getId());
     }
 
-    @Override
     public List<CustomerOrder> findCustomerOrderByFormalisteAssigned(List<Employee> employees,
             CustomerOrderStatus customerOrderStatus, Employee assignedUser, AssignationType assignationType) {
         return customerOrderRepository.findCustomerOrderByFormalisteAndStatusAssigned(employees, customerOrderStatus,

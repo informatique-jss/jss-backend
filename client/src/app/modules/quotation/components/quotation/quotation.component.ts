@@ -40,12 +40,12 @@ import { Provision } from '../../model/Provision';
 import { QuotationStatus } from '../../model/QuotationStatus';
 import { Service } from '../../model/Service';
 import { VatBase } from '../../model/VatBase';
-import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
 import { CustomerOrderService } from '../../services/customer.order.service';
 import { CustomerOrderStatusService } from '../../services/customer.order.status.service';
 import { OrderingSearchResultService } from '../../services/ordering.search.result.service';
 import { ProvisionService } from '../../services/provision.service';
 import { QuotationStatusService } from '../../services/quotation-status.service';
+import { QuotationSearchResultService } from '../../services/quotation.search.result.service';
 import { QuotationService } from '../../services/quotation.service';
 import { ServiceService } from '../../services/service.service';
 import { ValidationIdQuotationService } from '../../services/validation-id.quotation.service';
@@ -107,6 +107,8 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   saveObservableSubscription: Subscription = new Subscription;
   customerOrderInvoices: InvoiceSearchResult[] | undefined;
 
+  hasQuotation: boolean | undefined;
+
   constructor(private appService: AppService,
     private quotationService: QuotationService,
     private customerOrderService: CustomerOrderService,
@@ -126,7 +128,6 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     public customerOrderWorkflowDialog: MatDialog,
     private formBuilder: FormBuilder,
     private constantService: ConstantService,
-    private assoAffaireOrderService: AssoAffaireOrderService,
     protected searchService: SearchService,
     private provisionService: ProvisionService,
     private orderingSearchResultService: OrderingSearchResultService,
@@ -138,6 +139,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     private habilitationService: HabilitationsService,
     private notificationService: NotificationService,
     private incidentReportService: IncidentReportService,
+    private quotationSearchResultService: QuotationSearchResultService,
     private changeDetectorRef: ChangeDetectorRef) { }
 
   quotationForm = this.formBuilder.group({});
@@ -187,6 +189,12 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
                   this.selectedTabIndexAsso = i;
               }
           }
+
+          this.quotationSearchResultService.getQuotationsForCustomerOrder(this.quotation as CustomerOrder).subscribe(response => {
+            if (response)
+              this.hasQuotation = true;
+            else this.hasQuotation = false;
+          });
 
           this.incidentReportService.getIncidentReportsForCustomerOrder(this.quotation.id).subscribe(response => this.incidentList = response);
         })
@@ -360,20 +368,6 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     return this.instanceOfCustomerOrder ? this.customerOrderStatusList : this.quotationStatusList;
   }
 
-  createProvision(service: Service): Provision {
-    if (!this.habilitationService.canByPassProvisionLockOnBilledOrder())
-      if (instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
-        this.displaySnakBarLockProvision();
-        return {} as Provision;
-      }
-    if (service && !service.provisions)
-      service.provisions = [] as Array<Provision>;
-    let provision = {} as Provision;
-    service.provisions.push(provision);
-    this.generateInvoiceItem();
-    return provision;
-  }
-
   createService(asso: AssoAffaireOrder) {
     if (!this.habilitationService.canByPassProvisionLockOnBilledOrder())
       if (instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
@@ -382,17 +376,67 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     if (asso && !asso.services)
       asso.services = [] as Array<Service>;
 
-    let dialogRef = this.selectAttachmentTypeDialog.open(SelectMultiServiceTypeDialogComponent, {
-      width: '50%',
-    });
-    dialogRef.componentInstance.affaire = asso.affaire;
 
-    dialogRef.afterClosed().subscribe(response => {
-      if (response != null) {
-        asso.services.push(...response);
-        this.generateInvoiceItem();
+    if (this.hasQuotation) {
+      const dialogConfirm = this.confirmationDialog.open(ConfirmDialogComponent, {
+        maxWidth: "400px",
+        data: {
+          title: "Modification du devis de la commande",
+          content: "L'ajout d'une prestation impactera le devis initial lié à cette commande. Souhaitez-vous continuer ? ",
+          closeActionText: "Annuler",
+          validationActionText: "Confirmer"
+        }
+      });
+
+      dialogConfirm.afterClosed().subscribe(userConfirmed => {
+        if (userConfirmed) {
+          let dialogRef = this.selectAttachmentTypeDialog.open(SelectMultiServiceTypeDialogComponent, {
+            width: '50%',
+          });
+          dialogRef.componentInstance.affaire = asso.affaire;
+
+          dialogRef.afterClosed().subscribe(response => {
+            if (response != null)
+              asso.services.push(...response);
+          });
+        }
+      });
+    }
+  }
+
+  createProvision(service: Service): Provision {
+    if (!this.habilitationService.canByPassProvisionLockOnBilledOrder()) {
+      if (instanceOfCustomerOrder(this.quotation) &&
+        this.quotation.customerOrderStatus &&
+        (this.quotation.customerOrderStatus.code === CUSTOMER_ORDER_STATUS_TO_BILLED ||
+          this.quotation.customerOrderStatus.code === CUSTOMER_ORDER_STATUS_BILLED)) {
+        this.displaySnakBarLockProvision();
+        return {} as Provision;
       }
-    });
+    }
+    let provision = {} as Provision;
+    if (this.hasQuotation) {
+      const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+        maxWidth: "400px",
+        data: {
+          title: "Modification du devis de la commande",
+          content: "L'ajout d'une prestation impactera le devis initial lié à cette commande. Souhaitez-vous continuer ? ",
+          closeActionText: "Annuler",
+          validationActionText: "Confirmer"
+        }
+      });
+
+      dialogRef.afterClosed().subscribe(userConfirmed => {
+        if (userConfirmed) {
+          if (service && !service.provisions) {
+            service.provisions = [] as Array<Provision>;
+          }
+          service.provisions.push(provision);
+          this.generateInvoiceItem();
+        }
+      });
+    }
+    return provision;
   }
 
   deleteService(asso: AssoAffaireOrder, service: Service) {

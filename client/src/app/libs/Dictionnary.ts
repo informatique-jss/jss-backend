@@ -139,7 +139,8 @@ export const Dictionnary = {
   "NEW_CANDIDACY_RECEIVED": "Nouvelle candidature reçue",
   "INCIDENT_REPORT_ASKED": "Nouveau CRI à remplir",
   "ORDER_IMMEDIATLY_AFFECTED": "Commande affectée immédiatement",
-  "ORDER_ADD_COMMENT_MYJSS": "Nouveau commentaire client"
+  "ORDER_ADD_COMMENT_MYJSS": "Nouveau commentaire client",
+  "MODIFIED_QUOTATION": "Modification de commande liée à un devis",
 };
 
 
