@@ -394,6 +394,7 @@ public class MailHelper {
                                     break outerloop;
                                 }
 
+            ctx.setVariable("customerName", getCustomerName(quotation));
             if (mail.getMailComputeResult() != null && mail.getMailComputeResult().getIsSendToAffaire()
                     && (mail.getMailTemplate().equals(CustomerMail.TEMPLATE_CUSTOMER_ORDER_FINALIZATION)
                             || mail.getMailTemplate().equals(CustomerMail.TEMPLATE_INVOICE_REMINDER))
@@ -404,14 +405,15 @@ public class MailHelper {
                     ctx.setVariable("customerName", quotation.getAssoAffaireOrders().get(0).getAffaire().getFirstname()
                             + ' ' + quotation.getAssoAffaireOrders().get(0).getAffaire().getLastname());
 
-                else if (mail.getMailComputeResult() != null && mail.getMailComputeResult().getIsSendToAffaire()
+                else if (assoAffaireOrderToUse != null && mail.getMailComputeResult() != null
+                        && mail.getMailComputeResult().getIsSendToAffaire()
                         && (mail.getMailTemplate().equals(CustomerMail.TEMPLATE_CUSTOMER_ORDER_FINALIZATION)
                                 || mail.getMailTemplate().equals(CustomerMail.TEMPLATE_INVOICE_REMINDER))
                         && (!assoAffaireOrderToUse.getAffaire().getIsIndividual()
                                 || assoAffaireOrderToUse.getAffaire().getIsIndividual() == null))
                     ctx.setVariable("customerName", "");
-            } else
-                ctx.setVariable("customerName", getCustomerName(quotation));
+            }
+
             ctx.setVariable("affaireLabel", getCustomerOrderAffaireLabel(quotation, assoAffaireOrderToUse));
             ctx.setVariable("affaireLabelDetails",
                     getCustomerOrderAffaireDetailLabel(quotation, assoAffaireOrderToUse));
