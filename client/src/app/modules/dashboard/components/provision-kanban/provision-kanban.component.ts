@@ -3,7 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatExpansionPanel } from '@angular/material/expansion';
 import { combineLatest, map } from 'rxjs';
-import { ANNOUNCEMENT_PUBLISHED, ANNOUNCEMENT_STATUS_DONE, ANNOUNCEMENT_STATUS_IN_PROGRESS, ANNOUNCEMENT_STATUS_WAITING_CONFRERE, ANNOUNCEMENT_STATUS_WAITING_READ_CUSTOMER, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN } from 'src/app/libs/Constants';
+import { ANNOUNCEMENT_PUBLISHED, ANNOUNCEMENT_STATUS_DONE, ANNOUNCEMENT_STATUS_IN_PROGRESS, ANNOUNCEMENT_STATUS_NEW, ANNOUNCEMENT_STATUS_WAITING_CONFRERE, ANNOUNCEMENT_STATUS_WAITING_READ_CUSTOMER, FORMALITE_AUTHORITY_IN_PROGRESS, FORMALITE_AUTHORITY_NEW, FORMALITE_AUTHORITY_REJECTED, FORMALITE_AUTHORITY_VALIDATED, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, SIMPLE_PROVISION_STATUS_IN_PROGRESS, SIMPLE_PROVISION_STATUS_NEW } from 'src/app/libs/Constants';
 import { formatDateFrance } from 'src/app/libs/FormatHelper';
 import { getResponsableLabelIQuotation, getTiersLabelIQuotation } from 'src/app/modules/invoicing/components/invoice-tools';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
@@ -11,6 +11,7 @@ import { WorkflowDialogComponent } from 'src/app/modules/miscellaneous/component
 import { IWorkflowElement } from 'src/app/modules/miscellaneous/model/IWorkflowElement';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { Employee } from 'src/app/modules/profile/model/Employee';
+import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
 import { ChooseCompetentAuthorityDialogComponent } from 'src/app/modules/quotation/components/choose-competent-authority-dialog/choose-competent-authority-dialog.component';
 import { ProvisionComponent } from 'src/app/modules/quotation/components/provision/provision.component';
 import { MissingAttachmentMailDialogComponent } from 'src/app/modules/quotation/components/select-attachment-type-dialog/missing-attachment-mail-dialog.component';
@@ -70,6 +71,8 @@ export class ProvisionKanbanComponent extends KanbanComponent<Provision, IWorkfl
   customerOrderFetched: CustomerOrder | undefined;
   possibleEntityStatusCustomerOrder: CustomerOrderStatus[] = [];
 
+  currentUser: Employee | undefined;
+
 
   constructor(
     private provisionService: ProvisionService,
@@ -94,6 +97,7 @@ export class ProvisionKanbanComponent extends KanbanComponent<Provision, IWorkfl
     private orderService: CustomerOrderService,
     private customerOrderStatusService: CustomerOrderStatusService,
     private assoAffaireOrderService: AssoAffaireOrderService,
+    private employeeService: EmployeeService
   ) {
     super(restUserPreferenceService2);
   }
@@ -111,6 +115,8 @@ export class ProvisionKanbanComponent extends KanbanComponent<Provision, IWorkfl
     this.swimlaneTypes.push({ fieldName: "service.assoAffaireOrder.customerOrder.createdDate", label: "Semaine", valueFonction: (provision: Provision) => { return formatDateFrance(this.getStartOfWeek(provision.service.assoAffaireOrder.customerOrder.createdDate)) }, fieldValueFunction: (provision: Provision) => { return formatDateFrance(this.getStartOfWeek(provision.service.assoAffaireOrder.customerOrder.createdDate)) } });
     this.swimlaneTypes.push({ fieldName: "service.assoAffaireOrder.customerOrder.id", label: "Commande", valueFonction: (provision: Provision) => { return "Commande " + provision.service.assoAffaireOrder.customerOrder.id }, fieldValueFunction: undefined });
     this.selectedSwimlaneType = this.swimlaneTypes[0];
+
+    this.employeeService.getCurrentEmployee().subscribe(response => this.currentUser = response);
 
     combineLatest([
       this.domiciliationStatusService.getDomiciliationStatus(),
@@ -448,14 +454,23 @@ export class ProvisionKanbanComponent extends KanbanComponent<Provision, IWorkfl
   }
 
   assignNewCustomerOrder() {
-    const dialogRef = this.assignNewOrderDialog.open(AssignNewOrderDialogComponent, {
-      width: "50%"
-    });
+    if (this.currentUser) {
+      this.provisionService.searchProvisions([this.currentUser.id], [FORMALITE_AUTHORITY_NEW, FORMALITE_AUTHORITY_IN_PROGRESS, FORMALITE_AUTHORITY_REJECTED, FORMALITE_AUTHORITY_VALIDATED, SIMPLE_PROVISION_STATUS_IN_PROGRESS, SIMPLE_PROVISION_STATUS_NEW, ANNOUNCEMENT_STATUS_NEW, ANNOUNCEMENT_STATUS_IN_PROGRESS]).subscribe(response => {
 
-    dialogRef.afterClosed().subscribe(dialogResult => {
-      if (dialogResult) {
-        this.startFilter();
-      }
-    });
+        if (response && response.length > 5) {
+          this.appService.displaySnackBar("Vous avez trop de dossiers encore à traiter pour vous assigner une nouvelle commande", true, 5);
+          return;
+        }
+        const dialogRef = this.assignNewOrderDialog.open(AssignNewOrderDialogComponent, {
+          width: "50%"
+        });
+
+        dialogRef.afterClosed().subscribe(dialogResult => {
+          if (dialogResult) {
+            this.startFilter();
+          }
+        });
+      });
+    }
   }
 }

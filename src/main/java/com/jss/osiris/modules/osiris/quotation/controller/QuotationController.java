@@ -2881,7 +2881,7 @@ public class QuotationController {
   @PreAuthorize(ActiveDirectoryHelper.TEAM_RESPONSIBLE)
   public ResponseEntity<Boolean> updateCustomerOrderAssignation(Integer idCustomerOrderAssignation,
       @RequestParam(required = false) Integer idEmployee)
-      throws OsirisValidationException {
+      throws OsirisException {
 
     CustomerOrderAssignation customerOrderAssignation = customerOrderAssignationService
         .getCustomerOrderAssignation(idCustomerOrderAssignation);
