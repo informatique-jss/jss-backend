@@ -77,10 +77,15 @@ public class CustomerOrderAssignationServiceImpl implements CustomerOrderAssigna
     @Override
     @Transactional(rollbackFor = Exception.class)
     public CustomerOrderAssignation addOrUpdateCustomerOrderAssignation(
-            CustomerOrderAssignation customerOrderAssignation, Employee employee) {
+            CustomerOrderAssignation customerOrderAssignation, Employee employee) throws OsirisException {
         customerOrderAssignation = getCustomerOrderAssignation(customerOrderAssignation.getId());
         customerOrderAssignation.setEmployee(employee);
-        return addOrUpdateCustomerOrderAssignation(customerOrderAssignation);
+
+        addOrUpdateCustomerOrderAssignation(customerOrderAssignation);
+        if (employee != null && employee.getId().equals(employeeService.getCurrentEmployee().getId())) {
+            assignToEmployee(customerOrderAssignation, employeeService.getCurrentEmployee());
+        }
+        return customerOrderAssignation;
     }
 
     @Override

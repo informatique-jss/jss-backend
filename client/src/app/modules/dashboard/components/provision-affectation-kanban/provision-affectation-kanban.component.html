@@ -25,6 +25,7 @@
     <div *ngFor="let status of statusSelected ;let indexStatus = index" class="kanban-column"
       [ngClass]="{'first-column':indexStatus==0}">
       <h3 style="margin: 0px; text-align: center;"><span [matBadge]="status.id?getNumberOfEntitiesByStatus(status):0"
+          [matTooltip]="status.id?getNumberOfEntitiesByStatus(status)+'':'0'"
           [matBadgeHidden]="!status.id ||getNumberOfEntitiesByStatus(status)==0" matBadgePosition="after"
           matBadgeSize="small">{{ status.firstname + ' '+status.lastname }}</span></h3>
     </div>
