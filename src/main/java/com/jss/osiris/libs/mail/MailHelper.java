@@ -457,10 +457,7 @@ public class MailHelper {
         ctx.setVariable("ibanJss", ibanJss);
         ctx.setVariable("bicJss", bicJss);
         ctx.setVariable("cbLink", mail.getCbLink());
-        ctx.setVariable("isQrCodePaymentDisabled",
-                mail.getIsQrCodePaymentDisabled()
-                        ? mail.getIsQrCodePaymentDisabled()
-                        : false);
+        ctx.setVariable("isQrCodePaymentDisabled", Boolean.TRUE.equals(mail.getIsQrCodePaymentDisabled()));
 
         if (mail.getMailTemplate().equals(CustomerMail.TEMPLATE_CUSTOMER_ORDER_IN_PROGRESS)
                 && (mail.getCustomerOrder() != null || mail.getQuotation() != null))
