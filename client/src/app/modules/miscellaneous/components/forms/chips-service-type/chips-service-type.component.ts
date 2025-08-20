@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { Observable } from 'rxjs';
@@ -19,6 +19,7 @@ export class ChipsServiceTypeComponent extends GenericChipsComponent<ServiceType
 
   serviceTypes: ServiceType[] = [] as Array<ServiceType>;
   filteredServiceTypes: Observable<ServiceType[]> | undefined;
+  @Input() isDisplayOnlyServiceForUnregisteredAffaire: boolean = false;
   @ViewChild('serviceTypeInput') serviceTypeInput: ElementRef<HTMLInputElement> | undefined;
 
   constructor(private formBuild: UntypedFormBuilder, private habilitationService: HabilitationsService,
@@ -28,7 +29,10 @@ export class ChipsServiceTypeComponent extends GenericChipsComponent<ServiceType
 
   callOnNgInit(): void {
     this.serviceTypeService.getServiceTypes().subscribe(response => {
-      this.serviceTypes = response;
+      if (this.isDisplayOnlyServiceForUnregisteredAffaire)
+        this.serviceTypes = response.filter(service => service.isRequiringNewUnregisteredAffaire);
+      else
+        this.serviceTypes = response;
     })
     if (this.form)
       this.filteredServiceTypes = this.form.get(this.propertyName)?.valueChanges.pipe(

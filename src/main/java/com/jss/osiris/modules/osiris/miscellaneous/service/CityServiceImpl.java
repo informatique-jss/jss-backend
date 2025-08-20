@@ -78,6 +78,11 @@ public class CityServiceImpl implements CityService {
     }
 
     @Override
+    public City getCityByInpiLabel(String inpiLabel) {
+        return cityRepository.findByInpiLabel(inpiLabel);
+    }
+
+    @Override
     public Page<City> getCitiesByLabelAndCountryAndPostalCode(String label, Integer countryId, String postalCode,
             Pageable pageable) {
         Country country = countryService.getCountry(countryId);

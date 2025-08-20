@@ -39,6 +39,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DepartmentVatSettingService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.PaymentTypeService;
+import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
@@ -47,6 +48,7 @@ import com.jss.osiris.modules.osiris.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
+import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.AutresEtablissement;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.Cart;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.CartRate;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.FormaliteGuichetUnique;
@@ -58,6 +60,7 @@ import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.ValidationsRequestStatus;
 import com.jss.osiris.modules.osiris.quotation.repository.guichetUnique.FormaliteGuichetUniqueRepository;
 import com.jss.osiris.modules.osiris.quotation.repository.guichetUnique.PartnerCenterRepository;
+import com.jss.osiris.modules.osiris.quotation.service.AffaireService;
 import com.jss.osiris.modules.osiris.quotation.service.AssoAffaireOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderCommentService;
 import com.jss.osiris.modules.osiris.quotation.service.FormaliteService;
@@ -139,6 +142,9 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
     @Autowired
     NotificationService notificationService;
+
+    @Autowired
+    AffaireService affaireService;
 
     private String cartStatusPayed = "PAID";
     private String cartStatusRefund = "REFUNDED";
@@ -339,6 +345,25 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
             savedFormaliteGuichetUnique = addOrUpdateFormaliteGuichetUnique(savedFormaliteGuichetUnique);
 
+            // grap back SIREN / SIRET for creation of firm
+            if (Boolean.TRUE.equals(apiFormaliteGuichetUnique.getIsFormality())
+                    && apiFormaliteGuichetUnique.getTypeFormalite().getCode().equals("C")
+                    && apiFormaliteGuichetUnique.getSiren() != null) {
+                if (formalite != null && formalite.getProvision() != null && formalite.getProvision().get(0)
+                        .getService().getAssoAffaireOrder().getAffaire().getSiren() == null) {
+                    Affaire affaire = formalite.getProvision().get(0).getService().getAssoAffaireOrder().getAffaire();
+                    affaire.setIsUnregistered(false);
+                    affaire.setSiren(apiFormaliteGuichetUnique.getSiren());
+                    String siret = getSiretFromFormaliteGuichetUnique(apiFormaliteGuichetUnique);
+                    if (siret == null)
+                        throw new OsirisException("Impossible to find SIRET for immatriculation "
+                                + apiFormaliteGuichetUnique.getLiasseNumber());
+                    affaire.setSiret(siret);
+                    affaireService.addOrUpdateAffaire(affaire);
+                    affaireService.refreshAffaireFromRne(affaire);
+                }
+            }
+
             // Update provision waiting AC field
             if (savedFormaliteGuichetUnique.getStatus().getCode()
                     .equals(FormaliteGuichetUniqueStatus.VALIDATION_PENDING)
@@ -477,6 +502,47 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
         }
         return savedFormaliteGuichetUnique;
 
+    }
+
+    private String getSiretFromFormaliteGuichetUnique(FormaliteGuichetUnique formalite) {
+        if (formalite == null || formalite.getContent() == null
+                || formalite.getContent().getPersonneMorale() == null
+                        && formalite.getContent().getPersonnePhysique() == null)
+            return null;
+
+        if (formalite.getContent().getPersonneMorale() != null
+                && formalite.getContent().getPersonneMorale().getAutresEtablissements() != null)
+            for (AutresEtablissement other : formalite.getContent().getPersonneMorale()
+                    .getAutresEtablissements()) {
+                if (other.getDescriptionEtablissement() != null
+                        && other.getDescriptionEtablissement().getSiret() != null)
+                    return other.getDescriptionEtablissement().getSiret();
+            }
+        if (formalite.getContent().getPersonneMorale() != null
+                && formalite.getContent().getPersonneMorale()
+                        .getEtablissementPrincipal() != null
+                && formalite.getContent().getPersonneMorale()
+                        .getEtablissementPrincipal().getDescriptionEtablissement().getSiret() != null)
+            return formalite.getContent().getPersonneMorale()
+                    .getEtablissementPrincipal().getDescriptionEtablissement().getSiret();
+
+        if (formalite.getContent().getPersonnePhysique() != null
+                && formalite.getContent().getPersonnePhysique().getAutresEtablissements() != null)
+            for (AutresEtablissement other : formalite.getContent().getPersonnePhysique()
+                    .getAutresEtablissements()) {
+                if (other.getDescriptionEtablissement() != null
+                        && other.getDescriptionEtablissement().getSiret() != null)
+                    return other.getDescriptionEtablissement().getSiret();
+            }
+        if (formalite.getContent().getPersonnePhysique() != null
+                && formalite.getContent().getPersonnePhysique()
+                        .getEtablissementPrincipal() != null
+                && formalite.getContent().getPersonnePhysique()
+                        .getEtablissementPrincipal().getDescriptionEtablissement().getSiret() != null)
+            return formalite.getContent().getPersonnePhysique()
+                    .getEtablissementPrincipal().getDescriptionEtablissement().getSiret();
+
+        return null;
     }
 
     private List<PiecesJointe> getAttachmentOfFormaliteGuichetUnique(FormaliteGuichetUnique formaliteGuichetUnique)

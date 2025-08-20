@@ -102,7 +102,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         " and (:journalId =0 or r.id_accounting_journal = :journalId) " +
                         " and (:tiersId =0  or coalesce(t.id, pr.id) is not null) "
                         +
-                        " and (:hideLettered = false or coalesce(r.lettering_date_time,:endDate)>=:endDate ) " +
+                        " and (:hideLettered = false or r.lettering_date_time is null ) " +
                         " and (:isFromAs400 = false or r.is_from_as400=true ) " +
                         " and (greatest(r.operation_date_time,'2023-01-01') between :startDate and :endDate)  "
                         +
@@ -187,7 +187,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         " and (:journalId =0 or r.id_accounting_journal = :journalId) " +
                         " and (:tiersId =0  or coalesce(t.id, pr.id) is not null) "
                         +
-                        " and (:hideLettered = false or coalesce(r.lettering_date_time,:endDate)>=:endDate ) " +
+                        " and (:hideLettered = false or r.lettering_date_time is null  ) " +
                         " and (:isFromAs400 = false or r.is_from_as400=true ) " +
                         " and (greatest(r.operation_date_time,'2023-01-01') between :startDate  and :endDate)  "
                         +

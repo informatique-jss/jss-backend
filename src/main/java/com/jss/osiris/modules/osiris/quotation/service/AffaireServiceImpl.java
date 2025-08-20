@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.GlobalExceptionHandler;
@@ -38,17 +40,26 @@ import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.Rna;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
+import com.jss.osiris.modules.osiris.quotation.model.UniteLegaleImport;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.Activite;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.AdresseDomicile;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.AutresEtablissement;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.PersonneMorale;
+import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.PersonnePhysique;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.RneCompany;
+import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.RneResult;
+import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.FormeExerciceActivitePrincipal;
+import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.FormeJuridique;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeVoie;
 import com.jss.osiris.modules.osiris.quotation.repository.AffaireRepository;
+import com.jss.osiris.modules.osiris.quotation.repository.UniteLegaleImportRepository;
 import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.referentials.FormeExerciceActivitePrincipalService;
 import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.referentials.FormeJuridiqueService;
 import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.referentials.TypeVoieService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 @org.springframework.stereotype.Service
 public class AffaireServiceImpl implements AffaireService {
@@ -115,7 +126,7 @@ public class AffaireServiceImpl implements AffaireService {
     }
 
     @Override
-    public Affaire getAffaireBySiret(String siret) {
+    public List<Affaire> getAffaireBySiret(String siret) {
         return affaireRepository.findBySiret(siret);
     }
 
@@ -135,7 +146,7 @@ public class AffaireServiceImpl implements AffaireService {
         affaire = getAffaire(affaire.getId());
         List<RneCompany> rneCompanies = rneDelegateService.getCompanyBySiret(affaire.getSiret());
         if (rneCompanies != null && rneCompanies.size() == 1)
-            updateAffaireFromRneCompany(affaire, rneCompanies.get(0), true);
+            updateAffaireFromRneCompany(affaire, rneCompanies.get(0));
         addOrUpdateAffaire(affaire);
         return affaire;
     }
@@ -229,14 +240,14 @@ public class AffaireServiceImpl implements AffaireService {
 
         affaire.setSiret(specificSiret);
         affaire.setSiren(rneCompany.getSiren());
-        updateAffaireFromRneCompany(affaire, rneCompany, false);
+        updateAffaireFromRneCompany(affaire, rneCompany);
 
         // if already existing affaire, use it
         if (affaire.getSiret() != null) {
-            Affaire existingAffaire = getAffaireBySiret(affaire.getSiret());
-            if (existingAffaire != null) {
-                affaire = existingAffaire;
-                updateAffaireFromRneCompany(existingAffaire, rneCompany, false);
+            List<Affaire> existingAffaires = getAffaireBySiret(affaire.getSiret());
+            if (existingAffaires != null && existingAffaires.size() > 0) {
+                affaire = existingAffaires.get(0);
+                updateAffaireFromRneCompany(affaire, rneCompany);
             } else {
                 // else persist it
                 affaire = addOrUpdateAffaire(affaire);
@@ -246,9 +257,10 @@ public class AffaireServiceImpl implements AffaireService {
         return affaire;
     }
 
-    private void updateAffaireFromRneCompany(Affaire affaire, RneCompany rneCompany, boolean isForceRefresh)
+    private void updateAffaireFromRneCompany(Affaire affaire, RneCompany rneCompany)
             throws OsirisException {
         PersonneMorale personneMorale = null;
+        PersonnePhysique personnePhysique = null;
 
         if (rneCompany == null)
             return;
@@ -259,38 +271,27 @@ public class AffaireServiceImpl implements AffaireService {
         if (affaire.getIsUnregistered() == null)
             affaire.setIsUnregistered(false);
 
-        if (isForceRefresh) {
-            affaire.setAcronym(null);
-            affaire.setAddress(null);
-            affaire.setCedexComplement(null);
-            affaire.setCity(null);
-            affaire.setCompetentAuthority(null);
-            affaire.setCountry(null);
-            affaire.setDenomination(null);
-            affaire.setLegalForm(null);
-            affaire.setMainActivity(null);
-            affaire.setPostalCode(null);
-            affaire.setShareCapital(null);
-        }
-
         affaire.setSiren(rneCompany.getSiren());
 
         if (rneCompany != null && rneCompany.getFormality() != null && rneCompany.getFormality().getContent() != null
-                && rneCompany.getFormality().getContent().getPersonneMorale() != null
-                && rneCompany.getFormality().getContent() != null)
+                && rneCompany.getFormality().getContent().getPersonneMorale() != null)
             personneMorale = rneCompany.getFormality().getContent().getPersonneMorale();
 
-        if (personneMorale == null)
-            return;
+        if (rneCompany != null && rneCompany.getFormality() != null && rneCompany.getFormality().getContent() != null
+                && rneCompany.getFormality().getContent().getPersonnePhysique() != null)
+            personnePhysique = rneCompany.getFormality().getContent().getPersonnePhysique();
 
-        if (affaire.getSiret() == null && personneMorale.getEtablissementPrincipal() != null
-                && personneMorale.getEtablissementPrincipal().getDescriptionEtablissement() != null)
-            affaire.setSiret(personneMorale.getEtablissementPrincipal().getDescriptionEtablissement().getSiret());
+        if (personneMorale != null) {
+            if (affaire.getSiret() == null && personneMorale.getEtablissementPrincipal() != null
+                    && personneMorale.getEtablissementPrincipal().getDescriptionEtablissement() != null)
+                affaire.setSiret(personneMorale.getEtablissementPrincipal().getDescriptionEtablissement().getSiret());
 
-        if (affaire.getSiret() == null && personneMorale.getAutresEtablissements() != null
-                && personneMorale.getAutresEtablissements().size() > 0
-                && personneMorale.getAutresEtablissements().get(0).getDescriptionEtablissement() != null)
-            affaire.setSiret(personneMorale.getAutresEtablissements().get(0).getDescriptionEtablissement().getSiret());
+            if (affaire.getSiret() == null && personneMorale.getAutresEtablissements() != null
+                    && personneMorale.getAutresEtablissements().size() > 0
+                    && personneMorale.getAutresEtablissements().get(0).getDescriptionEtablissement() != null)
+                affaire.setSiret(
+                        personneMorale.getAutresEtablissements().get(0).getDescriptionEtablissement().getSiret());
+        }
 
         AdresseDomicile address = getAddressFromRneCompany(rneCompany, affaire.getSiren(), affaire.getSiret());
         if (address != null && address != null) {
@@ -309,25 +310,19 @@ public class AffaireServiceImpl implements AffaireService {
 
             adressElements.add(address.getVoie());
 
-            if (affaire.getAddress() == null || affaire.getAddress().length() == 0)
-                if (affaire.getAddress() == null || affaire.getAddress().equals(""))
-                    affaire.setAddress(adressElements.stream().filter(s -> s != null && !s.isEmpty())
-                            .collect(Collectors.joining(" ")));
+            affaire.setAddress(
+                    adressElements.stream().filter(s -> s != null && !s.isEmpty()).collect(Collectors.joining(" ")));
 
             companyPostalCode = address.getCodePostal();
 
-            if (affaire.getPostalCode() == null || affaire.getPostalCode().length() == 0)
-                if (affaire.getPostalCode() == null || affaire.getPostalCode().equals(""))
-                    affaire.setPostalCode(companyPostalCode);
+            if (companyPostalCode != null)
+                affaire.setPostalCode(companyPostalCode);
 
-            if (affaire.getCedexComplement() == null || affaire.getCedexComplement().length() == 0)
-                if (affaire.getCedexComplement() == null || affaire.getCedexComplement().equals(""))
-                    affaire.setCedexComplement(
-                            address.getDistributionSpeciale());
+            if (address.getDistributionSpeciale() != null)
+                affaire.setCedexComplement(address.getDistributionSpeciale());
 
-            if (address.getCommune() != null && affaire.getCity() == null) {
-                List<City> foundCities = cityService
-                        .getCitiesByLabel(address.getCommune());
+            if (address.getCommune() != null) {
+                List<City> foundCities = cityService.getCitiesByLabel(address.getCommune().replaceAll("-", " "));
                 if (foundCities != null) {
                     if (foundCities.size() == 1)
                         companyCity = foundCities.get(0);
@@ -342,7 +337,10 @@ public class AffaireServiceImpl implements AffaireService {
                     if (foundCities.size() == 1)
                         companyCity = foundCities.get(0);
                 }
-                if (affaire.getCity() == null)
+                if (companyCity == null) {
+                    companyCity = cityService.getCityByInpiLabel(address.getCommune());
+                }
+                if (companyCity != null)
                     affaire.setCity(companyCity);
             }
 
@@ -352,6 +350,9 @@ public class AffaireServiceImpl implements AffaireService {
 
         List<Activite> activites = getActivitesFromRneCompany(rneCompany, affaire.getSiren(), affaire.getSiret());
         if (activites != null && activites.size() > 0) {
+            affaire.setApeCodes(String.join(";",
+                    activites.stream().map(Activite::getCodeApe).distinct().collect(Collectors.toList())));
+
             Integer nbrEmployee = 0;
             for (Activite activite : activites)
                 if (activite.getEffectifSalarie() != null && activite.getEffectifSalarie().getNombreSalarie() != null)
@@ -359,48 +360,56 @@ public class AffaireServiceImpl implements AffaireService {
             if (nbrEmployee > 0)
                 affaire.setEmployeeNumber(nbrEmployee);
 
-            affaire.setApeCodes(String.join(";",
-                    activites.stream().map(Activite::getCodeApe).distinct().collect(Collectors.toList())));
         }
 
-        if (affaire.getLegalForm() == null) {
-            if (affaire.getLegalForm() == null)
-                affaire.setLegalForm(formeJuridiqueService
-                        .getFormeJuridique(
-                                rneCompany.getFormality().getContent().getNatureCreation().getFormeJuridique()
-                                        .getCode()));
-        }
+        FormeJuridique legalForm = formeJuridiqueService.getFormeJuridique(
+                rneCompany.getFormality().getContent().getNatureCreation().getFormeJuridique().getCode());
+        if (legalForm != null)
+            affaire.setLegalForm(legalForm);
 
         affaire.setIsMainOffice(isEtablissementPrincipal(rneCompany, affaire.getSiren(), affaire.getSiret()));
 
-        if (affaire.getMainActivity() == null
-                && rneCompany.getFormality().getContent().getFormeExerciceActivitePrincipale() != null) {
-            if (affaire.getMainActivity() == null)
-                affaire.setMainActivity(formeExerciceActivitePrincipalService.getFormeExerciceActivitePrincipal(
-                        rneCompany.getFormality().getContent().getFormeExerciceActivitePrincipale().getCode()));
+        if (rneCompany.getFormality().getContent().getFormeExerciceActivitePrincipale() != null) {
+            FormeExerciceActivitePrincipal activity = formeExerciceActivitePrincipalService
+                    .getFormeExerciceActivitePrincipal(
+                            rneCompany.getFormality().getContent().getFormeExerciceActivitePrincipale().getCode());
+            if (activity != null)
+                affaire.setMainActivity(activity);
         }
 
-        if ((affaire.getShareCapital() == null || affaire.getShareCapital().compareTo(new BigDecimal(0)) <= 0)
-                && personneMorale.getIdentite() != null
-                && personneMorale.getIdentite().getDescription() != null
-                && personneMorale.getIdentite().getDescription().getMontantCapital() != null)
-            if (affaire.getShareCapital() == null || affaire.getShareCapital().equals(0f))
+        if (personneMorale != null) {
+            if (personneMorale.getIdentite() != null
+                    && personneMorale.getIdentite().getDescription() != null
+                    && personneMorale.getIdentite().getDescription().getMontantCapital() != null)
                 affaire.setShareCapital(
-                        personneMorale.getIdentite().getDescription().getMontantCapital().multiply(new BigDecimal(1)));
+                        personneMorale.getIdentite().getDescription().getMontantCapital()
+                                .multiply(new BigDecimal(1)));
 
-        if ((affaire.getAcronym() == null || affaire.getAcronym().length() == 0)
-                && personneMorale.getIdentite() != null && personneMorale.getIdentite().getDescription() != null
-                && personneMorale.getIdentite().getDescription().getSigle() != null)
-            if (affaire.getAcronym() == null || affaire.getAcronym().equals(""))
+            if (personneMorale.getIdentite() != null && personneMorale.getIdentite().getDescription() != null
+                    && personneMorale.getIdentite().getDescription().getSigle() != null)
                 affaire.setAcronym(personneMorale.getIdentite().getDescription().getSigle());
 
-        if ((affaire.getDenomination() == null || affaire.getDenomination().length() == 0)
-                && personneMorale.getIdentite() != null && personneMorale.getIdentite().getEntreprise() != null
-                && personneMorale.getIdentite().getEntreprise().getDenomination() != null)
-            if (affaire.getDenomination() == null || affaire.getDenomination().equals(""))
+            if (personneMorale.getIdentite() != null && personneMorale.getIdentite().getEntreprise() != null
+                    && personneMorale.getIdentite().getEntreprise().getDenomination() != null)
                 affaire.setDenomination(personneMorale.getIdentite().getEntreprise().getDenomination());
+        } else if (personnePhysique != null) {
+            affaire.setIsIndividual(true);
+            if (personnePhysique.getIdentite() != null
+                    && personnePhysique.getIdentite().getDescription() != null
+                    && personnePhysique.getIdentite().getDescription().getMontantCapital() != null)
+                affaire.setShareCapital(personnePhysique.getIdentite().getDescription().getMontantCapital()
+                        .multiply(new BigDecimal(1)));
 
-        if (affaire.getCity() != null && affaire.getCompetentAuthority() == null) {
+            if (personnePhysique.getIdentite() != null && personnePhysique.getIdentite().getDescription() != null
+                    && personnePhysique.getIdentite().getDescription().getSigle() != null)
+                affaire.setAcronym(personnePhysique.getIdentite().getDescription().getSigle());
+
+            if (personnePhysique.getIdentite() != null && personnePhysique.getIdentite().getEntreprise() != null
+                    && personnePhysique.getIdentite().getEntreprise().getDenomination() != null)
+                affaire.setDenomination(personnePhysique.getIdentite().getEntreprise().getDenomination());
+        }
+
+        if (affaire.getCity() != null) {
             List<CompetentAuthority> competentAuthoritiesFound = competentAuthorityService
                     .getCompetentAuthorityByCityAndAuthorityType(affaire.getCity(),
                             constantService.getCompetentAuthorityTypeRcs());
@@ -412,28 +421,46 @@ public class AffaireServiceImpl implements AffaireService {
 
     private Boolean isEtablissementPrincipal(RneCompany company, String siren, String siret) {
         if (company == null || company.getFormality() == null || company.getFormality().getContent() == null
-                || company.getFormality().getContent().getPersonneMorale() == null)
+                || company.getFormality().getContent().getPersonneMorale() == null
+                        && company.getFormality().getContent().getPersonnePhysique() == null)
             return null;
 
         if (siren != null && (siret == null || siret.length() == 0)) {
             return true;
         } else if (siret != null) {
-            if (company.getFormality().getContent().getPersonneMorale().getAutresEtablissements() != null)
-                for (AutresEtablissement other : company.getFormality().getContent().getPersonneMorale()
-                        .getAutresEtablissements()) {
-                    if (other.getDescriptionEtablissement() != null
-                            && other.getDescriptionEtablissement().getSiret() != null
-                            && other.getDescriptionEtablissement().getSiret().equals(siret))
-                        return false;
-                }
-            if (company.getFormality().getContent().getPersonneMorale()
-                    .getEtablissementPrincipal() != null
-                    && siret.equals(company.getFormality().getContent().getPersonneMorale()
-                            .getEtablissementPrincipal().getDescriptionEtablissement().getSiret()))
-                return true;
-            return false;
+            if (company.getFormality().getContent().getPersonneMorale() != null) {
+                if (company.getFormality().getContent().getPersonneMorale().getAutresEtablissements() != null)
+                    for (AutresEtablissement other : company.getFormality().getContent().getPersonneMorale()
+                            .getAutresEtablissements()) {
+                        if (other.getDescriptionEtablissement() != null
+                                && other.getDescriptionEtablissement().getSiret() != null
+                                && other.getDescriptionEtablissement().getSiret().equals(siret))
+                            return false;
+                    }
+                if (company.getFormality().getContent().getPersonneMorale()
+                        .getEtablissementPrincipal() != null
+                        && siret.equals(company.getFormality().getContent().getPersonneMorale()
+                                .getEtablissementPrincipal().getDescriptionEtablissement().getSiret()))
+                    return true;
+                return false;
+            } else if (company.getFormality().getContent().getPersonnePhysique() != null) {
+                if (company.getFormality().getContent().getPersonnePhysique().getAutresEtablissements() != null)
+                    for (AutresEtablissement other : company.getFormality().getContent().getPersonnePhysique()
+                            .getAutresEtablissements()) {
+                        if (other.getDescriptionEtablissement() != null
+                                && other.getDescriptionEtablissement().getSiret() != null
+                                && other.getDescriptionEtablissement().getSiret().equals(siret))
+                            return false;
+                    }
+                if (company.getFormality().getContent().getPersonnePhysique()
+                        .getEtablissementPrincipal() != null
+                        && siret.equals(company.getFormality().getContent().getPersonnePhysique()
+                                .getEtablissementPrincipal().getDescriptionEtablissement().getSiret()))
+                    return true;
+                return false;
+            }
         }
-        return null;
+        return false;
     }
 
     private AdresseDomicile getAddressFromRneCompany(RneCompany company, String siren, String siret) {
@@ -448,50 +475,132 @@ public class AffaireServiceImpl implements AffaireService {
                 company.getFormality().getContent().getPersonneMorale().getEtablissementPrincipal().getAdresse();
             }
         } else if (siret != null) {
-            if (company.getFormality().getContent().getPersonneMorale().getAutresEtablissements() != null)
-                for (AutresEtablissement other : company.getFormality().getContent().getPersonneMorale()
-                        .getAutresEtablissements()) {
-                    if (other.getDescriptionEtablissement() != null
-                            && other.getDescriptionEtablissement().getSiret() != null
-                            && other.getDescriptionEtablissement().getSiret().equals(siret))
-                        return other.getAdresse();
-                }
-            if (company.getFormality().getContent().getPersonneMorale()
-                    .getEtablissementPrincipal() != null
-                    && siret.equals(company.getFormality().getContent().getPersonneMorale()
-                            .getEtablissementPrincipal().getDescriptionEtablissement().getSiret()))
-                return company.getFormality().getContent().getPersonneMorale().getEtablissementPrincipal().getAdresse();
-            return company.getFormality().getContent().getPersonneMorale().getAdresseEntreprise().getAdresse();
+            if (company.getFormality().getContent().getPersonneMorale() != null) {
+                if (company.getFormality().getContent().getPersonneMorale().getAutresEtablissements() != null)
+                    for (AutresEtablissement other : company.getFormality().getContent().getPersonneMorale()
+                            .getAutresEtablissements()) {
+                        if (other.getDescriptionEtablissement() != null
+                                && other.getDescriptionEtablissement().getSiret() != null
+                                && other.getDescriptionEtablissement().getSiret().equals(siret))
+                            return other.getAdresse();
+                    }
+                if (company.getFormality().getContent().getPersonneMorale()
+                        .getEtablissementPrincipal() != null
+                        && siret.equals(company.getFormality().getContent().getPersonneMorale()
+                                .getEtablissementPrincipal().getDescriptionEtablissement().getSiret()))
+                    return company.getFormality().getContent().getPersonneMorale().getEtablissementPrincipal()
+                            .getAdresse();
+                return company.getFormality().getContent().getPersonneMorale().getAdresseEntreprise().getAdresse();
+            } else if (company.getFormality().getContent().getPersonnePhysique() != null) {
+                if (company.getFormality().getContent().getPersonneMorale().getAutresEtablissements() != null)
+                    for (AutresEtablissement other : company.getFormality().getContent().getPersonnePhysique()
+                            .getAutresEtablissements()) {
+                        if (other.getDescriptionEtablissement() != null
+                                && other.getDescriptionEtablissement().getSiret() != null
+                                && other.getDescriptionEtablissement().getSiret().equals(siret))
+                            return other.getAdresse();
+                    }
+                if (company.getFormality().getContent().getPersonnePhysique()
+                        .getEtablissementPrincipal() != null
+                        && siret.equals(company.getFormality().getContent().getPersonnePhysique()
+                                .getEtablissementPrincipal().getDescriptionEtablissement().getSiret()))
+                    return company.getFormality().getContent().getPersonnePhysique().getEtablissementPrincipal()
+                            .getAdresse();
+                return company.getFormality().getContent().getPersonnePhysique().getAdresseEntreprise().getAdresse();
+            }
         }
         return null;
     }
 
+    private List<String> getSiretsFromRneCompany(RneCompany company) {
+        HashSet<String> sirets = new HashSet<String>();
+
+        if (company == null || company.getFormality() == null || company.getFormality().getContent() == null
+                || company.getFormality().getContent().getPersonneMorale() == null
+                        && company.getFormality().getContent().getPersonnePhysique() == null)
+            return null;
+
+        if (company.getFormality().getContent().getPersonneMorale() != null
+                && company.getFormality().getContent().getPersonneMorale().getAutresEtablissements() != null)
+            for (AutresEtablissement other : company.getFormality().getContent().getPersonneMorale()
+                    .getAutresEtablissements()) {
+                if (other.getDescriptionEtablissement() != null
+                        && other.getDescriptionEtablissement().getSiret() != null)
+                    sirets.add(other.getDescriptionEtablissement().getSiret());
+            }
+        if (company.getFormality().getContent().getPersonneMorale() != null
+                && company.getFormality().getContent().getPersonneMorale()
+                        .getEtablissementPrincipal() != null
+                && company.getFormality().getContent().getPersonneMorale()
+                        .getEtablissementPrincipal().getDescriptionEtablissement().getSiret() != null)
+            sirets.add(company.getFormality().getContent().getPersonneMorale()
+                    .getEtablissementPrincipal().getDescriptionEtablissement().getSiret());
+
+        if (company.getFormality().getContent().getPersonnePhysique() != null
+                && company.getFormality().getContent().getPersonnePhysique().getAutresEtablissements() != null)
+            for (AutresEtablissement other : company.getFormality().getContent().getPersonnePhysique()
+                    .getAutresEtablissements()) {
+                if (other.getDescriptionEtablissement() != null
+                        && other.getDescriptionEtablissement().getSiret() != null)
+                    sirets.add(other.getDescriptionEtablissement().getSiret());
+            }
+        if (company.getFormality().getContent().getPersonnePhysique() != null
+                && company.getFormality().getContent().getPersonnePhysique()
+                        .getEtablissementPrincipal() != null
+                && company.getFormality().getContent().getPersonnePhysique()
+                        .getEtablissementPrincipal().getDescriptionEtablissement().getSiret() != null)
+            sirets.add(company.getFormality().getContent().getPersonnePhysique()
+                    .getEtablissementPrincipal().getDescriptionEtablissement().getSiret());
+
+        return new ArrayList<String>(sirets);
+
+    }
+
     private List<Activite> getActivitesFromRneCompany(RneCompany company, String siren, String siret) {
         if (company == null || company.getFormality() == null || company.getFormality().getContent() == null
-                || company.getFormality().getContent().getPersonneMorale() == null)
+                || company.getFormality().getContent().getPersonneMorale() == null
+                        && company.getFormality().getContent().getPersonnePhysique() == null)
             return null;
 
         if (siren != null && (siret == null || siret.length() == 0)) {
-            if (company.getFormality().getContent().getPersonneMorale().getEtablissementPrincipal() == null) {
-                return null;
-            } else {
-                company.getFormality().getContent().getPersonneMorale().getEtablissementPrincipal().getActivites();
-            }
-        } else if (siret != null) {
-            if (company.getFormality().getContent().getPersonneMorale().getAutresEtablissements() != null)
-                for (AutresEtablissement other : company.getFormality().getContent().getPersonneMorale()
-                        .getAutresEtablissements()) {
-                    if (other.getDescriptionEtablissement() != null
-                            && other.getDescriptionEtablissement().getSiret() != null
-                            && other.getDescriptionEtablissement().getSiret().equals(siret))
-                        return other.getActivites();
+            if (company.getFormality().getContent().getPersonneMorale() != null)
+                if (company.getFormality().getContent().getPersonneMorale().getEtablissementPrincipal() == null) {
+                    return null;
+                } else {
+                    company.getFormality().getContent().getPersonneMorale().getEtablissementPrincipal().getActivites();
                 }
-            if (company.getFormality().getContent().getPersonneMorale()
-                    .getEtablissementPrincipal() != null
-                    && siret.equals(company.getFormality().getContent().getPersonneMorale()
-                            .getEtablissementPrincipal().getDescriptionEtablissement().getSiret()))
-                return company.getFormality().getContent().getPersonneMorale().getEtablissementPrincipal()
-                        .getActivites();
+        } else if (siret != null) {
+            if (company.getFormality().getContent().getPersonneMorale() != null) {
+                if (company.getFormality().getContent().getPersonneMorale().getAutresEtablissements() != null)
+                    for (AutresEtablissement other : company.getFormality().getContent().getPersonneMorale()
+                            .getAutresEtablissements()) {
+                        if (other.getDescriptionEtablissement() != null
+                                && other.getDescriptionEtablissement().getSiret() != null
+                                && other.getDescriptionEtablissement().getSiret().equals(siret))
+                            return other.getActivites();
+                    }
+                if (company.getFormality().getContent().getPersonneMorale()
+                        .getEtablissementPrincipal() != null
+                        && siret.equals(company.getFormality().getContent().getPersonneMorale()
+                                .getEtablissementPrincipal().getDescriptionEtablissement().getSiret()))
+                    return company.getFormality().getContent().getPersonneMorale().getEtablissementPrincipal()
+                            .getActivites();
+            } else if (company.getFormality().getContent().getPersonnePhysique() != null) {
+                if (company.getFormality().getContent().getPersonnePhysique().getAutresEtablissements() != null)
+                    for (AutresEtablissement other : company.getFormality().getContent().getPersonnePhysique()
+                            .getAutresEtablissements()) {
+                        if (other.getDescriptionEtablissement() != null
+                                && other.getDescriptionEtablissement().getSiret() != null
+                                && other.getDescriptionEtablissement().getSiret().equals(siret))
+                            return other.getActivites();
+                    }
+                if (company.getFormality().getContent().getPersonnePhysique()
+                        .getEtablissementPrincipal() != null
+                        && siret.equals(company.getFormality().getContent().getPersonnePhysique()
+                                .getEtablissementPrincipal().getDescriptionEtablissement().getSiret()))
+                    return company.getFormality().getContent().getPersonnePhysique().getEtablissementPrincipal()
+                            .getActivites();
+            }
         }
         return null;
     }
@@ -572,28 +681,88 @@ public class AffaireServiceImpl implements AffaireService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateAffairesFromRne() throws OsirisException, OsirisClientMessageException {
-        List<Affaire> affaires = affaireRepository.getAffairesForUpdate();
-        if (affaires != null)
-            for (Affaire affaire : affaires) {
-                batchService.declareNewBatch(Batch.UPDATE_AFFAIRE_FROM_RNE, affaire.getId());
-            }
+        batchService.declareNewBatch(Batch.UPDATE_AFFAIRE_FROM_RNE, 1);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void updateAffaireFromRne(Affaire affaire)
+    public void updateAffaireFromRne()
             throws OsirisException, OsirisClientMessageException, OsirisDuplicateException {
-        if (affaire != null) {
-            List<RneCompany> rneCompanies = new ArrayList<RneCompany>();
-            if (affaire.getSiret() != null && affaire.getSiret().length() > 0)
-                rneCompanies = rneDelegateService.getCompanyBySiret(affaire.getSiret());
-            else if (affaire.getSiren() != null && affaire.getSiren().length() > 0)
-                rneCompanies = rneDelegateService.getCompanyBySiren(affaire.getSiren());
+        LocalDate lastDate = affaireRepository.getLastRneUpdateForAffaires();
+        String lastSiret = null;
+        int iteration = 0;
+        if (lastDate != null) {
+            do {
+                System.out.println("batch : " + iteration);
+                iteration++;
+                RneResult result = rneDelegateService.getCompanyModifiedSince(lastDate, lastSiret);
+                if (result.getCompanies() != null) {
+                    lastSiret = result.getLastSiret();
+                    for (RneCompany company : result.getCompanies()) {
+                        if (company.getSiren() != null) {
+                            List<String> sirets = getSiretsFromRneCompany(company);
+                            if (sirets != null)
+                                for (String siret : sirets) {
+                                    List<Affaire> affaire = getAffaireBySiret(siret);
+                                    Affaire updatedAffaire = null;
+                                    if (affaire != null && affaire.size() > 0) {
+                                        updatedAffaire = affaire.get(0);
+                                        updateAffaireFromRneCompany(updatedAffaire, company);
+                                        updatedAffaire.setLastRneUpdate(LocalDate.now());
+                                        addOrUpdateAffaire(updatedAffaire);
+                                    }
+                                }
+                        }
+                    }
+                }
+            } while (lastSiret != null);
+        }
+    }
 
-            if (rneCompanies != null && rneCompanies.size() == 1)
-                updateAffaireFromRneCompany(affaire, rneCompanies.get(0), false);
-            affaire.setLastRneUpdate(LocalDate.now());
-            addOrUpdateAffaire(affaire);
+    @Autowired
+    UniteLegaleImportRepository uniteLegaleImportRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @Override
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
+    public void initialFetchRne(Integer iterationMax)
+            throws OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+        Integer iteration = 0;
+        while (iteration < iterationMax) {
+            System.out.println("init : " + iteration);
+            iteration++;
+            List<UniteLegaleImport> unites = uniteLegaleImportRepository.getNextUniteLegale();
+            if (unites != null) {
+                List<RneCompany> companies = rneDelegateService
+                        .getCompanyBySirens(unites.stream().map(u -> u.getSiren()).toList());
+                if (companies != null)
+                    for (RneCompany company : companies) {
+                        if (company.getSiren() != null) {
+                            List<String> sirets = getSiretsFromRneCompany(company);
+                            if (sirets != null)
+                                for (String siret : sirets) {
+                                    List<Affaire> affaire = getAffaireBySiret(siret);
+                                    Affaire updatedAffaire = null;
+                                    if (affaire != null && affaire.size() > 0) {
+                                        updatedAffaire = affaire.get(0);
+                                        updateAffaireFromRneCompany(updatedAffaire, company);
+                                        updatedAffaire.setLastRneUpdate(LocalDate.now());
+                                        addOrUpdateAffaire(updatedAffaire);
+                                    }
+                                }
+                        }
+                    }
+
+                for (UniteLegaleImport unite : unites) {
+                    unite.setUpdated(true);
+                    uniteLegaleImportRepository.save(unite);
+                }
+            }
+
+            entityManager.flush();
+            entityManager.clear();
         }
     }
 

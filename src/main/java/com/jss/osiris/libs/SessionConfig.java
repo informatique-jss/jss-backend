@@ -72,11 +72,11 @@ public class SessionConfig {
                     } else if (host.contains("jss") || host.contains("4202")) {
                         cookieName = "JSS";
                     }
-                    if (host.contains("_REC"))
+                    if (host.toUpperCase().contains("_REC"))
                         cookieName += "_REC";
                     return cookieName;
                 }
-                return null;
+                return "OSIRIS";
             }
 
         };

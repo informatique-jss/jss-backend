@@ -37,8 +37,6 @@ export abstract class KanbanComponent<T, U extends IWorkflowElement<T>> {
 
     // Set bookmark
     this.numberOfEntitiesByStatus = [];
-    if (this.allEntities && this.allEntities.length > 0)
-      this.saveUserPreferencesOnApplyFilter();
     if (!isOnlyFilterText) {
       if (this.statusSelected && this.statusSelected.length > 0) {
         this.findEntities().subscribe(response => {
@@ -123,6 +121,7 @@ export abstract class KanbanComponent<T, U extends IWorkflowElement<T>> {
         }
       }
 
+    this.saveUserPreferencesOnApplyFilter();
     return this.swimlanes.sort((a, b) => a.label.localeCompare(b.label));
   }
 

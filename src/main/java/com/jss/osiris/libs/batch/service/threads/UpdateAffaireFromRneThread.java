@@ -25,6 +25,6 @@ public class UpdateAffaireFromRneThread implements IOsirisThread {
         public void executeTask(Integer entityId)
                         throws OsirisValidationException, OsirisException, OsirisClientMessageException,
                         OsirisDuplicateException {
-                affaireService.updateAffaireFromRne(affaireService.getAffaire(entityId));
+                affaireService.updateAffaireFromRne();
         }
 }

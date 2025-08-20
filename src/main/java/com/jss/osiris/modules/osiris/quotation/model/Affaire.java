@@ -115,7 +115,7 @@ public class Affaire implements IId, IAttachment {
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
 	private Country country;
 
-	@Column(length = 100, nullable = false)
+	@Column(length = 500)
 	@IndexedField
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class,
 			JacksonViews.MyJssListView.class })

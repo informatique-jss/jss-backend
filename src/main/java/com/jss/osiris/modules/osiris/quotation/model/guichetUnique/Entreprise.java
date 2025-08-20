@@ -96,8 +96,6 @@ public class Entreprise implements Serializable, IId {
     @JoinColumn(name = "id_individu_representant")
     IndividuRepresentant individuRepresentant;
 
-    String entrepriseRepresentant;
-
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_adresse_domicile")
     AdresseDomicile adresseEntrepriseRepresentant;
@@ -284,14 +282,6 @@ public class Entreprise implements Serializable, IId {
 
     public void setIndividuRepresentant(IndividuRepresentant individuRepresentant) {
         this.individuRepresentant = individuRepresentant;
-    }
-
-    public String getEntrepriseRepresentant() {
-        return entrepriseRepresentant;
-    }
-
-    public void setEntrepriseRepresentant(String entrepriseRepresentant) {
-        this.entrepriseRepresentant = entrepriseRepresentant;
     }
 
     public AdresseDomicile getAdresseEntrepriseRepresentant() {
