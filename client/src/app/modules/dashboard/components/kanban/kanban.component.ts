@@ -41,6 +41,7 @@ export abstract class KanbanComponent<T, U extends IWorkflowElement<T>> {
       if (this.statusSelected && this.statusSelected.length > 0) {
         this.findEntities().subscribe(response => {
           this.allEntities = response;
+          this.saveUserPreferencesOnApplyFilter();
           this.filterCard();
         });
       }
@@ -121,7 +122,6 @@ export abstract class KanbanComponent<T, U extends IWorkflowElement<T>> {
         }
       }
 
-    this.saveUserPreferencesOnApplyFilter();
     return this.swimlanes.sort((a, b) => a.label.localeCompare(b.label));
   }
 
