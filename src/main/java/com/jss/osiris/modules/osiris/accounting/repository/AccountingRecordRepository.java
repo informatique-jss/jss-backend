@@ -672,7 +672,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         " join customer_order co on co.id = p.id_customer_order " +
                         " join responsable r on r.id = co.id_responsable " +
                         " join tiers t on t.id = r.id_tiers " +
-                        " where p.is_cancelled = false and (t.id_accounting_account_deposit  in (:accountingAccountIds) or t.id_accounting_account_provider  in (:accountingAccountIds) ) "
+                        " where p.is_cancelled = false and (t.id_accounting_account_deposit  in (:accountingAccountIds) or t.id_accounting_account_customer  in (:accountingAccountIds) ) "
                         +
                         " ), " +
                         " pay as (select * from pay1 union select * from pay2),                 " +
