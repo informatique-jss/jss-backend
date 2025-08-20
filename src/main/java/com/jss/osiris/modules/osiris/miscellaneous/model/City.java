@@ -38,6 +38,9 @@ public class City implements Serializable, IId {
 			JacksonViews.OsirisDetailedView.class })
 	private String label;
 
+	@Column(length = 100)
+	private String inpiLabel;
+
 	@Column(nullable = false, length = 20)
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String code;
@@ -100,6 +103,18 @@ public class City implements Serializable, IId {
 
 	public void setCountry(Country country) {
 		this.country = country;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	public String getInpiLabel() {
+		return inpiLabel;
+	}
+
+	public void setInpiLabel(String inpiLabel) {
+		this.inpiLabel = inpiLabel;
 	}
 
 }

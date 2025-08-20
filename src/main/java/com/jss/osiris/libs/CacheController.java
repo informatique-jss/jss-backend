@@ -4,13 +4,10 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@CrossOrigin
-@PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
 public class CacheController {
 
 	@Autowired
@@ -23,6 +20,7 @@ public class CacheController {
 
 	@GetMapping(inputEntryPoint + "/clearAll")
 	@SuppressWarnings({ "all" })
+	@PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
 	public void clearCache() {
 		cacheManager.getCacheNames().forEach(name -> {
 			var cache = cacheManager.getCache(name);

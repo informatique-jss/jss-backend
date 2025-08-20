@@ -1659,6 +1659,14 @@ public class QuotationController {
   }
 
   @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+  @GetMapping(inputEntryPoint + "/affaire/init")
+  public ResponseEntity<Boolean> initialFetchRne(Integer iterationMax)
+      throws OsirisValidationException, OsirisException {
+    affaireService.initialFetchRne(iterationMax);
+    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
+  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
   @PostMapping(inputEntryPoint + "/provision-family-type")
   public ResponseEntity<ProvisionFamilyType> addOrUpdateProvisionFamilyType(
       @RequestBody ProvisionFamilyType provisionFamilyType) throws OsirisValidationException, OsirisException {

@@ -145,6 +145,7 @@ export abstract class KanbanComponent<T, U extends IWorkflowElement<T>> {
         }
       }
 
+    this.saveUserPreferencesOnApplyFilter();
     return this.swimlanes.sort((a, b) => a.label.localeCompare(b.label));
   }
 

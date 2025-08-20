@@ -17,7 +17,7 @@ public interface AffaireService {
 
         public void reindexAffaire() throws OsirisException;
 
-        public Affaire getAffaireBySiret(String siret);
+        public List<Affaire> getAffaireBySiret(String siret);
 
         public List<Affaire> getAffairesBySiren(String siren);
 
@@ -29,7 +29,7 @@ public interface AffaireService {
 
         public void updateAffairesFromRne() throws OsirisException, OsirisClientMessageException;
 
-        public void updateAffaireFromRne(Affaire affaire)
+        public void updateAffaireFromRne()
                         throws OsirisException, OsirisClientMessageException, OsirisDuplicateException;
 
         public Affaire refreshAffaireFromRne(Affaire affaire)
@@ -38,5 +38,8 @@ public interface AffaireService {
         public List<Affaire> getAffairesForCurrentUser(Integer page, String sortBy, String searchText);
 
         public List<Attachment> getAttachmentsForAffaire(Affaire affaire) throws OsirisException;
+
+        public void initialFetchRne(Integer iterationMax)
+                        throws OsirisException, OsirisClientMessageException, OsirisDuplicateException;
 
 }

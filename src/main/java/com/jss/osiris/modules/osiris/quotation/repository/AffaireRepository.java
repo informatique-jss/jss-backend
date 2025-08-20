@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.quotation.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.domain.Pageable;
@@ -12,7 +13,7 @@ import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 public interface AffaireRepository extends QueryCacheCrudRepository<Affaire, Integer> {
 
-        Affaire findBySiret(String siret);
+        List<Affaire> findBySiret(String siret);
 
         List<Affaire> findBySiren(String siret);
 
@@ -26,8 +27,8 @@ public interface AffaireRepository extends QueryCacheCrudRepository<Affaire, Int
 
         Affaire findByRna(String rna);
 
-        @Query(nativeQuery = true, value = "select * from affaire a  where siren is not null or siret is not null order by coalesce(last_rne_update,'1950-01-01') limit 5000")
-        List<Affaire> getAffairesForUpdate();
+        @Query("select max(lastRneUpdate) from Affaire a  where siret is not null and lastRneUpdate is not null ")
+        LocalDate getLastRneUpdateForAffaires();
 
         @Query(value = "select a from Affaire a where exists (select 1 from AssoAffaireOrder aao join aao.customerOrder c where aao.affaire = a  and c.responsable in :responsables) and ( lower(a.denomination) like lower(concat('%', :searchText,'%')) or lower(concat(a.firstname, ' ', a.lastname)) like lower(concat('%', :searchText,'%')) or a.siret like concat(:searchText,'%') or a.id=:idAffaire  ) ")
         List<Affaire> getAffairesForResponsables(Pageable pageableRequest,

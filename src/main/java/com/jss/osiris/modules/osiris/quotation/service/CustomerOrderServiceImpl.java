@@ -646,6 +646,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if (customerOrderStatus == null)
             throw new OsirisException(null, "Customer order status not found for code " + targetStatusCode);
 
+        customerOrder.setIsPayed(false);
         customerOrder.setCustomerOrderStatus(customerOrderStatus);
         customerOrder.setLastStatusUpdate(LocalDateTime.now());
         return this.addOrUpdateCustomerOrder(customerOrder, false, checkAllProvisionEnded);

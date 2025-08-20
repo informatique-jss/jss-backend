@@ -1,6 +1,9 @@
 package com.jss.osiris.modules.osiris.quotation.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,8 +22,10 @@ import com.jss.osiris.libs.SSLHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.RneCompany;
+import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.RneCompanyResponse;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.RneLogInResponse;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.RneLogin;
+import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.RneResult;
 import com.jss.osiris.modules.osiris.quotation.repository.AnnouncementNoticeTemplateRepository;
 
 @Service
@@ -75,6 +80,24 @@ public class RneDelegateServiceImpl implements RneDelegateService {
     }
 
     @Override
+    public List<RneCompany> getCompanyBySirens(List<String> sirens)
+            throws OsirisException, OsirisClientMessageException {
+        SSLHelper.disableCertificateValidation();
+        HttpHeaders headers = createHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        ResponseEntity<List<RneCompany>> res = new RestTemplate().exchange(
+                rneEntryPoint + entrepriseRequest + "?pageSize=500&siren[]=" + String.join("&siren[]=", sirens),
+                HttpMethod.GET,
+                new HttpEntity<Object>(headers),
+                new ParameterizedTypeReference<List<RneCompany>>() {
+                });
+        if (res.getBody() != null && res.getBody() != null) {
+            return res.getBody();
+        }
+        return null;
+    }
+
+    @Override
     public List<RneCompany> getCompanyBySiret(String siren)
             throws OsirisException, OsirisClientMessageException {
         SSLHelper.disableCertificateValidation();
@@ -89,6 +112,56 @@ public class RneDelegateServiceImpl implements RneDelegateService {
             return res.getBody();
         }
         return null;
+    }
+
+    @Override
+    public RneResult getCompanyModifiedSince(LocalDate lastExecutionDate, String lastSiret)
+            throws OsirisException, OsirisClientMessageException {
+
+        SSLHelper.disableCertificateValidation();
+        HttpHeaders headers = createHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        List<RneCompany> results = new ArrayList<>();
+
+        String searchAfter = lastSiret;
+        int pageSize = 500;
+        boolean hasMore = true;
+
+        // minus 2 because from date is excluded and we could have miss some
+        // modifications from the previous day
+        // plus 1 because we limit the number of days fetched
+        String url = rneEntryPoint
+                + "/companies/diff?pageSize=" + pageSize
+                + "&from=" + lastExecutionDate.minusDays(2).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                + "&to=" + lastExecutionDate.plusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+        HttpHeaders requestHeaders = new HttpHeaders(headers);
+        if (searchAfter != null) {
+            url += "&searchAfter=" + searchAfter;
+        }
+
+        ResponseEntity<List<RneCompanyResponse>> res = new RestTemplate().exchange(url, HttpMethod.GET,
+                new HttpEntity<>(requestHeaders), new ParameterizedTypeReference<List<RneCompanyResponse>>() {
+                });
+
+        List<RneCompanyResponse> body = res.getBody();
+        if (body != null) {
+            results.addAll(body.stream().map(RneCompanyResponse::getCompany).toList());
+        }
+
+        // Handle pagination
+        List<String> paginationHeaders = res.getHeaders().get("pagination-search-after");
+        if (paginationHeaders != null && !paginationHeaders.isEmpty()) {
+            searchAfter = paginationHeaders.get(0);
+        } else {
+            hasMore = false;
+        }
+
+        RneResult result = new RneResult();
+        result.setCompanies(results);
+        result.setLastSiret(hasMore ? searchAfter : null);
+        return result;
     }
 
     @SuppressWarnings({ "null" })

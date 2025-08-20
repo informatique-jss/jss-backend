@@ -29,4 +29,6 @@ public interface CityRepository extends QueryCacheCrudRepository<City, Integer> 
             String postalCode, Pageable pageable);
 
     List<City> findByCountry(Country country);
+
+    City findByInpiLabel(String inpiLabel);
 }

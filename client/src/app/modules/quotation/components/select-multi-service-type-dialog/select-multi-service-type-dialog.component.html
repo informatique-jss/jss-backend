@@ -1,11 +1,12 @@
 <h1 mat-dialog-title>Choix des types de service</h1>
 <div mat-dialog-content>
   <p>Choisissez les types de service ci-dessous :</p>
-  <table class="full-width">
+  <table class="full-width" *ngIf="affaire">
     <tr>
       <td>
         <chips-service-type [(model)]="selectedServiceTypes" label="Type de service" [form]="serviceTypeForm"
-          propertyName="selectedServiceType" [isMandatory]="true" [isDisabled]="false"></chips-service-type>
+          propertyName="selectedServiceType" [isMandatory]="true" [isDisabled]="false"
+          [isDisplayOnlyServiceForUnregisteredAffaire]="affaire.isUnregistered"></chips-service-type>
       </td>
     </tr>
     <tr *ngIf="!isJustSelectServiceType">
