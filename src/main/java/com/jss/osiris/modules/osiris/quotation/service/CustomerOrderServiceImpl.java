@@ -394,7 +394,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         + "</p>" +
                         "<p>Description de la demande : "
                         + (customerOrder.getDescription() != null ? customerOrder.getDescription() : "") + "</p>";
-                customerOrderCommentService.createCustomerOrderComment(customerOrder, comment);
+                customerOrderCommentService.createCustomerOrderComment(customerOrder, comment, true);
             }
         }
 
