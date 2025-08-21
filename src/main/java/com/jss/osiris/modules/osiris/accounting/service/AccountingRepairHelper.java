@@ -87,37 +87,37 @@ public class AccountingRepairHelper {
             AccountingJournal journal = constantService.getAccountingJournalMiscellaneousOperations();
             AccountingAccount repriseAccount = accountingAccountService.getAccountingAccount(675657);
             List<AccountingRecord> newRecord = new ArrayList<AccountingRecord>();
-            if (soldeCustomer.compareTo(new BigDecimal(0)) > 0) {
+            if (soldeCustomer.compareTo(new BigDecimal(0)) < 0) {
                 newRecord.add(generateNewAccountingRecord(operationDateTime, operationId,
                         "Reprise comptabilité 2024 - " + tiers.getAccountingAccountCustomer().getLabel(),
                         soldeCustomer.abs(),
                         null, tiers.getAccountingAccountCustomer(), journal));
             }
-            if (soldeCustomer.compareTo(new BigDecimal(0)) < 0) {
+            if (soldeCustomer.compareTo(new BigDecimal(0)) > 0) {
                 newRecord.add(generateNewAccountingRecord(operationDateTime, operationId,
                         "Reprise comptabilité 2024 - " + tiers.getAccountingAccountCustomer().getLabel(), null,
                         soldeCustomer.abs(), tiers.getAccountingAccountCustomer(), journal));
             }
-            if (soldeDeposit.compareTo(new BigDecimal(0)) > 0) {
+            if (soldeDeposit.compareTo(new BigDecimal(0)) < 0) {
                 newRecord.add(generateNewAccountingRecord(operationDateTime, operationId,
                         "Reprise comptabilité 2024 - " + tiers.getAccountingAccountCustomer().getLabel(),
                         soldeDeposit.abs(),
                         null, tiers.getAccountingAccountDeposit(), journal));
             }
-            if (soldeDeposit.compareTo(new BigDecimal(0)) < 0) {
+            if (soldeDeposit.compareTo(new BigDecimal(0)) > 0) {
                 newRecord.add(generateNewAccountingRecord(operationDateTime, operationId,
                         "Reprise comptabilité 2024 - " + tiers.getAccountingAccountCustomer().getLabel(), null,
                         soldeDeposit.abs(), tiers.getAccountingAccountDeposit(), journal));
             }
 
             BigDecimal totalSolde = soldeCustomer.add(soldeDeposit);
-            if (totalSolde.compareTo(new BigDecimal(0)) > 0) {
+            if (totalSolde.compareTo(new BigDecimal(0)) < 0) {
                 newRecord.add(generateNewAccountingRecord(operationDateTime, operationId,
                         "Reprise comptabilité 2024 - " + tiers.getAccountingAccountCustomer().getLabel(),
                         null, totalSolde.abs(),
                         repriseAccount, journal));
             }
-            if (totalSolde.compareTo(new BigDecimal(0)) < 0) {
+            if (totalSolde.compareTo(new BigDecimal(0)) > 0) {
                 newRecord.add(generateNewAccountingRecord(operationDateTime, operationId,
                         "Reprise comptabilité 2024 - " + tiers.getAccountingAccountCustomer().getLabel(),
                         totalSolde.abs(), null, repriseAccount, journal));
