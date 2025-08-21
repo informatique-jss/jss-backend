@@ -1867,6 +1867,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
+    public List<CustomerOrder> findCustomerOrderByResponsableAndCreatedDate(Responsable responsable,
+            LocalDateTime startOfDay, LocalDateTime endOfDay) {
+        return customerOrderRepository.findByResponsableAndCreatedDateBetween(responsable, startOfDay, endOfDay);
+    }
+
+    @Override
     public List<CustomerOrder> searchCustomerOrders(List<Employee> commercials,
             List<CustomerOrderStatus> status, List<Employee> invoicingEmployees) throws OsirisException {
 

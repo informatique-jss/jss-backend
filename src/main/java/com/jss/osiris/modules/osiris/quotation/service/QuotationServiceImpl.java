@@ -762,6 +762,12 @@ public class QuotationServiceImpl implements QuotationService {
     }
 
     @Override
+    public List<Quotation> findQuotationByResponsableAndCreatedDate(Responsable responsable, LocalDateTime startDate,
+            LocalDateTime endDate) {
+        return quotationRepository.findByResponsableAndCreatedDateBetween(responsable, startDate, endDate);
+    }
+
+    @Override
     public Quotation completeAdditionnalInformationForQuotation(Quotation quotation,
             Boolean populationAssoAffaireOrderTransientField)
             throws OsirisException {

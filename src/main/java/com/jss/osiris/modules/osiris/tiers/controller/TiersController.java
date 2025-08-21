@@ -26,6 +26,7 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.jackson.JacksonViews.OsirisDetailedView;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingRepairHelper;
+import com.jss.osiris.modules.osiris.crm.model.KpiCrm;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
@@ -631,4 +632,13 @@ public class TiersController {
         responsableService.getResponsablesByTiers(tiersService.getTiers(idTiers)), HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/responsables/kpi")
+  @JsonView(JacksonViews.OsirisListView.class)
+  public ResponseEntity<KpiCrm> getKpiByTiers(@RequestParam Integer idTiers) {
+
+    List<Responsable> responsables = responsableService.getResponsablesByTiers(tiersService.getTiers(idTiers));
+
+    return new ResponseEntity<KpiCrm>(responsableService.computeKpiOpportunityClosingAverageTime(responsables),
+        HttpStatus.OK);
+  }
 }
