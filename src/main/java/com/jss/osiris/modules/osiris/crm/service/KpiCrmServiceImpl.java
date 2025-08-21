@@ -42,11 +42,11 @@ public class KpiCrmServiceImpl implements KpiCrmService {
 
                 for (Map.Entry<LocalDate, BigDecimal> entry : dailyKpiValues.entrySet()) {
                     KpiCrm kpi = new KpiCrm();
-                    kpi.setResponsable(responsable);
-                    kpi.setCreatedDate(entry.getKey());
-                    kpi.setCode(iKpi.getCode());
-                    kpi.setComputeType(iKpi.getComputeType());
-                    kpi.setValue(entry.getValue());
+                    // kpi.setResponsable(responsable);
+                    // kpi.setCreatedDate(entry.getKey());
+                    // kpi.setCode(iKpi.getCode());
+                    // kpi.setComputeType(iKpi.getComputeType());
+                    // kpi.setValue(entry.getValue());
 
                     addOrUpdateKpiCrm(kpi);
                 }
@@ -69,9 +69,9 @@ public class KpiCrmServiceImpl implements KpiCrmService {
                     BigDecimal sum = BigDecimal.ZERO;
 
                     for (KpiCrm kpi : kpiToAggregate) {
-                        if (kpi.getValue() != null) {
-                            sum = sum.add(kpi.getValue());
-                        }
+                        // if (kpi.getValue() != null) {
+                        // sum = sum.add(kpi.getValue());
+                        // }
                     }
 
                     BigDecimal avg = sum.divide(BigDecimal.valueOf(kpiToAggregate.size()), RoundingMode.HALF_UP);
@@ -80,8 +80,8 @@ public class KpiCrmServiceImpl implements KpiCrmService {
                     aggregate.setCode(iKpi.getCode());
                     aggregate.setLabel(iKpi.getLabel());
                     aggregate.setComputeType(iKpi.getComputeType());
-                    aggregate.setCreatedDate(endDate);
-                    aggregate.setValue(avg);
+                    // aggregate.setCreatedDate(endDate);
+                    // aggregate.setValue(avg);
 
                     kpiAggregated.add(aggregate);
                 }
@@ -105,17 +105,17 @@ public class KpiCrmServiceImpl implements KpiCrmService {
                     BigDecimal sum = BigDecimal.ZERO;
 
                     for (KpiCrm kpi : kpiToAggregate) {
-                        if (kpi.getValue() != null) {
-                            sum = sum.add(kpi.getValue());
-                        }
+                        // if (kpi.getValue() != null) {
+                        // sum = sum.add(kpi.getValue());
+                        // }
                     }
 
                     KpiCrm aggregate = new KpiCrm();
                     aggregate.setCode(iKpi.getCode());
                     aggregate.setLabel(iKpi.getLabel());
                     aggregate.setComputeType(iKpi.getComputeType());
-                    aggregate.setCreatedDate(endDate);
-                    aggregate.setValue(sum);
+                    // aggregate.setCreatedDate(endDate);
+                    // aggregate.setValue(sum);
 
                     kpiAggregated.add(aggregate);
                 }
