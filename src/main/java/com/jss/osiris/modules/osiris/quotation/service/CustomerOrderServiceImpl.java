@@ -581,7 +581,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             }
 
             // save once customer order to recompute invoice item before set it in stone...
-            this.addOrUpdateCustomerOrder(customerOrder, true, checkAllProvisionEnded);
+            this.addOrUpdateCustomerOrder(customerOrder, isFromUser, checkAllProvisionEnded);
 
             // Protection : if we already have an invoice not cancelled, abord...
             if (customerOrder.getInvoices() != null) {
