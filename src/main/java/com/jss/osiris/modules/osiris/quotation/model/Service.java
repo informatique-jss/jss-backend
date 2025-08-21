@@ -129,7 +129,7 @@ public class Service implements Serializable, IId {
 	private LocalDateTime lastMissingAttachmentQueryDateTime;
 
 	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class,
-			JacksonViews.OsirisDetailedView.class, JacksonViews.OsirisDetailedView.class })
+			JacksonViews.OsirisDetailedView.class, JacksonViews.OsirisListView.class })
 	@Column(length = 2000)
 	@IndexedField
 	private String serviceLabelToDisplay;
