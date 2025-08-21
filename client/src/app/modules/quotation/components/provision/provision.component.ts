@@ -212,7 +212,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     asso.services.splice(asso.services.indexOf(service), 1);
   }
 
-  modifyService(service: Service) {
+  modifyService(service: Service, affaire: Affaire) {
     const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
       maxWidth: "400px",
       data: {
@@ -229,6 +229,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
           width: "50%",
         });
         dialogRef2.componentInstance.isJustSelectServiceType = true;
+        dialogRef2.componentInstance.affaire = affaire;
         dialogRef2.afterClosed().subscribe(dialogResult => {
           if (dialogResult && service && (this.asso.quotation || this.asso.customerOrder)) {
             this.serviceService.modifyServiceType(service, dialogResult).subscribe(response => {

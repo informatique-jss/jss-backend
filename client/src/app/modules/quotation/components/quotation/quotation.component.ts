@@ -477,7 +477,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     });
   }
 
-  modifyService(service: Service) {
+  modifyService(service: Service, affaire: Affaire) {
     const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
       maxWidth: "400px",
       data: {
@@ -494,6 +494,8 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
           width: "50%",
         });
         dialogRef2.componentInstance.isJustSelectServiceType = true;
+        dialogRef2.componentInstance.affaire = affaire;
+
         dialogRef2.afterClosed().subscribe(dialogResult => {
           if (dialogResult && service && this.quotation) {
             this.serviceService.modifyServiceType(service, dialogResult).subscribe(response => {

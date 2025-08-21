@@ -53,7 +53,7 @@
           </mat-panel-title>
           <mat-panel-description style="height:40px">
             <mat-icon color="accent" *ngIf="!editMode && service.id" matTooltip="Modifier le type de service"
-              (click)="modifyService(service);$event.stopPropagation()" class="pointer">
+              (click)="modifyService(service, asso.affaire);$event.stopPropagation()" class="pointer">
               edit</mat-icon>
             <mat-icon color="accent" *ngIf="editMode  " matTooltip="Supprimer le service"
               (click)="deleteService(asso,service);$event.stopPropagation()" class="pointer">
