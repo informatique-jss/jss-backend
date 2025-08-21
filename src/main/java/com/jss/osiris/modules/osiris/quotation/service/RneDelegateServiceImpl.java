@@ -125,7 +125,7 @@ public class RneDelegateServiceImpl implements RneDelegateService {
         List<RneCompany> results = new ArrayList<>();
 
         String searchAfter = lastSiret;
-        int pageSize = 500;
+        int pageSize = 250;
         boolean hasMore = true;
 
         // minus 2 because from date is excluded and we could have miss some
