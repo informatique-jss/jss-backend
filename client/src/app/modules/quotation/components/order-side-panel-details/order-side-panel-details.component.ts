@@ -31,6 +31,8 @@ export class OrderSidePanelDetailsComponent implements OnInit {
   CUSTOMER_ORDER_ENTITY_TYPE = CUSTOMER_ORDER_ENTITY_TYPE;
   affaireNotification: Notification[][] = [];
 
+  totalServicesPrice: number = 0;
+
   @Output() triggerRefreshEntity = new EventEmitter<void>();
 
   constructor(
@@ -53,6 +55,7 @@ export class OrderSidePanelDetailsComponent implements OnInit {
         for (let i = 0; i < this.selectedEntity!.assoAffaireOrders.length; i++) {
           this.affaireService.getAffaire(this.selectedEntity!.assoAffaireOrders[i].affaire.id).subscribe(response => {
             this.selectedEntity!.assoAffaireOrders[i].affaire = response;
+            this.totalServicesPrice = this.totalServicesPrice + this.selectedEntity!.assoAffaireOrders[i].services.map(service => service.serviceTotalPrice).reduce((sum, current) => sum + current, 0);
           })
         }
       })
