@@ -253,30 +253,42 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     if (asso && !asso.services)
       asso.services = [] as Array<Service>;
 
-    if (this.asso.customerOrder && this.hasQuotation) {
-      const dialogConfirm = this.confirmationDialog.open(ConfirmDialogComponent, {
-        maxWidth: "400px",
-        data: {
-          title: "Modification du devis de la commande",
-          content: "L'ajout d'une prestation impactera le devis initial lié à cette commande. Souhaitez-vous continuer ? ",
-          closeActionText: "Annuler",
-          validationActionText: "Confirmer"
-        }
-      });
+    if (this.asso.customerOrder) {
+      if (this.hasQuotation) {
+        const dialogConfirm = this.confirmationDialog.open(ConfirmDialogComponent, {
+          maxWidth: "400px",
+          data: {
+            title: "Modification du devis de la commande",
+            content: "L'ajout d'une prestation impactera le devis initial lié à cette commande. Souhaitez-vous continuer ? ",
+            closeActionText: "Annuler",
+            validationActionText: "Confirmer"
+          }
+        });
 
-      dialogConfirm.afterClosed().subscribe(userConfirmed => {
-        if (userConfirmed) {
-          let dialogRef = this.selectAttachmentTypeDialog.open(SelectMultiServiceTypeDialogComponent, {
-            width: '50%',
-          });
-          dialogRef.componentInstance.affaire = asso.affaire;
+        dialogConfirm.afterClosed().subscribe(userConfirmed => {
+          if (userConfirmed) {
+            let dialogRef = this.selectAttachmentTypeDialog.open(SelectMultiServiceTypeDialogComponent, {
+              width: '50%',
+            });
+            dialogRef.componentInstance.affaire = asso.affaire;
 
-          dialogRef.afterClosed().subscribe(response => {
-            if (response != null)
-              asso.services.push(...response);
-          });
-        }
-      });
+            dialogRef.afterClosed().subscribe(response => {
+              if (response != null)
+                asso.services.push(...response);
+            });
+          }
+        });
+      } else {
+        let dialogRef = this.selectAttachmentTypeDialog.open(SelectMultiServiceTypeDialogComponent, {
+          width: '50%',
+        });
+        dialogRef.componentInstance.affaire = asso.affaire;
+
+        dialogRef.afterClosed().subscribe(response => {
+          if (response != null)
+            asso.services.push(...response);
+        });
+      }
     }
   }
 

@@ -403,6 +403,16 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
           });
         }
       });
+    } else {
+      let dialogRef = this.selectAttachmentTypeDialog.open(SelectMultiServiceTypeDialogComponent, {
+        width: '50%',
+      });
+      dialogRef.componentInstance.affaire = asso.affaire;
+
+      dialogRef.afterClosed().subscribe(response => {
+        if (response != null)
+          asso.services.push(...response);
+      });
     }
   }
 
