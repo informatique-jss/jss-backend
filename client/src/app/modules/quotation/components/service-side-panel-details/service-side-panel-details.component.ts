@@ -69,9 +69,6 @@ export class ServiceSidePanelDetailsComponent implements OnInit {
       this.affaireService.getAffaire(this.service.assoAffaireOrder.affaire.id).subscribe(response => {
         this.service!.assoAffaireOrder.affaire = response;
       })
-
-    console.log(this.service);
-    console.log(this.service?.serviceTotalPrice);
   }
 
   addNewNotificationOnAffaire(affaire: Affaire) {
