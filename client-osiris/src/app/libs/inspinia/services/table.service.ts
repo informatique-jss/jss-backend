@@ -170,9 +170,6 @@ export class TableService<T extends {}> {
         this._search$.next();
     }
 
-
-
-
     private _search(): Observable<SearchResult<T>> {
         const { pageSize, page, searchTerm, sortColumn, sortDirection } =
             this._state
@@ -223,8 +220,6 @@ export class TableService<T extends {}> {
         this._search$.next()
     }
 
-
-
     setSort(column: keyof T | '', direction: SortDirection) {
         this.sortColumn = column;
         this.sortDirection = direction;
@@ -268,6 +263,4 @@ export class TableService<T extends {}> {
         }
         this._search$.next();
     }
-
-
 }

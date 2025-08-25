@@ -80,23 +80,14 @@ export class ResponsableSelectionComponent implements OnInit {
 
     toggleAllSelection() {
         this.tableService.setAllSelection(this.selectAll);
-        this.tableService.items$.subscribe(items => {
-            // TODO : lorsque modifié le add et remplacé par un set, faire (idem dans les méthodes plus bas) :
-            // this.responsableService.setSelectedResponsables(this.tableService.getSelectedItems());
-            if (this.selectAll)
-                this.responsableService.addSelectedResponsables(items);
-            else
-                this.responsableService.removeSelectedResponsables(items);
-        }).unsubscribe();
-
+        this.responsableService.setSelectedResponsables(this.tableService.getSelectedItems());
     }
 
     toggleSingleSelection() {
-        this.tableService.items$.subscribe(items => {
-            this.selectAll = items.every((item: any) => item.selected);
-            this.responsableService.addSelectedResponsables(items.filter(r => r.selected));
-            this.responsableService.removeSelectedResponsables(items.filter(r => !r.selected));
-        }).unsubscribe();
+        this.tableService.total$.subscribe(number => {
+            this.selectAll = this.tableService.getSelectedItems().length == number;
+            this.responsableService.setSelectedResponsables(this.tableService.getSelectedItems());
+        });
     }
 
     deleteSelected() {

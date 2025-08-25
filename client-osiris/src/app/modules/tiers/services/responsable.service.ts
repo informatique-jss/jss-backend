@@ -22,17 +22,10 @@ export class ResponsableService extends AppRestService<Responsable> {
     return this.selectedResponsablesSubject;
   }
 
-  // TODO : modifier en faisant un set et retirer add et remove
-  addSelectedResponsables(responsables: Responsable[]) {
+  setSelectedResponsables(responsables: Responsable[]) {
+    this.selectedResponsables.clear();
     for (let respo of responsables) {
       this.selectedResponsables.add(respo);
-    }
-    this.selectedResponsablesSubject.next(Array.from(this.selectedResponsables.values()));
-  }
-
-  removeSelectedResponsables(responsables: Responsable[]) {
-    for (let respo of responsables) {
-      this.selectedResponsables.delete(respo);
     }
     this.selectedResponsablesSubject.next(Array.from(this.selectedResponsables.values()));
   }
