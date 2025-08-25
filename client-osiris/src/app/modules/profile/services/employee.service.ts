@@ -23,7 +23,6 @@ export class EmployeeService extends AppRestService<Employee> {
   }
 
   addOrUpdateEmployee(employee: Employee) {
-    this.clearListCache(new HttpParams(), "employee/all");
     return this.addOrUpdate(new HttpParams(), "employee", employee, "Profil mis à jour" + ((employee.backups && employee.backups.length > 0) ? ". Bonnes vacances ! 😎" : ""), "Erreur lors de la mise à jour du profil");
   }
 

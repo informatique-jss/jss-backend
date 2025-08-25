@@ -206,6 +206,9 @@ public interface CustomerOrderRepository
 
         List<CustomerOrder> findByResponsable(Responsable responsable);
 
+        List<CustomerOrder> findByResponsableAndCreatedDateBetween(Responsable responsable, LocalDateTime startOfDay,
+                        LocalDateTime endOfDay);
+
         @Query("select c from CustomerOrder c join c.responsable r  join fetch c.assoAffaireOrders a join fetch a.affaire af "
                         +
                         "  where (0 in :commercials or r.salesEmployee.id in :commercials) " +

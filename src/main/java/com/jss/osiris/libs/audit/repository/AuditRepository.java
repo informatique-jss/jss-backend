@@ -12,6 +12,10 @@ public interface AuditRepository extends CrudRepository<Audit, Integer> {
 
     List<Audit> findByEntityAndEntityId(String entityType, Integer entityId);
 
+    @Query("select a from Audit a where a.entity =:entityType AND a.entityId =:entityId AND a.fieldName =:fieldName AND (a.oldValue =:status OR a.newValue =:status)")
+    List<Audit> findByEntityAndEntityIdAndFieldNameAndValue(String entityType, Integer entityId, String status,
+            String fieldName);
+
     @Modifying
     @Query(nativeQuery = true, value = "call purge_audit()")
     void cleanAudit();
