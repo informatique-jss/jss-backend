@@ -33,6 +33,7 @@ import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.osiris.quotation.service.DomiciliationStatusService;
 import com.jss.osiris.modules.osiris.quotation.service.FormaliteStatusService;
+import com.jss.osiris.modules.osiris.quotation.service.LaPosteTrackingService;
 import com.jss.osiris.modules.osiris.quotation.service.MissingAttachmentQueryService;
 import com.jss.osiris.modules.osiris.quotation.service.ProvisionScreenTypeService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
@@ -114,6 +115,9 @@ public class OsirisScheduller {
 
 	@Autowired
 	GuichetUniqueDelegateService guichetUniqueDelegateService;
+
+	@Autowired
+	LaPosteTrackingService laPosteTrackingService;
 
 	@Autowired
 	CentralPayPaymentRequestService centralPayPaymentRequestService;
@@ -348,6 +352,16 @@ public class OsirisScheduller {
 		try {
 			if (nodeService.shouldIBatch() && !devMode)
 				guichetUniqueDelegateService.refreshAllOpenFormalities();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.la.poste.refresh}")
+	private void refreshAllOpenLaPosteTrackings() {
+		try {
+			if (nodeService.shouldIBatch() && !devMode)
+				laPosteTrackingService.refreshAllOpenLaPosteTrackings();
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}

@@ -129,6 +129,7 @@ import com.jss.osiris.modules.osiris.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.ValidationRequest;
 import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.FormaliteInfogreffe;
+import com.jss.osiris.modules.osiris.quotation.model.laPoste.LaPosteTracking;
 import com.jss.osiris.modules.osiris.quotation.service.ActTypeService;
 import com.jss.osiris.modules.osiris.quotation.service.AffaireService;
 import com.jss.osiris.modules.osiris.quotation.service.AnnouncementNoticeTemplateFragmentService;
@@ -157,6 +158,7 @@ import com.jss.osiris.modules.osiris.quotation.service.FormaliteService;
 import com.jss.osiris.modules.osiris.quotation.service.FormaliteStatusService;
 import com.jss.osiris.modules.osiris.quotation.service.FundTypeService;
 import com.jss.osiris.modules.osiris.quotation.service.JournalTypeService;
+import com.jss.osiris.modules.osiris.quotation.service.LaPosteTrackingService;
 import com.jss.osiris.modules.osiris.quotation.service.MailRedirectionTypeService;
 import com.jss.osiris.modules.osiris.quotation.service.MissingAttachmentQueryService;
 import com.jss.osiris.modules.osiris.quotation.service.NoticeTypeFamilyService;
@@ -411,6 +413,51 @@ public class QuotationController {
 
   @Autowired
   CustomerOrderAssignationService customerOrderAssignationService;
+
+  @Autowired
+  LaPosteTrackingService laPosteTrackingService;
+
+  @GetMapping(inputEntryPoint + "/la-poste-trackings/provision")
+  public ResponseEntity<Boolean> checkTrackingId(@RequestParam String trackingId)
+      throws OsirisValidationException {
+
+    return new ResponseEntity<Boolean>(laPosteTrackingService.checkTrackingId(trackingId), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/la-poste-trackings/provision")
+  public ResponseEntity<Boolean> removeTrackingOnProvision(@RequestParam String trackingId)
+      throws OsirisValidationException {
+
+    laPosteTrackingService.removeTrackingOnProvision(trackingId);
+
+    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/la-poste-trackings/provision")
+  public ResponseEntity<Boolean> addLaPosteTrackingOnProvision(@RequestParam Integer provisionId,
+      @RequestParam String trackingId)
+      throws OsirisValidationException {
+    Provision provision = provisionService.getProvision(provisionId);
+
+    if (provision == null)
+      throw new OsirisValidationException("provision");
+
+    laPosteTrackingService.addLaPosteTrackingOnProvision(provision, trackingId);
+
+    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/la-poste-trackings/provision")
+  public ResponseEntity<List<LaPosteTracking>> getLaPosteTrackingsByProvision(@RequestParam Integer provisionId)
+      throws OsirisValidationException {
+    Provision provision = provisionService.getProvision(provisionId);
+
+    if (provision == null)
+      throw new OsirisValidationException("provision");
+
+    return new ResponseEntity<List<LaPosteTracking>>(laPosteTrackingService.getLaPosteTrackingsByProvision(provision),
+        HttpStatus.OK);
+  }
 
   @GetMapping(inputEntryPoint + "/service-field-types")
   public ResponseEntity<List<ServiceFieldType>> getServiceFieldTypes() {

@@ -63,6 +63,9 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("central.pay.entrypoint");
         isOk = isOk && checkProperty("central.pay.api.key");
         isOk = isOk && checkProperty("central.pay.api.password");
+        isOk = isOk && checkProperty("la.poste.entry.point");
+        isOk = isOk && checkProperty("la.poste.token");
+        isOk = isOk && checkProperty("schedulling.la.poste.refresh");
         isOk = isOk && checkProperty("actu.legale.auth.entry.point");
         isOk = isOk && checkProperty("actu.legale.is.test");
         isOk = isOk && checkProperty("actu.legale.auth.username");

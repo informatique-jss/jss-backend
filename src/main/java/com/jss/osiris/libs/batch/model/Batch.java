@@ -74,6 +74,7 @@ public class Batch implements IId, Serializable {
     public static String COMPUTE_INDICATOR = "COMPUTE_INDICATOR";
     public static String PURGE_QUOTATION = "PURGE_QUOTATION";
     public static String PURGE_CUSTOMER_ORDER = "PURGE_CUSTOMER_ORDER";
+    public static String UPDATE_LA_POSTE_TRACKING = "UPDATE_LA_POSTE_TRACKING";
 
     @Id
     @SequenceGenerator(name = "batch_sequence", sequenceName = "batch_sequence", allocationSize = 1)
