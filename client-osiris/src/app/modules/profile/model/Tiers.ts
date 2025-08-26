@@ -19,4 +19,5 @@ export interface Tiers {
   firstname: string;
   lastname: string;
   isIndividual: boolean;
+  selected: boolean;
 }

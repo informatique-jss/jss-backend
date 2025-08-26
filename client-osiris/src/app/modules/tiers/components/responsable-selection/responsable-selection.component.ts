@@ -1,10 +1,10 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbPagination, NgbPaginationNext, NgbPaginationPrevious } from '@ng-bootstrap/ng-bootstrap';
 import { NgIcon } from '@ng-icons/core';
 import { LucideAngularModule, LucideSearch, LucideShield, LucideUserCheck } from 'lucide-angular';
-import { Observable } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
 import { NgbdSortableHeader } from '../../../../libs/inspinia/directive/sortable.directive';
 import { TableService } from '../../../../libs/inspinia/services/table.service';
 import { toTitleCase } from '../../../../libs/inspinia/utils/string-utils';
@@ -41,7 +41,10 @@ type UserType = {
     providers: [TableService],
     templateUrl: './responsable-selection.component.html'
 })
-export class ResponsableSelectionComponent implements OnInit {
+export class ResponsableSelectionComponent implements OnInit, OnDestroy {
+
+    private componentDestroyed = new Subject<void>();
+
     selectAll = false;
 
     tiers: Tiers | undefined;
@@ -60,15 +63,13 @@ export class ResponsableSelectionComponent implements OnInit {
         public tableService: TableService<Responsable>,
         private responsableService: ResponsableService,
         private tiersService: TiersService,
-        private cdr: ChangeDetectorRef,
-
     ) {
         this.users$ = this.tableService.items$
         this.total$ = this.tableService.total$
     }
 
     ngOnInit(): void {
-        this.tiersService.getSelectedTiers().subscribe(tiersId => {
+        this.tiersService.getSelectedTiers().pipe(takeUntil(this.componentDestroyed)).subscribe(tiersId => {
             if (tiersId) {
                 this.responsableService.getResponsablesByTiers(tiersId).subscribe(res => {
                     this.users = res;
@@ -76,6 +77,15 @@ export class ResponsableSelectionComponent implements OnInit {
                 });
             }
         });
+
+        this.tableService.total$.pipe(takeUntil(this.componentDestroyed)).subscribe(number => {
+            this.selectAll = this.tableService.getSelectedItems().length == number;
+        });
+    }
+
+    ngOnDestroy(): void {
+        this.componentDestroyed.next();
+        this.componentDestroyed.complete();
     }
 
     toggleAllSelection() {
@@ -84,10 +94,7 @@ export class ResponsableSelectionComponent implements OnInit {
     }
 
     toggleSingleSelection() {
-        this.tableService.total$.subscribe(number => {
-            this.selectAll = this.tableService.getSelectedItems().length == number;
-            this.responsableService.setSelectedResponsables(this.tableService.getSelectedItems());
-        });
+        this.responsableService.setSelectedResponsables(this.tableService.getSelectedItems());
     }
 
     deleteSelected() {
@@ -98,4 +105,6 @@ export class ResponsableSelectionComponent implements OnInit {
     get hasSelection(): boolean {
         return this.tableService.hasSelectedItems();
     }
+
+
 }
