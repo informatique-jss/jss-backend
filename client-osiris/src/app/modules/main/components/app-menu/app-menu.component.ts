@@ -32,7 +32,7 @@ export class AppMenuComponent implements OnInit {
 
   menuItems: MenuItemType[] = [
     { label: "Menu", isTitle: true } as MenuItemType,
-    { label: "Tiers/Responsables", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "tiers/null" } as MenuItemType,
+    { label: "Tiers/Responsables", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "tiers" } as MenuItemType,
     { label: "CRM", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerApps", url: "crm" } as MenuItemType
   ];
 
