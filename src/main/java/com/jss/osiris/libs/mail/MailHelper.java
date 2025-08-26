@@ -409,8 +409,6 @@ public class MailHelper {
 
                 else if (assoAffaireOrderToUse != null && mail.getMailComputeResult() != null
                         && mail.getMailComputeResult().getIsSendToAffaire()
-                        && (mail.getMailTemplate().equals(CustomerMail.TEMPLATE_CUSTOMER_ORDER_FINALIZATION)
-                                || mail.getMailTemplate().equals(CustomerMail.TEMPLATE_INVOICE_REMINDER))
                         && (!assoAffaireOrderToUse.getAffaire().getIsIndividual()
                                 || assoAffaireOrderToUse.getAffaire().getIsIndividual() == null))
                     ctx.setVariable("customerName", "");

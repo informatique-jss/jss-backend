@@ -21,6 +21,7 @@ import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.osiris.quotation.service.ProvisionService;
 import com.jss.osiris.modules.osiris.reporting.model.IncidentReport;
 
 @org.springframework.stereotype.Service
@@ -37,6 +38,9 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Autowired
     ConstantService constantService;
+
+    @Autowired
+    ProvisionService provisionService;
 
     @Override
     public List<Notification> getNotificationsForCurrentEmployee(Boolean displayFuture, Boolean displayRead,
@@ -280,6 +284,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public void notifyAttachmentAddToProvision(Provision provision, Attachment attachment) throws OsirisException {
         CustomerOrder order = provision.getService().getAssoAffaireOrder().getCustomerOrder();
+        provision = provisionService.getProvision(provision.getId());
         if (!isProvisionClosed(provision) && !isProvisionOpen(provision)) {
             if (order != null && (order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)
                     || order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.TO_BILLED))) {
