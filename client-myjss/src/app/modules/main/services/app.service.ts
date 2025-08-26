@@ -62,6 +62,10 @@ export class AppService {
     window.open(environment.frontendJssUrl + route, inNewWindows ? "_blank" : "_self");
   }
 
+  openOsirisV2Route(event: any, route: string, inNewWindows = true) {
+    window.open(environment.frontendOsirisV2Url + route, inNewWindows ? "_blank" : "_self");
+  }
+
   openLinkedinJssPage() {
     window.open("https://www.linkedin.com/company/journal-special-des-societes/_blank");
   }
