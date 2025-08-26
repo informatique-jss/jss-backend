@@ -608,10 +608,13 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
             }
         }
 
-        if (oneNewProvision && customerOrder != null && customerOrder instanceof CustomerOrder
-                && ((CustomerOrder) customerOrder).getQuotations() != null
-                && ((CustomerOrder) customerOrder).getQuotations().size() > 0)
-            notificationService.notifyQuotationModified(assoAffaireOrder.getCustomerOrder());
+        if (oneNewProvision && customerOrder != null && customerOrder instanceof CustomerOrder) {
+            customerOrder = customerOrderService.getCustomerOrder(customerOrder.getId());
+            if (((CustomerOrder) customerOrder).getQuotations() != null
+                    && ((CustomerOrder) customerOrder).getQuotations().size() > 0) {
+                notificationService.notifyQuotationModified(assoAffaireOrder.getCustomerOrder());
+            }
+        }
 
         return assoAffaireOrder;
     }
