@@ -241,22 +241,6 @@
                   </ul>
                 </div>
 
-                <!-- Author description  -->
-                <div *ngIf="post" class="card mb-3 border border-light p-3">
-                  <div class="row align-items-center">
-                    <div class="col-auto avatar avatar-xl">
-                      <img class="avatar-img rounded-circle" [src]="post.fullAuthor.avatar_url_size_48" alt="avatar">
-                    </div>
-                    <div class="col">
-                      <a style="cursor: pointer;" (click)="openAuthorPosts(post.fullAuthor, $event)"
-                        class="stretched-link d-block">{{post.fullAuthor.name}}</a>
-                    </div>
-                  </div>
-                  <div class="row align-items-center pt-2">
-                    <p>{{post.fullAuthor.description}}</p>
-                  </div>
-                </div>
-
                 <!--============= Comments ==============-->
 
                 <!-- Comments -->
