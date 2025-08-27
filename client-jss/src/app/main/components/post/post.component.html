@@ -57,7 +57,7 @@
                   </div>
                 </a>
 
-                <div class="dropdown-menu dropdown-menu-end my-1 custom-drop p-2" [ngClass]="{ show: dropdownOpen }">
+                <div class="dropdown-menu dropdown-menu-end my-1 p-2" [ngClass]="{ show: dropdownOpen }">
                   <ng-container>
                     <div class="d-flex flex-row gap-2">
                       <a (click)="shareOnLinkedin()"
@@ -109,7 +109,7 @@
 
           <!-- Player START -->
           <div class="container pe-3">
-            <div class="row post-player-bg border rounded-2 ms-0 mb-3 p-1 pt-2 align-items-center">
+            <div class="row post-player-bg border rounded-2 ms-0 mb-3 p-1 align-items-center">
               <a class="col-auto ps-0 btn-dark rounded-circle btn-circle-md fs-4" (click)="togglePlayPause(post!)"><i
                   [ngClass]="getIsPlaying(post!) ? 'bi-pause-fill' : 'bi-play-fill'"></i></a>
               <div class="col">
@@ -122,7 +122,6 @@
                   <small *ngIf="getDuration()!=0" class="col-auto text-muted px-0"> /{{ getDuration()*1000 |
                     date:'mm:ss' }}</small>
                 </div>
-
               </div>
             </div>
           </div>
@@ -239,22 +238,6 @@
                       </article>
                     </li>
                   </ul>
-                </div>
-
-                <!-- Author description  -->
-                <div *ngIf="post" class="card mb-3 border border-light p-3">
-                  <div class="row align-items-center">
-                    <div class="col-auto avatar avatar-xl">
-                      <img class="avatar-img rounded-circle" [src]="post.fullAuthor.avatar_url_size_48" alt="avatar">
-                    </div>
-                    <div class="col">
-                      <a style="cursor: pointer;" (click)="openAuthorPosts(post.fullAuthor, $event)"
-                        class="stretched-link d-block">{{post.fullAuthor.name}}</a>
-                    </div>
-                  </div>
-                  <div class="row align-items-center pt-2">
-                    <p>{{post.fullAuthor.description}}</p>
-                  </div>
                 </div>
 
                 <!--============= Comments ==============-->
