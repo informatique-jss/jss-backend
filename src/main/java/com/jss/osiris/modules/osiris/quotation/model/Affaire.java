@@ -95,6 +95,7 @@ public class Affaire implements IId, IAttachment {
 	@Column(length = 10)
 	@IndexedField
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class,
+			JacksonViews.OsirisListView.class,
 			JacksonViews.MyJssListView.class })
 	private String postalCode;
 
@@ -118,6 +119,7 @@ public class Affaire implements IId, IAttachment {
 	@Column(length = 500)
 	@IndexedField
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class,
+			JacksonViews.OsirisListView.class,
 			JacksonViews.MyJssListView.class })
 	private String address;
 
@@ -194,6 +196,8 @@ public class Affaire implements IId, IAttachment {
 	@Column(columnDefinition = "TEXT")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String apeCodes;
+
+	private Boolean isToNotUpdate;
 
 	public String getPaymentIban() {
 		return paymentIban;
@@ -465,6 +469,14 @@ public class Affaire implements IId, IAttachment {
 
 	public void setAssoAffaireOrders(List<AssoAffaireOrder> assoAffaireOrders) {
 		this.assoAffaireOrders = assoAffaireOrders;
+	}
+
+	public Boolean getIsToNotUpdate() {
+		return isToNotUpdate;
+	}
+
+	public void setIsToNotUpdate(Boolean isToNotUpdate) {
+		this.isToNotUpdate = isToNotUpdate;
 	}
 
 }

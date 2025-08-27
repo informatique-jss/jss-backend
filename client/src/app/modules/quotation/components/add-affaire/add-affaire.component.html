@@ -185,4 +185,12 @@
       </td>
     </tr>
   </table>
+  <table class="full-width">
+    <tr>
+      <td>
+        <generic-toggle [(model)]="affaire.isToNotUpdate" label="Ne pas mettre à jour depuis le RNE"
+          [form]="affaireForm" propertyName="isToNotUpdate" [isDisabled]="!editMode"></generic-toggle>
+      </td>
+    </tr>
+  </table>
 </fieldset>

@@ -7,7 +7,7 @@ import { AssoAffaireOrder } from '../model/AssoAffaireOrder';
 @Injectable({
   providedIn: 'root'
 })
-export class AffaireService extends AppRestService<Affaire>{
+export class AffaireService extends AppRestService<Affaire> {
 
   constructor(http: HttpClient) {
     super(http, "quotation");
@@ -35,6 +35,10 @@ export class AffaireService extends AppRestService<Affaire>{
 
   generateAffaireByRna(rna: string) {
     return this.getList(new HttpParams().set("rna", rna), "rna");
+  }
+
+  searchAffaireForCorrection() {
+    return this.getList(new HttpParams(), "affaire/correction");
   }
 
   refreshAffaire(affaire: Affaire) {

@@ -413,6 +413,12 @@ public class QuotationController {
   @Autowired
   CustomerOrderAssignationService customerOrderAssignationService;
 
+  @JsonView(JacksonViews.OsirisListView.class)
+  @GetMapping(inputEntryPoint + "/affaire/correction")
+  public ResponseEntity<List<Affaire>> searchAffaireForCorrection() {
+    return new ResponseEntity<List<Affaire>>(affaireService.searchAffaireForCorrection(), HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/service-field-types")
   public ResponseEntity<List<ServiceFieldType>> getServiceFieldTypes() {
     return new ResponseEntity<List<ServiceFieldType>>(serviceFieldTypeService.getServiceFieldTypes(), HttpStatus.OK);
@@ -1692,14 +1698,6 @@ public class QuotationController {
   public ResponseEntity<List<ProvisionFamilyType>> getProvisionFamilyTypes() {
     return new ResponseEntity<List<ProvisionFamilyType>>(provisionFamilyTypeService.getProvisionFamilyTypes(),
         HttpStatus.OK);
-  }
-
-  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
-  @GetMapping(inputEntryPoint + "/affaire/init")
-  public ResponseEntity<Boolean> initialFetchRne(Integer iterationMax)
-      throws OsirisValidationException, OsirisException {
-    affaireService.initialFetchRne(iterationMax);
-    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
   }
 
   @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
