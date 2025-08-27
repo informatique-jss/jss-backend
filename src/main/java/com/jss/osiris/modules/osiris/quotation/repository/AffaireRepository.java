@@ -36,4 +36,14 @@ public interface AffaireRepository extends QueryCacheCrudRepository<Affaire, Int
                         @Param("idAffaire") Integer idAffaire);
 
         List<Affaire> findAllBySiret(String siret);
+
+        @Query(value = "select a from Affaire a where siret is null and coalesce(isIndividual , false) = false and coalesce(isToNotUpdate , false) = false ")
+        List<Affaire> getNextAffaireToUpdate();
+
+        @Query(value = "select a from Affaire a where siret is not null  ")
+        List<Affaire> getNextAffaireToUpdateForRne();
+
+        @Query(value = "select a from Affaire a where (siret is null or city is null) and coalesce(isIndividual , false) = false and coalesce(isToNotUpdate , false) = false ")
+        List<Affaire> getAffairesForCorrection();
+
 }

@@ -42,4 +42,5 @@ export interface Affaire extends IReferential, IAttachment {
   employeeNumber: number;
   apeCodes: string;
   isMainOffice: boolean;
+  isToNotUpdate: boolean;
 }

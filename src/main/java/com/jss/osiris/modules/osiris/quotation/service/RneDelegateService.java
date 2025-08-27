@@ -16,10 +16,13 @@ public interface RneDelegateService {
         public List<RneCompany> getCompanyBySirens(List<String> sirens)
                         throws OsirisException, OsirisClientMessageException;
 
-        public List<RneCompany> getCompanyBySiret(String siren)
+        public List<RneCompany> getCompanyBySiret(String siret)
                         throws OsirisException, OsirisClientMessageException;
 
-        public RneResult getCompanyModifiedSince(LocalDate lastExecutionDate, String lastSiret)
+        public List<RneCompany> getCompanyByDenominationAndPostalCode(String denomination, String postalCode)
+                        throws OsirisException, OsirisClientMessageException;
+
+        public RneResult getCompanyModifiedSince(LocalDate lastExecutionDate, String lastSiret, List<String> sirens)
                         throws OsirisException, OsirisClientMessageException;
 
 }

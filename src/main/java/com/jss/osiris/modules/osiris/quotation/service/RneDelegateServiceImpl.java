@@ -98,13 +98,13 @@ public class RneDelegateServiceImpl implements RneDelegateService {
     }
 
     @Override
-    public List<RneCompany> getCompanyBySiret(String siren)
+    public List<RneCompany> getCompanyBySiret(String siret)
             throws OsirisException, OsirisClientMessageException {
         SSLHelper.disableCertificateValidation();
         HttpHeaders headers = createHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         ResponseEntity<List<RneCompany>> res = new RestTemplate().exchange(
-                rneEntryPoint + entrepriseRequest + "?siret=" + siren, HttpMethod.GET,
+                rneEntryPoint + entrepriseRequest + "?siret=" + siret, HttpMethod.GET,
                 new HttpEntity<Object>(headers),
                 new ParameterizedTypeReference<List<RneCompany>>() {
                 });
@@ -115,7 +115,29 @@ public class RneDelegateServiceImpl implements RneDelegateService {
     }
 
     @Override
-    public RneResult getCompanyModifiedSince(LocalDate lastExecutionDate, String lastSiret)
+    public List<RneCompany> getCompanyByDenominationAndPostalCode(String denomination, String postalCode)
+            throws OsirisException, OsirisClientMessageException {
+        SSLHelper.disableCertificateValidation();
+        HttpHeaders headers = createHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        try {
+            ResponseEntity<List<RneCompany>> res = new RestTemplate().exchange(
+                    rneEntryPoint + entrepriseRequest + "?companyName=" + denomination + "&zipCodes[]=" + postalCode,
+                    HttpMethod.GET,
+                    new HttpEntity<Object>(headers),
+                    new ParameterizedTypeReference<List<RneCompany>>() {
+                    });
+            if (res.getBody() != null && res.getBody() != null) {
+                return res.getBody();
+            }
+        } catch (Exception e) {
+            return null;
+        }
+        return null;
+    }
+
+    @Override
+    public RneResult getCompanyModifiedSince(LocalDate lastExecutionDate, String lastSiret, List<String> sirens)
             throws OsirisException, OsirisClientMessageException {
 
         SSLHelper.disableCertificateValidation();
@@ -139,6 +161,10 @@ public class RneDelegateServiceImpl implements RneDelegateService {
         HttpHeaders requestHeaders = new HttpHeaders(headers);
         if (searchAfter != null) {
             url += "&searchAfter=" + searchAfter;
+        }
+
+        if (sirens != null && sirens.size() > 0) {
+            url += "&siren[]=" + String.join("&siren[]=", sirens);
         }
 
         ResponseEntity<List<RneCompanyResponse>> res = new RestTemplate().exchange(url, HttpMethod.GET,

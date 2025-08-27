@@ -34,6 +34,7 @@ import { ActeDepositComponent } from '../acte-deposit/acte-deposit.component';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
 import { AddAffaireComponent } from '../add-affaire/add-affaire.component';
 import { AddIncidentReportComponent } from '../add-incident-report/add-incident-report.component';
+import { AffaireCorrectionComponent } from '../affaire-correction/affaire-correction.component';
 import { AffaireListComponent } from '../affaire-list/affaire-list.component';
 import { AffaireComponent } from '../affaire/affaire.component';
 import { AnnouncementListComponent } from '../announcement-list/announcement-list.component';
@@ -104,6 +105,7 @@ const routes: Routes = [
   { path: 'service/:idService', component: ProvisionComponent },
   { path: 'provision/:id/:idProvision', component: ProvisionComponent },
   { path: 'affaire', component: AffaireListComponent },
+  { path: 'affaire-correction', component: AffaireCorrectionComponent },
   { path: 'affaire/:id', component: AffaireComponent },
   { path: 'paper-set', component: PaperSetListComponent },
 ];
@@ -203,7 +205,8 @@ const routes: Routes = [
     IncidentReportListComponent,
     AddIncidentReportComponent,
     InvoiceListComponent,
-    SuggestedQuotationsDialogComponent
+    SuggestedQuotationsDialogComponent,
+    AffaireCorrectionComponent,
   ],
   exports: [
     OrderingListComponent,

@@ -17,7 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.GlobalExceptionHandler;
@@ -40,7 +39,6 @@ import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.Rna;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
-import com.jss.osiris.modules.osiris.quotation.model.UniteLegaleImport;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.Activite;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.AdresseDomicile;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.AutresEtablissement;
@@ -52,7 +50,6 @@ import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.FormeJuridique;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeVoie;
 import com.jss.osiris.modules.osiris.quotation.repository.AffaireRepository;
-import com.jss.osiris.modules.osiris.quotation.repository.UniteLegaleImportRepository;
 import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.referentials.FormeExerciceActivitePrincipalService;
 import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.referentials.FormeJuridiqueService;
 import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.referentials.TypeVoieService;
@@ -111,6 +108,9 @@ public class AffaireServiceImpl implements AffaireService {
 
     @Autowired
     EmployeeService employeeService;
+
+    @Autowired
+    AffaireRneUpdateHelper affaireRneUpdateHelper;
 
     @Override
     public List<Affaire> getAffaires() {
@@ -257,7 +257,8 @@ public class AffaireServiceImpl implements AffaireService {
         return affaire;
     }
 
-    private void updateAffaireFromRneCompany(Affaire affaire, RneCompany rneCompany)
+    @Override
+    public void updateAffaireFromRneCompany(Affaire affaire, RneCompany rneCompany)
             throws OsirisException {
         PersonneMorale personneMorale = null;
         PersonnePhysique personnePhysique = null;
@@ -512,7 +513,7 @@ public class AffaireServiceImpl implements AffaireService {
         return null;
     }
 
-    private List<String> getSiretsFromRneCompany(RneCompany company) {
+    private List<String> getSiretsFromRneCompany(RneCompany company, boolean onlyPrincipalEtablissment) {
         HashSet<String> sirets = new HashSet<String>();
 
         if (company == null || company.getFormality() == null || company.getFormality().getContent() == null
@@ -525,16 +526,24 @@ public class AffaireServiceImpl implements AffaireService {
             for (AutresEtablissement other : company.getFormality().getContent().getPersonneMorale()
                     .getAutresEtablissements()) {
                 if (other.getDescriptionEtablissement() != null
-                        && other.getDescriptionEtablissement().getSiret() != null)
+                        && other.getDescriptionEtablissement().getSiret() != null) {
                     sirets.add(other.getDescriptionEtablissement().getSiret());
+                    if (onlyPrincipalEtablissment && Boolean.TRUE
+                            .equals(other.getDescriptionEtablissement().getIndicateurEtablissementPrincipal()))
+                        return Arrays.asList(other.getDescriptionEtablissement().getSiret());
+                }
             }
         if (company.getFormality().getContent().getPersonneMorale() != null
                 && company.getFormality().getContent().getPersonneMorale()
                         .getEtablissementPrincipal() != null
                 && company.getFormality().getContent().getPersonneMorale()
-                        .getEtablissementPrincipal().getDescriptionEtablissement().getSiret() != null)
+                        .getEtablissementPrincipal().getDescriptionEtablissement().getSiret() != null) {
             sirets.add(company.getFormality().getContent().getPersonneMorale()
                     .getEtablissementPrincipal().getDescriptionEtablissement().getSiret());
+            if (onlyPrincipalEtablissment)
+                return Arrays.asList(company.getFormality().getContent().getPersonneMorale()
+                        .getEtablissementPrincipal().getDescriptionEtablissement().getSiret());
+        }
 
         if (company.getFormality().getContent().getPersonnePhysique() != null
                 && company.getFormality().getContent().getPersonnePhysique().getAutresEtablissements() != null)
@@ -551,6 +560,9 @@ public class AffaireServiceImpl implements AffaireService {
                         .getEtablissementPrincipal().getDescriptionEtablissement().getSiret() != null)
             sirets.add(company.getFormality().getContent().getPersonnePhysique()
                     .getEtablissementPrincipal().getDescriptionEtablissement().getSiret());
+
+        if (onlyPrincipalEtablissment)
+            return null;
 
         return new ArrayList<String>(sirets);
 
@@ -685,86 +697,71 @@ public class AffaireServiceImpl implements AffaireService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    public List<Affaire> searchAffaireForCorrection() {
+        return affaireRepository.getAffairesForCorrection();
+    }
+
+    @Override
     public void updateAffaireFromRne()
             throws OsirisException, OsirisClientMessageException, OsirisDuplicateException {
-        LocalDate lastDate = affaireRepository.getLastRneUpdateForAffaires();
-        String lastSiret = null;
-        int iteration = 0;
-        if (lastDate != null) {
-            do {
-                System.out.println("batch : " + iteration);
-                iteration++;
-                RneResult result = rneDelegateService.getCompanyModifiedSince(lastDate, lastSiret);
-                if (result.getCompanies() != null) {
-                    lastSiret = result.getLastSiret();
-                    for (RneCompany company : result.getCompanies()) {
-                        if (company.getSiren() != null) {
-                            List<String> sirets = getSiretsFromRneCompany(company);
-                            if (sirets != null)
-                                for (String siret : sirets) {
-                                    List<Affaire> affaire = getAffaireBySiret(siret);
-                                    Affaire updatedAffaire = null;
-                                    if (affaire != null && affaire.size() > 0) {
-                                        updatedAffaire = affaire.get(0);
-                                        updateAffaireFromRneCompany(updatedAffaire, company);
-                                        updatedAffaire.setLastRneUpdate(LocalDate.now());
-                                        addOrUpdateAffaire(updatedAffaire);
-                                    }
-                                }
+
+        // Update and search new ones
+        int batchSize = 250;
+        List<Affaire> affaires = affaireRepository.getNextAffaireToUpdate();
+
+        for (Affaire affaire : affaires) {
+            if (affaire.getDenomination() != null && affaire.getPostalCode() != null
+                    && affaire.getDenomination().length() > 0 && affaire.getPostalCode().length() > 0) {
+                List<RneCompany> results = rneDelegateService
+                        .getCompanyByDenominationAndPostalCode(affaire.getDenomination(),
+                                affaire.getPostalCode());
+
+                if (results != null && results.size() == 1) {
+                    RneCompany company = results.get(0);
+                    if (company.getSiren() != null) {
+                        List<String> sirets = getSiretsFromRneCompany(company, true);
+                        if (sirets != null && sirets.size() == 1) {
+                            affaireRneUpdateHelper.updateAffaireSiretFromRne(affaire, company.getSiren(),
+                                    sirets.get(0));
+                            affaireRneUpdateHelper.updateAffaireFromRne(affaire, company);
                         }
                     }
                 }
-            } while (lastSiret != null);
+            }
+        }
+
+        // Update diff
+        LocalDate lastDate = affaireRepository.getLastRneUpdateForAffaires();
+        if (lastDate != null) {
+            affaires = affaireRepository.getNextAffaireToUpdateForRne();
+
+            for (int i = 0; i < affaires.size(); i += batchSize) {
+                int end = Math.min(i + batchSize, affaires.size());
+                List<Affaire> batch = affaires.subList(i, end);
+
+                RneResult result = rneDelegateService.getCompanyModifiedSince(lastDate, null,
+                        batch.stream().map(a -> a.getSiren()).toList());
+
+                for (RneCompany company : result.getCompanies()) {
+                    if (company.getSiren() != null) {
+                        List<String> sirets = getSiretsFromRneCompany(company, false);
+                        if (sirets != null)
+                            for (String siret : sirets) {
+                                List<Affaire> affaire = getAffaireBySiret(siret);
+                                Affaire updatedAffaire = null;
+                                if (affaire != null && affaire.size() > 0) {
+                                    updatedAffaire = affaire.get(0);
+                                    affaireRneUpdateHelper.updateAffaireFromRne(updatedAffaire, company);
+                                }
+                            }
+                    }
+                }
+            }
         }
     }
-
-    @Autowired
-    UniteLegaleImportRepository uniteLegaleImportRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
-
-    @Override
-    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
-    public void initialFetchRne(Integer iterationMax)
-            throws OsirisException, OsirisClientMessageException, OsirisDuplicateException {
-        Integer iteration = 0;
-        while (iteration < iterationMax) {
-            System.out.println("init : " + iteration);
-            iteration++;
-            List<UniteLegaleImport> unites = uniteLegaleImportRepository.getNextUniteLegale();
-            if (unites != null) {
-                List<RneCompany> companies = rneDelegateService
-                        .getCompanyBySirens(unites.stream().map(u -> u.getSiren()).toList());
-                if (companies != null)
-                    for (RneCompany company : companies) {
-                        if (company.getSiren() != null) {
-                            List<String> sirets = getSiretsFromRneCompany(company);
-                            if (sirets != null)
-                                for (String siret : sirets) {
-                                    List<Affaire> affaire = getAffaireBySiret(siret);
-                                    Affaire updatedAffaire = null;
-                                    if (affaire != null && affaire.size() > 0) {
-                                        updatedAffaire = affaire.get(0);
-                                        updateAffaireFromRneCompany(updatedAffaire, company);
-                                        updatedAffaire.setLastRneUpdate(LocalDate.now());
-                                        addOrUpdateAffaire(updatedAffaire);
-                                    }
-                                }
-                        }
-                    }
-
-                for (UniteLegaleImport unite : unites) {
-                    unite.setUpdated(true);
-                    uniteLegaleImportRepository.save(unite);
-                }
-            }
-
-            entityManager.flush();
-            entityManager.clear();
-        }
-    }
 
     @Override
     public List<Affaire> getAffairesForCurrentUser(Integer page, String sortBy, String searchText) {

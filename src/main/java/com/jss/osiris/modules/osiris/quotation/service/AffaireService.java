@@ -7,6 +7,7 @@ import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
+import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.RneCompany;
 
 public interface AffaireService {
         public List<Affaire> getAffaires();
@@ -39,7 +40,9 @@ public interface AffaireService {
 
         public List<Attachment> getAttachmentsForAffaire(Affaire affaire) throws OsirisException;
 
-        public void initialFetchRne(Integer iterationMax)
-                        throws OsirisException, OsirisClientMessageException, OsirisDuplicateException;
+        public void updateAffaireFromRneCompany(Affaire affaire, RneCompany rneCompany)
+                        throws OsirisException;
+
+        public List<Affaire> searchAffaireForCorrection();
 
 }
