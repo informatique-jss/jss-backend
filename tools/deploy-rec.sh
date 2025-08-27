@@ -1,6 +1,6 @@
 cd ..
 rm build/libs/*
-gradle bootJar -PexcludeHazelcast=true
+gradle bootJar -PexcludeInfinispan=true
 ssh -t osiris@app-rec1.osiris.jss.fr 'sudo  /usr/bin/systemctl stop osiris.service;exit'
 scp build/libs/*-*.jar osiris@app-rec1.osiris.jss.fr:/appli/osiris/osiris.jar
 ssh -t osiris@app-rec1.osiris.jss.fr 'sudo  /usr/bin/systemctl start osiris.service;exit'

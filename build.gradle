@@ -24,10 +24,10 @@ tasks.withType(JavaCompile) {
     options.compilerArgs << "-parameters"
 }
 
-def excludeHazelcast = project.hasProperty('excludeHazelcast') && project.excludeHazelcast == 'true'
+def excludeInfinispan = project.hasProperty('excludeInfinispan') && project.excludeInfinispan == 'true'
 
 tasks.named('processResources') {
-    if (excludeHazelcast) {
+    if (excludeInfinispan) {
         exclude 'infinispan.xml'
     }
 }
