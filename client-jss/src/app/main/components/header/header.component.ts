@@ -206,6 +206,11 @@ export class HeaderComponent implements OnInit {
     this.appService.openRoute(event, "post/department/" + department.code, undefined);
   }
 
+  openPremium(event: any) {
+    this.isMobileMenuOpen = false;
+    this.appService.openRoute(event, "post/premium", undefined);
+  }
+
   openPremiumPosts() {
     this.isMobileMenuOpen = false;
     // TODO

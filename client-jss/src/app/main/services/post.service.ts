@@ -123,6 +123,16 @@ export class PostService extends AppRestService<Post> {
     return this.getPagedList(params, "posts/all/author", "", "");
   }
 
+  getAllPremiumPosts(page: number, size: number, searchText: string, isDisplayNewPosts: boolean): Observable<PagedContent<Post>> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString())
+      .set('isDisplayNewPosts', isDisplayNewPosts);
+    if (searchText)
+      params = params.set('searchText', searchText);
+    return this.getPagedList(params, "posts/all/premium", "", "");
+  }
+
   getAllPostsBySerie(serie: Serie, page: number, size: number, searchText: string): Observable<PagedContent<Post>> {
     let params = new HttpParams()
       .set('serieSlug', serie.slug)
@@ -165,6 +175,13 @@ export class PostService extends AppRestService<Post> {
       .set('page', page.toString())
       .set('size', size.toString());
     return this.getPagedList(params, "posts/author/most-seen", "", "");
+  }
+
+  getMostSeenPremiumPost(page: number, size: number): Observable<PagedContent<Post>> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+    return this.getPagedList(params, "posts/premium/most-seen", "", "");
   }
 
   getMostSeenPostBySerie(serie: Serie, page: number, size: number): Observable<PagedContent<Post>> {

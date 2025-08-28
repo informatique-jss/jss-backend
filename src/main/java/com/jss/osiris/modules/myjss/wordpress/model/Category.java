@@ -10,13 +10,18 @@ import jakarta.persistence.Id;
 
 @Entity
 public class Category implements Serializable {
+
     @Id
     @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private Integer id;
+
     @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private String name;
+
     @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+
     private String slug;
+
     private Integer count;
 
     public Integer getId() {
@@ -50,5 +55,4 @@ public class Category implements Serializable {
     public void setCount(Integer count) {
         this.count = count;
     }
-
 }

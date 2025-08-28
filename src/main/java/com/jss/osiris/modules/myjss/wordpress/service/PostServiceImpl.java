@@ -200,6 +200,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public Page<Post> getMostSeenPremiumPost(Pageable pageableRequest) {
+        return postRepository.findMostSeenPremiumPosts(pageableRequest);
+    }
+
+    @Override
     public Page<Post> getMostSeenPostByPublishingDepartment(Pageable pageableRequest,
             PublishingDepartment publishingDepartment) throws OsirisException {
         return postRepository.findMostSeenPostPublishingDepartment(pageableRequest, getCategoryArticle(),
@@ -673,6 +678,19 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public Page<Post> getAllPremiumPosts(String searchText, Pageable pageableRequest) throws OsirisException {
+        if (searchText != null) {
+            List<IndexEntity> tmpEntitiesFound = null;
+            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
+            if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
+                return searchPostAgainstEntitiesToMatch(searchText, postRepository.findActivePremiumPosts(
+                        getCategoryArticle(), pageableRequest));
+            }
+        }
+        return postRepository.findActivePremiumPosts(getCategoryArticle(), pageableRequest);
+    }
+
+    @Override
     public Page<Post> getPostsByMyJssCategory(int page, MyJssCategory myJssCategory) {
         Order order = new Order(Direction.DESC, "date");
         Sort sort = Sort.by(Arrays.asList(order));
@@ -998,4 +1016,5 @@ public class PostServiceImpl implements PostService {
         }
         return post;
     }
+
 }
