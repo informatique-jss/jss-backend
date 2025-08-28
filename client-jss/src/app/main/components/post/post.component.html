@@ -31,58 +31,84 @@
                 </div>
               </div>
             </div>
-
             <!-- Post info  -->
             <div class="col list-inline list-unstyled ps-3">
               <span class="list-inline-item d-lg-block">{{post.date | date:'EEEE d MMMM HH:mm'}}</span>
               <span class="list-inline-item d-lg-block">{{getTimeReading(post.contentText)}}</span>
             </div>
-          </div>
-          <!-- Boutons offrir article, enrregistrer, partager  -->
-          <div class="row inline-row align-items-center mb-2 g-2">
+
+
+            <!-- Boutons offrir article, enrregistrer, partager  -->
             <div class="col-auto mt-0">
-              <button *ngIf="currentUser" class="btn btn-primary" (click)="openOfferPostModal(givePostModal)"><i
-                  class="bi bi-gift me-2"></i>Offrir cet article</button>
-            </div>
-            <bookmark [post]="post" [isSinglePost]="true" class="mt-0"></bookmark>
+              <div class="row inline-row align-items-center mb-2">
+                <div class="col-auto mt-0">
 
-            <div class="col-auto mt-0">
-              <!-- Share dropdown -->
-              <div class="dropdown nav" [ngClass]="{ show: dropdownOpen }">
-                <a role="button" class="d-flex align-items-center p-0 user-account" (click)="toggleDropdown($event)"
-                  [attr.aria-expanded]="dropdownOpen">
-
-                  <div class="d-none d-md-block">
-                    <div class="btn btn-primary"><i class="bi bi-share me-2"></i>Partager</div>
-                  </div>
-                </a>
-
-                <div class="dropdown-menu dropdown-menu-end my-1 p-2" [ngClass]="{ show: dropdownOpen }">
-                  <ng-container>
-                    <div class="d-flex flex-row gap-2">
-                      <a (click)="shareOnLinkedin()"
-                        class="btn btn-primary bg-light border-0 rounded-circle d-flex justify-content-center align-items-center"
-                        style="width: 48px; height: 48px;">
-                        <i class="bi bi-linkedin fs-6"></i>
-                      </a>
-                      <a (click)="shareOnInstagram()"
-                        class="btn btn-primary bg-light border-0 rounded-circle d-flex justify-content-center align-items-center"
-                        style="width: 48px; height: 48px;">
-                        <i class="bi bi-instagram fs-4"></i>
-                      </a>
-                      <a (click)="shareOnFacebook()"
-                        class="btn btn-primary bg-light border-0 rounded-circle d-flex justify-content-center align-items-center"
-                        style="width: 48px; height: 48px;">
-                        <i class="bi bi-facebook fs-4"></i>
-                      </a>
-                      <a (click)="shareByMail()"
-                        class="btn btn-primary bg-light border-0 rounded-circle d-flex justify-content-center align-items-center"
-                        style="width: 48px; height: 48px;">
-                        <i class="bi bi-envelope fs-4"></i>
-                      </a>
-                    </div>
-                  </ng-container>
+                  <button *ngIf="currentUser" class="btn btn-primary" (click)="openOfferPostModal(givePostModal)"><i
+                      class="bi bi-gift me-2"></i>Offrir cet article</button>
                 </div>
+                <bookmark [post]="post" [isSinglePost]="true" class="mt-0"></bookmark>
+
+                <div class="col-auto mt-0">
+                  <!-- Share dropdown -->
+                  <div class="dropdown nav" [ngClass]="{ show: dropdownOpen }">
+                    <a role="button" class="d-flex align-items-center p-0 user-account" (click)="toggleDropdown($event)"
+                      [attr.aria-expanded]="dropdownOpen">
+
+                      <div class="d-none d-md-block">
+                        <div class="btn btn-primary"><i class="bi bi-share me-2"></i>Partager</div>
+                      </div>
+                    </a>
+
+                    <div class="dropdown-menu dropdown-menu-end my-1 p-2" [ngClass]="{ show: dropdownOpen }">
+                      <ng-container>
+                        <div class="d-flex flex-row gap-2">
+                          <a (click)="shareOnLinkedin()"
+                            class="btn btn-primary bg-light border-0 rounded-circle d-flex justify-content-center align-items-center"
+                            style="width: 48px; height: 48px;">
+                            <i class="bi bi-linkedin fs-6"></i>
+                          </a>
+                          <a (click)="shareOnInstagram()"
+                            class="btn btn-primary bg-light border-0 rounded-circle d-flex justify-content-center align-items-center"
+                            style="width: 48px; height: 48px;">
+                            <i class="bi bi-instagram fs-4"></i>
+                          </a>
+                          <a (click)="shareOnFacebook()"
+                            class="btn btn-primary bg-light border-0 rounded-circle d-flex justify-content-center align-items-center"
+                            style="width: 48px; height: 48px;">
+                            <i class="bi bi-facebook fs-4"></i>
+                          </a>
+                          <a (click)="shareByMail()"
+                            class="btn btn-primary bg-light border-0 rounded-circle d-flex justify-content-center align-items-center"
+                            style="width: 48px; height: 48px;">
+                            <i class="bi bi-envelope fs-4"></i>
+                          </a>
+                        </div>
+                      </ng-container>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row inline-row align-items-center mb-2 g-2">
+                <!-- Player START -->
+                <div class="mt-2 pe-2">
+                  <div class="row post-player-bg border rounded-2 ms-0 p-1 align-items-center">
+                    <a class="col-auto ps-0 btn-dark rounded-circle btn-circle-md fs-4"
+                      (click)="togglePlayPause(post!)"><i
+                        [ngClass]="getIsPlaying(post!) ? 'bi-pause-fill' : 'bi-play-fill'"></i></a>
+                    <div class="col">
+                      <h6 class="mb-0">Écouter l'article</h6>
+                      <div class="row align-items-center px-2">
+                        <input *ngIf="getDuration()!=0" type="range" class="col form-range flex-grow-1 me-1 w-100"
+                          [style.--progress.%]="progress" min="0" max="100" step="0.01" (input)="onSeek($event)" />
+                        <small *ngIf="getCurrentTime()!=0" class="col-auto text-muted px-0">{{ getCurrentTime()*1000 |
+                          date:'mm:ss' }} </small>
+                        <small *ngIf="getDuration()!=0" class="col-auto text-muted px-0"> /{{ getDuration()*1000 |
+                          date:'mm:ss' }}</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Player END -->
               </div>
             </div>
           </div>
@@ -106,26 +132,6 @@
               <div class="skeleton skeleton-block"></div>
             </div>
           </div>
-
-          <!-- Player START -->
-          <div class="container pe-3">
-            <div class="row post-player-bg border rounded-2 ms-0 mb-3 p-1 align-items-center">
-              <a class="col-auto ps-0 btn-dark rounded-circle btn-circle-md fs-4" (click)="togglePlayPause(post!)"><i
-                  [ngClass]="getIsPlaying(post!) ? 'bi-pause-fill' : 'bi-play-fill'"></i></a>
-              <div class="col">
-                <h6 class="mb-0">Écouter l'article</h6>
-                <div class="row align-items-center px-2">
-                  <input *ngIf="getDuration()!=0" type="range" class="col form-range flex-grow-1 me-1 w-100"
-                    [style.--progress.%]="progress" min="0" max="100" step="0.01" (input)="onSeek($event)" />
-                  <small *ngIf="getCurrentTime()!=0" class="col-auto text-muted px-0">{{ getCurrentTime()*1000 |
-                    date:'mm:ss' }} </small>
-                  <small *ngIf="getDuration()!=0" class="col-auto text-muted px-0"> /{{ getDuration()*1000 |
-                    date:'mm:ss' }}</small>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- Player END -->
 
           <section class="pt-0" *ngIf="post">
             <div class="row">
