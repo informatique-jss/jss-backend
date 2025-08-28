@@ -762,9 +762,11 @@ public class QuotationServiceImpl implements QuotationService {
     }
 
     @Override
-    public List<Quotation> findQuotationByResponsableAndCreatedDate(Responsable responsable, LocalDateTime startDate,
-            LocalDateTime endDate) {
-        return quotationRepository.findByResponsableAndCreatedDateBetween(responsable, startDate, endDate);
+    public List<Quotation> getQuotationByResponsableAndStatusAndCreatedDate(Responsable responsable,
+            LocalDateTime startDate,
+            LocalDateTime endDate, QuotationStatus quotationStatus) {
+        return quotationRepository.findByResponsableAndStatusAndCreatedDateBetween(responsable, startDate,
+                endDate, quotationStatus);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.tiers.controller;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +27,9 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.jackson.JacksonViews.OsirisDetailedView;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingRepairHelper;
+import com.jss.osiris.modules.osiris.crm.model.AnalyticStatsType;
+import com.jss.osiris.modules.osiris.crm.model.KpiCrm;
+import com.jss.osiris.modules.osiris.crm.service.KpiCrmService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
@@ -168,6 +172,9 @@ public class TiersController {
 
   @Autowired
   AccountingRepairHelper accountingRepairHelper;
+
+  @Autowired
+  KpiCrmService kpiCrmService;
 
   @GetMapping(inputEntryPoint + "/rff-frequencies")
   public ResponseEntity<List<RffFrequency>> getRffFrequencies() {
@@ -631,4 +638,32 @@ public class TiersController {
         responsableService.getResponsablesByTiers(tiersService.getTiers(idTiers)), HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/analytic-stats-types")
+  @JsonView(JacksonViews.OsirisListView.class)
+  public ResponseEntity<List<AnalyticStatsType>> getAnalyticStatsTypesForTiers(
+      @RequestParam List<Integer> responsableIds) throws OsirisValidationException {
+
+    // List<KpiCrm> kpiCrms = kpiCrmService.getKpiCrms();
+    List<KpiCrm> kpiCrms = List.of(kpiCrmService.getKpiCrmByCode(KpiCrm.ORDER_COMPLETION_AVERAGE_TIME));
+    List<AnalyticStatsType> analyticStatsTypes = new ArrayList<>();
+
+    List<Responsable> responsables = new ArrayList<Responsable>();
+    if (responsableIds != null) {
+      for (Integer responsableId : responsableIds) {
+        Responsable responsable = responsableService.getResponsable(responsableId);
+        if (responsable == null)
+          throw new OsirisValidationException("servicesType");
+        responsables.add(responsable);
+      }
+    } else {
+      throw new OsirisValidationException("responsableIds");
+    }
+
+    if (!kpiCrms.isEmpty() && !responsables.isEmpty())
+      for (KpiCrm kpiCrm : kpiCrms) {
+        analyticStatsTypes.addAll(kpiCrmService.getAggregatedKpis(kpiCrm, responsables, LocalDate.of(2025, 1, 1),
+            LocalDate.of(2025, 1, 31)));
+      }
+    return new ResponseEntity<List<AnalyticStatsType>>(analyticStatsTypes, HttpStatus.OK);
+  }
 }

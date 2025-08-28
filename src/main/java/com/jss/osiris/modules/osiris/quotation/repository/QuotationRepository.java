@@ -83,8 +83,15 @@ public interface QuotationRepository extends QueryCacheCrudRepository<Quotation,
 
         List<Quotation> findByResponsable(Responsable responsable);
 
-        List<Quotation> findByResponsableAndCreatedDateBetween(Responsable responsable, LocalDateTime startOfDay,
-                        LocalDateTime endOfDay);
+        @Query("SELECT q FROM Quotation q " +
+                        "WHERE q.responsable = :responsable " +
+                        "AND q.createdDate BETWEEN :startOfDay AND :endOfDay " +
+                        "AND (:quotationStatus IS NULL OR q.quotationStatus = :quotationStatus)")
+        List<Quotation> findByResponsableAndStatusAndCreatedDateBetween(
+                        @Param("responsable") Responsable responsable,
+                        @Param("startOfDay") LocalDateTime startOfDay,
+                        @Param("endOfDay") LocalDateTime endOfDay,
+                        @Param("quotationStatus") QuotationStatus quotationStatus);
 
         @Query("select c from Quotation c join c.responsable r join fetch c.assoAffaireOrders a join fetch a.affaire af    "
                         +

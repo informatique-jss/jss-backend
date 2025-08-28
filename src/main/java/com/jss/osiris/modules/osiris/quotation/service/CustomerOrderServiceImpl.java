@@ -1867,9 +1867,17 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
-    public List<CustomerOrder> findCustomerOrderByResponsableAndCreatedDate(Responsable responsable,
+    public List<CustomerOrder> getCustomerOrderByResponsableAndStatusAndDates(Responsable responsable,
+            CustomerOrderStatus customerOrderStatus, Boolean isReccuring,
             LocalDateTime startOfDay, LocalDateTime endOfDay) {
-        return customerOrderRepository.findByResponsableAndCreatedDateBetween(responsable, startOfDay, endOfDay);
+        return customerOrderRepository.findByResponsableAndStatusAndCreatedDateBetween(responsable,
+                startOfDay, endOfDay, isReccuring, customerOrderStatus);
+    }
+
+    @Override
+    public List<CustomerOrder> getOrdersByResponsablesAndDates(List<Responsable> responsables,
+            LocalDateTime startOfDay, LocalDateTime endOfDay) {
+        return customerOrderRepository.findByResponsableInAndCreatedDateBetween(responsables, startOfDay, endOfDay);
     }
 
     @Override

@@ -1,13 +1,11 @@
+import { AnalyticStatsValue } from './AnalyticStatsValue';
 export type AnalyticStatsType = {
-    id: number,
-    icon: string;
-    count: {
-        prefix?: string,
-        value: number,
-        suffix?: string
-    },
-    title: string
-    percentage: number;
-    percentageIcon: string;
-    isPositive: boolean
+  id: number,
+  icon: string;
+  analyticStatsValue: AnalyticStatsValue,
+  title: string
+  percentage: number;
+  percentageIcon: string;
+  isPositive: boolean;
+  // valueDate: Date;
 }

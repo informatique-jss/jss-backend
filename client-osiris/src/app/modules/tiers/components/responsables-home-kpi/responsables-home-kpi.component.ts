@@ -6,6 +6,7 @@ import { AnalyticStatisticWidgetComponent } from '../../../main/components/analy
 import { ApexchartComponent } from '../../../main/components/apexchart/apexchart.component';
 import { AnalyticStatsType } from '../../../main/model/AnalyticStatsType';
 import { Responsable } from '../../../profile/model/Responsable';
+import { AnalyticStatsTypeService } from '../../services/analytic-stats-type.service';
 import { ResponsableService } from '../../services/responsable.service';
 
 @Component({
@@ -26,7 +27,7 @@ export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
     {
       id: 1,
       icon: 'tablerEye',
-      count: { value: 14.59, suffix: 'M' },
+      analyticStatsValue: { value: 14.59, suffix: 'M' },
       title: 'Total Views',
       percentage: 5.2,
       percentageIcon: 'tablerTrendingUp',
@@ -35,7 +36,7 @@ export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
     {
       id: 2,
       icon: 'tablerClock',
-      count: { value: 815.58, suffix: 'k' },
+      analyticStatsValue: { value: 815.58, suffix: 'k' },
       title: 'Sessions',
       percentage: 3.9,
       percentageIcon: 'tablerActivity',
@@ -44,7 +45,7 @@ export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
     {
       id: 3,
       icon: 'tablerRepeatOnce',
-      count: { value: 41.3, suffix: '%' },
+      analyticStatsValue: { value: 41.3, suffix: '%' },
       title: 'Bounce Rate',
       percentage: 1.1,
       percentageIcon: 'tablerArrowDownLeft',
@@ -56,7 +57,7 @@ export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
     {
       id: 2,
       icon: 'tablerClock',
-      count: { value: 815.58, suffix: 'k' },
+      analyticStatsValue: { value: 815.58, suffix: 'k' },
       title: 'Sessions',
       percentage: 3.9,
       percentageIcon: 'tablerActivity',
@@ -65,7 +66,7 @@ export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
     {
       id: 3,
       icon: 'tablerRepeatOnce',
-      count: { value: 41.3, suffix: '%' },
+      analyticStatsValue: { value: 41.3, suffix: '%' },
       title: 'Bounce Rate',
       percentage: 1.1,
       percentageIcon: 'tablerArrowDownLeft',
@@ -74,7 +75,7 @@ export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
     {
       id: 4,
       icon: 'tablerUser',
-      count: { value: 56.39, suffix: 'k' },
+      analyticStatsValue: { value: 56.39, suffix: 'k' },
       title: 'Active Users',
       percentage: 2.3,
       percentageIcon: 'tablerUsers',
@@ -86,7 +87,7 @@ export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
     {
       id: 1,
       icon: 'tablerEye',
-      count: { value: 14.59, suffix: 'M' },
+      analyticStatsValue: { value: 14.59, suffix: 'M' },
       title: 'Total Views',
       percentage: 5.2,
       percentageIcon: 'tablerTrendingUp',
@@ -95,7 +96,7 @@ export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
     {
       id: 2,
       icon: 'tablerClock',
-      count: { value: 815.58, suffix: 'k' },
+      analyticStatsValue: { value: 815.58, suffix: 'k' },
       title: 'Sessions',
       percentage: 3.9,
       percentageIcon: 'tablerActivity',
@@ -104,7 +105,7 @@ export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
     {
       id: 3,
       icon: 'tablerRepeatOnce',
-      count: { value: 41.3, suffix: '%' },
+      analyticStatsValue: { value: 41.3, suffix: '%' },
       title: 'Bounce Rate',
       percentage: 1.1,
       percentageIcon: 'tablerArrowDownLeft',
@@ -113,7 +114,7 @@ export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
     {
       id: 4,
       icon: 'tablerUser',
-      count: { value: 56.39, suffix: 'k' },
+      analyticStatsValue: { value: 56.39, suffix: 'k' },
       title: 'Active Users',
       percentage: 2.3,
       percentageIcon: 'tablerUsers',
@@ -122,7 +123,7 @@ export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
     {
       id: 2,
       icon: 'tablerClock',
-      count: { value: 815.58, suffix: 'k' },
+      analyticStatsValue: { value: 815.58, suffix: 'k' },
       title: 'Sessions',
       percentage: 3.9,
       percentageIcon: 'tablerActivity',
@@ -131,7 +132,7 @@ export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
     {
       id: 3,
       icon: 'tablerRepeatOnce',
-      count: { value: 41.3, suffix: '%' },
+      analyticStatsValue: { value: 41.3, suffix: '%' },
       title: 'Bounce Rate',
       percentage: 1.1,
       percentageIcon: 'tablerArrowDownLeft',
@@ -220,6 +221,7 @@ export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
 
   constructor(
     private responsableService: ResponsableService,
+    private analyticStatsTypeService: AnalyticStatsTypeService,
   ) {
 
   }
@@ -227,14 +229,20 @@ export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.selectedResponsablesSubscription = this.responsableService.getSelectedResponsables().subscribe(respos => {
       this.selectedResponsables = respos;
+      if (this.selectedResponsables)
+        this.analyticStatsTypeService.getAnalyticStatsTypesForTiers(this.selectedResponsables).subscribe(response => {
+          if (response)
+            this.kpisLeft = response;
+        });
+    });
 
-    })
   }
 
   ngOnChanges() {
     // this.responsableService.getSelectedResponsables().subscribe(respos => {
     //   this.selectedResponsables = respos;
-    // })
+
+    // });
   }
 }
 

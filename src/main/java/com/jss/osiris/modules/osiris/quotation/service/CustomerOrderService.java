@@ -74,7 +74,11 @@ public interface CustomerOrderService {
 
         public List<CustomerOrder> findCustomerOrderByResponsable(Responsable responsable);
 
-        public List<CustomerOrder> findCustomerOrderByResponsableAndCreatedDate(Responsable responsable,
+        public List<CustomerOrder> getCustomerOrderByResponsableAndStatusAndDates(Responsable responsable,
+                        CustomerOrderStatus customerOrderStatus, Boolean isReccuring,
+                        LocalDateTime startOfDay, LocalDateTime endOfDay);
+
+        public List<CustomerOrder> getOrdersByResponsablesAndDates(List<Responsable> responsables,
                         LocalDateTime startOfDay, LocalDateTime endOfDay);
 
         public List<OrderingSearchResult> searchOrders(OrderingSearch orderingSearch);
