@@ -2051,6 +2051,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         AssoAffaireOrder assoAffaireOrder = new AssoAffaireOrder();
         assoAffaireOrder.setCustomerOrder(customerOrder);
         assoAffaireOrder.setServices(Arrays.asList(serviceSubscription));
+        if (employeeService.getCurrentMyJssUser() != null)
+            assoAffaireOrder.setAffaire(
+                    affaireService.getAffaireFromDenomination(employeeService.getCurrentMyJssUser().getFirstname(),
+                            employeeService.getCurrentMyJssUser().getLastname()));
 
         customerOrder.setAssoAffaireOrders(Arrays.asList(assoAffaireOrder));
 

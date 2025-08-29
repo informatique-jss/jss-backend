@@ -55,7 +55,7 @@
             <mat-icon color="accent" *ngIf="!editMode && service.id" matTooltip="Modifier le type de service"
               (click)="modifyService(service, asso.affaire);$event.stopPropagation()" class="pointer">
               edit</mat-icon>
-            <mat-icon color="accent" *ngIf="editMode  " matTooltip="Supprimer le service"
+            <mat-icon color="accent" *ngIf="!editMode  " matTooltip="Supprimer le service"
               (click)="deleteService(asso,service);$event.stopPropagation()" class="pointer">
               delete</mat-icon>
             <mat-icon color="accent" matTooltip="Ajouter une notification sur ce service"
@@ -87,8 +87,8 @@
             <ng-template></ng-template>
           </mat-panel-description>
           <mat-panel-description>
-            <mat-icon color="accent" matTooltip="Supprimer la prestation" (click)="deleteProvision(service,provision)"
-              class="pointer" *ngIf="editMode">
+            <mat-icon color="accent" *ngIf="!editMode" matTooltip="Supprimer la prestation" style="padding-right: 20px;"
+              (click)="deleteProvision(provision);$event.stopPropagation()" class="pointer">
               delete</mat-icon>
             <mat-icon color="accent" matTooltip="Ajouter une notification sur cette prestation"
               (click)="addNewNotificationOnProvision(provision);$event.stopPropagation();"

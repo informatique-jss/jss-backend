@@ -407,11 +407,9 @@ public class MailHelper {
                     ctx.setVariable("customerName", quotation.getAssoAffaireOrders().get(0).getAffaire().getFirstname()
                             + ' ' + quotation.getAssoAffaireOrders().get(0).getAffaire().getLastname());
 
-                else if (assoAffaireOrderToUse != null && mail.getMailComputeResult() != null
-                        && mail.getMailComputeResult().getIsSendToAffaire()
-                        && (!assoAffaireOrderToUse.getAffaire().getIsIndividual()
-                                || assoAffaireOrderToUse.getAffaire().getIsIndividual() == null))
-                    ctx.setVariable("customerName", "");
+                else
+                    ctx.setVariable("customerName",
+                            quotation.getAssoAffaireOrders().get(0).getAffaire().getDenomination());
             }
 
             ctx.setVariable("affaireLabel", getCustomerOrderAffaireLabel(quotation, assoAffaireOrderToUse));

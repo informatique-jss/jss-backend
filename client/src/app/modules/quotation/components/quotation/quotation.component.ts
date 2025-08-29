@@ -456,6 +456,29 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
       if (instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
         this.displaySnakBarLockProvision();
       }
+
+    if (this.hasQuotation) {
+      const dialogConfirm = this.confirmationDialog.open(ConfirmDialogComponent, {
+        maxWidth: "400px",
+        data: {
+          title: "Modification du devis de la commande",
+          content: "La suppression d'un service impactera le devis initial lié à cette commande. Souhaitez-vous continuer ? ",
+          closeActionText: "Annuler",
+          validationActionText: "Confirmer"
+        }
+      });
+
+      dialogConfirm.afterClosed().subscribe(userConfirmed => {
+        if (userConfirmed) {
+          this.deleteServiceDialog(service);
+        }
+      });
+    } else {
+      this.deleteServiceDialog(service);
+    }
+  }
+
+  deleteServiceDialog(service: Service) {
     const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
       maxWidth: "400px",
       data: {
@@ -470,17 +493,11 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
       if (response) {
         this.serviceService.deleteService(service).subscribe(response => {
           if (!this.instanceOfCustomerOrder) {
-            this.quotationService.addOrUpdateQuotation(this.quotation).subscribe(response => {
-              this.editMode = false;
-              this.quotation = response;
-              this.appService.openRoute(null, '/quotation/' + this.quotation.id, null);
-            })
+            this.editMode = false;
+            this.appService.openRoute(null, '/quotation/' + this.quotation.id, null);
           } else {
-            this.customerOrderService.addOrUpdateCustomerOrder(this.quotation).subscribe(response => {
-              this.editMode = false;
-              this.quotation = response;
-              this.appService.openRoute(null, '/order/' + this.quotation.id, null);
-            })
+            this.editMode = false;
+            this.appService.openRoute(null, '/order/' + this.quotation.id, null);
           }
         });
       }
@@ -656,6 +673,28 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
       return;
     }
 
+    if (this.hasQuotation) {
+      const dialogConfirm = this.confirmationDialog.open(ConfirmDialogComponent, {
+        maxWidth: "400px",
+        data: {
+          title: "Modification du devis de la commande",
+          content: "La suppression d'une prestation impactera le devis initial lié à cette commande. Souhaitez-vous continuer ? ",
+          closeActionText: "Annuler",
+          validationActionText: "Confirmer"
+        }
+      });
+
+      dialogConfirm.afterClosed().subscribe(userConfirmed => {
+        if (userConfirmed) {
+          this.deleteProvisionDialog(provision);
+        }
+      });
+    } else {
+      this.deleteProvisionDialog(provision);
+    }
+  }
+
+  deleteProvisionDialog(provision: Provision) {
     const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
       maxWidth: "400px",
       data: {
@@ -665,22 +704,15 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
         validationActionText: "Confirmer"
       }
     });
-
     dialogRef.afterClosed().subscribe(response => {
       if (response) {
         this.provisionService.deleteProvision(provision).subscribe(response => {
           if (!this.instanceOfCustomerOrder) {
-            this.quotationService.addOrUpdateQuotation(this.quotation).subscribe(response => {
-              this.editMode = false;
-              this.quotation = response;
-              this.appService.openRoute(null, '/quotation/' + this.quotation.id, null);
-            })
+            this.editMode = false;
+            this.appService.openRoute(null, '/quotation/' + this.quotation.id, null);
           } else {
-            this.customerOrderService.addOrUpdateCustomerOrder(this.quotation).subscribe(response => {
-              this.editMode = false;
-              this.quotation = response;
-              this.appService.openRoute(null, '/order/' + this.quotation.id, null);
-            })
+            this.editMode = false;
+            this.appService.openRoute(null, '/order/' + this.quotation.id, null);
           }
         });
       }

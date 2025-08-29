@@ -25,6 +25,10 @@ public interface AffaireRepository extends QueryCacheCrudRepository<Affaire, Int
         List<Affaire> findByPostalCodeAndDenomination(@Param("postalCode") String postalCode,
                         @Param("denomination") String denomination);
 
+        @Query(value = "select a from Affaire a where  isIndividual = false and trim(upper(firstname))=upper(trim(:firstname)) and trim(upper(lastname))=upper(trim(:lastname))  ")
+        Affaire findByFirstnameAndLastname(@Param("lastname") String lastname,
+                        @Param("firstname") String firstname);
+
         Affaire findByRna(String rna);
 
         @Query("select max(lastRneUpdate) from Affaire a  where siret is not null and lastRneUpdate is not null ")

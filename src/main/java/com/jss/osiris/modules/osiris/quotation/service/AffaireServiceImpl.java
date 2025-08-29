@@ -825,4 +825,17 @@ public class AffaireServiceImpl implements AffaireService {
         return attachments;
     }
 
+    public Affaire getAffaireFromDenomination(String firstname, String lastname)
+            throws OsirisDuplicateException, OsirisException {
+        Affaire affaire = affaireRepository.findByFirstnameAndLastname(firstname, lastname);
+        if (affaire != null)
+            return affaire;
+
+        affaire = new Affaire();
+        affaire.setFirstname(firstname);
+        affaire.setLastname(lastname);
+        affaire.setIsIndividual(true);
+        return addOrUpdateAffaire(affaire);
+    }
+
 }

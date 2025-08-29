@@ -20,6 +20,7 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.AnnouncementStatus;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
@@ -56,6 +57,9 @@ public class ProvisionServiceImpl implements ProvisionService {
     @Autowired
     BatchService batchService;
 
+    @Autowired
+    NotificationService notificationService;
+
     @Override
     public Provision getProvision(Integer id) {
         Optional<Provision> provision = provisionRepository.findById(id);
@@ -90,12 +94,14 @@ public class ProvisionServiceImpl implements ProvisionService {
     @Override
     @Transactional
     public Boolean deleteProvision(Provision provision) {
+        provision = getProvision(provision.getId());
         if (provision.getAttachments() != null && provision.getAttachments().size() > 0) {
             for (Attachment attachment : provision.getAttachments()) {
                 attachmentService.cleanAttachmentForDelete(attachment);
             }
         }
         provisionRepository.delete(provision);
+        notificationService.notifyQuotationModified(provision.getService().getAssoAffaireOrder().getCustomerOrder());
         return true;
     }
 
