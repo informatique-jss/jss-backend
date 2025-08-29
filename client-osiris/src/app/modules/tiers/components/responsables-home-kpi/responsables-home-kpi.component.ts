@@ -237,8 +237,11 @@ export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
       if (this.selectedResponsables && this.kpiCodeToLoad)
         for (let kpiCode of this.kpiCodeToLoad)
           this.analyticStatsTypeService.getAnalyticStatsTypeForTiers(kpiCode, this.selectedResponsables).subscribe(response => {
-            if (response)
+            if (response) {
               this.kpiLoaded.push(...response);
+              // if (this.kpiLoaded.length > 0 && this.kpiLoaded[0].aggregateType == AGGREGATE_TYPE_AVERAGE)
+              // this.kpiLoaded[0].analyticStatsValue = convertMinutesToTime(this.kpiLoaded[0].analyticStatsValue);
+            }
           });
     });
 
@@ -252,6 +255,24 @@ export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
   }
 }
 
+function convertMinutesToTime(durationInMinutes: number): string {
+  const days = Math.floor(durationInMinutes / (60 * 24));
+  const hours = Math.floor((durationInMinutes % (60 * 24)) / 60);
+  const minutes = durationInMinutes % 60;
+
+  let result = '';
+  if (days > 0) {
+    result += `${days}j `;
+  }
+  if (hours > 0) {
+    result += `${hours}h `;
+  }
+  if (minutes > 0 || result === '') {
+    result += `${minutes}m`;
+  }
+
+  return result.trim();
+}
 function generateRandomData(count: number, min: number, max: number): number[] {
   return Array.from({ length: count }, () =>
     Math.floor(Math.random() * (max - min + 1)) + min

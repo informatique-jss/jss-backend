@@ -9,6 +9,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +38,7 @@ import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 @org.springframework.stereotype.Service
 public class KpiOrderCompletionAverageTimeService implements IKpiCrm {
+
     @Autowired
     CustomerOrderService customerOrderService;
 
@@ -46,30 +48,29 @@ public class KpiOrderCompletionAverageTimeService implements IKpiCrm {
     @Autowired
     KpiCrmService kpiCrmService;
 
+    private static final Map<String, String> WAITING_STATUS_BY_ENTITY = Map.of(
+            SimpleProvision.class.getSimpleName(), SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT,
+            Formalite.class.getSimpleName(), FormaliteStatus.FORMALITE_WAITING_DOCUMENT,
+            Announcement.class.getSimpleName(), AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT,
+            Domiciliation.class.getSimpleName(), DomiciliationStatus.DOMICILIATION_WAITING_FOR_DOCUMENTS);
+
+    @Override
     public String getCode() {
         return KpiCrm.ORDER_COMPLETION_AVERAGE_TIME;
     }
 
+    @Override
     public String getAggregateType() {
         return KpiCrm.AGGREGATE_TYPE_AVERAGE;
     }
 
-    public LocalDate getDate() {
-
-        return null;
-    }
-
-    public Responsable getResponsable() {
-        return null;
-    }
-
+    @Override
     public String getLabel() {
         return kpiCrmService.getKpiCrmByCode(getCode()).getLabel();
     }
 
     @Transactional(rollbackFor = Exception.class)
     public List<KpiCrmValue> getComputeValue(Responsable responsable, LocalDate startDate, LocalDate endDate) {
-
         List<KpiCrmValue> dailyKpis = new ArrayList<>();
 
         for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
@@ -78,58 +79,25 @@ public class KpiOrderCompletionAverageTimeService implements IKpiCrm {
 
             List<CustomerOrder> orders = customerOrderService
                     .getCustomerOrderByResponsableAndStatusAndDates(responsable, null, null, startOfDay, endOfDay);
+
             if (!orders.isEmpty()) {
                 BigDecimal kpiTotal = BigDecimal.ZERO;
                 int provisionCount = 0;
+
                 for (CustomerOrder order : orders) {
-                    if (!order.getAssoAffaireOrders().isEmpty()) {
-                        for (AssoAffaireOrder asso : order.getAssoAffaireOrders())
-                            if (!asso.getServices().isEmpty()) {
-                                for (com.jss.osiris.modules.osiris.quotation.model.Service service : asso.getServices())
-                                    if (!service.getProvisions().isEmpty()) {
-                                        for (Provision provision : service.getProvisions()) {
-                                            if (provision.getFormalite() != null) {
-                                                kpiTotal.add(BigDecimal
-                                                        .valueOf(sumStatusTime(Formalite.class.getSimpleName(),
-                                                                provision.getFormalite().getId(),
-                                                                FormaliteStatus.FORMALITE_WAITING_DOCUMENT,
-                                                                "formaliteStatus")
-                                                                .toMinutes()));
-                                                provisionCount++;
-                                            }
-                                            if (provision.getSimpleProvision() != null) {
-                                                kpiTotal.add(BigDecimal
-                                                        .valueOf(sumStatusTime(SimpleProvision.class.getSimpleName(),
-                                                                provision.getSimpleProvision().getId(),
-                                                                SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT,
-                                                                "simpleProvisionStatus")
-                                                                .toMinutes()));
-                                                provisionCount++;
-                                            }
-                                            if (provision.getDomiciliation() != null) {
-                                                kpiTotal.add(BigDecimal
-                                                        .valueOf(sumStatusTime(Domiciliation.class.getSimpleName(),
-                                                                provision.getDomiciliation().getId(),
-                                                                DomiciliationStatus.DOMICILIATION_WAITING_FOR_DOCUMENTS,
-                                                                "domiciliationStatus")
-                                                                .toMinutes()));
-                                                provisionCount++;
-                                            }
-                                            if (provision.getAnnouncement() != null) {
-                                                kpiTotal.add(BigDecimal
-                                                        .valueOf(sumStatusTime(Announcement.class.getSimpleName(),
-                                                                provision.getAnnouncement().getId(),
-                                                                AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT,
-                                                                "announcementStatus")
-                                                                .toMinutes()));
-                                                provisionCount++;
-                                            }
-                                        }
-                                    }
+                    for (AssoAffaireOrder asso : order.getAssoAffaireOrders()) {
+                        for (com.jss.osiris.modules.osiris.quotation.model.Service service : asso.getServices()) {
+                            for (Provision provision : service.getProvisions()) {
+                                BigDecimal time = computeProvisionWaitingTime(provision);
+                                if (time.compareTo(BigDecimal.ZERO) > 0) {
+                                    kpiTotal = kpiTotal.add(time);
+                                    provisionCount++;
+                                }
                             }
+                        }
                     }
                 }
-                kpiTotal.divide(BigDecimal.valueOf(provisionCount));
+
                 if (provisionCount > 0) {
                     KpiCrmValue kpiCrmValue = new KpiCrmValue();
                     kpiCrmValue.setResponsable(responsable);
@@ -139,6 +107,7 @@ public class KpiOrderCompletionAverageTimeService implements IKpiCrm {
                 }
             }
         }
+
         return dailyKpis;
     }
 
@@ -156,127 +125,91 @@ public class KpiOrderCompletionAverageTimeService implements IKpiCrm {
         if (!orders.isEmpty()) {
             BigDecimal kpiTotal = BigDecimal.ZERO;
             int provisionCount = 0;
+
             for (CustomerOrder order : orders) {
-                if (!order.getAssoAffaireOrders().isEmpty()) {
-                    for (AssoAffaireOrder asso : order.getAssoAffaireOrders())
-                        if (!asso.getServices().isEmpty()) {
-                            for (com.jss.osiris.modules.osiris.quotation.model.Service service : asso.getServices())
-                                if (!service.getProvisions().isEmpty()) {
-                                    for (Provision provision : service.getProvisions()) {
-                                        if (provision.getFormalite() != null) {
-                                            kpiTotal = kpiTotal.add(BigDecimal
-                                                    .valueOf(sumStatusTime(Formalite.class.getSimpleName(),
-                                                            provision.getFormalite().getId(),
-                                                            FormaliteStatus.FORMALITE_WAITING_DOCUMENT,
-                                                            "formaliteStatus")
-                                                            .toMinutes()));
-                                            provisionCount++;
-                                        }
-                                        if (provision.getSimpleProvision() != null) {
-                                            kpiTotal = kpiTotal.add(BigDecimal
-                                                    .valueOf(sumStatusTime(SimpleProvision.class.getSimpleName(),
-                                                            provision.getSimpleProvision().getId(),
-                                                            SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT,
-                                                            "simpleProvisionStatus")
-                                                            .toMinutes()));
-                                            provisionCount++;
-                                        }
-                                        if (provision.getDomiciliation() != null) {
-                                            kpiTotal = kpiTotal.add(BigDecimal
-                                                    .valueOf(sumStatusTime(Domiciliation.class.getSimpleName(),
-                                                            provision.getDomiciliation().getId(),
-                                                            DomiciliationStatus.DOMICILIATION_WAITING_FOR_DOCUMENTS,
-                                                            "domiciliationStatus")
-                                                            .toMinutes()));
-                                            provisionCount++;
-                                        }
-                                        if (provision.getAnnouncement() != null) {
-                                            kpiTotal = kpiTotal.add(BigDecimal
-                                                    .valueOf(sumStatusTime(Announcement.class.getSimpleName(),
-                                                            provision.getAnnouncement().getId(),
-                                                            AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT,
-                                                            "announcementStatus")
-                                                            .toMinutes()));
-                                            provisionCount++;
-                                        }
-                                    }
-                                }
+                for (AssoAffaireOrder asso : order.getAssoAffaireOrders()) {
+                    for (com.jss.osiris.modules.osiris.quotation.model.Service service : asso.getServices()) {
+                        for (Provision provision : service.getProvisions()) {
+                            BigDecimal time = computeProvisionWaitingTime(provision);
+                            if (time.compareTo(BigDecimal.ZERO) > 0) {
+                                kpiTotal = kpiTotal.add(time);
+                                provisionCount++;
+                            }
                         }
+                    }
                 }
             }
-            analyticStatsValue.setValue(kpiTotal.divide(BigDecimal.valueOf(provisionCount)));
-            analyticStatsType.setAnalyticStatsValue(analyticStatsValue);
-            analyticStatsType.setValueDate(endDate);
-            analyticStatsType.setId(kpiCrm.getId());
-            analyticStatsType.setTitle(kpiCrm.getLabel());
 
+            if (provisionCount > 0) {
+                analyticStatsValue.setValue(kpiTotal.divide(BigDecimal.valueOf(provisionCount), RoundingMode.HALF_UP));
+                analyticStatsType.setAnalyticStatsValue(analyticStatsValue);
+                analyticStatsType.setValueDate(endDate);
+                analyticStatsType.setId(kpiCrm.getId());
+                analyticStatsType.setTitle(kpiCrm.getLabel());
+            }
         }
-        return analyticStatsType;
 
+        return analyticStatsType;
     }
 
-    // TODO corriger : si tjs en attente de doc, on ne le compte pas encore
-    private Duration sumStatusTime(String entityType, Integer entityId, String entityStatus, String fieldName) {
-        List<Audit> audits = new ArrayList<>();
-        LocalDateTime waitingSince = null;
-        Duration total = Duration.ZERO;
-        audits = auditService.getAuditForEntityAndFieldName(
-                entityType,
-                entityId,
-                entityStatus,
-                fieldName);
-        audits.sort(Comparator.comparing(Audit::getDatetime));
+    private BigDecimal computeProvisionWaitingTime(Provision provision) {
+        BigDecimal total = BigDecimal.ZERO;
 
-        for (Audit audit : audits) {
-            if (entityType.equals(SimpleProvision.class.getSimpleName())) {
-                if (audit.getNewValue()
-                        .equals(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT)) {
-                    waitingSince = audit.getDatetime();
-                }
-                if (audit.getOldValue()
-                        .equals(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT)
-                        && waitingSince != null) {
-                    total = total
-                            .plus(Duration.between(waitingSince,
-                                    audit.getDatetime()));
-                    waitingSince = null;
-                }
-            }
-            if (entityType.equals(Formalite.class.getSimpleName())) {
-                if (audit.getNewValue()
-                        .equals(FormaliteStatus.FORMALITE_WAITING_DOCUMENT)) {
-                    waitingSince = audit.getDatetime();
-                }
-                if (audit.getOldValue()
-                        .equals(FormaliteStatus.FORMALITE_WAITING_DOCUMENT)
-                        && waitingSince != null) {
-                    total = total
-                            .plus(Duration.between(waitingSince,
-                                    audit.getDatetime()));
-                    waitingSince = null;
-                }
-            }
-            if (entityType.equals(Announcement.class.getSimpleName())) {
-                if (audit.getNewValue()
-                        .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT)) {
-                    waitingSince = audit.getDatetime();
-                }
-                if (audit.getOldValue()
-                        .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT)
-                        && waitingSince != null) {
-                    total = total
-                            .plus(Duration.between(waitingSince,
-                                    audit.getDatetime()));
-                    waitingSince = null;
-                }
-            }
+        if (provision.getFormalite() != null) {
+            total = total.add(BigDecimal.valueOf(sumStatusTime(
+                    Formalite.class.getSimpleName(),
+                    provision.getFormalite().getId(),
+                    FormaliteStatus.FORMALITE_WAITING_DOCUMENT,
+                    "formaliteStatus").toMinutes()));
         }
-        // if still waiting document, we put end date to sysdate for calculation
-        if (waitingSince != null) {
-            // total = total
-            // .plus(Duration.between(waitingSince, LocalDateTime.now()));
+
+        if (provision.getSimpleProvision() != null) {
+            total = total.add(BigDecimal.valueOf(sumStatusTime(
+                    SimpleProvision.class.getSimpleName(),
+                    provision.getSimpleProvision().getId(),
+                    SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT,
+                    "simpleProvisionStatus").toMinutes()));
         }
+
+        if (provision.getDomiciliation() != null) {
+            total = total.add(BigDecimal.valueOf(sumStatusTime(
+                    Domiciliation.class.getSimpleName(),
+                    provision.getDomiciliation().getId(),
+                    DomiciliationStatus.DOMICILIATION_WAITING_FOR_DOCUMENTS,
+                    "domiciliationStatus").toMinutes()));
+        }
+
+        if (provision.getAnnouncement() != null) {
+            total = total.add(BigDecimal.valueOf(sumStatusTime(
+                    Announcement.class.getSimpleName(),
+                    provision.getAnnouncement().getId(),
+                    AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT,
+                    "announcementStatus").toMinutes()));
+        }
+
         return total;
     }
 
+    private Duration sumStatusTime(String entityType, Integer entityId, String entityStatus, String fieldName) {
+        String targetStatus = WAITING_STATUS_BY_ENTITY.get(entityType);
+        if (targetStatus == null)
+            return Duration.ZERO;
+
+        List<Audit> audits = auditService.getAuditForEntityAndFieldName(entityType, entityId, entityStatus, fieldName);
+        audits.sort(Comparator.comparing(Audit::getDatetime));
+
+        Duration total = Duration.ZERO;
+        LocalDateTime waitingSince = null;
+
+        for (Audit audit : audits) {
+            if (targetStatus.equals(audit.getNewValue())) {
+                waitingSince = audit.getDatetime();
+            } else if (targetStatus.equals(audit.getOldValue()) && waitingSince != null) {
+                total = total.plus(Duration.between(waitingSince, audit.getDatetime()));
+                waitingSince = null;
+            }
+        }
+
+        return total;
+    }
 }

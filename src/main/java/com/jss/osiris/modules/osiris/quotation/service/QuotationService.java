@@ -83,9 +83,8 @@ public interface QuotationService {
 
         public List<Quotation> findQuotationByResponsable(Responsable responsable);
 
-        public List<Quotation> getQuotationByResponsableAndStatusAndCreatedDate(Responsable responsable,
-                        LocalDateTime startDate,
-                        LocalDateTime endDate, QuotationStatus quotationStatus);
+        public List<Quotation> getQuotationsByResponsablesAndStatusAndDates(List<Responsable> responsables,
+                        LocalDateTime startDate, LocalDateTime endDate, QuotationStatus quotationStatus);
 
         public List<Quotation> completeAdditionnalInformationForQuotations(List<Quotation> customerOrders,
                         Boolean populationAssoAffaireOrderTransientField)

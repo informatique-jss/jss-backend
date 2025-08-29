@@ -71,8 +71,8 @@ public class KpiPotentialRevenueCumulService implements IKpiCrm {
             List<CustomerOrder> reccuringOrders = customerOrderService
                     .getCustomerOrderByResponsableAndStatusAndDates(responsable, null, true, startOfDay, endOfDay);
 
-            List<Quotation> quotations = quotationService.getQuotationByResponsableAndStatusAndCreatedDate(responsable,
-                    startOfDay, endOfDay,
+            List<Quotation> quotations = quotationService.getQuotationsByResponsablesAndStatusAndDates(
+                    List.of(responsable), startOfDay, endOfDay,
                     quotationStatusService.getQuotationStatusByCode(QuotationStatus.SENT_TO_CUSTOMER));
 
             BigDecimal revenueHt = BigDecimal.ZERO;
@@ -116,6 +116,7 @@ public class KpiPotentialRevenueCumulService implements IKpiCrm {
     @Override
     public AnalyticStatsType getKpiCrmAggregatedValue(List<Responsable> responsables, LocalDate startDate,
             LocalDate endDate) {
+
         return null;
     }
 
