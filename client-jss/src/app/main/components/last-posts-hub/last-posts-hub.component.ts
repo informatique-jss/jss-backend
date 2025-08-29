@@ -16,7 +16,7 @@ import { GenericHubComponent } from '../generic-hub/generic-hub.component';
 import { GenericInputComponent } from '../generic-input/generic-input.component';
 
 @Component({
-  selector: 'tendency-hub',
+  selector: 'last-posts-hub',
   templateUrl: './../generic-hub/generic-hub.component.html',
   styleUrls: ['./../generic-hub/generic-hub.component.css'],
   imports: [SHARED_IMPORTS, GenericInputComponent, NgbTooltipModule, BookmarkComponent],
@@ -28,11 +28,11 @@ export class TendencyHubComponent extends GenericHubComponent<{ id: number }> im
     super(appService, formBuilder, activeRoute, postService, loginService,);
   }
   override getAllPostByEntityType(selectedEntityType: Post, page: number, pageSize: number, searchText: string): Observable<PagedContent<Post>> {
-    return this.postService.getPostsTendency(page, pageSize, searchText);
+    return this.postService.getLastPosts(page, pageSize, searchText);
   }
 
   override getAllTagByEntityType(selectedEntityType: Post): Observable<Array<Tag>> {
-    return this.tagService.getAllTendencyTags();
+    return this.tagService.getAllLastPostsTags();
   }
 
   override getMostSeenPostByEntityType(selectedEntityType: Post, page: number, pageSize: number): Observable<PagedContent<Post>> {

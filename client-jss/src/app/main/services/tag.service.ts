@@ -52,4 +52,12 @@ export class TagService extends AppRestService<Tag> {
   getAllTendencyTags() {
     return this.getList(new HttpParams(), "tags/tendency");
   }
+
+  getAllLastPostsTags() {
+    return this.getList(new HttpParams(), "tags/last");
+  }
+
+  getAllMostSeenPostsTags() {
+    return this.getList(new HttpParams(), "tags/most-seen");
+  }
 }

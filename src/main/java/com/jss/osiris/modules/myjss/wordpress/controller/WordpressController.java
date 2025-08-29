@@ -445,11 +445,12 @@ public class WordpressController {
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 
-	@GetMapping(inputEntryPoint + "/posts/jss/top")
+	@GetMapping(inputEntryPoint + "/posts/jss/last")
 	@JsonView(JacksonViews.MyJssListView.class)
-	public ResponseEntity<Page<Post>> getTopJssPosts(
+	public ResponseEntity<Page<Post>> getLastJssPosts(
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size,
+			@RequestParam(required = false) String searchText,
 			HttpServletRequest request)
 			throws OsirisException {
 
@@ -459,7 +460,7 @@ public class WordpressController {
 				Sort.by(Sort.Direction.DESC, "date"));
 
 		return new ResponseEntity<Page<Post>>(
-				postService.computeBookmarkedPosts(postService.getJssCategoryPosts(pageable)),
+				postService.computeBookmarkedPosts(postService.getJssCategoryPosts(searchText, pageable)),
 				HttpStatus.OK);
 	}
 
@@ -505,8 +506,7 @@ public class WordpressController {
 
 		detectFlood(request);
 
-		Pageable pageableRequest = PageRequest.of(page, ValidationHelper.limitPageSize(size),
-				Sort.by(Sort.Direction.DESC, "date"));
+		Pageable pageableRequest = PageRequest.of(page, ValidationHelper.limitPageSize(size));
 
 		return new ResponseEntity<Page<Post>>(
 				postService.getJssCategoryPostMostSeen(pageableRequest),
@@ -1125,6 +1125,16 @@ public class WordpressController {
 	@GetMapping(inputEntryPoint + "/tags/tendency")
 	public ResponseEntity<List<Tag>> getAllTendencyTags() throws OsirisException {
 		return new ResponseEntity<List<Tag>>(tagService.getAllTendencyTags(), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/tags/last")
+	public ResponseEntity<List<Tag>> getAllLastPostsTags() throws OsirisException {
+		return new ResponseEntity<List<Tag>>(tagService.getAllTendencyTags(), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/tags/most-seen")
+	public ResponseEntity<List<Tag>> getAllMostSeenPostsTags() throws OsirisException {
+		return new ResponseEntity<List<Tag>>(tagService.getAllMostSeenPostsTags(), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/tags/all/publishing-department")

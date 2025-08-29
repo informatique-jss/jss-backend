@@ -79,7 +79,7 @@ export class PodcastsComponent implements OnInit {
   }
 
   getMostSeenPosts(page: number, pageSize: number): Observable<PagedContent<Post>> {
-    return this.postService.getMostViewedPosts(page, pageSize);
+    return this.postService.getMostSeenPosts(page, pageSize, "");
   }
 
   openTagPosts(tag: Tag, event: any) {

@@ -26,8 +26,8 @@ export class PostService extends AppRestService<Post> {
     super(http, "wordpress");
   }
 
-  getTopPost(page: number, pageSize: number) {
-    return this.getPagedList(new HttpParams().set("page", page).set("size", pageSize), "posts/jss/top");
+  getLastPosts(page: number, pageSize: number, searchText: string) {
+    return this.getPagedList(new HttpParams().set("page", page).set("size", pageSize).set("searchText", searchText), "posts/jss/last");
   }
 
   getPostsTendency(page: number, size: number, searchText: string) {
@@ -183,6 +183,10 @@ export class PostService extends AppRestService<Post> {
     return this.getPagedList(params, "posts/publishing-department/most-seen", "", "");
   }
 
+  getMostSeenPosts(page: number, size: number, searchText: string) {
+    return this.getPagedList(new HttpParams().set("page", page).set("size", size).set("searchText", searchText), "posts/most-seen");
+  }
+
   getIleDeFranceTopPost(page: number, size: number) {
     return this.getPagedList(new HttpParams().set("page", page).set("size", size), "posts/top/department/all");
   }
@@ -193,10 +197,6 @@ export class PostService extends AppRestService<Post> {
 
   getTopPostPodcast(page: number, size: number) {
     return this.getPagedList(new HttpParams().set("page", page).set("size", size), "posts/top/podcast");
-  }
-
-  getMostViewedPosts(page: number, size: number) {
-    return this.getPagedList(new HttpParams().set("page", page).set("size", size), "posts/most-seen");
   }
 
   getPinnedPosts(page: number, size: number) {
