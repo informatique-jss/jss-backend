@@ -12,8 +12,8 @@ export class AnalyticStatsTypeService extends AppRestService<AnalyticStatsType> 
     super(http, "tiers");
   }
 
-  getAnalyticStatsTypesForTiers(responsables: Responsable[]) {
-    return this.getList(new HttpParams().set("responsableIds", responsables.map(s => s.id).join(",")), "analytic-stats-types");
+  getAnalyticStatsTypeForTiers(codeKpi: string, responsables: Responsable[]) {
+    return this.getList(new HttpParams().set("responsableIds", responsables.map(s => s.id).join(",")).set("kpiCrmCode", codeKpi), "analytic-stats-types");
   }
 
 

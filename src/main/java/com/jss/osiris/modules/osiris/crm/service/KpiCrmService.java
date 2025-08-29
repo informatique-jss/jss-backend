@@ -11,6 +11,8 @@ public interface KpiCrmService {
 
     public KpiCrm getKpiCrmByCode(String code);
 
+    public KpiCrm getKpiCrmById(Integer id);
+
     public List<AnalyticStatsType> getAggregatedKpis(KpiCrm kpiCrm, List<Responsable> responsables,
             LocalDate startDate, LocalDate endDate);
 

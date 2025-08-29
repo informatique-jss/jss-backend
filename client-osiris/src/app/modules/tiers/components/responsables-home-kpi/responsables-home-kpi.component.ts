@@ -1,10 +1,12 @@
 import { Component, OnChanges, OnInit } from '@angular/core';
 import { NgIcon } from '@ng-icons/core';
 import { Subscription } from 'rxjs';
+import { OPPORTUNITY_CLOSING_AVERAGE_TIME, ORDER_COMPLETION_AVERAGE_TIME } from '../../../../libs/Constants';
 import { getColor } from '../../../../libs/inspinia/utils/color-utils';
 import { AnalyticStatisticWidgetComponent } from '../../../main/components/analytic-statistic-widget/analytic-statistic-widget.component';
 import { ApexchartComponent } from '../../../main/components/apexchart/apexchart.component';
 import { AnalyticStatsType } from '../../../main/model/AnalyticStatsType';
+import { ConstantService } from '../../../main/services/constant.service';
 import { Responsable } from '../../../profile/model/Responsable';
 import { AnalyticStatsTypeService } from '../../services/analytic-stats-type.service';
 import { ResponsableService } from '../../services/responsable.service';
@@ -212,6 +214,8 @@ export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
 
   selectedResponsables: Responsable[] = [];
 
+  kpiCodeToLoad: string[] = [ORDER_COMPLETION_AVERAGE_TIME, OPPORTUNITY_CLOSING_AVERAGE_TIME];
+  kpiLoaded: AnalyticStatsType[] = [];
   // TODO : first try to init chart after timeout
   // ngAfterViewInit() {
   //   setTimeout(() => {
@@ -222,6 +226,7 @@ export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
   constructor(
     private responsableService: ResponsableService,
     private analyticStatsTypeService: AnalyticStatsTypeService,
+    private constantService: ConstantService
   ) {
 
   }
@@ -229,11 +234,12 @@ export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.selectedResponsablesSubscription = this.responsableService.getSelectedResponsables().subscribe(respos => {
       this.selectedResponsables = respos;
-      if (this.selectedResponsables)
-        this.analyticStatsTypeService.getAnalyticStatsTypesForTiers(this.selectedResponsables).subscribe(response => {
-          if (response)
-            this.kpisLeft = response;
-        });
+      if (this.selectedResponsables && this.kpiCodeToLoad)
+        for (let kpiCode of this.kpiCodeToLoad)
+          this.analyticStatsTypeService.getAnalyticStatsTypeForTiers(kpiCode, this.selectedResponsables).subscribe(response => {
+            if (response)
+              this.kpiLoaded.push(...response);
+          });
     });
 
   }

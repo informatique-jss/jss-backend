@@ -641,29 +641,28 @@ public class TiersController {
   @GetMapping(inputEntryPoint + "/analytic-stats-types")
   @JsonView(JacksonViews.OsirisListView.class)
   public ResponseEntity<List<AnalyticStatsType>> getAnalyticStatsTypesForTiers(
-      @RequestParam List<Integer> responsableIds) throws OsirisValidationException {
+      @RequestParam List<Integer> responsableIds, @RequestParam String kpiCrmCode) throws OsirisValidationException {
 
-    // List<KpiCrm> kpiCrms = kpiCrmService.getKpiCrms();
-    List<KpiCrm> kpiCrms = List.of(kpiCrmService.getKpiCrmByCode(KpiCrm.ORDER_COMPLETION_AVERAGE_TIME));
-    List<AnalyticStatsType> analyticStatsTypes = new ArrayList<>();
+    KpiCrm kpiCrm = kpiCrmService.getKpiCrmByCode(kpiCrmCode);
+
+    if (kpiCrm == null)
+      throw new OsirisValidationException("kpiCrmCode");
 
     List<Responsable> responsables = new ArrayList<Responsable>();
     if (responsableIds != null) {
       for (Integer responsableId : responsableIds) {
         Responsable responsable = responsableService.getResponsable(responsableId);
         if (responsable == null)
-          throw new OsirisValidationException("servicesType");
+          throw new OsirisValidationException("responsable");
         responsables.add(responsable);
       }
     } else {
       throw new OsirisValidationException("responsableIds");
     }
 
-    if (!kpiCrms.isEmpty() && !responsables.isEmpty())
-      for (KpiCrm kpiCrm : kpiCrms) {
-        analyticStatsTypes.addAll(kpiCrmService.getAggregatedKpis(kpiCrm, responsables, LocalDate.of(2025, 1, 1),
-            LocalDate.of(2025, 1, 31)));
-      }
-    return new ResponseEntity<List<AnalyticStatsType>>(analyticStatsTypes, HttpStatus.OK);
+    return new ResponseEntity<List<AnalyticStatsType>>(
+        kpiCrmService.getAggregatedKpis(kpiCrm, responsables, LocalDate.of(2025, 1, 1),
+            LocalDate.of(2025, 1, 31)),
+        HttpStatus.OK);
   }
 }

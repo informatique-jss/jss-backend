@@ -8,4 +8,5 @@ export type AnalyticStatsType = {
   percentageIcon: string;
   isPositive: boolean;
   // valueDate: Date;
+  // TODO aggregateType ?? ==>  reconvertir en J ou H dans le front les temps moyens
 }
