@@ -1,0 +1,16 @@
+<mj-section background-color="#ffffff" th:fragment="signature">
+  <mj-column>
+    <mj-text align="center" color="#666666" font-size="26px" line-height="24px">
+      <span th:text="${replyToEmployee.firstname}"></span> <span th:if="${replyToEmployee.lastname!=null}" th:text="${replyToEmployee.lastname}"></span> </mj-text>
+    <mj-text align="center" color="#666666" font-size="16px" th:if="${replyToEmployee.title!=null}">
+      <span th:text="${replyToEmployee.title}"></span> </mj-text>
+    <mj-text align="center" color="#666666" font-size="16px">
+      01 47 03 10 10 </mj-text>
+    <mj-text align="center" color="#666666" font-size="16px">
+      <a th:href="@{'mailto:' + ${replyToEmployee.mail}}" style="color: inherit; text-decoration: none;">
+        <span th:text="${replyToEmployee.mail}"></span>
+      </a>
+      </a>
+    </mj-text>
+  </mj-column>
+</mj-section>

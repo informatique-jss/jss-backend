@@ -8,11 +8,13 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.poi.util.IOUtils;
+import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -77,6 +79,7 @@ import com.jss.osiris.modules.osiris.tiers.model.Rff;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
 
+import ch.digitalfondue.mjml4j.Mjml4j;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
@@ -112,6 +115,12 @@ public class MailHelper {
 
     @Value("${jss.media.entry.point}")
     private String jssMediaEntryPoint;
+
+    @Value("${my.jss.entry.point}")
+    private String myJssEntryPoint;
+
+    @Value("${mail.use.new}")
+    private Boolean useNewMail;
 
     private JavaMailSender javaMailSender;
 
@@ -186,12 +195,30 @@ public class MailHelper {
     private ITemplateResolver htmlTemplateResolver() {
         final ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
         templateResolver.setOrder(Integer.valueOf(1));
-        templateResolver.setPrefix("mails/templates/");
-        templateResolver.setSuffix(".html");
+        if (useNewMail) {
+            templateResolver.setPrefix("mails/mjml/");
+            templateResolver.setSuffix(".mjml");
+        } else {
+            templateResolver.setPrefix("mails/templates/");
+            templateResolver.setSuffix(".html");
+        }
         templateResolver.setTemplateMode(TemplateMode.HTML);
         templateResolver.setCharacterEncoding(EMAIL_TEMPLATE_ENCODING);
         templateResolver.setCacheable(false);
         return templateResolver;
+    }
+
+    private String parseMjmlFile(String mjmlString) {
+        if (useNewMail) {
+            org.jsoup.nodes.Document xhtmlDoc = Jsoup.parse(Mjml4j.render(mjmlString), "UTF-8");
+            xhtmlDoc.outputSettings()
+                    .syntax(org.jsoup.nodes.Document.OutputSettings.Syntax.xml)
+                    .escapeMode(org.jsoup.nodes.Entities.EscapeMode.xhtml)
+                    .charset("UTF-8");
+
+            return xhtmlDoc.html();
+        } else
+            return mjmlString;
     }
 
     public JavaMailSender getMailSender() throws OsirisException {
@@ -273,7 +300,7 @@ public class MailHelper {
 
             // Create the HTML body using Thymeleaf
             final String htmlContent = StringEscapeUtils
-                    .unescapeHtml4(emailTemplateEngine().process(mail.getMailTemplate(), ctx));
+                    .unescapeHtml4(parseMjmlFile(emailTemplateEngine().process(mail.getMailTemplate(), ctx)));
             message.setText(htmlContent, true);
 
             // header picture
@@ -315,6 +342,34 @@ public class MailHelper {
                 final InputStreamSource imageSourceTwitter = new ByteArrayResource(
                         IOUtils.toByteArray(new ClassPathResource("images/twitter.png").getInputStream()));
                 message.addInline("twitter", imageSourceTwitter, PNG_MIME);
+
+                if (useNewMail) {
+                    // template header
+                    final InputStreamSource imageSourceHeader = new ByteArrayResource(
+                            IOUtils.toByteArray(
+                                    new ClassPathResource("images/mails/mjml/" + mail.getMailTemplate() + ".png")
+                                            .getInputStream()));
+                    message.addInline("mailHeaderPicture", imageSourceHeader, PNG_MIME);
+
+                    final InputStreamSource imageFooterPicture = new ByteArrayResource(
+                            IOUtils.toByteArray(
+                                    new ClassPathResource("images/mails/mjml/footer.png")
+                                            .getInputStream()));
+                    message.addInline("mailFooterPicture", imageFooterPicture, PNG_MIME);
+
+                    final InputStreamSource imageBackgourndPicture = new ByteArrayResource(
+                            IOUtils.toByteArray(
+                                    new ClassPathResource(
+                                            "images/mails/mjml/background-" + getBackgroundColor(mail) + ".png")
+                                            .getInputStream()));
+                    message.addInline("mailBackgroundPicture", imageBackgourndPicture, PNG_MIME);
+
+                    final InputStreamSource imageLogoPicture = new ByteArrayResource(
+                            IOUtils.toByteArray(
+                                    new ClassPathResource("images/mails/mjml/logo-" + getBackgroundColor(mail) + ".png")
+                                            .getInputStream()));
+                    message.addInline("mailLogoPicture", imageLogoPicture, PNG_MIME);
+                }
             } catch (IOException e) {
                 throw new OsirisException(e, "Unable to find some pictures for customer mail " + mail.getId());
             }
@@ -352,6 +407,12 @@ public class MailHelper {
         return mimeMessage;
     }
 
+    private String getBackgroundColor(CustomerMail mail) {
+        if (Arrays.asList(CustomerMail.TEMPLATE_SEND_CONTACT_REQUEST).contains(mail.getMailTemplate()))
+            return "blue";
+        return "white";
+    }
+
     public File generateGenericPdfOfMail(CustomerMail mail)
             throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         final Context ctx = new Context();
@@ -359,7 +420,8 @@ public class MailHelper {
         String htmlContent = "";
         // Create the HTML body using Thymeleaf
         try {
-            htmlContent = StringEscapeUtils.unescapeHtml4(emailTemplateEngine().process(mail.getMailTemplate(), ctx));
+            htmlContent = StringEscapeUtils
+                    .unescapeHtml4(parseMjmlFile(emailTemplateEngine().process(mail.getMailTemplate(), ctx)));
         } catch (Exception e) {
             throw new OsirisException(e, "Unable to parse HTML for mail " + mail.getId());
         }
@@ -381,7 +443,17 @@ public class MailHelper {
         ctx.setVariable("headerPicture", mail.getHeaderPicture() != null ? "headerPicture" : null);
         ctx.setVariable("customerOrder", mail.getCustomerOrder());
         ctx.setVariable("quotation", mail.getQuotation());
-        ctx.setVariable("replyToEmployee", mail.getReplyTo() != null ? mail.getReplyTo() : mail.getSendToMeEmployee());
+
+        if (useNewMail && Arrays
+                .asList(CustomerMail.TEMPLATE_BILLING_CLOSURE, CustomerMail.TEMPLATE_CUSTOMER_ORDER_FINALIZATION)
+                .contains(mail.getMailTemplate())) {
+            Employee replyEmployeeAccounting = new Employee();
+            replyEmployeeAccounting.setFirstname("Service Comptabilité");
+            replyEmployeeAccounting.setMail(constantService.getStringAccountingSharedMaiblox());
+            ctx.setVariable("replyToEmployee", replyEmployeeAccounting);
+        } else
+            ctx.setVariable("replyToEmployee",
+                    mail.getReplyTo() != null ? mail.getReplyTo() : mail.getSendToMeEmployee());
 
         IQuotation quotation = mail.getCustomerOrder() != null ? mail.getCustomerOrder() : mail.getQuotation();
         if (quotation != null) {
@@ -396,7 +468,7 @@ public class MailHelper {
                                     break outerloop;
                                 }
 
-            ctx.setVariable("customerName", getCustomerName(quotation));
+            ctx.setVariable("customerName", getCustomerName(quotation, mail.getTiers(), mail.getResponsable()));
             if (mail.getMailComputeResult() != null && mail.getMailComputeResult().getIsSendToAffaire()
                     && (mail.getMailTemplate().equals(CustomerMail.TEMPLATE_CUSTOMER_ORDER_FINALIZATION)
                             || mail.getMailTemplate().equals(CustomerMail.TEMPLATE_INVOICE_REMINDER))
@@ -474,6 +546,7 @@ public class MailHelper {
         ctx.setVariable("tiers", mail.getTiers());
         ctx.setVariable("explaination", mail.getExplaination());
         ctx.setVariable("qrCodePicture", mail.getCbLink() != null ? "qrCodePicture" : null);
+        ctx.setVariable("todayDateString", LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         ctx.setVariable("endOfYearDateString",
                 LocalDate.now().withMonth(12).withDayOfMonth(31).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
@@ -550,6 +623,19 @@ public class MailHelper {
             ctx.setVariable("postLink", jssMediaEntryPoint + "/posts/" + mail.getSubscription().getValidationToken()
                     + "/" + mail.getSubscription().getSubscriptionOfferedMail());
             ctx.setVariable("responsable", mail.getSubscription().getSubcriptionMail().getResponsables().get(0));
+        }
+
+        if (useNewMail) {
+            ctx.setVariable("mailHeaderPicture", "mailHeaderPicture");
+            ctx.setVariable("mailFooterPicture", "mailFooterPicture");
+            ctx.setVariable("mailBackgroundPicture", "mailBackgroundPicture");
+            ctx.setVariable("mailLogoPicture", "mailLogoPicture");
+            ctx.setVariable("myJssEntryPoint", myJssEntryPoint);
+            ctx.setVariable("websiteUrl",
+                    getBackgroundColor(mail).equals("blue") ? "https://www.jss.fr" : "https://my.jss.fr");
+            if (invoice != null)
+                ctx.setVariable("invoiceCreatedDateString",
+                        invoice.getCreatedDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         }
     }
 
@@ -638,13 +724,22 @@ public class MailHelper {
         return affaireLabel;
     }
 
-    private String getCustomerName(IQuotation customerOrder) {
+    private String getCustomerName(IQuotation customerOrder, Tiers tiers, Responsable responsable) {
         String customerName = "";
         if (customerOrder != null) {
             if (customerOrder.getResponsable() != null) {
                 customerName = customerOrder.getResponsable().getCivility().getLabel() + " "
                         + customerOrder.getResponsable().getFirstname() + " "
                         + customerOrder.getResponsable().getLastname();
+            }
+        } else if (responsable != null) {
+            customerName = responsable.getCivility().getLabel() + " " + responsable.getFirstname() + " "
+                    + responsable.getLastname();
+        } else if (tiers != null) {
+            if (tiers.getIsIndividual()) {
+                customerName = tiers.getCivility().getLabel() + " " + tiers.getFirstname() + " " + tiers.getLastname();
+            } else {
+                customerName = tiers.getDenomination();
             }
         }
         return customerName;
@@ -662,7 +757,7 @@ public class MailHelper {
         ctx.setVariable("greetings", greetings);
 
         // Create the HTML body using Thymeleaf
-        return emailTemplateEngine().process("model", ctx);
+        return parseMjmlFile(emailTemplateEngine().process("model", ctx));
     }
 
     public void setQuotationPrice(IQuotation quotation, Context ctx)
@@ -1353,11 +1448,16 @@ public class MailHelper {
                     paymentCbEntryPoint + "/order/invoice?customerOrderId=" + mail.getCustomerOrder().getId() + "&mail="
                             + mail.getMailComputeResult().getRecipientsMailTo().get(0).getMail());
 
-        if (invoice != null)
-            mail.setSubject(
-                    "Votre facture n°" + invoice.getId() + " concernant la commande n°" + customerOrder.getId() + " - "
-                            + getCustomerOrderAffaireLabel(customerOrder, null));
-        else
+        if (invoice != null) {
+            if (isReminder || isLastReminder)
+                mail.setSubject("Votre facture n°" + invoice.getId() + " est en attente de paiement - "
+                        + getCustomerOrderAffaireLabel(customerOrder, null));
+            else
+                mail.setSubject(
+                        "Votre facture n°" + invoice.getId() + " concernant la commande n°" + customerOrder.getId()
+                                + " - "
+                                + getCustomerOrderAffaireLabel(customerOrder, null));
+        } else
             mail.setSubject(
                     "Votre facture concernant la commande n°" + customerOrder.getId() + " - "
                             + getCustomerOrderAffaireLabel(customerOrder, null));

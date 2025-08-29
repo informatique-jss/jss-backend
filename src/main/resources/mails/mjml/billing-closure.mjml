@@ -1,0 +1,31 @@
+<mj-head th:replace="~{fragments/header}"></mj-head>
+<mj-head th:replace="~{fragments/headline(title='Relevé de compte', subtitle=${'Client n°'+tiers.id})}"></mj-head>
+<mj-section background-color="#ffffff" padding="10px">
+  <mj-column>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Bonjour <span th:text="${customerName}"></span>,
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Veuillez trouver en pièce-jointe de ce mail le relevé de votre compte client n°<span th:text="${tiers.id}"></span> des factures dues en date du <span th:text="${todayDateString}"></span>.
+    </mj-text>
+
+    <mj-text color="#666666" font-size="16px" line-height="24px">Vous disposez de plusieurs moyens de règlement :
+    </mj-text>
+
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      ➡️ <strong>Virement : </strong><br />
+      IBAN / BIC : <span th:text="${ibanJss}"></span> / <span th:text="${bicJss}"></span><br />
+      ➡️ <strong>Carte bancaire</strong> en vous rendant sur votre compte MyJSS (ci-dessous) ou via les liens présents dans le relevé
+    </mj-text>
+
+    <mj-text color="#666666" font-size="16px" line-height="24px" padding-top="24px">
+      Nous restons à votre disposition pour toute information complémentaire.
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Cordialement,
+    </mj-text>
+  </mj-column>
+</mj-section>
+<mj-head th:replace="~{fragments/cta(title='Accéder à mon relevé de compte', buttonText='Voir mon relevé',buttonUrl=${myJssEntryPoint+'/account/closure})}"></mj-head>
+<mj-head th:replace="~{fragments/signature}"></mj-head>
+<mj-head th:replace="~{fragments/footer}"></mj-head>

@@ -1,0 +1,29 @@
+<mj-section background-color="#ffffff" th:fragment="footer">
+  <mj-column width="5%"></mj-column>
+  <mj-column width="90%">
+    <mj-image padding="0px" href="https://my.jss.fr/account" th:src="${'cid:'+mailFooterPicture}"></mj-image>
+  </mj-column>
+  <mj-column width="5%"></mj-column>
+</mj-section>
+
+<mj-section background-color="#1c2d41">
+  <mj-column>
+    <mj-text align="center" color="#ffffff" font-size="14px">
+      Suivez-nous !
+    </mj-text>
+    <mj-social font-size="15px" icon-size="30px" mode="horizontal">
+      <mj-social-element href="https://www.linkedin.com/company/journal-special-des-societes/_blank" name="linkedin"></mj-social-element>
+      <mj-social-element href="https://www.facebook.com/Journal.Special.des.Societes/_blank" name="facebook"></mj-social-element>
+      <mj-social-element href="https://www.instagram.com/journalspecialdessocietes/_blank" name="instagram"></mj-social-element>
+    </mj-social>
+    <mj-text align="center" color="#ffffff" font-size="12px">
+      Journal Spécial des Sociétés | <a href="https://my.jss.fr/disclaimer" style="color: inherit; text-decoration: none;">Mentions légales</a>  | <a href="https://my.jss.fr/privacy-policy" style="color: inherit; text-decoration: none;">Politique de confidentialité
+      </a>
+    </mj-text>
+  </mj-column>
+</mj-section>
+<!--[if !mso]><!-->
+</mj-wrapper>
+<!--<![endif]-->
+</mj-body>
+</mjml>

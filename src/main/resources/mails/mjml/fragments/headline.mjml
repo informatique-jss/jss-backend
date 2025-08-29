@@ -1,0 +1,12 @@
+<mj-section background-color="#ffffff" th:fragment="headline (title, subtitle)">
+  <mj-column width="5%"></mj-column>
+  <mj-column background-color="#1c2d41" border-radius="8px" width="90%">
+    <mj-text align="center" color="#ffffff" font-weight="bold" font-size="24px">
+      <span th:text="${title}"></span>
+    </mj-text>
+    <mj-text align="center" color="#ffffff" font-size="16px" line-height="24px">
+      <span th:text="${subtitle}"></span>
+    </mj-text>
+  </mj-column>
+  <mj-column width="5%"></mj-column>
+</mj-section>

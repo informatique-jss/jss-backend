@@ -1,0 +1,12 @@
+<mj-section background-color="#ffffff" th:fragment="cta (title, buttonText, buttonUrl)">
+  <mj-column width="5%"></mj-column>
+  <mj-column background-color="#1c2d41" border-radius="8px" width="90%" padding-top="20px" padding-bottom="20px">
+    <mj-text align="center" color="#ffffff" font-size="24px" font-weight="bold">
+      <span th:text="${title}"></span>
+    </mj-text>
+    <mj-button th:href="${buttonUrl}" align="center" background-color="#ffffff" color="#666666" font-size="16px" font-weight="600" border-radius="8px">
+      <span th:text="${buttonText}"></span>
+    </mj-button>
+  </mj-column>
+  <mj-column width="5%"></mj-column>
+</mj-section>
