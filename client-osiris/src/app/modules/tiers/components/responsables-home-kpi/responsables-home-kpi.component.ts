@@ -33,7 +33,8 @@ export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
       title: 'Total Views',
       percentage: 5.2,
       percentageIcon: 'tablerTrendingUp',
-      isPositive: true
+      isPositive: true,
+      aggregateType: ''
     },
     {
       id: 2,
@@ -42,7 +43,8 @@ export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
       title: 'Sessions',
       percentage: 3.9,
       percentageIcon: 'tablerActivity',
-      isPositive: true
+      isPositive: true,
+      aggregateType: ''
     },
     {
       id: 3,
@@ -51,7 +53,8 @@ export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
       title: 'Bounce Rate',
       percentage: 1.1,
       percentageIcon: 'tablerArrowDownLeft',
-      isPositive: false
+      isPositive: false,
+      aggregateType: ''
     }
   ]
 
@@ -63,7 +66,8 @@ export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
       title: 'Sessions',
       percentage: 3.9,
       percentageIcon: 'tablerActivity',
-      isPositive: true
+      isPositive: true,
+      aggregateType: ''
     },
     {
       id: 3,
@@ -72,7 +76,8 @@ export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
       title: 'Bounce Rate',
       percentage: 1.1,
       percentageIcon: 'tablerArrowDownLeft',
-      isPositive: false
+      isPositive: false,
+      aggregateType: ''
     },
     {
       id: 4,
@@ -81,7 +86,8 @@ export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
       title: 'Active Users',
       percentage: 2.3,
       percentageIcon: 'tablerUsers',
-      isPositive: true
+      isPositive: true,
+      aggregateType: ''
     }
   ]
 
@@ -93,7 +99,8 @@ export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
       title: 'Total Views',
       percentage: 5.2,
       percentageIcon: 'tablerTrendingUp',
-      isPositive: true
+      isPositive: true,
+      aggregateType: ''
     },
     {
       id: 2,
@@ -102,7 +109,8 @@ export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
       title: 'Sessions',
       percentage: 3.9,
       percentageIcon: 'tablerActivity',
-      isPositive: true
+      isPositive: true,
+      aggregateType: ''
     },
     {
       id: 3,
@@ -111,7 +119,8 @@ export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
       title: 'Bounce Rate',
       percentage: 1.1,
       percentageIcon: 'tablerArrowDownLeft',
-      isPositive: false
+      isPositive: false,
+      aggregateType: ''
     },
     {
       id: 4,
@@ -120,7 +129,8 @@ export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
       title: 'Active Users',
       percentage: 2.3,
       percentageIcon: 'tablerUsers',
-      isPositive: true
+      isPositive: true,
+      aggregateType: ''
     },
     {
       id: 2,
@@ -129,7 +139,8 @@ export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
       title: 'Sessions',
       percentage: 3.9,
       percentageIcon: 'tablerActivity',
-      isPositive: true
+      isPositive: true,
+      aggregateType: ''
     },
     {
       id: 3,
@@ -138,7 +149,8 @@ export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
       title: 'Bounce Rate',
       percentage: 1.1,
       percentageIcon: 'tablerArrowDownLeft',
-      isPositive: false
+      isPositive: false,
+      aggregateType: ''
     },
   ]
 
