@@ -144,6 +144,7 @@ export class ProvisionKanbanComponent extends KanbanComponent<Provision, IWorkfl
       this.restUserPreferenceService2.getUserPreferenceValue(this.getKanbanComponentViewCode() + "_" + DEFAULT_USER_PREFERENCE).subscribe(kanbanViewString => {
         if (kanbanViewString) {
           let kabanView: KanbanView<Provision, IWorkflowElement<any>>[] = JSON.parse(kanbanViewString);
+          this.statusSelected = [];
           //default view so only one KanbanView
           for (let orderStatus of kabanView[0].status)
             this.statusSelected.push(orderStatus);
