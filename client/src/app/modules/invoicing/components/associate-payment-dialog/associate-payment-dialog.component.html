@@ -31,6 +31,14 @@
               [overrideTooltipAction]="'Associer cette commande au paiement'" [isForPaymentAssocationIntegration]="true"
               [defaultStatusFilter]="[CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT,CUSTOMER_ORDER_STATUS_OPEN]"></ordering-list>
           </mat-tab>
+          <mat-tab label="Multiple" bodyClass="tab-height-limit">
+            <generic-input [(model)]="multipleInvoices" label="Multiples factures à associer (séparé par ',')"
+              [form]="refundForm" propertyName="multipleInvoices" [isMandatory]="false"
+              [isDisabled]="false"></generic-input>
+            <div class="top">
+              <button mat-raised-button color="warn" (click)="multipleAssociateInvoices()">Associer</button>
+            </div>
+          </mat-tab>
         </mat-tab-group>
         <div class="top">
           <button mat-raised-button color="accent" matStepperPrevious>Précédent</button>

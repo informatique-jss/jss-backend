@@ -143,11 +143,13 @@ export class ProvisionKanbanComponent extends KanbanComponent<Provision, IWorkfl
 
       // Retrieve bookmark
       let bookmarkpossibleEntityStatusIds = this.userPreferenceService.getUserSearchBookmark("kanban-provision-status") as number[];
-      if (bookmarkpossibleEntityStatusIds)
+      if (bookmarkpossibleEntityStatusIds) {
+        this.statusSelected = [];
         for (let bookmarkpossibleEntityStatusId of bookmarkpossibleEntityStatusIds)
           for (let orderStatu of this.possibleEntityStatus!)
             if (bookmarkpossibleEntityStatusId == orderStatu.id)
               this.statusSelected.push(orderStatu);
+      }
 
       let bookmarkOrderEmployees = this.userPreferenceService.getUserSearchBookmark("kanban-provision-employee") as Employee[];
       if (bookmarkOrderEmployees && bookmarkOrderEmployees.length > 0)
