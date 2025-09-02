@@ -684,6 +684,19 @@ public class WordpressController {
 				HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/posts/premium/most-seen")
+	@JsonView(JacksonViews.MyJssListView.class)
+	public ResponseEntity<Page<Post>> getMostSeenPremiumPost(@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "20") int size, HttpServletRequest request) {
+		detectFlood(request);
+		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
+				Sort.by(Sort.Direction.DESC, "date"));
+
+		return new ResponseEntity<Page<Post>>(
+				postService.getMostSeenPremiumPost(pageable),
+				HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/posts/publishing-department/most-seen")
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Page<Post>> getMostSeenPostByPublishingDepartment(
@@ -865,6 +878,24 @@ public class WordpressController {
 						.applyPremiumAndBookmarks(
 								postService.getAllPostsByPublishingDepartment(pageableRequest, publishingDepartment,
 										searchText)),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/posts/all/premium")
+	@JsonView(JacksonViews.MyJssListView.class)
+	public ResponseEntity<Page<Post>> getAllPremiumPosts(
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "20") int size, @RequestParam(required = false) String searchText,
+			HttpServletRequest request) throws OsirisException {
+
+		detectFlood(request);
+
+		Pageable pageableRequest = PageRequest.of(page, ValidationHelper.limitPageSize(size),
+				Sort.by(Sort.Direction.DESC, "date"));
+
+		return new ResponseEntity<Page<Post>>(
+				postService
+						.applyPremiumAndBookmarks(postService.getAllPremiumPosts(searchText, pageableRequest)),
 				HttpStatus.OK);
 	}
 
@@ -1150,6 +1181,14 @@ public class WordpressController {
 			return new ResponseEntity<List<Tag>>(tagService.getAllTagsByIdf(), HttpStatus.OK);
 
 		return new ResponseEntity<List<Tag>>(tagService.getAllTagsByPublishingDepartment(publishingDepartment),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/tags/all/premium")
+	public ResponseEntity<List<Tag>> getAllTagsByPremiumPosts()
+			throws OsirisException {
+
+		return new ResponseEntity<List<Tag>>(tagService.getAllTagsByPremiumPosts(),
 				HttpStatus.OK);
 	}
 

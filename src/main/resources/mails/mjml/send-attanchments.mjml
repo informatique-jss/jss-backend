@@ -1,0 +1,36 @@
+<mj-head th:replace="~{fragments/header}"></mj-head>
+<mj-head th:replace="~{fragments/headline(title=${'Commande n°'+customerOrder.id}, subtitle=${affaireLabelDetails})}"></mj-head>
+<mj-section background-color="#ffffff" padding="10px">
+  <mj-column>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Bonjour <span th:text="${customerName}"></span>,
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Veuillez trouver en PJ la/les pièce(s) numérique(s) correspondant à l'affaire en référence.
+    </mj-text>
+
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      <th:block th:each="service : ${asso.services}">
+        <th:block th:each="provision : ${service.provisions}">
+          <th:block th:each="attachment : ${attachments}" th:if="${attachment.parentAttachment}!=null and ${attachment.parentAttachment.provision}!=null">
+            <span th:if="${attachment.parentAttachment.provision.id==provision.id}">
+              • <span th:text="${attachment.attachmentType.label}"></span> (<span th:text="${attachment.uploadedFile.filename}"></span>)
+            </span>
+          </th:block>
+        </th:block>
+      </th:block>
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Retrouvez tous les détails de votre commande en cliquant simplement sur le bouton ci-dessous.
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px" padding-top="24px">
+      Nous restons à votre disposition pour toute information complémentaire.
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Cordialement,
+    </mj-text>
+  </mj-column>
+</mj-section>
+<mj-head th:replace="~{fragments/cta(title='Accéder à mon compte', buttonText='Voir ma commande',buttonUrl=${myJssEntryPoint+'/account/orders/details/'+customerOrder.id})}"></mj-head>
+<mj-head th:replace="~{fragments/signature}"></mj-head>
+<mj-head th:replace="~{fragments/footer}"></mj-head>

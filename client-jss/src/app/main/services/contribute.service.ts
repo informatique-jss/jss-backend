@@ -15,6 +15,6 @@ export class ContributeService extends AppRestService<Boolean> {
     let httpParams = new HttpParams().set("mail", mail).set("firstName", firstName).set("lastName", lastName).set("message", message);
     if (phone && phone.length > 0)
       httpParams = httpParams.set("phoneNumber", phone);
-    return this.get(httpParams, "subscribe/contact");
+    return this.get(httpParams, "contribute");
   }
 }

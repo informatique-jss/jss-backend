@@ -56,6 +56,9 @@ export const routes: Routes = [
       {
         path: 'post/most-seen',
         loadComponent: () => import('./main/components/post-most-seen-header/post-most-seen-header.component').then(m => m.PostMostSeenHeaderComponent)
+      }, {
+        path: 'post/premium',
+        loadComponent: () => import('./main/components/post-premium-header/post-premium-header.component').then(m => m.PostPremiumHeaderComponent)
       },
       {
         path: 'post/:slug',

@@ -186,6 +186,29 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
+    public List<Tag> getAllTagsByPremiumPosts() throws OsirisException {
+        List<Tag> tags = new ArrayList<Tag>();
+        List<Integer> tagsAdded = new ArrayList<Integer>();
+
+        Pageable pageable = PageRequest.of(0, ValidationHelper.limitPageSize(15),
+                Sort.by(Sort.Direction.DESC, "date"));
+
+        List<Post> posts = postService.getAllPremiumPosts(null, pageable).getContent();
+
+        if (posts != null)
+            for (Post post : posts)
+                if (post.getPostTags() != null) {
+                    for (Tag tag : post.getPostTags()) {
+                        if (!tagsAdded.contains(tag.getId())) {
+                            tags.add(tag);
+                            tagsAdded.add(tag.getId());
+                        }
+                    }
+                }
+        return tags;
+    }
+
+    @Override
     public List<Tag> getAllLastPostsTags() throws OsirisException {
         List<Tag> tags = new ArrayList<Tag>();
         List<Integer> tagsAdded = new ArrayList<Integer>();

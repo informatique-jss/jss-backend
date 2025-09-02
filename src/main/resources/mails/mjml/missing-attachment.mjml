@@ -1,0 +1,32 @@
+<mj-head th:replace="~{fragments/header}"></mj-head>
+<mj-head th:replace="~{fragments/headline(title=${'Commande n°'+customerOrder.id}, subtitle=${affaireLabelDetails})}"></mj-head>
+<mj-section background-color="#ffffff" padding="10px">
+  <mj-column>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Bonjour <span th:text="${customerName}"></span>,
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Dans l'objectif de poursuivre rapidement le traitement de votre commande, pourriez-vous nous transmettre les pièces suivantes ?
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      <span th:each="assoServiceDocument : ${assoServiceDocuments}">• <span th:text="${assoServiceDocument.typeDocument.customLabel}"></span><span th:if="${assoServiceDocument.formalisteComment!=null}">- <span th:text="${assoServiceDocument.formalisteComment}"></span></span><br /></span>
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px" th:if=" ${assoServiceFieldTypes!=null}">
+      De la même façon, pourriez-vous nous fournir les informations suivantes ?
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      <span th:each="assoServiceFieldType : ${assoServiceFieldTypes}">• <span th:text="${assoServiceFieldType.serviceFieldType.label}"></span><span th:if="${assoServiceFieldType.formalisteComment!=null}"> - <span th:text="${assoServiceFieldType.formalisteComment}"></span></span><br /></span>
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">Vous pouvez importer ces documents et compléter ces informations directement depuis votre compte à l'aide du boutton ci-dessous.
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px" padding-top="24px">
+      Nous restons à votre disposition pour toute information complémentaire.
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Cordialement,
+    </mj-text>
+  </mj-column>
+</mj-section>
+<mj-head th:replace="~{fragments/cta(title='Accéder à mon compte', buttonText='Déposer des documents',buttonUrl=${myJssEntryPoint+'/account/orders/details/'+customerOrder.id})}"></mj-head>
+<mj-head th:replace="~{fragments/signature}"></mj-head>
+<mj-head th:replace="~{fragments/footer}"></mj-head>

@@ -1,0 +1,43 @@
+<mj-head th:replace="~{fragments/header}"></mj-head>
+<mj-head th:replace="~{fragments/headline(title=${'Demande de Parution'}, subtitle='')}"></mj-head>
+<mj-section background-color="#ffffff" padding="10px">
+  <mj-column>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Bonjour <span th:text="${customerName}"></span>,
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Cher confrère,
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Nous vous prions de trouver en pièce jointe le texte d'insertion légale à faire paraître le <span th:text="${announcementPublicationDate}"></span> en composition économique :
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Nous vous prions de trouver en pièce jointe le texte d'insertion légale à faire paraître le <span th:text="${announcementPublicationDate}"></span> en composition économique :
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      • Société : <span th:text="${provision.service.assoAffaireOrder.affaire.denomination}"></span><span th:text="${provision.service.assoAffaireOrder.affaire.firstname}"></span> <span th:text="${provision.service.assoAffaireOrder.affaire.lastname}"></span><br />
+      • Département : <span th:text="${provision.announcement.department.code}"></span><br />
+      • Rubrique : <span th:text="${provision.announcement.noticeTypeFamily.label}"></span> - <span th:text="${provision.announcement.noticeTypes[0].label}"></span><br />
+      • Support : <span th:text="${provision.announcement.confrere.label}"></span><br />
+      • Notre référence : <span th:text="${customerOrder.id}"></span>
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px" padding-top="24px">
+      Nous vous demandons de nous adresser dans les meilleurs délais :
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px" padding-top="24px">
+      • Une attestation de parution par email à <a th:href="@{'mailto:' + ${provision.assignedTo.mail}}" style="color: inherit; text-decoration: none;"><span th:text="${provision.assignedTo.mail}"></span></a> <br />
+      • Un justificatif électronique<br />
+      • La facture à l'ordre du JOURNAL SPÉCIAL DES SOCIÉTÉS (selon les conditions établies ensemble)
+    </mj-text>
+
+    <mj-text color="#666666" font-size="16px" line-height="24px" padding-top="24px">
+      Nous restons à votre disposition pour toute information complémentaire.
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Cordialement,
+    </mj-text>
+  </mj-column>
+</mj-section>
+<mj-head th:replace="~{fragments/cta(title='Accéder à mon compte', buttonText='Voir ma commande',buttonUrl=${myJssEntryPoint+'/account/orders/details/'+customerOrder.id})}"></mj-head>
+<mj-head th:replace="~{fragments/signature}"></mj-head>
+<mj-head th:replace="~{fragments/footer}"></mj-head>
