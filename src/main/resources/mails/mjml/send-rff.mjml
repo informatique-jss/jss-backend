@@ -1,0 +1,31 @@
+<mj-head th:replace="~{fragments/header}"></mj-head>
+<mj-head th:replace="~{fragments/headline(title='Vos remboursements forfaitaires de frais', subtitle=${'Année '+rffYear})}"></mj-head>
+<mj-section background-color="#ffffff" padding="10px">
+  <mj-column>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Bonjour,
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Afin de nous permettre de procéder au règlement de vos remboursements forfaitaires de frais (RFF), nous vous remercions de nous faire parvenir avant la fin de l’année, une facture avec les montants ci-dessous correspondant à l’année <span th:text="${rffYear}"></span>.
+    </mj-text>
+
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      <strong><span th:text="${rffMonth}"></span></strong><br />
+      • Remboursement forfaitaire de frais pour l’année <span th:text="${rffYear}"></span> : <span th:text="${#numbers.formatDecimal(rff.rffTotal,1,2)}"></span> €<br />
+      • TVA à 20% : <span th:text="${#numbers.formatDecimal(rff.rffTotal*0.2,1,2)}"></span> €<br />
+      • Total TTC : <span th:text="${#numbers.formatDecimal(rff.rffTotal*1.2,1,2)}"></span> €<br />
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Cette facture doit obligatoirement être datée de <span th:text="${rffYear}"></span>.
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px" padding-top="24px">
+      Nous restons à votre disposition pour toute information complémentaire.
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Cordialement,
+    </mj-text>
+  </mj-column>
+</mj-section>
+<mj-head th:replace="~{fragments/cta(title='Accéder à mon compte', buttonText='Voir mon compte',buttonUrl=${myJssEntryPoint+'/account/overview'})}"></mj-head>
+<mj-head th:replace="~{fragments/signature}"></mj-head>
+<mj-head th:replace="~{fragments/footer}"></mj-head>

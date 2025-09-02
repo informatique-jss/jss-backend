@@ -12,9 +12,9 @@
       Suivez-nous !
     </mj-text>
     <mj-social font-size="15px" icon-size="30px" mode="horizontal">
-      <mj-social-element href="https://www.linkedin.com/company/journal-special-des-societes/_blank" name="linkedin"></mj-social-element>
-      <mj-social-element href="https://www.facebook.com/Journal.Special.des.Societes/_blank" name="facebook"></mj-social-element>
-      <mj-social-element href="https://www.instagram.com/journalspecialdessocietes/_blank" name="instagram"></mj-social-element>
+      <mj-social-element href="https://www.linkedin.com/company/journal-special-des-societes" name="linkedin"></mj-social-element>
+      <mj-social-element href="https://www.facebook.com/Journal.Special.des.Societes" name="facebook"></mj-social-element>
+      <mj-social-element href="https://www.instagram.com/journalspecialdessocietes" name="instagram"></mj-social-element>
     </mj-social>
     <mj-text align="center" color="#ffffff" font-size="12px">
       Journal Spécial des Sociétés | <a href="https://my.jss.fr/disclaimer" style="color: inherit; text-decoration: none;">Mentions légales</a>  | <a href="https://my.jss.fr/privacy-policy" style="color: inherit; text-decoration: none;">Politique de confidentialité

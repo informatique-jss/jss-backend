@@ -18,10 +18,11 @@ import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamSource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -56,6 +57,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
+import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
@@ -184,7 +186,12 @@ public class MailHelper {
     @Autowired
     ProvisionService provisionService;
 
-    @Bean
+    @Autowired
+    EmployeeService employeeService;
+
+    @Autowired
+    ResourceLoader resourceLoader;
+
     public TemplateEngine emailTemplateEngine() {
         final SpringTemplateEngine templateEngine = new SpringTemplateEngine();
         templateEngine.addTemplateResolver(htmlTemplateResolver());
@@ -345,11 +352,15 @@ public class MailHelper {
 
                 if (useNewMail) {
                     // template header
-                    final InputStreamSource imageSourceHeader = new ByteArrayResource(
-                            IOUtils.toByteArray(
-                                    new ClassPathResource("images/mails/mjml/" + mail.getMailTemplate() + ".png")
-                                            .getInputStream()));
-                    message.addInline("mailHeaderPicture", imageSourceHeader, PNG_MIME);
+                    Resource resource = resourceLoader
+                            .getResource("classpath:images/mails/mjml/" + mail.getMailTemplate() + ".png");
+                    if (resource.exists()) {
+                        final InputStreamSource imageSourceHeader = new ByteArrayResource(
+                                IOUtils.toByteArray(
+                                        new ClassPathResource("images/mails/mjml/" + mail.getMailTemplate() + ".png")
+                                                .getInputStream()));
+                        message.addInline("mailHeaderPicture", imageSourceHeader, PNG_MIME);
+                    }
 
                     final InputStreamSource imageFooterPicture = new ByteArrayResource(
                             IOUtils.toByteArray(
@@ -408,7 +419,9 @@ public class MailHelper {
     }
 
     private String getBackgroundColor(CustomerMail mail) {
-        if (Arrays.asList(CustomerMail.TEMPLATE_SEND_CONTACT_REQUEST).contains(mail.getMailTemplate()))
+        if (Arrays.asList(CustomerMail.TEMPLATE_SEND_CONTRIBUTION_REQUEST,
+                CustomerMail.TEMPLATE_SEND_CANDIDACY_CONFIRMATION, CustomerMail.TEMPLATE_SEND_GIFTED_POST)
+                .contains(mail.getMailTemplate()))
             return "blue";
         return "white";
     }
@@ -445,12 +458,19 @@ public class MailHelper {
         ctx.setVariable("quotation", mail.getQuotation());
 
         if (useNewMail && Arrays
-                .asList(CustomerMail.TEMPLATE_BILLING_CLOSURE, CustomerMail.TEMPLATE_CUSTOMER_ORDER_FINALIZATION)
+                .asList(CustomerMail.TEMPLATE_BILLING_CLOSURE, CustomerMail.TEMPLATE_SEND_CREDIT_NOTE)
                 .contains(mail.getMailTemplate())) {
             Employee replyEmployeeAccounting = new Employee();
             replyEmployeeAccounting.setFirstname("Service Comptabilité");
             replyEmployeeAccounting.setMail(constantService.getStringAccountingSharedMaiblox());
             ctx.setVariable("replyToEmployee", replyEmployeeAccounting);
+        } else if (useNewMail && Arrays
+                .asList(CustomerMail.TEMPLATE_INVOICE_REMINDER, CustomerMail.TEMPLATE_CUSTOMER_ORDER_FINALIZATION)
+                .contains(mail.getMailTemplate())) {
+            Employee replyEmployeeRecover = new Employee();
+            replyEmployeeRecover.setFirstname("Service Recouvrement");
+            replyEmployeeRecover.setMail(constantService.getRecoverySharedMaiblox());
+            ctx.setVariable("replyToEmployee", replyEmployeeRecover);
         } else
             ctx.setVariable("replyToEmployee",
                     mail.getReplyTo() != null ? mail.getReplyTo() : mail.getSendToMeEmployee());
@@ -631,6 +651,7 @@ public class MailHelper {
             ctx.setVariable("mailBackgroundPicture", "mailBackgroundPicture");
             ctx.setVariable("mailLogoPicture", "mailLogoPicture");
             ctx.setVariable("myJssEntryPoint", myJssEntryPoint);
+            ctx.setVariable("jssMediaEntryPoint", jssMediaEntryPoint);
             ctx.setVariable("websiteUrl",
                     getBackgroundColor(mail).equals("blue") ? "https://www.jss.fr" : "https://my.jss.fr");
             if (invoice != null)
@@ -956,6 +977,13 @@ public class MailHelper {
                 CustomerMail.TEMPLATE_SEND_CONTACT_CONFIRMATION);
     }
 
+    public void sendConfirmationContributeFormJssMedia(String mailAdress) throws OsirisException {
+        sendCustomerMailForMyJssMail(mailAdress, null,
+                constantService.getStringMyJssContactFormRequestMail(),
+                "Confirmation de la réception de votre demande de contribution",
+                CustomerMail.TEMPLATE_SEND_CONTRIBUTION_CONFIRMATION);
+    }
+
     public void sendCustomerDemoRequestToCommercial(String mailAdress, String firstName, String lastName,
             String phoneNumber) throws OsirisException {
         String explaination = firstName + " " + lastName + " - " + mailAdress;
@@ -981,8 +1009,20 @@ public class MailHelper {
                 + message;
         sendCustomerMailForMyJssMail(constantService.getStringMyJssContactFormRequestMail(), explaination,
                 constantService.getStringMyJssContactFormRequestMail(),
-                "Notification d'une contribution d'un lecteur",
+                "Notification d'une demande de contact",
                 CustomerMail.TEMPLATE_SEND_CONTACT_REQUEST);
+    }
+
+    public void sendContributeFormNotificationMail(String mailAdress, String firstName, String lastName,
+            String phoneNumber,
+            String message) throws OsirisException {
+        String explaination = firstName + " " + lastName + " - "
+                + (phoneNumber != null && phoneNumber.length() > 0 ? phoneNumber + " - " : "") + mailAdress + " : "
+                + message;
+        sendCustomerMailForMyJssMail(constantService.getStringMyJssContactFormRequestMail(), explaination,
+                constantService.getStringMyJssContactFormRequestMail(),
+                "Notification d'une contribution d'un lecteur",
+                CustomerMail.TEMPLATE_SEND_CONTRIBUTION_REQUEST);
     }
 
     public void sendCustomerPricesRequestToCommercial(String mailAdress, String firstName, String lastName,
@@ -1522,7 +1562,7 @@ public class MailHelper {
         mailComputeResult.getRecipientsMailTo().add(subscription.getSubscriptionOfferedMail());
         mail.setMailComputeResult(mailComputeResult);
 
-        mail.setSubject("Votre article offert");
+        mail.setSubject("Un article Premium vous est offert");
 
         customerMailService.addMailToQueue(mail);
     }
@@ -1550,7 +1590,12 @@ public class MailHelper {
         CustomerMail mail = new CustomerMail();
         mail.setMailTemplate(CustomerMail.TEMPLATE_REQUEST_RIB);
         mail.setHeaderPicture("images/mails/request-rib.png");
-        mail.setReplyTo(assoAffaireOrder.getCustomerOrder().getResponsable().getSalesEmployee());
+        if (assoAffaireOrder.getCustomerOrder() != null
+                && assoAffaireOrder.getCustomerOrder().getInvoicingEmployee() != null)
+            mail.setReplyTo(assoAffaireOrder.getCustomerOrder().getInvoicingEmployee());
+        else
+            mail.setReplyTo(employeeService.getCurrentEmployee());
+
         mail.setSendToMe(false);
         MailComputeResult mailComputeResult = new MailComputeResult();
         mailComputeResult.setRecipientsMailTo(new ArrayList<Mail>());
@@ -1567,7 +1612,7 @@ public class MailHelper {
     public void sendRffToCustomer(Rff rff, boolean sendToMe) throws OsirisException, OsirisClientMessageException {
         CustomerMail mail = new CustomerMail();
         mail.setHeaderPicture("images/mails/send-rff.png");
-        mail.setReplyToMail(rff.getTiers().getSalesEmployee().getMail());
+        mail.setReplyTo(rff.getTiers().getSalesEmployee());
         mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(mailComputeHelper.computeMailForRff(rff));
         mail.setSubject("Vos remboursements forfaitaires de frais pour le compte n°" + rff.getTiers().getId());

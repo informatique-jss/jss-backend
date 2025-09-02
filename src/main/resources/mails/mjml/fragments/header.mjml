@@ -27,7 +27,7 @@
         </mj-column>
         <mj-column width="5%"></mj-column>
       </mj-section>
-      <mj-section background-color="#ffffff" padding-top="0">
+      <mj-section background-color="#ffffff" padding-top="0" th:if="${mailHeaderPicture}!=null">
         <mj-column width="5%"></mj-column>
         <mj-column width="90%">
           <mj-image padding="0px" th:src="${'cid:' + mailHeaderPicture}"></mj-image>

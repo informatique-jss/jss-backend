@@ -322,6 +322,28 @@ public class MyJssCrmController {
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
+    @GetMapping(inputEntryPoint + "/contribute")
+    public ResponseEntity<Boolean> subscribeContributeForm(@RequestParam String mail, @RequestParam String firstName,
+            @RequestParam String lastName, @RequestParam(required = false) String phoneNumber,
+            @RequestParam String message,
+            HttpServletRequest request) throws OsirisException {
+        detectFlood(request);
+        if (!validationHelper.validateMail(mail))
+            throw new OsirisValidationException("mail");
+
+        validationHelper.validateString(firstName, true, 50, "firstname");
+        validationHelper.validateString(lastName, true, 50, "lastname");
+        validationHelper.validateString(message, true, 250, "message");
+
+        if (phoneNumber != null
+                && !validationHelper.validateFrenchPhone(phoneNumber))
+            throw new OsirisValidationException("phone");
+
+        mailHelper.sendConfirmationContributeFormJssMedia(mail);
+        mailHelper.sendContributeFormNotificationMail(mail, firstName, lastName, phoneNumber, message);
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
     @JsonView(JacksonViews.MyJssDetailedView.class)
     @PostMapping(inputEntryPoint + "/subscribe/candidacy")
     public ResponseEntity<Candidacy> subscribeCandidacy(@RequestBody Candidacy candidacy,

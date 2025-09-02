@@ -1,27 +1,25 @@
 <mj-head th:replace="~{fragments/header}"></mj-head>
-<mj-head th:replace="~{fragments/headline(title=${'Commande n°'+customerOrder.id}, subtitle=${affaireLabelDetails})}"></mj-head>
+<mj-head th:replace="~{fragments/headline(title=${'Devis n°'+quotation.id}, subtitle=${affaireLabelDetails})}"></mj-head>
 <mj-section background-color="#ffffff" padding="10px">
   <mj-column>
     <mj-text color="#666666" font-size="16px" line-height="24px">
       Bonjour <span th:text="${customerName}"></span>,
     </mj-text>
     <mj-text color="#666666" font-size="16px" line-height="24px">
-      Nous vous adressons une nouvelle fois la facture de votre commande n°<span th:text="${customerOrder.id}"> du <span th:text="${invoiceCreatedDateString}"></span> à télécharger en pièce-jointe.
+      Pour donner suite à votre demande, veuillez trouver en pièce jointe votre devis n°<span th:text="${quotation.id}"></span>.
     </mj-text>
-    <mj-text color="#666666" font-size="16px" font-weight="600" line-height="24px" th:if="${isLastReminder}">
-      Sans réglement de votre part dans les 10 jours, nous nous verrons contraints de vous mettre en demeure pour la somme en question.
-    </mj-text>
-    <mj-text color="#666666" font-size="16px" line-height="24px">Afin de régler cette facture d'un montant de <span th:text="${#numbers.formatDecimal(remainingToPay,1,2)}"></span> € dans les meilleurs délais, vous disposez de plusieurs moyens de paiement :</mj-text>
     <mj-text color="#666666" font-size="16px" line-height="24px">
-      ➡️ <strong>Virement </strong>en indiquant cette référence dans le libellé : <strong><span th:text="${invoice.id}"></span></strong> :<br />
+      Pour le valider utiliser le bouton ci-dessous. <br />
+      Dès réception de votre validation ou du paiement de son montant, la commande sera automatiquement ouverte.
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">Vous disposez de plusieurs moyens de règlement pour cette commande :</mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      ➡️ <strong>Virement </strong>en indiquant cette référence dans le libellé : <strong><span th:text="${quotation.id}"></span></strong> :<br />
       IBAN / BIC : <span th:text="${ibanJss}"></span> / <span th:text="${bicJss}"></span><br />
       <span th:if="${cbLink!=null && !isQrCodePaymentDisabled}">➡️ <strong>Carte bancaire</strong> en vous rendant sur votre compte MyJSS (ci-dessous), en flashant le QR code ci-dessous ou en cliquant <a th:href="${cbLink}" target="_blank">ici</a></span>
       <span th:if="${cbLink!=null && isQrCodePaymentDisabled}">➡️ <strong>Carte bancaire</strong> en vous rendant sur votre compte MyJSS (ci-dessous) ou en cliquant <a th:href="${cbLink}" target="_blank">ici</a></span>
     </mj-text>
     <mj-image alt="qrCode" th:href="${cbLink}" th:src="|cid:${qrCodePicture}|"></mj-image>
-    <mj-text color="#666666" font-size="16px" line-height="24px">
-      Retrouvez tous les détails de votre commande en cliquant simplement sur le bouton ci-dessous.
-    </mj-text>
     <mj-text color="#666666" font-size="16px" line-height="24px" padding-top="24px">
       Nous restons à votre disposition pour toute information complémentaire.
     </mj-text>
@@ -30,6 +28,6 @@
     </mj-text>
   </mj-column>
 </mj-section>
-<mj-head th:replace="~{fragments/cta(title='Accéder à mon compte', buttonText='Payer ma facture',buttonUrl=${myJssEntryPoint+'/account/order/pay/'+customerOrder.id})}"></mj-head>
+<mj-head th:replace="~{fragments/cta(title='Accéder à mon compte', buttonText='Voir mon devis',buttonUrl=${myJssEntryPoint+'/account/quotation/pay/'+customerOrder.id})}"></mj-head>
 <mj-head th:replace="~{fragments/signature}"></mj-head>
 <mj-head th:replace="~{fragments/footer}"></mj-head>

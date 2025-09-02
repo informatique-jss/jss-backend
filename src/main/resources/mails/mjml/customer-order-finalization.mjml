@@ -6,7 +6,7 @@
       Bonjour <span th:text="${customerName}"></span>,
     </mj-text>
     <mj-text color="#666666" font-size="16px" line-height="24px">
-      Nous avons le plaisir de vous informer de la finalisation de votre commande..
+      Nous avons le plaisir de vous informer de la finalisation de votre commande n°<span th:text="${customerOrder.id}"></span>.
     </mj-text>
 
     <mj-text color="#666666" font-size="16px" line-height="24px"> La facture n°<strong><span th:text="${invoice.id}"></span></strong> est à télécharger en pièce-jointe.</p>
@@ -19,7 +19,7 @@
       <span th:if="${cbLink!=null && !isQrCodePaymentDisabled}">➡️ <strong>Carte bancaire</strong> en vous rendant sur votre compte MyJSS (ci-dessous), en flashant le QR code ci-dessous ou en cliquant <a th:href="${cbLink}" target="_blank">ici</a></span>
       <span th:if="${cbLink!=null && isQrCodePaymentDisabled}">➡️ <strong>Carte bancaire</strong> en vous rendant sur votre compte MyJSS (ci-dessous) ou en cliquant <a th:href="${cbLink}" target="_blank">ici</a></span>
     </mj-text>
-    <mj-image alt="qrCode" th:href="${cbLink}" th:src="|cid:${qrCodePicture}|"></mj-image>
+    <mj-image alt="qrCode" th:href="${cbLink}" th:src="|cid:${qrCodePicture}|" width="150px"></mj-image>
     <mj-text color="#666666" font-size="16px" line-height="24px">
       Retrouvez tous les détails de votre commande en cliquant simplement sur le bouton ci-dessous.
     </mj-text>

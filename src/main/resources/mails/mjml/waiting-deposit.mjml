@@ -6,14 +6,12 @@
       Bonjour <span th:text="${customerName}"></span>,
     </mj-text>
     <mj-text color="#666666" font-size="16px" line-height="24px">
-      Nous vous adressons une nouvelle fois la facture de votre commande n°<span th:text="${customerOrder.id}"> du <span th:text="${invoiceCreatedDateString}"></span> à télécharger en pièce-jointe.
+      Nous vous confirmons la prise en compte de votre commande dont le traitement débutera dès réception de votre acompte d'un montant de <span th:text="${#numbers.formatDecimal(depositAmount,1,2)}"> €</span>.<br />
+      Le montant de cet acompte sera déduit de la facture finale qui vous sera transmise par mail ultérieurement.
     </mj-text>
-    <mj-text color="#666666" font-size="16px" font-weight="600" line-height="24px" th:if="${isLastReminder}">
-      Sans réglement de votre part dans les 10 jours, nous nous verrons contraints de vous mettre en demeure pour la somme en question.
-    </mj-text>
-    <mj-text color="#666666" font-size="16px" line-height="24px">Afin de régler cette facture d'un montant de <span th:text="${#numbers.formatDecimal(remainingToPay,1,2)}"></span> € dans les meilleurs délais, vous disposez de plusieurs moyens de paiement :</mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">Vous disposez de plusieurs moyens de règlement pour cette commande :</mj-text>
     <mj-text color="#666666" font-size="16px" line-height="24px">
-      ➡️ <strong>Virement </strong>en indiquant cette référence dans le libellé : <strong><span th:text="${invoice.id}"></span></strong> :<br />
+      ➡️ <strong>Virement </strong>en indiquant cette référence dans le libellé : <strong><span th:text="${customerOrder.id}"></span></strong> :<br />
       IBAN / BIC : <span th:text="${ibanJss}"></span> / <span th:text="${bicJss}"></span><br />
       <span th:if="${cbLink!=null && !isQrCodePaymentDisabled}">➡️ <strong>Carte bancaire</strong> en vous rendant sur votre compte MyJSS (ci-dessous), en flashant le QR code ci-dessous ou en cliquant <a th:href="${cbLink}" target="_blank">ici</a></span>
       <span th:if="${cbLink!=null && isQrCodePaymentDisabled}">➡️ <strong>Carte bancaire</strong> en vous rendant sur votre compte MyJSS (ci-dessous) ou en cliquant <a th:href="${cbLink}" target="_blank">ici</a></span>
@@ -30,6 +28,6 @@
     </mj-text>
   </mj-column>
 </mj-section>
-<mj-head th:replace="~{fragments/cta(title='Accéder à mon compte', buttonText='Payer ma facture',buttonUrl=${myJssEntryPoint+'/account/order/pay/'+customerOrder.id})}"></mj-head>
+<mj-head th:replace="~{fragments/cta(title='Accéder à mon compte', buttonText='Payer mon acompte',buttonUrl=${myJssEntryPoint+'/account/order/pay/'+customerOrder.id})}"></mj-head>
 <mj-head th:replace="~{fragments/signature}"></mj-head>
 <mj-head th:replace="~{fragments/footer}"></mj-head>
