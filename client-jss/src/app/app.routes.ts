@@ -50,6 +50,10 @@ export const routes: Routes = [
         loadComponent: () => import('./main/components/post-tendency-header/post-tendency-header.component').then(m => m.PostTendencyHeaderComponent)
       },
       {
+        path: 'post/premium',
+        loadComponent: () => import('./main/components/post-premium-header/post-premium-header.component').then(m => m.PostPremiumHeaderComponent)
+      },
+      {
         path: 'post/:slug',
         loadComponent: () => import('./main/components/post/post.component').then(m => m.PostComponent)
       },
