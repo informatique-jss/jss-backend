@@ -12,5 +12,6 @@ export interface InvoiceSearch {
   customerOrders: Tiers[];
   invoiceId: number;
   customerOrderId: number;
+  affaireId: number;
   salesEmployee: Employee;
 }

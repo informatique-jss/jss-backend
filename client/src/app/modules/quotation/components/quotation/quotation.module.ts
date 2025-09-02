@@ -27,6 +27,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule, Routes } from '@angular/router';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { DirectDebitTransfertListComponent } from 'src/app/modules/invoicing/components/direct-debit-transfert-list/direct-debit-transfert-list.component';
+import { InvoiceListComponent } from 'src/app/modules/invoicing/components/invoice-list/invoice-list.component';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
 import { GuichetUniqueStatusComponent } from '../../guichet-unique-status/guichet-unique-status.component';
 import { ActeDepositComponent } from '../acte-deposit/acte-deposit.component';
@@ -89,6 +90,7 @@ import { SelectServiceDialogComponent } from '../select-service-dialog/select-se
 import { ServiceSidePanelDetailsComponent } from '../service-side-panel-details/service-side-panel-details.component';
 import { ServiceComponent } from '../service/service.component';
 import { SimpleProvisionComponent } from '../simple-provision/simple-provision.component';
+import { SuggestedQuotationsDialogComponent } from '../suggested-quotations-dialog/suggested-quotations-dialog.component';
 import { QuotationComponent } from './quotation.component';
 
 const routes: Routes = [
@@ -202,6 +204,8 @@ const routes: Routes = [
     ServiceSidePanelDetailsComponent,
     IncidentReportListComponent,
     AddIncidentReportComponent,
+    InvoiceListComponent,
+    SuggestedQuotationsDialogComponent,
     AffaireCorrectionComponent,
   ],
   exports: [
@@ -224,7 +228,8 @@ const routes: Routes = [
     OrderSidePanelDetailsComponent,
     ServiceSidePanelDetailsComponent,
     AddIncidentReportComponent,
-    IncidentReportListComponent
+    IncidentReportListComponent,
+    InvoiceListComponent,
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }

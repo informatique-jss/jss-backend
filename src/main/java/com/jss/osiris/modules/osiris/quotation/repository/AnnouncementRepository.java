@@ -115,11 +115,13 @@ public interface AnnouncementRepository extends QueryCacheCrudRepository<Announc
                         + " or lower(af.denomination) like %:searchText% "
                         + " or lower(concat(af.firstname, ' ', af.lastname)) like %:searchText% "
                         + " or lower(a.notice) like %:searchText% "
-                        + " or af.siren = :searchText )"
+                        + " or af.siren = :searchText ) and publicationDate is not null and publicationDate>=:startDate "
                         + " and c.customerOrderStatus not in (:customerOrderStatusExcluded) and a.announcementStatus in (:announcementStatus) ")
         Page<Announcement> searchAnnouncementForWebSite(@Param("searchText") String searchText,
                         @Param("customerOrderStatusExcluded") List<CustomerOrderStatus> customerOrderStatusExcluded,
                         @Param("announcementStatus") List<AnnouncementStatus> announcementStatus,
+                        @Param("startDate") LocalDate startDate,
                         @Param("confrere") Confrere confrere,
                         Pageable pageable);
+
 }

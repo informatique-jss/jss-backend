@@ -925,6 +925,7 @@ public class Constant implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_provision_type_rbe")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private ProvisionType provisionTypeRbe;
 
 	@ManyToOne

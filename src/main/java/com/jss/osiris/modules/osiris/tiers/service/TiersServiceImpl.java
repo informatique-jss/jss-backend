@@ -167,6 +167,8 @@ public class TiersServiceImpl implements TiersService {
                     mailService.populateMailIds(document.getMailsAffaire());
                 if (document.getMailsClient() != null && document.getMailsClient().size() > 0)
                     mailService.populateMailIds(document.getMailsClient());
+                if (document.getReminderMail() != null)
+                    mailService.populateMailId(document.getReminderMail());
             }
         }
 
@@ -219,6 +221,8 @@ public class TiersServiceImpl implements TiersService {
                             mailService.populateMailIds(document.getMailsAffaire());
                         if (document.getMailsClient() != null && document.getMailsClient().size() > 0)
                             mailService.populateMailIds(document.getMailsClient());
+                        if (document.getReminderMail() != null)
+                            mailService.populateMailId(document.getReminderMail());
                     }
                 }
             }

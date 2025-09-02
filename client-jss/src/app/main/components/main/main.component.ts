@@ -72,7 +72,7 @@ export class MainComponent implements OnInit {
         this.currentUser = user;
     })
     // Fetch top posts
-    this.postService.getTopPost(0, 10).subscribe(pagedPosts => {
+    this.postService.getLastPosts(0, 10, "").subscribe(pagedPosts => {
       if (pagedPosts.content) {
         this.lastPosts = pagedPosts.content;
       }
@@ -88,7 +88,7 @@ export class MainComponent implements OnInit {
     // Fetch posts by category
     this.fillPostsForCategories();
     //Fetch most viewed posts
-    this.postService.getMostViewedPosts(0, 5).subscribe(pagedPosts => {
+    this.postService.getMostSeenPosts(0, 5, "").subscribe(pagedPosts => {
       if (pagedPosts.content) {
         this.mostViewedPosts = pagedPosts.content;
       }

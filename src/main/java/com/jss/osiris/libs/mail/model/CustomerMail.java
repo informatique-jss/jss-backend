@@ -75,7 +75,9 @@ public class CustomerMail implements Serializable {
     public static String TEMPLATE_SEND_DEMO_REQUEST = "send-demo-request";
     public static String TEMPLATE_SEND_REPLAY_WEBINAR_REQUEST = "send-replay-webinar-request";
     public static String TEMPLATE_SEND_CONTACT_CONFIRMATION = "send-contact-confirmation";
+    public static String TEMPLATE_SEND_CONTRIBUTION_CONFIRMATION = "send-contribution-confirmation";
     public static String TEMPLATE_SEND_CONTACT_REQUEST = "send-contact-request";
+    public static String TEMPLATE_SEND_CONTRIBUTION_REQUEST = "send-contribution-request";
     public static String TEMPLATE_SEND_PRICES_REQUEST = "send-prices-request";
     public static String TEMPLATE_SEND_CANDIDACY_CONFIRMATION = "send-candidacy-confirmation";
     public static String TEMPLATE_SEND_QUOTATION_CREATION = "send-quotation-creation";
@@ -172,6 +174,8 @@ public class CustomerMail implements Serializable {
     private Boolean isCancelled;
 
     private Boolean isLastReminder;
+
+    private Boolean isQrCodePaymentDisabled;
 
     @ManyToOne
     @JoinColumn(name = "id_subscription")
@@ -626,4 +630,11 @@ public class CustomerMail implements Serializable {
         this.subscription = subscription;
     }
 
+    public Boolean getIsQrCodePaymentDisabled() {
+        return isQrCodePaymentDisabled;
+    }
+
+    public void setIsQrCodePaymentDisabled(Boolean isQrCodePaymentDisabled) {
+        this.isQrCodePaymentDisabled = isQrCodePaymentDisabled;
+    }
 }

@@ -22,10 +22,12 @@ export interface Document {
   mailsClient: Mail[];
   addToClientMailList: boolean;
   mailsAffaire: Mail[];
+  reminderMail: Mail,
   addToAffaireMailList: boolean;
   billingLabelType: BillingLabelType;
   isResponsableOnBilling: boolean;
   isCommandNumberMandatory: boolean;
+  isQrCodePaymentDisabled: boolean;
   commandNumber: string;
   paymentDeadlineType: PaymentDeadlineType;
   refundType: RefundType;

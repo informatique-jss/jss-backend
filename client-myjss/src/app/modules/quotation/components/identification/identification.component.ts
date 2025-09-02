@@ -149,7 +149,7 @@ export class IdentificationComponent implements OnInit {
   }
 
   changeQuotationType(quotationType: QuotationType) {
-    if (this.quotation) {
+    if (this.quotation && !this.quotation.id) {
       this.selectedQuotationType = quotationType;
       if (this.selectedQuotationType.id == QUOTATION_TYPE_QUOTATION.id)
         this.quotation.isQuotation = true;

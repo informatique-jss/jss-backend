@@ -45,4 +45,7 @@ public interface AffaireService {
 
         public List<Affaire> searchAffaireForCorrection();
 
+        public Affaire getAffaireFromDenomination(String firstname, String lastname)
+                        throws OsirisDuplicateException, OsirisException;
+
 }

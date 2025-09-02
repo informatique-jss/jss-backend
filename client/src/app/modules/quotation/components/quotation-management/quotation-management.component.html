@@ -90,6 +90,13 @@
                       propertyName="isResponsableOnBilling"></generic-toggle>
                   </td>
                 </tr>
+                <tr>
+                  <td>
+                    <generic-toggle [(model)]="billingDocument.isQrCodePaymentDisabled"
+                      label="Désactiver le QR code de paiement ?" [form]="quotationManagementForm"
+                      propertyName="isQrCodePaymentDisabled"></generic-toggle>
+                  </td>
+                </tr>
               </table>
               <table class="full-width">
                 <tr>
@@ -106,9 +113,16 @@
                   </td>
                 </tr>
               </table>
-              <addressing [editMode]="editMode" [document]="billingDocument "
-                (documentChange)="updateAdressing($event)"></addressing>
+              <addressing [editMode]="editMode" [document]="billingDocument" (documentChange)="updateAdressing($event)">
+              </addressing>
               <table class="full-width">
+                <tr>
+                  <td>
+                    <single-chips-mail label="Mails" [(model)]="billingDocument.reminderMail"
+                      [form]="quotationManagementForm" propertyName="reminderMail"
+                      label="Adresse mail de relance pour facturation" [isDisabled]="!editMode"></single-chips-mail>
+                  </td>
+                </tr>
                 <tr *ngIf="billingMailComputeResult">
                   <td>
                     <div *ngIf="billingMailComputeResult?.isSendToAffaire">

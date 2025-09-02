@@ -145,11 +145,16 @@ public class MyJssQuotationDelegate {
             fetchOrder = customerOrderService.addOrUpdateCustomerOrder(fetchOrder, true, false);
         }
 
+        if (!fetchOrder.getServiceFamilyGroup().getId().equals(order.getServiceFamilyGroup().getId())) {
+            fetchOrder.setServiceFamilyGroup(order.getServiceFamilyGroup());
+            fetchOrder = customerOrderService.addOrUpdateCustomerOrder(fetchOrder, true, false);
+        }
+
         if (isValidation != null && isValidation) {
             customerOrderService.addOrUpdateCustomerOrderStatus(fetchOrder, CustomerOrderStatus.BEING_PROCESSED, true);
-            if (customerOrderService.isOnlyJssAnnouncement(order, true)) {
-                quotationValidationHelper.validateQuotationAndCustomerOrder(order, null);
-                customerOrderService.autoBilledProvisions(order);
+            if (customerOrderService.isOnlyJssAnnouncement(fetchOrder, true)) {
+                quotationValidationHelper.validateQuotationAndCustomerOrder(fetchOrder, null);
+                customerOrderService.autoBilledProvisions(fetchOrder);
             }
         }
         return order;

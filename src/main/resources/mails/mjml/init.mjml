@@ -1,0 +1,138 @@
+<mjml>
+  <mj-head>
+    <mj-title>
+      Journal Spécial des Sociétés
+    </mj-title>
+    <mj-font href="https://fonts.googleapis.com/css2?family=Inter" name="'Inter',Arial, sans-serif"></mj-font>
+    <mj-attributes>
+      <mj-all font-family="Inter, Arial, sans-serif"></mj-all>
+    </mj-attributes>
+  </mj-head>
+  <mj-body background-color="#ffffff">
+    <!--[if mso]>
+<v:background xmlns:v="urn:schemas-microsoft-com:vml" fill="t">
+  <v:fill type="tile" src="https://cdn.shopify.com/s/files/1/0863/8971/9346/files/173591824498016_photo-1467810563316-b5476525c0f9_w_800_h_400_fit_crop.png" color="#F2E3CA"/>
+</v:background>
+<![endif]-->
+    <!--[if !mso]><!-->
+    <mj-wrapper full-width="full-width" background-url="https://cdn.shopify.com/s/files/1/0863/8971/9346/files/173591824498016_photo-1467810563316-b5476525c0f9_w_800_h_400_fit_crop.png" background-color="#F2E3CA" background-repeat="repeat" background-size="100% auto">
+      <!--<![endif]-->
+      <mj-section padding="0" background-color="#ffffff">
+
+        <!-- Colonne image -->
+        <mj-column width="100%" padding="0">
+          <mj-image src="https://cdn.shopify.com/s/files/1/0863/8971/9346/files/173591824498016_photo-1467810563316-b5476525c0f9_w_800_h_400_fit_crop.png" alt="Illustration" padding="0" />
+        </mj-column>
+
+        <!-- Bloc texte superposé -->
+        <mj-column width="50%" background-color="#1c2d41" border-radius="12px" padding="24px" css-class="overlay-block">
+          <mj-image src="https://cdn.shopify.com/s/files/1/0863/8971/9346/files/173591824498016_photo-1467810563316-b5476525c0f9_w_800_h_400_fit_crop.png" alt="My JSS" align="left" width="100px" padding-bottom="20px" />
+          <mj-text font-size="20px" font-weight="bold">
+            Relance automatique<br />dossier en attente AC -1
+          </mj-text>
+        </mj-column>
+
+      </mj-section>
+      <mj-section background-color="#ffffff" padding-bottom="0">
+        <mj-column>
+          <mj-image alt="Logo" href="https://www.easyemail.pro/?utm_source=email_template" src="https://cdn.shopify.com/s/files/1/0863/8971/9346/files/hwm526rq8_e9s0ynhimam_image.png" width="150px"></mj-image>
+        </mj-column>
+      </mj-section>
+      <mj-section background-color="#ffffff" padding-top="0">
+        <mj-column width="5%"></mj-column>
+        <mj-column width="90%">
+          <mj-image padding="0px" alt="New Year Celebration" src="https://cdn.shopify.com/s/files/1/0863/8971/9346/files/173591824498016_photo-1467810563316-b5476525c0f9_w_800_h_400_fit_crop.png"></mj-image>
+        </mj-column>
+        <mj-column width="5%"></mj-column>
+      </mj-section>
+      <mj-section background-color="#ffffff">
+        <mj-column width="5%"></mj-column>
+        <mj-column background-color="#1c2d41" border-radius="8px" width="90%">
+          <mj-text align="center" color="#ffffff" font-weight="bold" font-size="24px">
+            Commande n°XXX - Affaire
+          </mj-text>
+          <mj-text align="center" color="#ffffff" font-size="16px" line-height="24px">
+            12 rue de la mairie, Paris
+          </mj-text>
+        </mj-column>
+        <mj-column width="5%"></mj-column>
+      </mj-section>
+      <mj-section background-color="#ffffff" padding="10px">
+        <mj-column>
+          <mj-text color="#666666" font-size="16px" line-height="24px">
+            Bonjour [civilité] [nom],
+          </mj-text>
+          <mj-text color="#666666" font-size="16px" line-height="24px">
+            Nous vous remercions de nous avoir confié votre dossier pour lequel nous allons formaliser le ou
+            les évènement(s) suivant(s) :
+          </mj-text>
+          <mj-text color="#666666" font-size="16px" line-height="24px">
+            • Modification relative aux dirigeants<br />
+            • Autre modification concernant la personne<br />
+            • LBE avec formalité
+          </mj-text>
+          <mj-text color="#666666" font-size="16px" line-height="24px">
+            Pourriez-vous nous envoyer dès que possible ces pièces manquantes à notre dossier :</mj-text>
+          <mj-text color="#666666" font-size="16px" line-height="24px">
+            • Les justificatifs relatifs à la fin de la location gérance  </mj-text>
+          <mj-text color="#666666" font-size="16px" line-height="24px">
+            Vous pouvez les déposer sur notre plateforme MyJSS.</mj-text>
+          <mj-text color="#666666" font-size="16px" line-height="24px" padding-top="30px">
+            Nous restons à votre disposition pour toute information complémentaire.
+          </mj-text>
+        </mj-column>
+      </mj-section>
+      <mj-section background-color="#ffffff">
+        <mj-column width="5%"></mj-column>
+        <mj-column background-color="#1c2d41" border-radius="8px" width="90%" padding-top="20px" padding-bottom="20px">
+          <mj-text align="center" color="#ffffff" font-size="24px" font-weight="bold">
+            Accéder à mon compte
+          </mj-text>
+          <mj-button width="200px" align="center" background-color="#ffffff" color="#666666" href="#" font-size="16px" font-weight="900" border-radius="8px">
+            Déposer sur MyJSS
+          </mj-button>
+        </mj-column>
+        <mj-column width="5%"></mj-column>
+      </mj-section>
+
+      <mj-section background-color="#ffffff">
+        <mj-column>
+          <mj-text align="center" color="#666666" font-size="26px" line-height="24px">
+            Murielle Ranarivelo </mj-text>
+          <mj-text align="center" color="#666666" font-size="16px">
+            Formaliste Senior - Juriste </mj-text>
+          <mj-text align="center" color="#666666" font-size="16px">
+            01 47 03 10 10 </mj-text>
+          <mj-text align="center" color="#666666" font-size="16px">
+            mranarivelo@jss.fr
+          </mj-text>
+        </mj-column>
+      </mj-section>
+      <mj-section background-color="#ffffff">
+        <mj-column width="5%"></mj-column>
+        <mj-column width="90%">
+          <mj-image padding="0px" alt="New Year Celebration" src="https://cdn.shopify.com/s/files/1/0863/8971/9346/files/173591824498016_photo-1467810563316-b5476525c0f9_w_800_h_400_fit_crop.png"></mj-image>
+        </mj-column>
+        <mj-column width="5%"></mj-column>
+      </mj-section>
+
+      <mj-section background-color="#1c2d41">
+        <mj-column>
+          <mj-text align="center" color="#ffffff" font-size="14px">
+            Suivez-nous !
+          </mj-text>
+          <mj-social font-size="15px" icon-size="30px" mode="horizontal">
+            <mj-social-element href="#" name="facebook"></mj-social-element>
+            <mj-social-element href="#" name="instagram"></mj-social-element>
+            <mj-social-element href="#" name="twitter"></mj-social-element>
+          </mj-social>
+          <mj-text align="center" color="#ffffff" font-size="12px">
+            Journal Spécial des Sociétés | Mentions légales  | Politique de confidentialité | se désabonner.
+          </mj-text>
+        </mj-column>
+      </mj-section>
+      <!--[if !mso]><!-->
+    </mj-wrapper>
+    <!--<![endif]-->
+  </mj-body>
+</mjml>

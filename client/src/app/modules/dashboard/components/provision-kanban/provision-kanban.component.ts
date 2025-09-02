@@ -37,11 +37,12 @@ import { MissingAttachmentQueryService } from 'src/app/modules/quotation/service
 import { ProvisionService } from 'src/app/modules/quotation/services/provision.service';
 import { SimpleProvisionStatusService } from 'src/app/modules/quotation/services/simple.provision.status.service';
 import { AppService } from 'src/app/services/app.service';
-import { UserPreferenceService } from 'src/app/services/user.preference.service';
+import { RestUserPreferenceService } from 'src/app/services/rest.user.preference.service';
 import { AssoAffaireOrderService } from '../../../quotation/services/asso.affaire.order.service';
-import { SwimlaneType } from '../../model/SwimlaneType';
+import { KanbanView } from '../../model/KanbanView';
+import { DEFAULT_USER_PREFERENCE } from '../../model/UserPreference';
 import { AssignNewOrderDialogComponent } from '../assign-new-order-dialog/assign-new-order-dialog.component';
-import { KanbanComponent } from '../kanban/kanban.component';
+import { KanbanComponent, PROVISION_KANBAN } from '../kanban/kanban.component';
 
 @Component({
   selector: 'provision-kanban',
@@ -82,7 +83,7 @@ export class ProvisionKanbanComponent extends KanbanComponent<Provision, IWorkfl
     private formBuilder: FormBuilder,
     private appService: AppService,
     private constantService: ConstantService,
-    private userPreferenceService: UserPreferenceService,
+    private restUserPreferenceService2: RestUserPreferenceService,
     private announcementService: AnnouncementService,
     public workflowDialog: MatDialog,
     public confirmationDialog: MatDialog,
@@ -98,7 +99,7 @@ export class ProvisionKanbanComponent extends KanbanComponent<Provision, IWorkfl
     private assoAffaireOrderService: AssoAffaireOrderService,
     private employeeService: EmployeeService
   ) {
-    super();
+    super(restUserPreferenceService2);
   }
 
   kanbanForm = this.formBuilder.group({});
@@ -139,30 +140,18 @@ export class ProvisionKanbanComponent extends KanbanComponent<Provision, IWorkfl
 
       this.statusSelected = [];
 
-
-
       // Retrieve bookmark
-      let bookmarkpossibleEntityStatusIds = this.userPreferenceService.getUserSearchBookmark("kanban-provision-status") as number[];
-      if (bookmarkpossibleEntityStatusIds) {
-        this.statusSelected = [];
-        for (let bookmarkpossibleEntityStatusId of bookmarkpossibleEntityStatusIds)
-          for (let orderStatu of this.possibleEntityStatus!)
-            if (bookmarkpossibleEntityStatusId == orderStatu.id)
-              this.statusSelected.push(orderStatu);
-      }
-
-      let bookmarkOrderEmployees = this.userPreferenceService.getUserSearchBookmark("kanban-provision-employee") as Employee[];
-      if (bookmarkOrderEmployees && bookmarkOrderEmployees.length > 0)
-        this.employeesSelected = bookmarkOrderEmployees;
-
-      let bookmarkSwimlaneType = this.userPreferenceService.getUserSearchBookmark("kanban-provision-swimline-type") as SwimlaneType<Provision>;
-      if (bookmarkSwimlaneType) {
-        for (let swimlaneType of this.swimlaneTypes)
-          if (swimlaneType.fieldName == bookmarkSwimlaneType.fieldName)
-            this.selectedSwimlaneType = swimlaneType;
-      } else {
-        this.selectedSwimlaneType = this.swimlaneTypes[0];
-      }
+      this.restUserPreferenceService2.getUserPreferenceValue(this.getKanbanComponentViewCode() + "_" + DEFAULT_USER_PREFERENCE).subscribe(kanbanViewString => {
+        if (kanbanViewString) {
+          let kabanView: KanbanView<Provision, IWorkflowElement<any>>[] = JSON.parse(kanbanViewString);
+          this.statusSelected = [];
+          //default view so only one KanbanView
+          for (let orderStatus of kabanView[0].status)
+            this.statusSelected.push(orderStatus);
+          this.employeesSelected = kabanView[0].employees;
+          this.selectedSwimlaneType = kabanView[0].swimlaneType ? kabanView[0].swimlaneType : this.swimlaneTypes[0];
+        }
+      });
 
       if (this.possibleEntityStatus && this.statusSelected) {
         this.startFilter();
@@ -212,10 +201,19 @@ export class ProvisionKanbanComponent extends KanbanComponent<Provision, IWorkfl
     });
   }
 
-  saveUserPreferencesOnApplyFilter() {
-    this.userPreferenceService.setUserSearchBookmark(this.statusSelected.map(status => status.id), "kanban-provision-status");
-    this.userPreferenceService.setUserSearchBookmark((this.employeesSelected != undefined && this.employeesSelected.length > 0) ? this.employeesSelected : null, "kanban-provision-employee");
-    this.userPreferenceService.setUserSearchBookmark(this.selectedSwimlaneType, "kanban-provision-swimline-type");
+  setKanbanView(kanbanView: KanbanView<Provision, IWorkflowElement<any>>): void {
+    this.labelViewSelected = kanbanView.label;
+    this.statusSelected = kanbanView.status;
+    this.employeesSelected = kanbanView.employees;
+    this.selectedSwimlaneType = kanbanView.swimlaneType;
+  }
+
+  getKanbanView(): KanbanView<Provision, IWorkflowElement<any>> {
+    return { label: this.labelViewSelected, status: this.statusSelected, employees: this.employeesSelected, swimlaneType: this.selectedSwimlaneType } as KanbanView<Provision, IWorkflowElement<any>>;
+  }
+
+  getKanbanComponentViewCode(): string {
+    return PROVISION_KANBAN;
   }
 
   findEntities() {

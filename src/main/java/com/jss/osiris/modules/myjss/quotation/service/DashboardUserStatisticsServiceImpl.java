@@ -61,9 +61,21 @@ public class DashboardUserStatisticsServiceImpl implements DashboardUserStatisti
                             customerOrderStatusService
                                     .getCustomerOrderStatusByCode(CustomerOrderStatus.BEING_PROCESSED),
                             customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.TO_BILLED)),
+                    false,
                     listResponsables);
             if (customerOrderInProgress != null)
                 statistics.setCustomerOrderInProgress(customerOrderInProgress.size());
+
+            // compute customerOrderRequieringAttention
+            statistics.setCustomerOrderInProgress(0);
+            List<CustomerOrder> customerOrderRequieringAttention = customerOrderService.searchOrders(
+                    Arrays.asList(
+                            customerOrderStatusService
+                                    .getCustomerOrderStatusByCode(CustomerOrderStatus.BEING_PROCESSED)),
+                    true,
+                    listResponsables);
+            if (customerOrderRequieringAttention != null)
+                statistics.setCustomerOrderRequieringAttention(customerOrderRequieringAttention.size());
 
             // compute quotationToValidate
             statistics.setQuotationToValidate(0);
@@ -102,6 +114,7 @@ public class DashboardUserStatisticsServiceImpl implements DashboardUserStatisti
             statistics.setCustomerOrderDraft(0);
             List<CustomerOrder> customerOrderDraft = customerOrderService.searchOrders(
                     Arrays.asList(customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT)),
+                    false,
                     listResponsables);
             if (customerOrderDraft != null)
                 statistics.setCustomerOrderDraft(customerOrderDraft.size());

@@ -72,6 +72,9 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         @Query("select p from Post p join p.postViews v where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and :serie MEMBER OF p.postSerie and size(p.jssCategories) > 0 group by p.id order by sum(v.count) desc ")
         Page<Post> findMostSeenPostSerie(Pageable pageable, @Param("serie") Serie serie);
 
+        @Query("select p from Post p join p.postViews v where p.isCancelled = false AND p.isPremium = true AND p.date<=CURRENT_TIMESTAMP and size(p.jssCategories) > 0 group by p.id order by sum(v.count) desc ")
+        Page<Post> findMostSeenPremiumPosts(Pageable pageable);
+
         @Query("select p from Post p join p.postViews v where :category MEMBER OF p.postCategories AND p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and :publishingDepartment MEMBER OF p.departments and size(p.jssCategories) > 0 group by p.id order by sum(v.count) desc ")
         Page<Post> findMostSeenPostPublishingDepartment(Pageable pageable, Category category,
                         @Param("publishingDepartment") PublishingDepartment publishingDepartment);
@@ -132,5 +135,8 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         @Query("SELECT p FROM Post p WHERE :readingFolder MEMBER OF p.readingFolders")
         Page<Post> findByReadingFolders(@Param(value = "readingFolder") ReadingFolder readingFolder,
                         Pageable pageable);
+
+        @Query("SELECT p FROM Post p WHERE (p.isCancelled = false OR p.isCancelled IS NULL) AND p.isPremium = true AND :category MEMBER OF p.postCategories")
+        Page<Post> findActivePremiumPosts(@Param("category") Category category, Pageable pageable);
 
 }

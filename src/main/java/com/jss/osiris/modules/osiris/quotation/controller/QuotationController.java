@@ -47,7 +47,6 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.BillingType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Department;
-import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.osiris.miscellaneous.model.WeekDay;
 import com.jss.osiris.modules.osiris.miscellaneous.service.CityService;
@@ -983,7 +982,7 @@ public class QuotationController {
   public ResponseEntity<MailComputeResult> computeMailForBilling(
       @RequestBody CustomerOrder quotation) throws OsirisException, OsirisClientMessageException {
     return new ResponseEntity<MailComputeResult>(
-        mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(quotation),
+        mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(quotation, false),
         HttpStatus.OK);
   }
 
@@ -1083,7 +1082,7 @@ public class QuotationController {
       throw new OsirisValidationException("customerOrder");
     try {
       MailComputeResult mailComputeResult = mailComputeHelper
-          .computeMailForCustomerOrderFinalizationAndInvoice(customerOrder);
+          .computeMailForCustomerOrderFinalizationAndInvoice(customerOrder, false);
       if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
         throw new OsirisValidationException("MailTo");
       customerOrderService.generateInvoiceMail(customerOrder);
@@ -1101,7 +1100,7 @@ public class QuotationController {
       throw new OsirisValidationException("customerOrder");
     try {
       MailComputeResult mailComputeResult = mailComputeHelper
-          .computeMailForCustomerOrderFinalizationAndInvoice(customerOrder);
+          .computeMailForCustomerOrderFinalizationAndInvoice(customerOrder, false);
       if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
         throw new OsirisValidationException("MailTo");
       customerOrderService.sendInvoiceMail(customerOrder);
@@ -1531,41 +1530,6 @@ public class QuotationController {
     if (confrere.getSpecialOffers() != null) {
       for (SpecialOffer specialOffer : confrere.getSpecialOffers()) {
         validationHelper.validateReferential(specialOffer, false, "specialOffer");
-      }
-    }
-
-    if (confrere.getDocuments() != null && confrere.getDocuments().size() > 0) {
-      for (Document document : confrere.getDocuments()) {
-
-        validationHelper.validateReferential(document.getDocumentType(), true, "DocumentType");
-
-        if (document.getMailsAffaire() != null && !validationHelper.validateMailList(document.getMailsAffaire()))
-          throw new OsirisValidationException("MailsAffaire");
-        if (document.getMailsClient() != null && document.getMailsClient() != null
-            && document.getMailsClient().size() > 0)
-          if (!validationHelper.validateMailList(document.getMailsClient()))
-            throw new OsirisValidationException("MailsClient");
-
-        validationHelper.validateString(document.getAffaireAddress(), false, 200, "AffaireAddress");
-        validationHelper.validateString(document.getClientAddress(), false, 200, "ClientAddress");
-        validationHelper.validateString(document.getBillingAddress(), false, 200, "BillingAddress");
-        validationHelper.validateString(document.getBillingLabel(), false, 200, "BillingLabel");
-        validationHelper.validateString(document.getAffaireRecipient(), false, 200, "AffaireRecipient");
-        validationHelper.validateString(document.getClientRecipient(), false, 200, "ClientRecipient");
-        validationHelper.validateString(document.getCommandNumber(), false, 40, "CommandNumber");
-        validationHelper.validateReferential(document.getPaymentDeadlineType(), false, "PaymentDeadlineType");
-        validationHelper.validateReferential(document.getRefundType(), false, "RefundType");
-        validationHelper.validateIban(document.getRefundIBAN(), false, "RefundIBAN");
-        validationHelper.validateBic(document.getRefundBic(), false, "RefundBic");
-        validationHelper.validateReferential(document.getBillingClosureType(), false, "BillingClosureType");
-        validationHelper.validateReferential(document.getBillingClosureRecipientType(), false,
-            "BillingClosureRecipientType");
-
-        if (document.getIsRecipientAffaire() == null)
-          document.setIsRecipientAffaire(false);
-        if (document.getIsRecipientClient() == null)
-          document.setIsRecipientClient(false);
-
       }
     }
 
@@ -2903,6 +2867,20 @@ public class QuotationController {
 
     return new ResponseEntity<List<CustomerOrder>>(
         customerOrderService.getCustomerOrdersByVoucherAndResponsable(voucher, null), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/quotations/affaire")
+  @JsonView(JacksonViews.OsirisListView.class)
+  public ResponseEntity<List<Quotation>> getQuotationByAffaire(@RequestParam Integer idAffaire)
+      throws OsirisValidationException {
+
+    Affaire affaire = affaireService.getAffaire(idAffaire);
+
+    if (affaire == null)
+      throw new OsirisValidationException("affaire");
+
+    return new ResponseEntity<List<Quotation>>(
+        quotationService.getQuotationByAffaire(affaire), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/customer-order-assignation/update")

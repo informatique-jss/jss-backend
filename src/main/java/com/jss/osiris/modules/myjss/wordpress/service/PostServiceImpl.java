@@ -200,6 +200,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public Page<Post> getMostSeenPremiumPost(Pageable pageableRequest) {
+        return postRepository.findMostSeenPremiumPosts(pageableRequest);
+    }
+
+    @Override
     public Page<Post> getMostSeenPostByPublishingDepartment(Pageable pageableRequest,
             PublishingDepartment publishingDepartment) throws OsirisException {
         return postRepository.findMostSeenPostPublishingDepartment(pageableRequest, getCategoryArticle(),
@@ -276,6 +281,7 @@ public class PostServiceImpl implements PostService {
         modifyPodcastUrls(post);
         modifyVideoUrls(post);
         modifyHrefToOpenInNewTab(post);
+        modifyImgSrc(post);
         reformatQuotes(post);
         reformatFootnotes(post);
 
@@ -354,6 +360,33 @@ public class PostServiceImpl implements PostService {
     }
 
     /**
+     * Changing HTML to redirect picture to NAS
+     * 
+     * @param post
+     */
+    private void modifyImgSrc(Post post) {
+        String content = post.getOriginalContentText();
+
+        // Pattern qui capture chaque balise <img ...>
+        Pattern imgTagPattern = Pattern.compile("<img\\b[^>]*>", Pattern.CASE_INSENSITIVE);
+        Matcher imgMatcher = imgTagPattern.matcher(content);
+
+        StringBuffer sb = new StringBuffer();
+        while (imgMatcher.find()) {
+            String imgTag = imgMatcher.group();
+
+            String updatedImgTag = imgTag
+                    .replaceAll("(src=\")" + wordpressMediaBaseUrl, "$1" + apacheMediaBaseUrl)
+                    .replaceAll("(srcset=\")" + wordpressMediaBaseUrl, "$1" + apacheMediaBaseUrl);
+
+            imgMatcher.appendReplacement(sb, Matcher.quoteReplacement(updatedImgTag));
+        }
+        imgMatcher.appendTail(sb);
+
+        post.setOriginalContentText(sb.toString());
+    }
+
+    /**
      * Changing HTML for formatting quotes
      * 
      * @param post
@@ -424,7 +457,18 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Page<Post> getJssCategoryPosts(Pageable pageableRequest) throws OsirisException {
+    public Page<Post> getJssCategoryPosts(String searchText, Pageable pageableRequest) throws OsirisException {
+
+        if (searchText != null) {
+            List<IndexEntity> tmpEntitiesFound = null;
+            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
+            if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
+                return searchPostAgainstEntitiesToMatch(searchText,
+                        postRepository.findJssCategoryPosts(getCategoryArticle(), false,
+                                pageableRequest));
+            }
+        }
+
         return postRepository.findJssCategoryPosts(getCategoryArticle(), false,
                 pageableRequest);
     }
@@ -642,6 +686,19 @@ public class PostServiceImpl implements PostService {
         }
         return postRepository.findByDepartmentsAndIsCancelled(getCategoryArticle(), publishingDepartment, false,
                 pageableRequest);
+    }
+
+    @Override
+    public Page<Post> getAllPremiumPosts(String searchText, Pageable pageableRequest) throws OsirisException {
+        if (searchText != null) {
+            List<IndexEntity> tmpEntitiesFound = null;
+            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
+            if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
+                return searchPostAgainstEntitiesToMatch(searchText, postRepository.findActivePremiumPosts(
+                        getCategoryArticle(), pageableRequest));
+            }
+        }
+        return postRepository.findActivePremiumPosts(getCategoryArticle(), pageableRequest);
     }
 
     @Override
@@ -970,4 +1027,5 @@ public class PostServiceImpl implements PostService {
         }
         return post;
     }
+
 }

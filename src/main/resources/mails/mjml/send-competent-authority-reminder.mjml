@@ -1,0 +1,29 @@
+<mj-head th:replace="~{fragments/header}"></mj-head>
+<mj-head th:replace="~{fragments/headline(title=${'Dossier en attente de validation'}, subtitle='')}"></mj-head>
+<mj-section background-color="#ffffff" padding="10px">
+  <mj-column>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Bonjour Madame, Monsieur,
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Nous vous avons adressé le(s) dossier(s) ci-dessous référencé(s), pour effectuer des formalités :
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      <th:block th:each="details : ${provisionDetails}">
+        • <span th:text="${details}"></span>
+      </th:block>
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px" padding-top="24px">
+      Nous souhaiterions obtenir, dans les meilleurs délais, le KBis et/ou le certificat de dépôt correspondant.
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px" padding-top="24px">
+      Nous vous remercions pour la diligence que vous apporterez dans le traitement de cette demande.
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Dans l'attente,<br />
+      Cordialement,
+    </mj-text>
+  </mj-column>
+</mj-section>
+<mj-head th:replace="~{fragments/signature}"></mj-head>
+<mj-head th:replace="~{fragments/footer}"></mj-head>

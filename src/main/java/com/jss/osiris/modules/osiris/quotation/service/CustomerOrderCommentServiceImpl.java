@@ -69,7 +69,8 @@ public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentServ
     }
 
     @Override
-    public CustomerOrderComment createCustomerOrderComment(CustomerOrder customerOrder, String contentComment)
+    public CustomerOrderComment createCustomerOrderComment(CustomerOrder customerOrder, String contentComment,
+            Boolean doNotNotify)
             throws OsirisException {
         CustomerOrderComment customerOrderComment = new CustomerOrderComment();
         customerOrderComment.setCustomerOrder(customerOrder);
@@ -78,7 +79,7 @@ public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentServ
         Employee employee = employeeService.getCurrentEmployee();
         if (employee != null)
             customerOrderComment.setEmployee(employee);
-        else {
+        else if (!doNotNotify) {
             customerOrderComment.setCurrentCustomer(employeeService.getCurrentMyJssUser());
             notificationService.notifyCommentFromMyJssAddToCustomerOrder(customerOrder);
         }

@@ -32,6 +32,7 @@ import { Announcement } from '../../../my-account/model/Announcement';
 import { AssoServiceDocument } from '../../../my-account/model/AssoServiceDocument';
 import { AssoServiceFieldType } from '../../../my-account/model/AssoServiceFieldType';
 import { Provision } from '../../../my-account/model/Provision';
+import { ProvisionType } from '../../../my-account/model/ProvisionType';
 import { Service } from '../../../my-account/model/Service';
 import { ServiceType } from '../../../my-account/model/ServiceType';
 import { AssoServiceDocumentService } from '../../../my-account/services/asso.service.document.service';
@@ -125,6 +126,8 @@ export class RequiredInformationComponent implements OnInit {
   PROVISION_SCREEN_TYPE_DOMICILIATION = PROVISION_SCREEN_TYPE_DOMICILIATION;
   PROVISION_SCREEN_TYPE_ANNOUNCEMENT = PROVISION_SCREEN_TYPE_ANNOUNCEMENT;
 
+  provisionTypeRbe!: ProvisionType;
+
   mailRedirectionTypeOther!: MailRedirectionType;
   domiciliationContractTypeRouteEmailAndMail!: DomiciliationContractType
   domiciliationContractTypeRouteMail!: DomiciliationContractType
@@ -164,12 +167,13 @@ export class RequiredInformationComponent implements OnInit {
     this.noticeTemplateDescription = noticeTemplateService.getNoticeTemplateDescription()
   }
 
-
   informationForm!: FormGroup;
 
   parseInt = parseInt;
 
   async ngOnInit() {
+    this.provisionTypeRbe = this.constantService.getProvisionTypeRbe();
+
     this.noticeTemplateDescriptionSubscription = this.noticeTemplateService.noticeTemplateDescriptionObservable.subscribe(item => {
       if (item && item.isShowNoticeTemplate && this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined && item.announcementOrder != undefined
         && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[item.announcementOrder].announcement) {
@@ -394,6 +398,7 @@ export class RequiredInformationComponent implements OnInit {
     return of(true);
   }
 
+  // TODO : connet to back to save the list of modifiedBeneficialOwners when Pierre has finished the back end
   moveToService(newServiceIndex: number, newAssoIndex: number) {
     if (!this.quotation)
       return;
@@ -717,4 +722,5 @@ export class RequiredInformationComponent implements OnInit {
       return true;
     return false;
   }
+
 }

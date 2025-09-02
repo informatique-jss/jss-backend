@@ -340,6 +340,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             for (Document document : customerOrder.getDocuments()) {
                 mailService.populateMailIds(document.getMailsAffaire());
                 mailService.populateMailIds(document.getMailsClient());
+                mailService.populateMailId(document.getReminderMail());
                 document.setCustomerOrder(customerOrder);
             }
 
@@ -393,7 +394,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         + "</p>" +
                         "<p>Description de la demande : "
                         + (customerOrder.getDescription() != null ? customerOrder.getDescription() : "") + "</p>";
-                customerOrderCommentService.createCustomerOrderComment(customerOrder, comment);
+                customerOrderCommentService.createCustomerOrderComment(customerOrder, comment, true);
             }
         }
 
@@ -580,7 +581,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             }
 
             // save once customer order to recompute invoice item before set it in stone...
-            this.addOrUpdateCustomerOrder(customerOrder, true, checkAllProvisionEnded);
+            this.addOrUpdateCustomerOrder(customerOrder, isFromUser, checkAllProvisionEnded);
 
             // Protection : if we already have an invoice not cancelled, abord...
             if (customerOrder.getInvoices() != null) {
@@ -1536,7 +1537,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         return customerOrder2;
     }
 
-    public List<CustomerOrder> searchOrdersForCurrentUser(List<String> customerOrderStatus, Integer page,
+    public List<CustomerOrder> searchOrdersForCurrentUser(List<String> customerOrderStatus,
+            Boolean withMissingAttachment, Integer page,
             String sortBy) throws OsirisException {
         List<CustomerOrderStatus> customerOrderStatusToFilter = new ArrayList<CustomerOrderStatus>();
         boolean displayPayed = false;
@@ -1574,7 +1576,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 Pageable pageableRequest = PageRequest.of(page, 10, sort);
                 return completeAdditionnalInformationForCustomerOrders(
                         customerOrderRepository.searchOrdersForCurrentUser(responsablesToFilter,
-                                customerOrderStatusToFilter, pageableRequest, customerOrderStatusBilled, displayPayed),
+                                customerOrderStatusToFilter, pageableRequest, customerOrderStatusBilled, displayPayed,
+                                withMissingAttachment, AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT,
+                                FormaliteStatus.FORMALITE_WAITING_DOCUMENT,
+                                SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT),
                         false);
             }
         }
@@ -1846,10 +1851,14 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     public List<CustomerOrder> searchOrders(List<CustomerOrderStatus> customerOrderStatus,
+            Boolean withMissingAttachment,
             List<Responsable> responsables) {
         if (customerOrderStatus != null && customerOrderStatus.size() > 0 && customerOrderStatus.size() > 0
                 && responsables != null && responsables.size() > 0) {
-            return customerOrderRepository.searchOrders(responsables, customerOrderStatus);
+            return customerOrderRepository.searchOrders(responsables, customerOrderStatus,
+                    withMissingAttachment, AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT,
+                    FormaliteStatus.FORMALITE_WAITING_DOCUMENT,
+                    SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT);
         }
         return null;
     }
@@ -2042,6 +2051,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         AssoAffaireOrder assoAffaireOrder = new AssoAffaireOrder();
         assoAffaireOrder.setCustomerOrder(customerOrder);
         assoAffaireOrder.setServices(Arrays.asList(serviceSubscription));
+        if (employeeService.getCurrentMyJssUser() != null)
+            assoAffaireOrder.setAffaire(
+                    affaireService.getAffaireFromDenomination(employeeService.getCurrentMyJssUser().getFirstname(),
+                            employeeService.getCurrentMyJssUser().getLastname()));
 
         customerOrder.setAssoAffaireOrders(Arrays.asList(assoAffaireOrder));
 
@@ -2126,7 +2139,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 batchService.declareNewBatch(Batch.PURGE_CUSTOMER_ORDER, order.getId());
     }
 
-    @Override
     public List<CustomerOrder> findCustomerOrderByFormalisteAssigned(List<Employee> employees,
             CustomerOrderStatus customerOrderStatus, Employee assignedUser, AssignationType assignationType) {
         return customerOrderRepository.findCustomerOrderByFormalisteAndStatusAssigned(employees, customerOrderStatus,

@@ -11,6 +11,7 @@
         <autocomplete-post #autocomplePost [myJssCategory]="selectedMyJssCategory" [(model)]="searchText"
           label="Rechercher" [form]="practicalSheetsForm" propertyName="searchText" [isMandatory]="false"
           [isDisabled]="false" [isDisplayLabel]="false" (onFormChange)="searchForPosts()"
+          (onOptionSelected)="openPost($event.slug, $event)"
           (onChangeMyJssCategory)="getTopPosts($event)"></autocomplete-post>
       </div>
     </div>
@@ -47,13 +48,13 @@
         <div class="h-100">
           <div class="card border-0 bg-tertiary">
             <a (click)="openPost(post.slug,$event)">
-              <img class="card-img-top"
+              <img class="card-img-top" *ngIf="post.media "
                 [src]="post.media && post.media.urlMediumLarge ? post.media.urlMediumLarge : post.media.urlFull"
                 alt="Post image">
             </a>
             <div class="card-body pb-4">
               <div class="d-flex align-items-center mb-4 mt-n1">
-                <span class="fs-sm text-body-secondary">{{post.date | date:'yyyy-MM-dd'}}</span>
+                <span class="fs-sm text-body-secondary">{{post.date | date:'dd/MM/yyyy'}}</span>
                 <span class="fs-xs opacity-20 mx-3">|</span>
                 <a class="badge text-nav fs-xs border" *ngIf="post.postTags[0]"
                   (click)="openTagSearch(post.postTags[0].slug, $event)">{{post.postTags[0].name}}</a>
@@ -107,12 +108,12 @@
       <div class="h-100">
         <div class="card border-0 bg-tertiary">
           <a (click)="openPost(post.slug,$event)">
-            <img class="card-img-top"
+            <img class="card-img-top" *ngIf="post.media "
               [src]="post.media && post.media.urlLarge ? post.media.urlLarge : post.media.urlFull" alt="Post image">
           </a>
           <div class="card-body pb-4">
             <div class="d-flex align-items-center mb-4 mt-n1">
-              <span class="fs-sm text-body-secondary">{{post.date | date:'yyyy-MM-dd'}}</span>
+              <span class="fs-sm text-body-secondary">{{post.date | date:'dd/MM/yyyy'}}</span>
               <span class="fs-xs opacity-20 mx-3">|</span>
               <a class="badge text-nav fs-xs border" *ngIf="post.postTags[0]"
                 (click)="openTagSearch(post.postTags[0].slug, $event)">{{post.postTags[0].name}}</a>
@@ -172,7 +173,7 @@
             </a>
             <div class="card-body pb-4">
               <div class="d-flex align-items-center mb-4 mt-n1">
-                <span class="fs-sm text-body-secondary">{{post.date | date:'yyyy-MM-dd'}}</span>
+                <span class="fs-sm text-body-secondary">{{post.date | date:'dd/MM/yyyy'}}</span>
                 <span class="fs-xs opacity-20 mx-3">|</span>
                 <a class="badge text-nav fs-xs border" *ngIf="post.postTags[0]"
                   (click)="openTagSearch(post.postTags[0].slug, $event)">{{post.postTags[0].name}}</a>

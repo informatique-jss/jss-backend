@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MY_JSS_CGV_ROUTE, MY_JSS_CONFIDENTIALITY_ROUTE, MY_JSS_JOIN_US_ROUTE, MY_JSS_LEGAL_MENTIONS_ROUTE, MY_JSS_PARTNERS_ROUTE, MY_JSS_SERVICES_ANNOUNCEMENT_ROUTE, MY_JSS_SERVICES_APOSITLLE_ROUTE, MY_JSS_SERVICES_DOCUMENT_ROUTE, MY_JSS_SERVICES_DOMICILIATION_ROUTE, MY_JSS_SERVICES_FORMALITY_ROUTE, MY_JSS_SUBSCRIBE_ROUTE, MY_JSS_WHO_ARE_WE_ROUTE } from '../../../libs/Constants';
+import { MY_JSS_CGV_ROUTE, MY_JSS_CONFIDENTIALITY_ROUTE, MY_JSS_JOIN_US_ROUTE, MY_JSS_LEGAL_MENTIONS_ROUTE, MY_JSS_SERVICES_ANNOUNCEMENT_ROUTE, MY_JSS_SERVICES_APOSITLLE_ROUTE, MY_JSS_SERVICES_DOCUMENT_ROUTE, MY_JSS_SERVICES_DOMICILIATION_ROUTE, MY_JSS_SERVICES_FORMALITY_ROUTE, MY_JSS_SUBSCRIBE_ROUTE, MY_JSS_WHO_ARE_WE_ROUTE } from '../../../libs/Constants';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { AppService } from '../../../services/app.service';
 import { JssCategory } from '../../model/JssCategory';
@@ -96,16 +96,16 @@ export class FooterComponent implements OnInit {
     this.appService.openMyJssRoute(event, MY_JSS_JOIN_US_ROUTE);
   }
 
-  openPartners(event: any) {
-    this.appService.openMyJssRoute(event, MY_JSS_PARTNERS_ROUTE);
-  }
-
   openLegalMentions(event: any) {
     this.appService.openMyJssRoute(event, MY_JSS_LEGAL_MENTIONS_ROUTE);
   }
 
   openCgv(event: any) {
     this.appService.openMyJssRoute(event, MY_JSS_CGV_ROUTE);
+  }
+
+  openPrivacyPolicy(event: any) {
+    this.appService.openMyJssRoute(event, MY_JSS_CONFIDENTIALITY_ROUTE);
   }
 
   openPodcastPosts(event: any) {

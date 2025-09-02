@@ -63,6 +63,13 @@ export class BillingClosureComponent implements OnInit {
       });
   }
 
+  exportReceipt() {
+    if (this.currentUser) {
+      this.appService.showLoadingSpinner();
+      this.billingClosureService.downloadBillingClosureReceiptValueForResponsable(this.currentUser.id);
+      this.appService.hideLoadingSpinner();
+    }
+  }
 
   changeFilter() {
     this.receiptValues = [];

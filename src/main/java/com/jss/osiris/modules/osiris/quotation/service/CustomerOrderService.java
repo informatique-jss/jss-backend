@@ -132,7 +132,8 @@ public interface CustomerOrderService {
         public void generateRecurringCustomerOrders() throws OsirisException, OsirisClientMessageException,
                         OsirisValidationException, OsirisDuplicateException;
 
-        public List<CustomerOrder> searchOrdersForCurrentUser(List<String> customerOrderStatus, Integer page,
+        public List<CustomerOrder> searchOrdersForCurrentUser(List<String> customerOrderStatus,
+                        Boolean withMissingAttachment, Integer page,
                         String sortBy) throws OsirisException;
 
         public List<CustomerOrder> searchOrdersForCurrentUserAndAffaire(Affaire affaire) throws OsirisException;
@@ -144,6 +145,7 @@ public interface CustomerOrderService {
         public List<CustomerOrderComment> getCustomerOrderCommentsForCustomer(CustomerOrder customerOrder);
 
         public List<CustomerOrder> searchOrders(List<CustomerOrderStatus> customerOrderStatus,
+                        Boolean withMissingAttachment,
                         List<Responsable> responsables);
 
         public CustomerOrder completeAdditionnalInformationForCustomerOrder(CustomerOrder customerOrder,

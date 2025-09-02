@@ -22,7 +22,12 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.SpringTemplateEngine;
+import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+import org.thymeleaf.templateresolver.ITemplateResolver;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 import org.xhtmlrenderer.util.XRLog;
 
@@ -128,6 +133,26 @@ public class GeneratePdfDelegate {
     @Autowired
     TranslationService translationService;
 
+    public static final String EMAIL_TEMPLATE_ENCODING = "UTF-8";
+
+    public TemplateEngine emailTemplateEngine() {
+        final SpringTemplateEngine templateEngine = new SpringTemplateEngine();
+        templateEngine.addTemplateResolver(htmlTemplateResolver());
+        // Message source, internationalization specific to emails
+        return templateEngine;
+    }
+
+    private ITemplateResolver htmlTemplateResolver() {
+        final ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
+        templateResolver.setOrder(Integer.valueOf(1));
+        templateResolver.setPrefix("mails/templates/");
+        templateResolver.setSuffix(".html");
+        templateResolver.setTemplateMode(TemplateMode.HTML);
+        templateResolver.setCharacterEncoding(EMAIL_TEMPLATE_ENCODING);
+        templateResolver.setCacheable(false);
+        return templateResolver;
+    }
+
     @Transactional(rollbackFor = Exception.class)
     public File generatePublicationForAnnouncement(Announcement announcement, Provision provision,
             boolean isPublicationFlag,
@@ -161,7 +186,7 @@ public class GeneratePdfDelegate {
 
             // Create the HTML body using Thymeleaf
             final String htmlContent = StringEscapeUtils
-                    .unescapeHtml4(mailHelper.emailTemplateEngine().process("publication-flag", ctx));
+                    .unescapeHtml4(emailTemplateEngine().process("publication-flag", ctx));
 
             OutputStream outputStream;
             File tempFile2;
@@ -265,7 +290,7 @@ public class GeneratePdfDelegate {
 
         // Create the HTML body using Thymeleaf
         String htmlContent = StringEscapeUtils
-                .unescapeHtml4(mailHelper.emailTemplateEngine().process("letter-page", ctx));
+                .unescapeHtml4(emailTemplateEngine().process("letter-page", ctx));
 
         File tempFile;
         OutputStream outputStream;
@@ -373,7 +398,7 @@ public class GeneratePdfDelegate {
         ctx.setVariable("debitBalance", debitBalance);
 
         // Create the HTML body using Thymeleaf
-        final String htmlContent = mailHelper.emailTemplateEngine().process("billing-closure-receipt", ctx);
+        final String htmlContent = emailTemplateEngine().process("billing-closure-receipt", ctx);
 
         File tempFile;
         OutputStream outputStream;
@@ -409,18 +434,29 @@ public class GeneratePdfDelegate {
         ctx.setVariable("responsableOnBilling", quotation.getResponsable().getFirstname() + " "
                 + quotation.getResponsable().getLastname());
         ctx.setVariable("assos", quotation.getAssoAffaireOrders());
-        ctx.setVariable("quotation", quotation);
 
-        if (quotation.getCreatedDate() != null)
-            ctx.setVariable("quotationCreatedDate", quotation.getCreatedDate().format(DateTimeFormatter
-                    .ofPattern("dd/MM/yyyy")));
+        Boolean hasDocuments = null;
+        if (!quotation.getAssoAffaireOrders().isEmpty())
+            hasDocuments = quotation.getAssoAffaireOrders().stream()
+                    .filter(asso -> asso.getServices() != null)
+                    .flatMap(asso -> asso.getServices().stream())
+                    .anyMatch(service -> service.getAssoServiceDocuments() != null
+                            && !service.getAssoServiceDocuments().isEmpty());
+        ctx.setVariable("hasDocuments", hasDocuments);
+
+        ctx.setVariable("quotation", quotation);
+        ctx.setVariable("quotationCreatedDate",
+                quotation.getEffectiveDate() != null ? quotation.getEffectiveDate().format(DateTimeFormatter
+                        .ofPattern("dd/MM/yyyy"))
+                        : quotation.getCreatedDate().format(DateTimeFormatter
+                                .ofPattern("dd/MM/yyyy")));
         ctx.setVariable("endOfYearDateString",
                 LocalDate.now().withMonth(12).withDayOfMonth(31).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
         mailHelper.setQuotationPrice(quotation, ctx);
 
         final String htmlContent = StringEscapeUtils
-                .unescapeHtml4(mailHelper.emailTemplateEngine().process("quotation-page", ctx));
+                .unescapeHtml4(emailTemplateEngine().process("quotation-page", ctx));
         File tempFile;
         OutputStream outputStream;
         try {
@@ -457,7 +493,7 @@ public class GeneratePdfDelegate {
                 .compareTo(zeroValue) > 0)
             ctx.setVariable("discountTotal", invoiceHelper.getDiscountTotal(invoice));
 
-        // Group debouts for asso invoice item debours
+        // Group debours for asso invoice item debours
         if (customerOrder != null) {
             List<AssoAffaireOrder> assos = new ArrayList<AssoAffaireOrder>();
             if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0)
@@ -622,7 +658,7 @@ public class GeneratePdfDelegate {
         }
         // Create the HTML body using Thymeleaf
         final String htmlContent = StringEscapeUtils
-                .unescapeHtml4(mailHelper.emailTemplateEngine().process("invoice-page", ctx));
+                .unescapeHtml4(emailTemplateEngine().process("invoice-page", ctx));
 
         try {
             PrintWriter out = new PrintWriter("C:\\uploads\\html.txt");
@@ -1156,7 +1192,7 @@ public class GeneratePdfDelegate {
 
         // Create the HTML body using Thymeleaf
         String htmlContent = StringEscapeUtils
-                .unescapeHtml4(mailHelper.emailTemplateEngine().process(template, ctx));
+                .unescapeHtml4(emailTemplateEngine().process(template, ctx));
 
         File tempFile;
         OutputStream outputStream;
@@ -1391,7 +1427,7 @@ public class GeneratePdfDelegate {
         }
 
         final String htmlContent = StringEscapeUtils
-                .unescapeHtml4(mailHelper.emailTemplateEngine().process("registration-act", ctx));
+                .unescapeHtml4(emailTemplateEngine().process("registration-act", ctx));
 
         File tempFile;
         OutputStream outputStream;
@@ -1444,7 +1480,7 @@ public class GeneratePdfDelegate {
         }
 
         final String htmlContent = StringEscapeUtils
-                .unescapeHtml4(mailHelper.emailTemplateEngine().process("tracking-sheet", ctx));
+                .unescapeHtml4(emailTemplateEngine().process("tracking-sheet", ctx));
 
         File tempFile;
         OutputStream outputStream;
@@ -1484,9 +1520,9 @@ public class GeneratePdfDelegate {
         XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
         try {
             renderer.setDocumentFromString(
-                    htmlContent.replaceAll("\\p{C}", " ")
-                            .replace("&mail", "mail").replace("&validationToken", "validationToken")
-                            .replaceAll("&", "<![CDATA[&]]>").replaceAll("&#160;", " "));
+                    htmlContent.replaceAll("\\p{C}", " ").replaceAll("&#160;", " ")
+                            .replaceAll("&(?![a-zA-Z#0-9]+;)", "&amp;")
+                            .replaceAll("font-size:\\s*0(px|pt|em|rem)?", "font-size:1px"));
 
             renderer.setScaleToFit(true);
             renderer.layout();

@@ -20,6 +20,7 @@ import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.AnnouncementStatus;
@@ -83,6 +84,9 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Autowired
     AnnouncementStatusService announcementStatusService;
+
+    @Autowired
+    NotificationService notificationService;
 
     @Override
     public Service getService(Integer id) {
@@ -162,7 +166,10 @@ public class ServiceServiceImpl implements ServiceService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean deleteServiceFromUser(Service service) {
-        return deleteService(service, false);
+        service = getService(service.getId());
+        deleteService(service, false);
+        notificationService.notifyQuotationModified(service.getAssoAffaireOrder().getCustomerOrder());
+        return true;
     }
 
     private Boolean deleteService(Service service, boolean permanentlyDeleteAttachments) {
@@ -700,8 +707,7 @@ public class ServiceServiceImpl implements ServiceService {
                     for (Provision provision : service.getProvisions()) {
                         if (provision.getAnnouncement() != null
                                 && provision.getAnnouncement().getConfrere() != null)
-                            service.setConfrereLabel(
-                                    "publié sur " + provision.getAnnouncement().getConfrere().getLabel());
+                            service.setConfrereLabel(provision.getAnnouncement().getConfrere().getLabel());
 
                         if (provision.getSimpleProvision() != null
                                 && provision.getSimpleProvision().getSimpleProvisionStatus() != null

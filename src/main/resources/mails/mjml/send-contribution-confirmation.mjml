@@ -1,0 +1,19 @@
+<mj-head th:replace="~{fragments/header}"></mj-head>
+<mj-head th:replace="~{fragments/headline(title=${'Votre contribution'}, subtitle='')}"></mj-head>
+<mj-section background-color="#ffffff" padding="10px">
+  <mj-column>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Bonjour,
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Nous vous confirmons la prise en compte de votre demande de contribution. Un de nos journalistes vous contactera dans les plus brefs délais.
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Nous restons à votre disposition pour toute information complémentaire.
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Cordialement,
+    </mj-text>
+  </mj-column>
+</mj-section>
+<mj-head th:replace="~{fragments/footer}"></mj-head>

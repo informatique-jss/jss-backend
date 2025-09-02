@@ -14,7 +14,6 @@ import { AssoAffaireOrder } from 'src/app/modules/quotation/model/AssoAffaireOrd
 import { Provision } from 'src/app/modules/quotation/model/Provision';
 import { Service } from 'src/app/modules/quotation/model/Service';
 import { AffaireService } from 'src/app/modules/quotation/services/affaire.service';
-import { AssoAffaireOrderService } from 'src/app/modules/quotation/services/asso.affaire.order.service';
 import { ServiceService } from 'src/app/modules/quotation/services/service.service';
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from 'src/app/services/habilitations.service';
@@ -53,7 +52,6 @@ export class ServiceSidePanelDetailsComponent implements OnInit {
     private habilitationService: HabilitationsService,
     private notificationService: NotificationService,
     private appService: AppService,
-    private assoAffaireOrderService: AssoAffaireOrderService,
     private affaireService: AffaireService
   ) { }
 

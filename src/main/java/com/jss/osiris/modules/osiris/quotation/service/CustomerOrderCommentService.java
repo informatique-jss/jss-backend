@@ -10,22 +10,24 @@ import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 
 public interface CustomerOrderCommentService {
-    public List<CustomerOrderComment> getCustomerOrderComments();
+        public List<CustomerOrderComment> getCustomerOrderComments();
 
-    public CustomerOrderComment getCustomerOrderComment(Integer id);
+        public CustomerOrderComment getCustomerOrderComment(Integer id);
 
-    public List<CustomerOrderComment> getCustomerOrderCommentForOrder(CustomerOrder customerOrder);
+        public List<CustomerOrderComment> getCustomerOrderCommentForOrder(CustomerOrder customerOrder);
 
-    public CustomerOrderComment addOrUpdateCustomerOrderComment(CustomerOrderComment customerOrderComment);
+        public CustomerOrderComment addOrUpdateCustomerOrderComment(CustomerOrderComment customerOrderComment);
 
-    public CustomerOrderComment createCustomerOrderComment(CustomerOrder customerOrder, String contentComment)
-            throws OsirisException;
+        public CustomerOrderComment createCustomerOrderComment(CustomerOrder customerOrder, String contentComment,
+                        Boolean doNotNotify)
+                        throws OsirisException;
 
-    public CustomerOrderComment tagActiveDirectoryGroupOnCustomerOrderComment(CustomerOrderComment customerOrderComment,
-            ActiveDirectoryGroup activeDirectoryGroup);
+        public CustomerOrderComment tagActiveDirectoryGroupOnCustomerOrderComment(
+                        CustomerOrderComment customerOrderComment,
+                        ActiveDirectoryGroup activeDirectoryGroup);
 
-    public List<CustomerOrderComment> getCustomerOrderCommentForQuotation(Quotation quotation);
+        public List<CustomerOrderComment> getCustomerOrderCommentForQuotation(Quotation quotation);
 
-    public List<CustomerOrderComment> getCustomerOrderCommentForProvision(Provision provision);
+        public List<CustomerOrderComment> getCustomerOrderCommentForProvision(Provision provision);
 
 }

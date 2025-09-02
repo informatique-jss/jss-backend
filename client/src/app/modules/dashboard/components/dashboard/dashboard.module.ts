@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
@@ -26,6 +27,7 @@ import { ProvisionAffectationKanbanComponent } from '../provision-affectation-ka
 import { ProvisionBoardComponent } from '../provision-board/provision-board.component';
 import { ProvisionKanbanComponent } from '../provision-kanban/provision-kanban.component';
 import { QuotationKanbanComponent } from '../quotation-kanban/quotation-kanban.component';
+import { SaveCurrentViewDialog } from '../save-current-view-dialog/save-current-view-dialog.component';
 import { DashboardComponent } from './dashboard.component';
 
 const routes: Routes = [
@@ -55,6 +57,7 @@ const routes: Routes = [
     InvoicingModule,
     QuotationModule,
     AdministrationModule,
+    MatDialogModule,
     NgxEchartsModule.forRoot({
       echarts: () => import('echarts'),
     }),
@@ -66,7 +69,8 @@ const routes: Routes = [
     QuotationKanbanComponent,
     AssignNewOrderDialogComponent,
     ProvisionKanbanComponent,
-    ProvisionAffectationKanbanComponent
+    ProvisionAffectationKanbanComponent,
+    SaveCurrentViewDialog,
   ],
   exports: [
   ],

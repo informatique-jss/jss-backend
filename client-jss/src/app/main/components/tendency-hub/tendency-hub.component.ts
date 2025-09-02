@@ -36,6 +36,6 @@ export class TendencyHubComponent extends GenericHubComponent<{ id: number }> im
   }
 
   override getMostSeenPostByEntityType(selectedEntityType: Post, page: number, pageSize: number): Observable<PagedContent<Post>> {
-    return this.postService.getMostViewedPosts(page, pageSize);
+    return this.postService.getMostSeenPosts(page, pageSize, "");
   }
 }

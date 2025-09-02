@@ -1,0 +1,36 @@
+<mjml th:fragment="header">
+  <mj-head>
+    <mj-title>
+      Journal Spécial des Sociétés
+    </mj-title>
+    <mj-font href="https://fonts.googleapis.com/css2?family=Inter" name="'Inter',Arial, sans-serif"></mj-font>
+    <mj-attributes>
+      <mj-all font-family="Inter, Arial, sans-serif"></mj-all>
+    </mj-attributes>
+  </mj-head>
+  <mj-body background-color="#ffffff">
+    <!--[if mso]>
+<v:background xmlns:v="urn:schemas-microsoft-com:vml" fill="t" style="display:block;mso-hide:all;">
+  <v:fill type="tile" th:src="${'cid:'+mailBackgroundPicture}" color="#F2E3CA"/>
+</v:background>
+<![endif]-->
+    <!--[if !mso]><!-->
+    <mj-wrapper full-width="full-width" th:attr="background-url=${'cid:' + mailBackgroundPicture}" background-color="#F2E3CA" background-repeat="repeat" background-size="100% auto">
+      <!--<![endif]-->
+      <mj-section background-color="transparent" padding-bottom="0">
+        <mj-column></mj-column>
+      </mj-section>
+      <mj-section background-color="#ffffff" padding-bottom="0">
+        <mj-column width="5%"></mj-column>
+        <mj-column width="90%">
+          <mj-image alt="Logo" th:href="${websiteUrl}" th:src="${'cid:'+mailLogoPicture}" width="150px"></mj-image>
+        </mj-column>
+        <mj-column width="5%"></mj-column>
+      </mj-section>
+      <mj-section background-color="#ffffff" padding-top="0" th:if="${mailHeaderPicture}!=null">
+        <mj-column width="5%"></mj-column>
+        <mj-column width="90%">
+          <mj-image padding="0px" th:src="${'cid:' + mailHeaderPicture}"></mj-image>
+        </mj-column>
+        <mj-column width="5%"></mj-column>
+      </mj-section>

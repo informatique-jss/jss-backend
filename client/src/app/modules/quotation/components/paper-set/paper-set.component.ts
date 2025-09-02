@@ -40,6 +40,7 @@ export class PaperSetComponent implements OnInit {
     this.displayedColumns.push({ id: "id", fieldName: "id", label: "N°" } as SortTableColumn<PaperSetResult>);
     this.displayedColumns.push({ id: "paperSetType", fieldName: "paperSetTypeLabel", label: "Action à réaliser" } as SortTableColumn<PaperSetResult>);
     this.displayedColumns.push({ id: "locationNumber", fieldName: "locationNumber", label: "Emplacement" } as SortTableColumn<PaperSetResult>);
+    this.displayedColumns.push({ id: "competentAuthorityLabel", fieldName: "competentAuthorityLabel", label: "Autorité compétente" } as SortTableColumn<PaperSetResult>);
     this.displayedColumns.push({ id: "creationComment", fieldName: "creationComment", label: "Commentaire" } as SortTableColumn<PaperSetResult>);
     this.displayedColumns.push({ id: "validationComment", fieldName: "validationComment", label: "Commentaire de validation/annulation" } as SortTableColumn<PaperSetResult>);
     this.displayedColumns.push({ id: "isCancelled", fieldName: "isCancelled", label: "Annulé ?", valueFonction: (element: PaperSetResult | PaperSetResult) => { if (element.isCancelled) return "Oui"; return "Non"; } } as unknown as SortTableColumn<PaperSetResult | PaperSetResult>);
@@ -136,6 +137,7 @@ export class PaperSetComponent implements OnInit {
           paperSet.customerOrder = this.customerOrder;
           paperSet.paperSetType = dialogResult.paperSetType;
           paperSet.creationComment = dialogResult.creationComment;
+          paperSet.competentAuthority = dialogResult.competentAuthority;
           this.paperSetService.addOrUpdatePaperSet(paperSet).subscribe(newPaperSet => {
             this.refreshPaperSets();
             if (this.customerOrder)
