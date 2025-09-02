@@ -457,7 +457,18 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Page<Post> getJssCategoryPosts(Pageable pageableRequest) throws OsirisException {
+    public Page<Post> getJssCategoryPosts(String searchText, Pageable pageableRequest) throws OsirisException {
+
+        if (searchText != null) {
+            List<IndexEntity> tmpEntitiesFound = null;
+            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
+            if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
+                return searchPostAgainstEntitiesToMatch(searchText,
+                        postRepository.findJssCategoryPosts(getCategoryArticle(), false,
+                                pageableRequest));
+            }
+        }
+
         return postRepository.findJssCategoryPosts(getCategoryArticle(), false,
                 pageableRequest);
     }

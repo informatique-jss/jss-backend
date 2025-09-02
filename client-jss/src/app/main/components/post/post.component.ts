@@ -204,7 +204,7 @@ export class PostComponent implements OnInit, AfterViewInit {
   }
 
   getMostSeenPosts(page: number, pageSize: number): Observable<PagedContent<Post>> {
-    return this.postService.getMostViewedPosts(page, pageSize);
+    return this.postService.getMostSeenPosts(page, pageSize, "");
   }
 
   fetchComments(page: number) {

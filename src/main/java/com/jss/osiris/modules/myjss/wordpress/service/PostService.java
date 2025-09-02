@@ -29,7 +29,7 @@ public interface PostService {
                         Responsable responsable,
                         Pageable pageableRequest);
 
-        public Page<Post> getJssCategoryPosts(Pageable pageableRequest) throws OsirisException;
+        public Page<Post> getJssCategoryPosts(String searchText, Pageable pageableRequest) throws OsirisException;
 
         public List<Post> getMyJssCategoryPosts(int page) throws OsirisException;
 
