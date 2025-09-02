@@ -1,0 +1,22 @@
+<mj-head th:replace="~{fragments/header}"></mj-head>
+<mj-head th:replace="~{fragments/headline(title=${'Nouvelle demande de tarifs'}, subtitle='')}"></mj-head>
+<mj-section background-color="#ffffff" padding="10px">
+  <mj-column>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Bonjour,
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Nous avons reçu une demande de tarif d'un client. Ci-dessous le contact client et son message :
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      <span th:text="${explaination}"></span>
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Merci de prendre contact avec ce dernier.
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Cordialement,
+    </mj-text>
+  </mj-column>
+</mj-section>
+<mj-head th:replace="~{fragments/footer}"></mj-head>

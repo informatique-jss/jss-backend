@@ -1,0 +1,36 @@
+<mj-head th:replace="~{fragments/header}"></mj-head>
+<mj-head th:replace="~{fragments/headline(title=${'Commande n°'+customerOrder.id}, subtitle=${affaireLabelDetails})}"></mj-head>
+<mj-section background-color="#ffffff" padding="10px">
+  <mj-column>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Bonjour <span th:text="${customerName}"></span>,
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Nous avons le plaisir de vous informer de la finalisation de votre commande n°<span th:text="${customerOrder.id}"></span>.
+    </mj-text>
+
+    <mj-text color="#666666" font-size="16px" line-height="24px"> La facture n°<strong><span th:text="${invoice.id}"></span></strong> est à télécharger en pièce-jointe.</p>
+    </mj-text>
+
+    <mj-text color="#666666" font-size="16px" line-height="24px">Vous disposez de plusieurs moyens de règlement pour cette commande :</mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      ➡️ <strong>Virement </strong>en indiquant cette référence dans le libellé : <strong><span th:text="${invoice.id}"></span></strong> :<br />
+      IBAN / BIC : <span th:text="${ibanJss}"></span> / <span th:text="${bicJss}"></span><br />
+      <span th:if="${cbLink!=null && !isQrCodePaymentDisabled}">➡️ <strong>Carte bancaire</strong> en vous rendant sur votre compte MyJSS (ci-dessous), en flashant le QR code ci-dessous ou en cliquant <a th:href="${cbLink}" target="_blank">ici</a></span>
+      <span th:if="${cbLink!=null && isQrCodePaymentDisabled}">➡️ <strong>Carte bancaire</strong> en vous rendant sur votre compte MyJSS (ci-dessous) ou en cliquant <a th:href="${cbLink}" target="_blank">ici</a></span>
+    </mj-text>
+    <mj-image alt="qrCode" th:href="${cbLink}" th:src="|cid:${qrCodePicture}|" width="150px"></mj-image>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Retrouvez tous les détails de votre commande en cliquant simplement sur le bouton ci-dessous.
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px" padding-top="24px">
+      Nous restons à votre disposition pour toute information complémentaire.
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Cordialement,
+    </mj-text>
+  </mj-column>
+</mj-section>
+<mj-head th:replace="~{fragments/cta(title='Accéder à mon compte', buttonText='Régler ma facture',buttonUrl=${myJssEntryPoint+'/account/order/pay/'+customerOrder.id})}"></mj-head>
+<mj-head th:replace="~{fragments/signature}"></mj-head>
+<mj-head th:replace="~{fragments/footer}"></mj-head>

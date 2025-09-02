@@ -1,0 +1,21 @@
+<mj-head th:replace="~{fragments/header}"></mj-head>
+<mj-head th:replace="~{fragments/headline(title=${'Article Premium offert'}, subtitle='')}"></mj-head>
+<mj-section background-color="#ffffff" padding="10px">
+  <mj-column>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Bonjour,
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      <span th:text="${responsable.firstName}"> </span><span th:text="${responsable.lastName}"></span> vous offre un article payant du JSS. Vous pouvez le consulter gratuitement, simplement en cliquant sur le lien suivant ci-dessous.
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Nous vous souhaitons une bonne lecture.
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Cordialement,
+    </mj-text>
+  </mj-column>
+</mj-section>
+<mj-head th:replace="~{fragments/cta(title='Article offert', buttonText='Accéder à mon article',buttonUrl=${postLink})}"></mj-head>
+<mj-head th:replace="~{fragments/cta(title='Découvrez l'ensemble de nos offres d'abonnement', buttonText='Nos offres d'abonnement',buttonUrl=${jssMediaEntryPoint+'/subscription'})}"></mj-head>
+<mj-head th:replace="~{fragments/footer}"></mj-head>
