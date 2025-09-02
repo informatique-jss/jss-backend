@@ -57,6 +57,11 @@ public class ResponsableServiceImpl implements ResponsableService {
     }
 
     @Override
+    public List<Responsable> getAllActiveResponsables() {
+        return responsableRepository.findByIsActiveTrue();
+    }
+
+    @Override
     public List<Responsable> getResponsables(String searchedValue) {
         if (searchedValue == null || searchedValue.trim().length() <= 2)
             return null;

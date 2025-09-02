@@ -69,6 +69,7 @@ public class KpiOrderCompletionAverageTimeService implements IKpiCrm {
         return kpiCrmService.getKpiCrmByCode(getCode()).getLabel();
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public List<KpiCrmValue> getComputeValue(Responsable responsable, LocalDate startDate, LocalDate endDate) {
         List<KpiCrmValue> dailyKpis = new ArrayList<>();
@@ -111,6 +112,7 @@ public class KpiOrderCompletionAverageTimeService implements IKpiCrm {
         return dailyKpis;
     }
 
+    @Override
     public AnalyticStatsType getKpiCrmAggregatedValue(List<Responsable> responsables, LocalDate startDate,
             LocalDate endDate) {
         LocalDateTime startOfDay = startDate.atStartOfDay();
@@ -142,13 +144,13 @@ public class KpiOrderCompletionAverageTimeService implements IKpiCrm {
 
             if (provisionCount > 0) {
                 analyticStatsValue.setValue(kpiTotal.divide(BigDecimal.valueOf(provisionCount), RoundingMode.HALF_UP));
+                analyticStatsValue.setSuffix("Heures");
                 analyticStatsType.setAnalyticStatsValue(analyticStatsValue);
                 analyticStatsType.setValueDate(endDate);
                 analyticStatsType.setId(kpiCrm.getId());
                 analyticStatsType.setTitle(kpiCrm.getLabel());
             }
         }
-
         return analyticStatsType;
     }
 
@@ -160,7 +162,7 @@ public class KpiOrderCompletionAverageTimeService implements IKpiCrm {
                     Formalite.class.getSimpleName(),
                     provision.getFormalite().getId(),
                     FormaliteStatus.FORMALITE_WAITING_DOCUMENT,
-                    "formaliteStatus").toMinutes()));
+                    "formaliteStatus").toHours()));
         }
 
         if (provision.getSimpleProvision() != null) {
@@ -168,7 +170,7 @@ public class KpiOrderCompletionAverageTimeService implements IKpiCrm {
                     SimpleProvision.class.getSimpleName(),
                     provision.getSimpleProvision().getId(),
                     SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT,
-                    "simpleProvisionStatus").toMinutes()));
+                    "simpleProvisionStatus").toHours()));
         }
 
         if (provision.getDomiciliation() != null) {
@@ -176,7 +178,7 @@ public class KpiOrderCompletionAverageTimeService implements IKpiCrm {
                     Domiciliation.class.getSimpleName(),
                     provision.getDomiciliation().getId(),
                     DomiciliationStatus.DOMICILIATION_WAITING_FOR_DOCUMENTS,
-                    "domiciliationStatus").toMinutes()));
+                    "domiciliationStatus").toHours()));
         }
 
         if (provision.getAnnouncement() != null) {
@@ -184,7 +186,7 @@ public class KpiOrderCompletionAverageTimeService implements IKpiCrm {
                     Announcement.class.getSimpleName(),
                     provision.getAnnouncement().getId(),
                     AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT,
-                    "announcementStatus").toMinutes()));
+                    "announcementStatus").toHours()));
         }
 
         return total;

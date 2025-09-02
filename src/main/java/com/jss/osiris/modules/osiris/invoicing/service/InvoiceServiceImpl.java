@@ -758,8 +758,19 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public List<Invoice> getInvoicesForResponsablesAndDates(List<InvoiceStatus> invoiceStatus,
+    public List<Invoice> getDueInvoicesForResponsablesAndDueDates(List<InvoiceStatus> invoiceStatus,
             List<Responsable> responsables, LocalDate startDate, LocalDate endDate) {
+        if (invoiceStatus != null && invoiceStatus.size() > 0 && invoiceStatus.size() > 0
+                && responsables != null && responsables.size() > 0 && startDate != null && endDate != null) {
+            return invoiceRepository.findByResponsableInAndInvoiceStatusInAndDueDateBetween(responsables,
+                    invoiceStatus, startDate, endDate);
+        }
+        return null;
+    }
+
+    @Override
+    public List<Invoice> getInvoicesForResponsablesAndDates(List<InvoiceStatus> invoiceStatus,
+            List<Responsable> responsables, LocalDateTime startDate, LocalDateTime endDate) {
         if (invoiceStatus != null && invoiceStatus.size() > 0 && invoiceStatus.size() > 0
                 && responsables != null && responsables.size() > 0 && startDate != null && endDate != null) {
             return invoiceRepository.findByResponsableInAndInvoiceStatusInAndCreatedDateBetween(responsables,

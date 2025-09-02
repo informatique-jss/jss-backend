@@ -88,7 +88,7 @@ public interface QuotationRepository extends QueryCacheCrudRepository<Quotation,
                         "AND q.createdDate BETWEEN :startOfDay AND :endOfDay " +
                         "AND (:quotationStatus IS NULL OR q.quotationStatus = :quotationStatus)")
         List<Quotation> findByResponsablesAndStatusAndCreatedDateBetween(
-                        @Param("responsable") List<Responsable> responsables,
+                        @Param("responsables") List<Responsable> responsables,
                         @Param("startOfDay") LocalDateTime startOfDay,
                         @Param("endOfDay") LocalDateTime endOfDay,
                         @Param("quotationStatus") QuotationStatus quotationStatus);

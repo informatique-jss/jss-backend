@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.modules.osiris.crm.model.AnalyticStatsType;
 import com.jss.osiris.modules.osiris.crm.model.AnalyticStatsValue;
@@ -53,6 +54,7 @@ public class KpiOpportunityClosingAverageTimeService implements IKpiCrm {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public List<KpiCrmValue> getComputeValue(Responsable responsable, LocalDate startDate, LocalDate endDate) {
         List<KpiCrmValue> dailyKpis = new ArrayList<>();
 
@@ -70,11 +72,12 @@ public class KpiOpportunityClosingAverageTimeService implements IKpiCrm {
 
                 for (Quotation quotation : quotations) {
                     if (!quotation.getCustomerOrders().isEmpty()
-                            && quotation.getCustomerOrders().get(0).getCreatedDate() != null) {
+                            && quotation.getCustomerOrders().get(0).getCreatedDate() != null && quotation
+                                    .getCreatedDate().isBefore(quotation.getCustomerOrders().get(0).getCreatedDate())) {
                         kpiValuesCount++;
                         long daysBetween = Duration.between(
                                 quotation.getCreatedDate(),
-                                quotation.getCustomerOrders().get(0).getCreatedDate()).toDays();
+                                quotation.getCustomerOrders().get(0).getCreatedDate()).toMinutes();
 
                         kpiTotal = kpiTotal.add(BigDecimal.valueOf(daysBetween));
                     }
@@ -113,11 +116,12 @@ public class KpiOpportunityClosingAverageTimeService implements IKpiCrm {
 
             for (Quotation quotation : quotations) {
                 if (!quotation.getCustomerOrders().isEmpty()
-                        && quotation.getCustomerOrders().get(0).getCreatedDate() != null) {
+                        && quotation.getCustomerOrders().get(0).getCreatedDate() != null && quotation
+                                .getCreatedDate().isBefore(quotation.getCustomerOrders().get(0).getCreatedDate())) {
                     kpiValuesCount++;
                     long daysBetween = Duration.between(
                             quotation.getCreatedDate(),
-                            quotation.getCustomerOrders().get(0).getCreatedDate()).toDays();
+                            quotation.getCustomerOrders().get(0).getCreatedDate()).toHours();
 
                     kpiTotal = kpiTotal.add(BigDecimal.valueOf(daysBetween));
                 }
@@ -125,6 +129,7 @@ public class KpiOpportunityClosingAverageTimeService implements IKpiCrm {
 
             if (kpiValuesCount > 0) {
                 analyticStatsValue.setValue(kpiTotal.divide(BigDecimal.valueOf(kpiValuesCount)));
+                analyticStatsValue.setSuffix("Heures");
                 analyticStatsType.setAnalyticStatsValue(analyticStatsValue);
                 analyticStatsType.setValueDate(endDate);
                 analyticStatsType.setId(kpiCrm.getId());

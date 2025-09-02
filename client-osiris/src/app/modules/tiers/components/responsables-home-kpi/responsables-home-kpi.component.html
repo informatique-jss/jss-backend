@@ -58,5 +58,12 @@
       </div>
       }
     </div>
+    <div class="row g-0">
+      @for (kpi of kpiLoaded; track $index) {
+      <div class="col">
+        <app-analytic-statistic-widget [osirisStat]="kpi" />
+      </div>
+      }
+    </div>
   </div>
 </div>

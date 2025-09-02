@@ -1,7 +1,7 @@
 import { Component, OnChanges, OnInit } from '@angular/core';
 import { NgIcon } from '@ng-icons/core';
 import { Subscription } from 'rxjs';
-import { OPPORTUNITY_CLOSING_AVERAGE_TIME, ORDER_COMPLETION_AVERAGE_TIME } from '../../../../libs/Constants';
+import { OPPORTUNITY_CLOSING_AVERAGE_TIME, ORDER_COMPLETION_AVERAGE_TIME, PAYING_INVOICE_AVERAGE_TIME } from '../../../../libs/Constants';
 import { getColor } from '../../../../libs/inspinia/utils/color-utils';
 import { AnalyticStatisticWidgetComponent } from '../../../main/components/analytic-statistic-widget/analytic-statistic-widget.component';
 import { ApexchartComponent } from '../../../main/components/apexchart/apexchart.component';
@@ -226,7 +226,7 @@ export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
 
   selectedResponsables: Responsable[] = [];
 
-  kpiCodeToLoad: string[] = [ORDER_COMPLETION_AVERAGE_TIME, OPPORTUNITY_CLOSING_AVERAGE_TIME];
+  kpiCodeToLoad: string[] = [ORDER_COMPLETION_AVERAGE_TIME, OPPORTUNITY_CLOSING_AVERAGE_TIME, PAYING_INVOICE_AVERAGE_TIME];
   kpiLoaded: AnalyticStatsType[] = [];
   // TODO : first try to init chart after timeout
   // ngAfterViewInit() {
@@ -246,13 +246,16 @@ export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.selectedResponsablesSubscription = this.responsableService.getSelectedResponsables().subscribe(respos => {
       this.selectedResponsables = respos;
-      if (this.selectedResponsables && this.kpiCodeToLoad)
+      if (this.selectedResponsables && this.selectedResponsables.length > 0 && this.kpiCodeToLoad)
         for (let kpiCode of this.kpiCodeToLoad)
           this.analyticStatsTypeService.getAnalyticStatsTypeForTiers(kpiCode, this.selectedResponsables).subscribe(response => {
-            if (response) {
+            if (response && response.length > 0) {
+              for (let kpiToReplace of response) {
+                const index = this.kpiLoaded.findIndex(kpi => kpi.id === kpiToReplace.id);
+                if (index !== -1)
+                  this.kpiLoaded.splice(index, 1);
+              }
               this.kpiLoaded.push(...response);
-              // if (this.kpiLoaded.length > 0 && this.kpiLoaded[0].aggregateType == AGGREGATE_TYPE_AVERAGE)
-              // this.kpiLoaded[0].analyticStatsValue = convertMinutesToTime(this.kpiLoaded[0].analyticStatsValue);
             }
           });
     });

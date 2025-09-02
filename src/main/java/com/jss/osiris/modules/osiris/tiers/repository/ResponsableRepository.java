@@ -159,4 +159,6 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
 
         List<Responsable> findByTiers(Tiers tiers);
 
+        List<Responsable> findByIsActiveTrue();
+
 }

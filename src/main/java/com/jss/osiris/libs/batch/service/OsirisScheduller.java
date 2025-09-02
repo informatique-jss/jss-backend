@@ -18,6 +18,7 @@ import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.libs.mail.IndexationMailService;
 import com.jss.osiris.libs.node.service.NodeService;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingRecordService;
+import com.jss.osiris.modules.osiris.crm.service.KpiCrmService;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.CompetentAuthorityService;
@@ -141,6 +142,9 @@ public class OsirisScheduller {
 
 	@Autowired
 	IncidentReportStatusService incidentReportStatusService;
+
+	@Autowired
+	KpiCrmService kpiCrmService;
 
 	@Bean
 	public ThreadPoolTaskScheduler taskExecutor() {
@@ -502,6 +506,15 @@ public class OsirisScheduller {
 	private void updateIndicatorsValues() {
 		try {
 			indicatorService.updateIndicatorsValues();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(initialDelay = 1000, fixedDelay = 6000)
+	private void updateKpiCrms() {
+		try {
+			kpiCrmService.updateIndicatorsValues();
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}

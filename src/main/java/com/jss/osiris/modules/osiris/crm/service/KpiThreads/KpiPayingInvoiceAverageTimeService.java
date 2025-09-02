@@ -62,7 +62,6 @@ public class KpiPayingInvoiceAverageTimeService implements IKpiCrm {
         List<KpiCrmValue> dailyKpis = new ArrayList<>();
 
         List<Invoice> invoices = new ArrayList<Invoice>();
-
         try {
             invoices = invoiceService.searchInvoices(List.of(constantService.getInvoiceStatusSend()),
                     List.of(responsable));
@@ -97,7 +96,7 @@ public class KpiPayingInvoiceAverageTimeService implements IKpiCrm {
                     List<Audit> audits = null;
                     try {
                         audits = auditService.getAuditForEntityAndFieldName(Invoice.class.getSimpleName(),
-                                invoice.getId(), constantService.getInvoiceStatusSend().getId().toString(),
+                                invoice.getId(), constantService.getInvoiceStatusSend().getCode().toString(),
                                 "invoiceStatus");
                         if (!audits.isEmpty()) {
                             audits.sort(Comparator.comparing(Audit::getDatetime));
@@ -140,10 +139,12 @@ public class KpiPayingInvoiceAverageTimeService implements IKpiCrm {
         AnalyticStatsType analyticStatsType = new AnalyticStatsType();
         AnalyticStatsValue analyticStatsValue = new AnalyticStatsValue();
         KpiCrm kpiCrm = kpiCrmService.getKpiCrmByCode(getCode());
+        LocalDateTime startOfDay = startDate.atStartOfDay();
+        LocalDateTime endOfDay = endDate.atTime(LocalTime.MAX);
 
         try {
             invoices = invoiceService.getInvoicesForResponsablesAndDates(
-                    List.of(constantService.getInvoiceStatusSend()), responsables, startDate, endDate);
+                    List.of(constantService.getInvoiceStatusSend()), responsables, startOfDay, endOfDay);
 
             for (Invoice invoice : invoices) {
                 if (!invoice.getPayments().isEmpty()) {
@@ -163,7 +164,7 @@ public class KpiPayingInvoiceAverageTimeService implements IKpiCrm {
                     List<Audit> audits = null;
                     try {
                         audits = auditService.getAuditForEntityAndFieldName(Invoice.class.getSimpleName(),
-                                invoice.getId(), constantService.getInvoiceStatusSend().getId().toString(),
+                                invoice.getId(), constantService.getInvoiceStatusSend().getCode().toString(),
                                 "invoiceStatus");
                         if (!audits.isEmpty()) {
                             audits.sort(Comparator.comparing(Audit::getDatetime));

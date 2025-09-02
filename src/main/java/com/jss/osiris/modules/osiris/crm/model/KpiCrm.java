@@ -25,6 +25,7 @@ public class KpiCrm implements Serializable, IId {
     public static String PAYING_INVOICE_AVERAGE_TIME = "PAYING_INVOICE_AVERAGE_TIME";
     public static String POTENTIAL_REVENUE_CUMUL = "POTENTIAL_REVENUE_CUMUL";
     public static String AGGREGATE_TYPE_AVERAGE = "AGGREGATE_TYPE_AVERAGE";
+    public static String AGGREGATE_TYPE_DURATION = "AGGREGATE_TYPE_DURATION";
     public static String AGGREGATE_TYPE_CUMUL = "AGGREGATE_TYPE_CUMUL";
     public static String AGGREGATE_TYPE_HISTORIC = "AGGREGATE_TYPE_HISTORIC";
 

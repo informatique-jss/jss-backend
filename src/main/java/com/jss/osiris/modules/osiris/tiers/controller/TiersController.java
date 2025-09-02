@@ -662,7 +662,7 @@ public class TiersController {
 
     return new ResponseEntity<List<AnalyticStatsType>>(
         kpiCrmService.getAggregatedKpis(kpiCrm, responsables, LocalDate.of(2025, 1, 1),
-            LocalDate.of(2025, 1, 31)),
+            LocalDate.of(2025, 9, 30)),
         HttpStatus.OK);
   }
 }

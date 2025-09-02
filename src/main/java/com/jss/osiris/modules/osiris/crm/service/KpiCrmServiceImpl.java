@@ -14,6 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.batch.model.Batch;
+import com.jss.osiris.libs.batch.service.BatchService;
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.crm.model.AnalyticStatsType;
 import com.jss.osiris.modules.osiris.crm.model.AnalyticStatsValue;
 import com.jss.osiris.modules.osiris.crm.model.IKpiCrm;
@@ -23,6 +26,7 @@ import com.jss.osiris.modules.osiris.crm.repository.KpiCrmRepository;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
+import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
 
 @Service
 public class KpiCrmServiceImpl implements KpiCrmService {
@@ -37,6 +41,12 @@ public class KpiCrmServiceImpl implements KpiCrmService {
 
     @Autowired
     KpiCrmValueService kpiCrmValueService;
+
+    @Autowired
+    ResponsableService responsableService;
+
+    @Autowired
+    BatchService batchService;
 
     public KpiCrm addOrUpdateKpiCrm(KpiCrm kpiCrm) {
         return kpiCrmRepository.save(kpiCrm);
@@ -63,10 +73,23 @@ public class KpiCrmServiceImpl implements KpiCrmService {
         return IterableUtils.toList(kpiCrmRepository.findAll());
     }
 
+    @Override
+    public void updateIndicatorsValues() throws OsirisException {
+        List<Responsable> responsables = responsableService.getAllActiveResponsables();
+        if (responsables != null)
+            for (Responsable responsable : responsables)
+                batchService.declareNewBatch(Batch.COMPUTE_KPI_CRM, responsable.getId());
+
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
-    public void computeKpiCrm(Responsable responsable, LocalDate dateToCompute) {
+    public void computeKpiCrm(Integer responsableId, LocalDate dateToCompute) {
         LocalDate startDate = LocalDate.now().minusDays(30);
         LocalDate endDate = LocalDate.now().minusDays(1);
+
+        Responsable responsable = responsableService.getResponsable(responsableId);
+
         if (IKpiServiceList != null && IKpiServiceList.size() > 0)
             for (IKpiCrm iKpi : IKpiServiceList) {
                 List<KpiCrmValue> dailyKpiValues = iKpi.getComputeValue(responsable, startDate, endDate);
@@ -107,7 +130,8 @@ public class KpiCrmServiceImpl implements KpiCrmService {
             aggregatedKpiValues.add(analyticStatsType);
         }
 
-        if (kpiCrm.getAggregateType() != null && kpiCrm.getAggregateType().equals(KpiCrm.AGGREGATE_TYPE_AVERAGE)) {
+        if (kpiCrm.getAggregateType() != null && (kpiCrm.getAggregateType().equals(KpiCrm.AGGREGATE_TYPE_AVERAGE)
+                || kpiCrm.getAggregateType().equals(KpiCrm.AGGREGATE_TYPE_DURATION))) {
             for (IKpiCrm iKpi : IKpiServiceList) {
                 if (iKpi.getCode().equals(kpiCrm.getCode())) {
                     aggregatedKpiValues.add(iKpi.getKpiCrmAggregatedValue(responsables, startDate, endDate));
