@@ -100,7 +100,7 @@
     <span>Regrouper par : </span>
   </div>
   <div mat-menu-item *ngFor="let swimlaneType of swimlaneTypes"
-    (click)="selectedSwimlaneType=swimlaneType;startFilter(true)" class="pointer">
+    (click)="selectedSwimlaneType=swimlaneType;startFilter(false)" class="pointer">
     <mat-icon
       *ngIf="selectedSwimlaneType && swimlaneType.fieldName==selectedSwimlaneType.fieldName">check</mat-icon>{{swimlaneType.label}}
   </div>

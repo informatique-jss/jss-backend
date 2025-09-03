@@ -204,7 +204,6 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
       this.statusSelected = this.possibleEntityStatus.filter(s => statusIds.includes(s.id));
     }
 
-    this.statusSelected = kanbanView.status;
     this.employeesSelected = kanbanView.employees[0];
     this.selectedSwimlaneType = kanbanView.swimlaneType;
     this.startFilter();
