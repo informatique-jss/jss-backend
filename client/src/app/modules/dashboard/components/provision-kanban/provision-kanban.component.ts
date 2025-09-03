@@ -107,7 +107,11 @@ export class ProvisionKanbanComponent extends KanbanComponent<Provision, IWorkfl
   ngOnInit() {
     this.appService.changeHeaderTitle("Tableau de bord");
 
-    this.swimlaneTypes.push({ fieldName: "assignedTo.id", label: "Formaliste", valueFonction: ((provision: Provision) => (provision.assignedTo ? (provision.assignedTo.firstname + ' ' + provision.assignedTo.lastname) : '')), fieldValueFunction: undefined });
+    this.swimlaneTypes.push({
+      fieldName: "assignedTo.id", label: "Formaliste", valueFonction: (provision: Provision) => {
+        return (provision.assignedTo ? (provision.assignedTo.firstname + ' ' + provision.assignedTo.lastname) : '')
+      }, fieldValueFunction: undefined
+    });
     this.swimlaneTypes.push({ fieldName: "service.assoAffaireOrder.customerOrder.responsable.id", label: "Responsable", valueFonction: (provision: Provision) => { return this.getResponsableLabelIQuotation(provision.service.assoAffaireOrder.customerOrder) }, fieldValueFunction: undefined });
     this.swimlaneTypes.push({ fieldName: "service.assoAffaireOrder.customerOrder.responsable.tiers.id", label: "Tiers", valueFonction: (provision: Provision) => { return this.getTiersLabelIQuotation(provision.service.assoAffaireOrder.customerOrder) }, fieldValueFunction: undefined });
     this.swimlaneTypes.push({ fieldName: "service.serviceLabelToDisplay", fieldValueFunction: undefined, label: "Service", valueFonction: undefined });
@@ -145,11 +149,8 @@ export class ProvisionKanbanComponent extends KanbanComponent<Provision, IWorkfl
         if (kanbanViewString) {
           let kabanView: KanbanView<Provision, IWorkflowElement<any>>[] = JSON.parse(kanbanViewString);
           this.statusSelected = [];
-          //default view so only one KanbanView
-          for (let orderStatus of kabanView[0].status)
-            this.statusSelected.push(orderStatus);
-          this.employeesSelected = kabanView[0].employees;
-          this.selectedSwimlaneType = kabanView[0].swimlaneType ? kabanView[0].swimlaneType : this.swimlaneTypes[0];
+          this.setKanbanView(kabanView[0]);
+          return;
         }
       });
 
@@ -205,7 +206,7 @@ export class ProvisionKanbanComponent extends KanbanComponent<Provision, IWorkfl
     this.labelViewSelected = kanbanView.label;
     this.statusSelected = kanbanView.status;
     this.employeesSelected = kanbanView.employees;
-    this.selectedSwimlaneType = kanbanView.swimlaneType;
+    this.selectedSwimlaneType = this.swimlaneTypes.find(s => s.fieldName == kanbanView.swimlaneType.fieldName);
     this.startFilter();
   }
 

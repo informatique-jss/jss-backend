@@ -147,14 +147,9 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
             if (kanbanViewString) {
               let kabanView: KanbanView<CustomerOrder, AffectationEmployee<CustomerOrder>>[] = JSON.parse(kanbanViewString);
               //default view so only one KanbanView
-              if (this.habilitationService.canAddAssignOrderForProduction())
-                this.employeesSelected = kabanView[0].employees[0];
-              this.selectedSwimlaneType = kabanView[0].swimlaneType ? kabanView[0].swimlaneType : this.swimlaneTypes[0];
+              this.setKanbanView(kabanView[0]);
             }
           });
-
-          if (applyFilter)
-            this.applyFilter(isOnlyFilterText);
         } else {
           if (applyFilter)
             this.applyFilter(isOnlyFilterText);
@@ -205,7 +200,7 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
     }
 
     this.employeesSelected = kanbanView.employees[0];
-    this.selectedSwimlaneType = kanbanView.swimlaneType;
+    this.selectedSwimlaneType = this.swimlaneTypes.find(s => s.fieldName == kanbanView.swimlaneType.fieldName);
     this.startFilter();
   }
 

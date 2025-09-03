@@ -85,9 +85,7 @@ export class KanbanInvoicingComponent extends KanbanComponent<CustomerOrder, Inv
       this.restUserPreferenceService2.getUserPreferenceValue(this.getKanbanComponentViewCode() + "_" + DEFAULT_USER_PREFERENCE).subscribe(kanbanViewString => {
         if (kanbanViewString) {
           let kabanView: KanbanView<CustomerOrder, InvoicingBlockage>[] = JSON.parse(kanbanViewString);
-          //default view so only one KanbanView
-          this.employeesSelected = kabanView[0].employees;
-          this.selectedSwimlaneType = kabanView[0].swimlaneType ? kabanView[0].swimlaneType : this.swimlaneTypes[0];
+          this.setKanbanView(kabanView[0]);
         }
       });
 
@@ -148,7 +146,7 @@ export class KanbanInvoicingComponent extends KanbanComponent<CustomerOrder, Inv
     }
 
     this.employeesSelected = kanbanView.employees;
-    this.selectedSwimlaneType = kanbanView.swimlaneType;
+    this.selectedSwimlaneType = this.swimlaneTypes.find(s => s.fieldName == kanbanView.swimlaneType.fieldName);
     this.applyFilter();
   }
 
