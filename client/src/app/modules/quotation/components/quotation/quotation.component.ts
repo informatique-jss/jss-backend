@@ -193,7 +193,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
           }
 
           this.quotationSearchResultService.getQuotationsForCustomerOrder(this.quotation as CustomerOrder).subscribe(response => {
-            if (response)
+            if (response && response.length > 0)
               this.hasQuotation = true;
             else this.hasQuotation = false;
           });
@@ -447,6 +447,12 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
           this.generateInvoiceItem();
         }
       });
+    } else {
+      if (service && !service.provisions) {
+        service.provisions = [] as Array<Provision>;
+      }
+      service.provisions.push(provision);
+      this.generateInvoiceItem();
     }
     return provision;
   }

@@ -131,6 +131,7 @@ export class QuotationKanbanComponent extends KanbanComponent<Quotation, Quotati
     this.statusSelected = kanbanView.status;
     this.employeesSelected = kanbanView.employees;
     this.selectedSwimlaneType = kanbanView.swimlaneType;
+    this.startFilter();
   }
 
   getKanbanView(): KanbanView<Quotation, QuotationStatus> {

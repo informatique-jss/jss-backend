@@ -176,7 +176,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
       promise.subscribe(response => {
         this.asso = response;
         this.quotationSearchResultService.getQuotationsForCustomerOrder(this.asso.customerOrder).subscribe(response => {
-          if (response)
+          if (response && response.length > 0)
             this.hasQuotation = true;
           else this.hasQuotation = false;
         });
@@ -420,6 +420,11 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
           service.provisions.push(provision);
         }
       });
+    } else {
+      if (service && !service.provisions) {
+        service.provisions = [] as Array<Provision>;
+      }
+      service.provisions.push(provision);
     }
     return provision;
   }

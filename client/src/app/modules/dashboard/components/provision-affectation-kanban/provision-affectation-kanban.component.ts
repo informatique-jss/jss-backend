@@ -155,6 +155,9 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
 
           if (applyFilter)
             this.applyFilter(isOnlyFilterText);
+        } else {
+          if (applyFilter)
+            this.applyFilter(isOnlyFilterText);
         }
       });
   }
@@ -195,13 +198,24 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
 
   setKanbanView(kanbanView: KanbanView<CustomerOrder, AffectationEmployee<CustomerOrder>>): void {
     this.labelViewSelected = kanbanView.label;
+
+    if (this.possibleEntityStatus) {
+      const statusIds = kanbanView.status.map(s => s.id);
+      this.statusSelected = this.possibleEntityStatus.filter(s => statusIds.includes(s.id));
+    }
+
     this.statusSelected = kanbanView.status;
     this.employeesSelected = kanbanView.employees[0];
     this.selectedSwimlaneType = kanbanView.swimlaneType;
+    this.startFilter();
   }
 
   getKanbanView(): KanbanView<CustomerOrder, AffectationEmployee<CustomerOrder>> {
-    return { label: this.labelViewSelected, status: this.statusSelected, employees: [this.employeesSelected], swimlaneType: this.selectedSwimlaneType } as KanbanView<CustomerOrder, AffectationEmployee<CustomerOrder>>;
+    let outStatus = [];
+    if (this.statusSelected)
+      for (let status of this.statusSelected)
+        outStatus.push({ id: status.id } as AffectationEmployee<CustomerOrder>);
+    return { label: this.labelViewSelected, status: outStatus, employees: [this.employeesSelected], swimlaneType: this.selectedSwimlaneType } as KanbanView<CustomerOrder, AffectationEmployee<CustomerOrder>>;
   }
 
   getKanbanComponentViewCode(): string {
