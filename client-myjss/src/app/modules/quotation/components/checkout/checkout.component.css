@@ -63,3 +63,8 @@ hr {
   margin-right: 5px;
   margin-top: 10px;
 }
+
+.cgu-link {
+  text-decoration: underline;
+  cursor: pointer;
+}
