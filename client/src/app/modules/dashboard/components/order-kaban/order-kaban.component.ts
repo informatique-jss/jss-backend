@@ -80,10 +80,7 @@ export class OrderKabanComponent extends KanbanComponent<CustomerOrder, Customer
         if (kanbanViewString) {
           let kabanView: KanbanView<CustomerOrder, CustomerOrderStatus>[] = JSON.parse(kanbanViewString);
           //default view so only one KanbanView
-          for (let orderStatus of kabanView[0].status)
-            this.statusSelected.push(orderStatus);
-          this.employeesSelected = kabanView[0].employees;
-          this.selectedSwimlaneType = kabanView[0].swimlaneType ? kabanView[0].swimlaneType : this.swimlaneTypes[0];
+          this.setKanbanView(kabanView[0]);
         }
       });
 
@@ -135,7 +132,7 @@ export class OrderKabanComponent extends KanbanComponent<CustomerOrder, Customer
     this.labelViewSelected = kanbanView.label;
     this.statusSelected = kanbanView.status;
     this.employeesSelected = kanbanView.employees;
-    this.selectedSwimlaneType = kanbanView.swimlaneType;
+    this.selectedSwimlaneType = this.swimlaneTypes.find(s => s.fieldName == kanbanView.swimlaneType.fieldName);
     this.startFilter();
   }
 
