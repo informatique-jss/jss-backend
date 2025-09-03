@@ -933,6 +933,12 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         return getAnnouncementSearch("", LocalDate.now().minusDays(7), pageable).getContent();
     }
 
+    @Override
+    public List<Announcement> getAllAnnouncementsForWebsite() throws OsirisException {
+        Pageable pageable = PageRequest.of(0, Integer.MAX_VALUE);
+        return getAnnouncementSearch("", LocalDate.now().minusYears(150), pageable).getContent();
+    }
+
     private List<Announcement> populateAffaireLabel(List<Announcement> announcements) {
         if (announcements != null)
             for (Announcement announcement : announcements) {
