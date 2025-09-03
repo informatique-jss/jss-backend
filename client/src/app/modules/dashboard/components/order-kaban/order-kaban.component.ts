@@ -136,6 +136,7 @@ export class OrderKabanComponent extends KanbanComponent<CustomerOrder, Customer
     this.statusSelected = kanbanView.status;
     this.employeesSelected = kanbanView.employees;
     this.selectedSwimlaneType = kanbanView.swimlaneType;
+    this.startFilter();
   }
 
   getKanbanView(): KanbanView<CustomerOrder, CustomerOrderStatus> {

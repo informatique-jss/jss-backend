@@ -206,6 +206,7 @@ export class ProvisionKanbanComponent extends KanbanComponent<Provision, IWorkfl
     this.statusSelected = kanbanView.status;
     this.employeesSelected = kanbanView.employees;
     this.selectedSwimlaneType = kanbanView.swimlaneType;
+    this.startFilter();
   }
 
   getKanbanView(): KanbanView<Provision, IWorkflowElement<any>> {

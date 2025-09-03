@@ -101,7 +101,11 @@ public class ProvisionServiceImpl implements ProvisionService {
             }
         }
         provisionRepository.delete(provision);
-        notificationService.notifyQuotationModified(provision.getService().getAssoAffaireOrder().getCustomerOrder());
+        if (provision.getService().getAssoAffaireOrder().getCustomerOrder() != null
+                && provision.getService().getAssoAffaireOrder().getCustomerOrder().getQuotations() != null
+                && provision.getService().getAssoAffaireOrder().getCustomerOrder().getQuotations().size() > 0)
+            notificationService
+                    .notifyQuotationModified(provision.getService().getAssoAffaireOrder().getCustomerOrder());
         return true;
     }
 

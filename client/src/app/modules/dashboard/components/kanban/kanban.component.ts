@@ -51,18 +51,20 @@ export abstract class KanbanComponent<T, U extends IWorkflowElement<T>> {
         swimlane.totalItems = 0;
       }
 
-    // Set bookmark
     this.numberOfEntitiesByStatus = [];
-    if (this.allEntities && this.allEntities.length > 0) {
-      let defaultKanbanView = this.getKanbanView();
-      let defaultKanbanComponentViewCode = this.getKanbanComponentViewCode();
-      this.restUserPreferenceService.setUserPreference(JSON.stringify([defaultKanbanView]), defaultKanbanComponentViewCode + "_" + DEFAULT_USER_PREFERENCE).subscribe();
-    }
 
     if (!isOnlyFilterText) {
       if (this.statusSelected && this.statusSelected.length > 0) {
         this.findEntities().subscribe(response => {
           this.allEntities = response;
+
+          // Set bookmark
+          if (this.allEntities && this.allEntities.length > 0) {
+            let defaultKanbanView = this.getKanbanView();
+            let defaultKanbanComponentViewCode = this.getKanbanComponentViewCode();
+            this.restUserPreferenceService.setUserPreference(JSON.stringify([defaultKanbanView]), defaultKanbanComponentViewCode + "_" + DEFAULT_USER_PREFERENCE).subscribe();
+          }
+
           this.filterCard();
         });
       }
@@ -82,9 +84,9 @@ export abstract class KanbanComponent<T, U extends IWorkflowElement<T>> {
   abstract getEntityStatus(entity: T): U;
   abstract fetchEntityAndOpenPanel(task: T, refreshColumn: boolean, openPanel: boolean): void;
 
-  abstract setKanbanView(kanbanView: KanbanView<T, U>): void; // pour dire à l'enfant quelle KanbanView enregistrer dans le composant pour qu'il affiche la vue avec les bons filtres
-  abstract getKanbanView(): KanbanView<T, U>; // c'est lui qui va valoriser le kanbanView au niveau de l'enfant pour dire au parent quoi enregistrer
-  abstract getKanbanComponentViewCode(): string; // Pour que le parent sache sur quelle vue il doit appliquer les filtres (quotation, provision etc.)
+  abstract setKanbanView(kanbanView: KanbanView<T, U>): void;
+  abstract getKanbanView(): KanbanView<T, U>;
+  abstract getKanbanComponentViewCode(): string;
 
   filterCard() {
     let i = 0;
