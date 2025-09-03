@@ -139,4 +139,9 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         @Query("SELECT p FROM Post p WHERE (p.isCancelled = false OR p.isCancelled IS NULL) AND p.isPremium = true AND :category MEMBER OF p.postCategories")
         Page<Post> findActivePremiumPosts(@Param("category") Category category, Pageable pageable);
 
+        @Query("select p from Post p where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and size(p.jssCategories) > 0 ")
+        List<Post> findAllJssPost();
+
+        @Query("select p from Post p where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and size(p.myJssCategories) > 0 ")
+        List<Post> findAllMyJssPost();
 }

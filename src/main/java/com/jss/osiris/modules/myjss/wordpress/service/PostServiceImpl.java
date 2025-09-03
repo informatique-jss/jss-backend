@@ -1028,4 +1028,14 @@ public class PostServiceImpl implements PostService {
         return post;
     }
 
+    @Override
+    public List<Post> getAllPostsForJssMedia() {
+        return postRepository.findAllJssPost();
+    }
+
+    @Override
+    public List<Post> getAllPostsForMyJss() {
+        return postRepository.findAllMyJssPost();
+    }
+
 }

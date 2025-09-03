@@ -50,6 +50,11 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
+    public List<Author> getAllAuthors() {
+        return authorRepository.findAllAuthors();
+    }
+
+    @Override
     public List<Author> getFollowedAuthorsForCurrentUser() {
         List<Author> authors = new ArrayList<>();
         List<AssoMailAuthor> assoMailAuthors = assoMailAuthorService.getAssoMailAuthorForCurrentUser();

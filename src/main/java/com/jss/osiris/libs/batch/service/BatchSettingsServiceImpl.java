@@ -653,5 +653,17 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.MISCELLANEOUS));
             addOrUpdateBatchSettings(batchSettings);
         }
+        if (getByCode(Batch.GENERATE_SITEMAPS) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.GENERATE_SITEMAPS);
+            batchSettings.setLabel("Génération des sitemaps");
+            batchSettings.setFixedRate(5 * 60 * 1000);
+            batchSettings.setQueueSize(1);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(true);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.MISCELLANEOUS));
+            addOrUpdateBatchSettings(batchSettings);
+        }
     }
 }
