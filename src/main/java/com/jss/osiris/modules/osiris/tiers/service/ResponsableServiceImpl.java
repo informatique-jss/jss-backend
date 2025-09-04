@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.tiers.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -167,5 +168,12 @@ public class ResponsableServiceImpl implements ResponsableService {
                 Arrays.asList(constantService.getInvoiceStatusPayed().getId(),
                         constantService.getInvoiceStatusSend().getId()),
                 this.constantService.getDocumentTypeBilling().getId(), tiersSearch.getWithNonNullTurnover());
+    }
+
+    @Override
+    public Responsable updateHasConnectedMyJss(Responsable responsable) {
+        responsable.setHasAlreadyConnectMyJss(true);
+        responsable.setConsentTermsDate(LocalDateTime.now());
+        return addOrUpdateResponsable(responsable);
     }
 }

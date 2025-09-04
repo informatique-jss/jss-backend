@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.myjss.quotation.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -230,6 +231,10 @@ public class MyJssQuotationDelegate {
                     // User create IQuotation but not connected => send a mail
                     hasToSendConfirmation = true;
                     shouldConnectUserAtTheEnd = false;
+                } else {
+                    Responsable currentUser = employeeService.getCurrentMyJssUser();
+                    currentUser.setConsentTermsDate(LocalDateTime.now());
+                    responsableService.addOrUpdateResponsable(currentUser);
                 }
             }
 

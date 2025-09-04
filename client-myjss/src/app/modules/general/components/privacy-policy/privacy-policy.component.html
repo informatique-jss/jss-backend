@@ -8,14 +8,21 @@
     </ol>
   </nav>
 
-  <ul class="nav nav-tabs" role="tablist">
-    <li class="nav-item" *ngFor="let tab of tabs">
-      <a class="nav-link" [class.active]="selectedTab.id === tab.id" (click)="selectTab(tab)">
-        <i class="fi-home me-2"></i>
-        {{ tab.label }}
-      </a>
-    </li>
-  </ul>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <ul class="nav nav-tabs" role="tablist">
+      <li class="nav-item" *ngFor="let tab of tabs">
+        <a class="nav-link" [class.active]="selectedTab.id === tab.id" (click)="selectTab(tab)">
+          <i class="fi-home me-2"></i>
+          {{ tab.label }}
+        </a>
+      </li>
+    </ul>
+
+    <a *ngIf="selectedTab && selectedTab.pdf" class="nav-link ms-3" [href]="selectedTab.pdf" target="_blank"
+      rel="noopener noreferrer" title="Télécharger">
+      <i class="bi bi-download fs-5"></i>
+    </a>
+  </div>
 </section>
 
 <section class="container pb-5">
