@@ -70,11 +70,13 @@ export class OverviewComponent implements OnInit {
           if (this.acceptTermsModalInstance) {
             return;
           }
-          this.acceptTermsModalInstance = this.modalService.open(this.acceptTermsModalView, {
-          });
 
-          this.acceptTermsModalInstance.result.finally(() => {
-            this.acceptTermsModalInstance = undefined;
+          setTimeout(() => {
+            this.acceptTermsModalInstance = this.modalService.open(this.acceptTermsModalView, { centered: true, size: 'md' });
+
+            this.acceptTermsModalInstance.result.finally(() => {
+              this.acceptTermsModalInstance = undefined;
+            });
           });
         }
       }

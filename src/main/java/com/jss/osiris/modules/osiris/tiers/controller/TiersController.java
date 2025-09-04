@@ -609,14 +609,4 @@ public class TiersController {
   public ResponseEntity<List<Responsable>> getResponsables(@RequestParam String searchedValue) {
     return new ResponseEntity<List<Responsable>>(responsableService.getResponsables(searchedValue), HttpStatus.OK);
   }
-
-  @GetMapping(inputEntryPoint + "/responsable/accept-terms")
-  @JsonView(JacksonViews.OsirisListView.class)
-  public ResponseEntity<Responsable> updateAcceptTermsForCurrentUser(@RequestParam Integer idResponsable)
-      throws OsirisValidationException {
-    if (idResponsable == null)
-      throw new OsirisValidationException("idResponsable");
-    Responsable responsable = responsableService.getResponsable(idResponsable);
-    return new ResponseEntity<Responsable>(responsableService.updateHasConnectedMyJss(responsable), HttpStatus.OK);
-  }
 }

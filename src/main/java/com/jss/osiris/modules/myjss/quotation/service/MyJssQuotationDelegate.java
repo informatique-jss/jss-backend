@@ -127,6 +127,11 @@ public class MyJssQuotationDelegate {
         } else {
             newResponsable = employeeService.getCurrentMyJssUser();
         }
+        if (employeeService.getCurrentMyJssUser() != null) {
+            Responsable currentUser = employeeService.getCurrentMyJssUser();
+            currentUser.setConsentTermsDate(LocalDateTime.now());
+            responsableService.addOrUpdateResponsable(currentUser);
+        }
 
         CustomerOrder fetchOrder = null;
         if (order.getId() == null) {
@@ -191,6 +196,12 @@ public class MyJssQuotationDelegate {
             newResponsable = employeeService.getCurrentMyJssUser();
         }
 
+        if (employeeService.getCurrentMyJssUser() != null) {
+            Responsable currentUser = employeeService.getCurrentMyJssUser();
+            currentUser.setConsentTermsDate(LocalDateTime.now());
+            responsableService.addOrUpdateResponsable(currentUser);
+        }
+
         Quotation fetchQuotation = null;
         if (quotation.getId() == null) {
             populateBooleansOfProvisions(quotation);
@@ -231,10 +242,6 @@ public class MyJssQuotationDelegate {
                     // User create IQuotation but not connected => send a mail
                     hasToSendConfirmation = true;
                     shouldConnectUserAtTheEnd = false;
-                } else {
-                    Responsable currentUser = employeeService.getCurrentMyJssUser();
-                    currentUser.setConsentTermsDate(LocalDateTime.now());
-                    responsableService.addOrUpdateResponsable(currentUser);
                 }
             }
 
