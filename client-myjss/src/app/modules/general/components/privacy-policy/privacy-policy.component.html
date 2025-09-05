@@ -18,10 +18,12 @@
       </li>
     </ul>
 
-    <a *ngIf="selectedTab && selectedTab.pdf" class="nav-link ms-3" [href]="selectedTab.pdf" target="_blank"
-      rel="noopener noreferrer" title="Télécharger">
-      <i class="bi bi-download fs-5"></i>
+    <a *ngIf="selectedTab && selectedTab.pdf" [href]="selectedTab.pdf" target="_blank" rel="noopener noreferrer"
+      class="btn btn-outline-light ms-3 d-flex align-items-center" title="Télécharger le document">
+      <i class="bi bi-download me-2"></i>
+      Télécharger
     </a>
+
   </div>
 </section>
 

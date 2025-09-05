@@ -14,7 +14,7 @@ export class PrivacyPolicyComponent implements OnInit {
   constructor(private activatedRoute: ActivatedRoute) { }
 
   tabs = [
-    { id: 'privacy-policy', label: 'Politique de confidentialité', pdf: '/assets/documents/CGV_JSS.pdf' },
+    { id: 'privacy-policy', label: 'Politique de confidentialité' },
     { id: 'disclaimer', label: 'Mentions légales' },
     { id: 'terms', label: 'CGU', pdf: '/assets/documents/CGU_JSS.pdf' },
   ];
