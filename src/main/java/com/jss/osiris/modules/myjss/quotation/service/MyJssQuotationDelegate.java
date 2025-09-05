@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.myjss.quotation.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -126,6 +127,11 @@ public class MyJssQuotationDelegate {
         } else {
             newResponsable = employeeService.getCurrentMyJssUser();
         }
+        if (employeeService.getCurrentMyJssUser() != null) {
+            Responsable currentUser = employeeService.getCurrentMyJssUser();
+            currentUser.setConsentTermsDate(LocalDateTime.now());
+            responsableService.addOrUpdateResponsable(currentUser);
+        }
 
         CustomerOrder fetchOrder = null;
         if (order.getId() == null) {
@@ -188,6 +194,12 @@ public class MyJssQuotationDelegate {
                 newResponsable = employeeService.getCurrentMyJssUser();
         } else {
             newResponsable = employeeService.getCurrentMyJssUser();
+        }
+
+        if (employeeService.getCurrentMyJssUser() != null) {
+            Responsable currentUser = employeeService.getCurrentMyJssUser();
+            currentUser.setConsentTermsDate(LocalDateTime.now());
+            responsableService.addOrUpdateResponsable(currentUser);
         }
 
         Quotation fetchQuotation = null;

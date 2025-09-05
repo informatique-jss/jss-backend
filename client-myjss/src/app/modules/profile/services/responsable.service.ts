@@ -19,4 +19,8 @@ export class ResponsableService extends AppRestService<Responsable> {
   getResponsable(idResponsable: number) {
     return this.get(new HttpParams().set("idResponsable", idResponsable), "responsable");
   }
+
+  updateAcceptTermsForCurrentUser(responsable: Responsable) {
+    return this.get(new HttpParams().set("idResponsable", responsable.id), "responsable/accept-terms");
+  }
 }

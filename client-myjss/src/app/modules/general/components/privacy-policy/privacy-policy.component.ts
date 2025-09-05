@@ -16,7 +16,7 @@ export class PrivacyPolicyComponent implements OnInit {
   tabs = [
     { id: 'privacy-policy', label: 'Politique de confidentialité' },
     { id: 'disclaimer', label: 'Mentions légales' },
-    { id: 'terms', label: 'CGU' },
+    { id: 'terms', label: 'CGU', pdf: '/assets/documents/CGU_JSS.pdf' },
   ];
 
   selectedTab = this.tabs[0];
