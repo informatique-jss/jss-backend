@@ -100,17 +100,8 @@
               </a>
             </li>
 
-            <!-- Kiosk -->
-            <li class="nav-item border-left">
-              <a class="nav-link"
-                [ngClass]="{'active': getCurrentRoute().includes('/kiosk') && getCurrentRoute().includes('/kiosk')}"
-                routerLink="kiosk">
-                Kiosque
-              </a>
-            </li>
-
             <!-- Podcast -->
-            <li class="nav-item nav-item-podcast">
+            <li class="nav-item border-left nav-item-podcast">
               <span>
                 <a class="nav-link podcast-nav-link mt-auto py-0 ps-2"
                   [ngClass]="{'active': getCurrentRoute().includes('/podcasts') && getCurrentRoute().includes('/podcasts')}"
