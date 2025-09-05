@@ -53,7 +53,7 @@ export class FooterComponent implements OnInit {
   }
 
   openDepartment(department: PublishingDepartment, event: any) {
-    this.appService.openRoute(event, "post/department/" + department.id, undefined);
+    this.appService.openRoute(event, "post/department/" + department.code, undefined);
   }
 
   openCategoryPosts(category: JssCategory, event: any) {

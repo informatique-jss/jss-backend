@@ -1,4 +1,4 @@
-export const MY_JSS_SUBSCRIBE_ROUTE = "/order/new/subscribe";
+export const MY_JSS_SUBSCRIBE_ROUTE = "/newsletter";
 export const MY_JSS_NEW_ANNOUNCEMENT_ROUTE = "/quotation";
 export const MY_JSS_NEW_FORMALITY_ROUTE = "/quotation";
 export const MY_JSS_SERVICES_ANNOUNCEMENT_ROUTE = "/services/announcement";
