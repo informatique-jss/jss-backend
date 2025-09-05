@@ -194,10 +194,6 @@ export class PostComponent implements OnInit, AfterViewInit {
     return span.textContent || span.innerText;
   };
 
-  openSubscribe(event: any) {
-    this.appService.openRoute(event, "order/new/subscribe/", undefined);
-  }
-
   readArticle(): void {
     if (this.post && this.post.contentText && this.platformService.isBrowser()) {
       const articleText = this.extractContent(this.post.contentText)!;

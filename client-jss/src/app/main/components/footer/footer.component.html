@@ -11,7 +11,7 @@ Footer START -->
           <div class="row">
             <div class="col-12">
               <ul class="nav flex-column text-primary-hover">
-                <li class="nav-item"><a class="nav-link pt-0" style="cursor: pointer;"
+                <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
                     (click)="openCategoryPosts(category, $event)"
                     *ngFor="let category of jssCategories">{{category.name}}</a></li>
               </ul>
@@ -23,7 +23,7 @@ Footer START -->
           <div class="row">
             <div class="col-12">
               <ul class="nav flex-column text-primary-hover">
-                <li class="nav-item"><a class="nav-link pt-0" style="cursor: pointer;"
+                <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
                     (click)="openDepartment(department, $event)"
                     *ngFor="let department of departments">{{department.name}}</a></li>
               </ul>
@@ -35,15 +35,13 @@ Footer START -->
           <div class="row">
             <div class="col-12">
               <ul class="nav flex-column text-primary-hover">
-                <li class="nav-item"><a class="nav-link pt-0" style="cursor: pointer;"
+                <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
                     (click)="openSubscribe($event)">S'abonner</a></li>
-                <li class="nav-item"><a class="nav-link pt-0" style="cursor: pointer;"
+                <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
                     (click)="openPodcastPosts($event)">Podcasts</a></li>
-                <li class="nav-item"><a class="nav-link pt-0" style="cursor: pointer;"
-                    (click)="openSeriesPosts($event)">Series et dossiers</a></li>
-                <li class="nav-item"><a class="nav-link pt-0" style="cursor: pointer;"
+                <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
                     (click)="openContributePage($event)">Contribuer</a></li>
-                <li class="nav-item"><a class="nav-link pt-0" style="cursor: pointer;"
+                <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
                     (click)="openKiosk($event)">Kiosque</a></li>
               </ul>
             </div>
@@ -54,15 +52,15 @@ Footer START -->
           <div class="row">
             <div class="col-12">
               <ul class="nav flex-column text-primary-hover">
-                <li class="nav-item"><a class="nav-link pt-0" style="cursor: pointer;"
+                <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
                     (click)="openProductAnnounce($event)">Annonces légales</a></li>
-                <li class="nav-item"><a class="nav-link pt-0" style="cursor: pointer;"
+                <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
                     (click)="openProductFormality($event)">Formalités légales</a></li>
-                <li class="nav-item"><a class="nav-link pt-0" style="cursor: pointer;"
+                <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
                     (click)="openProductApositlle($event)">Apostilles-Légalisation</a></li>
-                <li class="nav-item"><a class="nav-link pt-0" style="cursor: pointer;"
+                <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
                     (click)="openProductDomiciliation($event)">Domiciliation</a></li>
-                <li class="nav-item"><a class="nav-link pt-0" style="cursor: pointer;"
+                <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
                     (click)="openProductDocument($event)">Fourniture de documents</a></li>
               </ul>
             </div>
@@ -73,15 +71,17 @@ Footer START -->
           <div class="row">
             <div class="col-12">
               <ul class="nav flex-column text-primary-hover">
-                <li class="nav-item"><a class="nav-link pt-0" style="cursor: pointer;"
+                <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
                     (click)="openWhoAreWe($event)">Qui sommes-nous ?</a></li>
-                <li class="nav-item"><a class="nav-link pt-0" style="cursor: pointer;" (click)="openJoinUs($event)">Nous
+                <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
+                    (click)="openJoinUs($event)">Nous
                     rejoindre</a></li>
-                <li class="nav-item"><a class="nav-link pt-0" style="cursor: pointer;"
+                <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
                     (click)="openLegalMentions($event)">Mentions légales</a></li>
-                <li class="nav-item"><a class="nav-link pt-0" style="cursor: pointer;" (click)="openCgv($event)">CGV</a>
+                <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
+                    (click)="openCgv($event)">CGV</a>
                 </li>
-                <li class="nav-item"><a class="nav-link pt-0" style="cursor: pointer;"
+                <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
                     (click)="openPrivacyPolicy($event)">Politique de confidentialité</a>
                 </li>
               </ul>
