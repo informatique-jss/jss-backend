@@ -19,7 +19,7 @@ public interface NotificationRepository extends QueryCacheCrudRepository<Notific
                         " and (coalesce(n.updatedDateTime,n.createdDateTime)<CURRENT_TIMESTAMP() or :displayFuture=true) "
                         +
                         " and (coalesce(n.isRead,false) = false or :displayRead=true)" +
-                        " and n.notificationType not in (:notificationTypeToHide) and n.notificationType in (:notificationToDisplay) ")
+                        " and n.notificationType not in (:notificationTypeToHide) and n.notificationType in (:notificationToDisplay) order by coalesce(updatedDateTime,'1970-01-01')  ")
         List<Notification> findByEmployees(@Param("employees") List<Employee> employees,
                         @Param("displayFuture") Boolean displayFuture,
                         @Param("displayRead") Boolean displayRead,

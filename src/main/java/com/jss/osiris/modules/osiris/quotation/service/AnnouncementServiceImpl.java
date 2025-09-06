@@ -942,7 +942,9 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     private List<Announcement> populateAffaireLabel(List<Announcement> announcements) {
         if (announcements != null)
             for (Announcement announcement : announcements) {
-                if (announcement.getProvisions() != null && announcement.getProvisions().size() > 0)
+                if (Boolean.TRUE.equals(announcement.getIsLegacy())) {
+                    announcement.setAffaireLabel(announcement.getNoticeHeader());
+                } else if (announcement.getProvisions() != null && announcement.getProvisions().size() > 0)
                     if (announcement.getProvisions().get(0).getService() != null)
                         if (announcement.getProvisions().get(0).getService().getAssoAffaireOrder() != null)
                             if (announcement.getProvisions().get(0).getService().getAssoAffaireOrder()
