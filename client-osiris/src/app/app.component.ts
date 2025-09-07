@@ -28,7 +28,7 @@ export class AppComponent implements OnInit {
   loggedStateSubscription: Subscription = new Subscription;
   loggedIn = true;
 
-  constructor(private titleService: Title,
+  constructor(private titleService: Title, private meta: Meta,
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private constantService: ConstantService,

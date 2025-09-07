@@ -12,7 +12,7 @@ Footer START -->
             <div class="col-12">
               <ul class="nav flex-column text-primary-hover">
                 <li class="nav-item"><a class="nav-link pt-0" style="cursor: pointer;"
-                    (click)="openCategoryPosts(category, $event)"
+                    [routerLink]='"/post/category/" + category.slug'
                     *ngFor="let category of jssCategories">{{category.name}}</a></li>
               </ul>
             </div>
@@ -24,7 +24,7 @@ Footer START -->
             <div class="col-12">
               <ul class="nav flex-column text-primary-hover">
                 <li class="nav-item"><a class="nav-link pt-0" style="cursor: pointer;"
-                    (click)="openDepartment(department, $event)"
+                    [routerLink]='"/post/department/" + department.id'
                     *ngFor="let department of departments">{{department.name}}</a></li>
               </ul>
             </div>
@@ -38,13 +38,13 @@ Footer START -->
                 <li class="nav-item"><a class="nav-link pt-0" style="cursor: pointer;"
                     (click)="openSubscribe($event)">S'abonner</a></li>
                 <li class="nav-item"><a class="nav-link pt-0" style="cursor: pointer;"
-                    (click)="openPodcastPosts($event)">Podcasts</a></li>
+                    routerLink="/podcasts">Podcasts</a></li>
+                <li class="nav-item"><a class="nav-link pt-0" style="cursor: pointer;" routerLink="/series">Series et
+                    dossiers</a></li>
                 <li class="nav-item"><a class="nav-link pt-0" style="cursor: pointer;"
-                    (click)="openSeriesPosts($event)">Series et dossiers</a></li>
-                <li class="nav-item"><a class="nav-link pt-0" style="cursor: pointer;"
-                    (click)="openContributePage($event)">Contribuer</a></li>
-                <li class="nav-item"><a class="nav-link pt-0" style="cursor: pointer;"
-                    (click)="openKiosk($event)">Kiosque</a></li>
+                    routerLink="/contribute">Contribuer</a></li>
+                <li class="nav-item"><a class="nav-link pt-0" style="cursor: pointer;" routerLink="/kiosk">Kiosque</a>
+                </li>
               </ul>
             </div>
           </div>
@@ -107,7 +107,7 @@ Footer START -->
                 target="_blank"><i class="fab fa-instagram-square"></i></a>
             </li>
           </ul>
-          <h5 class="mb-4"><a class="nav-link pt-0" style="cursor: pointer;" (click)="openContact( $event)">Contact</a>
+          <h5 class="mb-4"><a class="nav-link pt-0" style="cursor: pointer;" routerLink="/contact">Contact</a>
           </h5>
         </div>
       </div>
@@ -116,26 +116,6 @@ Footer START -->
   </section>
   <!-- Hot topics END -->
 
-
-  <!-- =======================
-Cookies alert START -->
-  <div *ngIf="hasAcceptCookie" style="z-index: 1100;"
-    class="alert alert-light alert-dismissible fade show position-fixed bottom-0 start-50 translate-middle-x z-index-99 d-lg-flex justify-content-between align-items-center shadow p-4 col-9 col-md-5"
-    role="alert">
-    <p class="m-0 pe-3">Ce site stocke des cookies sur votre ordinateur. Pour en savoir plus, référez vous à notre <a
-        class="text-reset" style="cursor: pointer;" (click)="openConfidentiality($event)"> <u>politique de
-          confidentialité</u></a></p>
-    <div class="d-flex mt-3 mt-lg-0">
-      <button type="button" class="btn btn-success-soft btn-sm mb-0 me-2" data-bs-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true" (click)="acceptCookie()">Accepter</span>
-      </button>
-      <button type="button" class="btn btn-danger-soft btn-sm mb-0" data-bs-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">Refuser</span>
-      </button>
-    </div>
-  </div>
-  <!-- =======================
-Cookies alert END -->
 
 </footer>
 <!-- =======================

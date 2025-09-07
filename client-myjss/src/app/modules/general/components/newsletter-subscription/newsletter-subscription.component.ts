@@ -4,6 +4,8 @@ import { debounceTime, fromEvent, Subject, takeUntil } from 'rxjs';
 import { validateEmail } from '../../../../libs/CustomFormsValidatorsHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
+import { GtmService } from '../../../main/services/gtm.service';
+import { FormSubmitPayload, PageInfo } from '../../../main/services/GtmPayload';
 import { PlatformService } from '../../../main/services/platform.service';
 import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { CommunicationPreferencesService } from '../../services/communication.preference.service';
@@ -27,12 +29,25 @@ export class NewsletterSubscriptionComponent implements OnInit, AfterViewInit {
     private communicationPreferencesService: CommunicationPreferencesService,
     private appService: AppService,
     private formBuilder: FormBuilder,
-    private plaformService: PlatformService
+    private plaformService: PlatformService,
+    private gtmService: GtmService
   ) { }
 
   ngOnInit() {
     this.newsletterForm = this.formBuilder.group({});
     this.checkIfMobile();
+  }
+
+  trackFormNewsletter() {
+    this.gtmService.trackFormSubmit(
+      {
+        form: { type: "S'abonner" },
+        page: {
+          type: 'general',
+          name: 'newsletter'
+        } as PageInfo
+      } as FormSubmitPayload
+    );
   }
 
   ngAfterViewInit() {
@@ -66,6 +81,7 @@ export class NewsletterSubscriptionComponent implements OnInit, AfterViewInit {
     }
 
     this.communicationPreferencesService.subscribeToCorporateNewsletter(mailToRegister).subscribe(response => {
+      this.trackFormNewsletter();
       if (response) {
         this.newsletterForm.reset();
         this.mail = "";

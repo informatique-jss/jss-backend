@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Meta, Title } from '@angular/platform-browser';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { PremiumHubComponent } from "../premium-hub/premium-hub.component";
 
@@ -10,7 +11,12 @@ import { PremiumHubComponent } from "../premium-hub/premium-hub.component";
 })
 export class PostPremiumHeaderComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    private titleService: Title, private meta: Meta,
+  ) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.titleService.setTitle("Les articles premium - JSS");
+    this.meta.updateTag({ name: 'description', content: "Retrouvez les articles premium de l'actualité juridique et économique. JSS analyse pour vous les dernières annonces, formalités et tendances locales." });
+  }
 }

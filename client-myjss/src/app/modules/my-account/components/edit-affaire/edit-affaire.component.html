@@ -80,7 +80,10 @@
   <div class="text-center pt-1 pt-sm-2">
     <div class="btn-group   " role="group" aria-label="Outline button group">
       <button type="button" class="btn btn-primary" (click)="saveAffaire()">Enregistrer</button>
-      <button type="button" class="btn btn-outline-secondary" (click)="goBackAffaire()">Annuler</button>
+      <button type="button" class="btn btn-outline-secondary" *ngIf="idOrder"
+        [routerLink]='"/account/orders/details/" + idOrder'>Annuler</button>
+      <button type="button" class="btn btn-outline-secondary" *ngIf="idQuotation"
+        [routerLink]=' "/account/quotations/details/" + idQuotation'>Annuler</button>
     </div>
   </div>
 </section>

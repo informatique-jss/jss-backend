@@ -72,9 +72,4 @@ export class ReadingFoldersComponent implements OnInit {
         this.readingFolders.splice(this.readingFolders.indexOf(readingFolder), 1);
     });
   }
-
-  openReadingFolder(event: any, readingFolder: ReadingFolder) {
-    this.appService.openRoute(event, "account/reading-folders/" + readingFolder.id, undefined);
-  }
-
 }

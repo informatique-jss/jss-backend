@@ -10,6 +10,8 @@ import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { Mail } from '../../../general/model/Mail';
 import { AppService } from '../../../main/services/app.service';
 import { ConstantService } from '../../../main/services/constant.service';
+import { GtmService } from '../../../main/services/gtm.service';
+import { FileUploadPayload, PageInfo } from '../../../main/services/GtmPayload';
 import { AutocompleteCityComponent } from '../../../miscellaneous/components/forms/autocomplete-city/autocomplete-city.component';
 import { AutocompleteLegalFormComponent } from '../../../miscellaneous/components/forms/autocomplete-legal-form/autocomplete-legal-form.component';
 import { GenericDatePickerComponent } from '../../../miscellaneous/components/forms/generic-date-picker/generic-datetime-picker.component';
@@ -163,6 +165,7 @@ export class RequiredInformationComponent implements OnInit {
     private cityService: CityService,
     private noticeTemplateService: NoticeTemplateService,
     private modalService: NgbModal,
+    private gtmService: GtmService
   ) {
     this.noticeTemplateDescription = noticeTemplateService.getNoticeTemplateDescription()
   }
@@ -337,8 +340,25 @@ export class RequiredInformationComponent implements OnInit {
 
   onIsCompleteChange(event: boolean, selectedAssoIndex: number, selectedServiceIndex: number, assoServiceDocumentIndex: number, assoServiceDocument: AssoServiceDocument) {
     if (event) {
+      this.trackUploadFile(assoServiceDocument);
       this.refreshAssoServiceDocument(selectedAssoIndex, selectedServiceIndex, assoServiceDocumentIndex, assoServiceDocument);
     }
+  }
+
+  trackUploadFile(assoServiceDocument: AssoServiceDocument) {
+    if (this.quotation)
+      this.gtmService.trackFileUpload(
+        {
+          business: {
+            type: this.quotation.isQuotation ? 'quotation' : 'order',
+            order_id: this.quotation.id, documentType: assoServiceDocument.typeDocument.label
+          },
+          page: {
+            type: 'quotation',
+            name: 'required-information'
+          } as PageInfo
+        } as FileUploadPayload
+      );
   }
 
   onIsUploadDelete(event: boolean, selectedAssoIndex: number, selectedServiceIndex: number, assoServiceDocumentIndex: number, assoServiceDocument: AssoServiceDocument) {

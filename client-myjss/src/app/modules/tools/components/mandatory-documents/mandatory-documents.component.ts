@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { Meta, Title } from '@angular/platform-browser';
 import { SERVICE_FIELD_TYPE_SELECT } from '../../../../libs/Constants';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { NewsletterComponent } from '../../../general/components/newsletter/newsletter.component';
+import { GtmService } from '../../../main/services/gtm.service';
+import { CtaClickPayload, PageInfo } from '../../../main/services/GtmPayload';
 import { PlatformService } from '../../../main/services/platform.service';
 import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { ServiceFieldType } from '../../../my-account/model/ServiceFieldType';
@@ -33,10 +36,14 @@ export class MandatoryDocumentsComponent implements OnInit {
   constructor(private formBuilder: FormBuilder,
     private serviceFamilyService: ServiceFamilyService,
     private serviceTypeService: ServiceTypeService,
-    private platformService: PlatformService
+    private platformService: PlatformService,
+    private gtmService: GtmService,
+    private titleService: Title, private meta: Meta,
   ) { }
 
   ngOnInit() {
+    this.titleService.setTitle("Les pièces indispensables à vos démarches - MyJSS");
+    this.meta.updateTag({ name: 'description', content: "Ne perdez plus de temps. MyJSS liste pour vous toutes les pièces indispensables à vos démarches et assure la conformité de votre dossier grâce à nos check-lists." });
     this.practicalSheetsForm = this.formBuilder.group({});
     this.serviceFamilyService.getServiceFamiliesForMandatoryDocuments().subscribe(response => {
       if (response) {
@@ -59,6 +66,19 @@ export class MandatoryDocumentsComponent implements OnInit {
     });
   }
 
+
+  trackClickMandatoryService(idService: number, serviceName: string) {
+    this.gtmService.trackCtaClick(
+      {
+        cta: { type: 'link', label: serviceName, objectId: idService },
+        page: {
+          type: 'tools',
+          name: 'mandatory-documents'
+        } as PageInfo
+      } as CtaClickPayload
+    );
+  }
+
   ngAfterViewInit(): void {
     if (this.platformService.getNativeDocument())
       import('jarallax').then(module => {
@@ -79,8 +99,10 @@ export class MandatoryDocumentsComponent implements OnInit {
   toggleCard(serviceType: ServiceType): void {
     if (this.expandedCardIndex === serviceType.id)
       this.expandedCardIndex = -1;
-    else if (serviceType.id)
+    else if (serviceType.id) {
       this.expandedCardIndex = serviceType.id;
+      this.trackClickMandatoryService(serviceType.id, serviceType.customLabel);
+    }
 
     let currentService = this.serviceTypesByFamily[this.selectedFamilyTab.id].find(s => s.id == serviceType.id);
     if (currentService && this.expandedCardIndex >= 0 && serviceType.id && (!currentService.assoServiceTypeFieldTypes && !currentService.assoServiceTypeDocuments)) {

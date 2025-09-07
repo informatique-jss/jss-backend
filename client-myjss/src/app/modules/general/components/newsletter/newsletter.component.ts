@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { Meta, Title } from '@angular/platform-browser';
 import { validateEmail } from '../../../../libs/CustomFormsValidatorsHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
+import { GtmService } from '../../../main/services/gtm.service';
+import { FormSubmitPayload, PageInfo } from '../../../main/services/GtmPayload';
 import { CommunicationPreferencesService } from '../../services/communication.preference.service';
 
 @Component({
@@ -18,9 +21,26 @@ export class NewsletterComponent implements OnInit {
   constructor(
     private communicationPreferencesService: CommunicationPreferencesService,
     private appService: AppService,
+    private gtmService: GtmService,
+    private titleService: Title, private meta: Meta,
   ) { }
 
   ngOnInit() {
+    this.titleService.setTitle("Newsletter - MyJSS");
+    this.meta.updateTag({ name: 'description', content: "Restez à la pointe de l'actualité juridique. Abonnez-vous à la newsletter MyJSS pour recevoir nos analyses, conseils d'experts et astuces pour vos formalités." });
+  }
+
+
+  trackFormNewsletter() {
+    this.gtmService.trackFormSubmit(
+      {
+        form: { type: "S'inscrire" },
+        page: {
+          type: 'general',
+          name: 'newsletter'
+        } as PageInfo
+      } as FormSubmitPayload
+    );
   }
 
 
@@ -36,6 +56,9 @@ export class NewsletterComponent implements OnInit {
       return;
     }
 
-    this.communicationPreferencesService.subscribeToCorporateNewsletter(mailToRegister).subscribe();
+    this.communicationPreferencesService.subscribeToCorporateNewsletter(mailToRegister).subscribe(response => {
+      this.trackFormNewsletter();
+      this.appService.displayToast("Votre inscription a bien été prise en compte", false, "Inscription", 5000);
+    });
   }
 }
