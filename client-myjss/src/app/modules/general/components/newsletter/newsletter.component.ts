@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Meta, Title } from '@angular/platform-browser';
 import { validateEmail } from '../../../../libs/CustomFormsValidatorsHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
@@ -22,12 +21,9 @@ export class NewsletterComponent implements OnInit {
     private communicationPreferencesService: CommunicationPreferencesService,
     private appService: AppService,
     private gtmService: GtmService,
-    private titleService: Title, private meta: Meta,
   ) { }
 
   ngOnInit() {
-    this.titleService.setTitle("Newsletter - MyJSS");
-    this.meta.updateTag({ name: 'description', content: "Restez à la pointe de l'actualité juridique. Abonnez-vous à la newsletter MyJSS pour recevoir nos analyses, conseils d'experts et astuces pour vos formalités." });
   }
 
 

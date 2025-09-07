@@ -1,7 +1,6 @@
 import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { Title } from '@angular/platform-browser';
 import { Observable, combineLatest } from 'rxjs';
 import { Dictionnary } from 'src/app/libs/Dictionnary';
 import { formatDateTimeForSortTable } from 'src/app/libs/FormatHelper';
@@ -52,7 +51,6 @@ export class HistoryComponent implements OnInit {
   constructor(
     protected auditService: AuditService,
     private employeeService: EmployeeService,
-    private titleService: Title, private meta: Meta,
     private responsableService: ResponsableService
   ) { }
 
@@ -66,7 +64,6 @@ export class HistoryComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.titleService.setTitle("Notre histoire - MyJSS");
     this.internalHistoryActions = this.historyActions;
     this.displayedColumns = [];
     this.displayedColumns.push({ id: "fieldName", fieldName: "fieldName", label: "Champ" } as SortTableColumn<Audit>);

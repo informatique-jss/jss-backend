@@ -10,14 +10,9 @@ buildscript {
     }
 }
 
+
 apply plugin: 'java'
 apply plugin: 'org.springframework.boot' 
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(23)
-    }
-}
 
 repositories {
     maven {  
@@ -30,14 +25,16 @@ tasks.withType(JavaCompile) {
 }
 
 def excludeInfinispan = project.hasProperty('excludeInfinispan') && project.excludeInfinispan == 'true'
+
 tasks.named('processResources') {
     if (excludeInfinispan) {
         exclude 'infinispan.xml'
     }
 }
 
+
 dependencies {
-    developmentOnly "org.springframework.boot:spring-boot-devtools"
+    developmentOnly "org.springframework.boot:spring-boot-devtools:3.2.4"
     // Spring
     implementation 'org.springframework.boot:spring-boot-starter-web:3.2.4'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.2.4' 
@@ -86,3 +83,6 @@ dependencies {
 group = 'com.jss.osiris'
 version = '27-beta1' 
 description = 'Outil Sympa, Interactif, Révolutionnairement Intuitif et Simple'
+sourceCompatibility = '17'
+targetCompatibility = '17'
+ 
