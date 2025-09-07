@@ -63,9 +63,9 @@
               class="list-group-item d-flex justify-content-between align-items-center border-0 border-bottom">
               <span>{{ author.name }}</span>
               <div class="d-none d-sm-flex gap-2">
-                <button type="button" class="btn btn-outline-dark" (click)="openAuthorNewPosts($event, author)">
+                <a [href]="frontendJssUrl + 'post/author/' + author.slug + '/true'" class="btn btn-outline-dark">
                   Voir les news
-                </button>
+                </a>
                 <button type="button" class="btn btn-outline-dark fixed-width-btn"
                   [ngClass]="isFollowedAuthor[author.id] ? 'btn-follow text-white' :''"
                   (click)="isFollowedAuthor[author.id] ? unfollowAuthor(author) : followAuthor(author)">
@@ -74,10 +74,10 @@
                 </button>
               </div>
               <div class="d-flex d-sm-none gap-2">
-                <button type="button" class="btn btn-outline-dark btn-icon-sm" (click)="openAuthorNewPosts($event,
-                  author)">
+                <a [href]="frontendJssUrl + 'post/author/' + author.slug + '/true'"
+                  class="btn btn-outline-dark btn-icon-sm">
                   <i class="bi bi-eye"></i>
-                </button>
+                </a>
                 <button type="button" class="btn btn-outline-dark btn-icon-sm"
                   [ngClass]="isFollowedAuthor[author.id] ? 'btn-follow text-white' :''"
                   (click)="isFollowedAuthor[author.id] ? unfollowAuthor(author) : followAuthor(author)">
@@ -96,10 +96,9 @@
               class="list-group-item d-flex justify-content-between align-items-center border-0 border-bottom">
               <span> {{jssCategory.name}}</span>
               <div class="d-none d-sm-flex gap-2">
-                <button type="button" class="btn btn-outline-dark"
-                  (click)="openJssCategoryNewPosts($event, jssCategory)">
+                <a [href]="frontendJssUrl + 'post/category/' + jssCategory.slug + '/true'" class="btn btn-outline-dark">
                   Voir les news
-                </button>
+                </a>
                 <button type="button" class="btn btn-outline-dark fixed-width-btn"
                   [ngClass]="isFollowedJssCategory[jssCategory.id] ? 'btn-follow text-white' :''"
                   (click)="isFollowedJssCategory[jssCategory.id] ? unfollowJssCategory(jssCategory) : followJssCategory(jssCategory)">
@@ -109,10 +108,10 @@
                 </button>
               </div>
               <div class="d-flex d-sm-none gap-2">
-                <button type="button" class="btn btn-outline-dark btn-icon-sm"
-                  (click)="openJssCategoryNewPosts($event, jssCategory)">
+                <a [href]="frontendJssUrl + 'post/category/' + jssCategory.slug + '/true'"
+                  class="btn btn-outline-dark btn-icon-sm">
                   <i class="bi bi-eye"></i>
-                </button>
+                </a>
                 <button type="button" class="btn btn-outline-dark btn-icon-sm"
                   [ngClass]="isFollowedJssCategory[jssCategory.id] ? 'btn-follow text-white' :''"
                   (click)="isFollowedJssCategory[jssCategory.id] ? unfollowJssCategory(jssCategory) : followJssCategory(jssCategory)">
@@ -131,9 +130,9 @@
               class="list-group-item d-flex justify-content-between align-items-center border-0 border-bottom">
               <span>{{tag.name}}</span>
               <div class="d-none d-sm-flex gap-2">
-                <button type="button" class="btn btn-outline-dark" (click)="openTagNewPosts($event,tag)">
+                <a [href]="frontendJssUrl + 'post/tag/' + tag.slug + '/true'" class="btn btn-outline-dark">
                   Voir les news
-                </button>
+                </a>
                 <button type="button" class="btn btn-outline-dark fixed-width-btn"
                   [ngClass]="isFollowedTag[tag.id] ? 'btn-follow text-white' :''"
                   (click)="isFollowedTag[tag.id] ? unfollowTag(tag) : followTag(tag)">
@@ -142,9 +141,9 @@
                 </button>
               </div>
               <div class="d-flex d-sm-none gap-2">
-                <button type="button" class="btn btn-outline-dark btn-icon-sm" (click)="openTagNewPosts($event,tag)">
+                <a [href]="frontendJssUrl + 'post/tag/' + tag.slug + '/true'" class="btn btn-outline-dark btn-icon-sm">
                   <i class="bi bi-eye"></i>
-                </button>
+                </a>
                 <button type="button" class="btn btn-outline-dark btn-icon-sm"
                   [ngClass]="isFollowedTag[tag.id] ? 'btn-follow text-white' :''"
                   (click)="isFollowedTag[tag.id] ? unfollowTag(tag) : followTag(tag)">

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Meta, Title } from '@angular/platform-browser';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { PlatformService } from '../../../main/services/platform.service';
 
@@ -11,7 +12,9 @@ import { PlatformService } from '../../../main/services/platform.service';
 })
 export class OurTeamComponent implements OnInit {
 
-  constructor(private platformService: PlatformService) { }
+  constructor(private platformService: PlatformService,
+    private titleService: Title, private meta: Meta,
+  ) { }
 
   departments: any[] = [
     { name: 'Direction', key: 'direction' },
@@ -38,7 +41,6 @@ export class OurTeamComponent implements OnInit {
       { firstname: "Yllia", lastname: "V.", title: "Gestionnaire RH", photo: "yllia_gestionnaire_rh.jpg" }
     ],
     commercial: [
-      { firstname: "Martine", lastname: "S.", title: "Directrice commerciale", photo: "martine_directrice_commerciale.jpg" },
       { firstname: "Bruno", lastname: "V.", title: "Chargé de clientèle", photo: "bruno_charge_de_clientele.jpg" },
       { firstname: "Gaëlle", lastname: "H.", title: "Chargée de clientèle", photo: "gaelle_chargee_de_clientele.jpg" },
       { firstname: "Martine", lastname: "F.", title: "Chargée de clientèle", photo: "martine_chargee_de_clientele.jpg" },
@@ -96,6 +98,8 @@ export class OurTeamComponent implements OnInit {
   };
 
   ngOnInit() {
+    this.titleService.setTitle("Notre équipe - MyJSS");
+    this.meta.updateTag({ name: 'description', content: "Rencontrez les experts qui vous accompagnent. Découvrez l'équipe de juristes et de professionnels MyJSS, unis par la passion du service et l'excellence juridique." });
   }
 
 

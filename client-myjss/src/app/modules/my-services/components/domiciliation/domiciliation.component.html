@@ -9,9 +9,9 @@
         <p class="text-body fs-lg mb-5 text-white">Domiciliez votre entreprise à une adresse prestigieuse au cœur de
           Paris et bénéficiez d’un service de redirection personnalisé. </p>
         <double-buttons class="text-grey" orderActionLabel=" Domicilier mon entreprise"
-          [orderActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeOrder.id"
-          quotationActionLabel="Demander un devis"
-          [quotationActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeQuotation.id"
+          [orderActionRoute]="'/quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeOrder.id"
+          quotationActionLabel="Demander un devis" [fromPageInfo]="{ type: 'my-services', name: 'domiciliation'}"
+          [quotationActionRoute]="'/quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeQuotation.id"
           linkLabel="Bien choisir la domiciliation d'entreprise" [isLightButtons]="true">
         </double-buttons>
       </div>
@@ -49,7 +49,7 @@
           <h2 class="h2 secondary-heading pb-2 pb-sm-3 ">N'attendez plus et accédez à nos solutions</h2>
           <double-buttons class="text-grey" orderActionLabel=" Domicilier mon entreprise"
             [orderActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeOrder.id"
-            quotationActionLabel="Demander un devis"
+            quotationActionLabel="Demander un devis" [fromPageInfo]="{ type: 'my-services', name: 'domiciliation'}"
             [quotationActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeQuotation.id"
             linkLabel="Bien choisir la domiciliation d'entreprise" [isLightButtons]="false">
           </double-buttons>
@@ -202,7 +202,7 @@
             <p class="mb-0">Toutes les annonces légales, sur tout le territoire et sur tous les supports.</p>
           </div>
           <div class="card-footer border-0 pt-3 mb-3">
-            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" (click)="openAnnouncements($event)"
+            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" routerLink="/services/announcement"
               aria-label="Learn more">
               <i class="ai-arrow-right"></i>
             </a>
@@ -212,12 +212,14 @@
       <div class="col-lg-5 d-flex pt-3 pt-xl-0">
         <div class="card h-100 border-0 rounded-5 w-100">
           <div class="card-body pb-3 px-3">
-            <img src="assets/img/icons/Formalite.svg" alt="Icon">
-            <h3 class="h4 text-white" routerLink="/services/formality" style="cursor: pointer;">Formalité légale</h3>
-            <p class="mb-0">Un accompagnement complet pour toutes vos formalités juridiques.</p>
+            <img src="assets/img/icons/Apostille.svg" alt="Icon">
+            <h3 class="h4 text-white" routerLink="/services/apostille" style="cursor: pointer;">Apostille & Légalisation
+            </h3>
+            <p class="mb-0">Authentification et certification rapides et conformes de vos documents valables à
+              l’international.</p>
           </div>
           <div class="card-footer border-0 pt-3 mb-3">
-            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" (click)="openFormality($event)"
+            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" routerLink="/services/apostille"
               aria-label="Learn more">
               <i class="ai-arrow-right"></i>
             </a>
@@ -231,14 +233,12 @@
       <div class="col-lg-5 d-flex pt-3 pt-xl-0">
         <div class="card h-100 border-0 rounded-5 w-100">
           <div class="card-body pb-3 px-3">
-            <img src="assets/img/icons/Apostille.svg" alt="Icon">
-            <h3 class="h4 text-white" routerLink="/services/apostille" style="cursor: pointer;">Apostille & Légalisation
-            </h3>
-            <p class="mb-0">Authentification et certification rapide et conforme de vos documents valables à
-              l’international.</p>
+            <img src="assets/img/icons/Domiciliation.svg" alt="Icon">
+            <h3 class="h4 text-white" routerLink="/services/domiciliation" style="cursor: pointer;">Domiciliation</h3>
+            <p class="mb-0">Une domiciliation au cœur de Paris avec gestion simplifiée.</p>
           </div>
           <div class="card-footer border-0 pt-3 mb-3">
-            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" (click)="openApostille($event)"
+            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" routerLink="/services/domiciliation"
               aria-label="Learn more">
               <i class="ai-arrow-right"></i>
             </a>
@@ -254,7 +254,7 @@
             <p class="mb-0">Vos documents officiels fournis rapidement et en toute conformité.</p>
           </div>
           <div class="card-footer border-0 pt-3 mb-3">
-            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" (click)="openDocument($event)"
+            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" routerLink="/services/document"
               aria-label="Learn more">
               <i class="ai-arrow-right"></i>
             </a>
@@ -272,7 +272,7 @@
       <ng-template let-post>
         <div class="h-100">
           <div class="card border-0 bg-tertiary">
-            <a (click)="openPost(post.slug,$event)">
+            <a [routerLink]="'/post/'+post.slug">
               <img class="card-img-top"
                 [src]="post.media && post.media.urlMediumLarge ? post.media.urlMediumLarge : post.media.urlFull"
                 alt="Post image">
@@ -284,7 +284,7 @@
                 <a class="badge text-nav fs-xs border" *ngIf="post.postTags[0]">{{post.postTags[0].name}}</a>
               </div>
               <h3 class="h4 card-title card-title-truncate">
-                <a (click)="openPost(post.slug,$event)">{{post.titleText}}</a>
+                <a [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
               </h3>
               <p class="card-text card-text-truncate">{{post.excerptText}}</p>
             </div>

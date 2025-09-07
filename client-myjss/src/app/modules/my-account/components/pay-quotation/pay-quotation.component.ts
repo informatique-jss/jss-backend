@@ -59,10 +59,6 @@ export class PayQuotationComponent implements OnInit {
     }
   }
 
-  cancelPay() {
-    this.appService.openRoute(null, "account/quotations/details/" + this.idQuotation, undefined);
-  }
-
   refreshQrCode() {
     if (this.defaultMail && this.defaultMail.length > 0 && validateEmail(this.defaultMail) && this.idQuotation)
       this.myJssImageService.downloadQrCodeForQuotation(this.idQuotation, this.defaultMail).subscribe(response => {

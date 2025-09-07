@@ -6,7 +6,7 @@
           <div class="header-hub-bg d-flex align-items-center rounded-1">
             <div class="row w-100 ">
               <div class="col-12">
-                <h3 class="section-widget-title m-0">Consulter les annonces légales</h3>
+                <h1 class="section-widget-title m-0">Consulter les annonces légales</h1>
               </div>
             </div>
           </div>
@@ -59,7 +59,7 @@
                     </ng-container>
                   </div>
                   <h3 class="card-title">
-                    <a style="cursor: pointer;" (click)="openAnnouncement(announcement, $event)"
+                    <a style="cursor: pointer;" [routerLink]='"/announcement/" + announcement.id'
                       class="btn-link text-reset stretched-link">{{announcement.affaireLabel}}</a>
                   </h3>
                   <div class="row">

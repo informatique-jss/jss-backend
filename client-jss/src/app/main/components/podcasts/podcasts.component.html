@@ -5,7 +5,7 @@
         <div class="row w-100">
           <div class="col-12 ">
             <div class="d-flex align-items-center gap-3 flex-wrap">
-              <h3 class="section-widget-title m-0 ms-2">Podcast</h3>
+              <h1 class="section-widget-title m-0 ms-2">Podcast</h1>
             </div>
           </div>
         </div>
@@ -54,12 +54,14 @@
                           <div class="dropdown-menu p-1 podcast-menu"
                             [ngClass]="{ show: openedListenDropdownPostId === post.id }">
                             <ul class="list-unstyled d-flex  inline-row gap-2 align-items-center mb-0">
-                              <li *ngIf="post.deezerLinkUrl"><a [href]="post.deezerLinkUrl" target="_blank"><img
+                              <li *ngIf="post.deezerLinkUrl"><a [href]="post.deezerLinkUrl"
+                                  (click)="trackCtaClickExternalPodcastDeezer(post.id)" target="_blank"><img
                                     src="assets/images/icon/deezer.svg" alt="Deezer"></a></li>
                               <li *ngIf="post.applePodcastLinkUrl"><a [href]="post.applePodcastLinkUrl"
-                                  target="_blank"><img src="assets/images/icon/apple-podcasts.svg"
-                                    alt="Apple Podcasts"></a></li>
-                              <li *ngIf="post.spotifyLinkUrl"><a [href]="post.spotifyLinkUrl" target="_blank"><img
+                                  (click)="trackCtaClickExternalPodcastApplePodcast(post.id)" target="_blank"><img
+                                    src="assets/images/icon/apple-podcasts.svg" alt="Apple Podcasts"></a></li>
+                              <li *ngIf="post.spotifyLinkUrl"><a [href]="post.spotifyLinkUrl" target="_blank"
+                                  (click)="trackCtaClickExternalPodcastSpotify(post.id)"><img
                                     src="assets/images/icon/spotify.svg" alt="Spotify"></a></li>
                             </ul>
                           </div>
@@ -100,7 +102,7 @@
                   <ul class="tag-cloud list-inline">
                     <li *ngFor="let tag of tagsByEntityType.slice(0,8)" class="list-inline-item pb-1"><a
                         class="btn bg-light text-secondary bg-hover-danger text-hover-white bg-hover-secondary text-hover-white"
-                        (click)="openTagPosts(tag,$event)">{{tag.name}}</a>
+                        [routerLink]='"/post/tag/" + tag.slug'>{{tag.name}}</a>
                     </li>
                   </ul>
                 </div>
@@ -123,7 +125,7 @@
                         {{index+1}}.
                       </div>
                       <div class="col counter-post-item card-title-truncate ps-2">
-                        <a (click)="openPost(post, $event)" class="title-most-seen">{{post.titleText}}</a>
+                        <a [routerLink]='"/post/" + post.slug' class="title-most-seen">{{post.titleText}}</a>
                       </div>
                     </div>
                   </div>

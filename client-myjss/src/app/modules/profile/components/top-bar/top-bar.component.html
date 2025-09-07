@@ -61,7 +61,7 @@
             </div>
           </a>
           <div ngbDropdownMenu class="dropdown-menu dropdown-menu-end my-1">
-            <a class="dropdown-item" [routerLink]="'quotation/identification'">
+            <a class="dropdown-item" [routerLink]="'/quotation/identification'">
               <i class="fs-lg opacity-70 me-2 ai-circle-plus"></i>
               Nouvelle demande
             </a>
@@ -147,20 +147,20 @@
               </ul>
             </li>
             <li class="nav-item col col-md-auto">
-              <a class="nav-link " style="cursor: pointer;" [routerLink]="'quotation/identification'"
+              <a class="nav-link " style="cursor: pointer;" [routerLink]="'/quotation'"
                 (click)="attempToCloseNavbar(true,null)">Commande /
                 Devis</a>
             </li>
             <li class="nav-item col col-md-auto">
-              <a class="nav-link " style="cursor: pointer;" [routerLink]="'demo'"
+              <a class="nav-link " style="cursor: pointer;" [routerLink]="'/demo'"
                 (click)="attempToCloseNavbar(true,null)">Démo</a>
             </li>
             <li class="nav-item col col-md-auto">
-              <a class="nav-link " style="cursor: pointer;" [routerLink]="'contact'"
+              <a class="nav-link " style="cursor: pointer;" [routerLink]="'/contact'"
                 (click)="attempToCloseNavbar(true,null)">Contact</a>
             </li>
             <li class="nav-item col col-md-auto">
-              <a class="nav-link " style="cursor: pointer;" (click)="openJssRoute($event)">Journal Spécial des
+              <a class="nav-link " style="cursor: pointer;" [href]="frontendJssUrl" target="_blank">Journal Spécial des
                 Sociétés</a>
             </li>
           </ul>
@@ -196,19 +196,19 @@
             </ul>
           </li>
           <li class="nav-item col col-md-auto">
-            <a class="nav-link " style="cursor: pointer;" [routerLink]="'quotation/identification'">Commande / Devis</a>
+            <a class="nav-link " style="cursor: pointer;" [routerLink]="'/quotation'">Commande / Devis</a>
           </li>
           <li class="nav-item col col-md-auto">
-            <a class="nav-link " style="cursor: pointer;" [routerLink]="'demo'">Démo</a>
+            <a class="nav-link " style="cursor: pointer;" [routerLink]="'/demo'">Démo</a>
           </li>
           <li class="nav-item col col-md-auto">
-            <a class="nav-link " style="cursor: pointer;" [routerLink]="'prices'">Tarifs</a>
+            <a class="nav-link " style="cursor: pointer;" [routerLink]="'/prices'">Tarifs</a>
           </li>
           <li class="nav-item col col-md-auto">
-            <a class="nav-link " style="cursor: pointer;" [routerLink]="'contact'">Contact</a>
+            <a class="nav-link " style="cursor: pointer;" [routerLink]="'/contact'">Contact</a>
           </li>
           <li class="nav-item col col-md-auto">
-            <a class="nav-link " style="cursor: pointer;" (click)="openJssRoute($event)">Journal Spécial des
+            <a class="nav-link " style="cursor: pointer;" [href]="frontendJssUrl" target="_blank">Journal Spécial des
               Sociétés</a>
           </li>
         </ul>

@@ -10,10 +10,10 @@ import { getTimeReading } from '../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { TrustHtmlPipe } from '../../../libs/TrustHtmlPipe';
 import { AppService } from '../../../services/app.service';
+import { GtmService } from '../../../services/gtm.service';
+import { CtaClickPayload, FormSubmitPayload, PageInfo } from '../../../services/GtmPayload';
 import { PlatformService } from '../../../services/platform.service';
-import { Author } from '../../model/Author';
 import { Comment } from '../../model/Comment';
-import { JssCategory } from '../../model/JssCategory';
 import { Mail } from '../../model/Mail';
 import { PagedContent } from '../../model/PagedContent';
 import { Pagination } from '../../model/Pagination';
@@ -21,7 +21,6 @@ import { Post } from '../../model/Post';
 import { ReadingFolder } from '../../model/ReadingFolder';
 import { Responsable } from '../../model/Responsable';
 import { ONE_POST_SUBSCRIPTION } from '../../model/Subscription';
-import { Tag } from '../../model/Tag';
 import { AudioPlayerService } from '../../services/audio.player.service';
 import { CommentService } from '../../services/comment.service';
 import { LoginService } from '../../services/login.service';
@@ -86,6 +85,7 @@ export class PostComponent implements OnInit, AfterViewInit {
     private loginService: LoginService,
     private modalService: NgbModal,
     private cdr: ChangeDetectorRef,
+    private gtmService: GtmService,
     private readingFolderService: ReadingFolderService,
   ) { }
 
@@ -111,6 +111,44 @@ export class PostComponent implements OnInit, AfterViewInit {
       this.cdr.detectChanges();
     });
   }
+
+  trackCtaClickOfferPost() {
+    if (this.post)
+      this.gtmService.trackCtaClick(
+        {
+          cta: { type: 'link', label: "Offrir cet article", objectId: this.post.id },
+          page: {
+            type: 'main',
+            name: this.post!.slug
+          } as PageInfo
+        } as CtaClickPayload
+      );
+  }
+
+  trackFormReplyComment() {
+    this.gtmService.trackFormSubmit(
+      {
+        form: { type: 'Publier un commentaire' },
+        page: {
+          type: 'main',
+          name: this.post!.slug
+        } as PageInfo
+      } as FormSubmitPayload
+    );
+  }
+
+  trackFormOfferPost() {
+    this.gtmService.trackFormSubmit(
+      {
+        form: { type: 'Offrir cet article' },
+        page: {
+          type: 'main',
+          name: this.post!.slug
+        } as PageInfo
+      } as FormSubmitPayload
+    );
+  }
+
 
   refreshPost() {
     this.validationToken = this.activatedRoute.snapshot.params['token'];
@@ -246,6 +284,7 @@ export class PostComponent implements OnInit, AfterViewInit {
       }
 
       this.commentService.addOrUpdateComment(this.newComment, this.newCommentParent.id, this.post.id).subscribe(() => {
+        this.trackFormReplyComment();
         this.fetchComments(0);
       });
     } else if (!this.newComment.content.trim())
@@ -279,22 +318,6 @@ export class PostComponent implements OnInit, AfterViewInit {
 
   getResponsableNames(comment: Comment): Responsable {
     return { firstname: comment?.authorFirstName || '', lastname: comment?.authorLastNameInitials || '' } as Responsable;
-  }
-
-  openPost(post: Post, event: any) {
-    this.appService.openRoute(event, "post/" + post.slug, undefined);
-  }
-
-  openAuthorPosts(author: Author, event: any) {
-    this.appService.openRoute(event, "post/author/" + author.slug, undefined);
-  }
-
-  openCategoryPosts(category: JssCategory, event: any) {
-    this.appService.openRoute(event, "post/category/" + category.slug, undefined);
-  }
-
-  openTagPosts(tag: Tag, event: any) {
-    this.appService.openRoute(event, "post/tag/" + tag.slug, undefined);
   }
 
   shareOnFacebook() {
@@ -332,6 +355,7 @@ export class PostComponent implements OnInit, AfterViewInit {
   openOfferPostModal(content: any) {
     this.subscriptionService.getNumberOfRemainingPostsToShareForCurrentMonth().subscribe(res => {
       if (res != null) {
+        this.trackCtaClickOfferPost();
         this.numberOfSharingPostRemaining = res;
         this.modalService.open(content, { centered: true, size: 'md' });
       } else {
@@ -347,6 +371,7 @@ export class PostComponent implements OnInit, AfterViewInit {
     } else {
       this.subscriptionService.givePost(post.id, this.recipientMail).subscribe(res => {
         if (res) {
+          this.trackFormOfferPost();
           modalRef.close();
           this.giftForm.reset();
           this.appService.displayToast("L'article a bien été partagé à l'adresse mail indiquée !", false, "Article partagé", 5000)

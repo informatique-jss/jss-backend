@@ -9,7 +9,8 @@
         </a>
         <div>
           <a class="btn btn-light me-2 pointer" *ngIf="!currentUser" (click)="openSignIn($event)">Se connecter</a>
-          <a class="btn btn-yellow " *ngIf="!currentUser" (click)="openSubscribe($event)">S'abonner</a>
+          <a class="btn btn-yellow " *ngIf="!currentUser" (click)="openSubscribe($event)"
+            routerLink="/subscription">S'abonner</a>
           <!-- User signed in state. Account dropdown on screens > 576px -->
           <div class="dropdown nav" [ngClass]="{ show: dropdownOpen }" *ngIf="currentUser && currentUser.id">
             <a href="#" role="button" class="d-flex align-items-center p-0 user-account dropdown-toggle"
@@ -84,7 +85,8 @@
             <li class="nav-item dropdown"> <a class="nav-link dropdown-toggle">Ile-de-France</a>
               <ul class="dropdown-menu">
                 <li> <a *ngFor="let department of departments" class="dropdown-item"
-                    (click)="openDepartment(department,$event)">{{department.code.trim().length>0 &&
+                    [routerLink]='"/post/department/" + department.code'
+                    (click)="openDepartment()">{{department.code.trim().length>0 &&
                     department.code!="0" ?(department.code+ " - ")
                     :""}}{{department.name}}</a>
                 </li>
@@ -95,7 +97,7 @@
             <li class="nav-item" *ngFor="let category of categoriesByOrder">
               <a class="nav-link"
                 [ngClass]="{'active': getCurrentRoute().includes('/post/category') && getCurrentRoute().includes('/'+category.slug)}"
-                (click)="openCategoryPosts(category, $event)">
+                (click)="openCategoryPosts()" [routerLink]='"/post/category/" + category.slug'>
                 {{category.name}}
               </a>
             </li>
@@ -104,7 +106,7 @@
             <li class="nav-item border-left">
               <a class="nav-link"
                 [ngClass]="{'active': getCurrentRoute().includes('/kiosk') && getCurrentRoute().includes('/kiosk')}"
-                routerLink="kiosk">
+                routerLink="/kiosk">
                 Kiosque
               </a>
             </li>
@@ -114,7 +116,7 @@
               <span>
                 <a class="nav-link podcast-nav-link mt-auto py-0 ps-2"
                   [ngClass]="{'active': getCurrentRoute().includes('/podcasts') && getCurrentRoute().includes('/podcasts')}"
-                  routerLink="podcasts">
+                  routerLink="/podcasts">
                   Podcast <span><i class="fas fa-bolt"></i></span>
                 </a>
               </span>
@@ -122,14 +124,15 @@
 
             <!-- Premium -->
             <li class="nav-item">
-              <a class="nav-link" (click)="openPremium($event)">
+              <a class="nav-link" (click)="openPremium()" routerLink="/post/premium">
                 <img src="assets/images/premium-icon.svg" class="me-1" />Premium
               </a>
             </li>
 
             <!-- Annonce légale -->
             <li class="nav-item d-flex align-items-center">
-              <button class="btn btn-outline-light fs-9 px-2 m-0 rounded-1" (click)="openSearchAnnouncement($event)">
+              <button class="btn btn-outline-light fs-9 px-2 m-0 rounded-1" (click)="openSearchAnnouncement($event)"
+                routerLink="/announcement/search">
                 CONSULTER UNE ANNONCE LÉGALE
               </button>
             </li>
@@ -147,7 +150,7 @@
             <a class="btn btn-light w-100" *ngIf="!currentUser" (click)="openSignIn($event)">Se connecter</a>
           </div>
           <div class="col">
-            <a class="btn btn-yellow btn-yellow-burger w-100" *ngIf="!currentUser"
+            <a class="btn btn-yellow btn-yellow-burger w-100" *ngIf="!currentUser" routerLink="/subscription"
               (click)="openSubscribe($event)">S'abonner</a>
           </div>
         </div>
@@ -162,7 +165,8 @@
             </a>
             <ul class="list-unstyled ps-3" *ngIf="showDepartments">
               <li *ngFor="let department of departments" class="py-1">
-                <a class="text-white dropdown-item" (click)="openDepartment(department, $event)">
+                <a class="text-white dropdown-item" (click)="openDepartment()"
+                  [routerLink]='"/post/department/" + department.code'>
                   {{department.code !== '0' ? department.code + ' - ' : ''}}{{department.name}}
                 </a>
               </li>
@@ -173,14 +177,14 @@
           <li class="nav-item" *ngFor="let category of categories">
             <a class="nav-link"
               [ngClass]="{'active': getCurrentRoute().includes('/post/category') && getCurrentRoute().includes('/'+category.slug)}"
-              (click)="openCategoryPosts(category, $event)">
+              (click)="openCategoryPosts()" [routerLink]='"/post/category/" + category.slug'>
               {{category.name}}
             </a>
           </li>
 
           <!-- Podcast -->
           <li class="nav-item">
-            <a class="nav-link" (click)="openPodcasts($event)">
+            <a class="nav-link" routerLink="/podcasts">
               Podcast
             </a>
           </li>
@@ -198,7 +202,8 @@
           <div class="pb-2 row g-2">
             <div class="col-sm col-12">
               <a class="btn btn-outline-light w-100 h-100 fs-9 d-flex align-items-center justify-content-center"
-                (click)="openSearchAnnouncement($event)">CONSULTER UNE ANNONCE LÉGALE</a>
+                (click)="openSearchAnnouncement($event)" routerLink="/announcement/search">CONSULTER UNE ANNONCE
+                LÉGALE</a>
             </div>
             <div class="col-sm col-12 ">
               <a class="btn btn-outline-dark w-100 h-100 d-flex align-items-center justify-content-center border-light"
@@ -252,7 +257,8 @@
           <article data-aos="fade-up" class="blog-style2 card my-3">
             <div class="feature-image order-1 order-lg-0">
               <div class="image-frame image-hover-style-1">
-                <a (click)="openPost(post.text.slug, $event)"> <img class="lazyload" *ngIf="post.text.media"
+                <a (click)="openPost( )" [routerLink]='"/post/" + post.text.slug'> <img class="lazyload"
+                    *ngIf="post.text.media"
                     [src]="post.text.media.urlLarge!=null ? post.text.media.urlLarge : post.text.media.urlFull"
                     [alt]="post.text.media.alt_text" class="w-100"></a>
               </div>
@@ -261,11 +267,11 @@
               <div class="order-0 order-lg-1">
                 <div class="row align-items-center ms-0 mb-1"
                   *ngIf="post.text.jssCategories && post.text.jssCategories.length>0">
-                  <a (click)="openCategoryPosts(post.text.jssCategories[0], $event)"
+                  <a (click)="openCategoryPosts()" [routerLink]='"/post/category/" + post.text.jssCategories[0].slug'
                     class="badge bg-info rounded-pill px-1 col-auto me-2 mb-0">{{post.text.jssCategories[0].name}}</a>
                 </div>
                 <h4>
-                  <a class="card-text-truncate" (click)="openPost(post.text.slug, $event)"> <img
+                  <a class="card-text-truncate" (click)="openPost( )" [routerLink]='"/post/" + post.text.slug'> <img
                       *ngIf="post.text.isPremium" class="col-auto pe-1"
                       src="/assets/images/premium-icon.svg">{{post.text.titleText}}</a>
                 </h4>

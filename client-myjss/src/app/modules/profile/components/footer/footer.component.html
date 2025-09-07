@@ -50,27 +50,26 @@
             </div>
             <p>
               <a class="nav-link myjss-nav-link" style="cursor: pointer;" (click)="$event"
-                routerLink="quotation">Commande / Devis</a>
+                routerLink="/quotation">Commande / Devis</a>
             </p>
             <p>
-              <a class="nav-link myjss-nav-link" style="cursor: pointer;" (click)="$event" routerLink="demo">Démo</a>
-            </p>
-            <p>
-              <a class="nav-link myjss-nav-link" style="cursor: pointer;" (click)="$event"
-                routerLink="prices">Tarifs</a>
+              <a class="nav-link myjss-nav-link" style="cursor: pointer;" (click)="$event" routerLink="/demo">Démo</a>
             </p>
             <p>
               <a class="nav-link myjss-nav-link" style="cursor: pointer;" (click)="$event"
-                routerLink="newsletter">Newsletter</a>
+                routerLink="/prices">Tarifs</a>
             </p>
             <p>
               <a class="nav-link myjss-nav-link" style="cursor: pointer;" (click)="$event"
-                routerLink="contact">Contact</a>
+                routerLink="/newsletter">Newsletter</a>
+            </p>
+            <p>
+              <a class="nav-link myjss-nav-link" style="cursor: pointer;" (click)="$event"
+                routerLink="/contact">Contact</a>
             </p>
             <hr>
             <p>
-              <a class="nav-link myjss-nav-link" style="cursor: pointer;" (click)="openJssRoute($event)"
-                routerLink="/">Journal
+              <a class="nav-link myjss-nav-link" style="cursor: pointer;" [href]="frontendJssUrl" routerLink="/">Journal
                 Spécial des Sociétés</a>
             </p>
           </div>
@@ -107,15 +106,17 @@
           </a>
           <div class="col d-flex align-items-center me-2">
             <a class="btn btn-icon btn-sm btn-secondary btn-linkedin rounded-circle mx-2 ms-sm-0 me-sm-3"
-              (click)="openLinkedin()" aria-label="LinkedIn">
+              href="https://www.linkedin.com/company/journal-special-des-societes" target="_blank"
+              aria-label="LinkedIn">
               <i class="ai-linkedin"></i>
             </a>
             <a class="btn btn-icon btn-sm btn-secondary btn-facebook rounded-circle mx-2 ms-sm-0 me-sm-3"
-              (click)="openFacebook()" aria-label="Facebook">
+              href="https://www.linkedin.com/company/journal-special-des-societes/_blank" target="_blank"
+              aria-label="Facebook">
               <i class="ai-facebook"></i>
             </a>
             <a class="btn btn-icon btn-sm btn-secondary btn-instagram rounded-circle mx-2 ms-sm-0 me-sm-3"
-              (click)="openInstagram()" aria-label="Instagram">
+              href="https://www.facebook.com/Journal.Special.des.Societes" target="_blank" aria-label="Instagram">
               <i class="ai-instagram"></i>
             </a>
           </div>
@@ -140,9 +141,6 @@
               Sociétés</a></p>
         </div>
       </div>
-      <!-- <div class="row">
-        <p class="col-auto fs-sm footers-footer">Modifier mes choix de cookies</p>
-      </div> -->
     </div>
   </div>
 </footer>

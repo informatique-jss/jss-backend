@@ -4,6 +4,8 @@ import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CU
 import { capitalizeName } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
+import { GtmService } from '../../../main/services/gtm.service';
+import { LogPayload, PageInfo } from '../../../main/services/GtmPayload';
 import { AvatarComponent } from '../../../miscellaneous/components/avatar/avatar.component';
 import { Responsable } from '../../../profile/model/Responsable';
 import { LoginService } from '../../../profile/services/login.service';
@@ -33,7 +35,8 @@ export class OverviewComponent implements OnInit {
   constructor(private route: ActivatedRoute,
     private appService: AppService,
     private loginService: LoginService,
-    private dashboardUserStatisticsService: DashboardUserStatisticsService
+    private dashboardUserStatisticsService: DashboardUserStatisticsService,
+    private gtmService: GtmService
   ) { }
 
   capitalizeName = capitalizeName;
@@ -43,6 +46,7 @@ export class OverviewComponent implements OnInit {
       // I'm coming to login in, ok
       if (params["aToken"] && params["userId"]) {
         this.loginService.logUser(parseInt(params["userId"]), params["aToken"]).subscribe(response => {
+          this.trackLog();
           this.appService.openRoute(null, "account/overview", undefined);
         });
       }
@@ -55,6 +59,18 @@ export class OverviewComponent implements OnInit {
     })
 
     this.loginService.getCurrentUser().subscribe(response => this.currentUser = response);
+  }
+
+  trackLog() {
+    this.gtmService.trackLoginLogout(
+      {
+        type: 'login',
+        page: {
+          type: 'my-account',
+          name: 'sign-in'
+        } as PageInfo
+      } as LogPayload
+    );
   }
 
 }

@@ -1,12 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { environment } from '../../../../../environments/environment';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
-import { Author } from '../../../tools/model/Author';
 import { Post } from '../../../tools/model/Post';
 import { ReadingFolder } from '../../../tools/model/ReadingFolder';
-import { Tag } from '../../../tools/model/Tag';
 import { PostService } from '../../../tools/services/post.service';
 import { ReadingFolderService } from '../../../tools/services/reading.folder.service';
 
@@ -24,6 +23,7 @@ export class BookmarksComponent implements OnInit {
   @Input() validationToken: string | null = null;
   bookmarkPosts: Post[] = [] as Array<Post>;
   idReadingFolder: number | undefined;
+  frontendJssUrl = environment.frontendJssUrl;
   readingFolder: ReadingFolder | undefined;
 
   constructor(private postService: PostService, private appService: AppService,
@@ -63,17 +63,4 @@ export class BookmarksComponent implements OnInit {
           post.isBookmarked = true;
       });
   }
-
-  openPost(post: Post, event: any) {
-    this.appService.openJssRoute(event, "post/" + post.slug, undefined);
-  }
-
-  openAuthorPosts(author: Author, event: any) {
-    this.appService.openJssRoute(event, "post/author/" + author.slug, undefined);
-  }
-
-  openTagPosts(tag: Tag, event: any) {
-    this.appService.openJssRoute(event, "post/tag/" + tag.slug, undefined);
-  }
-
 }

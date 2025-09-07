@@ -15,7 +15,9 @@ export const ACCOUNTING_RESPONSIBLE: string = 'ROLE_OSIRIS_RESPONSABLE_COMPTABIL
 })
 export class LoginService extends AppRestService<Responsable> {
 
-  constructor(http: HttpClient, private appService: AppService, private quotationService: QuotationService) {
+  constructor(http: HttpClient, private appService: AppService,
+    private quotationService: QuotationService,
+  ) {
     super(http, "profile");
   }
 

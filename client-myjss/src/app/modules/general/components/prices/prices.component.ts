@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { Meta, Title } from '@angular/platform-browser';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
+import { GtmService } from '../../../main/services/gtm.service';
+import { FormSubmitPayload, PageInfo } from '../../../main/services/GtmPayload';
 import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { MailService } from '../../services/mail.service';
 
@@ -24,11 +27,28 @@ export class PricesComponent implements OnInit {
 
   constructor(private formBuilder: FormBuilder,
     private mailService: MailService,
-    private appService: AppService
+    private appService: AppService,
+    private gtmService: GtmService,
+    private titleService: Title,
+    private meta: Meta,
   ) { }
 
   ngOnInit() {
+    this.meta.updateTag({ name: 'description', content: "Obtenez une tarification claire et adaptée à vos besoins en formalités légales. Remplissez notre formulaire pour recevoir votre tarif personnalisé par MyJSS." });
+    this.titleService.setTitle("Demande de tarif - MyJSS");
     this.pricesForm = this.formBuilder.group({});
+  }
+
+  trackFormPrice() {
+    this.gtmService.trackFormSubmit(
+      {
+        form: { type: 'Demandez nos tarifs' },
+        page: {
+          type: 'general',
+          name: 'prices'
+        } as PageInfo
+      } as FormSubmitPayload
+    );
   }
 
   getPricesByMail(event: any) {

@@ -202,7 +202,7 @@
                           </p>
                         </div>
                         <button type="button" class="btn btn-link btn-sm px-2 mt-2 hover-bg-light "
-                          (click)="openQuotationDetails($event, quotation); $event.stopPropagation();">
+                          [routerLink]='"/account/quotations/details/" + quotation.id'>
                           <i class="ai-file-text me-2"></i>Détails du devis
                         </button>
                         <button type="button" class="btn btn-link btn-sm px-2 mt-2 hover-bg-light "
