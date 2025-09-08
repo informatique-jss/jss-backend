@@ -11896,15 +11896,6 @@ dl, ol, ul {
   border-radius: 8px;
 }
 
-.image-hover-style-1 img {
-  /* transform: scale(1);
-  transition: all .3s ease-in-out; */
-}
-
-.image-hover-style-1 img:hover {
-  /* transform: scale(1.03); */
-}
-
 blockquote {
   background: #f5f5f5;
   border-left: 5px solid var(--ar-blue-dark);
@@ -12424,28 +12415,30 @@ blockquote p {
 .feature-image {
   background-color: rgba(0, 0, 0, 0.05);
   position: relative;
+  display: block;
+  width: 100%;
 }
 
 .feature-image:before {
   content: "";
-  padding-bottom: 100%;
 }
 
 .feature-image .image-frame {
-  height: 100%;
-  left: 0;
-  position: absolute;
-  top: 0;
+  position: relative;
   width: 100%;
+  height: auto;
   z-index: 2;
 }
 
 .feature-image .image-frame img {
   width: 100%;
-  height: 100%;
   background-color: rgba(65, 65, 65, 0.05);
   -o-object-fit: cover;
   object-fit: cover;
+  height: auto;
+  /* <-- clé pour garder le ratio */
+  border-radius: 8px;
+  display: block;
 }
 
 .gallery-more-list {
@@ -12571,21 +12564,17 @@ blockquote p {
 .blog-style2 {
   flex-flow: row nowrap;
   justify-content: space-between;
-  align-items: stretch;
   background-color: transparent;
   border: 0;
   position: relative;
   transition: all 0.2s ease-in-out;
+  min-height: 15rem;
+  align-items: flex-start;
 }
 
 .blog-style2 .badge {
   margin-right: .5rem;
   margin-bottom: .5rem;
-}
-
-.blog-style2 .feature-image {
-  width: 100%;
-  margin-right: 1rem;
 }
 
 .blog-style2 .feature-image img {
@@ -12604,10 +12593,6 @@ blockquote p {
 
 .blog-style2 .card-body p {
   padding-bottom: 15px;
-}
-
-.blog-style3 .feature-image {
-  max-height: 400px;
 }
 
 .blog-style3 .feature-image img {
@@ -13450,19 +13435,26 @@ ul.entry-comment .comment-content ul, ul.entry-comment .comment-content ol {
   }
 
   .feature-image {
-    position: static;
-    aspect-ratio: 1 / 1;
-    /* auto if we want to keep a natural height */
+    position: relative;
+    display: block;
+    width: 100%;
   }
 
   .feature-image .image-frame {
     position: static;
+    width: 100%;
     height: auto;
   }
 
   .feature-image .image-frame img {
     height: auto;
-    aspect-ratio: 1 / 1;
+    aspect-ratio: auto;
+    width: 100%;
+    object-fit: contain;
+    /* ou cover if needed */
+    border-radius: 8px;
+    display: block;
+
   }
 
   .blog-style2 .feature-image .image-frame img {
@@ -13518,15 +13510,15 @@ ul.entry-comment .comment-content ul, ul.entry-comment .comment-content ol {
   Custom styles
 ============================================== */
 
-
+/* We let it commented. If needed all the classes are well located in the code, just uncomment these lines */
 .card-truncate-1-line, .card-truncate-1-line p {
-  display: -webkit-box;
+  /* display: -webkit-box;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: normal;
-  padding-bottom: 0px !important;
+  padding-bottom: 0px !important; */
 }
 
 .card-truncate-6-line, .card-truncate-6-line p {
@@ -13540,30 +13532,30 @@ ul.entry-comment .comment-content ul, ul.entry-comment .comment-content ol {
 }
 
 .card-title-truncate {
-  display: -webkit-box;
+  /* display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: normal;
+  white-space: normal; */
 }
 
 .card-text-truncate {
-  display: -webkit-box;
+  /* display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: normal;
+  white-space: normal; */
 }
 
 .card-truncate-1 {
-  display: -webkit-box;
+  /* display: -webkit-box;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: normal;
+  white-space: normal; */
 }
 
 
