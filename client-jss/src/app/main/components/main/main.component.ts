@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
+import { Meta, Title } from '@angular/platform-browser';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { environment } from '../../../../environments/environment';
 import { MY_JSS_HOME_ROUTE } from '../../../libs/Constants';
 import { validateEmail } from '../../../libs/CustomFormsValidatorsHelper';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { AppService } from '../../../services/app.service';
 import { ConstantService } from '../../../services/constant.service';
-import { Author } from '../../model/Author';
+import { GtmService } from '../../../services/gtm.service';
+import { FormSubmitPayload, PageInfo } from '../../../services/GtmPayload';
 import { JssCategory } from '../../model/JssCategory';
 import { Post } from '../../model/Post';
 import { PublishingDepartment } from '../../model/PublishingDepartment';
@@ -49,19 +52,25 @@ export class MainComponent implements OnInit {
   idf!: PublishingDepartment;
 
   currentUser: Responsable | undefined;
+  MY_JSS_HOME_ROUTE = MY_JSS_HOME_ROUTE;
+  frontendMyJssUrl = environment.frontendMyJssUrl;
 
   constructor(
     private postService: PostService,
     private serieService: SerieService,
     private loginService: LoginService,
     private appService: AppService,
+    private titleService: Title, private meta: Meta,
     private communicationPreferenceService: CommunicationPreferencesService,
     private constantService: ConstantService,
     private tagService: TagService,
+    private gtmService: GtmService,
     private audioService: AudioPlayerService
   ) { }
 
   ngOnInit() {
+    this.titleService.setTitle("Journal d'annonces légales Parisien - JSS");
+    this.meta.updateTag({ name: 'description', content: "JSS est votre Journal d'annonces légales Parisien habilité. Nous vous aidons à publier votre annonce légale en quelques clics. Simple, rapide et au meilleur prix." });
     this.firstCategory = this.constantService.getJssCategoryHomepageFirstHighlighted();
     this.secondCategory = this.constantService.getJssCategoryHomepageSecondHighlighted();
     this.thirdCategory = this.constantService.getJssCategoryHomepageThirdHighlighted();
@@ -119,38 +128,6 @@ export class MainComponent implements OnInit {
     })
   }
 
-  openPost(post: Post, event: any) {
-    this.appService.openRoute(event, "post/" + post.slug, undefined);
-  }
-
-  openAuthorPosts(author: Author, event: any) {
-    this.appService.openRoute(event, "post/author/" + author.slug, undefined);
-  }
-
-  openCategoryPosts(category: JssCategory, event: any) {
-    this.appService.openRoute(event, "post/category/" + category.slug, undefined);
-  }
-
-  openPodcastPosts(event: any) {
-    this.appService.openRoute(event, "podcasts", undefined);
-  }
-
-  openSeriePosts(serie: Serie, event: any) {
-    this.appService.openRoute(event, "post/serie/" + serie.slug, undefined);
-  }
-
-  openPodcastPost(podcast: Post, event: any) {
-    this.appService.openRoute(event, "podcast/" + podcast.slug, undefined);
-  }
-
-  openPinnedPosts(event: any) {
-    this.appService.openRoute(event, "pined/", undefined);
-  }
-
-  openMyJss(event: any) {
-    this.appService.openMyJssRoute(event, MY_JSS_HOME_ROUTE);
-  }
-
   registerEmail(mailToRegister: string) {
     // Email verifications
     if (!mailToRegister) {
@@ -162,7 +139,9 @@ export class MainComponent implements OnInit {
       // this.appService.displayToast("Impossible de finaliser votre inscription. Vérifiez votre adresse e-mail et réessayez.", true, "Une erreur s’est produite...", 3000);
       return;
     }
-    this.communicationPreferenceService.subscribeToNewspaperNewsletter(mailToRegister).subscribe();
+    this.communicationPreferenceService.subscribeToNewspaperNewsletter(mailToRegister).subscribe(reponse => {
+      this.trackFormNewsletter();
+    });
   }
 
   fillPostsForCategories() {
@@ -188,12 +167,16 @@ export class MainComponent implements OnInit {
     }
   }
 
-  followSerie(serieToFollow: Serie, event: MouseEvent) {
-    //TODO
-  }
-
-  unfollowSerie(serieToFollow: Serie, event: MouseEvent) {
-    //TODO
+  trackFormNewsletter() {
+    this.gtmService.trackFormSubmit(
+      {
+        form: { type: "S'inscrire" },
+        page: {
+          type: 'main',
+          name: 'main'
+        } as PageInfo
+      } as FormSubmitPayload
+    );
   }
 
   // Audio methods

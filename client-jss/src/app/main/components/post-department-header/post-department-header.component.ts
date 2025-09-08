@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { PublishingDepartment } from '../../model/PublishingDepartment';
@@ -15,17 +16,23 @@ import { DepartmentHubComponent } from '../department-hub/department-hub.compone
 export class PostDepartmentHeaderComponent implements OnInit {
 
   constructor(private departmentService: DepartmentService,
+    private titleService: Title, private meta: Meta,
     private activeRoute: ActivatedRoute
   ) { }
 
   selectedDepartment: PublishingDepartment | undefined;
 
   ngOnInit() {
+    this.titleService.setTitle("Tous nos articles - JSS");
+    this.meta.updateTag({ name: 'description', content: "Retrouvez l'actualité juridique et économique. JSS analyse pour vous les dernières annonces, formalités et tendances locales." });
     let code = this.activeRoute.snapshot.params['code'];
     if (code)
       this.departmentService.getPublishingDepartmentByCode(code).subscribe(response => {
-        if (response)
+        if (response) {
           this.selectedDepartment = response;
+          this.titleService.setTitle("Les articles en " + this.selectedDepartment!.name + " (" + this.selectedDepartment!.code + ") - JSS");
+          this.meta.updateTag({ name: 'description', content: "Retrouvez l'actualité juridique et économique en " + this.selectedDepartment!.name + " (" + this.selectedDepartment!.code + "). JSS analyse pour vous les dernières annonces, formalités et tendances locales." });
+        }
       });
   }
 

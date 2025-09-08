@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { Meta, Title } from '@angular/platform-browser';
+import { environment } from '../../../../environments/environment';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { AppService } from '../../../services/app.service';
+import { GtmService } from '../../../services/gtm.service';
+import { CtaClickPayload, PageInfo } from '../../../services/GtmPayload';
 import { Newspaper } from '../../model/Newspaper';
 import { Responsable } from '../../model/Responsable';
 import { NEWSPAPER_KIOSK_BUY } from '../../model/Subscription';
@@ -20,6 +24,8 @@ export class KioskComponent implements OnInit {
   currentUser: Responsable | undefined;
   isSubscribed: boolean = false;
   newspaperIdsSeeableByUser: number[] = [];
+  frontendMyJssUrl = environment.frontendMyJssUrl;
+  NEWSPAPER_KIOSK_BUY = NEWSPAPER_KIOSK_BUY;
 
   yearOpened: number = 2023;
   jssEditionNumberHovered: number = 0;
@@ -30,9 +36,13 @@ export class KioskComponent implements OnInit {
   constructor(
     private newspaperService: NewspaperService,
     private loginService: LoginService,
+    private gtmService: GtmService,
+    private titleService: Title, private meta: Meta,
     private appService: AppService) { }
 
   ngOnInit() {
+    this.titleService.setTitle("Toutes les éditions du Journal Spécial des Sociétés - JSS");
+    this.meta.updateTag({ name: 'description', content: "Accédez à toutes les éditions du Journal Spécial des Sociétés avec JSS. Consultez nos archives pour retrouver une annonce ou une information juridique précise." });
     this.loginService.getCurrentUser().subscribe(res => {
       this.currentUser = res;
       if (this.currentUser) {
@@ -73,10 +83,51 @@ export class KioskComponent implements OnInit {
   }
 
   openExtract(newspaperId: number) {
+    if (this.isSubscribed || this.newspaperIdsSeeableByUser.includes(newspaperId))
+      this.trackCtaClickDownloadComplete(newspaperId);
+    else
+      this.trackCtaClickDownloadExtract(newspaperId);
     this.newspaperService.getPdfForUser(newspaperId);
   }
 
   buyNewspaper(newspaperId: number) {
-    this.appService.openMyJssRoute(event, "/quotation/subscription/" + NEWSPAPER_KIOSK_BUY + "/" + false + "/" + newspaperId, true);
+    this.trackCtaClicBuy(newspaperId);
   }
+
+  trackCtaClickDownloadExtract(newspaperId: number) {
+    this.gtmService.trackCtaClick(
+      {
+        cta: { type: 'link', label: "Lire un extrait", objectId: newspaperId },
+        page: {
+          type: 'main',
+          name: 'kiosk'
+        } as PageInfo
+      } as CtaClickPayload
+    );
+  }
+
+  trackCtaClicBuy(newspaperId: number) {
+    this.gtmService.trackCtaClick(
+      {
+        cta: { type: 'link', label: "Acheter", objectId: newspaperId },
+        page: {
+          type: 'main',
+          name: 'kiosk'
+        } as PageInfo
+      } as CtaClickPayload
+    );
+  }
+
+  trackCtaClickDownloadComplete(newspaperId: number) {
+    this.gtmService.trackCtaClick(
+      {
+        cta: { type: 'link', label: "Lire le journal", objectId: newspaperId },
+        page: {
+          type: 'main',
+          name: 'kiosk'
+        } as PageInfo
+      } as CtaClickPayload
+    );
+  }
+
 }

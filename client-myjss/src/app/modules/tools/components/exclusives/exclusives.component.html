@@ -52,19 +52,19 @@
   <div *ngIf="searchResults && searchResults.length>0 ">
     <div *ngFor="let post of searchResults">
       <article class="row g-0 border-0 mb-5">
-        <img class="col-sm-5 col-lg-4 rounded-5 post-image" (click)="openPost(post.slug, $event)"
+        <img class="col-sm-5 col-lg-4 rounded-5 post-image" [routerLink]="'/post/'+post.slug"
           [src]="post.media && post.media.urlLarge ? post.media.urlLarge : (post.media && post.media.urlFull ? post.media.urlFull : 'assets/img/account/blog/list/01.jpg')"
           alt="Post image">
         <div class="col-sm-7 col-lg-8">
           <div class="pt-4 pb-sm-4 ps-sm-4 pe-lg-4">
             <h3>
-              <a class="card-title-truncate" (click)="openPost(post.slug, $event)">{{post.titleText}}</a>
+              <a class="card-title-truncate" [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
             </h3>
             <p class="d-sm-none d-md-block card-text-truncate">{{post.excerptText}}</p>
             <div class="d-flex flex-wrap align-items-center mt-n2">
               <span class="fs-sm text-body-secondary mt-2">Publié le {{post.date | date:'EEEE d MMMM'}}</span>
               <span class="fs-xs opacity-20 mt-2 mx-3">|</span>
-              <a *ngFor="let tag of post.postTags" (click)="openTagPosts(tag, $event)"
+              <a *ngFor="let tag of post.postTags" [routerLink]="'/tag/'+tag.slug"
                 class="badge text-nav fs-xs border mt-2">{{tag.slug}}</a>
             </div>
           </div>

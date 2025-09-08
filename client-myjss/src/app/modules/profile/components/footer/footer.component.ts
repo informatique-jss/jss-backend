@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { environment } from '../../../../../environments/environment';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { MenuItem } from '../../../general/model/MenuItem';
 import { AppService } from '../../../main/services/app.service';
@@ -21,6 +22,7 @@ export class FooterComponent implements OnInit {
   services!: MenuItem[];
   companyItems!: MenuItem[];
   tools!: MenuItem[];
+  frontendJssUrl = environment.frontendJssUrl;
 
 
   constructor(
@@ -31,49 +33,5 @@ export class FooterComponent implements OnInit {
     this.services = this.appService.getAllServicesMenuItems();
     this.companyItems = this.appService.getAllCompanyMenuItems();
     this.tools = this.appService.getAllToolsMenuItems();
-  }
-
-  openPage(page: string, event: any) {
-    this.appService.openRoute(event, page + "/", undefined);
-  }
-
-  openContact(event: any) {
-    this.appService.openRoute(event, "contact", undefined);
-  }
-
-  openJoinUs(event: any) {
-    this.appService.openRoute(event, "join-us", undefined);
-  }
-
-
-  openPartners(event: any) {
-    this.appService.openRoute(event, "partners", undefined);
-  }
-
-  openLegalMentions(event: any) {
-    this.appService.openRoute(event, "legal-mentions", undefined);
-  }
-
-  openNewOrder(event: any) {
-  }
-
-  openConfidentialityPolitic(event: any) {
-    this.appService.openRoute(event, "confidentiality", undefined);
-  }
-
-  openLinkedin() {
-    this.appService.openLinkedinJssPage();
-  }
-
-  openInstagram() {
-    this.appService.openInstagramJssPage();
-  }
-
-  openFacebook() {
-    this.appService.openFacebookJssPage();
-  }
-
-  openJssRoute(event: any) {
-    this.appService.openJssRoute(event, "");
   }
 }

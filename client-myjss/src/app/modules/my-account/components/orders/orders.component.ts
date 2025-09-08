@@ -170,11 +170,6 @@ export class OrdersComponent implements OnInit {
     }
   }
 
-  openOrderDetails(event: any, order: CustomerOrder) {
-    this.appService.openRoute(event, "account/orders/details/" + order.id, undefined);
-  }
-
-
   quotationToCancel: CustomerOrder | undefined;
   finalCancelDraft(event: any) {
     if (this.quotationToCancel && this.quotationToCancel.id) {

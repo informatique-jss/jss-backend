@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { AppService } from '../../../services/app.service';
@@ -21,6 +22,7 @@ export class PostTagHeaderComponent implements OnInit {
     private assoMailTagService: AssoMailTagService,
     private activeRoute: ActivatedRoute,
     private loginService: LoginService,
+    private titleService: Title, private meta: Meta,
     private appService: AppService
   ) { }
 
@@ -29,11 +31,15 @@ export class PostTagHeaderComponent implements OnInit {
   currentUser: Responsable | undefined;
 
   ngOnInit() {
+    this.titleService.setTitle("Tous nos articles - JSS");
+    this.meta.updateTag({ name: 'description', content: "Retrouvez l'actualité juridique et économique. JSS analyse pour vous les dernières annonces, formalités et tendances locales." });
     let slug = this.activeRoute.snapshot.params['slug'];
     if (slug) {
       this.tagService.getTagBySlug(slug).subscribe(response => {
         if (response) {
           this.selectedTag = response;
+          this.titleService.setTitle("Tous nos articles - " + this.selectedTag.name + " - JSS");
+          this.meta.updateTag({ name: 'description', content: this.selectedTag.name + " - Retrouvez l'actualité juridique et économique. JSS analyse pour vous les dernières annonces, formalités et tendances locales." });
           this.assoMailTagService.getAssoMailTag(this.selectedTag).subscribe(response => {
             if (response) {
               this.isFollowed = true;

@@ -60,11 +60,6 @@ export class PayOrderComponent implements OnInit {
     }
   }
 
-  cancelPay() {
-    if (this.idOrder)
-      this.appService.openRoute(null, "account/orders/details/" + this.idOrder, undefined);
-  }
-
   refreshQrCode() {
     if (this.defaultMail && this.defaultMail.length > 0 && validateEmail(this.defaultMail))
       if (this.idOrder)

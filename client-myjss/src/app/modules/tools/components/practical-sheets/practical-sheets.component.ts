@@ -1,11 +1,14 @@
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { NewsletterComponent } from '../../../general/components/newsletter/newsletter.component';
 import { AppService } from '../../../main/services/app.service';
+import { GtmService } from '../../../main/services/gtm.service';
+import { CtaClickPayload, PageInfo } from '../../../main/services/GtmPayload';
 import { AutocompletePostComponent } from '../../../miscellaneous/components/autocomplete-post/autocomplete-post.component';
 import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { SelectMyJssCategoryComponent } from '../../../miscellaneous/components/forms/select-myjss-category/select-myjss-category.component';
@@ -61,9 +64,13 @@ export class PracticalSheetsComponent implements OnInit {
     private appService: AppService,
     private myJssCategoryService: MyJssCategoryService,
     private activatedRoute: ActivatedRoute,
+    private titleService: Title, private meta: Meta,
+    private gtmService: GtmService
   ) { }
 
   ngOnInit() {
+    this.titleService.setTitle("Les fiches pratiques - MyJSS");
+    this.meta.updateTag({ name: 'description', content: "Des guides clairs pour réussir vos formalités. MyJSS vous offre des fiches pratiques pour simplifier vos démarches juridiques. L'expertise à votre portée." });
     this.practicalSheetsForm = this.formBuilder.group({});
     this.myJssCategories.push(this.allMyJssCategories);
     this.myJssCategoryService.getMyJssCategories().subscribe(response => {
@@ -165,7 +172,7 @@ export class PracticalSheetsComponent implements OnInit {
     this.secondSearchResults = [];
   }
 
-  openPost(slug: string, event: any) {
+  openPostOnSelect(slug: string, event: any) {
     this.appService.openRoute(event, "post/" + slug, undefined);
   }
 
@@ -173,11 +180,25 @@ export class PracticalSheetsComponent implements OnInit {
     return this.expandedCardIndex === index;
   }
 
+  trackClickPraticalSheet(categoryName: string) {
+    this.gtmService.trackCtaClick(
+      {
+        cta: { type: 'link', label: categoryName },
+        page: {
+          type: 'tools',
+          name: 'practical-sheets'
+        } as PageInfo
+      } as CtaClickPayload
+    );
+  }
+
   toggleCard(myJssCategory: MyJssCategory): void {
     if (this.expandedCardIndex === myJssCategory.id)
       this.expandedCardIndex = -1;
-    else if (myJssCategory.id)
+    else if (myJssCategory.id) {
       this.expandedCardIndex = myJssCategory.id;
+      this.trackClickPraticalSheet(myJssCategory.name);
+    }
 
     if (this.expandedCardIndex >= 0 && myJssCategory.id && this.myJssCategoriesFullLoaded.indexOf(myJssCategory.id) < 0) {
       this.postService.getPostsByMyJssCategory(myJssCategory, 0, 100000).subscribe(response => {

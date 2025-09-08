@@ -173,10 +173,6 @@ export class QuotationsComponent implements OnInit {
     return getCustomerOrderBillingMailList(this.quotationsMailComputeResult[quotation.id]);
   }
 
-  openQuotationDetails(event: any, quotation: Quotation) {
-    this.appService.openRoute(event, "account/quotations/details/" + quotation.id, undefined);
-  }
-
   getQuotationValidityDate(quotation: Quotation) {
     return new Date(new Date(quotation.createdDate).getFullYear(), 11, 31);
   }

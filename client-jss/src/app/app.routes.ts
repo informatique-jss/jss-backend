@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { NotFoundPageComponent } from './main/components/404/not.found.page.component';
 import { DefaultComponent } from './main/components/default/default.component';
 import { ConstantsResolver } from './services/constant.service';
 
@@ -96,6 +97,7 @@ export const routes: Routes = [
         path: 'contribute',
         loadComponent: () => import('./main/components/contribute/contribute.component').then(m => m.ContributeComponent)
       },
+      { path: '**', component: NotFoundPageComponent }
     ]
   }
 ];

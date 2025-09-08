@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Subscription } from 'rxjs';
+import { ActiveDirectoryGroup } from 'src/app/modules/miscellaneous/model/ActiveDirectoryGroup';
+import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AppService } from '../../../../services/app.service';
 import { UserPreferenceService } from '../../../../services/user.preference.service';
 import { Employee } from '../../model/Employee';
@@ -17,11 +19,13 @@ export class MyProfilComponent implements OnInit {
     private appService: AppService,
     private employeeService: EmployeeService,
     private formBuilder: FormBuilder,
-    private userPreferenceService: UserPreferenceService
+    private userPreferenceService: UserPreferenceService,
+    private constantService: ConstantService
   ) { }
 
   employeeForm = this.formBuilder.group({});
 
+  adSales: ActiveDirectoryGroup | undefined;
   currentEmployee: Employee | undefined;
   editMode: boolean = false;
 
@@ -33,6 +37,8 @@ export class MyProfilComponent implements OnInit {
       this.currentEmployee = response;
       this.appService.changeHeaderTitle("Mon profil : " + this.currentEmployee.firstname + " " + this.currentEmployee.lastname);
     })
+
+    this.adSales = this.constantService.getActiveDirectoryGroupSales();
 
     this.saveObservableSubscription = this.appService.saveObservable.subscribe(response => {
       if (response)

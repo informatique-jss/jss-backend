@@ -142,6 +142,9 @@ public class Announcement implements IId {
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Boolean isReReadByJss;
 
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	private Boolean isLegacy;
+
 	public Integer getId() {
 		return id;
 	}
@@ -422,4 +425,13 @@ public class Announcement implements IId {
 	public void setIsReReadByJss(Boolean isReReadByJss) {
 		this.isReReadByJss = isReReadByJss;
 	}
+
+	public Boolean getIsLegacy() {
+		return isLegacy;
+	}
+
+	public void setIsLegacy(Boolean isLegacy) {
+		this.isLegacy = isLegacy;
+	}
+
 }

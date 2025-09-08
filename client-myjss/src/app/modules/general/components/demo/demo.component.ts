@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { Meta, Title } from '@angular/platform-browser';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { FormSubmitPayload, PageInfo } from '../../../main/services/GtmPayload';
 import { AppService } from '../../../main/services/app.service';
+import { GtmService } from '../../../main/services/gtm.service';
 import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { MailService } from '../../services/mail.service';
 
@@ -23,11 +26,27 @@ export class DemoComponent implements OnInit {
 
   constructor(private formBuilder: FormBuilder,
     private mailService: MailService,
-    private appService: AppService
+    private appService: AppService,
+    private titleService: Title, private meta: Meta,
+    private gtmService: GtmService
   ) { }
 
   ngOnInit() {
+    this.titleService.setTitle("Demandez-votre démo - MyJSS");
+    this.meta.updateTag({ name: 'description', content: "Découvrez comment notre plateforme simplifie vos formalités. Demandez votre démo personnalisée et voyez comment MyJSS peut vous faire gagner du temps et en sérénité." });
     this.demoForm = this.formBuilder.group({});
+  }
+
+  trackFormDemo() {
+    this.gtmService.trackFormSubmit(
+      {
+        form: { type: 'Demander une démo' },
+        page: {
+          type: 'general',
+          name: 'demo'
+        } as PageInfo
+      } as FormSubmitPayload
+    );
   }
 
   getDemoByMail(event: any) {
@@ -41,6 +60,7 @@ export class DemoComponent implements OnInit {
 
     this.mailService.subscribeDemo(this.mail, this.firstName, this.lastName, this.phoneNumber).subscribe(response => {
       if (response) {
+        this.trackFormDemo();
         this.appService.displayToast("Vous allez recevoir un mail de confirmation.", false, "Demande validée", 3000);
         this.demoForm.reset();
         this.firstName = "";

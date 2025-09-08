@@ -8,7 +8,6 @@ import { PlatformService } from '../../../main/services/platform.service';
 import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { Category } from '../../model/Category';
 import { Post } from '../../model/Post';
-import { Tag } from '../../model/Tag';
 import { PostService } from '../../services/post.service';
 
 @Component({
@@ -109,13 +108,5 @@ export class ExclusivesComponent implements OnInit {
     }
 
     return Array.from({ length: end - start }, (_, i) => start + i);
-  }
-
-  openPost(slug: string, event: any) {
-    this.appService.openRoute(event, "post/" + slug, undefined);
-  }
-
-  openTagPosts(tag: Tag, event: any) {
-    this.appService.openRoute(event, "tag/" + tag.slug, undefined);
   }
 }
