@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { environment } from '../../../../environments/environment';
 import { MY_JSS_HOME_ROUTE } from '../../../libs/Constants';
 import { validateEmail } from '../../../libs/CustomFormsValidatorsHelper';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
@@ -51,6 +52,8 @@ export class MainComponent implements OnInit {
   idf!: PublishingDepartment;
 
   currentUser: Responsable | undefined;
+  MY_JSS_HOME_ROUTE = MY_JSS_HOME_ROUTE;
+  frontendMyJssUrl = environment.frontendMyJssUrl;
 
   constructor(
     private postService: PostService,
@@ -123,10 +126,6 @@ export class MainComponent implements OnInit {
     this.tagService.getAllTendencyTags().subscribe(reponse => {
       this.tagTendencies = reponse;
     })
-  }
-
-  openMyJss(event: any) {
-    this.appService.openMyJssRoute(event, MY_JSS_HOME_ROUTE);
   }
 
   registerEmail(mailToRegister: string) {

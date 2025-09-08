@@ -73,6 +73,9 @@ export class PostComponent implements OnInit, AfterViewInit {
   numberOfSharingPostRemaining: number = 0;
 
   @ViewChildren('sliderPage') sliderPage!: QueryList<any>;
+  frontendMyJssUrl = environment.frontendMyJssUrl;
+  ONE_POST_SUBSCRIPTION = ONE_POST_SUBSCRIPTION;
+  MY_JSS_SIGN_IN_ROUTE = MY_JSS_SIGN_IN_ROUTE;
 
   constructor(private activatedRoute: ActivatedRoute,
     private formBuilder: FormBuilder,
@@ -336,20 +339,12 @@ export class PostComponent implements OnInit, AfterViewInit {
     }
   }
 
-  shareOnInstagram() {
-    this.appService.openInstagramJssPage();
-  }
-
   shareByMail() {
     const win = this.platformService.getNativeWindow();
     if (this.post && win) {
       let url = environment.frontendUrl + "post/" + this.post.slug;
       win.open('mailto:?subject=Découvrez cet article intéressant sur JSS.FR&body=Bonjour,%0A%0AJe voulais vous partager cet article :%0A%0A' + this.extractContent(this.post.titleText) + '%0A' + url + '%0A%0ABonne lecture!', "_blank");
     }
-  }
-
-  openSignIn(event: any) {
-    this.appService.openMyJssRoute(event, MY_JSS_SIGN_IN_ROUTE, false);
   }
 
   openOfferPostModal(content: any) {
@@ -389,10 +384,6 @@ export class PostComponent implements OnInit, AfterViewInit {
     }
     return '';
   };
-
-  subscribeToOnePost(event: any, idArticle: number) {
-    this.appService.openMyJssRoute(event, "/quotation/subscription/" + ONE_POST_SUBSCRIPTION + "/" + false + "/" + idArticle, true);
-  }
 
   readArticle(): void {
     const win = this.platformService.getNativeWindow();

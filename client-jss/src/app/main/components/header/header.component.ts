@@ -2,6 +2,7 @@ import { Component, ElementRef, HostListener, OnInit, TemplateRef } from '@angul
 import { Router } from '@angular/router';
 import { NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 import { MY_JSS_HOME_ROUTE, MY_JSS_NEW_ANNOUNCEMENT_ROUTE, MY_JSS_NEW_FORMALITY_ROUTE, MY_JSS_SIGN_IN_ROUTE } from '../../../libs/Constants';
 import { capitalizeName } from '../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
@@ -54,6 +55,11 @@ export class HeaderComponent implements OnInit {
   myAccountItems: AccountMenuItem[] = [];
   MAIN_ITEM_ACCOUNT = MAIN_ITEM_ACCOUNT;
   MAIN_ITEM_DASHBOARD = MAIN_ITEM_DASHBOARD;
+  MY_JSS_SIGN_IN_ROUTE = MY_JSS_SIGN_IN_ROUTE;
+  frontendMyJssUrl = environment.frontendMyJssUrl;
+  MY_JSS_NEW_ANNOUNCEMENT_ROUTE = MY_JSS_NEW_ANNOUNCEMENT_ROUTE;
+  MY_JSS_NEW_FORMALITY_ROUTE = MY_JSS_NEW_FORMALITY_ROUTE;
+  MY_JSS_HOME_ROUTE = MY_JSS_HOME_ROUTE;
 
   constructor(
     private router: Router,
@@ -188,9 +194,8 @@ export class HeaderComponent implements OnInit {
     this.isMobileMenuOpen = false;
   }
 
-  openSignIn(event: any) {
+  openSignIn() {
     this.isMobileMenuOpen = false;
-    this.appService.openMyJssRoute(event, MY_JSS_SIGN_IN_ROUTE, false);
   }
 
   openCategoryPosts() {
@@ -215,29 +220,9 @@ export class HeaderComponent implements OnInit {
     this.isMobileMenuOpen = false;
   }
 
-  openNewAnnouncement(event: any) {
-    this.appService.openMyJssRoute(event, MY_JSS_NEW_ANNOUNCEMENT_ROUTE);
-  }
 
-  openNewFormality(event: any) {
-    this.appService.openMyJssRoute(event, MY_JSS_NEW_FORMALITY_ROUTE);
-  }
-
-  openMyJss(event: any) {
+  openMyJss() {
     this.isMobileMenuOpen = false;
-    this.appService.openMyJssRoute(event, MY_JSS_HOME_ROUTE);
-  }
-
-  openLinkedinJssPage() {
-    this.appService.openLinkedinJssPage();
-  }
-
-  openInstagramJssPage() {
-    this.appService.openInstagramJssPage();
-  }
-
-  openFacebookJssPage() {
-    this.appService.openFacebookJssPage();
   }
 
   searchEntities() {

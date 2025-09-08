@@ -36,7 +36,7 @@ Footer START -->
             <div class="col-12">
               <ul class="nav flex-column text-primary-hover">
                 <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
-                    (click)="openSubscribe($event)">S'abonner</a></li>
+                    [href]="frontendMyJssUrl+MY_JSS_SUBSCRIBE_ROUTE" target="_blank">S'abonner</a></li>
                 <li class="nav-item"><a class="nav-link pt-0" style="cursor: pointer;"
                     routerLink="/podcasts">Podcasts</a></li>
                 <li class="nav-item"><a class="nav-link pt-0" style="cursor: pointer;" routerLink="/series">Series et
@@ -55,15 +55,19 @@ Footer START -->
             <div class="col-12">
               <ul class="nav flex-column text-primary-hover">
                 <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
-                    (click)="openProductAnnounce($event)">Annonces légales</a></li>
+                    [href]="frontendMyJssUrl+MY_JSS_SERVICES_ANNOUNCEMENT_ROUTE" target="_blank">Annonces légales</a>
+                </li>
                 <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
-                    (click)="openProductFormality($event)">Formalités légales</a></li>
+                    [href]="frontendMyJssUrl+MY_JSS_SERVICES_FORMALITY_ROUTE" target="_blank">Formalités légales</a>
+                </li>
                 <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
-                    (click)="openProductApositlle($event)">Apostilles-Légalisation</a></li>
+                    [href]="frontendMyJssUrl+MY_JSS_SERVICES_APOSITLLE_ROUTE"
+                    target="_blank">Apostilles-Légalisation</a></li>
                 <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
-                    (click)="openProductDomiciliation($event)">Domiciliation</a></li>
+                    [href]="frontendMyJssUrl+MY_JSS_SERVICES_DOMICILIATION_ROUTE" target="_blank">Domiciliation</a></li>
                 <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
-                    (click)="openProductDocument($event)">Fourniture de documents</a></li>
+                    [href]="frontendMyJssUrl+MY_JSS_SERVICES_DOCUMENT_ROUTE" target="_blank">Fourniture de documents</a>
+                </li>
               </ul>
             </div>
           </div>
@@ -74,17 +78,18 @@ Footer START -->
             <div class="col-12">
               <ul class="nav flex-column text-primary-hover">
                 <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
-                    (click)="openWhoAreWe($event)">Qui sommes-nous ?</a></li>
+                    [href]="frontendMyJssUrl+MY_JSS_WHO_ARE_WE_ROUTE" target="_blank">Qui sommes-nous ?</a></li>
                 <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
-                    (click)="openJoinUs($event)">Nous
+                    [href]="frontendMyJssUrl+MY_JSS_JOIN_US_ROUTE" target="_blank">Nous
                     rejoindre</a></li>
                 <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
-                    (click)="openLegalMentions($event)">Mentions légales</a></li>
+                    [href]="frontendMyJssUrl+MY_JSS_LEGAL_MENTIONS_ROUTE" target="_blank">Mentions légales</a></li>
                 <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
-                    (click)="openCgv($event)">CGV</a>
+                    [href]="frontendMyJssUrl+MY_JSS_CGV_ROUTE" target="_blank">CGV</a>
                 </li>
                 <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
-                    (click)="openPrivacyPolicy($event)">Politique de confidentialité</a>
+                    [href]="frontendMyJssUrl+MY_JSS_CONFIDENTIALITY_ROUTE" target="_blank">Politique de
+                    confidentialité</a>
                 </li>
               </ul>
             </div>
