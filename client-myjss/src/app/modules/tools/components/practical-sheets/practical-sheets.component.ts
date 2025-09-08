@@ -42,7 +42,7 @@ export class PracticalSheetsComponent implements OnInit {
   secondSearchResults: { [key: number]: Array<Post> } = {};
 
   myJssCategories: MyJssCategory[] = [];
-  allMyJssCategories: MyJssCategory = { id: -1, name: 'Toutes les categories', slug: "all-categories", categoryOrder: 1 };
+  allMyJssCategories: MyJssCategory = { id: -1, name: 'Tout', slug: "all-categories", categoryOrder: 1 };
   myJssCategoriesFullLoaded: number[] = [];
 
   expandedCardIndex: number = -1;
