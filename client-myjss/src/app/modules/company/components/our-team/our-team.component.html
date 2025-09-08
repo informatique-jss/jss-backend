@@ -31,8 +31,8 @@
   </div>
   <section class="container py-5 mb-lg-3 mb-xl-4 mt-xl-3 my-xxl-5">
     <div class="row">
-      <div class="col-2">
-        <ul class="nav nav-tabs flex-column" role="tablist">
+      <div class="col-md-2 col-12">
+        <ul class="nav nav-tabs flex-md-column flex-row" role="tablist">
           <li class="nav-item" *ngFor="let dept of departments">
             <div class="nav-link" [class.active]="dept == selectedTab" (click)="selectedTab = dept">
               <i class="fi-home me-2"></i>
@@ -41,11 +41,11 @@
           </li>
         </ul>
       </div>
-      <div class="col-10" data-simplebar>
+      <div class="col-md-10 col-12 p-0" data-simplebar>
         <div *ngIf="staff[selectedTab.key]" class="mb-4 mb-lg-5 pb-4 px-3">
-          <div class="row row-cols-lg-4 flex-lg-wrap gy-lg-5 mx-n3">
+          <div class="row row-cols-2 row-cols-lg-4 flex-lg-wrap gy-lg-5 mx-n3 justify-content-center">
             <div class="col" *ngFor="let person of staff[selectedTab.key]">
-              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none mt-4 mt-md-0" style="min-width: 110px;">
                 <img class="rounded-circle" [src]="'assets/img/societe/team/' + selectedTab.key + '/' + person.photo"
                   width="120" [alt]="person.firstname">
                 <h3 class="h5 pt-4 mb-1">{{ person.firstname }} {{ person.lastname }}</h3>
