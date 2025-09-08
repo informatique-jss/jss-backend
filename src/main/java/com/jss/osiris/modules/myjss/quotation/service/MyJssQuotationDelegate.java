@@ -127,7 +127,7 @@ public class MyJssQuotationDelegate {
             newResponsable = employeeService.getCurrentMyJssUser();
         }
         if (employeeService.getCurrentMyJssUser() != null) {
-            responsableService.updateConsentDate(employeeService.getCurrentMyJssUser());
+            responsableService.updateConsentDateForCurrentUser(employeeService.getCurrentMyJssUser());
         }
 
         CustomerOrder fetchOrder = null;
@@ -194,7 +194,7 @@ public class MyJssQuotationDelegate {
         }
 
         if (employeeService.getCurrentMyJssUser() != null) {
-            responsableService.updateConsentDate(employeeService.getCurrentMyJssUser());
+            responsableService.updateConsentDateForCurrentUser(employeeService.getCurrentMyJssUser());
         }
 
         Quotation fetchQuotation = null;

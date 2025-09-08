@@ -260,11 +260,9 @@ public class MyJssProfileController {
 
 	@GetMapping(inputEntryPoint + "/responsable/accept-terms")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
-	public ResponseEntity<Responsable> updateAcceptTermsForCurrentUser(@RequestParam Integer idResponsable)
+	public ResponseEntity<Boolean> updateAcceptTermsForCurrentUser()
 			throws OsirisValidationException {
-		if (idResponsable == null)
-			throw new OsirisValidationException("idResponsable");
-		Responsable responsable = responsableService.getResponsable(idResponsable);
-		return new ResponseEntity<Responsable>(responsableService.updateConsentDate(responsable), HttpStatus.OK);
+		responsableService.updateConsentDateForCurrentUser();
+		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 }

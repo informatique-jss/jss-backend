@@ -88,7 +88,7 @@ export class OverviewComponent implements OnInit {
 
   acceptTermsForCurrentUser() {
     if (this.currentUser && this.acceptTerms)
-      this.responsableService.updateAcceptTermsForCurrentUser(this.currentUser).subscribe();
+      this.responsableService.updateAcceptTermsForCurrentUser().subscribe();
   }
 
   cancelAcceptation() {
