@@ -11,7 +11,7 @@ Footer START -->
           <div class="row">
             <div class="col-12">
               <ul class="nav flex-column text-primary-hover">
-                <li class="nav-item"><a class="nav-link pt-0" style="cursor: pointer;"
+                <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
                     [routerLink]='"/post/category/" + category.slug'
                     *ngFor="let category of jssCategories">{{category.name}}</a></li>
               </ul>
@@ -23,8 +23,8 @@ Footer START -->
           <div class="row">
             <div class="col-12">
               <ul class="nav flex-column text-primary-hover">
-                <li class="nav-item"><a class="nav-link pt-0" style="cursor: pointer;"
-                    [routerLink]='"/post/department/" + department.id'
+                <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
+                    [routerLink]='"/post/department/" + department.code'
                     *ngFor="let department of departments">{{department.name}}</a></li>
               </ul>
             </div>
@@ -36,14 +36,13 @@ Footer START -->
             <div class="col-12">
               <ul class="nav flex-column text-primary-hover">
                 <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
-                    [href]="frontendMyJssUrl+MY_JSS_SUBSCRIBE_ROUTE" target="_blank">S'abonner</a></li>
-                <li class="nav-item"><a class="nav-link pt-0" style="cursor: pointer;"
+                    routerLink="/subscription">S'abonner</a></li>
+                <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
                     routerLink="/podcasts">Podcasts</a></li>
-                <li class="nav-item"><a class="nav-link pt-0" style="cursor: pointer;" routerLink="/series">Series et
-                    dossiers</a></li>
-                <li class="nav-item"><a class="nav-link pt-0" style="cursor: pointer;"
+                <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
                     routerLink="/contribute">Contribuer</a></li>
-                <li class="nav-item"><a class="nav-link pt-0" style="cursor: pointer;" routerLink="/kiosk">Kiosque</a>
+                <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
+                    routerLink="/kiosk">Kiosque</a>
                 </li>
               </ul>
             </div>
