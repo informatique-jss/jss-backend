@@ -35,7 +35,6 @@ import { Phone } from '../../../profile/model/Phone';
 import { Responsable } from '../../../profile/model/Responsable';
 import { Tiers } from '../../../profile/model/Tiers';
 import { LoginService } from '../../../profile/services/login.service';
-import { ResponsableService } from '../../../profile/services/responsable.service';
 import { IQuotation } from '../../model/IQuotation';
 import { CityService } from '../../services/city.service';
 
@@ -97,6 +96,7 @@ export class CheckoutComponent implements OnInit {
 
   acceptDocs: boolean = false;
   acceptTerms: boolean = false;
+  acceptUseTerms: boolean = false;
 
   quotationPriceObservableRef: Subscription | undefined;
 
@@ -126,7 +126,6 @@ export class CheckoutComponent implements OnInit {
     private documentService: DocumentService,
     private cityService: CityService,
     private voucherService: VoucherService,
-    private responsableService: ResponsableService,
     private gtmService: GtmService
 
   ) { }
@@ -296,7 +295,7 @@ export class CheckoutComponent implements OnInit {
       this.appService.displayToast("Les deux e-mails renseignés ne sont pas identiques !", true, "Validation de " + (this.quotation!.isQuotation ? "devis" : "commande") + " impossible", 5000);
       return false;
     }
-    if (!this.acceptDocs || !this.acceptTerms) {
+    if (!this.acceptDocs || !this.acceptTerms || (!this.currentUser && !this.acceptUseTerms)) {
       this.appService.displayToast("Vous devez accepter les conditions ci-dessus pour pouvoir valider " + (this.quotation!.isQuotation ? "le devis" : "la commande"), true, "Validation de " + (this.quotation!.isQuotation ? "devis" : "commande") + " impossible", 50000);
       return false;
     }
