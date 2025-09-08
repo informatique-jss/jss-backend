@@ -26,5 +26,5 @@ public interface ResponsableService {
 
     public Document applyParametersDocumentToQuotation(DocumentType documentType, Responsable responsable);
 
-    public Responsable updateHasConnectedMyJss(Responsable responsable);
+    public void updateConsentDate(Responsable responsable);
 }

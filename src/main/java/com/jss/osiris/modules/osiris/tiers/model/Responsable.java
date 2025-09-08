@@ -239,9 +239,6 @@ public class Responsable implements IAttachment, IId {
 
 	private LocalDateTime consentTermsDate;
 
-	@JsonView({ JacksonViews.MyJssDetailedView.class })
-	private Boolean hasAlreadyConnectMyJss;
-
 	public Tiers getTiers() {
 		return tiers;
 	}
@@ -616,14 +613,6 @@ public class Responsable implements IAttachment, IId {
 
 	public void setConsentTermsDate(LocalDateTime consentTermsDate) {
 		this.consentTermsDate = consentTermsDate;
-	}
-
-	public Boolean getHasAlreadyConnectMyJss() {
-		return hasAlreadyConnectMyJss;
-	}
-
-	public void setHasAlreadyConnectMyJss(Boolean hasAlreadyConnectMyJss) {
-		this.hasAlreadyConnectMyJss = hasAlreadyConnectMyJss;
 	}
 
 }

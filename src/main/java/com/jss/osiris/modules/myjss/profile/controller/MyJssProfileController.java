@@ -265,6 +265,6 @@ public class MyJssProfileController {
 		if (idResponsable == null)
 			throw new OsirisValidationException("idResponsable");
 		Responsable responsable = responsableService.getResponsable(idResponsable);
-		return new ResponseEntity<Responsable>(responsableService.updateHasConnectedMyJss(responsable), HttpStatus.OK);
+		return new ResponseEntity<Responsable>(responsableService.updateConsentDate(responsable), HttpStatus.OK);
 	}
 }

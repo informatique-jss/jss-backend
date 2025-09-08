@@ -171,9 +171,8 @@ public class ResponsableServiceImpl implements ResponsableService {
     }
 
     @Override
-    public Responsable updateHasConnectedMyJss(Responsable responsable) {
-        responsable.setHasAlreadyConnectMyJss(true);
+    public void updateConsentDate(Responsable responsable) {
         responsable.setConsentTermsDate(LocalDateTime.now());
-        return addOrUpdateResponsable(responsable);
+        addOrUpdateResponsable(responsable);
     }
 }
