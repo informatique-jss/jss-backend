@@ -177,7 +177,7 @@ public class ResponsableServiceImpl implements ResponsableService {
     @Override
     public void updateConsentDateForCurrentUser() {
         Responsable responsable = employeeService.getCurrentMyJssUser();
-        if (responsable != null) {
+        if (responsable != null && responsable.getConsentTermsDate() == null) {
             responsable.setConsentTermsDate(LocalDateTime.now());
             addOrUpdateResponsable(responsable);
         }
