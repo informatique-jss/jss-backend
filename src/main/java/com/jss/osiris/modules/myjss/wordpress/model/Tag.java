@@ -8,8 +8,11 @@ import com.jss.osiris.libs.search.model.IndexedField;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(indexes = { @Index(name = "idx_tag_slug", columnList = "slug") })
 public class Tag implements Serializable {
     @Id
     @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
