@@ -50,7 +50,7 @@
               <div class="col-lg-8 col-md-12 order-sm-1 order-0">
                 <article class="blog-style3 border-0 card position-relative">
                   <!-- Adding the d-flex class to the feature-image so it doesn't cover the rest of the card -->
-                  <div class="feature-image d-flex">
+                  <div class="feature-image d-flex rounded-2">
                     <div class="image-frame image-hover-style-1">
                       <a [routerLink]='"/post/" + lastPosts[0].slug'> <img *ngIf="lastPosts[0].media" class="lazyload"
                           [src]="lastPosts[0].media.urlMediumLarge!=null ? lastPosts[0].media.urlMediumLarge : lastPosts[0].media.urlFull"
@@ -64,11 +64,11 @@
                       <bookmark *ngIf="currentUser" [post]="lastPosts[0]"></bookmark>
                     </div>
 
-                    <h2>
+                    <h3>
                       <a class="card-title-truncate"
                         [routerLink]='"/post/" + lastPosts[0].slug'><span>{{lastPosts[0].titleText}}</span> <img
                           *ngIf="lastPosts[0].isPremium" class="pe-0" src="/assets/images/premium-icon.svg"></a>
-                    </h2>
+                    </h3>
                     <p class="card-text-truncate">{{lastPosts[0].excerptText}}
                     </p>
                   </div>
@@ -98,7 +98,7 @@
                     <div class="image-frame image-hover-style-1">
                       <a [routerLink]='"/post/" + post.slug'> <img class="lazyload" *ngIf="post.media"
                           [src]="post.media.urlLarge!=null ? post.media.urlLarge : post.media.urlFull"
-                          [alt]="post.media.alt_text" class="w-100"></a>
+                          [alt]="post.media.alt_text"></a>
                     </div>
                   </div>
                   <div data-aos="fade-in" class="card-body d-flex flex-column flex-lg-row">
@@ -112,23 +112,8 @@
                         <a class="card-text-truncate" [routerLink]='"/post/" + post.slug'> <img *ngIf="post.isPremium"
                             class="col-auto pe-1" src="/assets/images/premium-icon.svg">{{post.titleText}}</a>
                       </h4>
-                      <div class="">
-                        <div class="card-truncate-6-line">{{post.excerptText}}
-                        </div>
-                      </div>
-                      <div class="row align-items-center">
-                        <div class="col-lg-6">
-                          <div class="author-block">
-                            <ul class="avatar list-inline mb-0">
-                              <li class="list-inline-item align-items-center"><a class="fs-9"
-                                  [routerLink]='"/post/author/" + post.fullAuthor.slug'><img
-                                    [src]="post.fullAuthor.avatar_url_size_24" [alt]="post.fullAuthor.name"
-                                    placement="top" [ngbTooltip]="post.fullAuthor.name">
-                                  {{post.fullAuthor.name}}</a></li>
-                            </ul>
-                          </div>
-                        </div>
-                        <div class="col-lg-6"> <span class="date-info fs-9 float-lg-end">
+                      <div class="row align-items-end">
+                        <div class="col"> <span class="date-info fs-9 float-lg-end">
                             <span>Publié le {{post.date | date:'EEEE d MMMM'}}</span>
                           </span>
                         </div>
@@ -194,8 +179,9 @@
                   </div>
                 </div>
               </div>
-              <article *ngFor="let post of ileDeFrancePosts"
-                class=" blog-style5 d-flex d-md-block d-xl-flex align-items-center mb-3">
+              <article *ngFor="let post of ileDeFrancePosts.slice(0,5); let postIndex = index"
+                class=" blog-style5 d-flex d-md-block d-xl-flex align-items-center"
+                [ngClass]=" { 'mb-0' : postIndex+1 == ileDeFrancePosts.slice(0,5).length, 'mb-3':  postIndex+1 != ileDeFrancePosts.slice(0,5).length}">
                 <a [routerLink]='"/post/" + post.slug'>
                   <div class="post-img-wrap position-relative overflow-hidden">
                     <img *ngIf="post.media" class="lazyload post-img"
@@ -204,12 +190,12 @@
                   </div>
                 </a>
                 <div class="post-content pt-md-2 pt-xl-0 pt-0">
-                  <h6 class="post-title card-text-truncate"><a
+                  <h6 class="post-title card-text-truncate fs-8"><a
                       [routerLink]='"/post/" + post.slug'>{{post.titleText}}</a>
                   </h6>
                   <div class="post-meta">
                     <span class="date-info small">
-                      <span>Publié le {{post.date | date:'EEEE d MMMM'}}</span>
+                      <span class="fs-9">Publié le {{post.date | date:'EEEE d MMMM'}}</span>
                     </span>
                   </div>
                 </div>
@@ -680,15 +666,6 @@
             </div>
             <div class="row align-items-center px-2">
               <div class="col-lg-6">
-                <div class="author-block">
-                  <ul class="avatar list-inline mb-0">
-                    <li class="list-inline-item"><a class="fs-9"
-                        [routerLink]='"/post/author/" + post.fullAuthor.slug'><img
-                          [src]="post.fullAuthor.avatar_url_size_24" [alt]="post.fullAuthor.name" placement="top"
-                          [ngbTooltip]="post.fullAuthor.name">
-                        {{post.fullAuthor.name}}</a></li>
-                  </ul>
-                </div>
               </div>
               <div class="col-lg-6"> <span class="date-info fs-9 float-lg-end">
                   <span>Publié le {{post.date | date:'EEEE d MMMM'}}</span>
