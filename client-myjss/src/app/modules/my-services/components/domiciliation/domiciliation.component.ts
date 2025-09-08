@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Meta, Title } from '@angular/platform-browser';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
 import { ConstantService } from '../../../main/services/constant.service';
@@ -31,10 +32,13 @@ export class DomiciliationComponent implements OnInit {
   constructor(private appService: AppService,
     private postService: PostService,
     private constantService: ConstantService,
-    private platformService: PlatformService
+    private platformService: PlatformService,
+    private titleService: Title, private meta: Meta,
   ) { }
 
   ngOnInit() {
+    this.titleService.setTitle("Domiciliation d'entreprise à Paris - MyJSS");
+    this.meta.updateTag({ name: 'description', content: "Domiciliation d'entreprise à Paris : optez pour une adresse de prestige avec MyJSS. Nous gérons vos formalités légales avec expertise. Service premium, simple et rapide." });
     this.serviceFamilyGroupOther = this.constantService.getServiceFamilyGroupOther();
     this.postService.getTopPostByMyJssCategory(0, this.constantService.getMyJssCategoryDomiciliation()).subscribe(response => {
       if (response && response.content && response.content.length > 0) {
@@ -51,23 +55,5 @@ export class DomiciliationComponent implements OnInit {
       });
   }
 
-  openPost(slug: string, event: any) {
-    this.appService.openRoute(event, "post/" + slug, undefined);
-  }
 
-  openFormality(event: any) {
-    this.appService.openRoute(event, "/services/formality", undefined);
-  }
-
-  openApostille(event: any) {
-    this.appService.openRoute(event, "/services/apostille", undefined);
-  }
-
-  openAnnouncements(event: any) {
-    this.appService.openRoute(event, "/services/announcement", undefined);
-  }
-
-  openDocument(event: any) {
-    this.appService.openRoute(event, "/services/document", undefined);
-  }
 }

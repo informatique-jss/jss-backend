@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Meta, Title } from '@angular/platform-browser';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { TendencyHubComponent } from "../last-posts-hub/last-posts-hub.component";
 
@@ -11,11 +12,13 @@ import { TendencyHubComponent } from "../last-posts-hub/last-posts-hub.component
 export class PostMostSeenHeaderComponent implements OnInit {
 
   constructor(
+    private titleService: Title, private meta: Meta,
   ) { }
 
 
   ngOnInit() {
-
+    this.titleService.setTitle("Les articles les plus vus - JSS");
+    this.meta.updateTag({ name: 'description', content: "Retrouvez les articles les plus vus de l'actualité juridique et économique. JSS analyse pour vous les dernières annonces, formalités et tendances locales." });
   }
 
 

@@ -140,7 +140,6 @@ export class HeaderComponent implements OnInit {
   disconnect() {
     this.loginService.signOut().subscribe(response => {
       this.currentUser = undefined;
-      this.appService.openRoute(undefined, '/', undefined);
     })
   }
 
@@ -187,7 +186,6 @@ export class HeaderComponent implements OnInit {
 
   openSubscribe(event: any) {
     this.isMobileMenuOpen = false;
-    this.appService.openRoute(event, "subscription/", undefined);
   }
 
   openSignIn(event: any) {
@@ -195,20 +193,17 @@ export class HeaderComponent implements OnInit {
     this.appService.openMyJssRoute(event, MY_JSS_SIGN_IN_ROUTE, false);
   }
 
-  openCategoryPosts(category: JssCategory, event: any) {
+  openCategoryPosts() {
     this.isMobileMenuOpen = false;
-    this.appService.openRoute(event, "post/category/" + category.slug, undefined);
     this.hideSearchModal();
   }
 
-  openDepartment(department: PublishingDepartment, event: any) {
+  openDepartment() {
     this.isMobileMenuOpen = false;
-    this.appService.openRoute(event, "post/department/" + department.code, undefined);
   }
 
-  openPremium(event: any) {
+  openPremium() {
     this.isMobileMenuOpen = false;
-    this.appService.openRoute(event, "post/premium", undefined);
   }
 
   openPremiumPosts() {
@@ -216,14 +211,8 @@ export class HeaderComponent implements OnInit {
     // TODO
   }
 
-  openPodcasts(event: any) {
-    this.isMobileMenuOpen = false;
-    this.appService.openRoute(event, "podcasts", undefined);
-  }
-
   openSearchAnnouncement(event: any) {
     this.isMobileMenuOpen = false;
-    this.appService.openRoute(event, "announcement/search", undefined);
   }
 
   openNewAnnouncement(event: any) {
@@ -282,8 +271,7 @@ export class HeaderComponent implements OnInit {
       })
   }
 
-  openPost(slug: string, event: any) {
-    this.appService.openRoute(event, "post/" + slug, undefined);
+  openPost() {
     this.hideSearchModal();
   }
 

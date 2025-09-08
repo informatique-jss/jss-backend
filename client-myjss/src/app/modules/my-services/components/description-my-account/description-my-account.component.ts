@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
 import { debounceTime, fromEvent, Subject, takeUntil } from 'rxjs';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { PlatformService } from '../../../main/services/platform.service';
@@ -13,6 +13,8 @@ import { PlatformService } from '../../../main/services/platform.service';
 export class DescriptionMyAccountComponent implements OnInit, AfterViewInit {
 
   isMobile: boolean = false;
+
+  @Input() imageSrc: string = "";
 
   private eventResize = new Subject<void>();
 

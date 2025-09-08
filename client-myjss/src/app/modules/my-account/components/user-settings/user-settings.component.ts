@@ -92,8 +92,4 @@ export class UserSettingsComponent implements OnInit {
       })
   }
 
-  modifyAddresse() {
-    if (this.currentUser)
-      this.appService.openRoute(event, "account/settings/address/edit/" + this.currentUser.id, undefined);
-  }
 }

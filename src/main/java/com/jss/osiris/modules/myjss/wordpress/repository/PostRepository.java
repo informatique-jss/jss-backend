@@ -37,7 +37,7 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
 
         Post findBySlugAndIsCancelled(String slug, Boolean isCancelled);
 
-        @Query("select p from Post p where id not in :postFetchedId AND p.date<=CURRENT_TIMESTAMP ")
+        @Query("select p from Post p where id not in :postFetchedId AND p.date<=CURRENT_TIMESTAMP and coalesce(isLegacy,false)=false ")
         List<Post> findPostExcludIds(@Param("postFetchedId") List<Integer> postFetchedId);
 
         @Query("select p from Post p join p.postViews v where p.isCancelled = false and size(p.jssCategories) > 0 and v.day >= :oneWeekAgo and :category MEMBER OF p.postCategories group by p.id order by sum(v.count) desc ")

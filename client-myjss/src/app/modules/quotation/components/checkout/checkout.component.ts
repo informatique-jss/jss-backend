@@ -10,6 +10,8 @@ import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { Mail } from '../../../general/model/Mail';
 import { AppService } from '../../../main/services/app.service';
 import { ConstantService } from '../../../main/services/constant.service';
+import { GtmService } from '../../../main/services/gtm.service';
+import { PageInfo, PurchasePayload } from '../../../main/services/GtmPayload';
 import { AutocompleteCityComponent } from '../../../miscellaneous/components/forms/autocomplete-city/autocomplete-city.component';
 import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { GenericTextareaComponent } from '../../../miscellaneous/components/forms/generic-textarea/generic-textarea.component';
@@ -124,7 +126,8 @@ export class CheckoutComponent implements OnInit {
     private documentService: DocumentService,
     private cityService: CityService,
     private voucherService: VoucherService,
-    private responsableService: ResponsableService
+    private responsableService: ResponsableService,
+    private gtmService: GtmService
 
   ) { }
 
@@ -191,6 +194,25 @@ export class CheckoutComponent implements OnInit {
     }
   }
 
+  trackPurchase(isDraft: boolean, quotationId: number) {
+    if (this.quotation)
+      this.gtmService.trackPurchase(
+        {
+          business: {
+            type: 'order',
+            order_id: quotationId,
+            amount: this.totalPrice,
+            service: this.quotation.serviceFamilyGroup!.label,
+            is_draft: isDraft
+          },
+          page: {
+            type: 'quotation',
+            name: 'checkout'
+          } as PageInfo
+        } as PurchasePayload
+      );
+  }
+
   onValidateOrder(isDraft: boolean) {
     this.documentForm.markAllAsTouched();
     if (this.isOrderPossible())
@@ -207,6 +229,7 @@ export class CheckoutComponent implements OnInit {
         this.quotationService.setCurrentDraftQuotation(this.quotation);
         if (this.quotation.isQuotation)
           this.quotationService.saveFinalQuotation(this.quotation as Quotation, !isDraft).subscribe(response => {
+            this.trackPurchase(isDraft, response.id);
             if (response && response.id) {
               this.cleanStorageData();
               this.appService.hideLoadingSpinner();
@@ -220,6 +243,7 @@ export class CheckoutComponent implements OnInit {
           });
         else
           this.orderService.saveFinalOrder(this.quotation as CustomerOrder, !isDraft).subscribe(response => {
+            this.trackPurchase(isDraft, response.id);
             if (response && response.id) {
               this.cleanStorageData();
               this.appService.hideLoadingSpinner();

@@ -11,7 +11,7 @@
         <autocomplete-post #autocomplePost [myJssCategory]="selectedMyJssCategory" [(model)]="searchText"
           label="Rechercher" [form]="practicalSheetsForm" propertyName="searchText" [isMandatory]="false"
           [isDisabled]="false" [isDisplayLabel]="false" (onFormChange)="searchForPosts()"
-          (onOptionSelected)="openPost($event.slug, $event)"
+          (onOptionSelected)="openPostOnSelect($event.slug, $event)"
           (onChangeMyJssCategory)="getTopPosts($event)"></autocomplete-post>
       </div>
     </div>
@@ -47,11 +47,9 @@
       <ng-template let-post>
         <div class="h-100">
           <div class="card border-0 bg-tertiary">
-            <a (click)="openPost(post.slug,$event)">
-              <img class="card-img-top" *ngIf="post.media "
-                [src]="post.media && post.media.urlMediumLarge ? post.media.urlMediumLarge : post.media.urlFull"
-                alt="Post image">
-            </a>
+            <img class="card-img-top" *ngIf="post.media " [routerLink]="'/post/'+post.slug"
+              [src]="post.media && post.media.urlMediumLarge ? post.media.urlMediumLarge : post.media.urlFull"
+              alt="Post image">
             <div class="card-body pb-4">
               <div class="d-flex align-items-center mb-4 mt-n1">
                 <span class="fs-sm text-body-secondary">{{post.date | date:'dd/MM/yyyy'}}</span>
@@ -60,7 +58,7 @@
                   (click)="openTagSearch(post.postTags[0].slug, $event)">{{post.postTags[0].name}}</a>
               </div>
               <h3 class="h4 card-title card-title-truncate">
-                <a (click)="openPost(post.slug,$event)">{{post.titleText}}</a>
+                <a [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
               </h3>
               <p class="card-text card-text-truncate">{{post.excerptText}}</p>
             </div>
@@ -107,10 +105,8 @@
     <ng-template let-post>
       <div class="h-100">
         <div class="card border-0 bg-tertiary">
-          <a (click)="openPost(post.slug,$event)">
-            <img class="card-img-top" *ngIf="post.media "
-              [src]="post.media && post.media.urlLarge ? post.media.urlLarge : post.media.urlFull" alt="Post image">
-          </a>
+          <img class="card-img-top" *ngIf="post.media " [routerLink]="'/post/'+post.slug"
+            [src]="post.media && post.media.urlLarge ? post.media.urlLarge : post.media.urlFull" alt="Post image">
           <div class="card-body pb-4">
             <div class="d-flex align-items-center mb-4 mt-n1">
               <span class="fs-sm text-body-secondary">{{post.date | date:'dd/MM/yyyy'}}</span>
@@ -119,7 +115,7 @@
                 (click)="openTagSearch(post.postTags[0].slug, $event)">{{post.postTags[0].name}}</a>
             </div>
             <h3 class="h4 card-title card-title-truncate">
-              <a (click)="openPost(post.slug,$event)">{{post.titleText}}</a>
+              <a [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
             </h3>
             <p class="card-text card-text-truncate">{{post.excerptText}}</p>
           </div>
@@ -167,10 +163,8 @@
       <ng-template let-post>
         <div class="h-100">
           <div class="card border-0 bg-tertiary">
-            <a (click)="openPost(post.slug,$event)">
-              <img class="card-img-top"
-                [src]="post.media && post.media.urlLarge ? post.media.urlLarge : post.media.urlFull" alt="Post image">
-            </a>
+            <img class="card-img-top" *ngIf="post.media" [routerLink]="'/post/'+post.slug"
+              [src]="post.media && post.media.urlLarge ? post.media.urlLarge : post.media.urlFull" alt="Post image">
             <div class="card-body pb-4">
               <div class="d-flex align-items-center mb-4 mt-n1">
                 <span class="fs-sm text-body-secondary">{{post.date | date:'dd/MM/yyyy'}}</span>
@@ -179,7 +173,7 @@
                   (click)="openTagSearch(post.postTags[0].slug, $event)">{{post.postTags[0].name}}</a>
               </div>
               <h3 class="h4 card-title card-title-truncate">
-                <a (click)="openPost(post.slug,$event)">{{post.titleText}}</a>
+                <a [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
               </h3>
               <p class="card-text card-text-truncate">{{post.excerptText}}</p>
             </div>
@@ -200,7 +194,7 @@
 
 <!-- Second search -->
 <section class="container py-5">
-  <h1 class="m-4 text-center">Guides juridiques</h1>
+  <h2 class="m-4 text-center">Guides juridiques</h2>
   <p class="text-center">Dirigeant, professionnel du droit ou du chiffre, vous avez des questions juridiques ? <br>MyJSS
     vous propose 1300+
     articles mis à jour par des juristes formalistes.</p>
@@ -265,7 +259,7 @@
                 *ngFor="let post of (isExpanded(myJssCategory.id)  ? postsByMyJssCategory[myJssCategory.id] :  postsByMyJssCategory[myJssCategory.id].slice(0,3))">
                 <li class="d-flex pb-2 mb-1">
                   <span class="bg-primary mt-2 checkbox-custom"></span>
-                  <a class="text-decoration-none text-gray" (click)="openPost(post.slug,$event)">{{post.titleText}}</a>
+                  <a class="text-decoration-none text-gray" [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
                 </li>
               </div>
             </div>
@@ -296,7 +290,7 @@
                 <li class="d-flex pb-2 mb-1">
                   <span class="bg-primary mt-2 checkbox-custom"></span>
                   <a class="text-decoration-none text-gray text-truncate-custom"
-                    (click)="openPost(post.slug,$event)">{{post.titleText}}</a>
+                    [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
                 </li>
               </div>
             </div>
@@ -328,7 +322,7 @@
               <li class="d-flex pb-2 mb-1">
                 <span class="bg-primary mt-2 checkbox-custom"></span>
                 <a class="text-decoration-none text-gray text-truncate-custom"
-                  (click)="openPost(post.slug,$event)">{{post.titleText}}</a>
+                  [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
               </li>
             </div>
           </div>

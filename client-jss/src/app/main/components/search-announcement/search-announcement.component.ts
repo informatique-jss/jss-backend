@@ -46,10 +46,6 @@ export class SearchAnnouncementComponent implements OnInit {
     this.fetchNextAnnouncements();
   }
 
-  openAnnouncement(announcement: Announcement, event: any) {
-    this.appService.openRoute(event, "announcement/" + announcement.id, undefined);
-  }
-
   fetchNextAnnouncements() {
     this.isLoading = true;
     if (this.searchText && this.searchText.length > 2)

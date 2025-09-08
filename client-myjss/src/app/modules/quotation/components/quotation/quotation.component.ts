@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
@@ -57,9 +58,12 @@ export class QuotationComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private customerOrderService: CustomerOrderService,
     private noticeTemplateService: NoticeTemplateService,
+    private titleService: Title, private meta: Meta,
   ) { }
 
   ngOnInit() {
+    this.titleService.setTitle("Nouvelle commande - MyJSS");
+    this.meta.updateTag({ name: 'description', content: "Estimez le coût de vos formalités. Réalisez votre demande de devis en ligne et recevez rapidement une proposition détaillée et sans engagement de la part de MyJSS." });
     this.subscriptionType = this.activatedRoute.snapshot.params['subscription-type'];
     this.isPriceReductionForSubscription = this.activatedRoute.snapshot.params['is-price-reduction'];
     this.idArticle = this.activatedRoute.snapshot.params['id-article'];

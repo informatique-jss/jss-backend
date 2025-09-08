@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Meta, Title } from '@angular/platform-browser';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
 import { GenericSwiperComponent } from '../../../miscellaneous/components/generic-swiper/generic-swiper.component';
@@ -30,38 +31,17 @@ export class HomepageComponent implements OnInit {
 
   constructor(
     private appService: AppService,
-    private postService: PostService
+    private postService: PostService,
+    private titleService: Title, private meta: Meta,
   ) { }
 
   ngOnInit() {
+    this.titleService.setTitle("Annonces légales - Formalités légales - MyJSS");
+    this.meta.updateTag({ name: 'description', content: "MyJSS est votre partenaire unique pour vos annonces légales et formalités légales. Profitez d'une plateforme intuitive et de l'expertise de nos juristes dédiés." });
     this.postService.getTendencyPosts().subscribe(response => {
       if (response && response.length > 0) {
         this.tendencyPosts = response;
       }
     });
-  }
-
-  openAnnouncements(event: any) {
-    this.appService.openRoute(event, "/services/announcement", undefined);
-  }
-
-  openFormality(event: any) {
-    this.appService.openRoute(event, "/services/formality", undefined);
-  }
-
-  openApostille(event: any) {
-    this.appService.openRoute(event, "/services/apostille", undefined);
-  }
-
-  openDomiciliation(event: any) {
-    this.appService.openRoute(event, "/services/domiciliation", undefined);
-  }
-
-  openDocument(event: any) {
-    this.appService.openRoute(event, "/services/document", undefined);
-  }
-
-  openPost(slug: string, event: any) {
-    this.appService.openRoute(event, "post/" + slug, undefined);
   }
 }

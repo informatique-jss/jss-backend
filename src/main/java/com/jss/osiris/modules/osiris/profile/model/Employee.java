@@ -67,6 +67,9 @@ public class Employee implements Serializable, IId, AttributesMapper<Employee> {
 
 	private Boolean isActive;
 
+	@Column(length = 200)
+	private String bookingPageUrl;
+
 	@OneToMany(targetEntity = Employee.class, fetch = FetchType.LAZY)
 	@JoinTable(name = "asso_employee_backup", joinColumns = @JoinColumn(name = "id_employee"), inverseJoinColumns = @JoinColumn(name = "id_employee_backup"))
 	@JsonIgnoreProperties(value = { "backups" }, allowSetters = true)
@@ -181,5 +184,13 @@ public class Employee implements Serializable, IId, AttributesMapper<Employee> {
 
 	public void setNotificationTypeToHide(List<String> notificationTypeToHide) {
 		this.notificationTypeToHide = notificationTypeToHide;
+	}
+
+	public String getBookingPageUrl() {
+		return bookingPageUrl;
+	}
+
+	public void setBookingPageUrl(String bookingPageUrl) {
+		this.bookingPageUrl = bookingPageUrl;
 	}
 }

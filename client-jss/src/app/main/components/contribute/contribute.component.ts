@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { Meta, Title } from '@angular/platform-browser';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { AppService } from '../../../services/app.service';
+import { GtmService } from '../../../services/gtm.service';
+import { FormSubmitPayload, PageInfo } from '../../../services/GtmPayload';
 import { ContributeService } from '../../services/contribute.service';
 import { GenericInputComponent } from "../generic-input/generic-input.component";
 import { GenericTextareaComponent } from "../generic-textarea/generic-textarea.component";
@@ -27,9 +30,13 @@ export class ContributeComponent implements OnInit {
   constructor(private formBuilder: FormBuilder,
     private mailService: ContributeService,
     private appService: AppService,
+    private titleService: Title, private meta: Meta,
+    private gtmService: GtmService
   ) { }
 
   ngOnInit() {
+    this.titleService.setTitle("Contribuer au journal");
+    this.meta.updateTag({ name: 'description', content: "Spécialiste ou journaliste ? Au JSS, l’information se construit avec vous. Contribuez à l'actualité et partagez votre analyse pour enrichir le débat public." });
     this.contributeForm = this.formBuilder.group({});
   }
 
@@ -43,6 +50,7 @@ export class ContributeComponent implements OnInit {
     }
 
     this.mailService.contributeContactForm(this.mail, this.firstName, this.lastName, this.phone, this.message).subscribe(response => {
+      this.trackFormContact();
       if (response) {
         this.appService.displayToast("Vous allez recevoir un mail de confirmation.", false, "Demande reçue", 3000);
         this.contributeForm.reset();
@@ -54,5 +62,17 @@ export class ContributeComponent implements OnInit {
         this.isConditionAccepted = false;
       }
     });
+  }
+
+  trackFormContact() {
+    this.gtmService.trackFormSubmit(
+      {
+        form: { type: 'Envoyer' },
+        page: {
+          type: 'main',
+          name: 'contribute'
+        } as PageInfo
+      } as FormSubmitPayload
+    );
   }
 }

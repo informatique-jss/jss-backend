@@ -1,0 +1,10 @@
+<div *ngIf="showBanner" class="cookie-banner">
+  <p class="cookie-text">
+    Nous utilisons des cookies pour améliorer votre expérience de navigation, diffuser et analyser notre trafic. En
+    cliquant sur « Accepter », vous consentez à notre utilisation des cookies.
+  </p>
+  <div class="cookie-actions">
+    <button class="btn btn-accept" (click)="accept()">Accepter</button>
+    <button class="btn btn-reject" (click)="reject()">Refuser</button>
+  </div>
+</div>
