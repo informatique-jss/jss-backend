@@ -1,6 +1,7 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { environment } from '../../../../../environments/environment';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { CommunicationPreference } from '../../../general/model/CommunicationPreference';
 import { CommunicationPreferencesService } from '../../../general/services/communication.preference.service';
@@ -38,6 +39,7 @@ export class CommunicationPreferenceComponent implements OnInit, AfterContentChe
   isFollowedAuthor: { [key: number]: boolean } = {};
   isFollowedTag: { [key: number]: boolean } = {};
   isFollowedJssCategory: { [key: number]: boolean } = {};
+  frontendJssUrl = environment.frontendJssUrl;
 
   displayedTab: number = -1;
 
@@ -183,13 +185,4 @@ export class CommunicationPreferenceComponent implements OnInit, AfterContentChe
       });
   }
 
-  openAuthorNewPosts(event: any, author: Author) {
-    this.appService.openJssRoute(event, "post/author/" + author.slug + "/true", false);
-  }
-  openTagNewPosts(event: any, tag: Tag) {
-    this.appService.openJssRoute(event, "post/tag/" + tag.slug + "/true", false);
-  }
-  openJssCategoryNewPosts(event: any, jssCategory: JssCategory) {
-    this.appService.openJssRoute(event, "post/category/" + jssCategory.slug + "/true", false);
-  }
 }

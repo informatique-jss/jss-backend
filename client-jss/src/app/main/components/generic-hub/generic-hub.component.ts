@@ -3,8 +3,6 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
 import { AppService } from '../../../services/app.service';
-import { Author } from '../../model/Author';
-import { JssCategory } from '../../model/JssCategory';
 import { PagedContent } from '../../model/PagedContent';
 import { Post } from '../../model/Post';
 import { Responsable } from '../../model/Responsable';
@@ -120,21 +118,5 @@ export abstract class GenericHubComponent<T extends { id: number }> implements O
     }
 
     return Array.from({ length: end - start }, (_, i) => start + i);
-  }
-
-  openCategoryPosts(category: JssCategory, event: any) {
-    this.appService.openRoute(event, "post/category/" + category.slug, undefined);
-  }
-
-  openPost(post: Post, event: any) {
-    this.appService.openRoute(event, "post/" + post.slug, undefined);
-  }
-
-  openAuthorPosts(author: Author, event: any) {
-    this.appService.openRoute(event, "post/author/" + author.slug, undefined);
-  }
-
-  openTagPosts(tag: Tag, event: any) {
-    this.appService.openRoute(event, "post/tag/" + tag.slug, undefined);
   }
 }

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
-import { environment } from '../../../../environments/environment';
 import { Toast } from '../../../libs/toast/Toast';
 import { MenuItem } from '../../general/model/MenuItem';
 import { AccountMenuItem, MAIN_ITEM_ACCOUNT, MAIN_ITEM_DASHBOARD } from '../../my-account/model/AccountMenuItem';
@@ -56,22 +55,6 @@ export class AppService {
         sameWindowEndFonction();
     }
     return;
-  }
-
-  openJssRoute(event: any, route: string, inNewWindows = true) {
-    window.open(environment.frontendJssUrl + route, inNewWindows ? "_blank" : "_self");
-  }
-
-  openLinkedinJssPage() {
-    window.open("https://www.linkedin.com/company/journal-special-des-societes/_blank");
-  }
-
-  openInstagramJssPage() {
-    window.open("https://www.instagram.com/journalspecialdessocietes/_blank");
-  }
-
-  openFacebookJssPage() {
-    window.open("https://www.facebook.com/Journal.Special.des.Societes/_blank");
   }
 
   getAllAccountMenuItems(): AccountMenuItem[] {

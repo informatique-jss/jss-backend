@@ -28,10 +28,11 @@ export class BookmarkComponent implements OnInit {
 
   ngOnInit() {
     this.loginService.getCurrentUser().subscribe(user => {
-      if (user)
+      if (user) {
         this.currentUser = user;
+        this.fetchReadingFolders();
+      }
     });
-    this.fetchReadingFolders();
   }
 
   unBookmarkPost(post: Post) {

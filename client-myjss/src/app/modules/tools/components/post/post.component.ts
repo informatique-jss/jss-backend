@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../../../../environments/environment';
 import { getTimeReading } from '../../../../libs/FormatHelper';
@@ -7,8 +8,9 @@ import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { TrustHtmlPipe } from '../../../../libs/TrustHtmlPipe';
 import { NewsletterComponent } from '../../../general/components/newsletter/newsletter.component';
 import { Mail } from '../../../general/model/Mail';
-import { AppService } from '../../../main/services/app.service';
 import { ConstantService } from '../../../main/services/constant.service';
+import { GtmService } from '../../../main/services/gtm.service';
+import { FormSubmitPayload, PageInfo } from '../../../main/services/GtmPayload';
 import { PlatformService } from '../../../main/services/platform.service';
 import { AvatarComponent } from '../../../miscellaneous/components/avatar/avatar.component';
 import { DoubleButtonsComponent } from '../../../miscellaneous/components/double-buttons/double-buttons.component';
@@ -79,15 +81,17 @@ export class PostComponent implements OnInit, AfterViewInit {
     private postService: PostService,
     private commentService: CommentService,
     private formBuilder: FormBuilder,
-    private appService: AppService,
     private constantService: ConstantService,
     private platformService: PlatformService,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private titleService: Title, private meta: Meta,
+    private gtmService: GtmService
   ) { }
 
   getTimeReading = getTimeReading;
 
   ngOnInit() {
+    this.titleService.setTitle("Les fiches pratiques - MyJSS");
     this.myJssCategoryFormality = this.constantService.getMyJssCategoryFormality();
     this.myJssCategoryAnnouncement = this.constantService.getMyJssCategoryAnnouncement();
     this.myJssCategoryApostille = this.constantService.getMyJssCategoryApostille();
@@ -122,6 +126,8 @@ export class PostComponent implements OnInit, AfterViewInit {
     if (this.slug) {
       this.postService.getPostBySlug(this.slug).subscribe(post => {
         this.post = post;
+        this.titleService.setTitle("Les fiches pratiques - " + post.titleText + " - MyJSS");
+        this.meta.updateTag({ name: 'description', content: post.excerptText });
         this.fetchComments(0);
       })
       this.cancelReply();
@@ -135,10 +141,6 @@ export class PostComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-  }
-
-  openPost(post: Post, event: any) {
-    this.appService.openRoute(event, "post/" + post.slug, undefined);
   }
 
   shareOnFacebook() {
@@ -160,6 +162,18 @@ export class PostComponent implements OnInit, AfterViewInit {
       let url = environment.frontendUrl + "post/" + this.post.slug;
       window.open("https://twitter.com/intent/tweet?text=" + this.extractContent(this.post.titleText) + "&url=" + url, "_blank");
     }
+  }
+
+  trackFormReplyComment() {
+    this.gtmService.trackFormSubmit(
+      {
+        form: { type: 'Publier un commentaire' },
+        page: {
+          type: 'tools',
+          name: this.post!.slug
+        } as PageInfo
+      } as FormSubmitPayload
+    );
   }
 
   shareOnInstagram() {
@@ -244,6 +258,7 @@ export class PostComponent implements OnInit, AfterViewInit {
       }
 
       this.commentService.addOrUpdateComment(this.newComment, this.newCommentParent.id, this.post.id).subscribe(() => {
+        this.trackFormReplyComment();
         this.fetchComments(0);
       });
     }

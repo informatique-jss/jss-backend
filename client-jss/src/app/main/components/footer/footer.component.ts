@@ -18,7 +18,6 @@ export class FooterComponent implements OnInit {
 
   jssCategories: JssCategory[] | undefined;
   departments: PublishingDepartment[] | undefined;
-  hasAcceptCookie: boolean = false;
 
   constructor(
     private jssCategoryService: JssCategoryService,
@@ -33,31 +32,6 @@ export class FooterComponent implements OnInit {
     this.publishingDepartmentService.getAvailablePublishingDepartments().subscribe(response => {
       this.departments = response.sort((a: PublishingDepartment, b: PublishingDepartment) => a.name.localeCompare(b.name));
     })
-
-    //if (localStorage.getItem('hasAcceptCookie') != null) {
-    //  let a = localStorage.getItem('hasAcceptCookie');
-    //  let hasAcceptCookie = JSON.parse(a!) as boolean;
-    //  if (hasAcceptCookie)
-    //    this.hasAcceptCookie = hasAcceptCookie;
-    //}
-  }
-
-  acceptCookie() {
-    this.hasAcceptCookie = true;
-    localStorage.setItem('hasAcceptCookie', 'true');
-  }
-
-
-  openContact(event: any) {
-    this.appService.openRoute(event, "contact", undefined);
-  }
-
-  openDepartment(department: PublishingDepartment, event: any) {
-    this.appService.openRoute(event, "post/department/" + department.code, undefined);
-  }
-
-  openCategoryPosts(category: JssCategory, event: any) {
-    this.appService.openRoute(event, "post/category/" + category.slug, undefined);
   }
 
   openSubscribe(event: any) {
@@ -106,21 +80,5 @@ export class FooterComponent implements OnInit {
 
   openPrivacyPolicy(event: any) {
     this.appService.openMyJssRoute(event, MY_JSS_CONFIDENTIALITY_ROUTE);
-  }
-
-  openPodcastPosts(event: any) {
-    this.appService.openRoute(event, "podcasts", undefined);
-  }
-
-  openContributePage(event: any) {
-    this.appService.openRoute(event, "contribute", undefined);
-  }
-
-  openSeriesPosts(event: any) {
-    this.appService.openRoute(event, "series", undefined);
-  }
-
-  openKiosk(event: any) {
-    this.appService.openRoute(event, "kiosk", undefined);
   }
 }

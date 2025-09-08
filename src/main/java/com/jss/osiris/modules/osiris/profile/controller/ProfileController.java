@@ -165,10 +165,12 @@ public class ProfileController {
 			@RequestBody Employee employee) throws OsirisValidationException, OsirisException {
 		List<Employee> backups = new ArrayList<Employee>();
 		List<String> notificationTypesToHide = new ArrayList<String>();
+		String bookingPage = null;
 
 		if (employee != null) {
 			backups = employee.getBackups();
 			notificationTypesToHide = employee.getNotificationTypeToHide();
+			bookingPage = employee.getBookingPageUrl();
 		}
 
 		employee = (Employee) validationHelper.validateReferential(employee, true, "employee");
@@ -177,7 +179,10 @@ public class ProfileController {
 			for (Employee backup : backups)
 				validationHelper.validateReferential(backup, true, "backup");
 
+		validationHelper.validateString(bookingPage, false, 200, "bookingPage");
+
 		employee.setBackups(backups);
+		employee.setBookingPageUrl(bookingPage);
 		employee.setNotificationTypeToHide(notificationTypesToHide);
 
 		return new ResponseEntity<Employee>(employeeService.addOrUpdateEmployee(employee), HttpStatus.OK);

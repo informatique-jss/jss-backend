@@ -1,0 +1,47 @@
+.cookie-banner {
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 950px;
+  width: 95%;
+  background: var(--ar-primary);
+  /* fond opaque */
+  color: var(--ar-secondary);
+  /* texte clair */
+  padding: 1rem 1.5rem;
+  border-radius: 0.75rem;
+  /* équivalent à var(--ar-border-radius-lg) */
+  box-shadow: 0 0.5rem 1.75rem rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  font-family: var(--bs-font-sans-serif);
+  z-index: 1000;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.cookie-text {
+  flex: 1 1 60%;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: var(--ar-secondary);
+}
+
+.cookie-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 0.55rem 1.2rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  border: 2px solid transparent;
+}

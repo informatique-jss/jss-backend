@@ -1,5 +1,5 @@
 <div class="container my-4 position-relative text-center d-none d-md-block">
-  <img src="/assets/images/homepage/bandeauJss.svg" class="img-fluid w-100" alt="Top image" />
+  <img src="/assets/images/homepage/bandeau_hp_jss.svg" class="img-fluid w-100" alt="Top image" />
   <a class="btn btn-yellow position-absolute start-55 top-50 translate-middle pointer" (click)="openMyJss($event)">
     Essayer dès maintenant
   </a>
@@ -27,18 +27,18 @@
                 <article *ngFor="let post of lastPosts | slice:1:3" class="blog-style4">
                   <div class="card border-0">
                     <div class="blog-post-image image-hover-style-1">
-                      <a (click)="openPost(post, $event)"> <img class="lazyload" *ngIf="post && post.media"
+                      <a [routerLink]='"/post/" + post.slug'> <img class="lazyload" *ngIf="post && post.media"
                           [src]="post.media.urlMediumLarge!=null ? post.media.urlMediumLarge : post.media.urlFull!=null ? post.media.urlFull : '' "
                           [alt]="post.media.alt_text" class="w-100"></a>
                     </div>
                     <div class="card-body px-0">
                       <div class="row ms-0 pb-1 align-items-center">
-                        <a (click)="openCategoryPosts(post.jssCategories[0], $event)"
+                        <a [routerLink]='"/post/category/" + post.jssCategories[0].slug'
                           class="badge bg-info rounded-pill col-auto me-2 px-1">{{post.jssCategories[0].name}}</a>
-                        <bookmark [post]="post"></bookmark>
+                        <bookmark *ngIf="currentUser" [post]="post"></bookmark>
                       </div>
                       <h6 class="mb-0 ">
-                        <a class="card-text-truncate" (click)="openPost(post, $event)">{{post.titleText}} <img
+                        <a class="card-text-truncate" [routerLink]='"/post/" + post.slug'>{{post.titleText}} <img
                             *ngIf="post.isPremium" class="pe-0" src="/assets/images/premium-icon.svg">
                         </a>
                       </h6>
@@ -51,21 +51,21 @@
                   <!-- Adding the d-flex class to the feature-image so it doesn't cover the rest of the card -->
                   <div class="feature-image d-flex">
                     <div class="image-frame image-hover-style-1">
-                      <a (click)="openPost(lastPosts[0], $event)"> <img *ngIf="lastPosts[0].media" class="lazyload"
+                      <a [routerLink]='"/post/" + lastPosts[0].slug'> <img *ngIf="lastPosts[0].media" class="lazyload"
                           [src]="lastPosts[0].media.urlMediumLarge!=null ? lastPosts[0].media.urlMediumLarge : lastPosts[0].media.urlFull"
                           [alt]="lastPosts[0].media.alt_text" class="w-100"></a>
                     </div>
                   </div>
                   <div class="card-body px-0">
                     <div class="row pb-1 ms-0 align-items-center">
-                      <a (click)="openCategoryPosts(lastPosts[0].jssCategories[0], $event)"
+                      <a [routerLink]='"/post/category/" + lastPosts[0].jssCategories[0].slug'
                         class="badge bg-info rounded-pill col-auto me-2 px-1">{{lastPosts[0].jssCategories[0].name}}</a>
-                      <bookmark [post]="lastPosts[0]"></bookmark>
+                      <bookmark *ngIf="currentUser" [post]="lastPosts[0]"></bookmark>
                     </div>
 
                     <h2>
                       <a class="card-title-truncate"
-                        (click)="openPost(lastPosts[0], $event)"><span>{{lastPosts[0].titleText}}</span> <img
+                        [routerLink]='"/post/" + lastPosts[0].slug'><span>{{lastPosts[0].titleText}}</span> <img
                           *ngIf="lastPosts[0].isPremium" class="pe-0" src="/assets/images/premium-icon.svg"></a>
                     </h2>
                     <p class="card-text-truncate">{{lastPosts[0].excerptText}}
@@ -95,7 +95,7 @@
                 <article data-aos="fade-up" class="blog-style2 card my-3">
                   <div class="feature-image order-1 order-lg-0">
                     <div class="image-frame image-hover-style-1">
-                      <a (click)="openPost(post, $event)"> <img class="lazyload" *ngIf="post.media"
+                      <a [routerLink]='"/post/" + post.slug'> <img class="lazyload" *ngIf="post.media"
                           [src]="post.media.urlLarge!=null ? post.media.urlLarge : post.media.urlFull"
                           [alt]="post.media.alt_text" class="w-100"></a>
                     </div>
@@ -103,12 +103,12 @@
                   <div data-aos="fade-in" class="card-body d-flex flex-column flex-lg-row align-items-stretch p-0">
                     <div class="order-0 order-lg-1">
                       <div class="row align-items-center ms-0 mb-1">
-                        <a (click)="openCategoryPosts(post.jssCategories[0], $event)"
+                        <a [routerLink]='"/post/category/" +post.jssCategories[0].slug'
                           class="badge bg-info rounded-pill px-1 col-auto me-2 mb-0">{{post.jssCategories[0].name}}</a>
-                        <bookmark [post]="post"></bookmark>
+                        <bookmark *ngIf="currentUser" [post]="post"></bookmark>
                       </div>
                       <h4>
-                        <a class="card-text-truncate" (click)="openPost(post, $event)"> <img *ngIf="post.isPremium"
+                        <a class="card-text-truncate" [routerLink]='"/post/" + post.slug'> <img *ngIf="post.isPremium"
                             class="col-auto pe-1" src="/assets/images/premium-icon.svg">{{post.titleText}}</a>
                       </h4>
                       <div class="">
@@ -120,7 +120,7 @@
                           <div class="author-block">
                             <ul class="avatar list-inline mb-0">
                               <li class="list-inline-item align-items-center"><a class="fs-9"
-                                  (click)="openAuthorPosts(post.fullAuthor, $event)"><img
+                                  [routerLink]='"/post/author/" + post.fullAuthor.slug'><img
                                     [src]="post.fullAuthor.avatar_url_size_24" [alt]="post.fullAuthor.name"
                                     placement="top" [ngbTooltip]="post.fullAuthor.name">
                                   {{post.fullAuthor.name}}</a></li>
@@ -195,7 +195,7 @@
               </div>
               <article *ngFor="let post of ileDeFrancePosts"
                 class=" blog-style5 d-flex d-md-block d-xl-flex align-items-center mb-3">
-                <a (click)="openPost(post, $event)">
+                <a [routerLink]='"/post/" + post.slug'>
                   <div class="post-img-wrap position-relative overflow-hidden">
                     <img *ngIf="post.media" class="lazyload post-img"
                       [src]="post.media.urlMedium!=null ? post.media.urlMedium : post.media.urlFull"
@@ -203,7 +203,8 @@
                   </div>
                 </a>
                 <div class="post-content pt-md-2 pt-xl-0 pt-0">
-                  <h6 class="post-title card-text-truncate"><a (click)="openPost(post, $event)">{{post.titleText}}</a>
+                  <h6 class="post-title card-text-truncate"><a
+                      [routerLink]='"/post/" + post.slug'>{{post.titleText}}</a>
                   </h6>
                   <div class="post-meta">
                     <span class="date-info small">
@@ -288,7 +289,7 @@
                     {{index+1}}.
                   </div>
                   <div class="col counter-post-item card-title-truncate ps-2">
-                    <a (click)="openPost(post, $event)" class="title-most-seen">{{post.titleText}}</a>
+                    <a [routerLink]='"/post/" + post.slug' class="title-most-seen">{{post.titleText}}</a>
                   </div>
                 </div>
               </div>
@@ -375,7 +376,7 @@
                 </div>
               </div>
               <article *ngFor="let post of justiceTopPosts" class="blog-style5 d-flex align-items-center mb-3">
-                <a (click)="openPost(post, $event)">
+                <a [routerLink]='"/post/" + post.slug'>
                   <div class="post-img-wrap position-relative overflow-hidden">
                     <img *ngIf="post.media" class="lazyload post-img"
                       [src]="post.media.urlMedium!=null ? post.media.urlMedium : post.media.urlFull"
@@ -383,7 +384,8 @@
                   </div>
                 </a>
                 <div class="post-content">
-                  <h6 class="post-title card-text-truncate"><a (click)="openPost(post, $event)">{{post.titleText}}</a>
+                  <h6 class="post-title card-text-truncate"><a
+                      [routerLink]='"/post/" + post.slug'>{{post.titleText}}</a>
                   </h6>
                   <div class="post-meta">
                     <span class="date-info small">
@@ -394,7 +396,7 @@
               </article>
               <div class="row">
                 <div class="col mt-3">
-                  <a *ngIf="firstCategory" (click)="openCategoryPosts(firstCategory, $event)"
+                  <a *ngIf="firstCategory" [routerLink]='"/post/category/" + firstCategory.slug'
                     class="text-uppercase section-title-link">
                     Voir tous
                     <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -426,7 +428,7 @@
                 </div>
               </div>
               <article *ngFor="let post of lawTopPosts" class="blog-style5 d-flex align-items-center mb-3">
-                <a (click)="openPost(post, $event)">
+                <a [routerLink]='"/post/" + post.slug'>
                   <div class="post-img-wrap position-relative overflow-hidden">
                     <img *ngIf="post.media" class="lazyload post-img"
                       [src]="post.media.urlMedium!=null ? post.media.urlMedium : post.media.urlFull"
@@ -434,7 +436,8 @@
                   </div>
                 </a>
                 <div class="post-content">
-                  <h6 class="post-title card-text-truncate"><a (click)="openPost(post, $event)">{{post.titleText}}</a>
+                  <h6 class="post-title card-text-truncate"><a
+                      [routerLink]='"/post/" + post.slug'>{{post.titleText}}</a>
                   </h6>
                   <div class="post-meta">
                     <span class="date-info small">
@@ -445,7 +448,7 @@
               </article>
               <div class="row">
                 <div class="col mt-3">
-                  <a *ngIf="secondCategory" (click)="openCategoryPosts(secondCategory, $event)"
+                  <a *ngIf="secondCategory" [routerLink]='"/post/category/" + secondCategory.slug'
                     class="text-uppercase section-title-link">
                     Voir tous
                     <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -477,7 +480,7 @@
                 </div>
               </div>
               <article *ngFor="let post of economyTopPosts" class="blog-style5 d-flex align-items-center mb-3">
-                <a (click)="openPost(post, $event)">
+                <a [routerLink]='"/post/" + post.slug'>
                   <div class="post-img-wrap position-relative overflow-hidden">
                     <img *ngIf="post.media" class="lazyload post-img"
                       [src]="post.media.urlMedium!=null ? post.media.urlMedium : post.media.urlFull"
@@ -487,7 +490,8 @@
                   </div>
                 </a>
                 <div class="post-content">
-                  <h6 class="post-title card-text-truncate"><a (click)="openPost(post, $event)">{{post.titleText}}</a>
+                  <h6 class="post-title card-text-truncate"><a
+                      [routerLink]='"/post/" + post.slug'>{{post.titleText}}</a>
                   </h6>
                   <div class="post-meta">
                     <span class="date-info small">
@@ -498,7 +502,7 @@
               </article>
               <div class="row">
                 <div class="col mt-3">
-                  <a *ngIf="thirdCategory" (click)="openCategoryPosts(thirdCategory, $event)"
+                  <a *ngIf="thirdCategory" [routerLink]='"/post/category/" + thirdCategory.slug'
                     class="text-uppercase section-title-link">
                     Voir tous
                     <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -519,7 +523,7 @@
           <div class="col-md-12">
             <div class="section-title-block d-flex pb-3">
               <h3 class="section-widget-title">Podcast Raide comme la justice</h3>
-              <a (click)="openPodcastPosts($event)" class="text-uppercase section-title-link">
+              <a routerLink="/podcasts" class="text-uppercase section-title-link">
                 Voir tous
                 <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path
@@ -541,9 +545,8 @@
           <div *ngIf="podcasts && podcasts.length>0" class="row">
             <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-none d-sm-block">
               <div class="image-hover-style-1">
-                <a (click)="openPodcastPosts($event)"> <img class="lazyload"
-                    src="assets/images/homepage/raide-comme-la-justice.png" alt="raide-comme-la-justice image"
-                    class="w-100"></a>
+                <a routerLink="/podcasts"> <img class="lazyload" src="assets/images/homepage/raide-comme-la-justice.png"
+                    alt="raide-comme-la-justice image" class="w-100"></a>
               </div>
             </div>
             <div *ngFor="let podcast of podcasts" class="col-12 col-sm-6 col-md-4 col-lg-3 mb-2 mb-md-0">
@@ -582,7 +585,7 @@
               <article class="border-0 card">
                 <div class="card-img p-2">
                   <div class="image-frame image-hover-style-1">
-                    <a (click)="openSeriePosts(series[0], $event)"> <img *ngIf="series[0].picture" class="lazyload"
+                    <a [routerLink]='"/post/serie/" + series[0].slug'> <img *ngIf="series[0].picture" class="lazyload"
                         [src]="series[0].picture.urlFull" alt="image" class="w-100"></a>
                   </div>
                 </div>
@@ -590,7 +593,7 @@
                   <div class="row pb-1 align-items-center m-0">
 
                   </div>
-                  <h2><a class="card-title-truncate" (click)="openSeriePosts(series[0], $event)">
+                  <h2><a class="card-title-truncate" [routerLink]='"/post/serie/" + series[0].slug'>
                       {{series[0].titleText}}</a>
                   </h2>
                   <p class="card-text-truncate">{{series[0].excerptText}}
@@ -600,7 +603,7 @@
             </div>
             <div class="col-lg-4 col-md-6 pt-2">
               <article *ngFor="let serie of series | slice:1:6" class="blog-style5 d-flex align-items-center mb-3">
-                <a (click)="openSeriePosts(serie, $event)">
+                <a [routerLink]='"/post/serie/" + serie.slug'>
                   <div class="post-img-wrap position-relative overflow-hidden">
                     <img *ngIf="serie.picture" class="lazyload post-img"
                       [src]="serie.picture.urlMedium!=null ? serie.picture.urlMedium : serie.picture.urlFull"
@@ -609,7 +612,7 @@
                 </a>
                 <div class="post-content">
                   <h6 class="post-title card-text-truncate"><a
-                      (click)="openSeriePosts(serie, $event)">{{serie.titleText}}</a>
+                      [routerLink]='"/post/serie/" + serie.slug'>{{serie.titleText}}</a>
                   </h6>
                 </div>
               </article>
@@ -655,20 +658,20 @@
           <article class="border-0 card h-100">
             <div class="card-img px-2 d-flex">
               <div class="image-hover-style-1 w-100">
-                <a (click)="openPost(post, $event)"> <img *ngIf="post.media" class="lazyload"
+                <a [routerLink]='"/post/" + post.slug'> <img *ngIf="post.media" class="lazyload"
                     [src]="post.media.urlMediumLarge!=null ? post.media.urlMediumLarge : post.media.urlFull"
                     [alt]="post.media.alt_text" class="w-100"> </a>
               </div>
             </div>
             <div class="card-body">
               <div class="row pb-1 px-2 align-items-center">
-                <a (click)="openCategoryPosts(post.jssCategories[0], $event)"
+                <a [routerLink]='"/post/category/" + post.jssCategories[0].slug'
                   class="badge bg-info rounded-pill px-1 col-auto me-2">{{post.jssCategories[0].name}}</a>
-                <bookmark [post]="post"></bookmark>
+                <bookmark *ngIf="currentUser" [post]="post"></bookmark>
               </div>
               <h4>
-                <a class="card-text-truncate" (click)="openPost(post, $event)"> <img *ngIf="post.isPremium" class="pe-0"
-                    src="/assets/images/premium-icon.svg">
+                <a class="card-text-truncate" [routerLink]='"/post/" + post.slug'> <img *ngIf="post.isPremium"
+                    class="pe-0" src="/assets/images/premium-icon.svg">
                   {{post.titleText}}</a>
               </h4>
               <p class="card-text-truncate mb-0">{{post.excerptText}}
@@ -678,7 +681,8 @@
               <div class="col-lg-6">
                 <div class="author-block">
                   <ul class="avatar list-inline mb-0">
-                    <li class="list-inline-item"><a class="fs-9" (click)="openAuthorPosts(post.fullAuthor, $event)"><img
+                    <li class="list-inline-item"><a class="fs-9"
+                        [routerLink]='"/post/author/" + post.fullAuthor.slug'><img
                           [src]="post.fullAuthor.avatar_url_size_24" [alt]="post.fullAuthor.name" placement="top"
                           [ngbTooltip]="post.fullAuthor.name">
                         {{post.fullAuthor.name}}</a></li>

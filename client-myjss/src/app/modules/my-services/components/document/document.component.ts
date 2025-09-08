@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Meta, Title } from '@angular/platform-browser';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
 import { ConstantService } from '../../../main/services/constant.service';
@@ -31,10 +32,13 @@ export class DocumentComponent implements OnInit {
   constructor(private appService: AppService,
     private postService: PostService,
     private constantService: ConstantService,
-    private platformService: PlatformService
+    private platformService: PlatformService,
+    private titleService: Title, private meta: Meta,
   ) {
   }
   ngOnInit() {
+    this.titleService.setTitle("Documents juridiques - MyJSS");
+    this.meta.updateTag({ name: 'description', content: "Accédez à des modèles de documents juridiques rédigés par nos experts. MyJSS vous assure des statuts, PV d'AG et autres actes conformes, prêts à l'emploi." });
     this.serviceFamilyGroupOther = this.constantService.getServiceFamilyGroupOther();
     this.postService.getTopPostByMyJssCategory(0, this.constantService.getMyJssCategoryDocument()).subscribe(response => {
       if (response && response.content && response.content.length > 0) {
@@ -52,23 +56,4 @@ export class DocumentComponent implements OnInit {
       });
   }
 
-  openPost(slug: string, event: any) {
-    this.appService.openRoute(event, "post/" + slug, undefined);
-  }
-
-  openAnnouncements(event: any) {
-    this.appService.openRoute(event, "/services/announcement", undefined);
-  }
-
-  openFormality(event: any) {
-    this.appService.openRoute(event, "/services/formality", undefined);
-  }
-
-  openApostille(event: any) {
-    this.appService.openRoute(event, "/services/apostille", undefined);
-  }
-
-  openDomiciliation(event: any) {
-    this.appService.openRoute(event, "/services/domiciliation", undefined);
-  }
 }

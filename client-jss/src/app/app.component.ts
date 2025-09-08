@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { filter } from 'rxjs';
 import { SHARED_IMPORTS } from './libs/SharedImports';
 import { ConstantService } from './services/constant.service';
 import { GtmService } from './services/gtm.service';
+import { PageInfo, PageViewPayload } from './services/GtmPayload';
 
 @Component({
   selector: 'app-root',
@@ -16,13 +18,17 @@ export class AppComponent {
 
   constructor(
     private constantService: ConstantService,
-    private gtm: GtmService,
+    private router: Router,
+    private gtmService: GtmService
   ) { }
 
   ngOnInit() {
     this.constantService.initConstant();
 
-    //Init Google tag manager if in browser
-    this.gtm.init();
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event: NavigationEnd) => {
+        this.gtmService.trackPageView({ page: { type: "page", name: event.urlAfterRedirects } as PageInfo } as PageViewPayload);
+      });
   }
 }
