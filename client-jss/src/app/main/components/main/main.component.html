@@ -1,6 +1,7 @@
 <div class="container my-4 position-relative text-center d-none d-md-block">
   <img src="/assets/images/homepage/bandeau_hp_jss.svg" class="img-fluid w-100" alt="Top image" />
-  <a class="btn btn-yellow position-absolute start-55 top-50 translate-middle pointer" (click)="openMyJss($event)">
+  <a class="btn btn-yellow position-absolute start-55 top-50 translate-middle pointer"
+    [href]="frontendMyJssUrl+MY_JSS_HOME_ROUTE" target="_blank">
     Essayer dès maintenant
   </a>
 </div>
@@ -23,7 +24,7 @@
           <!-- Top posts -->
           <div *ngIf="lastPosts && lastPosts.length>0" class="row">
             <div class="row">
-              <div class="col-lg-4 col-md-6">
+              <div class="col-lg-4 col-md-6 order-sm-0 order-1">
                 <article *ngFor="let post of lastPosts | slice:1:3" class="blog-style4">
                   <div class="card border-0">
                     <div class="blog-post-image image-hover-style-1">
@@ -46,7 +47,7 @@
                   </div>
                 </article>
               </div>
-              <div class="col-lg-8 col-md-12">
+              <div class="col-lg-8 col-md-12 order-sm-1 order-0">
                 <article class="blog-style3 border-0 card position-relative">
                   <!-- Adding the d-flex class to the feature-image so it doesn't cover the rest of the card -->
                   <div class="feature-image d-flex rounded-2">
@@ -93,7 +94,7 @@
               </div>
               <div *ngFor="let post of lastPosts | slice:3:10">
                 <article data-aos="fade-up" class="blog-style2 card my-3">
-                  <div class="feature-image order-1 order-lg-0 rounded-2">
+                  <div class="feature-image order-0 rounded-2">
                     <div class="image-frame image-hover-style-1">
                       <a [routerLink]='"/post/" + post.slug'> <img class="lazyload" *ngIf="post.media"
                           [src]="post.media.urlLarge!=null ? post.media.urlLarge : post.media.urlFull"
@@ -101,7 +102,7 @@
                     </div>
                   </div>
                   <div data-aos="fade-in" class="card-body d-flex flex-column flex-lg-row">
-                    <div class="order-0 order-lg-1 col">
+                    <div class=" order-1 col">
                       <div class="row align-items-center ms-0 mb-1">
                         <a [routerLink]='"/post/category/" +post.jssCategories[0].slug'
                           class="badge bg-info rounded-pill px-1 col-auto me-2 mb-0">{{post.jssCategories[0].name}}</a>

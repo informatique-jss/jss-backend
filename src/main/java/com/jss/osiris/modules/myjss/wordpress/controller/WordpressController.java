@@ -2,6 +2,8 @@ package com.jss.osiris.modules.myjss.wordpress.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
@@ -556,7 +558,13 @@ public class WordpressController {
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<Post> getPostBySlug(@RequestParam String slug, HttpServletRequest request)
 			throws OsirisException {
+		if (slug != null && slug.contains("%"))
+			slug = URLDecoder.decode(slug, StandardCharsets.UTF_8);
 		Post post = postService.getPostsBySlug(slug);
+		if (post == null && slug.matches("[0-9]+") && slug.length() > 2) {
+			// For legacy post by id
+			post = postService.getPost(Integer.parseInt("100000" + slug));
+		}
 		if (post != null && !isCrawler(request))
 			postViewService.incrementView(post);
 		return new ResponseEntity<Post>(postService.applyPremiumAndBookmarks(post, null, null, false), HttpStatus.OK);

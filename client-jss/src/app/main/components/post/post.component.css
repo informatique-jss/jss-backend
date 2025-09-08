@@ -17,3 +17,10 @@
 .btn-check:focus+.btn-secondary, .btn-secondary:focus {
   color: var(--ar-primary);
 }
+
+.resize-featured-img {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+  display: block;
+}

@@ -459,7 +459,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public Page<Post> getJssCategoryPosts(String searchText, Pageable pageableRequest) throws OsirisException {
 
-        if (searchText != null) {
+        if (searchText != null && !searchText.equals("")) {
             List<IndexEntity> tmpEntitiesFound = null;
             tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
@@ -493,7 +493,7 @@ public class PostServiceImpl implements PostService {
             assoMailJssCategoryService.updateJssCategoryConsultationDate(mail, jssCategory);
         }
 
-        if (searchText != null) {
+        if (searchText != null && !searchText.equals("")) {
             List<IndexEntity> tmpEntitiesFound = null;
             tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
@@ -603,7 +603,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<Post> getAllPostsByIdf(Pageable pageableRequest, String searchText) throws OsirisException {
-        if (searchText != null) {
+        if (searchText != null && !searchText.equals("")) {
             List<IndexEntity> tmpEntitiesFound = null;
             tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
@@ -627,7 +627,7 @@ public class PostServiceImpl implements PostService {
         if (responsable != null)
             assoMailTagService.updateTagConsultationDate(responsable.getMail(), tag);
 
-        if (searchText != null) {
+        if (searchText != null && !searchText.equals("")) {
             List<IndexEntity> tmpEntitiesFound = null;
             tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
@@ -647,7 +647,7 @@ public class PostServiceImpl implements PostService {
         if (responsable != null)
             assoMailAuthorService.updateAuthorConsultationDate(responsable.getMail(), author);
 
-        if (searchText != null) {
+        if (searchText != null && !searchText.equals("")) {
             List<IndexEntity> tmpEntitiesFound = null;
             tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
@@ -660,7 +660,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<Post> getAllPostsBySerie(Pageable pageableRequest, Serie serie, String searchText) {
-        if (searchText != null) {
+        if (searchText != null && !searchText.equals("")) {
             List<IndexEntity> tmpEntitiesFound = null;
             tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
@@ -676,7 +676,7 @@ public class PostServiceImpl implements PostService {
     public Page<Post> getAllPostsByPublishingDepartment(Pageable pageableRequest,
             PublishingDepartment publishingDepartment, String searchText) throws OsirisException {
 
-        if (searchText != null) {
+        if (searchText != null && !searchText.equals("")) {
             List<IndexEntity> tmpEntitiesFound = null;
             tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
@@ -690,7 +690,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<Post> getAllPremiumPosts(String searchText, Pageable pageableRequest) throws OsirisException {
-        if (searchText != null) {
+        if (searchText != null && !searchText.equals("")) {
             List<IndexEntity> tmpEntitiesFound = null;
             tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
