@@ -2,6 +2,7 @@ import { Component, ElementRef, HostListener, OnInit, TemplateRef } from '@angul
 import { Router } from '@angular/router';
 import { NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 import { MY_JSS_HOME_ROUTE, MY_JSS_NEW_ANNOUNCEMENT_ROUTE, MY_JSS_NEW_FORMALITY_ROUTE, MY_JSS_SIGN_IN_ROUTE } from '../../../libs/Constants';
 import { capitalizeName } from '../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
@@ -54,6 +55,11 @@ export class HeaderComponent implements OnInit {
   myAccountItems: AccountMenuItem[] = [];
   MAIN_ITEM_ACCOUNT = MAIN_ITEM_ACCOUNT;
   MAIN_ITEM_DASHBOARD = MAIN_ITEM_DASHBOARD;
+  MY_JSS_SIGN_IN_ROUTE = MY_JSS_SIGN_IN_ROUTE;
+  frontendMyJssUrl = environment.frontendMyJssUrl;
+  MY_JSS_NEW_ANNOUNCEMENT_ROUTE = MY_JSS_NEW_ANNOUNCEMENT_ROUTE;
+  MY_JSS_NEW_FORMALITY_ROUTE = MY_JSS_NEW_FORMALITY_ROUTE;
+  MY_JSS_HOME_ROUTE = MY_JSS_HOME_ROUTE;
 
   constructor(
     private router: Router,
@@ -140,7 +146,6 @@ export class HeaderComponent implements OnInit {
   disconnect() {
     this.loginService.signOut().subscribe(response => {
       this.currentUser = undefined;
-      this.appService.openRoute(undefined, '/', undefined);
     })
   }
 
@@ -187,28 +192,23 @@ export class HeaderComponent implements OnInit {
 
   openSubscribe(event: any) {
     this.isMobileMenuOpen = false;
-    this.appService.openRoute(event, "subscription/", undefined);
   }
 
-  openSignIn(event: any) {
+  openSignIn() {
     this.isMobileMenuOpen = false;
-    this.appService.openMyJssRoute(event, MY_JSS_SIGN_IN_ROUTE, false);
   }
 
-  openCategoryPosts(category: JssCategory, event: any) {
+  openCategoryPosts() {
     this.isMobileMenuOpen = false;
-    this.appService.openRoute(event, "post/category/" + category.slug, undefined);
     this.hideSearchModal();
   }
 
-  openDepartment(department: PublishingDepartment, event: any) {
+  openDepartment() {
     this.isMobileMenuOpen = false;
-    this.appService.openRoute(event, "post/department/" + department.code, undefined);
   }
 
-  openPremium(event: any) {
+  openPremium() {
     this.isMobileMenuOpen = false;
-    this.appService.openRoute(event, "post/premium", undefined);
   }
 
   openPremiumPosts() {
@@ -216,39 +216,13 @@ export class HeaderComponent implements OnInit {
     // TODO
   }
 
-  openPodcasts(event: any) {
-    this.isMobileMenuOpen = false;
-    this.appService.openRoute(event, "podcasts", undefined);
-  }
-
   openSearchAnnouncement(event: any) {
     this.isMobileMenuOpen = false;
-    this.appService.openRoute(event, "announcement/search", undefined);
   }
 
-  openNewAnnouncement(event: any) {
-    this.appService.openMyJssRoute(event, MY_JSS_NEW_ANNOUNCEMENT_ROUTE);
-  }
 
-  openNewFormality(event: any) {
-    this.appService.openMyJssRoute(event, MY_JSS_NEW_FORMALITY_ROUTE);
-  }
-
-  openMyJss(event: any) {
+  openMyJss() {
     this.isMobileMenuOpen = false;
-    this.appService.openMyJssRoute(event, MY_JSS_HOME_ROUTE);
-  }
-
-  openLinkedinJssPage() {
-    this.appService.openLinkedinJssPage();
-  }
-
-  openInstagramJssPage() {
-    this.appService.openInstagramJssPage();
-  }
-
-  openFacebookJssPage() {
-    this.appService.openFacebookJssPage();
   }
 
   searchEntities() {
@@ -282,8 +256,7 @@ export class HeaderComponent implements OnInit {
       })
   }
 
-  openPost(slug: string, event: any) {
-    this.appService.openRoute(event, "post/" + slug, undefined);
+  openPost() {
     this.hideSearchModal();
   }
 

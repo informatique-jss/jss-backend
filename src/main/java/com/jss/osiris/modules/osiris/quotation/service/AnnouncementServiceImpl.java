@@ -933,10 +933,18 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         return getAnnouncementSearch("", LocalDate.now().minusDays(7), pageable).getContent();
     }
 
+    @Override
+    public List<Announcement> getAllAnnouncementsForWebsite() throws OsirisException {
+        Pageable pageable = PageRequest.of(0, Integer.MAX_VALUE);
+        return getAnnouncementSearch("", LocalDate.now().minusYears(150), pageable).getContent();
+    }
+
     private List<Announcement> populateAffaireLabel(List<Announcement> announcements) {
         if (announcements != null)
             for (Announcement announcement : announcements) {
-                if (announcement.getProvisions() != null && announcement.getProvisions().size() > 0)
+                if (Boolean.TRUE.equals(announcement.getIsLegacy())) {
+                    announcement.setAffaireLabel(announcement.getNoticeHeader());
+                } else if (announcement.getProvisions() != null && announcement.getProvisions().size() > 0)
                     if (announcement.getProvisions().get(0).getService() != null)
                         if (announcement.getProvisions().get(0).getService().getAssoAffaireOrder() != null)
                             if (announcement.getProvisions().get(0).getService().getAssoAffaireOrder()

@@ -85,9 +85,7 @@ export class KanbanInvoicingComponent extends KanbanComponent<CustomerOrder, Inv
       this.restUserPreferenceService2.getUserPreferenceValue(this.getKanbanComponentViewCode() + "_" + DEFAULT_USER_PREFERENCE).subscribe(kanbanViewString => {
         if (kanbanViewString) {
           let kabanView: KanbanView<CustomerOrder, InvoicingBlockage>[] = JSON.parse(kanbanViewString);
-          //default view so only one KanbanView
-          this.employeesSelected = kabanView[0].employees;
-          this.selectedSwimlaneType = kabanView[0].swimlaneType ? kabanView[0].swimlaneType : this.swimlaneTypes[0];
+          this.setKanbanView(kabanView[0]);
         }
       });
 
@@ -141,13 +139,23 @@ export class KanbanInvoicingComponent extends KanbanComponent<CustomerOrder, Inv
 
   setKanbanView(kanbanView: KanbanView<CustomerOrder, InvoicingBlockage>): void {
     this.labelViewSelected = kanbanView.label;
-    this.statusSelected = kanbanView.status;
+
+    if (this.possibleEntityStatus) {
+      const statusIds = kanbanView.status.map(s => s.id);
+      this.statusSelected = this.possibleEntityStatus.filter(s => statusIds.includes(s.id));
+    }
+
     this.employeesSelected = kanbanView.employees;
-    this.selectedSwimlaneType = kanbanView.swimlaneType;
+    this.selectedSwimlaneType = this.swimlaneTypes.find(s => s.fieldName == kanbanView.swimlaneType.fieldName);
+    this.applyFilter();
   }
 
   getKanbanView(): KanbanView<CustomerOrder, InvoicingBlockage> {
-    return { label: this.labelViewSelected, status: this.statusSelected, employees: this.employeesSelected, swimlaneType: this.selectedSwimlaneType } as KanbanView<CustomerOrder, InvoicingBlockage>;
+    let outStatus = [];
+    if (this.statusSelected)
+      for (let status of this.statusSelected)
+        outStatus.push({ id: status.id } as InvoicingBlockage);
+    return { label: this.labelViewSelected, status: outStatus, employees: this.employeesSelected, swimlaneType: this.selectedSwimlaneType } as KanbanView<CustomerOrder, InvoicingBlockage>;
   }
 
   getKanbanComponentViewCode(): string {

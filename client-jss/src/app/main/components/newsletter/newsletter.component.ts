@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { validateEmail } from '../../../libs/CustomFormsValidatorsHelper';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { AppService } from '../../../services/app.service';
+import { GtmService } from '../../../services/gtm.service';
+import { FormSubmitPayload, PageInfo } from '../../../services/GtmPayload';
 import { CommunicationPreferencesService } from '../../services/communication.preference.service';
 
 @Component({
@@ -19,9 +21,22 @@ export class NewsletterComponent implements OnInit {
   constructor(
     private communicationPreferencesService: CommunicationPreferencesService,
     private appService: AppService,
+    private gtmService: GtmService,
   ) { }
 
   ngOnInit() {
+  }
+
+  trackFormNewsletter() {
+    this.gtmService.trackFormSubmit(
+      {
+        form: { type: "S'inscrire" },
+        page: {
+          type: 'main',
+          name: 'main'
+        } as PageInfo
+      } as FormSubmitPayload
+    );
   }
 
 
@@ -38,6 +53,7 @@ export class NewsletterComponent implements OnInit {
     }
 
     this.communicationPreferencesService.subscribeToNewspaperNewsletter(mailToRegister).subscribe(res => {
+      this.trackFormNewsletter();
       this.mail = '';
       this.isSent = true;
     });

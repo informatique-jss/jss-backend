@@ -12,4 +12,6 @@ public interface AuthorService {
         public Author getAuthorBySlug(String slug);
 
         public List<Author> getFollowedAuthorsForCurrentUser();
+
+        public List<Author> getAllAuthors();
 }

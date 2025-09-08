@@ -196,6 +196,7 @@ public class Post implements IId, Serializable {
     private Integer mediaTimeLength;
 
     private Boolean isCancelled;
+    private Boolean isLegacy;
 
     @OneToMany(mappedBy = "post")
     @JsonIgnore
@@ -543,5 +544,13 @@ public class Post implements IId, Serializable {
 
     public void setReadingFolders(List<ReadingFolder> readingFolders) {
         this.readingFolders = readingFolders;
+    }
+
+    public Boolean getIsLegacy() {
+        return isLegacy;
+    }
+
+    public void setIsLegacy(Boolean isLegacy) {
+        this.isLegacy = isLegacy;
     }
 }

@@ -9,11 +9,11 @@
         <p class="text-body fs-lg mb-5 text-white">Publiez vos annonces légales en quelques clics 24/7 sur MyJSS notre
           plateforme sécurisée.</p>
         <double-buttons class="text-grey" orderActionLabel=" Publier une annonce légale"
-          [orderActionRoute]="'quotation/new/'+serviceFamilyGroupAnnouncement!.id+'/'+quotationTypeOrder.id"
+          [orderActionRoute]="'/quotation/new/'+serviceFamilyGroupAnnouncement!.id+'/'+quotationTypeOrder.id"
           quotationActionLabel="Demander un devis"
-          [quotationActionRoute]="'quotation/new/'+serviceFamilyGroupAnnouncement!.id+'/'+quotationTypeQuotation.id"
+          [quotationActionRoute]="'/quotation/new/'+serviceFamilyGroupAnnouncement!.id+'/'+quotationTypeQuotation.id"
           linkLabel="Consulter les annonces légales" linkRoute="announcement/search" [linkRouteToJssMedia]='true'
-          [isLightButtons]="true">
+          [fromPageInfo]="{ type: 'my-services', name: 'annoucement'}" [isLightButtons]="true">
         </double-buttons>
       </div>
     </div>
@@ -36,7 +36,8 @@
   thirdStepDescription="Bénéficiez d’une interface sécurisée et fiable pour le traitement de vos informations bancaires."
   [firstJumpTo]="5" [secondJumpTo]="15"></explaination-video>
 
-<description-my-account></description-my-account>
+<description-my-account
+  imageSrc="assets/img/myjss-services/announcement/parcourir_mon_compte_annonce.webp"></description-my-account>
 
 <section *ngIf="carouselAnnouncementPosts && carouselAnnouncementPosts.length>0" class="background-opacity">
   <div class="container">
@@ -47,11 +48,12 @@
           <div class="h-100">
             <div class="card card-carousel">
               <div class="card-body">
-                <h3 class="card-title card-title-truncate">{{post.titleText}}</h3>
-                <p class="card-text text-gray card-text-truncate">{{post.excerptText}}</p>
+                <h3 class="card-title card-title-truncate" [routerLink]="'/post/'+post.slug">{{post.titleText}}</h3>
+                <p class="card-text text-gray card-text-truncate" [routerLink]="'/post/'+post.slug">{{post.excerptText}}
+                </p>
               </div>
               <div class="card-footer ">
-                <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" (click)="openPost(post.slug,$event)"
+                <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" [routerLink]="'/post/'+post.slug"
                   aria-label="Learn more">
                   <i class="ai-arrow-right"></i>
                 </a>
@@ -75,9 +77,9 @@
           </div>
           <h2 class="h2 secondary-heading pb-2 pb-sm-3 ">N'attendez plus et accédez à nos solutions</h2>
           <double-buttons class="text-grey" orderActionLabel=" Publier une annonce légale"
-            [orderActionRoute]="'quotation/new/'+serviceFamilyGroupAnnouncement!.id+'/'+quotationTypeOrder.id"
-            quotationActionLabel="Demander un devis"
-            [quotationActionRoute]="'quotation/new/'+serviceFamilyGroupAnnouncement!.id+'/'+quotationTypeQuotation.id"
+            [orderActionRoute]="'/quotation/new/'+serviceFamilyGroupAnnouncement!.id+'/'+quotationTypeOrder.id"
+            quotationActionLabel="Demander un devis" [fromPageInfo]="{ type: 'my-services', name: 'annoucement'}"
+            [quotationActionRoute]="'/quotation/new/'+serviceFamilyGroupAnnouncement!.id+'/'+quotationTypeQuotation.id"
             linkLabel="Consulter les annonces légales" linkRoute="announcement/search" [linkRouteToJssMedia]='true'
             [isLightButtons]="false">
           </double-buttons>
@@ -270,12 +272,12 @@
       <div class="col-lg-5 d-flex pt-3 pt-xl-0">
         <div class="card h-100 border-0 rounded-5 w-100">
           <div class="card-body pb-3 px-3">
-            <img src="assets/img/icons/Formalite.svg" alt="Icon">
-            <h3 class="h4 text-white" routerLink="/services/formality" style="cursor: pointer;">Formalité légale</h3>
-            <p class="mb-0">Un accompagnement complet pour toutes vos formalités juridiques.</p>
+            <img src="assets/img/icons/Annonces.svg" alt="Icon">
+            <h3 class="h4 text-white" routerLink="/services/announcement" style="cursor: pointer;">Annonces légales</h3>
+            <p class="mb-0">Toutes les annonces légales, sur tout le territoire et sur tous les supports.</p>
           </div>
           <div class="card-footer border-0 pt-3 mb-3">
-            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" (click)="openFormality($event)"
+            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" routerLink="/services/announcement"
               aria-label="Learn more">
               <i class="ai-arrow-right"></i>
             </a>
@@ -288,11 +290,11 @@
             <img src="assets/img/icons/Apostille.svg" alt="Icon">
             <h3 class="h4 text-white" routerLink="/services/apostille" style="cursor: pointer;">Apostille & Légalisation
             </h3>
-            <p class="mb-0">Authentification et certification rapide et conforme de vos documents valables à
+            <p class="mb-0">Authentification et certification rapides et conformes de vos documents valables à
               l’international.</p>
           </div>
           <div class="card-footer border-0 pt-3 mb-3">
-            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" (click)="openApostille($event)"
+            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" routerLink="/services/apostille"
               aria-label="Learn more">
               <i class="ai-arrow-right"></i>
             </a>
@@ -307,11 +309,11 @@
         <div class="card h-100 border-0 rounded-5 w-100">
           <div class="card-body pb-3 px-3">
             <img src="assets/img/icons/Domiciliation.svg" alt="Icon">
-            <h3 class="h4 text-white" routerLink="/services/domiciliation" style="cursor: pointer;">Domiciliations</h3>
-            <p class="mb-0">Une adresse prestigieuse pour votre société en plein coeur de Paris.</p>
+            <h3 class="h4 text-white" routerLink="/services/domiciliation" style="cursor: pointer;">Domiciliation</h3>
+            <p class="mb-0">Une domiciliation au cœur de Paris avec gestion simplifiée.</p>
           </div>
           <div class="card-footer border-0 pt-3 mb-3">
-            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" (click)="openDomiciliation($event)"
+            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" routerLink="/services/domiciliation"
               aria-label="Learn more">
               <i class="ai-arrow-right"></i>
             </a>
@@ -327,7 +329,7 @@
             <p class="mb-0">Vos documents officiels fournis rapidement et en toute conformité.</p>
           </div>
           <div class="card-footer border-0 pt-3 mb-3">
-            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" (click)="openDocument($event)"
+            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" routerLink="services/document"
               aria-label="Learn more">
               <i class="ai-arrow-right"></i>
             </a>
@@ -344,7 +346,7 @@
       <ng-template let-post>
         <div class="h-100">
           <div class="card border-0 bg-tertiary">
-            <a (click)="openPost(post.slug,$event)">
+            <a [routerLink]="'/post/'+post.slug">
               <img class="card-img-top"
                 [src]="post.media && post.media.urlMediumLarge ? post.media.urlMediumLarge : post.media.urlFull"
                 alt="Post image">
@@ -356,7 +358,7 @@
                 <a class="badge text-nav fs-xs border" *ngIf="post.postTags[0]">{{post.postTags[0].name}}</a>
               </div>
               <h3 class="h4 card-title card-title-truncate">
-                <a (click)="openPost(post.slug,$event)">{{post.titleText}}</a>
+                <a [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
               </h3>
               <p class="card-text card-text-truncate">{{post.excerptText}}</p>
             </div>

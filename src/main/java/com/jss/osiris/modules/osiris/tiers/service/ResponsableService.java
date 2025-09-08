@@ -25,4 +25,6 @@ public interface ResponsableService {
     public List<IResponsableSearchResult> searchResponsables(TiersSearch tiersSearch) throws OsirisException;
 
     public Document applyParametersDocumentToQuotation(DocumentType documentType, Responsable responsable);
+
+    public void updateConsentDateForCurrentUser();
 }

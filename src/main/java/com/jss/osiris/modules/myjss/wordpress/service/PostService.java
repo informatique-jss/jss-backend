@@ -124,4 +124,8 @@ public interface PostService {
         public Post getNextPost(Post post);
 
         public Post getPreviousPost(Post post);
+
+        public List<Post> getAllPostsForJssMedia();
+
+        public List<Post> getAllPostsForMyJss();
 }

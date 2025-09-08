@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
@@ -128,6 +129,8 @@ public class InvoiceHelper {
             invoiceLabelResult.setIsCommandNumberMandatory(billingDocument.getIsCommandNumberMandatory());
             invoiceLabelResult.setCommandNumber(billingDocument.getCommandNumber());
             invoiceLabelResult.setLabelOrigin("la configuration Facture / Autres du donneur d'ordre");
+            if (invoiceLabelResult.getBillingLabel() == null || invoiceLabelResult.getBillingLabel().length() == 0)
+                throw new OsirisClientMessageException("Aucun libellé trouvé pour la facture");
         } else if (customerOrder != null
                 && constantService.getBillingLabelTypeCodeAffaire().getId()
                         .equals(billingDocument.getBillingLabelType().getId())) {

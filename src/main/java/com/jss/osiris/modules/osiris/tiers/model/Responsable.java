@@ -237,6 +237,8 @@ public class Responsable implements IAttachment, IId {
 	@JsonView({ JacksonViews.OsirisDetailedView.class, JacksonViews.OsirisListView.class })
 	private List<Voucher> vouchers;
 
+	private LocalDateTime consentTermsDate;
+
 	public Tiers getTiers() {
 		return tiers;
 	}
@@ -603,6 +605,14 @@ public class Responsable implements IAttachment, IId {
 
 	public void setVouchers(List<Voucher> vouchers) {
 		this.vouchers = vouchers;
+	}
+
+	public LocalDateTime getConsentTermsDate() {
+		return consentTermsDate;
+	}
+
+	public void setConsentTermsDate(LocalDateTime consentTermsDate) {
+		this.consentTermsDate = consentTermsDate;
 	}
 
 }

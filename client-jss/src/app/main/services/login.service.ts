@@ -53,6 +53,7 @@ export class LoginService extends AppRestService<Responsable> {
         this.currentUserChange.next(false);
         observer.next(true);
         observer.complete();
+        this.appService.openRoute(undefined, '/', undefined);
       })
     })
   }

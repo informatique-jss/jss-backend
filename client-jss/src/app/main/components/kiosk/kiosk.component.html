@@ -45,7 +45,8 @@
               </div>
               <div class="col-auto">
                 <a class="col-auto btn-secondary rounded-circle btn-circle-md fs-4"
-                  (click)="buyNewspaper(newspaper.id)"><i class="bi-cart"></i></a>
+                  [href]='frontendMyJssUrl+"/quotation/subscription/" + NEWSPAPER_KIOSK_BUY + "/" + false + "/" + newspaper.id'
+                  target="_blank" (click)="buyNewspaper(newspaper.id)"><i class="bi-cart"></i></a>
               </div>
             </div>
           </div>

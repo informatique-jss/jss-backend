@@ -65,7 +65,8 @@ public class AnnouncementStatusServiceImpl implements AnnouncementStatusService 
                                 false, false,
                                 AggregateStatus.AGGREGATE_STATUS_WAITING, 6);
 
-                updateStatus(AnnouncementStatus.ANNOUNCEMENT_WAITING_LINKED_PROVISION, "En attente de prestation liée",
+                updateStatus(AnnouncementStatus.ANNOUNCEMENT_WAITING_LINKED_PROVISION,
+                                "En attente d'une autre prestation",
                                 "link", false,
                                 false,
                                 AggregateStatus.AGGREGATE_STATUS_WAITING, 4);

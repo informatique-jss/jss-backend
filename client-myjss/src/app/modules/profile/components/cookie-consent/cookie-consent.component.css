@@ -1,0 +1,75 @@
+.cookie-banner {
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 950px;
+  width: 95%;
+  background: var(--ar-dark);
+  color: var(--ar-primary);
+  padding: 1rem 1.5rem;
+  border-radius: var(--ar-border-radius-lg);
+  box-shadow: var(--ar-box-shadow-lg);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  font-family: var(--ar-font-sans-serif);
+  z-index: 1000;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.cookie-text {
+  flex: 1 1 60%;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: var(--ar-primary);
+}
+
+.cookie-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 0.55rem 1.2rem;
+  border-radius: var(--ar-border-radius);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  border-width: var(--ar-border-width);
+  border-style: var(--ar-border-style);
+}
+
+.btn-accept {
+  background: var(--ar-success);
+  color: var(--ar-light);
+  border-color: var(--ar-success);
+
+  &:hover {
+    background: var(--ar-info);
+    border-color: var(--ar-info);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+.btn-reject {
+  background: var(--ar-dark-bg);
+  color: var(--ar-primary);
+  border-color: var(--ar-primary);
+
+  &:hover {
+    background: var(--ar-dark-bg-subtle);
+    color: var(--ar-success);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+}

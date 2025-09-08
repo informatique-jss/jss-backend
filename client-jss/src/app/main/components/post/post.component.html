@@ -9,7 +9,7 @@
           <div class="col-12">
             <ng-container *ngIf="post.jssCategories!=null && post.jssCategories.length>0">
               <a *ngFor="let category of post.jssCategories | slice : 1 " style="cursor: pointer;"
-                (click)="openCategoryPosts(category, $event)" class="my-2 margin-category fw-bold"
+                [routerLink]='"/post/category/" + category.slug' class="my-2 margin-category fw-bold"
                 [style.background-color]="category.color+' !important'">{{category.name}}</a>
             </ng-container>
             <h1 class="mt-2"><img *ngIf="post.isPremium" class="px-0 me-1" src="/assets/images/premium-icon.svg">
@@ -26,7 +26,7 @@
                   <img class="avatar-img rounded-circle" [src]="post.fullAuthor.avatar_url_size_48" alt="avatar">
                 </div>
                 <div class="col">
-                  <a style="cursor: pointer;" (click)="openAuthorPosts(post.fullAuthor, $event)"
+                  <a style="cursor: pointer;" [routerLink]=' "/post/author/" + post.fullAuthor.slug'
                     class="stretched-link d-block">{{post.fullAuthor.name}}</a>
                   <p>{{post.fullAuthor.description}}</p>
                 </div>
@@ -47,7 +47,7 @@
                   <button *ngIf="currentUser" class="btn btn-primary" (click)="openOfferPostModal(givePostModal)"><i
                       class="bi bi-gift me-2"></i>Offrir cet article</button>
                 </div>
-                <bookmark [post]="post" [isSinglePost]="true" class="mt-0"></bookmark>
+                <bookmark *ngIf="currentUser" [post]="post" [isSinglePost]="true" class="mt-0"></bookmark>
 
                 <div class="col-auto mt-0">
                   <!-- Share dropdown -->
@@ -68,7 +68,7 @@
                             style="width: 48px; height: 48px;">
                             <i class="bi bi-linkedin fs-6"></i>
                           </a>
-                          <a (click)="shareOnInstagram()"
+                          <a href="https://www.instagram.com/journalspecialdessocietes/" target="_blank"
                             class="btn btn-primary bg-light border-0 rounded-circle d-flex justify-content-center align-items-center"
                             style="width: 48px; height: 48px;">
                             <i class="bi bi-instagram fs-4"></i>
@@ -136,6 +136,10 @@
 
           <section class="pt-0" *ngIf="post">
             <div class="row">
+              <div>
+                <img *ngIf="post.media" class="rounded-2 mb-2 resize-featured-img"
+                  [src]="post.media.urlFull ? post.media.urlFull : ''">
+              </div>
               <!-- Main Content START -->
               <div class="mb-5">
                 <span [innerHTML]="post.contentText| trustHtml"></span>
@@ -147,7 +151,9 @@
                   <p>Lisez cette article pour seulement 1 € ou abonnez-vous pour profiter de cet article en
                     intégralité et de bien d'autres !</p>
                   <div><a class="btn btn-secondary mt-3" style="margin-right: 20px;cursor: pointer;"
-                      (click)="subscribeToOnePost($event, post.id)">Lire pour 1 €</a>
+                      [href]='frontendMyJssUrl+"/quotation/subscription/" + ONE_POST_SUBSCRIPTION + "/" + false + "/" + post.id'
+                      target="_blank">Lire
+                      pour 1 €</a>
                     <a class="btn btn-yellow mt-3" style="cursor: pointer;" href="subscription">S'abonner</a>
                   </div>
                 </div>
@@ -156,8 +162,8 @@
                 <div *ngIf="post.relatedPosts.length > 0" class="my-4">
                   <p class="fw-bold">LIRE AUSSI</p>
                   <div class="row border-left-red ms-0 ps-1 py-1">
-                    <a *ngFor="let relatedPost of post.relatedPosts.slice(0, 3)" (click)="openPost(relatedPost, $event)"
-                      class="card-truncate-1">
+                    <a *ngFor="let relatedPost of post.relatedPosts.slice(0, 3)"
+                      [routerLink]='"/post/" + relatedPost.slug' class="card-truncate-1">
                       <h6 class="m-0 p-1"><img *ngIf="relatedPost.isPremium" class="px-0 me-1"
                           src="/assets/images/premium-icon.svg">&#9632; {{relatedPost.titleText}}</h6>
                     </a>
@@ -174,7 +180,7 @@
                         style="width: 48px; height: 48px;">
                         <i class="bi bi-linkedin fs-6"></i>
                       </a>
-                      <a (click)="shareOnInstagram()"
+                      <a href="https://www.instagram.com/journalspecialdessocietes/" target="_blank"
                         class="btn btn-primary rounded-circle d-flex justify-content-center align-items-center"
                         style="width: 48px; height: 48px;">
                         <i class="bi bi-instagram fs-4"></i>
@@ -200,7 +206,7 @@
                     <ul class="tag-cloud mb-0 list-inline">
                       <li *ngFor="let tag of post.postTags" class="list-inline-item pb-1"><a
                           class="btn bg-light text-secondary bg-hover-danger text-hover-white bg-hover-secondary"
-                          (click)="openTagPosts(tag, $event)">{{tag.name}}</a>
+                          [routerLink]='"/post/tag/" + tag.slug'>{{tag.name}}</a>
                       </li>
                     </ul>
 
@@ -210,7 +216,8 @@
                 <!-- Next article, previous article  -->
                 <div class="single-post-widget border-light border-top pt-3 mt-3">
                   <ul class="entry-navigation list-inline d-block d-lg-flex justify-content-between flex">
-                    <li *ngIf="previousPost" (click)="openPost(previousPost, $event)" class="col-xl-6  mb-3 mb-lg-0 ">
+                    <li *ngIf="previousPost" [routerLink]='"/post/" + previousPost.slug'
+                      class="col-xl-6  mb-3 mb-lg-0 ">
                       <article class="blog-style5 d-flex align-items-center rounded">
                         <a>
                           <div class="post-img-wrap position-relative overflow-hidden  me-2 ms-0">
@@ -222,24 +229,24 @@
                         <div class="post-content pt-md-2 pt-xl-0 pt-0">
                           <p class="mb-1"><i class="bi bi-arrow-left"></i> Article précédent</p>
                           <h6 class="post-title card-text-truncate">
-                            <a (click)="openPost(previousPost, $event)"><img *ngIf="previousPost.isPremium"
+                            <a [routerLink]='"/post/" + previousPost.slug'><img *ngIf="previousPost.isPremium"
                                 class="px-0 me-1" src="/assets/images/premium-icon.svg">
                               {{previousPost.titleText}}</a>
                           </h6>
                         </div>
                       </article>
                     </li>
-                    <li class="col-xl-6" *ngIf="nextPost" (click)="openPost(nextPost, $event)">
+                    <li class="col-xl-6" *ngIf="nextPost" [routerLink]='"/post/" + nextPost.slug'>
                       <article class="blog-style5 d-flex align-items-center rounded">
                         <div class="post-content pt-md-2 pt-xl-0 pt-0">
                           <p class="mb-1 text-end">Article suivant <i class="bi bi-arrow-right"></i></p>
                           <h6 class="post-title text-end card-text-truncate">
-                            <a (click)="openPost(nextPost, $event)"><img *ngIf="nextPost.isPremium" class="px-0 me-1"
+                            <a [routerLink]='"/post/" + nextPost.slug'><img *ngIf="nextPost.isPremium" class="px-0 me-1"
                                 src="/assets/images/premium-icon.svg">
                               {{nextPost.titleText}}</a>
                           </h6>
                         </div>
-                        <a (click)="openPost(nextPost, $event)" *ngIf="nextPost.media">
+                        <a [routerLink]='"/post/" + nextPost.slug' *ngIf="nextPost.media">
                           <div class="post-img-wrap position-relative overflow-hidden me-0 ms-2">
                             <img class="post-img"
                               [src]="nextPost.media.urlThumbnail ? nextPost.media.urlThumbnail : nextPost.media.urlFull"
@@ -420,7 +427,7 @@
             <ul class="tag-cloud list-inline">
               <li *ngFor="let tag of post.postTags" class="list-inline-item pb-1"><a
                   class="btn bg-light text-secondary text-hover-white bg-hover-secondary"
-                  (click)="openTagPosts(tag, $event)">{{tag.name}}</a>
+                  [routerLink]='"/post/tag/" + tag.slug'>{{tag.name}}</a>
               </li>
             </ul>
           </div>
@@ -443,7 +450,7 @@
                   {{index+1}}.
                 </div>
                 <div class="col counter-post-item card-title-truncate ps-2">
-                  <a (click)="openPost(post, $event)" class="title-most-seen">{{post.titleText}}</a>
+                  <a [routerLink]='"/post/" + post.slug' class="title-most-seen">{{post.titleText}}</a>
                 </div>
               </div>
             </div>

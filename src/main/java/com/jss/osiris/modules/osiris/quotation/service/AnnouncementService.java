@@ -106,4 +106,6 @@ public interface AnnouncementService {
 
         public List<Announcement> getLastSevenDaysAnnouncements() throws OsirisException;
 
+        public List<Announcement> getAllAnnouncementsForWebsite() throws OsirisException;
+
 }

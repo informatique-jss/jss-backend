@@ -147,12 +147,10 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
             if (kanbanViewString) {
               let kabanView: KanbanView<CustomerOrder, AffectationEmployee<CustomerOrder>>[] = JSON.parse(kanbanViewString);
               //default view so only one KanbanView
-              if (this.habilitationService.canAddAssignOrderForProduction())
-                this.employeesSelected = kabanView[0].employees[0];
-              this.selectedSwimlaneType = kabanView[0].swimlaneType ? kabanView[0].swimlaneType : this.swimlaneTypes[0];
+              this.setKanbanView(kabanView[0]);
             }
           });
-
+        } else {
           if (applyFilter)
             this.applyFilter(isOnlyFilterText);
         }
@@ -195,13 +193,23 @@ export class ProvisionAffectationKanbanComponent extends KanbanComponent<Custome
 
   setKanbanView(kanbanView: KanbanView<CustomerOrder, AffectationEmployee<CustomerOrder>>): void {
     this.labelViewSelected = kanbanView.label;
-    this.statusSelected = kanbanView.status;
+
+    if (this.possibleEntityStatus) {
+      const statusIds = kanbanView.status.map(s => s.id);
+      this.statusSelected = this.possibleEntityStatus.filter(s => statusIds.includes(s.id));
+    }
+
     this.employeesSelected = kanbanView.employees[0];
-    this.selectedSwimlaneType = kanbanView.swimlaneType;
+    this.selectedSwimlaneType = this.swimlaneTypes.find(s => s.fieldName == kanbanView.swimlaneType.fieldName);
+    this.startFilter();
   }
 
   getKanbanView(): KanbanView<CustomerOrder, AffectationEmployee<CustomerOrder>> {
-    return { label: this.labelViewSelected, status: this.statusSelected, employees: [this.employeesSelected], swimlaneType: this.selectedSwimlaneType } as KanbanView<CustomerOrder, AffectationEmployee<CustomerOrder>>;
+    let outStatus = [];
+    if (this.statusSelected)
+      for (let status of this.statusSelected)
+        outStatus.push({ id: status.id } as AffectationEmployee<CustomerOrder>);
+    return { label: this.labelViewSelected, status: outStatus, employees: [this.employeesSelected], swimlaneType: this.selectedSwimlaneType } as KanbanView<CustomerOrder, AffectationEmployee<CustomerOrder>>;
   }
 
   getKanbanComponentViewCode(): string {

@@ -168,7 +168,11 @@ public class ServiceServiceImpl implements ServiceService {
     public Boolean deleteServiceFromUser(Service service) {
         service = getService(service.getId());
         deleteService(service, false);
-        notificationService.notifyQuotationModified(service.getAssoAffaireOrder().getCustomerOrder());
+
+        if (service.getAssoAffaireOrder().getCustomerOrder() != null
+                && service.getAssoAffaireOrder().getCustomerOrder().getQuotations() != null
+                && service.getAssoAffaireOrder().getCustomerOrder().getQuotations().size() > 0)
+            notificationService.notifyQuotationModified(service.getAssoAffaireOrder().getCustomerOrder());
         return true;
     }
 

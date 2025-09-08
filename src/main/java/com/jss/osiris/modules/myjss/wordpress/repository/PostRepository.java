@@ -37,7 +37,7 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
 
         Post findBySlugAndIsCancelled(String slug, Boolean isCancelled);
 
-        @Query("select p from Post p where id not in :postFetchedId AND p.date<=CURRENT_TIMESTAMP ")
+        @Query("select p from Post p where id not in :postFetchedId AND p.date<=CURRENT_TIMESTAMP and coalesce(isLegacy,false)=false ")
         List<Post> findPostExcludIds(@Param("postFetchedId") List<Integer> postFetchedId);
 
         @Query("select p from Post p join p.postViews v where p.isCancelled = false and size(p.jssCategories) > 0 and v.day >= :oneWeekAgo and :category MEMBER OF p.postCategories group by p.id order by sum(v.count) desc ")
@@ -139,4 +139,9 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         @Query("SELECT p FROM Post p WHERE (p.isCancelled = false OR p.isCancelled IS NULL) AND p.isPremium = true AND :category MEMBER OF p.postCategories")
         Page<Post> findActivePremiumPosts(@Param("category") Category category, Pageable pageable);
 
+        @Query("select p from Post p where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and size(p.jssCategories) > 0 ")
+        List<Post> findAllJssPost();
+
+        @Query("select p from Post p where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and size(p.myJssCategories) > 0 ")
+        List<Post> findAllMyJssPost();
 }

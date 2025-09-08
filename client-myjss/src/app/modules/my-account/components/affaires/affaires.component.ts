@@ -119,10 +119,6 @@ export class AffairesComponent implements OnInit {
     }
   }
 
-  openOrderDetails(event: any, order: CustomerOrder) {
-    this.appService.openRoute(event, "account/orders/details/" + order.id, undefined);
-  }
-
   setBookmark() {
     this.userPreferenceService.setUserSearchBookmark(this.currentSort, "affaire-currentSort");
   }

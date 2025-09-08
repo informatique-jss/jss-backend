@@ -28,7 +28,12 @@ export class DepartmentHubComponent extends GenericHubComponent<PublishingDepart
   selectedPublishingDepartment: PublishingDepartment | undefined;
   @Output() departmentChange = new EventEmitter<PublishingDepartment>();
 
-  constructor(private tagService: TagService, postService: PostService, loginService: LoginService, appService: AppService, formBuilder: FormBuilder, activeRoute: ActivatedRoute
+  constructor(private tagService: TagService,
+    postService: PostService,
+    loginService: LoginService,
+    appService: AppService,
+    formBuilder: FormBuilder,
+    activeRoute: ActivatedRoute,
   ) {
     super(appService, formBuilder, activeRoute, postService, loginService,);
   }

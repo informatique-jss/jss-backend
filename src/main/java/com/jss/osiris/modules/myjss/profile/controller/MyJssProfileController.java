@@ -26,6 +26,7 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.service.SearchService;
@@ -255,5 +256,13 @@ public class MyJssProfileController {
 		return ResponseEntity.ok()
 				.contentType(MediaType.APPLICATION_XML)
 				.body(xml);
+	}
+
+	@GetMapping(inputEntryPoint + "/responsable/accept-terms")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<Boolean> updateAcceptTermsForCurrentUser()
+			throws OsirisValidationException {
+		responsableService.updateConsentDateForCurrentUser();
+		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 }

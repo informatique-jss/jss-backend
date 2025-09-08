@@ -224,7 +224,7 @@
                           </p>
                         </div>
                         <button type="button" class="btn btn-link btn-sm px-2 mt-2 hover-bg-light "
-                          (click)="openOrderDetails($event, order); $event.stopPropagation();">
+                          [routerLink]='"/account/orders/details/" + order.id'>
                           <i class="ai-file-text me-2"></i>Détails de la commande
                         </button>
                         <button type="button" class="btn btn-link btn-sm px-2 mt-2 hover-bg-light "

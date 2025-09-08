@@ -6,4 +6,5 @@ export interface Employee {
   title: string;
   mail: string;
   phoneNumber: string;
+  bookingPageUrl: string;
 }
