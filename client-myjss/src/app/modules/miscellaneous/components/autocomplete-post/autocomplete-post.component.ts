@@ -23,7 +23,7 @@ export class AutocompletePostComponent extends GenericAutocompleteComponent<Post
 
   @Input() myJssCategory: MyJssCategory | undefined;
 
-  additionalCategory: MyJssCategory = { id: -1, name: 'Toutes les categories', slug: "all-categories", categoryOrder: 1 };
+  additionalCategory: MyJssCategory = { id: -1, name: 'Tout', slug: "all-categories", categoryOrder: 1 };
 
   postResults: Post[] = [];
   searchText: string = "";
