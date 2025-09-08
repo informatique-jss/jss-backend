@@ -28,6 +28,10 @@ export class SelectPublishingDepartmentComponent extends GenericSelectComponent<
   }
 
   override displayLabel(object: any): string {
-    return (object && object.code && object.code.trim().length > 0) ? (object.code + " - " + object.name) : (object) ? object.name : '';
+    return (object)
+      ? ((object.code !== null && object.code !== undefined && object.code.toString().trim() !== '' && object.code.toString() !== '0')
+        ? (object.code + " - " + object.name)
+        : object.name)
+      : '';
   }
 }

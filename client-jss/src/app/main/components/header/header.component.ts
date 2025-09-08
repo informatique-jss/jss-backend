@@ -7,6 +7,7 @@ import { MY_JSS_HOME_ROUTE, MY_JSS_NEW_ANNOUNCEMENT_ROUTE, MY_JSS_NEW_FORMALITY_
 import { capitalizeName } from '../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { AppService } from '../../../services/app.service';
+import { ConstantService } from '../../../services/constant.service';
 import { PlatformService } from '../../../services/platform.service';
 import { AccountMenuItem, MAIN_ITEM_ACCOUNT, MAIN_ITEM_DASHBOARD } from '../../model/AccountMenuItem';
 import { IndexEntity } from '../../model/IndexEntity';
@@ -51,6 +52,7 @@ export class HeaderComponent implements OnInit {
 
   isMobileMenuOpen: boolean = false;
   showDepartments: boolean = false;
+  idfPublishingDepartment: PublishingDepartment | undefined;
 
   myAccountItems: AccountMenuItem[] = [];
   MAIN_ITEM_ACCOUNT = MAIN_ITEM_ACCOUNT;
@@ -71,17 +73,19 @@ export class HeaderComponent implements OnInit {
     private modalService: NgbModal,
     private eRef: ElementRef,
     private plaformService: PlatformService,
+    private constantService: ConstantService
   ) { }
 
   ngOnInit() {
     this.myAccountItems = this.appService.getAllAccountMenuItems();
-
+    this.idfPublishingDepartment = this.constantService.getPublishingDepartmentIdf();
     if (this.plaformService.isBrowser())
       this.loginService.getCurrentUser().subscribe(response => {
         this.currentUser = response;
       })
     this.departmentService.getAvailablePublishingDepartments().subscribe(departments => {
       this.departments = departments
+        .filter(dept => dept.code !== this.idfPublishingDepartment?.code)
         .slice()
         .sort((a, b) => {
           const aCode = parseInt(a.code);

@@ -84,7 +84,9 @@
       <nav class="navbar navbar-expand-lg text-uppercase text-white-100 d-none d-lg-flex">
         <div class="collapse navbar-collapse" id="main_nav">
           <ul class="navbar-nav me-auto">
-            <li class="nav-item dropdown"> <a class="nav-link dropdown-toggle">Ile-de-France</a>
+            <li class="nav-item dropdown"> <a class="nav-link" *ngIf="idfPublishingDepartment"
+                [ngClass]="{'active': getCurrentRoute().includes('/post/department') && getCurrentRoute().includes('/post/department')}"
+                [routerLink]='"post/department/"+ idfPublishingDepartment.code'>Ile-de-France</a>
               <ul class="dropdown-menu">
                 <li> <a *ngFor="let department of departments" class="dropdown-item"
                     [routerLink]='"/post/department/" + department.code'
