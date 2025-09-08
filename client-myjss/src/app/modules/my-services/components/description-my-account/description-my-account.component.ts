@@ -21,7 +21,6 @@ export class DescriptionMyAccountComponent implements OnInit, AfterViewInit {
   constructor(private platformService: PlatformService) { }
 
   ngOnInit() {
-    console.log(this.imageSrc);
     this.checkIfMobile();
   }
 
