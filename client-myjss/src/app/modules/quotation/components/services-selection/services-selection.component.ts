@@ -6,6 +6,7 @@ import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
 import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { GenericToggleComponent } from '../../../miscellaneous/components/forms/generic-toggle/generic-toggle.component';
+import { AssoAffaireOrder } from '../../../my-account/model/AssoAffaireOrder';
 import { ServiceType } from '../../../my-account/model/ServiceType';
 import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
 import { QuotationService } from '../../../my-account/services/quotation.service';
@@ -245,8 +246,12 @@ export class ServicesSelectionComponent implements OnInit {
     this.appService.openRoute(undefined, "quotation/identification", undefined);
   }
 
-  hasServiceForUnregisteredAffaire(serviceFamily: ServiceFamily) {
-    if (serviceFamily) {
+  shouldDisplayServiceFamily(serviceFamily: ServiceFamily, asso: AssoAffaireOrder) {
+    if (serviceFamily && asso && asso.affaire.siret) {
+      for (let service of serviceFamily.services)
+        if (!service.isRequiringNewUnregisteredAffaire)
+          return true;
+    } else if (serviceFamily && asso && asso.affaire && (asso.affaire.siret == null || asso.affaire.siret == undefined || asso.affaire.siret == "")) {
       for (let service of serviceFamily.services)
         if (service.isRequiringNewUnregisteredAffaire)
           return true;
