@@ -67,7 +67,6 @@ export class OrderDetailsComponent implements OnInit {
   serviceProvisionAttachments: Attachment[][] = [];
   currentUser: Responsable | undefined;
   associatedQuotation: Quotation | undefined;
-  dislayAlreadyFilledAttachment = false;
 
   selectedAssoAffaireOrder: AssoAffaireOrder | undefined;
   ASSO_SERVICE_DOCUMENT_ENTITY_TYPE = ASSO_SERVICE_DOCUMENT_ENTITY_TYPE;
@@ -125,7 +124,6 @@ export class OrderDetailsComponent implements OnInit {
   }
 
   refreshOrder() {
-    this.dislayAlreadyFilledAttachment = false;
     this.customerOrderService.getCustomerOrder(this.activatedRoute.snapshot.params['id']).subscribe(response => {
       this.order = response;
       this.appService.hideLoadingSpinner();
@@ -172,11 +170,6 @@ export class OrderDetailsComponent implements OnInit {
         this.associatedQuotation = response;
     })
   }
-
-  toggleDislayAlreadyFilledAttachment() {
-    this.dislayAlreadyFilledAttachment = !this.dislayAlreadyFilledAttachment;
-  }
-
 
   getCustomerOrderBillingMailList() {
     if (this.order && this.orderMailComputeResult)

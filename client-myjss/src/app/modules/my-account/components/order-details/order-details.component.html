@@ -180,128 +180,126 @@
                   <h5 class="pt-3">Pièces obligatoires</h5>
                   <div class="list-group">
                     <ng-container *ngFor="let assoServiceDocument of service.assoServiceDocuments;let index = index">
-                      <div class="list-group-item list-group-item-action flex-column align-items-start py-3 "
+                      <div class="list-group-item list-group-item-action flex-column align-items-start py-3"
                         [ngClass]="{'border-top-1':index>0}" style="border-width: 2px;"
-                        *ngIf="assoServiceDocument.isMandatory && (!assoServiceDocument.attachments || assoServiceDocument.attachments.length==0 || dislayAlreadyFilledAttachment)">
-                        <div class="d-flex flex-wrap w-100 justify-content-between">
-                          <h6>{{assoServiceDocument.typeDocument.customLabel}}</h6>
-                        </div>
-                        <p class="fs-sm  "
-                          *ngIf="assoServiceDocument.formalisteComment && assoServiceDocument.formalisteComment.length>0">
-                          {{assoServiceDocument.formalisteComment}}</p>
-                        <div class="mb-2 mb-md-3 row  ">
-                          <div class="col-md-12">
-                            <single-upload [entity]="assoServiceDocument" forcedFileExtension="PDF"
-                              (endOfUpload)="refreshCurrentAssoAffaireOrder(assoServiceDocument)"
-                              [entityType]="ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType" [isDirectUpload]="true"
-                              [attachmentType]="assoServiceDocument.typeDocument.attachmentType"
-                              [typeDocument]="assoServiceDocument.typeDocument"></single-upload>
+                        *ngIf="assoServiceDocument.isMandatory">
+                        <div class="row">
+                          <div class="row d-flex flex-wrap w-100 align-items-center mb-3">
+                            <h6 class="col-auto m-0">{{assoServiceDocument.typeDocument.customLabel}}</h6>
+                            <button type="button" class="col-auto btn btn-outline-secondary btn-sm"
+                              *ngIf="assoServiceDocument.typeDocument.attachments && assoServiceDocument.typeDocument.attachments[0]"
+                              (click)="downloadAttachment(assoServiceDocument.typeDocument.attachments[0])">Télécharger
+                              le modèle</button>
                           </div>
-                        </div>
-                        <div class="table-responsive"
-                          *ngIf="assoServiceDocument.attachments && assoServiceDocument.attachments.length>0">
-                          <table class="table table-hover mb-0">
-                            <thead>
-                              <tr>
-                                <th style="width: 5%;">#</th>
-                                <th>Nom</th>
-                                <th class="d-none d-md-table-cell" style="width: 20%;">Type</th>
-                                <th class="d-none d-lg-table-cell" style="width: 20%;">Date de dépôt</th>
-                                <th style="width: 10%;"></th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr *ngFor="let attachment of assoServiceDocument.attachments; let i = index">
-                                <th scope="row">{{i + 1}}</th>
-                                <td class="text-wrap" style="min-width: 150px;">{{attachment.description}}</td>
-                                <td class="d-none d-md-table-cell">{{attachment.attachmentType.label}}</td>
-                                <td class="d-none d-lg-table-cell">{{attachment.creatDateTime | date:'dd/MM/yyyy'}}</td>
-                                <td>
-                                  <button type="button" class="btn btn-secondary btn-icon btn-sm"
-                                    aria-label="Télécharger" placement="right" ngbTooltip="Télécharger"
-                                    (click)="downloadAttachment(attachment)">
-                                    <i class="ai-download"></i>
-                                  </button>
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
+                          <div class="col order-1">
+                            <p class="fs-sm  "
+                              *ngIf="assoServiceDocument.formalisteComment && assoServiceDocument.formalisteComment.length>0">
+                              {{assoServiceDocument.formalisteComment}}</p>
+                            <div class="mb-2 mb-md-3 row  ">
+                              <div class="col-md-12">
+                                <single-upload [entity]="assoServiceDocument" forcedFileExtension="PDF"
+                                  (endOfUpload)="refreshCurrentAssoAffaireOrder(assoServiceDocument)"
+                                  [entityType]="ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType" [isDirectUpload]="true"
+                                  [attachmentType]="assoServiceDocument.typeDocument.attachmentType"
+                                  [typeDocument]="assoServiceDocument.typeDocument"></single-upload>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-md-8 order-0 table-responsive"
+                            *ngIf="assoServiceDocument.attachments && assoServiceDocument.attachments.length>0">
+                            <table class="table table-hover mb-0">
+                              <thead>
+                                <tr>
+                                  <th style="width: 5%;">#</th>
+                                  <th>Nom</th>
+                                  <th class="d-none d-md-table-cell" style="width: 20%;">Type</th>
+                                  <th class="d-none d-lg-table-cell" style="width: 20%;">Date de dépôt</th>
+                                  <th style="width: 10%;"></th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr *ngFor="let attachment of assoServiceDocument.attachments; let i = index">
+                                  <th scope="row">{{i + 1}}</th>
+                                  <td class="text-wrap" style="min-width: 150px;">{{attachment.description}}</td>
+                                  <td class="d-none d-md-table-cell">{{attachment.attachmentType.label}}</td>
+                                  <td class="d-none d-lg-table-cell">{{attachment.creatDateTime | date:'dd/MM/yyyy'}}
+                                  </td>
+                                  <td>
+                                    <button type="button" class="btn btn-outline-secondary btn-icon btn-sm"
+                                      aria-label="Télécharger" placement="right" ngbTooltip="Télécharger"
+                                      (click)="downloadAttachment(attachment)">
+                                      <i class="ai-download"></i>
+                                    </button>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
                         </div>
                       </div>
                     </ng-container>
-                    <div class="text-center pt-3" *ngIf="!dislayAlreadyFilledAttachment">
-                      <i class="ai-circle-plus text-info small text-decoration-none mx-1"></i>
-                      <a class="text-info small text-decoration-none"
-                        (click)="toggleDislayAlreadyFilledAttachment()">Voir les pièces déjà renseignées</a>
-                    </div>
-                    <div class="text-center pt-3" *ngIf="dislayAlreadyFilledAttachment">
-                      <i class="ai-circle-minus text-info small text-decoration-none mx-1"></i>
-                      <a class="text-info small text-decoration-none"
-                        (click)="toggleDislayAlreadyFilledAttachment()">Masquer les pièces déjà renseignées</a>
-                    </div>
                   </div>
                   <h5 class="pt-3">Pièces optionnelles</h5>
                   <div class="list-group">
                     <ng-container *ngFor="let assoServiceDocument of service.assoServiceDocuments;let index = index">
                       <div class="list-group-item list-group-item-action flex-column align-items-start py-3 "
                         [ngClass]="{'border-top-1':index>0}" style="border-width: 2px;"
-                        *ngIf="!assoServiceDocument.isMandatory && (!assoServiceDocument.attachments || assoServiceDocument.attachments.length==0 || dislayAlreadyFilledAttachment)">
-                        <div class="d-flex flex-wrap w-100 justify-content-between">
-                          <h6>{{assoServiceDocument.typeDocument.customLabel}}</h6>
-                        </div>
-                        <p class="fs-sm  "
-                          *ngIf="assoServiceDocument.formalisteComment && assoServiceDocument.formalisteComment.length>0">
-                          {{assoServiceDocument.formalisteComment}}</p>
-                        <div class="mb-2 mb-md-3 row  ">
-                          <div class="col-md-12">
-                            <single-upload [entity]="assoServiceDocument" forcedFileExtension="PDF"
-                              (endOfUpload)="refreshCurrentAssoAffaireOrder(assoServiceDocument)"
-                              [entityType]="ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType" [isDirectUpload]="true"
-                              [attachmentType]="assoServiceDocument.typeDocument.attachmentType"
-                              [typeDocument]="assoServiceDocument.typeDocument"></single-upload>
+                        *ngIf="!assoServiceDocument.isMandatory">
+                        <div class="row">
+                          <div class="row d-flex flex-wrap w-100 align-items-center mb-3">
+                            <h6 class="col-auto m-0">{{assoServiceDocument.typeDocument.customLabel}}</h6>
+                            <button type="button" class="col-auto btn btn-outline-secondary btn-sm"
+                              *ngIf="assoServiceDocument.typeDocument.attachments && assoServiceDocument.typeDocument.attachments[0]"
+                              (click)="downloadAttachment(assoServiceDocument.typeDocument.attachments[0])">Télécharger
+                              le modèle</button>
                           </div>
-                        </div>
-                        <div class="table-responsive"
-                          *ngIf="assoServiceDocument.attachments && assoServiceDocument.attachments.length>0">
-                          <table class="table table-hover mb-0">
-                            <thead>
-                              <tr>
-                                <th style="width: 5%;">#</th>
-                                <th>Nom</th>
-                                <th class="d-none d-md-table-cell" style="width: 20%;">Type</th>
-                                <th class="d-none d-lg-table-cell" style="width: 20%;">Date de dépôt</th>
-                                <th style="width: 10%;"></th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr *ngFor="let attachment of assoServiceDocument.attachments; let i = index">
-                                <th scope="row">{{i + 1}}</th>
-                                <td class="text-wrap" style="min-width: 150px;">{{attachment.description}}</td>
-                                <td class="d-none d-md-table-cell">{{attachment.attachmentType.label}}</td>
-                                <td class="d-none d-lg-table-cell">{{attachment.creatDateTime | date:'dd/MM/yyyy'}}</td>
-                                <td>
-                                  <button type="button" class="btn btn-secondary btn-icon btn-sm"
-                                    aria-label="Télécharger" placement="right" ngbTooltip="Télécharger"
-                                    (click)="downloadAttachment(attachment)">
-                                    <i class="ai-download"></i>
-                                  </button>
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
+                          <div class="col order-1">
+                            <p class="fs-sm  "
+                              *ngIf="assoServiceDocument.formalisteComment && assoServiceDocument.formalisteComment.length>0">
+                              {{assoServiceDocument.formalisteComment}}</p>
+                            <div class="mb-2 mb-md-3 row  ">
+                              <div class="col-md-12">
+                                <single-upload [entity]="assoServiceDocument" forcedFileExtension="PDF"
+                                  (endOfUpload)="refreshCurrentAssoAffaireOrder(assoServiceDocument)"
+                                  [entityType]="ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType" [isDirectUpload]="true"
+                                  [attachmentType]="assoServiceDocument.typeDocument.attachmentType"
+                                  [typeDocument]="assoServiceDocument.typeDocument"></single-upload>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-md-8 order-0 table-responsive"
+                            *ngIf="assoServiceDocument.attachments && assoServiceDocument.attachments.length>0">
+                            <table class="table table-hover mb-0">
+                              <thead>
+                                <tr>
+                                  <th style="width: 5%;">#</th>
+                                  <th>Nom</th>
+                                  <th class="d-none d-md-table-cell" style="width: 20%;">Type</th>
+                                  <th class="d-none d-lg-table-cell" style="width: 20%;">Date de dépôt</th>
+                                  <th style="width: 10%;"></th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr *ngFor="let attachment of assoServiceDocument.attachments; let i = index">
+                                  <th scope="row">{{i + 1}}</th>
+                                  <td class="text-wrap" style="min-width: 150px;">{{attachment.description}}</td>
+                                  <td class="d-none d-md-table-cell">{{attachment.attachmentType.label}}</td>
+                                  <td class="d-none d-lg-table-cell">{{attachment.creatDateTime | date:'dd/MM/yyyy'}}
+                                  </td>
+                                  <td>
+                                    <button type="button" class="btn btn-outline-secondary btn-icon btn-sm"
+                                      aria-label="Télécharger" placement="right" ngbTooltip="Télécharger"
+                                      (click)="downloadAttachment(attachment)">
+                                      <i class="ai-download"></i>
+                                    </button>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
                         </div>
                       </div>
                     </ng-container>
-                    <div class="text-center pt-3" *ngIf="!dislayAlreadyFilledAttachment">
-                      <i class="ai-circle-plus text-info small text-decoration-none mx-1"></i>
-                      <a class="text-info small text-decoration-none"
-                        (click)="toggleDislayAlreadyFilledAttachment()">Voir les pièces déjà renseignées</a>
-                    </div>
-                    <div class="text-center pt-3" *ngIf="dislayAlreadyFilledAttachment">
-                      <i class="ai-circle-minus text-info small text-decoration-none mx-1"></i>
-                      <a class="text-info small text-decoration-none"
-                        (click)="toggleDislayAlreadyFilledAttachment()">Masquer les pièces déjà renseignées</a>
-                    </div>
                   </div>
                 </ng-template>
               </li>
@@ -387,8 +385,9 @@
                           <td class="d-none d-md-table-cell">{{attachment.attachmentType.label}}</td>
                           <td class="d-none d-lg-table-cell">{{attachment.creatDateTime | date:'dd/MM/yyyy'}}</td>
                           <td>
-                            <button type="button" class="btn btn-secondary btn-icon btn-sm" aria-label="Télécharger"
-                              placement="right" ngbTooltip="Télécharger" (click)="downloadAttachment(attachment)">
+                            <button type="button" class="btn btn-outline-secondary btn-icon btn-sm"
+                              aria-label="Télécharger" placement="right" ngbTooltip="Télécharger"
+                              (click)="downloadAttachment(attachment)">
                               <i class="ai-download"></i>
                             </button>
                           </td>
