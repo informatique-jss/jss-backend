@@ -15,6 +15,7 @@ import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
+import com.jss.osiris.modules.osiris.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentTypeService;
@@ -138,6 +139,21 @@ public class MyJssQuotationDelegate {
             order.setCustomerOrderStatus(
                     customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT));
             fetchOrder = customerOrderService.addOrUpdateCustomerOrder(order, true, false);
+
+            // Add special offers
+            List<SpecialOffer> specialOffers = null;
+            if (order.getResponsable().getTiers().getSpecialOffers() != null
+                    && order.getResponsable().getTiers().getSpecialOffers().size() > 0) {
+                specialOffers = order.getResponsable().getTiers().getSpecialOffers();
+
+                if (specialOffers != null && specialOffers.size() > 0) {
+                    order.setSpecialOffers(new ArrayList<SpecialOffer>());
+                    for (SpecialOffer specialOffer : specialOffers)
+                        order.getSpecialOffers().add(specialOffer);
+                    fetchOrder = customerOrderService.addOrUpdateCustomerOrder(order, true, false);
+                }
+            }
+
         } else
             fetchOrder = customerOrderService.getCustomerOrder(order.getId());
 
@@ -205,6 +221,20 @@ public class MyJssQuotationDelegate {
             quotation.setCustomerOrderOrigin(constantService.getCustomerOrderOriginMyJss());
             quotation.setQuotationStatus(quotationStatusService.getQuotationStatusByCode(QuotationStatus.DRAFT));
             fetchQuotation = quotationService.addOrUpdateQuotation(quotation);
+
+            // Add special offers
+            List<SpecialOffer> specialOffers = null;
+            if (quotation.getResponsable().getTiers().getSpecialOffers() != null
+                    && quotation.getResponsable().getTiers().getSpecialOffers().size() > 0) {
+                specialOffers = quotation.getResponsable().getTiers().getSpecialOffers();
+
+                if (specialOffers != null && specialOffers.size() > 0) {
+                    quotation.setSpecialOffers(new ArrayList<SpecialOffer>());
+                    for (SpecialOffer specialOffer : specialOffers)
+                        quotation.getSpecialOffers().add(specialOffer);
+                    fetchQuotation = quotationService.addOrUpdateQuotation(quotation);
+                }
+            }
         } else
             fetchQuotation = quotationService.getQuotation(quotation.getId());
 
