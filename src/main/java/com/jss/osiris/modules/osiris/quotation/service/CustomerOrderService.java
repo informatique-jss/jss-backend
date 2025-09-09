@@ -133,6 +133,7 @@ public interface CustomerOrderService {
                         OsirisValidationException, OsirisDuplicateException;
 
         public List<CustomerOrder> searchOrdersForCurrentUser(List<String> customerOrderStatus,
+                        List<Integer> responsableIdToFilter,
                         Boolean withMissingAttachment, Integer page,
                         String sortBy) throws OsirisException;
 

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.libs.QueryCacheCrudRepository;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 import com.jss.osiris.modules.osiris.tiers.model.IResponsableSearchResult;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
@@ -149,5 +150,7 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
 
         List<Responsable> findByLastnameContainingIgnoreCaseOrFirstnameContainingIgnoreCase(String lastname,
                         String firstname);
+
+        List<Responsable> findByMail(Mail mail);
 
 }

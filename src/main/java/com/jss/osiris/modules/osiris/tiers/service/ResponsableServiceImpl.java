@@ -16,6 +16,7 @@ import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.DocumentType;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
@@ -94,6 +95,11 @@ public class ResponsableServiceImpl implements ResponsableService {
     @Override
     public Responsable getResponsableByMail(String mail) {
         return responsableRepository.findFirst1ByMail_MailIgnoreCase(mail);
+    }
+
+    @Override
+    public List<Responsable> getResponsableByMail(Mail mail) {
+        return responsableRepository.findByMail(mail);
     }
 
     @Override
@@ -177,9 +183,15 @@ public class ResponsableServiceImpl implements ResponsableService {
     @Override
     public void updateConsentDateForCurrentUser() {
         Responsable responsable = employeeService.getCurrentMyJssUser();
-        if (responsable != null && responsable.getConsentTermsDate() == null) {
-            responsable.setConsentTermsDate(LocalDateTime.now());
-            addOrUpdateResponsable(responsable);
+        if (responsable.getMail() != null) {
+            List<Responsable> responsables = getResponsableByMail(responsable.getMail());
+            if (responsables != null)
+                for (Responsable responsableToUpdate : responsables) {
+                    if (responsableToUpdate.getConsentTermsDate() == null) {
+                        responsableToUpdate.setConsentTermsDate(LocalDateTime.now());
+                        addOrUpdateResponsable(responsableToUpdate);
+                    }
+                }
         }
     }
 }

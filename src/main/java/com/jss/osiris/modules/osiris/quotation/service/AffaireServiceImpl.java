@@ -28,6 +28,8 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.City;
 import com.jss.osiris.modules.osiris.miscellaneous.model.CompetentAuthority;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Phone;
 import com.jss.osiris.modules.osiris.miscellaneous.service.CityService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.CompetentAuthorityService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
@@ -764,9 +766,20 @@ public class AffaireServiceImpl implements AffaireService {
     private EntityManager entityManager;
 
     @Override
-    public List<Affaire> getAffairesForCurrentUser(Integer page, String sortBy, String searchText) {
-        List<Responsable> responsables = Arrays.asList(employeeService.getCurrentMyJssUser());
-        if (responsables == null || responsables.size() == 0)
+    public List<Affaire> getAffairesForCurrentUser(List<Integer> responsableIdToFilter, Integer page, String sortBy,
+            String searchText) {
+
+        Responsable currentUser = employeeService.getCurrentMyJssUser();
+        List<Responsable> responsablesToFilter = new ArrayList<Responsable>();
+        responsablesToFilter.add(currentUser);
+        if (Boolean.TRUE.equals(currentUser.getCanViewAllTiersInWeb()))
+            responsablesToFilter.addAll(currentUser.getTiers().getResponsables());
+
+        if (responsableIdToFilter != null)
+            responsablesToFilter.removeAll(
+                    responsablesToFilter.stream().filter(r -> !responsableIdToFilter.contains(r.getId())).toList());
+
+        if (responsablesToFilter == null || responsablesToFilter.size() == 0)
             return new ArrayList<Affaire>();
 
         Order orderDenomination = new Order(Direction.ASC, "denomination");
@@ -787,7 +800,8 @@ public class AffaireServiceImpl implements AffaireService {
         }
         Sort sort = Sort.by(Arrays.asList(orderDenomination, orderLastname, orderFirstname));
         Pageable pageableRequest = PageRequest.of(page, 10, sort);
-        return affaireRepository.getAffairesForResponsables(pageableRequest, responsables, searchText, idAffaire);
+        return affaireRepository.getAffairesForResponsables(pageableRequest, responsablesToFilter, searchText,
+                idAffaire);
     }
 
     @Override
@@ -825,17 +839,42 @@ public class AffaireServiceImpl implements AffaireService {
         return attachments;
     }
 
-    public Affaire getAffaireFromDenomination(String firstname, String lastname)
+    @Override
+    public Affaire getAffaireFromResponsable(Responsable responsable)
             throws OsirisDuplicateException, OsirisException {
-        Affaire affaire = affaireRepository.findByFirstnameAndLastname(firstname, lastname);
+        Affaire affaire = affaireRepository.findByFirstnameAndLastname(responsable.getFirstname(),
+                responsable.getLastname());
         if (affaire != null)
             return affaire;
 
-        affaire = new Affaire();
-        affaire.setFirstname(firstname);
-        affaire.setLastname(lastname);
+        return addOrUpdateAffaire(createAffaireWithResponsable(responsable));
+    }
+
+    private Affaire createAffaireWithResponsable(Responsable responsable) {
+        Affaire affaire = new Affaire();
+        affaire.setFirstname(responsable.getFirstname());
+        affaire.setLastname(responsable.getLastname());
         affaire.setIsIndividual(true);
-        return addOrUpdateAffaire(affaire);
+        affaire.setCivility(responsable.getCivility());
+        affaire.setAddress(responsable.getAddress());
+        affaire.setPostalCode(responsable.getPostalCode());
+        affaire.setCity(responsable.getCity());
+        affaire.setCountry(responsable.getCountry());
+        List<Mail> mails = new ArrayList<>();
+        if (responsable.getMails() != null) {
+            for (Mail mail : responsable.getMails()) {
+                mails.add(mail);
+            }
+        }
+        affaire.setMails(mails);
+        List<Phone> phones = new ArrayList<>();
+        if (responsable.getPhones() != null) {
+            for (Phone phone : responsable.getPhones()) {
+                phones.add(phone);
+            }
+        }
+        affaire.setPhones(phones);
+        return affaire;
     }
 
 }

@@ -38,6 +38,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
+import com.jss.osiris.modules.osiris.tiers.service.TiersService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -70,6 +71,9 @@ public class MyJssProfileController {
 
 	@Autowired
 	MyJssQuotationValidationHelper myJssQuotationValidationHelper;
+
+	@Autowired
+	TiersService tiersService;
 
 	private final ConcurrentHashMap<String, AtomicLong> requestCount = new ConcurrentHashMap<>();
 	private final long rateLimit = 10;
@@ -264,5 +268,18 @@ public class MyJssProfileController {
 			throws OsirisValidationException {
 		responsableService.updateConsentDateForCurrentUser();
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/tiers/responsables/current")
+	@JsonView(JacksonViews.MyJssListView.class)
+	public ResponseEntity<List<Responsable>> getResponsablesForCurrentUser()
+			throws OsirisException {
+		Responsable currentUser = employeeService.getCurrentMyJssUser();
+
+		if (currentUser != null && Boolean.TRUE.equals(currentUser.getCanViewAllTiersInWeb())) {
+			return new ResponseEntity<List<Responsable>>(
+					tiersService.getTiers(currentUser.getTiers().getId()).getResponsables(), HttpStatus.OK);
+		}
+		return new ResponseEntity<List<Responsable>>(new ArrayList<Responsable>(), HttpStatus.OK);
 	}
 }

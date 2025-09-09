@@ -15,7 +15,6 @@ import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
-import com.jss.osiris.modules.osiris.miscellaneous.model.Phone;
 import com.jss.osiris.modules.osiris.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
@@ -38,7 +37,6 @@ import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderStatusServic
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationStatusService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
-import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
 import com.jss.osiris.modules.osiris.tiers.service.TiersService;
 
@@ -290,6 +288,10 @@ public class MyJssQuotationDelegate {
 
         // Save new affaire
         for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders()) {
+            if (asso.getAffaire() != null
+                    && asso.getAffaire().getId().equals(constantService.getAffaireDummyForSubscription().getId()))
+                asso.setAffaire(null);
+
             if (asso.getAffaire() != null) {
                 if (asso.getAffaire().getId() == null
                         && (asso.getAffaire().getDenomination() != null || asso.getAffaire().getLastname() != null)) {
@@ -297,7 +299,7 @@ public class MyJssQuotationDelegate {
                 }
                 saveNewMailsOnAffaire(quotation);
             } else {
-                Affaire newAffaire = createAffaireWithTiers(quotation.getResponsable().getTiers());
+                Affaire newAffaire = affaireService.getAffaireFromResponsable(quotation.getResponsable());
                 asso.setAffaire(affaireService.addOrUpdateAffaire(newAffaire));
             }
         }
@@ -498,32 +500,4 @@ public class MyJssQuotationDelegate {
 
     }
 
-    private Affaire createAffaireWithTiers(Tiers tiers) {
-        Affaire affaire = new Affaire();
-        affaire.setDenomination(tiers.getDenomination());
-        affaire.setCivility(tiers.getCivility());
-        affaire.setAddress(tiers.getAddress());
-        affaire.setPostalCode(tiers.getPostalCode());
-        affaire.setCity(tiers.getCity());
-        affaire.setCountry(tiers.getCountry());
-        affaire.setIsIndividual(tiers.getIsIndividual());
-        affaire.setFirstname(tiers.getFirstname());
-        affaire.setLastname(tiers.getLastname());
-        List<Mail> mails = new ArrayList<>();
-        if (tiers.getMails() != null) {
-            for (Mail mail : tiers.getMails()) {
-                mails.add(mail);
-            }
-        }
-        affaire.setMails(mails);
-        List<Phone> phones = new ArrayList<>();
-        if (tiers.getPhones() != null) {
-            for (Phone phone : tiers.getPhones()) {
-                phones.add(phone);
-            }
-        }
-        affaire.setPhones(phones);
-        affaire.setSiret(tiers.getSiret());
-        return affaire;
-    }
 }

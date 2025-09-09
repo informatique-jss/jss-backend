@@ -6,6 +6,10 @@
   border-radius: 0px !important;
 }
 
-.hover-bg-light:hover {
+.hover-bg-light {
   background-color: var(--ar-gray-300);
+}
+
+.hover-bg-light:hover {
+  background-color: inherit;
 }

@@ -292,7 +292,8 @@ public class MyJssQuotationController {
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<CustomerOrder>> searchOrdersForCurrentUser(
 			@RequestBody List<String> customerOrderStatus, @RequestParam boolean withMissingAttachment,
-			@RequestParam Integer page, @RequestParam String sortBy)
+			@RequestParam Integer page, @RequestParam String sortBy,
+			@RequestParam(required = false) List<Integer> responsableIdsToFilter)
 			throws OsirisException {
 		if (customerOrderStatus == null || customerOrderStatus.size() == 0)
 			return new ResponseEntity<List<CustomerOrder>>(new ArrayList<CustomerOrder>(), HttpStatus.OK);
@@ -305,7 +306,8 @@ public class MyJssQuotationController {
 			sortBy = "createdDateDesc";
 
 		return new ResponseEntity<List<CustomerOrder>>(
-				customerOrderService.searchOrdersForCurrentUser(customerOrderStatus, withMissingAttachment, page,
+				customerOrderService.searchOrdersForCurrentUser(customerOrderStatus, responsableIdsToFilter,
+						withMissingAttachment, page,
 						sortBy),
 				HttpStatus.OK);
 	}
@@ -338,6 +340,7 @@ public class MyJssQuotationController {
 	@PostMapping(inputEntryPoint + "/quotation/search/current")
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Quotation>> searchQuotationsForCurrentUser(
+			@RequestParam(required = false) List<Integer> responsableIdsToFilter,
 			@RequestBody List<String> quotationStatus, @RequestParam Integer page, @RequestParam String sortBy)
 			throws OsirisClientMessageException {
 		if (quotationStatus == null || quotationStatus.size() == 0)
@@ -351,7 +354,8 @@ public class MyJssQuotationController {
 			sortBy = "createdDateDesc";
 
 		return new ResponseEntity<List<Quotation>>(
-				quotationService.searchQuotationsForCurrentUser(quotationStatus, page, sortBy), HttpStatus.OK);
+				quotationService.searchQuotationsForCurrentUser(quotationStatus, responsableIdsToFilter, page, sortBy),
+				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/order/asso")
@@ -1172,14 +1176,16 @@ public class MyJssQuotationController {
 	@GetMapping(inputEntryPoint + "/affaire/search/current")
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Affaire>> getAffairesForCurrentUser(@RequestParam Integer page,
-			@RequestParam String sortBy, @RequestParam String searchText) {
+			@RequestParam String sortBy, @RequestParam String searchText,
+			@RequestParam(required = false) List<Integer> responsableIdsToFilter) {
 		if (page == null || page < 0)
 			page = 0;
 
 		if (sortBy == null || !sortBy.equals("nameAsc") && !sortBy.equals("nameDesc"))
 			sortBy = "nameAsc";
 
-		return new ResponseEntity<List<Affaire>>(affaireService.getAffairesForCurrentUser(page, sortBy, searchText),
+		return new ResponseEntity<List<Affaire>>(
+				affaireService.getAffairesForCurrentUser(responsableIdsToFilter, page, sortBy, searchText),
 				HttpStatus.OK);
 	}
 

@@ -7,6 +7,8 @@ import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
 import { UserPreferenceService } from '../../../main/services/user.preference.service';
 import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
+import { Responsable } from '../../../profile/model/Responsable';
+import { ResponsableService } from '../../../profile/services/responsable.service';
 import { Affaire } from '../../model/Affaire';
 import { Attachment } from '../../model/Attachment';
 import { CustomerOrder } from '../../model/CustomerOrder';
@@ -43,6 +45,8 @@ export class AffairesComponent implements OnInit {
   affaireForm!: FormGroup;
 
   inputIdAffaire: number | undefined;
+  responsablesForCurrentUser: Responsable[] | undefined;
+  responsableCheck: boolean[] = [];
 
   constructor(
     private customerOrderService: CustomerOrderService,
@@ -53,6 +57,7 @@ export class AffairesComponent implements OnInit {
     private formBuilder: FormBuilder,
     private uploadAttachmentService: UploadAttachmentService,
     private activatedRoute: ActivatedRoute,
+    private responsableService: ResponsableService
   ) { }
 
   ngOnInit() {
@@ -62,7 +67,17 @@ export class AffairesComponent implements OnInit {
       this.searchText = this.inputIdAffaire + "";
       return;
     }
-    this.retrieveBookmark();
+
+    this.appService.showLoadingSpinner();
+    this.responsableService.getResponsablesForCurrentUser().subscribe(response => {
+      this.responsablesForCurrentUser = response;
+      if (this.responsablesForCurrentUser)
+        for (let respo of this.responsablesForCurrentUser) {
+          this.responsableCheck[respo.id] = true;
+        }
+      this.retrieveBookmark();
+      this.refreshAffaires();
+    });
   }
 
   refreshAffaires() {
@@ -72,7 +87,7 @@ export class AffairesComponent implements OnInit {
       this.isFirstLoading = true;
 
     this.appService.showLoadingSpinner();
-    this.affaireService.searchAffairesForCurrentUser(this.searchText, this.currentPage, this.currentSort).subscribe(response => {
+    this.affaireService.searchAffairesForCurrentUser(this.searchText, this.currentPage, this.currentSort, this.getCurrentSelectedResponsable()).subscribe(response => {
       this.appService.hideLoadingSpinner();
       if (response) {
         this.affaires.push(...response);
@@ -81,6 +96,17 @@ export class AffairesComponent implements OnInit {
       }
       this.isFirstLoading = false;
     })
+  }
+
+  getCurrentSelectedResponsable() {
+    let filterResponsable = undefined;
+    if (this.responsablesForCurrentUser) {
+      filterResponsable = [];
+      for (let respoForCurrentUser of this.responsablesForCurrentUser)
+        if (this.responsableCheck[respoForCurrentUser.id])
+          filterResponsable.push(respoForCurrentUser);
+    }
+    return filterResponsable;
   }
 
   changeSort(sorter: string) {
@@ -121,10 +147,19 @@ export class AffairesComponent implements OnInit {
 
   setBookmark() {
     this.userPreferenceService.setUserSearchBookmark(this.currentSort, "affaire-currentSort");
+    if (this.responsablesForCurrentUser && this.getCurrentSelectedResponsable())
+      this.userPreferenceService.setUserSearchBookmark(this.getCurrentSelectedResponsable()!.map(r => r.id).join(","), "affaire-responsables");
   }
 
   retrieveBookmark() {
     this.currentSort = this.userPreferenceService.getUserSearchBookmark("affaire-currentSort");
+    if (this.userPreferenceService.getUserSearchBookmark("affaire-responsables")) {
+      let respoIds = this.userPreferenceService.getUserSearchBookmark("affaire-responsables").split(",");
+      for (let i in this.responsableCheck)
+        this.responsableCheck[i] = false;
+      for (let respoId of respoIds)
+        this.responsableCheck[parseInt(respoId)] = true;
+    }
     if (!this.currentSort)
       this.currentSort = "nameAsc";
   }
