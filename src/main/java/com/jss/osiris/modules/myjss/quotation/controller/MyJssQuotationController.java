@@ -1639,9 +1639,6 @@ public class MyJssQuotationController {
 			} else {
 				myJssQuotationValidationHelper.validateAffaire(asso.getAffaire());
 			}
-			Responsable responsable = employeeService.getCurrentMyJssUser();
-			if (responsable != null)
-				myJssQuotationValidationHelper.validateSpecialOffer(order, responsable);
 		}
 		return new ResponseEntity<Integer>(
 				myJssQuotationDelegate.saveCustomerOrderFromMyJss(order, isValidation, request).getId(),
@@ -1668,9 +1665,6 @@ public class MyJssQuotationController {
 			} else {
 				myJssQuotationValidationHelper.validateAffaire(asso.getAffaire());
 			}
-			Responsable responsable = employeeService.getCurrentMyJssUser();
-			if (responsable != null)
-				myJssQuotationValidationHelper.validateSpecialOffer(order, responsable);
 		}
 		return new ResponseEntity<Integer>(
 				myJssQuotationDelegate.saveQuotationFromMyJss(order, isValidation, request).getId(),

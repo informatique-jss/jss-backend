@@ -1,8 +1,5 @@
 package com.jss.osiris.modules.myjss.quotation.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +7,6 @@ import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
-import com.jss.osiris.modules.osiris.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.controller.QuotationValidationHelper;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
@@ -48,18 +44,5 @@ public class MyJssQuotationValidationHelper {
 
         public void validateAffaire(Affaire affaire) throws OsirisValidationException, OsirisException {
                 quotationValidationHelper.validateAffaire(affaire);
-        }
-
-        public void validateSpecialOffer(IQuotation quotation, Responsable responsable) {
-                if (responsable.getTiers() != null) {
-                        List<SpecialOffer> specialOffers = null;
-                        if (responsable.getTiers().getSpecialOffers() != null
-                                        && responsable.getTiers().getSpecialOffers().size() > 0) {
-                                specialOffers = responsable.getTiers().getSpecialOffers();
-                                quotation.setSpecialOffers(new ArrayList<SpecialOffer>());
-                                for (SpecialOffer specialOffer : specialOffers)
-                                        quotation.getSpecialOffers().add(specialOffer);
-                        }
-                }
         }
 }
