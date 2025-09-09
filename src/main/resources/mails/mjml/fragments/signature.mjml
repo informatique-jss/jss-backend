@@ -1,5 +1,5 @@
 <mj-section background-color="#ffffff" th:fragment="signature">
-  <mj-column>
+  <mj-column th:if="${replyToEmployee}!=null">
     <mj-text align="center" color="#666666" font-size="26px" line-height="24px">
       <span th:text="${replyToEmployee.firstname}"></span> <span th:if="${replyToEmployee.lastname!=null}" th:text="${replyToEmployee.lastname}"></span> </mj-text>
     <mj-text align="center" color="#666666" font-size="16px" th:if="${replyToEmployee.title!=null}">

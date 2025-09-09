@@ -16,5 +16,5 @@
     </mj-text>
   </mj-column>
 </mj-section>
-<mj-head th:replace="~{fragments/cta(title='Accéder à mon compte', buttonText='Voir mon compte',buttonUrl=${myJssEntryPoint+'/account/overview'})}"></mj-head>
+<mj-head th:replace="~{fragments/cta(title='Accéder à mon compte', buttonText='Voir mon compte',buttonUrl=${tokenLink})}"></mj-head>
 <mj-head th:replace="~{fragments/footer}"></mj-head>
