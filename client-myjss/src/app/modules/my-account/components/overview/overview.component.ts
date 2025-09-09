@@ -69,7 +69,7 @@ export class OverviewComponent implements OnInit {
     this.loginService.getCurrentUser().subscribe(response => {
       if (response) {
         this.currentUser = response;
-        if (this.currentUser && !this.currentUser.hasAlreadyConnectMyJss) {
+        if (this.currentUser && !this.currentUser.consentTermsDate) {
           if (this.acceptTermsModalInstance) {
             return;
           }

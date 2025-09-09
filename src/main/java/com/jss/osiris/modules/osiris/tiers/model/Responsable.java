@@ -237,6 +237,7 @@ public class Responsable implements IAttachment, IId {
 	@JsonView({ JacksonViews.OsirisDetailedView.class, JacksonViews.OsirisListView.class })
 	private List<Voucher> vouchers;
 
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private LocalDateTime consentTermsDate;
 
 	public Tiers getTiers() {
