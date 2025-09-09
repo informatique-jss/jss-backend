@@ -6,6 +6,7 @@ import { PrincipalAccountingAccount } from '../../accounting/model/PrincipalAcco
 import { InvoiceStatus } from "../../invoicing/model/InvoiceStatus";
 import { Employee } from '../../profile/model/Employee';
 import { ActType } from "../../quotation/model/ActType";
+import { Affaire } from '../../quotation/model/Affaire';
 import { AssignationType } from "../../quotation/model/AssignationType";
 import { Confrere } from "../../quotation/model/Confrere";
 import { DomiciliationContractType } from "../../quotation/model/DomiciliationContractType";
@@ -282,6 +283,7 @@ export interface Constant {
   activeDirectoryGroupDirection: ActiveDirectoryGroup;
   furtherInformationServiceFieldType: ServiceFieldType;
   responsableDummyCustomerFrance: Responsable;
+  affaireDummyForSubscription: Affaire;
   provisionScreenTypeAnnouncement: ProvisionScreenType;
   categoryInterview: Category;
   categoryPodcast: Category;

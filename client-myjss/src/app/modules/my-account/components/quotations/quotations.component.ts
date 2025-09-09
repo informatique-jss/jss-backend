@@ -7,6 +7,8 @@ import { capitalizeName } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
 import { UserPreferenceService } from '../../../main/services/user.preference.service';
+import { Responsable } from '../../../profile/model/Responsable';
+import { ResponsableService } from '../../../profile/services/responsable.service';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
 import { InvoiceLabelResult } from '../../model/InvoiceLabelResult';
 import { MailComputeResult } from '../../model/MailComputeResult';
@@ -43,6 +45,8 @@ export class QuotationsComponent implements OnInit {
   currentPage: number = 0;
 
   quotations: Quotation[] = [];
+  responsablesForCurrentUser: Responsable[] | undefined;
+  responsableCheck: boolean[] = [];
 
   hideSeeMore: boolean = false;
   isFirstLoading: boolean = false;
@@ -68,15 +72,24 @@ export class QuotationsComponent implements OnInit {
     private mailComputeResultService: MailComputeResultService,
     private userPreferenceService: UserPreferenceService,
     private activatedRoute: ActivatedRoute,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private responsableService: ResponsableService
   ) { }
 
   getQuotationStatusLabel = getQuotationStatusLabel;
   getClassForQuotationStatus = getClassForQuotationStatus;
 
   ngOnInit() {
-    this.retrieveBookmark();
-    this.refreshQuotations();
+    this.appService.showLoadingSpinner();
+    this.responsableService.getResponsablesForCurrentUser().subscribe(response => {
+      this.responsablesForCurrentUser = response;
+      if (this.responsablesForCurrentUser)
+        for (let respo of this.responsablesForCurrentUser) {
+          this.responsableCheck[respo.id] = true;
+        }
+      this.retrieveBookmark();
+      this.refreshQuotations();
+    });
   }
 
   refreshQuotations() {
@@ -126,13 +139,24 @@ export class QuotationsComponent implements OnInit {
       this.currentSearchRef.unsubscribe();
 
     this.appService.showLoadingSpinner();
-    this.currentSearchRef = this.quotationService.searchQuotationsForCurrentUser(status, this.currentPage, this.currentSort).subscribe(response => {
+    this.currentSearchRef = this.quotationService.searchQuotationsForCurrentUser(status, this.currentPage, this.currentSort, this.getCurrentSelectedResponsable()).subscribe(response => {
       this.appService.hideLoadingSpinner();
       this.quotations.push(...response);
       this.isFirstLoading = false;
       if (response.length < 10)
         this.hideSeeMore = true;
     })
+  }
+
+  getCurrentSelectedResponsable() {
+    let filterResponsable = undefined;
+    if (this.responsablesForCurrentUser) {
+      filterResponsable = [];
+      for (let respoForCurrentUser of this.responsablesForCurrentUser)
+        if (this.responsableCheck[respoForCurrentUser.id])
+          filterResponsable.push(respoForCurrentUser);
+    }
+    return filterResponsable;
   }
 
   changeFilter() {
@@ -216,6 +240,8 @@ export class QuotationsComponent implements OnInit {
     this.userPreferenceService.setUserSearchBookmark(this.statusFilterRefusedByCustomer, "quotation-statusFilterRefusedByCustomer");
     this.userPreferenceService.setUserSearchBookmark(this.statusFilterAbandonned, "quotation-statusFilterAbandonned");
     this.userPreferenceService.setUserSearchBookmark(this.currentSort, "quotation-currentSort");
+    if (this.responsablesForCurrentUser && this.getCurrentSelectedResponsable())
+      this.userPreferenceService.setUserSearchBookmark(this.getCurrentSelectedResponsable()!.map(r => r.id).join(","), "quotation-responsables");
   }
 
   retrieveBookmark() {
@@ -260,9 +286,17 @@ export class QuotationsComponent implements OnInit {
       this.statusFilterAbandonned = true;
       atLeastOne = true;
     }
+    if (this.userPreferenceService.getUserSearchBookmark("quotation-responsables")) {
+      let respoIds = this.userPreferenceService.getUserSearchBookmark("quotation-responsables").split(",");
+      for (let i in this.responsableCheck)
+        this.responsableCheck[i] = false;
+      for (let respoId of respoIds)
+        this.responsableCheck[parseInt(respoId)] = true;
+    }
 
     if (!atLeastOne)
       this.statusFilterSendToCustomer = true;
+
   }
 }
 

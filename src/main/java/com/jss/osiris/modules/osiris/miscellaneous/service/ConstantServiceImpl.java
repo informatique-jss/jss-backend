@@ -35,6 +35,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Vat;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.ActType;
+import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.AssignationType;
 import com.jss.osiris.modules.osiris.quotation.model.Confrere;
 import com.jss.osiris.modules.osiris.quotation.model.DomiciliationContractType;
@@ -1218,6 +1219,11 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public Responsable getResponsableDummyCustomerFrance() throws OsirisException {
         return this.getConstants().getResponsableDummyCustomerFrance();
+    }
+
+    @Override
+    public Affaire getAffaireDummyForSubscription() throws OsirisException {
+        return this.getConstants().getAffaireDummyForSubscription();
     }
 
     @Override

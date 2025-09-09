@@ -1538,6 +1538,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     public List<CustomerOrder> searchOrdersForCurrentUser(List<String> customerOrderStatus,
+            List<Integer> responsableIdToFilter,
             Boolean withMissingAttachment, Integer page,
             String sortBy) throws OsirisException {
         List<CustomerOrderStatus> customerOrderStatusToFilter = new ArrayList<CustomerOrderStatus>();
@@ -1559,7 +1560,15 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             CustomerOrderStatus customerOrderStatusBilled = customerOrderStatusService
                     .getCustomerOrderStatusByCode(CustomerOrderStatus.BILLED);
 
-            List<Responsable> responsablesToFilter = Arrays.asList(employeeService.getCurrentMyJssUser());
+            Responsable currentUser = employeeService.getCurrentMyJssUser();
+            List<Responsable> responsablesToFilter = new ArrayList<Responsable>();
+            responsablesToFilter.add(currentUser);
+            if (Boolean.TRUE.equals(currentUser.getCanViewAllTiersInWeb()))
+                responsablesToFilter.addAll(currentUser.getTiers().getResponsables());
+
+            if (responsableIdToFilter != null)
+                responsablesToFilter.removeAll(
+                        responsablesToFilter.stream().filter(r -> !responsableIdToFilter.contains(r.getId())).toList());
 
             if (responsablesToFilter != null
                     && responsablesToFilter.size() > 0) {
@@ -2037,9 +2046,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             customerOrder.setIsRecurringAutomaticallyBilled(true);
         }
 
-        Service serviceSubscription = serviceService
-                .generateServiceInstanceFromMultiServiceTypes(Arrays.asList(serviceTypeSubscription), null, null)
-                .getFirst();
+        List<Service> servicesSubscription = serviceService
+                .generateServiceInstanceFromMultiServiceTypes(Arrays.asList(serviceTypeSubscription), null, null);
+
+        if (servicesSubscription == null || servicesSubscription.size() == 0)
+            return null;
+
+        Service serviceSubscription = servicesSubscription.get(0);
 
         if (subscriptionType.equals(Subscription.NEWSPAPER_KIOSK_BUY)
                 || subscriptionType.equals(Subscription.ONE_POST_SUBSCRIPTION)) {
@@ -2052,9 +2065,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         assoAffaireOrder.setCustomerOrder(customerOrder);
         assoAffaireOrder.setServices(Arrays.asList(serviceSubscription));
         if (employeeService.getCurrentMyJssUser() != null)
-            assoAffaireOrder.setAffaire(
-                    affaireService.getAffaireFromDenomination(employeeService.getCurrentMyJssUser().getFirstname(),
-                            employeeService.getCurrentMyJssUser().getLastname()));
+            assoAffaireOrder
+                    .setAffaire(affaireService.getAffaireFromResponsable(employeeService.getCurrentMyJssUser()));
+        else
+            assoAffaireOrder.setAffaire(constantService.getAffaireDummyForSubscription());
 
         customerOrder.setAssoAffaireOrders(Arrays.asList(assoAffaireOrder));
 

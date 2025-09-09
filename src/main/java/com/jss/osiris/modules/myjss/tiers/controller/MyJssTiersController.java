@@ -109,5 +109,4 @@ public class MyJssTiersController {
 		}
 		return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
 	}
-
 }

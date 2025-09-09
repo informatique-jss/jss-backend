@@ -211,6 +211,7 @@ public class Responsable implements IAttachment, IId {
 
 	private String loginWeb;
 
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Boolean canViewAllTiersInWeb;
 
 	private String salt; // TODO : delete
