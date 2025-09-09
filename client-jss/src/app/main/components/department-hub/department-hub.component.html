@@ -43,52 +43,7 @@
                 <div
                   *ngIf="postsByEntityType[selectedEntityType.id] && postsByEntityType[selectedEntityType.id].length>0 && !searchText"
                   class="row p-0 fixed-size-img-posts">
-                  <div *ngFor="let post of postsByEntityType[selectedEntityType.id].slice(0,6)"
-                    class="col-lg-6 col-12 mb-4">
-                    <article class="border-0 card h-100">
-                      <div class="card-img px-2 d-flex">
-                        <div class="image-hover-style-1 w-100">
-                          <a [routerLink]=' "/post/" + post.slug'> <img *ngIf="post.media" class="lazyload"
-                              [src]="post.media.urlMediumLarge!=null ? post.media.urlMediumLarge : post.media.urlFull"
-                              [alt]="post.media.alt_text" class="w-100"> </a>
-                        </div>
-                      </div>
-                      <div class="card-body">
-                        <div class="row pb-1 px-2 align-items-center" *ngIf="post.postTags">
-                          <div class="d-flex flex-wrap gap-1">
-                            <a *ngFor="let tag of post.postTags" [routerLink]=' "/post/" + tag.slug'
-                              class="badge bg-info rounded-pill px-2">{{ tag.name }}</a>
-                            <bookmark *ngIf="currentUser" [post]="post"></bookmark>
-                          </div>
-                        </div>
-                        <h4>
-                          <a class="card-text-truncate" [routerLink]=' "/post/" + post.slug'> <img
-                              *ngIf="post.isPremium" class="pe-0" src="/assets/images/premium-icon.svg">
-                            {{post.titleText}}</a>
-                        </h4>
-                      </div>
-                      <div class="row align-items-center px-2">
-                        <div class="col-lg-6">
-                          <div class="author-block">
-                            <ul class="avatar list-inline mb-0">
-                              <li class="list-inline-item"><a class="fs-9"
-                                  [routerLink]=' "/post/author/" + post.fullAuthor.slug'><img
-                                    [src]="post.fullAuthor.avatar_url_size_24" [alt]="post.fullAuthor.name"
-                                    placement="top" [ngbTooltip]="post.fullAuthor.name">
-                                  {{post.fullAuthor.name}}</a></li>
-                            </ul>
-                          </div>
-                        </div>
-                        <div class="col-lg-6"> <span class="date-info fs-9 float-lg-end">
-                            <span>Publié le {{post.date | date:'EEEE d MMMM'}}</span>
-                          </span>
-                        </div>
-                      </div>
-                    </article>
-                    <hr>
-                  </div>
-
-                  <div *ngFor="let post of postsByEntityType[selectedEntityType.id].slice(6)" class="col-12 mb-2">
+                  <div *ngFor="let post of postsByEntityType[selectedEntityType.id]" class="col-12 mb-2">
                     <article class="blog-style2 card mb-4">
                       <div class="feature-image">
                         <div class="image-frame image-hover-style-1">
@@ -100,8 +55,8 @@
                       <div class="card-body  d-md-flex align-items-center">
                         <div class="card-flex-content">
                           <div class="d-flex flex-wrap gap-1">
-                            <a *ngFor="let tag of post.postTags" [routerLink]=' "/post/" + tag.slug'
-                              class="badge bg-info rounded-pill px-2">{{ tag.name }}</a>
+                            <a *ngFor="let cat of post.jssCategories" [routerLink]=' "/post/category/" + cat.slug'
+                              class="badge bg-info rounded-pill px-2">{{ cat.name }}</a>
                             <bookmark *ngIf="currentUser" [post]="post"></bookmark>
                           </div>
                           <h4>
@@ -109,23 +64,6 @@
                                 *ngIf="post.isPremium" class="pe-0" src="/assets/images/premium-icon.svg">
                               {{post.titleText}}</a>
                           </h4>
-                          <div class="row">
-                            <div class="col-lg-6">
-                              <div class="author-block">
-                                <ul class="avatar list-inline mb-0">
-                                  <li class="list-inline-item"><a class="fs-9"
-                                      [routerLink]=' "/post/author/" + post.fullAuthor.slug'><img
-                                        [src]="post.fullAuthor.avatar_url_size_24" [alt]="post.fullAuthor.name"
-                                        placement="top" [ngbTooltip]="post.fullAuthor.name">
-                                      {{post.fullAuthor.name}}</a></li>
-                                </ul>
-                              </div>
-                            </div>
-                            <div class="col-lg-6"> <span class="date-info fs-9 float-lg-end">
-                                <span>Publié le {{post.date | date:'EEEE d MMMM'}} à {{post.date | date:'HH:mm'}}</span>
-                              </span>
-                            </div>
-                          </div>
                         </div>
                       </div>
                     </article>
@@ -135,50 +73,7 @@
 
                 <div *ngIf="searchResults && searchResults.length>0 && searchText && searchText.length>2"
                   class="row p-0 fixed-size-img-posts">
-                  <div *ngFor="let post of searchResults.slice(0,6)" class="col-lg-6 col-12 mb-4">
-                    <article class="border-0 card h-100">
-                      <div class="card-img px-2 d-flex">
-                        <div class="image-hover-style-1 w-100">
-                          <a [routerLink]=' "/post/" + post.slug'> <img *ngIf="post.media" class="lazyload"
-                              [src]="post.media.urlMediumLarge!=null ? post.media.urlMediumLarge : post.media.urlFull"
-                              [alt]="post.media.alt_text" class="w-100"> </a>
-                        </div>
-                      </div>
-                      <div class="card-body">
-                        <div class="row pb-1 px-2 align-items-center" *ngIf="post.postTags">
-                          <div class="d-flex flex-wrap gap-1">
-                            <a *ngFor="let tag of post.postTags" [routerLink]=' "/post/" + tag.slug'
-                              class="badge bg-info rounded-pill px-2">{{ tag.name }}</a>
-
-                            <bookmark *ngIf="currentUser" [post]="post"></bookmark>
-                          </div>
-                        </div>
-                      </div>
-                      <h4>
-                        <a class="card-text-truncate" [routerLink]=' "/post/" + post.slug'> <img *ngIf="post.isPremium"
-                            class="pe-0" src="/assets/images/premium-icon.svg">
-                          {{post.titleText}}</a>
-                      </h4>
-                      <div class="row align-items-center px-2">
-                        <div class="col-lg-6">
-                          <div class="author-block">
-                            <ul class="avatar list-inline mb-0">
-                              <li class="list-inline-item"><a class="fs-9"
-                                  [routerLink]=' "/post/author/" + post.fullAuthor.slug'><img
-                                    [src]="post.fullAuthor.avatar_url_size_24" [alt]="post.fullAuthor.name"
-                                    placement="top" [ngbTooltip]="post.fullAuthor.name">
-                                  {{post.fullAuthor.name}}</a></li>
-                            </ul>
-                          </div>
-                        </div>
-                        <div class="col-lg-6"> <span class="date-info fs-9 float-lg-end">
-                            <span>Publié le {{post.date | date:'EEEE d MMMM'}}</span>
-                          </span>
-                        </div>
-                      </div>
-                    </article>
-                  </div>
-                  <div *ngFor="let post of searchResults.slice(6)" class="col-12 mb-2">
+                  <div *ngFor="let post of searchResults" class="col-12 mb-2">
                     <article class="blog-style2 card mb-4">
                       <div class="feature-image">
                         <div class="image-frame image-hover-style-1">
@@ -190,8 +85,8 @@
                       <div class="card-body  d-md-flex align-items-center">
                         <div class="card-flex-content">
                           <div class="d-flex flex-wrap gap-1">
-                            <a *ngFor="let tag of post.postTags" [routerLink]=' "/post/" + tag.slug'
-                              class="badge bg-info rounded-pill px-2">{{ tag.name }}</a>
+                            <a *ngFor="let cat of post.jssCategories" [routerLink]=' "/post/category/" + cat.slug'
+                              class="badge bg-info rounded-pill px-2">{{ cat.name }}</a>
 
                             <bookmark *ngIf="currentUser" [post]="post"></bookmark>
                           </div>
@@ -200,23 +95,6 @@
                                 *ngIf="post.isPremium" class="pe-0" src="/assets/images/premium-icon.svg">
                               {{post.titleText}}</a>
                           </h4>
-                          <div class="row">
-                            <div class="col-lg-6">
-                              <div class="author-block">
-                                <ul class="avatar list-inline mb-0">
-                                  <li class="list-inline-item"><a class="fs-9"
-                                      [routerLink]=' "/post/author/" + post.fullAuthor.slug'><img
-                                        [src]="post.fullAuthor.avatar_url_size_24" [alt]="post.fullAuthor.name"
-                                        placement="top" [ngbTooltip]="post.fullAuthor.name">
-                                      {{post.fullAuthor.name}}</a></li>
-                                </ul>
-                              </div>
-                            </div>
-                            <div class="col-lg-6"> <span class="date-info fs-9 float-lg-end">
-                                <span>Publié le {{post.date | date:'EEEE d MMMM'}} à {{post.date | date:'HH:mm'}}</span>
-                              </span>
-                            </div>
-                          </div>
                         </div>
                       </div>
                     </article>
@@ -238,8 +116,7 @@
                     </div>
                   </div>
                   <ul class="tag-cloud list-inline">
-                    <!-- TODO replace with routerLink and make it work -->
-                    <li *ngFor="let tag of tagsByEntityType" class="list-inline-item pb-1"><a class="btn bg-light text-secondary bg-hover-danger text-hover-white bg-hover-secondary
+                    <li *ngFor="let tag of tagsByEntityType.slice(0,8)" class="list-inline-item pb-1"><a class="btn bg-light text-secondary bg-hover-danger text-hover-white bg-hover-secondary
                         text-hover-white" [routerLink]=' "/post/" + tag.slug'>{{tag.name}}</a>
                     </li>
                   </ul>
@@ -261,7 +138,7 @@
                       <div class="col-auto digits pe-2">
                         {{index+1}}.
                       </div>
-                      <div class="col counter-post-item card-title-truncate ps-2">
+                      <div class="col counter-post-item ps-2">
                         <a [routerLink]=' "/post/" + post.slug' class="title-most-seen">{{post.titleText}}</a>
                       </div>
                     </div>

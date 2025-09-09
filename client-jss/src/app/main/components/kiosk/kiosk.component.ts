@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
+import { environment } from '../../../../environments/environment';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { AppService } from '../../../services/app.service';
 import { GtmService } from '../../../services/gtm.service';
@@ -23,6 +24,8 @@ export class KioskComponent implements OnInit {
   currentUser: Responsable | undefined;
   isSubscribed: boolean = false;
   newspaperIdsSeeableByUser: number[] = [];
+  frontendMyJssUrl = environment.frontendMyJssUrl;
+  NEWSPAPER_KIOSK_BUY = NEWSPAPER_KIOSK_BUY;
 
   yearOpened: number = 2023;
   jssEditionNumberHovered: number = 0;
@@ -89,7 +92,6 @@ export class KioskComponent implements OnInit {
 
   buyNewspaper(newspaperId: number) {
     this.trackCtaClicBuy(newspaperId);
-    this.appService.openMyJssRoute(event, "/quotation/subscription/" + NEWSPAPER_KIOSK_BUY + "/" + false + "/" + newspaperId, true);
   }
 
   trackCtaClickDownloadExtract(newspaperId: number) {

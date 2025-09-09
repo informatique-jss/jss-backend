@@ -2,13 +2,15 @@
   <div class="header-navbar-middle d-none d-lg-block">
     <div class="container">
       <div class="navbar-brand-wrapper py-1 d-flex justify-content-between align-items-center">
-        <a class="btn btn-secondary btn-fixed-secondary px-3 align-items-center d-flex" (click)="openMyJss($event)"><img
-            src="assets/images/homepage/my-jss-logo-link.svg" /><i class="bi-arrow-up-right ms-1"></i></a>
+        <a class="btn btn-secondary btn-fixed-secondary px-3 align-items-center d-flex" (click)="openMyJss()"
+          [href]="frontendMyJssUrl+MY_JSS_HOME_ROUTE"><img src="assets/images/homepage/my-jss-logo-link.svg" /><i
+            class="bi-arrow-up-right ms-1"></i></a>
         <a class="navbar-brand ms-5 ps-3 " href="index.html">
           <img class="lazyload" src="assets/images/homepage/logo.svg" style="max-height: 90px;" alt="image">
         </a>
         <div>
-          <a class="btn btn-light me-2 pointer" *ngIf="!currentUser" (click)="openSignIn($event)">Se connecter</a>
+          <a class="btn btn-light me-2 pointer" *ngIf="!currentUser" (click)="openSignIn()"
+            [href]="frontendMyJssUrl+MY_JSS_SIGN_IN_ROUTE">Se connecter</a>
           <a class="btn btn-yellow " *ngIf="!currentUser" (click)="openSubscribe($event)"
             routerLink="/subscription">S'abonner</a>
           <!-- User signed in state. Account dropdown on screens > 576px -->
@@ -82,7 +84,9 @@
       <nav class="navbar navbar-expand-lg text-uppercase text-white-100 d-none d-lg-flex">
         <div class="collapse navbar-collapse" id="main_nav">
           <ul class="navbar-nav me-auto">
-            <li class="nav-item dropdown"> <a class="nav-link dropdown-toggle">Ile-de-France</a>
+            <li class="nav-item dropdown"> <a class="nav-link" *ngIf="idfPublishingDepartment"
+                [ngClass]="{'active': getCurrentRoute().includes('/post/department') && getCurrentRoute().includes('/post/department')}"
+                [routerLink]='"post/department/"+ idfPublishingDepartment.code'>Ile-de-France</a>
               <ul class="dropdown-menu">
                 <li> <a *ngFor="let department of departments" class="dropdown-item"
                     [routerLink]='"/post/department/" + department.code'
@@ -102,17 +106,8 @@
               </a>
             </li>
 
-            <!-- Kiosk -->
-            <li class="nav-item border-left">
-              <a class="nav-link"
-                [ngClass]="{'active': getCurrentRoute().includes('/kiosk') && getCurrentRoute().includes('/kiosk')}"
-                routerLink="/kiosk">
-                Kiosque
-              </a>
-            </li>
-
             <!-- Podcast -->
-            <li class="nav-item nav-item-podcast">
+            <li class="nav-item border-left nav-item-podcast">
               <span>
                 <a class="nav-link podcast-nav-link mt-auto py-0 ps-2"
                   [ngClass]="{'active': getCurrentRoute().includes('/podcasts') && getCurrentRoute().includes('/podcasts')}"
@@ -147,7 +142,8 @@
       <div class="d-lg-none" *ngIf="isMobileMenuOpen">
         <div class="py-3 row g-2">
           <div class="col">
-            <a class="btn btn-light w-100" *ngIf="!currentUser" (click)="openSignIn($event)">Se connecter</a>
+            <a class="btn btn-light w-100" *ngIf="!currentUser" [href]="" (click)="openSignIn()"
+              [href]="frontendMyJssUrl+MY_JSS_SIGN_IN_ROUTE">Se connecter</a>
           </div>
           <div class="col">
             <a class="btn btn-yellow btn-yellow-burger w-100" *ngIf="!currentUser" routerLink="/subscription"
@@ -174,7 +170,7 @@
           </li>
 
           <!-- Categories -->
-          <li class="nav-item" *ngFor="let category of categories">
+          <li class="nav-item" *ngFor="let category of categoriesByOrder">
             <a class="nav-link"
               [ngClass]="{'active': getCurrentRoute().includes('/post/category') && getCurrentRoute().includes('/'+category.slug)}"
               (click)="openCategoryPosts()" [routerLink]='"/post/category/" + category.slug'>
@@ -207,7 +203,7 @@
             </div>
             <div class="col-sm col-12 ">
               <a class="btn btn-outline-dark w-100 h-100 d-flex align-items-center justify-content-center border-light"
-                (click)=" openMyJss($event)">
+                (click)=" openMyJss()" [href]="frontendMyJssUrl+MY_JSS_HOME_ROUTE">
                 <img src="assets/images/homepage/my-jss-logo-link.svg" /> <i class="bi-arrow-up-right ms-1"></i>
               </a>
             </div>

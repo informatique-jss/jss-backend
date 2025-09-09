@@ -2,10 +2,12 @@ import { Component, ElementRef, HostListener, OnInit, TemplateRef } from '@angul
 import { Router } from '@angular/router';
 import { NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 import { MY_JSS_HOME_ROUTE, MY_JSS_NEW_ANNOUNCEMENT_ROUTE, MY_JSS_NEW_FORMALITY_ROUTE, MY_JSS_SIGN_IN_ROUTE } from '../../../libs/Constants';
 import { capitalizeName } from '../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { AppService } from '../../../services/app.service';
+import { ConstantService } from '../../../services/constant.service';
 import { PlatformService } from '../../../services/platform.service';
 import { AccountMenuItem, MAIN_ITEM_ACCOUNT, MAIN_ITEM_DASHBOARD } from '../../model/AccountMenuItem';
 import { IndexEntity } from '../../model/IndexEntity';
@@ -50,10 +52,16 @@ export class HeaderComponent implements OnInit {
 
   isMobileMenuOpen: boolean = false;
   showDepartments: boolean = false;
+  idfPublishingDepartment: PublishingDepartment | undefined;
 
   myAccountItems: AccountMenuItem[] = [];
   MAIN_ITEM_ACCOUNT = MAIN_ITEM_ACCOUNT;
   MAIN_ITEM_DASHBOARD = MAIN_ITEM_DASHBOARD;
+  MY_JSS_SIGN_IN_ROUTE = MY_JSS_SIGN_IN_ROUTE;
+  frontendMyJssUrl = environment.frontendMyJssUrl;
+  MY_JSS_NEW_ANNOUNCEMENT_ROUTE = MY_JSS_NEW_ANNOUNCEMENT_ROUTE;
+  MY_JSS_NEW_FORMALITY_ROUTE = MY_JSS_NEW_FORMALITY_ROUTE;
+  MY_JSS_HOME_ROUTE = MY_JSS_HOME_ROUTE;
 
   constructor(
     private router: Router,
@@ -65,17 +73,19 @@ export class HeaderComponent implements OnInit {
     private modalService: NgbModal,
     private eRef: ElementRef,
     private plaformService: PlatformService,
+    private constantService: ConstantService
   ) { }
 
   ngOnInit() {
     this.myAccountItems = this.appService.getAllAccountMenuItems();
-
+    this.idfPublishingDepartment = this.constantService.getPublishingDepartmentIdf();
     if (this.plaformService.isBrowser())
       this.loginService.getCurrentUser().subscribe(response => {
         this.currentUser = response;
       })
     this.departmentService.getAvailablePublishingDepartments().subscribe(departments => {
       this.departments = departments
+        .filter(dept => dept.code !== this.idfPublishingDepartment?.code)
         .slice()
         .sort((a, b) => {
           const aCode = parseInt(a.code);
@@ -188,9 +198,8 @@ export class HeaderComponent implements OnInit {
     this.isMobileMenuOpen = false;
   }
 
-  openSignIn(event: any) {
+  openSignIn() {
     this.isMobileMenuOpen = false;
-    this.appService.openMyJssRoute(event, MY_JSS_SIGN_IN_ROUTE, false);
   }
 
   openCategoryPosts() {
@@ -215,29 +224,9 @@ export class HeaderComponent implements OnInit {
     this.isMobileMenuOpen = false;
   }
 
-  openNewAnnouncement(event: any) {
-    this.appService.openMyJssRoute(event, MY_JSS_NEW_ANNOUNCEMENT_ROUTE);
-  }
 
-  openNewFormality(event: any) {
-    this.appService.openMyJssRoute(event, MY_JSS_NEW_FORMALITY_ROUTE);
-  }
-
-  openMyJss(event: any) {
+  openMyJss() {
     this.isMobileMenuOpen = false;
-    this.appService.openMyJssRoute(event, MY_JSS_HOME_ROUTE);
-  }
-
-  openLinkedinJssPage() {
-    this.appService.openLinkedinJssPage();
-  }
-
-  openInstagramJssPage() {
-    this.appService.openInstagramJssPage();
-  }
-
-  openFacebookJssPage() {
-    this.appService.openFacebookJssPage();
   }
 
   searchEntities() {
