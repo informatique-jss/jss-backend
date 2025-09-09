@@ -58,6 +58,8 @@ public class TypeDocument implements ICode, IAttachment {
 
     @OneToMany(mappedBy = "typeDocumentAttachment", fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "typeDocumentAttachment" }, allowSetters = true)
+    @JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
+            JacksonViews.OsirisDetailedView.class })
     private List<Attachment> attachments;
 
     public String getCode() {
