@@ -23,5 +23,5 @@ export interface Responsable {
   city: City;
   country: Country;
   documents: Document[];
-  hasAlreadyConnectMyJss: boolean;
+  consentTermsDate: Date;
 }
