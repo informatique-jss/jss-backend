@@ -126,10 +126,12 @@
 
             <!-- Annonce légale -->
             <li class="nav-item d-flex align-items-center">
-              <button class="btn btn-outline-light fs-9 px-2 m-0 rounded-1" (click)="openSearchAnnouncement($event)"
-                routerLink="/announcement/search">
-                CONSULTER UNE ANNONCE LÉGALE
-              </button>
+              <a routerLink="/announcement/search" style="padding: 0 !important;"
+                (click)="openSearchAnnouncement($event)">
+                <button class="btn btn-outline-light fs-9 px-2 m-0 rounded-1" (click)="$event.stopPropagation()">
+                  CONSULTER UNE ANNONCE LÉGALE
+                </button>
+              </a>
             </li>
           </ul>
           <a class="nav-link pointer text-white" (click)="displaySearchModal(searchModal)">
