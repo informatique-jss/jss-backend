@@ -105,6 +105,9 @@ public class ServiceServiceImpl implements ServiceService {
             pricingHelper.getAndSetInvoiceItemsForQuotation(service.getAssoAffaireOrder().getCustomerOrder(), true);
         else if (service.getAssoAffaireOrder() != null && service.getAssoAffaireOrder().getQuotation() != null)
             pricingHelper.getAndSetInvoiceItemsForQuotation(service.getAssoAffaireOrder().getQuotation(), true);
+
+        notificationService.notifyInformationAddToService(service);
+
         return service;
     }
 

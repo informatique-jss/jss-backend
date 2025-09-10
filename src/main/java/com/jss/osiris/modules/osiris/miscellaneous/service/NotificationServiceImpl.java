@@ -336,6 +336,30 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
+    public void notifyInformationAddToService(Service service) throws OsirisException {
+        CustomerOrder order = service.getAssoAffaireOrder().getCustomerOrder();
+        List<Integer> employeeIdAlreadyNotified = new ArrayList<Integer>();
+        if (order != null && service.getProvisions() != null
+                && (order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)
+                        || order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.TO_BILLED))) {
+            for (Provision provision : service.getProvisions()) {
+                if (!isProvisionClosed(provision) && provision.getAssignedTo() != null
+                        && !employeeIdAlreadyNotified.contains(provision.getAssignedTo().getId())) {
+                    if (provision.getAssignedTo() != null) {
+                        employeeIdAlreadyNotified.add(provision.getAssignedTo().getId());
+                        if (employeeService.getCurrentEmployee() != null && provision.getAssignedTo().getId()
+                                .equals(employeeService.getCurrentEmployee().getId()))
+                            return;
+
+                        generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
+                                Notification.SERVICE_ADD_INFORMATION, false, service, null, null, null);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
     public void notifyAttachmentAddToCustomerOrder(CustomerOrder order, Attachment attachment) throws OsirisException {
         List<Integer> employeeIdAlreadyNotified = new ArrayList<Integer>();
         if (order != null && order.getAssoAffaireOrders() != null) {
