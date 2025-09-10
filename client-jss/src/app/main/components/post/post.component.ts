@@ -1,5 +1,6 @@
 import { AfterViewInit, ChangeDetectorRef, Component, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable, Subscription } from 'rxjs';
@@ -90,6 +91,7 @@ export class PostComponent implements OnInit, AfterViewInit {
     private cdr: ChangeDetectorRef,
     private gtmService: GtmService,
     private readingFolderService: ReadingFolderService,
+    private titleService: Title, private meta: Meta,
   ) { }
 
   getTimeReading = getTimeReading;
@@ -98,6 +100,9 @@ export class PostComponent implements OnInit, AfterViewInit {
   newCommentForm!: FormGroup;
 
   ngOnInit() {
+    this.titleService.setTitle("Tous nos articles - JSS");
+    this.meta.updateTag({ name: 'description', content: "Retrouvez l'actualité juridique et économique. JSS analyse pour vous les dernières annonces, formalités et tendances locales." });
+
     this.loginService.getCurrentUser().subscribe(res => this.currentUser = res);
 
     this.newCommentForm = this.formBuilder.group({});
@@ -182,9 +187,17 @@ export class PostComponent implements OnInit, AfterViewInit {
   }
 
   private fetchNextPrevArticleAndComments(post: Post) {
+    this.titleService.setTitle(post.titleText + " - JSS");
+    this.meta.updateTag({ name: 'description', content: this.getFirstSentenceFromHtml(post.excerptText) });
     this.postService.getNextArticle(post).subscribe(response => this.nextPost = response);
     this.postService.getPreviousArticle(post).subscribe(response => this.previousPost = response);
     this.fetchComments(0);
+  }
+
+  getFirstSentenceFromHtml(html: string): string {
+    const plain = html.replace(/<[^>]+>/g, '');
+    const match = plain.match(/(.*?[.?!])\s/);
+    return match ? match[1].trim() : plain.trim();
   }
 
   ngOnDestroy() {
