@@ -1824,7 +1824,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     discountTotal = discountTotal.add(invoiceItem.getDiscountAmount());
                 }
             }
-        totalPrice = discountTotal.add(vatTotal).add(preTaxPriceTotal).subtract(discountTotal);
+        totalPrice = preTaxPriceTotal.add(vatTotal).subtract(discountTotal);
 
         invoicingSummary.setDiscountTotal(discountTotal);
         invoicingSummary.setPreTaxPriceTotal(preTaxPriceTotal);

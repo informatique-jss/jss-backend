@@ -20,6 +20,7 @@ import org.springframework.data.domain.Sort.Order;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.GlobalExceptionHandler;
+import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
@@ -114,6 +115,9 @@ public class AffaireServiceImpl implements AffaireService {
     @Autowired
     AffaireRneUpdateHelper affaireRneUpdateHelper;
 
+    @Autowired
+    ValidationHelper validationHelper;
+
     @Override
     public List<Affaire> getAffaires() {
         return IterableUtils.toList(affaireRepository.findAll());
@@ -197,14 +201,11 @@ public class AffaireServiceImpl implements AffaireService {
 
     @Override
     public List<Affaire> getAffairesFromSiren(String siren) throws OsirisException, OsirisClientMessageException {
-        // List<Affaire> existingAffaires = affaireRepository.findBySiren(siren);
-        // if (existingAffaires != null && existingAffaires.size() > 0)
-        // return existingAffaires;
         List<RneCompany> rneCompanies = rneDelegateService.getCompanyBySiren(siren);
         List<Affaire> affaires = new ArrayList<Affaire>();
         if (rneCompanies != null && rneCompanies.size() > 0)
             for (RneCompany rneCompany : rneCompanies)
-                affaires.add(getAffaireFromRneCompany(rneCompany, null));
+                affaires.add(getAffaireFromRneCompany(rneCompany, null, true));
         return affaires;
     }
 
@@ -217,11 +218,49 @@ public class AffaireServiceImpl implements AffaireService {
         affaires = new ArrayList<Affaire>();
         if (rneCompanies != null && rneCompanies.size() > 0) {
             for (RneCompany rneCompany : rneCompanies)
-                affaires.add(getAffaireFromRneCompany(rneCompany, siret));
+                affaires.add(getAffaireFromRneCompany(rneCompany, siret, true));
         } else {
             return getAffairesFromSiren(siret);
         }
         return affaires;
+    }
+
+    @Override
+    public List<Affaire> getAffairesFromSiretFromWebsite(String siret)
+            throws OsirisException, OsirisClientMessageException {
+        siret = siret.replaceAll(" ", "");
+        if (validationHelper.validateSiret(siret)) {
+            // Find in local DB
+            List<Affaire> affaires = affaireRepository.findAllBySiret(siret);
+            if (affaires != null && affaires.size() > 0)
+                return affaires;
+
+            List<RneCompany> rneCompanies = rneDelegateService.getCompanyBySiret(siret);
+            affaires = new ArrayList<Affaire>();
+            if (rneCompanies != null && rneCompanies.size() > 0) {
+                for (RneCompany rneCompany : rneCompanies)
+                    affaires.add(getAffaireFromRneCompany(rneCompany, siret, false));
+            }
+        } else if (validationHelper.validateSiren(siret)) {
+            // Generate all possibilities from siret
+            List<RneCompany> rneCompanies = rneDelegateService.getCompanyBySiren(siret);
+            List<Affaire> affaires = new ArrayList<Affaire>();
+            if (rneCompanies != null && rneCompanies.size() > 0)
+                for (RneCompany rneCompany : rneCompanies) {
+                    List<String> sirets = getSiretsFromRneCompany(rneCompany, false);
+                    if (siret != null) {
+                        for (String siretFromRne : sirets) {
+                            Affaire affaireFromRne = getAffaireFromRneCompany(rneCompany, siretFromRne, false);
+                            if (affaireFromRne != null)
+                                affaires.add(affaireFromRne);
+                            if (affaires.size() > 50)
+                                return affaires;
+                        }
+                    }
+                }
+            return affaires;
+        }
+        return null;
     }
 
     @Override
@@ -234,7 +273,8 @@ public class AffaireServiceImpl implements AffaireService {
         return affaires;
     }
 
-    private Affaire getAffaireFromRneCompany(RneCompany rneCompany, String specificSiret) throws OsirisException {
+    private Affaire getAffaireFromRneCompany(RneCompany rneCompany, String specificSiret, Boolean persistEntity)
+            throws OsirisException {
         Affaire affaire = new Affaire();
 
         if (rneCompany == null)
@@ -250,7 +290,7 @@ public class AffaireServiceImpl implements AffaireService {
             if (existingAffaires != null && existingAffaires.size() > 0) {
                 affaire = existingAffaires.get(0);
                 updateAffaireFromRneCompany(affaire, rneCompany);
-            } else {
+            } else if (persistEntity) {
                 // else persist it
                 affaire = addOrUpdateAffaire(affaire);
             }

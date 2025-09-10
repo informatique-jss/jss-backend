@@ -99,8 +99,21 @@ public class MyJssQuotationDelegate {
             throws OsirisClientMessageException, OsirisValidationException, OsirisException {
         if (order.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder asso : order.getAssoAffaireOrders())
-                if (asso.getAffaire() != null && asso.getAffaire().getId() == null)
-                    affaireService.addOrUpdateAffaire(asso.getAffaire());
+                if (asso.getAffaire() != null && asso.getAffaire().getId() == null) {
+                    boolean found = false;
+                    // Retreive existing affaire by SIRET
+                    if (asso.getAffaire().getSiret() != null) {
+                        List<Affaire> existingAffaires = affaireService
+                                .getAffaireBySiret(asso.getAffaire().getSiret().replaceAll(" ", ""));
+                        if (existingAffaires != null && existingAffaires.size() == 1) {
+                            asso.setAffaire(existingAffaires.get(0));
+                            found = true;
+                        }
+                    }
+
+                    if (!found)
+                        affaireService.addOrUpdateAffaire(asso.getAffaire());
+                }
 
         saveNewMailsOnAffaire(order);
 
@@ -183,8 +196,21 @@ public class MyJssQuotationDelegate {
             throws OsirisClientMessageException, OsirisValidationException, OsirisException {
         if (quotation.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders())
-                if (asso.getAffaire() != null && asso.getAffaire().getId() == null)
-                    affaireService.addOrUpdateAffaire(asso.getAffaire());
+                if (asso.getAffaire() != null && asso.getAffaire().getId() == null) {
+                    boolean found = false;
+                    // Retreive existing affaire by SIRET
+                    if (asso.getAffaire().getSiret() != null) {
+                        List<Affaire> existingAffaires = affaireService
+                                .getAffaireBySiret(asso.getAffaire().getSiret().replaceAll(" ", ""));
+                        if (existingAffaires != null && existingAffaires.size() == 1) {
+                            asso.setAffaire(existingAffaires.get(0));
+                            found = true;
+                        }
+                    }
+
+                    if (!found)
+                        affaireService.addOrUpdateAffaire(asso.getAffaire());
+                }
 
         saveNewMailsOnAffaire(quotation);
 
@@ -293,9 +319,20 @@ public class MyJssQuotationDelegate {
                 asso.setAffaire(null);
 
             if (asso.getAffaire() != null) {
-                if (asso.getAffaire().getId() == null
-                        && (asso.getAffaire().getDenomination() != null || asso.getAffaire().getLastname() != null)) {
-                    asso.setAffaire(affaireService.addOrUpdateAffaire(asso.getAffaire()));
+                if (asso.getAffaire().getId() == null) {
+                    boolean found = false;
+                    // Retreive existing affaire by SIRET
+                    if (asso.getAffaire().getSiret() != null) {
+                        List<Affaire> existingAffaires = affaireService
+                                .getAffaireBySiret(asso.getAffaire().getSiret().replaceAll(" ", ""));
+                        if (existingAffaires != null && existingAffaires.size() == 1) {
+                            asso.setAffaire(existingAffaires.get(0));
+                            found = true;
+                        }
+                    }
+
+                    if (!found)
+                        asso.setAffaire(affaireService.addOrUpdateAffaire(asso.getAffaire()));
                 }
                 saveNewMailsOnAffaire(quotation);
             } else {
@@ -330,8 +367,8 @@ public class MyJssQuotationDelegate {
 
         if (hasToSendConfirmation)
             if (quotation.getIsQuotation())
-                mailHelper.sendConfirmationQuotationCreationMyJss(
-                        quotation.getResponsable().getMail().getMail(), (Quotation) quotation);
+                mailHelper.sendConfirmationQuotationCreationMyJss(quotation.getResponsable().getMail().getMail(),
+                        (Quotation) quotation);
             else
                 mailHelper.sendConfirmationOrderCreationMyJss(quotation.getResponsable().getMail().getMail(),
                         (CustomerOrder) quotation);

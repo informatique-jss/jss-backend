@@ -27,6 +27,9 @@ public interface AffaireService {
 
         public List<Affaire> getAffairesFromSiret(String siret) throws OsirisException, OsirisClientMessageException;
 
+        public List<Affaire> getAffairesFromSiretFromWebsite(String siret)
+                        throws OsirisException, OsirisClientMessageException;
+
         public List<Affaire> getAffairesFromRna(String rna) throws OsirisException, OsirisClientMessageException;
 
         public void updateAffairesFromRne() throws OsirisException, OsirisClientMessageException;

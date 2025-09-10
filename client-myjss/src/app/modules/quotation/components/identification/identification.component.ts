@@ -203,28 +203,6 @@ export class IdentificationComponent implements OnInit {
       this.quotation.serviceFamilyGroup = undefined;
   }
 
-  /* searchSiret(indexAsso: number) {
-     clearTimeout(this.debounce);
-     this.debounce = setTimeout(() => {
-       this.effectiveSearchSiret(indexAsso);
-     }, 500);
-   }
-
-   effectiveSearchSiret(indexAsso: number) {
-     if (this.siretSearched && (validateSiret(this.siretSearched) || validateSiren(this.siretSearched))) {
-       this.loadingSiretSearch = true;
-       this.affaireService.getAffaireBySiret(this.siretSearched).subscribe(response => {
-         this.loadingSiretSearch = false;
-         if (response && response.length == 1 && response[0].siret) {
-           this.quotation.assoAffaireOrders[indexAsso].affaire = response[0];
-           this.siretSearched = "";
-         } else if (response && response.length > 1) {
-           this.appService.displayToast("Plusieurs SIRET existent pour ce SIREN. Merci de préciser le SIRET souhaité", true, "SIRET multiples", 5000);
-         }
-       })
-     }
-   }*/
-
   selectSiret(affaire: Affaire, indexAsso: number) {
     if (affaire) {
       this.quotation.assoAffaireOrders[indexAsso].affaire = affaire;

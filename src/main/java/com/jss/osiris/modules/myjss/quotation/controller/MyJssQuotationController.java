@@ -55,7 +55,6 @@ import com.jss.osiris.modules.osiris.crm.service.VoucherService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
-import com.jss.osiris.modules.osiris.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.City;
@@ -889,8 +888,9 @@ public class MyJssQuotationController {
 				&& !validationHelper.validateSiren(siretOrSiren.trim().replaceAll(" ", "")))
 			return new ResponseEntity<Page<Affaire>>(Page.empty(), HttpStatus.OK);
 
-		List<Affaire> affaires = affaireService.getAffairesFromSiret(siretOrSiren.trim().replaceAll(" ", ""));
-		PageRequest newPageRequest = PageRequest.of(0, Math.max(affaires.size(), 1));
+		List<Affaire> affaires = affaireService
+				.getAffairesFromSiretFromWebsite(siretOrSiren.trim().replaceAll(" ", ""));
+		PageRequest newPageRequest = PageRequest.of(0, 50);
 		Page<Affaire> pageResult = new PageImpl<>(affaires, newPageRequest, affaires.size());
 		return new ResponseEntity<Page<Affaire>>(pageResult, HttpStatus.OK);
 	}
@@ -1156,19 +1156,13 @@ public class MyJssQuotationController {
 			customerOrderComment.setQuotation(customerOrderCommentOriginal.getQuotation());
 		}
 
-		customerOrderComment.setEmployee(null);
-		customerOrderComment.setCurrentCustomer(employeeService.getCurrentMyJssUser());
-		customerOrderComment.setProvision(null);
-		customerOrderComment.setActiveDirectoryGroups(new ArrayList<ActiveDirectoryGroup>());
-		customerOrderComment.getActiveDirectoryGroups().add(constantService.getActiveDirectoryGroupSales());
-		customerOrderComment.setIsToDisplayToCustomer(true);
-
-		if (customerOrderComment.getId() == null)
-			customerOrderComment.setCreatedDateTime(LocalDateTime.now());
-		else if (customerOrderCommentOriginal != null)
+		if (customerOrderComment.getId() == null) {
+			customerOrderCommentService.createCustomerOrderComment(customerOrderComment.getCustomerOrder(),
+					customerOrderComment.getComment(), false);
+		} else if (customerOrderCommentOriginal != null) {
 			customerOrderComment.setCreatedDateTime(customerOrderCommentOriginal.getCreatedDateTime());
-
-		customerOrderCommentService.addOrUpdateCustomerOrderComment(customerOrderComment);
+			customerOrderCommentService.addOrUpdateCustomerOrderComment(customerOrderComment);
+		}
 
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}

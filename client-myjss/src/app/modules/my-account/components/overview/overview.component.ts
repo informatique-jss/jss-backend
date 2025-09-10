@@ -1,5 +1,5 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_REQUIRE_ATTENTION, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_SENT_TO_CUSTOMER } from '../../../../libs/Constants';
@@ -35,7 +35,7 @@ export class OverviewComponent implements OnInit {
   CUSTOMER_ORDER_STATUS_BEING_PROCESSED = CUSTOMER_ORDER_STATUS_BEING_PROCESSED;
   CUSTOMER_ORDER_STATUS_REQUIRE_ATTENTION = CUSTOMER_ORDER_STATUS_REQUIRE_ATTENTION;
 
-  appointmentUrl: SafeUrl | undefined;
+  appointmentUrl: SafeResourceUrl | undefined;
 
   @ViewChild('acceptTermsModal') acceptTermsModalView!: TemplateRef<any>;
   acceptTermsModalInstance: any | undefined;
@@ -74,7 +74,7 @@ export class OverviewComponent implements OnInit {
       if (response) {
         this.currentUser = response;
         if (this.currentUser && this.currentUser.salesEmployee && this.currentUser.salesEmployee.bookingPageUrl)
-          this.appointmentUrl = this.sanitizer.bypassSecurityTrustUrl(this.currentUser.salesEmployee.bookingPageUrl);
+          this.appointmentUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.currentUser.salesEmployee.bookingPageUrl);
         if (this.currentUser && !this.currentUser.consentTermsDate) {
           if (this.acceptTermsModalInstance) {
             return;

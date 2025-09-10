@@ -83,12 +83,8 @@
         <!-- Choose affaire by SIRET -->
         <div *ngIf="isRegisteredAffaire[indexAsso] ">
           <ng-container
-            *ngIf="this.quotation.assoAffaireOrders[indexAsso].affaire && !this.quotation.assoAffaireOrders[indexAsso].affaire.id">
-            <!-- <p class="mb-1 mt-4 ms-1">Indiquez le SIREN/SIRET</p> -->
+            *ngIf="this.quotation.assoAffaireOrders[indexAsso].affaire && !this.quotation.assoAffaireOrders[indexAsso].affaire.id && !this.quotation.assoAffaireOrders[indexAsso].affaire.siret">
             <div class="w-100">
-              <!--generic-input [(model)]=" siretSearched" label="Indiquez le SIREN/SIRET" [form]="idenficationForm"
-                propertyName="siretSearched" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="false"
-                (onFormChange)="searchSiret(indexAsso)" [icon]="'search'"></generic-input-->
               <autocomplete-siret [(model)]="siretSearched" [form]="idenficationForm" [isMandatory]="true"
                 label="Indiquez le SIREN/SIRET" propertyName="siretSearched"
                 (onOptionSelected)="selectSiret($event,indexAsso )"></autocomplete-siret>
@@ -105,7 +101,7 @@
             </p>
           </div>
           <div
-            *ngIf="this.quotation.assoAffaireOrders[indexAsso].affaire && this.quotation.assoAffaireOrders[indexAsso].affaire.id">
+            *ngIf="this.quotation.assoAffaireOrders[indexAsso].affaire && (this.quotation.assoAffaireOrders[indexAsso].affaire.id || this.quotation.assoAffaireOrders[indexAsso].affaire.siret)">
             <div class="card rounded-1 px-4 py-3">
               <div class="row mb-2">
                 <strong class="col-12 col-lg-3 ">

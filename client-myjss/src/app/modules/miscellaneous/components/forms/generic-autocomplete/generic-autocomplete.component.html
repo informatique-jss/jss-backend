@@ -2,6 +2,11 @@
   <div [formGroup]="form!" class="needs-validation">
     <label [for]="'fl-text'+uniqueId" *ngIf="isDisplayLabel && label && label.length>0"
       class="form-label">{{label}}</label>
+    <div class="alert alert-info d-flex mb-2" role="alert" *ngIf="infoToDisplay">
+      <i class="ai-circle-info fs-xl"></i>
+      <div class="ps-2">{{infoToDisplay}}
+      </div>
+    </div>
     <div>
       <ng-autocomplete [data]="filteredTypes" [searchKeyword]="searchKeyword" [placeholder]="label"
         [attr.name]="propertyName" [initialValue]="selectedItem" (selected)='optionSelected($event)'

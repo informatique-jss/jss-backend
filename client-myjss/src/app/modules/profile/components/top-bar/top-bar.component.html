@@ -57,7 +57,8 @@
               <div class="fs-sm  ">{{capitalizeName(currentUser.firstname + " "
                 +currentUser.lastname)}}
               </div>
-              <div class="fs-sm  " *ngIf="userScope && userScope.length>0">{{currentUser.tiers.denomination}}</div>
+              <div class="fs-sm text-truncate tiers-label " *ngIf="userScope && userScope.length>0">
+                {{currentUser.tiers.denomination}}</div>
             </div>
           </a>
           <div ngbDropdownMenu class="dropdown-menu dropdown-menu-end my-1">
@@ -94,10 +95,10 @@
                   style="min-width: 250px; max-height: 300px; overflow-y: auto;">
                   <ng-container *ngFor="let group of groupedAccounts">
                     <div
-                      class="dropdown-header dropdown-header-sub text-uppercase text-body-secondary fs-xs fw-semibold pt-2">
+                      class="dropdown-header dropdown-header-sub text-uppercase text-body-secondary fs-xs fw-semibold pt-2 tiers-label text-truncate">
                       {{ group.denomination }}
                     </div>
-                    <ng-container *ngFor="let account of group.accounts">
+                    <ng-container *ngFor=" let account of group.accounts">
                       <a class="dropdown-item ps-4" (click)="switchAccount(account)">
                         {{ account.firstname}} {{account.lastname }}
                       </a>

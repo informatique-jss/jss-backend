@@ -29,6 +29,8 @@ export abstract class GenericAutocompleteComponent<T, U> extends GenericFormComp
 
   @ViewChild('inputField') input: ElementRef | undefined;
 
+  infoToDisplay: string | undefined;
+
   expectedMinLengthInput: number = 3;
   debounceTime = 200;
 

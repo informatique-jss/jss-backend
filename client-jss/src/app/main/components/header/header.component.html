@@ -27,14 +27,15 @@
             </a>
 
             <div class="dropdown-menu dropdown-menu-end my-1 custom-drop" [ngClass]="{ show: dropdownOpen }">
-              <a class="dropdown-item" (click)="openMyJssRouteUrl('quotation/identification')">
+              <a class="dropdown-item" [href]="frontendMyJssUrl+'/quotation/identification'">
                 <i class="fs-lg opacity-70 me-2 ai-circle-plus"></i>
                 Nouvelle demande
               </a>
               <h6 class="dropdown-header fs-xs fw-medium text-body-secondary text-uppercase pb-1">Tableau de
                 bord</h6>
               <ng-container *ngFor="let item of myAccountItems">
-                <a class="dropdown-item" (click)="openMyJssRoute(item)" *ngIf="item.mainItem==MAIN_ITEM_DASHBOARD">
+                <a class="dropdown-item" [href]="frontendMyJssUrl+item.route"
+                  *ngIf="item.mainItem==MAIN_ITEM_DASHBOARD">
                   <i class="fs-lg opacity-70 me-2" [ngClass]="item.iconClass"></i>
                   {{item.label}}
                 </a>
@@ -42,7 +43,7 @@
               <div class="dropdown-divider"></div>
               <h6 class="dropdown-header fs-xs fw-medium text-body-secondary text-uppercase pb-1">Mon compte</h6>
               <ng-container *ngFor="let item of myAccountItems">
-                <a class="dropdown-item pointer" (click)="openMyJssRoute(item)"
+                <a class="dropdown-item pointer" [href]="frontendMyJssUrl+item.route"
                   *ngIf="item.mainItem==MAIN_ITEM_ACCOUNT">
                   <i class=" fs-lg opacity-70 me-2" [ngClass]="item.iconClass"></i>
                   {{item.label}}
