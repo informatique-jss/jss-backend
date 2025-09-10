@@ -132,6 +132,7 @@ export const Dictionnary = {
   "PERSONNAL": "Notification personnelle",
   "PROVISION_ADD_ATTACHMENT": "Nouveau document sur une prestation",
   "SERVICE_ADD_ATTACHMENT": "Nouveau document sur un service",
+  "SERVICE_ADD_INFORMATION": "Nouvelle information sur un service",
   "ORDER_ADD_ATTACHMENT": "Nouveau document sur une commande",
   "PROVISION_GUICHET_UNIQUE_STATUS_VALIDATED": "Liasse GU validée",
   "PROVISION_GUICHET_UNIQUE_STATUS_REFUSED": "Liasse GU rejetée",

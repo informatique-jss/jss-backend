@@ -29,6 +29,8 @@ public interface NotificationService {
         public void notifyAttachmentAddToService(Service service, Attachment attachment)
                         throws OsirisException;
 
+        public void notifyInformationAddToService(Service service) throws OsirisException;
+
         public void notifyAttachmentAddToCustomerOrder(CustomerOrder order, Attachment attachment)
                         throws OsirisException;
 
