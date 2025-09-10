@@ -83,7 +83,7 @@ export class AppService {
     let menuItem = [] as MenuItem[];
     menuItem.push({ label: "Annonces légales", iconClass: "ai-user-check", route: "/services/announcement" } as MenuItem);
     menuItem.push({ label: "Formalités légales", iconClass: "ai-wallet", route: "/services/formality" } as MenuItem);
-    menuItem.push({ label: "Apostilles-Légalisation", iconClass: "ai-chart", route: "/services/apostille" } as MenuItem);
+    menuItem.push({ label: "Apostilles-Légalisations", iconClass: "ai-chart", route: "/services/apostille" } as MenuItem);
     menuItem.push({ label: "Domiciliation", iconClass: "ai-slider", route: "/services/domiciliation" } as MenuItem);
     menuItem.push({ label: "Fourniture de documents", iconClass: "ai-cart", route: "/services/document" } as MenuItem);
     return menuItem;

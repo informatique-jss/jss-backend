@@ -15,6 +15,9 @@ export class DescriptionMyAccountComponent implements OnInit, AfterViewInit {
   isMobile: boolean = false;
 
   @Input() imageSrc: string = "";
+  @Input() firstStepText: string = "";
+  @Input() secondStepText: string = "";
+  @Input() thirdtepText: string = "";
 
   private eventResize = new Subject<void>();
 

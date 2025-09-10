@@ -10,12 +10,16 @@
   <!-- The header content -->
   <div class="container h-100 mt-5 mt-sm-0">
     <div class="row justify-content-between align-items-center">
-      <div class="col-lg-6 col-auto h-100 text-left">
+      <div class="col-lg-8 col-auto h-100 text-left">
         <div class="w-100 text-white">
-          <h1 class="display-3 text-white">Votre esprit libre, notre savoir-faire</h1>
-          <p class="lead mb-0">Avec MyJSS, accédez à une information juridique fiable et actualisée pour prendre des
-            décisions éclairées.</p>
+          <h1 class="display-3 text-white">MyJSS, <br>votre droit à l'excellence</h1>
         </div>
+        <double-buttons class="text-grey" orderActionLabel=" Publier une annonce légale"
+          [orderActionRoute]="'/quotation/new/'+serviceFamilyGroupAnnouncement!.id+'/'+quotationTypeOrder.id"
+          quotationActionLabel="Demander un devis"
+          [quotationActionRoute]="'/quotation/new/'+serviceFamilyGroupFormality!.id+'/'+quotationTypeOrder.id"
+          [isLightButtons]="true">
+        </double-buttons>
       </div>
       <div class="col-auto h-100 d-none d-lg-block ">
         <a href="">
@@ -30,7 +34,7 @@
 <section class="py-5">
   <div class="container py-3 py-sm-4 py-lg-5 my-md-2 my-lg-3 my-xl-4 my-xxl-5">
     <div class="text-center">
-      <h2 class="h1 pb-3 mb-lg-4 text-white">Nos services</h2>
+      <h2 class="h2 pb-3 mb-lg-4 text-white">Nos services</h2>
       <p>Nous proposons une large gamme de services de formalités, adaptés à vos besoins pour simplifier vos démarches
         administratives.</p>
     </div>
@@ -55,7 +59,8 @@
         <div class="card h-100 border-0 rounded-5 w-100">
           <div class="card-body pb-3 px-3">
             <img src="assets/img/icons/Apostille.svg" alt="Icon">
-            <h3 class="h4 text-white" routerLink="/services/apostille" style="cursor: pointer;">Apostille & Légalisation
+            <h3 class="h4 text-white" routerLink="/services/apostille" style="cursor: pointer;">Apostilles &
+              Légalisations
             </h3>
             <p class="mb-0">Authentification et certification rapides et conformes de vos documents valables à
               l’international.</p>
@@ -106,56 +111,12 @@
     </div>
   </div>
 </section>
+<description-my-account
+  firstStepText="Accédez à l’ensemble de vos devis, commandes et suivez leur état d’avancement en temps réel."
+  secondStepText="Validez vos devis, complétez vos commandes, payez vos factures en ligne."
+  thirdtepText="Récupérez facilement tous vos documents : attestations de parution, Kbis et factures en toute sécurité."
+  imageSrc="assets/img/parcourir_mon_compte_accueil.webp"></description-my-account>
 
-<section class="container pb-5 mb-md-3 mb-lg-4 mb-xxl-5">
-  <div class="row pb-md-4 pb-xl-5">
-    <div class="col-md-6 mb-2 mb-md-0">
-      <div class="card border-0 h-100 bg-size-cover bg-position-center"
-        style="background-image: url(assets/img/parcourir_mon_compte_accueil.webp);">
-        <div class="d-none d-sm-block d-md-none" style="height: 450px;"></div>
-        <div class="d-sm-none" style="height: 350px;"></div>
-      </div>
-    </div>
-    <div class="col-md-6 col-xl-5 offset-xl-1">
-      <div class="pt-4 pb-sm-4 ps-md-4 ps-xl-0">
-        <h2 class="h1 text-white pb-2 pb-sm-3 pb-xl-4">Parcourir l'espace <br>"Mon compte"</h2>
-        <div class="d-flex pb-3 mb-2 mb-xl-3">
-          <div class="text-body-secondary pt-1">01</div>
-          <div class="ps-3">
-            <h3 class="h5 text-white">Gestion de votre commande</h3>
-            <p class="mb-0 text-body-secondary">Suivi de votre dossier en ligne via MyJSS et consultation des pièces
-              obligatoires, avec une
-              mise à jour en temps réel de l'avancement.</p>
-          </div>
-        </div>
-        <div class="d-flex pb-3 mb-2 mb-xl-3">
-          <div class="text-body-secondary pt-1">02</div>
-          <div class="ps-3">
-            <h3 class="h5 text-white">Périmètre</h3>
-            <p class="mb-0">Accédez à l'ensemble de vos dossiers : commandes, devis, et suivez leur statut en temps
-              réel.</p>
-          </div>
-        </div>
-        <div class="d-flex pb-3 mb-2 mb-xl-3">
-          <div class="text-body-secondary pt-1">03</div>
-          <div class="ps-3">
-            <h3 class="h5 text-white">Données sécurisées</h3>
-            <p class="mb-0">Téléchargez facilement tous vos documents importants : factures, Kbis, et autres pièces
-              justificatives en toute sécurité.</p>
-          </div>
-        </div>
-        <div class="d-flex mb-2 mb-xl-3">
-          <div class="text-body-secondary pt-1">04</div>
-          <div class="ps-3">
-            <h3 class="h5 text-white">Accompagnement sur mesure</h3>
-            <p class="mb-0">Une plateforme simple à utiliser pour vous faire gagner du temps, avec des échanges directs
-              en ligne avec votre formalité attitré et votre chargé de clientèle.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 
 <section class="background-opacity mb-5">
   <div class="container overflow-hidden">
@@ -193,6 +154,128 @@
     </generic-swiper>
   </div>
 </section>
+
+
+<section class="container py-5 my-5">
+  <div class="row text-center">
+    <h2 class="h2 mb-lg-4 text-white">Témoignages</h2>
+  </div>
+  <div class="row">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+      <div class="col">
+        <div class="card dark-blue-dropdown h-100 border-0 rounded-5">
+          <div class="card-body">
+            <div class="d-flex align-items-center text-decoration-none pb-2">
+              <img class="rounded-circle" src="assets/img/testimonial/test_temoignage.jpg" width="48" alt="testimonial">
+              <div class="row ps-3 pt-3">
+                <h6 class=" mb-0">Luc Athlan</h6>
+                <p>Responsable droit des sociétés</p>
+              </div>
+            </div>
+            <p class="mb-0">Je travaille depuis plusieurs années avec le JSS et je dois dire que j'ai toujours apprécié
+              le professionnalisme et la qualité du service qui les animent.
+              A titre d'exemple, lors de l'envoi d'une demande d'insertion vous recevez par retour de mail l'attestation
+              de parution dans un temps record. C'est assez précieux quand vous devez avancer rapidement sur un dossier
+              et que votre partenaire est dans la même lancée.
+              Il en est de même sur la partie formalités sur des dossiers souvent compliqués, nous arrivons à avoir
+              notre Kbis à jour rapidement.
+              On ne change pas une équipe qui gagne. Je recommande vivement.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card dark-blue-dropdown h-100 border-0 rounded-5">
+          <div class="card-body">
+            <div class="d-flex align-items-center text-decoration-none pb-2">
+              <img class="rounded-circle" src="assets/img/testimonial/test_temoignage.jpg" width="48" alt="testimonial">
+              <div class="row ps-3 pt-3">
+                <h6 class=" mb-0">George Apostol</h6>
+                <p>Avocat à la Cour</p>
+              </div>
+            </div>
+            <p class="mb-0">Depuis 2021 maintenant, j'ai l’opportunité de coopérer avec l’équipe du JSS. Leur expertise
+              pratique dans le domaine des démarches légales : annonces légales, immatriculations & modifications RCS
+              est précieuse. Ils ont une connaissance approfondie des aspects techniques de ces procédures avant et
+              après instauration du Guichet unique, avec un gain de temps considérable. Les échanges sont plaisants,
+              l’équipe expérimentée, fiable et très réactive, y compris dans l'urgence.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card dark-blue-dropdown h-100 border-0 rounded-5">
+          <div class="card-body">
+            <div class="d-flex align-items-center text-decoration-none pb-2">
+              <img class="rounded-circle" src="assets/img/testimonial/test_temoignage.jpg" width="48" alt="testimonial">
+              <div class="row ps-3 pt-3">
+                <h6 class=" mb-0">Sébastien Gomez</h6>
+                <p>Expert-comptable</p>
+              </div>
+            </div>
+            <p class="mb-0">Nous collaborons avec le JSS depuis plusieurs années et c’est toujours un réel plaisir. Leur
+              réactivité, leur professionnalisme, ainsi que leur disponibilité sont des atouts précieux, en particulier
+              sur des points techniques parfois complexes. À chaque fois que nous rencontrons une difficulté liée à une
+              formalité, ils savent nous apporter des solutions efficaces et rapides. Forts de cette expérience, nous
+              avons fait le choix de leur confier l’ensemble de nos formalités de publicité et d’immatriculation au RCS.
+              Une collaboration de confiance que nous recommandons vivement. </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 ">
+      <div class="col">
+        <div class="card dark-blue-dropdown h-100 border-0 rounded-5">
+          <div class="card-body">
+            <div class="d-flex align-items-center text-decoration-none pb-2">
+              <img class="rounded-circle" src="assets/img/testimonial/test_temoignage.jpg" width="48" alt="testimonial">
+              <div class="row ps-3 pt-3">
+                <h6 class=" mb-0">Julie Soudaz</h6>
+                <p>Avocat à la Cour</p>
+              </div>
+            </div>
+            <p class="mb-0">Avec le JSS, la collaboration est toujours fluide et efficace. Équipe disponible, réactive
+              et agréable, sur qui je peux compter depuis plusieurs années pour un accompagnement rigoureux de mes
+              clients pour leurs formalités. Un vrai partenaire de confiance.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col">
+        <div class="card dark-blue-dropdown h-100 border-0 rounded-5">
+          <div class="card-body">
+            <div class="d-flex align-items-center text-decoration-none pb-2">
+              <img class="rounded-circle" src="assets/img/testimonial/test_temoignage.jpg" width="48" alt="testimonial">
+              <div class="row ps-3 pt-3">
+                <h6 class=" mb-0">Perrine Latour</h6>
+                <p>Chef d'entreprise</p>
+              </div>
+            </div>
+            <p class="mb-0">Un service de qualité, pédagogue, réactif et très à l'écoute. <br>
+              Merci !
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card dark-blue-dropdown h-100 border-0 rounded-5">
+          <div class="card-body">
+            <div class="d-flex align-items-center text-decoration-none pb-2">
+              <img class="rounded-circle" src="assets/img/testimonial/test_temoignage.jpg" width="48" alt="testimonial">
+              <div class="row ps-3 pt-3">
+                <h6 class=" mb-0">Stanislas Roquebert</h6>
+                <p>Avocat à la Cour</p>
+              </div>
+            </div>
+            <p class="mb-0">Excellente expérience sur le site du JSS. Une équipe réactive et à l'écoute. J'ai obtenu les
+              papiers officiels en quelques heures. Sérieux et efficace, je recommande. </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- TODO : uncomment when done -->
 <!-- <generic-testimonial></generic-testimonial> -->
 <div class="py-5 my-md-3 my-lg-4 my-xxl-5">
