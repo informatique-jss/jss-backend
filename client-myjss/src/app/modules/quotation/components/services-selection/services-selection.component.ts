@@ -35,6 +35,7 @@ export class ServicesSelectionComponent implements OnInit {
   currentUser: Responsable | undefined;
   applyToAllAffaires: boolean = false;
   serviceLinkToggles: boolean[][] = [];
+  activeId = 0;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -99,6 +100,7 @@ export class ServicesSelectionComponent implements OnInit {
             family.services.sort((a, b) => a.label.localeCompare(b.label));
         }
         this.selectedServiceFamily = this.serviceFamilies[0];
+        this.manageFamilySelection();
       });
 
     if (this.quotation && this.quotation.assoAffaireOrders) {
@@ -107,6 +109,19 @@ export class ServicesSelectionComponent implements OnInit {
           this.selectedServiceTypes[i] = [];
       }
     }
+  }
+
+  manageFamilySelection() {
+    if (this.quotation && this.selectedAssoIndex != undefined && this.serviceFamilies) {
+      for (let i = 0; i < this.serviceFamilies.length; i++) {
+        if (this.shouldDisplayServiceFamily(this.serviceFamilies[i], this.quotation.assoAffaireOrders[this.selectedAssoIndex])) {
+          this.activeId = i;
+          this.selectedServiceFamily = this.serviceFamilies[i];
+          return;
+        }
+      }
+    }
+
   }
 
   getFamilyLabelForService(service: ServiceType) {
@@ -121,6 +136,7 @@ export class ServicesSelectionComponent implements OnInit {
 
   selectCard(affaireId: number) {
     this.selectedAssoIndex = affaireId;
+    this.manageFamilySelection();
   }
 
   selecteServiceFamily(serviceFamily: ServiceFamily) {

@@ -68,6 +68,7 @@ public class Employee implements Serializable, IId, AttributesMapper<Employee> {
 	private Boolean isActive;
 
 	@Column(length = 200)
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String bookingPageUrl;
 
 	@OneToMany(targetEntity = Employee.class, fetch = FetchType.LAZY)

@@ -20251,3 +20251,70 @@ html.theme-account[data-bs-theme=light] {
 }
 
 /*# sourceMappingURL=theme-account.css.map */
+
+/*Override modal */
+
+/* Modal content : glassy */
+.theme-account .modal-content {
+  border: none;
+  border-radius: 1rem;
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+/* Animation apparition */
+.theme-account .modal.fade .modal-dialog {
+  transform: translateY(-20px);
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+}
+
+.theme-account .modal.show .modal-dialog {
+  transform: translateY(0);
+}
+
+/* Translucids Header + Footer  */
+.theme-account .modal-header,
+.theme-account .modal-footer {
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  border: none;
+}
+
+/* Title and body */
+.theme-account .modal-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #111;
+}
+
+.theme-account .modal-body {
+  font-size: 0.95rem;
+  color: #222;
+}
+
+/* Bouton close */
+.theme-account .modal-header .btn-close {
+  background: none;
+  opacity: 0.6;
+  filter: invert(0.4);
+  transition: opacity 0.2s ease;
+}
+
+.theme-account .modal-header .btn-close:hover {
+  opacity: 1;
+}
+
+/* Footer bouton */
+.theme-account .modal-footer .btn {
+  border-radius: 0.5rem;
+  padding: 0.5rem 1.25rem;
+}
+
+/* Overlay  */
+.theme-account .modal-backdrop.show {
+  background: rgba(20, 20, 20, 0.4);
+  backdrop-filter: blur(2px);
+}

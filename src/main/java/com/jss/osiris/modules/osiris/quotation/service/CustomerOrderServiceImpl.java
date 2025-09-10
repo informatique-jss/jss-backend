@@ -524,7 +524,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 mailHelper.sendCustomerOrderInProgressToCustomer(customerOrder, false);
             } else {
                 targetStatusCode = CustomerOrderStatus.WAITING_DEPOSIT;
-                mailHelper.sendCustomerOrderDepositMailToCustomer(customerOrder, false, false);
+                try {
+                    mailHelper.sendCustomerOrderDepositMailToCustomer(customerOrder, false, false);
+                } catch (OsirisClientMessageException e) {
+                }
             }
 
         }
@@ -602,16 +605,24 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
             Invoice invoice = generateInvoice(customerOrder);
 
+            entityManager.flush();
+            entityManager.clear();
+
+            invoice = invoiceService.getInvoice(invoice.getId());
+
             // If deposit already set, associate them to invoice
             List<Payment> paymentToMove = new ArrayList<Payment>();
-            if (customerOrder.getPayments() != null)
-                for (Payment payment : customerOrder.getPayments())
+            List<Payment> customerOrderPayement = paymentService.getPaymentForCustomerOrder(customerOrder);
+
+            if (customerOrderPayement != null)
+                for (Payment payment : customerOrderPayement)
                     if (!payment.getIsCancelled())
                         paymentToMove.add(payment);
 
             if (paymentToMove.size() > 0)
-                for (Payment payment : paymentToMove)
+                for (Payment payment : paymentToMove) {
                     paymentService.movePaymentFromCustomerOrderToInvoice(payment, customerOrder, invoice);
+                }
 
             entityManager.flush();
             entityManager.clear();
@@ -1597,13 +1608,17 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     public List<CustomerOrder> searchOrdersForCurrentUserAndAffaire(Affaire affaire) throws OsirisException {
-        List<Responsable> responsablesToFilter = Arrays.asList(employeeService.getCurrentMyJssUser());
-        CustomerOrderStatus statusAbandonned = customerOrderStatusService
-                .getCustomerOrderStatusByCode(CustomerOrderStatus.ABANDONED);
+        Responsable currentUser = employeeService.getCurrentMyJssUser();
+        List<Responsable> responsablesToFilter = new ArrayList<Responsable>();
+        responsablesToFilter.add(currentUser);
+
+        if (currentUser != null && Boolean.TRUE.equals(currentUser.getCanViewAllTiersInWeb())) {
+            responsablesToFilter.addAll(tiersService.getTiers(currentUser.getTiers().getId()).getResponsables());
+        }
 
         if (responsablesToFilter != null && responsablesToFilter.size() > 0) {
             return completeAdditionnalInformationForCustomerOrders(customerOrderRepository
-                    .searchOrdersForCurrentUserAndAffaire(responsablesToFilter, affaire, statusAbandonned), false);
+                    .searchOrdersForCurrentUserAndAffaire(responsablesToFilter, affaire), false);
         }
         return null;
     }

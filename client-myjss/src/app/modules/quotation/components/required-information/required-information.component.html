@@ -1005,17 +1005,15 @@
 
 <!-- Modal de confirmation -->
 <ng-template #confirmBackModal let-modal>
-  <div class="modal-content">
-    <div class="modal-header">
-      <h5 class="modal-title" id="confirmBackModalLabel">Confirmation</h5>
-      <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Fermer"></button>
-    </div>
-    <div class="modal-body">
-      Êtes-vous sûr de vouloir revenir en arrière ? L'ensemble de votre progression sera perdue.
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Annuler</button>
-      <button type="button" class="btn btn-danger ms-2" (click)="confirmGoBack();modal.dismiss()">Confirmer</button>
-    </div>
+  <div class="modal-header">
+    <h5 class="modal-title" id="confirmBackModalLabel">Confirmation</h5>
+    <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Fermer"></button>
+  </div>
+  <div class="modal-body">
+    Êtes-vous sûr de vouloir revenir en arrière ? L'ensemble de votre progression sera perdue.
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Annuler</button>
+    <button type="button" class="btn btn-danger ms-2" (click)="confirmGoBack();modal.dismiss()">Confirmer</button>
   </div>
 </ng-template>

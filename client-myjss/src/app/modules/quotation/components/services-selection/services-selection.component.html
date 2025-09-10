@@ -59,7 +59,7 @@
       </p>
     </div>
 
-    <ul ngbNav #nav="ngbNav" [destroyOnHide]="false" [activeId]="0" class="nav-tabs ">
+    <ul ngbNav #nav="ngbNav" [destroyOnHide]="false" [activeId]="activeId" class="nav-tabs ">
       <ng-container *ngIf="serviceFamilies">
         <ng-container *ngFor="let serviceFamily of serviceFamilies;let serviceFamilyIndex=index">
           <li [ngbNavItem]="serviceFamilyIndex" class="nav-item "

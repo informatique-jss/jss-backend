@@ -31,6 +31,13 @@ export class PostTagHeaderComponent implements OnInit {
   currentUser: Responsable | undefined;
 
   ngOnInit() {
+    this.refresh();
+    this.activeRoute.paramMap.subscribe(params => {
+      this.refresh();
+    });
+  }
+
+  refresh() {
     this.titleService.setTitle("Tous nos articles - JSS");
     this.meta.updateTag({ name: 'description', content: "Retrouvez l'actualité juridique et économique. JSS analyse pour vous les dernières annonces, formalités et tendances locales." });
     let slug = this.activeRoute.snapshot.params['slug'];

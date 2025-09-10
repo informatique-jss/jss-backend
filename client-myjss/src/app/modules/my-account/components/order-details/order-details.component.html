@@ -18,7 +18,7 @@
   *ngIf="order && order.customerOrderStatus && order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT">
   <i class="ai-circle-info fs-xl"></i>
   <div class="ps-2">Payez votre acompte pour lancer le traitement de votre commande !</div>
-  <a class="btn btn-sm btn-secondary  mt-3 mt-md-0" *ngIf="order  && displayPayButton"
+  <a class="btn btn-sm btn-primary  mt-3 mt-md-0 ms-4" *ngIf="order  && displayPayButton"
     [routerLink]=' "/account/order/pay/" + order.id'>
     <i class="ai-cart ms-n1 me-2"></i>
     <span>Payer l'acompte</span>
@@ -65,7 +65,7 @@
         {{capitalizeName(selectedAssoAffaireOrder.affaire.denomination?selectedAssoAffaireOrder.affaire.denomination:(selectedAssoAffaireOrder.affaire.firstname
         +" "+selectedAssoAffaireOrder.affaire.lastname))}} </h2>
       <a class="btn btn-sm  ms-auto btn-danger" role="button"
-        [routerLink]='"/account/affaire/edit/order/" + selectedAssoAffaireOrder.id + "/" + this.order.id'
+        [routerLink]='"/account/affaire/edit/order/" + selectedAssoAffaireOrder.affaire.id + "/" + this.order.id'
         *ngIf="(!selectedAssoAffaireOrder.affaire.paymentIban || !selectedAssoAffaireOrder.affaire.paymentBic || !selectedAssoAffaireOrder.affaire.mails || selectedAssoAffaireOrder.affaire.mails.length==0) && invoiceSummary && invoiceSummary.billingLabelType && invoiceSummary.billingLabelType.id == billingLabelTypeCodeAffaire.id ;else just_edit_affaire">
         <i class="ai-edit ms-n1 me-2"></i>
         Indiquer <span
@@ -77,7 +77,7 @@
           mail</span>
       </a>
       <ng-template #just_edit_affaire> <a class="btn btn-sm  mt-3 mt-md-0 ms-md-auto btn-secondary" role="button"
-          [routerLink]='"/account/affaire/edit/order/" + selectedAssoAffaireOrder.id + "/" + this.order.id'>
+          [routerLink]='"/account/affaire/edit/order/" + selectedAssoAffaireOrder.affaire.id + "/" + this.order.id'>
           <i class="ai-edit ms-n1 me-2"></i>
           Modifier
         </a></ng-template>
@@ -423,6 +423,17 @@
         <div class="d-flex align-items-center pb-1 mb-2">
           <h3 class="h6 mb-0 me-3">Libellé de facturation</h3>
         </div>
+        <p class="mb-0" *ngIf="orderInvoiceLabelResult">
+          {{orderInvoiceLabelResult.billingLabel}}<br>{{orderInvoiceLabelResult.billingLabelAddress
+          }}<br>{{orderInvoiceLabelResult.billingLabelPostalCode }}
+          {{orderInvoiceLabelResult.billingLabelCity?orderInvoiceLabelResult.billingLabelCity.label:""}}<span
+            *ngIf="orderInvoiceLabelResult.commandNumber && orderInvoiceLabelResult.commandNumber.length>0"><br>Commande
+            {{orderInvoiceLabelResult.commandNumber }}</span></p>
+        <div class="col-sm-7 col-md-5 mb-4 mb-md-0" *ngIf="!orderMailComputeResult">
+          <p class="card-text placeholder-glow">
+            <span class="placeholder placeholder-sm col-7 me-2"></span>
+          </p>
+        </div>
         <div class="text-body-secondary fw-medium d-flex flex-wrap flex-sm-nowrap align-items-center my-1"
           *ngIf="orderMailComputeResult">
           <div class="d-flex align-items-center me-3">
@@ -430,12 +441,6 @@
             {{getCustomerOrderBillingMailList()}}
           </div>
         </div>
-        <p class="mb-0" *ngIf="orderInvoiceLabelResult">
-          {{orderInvoiceLabelResult.billingLabel}}<br>{{orderInvoiceLabelResult.billingLabelAddress
-          }}<br>{{orderInvoiceLabelResult.billingLabelPostalCode }}
-          {{orderInvoiceLabelResult.billingLabelCity?orderInvoiceLabelResult.billingLabelCity.label:""}}<span
-            *ngIf="orderInvoiceLabelResult.commandNumber && orderInvoiceLabelResult.commandNumber.length>0"><br>Commande
-            {{orderInvoiceLabelResult.commandNumber }}</span></p>
         <div class="col-sm-7 col-md-5 mb-4 mb-md-0" *ngIf="!orderInvoiceLabelResult">
           <p class="card-text placeholder-glow">
             <span class="placeholder placeholder-sm col-7 me-2"></span>

@@ -74,9 +74,10 @@
         </div>
       </div>
       <div *ngIf="indexAsso==currentOpenedPanel">
-        <div class="my-3">
-          <generic-toggle [(model)]="isRegisteredAffaire[indexAsso]" label="L'entreprise existe"
-            [form]="idenficationForm" [propertyName]="'isRegisteredAffaire'+indexAsso">
+        <div class="my-3" *ngIf="!quotation || !quotation.id">
+          <generic-toggle [(model)]="isRegisteredAffaire[indexAsso]"
+            label="L'entreprise ou l'établissement concerné existe ?" [form]="idenficationForm"
+            [propertyName]="'isRegisteredAffaire'+indexAsso">
           </generic-toggle>
         </div>
         <!-- Choose affaire by SIRET -->

@@ -587,7 +587,7 @@ public class MyJssQuotationController {
 
 		boolean canDownload = true;
 		if (tiersAttachment.getProvision() == null && tiersAttachment.getAssoServiceDocument() == null
-				&& tiersAttachment.getCustomerOrder() == null)
+				&& tiersAttachment.getCustomerOrder() == null && tiersAttachment.getTypeDocumentAttachment() == null)
 			canDownload = false;
 
 		// Can only download invoice

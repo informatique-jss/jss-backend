@@ -97,9 +97,9 @@ export class QuotationComponent implements OnInit {
       this.appService.openRoute(undefined, this.quotationService.getCurrentDraftQuotationStep()!, undefined);
     } else {
       if (this.myJssQuotationItems.length > 0 && this.router.url) {
-        this.matchRoute(this.router.url);
-      } else {
-        this.selectedTab = this.myJssQuotationItems[0];
+        if (!this.matchRoute(this.router.url))
+          this.selectedTab = this.myJssQuotationItems[0];
+        this.appService.openRoute(undefined, this.selectedTab!.route, undefined);
       }
     }
 

@@ -1771,4 +1771,8 @@ public class PaymentServiceImpl implements PaymentService {
         return image;
     }
 
+    @Override
+    public List<Payment> getPaymentForCustomerOrder(CustomerOrder customerOrder) {
+        return paymentRepository.findByCustomerOrder(customerOrder);
+    }
 }

@@ -18,7 +18,7 @@ export class CustomerOrderService extends AppRestService<CustomerOrder> {
   searchOrdersForCurrentUser(customerOrderStatus: string[], withMissingAttachment: boolean, page: number, sorter: string, responsablesToFilter: Responsable[] | undefined) {
 
     let params = new HttpParams().set("page", page).set("sortBy", sorter).set("withMissingAttachment", withMissingAttachment);
-    if (responsablesToFilter)
+    if (responsablesToFilter && responsablesToFilter.length > 0)
       params = params.set("responsableIdsToFilter", responsablesToFilter.map(r => r.id).join(","));
     return this.postList(params, "order/search/current", customerOrderStatus);
   }

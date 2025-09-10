@@ -30,7 +30,7 @@ export class AffaireService extends AppRestService<Affaire> {
 
   searchAffairesForCurrentUser(searchText: string, page: number, sorter: string, responsablesToFilter: Responsable[] | undefined) {
     let params = new HttpParams().set("page", page).set("sortBy", sorter).set("searchText", searchText);
-    if (responsablesToFilter)
+    if (responsablesToFilter && responsablesToFilter.length > 0)
       params = params.set("responsableIdsToFilter", responsablesToFilter.map(r => r.id).join(","));
     return this.getList(params, "affaire/search/current");
   }

@@ -328,17 +328,15 @@
   </div>
 
   <ng-template #cancelQuotationModal let-modal>
-    <div>
-      <div class="modal-header">
-        <h5 class="modal-title" id="cancelQuotationModal">Abandonner la commande</h5>
-        <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Fermer"></button>
-      </div>
-      <div class="modal-body">Êtes-vous sûr de vouloir abandonner cette commande ?
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Annuler</button>
-        <button type="button" class="btn btn-danger ms-2"
-          (click)="finalCancelDraft($event );$event.stopPropagation();modal.dismiss()">Abandonner</button>
-      </div>
+    <div class="modal-header">
+      <h5 class="modal-title" id="cancelQuotationModal">Abandonner la commande</h5>
+      <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Fermer"></button>
+    </div>
+    <div class="modal-body">Êtes-vous sûr de vouloir abandonner cette commande ?
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Annuler</button>
+      <button type="button" class="btn btn-danger ms-2"
+        (click)="finalCancelDraft($event );$event.stopPropagation();modal.dismiss()">Abandonner</button>
     </div>
   </ng-template>

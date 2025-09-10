@@ -98,6 +98,13 @@ export class PostComponent implements OnInit, AfterViewInit {
   newCommentForm!: FormGroup;
 
   ngOnInit() {
+    this.refresh();
+    this.activatedRoute.paramMap.subscribe(params => {
+      this.refresh();
+    });
+  }
+
+  refresh() {
     this.loginService.getCurrentUser().subscribe(res => this.currentUser = res);
 
     this.newCommentForm = this.formBuilder.group({});
