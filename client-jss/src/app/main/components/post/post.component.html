@@ -15,12 +15,12 @@
             <h1 class="mt-2"><img *ngIf="post.isPremium" class="px-0 me-1" src="/assets/images/premium-icon.svg">
               {{post.titleText}} </h1>
           </div>
-          <p class="lead"> {{post.excerptText}}</p>
+          <p class=""> {{post.excerptText}}</p>
 
           <hr class="d-none d-lg-block">
           <div class="row inline-row align-items-center mb-2">
             <!-- Author info -->
-            <div class="col-auto position-relative border-end pe-3">
+            <div class="col-auto position-relative border-end pe-1">
               <div class="row align-items-center">
                 <div class="col-auto avatar avatar-xl">
                   <img class="avatar-img rounded-circle" [src]="post.fullAuthor.avatar_url_size_48" alt="avatar">
@@ -28,24 +28,36 @@
                 <div class="col">
                   <a style="cursor: pointer;" [routerLink]=' "/post/author/" + post.fullAuthor.slug'
                     class="stretched-link d-block">{{post.fullAuthor.name}}</a>
-                  <p>{{post.fullAuthor.description}}</p>
+                  <p *ngIf="post.fullAuthor.description" class="fs-8">{{post.fullAuthor.description}}</p>
+                  <span class="list-inline-item d-lg-block fs-8">{{post.date | date:'EEEE d MMMM HH:mm'}}</span>
+                  <span class="list-inline-item d-lg-block fs-8">{{getTimeReading(post.contentText)}}</span>
                 </div>
               </div>
             </div>
-            <!-- Post info  -->
-            <div class="col list-inline list-unstyled ps-3">
-              <span class="list-inline-item d-lg-block">{{post.date | date:'EEEE d MMMM HH:mm'}}</span>
-              <span class="list-inline-item d-lg-block">{{getTimeReading(post.contentText)}}</span>
+            <!-- Player START -->
+            <div class="col list-inline list-unstyled0 ps-3 me-2">
+              <div class="row inline-row align-items-center">
+                <div class="row post-player-bg border rounded-2 ms-0 p-1 align-items-center">
+                  <a class="col-auto px-1 btn-dark rounded-circle btn-circle-sm fs-6"
+                    (click)="togglePlayPause(post!)"><i
+                      [ngClass]="getIsPlaying(post!) ? 'bi-pause-fill' : 'bi-play-fill'"></i></a>
+                  <div class="col">
+                    <h6 class="mb-0 fs-7">Écouter l'article</h6>
+                  </div>
+                </div>
+                <!-- Player END -->
+              </div>
             </div>
 
 
             <!-- Boutons offrir article, enrregistrer, partager  -->
             <div class="col-auto mt-0">
-              <div class="row inline-row align-items-center mb-2">
+              <div class="row inline-row align-items-center mb-1">
                 <div class="col-auto mt-0">
 
-                  <button *ngIf="currentUser" class="btn btn-primary" (click)="openOfferPostModal(givePostModal)"><i
-                      class="bi bi-gift me-2"></i>Offrir cet article</button>
+                  <button *ngIf="currentUser" class="btn btn-primary btn-sm rounded-2"
+                    (click)="openOfferPostModal(givePostModal)"><i class="bi bi-gift me-2"></i>Offrir cet
+                    article</button>
                 </div>
                 <bookmark *ngIf="currentUser" [post]="post" [isSinglePost]="true" class="mt-0"></bookmark>
 
@@ -56,7 +68,7 @@
                       [attr.aria-expanded]="dropdownOpen">
 
                       <div class="d-none d-md-block">
-                        <div class="btn btn-primary"><i class="bi bi-share me-2"></i>Partager</div>
+                        <div class="btn btn-primary btn-sm rounded-2"><i class="bi bi-share me-2"></i>Partager</div>
                       </div>
                     </a>
 
@@ -89,28 +101,6 @@
                   </div>
                 </div>
               </div>
-              <div class="row inline-row align-items-center mb-2 g-2">
-                <!-- Player START -->
-                <div class="mt-2 pe-2">
-                  <div class="row post-player-bg border rounded-2 ms-0 p-1 align-items-center">
-                    <a class="col-auto ps-0 btn-dark rounded-circle btn-circle-md fs-4"
-                      (click)="togglePlayPause(post!)"><i
-                        [ngClass]="getIsPlaying(post!) ? 'bi-pause-fill' : 'bi-play-fill'"></i></a>
-                    <div class="col">
-                      <h6 class="mb-0">Écouter l'article</h6>
-                      <div class="row align-items-center px-2">
-                        <input *ngIf="getDuration()!=0" type="range" class="col form-range flex-grow-1 me-1 w-100"
-                          [style.--progress.%]="progress" min="0" max="100" step="0.01" (input)="onSeek($event)" />
-                        <small *ngIf="getCurrentTime()!=0" class="col-auto text-muted px-0">{{ getCurrentTime()*1000 |
-                          date:'mm:ss' }} </small>
-                        <small *ngIf="getDuration()!=0" class="col-auto text-muted px-0"> /{{ getDuration()*1000 |
-                          date:'mm:ss' }}</small>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <!-- Player END -->
-              </div>
             </div>
           </div>
         </div>
@@ -136,13 +126,13 @@
 
           <section class="pt-0" *ngIf="post">
             <div class="row">
+              <!-- Main Content START -->
               <div>
                 <img *ngIf="post.media" class="rounded-2 mb-2 resize-featured-img"
                   [src]="post.media.urlFull ? post.media.urlFull : ''">
               </div>
-              <!-- Main Content START -->
               <div class="mb-5">
-                <span [innerHTML]="post.contentText| trustHtml"></span>
+                <span class="fs-6" [innerHTML]="post.contentText| trustHtml"></span>
 
                 <!-- Bannière d'abonnement en bas de l'article visible -->
                 <div class="bg-blue-400 d-flex justify-content-center align-items-center flex-column text-center p-4"
@@ -414,24 +404,6 @@
 
       <!-- ======================= Right column START -->
       <div class="col-md-4">
-        <!-- Tags liés -->
-        <div *ngIf="post" class="card mb-3 border border-light p-3">
-          <div class="wrapper">
-            <div class="row">
-              <div class="col-md-12">
-                <div class="section-title-block d-flex pb-3">
-                  <h3 class="section-widget-title">Tags liés</h3>
-                </div>
-              </div>
-            </div>
-            <ul class="tag-cloud list-inline">
-              <li *ngFor="let tag of post.postTags" class="list-inline-item pb-1"><a
-                  class="btn bg-light text-secondary text-hover-white bg-hover-secondary"
-                  [routerLink]='"/post/tag/" + tag.slug'>{{tag.name}}</a>
-              </li>
-            </ul>
-          </div>
-        </div>
 
         <!-- Les plus vus -->
         <div class="mb-3 border border-light card">
