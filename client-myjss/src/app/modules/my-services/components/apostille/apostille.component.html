@@ -7,7 +7,7 @@
 
       <div class="col-md-6 col-xl-5 offset-xl-1">
         <p class="text-body fs-lg mb-5 text-white">Confiez à nos experts vos documents à authentifier pour une démarche
-          à l'étranger ou en France.{{serviceFamilyGroupOther}}</p>
+          à l'étranger ou en France.</p>
         <double-buttons class="text-grey" orderActionLabel=" Demander une apostille ou légalisation"
           [orderActionRoute]="'/quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeOrder.id"
           quotationActionLabel="Demander un devis"
@@ -36,6 +36,9 @@
   [secondJumpTo]="15"></explaination-video>
 
 <description-my-account
+  firstStepText="Suivi de votre dossier en ligne via MyJSS, avec une mise à jour en temps réel de l’avancement."
+  secondStepText="Accédez à l’ensemble de vos dossiers : commandes, devis et suivez leur statut en temps réel."
+  thirdtepText="Récupérez facilement tous vos documents apostillés et légalisés."
   imageSrc="assets/img/myjss-services/apostilles/parcourir_mon_compte_apostille.webp"></description-my-account>
 
 <section class="container mt-lg-3 mt-xl-4 mt-xxl-5 pt-lg-5 pt-sm-3 pt-2">
@@ -45,7 +48,7 @@
         <div class="text-center text-md-start py-5 px-4 px-sm-5 pe-md-0 ps-lg-4 ps-xl-5">
           <div class="d-flex align-items-center justify-content-center justify-content-md-start mb-2">
             <span class="text-blue opacity-70 me-2 practical-sheets-pre-border "></span>
-            <span class="fs-xs fw-semibold text-blue text-uppercase">Apostilles et légalisation</span>
+            <span class="fs-xs fw-semibold text-blue text-uppercase">Apostille et légalisation</span>
           </div>
           <h2 class="h2 secondary-heading pb-2 pb-sm-3 ">N'attendez plus et accédez à nos solutions</h2>
           <double-buttons class="text-grey" orderActionLabel=" Demander une apostille ou légalisation"
@@ -153,11 +156,11 @@
             </li>
             <li class="d-flex pb-2 mb-1">
               <span class="bg-primary mt-2 me-2 checkbox-custom"></span>
-              Légalisation par le Ministère des Affaires Etrangères
+              Apostille et légalisation par la Chambre des Notaires
             </li>
             <li class="d-flex">
               <span class="bg-primary mt-2 me-2 checkbox-custom"></span>
-              Ambassade ou Consulat
+              Légalisation par l’ Ambassade ou Consulat
             </li>
           </ul>
         </div>
@@ -223,7 +226,7 @@
   <div class="container py-3 py-sm-4 py-lg-5 my-md-2 my-lg-3 my-xl-4 my-xxl-5">
     <div class="text-center">
       <h2 class="h1 pb-3 mb-lg-4 text-white">Nos services</h2>
-      <p>Nous proposons une large gamme de services de formalités, adaptés à vos besoins pour simplifier vos démarches
+      <p>Nous proposons une large gamme de services juridiques, adaptés à vos besoins pour simplifier vos démarches
         administratives.</p>
     </div>
     <div
@@ -246,14 +249,13 @@
       <div class="col-lg-5 d-flex pt-3 pt-xl-0">
         <div class="card h-100 border-0 rounded-5 w-100">
           <div class="card-body pb-3 px-3">
-            <img src="assets/img/icons/Apostille.svg" alt="Icon">
-            <h3 class="h4 text-white" routerLink="/services/apostille" style="cursor: pointer;">Apostille & Légalisation
+            <img src="assets/img/icons/Formalite.svg" alt="Icon">
+            <h3 class="h4 text-white" routerLink="/services/formality" style="cursor: pointer;">Formalités légales
             </h3>
-            <p class="mb-0">Authentification et certification rapides et conformes de vos documents valables à
-              l’international.</p>
+            <p class="mb-0">Un accompagnement complet pour toutes vos formalités juridiques.</p>
           </div>
           <div class="card-footer border-0 pt-3 mb-3">
-            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" routerLink="/services/apostille"
+            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" routerLink="/services/formality"
               aria-label="Learn more">
               <i class="ai-arrow-right"></i>
             </a>

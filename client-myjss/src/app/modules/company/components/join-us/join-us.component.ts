@@ -34,6 +34,7 @@ export class JoinUsComponent implements OnInit {
     "assets/img/myjss-services/apostilles/myjss_occupe_tout.jpg",
     "assets/img/societe/join-us/team.jpg",
     "assets/img/societe/join-us/join_us_caroussel3.png",
+    "assets/img/societe/join-us/everybody.png",
   ];
 
   @ViewChild('modalImage') modalImageRef!: ElementRef<HTMLImageElement>;
