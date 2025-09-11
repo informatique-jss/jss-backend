@@ -37,7 +37,11 @@
   [firstJumpTo]="5" [secondJumpTo]="15"></explaination-video>
 
 <description-my-account
+  firstStepText="Accédez à l’ensemble de vos devis, commandes et suivez leur état d’avancement en temps réel."
+  secondStepText="Validez vos devis, complétez vos commandes, payez vos factures en ligne."
+  thirdtepText="Récupérez facilement tous vos documents : attestations de parution, témoin de publication et factures en toute sécurité."
   imageSrc="assets/img/myjss-services/announcement/parcourir_mon_compte_annonce.webp"></description-my-account>
+
 
 <section *ngIf="carouselAnnouncementPosts && carouselAnnouncementPosts.length>0" class="background-opacity">
   <div class="container">
@@ -221,7 +225,7 @@
     <div class="col-md-6 position-relative pb-3 pb-md-0 mb-2 mb-sm-3 mb-md-0">
       <div class="binded-content z-2">
         <div class="binded-item active" id="image1">
-          <img class="d-block rounded-5" src="assets/img/myjss-services/announcement/Chiffres.png" alt="Image">
+          <img class="d-block rounded-5" src="assets/img/myjss-services/announcement/qui_est_concerne.png" alt="Image">
         </div>
       </div>
     </div>
@@ -272,12 +276,13 @@
       <div class="col-lg-5 d-flex pt-3 pt-xl-0">
         <div class="card h-100 border-0 rounded-5 w-100">
           <div class="card-body pb-3 px-3">
-            <img src="assets/img/icons/Annonces.svg" alt="Icon">
-            <h3 class="h4 text-white" routerLink="/services/announcement" style="cursor: pointer;">Annonces légales</h3>
-            <p class="mb-0">Toutes les annonces légales, sur tout le territoire et sur tous les supports.</p>
+            <img src="assets/img/icons/Formalite.svg" alt="Icon">
+            <h3 class="h4 text-white" routerLink="/services/formality" style="cursor: pointer;">Formalités légales
+            </h3>
+            <p class="mb-0">Un accompagnement complet pour toutes vos formalités juridiques.</p>
           </div>
           <div class="card-footer border-0 pt-3 mb-3">
-            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" routerLink="/services/announcement"
+            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" routerLink="/services/formality"
               aria-label="Learn more">
               <i class="ai-arrow-right"></i>
             </a>
@@ -288,7 +293,8 @@
         <div class="card h-100 border-0 rounded-5 w-100">
           <div class="card-body pb-3 px-3">
             <img src="assets/img/icons/Apostille.svg" alt="Icon">
-            <h3 class="h4 text-white" routerLink="/services/apostille" style="cursor: pointer;">Apostille & Légalisation
+            <h3 class="h4 text-white" routerLink="/services/apostille" style="cursor: pointer;">Apostilles &
+              Légalisations
             </h3>
             <p class="mb-0">Authentification et certification rapides et conformes de vos documents valables à
               l’international.</p>
