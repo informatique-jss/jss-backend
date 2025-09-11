@@ -173,7 +173,7 @@ export class EditAddressComponent implements OnInit {
     if (this.idQuotation)
       this.appService.openRoute(null, "account/quotations/details/" + this.idQuotation, undefined);
     if (this.idResponsable)
-      this.appService.openRoute(null, "account/settings/" + this.idResponsable, undefined);
+      this.appService.openRoute(null, "account/", undefined);
   }
 
   deleteMail(mail: Mail, document: Document, isAffaire: boolean) {

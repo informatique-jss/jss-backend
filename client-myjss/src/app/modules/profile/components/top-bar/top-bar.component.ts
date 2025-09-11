@@ -170,10 +170,9 @@ export class TopBarComponent implements OnInit {
   }
 
   refreshAfterSwitch() {
-    const currentUrl = this.router.url;
     this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
       this.appService.hideLoadingSpinner();
-      this.router.navigate([currentUrl]);
+      this.router.navigate(['/account/overview']);
     });
   }
 
