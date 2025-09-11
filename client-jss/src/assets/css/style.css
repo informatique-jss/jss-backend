@@ -13784,3 +13784,8 @@ img[class^="wp-image-"] {
   border: none;
   padding: 0.5rem;
 }
+
+figcaption {
+  color: #666666;
+  font-size: small;
+}
