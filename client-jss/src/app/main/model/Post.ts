@@ -3,6 +3,7 @@ import { Category } from "./Category";
 import { JssCategory } from "./JssCategory";
 import { Media } from "./Media";
 import { PublishingDepartment } from "./PublishingDepartment";
+import { Serie } from "./Serie";
 import { Tag } from "./Tag";
 
 export interface Post {
@@ -24,6 +25,7 @@ export interface Post {
   relatedPosts: Post[];
   mediaTimeLength: number;
   isHiddenAuthor: boolean;
+  postSerie: Serie[];
 
   // Computed field
   fullAuthor: Author;

@@ -16,7 +16,6 @@ export class SerieService extends AppRestService<Serie> {
     return this.getPagedList(new HttpParams().set("page", page).set("size", size), "series");
   }
 
-
   getSerieBySlug(slug: string) {
     return this.get(new HttpParams().set("slug", slug), "serie/slug");
   }
