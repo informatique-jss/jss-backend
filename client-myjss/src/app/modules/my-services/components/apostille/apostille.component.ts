@@ -72,4 +72,8 @@ export class ApostilleComponent implements OnInit {
       });
   }
 
+  openRoute(route: string) {
+    this.appService.openRoute(undefined, route, undefined);
+  }
+
 }

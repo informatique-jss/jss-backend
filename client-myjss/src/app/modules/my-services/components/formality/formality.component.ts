@@ -61,4 +61,8 @@ export class FormalityComponent implements OnInit {
         });
       });
   }
+
+  openRoute(route: string) {
+    this.appService.openRoute(undefined, route, undefined);
+  }
 }

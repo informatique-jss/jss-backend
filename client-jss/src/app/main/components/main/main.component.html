@@ -7,6 +7,8 @@
     </a>
   </div>
 </div>
+<h1 style="font-size: 1px; color: rgb(236, 245, 255);">MyJSS, la solution pour vos annonces légales et dépôts de
+  formalités</h1>
 
 <div class="container">
   <!--/// Blog Area /// -->
@@ -83,7 +85,7 @@
             <div class="row pt-3">
               <div class="col-md-12">
                 <div class="section-title-block d-flex">
-                  <h3 class="section-widget-title">Le fil info</h3>
+                  <h2 class="section-widget-title h3">Le fil info</h2>
                   <a href="post/last" class="text-uppercase section-title-link">
                     Voir tous
                     <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -134,7 +136,7 @@
           <!-- Newsletter -->
           <div class="border border-light bg-newsletter card p-3 mb-3">
             <div class="wrapper">
-              <h3>Newsletter</h3>
+              <h2 class="h3">Newsletter</h2>
               <p>Recevez gratuitement un concentré d'actualité chaque semaine.</p>
               <form class="subscription-from">
                 <div class="input-group">
@@ -153,7 +155,7 @@
             <div class="row d-flex align-items-center position-relative z-1">
               <img src="assets/images/homepage/man-reading.png" alt="Reader" class="col-auto">
               <div class="col">
-                <h3 class="fw-bold text-white">Le kiosque</h3>
+                <h2 class="fw-bold text-white h3">Le kiosque</h2>
                 <p class="">Retrouvez les archives du Journal Spécial des Sociétés.</p>
               </div>
             </div>
@@ -169,7 +171,7 @@
               <div class="row">
                 <div class="col-md-12">
                   <div class="section-title-block d-flex pb-3">
-                    <h3 class="section-widget-title">Ile-de-France</h3>
+                    <h2 class="section-widget-title h3">Ile-de-France</h2>
                     <a class="text-uppercase section-title-link" [routerLink]="'/post/department/'+idf.code">
                       Voir tous
                       <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -211,7 +213,7 @@
               <div class="row">
                 <div class="col-md-12">
                   <div class="section-title-block d-flex">
-                    <h3>Podcast</h3>
+                    <h2 class="h3">Podcast</h2>
                     <a routerLink="/podcasts" class="text-uppercase section-title-link">
                       Voir tout
                       <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -260,7 +262,7 @@
               <div class="row">
                 <div class="col-md-12">
                   <div class="section-title-block d-flex">
-                    <h3 class="section-widget-title">Les plus vus</h3>
+                    <h2 class="section-widget-title h3">Les plus vus</h2>
                     <a href="post/most-seen" class="text-uppercase section-title-link">
                       Voir tous
                       <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -287,11 +289,11 @@
 
           <!-- Tag tendencies  -->
           <div class="card mb-3 border border-light p-3">
-            <div class="wrapper">
+            <div class="wrapper ">
               <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-12 pb-3">
                   <div class="section-title-block d-flex">
-                    <h3 class="section-widget-title">Tendances</h3>
+                    <h2 class="section-widget-title h3">Tendances</h2>
                     <a routerLink="/post/tendency" class="text-uppercase section-title-link">
                       Voir tous
                       <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -342,7 +344,7 @@
           <div class="row">
             <div class="col-md-12">
               <div class="section-title-block d-flex pb-3">
-                <h3 class="section-widget-title">L’actualité par catégories</h3>
+                <h2 class="section-widget-title h3">L’actualité par catégories</h2>
               </div>
             </div>
             <div *ngIf="!justiceTopPosts || justiceTopPosts.length == 0" class="col-md-6 col-lg-4 pb-3">
@@ -358,9 +360,9 @@
               <div class="row">
                 <div class="col-md-12">
                   <div class="section-title-block d-flex pb-3">
-                    <h3 class="section-widget-title text-uppercase"> {{
+                    <h2 class="section-widget-title text-uppercase h3"> {{
                       firstCategory.name }}
-                    </h3>
+                    </h2>
                   </div>
                 </div>
               </div>
@@ -410,9 +412,9 @@
               <div class="row">
                 <div class="col-md-12">
                   <div class="section-title-block d-flex pb-3">
-                    <h3 class="section-widget-title text-uppercase"> {{
+                    <h2 class="section-widget-title text-uppercase h3"> {{
                       secondCategory.name }}
-                    </h3>
+                    </h2>
                   </div>
                 </div>
               </div>
@@ -462,9 +464,9 @@
               <div class="row">
                 <div class="col-md-12">
                   <div class="section-title-block d-flex pb-3">
-                    <h3 class="section-widget-title text-uppercase"> {{
+                    <h2 class="section-widget-title text-uppercase h3"> {{
                       thirdCategory.name }}
-                    </h3>
+                    </h2>
                   </div>
                 </div>
               </div>
@@ -511,7 +513,7 @@
         <div class="blog-area">
           <div class="col-md-12">
             <div class="section-title-block d-flex pb-3">
-              <h3 class="section-widget-title">Podcast Raide comme la justice</h3>
+              <h2 class="section-widget-title h3">Podcast Raide comme la justice</h2>
               <a routerLink="/podcasts" class="text-uppercase section-title-link">
                 Voir tous
                 <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -557,7 +559,7 @@
         <div class="row p-0">
           <div class="col-md-12">
             <div class="section-title-block d-flex pb-3">
-              <h3 class="section-widget-title">Les dossiers</h3>
+              <h2 class="section-widget-title h3">Les dossiers</h2>
             </div>
           </div>
           <div *ngIf="!series || series.length == 0" class="pb-3">
