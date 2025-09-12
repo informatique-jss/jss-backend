@@ -11,6 +11,14 @@
   </div>
 </section>
 
+<section>
+  <div class="jarallax overflow-hidden z-2" data-speed="0.5">
+    <div class="jarallax-img" style="background-image: url('/assets/img/my-jss-tools/Webinaire.png');">
+    </div>
+  </div>
+</section>
+
+
 <section class="dark-blue-dropdown">
   <section class="container pt-5 pb-lg-2 pb-xl-4 py-xxl-5 my-5">
     <div class="row pb-1 pb-sm-3 pb-lg-4 d-flex align-items-center">
@@ -30,6 +38,9 @@
       </div>
 
       <div class="col-lg-8 col-xl-7 offset-xl-1" *ngIf="displayForm">
+        <div class="col-sm-12">
+          <h3 class="text-center">Participer à l'événement</h3>
+        </div>
         <form class="needs-validation row g-4" #formRef novalidate>
           <div class="col-sm-6">
             <generic-input class="form-control form-control-lg" [(model)]="webinarParticipant.firstname" label="Prénom*"
@@ -200,7 +211,8 @@
 <section class="container">
   <div class="container yellow-card my-2 my-md-3 my-xl-4 pb-2 rounded-5 overflow-hidden p-md-5 p-4">
     <div class="row justify-content-center gy-md-5 gy-4 gx-xl-5 p-4">
-      <h1 class="h2 text-center text-secondary">Visionnez le dernier webinaire en replay et ne manquez aucune des
+      <h1 class="h2 text-blue text-center text-secondary">Visionnez le dernier webinaire en replay et ne manquez aucune
+        des
         nouveautés !
       </h1>
     </div>

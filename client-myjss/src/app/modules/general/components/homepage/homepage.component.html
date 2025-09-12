@@ -35,12 +35,12 @@
   <div class="container py-3 py-sm-4 py-lg-5 my-md-2 my-lg-3 my-xl-4 my-xxl-5">
     <div class="text-center">
       <h2 class="h2 pb-3 mb-lg-4 text-white">Nos services</h2>
-      <p>Nous proposons une large gamme de services de formalités, adaptés à vos besoins pour simplifier vos démarches
+      <p>Nous proposons une large gamme de services juridiques, adaptés à vos besoins pour simplifier vos démarches
         administratives.</p>
     </div>
     <div
       class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3 pb-xl-2 pb-xxl-3 justify-content-center align-items-stretch">
-      <div class="col-lg-5 d-flex pt-3 pt-xl-0">
+      <div class="col-lg-6 d-flex pt-3 pt-xl-0">
         <div class="card h-100 border-0 rounded-5 w-100">
           <div class="card-body pb-3 px-3">
             <img src="assets/img/icons/Annonces.svg" alt="Icon">
@@ -48,14 +48,29 @@
             <p class="mb-0">Toutes les annonces légales, sur tout le territoire et sur tous les supports.</p>
           </div>
           <div class="card-footer border-0 pt-3 mb-3">
-            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" routerLink="/services/announcement"
+            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle"
+              (clic)="openRoute('/services/announcement')" aria-label="Learn more">
+              <i class="ai-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 d-flex pt-3 pt-xl-0">
+        <div class="card h-100 border-0 rounded-5 w-100">
+          <div class="card-body pb-3 px-3">
+            <img src="assets/img/icons/Formalite.svg" alt="Icon">
+            <h3 class="h4 text-white" routerLink="/services/formalite" style="cursor: pointer;">Formalités légales</h3>
+            <p class="mb-0">Un accompagnement complet pour toutes vos formalités juridiques.</p>
+          </div>
+          <div class="card-footer border-0 pt-3 mb-3">
+            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" (clic)="openRoute('/services/formalite')"
               aria-label="Learn more">
               <i class="ai-arrow-right"></i>
             </a>
           </div>
         </div>
       </div>
-      <div class="col-lg-5 d-flex pt-3 pt-xl-0">
+      <div class="col-lg-4 d-flex pt-3 pt-xl-0">
         <div class="card h-100 border-0 rounded-5 w-100">
           <div class="card-body pb-3 px-3">
             <img src="assets/img/icons/Apostille.svg" alt="Icon">
@@ -66,18 +81,16 @@
               l’international.</p>
           </div>
           <div class="card-footer border-0 pt-3 mb-3">
-            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" routerLink="/services/apostille"
+            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" (clic)="openRoute('/services/apostille')"
               aria-label="Learn more">
               <i class="ai-arrow-right"></i>
             </a>
           </div>
         </div>
       </div>
-    </div>
 
-    <div
-      class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3 pb-xl-2 pb-xxl-3 justify-content-center align-items-stretch">
-      <div class="col-lg-5 d-flex pt-3 pt-xl-0">
+
+      <div class="col-lg-4 d-flex pt-3 pt-xl-0">
         <div class="card h-100 border-0 rounded-5 w-100">
           <div class="card-body pb-3 px-3">
             <img src="assets/img/icons/Domiciliation.svg" alt="Icon">
@@ -85,14 +98,14 @@
             <p class="mb-0">Une domiciliation au cœur de Paris avec gestion simplifiée.</p>
           </div>
           <div class="card-footer border-0 pt-3 mb-3">
-            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" routerLink="/services/domiciliation"
-              aria-label="Learn more">
+            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle"
+              (clic)="openRoute('/services/domiciliation')" aria-label="Learn more">
               <i class="ai-arrow-right"></i>
             </a>
           </div>
         </div>
       </div>
-      <div class="col-lg-5 d-flex pt-3 pt-xl-0">
+      <div class="col-lg-4 d-flex pt-3 pt-xl-0">
         <div class="card h-100 border-0 rounded-5 w-100">
           <div class="card-body pb-3 px-3">
             <img src="assets/img/icons/Fourniture_documents.svg" alt="Icon">
@@ -101,7 +114,7 @@
             <p class="mb-0">Vos documents officiels fournis rapidement et en toute conformité.</p>
           </div>
           <div class="card-footer border-0 pt-3 mb-3">
-            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" routerLink="/services/document"
+            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" (clic)="openRoute('/services/document')"
               aria-label="Learn more">
               <i class="ai-arrow-right"></i>
             </a>
@@ -166,7 +179,7 @@
         <div class="card dark-blue-dropdown h-100 border-0 rounded-5">
           <div class="card-body">
             <div class="d-flex align-items-center text-decoration-none pb-2">
-              <img class="rounded-circle" src="assets/img/testimonial/test_temoignage.jpg" width="48" alt="testimonial">
+              <img class="rounded-circle" src="assets/img/testimonial/Photo_LA.jpg" width="48" alt="testimonial">
               <div class="row ps-3 pt-3">
                 <h6 class=" mb-0">Luc Athlan</h6>
                 <p>Responsable droit des sociétés</p>
@@ -188,10 +201,10 @@
         <div class="card dark-blue-dropdown h-100 border-0 rounded-5">
           <div class="card-body">
             <div class="d-flex align-items-center text-decoration-none pb-2">
-              <img class="rounded-circle" src="assets/img/testimonial/test_temoignage.jpg" width="48" alt="testimonial">
+              <img class="rounded-circle" src="assets/img/testimonial/Photo_NB.jpg" width="48" alt="testimonial">
               <div class="row ps-3 pt-3">
-                <h6 class=" mb-0">George Apostol</h6>
-                <p>Avocat à la Cour</p>
+                <h6 class=" mb-0">Nathan Bonnet</h6>
+                <p>Juriste en entreprise</p>
               </div>
             </div>
             <p class="mb-0">Depuis 2021 maintenant, j'ai l’opportunité de coopérer avec l’équipe du JSS. Leur expertise
@@ -206,7 +219,7 @@
         <div class="card dark-blue-dropdown h-100 border-0 rounded-5">
           <div class="card-body">
             <div class="d-flex align-items-center text-decoration-none pb-2">
-              <img class="rounded-circle" src="assets/img/testimonial/test_temoignage.jpg" width="48" alt="testimonial">
+              <img class="rounded-circle" src="assets/img/testimonial/Photo_SG.jpg" width="48" alt="testimonial">
               <div class="row ps-3 pt-3">
                 <h6 class=" mb-0">Sébastien Gomez</h6>
                 <p>Expert-comptable</p>
@@ -228,15 +241,16 @@
         <div class="card dark-blue-dropdown h-100 border-0 rounded-5">
           <div class="card-body">
             <div class="d-flex align-items-center text-decoration-none pb-2">
-              <img class="rounded-circle" src="assets/img/testimonial/test_temoignage.jpg" width="48" alt="testimonial">
+              <img class="rounded-circle" src="assets/img/testimonial/Photo_JS.jpg" width="48" alt="testimonial">
               <div class="row ps-3 pt-3">
-                <h6 class=" mb-0">Julie Soudaz</h6>
-                <p>Avocat à la Cour</p>
+                <h6 class=" mb-0">Isabelle de Kerviler</h6>
+                <p>Expert-Comptable</p>
               </div>
             </div>
-            <p class="mb-0">Avec le JSS, la collaboration est toujours fluide et efficace. Équipe disponible, réactive
-              et agréable, sur qui je peux compter depuis plusieurs années pour un accompagnement rigoureux de mes
-              clients pour leurs formalités. Un vrai partenaire de confiance.</p>
+            <p class="mb-0">Je tiens à souligner la réactivité et le professionnalisme du JSS pour les réponses
+              apportées à nos dossiers. Ils m'ont rappelée dès le lendemain matin avec des réponses claires aux 2 points
+              que j’avais abordés. On peut donc parler de vive voix à un correspondant du service client en attendant
+              très peu de temps. Un grand bravo !</p>
           </div>
         </div>
       </div>
@@ -245,7 +259,7 @@
         <div class="card dark-blue-dropdown h-100 border-0 rounded-5">
           <div class="card-body">
             <div class="d-flex align-items-center text-decoration-none pb-2">
-              <img class="rounded-circle" src="assets/img/testimonial/test_temoignage.jpg" width="48" alt="testimonial">
+              <img class="rounded-circle" src="assets/img/testimonial/Photo_PL.jpg" width="48" alt="testimonial">
               <div class="row ps-3 pt-3">
                 <h6 class=" mb-0">Perrine Latour</h6>
                 <p>Chef d'entreprise</p>
@@ -261,7 +275,7 @@
         <div class="card dark-blue-dropdown h-100 border-0 rounded-5">
           <div class="card-body">
             <div class="d-flex align-items-center text-decoration-none pb-2">
-              <img class="rounded-circle" src="assets/img/testimonial/test_temoignage.jpg" width="48" alt="testimonial">
+              <img class="rounded-circle" src="assets/img/testimonial/Photo_SR.jpg" width="48" alt="testimonial">
               <div class="row ps-3 pt-3">
                 <h6 class=" mb-0">Stanislas Roquebert</h6>
                 <p>Avocat à la Cour</p>

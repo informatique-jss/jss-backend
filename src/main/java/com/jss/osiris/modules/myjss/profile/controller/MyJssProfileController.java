@@ -278,7 +278,9 @@ public class MyJssProfileController {
 
 		if (currentUser != null && Boolean.TRUE.equals(currentUser.getCanViewAllTiersInWeb())) {
 			return new ResponseEntity<List<Responsable>>(
-					tiersService.getTiers(currentUser.getTiers().getId()).getResponsables(), HttpStatus.OK);
+					tiersService.getTiers(currentUser.getTiers().getId()).getResponsables().stream()
+							.filter(r -> Boolean.TRUE.equals(r.getIsActive())).toList(),
+					HttpStatus.OK);
 		}
 		return new ResponseEntity<List<Responsable>>(new ArrayList<Responsable>(), HttpStatus.OK);
 	}

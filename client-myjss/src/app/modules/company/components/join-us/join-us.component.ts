@@ -31,10 +31,10 @@ export class JoinUsComponent implements OnInit {
     "assets/img/myjss-services/apostilles/myjss_occupe_tout.jpg",
     "assets/img/societe/join-us/team.jpg",
     "assets/img/societe/join-us/join_us_caroussel3.png",
-    "assets/img/myjss-services/apostilles/myjss_occupe_tout.jpg",
-    "assets/img/societe/join-us/team.jpg",
-    "assets/img/societe/join-us/join_us_caroussel3.png",
-    "assets/img/societe/join-us/everybody.png",
+    "assets/img/societe/join-us/Carrousel1.png",
+    "assets/img/societe/join-us/Carrousel2.png",
+    "assets/img/societe/join-us/Carrousel3.png",
+    "assets/img/societe/join-us/Carrousel4.png",
   ];
 
   @ViewChild('modalImage') modalImageRef!: ElementRef<HTMLImageElement>;

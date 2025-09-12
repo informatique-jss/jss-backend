@@ -6,7 +6,7 @@ generic-input {
   border-color: var(--ar-primary);
 }
 
-h2 {
+.text-blue {
   color: var(--ar-heading-secondary-color);
 }
 

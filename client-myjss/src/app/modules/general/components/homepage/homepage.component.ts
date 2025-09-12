@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { AppService } from '../../../main/services/app.service';
 import { ConstantService } from '../../../main/services/constant.service';
 import { DoubleButtonsComponent } from '../../../miscellaneous/components/double-buttons/double-buttons.component';
 import { GenericSwiperComponent } from '../../../miscellaneous/components/generic-swiper/generic-swiper.component';
@@ -39,6 +40,7 @@ export class HomepageComponent implements OnInit {
     private postService: PostService,
     private constantService: ConstantService,
     private titleService: Title, private meta: Meta,
+    private appService: AppService
   ) { }
 
   ngOnInit() {
@@ -51,5 +53,9 @@ export class HomepageComponent implements OnInit {
         this.tendencyPosts = response;
       }
     });
+  }
+
+  openRoute(route: string) {
+    this.appService.openRoute(null, route, undefined);
   }
 }

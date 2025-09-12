@@ -7,6 +7,7 @@ import { Mail } from '../../../general/model/Mail';
 import { AppService } from '../../../main/services/app.service';
 import { GtmService } from '../../../main/services/gtm.service';
 import { FormSubmitPayload, PageInfo } from '../../../main/services/GtmPayload';
+import { PlatformService } from '../../../main/services/platform.service';
 import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { WebinarParticipant } from '../../model/WebinarParticipant';
 import { WebinarParticipantService } from '../../services/webinar.participant.service';
@@ -32,6 +33,7 @@ export class WebinarsComponent implements OnInit {
     private appService: AppService,
     private gtmService: GtmService,
     private titleService: Title, private meta: Meta,
+    private platformService: PlatformService,
     private formBuilder: FormBuilder,) { }
 
   ngOnInit() {
@@ -64,6 +66,15 @@ export class WebinarsComponent implements OnInit {
         setTimeout(() => this.displayForm = true, 0);
       }
     });
+  }
+
+  ngAfterViewInit(): void {
+    if (this.platformService.getNativeDocument())
+      import('jarallax').then(module => {
+        module.jarallax(this.platformService.getNativeDocument()!.querySelectorAll('.jarallax'), {
+          speed: 0.5
+        });
+      });
   }
 
 

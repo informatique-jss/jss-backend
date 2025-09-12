@@ -91,7 +91,7 @@ export class OurTeamComponent implements OnInit {
       { firstname: "Céline", lastname: "L.", title: "Agent de facturation", photo: "celine_agent_de_facturation.jpg" },
     ],
     informatique: [
-      { firstname: "Frédéric", lastname: "B.", title: "Analyste Programmeur", photo: "anonymous.svg" },
+      { firstname: "Frédéric", lastname: "B.", title: "Analyste Programmeur", photo: "frederic_analyste_programmeur.jpg" },
       { firstname: "Pierre", lastname: "C.", title: "Analyste Programmeur", photo: "pierre_analyste_programmeur.jpg" },
     ]
   };
