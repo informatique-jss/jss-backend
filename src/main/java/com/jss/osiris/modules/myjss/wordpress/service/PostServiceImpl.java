@@ -283,6 +283,7 @@ public class PostServiceImpl implements PostService {
         modifyHrefToOpenInNewTab(post);
         modifyImgSrc(post);
         reformatQuotes(post);
+        reformatTables(post);
         reformatFootnotes(post);
 
         addOrUpdatePost(computePost(post));
@@ -377,7 +378,8 @@ public class PostServiceImpl implements PostService {
 
             String updatedImgTag = imgTag
                     .replaceAll("(src=\")" + wordpressMediaBaseUrl, "$1" + apacheMediaBaseUrl)
-                    .replaceAll("(srcset=\")" + wordpressMediaBaseUrl, "$1" + apacheMediaBaseUrl);
+                    .replace("srcset=\"" + wordpressMediaBaseUrl, "srcset=\"" + apacheMediaBaseUrl)
+                    .replace(" " + wordpressMediaBaseUrl, " " + apacheMediaBaseUrl);
 
             imgMatcher.appendReplacement(sb, Matcher.quoteReplacement(updatedImgTag));
         }
@@ -415,6 +417,13 @@ public class PostServiceImpl implements PostService {
         final String CITE_TAG = "<cite";
         post.setOriginalContentText(post.getOriginalContentText().replace(CITE_TAG,
                 CITE_TAG + " class=\"blockquote-footer\" style=\"padding-left:0\""));
+    }
+
+    private void reformatTables(Post post) {
+        if (post.getContentText() != null)
+            post.setContentText(post.getContentText().replaceAll(
+                    "<table class=\"",
+                    "<table class=\"table table-striped "));
     }
 
     /**

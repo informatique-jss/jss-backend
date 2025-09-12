@@ -8,6 +8,7 @@ import { environment } from '../../../../environments/environment';
 import { MY_JSS_SIGN_IN_ROUTE } from '../../../libs/Constants';
 import { validateEmail } from '../../../libs/CustomFormsValidatorsHelper';
 import { getTimeReading } from '../../../libs/FormatHelper';
+import { LiteralDatePipe } from '../../../libs/LiteralDatePipe';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { TrustHtmlPipe } from '../../../libs/TrustHtmlPipe';
 import { AppService } from '../../../services/app.service';
@@ -19,14 +20,12 @@ import { Mail } from '../../model/Mail';
 import { PagedContent } from '../../model/PagedContent';
 import { Pagination } from '../../model/Pagination';
 import { Post } from '../../model/Post';
-import { ReadingFolder } from '../../model/ReadingFolder';
 import { Responsable } from '../../model/Responsable';
 import { ONE_POST_SUBSCRIPTION } from '../../model/Subscription';
 import { AudioPlayerService } from '../../services/audio.player.service';
 import { CommentService } from '../../services/comment.service';
 import { LoginService } from '../../services/login.service';
 import { PostService } from '../../services/post.service';
-import { ReadingFolderService } from '../../services/reading.folder.service';
 import { SubscriptionService } from '../../services/subscription.service';
 import { AvatarComponent } from '../avatar/avatar.component';
 import { BookmarkComponent } from "../bookmark/bookmark.component";
@@ -40,7 +39,7 @@ declare var tns: any;
   selector: 'app-post',
   templateUrl: './post.component.html',
   styleUrls: ['./post.component.css'],
-  imports: [SHARED_IMPORTS, TrustHtmlPipe, AvatarComponent, GenericInputComponent, GenericTextareaComponent, NewsletterComponent, BookmarkComponent],
+  imports: [SHARED_IMPORTS, TrustHtmlPipe, AvatarComponent, GenericInputComponent, GenericTextareaComponent, NewsletterComponent, BookmarkComponent, LiteralDatePipe],
   standalone: true
 })
 export class PostComponent implements OnInit, AfterViewInit {
@@ -66,7 +65,6 @@ export class PostComponent implements OnInit, AfterViewInit {
   audioUrl: string | undefined;
   progress: number = 0;
   progressSubscription: Subscription = new Subscription;
-  readingFolders: ReadingFolder[] = [];
   recipientMail: string | undefined;
 
   currentUser: Responsable | undefined;
@@ -90,7 +88,6 @@ export class PostComponent implements OnInit, AfterViewInit {
     private modalService: NgbModal,
     private cdr: ChangeDetectorRef,
     private gtmService: GtmService,
-    private readingFolderService: ReadingFolderService,
     private titleService: Title, private meta: Meta,
   ) { }
 
@@ -190,7 +187,6 @@ export class PostComponent implements OnInit, AfterViewInit {
 
     this.cancelReply()
     this.fetchMostSeenPosts();
-    this.fetchReadingFolder();
   }
 
   private fetchNextPrevArticleAndComments(post: Post) {
@@ -241,13 +237,6 @@ export class PostComponent implements OnInit, AfterViewInit {
         }
       });
     })
-  }
-
-  fetchReadingFolder() {
-    this.readingFolderService.getReadingFolders().subscribe(response => {
-      if (response)
-        this.readingFolders.push(...response);
-    });
   }
 
   dropdownOpen = false;

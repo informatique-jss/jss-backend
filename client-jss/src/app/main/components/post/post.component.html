@@ -29,7 +29,7 @@
                   <a style="cursor: pointer;" [routerLink]=' "/post/author/" + post.fullAuthor.slug'
                     class="stretched-link d-block">{{post.fullAuthor.name}}</a>
                   <p *ngIf="post.fullAuthor.description" class="fs-8">{{post.fullAuthor.description}}</p>
-                  <span class="list-inline-item d-lg-block fs-8">{{post.date | date:'EEEE d MMMM HH:mm'}}</span>
+                  <span class="list-inline-item d-lg-block fs-8">{{post.date | literalDatePipe}}</span>
                   <span class="list-inline-item d-lg-block fs-8">{{getTimeReading(post.contentText)}}</span>
                 </div>
               </div>
@@ -130,6 +130,8 @@
               <div>
                 <img *ngIf="post.media" class="rounded-2 mb-2 resize-featured-img"
                   [src]="post.media.urlFull ? post.media.urlFull : ''">
+                <figcaption class="figure-caption" *ngIf=" post.media.captionText">{{post.media.captionText}}
+                </figcaption>
               </div>
               <div class="mb-5">
                 <span class="fs-6" [innerHTML]="post.contentText| trustHtml"></span>
