@@ -260,12 +260,16 @@
         <div class="card h-100 border-0 rounded-5 w-100">
           <div class="card-body pb-3 px-3">
             <img src="assets/img/icons/Annonces.svg" alt="Icon">
-            <h3 class="h4 text-white" routerLink="/services/announcement" style="cursor: pointer;">Annonces légales</h3>
+            <h3 class="h4 text-white">
+              <a routerLink="/services/announcement" class="text-white text-decoration-none">
+                Annonces légales
+              </a>
+            </h3>
             <p class="mb-0">Toutes les annonces légales, sur tout le territoire et sur tous les supports.</p>
           </div>
           <div class="card-footer border-0 pt-3 mb-3">
-            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" routerLink="/services/announcement"
-              aria-label="Learn more">
+            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle"
+              (click)="openRoute('/services/announcement')">
               <i class="ai-arrow-right"></i>
             </a>
           </div>
@@ -275,14 +279,16 @@
         <div class="card h-100 border-0 rounded-5 w-100">
           <div class="card-body pb-3 px-3">
             <img src="assets/img/icons/Apostille.svg" alt="Icon">
-            <h3 class="h4 text-white" routerLink="/services/apostille" style="cursor: pointer;">Apostilles &
-              Légalisations
+            <h3 class="h4 text-white">
+              <a routerLink="/services/apostille" class="text-white text-decoration-none">
+                Apostille & Légalisation
+              </a>
             </h3>
             <p class="mb-0">Authentification et certification rapides et conformes de vos documents valables à
               l’international.</p>
           </div>
           <div class="card-footer border-0 pt-3 mb-3">
-            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" routerLink="/services/apostille"
+            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" (click)="openRoute('/services/apostille')"
               aria-label="Learn more">
               <i class="ai-arrow-right"></i>
             </a>
@@ -297,12 +303,16 @@
         <div class="card h-100 border-0 rounded-5 w-100">
           <div class="card-body pb-3 px-3">
             <img src="assets/img/icons/Domiciliation.svg" alt="Icon">
-            <h3 class="h4 text-white" routerLink="/services/domiciliation" style="cursor: pointer;">Domiciliation</h3>
+            <h3 class="h4 text-white">
+              <a routerLink="/services/domiciliation" class="text-white text-decoration-none">
+                Domiciliation
+              </a>
+            </h3>
             <p class="mb-0">Une domiciliation au cœur de Paris avec gestion simplifiée.</p>
           </div>
           <div class="card-footer border-0 pt-3 mb-3">
-            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" routerLink="/services/domiciliation"
-              aria-label="Learn more">
+            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle"
+              (click)="openRoute('/services/domiciliation')" aria-label="Learn more">
               <i class="ai-arrow-right"></i>
             </a>
           </div>
@@ -312,12 +322,15 @@
         <div class="card h-100 border-0 rounded-5 w-100">
           <div class="card-body pb-3 px-3">
             <img src="assets/img/icons/Fourniture_documents.svg" alt="Icon">
-            <h3 class="h4 text-white" routerLink="/services/document" style="cursor: pointer;">Fourniture de documents
+            <h3 class="h4 text-white">
+              <a routerLink="/services/document" class="text-white text-decoration-none">
+                Fourniture de documents
+              </a>
             </h3>
             <p class="mb-0">Vos documents officiels fournis rapidement et en toute conformité.</p>
           </div>
           <div class="card-footer border-0 pt-3 mb-3">
-            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" routerLink="/services/document"
+            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" (click)="openRoute('/services/document')"
               aria-label="Learn more">
               <i class="ai-arrow-right"></i>
             </a>

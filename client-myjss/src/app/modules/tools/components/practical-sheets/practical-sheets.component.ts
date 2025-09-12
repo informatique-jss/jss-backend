@@ -176,6 +176,10 @@ export class PracticalSheetsComponent implements OnInit {
     this.appService.openRoute(event, "post/" + slug, undefined);
   }
 
+  openRoute(route: string) {
+    this.appService.openRoute(undefined, route, undefined);
+  }
+
   isExpanded(index: number): boolean {
     return this.expandedCardIndex === index;
   }

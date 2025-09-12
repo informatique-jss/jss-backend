@@ -55,5 +55,9 @@ export class DomiciliationComponent implements OnInit {
       });
   }
 
+  openRoute(route: string) {
+    this.appService.openRoute(undefined, route, undefined);
+  }
+
 
 }

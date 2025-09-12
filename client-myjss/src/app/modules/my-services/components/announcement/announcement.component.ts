@@ -63,4 +63,8 @@ export class AnnouncementComponent implements OnInit {
       });
   }
 
+  openRoute(route: string) {
+    this.appService.openRoute(undefined, route, undefined);
+  }
+
 }
