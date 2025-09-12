@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Meta, Title } from '@angular/platform-browser';
 import { Observable } from 'rxjs';
+import { LiteralDatePipe } from '../../../libs/LiteralDatePipe';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { TimeFormatPipe } from '../../../libs/TimeFormatPipe';
 import { AppService } from '../../../services/app.service';
@@ -20,7 +21,7 @@ import { TagService } from '../../services/tag.service';
   selector: 'podcasts',
   templateUrl: './podcasts.component.html',
   styleUrls: ['./podcasts.component.css'],
-  imports: [SHARED_IMPORTS, TimeFormatPipe],
+  imports: [SHARED_IMPORTS, TimeFormatPipe, LiteralDatePipe],
   standalone: true
 })
 export class PodcastsComponent implements OnInit {

@@ -66,7 +66,7 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         @Query("select p from Post p join p.postViews v where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and :tag MEMBER OF p.postTags and size(p.jssCategories) > 0 group by p.id order by sum(v.count) desc ")
         Page<Post> findMostSeenPostTag(Pageable pageable, @Param("tag") Tag tag);
 
-        @Query("select p from Post p join p.postViews v where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and p.fullAuthor =:author and size(p.jssCategories) > 0 group by p.id order by sum(v.count) desc ")
+        @Query("select p from Post p join p.postViews v where p.isCancelled = false and coalesce(p.isHiddenAuthor,false)=false AND p.date<=CURRENT_TIMESTAMP and p.fullAuthor =:author and size(p.jssCategories) > 0 group by p.id order by sum(v.count) desc ")
         Page<Post> findMostSeenPostAuthor(Pageable pageable, @Param("author") Author author);
 
         @Query("select p from Post p join p.postViews v where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and :serie MEMBER OF p.postSerie and size(p.jssCategories) > 0 group by p.id order by sum(v.count) desc ")
@@ -106,7 +106,7 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         Page<Post> findByPostTagsAndIsCancelled(Tag tag, Category category, boolean b, LocalDateTime consultationDate,
                         Pageable pageableRequest);
 
-        @Query("SELECT p FROM Post p WHERE p.fullAuthor =:author AND p.isCancelled = :b AND p.date<=CURRENT_TIMESTAMP AND p.date>:consultationDate AND p.date<=CURRENT_TIMESTAMP ")
+        @Query("SELECT p FROM Post p WHERE p.fullAuthor =:author AND p.isCancelled = :b and coalesce(p.isHiddenAuthor,false)=false AND p.date<=CURRENT_TIMESTAMP AND p.date>:consultationDate AND p.date<=CURRENT_TIMESTAMP ")
         Page<Post> findByFullAuthorAndIsCancelled(Author author, boolean b, LocalDateTime consultationDate,
                         Pageable pageableRequest);
 

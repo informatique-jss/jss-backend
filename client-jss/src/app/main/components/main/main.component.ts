@@ -4,6 +4,7 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from '../../../../environments/environment';
 import { MY_JSS_HOME_ROUTE } from '../../../libs/Constants';
 import { validateEmail } from '../../../libs/CustomFormsValidatorsHelper';
+import { LiteralDatePipe } from '../../../libs/LiteralDatePipe';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { AppService } from '../../../services/app.service';
 import { ConstantService } from '../../../services/constant.service';
@@ -30,7 +31,7 @@ declare var tns: any;
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, NgbTooltipModule, BookmarkComponent]
+  imports: [SHARED_IMPORTS, NgbTooltipModule, BookmarkComponent, LiteralDatePipe]
 })
 export class MainComponent implements OnInit {
 

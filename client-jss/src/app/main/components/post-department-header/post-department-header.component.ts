@@ -33,7 +33,8 @@ export class PostDepartmentHeaderComponent implements OnInit {
     this.titleService.setTitle("Tous nos articles - JSS");
     this.meta.updateTag({ name: 'description', content: "Retrouvez l'actualité juridique et économique. JSS analyse pour vous les dernières annonces, formalités et tendances locales." });
     let code = this.activeRoute.snapshot.params['code'];
-    if (code)
+    if (code) {
+      this.selectedDepartment = undefined;
       this.departmentService.getPublishingDepartmentByCode(code).subscribe(response => {
         if (response) {
           this.selectedDepartment = response;
@@ -41,6 +42,7 @@ export class PostDepartmentHeaderComponent implements OnInit {
           this.meta.updateTag({ name: 'description', content: "Retrouvez l'actualité juridique et économique en " + this.selectedDepartment!.name + " (" + this.selectedDepartment!.code + "). JSS analyse pour vous les dernières annonces, formalités et tendances locales." });
         }
       });
+    }
   }
 
   updateSelectedDepartment(department: PublishingDepartment) {

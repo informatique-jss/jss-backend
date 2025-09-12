@@ -42,6 +42,7 @@ export class PostTagHeaderComponent implements OnInit {
     this.meta.updateTag({ name: 'description', content: "Retrouvez l'actualité juridique et économique. JSS analyse pour vous les dernières annonces, formalités et tendances locales." });
     let slug = this.activeRoute.snapshot.params['slug'];
     if (slug) {
+      this.selectedTag = undefined;
       this.tagService.getTagBySlug(slug).subscribe(response => {
         if (response) {
           this.selectedTag = response;

@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { MY_JSS_HOME_ROUTE, MY_JSS_NEW_ANNOUNCEMENT_ROUTE, MY_JSS_NEW_FORMALITY_ROUTE, MY_JSS_SIGN_IN_ROUTE } from '../../../libs/Constants';
 import { capitalizeName } from '../../../libs/FormatHelper';
+import { LiteralDatePipe } from '../../../libs/LiteralDatePipe';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { AppService } from '../../../services/app.service';
 import { ConstantService } from '../../../services/constant.service';
@@ -27,7 +28,8 @@ import { AvatarComponent } from '../avatar/avatar.component';
   imports: [
     SHARED_IMPORTS,
     AvatarComponent,
-    NgbTooltipModule
+    NgbTooltipModule,
+    LiteralDatePipe
   ],
   standalone: true
 })

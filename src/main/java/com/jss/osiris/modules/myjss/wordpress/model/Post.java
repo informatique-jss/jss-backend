@@ -197,6 +197,7 @@ public class Post implements IId, Serializable {
 
     private Boolean isCancelled;
     private Boolean isLegacy;
+    private Boolean isHiddenAuthor;
 
     @OneToMany(mappedBy = "post")
     @JsonIgnore
@@ -552,5 +553,13 @@ public class Post implements IId, Serializable {
 
     public void setIsLegacy(Boolean isLegacy) {
         this.isLegacy = isLegacy;
+    }
+
+    public Boolean getIsHiddenAuthor() {
+        return isHiddenAuthor;
+    }
+
+    public void setIsHiddenAuthor(Boolean isHiddenAuthor) {
+        this.isHiddenAuthor = isHiddenAuthor;
     }
 }

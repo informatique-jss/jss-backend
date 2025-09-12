@@ -20,7 +20,6 @@ export abstract class GenericHubComponent<T extends { id: number }> implements O
   linkedTags: Tag[] = [] as Array<Tag>;
   mostSeenPostsByEntityType: Post[] = [] as Array<Post>;
   postsByEntityType: { [key: number]: Array<Post> } = {};
-  postsByEntityTypeFullLoaded: number[] = [];
 
   tagsByEntityType: Tag[] = [] as Array<Tag>;
   pageSize: number = 15;
@@ -39,6 +38,10 @@ export abstract class GenericHubComponent<T extends { id: number }> implements O
   ) { }
 
   ngOnInit() {
+    this.refresh();
+  }
+
+  refresh() {
     if (this.activeRoute.snapshot.params['isDisplayNews'])
       this.isDisplayNewPosts = this.activeRoute.snapshot.params['isDisplayNews'];
     this.hubForm = this.formBuilder.group({});
@@ -56,11 +59,10 @@ export abstract class GenericHubComponent<T extends { id: number }> implements O
   abstract getMostSeenPostByEntityType(selectedEntityType: T, page: number, pageSize: number): Observable<PagedContent<Post>>
 
   fetchPosts(page: number) {
-    if (this.selectedEntityType && this.selectedEntityType.id && (this.postsByEntityTypeFullLoaded.indexOf(this.selectedEntityType.id) < 0 || (this.searchText && this.searchText.length > 2)))
+    if (this.selectedEntityType && this.selectedEntityType.id && (!this.searchText || this.searchText.length > 2))
       this.getAllPostByEntityType(this.selectedEntityType, page, this.pageSize, this.searchText, this.isDisplayNewPosts).subscribe(data => {
         if (data && this.selectedEntityType && !this.searchText) {
           this.postsByEntityType[this.selectedEntityType.id] = data.content;
-          this.postsByEntityTypeFullLoaded.push(this.selectedEntityType.id);
         }
         if (data && this.searchText && this.searchText.length > 2)
           this.searchResults = data.content;
