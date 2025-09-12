@@ -17,7 +17,6 @@ import jakarta.persistence.Transient;
 public class Serie implements Serializable {
 
     @Id
-    @JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
     private Integer id;
 
     @JsonView(JacksonViews.MyJssDetailedView.class)
@@ -28,7 +27,6 @@ public class Serie implements Serializable {
 
     private Integer count;
 
-    @JsonView(JacksonViews.MyJssDetailedView.class)
     private Integer serieOrder;
 
     @Transient
@@ -44,7 +42,6 @@ public class Serie implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_media")
-    @JsonView(JacksonViews.MyJssDetailedView.class)
     private Media picture;
 
     public Integer getId() {

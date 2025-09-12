@@ -207,7 +207,6 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/series")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<Page<Serie>> getSeries(
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size,
