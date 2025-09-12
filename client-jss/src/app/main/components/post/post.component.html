@@ -154,7 +154,7 @@
                 <!-- Lire aussi -->
                 <div *ngIf="post.relatedPosts.length > 0" class="my-4">
                   <p class="fw-bold">LIRE AUSSI</p>
-                  <div class="row border-left-red ms-0 ps-1 py-1">
+                  <div class="row border-left-blue ms-0 ps-1 py-1">
                     <a *ngFor="let relatedPost of post.relatedPosts.slice(0, 3)"
                       [routerLink]='"/post/" + relatedPost.slug' class="card-truncate-1">
                       <h6 class="m-0 p-1"><img *ngIf="relatedPost.isPremium" class="px-0 me-1"
@@ -195,7 +195,7 @@
                 <!-- Thematiques associées -->
                 <div *ngIf="post.postTags.length > 0" class="my-4 border-light border-top pt-3 mt-3">
                   <p class="fw-bold">THÉMATIQUES ASSOCIÉES</p>
-                  <div class="border-left-red ms-0 ps-1 pt-1 pb-0">
+                  <div class="border-left-blue ms-0 ps-1 pt-1 pb-0">
                     <ul class="tag-cloud mb-0 list-inline">
                       <li *ngFor="let tag of post.postTags" class="list-inline-item pb-1"><a
                           class="btn bg-light text-secondary bg-hover-danger text-hover-white bg-hover-secondary"
