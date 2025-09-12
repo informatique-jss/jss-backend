@@ -199,6 +199,7 @@ public class Post implements IId, Serializable {
     private Boolean isLegacy;
 
     @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+    @IndexedField
     private Boolean isHiddenAuthor;
 
     @OneToMany(mappedBy = "post")

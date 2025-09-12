@@ -23,6 +23,7 @@ export interface Post {
   isBookmarked: boolean;
   relatedPosts: Post[];
   mediaTimeLength: number;
+  isHiddenAuthor: boolean;
 
   // Computed field
   fullAuthor: Author;

@@ -279,7 +279,8 @@
                   </div>
                 </div>
                 <div class="row align-items-center">
-                  <div class="col-lg-6">
+                  <div class="col-lg-6"
+                    *ngIf="post.text.isHiddenAuthor==undefined || post.text.isHiddenAuthor==null || post.text.isHiddenAuthor==false">
                     <div class="author-block">
                       <ul class="avatar list-inline mb-0">
                         <li class="list-inline-item align-items-center" *ngIf="post.text.author"><a class="fs-9"><img

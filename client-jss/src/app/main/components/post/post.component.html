@@ -20,7 +20,8 @@
           <hr class="d-none d-lg-block">
           <div class="row inline-row align-items-center mb-2">
             <!-- Author info -->
-            <div class="col-auto position-relative border-end pe-1">
+            <div class="col-auto position-relative border-end pe-1"
+              *ngIf="post.isHiddenAuthor==undefined || post.isHiddenAuthor==null || post.isHiddenAuthor==false">
               <div class="row align-items-center">
                 <div class="col-auto avatar avatar-xl">
                   <img class="avatar-img rounded-circle" [src]="post.fullAuthor.avatar_url_size_48" alt="avatar">
