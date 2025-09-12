@@ -157,6 +157,13 @@ export class PostComponent implements OnInit, AfterViewInit {
     }
   }
 
+  shareOnBluesky() {
+    if (this.post && this.platformService.isBrowser()) {
+      let url = environment.frontendUrl + "post/" + this.post.slug;
+      window.open("https://bsky.app/intent/compose?text=" + url + "&title=" + this.extractContent(this.post.titleText) + "&summary=" + this.extractContent(this.post.excerptText), "_blank");
+    }
+  }
+
   shareOnTwitter() {
     if (this.post && this.platformService.isBrowser()) {
       let url = environment.frontendUrl + "post/" + this.post.slug;

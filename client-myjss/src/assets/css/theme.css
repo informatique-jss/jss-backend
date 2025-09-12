@@ -16505,6 +16505,12 @@ html:not([dir=rtl]) .range-slider-ui.noUi-horizontal .noUi-handle {
   border-color: #405de6 !important;
 }
 
+.btn-bluesky:hover, .btn-bluesky:focus, .btn-bluesky:active {
+  color: #fff !important;
+  background-color: #405de6 !important;
+  border-color: #405de6 !important;
+}
+
 .btn-kickstarter:hover, .btn-kickstarter:focus, .btn-kickstarter:active {
   color: #fff !important;
   background-color: #2bde73 !important;

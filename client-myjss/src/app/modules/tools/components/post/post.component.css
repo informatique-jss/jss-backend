@@ -1,3 +1,18 @@
 .citing-author {
   color: var(--ar-tertiary);
 }
+
+.btn-icon-bluesky {
+  --ar-btn-size: 3rem;
+  width: var(--ar-btn-size);
+  height: var(--ar-btn-size);
+}
+
+.btn-icon-bluesky img {
+  transition: filter 0.2s ease-in-out;
+}
+
+.btn-icon-bluesky:hover img,
+.btn-icon-bluesky:focus img {
+  filter: brightness(0) invert(1);
+}
