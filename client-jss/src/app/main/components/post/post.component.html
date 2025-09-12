@@ -91,6 +91,11 @@
                             style="width: 48px; height: 48px;">
                             <i class="bi bi-facebook fs-4"></i>
                           </a>
+                          <a (click)="shareOnBluesky()"
+                            class="btn btn-primary bg-light border-0 rounded-circle d-flex justify-content-center align-items-center"
+                            style="width: 48px; height: 48px;">
+                            <i class="bi bi-bluesky fs-4"></i>
+                          </a>
                           <a (click)="shareByMail()"
                             class="btn btn-primary bg-light border-0 rounded-circle d-flex justify-content-center align-items-center"
                             style="width: 48px; height: 48px;">
@@ -134,7 +139,7 @@
                 <figcaption class="figure-caption" *ngIf=" post.media.captionText">{{post.media.captionText}}
                 </figcaption>
               </div>
-              <div class="mb-5">
+              <div class="mb-5 mt-2">
                 <span class="fs-6" [innerHTML]="post.contentText| trustHtml"></span>
 
                 <!-- Bannière d'abonnement en bas de l'article visible -->
@@ -182,6 +187,11 @@
                         class="btn btn-primary rounded-circle d-flex justify-content-center align-items-center"
                         style="width: 48px; height: 48px;">
                         <i class="bi bi-facebook fs-4"></i>
+                      </a>
+                      <a (click)="shareOnBluesky()"
+                        class="btn btn-primary rounded-circle d-flex justify-content-center align-items-center"
+                        style="width: 48px; height: 48px;">
+                        <i class="bi bi-bluesky fs-4"></i>
                       </a>
                       <a (click)="shareByMail()"
                         class="btn btn-primary rounded-circle d-flex justify-content-center align-items-center"

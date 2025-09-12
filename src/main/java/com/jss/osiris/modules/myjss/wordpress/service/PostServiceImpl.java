@@ -422,8 +422,8 @@ public class PostServiceImpl implements PostService {
     private void reformatTables(Post post) {
         if (post.getContentText() != null)
             post.setContentText(post.getContentText().replaceAll(
-                    "<table class=\"",
-                    "<table class=\"table table-striped "));
+                    "has-fixed-layout",
+                    "has-fixed-layout table table-bordered "));
     }
 
     /**

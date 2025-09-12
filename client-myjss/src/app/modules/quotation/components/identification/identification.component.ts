@@ -167,7 +167,8 @@ export class IdentificationComponent implements OnInit {
   refreshIsRegisteredAffaire() {
     if (this.quotation)
       for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++)
-        this.isRegisteredAffaire[i] = this.quotation.assoAffaireOrders[i].affaire.siret != null && this.quotation.assoAffaireOrders[i].affaire.siret != undefined && this.quotation.assoAffaireOrders[i].affaire.siret != "";
+        if (this.quotation.assoAffaireOrders[i].affaire)
+          this.isRegisteredAffaire[i] = this.quotation.assoAffaireOrders[i].affaire.siret != null && this.quotation.assoAffaireOrders[i].affaire.siret != undefined && this.quotation.assoAffaireOrders[i].affaire.siret != "";
   }
 
   addAffaire() {

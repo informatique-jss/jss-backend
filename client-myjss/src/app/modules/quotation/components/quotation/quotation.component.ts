@@ -89,6 +89,7 @@ export class QuotationComponent implements OnInit {
         this.appService.hideLoadingSpinner();
         this.appService.openRoute(event, "/quotation/checkout/", undefined);
       });
+      return;
     }
 
     this.maxAccessibleStepIndex = parseInt(this.quotationService.getCurrentDraftQuotationStep() != null ? this.quotationService.getCurrentDraftQuotationStep()! : "0");
