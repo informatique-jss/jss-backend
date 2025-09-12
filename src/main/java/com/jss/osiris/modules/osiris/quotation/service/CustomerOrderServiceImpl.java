@@ -2012,6 +2012,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         CustomerOrder customerOrder = new CustomerOrder();
         boolean isRecurring = false;
         AssoProvisionPostNewspaper assoProvisionPostNewspaper = new AssoProvisionPostNewspaper();
+        customerOrder.setServiceFamilyGroup(constantService.getServiceFamilyGroupOther());
 
         switch (subscriptionType) {
             case Subscription.ANNUAL_SUBSCRIPTION:
@@ -2097,7 +2098,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         customerOrder.setResponsable(null);
         customerOrder.setIsQuotation(false);
 
-        return customerOrder;
+        if (employeeService.getCurrentMyJssUser() != null)
+            return addOrUpdateCustomerOrder(customerOrder, true, false);
+        else
+            return customerOrder;
     }
 
     @Override

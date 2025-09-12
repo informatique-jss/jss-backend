@@ -84,7 +84,11 @@ export class QuotationComponent implements OnInit {
       this.appService.showLoadingSpinner();
       this.customerOrderService.getCustomerOrderForSubscription(this.subscriptionType, this.isPriceReductionForSubscription, this.idArticle).subscribe(computedCustomerOrder => {
         this.customerOrder = computedCustomerOrder;
-        this.customerOrderService.setCurrentDraftOrder(this.customerOrder);
+        if (this.customerOrder && this.customerOrder.id)
+          this.customerOrderService.setCurrentDraftOrderId(this.customerOrder.id);
+        else
+          this.customerOrderService.setCurrentDraftOrder(this.customerOrder);
+
 
         this.appService.hideLoadingSpinner();
         this.appService.openRoute(event, "/quotation/checkout/", undefined);

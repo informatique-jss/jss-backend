@@ -420,8 +420,8 @@ public class PostServiceImpl implements PostService {
     }
 
     private void reformatTables(Post post) {
-        if (post.getContentText() != null)
-            post.setContentText(post.getContentText().replaceAll(
+        if (post.getOriginalContentText() != null)
+            post.setOriginalContentText(post.getOriginalContentText().replaceAll(
                     "has-fixed-layout",
                     "has-fixed-layout table table-bordered "));
     }
