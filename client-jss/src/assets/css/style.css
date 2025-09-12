@@ -13636,7 +13636,7 @@ ul.entry-comment .comment-content ul, ul.entry-comment .comment-content ol {
 }
 
 .header-hub-bg {
-  background: #F6F9FC;
+  background: var(--bs-gray-100);
   min-height: 100px;
 }
 

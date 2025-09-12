@@ -168,6 +168,7 @@ public class Post implements IId, Serializable {
     @ManyToMany
     @JoinTable(name = "asso_post_serie", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_serie"))
     @IndexedField
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private List<Serie> postSerie;
 
     @ManyToOne(fetch = FetchType.LAZY)

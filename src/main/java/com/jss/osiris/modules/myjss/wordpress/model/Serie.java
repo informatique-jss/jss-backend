@@ -2,6 +2,9 @@ package com.jss.osiris.modules.myjss.wordpress.model;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -12,20 +15,29 @@ import jakarta.persistence.Transient;
 
 @Entity
 public class Serie implements Serializable {
+
     @Id
     private Integer id;
+
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private String name;
+
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private String slug;
+
     private Integer count;
+
     private Integer serieOrder;
 
     @Transient
     private AcfSerie acf;
 
     @Column(columnDefinition = "TEXT")
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private String titleText;
 
     @Column(columnDefinition = "TEXT")
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private String excerptText;
 
     @ManyToOne(fetch = FetchType.LAZY)

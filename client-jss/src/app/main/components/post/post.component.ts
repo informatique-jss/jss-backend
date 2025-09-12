@@ -21,11 +21,13 @@ import { PagedContent } from '../../model/PagedContent';
 import { Pagination } from '../../model/Pagination';
 import { Post } from '../../model/Post';
 import { Responsable } from '../../model/Responsable';
+import { Serie } from '../../model/Serie';
 import { ONE_POST_SUBSCRIPTION } from '../../model/Subscription';
 import { AudioPlayerService } from '../../services/audio.player.service';
 import { CommentService } from '../../services/comment.service';
 import { LoginService } from '../../services/login.service';
 import { PostService } from '../../services/post.service';
+import { SerieService } from '../../services/serie.service';
 import { SubscriptionService } from '../../services/subscription.service';
 import { AvatarComponent } from '../avatar/avatar.component';
 import { BookmarkComponent } from "../bookmark/bookmark.component";
@@ -50,6 +52,8 @@ export class PostComponent implements OnInit, AfterViewInit {
   nextPost: Post | undefined;
   previousPost: Post | undefined;
   commentsPagination: Pagination = {} as Pagination;
+  seriePost: Serie | undefined;
+  postsOfSerie: Post[] = []
 
   comments: Comment[] = [];
   newComment: Comment = {} as Comment;
@@ -82,6 +86,7 @@ export class PostComponent implements OnInit, AfterViewInit {
     private appService: AppService,
     private platformService: PlatformService,
     private audioService: AudioPlayerService,
+    private serieService: SerieService,
     private commentService: CommentService,
     private subscriptionService: SubscriptionService,
     private loginService: LoginService,
@@ -169,7 +174,7 @@ export class PostComponent implements OnInit, AfterViewInit {
       this.postService.getOfferedPostByToken(this.validationToken, mail).subscribe(post => {
         this.post = post;
         if (this.post) {
-          this.fetchNextPrevArticleAndComments(this.post);
+          this.fetchNextPrevArticleAndSerieAndComments(this.post);
         }
       });
 
@@ -179,7 +184,7 @@ export class PostComponent implements OnInit, AfterViewInit {
         this.postService.getPostBySlug(this.slug).subscribe(post => {
           this.post = post;
           if (this.post) {
-            this.fetchNextPrevArticleAndComments(this.post);
+            this.fetchNextPrevArticleAndSerieAndComments(this.post);
           }
         })
       }
@@ -189,7 +194,15 @@ export class PostComponent implements OnInit, AfterViewInit {
     this.fetchMostSeenPosts();
   }
 
-  private fetchNextPrevArticleAndComments(post: Post) {
+  private fetchNextPrevArticleAndSerieAndComments(post: Post) {
+    if (post.postSerie && post.postSerie.length > 0) {
+      this.seriePost = post.postSerie[0];
+      this.postService.getAllPostsBySerie(this.seriePost, 0, 50, "").subscribe(res => {
+        if (res && res.content.length > 0)
+          this.postsOfSerie = res.content;
+      });
+      this.postsOfSerie
+    }
     this.titleService.setTitle(post.titleText + " - JSS");
     this.meta.updateTag({ name: 'description', content: this.getFirstSentenceFromHtml(post.excerptText) });
     this.postService.getNextArticle(post).subscribe(response => this.nextPost = response);
