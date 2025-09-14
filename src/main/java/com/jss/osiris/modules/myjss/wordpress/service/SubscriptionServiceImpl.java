@@ -20,6 +20,7 @@ import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
+import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
 
 import jakarta.transaction.Transactional;
 
@@ -40,6 +41,9 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Autowired
     AssoProvisionPostNewspaperService assoProvisionPostNewspaperService;
+
+    @Autowired
+    ResponsableService responsableService;
 
     @Override
     public List<Subscription> getSubscriptionsForMail(Mail mail) {
@@ -171,8 +175,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                         newSubscription.setSubscriptionType(Subscription.MONTHLY_SUBSCRIPTION);
 
                     } else if (service.getServiceTypes().get(0).getId().equals(constantService
-                            .getServiceTypeKioskNewspaperBuy().getId())) {
-                        newSubscription.setSubscriptionType(Subscription.NEWSPAPER_KIOSK_BUY);
+                            .getServiceTypeUniqueArticleBuy().getId())) {
+                        newSubscription.setSubscriptionType(Subscription.ONE_POST_SUBSCRIPTION);
 
                         AssoProvisionPostNewspaper assoProvisionPostNewspaper = assoProvisionPostNewspaperService
                                 .getAssoProvisionPostNewspaperByProvision(service.getProvisions().get(0));
@@ -180,8 +184,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                             newSubscription.setPost(assoProvisionPostNewspaper.getPost());
 
                     } else if (service.getServiceTypes().get(0).getId().equals(constantService
-                            .getServiceTypeUniqueArticleBuy().getId())) {
-                        newSubscription.setSubscriptionType(Subscription.ONE_POST_SUBSCRIPTION);
+                            .getServiceTypeKioskNewspaperBuy().getId())) {
+                        newSubscription.setSubscriptionType(Subscription.NEWSPAPER_KIOSK_BUY);
 
                         AssoProvisionPostNewspaper assoProvisionPostNewspaper = assoProvisionPostNewspaperService
                                 .getAssoProvisionPostNewspaperByProvision(service.getProvisions().get(0));
@@ -189,7 +193,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                             newSubscription.setNewspaper(assoProvisionPostNewspaper.getNewspaper());
                     }
 
-                    if (service.getAssoAffaireOrder().getCustomerOrder().getIsRecurring()) {
+                    if (Boolean.TRUE.equals(service.getAssoAffaireOrder().getCustomerOrder().getIsRecurring())) {
                         newSubscription
                                 .setStartDate(service.getAssoAffaireOrder().getCustomerOrder().getRecurringStartDate());
                         newSubscription
@@ -198,6 +202,12 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
                     addOrUpdateSubscription(newSubscription);
                 }
+            }
+
+            Responsable responsable = responsableService.getResponsable(customerOrder.getId());
+            if (responsable != null) {
+                responsable.setNumberOfGiftPostsPerMonth(2);
+                responsableService.addOrUpdateResponsable(responsable);
             }
         }
     }

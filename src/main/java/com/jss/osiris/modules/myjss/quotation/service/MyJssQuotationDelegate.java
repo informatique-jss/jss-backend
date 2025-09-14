@@ -183,7 +183,7 @@ public class MyJssQuotationDelegate {
 
         if (isValidation != null && isValidation) {
             customerOrderService.addOrUpdateCustomerOrderStatus(fetchOrder, CustomerOrderStatus.BEING_PROCESSED, true);
-            if (customerOrderService.isOnlyJssAnnouncement(fetchOrder, true)) {
+            if (customerOrderService.isOnlyJssAnnouncementOrSubscription(fetchOrder, true)) {
                 quotationValidationHelper.validateQuotationAndCustomerOrder(fetchOrder, null);
                 customerOrderService.autoBilledProvisions(fetchOrder);
             }
@@ -344,6 +344,17 @@ public class MyJssQuotationDelegate {
         // Validate Quotation or CustomerOrder
         quotationValidationHelper.validateQuotationAndCustomerOrder(quotation, null);
 
+        // Associate subscription
+        if (quotation.getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders())
+                if (asso.getServices() != null)
+                    for (Service ser : asso.getServices())
+                        if (ser.getProvisions() != null)
+                            for (Provision pro : ser.getProvisions())
+                                if (pro.getAssoProvisionPostNewspapers() != null
+                                        && pro.getAssoProvisionPostNewspapers().size() > 0)
+                                    pro.getAssoProvisionPostNewspapers().get(0).setProvision(pro);
+
         // Save Quotation or CustomerOrder
         if (!quotation.getIsQuotation()) {
             ((CustomerOrder) quotation).setCustomerOrderStatus(
@@ -352,7 +363,7 @@ public class MyJssQuotationDelegate {
             if (isValidation) {
                 quotation = customerOrderService.addOrUpdateCustomerOrderStatus((CustomerOrder) quotation,
                         CustomerOrderStatus.BEING_PROCESSED, true);
-                if (customerOrderService.isOnlyJssAnnouncement((CustomerOrder) quotation, true))
+                if (customerOrderService.isOnlyJssAnnouncementOrSubscription((CustomerOrder) quotation, true))
                     customerOrderService.autoBilledProvisions((CustomerOrder) quotation);
             }
         }
@@ -365,13 +376,15 @@ public class MyJssQuotationDelegate {
                         QuotationStatus.TO_VERIFY);
         }
 
-        if (hasToSendConfirmation)
+        if (hasToSendConfirmation) {
+            Responsable respo = responsableService.getResponsable(quotation.getResponsable().getId());
             if (quotation.getIsQuotation())
-                mailHelper.sendConfirmationQuotationCreationMyJss(quotation.getResponsable().getMail().getMail(),
+                mailHelper.sendConfirmationQuotationCreationMyJss(respo.getMail().getMail(),
                         (Quotation) quotation);
             else
-                mailHelper.sendConfirmationOrderCreationMyJss(quotation.getResponsable().getMail().getMail(),
+                mailHelper.sendConfirmationOrderCreationMyJss(respo.getMail().getMail(),
                         (CustomerOrder) quotation);
+        }
 
         if (shouldConnectUserAtTheEnd) {
             userScopeService.authenticateUser(quotation.getResponsable(), request);

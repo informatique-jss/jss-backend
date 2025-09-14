@@ -228,8 +228,8 @@ export class CheckoutComponent implements OnInit {
         this.quotationService.setCurrentDraftQuotation(this.quotation);
         if (this.quotation.isQuotation)
           this.quotationService.saveFinalQuotation(this.quotation as Quotation, !isDraft).subscribe(response => {
-            this.trackPurchase(isDraft, response.id);
             if (response && response.id) {
+              this.trackPurchase(isDraft, response.id);
               this.cleanStorageData();
               this.appService.hideLoadingSpinner();
               this.loginService.refreshUserRoles().subscribe(role => {
@@ -242,8 +242,8 @@ export class CheckoutComponent implements OnInit {
           });
         else
           this.orderService.saveFinalOrder(this.quotation as CustomerOrder, !isDraft).subscribe(response => {
-            this.trackPurchase(isDraft, response.id);
             if (response && response.id) {
+              this.trackPurchase(isDraft, response.id);
               this.cleanStorageData();
               this.appService.hideLoadingSpinner();
               this.loginService.refreshUserRoles().subscribe(role => {

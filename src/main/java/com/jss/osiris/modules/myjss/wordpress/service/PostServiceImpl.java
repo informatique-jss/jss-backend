@@ -871,16 +871,19 @@ public class PostServiceImpl implements PostService {
                                 .getSubscriptionsForMail(signedInUser.getMail());
                         for (Subscription sub : subscriptions) {
                             if (sub.getStartDate() != null && sub.getEndDate() != null
-                                    && sub.getStartDate().isBefore(LocalDate.now())
+                                    && (sub.getStartDate().isBefore(LocalDate.now())
+                                            || sub.getStartDate().isEqual(LocalDate.now()))
                                     && LocalDate.now().isBefore(sub.getEndDate())
                                     && (sub.getSubscriptionType().equals(Subscription.ANNUAL_SUBSCRIPTION)
                                             || sub.getSubscriptionType().equals(Subscription.MONTHLY_SUBSCRIPTION)
                                             || sub.getSubscriptionType()
                                                     .equals(Subscription.ENTERPRISE_ANNUAL_SUBSCRIPTION))) {
+                                post.setIsHidePremium(true);
                                 return post;
 
-                            } else if (sub.getPost().getId().equals(post.getId())
-                                    && sub.getSubscriptionType().equals(Subscription.ONE_POST_SUBSCRIPTION)) {
+                            } else if (sub.getSubscriptionType().equals(Subscription.ONE_POST_SUBSCRIPTION)
+                                    && sub.getPost().getId().equals(post.getId())) {
+                                post.setIsHidePremium(true);
                                 return post;
                             }
                         }

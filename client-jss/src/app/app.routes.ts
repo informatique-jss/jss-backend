@@ -66,7 +66,7 @@ export const routes: Routes = [
         loadComponent: () => import('./main/components/post/post.component').then(m => m.PostComponent)
       },
       {
-        path: 'post/:token/:mail',
+        path: 'posts/:token/:mail',
         loadComponent: () => import('./main/components/post/post.component').then(m => m.PostComponent)
       },
       {

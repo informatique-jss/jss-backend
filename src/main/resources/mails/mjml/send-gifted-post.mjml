@@ -6,7 +6,7 @@
       Bonjour,
     </mj-text>
     <mj-text color="#666666" font-size="16px" line-height="24px">
-      <span th:text="${responsable.firstName}"> </span><span th:text="${responsable.lastName}"></span> vous offre un article payant du JSS. Vous pouvez le consulter gratuitement, simplement en cliquant sur le lien suivant ci-dessous.
+      <span th:text="${responsable.firstname}"></span> <span th:text="${responsable.lastname}"></span> vous offre un article payant du JSS. Vous pouvez le consulter gratuitement, simplement en cliquant sur le lien suivant ci-dessous.
     </mj-text>
     <mj-text color="#666666" font-size="16px" line-height="24px">
       Nous vous souhaitons une bonne lecture.
@@ -17,5 +17,5 @@
   </mj-column>
 </mj-section>
 <mj-head th:replace="~{fragments/cta(title='Article offert', buttonText='Accéder à mon article',buttonUrl=${postLink})}"></mj-head>
-<mj-head th:replace="~{fragments/cta(title='Découvrez l'ensemble de nos offres d'abonnement', buttonText='Nos offres d'abonnement',buttonUrl=${jssMediaEntryPoint+'/subscription'})}"></mj-head>
+<mj-head th:replace="~{fragments/cta(title='Découvrez nos abonnements', buttonText='Nos abonnements',buttonUrl=${jssMediaEntryPoint+'/subscription'})}"></mj-head>
 <mj-head th:replace="~{fragments/footer}"></mj-head>

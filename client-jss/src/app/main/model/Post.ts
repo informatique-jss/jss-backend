@@ -26,7 +26,7 @@ export interface Post {
   mediaTimeLength: number;
   isHiddenAuthor: boolean;
   postSerie: Serie[];
-
+  isHidePremium: boolean;
   // Computed field
   fullAuthor: Author;
   jssCategories: JssCategory[];

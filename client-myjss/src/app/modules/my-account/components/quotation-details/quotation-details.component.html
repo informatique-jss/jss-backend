@@ -23,7 +23,7 @@
   *ngIf="associatedCustomerOrder && quotation && quotation.quotationStatus.code == QUOTATION_STATUS_VALIDATED_BY_CUSTOMER">
   <i class="ai-circle-info fs-xl"></i>
   <div class="ps-2">Ce devis validé a donné lieu à la commande n°<a style="cursor: pointer; text-decoration: underline;"
-      [routerLink]='"/account/orders/details/" + quotation.id'>{{associatedCustomerOrder.id}}</a>
+      [routerLink]='"/account/orders/details/" + associatedCustomerOrder.id'>{{associatedCustomerOrder.id}}</a>
   </div>
 </div>
 <div class="d-flex flex-column flex-md-row align-items-center mb-4"

@@ -39,11 +39,13 @@ public class AssoProvisionPostNewspaper implements Serializable, IId {
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "id_post")
         @IndexedField
+        @JsonView({ JacksonViews.MyJssDetailedView.class })
         private Post post;
 
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "id_newspaper")
         @IndexedField
+        @JsonView({ JacksonViews.MyJssDetailedView.class })
         private Newspaper newspaper;
 
         public Integer getId() {

@@ -166,8 +166,8 @@
 
                 <!-- Bannière d'abonnement en bas de l'article visible -->
                 <div class="bg-blue-400 d-flex justify-content-center align-items-center flex-column text-center p-4"
-                  style="position: relative; " *ngIf="post.isPremium">
-                  <h2 class=" fw-bold">Vous souhaitez lire la suite ?</h2>
+                  style="position: relative; " *ngIf="post.isPremium && !post.isHidePremium">
+                  <h2 class="fw-bold">Vous souhaitez lire la suite ?</h2>
                   <p>Lisez cette article pour seulement 1 € ou abonnez-vous pour profiter de cet article en
                     intégralité et de bien d'autres !</p>
                   <div><a class="btn btn-secondary mt-3" style="margin-right: 20px;cursor: pointer;"
@@ -476,8 +476,7 @@
             </div>
             <p>Infos locales, analyses et enquêtes : restez informé(e) sans limite.</p>
             <div class="row align-items-center">
-              <div class="btn btn-yellow">S'abonner
-              </div>
+              <a class="btn btn-yellow" style="cursor: pointer;" href="subscription">S'abonner</a>
             </div>
           </div>
         </div>

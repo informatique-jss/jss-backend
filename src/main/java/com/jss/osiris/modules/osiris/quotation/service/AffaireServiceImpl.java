@@ -896,10 +896,17 @@ public class AffaireServiceImpl implements AffaireService {
         affaire.setLastname(responsable.getLastname());
         affaire.setIsIndividual(true);
         affaire.setCivility(responsable.getCivility());
-        affaire.setAddress(responsable.getAddress());
-        affaire.setPostalCode(responsable.getPostalCode());
-        affaire.setCity(responsable.getCity());
-        affaire.setCountry(responsable.getCountry());
+        if (responsable.getCity() != null) {
+            affaire.setAddress(responsable.getAddress());
+            affaire.setPostalCode(responsable.getPostalCode());
+            affaire.setCity(responsable.getCity());
+            affaire.setCountry(responsable.getCountry());
+        } else {
+            affaire.setAddress(responsable.getTiers().getAddress());
+            affaire.setPostalCode(responsable.getTiers().getPostalCode());
+            affaire.setCity(responsable.getTiers().getCity());
+            affaire.setCountry(responsable.getTiers().getCountry());
+        }
         List<Mail> mails = new ArrayList<>();
         if (responsable.getMails() != null) {
             for (Mail mail : responsable.getMails()) {

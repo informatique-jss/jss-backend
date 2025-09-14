@@ -639,7 +639,7 @@ public class MailHelper {
 
         if (mail.getSubscription() != null) {
             ctx.setVariable("postLink", jssMediaEntryPoint + "/posts/" + mail.getSubscription().getValidationToken()
-                    + "/" + mail.getSubscription().getSubscriptionOfferedMail());
+                    + "/" + mail.getSubscription().getSubscriptionOfferedMail().getMail());
             ctx.setVariable("responsable", mail.getSubscription().getSubcriptionMail().getResponsables().get(0));
         }
 
@@ -1553,6 +1553,8 @@ public class MailHelper {
         mail.setReplyToMail(constantService.getStringMyJssContactFormRequestMail() + "");
         mail.setSendToMe(false);
         mail.setSubscription(subscription);
+        mail.setHeaderPicture("images/mails/waiting-quotation-validation.jpg");
+        mail.setResponsable(employeeService.getCurrentMyJssUser());
 
         MailComputeResult mailComputeResult = new MailComputeResult();
         mailComputeResult.setRecipientsMailTo(new ArrayList<Mail>());

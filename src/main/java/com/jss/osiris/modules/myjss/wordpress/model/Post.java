@@ -125,6 +125,10 @@ public class Post implements IId, Serializable {
     @JsonView(JacksonViews.MyJssDetailedView.class)
     private String contentText;
 
+    @Transient
+    @JsonView(JacksonViews.MyJssDetailedView.class)
+    private Boolean isHidePremium;
+
     // Computed field
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_author")
@@ -565,5 +569,13 @@ public class Post implements IId, Serializable {
 
     public void setIsHiddenAuthor(Boolean isHiddenAuthor) {
         this.isHiddenAuthor = isHiddenAuthor;
+    }
+
+    public Boolean getIsHidePremium() {
+        return isHidePremium;
+    }
+
+    public void setIsHidePremium(Boolean isHidePremium) {
+        this.isHidePremium = isHidePremium;
     }
 }

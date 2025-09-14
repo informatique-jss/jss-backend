@@ -308,7 +308,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException, OsirisException {
         customerOrder = getCustomerOrder(customerOrder.getId());
         customerOrder.setIsPayed(isPayed);
-        subscriptionService.saveSubscription(customerOrder);
+        if (isPayed)
+            subscriptionService.saveSubscription(customerOrder);
 
         simpleAddOrUpdate(customerOrder);
     }
@@ -469,11 +470,31 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         return true;
     }
 
+    private boolean isOnlySubscription(CustomerOrder customerOrder) throws OsirisException {
+        if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+                for (Service service : asso.getServices())
+                    if (service.getServiceTypes() != null)
+                        for (ServiceType serviceType : service.getServiceTypes())
+                            if (!serviceType.getId().equals(constantService.getServiceTypeAnnualSubscription().getId())
+                                    && !serviceType.getId().equals(
+                                            constantService.getServiceTypeEnterpriseAnnualSubscription().getId())
+                                    && !serviceType.getId()
+                                            .equals(constantService.getServiceTypeKioskNewspaperBuy().getId())
+                                    && !serviceType.getId()
+                                            .equals(constantService.getServiceTypeUniqueArticleBuy().getId()))
+                                return false;
+        return true;
+    }
+
     @Override
-    public boolean isOnlyJssAnnouncement(CustomerOrder customerOrder, Boolean isReadyForBilling)
+    public boolean isOnlyJssAnnouncementOrSubscription(CustomerOrder customerOrder, Boolean isReadyForBilling)
             throws OsirisException {
-        if (!isOnlyAnnouncement(customerOrder))
+        if (!isOnlyAnnouncement(customerOrder) && !isOnlySubscription(customerOrder))
             return false;
+
+        if (isOnlySubscription(customerOrder))
+            return true;
 
         if (customerOrder != null && customerOrder.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
@@ -563,7 +584,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 customerOrder.setPrincingEffectiveDate(LocalDate.now());
             // Auto billed for JSS Announcement only customer order
             if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)
-                    && isOnlyJssAnnouncement(customerOrder, false)
+                    && isOnlyJssAnnouncementOrSubscription(customerOrder, false)
                     && getRemainingAmountToPayForCustomerOrder(customerOrder).compareTo(zeroValue) >= 0) {
                 targetStatusCode = CustomerOrderStatus.BILLED;
             }
@@ -748,7 +769,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
             addOrUpdateCustomerOrderStatus(customerOrder, CustomerOrderStatus.BEING_PROCESSED, false);
 
-            if (isOnlyJssAnnouncement(customerOrder, true)) {
+            if (isOnlyJssAnnouncementOrSubscription(customerOrder, true)) {
                 quotationValidationHelper.validateQuotationAndCustomerOrder(customerOrder, null);
                 autoBilledProvisions(customerOrder);
             }
@@ -2041,13 +2062,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
             case Subscription.ONE_POST_SUBSCRIPTION:
                 serviceTypeSubscription = constantService.getServiceTypeUniqueArticleBuy();
-
                 assoProvisionPostNewspaper.setPost(postService.getPost(idArticle));
                 break;
 
             case Subscription.NEWSPAPER_KIOSK_BUY:
                 serviceTypeSubscription = constantService.getServiceTypeKioskNewspaperBuy();
-
                 assoProvisionPostNewspaper.setNewspaper(newspaperService.getNewspaper(idArticle));
                 break;
 
@@ -2062,8 +2081,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             customerOrder.setIsRecurringAutomaticallyBilled(true);
         }
 
+        customerOrder.setResponsable(constantService.getResponsableDummyCustomerFrance());
+
+        List<ServiceType> subscriptionServiceTypeList = new ArrayList<ServiceType>();
+        subscriptionServiceTypeList.add(serviceTypeSubscription);
         List<Service> servicesSubscription = serviceService
-                .generateServiceInstanceFromMultiServiceTypes(Arrays.asList(serviceTypeSubscription), null, null);
+                .generateServiceInstanceFromMultiServiceTypes(subscriptionServiceTypeList, null, null);
 
         if (servicesSubscription == null || servicesSubscription.size() == 0)
             return null;
@@ -2073,20 +2096,28 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         if (subscriptionType.equals(Subscription.NEWSPAPER_KIOSK_BUY)
                 || subscriptionType.equals(Subscription.ONE_POST_SUBSCRIPTION)) {
             assoProvisionPostNewspaper.setProvision(serviceSubscription.getProvisions().get(0));
+            ArrayList<AssoProvisionPostNewspaper> assoProvisionPostList = new ArrayList<AssoProvisionPostNewspaper>();
+            assoProvisionPostList.add(assoProvisionPostNewspaper);
+            serviceSubscription.getProvisions().get(0)
+                    .setAssoProvisionPostNewspapers(assoProvisionPostList);
         }
-
-        customerOrder.setResponsable(constantService.getResponsableDummyCustomerFrance());
 
         AssoAffaireOrder assoAffaireOrder = new AssoAffaireOrder();
         assoAffaireOrder.setCustomerOrder(customerOrder);
-        assoAffaireOrder.setServices(Arrays.asList(serviceSubscription));
-        if (employeeService.getCurrentMyJssUser() != null)
+
+        if (employeeService.getCurrentMyJssUser() != null) {
             assoAffaireOrder
                     .setAffaire(affaireService.getAffaireFromResponsable(employeeService.getCurrentMyJssUser()));
-        else
+        } else
             assoAffaireOrder.setAffaire(constantService.getAffaireDummyForSubscription());
 
-        customerOrder.setAssoAffaireOrders(Arrays.asList(assoAffaireOrder));
+        ArrayList<AssoAffaireOrder> assoList = new ArrayList<AssoAffaireOrder>();
+        assoList.add(assoAffaireOrder);
+        customerOrder.setAssoAffaireOrders(assoList);
+
+        ArrayList<Service> serviceList = new ArrayList<Service>();
+        serviceList.add(serviceSubscription);
+        assoAffaireOrder.setServices(serviceList);
 
         List<SpecialOffer> specialOffers = new ArrayList<>();
         if (isPriceReductionForSubscription) {
@@ -2099,7 +2130,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         customerOrder.setIsQuotation(false);
 
         if (employeeService.getCurrentMyJssUser() != null)
-            return addOrUpdateCustomerOrder(customerOrder, true, false);
+            return myJssQuotationDelegate.saveCustomerOrderFromMyJss(customerOrder, false, null);
         else
             return customerOrder;
     }
@@ -2108,7 +2139,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     public void autoBilledProvisions(CustomerOrder customerOrder)
             throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException, OsirisException {
         if (customerOrder.getCustomerOrderStatus() != null && customerOrder.getCustomerOrderStatus().getCode()
-                .equals(CustomerOrderStatus.BEING_PROCESSED) && isOnlyJssAnnouncement(customerOrder, true))
+                .equals(CustomerOrderStatus.BEING_PROCESSED)
+                && isOnlyJssAnnouncementOrSubscription(customerOrder, true))
             if (customerOrder.getAssoAffaireOrders() != null) {
                 for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
                     if (asso.getServices() != null) {

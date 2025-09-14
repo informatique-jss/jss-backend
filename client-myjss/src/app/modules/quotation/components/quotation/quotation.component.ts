@@ -7,10 +7,12 @@ import { Subscription } from 'rxjs';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { MenuItem } from '../../../general/model/MenuItem';
 import { AppService } from '../../../main/services/app.service';
+import { PlatformService } from '../../../main/services/platform.service';
 import { CustomerOrder } from '../../../my-account/model/CustomerOrder';
 import { Service } from '../../../my-account/model/Service';
 import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
 import { QuotationService } from '../../../my-account/services/quotation.service';
+import { LoginService } from '../../../profile/services/login.service';
 import { NoticeTemplateDescription } from '../../model/NoticeTemplateDescription';
 import { NoticeTemplateService } from '../../services/notice.template.service';
 import { NoticeTemplateComponent } from '../notice-template/notice-template.component';
@@ -59,6 +61,8 @@ export class QuotationComponent implements OnInit {
     private customerOrderService: CustomerOrderService,
     private noticeTemplateService: NoticeTemplateService,
     private titleService: Title, private meta: Meta,
+    private loginService: LoginService,
+    private platformService: PlatformService
   ) { }
 
   ngOnInit() {
@@ -80,19 +84,9 @@ export class QuotationComponent implements OnInit {
       this.quotationService.cleanStorageData();
       this.idQuotation ? this.quotationService.setCurrentDraftQuotationId(this.idQuotation) : this.customerOrderService.setCurrentDraftOrderId(this.idOrder!);
       this.quotationService.setCurrentDraftQuotationStep(this.myJssQuotationItems[2]);
-    } else if (this.subscriptionType) {
+    } else if (this.subscriptionType && this.platformService.isBrowser()) {
       this.appService.showLoadingSpinner();
-      this.customerOrderService.getCustomerOrderForSubscription(this.subscriptionType, this.isPriceReductionForSubscription, this.idArticle).subscribe(computedCustomerOrder => {
-        this.customerOrder = computedCustomerOrder;
-        if (this.customerOrder && this.customerOrder.id)
-          this.customerOrderService.setCurrentDraftOrderId(this.customerOrder.id);
-        else
-          this.customerOrderService.setCurrentDraftOrder(this.customerOrder);
-
-
-        this.appService.hideLoadingSpinner();
-        this.appService.openRoute(event, "/quotation/checkout/", undefined);
-      });
+      this.getOrderForSubscription();
       return;
     }
 
@@ -124,6 +118,20 @@ export class QuotationComponent implements OnInit {
       if (url instanceof NavigationEnd) {
         this.matchRoute(url.url);
       }
+    });
+  }
+
+  getOrderForSubscription() {
+    this.customerOrderService.getCustomerOrderForSubscription(this.subscriptionType, this.isPriceReductionForSubscription, this.idArticle).subscribe(computedCustomerOrder => {
+      this.customerOrder = computedCustomerOrder;
+      if (this.customerOrder && this.customerOrder.id)
+        this.customerOrderService.setCurrentDraftOrderId(this.customerOrder.id);
+      else
+        this.customerOrderService.setCurrentDraftOrder(this.customerOrder);
+
+
+      this.appService.hideLoadingSpinner();
+      this.appService.openRoute(event, "/quotation/checkout/", undefined);
     });
   }
 
