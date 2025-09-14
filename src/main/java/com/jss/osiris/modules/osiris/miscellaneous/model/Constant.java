@@ -16,6 +16,7 @@ import com.jss.osiris.modules.osiris.accounting.model.PrincipalAccountingAccount
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceStatus;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.ActType;
+import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.AssignationType;
 import com.jss.osiris.modules.osiris.quotation.model.Confrere;
 import com.jss.osiris.modules.osiris.quotation.model.DomiciliationContractType;
@@ -979,6 +980,11 @@ public class Constant implements Serializable, IId {
 	@JoinColumn(name = "id_responsable_dummy_customer_france")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Responsable responsableDummyCustomerFrance;
+
+	@ManyToOne
+	@JoinColumn(name = "id_affaire_dummy_for_subscription")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	private Affaire affaireDummyForSubscription;
 
 	@ManyToOne
 	@JoinColumn(name = "id_provision_screen_type_announcement")
@@ -3106,6 +3112,14 @@ public class Constant implements Serializable, IId {
 
 	public void setActiveDirectoryGroupDirection(ActiveDirectoryGroup activeDirectoryGroupDirection) {
 		this.activeDirectoryGroupDirection = activeDirectoryGroupDirection;
+	}
+
+	public Affaire getAffaireDummyForSubscription() {
+		return affaireDummyForSubscription;
+	}
+
+	public void setAffaireDummyForSubscription(Affaire affaireDummyForSubscription) {
+		this.affaireDummyForSubscription = affaireDummyForSubscription;
 	}
 
 }

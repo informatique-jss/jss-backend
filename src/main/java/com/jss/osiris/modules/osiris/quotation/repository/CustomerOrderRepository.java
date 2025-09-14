@@ -186,12 +186,11 @@ public interface CustomerOrderRepository
                         @Param("simpleProvisionStatusWaitingDoc") String simpleProvisionStatusWaitingDoc);
 
         @Query("select c from CustomerOrder c " +
-                        " where c.customerOrderStatus<>:statusAbandonned " +
-                        " and responsable in :responsableToFilter and  exists (select 1 from AssoAffaireOrder aao where aao.affaire = :affaire and aao.customerOrder = c)")
+                        " where  " +
+                        "   responsable in :responsableToFilter and  exists (select 1 from AssoAffaireOrder aao where aao.affaire = :affaire and aao.customerOrder = c)")
         List<CustomerOrder> searchOrdersForCurrentUserAndAffaire(
                         @Param("responsableToFilter") List<Responsable> responsablesToFilter,
-                        @Param("affaire") Affaire affaire,
-                        @Param("statusAbandonned") CustomerOrderStatus statusAbandonned);
+                        @Param("affaire") Affaire affaire);
 
         @Query("select c from CustomerOrder c where " +
                         " responsable in :responsables " +

@@ -32,6 +32,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Vat;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.ActType;
+import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.AssignationType;
 import com.jss.osiris.modules.osiris.quotation.model.Confrere;
 import com.jss.osiris.modules.osiris.quotation.model.DomiciliationContractType;
@@ -62,6 +63,10 @@ import com.jss.osiris.modules.osiris.tiers.model.TiersType;
 
 public interface ConstantService {
     public Constant getConstants() throws OsirisException;
+
+    public String getConstantsForMyJss() throws OsirisException;
+
+    public void dropConstantCache();
 
     public Constant addOrUpdateConstant(Constant constant) throws OsirisException;
 
@@ -520,6 +525,8 @@ public interface ConstantService {
     public ServiceFieldType getFurtherInformationServiceFieldType() throws OsirisException;
 
     public Responsable getResponsableDummyCustomerFrance() throws OsirisException;
+
+    public Affaire getAffaireDummyForSubscription() throws OsirisException;
 
     public ProvisionScreenType getProvisionScreenTypeAnnouncement() throws OsirisException;
 

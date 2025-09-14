@@ -140,4 +140,6 @@ public interface PaymentService {
 
         public MyJssImage downloadQrCodeForQuotationPayment(Quotation quotation, String mail) throws OsirisException;
 
+        public List<Payment> getPaymentForCustomerOrder(CustomerOrder customerOrder);
+
 }

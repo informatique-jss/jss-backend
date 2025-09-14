@@ -3,7 +3,7 @@
     <div class="row justify-content-between">
       <div class="col-lg-7">
         <!-- Connexion -->
-        <div class="row" *ngIf="!currentUser && !isLinkSent">
+        <div class="row" *ngIf="!currentUser && !isLinkSent && false">
           <div class="card mb-4 bg-secondary-subtle">
             <div class="row">
               <div class="col-lg-4 ps-0">
@@ -449,18 +449,18 @@
     </div>
     <div class="form-check">
       <generic-toggle *ngIf="quotation!.assoAffaireOrders.length==1" [(model)]="document.isRecipientAffaire"
-        label="L'envoyer à mon client" [form]="documentForm" propertyName="isRecipientAffaireBilling"
+        label="L'envoyer à mon client/affaire" [form]="documentForm" propertyName="isRecipientAffaireBilling"
         [isMandatory]="false">
       </generic-toggle>
       <div class="mb-2">
         <generic-input *ngIf="document.isRecipientAffaire"
-          [(model)]="quotation!.assoAffaireOrders[0].affaire.mails[0].mail" label="Mail de mon client"
+          [(model)]="quotation!.assoAffaireOrders[0].affaire.mails[0].mail" label="Mail de mon client/affaire"
           [form]="documentForm" propertyName="affaireMail" [isMandatory]="true" [isDisabled]="false" type="email"
           [maxLength]="250"></generic-input>
       </div>
       <div class="row ps-4 pb-3">
         <generic-toggle class="pb-2" *ngIf="document.isRecipientAffaire" [(model)]="document.addToAffaireMailList"
-          label="Ajouter des adresses mails en copie de mon client" [form]="documentForm"
+          label="Ajouter des adresses mails en copie de mon client/affaire" [form]="documentForm"
           propertyName="addToAffaireMailListBilling" [isMandatory]="false">
         </generic-toggle>
 
@@ -526,18 +526,18 @@
     </div>
     <div class="form-check">
       <generic-toggle *ngIf="quotation!.assoAffaireOrders.length == 1" [(model)]="document.isRecipientAffaire"
-        label="L'envoyer à mon client" [form]="documentForm" propertyName="isRecipientAffaireDigital"
+        label="L'envoyer à mon client/affaire" [form]="documentForm" propertyName="isRecipientAffaireDigital"
         [isMandatory]="false">
       </generic-toggle>
       <div class="mb-2">
         <generic-input *ngIf="document.isRecipientAffaire"
-          [(model)]="quotation!.assoAffaireOrders[0].affaire.mails[0].mail" label="Mail de mon client"
+          [(model)]="quotation!.assoAffaireOrders[0].affaire.mails[0].mail" label="Mail de mon client/affaire"
           [form]="documentForm" propertyName="affaireMailDigital" [isMandatory]="true" [isDisabled]="false" type="email"
           [maxLength]="250"></generic-input>
       </div>
       <div class="row ps-4 pb-3">
         <generic-toggle class="pb-2" *ngIf="document.isRecipientAffaire" [(model)]="document.addToAffaireMailList"
-          [isMandatory]="false" label="Ajouter des adresses mails en copie de mon client" [form]="documentForm"
+          [isMandatory]="false" label="Ajouter des adresses mails en copie de mon client/affaire" [form]="documentForm"
           propertyName="addToAffaireMailListDigital">
         </generic-toggle>
 
@@ -602,8 +602,8 @@
       </h3>
     </div>
     <div class="form-check">
-      <generic-toggle [(model)]="document.isRecipientAffaire" label="L'envoyer à mon client" [form]="documentForm"
-        propertyName="isRecipientAffairePaper" [isMandatory]="false">
+      <generic-toggle [(model)]="document.isRecipientAffaire" label="L'envoyer à mon client/affaire"
+        [form]="documentForm" propertyName="isRecipientAffairePaper" [isMandatory]="false">
       </generic-toggle>
       <generic-toggle [(model)]="document.isRecipientClient" label="Me l'envoyer" [form]="documentForm"
         propertyName="isRecipientClientPaper" [isMandatory]="false">
@@ -679,7 +679,7 @@
             </a>
           </li>
           <li class="d-flex justify-content-between mb-2">
-            Sous-total:
+            Sous-total :
             <div *ngIf="isComputingPrice" class="spinner-border spinner-border-sm" role="status">
               <span class="visually-hidden"></span>
             </div>
@@ -687,12 +687,16 @@
               currency:'EUR'}}</span>
           </li>
           <li class="d-flex justify-content-between mb-2" *ngIf="!isComputingPrice">
-            TVA:<span class="fw-semibold ms-2">{{totalVatPrice | currency:'EUR'}}</span>
+            TVA :<span class="fw-semibold ms-2">{{totalVatPrice | currency:'EUR'}}</span>
+          </li>
+          <li class="d-flex justify-content-between mb-2"
+            *ngIf="!isComputingPrice && discountAmountTotal && discountAmountTotal>0">
+            Remise :<span class="fw-semibold ms-2">- {{discountAmountTotal | currency:'EUR'}}</span>
           </li>
         </ul>
         <hr>
         <div class="d-flex align-items-center justify-content-between border-top fs-xl pb-4">
-          Total:
+          Total :
           <div *ngIf="isComputingPrice" class="spinner-border" role="status">
             <span class="visually-hidden"></span>
           </div>

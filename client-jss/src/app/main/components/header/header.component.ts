@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { MY_JSS_HOME_ROUTE, MY_JSS_NEW_ANNOUNCEMENT_ROUTE, MY_JSS_NEW_FORMALITY_ROUTE, MY_JSS_SIGN_IN_ROUTE } from '../../../libs/Constants';
 import { capitalizeName } from '../../../libs/FormatHelper';
+import { LiteralDatePipe } from '../../../libs/LiteralDatePipe';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { AppService } from '../../../services/app.service';
 import { ConstantService } from '../../../services/constant.service';
@@ -12,7 +13,6 @@ import { PlatformService } from '../../../services/platform.service';
 import { AccountMenuItem, MAIN_ITEM_ACCOUNT, MAIN_ITEM_DASHBOARD } from '../../model/AccountMenuItem';
 import { IndexEntity } from '../../model/IndexEntity';
 import { JssCategory } from '../../model/JssCategory';
-import { MenuItem } from '../../model/MenuItem';
 import { PublishingDepartment } from '../../model/PublishingDepartment';
 import { Responsable } from '../../model/Responsable';
 import { DepartmentService } from '../../services/department.service';
@@ -28,7 +28,8 @@ import { AvatarComponent } from '../avatar/avatar.component';
   imports: [
     SHARED_IMPORTS,
     AvatarComponent,
-    NgbTooltipModule
+    NgbTooltipModule,
+    LiteralDatePipe
   ],
   standalone: true
 })
@@ -62,6 +63,7 @@ export class HeaderComponent implements OnInit {
   MY_JSS_NEW_ANNOUNCEMENT_ROUTE = MY_JSS_NEW_ANNOUNCEMENT_ROUTE;
   MY_JSS_NEW_FORMALITY_ROUTE = MY_JSS_NEW_FORMALITY_ROUTE;
   MY_JSS_HOME_ROUTE = MY_JSS_HOME_ROUTE;
+
 
   constructor(
     private router: Router,
@@ -137,14 +139,6 @@ export class HeaderComponent implements OnInit {
 
   toggleDepartmentDropdown(): void {
     this.showDepartments = !this.showDepartments;
-  }
-
-  openMyJssRoute(item: MenuItem) {
-    this.appService.openMyJssRoute(undefined, item.route, false);
-  }
-
-  openMyJssRouteUrl(item: string) {
-    this.appService.openMyJssRoute(undefined, item, false);
   }
 
   disconnect() {

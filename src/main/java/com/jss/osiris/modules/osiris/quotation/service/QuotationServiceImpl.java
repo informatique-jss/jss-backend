@@ -653,7 +653,8 @@ public class QuotationServiceImpl implements QuotationService {
         return addOrUpdateQuotation(quotation);
     }
 
-    public List<Quotation> searchQuotationsForCurrentUser(List<String> customerOrderStatus, Integer page,
+    public List<Quotation> searchQuotationsForCurrentUser(List<String> customerOrderStatus,
+            List<Integer> responsableIdToFilter, Integer page,
             String sortBy) {
         List<QuotationStatus> quotationStatusToFilter = new ArrayList<QuotationStatus>();
 
@@ -666,7 +667,15 @@ public class QuotationServiceImpl implements QuotationService {
                     quotationStatusToFilter.add(customerOrderStatusFetched);
             }
 
-            List<Responsable> responsablesToFilter = Arrays.asList(employeeService.getCurrentMyJssUser());
+            Responsable currentUser = employeeService.getCurrentMyJssUser();
+            List<Responsable> responsablesToFilter = new ArrayList<Responsable>();
+            responsablesToFilter.add(currentUser);
+            if (Boolean.TRUE.equals(currentUser.getCanViewAllTiersInWeb()))
+                responsablesToFilter.addAll(currentUser.getTiers().getResponsables());
+
+            if (responsableIdToFilter != null)
+                responsablesToFilter.removeAll(
+                        responsablesToFilter.stream().filter(r -> !responsableIdToFilter.contains(r.getId())).toList());
 
             if (quotationStatusToFilter.size() > 0 && responsablesToFilter != null
                     && responsablesToFilter.size() > 0) {

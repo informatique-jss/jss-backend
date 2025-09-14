@@ -17,6 +17,7 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.modules.myjss.wordpress.model.AssoProvisionPostNewspaper;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
@@ -264,6 +265,11 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                         attachment.setProvision(provision);
                         attachmentService.addOrUpdateAttachment(attachment);
                     }
+
+                if (provision.getAssoProvisionPostNewspapers() != null
+                        && provision.getAssoProvisionPostNewspapers().size() > 0)
+                    for (AssoProvisionPostNewspaper assoNewspaper : provision.getAssoProvisionPostNewspapers())
+                        assoNewspaper.setProvision(provision);
 
                 if (provision.getId() != null && provision.getInvoiceItems() != null)
                     for (InvoiceItem invoiceItem : provision.getInvoiceItems()) {

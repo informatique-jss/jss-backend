@@ -26,6 +26,7 @@ export class MyProfilComponent implements OnInit {
   employeeForm = this.formBuilder.group({});
 
   adSales: ActiveDirectoryGroup | undefined;
+  adDirection: ActiveDirectoryGroup | undefined;
   currentEmployee: Employee | undefined;
   editMode: boolean = false;
 
@@ -39,6 +40,7 @@ export class MyProfilComponent implements OnInit {
     })
 
     this.adSales = this.constantService.getActiveDirectoryGroupSales();
+    this.adDirection = this.constantService.getActiveDirectoryGroupDirection();
 
     this.saveObservableSubscription = this.appService.saveObservable.subscribe(response => {
       if (response)

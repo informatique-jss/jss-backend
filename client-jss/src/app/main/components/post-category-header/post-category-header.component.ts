@@ -36,10 +36,18 @@ export class PostCategoryHeaderComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.refresh();
+    this.activeRoute.paramMap.subscribe(params => {
+      this.refresh();
+    });
+  }
+
+  refresh() {
     this.titleService.setTitle("Tous nos articles - JSS");
     this.meta.updateTag({ name: 'description', content: "Retrouvez l'actualité juridique et économique. JSS analyse pour vous les dernières annonces, formalités et tendances locales." });
     let slug = this.activeRoute.snapshot.params['slug'];
     if (slug) {
+      this.selectedJssCategory = undefined;
       this.jssCategoryService.getJssCategoryBySlug(slug).subscribe(response => {
         if (response) {
           this.selectedJssCategory = response;

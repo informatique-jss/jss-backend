@@ -1,8 +1,9 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { AppService } from '../../main/services/app.service';
 import { AppRestService } from '../../main/services/appRest.service';
+import { PlatformService } from '../../main/services/platform.service';
 import { QuotationService } from '../../my-account/services/quotation.service';
 import { Responsable } from '../model/Responsable';
 
@@ -17,6 +18,7 @@ export class LoginService extends AppRestService<Responsable> {
 
   constructor(http: HttpClient, private appService: AppService,
     private quotationService: QuotationService,
+    private plateformService: PlatformService
   ) {
     super(http, "profile");
   }
@@ -84,6 +86,8 @@ export class LoginService extends AppRestService<Responsable> {
   }
 
   getCurrentUser(forceFetch: boolean = false, getFromCache: boolean = false): Observable<Responsable> {
+    if (this.plateformService.isServer())
+      return of(undefined) as any as Observable<Responsable>;
     return new Observable<Responsable>(observer => {
       if (!forceFetch && (getFromCache || this.currentUser)) {
         observer.next(this.currentUser!);

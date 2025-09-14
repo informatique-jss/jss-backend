@@ -52,7 +52,7 @@ export class OurTeamComponent implements OnInit {
       { firstname: "Catherine", lastname: "C.", title: "Hôtesse d'accueil", photo: "catherine_hotesse_d_accueil.jpg" },
     ],
     annonces: [
-      { firstname: "Hélène", lastname: "P.", title: "Responsable Service Annonces Légales", photo: "helene_responsable_service_annonces_legales.jpg" },
+      { firstname: "Hélène", lastname: "P.", title: "Responsable Service annonces légales", photo: "helene_responsable_service_annonces_legales.jpg" },
       { firstname: "Didier", lastname: "C.", title: "Gestionnaire d'annonces légales", photo: "didier_gestionnaire_d_annonces_legales.jpg" },
       { firstname: "Elianna", lastname: "L.", title: "Gestionnaire d'annonces légales", photo: "elianna_gestionnaire_d_annonces_legales.jpg" },
       { firstname: "Diana", lastname: "L.", title: "Gestionnaire d'annonces légales", photo: "diana_gestionnaire_d_annonces_legales.jpg" },
@@ -75,7 +75,6 @@ export class OurTeamComponent implements OnInit {
     marketing: [
       { firstname: "Yseult", lastname: "V.", title: "Responsable Marketing et Communication", photo: "yseult_responsable_marketing_et_communication.jpg" },
       { firstname: "Jessica", lastname: "L.", title: "Chargée de Marketing et de Communication", photo: "jessica_chargee_de_marketing_et_de_communication.jpg" },
-      { firstname: "Solène", lastname: "F.", title: "Graphiste Community Manager", photo: "solene_graphiste_community_manager.jpg" },
     ],
     redaction: [
       { firstname: "Bérengère", lastname: "M.", title: "Rédactrice en chef", photo: "berengere_redactrice_en_chef.jpg" },
@@ -92,7 +91,7 @@ export class OurTeamComponent implements OnInit {
       { firstname: "Céline", lastname: "L.", title: "Agent de facturation", photo: "celine_agent_de_facturation.jpg" },
     ],
     informatique: [
-      { firstname: "Frédéric", lastname: "B.", title: "Analyste Programmeur", photo: "anonymous.svg" },
+      { firstname: "Frédéric", lastname: "B.", title: "Analyste Programmeur", photo: "frederic_analyste_programmeur.jpg" },
       { firstname: "Pierre", lastname: "C.", title: "Analyste Programmeur", photo: "pierre_analyste_programmeur.jpg" },
     ]
   };

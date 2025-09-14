@@ -16,6 +16,6 @@
     </div>
   </div>
 
-  <department-hub [selectedEntityType]="selectedDepartment"
+  <department-hub [selectedEntityType]="selectedDepartment" *ngIf="selectedDepartment"
     (departmentChange)="updateSelectedDepartment($event)"></department-hub>
 </div>

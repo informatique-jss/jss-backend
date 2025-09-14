@@ -44,7 +44,7 @@
   (click)="handleBookmarkPost(post, readingFolders ? readingFolders[0]: undefined)">
 
   <div class="d-none d-md-block">
-    <div class="btn btn-primary "><i class="me-1" [ngClass]="{'bi-bookmark ': !post.isBookmarked,
+    <div class="btn btn-primary btn-sm rounded-2"><i class=" me-1" [ngClass]="{'bi-bookmark ': !post.isBookmarked,
                                 'bi-bookmark-fill text-dark ': post.isBookmarked,
                                 'text-transparent ': !post.isBookmarked}">
       </i>Enregistrer</div>

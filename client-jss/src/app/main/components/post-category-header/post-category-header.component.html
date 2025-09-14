@@ -20,6 +20,6 @@
     </div>
   </div>
 
-  <category-hub [selectedEntityType]="selectedJssCategory"
+  <category-hub [selectedEntityType]="selectedJssCategory" *ngIf="selectedJssCategory"
     (jssCategoryChange)="updateSelectedCategory($event)"></category-hub>
 </div>

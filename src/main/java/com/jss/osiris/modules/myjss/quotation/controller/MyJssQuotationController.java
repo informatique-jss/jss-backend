@@ -55,12 +55,10 @@ import com.jss.osiris.modules.osiris.crm.service.VoucherService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
-import com.jss.osiris.modules.osiris.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.City;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Civility;
-import com.jss.osiris.modules.osiris.miscellaneous.model.Constant;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Country;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Department;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
@@ -283,16 +281,19 @@ public class MyJssQuotationController {
 
 	@GetMapping(inputEntryPoint + "/constants")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
-	public ResponseEntity<Constant> getConstants(HttpServletRequest request) throws OsirisException {
+	public ResponseEntity<String> getConstants(HttpServletRequest request)
+			throws OsirisException {
 		detectFlood(request);
-		return new ResponseEntity<Constant>(constantService.getConstants(), HttpStatus.OK);
+		return new ResponseEntity<String>(constantService.getConstantsForMyJss(),
+				HttpStatus.OK);
 	}
 
 	@PostMapping(inputEntryPoint + "/order/search/current")
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<CustomerOrder>> searchOrdersForCurrentUser(
 			@RequestBody List<String> customerOrderStatus, @RequestParam boolean withMissingAttachment,
-			@RequestParam Integer page, @RequestParam String sortBy)
+			@RequestParam Integer page, @RequestParam String sortBy,
+			@RequestParam(required = false) List<Integer> responsableIdsToFilter)
 			throws OsirisException {
 		if (customerOrderStatus == null || customerOrderStatus.size() == 0)
 			return new ResponseEntity<List<CustomerOrder>>(new ArrayList<CustomerOrder>(), HttpStatus.OK);
@@ -305,7 +306,8 @@ public class MyJssQuotationController {
 			sortBy = "createdDateDesc";
 
 		return new ResponseEntity<List<CustomerOrder>>(
-				customerOrderService.searchOrdersForCurrentUser(customerOrderStatus, withMissingAttachment, page,
+				customerOrderService.searchOrdersForCurrentUser(customerOrderStatus, responsableIdsToFilter,
+						withMissingAttachment, page,
 						sortBy),
 				HttpStatus.OK);
 	}
@@ -338,6 +340,7 @@ public class MyJssQuotationController {
 	@PostMapping(inputEntryPoint + "/quotation/search/current")
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Quotation>> searchQuotationsForCurrentUser(
+			@RequestParam(required = false) List<Integer> responsableIdsToFilter,
 			@RequestBody List<String> quotationStatus, @RequestParam Integer page, @RequestParam String sortBy)
 			throws OsirisClientMessageException {
 		if (quotationStatus == null || quotationStatus.size() == 0)
@@ -351,7 +354,8 @@ public class MyJssQuotationController {
 			sortBy = "createdDateDesc";
 
 		return new ResponseEntity<List<Quotation>>(
-				quotationService.searchQuotationsForCurrentUser(quotationStatus, page, sortBy), HttpStatus.OK);
+				quotationService.searchQuotationsForCurrentUser(quotationStatus, responsableIdsToFilter, page, sortBy),
+				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/order/asso")
@@ -583,7 +587,7 @@ public class MyJssQuotationController {
 
 		boolean canDownload = true;
 		if (tiersAttachment.getProvision() == null && tiersAttachment.getAssoServiceDocument() == null
-				&& tiersAttachment.getCustomerOrder() == null)
+				&& tiersAttachment.getCustomerOrder() == null && tiersAttachment.getTypeDocumentAttachment() == null)
 			canDownload = false;
 
 		// Can only download invoice
@@ -885,8 +889,9 @@ public class MyJssQuotationController {
 				&& !validationHelper.validateSiren(siretOrSiren.trim().replaceAll(" ", "")))
 			return new ResponseEntity<Page<Affaire>>(Page.empty(), HttpStatus.OK);
 
-		List<Affaire> affaires = affaireService.getAffairesFromSiret(siretOrSiren.trim().replaceAll(" ", ""));
-		PageRequest newPageRequest = PageRequest.of(0, Math.max(affaires.size(), 1));
+		List<Affaire> affaires = affaireService
+				.getAffairesFromSiretFromWebsite(siretOrSiren.trim().replaceAll(" ", ""));
+		PageRequest newPageRequest = PageRequest.of(0, 50);
 		Page<Affaire> pageResult = new PageImpl<>(affaires, newPageRequest, affaires.size());
 		return new ResponseEntity<Page<Affaire>>(pageResult, HttpStatus.OK);
 	}
@@ -1152,19 +1157,13 @@ public class MyJssQuotationController {
 			customerOrderComment.setQuotation(customerOrderCommentOriginal.getQuotation());
 		}
 
-		customerOrderComment.setEmployee(null);
-		customerOrderComment.setCurrentCustomer(employeeService.getCurrentMyJssUser());
-		customerOrderComment.setProvision(null);
-		customerOrderComment.setActiveDirectoryGroups(new ArrayList<ActiveDirectoryGroup>());
-		customerOrderComment.getActiveDirectoryGroups().add(constantService.getActiveDirectoryGroupSales());
-		customerOrderComment.setIsToDisplayToCustomer(true);
-
-		if (customerOrderComment.getId() == null)
-			customerOrderComment.setCreatedDateTime(LocalDateTime.now());
-		else if (customerOrderCommentOriginal != null)
+		if (customerOrderComment.getId() == null) {
+			customerOrderCommentService.createCustomerOrderComment(customerOrderComment.getCustomerOrder(),
+					customerOrderComment.getComment(), false);
+		} else if (customerOrderCommentOriginal != null) {
 			customerOrderComment.setCreatedDateTime(customerOrderCommentOriginal.getCreatedDateTime());
-
-		customerOrderCommentService.addOrUpdateCustomerOrderComment(customerOrderComment);
+			customerOrderCommentService.addOrUpdateCustomerOrderComment(customerOrderComment);
+		}
 
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
@@ -1172,14 +1171,16 @@ public class MyJssQuotationController {
 	@GetMapping(inputEntryPoint + "/affaire/search/current")
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Affaire>> getAffairesForCurrentUser(@RequestParam Integer page,
-			@RequestParam String sortBy, @RequestParam String searchText) {
+			@RequestParam String sortBy, @RequestParam String searchText,
+			@RequestParam(required = false) List<Integer> responsableIdsToFilter) {
 		if (page == null || page < 0)
 			page = 0;
 
 		if (sortBy == null || !sortBy.equals("nameAsc") && !sortBy.equals("nameDesc"))
 			sortBy = "nameAsc";
 
-		return new ResponseEntity<List<Affaire>>(affaireService.getAffairesForCurrentUser(page, sortBy, searchText),
+		return new ResponseEntity<List<Affaire>>(
+				affaireService.getAffairesForCurrentUser(responsableIdsToFilter, page, sortBy, searchText),
 				HttpStatus.OK);
 	}
 

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { NgbAccordionModule, NgbDropdownModule, NgbNavModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { environment } from '../../../../../environments/environment';
 import { ASSO_SERVICE_DOCUMENT_ENTITY_TYPE, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, INVOICING_PAYMENT_LIMIT_REFUND_EUROS, SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
 import { capitalizeName, getListMails, getListPhones } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
@@ -67,7 +68,6 @@ export class OrderDetailsComponent implements OnInit {
   serviceProvisionAttachments: Attachment[][] = [];
   currentUser: Responsable | undefined;
   associatedQuotation: Quotation | undefined;
-  dislayAlreadyFilledAttachment = false;
 
   selectedAssoAffaireOrder: AssoAffaireOrder | undefined;
   ASSO_SERVICE_DOCUMENT_ENTITY_TYPE = ASSO_SERVICE_DOCUMENT_ENTITY_TYPE;
@@ -114,6 +114,7 @@ export class OrderDetailsComponent implements OnInit {
   SERVICE_FIELD_TYPE_DATE = SERVICE_FIELD_TYPE_DATE;
   SERVICE_FIELD_TYPE_SELECT = SERVICE_FIELD_TYPE_SELECT;
   CUSTOMER_ORDER_STATUS_OPEN = CUSTOMER_ORDER_STATUS_OPEN;
+  frontendJssUrl = environment.frontendJssUrl;
 
   ngOnInit() {
     this.orderDetailsForm = this.formBuilder.group({});
@@ -125,7 +126,6 @@ export class OrderDetailsComponent implements OnInit {
   }
 
   refreshOrder() {
-    this.dislayAlreadyFilledAttachment = false;
     this.customerOrderService.getCustomerOrder(this.activatedRoute.snapshot.params['id']).subscribe(response => {
       this.order = response;
       this.appService.hideLoadingSpinner();
@@ -162,7 +162,11 @@ export class OrderDetailsComponent implements OnInit {
     })
     this.invoicingSummaryService.getInvoicingSummaryForCustomerOrder(this.order.id).subscribe(response => {
       this.invoiceSummary = response;
-      if (this.invoiceSummary.remainingToPay && Math.abs(this.invoiceSummary.remainingToPay) > INVOICING_PAYMENT_LIMIT_REFUND_EUROS && this.order?.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_OPEN)
+      if (this.invoiceSummary.remainingToPay && Math.abs(this.invoiceSummary.remainingToPay) > INVOICING_PAYMENT_LIMIT_REFUND_EUROS && this.order!.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_OPEN)
+        this.displayPayButton = true;
+      if (this.invoiceSummary.remainingToPay && this.order?.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_OPEN && this.order!.servicesList == this.constantService.getServiceTypeUniqueArticleBuy().label)
+        this.displayPayButton = true;
+      if (this.invoiceSummary.remainingToPay && this.order?.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_OPEN && this.order!.servicesList == this.constantService.getServiceTypeKioskNewspaperBuy().label)
         this.displayPayButton = true;
     })
     this.refreshCustomerOrderComments();
@@ -172,11 +176,6 @@ export class OrderDetailsComponent implements OnInit {
         this.associatedQuotation = response;
     })
   }
-
-  toggleDislayAlreadyFilledAttachment() {
-    this.dislayAlreadyFilledAttachment = !this.dislayAlreadyFilledAttachment;
-  }
-
 
   getCustomerOrderBillingMailList() {
     if (this.order && this.orderMailComputeResult)

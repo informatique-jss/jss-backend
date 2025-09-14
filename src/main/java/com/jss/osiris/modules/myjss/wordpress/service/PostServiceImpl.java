@@ -283,6 +283,7 @@ public class PostServiceImpl implements PostService {
         modifyHrefToOpenInNewTab(post);
         modifyImgSrc(post);
         reformatQuotes(post);
+        reformatTables(post);
         reformatFootnotes(post);
 
         addOrUpdatePost(computePost(post));
@@ -377,7 +378,8 @@ public class PostServiceImpl implements PostService {
 
             String updatedImgTag = imgTag
                     .replaceAll("(src=\")" + wordpressMediaBaseUrl, "$1" + apacheMediaBaseUrl)
-                    .replaceAll("(srcset=\")" + wordpressMediaBaseUrl, "$1" + apacheMediaBaseUrl);
+                    .replace("srcset=\"" + wordpressMediaBaseUrl, "srcset=\"" + apacheMediaBaseUrl)
+                    .replace(" " + wordpressMediaBaseUrl, " " + apacheMediaBaseUrl);
 
             imgMatcher.appendReplacement(sb, Matcher.quoteReplacement(updatedImgTag));
         }
@@ -415,6 +417,13 @@ public class PostServiceImpl implements PostService {
         final String CITE_TAG = "<cite";
         post.setOriginalContentText(post.getOriginalContentText().replace(CITE_TAG,
                 CITE_TAG + " class=\"blockquote-footer\" style=\"padding-left:0\""));
+    }
+
+    private void reformatTables(Post post) {
+        if (post.getOriginalContentText() != null)
+            post.setOriginalContentText(post.getOriginalContentText().replaceAll(
+                    "has-fixed-layout",
+                    "has-fixed-layout table table-bordered "));
     }
 
     /**
@@ -862,16 +871,19 @@ public class PostServiceImpl implements PostService {
                                 .getSubscriptionsForMail(signedInUser.getMail());
                         for (Subscription sub : subscriptions) {
                             if (sub.getStartDate() != null && sub.getEndDate() != null
-                                    && sub.getStartDate().isBefore(LocalDate.now())
+                                    && (sub.getStartDate().isBefore(LocalDate.now())
+                                            || sub.getStartDate().isEqual(LocalDate.now()))
                                     && LocalDate.now().isBefore(sub.getEndDate())
                                     && (sub.getSubscriptionType().equals(Subscription.ANNUAL_SUBSCRIPTION)
                                             || sub.getSubscriptionType().equals(Subscription.MONTHLY_SUBSCRIPTION)
                                             || sub.getSubscriptionType()
                                                     .equals(Subscription.ENTERPRISE_ANNUAL_SUBSCRIPTION))) {
+                                post.setIsHidePremium(true);
                                 return post;
 
-                            } else if (sub.getPost().getId().equals(post.getId())
-                                    && sub.getSubscriptionType().equals(Subscription.ONE_POST_SUBSCRIPTION)) {
+                            } else if (sub.getSubscriptionType().equals(Subscription.ONE_POST_SUBSCRIPTION)
+                                    && sub.getPost().getId().equals(post.getId())) {
+                                post.setIsHidePremium(true);
                                 return post;
                             }
                         }

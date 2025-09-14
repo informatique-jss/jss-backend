@@ -1,4 +1,5 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_REQUIRE_ATTENTION, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_SENT_TO_CUSTOMER } from '../../../../libs/Constants';
@@ -34,6 +35,8 @@ export class OverviewComponent implements OnInit {
   CUSTOMER_ORDER_STATUS_BEING_PROCESSED = CUSTOMER_ORDER_STATUS_BEING_PROCESSED;
   CUSTOMER_ORDER_STATUS_REQUIRE_ATTENTION = CUSTOMER_ORDER_STATUS_REQUIRE_ATTENTION;
 
+  appointmentUrl: SafeResourceUrl | undefined;
+
   @ViewChild('acceptTermsModal') acceptTermsModalView!: TemplateRef<any>;
   acceptTermsModalInstance: any | undefined;
   acceptTerms: boolean = false;
@@ -44,7 +47,8 @@ export class OverviewComponent implements OnInit {
     private dashboardUserStatisticsService: DashboardUserStatisticsService,
     public modalService: NgbModal,
     private responsableService: ResponsableService,
-    private gtmService: GtmService
+    private gtmService: GtmService,
+    private sanitizer: DomSanitizer
   ) { }
 
   capitalizeName = capitalizeName;
@@ -69,6 +73,8 @@ export class OverviewComponent implements OnInit {
     this.loginService.getCurrentUser().subscribe(response => {
       if (response) {
         this.currentUser = response;
+        if (this.currentUser && this.currentUser.salesEmployee && this.currentUser.salesEmployee.bookingPageUrl)
+          this.appointmentUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.currentUser.salesEmployee.bookingPageUrl);
         if (this.currentUser && !this.currentUser.consentTermsDate) {
           if (this.acceptTermsModalInstance) {
             return;
@@ -88,7 +94,9 @@ export class OverviewComponent implements OnInit {
 
   acceptTermsForCurrentUser() {
     if (this.currentUser && this.acceptTerms)
-      this.responsableService.updateAcceptTermsForCurrentUser().subscribe();
+      this.responsableService.updateAcceptTermsForCurrentUser().subscribe(res => {
+        this.loginService.getCurrentUser().subscribe(res => this.currentUser = res);
+      });
   }
 
   cancelAcceptation() {

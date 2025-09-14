@@ -8,6 +8,7 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.RneCompany;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 public interface AffaireService {
         public List<Affaire> getAffaires();
@@ -26,6 +27,9 @@ public interface AffaireService {
 
         public List<Affaire> getAffairesFromSiret(String siret) throws OsirisException, OsirisClientMessageException;
 
+        public List<Affaire> getAffairesFromSiretFromWebsite(String siret)
+                        throws OsirisException, OsirisClientMessageException;
+
         public List<Affaire> getAffairesFromRna(String rna) throws OsirisException, OsirisClientMessageException;
 
         public void updateAffairesFromRne() throws OsirisException, OsirisClientMessageException;
@@ -36,7 +40,8 @@ public interface AffaireService {
         public Affaire refreshAffaireFromRne(Affaire affaire)
                         throws OsirisException, OsirisClientMessageException, OsirisDuplicateException;
 
-        public List<Affaire> getAffairesForCurrentUser(Integer page, String sortBy, String searchText);
+        public List<Affaire> getAffairesForCurrentUser(List<Integer> responsableIdToFilter, Integer page, String sortBy,
+                        String searchText);
 
         public List<Attachment> getAttachmentsForAffaire(Affaire affaire) throws OsirisException;
 
@@ -45,7 +50,7 @@ public interface AffaireService {
 
         public List<Affaire> searchAffaireForCorrection();
 
-        public Affaire getAffaireFromDenomination(String firstname, String lastname)
+        public Affaire getAffaireFromResponsable(Responsable responsable)
                         throws OsirisDuplicateException, OsirisException;
 
 }

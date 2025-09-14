@@ -7,6 +7,7 @@ import { SingleUploadComponent } from '../../../miscellaneous/components/forms/s
 import { AssoServiceDocument } from '../../../my-account/model/AssoServiceDocument';
 import { Attachment } from '../../../my-account/model/Attachment';
 import { AttachmentService } from '../../../my-account/services/attachment.service';
+import { UploadAttachmentService } from '../../../my-account/services/upload.attachment.service';
 import { UploadState } from '../../model/UploadState';
 
 @Component({
@@ -37,6 +38,7 @@ export class QuotationFileUploaderComponent implements OnInit {
 
   constructor(
     private attachmentService: AttachmentService,
+    private uploadAttachmentService: UploadAttachmentService,
     private formBuilder: FormBuilder
   ) { }
 
@@ -89,4 +91,7 @@ export class QuotationFileUploaderComponent implements OnInit {
     this.attachmentService.updateAttachmentDocumentDate(attachment.id, attachment.attachmentDate).subscribe();
   }
 
+  downloadAttachment(attachment: Attachment) {
+    this.uploadAttachmentService.downloadAttachment(attachment);
+  }
 }

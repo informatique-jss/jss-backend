@@ -118,7 +118,7 @@
                       </h4>
                       <div class="row align-items-end">
                         <div class="col"> <span class="date-info fs-9 float-lg-end">
-                            <span>Publié le {{post.date | date:'EEEE d MMMM'}}</span>
+                            <span>Publié le {{post.date | literalDatePipe}}</span>
                           </span>
                         </div>
                       </div>
@@ -199,7 +199,7 @@
                   </h6>
                   <div class="post-meta">
                     <span class="date-info small">
-                      <span class="fs-9">Publié le {{post.date | date:'EEEE d MMMM'}}</span>
+                      <span class="fs-9">Publié le {{post.date | literalDatePipe}}</span>
                     </span>
                   </div>
                 </div>
@@ -247,8 +247,7 @@
                     <a class="btn-light btn-sm rounded-circle btn-circle fs-7"
                       (click)="togglePlayPodcast(podcasts[0])"><i
                         [ngClass]="isPlayingPodcast(podcasts[0]) ? 'bi-pause-fill' : 'bi-play-fill'"></i></a>
-                    <span class="small text-light fs-9 ms-2">Publié le {{podcasts[0].date | date: 'dd/MM/yyyy'}} à
-                      {{podcasts[0].date | date: 'HH:mm'}}</span>
+                    <span class="small text-light fs-9 ms-2">Publié le {{podcasts[0].date | literalDatePipe}}</span>
                   </div>
 
                 </div>
@@ -327,8 +326,7 @@
               </div>
               <p>Infos locales, analyses et enquêtes : restez informé(e) sans limite.</p>
               <div class="row align-items-center" routerLink="/subscription">
-                <div class="btn btn-yellow">S'abonner
-                </div>
+                <a class="btn btn-yellow mt-3" style="cursor: pointer;" href="subscription">S'abonner</a>
               </div>
             </div>
           </div>
@@ -380,7 +378,7 @@
                   </h6>
                   <div class="post-meta">
                     <span class="date-info small">
-                      <span>Publié le {{post.date | date:'EEEE d MMMM'}}</span>
+                      <span>Publié le {{post.date | literalDatePipe}}</span>
                     </span>
                   </div>
                 </div>
@@ -432,7 +430,7 @@
                   </h6>
                   <div class="post-meta">
                     <span class="date-info small">
-                      <span>Publié le {{post.date | date:'EEEE d MMMM'}}</span>
+                      <span>Publié le {{post.date |literalDatePipe}}</span>
                     </span>
                   </div>
                 </div>
@@ -486,7 +484,7 @@
                   </h6>
                   <div class="post-meta">
                     <span class="date-info small">
-                      <span>Publié le {{post.date | date:'EEEE d MMMM'}}</span>
+                      <span>Publié le {{post.date | literalDatePipe}}</span>
                     </span>
                   </div>
                 </div>
@@ -555,11 +553,11 @@
         </div>
         <hr>
 
-        <!-- Les dossiers -->
+        <!-- Les séries -->
         <div class="row p-0">
           <div class="col-md-12">
             <div class="section-title-block d-flex pb-3">
-              <h2 class="section-widget-title h3">Les dossiers</h2>
+              <h3 class="section-widget-title">Les séries</h3>
             </div>
           </div>
           <div *ngIf="!series || series.length == 0" class="pb-3">
@@ -672,7 +670,7 @@
               <div class="col-lg-6">
               </div>
               <div class="col-lg-6"> <span class="date-info fs-9 float-lg-end">
-                  <span>Publié le {{post.date | date:'EEEE d MMMM'}}</span>
+                  <span>Publié le {{post.date | literalDatePipe}}</span>
                 </span>
               </div>
             </div>
@@ -680,6 +678,5 @@
         </div>
       </div>
     </div>
-    <!-- <newsletter></newsletter> -->
   </div>
 </div>

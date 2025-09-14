@@ -167,7 +167,8 @@ export class IdentificationComponent implements OnInit {
   refreshIsRegisteredAffaire() {
     if (this.quotation)
       for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++)
-        this.isRegisteredAffaire[i] = this.quotation.assoAffaireOrders[i].affaire.siret != null && this.quotation.assoAffaireOrders[i].affaire.siret != undefined && this.quotation.assoAffaireOrders[i].affaire.siret != "";
+        if (this.quotation.assoAffaireOrders[i].affaire)
+          this.isRegisteredAffaire[i] = this.quotation.assoAffaireOrders[i].affaire.siret != null && this.quotation.assoAffaireOrders[i].affaire.siret != undefined && this.quotation.assoAffaireOrders[i].affaire.siret != "";
   }
 
   addAffaire() {
@@ -202,28 +203,6 @@ export class IdentificationComponent implements OnInit {
     if (!this.quotation.assoAffaireOrders || this.quotation.assoAffaireOrders.length == 0)
       this.quotation.serviceFamilyGroup = undefined;
   }
-
-  /* searchSiret(indexAsso: number) {
-     clearTimeout(this.debounce);
-     this.debounce = setTimeout(() => {
-       this.effectiveSearchSiret(indexAsso);
-     }, 500);
-   }
-
-   effectiveSearchSiret(indexAsso: number) {
-     if (this.siretSearched && (validateSiret(this.siretSearched) || validateSiren(this.siretSearched))) {
-       this.loadingSiretSearch = true;
-       this.affaireService.getAffaireBySiret(this.siretSearched).subscribe(response => {
-         this.loadingSiretSearch = false;
-         if (response && response.length == 1 && response[0].siret) {
-           this.quotation.assoAffaireOrders[indexAsso].affaire = response[0];
-           this.siretSearched = "";
-         } else if (response && response.length > 1) {
-           this.appService.displayToast("Plusieurs SIRET existent pour ce SIREN. Merci de préciser le SIRET souhaité", true, "SIRET multiples", 5000);
-         }
-       })
-     }
-   }*/
 
   selectSiret(affaire: Affaire, indexAsso: number) {
     if (affaire) {

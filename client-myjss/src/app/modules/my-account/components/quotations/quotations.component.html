@@ -1,6 +1,21 @@
 <div class="d-flex align-items-center mb-4">
   <h1 class="h2 mb-0">Devis</h1>
   <div class="ms-auto">
+    <div ngbDropdown [autoClose]="'outside'" class="btn-group dropdown" style="margin-right: 10px;"
+      *ngIf="responsablesForCurrentUser && responsablesForCurrentUser.length>0">
+      <button type="button" class="btn btn-outline-secondary dropdown-toggle" ngbDropdownToggle aria-haspopup="true"
+        aria-expanded="false">
+        <i class="ai-filter me-2"></i>
+        Responsables
+      </button>
+      <div ngbDropdownMenu class="dropdown-menu my-1">
+        <label class=" dropdown-item" *ngFor="let respo of responsablesForCurrentUser">
+          <input class="form-check-input me-2" type="checkbox" value="" [(ngModel)]="responsableCheck[respo.id]"
+            (change)="changeFilter()">
+          {{respo.firstname}} {{respo.lastname}}
+        </label>
+      </div>
+    </div>
     <div ngbDropdown [autoClose]="'outside'" class="btn-group dropdown" style="margin-right: 10px;">
       <button type="button" class="btn btn-outline-secondary dropdown-toggle" ngbDropdownToggle aria-haspopup="true"
         aria-expanded="false">
@@ -121,6 +136,12 @@
                   <div class="col-12 col-sm-3">
                     <div class="fs-sm text-body-secondary mb-2">Services</div>
                     <div class="fs-sm fw-medium text-dark">{{quotation.servicesList}}</div>
+                  </div>
+                  <div class="col-12 col-sm-2"
+                    *ngIf="quotation.responsable && responsablesForCurrentUser && responsablesForCurrentUser.length>0">
+                    <div class="fs-sm text-body-secondary mb-2">Responsable</div>
+                    <div class="fs-sm fw-medium text-dark">{{quotation.responsable.firstname}}
+                      {{quotation.responsable.lastname}}</div>
                   </div>
                 </div>
               </div>
@@ -283,17 +304,15 @@
 </div>
 
 <ng-template #cancelQuotationModal let-modal>
-  <div>
-    <div class="modal-header">
-      <h5 class="modal-title" id="cancelQuotationModal">Abandonner le devis</h5>
-      <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Fermer"></button>
-    </div>
-    <div class="modal-body">Êtes-vous sûr de vouloir abandonner ce devis ?
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Annuler</button>
-      <button type="button" class="btn btn-danger ms-2"
-        (click)="finalCancelDraft($event );$event.stopPropagation();modal.dismiss()">Abandonner</button>
-    </div>
+  <div class="modal-header">
+    <h5 class="modal-title" id="cancelQuotationModal">Abandonner le devis</h5>
+    <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Fermer"></button>
+  </div>
+  <div class="modal-body">Êtes-vous sûr de vouloir abandonner ce devis ?
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Annuler</button>
+    <button type="button" class="btn btn-danger ms-2"
+      (click)="finalCancelDraft($event );$event.stopPropagation();modal.dismiss()">Abandonner</button>
   </div>
 </ng-template>

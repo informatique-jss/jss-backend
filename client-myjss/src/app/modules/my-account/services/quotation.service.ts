@@ -16,8 +16,11 @@ export class QuotationService extends AppRestService<Quotation> {
     super(http, "quotation");
   }
 
-  searchQuotationsForCurrentUser(quotationStatus: string[], page: number, sorter: string) {
-    return this.postList(new HttpParams().set("page", page).set("sortBy", sorter), "quotation/search/current", quotationStatus);
+  searchQuotationsForCurrentUser(quotationStatus: string[], page: number, sorter: string, responsablesToFilter: Responsable[] | undefined) {
+    let params = new HttpParams().set("page", page).set("sortBy", sorter);
+    if (responsablesToFilter && responsablesToFilter.length > 0)
+      params = params.set("responsableIdsToFilter", responsablesToFilter.map(r => r.id).join(","));
+    return this.postList(params, "quotation/search/current", quotationStatus);
   }
 
   getQuotation(quotationId: number) {

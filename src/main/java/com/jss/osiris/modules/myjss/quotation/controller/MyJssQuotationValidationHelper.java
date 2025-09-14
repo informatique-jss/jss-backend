@@ -29,9 +29,17 @@ public class MyJssQuotationValidationHelper {
         QuotationValidationHelper quotationValidationHelper;
 
         public boolean canSeeQuotation(IQuotation quotation) {
-                if (quotation != null && quotation.getResponsable() != null && employeeService.getCurrentMyJssUser()
-                                .getId().equals(quotation.getResponsable().getId()))
-                        return true;
+                if (quotation != null && quotation.getResponsable() != null) {
+                        Responsable currentUser = employeeService.getCurrentMyJssUser();
+                        if (currentUser.getId().equals(quotation.getResponsable().getId()))
+                                return true;
+                        if (Boolean.TRUE.equals(currentUser.getCanViewAllTiersInWeb())) {
+                                for (Responsable responsable : currentUser.getTiers().getResponsables()) {
+                                        if (responsable.getId().equals(quotation.getResponsable().getId()))
+                                                return true;
+                                }
+                        }
+                }
                 return false;
         }
 
@@ -39,7 +47,16 @@ public class MyJssQuotationValidationHelper {
                 if (responsable == null || responsable.getId() == null)
                         return false;
 
-                return responsable.getId().equals(employeeService.getCurrentMyJssUser().getId());
+                Responsable currentUser = employeeService.getCurrentMyJssUser();
+                if (currentUser.getId().equals(responsable.getId()))
+                        return true;
+                if (Boolean.TRUE.equals(currentUser.getCanViewAllTiersInWeb())) {
+                        for (Responsable responsableToCheck : currentUser.getTiers().getResponsables()) {
+                                if (responsableToCheck.getId().equals(responsable.getId()))
+                                        return true;
+                        }
+                }
+                return false;
         }
 
         public void validateAffaire(Affaire affaire) throws OsirisValidationException, OsirisException {

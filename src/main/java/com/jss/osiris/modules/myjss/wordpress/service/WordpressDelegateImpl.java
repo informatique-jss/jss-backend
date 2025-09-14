@@ -158,7 +158,7 @@ public class WordpressDelegateImpl implements WordpressDelegate {
     private ResponseEntity<List<Media>> getMediaPaginated(int page) {
         ResponseEntity<List<Media>> response = new RestTemplate()
                 .exchange(wordpressEntryPoint + mediaRequestUrl + "?per_page=100&page=" + page
-                        + "&_fields=id,author,date,media_details,media_type,alt_text,source_url",
+                        + "&_fields=id,author,date,media_details,media_type,alt_text,caption,source_url",
                         HttpMethod.GET,
                         null,
                         new ParameterizedTypeReference<List<Media>>() {

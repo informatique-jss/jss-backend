@@ -3,7 +3,6 @@ package com.jss.osiris.modules.osiris.quotation.service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -210,9 +209,12 @@ public class ServiceServiceImpl implements ServiceService {
 
         List<ServiceType> serviceTypeNonMergeables = serviceTypes.stream().filter(s -> !s.getIsMergeable())
                 .toList();
-        for (ServiceType serviceType : serviceTypeNonMergeables)
+        for (ServiceType serviceType : serviceTypeNonMergeables) {
+            ArrayList<ServiceType> serviceTypeList = new ArrayList<ServiceType>();
+            serviceTypeList.add(serviceType);
             services.add(
-                    getServiceForMultiServiceTypesAndAffaire(Arrays.asList(serviceType), customLabel, affaire));
+                    getServiceForMultiServiceTypesAndAffaire(serviceTypeList, customLabel, affaire));
+        }
 
         return services;
     }

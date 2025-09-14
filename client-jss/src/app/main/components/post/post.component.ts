@@ -8,6 +8,7 @@ import { environment } from '../../../../environments/environment';
 import { MY_JSS_SIGN_IN_ROUTE } from '../../../libs/Constants';
 import { validateEmail } from '../../../libs/CustomFormsValidatorsHelper';
 import { getTimeReading } from '../../../libs/FormatHelper';
+import { LiteralDatePipe } from '../../../libs/LiteralDatePipe';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { TrustHtmlPipe } from '../../../libs/TrustHtmlPipe';
 import { AppService } from '../../../services/app.service';
@@ -19,14 +20,14 @@ import { Mail } from '../../model/Mail';
 import { PagedContent } from '../../model/PagedContent';
 import { Pagination } from '../../model/Pagination';
 import { Post } from '../../model/Post';
-import { ReadingFolder } from '../../model/ReadingFolder';
 import { Responsable } from '../../model/Responsable';
+import { Serie } from '../../model/Serie';
 import { ONE_POST_SUBSCRIPTION } from '../../model/Subscription';
 import { AudioPlayerService } from '../../services/audio.player.service';
 import { CommentService } from '../../services/comment.service';
 import { LoginService } from '../../services/login.service';
 import { PostService } from '../../services/post.service';
-import { ReadingFolderService } from '../../services/reading.folder.service';
+import { SerieService } from '../../services/serie.service';
 import { SubscriptionService } from '../../services/subscription.service';
 import { AvatarComponent } from '../avatar/avatar.component';
 import { BookmarkComponent } from "../bookmark/bookmark.component";
@@ -40,7 +41,7 @@ declare var tns: any;
   selector: 'app-post',
   templateUrl: './post.component.html',
   styleUrls: ['./post.component.css'],
-  imports: [SHARED_IMPORTS, TrustHtmlPipe, AvatarComponent, GenericInputComponent, GenericTextareaComponent, NewsletterComponent, BookmarkComponent],
+  imports: [SHARED_IMPORTS, TrustHtmlPipe, AvatarComponent, GenericInputComponent, GenericTextareaComponent, NewsletterComponent, BookmarkComponent, LiteralDatePipe],
   standalone: true
 })
 export class PostComponent implements OnInit, AfterViewInit {
@@ -51,6 +52,8 @@ export class PostComponent implements OnInit, AfterViewInit {
   nextPost: Post | undefined;
   previousPost: Post | undefined;
   commentsPagination: Pagination = {} as Pagination;
+  seriePost: Serie | undefined;
+  postsOfSerie: Post[] = []
 
   comments: Comment[] = [];
   newComment: Comment = {} as Comment;
@@ -66,7 +69,6 @@ export class PostComponent implements OnInit, AfterViewInit {
   audioUrl: string | undefined;
   progress: number = 0;
   progressSubscription: Subscription = new Subscription;
-  readingFolders: ReadingFolder[] = [];
   recipientMail: string | undefined;
 
   currentUser: Responsable | undefined;
@@ -84,13 +86,13 @@ export class PostComponent implements OnInit, AfterViewInit {
     private appService: AppService,
     private platformService: PlatformService,
     private audioService: AudioPlayerService,
+    private serieService: SerieService,
     private commentService: CommentService,
     private subscriptionService: SubscriptionService,
     private loginService: LoginService,
     private modalService: NgbModal,
     private cdr: ChangeDetectorRef,
     private gtmService: GtmService,
-    private readingFolderService: ReadingFolderService,
     private titleService: Title, private meta: Meta,
   ) { }
 
@@ -100,6 +102,13 @@ export class PostComponent implements OnInit, AfterViewInit {
   newCommentForm!: FormGroup;
 
   ngOnInit() {
+    this.refresh();
+    this.activatedRoute.paramMap.subscribe(params => {
+      this.refresh();
+    });
+  }
+
+  refresh() {
     this.titleService.setTitle("Tous nos articles - JSS");
     this.meta.updateTag({ name: 'description', content: "Retrouvez l'actualité juridique et économique. JSS analyse pour vous les dernières annonces, formalités et tendances locales." });
 
@@ -165,7 +174,7 @@ export class PostComponent implements OnInit, AfterViewInit {
       this.postService.getOfferedPostByToken(this.validationToken, mail).subscribe(post => {
         this.post = post;
         if (this.post) {
-          this.fetchNextPrevArticleAndComments(this.post);
+          this.fetchNextPrevArticleAndSerieAndComments(this.post);
         }
       });
 
@@ -175,7 +184,7 @@ export class PostComponent implements OnInit, AfterViewInit {
         this.postService.getPostBySlug(this.slug).subscribe(post => {
           this.post = post;
           if (this.post) {
-            this.fetchNextPrevArticleAndComments(this.post);
+            this.fetchNextPrevArticleAndSerieAndComments(this.post);
           }
         })
       }
@@ -183,10 +192,17 @@ export class PostComponent implements OnInit, AfterViewInit {
 
     this.cancelReply()
     this.fetchMostSeenPosts();
-    this.fetchReadingFolder();
   }
 
-  private fetchNextPrevArticleAndComments(post: Post) {
+  private fetchNextPrevArticleAndSerieAndComments(post: Post) {
+    if (post.postSerie && post.postSerie.length > 0) {
+      this.seriePost = post.postSerie[0];
+      this.postService.getAllPostsBySerie(this.seriePost, 0, 50, "").subscribe(res => {
+        if (res && res.content.length > 0)
+          this.postsOfSerie = res.content;
+      });
+      this.postsOfSerie
+    }
     this.titleService.setTitle(post.titleText + " - JSS");
     this.meta.updateTag({ name: 'description', content: this.getFirstSentenceFromHtml(post.excerptText) });
     this.postService.getNextArticle(post).subscribe(response => this.nextPost = response);
@@ -234,13 +250,6 @@ export class PostComponent implements OnInit, AfterViewInit {
         }
       });
     })
-  }
-
-  fetchReadingFolder() {
-    this.readingFolderService.getReadingFolders().subscribe(response => {
-      if (response)
-        this.readingFolders.push(...response);
-    });
   }
 
   dropdownOpen = false;
@@ -349,6 +358,14 @@ export class PostComponent implements OnInit, AfterViewInit {
     if (this.post && win) {
       let url = environment.frontendUrl + "post/" + this.post.slug;
       win.open("https://www.linkedin.com/shareArticle?mini=true&url=" + url + "&title=" + this.extractContent(this.post.titleText) + "&summary=" + this.extractContent(this.post.excerptText), "_blank");
+    }
+  }
+
+  shareOnBluesky() {
+    const win = this.platformService.getNativeWindow();
+    if (this.post && win) {
+      let url = environment.frontendUrl + "post/" + this.post.slug;
+      win.open("https://bsky.app/intent/compose?text=" + this.extractContent(this.post.titleText), "_blank");
     }
   }
 

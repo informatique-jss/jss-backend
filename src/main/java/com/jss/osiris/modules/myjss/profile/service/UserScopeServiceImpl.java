@@ -33,7 +33,7 @@ public class UserScopeServiceImpl implements UserScopeService {
     @Override
     public List<Responsable> getPotentialUserScope() {
         Responsable responsable = employeeService.getCurrentMyJssUser();
-        return getPotentialUserScope(responsable);
+        return responsableService.getResponsableByMail(responsable.getMail());
     }
 
     @Override

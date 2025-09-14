@@ -15,7 +15,7 @@ import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
-import com.jss.osiris.modules.osiris.miscellaneous.model.Phone;
+import com.jss.osiris.modules.osiris.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentTypeService;
@@ -37,7 +37,6 @@ import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderStatusServic
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationStatusService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
-import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
 import com.jss.osiris.modules.osiris.tiers.service.TiersService;
 
@@ -100,8 +99,21 @@ public class MyJssQuotationDelegate {
             throws OsirisClientMessageException, OsirisValidationException, OsirisException {
         if (order.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder asso : order.getAssoAffaireOrders())
-                if (asso.getAffaire() != null && asso.getAffaire().getId() == null)
-                    affaireService.addOrUpdateAffaire(asso.getAffaire());
+                if (asso.getAffaire() != null && asso.getAffaire().getId() == null) {
+                    boolean found = false;
+                    // Retreive existing affaire by SIRET
+                    if (asso.getAffaire().getSiret() != null) {
+                        List<Affaire> existingAffaires = affaireService
+                                .getAffaireBySiret(asso.getAffaire().getSiret().replaceAll(" ", ""));
+                        if (existingAffaires != null && existingAffaires.size() == 1) {
+                            asso.setAffaire(existingAffaires.get(0));
+                            found = true;
+                        }
+                    }
+
+                    if (!found)
+                        affaireService.addOrUpdateAffaire(asso.getAffaire());
+                }
 
         saveNewMailsOnAffaire(order);
 
@@ -140,6 +152,21 @@ public class MyJssQuotationDelegate {
             order.setCustomerOrderStatus(
                     customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT));
             fetchOrder = customerOrderService.addOrUpdateCustomerOrder(order, true, false);
+
+            // Add special offers
+            List<SpecialOffer> specialOffers = null;
+            if (order.getResponsable().getTiers().getSpecialOffers() != null
+                    && order.getResponsable().getTiers().getSpecialOffers().size() > 0) {
+                specialOffers = order.getResponsable().getTiers().getSpecialOffers();
+
+                if (specialOffers != null && specialOffers.size() > 0) {
+                    order.setSpecialOffers(new ArrayList<SpecialOffer>());
+                    for (SpecialOffer specialOffer : specialOffers)
+                        order.getSpecialOffers().add(specialOffer);
+                    fetchOrder = customerOrderService.addOrUpdateCustomerOrder(order, true, false);
+                }
+            }
+
         } else
             fetchOrder = customerOrderService.getCustomerOrder(order.getId());
 
@@ -156,7 +183,7 @@ public class MyJssQuotationDelegate {
 
         if (isValidation != null && isValidation) {
             customerOrderService.addOrUpdateCustomerOrderStatus(fetchOrder, CustomerOrderStatus.BEING_PROCESSED, true);
-            if (customerOrderService.isOnlyJssAnnouncement(fetchOrder, true)) {
+            if (customerOrderService.isOnlyJssAnnouncementOrSubscription(fetchOrder, true)) {
                 quotationValidationHelper.validateQuotationAndCustomerOrder(fetchOrder, null);
                 customerOrderService.autoBilledProvisions(fetchOrder);
             }
@@ -169,8 +196,21 @@ public class MyJssQuotationDelegate {
             throws OsirisClientMessageException, OsirisValidationException, OsirisException {
         if (quotation.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders())
-                if (asso.getAffaire() != null && asso.getAffaire().getId() == null)
-                    affaireService.addOrUpdateAffaire(asso.getAffaire());
+                if (asso.getAffaire() != null && asso.getAffaire().getId() == null) {
+                    boolean found = false;
+                    // Retreive existing affaire by SIRET
+                    if (asso.getAffaire().getSiret() != null) {
+                        List<Affaire> existingAffaires = affaireService
+                                .getAffaireBySiret(asso.getAffaire().getSiret().replaceAll(" ", ""));
+                        if (existingAffaires != null && existingAffaires.size() == 1) {
+                            asso.setAffaire(existingAffaires.get(0));
+                            found = true;
+                        }
+                    }
+
+                    if (!found)
+                        affaireService.addOrUpdateAffaire(asso.getAffaire());
+                }
 
         saveNewMailsOnAffaire(quotation);
 
@@ -207,6 +247,20 @@ public class MyJssQuotationDelegate {
             quotation.setCustomerOrderOrigin(constantService.getCustomerOrderOriginMyJss());
             quotation.setQuotationStatus(quotationStatusService.getQuotationStatusByCode(QuotationStatus.DRAFT));
             fetchQuotation = quotationService.addOrUpdateQuotation(quotation);
+
+            // Add special offers
+            List<SpecialOffer> specialOffers = null;
+            if (quotation.getResponsable().getTiers().getSpecialOffers() != null
+                    && quotation.getResponsable().getTiers().getSpecialOffers().size() > 0) {
+                specialOffers = quotation.getResponsable().getTiers().getSpecialOffers();
+
+                if (specialOffers != null && specialOffers.size() > 0) {
+                    quotation.setSpecialOffers(new ArrayList<SpecialOffer>());
+                    for (SpecialOffer specialOffer : specialOffers)
+                        quotation.getSpecialOffers().add(specialOffer);
+                    fetchQuotation = quotationService.addOrUpdateQuotation(quotation);
+                }
+            }
         } else
             fetchQuotation = quotationService.getQuotation(quotation.getId());
 
@@ -260,20 +314,46 @@ public class MyJssQuotationDelegate {
 
         // Save new affaire
         for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders()) {
+            if (asso.getAffaire() != null
+                    && asso.getAffaire().getId().equals(constantService.getAffaireDummyForSubscription().getId()))
+                asso.setAffaire(null);
+
             if (asso.getAffaire() != null) {
-                if (asso.getAffaire().getId() == null
-                        && (asso.getAffaire().getDenomination() != null || asso.getAffaire().getLastname() != null)) {
-                    asso.setAffaire(affaireService.addOrUpdateAffaire(asso.getAffaire()));
+                if (asso.getAffaire().getId() == null) {
+                    boolean found = false;
+                    // Retreive existing affaire by SIRET
+                    if (asso.getAffaire().getSiret() != null) {
+                        List<Affaire> existingAffaires = affaireService
+                                .getAffaireBySiret(asso.getAffaire().getSiret().replaceAll(" ", ""));
+                        if (existingAffaires != null && existingAffaires.size() == 1) {
+                            asso.setAffaire(existingAffaires.get(0));
+                            found = true;
+                        }
+                    }
+
+                    if (!found)
+                        asso.setAffaire(affaireService.addOrUpdateAffaire(asso.getAffaire()));
                 }
                 saveNewMailsOnAffaire(quotation);
             } else {
-                Affaire newAffaire = createAffaireWithTiers(quotation.getResponsable().getTiers());
+                Affaire newAffaire = affaireService.getAffaireFromResponsable(quotation.getResponsable());
                 asso.setAffaire(affaireService.addOrUpdateAffaire(newAffaire));
             }
         }
 
         // Validate Quotation or CustomerOrder
         quotationValidationHelper.validateQuotationAndCustomerOrder(quotation, null);
+
+        // Associate subscription
+        if (quotation.getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders())
+                if (asso.getServices() != null)
+                    for (Service ser : asso.getServices())
+                        if (ser.getProvisions() != null)
+                            for (Provision pro : ser.getProvisions())
+                                if (pro.getAssoProvisionPostNewspapers() != null
+                                        && pro.getAssoProvisionPostNewspapers().size() > 0)
+                                    pro.getAssoProvisionPostNewspapers().get(0).setProvision(pro);
 
         // Save Quotation or CustomerOrder
         if (!quotation.getIsQuotation()) {
@@ -283,7 +363,7 @@ public class MyJssQuotationDelegate {
             if (isValidation) {
                 quotation = customerOrderService.addOrUpdateCustomerOrderStatus((CustomerOrder) quotation,
                         CustomerOrderStatus.BEING_PROCESSED, true);
-                if (customerOrderService.isOnlyJssAnnouncement((CustomerOrder) quotation, true))
+                if (customerOrderService.isOnlyJssAnnouncementOrSubscription((CustomerOrder) quotation, true))
                     customerOrderService.autoBilledProvisions((CustomerOrder) quotation);
             }
         }
@@ -296,17 +376,20 @@ public class MyJssQuotationDelegate {
                         QuotationStatus.TO_VERIFY);
         }
 
-        if (hasToSendConfirmation)
+        if (hasToSendConfirmation) {
+            Responsable respo = responsableService.getResponsable(quotation.getResponsable().getId());
             if (quotation.getIsQuotation())
-                mailHelper.sendConfirmationQuotationCreationMyJss(
-                        quotation.getResponsable().getMail().getMail(), (Quotation) quotation);
+                mailHelper.sendConfirmationQuotationCreationMyJss(respo.getMail().getMail(),
+                        (Quotation) quotation);
             else
-                mailHelper.sendConfirmationOrderCreationMyJss(quotation.getResponsable().getMail().getMail(),
+                mailHelper.sendConfirmationOrderCreationMyJss(respo.getMail().getMail(),
                         (CustomerOrder) quotation);
+        }
 
-        if (shouldConnectUserAtTheEnd)
+        if (shouldConnectUserAtTheEnd) {
             userScopeService.authenticateUser(quotation.getResponsable(), request);
-        else
+            responsableService.updateConsentDateForCurrentUser();
+        } else
             return null;
         return quotation;
     }
@@ -468,32 +551,4 @@ public class MyJssQuotationDelegate {
 
     }
 
-    private Affaire createAffaireWithTiers(Tiers tiers) {
-        Affaire affaire = new Affaire();
-        affaire.setDenomination(tiers.getDenomination());
-        affaire.setCivility(tiers.getCivility());
-        affaire.setAddress(tiers.getAddress());
-        affaire.setPostalCode(tiers.getPostalCode());
-        affaire.setCity(tiers.getCity());
-        affaire.setCountry(tiers.getCountry());
-        affaire.setIsIndividual(tiers.getIsIndividual());
-        affaire.setFirstname(tiers.getFirstname());
-        affaire.setLastname(tiers.getLastname());
-        List<Mail> mails = new ArrayList<>();
-        if (tiers.getMails() != null) {
-            for (Mail mail : tiers.getMails()) {
-                mails.add(mail);
-            }
-        }
-        affaire.setMails(mails);
-        List<Phone> phones = new ArrayList<>();
-        if (tiers.getPhones() != null) {
-            for (Phone phone : tiers.getPhones()) {
-                phones.add(phone);
-            }
-        }
-        affaire.setPhones(phones);
-        affaire.setSiret(tiers.getSiret());
-        return affaire;
-    }
 }

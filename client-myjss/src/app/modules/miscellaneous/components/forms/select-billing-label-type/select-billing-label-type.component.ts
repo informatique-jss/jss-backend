@@ -32,7 +32,7 @@ export class SelectBillingLabelTypeComponent extends GenericSelectComponent<Bill
   override displayLabel(object: any): string {
     if (object && object.id) {
       if (object.id == this.constantService.getBillingLabelTypeCodeAffaire().id)
-        return "À mon client";
+        return "À mon client/affaire";
       if (object.id == this.constantService.getBillingLabelTypeCustomer().id)
         return "À moi";
     }

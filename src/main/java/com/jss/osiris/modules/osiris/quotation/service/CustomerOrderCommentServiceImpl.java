@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.miscellaneous.model.ActiveDirectoryGroup;
+import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
@@ -32,6 +33,9 @@ public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentServ
 
     @Autowired
     NotificationService notificationService;
+
+    @Autowired
+    ConstantService constantService;
 
     @Override
     public List<CustomerOrderComment> getCustomerOrderComments() {
@@ -81,6 +85,9 @@ public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentServ
             customerOrderComment.setEmployee(employee);
         else if (!doNotNotify) {
             customerOrderComment.setCurrentCustomer(employeeService.getCurrentMyJssUser());
+            customerOrderComment.setActiveDirectoryGroups(new ArrayList<ActiveDirectoryGroup>());
+            customerOrderComment.getActiveDirectoryGroups().add(constantService.getActiveDirectoryGroupSales());
+            customerOrderComment.setIsToDisplayToCustomer(true);
             notificationService.notifyCommentFromMyJssAddToCustomerOrder(customerOrder);
         }
         customerOrderComment.setCreatedDateTime(LocalDateTime.now());

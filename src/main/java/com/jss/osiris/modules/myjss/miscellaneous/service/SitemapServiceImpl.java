@@ -147,7 +147,7 @@ public class SitemapServiceImpl implements SitemapService {
     }
 
     private void generateSitemapsForMyJssArticles() throws OsirisException {
-        List<Post> posts = postService.getAllPostsForJssMedia();
+        List<Post> posts = postService.getAllPostsForMyJss();
         generateSitemapsForPosts(posts, myJssEntryPoint, "-articles-myjss");
     }
 
