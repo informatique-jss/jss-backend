@@ -20,16 +20,18 @@
           <hr class="d-none d-lg-block">
           <div class="row inline-row align-items-center mb-2">
             <!-- Author info -->
-            <div class="col-auto position-relative border-end pe-1"
-              *ngIf="post.isHiddenAuthor==undefined || post.isHiddenAuthor==null || post.isHiddenAuthor==false">
+            <div class="col-auto position-relative border-end pe-1">
               <div class="row align-items-center">
-                <div class="col-auto avatar avatar-xl">
+                <div class="col-auto avatar avatar-xl"
+                  *ngIf="post.isHiddenAuthor==undefined || post.isHiddenAuthor==null || post.isHiddenAuthor==false">
                   <img class="avatar-img rounded-circle" [src]="post.fullAuthor.avatar_url_size_48" alt="avatar">
                 </div>
                 <div class="col">
                   <a style="cursor: pointer;" [routerLink]=' "/post/author/" + post.fullAuthor.slug'
-                    class="stretched-link d-block">{{post.fullAuthor.name}}</a>
-                  <p *ngIf="post.fullAuthor.description" class="fs-8">{{post.fullAuthor.description}}</p>
+                    class="stretched-link d-block"
+                    *ngIf="post.isHiddenAuthor==undefined || post.isHiddenAuthor==null || post.isHiddenAuthor==false">{{post.fullAuthor.name}}</a>
+                  <p *ngIf="post.fullAuthor.description && (post.isHiddenAuthor==undefined || post.isHiddenAuthor==null || post.isHiddenAuthor==false)"
+                    class="fs-8">{{post.fullAuthor.description}}</p>
                   <span class="list-inline-item d-lg-block fs-8">{{post.date | literalDatePipe}}</span>
                   <span class="list-inline-item d-lg-block fs-8">{{getTimeReading(post.contentText)}}</span>
                 </div>
