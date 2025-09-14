@@ -59,7 +59,6 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.City;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Civility;
-import com.jss.osiris.modules.osiris.miscellaneous.model.Constant;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Country;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Department;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
@@ -282,9 +281,11 @@ public class MyJssQuotationController {
 
 	@GetMapping(inputEntryPoint + "/constants")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
-	public ResponseEntity<Constant> getConstants(HttpServletRequest request) throws OsirisException {
+	public ResponseEntity<String> getConstants(HttpServletRequest request)
+			throws OsirisException {
 		detectFlood(request);
-		return new ResponseEntity<Constant>(constantService.getConstants(), HttpStatus.OK);
+		return new ResponseEntity<String>(constantService.getConstantsForMyJss(),
+				HttpStatus.OK);
 	}
 
 	@PostMapping(inputEntryPoint + "/order/search/current")

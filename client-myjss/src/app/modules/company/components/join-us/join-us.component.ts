@@ -32,8 +32,9 @@ export class JoinUsComponent implements OnInit {
     "assets/img/societe/join-us/team.jpg",
     "assets/img/societe/join-us/join_us_caroussel3.png",
     "assets/img/societe/join-us/Carrousel1.png",
-    "assets/img/societe/join-us/Carrousel2.png",
     "assets/img/societe/join-us/Carrousel3.png",
+    "assets/img/societe/join-us/Carrousel 1.jpg",
+    "assets/img/societe/join-us/Carrousel 2.jpg",
     "assets/img/societe/join-us/Carrousel4.png",
   ];
 

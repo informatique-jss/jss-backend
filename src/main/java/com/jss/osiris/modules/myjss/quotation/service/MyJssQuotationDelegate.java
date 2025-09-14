@@ -373,9 +373,10 @@ public class MyJssQuotationDelegate {
                 mailHelper.sendConfirmationOrderCreationMyJss(quotation.getResponsable().getMail().getMail(),
                         (CustomerOrder) quotation);
 
-        if (shouldConnectUserAtTheEnd)
+        if (shouldConnectUserAtTheEnd) {
             userScopeService.authenticateUser(quotation.getResponsable(), request);
-        else
+            responsableService.updateConsentDateForCurrentUser();
+        } else
             return null;
         return quotation;
     }

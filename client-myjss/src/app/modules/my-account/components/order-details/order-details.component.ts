@@ -160,7 +160,11 @@ export class OrderDetailsComponent implements OnInit {
     })
     this.invoicingSummaryService.getInvoicingSummaryForCustomerOrder(this.order.id).subscribe(response => {
       this.invoiceSummary = response;
-      if (this.invoiceSummary.remainingToPay && Math.abs(this.invoiceSummary.remainingToPay) > INVOICING_PAYMENT_LIMIT_REFUND_EUROS && this.order?.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_OPEN)
+      if (this.invoiceSummary.remainingToPay && Math.abs(this.invoiceSummary.remainingToPay) > INVOICING_PAYMENT_LIMIT_REFUND_EUROS && this.order!.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_OPEN)
+        this.displayPayButton = true;
+      if (this.invoiceSummary.remainingToPay && this.order?.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_OPEN && this.order!.servicesList == this.constantService.getServiceTypeUniqueArticleBuy().label)
+        this.displayPayButton = true;
+      if (this.invoiceSummary.remainingToPay && this.order?.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_OPEN && this.order!.servicesList == this.constantService.getServiceTypeKioskNewspaperBuy().label)
         this.displayPayButton = true;
     })
     this.refreshCustomerOrderComments();

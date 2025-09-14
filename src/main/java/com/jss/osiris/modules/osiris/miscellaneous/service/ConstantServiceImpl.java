@@ -1,11 +1,22 @@
 package com.jss.osiris.modules.osiris.miscellaneous.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule;
+import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule.Feature;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.jackson.JacksonLocalDateDeserializer;
+import com.jss.osiris.libs.jackson.JacksonLocalDateSerializer;
+import com.jss.osiris.libs.jackson.JacksonLocalDateTimeSerializer;
+import com.jss.osiris.libs.jackson.JacksonTimestampMillisecondDeserializer;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.myjss.wordpress.model.Category;
 import com.jss.osiris.modules.myjss.wordpress.model.JssCategory;
 import com.jss.osiris.modules.myjss.wordpress.model.MyJssCategory;
@@ -70,6 +81,9 @@ public class ConstantServiceImpl implements ConstantService {
     @Autowired
     ConstantServiceProxyImpl constantServiceProxy;
 
+    private String constantCache = null;
+    private LocalDateTime lastPutCache = null;
+
     @Override
     public Constant addOrUpdateConstant(
             Constant constant) throws OsirisException {
@@ -79,6 +93,38 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public Constant getConstants() throws OsirisException {
         return constantServiceProxy.getConstants();
+    }
+
+    @Override
+    public void dropConstantCache() {
+        constantCache = null;
+    }
+
+    @Override
+    public String getConstantsForMyJss() throws OsirisException {
+        if (constantCache != null && lastPutCache.isAfter(LocalDateTime.now().minusMinutes(5)))
+            return constantCache;
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        SimpleModule simpleModule = new SimpleModule("SimpleModule");
+        simpleModule.addSerializer(LocalDateTime.class, new JacksonLocalDateTimeSerializer());
+        simpleModule.addSerializer(LocalDate.class, new JacksonLocalDateSerializer());
+        simpleModule.addDeserializer(LocalDateTime.class, new JacksonTimestampMillisecondDeserializer());
+        simpleModule.addDeserializer(LocalDate.class, new JacksonLocalDateDeserializer());
+        objectMapper.registerModule(simpleModule);
+        Hibernate5JakartaModule module = new Hibernate5JakartaModule();
+        module.enable(Feature.FORCE_LAZY_LOADING);
+        objectMapper.registerModule(module);
+        try {
+            constantCache = objectMapper.writerWithView(JacksonViews.MyJssDetailedView.class)
+                    .writeValueAsString(getConstants());
+            lastPutCache = LocalDateTime.now();
+            return constantCache;
+        } catch (JsonProcessingException e) {
+            throw new OsirisException(e, "Error when parsing constant");
+        } catch (OsirisException e) {
+            throw new OsirisException(e, "Error when parsing constant");
+        }
     }
 
     @Override

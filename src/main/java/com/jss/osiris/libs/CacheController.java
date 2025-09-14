@@ -7,6 +7,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
+
 @RestController
 public class CacheController {
 
@@ -15,6 +17,9 @@ public class CacheController {
 
 	@Autowired
 	SessionFactory sessionFactory;
+
+	@Autowired
+	ConstantService constantService;
 
 	private static final String inputEntryPoint = "/cache";
 
@@ -30,5 +35,7 @@ public class CacheController {
 
 		// Clear Hibernate 2nd level cache
 		sessionFactory.getCache().evictAllRegions();
+
+		constantService.dropConstantCache();
 	}
 }

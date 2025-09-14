@@ -64,6 +64,10 @@ import com.jss.osiris.modules.osiris.tiers.model.TiersType;
 public interface ConstantService {
     public Constant getConstants() throws OsirisException;
 
+    public String getConstantsForMyJss() throws OsirisException;
+
+    public void dropConstantCache();
+
     public Constant addOrUpdateConstant(Constant constant) throws OsirisException;
 
     public BillingLabelType getBillingLabelTypeCodeAffaire() throws OsirisException;
