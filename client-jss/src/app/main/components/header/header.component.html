@@ -142,7 +142,7 @@
       </nav>
 
       <!-- Navigation Mobile (expandable) -->
-      <div class="d-lg-none" *ngIf="isMobileMenuOpen">
+      <div class="d-lg-none" *ngIf="isMobileMenuOpen" #menuMobile>
         <div class="py-3 row g-2">
           <div class="col">
             <a class="btn btn-light w-100" *ngIf="!currentUser" [href]="" (click)="openSignIn()"
