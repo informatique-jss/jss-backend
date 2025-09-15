@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, OnInit, TemplateRef } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
@@ -54,6 +54,8 @@ export class HeaderComponent implements OnInit {
   isMobileMenuOpen: boolean = false;
   showDepartments: boolean = false;
   idfPublishingDepartment: PublishingDepartment | undefined;
+
+  @ViewChild('menuMobile') menuMobileRef!: ElementRef;
 
   myAccountItems: AccountMenuItem[] = [];
   MAIN_ITEM_ACCOUNT = MAIN_ITEM_ACCOUNT;
@@ -130,11 +132,24 @@ export class HeaderComponent implements OnInit {
     }
   }
 
-
-
   toggleMobileMenu(): void {
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
     this.showDepartments = false;
+  }
+
+  // Ferme le menu mobile si clic à l'extérieur
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+
+    if (
+      this.isMobileMenuOpen &&
+      this.menuMobileRef &&
+      !this.menuMobileRef.nativeElement.contains(target) &&
+      !target.closest('.bi-list') // le bouton burger lui-même
+    ) {
+      this.isMobileMenuOpen = false;
+    }
   }
 
   toggleDepartmentDropdown(): void {
