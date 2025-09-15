@@ -204,7 +204,8 @@ export class PostComponent implements OnInit, AfterViewInit {
       this.postsOfSerie
     }
     this.titleService.setTitle(post.titleText + " - JSS");
-    this.meta.updateTag({ name: 'description', content: this.getFirstSentenceFromHtml(post.excerptText) });
+    if (post.excerptText)
+      this.meta.updateTag({ name: 'description', content: this.getFirstSentenceFromHtml(post.excerptText) });
     this.postService.getNextArticle(post).subscribe(response => this.nextPost = response);
     this.postService.getPreviousArticle(post).subscribe(response => this.previousPost = response);
     this.fetchComments(0);
