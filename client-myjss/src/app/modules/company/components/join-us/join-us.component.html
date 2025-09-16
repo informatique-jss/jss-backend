@@ -58,6 +58,10 @@
 <ng-template #spontaneousApplicationModal let-modal>
   <div class="modal-content">
     <div class="modal-header">
+      <div class="justify-content-end row">
+        <button type="button" class="col-auto btn text-white" aria-label="Close" (click)="closeApplicationModal()"><i
+            class="ai-cross-alt"></i></button>
+      </div>
       <h5 id="spontaneousApplicationModalLabel">Formulaire de Candidature</h5>
       <p>Pour nous faire parvenir votre candidature spontanée, remplissez ce formulaire et
         téléchargez
