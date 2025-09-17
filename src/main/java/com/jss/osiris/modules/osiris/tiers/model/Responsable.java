@@ -239,6 +239,8 @@ public class Responsable implements IAttachment, IId {
 	private List<Voucher> vouchers;
 
 	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
+	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
 	private LocalDateTime consentTermsDate;
 
 	public Tiers getTiers() {
