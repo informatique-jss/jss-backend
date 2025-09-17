@@ -31,7 +31,7 @@ export class AnnouncementService extends AppRestService<Announcement> {
     return this.getList(new HttpParams(), "announcement/last-seven-days", "", "");
   }
 
-  downloadPublicationReceipt(announcement: Announcement) {
+  downloadPublicationFlag(announcement: Announcement) {
     this.downloadGet(new HttpParams().set("idAnnouncement", announcement.id + ""), "publication/flag/download");
   }
 }

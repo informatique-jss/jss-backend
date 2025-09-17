@@ -52,10 +52,10 @@ export class AnnouncementComponent implements OnInit {
     this.location.back();
   }
 
-  downloadPublicationReceipt() {
+  downloadPublicationFlag() {
     if (this.announcement) {
       this.trackCtaClickDownloadFlag();
-      this.announcementService.downloadPublicationReceipt(this.announcement);
+      this.announcementService.downloadPublicationFlag(this.announcement);
     }
   }
 }

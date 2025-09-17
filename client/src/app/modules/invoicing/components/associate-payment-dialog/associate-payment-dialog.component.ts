@@ -223,7 +223,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
     amountDialogRef.componentInstance.maxAmount = Math.round(maxAmount * 100) / 100;
     amountDialogRef.afterClosed().subscribe(response => {
       if (response != null) {
-        let asso = { payment: this.payment, invoice: { id: invoice.id, totalPrice: invoice.totalPrice, responsable: invoice.responsable } } as AssociationSummaryTable;
+        let asso = { payment: this.payment, invoice: { id: invoice.id, totalPrice: invoice.totalPrice, responsable: invoice.responsable, customerOrder: invoice.customerOrder } } as AssociationSummaryTable;
         asso.amountUsed = parseFloat(response);
         this.associations.push(asso);
         if (!this.responsableOrder || !this.responsableOrder.id)
