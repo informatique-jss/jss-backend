@@ -1297,7 +1297,7 @@ public class WordpressController {
 
 			headers = new HttpHeaders();
 			headers.setContentLength(data.length);
-			headers.add("filename", "Attestation de parution n°" + announcement.getId() + ".pdf");
+			headers.add("filename", "Témoin de parution n°" + announcement.getId() + ".pdf");
 			headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
 
 			// Compute content type

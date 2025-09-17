@@ -21,7 +21,7 @@ public class SendMailThread implements IOsirisThread {
                 return Batch.SEND_MAIL;
         }
 
-        @Transactional(rollbackFor = Exception.class)
+        @Transactional(rollbackFor = Exception.class, noRollbackFor = OsirisClientMessageException.class)
         public void executeTask(Integer entityId)
                         throws OsirisValidationException, OsirisException, OsirisClientMessageException,
                         OsirisDuplicateException {
