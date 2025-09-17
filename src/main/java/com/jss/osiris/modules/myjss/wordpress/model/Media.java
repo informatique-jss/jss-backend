@@ -46,6 +46,7 @@ public class Media implements Serializable {
     private String captionText;
 
     @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+    @Column(length = 500)
     private String alt_text;
 
     @IndexedField

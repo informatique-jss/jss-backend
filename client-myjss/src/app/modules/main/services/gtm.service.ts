@@ -56,6 +56,9 @@ export class GtmService {
     if (this.currentUser)
       payload.user = { id: this.currentUser.id };
 
+    if (payload && payload.page)
+      payload.page.website = "myjss";
+
     const eventData = { event, ...payload };
     win.dataLayer.push(eventData);
 
