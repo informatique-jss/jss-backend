@@ -49,7 +49,8 @@ public class PrintDelegate {
       if (customerOrder.getCustomerOrderAssignations() != null) {
         Employee employee = null;
         for (CustomerOrderAssignation customerOrderAssignation : customerOrder.getCustomerOrderAssignations())
-          if (customerOrderAssignation.getId().equals(constantService.getAssignationTypeFormaliste().getId()))
+          if (customerOrderAssignation.getAssignationType().getId()
+              .equals(constantService.getAssignationTypeFormaliste().getId()))
             employee = customerOrderAssignation.getEmployee();
 
         if (employee != null) {
@@ -318,8 +319,17 @@ public class PrintDelegate {
       socket = new Socket(printerIp, printerPort);
       dOut = new DataOutputStream(socket.getOutputStream());
 
+      addressLine1 = StringUtils.stripAccents(addressLine1);
+      addressLine2 = StringUtils.stripAccents(addressLine2);
+      addressLine3 = StringUtils.stripAccents(addressLine3);
+      addressLine4 = StringUtils.stripAccents(addressLine4);
+      postalCodeAndCity = StringUtils.stripAccents(postalCodeAndCity);
+
+      String fontSize = "30,30";
+
       String zpl = "" +
           " ^XA " +
+          " ^CI28 " +
           " ^PW800             // largeur 800 dots = 100 mm " +
           " ^LL400             // hauteur 400 dots = 50 mm " +
           " ^LH0,0             // origine en haut à gauche " +
@@ -336,29 +346,29 @@ public class PrintDelegate {
           " // --- ADRESSE à droite, toute hauteur --- " +
           "  " +
           " ^FO260,130 " +
-          " ^AZN,35,35 " +
+          " ^AZN," + fontSize + " " +
           " ^FD" + addressLine1 + "^FS " +
           "  " +
           " ^FO260,180 " +
-          " ^AZN,35,35 " +
+          " ^AZN," + fontSize + " " +
           " ^FD" + addressLine2 + "^FS " +
           "  " +
           " ^FO260,230 " +
-          " ^AZN,35,35 " +
+          " ^AZN," + fontSize + " " +
           " ^FD" + addressLine3 + "^FS " +
           "  " +
           " ^FO260,280 " +
-          " ^AZN,35,35 " +
+          " ^AZN," + fontSize + " " +
           " ^FD" + addressLine4 + "^FS " +
           "  " +
           " ^FO260,345 " +
-          " ^AZN,35,35 " +
+          " ^AZN," + fontSize + " " +
           " ^FD" + postalCodeAndCity + "^FS " +
           "  " +
           "  " +
           " ^XZ        ";
 
-      dOut.write(zpl.getBytes("UTF-8"));
+      dOut.write(zpl.getBytes("CP850"));
       dOut.flush();
     } catch (IOException e) {
       throw new OsirisException(e, "Error when printing");
