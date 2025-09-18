@@ -388,28 +388,29 @@ public class MailHelper {
             if (mail.getAttachments() != null) {
                 List<Integer> attachmentsDone = new ArrayList<Integer>();
                 for (Attachment attachment : mail.getAttachments()) {
-                    if ((attachment.getParentAttachment() == null && !attachmentsDone.contains(attachment.getId()))
-                            || (attachment.getParentAttachment() != null
-                                    && !attachmentsDone.contains(attachment.getParentAttachment().getId()))) {
-                        if (attachment.getParentAttachment() != null)
-                            attachmentsDone.add(attachment.getParentAttachment().getId());
-                        else
-                            attachmentsDone.add(attachment.getId());
-                        message.addAttachment(attachment.getUploadedFile().getFilename(),
-                                new File(attachment.getUploadedFile().getPath()));
-
-                        if (mail.getSendToMe() == null || mail.getSendToMe() == false) {
-                            attachment.setIsAlreadySent(true);
-                            attachmentService.addOrUpdateAttachment(attachment);
+                    if (!Boolean.TRUE.equals(attachment.getIsDisabled()))
+                        if ((attachment.getParentAttachment() == null && !attachmentsDone.contains(attachment.getId()))
+                                || (attachment.getParentAttachment() != null
+                                        && !attachmentsDone.contains(attachment.getParentAttachment().getId()))) {
                             if (attachment.getParentAttachment() != null)
-                                attachment.getParentAttachment().setIsAlreadySent(true);
-                            else if (attachment != null)
-                                attachment.setIsAlreadySent(true);
+                                attachmentsDone.add(attachment.getParentAttachment().getId());
+                            else
+                                attachmentsDone.add(attachment.getId());
+                            message.addAttachment(attachment.getUploadedFile().getFilename(),
+                                    new File(attachment.getUploadedFile().getPath()));
 
-                            if (attachment != null && attachment.getParentAttachment() != null)
-                                attachmentService.addOrUpdateAttachment(attachment.getParentAttachment());
+                            if (mail.getSendToMe() == null || mail.getSendToMe() == false) {
+                                attachment.setIsAlreadySent(true);
+                                attachmentService.addOrUpdateAttachment(attachment);
+                                if (attachment.getParentAttachment() != null)
+                                    attachment.getParentAttachment().setIsAlreadySent(true);
+                                else if (attachment != null)
+                                    attachment.setIsAlreadySent(true);
+
+                                if (attachment != null && attachment.getParentAttachment() != null)
+                                    attachmentService.addOrUpdateAttachment(attachment.getParentAttachment());
+                            }
                         }
-                    }
                 }
             }
         } catch (MessagingException e) {
@@ -1051,7 +1052,8 @@ public class MailHelper {
         if (quotation.getAttachments() != null && quotation.getAttachments().size() > 0) {
             for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(quotation.getAttachments())) {
                 if (attachment.getAttachmentType() != null && attachment.getAttachmentType().getId()
-                        .equals(constantService.getAttachmentTypeQuotation().getId())) {
+                        .equals(constantService.getAttachmentTypeQuotation().getId())
+                        && !Boolean.TRUE.equals(attachment.getIsDisabled())) {
                     if (mail.getAttachments() == null)
                         mail.setAttachments(new ArrayList<Attachment>());
                     mail.getAttachments().add(attachment);
@@ -1167,7 +1169,7 @@ public class MailHelper {
         if (currentProvision.getAttachments() != null) {
             for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(currentProvision.getAttachments()))
                 if (attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypePublicationReceipt()
-                        .getId())) {
+                        .getId()) && !Boolean.TRUE.equals(attachment.getIsDisabled())) {
                     attachments.add(attachment);
                     break;
                 }
@@ -1219,7 +1221,8 @@ public class MailHelper {
         for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(currentProvision.getAttachments()))
             if (attachment.getAttachmentType().getId()
                     .equals(constantService.getAttachmentTypeProofReading()
-                            .getId())) {
+                            .getId())
+                    && !Boolean.TRUE.equals(attachment.getIsDisabled())) {
                 attachments.add(attachment);
                 break;
             }
@@ -1294,7 +1297,7 @@ public class MailHelper {
         if (currentProvision.getAttachments() != null) {
             for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(currentProvision.getAttachments()))
                 if (attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypePublicationFlag()
-                        .getId())) {
+                        .getId()) && !Boolean.TRUE.equals(attachment.getIsDisabled())) {
                     attachments.add(attachment);
                     break;
                 }
@@ -1337,9 +1340,8 @@ public class MailHelper {
 
         List<Attachment> attachments = new ArrayList<Attachment>();
         for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(provision.getAttachments()))
-            if (attachment.getAttachmentType().getId()
-                    .equals(constantService.getAttachmentTypeAnnouncement()
-                            .getId())) {
+            if (attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeAnnouncement()
+                    .getId()) && !Boolean.TRUE.equals(attachment.getIsDisabled())) {
                 attachments.add(attachment);
                 break;
             }
@@ -1373,9 +1375,8 @@ public class MailHelper {
 
         List<Attachment> attachments = new ArrayList<Attachment>();
         for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(provision.getAttachments()))
-            if (attachment.getAttachmentType().getId()
-                    .equals(constantService.getAttachmentTypeAnnouncement()
-                            .getId())) {
+            if (attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeAnnouncement()
+                    .getId()) && !Boolean.TRUE.equals(attachment.getIsDisabled())) {
                 attachments.add(attachment);
                 break;
             }
@@ -1407,9 +1408,8 @@ public class MailHelper {
 
         List<Attachment> attachments = new ArrayList<Attachment>();
         for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(provision.getAttachments()))
-            if (attachment.getAttachmentType().getId()
-                    .equals(constantService.getAttachmentTypeAnnouncement()
-                            .getId())) {
+            if (attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeAnnouncement()
+                    .getId()) && !Boolean.TRUE.equals(attachment.getIsDisabled())) {
                 attachments.add(attachment);
                 break;
             }
@@ -1442,7 +1442,8 @@ public class MailHelper {
 
         if (customerOrder.getAttachments() != null) {
             for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(customerOrder.getAttachments())) {
-                if (attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeInvoice().getId())) {
+                if (attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeInvoice().getId())
+                        && !Boolean.TRUE.equals(attachment.getIsDisabled())) {
                     attachments.add(attachment);
                     attachmentTypeIdsDone.add(attachment.getAttachmentType().getId());
                     break;
@@ -1715,7 +1716,8 @@ public class MailHelper {
         if (customerOrder.getAttachments() != null) {
             for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(customerOrder.getAttachments())) {
                 if (attachment.getAttachmentType().getId()
-                        .equals(constantService.getAttachmentTypeCreditNote().getId())) {
+                        .equals(constantService.getAttachmentTypeCreditNote().getId())
+                        && !Boolean.TRUE.equals(attachment.getIsDisabled())) {
                     attachments.add(attachment);
                     attachmentTypeIdsDone.add(attachment.getAttachmentType().getId());
                     break;
@@ -1804,7 +1806,8 @@ public class MailHelper {
                 if (attachment.getAttachmentType().getIsToSentOnFinalizationMail()
                         && !attachmentTypeIdsDone.contains(attachment.getAttachmentType().getId())
                         && !attachment.getAttachmentType().getId()
-                                .equals(constantService.getAttachmentTypeInvoice().getId())) {
+                                .equals(constantService.getAttachmentTypeInvoice().getId())
+                        && !Boolean.TRUE.equals(attachment.getIsDisabled())) {
                     attachments.add(attachment);
                     attachmentTypeIdsDone.add(attachment.getAttachmentType().getId());
                 }
@@ -1819,6 +1822,7 @@ public class MailHelper {
                                     if ((sendToMe == true || attachment.getIsAlreadySent() == false)
                                             && attachment.getAttachmentType().getIsToSentOnFinalizationMail()
                                             && !attachmentTypeIdsDone.contains(attachment.getAttachmentType().getId())
+                                            && !Boolean.TRUE.equals(attachment.getIsDisabled())
                                             && !attachment.getAttachmentType().getId()
                                                     .equals(constantService.getAttachmentTypeInvoice().getId())) {
                                         attachments.add(attachment);
