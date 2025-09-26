@@ -2,6 +2,7 @@ package com.jss.osiris.modules.osiris.quotation.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -36,6 +37,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_affaire_siret", columnList = "siret", unique = true) })
@@ -201,6 +203,9 @@ public class Affaire implements IId, IAttachment {
 	private String apeCodes;
 
 	private Boolean isToNotUpdate;
+
+	@Transient
+	private LocalDateTime createdDateTime;
 
 	public String getPaymentIban() {
 		return paymentIban;
@@ -480,6 +485,14 @@ public class Affaire implements IId, IAttachment {
 
 	public void setIsToNotUpdate(Boolean isToNotUpdate) {
 		this.isToNotUpdate = isToNotUpdate;
+	}
+
+	public LocalDateTime getCreatedDateTime() {
+		return createdDateTime;
+	}
+
+	public void setCreatedDateTime(LocalDateTime createdDateTime) {
+		this.createdDateTime = createdDateTime;
 	}
 
 }

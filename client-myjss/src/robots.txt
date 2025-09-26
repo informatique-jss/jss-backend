@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://server.my.jss.fr/sitemap-index-myjss.xml
+Sitemap: https://my.jss.fr/sitemap-index-myjss.xml

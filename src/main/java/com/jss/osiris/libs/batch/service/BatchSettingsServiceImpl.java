@@ -382,9 +382,9 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setCode(Batch.UPDATE_AFFAIRE_FROM_RNE);
             batchSettings.setLabel("Mise à jour des affaires depuis le RNE");
             batchSettings.setFixedRate(1000);
-            batchSettings.setQueueSize(4);
+            batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
-            batchSettings.setIsOnlyOneJob(false);
+            batchSettings.setIsOnlyOneJob(true);
             batchSettings.setMaxAddedNumberPerIteration(0);
             batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.REFERENTIALS));
             addOrUpdateBatchSettings(batchSettings);

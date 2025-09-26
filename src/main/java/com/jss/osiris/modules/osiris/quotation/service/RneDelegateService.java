@@ -22,7 +22,7 @@ public interface RneDelegateService {
         public List<RneCompany> getCompanyByDenominationAndPostalCode(String denomination, String postalCode)
                         throws OsirisException, OsirisClientMessageException;
 
-        public RneResult getCompanyModifiedSince(LocalDate lastExecutionDate, String lastSiret, List<String> sirens)
+        public RneResult getCompanyModifiedForDay(LocalDate lastExecutionDate, String lastSiret, List<String> sirens)
                         throws OsirisException, OsirisClientMessageException;
 
 }

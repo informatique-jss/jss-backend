@@ -137,7 +137,7 @@ public class RneDelegateServiceImpl implements RneDelegateService {
     }
 
     @Override
-    public RneResult getCompanyModifiedSince(LocalDate lastExecutionDate, String lastSiret, List<String> sirens)
+    public RneResult getCompanyModifiedForDay(LocalDate dateSearched, String lastSiret, List<String> sirens)
             throws OsirisException, OsirisClientMessageException {
 
         SSLHelper.disableCertificateValidation();
@@ -150,13 +150,11 @@ public class RneDelegateServiceImpl implements RneDelegateService {
         int pageSize = 250;
         boolean hasMore = true;
 
-        // minus 2 because from date is excluded and we could have miss some
-        // modifications from the previous day
-        // plus 1 because we limit the number of days fetched
+        // Minus 1 because from date is excluded
         String url = rneEntryPoint
                 + "/companies/diff?pageSize=" + pageSize
-                + "&from=" + lastExecutionDate.minusDays(2).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-                + "&to=" + lastExecutionDate.plusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                + "&from=" + dateSearched.minusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                + "&to=" + dateSearched.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
         HttpHeaders requestHeaders = new HttpHeaders(headers);
         if (searchAfter != null) {
