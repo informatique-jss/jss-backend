@@ -1,41 +1,43 @@
-<div class="d-flex align-items-center mb-4">
-  <h1 class="h2 mb-0">Affaires</h1>
-  <div class="ms-auto d-flex">
-    <div style="margin-right: 10px;"><generic-input [(model)]="searchText" label="SIRET / Dénomination"
-        [form]="affaireForm" propertyName="searchText" [isMandatory]="false" [isDisabled]="false" icon="search"
-        [isDisplayLabel]="false" (onFormChange)="changeFilter()"></generic-input></div>
-    <div ngbDropdown [autoClose]="'outside'" class="btn-group dropdown" style="margin-right: 10px;"
-      *ngIf="responsablesForCurrentUser && responsablesForCurrentUser.length>0">
-      <button type="button" class="btn btn-outline-secondary dropdown-toggle" ngbDropdownToggle aria-haspopup="true"
-        aria-expanded="false">
-        <i class="ai-filter me-2"></i>
-        Responsables
-      </button>
-      <div ngbDropdownMenu class="dropdown-menu my-1">
-        <label class=" dropdown-item" *ngFor="let respo of responsablesForCurrentUser">
-          <input class="form-check-input me-2" type="checkbox" value="" [(ngModel)]="responsableCheck[respo.id]"
-            (change)="changeFilter()">
-          {{respo.firstname}} {{respo.lastname}}
-        </label>
+<div class="row d-flex align-items-center justify-content-between mb-4">
+  <h1 class="h2 mb-sm-0 col-auto">Affaires</h1>
+  <div class="col-auto">
+    <div class="row">
+      <div class="col"><generic-input [(model)]="searchText" label="SIRET / Dénomination" [form]="affaireForm"
+          propertyName="searchText" [isMandatory]="false" [isDisabled]="false" icon="search" [isDisplayLabel]="false"
+          (onFormChange)="changeFilter()"></generic-input></div>
+      <div ngbDropdown [autoClose]="'outside'" class="btn-group dropdown col" style="margin-right: 10px;"
+        *ngIf="responsablesForCurrentUser && responsablesForCurrentUser.length>0">
+        <button type="button" class="btn btn-outline-secondary dropdown-toggle" ngbDropdownToggle aria-haspopup="true"
+          aria-expanded="false">
+          <i class="ai-filter me-2"></i>
+          Responsables
+        </button>
+        <div ngbDropdownMenu class="dropdown-menu my-1">
+          <label class=" dropdown-item" *ngFor="let respo of responsablesForCurrentUser">
+            <input class="form-check-input me-2" type="checkbox" value="" [(ngModel)]="responsableCheck[respo.id]"
+              (change)="changeFilter()">
+            {{respo.firstname}} {{respo.lastname}}
+          </label>
+        </div>
       </div>
-    </div>
-    <div ngbDropdown class="btn-group dropdown">
-      <button type="button" class="btn btn-outline-secondary dropdown-toggle" ngbDropdownToggle aria-haspopup="true"
-        aria-expanded="false">
-        <i class="ai-bar-chart-3 me-2"></i>
-        Trier par
-      </button>
-      <div ngbDropdownMenu class="dropdown-menu my-1">
-        <a class="dropdown-item" style="cursor: pointer;" (click)="changeSort('nameAsc');$event.stopPropagation();">
+      <div ngbDropdown class="btn-group dropdown col">
+        <button type="button" class="btn btn-outline-secondary dropdown-toggle" ngbDropdownToggle aria-haspopup="true"
+          aria-expanded="false">
           <i class="ai-bar-chart-3 me-2"></i>
-          Dans l'ordre alphabétique
-          <i class="ai-check me-2" *ngIf="currentSort=='nameAsc'"></i>
-        </a>
-        <a class="dropdown-item" style="cursor: pointer;" (click)="changeSort('nameDesc');$event.stopPropagation();">
-          <i class="ai-bar-chart-1 me-2"></i>
-          Dans l'ordre anti-alphabétique
-          <i class="ai-check me-2" *ngIf="currentSort=='nameDesc'"></i>
-        </a>
+          Trier par
+        </button>
+        <div ngbDropdownMenu class="dropdown-menu my-1">
+          <a class="dropdown-item" style="cursor: pointer;" (click)="changeSort('nameAsc');$event.stopPropagation();">
+            <i class="ai-bar-chart-3 me-2"></i>
+            Dans l'ordre alphabétique
+            <i class="ai-check me-2" *ngIf="currentSort=='nameAsc'"></i>
+          </a>
+          <a class="dropdown-item" style="cursor: pointer;" (click)="changeSort('nameDesc');$event.stopPropagation();">
+            <i class="ai-bar-chart-1 me-2"></i>
+            Dans l'ordre anti-alphabétique
+            <i class="ai-check me-2" *ngIf="currentSort=='nameDesc'"></i>
+          </a>
+        </div>
       </div>
     </div>
   </div>
