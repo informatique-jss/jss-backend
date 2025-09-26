@@ -43,19 +43,22 @@
 
 
 <section *ngIf="carouselAnnouncementPosts && carouselAnnouncementPosts.length>0" class="background-opacity">
-  <div class="container">
-    <div class="row">
-      <generic-swiper [items]="carouselAnnouncementPosts" title="Les annonces légales les plus courantes"
+  <div class="container overflow-hidden">
+    <div class="row w-100 m-0 p-0">
+      <generic-swiper *ngIf="carouselAnnouncementPosts && carouselAnnouncementPosts.length>0"
+        [items]="carouselAnnouncementPosts" title="Les annonces légales les plus courantes"
         [firstFixedImg]="'assets/img/myjss-services/announcement/annonces_courantes.jpg'">
         <ng-template let-post>
           <div class="h-100">
-            <div class="card card-carousel">
-              <div class="card-body">
-                <h3 class="card-title card-title-truncate" [routerLink]="'/post/'+post.slug">{{post.titleText}}</h3>
-                <p class="card-text text-gray card-text-truncate" [routerLink]="'/post/'+post.slug">{{post.excerptText}}
-                </p>
+            <div class="card border-0 bg-tertiary">
+              <a [routerLink]="'/post/'+post.slug">
+              </a>
+              <div class="card-body pb-4">
+                <h3 class="h4 card-title">
+                  <a [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
+                </h3>
               </div>
-              <div class="card-footer ">
+              <div class="card-footer pt-3">
                 <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" [routerLink]="'/post/'+post.slug"
                   aria-label="Learn more">
                   <i class="ai-arrow-right"></i>
