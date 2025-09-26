@@ -50,12 +50,6 @@ public class SitemapServiceImpl implements SitemapService {
     @Value("${jss.media.entry.point}")
     private String jssMediaEntryPoint;
 
-    @Value("${server.my.jss.entry.point}")
-    private String serverMyJssEntryPoint;
-
-    @Value("${server.jss.entry.point}")
-    private String serverJssEntryPoint;
-
     @Value("${upload.file.directory}")
     private String uploadFolder;
 
@@ -164,7 +158,8 @@ public class SitemapServiceImpl implements SitemapService {
 
             for (int j = fromIndex; j < toIndex; j++) {
                 Post post = posts.get(j);
-                entries.add(new UrlEntry(siteEntryPoint + "/post/" + post.getSlug(), post.getModified().toString(),
+                entries.add(new UrlEntry(siteEntryPoint + "/post/" + post.getSlug(),
+                        post.getModified().toLocalDate().toString(),
                         post.getDate().toLocalDate().isBefore(LocalDate.now().minusWeeks(1)) ? "monthly" : "daily",
                         post.getDate().toLocalDate().isBefore(LocalDate.now().minusWeeks(1)) ? "0.0" : "0.5"));
             }
@@ -298,7 +293,7 @@ public class SitemapServiceImpl implements SitemapService {
                 .filter(file -> file.isFile() && file.getName().startsWith("sitemap")
                         && file.getName().endsWith(".xml") && file.getName().contains("-media"))
                 .map(file -> {
-                    String loc = serverJssEntryPoint + "/" + file.getName();
+                    String loc = jssMediaEntryPoint + "/" + file.getName();
                     return new UrlEntry(loc);
                 })
                 .collect(Collectors.toList());
@@ -322,7 +317,7 @@ public class SitemapServiceImpl implements SitemapService {
                 .filter(file -> file.isFile() && file.getName().startsWith("sitemap")
                         && file.getName().endsWith(".xml") && file.getName().contains("-myjss"))
                 .map(file -> {
-                    String loc = serverMyJssEntryPoint + "/" + file.getName();
+                    String loc = myJssEntryPoint + "/" + file.getName();
                     return new UrlEntry(loc);
                 })
                 .collect(Collectors.toList());

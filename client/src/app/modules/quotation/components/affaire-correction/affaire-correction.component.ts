@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { formatDateTimeForSortTable } from 'src/app/libs/FormatHelper';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { AppService } from 'src/app/services/app.service';
@@ -31,6 +32,7 @@ export class AffaireCorrectionComponent implements OnInit {
     this.displayedColumns.push({ id: "address", fieldName: "address", label: "Adresse" } as SortTableColumn<Affaire>);
     this.displayedColumns.push({ id: "postalCode", fieldName: "postalCode", label: "Code postal" } as SortTableColumn<Affaire>);
     this.displayedColumns.push({ id: "city.label", fieldName: "city", label: "Ville", valueFonction: (element: Affaire, column: SortTableColumn<Affaire>) => { return element.city ? element.city.label : "" } } as SortTableColumn<Affaire>);
+    this.displayedColumns.push({ id: "createdDateTime", fieldName: "createdDateTime", label: "Date de création", valueFonction: formatDateTimeForSortTable } as SortTableColumn<Affaire>);
 
     this.tableAction.push({
       actionIcon: "edit", actionName: "Editer l'affaire", actionLinkFunction: (action: SortTableAction<Affaire>, element: Affaire) => {

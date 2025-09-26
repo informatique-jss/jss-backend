@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.GlobalExceptionHandler;
 import com.jss.osiris.libs.ValidationHelper;
+import com.jss.osiris.libs.audit.service.AuditService;
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
@@ -117,6 +118,9 @@ public class AffaireServiceImpl implements AffaireService {
 
     @Autowired
     ValidationHelper validationHelper;
+
+    @Autowired
+    AuditService auditService;
 
     @Override
     public List<Affaire> getAffaires() {
@@ -740,64 +744,88 @@ public class AffaireServiceImpl implements AffaireService {
 
     @Override
     public List<Affaire> searchAffaireForCorrection() {
-        return affaireRepository.getAffairesForCorrection();
+        List<Affaire> affaires = affaireRepository.getAffairesForCorrection();
+        if (affaires != null)
+            for (Affaire affaire : affaires)
+                affaire.setCreatedDateTime(
+                        auditService.getCreationDateTimeForEntity(Affaire.class.getSimpleName(), affaire.getId()));
+        return affaires;
     }
 
     @Override
+    @Transactional
     public void updateAffaireFromRne()
             throws OsirisException, OsirisClientMessageException, OsirisDuplicateException {
 
         // Update and search new ones
         int batchSize = 250;
         List<Affaire> affaires = affaireRepository.getNextAffaireToUpdate();
+        List<String> sirets = null;
 
         for (Affaire affaire : affaires) {
-            if (affaire.getDenomination() != null && affaire.getPostalCode() != null
-                    && affaire.getDenomination().length() > 0 && affaire.getPostalCode().length() > 0) {
-                List<RneCompany> results = rneDelegateService
-                        .getCompanyByDenominationAndPostalCode(affaire.getDenomination(),
-                                affaire.getPostalCode());
+            try {
+                if (affaire.getDenomination() != null && affaire.getPostalCode() != null
+                        && affaire.getDenomination().length() > 0 && affaire.getPostalCode().length() > 0) {
+                    List<RneCompany> results = rneDelegateService
+                            .getCompanyByDenominationAndPostalCode(affaire.getDenomination(),
+                                    affaire.getPostalCode());
 
-                if (results != null && results.size() == 1) {
-                    RneCompany company = results.get(0);
-                    if (company.getSiren() != null) {
-                        List<String> sirets = getSiretsFromRneCompany(company, true);
-                        if (sirets != null && sirets.size() == 1) {
-                            affaireRneUpdateHelper.updateAffaireSiretFromRne(affaire, company.getSiren(),
-                                    sirets.get(0));
-                            affaireRneUpdateHelper.updateAffaireFromRne(affaire, company);
+                    if (results != null && results.size() == 1) {
+                        RneCompany company = results.get(0);
+                        if (company.getSiren() != null) {
+                            sirets = getSiretsFromRneCompany(company, true);
+                            if (sirets != null && sirets.size() == 1) {
+                                Affaire affaireToCheck = getAffaireFromRneCompany(company, sirets.get(0), false);
+                                if (affaire.getDenomination().equals(affaireToCheck.getDenomination())) {
+                                    affaireRneUpdateHelper.updateAffaireSiretFromRne(affaire, company.getSiren(),
+                                            sirets.get(0));
+                                    affaireRneUpdateHelper.updateAffaireFromRne(affaire, company);
+                                }
+                            }
                         }
                     }
                 }
+            } catch (Exception e) {
+                throw new OsirisException(e, "Error when searching for affaire " + affaire.getId()
+                        + " in RNE with SIRET " + (sirets != null && sirets.size() > 0 ? sirets.get(0) : ""));
             }
+            entityManager.flush();
+            entityManager.clear();
         }
 
         // Update diff
         LocalDate lastDate = affaireRepository.getLastRneUpdateForAffaires();
+        // minus 1 because we could have miss some modifications from the previous day
+        lastDate = lastDate.minusDays(1);
         if (lastDate != null) {
-            affaires = affaireRepository.getNextAffaireToUpdateForRne();
+            while (lastDate.isBefore(LocalDate.now()) || lastDate.equals(LocalDate.now())) {
+                affaires = affaireRepository.getNextAffaireToUpdateForRne();
 
-            for (int i = 0; i < affaires.size(); i += batchSize) {
-                int end = Math.min(i + batchSize, affaires.size());
-                List<Affaire> batch = affaires.subList(i, end);
+                for (int i = 0; i < affaires.size(); i += batchSize) {
+                    int end = Math.min(i + batchSize, affaires.size());
+                    List<Affaire> batch = affaires.subList(i, end);
 
-                RneResult result = rneDelegateService.getCompanyModifiedSince(lastDate, null,
-                        batch.stream().map(a -> a.getSiren()).toList());
+                    RneResult result = rneDelegateService.getCompanyModifiedForDay(lastDate, null,
+                            batch.stream().map(a -> a.getSiren()).toList());
 
-                for (RneCompany company : result.getCompanies()) {
-                    if (company.getSiren() != null) {
-                        List<String> sirets = getSiretsFromRneCompany(company, false);
-                        if (sirets != null)
-                            for (String siret : sirets) {
-                                List<Affaire> affaire = getAffaireBySiret(siret);
-                                Affaire updatedAffaire = null;
-                                if (affaire != null && affaire.size() > 0) {
-                                    updatedAffaire = affaire.get(0);
-                                    affaireRneUpdateHelper.updateAffaireFromRne(updatedAffaire, company);
+                    for (RneCompany company : result.getCompanies()) {
+                        if (company.getSiren() != null) {
+                            sirets = getSiretsFromRneCompany(company, false);
+                            if (sirets != null)
+                                for (String siret : sirets) {
+                                    List<Affaire> affaire = getAffaireBySiret(siret);
+                                    Affaire updatedAffaire = null;
+                                    if (affaire != null && affaire.size() > 0) {
+                                        updatedAffaire = affaire.get(0);
+                                        affaireRneUpdateHelper.updateAffaireFromRne(updatedAffaire, company);
+                                    }
                                 }
-                            }
+                        }
                     }
                 }
+                lastDate = lastDate.plusDays(1);
+                entityManager.flush();
+                entityManager.clear();
             }
         }
     }
