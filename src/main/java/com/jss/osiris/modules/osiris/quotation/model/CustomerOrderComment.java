@@ -87,7 +87,7 @@ public class CustomerOrderComment implements Serializable, IId {
 	@JsonView({ JacksonViews.MyJssDetailedView.class })
 	private Boolean isRead;
 
-	@JsonView({ JacksonViews.MyJssDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class })
 	private Boolean isToDisplayToCustomer;
 
 	public Integer getId() {

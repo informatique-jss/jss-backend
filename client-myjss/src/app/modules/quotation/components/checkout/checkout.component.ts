@@ -756,4 +756,12 @@ export class CheckoutComponent implements OnInit {
     this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[2]);
     this.appService.openRoute(undefined, "quotation/required-information", undefined);
   }
+
+  getBillingDocument() {
+    if (this.quotation && this.quotation.documents)
+      for (let doc of this.quotation.documents)
+        if (doc.documentType.id == this.constantService.getDocumentTypeBilling().id)
+          return doc
+    return null;
+  }
 }

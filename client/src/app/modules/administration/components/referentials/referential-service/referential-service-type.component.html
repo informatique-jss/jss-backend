@@ -51,8 +51,15 @@
           <tr>
             <td>
               <generic-toggle [(model)]="selectedEntity.isRequiringNewUnregisteredAffaire"
-                label="Nécessite la création d'une affaire non enregistrée" [form]="entityForm"
+                label="Nécessite l'utilisation d'une affaire non enregistrée au RNE" [form]="entityForm"
                 propertyName="isRequiringNewUnregisteredAffaire" [isDisabled]="!editMode"></generic-toggle>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-toggle [(model)]="selectedEntity.isRequiringNewRegisteredAffaire"
+                label="Nécessite l'utilisation d'une affaire enregistrée au RNE" [form]="entityForm"
+                propertyName="isRequiringNewRegisteredAffaire" [isDisabled]="!editMode"></generic-toggle>
             </td>
           </tr>
           <tr>

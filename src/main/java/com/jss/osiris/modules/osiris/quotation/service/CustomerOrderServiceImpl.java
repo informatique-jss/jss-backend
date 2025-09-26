@@ -59,6 +59,7 @@ import com.jss.osiris.modules.myjss.wordpress.model.Subscription;
 import com.jss.osiris.modules.myjss.wordpress.service.AssoProvisionPostNewspaperService;
 import com.jss.osiris.modules.myjss.wordpress.service.NewspaperService;
 import com.jss.osiris.modules.myjss.wordpress.service.PostService;
+import com.jss.osiris.modules.myjss.wordpress.service.PostServiceImpl;
 import com.jss.osiris.modules.myjss.wordpress.service.SubscriptionService;
 import com.jss.osiris.modules.osiris.crm.model.Voucher;
 import com.jss.osiris.modules.osiris.crm.service.VoucherService;
@@ -396,7 +397,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         + "</p>" +
                         "<p>Description de la demande : "
                         + (customerOrder.getDescription() != null ? customerOrder.getDescription() : "") + "</p>";
-                customerOrderCommentService.createCustomerOrderComment(customerOrder, comment, true);
+                customerOrderCommentService.createCustomerOrderComment(customerOrder, comment, true, false);
             }
         }
 
@@ -534,6 +535,14 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             boolean isDepositMandatory = false;
             boolean isPaymentTypePrelevement = false;
             isDepositMandatory = tiers.getIsProvisionalPaymentMandatory();
+
+            if (!isDepositMandatory && customerOrder.getAssoAffaireOrders() != null)
+                for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+                    if (asso.getAffaire() != null
+                            && Boolean.TRUE.equals(asso.getAffaire().getIsProvisionalPaymentMandatory())) {
+                        isDepositMandatory = true;
+                        break;
+                    }
 
             if (tiers instanceof Tiers)
                 isPaymentTypePrelevement = ((Tiers) tiers).getPaymentType().getId()
@@ -2218,8 +2227,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         return complexity;
     }
 
+    @Autowired
+    PostServiceImpl postServiceImpl;
+
     @Scheduled(initialDelay = 100, fixedDelay = Integer.MAX_VALUE)
-    public void test() throws OsirisClientMessageException, OsirisException {
-        affaireService.updateAffaireFromRne();
+    public void test() {
+        postServiceImpl.test();
     }
+
 }

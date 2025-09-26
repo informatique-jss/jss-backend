@@ -134,8 +134,10 @@ export class AddInvoiceComponent implements OnInit {
         this.selectInvoiceItem(this.invoiceItems[0]);
         this.invoice.isCreditNote = true;
         this.invoice.manualPaymentType = this.contantService.getPaymentTypeVirement();
-        if (response && response.provider)
+        if (response && response.provider) {
           this.invoice.provider = response.provider;
+          this.invoice.manualPaymentType = this.constantService.getPaymentTypeCB();
+        }
         this.appService.changeHeaderTitle("Saisir un avoir sur la facture n°" + this.idInvoiceForCreditNote);
       });
     } else {

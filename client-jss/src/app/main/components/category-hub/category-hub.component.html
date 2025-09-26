@@ -44,7 +44,7 @@
                   *ngIf="postsByEntityType[selectedEntityType.id] && postsByEntityType[selectedEntityType.id].length>0 && !searchText"
                   class="row p-0 fixed-size-img-posts">
 
-                  <div *ngFor="let post of postsByEntityType[selectedEntityType.id].slice(6)" class="col-12 mb-2">
+                  <div *ngFor="let post of postsByEntityType[selectedEntityType.id]" class="col-12 mb-2">
                     <article class="blog-style2 card mb-4">
                       <div class="feature-image">
                         <div class="image-frame image-hover-style-1">

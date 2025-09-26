@@ -265,7 +265,7 @@ export class ServicesSelectionComponent implements OnInit {
   shouldDisplayServiceFamily(serviceFamily: ServiceFamily, asso: AssoAffaireOrder) {
     if (serviceFamily && asso && asso.affaire.siret) {
       for (let service of serviceFamily.services)
-        if (!service.isRequiringNewUnregisteredAffaire)
+        if (service.isRequiringNewRegisteredAffaire)
           return true;
     } else if (serviceFamily && asso && asso.affaire && (asso.affaire.siret == null || asso.affaire.siret == undefined || asso.affaire.siret == "")) {
       for (let service of serviceFamily.services)

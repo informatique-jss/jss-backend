@@ -891,7 +891,12 @@ public class MyJssQuotationController {
 
 		List<Affaire> affaires = affaireService
 				.getAffairesFromSiretFromWebsite(siretOrSiren.trim().replaceAll(" ", ""));
+
 		PageRequest newPageRequest = PageRequest.of(0, 50);
+
+		if (affaires == null || affaires.size() == 0)
+			return new ResponseEntity<Page<Affaire>>(new PageImpl<>(null, newPageRequest, 1), HttpStatus.OK);
+
 		Page<Affaire> pageResult = new PageImpl<>(affaires, newPageRequest, affaires.size());
 		return new ResponseEntity<Page<Affaire>>(pageResult, HttpStatus.OK);
 	}
@@ -1159,7 +1164,7 @@ public class MyJssQuotationController {
 
 		if (customerOrderComment.getId() == null) {
 			customerOrderCommentService.createCustomerOrderComment(customerOrderComment.getCustomerOrder(),
-					customerOrderComment.getComment(), false);
+					customerOrderComment.getComment(), false, true);
 		} else if (customerOrderCommentOriginal != null) {
 			customerOrderComment.setCreatedDateTime(customerOrderCommentOriginal.getCreatedDateTime());
 			customerOrderCommentService.addOrUpdateCustomerOrderComment(customerOrderComment);

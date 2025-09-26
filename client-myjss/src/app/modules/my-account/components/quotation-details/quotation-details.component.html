@@ -146,6 +146,17 @@
         <div ngbAccordionBody>
           <ng-template>
             <ul ngbNav #nav="ngbNav" [activeId]="0" class="nav-tabs  justify-content-center">
+              <li [ngbNavItem]="0" *ngIf="quotation && quotation.description">
+                <button ngbNavLink>Informations complémentaires</button>
+                <ng-template ngbNavContent>
+                  <div>
+                    <label for="text-textarea" class="form-label">Commentaire</label>
+                    <div> <textarea class="form-control" id="text-textarea" [(ngModel)]="quotation.description" rows="5"
+                        disabled="true"></textarea>
+                    </div>
+                  </div>
+                </ng-template>
+              </li>
               <li [ngbNavItem]="1" *ngIf="service.assoServiceDocuments && service.assoServiceDocuments.length>0">
                 <button ngbNavLink>Déposer des documents</button>
                 <ng-template ngbNavContent>

@@ -149,13 +149,20 @@ public class CustomerMailServiceImpl implements CustomerMailService {
             batchService.declareNewBatch(Batch.SEND_MAIL, mail.getId());
     }
 
-    private synchronized void manageTemporization(CustomerMail mail) { // Synchronize to avoid mails not seen because of
-                                                                       // parallel transactions...
+    private synchronized void manageTemporization(CustomerMail mail) throws OsirisException { // Synchronize to avoid
+                                                                                              // mails not seen because
+                                                                                              // of
+        // parallel transactions...
         List<CustomerMail> customerOrderMails = customerMailRepository
                 .findTemporizedMailsForCustomerOrder(mail.getCustomerOrder());
         LocalDateTime previousSendDateTime = LocalDateTime.now().plusSeconds(temporizedMailDeltaTime);
         mail.setIsCancelled(false);
-        mail.setToSendAfter(previousSendDateTime); // if previous mail steal its date else now + tempo
+
+        // No temporization for MyJSS order for mail in progress
+        if (!mail.getMailTemplate().equals(CustomerMail.TEMPLATE_CUSTOMER_ORDER_IN_PROGRESS)
+                || mail.getCustomerOrder() == null || !mail.getCustomerOrder().getCustomerOrderOrigin().getId()
+                        .equals(constantService.getCustomerOrderOriginMyJss().getId()))
+            mail.setToSendAfter(previousSendDateTime); // if previous mail steal its date else now + tempo
 
         if (customerOrderMails != null && customerOrderMails.size() > 0) {
             // Order in progress then finalized => keep only finalized

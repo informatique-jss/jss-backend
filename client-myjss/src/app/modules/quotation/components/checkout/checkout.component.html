@@ -67,7 +67,9 @@
 
         <!-- Renseignement administratif -->
         <div ngbAccordion class="row" *ngIf="quotation ">
-          <div ngbAccordionItem class="card mb-4" [collapsed]="currentUser!=undefined">
+          <div ngbAccordionItem class="card mb-4"
+            [disabled]="(getBillingDocument()!=null && (getBillingDocument()!.isCommandNumberMandatory || isExtRefMandatory))?true :false"
+            [collapsed]="currentUser!=undefined && (getBillingDocument()==null || !getBillingDocument()!.isCommandNumberMandatory && !isExtRefMandatory )">
             <h6 ngbAccordionHeader>
               <button ngbAccordionButton class="card-header"><i class="ai-note me-2"></i> Renseignements
                 administratifs</button>
@@ -150,7 +152,7 @@
 
         <!-- Commentaire -->
         <div ngbAccordion class="row" *ngIf="quotation ">
-          <div ngbAccordionItem class="card mb-4" [collapsed]="currentUser!=undefined">
+          <div ngbAccordionItem class="card mb-4">
             <h6 ngbAccordionHeader>
               <button ngbAccordionButton class="card-header"><i class="ai-edit-alt me-2"></i> Commentaires</button>
             </h6>

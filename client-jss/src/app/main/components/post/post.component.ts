@@ -168,6 +168,7 @@ export class PostComponent implements OnInit, AfterViewInit {
 
 
   refreshPost() {
+    this.postsOfSerie = [];
     this.validationToken = this.activatedRoute.snapshot.params['token'];
     if (this.validationToken) {
       let mail = this.activatedRoute.snapshot.params['mail'];
@@ -201,7 +202,6 @@ export class PostComponent implements OnInit, AfterViewInit {
         if (res && res.content.length > 0)
           this.postsOfSerie = res.content;
       });
-      this.postsOfSerie
     }
     this.titleService.setTitle(post.titleText + " - JSS");
     if (post.excerptText)
