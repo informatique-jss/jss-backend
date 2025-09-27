@@ -3,13 +3,13 @@ import { NgIcon } from '@ng-icons/core';
 import { Subscription } from 'rxjs';
 import { OPPORTUNITY_CLOSING_AVERAGE_TIME, ORDER_COMPLETION_AVERAGE_TIME, PAYING_INVOICE_AVERAGE_TIME } from '../../../../libs/Constants';
 import { getColor } from '../../../../libs/inspinia/utils/color-utils';
-import { AnalyticStatisticWidgetComponent } from '../../../main/components/analytic-statistic-widget/analytic-statistic-widget.component';
-import { ApexchartComponent } from '../../../main/components/apexchart/apexchart.component';
 import { AnalyticStatsType } from '../../../main/model/AnalyticStatsType';
 import { ConstantService } from '../../../main/services/constant.service';
 import { Responsable } from '../../../profile/model/Responsable';
 import { AnalyticStatsTypeService } from '../../services/analytic-stats-type.service';
 import { ResponsableService } from '../../services/responsable.service';
+import { AnalyticStatisticWidgetComponent } from '../analytic-statistic-widget/analytic-statistic-widget.component';
+import { ApexchartComponent } from '../apexchart/apexchart.component';
 
 @Component({
   selector: 'responsables-home-kpi',

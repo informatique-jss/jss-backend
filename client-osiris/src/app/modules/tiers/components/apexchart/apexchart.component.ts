@@ -1,7 +1,7 @@
 import { Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { ApexOptions, ChartComponent } from 'ng-apexcharts';
 import { Subscription } from 'rxjs';
-import { LayoutStoreService } from '../../services/layout-store.service';
+import { LayoutStoreService } from '../../../main/services/layout-store.service';
 
 @Component({
   selector: 'app-apexchart',
