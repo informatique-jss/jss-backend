@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { toTitleCase } from '../../../../libs/inspinia/utils/string-utils';
-import { UiCardComponent } from '../../../main/components/ui-card/ui-card.component';
+import { UiCardComponent } from '../ui-card/ui-card.component';
 
 type TaskType = {
   title: string;
