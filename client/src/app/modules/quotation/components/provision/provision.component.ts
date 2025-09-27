@@ -28,7 +28,6 @@ import { AffaireService } from '../../services/affaire.service';
 import { AnnouncementService } from '../../services/announcement.service';
 import { AnnouncementStatusService } from '../../services/announcement.status.service';
 import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
-import { CustomerOrderService } from '../../services/customer.order.service';
 import { DomiciliationStatusService } from '../../services/domiciliation-status.service';
 import { DomiciliationService } from '../../services/domiciliation.service';
 import { FormaliteStatusService } from '../../services/formalite.status.service';
@@ -101,7 +100,6 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     private habilitationService: HabilitationsService,
     private notificationService: NotificationService,
     private quotationSearchResultService: QuotationSearchResultService,
-    private customerOrderService: CustomerOrderService
   ) { }
 
   affaireForm = this.formBuilder.group({});
@@ -118,6 +116,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
 
     this.refreshAffaire();
 
+    this.quotationSearchResultService.getQuotationsForCustomerOrder(this.asso.customerOrder).subscribe(response => { if (response) this.hasQuotation; else this.hasQuotation = false; });
     this.formaliteStatusService.getFormaliteStatus().subscribe(response => this.formaliteStatus = response);
     this.domiciliationStatusService.getDomiciliationStatus().subscribe(response => this.domiciliationStatus = response);
     this.announcementStatusService.getAnnouncementStatus().subscribe(response => this.announcementStatus = response);

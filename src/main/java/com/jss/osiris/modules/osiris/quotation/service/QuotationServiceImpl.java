@@ -771,6 +771,13 @@ public class QuotationServiceImpl implements QuotationService {
     }
 
     @Override
+    public List<Quotation> getQuotationsByResponsablesAndStatusAndDates(List<Responsable> responsables,
+            LocalDateTime startDate, LocalDateTime endDate, QuotationStatus quotationStatus) {
+        return quotationRepository.findByResponsablesAndStatusAndCreatedDateBetween(responsables, startDate,
+                endDate, quotationStatus);
+    }
+
+    @Override
     public Quotation completeAdditionnalInformationForQuotation(Quotation quotation,
             Boolean populationAssoAffaireOrderTransientField)
             throws OsirisException {

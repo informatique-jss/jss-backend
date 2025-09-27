@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Title } from '@angular/platform-browser';
+import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { provideIcons } from '@ng-icons/core';
 import * as tablerIcons from '@ng-icons/tabler-icons';

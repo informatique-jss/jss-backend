@@ -4,12 +4,13 @@ import { Observable, of } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { PagedContent } from './PagedContent';
 
+
 @Injectable({
   providedIn: 'root'
 })
 export abstract class AppRestService<T> {
 
-  public static serverUrl: string = environment.backendUrl + "myjss/";
+  public static serverUrl: string = environment.backendUrl;
 
   cache: any;
 

@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.quotation.service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -72,6 +73,13 @@ public interface CustomerOrderService {
                         OsirisDuplicateException;
 
         public List<CustomerOrder> findCustomerOrderByResponsable(Responsable responsable);
+
+        public List<CustomerOrder> getCustomerOrderByResponsableAndStatusAndDates(Responsable responsable,
+                        CustomerOrderStatus customerOrderStatus, Boolean isReccuring,
+                        LocalDateTime startOfDay, LocalDateTime endOfDay);
+
+        public List<CustomerOrder> getOrdersByResponsablesAndDates(List<Responsable> responsables,
+                        LocalDateTime startOfDay, LocalDateTime endOfDay);
 
         public List<OrderingSearchResult> searchOrders(OrderingSearch orderingSearch);
 

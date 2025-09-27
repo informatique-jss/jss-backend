@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.invoicing.repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -110,8 +111,14 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
         List<Invoice> findInvoiceForCustomReminder(@Param("invoiceStatus") InvoiceStatus invoiceStatusSend,
                         @Param("billingLabelType") BillingLabelType billingLabelType);
 
-        @Query("select i from Invoice i where responsable in :responsables and (invoiceStatus in :invoiceStatus)")
+        @Query("select i from Invoice i where responsable in :responsables and (invoiceStatus in :invoiceStatus) ")
         List<Invoice> searchInvoices(List<Responsable> responsables, List<InvoiceStatus> invoiceStatus);
+
+        List<Invoice> findByResponsableInAndInvoiceStatusInAndCreatedDateBetween(List<Responsable> responsables,
+                        List<InvoiceStatus> invoiceStatus, LocalDateTime startDate, LocalDateTime endDate);
+
+        List<Invoice> findByResponsableInAndInvoiceStatusInAndDueDateBetween(List<Responsable> responsables,
+                        List<InvoiceStatus> invoiceStatus, LocalDate startDate, LocalDate endDate);
 
         @Modifying
         @Query(nativeQuery = true, value = " delete from invoice where  id  in (select id from reprise_inpi_del)")

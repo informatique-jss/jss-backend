@@ -5,6 +5,7 @@ import { NgIcon } from '@ng-icons/core';
 import { filter } from 'rxjs';
 import { scrollToElement } from '../../../../libs/GenericHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { ResponsableService } from '../../../tiers/services/responsable.service';
 import { MenuItemType } from '../../model/MenuItemType';
 import { LayoutStoreService } from '../../services/layout-store.service';
 
@@ -16,8 +17,10 @@ import { LayoutStoreService } from '../../services/layout-store.service';
 })
 export class AppMenuComponent implements OnInit {
 
-  constructor(private layout: LayoutStoreService,
-    private router: Router
+  constructor(
+    private layout: LayoutStoreService,
+    private router: Router,
+    private responsableService: ResponsableService
   ) {
   }
 
@@ -27,7 +30,11 @@ export class AppMenuComponent implements OnInit {
   @ViewChild('MenuItem', { static: true })
   menuItem!: TemplateRef<{ item: MenuItemType }>;
 
-  menuItems: MenuItemType[] = [];
+  menuItems: MenuItemType[] = [
+    { label: "Menu", isTitle: true } as MenuItemType,
+    { label: "Tiers/Responsables", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "tiers" } as MenuItemType,
+    { label: "CRM", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerApps", url: "crm" } as MenuItemType
+  ];
 
   ngOnInit(): void {
     this.router.events

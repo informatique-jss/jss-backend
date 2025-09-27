@@ -11,7 +11,7 @@ import { AppRestService } from './appRest.service';
 export class ConstantService extends AppRestService<Constant> {
 
   constructor(http: HttpClient,) {
-    super(http, "quotation");
+    super(http, "miscellaneous");
   }
 
   constant: Constant = {} as Constant;
