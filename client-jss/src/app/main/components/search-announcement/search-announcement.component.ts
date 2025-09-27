@@ -35,16 +35,15 @@ export class SearchAnnouncementComponent implements OnInit {
 
   ngOnInit() {
     this.searchAnnouncementForm = this.formBuilder.group({});
+    this.announcementService.getLastSevenDaysAnnouncements().subscribe(res => {
+      this.searchResults = res;
+    })
   }
 
 
   getNextAnnouncements() {
     this.page++;
     this.fetchNextAnnouncements();
-  }
-
-  openAnnouncement(announcement: Announcement, event: any) {
-    this.appService.openRoute(event, "announcement/" + announcement.id, undefined);
   }
 
   fetchNextAnnouncements() {

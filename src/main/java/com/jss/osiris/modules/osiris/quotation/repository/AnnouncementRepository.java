@@ -108,18 +108,22 @@ public interface AnnouncementRepository extends QueryCacheCrudRepository<Announc
                         @Param("announcementStatusDoneId") Integer announcementStatusDoneId,
                         @Param("provisionTypeBilanPublicationId") Integer provisionTypeBilanPublicationId);
 
-        @Query("select a from Announcement a join fetch a.provisions p join fetch p.service s join fetch s.assoAffaireOrder asso join fetch asso.affaire af "
-                        + " join asso.customerOrder c "
+        @Query("select a from Announcement a left join fetch a.provisions p left join fetch p.service s left join fetch s.assoAffaireOrder asso left join fetch asso.affaire af "
+                        + " left join asso.customerOrder c "
                         + " where a.confrere = :confrere "
-                        + " and (:searchText is null or :searchText = '' "
+                        + " and (isLegacy is null and (c.customerOrderStatus not in (:customerOrderStatusExcluded) and a.announcementStatus in (:announcementStatus)  "
+                        + " and  (:searchText is null or :searchText = '' "
                         + " or lower(af.denomination) like %:searchText% "
                         + " or lower(concat(af.firstname, ' ', af.lastname)) like %:searchText% "
                         + " or lower(a.notice) like %:searchText% "
-                        + " or af.siren = :searchText )"
-                        + " and c.customerOrderStatus not in (:customerOrderStatusExcluded) and a.announcementStatus in (:announcementStatus) ")
+                        + " or af.siren = :searchText )  "
+                        + " and publicationDate is not null and publicationDate>=:startDate and publicationDate<=CURRENT_TIMESTAMP) or (isLegacy=true and (:searchText is null or lower(a.notice) like %:searchText%  or lower(a.noticeHeader) like %:searchText% )) )  "
+                        + "")
         Page<Announcement> searchAnnouncementForWebSite(@Param("searchText") String searchText,
                         @Param("customerOrderStatusExcluded") List<CustomerOrderStatus> customerOrderStatusExcluded,
                         @Param("announcementStatus") List<AnnouncementStatus> announcementStatus,
+                        @Param("startDate") LocalDate startDate,
                         @Param("confrere") Confrere confrere,
                         Pageable pageable);
+
 }

@@ -1,2 +1,4 @@
 User-agent: *
-Disallow: /
+Allow: /
+
+Sitemap: https://my.jss.fr/sitemap-index-myjss.xml

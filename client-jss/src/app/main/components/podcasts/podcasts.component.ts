@@ -1,10 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { Meta, Title } from '@angular/platform-browser';
 import { Observable } from 'rxjs';
+import { LiteralDatePipe } from '../../../libs/LiteralDatePipe';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { TimeFormatPipe } from '../../../libs/TimeFormatPipe';
 import { AppService } from '../../../services/app.service';
 import { ConstantService } from '../../../services/constant.service';
+import { GtmService } from '../../../services/gtm.service';
+import { CtaClickPayload, PageInfo } from '../../../services/GtmPayload';
 import { Category } from '../../model/Category';
 import { PagedContent } from '../../model/PagedContent';
 import { Post } from '../../model/Post';
@@ -17,7 +21,7 @@ import { TagService } from '../../services/tag.service';
   selector: 'podcasts',
   templateUrl: './podcasts.component.html',
   styleUrls: ['./podcasts.component.css'],
-  imports: [SHARED_IMPORTS, TimeFormatPipe],
+  imports: [SHARED_IMPORTS, TimeFormatPipe, LiteralDatePipe],
   standalone: true
 })
 export class PodcastsComponent implements OnInit {
@@ -36,10 +40,14 @@ export class PodcastsComponent implements OnInit {
     private formBuilder: FormBuilder,
     private postService: PostService,
     private tagService: TagService,
+    private titleService: Title, private meta: Meta,
     private audioService: AudioPlayerService,
+    private gtmService: GtmService,
     private constantService: ConstantService) { }
 
   ngOnInit() {
+    this.titleService.setTitle("Découvez notre podcast - JSS");
+    this.meta.updateTag({ name: 'description', content: "Plongez au cœur de l'actualité juridique et économique avec le podcast de JSS. Nos experts décryptent pour vous les sujets qui façonnent le monde des affaires." });
     this.categoryPodcast = this.constantService.getCategoryPodcast();
     this.hubForm = this.formBuilder.group({});
     this.fetchPosts(0);
@@ -54,6 +62,42 @@ export class PodcastsComponent implements OnInit {
           this.postsByEntityType = data.content;
         }
       });
+  }
+
+  trackCtaClickExternalPodcastDeezer(podcastId: number) {
+    this.gtmService.trackCtaClick(
+      {
+        cta: { type: 'link', label: "Lire sur Deezer", objectId: podcastId },
+        page: {
+          type: 'main',
+          name: 'podcasts'
+        } as PageInfo
+      } as CtaClickPayload
+    );
+  }
+
+  trackCtaClickExternalPodcastSpotify(podcastId: number) {
+    this.gtmService.trackCtaClick(
+      {
+        cta: { type: 'link', label: "Lire sur Spotify", objectId: podcastId },
+        page: {
+          type: 'main',
+          name: 'podcasts'
+        } as PageInfo
+      } as CtaClickPayload
+    );
+  }
+
+  trackCtaClickExternalPodcastApplePodcast(podcastId: number) {
+    this.gtmService.trackCtaClick(
+      {
+        cta: { type: 'link', label: "Lire sur Apple Podcast", objectId: podcastId },
+        page: {
+          type: 'main',
+          name: 'podcasts'
+        } as PageInfo
+      } as CtaClickPayload
+    );
   }
 
   getAllPostByEntityType(selectedEntityType: Category, page: number, pageSize: number): Observable<PagedContent<Post>> {
@@ -79,16 +123,10 @@ export class PodcastsComponent implements OnInit {
   }
 
   getMostSeenPosts(page: number, pageSize: number): Observable<PagedContent<Post>> {
-    return this.postService.getMostViewedPosts(page, pageSize);
+    return this.postService.getMostSeenPosts(page, pageSize, "");
   }
 
-  openTagPosts(tag: Tag, event: any) {
-    this.appService.openRoute(event, "post/tag/" + tag.slug, undefined);
-  }
 
-  openPost(post: Post, event: any) {
-    this.appService.openRoute(event, "post/" + post.slug, undefined);
-  }
 
   // ----------------- Player methods ---------------------------------
 

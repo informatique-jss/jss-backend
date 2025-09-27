@@ -17,7 +17,7 @@ public interface CustomerOrderAssignationService {
 
         public CustomerOrderAssignation addOrUpdateCustomerOrderAssignation(
                         CustomerOrderAssignation customerOrderAssignation,
-                        Employee employee);
+                        Employee employee) throws OsirisException;
 
         public void completeAssignationForCustomerOrder(CustomerOrder customerOrder) throws OsirisException;
 

@@ -16,6 +16,7 @@
 <div class="kanban-container top-container">
   <div *ngFor="let status of statusSelected" class="kanban-column">
     <h3 style="margin: 0px; text-align: center;"><span [matBadge]="status.id?getNumberOfEntitiesByStatus(status):0"
+        [matTooltip]="status.id?getNumberOfEntitiesByStatus(status)+'':'0'"
         [matBadgeHidden]="!status.id ||getNumberOfEntitiesByStatus(status)==0" matBadgePosition="after"
         matBadgeSize="small">{{ status.label }}</span></h3>
   </div>
@@ -79,10 +80,16 @@
     <span>Regrouper par : </span>
   </div>
   <div mat-menu-item *ngFor="let swimlaneType of swimlaneTypes"
-    (click)="selectedSwimlaneType=swimlaneType;startFilter(true)" class="pointer">
+    (click)="selectedSwimlaneType=swimlaneType;startFilter(false)" class="pointer">
     <mat-icon
       *ngIf="selectedSwimlaneType && swimlaneType.fieldName==selectedSwimlaneType.fieldName">check</mat-icon>{{swimlaneType.label}}
   </div>
+  <mat-divider></mat-divider>
+  <div mat-menu-item class="pointer" [matMenuTriggerFor]="customViews" (click)="expandAll()">Gestion des vues</div>
+  <mat-menu #customViews="matMenu">
+    <custom-views [componentToSaveViewCode]="quotationKanbanCode" [currentView]="getKanbanView()"
+      (selectedViewEmitter)="setKanbanView($event)"></custom-views>
+  </mat-menu>
   <mat-divider></mat-divider>
   <div mat-menu-item class="pointer" (click)="expandAll()">Déplier tout </div>
   <div mat-menu-item class="pointer" (click)="collapseAll()">Replier tout </div>

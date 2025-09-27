@@ -1,0 +1,22 @@
+<mj-head th:replace="~{fragments/header}"></mj-head>
+<mj-head th:replace="~{fragments/headline(title='Votre annonce légale', subtitle=${affaireLabelDetails})}"></mj-head>
+<mj-section background-color="#ffffff" padding="10px">
+  <mj-column>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Bonjour <span th:text="${customerName}"></span>,
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Veuillez trouver en pièce-jointe de ce mail l'annonce légale nécessitant votre validation.<br />
+      Pour nous fournir votre accord, envoyez directement la mention 'Bon à Tirer' en répondant à ce mail.
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px" padding-top="24px">
+      Nous restons à votre disposition pour toute information complémentaire.
+    </mj-text>
+    <mj-text color="#666666" font-size="16px" line-height="24px">
+      Cordialement,
+    </mj-text>
+  </mj-column>
+</mj-section>
+<mj-head th:replace="~{fragments/cta(title='Accéder à mon compte',  buttonText='Voir ma commande',buttonUrl=${myJssEntryPoint+'/account/orders/details/'+customerOrder.id})}"></mj-head>
+<mj-head th:replace="~{fragments/signature}"></mj-head>
+<mj-head th:replace="~{fragments/footer}"></mj-head>

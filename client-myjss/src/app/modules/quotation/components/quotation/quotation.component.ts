@@ -1,15 +1,18 @@
 import { ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { MenuItem } from '../../../general/model/MenuItem';
 import { AppService } from '../../../main/services/app.service';
+import { PlatformService } from '../../../main/services/platform.service';
 import { CustomerOrder } from '../../../my-account/model/CustomerOrder';
 import { Service } from '../../../my-account/model/Service';
 import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
 import { QuotationService } from '../../../my-account/services/quotation.service';
+import { LoginService } from '../../../profile/services/login.service';
 import { NoticeTemplateDescription } from '../../model/NoticeTemplateDescription';
 import { NoticeTemplateService } from '../../services/notice.template.service';
 import { NoticeTemplateComponent } from '../notice-template/notice-template.component';
@@ -57,9 +60,14 @@ export class QuotationComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private customerOrderService: CustomerOrderService,
     private noticeTemplateService: NoticeTemplateService,
+    private titleService: Title, private meta: Meta,
+    private loginService: LoginService,
+    private platformService: PlatformService
   ) { }
 
   ngOnInit() {
+    this.titleService.setTitle("Nouvelle commande - MyJSS");
+    this.meta.updateTag({ name: 'description', content: "Estimez le coût de vos formalités. Réalisez votre demande de devis en ligne et recevez rapidement une proposition détaillée et sans engagement de la part de MyJSS." });
     this.subscriptionType = this.activatedRoute.snapshot.params['subscription-type'];
     this.isPriceReductionForSubscription = this.activatedRoute.snapshot.params['is-price-reduction'];
     this.idArticle = this.activatedRoute.snapshot.params['id-article'];
@@ -76,15 +84,10 @@ export class QuotationComponent implements OnInit {
       this.quotationService.cleanStorageData();
       this.idQuotation ? this.quotationService.setCurrentDraftQuotationId(this.idQuotation) : this.customerOrderService.setCurrentDraftOrderId(this.idOrder!);
       this.quotationService.setCurrentDraftQuotationStep(this.myJssQuotationItems[2]);
-    } else if (this.subscriptionType) {
+    } else if (this.subscriptionType && this.platformService.isBrowser()) {
       this.appService.showLoadingSpinner();
-      this.customerOrderService.getCustomerOrderForSubscription(this.subscriptionType, this.isPriceReductionForSubscription, this.idArticle).subscribe(computedCustomerOrder => {
-        this.customerOrder = computedCustomerOrder;
-        this.customerOrderService.setCurrentDraftOrder(this.customerOrder);
-
-        this.appService.hideLoadingSpinner();
-        this.appService.openRoute(event, "/quotation/checkout/", undefined);
-      });
+      this.getOrderForSubscription();
+      return;
     }
 
     this.maxAccessibleStepIndex = parseInt(this.quotationService.getCurrentDraftQuotationStep() != null ? this.quotationService.getCurrentDraftQuotationStep()! : "0");
@@ -93,9 +96,9 @@ export class QuotationComponent implements OnInit {
       this.appService.openRoute(undefined, this.quotationService.getCurrentDraftQuotationStep()!, undefined);
     } else {
       if (this.myJssQuotationItems.length > 0 && this.router.url) {
-        this.matchRoute(this.router.url);
-      } else {
-        this.selectedTab = this.myJssQuotationItems[0];
+        if (!this.matchRoute(this.router.url))
+          this.selectedTab = this.myJssQuotationItems[0];
+        this.appService.openRoute(undefined, this.selectedTab!.route, undefined);
       }
     }
 
@@ -115,6 +118,20 @@ export class QuotationComponent implements OnInit {
       if (url instanceof NavigationEnd) {
         this.matchRoute(url.url);
       }
+    });
+  }
+
+  getOrderForSubscription() {
+    this.customerOrderService.getCustomerOrderForSubscription(this.subscriptionType, this.isPriceReductionForSubscription, this.idArticle).subscribe(computedCustomerOrder => {
+      this.customerOrder = computedCustomerOrder;
+      if (this.customerOrder && this.customerOrder.id)
+        this.customerOrderService.setCurrentDraftOrderId(this.customerOrder.id);
+      else
+        this.customerOrderService.setCurrentDraftOrder(this.customerOrder);
+
+
+      this.appService.hideLoadingSpinner();
+      this.appService.openRoute(event, "/quotation/checkout/", undefined);
     });
   }
 

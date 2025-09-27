@@ -63,6 +63,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
 
   doNotInitializeAsso: boolean = false;
   invoiceSearch: InvoiceSearch = {} as InvoiceSearch;
+  multipleInvoices: string = "";
 
   constructor(public dialogRef: MatDialogRef<AssociatePaymentDialogComponent>,
     private appService: AppService,
@@ -222,7 +223,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
     amountDialogRef.componentInstance.maxAmount = Math.round(maxAmount * 100) / 100;
     amountDialogRef.afterClosed().subscribe(response => {
       if (response != null) {
-        let asso = { payment: this.payment, invoice: invoice } as AssociationSummaryTable;
+        let asso = { payment: this.payment, invoice: { id: invoice.id, totalPrice: invoice.totalPrice, responsable: invoice.responsable, customerOrder: invoice.customerOrder } } as AssociationSummaryTable;
         asso.amountUsed = parseFloat(response);
         this.associations.push(asso);
         if (!this.responsableOrder || !this.responsableOrder.id)
@@ -232,6 +233,58 @@ export class AssociatePaymentDialogComponent implements OnInit {
         return;
       }
     });
+  }
+
+  multipleAssociateInvoices() {
+    if (!this.multipleInvoices || this.multipleInvoices.length == 0)
+      return;
+
+    let invoiceIds = this.multipleInvoices.split(",");
+    for (let invoiceId of invoiceIds) {
+      this.invoiceService.getInvoiceById(parseInt(invoiceId.trim())).subscribe(invoice => {
+        if (this.associations)
+          for (let asso of this.associations)
+            if (asso.invoice && asso.invoice.id == invoice.id) {
+              return;
+            }
+
+        if (this.invoice && invoice.invoiceStatus && invoice.invoiceStatus.id == this.invoiceStatusCreditNoteEmited.id) {
+          return;
+        }
+
+        if (this.payment) {
+          if (this.payment.paymentAmount > 0) {
+            if (invoice.invoiceStatus.id != this.invoiceStatusSend.id && invoice.invoiceStatus.id != this.invoiceStatusCreditNoteReceived.id) {
+              return;
+            }
+          } else {
+            if (invoice.invoiceStatus.id != this.invoiceStatusReceived.id) {
+              return;
+            }
+            if (this.payment && Math.round(invoice.totalPrice * 100) < Math.abs(Math.round(this.payment.paymentAmount * 100))) {
+              return;
+            }
+          }
+        }
+
+        if (invoice.responsable && !this.isSameCustomerOrder(invoice.responsable) && !this.habilitationsService.canByPassMultipleCustomerOrderOnAssociationCheck()) {
+          return;
+        }
+
+        let maxAmount = this.getBalance();
+        if (invoice.totalPrice > 0 && getRemainingToPay(invoice) < maxAmount)
+          maxAmount = getRemainingToPay(invoice);
+        else if (invoice.totalPrice < 0 && -getRemainingToPay(invoice) > maxAmount)
+          maxAmount = - getRemainingToPay(invoice);
+
+        let asso = { payment: this.payment, invoice: { id: invoice.id, totalPrice: invoice.totalPrice, responsable: invoice.responsable } } as AssociationSummaryTable;
+        asso.amountUsed = maxAmount;
+        this.associations.push(asso);
+        if (!this.responsableOrder || !this.responsableOrder.id)
+          this.responsableOrder = this.getResponsableOrder();
+        this.refreshSummaryTables();
+      });
+    }
   }
 
   associateOrderFromSearch(orderIn: OrderingSearchResult) {
@@ -279,7 +332,7 @@ export class AssociatePaymentDialogComponent implements OnInit {
       amountDialogRef.componentInstance.maxAmount = Math.round(maxAmount * 100) / 100;
       amountDialogRef.afterClosed().subscribe(response => {
         if (response != null) {
-          let asso = { payment: this.payment, customerOrder: order, } as AssociationSummaryTable;
+          let asso = { payment: this.payment, customerOrder: order } as AssociationSummaryTable;
           asso.amountUsed = parseFloat(response);
           this.associations.push(asso);
           this.refreshSummaryTables();

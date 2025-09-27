@@ -2,8 +2,8 @@
   border-color: var(--bs-gray-300);
 }
 
-.border-left-red {
-  border-left: solid 3px #FF5757;
+.border-left-blue {
+  border-left: solid 3px #1c2d41;
 }
 
 .post-player-bg {
@@ -16,4 +16,15 @@
 
 .btn-check:focus+.btn-secondary, .btn-secondary:focus {
   color: var(--ar-primary);
+}
+
+.resize-featured-img {
+  width: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.serie-border {
+  border-left: solid 4px var(--ar-primary);
+  background-color: var(--bs-gray-100);
 }

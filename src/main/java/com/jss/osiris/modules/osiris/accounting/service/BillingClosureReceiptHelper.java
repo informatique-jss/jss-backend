@@ -420,7 +420,7 @@ public class BillingClosureReceiptHelper {
             value.setEventDescription(String.join("", eventDescriptions));
 
             MailComputeResult mailComputeResult = mailComputeHelper
-                    .computeMailForCustomerOrderFinalizationAndInvoice(invoice.getCustomerOrder());
+                    .computeMailForCustomerOrderFinalizationAndInvoice(invoice.getCustomerOrder(), false);
             value.setEventCbLink(paymentCbEntryPoint + "/order/invoice?mail="
                     + mailComputeResult.getRecipientsMailTo().get(0).getMail() + "&customerOrderId="
                     + invoice.getCustomerOrder().getId());

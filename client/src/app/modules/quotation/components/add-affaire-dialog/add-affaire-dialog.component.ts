@@ -41,7 +41,6 @@ export class AddAffaireDialogComponent implements OnInit {
   }
 
   fillAffaire(entity: IndexEntity) {
-    let obj = JSON.parse((entity.text as string));
     this.affaireService.getAffaire(entity.entityId).subscribe(affaire => {
       this.selectedAffaire = affaire;
     });

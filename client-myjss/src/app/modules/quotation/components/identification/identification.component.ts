@@ -4,6 +4,8 @@ import { ActivatedRoute } from '@angular/router';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
 import { ConstantService } from '../../../main/services/constant.service';
+import { GtmService } from '../../../main/services/gtm.service';
+import { BeginCheckoutPayload, PageInfo } from '../../../main/services/GtmPayload';
 import { AutocompleteCityComponent } from '../../../miscellaneous/components/forms/autocomplete-city/autocomplete-city.component';
 import { AutocompleteSiretComponent } from '../../../miscellaneous/components/forms/autocomplete-siret/autocomplete-siret.component';
 import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
@@ -70,7 +72,8 @@ export class IdentificationComponent implements OnInit {
     private loginService: LoginService,
     private appService: AppService,
     private cityService: CityService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private gtmService: GtmService
   ) { }
 
   idenficationForm!: FormGroup;
@@ -149,7 +152,7 @@ export class IdentificationComponent implements OnInit {
   }
 
   changeQuotationType(quotationType: QuotationType) {
-    if (this.quotation) {
+    if (this.quotation && !this.quotation.id) {
       this.selectedQuotationType = quotationType;
       if (this.selectedQuotationType.id == QUOTATION_TYPE_QUOTATION.id)
         this.quotation.isQuotation = true;
@@ -164,7 +167,8 @@ export class IdentificationComponent implements OnInit {
   refreshIsRegisteredAffaire() {
     if (this.quotation)
       for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++)
-        this.isRegisteredAffaire[i] = this.quotation.assoAffaireOrders[i].affaire.siret != null && this.quotation.assoAffaireOrders[i].affaire.siret != undefined && this.quotation.assoAffaireOrders[i].affaire.siret != "";
+        if (this.quotation.assoAffaireOrders[i].affaire)
+          this.isRegisteredAffaire[i] = this.quotation.assoAffaireOrders[i].affaire.siret != null && this.quotation.assoAffaireOrders[i].affaire.siret != undefined && this.quotation.assoAffaireOrders[i].affaire.siret != "";
   }
 
   addAffaire() {
@@ -200,28 +204,6 @@ export class IdentificationComponent implements OnInit {
       this.quotation.serviceFamilyGroup = undefined;
   }
 
-  /* searchSiret(indexAsso: number) {
-     clearTimeout(this.debounce);
-     this.debounce = setTimeout(() => {
-       this.effectiveSearchSiret(indexAsso);
-     }, 500);
-   }
-
-   effectiveSearchSiret(indexAsso: number) {
-     if (this.siretSearched && (validateSiret(this.siretSearched) || validateSiren(this.siretSearched))) {
-       this.loadingSiretSearch = true;
-       this.affaireService.getAffaireBySiret(this.siretSearched).subscribe(response => {
-         this.loadingSiretSearch = false;
-         if (response && response.length == 1 && response[0].siret) {
-           this.quotation.assoAffaireOrders[indexAsso].affaire = response[0];
-           this.siretSearched = "";
-         } else if (response && response.length > 1) {
-           this.appService.displayToast("Plusieurs SIRET existent pour ce SIREN. Merci de préciser le SIRET souhaité", true, "SIRET multiples", 5000);
-         }
-       })
-     }
-   }*/
-
   selectSiret(affaire: Affaire, indexAsso: number) {
     if (affaire) {
       this.quotation.assoAffaireOrders[indexAsso].affaire = affaire;
@@ -255,9 +237,22 @@ export class IdentificationComponent implements OnInit {
     return false;
   }
 
+  trackBeginCheckout() {
+    if (this.selectedQuotationType && this.quotation.serviceFamilyGroup)
+      this.gtmService.trackBeginCheckout(
+        {
+          business: { type: this.selectedQuotationType.id == QUOTATION_TYPE_QUOTATION.id ? 'quotation' : 'order', service: this.quotation.serviceFamilyGroup!.label },
+          page: {
+            type: 'quotation',
+            name: 'identification'
+          } as PageInfo
+        } as BeginCheckoutPayload
+      );
+  }
+
   startQuotation() {
     this.appService.showLoadingSpinner();
-    if (this.selectedQuotationType)
+    if (this.selectedQuotationType) {
       if (this.currentUser) {
         if (this.selectedQuotationType.id == QUOTATION_TYPE_QUOTATION.id) {
           this.quotation.isQuotation = true;
@@ -288,6 +283,7 @@ export class IdentificationComponent implements OnInit {
         this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);
         this.appService.openRoute(undefined, "quotation/services-selection", undefined);
       }
+    }
   }
 
   findCity(indexAsso: number) {

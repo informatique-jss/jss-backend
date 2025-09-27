@@ -212,6 +212,7 @@ public class Responsable implements IAttachment, IId {
 
 	private String loginWeb;
 
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Boolean canViewAllTiersInWeb;
 
 	private String salt; // TODO : delete
@@ -237,6 +238,11 @@ public class Responsable implements IAttachment, IId {
 	@JsonIgnoreProperties(value = { "responsables" }, allowSetters = true)
 	@JsonView({ JacksonViews.OsirisDetailedView.class, JacksonViews.OsirisListView.class })
 	private List<Voucher> vouchers;
+
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
+	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
+	private LocalDateTime consentTermsDate;
 
 	public Tiers getTiers() {
 		return tiers;
@@ -604,6 +610,14 @@ public class Responsable implements IAttachment, IId {
 
 	public void setVouchers(List<Voucher> vouchers) {
 		this.vouchers = vouchers;
+	}
+
+	public LocalDateTime getConsentTermsDate() {
+		return consentTermsDate;
+	}
+
+	public void setConsentTermsDate(LocalDateTime consentTermsDate) {
+		this.consentTermsDate = consentTermsDate;
 	}
 
 }

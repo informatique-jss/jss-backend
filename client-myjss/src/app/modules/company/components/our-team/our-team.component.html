@@ -5,11 +5,10 @@
     </div>
 
     <div class="col-md-6 col-xl-5 offset-xl-1">
-      <p class="text-body fs-lg mb-5 text-white">Nos équipes sont notre plus grande force.<br />
-        Chaque collaborateur apporte son expertise, son énergie et sa motivation pour nous faire avancer.<br />
-        L’humain est au cœur de notre réussite, c’est pourquoi nous cultivons une équipe engagée, passionnée et tournée
-        vers l’avenir.<br />
-        Découvrez les visages qui font vivre JSS au quotidien.
+      <p class="text-body fs-lg mb-5 text-white">Nos équipes sont notre plus grande force.<br>
+        Chaque collaborateur apporte son expertise, son énergie et sa motivation pour nous faire avancer.<br><br>
+        L’humain est au cœur de notre réussite, c’est pourquoi nous cultivons l’engagement au sein de nos équipes, la
+        passion et faisons vivre notre vision. <br><br>Découvrez les visages qui font vivre le JSS & MyJSS au quotidien.
       </p>
     </div>
   </div>
@@ -18,21 +17,23 @@
 </div>
 
 <section class="pb-5 my-5">
-  <div class="jarallax" data-jarallax>
-    <div class="jarallax-img" style="background-image: url(assets/img/societe/team/our_team_banner.png);">
+  <div class="jarallax d-none d-md-block" data-jarallax>
+    <div class="jarallax-img" style="background-image: url(assets/img/societe/team/our_team_banner.jpg);">
     </div>
+  </div>
+  <div class="d-block d-md-none">
+    <img src="assets/img/societe/team/our_team_banner.jpg" />
   </div>
 </section>
 
 <section class="container overflow-hidden py-5 my-5">
   <div class="row">
-    <p>NOS ÉQUIPES </p>
-    <h2 class="h1 pb-3 mb-lg-4 text-white">Découvrez nos talents par métier</h2>
+    <h2 class="h2 pb-3 mb-lg-4 text-white">Découvrez nos talents par métier</h2>
   </div>
   <section class="container py-5 mb-lg-3 mb-xl-4 mt-xl-3 my-xxl-5">
     <div class="row">
-      <div class="col-2">
-        <ul class="nav nav-tabs flex-column" role="tablist">
+      <div class="col-md-2 col-12">
+        <ul class="nav nav-tabs flex-md-column flex-row" role="tablist">
           <li class="nav-item" *ngFor="let dept of departments">
             <div class="nav-link" [class.active]="dept == selectedTab" (click)="selectedTab = dept">
               <i class="fi-home me-2"></i>
@@ -41,11 +42,11 @@
           </li>
         </ul>
       </div>
-      <div class="col-10" data-simplebar>
+      <div class="col-md-10 col-12 p-0" data-simplebar>
         <div *ngIf="staff[selectedTab.key]" class="mb-4 mb-lg-5 pb-4 px-3">
-          <div class="row row-cols-lg-4 flex-lg-wrap gy-lg-5 mx-n3">
+          <div class="row row-cols-2 row-cols-lg-4 flex-lg-wrap gy-lg-5 mx-n3 justify-content-center">
             <div class="col" *ngFor="let person of staff[selectedTab.key]">
-              <div class="d-block text-center text-decoration-none" style="min-width: 210px;">
+              <div class="d-block text-center text-decoration-none mt-4 mt-md-0" style="min-width: 110px;">
                 <img class="rounded-circle" [src]="'assets/img/societe/team/' + selectedTab.key + '/' + person.photo"
                   width="120" [alt]="person.firstname">
                 <h3 class="h5 pt-4 mb-1">{{ person.firstname }} {{ person.lastname }}</h3>

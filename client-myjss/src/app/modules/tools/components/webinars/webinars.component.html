@@ -11,6 +11,16 @@
   </div>
 </section>
 
+<section>
+  <div class="jarallax overflow-hidden z-2 d-none d-md-block" data-speed="0.5">
+    <div class="jarallax-img" style="background-image: url('/assets/img/my-jss-tools/Webinaire.png');">
+    </div>
+  </div>
+  <div class="d-block d-md-none">
+    <img src="assets/img/my-jss-tools/Webinaire.png" />
+  </div>
+</section>
+
 <section class="dark-blue-dropdown">
   <section class="container pt-5 pb-lg-2 pb-xl-4 py-xxl-5 my-5">
     <div class="row pb-1 pb-sm-3 pb-lg-4 d-flex align-items-center">
@@ -22,11 +32,17 @@
             </path>
           </svg>
         </div>
-        <h2 class="h2 pe-xxl-5 me-xl-4 mb-md-0 text-white">Ne manquez pas notre prochain webinaire le 24 mars à 13h00
+        <h2 class="h2 pe-xxl-5 me-xl-4 mb-md-0 text-white">
+          Inscrivez-vous à notre prochain webinaire
+          <span style="color: #CEB793;">Confidentialité des données</span> <br>
+          le 26 septembre à 09h30
         </h2>
       </div>
 
       <div class="col-lg-8 col-xl-7 offset-xl-1" *ngIf="displayForm">
+        <div class="col-sm-12">
+          <h3 class="text-center">Participer à l'événement</h3>
+        </div>
         <form class="needs-validation row g-4" #formRef novalidate>
           <div class="col-sm-6">
             <generic-input class="form-control form-control-lg" [(model)]="webinarParticipant.firstname" label="Prénom*"
@@ -84,15 +100,15 @@
       <div class="col-md-8 order-md-2">
         <div class="d-flex flex-column h-100 card border-0 rounded-3 pt-5 px-4 px-lg-5">
           <p class="mb-4 mb-xl-5">Présidente du Journal Spécial des Sociétés, Myriam de Montis accompagne depuis plus de
-            30 ans les entreprises dans leurs démarches juridiques.
+            30 ans les entreprises dans leurs démarches juridiques.<br>
             Son expertise en annonces légales et formalités d’entreprises fait d’elle une référente dans le
-            domaine.<br />
-            Elle suit quotidiennement les évolutions réglementaires et éclaire les professionnels sur leurs obligations.
+            domaine.<br><br>
+            Elle suit quotidiennement les évolutions réglementaires et éclaire les professionnels sur leurs
+            obligations.<br>
             Grâce à son expérience, elle apporte un regard concrêt et opérationnel sur ces enjeux complexes et participe
-            aux réflexions menées par les différents acteurs réglementaires du marché.
-          </p>
-          <p class="mb-4 mb-xl-5">À travers nos webinaires, Myriam de Montis décrypte entre autre le Guichet unique et
-            répond aux questions des participants.
+            aux réflexions menées par les différents acteurs réglementaires du marché.<br><br>
+            À travers nos webinaires, Myriam de Montis décrypte entre autre le Guichet unique et
+            répond aux questions des participants.<br><br>
             Ne manquez pas la prochaine édition !
           </p>
         </div>
@@ -104,7 +120,7 @@
 <section class="container mb-lg-2 mt-lg-3 my-xl-4 my-xxl-5">
   <div class="d-md-flex align-items-center justify-content-between pt-2 pt-sm-3 pb-3 mt-md-3 mb-3 mb-lg-4">
     <div class="d-flex align-items-center mb-4 mb-md-0">
-      <h2 class="h2 mb-0">Les grands moments d'un webinaire</h2>
+      <h2 class="h2 mb-0">Les temps forts du webinaire</h2>
       <div class="text-warning flex-shrink-0 ps-sm-1 ms-3">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
           <path
@@ -118,26 +134,18 @@
     <div class="tab-pane fade show active" id="dayOne" role="tabpanel">
       <div class="row py-3 my-2 my-md-3">
         <div class="col-md-3">
-          <div class="h6 mb-2 mb-md-0">9:30 - 9:35</div>
+          <div class="h6 mb-2 mb-md-0">9:30 - 9:40</div>
         </div>
         <div class="col-md-6">
-          <h3 class="h4 mb-0">Introduction : Le circuit des formalités</h3>
-          <p class="pt-2 pt-md-3 mb-md-0">Présentation du Guichet Unique, son fonctionnement et son impact sur les
-            formalités des entreprises.</p>
+          <h3 class="h4 mb-0">Introduction </h3>
+          <p class="pt-2 pt-md-3 mb-md-0">Tour d’horizon des dernières actualités juridiques liées aux formalités
+            d’entreprise.</p>
         </div>
         <div class="col-md-3 text-md-end">
           <div class="d-inline-flex">
             <div class="bg-light flex-shrink-0 rounded-circle position-relative z-4" style="padding: 3px;">
-              <img class="rounded-circle" src="assets/img/avatar/05.jpg" width="48" alt="Avatar">
-            </div>
-            <div class="bg-light flex-shrink-0 rounded-circle position-relative z-3 ms-n3" style="padding: 3px;">
-              <img class="rounded-circle" src="assets/img/avatar/08.jpg" width="48" alt="Avatar">
-            </div>
-            <div class="bg-light flex-shrink-0 rounded-circle position-relative z-2 ms-n3" style="padding: 3px;">
-              <img class="rounded-circle" src="assets/img/avatar/09.jpg" width="48" alt="Avatar">
-            </div>
-            <div class="bg-light flex-shrink-0 rounded-circle position-relative z-1 ms-n3" style="padding: 3px;">
-              <img class="rounded-circle" src="assets/img/avatar/12.jpg" width="48" alt="Avatar">
+              <img class="rounded-circle" src="assets/img/societe/team/direction/myriam_presidente.jpg" width="48"
+                alt="Avatar">
             </div>
           </div>
         </div>
@@ -145,20 +153,18 @@
       <hr>
       <div class="row py-3 my-2 my-md-3">
         <div class="col-md-3">
-          <div class="h6 mb-2 mb-md-0">9:30 - 10:00</div>
+          <div class="h6 mb-2 mb-md-0">9:40 - 10:00</div>
         </div>
         <div class="col-md-6">
-          <h3 class="h4 mb-0">Points d'actualités</h3>
-          <p class="pt-2 pt-md-3 mb-md-0">Tour d’horizon de toutes les dernières actualités juridiques liées au Guichet
-            Unique et point de situation global.</p>
+          <h3 class="h4 mb-0">Anonymisation des données personnelles</h3>
+          <p class="pt-2 pt-md-3 mb-md-0">Dernières informations sur la confidentialité des informations personnelles
+            sur le Kbis, la fiche RNE et autres actes déposés. Qui est concerné ? Comment faire ? Quelles pièces ?</p>
         </div>
         <div class="col-md-3 text-md-end">
           <div class="d-inline-flex">
             <div class="bg-light flex-shrink-0 rounded-circle position-relative z-4" style="padding: 3px;">
-              <img class="rounded-circle" src="assets/img/avatar/10.jpg" width="48" alt="Avatar">
-            </div>
-            <div class="bg-light flex-shrink-0 rounded-circle position-relative z-3 ms-n3" style="padding: 3px;">
-              <img class="rounded-circle" src="assets/img/avatar/06.jpg" width="48" alt="Avatar">
+              <img class="rounded-circle" src="assets/img/societe/team/direction/myriam_presidente.jpg" width="48"
+                alt="Avatar">
             </div>
           </div>
         </div>
@@ -175,7 +181,8 @@
         <div class="col-md-3 text-md-end">
           <div class="d-inline-flex">
             <div class="bg-light flex-shrink-0 rounded-circle position-relative z-4" style="padding: 3px;">
-              <img class="rounded-circle" src="assets/img/avatar/19.jpg" width="48" alt="Avatar">
+              <img class="rounded-circle" src="assets/img/societe/team/direction/myriam_presidente.jpg" width="48"
+                alt="Avatar">
             </div>
           </div>
         </div>
@@ -186,20 +193,15 @@
           <div class="h6 mb-2 mb-md-0">10:15 - 10:30</div>
         </div>
         <div class="col-md-6">
-          <h3 class="h4 mb-0">Questions/réponses avec nos experts</h3>
+          <h3 class="h4 mb-0">Questions/réponses avec notre experte</h3>
           <p class="pt-2 pt-md-3 mb-md-0">Échanges en direct pour répondre aux interrogations des participants et
             clarifier les points essentiels.</p>
         </div>
         <div class="col-md-3 text-md-end">
           <div class="d-inline-flex">
             <div class="bg-light flex-shrink-0 rounded-circle position-relative z-4" style="padding: 3px;">
-              <img class="rounded-circle" src="assets/img/avatar/08.jpg" width="48" alt="Avatar">
-            </div>
-            <div class="bg-light flex-shrink-0 rounded-circle position-relative z-3 ms-n3" style="padding: 3px;">
-              <img class="rounded-circle" src="assets/img/avatar/06.jpg" width="48" alt="Avatar">
-            </div>
-            <div class="bg-light flex-shrink-0 rounded-circle position-relative z-2 ms-n3" style="padding: 3px;">
-              <img class="rounded-circle" src="assets/img/avatar/09.jpg" width="48" alt="Avatar">
+              <img class="rounded-circle" src="assets/img/societe/team/direction/myriam_presidente.jpg" width="48"
+                alt="Avatar">
             </div>
           </div>
         </div>
@@ -208,25 +210,20 @@
   </div>
 </section>
 
-<section class="container py-5 my-5">
-  <div class="card text-center dark-blue-dropdown py-5">
-    <div class="row">
-      <div class="col-md-8 m-auto">
-        <h2 class="text-white">Visionnez le dernier webinaire en replay et ne manquez aucune des nouveautés !</h2>
-      </div>
+<section class="container">
+  <div class="container yellow-card my-2 my-md-3 my-xl-4 pb-2 rounded-5 overflow-hidden p-md-5 p-4">
+    <div class="row justify-content-center gy-md-5 gy-4 gx-xl-5 p-4">
+      <h1 class="h2 text-blue text-center text-secondary">Visionnez le dernier webinaire en replay et ne manquez aucune
+        des
+        nouveautés !
+      </h1>
     </div>
-    <div class="row justify-content-center">
-      <div class="col-md-6 col-12 align-items-center">
-        <div class="input-group input-group-border text-white align-items-center py-1 mt-5 rounded-1 d-flex">
-          <div class="col">
-            <div class="row align-items-center me-1">
-              <generic-input style="flex-grow: 1;" label="E-mail" [form]="webinarsForm" propertyName="email"
-                [(model)]="replayMail" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="false" class="col"
-                type="email" [icon]="'mail'"></generic-input>
-
-              <button class="btn btn-primary col-4" type="button" (click)="sendReplay()">Voir le replay</button>
-            </div>
-          </div>
+    <div class="row justify-content-center mb-4 mb-md-2 gy-md-5 gy-4 gx-xl-5">
+      <div class="col-lg-6 mt-2 mt-sm-4">
+        <div class="input-group">
+          <label class="form-label fs-base" for="email"></label>
+          <input class="form-control " type="email" placeholder="E-mail" [(ngModel)]="replayMail" required id="email">
+          <button class="btn btn-secondary" type="button" (click)="sendReplay()">Voir le replay</button>
         </div>
       </div>
     </div>

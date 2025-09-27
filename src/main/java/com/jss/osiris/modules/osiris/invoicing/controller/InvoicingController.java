@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -565,6 +566,14 @@ public class InvoicingController {
         if (paymentAssociate == null)
             throw new OsirisValidationException("paymentAssociate");
 
+        if (paymentAssociate.getInvoices() != null) {
+            ArrayList<Invoice> outInvoices = new ArrayList<Invoice>();
+            for (Invoice invoice : paymentAssociate.getInvoices()) {
+                outInvoices.add((Invoice) validationHelper.validateReferential(invoice, true, "Invoice"));
+            }
+            paymentAssociate.setInvoices(outInvoices);
+        }
+
         // Check referentials
 
         paymentAssociate.setPayment(
@@ -594,7 +603,7 @@ public class InvoicingController {
                 && (paymentAssociate.getInvoices() == null
                         || paymentAssociate.getInvoices().get(0).getIsCreditNote() == false)) {
             if (paymentAssociate.getResponsableOrder() == null
-                    && paymentAssociate.getResponsableOrder().getId() == null)
+                    || paymentAssociate.getResponsableOrder().getId() == null)
                 throw new OsirisValidationException("no responsable order set");
 
             responsableOrder = responsableService.getResponsable(paymentAssociate.getResponsableOrder().getId());
@@ -620,7 +629,6 @@ public class InvoicingController {
                 paymentAssociate.setInvoices(null);
             else
                 for (Invoice invoice : paymentAssociate.getInvoices()) {
-                    invoice = (Invoice) validationHelper.validateReferential(invoice, true, "invoice");
                     if (!invoice.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId())
                             && !invoice.getInvoiceStatus().getId()
                                     .equals(constantService.getInvoiceStatusReceived().getId())

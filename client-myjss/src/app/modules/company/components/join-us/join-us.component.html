@@ -6,29 +6,30 @@
     <div class="col-md-6 col-xl-5 offset-xl-1">
       <p class="text-body fs-lg mb-5 text-white">Journal d’annonces légales parisien historique et prestataire en
         formalités légales, le JSS est un des leaders dans son domaine.<br />
-        Vous cherchez un environnement dynamique où votre talent fera la différence ? <br />
-        Découvrez nos opportunités et participez à notre aventure !
-      </p>
+        Vous cherchez un environnement dynamique où votre talent fera la différence ? Découvrez nos opportunités ou
+        déposez votre candidature spontanée et participez à notre aventure !</p>
     </div>
   </div>
 </section>
 
 <section class="pb-3 pb-5">
-  <div class="jarallax" data-jarallax>
-    <div class="jarallax-img" style="background-image: url(assets/img/societe/join-us/join_us_banner.png);">
+  <div class="jarallax  d-none d-md-block" data-jarallax>
+    <div class="jarallax-img" style="background-image: url(assets/img/societe/join-us/join_us_banner.jpg);">
     </div>
+  </div>
+  <div class="d-block d-md-none">
+    <img src="assets/img/societe/join-us/join_us_banner.jpg" />
   </div>
 </section>
 
 <section class="container overflow-hidden py-5 my-5">
   <div class="row">
-    <h2 class="h1 pb-3 mb-lg-4 text-white">Rejoignez le JSS</h2>
+    <h2 class="h2 pb-3 mb-lg-4 text-white">Rejoignez le JSS</h2>
   </div>
   <div class="card-info">
     <div class="row g-4">
       <div class="col-md-7 order-md-1">
-        <img class="object-fit-cover w-100 h-100 rounded-3" src="assets/img/societe/join-us/join-the-jss.png"
-          alt="Image">
+        <img class="object-fit-cover w-100 h-100 rounded-3" src="assets/img/societe/join-us/join_jss.jpg" alt="Image">
       </div>
       <div class="col-md-5 order-md-2">
         <div class="d-flex flex-column h-100 card border-0 rounded-3 pt-5 px-4 px-lg-5">
@@ -45,7 +46,8 @@
             avec nous, postulez !
           </p>
           <div class="col-auto pb-4">
-            <button type="button" class="btn btn-light btn-secondary" (click)="openApplicationModal()">
+            <button type="button" class="btn btn-light btn-secondary"
+              (click)="openApplicationModal();trackClickCandidacy()">
               Candidature spontanée <i class="ai-arrow-right"></i>
             </button>
           </div>
@@ -59,6 +61,10 @@
 <ng-template #spontaneousApplicationModal let-modal>
   <div class="modal-content">
     <div class="modal-header">
+      <div class="justify-content-end row">
+        <button type="button" class="col-auto btn text-white" aria-label="Close" (click)="closeApplicationModal()"><i
+            class="ai-cross-alt"></i></button>
+      </div>
       <h5 id="spontaneousApplicationModalLabel">Formulaire de Candidature</h5>
       <p>Pour nous faire parvenir votre candidature spontanée, remplissez ce formulaire et
         téléchargez
@@ -99,7 +105,7 @@
 
 <section class="container py-5 my-5">
   <div class="row">
-    <h2 class="h1 pb-3 mb-lg-4 text-white">Zoom sur nos services</h2>
+    <h2 class="h2 mb-lg-4 text-white">Zoom sur nos services</h2>
   </div>
   <div class="row">
     <div class="row row-cols-1 row-cols-sm-2 g-4">
@@ -131,7 +137,9 @@
         <div class="card h-100 border-0 rounded-5">
           <div class="card-body">
             <h3 class="h4">Commercial</h3>
-            <p class="mb-0">Les chargés de clientèle sont en contact quotidien avec les clients et prospects.</p>
+            <p class="mb-0">Les chargés de clientèle gèrent leur portefeuille de clients et de prospects. Ils sont
+              entourés des assistants commerciaux. Tous ont comme principal objectif d’établir un lien de confiance avec
+              les clients.</p>
           </div>
         </div>
       </div>
@@ -141,7 +149,8 @@
         <div class="card h-100 border-0 rounded-5">
           <div class="card-body">
             <h3 class="h4">Marketing et Communication</h3>
-            <p class="mb-0">La communication interne comme externe avec passion.</p>
+            <p class="mb-0">L’équipe de la com’ est garante de l’image et de la notoriété du JSS.<br>
+              En interne, une vraie politique est menée pour répondre à l’engagement des salariés.</p>
           </div>
         </div>
       </div>
@@ -226,70 +235,18 @@
   </div>
 </ng-template>
 
-
-<!-- Tools-->
-<section class="container overflow-hidden my-md-3 my-lg-2 my-xl-4 my-xxl-5">
-  <div class="row justify-content-between">
-    <div class="col">
-      <h2 class="h1 pb-3 mb-lg-4 text-white">Une infrastructure performante </h2>
-    </div>
-  </div>
-  <div class="row align-items-center my-2 py-2 py-sm-4 py-lg-5 my-xxl-2">
-    <div class="col position-relative mx-auto" style="max-width: 510px;">
-      <img class="d-block d-dark-mode-none" src="assets/img/societe/join-us/circle-gray-1.png"
-        style="animation: rotate-cw 100s linear infinite;" alt="Circle">
-      <img class="d-none d-dark-mode-block" src="assets/img/societe/join-us/circle-light-1.png"
-        style="animation: rotate-cw 100s linear infinite;" alt="Circle">
-      <img class="d-block d-dark-mode-none position-absolute top-0 start-0"
-        src="assets/img/societe/join-us/circle-gray-2.png" style="animation: rotate-ccw 50s linear infinite;"
-        alt="Circle">
-      <img class="d-none d-dark-mode-block position-absolute top-0 start-0"
-        src="assets/img/societe/join-us/circle-light-2.png" style="animation: rotate-ccw 50s linear infinite;"
-        alt="Circle">
-      <img class="position-absolute top-0 start-0 z-2" src="assets/img/societe/join-us/join_us_logo.png" alt="Icon">
-    </div>
-    <div class="col-md-5 text-center text-md-start pe-md-5 pe-lg-0 pe-xxl-4 ps-xl-5 mb-5 mb-md-0 m-md-3">
-      <h2 class="h1 pb-3 pb-xl-2 mb-lg-4 mb-xl-5">L'écosystème technique qui soutient notre innovation</h2>
-      <p>Nous utilisons une stack technique moderne et performante, conçue pour garantir la fiabilité, la sécurité et
-        l'évolutivité de nos services, tout en anticipant les besoins futurs.</p>
-      <ul class="list-unstyled mb-4 mb-xl-5">
-        <li class="d-flex pb-2 mb-1">
-          <span class="bg-primary mt-2 me-2 checkbox-custom"></span>
-          Back-end : Java 17, Spring Boot, PostgreSQL
-        </li>
-        <li class="d-flex pb-2 mb-1">
-          <span class="bg-primary mt-2 me-2 checkbox-custom"></span>
-          Front-end : Angular 16
-        </li>
-        <li class="d-flex pb-2 mb-1">
-          <span class="bg-primary yellow-card mt-2 me-2 checkbox-custom"></span>
-          Infrastructure : On premise
-        </li>
-        <li class="d-flex pb-2 mb-1">
-          <span class="bg-primary yellow-card mt-2 me-2 checkbox-custom"></span>
-          Sécurité : OAuth
-        </li>
-        <li class="d-flex pb-2 mb-1  " style="text-align: left;">
-          <span class="bg-primary yellow-card mt-2 me-2 checkbox-custom"></span>
-          Bureautique : Teams, Microsoft Office, Windows
-        </li>
-      </ul>
-    </div>
-  </div>
-</section>
-
 <!-- Un cadre epanouissant -->
 <section class="white-tranlucid-bg">
   <div class="container py-5 my-5">
     <div class="row justify-content-between">
       <div class="col">
-        <h2 class="h1 pb-3 mb-lg-4 text-white">Un cadre épanouissant</h2>
+        <h2 class="h2 pb-3 mb-lg-4 text-white">Un cadre épanouissant</h2>
       </div>
     </div>
     <div class="row">
       <div class="col-12 col-lg-4 mb-4">
         <div class="card h-100">
-          <img src="assets/img/societe/join-us/join-the-jss.png" class="card-img-top" alt="Card image">
+          <img src="assets/img/societe/join-us/events.jpg" class="card-img-top" alt="Card image">
           <div class="card-body">
             <h4 class="card-title">Événements toute l’année</h4>
             <p class="card-text">La Com’ remue ciel et terre pour animer le quotidien des salariés : déjeuner,
@@ -346,9 +303,7 @@
           <img src="assets/img/societe/join-us/home-working.jpg" class="card-img-top" alt="Card image">
           <div class="card-body">
             <h4 class="card-title">Charte de télétravail</h4>
-            <p class="card-text">Profitez d’un rythme de travail souple avec 1 jour de télétravail par semaine et 1
-              jour
-              flottant par mois à poser quand vous le souhaitez.</p>
+            <p class="card-text">Profitez d’un rythme de travail souple avec 2 jours de télétravail par semaine.</p>
           </div>
         </div>
       </div>

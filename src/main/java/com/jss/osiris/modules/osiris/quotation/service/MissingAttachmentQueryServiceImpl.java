@@ -262,7 +262,8 @@ public class MissingAttachmentQueryServiceImpl implements MissingAttachmentQuery
                     CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
                             assoServiceDocument.getService().getAssoAffaireOrder().getCustomerOrder(),
                             "La demande de pièces manquantes du " + missingAttachmentQuery.getCreatedDateTime()
-                                    .format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + " a été complétée");
+                                    .format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + " a été complétée",
+                            false, false);
 
                     customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
                             constantService.getActiveDirectoryGroupFormalites());

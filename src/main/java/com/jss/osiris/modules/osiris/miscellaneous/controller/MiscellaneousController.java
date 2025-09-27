@@ -10,6 +10,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
@@ -1300,6 +1301,24 @@ public class MiscellaneousController {
             headers.set("content-type", mimeType);
         }
         return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/attachment/download-all")
+    public ResponseEntity<byte[]> downloadAllAttachments(@RequestBody List<Integer> invoiceIds)
+            throws OsirisValidationException, OsirisException {
+
+        if (invoiceIds == null)
+            throw new OsirisValidationException("invoiceIds");
+
+        byte[] zipBytes = attachmentService.downloadAllInvoicesAsZip(invoiceIds);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("filename", "factures.zip");
+        headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
+        headers.setContentLength(zipBytes.length);
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
+        return new ResponseEntity<>(zipBytes, headers, HttpStatus.OK);
     }
 
     @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)

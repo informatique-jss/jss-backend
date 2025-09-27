@@ -43,6 +43,7 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("schedulling.guichet.unique.refresh.opened");
         isOk = isOk && checkProperty("schedulling.mail.purge.iquotation.draft");
         isOk = isOk && checkProperty("schedulling.central.pay.payment.request.validation.check");
+        isOk = isOk && checkProperty("schedulling.sitemap.generate");
         isOk = isOk && checkProperty("azure.form.recognizer.invoice.check");
         isOk = isOk && checkProperty("ldap.dc.level.0");
         isOk = isOk && checkProperty("ldap.dc.level.1");
@@ -148,6 +149,8 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("microsoft.host");
         isOk = isOk && checkProperty("jss.media.entry.point");
         isOk = isOk && checkProperty("my.jss.entry.point");
+        isOk = isOk && checkProperty("server.my.jss.entry.point");
+        isOk = isOk && checkProperty("server.jss.entry.point");
 
         if (!isOk)
             System.exit(-1);

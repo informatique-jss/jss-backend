@@ -2,19 +2,22 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { NgbAccordionModule, NgbDropdownModule, NgbNavModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { environment } from '../../../../../environments/environment';
 import { ASSO_SERVICE_DOCUMENT_ENTITY_TYPE, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, INVOICING_PAYMENT_LIMIT_REFUND_EUROS, SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
 import { capitalizeName, getListMails, getListPhones } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { TrustHtmlPipe } from '../../../../libs/TrustHtmlPipe';
 import { AppService } from '../../../main/services/app.service';
 import { ConstantService } from '../../../main/services/constant.service';
+import { GtmService } from '../../../main/services/gtm.service';
+import { FileUploadPayload, PageInfo } from '../../../main/services/GtmPayload';
 import { AvatarComponent } from '../../../miscellaneous/components/avatar/avatar.component';
 import { SingleUploadComponent } from '../../../miscellaneous/components/forms/single-upload/single-upload.component';
 import { Employee } from '../../../profile/model/Employee';
 import { Responsable } from '../../../profile/model/Responsable';
 import { LoginService } from '../../../profile/services/login.service';
-import { Affaire } from '../../model/Affaire';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
+import { AssoServiceDocument } from '../../model/AssoServiceDocument';
 import { Attachment } from '../../model/Attachment';
 import { BillingLabelType } from '../../model/BillingLabelType';
 import { CustomerOrder } from '../../model/CustomerOrder';
@@ -65,7 +68,6 @@ export class OrderDetailsComponent implements OnInit {
   serviceProvisionAttachments: Attachment[][] = [];
   currentUser: Responsable | undefined;
   associatedQuotation: Quotation | undefined;
-  dislayAlreadyFilledAttachment = false;
 
   selectedAssoAffaireOrder: AssoAffaireOrder | undefined;
   ASSO_SERVICE_DOCUMENT_ENTITY_TYPE = ASSO_SERVICE_DOCUMENT_ENTITY_TYPE;
@@ -96,7 +98,8 @@ export class OrderDetailsComponent implements OnInit {
     private loginService: LoginService,
     private formBuilder: FormBuilder,
     private serviceService: ServiceService,
-    private quotationService: QuotationService
+    private quotationService: QuotationService,
+    private gtmService: GtmService
   ) { }
 
   capitalizeName = capitalizeName;
@@ -111,6 +114,7 @@ export class OrderDetailsComponent implements OnInit {
   SERVICE_FIELD_TYPE_DATE = SERVICE_FIELD_TYPE_DATE;
   SERVICE_FIELD_TYPE_SELECT = SERVICE_FIELD_TYPE_SELECT;
   CUSTOMER_ORDER_STATUS_OPEN = CUSTOMER_ORDER_STATUS_OPEN;
+  frontendJssUrl = environment.frontendJssUrl;
 
   ngOnInit() {
     this.orderDetailsForm = this.formBuilder.group({});
@@ -122,7 +126,6 @@ export class OrderDetailsComponent implements OnInit {
   }
 
   refreshOrder() {
-    this.dislayAlreadyFilledAttachment = false;
     this.customerOrderService.getCustomerOrder(this.activatedRoute.snapshot.params['id']).subscribe(response => {
       this.order = response;
       this.appService.hideLoadingSpinner();
@@ -159,7 +162,11 @@ export class OrderDetailsComponent implements OnInit {
     })
     this.invoicingSummaryService.getInvoicingSummaryForCustomerOrder(this.order.id).subscribe(response => {
       this.invoiceSummary = response;
-      if (this.invoiceSummary.remainingToPay && Math.abs(this.invoiceSummary.remainingToPay) > INVOICING_PAYMENT_LIMIT_REFUND_EUROS && this.order?.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_OPEN)
+      if (this.invoiceSummary.remainingToPay && Math.abs(this.invoiceSummary.remainingToPay) > INVOICING_PAYMENT_LIMIT_REFUND_EUROS && this.order!.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_OPEN)
+        this.displayPayButton = true;
+      if (this.invoiceSummary.remainingToPay && this.order?.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_OPEN && this.order!.servicesList == this.constantService.getServiceTypeUniqueArticleBuy().label)
+        this.displayPayButton = true;
+      if (this.invoiceSummary.remainingToPay && this.order?.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_OPEN && this.order!.servicesList == this.constantService.getServiceTypeKioskNewspaperBuy().label)
         this.displayPayButton = true;
     })
     this.refreshCustomerOrderComments();
@@ -169,11 +176,6 @@ export class OrderDetailsComponent implements OnInit {
         this.associatedQuotation = response;
     })
   }
-
-  toggleDislayAlreadyFilledAttachment() {
-    this.dislayAlreadyFilledAttachment = !this.dislayAlreadyFilledAttachment;
-  }
-
 
   getCustomerOrderBillingMailList() {
     if (this.order && this.orderMailComputeResult)
@@ -208,11 +210,11 @@ export class OrderDetailsComponent implements OnInit {
     this.currentSelectedAttachmentForDisable = attachment;
   }
 
-  confirmDisableAttachment() {
+  confirmDisableAttachment(assoServiceDocument: AssoServiceDocument) {
     if (this.currentSelectedAttachmentForDisable)
       this.uploadAttachmentService.disableAttachment(this.currentSelectedAttachmentForDisable).subscribe(response => {
         this.currentSelectedAttachmentForDisable = undefined;
-        this.refreshCurrentAssoAffaireOrder();
+        this.refreshCurrentAssoAffaireOrder(assoServiceDocument);
       })
   }
 
@@ -220,7 +222,26 @@ export class OrderDetailsComponent implements OnInit {
     this.currentSelectedAttachmentForDisable = undefined;
   }
 
-  refreshCurrentAssoAffaireOrder() {
+  trackUploadFile(assoServiceDocument: AssoServiceDocument) {
+    if (this.order)
+      this.gtmService.trackFileUpload(
+        {
+          business: {
+            type: 'order',
+            order_id: this.order.id,
+            documentType: assoServiceDocument.typeDocument.label
+          },
+          page: {
+            type: 'my-account',
+            name: 'order-details'
+          } as PageInfo
+        } as FileUploadPayload
+      );
+  }
+
+  refreshCurrentAssoAffaireOrder(assoServiceDocument: AssoServiceDocument | null) {
+    if (assoServiceDocument)
+      this.trackUploadFile(assoServiceDocument);
     if (this.order)
       this.assoAffaireOrderService.getAssoAffaireOrdersForCustomerOrder(this.order).subscribe(response => {
         this.ordersAssoAffaireOrders = response;
@@ -229,21 +250,6 @@ export class OrderDetailsComponent implements OnInit {
             if (asso.id == this.selectedAssoAffaireOrder.id)
               this.changeAffaire(asso);
       })
-  }
-
-  editAffaireDetails(affaire: Affaire, event: any) {
-    if (this.order)
-      this.appService.openRoute(event, "account/affaire/edit/order/" + affaire.id + "/" + this.order.id, undefined);
-  }
-
-  editAddress(event: any) {
-    if (this.order)
-      this.appService.openRoute(event, "account/order/address/edit/" + this.order.id, undefined);
-  }
-
-  payCustomerOrder(event: any) {
-    if (this.order)
-      this.appService.openRoute(event, "account/order/pay/" + this.order.id, undefined);
   }
 
   downloadInvoice() {
@@ -273,14 +279,10 @@ export class OrderDetailsComponent implements OnInit {
     this.newCustomerOrderComment.comment = this.newCustomerOrderComment.comment.replace(/<[^>]+>/g, '');
   }
 
-  openQuotationDetails(event: any, quotation: Quotation) {
-    this.appService.openRoute(event, "account/quotations/details/" + quotation.id, undefined);
-  }
-
   saveFieldsValue(service: Service) {
     this.serviceService.addOrUpdateService(service).subscribe(response => {
       this.appService.displayToast("Vos informations complémentaires ont bien été enrengistrées", false, "Succès", 15000);
-      this.refreshCurrentAssoAffaireOrder();
+      this.refreshCurrentAssoAffaireOrder(null);
     })
   }
 
@@ -290,11 +292,6 @@ export class OrderDetailsComponent implements OnInit {
 
   displayMyInformation(service: Service) {
     return service.assoServiceFieldTypes && service.assoServiceFieldTypes.find(a => a.isMandatory);
-  }
-
-  resumeDraft(event: any) {
-    if (this.order && this.order.id)
-      this.appService.openRoute(event, "quotation/resume/order/" + this.order.id, undefined);
   }
 
   cancelDraft(event: any) {

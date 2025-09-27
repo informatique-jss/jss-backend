@@ -2,6 +2,7 @@ package com.jss.osiris.modules.osiris.quotation.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -28,14 +29,18 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
+@Table(indexes = { @Index(name = "idx_affaire_siret", columnList = "siret", unique = true) })
 public class Affaire implements IId, IAttachment {
 
 	@Id
@@ -95,6 +100,7 @@ public class Affaire implements IId, IAttachment {
 	@Column(length = 10)
 	@IndexedField
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class,
+			JacksonViews.OsirisListView.class,
 			JacksonViews.MyJssListView.class })
 	private String postalCode;
 
@@ -115,9 +121,10 @@ public class Affaire implements IId, IAttachment {
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
 	private Country country;
 
-	@Column(length = 100, nullable = false)
+	@Column(length = 500)
 	@IndexedField
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class,
+			JacksonViews.OsirisListView.class,
 			JacksonViews.MyJssListView.class })
 	private String address;
 
@@ -194,6 +201,16 @@ public class Affaire implements IId, IAttachment {
 	@Column(columnDefinition = "TEXT")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String apeCodes;
+
+	private Boolean isToNotUpdate;
+
+	@JsonView({ JacksonViews.MyJssDetailedView.class })
+	@Column(nullable = false)
+	private Boolean isProvisionalPaymentMandatory;
+
+	@Transient
+	@JsonView({ JacksonViews.OsirisListView.class })
+	private LocalDateTime createdDateTime;
 
 	public String getPaymentIban() {
 		return paymentIban;
@@ -465,6 +482,30 @@ public class Affaire implements IId, IAttachment {
 
 	public void setAssoAffaireOrders(List<AssoAffaireOrder> assoAffaireOrders) {
 		this.assoAffaireOrders = assoAffaireOrders;
+	}
+
+	public Boolean getIsToNotUpdate() {
+		return isToNotUpdate;
+	}
+
+	public void setIsToNotUpdate(Boolean isToNotUpdate) {
+		this.isToNotUpdate = isToNotUpdate;
+	}
+
+	public LocalDateTime getCreatedDateTime() {
+		return createdDateTime;
+	}
+
+	public void setCreatedDateTime(LocalDateTime createdDateTime) {
+		this.createdDateTime = createdDateTime;
+	}
+
+	public Boolean getIsProvisionalPaymentMandatory() {
+		return isProvisionalPaymentMandatory;
+	}
+
+	public void setIsProvisionalPaymentMandatory(Boolean isProvisionalPaymentMandatory) {
+		this.isProvisionalPaymentMandatory = isProvisionalPaymentMandatory;
 	}
 
 }

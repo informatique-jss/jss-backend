@@ -78,7 +78,7 @@ public class MailComputeHelper {
     }
 
     @Transactional(rollbackOn = Exception.class)
-    public MailComputeResult computeMailForCustomerOrderFinalizationAndInvoice(IQuotation quotation)
+    public MailComputeResult computeMailForCustomerOrderFinalizationAndInvoice(IQuotation quotation, Boolean isReminder)
             throws OsirisException, OsirisClientMessageException {
         if (quotation.getId() != null) {
             IQuotation fetchedQuotation = customerOrderService.getCustomerOrder(quotation.getId());
@@ -87,7 +87,10 @@ public class MailComputeHelper {
             if (fetchedQuotation != null)
                 quotation = fetchedQuotation;
         }
-        return computeMailForDocument(quotation, constantService.getDocumentTypeBilling(), false);
+        if (!isReminder)
+            return computeMailForDocument(quotation, constantService.getDocumentTypeBilling(), false);
+        else
+            return computeReminderMailForDocument(quotation, constantService.getDocumentTypeBilling());
     }
 
     public MailComputeResult computeMailForPublicationReceipt(IQuotation quotation)
@@ -139,6 +142,32 @@ public class MailComputeHelper {
         return computeMailForConfrereAnnouncementRequest(announcement);
     }
 
+    private MailComputeResult computeReminderMailForDocument(IQuotation quotation, DocumentType documentType)
+            throws OsirisException, OsirisClientMessageException {
+
+        if (quotation == null)
+            throw new OsirisException(null, "Quotation not provided");
+
+        if (documentType == null)
+            throw new OsirisException(null, "Document Type not provided");
+
+        // Compute recipients
+        MailComputeResult mailComputeResult = new MailComputeResult();
+        mailComputeResult.setRecipientsMailTo(new ArrayList<Mail>());
+        mailComputeResult.setRecipientsMailCc(new ArrayList<Mail>());
+        mailComputeResult.setIsSendToClient(false);
+        mailComputeResult.setIsSendToAffaire(false);
+        Document quotationDocument = documentService.getDocumentByDocumentType(quotation.getDocuments(), documentType);
+        if (quotationDocument.getReminderMail() != null) {
+            mailComputeResult.getRecipientsMailTo().add(quotationDocument.getReminderMail());
+            mailComputeResult.setMailToClientOrigin("mails de relance");
+        } else {
+            return computeMailForDocument(quotation, constantService.getDocumentTypeBilling(), false);
+        }
+
+        return mailComputeResult;
+    }
+
     private MailComputeResult computeMailForDocument(IQuotation quotation, DocumentType documentType,
             boolean isForcedClient)
             throws OsirisException, OsirisClientMessageException {
@@ -169,7 +198,8 @@ public class MailComputeHelper {
 
         if (quotationDocument != null) {
             boolean hasAlreadyAddMails = false;
-            if (quotationDocument.getIsRecipientAffaire() && !isForcedClient) {
+            if ((quotationDocument.getIsRecipientAffaire() && !isForcedClient)
+                    || (quotationDocument.getIsRecipientAffaire() && !isForcedClient)) {
                 mailComputeResult.setIsSendToAffaire(true);
                 if (quotationDocument.getMailsAffaire() != null && quotationDocument.getMailsAffaire().size() > 0) {
                     mailComputeResult.getRecipientsMailTo().addAll(quotationDocument.getMailsAffaire());
@@ -189,9 +219,12 @@ public class MailComputeHelper {
                     throw new OsirisClientMessageException("Aucun mail trouvé pour l'affaire");
             }
 
-            if (quotationDocument.getIsRecipientClient()
+            if (((quotationDocument.getIsRecipientClient()
                     || !quotationDocument.getIsRecipientClient() && !quotationDocument.getIsRecipientAffaire()
-                    || isForcedClient) {
+                    || isForcedClient))
+                    || ((quotationDocument.getIsRecipientClient()
+                            || !quotationDocument.getIsRecipientClient() && !quotationDocument.getIsRecipientAffaire()
+                            || isForcedClient))) {
                 hasAlreadyAddMails = false;
                 mailComputeResult.setIsSendToClient(true);
                 if (quotationDocument.getMailsClient() != null
@@ -220,7 +253,6 @@ public class MailComputeHelper {
                     mailComputeResult.setMailToClientOrigin("mails du tiers");
                 } else
                     throw new OsirisClientMessageException("Aucun mail trouvé pour le client");
-
             }
         }
         return mailComputeResult;

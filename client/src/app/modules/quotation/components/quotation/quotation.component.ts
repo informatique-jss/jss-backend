@@ -58,6 +58,7 @@ import { ProvisionComponent } from '../provision/provision.component';
 import { QuotationAbandonReasonDialog } from '../quotation-abandon-reason-dialog/quotation-abandon-reason-dialog';
 import { QuotationManagementComponent } from '../quotation-management/quotation-management.component';
 import { SelectMultiServiceTypeDialogComponent } from '../select-multi-service-type-dialog/select-multi-service-type-dialog.component';
+import { SuggestedQuotationsDialogComponent } from '../suggested-quotations-dialog/suggested-quotations-dialog.component';
 import { IQuotation } from './../../model/IQuotation';
 
 @Component({
@@ -126,6 +127,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     public quotationWorkflowDialog: MatDialog,
     public orderSimilaritiesDialog: MatDialog,
     public customerOrderWorkflowDialog: MatDialog,
+    public suggestedQuotationDialog: MatDialog,
     private formBuilder: FormBuilder,
     private constantService: ConstantService,
     protected searchService: SearchService,
@@ -189,6 +191,12 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
                   this.selectedTabIndexAsso = i;
               }
           }
+
+          this.quotationSearchResultService.getQuotationsForCustomerOrder(this.quotation as CustomerOrder).subscribe(response => {
+            if (response && response.length > 0)
+              this.hasQuotation = true;
+            else this.hasQuotation = false;
+          });
 
           this.incidentReportService.getIncidentReportsForCustomerOrder(this.quotation.id).subscribe(response => this.incidentList = response);
         })
@@ -402,6 +410,16 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
           });
         }
       });
+    } else {
+      let dialogRef = this.selectAttachmentTypeDialog.open(SelectMultiServiceTypeDialogComponent, {
+        width: '50%',
+      });
+      dialogRef.componentInstance.affaire = asso.affaire;
+
+      dialogRef.afterClosed().subscribe(response => {
+        if (response != null)
+          asso.services.push(...response);
+      });
     }
   }
 
@@ -436,6 +454,12 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
           this.generateInvoiceItem();
         }
       });
+    } else {
+      if (service && !service.provisions) {
+        service.provisions = [] as Array<Provision>;
+      }
+      service.provisions.push(provision);
+      this.generateInvoiceItem();
     }
     return provision;
   }
@@ -445,6 +469,29 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
       if (instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
         this.displaySnakBarLockProvision();
       }
+
+    if (this.hasQuotation) {
+      const dialogConfirm = this.confirmationDialog.open(ConfirmDialogComponent, {
+        maxWidth: "400px",
+        data: {
+          title: "Modification du devis de la commande",
+          content: "La suppression d'un service impactera le devis initial lié à cette commande. Souhaitez-vous continuer ? ",
+          closeActionText: "Annuler",
+          validationActionText: "Confirmer"
+        }
+      });
+
+      dialogConfirm.afterClosed().subscribe(userConfirmed => {
+        if (userConfirmed) {
+          this.deleteServiceDialog(service);
+        }
+      });
+    } else {
+      this.deleteServiceDialog(service);
+    }
+  }
+
+  deleteServiceDialog(service: Service) {
     const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
       maxWidth: "400px",
       data: {
@@ -459,24 +506,18 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
       if (response) {
         this.serviceService.deleteService(service).subscribe(response => {
           if (!this.instanceOfCustomerOrder) {
-            this.quotationService.addOrUpdateQuotation(this.quotation).subscribe(response => {
-              this.editMode = false;
-              this.quotation = response;
-              this.appService.openRoute(null, '/quotation/' + this.quotation.id, null);
-            })
+            this.editMode = false;
+            this.appService.openRoute(null, '/quotation/' + this.quotation.id, null);
           } else {
-            this.customerOrderService.addOrUpdateCustomerOrder(this.quotation).subscribe(response => {
-              this.editMode = false;
-              this.quotation = response;
-              this.appService.openRoute(null, '/order/' + this.quotation.id, null);
-            })
+            this.editMode = false;
+            this.appService.openRoute(null, '/order/' + this.quotation.id, null);
           }
         });
       }
     });
   }
 
-  modifyService(service: Service) {
+  modifyService(service: Service, affaire: Affaire) {
     const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
       maxWidth: "400px",
       data: {
@@ -493,6 +534,8 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
           width: "50%",
         });
         dialogRef2.componentInstance.isJustSelectServiceType = true;
+        dialogRef2.componentInstance.affaire = affaire;
+
         dialogRef2.afterClosed().subscribe(dialogResult => {
           if (dialogResult && service && this.quotation) {
             this.serviceService.modifyServiceType(service, dialogResult).subscribe(response => {
@@ -537,10 +580,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
               return;
             }
 
-
         let asso = {} as AssoAffaireOrder;
         asso.affaire = response;
         asso.services = [] as Array<Service>;
+
         if (!this.quotation.assoAffaireOrders)
           this.quotation.assoAffaireOrders = [] as Array<AssoAffaireOrder>;
 
@@ -568,7 +611,13 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
                 this.quotation.assoAffaireOrders.push(asso);
                 this.selectedTabIndex = 1;
               }
+              //After checking suggested orders, check suggested quotation with same affaire
+              this.quotationService.getQuotationByAffaire(asso.affaire).subscribe(response => {
+                if (response && response.length > 0)
+                  this.openSuggestedQuotationDialog(asso);
+              });
             });
+
           } else {
             this.quotation.assoAffaireOrders.push(asso);
             this.selectedTabIndex = 1;
@@ -576,6 +625,13 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
         });
       }
     })
+  }
+
+  openSuggestedQuotationDialog(asso: AssoAffaireOrder) {
+    let dialogQuotation = this.suggestedQuotationDialog.open(SuggestedQuotationsDialogComponent, {
+      width: '100%'
+    });
+    dialogQuotation.componentInstance.selectedAffaire = asso.affaire;
   }
 
   displayQuotationWorkflowDialog() {
@@ -630,6 +686,28 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
       return;
     }
 
+    if (this.hasQuotation) {
+      const dialogConfirm = this.confirmationDialog.open(ConfirmDialogComponent, {
+        maxWidth: "400px",
+        data: {
+          title: "Modification du devis de la commande",
+          content: "La suppression d'une prestation impactera le devis initial lié à cette commande. Souhaitez-vous continuer ? ",
+          closeActionText: "Annuler",
+          validationActionText: "Confirmer"
+        }
+      });
+
+      dialogConfirm.afterClosed().subscribe(userConfirmed => {
+        if (userConfirmed) {
+          this.deleteProvisionDialog(provision);
+        }
+      });
+    } else {
+      this.deleteProvisionDialog(provision);
+    }
+  }
+
+  deleteProvisionDialog(provision: Provision) {
     const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
       maxWidth: "400px",
       data: {
@@ -639,22 +717,15 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
         validationActionText: "Confirmer"
       }
     });
-
     dialogRef.afterClosed().subscribe(response => {
       if (response) {
         this.provisionService.deleteProvision(provision).subscribe(response => {
           if (!this.instanceOfCustomerOrder) {
-            this.quotationService.addOrUpdateQuotation(this.quotation).subscribe(response => {
-              this.editMode = false;
-              this.quotation = response;
-              this.appService.openRoute(null, '/quotation/' + this.quotation.id, null);
-            })
+            this.editMode = false;
+            this.appService.openRoute(null, '/quotation/' + this.quotation.id, null);
           } else {
-            this.customerOrderService.addOrUpdateCustomerOrder(this.quotation).subscribe(response => {
-              this.editMode = false;
-              this.quotation = response;
-              this.appService.openRoute(null, '/order/' + this.quotation.id, null);
-            })
+            this.editMode = false;
+            this.appService.openRoute(null, '/order/' + this.quotation.id, null);
           }
         });
       }

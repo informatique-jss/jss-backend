@@ -9,9 +9,9 @@
         <p class="text-body fs-lg mb-5 text-white">Domiciliez votre entreprise à une adresse prestigieuse au cœur de
           Paris et bénéficiez d’un service de redirection personnalisé. </p>
         <double-buttons class="text-grey" orderActionLabel=" Domicilier mon entreprise"
-          [orderActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeOrder.id"
-          quotationActionLabel="Demander un devis"
-          [quotationActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeQuotation.id"
+          [orderActionRoute]="'/quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeOrder.id"
+          quotationActionLabel="Demander un devis" [fromPageInfo]="{ type: 'my-services', name: 'domiciliation'}"
+          [quotationActionRoute]="'/quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeQuotation.id"
           linkLabel="Bien choisir la domiciliation d'entreprise" [isLightButtons]="true">
         </double-buttons>
       </div>
@@ -19,23 +19,30 @@
   </div>
 </section>
 <section>
-  <div class="jarallax overflow-hidden z-2" data-speed="0.5">
+  <div class="jarallax overflow-hidden z-2  d-none d-md-block" data-speed="0.5">
     <div class="jarallax-img"
       style="background-image: url('/assets/img/myjss-services/domiciliation/banniere_domiciliation.png');"></div>
   </div>
+  <div class="d-block d-md-none">
+    <img src="assets/img/myjss-services/domiciliation/banniere_domiciliation.png" />
+  </div>
 </section>
 
-
-<explaination-video posterPath="assets/img/announcement/annonce_bandeau_img.jpg"
-  videoPath="assets/videos/test_video.mp4" title="Domiciliez votre entreprise en 3 étapes"
+<explaination-video posterPath="assets/img/myjss-services/MyJssVideo-poster.png"
+  videoPath="assets/videos/domiciliation.mp4" title="Domiciliez votre entreprise en 3 étapes"
   firstStepTitle="Choisissez votre formule"
   firstStepDescription="Sélectionnez le type de renvoi de courrier (postal, digital ou les deux) et la langue (FR/EN) de rédaction de votre contrat."
   secondStepTitle="Téléversez les pièces justificatives"
-  secondStepDescription="Déposez les pièces nécessaire à l'établissement de votre contrat de domiciliation directement sur le site. Ces pièces varient si c'est une société ou une succursale à domicilier."
+  secondStepDescription="Déposez les pièces nécessaires à l'établissement de votre contrat de domiciliation directement sur le site. Ces pièces varient si c'est une société ou une succursale à domicilier."
   thirdStepTitle="Recevez votre contrat par email"
-  thirdStepDescription="Dès la signature de votre contrat, il vous est envoyé par mail et votre société est domiciliée."></explaination-video>
+  thirdStepDescription="Dès la signature de votre contrat, il vous est envoyé par mail et votre société est domiciliée."
+  [firstJumpTo]="34"></explaination-video>
 
-<description-my-account></description-my-account>
+<description-my-account
+  firstStepText="Suivi de votre dossier en ligne via MyJSS et consultation des pièces obligatoires, avec une mise à jour en temps réel de l’avancement."
+  secondStepText="Accédez à l’ensemble de vos dossiers : commandes, devis, et suivez leur statut en temps réel."
+  thirdtepText="Téléchargez facilement tous vos documents importants : attestations de parution, factures, témoins de publication, et autres pièces justificatives en toute sécurité."
+  imageSrc="assets/img/parcourir_mon_compte_accueil.webp"></description-my-account>
 
 <section class="container mt-lg-3 mt-xl-4 mt-xxl-5 pt-lg-5 pt-sm-3 pt-2">
   <div class="bg-yellow-custom rounded-5 overflow-hidden mt-2 mt-sm-4 mt-lg-5">
@@ -49,7 +56,7 @@
           <h2 class="h2 secondary-heading pb-2 pb-sm-3 ">N'attendez plus et accédez à nos solutions</h2>
           <double-buttons class="text-grey" orderActionLabel=" Domicilier mon entreprise"
             [orderActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeOrder.id"
-            quotationActionLabel="Demander un devis"
+            quotationActionLabel="Demander un devis" [fromPageInfo]="{ type: 'my-services', name: 'domiciliation'}"
             [quotationActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeQuotation.id"
             linkLabel="Bien choisir la domiciliation d'entreprise" [isLightButtons]="false">
           </double-buttons>
@@ -189,7 +196,7 @@
   <div class="container py-3 py-sm-4 py-lg-5 my-md-2 my-lg-3 my-xl-4 my-xxl-5">
     <div class="text-center">
       <h2 class="h1 pb-3 mb-lg-4 text-white">Nos services</h2>
-      <p>Nous proposons une large gamme de services de formalités, adaptés à vos besoins pour simplifier vos démarches
+      <p>Nous proposons une large gamme de services juridiques, adaptés à vos besoins pour simplifier vos démarches
         administratives.</p>
     </div>
     <div
@@ -198,12 +205,16 @@
         <div class="card h-100 border-0 rounded-5 w-100">
           <div class="card-body pb-3 px-3">
             <img src="assets/img/icons/Annonces.svg" alt="Icon">
-            <h3 class="h4 text-white" routerLink="/services/announcement" style="cursor: pointer;">Annonces légales</h3>
+            <h3 class="h4 text-white">
+              <a routerLink="/services/announcement" class="text-white text-decoration-none">
+                Annonces légales
+              </a>
+            </h3>
             <p class="mb-0">Toutes les annonces légales, sur tout le territoire et sur tous les supports.</p>
           </div>
           <div class="card-footer border-0 pt-3 mb-3">
-            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" (click)="openAnnouncements($event)"
-              aria-label="Learn more">
+            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle"
+              (click)="openRoute('/services/announcement')">
               <i class="ai-arrow-right"></i>
             </a>
           </div>
@@ -212,18 +223,23 @@
       <div class="col-lg-5 d-flex pt-3 pt-xl-0">
         <div class="card h-100 border-0 rounded-5 w-100">
           <div class="card-body pb-3 px-3">
-            <img src="assets/img/icons/Formalite.svg" alt="Icon">
-            <h3 class="h4 text-white" routerLink="/services/formality" style="cursor: pointer;">Formalité légale</h3>
+            <img src="assets/img/icons/Apostille.svg" alt="Icon">
+            <h3 class="h4 text-white">
+              <a routerLink="/services/apostille" class="text-white text-decoration-none">
+                Apostille & Légalisation
+              </a>
+            </h3>
             <p class="mb-0">Un accompagnement complet pour toutes vos formalités juridiques.</p>
           </div>
           <div class="card-footer border-0 pt-3 mb-3">
-            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" (click)="openFormality($event)"
+            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" (click)="openRoute('/services/apostille')"
               aria-label="Learn more">
               <i class="ai-arrow-right"></i>
             </a>
           </div>
         </div>
       </div>
+
     </div>
 
     <div
@@ -231,15 +247,17 @@
       <div class="col-lg-5 d-flex pt-3 pt-xl-0">
         <div class="card h-100 border-0 rounded-5 w-100">
           <div class="card-body pb-3 px-3">
-            <img src="assets/img/icons/Apostille.svg" alt="Icon">
-            <h3 class="h4 text-white" routerLink="/services/apostille" style="cursor: pointer;">Apostille & Légalisation
+            <img src="assets/img/icons/Domiciliation.svg" alt="Icon">
+            <h3 class="h4 text-white">
+              <a routerLink="/services/domiciliation" class="text-white text-decoration-none">
+                Domiciliation
+              </a>
             </h3>
-            <p class="mb-0">Authentification et certification rapide et conforme de vos documents valables à
-              l’international.</p>
+            <p class="mb-0">Une domiciliation au cœur de Paris avec gestion simplifiée.</p>
           </div>
           <div class="card-footer border-0 pt-3 mb-3">
-            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" (click)="openApostille($event)"
-              aria-label="Learn more">
+            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle"
+              (click)="openRoute('/services/domiciliation')" aria-label="Learn more">
               <i class="ai-arrow-right"></i>
             </a>
           </div>
@@ -249,12 +267,15 @@
         <div class="card h-100 border-0 rounded-5 w-100">
           <div class="card-body pb-3 px-3">
             <img src="assets/img/icons/Fourniture_documents.svg" alt="Icon">
-            <h3 class="h4 text-white" routerLink="/services/document" style="cursor: pointer;">Fourniture de documents
+            <h3 class="h4 text-white">
+              <a routerLink="/services/document" class="text-white text-decoration-none">
+                Fourniture de documents
+              </a>
             </h3>
             <p class="mb-0">Vos documents officiels fournis rapidement et en toute conformité.</p>
           </div>
           <div class="card-footer border-0 pt-3 mb-3">
-            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" (click)="openDocument($event)"
+            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" (click)="openRoute('/services/document')"
               aria-label="Learn more">
               <i class="ai-arrow-right"></i>
             </a>
@@ -272,7 +293,7 @@
       <ng-template let-post>
         <div class="h-100">
           <div class="card border-0 bg-tertiary">
-            <a (click)="openPost(post.slug,$event)">
+            <a [routerLink]="'/post/'+post.slug">
               <img class="card-img-top"
                 [src]="post.media && post.media.urlMediumLarge ? post.media.urlMediumLarge : post.media.urlFull"
                 alt="Post image">
@@ -284,7 +305,7 @@
                 <a class="badge text-nav fs-xs border" *ngIf="post.postTags[0]">{{post.postTags[0].name}}</a>
               </div>
               <h3 class="h4 card-title card-title-truncate">
-                <a (click)="openPost(post.slug,$event)">{{post.titleText}}</a>
+                <a [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
               </h3>
               <p class="card-text card-text-truncate">{{post.excerptText}}</p>
             </div>

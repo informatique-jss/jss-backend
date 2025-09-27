@@ -9,7 +9,7 @@ export class UserPreferenceService {
 
   // User search
   setUserSearchBookmark(search: any, searchName: string) {
-    if (search && searchName)
+    if (search != null && search != undefined && searchName)
       localStorage.setItem('search-' + searchName, JSON.stringify(search));
   }
 

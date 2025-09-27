@@ -922,6 +922,10 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.responsableDummyCustomerFrance;
   }
 
+  getAffaireDummyForSubscription() {
+    return this.constant.affaireDummyForSubscription;
+  }
+
   getProvisionScreenTypeAnnouncement() {
     return this.constant.provisionScreenTypeAnnouncement;
   }

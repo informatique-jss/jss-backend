@@ -91,6 +91,8 @@ public class MediaServiceImpl implements MediaService {
                 media.setLength(media.getMedia_details().getLength());
             if (media.getAuthor() != null && media.getAuthor() > 0)
                 media.setFullAuthor(authorService.getAuthor(media.getAuthor()));
+            if (media.getCaption() != null && media.getCaption().getRendered() != null)
+                media.setCaptionText(media.getCaption().getRendered().replaceAll("<[^>]*>", ""));
         }
         return media;
     }

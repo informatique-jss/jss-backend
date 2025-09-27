@@ -7,9 +7,11 @@ import { capitalizeName, getListMails, getListPhones } from '../../../../libs/Fo
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
 import { ConstantService } from '../../../main/services/constant.service';
+import { GtmService } from '../../../main/services/gtm.service';
+import { FileUploadPayload, PageInfo } from '../../../main/services/GtmPayload';
 import { SingleUploadComponent } from '../../../miscellaneous/components/forms/single-upload/single-upload.component';
-import { Affaire } from '../../model/Affaire';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
+import { AssoServiceDocument } from '../../model/AssoServiceDocument';
 import { Attachment } from '../../model/Attachment';
 import { BillingLabelType } from '../../model/BillingLabelType';
 import { CustomerOrder } from '../../model/CustomerOrder';
@@ -86,6 +88,7 @@ export class QuotationDetailsComponent implements OnInit {
     private customerOrderService: CustomerOrderService,
     private serviceService: ServiceService,
     private modalService: NgbModal,
+    private gtmService: GtmService
   ) { }
 
   capitalizeName = capitalizeName;
@@ -181,11 +184,11 @@ export class QuotationDetailsComponent implements OnInit {
     this.currentSelectedAttachmentForDisable = attachment;
   }
 
-  confirmDisableAttachment() {
+  confirmDisableAttachment(assoServiceDocument: AssoServiceDocument) {
     if (this.currentSelectedAttachmentForDisable)
       this.uploadAttachmentService.disableAttachment(this.currentSelectedAttachmentForDisable).subscribe(response => {
         this.currentSelectedAttachmentForDisable = undefined;
-        this.refreshCurrentAssoAffaireOrder();
+        this.refreshCurrentAssoAffaireOrder(assoServiceDocument);
       })
   }
 
@@ -193,7 +196,26 @@ export class QuotationDetailsComponent implements OnInit {
     this.currentSelectedAttachmentForDisable = undefined;
   }
 
-  refreshCurrentAssoAffaireOrder() {
+  trackUploadFile(assoServiceDocument: AssoServiceDocument) {
+    if (this.quotation)
+      this.gtmService.trackFileUpload(
+        {
+          business: {
+            type: 'quotation',
+            order_id: this.quotation.id,
+            documentType: assoServiceDocument.typeDocument.label
+          },
+          page: {
+            type: 'my-account',
+            name: 'quotation-details'
+          } as PageInfo
+        } as FileUploadPayload
+      );
+  }
+
+  refreshCurrentAssoAffaireOrder(assoServiceDocument: AssoServiceDocument | null) {
+    if (assoServiceDocument)
+      this.trackUploadFile(assoServiceDocument);
     if (this.quotation)
       this.assoAffaireOrderService.getAssoAffaireOrdersForQuotation(this.quotation).subscribe(response => {
         this.quotationAssoAffaireOrders = response;
@@ -208,29 +230,10 @@ export class QuotationDetailsComponent implements OnInit {
     this.dislayAlreadyFilledAttachment = !this.dislayAlreadyFilledAttachment;
   }
 
-  editAffaireDetails(affaire: Affaire, event: any) {
-    if (this.quotation)
-      this.appService.openRoute(event, "account/affaire/edit/quotation/" + affaire.id + "/" + this.quotation.id, undefined);
-  }
-
-  editAddress(event: any) {
-    if (this.quotation)
-      this.appService.openRoute(event, "account/quotation/address/edit/" + this.quotation.id, undefined);
-  }
-
-  payQuotation(event: any) {
-    if (this.quotation)
-      this.appService.openRoute(event, "account/quotation/pay/" + this.quotation.id, undefined);
-  }
-
-  openOrderDetails(event: any, order: CustomerOrder) {
-    this.appService.openRoute(event, "account/orders/details/" + order.id, undefined);
-  }
-
   saveFieldsValue(service: Service) {
     this.serviceService.addOrUpdateService(service).subscribe(response => {
       this.appService.displayToast("Vos informations complémentaires ont bien été enrengistrées", false, "Succès", 15000);
-      this.refreshCurrentAssoAffaireOrder();
+      this.refreshCurrentAssoAffaireOrder(null);
     })
   }
 

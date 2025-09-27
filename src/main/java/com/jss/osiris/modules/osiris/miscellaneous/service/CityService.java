@@ -26,4 +26,6 @@ public interface CityService {
             Pageable pageable);
 
     public List<City> getCitiesByCountry(Integer countryId);
+
+    public City getCityByInpiLabel(String inpiLabel);
 }

@@ -7,6 +7,8 @@ import { capitalizeName, formatDateFrance } from '../../../../libs/FormatHelper'
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
 import { UserPreferenceService } from '../../../main/services/user.preference.service';
+import { Responsable } from '../../../profile/model/Responsable';
+import { ResponsableService } from '../../../profile/services/responsable.service';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
 import { CustomerOrder } from '../../model/CustomerOrder';
 import { InvoiceLabelResult } from '../../model/InvoiceLabelResult';
@@ -43,6 +45,8 @@ export class OrdersComponent implements OnInit {
   currentPage: number = 0;
 
   orders: CustomerOrder[] = [];
+  responsablesForCurrentUser: Responsable[] | undefined;
+  responsableCheck: boolean[] = [];
 
   hideSeeMore: boolean = false;
   isFirstLoading: boolean = false;
@@ -65,12 +69,21 @@ export class OrdersComponent implements OnInit {
     private userPreferenceService: UserPreferenceService,
     private activatedRoute: ActivatedRoute,
     private modalService: NgbModal,
-    private quotationService: QuotationService
+    private quotationService: QuotationService,
+    private responsableService: ResponsableService
   ) { }
 
   ngOnInit() {
-    this.retrieveBookmark();
-    this.refreshOrders();
+    this.appService.showLoadingSpinner();
+    this.responsableService.getResponsablesForCurrentUser().subscribe(response => {
+      this.responsablesForCurrentUser = response;
+      if (this.responsablesForCurrentUser)
+        for (let respo of this.responsablesForCurrentUser) {
+          this.responsableCheck[respo.id] = true;
+        }
+      this.retrieveBookmark();
+      this.refreshOrders();
+    });
   }
 
   refreshOrders() {
@@ -125,7 +138,8 @@ export class OrdersComponent implements OnInit {
       this.currentSearchRef.unsubscribe();
 
     this.appService.showLoadingSpinner();
-    this.currentSearchRef = this.customerOrderService.searchOrdersForCurrentUser(status, this.withMissingAttachment, this.currentPage, this.currentSort).subscribe(response => {
+
+    this.currentSearchRef = this.customerOrderService.searchOrdersForCurrentUser(status, this.withMissingAttachment, this.currentPage, this.currentSort, this.getCurrentSelectedResponsable()).subscribe(response => {
       this.appService.hideLoadingSpinner();
       if (response) {
         this.orders.push(...response);
@@ -134,6 +148,17 @@ export class OrdersComponent implements OnInit {
       }
       this.isFirstLoading = false;
     })
+  }
+
+  getCurrentSelectedResponsable() {
+    let filterResponsable = undefined;
+    if (this.responsablesForCurrentUser) {
+      filterResponsable = [];
+      for (let respoForCurrentUser of this.responsablesForCurrentUser)
+        if (this.responsableCheck[respoForCurrentUser.id])
+          filterResponsable.push(respoForCurrentUser);
+    }
+    return filterResponsable;
   }
 
   changeFilter() {
@@ -169,11 +194,6 @@ export class OrdersComponent implements OnInit {
       })
     }
   }
-
-  openOrderDetails(event: any, order: CustomerOrder) {
-    this.appService.openRoute(event, "account/orders/details/" + order.id, undefined);
-  }
-
 
   quotationToCancel: CustomerOrder | undefined;
   finalCancelDraft(event: any) {
@@ -213,6 +233,8 @@ export class OrdersComponent implements OnInit {
     this.userPreferenceService.setUserSearchBookmark(this.statusFilterPayed, "order-statusFilterPayed");
     this.userPreferenceService.setUserSearchBookmark(this.withMissingAttachment, "order-withMissingAttachment");
     this.userPreferenceService.setUserSearchBookmark(this.currentSort, "order-currentSort");
+    if (this.responsablesForCurrentUser && this.getCurrentSelectedResponsable())
+      this.userPreferenceService.setUserSearchBookmark(this.getCurrentSelectedResponsable()!.map(r => r.id).join(","), "order-responsables");
   }
 
   retrieveBookmark() {
@@ -254,6 +276,13 @@ export class OrdersComponent implements OnInit {
     }
     if (this.userPreferenceService.getUserSearchBookmark("order-withMissingAttachment")) {
       this.withMissingAttachment = true;
+    }
+    if (this.userPreferenceService.getUserSearchBookmark("order-responsables")) {
+      let respoIds = this.userPreferenceService.getUserSearchBookmark("order-responsables").split(",");
+      for (let i in this.responsableCheck)
+        this.responsableCheck[i] = false;
+      for (let respoId of respoIds)
+        this.responsableCheck[parseInt(respoId)] = true;
     }
 
     if (!atLeastOne)

@@ -1,7 +1,22 @@
 <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center mb-4">
   <h1 class="h2 mb-3 mb-sm-0">Relevé de compte</h1>
 
-  <div class="d-flex flex-column flex-sm-row ms-sm-auto gap-2">
+  <div class="d-flex flex-sm-row ms-sm-auto gap-2">
+    <div ngbDropdown [autoClose]="'outside'" class="btn-group dropdown" style="margin-right: 10px;"
+      *ngIf="responsablesForCurrentUser && responsablesForCurrentUser.length>0">
+      <button type="button" class="btn btn-outline-secondary dropdown-toggle" ngbDropdownToggle aria-haspopup="true"
+        aria-expanded="false">
+        <i class="ai-filter me-2"></i>
+        Responsables
+      </button>
+      <div ngbDropdownMenu class="dropdown-menu my-1">
+        <label class=" dropdown-item" *ngFor="let respo of responsablesForCurrentUser">
+          <input class="form-check-input me-2" type="checkbox" value="" [(ngModel)]="responsableCheck[respo.id]"
+            (change)="changeFilter()">
+          {{respo.firstname}} {{respo.lastname}}
+        </label>
+      </div>
+    </div>
     <div ngbDropdown class="btn-group dropdown">
       <button type="button" class="btn btn-outline-secondary dropdown-toggle" ngbDropdownToggle aria-haspopup="true"
         aria-expanded="false">
@@ -94,27 +109,27 @@
               <strong>Service : </strong>
               <span [innerHTML]="receiptValue.serviceLists"></span>
             </div>
-            <div class="d-flex justify-content-end gap-2 pb-2">
-              <a class="btn btn-sm btn-outline-primary  " role="button"
+            <div class="d-flex justify-content-end gap-3 pb-2 row px-2 mb-2">
+              <a class="btn btn-sm btn-outline-primary col" role="button"
                 [routerLink]="'/account/orders/details/' + receiptValue.idCustomerOrder"
                 *ngIf="receiptValue.idCustomerOrder">
                 <i class="ai-cart me-2"></i>
                 Voir la commande
               </a>
 
-              <a class="btn btn-sm btn-outline-primary " role="button"
+              <a class="btn btn-sm btn-outline-primary col" role="button"
                 (click)="downloadInvoice(receiptValue.idCustomerOrder)"
                 *ngIf="receiptValue.idInvoice && receiptValue.idCustomerOrder">
                 <i class="ai-note me-2"></i>
                 Télécharger la facture
               </a>
 
-              <a class="btn btn-sm btn-outline-primary " role="button" (click)="addToPayCb(receiptValue)"
+              <a class="btn btn-sm btn-outline-primary col" role="button" (click)="addToPayCb(receiptValue)"
                 *ngIf="receiptValue.idCustomerOrder && orderToPayInCb.indexOf(receiptValue.idCustomerOrder)<0 && receiptValue.debitAmount">
                 <i class="ai-card me-2"></i>
                 Ajouter au paiement CB
               </a>
-              <a class="btn btn-sm btn-primary " role="button" (click)="removeFromPayCb(receiptValue)"
+              <a class="btn btn-sm btn-primary col" role="button" (click)="removeFromPayCb(receiptValue)"
                 *ngIf="receiptValue.idCustomerOrder && orderToPayInCb.indexOf(receiptValue.idCustomerOrder)>=0 && receiptValue.debitAmount">
                 <i class="ai-check me-2"></i>
                 Retirer du paiement CB

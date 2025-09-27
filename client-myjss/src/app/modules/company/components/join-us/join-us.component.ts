@@ -1,11 +1,14 @@
 import { Component, ElementRef, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { Meta, Title } from '@angular/platform-browser';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { APPLICATION_CV_ENTITY_TYPE } from '../../../../libs/Constants';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { Mail } from '../../../general/model/Mail';
 import { AppService } from '../../../main/services/app.service';
 import { ConstantService } from '../../../main/services/constant.service';
+import { GtmService } from '../../../main/services/gtm.service';
+import { CtaClickPayload, FormSubmitPayload, PageInfo } from '../../../main/services/GtmPayload';
 import { PlatformService } from '../../../main/services/platform.service';
 import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { GenericTextareaComponent } from '../../../miscellaneous/components/forms/generic-textarea/generic-textarea.component';
@@ -27,10 +30,10 @@ export class JoinUsComponent implements OnInit {
   images: string[] = [
     "assets/img/myjss-services/apostilles/myjss_occupe_tout.jpg",
     "assets/img/societe/join-us/team.jpg",
-    "assets/img/societe/join-us/join_us_caroussel3.png",
-    "assets/img/myjss-services/apostilles/myjss_occupe_tout.jpg",
-    "assets/img/societe/join-us/team.jpg",
-    "assets/img/societe/join-us/join_us_caroussel3.png",
+    "assets/img/societe/join-us/Carrousel 1.jpg",
+    "assets/img/societe/join-us/Carrousel 2.jpg",
+    "assets/img/societe/join-us/Carrousel2.jpg",
+    "assets/img/societe/join-us/Carrousel3.jpg",
   ];
 
   @ViewChild('modalImage') modalImageRef!: ElementRef<HTMLImageElement>;
@@ -52,11 +55,39 @@ export class JoinUsComponent implements OnInit {
     private appService: AppService,
     private platformService: PlatformService,
     private modalService: NgbModal,
+    private gtmService: GtmService,
+    private titleService: Title, private meta: Meta,
   ) { }
 
   ngOnInit() {
+    this.titleService.setTitle("Rejoignez-nous - MyJSS");
+    this.meta.updateTag({ name: 'description', content: "Vous voulez innover dans la legaltech ? Rejoignez l'équipe MyJSS et contribuez à simplifier la vie juridique des entreprises. Découvrez nos offres d'emploi." });
     this.attachmentTypeApplicationCv = this.constantService.getAttachmentTypeApplicationCv();
     this.applicationForm = this.formBuilder.group({});
+  }
+
+  trackClickCandidacy() {
+    this.gtmService.trackCtaClick(
+      {
+        cta: { type: 'link', label: 'Candidature spontanée' },
+        page: {
+          type: 'company',
+          name: 'join-us'
+        } as PageInfo
+      } as CtaClickPayload
+    );
+  }
+
+  trackFormCandidacy() {
+    this.gtmService.trackFormSubmit(
+      {
+        form: { type: 'Envoyer ma candidature' },
+        page: {
+          type: 'company',
+          name: 'join-us'
+        } as PageInfo
+      } as FormSubmitPayload
+    );
   }
 
   ngAfterViewInit(): void {
@@ -90,6 +121,7 @@ export class JoinUsComponent implements OnInit {
     }
     this.candidacyService.addOrUpdateCandidacy(this.newCandidacy).subscribe(response => {
       if (response) {
+        this.trackFormCandidacy();
         if (this.singleUploadComponent && this.singleUploadComponent.files && this.singleUploadComponent.files.length > 0) {
           this.singleUploadComponent.entity = response;
           this.singleUploadComponent.uploadFiles();

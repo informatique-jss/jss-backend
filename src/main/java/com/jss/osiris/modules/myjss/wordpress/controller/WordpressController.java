@@ -2,6 +2,8 @@ package com.jss.osiris.modules.myjss.wordpress.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
@@ -445,11 +447,12 @@ public class WordpressController {
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 
-	@GetMapping(inputEntryPoint + "/posts/jss/top")
+	@GetMapping(inputEntryPoint + "/posts/jss/last")
 	@JsonView(JacksonViews.MyJssListView.class)
-	public ResponseEntity<Page<Post>> getTopJssPosts(
+	public ResponseEntity<Page<Post>> getLastJssPosts(
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size,
+			@RequestParam(required = false) String searchText,
 			HttpServletRequest request)
 			throws OsirisException {
 
@@ -459,7 +462,7 @@ public class WordpressController {
 				Sort.by(Sort.Direction.DESC, "date"));
 
 		return new ResponseEntity<Page<Post>>(
-				postService.computeBookmarkedPosts(postService.getJssCategoryPosts(pageable)),
+				postService.computeBookmarkedPosts(postService.getJssCategoryPosts(searchText, pageable)),
 				HttpStatus.OK);
 	}
 
@@ -505,8 +508,7 @@ public class WordpressController {
 
 		detectFlood(request);
 
-		Pageable pageableRequest = PageRequest.of(page, ValidationHelper.limitPageSize(size),
-				Sort.by(Sort.Direction.DESC, "date"));
+		Pageable pageableRequest = PageRequest.of(page, ValidationHelper.limitPageSize(size));
 
 		return new ResponseEntity<Page<Post>>(
 				postService.getJssCategoryPostMostSeen(pageableRequest),
@@ -556,7 +558,13 @@ public class WordpressController {
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<Post> getPostBySlug(@RequestParam String slug, HttpServletRequest request)
 			throws OsirisException {
+		if (slug != null && slug.contains("%"))
+			slug = URLDecoder.decode(slug, StandardCharsets.UTF_8);
 		Post post = postService.getPostsBySlug(slug);
+		if (post == null && slug.matches("[0-9]+") && slug.length() > 2) {
+			// For legacy post by id
+			post = postService.getPost(Integer.parseInt("100000" + slug));
+		}
 		if (post != null && !isCrawler(request))
 			postViewService.incrementView(post);
 		return new ResponseEntity<Post>(postService.applyPremiumAndBookmarks(post, null, null, false), HttpStatus.OK);
@@ -681,6 +689,19 @@ public class WordpressController {
 
 		return new ResponseEntity<Page<Post>>(
 				postService.getMostSeenPostBySerie(pageable, serie),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/posts/premium/most-seen")
+	@JsonView(JacksonViews.MyJssListView.class)
+	public ResponseEntity<Page<Post>> getMostSeenPremiumPost(@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "20") int size, HttpServletRequest request) {
+		detectFlood(request);
+		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
+				Sort.by(Sort.Direction.DESC, "date"));
+
+		return new ResponseEntity<Page<Post>>(
+				postService.getMostSeenPremiumPost(pageable),
 				HttpStatus.OK);
 	}
 
@@ -865,6 +886,24 @@ public class WordpressController {
 						.applyPremiumAndBookmarks(
 								postService.getAllPostsByPublishingDepartment(pageableRequest, publishingDepartment,
 										searchText)),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/posts/all/premium")
+	@JsonView(JacksonViews.MyJssListView.class)
+	public ResponseEntity<Page<Post>> getAllPremiumPosts(
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "20") int size, @RequestParam(required = false) String searchText,
+			HttpServletRequest request) throws OsirisException {
+
+		detectFlood(request);
+
+		Pageable pageableRequest = PageRequest.of(page, ValidationHelper.limitPageSize(size),
+				Sort.by(Sort.Direction.DESC, "date"));
+
+		return new ResponseEntity<Page<Post>>(
+				postService
+						.applyPremiumAndBookmarks(postService.getAllPremiumPosts(searchText, pageableRequest)),
 				HttpStatus.OK);
 	}
 
@@ -1127,6 +1166,16 @@ public class WordpressController {
 		return new ResponseEntity<List<Tag>>(tagService.getAllTendencyTags(), HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/tags/last")
+	public ResponseEntity<List<Tag>> getAllLastPostsTags() throws OsirisException {
+		return new ResponseEntity<List<Tag>>(tagService.getAllTendencyTags(), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/tags/most-seen")
+	public ResponseEntity<List<Tag>> getAllMostSeenPostsTags() throws OsirisException {
+		return new ResponseEntity<List<Tag>>(tagService.getAllMostSeenPostsTags(), HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/tags/all/publishing-department")
 	public ResponseEntity<List<Tag>> getAllTagsByPublishingDepartment(@RequestParam String departmentCode)
 			throws OsirisException {
@@ -1140,6 +1189,14 @@ public class WordpressController {
 			return new ResponseEntity<List<Tag>>(tagService.getAllTagsByIdf(), HttpStatus.OK);
 
 		return new ResponseEntity<List<Tag>>(tagService.getAllTagsByPublishingDepartment(publishingDepartment),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/tags/all/premium")
+	public ResponseEntity<List<Tag>> getAllTagsByPremiumPosts()
+			throws OsirisException {
+
+		return new ResponseEntity<List<Tag>>(tagService.getAllTagsByPremiumPosts(),
 				HttpStatus.OK);
 	}
 
@@ -1171,7 +1228,18 @@ public class WordpressController {
 		searchText = searchText.trim().toLowerCase();
 
 		return new ResponseEntity<Page<Announcement>>(
-				announcementService.getAnnouncementSearch(searchText, pageable), HttpStatus.OK);
+				announcementService.getAnnouncementSearch(searchText, null, pageable), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/announcement/last-seven-days")
+	@JsonView(JacksonViews.MyJssListView.class)
+	public ResponseEntity<List<Announcement>> getLastSevenDaysAnnouncements(HttpServletRequest request)
+			throws OsirisException {
+
+		detectFlood(request);
+
+		return new ResponseEntity<List<Announcement>>(
+				announcementService.getLastSevenDaysAnnouncements(), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/announcement/unique")
@@ -1229,7 +1297,7 @@ public class WordpressController {
 
 			headers = new HttpHeaders();
 			headers.setContentLength(data.length);
-			headers.add("filename", "Attestation de parution n°" + announcement.getId() + ".pdf");
+			headers.add("filename", "Témoin de parution n°" + announcement.getId() + ".pdf");
 			headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
 
 			// Compute content type

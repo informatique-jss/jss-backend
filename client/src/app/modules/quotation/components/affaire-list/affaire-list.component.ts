@@ -71,4 +71,8 @@ export class AffaireListComponent implements OnInit {
       });
     }
   }
+
+  correctAffaire() {
+    this.appService.openRoute(null, "affaire-correction", undefined);
+  }
 }

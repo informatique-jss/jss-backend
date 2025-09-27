@@ -255,7 +255,8 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
                             "Formalité Infogreffe n°" + formaliteInfogreffe.getReferenceTechnique() + " rejetée par "
                                     + (formaliteInfogreffe.getGreffeDestinataire() != null
                                             ? formaliteInfogreffe.getGreffeDestinataire().getNom()
-                                            : ""));
+                                            : ""),
+                            false, false);
 
                     customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
                             constantService.getActiveDirectoryGroupFormalites());
@@ -271,7 +272,8 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
                             "Formalité Infogreffe n°" + formaliteInfogreffe.getReferenceTechnique() + " validée par "
                                     + (formaliteInfogreffe.getGreffeDestinataire() != null
                                             ? formaliteInfogreffe.getGreffeDestinataire().getNom()
-                                            : ""));
+                                            : ""),
+                            false, false);
 
                     customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
                             constantService.getActiveDirectoryGroupFormalites());

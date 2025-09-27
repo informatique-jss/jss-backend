@@ -3,6 +3,8 @@ package com.jss.osiris.modules.myjss.wordpress.model;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import com.jss.osiris.libs.search.model.DoNotAudit;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -15,6 +17,7 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
 @Entity
+@DoNotAudit
 @Table(indexes = { @Index(name = "idx_post_view_day", columnList = "id_post,day", unique = true),
 })
 public class PostView implements Serializable {

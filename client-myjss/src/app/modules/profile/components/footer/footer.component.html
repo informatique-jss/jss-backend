@@ -50,27 +50,26 @@
             </div>
             <p>
               <a class="nav-link myjss-nav-link" style="cursor: pointer;" (click)="$event"
-                routerLink="quotation">Commande / Devis</a>
+                routerLink="/quotation">Commande / Devis</a>
             </p>
             <p>
-              <a class="nav-link myjss-nav-link" style="cursor: pointer;" (click)="$event" routerLink="demo">Démo</a>
-            </p>
-            <p>
-              <a class="nav-link myjss-nav-link" style="cursor: pointer;" (click)="$event"
-                routerLink="prices">Tarifs</a>
+              <a class="nav-link myjss-nav-link" style="cursor: pointer;" (click)="$event" routerLink="/demo">Démo</a>
             </p>
             <p>
               <a class="nav-link myjss-nav-link" style="cursor: pointer;" (click)="$event"
-                routerLink="newsletter">Newsletter</a>
+                routerLink="/prices">Tarifs</a>
             </p>
             <p>
               <a class="nav-link myjss-nav-link" style="cursor: pointer;" (click)="$event"
-                routerLink="contact">Contact</a>
+                routerLink="/newsletter">Newsletter</a>
+            </p>
+            <p>
+              <a class="nav-link myjss-nav-link" style="cursor: pointer;" (click)="$event"
+                routerLink="/contact">Contact</a>
             </p>
             <hr>
             <p>
-              <a class="nav-link myjss-nav-link" style="cursor: pointer;" (click)="openJssRoute($event)"
-                routerLink="/">Journal
+              <a class="nav-link myjss-nav-link" style="cursor: pointer;" [href]="frontendJssUrl">Journal
                 Spécial des Sociétés</a>
             </p>
           </div>
@@ -81,7 +80,7 @@
               LOCALISATION
             </div>
             <div class="footer-body">
-              <p class="mb-0">10 Bd Haussmann,</p>
+              <p class="mb-0">10 Bd Haussmann</p>
               <p>75009 Paris</p>
               <a class="mb-0" href="mailto:contact@jss.fr">contact&#64;jss.fr</a>
               <p>01 47 03 10 10</p>
@@ -107,16 +106,25 @@
           </a>
           <div class="col d-flex align-items-center me-2">
             <a class="btn btn-icon btn-sm btn-secondary btn-linkedin rounded-circle mx-2 ms-sm-0 me-sm-3"
-              (click)="openLinkedin()" aria-label="LinkedIn">
+              href="https://www.linkedin.com/company/journal-special-des-societes" target="_blank"
+              aria-label="LinkedIn">
               <i class="ai-linkedin"></i>
             </a>
             <a class="btn btn-icon btn-sm btn-secondary btn-facebook rounded-circle mx-2 ms-sm-0 me-sm-3"
-              (click)="openFacebook()" aria-label="Facebook">
+              href="https://www.facebook.com/Journal.Special.des.Societes" target="_blank" aria-label="Facebook">
               <i class="ai-facebook"></i>
             </a>
             <a class="btn btn-icon btn-sm btn-secondary btn-instagram rounded-circle mx-2 ms-sm-0 me-sm-3"
-              (click)="openInstagram()" aria-label="Instagram">
+              href="https://www.instagram.com/journalspecialdessocietes" target="_blank" aria-label="Instagram">
               <i class="ai-instagram"></i>
+            </a>
+            <a class="btn btn-icon btn-sm btn-secondary btn-instagram rounded-circle mx-2 ms-sm-0 me-sm-3"
+              href="https://bsky.app/profile/jss-media.bsky.social" target="_blank" aria-label="Bluesky">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bluesky"
+                viewBox="0 0 16 16">
+                <path
+                  d="M3.468 1.948C5.303 3.325 7.276 6.118 8 7.616c.725-1.498 2.698-4.29 4.532-5.668C13.855.955 16 .186 16 2.632c0 .489-.28 4.105-.444 4.692-.572 2.04-2.653 2.561-4.504 2.246 3.236.551 4.06 2.375 2.281 4.2-3.376 3.464-4.852-.87-5.23-1.98-.07-.204-.103-.3-.103-.218 0-.081-.033.014-.102.218-.379 1.11-1.855 5.444-5.231 1.98-1.778-1.825-.955-3.65 2.28-4.2-1.85.315-3.932-.205-4.503-2.246C.28 6.737 0 3.12 0 2.632 0 .186 2.145.955 3.468 1.948" />
+              </svg>
             </a>
           </div>
         </div>
@@ -140,9 +148,6 @@
               Sociétés</a></p>
         </div>
       </div>
-      <!-- <div class="row">
-        <p class="col-auto fs-sm footers-footer">Modifier mes choix de cookies</p>
-      </div> -->
     </div>
   </div>
 </footer>

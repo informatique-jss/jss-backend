@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Meta, Title } from '@angular/platform-browser';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
 import { ConstantService } from '../../../main/services/constant.service';
@@ -32,10 +33,13 @@ export class AnnouncementComponent implements OnInit {
   constructor(private appService: AppService,
     private constantService: ConstantService,
     private postService: PostService,
-    private platformService: PlatformService
+    private platformService: PlatformService,
+    private titleService: Title, private meta: Meta,
   ) { }
 
   ngOnInit() {
+    this.titleService.setTitle("Publication annonces légales - MyJSS");
+    this.meta.updateTag({ name: 'description', content: "Publiez votre annonce légale en quelques clics avec MyJSS. Obtenez une attestation de parution immédiate au meilleur prix et un accompagnement d'experts dédiés." });
     this.serviceFamilyGroupAnnouncement = this.constantService.getServiceFamilyGroupAnnouncement();
     this.myJssCategoryAnnouncement = this.constantService.getMyJssCategoryAnnouncement();
     this.postService.getTopPostByMyJssCategory(0, this.constantService.getMyJssCategoryAnnouncement()).subscribe(response => {
@@ -59,23 +63,8 @@ export class AnnouncementComponent implements OnInit {
       });
   }
 
-  openFormality(event: any) {
-    this.appService.openRoute(event, "/services/formality", undefined);
+  openRoute(route: string) {
+    this.appService.openRoute(undefined, route, undefined);
   }
 
-  openApostille(event: any) {
-    this.appService.openRoute(event, "/services/apostille", undefined);
-  }
-
-  openDomiciliation(event: any) {
-    this.appService.openRoute(event, "/services/domiciliation", undefined);
-  }
-
-  openDocument(event: any) {
-    this.appService.openRoute(event, "/services/document", undefined);
-  }
-
-  openPost(slug: string, event: any) {
-    this.appService.openRoute(event, "post/" + slug, undefined);
-  }
 }

@@ -1,26 +1,43 @@
-<div class="d-flex align-items-center mb-4">
-  <h1 class="h2 mb-0">Affaires</h1>
-  <div class="ms-auto d-flex">
-    <div style="margin-right: 10px;"><generic-input [(model)]="searchText" label="SIRET / Dénomination"
-        [form]="affaireForm" propertyName="searchText" [isMandatory]="false" [isDisabled]="false" icon="search"
-        [isDisplayLabel]="false" (onFormChange)="changeFilter()"></generic-input></div>
-    <div ngbDropdown class="btn-group dropdown">
-      <button type="button" class="btn btn-outline-secondary dropdown-toggle" ngbDropdownToggle aria-haspopup="true"
-        aria-expanded="false">
-        <i class="ai-bar-chart-3 me-2"></i>
-        Trier par
-      </button>
-      <div ngbDropdownMenu class="dropdown-menu my-1">
-        <a class="dropdown-item" style="cursor: pointer;" (click)="changeSort('nameAsc');$event.stopPropagation();">
+<div class="row d-flex align-items-center justify-content-between mb-4">
+  <h1 class="h2 mb-sm-0 col-auto">Affaires</h1>
+  <div class="col-auto">
+    <div class="row">
+      <div class="col"><generic-input [(model)]="searchText" label="SIRET / Dénomination" [form]="affaireForm"
+          propertyName="searchText" [isMandatory]="false" [isDisabled]="false" icon="search" [isDisplayLabel]="false"
+          (onFormChange)="changeFilter()"></generic-input></div>
+      <div ngbDropdown [autoClose]="'outside'" class="btn-group dropdown col" style="margin-right: 10px;"
+        *ngIf="responsablesForCurrentUser && responsablesForCurrentUser.length>0">
+        <button type="button" class="btn btn-outline-secondary dropdown-toggle" ngbDropdownToggle aria-haspopup="true"
+          aria-expanded="false">
+          <i class="ai-filter me-2"></i>
+          Responsables
+        </button>
+        <div ngbDropdownMenu class="dropdown-menu my-1">
+          <label class=" dropdown-item" *ngFor="let respo of responsablesForCurrentUser">
+            <input class="form-check-input me-2" type="checkbox" value="" [(ngModel)]="responsableCheck[respo.id]"
+              (change)="changeFilter()">
+            {{respo.firstname}} {{respo.lastname}}
+          </label>
+        </div>
+      </div>
+      <div ngbDropdown class="btn-group dropdown col">
+        <button type="button" class="btn btn-outline-secondary dropdown-toggle" ngbDropdownToggle aria-haspopup="true"
+          aria-expanded="false">
           <i class="ai-bar-chart-3 me-2"></i>
-          Dans l'ordre alphabétique
-          <i class="ai-check me-2" *ngIf="currentSort=='nameAsc'"></i>
-        </a>
-        <a class="dropdown-item" style="cursor: pointer;" (click)="changeSort('nameDesc');$event.stopPropagation();">
-          <i class="ai-bar-chart-1 me-2"></i>
-          Dans l'ordre anti-alphabétique
-          <i class="ai-check me-2" *ngIf="currentSort=='nameDesc'"></i>
-        </a>
+          Trier par
+        </button>
+        <div ngbDropdownMenu class="dropdown-menu my-1">
+          <a class="dropdown-item" style="cursor: pointer;" (click)="changeSort('nameAsc');$event.stopPropagation();">
+            <i class="ai-bar-chart-3 me-2"></i>
+            Dans l'ordre alphabétique
+            <i class="ai-check me-2" *ngIf="currentSort=='nameAsc'"></i>
+          </a>
+          <a class="dropdown-item" style="cursor: pointer;" (click)="changeSort('nameDesc');$event.stopPropagation();">
+            <i class="ai-bar-chart-1 me-2"></i>
+            Dans l'ordre anti-alphabétique
+            <i class="ai-check me-2" *ngIf="currentSort=='nameDesc'"></i>
+          </a>
+        </div>
       </div>
     </div>
   </div>
@@ -56,11 +73,7 @@
               <div class="container-fluid ">
                 <div class="row g-2 w-100">
 
-                  <div class="col-12 col-sm-2">
-                    <div class="fs-sm text-body-secondary fw-bold text-center">n°{{affaire.id}}
-                    </div>
-                  </div>
-                  <div class="col-12 col-sm-4">
+                  <div class="col-12 col-sm-5">
                     <div class="d-none d-sm-block fs-sm text-body-secondary mb-2  ">Dénomination</div>
                     <div class="fs-sm fw-medium text-dark"> {{ affaire.denomination ? affaire.denomination :
                       (affaire.firstname + ' ' + affaire.lastname) }}</div>
@@ -69,7 +82,7 @@
                     <div class="d-none d-sm-block fs-sm text-body-secondary mb-2">SIRET</div>
                     <div class="fs-sm fw-medium text-dark">{{ affaire.siret }}</div>
                   </div>
-                  <div class="col-12 col-sm-3">
+                  <div class="col-12 col-sm-4">
                     <div class="fs-sm text-body-secondary mb-2">Ville</div>
                     <div class="fs-sm fw-medium text-dark">{{ affaire.city?affaire.city.label : '' }}</div>
                   </div>
@@ -103,7 +116,6 @@
                           <div *ngFor="let order of ordersAffaire[affaire.id]" class="card  p-3">
                             <div class="container-fluid p-0">
                               <div class="row g-2 w-100">
-
                                 <div class="col-12 col-sm-2 d-flex flex-column align-items-center">
                                   <div class="fs-sm text-body-secondary fw-bold text-center">
                                     n°{{order.id}}
@@ -116,13 +128,6 @@
                                     [ngClass]="getClassForCustomerOrderStatus(order)" style="white-space: normal;">
                                     {{getCustomerOrderStatusLabel(order)}}
                                   </span>
-                                </div>
-
-                                <div class="col-12 col-sm-2" *ngIf="  order.responsable">
-                                  <div class="fs-sm text-body-secondary fw-bold mb-1">Responsable</div>
-                                  <div class="fs-sm fw-medium text-dark">
-                                    {{capitalizeName(order.responsable.firstname + ' ' + order.responsable.lastname)}}
-                                  </div>
                                 </div>
 
                                 <div class="col-12 col-sm-2">
@@ -146,6 +151,25 @@
                                   </div>
                                 </div>
 
+                                <div class="col-12 col-sm-2"
+                                  *ngIf="  order.responsable && responsablesForCurrentUser && responsablesForCurrentUser.length>0">
+                                  <div class="fs-sm text-body-secondary fw-bold mb-1">Responsable</div>
+                                  <div class="fs-sm fw-medium text-dark">
+                                    {{capitalizeName(order.responsable.firstname + ' ' + order.responsable.lastname)}}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="container-fluid p-0 mt-2">
+                              <!-- Deuxième ligne -->
+                              <div class="row">
+                                <div class="col-12 d-flex justify-content-left">
+                                  <button type="button" class="btn btn-link btn-sm px-2 hover-bg-light"
+                                    [routerLink]='"/account/orders/details/" + order.id'>
+                                    <i class="ai-file-text me-2"></i>
+                                    Détails de la commande
+                                  </button>
+                                </div>
                               </div>
                             </div>
                           </div>

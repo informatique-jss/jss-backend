@@ -4,5 +4,5 @@ export interface AffaireType {
   label: string;
 }
 
-export const notIndividual: AffaireType = { id: 1, code: "NOT_INDIVIDUAL", label: "Créer une société" };
-export const individual: AffaireType = { id: 2, code: "INDIVIDUAL", label: "Créer une entreprise en nom propre" };
+export const notIndividual: AffaireType = { id: 1, code: "NOT_INDIVIDUAL", label: "Société" };
+export const individual: AffaireType = { id: 2, code: "INDIVIDUAL", label: "Personne physique" };

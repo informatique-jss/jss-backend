@@ -21,6 +21,7 @@ import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.osiris.quotation.service.ProvisionService;
 import com.jss.osiris.modules.osiris.reporting.model.IncidentReport;
 
 @org.springframework.stereotype.Service
@@ -37,6 +38,9 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Autowired
     ConstantService constantService;
+
+    @Autowired
+    ProvisionService provisionService;
 
     @Override
     public List<Notification> getNotificationsForCurrentEmployee(Boolean displayFuture, Boolean displayRead,
@@ -279,6 +283,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void notifyAttachmentAddToProvision(Provision provision, Attachment attachment) throws OsirisException {
+        provision = provisionService.getProvision(provision.getId());
         CustomerOrder order = provision.getService().getAssoAffaireOrder().getCustomerOrder();
         if (!isProvisionClosed(provision) && !isProvisionOpen(provision)) {
             if (order != null && (order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)
@@ -301,6 +306,12 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
+    public void notifyQuotationModified(CustomerOrder customerOrder) {
+        generateNewNotification(employeeService.getCurrentEmployee(), customerOrder.getResponsable().getSalesEmployee(),
+                Notification.MODIFIED_QUOTATION, false, null, null, customerOrder, null);
+    }
+
+    @Override
     public void notifyAttachmentAddToService(Service service, Attachment attachment) throws OsirisException {
         CustomerOrder order = service.getAssoAffaireOrder().getCustomerOrder();
         List<Integer> employeeIdAlreadyNotified = new ArrayList<Integer>();
@@ -318,6 +329,30 @@ public class NotificationServiceImpl implements NotificationService {
 
                         generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
                                 Notification.SERVICE_ADD_ATTACHMENT, false, service, null, null, null);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void notifyInformationAddToService(Service service) throws OsirisException {
+        CustomerOrder order = service.getAssoAffaireOrder().getCustomerOrder();
+        List<Integer> employeeIdAlreadyNotified = new ArrayList<Integer>();
+        if (order != null && service.getProvisions() != null
+                && (order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)
+                        || order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.TO_BILLED))) {
+            for (Provision provision : service.getProvisions()) {
+                if (!isProvisionClosed(provision) && provision.getAssignedTo() != null
+                        && !employeeIdAlreadyNotified.contains(provision.getAssignedTo().getId())) {
+                    if (provision.getAssignedTo() != null) {
+                        employeeIdAlreadyNotified.add(provision.getAssignedTo().getId());
+                        if (employeeService.getCurrentEmployee() != null && provision.getAssignedTo().getId()
+                                .equals(employeeService.getCurrentEmployee().getId()))
+                            return;
+
+                        generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
+                                Notification.SERVICE_ADD_INFORMATION, false, service, null, null, null);
                     }
                 }
             }

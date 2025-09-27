@@ -382,9 +382,9 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setCode(Batch.UPDATE_AFFAIRE_FROM_RNE);
             batchSettings.setLabel("Mise à jour des affaires depuis le RNE");
             batchSettings.setFixedRate(1000);
-            batchSettings.setQueueSize(4);
+            batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
-            batchSettings.setIsOnlyOneJob(false);
+            batchSettings.setIsOnlyOneJob(true);
             batchSettings.setMaxAddedNumberPerIteration(0);
             batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.REFERENTIALS));
             addOrUpdateBatchSettings(batchSettings);
@@ -578,7 +578,7 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setIsActive(true);
             batchSettings.setIsOnlyOneJob(true);
             batchSettings.setMaxAddedNumberPerIteration(1);
-            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.MISCELLANEOUS));
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.WEBSITES));
             addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.CHECK_MAIL_TO_INDEX) == null) {
@@ -626,7 +626,7 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setIsActive(true);
             batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
-            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.MISCELLANEOUS));
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.INDICATORS));
             addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.PURGE_QUOTATION) == null) {
@@ -638,7 +638,7 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setIsActive(true);
             batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
-            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.MISCELLANEOUS));
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.WEBSITES));
             addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.PURGE_CUSTOMER_ORDER) == null) {
@@ -650,7 +650,7 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setIsActive(true);
             batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
-            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.MISCELLANEOUS));
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.WEBSITES));
             addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.COMPUTE_KPI_CRM) == null) {
@@ -662,7 +662,19 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setIsActive(true);
             batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
-            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.MISCELLANEOUS));
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.INDICATORS));
+            addOrUpdateBatchSettings(batchSettings);
+        }
+        if (getByCode(Batch.GENERATE_SITEMAPS) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.GENERATE_SITEMAPS);
+            batchSettings.setLabel("Génération des sitemaps");
+            batchSettings.setFixedRate(5 * 60 * 1000);
+            batchSettings.setQueueSize(1);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(true);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.WEBSITES));
             addOrUpdateBatchSettings(batchSettings);
         }
     }

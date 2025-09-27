@@ -125,6 +125,10 @@ public class Post implements IId, Serializable {
     @JsonView(JacksonViews.MyJssDetailedView.class)
     private String contentText;
 
+    @Transient
+    @JsonView(JacksonViews.MyJssDetailedView.class)
+    private Boolean isHidePremium;
+
     // Computed field
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_author")
@@ -168,6 +172,7 @@ public class Post implements IId, Serializable {
     @ManyToMany
     @JoinTable(name = "asso_post_serie", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_serie"))
     @IndexedField
+    @JsonView(JacksonViews.MyJssDetailedView.class)
     private List<Serie> postSerie;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -196,6 +201,11 @@ public class Post implements IId, Serializable {
     private Integer mediaTimeLength;
 
     private Boolean isCancelled;
+    private Boolean isLegacy;
+
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+    @IndexedField
+    private Boolean isHiddenAuthor;
 
     @OneToMany(mappedBy = "post")
     @JsonIgnore
@@ -543,5 +553,29 @@ public class Post implements IId, Serializable {
 
     public void setReadingFolders(List<ReadingFolder> readingFolders) {
         this.readingFolders = readingFolders;
+    }
+
+    public Boolean getIsLegacy() {
+        return isLegacy;
+    }
+
+    public void setIsLegacy(Boolean isLegacy) {
+        this.isLegacy = isLegacy;
+    }
+
+    public Boolean getIsHiddenAuthor() {
+        return isHiddenAuthor;
+    }
+
+    public void setIsHiddenAuthor(Boolean isHiddenAuthor) {
+        this.isHiddenAuthor = isHiddenAuthor;
+    }
+
+    public Boolean getIsHidePremium() {
+        return isHidePremium;
+    }
+
+    public void setIsHidePremium(Boolean isHidePremium) {
+        this.isHidePremium = isHidePremium;
     }
 }

@@ -8,80 +8,105 @@
         <div class="row pt-2">
           <div class="col-12">
             <ng-container *ngIf="post.jssCategories!=null && post.jssCategories.length>0">
-              <a *ngFor="let category of post.jssCategories | slice : 1 " style="cursor: pointer;"
-                (click)="openCategoryPosts(category, $event)" class="my-2 margin-category fw-bold"
-                [style.background-color]="category.color+' !important'">{{category.name}}</a>
+              <a *ngFor="let category of post.jssCategories  " style="cursor: pointer;"
+                [routerLink]='"/post/category/" + category.slug'
+                class="my-2 margin-category fw-bold p-1">{{category.name}}</a>
             </ng-container>
-            <h1 class="mt-2">{{post.titleText}} </h1>
+            <h1 class="mt-2"><img *ngIf="post.isPremium" class="px-0 me-1" src="/assets/images/premium-icon.svg">
+              {{post.titleText}} </h1>
           </div>
-          <p class="lead"> {{post.excerptText}}</p>
+          <p class=""> {{post.excerptText}}</p>
 
           <hr class="d-none d-lg-block">
           <div class="row inline-row align-items-center mb-2">
             <!-- Author info -->
-            <div class="col-auto position-relative border-end pe-3">
+            <div class="col-auto position-relative border-end pe-1">
               <div class="row align-items-center">
-                <div class="col-auto avatar avatar-xl">
+                <div class="col-auto avatar avatar-xl"
+                  *ngIf="post.isHiddenAuthor==undefined || post.isHiddenAuthor==null || post.isHiddenAuthor==false">
                   <img class="avatar-img rounded-circle" [src]="post.fullAuthor.avatar_url_size_48" alt="avatar">
                 </div>
                 <div class="col">
-                  <a style="cursor: pointer;" (click)="openAuthorPosts(post.fullAuthor, $event)"
-                    class="stretched-link d-block">{{post.fullAuthor.name}}</a>
-                  <p>{{post.fullAuthor.description}}</p>
+                  <a style="cursor: pointer;" [routerLink]=' "/post/author/" + post.fullAuthor.slug'
+                    class="stretched-link d-block"
+                    *ngIf="post.isHiddenAuthor==undefined || post.isHiddenAuthor==null || post.isHiddenAuthor==false">{{post.fullAuthor.name}}</a>
+                  <p *ngIf="post.fullAuthor.description && (post.isHiddenAuthor==undefined || post.isHiddenAuthor==null || post.isHiddenAuthor==false)"
+                    class="fs-8">{{post.fullAuthor.description}}</p>
+                  <span class="list-inline-item d-lg-block fs-8">{{post.date | literalDatePipe}}</span>
+                  <span class="list-inline-item d-lg-block fs-8">{{getTimeReading(post.contentText)}}</span>
                 </div>
               </div>
             </div>
-
-            <!-- Post info  -->
-            <div class="col list-inline list-unstyled ps-3">
-              <span class="list-inline-item d-lg-block">{{post.date | date:'EEEE d MMMM HH:mm'}}</span>
-              <span class="list-inline-item d-lg-block">{{getTimeReading(post.contentText)}}</span>
-            </div>
-          </div>
-          <!-- Boutons offrir article, enrregistrer, partager  -->
-          <div class="row inline-row align-items-center mb-2 g-2">
-            <div class="col-auto mt-0">
-              <button *ngIf="currentUser" class="btn btn-primary" (click)="openOfferPostModal(givePostModal)"><i
-                  class="bi bi-gift me-2"></i>Offrir cet article</button>
-            </div>
-            <bookmark [post]="post" [isSinglePost]="true" class="mt-0"></bookmark>
-
-            <div class="col-auto mt-0">
-              <!-- Share dropdown -->
-              <div class="dropdown nav" [ngClass]="{ show: dropdownOpen }">
-                <a role="button" class="d-flex align-items-center p-0 user-account" (click)="toggleDropdown($event)"
-                  [attr.aria-expanded]="dropdownOpen">
-
-                  <div class="d-none d-md-block">
-                    <div class="btn btn-primary"><i class="bi bi-share me-2"></i>Partager</div>
+            <!-- Player START -->
+            <div class="col list-inline list-unstyled0 ps-3 me-2">
+              <div class="row inline-row align-items-center">
+                <div class="row post-player-bg border rounded-2 ms-0 p-1 align-items-center">
+                  <a class="col-auto px-1 btn-dark rounded-circle btn-circle-sm fs-6"
+                    (click)="togglePlayPause(post!)"><i
+                      [ngClass]="getIsPlaying(post!) ? 'bi-pause-fill' : 'bi-play-fill'"></i></a>
+                  <div class="col">
+                    <h6 class="mb-0 fs-7">Écouter l'article</h6>
                   </div>
-                </a>
+                </div>
+                <!-- Player END -->
+              </div>
+            </div>
 
-                <div class="dropdown-menu dropdown-menu-end my-1 custom-drop p-2" [ngClass]="{ show: dropdownOpen }">
-                  <ng-container>
-                    <div class="d-flex flex-row gap-2">
-                      <a (click)="shareOnLinkedin()"
-                        class="btn btn-primary bg-light border-0 rounded-circle d-flex justify-content-center align-items-center"
-                        style="width: 48px; height: 48px;">
-                        <i class="bi bi-linkedin fs-6"></i>
-                      </a>
-                      <a (click)="shareOnInstagram()"
-                        class="btn btn-primary bg-light border-0 rounded-circle d-flex justify-content-center align-items-center"
-                        style="width: 48px; height: 48px;">
-                        <i class="bi bi-instagram fs-4"></i>
-                      </a>
-                      <a (click)="shareOnFacebook()"
-                        class="btn btn-primary bg-light border-0 rounded-circle d-flex justify-content-center align-items-center"
-                        style="width: 48px; height: 48px;">
-                        <i class="bi bi-facebook fs-4"></i>
-                      </a>
-                      <a (click)="shareByMail()"
-                        class="btn btn-primary bg-light border-0 rounded-circle d-flex justify-content-center align-items-center"
-                        style="width: 48px; height: 48px;">
-                        <i class="bi bi-envelope fs-4"></i>
-                      </a>
+
+            <!-- Boutons offrir article, enrregistrer, partager  -->
+            <div class="col-auto mt-0">
+              <div class="row inline-row align-items-center mb-1">
+                <div class="col-auto mt-0">
+
+                  <button *ngIf="currentUser" class="btn btn-primary btn-sm rounded-2"
+                    (click)="openOfferPostModal(givePostModal)"><i class="bi bi-gift me-2"></i>Offrir cet
+                    article</button>
+                </div>
+                <bookmark *ngIf="currentUser" [post]="post" [isSinglePost]="true" class="mt-0"></bookmark>
+
+                <div class="col-auto mt-0">
+                  <!-- Share dropdown -->
+                  <div class="dropdown nav" [ngClass]="{ show: dropdownOpen }">
+                    <a role="button" class="d-flex align-items-center p-0 user-account" (click)="toggleDropdown($event)"
+                      [attr.aria-expanded]="dropdownOpen">
+
+                      <div class="d-none d-md-block">
+                        <div class="btn btn-primary btn-sm rounded-2"><i class="bi bi-share me-2"></i>Partager</div>
+                      </div>
+                    </a>
+
+                    <div class="dropdown-menu dropdown-menu-end my-1 p-2" [ngClass]="{ show: dropdownOpen }">
+                      <ng-container>
+                        <div class="d-flex flex-row gap-2">
+                          <a (click)="shareOnLinkedin()"
+                            class="btn btn-primary bg-light border-0 rounded-circle d-flex justify-content-center align-items-center"
+                            style="width: 48px; height: 48px;">
+                            <i class="bi bi-linkedin fs-6"></i>
+                          </a>
+                          <a href="https://www.instagram.com/journalspecialdessocietes/" target="_blank"
+                            class="btn btn-primary bg-light border-0 rounded-circle d-flex justify-content-center align-items-center"
+                            style="width: 48px; height: 48px;">
+                            <i class="bi bi-instagram fs-4"></i>
+                          </a>
+                          <a (click)="shareOnFacebook()"
+                            class="btn btn-primary bg-light border-0 rounded-circle d-flex justify-content-center align-items-center"
+                            style="width: 48px; height: 48px;">
+                            <i class="bi bi-facebook fs-4"></i>
+                          </a>
+                          <a (click)="shareOnBluesky()"
+                            class="btn btn-primary bg-light border-0 rounded-circle d-flex justify-content-center align-items-center"
+                            style="width: 48px; height: 48px;">
+                            <i class="bi bi-bluesky fs-4"></i>
+                          </a>
+                          <a (click)="shareByMail()"
+                            class="btn btn-primary bg-light border-0 rounded-circle d-flex justify-content-center align-items-center"
+                            style="width: 48px; height: 48px;">
+                            <i class="bi bi-envelope fs-4"></i>
+                          </a>
+                        </div>
+                      </ng-container>
                     </div>
-                  </ng-container>
+                  </div>
                 </div>
               </div>
             </div>
@@ -107,53 +132,63 @@
             </div>
           </div>
 
-          <!-- Player START -->
-          <div class="container pe-3">
-            <div class="row post-player-bg border rounded-2 ms-0 mb-3 p-1 pt-2 align-items-center">
-              <a class="col-auto ps-0 btn-dark rounded-circle btn-circle-md fs-4" (click)="togglePlayPause(post!)"><i
-                  [ngClass]="getIsPlaying(post!) ? 'bi-pause-fill' : 'bi-play-fill'"></i></a>
-              <div class="col">
-                <h6 class="mb-0">Écouter l'article</h6>
-                <div class="row align-items-center px-2">
-                  <input *ngIf="getDuration()!=0" type="range" class="col form-range flex-grow-1 me-1 w-100"
-                    [style.--progress.%]="progress" min="0" max="100" step="0.01" (input)="onSeek($event)" />
-                  <small *ngIf="getCurrentTime()!=0" class="col-auto text-muted px-0">{{ getCurrentTime()*1000 |
-                    date:'mm:ss' }} </small>
-                  <small *ngIf="getDuration()!=0" class="col-auto text-muted px-0"> /{{ getDuration()*1000 |
-                    date:'mm:ss' }}</small>
-                </div>
-
-              </div>
-            </div>
-          </div>
-          <!-- Player END -->
-
           <section class="pt-0" *ngIf="post">
             <div class="row">
               <!-- Main Content START -->
-              <div class="mb-5">
-                <span [innerHTML]="post.contentText| trustHtml"></span>
+              <div>
+                <img *ngIf="post.media" class="rounded-2 mb-2 resize-featured-img"
+                  [src]="post.media.urlFull ? post.media.urlFull : ''">
+                <figcaption class="figure-caption" *ngIf=" post.media.captionText">{{post.media.captionText}}
+                </figcaption>
+              </div>
+
+              <!-- IF serie : Serie bloc -->
+              <div class="my-2" *ngIf="seriePost">
+                <div class="serie-border p-3">
+                  <div class="row">
+                    <h3>Notre série "{{seriePost.name}}"</h3>
+                  </div>
+                  <div class="row pb-2">
+                    <strong>{{seriePost.excerptText}}</strong>
+                  </div>
+                  <div class="row" *ngFor="let seriePost of postsOfSerie">
+                    <li *ngIf="seriePost.id!=post.id">
+                      <a style="color: var(--ar-blue-medium);"
+                        [routerLink]=' "/post/" + seriePost.slug'>{{seriePost.titleText}}</a>
+                    </li>
+                    <li *ngIf="seriePost.id==post.id">
+                      {{seriePost.titleText}}
+                    </li>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mb-5 mt-2">
+                <span class="fs-6" [innerHTML]="post.contentText| trustHtml"></span>
 
                 <!-- Bannière d'abonnement en bas de l'article visible -->
                 <div class="bg-blue-400 d-flex justify-content-center align-items-center flex-column text-center p-4"
-                  style="position: relative; " *ngIf="post.isPremium">
-                  <h2 class=" fw-bold">Vous souhaitez lire la suite ?</h2>
+                  style="position: relative; " *ngIf="post.isPremium && !post.isHidePremium">
+                  <h2 class="fw-bold">Vous souhaitez lire la suite ?</h2>
                   <p>Lisez cette article pour seulement 1 € ou abonnez-vous pour profiter de cet article en
                     intégralité et de bien d'autres !</p>
-                  <div><a class="btn btn-secondary mt-3" style="margin-right: 20px;cursor: pointer;"
-                      (click)="subscribeToOnePost($event, post.id)">Lire pour 1 €</a>
-                    <a class="btn btn-yellow mt-3" style="cursor: pointer;" href="subscription">S'abonner</a>
+                  <div class="row gap-2 justify-content-center">
+                    <a class="col-auto btn btn-secondary mt-3" style="cursor: pointer;"
+                      [href]='frontendMyJssUrl+"/quotation/subscription/" + ONE_POST_SUBSCRIPTION + "/" + false + "/" + post.id'
+                      target="_blank">Lire
+                      pour 1 €</a>
+                    <a class="col-auto btn btn-yellow mt-3" style="cursor: pointer;" href="subscription">S'abonner</a>
                   </div>
                 </div>
 
                 <!-- Lire aussi -->
                 <div *ngIf="post.relatedPosts.length > 0" class="my-4">
                   <p class="fw-bold">LIRE AUSSI</p>
-                  <div class="row border-left-red ms-0 ps-1 py-1">
-                    <a *ngFor="let relatedPost of post.relatedPosts.slice(0, 3)" (click)="openPost(relatedPost, $event)"
-                      class="card-truncate-1">
-                      <h6 class="m-0 p-1"><img *ngIf="post.isPremium" class="px-0 me-1"
-                          src="/assets/images/premium-icon.svg"> &#9632; {{relatedPost.titleText}}</h6>
+                  <div class="row border-left-blue ms-0 ps-1 py-1">
+                    <a *ngFor="let relatedPost of post.relatedPosts.slice(0, 3)"
+                      [routerLink]='"/post/" + relatedPost.slug' class="card-truncate-1">
+                      <h6 class="m-0 p-1"><img *ngIf="relatedPost.isPremium" class="px-0 me-1"
+                          src="/assets/images/premium-icon.svg">&#9632; {{relatedPost.titleText}}</h6>
                     </a>
                   </div>
                 </div>
@@ -168,7 +203,7 @@
                         style="width: 48px; height: 48px;">
                         <i class="bi bi-linkedin fs-6"></i>
                       </a>
-                      <a (click)="shareOnInstagram()"
+                      <a href="https://www.instagram.com/journalspecialdessocietes/" target="_blank"
                         class="btn btn-primary rounded-circle d-flex justify-content-center align-items-center"
                         style="width: 48px; height: 48px;">
                         <i class="bi bi-instagram fs-4"></i>
@@ -177,6 +212,11 @@
                         class="btn btn-primary rounded-circle d-flex justify-content-center align-items-center"
                         style="width: 48px; height: 48px;">
                         <i class="bi bi-facebook fs-4"></i>
+                      </a>
+                      <a (click)="shareOnBluesky()"
+                        class="btn btn-primary rounded-circle d-flex justify-content-center align-items-center"
+                        style="width: 48px; height: 48px;">
+                        <i class="bi bi-bluesky fs-4"></i>
                       </a>
                       <a (click)="shareByMail()"
                         class="btn btn-primary rounded-circle d-flex justify-content-center align-items-center"
@@ -190,11 +230,11 @@
                 <!-- Thematiques associées -->
                 <div *ngIf="post.postTags.length > 0" class="my-4 border-light border-top pt-3 mt-3">
                   <p class="fw-bold">THÉMATIQUES ASSOCIÉES</p>
-                  <div class="border-left-red ms-0 ps-1 pt-1 pb-0">
+                  <div class="border-left-blue ms-0 ps-1 pt-1 pb-0">
                     <ul class="tag-cloud mb-0 list-inline">
                       <li *ngFor="let tag of post.postTags" class="list-inline-item pb-1"><a
                           class="btn bg-light text-secondary bg-hover-danger text-hover-white bg-hover-secondary"
-                          (click)="openTagPosts(tag, $event)">{{tag.name}}</a>
+                          [routerLink]='"/post/tag/" + tag.slug'>{{tag.name}}</a>
                       </li>
                     </ul>
 
@@ -204,7 +244,8 @@
                 <!-- Next article, previous article  -->
                 <div class="single-post-widget border-light border-top pt-3 mt-3">
                   <ul class="entry-navigation list-inline d-block d-lg-flex justify-content-between flex">
-                    <li *ngIf="previousPost" (click)="openPost(previousPost, $event)" class="col-xl-6  mb-3 mb-lg-0 ">
+                    <li *ngIf="previousPost" [routerLink]='"/post/" + previousPost.slug'
+                      class="col-xl-6  mb-3 mb-lg-0 ">
                       <article class="blog-style5 d-flex align-items-center rounded">
                         <a>
                           <div class="post-img-wrap position-relative overflow-hidden  me-2 ms-0">
@@ -216,20 +257,24 @@
                         <div class="post-content pt-md-2 pt-xl-0 pt-0">
                           <p class="mb-1"><i class="bi bi-arrow-left"></i> Article précédent</p>
                           <h6 class="post-title card-text-truncate">
-                            <a (click)="openPost(previousPost, $event)">{{previousPost.titleText}}</a>
+                            <a [routerLink]='"/post/" + previousPost.slug'><img *ngIf="previousPost.isPremium"
+                                class="px-0 me-1" src="/assets/images/premium-icon.svg">
+                              {{previousPost.titleText}}</a>
                           </h6>
                         </div>
                       </article>
                     </li>
-                    <li class="col-xl-6" *ngIf="nextPost" (click)="openPost(nextPost, $event)">
+                    <li class="col-xl-6" *ngIf="nextPost" [routerLink]='"/post/" + nextPost.slug'>
                       <article class="blog-style5 d-flex align-items-center rounded">
                         <div class="post-content pt-md-2 pt-xl-0 pt-0">
                           <p class="mb-1 text-end">Article suivant <i class="bi bi-arrow-right"></i></p>
                           <h6 class="post-title text-end card-text-truncate">
-                            <a (click)="openPost(nextPost, $event)">{{nextPost.titleText}}</a>
+                            <a [routerLink]='"/post/" + nextPost.slug'><img *ngIf="nextPost.isPremium" class="px-0 me-1"
+                                src="/assets/images/premium-icon.svg">
+                              {{nextPost.titleText}}</a>
                           </h6>
                         </div>
-                        <a (click)="openPost(nextPost, $event)" *ngIf="nextPost.media">
+                        <a [routerLink]='"/post/" + nextPost.slug' *ngIf="nextPost.media">
                           <div class="post-img-wrap position-relative overflow-hidden me-0 ms-2">
                             <img class="post-img"
                               [src]="nextPost.media.urlThumbnail ? nextPost.media.urlThumbnail : nextPost.media.urlFull"
@@ -241,31 +286,15 @@
                   </ul>
                 </div>
 
-                <!-- Author description  -->
-                <div *ngIf="post" class="card mb-3 border border-light p-3">
-                  <div class="row align-items-center">
-                    <div class="col-auto avatar avatar-xl">
-                      <img class="avatar-img rounded-circle" [src]="post.fullAuthor.avatar_url_size_48" alt="avatar">
-                    </div>
-                    <div class="col">
-                      <a style="cursor: pointer;" (click)="openAuthorPosts(post.fullAuthor, $event)"
-                        class="stretched-link d-block">{{post.fullAuthor.name}}</a>
-                    </div>
-                  </div>
-                  <div class="row align-items-center pt-2">
-                    <p>{{post.fullAuthor.description}}</p>
-                  </div>
-                </div>
-
                 <!--============= Comments ==============-->
 
                 <!-- Comments -->
                 <hr>
                 <div class="" id="comments">
-                  <h2 class="h3 py-lg-1 py-xl-3" *ngIf="!commentsPagination.totalElements">0 Commentaire </h2>
-                  <h2 class="h3 py-lg-1 py-xl-3" *ngIf="commentsPagination.totalElements">
+                  <p class="h3 py-lg-1 py-xl-3" *ngIf="!commentsPagination.totalElements">0 Commentaire </p>
+                  <p class="h3 py-lg-1 py-xl-3" *ngIf="commentsPagination.totalElements">
                     {{commentsPagination.totalElements <= 1 ? commentsPagination.totalElements + " Commentaire" :
-                      commentsPagination.totalElements + " Commentaires" }} </h2>
+                      commentsPagination.totalElements + " Commentaires" }} </p>
                       <div class="" *ngIf="commentsPagination.totalElements!=0">
                         <hr>
                         <!-- Comment -->
@@ -333,8 +362,8 @@
                         class="card border-2 pt-2 p-md-2 p-xl-3 p-xxl-4 mt-5 mt-md-0 mb-4">
                         <div class="card-body">
                           <div class="row justify-content-between align-items-center">
-                            <h2 class="col-8 pb-2 pb-lg-3 pb-xl-4" *ngIf="!newCommentParent.id">Laisser un commentaire
-                            </h2>
+                            <p class="h2 col-8 pb-2 pb-lg-3 pb-xl-4" *ngIf="!newCommentParent.id">Laisser un commentaire
+                            </p>
                             <h2 class="col-8 pb-2 pb-lg-3 pb-xl-4" *ngIf="newCommentParent.id">Répondre à
                               {{newCommentParent.authorFirstName}} {{newCommentParent.authorLastNameInitials}}.</h2>
                             <div class=" col-4 d-inline-flex justify-content-end pb-2 pb-lg-3 pb-xl-4"
@@ -377,8 +406,8 @@
                         class="card border-2 pt-2 p-md-2 p-xl-3 p-xxl-4 mt-5 mt-md-0 mb-4">
                         <div class="card-body">
                           <div class="row justify-content-between align-items-center">
-                            <h2 class="col-8 pb-2 pb-lg-3 pb-xl-4" *ngIf="!newCommentParent.id">Laisser un commentaire
-                            </h2>
+                            <p class="h2 col-8 pb-2 pb-lg-3 pb-xl-4" *ngIf="!newCommentParent.id">Laisser un commentaire
+                            </p>
                             <h2 class="col-8 pb-2 pb-lg-3 pb-xl-4" *ngIf="newCommentParent.id">Répondre à
                               {{newCommentParent.authorFirstName}} {{newCommentParent.authorLastNameInitials}}.</h2>
                             <div class=" col-4 d-inline-flex justify-content-end pb-2 pb-lg-3 pb-xl-4"
@@ -413,24 +442,6 @@
 
       <!-- ======================= Right column START -->
       <div class="col-md-4">
-        <!-- Tags liés -->
-        <div *ngIf="post" class="card mb-3 border border-light p-3">
-          <div class="wrapper">
-            <div class="row">
-              <div class="col-md-12">
-                <div class="section-title-block d-flex pb-3">
-                  <h3 class="section-widget-title">Tags liés</h3>
-                </div>
-              </div>
-            </div>
-            <ul class="tag-cloud list-inline">
-              <li *ngFor="let tag of post.postTags" class="list-inline-item pb-1"><a
-                  class="btn bg-light text-secondary text-hover-white bg-hover-secondary"
-                  (click)="openTagPosts(tag, $event)">{{tag.name}}</a>
-              </li>
-            </ul>
-          </div>
-        </div>
 
         <!-- Les plus vus -->
         <div class="mb-3 border border-light card">
@@ -448,8 +459,8 @@
                 <div class="col-auto digits pe-2">
                   {{index+1}}.
                 </div>
-                <div class="col counter-post-item card-title-truncate ps-2">
-                  <a (click)="openPost(post, $event)" class="title-most-seen">{{post.titleText}}</a>
+                <div class="col counter-post-item ps-2">
+                  <a [routerLink]='"/post/" + post.slug' class="title-most-seen">{{post.titleText}}</a>
                 </div>
               </div>
             </div>
@@ -468,8 +479,7 @@
             </div>
             <p>Infos locales, analyses et enquêtes : restez informé(e) sans limite.</p>
             <div class="row align-items-center">
-              <div class="btn btn-yellow">S'abonner
-              </div>
+              <a class="btn btn-yellow" style="cursor: pointer;" href="subscription">S'abonner</a>
             </div>
           </div>
         </div>

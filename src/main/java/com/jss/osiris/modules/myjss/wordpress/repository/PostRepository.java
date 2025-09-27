@@ -37,7 +37,7 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
 
         Post findBySlugAndIsCancelled(String slug, Boolean isCancelled);
 
-        @Query("select p from Post p where id not in :postFetchedId AND p.date<=CURRENT_TIMESTAMP ")
+        @Query("select p from Post p where id not in :postFetchedId AND p.date<=CURRENT_TIMESTAMP and coalesce(isLegacy,false)=false ")
         List<Post> findPostExcludIds(@Param("postFetchedId") List<Integer> postFetchedId);
 
         @Query("select p from Post p join p.postViews v where p.isCancelled = false and size(p.jssCategories) > 0 and v.day >= :oneWeekAgo and :category MEMBER OF p.postCategories group by p.id order by sum(v.count) desc ")
@@ -66,11 +66,14 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         @Query("select p from Post p join p.postViews v where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and :tag MEMBER OF p.postTags and size(p.jssCategories) > 0 group by p.id order by sum(v.count) desc ")
         Page<Post> findMostSeenPostTag(Pageable pageable, @Param("tag") Tag tag);
 
-        @Query("select p from Post p join p.postViews v where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and p.fullAuthor =:author and size(p.jssCategories) > 0 group by p.id order by sum(v.count) desc ")
+        @Query("select p from Post p join p.postViews v where p.isCancelled = false and coalesce(p.isHiddenAuthor,false)=false AND p.date<=CURRENT_TIMESTAMP and p.fullAuthor =:author and size(p.jssCategories) > 0 group by p.id order by sum(v.count) desc ")
         Page<Post> findMostSeenPostAuthor(Pageable pageable, @Param("author") Author author);
 
         @Query("select p from Post p join p.postViews v where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and :serie MEMBER OF p.postSerie and size(p.jssCategories) > 0 group by p.id order by sum(v.count) desc ")
         Page<Post> findMostSeenPostSerie(Pageable pageable, @Param("serie") Serie serie);
+
+        @Query("select p from Post p join p.postViews v where p.isCancelled = false AND p.isPremium = true AND p.date<=CURRENT_TIMESTAMP and size(p.jssCategories) > 0 group by p.id order by sum(v.count) desc ")
+        Page<Post> findMostSeenPremiumPosts(Pageable pageable);
 
         @Query("select p from Post p join p.postViews v where :category MEMBER OF p.postCategories AND p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and :publishingDepartment MEMBER OF p.departments and size(p.jssCategories) > 0 group by p.id order by sum(v.count) desc ")
         Page<Post> findMostSeenPostPublishingDepartment(Pageable pageable, Category category,
@@ -103,7 +106,7 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         Page<Post> findByPostTagsAndIsCancelled(Tag tag, Category category, boolean b, LocalDateTime consultationDate,
                         Pageable pageableRequest);
 
-        @Query("SELECT p FROM Post p WHERE p.fullAuthor =:author AND p.isCancelled = :b AND p.date<=CURRENT_TIMESTAMP AND p.date>:consultationDate AND p.date<=CURRENT_TIMESTAMP ")
+        @Query("SELECT p FROM Post p WHERE p.fullAuthor =:author AND p.isCancelled = :b and coalesce(p.isHiddenAuthor,false)=false AND p.date<=CURRENT_TIMESTAMP AND p.date>:consultationDate AND p.date<=CURRENT_TIMESTAMP ")
         Page<Post> findByFullAuthorAndIsCancelled(Author author, boolean b, LocalDateTime consultationDate,
                         Pageable pageableRequest);
 
@@ -133,4 +136,12 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         Page<Post> findByReadingFolders(@Param(value = "readingFolder") ReadingFolder readingFolder,
                         Pageable pageable);
 
+        @Query("SELECT p FROM Post p WHERE (p.isCancelled = false OR p.isCancelled IS NULL) AND p.isPremium = true AND :category MEMBER OF p.postCategories")
+        Page<Post> findActivePremiumPosts(@Param("category") Category category, Pageable pageable);
+
+        @Query("select p from Post p where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and size(p.jssCategories) > 0 ")
+        List<Post> findAllJssPost();
+
+        @Query("select p from Post p where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and size(p.myJssCategories) > 0 ")
+        List<Post> findAllMyJssPost();
 }

@@ -13,4 +13,5 @@ export interface Media {
   urlMediumLarge: string;
   urlThumbnail: string;
   length: number;
+  captionText: string;
 }

@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.quotation.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.domain.Pageable;
@@ -12,7 +13,7 @@ import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 public interface AffaireRepository extends QueryCacheCrudRepository<Affaire, Integer> {
 
-        Affaire findBySiret(String siret);
+        List<Affaire> findBySiret(String siret);
 
         List<Affaire> findBySiren(String siret);
 
@@ -24,10 +25,14 @@ public interface AffaireRepository extends QueryCacheCrudRepository<Affaire, Int
         List<Affaire> findByPostalCodeAndDenomination(@Param("postalCode") String postalCode,
                         @Param("denomination") String denomination);
 
+        @Query(value = "select a from Affaire a where  isIndividual = false and trim(upper(firstname))=upper(trim(:firstname)) and trim(upper(lastname))=upper(trim(:lastname))  ")
+        Affaire findByFirstnameAndLastname(@Param("lastname") String lastname,
+                        @Param("firstname") String firstname);
+
         Affaire findByRna(String rna);
 
-        @Query(nativeQuery = true, value = "select * from affaire a  where siren is not null or siret is not null order by coalesce(last_rne_update,'1950-01-01') limit 5000")
-        List<Affaire> getAffairesForUpdate();
+        @Query("select max(lastRneUpdate) from Affaire a  where siret is not null and lastRneUpdate is not null ")
+        LocalDate getLastRneUpdateForAffaires();
 
         @Query(value = "select a from Affaire a where exists (select 1 from AssoAffaireOrder aao join aao.customerOrder c where aao.affaire = a  and c.responsable in :responsables) and ( lower(a.denomination) like lower(concat('%', :searchText,'%')) or lower(concat(a.firstname, ' ', a.lastname)) like lower(concat('%', :searchText,'%')) or a.siret like concat(:searchText,'%') or a.id=:idAffaire  ) ")
         List<Affaire> getAffairesForResponsables(Pageable pageableRequest,
@@ -35,4 +40,14 @@ public interface AffaireRepository extends QueryCacheCrudRepository<Affaire, Int
                         @Param("idAffaire") Integer idAffaire);
 
         List<Affaire> findAllBySiret(String siret);
+
+        @Query(value = "select a from Affaire a where siret is null and coalesce(isIndividual , false) = false and coalesce(isToNotUpdate , false) = false ")
+        List<Affaire> getNextAffaireToUpdate();
+
+        @Query(value = "select a from Affaire a where siret is not null  ")
+        List<Affaire> getNextAffaireToUpdateForRne();
+
+        @Query(value = "select a from Affaire a where (siret is null or city is null) and coalesce(isIndividual , false) = false and coalesce(isToNotUpdate , false) = false ")
+        List<Affaire> getAffairesForCorrection();
+
 }

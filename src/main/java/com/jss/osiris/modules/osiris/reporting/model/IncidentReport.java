@@ -30,105 +30,105 @@ public class IncidentReport implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "incident_report_sequence", sequenceName = "incident_report_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "incident_report_sequence")
-	@JsonView(JacksonViews.OsirisListView.class)
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_incident_report_status")
-	@JsonView(JacksonViews.OsirisListView.class)
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private IncidentReportStatus incidentReportStatus;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_incident_responsibility")
-	@JsonView(JacksonViews.OsirisListView.class)
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private IncidentResponsibility incidentResponsibility;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_incident_type")
-	@JsonView(JacksonViews.OsirisListView.class)
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private IncidentType incidentType;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_incident_cause")
-	@JsonView(JacksonViews.OsirisListView.class)
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private IncidentCause incidentCause;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_employee")
-	@JsonView(JacksonViews.OsirisListView.class)
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private Employee assignedTo;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_customer_order")
-	@JsonView(JacksonViews.OsirisListView.class)
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private CustomerOrder customerOrder;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_provision")
-	@JsonView(JacksonViews.OsirisListView.class)
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private Provision provision;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_employee_initiator")
-	@JsonView(JacksonViews.OsirisListView.class)
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private Employee initiatedBy;
 
-	@JsonView(JacksonViews.OsirisListView.class)
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private LocalDate startDate;
 
-	@JsonView(JacksonViews.OsirisListView.class)
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private LocalDate endDate;
 
 	@Column(length = 200)
-	@JsonView(JacksonViews.OsirisListView.class)
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private String title;
 
 	@Column(columnDefinition = "TEXT")
-	@JsonView(JacksonViews.OsirisListView.class)
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private String description;
 
 	@Column(columnDefinition = "TEXT")
-	@JsonView(JacksonViews.OsirisListView.class)
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private String customerImpact;
 
 	@Column(columnDefinition = "TEXT")
-	@JsonView(JacksonViews.OsirisListView.class)
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private String jssImpact;
 
 	@Column(columnDefinition = "TEXT")
-	@JsonView(JacksonViews.OsirisListView.class)
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private String detectionDescription;
 
 	@Column(columnDefinition = "TEXT")
-	@JsonView(JacksonViews.OsirisListView.class)
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private String internalCommunicationDescription;
 
 	@Column(columnDefinition = "TEXT")
-	@JsonView(JacksonViews.OsirisListView.class)
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private String externalCommunicationDescription;
 
 	@Column(columnDefinition = "TEXT")
-	@JsonView(JacksonViews.OsirisListView.class)
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private String analysis;
 
 	@Column(columnDefinition = "TEXT")
-	@JsonView(JacksonViews.OsirisListView.class)
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private String remedialActions;
 
 	@Column(columnDefinition = "TEXT")
-	@JsonView(JacksonViews.OsirisListView.class)
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private String preventiveActionsProposal;
 
 	@Column(columnDefinition = "TEXT")
-	@JsonView(JacksonViews.OsirisListView.class)
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private Float costEstimation;
 
 	@Column(columnDefinition = "TEXT")
-	@JsonView(JacksonViews.OsirisListView.class)
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private String managementComments;
 
 	@Column(columnDefinition = "TEXT")
-	@JsonView(JacksonViews.OsirisListView.class)
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private String preventiveActions;
 
 	public Integer getId() {

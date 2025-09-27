@@ -55,24 +55,6 @@ export class AppService {
       win.open(environment.frontendMyJssUrl + route, inNewWindows ? "_blank" : "_self");
   }
 
-  openLinkedinJssPage() {
-    const win = this.platformService.getNativeWindow();
-    if (win)
-      win.open("https://www.linkedin.com/company/journal-special-des-societes/", "_blank");
-  }
-
-  openInstagramJssPage() {
-    const win = this.platformService.getNativeWindow();
-    if (win)
-      win.open("https://www.instagram.com/journalspecialdessocietes/", "_blank");
-  }
-
-  openFacebookJssPage() {
-    const win = this.platformService.getNativeWindow();
-    if (win)
-      win.open("https://www.facebook.com/Journal.Special.des.Societes/", "_blank");
-  }
-
   getAllAccountMenuItems(): AccountMenuItem[] {
     let menuItem = [] as AccountMenuItem[];
 

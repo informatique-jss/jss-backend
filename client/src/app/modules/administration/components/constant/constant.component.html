@@ -1756,6 +1756,13 @@
           </tr>
           <tr>
             <td>
+              <autocomplete-affaire [(model)]="constant.affaireDummyForSubscription" [form]="constantForm"
+                propertyName="affaireDummyForSubscription" [isMandatory]="true"
+                label="Affaire standard pour la création d'abonnement"></autocomplete-affaire>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-provision-screen-type [(model)]="constant.provisionScreenTypeAnnouncement"
                 label="Type d'écran Annonce légale" [form]="constantForm" propertyName="provisionScreenTypeAnnouncement"
                 [isMandatory]="true" [isDisabled]="!editMode"></select-provision-screen-type>

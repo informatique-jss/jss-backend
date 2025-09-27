@@ -15,7 +15,9 @@ import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.itextpdf.text.pdf.PdfReader;
@@ -23,6 +25,7 @@ import com.itextpdf.text.pdf.parser.PdfReaderContentParser;
 import com.itextpdf.text.pdf.parser.SimpleTextExtractionStrategy;
 import com.itextpdf.text.pdf.parser.TextExtractionStrategy;
 import com.jss.osiris.libs.PictureHelper;
+import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.WordGenerationHelper;
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
@@ -94,6 +97,9 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Autowired
     BatchService batchService;
+
+    @Autowired
+    ConfrereService confrereService;
 
     @Override
     public List<Announcement> getAnnouncements() {
@@ -891,7 +897,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     @Override
-    public Page<Announcement> getAnnouncementSearch(String searchText, Pageable pageableRequest)
+    public Page<Announcement> getAnnouncementSearch(String searchText, LocalDate startDate, Pageable pageableRequest)
             throws OsirisException {
         List<CustomerOrderStatus> customerOrderStatusExcluded = new ArrayList<CustomerOrderStatus>();
         customerOrderStatusExcluded
@@ -903,22 +909,42 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         announcementStatus
                 .add(announcementStatusService.getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_DONE));
 
-        return populateAffaireLabel(
+        if (startDate == null)
+            startDate = LocalDate.now().minusYears(100);
+
+        List<Announcement> announcements = populateAffaireLabel(
                 announcementRepository.searchAnnouncementForWebSite(searchText, customerOrderStatusExcluded,
-                        announcementStatus, constantService.getConfrereJssSpel(),
-                        pageableRequest));
+                        announcementStatus, startDate, constantService.getConfrereJssSpel(),
+                        pageableRequest).getContent());
+
+        return new PageImpl<>(announcements);
     }
 
     @Override
     public Announcement getAnnouncementForWebSite(Announcement announcement) throws OsirisException {
         announcement = getAnnouncement(announcement.getId());
-        return populateAffaireLabel(new PageImpl<>(List.of(announcement))).getContent().get(0);
+        return populateAffaireLabel(List.of(announcement)).get(0);
     }
 
-    private Page<Announcement> populateAffaireLabel(Page<Announcement> announcements) {
+    @Override
+    public List<Announcement> getLastSevenDaysAnnouncements() throws OsirisException {
+        Pageable pageable = PageRequest.of(0, ValidationHelper.limitPageSize(100),
+                Sort.by(Sort.Direction.DESC, "publicationDate"));
+        return getAnnouncementSearch("", LocalDate.now().minusDays(7), pageable).getContent();
+    }
+
+    @Override
+    public List<Announcement> getAllAnnouncementsForWebsite() throws OsirisException {
+        Pageable pageable = PageRequest.of(0, Integer.MAX_VALUE);
+        return getAnnouncementSearch("", LocalDate.now().minusYears(150), pageable).getContent();
+    }
+
+    private List<Announcement> populateAffaireLabel(List<Announcement> announcements) {
         if (announcements != null)
-            for (Announcement announcement : announcements.toList()) {
-                if (announcement.getProvisions() != null && announcement.getProvisions().size() > 0)
+            for (Announcement announcement : announcements) {
+                if (Boolean.TRUE.equals(announcement.getIsLegacy())) {
+                    announcement.setAffaireLabel(announcement.getNoticeHeader());
+                } else if (announcement.getProvisions() != null && announcement.getProvisions().size() > 0)
                     if (announcement.getProvisions().get(0).getService() != null)
                         if (announcement.getProvisions().get(0).getService().getAssoAffaireOrder() != null)
                             if (announcement.getProvisions().get(0).getService().getAssoAffaireOrder()

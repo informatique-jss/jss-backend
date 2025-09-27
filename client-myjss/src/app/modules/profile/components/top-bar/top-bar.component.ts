@@ -1,10 +1,13 @@
 import { ChangeDetectorRef, Component, ElementRef, HostListener, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbCollapseModule, NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { environment } from '../../../../../environments/environment';
 import { capitalizeName } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { MenuItem } from '../../../general/model/MenuItem';
 import { AppService } from '../../../main/services/app.service';
+import { GtmService } from '../../../main/services/gtm.service';
+import { LogPayload, PageInfo } from '../../../main/services/GtmPayload';
 import { PlatformService } from '../../../main/services/platform.service';
 import { AvatarComponent } from '../../../miscellaneous/components/avatar/avatar.component';
 import { AccountMenuItem, MAIN_ITEM_ACCOUNT, MAIN_ITEM_DASHBOARD } from '../../../my-account/model/AccountMenuItem';
@@ -49,6 +52,7 @@ export class TopBarComponent implements OnInit {
 
   MAIN_ITEM_ACCOUNT = MAIN_ITEM_ACCOUNT;
   MAIN_ITEM_DASHBOARD = MAIN_ITEM_DASHBOARD;
+  frontendJssUrl = environment.frontendJssUrl;
 
   isNavbarCollapsed: boolean = true;
 
@@ -61,7 +65,8 @@ export class TopBarComponent implements OnInit {
     private quotationService: QuotationService,
     private orderService: CustomerOrderService,
     private cdr: ChangeDetectorRef,
-    private platformService: PlatformService
+    private platformService: PlatformService,
+    private gtmService: GtmService
   ) { }
 
   capitalizeName = capitalizeName;
@@ -129,9 +134,22 @@ export class TopBarComponent implements OnInit {
     });
   }
 
+  trackLog() {
+    this.gtmService.trackLoginLogout(
+      {
+        type: 'switch',
+        page: {
+          type: 'my-account',
+          name: 'sign-in'
+        } as PageInfo
+      } as LogPayload
+    );
+  }
+
   switchAccount(account: Responsable) {
     this.appService.showLoadingSpinner();
     this.loginService.switchUser(account.id).subscribe(response => {
+      this.trackLog();
       // switch current quotation
       if (this.quotationService.getCurrentDraftQuotationId() || this.orderService.getCurrentDraftOrderId()) {
         this.loginService.getCurrentUser().subscribe(currentUser => {
@@ -152,23 +170,10 @@ export class TopBarComponent implements OnInit {
   }
 
   refreshAfterSwitch() {
-    const currentUrl = this.router.url;
     this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
       this.appService.hideLoadingSpinner();
-      this.router.navigate([currentUrl]);
+      this.router.navigate(['/account/overview']);
     });
-  }
-
-  openProduct(event: any) {
-    this.appService.openRoute(event, "product/" + "", undefined);
-  }
-
-  openOffers(event: any) {
-    this.appService.openRoute(event, "offers/" + "", undefined);
-  }
-
-  openNewOrder(event: any) {
-    this.appService.openRoute(event, "order/new/" + "", undefined);
   }
 
   navbarCollapsed() {
@@ -205,9 +210,5 @@ export class TopBarComponent implements OnInit {
     this.searchModalInstance.result.finally(() => {
       this.searchModalInstance = undefined;
     });
-  }
-
-  openJssRoute(event: any) {
-    this.appService.openJssRoute(event, "");
   }
 }

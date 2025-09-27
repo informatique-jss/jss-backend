@@ -1,5 +1,6 @@
 import { AfterViewInit, ChangeDetectorRef, Component, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable, Subscription } from 'rxjs';
@@ -7,26 +8,26 @@ import { environment } from '../../../../environments/environment';
 import { MY_JSS_SIGN_IN_ROUTE } from '../../../libs/Constants';
 import { validateEmail } from '../../../libs/CustomFormsValidatorsHelper';
 import { getTimeReading } from '../../../libs/FormatHelper';
+import { LiteralDatePipe } from '../../../libs/LiteralDatePipe';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { TrustHtmlPipe } from '../../../libs/TrustHtmlPipe';
 import { AppService } from '../../../services/app.service';
+import { GtmService } from '../../../services/gtm.service';
+import { CtaClickPayload, FormSubmitPayload, PageInfo } from '../../../services/GtmPayload';
 import { PlatformService } from '../../../services/platform.service';
-import { Author } from '../../model/Author';
 import { Comment } from '../../model/Comment';
-import { JssCategory } from '../../model/JssCategory';
 import { Mail } from '../../model/Mail';
 import { PagedContent } from '../../model/PagedContent';
 import { Pagination } from '../../model/Pagination';
 import { Post } from '../../model/Post';
-import { ReadingFolder } from '../../model/ReadingFolder';
 import { Responsable } from '../../model/Responsable';
+import { Serie } from '../../model/Serie';
 import { ONE_POST_SUBSCRIPTION } from '../../model/Subscription';
-import { Tag } from '../../model/Tag';
 import { AudioPlayerService } from '../../services/audio.player.service';
 import { CommentService } from '../../services/comment.service';
 import { LoginService } from '../../services/login.service';
 import { PostService } from '../../services/post.service';
-import { ReadingFolderService } from '../../services/reading.folder.service';
+import { SerieService } from '../../services/serie.service';
 import { SubscriptionService } from '../../services/subscription.service';
 import { AvatarComponent } from '../avatar/avatar.component';
 import { BookmarkComponent } from "../bookmark/bookmark.component";
@@ -40,7 +41,7 @@ declare var tns: any;
   selector: 'app-post',
   templateUrl: './post.component.html',
   styleUrls: ['./post.component.css'],
-  imports: [SHARED_IMPORTS, TrustHtmlPipe, AvatarComponent, GenericInputComponent, GenericTextareaComponent, NewsletterComponent, BookmarkComponent],
+  imports: [SHARED_IMPORTS, TrustHtmlPipe, AvatarComponent, GenericInputComponent, GenericTextareaComponent, NewsletterComponent, BookmarkComponent, LiteralDatePipe],
   standalone: true
 })
 export class PostComponent implements OnInit, AfterViewInit {
@@ -51,6 +52,8 @@ export class PostComponent implements OnInit, AfterViewInit {
   nextPost: Post | undefined;
   previousPost: Post | undefined;
   commentsPagination: Pagination = {} as Pagination;
+  seriePost: Serie | undefined;
+  postsOfSerie: Post[] = []
 
   comments: Comment[] = [];
   newComment: Comment = {} as Comment;
@@ -66,7 +69,6 @@ export class PostComponent implements OnInit, AfterViewInit {
   audioUrl: string | undefined;
   progress: number = 0;
   progressSubscription: Subscription = new Subscription;
-  readingFolders: ReadingFolder[] = [];
   recipientMail: string | undefined;
 
   currentUser: Responsable | undefined;
@@ -74,6 +76,9 @@ export class PostComponent implements OnInit, AfterViewInit {
   numberOfSharingPostRemaining: number = 0;
 
   @ViewChildren('sliderPage') sliderPage!: QueryList<any>;
+  frontendMyJssUrl = environment.frontendMyJssUrl;
+  ONE_POST_SUBSCRIPTION = ONE_POST_SUBSCRIPTION;
+  MY_JSS_SIGN_IN_ROUTE = MY_JSS_SIGN_IN_ROUTE;
 
   constructor(private activatedRoute: ActivatedRoute,
     private formBuilder: FormBuilder,
@@ -81,12 +86,14 @@ export class PostComponent implements OnInit, AfterViewInit {
     private appService: AppService,
     private platformService: PlatformService,
     private audioService: AudioPlayerService,
+    private serieService: SerieService,
     private commentService: CommentService,
     private subscriptionService: SubscriptionService,
     private loginService: LoginService,
     private modalService: NgbModal,
     private cdr: ChangeDetectorRef,
-    private readingFolderService: ReadingFolderService,
+    private gtmService: GtmService,
+    private titleService: Title, private meta: Meta,
   ) { }
 
   getTimeReading = getTimeReading;
@@ -95,6 +102,16 @@ export class PostComponent implements OnInit, AfterViewInit {
   newCommentForm!: FormGroup;
 
   ngOnInit() {
+    this.refresh();
+    this.activatedRoute.paramMap.subscribe(params => {
+      this.refresh();
+    });
+  }
+
+  refresh() {
+    this.titleService.setTitle("Tous nos articles - JSS");
+    this.meta.updateTag({ name: 'description', content: "Retrouvez l'actualité juridique et économique. JSS analyse pour vous les dernières annonces, formalités et tendances locales." });
+
     this.loginService.getCurrentUser().subscribe(res => this.currentUser = res);
 
     this.newCommentForm = this.formBuilder.group({});
@@ -112,14 +129,53 @@ export class PostComponent implements OnInit, AfterViewInit {
     });
   }
 
+  trackCtaClickOfferPost() {
+    if (this.post)
+      this.gtmService.trackCtaClick(
+        {
+          cta: { type: 'link', label: "Offrir cet article", objectId: this.post.id },
+          page: {
+            type: 'main',
+            name: this.post!.slug
+          } as PageInfo
+        } as CtaClickPayload
+      );
+  }
+
+  trackFormReplyComment() {
+    this.gtmService.trackFormSubmit(
+      {
+        form: { type: 'Publier un commentaire' },
+        page: {
+          type: 'main',
+          name: this.post!.slug
+        } as PageInfo
+      } as FormSubmitPayload
+    );
+  }
+
+  trackFormOfferPost() {
+    this.gtmService.trackFormSubmit(
+      {
+        form: { type: 'Offrir cet article' },
+        page: {
+          type: 'main',
+          name: this.post!.slug
+        } as PageInfo
+      } as FormSubmitPayload
+    );
+  }
+
+
   refreshPost() {
+    this.postsOfSerie = [];
     this.validationToken = this.activatedRoute.snapshot.params['token'];
     if (this.validationToken) {
       let mail = this.activatedRoute.snapshot.params['mail'];
       this.postService.getOfferedPostByToken(this.validationToken, mail).subscribe(post => {
         this.post = post;
         if (this.post) {
-          this.fetchNextPrevArticleAndComments(this.post);
+          this.fetchNextPrevArticleAndSerieAndComments(this.post);
         }
       });
 
@@ -129,7 +185,7 @@ export class PostComponent implements OnInit, AfterViewInit {
         this.postService.getPostBySlug(this.slug).subscribe(post => {
           this.post = post;
           if (this.post) {
-            this.fetchNextPrevArticleAndComments(this.post);
+            this.fetchNextPrevArticleAndSerieAndComments(this.post);
           }
         })
       }
@@ -137,13 +193,28 @@ export class PostComponent implements OnInit, AfterViewInit {
 
     this.cancelReply()
     this.fetchMostSeenPosts();
-    this.fetchReadingFolder();
   }
 
-  private fetchNextPrevArticleAndComments(post: Post) {
+  private fetchNextPrevArticleAndSerieAndComments(post: Post) {
+    if (post.postSerie && post.postSerie.length > 0) {
+      this.seriePost = post.postSerie[0];
+      this.postService.getAllPostsBySerie(this.seriePost, 0, 50, "").subscribe(res => {
+        if (res && res.content.length > 0)
+          this.postsOfSerie = res.content;
+      });
+    }
+    this.titleService.setTitle(post.titleText + " - JSS");
+    if (post.excerptText)
+      this.meta.updateTag({ name: 'description', content: this.getFirstSentenceFromHtml(post.excerptText) });
     this.postService.getNextArticle(post).subscribe(response => this.nextPost = response);
     this.postService.getPreviousArticle(post).subscribe(response => this.previousPost = response);
     this.fetchComments(0);
+  }
+
+  getFirstSentenceFromHtml(html: string): string {
+    const plain = html.replace(/<[^>]+>/g, '');
+    const match = plain.match(/(.*?[.?!])\s/);
+    return match ? match[1].trim() : plain.trim();
   }
 
   ngOnDestroy() {
@@ -182,13 +253,6 @@ export class PostComponent implements OnInit, AfterViewInit {
     })
   }
 
-  fetchReadingFolder() {
-    this.readingFolderService.getReadingFolders().subscribe(response => {
-      if (response)
-        this.readingFolders.push(...response);
-    });
-  }
-
   dropdownOpen = false;
 
   toggleDropdown(event: Event): void {
@@ -204,7 +268,7 @@ export class PostComponent implements OnInit, AfterViewInit {
   }
 
   getMostSeenPosts(page: number, pageSize: number): Observable<PagedContent<Post>> {
-    return this.postService.getMostViewedPosts(page, pageSize);
+    return this.postService.getMostSeenPosts(page, pageSize, "");
   }
 
   fetchComments(page: number) {
@@ -246,6 +310,7 @@ export class PostComponent implements OnInit, AfterViewInit {
       }
 
       this.commentService.addOrUpdateComment(this.newComment, this.newCommentParent.id, this.post.id).subscribe(() => {
+        this.trackFormReplyComment();
         this.fetchComments(0);
       });
     } else if (!this.newComment.content.trim())
@@ -281,22 +346,6 @@ export class PostComponent implements OnInit, AfterViewInit {
     return { firstname: comment?.authorFirstName || '', lastname: comment?.authorLastNameInitials || '' } as Responsable;
   }
 
-  openPost(post: Post, event: any) {
-    this.appService.openRoute(event, "post/" + post.slug, undefined);
-  }
-
-  openAuthorPosts(author: Author, event: any) {
-    this.appService.openRoute(event, "post/author/" + author.slug, undefined);
-  }
-
-  openCategoryPosts(category: JssCategory, event: any) {
-    this.appService.openRoute(event, "post/category/" + category.slug, undefined);
-  }
-
-  openTagPosts(tag: Tag, event: any) {
-    this.appService.openRoute(event, "post/tag/" + tag.slug, undefined);
-  }
-
   shareOnFacebook() {
     const win = this.platformService.getNativeWindow();
     if (this.post && win) {
@@ -313,8 +362,12 @@ export class PostComponent implements OnInit, AfterViewInit {
     }
   }
 
-  shareOnInstagram() {
-    this.appService.openInstagramJssPage();
+  shareOnBluesky() {
+    const win = this.platformService.getNativeWindow();
+    if (this.post && win) {
+      let url = environment.frontendUrl + "post/" + this.post.slug;
+      win.open("https://bsky.app/intent/compose?text=" + this.extractContent(this.post.titleText), "_blank");
+    }
   }
 
   shareByMail() {
@@ -325,13 +378,10 @@ export class PostComponent implements OnInit, AfterViewInit {
     }
   }
 
-  openSignIn(event: any) {
-    this.appService.openMyJssRoute(event, MY_JSS_SIGN_IN_ROUTE, false);
-  }
-
   openOfferPostModal(content: any) {
     this.subscriptionService.getNumberOfRemainingPostsToShareForCurrentMonth().subscribe(res => {
       if (res != null) {
+        this.trackCtaClickOfferPost();
         this.numberOfSharingPostRemaining = res;
         this.modalService.open(content, { centered: true, size: 'md' });
       } else {
@@ -347,6 +397,7 @@ export class PostComponent implements OnInit, AfterViewInit {
     } else {
       this.subscriptionService.givePost(post.id, this.recipientMail).subscribe(res => {
         if (res) {
+          this.trackFormOfferPost();
           modalRef.close();
           this.giftForm.reset();
           this.appService.displayToast("L'article a bien été partagé à l'adresse mail indiquée !", false, "Article partagé", 5000)
@@ -364,10 +415,6 @@ export class PostComponent implements OnInit, AfterViewInit {
     }
     return '';
   };
-
-  subscribeToOnePost(event: any, idArticle: number) {
-    this.appService.openMyJssRoute(event, "/quotation/subscription/" + ONE_POST_SUBSCRIPTION + "/" + false + "/" + idArticle, true);
-  }
 
   readArticle(): void {
     const win = this.platformService.getNativeWindow();

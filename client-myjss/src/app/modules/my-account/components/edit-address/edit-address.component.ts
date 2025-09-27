@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { NgbNavModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { validateEmail } from '../../../../libs/CustomFormsValidatorsHelper';
+import { getDocument } from '../../../../libs/DocumentHelper';
 import { capitalizeName } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { Mail } from '../../../general/model/Mail';
@@ -11,6 +12,7 @@ import { ConstantService } from '../../../main/services/constant.service';
 import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { Responsable } from '../../../profile/model/Responsable';
 import { ResponsableService } from '../../../profile/services/responsable.service';
+import { IDocument } from '../../../quotation/model/IDocument';
 import { BillingLabelType } from '../../model/BillingLabelType';
 import { Document } from '../../model/Document';
 import { DocumentType } from '../../model/DocumentType';
@@ -38,6 +40,7 @@ export class EditAddressComponent implements OnInit {
 
   newMailBillingAffaire: string = "";
   newMailBillingClient: string = "";
+  newReminderMail: string = "";
 
   newMailDigitalAffaire: string = "";
   newMailDigitalClient: string = "";
@@ -85,6 +88,8 @@ export class EditAddressComponent implements OnInit {
                 document.billingLabelType = this.billingLabelTypeCustomer;
               if (document.billingLabelType.id == this.billingLabelTypeOther.id)
                 document.billingLabelType = this.billingLabelTypeOther;
+              if (document.reminderMail && document.reminderMail.mail)
+                this.newReminderMail = document.reminderMail.mail;
 
               this.lockBillingLabel = document.billingLabelType.id == this.billingLabelTypeOther.id;
             }
@@ -102,6 +107,8 @@ export class EditAddressComponent implements OnInit {
                 document.billingLabelType = this.billingLabelTypeCustomer;
               if (document.billingLabelType.id == this.billingLabelTypeOther.id)
                 document.billingLabelType = this.billingLabelTypeOther;
+              if (document.reminderMail && document.reminderMail.mail)
+                this.newReminderMail = document.reminderMail.mail;
 
               this.lockBillingLabel = document.billingLabelType.id == this.billingLabelTypeOther.id;
             }
@@ -122,6 +129,8 @@ export class EditAddressComponent implements OnInit {
                 document.billingLabelType = this.billingLabelTypeCustomer;
               if (document.billingLabelType.id == this.billingLabelTypeOther.id)
                 document.billingLabelType = this.billingLabelTypeOther;
+              if (document.reminderMail && document.reminderMail.mail)
+                this.newReminderMail = document.reminderMail.mail;
 
               this.lockBillingLabel = document.billingLabelType.id == this.billingLabelTypeOther.id;
             }
@@ -131,6 +140,16 @@ export class EditAddressComponent implements OnInit {
 
   saveDocuments() {
     if (this.documents) {
+      if (this.newReminderMail && validateEmail(this.newReminderMail)) {
+        let mail = {} as Mail;
+        mail.mail = this.newReminderMail;
+        let doc = getDocument(this.constantService.getDocumentTypeBilling(), { documents: this.documents } as IDocument);
+        if (!doc.reminderMail)
+          doc.reminderMail = {} as Mail;
+        doc.reminderMail = mail;
+        this.newReminderMail = "";
+      }
+
       if (this.idOrder)
         this.documentService.addOrUpdateDocumentsForCustomerOrder(this.documents).subscribe(response => {
           this.appService.openRoute(null, "account/orders/details/" + this.idOrder, undefined);
@@ -154,7 +173,7 @@ export class EditAddressComponent implements OnInit {
     if (this.idQuotation)
       this.appService.openRoute(null, "account/quotations/details/" + this.idQuotation, undefined);
     if (this.idResponsable)
-      this.appService.openRoute(null, "account/settings/" + this.idResponsable, undefined);
+      this.appService.openRoute(null, "account/settings", undefined);
   }
 
   deleteMail(mail: Mail, document: Document, isAffaire: boolean) {
@@ -163,6 +182,11 @@ export class EditAddressComponent implements OnInit {
         document.mailsAffaire.splice(document.mailsAffaire.indexOf(mail), 1);
       else
         document.mailsClient.splice(document.mailsClient.indexOf(mail), 1);
+  }
+
+  deleteMailReminder(mail: Mail, document: Document) {
+    if (document)
+      document.reminderMail = {} as Mail;
   }
 
   addMail(document: Document, isAffaire: boolean) {

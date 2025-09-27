@@ -6,6 +6,7 @@ import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
 import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { GenericToggleComponent } from '../../../miscellaneous/components/forms/generic-toggle/generic-toggle.component';
+import { AssoAffaireOrder } from '../../../my-account/model/AssoAffaireOrder';
 import { ServiceType } from '../../../my-account/model/ServiceType';
 import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
 import { QuotationService } from '../../../my-account/services/quotation.service';
@@ -34,6 +35,7 @@ export class ServicesSelectionComponent implements OnInit {
   currentUser: Responsable | undefined;
   applyToAllAffaires: boolean = false;
   serviceLinkToggles: boolean[][] = [];
+  activeId = 0;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -98,6 +100,7 @@ export class ServicesSelectionComponent implements OnInit {
             family.services.sort((a, b) => a.label.localeCompare(b.label));
         }
         this.selectedServiceFamily = this.serviceFamilies[0];
+        this.manageFamilySelection();
       });
 
     if (this.quotation && this.quotation.assoAffaireOrders) {
@@ -106,6 +109,19 @@ export class ServicesSelectionComponent implements OnInit {
           this.selectedServiceTypes[i] = [];
       }
     }
+  }
+
+  manageFamilySelection() {
+    if (this.quotation && this.selectedAssoIndex != undefined && this.serviceFamilies) {
+      for (let i = 0; i < this.serviceFamilies.length; i++) {
+        if (this.shouldDisplayServiceFamily(this.serviceFamilies[i], this.quotation.assoAffaireOrders[this.selectedAssoIndex])) {
+          this.activeId = i;
+          this.selectedServiceFamily = this.serviceFamilies[i];
+          return;
+        }
+      }
+    }
+
   }
 
   getFamilyLabelForService(service: ServiceType) {
@@ -120,6 +136,7 @@ export class ServicesSelectionComponent implements OnInit {
 
   selectCard(affaireId: number) {
     this.selectedAssoIndex = affaireId;
+    this.manageFamilySelection();
   }
 
   selecteServiceFamily(serviceFamily: ServiceFamily) {
@@ -245,8 +262,12 @@ export class ServicesSelectionComponent implements OnInit {
     this.appService.openRoute(undefined, "quotation/identification", undefined);
   }
 
-  hasServiceForUnregisteredAffaire(serviceFamily: ServiceFamily) {
-    if (serviceFamily) {
+  shouldDisplayServiceFamily(serviceFamily: ServiceFamily, asso: AssoAffaireOrder) {
+    if (serviceFamily && asso && asso.affaire.siret) {
+      for (let service of serviceFamily.services)
+        if (service.isRequiringNewRegisteredAffaire)
+          return true;
+    } else if (serviceFamily && asso && asso.affaire && (asso.affaire.siret == null || asso.affaire.siret == undefined || asso.affaire.siret == "")) {
       for (let service of serviceFamily.services)
         if (service.isRequiringNewUnregisteredAffaire)
           return true;

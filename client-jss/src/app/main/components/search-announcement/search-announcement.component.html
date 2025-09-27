@@ -6,7 +6,7 @@
           <div class="header-hub-bg d-flex align-items-center rounded-1">
             <div class="row w-100 ">
               <div class="col-12">
-                <h3 class="section-widget-title m-0">Consulter une annonce légale</h3>
+                <h1 class="section-widget-title m-0">Consulter les annonces légales</h1>
               </div>
             </div>
           </div>
@@ -59,17 +59,17 @@
                     </ng-container>
                   </div>
                   <h3 class="card-title">
-                    <a style="cursor: pointer;" (click)="openAnnouncement(announcement, $event)"
+                    <a style="cursor: pointer;" [routerLink]='"/announcement/" + announcement.id'
                       class="btn-link text-reset stretched-link">{{announcement.affaireLabel}}</a>
                   </h3>
-                  <ul class="nav nav-divider align-items-center d-none d-sm-inline-block">
-                    <li class="nav-item" *ngIf="announcement.affaireSiren && announcement.affaireSiren.length>0">
+                  <div class="row">
+                    <div class="col-auto" *ngIf="announcement.affaireSiren && announcement.affaireSiren.length>0">
                       {{announcement.affaireSiren}} <span class="mt-2 me-2 bullet-point-custom"></span>
-                      {{announcement.department.label}} ({{announcement.department.code}})
-                      {{announcement.publicationDate | date:'EEEE d MMMM y'}}
-                    </li>
-                    <li class="nav-item"></li>
-                  </ul>
+                    </div>
+                    <div class="col-auto  ms-auto"> {{announcement.department.label}} ({{announcement.department.code}})
+                    </div>
+                    <div class="col-auto"> {{announcement.publicationDate | date:'EEEE d MMMM y'}} </div>
+                  </div>
                 </div>
               </div>
             </div>

@@ -752,7 +752,8 @@ public class PaymentServiceImpl implements PaymentService {
                 CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
                         correspondingCustomerOrder.get(i),
                         "Nouveau paiement n°" + newPayment.getId() + " de " + newPayment.getPaymentAmount()
-                                + " € placé sur la commande");
+                                + " € placé sur la commande",
+                        false, false);
 
                 customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
                         constantService.getActiveDirectoryGroupFacturation());
@@ -1220,7 +1221,8 @@ public class PaymentServiceImpl implements PaymentService {
                     CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
                             invoice.getCustomerOrder(),
                             "Nouveau paiement n°" + payment.getId() + " de " + payment.getPaymentAmount()
-                                    + " € placé sur la facture n°" + invoice.getId());
+                                    + " € placé sur la facture n°" + invoice.getId(),
+                            false, false);
 
                     customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
                             constantService.getActiveDirectoryGroupFacturation());
@@ -1769,4 +1771,8 @@ public class PaymentServiceImpl implements PaymentService {
         return image;
     }
 
+    @Override
+    public List<Payment> getPaymentForCustomerOrder(CustomerOrder customerOrder) {
+        return paymentRepository.findByCustomerOrder(customerOrder);
+    }
 }

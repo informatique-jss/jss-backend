@@ -57,6 +57,13 @@
             <a class="nav-link p-2 me-2" (click)="shareOnFacebook()" title="Facebook" aria-label="Facebook">
               <i class="ai-facebook"></i>
             </a>
+            <a class="nav-link p-2 me-2" (click)="shareOnBluesky()" title="Bluesky" aria-label="Bluesky">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bluesky"
+                viewBox="0 0 16 16">
+                <path
+                  d="M3.468 1.948C5.303 3.325 7.276 6.118 8 7.616c.725-1.498 2.698-4.29 4.532-5.668C13.855.955 16 .186 16 2.632c0 .489-.28 4.105-.444 4.692-.572 2.04-2.653 2.561-4.504 2.246 3.236.551 4.06 2.375 2.281 4.2-3.376 3.464-4.852-.87-5.23-1.98-.07-.204-.103-.3-.103-.218 0-.081-.033.014-.102.218-.379 1.11-1.855 5.444-5.231 1.98-1.778-1.825-.955-3.65 2.28-4.2-1.85.315-3.932-.205-4.503-2.246C.28 6.737 0 3.12 0 2.632 0 .186 2.145.955 3.468 1.948" />
+              </svg>
+            </a>
             <a class="nav-link p-2" (click)="shareByMail()" title="mail" aria-label="mail">
               <i class="ai-mail"></i>
             </a>
@@ -87,42 +94,42 @@
       <!-- Submit a formality or contact us -->
       <div class="mb-3" *ngIf="isPostContainsMyJssCategory(myJssCategoryFormality)">
         <double-buttons class="text-grey" orderActionLabel=" Déposer une formalité"
-          [orderActionRoute]="'quotation/new/'+serviceFamilyGroupFormality!.id+'/'+quotationTypeOrder.id"
-          quotationActionLabel="Demander un devis"
-          [quotationActionRoute]="'quotation/new/'+serviceFamilyGroupFormality!.id+'/'+quotationTypeQuotation.id"
+          [orderActionRoute]="'/quotation/new/'+serviceFamilyGroupFormality!.id+'/'+quotationTypeOrder.id"
+          quotationActionLabel="Demander un devis" [fromPageInfo]="{ type: 'tools', name: 'post'}"
+          [quotationActionRoute]="'/quotation/new/'+serviceFamilyGroupFormality!.id+'/'+quotationTypeQuotation.id"
           [isLightButtons]="true">
         </double-buttons>
       </div>
       <div class="mb-3" *ngIf="isPostContainsMyJssCategory(myJssCategoryAnnouncement)">
         <double-buttons class="text-grey" orderActionLabel=" Publier une annonce légale"
-          [orderActionRoute]="'quotation/new/'+serviceFamilyGroupAnnouncement!.id+'/'+quotationTypeOrder.id"
-          quotationActionLabel="Demander un devis"
-          [quotationActionRoute]="'quotation/new/'+serviceFamilyGroupAnnouncement!.id+'/'+quotationTypeQuotation.id"
+          [orderActionRoute]="'/quotation/new/'+serviceFamilyGroupAnnouncement!.id+'/'+quotationTypeOrder.id"
+          quotationActionLabel="Demander un devis" [fromPageInfo]="{ type: 'tools', name: 'post'}"
+          [quotationActionRoute]="'/quotation/new/'+serviceFamilyGroupAnnouncement!.id+'/'+quotationTypeQuotation.id"
           linkLabel="Consulter les annonces légales" linkRoute="announcement/search" [linkRouteToJssMedia]='true'
           [isLightButtons]="true">
         </double-buttons>
       </div>
       <div class="mb-3" *ngIf="isPostContainsMyJssCategory(myJssCategoryApostille)">
         <double-buttons class="text-grey" orderActionLabel=" Demander une apostille ou légalisation"
-          [orderActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeOrder.id"
-          quotationActionLabel="Demander un devis"
-          [quotationActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeQuotation.id"
+          [orderActionRoute]="'/quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeOrder.id"
+          quotationActionLabel="Demander un devis" [fromPageInfo]="{ type: 'tools', name: 'post'}"
+          [quotationActionRoute]="'/quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeQuotation.id"
           [isLightButtons]="true">
         </double-buttons>
       </div>
       <div class="mb-3" *ngIf="isPostContainsMyJssCategory(myJssCategoryDomiciliation)">
         <double-buttons class="text-grey" orderActionLabel=" Domicilier mon entreprise"
-          [orderActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeOrder.id"
-          quotationActionLabel="Demander un devis"
-          [quotationActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeQuotation.id"
+          [orderActionRoute]="'/quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeOrder.id"
+          quotationActionLabel="Demander un devis" [fromPageInfo]="{ type: 'tools', name: 'post'}"
+          [quotationActionRoute]="'/quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeQuotation.id"
           linkLabel="Bien choisir la domiciliation d'entreprise" [isLightButtons]="true">
         </double-buttons>
       </div>
       <div class="mb-3" *ngIf="isPostContainsMyJssCategory(myJssCategoryDocument)">
         <double-buttons class="text-grey" orderActionLabel=" Commander des documents"
-          [orderActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeOrder.id"
-          quotationActionLabel="Demander un devis"
-          [quotationActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeQuotation.id"
+          [orderActionRoute]="'/quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeOrder.id"
+          quotationActionLabel="Demander un devis" [fromPageInfo]="{ type: 'tools', name: 'post'}"
+          [quotationActionRoute]="'/quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeQuotation.id"
           [isLightButtons]="true">
         </double-buttons>
       </div>
@@ -159,6 +166,13 @@
                 </a>
                 <a class="nav-link p-2 me-2" (click)="shareOnFacebook()" title="Facebook" aria-label="Facebook">
                   <i class="ai-facebook"></i>
+                </a>
+                <a class="nav-link p-2 me-2" (click)="shareOnBluesky()" title="Bluesky" aria-label="Bluesky">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    class="bi bi-bluesky" viewBox="0 0 16 16">
+                    <path
+                      d="M3.468 1.948C5.303 3.325 7.276 6.118 8 7.616c.725-1.498 2.698-4.29 4.532-5.668C13.855.955 16 .186 16 2.632c0 .489-.28 4.105-.444 4.692-.572 2.04-2.653 2.561-4.504 2.246 3.236.551 4.06 2.375 2.281 4.2-3.376 3.464-4.852-.87-5.23-1.98-.07-.204-.103-.3-.103-.218 0-.081-.033.014-.102.218-.379 1.11-1.855 5.444-5.231 1.98-1.778-1.825-.955-3.65 2.28-4.2-1.85.315-3.932-.205-4.503-2.246C.28 6.737 0 3.12 0 2.632 0 .186 2.145.955 3.468 1.948" />
+                  </svg>
                 </a>
                 <a class="nav-link p-2" (click)="shareByMail()" title="Mail" aria-label="Mail">
                   <i class="ai-mail"></i>
@@ -328,12 +342,12 @@
     <!-- Post -->
     <article>
       <div class="position-relative">
-        <img class="rounded-5"
+        <img class="rounded-5" *ngIf="relatedPost.media"
           [src]="relatedPost.media && relatedPost.media.urlLarge ? relatedPost.media.urlLarge : relatedPost.media.urlFull"
           alt="Post image">
         <h3 class="h4 mt-4 mb-0">
           <a class="stretched-link" style="cursor: pointer;"
-            (click)="openPost(relatedPost, $event)">{{relatedPost.titleText}}</a>
+            [routerLink]="'/post/'+relatedPost.slug">{{relatedPost.titleText}}</a>
         </h3>
       </div>
     </article>
@@ -350,19 +364,19 @@
       <h4 *ngIf="hotPosts[0] && hotPosts[1]" class="pt-1 pt-lg-0 mt-lg-n2">Populaires :</h4>
       <div class="mb-lg-5 mb-4">
         <article *ngIf="hotPosts[0]" class="position-relative pb-2 mb-3 mb-lg-4">
-          <img class="rounded-5" (click)="openPost(hotPosts[0], $event)"
+          <img class="rounded-5" [routerLink]="'/post/'+hotPosts[0].slug" *ngIf="hotPosts[0].media"
             [src]="hotPosts[0].media.urlLarge ? hotPosts[0].media.urlLarge : hotPosts[0].media.urlFull"
             alt="Post image">
           <h5 class="h6 mt-3 mb-0">
-            <a class="stretched-link" (click)="openPost(hotPosts[0], $event)">{{hotPosts[0].titleText}}</a>
+            <a class="stretched-link" [routerLink]="'/post/'+hotPosts[0].slug">{{hotPosts[0].titleText}}</a>
           </h5>
         </article>
         <article *ngIf="hotPosts[1]" class="position-relative pb-2 mb-3 mb-lg-4">
-          <img class="rounded-5" (click)="openPost(hotPosts[1], $event)"
+          <img class="rounded-5" [routerLink]="'/post/'+hotPosts[1].slug" *ngIf="hotPosts[1].media"
             [src]="hotPosts[1].media.urlLarge ? hotPosts[1].media.urlLarge : hotPosts[1].media.urlFull"
             alt="Post image">
           <h5 class="h6 mt-3 mb-0">
-            <a class="stretched-link" (click)="openPost(hotPosts[1], $event)">{{hotPosts[1].titleText}}</a>
+            <a class="stretched-link" [routerLink]="'/post/'+hotPosts[1].slug">{{hotPosts[1].titleText}}</a>
           </h5>
         </article>
       </div>
@@ -372,22 +386,22 @@
       <ul class="list-unstyled mb-lg-5 mb-4">
         <li class="border-bottom pb-3 mb-3" *ngIf="recentPosts[0]">
           <span class="h6 mb-0">
-            <a (click)="openPost(recentPosts[0], $event)">{{recentPosts[0].titleText}}</a>
+            <a [routerLink]="'/post/'+recentPosts[0].slug">{{recentPosts[0].titleText}}</a>
           </span>
         </li>
         <li class="border-bottom pb-3 mb-3" *ngIf="recentPosts[1]">
           <span class="h6 mb-0">
-            <a (click)="openPost(recentPosts[1], $event)">{{recentPosts[1].titleText}}</a>
+            <a [routerLink]="'/post/'+recentPosts[1].slug">{{recentPosts[1].titleText}}</a>
           </span>
         </li>
         <li class="border-bottom pb-3 mb-3" *ngIf="recentPosts[2]">
           <span class="h6 mb-0">
-            <a (click)="openPost(recentPosts[2], $event)">{{recentPosts[2].titleText}}</a>
+            <a [routerLink]="'/post/'+recentPosts[2].slug">{{recentPosts[2].titleText}}</a>
           </span>
         </li>
         <li class="border-bottom pb-3" *ngIf="recentPosts[3]">
           <span class="h6 mb-0">
-            <a (click)="openPost(recentPosts[3], $event)">{{recentPosts[3].titleText}}</a>
+            <a [routerLink]="'/post/'+recentPosts[3].slug">{{recentPosts[3].titleText}}</a>
           </span>
         </li>
       </ul>

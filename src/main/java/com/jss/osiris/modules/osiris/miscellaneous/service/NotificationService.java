@@ -29,6 +29,8 @@ public interface NotificationService {
         public void notifyAttachmentAddToService(Service service, Attachment attachment)
                         throws OsirisException;
 
+        public void notifyInformationAddToService(Service service) throws OsirisException;
+
         public void notifyAttachmentAddToCustomerOrder(CustomerOrder order, Attachment attachment)
                         throws OsirisException;
 
@@ -66,6 +68,8 @@ public interface NotificationService {
         public void notifyNewCandidacy(Candidacy candidacy) throws OsirisException;
 
         public void notifyIncidentReportAsked(IncidentReport incident) throws OsirisException;
+
+        public void notifyQuotationModified(CustomerOrder customerOrder);
 
         public void notifyImmediateAffactationOfOrder(CustomerOrder customerOrder) throws OsirisException;
 }

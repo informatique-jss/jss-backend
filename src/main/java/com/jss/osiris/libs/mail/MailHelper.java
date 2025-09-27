@@ -8,18 +8,21 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.poi.util.IOUtils;
+import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamSource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -54,6 +57,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
+import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
@@ -77,6 +81,7 @@ import com.jss.osiris.modules.osiris.tiers.model.Rff;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
 
+import ch.digitalfondue.mjml4j.Mjml4j;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
@@ -112,6 +117,12 @@ public class MailHelper {
 
     @Value("${jss.media.entry.point}")
     private String jssMediaEntryPoint;
+
+    @Value("${my.jss.entry.point}")
+    private String myJssEntryPoint;
+
+    @Value("${mail.use.new}")
+    private Boolean useNewMail;
 
     private JavaMailSender javaMailSender;
 
@@ -175,7 +186,12 @@ public class MailHelper {
     @Autowired
     ProvisionService provisionService;
 
-    @Bean
+    @Autowired
+    EmployeeService employeeService;
+
+    @Autowired
+    ResourceLoader resourceLoader;
+
     public TemplateEngine emailTemplateEngine() {
         final SpringTemplateEngine templateEngine = new SpringTemplateEngine();
         templateEngine.addTemplateResolver(htmlTemplateResolver());
@@ -186,12 +202,30 @@ public class MailHelper {
     private ITemplateResolver htmlTemplateResolver() {
         final ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
         templateResolver.setOrder(Integer.valueOf(1));
-        templateResolver.setPrefix("mails/templates/");
-        templateResolver.setSuffix(".html");
+        if (useNewMail) {
+            templateResolver.setPrefix("mails/mjml/");
+            templateResolver.setSuffix(".mjml");
+        } else {
+            templateResolver.setPrefix("mails/templates/");
+            templateResolver.setSuffix(".html");
+        }
         templateResolver.setTemplateMode(TemplateMode.HTML);
         templateResolver.setCharacterEncoding(EMAIL_TEMPLATE_ENCODING);
         templateResolver.setCacheable(false);
         return templateResolver;
+    }
+
+    private String parseMjmlFile(String mjmlString) {
+        if (useNewMail) {
+            org.jsoup.nodes.Document xhtmlDoc = Jsoup.parse(Mjml4j.render(mjmlString), "UTF-8");
+            xhtmlDoc.outputSettings()
+                    .syntax(org.jsoup.nodes.Document.OutputSettings.Syntax.xml)
+                    .escapeMode(org.jsoup.nodes.Entities.EscapeMode.xhtml)
+                    .charset("UTF-8");
+
+            return xhtmlDoc.html();
+        } else
+            return mjmlString;
     }
 
     public JavaMailSender getMailSender() throws OsirisException {
@@ -273,7 +307,7 @@ public class MailHelper {
 
             // Create the HTML body using Thymeleaf
             final String htmlContent = StringEscapeUtils
-                    .unescapeHtml4(emailTemplateEngine().process(mail.getMailTemplate(), ctx));
+                    .unescapeHtml4(parseMjmlFile(emailTemplateEngine().process(mail.getMailTemplate(), ctx)));
             message.setText(htmlContent, true);
 
             // header picture
@@ -283,7 +317,9 @@ public class MailHelper {
                 message.addInline("headerPicture", imageSourceQuotationHeader, PNG_MIME);
 
                 // QR Code
-                if (mail.getCbLink() != null) {
+                if (mail.getCbLink() != null && mail.getMailComputeResult() != null
+                        && (mail.getIsQrCodePaymentDisabled() == null
+                                || !mail.getIsQrCodePaymentDisabled())) {
                     final InputStreamSource imageSourceQrCode = new ByteArrayResource(
                             qrCodeHelper.getQrCode(mail.getCbLink(), 150));
                     message.addInline("qrCodePicture", imageSourceQrCode, PNG_MIME);
@@ -313,6 +349,38 @@ public class MailHelper {
                 final InputStreamSource imageSourceTwitter = new ByteArrayResource(
                         IOUtils.toByteArray(new ClassPathResource("images/twitter.png").getInputStream()));
                 message.addInline("twitter", imageSourceTwitter, PNG_MIME);
+
+                if (useNewMail) {
+                    // template header
+                    Resource resource = resourceLoader
+                            .getResource("classpath:images/mails/mjml/" + mail.getMailTemplate() + ".png");
+                    if (resource.exists()) {
+                        final InputStreamSource imageSourceHeader = new ByteArrayResource(
+                                IOUtils.toByteArray(
+                                        new ClassPathResource("images/mails/mjml/" + mail.getMailTemplate() + ".png")
+                                                .getInputStream()));
+                        message.addInline("mailHeaderPicture", imageSourceHeader, PNG_MIME);
+                    }
+
+                    final InputStreamSource imageFooterPicture = new ByteArrayResource(
+                            IOUtils.toByteArray(
+                                    new ClassPathResource("images/mails/mjml/footer.png")
+                                            .getInputStream()));
+                    message.addInline("mailFooterPicture", imageFooterPicture, PNG_MIME);
+
+                    final InputStreamSource imageBackgourndPicture = new ByteArrayResource(
+                            IOUtils.toByteArray(
+                                    new ClassPathResource(
+                                            "images/mails/mjml/background-" + getBackgroundColor(mail) + ".png")
+                                            .getInputStream()));
+                    message.addInline("mailBackgroundPicture", imageBackgourndPicture, PNG_MIME);
+
+                    final InputStreamSource imageLogoPicture = new ByteArrayResource(
+                            IOUtils.toByteArray(
+                                    new ClassPathResource("images/mails/mjml/logo-" + getBackgroundColor(mail) + ".png")
+                                            .getInputStream()));
+                    message.addInline("mailLogoPicture", imageLogoPicture, PNG_MIME);
+                }
             } catch (IOException e) {
                 throw new OsirisException(e, "Unable to find some pictures for customer mail " + mail.getId());
             }
@@ -320,34 +388,43 @@ public class MailHelper {
             if (mail.getAttachments() != null) {
                 List<Integer> attachmentsDone = new ArrayList<Integer>();
                 for (Attachment attachment : mail.getAttachments()) {
-                    if ((attachment.getParentAttachment() == null && !attachmentsDone.contains(attachment.getId()))
-                            || (attachment.getParentAttachment() != null
-                                    && !attachmentsDone.contains(attachment.getParentAttachment().getId()))) {
-                        if (attachment.getParentAttachment() != null)
-                            attachmentsDone.add(attachment.getParentAttachment().getId());
-                        else
-                            attachmentsDone.add(attachment.getId());
-                        message.addAttachment(attachment.getUploadedFile().getFilename(),
-                                new File(attachment.getUploadedFile().getPath()));
-
-                        if (mail.getSendToMe() == null || mail.getSendToMe() == false) {
-                            attachment.setIsAlreadySent(true);
-                            attachmentService.addOrUpdateAttachment(attachment);
+                    if (!Boolean.TRUE.equals(attachment.getIsDisabled()))
+                        if ((attachment.getParentAttachment() == null && !attachmentsDone.contains(attachment.getId()))
+                                || (attachment.getParentAttachment() != null
+                                        && !attachmentsDone.contains(attachment.getParentAttachment().getId()))) {
                             if (attachment.getParentAttachment() != null)
-                                attachment.getParentAttachment().setIsAlreadySent(true);
-                            else if (attachment != null)
-                                attachment.setIsAlreadySent(true);
+                                attachmentsDone.add(attachment.getParentAttachment().getId());
+                            else
+                                attachmentsDone.add(attachment.getId());
+                            message.addAttachment(attachment.getUploadedFile().getFilename(),
+                                    new File(attachment.getUploadedFile().getPath()));
 
-                            if (attachment != null && attachment.getParentAttachment() != null)
-                                attachmentService.addOrUpdateAttachment(attachment.getParentAttachment());
+                            if (mail.getSendToMe() == null || mail.getSendToMe() == false) {
+                                attachment.setIsAlreadySent(true);
+                                attachmentService.addOrUpdateAttachment(attachment);
+                                if (attachment.getParentAttachment() != null)
+                                    attachment.getParentAttachment().setIsAlreadySent(true);
+                                else if (attachment != null)
+                                    attachment.setIsAlreadySent(true);
+
+                                if (attachment != null && attachment.getParentAttachment() != null)
+                                    attachmentService.addOrUpdateAttachment(attachment.getParentAttachment());
+                            }
                         }
-                    }
                 }
             }
         } catch (MessagingException e) {
         }
 
         return mimeMessage;
+    }
+
+    private String getBackgroundColor(CustomerMail mail) {
+        if (Arrays.asList(CustomerMail.TEMPLATE_SEND_CONTRIBUTION_REQUEST,
+                CustomerMail.TEMPLATE_SEND_CANDIDACY_CONFIRMATION, CustomerMail.TEMPLATE_SEND_GIFTED_POST)
+                .contains(mail.getMailTemplate()))
+            return "blue";
+        return "white";
     }
 
     public File generateGenericPdfOfMail(CustomerMail mail)
@@ -357,7 +434,8 @@ public class MailHelper {
         String htmlContent = "";
         // Create the HTML body using Thymeleaf
         try {
-            htmlContent = StringEscapeUtils.unescapeHtml4(emailTemplateEngine().process(mail.getMailTemplate(), ctx));
+            htmlContent = StringEscapeUtils
+                    .unescapeHtml4(parseMjmlFile(emailTemplateEngine().process(mail.getMailTemplate(), ctx)));
         } catch (Exception e) {
             throw new OsirisException(e, "Unable to parse HTML for mail " + mail.getId());
         }
@@ -379,12 +457,27 @@ public class MailHelper {
         ctx.setVariable("headerPicture", mail.getHeaderPicture() != null ? "headerPicture" : null);
         ctx.setVariable("customerOrder", mail.getCustomerOrder());
         ctx.setVariable("quotation", mail.getQuotation());
-        ctx.setVariable("replyToEmployee", mail.getReplyTo() != null ? mail.getReplyTo() : mail.getSendToMeEmployee());
+
+        if (useNewMail && Arrays
+                .asList(CustomerMail.TEMPLATE_BILLING_CLOSURE, CustomerMail.TEMPLATE_SEND_CREDIT_NOTE)
+                .contains(mail.getMailTemplate())) {
+            Employee replyEmployeeAccounting = new Employee();
+            replyEmployeeAccounting.setFirstname("Service Comptabilité");
+            replyEmployeeAccounting.setMail(constantService.getStringAccountingSharedMaiblox());
+            ctx.setVariable("replyToEmployee", replyEmployeeAccounting);
+        } else if (useNewMail && Arrays
+                .asList(CustomerMail.TEMPLATE_INVOICE_REMINDER, CustomerMail.TEMPLATE_CUSTOMER_ORDER_FINALIZATION)
+                .contains(mail.getMailTemplate())) {
+            Employee replyEmployeeRecover = new Employee();
+            replyEmployeeRecover.setFirstname("Service Recouvrement");
+            replyEmployeeRecover.setMail(constantService.getRecoverySharedMaiblox());
+            ctx.setVariable("replyToEmployee", replyEmployeeRecover);
+        } else
+            ctx.setVariable("replyToEmployee",
+                    mail.getReplyTo() != null ? mail.getReplyTo() : mail.getSendToMeEmployee());
 
         IQuotation quotation = mail.getCustomerOrder() != null ? mail.getCustomerOrder() : mail.getQuotation();
         if (quotation != null) {
-            ctx.setVariable("customerName", getCustomerName(quotation));
-
             AssoAffaireOrder assoAffaireOrderToUse = null;
             if (mail.getProvision() != null)
                 if (quotation.getAssoAffaireOrders() != null)
@@ -395,6 +488,22 @@ public class MailHelper {
                                     assoAffaireOrderToUse = assoAffaireOrder;
                                     break outerloop;
                                 }
+
+            ctx.setVariable("customerName", getCustomerName(quotation, mail.getTiers(), mail.getResponsable()));
+            if (mail.getMailComputeResult() != null && mail.getMailComputeResult().getIsSendToAffaire()
+                    && (mail.getMailTemplate().equals(CustomerMail.TEMPLATE_CUSTOMER_ORDER_FINALIZATION)
+                            || mail.getMailTemplate().equals(CustomerMail.TEMPLATE_INVOICE_REMINDER))
+                    && quotation.getAssoAffaireOrders() != null && quotation.getAssoAffaireOrders().size() > 0) {
+                if (quotation.getAssoAffaireOrders().get(0).getAffaire().getIsIndividual()
+                        && quotation.getAssoAffaireOrders().get(0).getAffaire().getLastname() != null
+                        && quotation.getAssoAffaireOrders().get(0).getAffaire().getFirstname() != null)
+                    ctx.setVariable("customerName", quotation.getAssoAffaireOrders().get(0).getAffaire().getFirstname()
+                            + ' ' + quotation.getAssoAffaireOrders().get(0).getAffaire().getLastname());
+
+                else
+                    ctx.setVariable("customerName",
+                            quotation.getAssoAffaireOrders().get(0).getAffaire().getDenomination());
+            }
 
             ctx.setVariable("affaireLabel", getCustomerOrderAffaireLabel(quotation, assoAffaireOrderToUse));
             ctx.setVariable("affaireLabelDetails",
@@ -437,31 +546,34 @@ public class MailHelper {
         ctx.setVariable("ibanJss", ibanJss);
         ctx.setVariable("bicJss", bicJss);
         ctx.setVariable("cbLink", mail.getCbLink());
+        ctx.setVariable("isQrCodePaymentDisabled", Boolean.TRUE.equals(mail.getIsQrCodePaymentDisabled()));
 
         if (mail.getMailTemplate().equals(CustomerMail.TEMPLATE_CUSTOMER_ORDER_IN_PROGRESS)
-                && (mail.getCustomerOrder() != null || mail.getQuotation() != null)) {
+                && (mail.getCustomerOrder() != null || mail.getQuotation() != null))
             try {
                 MailComputeResult mailComputeResultInvoice = mailComputeHelper
                         .computeMailForCustomerOrderFinalizationAndInvoice(
-                                mail.getCustomerOrder() != null ? mail.getCustomerOrder() : mail.getQuotation());
+                                mail.getCustomerOrder() != null ? mail.getCustomerOrder() : mail.getQuotation(), false);
                 if (mailComputeResultInvoice != null)
                     ctx.setVariable("mailComputeResultInvoice", mailComputeResultInvoice);
             } catch (OsirisClientMessageException e) {
                 // We catch the exception so the mail is still sent even if the adress of the
                 // Affaire is not set
             }
-        }
         ctx.setVariable("attachments", mail.getAttachments());
         ctx.setVariable("provision", mail.getProvision());
         ctx.setVariable("tiers", mail.getTiers());
         ctx.setVariable("explaination", mail.getExplaination());
         ctx.setVariable("qrCodePicture", mail.getCbLink() != null ? "qrCodePicture" : null);
+        ctx.setVariable("todayDateString", LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         ctx.setVariable("endOfYearDateString",
                 LocalDate.now().withMonth(12).withDayOfMonth(31).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
         if (mail.getProvision() != null && mail.getProvision().getAnnouncement() != null
                 && mail.getProvision().getAnnouncement().getIsAnnouncementAlreadySentToConfrere() != null
-                && mail.getProvision().getAnnouncement().getIsAnnouncementAlreadySentToConfrere()) {
+                && mail.getProvision().getAnnouncement().getIsAnnouncementAlreadySentToConfrere())
+
+        {
             ctx.setVariable("sentDateToConfrere", mail.getProvision().getAnnouncement()
                     .getFirstConfrereSentMailDateTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy à HH:mm")));
         }
@@ -487,6 +599,7 @@ public class MailHelper {
         }
 
         if (quotation != null)
+
             setQuotationPrice(quotation, ctx);
 
         if (mail.getMissingAttachmentQuery() != null) {
@@ -527,8 +640,22 @@ public class MailHelper {
 
         if (mail.getSubscription() != null) {
             ctx.setVariable("postLink", jssMediaEntryPoint + "/posts/" + mail.getSubscription().getValidationToken()
-                    + "/" + mail.getSubscription().getSubscriptionOfferedMail());
+                    + "/" + mail.getSubscription().getSubscriptionOfferedMail().getMail());
             ctx.setVariable("responsable", mail.getSubscription().getSubcriptionMail().getResponsables().get(0));
+        }
+
+        if (useNewMail) {
+            ctx.setVariable("mailHeaderPicture", "mailHeaderPicture");
+            ctx.setVariable("mailFooterPicture", "mailFooterPicture");
+            ctx.setVariable("mailBackgroundPicture", "mailBackgroundPicture");
+            ctx.setVariable("mailLogoPicture", "mailLogoPicture");
+            ctx.setVariable("myJssEntryPoint", myJssEntryPoint);
+            ctx.setVariable("jssMediaEntryPoint", jssMediaEntryPoint);
+            ctx.setVariable("websiteUrl",
+                    getBackgroundColor(mail).equals("blue") ? "https://www.jss.fr" : "https://my.jss.fr");
+            if (invoice != null)
+                ctx.setVariable("invoiceCreatedDateString",
+                        invoice.getCreatedDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         }
     }
 
@@ -617,13 +744,22 @@ public class MailHelper {
         return affaireLabel;
     }
 
-    private String getCustomerName(IQuotation customerOrder) {
+    private String getCustomerName(IQuotation customerOrder, Tiers tiers, Responsable responsable) {
         String customerName = "";
         if (customerOrder != null) {
             if (customerOrder.getResponsable() != null) {
                 customerName = customerOrder.getResponsable().getCivility().getLabel() + " "
                         + customerOrder.getResponsable().getFirstname() + " "
                         + customerOrder.getResponsable().getLastname();
+            }
+        } else if (responsable != null) {
+            customerName = responsable.getCivility().getLabel() + " " + responsable.getFirstname() + " "
+                    + responsable.getLastname();
+        } else if (tiers != null) {
+            if (tiers.getIsIndividual()) {
+                customerName = tiers.getCivility().getLabel() + " " + tiers.getFirstname() + " " + tiers.getLastname();
+            } else {
+                customerName = tiers.getDenomination();
             }
         }
         return customerName;
@@ -641,7 +777,7 @@ public class MailHelper {
         ctx.setVariable("greetings", greetings);
 
         // Create the HTML body using Thymeleaf
-        return emailTemplateEngine().process("model", ctx);
+        return parseMjmlFile(emailTemplateEngine().process("model", ctx));
     }
 
     public void setQuotationPrice(IQuotation quotation, Context ctx)
@@ -840,6 +976,13 @@ public class MailHelper {
                 CustomerMail.TEMPLATE_SEND_CONTACT_CONFIRMATION);
     }
 
+    public void sendConfirmationContributeFormJssMedia(String mailAdress) throws OsirisException {
+        sendCustomerMailForMyJssMail(mailAdress, null,
+                constantService.getStringMyJssContactFormRequestMail(),
+                "Confirmation de la réception de votre demande de contribution",
+                CustomerMail.TEMPLATE_SEND_CONTRIBUTION_CONFIRMATION);
+    }
+
     public void sendCustomerDemoRequestToCommercial(String mailAdress, String firstName, String lastName,
             String phoneNumber) throws OsirisException {
         String explaination = firstName + " " + lastName + " - " + mailAdress;
@@ -865,8 +1008,20 @@ public class MailHelper {
                 + message;
         sendCustomerMailForMyJssMail(constantService.getStringMyJssContactFormRequestMail(), explaination,
                 constantService.getStringMyJssContactFormRequestMail(),
-                "Notification d'une contribution d'un lecteur",
+                "Notification d'une demande de contact",
                 CustomerMail.TEMPLATE_SEND_CONTACT_REQUEST);
+    }
+
+    public void sendContributeFormNotificationMail(String mailAdress, String firstName, String lastName,
+            String phoneNumber,
+            String message) throws OsirisException {
+        String explaination = firstName + " " + lastName + " - "
+                + (phoneNumber != null && phoneNumber.length() > 0 ? phoneNumber + " - " : "") + mailAdress + " : "
+                + message;
+        sendCustomerMailForMyJssMail(constantService.getStringMyJssContactFormRequestMail(), explaination,
+                constantService.getStringMyJssContactFormRequestMail(),
+                "Notification d'une contribution d'un lecteur",
+                CustomerMail.TEMPLATE_SEND_CONTRIBUTION_REQUEST);
     }
 
     public void sendCustomerPricesRequestToCommercial(String mailAdress, String firstName, String lastName,
@@ -897,7 +1052,8 @@ public class MailHelper {
         if (quotation.getAttachments() != null && quotation.getAttachments().size() > 0) {
             for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(quotation.getAttachments())) {
                 if (attachment.getAttachmentType() != null && attachment.getAttachmentType().getId()
-                        .equals(constantService.getAttachmentTypeQuotation().getId())) {
+                        .equals(constantService.getAttachmentTypeQuotation().getId())
+                        && !Boolean.TRUE.equals(attachment.getIsDisabled())) {
                     if (mail.getAttachments() == null)
                         mail.setAttachments(new ArrayList<Attachment>());
                     mail.getAttachments().add(attachment);
@@ -1013,7 +1169,7 @@ public class MailHelper {
         if (currentProvision.getAttachments() != null) {
             for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(currentProvision.getAttachments()))
                 if (attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypePublicationReceipt()
-                        .getId())) {
+                        .getId()) && !Boolean.TRUE.equals(attachment.getIsDisabled())) {
                     attachments.add(attachment);
                     break;
                 }
@@ -1065,7 +1221,8 @@ public class MailHelper {
         for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(currentProvision.getAttachments()))
             if (attachment.getAttachmentType().getId()
                     .equals(constantService.getAttachmentTypeProofReading()
-                            .getId())) {
+                            .getId())
+                    && !Boolean.TRUE.equals(attachment.getIsDisabled())) {
                 attachments.add(attachment);
                 break;
             }
@@ -1108,7 +1265,8 @@ public class MailHelper {
         mail.setProvision(currentProvision);
         mail.setReplyTo(customerOrder.getResponsable().getSalesEmployee());
         mail.setSendToMe(false);
-        mail.setMailComputeResult(mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(customerOrder));
+        mail.setMailComputeResult(
+                mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(customerOrder, false));
         mail.setSubject("Publication de vos comptes annuels - "
                 + getCustomerOrderAffaireLabel(customerOrder, currentProvision.getService().getAssoAffaireOrder()));
         customerMailService.addMailToQueue(mail);
@@ -1139,7 +1297,7 @@ public class MailHelper {
         if (currentProvision.getAttachments() != null) {
             for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(currentProvision.getAttachments()))
                 if (attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypePublicationFlag()
-                        .getId())) {
+                        .getId()) && !Boolean.TRUE.equals(attachment.getIsDisabled())) {
                     attachments.add(attachment);
                     break;
                 }
@@ -1182,9 +1340,8 @@ public class MailHelper {
 
         List<Attachment> attachments = new ArrayList<Attachment>();
         for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(provision.getAttachments()))
-            if (attachment.getAttachmentType().getId()
-                    .equals(constantService.getAttachmentTypeAnnouncement()
-                            .getId())) {
+            if (attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeAnnouncement()
+                    .getId()) && !Boolean.TRUE.equals(attachment.getIsDisabled())) {
                 attachments.add(attachment);
                 break;
             }
@@ -1218,9 +1375,8 @@ public class MailHelper {
 
         List<Attachment> attachments = new ArrayList<Attachment>();
         for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(provision.getAttachments()))
-            if (attachment.getAttachmentType().getId()
-                    .equals(constantService.getAttachmentTypeAnnouncement()
-                            .getId())) {
+            if (attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeAnnouncement()
+                    .getId()) && !Boolean.TRUE.equals(attachment.getIsDisabled())) {
                 attachments.add(attachment);
                 break;
             }
@@ -1252,9 +1408,8 @@ public class MailHelper {
 
         List<Attachment> attachments = new ArrayList<Attachment>();
         for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(provision.getAttachments()))
-            if (attachment.getAttachmentType().getId()
-                    .equals(constantService.getAttachmentTypeAnnouncement()
-                            .getId())) {
+            if (attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeAnnouncement()
+                    .getId()) && !Boolean.TRUE.equals(attachment.getIsDisabled())) {
                 attachments.add(attachment);
                 break;
             }
@@ -1278,14 +1433,17 @@ public class MailHelper {
 
         CustomerMail mail = new CustomerMail();
         mail.setCustomerOrder(customerOrder);
-        mail.setMailComputeResult(mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(customerOrder));
+        mail.setMailComputeResult(
+                mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(customerOrder,
+                        isReminder || isLastReminder));
 
         List<Attachment> attachments = new ArrayList<Attachment>();
         List<Integer> attachmentTypeIdsDone = new ArrayList<Integer>();
 
         if (customerOrder.getAttachments() != null) {
             for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(customerOrder.getAttachments())) {
-                if (attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeInvoice().getId())) {
+                if (attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeInvoice().getId())
+                        && !Boolean.TRUE.equals(attachment.getIsDisabled())) {
                     attachments.add(attachment);
                     attachmentTypeIdsDone.add(attachment.getAttachmentType().getId());
                     break;
@@ -1304,21 +1462,41 @@ public class MailHelper {
 
         mail.setIsLastReminder(isLastReminder);
 
+        if (customerOrder.getDocuments() != null && customerOrder.getDocuments().size() > 0) {
+            for (Document document : customerOrder.getDocuments())
+                if (document.getDocumentType().getId().equals(constantService.getDocumentTypeBilling().getId())
+                        && (document.getIsQrCodePaymentDisabled() == null
+                                || (document.getIsQrCodePaymentDisabled() != null
+                                        && !document.getIsQrCodePaymentDisabled())))
+                    mail.setIsQrCodePaymentDisabled(false);
+                else if (document.getDocumentType().getId()
+                        .equals(constantService.getDocumentTypeBilling().getId())) {
+                    mail.setIsQrCodePaymentDisabled(true);
+                    break;
+                }
+        }
+
         Invoice invoice = null;
         for (Invoice invoiceCo : mail.getCustomerOrder().getInvoices())
             if (invoiceCo.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusSend().getId())
                     || invoiceCo.getInvoiceStatus().getId().equals(constantService.getInvoiceStatusPayed().getId()))
                 invoice = invoiceCo;
 
-        mail.setCbLink(
-                paymentCbEntryPoint + "/order/invoice?customerOrderId=" + mail.getCustomerOrder().getId() + "&mail="
-                        + mail.getMailComputeResult().getRecipientsMailTo().get(0).getMail());
+        if (mail.getMailComputeResult() != null)
+            mail.setCbLink(
+                    paymentCbEntryPoint + "/order/invoice?customerOrderId=" + mail.getCustomerOrder().getId() + "&mail="
+                            + mail.getMailComputeResult().getRecipientsMailTo().get(0).getMail());
 
-        if (invoice != null)
-            mail.setSubject(
-                    "Votre facture n°" + invoice.getId() + " concernant la commande n°" + customerOrder.getId() + " - "
-                            + getCustomerOrderAffaireLabel(customerOrder, null));
-        else
+        if (invoice != null) {
+            if (isReminder || isLastReminder)
+                mail.setSubject("Votre facture n°" + invoice.getId() + " est en attente de paiement - "
+                        + getCustomerOrderAffaireLabel(customerOrder, null));
+            else
+                mail.setSubject(
+                        "Votre facture n°" + invoice.getId() + " concernant la commande n°" + customerOrder.getId()
+                                + " - "
+                                + getCustomerOrderAffaireLabel(customerOrder, null));
+        } else
             mail.setSubject(
                     "Votre facture concernant la commande n°" + customerOrder.getId() + " - "
                             + getCustomerOrderAffaireLabel(customerOrder, null));
@@ -1376,6 +1554,8 @@ public class MailHelper {
         mail.setReplyToMail(constantService.getStringMyJssContactFormRequestMail() + "");
         mail.setSendToMe(false);
         mail.setSubscription(subscription);
+        mail.setHeaderPicture("images/mails/waiting-quotation-validation.jpg");
+        mail.setResponsable(employeeService.getCurrentMyJssUser());
 
         MailComputeResult mailComputeResult = new MailComputeResult();
         mailComputeResult.setRecipientsMailTo(new ArrayList<Mail>());
@@ -1383,7 +1563,7 @@ public class MailHelper {
         mailComputeResult.getRecipientsMailTo().add(subscription.getSubscriptionOfferedMail());
         mail.setMailComputeResult(mailComputeResult);
 
-        mail.setSubject("Votre article offert");
+        mail.setSubject("Un article Premium vous est offert");
 
         customerMailService.addMailToQueue(mail);
     }
@@ -1411,7 +1591,12 @@ public class MailHelper {
         CustomerMail mail = new CustomerMail();
         mail.setMailTemplate(CustomerMail.TEMPLATE_REQUEST_RIB);
         mail.setHeaderPicture("images/mails/request-rib.png");
-        mail.setReplyTo(assoAffaireOrder.getCustomerOrder().getResponsable().getSalesEmployee());
+        if (assoAffaireOrder.getCustomerOrder() != null
+                && assoAffaireOrder.getCustomerOrder().getInvoicingEmployee() != null)
+            mail.setReplyTo(assoAffaireOrder.getCustomerOrder().getInvoicingEmployee());
+        else
+            mail.setReplyTo(employeeService.getCurrentEmployee());
+
         mail.setSendToMe(false);
         MailComputeResult mailComputeResult = new MailComputeResult();
         mailComputeResult.setRecipientsMailTo(new ArrayList<Mail>());
@@ -1428,7 +1613,7 @@ public class MailHelper {
     public void sendRffToCustomer(Rff rff, boolean sendToMe) throws OsirisException, OsirisClientMessageException {
         CustomerMail mail = new CustomerMail();
         mail.setHeaderPicture("images/mails/send-rff.png");
-        mail.setReplyToMail(rff.getTiers().getSalesEmployee().getMail());
+        mail.setReplyTo(rff.getTiers().getSalesEmployee());
         mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(mailComputeHelper.computeMailForRff(rff));
         mail.setSubject("Vos remboursements forfaitaires de frais pour le compte n°" + rff.getTiers().getId());
@@ -1522,7 +1707,8 @@ public class MailHelper {
 
         CustomerMail mail = new CustomerMail();
         mail.setCustomerOrder(customerOrder);
-        mail.setMailComputeResult(mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(customerOrder));
+        mail.setMailComputeResult(
+                mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(customerOrder, false));
 
         List<Attachment> attachments = new ArrayList<Attachment>();
         List<Integer> attachmentTypeIdsDone = new ArrayList<Integer>();
@@ -1530,7 +1716,8 @@ public class MailHelper {
         if (customerOrder.getAttachments() != null) {
             for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(customerOrder.getAttachments())) {
                 if (attachment.getAttachmentType().getId()
-                        .equals(constantService.getAttachmentTypeCreditNote().getId())) {
+                        .equals(constantService.getAttachmentTypeCreditNote().getId())
+                        && !Boolean.TRUE.equals(attachment.getIsDisabled())) {
                     attachments.add(attachment);
                     attachmentTypeIdsDone.add(attachment.getAttachmentType().getId());
                     break;
@@ -1619,7 +1806,8 @@ public class MailHelper {
                 if (attachment.getAttachmentType().getIsToSentOnFinalizationMail()
                         && !attachmentTypeIdsDone.contains(attachment.getAttachmentType().getId())
                         && !attachment.getAttachmentType().getId()
-                                .equals(constantService.getAttachmentTypeInvoice().getId())) {
+                                .equals(constantService.getAttachmentTypeInvoice().getId())
+                        && !Boolean.TRUE.equals(attachment.getIsDisabled())) {
                     attachments.add(attachment);
                     attachmentTypeIdsDone.add(attachment.getAttachmentType().getId());
                 }
@@ -1634,6 +1822,7 @@ public class MailHelper {
                                     if ((sendToMe == true || attachment.getIsAlreadySent() == false)
                                             && attachment.getAttachmentType().getIsToSentOnFinalizationMail()
                                             && !attachmentTypeIdsDone.contains(attachment.getAttachmentType().getId())
+                                            && !Boolean.TRUE.equals(attachment.getIsDisabled())
                                             && !attachment.getAttachmentType().getId()
                                                     .equals(constantService.getAttachmentTypeInvoice().getId())) {
                                         attachments.add(attachment);

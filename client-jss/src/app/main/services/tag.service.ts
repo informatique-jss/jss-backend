@@ -41,6 +41,10 @@ export class TagService extends AppRestService<Tag> {
     return this.getList(new HttpParams().set("authorSlug", author.slug).set("isDisplayNewPosts", isDisplayNewPosts), "tags/all/author");
   }
 
+  getAllTagsByPremiumPosts() {
+    return this.getList(new HttpParams(), "tags/all/premium");
+  }
+
   getAllTagsBySerie(serie: Serie) {
     return this.getList(new HttpParams().set("serieSlug", serie.slug), "tags/all/serie");
   }
@@ -51,5 +55,13 @@ export class TagService extends AppRestService<Tag> {
 
   getAllTendencyTags() {
     return this.getList(new HttpParams(), "tags/tendency");
+  }
+
+  getAllLastPostsTags() {
+    return this.getList(new HttpParams(), "tags/last");
+  }
+
+  getAllMostSeenPostsTags() {
+    return this.getList(new HttpParams(), "tags/most-seen");
   }
 }

@@ -26,6 +26,7 @@ public class JssCategory implements Serializable {
     @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private String slug;
 
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private String color;
 
     @JsonView(JacksonViews.MyJssListView.class)

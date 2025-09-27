@@ -47,7 +47,7 @@ export class AudioPlayerService {
     const lastTrackId = this.userPref.getCurrentPlayingTrack();
     const lastTrackTime = this.userPref.getCurrentPlayingTrackTime();
 
-    if (lastTrackId) {
+    if (lastTrackId && lastTrackId != "null") {
       this.postService.getPostById(parseInt(lastTrackId)).subscribe(post => {
         this.setTrack(post);
         if (this.isAudioPodcast(post) && lastTrackTime) {

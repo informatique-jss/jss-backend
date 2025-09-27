@@ -10,6 +10,8 @@ import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { Mail } from '../../../general/model/Mail';
 import { AppService } from '../../../main/services/app.service';
 import { ConstantService } from '../../../main/services/constant.service';
+import { GtmService } from '../../../main/services/gtm.service';
+import { PageInfo, PurchasePayload } from '../../../main/services/GtmPayload';
 import { AutocompleteCityComponent } from '../../../miscellaneous/components/forms/autocomplete-city/autocomplete-city.component';
 import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { GenericTextareaComponent } from '../../../miscellaneous/components/forms/generic-textarea/generic-textarea.component';
@@ -33,7 +35,6 @@ import { Phone } from '../../../profile/model/Phone';
 import { Responsable } from '../../../profile/model/Responsable';
 import { Tiers } from '../../../profile/model/Tiers';
 import { LoginService } from '../../../profile/services/login.service';
-import { ResponsableService } from '../../../profile/services/responsable.service';
 import { IQuotation } from '../../model/IQuotation';
 import { CityService } from '../../services/city.service';
 
@@ -95,6 +96,7 @@ export class CheckoutComponent implements OnInit {
 
   acceptDocs: boolean = false;
   acceptTerms: boolean = false;
+  acceptUseTerms: boolean = false;
 
   quotationPriceObservableRef: Subscription | undefined;
 
@@ -124,7 +126,7 @@ export class CheckoutComponent implements OnInit {
     private documentService: DocumentService,
     private cityService: CityService,
     private voucherService: VoucherService,
-    private responsableService: ResponsableService
+    private gtmService: GtmService
 
   ) { }
 
@@ -191,6 +193,25 @@ export class CheckoutComponent implements OnInit {
     }
   }
 
+  trackPurchase(isDraft: boolean, quotationId: number) {
+    if (this.quotation)
+      this.gtmService.trackPurchase(
+        {
+          business: {
+            type: 'order',
+            order_id: quotationId,
+            amount: this.totalPrice,
+            service: this.quotation.serviceFamilyGroup!.label,
+            is_draft: isDraft
+          },
+          page: {
+            type: 'quotation',
+            name: 'checkout'
+          } as PageInfo
+        } as PurchasePayload
+      );
+  }
+
   onValidateOrder(isDraft: boolean) {
     this.documentForm.markAllAsTouched();
     if (this.isOrderPossible())
@@ -208,6 +229,7 @@ export class CheckoutComponent implements OnInit {
         if (this.quotation.isQuotation)
           this.quotationService.saveFinalQuotation(this.quotation as Quotation, !isDraft).subscribe(response => {
             if (response && response.id) {
+              this.trackPurchase(isDraft, response.id);
               this.cleanStorageData();
               this.appService.hideLoadingSpinner();
               this.loginService.refreshUserRoles().subscribe(role => {
@@ -221,6 +243,7 @@ export class CheckoutComponent implements OnInit {
         else
           this.orderService.saveFinalOrder(this.quotation as CustomerOrder, !isDraft).subscribe(response => {
             if (response && response.id) {
+              this.trackPurchase(isDraft, response.id);
               this.cleanStorageData();
               this.appService.hideLoadingSpinner();
               this.loginService.refreshUserRoles().subscribe(role => {
@@ -272,7 +295,7 @@ export class CheckoutComponent implements OnInit {
       this.appService.displayToast("Les deux e-mails renseignés ne sont pas identiques !", true, "Validation de " + (this.quotation!.isQuotation ? "devis" : "commande") + " impossible", 5000);
       return false;
     }
-    if (!this.acceptDocs || !this.acceptTerms) {
+    if (!this.acceptDocs || !this.acceptTerms || (!this.currentUser && !this.acceptUseTerms)) {
       this.appService.displayToast("Vous devez accepter les conditions ci-dessus pour pouvoir valider " + (this.quotation!.isQuotation ? "le devis" : "la commande"), true, "Validation de " + (this.quotation!.isQuotation ? "devis" : "commande") + " impossible", 50000);
       return false;
     }
@@ -732,5 +755,13 @@ export class CheckoutComponent implements OnInit {
   goBackQuotation() {
     this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[2]);
     this.appService.openRoute(undefined, "quotation/required-information", undefined);
+  }
+
+  getBillingDocument() {
+    if (this.quotation && this.quotation.documents)
+      for (let doc of this.quotation.documents)
+        if (doc.documentType.id == this.constantService.getDocumentTypeBilling().id)
+          return doc
+    return null;
   }
 }

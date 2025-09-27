@@ -3,6 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { TrustHtmlPipe } from '../../../libs/TrustHtmlPipe';
+import { GtmService } from '../../../services/gtm.service';
+import { CtaClickPayload, PageInfo } from '../../../services/GtmPayload';
 import { Announcement } from '../../model/Announcement';
 import { AnnouncementService } from '../../services/announcement.service';
 import { NewsletterComponent } from "../newsletter/newsletter.component";
@@ -23,6 +25,7 @@ export class AnnouncementComponent implements OnInit {
     private announcementService: AnnouncementService,
     private activatedRoute: ActivatedRoute,
     private location: Location,
+    private gtmService: GtmService
   ) { }
 
   ngOnInit() {
@@ -33,12 +36,26 @@ export class AnnouncementComponent implements OnInit {
       })
   }
 
+  trackCtaClickDownloadFlag() {
+    this.gtmService.trackCtaClick(
+      {
+        cta: { type: 'link', label: "Télécharger le témoin de parution", objectId: this.idAnnouncement },
+        page: {
+          type: 'main',
+          name: 'announcement'
+        } as PageInfo
+      } as CtaClickPayload
+    );
+  }
+
   goBack() {
     this.location.back();
   }
 
-  downloadPublicationReceipt() {
-    if (this.announcement)
-      this.announcementService.downloadPublicationReceipt(this.announcement);
+  downloadPublicationFlag() {
+    if (this.announcement) {
+      this.trackCtaClickDownloadFlag();
+      this.announcementService.downloadPublicationFlag(this.announcement);
+    }
   }
 }

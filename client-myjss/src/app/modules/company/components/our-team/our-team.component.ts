@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Meta, Title } from '@angular/platform-browser';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { PlatformService } from '../../../main/services/platform.service';
 
@@ -11,7 +12,9 @@ import { PlatformService } from '../../../main/services/platform.service';
 })
 export class OurTeamComponent implements OnInit {
 
-  constructor(private platformService: PlatformService) { }
+  constructor(private platformService: PlatformService,
+    private titleService: Title, private meta: Meta,
+  ) { }
 
   departments: any[] = [
     { name: 'Direction', key: 'direction' },
@@ -38,7 +41,6 @@ export class OurTeamComponent implements OnInit {
       { firstname: "Yllia", lastname: "V.", title: "Gestionnaire RH", photo: "yllia_gestionnaire_rh.jpg" }
     ],
     commercial: [
-      { firstname: "Martine", lastname: "S.", title: "Directrice commerciale", photo: "martine_directrice_commerciale.jpg" },
       { firstname: "Bruno", lastname: "V.", title: "Chargé de clientèle", photo: "bruno_charge_de_clientele.jpg" },
       { firstname: "Gaëlle", lastname: "H.", title: "Chargée de clientèle", photo: "gaelle_chargee_de_clientele.jpg" },
       { firstname: "Martine", lastname: "F.", title: "Chargée de clientèle", photo: "martine_chargee_de_clientele.jpg" },
@@ -50,7 +52,7 @@ export class OurTeamComponent implements OnInit {
       { firstname: "Catherine", lastname: "C.", title: "Hôtesse d'accueil", photo: "catherine_hotesse_d_accueil.jpg" },
     ],
     annonces: [
-      { firstname: "Hélène", lastname: "P.", title: "Responsable Service Annonces Légales", photo: "helene_responsable_service_annonces_legales.jpg" },
+      { firstname: "Hélène", lastname: "P.", title: "Responsable Service annonces légales", photo: "helene_responsable_service_annonces_legales.jpg" },
       { firstname: "Didier", lastname: "C.", title: "Gestionnaire d'annonces légales", photo: "didier_gestionnaire_d_annonces_legales.jpg" },
       { firstname: "Elianna", lastname: "L.", title: "Gestionnaire d'annonces légales", photo: "elianna_gestionnaire_d_annonces_legales.jpg" },
       { firstname: "Diana", lastname: "L.", title: "Gestionnaire d'annonces légales", photo: "diana_gestionnaire_d_annonces_legales.jpg" },
@@ -73,7 +75,6 @@ export class OurTeamComponent implements OnInit {
     marketing: [
       { firstname: "Yseult", lastname: "V.", title: "Responsable Marketing et Communication", photo: "yseult_responsable_marketing_et_communication.jpg" },
       { firstname: "Jessica", lastname: "L.", title: "Chargée de Marketing et de Communication", photo: "jessica_chargee_de_marketing_et_de_communication.jpg" },
-      { firstname: "Solène", lastname: "F.", title: "Graphiste Community Manager", photo: "solene_graphiste_community_manager.jpg" },
     ],
     redaction: [
       { firstname: "Bérengère", lastname: "M.", title: "Rédactrice en chef", photo: "berengere_redactrice_en_chef.jpg" },
@@ -90,12 +91,14 @@ export class OurTeamComponent implements OnInit {
       { firstname: "Céline", lastname: "L.", title: "Agent de facturation", photo: "celine_agent_de_facturation.jpg" },
     ],
     informatique: [
-      { firstname: "Frédéric", lastname: "B.", title: "Analyste Programmeur", photo: "anonymous.svg" },
+      { firstname: "Frédéric", lastname: "B.", title: "Analyste Programmeur", photo: "../../../others/anonymous.svg" },
       { firstname: "Pierre", lastname: "C.", title: "Analyste Programmeur", photo: "pierre_analyste_programmeur.jpg" },
     ]
   };
 
   ngOnInit() {
+    this.titleService.setTitle("Notre équipe - MyJSS");
+    this.meta.updateTag({ name: 'description', content: "Rencontrez les experts qui vous accompagnent. Découvrez l'équipe de juristes et de professionnels MyJSS, unis par la passion du service et l'excellence juridique." });
   }
 
 

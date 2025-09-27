@@ -25,6 +25,16 @@
           </td>
         </tr>
       </table>
+      <table class="full-width"
+        *ngIf="adSales && currentEmployee.adPath.indexOf(adSales.activeDirectoryPath)>=0 || adDirection  && currentEmployee.adPath.indexOf(adDirection.activeDirectoryPath)>=0">
+        <tr>
+          <td>
+            <generic-input [(model)]="currentEmployee.bookingPageUrl" label="URL vers ma page de rendez-vous"
+              [form]="employeeForm" propertyName="bookingPageUrl" [isMandatory]="false"
+              [isDisabled]="!editMode"></generic-input>
+          </td>
+        </tr>
+      </table>
       <table class="full-width">
         <tr>
           <td>

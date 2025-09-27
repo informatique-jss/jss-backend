@@ -168,12 +168,13 @@ public class SearchServiceImpl implements SearchService {
                 if (indexEntity.getEntityType().equals(Affaire.class.getSimpleName())) {
                     List<CustomerOrder> customerOrders = customerOrderService
                             .searchOrdersForCurrentUserAndAffaire(affaireService.getAffaire(indexEntity.getEntityId()));
-                    if (customerOrders != null && customerOrders.size() > 0)
+                    if (customerOrders != null && customerOrders.size() > 0) {
                         for (CustomerOrder customerOrder : customerOrders) {
                             if (myJssQuotationValidationHelper.canSeeQuotation(customerOrder)) {
                                 authorizedEntities.add(indexEntity);
                             }
                         }
+                    }
                 }
             }
         }

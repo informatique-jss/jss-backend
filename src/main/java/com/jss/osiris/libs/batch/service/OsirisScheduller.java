@@ -166,9 +166,15 @@ public class OsirisScheduller {
 	}
 
 	@Scheduled(cron = "${schedulling.notification.purge}")
-	private void purgeNotidication() throws OsirisException {
+	private void purgeNotification() throws OsirisException {
 		if (nodeService.shouldIBatch())
 			batchService.declareNewBatch(Batch.PURGE_NOTIFICATION, null);
+	}
+
+	@Scheduled(cron = "${schedulling.sitemap.generate}")
+	private void generateSitemaps() throws OsirisException {
+		if (nodeService.shouldIBatch())
+			batchService.declareNewBatch(Batch.GENERATE_SITEMAPS, 1);
 	}
 
 	@Scheduled(cron = "${schedulling.mail.purge.iquotation.draft}")

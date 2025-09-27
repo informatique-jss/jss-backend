@@ -130,6 +130,14 @@
     </ng-container>
   </mat-accordion>
 </div>
+<div class="custom-panel" style="margin-bottom: 15px; margin-top: 20px;" *ngIf="totalServicesPrice!=0">
+  <div class="field-row">
+    <div class="label">Prix total du devis</div>
+    <div class="value">
+      {{totalServicesPrice | currency:'EUR'}}
+    </div>
+  </div>
+</div>
 
 <div class="timestamps" *ngIf="selectedEntity">
   <p>Créée le {{selectedEntity.createdDate | date:'EEEE d MMMM HH:mm'}}<br />

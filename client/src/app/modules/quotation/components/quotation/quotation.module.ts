@@ -34,6 +34,7 @@ import { ActeDepositComponent } from '../acte-deposit/acte-deposit.component';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
 import { AddAffaireComponent } from '../add-affaire/add-affaire.component';
 import { AddIncidentReportComponent } from '../add-incident-report/add-incident-report.component';
+import { AffaireCorrectionComponent } from '../affaire-correction/affaire-correction.component';
 import { AffaireListComponent } from '../affaire-list/affaire-list.component';
 import { AffaireComponent } from '../affaire/affaire.component';
 import { AnnouncementListComponent } from '../announcement-list/announcement-list.component';
@@ -89,6 +90,7 @@ import { SelectServiceDialogComponent } from '../select-service-dialog/select-se
 import { ServiceSidePanelDetailsComponent } from '../service-side-panel-details/service-side-panel-details.component';
 import { ServiceComponent } from '../service/service.component';
 import { SimpleProvisionComponent } from '../simple-provision/simple-provision.component';
+import { SuggestedQuotationsDialogComponent } from '../suggested-quotations-dialog/suggested-quotations-dialog.component';
 import { QuotationComponent } from './quotation.component';
 
 const routes: Routes = [
@@ -103,6 +105,7 @@ const routes: Routes = [
   { path: 'service/:idService', component: ProvisionComponent },
   { path: 'provision/:id/:idProvision', component: ProvisionComponent },
   { path: 'affaire', component: AffaireListComponent },
+  { path: 'affaire-correction', component: AffaireCorrectionComponent },
   { path: 'affaire/:id', component: AffaireComponent },
   { path: 'paper-set', component: PaperSetListComponent },
 ];
@@ -202,6 +205,8 @@ const routes: Routes = [
     IncidentReportListComponent,
     AddIncidentReportComponent,
     InvoiceListComponent,
+    SuggestedQuotationsDialogComponent,
+    AffaireCorrectionComponent,
   ],
   exports: [
     OrderingListComponent,

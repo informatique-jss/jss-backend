@@ -74,20 +74,17 @@
         </div>
       </div>
       <div *ngIf="indexAsso==currentOpenedPanel">
-        <div class="my-3">
-          <generic-toggle [(model)]="isRegisteredAffaire[indexAsso]" label="L'entreprise existe"
-            [form]="idenficationForm" [propertyName]="'isRegisteredAffaire'+indexAsso">
+        <div class="my-3" *ngIf="!quotation || !quotation.id">
+          <generic-toggle [(model)]="isRegisteredAffaire[indexAsso]"
+            label="L'entreprise ou l'établissement concerné existe ?" [form]="idenficationForm"
+            [propertyName]="'isRegisteredAffaire'+indexAsso">
           </generic-toggle>
         </div>
         <!-- Choose affaire by SIRET -->
         <div *ngIf="isRegisteredAffaire[indexAsso] ">
           <ng-container
-            *ngIf="this.quotation.assoAffaireOrders[indexAsso].affaire && !this.quotation.assoAffaireOrders[indexAsso].affaire.id">
-            <!-- <p class="mb-1 mt-4 ms-1">Indiquez le SIREN/SIRET</p> -->
+            *ngIf="this.quotation.assoAffaireOrders[indexAsso].affaire && !this.quotation.assoAffaireOrders[indexAsso].affaire.id && !this.quotation.assoAffaireOrders[indexAsso].affaire.siret">
             <div class="w-100">
-              <!--generic-input [(model)]=" siretSearched" label="Indiquez le SIREN/SIRET" [form]="idenficationForm"
-                propertyName="siretSearched" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="false"
-                (onFormChange)="searchSiret(indexAsso)" [icon]="'search'"></generic-input-->
               <autocomplete-siret [(model)]="siretSearched" [form]="idenficationForm" [isMandatory]="true"
                 label="Indiquez le SIREN/SIRET" propertyName="siretSearched"
                 (onOptionSelected)="selectSiret($event,indexAsso )"></autocomplete-siret>
@@ -104,7 +101,7 @@
             </p>
           </div>
           <div
-            *ngIf="this.quotation.assoAffaireOrders[indexAsso].affaire && this.quotation.assoAffaireOrders[indexAsso].affaire.id">
+            *ngIf="this.quotation.assoAffaireOrders[indexAsso].affaire && (this.quotation.assoAffaireOrders[indexAsso].affaire.id || this.quotation.assoAffaireOrders[indexAsso].affaire.siret)">
             <div class="card rounded-1 px-4 py-3">
               <div class="row mb-2">
                 <strong class="col-12 col-lg-3 ">
@@ -201,7 +198,7 @@
             <div class="col-md-6">
               <generic-input [(model)]="quotation.assoAffaireOrders[indexAsso].affaire.cedexComplement"
                 label="Complément d'adresse" [form]="idenficationForm" [propertyName]="'cedexComplement'+indexAsso"
-                [isMandatory]="true" [isDisabled]="false" [maxLength]="50">
+                [isMandatory]="false" [isDisabled]="false" [maxLength]="50">
               </generic-input>
             </div>
           </div>

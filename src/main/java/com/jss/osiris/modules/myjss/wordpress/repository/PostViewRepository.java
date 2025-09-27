@@ -2,6 +2,10 @@ package com.jss.osiris.modules.myjss.wordpress.repository;
 
 import java.time.LocalDate;
 
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
 import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.myjss.wordpress.model.Post;
 import com.jss.osiris.modules.myjss.wordpress.model.PostView;
@@ -9,5 +13,12 @@ import com.jss.osiris.modules.myjss.wordpress.model.PostView;
 public interface PostViewRepository extends QueryCacheCrudRepository<PostView, Integer> {
 
     PostView findByPostAndDay(Post post, LocalDate now);
+
+    @Modifying
+    @Query(nativeQuery = true, value = "" +
+            " merge into post_view p using (select :idPost as id) t on (p.id_post = t.id and p.day = current_date) " +
+            " when matched then update set count = count+1 " +
+            " when not matched then insert values (nextval('post_view_sequence'), 1, now(),:idPost) ")
+    void incrementPostViewForToday(@Param("idPost") Integer idPost);
 
 }

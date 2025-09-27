@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { NotFoundPageComponent } from './main/components/404/not.found.page.component';
 import { DefaultComponent } from './main/components/default/default.component';
 import { ConstantsResolver } from './services/constant.service';
 
@@ -50,11 +51,22 @@ export const routes: Routes = [
         loadComponent: () => import('./main/components/post-tendency-header/post-tendency-header.component').then(m => m.PostTendencyHeaderComponent)
       },
       {
+        path: 'post/last',
+        loadComponent: () => import('./main/components/post-last-header/post-last-header.component').then(m => m.PostLastHeaderComponent)
+      },
+      {
+        path: 'post/most-seen',
+        loadComponent: () => import('./main/components/post-most-seen-header/post-most-seen-header.component').then(m => m.PostMostSeenHeaderComponent)
+      }, {
+        path: 'post/premium',
+        loadComponent: () => import('./main/components/post-premium-header/post-premium-header.component').then(m => m.PostPremiumHeaderComponent)
+      },
+      {
         path: 'post/:slug',
         loadComponent: () => import('./main/components/post/post.component').then(m => m.PostComponent)
       },
       {
-        path: 'post/:token/:mail',
+        path: 'posts/:token/:mail',
         loadComponent: () => import('./main/components/post/post.component').then(m => m.PostComponent)
       },
       {
@@ -85,6 +97,7 @@ export const routes: Routes = [
         path: 'contribute',
         loadComponent: () => import('./main/components/contribute/contribute.component').then(m => m.ContributeComponent)
       },
+      { path: '**', component: NotFoundPageComponent }
     ]
   }
 ];

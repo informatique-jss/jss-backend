@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { NotFoundPageComponent } from './modules/general/components/404/not.found.page.component';
 import { DefaultComponent } from './modules/main/components/default/default.component';
 import { ConstantsResolver } from './modules/main/services/constant.service';
 import { MyAccountComponent } from './modules/my-account/components/my-account/my-account.component';
@@ -33,7 +34,6 @@ const routesMyAccount = [
       { path: 'settings', loadComponent: () => import('./modules/my-account/components/user-settings/user-settings.component').then(m => m.UserSettingsComponent) },
       { path: 'settings/address/edit/:idResponsable', loadComponent: () => import('./modules/my-account/components/edit-address/edit-address.component').then(m => m.EditAddressComponent) },
       { path: 'subscription', loadComponent: () => import('./modules/my-account/components/subscriptions/subscriptions.component').then(m => m.SubscriptionsComponent) },
-      { path: 'appointment', loadComponent: () => import('./modules/my-account/components/appointment/appointment.component').then(m => m.AppointmentComponent) },
     ]
   },
   { path: 'account/signin/:from', loadComponent: () => import('./modules/my-account/components/sign-in/sign-in.component').then(m => m.SignInComponent) },
@@ -133,6 +133,7 @@ export const routes: Routes = [
       ...routesCompany,
       ...routesTools,
       { path: 'beta_access', loadComponent: () => import('./modules/profile/components/beta/beta.component').then(m => m.BetaComponent) },
+      { path: '**', component: NotFoundPageComponent }
     ]
   }
 ];

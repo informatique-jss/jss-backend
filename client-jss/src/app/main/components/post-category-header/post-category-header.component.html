@@ -7,7 +7,7 @@
           <div class="row w-100">
             <div class="col-12 ">
               <div class="d-flex align-items-center gap-3 flex-wrap">
-                <h3 class="section-widget-title m-0">{{selectedJssCategory.name}}</h3>
+                <h1 class="section-widget-title m-0">{{selectedJssCategory.name}}</h1>
                 <button type="button" class="btn btn-outline-dark" *ngIf="currentUser"
                   (click)="isFollowed ? unfollowAuthor() : followAuthor()"> <i class="bi"
                     [ngClass]="isFollowed ? 'bi-dash-lg' : 'bi-plus-lg'"></i>
@@ -20,6 +20,6 @@
     </div>
   </div>
 
-  <category-hub [selectedEntityType]="selectedJssCategory"
+  <category-hub [selectedEntityType]="selectedJssCategory" *ngIf="selectedJssCategory"
     (jssCategoryChange)="updateSelectedCategory($event)"></category-hub>
 </div>

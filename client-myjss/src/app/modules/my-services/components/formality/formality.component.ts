@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Meta, Title } from '@angular/platform-browser';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
 import { ConstantService } from '../../../main/services/constant.service';
@@ -32,10 +33,13 @@ export class FormalityComponent implements OnInit {
   constructor(private appService: AppService,
     private constantService: ConstantService,
     private postService: PostService,
-    private platformService: PlatformService
+    private platformService: PlatformService,
+    private titleService: Title, private meta: Meta,
   ) { }
 
   ngOnInit() {
+    this.titleService.setTitle("Formalités légales - MyJSS");
+    this.meta.updateTag({ name: 'description', content: "Confiez l'ensemble de vos formalités légales à MyJSS. De la création à la dissolution, nos juristes experts vous assurent une gestion simple, rapide et sécurisée." });
     this.serviceFamilyGroupFormality = this.constantService.getServiceFamilyGroupFormality();
     this.myJssCategoryFormality = this.constantService.getMyJssCategoryFormality();
     this.postService.getPinnedPostByMyJssCategory(0, this.myJssCategoryFormality).subscribe(posts => {
@@ -58,24 +62,7 @@ export class FormalityComponent implements OnInit {
       });
   }
 
-  openPost(slug: string, event: any) {
-    this.appService.openRoute(event, "post/" + slug, undefined);
+  openRoute(route: string) {
+    this.appService.openRoute(undefined, route, undefined);
   }
-
-  openAnnouncements(event: any) {
-    this.appService.openRoute(event, "/services/announcement", undefined);
-  }
-
-  openApostille(event: any) {
-    this.appService.openRoute(event, "/services/apostille", undefined);
-  }
-
-  openDomiciliation(event: any) {
-    this.appService.openRoute(event, "/services/domiciliation", undefined);
-  }
-
-  openDocument(event: any) {
-    this.appService.openRoute(event, "/services/document", undefined);
-  }
-
 }

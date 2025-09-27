@@ -2,14 +2,17 @@
   <div class="header-navbar-middle d-none d-lg-block">
     <div class="container">
       <div class="navbar-brand-wrapper py-1 d-flex justify-content-between align-items-center">
-        <a class="btn btn-secondary btn-fixed-secondary px-3 align-items-center d-flex" (click)="openMyJss($event)"><img
+        <a class="btn btn-secondary btn-fixed-secondary px-3 align-items-center d-flex" (click)="openMyJss()"
+          target="_blank" [href]="frontendMyJssUrl+MY_JSS_HOME_ROUTE"><img
             src="assets/images/homepage/my-jss-logo-link.svg" /><i class="bi-arrow-up-right ms-1"></i></a>
-        <a class="navbar-brand ms-5 ps-3 " href="index.html">
+        <a class="navbar-brand ms-5 ps-3 " [routerLink]="['/']">
           <img class="lazyload" src="assets/images/homepage/logo.svg" style="max-height: 90px;" alt="image">
         </a>
         <div>
-          <a class="btn btn-light me-2 pointer" *ngIf="!currentUser" (click)="openSignIn($event)">Se connecter</a>
-          <a class="btn btn-yellow " *ngIf="!currentUser" (click)="openSubscribe($event)">S'abonner</a>
+          <a class="btn btn-light me-2 pointer" *ngIf="!currentUser" (click)="openSignIn()"
+            [href]="frontendMyJssUrl+MY_JSS_SIGN_IN_ROUTE">Se connecter</a>
+          <a class="btn btn-yellow " *ngIf="!currentUser" (click)="openSubscribe($event)"
+            routerLink="/subscription">S'abonner</a>
           <!-- User signed in state. Account dropdown on screens > 576px -->
           <div class="dropdown nav" [ngClass]="{ show: dropdownOpen }" *ngIf="currentUser && currentUser.id">
             <a href="#" role="button" class="d-flex align-items-center p-0 user-account dropdown-toggle"
@@ -24,14 +27,15 @@
             </a>
 
             <div class="dropdown-menu dropdown-menu-end my-1 custom-drop" [ngClass]="{ show: dropdownOpen }">
-              <a class="dropdown-item" (click)="openMyJssRouteUrl('quotation/identification')">
+              <a class="dropdown-item" [href]="frontendMyJssUrl+'/quotation/identification'">
                 <i class="fs-lg opacity-70 me-2 ai-circle-plus"></i>
                 Nouvelle demande
               </a>
               <h6 class="dropdown-header fs-xs fw-medium text-body-secondary text-uppercase pb-1">Tableau de
                 bord</h6>
               <ng-container *ngFor="let item of myAccountItems">
-                <a class="dropdown-item" (click)="openMyJssRoute(item)" *ngIf="item.mainItem==MAIN_ITEM_DASHBOARD">
+                <a class="dropdown-item" [href]="frontendMyJssUrl+item.route"
+                  *ngIf="item.mainItem==MAIN_ITEM_DASHBOARD">
                   <i class="fs-lg opacity-70 me-2" [ngClass]="item.iconClass"></i>
                   {{item.label}}
                 </a>
@@ -39,7 +43,7 @@
               <div class="dropdown-divider"></div>
               <h6 class="dropdown-header fs-xs fw-medium text-body-secondary text-uppercase pb-1">Mon compte</h6>
               <ng-container *ngFor="let item of myAccountItems">
-                <a class="dropdown-item pointer" (click)="openMyJssRoute(item)"
+                <a class="dropdown-item pointer" [href]="frontendMyJssUrl+item.route"
                   *ngIf="item.mainItem==MAIN_ITEM_ACCOUNT">
                   <i class=" fs-lg opacity-70 me-2" [ngClass]="item.iconClass"></i>
                   {{item.label}}
@@ -67,8 +71,8 @@
         </a>
 
         <!-- Mobile logo -->
-        <a class="navbar-brand mx-auto" href="/">
-          <img src="assets/images/homepage/my-jss-logo-white.svg" alt="logo" style="height: 40px;" />
+        <a class="navbar-brand mx-auto" [routerLink]="['/']">
+          <img src="assets/images/homepage/logo-white.svg" alt="logo" style="height: 40px;" />
         </a>
 
         <!-- Search icon -->
@@ -81,11 +85,13 @@
       <nav class="navbar navbar-expand-lg text-uppercase text-white-100 d-none d-lg-flex">
         <div class="collapse navbar-collapse" id="main_nav">
           <ul class="navbar-nav me-auto">
-            <li class="nav-item dropdown"> <a class="nav-link dropdown-toggle">île
-                de France </a>
+            <li class="nav-item dropdown"> <a class="nav-link" *ngIf="idfPublishingDepartment"
+                [ngClass]="{'active': getCurrentRoute().includes('/post/department') && getCurrentRoute().includes('/post/department')}"
+                [routerLink]='"post/department/"+ idfPublishingDepartment.code'>Ile-de-France</a>
               <ul class="dropdown-menu">
                 <li> <a *ngFor="let department of departments" class="dropdown-item"
-                    (click)="openDepartment(department,$event)">{{department.code.trim().length>0 &&
+                    [routerLink]='"/post/department/" + department.code'
+                    (click)="openDepartment()">{{department.code.trim().length>0 &&
                     department.code!="0" ?(department.code+ " - ")
                     :""}}{{department.name}}</a>
                 </li>
@@ -96,43 +102,37 @@
             <li class="nav-item" *ngFor="let category of categoriesByOrder">
               <a class="nav-link"
                 [ngClass]="{'active': getCurrentRoute().includes('/post/category') && getCurrentRoute().includes('/'+category.slug)}"
-                (click)="openCategoryPosts(category, $event)">
+                (click)="openCategoryPosts()" [routerLink]='"/post/category/" + category.slug'>
                 {{category.name}}
               </a>
             </li>
 
-            <!-- Kiosk -->
-            <li class="nav-item border-left">
-              <a class="nav-link"
-                [ngClass]="{'active': getCurrentRoute().includes('/kiosk') && getCurrentRoute().includes('/kiosk')}"
-                routerLink="kiosk">
-                Kiosque
-              </a>
-            </li>
-
             <!-- Podcast -->
-            <li class="nav-item nav-item-podcast">
+            <li class="nav-item border-left nav-item-podcast">
               <span>
                 <a class="nav-link podcast-nav-link mt-auto py-0 ps-2"
                   [ngClass]="{'active': getCurrentRoute().includes('/podcasts') && getCurrentRoute().includes('/podcasts')}"
-                  routerLink="podcasts">
-                  Podcast <span><i class="fas fa-bolt"></i></span>
+                  routerLink="/podcasts">
+                  Podcast
                 </a>
               </span>
             </li>
 
             <!-- Premium -->
             <li class="nav-item">
-              <a class="nav-link" href="#">
+              <a class="nav-link" (click)="openPremium()" routerLink="/post/premium">
                 <img src="assets/images/premium-icon.svg" class="me-1" />Premium
               </a>
             </li>
 
             <!-- Annonce légale -->
             <li class="nav-item d-flex align-items-center">
-              <button class="btn btn-outline-light fs-9 px-2 m-0 rounded-1" (click)="openSearchAnnouncement($event)">
-                CONSULTER UNE ANNONCE LÉGALE
-              </button>
+              <a routerLink="/announcement/search" style="padding: 0 !important;"
+                (click)="openSearchAnnouncement($event)">
+                <button class="btn btn-outline-light fs-9 px-2 m-0 rounded-1" (click)="$event.stopPropagation()">
+                  CONSULTER UNE ANNONCE LÉGALE
+                </button>
+              </a>
             </li>
           </ul>
           <a class="nav-link pointer text-white" (click)="displaySearchModal(searchModal)">
@@ -142,13 +142,14 @@
       </nav>
 
       <!-- Navigation Mobile (expandable) -->
-      <div class="d-lg-none" *ngIf="isMobileMenuOpen">
+      <div class="d-lg-none" *ngIf="isMobileMenuOpen" #menuMobile>
         <div class="py-3 row g-2">
           <div class="col">
-            <a class="btn btn-light w-100" *ngIf="!currentUser" (click)="openSignIn($event)">Se connecter</a>
+            <a class="btn btn-light w-100" *ngIf="!currentUser" [href]="" (click)="openSignIn()"
+              [href]="frontendMyJssUrl+MY_JSS_SIGN_IN_ROUTE">Se connecter</a>
           </div>
           <div class="col">
-            <a class="btn btn-yellow btn-yellow-burger w-100" *ngIf="!currentUser"
+            <a class="btn btn-yellow btn-yellow-burger w-100" *ngIf="!currentUser" routerLink="/subscription"
               (click)="openSubscribe($event)">S'abonner</a>
           </div>
         </div>
@@ -163,7 +164,8 @@
             </a>
             <ul class="list-unstyled ps-3" *ngIf="showDepartments">
               <li *ngFor="let department of departments" class="py-1">
-                <a class="text-white dropdown-item" (click)="openDepartment(department, $event)">
+                <a class="text-white dropdown-item" (click)="openDepartment()"
+                  [routerLink]='"/post/department/" + department.code'>
                   {{department.code !== '0' ? department.code + ' - ' : ''}}{{department.name}}
                 </a>
               </li>
@@ -171,17 +173,17 @@
           </li>
 
           <!-- Categories -->
-          <li class="nav-item" *ngFor="let category of categories">
+          <li class="nav-item" *ngFor="let category of categoriesByOrder">
             <a class="nav-link"
               [ngClass]="{'active': getCurrentRoute().includes('/post/category') && getCurrentRoute().includes('/'+category.slug)}"
-              (click)="openCategoryPosts(category, $event)">
+              (click)="openCategoryPosts()" [routerLink]='"/post/category/" + category.slug'>
               {{category.name}}
             </a>
           </li>
 
           <!-- Podcast -->
           <li class="nav-item">
-            <a class="nav-link" (click)="openPodcasts($event)">
+            <a class="nav-link" routerLink="/podcasts">
               Podcast
             </a>
           </li>
@@ -199,11 +201,12 @@
           <div class="pb-2 row g-2">
             <div class="col-sm col-12">
               <a class="btn btn-outline-light w-100 h-100 fs-9 d-flex align-items-center justify-content-center"
-                (click)="openSearchAnnouncement($event)">CONSULTER UNE ANNONCE LÉGALE</a>
+                (click)="openSearchAnnouncement($event)" routerLink="/announcement/search">CONSULTER UNE ANNONCE
+                LÉGALE</a>
             </div>
             <div class="col-sm col-12 ">
               <a class="btn btn-outline-dark w-100 h-100 d-flex align-items-center justify-content-center border-light"
-                (click)=" openMyJss($event)">
+                (click)=" openMyJss()" [href]="frontendMyJssUrl+MY_JSS_HOME_ROUTE">
                 <img src="assets/images/homepage/my-jss-logo-link.svg" /> <i class="bi-arrow-up-right ms-1"></i>
               </a>
             </div>
@@ -244,7 +247,7 @@
           </button>
         </form>
         <!-- Search form END -->
-        <p class="small mb-0">ex : droit des société, tribunal d'instance, TUP </p>
+        <p class="small mb-0">ex : droit des sociétés, tribunal d'instance, TUP </p>
       </div>
     </div>
     <div class="row">
@@ -253,20 +256,21 @@
           <article data-aos="fade-up" class="blog-style2 card my-3">
             <div class="feature-image order-1 order-lg-0">
               <div class="image-frame image-hover-style-1">
-                <a (click)="openPost(post.text.slug, $event)"> <img class="lazyload" *ngIf="post.text.media"
+                <a (click)="openPost( )" [routerLink]='"/post/" + post.text.slug'> <img class="lazyload"
+                    *ngIf="post.text.media"
                     [src]="post.text.media.urlLarge!=null ? post.text.media.urlLarge : post.text.media.urlFull"
                     [alt]="post.text.media.alt_text" class="w-100"></a>
               </div>
             </div>
-            <div data-aos="fade-in" class="card-body d-flex flex-column flex-lg-row align-items-stretch p-0">
+            <div data-aos="fade-in" class="ms-3 card-body d-flex flex-column flex-lg-row align-items-stretch p-0">
               <div class="order-0 order-lg-1">
                 <div class="row align-items-center ms-0 mb-1"
                   *ngIf="post.text.jssCategories && post.text.jssCategories.length>0">
-                  <a (click)="openCategoryPosts(post.text.jssCategories[0], $event)"
+                  <a (click)="openCategoryPosts()" [routerLink]='"/post/category/" + post.text.jssCategories[0].slug'
                     class="badge bg-info rounded-pill px-1 col-auto me-2 mb-0">{{post.text.jssCategories[0].name}}</a>
                 </div>
                 <h4>
-                  <a class="card-text-truncate" (click)="openPost(post.text.slug, $event)"> <img
+                  <a class="card-text-truncate" (click)="openPost( )" [routerLink]='"/post/" + post.text.slug'> <img
                       *ngIf="post.text.isPremium" class="col-auto pe-1"
                       src="/assets/images/premium-icon.svg">{{post.text.titleText}}</a>
                 </h4>
@@ -275,7 +279,8 @@
                   </div>
                 </div>
                 <div class="row align-items-center">
-                  <div class="col-lg-6">
+                  <div class="col-lg-6"
+                    *ngIf="post.text.isHiddenAuthor==undefined || post.text.isHiddenAuthor==null || post.text.isHiddenAuthor==false">
                     <div class="author-block">
                       <ul class="avatar list-inline mb-0">
                         <li class="list-inline-item align-items-center" *ngIf="post.text.author"><a class="fs-9"><img
@@ -286,7 +291,7 @@
                     </div>
                   </div>
                   <div class="col-lg-6"> <span class="date-info fs-9 float-lg-end">
-                      <span>Publié le {{post.text.date | date:'EEEE d MMMM'}}</span>
+                      <span>Publié le {{post.text.date | literalDatePipe}}</span>
                     </span>
                   </div>
                 </div>

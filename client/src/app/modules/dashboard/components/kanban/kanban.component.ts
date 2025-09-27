@@ -4,8 +4,18 @@ import { Observable } from 'rxjs';
 import { getObjectPropertybyString } from 'src/app/libs/FormatHelper';
 import { copyObjectList } from 'src/app/libs/GenericHelper';
 import { IWorkflowElement } from 'src/app/modules/miscellaneous/model/IWorkflowElement';
+import { RestUserPreferenceService } from '../../../../services/rest.user.preference.service';
+import { KanbanView } from '../../model/KanbanView';
 import { Swimlane } from '../../model/Swimlane';
 import { SwimlaneType } from '../../model/SwimlaneType';
+import { DEFAULT_USER_PREFERENCE } from '../../model/UserPreference';
+
+export const ORDER_KANBAN: string = "ORDER_KANBAN";
+export const PROVISION_AFFECTATION_KANBAN: string = "PROVISION_AFFECTATION_KANBAN";
+export const PROVISION_KANBAN: string = "PROVISION_KANBAN";
+export const QUOTATION_KANBAN: string = "QUOTATION_KANBAN";
+export const INCIDENT_REPORTING_KANBAN: string = "INCIDENT_REPORTING_KANBAN";
+export const INVOICING_KANBAN: string = "INVOICING_KANBAN";
 
 @Directive()
 export abstract class KanbanComponent<T, U extends IWorkflowElement<T>> {
@@ -14,6 +24,7 @@ export abstract class KanbanComponent<T, U extends IWorkflowElement<T>> {
   selectedSwimlaneType: SwimlaneType<T> | undefined;
   swimlanes: Swimlane<U>[] = [] as Swimlane<U>[];
   debounce: any;
+  labelViewSelected: string | undefined;
   statusSelected: U[] = [];
   allEntities: T[] = [];
   activeDraggedStatusId: number | null = null;
@@ -26,6 +37,12 @@ export abstract class KanbanComponent<T, U extends IWorkflowElement<T>> {
   computeAggregatedStatus: boolean = false;
   statusId: string[] = [];
 
+  kanbanViews: Array<KanbanView<T, U>> | undefined;
+
+  quotationKanbanCode = this.getKanbanComponentViewCode();
+
+  constructor(private restUserPreferenceService: RestUserPreferenceService) { }
+
   applyFilter(isOnlyFilterText = false) {
 
     if (this.swimlanes)
@@ -34,22 +51,26 @@ export abstract class KanbanComponent<T, U extends IWorkflowElement<T>> {
         swimlane.totalItems = 0;
       }
 
-
-    // Set bookmark
     this.numberOfEntitiesByStatus = [];
-    if (this.allEntities && this.allEntities.length > 0)
-      this.saveUserPreferencesOnApplyFilter();
+
     if (!isOnlyFilterText) {
       if (this.statusSelected && this.statusSelected.length > 0) {
         this.findEntities().subscribe(response => {
           this.allEntities = response;
+
+          // Set bookmark
+          if (this.allEntities && this.allEntities.length > 0) {
+            let defaultKanbanView = this.getKanbanView();
+            let defaultKanbanComponentViewCode = this.getKanbanComponentViewCode();
+            this.restUserPreferenceService.setUserPreference(JSON.stringify([defaultKanbanView]), defaultKanbanComponentViewCode + "_" + DEFAULT_USER_PREFERENCE).subscribe();
+          }
+
           this.filterCard();
         });
       }
     } else {
       this.filterCard();
     }
-
   }
 
   getConnectedDropLists(swimlane: Swimlane<U>) {
@@ -59,10 +80,13 @@ export abstract class KanbanComponent<T, U extends IWorkflowElement<T>> {
       return swimlane.status.map(s => 'list-' + this.statusId.indexOf(s.label + '-' + swimlane.id));
   }
 
-  abstract saveUserPreferencesOnApplyFilter(): void;
   abstract findEntities(): Observable<T[]>;
   abstract getEntityStatus(entity: T): U;
   abstract fetchEntityAndOpenPanel(task: T, refreshColumn: boolean, openPanel: boolean): void;
+
+  abstract setKanbanView(kanbanView: KanbanView<T, U>): void;
+  abstract getKanbanView(): KanbanView<T, U>;
+  abstract getKanbanComponentViewCode(): string;
 
   filterCard() {
     let i = 0;
@@ -122,6 +146,7 @@ export abstract class KanbanComponent<T, U extends IWorkflowElement<T>> {
           this.statusId.push(status.label + '-' + swimlane.id);
         }
       }
+
 
     return this.swimlanes.sort((a, b) => a.label.localeCompare(b.label));
   }
@@ -219,8 +244,6 @@ export abstract class KanbanComponent<T, U extends IWorkflowElement<T>> {
   normalize(str: string): string {
     return str.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '');
   }
-
-
 
   closePanel() {
     this.panelOpen = false;

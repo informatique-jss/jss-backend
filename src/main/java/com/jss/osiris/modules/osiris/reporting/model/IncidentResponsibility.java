@@ -19,14 +19,14 @@ public class IncidentResponsibility implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "incident_responsibility_sequence", sequenceName = "incident_responsibility_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "incident_responsibility_sequence")
-	@JsonView(JacksonViews.OsirisListView.class)
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private Integer id;
 
 	@Column(nullable = false)
-	@JsonView(JacksonViews.OsirisListView.class)
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private String label;
 
-	@JsonView(JacksonViews.OsirisListView.class)
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private String code;
 
 	public Integer getId() {

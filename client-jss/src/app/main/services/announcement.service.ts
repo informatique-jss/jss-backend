@@ -21,13 +21,17 @@ export class AnnouncementService extends AppRestService<Announcement> {
   getTopAnnouncementSearch(page: number, pageSize: number, searchText: string): Observable<PagedContent<Announcement>> {
     let params = new HttpParams()
       .set('page', page.toString())
-      .set('size', pageSize.toString());
+      .set('pageSize', pageSize.toString());
     if (searchText)
       params = params.set('searchText', searchText);
     return this.getPagedList(params, "announcement/search", "", "");
   }
 
-  downloadPublicationReceipt(announcement: Announcement) {
+  getLastSevenDaysAnnouncements(): Observable<Announcement[]> {
+    return this.getList(new HttpParams(), "announcement/last-seven-days", "", "");
+  }
+
+  downloadPublicationFlag(announcement: Announcement) {
     this.downloadGet(new HttpParams().set("idAnnouncement", announcement.id + ""), "publication/flag/download");
   }
 }

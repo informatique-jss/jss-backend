@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.myjss.wordpress.service;
 
+import java.io.FileInputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -9,6 +10,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -47,6 +53,8 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.repository.ReadingFolderRepository;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
+
+import jakarta.persistence.EntityManager;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -200,6 +208,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public Page<Post> getMostSeenPremiumPost(Pageable pageableRequest) {
+        return postRepository.findMostSeenPremiumPosts(pageableRequest);
+    }
+
+    @Override
     public Page<Post> getMostSeenPostByPublishingDepartment(Pageable pageableRequest,
             PublishingDepartment publishingDepartment) throws OsirisException {
         return postRepository.findMostSeenPostPublishingDepartment(pageableRequest, getCategoryArticle(),
@@ -278,6 +291,7 @@ public class PostServiceImpl implements PostService {
         modifyHrefToOpenInNewTab(post);
         modifyImgSrc(post);
         reformatQuotes(post);
+        reformatTables(post);
         reformatFootnotes(post);
 
         addOrUpdatePost(computePost(post));
@@ -372,7 +386,8 @@ public class PostServiceImpl implements PostService {
 
             String updatedImgTag = imgTag
                     .replaceAll("(src=\")" + wordpressMediaBaseUrl, "$1" + apacheMediaBaseUrl)
-                    .replaceAll("(srcset=\")" + wordpressMediaBaseUrl, "$1" + apacheMediaBaseUrl);
+                    .replace("srcset=\"" + wordpressMediaBaseUrl, "srcset=\"" + apacheMediaBaseUrl)
+                    .replace(" " + wordpressMediaBaseUrl, " " + apacheMediaBaseUrl);
 
             imgMatcher.appendReplacement(sb, Matcher.quoteReplacement(updatedImgTag));
         }
@@ -410,6 +425,13 @@ public class PostServiceImpl implements PostService {
         final String CITE_TAG = "<cite";
         post.setOriginalContentText(post.getOriginalContentText().replace(CITE_TAG,
                 CITE_TAG + " class=\"blockquote-footer\" style=\"padding-left:0\""));
+    }
+
+    private void reformatTables(Post post) {
+        if (post.getOriginalContentText() != null)
+            post.setOriginalContentText(post.getOriginalContentText().replaceAll(
+                    "has-fixed-layout",
+                    "has-fixed-layout table table-bordered "));
     }
 
     /**
@@ -452,7 +474,18 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Page<Post> getJssCategoryPosts(Pageable pageableRequest) throws OsirisException {
+    public Page<Post> getJssCategoryPosts(String searchText, Pageable pageableRequest) throws OsirisException {
+
+        if (searchText != null && !searchText.equals("")) {
+            List<IndexEntity> tmpEntitiesFound = null;
+            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
+            if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
+                return searchPostAgainstEntitiesToMatch(searchText,
+                        postRepository.findJssCategoryPosts(getCategoryArticle(), false,
+                                pageableRequest));
+            }
+        }
+
         return postRepository.findJssCategoryPosts(getCategoryArticle(), false,
                 pageableRequest);
     }
@@ -477,7 +510,7 @@ public class PostServiceImpl implements PostService {
             assoMailJssCategoryService.updateJssCategoryConsultationDate(mail, jssCategory);
         }
 
-        if (searchText != null) {
+        if (searchText != null && !searchText.equals("")) {
             List<IndexEntity> tmpEntitiesFound = null;
             tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
@@ -587,7 +620,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<Post> getAllPostsByIdf(Pageable pageableRequest, String searchText) throws OsirisException {
-        if (searchText != null) {
+        if (searchText != null && !searchText.equals("")) {
             List<IndexEntity> tmpEntitiesFound = null;
             tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
@@ -611,7 +644,7 @@ public class PostServiceImpl implements PostService {
         if (responsable != null)
             assoMailTagService.updateTagConsultationDate(responsable.getMail(), tag);
 
-        if (searchText != null) {
+        if (searchText != null && !searchText.equals("")) {
             List<IndexEntity> tmpEntitiesFound = null;
             tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
@@ -631,7 +664,7 @@ public class PostServiceImpl implements PostService {
         if (responsable != null)
             assoMailAuthorService.updateAuthorConsultationDate(responsable.getMail(), author);
 
-        if (searchText != null) {
+        if (searchText != null && !searchText.equals("")) {
             List<IndexEntity> tmpEntitiesFound = null;
             tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
@@ -644,7 +677,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<Post> getAllPostsBySerie(Pageable pageableRequest, Serie serie, String searchText) {
-        if (searchText != null) {
+        if (searchText != null && !searchText.equals("")) {
             List<IndexEntity> tmpEntitiesFound = null;
             tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
@@ -660,7 +693,7 @@ public class PostServiceImpl implements PostService {
     public Page<Post> getAllPostsByPublishingDepartment(Pageable pageableRequest,
             PublishingDepartment publishingDepartment, String searchText) throws OsirisException {
 
-        if (searchText != null) {
+        if (searchText != null && !searchText.equals("")) {
             List<IndexEntity> tmpEntitiesFound = null;
             tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
@@ -670,6 +703,19 @@ public class PostServiceImpl implements PostService {
         }
         return postRepository.findByDepartmentsAndIsCancelled(getCategoryArticle(), publishingDepartment, false,
                 pageableRequest);
+    }
+
+    @Override
+    public Page<Post> getAllPremiumPosts(String searchText, Pageable pageableRequest) throws OsirisException {
+        if (searchText != null && !searchText.equals("")) {
+            List<IndexEntity> tmpEntitiesFound = null;
+            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
+            if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
+                return searchPostAgainstEntitiesToMatch(searchText, postRepository.findActivePremiumPosts(
+                        getCategoryArticle(), pageableRequest));
+            }
+        }
+        return postRepository.findActivePremiumPosts(getCategoryArticle(), pageableRequest);
     }
 
     @Override
@@ -833,16 +879,19 @@ public class PostServiceImpl implements PostService {
                                 .getSubscriptionsForMail(signedInUser.getMail());
                         for (Subscription sub : subscriptions) {
                             if (sub.getStartDate() != null && sub.getEndDate() != null
-                                    && sub.getStartDate().isBefore(LocalDate.now())
+                                    && (sub.getStartDate().isBefore(LocalDate.now())
+                                            || sub.getStartDate().isEqual(LocalDate.now()))
                                     && LocalDate.now().isBefore(sub.getEndDate())
                                     && (sub.getSubscriptionType().equals(Subscription.ANNUAL_SUBSCRIPTION)
                                             || sub.getSubscriptionType().equals(Subscription.MONTHLY_SUBSCRIPTION)
                                             || sub.getSubscriptionType()
                                                     .equals(Subscription.ENTERPRISE_ANNUAL_SUBSCRIPTION))) {
+                                post.setIsHidePremium(true);
                                 return post;
 
-                            } else if (sub.getPost().getId().equals(post.getId())
-                                    && sub.getSubscriptionType().equals(Subscription.ONE_POST_SUBSCRIPTION)) {
+                            } else if (sub.getSubscriptionType().equals(Subscription.ONE_POST_SUBSCRIPTION)
+                                    && sub.getPost().getId().equals(post.getId())) {
+                                post.setIsHidePremium(true);
                                 return post;
                             }
                         }
@@ -997,5 +1046,107 @@ public class PostServiceImpl implements PostService {
             post.setPostSerie(series);
         }
         return post;
+    }
+
+    @Override
+    public List<Post> getAllPostsForJssMedia() {
+        return postRepository.findAllJssPost();
+    }
+
+    @Override
+    public List<Post> getAllPostsForMyJss() {
+        return postRepository.findAllMyJssPost();
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void test() {
+        try (FileInputStream fis = new FileInputStream("C:\\t\\Export2.xml")) {
+            XMLInputFactory factory = XMLInputFactory.newInstance();
+            XMLStreamReader reader = factory.createXMLStreamReader(fis);
+
+            String currentElement = "";
+            String idArticle = null;
+            String contenu = null;
+
+            while (reader.hasNext()) {
+                int event = reader.next();
+
+                switch (event) {
+                    case XMLStreamConstants.START_ELEMENT:
+                        currentElement = reader.getLocalName();
+                        break;
+
+                    case XMLStreamConstants.CHARACTERS:
+                        String text = reader.getText().trim();
+                        if (!text.isEmpty()) {
+                            switch (currentElement) {
+                                case "IDArticle":
+                                    idArticle = text;
+                                    break;
+                                case "Contenu":
+                                    contenu = text;
+                                    break;
+                            }
+                        }
+                        break;
+
+                    case XMLStreamConstants.END_ELEMENT:
+                        if ("Contenu".equals(reader.getLocalName())) {
+                            if (idArticle != null && contenu != null) {
+                                contenu = readElementText(reader);
+                                updatePost(Integer.parseInt(idArticle), contenu);
+                            }
+                            // reset pour le prochain élément
+                            idArticle = null;
+                            contenu = null;
+                        }
+                        break;
+                }
+            }
+
+            reader.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String readElementText(XMLStreamReader reader) throws XMLStreamException {
+        StringBuilder sb = new StringBuilder();
+        while (reader.hasNext()) {
+            int event = reader.next();
+            if (event == XMLStreamConstants.CHARACTERS
+                    || event == XMLStreamConstants.CDATA) {
+                sb.append(reader.getText());
+            } else if (event == XMLStreamConstants.END_ELEMENT) {
+                if ("Contenu".equals(reader.getLocalName())) {
+                    break; // on a fini de lire le contenu
+                }
+            }
+        }
+        return sb.toString();
+    }
+
+    @Autowired
+    EntityManager entityManager;
+
+    public static String cleanInvalidXmlChars(String text) {
+        if (text == null)
+            return null;
+        // On supprime les caractères XML interdits (contrôle ASCII sauf CR/LF/TAB)
+        return text.replaceAll(
+                "[\\x00-\\x08\\x0B\\x0C\\x0E-\\x1F\\x7F]",
+                "");
+    }
+
+    // Fonction à appeler pour chaque post
+    private void updatePost(int idArticle, String contenu) {
+        // Exemple d'update direct avec JPQL
+        entityManager.createQuery(
+                "UPDATE Post p SET p.originalContentText = :contenu WHERE p.id = :id")
+                .setParameter("contenu", contenu)
+                .setParameter("id", "100000" + idArticle) // comme tu veux : 100000 || idArticle
+                .executeUpdate();
+
     }
 }

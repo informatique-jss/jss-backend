@@ -9,6 +9,7 @@ import com.jss.osiris.libs.jackson.JacksonLocalDateTimeDeserializer;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
@@ -37,7 +38,15 @@ public class Media implements Serializable {
 
     private String media_type;
 
+    @Transient
+    private Content caption;
+
+    @Column(length = 500)
+    @JsonView({ JacksonViews.MyJssDetailedView.class })
+    private String captionText;
+
     @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+    @Column(length = 500)
     private String alt_text;
 
     @IndexedField
@@ -183,6 +192,22 @@ public class Media implements Serializable {
 
     public void setSource_url(String source_url) {
         this.source_url = source_url;
+    }
+
+    public Content getCaption() {
+        return caption;
+    }
+
+    public void setCaption(Content caption) {
+        this.caption = caption;
+    }
+
+    public String getCaptionText() {
+        return captionText;
+    }
+
+    public void setCaptionText(String captionText) {
+        this.captionText = captionText;
     }
 
 }

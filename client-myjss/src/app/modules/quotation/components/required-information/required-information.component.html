@@ -499,7 +499,7 @@
             </ng-template>
           </li>
 
-          <li class="nav-item " [ngbNavItem]="3" *ngIf="provision.provisionType.code == provisionTypeRbe.code">
+          <!--li class="nav-item " [ngbNavItem]="3" *ngIf="provision.provisionType.code == provisionTypeRbe.code">
             <button ngbNavLink>Déclaration des Bénéficiares Effectifs de la société</button>
             <ng-template ngbNavContent>
               <div *ngFor="let beneficialOwner of modifiedBeneficialOwners; let beIndex = index"
@@ -579,13 +579,13 @@
                     <select-country [(model)]="beneficialOwner.country" label="Pays" [form]="informationForm"
                       [propertyName]="'beCountry'+beIndex" [isMandatory]="false" [isDisabled]="false"></select-country>
                   </div>
-                </div>
-                <!-- Modalités du contrôle exercé par le bénéficiaire effectif sur la société -->
-                <h6 class=" mt-5"><i class="ai-home me-2"></i>Modalités du contrôle exercé par le bénéficiaire effectif
+                </div-->
+          <!-- Modalités du contrôle exercé par le bénéficiaire effectif sur la société -->
+          <!--h6 class=" mt-5"><i class="ai-home me-2"></i>Modalités du contrôle exercé par le bénéficiaire effectif
                   sur la société
-                </h6>
-                <!-- ========== CAPITAL ============= -->
-                <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                </h6-->
+          <!-- ========== CAPITAL ============= -->
+          <!--div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
                   <div class="col-md-6">
                     <generic-toggle [(model)]="beneficialOwner.isOwnerOfMoreThanQuarterOfCapital"
                       label="Détention de plus de 25 % du capital ?" [form]="informationForm"
@@ -606,9 +606,9 @@
                       label="Détention directe" [form]="informationForm"
                       [propertyName]="'isDirectOwnershipOfCapital'+beIndex" [isMandatory]="false"
                       [isDisabled]="false"></generic-toggle>
-                  </div>
-                  <!-- Direct -->
-                  <div
+                  </div-->
+          <!-- Direct -->
+          <!--div
                     *ngIf="beneficialOwner.isOwnerOfMoreThanQuarterOfCapital && beneficialOwner.isDirectOwnershipOfCapital"
                     class="row align-items-start">
                     <div class="col">
@@ -624,10 +624,10 @@
                         [isDisabled]="false" [maxLength]="6"></generic-input>
                     </div>
                   </div>
-                </div>
+                </div-->
 
-                <!-- Indirect : Détention par le biais d’une indivision (joint ownership)-->
-                <div *ngIf="beneficialOwner.isOwnerOfMoreThanQuarterOfCapital"
+          <!-- Indirect : Détention par le biais d’une indivision (joint ownership)-->
+          <!--div *ngIf="beneficialOwner.isOwnerOfMoreThanQuarterOfCapital"
                   class="row form-switch p-0 pt-md-2 g-3 ms-2 ms-md-5 my-4">
                   <div class="row">
                     <generic-toggle class="col" [(model)]="beneficialOwner.isIndirectOwnershipOfCapital"
@@ -659,10 +659,10 @@
                         [propertyName]="'jointCapitalBareOwnershipPercentage'+beIndex" [isMandatory]="false"
                         [isDisabled]="false" [maxLength]="6"></generic-input>
                     </div>
-                  </div>
+                  </div-->
 
-                  <!-- Indirect : Détention par le biais d’une ou plusieurs personnes morales -->
-                  <div
+          <!-- Indirect : Détention par le biais d’une ou plusieurs personnes morales -->
+          <!--div
                     *ngIf="beneficialOwner.isOwnerOfMoreThanQuarterOfCapital && beneficialOwner.isIndirectOwnershipOfCapital"
                     class="col-md-12">
                     <div class="row align-items-center mb-2">
@@ -691,9 +691,9 @@
                     </div>
                   </div>
                 </div>
-                <hr>
-                <!-- ================= VOTES RIGHTS ================= -->
-                <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                <hr-->
+          <!-- ================= VOTES RIGHTS ================= -->
+          <!--div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
                   <div class="col-md-6">
                     <generic-toggle [(model)]="beneficialOwner.isOwnerOfMoreThanQuarterOfVotesRights"
                       label="Détention de plus de 25 % des droits de vote ?" [form]="informationForm"
@@ -714,9 +714,9 @@
                       label="Détention directe" [form]="informationForm"
                       [propertyName]="'isDirectOwnershipOfVotesRights'+beIndex" [isMandatory]="false"
                       [isDisabled]="false"></generic-toggle>
-                  </div>
-                  <!-- Direct -->
-                  <div *ngIf="beneficialOwner.isDirectOwnershipOfVotesRights"
+                  </div-->
+          <!-- Direct -->
+          <!--div *ngIf="beneficialOwner.isDirectOwnershipOfVotesRights"
                     class="row align-items-start mb-4 mb-md-2">
                     <div class="col-md-4">
                       <generic-input [(model)]="beneficialOwner.directFullVotesRightsOwnershipPercentage"
@@ -737,10 +737,10 @@
                         [isDisabled]="false" [maxLength]="6"></generic-input>
                     </div>
                   </div>
-                </div>
+                </div-->
 
-                <!-- Indirect : Détention par le biais d’une indivision-->
-                <div *ngIf="beneficialOwner.isOwnerOfMoreThanQuarterOfVotesRights"
+          <!-- Indirect : Détention par le biais d’une indivision-->
+          <!--div *ngIf="beneficialOwner.isOwnerOfMoreThanQuarterOfVotesRights"
                   class="row form-switch p-0 pt-md-2 g-3 ms-2 ms-md-5 my-4">
                   <div class="row">
                     <generic-toggle class="col" [(model)]="beneficialOwner.isIndirectOwnershipOfVotesRights"
@@ -778,10 +778,10 @@
                         [propertyName]="'jointVotesRightsUsufructOwnershipPercentage'+beIndex" [isMandatory]="false"
                         [isDisabled]="false" [maxLength]="6"></generic-input>
                     </div>
-                  </div>
+                  </div-->
 
-                  <!-- Indirect : Détention par le biais d’une ou plusieurs personnes morales-->
-                  <div
+          <!-- Indirect : Détention par le biais d’une ou plusieurs personnes morales-->
+          <!--div
                     *ngIf="beneficialOwner.isOwnerOfMoreThanQuarterOfVotesRights && beneficialOwner.isIndirectOwnershipOfVotesRights"
                     class="col-md-12">
                     <div class="row align-items-center mb-2">
@@ -817,9 +817,9 @@
                     </div>
                   </div>
                 </div>
-                <hr>
-                <!-- Other means to control the company -->
-                <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                <hr-->
+          <!-- Other means to control the company -->
+          <!--div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
                   <div class="col-md-6">
                     <generic-toggle [(model)]="beneficialOwner.isOtherMeansForControl"
                       [label]="'Exercice par tout autre moyen d\'un pouvoir de contrôle sur la société déclarante' + (beneficialOwner.isOtherMeansForControl ? ' :' : '.')"
@@ -865,7 +865,7 @@
                 </div>
               </div>
             </ng-template>
-          </li>
+          </li-->
         </ng-container>
         <li [ngbNavItem]="4" *ngIf="(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes ||
         quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments)">
@@ -1005,17 +1005,15 @@
 
 <!-- Modal de confirmation -->
 <ng-template #confirmBackModal let-modal>
-  <div class="modal-content">
-    <div class="modal-header">
-      <h5 class="modal-title" id="confirmBackModalLabel">Confirmation</h5>
-      <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Fermer"></button>
-    </div>
-    <div class="modal-body">
-      Êtes-vous sûr de vouloir revenir en arrière ? L'ensemble de votre progression sera perdue.
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Annuler</button>
-      <button type="button" class="btn btn-danger ms-2" (click)="confirmGoBack();modal.dismiss()">Confirmer</button>
-    </div>
+  <div class="modal-header">
+    <h5 class="modal-title" id="confirmBackModalLabel">Confirmation</h5>
+    <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Fermer"></button>
+  </div>
+  <div class="modal-body">
+    Êtes-vous sûr de vouloir revenir en arrière ? L'ensemble de votre progression sera perdue.
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Annuler</button>
+    <button type="button" class="btn btn-danger ms-2" (click)="confirmGoBack();modal.dismiss()">Confirmer</button>
   </div>
 </ng-template>

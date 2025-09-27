@@ -412,6 +412,12 @@ public class QuotationController {
   @Autowired
   CustomerOrderAssignationService customerOrderAssignationService;
 
+  @JsonView(JacksonViews.OsirisListView.class)
+  @GetMapping(inputEntryPoint + "/affaire/correction")
+  public ResponseEntity<List<Affaire>> searchAffaireForCorrection() {
+    return new ResponseEntity<List<Affaire>>(affaireService.searchAffaireForCorrection(), HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/service-field-types")
   public ResponseEntity<List<ServiceFieldType>> getServiceFieldTypes() {
     return new ResponseEntity<List<ServiceFieldType>>(serviceFieldTypeService.getServiceFieldTypes(), HttpStatus.OK);
@@ -976,7 +982,7 @@ public class QuotationController {
   public ResponseEntity<MailComputeResult> computeMailForBilling(
       @RequestBody CustomerOrder quotation) throws OsirisException, OsirisClientMessageException {
     return new ResponseEntity<MailComputeResult>(
-        mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(quotation),
+        mailComputeHelper.computeMailForCustomerOrderFinalizationAndInvoice(quotation, false),
         HttpStatus.OK);
   }
 
@@ -1076,7 +1082,7 @@ public class QuotationController {
       throw new OsirisValidationException("customerOrder");
     try {
       MailComputeResult mailComputeResult = mailComputeHelper
-          .computeMailForCustomerOrderFinalizationAndInvoice(customerOrder);
+          .computeMailForCustomerOrderFinalizationAndInvoice(customerOrder, false);
       if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
         throw new OsirisValidationException("MailTo");
       customerOrderService.generateInvoiceMail(customerOrder);
@@ -1094,7 +1100,7 @@ public class QuotationController {
       throw new OsirisValidationException("customerOrder");
     try {
       MailComputeResult mailComputeResult = mailComputeHelper
-          .computeMailForCustomerOrderFinalizationAndInvoice(customerOrder);
+          .computeMailForCustomerOrderFinalizationAndInvoice(customerOrder, false);
       if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
         throw new OsirisValidationException("MailTo");
       customerOrderService.sendInvoiceMail(customerOrder);
@@ -2863,11 +2869,25 @@ public class QuotationController {
         customerOrderService.getCustomerOrdersByVoucherAndResponsable(voucher, null), HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/quotations/affaire")
+  @JsonView(JacksonViews.OsirisListView.class)
+  public ResponseEntity<List<Quotation>> getQuotationByAffaire(@RequestParam Integer idAffaire)
+      throws OsirisValidationException {
+
+    Affaire affaire = affaireService.getAffaire(idAffaire);
+
+    if (affaire == null)
+      throw new OsirisValidationException("affaire");
+
+    return new ResponseEntity<List<Quotation>>(
+        quotationService.getQuotationByAffaire(affaire), HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/customer-order-assignation/update")
   @PreAuthorize(ActiveDirectoryHelper.TEAM_RESPONSIBLE)
   public ResponseEntity<Boolean> updateCustomerOrderAssignation(Integer idCustomerOrderAssignation,
       @RequestParam(required = false) Integer idEmployee)
-      throws OsirisValidationException {
+      throws OsirisException {
 
     CustomerOrderAssignation customerOrderAssignation = customerOrderAssignationService
         .getCustomerOrderAssignation(idCustomerOrderAssignation);

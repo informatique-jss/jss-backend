@@ -11,6 +11,7 @@ import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.osiris.invoicing.model.OutboundCheckSearchResult;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
 import com.jss.osiris.modules.osiris.invoicing.model.PaymentSearchResult;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 
 public interface PaymentRepository extends QueryCacheCrudRepository<Payment, Integer> {
 
@@ -95,5 +96,7 @@ public interface PaymentRepository extends QueryCacheCrudRepository<Payment, Int
                         @Param("minSearchCheckDate") LocalDateTime minSearchCheckDate,
                         @Param("minAmount") Float minAmount, @Param("maxAmount") Float maxAmount,
                         @Param("label") String label);
+
+        List<Payment> findByCustomerOrder(CustomerOrder customerOrder);
 
 }

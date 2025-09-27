@@ -28,17 +28,28 @@ export class AutocompleteSiretComponent extends GenericAutocompleteComponent<Aff
   override debounceTime = 700;
 
   searchEntities(value: string): Observable<PagedContent<Affaire>> {
+    this.infoToDisplay = undefined;
     return this.affaireService.getAffaireBySiret(value, this.page, this.pageSize);
   }
 
   override mapResponse(response: Affaire[]): Affaire[] {
+    this.searchValue = this.searchValue.replaceAll(" ", "");
     if (response)
       for (let affaire of response)
         affaire.sirenOrSiret = affaire.siret ? affaire.siret : affaire.siren;
 
     if (response && response.length == 1)
       this.optionSelected(response[0]);
+
+    if (response.length >= 49)
+      this.infoToDisplay = "Plus de 50 résultats ont été trouvés. Affinez votre recherche en saisissant le SIRET concerné";
+    else
+      this.infoToDisplay = undefined;
     return response;
+  }
+
+  override fetchNextPage() {
+    return;
   }
 
   override displayLabel(object: Affaire): string {

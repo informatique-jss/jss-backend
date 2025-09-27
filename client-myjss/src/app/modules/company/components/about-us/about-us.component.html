@@ -1,39 +1,40 @@
 <section class="container my-5">
   <div class="row pt-md-2 pt-lg-3 pt-xl-4 pb-lg-2 pb-xl-3">
     <div class="col-md-6">
-      <h1 class="h1 pe-xxl-5 me-xl-4 mb-md-0 text-white">Journal Spécial des Sociétés & MyJSS</h1>
+      <h1 class="h1 pe-xxl-5 me-xl-4 mb-md-0 text-white">Entre héritage et innovation</h1>
     </div>
 
     <div class="col-md-6 col-xl-5 offset-xl-1">
-      <p class="text-body fs-lg mb-5 text-white">Le JSS est un journal d’annonces légales parisien historique et MyJSS
-        son prestataire de service en formalités légales des entreprises. <br />Nous accompagnons chaque jour les
-        professionnels du droit et du chiffre dans toutes les étapes de la vie juridique des sociétés. <br />Notre
-        gérons vos publicités légales liées à la vie sociale de votre entreprise, complexes et chronophages, afin que
-        vous vous consacriez à votre cœur de métier. </p>
-      <button type="button" routerLink="/contact" class="btn btn-light">Nous contacter <i
+      <p class="text-body fs-lg mb-5 text-white">Le JSS est une entreprise familiale, un journal d’annonces légales
+        parisien historique et indépendant. MyJSS est sa plateforme de service en formalités légales des entreprises.
+      </p>
+      <button type="button" routerLink="/contact" class="btn btn-light" (click)="trackClickContact()">Nous contacter <i
           class="ai-arrow-right"></i></button>
     </div>
   </div>
 </section>
 
 <section class="pb-3">
-  <div class="jarallax" data-jarallax>
-    <div class="jarallax-img" style="background-image: url(assets/img/societe/a-propos/parallax-image.jpg);">
+  <div class="jarallax  d-none d-md-block" data-jarallax>
+    <div class="jarallax-img" style="background-image: url(assets/img/societe/a-propos/banniere_a_propos.jpg);">
     </div>
+  </div>
+  <div class="d-block d-md-none">
+    <img src="assets/img/societe/a-propos/banniere_a_propos.jpg" />
   </div>
 </section>
 
-<section class="container mt-3 mb-5 pb-5">
+<section class="container my-5">
   <div class="row g-4 justify-content-between">
-    <div class=" col-md-4 text-start">
+    <div class=" col text-start">
       <div class=" h2 mb-1 text-white">1898</div>
       <div class="fs-sm text-body">Année de création</div>
     </div>
-    <div class="col-md-4 text-center">
+    <div class="col text-center">
       <div class="h2 mb-1 text-white">50</div>
       <div class="fs-sm text-body">Collaborateurs</div>
     </div>
-    <div class="col-md-4 text-end">
+    <div class="col text-end">
       <div class="h2 mb-1 text-white">1200</div>
       <div class="fs-sm text-body">Articles/an</div>
     </div>
@@ -42,24 +43,28 @@
 
 <section class="container overflow-hidden py-5 my-5">
   <div class="row">
-    <p>Qui sommes-nous ? </p>
-    <h2 class="h1 pb-3 mb-lg-4 text-white">Du papier au digital, toujours à vos côtés</h2>
+    <h2 class="h2 pb-3 mb-lg-4 text-white">5 générations à la barre du JSS</h2>
   </div>
   <div class="card-info">
     <div class="row g-4">
       <div class="col-md-7 order-md-1">
-        <img class="object-fit-cover w-100 h-100 rounded-3" src="assets/img/societe/a-propos/our-expertise.png"
+        <img class="object-fit-cover w-100 h-100 rounded-3" src="assets/img/societe/a-propos/cinq_generations.png"
           alt="Image">
       </div>
       <div class="col-md-5 order-md-2">
         <div class="d-flex flex-column h-100 card border-0 rounded-3 pt-5 px-4 px-lg-5">
-          <h2 class="mb-xl-4">Notre expertise au service de votre entreprise</h2>
-          <p class="mb-4 mb-xl-5">Depuis 126 ans, le Journal Spécial des Sociétés (JSS) est un acteur incontournable des
-            annonces légales en Ile-de-France.<br><br>Nous accompagnons les avocats, experts-comptables, notaires,
-            juristes et chefs d’entreprises dans toutes leurs formalités légales : création, modification,
-            dissolution…<br><br>Notre ligne éditoriale se concentre sur l’actualité juridique et judiciaire pour
-            diffuser avec objectivité l’information à tous les acteurs du monde du droit.<br><br>MyJSS répond à
-            l'ensemble de vos besoins en services juridiques digitaux aujourd’hui et anticipe ceux de demain.
+          <h3 class="mb-xl-4">Vers une nouvelle ère</h3>
+          <p class="mb-4 mb-xl-5">Depuis 1898, chaque génération a contribué au succès du journal. L’alliance de
+            l’héritage et de la modernité a toujours été dans son ADN avec des engagements inchangés au fil des
+            générations : être le partenaire fiable qui accompagne les entreprises dans la finalisation de leurs
+            opérations juridiques.<br>
+            Aujourd’hui, Myriam de Montis est Présidente et prépare la transmission de la société à son fils, Arsène de
+            Montis, Directeur
+            Général Délégué, qui apporte sa vision pour développer le JSS.<br><br>Arsène a intégré une politique RSE au
+            sein de la société et oriente la stratégie de l’entreprise vers l’innovation en intégrant de la technologie
+            dans chaque service. La finalité est d’offrir la meilleure expérience aux clients et anticiper leurs besoins
+            de demain. A leurs côtés pour diriger le JSS, Cyrille de Montis comme Directeur de la publication et Alex
+            Gapin, Directeur de la Production.
           </p>
         </div>
       </div>
@@ -70,31 +75,21 @@
 <section class="container overflow-hidden pb-5">
   <div class="card-info">
     <div class="row g-4">
-      <div class="card bg-yellow-color rounded-3 col-md-6 order-md-2">
-        <img class="object-fit-contain w-100 h-100 " src="assets/img/societe/a-propos/myjss.png" alt="Image">
+      <div class="card rounded-3 col-md-6 order-md-2 p-0">
+        <img class="object-fit-contain   " src="assets/img/societe/a-propos/myjss.png" alt="Image">
       </div>
       <div class="col-md-6 order-md-1">
         <div class="d-flex flex-column h-100 card border-0 rounded-3 pt-5 px-4 px-lg-5">
-          <h2 class="mb-xl-4">MyJSS, votre nouvel espace dédié pour simplifier vos formalités</h2>
-          <p class="mb-4 mb-xl-5">MyJSS est la plateforme en ligne pensée pour simplifier vos démarches juridiques.
-            Conçu par le Journal Spécial des Sociétés, cet outil vous permet en quelques clics de publier vos annonces
-            légales et de déposer des formalités.<br><br>Avec MyJSS, bénéficiez d’un accompagnement expert et d’une
-            interface optimisée pour un suivi en temps réel, une gestion centralisée et un gain de temps considérable.
+          <h2 class="mb-xl-4">MyJSS et JSS.fr</h2>
+          <p class="mb-4 mb-xl-5">Deux nouveaux sites ont été développés pour répondre aux besoins de nos
+            clients.<br><br>
+            Sur JSS.fr, le média du JSS, toute l’actualité de la vie du Droit et du chiffre est traitée avec passion et
+            curiosité par le service de rédaction.
+            Retrouvez également la publication de toutes les annonces légales dans une partie dédiée.<br><br>
+            MyJSS est la plateforme en ligne qui permet aux entreprises de réaliser leurs démarches juridiques en
+            quelques clics. Ils bénéficient d’un accompagnement expert et d’une interface optimisée pour un suivi en
+            temps réel, une gestion centralisée et un gain de temps considérable.
           </p>
-          <ul class="list-unstyled mb-4 mb-xl-5">
-            <li class="d-flex pb-2 mb-1">
-              <span class="bg-primary mt-2 me-2 checkbox-custom"></span>
-              Dépôt et suivi en ligne de vos commandes
-            </li>
-            <li class="d-flex pb-2 mb-1">
-              <span class="bg-primary mt-2 me-2 checkbox-custom"></span>
-              Accès rapide à vos documents
-            </li>
-            <li class="d-flex pb-2 mb-1">
-              <span class="bg-primary mt-2 me-2 checkbox-custom"></span>
-              Assistance et conseils d’experts à chaque étape
-            </li>
-          </ul>
         </div>
       </div>
     </div>
@@ -103,8 +98,7 @@
 
 <section class="container pt-5 mt-1 mt-sm-2 mt-xl-4 mt-xxl-5">
   <div class="row">
-    <p>Nos valeurs</p>
-    <h2 class="h1 text-white">Des valeurs fortes au service de nos clients</h2>
+    <h2 class="text-white">Des valeurs fortes au service de nos clients</h2>
   </div>
   <div class="row align-items-center pt-2 pt-sm-3 pt-md-4 pt-lg-5 mt-xl-2 mt-xxl-3">
     <div class="col-md-6 col-xl-5 pb-3 pb-md-0 mb-4 mb-md-0">
@@ -122,8 +116,8 @@
             </div>
             <div class="step-body">
               <h3 class="h5 pb-1 mb-2">Qualité</h3>
-              <p class="mb-0">Grâce à notre expertise, nous vous garantissons la meilleure expérience sur le marché des
-                annonces et formalités légales.</p>
+              <p class="mb-0">La qualité est notre priorité.<br> Grâce à notre expertise, nous vous garantissons la
+                meilleure expérience sur le marché des annonces et formalités légales.</p>
             </div>
           </div>
           <div class="step py-3 py-xl-4">
@@ -132,7 +126,7 @@
             </div>
             <div class="step-body">
               <h3 class="h5 pb-1 mb-2">Innovation</h3>
-              <p class="mb-0">L'innovation est au centre de nos préocupations. Nous nous adaptons constamment aux
+              <p class="mb-0">L'innovation est au centre de nos préocupations.<br> Nous nous adaptons constamment aux
                 évolutions règlementaires comme technologiques et anticipons vos besoins digitaux de demain.</p>
             </div>
           </div>
@@ -142,9 +136,9 @@
             </div>
             <div class="step-body">
               <h3 class="h5 pb-1 mb-2">Engagement</h3>
-              <p class="mb-0">L'engagement guide chacune de nos actions. Nous plaçons votre satisfaction au coeur de nos
-                priorités pour être le partenaire juridique qui vous accompagnera tout au long de la vie de votre
-                société.</p>
+              <p class="mb-0">L'engagement guide chacune de nos actions.<br>L’investissement quotidien de nos équipes
+                sur l’ensemble de vos demandes fait de nous votre meilleur
+                partenaire juridique.</p>
             </div>
           </div>
 

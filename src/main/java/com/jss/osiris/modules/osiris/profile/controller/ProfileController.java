@@ -28,7 +28,9 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.profile.model.User;
+import com.jss.osiris.modules.osiris.profile.model.UserPreference;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
+import com.jss.osiris.modules.osiris.profile.service.UserPreferenceService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
 
@@ -54,6 +56,9 @@ public class ProfileController {
 
 	@Autowired
 	ResponsableService responsableService;
+
+	@Autowired
+	UserPreferenceService userPreferenceService;
 
 	@GetMapping(inputEntryPoint + "/login/check")
 	public ResponseEntity<Boolean> checkLogin() {
@@ -160,10 +165,12 @@ public class ProfileController {
 			@RequestBody Employee employee) throws OsirisValidationException, OsirisException {
 		List<Employee> backups = new ArrayList<Employee>();
 		List<String> notificationTypesToHide = new ArrayList<String>();
+		String bookingPage = null;
 
 		if (employee != null) {
 			backups = employee.getBackups();
 			notificationTypesToHide = employee.getNotificationTypeToHide();
+			bookingPage = employee.getBookingPageUrl();
 		}
 
 		employee = (Employee) validationHelper.validateReferential(employee, true, "employee");
@@ -172,10 +179,62 @@ public class ProfileController {
 			for (Employee backup : backups)
 				validationHelper.validateReferential(backup, true, "backup");
 
+		validationHelper.validateString(bookingPage, false, 200, "bookingPage");
+
 		employee.setBackups(backups);
+		employee.setBookingPageUrl(bookingPage);
 		employee.setNotificationTypeToHide(notificationTypesToHide);
 
 		return new ResponseEntity<Employee>(employeeService.addOrUpdateEmployee(employee), HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/user-preference/code")
+	public ResponseEntity<String> getUserPreferenceValue(@RequestParam String code) {
+
+		Employee currentEmployee = employeeService.getCurrentEmployee();
+		if (code != null && currentEmployee != null) {
+			UserPreference userPreference = userPreferenceService.getUserPreferenceByCode(code, currentEmployee);
+
+			if (userPreference != null)
+				return new ResponseEntity<String>(userPreference.getJsonValue(), HttpStatus.OK);
+		}
+
+		return new ResponseEntity<String>("", HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/user-preferences")
+	public ResponseEntity<List<UserPreference>> getCustomUserPreferences() {
+
+		Employee currentEmployee = employeeService.getCurrentEmployee();
+		if (currentEmployee != null) {
+			return new ResponseEntity<List<UserPreference>>(
+					userPreferenceService.getAllCustomUserPreferences(currentEmployee), HttpStatus.OK);
+		}
+
+		return new ResponseEntity<List<UserPreference>>(new ArrayList<>(), HttpStatus.OK);
+	}
+
+	@PostMapping(inputEntryPoint + "/user-preference/set")
+	public ResponseEntity<UserPreference> setUserPreference(@RequestParam String code, @RequestBody String jsonValue) {
+
+		Employee employee = employeeService.getCurrentEmployee();
+
+		if (employee != null && code != null && jsonValue != null)
+			return new ResponseEntity<UserPreference>(
+					userPreferenceService.setUserPreference(code, jsonValue, employee), HttpStatus.OK);
+
+		return new ResponseEntity<UserPreference>(new UserPreference(), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/user-preference/delete")
+	public ResponseEntity<Boolean> deleteUserPreference(@RequestParam String codeToDelete) {
+
+		Employee currentEmployee = employeeService.getCurrentEmployee();
+		if (codeToDelete != null && currentEmployee != null) {
+			userPreferenceService.deleteUserPreferenceByCode(currentEmployee, codeToDelete);
+			return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+		}
+
+		return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+	}
 }

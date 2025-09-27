@@ -3,8 +3,6 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
 import { AppService } from '../../../services/app.service';
-import { Author } from '../../model/Author';
-import { JssCategory } from '../../model/JssCategory';
 import { PagedContent } from '../../model/PagedContent';
 import { Post } from '../../model/Post';
 import { Responsable } from '../../model/Responsable';
@@ -22,7 +20,6 @@ export abstract class GenericHubComponent<T extends { id: number }> implements O
   linkedTags: Tag[] = [] as Array<Tag>;
   mostSeenPostsByEntityType: Post[] = [] as Array<Post>;
   postsByEntityType: { [key: number]: Array<Post> } = {};
-  postsByEntityTypeFullLoaded: number[] = [];
 
   tagsByEntityType: Tag[] = [] as Array<Tag>;
   pageSize: number = 15;
@@ -41,6 +38,10 @@ export abstract class GenericHubComponent<T extends { id: number }> implements O
   ) { }
 
   ngOnInit() {
+    this.refresh();
+  }
+
+  refresh() {
     if (this.activeRoute.snapshot.params['isDisplayNews'])
       this.isDisplayNewPosts = this.activeRoute.snapshot.params['isDisplayNews'];
     this.hubForm = this.formBuilder.group({});
@@ -58,11 +59,10 @@ export abstract class GenericHubComponent<T extends { id: number }> implements O
   abstract getMostSeenPostByEntityType(selectedEntityType: T, page: number, pageSize: number): Observable<PagedContent<Post>>
 
   fetchPosts(page: number) {
-    if (this.selectedEntityType && this.selectedEntityType.id && (this.postsByEntityTypeFullLoaded.indexOf(this.selectedEntityType.id) < 0 || (this.searchText && this.searchText.length > 2)))
+    if (this.selectedEntityType && this.selectedEntityType.id && (!this.searchText || this.searchText.length > 2))
       this.getAllPostByEntityType(this.selectedEntityType, page, this.pageSize, this.searchText, this.isDisplayNewPosts).subscribe(data => {
         if (data && this.selectedEntityType && !this.searchText) {
           this.postsByEntityType[this.selectedEntityType.id] = data.content;
-          this.postsByEntityTypeFullLoaded.push(this.selectedEntityType.id);
         }
         if (data && this.searchText && this.searchText.length > 2)
           this.searchResults = data.content;
@@ -120,21 +120,5 @@ export abstract class GenericHubComponent<T extends { id: number }> implements O
     }
 
     return Array.from({ length: end - start }, (_, i) => start + i);
-  }
-
-  openCategoryPosts(category: JssCategory, event: any) {
-    this.appService.openRoute(event, "post/category/" + category.slug, undefined);
-  }
-
-  openPost(post: Post, event: any) {
-    this.appService.openRoute(event, "post/" + post.slug, undefined);
-  }
-
-  openAuthorPosts(author: Author, event: any) {
-    this.appService.openRoute(event, "post/author/" + author.slug, undefined);
-  }
-
-  openTagPosts(tag: Tag, event: any) {
-    this.appService.openRoute(event, "post/tag/" + tag.slug, undefined);
   }
 }

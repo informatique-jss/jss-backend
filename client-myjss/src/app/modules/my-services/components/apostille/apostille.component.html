@@ -7,35 +7,42 @@
 
       <div class="col-md-6 col-xl-5 offset-xl-1">
         <p class="text-body fs-lg mb-5 text-white">Confiez à nos experts vos documents à authentifier pour une démarche
-          à l'étranger ou en France.{{serviceFamilyGroupOther}}</p>
+          à l'étranger ou en France.</p>
         <double-buttons class="text-grey" orderActionLabel=" Demander une apostille ou légalisation"
-          [orderActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeOrder.id"
+          [orderActionRoute]="'/quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeOrder.id"
           quotationActionLabel="Demander un devis"
-          [quotationActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeQuotation.id"
-          [isLightButtons]="true">
+          [quotationActionRoute]="'/quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeQuotation.id"
+          [fromPageInfo]="{ type: 'my-services', name: 'apostille'}" [isLightButtons]="true">
         </double-buttons>
       </div>
     </div>
   </div>
 </section>
 <section>
-  <div class="jarallax rounded overflow-hidden z-2" data-speed="0.5">
+  <div class="jarallax rounded overflow-hidden z-2 d-none d-md-block" data-speed="0.5">
     <div class="jarallax-img"
       style="background-image: url('/assets/img/myjss-services/apostilles/banniere_apostilles.jpg');"></div>
   </div>
+  <div class="d-block d-md-none">
+    <img src="assets/img/myjss-services/apostilles/banniere_apostilles.jpg" />
+  </div>
 </section>
 
-<explaination-video posterPath="assets/img/announcement/annonce_bandeau_img.jpg"
-  videoPath="assets/videos/test_video.mp4" title="Authentifiez vos documents pour l’étranger en 3 étapes"
+<explaination-video posterPath="assets/img/myjss-services/MyJssVideo-poster.png"
+  videoPath="assets/videos/apostilles.mp4" title="Authentifiez vos documents pour l’étranger en 3 étapes"
   firstStepTitle="Remplissez le bon de commande"
   firstStepDescription="Indiquez le type de document, le pays de destination et les éventuelles traductions."
   secondStepTitle="Envoyez les originaux"
   secondStepDescription="Transmettez les documents originaux à cette adresse : <br/>JSS - Service Apostilles Légalisations, <br/>10 Boulevard Haussmann, <br/>75009 Paris"
   thirdStepTitle="Récupérez vos documents authentifiés"
-  thirdStepDescription="Recevez vos documents selon les modalités que vous aurez précisées." [firstJumpTo]="5"
-  [secondJumpTo]="15"></explaination-video>
+  thirdStepDescription="Recevez vos documents selon les modalités que vous aurez précisées."
+  [firstJumpTo]="28"></explaination-video>
 
-<description-my-account></description-my-account>
+<description-my-account
+  firstStepText="Suivi de votre dossier en ligne via MyJSS, avec une mise à jour en temps réel de l’avancement."
+  secondStepText="Accédez à l’ensemble de vos dossiers : commandes, devis et suivez leur statut en temps réel."
+  thirdtepText="Récupérez facilement tous vos documents apostillés et légalisés."
+  imageSrc="assets/img/myjss-services/apostilles/parcourir_mon_compte_apostille.webp"></description-my-account>
 
 <section class="container mt-lg-3 mt-xl-4 mt-xxl-5 pt-lg-5 pt-sm-3 pt-2">
   <div class="bg-yellow-custom rounded-5 overflow-hidden mt-2 mt-sm-4 mt-lg-5">
@@ -44,10 +51,11 @@
         <div class="text-center text-md-start py-5 px-4 px-sm-5 pe-md-0 ps-lg-4 ps-xl-5">
           <div class="d-flex align-items-center justify-content-center justify-content-md-start mb-2">
             <span class="text-blue opacity-70 me-2 practical-sheets-pre-border "></span>
-            <span class="fs-xs fw-semibold text-blue text-uppercase">Apostilles et légalisation</span>
+            <span class="fs-xs fw-semibold text-blue text-uppercase">Apostille et légalisation</span>
           </div>
           <h2 class="h2 secondary-heading pb-2 pb-sm-3 ">N'attendez plus et accédez à nos solutions</h2>
           <double-buttons class="text-grey" orderActionLabel=" Demander une apostille ou légalisation"
+            [fromPageInfo]="{ type: 'my-services', name: 'apostille'}"
             [orderActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeOrder.id"
             quotationActionLabel="Demander un devis"
             [quotationActionRoute]="'quotation/new/'+serviceFamilyGroupOther!.id+'/'+quotationTypeQuotation.id"
@@ -151,11 +159,11 @@
             </li>
             <li class="d-flex pb-2 mb-1">
               <span class="bg-primary mt-2 me-2 checkbox-custom"></span>
-              Légalisation par le Ministère des Affaires Etrangères
+              Apostille et légalisation par la Chambre des Notaires
             </li>
             <li class="d-flex">
               <span class="bg-primary mt-2 me-2 checkbox-custom"></span>
-              Ambassade ou Consulat
+              Légalisation par l’ Ambassade ou Consulat
             </li>
           </ul>
         </div>
@@ -178,8 +186,9 @@
             sa commande en original papier. </p>
 
           <div class="mt-auto">
-            <button type="button" href="#" class="btn btn-light me-3 mb-2 mb-md-0">Commandez un Kbis <i
-                class="ai-arrow-right"></i>
+            <button type="button" href="#" class="btn btn-light me-3 mb-2 mb-md-0" (click)="trackCtaClickOrder()"
+              [routerLink]="'/quotation/new/'+serviceFamilyGroupFormality!.id+'/'+quotationTypeOrder.id">Commandez un
+              Kbis <i class="ai-arrow-right"></i>
             </button>
           </div>
         </div>
@@ -220,7 +229,7 @@
   <div class="container py-3 py-sm-4 py-lg-5 my-md-2 my-lg-3 my-xl-4 my-xxl-5">
     <div class="text-center">
       <h2 class="h1 pb-3 mb-lg-4 text-white">Nos services</h2>
-      <p>Nous proposons une large gamme de services de formalités, adaptés à vos besoins pour simplifier vos démarches
+      <p>Nous proposons une large gamme de services juridiques, adaptés à vos besoins pour simplifier vos démarches
         administratives.</p>
     </div>
     <div
@@ -229,12 +238,16 @@
         <div class="card h-100 border-0 rounded-5 w-100">
           <div class="card-body pb-3 px-3">
             <img src="assets/img/icons/Annonces.svg" alt="Icon">
-            <h3 class="h4 text-white" routerLink="/services/announcement" style="cursor: pointer;">Annonces légales</h3>
+            <h3 class="h4 text-white">
+              <a routerLink="/services/announcement" class="text-white text-decoration-none">
+                Annonces légales
+              </a>
+            </h3>
             <p class="mb-0">Toutes les annonces légales, sur tout le territoire et sur tous les supports.</p>
           </div>
           <div class="card-footer border-0 pt-3 mb-3">
-            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" (click)="openAnnouncements($event)"
-              aria-label="Learn more">
+            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle"
+              (click)="openRoute('/services/announcement')">
               <i class="ai-arrow-right"></i>
             </a>
           </div>
@@ -243,12 +256,16 @@
       <div class="col-lg-5 d-flex pt-3 pt-xl-0">
         <div class="card h-100 border-0 rounded-5 w-100">
           <div class="card-body pb-3 px-3">
-            <img src="assets/img/icons/Formalite.svg" alt="Icon">
-            <h3 class="h4 text-white" routerLink="/services/formality" style="cursor: pointer;">Formalité légale</h3>
+            <img src="assets/img/icons/Apostille.svg" alt="Icon">
+            <h3 class="h4 text-white">
+              <a routerLink="/services/apostille" class="text-white text-decoration-none">
+                Apostille & Légalisation
+              </a>
+            </h3>
             <p class="mb-0">Un accompagnement complet pour toutes vos formalités juridiques.</p>
           </div>
           <div class="card-footer border-0 pt-3 mb-3">
-            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" (click)="openFormality($event)"
+            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" (click)="openRoute('/services/apostille')"
               aria-label="Learn more">
               <i class="ai-arrow-right"></i>
             </a>
@@ -263,12 +280,16 @@
         <div class="card h-100 border-0 rounded-5 w-100">
           <div class="card-body pb-3 px-3">
             <img src="assets/img/icons/Domiciliation.svg" alt="Icon">
-            <h3 class="h4 text-white" routerLink="/services/domiciliation" style="cursor: pointer;">Domiciliation</h3>
+            <h3 class="h4 text-white">
+              <a routerLink="/services/domiciliation" class="text-white text-decoration-none">
+                Domiciliation
+              </a>
+            </h3>
             <p class="mb-0">Une domiciliation au cœur de Paris avec gestion simplifiée.</p>
           </div>
           <div class="card-footer border-0 pt-3 mb-3">
-            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" (click)="openDomiciliation($event)"
-              aria-label="Learn more">
+            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle"
+              (click)="openRoute('/services/domiciliation')" aria-label="Learn more">
               <i class="ai-arrow-right"></i>
             </a>
           </div>
@@ -278,12 +299,15 @@
         <div class="card h-100 border-0 rounded-5 w-100">
           <div class="card-body pb-3 px-3">
             <img src="assets/img/icons/Fourniture_documents.svg" alt="Icon">
-            <h3 class="h4 text-white" routerLink="/services/document" style="cursor: pointer;">Fourniture de documents
+            <h3 class="h4 text-white">
+              <a routerLink="/services/document" class="text-white text-decoration-none">
+                Fourniture de documents
+              </a>
             </h3>
             <p class="mb-0">Vos documents officiels fournis rapidement et en toute conformité.</p>
           </div>
           <div class="card-footer border-0 pt-3 mb-3">
-            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" (click)="openDocument($event)"
+            <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" (click)="openRoute('/services/document')"
               aria-label="Learn more">
               <i class="ai-arrow-right"></i>
             </a>
@@ -301,7 +325,7 @@
       <ng-template let-post>
         <div class="h-100">
           <div class="card border-0 bg-tertiary">
-            <a (click)="openPost(post.slug,$event)">
+            <a [routerLink]="'/post/'+post.slug">
               <img class="card-img-top"
                 [src]="post.media && post.media.urlMediumLarge ? post.media.urlMediumLarge : post.media.urlFull"
                 alt="Post image">
@@ -313,7 +337,7 @@
                 <a class="badge text-nav fs-xs border" *ngIf="post.postTags[0]">{{post.postTags[0].name}}</a>
               </div>
               <h3 class="h4 card-title card-title-truncate">
-                <a (click)="openPost(post.slug,$event)">{{post.titleText}}</a>
+                <a [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
               </h3>
               <p class="card-text card-text-truncate">{{post.excerptText}}</p>
             </div>

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
-import { environment } from '../../../../environments/environment';
 import { Toast } from '../../../libs/toast/Toast';
 import { MenuItem } from '../../general/model/MenuItem';
 import { AccountMenuItem, MAIN_ITEM_ACCOUNT, MAIN_ITEM_DASHBOARD } from '../../my-account/model/AccountMenuItem';
@@ -58,26 +57,6 @@ export class AppService {
     return;
   }
 
-  openJssRoute(event: any, route: string, inNewWindows = true) {
-    window.open(environment.frontendJssUrl + route, inNewWindows ? "_blank" : "_self");
-  }
-
-  openOsirisV2Route(event: any, route: string, inNewWindows = true) {
-    window.open(environment.frontendOsirisV2Url + route, inNewWindows ? "_blank" : "_self");
-  }
-
-  openLinkedinJssPage() {
-    window.open("https://www.linkedin.com/company/journal-special-des-societes/_blank");
-  }
-
-  openInstagramJssPage() {
-    window.open("https://www.instagram.com/journalspecialdessocietes/_blank");
-  }
-
-  openFacebookJssPage() {
-    window.open("https://www.facebook.com/Journal.Special.des.Societes/_blank");
-  }
-
   getAllAccountMenuItems(): AccountMenuItem[] {
     let menuItem = [] as AccountMenuItem[];
     menuItem.push({ mainItem: MAIN_ITEM_DASHBOARD, label: "Vue d'ensemble", iconClass: "ai-chart", route: "/account/overview" } as AccountMenuItem);
@@ -104,7 +83,7 @@ export class AppService {
     let menuItem = [] as MenuItem[];
     menuItem.push({ label: "Annonces légales", iconClass: "ai-user-check", route: "/services/announcement" } as MenuItem);
     menuItem.push({ label: "Formalités légales", iconClass: "ai-wallet", route: "/services/formality" } as MenuItem);
-    menuItem.push({ label: "Apostilles-Légalisation", iconClass: "ai-chart", route: "/services/apostille" } as MenuItem);
+    menuItem.push({ label: "Apostilles-Légalisations", iconClass: "ai-chart", route: "/services/apostille" } as MenuItem);
     menuItem.push({ label: "Domiciliation", iconClass: "ai-slider", route: "/services/domiciliation" } as MenuItem);
     menuItem.push({ label: "Fourniture de documents", iconClass: "ai-cart", route: "/services/document" } as MenuItem);
     return menuItem;

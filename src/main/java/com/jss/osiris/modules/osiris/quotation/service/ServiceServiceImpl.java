@@ -3,7 +3,6 @@ package com.jss.osiris.modules.osiris.quotation.service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +19,7 @@ import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.AnnouncementStatus;
@@ -84,6 +84,9 @@ public class ServiceServiceImpl implements ServiceService {
     @Autowired
     AnnouncementStatusService announcementStatusService;
 
+    @Autowired
+    NotificationService notificationService;
+
     @Override
     public Service getService(Integer id) {
         Optional<Service> service = serviceRepository.findById(id);
@@ -101,6 +104,9 @@ public class ServiceServiceImpl implements ServiceService {
             pricingHelper.getAndSetInvoiceItemsForQuotation(service.getAssoAffaireOrder().getCustomerOrder(), true);
         else if (service.getAssoAffaireOrder() != null && service.getAssoAffaireOrder().getQuotation() != null)
             pricingHelper.getAndSetInvoiceItemsForQuotation(service.getAssoAffaireOrder().getQuotation(), true);
+
+        notificationService.notifyInformationAddToService(service);
+
         return service;
     }
 
@@ -162,7 +168,14 @@ public class ServiceServiceImpl implements ServiceService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean deleteServiceFromUser(Service service) {
-        return deleteService(service, false);
+        service = getService(service.getId());
+        deleteService(service, false);
+
+        if (service.getAssoAffaireOrder().getCustomerOrder() != null
+                && service.getAssoAffaireOrder().getCustomerOrder().getQuotations() != null
+                && service.getAssoAffaireOrder().getCustomerOrder().getQuotations().size() > 0)
+            notificationService.notifyQuotationModified(service.getAssoAffaireOrder().getCustomerOrder());
+        return true;
     }
 
     private Boolean deleteService(Service service, boolean permanentlyDeleteAttachments) {
@@ -196,9 +209,12 @@ public class ServiceServiceImpl implements ServiceService {
 
         List<ServiceType> serviceTypeNonMergeables = serviceTypes.stream().filter(s -> !s.getIsMergeable())
                 .toList();
-        for (ServiceType serviceType : serviceTypeNonMergeables)
+        for (ServiceType serviceType : serviceTypeNonMergeables) {
+            ArrayList<ServiceType> serviceTypeList = new ArrayList<ServiceType>();
+            serviceTypeList.add(serviceType);
             services.add(
-                    getServiceForMultiServiceTypesAndAffaire(Arrays.asList(serviceType), customLabel, affaire));
+                    getServiceForMultiServiceTypesAndAffaire(serviceTypeList, customLabel, affaire));
+        }
 
         return services;
     }
@@ -700,8 +716,7 @@ public class ServiceServiceImpl implements ServiceService {
                     for (Provision provision : service.getProvisions()) {
                         if (provision.getAnnouncement() != null
                                 && provision.getAnnouncement().getConfrere() != null)
-                            service.setConfrereLabel(
-                                    "publié sur " + provision.getAnnouncement().getConfrere().getLabel());
+                            service.setConfrereLabel(provision.getAnnouncement().getConfrere().getLabel());
 
                         if (provision.getSimpleProvision() != null
                                 && provision.getSimpleProvision().getSimpleProvisionStatus() != null

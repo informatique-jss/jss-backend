@@ -10,6 +10,8 @@ import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { Mail } from '../../../general/model/Mail';
 import { AppService } from '../../../main/services/app.service';
 import { ConstantService } from '../../../main/services/constant.service';
+import { GtmService } from '../../../main/services/gtm.service';
+import { FileUploadPayload, PageInfo } from '../../../main/services/GtmPayload';
 import { AutocompleteCityComponent } from '../../../miscellaneous/components/forms/autocomplete-city/autocomplete-city.component';
 import { AutocompleteLegalFormComponent } from '../../../miscellaneous/components/forms/autocomplete-legal-form/autocomplete-legal-form.component';
 import { GenericDatePickerComponent } from '../../../miscellaneous/components/forms/generic-date-picker/generic-datetime-picker.component';
@@ -44,7 +46,6 @@ import { Department } from '../../../profile/model/Department';
 import { Phone } from '../../../profile/model/Phone';
 import { Responsable } from '../../../profile/model/Responsable';
 import { LoginService } from '../../../profile/services/login.service';
-import { BeneficialOwner } from '../../model/BeneficialOwner';
 import { Domiciliation } from '../../model/Domiciliation';
 import { DomiciliationContractType } from '../../model/DomiciliationContractType';
 import { IQuotation } from '../../model/IQuotation';
@@ -116,7 +117,7 @@ export class RequiredInformationComponent implements OnInit {
   checkedOnce = false;
   isBrowser = false;
 
-  activeId = 3;
+  activeId = 4;
   isOnlyAnnouncement = true;
 
   SERVICE_FIELD_TYPE_TEXT = SERVICE_FIELD_TYPE_TEXT;
@@ -128,7 +129,6 @@ export class RequiredInformationComponent implements OnInit {
   PROVISION_SCREEN_TYPE_ANNOUNCEMENT = PROVISION_SCREEN_TYPE_ANNOUNCEMENT;
 
   provisionTypeRbe!: ProvisionType;
-  modifiedBeneficialOwners: BeneficialOwner[] = [{} as BeneficialOwner];
 
   mailRedirectionTypeOther!: MailRedirectionType;
   domiciliationContractTypeRouteEmailAndMail!: DomiciliationContractType
@@ -165,6 +165,7 @@ export class RequiredInformationComponent implements OnInit {
     private cityService: CityService,
     private noticeTemplateService: NoticeTemplateService,
     private modalService: NgbModal,
+    private gtmService: GtmService
   ) {
     this.noticeTemplateDescription = noticeTemplateService.getNoticeTemplateDescription()
   }
@@ -339,8 +340,25 @@ export class RequiredInformationComponent implements OnInit {
 
   onIsCompleteChange(event: boolean, selectedAssoIndex: number, selectedServiceIndex: number, assoServiceDocumentIndex: number, assoServiceDocument: AssoServiceDocument) {
     if (event) {
+      this.trackUploadFile(assoServiceDocument);
       this.refreshAssoServiceDocument(selectedAssoIndex, selectedServiceIndex, assoServiceDocumentIndex, assoServiceDocument);
     }
+  }
+
+  trackUploadFile(assoServiceDocument: AssoServiceDocument) {
+    if (this.quotation)
+      this.gtmService.trackFileUpload(
+        {
+          business: {
+            type: this.quotation.isQuotation ? 'quotation' : 'order',
+            order_id: this.quotation.id, documentType: assoServiceDocument.typeDocument.label
+          },
+          page: {
+            type: 'quotation',
+            name: 'required-information'
+          } as PageInfo
+        } as FileUploadPayload
+      );
   }
 
   onIsUploadDelete(event: boolean, selectedAssoIndex: number, selectedServiceIndex: number, assoServiceDocumentIndex: number, assoServiceDocument: AssoServiceDocument) {
@@ -374,11 +392,12 @@ export class RequiredInformationComponent implements OnInit {
           return of(false);
         }
 
-        for (let provision of this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions)
-          if (provision && provision.announcement && !provision.isRedactedByJss && this.noticeTemplateDescription.isUsingTemplate && (!provision.announcement || !provision.announcement.notice || provision.announcement.notice.length == 0)) {
-            this.appService.displayToast("Veuillez remplir le texte de l'annonce légale", true, "Champs obligatoires", 5000);
-            return of(false);
-          }
+        if (this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex])
+          for (let provision of this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions)
+            if (provision && provision.announcement && !provision.isRedactedByJss && this.noticeTemplateDescription.isUsingTemplate && (!provision.announcement || !provision.announcement.notice || provision.announcement.notice.length == 0)) {
+              this.appService.displayToast("Veuillez remplir le texte de l'annonce légale", true, "Champs obligatoires", 5000);
+              return of(false);
+            }
       }
 
       if (this.noticeTemplateDescription.announcementOrder && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[this.noticeTemplateDescription.announcementOrder])
@@ -725,11 +744,4 @@ export class RequiredInformationComponent implements OnInit {
     return false;
   }
 
-  addBeneficialOwner() {
-    this.modifiedBeneficialOwners.push({} as BeneficialOwner);
-  }
-
-  deleteLastBeneficialOwner() {
-    this.modifiedBeneficialOwners.pop();
-  }
 }

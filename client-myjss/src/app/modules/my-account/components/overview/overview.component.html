@@ -38,7 +38,7 @@
         *ngIf="statistics.customerOrderRequieringAttention && statistics.customerOrderRequieringAttention>0">
         <div class="h-100 bg-secondary rounded-3 text-center p-4 stat-card"
           [routerLink]="'/account/orders/search/'+CUSTOMER_ORDER_STATUS_REQUIRE_ATTENTION">
-          <h2 class="h6 pb-2 mb-1">Commandes qui requièrent votre attention</h2>
+          <h2 class="h6 pb-2 mb-1">Commandes qui requierent votre attention</h2>
           <div class="h2 text-primary mb-2">{{statistics.customerOrderRequieringAttention}}</div>
         </div>
       </div>
@@ -133,11 +133,11 @@
           </div>
         </div>
       </div>
-      <div class="row py-4 mb-2 mb-sm-3">
+      <div class="row py-4 mb-2 mb-sm-3" *ngIf="currentUser && currentUser.salesEmployee ">
         <div class="col-md-8 mb-4 mb-md-0">
           <table class="table mb-0">
             <tbody>
-              <tr *ngIf="currentUser && currentUser.salesEmployee && currentUser.salesEmployee.phoneNumber">
+              <tr *ngIf=" currentUser.salesEmployee.phoneNumber">
                 <td class="border-0 text-body-secondary py-1 px-0"><i class="ai-phone me-1"></i>Téléphone</td>
                 <td class="border-0 text-dark fw-medium py-1 ps-3">{{currentUser.salesEmployee.phoneNumber}}
                 </td>
@@ -146,18 +146,40 @@
                 <td class="border-0 text-body-secondary py-1 px-0"><i class="ai-mail me-1"></i>Mail</td>
                 <td class="border-0 text-dark fw-medium py-1 ps-3">{{currentUser.salesEmployee.mail}}</td>
               </tr>
-              <tr>
+              <tr *ngIf="currentUser.salesEmployee.bookingPageUrl">
                 <td class="border-0 text-body-secondary py-1 px-0"><i class="ai-pin me-1"></i>Prenez rendez-vous
                   ci-dessous : </td>
               </tr>
             </tbody>
           </table>
         </div>
-        <div class="center-block">
-          <iframe class="pt-4" src="https://outlook.office365.com/book/test1@jss138.onmicrosoft.com/" width="100%"
-            height="2300px" frameborder="0">
+        <div class="center-block" *ngIf="appointmentUrl">
+          <iframe class="pt-4" [src]="appointmentUrl" width="100%" height="2300px" frameborder="0">
           </iframe>
         </div>
       </div>
     </ng-container>
   </div>
+
+  <ng-template #acceptTermsModal let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title" id="acceptTermsModal">Conditions générales d'utilisation</h5>
+      <button type="button" class="btn-close" (click)="cancelAcceptation();modal.dismiss()"
+        aria-label="Fermer"></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-check mb-4 pe-2">
+        <input class="form-check-input" type="checkbox" id="save-info2" [(ngModel)]="acceptTerms" name="acceptTerms"
+          required>
+        <label class="form-check-label" for="save-info2">En cochant la case, je reconnais avoir pris connaissance et
+          accepter les Conditions Générales d’Utilisation du site accessibles et téléchargeables <a class="cgu-link"
+            href="/terms" target="_blank" rel="noopener noreferrer">ici</a>.
+        </label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="cancelAcceptation();modal.dismiss()">Annuler</button>
+      <button type="button" class="btn btn-danger ms-2" [disabled]="!acceptTerms"
+        (click)="acceptTermsForCurrentUser();modal.dismiss()">Confirmer</button>
+    </div>
+  </ng-template>

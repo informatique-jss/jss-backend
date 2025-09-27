@@ -36,6 +36,7 @@
 <div class="kanban-container top-container">
   <div *ngFor="let status of deduplicateArrayByLabel(statusSelected)" class="kanban-column">
     <h3 style="margin: 0px; text-align: center;"><span [matBadge]="getNumberOfEntitiesByStatus(status)"
+        [matTooltip]="getNumberOfEntitiesByStatus(status)+''"
         [matBadgeHidden]="!status.id || getNumberOfEntitiesByStatus(status)==0" matBadgePosition="after"
         matBadgeSize="small">{{ status.label }}</span></h3>
   </div>
@@ -116,6 +117,12 @@
     <mat-icon
       *ngIf="selectedSwimlaneType && swimlaneType.fieldName==selectedSwimlaneType.fieldName">check</mat-icon>{{swimlaneType.label}}
   </div>
+  <mat-divider></mat-divider>
+  <div mat-menu-item class="pointer" [matMenuTriggerFor]="customViews" (click)="expandAll()">Gestion des vues</div>
+  <mat-menu #customViews="matMenu">
+    <custom-views [componentToSaveViewCode]="quotationKanbanCode" [currentView]="getKanbanView()"
+      (selectedViewEmitter)="setKanbanView($event)"></custom-views>
+  </mat-menu>
   <mat-divider></mat-divider>
   <div mat-menu-item class="pointer" (click)="expandAll()">Déplier tout </div>
   <div mat-menu-item class="pointer" (click)="collapseAll()">Replier tout </div>

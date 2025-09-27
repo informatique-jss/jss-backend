@@ -10,4 +10,5 @@ export interface Employee {
   backups: Employee[];
   adPath: string;
   notificationTypeToHide: string[];
+  bookingPageUrl: string;
 }

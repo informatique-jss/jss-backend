@@ -75,6 +75,7 @@ public class Batch implements IId, Serializable {
     public static String PURGE_QUOTATION = "PURGE_QUOTATION";
     public static String PURGE_CUSTOMER_ORDER = "PURGE_CUSTOMER_ORDER";
     public static String COMPUTE_KPI_CRM = "COMPUTE_KPI_CRM";
+    public static String GENERATE_SITEMAPS = "GENERATE_SITEMAPS";
 
     @Id
     @SequenceGenerator(name = "batch_sequence", sequenceName = "batch_sequence", allocationSize = 1)
