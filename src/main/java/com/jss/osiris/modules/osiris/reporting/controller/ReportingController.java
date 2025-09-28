@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,16 +22,22 @@ import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.jackson.JacksonViews;
+import com.jss.osiris.modules.osiris.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.osiris.reporting.model.AssoReportingDashboardWidget;
 import com.jss.osiris.modules.osiris.reporting.model.IncidentCause;
 import com.jss.osiris.modules.osiris.reporting.model.IncidentReport;
 import com.jss.osiris.modules.osiris.reporting.model.IncidentReportStatus;
 import com.jss.osiris.modules.osiris.reporting.model.IncidentResponsibility;
 import com.jss.osiris.modules.osiris.reporting.model.IncidentType;
+import com.jss.osiris.modules.osiris.reporting.model.ReportingDashboard;
+import com.jss.osiris.modules.osiris.reporting.model.ReportingUpdateFrequency;
+import com.jss.osiris.modules.osiris.reporting.model.ReportingWidget;
+import com.jss.osiris.modules.osiris.reporting.model.ReportingWorkingTable;
 import com.jss.osiris.modules.osiris.reporting.model.UserReporting;
 import com.jss.osiris.modules.osiris.reporting.service.AnnouncementReportingService;
 import com.jss.osiris.modules.osiris.reporting.service.CustomerOrderReportingService;
@@ -43,6 +50,9 @@ import com.jss.osiris.modules.osiris.reporting.service.ProvisionProductionReport
 import com.jss.osiris.modules.osiris.reporting.service.ProvisionReportingService;
 import com.jss.osiris.modules.osiris.reporting.service.QuotationReportingService;
 import com.jss.osiris.modules.osiris.reporting.service.RecoveryReportingService;
+import com.jss.osiris.modules.osiris.reporting.service.ReportingDashboardService;
+import com.jss.osiris.modules.osiris.reporting.service.ReportingWidgetService;
+import com.jss.osiris.modules.osiris.reporting.service.ReportingWorkingTableService;
 import com.jss.osiris.modules.osiris.reporting.service.TiersReportingService;
 import com.jss.osiris.modules.osiris.reporting.service.TurnoverReportingService;
 import com.jss.osiris.modules.osiris.reporting.service.TurnoverVatReportingService;
@@ -120,12 +130,127 @@ public class ReportingController {
 	@Autowired
 	ResponsableService responsableService;
 
+	@Autowired
+	ReportingWorkingTableService reportingWorkingTableService;
+
+	@Autowired
+	ReportingDashboardService reportingDashboardService;
+
+	@Autowired
+	ReportingWidgetService reportingWidgetService;
+
+	@GetMapping(inputEntryPoint + "/reporting-widget/payload")
+	public ResponseEntity<String> getReportingWidgetPayload(@RequestParam Integer id) throws OsirisValidationException {
+		ReportingWidget widget = reportingWidgetService.getReportingWidget(id);
+
+		if (widget == null)
+			throw new OsirisValidationException("widget");
+
+		return new ResponseEntity<String>(reportingWidgetService.getReportingWidgetPayload(widget),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/reporting-widgets")
+	@PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+	public ResponseEntity<List<ReportingWidget>> getReportingWidgets() {
+		return new ResponseEntity<List<ReportingWidget>>(reportingWidgetService.getReportingWidgets(), HttpStatus.OK);
+	}
+
+	@PostMapping(inputEntryPoint + "/reporting-widget")
+	@PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+	public ResponseEntity<ReportingWidget> addOrUpdateReportingWidget(
+			@RequestBody ReportingWidget reportingWidgets) throws OsirisValidationException, OsirisException {
+		if (reportingWidgets.getId() != null)
+			validationHelper.validateReferential(reportingWidgets, true, "reportingWidgets");
+		validationHelper.validateString(reportingWidgets.getLabel(), true, "label");
+		validationHelper.validateString(reportingWidgets.getLabelSqlText(), true, "labelSqlText");
+		validationHelper.validateString(reportingWidgets.getLabelType(), true, "labelType");
+
+		return new ResponseEntity<ReportingWidget>(reportingWidgetService.addOrUpdateReportingWidget(reportingWidgets),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/reporting-dashboards/current")
+	@JsonView(JacksonViews.OsirisListView.class)
+	public ResponseEntity<List<ReportingDashboard>> getReportingDashboardsForCurrentUser() {
+		return new ResponseEntity<List<ReportingDashboard>>(
+				reportingDashboardService.getReportingDashboardsForCurrentUser(),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/reporting-dashboards/id")
+	@JsonView(JacksonViews.OsirisDetailedView.class)
+	public ResponseEntity<ReportingDashboard> getReportingDashboardById(@RequestParam Integer id) {
+		return new ResponseEntity<ReportingDashboard>(reportingDashboardService.getReportingDashboardById(id),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/reporting-dashboards")
+	@PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+	public ResponseEntity<List<ReportingDashboard>> getReportingDashboards() {
+		return new ResponseEntity<List<ReportingDashboard>>(reportingDashboardService.getReportingDashboards(),
+				HttpStatus.OK);
+	}
+
+	@PostMapping(inputEntryPoint + "/reporting-dashboard")
+	@PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+	public ResponseEntity<ReportingDashboard> addOrUpdateReportingDashboard(
+			@RequestBody ReportingDashboard reportingDashboards) throws OsirisValidationException, OsirisException {
+		if (reportingDashboards.getId() != null)
+			validationHelper.validateReferential(reportingDashboards, true, "reportingDashboards");
+		validationHelper.validateString(reportingDashboards.getLabel(), true, "label");
+		validationHelper.validateInteger(reportingDashboards.getDashboardOrder(), true, "order");
+
+		if (reportingDashboards.getActiveDirectoryGroups() != null)
+			for (ActiveDirectoryGroup adGroup : reportingDashboards.getActiveDirectoryGroups())
+				validationHelper.validateReferential(adGroup, true, "adGroup");
+
+		if (reportingDashboards.getAssoReportingDashboardWidgets() != null)
+			for (AssoReportingDashboardWidget asso : reportingDashboards.getAssoReportingDashboardWidgets())
+				validationHelper.validateReferential(asso.getReportingWidget(), true, "assoWidget");
+
+		return new ResponseEntity<ReportingDashboard>(
+				reportingDashboardService.addOrUpdateReportingDashboard(reportingDashboards), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/reporting-update-frequency")
+	@PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+	public ResponseEntity<List<ReportingUpdateFrequency>> getReportingUpdateFrequencies() {
+		return new ResponseEntity<List<ReportingUpdateFrequency>>(ReportingUpdateFrequency.getAllReporingFrequency(),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/reporting-working-tables")
+	@PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+	public ResponseEntity<List<ReportingWorkingTable>> getReportingWorkingTables() {
+		return new ResponseEntity<List<ReportingWorkingTable>>(reportingWorkingTableService.getReportingWorkingTables(),
+				HttpStatus.OK);
+	}
+
+	@PostMapping(inputEntryPoint + "/reporting-working-table")
+	@PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+	public ResponseEntity<ReportingWorkingTable> addOrUpdateReportingWorkingTable(
+			@RequestBody ReportingWorkingTable reportingWorkingTables)
+			throws OsirisValidationException, OsirisException {
+		if (reportingWorkingTables.getId() != null)
+			validationHelper.validateReferential(reportingWorkingTables, true, "reportingWorkingTables");
+		validationHelper.validateString(reportingWorkingTables.getSqlText(), true, "code");
+		validationHelper.validateString(reportingWorkingTables.getLabel(), true, "label");
+		validationHelper.validateString(reportingWorkingTables.getViewName(), true, "viewName");
+		validationHelper.validateString(reportingWorkingTables.getReportingUpdateFrequency(), true,
+				"reportingUpdateFrequency");
+
+		return new ResponseEntity<ReportingWorkingTable>(
+				reportingWorkingTableService.addOrUpdateReportingWorkingTable(reportingWorkingTables), HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/incident-types")
 	public ResponseEntity<List<IncidentType>> getIncidentTypes() {
 		return new ResponseEntity<List<IncidentType>>(incidentTypeService.getIncidentTypes(), HttpStatus.OK);
 	}
 
 	@PostMapping(inputEntryPoint + "/incident-type")
+	@PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
 	public ResponseEntity<IncidentType> addOrUpdateIncidentType(
 			@RequestBody IncidentType incidentTypes) throws OsirisValidationException, OsirisException {
 		if (incidentTypes.getId() != null)
@@ -143,6 +268,7 @@ public class ReportingController {
 	}
 
 	@PostMapping(inputEntryPoint + "/incident-cause")
+	@PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
 	public ResponseEntity<IncidentCause> addOrUpdateIncidentCause(
 			@RequestBody IncidentCause incidentCauses) throws OsirisValidationException, OsirisException {
 		if (incidentCauses.getId() != null)
@@ -161,6 +287,7 @@ public class ReportingController {
 	}
 
 	@PostMapping(inputEntryPoint + "/incident-responsibility")
+	@PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
 	public ResponseEntity<IncidentResponsibility> addOrUpdateIncidentResponsibility(
 			@RequestBody IncidentResponsibility incidentResponsibilities)
 			throws OsirisValidationException, OsirisException {

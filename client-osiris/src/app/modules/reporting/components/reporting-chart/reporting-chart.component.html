@@ -1,0 +1,6 @@
+@if(options && options.series && options.series.length>0){
+<app-apexchart [options]="options" />
+}
+@if(data && columns){
+<tanstack-table [data]="data" [columns]="columns" />
+}

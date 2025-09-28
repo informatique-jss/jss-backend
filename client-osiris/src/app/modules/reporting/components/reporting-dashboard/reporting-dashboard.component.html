@@ -1,0 +1,23 @@
+<div class="container-fluid">
+  <app-page-title [title]="dashboard.label" *ngIf="dashboard" />
+  <div class="row g-1">
+    @if(dashboard && dashboard.assoReportingDashboardWidgets){
+
+    @for (asso of dashboard.assoReportingDashboardWidgets!; track $index) {
+    <div [ngClass]="asso.classToUse">
+      <div class="card  ">
+        <div class="card-header justify-content-between align-items-center">
+          <h5 class="card-title">{{ asso.reportingWidget.label }}
+          </h5>
+        </div>
+        <div class="card-body p-0">
+          <reporting-chart [widget]="asso.reportingWidget" />
+        </div>
+      </div>
+    </div>
+
+    }
+
+    }
+  </div>
+</div>

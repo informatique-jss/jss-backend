@@ -5,7 +5,8 @@ import { NgIcon } from '@ng-icons/core';
 import { filter } from 'rxjs';
 import { scrollToElement } from '../../../../libs/GenericHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
-import { ResponsableService } from '../../../tiers/services/responsable.service';
+import { ReportingDashboard } from '../../../reporting/model/ReportingDashboard';
+import { ReportingDashboardService } from '../../../reporting/services/reporting.dashboard.service';
 import { MenuItemType } from '../../model/MenuItemType';
 import { LayoutStoreService } from '../../services/layout-store.service';
 
@@ -20,9 +21,11 @@ export class AppMenuComponent implements OnInit {
   constructor(
     private layout: LayoutStoreService,
     private router: Router,
-    private responsableService: ResponsableService
+    private dashboardService: ReportingDashboardService
   ) {
   }
+
+  userDashboards: ReportingDashboard[] | undefined;
 
   @ViewChild('MenuItemWithChildren', { static: true })
   menuItemWithChildren!: TemplateRef<{ item: MenuItemType }>;
@@ -30,11 +33,7 @@ export class AppMenuComponent implements OnInit {
   @ViewChild('MenuItem', { static: true })
   menuItem!: TemplateRef<{ item: MenuItemType }>;
 
-  menuItems: MenuItemType[] = [
-    { label: "Menu", isTitle: true } as MenuItemType,
-    { label: "Tiers/Responsables", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "tiers" } as MenuItemType,
-    { label: "CRM", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerApps", url: "crm" } as MenuItemType
-  ];
+  menuItems: MenuItemType[] = [];
 
   ngOnInit(): void {
     this.router.events
@@ -46,6 +45,20 @@ export class AppMenuComponent implements OnInit {
 
     this.expandActivePaths(this.menuItems);
     setTimeout(() => this.scrollToActiveLink(), 100);
+
+    this.dashboardService.getReportingDashboardsForCurrentUser().subscribe(response => {
+      this.userDashboards = response;
+      this.initMenu();
+    })
+  }
+
+  initMenu() {
+    this.menuItems = [
+      { label: "Menu", isTitle: true } as MenuItemType,
+      { label: "Tiers/Responsables", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "tiers" } as MenuItemType,
+      { label: "CRM", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerApps", url: "crm" } as MenuItemType,
+      { label: "Reporting", isTitle: false, isCollapsed: true, isDisabled: false, isSpecial: false, icon: "tablerLayoutDashboard", children: this.getAllDashboardsItem() } as MenuItemType
+    ]
   }
 
   hasSubMenu(item: MenuItemType): boolean {
@@ -83,6 +96,16 @@ export class AppMenuComponent implements OnInit {
 
       scrollToElement(scrollContainer, scrollContainer.scrollTop + offset, 500);
     }
+  }
+
+  getAllDashboardsItem() {
+    let dashboardItems = [];
+    if (this.userDashboards) {
+      for (let userDashboard of this.userDashboards) {
+        dashboardItems.push({ label: userDashboard.label, url: '/dashboards/' + userDashboard.id })
+      }
+    }
+    return dashboardItems;
   }
 
 }

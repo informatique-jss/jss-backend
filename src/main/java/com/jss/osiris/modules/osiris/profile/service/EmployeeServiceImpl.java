@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.codec.Hex;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,7 @@ import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.SSLHelper;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.mail.MailHelper;
+import com.jss.osiris.modules.osiris.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.osiris.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.osiris.miscellaneous.service.CustomerOrderOriginService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
@@ -27,6 +29,9 @@ import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
+
+    @Value("${dev.mode}")
+    private Boolean devMode;
 
     @Autowired
     EmployeeRepository employeeRepository;
@@ -234,6 +239,19 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public List<Integer> getPotentialUserScope(Integer idMail) {
         return employeeRepository.getPotentialUserScope(idMail);
+    }
+
+    @Override
+    public boolean isCurrentUserHasAdGroup(ActiveDirectoryGroup adGroup) {
+        if (devMode) {
+            return true;
+        }
+        if (getCurrentEmployee() != null)
+            if (getCurrentEmployee().getAdPath() != null
+                    && getCurrentEmployee().getAdPath().startsWith(adGroup.getActiveDirectoryPath())) {
+                return true;
+            }
+        return false;
     }
 
 }

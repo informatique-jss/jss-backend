@@ -79,6 +79,9 @@ import { ReferentialProvisionTypeComponent } from '../referentials/referential-p
 import { ReferentialQuotationAbandonReasonComponent } from '../referentials/referential-quotation-abandon-reason/referential-quotation-abandon-reason';
 import { ReferentialRefundTypeComponent } from '../referentials/referential-refund-type/referential-refund-type.component';
 import { ReferentialRegionComponent } from '../referentials/referential-region/referential-region.component';
+import { ReferentialReportingDashboardComponent } from '../referentials/referential-reporting-dashboard/referential-reporting-dashboard.component';
+import { ReferentialReportingWidgetComponent } from '../referentials/referential-reporting-widget/referential-reporting-widget.component';
+import { ReferentialReportingWorkingTableComponent } from '../referentials/referential-reporting-working-table/referential-reporting-working-table.component';
 import { ReferentialRffFrequencyComponent } from '../referentials/referential-rff-frequency/referential-rff-frequency.component';
 import { ReferentialServiceFamilyGroupComponent } from '../referentials/referential-service-family-group/referential-service-family-group.component';
 import { ReferentialServiceFamilyComponent } from '../referentials/referential-service-family/referential-service-family.component';
@@ -212,6 +215,9 @@ const routes: Routes = [
     ReferentialIncidentCauseComponent,
     ReferentialIncidentTypeComponent,
     ReferentialAnnouncementNoticeTemplateFragmentComponent,
+    ReferentialReportingWorkingTableComponent,
+    ReferentialReportingDashboardComponent,
+    ReferentialReportingWidgetComponent
   ], exports: [LogComponent,
     CompetentAuthorityComponent,
     ProviderComponent

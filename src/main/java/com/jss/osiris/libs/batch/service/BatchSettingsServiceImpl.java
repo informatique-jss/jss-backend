@@ -677,5 +677,29 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.WEBSITES));
             addOrUpdateBatchSettings(batchSettings);
         }
+        if (getByCode(Batch.COMPUTE_REPORTING_WORKING_TABLE) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.COMPUTE_REPORTING_WORKING_TABLE);
+            batchSettings.setLabel("Reporting - génération des tables de travail");
+            batchSettings.setFixedRate(60 * 1000);
+            batchSettings.setQueueSize(1);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.INDICATORS));
+            addOrUpdateBatchSettings(batchSettings);
+        }
+        if (getByCode(Batch.COMPUTE_REPORTING_WIDGET) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.COMPUTE_REPORTING_WIDGET);
+            batchSettings.setLabel("Reporting - génération des gadgets");
+            batchSettings.setFixedRate(1000);
+            batchSettings.setQueueSize(1);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.INDICATORS));
+            addOrUpdateBatchSettings(batchSettings);
+        }
     }
 }

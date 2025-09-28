@@ -24,19 +24,15 @@
           <div dir="ltr">
             <div>
               <h4 class="card-title mb-0  w-100">CA HT vs CA HT N-1 </h4>
-              @if(analyticChartOptions){
               <div>
-                <app-apexchart [getOptions]="analyticChartOptions" />
+                <app-apexchart [options]="getAnalyticChartOptions()" />
               </div>
-              }
             </div>
             <div>
               <h4 class="card-title mb-0">CA HT et HD vs CA HT et HD N-1 </h4>
-              @if(analyticChartOptions){
               <div>
-                <app-apexchart [getOptions]="analyticChartOptions" />
+                <app-apexchart [options]="getAnalyticChartOptions()" />
               </div>
-              }
             </div>
           </div>
         </div>

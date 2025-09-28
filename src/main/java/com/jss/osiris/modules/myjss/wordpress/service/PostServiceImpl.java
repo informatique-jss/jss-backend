@@ -1,6 +1,5 @@
 package com.jss.osiris.modules.myjss.wordpress.service;
 
-import java.io.FileInputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -10,11 +9,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -53,8 +47,6 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.repository.ReadingFolderRepository;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
-
-import jakarta.persistence.EntityManager;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -1056,97 +1048,5 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<Post> getAllPostsForMyJss() {
         return postRepository.findAllMyJssPost();
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void test() {
-        try (FileInputStream fis = new FileInputStream("C:\\t\\Export2.xml")) {
-            XMLInputFactory factory = XMLInputFactory.newInstance();
-            XMLStreamReader reader = factory.createXMLStreamReader(fis);
-
-            String currentElement = "";
-            String idArticle = null;
-            String contenu = null;
-
-            while (reader.hasNext()) {
-                int event = reader.next();
-
-                switch (event) {
-                    case XMLStreamConstants.START_ELEMENT:
-                        currentElement = reader.getLocalName();
-                        break;
-
-                    case XMLStreamConstants.CHARACTERS:
-                        String text = reader.getText().trim();
-                        if (!text.isEmpty()) {
-                            switch (currentElement) {
-                                case "IDArticle":
-                                    idArticle = text;
-                                    break;
-                                case "Contenu":
-                                    contenu = text;
-                                    break;
-                            }
-                        }
-                        break;
-
-                    case XMLStreamConstants.END_ELEMENT:
-                        if ("Contenu".equals(reader.getLocalName())) {
-                            if (idArticle != null && contenu != null) {
-                                contenu = readElementText(reader);
-                                updatePost(Integer.parseInt(idArticle), contenu);
-                            }
-                            // reset pour le prochain élément
-                            idArticle = null;
-                            contenu = null;
-                        }
-                        break;
-                }
-            }
-
-            reader.close();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private String readElementText(XMLStreamReader reader) throws XMLStreamException {
-        StringBuilder sb = new StringBuilder();
-        while (reader.hasNext()) {
-            int event = reader.next();
-            if (event == XMLStreamConstants.CHARACTERS
-                    || event == XMLStreamConstants.CDATA) {
-                sb.append(reader.getText());
-            } else if (event == XMLStreamConstants.END_ELEMENT) {
-                if ("Contenu".equals(reader.getLocalName())) {
-                    break; // on a fini de lire le contenu
-                }
-            }
-        }
-        return sb.toString();
-    }
-
-    @Autowired
-    EntityManager entityManager;
-
-    public static String cleanInvalidXmlChars(String text) {
-        if (text == null)
-            return null;
-        // On supprime les caractères XML interdits (contrôle ASCII sauf CR/LF/TAB)
-        return text.replaceAll(
-                "[\\x00-\\x08\\x0B\\x0C\\x0E-\\x1F\\x7F]",
-                "");
-    }
-
-    // Fonction à appeler pour chaque post
-    private void updatePost(int idArticle, String contenu) {
-        // Exemple d'update direct avec JPQL
-        entityManager.createQuery(
-                "UPDATE Post p SET p.originalContentText = :contenu WHERE p.id = :id")
-                .setParameter("contenu", contenu)
-                .setParameter("id", "100000" + idArticle) // comme tu veux : 100000 || idArticle
-                .executeUpdate();
-
     }
 }

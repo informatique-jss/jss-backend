@@ -26,7 +26,6 @@ import org.springframework.data.domain.Sort.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,7 +58,6 @@ import com.jss.osiris.modules.myjss.wordpress.model.Subscription;
 import com.jss.osiris.modules.myjss.wordpress.service.AssoProvisionPostNewspaperService;
 import com.jss.osiris.modules.myjss.wordpress.service.NewspaperService;
 import com.jss.osiris.modules.myjss.wordpress.service.PostService;
-import com.jss.osiris.modules.myjss.wordpress.service.PostServiceImpl;
 import com.jss.osiris.modules.myjss.wordpress.service.SubscriptionService;
 import com.jss.osiris.modules.osiris.crm.model.Voucher;
 import com.jss.osiris.modules.osiris.crm.service.VoucherService;
@@ -2239,14 +2237,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                                 if (provision.getComplexity() != null && provision.getComplexity() < complexity)
                                     complexity = provision.getComplexity();
         return complexity;
-    }
-
-    @Autowired
-    PostServiceImpl postServiceImpl;
-
-    @Scheduled(initialDelay = 100, fixedDelay = Integer.MAX_VALUE)
-    public void test() {
-        postServiceImpl.test();
     }
 
 }

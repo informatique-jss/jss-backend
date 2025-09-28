@@ -517,6 +517,26 @@ public class OsirisScheduller {
 		}
 	}
 
+	@Scheduled(initialDelay = 60000, fixedDelayString = "${schedulling.reporting.hourly.compute}")
+	private void computeHourlyReportings() {
+		try {
+			if (nodeService.shouldIBatch())
+				batchService.declareNewBatch(Batch.COMPUTE_REPORTING_WORKING_TABLE, 0);
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(cron = "${schedulling.reporting.daily.compute}")
+	private void computeDailyReportings() {
+		try {
+			if (nodeService.shouldIBatch())
+				batchService.declareNewBatch(Batch.COMPUTE_REPORTING_WORKING_TABLE, 1);
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
 	@Scheduled(initialDelay = 1000, fixedDelay = 6000)
 	private void updateKpiCrms() {
 		try {

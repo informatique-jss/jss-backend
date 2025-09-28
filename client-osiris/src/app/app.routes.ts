@@ -5,6 +5,7 @@ import { ConstantsResolver } from './modules/main/services/constant.service';
 
 const routesCrm = [
   { path: 'home', loadComponent: () => import('./modules/crm/components/crm/crm.component').then(m => m.CrmComponent) },
+  { path: 'dashboards/:id', loadComponent: () => import('./modules/reporting/components/reporting-dashboard/reporting-dashboard.component').then(m => m.ReportingDashboardComponent) },
   {
     path: 'tiers',
     children: [

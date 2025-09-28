@@ -57,6 +57,11 @@ export class AppService {
     return;
   }
 
+  openOsirisV2Route(event: any, route: string, sameWindowEndFonction: any) {
+    // TODO
+    return;
+  }
+
   getAllAccountMenuItems(): AccountMenuItem[] {
     let menuItem = [] as AccountMenuItem[];
     menuItem.push({ mainItem: MAIN_ITEM_DASHBOARD, label: "Vue d'ensemble", iconClass: "ai-chart", route: "/account/overview" } as AccountMenuItem);

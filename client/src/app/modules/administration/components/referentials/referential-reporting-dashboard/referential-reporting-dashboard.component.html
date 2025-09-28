@@ -1,0 +1,82 @@
+<div>
+  <div>
+    <mat-form-field class="full-width">
+      <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
+    </mat-form-field>
+  </div>
+  <div class="table-container-scroll">
+    <sort-table [columns]="displayedColumns" (onRowClick)="selectEntity($event)" [values]="entities"
+      [noMaxHeight]="true" [noPaddingBottom]="true" tableName="Référentiel" [idRowSelected]="idRowSelected"
+      [filterText]="searchText">
+    </sort-table>
+  </div>
+</div>
+<div class="mat-elevation-z2 form-div" *ngIf="selectedEntity ">
+  <form [formGroup]="entityForm">
+    <div class="full-width">
+      <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+        <table class="full-width">
+          <tr>
+            <td>
+              <generic-input [(model)]="selectedEntity.id" label="Identifiant technique" [form]="entityForm"
+                *ngIf="selectedEntity.id" propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
+            </td>
+            <td>
+              <generic-input [(model)]="selectedEntity.label" label="Nom fonctionnel" [maxLength]="200"
+                [form]="entityForm" propertyName="label" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-input [(model)]="selectedEntity.dashboardOrder" label="Order" [form]="entityForm"
+                propertyName="dashboardOrder" [isMandatory]="true" [isDisabled]="!editMode"
+                type="number"></generic-input>
+            </td>
+            <td>
+              <select-active-directory-group-multiple [(model)]="selectedEntity.activeDirectoryGroups"
+                label="Groupe AD autorisés" [form]="entityForm" propertyName="activeDirectoryGroups"
+                [isMandatory]="false" [isDisabled]="!editMode"></select-active-directory-group-multiple>
+            </td>
+          </tr>
+        </table>
+        <p>Widget du tableau de bord</p>
+        <ng-container
+          *ngFor="let assoReportingDashboardWidget of selectedEntity.assoReportingDashboardWidgets ; let index = index">
+          <table class="full-width">
+            <tr>
+              <td>
+                <autocomplete-reporting-widget [(model)]="assoReportingDashboardWidget.reportingWidget"
+                  [form]="entityForm" [propertyName]="'reportingWidget'+index+deleteIndex" [isMandatory]="true"
+                  label="Gadget choisi" [isDisabled]="!editMode"></autocomplete-reporting-widget>
+              </td>
+              <td>
+                <generic-input [(model)]="assoReportingDashboardWidget.widgetOrder" label="Order du gadget"
+                  [form]="entityForm" [propertyName]="'widgetOrder'+index" [isMandatory]="true" [isDisabled]="!editMode"
+                  type="number" step="1"></generic-input>
+              </td>
+              <td>
+                <generic-input [(model)]="assoReportingDashboardWidget.classToUse" label="Class à appliquer"
+                  [form]="entityForm" [propertyName]="'classToUse'+index" [isMandatory]="false"
+                  [isDisabled]="!editMode"></generic-input>
+              </td>
+              <td>
+                <button *ngIf="editMode" (click)="deleteWidgetAsso(assoReportingDashboardWidget)" mat-raised-button
+                  color="accent">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </tr>
+          </table>
+        </ng-container>
+        <table class="full-width">
+          <tr>
+            <td>
+              <button *ngIf="editMode" (click)="addWidgetAsso()" mat-raised-button color="accent">Ajouter un widget au
+                tableau </button>
+            </td>
+          </tr>
+        </table>
+      </fieldset>
+    </div>
+  </form>
+</div>

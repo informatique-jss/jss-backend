@@ -132,3 +132,13 @@ export const VALIDE = "VALIDE";
 // Print label recipient
 export const PRINT_LABEL_RECIPIENT_CUSTOMER = "Client";
 export const PRINT_LABEL_RECIPIENT_AC = "Autorité compétente";
+
+// Widget label type
+export const LABEL_TYPE_NUMERIC = "numeric";
+export const LABEL_TYPE_DATETIME = "datetime";
+export const LABEL_TYPE_CATEGORY = "category";
+
+export const GRAPH_TYPE_LINE = "line";
+export const GRAPH_TYPE_AREA = "area";
+export const GRAPH_TYPE_BAR = "bar";
+export const GRAPH_TYPE_TABLE = "table";

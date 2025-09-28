@@ -1,0 +1,51 @@
+<div>
+  <div>
+    <mat-form-field class="full-width">
+      <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
+    </mat-form-field>
+  </div>
+  <div class="table-container-scroll">
+    <sort-table [columns]="displayedColumns" (onRowClick)="selectEntity($event)" [values]="entities"
+      [noMaxHeight]="true" [noPaddingBottom]="true" tableName="Référentiel" [idRowSelected]="idRowSelected"
+      [filterText]="searchText">
+    </sort-table>
+  </div>
+</div>
+<div class="mat-elevation-z2 form-div" *ngIf="selectedEntity ">
+  <form [formGroup]="entityForm">
+    <div class="full-width">
+      <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+        <table class="full-width">
+          <tr>
+            <td>
+              <generic-input [(model)]="selectedEntity.id" label="Identifiant technique" [form]="entityForm"
+                *ngIf="selectedEntity.id" propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
+            </td>
+            <td>
+              <generic-input [(model)]="selectedEntity.label" label="Nom fonctionnel" [maxLength]="200"
+                [form]="entityForm" propertyName="label" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select-reporting-frequency [(model)]="selectedEntity.reportingUpdateFrequency"
+                label="Fréquence de calcul" [form]="entityForm" propertyName="reportingUpdateFrequency"
+                [isMandatory]="true" [isDisabled]="!editMode"></select-reporting-frequency>
+            </td>
+            <td>
+              <generic-input [(model)]="selectedEntity.viewName" label="Nom de la vue" [form]="entityForm"
+                propertyName="viewName" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <generic-textarea [(model)]="selectedEntity.sqlText" label="Requête SQL" [form]="entityForm"
+                propertyName="sqlText" [isMandatory]="true" [isDisabled]="!editMode"
+                [numberOfLines]="8"></generic-textarea>
+            </td>
+          </tr>
+        </table>
+      </fieldset>
+    </div>
+  </form>
+</div>

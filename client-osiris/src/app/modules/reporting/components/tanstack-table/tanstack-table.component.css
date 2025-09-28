@@ -1,0 +1,10 @@
+.dropdown-menu.show {
+  display: block;
+  /* obligatoire pour ngbDropdown */
+  min-width: 200px;
+  /* largeur minimale */
+  max-height: 300px;
+  /* optionnel : scroll si beaucoup d’éléments */
+  overflow-y: auto;
+  /* scroll vertical si nécessaire */
+}

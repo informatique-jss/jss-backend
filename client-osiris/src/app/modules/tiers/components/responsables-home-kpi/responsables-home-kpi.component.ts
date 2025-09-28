@@ -1,6 +1,8 @@
 import { Component, OnChanges, OnInit } from '@angular/core';
 import { NgIcon } from '@ng-icons/core';
+import { ApexOptions } from 'ng-apexcharts';
 import { Subscription } from 'rxjs';
+import { ApexchartComponent } from '../../../../libs/apexchart/apexchart.component';
 import { OPPORTUNITY_CLOSING_AVERAGE_TIME, ORDER_COMPLETION_AVERAGE_TIME, PAYING_INVOICE_AVERAGE_TIME } from '../../../../libs/Constants';
 import { getColor } from '../../../../libs/inspinia/utils/color-utils';
 import { AnalyticStatsType } from '../../../main/model/AnalyticStatsType';
@@ -9,7 +11,6 @@ import { Responsable } from '../../../profile/model/Responsable';
 import { AnalyticStatsTypeService } from '../../services/analytic-stats-type.service';
 import { ResponsableService } from '../../services/responsable.service';
 import { AnalyticStatisticWidgetComponent } from '../analytic-statistic-widget/analytic-statistic-widget.component';
-import { ApexchartComponent } from '../apexchart/apexchart.component';
 
 @Component({
   selector: 'responsables-home-kpi',
@@ -154,73 +155,75 @@ export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
     },
   ]
 
-  analyticChartOptions: any = () => ({
-    chart: {
-      height: this.graphsHeight,
-      type: 'area',
-      toolbar: { show: true }
-    },
-    dataLabels: {
-      enabled: false
-    },
-    stroke: {
-      width: 2,
-      curve: 'smooth'
-    },
-    colors: [getColor('primary'), getColor('secondary')],
-    series: [
-      {
-        name: 'CA HT année N',
-        data: generateRandomData(12, 250, 450)
+  getAnalyticChartOptions() {
+    return {
+      chart: {
+        height: this.graphsHeight,
+        type: 'area',
+        toolbar: { show: true }
       },
-      {
-        name: 'CA HT année N-1',
-        data: generateRandomData(12, 250, 450)
-      }
-    ],
-    legend: {
-      offsetY: 5,
-    },
-    xaxis: {
-      categories: ["8 AM", "9 AM", "10 AM", "11 AM", "12 PM", "1 PM",
-        "2 PM", "3 PM", "4 PM", "5 PM", "6 PM", "7 PM", "8 PM",
-        "9 PM", "10 PM", "11 PM", "12 AM"],
-      axisBorder: { show: false },
-      axisTicks: { show: false },
-      tickAmount: 6,
-      labels: {
-        style: {
-          fontSize: "12px"
+      dataLabels: {
+        enabled: false
+      },
+      stroke: {
+        width: 2,
+        curve: 'smooth'
+      },
+      colors: [getColor('primary'), getColor('secondary')],
+      series: [
+        {
+          name: 'CA HT année N',
+          data: generateRandomData(12, 250, 450)
+        },
+        {
+          name: 'CA HT année N-1',
+          data: generateRandomData(12, 250, 450)
         }
-      }
-    },
-    tooltip: {
-      shared: true,
-      y: {
-        formatter: function (val: number, opts: any) {
-          const label = opts.seriesIndex === 0 ? "k€" : "k€";
-          return `${val} ${label}`;
+      ],
+      legend: {
+        offsetY: 5,
+      },
+      xaxis: {
+        categories: ["8 AM", "9 AM", "10 AM", "11 AM", "12 PM", "1 PM",
+          "2 PM", "3 PM", "4 PM", "5 PM", "6 PM", "7 PM", "8 PM",
+          "9 PM", "10 PM", "11 PM", "12 AM"],
+        axisBorder: { show: false },
+        axisTicks: { show: false },
+        tickAmount: 6,
+        labels: {
+          style: {
+            fontSize: "12px"
+          }
         }
-      }
-    },
-    fill: {
-      type: "gradient",
-      gradient: {
-        shadeIntensity: 1,
-        opacityFrom: 0.4,
-        opacityTo: 0.2,
-        stops: [15, 120, 100]
-      }
-    },
-    grid: {
-      borderColor: getColor('border-color'),
-      padding: {
-        bottom: 5
-      }
-    },
-    redrawOnParentResize: true, // ← important
-    redrawOnWindowResize: true, // ← aussi
-  })
+      },
+      tooltip: {
+        shared: true,
+        y: {
+          formatter: function (val: number, opts: any) {
+            const label = opts.seriesIndex === 0 ? "k€" : "k€";
+            return `${val} ${label}`;
+          }
+        }
+      },
+      fill: {
+        type: "gradient",
+        gradient: {
+          shadeIntensity: 1,
+          opacityFrom: 0.4,
+          opacityTo: 0.2,
+          stops: [15, 120, 100]
+        }
+      },
+      grid: {
+        borderColor: getColor('border-color'),
+        padding: {
+          bottom: 5
+        }
+      },
+      redrawOnParentResize: true, // ← important
+      redrawOnWindowResize: true, // ← aussi
+    } as ApexOptions
+  }
 
   selectedResponsablesSubscription: Subscription = new Subscription;
 

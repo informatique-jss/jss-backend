@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { ActiveDirectoryGroup } from '../../../model/ActiveDirectoryGroup';
-import { GenericSelectComponent } from '../generic-select/generic-select.component';
 import { UntypedFormBuilder } from '@angular/forms';
-import { ActiveDirectoryGroupService } from '../../../services/active.directory.group.service';
 import { AppService } from 'src/app/services/app.service';
+import { ActiveDirectoryGroup } from '../../../model/ActiveDirectoryGroup';
+import { ActiveDirectoryGroupService } from '../../../services/active.directory.group.service';
+import { GenericSelectComponent } from '../generic-select/generic-select.component';
 
 @Component({
   selector: 'select-active-directory-group',
-  templateUrl: './../select-accounting-journal/select-accounting-journal.component.html',
+  templateUrl: './../generic-select/generic-select.component.html',
   styleUrls: ['./../generic-select/generic-select.component.html']
 })
 export class SelectActiveDirectoryGroupComponent extends GenericSelectComponent<ActiveDirectoryGroup> implements OnInit {
