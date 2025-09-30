@@ -361,8 +361,9 @@ public class BillingClosureReceiptHelper {
             search.setAccountingAccount(tiers.getAccountingAccountCustomer());
             search.setIsFromAs400(true);
             search.setHideLettered(true);
+            search.setStartDate(LocalDateTime.of(LocalDate.now().getYear(), 1, 1, 0, 1, 0));
 
-            List<AccountingRecordSearchResult> results = accountingRecordService.searchAccountingRecords(search, true);
+            List<AccountingRecordSearchResult> results = accountingRecordService.searchAccountingRecords(search, false);
             if (results != null)
                 for (AccountingRecordSearchResult result : results)
                     values.add(getBillingClosureReceiptValueForAs400(result));
