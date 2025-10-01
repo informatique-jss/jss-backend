@@ -14,7 +14,6 @@ import { SHARED_IMPORTS } from '../SharedImports';
 })
 export class EchartComponent implements OnInit, OnDestroy {
   @Input() options: EChartsOption = {};
-
   @Input() height: string = '300px';
   @Input() width: string = 'auto';
   @Output() chartInit = new EventEmitter<EChartsType>();
