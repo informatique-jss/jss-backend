@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,6 +54,7 @@ import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.Cart;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.CartRate;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.PiecesJointe;
+import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.Rate;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.ValidationRequest;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.FormaliteGuichetUniqueStatus;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.FormaliteStatusHistoryItem;
@@ -220,6 +222,36 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             }
 
         boolean formalityHasNewStatus = false;
+
+        // Manage dupplicate but coherent cartRate wich cause merge error
+        HashMap<Integer, Rate> rateMap = new HashMap<Integer, Rate>();
+        if (savedFormaliteGuichetUnique != null && savedFormaliteGuichetUnique.getCarts() != null)
+            for (Cart cart : savedFormaliteGuichetUnique.getCarts())
+                if (cart.getCartRates() != null)
+                    for (CartRate cartRate : cart.getCartRates()) {
+                        if (cartRate.getRate() != null) {
+                            if (rateMap.get(cartRate.getRate().getId()) == null) {
+                                rateMap.put(cartRate.getRate().getId(), cartRate.getRate());
+                            } else {
+                                cartRate.setRate(rateMap.get(cartRate.getRate().getId()));
+                            }
+                        }
+                    }
+
+        // Manage dupplicate but coherent cartRate wich cause merge error
+        rateMap = new HashMap<Integer, Rate>();
+        if (apiFormaliteGuichetUnique != null && apiFormaliteGuichetUnique.getCarts() != null)
+            for (Cart cart : apiFormaliteGuichetUnique.getCarts())
+                if (cart.getCartRates() != null)
+                    for (CartRate cartRate : cart.getCartRates()) {
+                        if (cartRate.getRate() != null) {
+                            if (rateMap.get(cartRate.getRate().getId()) == null) {
+                                rateMap.put(cartRate.getRate().getId(), cartRate.getRate());
+                            } else {
+                                cartRate.setRate(rateMap.get(cartRate.getRate().getId()));
+                            }
+                        }
+                    }
 
         if (formalite == null) {
             return addOrUpdateFormaliteGuichetUnique(apiFormaliteGuichetUnique);
