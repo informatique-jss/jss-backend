@@ -27,7 +27,7 @@
     <div class="tab-pane mb-5">
       <router-outlet></router-outlet>
       <div class="container">
-        <notice-template *ngIf="isNoticeTemplateReadyToBeShown"
+        <notice-template *ngIf="isNoticeTemplateReadyToBeShown && selectedTab && selectedTab.id && selectedTab.id==2"
           [hidden]="!selectedServiceInRequiredInformation || !isShowNoticeTemplate"
           [service]="selectedServiceInRequiredInformation"></notice-template>
       </div>

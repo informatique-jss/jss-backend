@@ -169,6 +169,7 @@ export class PostComponent implements OnInit, AfterViewInit {
 
   refreshPost() {
     this.postsOfSerie = [];
+    this.seriePost = undefined;
     this.validationToken = this.activatedRoute.snapshot.params['token'];
     if (this.validationToken) {
       let mail = this.activatedRoute.snapshot.params['mail'];

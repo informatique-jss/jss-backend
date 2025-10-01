@@ -3,7 +3,53 @@
   <div class="row g-1">
     @if(dashboard && dashboard.assoReportingDashboardWidgets){
 
+    @if(stackedWidgets){
+    <div class="card analytic-card">
+      <div class="card-body p-0">
+        <div class="row g-0">
+          <div class="col-xl-3 order-2 order-xl-1">
+            <div class="row g-0">
+              @for (asso of stackedWidgets; track $index) {
+              <div class="col-md-6 col-lg-6 col-xl-12 pointer" (click)="selectWidgetToDisplay(asso)">
+                <div class="p-3 rounded m-1 border border-dashed">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h3 class="mb-1"><span [countUp]="asso.reportingWidget.lastValue"
+                          [options]="{duration:2,decimalPlaces:2}">0</span>{{ asso.reportingWidget.lastValueUnit || ''
+                        }}
+                        <span class="fs-base"
+                          [class]="asso.reportingWidget.currentEvolution>=0 ? 'text-success' : 'text-danger'">
+                          {{asso.reportingWidget.currentEvolution>=0 ? '+' : ''}}{{
+                          asso.reportingWidget.currentEvolution }}% <ng-icon
+                            [name]="asso.reportingWidget.currentEvolution>=0 ? 'tablerTrendingUp' : 'tablerArrowDownRight' " />
+                        </span>
+                      </h3>
+                      <p class="mb-0 text-muted">{{ asso.reportingWidget.label }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              }
+            </div>
+          </div>
+
+          <div class="col-xl-9 order-1 order-xl-2 border-start border-dashed">
+            <div class="card-header justify-content-between border-dashed">
+              <h4 class="card-title mb-0">Analyse synthétique</h4>
+            </div>
+            <div class="card-body">
+              <div dir="ltr" *ngIf="selectedStackedWidget">
+                <reporting-chart [widget]="selectedStackedWidget.reportingWidget" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    }
+
     @for (asso of dashboard.assoReportingDashboardWidgets!; track $index) {
+    @if(!asso.isStacked){
     <div [ngClass]="asso.classToUse">
       <div class="card  ">
         <div class="card-header justify-content-between align-items-center">
@@ -15,7 +61,7 @@
         </div>
       </div>
     </div>
-
+    }
     }
 
     }

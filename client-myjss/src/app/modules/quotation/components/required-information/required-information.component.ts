@@ -143,7 +143,7 @@ export class RequiredInformationComponent implements OnInit {
   ckEditorHeader = ClassicEditor;
 
   noticeTemplateDescriptionSubscription: Subscription = new Subscription;
-  noticeTemplateDescription: NoticeTemplateDescription;
+  noticeTemplateDescription: NoticeTemplateDescription | undefined;
 
   goBackModalInstance: any | undefined;
 
@@ -394,13 +394,13 @@ export class RequiredInformationComponent implements OnInit {
 
         if (this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex])
           for (let provision of this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions)
-            if (provision && provision.announcement && !provision.isRedactedByJss && this.noticeTemplateDescription.isUsingTemplate && (!provision.announcement || !provision.announcement.notice || provision.announcement.notice.length == 0)) {
+            if (provision && provision.announcement && !provision.isRedactedByJss && this.noticeTemplateDescription && this.noticeTemplateDescription.isUsingTemplate && (!provision.announcement || !provision.announcement.notice || provision.announcement.notice.length == 0)) {
               this.appService.displayToast("Veuillez remplir le texte de l'annonce légale", true, "Champs obligatoires", 5000);
               return of(false);
             }
       }
 
-      if (this.noticeTemplateDescription.announcementOrder && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[this.noticeTemplateDescription.announcementOrder])
+      if (this.noticeTemplateDescription && this.noticeTemplateDescription.announcementOrder && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[this.noticeTemplateDescription.announcementOrder])
         this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[this.noticeTemplateDescription.announcementOrder].announcement!.notice = this.noticeTemplateDescription.displayText;
 
       if (this.currentUser) {
@@ -448,8 +448,10 @@ export class RequiredInformationComponent implements OnInit {
         if (!response)
           return;
         this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[3]);
-        this.noticeTemplateDescription.isShowNoticeTemplate = false;
-        this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
+        if (this.noticeTemplateDescription) {
+          this.noticeTemplateDescription.isShowNoticeTemplate = false;
+          this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
+        }
         this.appService.openRoute(undefined, "quotation/checkout", undefined);
       });
       return;
@@ -645,19 +647,21 @@ export class RequiredInformationComponent implements OnInit {
   }
 
   private emitServiceChange() {
-    if (this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined)
+    if (this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined && this.noticeTemplateDescription) {
       this.noticeTemplateDescription.service = this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex];
-    this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
+      this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
+    }
   }
 
   changeIsShowNoticeTemplate(event: Boolean, isRedactedByJss: boolean) {
-    if (isRedactedByJss) {
-      this.noticeTemplateDescription.isShowNoticeTemplate = false;
-      this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
-    } else {
-      this.noticeTemplateDescription.isShowNoticeTemplate = event as boolean;
-      this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
-    }
+    if (this.noticeTemplateDescription)
+      if (isRedactedByJss) {
+        this.noticeTemplateDescription.isShowNoticeTemplate = false;
+        this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
+      } else {
+        this.noticeTemplateDescription.isShowNoticeTemplate = event as boolean;
+        this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
+      }
   }
 
   hasOneTemplate(service: Service) {
@@ -677,13 +681,14 @@ export class RequiredInformationComponent implements OnInit {
     let originId = ngbEvent.activeId as number;
 
     // if id is > 10 and first char begins with 1 then its an announcement tab
-    if (destId >= 10 && destId < 20) {
-      this.noticeTemplateDescription.announcementOrder = this.parseInt(destId.toString().substring(1));
-      this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
-    } else if (originId >= 10 && destId < 20) {
-      this.noticeTemplateDescription.announcementOrder = this.parseInt(originId.toString().substring(1));
-      this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
-    }
+    if (this.noticeTemplateDescription)
+      if (destId >= 10 && destId < 20) {
+        this.noticeTemplateDescription.announcementOrder = this.parseInt(destId.toString().substring(1));
+        this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
+      } else if (originId >= 10 && destId < 20) {
+        this.noticeTemplateDescription.announcementOrder = this.parseInt(originId.toString().substring(1));
+        this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
+      }
     if (destId < 10) {
       this.changeIsShowNoticeTemplate(false, true);
     }

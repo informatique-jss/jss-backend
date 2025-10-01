@@ -6,8 +6,8 @@ import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAc
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { Employee } from 'src/app/modules/profile/model/Employee';
 import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
+import { AppService } from 'src/app/services/app.service';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
-import { AppService } from '../../../../../../../client-myjss/src/app/modules/main/services/app.service';
 import { ResponsableSearchResult } from '../../model/ResponsableSearchResult';
 import { TiersSearch } from '../../model/TiersSearch';
 import { TiersSearchResult } from '../../model/TiersSearchResult';
@@ -123,7 +123,7 @@ export class TiersListComponent implements OnInit {
 
       this.tableActionTiers.push({
         actionIcon: "launch", actionName: "Voir le tiers dans le CRM", actionClick: (column: SortTableAction<TiersSearchResult>, element: TiersSearchResult, event: any) => {
-          this.appService.openOsirisV2Route(undefined, "tiers/" + element.tiersId, true);
+          //  this.appService.openOsirisV2Route(undefined, "tiers/" + element.tiersId, true);
         }, display: true,
       } as SortTableAction<TiersSearchResult>);
 

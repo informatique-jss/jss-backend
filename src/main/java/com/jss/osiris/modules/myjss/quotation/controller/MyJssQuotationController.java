@@ -583,53 +583,56 @@ public class MyJssQuotationController {
 
 		byte[] data = null;
 		HttpHeaders headers = null;
-		Attachment tiersAttachment = attachmentService.getAttachment(idAttachment);
+		Attachment attachment = attachmentService.getAttachment(idAttachment);
 
 		boolean canDownload = true;
-		if (tiersAttachment.getProvision() == null && tiersAttachment.getAssoServiceDocument() == null
-				&& tiersAttachment.getCustomerOrder() == null && tiersAttachment.getTypeDocumentAttachment() == null)
+		if (attachment.getProvision() == null && attachment.getAssoServiceDocument() == null
+				&& attachment.getCustomerOrder() == null && attachment.getTypeDocumentAttachment() == null)
+			canDownload = false;
+
+		if (attachment.getTypeDocumentAttachment() == null && employeeService.getCurrentMyJssUser() == null)
 			canDownload = false;
 
 		// Can only download invoice
-		if (tiersAttachment.getCustomerOrder() != null && !tiersAttachment.getAttachmentType().getId()
+		if (attachment.getCustomerOrder() != null && !attachment.getAttachmentType().getId()
 				.equals(constantService.getAttachmentTypeInvoice().getId()))
 			canDownload = false;
 
-		if (tiersAttachment.getProvision() != null && tiersAttachment.getProvision().getService() != null
-				&& tiersAttachment.getProvision().getService().getAssoAffaireOrder().getQuotation() != null
-				&& tiersAttachment.getAttachmentType().getIsToSentOnUpload()
+		if (attachment.getProvision() != null && attachment.getProvision().getService() != null
+				&& attachment.getProvision().getService().getAssoAffaireOrder().getQuotation() != null
+				&& attachment.getAttachmentType().getIsToSentOnUpload()
 				&& !myJssQuotationValidationHelper.canSeeQuotation(
-						tiersAttachment.getProvision().getService().getAssoAffaireOrder().getQuotation()))
+						attachment.getProvision().getService().getAssoAffaireOrder().getQuotation()))
 			canDownload = false;
 
-		if (tiersAttachment.getProvision() != null && tiersAttachment.getProvision().getService() != null
-				&& tiersAttachment.getProvision().getService().getAssoAffaireOrder().getCustomerOrder() != null
-				&& tiersAttachment.getAttachmentType().getIsToSentOnUpload()
+		if (attachment.getProvision() != null && attachment.getProvision().getService() != null
+				&& attachment.getProvision().getService().getAssoAffaireOrder().getCustomerOrder() != null
+				&& attachment.getAttachmentType().getIsToSentOnUpload()
 				&& !myJssQuotationValidationHelper.canSeeQuotation(
-						tiersAttachment.getProvision().getService().getAssoAffaireOrder().getCustomerOrder()))
+						attachment.getProvision().getService().getAssoAffaireOrder().getCustomerOrder()))
 			canDownload = false;
 
-		if (tiersAttachment.getProvision() != null && tiersAttachment.getAssoServiceDocument() != null
-				&& tiersAttachment.getAssoServiceDocument().getService().getAssoAffaireOrder().getQuotation() != null
+		if (attachment.getProvision() != null && attachment.getAssoServiceDocument() != null
+				&& attachment.getAssoServiceDocument().getService().getAssoAffaireOrder().getQuotation() != null
 				&& !myJssQuotationValidationHelper.canSeeQuotation(
-						tiersAttachment.getAssoServiceDocument().getService().getAssoAffaireOrder().getQuotation()))
+						attachment.getAssoServiceDocument().getService().getAssoAffaireOrder().getQuotation()))
 			canDownload = false;
 
-		if (tiersAttachment.getProvision() != null && tiersAttachment.getAssoServiceDocument() != null
-				&& tiersAttachment.getAssoServiceDocument().getService().getAssoAffaireOrder()
+		if (attachment.getProvision() != null && attachment.getAssoServiceDocument() != null
+				&& attachment.getAssoServiceDocument().getService().getAssoAffaireOrder()
 						.getCustomerOrder() != null
 				&& !myJssQuotationValidationHelper.canSeeQuotation(
-						tiersAttachment.getAssoServiceDocument().getService().getAssoAffaireOrder().getCustomerOrder()))
+						attachment.getAssoServiceDocument().getService().getAssoAffaireOrder().getCustomerOrder()))
 			canDownload = false;
 
 		if (!canDownload)
 			return new ResponseEntity<byte[]>(null, headers, HttpStatus.OK);
 
-		if (tiersAttachment == null || tiersAttachment.getUploadedFile() == null
-				|| tiersAttachment.getUploadedFile().getPath() == null)
+		if (attachment == null || attachment.getUploadedFile() == null
+				|| attachment.getUploadedFile().getPath() == null)
 			throw new OsirisValidationException("tiersAttachment or UploadedFile or Path");
 
-		File file = new File(tiersAttachment.getUploadedFile().getPath());
+		File file = new File(attachment.getUploadedFile().getPath());
 
 		if (file != null) {
 			try {
@@ -639,7 +642,7 @@ public class MyJssQuotationController {
 			}
 
 			headers = new HttpHeaders();
-			headers.add("filename", tiersAttachment.getUploadedFile().getFilename());
+			headers.add("filename", attachment.getUploadedFile().getFilename());
 			headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
 			headers.setContentLength(data.length);
 

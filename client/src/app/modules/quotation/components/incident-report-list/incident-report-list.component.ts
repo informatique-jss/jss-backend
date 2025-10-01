@@ -5,6 +5,7 @@ import { IncidentReport } from 'src/app/modules/reporting/model/IncidentReport';
 import { IncidentReportService } from 'src/app/modules/reporting/services/incident.report.service';
 import { Responsable } from 'src/app/modules/tiers/model/Responsable';
 import { Tiers } from 'src/app/modules/tiers/model/Tiers';
+import { HabilitationsService } from 'src/app/services/habilitations.service';
 import { CustomerOrder } from '../../model/CustomerOrder';
 
 @Component({
@@ -25,6 +26,7 @@ export class IncidentReportListComponent implements OnInit {
 
   constructor(
     private incidentReportService: IncidentReportService,
+    private habilitationService: HabilitationsService
   ) { }
 
   ngOnInit() {
@@ -55,7 +57,9 @@ export class IncidentReportListComponent implements OnInit {
     }
     this.displayedColumns.push({ id: "incidentReportStatus", fieldName: "incidentReportStatus.label", label: "Status" } as SortTableColumn<IncidentReport>);
     this.displayedColumns.push({ id: "incidentResponsibility", fieldName: "incidentResponsibility.label", label: "Responsabilité" } as SortTableColumn<IncidentReport>);
-    this.displayedColumns.push({ id: "initiatedBy", fieldName: "initiatedBy", label: "Initié par", displayAsEmployee: true } as SortTableColumn<IncidentReport>);
+
+    if (this.habilitationService.canUpdateIncidentResponsibility())
+      this.displayedColumns.push({ id: "initiatedBy", fieldName: "initiatedBy", label: "Initié par", displayAsEmployee: true } as SortTableColumn<IncidentReport>);
     this.displayedColumns.push({ id: "assignedTo", fieldName: "assignedTo", label: "Assigné à", displayAsEmployee: true } as SortTableColumn<IncidentReport>);
     this.displayedColumns.push({ id: "startDate", fieldName: "startDate", label: "Début", valueFonction: formatDateForSortTable } as SortTableColumn<IncidentReport>);
     this.displayedColumns.push({ id: "endDate", fieldName: "endDate", label: "Fin", valueFonction: formatDateForSortTable } as SortTableColumn<IncidentReport>);

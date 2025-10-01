@@ -1,7 +1,6 @@
 import { Component, HostListener } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
-import { environment } from 'src/environments/environment';
 import { SAVE_KEY_CODE, SEARCH_KEY_CODE } from './libs/Constants';
 import { ConstantService } from './modules/miscellaneous/services/constant.service';
 import { LoginDialogComponent } from './routing/login-dialog/login-dialog.component';
@@ -46,8 +45,7 @@ export class AppComponent {
         });
       }
 
-      if (environment.production == false && this.loginService.hasGroup(['toto']) == false)
-        this.loginService.setUserRoleAndRefresh();
+      this.loginService.setUserRoleAndRefresh();
     });
   }
 

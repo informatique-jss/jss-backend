@@ -40,6 +40,9 @@ public class AssoReportingDashboardWidget implements Serializable, IId {
 	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private String classToUse;
 
+	@JsonView({ JacksonViews.OsirisDetailedView.class, JacksonViews.OsirisListView.class })
+	private Boolean isStacked;
+
 	public Integer getId() {
 		return id;
 	}
@@ -78,6 +81,14 @@ public class AssoReportingDashboardWidget implements Serializable, IId {
 
 	public void setClassToUse(String classToUse) {
 		this.classToUse = classToUse;
+	}
+
+	public Boolean getIsStacked() {
+		return isStacked;
+	}
+
+	public void setIsStacked(Boolean isStacked) {
+		this.isStacked = isStacked;
 	}
 
 }

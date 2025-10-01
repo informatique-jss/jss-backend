@@ -37,12 +37,15 @@ export class LoginService extends AppRestService<User> {
   setUserRoleAndRefresh() {
     this.getUserRoles().subscribe(response => {
       let roles = [];
+      let reload = !localStorage.getItem('roles');
       for (let role of response as any) {
         roles.push(role["authority"]);
       }
       localStorage.setItem('roles', JSON.stringify(roles));
-      window.location.reload();
-      this.appService.openRoute(null, '/', null);
+      if (reload) {
+        window.location.reload();
+        this.appService.openRoute(null, '/', null);
+      }
     })
   }
 

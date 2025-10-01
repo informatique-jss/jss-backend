@@ -1,8 +1,9 @@
 import { Component, OnChanges, OnInit } from '@angular/core';
 import { NgIcon } from '@ng-icons/core';
-import { ApexOptions } from 'ng-apexcharts';
+import { EChartsOption } from 'echarts';
+import { provideEchartsCore } from 'ngx-echarts';
 import { Subscription } from 'rxjs';
-import { ApexchartComponent } from '../../../../libs/apexchart/apexchart.component';
+import { EchartComponent } from '../../../../libs/apexchart/echart.component';
 import { OPPORTUNITY_CLOSING_AVERAGE_TIME, ORDER_COMPLETION_AVERAGE_TIME, PAYING_INVOICE_AVERAGE_TIME } from '../../../../libs/Constants';
 import { getColor } from '../../../../libs/inspinia/utils/color-utils';
 import { AnalyticStatsType } from '../../../main/model/AnalyticStatsType';
@@ -11,13 +12,15 @@ import { Responsable } from '../../../profile/model/Responsable';
 import { AnalyticStatsTypeService } from '../../services/analytic-stats-type.service';
 import { ResponsableService } from '../../services/responsable.service';
 import { AnalyticStatisticWidgetComponent } from '../analytic-statistic-widget/analytic-statistic-widget.component';
+import { echarts } from './../../../reporting/components/reporting-chart/echarts-config';
 
 @Component({
   selector: 'responsables-home-kpi',
+  providers: [provideEchartsCore({ echarts })],
   imports: [
     AnalyticStatisticWidgetComponent,
     NgIcon,
-    ApexchartComponent
+    EchartComponent
   ],
   standalone: true,
   templateUrl: './responsables-home-kpi.component.html',
@@ -222,7 +225,7 @@ export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
       },
       redrawOnParentResize: true, // ← important
       redrawOnWindowResize: true, // ← aussi
-    } as ApexOptions
+    } as EChartsOption
   }
 
   selectedResponsablesSubscription: Subscription = new Subscription;

@@ -163,7 +163,6 @@ public class ReportingController {
 		if (reportingWidgets.getId() != null)
 			validationHelper.validateReferential(reportingWidgets, true, "reportingWidgets");
 		validationHelper.validateString(reportingWidgets.getLabel(), true, "label");
-		validationHelper.validateString(reportingWidgets.getLabelSqlText(), true, "labelSqlText");
 		validationHelper.validateString(reportingWidgets.getLabelType(), true, "labelType");
 
 		return new ResponseEntity<ReportingWidget>(reportingWidgetService.addOrUpdateReportingWidget(reportingWidgets),

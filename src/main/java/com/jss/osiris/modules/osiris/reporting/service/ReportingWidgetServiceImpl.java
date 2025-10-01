@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.reporting.service;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -10,6 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.reporting.model.ReportingWidget;
 import com.jss.osiris.modules.osiris.reporting.model.ReportingWidgetSerie;
 import com.jss.osiris.modules.osiris.reporting.repository.ReportingWidgetRepository;
@@ -25,6 +32,9 @@ public class ReportingWidgetServiceImpl implements ReportingWidgetService {
 
     @PersistenceContext
     EntityManager em;
+
+    @Autowired
+    ObjectMapper objectMapper;
 
     @Override
     public List<ReportingWidget> getReportingWidgets() {
@@ -60,7 +70,7 @@ public class ReportingWidgetServiceImpl implements ReportingWidgetService {
     }
 
     @Override
-    public void computeReportingWidget(Integer widgetId) {
+    public void computeReportingWidget(Integer widgetId) throws OsirisException {
         ReportingWidget widget = getReportingWidget(widgetId);
         if (widget != null) {
 
@@ -88,7 +98,7 @@ public class ReportingWidgetServiceImpl implements ReportingWidgetService {
                                 serie.getSerieSqlText()));
                     } else {
                         seriesUnion.append(String.format(
-                                "SELECT '%s' as serie_name, '%s' as plot_type, NULL::jsonb as columns, jsonb_agg(value ) as data "
+                                "SELECT '%s' as serie_name, '%s' as plot_type, NULL::jsonb as columns, jsonb_agg(jsonb_build_array(label, value) ) as data "
                                         +
                                         "FROM (%s) s",
                                 serie.getSerieName().replace("'", "''"),
@@ -102,10 +112,8 @@ public class ReportingWidgetServiceImpl implements ReportingWidgetService {
                     SET payload =t.payload,
                      last_update = now()
                      from (
-                        WITH lbl AS (%s),
-                        series_data AS (%s)
+                        WITH  series_data AS (%s)
                         SELECT jsonb_build_object(
-                            'labels', (SELECT jsonb_agg(label) FROM lbl),
                             'series', (
                                 SELECT jsonb_agg(
                                     jsonb_build_object(
@@ -120,10 +128,47 @@ public class ReportingWidgetServiceImpl implements ReportingWidgetService {
                         ) as payload
                     ) t
                     WHERE id = %d
-                    """, widget.getLabelSqlText(), seriesUnion.toString(), widgetId);
+                    """, seriesUnion.toString(), widgetId);
 
             // 4. Exécution native
             em.createNativeQuery(finalSql).executeUpdate();
+
+            // Update last value
+            if (widget.getLabelType().equals(ReportingWidget.LABEL_TYPE_DATETIME)) {
+                widget = getReportingWidget(widgetId);
+                if (widget.getPayload() != null) {
+                    JsonNode root;
+                    try {
+                        root = objectMapper.readTree(widget.getPayload());
+                    } catch (JsonMappingException e) {
+                        throw new OsirisException(e, "Error when parsing payload of widget " + widgetId);
+                    } catch (JsonProcessingException e) {
+                        throw new OsirisException(e, "Error when parsing payload of widget " + widgetId);
+                    }
+
+                    ArrayNode series = (ArrayNode) root.get("series");
+                    if (series != null && series.size() > 0) {
+                        JsonNode serie = series.get(0);
+
+                        ArrayNode data = (ArrayNode) serie.get("data");
+                        if (data != null) {
+                            BigDecimal last = null;
+                            BigDecimal penultieme = null;
+                            if (data.size() > 0)
+                                last = data.get(data.size() - 1).get(1).decimalValue();
+                            if (data.size() > 1)
+                                penultieme = data.get(data.size() - 2).get(1).decimalValue();
+
+                            widget.setLastValue(last);
+                            if (penultieme != null && !last.equals(new BigDecimal(0))) {
+                                widget.setCurrentEvolution(
+                                        last.subtract(penultieme).divide(last).multiply(new BigDecimal(100.0)));
+                            }
+                            addOrUpdateReportingWidget(widget);
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -159,10 +159,13 @@ public class CustomerMailServiceImpl implements CustomerMailService {
         mail.setIsCancelled(false);
 
         // No temporization for MyJSS order for mail in progress
-        if (!mail.getMailTemplate().equals(CustomerMail.TEMPLATE_CUSTOMER_ORDER_IN_PROGRESS)
-                || mail.getCustomerOrder() == null || !mail.getCustomerOrder().getCustomerOrderOrigin().getId()
-                        .equals(constantService.getCustomerOrderOriginMyJss().getId()))
-            mail.setToSendAfter(previousSendDateTime); // if previous mail steal its date else now + tempo
+        if (mail.getMailTemplate().equals(CustomerMail.TEMPLATE_CUSTOMER_ORDER_IN_PROGRESS)
+                || mail.getMailTemplate().equals(CustomerMail.TEMPLATE_WAITING_DEPOSIT))
+            if (mail.getCustomerOrder() != null && mail.getCustomerOrder().getCustomerOrderOrigin().getId()
+                    .equals(constantService.getCustomerOrderOriginMyJss().getId()))
+                return;
+
+        mail.setToSendAfter(previousSendDateTime); // if previous mail steal its date else now + tempo
 
         if (customerOrderMails != null && customerOrderMails.size() > 0) {
             // Order in progress then finalized => keep only finalized

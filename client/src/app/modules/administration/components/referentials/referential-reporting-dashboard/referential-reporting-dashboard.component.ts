@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { LABEL_TYPE_DATETIME } from 'src/app/libs/Constants';
 import { AssoReportingDashboardWidget } from 'src/app/modules/reporting/model/AssoReportingDashboardWidget';
 import { ReportingDashboard } from 'src/app/modules/reporting/model/ReportingDashboard';
 import { ReportingDashboardService } from 'src/app/modules/reporting/services/reporting.dashboard.service';
@@ -20,6 +21,7 @@ export class ReferentialReportingDashboardComponent extends GenericReferentialCo
   }
 
   deleteIndex = 0;
+  LABEL_TYPE_DATETIME = LABEL_TYPE_DATETIME;
 
   getAddOrUpdateObservable(): Observable<ReportingDashboard> {
     return this.reportingDashboardService.addOrUpdateReportingDashboard(this.selectedEntity!);

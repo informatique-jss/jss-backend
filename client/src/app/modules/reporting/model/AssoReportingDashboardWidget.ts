@@ -4,4 +4,5 @@ export interface AssoReportingDashboardWidget {
   reportingWidget: ReportingWidget;
   widgetOrder: number;
   classToUse: string;
+  isStacked: boolean;
 }

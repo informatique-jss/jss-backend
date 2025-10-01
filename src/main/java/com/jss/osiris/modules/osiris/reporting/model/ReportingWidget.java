@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.reporting.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -23,9 +24,9 @@ import jakarta.persistence.SequenceGenerator;
 @Entity
 public class ReportingWidget implements Serializable, IId {
 
-	private static String LABEL_TYPE_NUMERIC = "numeric";
-	private static String LABEL_TYPE_DATETIME = "datetime";
-	private static String LABEL_TYPE_CATEGORY = "category";
+	public static String LABEL_TYPE_NUMERIC = "numeric";
+	public static String LABEL_TYPE_DATETIME = "datetime";
+	public static String LABEL_TYPE_CATEGORY = "category";
 
 	@Id
 	@SequenceGenerator(name = "reporting_widget_sequence", sequenceName = "reporting_widget_sequence", allocationSize = 1)
@@ -36,10 +37,6 @@ public class ReportingWidget implements Serializable, IId {
 	@Column(nullable = false)
 	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private String label;
-
-	@Column(columnDefinition = "TEXT")
-	@JsonView({ JacksonViews.OsirisDetailedView.class })
-	private String labelSqlText;
 
 	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private String labelType;
@@ -56,6 +53,17 @@ public class ReportingWidget implements Serializable, IId {
 	private LocalDateTime lastUpdate;
 
 	private String reportingUpdateFrequency;
+
+	@Column(columnDefinition = "NUMERIC(15,2)", precision = 10, scale = 2)
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
+	private BigDecimal lastValue;
+
+	@Column(columnDefinition = "NUMERIC(15,2)", precision = 10, scale = 2)
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
+	private BigDecimal currentEvolution;
+
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
+	private String lastValueUnit;
 
 	public Integer getId() {
 		return id;
@@ -79,14 +87,6 @@ public class ReportingWidget implements Serializable, IId {
 
 	public void setPayload(String payload) {
 		this.payload = payload;
-	}
-
-	public String getLabelSqlText() {
-		return labelSqlText;
-	}
-
-	public void setLabelSqlText(String labelSqlText) {
-		this.labelSqlText = labelSqlText;
 	}
 
 	public List<ReportingWidgetSerie> getReportingWidgetSeries() {
@@ -143,6 +143,30 @@ public class ReportingWidget implements Serializable, IId {
 
 	public void setReportingUpdateFrequency(String reportingUpdateFrequency) {
 		this.reportingUpdateFrequency = reportingUpdateFrequency;
+	}
+
+	public BigDecimal getLastValue() {
+		return lastValue;
+	}
+
+	public void setLastValue(BigDecimal lastValue) {
+		this.lastValue = lastValue;
+	}
+
+	public BigDecimal getCurrentEvolution() {
+		return currentEvolution;
+	}
+
+	public void setCurrentEvolution(BigDecimal currentEvolution) {
+		this.currentEvolution = currentEvolution;
+	}
+
+	public String getLastValueUnit() {
+		return lastValueUnit;
+	}
+
+	public void setLastValueUnit(String lastUnit) {
+		this.lastValueUnit = lastUnit;
 	}
 
 }

@@ -22,7 +22,7 @@
                 *ngIf="selectedEntity.id" propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
             </td>
             <td>
-              <generic-input [(model)]="selectedEntity.label" label="Nom fonctionnel" [maxLength]="200"
+              <generic-input [(model)]="selectedEntity.label" label="Libellé des abscisses" [maxLength]="200"
                 [form]="entityForm" propertyName="label" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
             </td>
             <td>
@@ -35,21 +35,13 @@
         <table class="full-width">
           <tr>
             <td>
-              <generic-input [(model)]="selectedEntity.label" label="Libellé des abscisses" [form]="entityForm"
-                propertyName="label" [isMandatory]="true" [isDisabled]="true"></generic-input>
+              <generic-input [(model)]="selectedEntity.lastValueUnit" label="Unité" [form]="entityForm"
+                propertyName="lastValueUnit" [isMandatory]="false" [isDisabled]="true"></generic-input>
             </td>
             <td>
               <select-string [types]="labelTypes" [isMandatory]="true" [form]="entityForm" propertyName="labelType"
                 [(model)]="selectedEntity.labelType" label="Type des abscisses">
               </select-string>
-            </td>
-          </tr>
-          <tr>
-            <td colspan="2">
-              <generic-textarea [(model)]="selectedEntity.labelSqlText"
-                label="Requête SQL des abscisses (/!\ nommer la colonne label)" [form]="entityForm"
-                propertyName="labelSqlText" [isMandatory]="true" [isDisabled]="!editMode"
-                [numberOfLines]="6"></generic-textarea>
             </td>
           </tr>
         </table>
@@ -75,9 +67,9 @@
             <tr>
               <td colspan="3">
                 <generic-textarea [(model)]="serie.serieSqlText"
-                  label="Requête SQL de la série (/!\ nommer la colonne value)" [form]="entityForm"
-                  [propertyName]="'serieSqlText'+index" [isMandatory]="true" [isDisabled]="!editMode"
-                  [numberOfLines]="6"></generic-textarea>
+                  label="Requête SQL de la série (/!\ nommer la colonne les ordonnées value et les abscisses label )"
+                  [form]="entityForm" [propertyName]="'serieSqlText'+index" [isMandatory]="true"
+                  [isDisabled]="!editMode" [numberOfLines]="6"></generic-textarea>
               </td>
             </tr>
             <tr>

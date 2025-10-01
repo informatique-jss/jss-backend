@@ -94,11 +94,13 @@ export class NoticeTemplateComponent implements OnInit {
       this.prepareInitialDisplayText();
     });
 
-    let noticeTemplateDescription: NoticeTemplateDescription = this.noticeTemplateService.getNoticeTemplateDescription();
+    let noticeTemplateDescription = this.noticeTemplateService.getNoticeTemplateDescription();
     this.form.valueChanges.subscribe(() => {
       this.updateDisplayText()
-      noticeTemplateDescription.displayText = this.displayText;
-      this.noticeTemplateService.changeNoticeTemplateDescription(noticeTemplateDescription);
+      if (noticeTemplateDescription) {
+        noticeTemplateDescription.displayText = this.displayText;
+        this.noticeTemplateService.changeNoticeTemplateDescription(noticeTemplateDescription);
+      }
     });
   }
 

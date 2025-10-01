@@ -60,6 +60,12 @@
                   [isDisabled]="!editMode"></generic-input>
               </td>
               <td>
+                <generic-toggle [(model)]="assoReportingDashboardWidget.isStacked"
+                  label="Est dans le résumé du tableau ?" [form]="entityForm" [propertyName]="'isStacked'+index"
+                  [isMandatory]="false" [isDisabled]="!editMode"
+                  *ngIf="assoReportingDashboardWidget.reportingWidget && assoReportingDashboardWidget.reportingWidget.labelType && assoReportingDashboardWidget.reportingWidget.labelType==LABEL_TYPE_DATETIME"></generic-toggle>
+              </td>
+              <td>
                 <button *ngIf="editMode" (click)="deleteWidgetAsso(assoReportingDashboardWidget)" mat-raised-button
                   color="accent">
                   <mat-icon>delete</mat-icon>

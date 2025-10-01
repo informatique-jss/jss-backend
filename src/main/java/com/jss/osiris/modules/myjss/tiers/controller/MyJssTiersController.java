@@ -56,7 +56,7 @@ public class MyJssTiersController {
 
 		List<BillingClosureReceiptValue> values = billingClosureReceiptHelper
 				.generateBillingClosureValuesForITiers(responsable.getTiers(), responsable, isOrderingByEventDate,
-						true, true);
+						true, true, true);
 
 		values.sort(new Comparator<BillingClosureReceiptValue>() {
 			@Override

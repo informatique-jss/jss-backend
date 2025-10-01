@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input, OnInit, signal } from '@angular/core';
-import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
 import { NgIcon } from '@ng-icons/core';
 import { Cell, ColumnDef, createAngularTable, FlexRenderDirective, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, Table } from '@tanstack/angular-table';
 import { LucideAngularModule, LucideDownload, LucideSearch } from 'lucide-angular';
@@ -10,7 +9,7 @@ import { TanstackTablePaginationComponent } from '../tanstack-table-pagination/t
 
 @Component({
   selector: 'tanstack-table',
-  imports: [...SHARED_IMPORTS, FlexRenderDirective, LucideAngularModule, CommonModule, NgIcon, TanstackTablePaginationComponent, NgbDropdown],
+  imports: [...SHARED_IMPORTS, FlexRenderDirective, LucideAngularModule, CommonModule, NgIcon, TanstackTablePaginationComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './tanstack-table.component.html',
   styleUrls: ['./tanstack-table.component.css'],
@@ -20,10 +19,11 @@ export class TanstackTableComponent<T> implements OnInit {
   @Input() columns!: ColumnDef<any>[];
   @Input() data!: any[];
   @Input() title: string | undefined;
-  @Input() className = '';
+  @Input() className = 'card';
   emptyMessage: string | undefined = 'Aucun élément trouvé';
   @Input() showHeaders = true;
   table!: Table<T>;
+  searchValue = '';
 
   LucideDownload = LucideDownload;
   LucideSearch = LucideSearch;
@@ -78,6 +78,11 @@ export class TanstackTableComponent<T> implements OnInit {
     downloadLink.setAttribute('download', filename);
     document.body.appendChild(downloadLink);
     downloadLink.click();
+  }
+
+  applyExternalFilter(value: string) {
+    this.searchValue = value;
+    this.table.setGlobalFilter(value);
   }
 
 }
