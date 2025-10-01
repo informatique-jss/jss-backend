@@ -21,7 +21,6 @@ export class EchartComponent implements OnInit, OnDestroy {
   @Input() height: string = '300px';
   @Input() width: string = 'auto';
   @Input() series: any[] | undefined;
-  @Input() showLegend: boolean = true;
   @Input() labelType: string = LABEL_TYPE_CATEGORY;
   @Input() title: string = "";
   @Input() unit: string | undefined;
@@ -88,7 +87,7 @@ export class EchartComponent implements OnInit, OnDestroy {
         }
       },
       legend: {
-        show: (this.showLegend),
+        show: (this.series && this.series.length > 1),
         top: 0,
         left: 'left',
         textStyle: {
