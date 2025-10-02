@@ -506,5 +506,4 @@ public class Affaire implements IId, IAttachment {
 	public void setIsProvisionalPaymentMandatory(Boolean isProvisionalPaymentMandatory) {
 		this.isProvisionalPaymentMandatory = isProvisionalPaymentMandatory;
 	}
-
 }
