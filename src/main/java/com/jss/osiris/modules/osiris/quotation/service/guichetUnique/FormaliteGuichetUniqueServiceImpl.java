@@ -154,10 +154,24 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
     @Override
     public FormaliteGuichetUnique addOrUpdateFormaliteGuichetUnique(FormaliteGuichetUnique formaliteGuichetUnique) {
         ArrayList<Cart> cartToRemove = new ArrayList<Cart>();
+        HashMap<Integer, Rate> rateMap = new HashMap<Integer, Rate>();
         if (formaliteGuichetUnique.getCarts() != null)
-            for (Cart cart : formaliteGuichetUnique.getCarts())
+            for (Cart cart : formaliteGuichetUnique.getCarts()) {
                 if (!cart.getStatus().equals(cartStatusPayed) && !cart.getStatus().equals(cartStatusRefund))
                     cartToRemove.add(cart);
+
+                // Manage dupplicate but coherent cartRate wich cause merge error
+                if (cart.getCartRates() != null)
+                    for (CartRate cartRate : cart.getCartRates()) {
+                        if (cartRate.getRate() != null) {
+                            if (rateMap.get(cartRate.getRate().getId()) == null) {
+                                rateMap.put(cartRate.getRate().getId(), cartRate.getRate());
+                            } else {
+                                cartRate.setRate(rateMap.get(cartRate.getRate().getId()));
+                            }
+                        }
+                    }
+            }
 
         if (cartToRemove.size() > 0)
             formaliteGuichetUnique.getCarts().removeAll(cartToRemove);
@@ -222,36 +236,6 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             }
 
         boolean formalityHasNewStatus = false;
-
-        // Manage dupplicate but coherent cartRate wich cause merge error
-        HashMap<Integer, Rate> rateMap = new HashMap<Integer, Rate>();
-        if (savedFormaliteGuichetUnique != null && savedFormaliteGuichetUnique.getCarts() != null)
-            for (Cart cart : savedFormaliteGuichetUnique.getCarts())
-                if (cart.getCartRates() != null)
-                    for (CartRate cartRate : cart.getCartRates()) {
-                        if (cartRate.getRate() != null) {
-                            if (rateMap.get(cartRate.getRate().getId()) == null) {
-                                rateMap.put(cartRate.getRate().getId(), cartRate.getRate());
-                            } else {
-                                cartRate.setRate(rateMap.get(cartRate.getRate().getId()));
-                            }
-                        }
-                    }
-
-        // Manage dupplicate but coherent cartRate wich cause merge error
-        rateMap = new HashMap<Integer, Rate>();
-        if (apiFormaliteGuichetUnique != null && apiFormaliteGuichetUnique.getCarts() != null)
-            for (Cart cart : apiFormaliteGuichetUnique.getCarts())
-                if (cart.getCartRates() != null)
-                    for (CartRate cartRate : cart.getCartRates()) {
-                        if (cartRate.getRate() != null) {
-                            if (rateMap.get(cartRate.getRate().getId()) == null) {
-                                rateMap.put(cartRate.getRate().getId(), cartRate.getRate());
-                            } else {
-                                cartRate.setRate(rateMap.get(cartRate.getRate().getId()));
-                            }
-                        }
-                    }
 
         if (formalite == null) {
             return addOrUpdateFormaliteGuichetUnique(apiFormaliteGuichetUnique);
