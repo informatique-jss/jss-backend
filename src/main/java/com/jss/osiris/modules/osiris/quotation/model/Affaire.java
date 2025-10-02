@@ -205,7 +205,6 @@ public class Affaire implements IId, IAttachment {
 	private Boolean isToNotUpdate;
 
 	@JsonView({ JacksonViews.MyJssDetailedView.class })
-	@Column(nullable = false)
 	private Boolean isProvisionalPaymentMandatory;
 
 	@Transient
