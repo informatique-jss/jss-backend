@@ -25,7 +25,6 @@ import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.jackson.JacksonViews;
-import com.jss.osiris.libs.jackson.JacksonViews.OsirisDetailedView;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingRepairHelper;
 import com.jss.osiris.modules.osiris.crm.model.AnalyticStatsType;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrm;
@@ -613,17 +612,16 @@ public class TiersController {
     return new ResponseEntity<List<Responsable>>(responsableService.getResponsables(searchedValue), HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/tiers")
+  public ResponseEntity<Tiers> getTiersById(@RequestParam Integer id) {
+    return new ResponseEntity<Tiers>(tiersService.getTiersFromUser(id), HttpStatus.OK);
+  }
+
   /*
    * |============================================================================
    * |______________________METHODS FOR OSIRIS V2_________________________________
    * |============================================================================
    */
-
-  @GetMapping(inputEntryPoint + "/tiers")
-  @JsonView(OsirisDetailedView.class)
-  public ResponseEntity<Tiers> getTiersById(@RequestParam Integer id) {
-    return new ResponseEntity<Tiers>(tiersService.getTiersFromUser(id), HttpStatus.OK);
-  }
 
   @GetMapping(inputEntryPoint + "/responsables")
   @JsonView(JacksonViews.OsirisListView.class)
