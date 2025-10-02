@@ -58,7 +58,7 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
                         + " left join asso_affaire_order asso on asso.id_customer_order = c.id"
                         + " left join affaire af on af.id = asso.id_affaire"
                         + " left join city on af.id_city = city.id"
-                        + " left join responsable r1 on r1.id = c.id_responsable"
+                        + " left join responsable r1 on r1.id = i.id_responsable"
                         + " left join tiers t on r1.id_tiers =t.id "
                         + " left join provider pro on pro.id = i.id_provider"
                         + " left join payment p on p.id_invoice = i.id and p.is_cancelled = false"
