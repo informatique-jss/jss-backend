@@ -22,6 +22,8 @@ public class BatchCategory implements IId, Serializable {
     public static String MISCELLANEOUS = "MISCELLANEOUS";
     public static String REMINDERS = "REMINDERS";
     public static String REFERENTIALS = "REFERENTIALS";
+    public static String INDICATORS = "INDICATORS";
+    public static String WEBSITES = "WEBSITES";
     public static String MAILS = "MAILS";
     @Id
     @SequenceGenerator(name = "batch_category_sequence", sequenceName = "batch_category_sequence", allocationSize = 1)

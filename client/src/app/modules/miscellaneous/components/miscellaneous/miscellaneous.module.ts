@@ -65,6 +65,7 @@ import { AutocompletePrincipalAccountingAccountComponent } from '../forms/autoco
 import { AutocompleteProviderComponent } from '../forms/autocomplete-provider/autocomplete-provider.component';
 import { AutocompleteProvisionTypeComponent } from '../forms/autocomplete-provision-type/autocomplete-provision-type.component';
 import { AutocompleteRegionComponent } from '../forms/autocomplete-region/autocomplete-region.component';
+import { AutocompleteReportingWidgetComponent } from '../forms/autocomplete-reporting-widget/autocomplete-reporting-widget.component';
 import { AutocompleteResponsableComponent } from '../forms/autocomplete-responsable/autocomplete-responsable.component';
 import { AutocompleteRnaComponent } from '../forms/autocomplete-rna/autocomplete-rna.component';
 import { AutocompleteServiceTypeComponent } from '../forms/autocomplete-service-type/autocomplete-service-type.component';
@@ -203,6 +204,7 @@ import { RadioGroupRecordTypeComponent } from '../forms/radio-group-record-type/
 import { RadioGroupTransfertFundsComponent } from '../forms/radio-group-transfert-funds/radio-group-transfert-funds.component';
 import { SelectAccountingAccountClassComponent } from '../forms/select-accounting-account-class/select-accounting-account-class.component';
 import { SelectAccountingJournalComponent } from '../forms/select-accounting-journal/select-accounting-journal.component';
+import { SelectActiveDirectoryGroupMultipleComponent } from '../forms/select-active-directory-group-multiple/select-active-directory-group-multiple.component';
 import { SelectActiveDirectoryGroupComponent } from '../forms/select-active-directory-group/select-active-directory-group.component';
 import { SelectAnnouncementNoticeTemplateFragmentComponent } from '../forms/select-announcement-notice-template-fragment/select-announcement-notice-template-fragment';
 import { SelectAssignationTypeComponent } from '../forms/select-assignation-type/select-assignation-type.component';
@@ -263,6 +265,7 @@ import { SelectQuotationStatusComponent } from '../forms/select-quotation-status
 import { SelectRefundTypeComponent } from '../forms/select-refund-type/select-refund-type.component';
 import { SelectRegionsComponent } from '../forms/select-regions/select-regions.component';
 import { SelectReportingDatasetComponent } from '../forms/select-reporting-dataset/select-reporting-dataset.component';
+import { SelectReportingFrequencyComponent } from '../forms/select-reporting-frequency/select-reporting-frequency.component';
 import { SelectResponsableComponent } from '../forms/select-responsable/select-responsable.component';
 import { SelectRffFrequencyComponent } from '../forms/select-rff-frequency/select-rff-frequency.component';
 import { SelectServiceFamilyGroupComponent } from '../forms/select-service-family-group/select-service-family-group.component';
@@ -272,6 +275,7 @@ import { SelectServiceFieldTypeComponent } from '../forms/select-service-field-t
 import { SelectServiceTypeComponent } from '../forms/select-service-type/select-service-type.component';
 import { SelectSingleEmployeeComponent } from '../forms/select-single-employee/select-single-employee.component';
 import { SelectSpecialOfferComponent } from '../forms/select-special-offer/select-special-offer.component';
+import { SelectStringComponent } from '../forms/select-string/select-string.component';
 import { SelectSubscriptionPeriodComponent } from '../forms/select-subscription-period/select-subscription-period.component';
 import { SelectTiersCategoryComponent } from '../forms/select-tiers-category/select-tiers-category.component';
 import { SelectTiersTypeComponent } from '../forms/select-tiers-type/select-tiers-type.component';
@@ -601,6 +605,10 @@ const routes: Routes = [
     SelectSingleEmployeeComponent,
     SelectAnnouncementNoticeTemplateFragmentComponent,
     CustomViewsComponent,
+    SelectReportingFrequencyComponent,
+    SelectActiveDirectoryGroupMultipleComponent,
+    AutocompleteReportingWidgetComponent,
+    SelectStringComponent,
   ],
   exports: [
     HistoryComponent,
@@ -866,7 +874,11 @@ const routes: Routes = [
     ChipsResponsableComponent,
     SelectSingleEmployeeComponent,
     SelectAnnouncementNoticeTemplateFragmentComponent,
-    CustomViewsComponent
+    CustomViewsComponent,
+    SelectReportingFrequencyComponent,
+    SelectActiveDirectoryGroupMultipleComponent,
+    AutocompleteReportingWidgetComponent,
+    SelectStringComponent
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

@@ -245,6 +245,7 @@ public class AffaireServiceImpl implements AffaireService {
                 for (RneCompany rneCompany : rneCompanies)
                     affaires.add(getAffaireFromRneCompany(rneCompany, siret, false));
             }
+            return affaires;
         } else if (validationHelper.validateSiren(siret)) {
             // Generate all possibilities from siret
             List<RneCompany> rneCompanies = rneDelegateService.getCompanyBySiren(siret);

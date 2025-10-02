@@ -144,7 +144,7 @@ public class BillingClosureReceiptHelper {
 
             if (downloadFile) {
                 List<BillingClosureReceiptValue> values = generateBillingClosureValuesForITiers(tier, responsable,
-                        isOrderingByEventDate, false, false);
+                        isOrderingByEventDate, false, false, false);
 
                 return generatePdfDelegate.getBillingClosureReceiptFile(tier, responsable, values);
             }
@@ -157,7 +157,7 @@ public class BillingClosureReceiptHelper {
                                     .equals(constantService.getBillingClosureRecipientTypeOther().getId()))) {
 
                 List<BillingClosureReceiptValue> values = generateBillingClosureValuesForITiers(tier, responsable,
-                        isOrderingByEventDate, false, false);
+                        isOrderingByEventDate, false, false, false);
                 if (values.size() > 0) {
                     try {
                         sendBillingClosureReceiptFile(
@@ -179,7 +179,7 @@ public class BillingClosureReceiptHelper {
                     for (Responsable tiersResponsable : tier.getResponsables()) {
 
                         List<BillingClosureReceiptValue> values = generateBillingClosureValuesForITiers(null,
-                                tiersResponsable, isOrderingByEventDate, false, false);
+                                tiersResponsable, isOrderingByEventDate, false, false, false);
                         if (values.size() > 0) {
                             try {
                                 sendBillingClosureReceiptFile(
@@ -200,14 +200,14 @@ public class BillingClosureReceiptHelper {
     }
 
     public List<BillingClosureReceiptValue> generateBillingClosureValuesForITiers(Tiers tiers, Responsable responsable,
-            boolean isOrderingByEventDate, boolean hideAffaires, boolean hideServices)
+            boolean isOrderingByEventDate, boolean hideAffaires, boolean hideServices, boolean seeAllScope)
             throws OsirisException, OsirisClientMessageException {
 
         // Find all elements
         ArrayList<BillingClosureReceiptValue> values = new ArrayList<BillingClosureReceiptValue>();
 
         // Find customer orders
-        ArrayList<Responsable> responsableList = new ArrayList<Responsable>();
+        List<Responsable> responsableList = new ArrayList<Responsable>();
 
         if (responsable != null) {
             responsableList.add(responsable);
@@ -218,6 +218,10 @@ public class BillingClosureReceiptHelper {
             for (Responsable responsableOfTiers : tiers.getResponsables())
                 responsableList.add(responsableOfTiers);
         }
+
+        if (seeAllScope && Boolean.TRUE.equals(responsable.getCanViewAllTiersInWeb()) && tiers != null
+                && tiers.getResponsables() != null)
+            responsableList = tiers.getResponsables();
 
         List<CustomerOrder> customerOrders = customerOrderService
                 .searchOrders(customerOrderStatusService.getCustomerOrderStatus().stream()
@@ -591,7 +595,7 @@ public class BillingClosureReceiptHelper {
         responsable = responsableService.getResponsable(responsable.getId());
 
         List<BillingClosureReceiptValue> values = generateBillingClosureValuesForITiers(responsable.getTiers(),
-                responsable, true, true, true);
+                responsable, true, true, true, false);
 
         values.sort(new Comparator<BillingClosureReceiptValue>() {
             @Override

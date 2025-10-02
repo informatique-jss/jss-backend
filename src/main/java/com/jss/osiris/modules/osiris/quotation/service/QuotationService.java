@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.quotation.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
@@ -83,6 +84,9 @@ public interface QuotationService {
         public Boolean checkValidationIdQuotation(Integer validationId);
 
         public List<Quotation> findQuotationByResponsable(Responsable responsable);
+
+        public List<Quotation> getQuotationsByResponsablesAndStatusAndDates(List<Responsable> responsables,
+                        LocalDateTime startDate, LocalDateTime endDate, QuotationStatus quotationStatus);
 
         public List<Quotation> completeAdditionnalInformationForQuotations(List<Quotation> customerOrders,
                         Boolean populationAssoAffaireOrderTransientField)

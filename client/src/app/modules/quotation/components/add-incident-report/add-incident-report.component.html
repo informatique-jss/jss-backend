@@ -17,7 +17,7 @@
                 label="Assigné à"></autocomplete-employee>
             </td>
           </tr>
-          <tr>
+          <tr *ngIf="canUpdateIncidentResponsibility()">
             <td>
               <autocomplete-employee *ngIf="incident.id" [(model)]="incident.initiatedBy" [form]="incidentForm"
                 propertyName="initiatedBy" [isMandatory]="false" [isDisabled]="!canUpdateIncidentResponsibility()"

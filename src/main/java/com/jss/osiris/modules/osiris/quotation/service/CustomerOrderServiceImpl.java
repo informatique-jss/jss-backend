@@ -395,7 +395,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         + "</p>" +
                         "<p>Description de la demande : "
                         + (customerOrder.getDescription() != null ? customerOrder.getDescription() : "") + "</p>";
-                customerOrderCommentService.createCustomerOrderComment(customerOrder, comment, true);
+                customerOrderCommentService.createCustomerOrderComment(customerOrder, comment, true, false);
             }
         }
 
@@ -533,6 +533,14 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             boolean isDepositMandatory = false;
             boolean isPaymentTypePrelevement = false;
             isDepositMandatory = tiers.getIsProvisionalPaymentMandatory();
+
+            if (!isDepositMandatory && customerOrder.getAssoAffaireOrders() != null)
+                for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+                    if (asso.getAffaire() != null
+                            && Boolean.TRUE.equals(asso.getAffaire().getIsProvisionalPaymentMandatory())) {
+                        isDepositMandatory = true;
+                        break;
+                    }
 
             if (tiers instanceof Tiers)
                 isPaymentTypePrelevement = ((Tiers) tiers).getPaymentType().getId()
@@ -1876,6 +1884,20 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Override
     public List<CustomerOrder> findCustomerOrderByResponsable(Responsable responsable) {
         return customerOrderRepository.findByResponsable(responsable);
+    }
+
+    @Override
+    public List<CustomerOrder> getCustomerOrderByResponsableAndStatusAndDates(Responsable responsable,
+            CustomerOrderStatus customerOrderStatus, Boolean isReccuring,
+            LocalDateTime startOfDay, LocalDateTime endOfDay) {
+        return customerOrderRepository.findByResponsableAndStatusAndCreatedDateBetween(responsable,
+                startOfDay, endOfDay, isReccuring, customerOrderStatus);
+    }
+
+    @Override
+    public List<CustomerOrder> getOrdersByResponsablesAndDates(List<Responsable> responsables,
+            LocalDateTime startOfDay, LocalDateTime endOfDay) {
+        return customerOrderRepository.findByResponsableInAndCreatedDateBetween(responsables, startOfDay, endOfDay);
     }
 
     @Override

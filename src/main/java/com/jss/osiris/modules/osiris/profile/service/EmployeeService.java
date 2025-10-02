@@ -3,6 +3,7 @@ package com.jss.osiris.modules.osiris.profile.service;
 import java.util.List;
 
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.osiris.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.profile.model.User;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
@@ -35,4 +36,6 @@ public interface EmployeeService {
     public List<Employee> findEmployeesInTheSameOU(Employee employee);
 
     public List<Integer> getPotentialUserScope(Integer idMail);
+
+    public boolean isCurrentUserHasAdGroup(ActiveDirectoryGroup adGroup);
 }

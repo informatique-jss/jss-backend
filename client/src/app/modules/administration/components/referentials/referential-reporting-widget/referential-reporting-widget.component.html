@@ -1,0 +1,93 @@
+<div>
+  <div>
+    <mat-form-field class="full-width">
+      <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
+    </mat-form-field>
+  </div>
+  <div class="table-container-scroll">
+    <sort-table [columns]="displayedColumns" (onRowClick)="selectEntity($event)" [values]="entities"
+      [noMaxHeight]="true" [noPaddingBottom]="true" tableName="Référentiel" [idRowSelected]="idRowSelected"
+      [filterText]="searchText">
+    </sort-table>
+  </div>
+</div>
+<div class="mat-elevation-z2 form-div" *ngIf="selectedEntity ">
+  <form [formGroup]="entityForm">
+    <div class="full-width">
+      <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+        <table class="full-width">
+          <tr>
+            <td>
+              <generic-input [(model)]="selectedEntity.id" label="Identifiant technique" [form]="entityForm"
+                *ngIf="selectedEntity.id" propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
+            </td>
+            <td>
+              <generic-input [(model)]="selectedEntity.label" label="Libellé des abscisses" [maxLength]="200"
+                [form]="entityForm" propertyName="label" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
+            </td>
+            <td>
+              <select-reporting-frequency [(model)]="selectedEntity.reportingUpdateFrequency"
+                label="Fréquence de calcul" [form]="entityForm" propertyName="reportingUpdateFrequency"
+                [isMandatory]="true" [isDisabled]="!editMode"></select-reporting-frequency>
+            </td>
+          </tr>
+        </table>
+        <table class="full-width">
+          <tr>
+            <td>
+              <generic-input [(model)]="selectedEntity.lastValueUnit" label="Unité" [form]="entityForm"
+                propertyName="lastValueUnit" [isMandatory]="false" [isDisabled]="true"></generic-input>
+            </td>
+            <td>
+              <select-string [types]="labelTypes" [isMandatory]="true" [form]="entityForm" propertyName="labelType"
+                [(model)]="selectedEntity.labelType" label="Type des abscisses">
+              </select-string>
+            </td>
+          </tr>
+        </table>
+        <p>Définition des ordonnées</p>
+        <ng-container *ngFor="let serie of selectedEntity.reportingWidgetSeries ; let index = index">
+          <table class="full-width">
+            <tr>
+              <td>
+                <generic-input [(model)]="serie.serieName" label="Nom de la série" [form]="entityForm"
+                  [propertyName]="'serieName'+index" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
+              </td>
+              <td>
+                <select-string [types]="graphTypes" [isMandatory]="true" [form]="entityForm"
+                  [propertyName]="'plotType'+index" [(model)]="serie.plotType" label="Type de graphe">
+                </select-string>
+              </td>
+              <td>
+                <button *ngIf="editMode" (click)="deleteSerie(serie)" mat-raised-button color="accent">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="3">
+                <generic-textarea [(model)]="serie.serieSqlText"
+                  label="Requête SQL de la série (/!\ nommer la colonne les ordonnées value et les abscisses label )"
+                  [form]="entityForm" [propertyName]="'serieSqlText'+index" [isMandatory]="true"
+                  [isDisabled]="!editMode" [numberOfLines]="6"></generic-textarea>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="3" *ngIf="serie.plotType && serie.plotType==GRAPH_TYPE_TABLE">
+                <generic-input [(model)]="serie.columns" label="Liste des colonnes" [form]="entityForm"
+                  [propertyName]="'columns'+index" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
+              </td>
+            </tr>
+          </table>
+        </ng-container>
+        <table class="full-width">
+          <tr>
+            <td>
+              <button *ngIf="editMode" (click)="addSerie()" mat-raised-button color="accent">Ajouter une série </button>
+            </td>
+          </tr>
+        </table>
+      </fieldset>
+    </div>
+  </form>
+</div>

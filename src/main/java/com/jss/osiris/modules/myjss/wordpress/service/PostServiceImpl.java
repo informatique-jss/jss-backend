@@ -1049,5 +1049,4 @@ public class PostServiceImpl implements PostService {
     public List<Post> getAllPostsForMyJss() {
         return postRepository.findAllMyJssPost();
     }
-
 }

@@ -170,6 +170,8 @@ public class MyJssQuotationDelegate {
         } else
             fetchOrder = customerOrderService.getCustomerOrder(order.getId());
 
+        fetchOrder.setDescription(order.getDescription());
+
         if (fetchOrder.getResponsable() == null
                 || !fetchOrder.getResponsable().getId().equals(newResponsable.getId())) {
             fetchOrder.setResponsable(newResponsable);
@@ -263,6 +265,8 @@ public class MyJssQuotationDelegate {
             }
         } else
             fetchQuotation = quotationService.getQuotation(quotation.getId());
+
+        fetchQuotation.setDescription(quotation.getDescription());
 
         if (fetchQuotation.getResponsable() == null
                 || !fetchQuotation.getResponsable().getId().equals(newResponsable.getId())) {

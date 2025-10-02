@@ -201,6 +201,13 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
           this.incidentReportService.getIncidentReportsForCustomerOrder(this.quotation.id).subscribe(response => this.incidentList = response);
         })
         this.getInvoices();
+        if (instanceOfCustomerOrder(this.quotation))
+          this.quotationSearchResultService.getQuotationsForCustomerOrder(this.quotation).subscribe(response => {
+            if (response)
+              this.hasQuotation;
+            else this.hasQuotation = false;
+          });
+
       }
       // Load by quotation
     } else if (this.idQuotation != null && this.idQuotation != undefined) {

@@ -56,6 +56,8 @@ public class BatchCategoryServiceImpl implements BatchCategoryService {
         updateCategory(BatchCategory.MISCELLANEOUS, "Divers");
         updateCategory(BatchCategory.REMINDERS, "Relances");
         updateCategory(BatchCategory.REFERENTIALS, "Référentiels");
+        updateCategory(BatchCategory.INDICATORS, "Indicateurs");
+        updateCategory(BatchCategory.WEBSITES, "Sites internet");
         updateCategory(BatchCategory.MAILS, "Envoi de mails");
     }
 

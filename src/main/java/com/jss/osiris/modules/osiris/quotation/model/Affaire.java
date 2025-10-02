@@ -204,7 +204,11 @@ public class Affaire implements IId, IAttachment {
 
 	private Boolean isToNotUpdate;
 
+	@JsonView({ JacksonViews.MyJssDetailedView.class })
+	private Boolean isProvisionalPaymentMandatory;
+
 	@Transient
+	@JsonView({ JacksonViews.OsirisListView.class })
 	private LocalDateTime createdDateTime;
 
 	public String getPaymentIban() {
@@ -495,4 +499,11 @@ public class Affaire implements IId, IAttachment {
 		this.createdDateTime = createdDateTime;
 	}
 
+	public Boolean getIsProvisionalPaymentMandatory() {
+		return isProvisionalPaymentMandatory;
+	}
+
+	public void setIsProvisionalPaymentMandatory(Boolean isProvisionalPaymentMandatory) {
+		this.isProvisionalPaymentMandatory = isProvisionalPaymentMandatory;
+	}
 }

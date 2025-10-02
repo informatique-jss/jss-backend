@@ -5,6 +5,7 @@ import { MenuItem } from '../../general/model/MenuItem';
 import { AppRestService } from '../../main/services/appRest.service';
 import { Responsable } from '../../profile/model/Responsable';
 import { IQuotation } from '../../quotation/model/IQuotation';
+import { NoticeTemplateService } from '../../quotation/services/notice.template.service';
 import { Document } from '../model/Document';
 import { Quotation } from '../model/Quotation';
 
@@ -12,7 +13,7 @@ import { Quotation } from '../model/Quotation';
   providedIn: 'root'
 })
 export class QuotationService extends AppRestService<Quotation> {
-  constructor(http: HttpClient) {
+  constructor(http: HttpClient, private noticeTemplateService: NoticeTemplateService) {
     super(http, "quotation");
   }
 
@@ -90,6 +91,7 @@ export class QuotationService extends AppRestService<Quotation> {
   }
 
   cleanStorageData() {
+    this.noticeTemplateService.clearNoticeTemplateDescription();
     let allItems = localStorage as any;
     if (allItems)
       for (let key in allItems)

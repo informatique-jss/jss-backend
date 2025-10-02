@@ -1,6 +1,8 @@
 package com.jss.osiris.modules.osiris.invoicing.service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
@@ -72,5 +74,11 @@ public interface InvoiceService {
         public List<Invoice> searchInvoices(List<InvoiceStatus> invoiceStatus, List<Responsable> responsables);
 
         public void deleteDuplicateInvoices();
+
+        public List<Invoice> getInvoicesForResponsablesAndDates(List<InvoiceStatus> invoiceStatus,
+                        List<Responsable> responsables, LocalDateTime startDate, LocalDateTime endDate);
+
+        public List<Invoice> getDueInvoicesForResponsablesAndDueDates(List<InvoiceStatus> invoiceStatus,
+                        List<Responsable> responsables, LocalDate startDate, LocalDate endDate);
 
 }

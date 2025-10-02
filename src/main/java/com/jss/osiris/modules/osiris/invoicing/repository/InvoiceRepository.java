@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.invoicing.repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -57,7 +58,7 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
                         + " left join asso_affaire_order asso on asso.id_customer_order = c.id"
                         + " left join affaire af on af.id = asso.id_affaire"
                         + " left join city on af.id_city = city.id"
-                        + " left join responsable r1 on r1.id = c.id_responsable"
+                        + " left join responsable r1 on r1.id = i.id_responsable"
                         + " left join tiers t on r1.id_tiers =t.id "
                         + " left join provider pro on pro.id = i.id_provider"
                         + " left join payment p on p.id_invoice = i.id and p.is_cancelled = false"
@@ -110,8 +111,14 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
         List<Invoice> findInvoiceForCustomReminder(@Param("invoiceStatus") InvoiceStatus invoiceStatusSend,
                         @Param("billingLabelType") BillingLabelType billingLabelType);
 
-        @Query("select i from Invoice i where responsable in :responsables and (invoiceStatus in :invoiceStatus)")
+        @Query("select i from Invoice i where responsable in :responsables and (invoiceStatus in :invoiceStatus) ")
         List<Invoice> searchInvoices(List<Responsable> responsables, List<InvoiceStatus> invoiceStatus);
+
+        List<Invoice> findByResponsableInAndInvoiceStatusInAndCreatedDateBetween(List<Responsable> responsables,
+                        List<InvoiceStatus> invoiceStatus, LocalDateTime startDate, LocalDateTime endDate);
+
+        List<Invoice> findByResponsableInAndInvoiceStatusInAndDueDateBetween(List<Responsable> responsables,
+                        List<InvoiceStatus> invoiceStatus, LocalDate startDate, LocalDate endDate);
 
         @Modifying
         @Query(nativeQuery = true, value = " delete from invoice where  id  in (select id from reprise_inpi_del)")

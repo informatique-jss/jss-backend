@@ -192,5 +192,11 @@
           [form]="affaireForm" propertyName="isToNotUpdate" [isDisabled]="!editMode"></generic-toggle>
       </td>
     </tr>
+    <tr>
+      <td>
+        <generic-toggle [(model)]="affaire.isProvisionalPaymentMandatory" label="Affaire à l'acompte obligatoire ?"
+          [form]="affaireForm" propertyName="isProvisionalPaymentMandatory" [isDisabled]="!editMode"></generic-toggle>
+      </td>
+    </tr>
   </table>
 </fieldset>

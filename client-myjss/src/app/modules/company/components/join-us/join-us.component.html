@@ -13,9 +13,12 @@
 </section>
 
 <section class="pb-3 pb-5">
-  <div class="jarallax" data-jarallax>
+  <div class="jarallax  d-none d-md-block" data-jarallax>
     <div class="jarallax-img" style="background-image: url(assets/img/societe/join-us/join_us_banner.jpg);">
     </div>
+  </div>
+  <div class="d-block d-md-none">
+    <img src="assets/img/societe/join-us/join_us_banner.jpg" />
   </div>
 </section>
 
@@ -58,6 +61,10 @@
 <ng-template #spontaneousApplicationModal let-modal>
   <div class="modal-content">
     <div class="modal-header">
+      <div class="justify-content-end row">
+        <button type="button" class="col-auto btn text-white" aria-label="Close" (click)="closeApplicationModal()"><i
+            class="ai-cross-alt"></i></button>
+      </div>
       <h5 id="spontaneousApplicationModalLabel">Formulaire de Candidature</h5>
       <p>Pour nous faire parvenir votre candidature spontanée, remplissez ce formulaire et
         téléchargez
@@ -152,7 +159,7 @@
       <div class="col">
         <div class="card h-100 border-0 rounded-5">
           <div class="card-body">
-            <h3 class="h4">Redaction</h3>
+            <h3 class="h4">Rédaction</h3>
             <p class="mb-0">Les journalistes du Journal Spécial des Sociétés traitent de l’actualité de la vie du droit
               et du chiffre avec curiosité et talent.</p>
           </div>

@@ -142,7 +142,7 @@
       </nav>
 
       <!-- Navigation Mobile (expandable) -->
-      <div class="d-lg-none" *ngIf="isMobileMenuOpen">
+      <div class="d-lg-none" *ngIf="isMobileMenuOpen" #menuMobile>
         <div class="py-3 row g-2">
           <div class="col">
             <a class="btn btn-light w-100" *ngIf="!currentUser" [href]="" (click)="openSignIn()"
@@ -247,7 +247,7 @@
           </button>
         </form>
         <!-- Search form END -->
-        <p class="small mb-0">ex : droit des société, tribunal d'instance, TUP </p>
+        <p class="small mb-0">ex : droit des sociétés, tribunal d'instance, TUP </p>
       </div>
     </div>
     <div class="row">

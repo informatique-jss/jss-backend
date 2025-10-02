@@ -144,7 +144,9 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                     || subscription.getSubscriptionType().equals(Subscription.ENTERPRISE_ANNUAL_SUBSCRIPTION)
                     || subscription.getSubscriptionType().equals(Subscription.MONTHLY_SUBSCRIPTION)) {
                 if (subscription.getStartDate().isBefore(LocalDate.now())
-                        && LocalDate.now().isBefore(subscription.getEndDate()))
+                        && LocalDate.now().isBefore(subscription.getEndDate())
+                        || subscription.getStartDate().equals(LocalDate.now())
+                        || subscription.getEndDate().equals(LocalDate.now()))
                     hasFullSubscriptionValid = true;
             }
             if (hasFullSubscriptionValid)
@@ -195,9 +197,11 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
                     if (Boolean.TRUE.equals(service.getAssoAffaireOrder().getCustomerOrder().getIsRecurring())) {
                         newSubscription
-                                .setStartDate(service.getAssoAffaireOrder().getCustomerOrder().getRecurringStartDate());
+                                .setStartDate(
+                                        service.getAssoAffaireOrder().getCustomerOrder().getRecurringPeriodStartDate());
                         newSubscription
-                                .setEndDate(service.getAssoAffaireOrder().getCustomerOrder().getRecurringEndDate());
+                                .setEndDate(
+                                        service.getAssoAffaireOrder().getCustomerOrder().getRecurringPeriodEndDate());
                     }
 
                     addOrUpdateSubscription(newSubscription);

@@ -8,9 +8,9 @@
         <div class="row pt-2">
           <div class="col-12">
             <ng-container *ngIf="post.jssCategories!=null && post.jssCategories.length>0">
-              <a *ngFor="let category of post.jssCategories | slice : 1 " style="cursor: pointer;"
-                [routerLink]='"/post/category/" + category.slug' class="my-2 margin-category fw-bold"
-                [style.background-color]="category.color+' !important'">{{category.name}}</a>
+              <a *ngFor="let category of post.jssCategories  " style="cursor: pointer;"
+                [routerLink]='"/post/category/" + category.slug'
+                class="my-2 margin-category fw-bold p-1">{{category.name}}</a>
             </ng-container>
             <h1 class="mt-2"><img *ngIf="post.isPremium" class="px-0 me-1" src="/assets/images/premium-icon.svg">
               {{post.titleText}} </h1>
@@ -172,11 +172,12 @@
                   <h2 class="fw-bold">Vous souhaitez lire la suite ?</h2>
                   <p>Lisez cette article pour seulement 1 € ou abonnez-vous pour profiter de cet article en
                     intégralité et de bien d'autres !</p>
-                  <div><a class="btn btn-secondary mt-3" style="margin-right: 20px;cursor: pointer;"
+                  <div class="row gap-2 justify-content-center">
+                    <a class="col-auto btn btn-secondary mt-3" style="cursor: pointer;"
                       [href]='frontendMyJssUrl+"/quotation/subscription/" + ONE_POST_SUBSCRIPTION + "/" + false + "/" + post.id'
                       target="_blank">Lire
                       pour 1 €</a>
-                    <a class="btn btn-yellow mt-3" style="cursor: pointer;" href="subscription">S'abonner</a>
+                    <a class="col-auto btn btn-yellow mt-3" style="cursor: pointer;" href="subscription">S'abonner</a>
                   </div>
                 </div>
 

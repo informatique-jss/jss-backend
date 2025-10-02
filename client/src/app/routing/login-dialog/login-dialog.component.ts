@@ -32,6 +32,8 @@ export class LoginDialogComponent implements OnInit {
       if (response) {
         this.appService.displaySnackBar("👍 Authentification réussie", false, 10);
         this.loginService.setUserRoleAndRefresh();
+        window.location.reload();
+        this.appService.openRoute(null, '/', null);
       } else {
         this.appService.displaySnackBar("😢 Erreur lors de l'authentification", true, 10);
       }

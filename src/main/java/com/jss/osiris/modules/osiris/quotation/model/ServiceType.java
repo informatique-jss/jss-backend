@@ -78,6 +78,10 @@ public class ServiceType implements Serializable, IId {
 			JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private Boolean isRequiringNewUnregisteredAffaire;
 
+	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class,
+			JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
+	private Boolean isRequiringNewRegisteredAffaire;
+
 	@JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
 	@Transient
 	private Boolean hasAnnouncement;
@@ -231,5 +235,13 @@ public class ServiceType implements Serializable, IId {
 
 	public void setHideInMyJss(Boolean hideInMyJss) {
 		this.hideInMyJss = hideInMyJss;
+	}
+
+	public Boolean getIsRequiringNewRegisteredAffaire() {
+		return isRequiringNewRegisteredAffaire;
+	}
+
+	public void setIsRequiringNewRegisteredAffaire(Boolean isRequiringNewRegisteredAffaire) {
+		this.isRequiringNewRegisteredAffaire = isRequiringNewRegisteredAffaire;
 	}
 }

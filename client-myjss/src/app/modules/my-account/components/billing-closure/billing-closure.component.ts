@@ -7,6 +7,7 @@ import { AppService } from '../../../main/services/app.service';
 import { PlatformService } from '../../../main/services/platform.service';
 import { Responsable } from '../../../profile/model/Responsable';
 import { LoginService } from '../../../profile/services/login.service';
+import { ResponsableService } from '../../../profile/services/responsable.service';
 import { Affaire } from '../../model/Affaire';
 import { BillingClosureReceiptValue } from '../../model/BillingClosureReceiptValue';
 import { CustomerOrder } from '../../model/CustomerOrder';
@@ -28,6 +29,8 @@ export class BillingClosureComponent implements OnInit {
   isFirstLoading: boolean = true;
   orderToPayInCb: number[] = [];
   totalToPayCb: number = 0;
+  responsablesForCurrentUser: Responsable[] | undefined;
+  responsableCheck: boolean[] = [];
 
   capitalizeName = capitalizeName;
 
@@ -36,24 +39,37 @@ export class BillingClosureComponent implements OnInit {
     private billingClosureService: BillingClosureService,
     private customerOrderService: CustomerOrderService,
     private platformService: PlatformService,
-    private appService: AppService
+    private appService: AppService,
+    private responsableService: ResponsableService
   ) { }
 
   ngOnInit() {
     this.loginService.getCurrentUser().subscribe(currentUser => {
       this.currentUser = currentUser;
       this.refreshClosure();
+
+      this.responsableService.getResponsablesForCurrentUser().subscribe(response => {
+        this.responsablesForCurrentUser = response;
+        if (this.responsablesForCurrentUser)
+          for (let respo of this.responsablesForCurrentUser) {
+            this.responsableCheck[respo.id] = true;
+          }
+      });
     })
   }
 
   refreshClosure() {
     this.receiptValues = [];
     this.isFirstLoading = true;
-    if (this.currentUser)
+    if (this.currentUser) {
       this.billingClosureService.getBillingClosureReceiptValueForResponsable(this.currentUser.id, false, this.currentSort == 'createdDateDesc').subscribe(values => {
         this.receiptValues = [];
-        if (values)
+        if (values) {
           this.receiptValues = values.filter((b: BillingClosureReceiptValue) => b.eventDateTime);
+          if (this.responsableCheck && this.responsableCheck.length > 0) {
+            this.receiptValues = this.receiptValues.filter(b => !b.responsable || this.responsableCheck[b.responsable.id]);
+          }
+        }
 
         this.allAffaires = [];
         this.allResponsables = [];
@@ -61,6 +77,7 @@ export class BillingClosureComponent implements OnInit {
         this.getAllResponsables();
         this.isFirstLoading = false;
       });
+    }
   }
 
   exportReceipt() {

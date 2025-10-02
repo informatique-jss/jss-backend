@@ -1,0 +1,7 @@
+@if(series && series.length>0){
+<app-echart [series]="series" (categoryClicked)="categoryClicked($event)" [title]="widget.label"
+  [unit]="widget.lastValueUnit" [labelType]="widget.labelType" />
+}
+@if(data && columns){
+<tanstack-table [data]="data" [columns]="columns" className="" />
+}

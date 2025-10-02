@@ -19,7 +19,7 @@ public interface CustomerOrderCommentService {
         public CustomerOrderComment addOrUpdateCustomerOrderComment(CustomerOrderComment customerOrderComment);
 
         public CustomerOrderComment createCustomerOrderComment(CustomerOrder customerOrder, String contentComment,
-                        Boolean doNotNotify)
+                        Boolean doNotNotify, Boolean isToDisplayToCustomer)
                         throws OsirisException;
 
         public CustomerOrderComment tagActiveDirectoryGroupOnCustomerOrderComment(

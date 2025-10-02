@@ -43,4 +43,5 @@ export interface Affaire extends IReferential, IAttachment {
   apeCodes: string;
   isMainOffice: boolean;
   isToNotUpdate: boolean;
+  isProvisionalPaymentMandatory: boolean;
 }

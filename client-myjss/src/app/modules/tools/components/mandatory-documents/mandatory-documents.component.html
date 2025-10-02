@@ -13,9 +13,12 @@
   </div>
 </section>
 <section>
-  <div class="jarallax overflow-hidden z-2" data-speed="0.5">
+  <div class="jarallax overflow-hidden z-2 d-none d-md-block" data-speed="0.5">
     <div class="jarallax-img"
       style="background-image: url('assets/img/my-jss-tools/mandatory-documents-jarallax.jpg');"></div>
+  </div>
+  <div class="d-block d-md-none">
+    <img src="assets/img/my-jss-tools/mandatory-documents-jarallax.jpg" />
   </div>
 </section>
 
@@ -84,6 +87,14 @@
                   <li class="d-flex pb-2 mb-1">
                     <span class="bg-primary mt-2 checkbox-custom"></span>
                     <span class="text-decoration-none text-gray">{{item.typeDocument.customLabel}}</span>
+                    <button type="button"
+                      class="ms-3 btn btn-outline-secondary btn-sm d-flex align-items-center btn-icon-only"
+                      *ngIf="item.typeDocument.attachments && item.typeDocument.attachments[0]"
+                      (click)="downloadAttachment(item.typeDocument.attachments[0])" ngbTooltip="Télécharger le modèle"
+                      tooltipClass="custom-tooltip" placement="top">
+                      <i class="bi bi-download"></i>
+                      <span class="d-none d-lg-inline ms-1">Télécharger le modèle</span>
+                    </button>
                   </li>
                 </div>
               </ng-container>

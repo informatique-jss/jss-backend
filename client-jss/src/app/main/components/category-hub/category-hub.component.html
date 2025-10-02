@@ -44,7 +44,7 @@
                   *ngIf="postsByEntityType[selectedEntityType.id] && postsByEntityType[selectedEntityType.id].length>0 && !searchText"
                   class="row p-0 fixed-size-img-posts">
 
-                  <div *ngFor="let post of postsByEntityType[selectedEntityType.id].slice(6)" class="col-12 mb-2">
+                  <div *ngFor="let post of postsByEntityType[selectedEntityType.id]" class="col-12 mb-2">
                     <article class="blog-style2 card mb-4">
                       <div class="feature-image">
                         <div class="image-frame image-hover-style-1">
@@ -118,7 +118,7 @@
                   </div>
                   <ul class="tag-cloud list-inline">
                     <li *ngFor="let tag of tagsByEntityType.slice(0,8)" class="list-inline-item pb-1"><a class="btn bg-light text-secondary bg-hover-danger text-hover-white bg-hover-secondary
-                        text-hover-white" [routerLink]=' "/post/tag/" + tag.slug'>{{tag.name}}</a>
+                        text-hover-white fs-8" [routerLink]=' "/post/tag/" + tag.slug'>{{tag.name}}</a>
                     </li>
                   </ul>
                 </div>

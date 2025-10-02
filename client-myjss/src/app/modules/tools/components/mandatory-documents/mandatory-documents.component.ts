@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Meta, Title } from '@angular/platform-browser';
+import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 import { SERVICE_FIELD_TYPE_SELECT } from '../../../../libs/Constants';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { NewsletterComponent } from '../../../general/components/newsletter/newsletter.component';
@@ -8,8 +9,10 @@ import { GtmService } from '../../../main/services/gtm.service';
 import { CtaClickPayload, PageInfo } from '../../../main/services/GtmPayload';
 import { PlatformService } from '../../../main/services/platform.service';
 import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
+import { Attachment } from '../../../my-account/model/Attachment';
 import { ServiceFieldType } from '../../../my-account/model/ServiceFieldType';
 import { ServiceType } from '../../../my-account/model/ServiceType';
+import { UploadAttachmentService } from '../../../my-account/services/upload.attachment.service';
 import { ServiceFamily } from '../../../quotation/model/ServiceFamily';
 import { ServiceFamilyService } from '../../../quotation/services/service.family.service';
 import { ServiceTypeService } from '../../../quotation/services/service.type.service';
@@ -19,7 +22,7 @@ import { ServiceTypeService } from '../../../quotation/services/service.type.ser
   templateUrl: './mandatory-documents.component.html',
   styleUrls: ['./mandatory-documents.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, GenericInputComponent, NewsletterComponent]
+  imports: [SHARED_IMPORTS, GenericInputComponent, NewsletterComponent, NgbTooltip]
 })
 export class MandatoryDocumentsComponent implements OnInit {
 
@@ -39,6 +42,7 @@ export class MandatoryDocumentsComponent implements OnInit {
     private platformService: PlatformService,
     private gtmService: GtmService,
     private titleService: Title, private meta: Meta,
+    private uploadAttachmentService: UploadAttachmentService
   ) { }
 
   ngOnInit() {
@@ -148,5 +152,9 @@ export class MandatoryDocumentsComponent implements OnInit {
   clearSearch() {
     this.searchText = '';
     this.applyFilterOnServiceTypes();
+  }
+
+  downloadAttachment(attachment: Attachment) {
+    this.uploadAttachmentService.downloadAttachment(attachment);
   }
 }

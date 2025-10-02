@@ -57,6 +57,11 @@ export class AppService {
     return;
   }
 
+  openOsirisV2Route(event: any, route: string, sameWindowEndFonction: any) {
+    // TODO
+    return;
+  }
+
   getAllAccountMenuItems(): AccountMenuItem[] {
     let menuItem = [] as AccountMenuItem[];
     menuItem.push({ mainItem: MAIN_ITEM_DASHBOARD, label: "Vue d'ensemble", iconClass: "ai-chart", route: "/account/overview" } as AccountMenuItem);
@@ -72,10 +77,10 @@ export class AppService {
 
   getAllQuotationMenuItems(): MenuItem[] {
     let menuItem = [] as MenuItem[];
-    menuItem.push({ label: "1. Identification de l'entreprise", route: "/quotation/identification" } as MenuItem);
-    menuItem.push({ label: "2. Choix des services", route: "/quotation/services-selection" } as MenuItem);
-    menuItem.push({ label: "3. Informations requises", route: "/quotation/required-information" } as MenuItem);
-    menuItem.push({ label: "4. Récapitulatif", route: "/quotation/checkout" } as MenuItem);
+    menuItem.push({ id: 0, label: "1. Identification de l'entreprise", route: "/quotation/identification" } as MenuItem);
+    menuItem.push({ id: 1, label: "2. Choix des services", route: "/quotation/services-selection" } as MenuItem);
+    menuItem.push({ id: 2, label: "3. Informations requises", route: "/quotation/required-information" } as MenuItem);
+    menuItem.push({ id: 3, label: "4. Récapitulatif", route: "/quotation/checkout" } as MenuItem);
     return menuItem;
   }
 

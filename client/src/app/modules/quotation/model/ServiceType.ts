@@ -14,6 +14,7 @@ export interface ServiceType {
   assoServiceTypeDocuments: AssoServiceTypeDocument[];
   assoServiceTypeFieldTypes: AssoServiceTypeFieldType[];
   isRequiringNewUnregisteredAffaire: boolean;
+  isRequiringNewRegisteredAffaire: boolean;
   suspiciousMarkup: number;
   isMergeable: boolean;
   hideInMyJss: boolean;

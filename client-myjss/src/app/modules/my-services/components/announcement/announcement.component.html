@@ -20,20 +20,23 @@
   </div>
 </section>
 <section>
-  <div class="jarallax overflow-hidden z-2" data-speed="0.5">
+  <div class="jarallax overflow-hidden z-2  d-none d-md-block" data-speed="0.5">
     <div class="jarallax-img"
       style="background-image: url('/assets/img/myjss-services/announcement/banniere_annonces.jpg');"></div>
   </div>
+  <div class="d-block d-md-none">
+    <img src="assets/img/myjss-services/announcement/banniere_annonces.jpg" />
+  </div>
 </section>
 
-<explaination-video posterPath="assets/img/announcement/annonce_bandeau_img.jpg" videoPath="assets/videos/al.mp4"
-  title="Publiez votre annonce en 3 étapes" firstStepTitle="Sélectionnez votre modèle"
+<explaination-video posterPath="assets/img/myjss-services/MyJssVideo-poster.png" videoPath="assets/videos/al.mp4"
+  title="Publiez votre annonce en 3 étapes" firstStepTitle="Sélectionnez votre type d’annonce"
   firstStepDescription="Accédez à une bibliothèque complète de formulaires adaptés à vos besoins en annonces légales."
   secondStepTitle=" Remplissez, visualisez et validez votre annonce"
   secondStepDescription="Profitez d’une saisie libre ou guidée et obtenez le prix instantanément."
   thirdStepTitle="Complétez vos coordonnées et payez"
   thirdStepDescription="Bénéficiez d’une interface sécurisée et fiable pour le traitement de vos informations bancaires."
-  [firstJumpTo]="5" [secondJumpTo]="15"></explaination-video>
+  [firstJumpTo]="27.7" [secondJumpTo]="33" [thirdJumpTo]="43.2"></explaination-video>
 
 <description-my-account
   firstStepText="Accédez à l’ensemble de vos devis, commandes et suivez leur état d’avancement en temps réel."
@@ -43,19 +46,22 @@
 
 
 <section *ngIf="carouselAnnouncementPosts && carouselAnnouncementPosts.length>0" class="background-opacity">
-  <div class="container">
-    <div class="row">
-      <generic-swiper [items]="carouselAnnouncementPosts" title="Les annonces légales les plus courantes"
+  <div class="container overflow-hidden">
+    <div class="row w-100 m-0 p-0">
+      <generic-swiper *ngIf="carouselAnnouncementPosts && carouselAnnouncementPosts.length>0"
+        [items]="carouselAnnouncementPosts" title="Les annonces légales les plus courantes"
         [firstFixedImg]="'assets/img/myjss-services/announcement/annonces_courantes.jpg'">
         <ng-template let-post>
           <div class="h-100">
-            <div class="card card-carousel">
-              <div class="card-body">
-                <h3 class="card-title card-title-truncate" [routerLink]="'/post/'+post.slug">{{post.titleText}}</h3>
-                <p class="card-text text-gray card-text-truncate" [routerLink]="'/post/'+post.slug">{{post.excerptText}}
-                </p>
+            <div class="card border-0 bg-tertiary">
+              <a [routerLink]="'/post/'+post.slug">
+              </a>
+              <div class="card-body pb-4">
+                <h3 class="h4 card-title">
+                  <a [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
+                </h3>
               </div>
-              <div class="card-footer ">
+              <div class="card-footer pt-3">
                 <a class="btn btn-icon btn-lg btn-outline-primary rounded-circle" [routerLink]="'/post/'+post.slug"
                   aria-label="Learn more">
                   <i class="ai-arrow-right"></i>

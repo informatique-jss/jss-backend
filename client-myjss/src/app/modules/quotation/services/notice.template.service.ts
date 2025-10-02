@@ -10,7 +10,7 @@ import { NoticeTemplateDescription } from '../model/NoticeTemplateDescription';
 })
 export class NoticeTemplateService extends AppRestService<AnnouncementNoticeTemplate> {
 
-  noticeTemplateDescription: NoticeTemplateDescription;
+  noticeTemplateDescription: NoticeTemplateDescription | undefined;
 
   constructor(http: HttpClient) {
     super(http, "quotation");
@@ -26,5 +26,9 @@ export class NoticeTemplateService extends AppRestService<AnnouncementNoticeTemp
 
   getNoticeTemplateDescription() {
     return this.noticeTemplateDescription;
+  }
+
+  clearNoticeTemplateDescription() {
+    this.noticeTemplateDescription = undefined;
   }
 }
