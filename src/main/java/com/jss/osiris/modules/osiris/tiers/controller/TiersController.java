@@ -609,7 +609,6 @@ public class TiersController {
   }
 
   @GetMapping(inputEntryPoint + "/responsable/search")
-  @JsonView(JacksonViews.OsirisListView.class)
   public ResponseEntity<List<Responsable>> getResponsables(@RequestParam String searchedValue) {
     return new ResponseEntity<List<Responsable>>(responsableService.getResponsables(searchedValue), HttpStatus.OK);
   }
