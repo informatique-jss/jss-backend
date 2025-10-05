@@ -46,6 +46,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.repository.ReadingFolderRepository;
+import com.jss.osiris.modules.osiris.quotation.service.CharacterPriceService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 @Service
@@ -110,6 +111,9 @@ public class PostServiceImpl implements PostService {
 
     @Autowired
     ReadingFolderRepository readingFolderRepository;
+
+    @Autowired
+    CharacterPriceService characterPriceService;
 
     @Value("${apache.media.base.url}")
     private String apacheMediaBaseUrl;
@@ -1037,6 +1041,10 @@ public class PostServiceImpl implements PostService {
             }
             post.setPostSerie(series);
         }
+
+        post.setCharacterNumber((characterPriceService.cleanString(post.getTitleText())
+                + characterPriceService.cleanString(post.getOriginalContentText())).length());
+
         return post;
     }
 

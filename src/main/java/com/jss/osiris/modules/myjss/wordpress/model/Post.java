@@ -211,6 +211,8 @@ public class Post implements IId, Serializable {
     @JsonIgnore
     private List<PostView> postViews;
 
+    private Integer characterNumber;
+
     public Integer getId() {
         return id;
     }
@@ -577,5 +579,13 @@ public class Post implements IId, Serializable {
 
     public void setIsHidePremium(Boolean isHidePremium) {
         this.isHidePremium = isHidePremium;
+    }
+
+    public Integer getCharacterNumber() {
+        return characterNumber;
+    }
+
+    public void setCharacterNumber(Integer characterNumber) {
+        this.characterNumber = characterNumber;
     }
 }

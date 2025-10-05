@@ -138,8 +138,7 @@
       <div class="d-flex flex-wrap pb-5 pt-3 pt-md-4 pt-xl-5 mt-xl-n2" *ngIf="post.postTags && post.postTags.length>0">
         <h3 class="h6 py-1 mb-0 me-4">Tags associés :</h3>
         <div *ngFor="let tag of post.postTags">
-          <a class="nav-link fs-sm py-1 px-0 me-3" style="cursor: pointer;"
-            [routerLink]="'/tools/practical-sheets/'+tag.slug">
+          <a class="nav-link fs-sm py-1 px-0 me-3" style="cursor: pointer;" (click)="openTagSearch(tag.slug, $event)">
             <span class="text-primary">#</span>{{tag.name}}
           </a>
         </div>

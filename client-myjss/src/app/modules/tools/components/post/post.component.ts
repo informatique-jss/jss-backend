@@ -8,6 +8,7 @@ import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { TrustHtmlPipe } from '../../../../libs/TrustHtmlPipe';
 import { NewsletterComponent } from '../../../general/components/newsletter/newsletter.component';
 import { Mail } from '../../../general/model/Mail';
+import { AppService } from '../../../main/services/app.service';
 import { ConstantService } from '../../../main/services/constant.service';
 import { GtmService } from '../../../main/services/gtm.service';
 import { FormSubmitPayload, PageInfo } from '../../../main/services/GtmPayload';
@@ -85,7 +86,8 @@ export class PostComponent implements OnInit, AfterViewInit {
     private platformService: PlatformService,
     private loginService: LoginService,
     private titleService: Title, private meta: Meta,
-    private gtmService: GtmService
+    private gtmService: GtmService,
+    private appService: AppService
   ) { }
 
   getTimeReading = getTimeReading;
@@ -324,6 +326,10 @@ export class PostComponent implements OnInit, AfterViewInit {
 
   showLessComments() {
     this.fetchComments(0);
+  }
+
+  openTagSearch(tagSlug: string, event: any) {
+    this.appService.openRoute(event, "tools/practical-sheets/" + tagSlug, undefined);
   }
 
   isPostContainsMyJssCategory(category: MyJssCategory) {
