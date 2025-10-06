@@ -537,15 +537,12 @@ public class OsirisScheduller {
 		}
 	}
 
-	/*
-	 * @Scheduled(initialDelay = 1000, fixedDelay = 6000)
-	 * private void updateKpiCrms() {
-	 * try {
-	 * kpiCrmService.updateIndicatorsValues();
-	 * } catch (Exception e) {
-	 * globalExceptionHandler.handleExceptionOsiris(e);
-	 * }
-	 * }
-	 */
-
+	@Scheduled(cron = "${schedulling.kpi.crm.compute}")
+	private void updateKpiCrms() {
+		try {
+			kpiCrmService.startComputeBatches();
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
 }

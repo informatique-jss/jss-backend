@@ -5,31 +5,33 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisException;
-import com.jss.osiris.modules.osiris.crm.model.AnalyticStatsType;
-import com.jss.osiris.modules.osiris.crm.model.AnalyticStatsValue;
+import com.jss.osiris.modules.osiris.crm.dto.KpiWidgetDto;
 import com.jss.osiris.modules.osiris.crm.model.IKpiCrm;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrm;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrmValue;
 import com.jss.osiris.modules.osiris.crm.repository.KpiCrmRepository;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
-import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 @Service
 public class KpiCrmServiceImpl implements KpiCrmService {
+
     @Autowired
     CustomerOrderService customerOrderService;
 
@@ -48,6 +50,12 @@ public class KpiCrmServiceImpl implements KpiCrmService {
     @Autowired
     BatchService batchService;
 
+    @PersistenceContext
+    EntityManager em;
+
+    @Autowired
+    List<? extends IKpiCrm> IKpiThreadList;
+
     public KpiCrm addOrUpdateKpiCrm(KpiCrm kpiCrm) {
         return kpiCrmRepository.save(kpiCrm);
     }
@@ -65,115 +73,177 @@ public class KpiCrmServiceImpl implements KpiCrmService {
         return null;
     }
 
-    @Autowired
-    List<? extends IKpiCrm> IKpiServiceList;
-
     @Override
     public List<KpiCrm> getKpiCrms() {
         return IterableUtils.toList(kpiCrmRepository.findAll());
     }
 
-    @Override
-    public void updateIndicatorsValues() throws OsirisException {
-        List<Responsable> responsables = responsableService.getAllActiveResponsables();
-        if (responsables != null)
-            for (Responsable responsable : responsables)
-                batchService.declareNewBatch(Batch.COMPUTE_KPI_CRM, responsable.getId());
-
+    public List<KpiCrm> getKpiCrmsByDisplayedPageCode(String displayedPageCode) {
+        return kpiCrmRepository.getKpiCrmByDisplayedPage(displayedPageCode);
     }
 
+    /**
+     * Method called by batch to persist the KpiValues of a KpiCrm
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void computeKpiCrm(Integer responsableId, LocalDate dateToCompute) {
-        LocalDate startDate = LocalDate.now().minusDays(30);
-        LocalDate endDate = LocalDate.now().minusDays(1);
+    public void computeKpiCrm(Integer kpiCrmId) {
+        // Before updating the values of the table we truncate it
+        KpiCrm kpiCrm = getKpiCrmById(kpiCrmId);
+        for (IKpiCrm iKpiThread : IKpiThreadList) {
+            if (iKpiThread.getCode().equals(kpiCrm.getCode())) {
+                List<KpiCrmValue> kpiValues = iKpiThread.computeKpiCrmValues();
+                kpiCrm.setLastUpdate(LocalDateTime.now());
+                addOrUpdateKpiCrm(kpiCrm);
 
-        Responsable responsable = responsableService.getResponsable(responsableId);
-
-        if (IKpiServiceList != null && IKpiServiceList.size() > 0)
-            for (IKpiCrm iKpi : IKpiServiceList) {
-                List<KpiCrmValue> dailyKpiValues = iKpi.getComputeValue(responsable, startDate, endDate);
-                KpiCrm kpi = new KpiCrm();
-                kpi.setLastUpdate(LocalDateTime.now());
-                kpi.setCode(iKpi.getCode());
-                kpi.setAggregateType(iKpi.getAggregateType());
-                addOrUpdateKpiCrm(kpi);
-
-                for (KpiCrmValue kpiCrmValue : dailyKpiValues) {
-                    kpiCrmValue.setKpiCrm(kpi);
-                    kpiCrmValueService.addOrUpdateKpiCrmValue(kpiCrmValue);
+                for (KpiCrmValue kpiCrmValue : kpiValues) {
+                    kpiCrmValue.setKpiCrm(kpiCrm);
                 }
+                kpiCrmValueService.addOrUpdateKpiCrmValues(kpiValues);
+                break;
             }
+        }
     }
 
+    /**
+     * Method to get the values of the KpiCrmValues for a KpiCrm to display series
+     * of data
+     */
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public List<AnalyticStatsType> getAggregatedKpis(KpiCrm kpiCrm, List<Responsable> responsables,
-            LocalDate startDate, LocalDate endDate) {
-        List<AnalyticStatsType> aggregatedKpiValues = new ArrayList<>();
+    public String getKpiValues(Integer kpiCrmId, List<Integer> responsablesIds) throws JsonProcessingException {
+        String jsonPayloadString = "";
 
-        if (kpiCrm.getAggregateType() != null && kpiCrm.getAggregateType().equals(KpiCrm.AGGREGATE_TYPE_CUMUL)) {
-            List<KpiCrmValue> kpiCrmValues = kpiCrmValueService.getValuesForKpiCrmAndResponsablesAndDates(kpiCrm,
-                    responsables, startDate, endDate);
+        KpiCrm kpiCrm = getKpiCrmById(kpiCrmId);
 
-            BigDecimal sum = kpiCrmValues.stream()
-                    .map(KpiCrmValue::getValue)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
-            AnalyticStatsType analyticStatsType = new AnalyticStatsType();
-            AnalyticStatsValue analyticStatsValue = new AnalyticStatsValue();
-            analyticStatsValue.setValue(sum);
-            analyticStatsType.setId(kpiCrm.getId());
-            analyticStatsType.setTitle(kpiCrm.getLabel());
-            analyticStatsType.setAnalyticStatsValue(analyticStatsValue);
-            analyticStatsType.setValueDate(endDate);
+        if (kpiCrm != null) {
 
-            aggregatedKpiValues.add(analyticStatsType);
+            String sqlNameAggregatedFunction = getSqlNameAggregatedFunction(kpiCrm.getAggregateType());
+
+            StringBuilder dataSql = new StringBuilder();
+
+            String responsablesIdsString = String.join(",", responsablesIds.stream().map(r -> r.toString()).toList());
+
+            dataSql.append(String.format(
+                    "select kcv.value_date, %s(kcv.value) as y_value " +
+                            "from kpi_crm_value kcv " +
+                            "where kcv.id_kpi = %d " +
+                            "and kcv.id_responsable in (%s) " +
+                            "group by kcv.value_date ",
+                    sqlNameAggregatedFunction, kpiCrmId, responsablesIdsString));
+
+            String finalSql = String.format("""
+                    select
+                        json_agg(
+                            jsonb_build_object(
+                                'data', data_points,
+                                'label', '%s',
+                                'type', 'line'
+                            )
+                        )
+                    from (
+                        select
+                            json_agg(jsonb_build_array(value_date, y_value) order by value_date) as data_points
+                        from (%s)
+                    );
+                     """, kpiCrm.getLabel(), dataSql);
+
+            Object jsonPayload = em.createNativeQuery(finalSql).getSingleResult();
+            ObjectMapper mapper = new ObjectMapper();
+            jsonPayloadString = mapper.writeValueAsString(jsonPayload);
+
         }
 
-        if (kpiCrm.getAggregateType() != null && (kpiCrm.getAggregateType().equals(KpiCrm.AGGREGATE_TYPE_AVERAGE)
-                || kpiCrm.getAggregateType().equals(KpiCrm.AGGREGATE_TYPE_DURATION))) {
-            for (IKpiCrm iKpi : IKpiServiceList) {
-                if (iKpi.getCode().equals(kpiCrm.getCode())) {
-                    aggregatedKpiValues.add(iKpi.getKpiCrmAggregatedValue(responsables, startDate, endDate));
+        return jsonPayloadString;
+    }
+
+    /**
+     * Method to get the list of the kpis in the form of a dto for a specific page
+     * in the front and for a given timescale
+     */
+    @Override
+    public List<KpiWidgetDto> getKpiCrmWidget(String displayedPageCode, String timescale,
+            List<Integer> responsables) {
+        List<KpiWidgetDto> kpisWidgetDtos = new ArrayList<>();
+
+        List<KpiCrm> kpiCrms = this.getKpiCrmsByDisplayedPageCode(displayedPageCode);
+
+        for (KpiCrm kpiCrm : kpiCrms) {
+
+            LocalDate currentValueDate = LocalDate.now();
+            LocalDate previousValueDate = getPreviousDate(currentValueDate, timescale);
+
+            if (getKpiThread(kpiCrm) != null) {
+
+                BigDecimal currentValue = kpiCrmRepository.findLastValueForResponsables(
+                        responsables,
+                        kpiCrm.getId(),
+                        getKpiThread(kpiCrm).getClosestLastDate(currentValueDate),
+                        currentValueDate);
+
+                BigDecimal previousValue = kpiCrmRepository.findValueByDayOfMonthForResponsables(
+                        responsables,
+                        kpiCrm.getId(),
+                        currentValueDate.getDayOfMonth(),
+                        getKpiThread(kpiCrm).getClosestLastDate(previousValueDate),
+                        previousValueDate);
+
+                KpiWidgetDto kpiWidgetDto = new KpiWidgetDto();
+                kpiWidgetDto.setIdKpi(kpiCrm.getId());
+                kpiWidgetDto.setKpiValue(currentValue);
+                if (previousValue != null && !currentValue.equals(new BigDecimal(0))) {
+                    kpiWidgetDto.setKpiEvolution(
+                            currentValue.subtract(previousValue).divide(currentValue).multiply(new BigDecimal(100.0)));
                 }
+                kpiWidgetDto.setName(kpiCrm.getLabel());
+                kpiWidgetDto.setUnit(kpiCrm.getUnit());
+
+                kpisWidgetDtos.add(kpiWidgetDto);
             }
         }
 
-        if (kpiCrm.getAggregateType() != null && kpiCrm.getAggregateType().equals(KpiCrm.AGGREGATE_TYPE_HISTORIC)) {
-            List<KpiCrmValue> kpiCrmValues = kpiCrmValueService
-                    .getValuesForKpiCrmAndResponsablesAndDates(kpiCrm, responsables, startDate, endDate);
+        return kpisWidgetDtos;
+    }
 
-            Map<LocalDate, Map<KpiCrm, BigDecimal>> aggregatedList = kpiCrmValues.stream()
-                    .collect(Collectors.groupingBy(
-                            KpiCrmValue::getValueDate,
-                            Collectors.groupingBy(
-                                    KpiCrmValue::getKpiCrm,
-                                    Collectors.mapping(
-                                            KpiCrmValue::getValue,
-                                            Collectors.reducing(BigDecimal.ZERO, BigDecimal::add)))));
+    public void startComputeBatches() throws OsirisException {
+        List<KpiCrm> kpiList = getKpiCrms();
 
-            for (Map.Entry<LocalDate, Map<KpiCrm, BigDecimal>> dateEntry : aggregatedList.entrySet()) {
-                LocalDate date = dateEntry.getKey();
-                Map<KpiCrm, BigDecimal> kpiMap = dateEntry.getValue();
+        kpiCrmRepository.truncateTable();
+        for (KpiCrm kpi : kpiList)
+            batchService.declareNewBatch(Batch.COMPUTE_KPI_CRM, kpi.getId());
+    }
 
-                for (Map.Entry<KpiCrm, BigDecimal> kpiEntry : kpiMap.entrySet()) {
-                    KpiCrm kpi = kpiEntry.getKey();
-                    BigDecimal totalValue = kpiEntry.getValue();
+    private LocalDate getPreviousDate(LocalDate currentDate, String timescale) {
+        switch (timescale) {
+            case "WEEKLY":
+                return currentDate.minusWeeks(1);
+            case "MONTHLY":
+                return currentDate.minusMonths(1);
+            case "ANNUALLY":
+                return currentDate.minusYears(1);
+            default:
+                return null;
+        }
+    }
 
-                    AnalyticStatsType analyticStatsType = new AnalyticStatsType();
-                    AnalyticStatsValue analyticStatsValue = new AnalyticStatsValue();
+    private String getSqlNameAggregatedFunction(String aggregateType) {
+        switch (aggregateType) {
+            case KpiCrm.AGGREGATE_TYPE_AVERAGE:
+                return "AVG";
 
-                    analyticStatsValue.setValue(totalValue);
-                    analyticStatsType.setId(kpi.getId());
-                    analyticStatsType.setTitle(kpi.getLabel());
-                    analyticStatsType.setAnalyticStatsValue(analyticStatsValue);
-                    analyticStatsType.setValueDate(date);
+            case KpiCrm.AGGREGATE_TYPE_SUM:
+                return "SUM";
 
-                    aggregatedKpiValues.add(analyticStatsType);
-                }
+            default:
+                return null;
+        }
+    }
+
+    private IKpiCrm getKpiThread(KpiCrm kpiCrm) {
+        for (IKpiCrm iKpiThread : IKpiThreadList) {
+            if (iKpiThread.getCode().equals(kpiCrm.getCode())) {
+                return iKpiThread;
             }
         }
-
-        return aggregatedKpiValues;
+        return null;
     }
 }

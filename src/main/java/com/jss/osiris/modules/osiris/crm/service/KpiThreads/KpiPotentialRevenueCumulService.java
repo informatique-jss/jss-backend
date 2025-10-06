@@ -2,30 +2,23 @@ package com.jss.osiris.modules.osiris.crm.service.KpiThreads;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.jss.osiris.modules.osiris.crm.model.AnalyticStatsType;
 import com.jss.osiris.modules.osiris.crm.model.IKpiCrm;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrm;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrmValue;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
-import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
-import com.jss.osiris.modules.osiris.quotation.model.Quotation;
-import com.jss.osiris.modules.osiris.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationStatusService;
-import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 @Service
 public class KpiPotentialRevenueCumulService implements IKpiCrm {
@@ -48,55 +41,56 @@ public class KpiPotentialRevenueCumulService implements IKpiCrm {
 
     @Override
     public String getAggregateType() {
-        return KpiCrm.AGGREGATE_TYPE_CUMUL;
+        return KpiCrm.AGGREGATE_TYPE_SUM;
     }
 
     @Override
-    public String getLabel() {
-        return null;
-    }
-
-    @Override
-    public List<KpiCrmValue> getComputeValue(Responsable responsable, LocalDate startDate, LocalDate endDate) {
+    public List<KpiCrmValue> computeKpiCrmValues() {
         List<KpiCrmValue> dailyKpis = new ArrayList<>();
 
-        for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
-            LocalDateTime startOfDay = date.atStartOfDay();
-            LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
+        // for (LocalDate date = startDate; !date.isAfter(endDate); date =
+        // date.plusDays(1)) {
+        // LocalDateTime startOfDay = date.atStartOfDay();
+        // LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
 
-            List<CustomerOrder> inProgressOrders = customerOrderService.getCustomerOrderByResponsableAndStatusAndDates(
-                    responsable,
-                    customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.BEING_PROCESSED), null,
-                    startOfDay, endOfDay);
-            List<CustomerOrder> reccuringOrders = customerOrderService
-                    .getCustomerOrderByResponsableAndStatusAndDates(responsable, null, true, startOfDay, endOfDay);
+        // List<CustomerOrder> inProgressOrders =
+        // customerOrderService.getCustomerOrderByResponsableAndStatusAndDates(
+        // responsable,
+        // customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.BEING_PROCESSED),
+        // null,
+        // startOfDay, endOfDay);
+        // List<CustomerOrder> reccuringOrders = customerOrderService
+        // .getCustomerOrderByResponsableAndStatusAndDates(responsable, null, true,
+        // startOfDay, endOfDay);
 
-            List<Quotation> quotations = quotationService.getQuotationsByResponsablesAndStatusAndDates(
-                    List.of(responsable), startOfDay, endOfDay,
-                    quotationStatusService.getQuotationStatusByCode(QuotationStatus.SENT_TO_CUSTOMER));
+        // List<Quotation> quotations =
+        // quotationService.getQuotationsByResponsablesAndStatusAndDates(
+        // List.of(responsable), startOfDay, endOfDay,
+        // quotationStatusService.getQuotationStatusByCode(QuotationStatus.SENT_TO_CUSTOMER));
 
-            BigDecimal revenueHt = BigDecimal.ZERO;
-            if (!inProgressOrders.isEmpty())
-                revenueHt.add(computeCumulForOrders(inProgressOrders));
+        // BigDecimal revenueHt = BigDecimal.ZERO;
+        // if (!inProgressOrders.isEmpty())
+        // revenueHt.add(computeCumulForOrders(inProgressOrders));
 
-            if (!reccuringOrders.isEmpty())
-                revenueHt.add(computeCumulForOrders(reccuringOrders));
+        // if (!reccuringOrders.isEmpty())
+        // revenueHt.add(computeCumulForOrders(reccuringOrders));
 
-            if (!quotations.isEmpty())
-                for (Quotation quotation : quotations)
-                    for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders())
-                        for (com.jss.osiris.modules.osiris.quotation.model.Service service : asso.getServices())
-                            for (Provision provision : service.getProvisions())
-                                for (InvoiceItem invoiceItem : provision.getInvoiceItems())
-                                    if (invoiceItem.getPreTaxPrice() != null)
-                                        revenueHt.add(invoiceItem.getPreTaxPrice());
+        // if (!quotations.isEmpty())
+        // for (Quotation quotation : quotations)
+        // for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders())
+        // for (com.jss.osiris.modules.osiris.quotation.model.Service service :
+        // asso.getServices())
+        // for (Provision provision : service.getProvisions())
+        // for (InvoiceItem invoiceItem : provision.getInvoiceItems())
+        // if (invoiceItem.getPreTaxPrice() != null)
+        // revenueHt.add(invoiceItem.getPreTaxPrice());
 
-            KpiCrmValue kpiCrmValue = new KpiCrmValue();
-            kpiCrmValue.setResponsable(responsable);
-            kpiCrmValue.setValueDate(date);
-            kpiCrmValue.setValue(revenueHt);
-            dailyKpis.add(kpiCrmValue);
-        }
+        // KpiCrmValue kpiCrmValue = new KpiCrmValue();
+        // kpiCrmValue.setResponsable(responsable);
+        // kpiCrmValue.setValueDate(date);
+        // kpiCrmValue.setValue(revenueHt);
+        // dailyKpis.add(kpiCrmValue);
+        // }
 
         return dailyKpis;
     }
@@ -114,10 +108,23 @@ public class KpiPotentialRevenueCumulService implements IKpiCrm {
     }
 
     @Override
-    public AnalyticStatsType getKpiCrmAggregatedValue(List<Responsable> responsables, LocalDate startDate,
-            LocalDate endDate) {
-
-        return null;
+    public LocalDate getClosestLastDate(LocalDate fromDate) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getClosestLastDate'");
     }
+
+    @Override
+    public BigDecimal getDefaultValue() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getDefaultValue'");
+    }
+
+    // @Override
+    // public AnalyticStatsType getKpiCrmAggregatedValue(List<Responsable>
+    // responsables, LocalDate startDate,
+    // LocalDate endDate) {
+
+    // return null;
+    // }
 
 }

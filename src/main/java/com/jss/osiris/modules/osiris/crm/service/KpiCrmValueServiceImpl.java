@@ -33,9 +33,20 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void addOrUpdateKpiCrmValues(List<KpiCrmValue> kpiCrmValues) {
+        kpiCrmValueRepository.saveAll(kpiCrmValues);
+    }
+
+    @Override
     public List<KpiCrmValue> getValuesForKpiCrmAndResponsablesAndDates(KpiCrm kpiCrm, List<Responsable> responsables,
             LocalDate startDate, LocalDate endDate) {
         return kpiCrmValueRepository.findByKpiCrmAndResponsableInAndValueDateBetween(kpiCrm, responsables, startDate,
                 endDate);
+    }
+
+    @Override
+    public KpiCrmValue getLastKpiCrmValueByKpiCrm(Integer id) {
+        return kpiCrmValueRepository.findFirstByKpiCrmIdOrderByValueDateDesc(id);
     }
 }

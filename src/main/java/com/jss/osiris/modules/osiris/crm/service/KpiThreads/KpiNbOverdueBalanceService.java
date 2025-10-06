@@ -8,16 +8,16 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.jss.osiris.libs.audit.service.AuditService;
 import com.jss.osiris.modules.osiris.crm.model.IKpiCrm;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrm;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrmValue;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmService;
-import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 
 @Service
-public class KpiOverdueBalanceService implements IKpiCrm {
+public class KpiNbOverdueBalanceService implements IKpiCrm {
 
     @Autowired
     InvoiceService invoiceService;
@@ -26,24 +26,27 @@ public class KpiOverdueBalanceService implements IKpiCrm {
     ConstantService constantService;
 
     @Autowired
+    AuditService auditService;
+
+    @Autowired
     KpiCrmService kpiCrmService;
 
     @Override
     public String getCode() {
-        return KpiCrm.OVERDUE_BALANCE;
+        return KpiCrm.NB_OVERDUE_BALANCE;
     }
 
     @Override
     public String getAggregateType() {
-        return KpiCrm.AGGREGATE_TYPE_SUM;
+        return null;
     }
 
     // TODO : test method
     @Override
     public List<KpiCrmValue> computeKpiCrmValues() {
-        List<Invoice> invoices = new ArrayList<Invoice>();
         List<KpiCrmValue> dailyKpis = new ArrayList<>();
 
+        // List<Invoice> invoices = new ArrayList<Invoice>();
         // try {
         // invoices =
         // invoiceService.searchInvoices(List.of(constantService.getInvoiceStatusSend()),
@@ -51,19 +54,15 @@ public class KpiOverdueBalanceService implements IKpiCrm {
         // } catch (OsirisException e) {
         // e.printStackTrace();
         // }
-        // BigDecimal kpiTotal = BigDecimal.ZERO;
+        // Long kpiTotal = 0L;
 
-        // List<Invoice> filteredInvoices = invoices.stream()
-        // .filter(order -> order.getFirstReminderDateTime() != null).toList();
-
-        // for (Invoice invoice : filteredInvoices) {
-        // kpiTotal.add(invoice.getTotalPrice());
-        // }
+        // kpiTotal = invoices.stream()
+        // .filter(order -> order.getFirstReminderDateTime() != null).count();
 
         // KpiCrmValue kpiCrmValue = new KpiCrmValue();
         // kpiCrmValue.setResponsable(responsable);
         // kpiCrmValue.setValueDate(endDate);
-        // kpiCrmValue.setValue(kpiTotal);
+        // kpiCrmValue.setValue(BigDecimal.valueOf(kpiTotal));
         return dailyKpis;
     }
 
@@ -79,7 +78,7 @@ public class KpiOverdueBalanceService implements IKpiCrm {
         throw new UnsupportedOperationException("Unimplemented method 'getDefaultValue'");
     }
 
-    // TODO : test method
+    // // TODO : test method
     // @Override
     // public AnalyticStatsType getKpiCrmAggregatedValue(List<Responsable>
     // responsables, LocalDate startDate,

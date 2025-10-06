@@ -1,7 +1,6 @@
 package com.jss.osiris.modules.osiris.tiers.controller;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.PrintDelegate;
 import com.jss.osiris.libs.TiersValidationHelper;
@@ -26,7 +26,7 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingRepairHelper;
-import com.jss.osiris.modules.osiris.crm.model.AnalyticStatsType;
+import com.jss.osiris.modules.osiris.crm.dto.KpiWidgetDto;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrm;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
@@ -635,15 +635,19 @@ public class TiersController {
         responsableService.getResponsablesByTiers(tiersService.getTiers(idTiers)), HttpStatus.OK);
   }
 
-  @GetMapping(inputEntryPoint + "/analytic-stats-types")
+  @GetMapping(inputEntryPoint + "/kpi-widgets")
   @JsonView(JacksonViews.OsirisListView.class)
-  public ResponseEntity<List<AnalyticStatsType>> getAnalyticStatsTypesForTiers(
-      @RequestParam List<Integer> responsableIds, @RequestParam String kpiCrmCode) throws OsirisValidationException {
+  public ResponseEntity<List<KpiWidgetDto>> getKpiWidgetsByPageAndTimescaleForResponsables(
+      @RequestParam String displayedPageCode,
+      @RequestParam String timescale,
+      @RequestParam List<Integer> responsableIds) throws OsirisValidationException {
 
-    KpiCrm kpiCrm = kpiCrmService.getKpiCrmByCode(kpiCrmCode);
+    if (displayedPageCode == null || !KpiCrm.POSSIBLE_DISPLAYS.contains(displayedPageCode))
+      throw new OsirisValidationException("displayedPageCode");
 
-    if (kpiCrm == null)
-      throw new OsirisValidationException("kpiCrmCode");
+    if (displayedPageCode == null || !KpiCrm.WEEKLY_PERIOD.equals(timescale) || !KpiCrm.MONTHLY_PERIOD.equals(timescale)
+        || !KpiCrm.ANNUALLY_PERIOD.equals(timescale))
+      throw new OsirisValidationException("timescale");
 
     List<Responsable> responsables = new ArrayList<Responsable>();
     if (responsableIds != null) {
@@ -657,9 +661,34 @@ public class TiersController {
       throw new OsirisValidationException("responsableIds");
     }
 
-    return new ResponseEntity<List<AnalyticStatsType>>(
-        kpiCrmService.getAggregatedKpis(kpiCrm, responsables, LocalDate.of(2025, 1, 1),
-            LocalDate.of(2025, 9, 30)),
+    return new ResponseEntity<List<KpiWidgetDto>>(
+        kpiCrmService.getKpiCrmWidget(displayedPageCode, timescale, responsableIds),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/kpi-values")
+  @JsonView(JacksonViews.OsirisListView.class)
+  public ResponseEntity<String> getKpiValuesPayloadByKpiCrmForResponsables(
+      @RequestParam Integer kpiCrmId,
+      @RequestParam List<Integer> responsableIds) throws OsirisValidationException, JsonProcessingException {
+
+    if (kpiCrmId == null && kpiCrmService.getKpiCrmById(kpiCrmId) == null)
+      throw new OsirisValidationException("kpiCrmId");
+
+    List<Responsable> responsables = new ArrayList<Responsable>();
+    if (responsableIds != null) {
+      for (Integer responsableId : responsableIds) {
+        Responsable responsable = responsableService.getResponsable(responsableId);
+        if (responsable == null)
+          throw new OsirisValidationException("responsable");
+        responsables.add(responsable);
+      }
+    } else {
+      throw new OsirisValidationException("responsableIds");
+    }
+
+    return new ResponseEntity<String>(
+        kpiCrmService.getKpiValues(kpiCrmId, responsableIds),
         HttpStatus.OK);
   }
 }
