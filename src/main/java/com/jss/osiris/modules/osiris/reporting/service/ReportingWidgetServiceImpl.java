@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.reporting.service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -72,6 +73,7 @@ public class ReportingWidgetServiceImpl implements ReportingWidgetService {
     @Override
     public void computeReportingWidget(Integer widgetId) throws OsirisException {
         ReportingWidget widget = getReportingWidget(widgetId);
+        boolean computeEvolution = true;
         if (widget != null) {
 
             // Series generation
@@ -82,27 +84,32 @@ public class ReportingWidgetServiceImpl implements ReportingWidgetService {
                         seriesUnion.append(" UNION ALL ");
                     }
 
-                    if ("table".equalsIgnoreCase(serie.getPlotType())) {
+                    if ("table".equalsIgnoreCase(serie.getPlotType())
+                            || "boxplot".equalsIgnoreCase(serie.getPlotType())
+                            || "sankey".equalsIgnoreCase(serie.getPlotType())) {
+                        computeEvolution = false;
                         seriesUnion.append(String.format(
                                 """
                                         SELECT '%s' as serie_name,
                                                '%s' as plot_type,
+                                               '%s' as stack,
                                                jsonb_build_array(%s) as columns,
                                                (SELECT jsonb_agg(to_jsonb(s)) FROM (%s) s) as data
                                         """,
                                 serie.getSerieName().replace("'", "''"),
-                                serie.getPlotType(),
-                                Arrays.stream(serie.getColumns().split(","))
-                                        .map(col -> "'" + col.trim() + "'")
-                                        .collect(Collectors.joining(",")),
+                                serie.getPlotType(), serie.getStack() != null ? serie.getStack() : "",
+                                serie.getColumns() == null ? ""
+                                        : Arrays.stream(serie.getColumns().split(","))
+                                                .map(col -> "'" + col.trim() + "'")
+                                                .collect(Collectors.joining(",")),
                                 serie.getSerieSqlText()));
                     } else {
                         seriesUnion.append(String.format(
-                                "SELECT '%s' as serie_name, '%s' as plot_type, NULL::jsonb as columns, jsonb_agg(jsonb_build_array(label, value) ) as data "
+                                "SELECT '%s' as serie_name, '%s' as plot_type,'%s' as stack, NULL::jsonb as columns, jsonb_agg(jsonb_build_array(label, value, dim) ) as data "
                                         +
                                         "FROM (%s) s",
                                 serie.getSerieName().replace("'", "''"),
-                                serie.getPlotType(),
+                                serie.getPlotType(), serie.getStack() != null ? serie.getStack() : "",
                                 serie.getSerieSqlText()));
                     }
                 }
@@ -119,6 +126,7 @@ public class ReportingWidgetServiceImpl implements ReportingWidgetService {
                                     jsonb_build_object(
                                         'name', serie_name,
                                         'type', plot_type,
+                                        'stack', stack,
                                         'columns', columns,
                                         'data', data
                                     )
@@ -134,7 +142,7 @@ public class ReportingWidgetServiceImpl implements ReportingWidgetService {
             em.createNativeQuery(finalSql).executeUpdate();
 
             // Update last value
-            if (widget.getLabelType().equals(ReportingWidget.LABEL_TYPE_DATETIME)) {
+            if (computeEvolution && widget.getLabelType().equals(ReportingWidget.LABEL_TYPE_DATETIME)) {
                 widget = getReportingWidget(widgetId);
                 if (widget.getPayload() != null) {
                     JsonNode root;
@@ -162,7 +170,9 @@ public class ReportingWidgetServiceImpl implements ReportingWidgetService {
                             widget.setLastValue(last);
                             if (penultieme != null && !last.equals(new BigDecimal(0))) {
                                 widget.setCurrentEvolution(
-                                        last.subtract(penultieme).divide(last).multiply(new BigDecimal(100.0)));
+                                        last.subtract(penultieme).divide(last, RoundingMode.HALF_UP)
+                                                .setScale(2, RoundingMode.HALF_EVEN)
+                                                .multiply(new BigDecimal(100.0)));
                             }
                             addOrUpdateReportingWidget(widget);
                         }

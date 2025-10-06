@@ -6,5 +6,5 @@ export interface ReportingWidget extends IReferential {
   currentEvolution: number;
   lastValue: number;
   lastValueUnit: string;
-
+  minHeight: number;
 }
