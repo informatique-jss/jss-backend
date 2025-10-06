@@ -1,4 +1,4 @@
-package com.jss.osiris.modules.osiris.crm.service.KpiThreads;
+package com.jss.osiris.libs.batch.service.threads.kpi;
 
 import java.math.BigDecimal;
 import java.time.Duration;

@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.PrintDelegate;
 import com.jss.osiris.libs.TiersValidationHelper;
@@ -26,8 +25,6 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingRepairHelper;
-import com.jss.osiris.modules.osiris.crm.dto.KpiWidgetDto;
-import com.jss.osiris.modules.osiris.crm.model.KpiCrm;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
@@ -633,62 +630,5 @@ public class TiersController {
 
     return new ResponseEntity<List<Responsable>>(
         responsableService.getResponsablesByTiers(tiersService.getTiers(idTiers)), HttpStatus.OK);
-  }
-
-  @GetMapping(inputEntryPoint + "/kpi-widgets")
-  @JsonView(JacksonViews.OsirisListView.class)
-  public ResponseEntity<List<KpiWidgetDto>> getKpiWidgetsByPageAndTimescaleForResponsables(
-      @RequestParam String displayedPageCode,
-      @RequestParam String timescale,
-      @RequestParam List<Integer> responsableIds) throws OsirisValidationException {
-
-    if (displayedPageCode == null || !KpiCrm.POSSIBLE_DISPLAYS.contains(displayedPageCode))
-      throw new OsirisValidationException("displayedPageCode");
-
-    if (displayedPageCode == null || !KpiCrm.WEEKLY_PERIOD.equals(timescale) || !KpiCrm.MONTHLY_PERIOD.equals(timescale)
-        || !KpiCrm.ANNUALLY_PERIOD.equals(timescale))
-      throw new OsirisValidationException("timescale");
-
-    List<Responsable> responsables = new ArrayList<Responsable>();
-    if (responsableIds != null) {
-      for (Integer responsableId : responsableIds) {
-        Responsable responsable = responsableService.getResponsable(responsableId);
-        if (responsable == null)
-          throw new OsirisValidationException("responsable");
-        responsables.add(responsable);
-      }
-    } else {
-      throw new OsirisValidationException("responsableIds");
-    }
-
-    return new ResponseEntity<List<KpiWidgetDto>>(
-        kpiCrmService.getKpiCrmWidget(displayedPageCode, timescale, responsableIds),
-        HttpStatus.OK);
-  }
-
-  @GetMapping(inputEntryPoint + "/kpi-values")
-  @JsonView(JacksonViews.OsirisListView.class)
-  public ResponseEntity<String> getKpiValuesPayloadByKpiCrmForResponsables(
-      @RequestParam Integer kpiCrmId,
-      @RequestParam List<Integer> responsableIds) throws OsirisValidationException, JsonProcessingException {
-
-    if (kpiCrmId == null && kpiCrmService.getKpiCrmById(kpiCrmId) == null)
-      throw new OsirisValidationException("kpiCrmId");
-
-    List<Responsable> responsables = new ArrayList<Responsable>();
-    if (responsableIds != null) {
-      for (Integer responsableId : responsableIds) {
-        Responsable responsable = responsableService.getResponsable(responsableId);
-        if (responsable == null)
-          throw new OsirisValidationException("responsable");
-        responsables.add(responsable);
-      }
-    } else {
-      throw new OsirisValidationException("responsableIds");
-    }
-
-    return new ResponseEntity<String>(
-        kpiCrmService.getKpiValues(kpiCrmId, responsableIds),
-        HttpStatus.OK);
   }
 }
