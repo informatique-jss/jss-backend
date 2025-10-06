@@ -55,7 +55,14 @@ export class AppMenuComponent implements OnInit {
   initMenu() {
     this.menuItems = [
       { label: "Menu", isTitle: true } as MenuItemType,
-      { label: "Tiers/Responsables", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "tiers" } as MenuItemType,
+      {
+        label: "Tiers/Responsables", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "",
+        children: [{ label: "Home", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "tiers/home-kpi/61274" },
+        { label: "Infos générales", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "tiers/main-kpi/61274" },
+        { label: "Business", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "tiers/business-kpi/61274" },
+        { label: "Relation client", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "tiers/customer-kpi/61274" }
+        ]
+      } as MenuItemType,
       { label: "CRM", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerApps", url: "crm" } as MenuItemType,
       { label: "Reporting", isTitle: false, isCollapsed: true, isDisabled: false, isSpecial: false, icon: "tablerLayoutDashboard", children: this.getAllDashboardsItem() } as MenuItemType
     ]

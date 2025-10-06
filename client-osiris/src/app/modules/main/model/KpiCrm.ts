@@ -1,7 +1,8 @@
+import { KpiWidget } from "./KpiWidget";
+
 export interface KpiCrm {
   id: number;
-  code: string;
-  label: string;
-  aggregateType: string;
-  lastUpdate: Date;
+  title: string;
+  kpiWidget: KpiWidget;
+  widgetOrder: number;
 }

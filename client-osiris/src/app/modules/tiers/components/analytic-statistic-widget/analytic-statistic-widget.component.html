@@ -1,10 +1,10 @@
-<!-- <div *ngIf="stat.id" class="p-3 rounded m-1 {{stat.id===1 ? '' : 'mt-xxl-0'}} border border-dashed"
+<div *ngIf="stat.id" class="p-3 rounded m-1 {{stat.id===1 ? '' : 'mt-xxl-0'}} border border-dashed"
   style="background-color: white;">
   <div class="d-flex justify-content-between align-items-center">
     <div>
       <h3 class="mb-1">
         {{ stat.analyticStatsValue.prefix || '' }}<span [countUp]="stat.analyticStatsValue.value"
-          [options]="{duration:2,decimalPlaces:2}">0</span>{{ stat.analyticStatsValue.suffix || '' }}
+          [options]="{duration:2,decimalPlaces:2}">0</span>&nbsp;{{ stat.analyticStatsValue.suffix || '' }}
         <span class="fs-base" [class]="
                                   stat.isPositive ? 'text-success' : 'text-danger'
                                 ">
@@ -13,14 +13,9 @@
       </h3>
       <p class="mb-0 text-muted">{{ stat.title }}</p>
     </div>
-    <div class="avatar-xl">
-      <span class="avatar-title text-bg-light rounded-circle">
-        <ng-icon [name]="stat.icon" class="fs-2 text-muted d-flex" />
-      </span>
-    </div>
+  </div>
 </div>
-</div> -->
-
+<!--
 <div *ngIf="osirisStat && osirisStat.id&& osirisStat.analyticStatsValue" class="p-3 rounded m-1 border border-dashed"
   style="background-color: white;">
   <div class="d-flex justify-content-between align-items-center">
@@ -31,4 +26,4 @@
       <p class="mb-0 text-muted">{{ osirisStat.title }}</p>
     </div>
   </div>
-</div>
+</div> -->
