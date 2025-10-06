@@ -5,4 +5,5 @@ export interface ReportingWidgetSerie {
   plotType: string;
   columns: string;
   serieSqlText: string;
+  stack: string;
 }

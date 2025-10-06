@@ -30,6 +30,7 @@ public class ReportingWidgetSerie {
     private String columns;
 
     private String plotType;
+    private String stack;
 
     @ManyToOne
     @JoinColumn(name = "id_reporting_widget")
@@ -81,6 +82,14 @@ public class ReportingWidgetSerie {
 
     public void setColumns(String columns) {
         this.columns = columns;
+    }
+
+    public String getStack() {
+        return stack;
+    }
+
+    public void setStack(String stack) {
+        this.stack = stack;
     }
 
 }
