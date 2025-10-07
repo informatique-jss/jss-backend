@@ -2238,12 +2238,4 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                                     complexity = provision.getComplexity();
         return complexity;
     }
-
-    // @Autowired
-    // KpiCrmService kpiCrmService;
-
-    // @Scheduled(initialDelay = 100, fixedDelay = Integer.MAX_VALUE)
-    // public void getValueTest() {
-    // kpiCrmService.computeKpiCrm(1);
-    // }
 }

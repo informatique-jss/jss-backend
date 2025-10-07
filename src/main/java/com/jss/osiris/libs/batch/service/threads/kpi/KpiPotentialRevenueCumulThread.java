@@ -21,7 +21,7 @@ import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationStatusService;
 
 @Service
-public class KpiPotentialRevenueCumulService implements IKpiCrm {
+public class KpiPotentialRevenueCumulThread implements IKpiCrm {
     @Autowired
     CustomerOrderService customerOrderService;
 
