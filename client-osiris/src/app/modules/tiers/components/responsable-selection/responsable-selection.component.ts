@@ -14,97 +14,98 @@ import { ResponsableService } from '../../services/responsable.service';
 import { TiersService } from '../../services/tiers.service';
 
 type UserType = {
-    id: string;
-    name: string;
-    email: string;
-    avatar: string;
-    role: string;
-    date: string;
-    time: string;
-    status: "inactive" | "active" | "suspended",
-    selected?: boolean
+  id: string;
+  name: string;
+  email: string;
+  avatar: string;
+  role: string;
+  date: string;
+  time: string;
+  status: "inactive" | "active" | "suspended",
+  selected?: boolean
 }
 
 @Component({
-    selector: 'responsable-selection',
-    imports: [
-        LucideAngularModule,
-        NgIcon,
-        NgbdSortableHeader,
-        FormsModule,
-        NgbPagination,
-        NgbPaginationNext,
-        NgbPaginationPrevious,
-        AsyncPipe
-    ],
-    standalone: true,
-    providers: [TableService],
-    templateUrl: './responsable-selection.component.html'
+  selector: 'responsable-selection',
+  imports: [
+    LucideAngularModule,
+    NgIcon,
+    NgbdSortableHeader,
+    FormsModule,
+    NgbPagination,
+    NgbPaginationNext,
+    NgbPaginationPrevious,
+    AsyncPipe
+  ],
+  standalone: true,
+  providers: [TableService],
+  templateUrl: './responsable-selection.component.html'
 })
 export class ResponsableSelectionComponent implements OnInit, OnDestroy {
 
-    private componentDestroyed = new Subject<void>();
+  private componentDestroyed = new Subject<void>();
 
-    selectAll = false;
+  selectAll = false;
 
-    tiers: Tiers | undefined;
+  tiers: Tiers | undefined;
 
-    users$: Observable<Responsable[]>
-    total$: Observable<number>;
+  users$: Observable<Responsable[]>
+  total$: Observable<number>;
 
-    users: Responsable[] = [];
-    protected readonly toTitleCase = toTitleCase;
+  users: Responsable[] = [];
+  protected readonly toTitleCase = toTitleCase;
 
-    protected readonly LucideSearch = LucideSearch;
-    protected readonly LucideShield = LucideShield;
-    protected readonly LucideUserCheck = LucideUserCheck;
+  protected readonly LucideSearch = LucideSearch;
+  protected readonly LucideShield = LucideShield;
+  protected readonly LucideUserCheck = LucideUserCheck;
 
-    constructor(
-        public tableService: TableService<Responsable>,
-        private responsableService: ResponsableService,
-        private tiersService: TiersService,
-    ) {
-        this.users$ = this.tableService.items$
-        this.total$ = this.tableService.total$
-    }
+  constructor(
+    public tableService: TableService<Responsable>,
+    private responsableService: ResponsableService,
+    private tiersService: TiersService,
+  ) {
+    this.users$ = this.tableService.items$
+    this.total$ = this.tableService.total$
+  }
 
-    ngOnInit(): void {
-        this.tiersService.getSelectedTiers().pipe(takeUntil(this.componentDestroyed)).subscribe(tiersId => {
-            if (tiersId) {
-                this.responsableService.getResponsablesByTiers(tiersId).subscribe(res => {
-                    this.users = res;
-                    this.tableService.setItems(this.users, 4);
-                });
-            }
+  ngOnInit(): void {
+    this.tiersService.getSelectedTiers().pipe(takeUntil(this.componentDestroyed)).subscribe(tiersId => {
+      if (tiersId) {
+        this.responsableService.getResponsablesByTiers(tiersId).subscribe(res => {
+          this.users = res;
+          this.tableService.setItems(this.users, 4);
+          this.toggleAllSelection();
         });
+      }
+    });
 
-        this.tableService.total$.pipe(takeUntil(this.componentDestroyed)).subscribe(number => {
-            this.selectAll = this.tableService.getSelectedItems().length == number;
-        });
-    }
+    this.tableService.total$.pipe(takeUntil(this.componentDestroyed)).subscribe(number => {
+      this.selectAll = this.tableService.getSelectedItems().length == number;
+    });
+  }
 
-    ngOnDestroy(): void {
-        this.componentDestroyed.next();
-        this.componentDestroyed.complete();
-    }
+  ngOnDestroy(): void {
+    this.componentDestroyed.next();
+    this.componentDestroyed.complete();
+  }
 
-    toggleAllSelection() {
-        this.tableService.setAllSelection(this.selectAll);
-        this.responsableService.setSelectedResponsables(this.tableService.getSelectedItems());
-    }
+  toggleAllSelection() {
+    this.tableService.setAllSelection(this.selectAll);
+    this.responsableService.setSelectedResponsables(this.tableService.getSelectedItems());
+  }
 
-    toggleSingleSelection() {
-        this.responsableService.setSelectedResponsables(this.tableService.getSelectedItems());
-    }
+  toggleSingleSelection() {
+    this.responsableService.setSelectedResponsables(this.tableService.getSelectedItems());
+  }
 
-    deleteSelected() {
-        this.tableService.deleteSelectedItems();
-        this.selectAll = false;
-    }
+  deleteSelected() {
+    this.tableService.deleteSelectedItems();
+    this.selectAll = false;
+  }
 
-    get hasSelection(): boolean {
-        return this.tableService.hasSelectedItems();
-    }
+  get hasSelection(): boolean {
+    return this.tableService.hasSelectedItems();
+  }
 
 
 }

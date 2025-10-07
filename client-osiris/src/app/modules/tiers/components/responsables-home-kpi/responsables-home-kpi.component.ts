@@ -1,4 +1,4 @@
-import { Component, OnChanges, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { provideEchartsCore } from 'ngx-echarts';
 import { Subscription } from 'rxjs';
 import { TIERS_HOME_DISPLAY } from '../../../../libs/Constants';
@@ -16,7 +16,7 @@ import { echarts } from './../../../reporting/components/reporting-chart/echarts
   standalone: true,
   templateUrl: './responsables-home-kpi.component.html',
 })
-export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
+export class ResponsablesHomeKpiComponent implements OnInit {
 
   selectedResponsablesSubscription: Subscription = new Subscription;
   selectedResponsables: Responsable[] = [];
@@ -36,14 +36,8 @@ export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.selectedResponsablesSubscription = this.responsableService.getSelectedResponsables().subscribe(respos => {
       this.selectedResponsables = respos;
-
-      // if (this.kpiComponent) {
-      //   this.kpiComponent.ngOnInit();
-      // }
     });
-  }
 
-  ngOnChanges() {
   }
 }
 

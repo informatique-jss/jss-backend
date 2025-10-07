@@ -1,6 +1,6 @@
 <div class="card">
   <div class="card-body p-0">
-    <kpi-generic #kpiComponent [selectedDisplayedPageCode]="TIERS_HOME_DISPLAY"
-      [selectedResponsables]="selectedResponsables"></kpi-generic>
+    @if(selectedResponsables && selectedResponsables.length>0){<kpi-generic #kpiComponent
+      [selectedDisplayedPageCode]="TIERS_HOME_DISPLAY" [selectedResponsables]="selectedResponsables"></kpi-generic>}
   </div>
 </div>

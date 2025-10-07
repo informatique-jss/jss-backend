@@ -32,16 +32,13 @@
       </div>
     </div> } </div>
   <div class="col-xxl-8 order-1 order-xxl-2 border-start border-dashed ">
-    <div class="card-header justify-content-between border-dashed">
-      <div class="d-flex flex-wrap gap-1"> @for(respo of selectedResponsables; track respo.id){<p>{{respo.lastname}}</p>
-        } <a href="javascript:void(0);" class="btn btn-sm btn-secondary"> <ng-icon name="tablerDownload" class="me-1" />
-          Export CSV </a> </div>
-    </div>
     <div class="card-body w-100 z-0">
       <div dir="ltr">
-        <div> @if(selectedKpiCrm){ <h4 class="card-title mb-0 w-100">{{selectedKpiCrm.name}}</h4> <app-echart
-            [series]="serieValues[selectedKpiCrm.idKpi]" [title]="selectedKpiCrm.name" [unit]="selectedKpiCrm.unit"
-            [labelType]="selectedKpiCrm.labelType" /> } </div>
+        <div> @if(selectedKpiCrm && serieValues && serieValues.length>0){
+          <h4 class="card-title mb-0 w-100">{{selectedKpiCrm.name}}</h4>
+          <app-echart [series]="serieValues" [title]="selectedKpiCrm.name" [unit]="selectedKpiCrm.unit"
+            [labelType]="LABEL_TYPE_DATETIME" /> }
+        </div>
       </div>
     </div>
   </div>

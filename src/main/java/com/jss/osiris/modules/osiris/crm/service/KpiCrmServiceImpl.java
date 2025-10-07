@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisException;
@@ -149,8 +148,9 @@ public class KpiCrmServiceImpl implements KpiCrmService {
                      """, kpiCrm.getLabel(), dataSql);
 
             Object jsonPayload = em.createNativeQuery(finalSql).getSingleResult();
-            ObjectMapper mapper = new ObjectMapper();
-            jsonPayloadString = mapper.writeValueAsString(jsonPayload);
+            // ObjectMapper mapper = new ObjectMapper();
+            // jsonPayloadString = mapper.writeValueAsString(jsonPayload);
+            jsonPayloadString = jsonPayload.toString();
 
         }
 
