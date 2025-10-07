@@ -57,10 +57,10 @@ export class AppMenuComponent implements OnInit {
       { label: "Menu", isTitle: true } as MenuItemType,
       {
         label: "Tiers/Responsables", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "",
-        children: [{ label: "Home", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "tiers/home-kpi/61274" },
-        { label: "Infos générales", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "tiers/main-kpi/61274" },
-        { label: "Business", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "tiers/business-kpi/61274" },
-        { label: "Relation client", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "tiers/customer-kpi/61274" }
+        children: [{ label: "Home", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "tiers/home-kpi/4523425" },
+        { label: "Infos générales", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "tiers/main-kpi/4523425" },
+        { label: "Business", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "tiers/business-kpi/4523425" },
+        { label: "Relation client", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "tiers/customer-kpi/4523425" }
         ]
       } as MenuItemType,
       { label: "CRM", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerApps", url: "crm" } as MenuItemType,
@@ -75,7 +75,8 @@ export class AppMenuComponent implements OnInit {
   expandActivePaths(items: MenuItemType[]) {
     for (const item of items) {
       if (this.hasSubMenu(item)) {
-        item.isCollapsed = !this.isChildActive(item);
+        if (this.isChildActive(item))
+          item.isCollapsed = false;
         this.expandActivePaths(item.children || []);
       }
     }

@@ -30,13 +30,17 @@
                 label="Fréquence de calcul" [form]="entityForm" propertyName="reportingUpdateFrequency"
                 [isMandatory]="true" [isDisabled]="!editMode"></select-reporting-frequency>
             </td>
+            <td>
+              <generic-input [(model)]="selectedEntity.minHeight" label="Hauteur min." type="number" [form]="entityForm"
+                propertyName="minHeight" [isMandatory]="false" [isDisabled]="!editMode"></generic-input>
+            </td>
           </tr>
         </table>
         <table class="full-width">
           <tr>
             <td>
               <generic-input [(model)]="selectedEntity.lastValueUnit" label="Unité" [form]="entityForm"
-                propertyName="lastValueUnit" [isMandatory]="false" [isDisabled]="true"></generic-input>
+                propertyName="lastValueUnit" [isMandatory]="false" [isDisabled]="!editMode"></generic-input>
             </td>
             <td>
               <select-string [types]="labelTypes" [isMandatory]="true" [form]="entityForm" propertyName="labelType"
@@ -59,6 +63,10 @@
                 </select-string>
               </td>
               <td>
+                <generic-input [(model)]="serie.stack" label="Nom de la stack" [form]="entityForm"
+                  [propertyName]="'stack'+index" [isMandatory]="false" [isDisabled]="!editMode"></generic-input>
+              </td>
+              <td>
                 <button *ngIf="editMode" (click)="deleteSerie(serie)" mat-raised-button color="accent">
                   <mat-icon>delete</mat-icon>
                 </button>
@@ -67,7 +75,7 @@
             <tr>
               <td colspan="3">
                 <generic-textarea [(model)]="serie.serieSqlText"
-                  label="Requête SQL de la série (/!\ nommer la colonne les ordonnées value et les abscisses label )"
+                  label="Requête SQL de la série (/!\ nommer la colonne les ordonnées value, les abscisses label et la dimension éventuelle dim)"
                   [form]="entityForm" [propertyName]="'serieSqlText'+index" [isMandatory]="true"
                   [isDisabled]="!editMode" [numberOfLines]="6"></generic-textarea>
               </td>
@@ -84,6 +92,14 @@
           <tr>
             <td>
               <button *ngIf="editMode" (click)="addSerie()" mat-raised-button color="accent">Ajouter une série </button>
+            </td>
+          </tr>
+        </table>
+        <table class="full-width">
+          <tr>
+            <td>
+              <button *ngIf="selectedEntity.id" (click)="refreshWidget()" mat-raised-button color="accent">Raffraichir
+                immédiatement </button>
             </td>
           </tr>
         </table>

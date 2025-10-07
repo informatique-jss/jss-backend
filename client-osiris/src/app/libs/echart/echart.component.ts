@@ -1,13 +1,14 @@
 import { Component, EventEmitter, inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { ECharts, EChartsOption } from 'echarts';
+import { ECharts, EChartsOption, SeriesOption } from 'echarts';
 import type { EChartsType } from 'echarts/core';
-import { XAXisOption, YAXisOption } from 'echarts/types/dist/shared';
+import { TooltipOption, XAXisOption, YAXisOption } from 'echarts/types/dist/shared';
 import { NgxEchartsDirective } from 'ngx-echarts';
 import { Subscription } from 'rxjs';
 import * as XLSX from "xlsx";
-import { LABEL_TYPE_CATEGORY } from '../../../../../client/src/app/libs/Constants';
+import { GRAPH_TYPE_PIE, LABEL_TYPE_CATEGORY } from '../../../../../client/src/app/libs/Constants';
 import { LayoutStoreService } from '../../modules/main/services/layout-store.service';
-import { LABEL_TYPE_DATETIME, LABEL_TYPE_NUMERIC } from '../Constants';
+import { GRAPH_TYPE_AREA, GRAPH_TYPE_BOXPLOT, GRAPH_TYPE_LINE, GRAPH_TYPE_SANKEY, GRAPH_TYPE_TREEMAP, LABEL_TYPE_DATETIME, LABEL_TYPE_NUMERIC } from '../Constants';
+import { formatDate } from '../FormatHelper';
 import { getColor } from '../inspinia/utils/color-utils';
 import { SHARED_IMPORTS } from '../SharedImports';
 
@@ -18,7 +19,7 @@ import { SHARED_IMPORTS } from '../SharedImports';
   imports: [NgxEchartsDirective, ...SHARED_IMPORTS],
 })
 export class EchartComponent implements OnInit, OnDestroy {
-  @Input() height: string = '300px';
+  @Input() height: number = 300;
   @Input() width: string = 'auto';
   @Input() series: any[] | undefined;
   @Input() labelType: string = LABEL_TYPE_CATEGORY;
@@ -48,7 +49,8 @@ export class EchartComponent implements OnInit, OnDestroy {
       locale: 'FR',
       textStyle: {
         fontFamily: getComputedStyle(document.body).fontFamily
-      }, tooltip: {
+      },
+      tooltip: {
         trigger: "axis",
         backgroundColor: getColor("secondary-bg"),
         borderColor: getColor("border-color"),
@@ -192,13 +194,35 @@ export class EchartComponent implements OnInit, OnDestroy {
             }
           }
 
-        if ((serie as any).type == "area") {
-          serie.type = "line";
+        if ((serie as any).type == GRAPH_TYPE_AREA) {
+          serie.type = GRAPH_TYPE_LINE;
           serie.areaStyle = {
             opacity: 0.2, color: getColor("primary")
           };
         }
-        if ((serie as any).type == "area" || (serie as any).type == "line") {
+
+        if ((serie as any).type == GRAPH_TYPE_PIE || (serie as any).type == GRAPH_TYPE_TREEMAP) {
+          serie.radius = ['40%', '70%'];
+          serie.emphasis = {
+            label: {
+              show: true,
+              fontSize: 20,
+              fontWeight: 'bold'
+            }
+          };
+          defaultOptions.xAxis = {};
+          defaultOptions.yAxis = {};
+          defaultOptions.xAxis = { show: false };
+          defaultOptions.yAxis = { show: false };
+          defaultOptions.grid = { show: false };
+          (defaultOptions.tooltip! as TooltipOption).trigger = "item";
+          serie.data = serie.data.map((item: any[]) => ({
+            name: item[0],
+            value: item[1]
+          }));
+        }
+
+        if ((serie as any).type == GRAPH_TYPE_AREA || (serie as any).type == GRAPH_TYPE_LINE) {
           serie.smooth = true;
           serie.symbolSize = 5;
           serie.itemStyle = {
@@ -207,6 +231,90 @@ export class EchartComponent implements OnInit, OnDestroy {
           serie.lineStyle = {
           };
           serie.symbol = "circle";
+        }
+
+        if ((serie as any).type == GRAPH_TYPE_BOXPLOT) {
+          defaultOptions.xAxis = { type: 'category', data: serie.data.map((d: any) => LABEL_TYPE_DATETIME ? formatDate(new Date(d["label"])) : d["label"]) };
+          defaultOptions.yAxis = { type: 'value' };
+          serie.data = serie.data.map((d: any) => [d["min"], d["q1"], d["median"], d["q3"], d["max"]]);
+          this.labelType = LABEL_TYPE_CATEGORY;
+          (defaultOptions.tooltip as TooltipOption) = {
+            trigger: 'item',
+            backgroundColor: '#fff',
+            borderColor: '#e7e9eb',
+            textStyle: {
+              color: '#8a969c',
+              fontFamily: '"Open Sans", sans-serif'
+            },
+            formatter: (param: any) => {
+              if (!param || !param.data) return '';
+
+              const [min, q1, median, q3, max] = param.data;
+
+              // Tu peux formater la date ici si nécessaire :
+              const label = param.name || '(non défini)';
+
+              return `
+              <div style="padding:4px 8px">
+                <strong>${label}</strong><br/>
+                Min&nbsp;: <b>${min} ${this.unit}</b><br/>
+                Q1&nbsp;: <b>${q1} ${this.unit}</b><br/>
+                Médiane&nbsp;: <b>${median} ${this.unit}</b><br/>
+                Q3&nbsp;: <b>${q3} ${this.unit}</b><br/>
+                Max&nbsp;: <b>${max} ${this.unit}</b>
+              </div>
+            `;
+            }
+          }
+        }
+
+        if ((serie as any).type == GRAPH_TYPE_SANKEY) {
+
+          defaultOptions.xAxis = {};
+          defaultOptions.yAxis = {};
+          defaultOptions.xAxis = { show: false };
+          defaultOptions.yAxis = { show: false };
+          defaultOptions.grid = { show: false };
+          (defaultOptions.tooltip! as TooltipOption).trigger = "item";
+          this.labelType = LABEL_TYPE_CATEGORY;
+          const nodeNames = new Set<string>();
+
+          for (const link of serie.data) {
+            nodeNames.add(link.source);
+            nodeNames.add(link.target);
+          }
+
+          serie.links = serie.data;
+          serie.data = Array.from(nodeNames).map(name => ({ name }));
+
+          (defaultOptions.tooltip as TooltipOption) = {
+            trigger: 'item',
+            backgroundColor: '#fff',
+            borderColor: '#ccc',
+            borderWidth: 1,
+            textStyle: {
+              color: '#333',
+              fontFamily: '"Open Sans", sans-serif'
+            },
+            formatter: function (params: any) {
+              if (params.dataType === 'edge') {
+                return `
+                <div style="padding:6px 8px">
+                  <strong>${params.data.source}</strong> → <strong>${params.data.target}</strong><br/>
+                  Valeur : <strong>${params.data.value} </strong>
+                </div>
+              `;
+              } else if (params.dataType === 'node') {
+                return `
+              <div style="padding:6px 8px">
+                <strong>${params.data.name}</strong>
+                 Valeur : <strong>${params.data.value} </strong>
+              </div>
+            `;
+              }
+              return '';
+            }
+          }
         }
 
       }
@@ -233,8 +341,36 @@ export class EchartComponent implements OnInit, OnDestroy {
       }
     }
 
-    defaultOptions.series = this.series;
+    // Handle dimensions
+    const hasGroup = this.series![0].data[0][2] != null;
+
+    if (hasGroup && (this.series![0] as any).type != GRAPH_TYPE_BOXPLOT && (this.series![0] as any).type != GRAPH_TYPE_SANKEY) {
+      const grouped = new Map<string, [string, number][]>();
+
+      for (const [categorie, value, group] of this.series![0].data) {
+        if (!grouped.has(group)) grouped.set(group, []);
+        grouped.get(group)!.push([categorie, value]);
+      }
+
+      const baseSeries = ((this.series! as SeriesOption[])?.[0] ?? {}) as any;
+
+      const newSeries = Array.from(grouped.entries()).map(([name, values]) => ({
+        ...structuredClone(baseSeries),
+        name,
+        data: values,
+        stack: 'total'
+      }));
+
+      defaultOptions = {
+        ...defaultOptions,
+        series: newSeries
+      };
+    } else {
+      defaultOptions.series = this.series;
+    }
+
     this.options = defaultOptions;
+    console.log(this.options);
   }
 
   listenChartClick(ec: EChartsType) {
@@ -254,7 +390,13 @@ export class EchartComponent implements OnInit, OnDestroy {
     const series = this.options.series as any[];
     const categories = new Set<string>();
     for (const s of series) {
-      (s.data as [string, number][]).forEach(([x]) => categories.add(x));
+      (s.data as any[]).forEach((d) => {
+        if (Array.isArray(d)) {
+          categories.add(d[0]);
+        } else if (d && typeof d === 'object' && 'name' in d) {
+          categories.add(d.name);
+        }
+      });
     }
     const catArray = Array.from(categories);
 
@@ -269,11 +411,26 @@ export class EchartComponent implements OnInit, OnDestroy {
     const rows: any[] = [header];
 
     for (const cat of catArray) {
-      const row: any[] = [this.labelType == LABEL_TYPE_DATETIME ? new Date(cat) : cat];
+      const row: any[] = [
+        this.labelType == LABEL_TYPE_DATETIME ? new Date(cat) : cat
+      ];
+
       for (const s of series) {
-        const found = (s.data as [string, number][]).find(([x]) => x === cat);
-        row.push(found ? found[1] : null);
+        const dataArray = s.data as any[];
+        const found = dataArray.find((d) =>
+          Array.isArray(d)
+            ? d[0] === cat
+            : d && typeof d === 'object' && d.name === cat
+        );
+
+        if (found) {
+          const value = Array.isArray(found) ? found[1] : found.value;
+          row.push(value);
+        } else {
+          row.push(null);
+        }
       }
+
       rows.push(row);
     }
 

@@ -7,4 +7,5 @@ export interface ReportingWidget extends IReferential {
   label: string;
   labelType: string;
   lastValueUnit: string;
+  minHeight: number;
 }

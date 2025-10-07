@@ -52,7 +52,7 @@ public class ReportingDashboardServiceImpl implements ReportingDashboardService 
     public ReportingDashboard getReportingDashboardById(Integer id) {
         ReportingDashboard dashboard = getReportingDashboard(id);
         if (dashboard != null) {
-            if (dashboard.getActiveDirectoryGroups() == null)
+            if (dashboard.getActiveDirectoryGroups() == null || dashboard.getActiveDirectoryGroups().size() == 0)
                 return dashboard;
 
             for (ActiveDirectoryGroup adGroup : dashboard.getActiveDirectoryGroups())
@@ -70,7 +70,7 @@ public class ReportingDashboardServiceImpl implements ReportingDashboardService 
         List<ReportingDashboard> dashboards = getReportingDashboards();
         if (dashboards != null) {
             outerLoop: for (ReportingDashboard dashboard : dashboards) {
-                if (dashboard.getActiveDirectoryGroups() == null) {
+                if (dashboard.getActiveDirectoryGroups() == null || dashboard.getActiveDirectoryGroups().size() == 0) {
                     outDashboards.add(dashboard);
                     continue;
                 }
