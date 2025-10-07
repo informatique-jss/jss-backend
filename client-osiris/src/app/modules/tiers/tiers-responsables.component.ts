@@ -19,7 +19,6 @@ import { TiersService } from './services/tiers.service';
   styleUrls: ['./tiers-responsables.component.scss'],
 })
 export class TiersResponsablesComponent implements OnInit {
-  pageCode: string | undefined;
   constructor(
     private activatedRoute: ActivatedRoute,
     private appService: AppService,
@@ -28,7 +27,7 @@ export class TiersResponsablesComponent implements OnInit {
 
   ngOnInit() {
     let idTiersSelected = this.activatedRoute.snapshot.params['idTiers'];
-    this.pageCode = this.activatedRoute.snapshot.params['pageCode'];
+
     if (!idTiersSelected) {
       // TODO : faire la page de selection du Tiers (tableau avec liste des tiers filtrable et ligne cliquable pour aller sur le tiers en question)
       this.appService.openRoute(null, "tiers-selection", null);

@@ -38,13 +38,13 @@ public class KpiCrm implements Serializable, IId {
     public static final String ANNUALLY_PERIOD = "ANNUALLY_PERIOD";
 
     // ---------- PAGES SHOWN IN OSIRIS WITH WIDGETS AND KPIS ------------------
-    public static final String TIERS_HOME_DISPLAY = "TIERS_HOME_DISPLAY";
-    public static final String TIERS_MAIN_DISPLAY = "TIERS_MAIN_DISPLAY";
-    public static final String TIERS_BUSINESS_DISPLAY = "TIERS_BUSINESS_DISPLAY";
-    public static final String TIERS_CUSTOMER_DISPLAY = "TIERS_CUSTOMER_DISPLAY";
+    public static final String TIERS_KPI_HOME_DISPLAY = "TIERS_KPI_HOME_DISPLAY";
+    public static final String TIERS_KPI_MAIN_DISPLAY = "TIERS_KPI_MAIN_DISPLAY";
+    public static final String TIERS_KPI_BUSINESS_DISPLAY = "TIERS_KPI_BUSINESS_DISPLAY";
+    public static final String TIERS_KPI_CUSTOMER_DISPLAY = "TIERS_KPI_CUSTOMER_DISPLAY";
     public static final String CRM_HOME_DISPLAY = "CRM_HOME_DISPLAY";
-    public static final List<String> POSSIBLE_DISPLAYS = Arrays.asList(TIERS_HOME_DISPLAY, TIERS_MAIN_DISPLAY,
-            TIERS_BUSINESS_DISPLAY, TIERS_CUSTOMER_DISPLAY, CRM_HOME_DISPLAY);
+    public static final List<String> POSSIBLE_DISPLAYS = Arrays.asList(TIERS_KPI_HOME_DISPLAY, TIERS_KPI_MAIN_DISPLAY,
+            TIERS_KPI_BUSINESS_DISPLAY, TIERS_KPI_CUSTOMER_DISPLAY, CRM_HOME_DISPLAY);
 
     @Id
     @SequenceGenerator(name = "kpi_sequence", sequenceName = "kpi_sequence", allocationSize = 1)

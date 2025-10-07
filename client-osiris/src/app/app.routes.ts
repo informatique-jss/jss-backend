@@ -11,10 +11,10 @@ const routesCrm = [
     children: [
       {
         path: 'crm', children: [
-          { path: 'home-kpi/:idTiers/:pageCode', loadComponent: () => import('./modules/tiers/tiers-responsables.component').then(m => m.TiersResponsablesComponent) },
-          { path: 'main-kpi/:idTiers/:pageCode', loadComponent: () => import('./modules/tiers/tiers-responsables.component').then(m => m.TiersResponsablesComponent) },
-          { path: 'business-kpi/:idTiers/:pageCode', loadComponent: () => import('./modules/tiers/tiers-responsables.component').then(m => m.TiersResponsablesComponent) },
-          { path: 'customer-kpi/:idTiers/:pageCode', loadComponent: () => import('./modules/tiers/tiers-responsables.component').then(m => m.TiersResponsablesComponent) },
+          { path: 'home-kpi/:idTiers', loadComponent: () => import('./modules/tiers/tiers-responsables.component').then(m => m.TiersResponsablesComponent) },
+          { path: 'main-kpi/:idTiers', loadComponent: () => import('./modules/tiers/tiers-responsables.component').then(m => m.TiersResponsablesComponent) },
+          { path: 'business-kpi/:idTiers', loadComponent: () => import('./modules/tiers/tiers-responsables.component').then(m => m.TiersResponsablesComponent) },
+          { path: 'customer-kpi/:idTiers', loadComponent: () => import('./modules/tiers/tiers-responsables.component').then(m => m.TiersResponsablesComponent) },
 
         ]
       },

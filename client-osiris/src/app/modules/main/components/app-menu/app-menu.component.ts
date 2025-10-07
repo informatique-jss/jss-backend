@@ -63,7 +63,7 @@ export class AppMenuComponent implements OnInit {
         children: [{
           label: "Crm", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers",
           children: [
-            { label: "Home", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: `tiers/crm/home-kpi/${this.idTiers}/${this.pageCode}` },
+            { label: "Home", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: `tiers/crm/home-kpi/${this.idTiers}` },
             { label: "Infos générales", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: `tiers/main-kpi/${this.idTiers}` },
             { label: "Business", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: `tiers/business-kpi/${this.idTiers}` },
             { label: "Relation client", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: `tiers/customer-kpi/${this.idTiers}` }

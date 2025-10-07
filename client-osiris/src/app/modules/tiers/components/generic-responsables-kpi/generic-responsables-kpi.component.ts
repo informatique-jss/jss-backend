@@ -1,4 +1,5 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { Component, OnChanges, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon } from '@ng-icons/core';
 import { EChartsOption } from 'echarts';
 import { provideEchartsCore } from 'ngx-echarts';
@@ -22,7 +23,7 @@ import { ResponsableService } from '../../services/responsable.service';
 })
 export class GenericResponsablesKpiComponent implements OnInit, OnChanges {
 
-  @Input() pageCode: string = TIERS_KPI_HOME_DISPLAY;
+  pageCode: string = TIERS_KPI_HOME_DISPLAY;
   options: EChartsOption | undefined;
   selectedResponsablesSubscription: Subscription = new Subscription;
   selectedResponsables: Responsable[] = [];
@@ -42,9 +43,13 @@ export class GenericResponsablesKpiComponent implements OnInit, OnChanges {
   constructor(
     private responsableService: ResponsableService,
     private kpiWidgetService: KpiWidgetService,
+    private activatedRoute: ActivatedRoute,
+    private router: Router
   ) { }
 
   ngOnInit() {
+    this.pageCode = this.getDisplayedPageCodeFromUrl(this.router.url);
+
     this.selectedResponsablesSubscription = this.responsableService.getSelectedResponsables().subscribe(respos => {
       this.selectedResponsables = respos;
       this.kpiWidgetService.getKpiWidgetsByPage(this.pageCode, this.selectedTimeScale, this.selectedResponsables).subscribe(response => {
@@ -86,6 +91,14 @@ export class GenericResponsablesKpiComponent implements OnInit, OnChanges {
         }
       });
     }
+  }
+
+  //TODO le mettre dans un Helper pour appliquer aux autres onglets de Kpi ?
+  getDisplayedPageCodeFromUrl(url: string): string {
+    let pageCode = "";
+    if (url.toString().includes("tiers/crm/home-kpi"))
+      pageCode = TIERS_KPI_HOME_DISPLAY;
+    return pageCode;
   }
 }
 
