@@ -163,9 +163,9 @@ public class ReportingWidgetServiceImpl implements ReportingWidgetService {
                             BigDecimal last = null;
                             BigDecimal penultieme = null;
                             if (data.size() > 0)
-                                last = data.get(data.size() - 1).get(1).decimalValue();
+                                last = new BigDecimal(data.get(data.size() - 1).get(1).asDouble());
                             if (data.size() > 1)
-                                penultieme = data.get(data.size() - 2).get(1).decimalValue();
+                                penultieme = new BigDecimal(data.get(data.size() - 2).get(1).asDouble());
 
                             widget.setLastValue(last);
                             if (penultieme != null && !last.equals(new BigDecimal(0))) {
