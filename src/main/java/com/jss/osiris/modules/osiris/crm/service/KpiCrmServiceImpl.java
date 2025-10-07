@@ -193,9 +193,8 @@ public class KpiCrmServiceImpl implements KpiCrmService {
                 kpiWidgetDto.setKpiValue(currentValue);
                 if (previousValue != null && !currentValue.equals(new BigDecimal(0))) {
                     kpiWidgetDto.setKpiEvolution(
-                            currentValue.subtract(previousValue).divide(currentValue)
-                                    .setScale(0, RoundingMode.HALF_EVEN)
-                                    .multiply(new BigDecimal(100.0)).setScale(0, RoundingMode.HALF_EVEN));
+                            currentValue.subtract(previousValue).divide(currentValue, RoundingMode.HALF_EVEN)
+                                    .multiply(new BigDecimal(100.0)));
                 }
                 kpiWidgetDto.setName(kpiCrm.getLabel());
                 kpiWidgetDto.setUnit(kpiCrm.getUnit());
