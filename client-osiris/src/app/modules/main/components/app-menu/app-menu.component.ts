@@ -1,5 +1,5 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { NavigationEnd, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterLink } from '@angular/router';
 import { NgbCollapse } from '@ng-bootstrap/ng-bootstrap';
 import { NgIcon } from '@ng-icons/core';
 import { filter } from 'rxjs';
@@ -8,7 +8,6 @@ import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { ReportingDashboard } from '../../../reporting/model/ReportingDashboard';
 import { ReportingDashboardService } from '../../../reporting/services/reporting.dashboard.service';
 import { MenuItemType } from '../../model/MenuItemType';
-import { LayoutStoreService } from '../../services/layout-store.service';
 
 @Component({
   selector: 'app-menu',
@@ -19,9 +18,9 @@ import { LayoutStoreService } from '../../services/layout-store.service';
 export class AppMenuComponent implements OnInit {
 
   constructor(
-    private layout: LayoutStoreService,
     private router: Router,
-    private dashboardService: ReportingDashboardService
+    private dashboardService: ReportingDashboardService,
+    private activatedRoute: ActivatedRoute,
   ) {
   }
 
@@ -34,8 +33,12 @@ export class AppMenuComponent implements OnInit {
   menuItem!: TemplateRef<{ item: MenuItemType }>;
 
   menuItems: MenuItemType[] = [];
+  idTiers: number | undefined;
+  pageCode: string | undefined;
 
   ngOnInit(): void {
+    this.idTiers = this.activatedRoute.snapshot.params['idTiers'];
+    this.pageCode = this.activatedRoute.snapshot.params['pageCode'];
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe(() => {
@@ -57,11 +60,16 @@ export class AppMenuComponent implements OnInit {
       { label: "Menu", isTitle: true } as MenuItemType,
       {
         label: "Tiers/Responsables", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "",
-        children: [{ label: "Home", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "tiers/home-kpi/4523425" },
-        { label: "Infos générales", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "tiers/main-kpi/4523425" },
-        { label: "Business", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "tiers/business-kpi/4523425" },
-        { label: "Relation client", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "tiers/customer-kpi/4523425" }
-        ]
+        children: [{
+          label: "Crm", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers",
+          children: [
+            { label: "Home", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: `tiers/crm/home-kpi/${this.idTiers}/${this.pageCode}` },
+            { label: "Infos générales", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: `tiers/main-kpi/${this.idTiers}` },
+            { label: "Business", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: `tiers/business-kpi/${this.idTiers}` },
+            { label: "Relation client", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: `tiers/customer-kpi/${this.idTiers}` }
+          ]
+        },
+        { label: "Osiris", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "" }]
       } as MenuItemType,
       { label: "CRM", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerApps", url: "crm" } as MenuItemType,
       { label: "Reporting", isTitle: false, isCollapsed: true, isDisabled: false, isSpecial: false, icon: "tablerLayoutDashboard", children: this.getAllDashboardsItem() } as MenuItemType

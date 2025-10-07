@@ -3,7 +3,9 @@
   <div class="row">
     <div class="col">
       <div class="row">
-        <responsables-home-kpi />
+        @if(pageCode) {
+        <generic-responsables-kpi [pageCode]="pageCode"></generic-responsables-kpi>
+        }
       </div>
 
     </div>
