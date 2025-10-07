@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.crm.service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -192,7 +193,9 @@ public class KpiCrmServiceImpl implements KpiCrmService {
                 kpiWidgetDto.setKpiValue(currentValue);
                 if (previousValue != null && !currentValue.equals(new BigDecimal(0))) {
                     kpiWidgetDto.setKpiEvolution(
-                            currentValue.subtract(previousValue).divide(currentValue).multiply(new BigDecimal(100.0)));
+                            currentValue.subtract(previousValue).divide(currentValue)
+                                    .setScale(0, RoundingMode.HALF_EVEN)
+                                    .multiply(new BigDecimal(100.0)).setScale(0, RoundingMode.HALF_EVEN));
                 }
                 kpiWidgetDto.setName(kpiCrm.getLabel());
                 kpiWidgetDto.setUnit(kpiCrm.getUnit());
