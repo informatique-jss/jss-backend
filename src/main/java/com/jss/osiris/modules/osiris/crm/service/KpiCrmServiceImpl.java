@@ -10,7 +10,9 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jss.osiris.libs.batch.model.Batch;
@@ -85,23 +87,28 @@ public class KpiCrmServiceImpl implements KpiCrmService {
      * Method called by batch to persist the KpiValues of a KpiCrm
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    @Modifying
     public void computeKpiCrm(Integer kpiCrmId) {
         KpiCrm kpiCrm = getKpiCrmById(kpiCrmId);
-        for (IKpiCrm iKpiThread : IKpiThreadList) {
-            // Before updating the values of the table we truncate it
-            if (iKpiThread.getCode().equals(kpiCrm.getCode())) {
-                truncatePartition(kpiCrmId);
-                List<KpiCrmValue> kpiValues = iKpiThread.computeKpiCrmValues();
-                kpiCrm.setLastUpdate(LocalDateTime.now());
-                addOrUpdateKpiCrm(kpiCrm);
+        if (kpiCrm != null)
+            for (IKpiCrm iKpiThread : IKpiThreadList) {
+                if (iKpiThread.getCode().equals(kpiCrm.getCode())) {
 
-                for (KpiCrmValue kpiCrmValue : kpiValues) {
-                    kpiCrmValue.setKpiCrm(kpiCrm);
+                    createPartitionsIfNotExist(kpiCrm);
+                    truncatePartition(kpiCrmId);
+
+                    List<KpiCrmValue> kpiValues = iKpiThread.computeKpiCrmValues();
+                    kpiCrm.setLastUpdate(LocalDateTime.now());
+                    addOrUpdateKpiCrm(kpiCrm);
+
+                    for (KpiCrmValue kpiCrmValue : kpiValues) {
+                        kpiCrmValue.setKpiCrm(kpiCrm);
+                    }
+                    kpiCrmValueService.addOrUpdateKpiCrmValues(kpiValues);
+                    break;
                 }
-                kpiCrmValueService.addOrUpdateKpiCrmValues(kpiValues);
-                break;
             }
-        }
     }
 
     /**
@@ -210,8 +217,48 @@ public class KpiCrmServiceImpl implements KpiCrmService {
             batchService.declareNewBatch(Batch.COMPUTE_KPI_CRM, kpi.getId());
     }
 
+    private void createPartitionsIfNotExist(KpiCrm kpiCrm) {
+        String tableIdPartitionName = "kpi_crm_value_kpi_" + kpiCrm.getId();
+
+        if (kpiCrm.getLastUpdate() == null) {
+            em.createNativeQuery(
+                    "CREATE TABLE IF NOT EXISTS " + tableIdPartitionName + " PARTITION OF kpi_crm_value FOR VALUES IN ("
+                            + kpiCrm.getId() + ") PARTITION BY RANGE (value_date)")
+                    .executeUpdate();
+
+            // Creating the past tables until thisYear-1
+            for (int year = 2023; year < LocalDate.now().getYear(); year++) {
+                for (int month = 1; month <= 12; month++) {
+                    createDatePartition(tableIdPartitionName, year, month);
+                }
+            }
+
+            // Creating the past tables of thisYear until thisMonth
+            for (int month = 1; month <= LocalDate.now().getMonthValue(); month++) {
+                createDatePartition(tableIdPartitionName, LocalDate.now().getYear(), month);
+            }
+            kpiCrm.setLastUpdate(LocalDateTime.now());
+        }
+
+        // If thisMonth changed, creating the last partition for thisMonth
+        if (kpiCrm.getLastUpdate().getMonth().compareTo(LocalDate.now().getMonth()) < 0) {
+            createDatePartition(tableIdPartitionName, LocalDate.now().getYear(), LocalDate.now().getMonthValue());
+        }
+    }
+
+    private void createDatePartition(String tableIdPartitionName, int year, int month) {
+        String tableName = tableIdPartitionName + "_" + year + "_" + month;
+        LocalDate startRange = LocalDate.of(year, month, 1);
+        LocalDate endRange = startRange.plusMonths(1);
+
+        em.createNativeQuery(
+                "CREATE TABLE IF NOT EXISTS " + tableName + " PARTITION OF " + tableIdPartitionName
+                        + " FOR VALUES FROM ('" + startRange + "') TO ('" + endRange + "');")
+                .executeUpdate();
+    }
+
     public void truncatePartition(Integer kpiCrmIdPartition) {
-        String tableName = "kpi_crm_value_" + kpiCrmIdPartition;
+        String tableName = "kpi_crm_value_kpi_" + kpiCrmIdPartition;
         em.createNativeQuery("TRUNCATE TABLE " + tableName).executeUpdate();
     }
 
