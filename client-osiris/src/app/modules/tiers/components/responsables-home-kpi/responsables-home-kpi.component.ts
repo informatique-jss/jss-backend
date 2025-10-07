@@ -37,16 +37,13 @@ export class ResponsablesHomeKpiComponent implements OnInit, OnChanges {
     this.selectedResponsablesSubscription = this.responsableService.getSelectedResponsables().subscribe(respos => {
       this.selectedResponsables = respos;
 
-      if (this.kpiComponent) {
-        this.kpiComponent.ngOnInit();
-      }
+      // if (this.kpiComponent) {
+      //   this.kpiComponent.ngOnInit();
+      // }
     });
   }
 
   ngOnChanges() {
-    // this.responsableService.getSelectedResponsables().subscribe(respos => {
-    //   this.selectedResponsables = respos;
-    // });
   }
 }
 

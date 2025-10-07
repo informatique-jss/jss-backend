@@ -16,9 +16,9 @@ export const LABEL_TYPE_NUMERIC = "numeric";
 export const LABEL_TYPE_DATETIME = "datetime";
 export const LABEL_TYPE_CATEGORY = "category";
 
-export const DAILY_PERIOD = "DAILY";
-export const MONTHLY_PERIOD = "MONTHLY";
-export const ANNUALLY_PERIOD = "ANNUALLY";
+export const WEEKLY_PERIOD = "WEEKLY_PERIOD";
+export const MONTHLY_PERIOD = "MONTHLY_PERIOD";
+export const ANNUALLY_PERIOD = "ANNUALLY_PERIOD";
 
 export const TIERS_HOME_DISPLAY = "TIERS_HOME_DISPLAY";
 export const TIERS_MAIN_DISPLAY = "TIERS_MAIN_DISPLAY";

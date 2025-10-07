@@ -33,9 +33,9 @@ public class KpiCrm implements Serializable, IId {
     public static final String AGGREGATE_TYPE_SUM = "AGGREGATE_TYPE_SUM";
 
     // ---------- POSSIBLE SCALES OF TIME SELECTABLE FOR KPIS AND WIDGETS ----------
-    public static final String WEEKLY_PERIOD = "WEEKLY";
-    public static final String MONTHLY_PERIOD = "MONTHLY";
-    public static final String ANNUALLY_PERIOD = "ANNUALLY";
+    public static final String WEEKLY_PERIOD = "WEEKLY_PERIOD";
+    public static final String MONTHLY_PERIOD = "MONTHLY_PERIOD";
+    public static final String ANNUALLY_PERIOD = "ANNUALLY_PERIOD";
 
     // ---------- PAGES SHOWN IN OSIRIS WITH WIDGETS AND KPIS ------------------
     public static final String TIERS_HOME_DISPLAY = "TIERS_HOME_DISPLAY";

@@ -1,8 +1,8 @@
-import { KpiWidget } from "./KpiWidget";
+import { KpiWidgetDto } from "./KpiWidgetDto";
 
 export interface KpiCrm {
   id: number;
   title: string;
-  kpiWidget: KpiWidget;
+  kpiWidget: KpiWidgetDto;
   widgetOrder: number;
 }

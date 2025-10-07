@@ -67,7 +67,6 @@ public class KpiDemoCumulService implements IKpiCrm {
 
     @Override
     public String getAggregateType() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAggregateType'");
+        return KpiCrm.AGGREGATE_TYPE_SUM;
     }
 }

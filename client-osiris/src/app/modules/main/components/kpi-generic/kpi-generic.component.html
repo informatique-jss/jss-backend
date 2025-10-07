@@ -1,85 +1,48 @@
 <div class="row g-0">
   <div class="col-12 text-end mb-2">
     <div class="btn-group" role="group">
-      <button type="button" class="btn btn-outline-primary" [class.active]="selectedTimeScale === yearTimeScale"
-        (click)="changeTimeScale(yearTimeScale)">
+      <button type="button" class="btn btn-outline-primary" [class.active]="selectedTimeScale === ANNUALLY_PERIOD"
+        (click)="changeTimeScale(ANNUALLY_PERIOD)">
         Année
       </button>
 
-      <button type="button" class="btn btn-outline-primary" [class.active]="selectedTimeScale === monthTimeScale"
-        (click)="changeTimeScale(monthTimeScale)">
+      <button type="button" class="btn btn-outline-primary" [class.active]="selectedTimeScale === MONTHLY_PERIOD"
+        (click)="changeTimeScale(MONTHLY_PERIOD)">
         Mois
       </button>
 
-      <button type="button" class="btn btn-outline-primary" [class.active]="selectedTimeScale === dayTimeScale"
-        (click)="changeTimeScale(dayTimeScale)">
+      <button type="button" class="btn btn-outline-primary" [class.active]="selectedTimeScale === WEEKLY_PERIOD"
+        (click)="changeTimeScale(WEEKLY_PERIOD)">
         Jour
       </button>
     </div>
   </div>
-
-  <div class="d-flex flex-wrap align-items-start w-100 gap-2">
-
-    <!-- KPI Cards -->
-    <ng-container *ngFor="let kpi of kpiCrms; trackBy: trackByIndex">
-      <div class="kpi-card pointer" (click)="selectWidgetToDisplay(kpi)">
-        <div class="p-3 rounded border border-dashed">
-          <h3 class="mb-1">
-            {{kpi.kpiValue || ' ' || kpi.unit || ''}}
-            <span class="fs-base" [class]="kpi.currentEvolution >= 0 ? 'text-success' : 'text-danger'">
-              {{kpi.currentEvolution >= 0 ? '+' : ''}}{{kpi.currentEvolution}}%
-              <ng-icon [name]="kpi.currentEvolution >= 0 ? 'tablerTrendingUp' : 'tablerArrowDownRight'" />
-            </span>
-          </h3>
-          <p class="mb-0 text-muted">{{kpi.name}}</p>
-        </div>
-      </div>
-    </ng-container>
-
-    <!-- Graph Container -->
-    <div class="flex-grow-1 min-w-0">
-      <div class="card border-dashed">
-        <div class="card-header d-flex justify-content-between">
-          <div class="d-flex flex-wrap gap-1">
-            <ng-container *ngFor="let respo of selectedResponsables; trackBy: trackRespo">
-              <p>{{ respo.lastname }}</p>
-            </ng-container>
-            <a href="javascript:void(0);" class="btn btn-sm btn-secondary">
-              <ng-icon name="tablerDownload" class="me-1" />
-              Export CSV
-            </a>
+  <div class="col-xxl-2 order-2 order-xxl-1"> @for (kpi of kpiCrms; track $index) { <div
+      class="col-md-6 col-lg-6 col-xl-12 pointer" (click)="selectWidgetToDisplay(kpi)">
+      <div class="p-3 rounded m-1 border border-dashed">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h3 class="mb-1">{{kpi.kpiValue || ' ' || kpi.unit || ''}} <span class="fs-base"
+                [class]="kpi.kpiEvolution>=0 ? 'text-success' : 'text-danger'"> {{kpi.kpiEvolution>=0 ? '+' :
+                ''}}{{ kpi.kpiEvolution }}% <ng-icon
+                  [name]="kpi.kpiEvolution>=0 ? 'tablerTrendingUp' : 'tablerArrowDownRight' " /> </span> </h3>
+            <p class="mb-0 text-muted">{{ kpi.name }}</p>
           </div>
         </div>
-        <div class="card-body">
-          <h4 class="card-title mb-0">{{ selectedKpiCrm?.name }}</h4>
-          <app-echart *ngIf="selectedKpiCrm" [series]="serieValues[selectedKpiCrm.idKpi]" [title]="selectedKpiCrm.name"
-            [unit]="selectedKpiCrm.unit" [labelType]="selectedKpiCrm.labelType" />
-        </div>
       </div>
-    </div>
-
-  </div>
-  <!--
+    </div> } </div>
   <div class="col-xxl-8 order-1 order-xxl-2 border-start border-dashed ">
     <div class="card-header justify-content-between border-dashed">
-      <div class="d-flex flex-wrap gap-1">
-        @for(respo of selectedResponsables; track respo.id){<p>{{respo.lastname}}</p>}
-        <a href="javascript:void(0);" class="btn btn-sm btn-secondary">
-          <ng-icon name="tablerDownload" class="me-1" />
-          Export CSV
-        </a>
-      </div>
+      <div class="d-flex flex-wrap gap-1"> @for(respo of selectedResponsables; track respo.id){<p>{{respo.lastname}}</p>
+        } <a href="javascript:void(0);" class="btn btn-sm btn-secondary"> <ng-icon name="tablerDownload" class="me-1" />
+          Export CSV </a> </div>
     </div>
     <div class="card-body w-100 z-0">
       <div dir="ltr">
-        <div>
-          @if(selectedKpiCrm){
-          <h4 class="card-title mb-0 w-100">{{selectedKpiCrm.name}}</h4>
-          <app-echart [series]="serieValues[selectedKpiCrm.idKpi]" [title]="selectedKpiCrm.name"
-            [unit]="selectedKpiCrm.unit" [labelType]="selectedKpiCrm.labelType" />
-          }
-        </div>
+        <div> @if(selectedKpiCrm){ <h4 class="card-title mb-0 w-100">{{selectedKpiCrm.name}}</h4> <app-echart
+            [series]="serieValues[selectedKpiCrm.idKpi]" [title]="selectedKpiCrm.name" [unit]="selectedKpiCrm.unit"
+            [labelType]="selectedKpiCrm.labelType" /> } </div>
       </div>
     </div>
-  </div> -->
+  </div>
 </div>

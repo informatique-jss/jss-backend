@@ -214,11 +214,11 @@ public class KpiCrmServiceImpl implements KpiCrmService {
 
     private LocalDate getPreviousDate(LocalDate currentDate, String timescale) {
         switch (timescale) {
-            case "WEEKLY":
+            case KpiCrm.WEEKLY_PERIOD:
                 return currentDate.minusWeeks(1);
-            case "MONTHLY":
+            case KpiCrm.MONTHLY_PERIOD:
                 return currentDate.minusMonths(1);
-            case "ANNUALLY":
+            case KpiCrm.ANNUALLY_PERIOD:
                 return currentDate.minusYears(1);
             default:
                 return null;
