@@ -34,11 +34,9 @@ export class AppMenuComponent implements OnInit {
 
   menuItems: MenuItemType[] = [];
   idTiers: number | undefined;
-  pageCode: string | undefined;
 
   ngOnInit(): void {
     this.idTiers = this.activatedRoute.snapshot.params['idTiers'];
-    this.pageCode = this.activatedRoute.snapshot.params['pageCode'];
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe(() => {
@@ -63,10 +61,11 @@ export class AppMenuComponent implements OnInit {
         children: [{
           label: "Crm", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers",
           children: [
-            { label: "Home", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: `tiers/crm/home-kpi/${this.idTiers}` },
-            { label: "Infos générales", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: `tiers/main-kpi/${this.idTiers}` },
-            { label: "Business", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: `tiers/business-kpi/${this.idTiers}` },
-            { label: "Relation client", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: `tiers/customer-kpi/${this.idTiers}` }
+            //TODO boucle for pour charger / afficher menu
+            { label: "Home", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: `tiers/crm/TIERS_KPI_HOME_DISPLAY/${this.idTiers}` },
+            { label: "Infos générales", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: `tiers/crm/TIERS_KPI_MAIN_DISPLAY/${this.idTiers}` },
+            { label: "Business", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "" },
+            { label: "Relation client", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "" }
           ]
         },
         { label: "Osiris", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "" }]

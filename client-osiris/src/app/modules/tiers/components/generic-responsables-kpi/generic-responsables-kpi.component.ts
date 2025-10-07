@@ -1,4 +1,4 @@
-import { Component, OnChanges, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon } from '@ng-icons/core';
 import { EChartsOption } from 'echarts';
@@ -22,8 +22,7 @@ import { ResponsableService } from '../../services/responsable.service';
   styleUrls: ['./generic-responsables-kpi.component.css']
 })
 export class GenericResponsablesKpiComponent implements OnInit, OnChanges {
-
-  pageCode: string = TIERS_KPI_HOME_DISPLAY;
+  @Input() pageCode: string = TIERS_KPI_HOME_DISPLAY;
   options: EChartsOption | undefined;
   selectedResponsablesSubscription: Subscription = new Subscription;
   selectedResponsables: Responsable[] = [];

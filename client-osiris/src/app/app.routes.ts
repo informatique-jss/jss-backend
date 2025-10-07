@@ -9,13 +9,9 @@ const routesCrm = [
   {
     path: 'tiers',
     children: [
-      {
+      { //TODO pas de child + screencode
         path: 'crm', children: [
-          { path: 'home-kpi/:idTiers', loadComponent: () => import('./modules/tiers/tiers-responsables.component').then(m => m.TiersResponsablesComponent) },
-          { path: 'main-kpi/:idTiers', loadComponent: () => import('./modules/tiers/tiers-responsables.component').then(m => m.TiersResponsablesComponent) },
-          { path: 'business-kpi/:idTiers', loadComponent: () => import('./modules/tiers/tiers-responsables.component').then(m => m.TiersResponsablesComponent) },
-          { path: 'customer-kpi/:idTiers', loadComponent: () => import('./modules/tiers/tiers-responsables.component').then(m => m.TiersResponsablesComponent) },
-
+          { path: 'kpi/:screen/:idTiers', loadComponent: () => import('./modules/tiers/tiers-responsables.component').then(m => m.TiersResponsablesComponent) },
         ]
       },
       { path: 'osiris', loadComponent: () => import('./modules/crm/components/crm/crm.component').then(m => m.CrmComponent) },

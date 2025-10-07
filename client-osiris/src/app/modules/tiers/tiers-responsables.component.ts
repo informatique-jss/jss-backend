@@ -24,9 +24,11 @@ export class TiersResponsablesComponent implements OnInit {
     private appService: AppService,
     private tiersService: TiersService,
   ) { }
-
+  screen: string = "";
   ngOnInit() {
     let idTiersSelected = this.activatedRoute.snapshot.params['idTiers'];
+    //TODO KOqd on est sur un onglet et qu'on change d'onglet là ça marchera pas, faire comme dans tools.component
+    this.screen = this.activatedRoute.snapshot.params['screen'];
 
     if (!idTiersSelected) {
       // TODO : faire la page de selection du Tiers (tableau avec liste des tiers filtrable et ligne cliquable pour aller sur le tiers en question)
