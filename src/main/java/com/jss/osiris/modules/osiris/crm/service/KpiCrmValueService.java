@@ -13,8 +13,6 @@ public interface KpiCrmValueService {
 
     public KpiCrmValue getLastKpiCrmValueByKpiCrm(Integer id);
 
-    public KpiCrmValue addOrUpdateKpiCrmValue(KpiCrmValue kpiCrmValue);
-
     public void addOrUpdateKpiCrmValues(List<KpiCrmValue> kpiCrmValues);
 
     public List<KpiCrmValue> getValuesForKpiCrmAndResponsablesAndDates(KpiCrm kpiCrm, List<Responsable> responsables,

@@ -17,7 +17,7 @@ import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 
 @Service
-public class KpiNbOverdueBalanceService implements IKpiCrm {
+public class KpiNbOverdueBalanceThread implements IKpiCrm {
 
     @Autowired
     InvoiceService invoiceService;
@@ -38,7 +38,7 @@ public class KpiNbOverdueBalanceService implements IKpiCrm {
 
     @Override
     public String getAggregateType() {
-        return null;
+        return KpiCrm.AGGREGATE_TYPE_SUM;
     }
 
     // TODO : test method
@@ -68,14 +68,12 @@ public class KpiNbOverdueBalanceService implements IKpiCrm {
 
     @Override
     public LocalDate getClosestLastDate(LocalDate fromDate) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getClosestLastDate'");
+        return fromDate.minusDays(3);
     }
 
     @Override
     public BigDecimal getDefaultValue() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getDefaultValue'");
+        return BigDecimal.ZERO;
     }
 
     // // TODO : test method

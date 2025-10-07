@@ -11,7 +11,6 @@ import java.util.Optional;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jss.osiris.libs.batch.model.Batch;
@@ -86,12 +85,12 @@ public class KpiCrmServiceImpl implements KpiCrmService {
      * Method called by batch to persist the KpiValues of a KpiCrm
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public void computeKpiCrm(Integer kpiCrmId) {
-        // Before updating the values of the table we truncate it
         KpiCrm kpiCrm = getKpiCrmById(kpiCrmId);
         for (IKpiCrm iKpiThread : IKpiThreadList) {
+            // Before updating the values of the table we truncate it
             if (iKpiThread.getCode().equals(kpiCrm.getCode())) {
+                truncatePartition(kpiCrmId);
                 List<KpiCrmValue> kpiValues = iKpiThread.computeKpiCrmValues();
                 kpiCrm.setLastUpdate(LocalDateTime.now());
                 addOrUpdateKpiCrm(kpiCrm);
@@ -148,8 +147,6 @@ public class KpiCrmServiceImpl implements KpiCrmService {
                      """, kpiCrm.getLabel(), dataSql);
 
             Object jsonPayload = em.createNativeQuery(finalSql).getSingleResult();
-            // ObjectMapper mapper = new ObjectMapper();
-            // jsonPayloadString = mapper.writeValueAsString(jsonPayload);
             jsonPayloadString = jsonPayload.toString();
 
         }
@@ -209,9 +206,13 @@ public class KpiCrmServiceImpl implements KpiCrmService {
     public void startComputeBatches() throws OsirisException {
         List<KpiCrm> kpiList = getKpiCrms();
 
-        kpiCrmRepository.truncateTable();
         for (KpiCrm kpi : kpiList)
             batchService.declareNewBatch(Batch.COMPUTE_KPI_CRM, kpi.getId());
+    }
+
+    public void truncatePartition(Integer kpiCrmIdPartition) {
+        String tableName = "kpi_crm_value_" + kpiCrmIdPartition;
+        em.createNativeQuery("TRUNCATE TABLE " + tableName).executeUpdate();
     }
 
     private LocalDate getPreviousDate(LocalDate currentDate, String timescale) {

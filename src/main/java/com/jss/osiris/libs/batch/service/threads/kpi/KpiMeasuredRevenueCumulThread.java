@@ -15,7 +15,7 @@ import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 
 @Service
-public class KpiMeasuredRevenueCumulService implements IKpiCrm {
+public class KpiMeasuredRevenueCumulThread implements IKpiCrm {
     @Autowired
     InvoiceService invoiceService;
 

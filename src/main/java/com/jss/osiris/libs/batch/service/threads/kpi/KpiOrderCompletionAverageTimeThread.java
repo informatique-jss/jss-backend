@@ -30,7 +30,7 @@ import com.jss.osiris.modules.osiris.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 
 @org.springframework.stereotype.Service
-public class KpiOrderCompletionAverageTimeService implements IKpiCrm {
+public class KpiOrderCompletionAverageTimeThread implements IKpiCrm {
 
     @Autowired
     CustomerOrderService customerOrderService;

@@ -19,7 +19,7 @@ import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
 
 @Service
-public class KpiDemoCumulService implements IKpiCrm {
+public class KpiDemoCumulThread implements IKpiCrm {
 
     @Autowired
     InvoiceService invoiceService;

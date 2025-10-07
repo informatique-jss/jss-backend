@@ -17,7 +17,7 @@ import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationStatusService;
 
 @Service
-public class KpiOpportunityClosingAverageTimeService implements IKpiCrm {
+public class KpiOpportunityClosingAverageTimeThread implements IKpiCrm {
 
     @Autowired
     QuotationService quotationService;
