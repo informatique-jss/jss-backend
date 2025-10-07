@@ -65,6 +65,9 @@ public class ReportingWidget implements Serializable, IId {
 	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private String lastValueUnit;
 
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
+	private Integer minHeight;
+
 	public Integer getId() {
 		return id;
 	}
@@ -167,6 +170,14 @@ public class ReportingWidget implements Serializable, IId {
 
 	public void setLastValueUnit(String lastUnit) {
 		this.lastValueUnit = lastUnit;
+	}
+
+	public Integer getMinHeight() {
+		return minHeight;
+	}
+
+	public void setMinHeight(Integer minHeight) {
+		this.minHeight = minHeight;
 	}
 
 }

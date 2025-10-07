@@ -25,3 +25,11 @@ export const TIERS_MAIN_DISPLAY = "TIERS_MAIN_DISPLAY";
 export const TIERS_BUSINESS_DISPLAY = "TIERS_BUSINESS_DISPLAY";
 export const TIERS_CUSTOMER_DISPLAY = "TIERS_CUSTOMER_DISPLAY";
 
+export const GRAPH_TYPE_LINE = "line";
+export const GRAPH_TYPE_AREA = "area";
+export const GRAPH_TYPE_BAR = "bar";
+export const GRAPH_TYPE_PIE = "pie";
+export const GRAPH_TYPE_BOXPLOT = "boxplot";
+export const GRAPH_TYPE_TREEMAP = "treemap";
+export const GRAPH_TYPE_SANKEY = "sankey";
+export const GRAPH_TYPE_TABLE = "table";

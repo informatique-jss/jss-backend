@@ -216,7 +216,7 @@ export class ReportingComponent implements OnInit {
       , format = function (s: any, c: any) { return s.replace(/{(\w+)}/g, function (m: any, p: any) { return c[p]; }) }
 
     let table = document.getElementsByClassName("pvtTable")[0];
-    var ctx = { worksheet: 'Export' || 'Worksheet', table: table.innerHTML }
+    var ctx = { worksheet: 'Export', table: table.innerHTML }
 
     // Construct the <a> element
     var link = document.createElement("a");

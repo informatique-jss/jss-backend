@@ -18,7 +18,7 @@
       <div>
         <div class="row justify-content-between align-items-center">
           <ul>
-            <li class="row justify-content-between" *ngFor="let attachment of entity.attachments">
+            <li class="row justify-content-between" *ngFor="let attachment of entity.attachments; let index = index">
               <div class="blue-card card rounded-1 mb-3 p-2">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                   <div class="col-auto mb-0 text-truncate-1 px-2">
@@ -70,7 +70,7 @@
                 <div class="col-4">Date du document*</div>
                 <div class="col-8">
                   <generic-date-picker [(model)]="attachment.attachmentDate" label="  " [form]="uploadForm"
-                    [propertyName]="'attachmentDate'" [isMandatory]="true" [isDisabled]="false"
+                    [propertyName]="'attachmentDate'+index" [isMandatory]="true" [isDisabled]="false"
                     (onDateChange)="updateAttachment(attachment)"></generic-date-picker>
                 </div>
               </div>

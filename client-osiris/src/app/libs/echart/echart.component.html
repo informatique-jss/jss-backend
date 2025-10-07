@@ -1,4 +1,4 @@
 @if(options && series && series.length>0){
-<div echarts [options]="options" [autoResize]="true" [ngStyle]="{ minHeight: height, width: width }"
+<div echarts [options]="options" [autoResize]="true" [ngStyle]="{ minHeight: height+'px', width: width }"
   (chartInit)="onChartInit($event)" [initOpts]="{ locale: 'FR' }"></div>
 }

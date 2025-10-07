@@ -78,6 +78,11 @@ export class AppService {
     return;
   }
 
+  openRouteV2(route: string) {
+    window.open(environment.frontendUrlV2 + route, "_blank");
+    return;
+  }
+
   /**
    * Open given route to MyJss website on a new tab
    * @param route  : route to open
