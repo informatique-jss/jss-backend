@@ -248,7 +248,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
         if (getCurrentEmployee() != null)
             if (getCurrentEmployee().getAdPath() != null
-                    && getCurrentEmployee().getAdPath().startsWith(adGroup.getActiveDirectoryPath())) {
+                    && getCurrentEmployee().getAdPath().endsWith(adGroup.getActiveDirectoryPath())) {
                 return true;
             }
         return false;
