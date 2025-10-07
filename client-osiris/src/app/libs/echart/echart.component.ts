@@ -370,7 +370,6 @@ export class EchartComponent implements OnInit, OnDestroy {
     }
 
     this.options = defaultOptions;
-    console.log(this.options);
   }
 
   listenChartClick(ec: EChartsType) {
