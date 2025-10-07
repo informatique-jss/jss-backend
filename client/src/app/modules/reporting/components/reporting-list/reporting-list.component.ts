@@ -136,6 +136,6 @@ export class ReportingListComponent implements OnInit {
   }
 
   goToV2() {
-    this.appService.openRouteV2("/");
+    this.appService.openRouteV2("");
   }
 }
