@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { NgIcon } from '@ng-icons/core';
 import { CountUpModule } from 'ngx-countup';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
@@ -25,10 +25,27 @@ export class ReportingDashboardComponent implements OnInit {
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private dashboardService: ReportingDashboardService
+    private dashboardService: ReportingDashboardService,
+    private changeDetectorRef: ChangeDetectorRef,
+    private router: Router
   ) { }
 
   ngOnInit() {
+
+    this.router.events.subscribe(url => {
+      if (url instanceof NavigationEnd) {
+        this.refreshDashborard();
+      }
+    });
+    this.refreshDashborard();
+  }
+
+
+  refreshDashborard() {
+    this.stackedWidgets = undefined;
+    this.selectedStackedWidget = undefined;
+    this.dashboard = undefined;
+    this.idDashboard = undefined;
     this.idDashboard = this.activatedRoute.snapshot.params['id'];
     if (this.idDashboard)
       this.dashboardService.getReportingDashboardById(this.idDashboard).subscribe(response => {
@@ -52,5 +69,9 @@ export class ReportingDashboardComponent implements OnInit {
   selectWidgetToDisplay(asso: AssoReportingDashboardWidget) {
     this.selectedStackedWidget = undefined;
     setTimeout(() => { this.selectedStackedWidget = asso }, 0);
+  }
+
+  ngAfterContentChecked(): void {
+    this.changeDetectorRef.detectChanges();
   }
 }
