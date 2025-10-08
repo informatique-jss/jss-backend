@@ -1,5 +1,5 @@
 import { Component, EventEmitter, inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { ECharts, EChartsOption, SeriesOption } from 'echarts';
+import { ECharts, EChartsOption, LegendComponentOption } from 'echarts';
 import type { EChartsType } from 'echarts/core';
 import { TooltipOption, XAXisOption, YAXisOption } from 'echarts/types/dist/shared';
 import { NgxEchartsDirective } from 'ngx-echarts';
@@ -8,7 +8,7 @@ import * as XLSX from "xlsx";
 import { GRAPH_TYPE_PIE, LABEL_TYPE_CATEGORY } from '../../../../../client/src/app/libs/Constants';
 import { LayoutStoreService } from '../../modules/main/services/layout-store.service';
 import { GRAPH_TYPE_AREA, GRAPH_TYPE_BOXPLOT, GRAPH_TYPE_LINE, GRAPH_TYPE_SANKEY, GRAPH_TYPE_TREEMAP, LABEL_TYPE_DATETIME, LABEL_TYPE_NUMERIC } from '../Constants';
-import { formatDate } from '../FormatHelper';
+import { formatCurrency, formatDate } from '../FormatHelper';
 import { getColor } from '../inspinia/utils/color-utils';
 import { SHARED_IMPORTS } from '../SharedImports';
 
@@ -64,7 +64,9 @@ export class EchartComponent implements OnInit, OnDestroy {
           if (this.labelType !== LABEL_TYPE_DATETIME) {
             const seriesHtml = (isArray ? params : [params])
               .map(p => {
-                const yVal = Array.isArray(p.value) ? p.value[1] : p.value;
+                let yVal = Array.isArray(p.value) ? p.value[1] : p.value;
+                if (this.unit == '€')
+                  yVal = formatCurrency(yVal);
                 return `${p.marker} ${p.seriesName}: ${yVal}`;
               })
               .join('<br/>');
@@ -89,7 +91,6 @@ export class EchartComponent implements OnInit, OnDestroy {
         }
       },
       legend: {
-        show: (this.series && this.series.length > 1),
         top: 0,
         left: 'left',
         textStyle: {
@@ -249,9 +250,16 @@ export class EchartComponent implements OnInit, OnDestroy {
             formatter: (param: any) => {
               if (!param || !param.data) return '';
 
-              const [min, q1, median, q3, max] = param.data;
+              let [min, q1, median, q3, max] = param.data;
+              if (this.unit == '€') {
+                min = formatCurrency(min);
+                q1 = formatCurrency(q1);
+                median = formatCurrency(median);
+                q3 = formatCurrency(q3);
+                max = formatCurrency(max);
+              }
 
-              // Tu peux formater la date ici si nécessaire :
+
               const label = param.name || '(non défini)';
 
               return `
@@ -342,32 +350,40 @@ export class EchartComponent implements OnInit, OnDestroy {
     }
 
     // Handle dimensions
-    const hasGroup = this.series![0].data[0][2] != null;
+    let computedSeries = [];
+    for (let serie of this.series!) {
+      let i = 0;
+      const hasGroup = serie.data[0][2] != null;
 
-    if (hasGroup && (this.series![0] as any).type != GRAPH_TYPE_BOXPLOT && (this.series![0] as any).type != GRAPH_TYPE_SANKEY) {
-      const grouped = new Map<string, [string, number][]>();
+      if (hasGroup && (serie as any).type != GRAPH_TYPE_BOXPLOT && (serie as any).type != GRAPH_TYPE_SANKEY) {
+        const grouped = new Map<string, [string, number][]>();
 
-      for (const [categorie, value, group] of this.series![0].data) {
-        if (!grouped.has(group)) grouped.set(group, []);
-        grouped.get(group)!.push([categorie, value]);
-      }
+        for (const [categorie, value, group] of serie.data) {
+          if (!grouped.has(group)) grouped.set(group, []);
+          grouped.get(group)!.push([categorie, value]);
+        }
 
-      const baseSeries = ((this.series! as SeriesOption[])?.[0] ?? {}) as any;
+        const newSeries = Array.from(grouped.entries()).map(([name, values]) => ({
+          ...structuredClone(serie),
+          name,
+          data: values,
+          stack: 'total' + i
+        }));
 
-      const newSeries = Array.from(grouped.entries()).map(([name, values]) => ({
-        ...structuredClone(baseSeries),
-        name,
-        data: values,
-        stack: 'total'
-      }));
+        i++;
+        computedSeries.push(...newSeries);
 
-      defaultOptions = {
-        ...defaultOptions,
-        series: newSeries
-      };
-    } else {
-      defaultOptions.series = this.series;
+      } else
+        computedSeries.push(serie);
     }
+
+
+    if (computedSeries.length == 0)
+      computedSeries = this.series!;
+
+    defaultOptions.series = computedSeries;
+    (defaultOptions.legend! as LegendComponentOption).show = (defaultOptions.series && defaultOptions.series.length > 1 && defaultOptions.series.length < 6);
+
 
     this.options = defaultOptions;
     console.log(this.options);

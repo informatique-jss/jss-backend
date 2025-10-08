@@ -141,9 +141,13 @@ public class ReportingWidgetServiceImpl implements ReportingWidgetService {
             // 4. Exécution native
             em.createNativeQuery(finalSql).executeUpdate();
 
+            em.flush();
+            em.clear();
+
+            widget = getReportingWidget(widgetId);
+
             // Update last value
             if (computeEvolution && widget.getLabelType().equals(ReportingWidget.LABEL_TYPE_DATETIME)) {
-                widget = getReportingWidget(widgetId);
                 if (widget.getPayload() != null) {
                     JsonNode root;
                     try {
