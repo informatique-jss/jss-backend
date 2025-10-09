@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { Component, OnChanges, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon } from '@ng-icons/core';
 import { EChartsOption } from 'echarts';
@@ -22,7 +22,8 @@ import { ResponsableService } from '../../services/responsable.service';
   styleUrls: ['./generic-responsables-kpi.component.css']
 })
 export class GenericResponsablesKpiComponent implements OnInit, OnChanges {
-  @Input() pageCode: string = TIERS_KPI_HOME_DISPLAY;
+  pageCode: string = TIERS_KPI_HOME_DISPLAY;
+
   options: EChartsOption | undefined;
   selectedResponsablesSubscription: Subscription = new Subscription;
   selectedResponsables: Responsable[] = [];
@@ -47,19 +48,22 @@ export class GenericResponsablesKpiComponent implements OnInit, OnChanges {
   ) { }
 
   ngOnInit() {
-    this.pageCode = this.getDisplayedPageCodeFromUrl(this.router.url);
+    this.activatedRoute.params.subscribe(params => {
+      this.pageCode = params['screen'];
 
-    this.selectedResponsablesSubscription = this.responsableService.getSelectedResponsables().subscribe(respos => {
-      this.selectedResponsables = respos;
-      this.kpiWidgetService.getKpiWidgetsByPage(this.pageCode, this.selectedTimeScale, this.selectedResponsables).subscribe(response => {
-        if (response) {
-          this.kpiCrms = response;
-          this.selectedKpiCrm = this.kpiCrms[0];
-          this.selectWidgetToDisplay(this.selectedKpiCrm);
-        }
+      this.selectedResponsablesSubscription = this.responsableService.getSelectedResponsables().subscribe(respos => {
+        this.selectedResponsables = respos;
+        this.kpiWidgetService.getKpiWidgetsByPage(this.pageCode, this.selectedTimeScale, this.selectedResponsables).subscribe(response => {
+          if (response) {
+            this.kpiCrms = response;
+            this.selectedKpiCrm = this.kpiCrms[0];
+            this.selectWidgetToDisplay(this.selectedKpiCrm);
+          }
+        });
       });
     });
   }
+
 
   changeTimeScale(timeScale: string): void {
     this.selectedTimeScale = timeScale;
@@ -90,14 +94,6 @@ export class GenericResponsablesKpiComponent implements OnInit, OnChanges {
         }
       });
     }
-  }
-
-  //TODO le mettre dans un Helper pour appliquer aux autres onglets de Kpi ?
-  getDisplayedPageCodeFromUrl(url: string): string {
-    let pageCode = "";
-    if (url.toString().includes("tiers/crm/home-kpi"))
-      pageCode = TIERS_KPI_HOME_DISPLAY;
-    return pageCode;
   }
 }
 

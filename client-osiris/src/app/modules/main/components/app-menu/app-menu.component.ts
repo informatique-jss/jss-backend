@@ -7,7 +7,9 @@ import { scrollToElement } from '../../../../libs/GenericHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { ReportingDashboard } from '../../../reporting/model/ReportingDashboard';
 import { ReportingDashboardService } from '../../../reporting/services/reporting.dashboard.service';
+import { TiersService } from '../../../tiers/services/tiers.service';
 import { MenuItemType } from '../../model/MenuItemType';
+import { AppService } from '../../services/app.service';
 
 @Component({
   selector: 'app-menu',
@@ -21,6 +23,8 @@ export class AppMenuComponent implements OnInit {
     private router: Router,
     private dashboardService: ReportingDashboardService,
     private activatedRoute: ActivatedRoute,
+    private tiersService: TiersService,
+    private appService: AppService
   ) {
   }
 
@@ -36,7 +40,7 @@ export class AppMenuComponent implements OnInit {
   idTiers: number | undefined;
 
   ngOnInit(): void {
-    this.idTiers = this.activatedRoute.snapshot.params['idTiers'];
+
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe(() => {
@@ -54,25 +58,23 @@ export class AppMenuComponent implements OnInit {
   }
 
   initMenu() {
-    this.menuItems = [
-      { label: "Menu", isTitle: true } as MenuItemType,
-      {
-        label: "Tiers/Responsables", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "",
-        children: [{
-          label: "Crm", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers",
-          children: [
-            //TODO boucle for pour charger / afficher menu
-            { label: "Home", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: `tiers/crm/TIERS_KPI_HOME_DISPLAY/${this.idTiers}` },
-            { label: "Infos générales", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: `tiers/crm/TIERS_KPI_MAIN_DISPLAY/${this.idTiers}` },
-            { label: "Business", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "" },
-            { label: "Relation client", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "" }
-          ]
-        },
-        { label: "Osiris", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "" }]
-      } as MenuItemType,
-      { label: "CRM", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerApps", url: "crm" } as MenuItemType,
-      { label: "Reporting", isTitle: false, isCollapsed: true, isDisabled: false, isSpecial: false, icon: "tablerLayoutDashboard", children: this.getAllDashboardsItem() } as MenuItemType
-    ]
+    this.tiersService.getSelectedTiers().subscribe(response => {
+      this.idTiers = response;
+
+      this.menuItems = [
+        { label: "Menu", isTitle: true } as MenuItemType,
+        {
+          label: "Tiers/Responsables", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers",
+          children: [{
+            label: "Crm", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers",
+            children: this.appService.getTiersMenuItems(this.idTiers)
+          },
+          { label: "Osiris", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "" }]
+        } as MenuItemType,
+        { label: "CRM", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerApps", url: "crm" } as MenuItemType,
+        { label: "Reporting", isTitle: false, isCollapsed: true, isDisabled: false, isSpecial: false, icon: "tablerLayoutDashboard", children: this.getAllDashboardsItem() } as MenuItemType
+      ]
+    });
   }
 
   hasSubMenu(item: MenuItemType): boolean {
@@ -122,5 +124,7 @@ export class AppMenuComponent implements OnInit {
     }
     return dashboardItems;
   }
+
+
 
 }

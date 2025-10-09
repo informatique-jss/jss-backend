@@ -7,15 +7,10 @@ const routesCrm = [
   { path: 'home', loadComponent: () => import('./modules/crm/components/crm/crm.component').then(m => m.CrmComponent) },
   { path: 'dashboards/:id', loadComponent: () => import('./modules/reporting/components/reporting-dashboard/reporting-dashboard.component').then(m => m.ReportingDashboardComponent) },
   {
-    path: 'tiers',
+    path: 'tiers/crm/kpi/:idTiers', loadComponent: () => import('./modules/tiers/tiers-responsables.component').then(m => m.TiersResponsablesComponent),
     children: [
-      { //TODO pas de child + screencode
-        path: 'crm', children: [
-          { path: 'kpi/:screen/:idTiers', loadComponent: () => import('./modules/tiers/tiers-responsables.component').then(m => m.TiersResponsablesComponent) },
-        ]
-      },
-      { path: 'osiris', loadComponent: () => import('./modules/crm/components/crm/crm.component').then(m => m.CrmComponent) },
-    ]
+      { path: ':screen', loadComponent: () => import('./modules/tiers/components/generic-responsables-kpi/generic-responsables-kpi.component').then(m => m.GenericResponsablesKpiComponent) },
+    ],
   },
 ];
 
