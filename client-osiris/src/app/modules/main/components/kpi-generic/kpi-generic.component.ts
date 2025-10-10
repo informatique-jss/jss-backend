@@ -1,9 +1,9 @@
-import { CommonModule } from '@angular/common';
 import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import { NgIcon } from '@ng-icons/core';
 import { provideEchartsCore } from 'ngx-echarts';
 import { ANNUALLY_PERIOD, LABEL_TYPE_DATETIME, MONTHLY_PERIOD, WEEKLY_PERIOD } from '../../../../libs/Constants';
 import { EchartComponent } from '../../../../libs/echart/echart.component';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { Responsable } from '../../../profile/model/Responsable';
 import { KpiWidgetService } from '../../../tiers/services/kpiWidget.service';
 import { KpiWidgetDto } from '../../model/KpiWidgetDto';
@@ -14,7 +14,7 @@ import { echarts } from './../../../reporting/components/reporting-chart/echarts
   imports: [
     NgIcon,
     EchartComponent,
-    CommonModule
+    SHARED_IMPORTS
   ],
   standalone: true,
   templateUrl: './kpi-generic.component.html',
@@ -23,7 +23,6 @@ import { echarts } from './../../../reporting/components/reporting-chart/echarts
 export class KpiGenericComponent implements OnInit, OnChanges {
   @Input() selectedResponsables: Responsable[] = [];
   @Input() selectedDisplayedPageCode: string = "";
-  graphsHeight: number = 220;
   kpiCrms: KpiWidgetDto[] = [];
 
   LABEL_TYPE_DATETIME = LABEL_TYPE_DATETIME;
