@@ -11,7 +11,8 @@
         <div class="row row-cols-1 row-cols-lg-3 g-3">
 
           <!-- Loop over placeholder entries -->
-          <div class="col" *ngFor="let placeholder of placeholdersMap.get('#')">
+          <div class="col" [ngClass]="{'w-100': placeholder.dataType === SERVICE_FIELD_TYPE_TEXTAREA}"
+            *ngFor="let placeholder of placeholdersMap.get('#')">
 
             <!-- TEXT -->
             <div>
@@ -107,6 +108,7 @@
 
                       <!-- TEXTAREA -->
                       <generic-textarea *ngIf="placeholder.dataType === SERVICE_FIELD_TYPE_TEXTAREA"
+                        [ngClass]="{'w-100': placeholder.dataType === SERVICE_FIELD_TYPE_TEXTAREA}"
                         [(model)]="placeholder.value" [label]="placeholder.label + ' '+ fragmentIndex" [form]="form"
                         [propertyName]="buildFormControlName(fragmentInstance.code, placeholder, fragmentIndex)"
                         [isDisabled]="false" [isMandatory]="false">

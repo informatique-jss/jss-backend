@@ -284,7 +284,7 @@ export class NoticeTemplateComponent implements OnInit {
     return text;
   }
 
-  // Find placeholders formatted as {placeholder} and change them to <b>{*IF PRESENT : fragment.code_*placeholder_id}</b>
+  // Find placeholders formatted as {placeholder} and change them to <mark>{*IF PRESENT : fragment.code_*placeholder_id}</mark>
   private findAndReplacePlaceholders(fragment: AnnouncementNoticeTemplateFragment | undefined, text: string, fragmentPlaceholders: ServiceFieldType[], fragmentIndex: number | undefined) {
     for (const placeholder of fragmentPlaceholders) {
       text = text.replace(new RegExp(`\\{\\s*${placeholder.code}\\s*\\}`), `<mark>{${this.buildFormControlName(fragment ? fragment.code : null, placeholder, fragmentIndex)}}</mark>`);
