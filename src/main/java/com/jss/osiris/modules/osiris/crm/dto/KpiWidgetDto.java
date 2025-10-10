@@ -1,13 +1,10 @@
 package com.jss.osiris.modules.osiris.crm.dto;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 public class KpiWidgetDto {
 
     private int idKpi;
-
-    private LocalDate valueDate;
 
     private BigDecimal kpiValue;
 
@@ -25,20 +22,12 @@ public class KpiWidgetDto {
         return name;
     }
 
-    public LocalDate getValueDate() {
-        return valueDate;
-    }
-
     public int getIdKpi() {
         return idKpi;
     }
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public void setValueDate(LocalDate valueDate) {
-        this.valueDate = valueDate;
     }
 
     public BigDecimal getKpiValue() {

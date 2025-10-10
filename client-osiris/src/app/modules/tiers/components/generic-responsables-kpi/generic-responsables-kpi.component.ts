@@ -1,4 +1,4 @@
-import { Component, OnChanges, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgIcon } from '@ng-icons/core';
 import { EChartsOption } from 'echarts';
@@ -21,7 +21,7 @@ import { ResponsableService } from '../../services/responsable.service';
   templateUrl: './generic-responsables-kpi.component.html',
   styleUrls: ['./generic-responsables-kpi.component.css']
 })
-export class GenericResponsablesKpiComponent implements OnInit, OnChanges {
+export class GenericResponsablesKpiComponent implements OnInit {
   pageCode: string = TIERS_KPI_HOME_DISPLAY;
 
   options: EChartsOption | undefined;
@@ -53,38 +53,28 @@ export class GenericResponsablesKpiComponent implements OnInit, OnChanges {
 
       this.selectedResponsablesSubscription = this.responsableService.getSelectedResponsables().subscribe(respos => {
         this.selectedResponsables = respos;
-        this.kpiWidgetService.getKpiWidgetsByPage(this.pageCode, this.selectedTimeScale, this.selectedResponsables).subscribe(response => {
-          if (response) {
-            this.kpiCrms = response;
-            this.selectedKpiCrm = this.kpiCrms[0];
-            this.selectWidgetToDisplay(this.selectedKpiCrm);
-          }
-        });
+        this.refreshKpi();
       });
     });
   }
 
-
-  changeTimeScale(timeScale: string): void {
-    this.selectedTimeScale = timeScale;
+  refreshKpi() {
     this.kpiWidgetService.getKpiWidgetsByPage(this.pageCode, this.selectedTimeScale, this.selectedResponsables).subscribe(response => {
       if (response) {
         this.kpiCrms = response;
+        this.selectedKpiCrm = this.kpiCrms[0];
+        this.selectWidgetToDisplay(this.selectedKpiCrm);
       }
     });
   }
 
-  ngOnChanges() {
-    this.kpiWidgetService.getKpiWidgetsByPage(this.pageCode, this.selectedTimeScale, this.selectedResponsables).subscribe(response => {
-      if (response) {
-        this.kpiCrms = response;
-      }
-    });
+  changeTimeScale(timeScale: string): void {
+    this.selectedTimeScale = timeScale;
+    this.refreshKpi();
   }
 
   selectWidgetToDisplay(kpiWidget: KpiWidgetDto) {
     this.selectedKpiCrm = kpiWidget;
-    //TODO compute LabelType Echart from Unit
     this.selectedKpiCrm.labelType = LABEL_TYPE_DATETIME;
     if (this.selectedKpiCrm) {
       //TODO limiter le stockage en tableau à 3-5 kpi pour les perf navigateur

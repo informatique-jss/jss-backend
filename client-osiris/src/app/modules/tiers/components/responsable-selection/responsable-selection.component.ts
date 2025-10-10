@@ -8,6 +8,7 @@ import { Observable, Subject, takeUntil } from 'rxjs';
 import { NgbdSortableHeader } from '../../../../libs/inspinia/directive/sortable.directive';
 import { TableService } from '../../../../libs/inspinia/services/table.service';
 import { toTitleCase } from '../../../../libs/inspinia/utils/string-utils';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { Responsable } from '../../../profile/model/Responsable';
 import { Tiers } from '../../../profile/model/Tiers';
 import { ResponsableService } from '../../services/responsable.service';
@@ -27,7 +28,7 @@ type UserType = {
 
 @Component({
   selector: 'responsable-selection',
-  imports: [
+  imports: [SHARED_IMPORTS,
     LucideAngularModule,
     NgIcon,
     NgbdSortableHeader,
