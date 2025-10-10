@@ -1,7 +1,6 @@
 package com.jss.osiris.modules.osiris.tiers.controller;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,8 +25,6 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingRepairHelper;
-import com.jss.osiris.modules.osiris.crm.model.AnalyticStatsType;
-import com.jss.osiris.modules.osiris.crm.model.KpiCrm;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
@@ -633,33 +630,5 @@ public class TiersController {
 
     return new ResponseEntity<List<Responsable>>(
         responsableService.getResponsablesByTiers(tiersService.getTiers(idTiers)), HttpStatus.OK);
-  }
-
-  @GetMapping(inputEntryPoint + "/analytic-stats-types")
-  @JsonView(JacksonViews.OsirisListView.class)
-  public ResponseEntity<List<AnalyticStatsType>> getAnalyticStatsTypesForTiers(
-      @RequestParam List<Integer> responsableIds, @RequestParam String kpiCrmCode) throws OsirisValidationException {
-
-    KpiCrm kpiCrm = kpiCrmService.getKpiCrmByCode(kpiCrmCode);
-
-    if (kpiCrm == null)
-      throw new OsirisValidationException("kpiCrmCode");
-
-    List<Responsable> responsables = new ArrayList<Responsable>();
-    if (responsableIds != null) {
-      for (Integer responsableId : responsableIds) {
-        Responsable responsable = responsableService.getResponsable(responsableId);
-        if (responsable == null)
-          throw new OsirisValidationException("responsable");
-        responsables.add(responsable);
-      }
-    } else {
-      throw new OsirisValidationException("responsableIds");
-    }
-
-    return new ResponseEntity<List<AnalyticStatsType>>(
-        kpiCrmService.getAggregatedKpis(kpiCrm, responsables, LocalDate.of(2025, 1, 1),
-            LocalDate.of(2025, 9, 30)),
-        HttpStatus.OK);
   }
 }
