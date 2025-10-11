@@ -235,7 +235,7 @@ export class EchartComponent implements OnInit, OnDestroy {
         }
 
         if ((serie as any).type == GRAPH_TYPE_BOXPLOT) {
-          defaultOptions.xAxis = { type: 'category', data: serie.data.map((d: any) => LABEL_TYPE_DATETIME ? formatDate(new Date(d["label"])) : d["label"]) };
+          defaultOptions.xAxis = { type: 'category', data: serie.data.map((d: any) => this.labelType == LABEL_TYPE_DATETIME ? formatDate(new Date(d["label"])) : d["label"]) };
           defaultOptions.yAxis = { type: 'value' };
           serie.data = serie.data.map((d: any) => [d["min"], d["q1"], d["median"], d["q3"], d["max"]]);
           this.labelType = LABEL_TYPE_CATEGORY;
