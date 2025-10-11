@@ -41,4 +41,6 @@ public interface ITurnoverReporting {
     String getAnnouncementDepartment();
 
     String getReminderType();
+
+    Integer getTiersId();
 }

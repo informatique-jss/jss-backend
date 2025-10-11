@@ -12,7 +12,7 @@ import com.jss.osiris.modules.osiris.reporting.model.ITurnoverReporting;
 public interface TurnoverReportingRepository extends CrudRepository<Quotation, Integer> {
 
         @Query(nativeQuery = true, value = "" +
-                        " select " +
+                        " select r.id_tiers as tiersId," +
                         " to_char(date_trunc('year', " +
                         " i.created_date),'YYYY') as invoiceDateYear, " +
                         " to_char(date_trunc('month', " +
@@ -92,7 +92,7 @@ public interface TurnoverReportingRepository extends CrudRepository<Quotation, I
                         " where " +
                         " i.id_invoice_status in :invoiceStatusId " +
                         " and i.id_provider is null " +
-                        " group by " +
+                        " group by r.id_tiers ," +
                         " date_trunc('year', " +
                         " i.created_date), " +
                         " date_trunc('month', " +

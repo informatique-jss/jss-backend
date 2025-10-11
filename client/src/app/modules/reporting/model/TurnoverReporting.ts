@@ -19,4 +19,5 @@ export interface TurnoverReporting {
   announcementDepartment: string;
   confrereLabel: string;
   reminderType: string;
+  tiersId: number;
 }
