@@ -235,9 +235,16 @@ export class EchartComponent implements OnInit, OnDestroy {
         }
 
         if ((serie as any).type == GRAPH_TYPE_BOXPLOT) {
-          defaultOptions.xAxis = { type: 'category', data: serie.data.map((d: any) => this.labelType == LABEL_TYPE_DATETIME ? formatDate(new Date(d["label"])) : d["label"]) };
+          defaultOptions.xAxis = {
+            type: 'category', data: serie.data.map((d: any) => this.labelType == LABEL_TYPE_DATETIME ? formatDate(new Date(d["label"])) : d["label"])
+          };
           defaultOptions.yAxis = { type: 'value' };
-          serie.data = serie.data.map((d: any) => [d["min"], d["q1"], d["median"], d["q3"], d["max"]]);
+
+          let outData = [];
+          for (let d of serie.data) {
+            outData.push({ value: [d["min"], d["q1"], d["median"], d["q3"], d["max"]] })
+          }
+          serie.data = outData;
           this.labelType = LABEL_TYPE_CATEGORY;
           (defaultOptions.tooltip as TooltipOption) = {
             trigger: 'item',
@@ -250,7 +257,7 @@ export class EchartComponent implements OnInit, OnDestroy {
             formatter: (param: any) => {
               if (!param || !param.data) return '';
 
-              let [min, q1, median, q3, max] = param.data;
+              let [, min, q1, median, q3, max] = param.data.value;
               if (this.unit == '€') {
                 min = formatCurrency(min);
                 q1 = formatCurrency(q1);
@@ -265,11 +272,11 @@ export class EchartComponent implements OnInit, OnDestroy {
               return `
               <div style="padding:4px 8px">
                 <strong>${label}</strong><br/>
-                Min&nbsp;: <b>${min} ${this.unit}</b><br/>
+                D1&nbsp;: <b>${min} ${this.unit}</b><br/>
                 Q1&nbsp;: <b>${q1} ${this.unit}</b><br/>
                 Médiane&nbsp;: <b>${median} ${this.unit}</b><br/>
                 Q3&nbsp;: <b>${q3} ${this.unit}</b><br/>
-                Max&nbsp;: <b>${max} ${this.unit}</b>
+                D9&nbsp;: <b>${max} ${this.unit}</b>
               </div>
             `;
             }
@@ -386,7 +393,6 @@ export class EchartComponent implements OnInit, OnDestroy {
 
 
     this.options = defaultOptions;
-    console.log(this.options);
   }
 
   listenChartClick(ec: EChartsType) {
