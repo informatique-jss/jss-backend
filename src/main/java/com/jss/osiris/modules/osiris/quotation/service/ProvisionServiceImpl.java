@@ -139,12 +139,19 @@ public class ProvisionServiceImpl implements ProvisionService {
                 ? commercials.stream().map(Employee::getId).collect(Collectors.toList())
                 : Arrays.asList(0);
 
+        ArrayList<CustomerOrderStatus> excludedCustomerOrderStatus = new ArrayList<CustomerOrderStatus>();
+        excludedCustomerOrderStatus
+                .add(customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT));
+        excludedCustomerOrderStatus
+                .add(customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.WAITING_DEPOSIT));
+        excludedCustomerOrderStatus
+                .add(customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.ABANDONED));
+
         return provisionRepository.searchProvision(formalistesIds,
                 status.stream().filter(s -> s instanceof AnnouncementStatus).toList(),
                 status.stream().filter(s -> s instanceof SimpleProvisionStatus).toList(),
                 status.stream().filter(s -> s instanceof FormaliteStatus).toList(),
-                status.stream().filter(s -> s instanceof DomiciliationStatus).toList(),
-                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.BEING_PROCESSED));
+                status.stream().filter(s -> s instanceof DomiciliationStatus).toList(), excludedCustomerOrderStatus);
     }
 
     @Transactional(rollbackFor = Exception.class)

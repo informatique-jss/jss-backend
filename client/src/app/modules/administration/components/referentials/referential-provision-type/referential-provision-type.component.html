@@ -87,6 +87,19 @@
         <table class="full-width">
           <tr>
             <td>
+              <generic-toggle [(model)]="selectedEntity.isNotReinvoiced" label="Ne pas refacturer au client ?"
+                [form]="entityForm" propertyName="isNotReinvoiced"></generic-toggle>
+            </td>
+            <td>
+              <generic-toggle [(model)]="selectedEntity.isCanBeAddByAdmin"
+                label="N'est ajoutable que par l'administrateur ?" [form]="entityForm"
+                propertyName="isCanBeAddByAdmin"></generic-toggle>
+            </td>
+          </tr>
+        </table>
+        <table class="full-width">
+          <tr>
+            <td>
               <generic-toggle [(model)]="selectedEntity.isRecurring" label="Est recurrente par défaut ?"
                 [form]="entityForm" propertyName="isRecurring"></generic-toggle>
             </td>

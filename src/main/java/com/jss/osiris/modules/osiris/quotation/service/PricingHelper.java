@@ -415,6 +415,7 @@ public class PricingHelper {
                     BillingItem billingItem = getAppliableBillingItem(billingType, quotation);
 
                     if (billingItem != null && billingType.getAccountingAccountProduct() != null
+                            && !Boolean.TRUE.equals(provision.getProvisionType().getIsNotReinvoiced())
                             && (!billingItem.getBillingType().getIsOptionnal()
                                     || hasOption(billingItem.getBillingType(), provision))) {
 
@@ -554,7 +555,8 @@ public class PricingHelper {
 
         // Reinvoiced provider invoices
         if (provision != null) {
-            if (provision.getProviderInvoices() != null) {
+            if (provision.getProviderInvoices() != null
+                    && !Boolean.TRUE.equals(provision.getProvisionType().getIsNotReinvoiced())) {
                 for (Invoice invoice : provision.getProviderInvoices()) {
                     if (!invoice.getInvoiceStatus().getId().equals(
                             constantService.getInvoiceStatusCancelled().getId()) && invoice.getProvider() != null
