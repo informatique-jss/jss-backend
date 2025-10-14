@@ -147,7 +147,8 @@
                   </div>
                 </div>
               </div>
-              <div *ngIf="selectedFragments[i]!.isMultiple" class="row gap-2 justify-content-end">
+              <div *ngIf="selectedFragments[i] && selectedFragments[i]!.isMultiple"
+                class="row gap-2 justify-content-end">
                 <a class="col-auto btn btn-secondary" (click)="addFragmentInstance(selectedFragments[i]!.code)">Ajouter
                   {{selectedFragments[i]!.label}}</a>
                 <a class="col-auto btn btn-primary"

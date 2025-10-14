@@ -527,11 +527,11 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   }
 
   changeStatus(status: IWorkflowElement<any>, provision: Provision) {
-    if (!this.habilitationService.canByPassProvisionLockOnBilledOrder())
-      if (this.asso.customerOrder.customerOrderStatus && (this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
-        this.displaySnakBarLockProvision();
-        return;
-      }
+    /* if (!this.habilitationService.canByPassProvisionLockOnBilledOrder())
+       if (this.asso.customerOrder.customerOrderStatus && (this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.asso.customerOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
+         this.displaySnakBarLockProvision();
+         return;
+       }*/
 
     let saveAsso = true;
     if (provision.announcement) {
