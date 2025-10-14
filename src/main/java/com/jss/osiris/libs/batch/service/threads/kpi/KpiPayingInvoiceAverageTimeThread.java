@@ -1,7 +1,6 @@
 package com.jss.osiris.libs.batch.service.threads.kpi;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -127,12 +126,6 @@ public class KpiPayingInvoiceAverageTimeThread implements IKpiCrm {
         // }
         // }
         return dailyKpis;
-    }
-
-    @Override
-    public LocalDate getClosestLastDate(LocalDate fromDate) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getClosestLastDate'");
     }
 
     @Override
