@@ -1,7 +1,5 @@
 package com.jss.osiris.libs.batch.service.threads;
 
-import java.time.LocalDate;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +25,6 @@ public class ComputeKpiCrmThread implements IOsirisThread {
     public void executeTask(Integer entityId)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException,
             OsirisDuplicateException {
-        kpiCrmService.computeKpiCrm(entityId, LocalDate.now());
+        kpiCrmService.computeKpiCrm(entityId);
     }
 }

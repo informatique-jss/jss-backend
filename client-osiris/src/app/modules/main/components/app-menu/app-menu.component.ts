@@ -1,5 +1,5 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { NavigationEnd, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterLink } from '@angular/router';
 import { NgbCollapse } from '@ng-bootstrap/ng-bootstrap';
 import { NgIcon } from '@ng-icons/core';
 import { filter } from 'rxjs';
@@ -7,8 +7,9 @@ import { scrollToElement } from '../../../../libs/GenericHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { ReportingDashboard } from '../../../reporting/model/ReportingDashboard';
 import { ReportingDashboardService } from '../../../reporting/services/reporting.dashboard.service';
+import { TiersService } from '../../../tiers/services/tiers.service';
 import { MenuItemType } from '../../model/MenuItemType';
-import { LayoutStoreService } from '../../services/layout-store.service';
+import { AppService } from '../../services/app.service';
 
 @Component({
   selector: 'app-menu',
@@ -19,9 +20,11 @@ import { LayoutStoreService } from '../../services/layout-store.service';
 export class AppMenuComponent implements OnInit {
 
   constructor(
-    private layout: LayoutStoreService,
     private router: Router,
-    private dashboardService: ReportingDashboardService
+    private dashboardService: ReportingDashboardService,
+    private activatedRoute: ActivatedRoute,
+    private tiersService: TiersService,
+    private appService: AppService
   ) {
   }
 
@@ -34,8 +37,10 @@ export class AppMenuComponent implements OnInit {
   menuItem!: TemplateRef<{ item: MenuItemType }>;
 
   menuItems: MenuItemType[] = [];
+  idTiers: number | undefined;
 
   ngOnInit(): void {
+
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe(() => {
@@ -53,12 +58,23 @@ export class AppMenuComponent implements OnInit {
   }
 
   initMenu() {
-    this.menuItems = [
-      { label: "Menu", isTitle: true } as MenuItemType,
-      { label: "Tiers/Responsables", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "tiers" } as MenuItemType,
-      { label: "CRM", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerApps", url: "crm" } as MenuItemType,
-      { label: "Reporting", isTitle: false, isCollapsed: true, isDisabled: false, isSpecial: false, icon: "tablerLayoutDashboard", children: this.getAllDashboardsItem() } as MenuItemType
-    ]
+    this.tiersService.getSelectedTiers().subscribe(response => {
+      this.idTiers = response;
+
+      this.menuItems = [
+        { label: "Menu", isTitle: true } as MenuItemType,
+        {
+          label: "Tiers/Responsables", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers",
+          children: [{
+            label: "Crm", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers",
+            children: this.appService.getTiersMenuItems(this.idTiers)
+          },
+          { label: "Osiris", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "" }]
+        } as MenuItemType,
+        { label: "CRM", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerApps", url: "crm" } as MenuItemType,
+        { label: "Reporting", isTitle: false, isCollapsed: true, isDisabled: false, isSpecial: false, icon: "tablerLayoutDashboard", children: this.getAllDashboardsItem() } as MenuItemType
+      ]
+    });
   }
 
   hasSubMenu(item: MenuItemType): boolean {
@@ -68,7 +84,8 @@ export class AppMenuComponent implements OnInit {
   expandActivePaths(items: MenuItemType[]) {
     for (const item of items) {
       if (this.hasSubMenu(item)) {
-        item.isCollapsed = !this.isChildActive(item);
+        if (this.isChildActive(item))
+          item.isCollapsed = false;
         this.expandActivePaths(item.children || []);
       }
     }
@@ -107,5 +124,7 @@ export class AppMenuComponent implements OnInit {
     }
     return dashboardItems;
   }
+
+
 
 }

@@ -9,6 +9,9 @@ import com.jss.osiris.modules.osiris.crm.model.KpiCrmValue;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 public interface KpiCrmValueRepository extends QueryCacheCrudRepository<KpiCrmValue, Integer> {
+
+    KpiCrmValue findFirstByKpiCrmIdOrderByValueDateDesc(Integer id);
+
     List<KpiCrmValue> findByKpiCrmAndResponsableInAndValueDateBetween(KpiCrm kpiCrm, List<Responsable> responsables,
             LocalDate startDate, LocalDate endDate);
 }

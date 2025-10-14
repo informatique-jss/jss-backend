@@ -23,7 +23,6 @@ export class ToolsComponent implements OnInit {
     private router: Router) { }
 
   ngOnInit() {
-    this.toolsItems = this.appService.getAllToolsMenuItems();
 
     if (this.toolsItems.length > 0 && this.router.url) {
       this.matchRoute(this.router.url);

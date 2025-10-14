@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.modules.osiris.crm.model.KpiCrm;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrmValue;
@@ -15,6 +14,7 @@ import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 @Service
 public class KpiCrmValueServiceImpl implements KpiCrmValueService {
+
     @Autowired
     KpiCrmValueRepository kpiCrmValueRepository;
 
@@ -27,9 +27,8 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public KpiCrmValue addOrUpdateKpiCrmValue(KpiCrmValue kpiCrmValue) {
-        return kpiCrmValueRepository.save(kpiCrmValue);
+    public void addOrUpdateKpiCrmValues(List<KpiCrmValue> kpiCrmValues) {
+        kpiCrmValueRepository.saveAll(kpiCrmValues);
     }
 
     @Override
@@ -37,5 +36,10 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
             LocalDate startDate, LocalDate endDate) {
         return kpiCrmValueRepository.findByKpiCrmAndResponsableInAndValueDateBetween(kpiCrm, responsables, startDate,
                 endDate);
+    }
+
+    @Override
+    public KpiCrmValue getLastKpiCrmValueByKpiCrm(Integer id) {
+        return kpiCrmValueRepository.findFirstByKpiCrmIdOrderByValueDateDesc(id);
     }
 }
