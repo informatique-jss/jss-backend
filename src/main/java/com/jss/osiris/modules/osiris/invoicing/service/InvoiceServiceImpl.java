@@ -767,4 +767,15 @@ public class InvoiceServiceImpl implements InvoiceService {
         }
         return null;
     }
+
+    /*
+     * |============================================================================
+     * |______________________METHODS FOR OSIRIS V2_________________________________
+     * |============================================================================
+     */
+
+    @Override
+    public List<Invoice> searchInvoicesWithFirstReminderDateTime() {
+        return invoiceRepository.findByFirstReminderDateTimeIsNotNullOrderByFirstReminderDateTimeAscResponsableAsc();
+    }
 }

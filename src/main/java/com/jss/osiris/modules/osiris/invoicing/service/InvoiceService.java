@@ -77,4 +77,10 @@ public interface InvoiceService {
         public List<Invoice> getInvoicesForResponsablesAndDates(List<InvoiceStatus> invoiceStatus,
                         List<Responsable> responsables, LocalDate startDate, LocalDate endDate);
 
+        /*
+         * |============================================================================
+         * |______________________METHODS FOR OSIRIS V2_________________________________
+         * |============================================================================
+         */
+        public List<Invoice> searchInvoicesWithFirstReminderDateTime();
 }

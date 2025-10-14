@@ -121,4 +121,12 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
         @Query(nativeQuery = true, value = " delete from invoice where  id  in (select id from reprise_inpi_del)")
         void deleteDuplicateInvoices();
 
+        /*
+         * |============================================================================
+         * |______________________METHODS FOR OSIRIS V2_________________________________
+         * |============================================================================
+         */
+
+        List<Invoice> findByFirstReminderDateTimeIsNotNullOrderByFirstReminderDateTimeAscResponsableAsc();
+
 }
