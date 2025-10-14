@@ -75,9 +75,7 @@ export class GenericResponsablesKpiComponent implements OnInit {
 
   selectWidgetToDisplay(kpiWidget: KpiWidgetDto) {
     this.selectedKpiCrm = kpiWidget;
-    this.selectedKpiCrm.labelType = LABEL_TYPE_DATETIME;
     if (this.selectedKpiCrm) {
-      //TODO limiter le stockage en tableau à 3-5 kpi pour les perf navigateur
       this.kpiWidgetService.getKpiWidgetSerieValues(this.selectedKpiCrm, this.selectedResponsables).subscribe(response => {
         if (response) {
           this.serieValues = response;

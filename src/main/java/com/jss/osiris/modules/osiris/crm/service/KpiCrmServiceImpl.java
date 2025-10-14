@@ -120,10 +120,11 @@ public class KpiCrmServiceImpl implements KpiCrmService {
         String jsonPayloadString = "";
 
         KpiCrm kpiCrm = getKpiCrmById(kpiCrmId);
+        IKpiCrm kpiThread = getKpiThread(kpiCrm);
 
         if (kpiCrm != null) {
 
-            String sqlNameAggregatedFunction = getSqlNameAggregatedFunction(kpiCrm.getAggregateType());
+            String sqlNameAggregatedFunction = getSqlNameAggregatedFunction(kpiThread.getAggregateType());
 
             StringBuilder dataSql = new StringBuilder();
 
@@ -177,31 +178,32 @@ public class KpiCrmServiceImpl implements KpiCrmService {
             LocalDate currentValueDate = LocalDate.now();
             LocalDate previousValueDate = getPreviousDate(currentValueDate, timescale);
 
-            if (getKpiThread(kpiCrm) != null) {
+            IKpiCrm kpiCrmThread = getKpiThread(kpiCrm);
+
+            if (kpiCrmThread != null) {
 
                 BigDecimal currentValue = kpiCrmRepository.findLastValueForResponsables(
                         responsables,
                         kpiCrm.getId(),
-                        getKpiThread(kpiCrm).getClosestLastDate(currentValueDate),
+                        kpiCrmThread.getClosestLastDate(currentValueDate),
                         currentValueDate);
 
                 BigDecimal previousValue = kpiCrmRepository.findValueByDayOfMonthForResponsables(
                         responsables,
                         kpiCrm.getId(),
                         currentValueDate.getDayOfMonth(),
-                        getKpiThread(kpiCrm).getClosestLastDate(previousValueDate),
+                        kpiCrmThread.getClosestLastDate(previousValueDate),
                         previousValueDate);
 
                 KpiWidgetDto kpiWidgetDto = new KpiWidgetDto();
-                kpiWidgetDto.setIdKpi(kpiCrm.getId());
+                kpiWidgetDto.setKpiCrm(kpiCrm);
                 kpiWidgetDto.setKpiValue(currentValue);
+                kpiWidgetDto.setLabelType(kpiCrmThread.getLabelType());
                 if (previousValue != null && !currentValue.equals(new BigDecimal(0))) {
                     kpiWidgetDto.setKpiEvolution(
                             currentValue.subtract(previousValue).divide(currentValue, RoundingMode.HALF_EVEN)
                                     .multiply(new BigDecimal(100.0)));
                 }
-                kpiWidgetDto.setName(kpiCrm.getLabel());
-                kpiWidgetDto.setUnit(kpiCrm.getUnit());
 
                 kpisWidgetDtos.add(kpiWidgetDto);
             }

@@ -1,11 +1,8 @@
+import { KpiCrm } from "./KpiCrm";
 
 export interface KpiWidgetDto {
-
-  idKpi: number;
   kpiValue: number;
-  name: string;
-  unit: string;
   kpiEvolution: number;
+  kpiCrm: KpiCrm;
   labelType: string;
-  widgetOrder: number;
 }

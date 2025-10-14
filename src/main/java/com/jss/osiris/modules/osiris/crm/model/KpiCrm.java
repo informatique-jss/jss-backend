@@ -5,15 +5,12 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 
 @Entity
@@ -55,13 +52,7 @@ public class KpiCrm implements Serializable, IId {
 
     private String label;
 
-    private String aggregateType;
-
     private LocalDateTime lastUpdate;
-
-    @OneToMany(mappedBy = "kpiCrm", fetch = FetchType.LAZY)
-    @JsonIgnore
-    private List<KpiCrmValue> kpiValues;
 
     private String unit;
 
@@ -91,22 +82,6 @@ public class KpiCrm implements Serializable, IId {
 
     public void setLabel(String label) {
         this.label = label;
-    }
-
-    public String getAggregateType() {
-        return aggregateType;
-    }
-
-    public void setAggregateType(String computeType) {
-        this.aggregateType = computeType;
-    }
-
-    public List<KpiCrmValue> getKpiValues() {
-        return kpiValues;
-    }
-
-    public void setKpiValues(List<KpiCrmValue> kpiValues) {
-        this.kpiValues = kpiValues;
     }
 
     public LocalDateTime getLastUpdate() {
@@ -139,5 +114,121 @@ public class KpiCrm implements Serializable, IId {
 
     public void setDisplayedPage(String displayedPage) {
         this.displayedPage = displayedPage;
+    }
+
+    public static String getOPPORTUNITY_CLOSING_AVERAGE_TIME() {
+        return OPPORTUNITY_CLOSING_AVERAGE_TIME;
+    }
+
+    public static void setOPPORTUNITY_CLOSING_AVERAGE_TIME(String oPPORTUNITY_CLOSING_AVERAGE_TIME) {
+        OPPORTUNITY_CLOSING_AVERAGE_TIME = oPPORTUNITY_CLOSING_AVERAGE_TIME;
+    }
+
+    public static String getORDER_COMPLETION_AVERAGE_TIME() {
+        return ORDER_COMPLETION_AVERAGE_TIME;
+    }
+
+    public static void setORDER_COMPLETION_AVERAGE_TIME(String oRDER_COMPLETION_AVERAGE_TIME) {
+        ORDER_COMPLETION_AVERAGE_TIME = oRDER_COMPLETION_AVERAGE_TIME;
+    }
+
+    public static String getMEASURED_REVENUE_CUMUL() {
+        return MEASURED_REVENUE_CUMUL;
+    }
+
+    public static void setMEASURED_REVENUE_CUMUL(String mEASURED_REVENUE_CUMUL) {
+        MEASURED_REVENUE_CUMUL = mEASURED_REVENUE_CUMUL;
+    }
+
+    public static String getNB_INVOICE_WITH_LATE_PAYMENT() {
+        return NB_INVOICE_WITH_LATE_PAYMENT;
+    }
+
+    public static void setNB_INVOICE_WITH_LATE_PAYMENT(String nB_INVOICE_WITH_LATE_PAYMENT) {
+        NB_INVOICE_WITH_LATE_PAYMENT = nB_INVOICE_WITH_LATE_PAYMENT;
+    }
+
+    public static String getOVERDUE_BALANCE() {
+        return OVERDUE_BALANCE;
+    }
+
+    public static void setOVERDUE_BALANCE(String oVERDUE_BALANCE) {
+        OVERDUE_BALANCE = oVERDUE_BALANCE;
+    }
+
+    public static String getNB_OVERDUE_BALANCE() {
+        return NB_OVERDUE_BALANCE;
+    }
+
+    public static void setNB_OVERDUE_BALANCE(String nB_OVERDUE_BALANCE) {
+        NB_OVERDUE_BALANCE = nB_OVERDUE_BALANCE;
+    }
+
+    public static String getPAYING_INVOICE_AVERAGE_TIME() {
+        return PAYING_INVOICE_AVERAGE_TIME;
+    }
+
+    public static void setPAYING_INVOICE_AVERAGE_TIME(String pAYING_INVOICE_AVERAGE_TIME) {
+        PAYING_INVOICE_AVERAGE_TIME = pAYING_INVOICE_AVERAGE_TIME;
+    }
+
+    public static String getPOTENTIAL_REVENUE_CUMUL() {
+        return POTENTIAL_REVENUE_CUMUL;
+    }
+
+    public static void setPOTENTIAL_REVENUE_CUMUL(String pOTENTIAL_REVENUE_CUMUL) {
+        POTENTIAL_REVENUE_CUMUL = pOTENTIAL_REVENUE_CUMUL;
+    }
+
+    public static String getDEMO_CUMUL() {
+        return DEMO_CUMUL;
+    }
+
+    public static void setDEMO_CUMUL(String dEMO_CUMUL) {
+        DEMO_CUMUL = dEMO_CUMUL;
+    }
+
+    public static String getAggregateTypeAverage() {
+        return AGGREGATE_TYPE_AVERAGE;
+    }
+
+    public static String getAggregateTypeSum() {
+        return AGGREGATE_TYPE_SUM;
+    }
+
+    public static String getWeeklyPeriod() {
+        return WEEKLY_PERIOD;
+    }
+
+    public static String getMonthlyPeriod() {
+        return MONTHLY_PERIOD;
+    }
+
+    public static String getAnnuallyPeriod() {
+        return ANNUALLY_PERIOD;
+    }
+
+    public static String getTiersKpiHomeDisplay() {
+        return TIERS_KPI_HOME_DISPLAY;
+    }
+
+    public static String getTiersKpiMainDisplay() {
+        return TIERS_KPI_MAIN_DISPLAY;
+    }
+
+    public static String getTiersKpiBusinessDisplay() {
+        return TIERS_KPI_BUSINESS_DISPLAY;
+    }
+
+    public static String getTiersKpiCustomerDisplay() {
+        return TIERS_KPI_CUSTOMER_DISPLAY;
+    }
+
+    public static String getCrmHomeDisplay() {
+        return CRM_HOME_DISPLAY;
+    }
+
+    public static List<String> getPossibleDisplays() {
+        return POSSIBLE_DISPLAYS;
     }
 }

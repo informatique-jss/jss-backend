@@ -2,33 +2,17 @@ package com.jss.osiris.modules.osiris.crm.dto;
 
 import java.math.BigDecimal;
 
-public class KpiWidgetDto {
+import com.jss.osiris.modules.osiris.crm.model.KpiCrm;
 
-    private int idKpi;
+public class KpiWidgetDto {
 
     private BigDecimal kpiValue;
 
     private BigDecimal kpiEvolution;
 
-    private String name;
+    private KpiCrm kpiCrm;
 
-    private String unit;
-
-    public void setIdKpi(int idKpi) {
-        this.idKpi = idKpi;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public int getIdKpi() {
-        return idKpi;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
+    private String labelType;
 
     public BigDecimal getKpiValue() {
         return kpiValue;
@@ -46,11 +30,20 @@ public class KpiWidgetDto {
         this.kpiEvolution = kpiEvolution;
     }
 
-    public String getUnit() {
-        return unit;
+    public KpiCrm getKpiCrm() {
+        return kpiCrm;
     }
 
-    public void setUnit(String unit) {
-        this.unit = unit;
+    public void setKpiCrm(KpiCrm kpiCrm) {
+        this.kpiCrm = kpiCrm;
     }
+
+    public String getLabelType() {
+        return labelType;
+    }
+
+    public void setLabelType(String labelType) {
+        this.labelType = labelType;
+    }
+
 }

@@ -38,4 +38,6 @@ public interface IKpiCrm {
      */
     public List<KpiCrmValue> computeKpiCrmValues();
 
+    public String getLabelType();
+
 }
