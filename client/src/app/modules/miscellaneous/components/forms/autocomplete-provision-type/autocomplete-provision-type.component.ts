@@ -2,9 +2,10 @@ import { Component, OnInit, SimpleChanges } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { ProvisionType } from 'src/app/modules/quotation/model/ProvisionType';
 import { ProvisionTypeService } from 'src/app/modules/quotation/services/provision.type.service';
+import { AppService } from 'src/app/services/app.service';
+import { HabilitationsService } from 'src/app/services/habilitations.service';
 import { ConstantService } from '../../../services/constant.service';
 import { GenericLocalAutocompleteComponent } from '../generic-local-autocomplete/generic-local-autocomplete.component';
-import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'autocomplete-provision-type',
@@ -16,7 +17,7 @@ export class AutocompleteProvisionTypeComponent extends GenericLocalAutocomplete
   types: ProvisionType[] = [] as Array<ProvisionType>;
 
   constructor(private formBuild: UntypedFormBuilder, private provisionTypeService: ProvisionTypeService,
-    private constantService: ConstantService, private appService3: AppService) {
+    private constantService: ConstantService, private appService3: AppService, private habiltiationService: HabilitationsService) {
     super(formBuild, appService3)
   }
 
@@ -34,6 +35,8 @@ export class AutocompleteProvisionTypeComponent extends GenericLocalAutocomplete
   initTypes(): void {
     this.provisionTypeService.getProvisionTypes().subscribe(response => {
       this.types = response;
+      if (!this.habiltiationService.isAdministrator())
+        this.types = this.types.filter(t => !t.isCanBeAddByAdmin);
     });
   }
 

@@ -141,9 +141,13 @@ public class ReportingWidgetServiceImpl implements ReportingWidgetService {
             // 4. Exécution native
             em.createNativeQuery(finalSql).executeUpdate();
 
+            em.flush();
+            em.clear();
+
+            widget = getReportingWidget(widgetId);
+
             // Update last value
             if (computeEvolution && widget.getLabelType().equals(ReportingWidget.LABEL_TYPE_DATETIME)) {
-                widget = getReportingWidget(widgetId);
                 if (widget.getPayload() != null) {
                     JsonNode root;
                     try {
@@ -163,9 +167,9 @@ public class ReportingWidgetServiceImpl implements ReportingWidgetService {
                             BigDecimal last = null;
                             BigDecimal penultieme = null;
                             if (data.size() > 0)
-                                last = data.get(data.size() - 1).get(1).decimalValue();
+                                last = new BigDecimal(data.get(data.size() - 1).get(1).asDouble());
                             if (data.size() > 1)
-                                penultieme = data.get(data.size() - 2).get(1).decimalValue();
+                                penultieme = new BigDecimal(data.get(data.size() - 2).get(1).asDouble());
 
                             widget.setLastValue(last);
                             if (penultieme != null && !last.equals(new BigDecimal(0))) {

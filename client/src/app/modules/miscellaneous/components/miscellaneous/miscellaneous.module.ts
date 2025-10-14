@@ -58,6 +58,7 @@ import { AutocompleteEmployeeComponent } from '../forms/autocomplete-employee/au
 import { AutocompleteGuichetUniqueFormaliteComponent } from '../forms/autocomplete-formalite-guichet-unique/autocomplete-formalite-guichet-unique.component';
 import { AutocompleteInfogreffeFormaliteComponent } from '../forms/autocomplete-formalite-infogreffe/autocomplete-formalite-infogreffe.component';
 import { AutocompleteLegalFormComponent } from '../forms/autocomplete-legal-form/autocomplete-legal-form.component';
+import { AutocompleteNoticeTemplateComponent } from '../forms/autocomplete-notice-template/autocomplete-department.component';
 import { AutocompletePaymentComponent } from '../forms/autocomplete-payment/autocomplete-payment.component';
 import { AutocompletePostComponent } from '../forms/autocomplete-post/autocomplete-post.component';
 import { AutocompletePostalCodeComponent } from '../forms/autocomplete-postal-code/autocomplete-postal-code.component';
@@ -609,6 +610,7 @@ const routes: Routes = [
     SelectActiveDirectoryGroupMultipleComponent,
     AutocompleteReportingWidgetComponent,
     SelectStringComponent,
+    AutocompleteNoticeTemplateComponent
   ],
   exports: [
     HistoryComponent,
@@ -878,7 +880,8 @@ const routes: Routes = [
     SelectReportingFrequencyComponent,
     SelectActiveDirectoryGroupMultipleComponent,
     AutocompleteReportingWidgetComponent,
-    SelectStringComponent
+    SelectStringComponent,
+    AutocompleteNoticeTemplateComponent
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

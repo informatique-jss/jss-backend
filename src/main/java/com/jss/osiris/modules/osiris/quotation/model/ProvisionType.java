@@ -82,6 +82,9 @@ public class ProvisionType implements Serializable, IId {
 
 	private Boolean isMergeable;
 
+	private Boolean isNotReinvoiced;
+	private Boolean isCanBeAddByAdmin;
+
 	public Integer getId() {
 		return id;
 	}
@@ -201,6 +204,22 @@ public class ProvisionType implements Serializable, IId {
 
 	public void setIsMergeable(Boolean isMergeable) {
 		this.isMergeable = isMergeable;
+	}
+
+	public Boolean getIsNotReinvoiced() {
+		return isNotReinvoiced;
+	}
+
+	public void setIsNotReinvoiced(Boolean isNotReinvoiced) {
+		this.isNotReinvoiced = isNotReinvoiced;
+	}
+
+	public Boolean getIsCanBeAddByAdmin() {
+		return isCanBeAddByAdmin;
+	}
+
+	public void setIsCanBeAddByAdmin(Boolean isCanBeAddByAdmin) {
+		this.isCanBeAddByAdmin = isCanBeAddByAdmin;
 	}
 
 }

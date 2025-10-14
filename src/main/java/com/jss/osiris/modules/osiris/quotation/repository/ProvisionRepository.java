@@ -59,8 +59,9 @@ public interface ProvisionRepository extends QueryCacheCrudRepository<Provision,
                         " p.formalite.formaliteStatus in (:formaliteStatus) or " +
                         " p.simpleProvision.simpleProvisionStatus in (:simpleProvisionStatus) or " +
                         " p.domiciliation.domiciliationStatus in (:domiciliationStatus))  " +
-                        " and    (0 in :formalisteIds or p.assignedTo.id in :formalisteIds) and co.customerOrderStatus =:customerOrderStatusInProgress    ")
+                        " and    (0 in :formalisteIds or p.assignedTo.id in :formalisteIds) and co.customerOrderStatus not in (:excludedCustomerOrderStatus)    ")
         List<Provision> searchProvision(List<Integer> formalisteIds, List<IWorkflowElement> announcementStatus,
                         List<IWorkflowElement> simpleProvisionStatus, List<IWorkflowElement> formaliteStatus,
-                        List<IWorkflowElement> domiciliationStatus, CustomerOrderStatus customerOrderStatusInProgress);
+                        List<IWorkflowElement> domiciliationStatus,
+                        List<CustomerOrderStatus> excludedCustomerOrderStatus);
 }

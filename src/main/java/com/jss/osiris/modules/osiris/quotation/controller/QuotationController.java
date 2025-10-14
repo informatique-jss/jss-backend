@@ -1200,6 +1200,7 @@ public class QuotationController {
   }
 
   @GetMapping(inputEntryPoint + "/customer-order/offer")
+  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
   public ResponseEntity<Boolean> offerCustomerOrder(@RequestParam Integer customerOrderId)
       throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
 

@@ -164,6 +164,9 @@
           </div>
 
           <!-- Si type = entreprise -->
+          <div class="mb-4 mt-5" *ngIf="affaireTypes[indexAsso] && affaireTypes[indexAsso].id == notIndividual.id">
+            <p><strong>Adresse de l'entreprise ou de l'établissement à immatriculer :</strong></p>
+          </div>
           <div class="mb-3" *ngIf="affaireTypes[indexAsso] && affaireTypes[indexAsso].id == notIndividual.id">
             <generic-input [(model)]="quotation.assoAffaireOrders[indexAsso].affaire.denomination" label="Dénomination"
               [form]="idenficationForm" [propertyName]="'denomination'+indexAsso" [isMandatory]="true"
