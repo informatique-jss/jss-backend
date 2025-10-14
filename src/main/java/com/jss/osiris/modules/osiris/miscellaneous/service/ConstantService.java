@@ -196,10 +196,6 @@ public interface ConstantService {
 
     public BillingType getBillingTypePublicationFlag() throws OsirisException;
 
-    public BillingType getBillingTypeBodaccFollowup() throws OsirisException;
-
-    public BillingType getBillingTypeBodaccFollowupAndRedaction() throws OsirisException;
-
     public BillingType getBillingTypeNantissementDeposit() throws OsirisException;
 
     public BillingType getBillingTypeSocialShareNantissementRedaction() throws OsirisException;

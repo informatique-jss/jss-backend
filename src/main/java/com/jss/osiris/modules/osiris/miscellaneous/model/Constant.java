@@ -325,14 +325,6 @@ public class Constant implements Serializable, IId {
 	private BillingType billingTypePublicationFlag;
 
 	@ManyToOne
-	@JoinColumn(name = "id_billing_type_bodacc_followup")
-	private BillingType billingTypeBodaccFollowup;
-
-	@ManyToOne
-	@JoinColumn(name = "id_billing_type_bodacc_followup_redaction")
-	private BillingType billingTypeBodaccFollowupAndRedaction;
-
-	@ManyToOne
 	@JoinColumn(name = "id_billing_type_nantissement_deposit")
 	private BillingType billingTypeNantissementDeposit;
 
@@ -1560,14 +1552,6 @@ public class Constant implements Serializable, IId {
 		return billingTypePublicationFlag;
 	}
 
-	public BillingType getBillingTypeBodaccFollowup() {
-		return billingTypeBodaccFollowup;
-	}
-
-	public BillingType getBillingTypeBodaccFollowupAndRedaction() {
-		return billingTypeBodaccFollowupAndRedaction;
-	}
-
 	public BillingType getBillingTypeNantissementDeposit() {
 		return billingTypeNantissementDeposit;
 	}
@@ -1642,14 +1626,6 @@ public class Constant implements Serializable, IId {
 
 	public void setBillingTypePublicationFlag(BillingType billingTypePublicationFlag) {
 		this.billingTypePublicationFlag = billingTypePublicationFlag;
-	}
-
-	public void setBillingTypeBodaccFollowup(BillingType billingTypeBodaccFollowup) {
-		this.billingTypeBodaccFollowup = billingTypeBodaccFollowup;
-	}
-
-	public void setBillingTypeBodaccFollowupAndRedaction(BillingType billingTypeBodaccFollowupAndRedaction) {
-		this.billingTypeBodaccFollowupAndRedaction = billingTypeBodaccFollowupAndRedaction;
 	}
 
 	public void setBillingTypeNantissementDeposit(BillingType billingTypeNantissementDeposit) {

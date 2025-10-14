@@ -281,14 +281,6 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.billingTypePublicationFlag;
   }
 
-  getBillingTypeBodaccFollowup() {
-    return this.constant.billingTypeBodaccFollowup;
-  }
-
-  getBillingTypeBodaccFollowupAndRedaction() {
-    return this.constant.billingTypeBodaccFollowupAndRedaction;
-  }
-
   getBillingTypeNantissementDeposit() {
     return this.constant.billingTypeNantissementDeposit;
   }

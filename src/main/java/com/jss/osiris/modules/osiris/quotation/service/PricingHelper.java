@@ -702,14 +702,6 @@ public class PricingHelper {
                 && billingType.getId().equals(constantService.getBillingTypePublicationFlag().getId()))
             return true;
 
-        if (Boolean.TRUE.equals(provision.getIsBodaccFollowup())
-                && billingType.getId().equals(constantService.getBillingTypeBodaccFollowup().getId()))
-            return true;
-
-        if (Boolean.TRUE.equals(provision.getIsBodaccFollowupAndRedaction())
-                && billingType.getId().equals(constantService.getBillingTypeBodaccFollowupAndRedaction().getId()))
-            return true;
-
         if (Boolean.TRUE.equals(provision.getIsNantissementDeposit())
                 && billingType.getId().equals(constantService.getBillingTypeNantissementDeposit().getId()))
             return true;

@@ -519,8 +519,6 @@ public class MyJssQuotationDelegate {
                                 provision.setIsBaloPublicationFlag(false);
                                 provision.setIsBankCheque(false);
                                 provision.setIsBilan(false);
-                                provision.setIsBodaccFollowup(false);
-                                provision.setIsBodaccFollowupAndRedaction(false);
                                 provision.setIsBusinnessNantissementRedaction(false);
                                 provision.setIsChronopostFees(false);
                                 provision.setIsComplexeFile(false);

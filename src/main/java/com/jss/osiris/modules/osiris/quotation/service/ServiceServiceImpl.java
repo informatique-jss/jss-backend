@@ -439,8 +439,6 @@ public class ServiceServiceImpl implements ServiceService {
             provision.setIsPublicationPaper(false);
             provision.setIsPublicationReceipt(false);
             provision.setIsPublicationFlag(false);
-            provision.setIsBodaccFollowup(false);
-            provision.setIsBodaccFollowupAndRedaction(false);
             provision.setIsNantissementDeposit(false);
             provision.setIsSocialShareNantissementRedaction(false);
             provision.setIsBusinnessNantissementRedaction(false);
