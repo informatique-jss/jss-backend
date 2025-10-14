@@ -9390,7 +9390,8 @@ textarea.form-control-lg {
 }
 
 .text-wrap {
-  white-space: normal !important;
+  white-space: pre-wrap !important;
+  word-wrap: break-word !important;
 }
 
 .text-nowrap {
