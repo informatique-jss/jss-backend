@@ -33,8 +33,6 @@ export interface Provision extends IAttachment {
   publicationPaperAffaireNumber: number;
   publicationPaperClientNumber: number;
   isPublicationFlag: boolean;
-  isBodaccFollowup: boolean;
-  isBodaccFollowupAndRedaction: boolean;
   isNantissementDeposit: boolean;
   isSocialShareNantissementRedaction: boolean;
   isBusinnessNantissementRedaction: boolean;

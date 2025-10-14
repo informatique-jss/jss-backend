@@ -908,8 +908,6 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                 newProvision.setIsPublicationPaper(false);
                 newProvision.setIsPublicationReceipt(false);
                 newProvision.setIsPublicationFlag(false);
-                newProvision.setIsBodaccFollowup(false);
-                newProvision.setIsBodaccFollowupAndRedaction(false);
                 newProvision.setIsNantissementDeposit(false);
                 newProvision.setIsSocialShareNantissementRedaction(false);
                 newProvision.setIsBusinnessNantissementRedaction(false);

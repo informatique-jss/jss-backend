@@ -67,21 +67,6 @@
               (onToggleChange)="provisionChangeFunction()" propertyName="isPublicationFlag"></generic-toggle>
           </td>
         </tr>
-        <tr *ngIf="displayOption(billingTypeBodaccFollowup)">
-          <td>
-            <generic-toggle [(model)]="provision.isBodaccFollowup" label="Suivi BODACC ?" [form]="optionForm"
-              (onToggleChange)="toggleIsBodaccFollowup();provisionChangeFunction()" propertyName="isBodaccFollowup">
-            </generic-toggle>
-          </td>
-        </tr>
-        <tr *ngIf="displayOption(billingTypeBodaccFollowupAndRedaction)">
-          <td>
-            <generic-toggle [(model)]="provision.isBodaccFollowupAndRedaction"
-              (onToggleChange)="toggleIsBodaccRedaction();provisionChangeFunction()"
-              label="Rédaction, Publication & Suivi BODACC ?" [form]="optionForm"
-              propertyName="isBodaccFollowupAndRedaction"></generic-toggle>
-          </td>
-        </tr>
         <tr *ngIf="displayOption(billingTypeNantissementDeposit) && canDisplayNantissementDeposit()">
           <td>
             <generic-toggle [(model)]="provision.isNantissementDeposit" label="Dépôt de Nantissement ?"

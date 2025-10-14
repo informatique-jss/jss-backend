@@ -118,8 +118,6 @@ export interface Constant {
   billingTypePublicationPaper: BillingType;
   billingTypePublicationReceipt: BillingType;
   billingTypePublicationFlag: BillingType;
-  billingTypeBodaccFollowup: BillingType;
-  billingTypeBodaccFollowupAndRedaction: BillingType;
   billingTypeNantissementDeposit: BillingType;
   billingTypeSocialShareNantissementRedaction: BillingType;
   billingTypeBusinnessNantissementRedaction: BillingType;

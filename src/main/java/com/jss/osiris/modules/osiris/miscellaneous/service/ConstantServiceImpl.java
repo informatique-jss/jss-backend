@@ -433,16 +433,6 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
-    public BillingType getBillingTypeBodaccFollowup() throws OsirisException {
-        return getConstants().getBillingTypeBodaccFollowup();
-    }
-
-    @Override
-    public BillingType getBillingTypeBodaccFollowupAndRedaction() throws OsirisException {
-        return getConstants().getBillingTypeBodaccFollowupAndRedaction();
-    }
-
-    @Override
     public BillingType getBillingTypeNantissementDeposit() throws OsirisException {
         return getConstants().getBillingTypeNantissementDeposit();
     }

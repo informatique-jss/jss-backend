@@ -33,8 +33,6 @@ export class ProvisionOptionsComponent implements OnInit {
   billingTypePublicationPaper = this.constantService.getBillingTypePublicationPaper();
   billingTypePublicationReceipt = this.constantService.getBillingTypePublicationReceipt();
   billingTypePublicationFlag = this.constantService.getBillingTypePublicationFlag();
-  billingTypeBodaccFollowup = this.constantService.getBillingTypeBodaccFollowup();
-  billingTypeBodaccFollowupAndRedaction = this.constantService.getBillingTypeBodaccFollowupAndRedaction();
   billingTypeNantissementDeposit = this.constantService.getBillingTypeNantissementDeposit();
   billingTypeSocialShareNantissementRedaction = this.constantService.getBillingTypeSocialShareNantissementRedaction();
   billingTypeBusinnessNantissementRedaction = this.constantService.getBillingTypeBusinnessNantissementRedaction();
@@ -91,8 +89,6 @@ export class ProvisionOptionsComponent implements OnInit {
         this.provision.isPublicationFlag = !this.provision.id && this.displayOption(this.billingTypePublicationFlag) && this.provision.announcement != undefined && this.provision.announcement.confrere != undefined && this.provision.announcement.confrere.journalType.id == this.journalTypeSpel.id
       };
       if (!this.provision.isPublicationPaper) this.provision.isPublicationPaper = false;
-      if (!this.provision.isBodaccFollowup) this.provision.isBodaccFollowup = false;
-      if (!this.provision.isBodaccFollowupAndRedaction) this.provision.isBodaccFollowupAndRedaction = false;
       if (!this.provision.isNantissementDeposit) this.provision.isNantissementDeposit = false;
       if (!this.provision.isSocialShareNantissementRedaction) this.provision.isSocialShareNantissementRedaction = false;
       if (!this.provision.isBusinnessNantissementRedaction) this.provision.isBusinnessNantissementRedaction = false;
@@ -149,20 +145,6 @@ export class ProvisionOptionsComponent implements OnInit {
             this.logoUrl = this.sanitizer.bypassSecurityTrustUrl(url);
           })
       })
-    }
-  }
-
-  toggleIsBodaccFollowup() {
-    if (this.provision) {
-      if (this.provision.isBodaccFollowup)
-        this.provision.isBodaccFollowupAndRedaction = false;
-    }
-  }
-
-  toggleIsBodaccRedaction() {
-    if (this.provision) {
-      if (this.provision.isBodaccFollowupAndRedaction)
-        this.provision.isBodaccFollowup = false;
     }
   }
 

@@ -135,12 +135,6 @@ public class Provision implements IId, IAttachment {
 	private Boolean isPublicationFlag;
 
 	@Column(nullable = false)
-	private Boolean isBodaccFollowup;
-
-	@Column(nullable = false)
-	private Boolean isBodaccFollowupAndRedaction;
-
-	@Column(nullable = false)
 	private Boolean isNantissementDeposit;
 
 	@Column(nullable = false)
@@ -356,22 +350,6 @@ public class Provision implements IId, IAttachment {
 
 	public void setIsPublicationFlag(Boolean isPublicationFlag) {
 		this.isPublicationFlag = isPublicationFlag;
-	}
-
-	public Boolean getIsBodaccFollowup() {
-		return isBodaccFollowup;
-	}
-
-	public void setIsBodaccFollowup(Boolean isBodaccFollowup) {
-		this.isBodaccFollowup = isBodaccFollowup;
-	}
-
-	public Boolean getIsBodaccFollowupAndRedaction() {
-		return isBodaccFollowupAndRedaction;
-	}
-
-	public void setIsBodaccFollowupAndRedaction(Boolean isBodaccFollowupAndRedaction) {
-		this.isBodaccFollowupAndRedaction = isBodaccFollowupAndRedaction;
 	}
 
 	public Boolean getIsNantissementDeposit() {
