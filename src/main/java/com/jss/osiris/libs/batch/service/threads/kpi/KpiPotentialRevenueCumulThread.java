@@ -19,6 +19,7 @@ import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationStatusService;
+import com.jss.osiris.modules.osiris.reporting.model.ReportingWidget;
 
 @Service
 public class KpiPotentialRevenueCumulThread implements IKpiCrm {
@@ -37,6 +38,11 @@ public class KpiPotentialRevenueCumulThread implements IKpiCrm {
     @Override
     public String getCode() {
         return KpiCrm.POTENTIAL_REVENUE_CUMUL;
+    }
+
+    @Override
+    public String getLabelType() {
+        return ReportingWidget.LABEL_TYPE_DATETIME;
     }
 
     @Override

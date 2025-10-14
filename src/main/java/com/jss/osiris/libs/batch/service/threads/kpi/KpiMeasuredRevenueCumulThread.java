@@ -13,6 +13,7 @@ import com.jss.osiris.modules.osiris.crm.model.KpiCrm;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrmValue;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.osiris.reporting.model.ReportingWidget;
 
 @Service
 public class KpiMeasuredRevenueCumulThread implements IKpiCrm {
@@ -30,6 +31,11 @@ public class KpiMeasuredRevenueCumulThread implements IKpiCrm {
     @Override
     public String getAggregateType() {
         return KpiCrm.AGGREGATE_TYPE_SUM;
+    }
+
+    @Override
+    public String getLabelType() {
+        return ReportingWidget.LABEL_TYPE_DATETIME;
     }
 
     // TODO

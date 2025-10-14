@@ -28,6 +28,7 @@ import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.SimpleProvision;
 import com.jss.osiris.modules.osiris.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.osiris.reporting.model.ReportingWidget;
 
 @org.springframework.stereotype.Service
 public class KpiOrderCompletionAverageTimeThread implements IKpiCrm {
@@ -40,6 +41,11 @@ public class KpiOrderCompletionAverageTimeThread implements IKpiCrm {
 
     @Autowired
     KpiCrmService kpiCrmService;
+
+    @Override
+    public String getLabelType() {
+        return ReportingWidget.LABEL_TYPE_DATETIME;
+    }
 
     private static final Map<String, String> WAITING_STATUS_BY_ENTITY = Map.of(
             SimpleProvision.class.getSimpleName(), SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT,

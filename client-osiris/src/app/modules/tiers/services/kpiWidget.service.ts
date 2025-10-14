@@ -17,7 +17,7 @@ export class KpiWidgetService extends AppRestService<KpiWidgetDto> {
   }
 
   getKpiWidgetSerieValues(kpi: KpiWidgetDto, responsables: Responsable[]) {
-    return this.getList(new HttpParams().set("kpiCrmId", kpi.idKpi).set("responsableIds", responsables.map(s => s.id).join(",")), "kpi-values");
+    return this.getList(new HttpParams().set("kpiCrmId", kpi.kpiCrm.id).set("responsableIds", responsables.map(s => s.id).join(",")), "kpi-values");
   }
 
 }

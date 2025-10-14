@@ -15,6 +15,7 @@ import com.jss.osiris.modules.osiris.crm.model.KpiCrmValue;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationStatusService;
+import com.jss.osiris.modules.osiris.reporting.model.ReportingWidget;
 
 @Service
 public class KpiOpportunityClosingAverageTimeThread implements IKpiCrm {
@@ -31,6 +32,11 @@ public class KpiOpportunityClosingAverageTimeThread implements IKpiCrm {
     @Override
     public String getCode() {
         return KpiCrm.OPPORTUNITY_CLOSING_AVERAGE_TIME;
+    }
+
+    @Override
+    public String getLabelType() {
+        return ReportingWidget.LABEL_TYPE_DATETIME;
     }
 
     @Override

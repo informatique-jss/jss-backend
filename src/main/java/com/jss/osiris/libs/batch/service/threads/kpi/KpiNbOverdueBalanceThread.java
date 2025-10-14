@@ -15,6 +15,7 @@ import com.jss.osiris.modules.osiris.crm.model.KpiCrmValue;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmService;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.osiris.reporting.model.ReportingWidget;
 
 @Service
 public class KpiNbOverdueBalanceThread implements IKpiCrm {
@@ -34,6 +35,11 @@ public class KpiNbOverdueBalanceThread implements IKpiCrm {
     @Override
     public String getCode() {
         return KpiCrm.NB_OVERDUE_BALANCE;
+    }
+
+    @Override
+    public String getLabelType() {
+        return ReportingWidget.LABEL_TYPE_DATETIME;
     }
 
     @Override
