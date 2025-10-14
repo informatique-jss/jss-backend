@@ -191,9 +191,9 @@
               </td>
               <td
                 *ngIf="assoServiceProvisionType.noticeTypeFamily && assoServiceProvisionType.provisionType.provisionFamilyType">
-                <select-notice-template [(model)]="assoServiceProvisionType.announcementNoticeTemplate"
+                <autocomplete-notice-template [(model)]="assoServiceProvisionType.announcementNoticeTemplate"
                   label="Modèle d'annonce" [form]="entityForm" [propertyName]="'noticeTemplate'+index+deleteIndex"
-                  [isMandatory]="false" [isDisabled]="!editMode" [displayCode]="true"></select-notice-template>
+                  [isMandatory]="false" [isDisabled]="!editMode" [displayCode]="true"></autocomplete-notice-template>
               </td>
             </tr>
           </table>
