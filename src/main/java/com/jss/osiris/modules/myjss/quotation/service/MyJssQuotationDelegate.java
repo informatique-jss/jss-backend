@@ -318,7 +318,7 @@ public class MyJssQuotationDelegate {
 
         // Save new affaire
         for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders()) {
-            if (asso.getAffaire() != null
+            if (asso.getAffaire() != null && asso.getAffaire().getId() != null
                     && asso.getAffaire().getId().equals(constantService.getAffaireDummyForSubscription().getId()))
                 asso.setAffaire(null);
 
