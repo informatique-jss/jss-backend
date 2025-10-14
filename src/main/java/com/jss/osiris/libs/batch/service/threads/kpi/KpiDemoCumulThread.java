@@ -57,11 +57,6 @@ public class KpiDemoCumulThread implements IKpiCrm {
     }
 
     @Override
-    public LocalDate getClosestLastDate(LocalDate date) {
-        return date.minusDays(3);
-    }
-
-    @Override
     public BigDecimal getDefaultValue() {
         return BigDecimal.ZERO;
     }

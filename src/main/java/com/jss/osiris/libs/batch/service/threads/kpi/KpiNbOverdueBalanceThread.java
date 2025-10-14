@@ -1,7 +1,6 @@
 package com.jss.osiris.libs.batch.service.threads.kpi;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,11 +69,6 @@ public class KpiNbOverdueBalanceThread implements IKpiCrm {
         // kpiCrmValue.setValueDate(endDate);
         // kpiCrmValue.setValue(BigDecimal.valueOf(kpiTotal));
         return dailyKpis;
-    }
-
-    @Override
-    public LocalDate getClosestLastDate(LocalDate fromDate) {
-        return fromDate.minusDays(3);
     }
 
     @Override

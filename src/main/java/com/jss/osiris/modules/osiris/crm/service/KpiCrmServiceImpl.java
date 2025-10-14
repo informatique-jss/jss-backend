@@ -182,18 +182,21 @@ public class KpiCrmServiceImpl implements KpiCrmService {
 
             if (kpiCrmThread != null) {
 
-                BigDecimal currentValue = kpiCrmRepository.findLastValueForResponsables(
+                BigDecimal currentValue = kpiCrmRepository.findValueByDayOfMonthForResponsables(
                         responsables,
                         kpiCrm.getId(),
-                        kpiCrmThread.getClosestLastDate(currentValueDate),
-                        currentValueDate);
+                        currentValueDate,
+                        kpiCrmThread.getDefaultValue());
 
                 BigDecimal previousValue = kpiCrmRepository.findValueByDayOfMonthForResponsables(
                         responsables,
                         kpiCrm.getId(),
-                        currentValueDate.getDayOfMonth(),
-                        kpiCrmThread.getClosestLastDate(previousValueDate),
-                        previousValueDate);
+                        previousValueDate,
+                        kpiCrmThread.getDefaultValue());
+
+                if (previousValue == null) {
+                    previousValue = kpiCrmThread.getDefaultValue();
+                }
 
                 KpiWidgetDto kpiWidgetDto = new KpiWidgetDto();
                 kpiWidgetDto.setKpiCrm(kpiCrm);
