@@ -1,6 +1,5 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { NgbPagination, NgbPaginationNext, NgbPaginationPrevious } from '@ng-bootstrap/ng-bootstrap';
 import { NgIcon } from '@ng-icons/core';
 import { LucideAngularModule, LucideSearch, LucideShield, LucideUserCheck } from 'lucide-angular';
@@ -14,25 +13,12 @@ import { Tiers } from '../../../profile/model/Tiers';
 import { ResponsableService } from '../../services/responsable.service';
 import { TiersService } from '../../services/tiers.service';
 
-type UserType = {
-  id: string;
-  name: string;
-  email: string;
-  avatar: string;
-  role: string;
-  date: string;
-  time: string;
-  status: "inactive" | "active" | "suspended",
-  selected?: boolean
-}
-
 @Component({
   selector: 'responsable-selection',
   imports: [SHARED_IMPORTS,
     LucideAngularModule,
     NgIcon,
     NgbdSortableHeader,
-    FormsModule,
     NgbPagination,
     NgbPaginationNext,
     NgbPaginationPrevious,

@@ -62,8 +62,7 @@ export class GenericResponsablesKpiComponent implements OnInit {
     this.kpiWidgetService.getKpiWidgetsByPage(this.pageCode, this.selectedTimeScale, this.selectedResponsables).subscribe(response => {
       if (response) {
         this.kpiCrms = response;
-        this.selectedKpiCrm = this.kpiCrms[0];
-        this.selectWidgetToDisplay(this.selectedKpiCrm);
+        this.selectWidgetToDisplay(this.kpiCrms[0]);
       }
     });
   }
