@@ -34,7 +34,6 @@ export class EchartComponent implements OnInit, OnDestroy {
   private layoutSub!: Subscription;
 
   ngOnInit(): void {
-    // refresh chart on theme and skin change
     this.layoutSub = this.layout.layoutState$.subscribe(state => {
       const skin = state.skin;
       const theme = state.theme;

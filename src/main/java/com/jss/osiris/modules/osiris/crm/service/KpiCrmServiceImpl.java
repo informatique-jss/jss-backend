@@ -116,7 +116,8 @@ public class KpiCrmServiceImpl implements KpiCrmService {
      * of data
      */
     @Override
-    public String getKpiValues(Integer kpiCrmId, List<Integer> responsablesIds) throws JsonProcessingException {
+    public String getKpiValues(Integer kpiCrmId, String timeScale, List<Integer> responsablesIds)
+            throws JsonProcessingException {
         String jsonPayloadString = "";
 
         KpiCrm kpiCrm = getKpiCrmById(kpiCrmId);
@@ -130,11 +131,14 @@ public class KpiCrmServiceImpl implements KpiCrmService {
 
             String responsablesIdsString = String.join(",", responsablesIds.stream().map(r -> r.toString()).toList());
 
+            LocalDate previousValueDate = getPreviousDate(LocalDate.now(), timeScale);
+
             dataSql.append(String.format(
                     "select kcv.value_date, %s(kcv.value) as y_value " +
                             "from kpi_crm_value kcv " +
                             "where kcv.id_kpi = %d " +
                             "and kcv.id_responsable in (%s) " +
+                            "and kcv.value_date between '" + previousValueDate.toString() + "' AND CURRENT_DATE " +
                             "group by kcv.value_date ",
                     sqlNameAggregatedFunction, kpiCrmId, responsablesIdsString));
 
