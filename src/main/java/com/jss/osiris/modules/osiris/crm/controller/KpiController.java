@@ -76,7 +76,7 @@ public class KpiController {
                         throw new OsirisValidationException("timescale");
 
                 List<Responsable> responsables = new ArrayList<Responsable>();
-                if (responsableIds != null) {
+                if (responsableIds != null && responsableIds.size() > 0) {
                         for (Integer responsableId : responsableIds) {
                                 Responsable responsable = responsableService.getResponsable(responsableId);
                                 if (responsable == null)

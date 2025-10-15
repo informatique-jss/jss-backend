@@ -198,6 +198,10 @@ public class KpiCrmServiceImpl implements KpiCrmService {
                         previousValueDate,
                         kpiCrmThread.getDefaultValue());
 
+                if (currentValue == null) {
+                    currentValue = kpiCrmThread.getDefaultValue();
+                }
+
                 if (previousValue == null) {
                     previousValue = kpiCrmThread.getDefaultValue();
                 }
@@ -210,6 +214,8 @@ public class KpiCrmServiceImpl implements KpiCrmService {
                     kpiWidgetDto.setKpiEvolution(
                             currentValue.subtract(previousValue).divide(currentValue, RoundingMode.HALF_EVEN)
                                     .multiply(new BigDecimal(100.0)));
+                } else {
+                    kpiWidgetDto.setKpiEvolution(null);
                 }
 
                 kpisWidgetDtos.add(kpiWidgetDto);
