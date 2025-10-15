@@ -1,5 +1,8 @@
 package com.jss.osiris.modules.myjss.wordpress.service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +26,7 @@ public class PostViewServiceImpl implements PostViewService {
 
     @Transactional(rollbackFor = Exception.class)
     public void incrementView(Post post) {
-        postViewRepository.incrementPostViewForToday(post.getId());
+        postViewRepository.incrementPostViewDay(post.getId(),
+                LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
     }
 }

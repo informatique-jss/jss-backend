@@ -839,38 +839,41 @@ public class AffaireServiceImpl implements AffaireService {
             String searchText) {
 
         Responsable currentUser = employeeService.getCurrentMyJssUser();
-        List<Responsable> responsablesToFilter = new ArrayList<Responsable>();
-        responsablesToFilter.add(currentUser);
-        if (Boolean.TRUE.equals(currentUser.getCanViewAllTiersInWeb()))
-            responsablesToFilter.addAll(currentUser.getTiers().getResponsables());
+        if (currentUser != null) {
+            List<Responsable> responsablesToFilter = new ArrayList<Responsable>();
+            responsablesToFilter.add(currentUser);
+            if (Boolean.TRUE.equals(currentUser.getCanViewAllTiersInWeb()))
+                responsablesToFilter.addAll(currentUser.getTiers().getResponsables());
 
-        if (responsableIdToFilter != null)
-            responsablesToFilter.removeAll(
-                    responsablesToFilter.stream().filter(r -> !responsableIdToFilter.contains(r.getId())).toList());
+            if (responsableIdToFilter != null)
+                responsablesToFilter.removeAll(
+                        responsablesToFilter.stream().filter(r -> !responsableIdToFilter.contains(r.getId())).toList());
 
-        if (responsablesToFilter == null || responsablesToFilter.size() == 0)
-            return new ArrayList<Affaire>();
+            if (responsablesToFilter == null || responsablesToFilter.size() == 0)
+                return new ArrayList<Affaire>();
 
-        Order orderDenomination = new Order(Direction.ASC, "denomination");
-        Order orderFirstname = new Order(Direction.ASC, "firstname");
-        Order orderLastname = new Order(Direction.ASC, "lastname");
+            Order orderDenomination = new Order(Direction.ASC, "denomination");
+            Order orderFirstname = new Order(Direction.ASC, "firstname");
+            Order orderLastname = new Order(Direction.ASC, "lastname");
 
-        Integer idAffaire = 0;
-        if (searchText != null && searchText.length() > 0)
-            try {
-                idAffaire = Integer.parseInt(searchText);
-            } catch (Exception e) {
+            Integer idAffaire = 0;
+            if (searchText != null && searchText.length() > 0)
+                try {
+                    idAffaire = Integer.parseInt(searchText);
+                } catch (Exception e) {
+                }
+
+            if (sortBy.equals("nameDesc")) {
+                orderDenomination = new Order(Direction.DESC, "denomination");
+                orderFirstname = new Order(Direction.DESC, "firstname");
+                orderLastname = new Order(Direction.DESC, "lastname");
             }
-
-        if (sortBy.equals("nameDesc")) {
-            orderDenomination = new Order(Direction.DESC, "denomination");
-            orderFirstname = new Order(Direction.DESC, "firstname");
-            orderLastname = new Order(Direction.DESC, "lastname");
+            Sort sort = Sort.by(Arrays.asList(orderDenomination, orderLastname, orderFirstname));
+            Pageable pageableRequest = PageRequest.of(page, 10, sort);
+            return affaireRepository.getAffairesForResponsables(pageableRequest, responsablesToFilter, searchText,
+                    idAffaire);
         }
-        Sort sort = Sort.by(Arrays.asList(orderDenomination, orderLastname, orderFirstname));
-        Pageable pageableRequest = PageRequest.of(page, 10, sort);
-        return affaireRepository.getAffairesForResponsables(pageableRequest, responsablesToFilter, searchText,
-                idAffaire);
+        return null;
     }
 
     @Override

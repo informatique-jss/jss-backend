@@ -214,7 +214,7 @@ public class MissingAttachmentQueryServiceImpl implements MissingAttachmentQuery
     @Override
     public void checkCompleteAttachmentListAndComment(AssoServiceDocument assoServiceDocument, Attachment attachment)
             throws OsirisException {
-        if (assoServiceDocument.getService().getMissingAttachmentQueries() != null
+        if (assoServiceDocument != null && assoServiceDocument.getService().getMissingAttachmentQueries() != null
                 && assoServiceDocument.getService().getMissingAttachmentQueries().size() > 0) {
 
             List<MissingAttachmentQuery> missingAttchmentQueries = assoServiceDocument.getService()

@@ -247,19 +247,33 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
         initializeProvisionStatus(assoAffaireOrder);
         for (Service service : assoAffaireOrder.getServices()) {
-            service.setAssoAffaireOrder(assoAffaireOrder);
-            serviceService.addOrUpdateService(service);
 
+            if (service.getAssoAffaireOrder() == null) {
+                service.setAssoAffaireOrder(assoAffaireOrder);
+                serviceService.addOrUpdateService(service);
+            }
+
+            boolean isToSaveService = false;
             if (service.getAssoServiceDocuments() != null)
-                for (AssoServiceDocument assoServiceDocument : service.getAssoServiceDocuments())
-                    assoServiceDocument.setService(service);
+                for (AssoServiceDocument assoServiceDocument : service.getAssoServiceDocuments()) {
+                    if (assoServiceDocument.getService() == null) {
+                        assoServiceDocument.setService(service);
+                        isToSaveService = true;
+                    }
+                }
 
             // Complete field id_service in AssoServiceFieldType table
-            if (service.getAssoServiceFieldTypes() != null)
-                for (AssoServiceFieldType assoServiceFieldType : service.getAssoServiceFieldTypes())
-                    assoServiceFieldType.setService(service);
+            if (service.getAssoServiceFieldTypes() != null) {
+                for (AssoServiceFieldType assoServiceFieldType : service.getAssoServiceFieldTypes()) {
+                    if (assoServiceFieldType.getService() == null) {
+                        assoServiceFieldType.setService(service);
+                        isToSaveService = true;
+                    }
+                }
+            }
 
-            serviceService.addOrUpdateService(service);
+            if (isToSaveService)
+                serviceService.addOrUpdateService(service);
 
             for (Provision provision : service.getProvisions()) {
                 provision.setService(service);

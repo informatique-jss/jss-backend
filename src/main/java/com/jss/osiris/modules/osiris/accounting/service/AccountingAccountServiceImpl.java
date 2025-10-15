@@ -285,6 +285,7 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
 
         @Override
         public void deleteAccountingAccount(AccountingAccount accountingAccount) {
-                accountingAccountRepository.delete(accountingAccount);
+                if (accountingAccount != null)
+                        accountingAccountRepository.delete(accountingAccount);
         }
 }

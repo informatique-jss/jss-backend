@@ -16,9 +16,10 @@ public interface PostViewRepository extends QueryCacheCrudRepository<PostView, I
 
     @Modifying
     @Query(nativeQuery = true, value = "" +
-            " merge into post_view p using (select :idPost as id) t on (p.id_post = t.id and p.day = current_date) " +
+            " merge into post_view p using (select :idPost as id) t on (p.id_post = t.id and p.day = to_date(:dateToIncrement,'YYYY-MM-DD')) "
+            +
             " when matched then update set count = count+1 " +
-            " when not matched then insert values (nextval('post_view_sequence'), 1, now(),:idPost) ")
-    void incrementPostViewForToday(@Param("idPost") Integer idPost);
+            " when not matched then insert values (nextval('post_view_sequence'), 1,  to_date(:dateToIncrement,'YYYY-MM-DD'),:idPost) ")
+    void incrementPostViewDay(@Param("idPost") Integer idPost, @Param("dateToIncrement") String dateToIncrement);
 
 }
