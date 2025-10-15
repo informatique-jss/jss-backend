@@ -7,17 +7,17 @@
       </h4>
     </div>
     <ul class="nav nav-tabs nav-justified card-header-tabs nav-bordered">
-      <li class="nav-item" (click)="changeTimeScale(ANNUALLY_PERIOD)">
+      <li class="nav-item" (click)="selectTimeScale(ANNUALLY_PERIOD)">
         <a class="nav-link" [class.active]="selectedTimeScale === ANNUALLY_PERIOD">
           <span class="d-none d-md-block">Année</span>
         </a>
       </li>
-      <li class="nav-item" (click)="changeTimeScale(MONTHLY_PERIOD)">
+      <li class="nav-item" (click)="selectTimeScale(MONTHLY_PERIOD)">
         <a class="nav-link" [class.active]="selectedTimeScale === MONTHLY_PERIOD">
           <span class="d-none d-md-block">Mois</span>
         </a>
       </li>
-      <li class="nav-item" (click)="changeTimeScale(WEEKLY_PERIOD)">
+      <li class="nav-item" (click)="selectTimeScale(WEEKLY_PERIOD)">
         <a class="nav-link" [class.active]="selectedTimeScale === WEEKLY_PERIOD">
           <span class="d-none d-md-block">Semaine</span>
         </a>
