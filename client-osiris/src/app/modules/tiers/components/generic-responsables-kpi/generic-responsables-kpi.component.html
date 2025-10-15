@@ -37,7 +37,8 @@
 
           @for (kpi of kpiCrms; track $index) {
           <div class="col">
-            <div class="card rounded-0 border shadow-none border-dashed mb-0">
+            <div class="card rounded-0 border shadow-none border-dashed mb-0" (click)="selectWidgetToDisplay(kpi)"
+              style="cursor: pointer;">
               <div class="card-body">
                 <div class="mb-3 d-flex justify-content-between align-items-center">
                   <h5 class="fs-xl mb-0">{{ kpi.kpiValue }}{{ kpi.kpiCrm.unit }}</h5>
