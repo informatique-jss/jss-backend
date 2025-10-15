@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { ECharts, EChartsOption, LegendComponentOption } from 'echarts';
 import type { EChartsType } from 'echarts/core';
 import { TooltipOption, XAXisOption, YAXisOption } from 'echarts/types/dist/shared';
@@ -34,6 +34,10 @@ export class EchartComponent implements OnInit, OnDestroy {
   private layoutSub!: Subscription;
 
   ngOnInit(): void {
+    this.initChart();
+  }
+
+  initChart() {
     // refresh chart on theme and skin change
     this.layoutSub = this.layout.layoutState$.subscribe(state => {
       const skin = state.skin;
@@ -393,6 +397,13 @@ export class EchartComponent implements OnInit, OnDestroy {
 
 
     this.options = defaultOptions;
+  }
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['series']) {
+      // var a changé — même si le nom est le même, si la référence change, ça détecte
+      console.log('Nouvelle valeur de series:', this.series);
+      this.initChart();
+    }
   }
 
   listenChartClick(ec: EChartsType) {

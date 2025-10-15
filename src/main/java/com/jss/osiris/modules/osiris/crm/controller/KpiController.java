@@ -63,11 +63,17 @@ public class KpiController {
         @GetMapping(inputEntryPoint + "/kpi-values")
         public ResponseEntity<String> getKpiValuesPayloadByKpiCrmForResponsables(
                         @RequestParam Integer kpiCrmId,
+                        @RequestParam String timeScale,
                         @RequestParam List<Integer> responsableIds)
                         throws OsirisValidationException, JsonProcessingException {
 
                 if (kpiCrmId == null && kpiCrmService.getKpiCrmById(kpiCrmId) == null)
                         throw new OsirisValidationException("kpiCrmId");
+
+                if (timeScale == null || (!KpiCrm.WEEKLY_PERIOD.equals(timeScale)
+                                && !KpiCrm.MONTHLY_PERIOD.equals(timeScale)
+                                && !KpiCrm.ANNUALLY_PERIOD.equals(timeScale)))
+                        throw new OsirisValidationException("timescale");
 
                 List<Responsable> responsables = new ArrayList<Responsable>();
                 if (responsableIds != null) {
@@ -82,7 +88,7 @@ public class KpiController {
                 }
 
                 return new ResponseEntity<String>(
-                                kpiCrmService.getKpiValues(kpiCrmId, responsableIds),
+                                kpiCrmService.getKpiValues(kpiCrmId, timeScale, responsableIds),
                                 HttpStatus.OK);
         }
 }

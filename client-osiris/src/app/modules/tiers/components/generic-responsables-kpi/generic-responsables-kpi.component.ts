@@ -75,7 +75,7 @@ export class GenericResponsablesKpiComponent implements OnInit {
   selectWidgetToDisplay(kpiWidget: KpiWidgetDto) {
     this.selectedKpiCrm = kpiWidget;
     if (this.selectedKpiCrm) {
-      this.kpiWidgetService.getKpiWidgetSerieValues(this.selectedKpiCrm, this.selectedResponsables).subscribe(response => {
+      this.kpiWidgetService.getKpiWidgetSerieValues(this.selectedKpiCrm, this.selectedResponsables, this.selectedTimeScale).subscribe(response => {
         if (response) {
           this.serieValues = response;
         }

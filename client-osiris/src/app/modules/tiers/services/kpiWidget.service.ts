@@ -16,8 +16,8 @@ export class KpiWidgetService extends AppRestService<KpiWidgetDto> {
     return this.getList(new HttpParams().set("displayedPageCode", displayedPageCode).set("timeScale", timeScale).set("responsableIds", responsables.map(s => s.id).join(",")), "kpi-widgets");
   }
 
-  getKpiWidgetSerieValues(kpi: KpiWidgetDto, responsables: Responsable[]) {
-    return this.getList(new HttpParams().set("kpiCrmId", kpi.kpiCrm.id).set("responsableIds", responsables.map(s => s.id).join(",")), "kpi-values");
+  getKpiWidgetSerieValues(kpi: KpiWidgetDto, responsables: Responsable[], timeScale: string) {
+    return this.getList(new HttpParams().set("kpiCrmId", kpi.kpiCrm.id).set("timeScale", timeScale).set("responsableIds", responsables.map(s => s.id).join(",")), "kpi-values");
   }
 
 }

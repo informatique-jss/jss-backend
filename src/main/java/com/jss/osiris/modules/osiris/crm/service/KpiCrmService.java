@@ -17,7 +17,8 @@ public interface KpiCrmService {
 
     public List<KpiCrm> getKpiCrms();
 
-    public String getKpiValues(Integer kpiCrmId, List<Integer> responsablesIds) throws JsonProcessingException;
+    public String getKpiValues(Integer kpiCrmId, String timeScale, List<Integer> responsablesIds)
+            throws JsonProcessingException;
 
     public void startComputeBatches() throws OsirisException;
 
