@@ -73,6 +73,7 @@ export class GenericResponsablesKpiComponent implements OnInit {
   }
 
   selectWidgetToDisplay(kpiWidget: KpiWidgetDto) {
+    this.serieValues = [];
     this.selectedKpiCrm = kpiWidget;
     if (this.selectedKpiCrm) {
       this.kpiWidgetService.getKpiWidgetSerieValues(this.selectedKpiCrm, this.selectedResponsables, this.selectedTimeScale).subscribe(response => {
@@ -83,4 +84,3 @@ export class GenericResponsablesKpiComponent implements OnInit {
     }
   }
 }
-
