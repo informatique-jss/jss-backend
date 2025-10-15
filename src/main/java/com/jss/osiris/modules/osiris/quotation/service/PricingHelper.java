@@ -497,7 +497,8 @@ public class PricingHelper {
                 } else
                     tempInvoiceItem = invoiceItem;
 
-                if (tempInvoiceItem.getInvoice() == null && tempInvoiceItem.getOriginProviderInvoice() == null
+                if (tempInvoiceItem != null && tempInvoiceItem.getInvoice() == null
+                        && tempInvoiceItem.getOriginProviderInvoice() == null
                         && provisionType != null) {
                     boolean found = false;
                     for (BillingType billingType : provisionType.getBillingTypes()) {
@@ -538,6 +539,7 @@ public class PricingHelper {
                     tempInvoiceItem = invoiceItem;
 
                 if (tempInvoiceItem != null && tempInvoiceItem.getOriginProviderInvoice() != null) {
+                    idInvoiceAlreadyDone.add(tempInvoiceItem.getOriginProviderInvoice().getId());
                     if (tempInvoiceItem.getOriginProviderInvoice().getInvoiceStatus()
                             .getId().equals(constantService.getInvoiceStatusCancelled().getId())) {
                         invoiceItemsDeleted.add(invoiceItem);
@@ -547,7 +549,6 @@ public class PricingHelper {
                             invoiceItemService.deleteInvoiceItem(invoiceItem);
                         }
                     }
-                    idInvoiceAlreadyDone.add(tempInvoiceItem.getOriginProviderInvoice().getId());
                 }
             }
             provision.getInvoiceItems().removeAll(invoiceItemsDeleted);

@@ -400,8 +400,11 @@ public class CustomerMailServiceImpl implements CustomerMailService {
     @Override
     public void sendMail(CustomerMail mail)
             throws OsirisException, OsirisValidationException, OsirisClientMessageException {
-        if (mail != null && mail.getIsSent() == false) {
-            prepareAndSendMail(mail);
+        if (mail != null && mail.getIsSent() == false && !Boolean.TRUE.equals(mail.getIsCancelled())) {
+            try {
+                prepareAndSendMail(mail);
+            } catch (OsirisClientMessageException e) {
+            }
 
             if (!mail.getSendToMe()) {
                 File mailPdf = null;
@@ -463,9 +466,9 @@ public class CustomerMailServiceImpl implements CustomerMailService {
                     mail.setIsCancelled(true);
                     addOrUpdateCustomerMail(mail);
                     throw new OsirisException(e, "Impossible to read invoice PDF temp file");
+                } catch (OsirisClientMessageException e) {
                 } catch (Exception e) {
-                    mail.setIsCancelled(true);
-                    addOrUpdateCustomerMail(mail);
+                    cancelCustomerMail(mail);
                     throw new OsirisException(e, "Impossible to generate mail PDF for mail " + mail.getId());
                 } finally {
                     if (mailPdf != null)

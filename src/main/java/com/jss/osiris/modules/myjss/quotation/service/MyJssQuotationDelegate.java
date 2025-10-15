@@ -111,8 +111,10 @@ public class MyJssQuotationDelegate {
                         }
                     }
 
-                    if (!found)
+                    if (!found) {
+                        mailService.populateMailIds(asso.getAffaire().getMails());
                         affaireService.addOrUpdateAffaire(asso.getAffaire());
+                    }
                 }
 
         saveNewMailsOnAffaire(order);
@@ -210,8 +212,10 @@ public class MyJssQuotationDelegate {
                         }
                     }
 
-                    if (!found)
+                    if (!found) {
+                        mailService.populateMailIds(asso.getAffaire().getMails());
                         affaireService.addOrUpdateAffaire(asso.getAffaire());
+                    }
                 }
 
         saveNewMailsOnAffaire(quotation);
@@ -335,8 +339,10 @@ public class MyJssQuotationDelegate {
                         }
                     }
 
-                    if (!found)
+                    if (!found) {
+                        mailService.populateMailIds(asso.getAffaire().getMails());
                         asso.setAffaire(affaireService.addOrUpdateAffaire(asso.getAffaire()));
+                    }
                 }
                 saveNewMailsOnAffaire(quotation);
             } else {

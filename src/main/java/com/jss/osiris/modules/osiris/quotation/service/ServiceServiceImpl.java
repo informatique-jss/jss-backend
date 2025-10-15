@@ -297,13 +297,16 @@ public class ServiceServiceImpl implements ServiceService {
         List<Provision> newProvisions = new ArrayList<Provision>();
 
         Set<ProvisionType> possibleProvisionTypes = assoServiceProvisionTypes.stream()
+                .filter(p -> !p.getProvisionType().getProvisionScreenType().getCode()
+                        .equals(ProvisionScreenType.ANNOUNCEMENT))
                 .map(a -> a.getProvisionType()).collect(Collectors.toSet());
 
         for (ProvisionType provisionTypePossible : possibleProvisionTypes) {
-
             List<AssoServiceProvisionType> provisionTypeMergeable = assoServiceProvisionTypes.stream()
                     .filter(s -> Boolean.TRUE.equals(s.getProvisionType().getIsMergeable())
-                            && s.getProvisionType().getId().equals(provisionTypePossible.getId()))
+                            && s.getProvisionType().getId().equals(provisionTypePossible.getId())
+                            && !s.getProvisionType().getProvisionScreenType().getCode()
+                                    .equals(ProvisionScreenType.ANNOUNCEMENT))
                     .toList();
 
             if (provisionTypeMergeable != null && provisionTypeMergeable.size() > 0) {
@@ -312,25 +315,15 @@ public class ServiceServiceImpl implements ServiceService {
                         provisionTypeMergeable.get(0).getProvisionType(),
                         service, provisionTypeMergeable.get(0), isPriority);
 
-                if (provisionTypePossible.getProvisionScreenType().getCode().equals(ProvisionScreenType.ANNOUNCEMENT)) {
-                    if (provisionTypeMergeable.size() > 1) {
-                        mergeableProvision = generateProvisionFromProvisionType(
-                                this.constantService.getProvisionTypeCharacterAnnouncement(), service,
-                                assoServiceProvisionTypes.get(0), assoServiceProvisionTypes.get(0).getIsPriority());
-                    }
-
-                    mergeableProvision = completeNoticesFromAnnouncementProvision(mergeableProvision,
-                            provisionTypeMergeable, affaire);
-                    mergeableProvision.setIsRedactedByJss(true);
-                }
-
                 newProvisions.add(mergeableProvision);
             }
 
             List<AssoServiceProvisionType> provisionTypeNonMergeable = assoServiceProvisionTypes.stream()
                     .filter(s -> (s.getProvisionType().getIsMergeable() == null
                             || !s.getProvisionType().getIsMergeable())
-                            && s.getProvisionType().getId().equals(provisionTypePossible.getId()))
+                            && s.getProvisionType().getId().equals(provisionTypePossible.getId())
+                            && !s.getProvisionType().getProvisionScreenType().getCode()
+                                    .equals(ProvisionScreenType.ANNOUNCEMENT))
                     .toList();
 
             for (AssoServiceProvisionType assoServiceProvisionType : provisionTypeNonMergeable) {
@@ -338,18 +331,60 @@ public class ServiceServiceImpl implements ServiceService {
                     Provision nonMergeableProvision = generateProvisionFromProvisionType(
                             assoServiceProvisionType.getProvisionType(),
                             service, assoServiceProvisionType, assoServiceProvisionType.getIsPriority());
-
-                    if (nonMergeableProvision.getProvisionType().getProvisionScreenType().getCode()
-                            .equals(ProvisionScreenType.ANNOUNCEMENT)) {
-                        completeNoticesFromAnnouncementProvision(nonMergeableProvision, provisionTypeNonMergeable,
-                                affaire);
-                        nonMergeableProvision.setIsRedactedByJss(true);
-                    }
                     newProvisions.add(nonMergeableProvision);
                 }
             }
 
         }
+
+        // AL merge
+
+        List<AssoServiceProvisionType> provisionTypeMergeable = assoServiceProvisionTypes.stream()
+                .filter(s -> Boolean.TRUE.equals(s.getProvisionType().getIsMergeable())
+                        && s.getProvisionType().getProvisionScreenType().getCode()
+                                .equals(ProvisionScreenType.ANNOUNCEMENT))
+                .toList();
+
+        if (provisionTypeMergeable != null && provisionTypeMergeable.size() > 0) {
+            Boolean isPriority = getPriorityFromAssoServiceProvisionTypesList(assoServiceProvisionTypes);
+            Provision mergeableProvision = generateProvisionFromProvisionType(
+                    provisionTypeMergeable.get(0).getProvisionType(),
+                    service, provisionTypeMergeable.get(0), isPriority);
+
+            if (provisionTypeMergeable.size() > 1) {
+                mergeableProvision = generateProvisionFromProvisionType(
+                        this.constantService.getProvisionTypeCharacterAnnouncement(), service,
+                        assoServiceProvisionTypes.get(0), assoServiceProvisionTypes.get(0).getIsPriority());
+            }
+
+            mergeableProvision = completeNoticesFromAnnouncementProvision(mergeableProvision,
+                    provisionTypeMergeable, affaire);
+            mergeableProvision.setIsRedactedByJss(true);
+
+            newProvisions.add(mergeableProvision);
+        }
+
+        List<AssoServiceProvisionType> provisionTypeNonMergeable = assoServiceProvisionTypes.stream()
+                .filter(s -> (s.getProvisionType().getIsMergeable() == null
+                        || !s.getProvisionType().getIsMergeable())
+                        && s.getProvisionType().getProvisionScreenType().getCode()
+                                .equals(ProvisionScreenType.ANNOUNCEMENT))
+                .toList();
+
+        for (AssoServiceProvisionType assoServiceProvisionType : provisionTypeNonMergeable) {
+            if (provisionTypeNonMergeable != null && provisionTypeNonMergeable.size() > 0) {
+                Provision nonMergeableProvision = generateProvisionFromProvisionType(
+                        assoServiceProvisionType.getProvisionType(),
+                        service, assoServiceProvisionType, assoServiceProvisionType.getIsPriority());
+
+                completeNoticesFromAnnouncementProvision(nonMergeableProvision, provisionTypeNonMergeable,
+                        affaire);
+                nonMergeableProvision.setIsRedactedByJss(true);
+
+                newProvisions.add(nonMergeableProvision);
+            }
+        }
+
         return newProvisions;
     }
 

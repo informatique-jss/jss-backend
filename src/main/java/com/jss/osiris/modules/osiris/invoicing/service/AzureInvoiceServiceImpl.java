@@ -149,7 +149,8 @@ public class AzureInvoiceServiceImpl implements AzureInvoiceService {
         invoiceItem.setIsOverridePrice(false);
 
         invoiceItem.setLabel(
-                invoiceItem.getBillingItem().getBillingType().getLabel() + (invoice.getProvider().getLabel()));
+                invoiceItem.getBillingItem().getBillingType().getLabel()
+                        + (invoice.getProvider() != null ? invoice.getProvider().getLabel() : ""));
         invoiceItem.setPreTaxPrice(azureInvoice.getInvoicePreTaxTotal().multiply(oneHundredValue)
                 .setScale(0, RoundingMode.HALF_EVEN).divide(oneHundredValue));
         invoiceItem.setPreTaxPriceReinvoiced(invoiceItem.getPreTaxPrice());

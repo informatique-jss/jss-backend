@@ -898,7 +898,7 @@ public class MyJssQuotationController {
 		PageRequest newPageRequest = PageRequest.of(0, 50);
 
 		if (affaires == null || affaires.size() == 0)
-			return new ResponseEntity<Page<Affaire>>(new PageImpl<>(null, newPageRequest, 1), HttpStatus.OK);
+			return new ResponseEntity<>(null, HttpStatus.OK);
 
 		Page<Affaire> pageResult = new PageImpl<>(affaires, newPageRequest, affaires.size());
 		return new ResponseEntity<Page<Affaire>>(pageResult, HttpStatus.OK);

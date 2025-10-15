@@ -284,16 +284,19 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public void notifyAttachmentAddToProvision(Provision provision, Attachment attachment) throws OsirisException {
         provision = provisionService.getProvision(provision.getId());
-        CustomerOrder order = provision.getService().getAssoAffaireOrder().getCustomerOrder();
-        if (!isProvisionClosed(provision) && !isProvisionOpen(provision)) {
-            if (order != null && (order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)
-                    || order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.TO_BILLED))) {
-                if (provision.getAssignedTo() != null) {
-                    if (provision.getAssignedTo().getId().equals(employeeService.getCurrentEmployee().getId()))
-                        return;
+        if (provision.getService() != null) {
+            CustomerOrder order = provision.getService().getAssoAffaireOrder().getCustomerOrder();
+            if (!isProvisionClosed(provision) && !isProvisionOpen(provision)) {
+                if (order != null
+                        && (order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)
+                                || order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.TO_BILLED))) {
+                    if (provision.getAssignedTo() != null) {
+                        if (provision.getAssignedTo().getId().equals(employeeService.getCurrentEmployee().getId()))
+                            return;
 
-                    generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
-                            Notification.PROVISION_ADD_ATTACHMENT, false, null, provision, null, null);
+                        generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
+                                Notification.PROVISION_ADD_ATTACHMENT, false, null, provision, null, null);
+                    }
                 }
             }
         }

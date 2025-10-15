@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
@@ -26,8 +27,6 @@ import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Rff;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
-
-import jakarta.transaction.Transactional;
 
 @Service
 public class MailComputeHelper {
@@ -77,7 +76,7 @@ public class MailComputeHelper {
         return computeMailForDocument(quotation, constantService.getDocumentTypeBilling(), false);
     }
 
-    @Transactional(rollbackOn = Exception.class)
+    @Transactional(noRollbackFor = Exception.class)
     public MailComputeResult computeMailForCustomerOrderFinalizationAndInvoice(IQuotation quotation, Boolean isReminder)
             throws OsirisException, OsirisClientMessageException {
         if (quotation.getId() != null) {

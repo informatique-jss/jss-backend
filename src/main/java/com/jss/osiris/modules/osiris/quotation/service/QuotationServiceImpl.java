@@ -213,6 +213,7 @@ public class QuotationServiceImpl implements QuotationService {
                 document.setQuotation(quotation);
                 mailService.populateMailIds(document.getMailsAffaire());
                 mailService.populateMailIds(document.getMailsClient());
+                mailService.populateMailId(document.getReminderMail());
             }
 
         boolean isNewQuotation = quotation.getId() == null;

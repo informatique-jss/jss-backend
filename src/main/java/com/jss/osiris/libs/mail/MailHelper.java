@@ -1151,6 +1151,7 @@ public class MailHelper {
         mail.setMailTemplate(CustomerMail.TEMPLATE_SEND_PUBLICATION_RECEIPT);
 
         Provision currentProvision = null;
+        AssoAffaireOrder currentAssoAffaireOrder = null;
         if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0)
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
                 for (Service service : asso.getServices())
@@ -1158,6 +1159,7 @@ public class MailHelper {
                         if (provision.getAnnouncement() != null
                                 && provision.getAnnouncement().getId().equals(announcement.getId())) {
                             currentProvision = provision;
+                            currentAssoAffaireOrder = asso;
                         }
 
         if (currentProvision == null || currentProvision.getId() == null)
@@ -1190,7 +1192,7 @@ public class MailHelper {
         mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(mailComputeHelper.computeMailForPublicationReceipt(customerOrder));
         mail.setSubject("Attestation de parution - commande n°" + customerOrder.getId() + " - "
-                + getCustomerOrderAffaireLabel(customerOrder, currentProvision.getService().getAssoAffaireOrder()));
+                + getCustomerOrderAffaireLabel(customerOrder, currentAssoAffaireOrder));
         customerMailService.addMailToQueue(mail);
     }
 
@@ -1205,6 +1207,7 @@ public class MailHelper {
         mail.setMailTemplate(CustomerMail.TEMPLATE_SEND_PROOF_READING);
 
         Provision currentProvision = null;
+        AssoAffaireOrder currentAssoAffaireOrder = null;
         if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0)
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
                 for (Service service : asso.getServices())
@@ -1212,6 +1215,7 @@ public class MailHelper {
                         if (provision.getAnnouncement() != null
                                 && provision.getAnnouncement().getId().equals(announcement.getId())) {
                             currentProvision = provision;
+                            currentAssoAffaireOrder = asso;
                         }
 
         if (currentProvision == null)
@@ -1236,7 +1240,7 @@ public class MailHelper {
         mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(mailComputeHelper.computeMailForReadingProof(customerOrder));
         mail.setSubject("BAT à valider concernant la commande n°" + customerOrder.getId() + " - "
-                + getCustomerOrderAffaireLabel(customerOrder, currentProvision.getService().getAssoAffaireOrder()));
+                + getCustomerOrderAffaireLabel(customerOrder, currentAssoAffaireOrder));
         customerMailService.addMailToQueue(mail);
     }
 
@@ -1281,6 +1285,7 @@ public class MailHelper {
         mail.setMailTemplate(CustomerMail.TEMPLATE_SEND_PUBLICATION_FLAG);
 
         Provision currentProvision = null;
+        AssoAffaireOrder currentAssoAffaireOrder = null;
         if (customerOrder.getAssoAffaireOrders() != null && customerOrder.getAssoAffaireOrders().size() > 0)
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
                 for (Service service : asso.getServices())
@@ -1288,6 +1293,7 @@ public class MailHelper {
                         if (provision.getAnnouncement() != null
                                 && provision.getAnnouncement().getId().equals(announcement.getId())) {
                             currentProvision = provision;
+                            currentAssoAffaireOrder = asso;
                         }
 
         if (currentProvision == null)
@@ -1318,7 +1324,7 @@ public class MailHelper {
         mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(mailComputeHelper.computeMailForPublicationReceipt(customerOrder));
         mail.setSubject("Témoin de parution - commande n°" + customerOrder.getId() + " - "
-                + getCustomerOrderAffaireLabel(customerOrder, currentProvision.getService().getAssoAffaireOrder()));
+                + getCustomerOrderAffaireLabel(customerOrder, currentAssoAffaireOrder));
         customerMailService.addMailToQueue(mail);
     }
 
