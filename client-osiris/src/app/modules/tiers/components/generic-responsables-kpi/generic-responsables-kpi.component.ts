@@ -52,35 +52,43 @@ export class GenericResponsablesKpiComponent implements OnInit {
       this.pageCode = params['screen'];
 
       this.selectedResponsablesSubscription = this.responsableService.getSelectedResponsables().subscribe(respos => {
-        this.selectedResponsables = respos;
-        this.refreshKpi();
+        if (respos.length != 0 && respos.length != this.selectedResponsables.length) {
+          this.selectedResponsables = respos;
+          this.refreshKpi();
+        }
       });
     });
   }
 
   refreshKpi() {
-    this.serieValues = [];
     this.kpiWidgetService.getKpiWidgetsByPage(this.pageCode, this.selectedTimeScale, this.selectedResponsables).subscribe(response => {
       if (response) {
         this.kpiCrms = response;
-        this.selectWidgetToDisplay(this.kpiCrms[0]);
+        this.fetchSeriesForWidgetToDisplay();
       }
     });
   }
 
-  changeTimeScale(timeScale: string): void {
+  fetchSeriesForWidgetToDisplay() {
+    this.serieValues = [];
+
+    if (!this.selectedKpiCrm) {
+      this.selectedKpiCrm = this.kpiCrms[0];
+    }
+    this.kpiWidgetService.getKpiWidgetSerieValues(this.selectedKpiCrm, this.selectedResponsables, this.selectedTimeScale).subscribe(response => {
+      if (response) {
+        this.serieValues = response;
+      }
+    });
+  }
+
+  selectTimeScale(timeScale: string): void {
     this.selectedTimeScale = timeScale;
     this.refreshKpi();
   }
 
   selectWidgetToDisplay(kpiWidget: KpiWidgetDto) {
     this.selectedKpiCrm = kpiWidget;
-    if (this.selectedKpiCrm) {
-      this.kpiWidgetService.getKpiWidgetSerieValues(this.selectedKpiCrm, this.selectedResponsables, this.selectedTimeScale).subscribe(response => {
-        if (response) {
-          this.serieValues = response;
-        }
-      });
-    }
+    this.fetchSeriesForWidgetToDisplay();
   }
 }
