@@ -210,12 +210,42 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                 }
     }
 
+    private void initializeProvisionStatus(AssoAffaireOrder assoAffaireOrder) {
+        if (assoAffaireOrder.getServices() != null)
+            for (Service service : assoAffaireOrder.getServices()) {
+                for (Provision provision : service.getProvisions()) {
+                    if (provision.getDomiciliation() != null
+                            && provision.getDomiciliation().getDomiciliationStatus() == null)
+                        provision.getDomiciliation().setDomiciliationStatus(domiciliationStatusService
+                                .getDomiciliationStatusByCode(DomiciliationStatus.DOMICILIATION_NEW));
+
+                    if (provision.getFormalite() != null && provision.getFormalite().getFormaliteStatus() == null)
+                        provision.getFormalite().setFormaliteStatus(
+                                formaliteStatusService
+                                        .getFormaliteStatusByCode(FormaliteStatus.FORMALITE_NEW));
+
+                    if (provision.getAnnouncement() != null
+                            && provision.getAnnouncement().getAnnouncementStatus() == null)
+                        provision.getAnnouncement().setAnnouncementStatus(announcementStatusService
+                                .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_NEW));
+
+                    if (provision.getSimpleProvision() != null
+                            && provision.getSimpleProvision().getSimpleProvisionStatus() == null)
+                        provision.getSimpleProvision().setSimpleProvisionStatus(simpleProvisionStatusService
+                                .getSimpleProvisionStatusByCode(
+                                        SimpleProvisionStatus.SIMPLE_PROVISION_NEW));
+                }
+
+            }
+    }
+
     @Override
     public AssoAffaireOrder completeAssoAffaireOrder(AssoAffaireOrder assoAffaireOrder, IQuotation customerOrder,
             Boolean isFromUser)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         Boolean oneNewProvision = false;
 
+        initializeProvisionStatus(assoAffaireOrder);
         for (Service service : assoAffaireOrder.getServices()) {
             service.setAssoAffaireOrder(assoAffaireOrder);
             serviceService.addOrUpdateService(service);
@@ -279,10 +309,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                 if (provision.getDomiciliation() != null) {
                     Domiciliation domiciliation = provision.getDomiciliation();
-                    if (customerOrder.getId() == null || domiciliation.getDomiciliationStatus() == null)
-                        domiciliation.setDomiciliationStatus(domiciliationStatusService
-                                .getDomiciliationStatusByCode(DomiciliationStatus.DOMICILIATION_NEW));
-
                     // If mails already exists, get their ids
                     if (domiciliation != null && domiciliation.getMails() != null
                             && domiciliation.getMails().size() > 0) {
@@ -320,12 +346,7 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                 if (provision.getFormalite() != null) {
                     Formalite formalite = provision.getFormalite();
-                    if (customerOrder.getId() == null || formalite.getFormaliteStatus() == null)
-                        formalite.setFormaliteStatus(
-                                formaliteStatusService
-                                        .getFormaliteStatusByCode(FormaliteStatus.FORMALITE_NEW));
-
-                    else if (formalite.getFormalitesGuichetUnique() != null) {
+                    if (customerOrder.getId() != null && formalite.getFormalitesGuichetUnique() != null) {
                         for (FormaliteGuichetUnique formaliteGuichetUnique : formalite
                                 .getFormalitesGuichetUnique()) {
                             if (formaliteGuichetUnique.getStatus() == null
@@ -457,10 +478,6 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
 
                     announcement
                             .setCharacterNumber(characterPriceService.getCharacterNumber(provision, true));
-
-                    if (customerOrder.getId() == null || announcement.getAnnouncementStatus() == null)
-                        announcement.setAnnouncementStatus(announcementStatusService
-                                .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_NEW));
 
                     boolean publicationProofFound = false;
                     if (announcement != null) {
