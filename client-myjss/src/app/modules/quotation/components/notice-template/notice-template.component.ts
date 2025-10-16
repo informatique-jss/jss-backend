@@ -194,6 +194,7 @@ export class NoticeTemplateComponent implements OnInit {
             i++;
           }
           text = text.replace(new RegExp(`\\[\\s*${fragmentFound.code}\\s*\\]`), `<div id="fragment-${fragmentFound.code}" class="fragment-box ${this.getFragmentClass(fragmentFound.code)}">` + fragmentTextToReplace + "</div>");
+          text = text.replace("/n", "<br>"); // if user adds a paragraph break, we want to display it
         }
       }
     }
