@@ -250,8 +250,8 @@ export class NoticeTemplateComponent implements OnInit {
   }
 
   /**
-  Returns the name of the CSS class corresponding to the fragment's color.
-  */
+   Returns the name of the CSS class corresponding to the fragment's color.
+   */
   private getFragmentClass(code: string): string {
     const color = this.fragmentBordersColorsMap.get(code);
     if (!color) return 'fragment-box';
@@ -364,5 +364,20 @@ export class NoticeTemplateComponent implements OnInit {
     }
 
     this.updateDisplayText();
+  }
+
+  getFragmentInputLabel(placeholder: ServiceFieldType, fragmentIndex: number, fragmentInstances: AnnouncementNoticeTemplateFragment[]): string {
+    let baseLabel = "";
+    if (placeholder.label)
+      baseLabel = placeholder.label;
+    else
+      baseLabel = placeholder.code;
+
+    if (fragmentInstances.length > 1) {
+      let fragmentIndexCopy = fragmentIndex + 1;
+      return baseLabel + " " + fragmentIndexCopy;
+    } else {
+      return baseLabel;
+    }
   }
 }
