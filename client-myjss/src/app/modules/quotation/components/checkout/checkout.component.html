@@ -2,45 +2,6 @@
   <form class="needs-validation container position-relative z-2 pt-5 pb-5 mb-md-2 mb-lg-0" novalidate>
     <div class="row justify-content-between">
       <div class="col-lg-7">
-        <!-- Connexion -->
-        <div class="row" *ngIf="!currentUser && !isLinkSent && false">
-          <div class="card mb-4 bg-secondary-subtle">
-            <div class="row">
-              <div class="col-lg-4 ps-0">
-                <div class=" d-lg-block d-none">
-                  <div class="w-100 border-0">
-                    <img src="assets/img/account/cover.jpg" class="rounded-1 object-fit-cover w-100 m-4 image-height"
-                      alt="Card image">
-                  </div>
-                </div>
-              </div>
-              <div class="col-lg-8 p-4">
-                <h3 class="text-white">Se connecter</h3>
-                <div class="row p-0 ">
-                  <label class="col-md-12 col-form-label text-white" for="inputMail">Vous avez déjà un
-                    compte ? Renseignez votre mail ci-dessous et ouvrez le lien reçu par mail.</label>
-                  <div class="col-md-12 ">
-                    <generic-input (onFormChange)="saveDraftQuotation()" class="white-form-control"
-                      [(model)]="inputMail" label="" [form]="documentForm" propertyName="inputMail"
-                      [isMandatory]="false" [isDisabled]="false" type="email" [isDisplayLabel]="false" [icon]="'mail'">
-                    </generic-input>
-                  </div>
-                  <div class="mt-3">
-                    <button class="btn btn-lg btn-primary w-100" type="button" (click)="sendConnectionLink()"><span
-                        class="spinner-border spinner-border-sm me-2" aria-hidden="true"
-                        *ngIf="isSendingLink"></span>Recevoir un lien de connexion</button>
-                  </div>
-                  <div class="alert alert-info d-flex mb-0 mb-2" role="alert" *ngIf="isLinkSent">
-                    <i class="ai-circle-info fs-xl"></i>
-                    <div class="ps-2">Un lien vous a été envoyé par mail. Ouvez le et revenez sur cette page.</div>
-                  </div>
-
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
         <!-- Quick message -->
         <div class="row" *ngIf="quotation && quotation.assoAffaireOrders && quotation.assoAffaireOrders[0] && quotation.assoAffaireOrders[0].services
           && quotation.assoAffaireOrders[0].services[0] && quotation.assoAffaireOrders[0].services[0].provisions[0]
@@ -85,7 +46,7 @@
                         </generic-toggle>
                       </div>
                       <div class="mb-3">
-                        <generic-input (onFormChange)="saveDraftQuotation()" *ngIf="doc.isCommandNumberMandatory"
+                        <generic-input (onFormChange)="setDocumentValue(doc)" *ngIf="doc.isCommandNumberMandatory"
                           [(model)]="doc.commandNumber" label="N° de commande" [form]="documentForm"
                           propertyName="commandNumber" [isMandatory]="true" [isDisabled]="false" type="text">
                         </generic-input>
@@ -96,7 +57,7 @@
                         </generic-toggle>
                       </div>
                       <div class="mb-3" *ngIf="isExtRefMandatory">
-                        <generic-input (onFormChange)="saveDraftQuotation()" [(model)]="doc.externalReference"
+                        <generic-input (onFormChange)="setDocumentValue(doc)" [(model)]="doc.externalReference"
                           label="N° de référence" [form]="documentForm" propertyName="externalReference"
                           [isMandatory]="true" [isDisabled]="false" type="text">
                         </generic-input>
@@ -399,22 +360,22 @@
             *ngIf="document.billingLabelType && document.billingLabelType.code && document.billingLabelType.id == billingLabelTypeOther.id">
             <div class="row mb-3">
               <div class="col">
-                <generic-input (onFormChange)="saveDraftQuotation()" [(model)]="document.billingLabel" label="Libellé"
-                  [form]="documentForm" propertyName="billingLabel" [maxLength]="200" [isMandatory]="true"
-                  [isDisabled]="false"></generic-input>
+                <generic-input (onFormChange)="setDocumentValue(document)" [(model)]="document.billingLabel"
+                  label="Libellé" [form]="documentForm" propertyName="billingLabel" [maxLength]="200"
+                  [isMandatory]="true" [isDisabled]="false"></generic-input>
               </div>
 
               <div class="col">
-                <generic-input (onFormChange)="saveDraftQuotation()" [(model)]="document.billingAddress" label="Adresse"
-                  [form]="documentForm" propertyName="billingAddress" [isMandatory]="true" [isDisabled]="false"
-                  [maxLength]="200"></generic-input>
+                <generic-input (onFormChange)="setDocumentValue(document)" [(model)]="document.billingAddress"
+                  label="Adresse" [form]="documentForm" propertyName="billingAddress" [isMandatory]="true"
+                  [isDisabled]="false" [maxLength]="200"></generic-input>
               </div>
 
             </div>
 
             <div class="row mb-3">
               <div class="col-md-4">
-                <generic-input (onFormChange)="saveDraftQuotation()" class="col-md-4"
+                <generic-input (onFormChange)="setDocumentValue(document)" class="col-md-4"
                   [(model)]="document.billingPostalCode" label="Code postal" [form]="documentForm"
                   (onFormBlur)="findCityForDocument(document)" propertyName="docPostalCode" [isMandatory]="true"
                   [isDisabled]="false" [maxLength]="10" (change)="computeQuotationPrice(false)">
@@ -436,7 +397,7 @@
 
             <div class="row mb-3">
               <div class="col-md-4">
-                <generic-input (onFormChange)="saveDraftQuotation()" [(model)]="document.cedexComplement"
+                <generic-input (onFormChange)="setDocumentValue(document)" [(model)]="document.cedexComplement"
                   label="Complément CEDEX" [form]="documentForm" propertyName="billingCedexComplement"
                   [isMandatory]="false" [isDisabled]="false" [maxLength]="20"></generic-input>
               </div>
@@ -466,7 +427,7 @@
           propertyName="addToAffaireMailListBilling" [isMandatory]="false">
         </generic-toggle>
 
-        <generic-input (onFormChange)="saveDraftQuotation()" class="pb-0 pt-2"
+        <generic-input (onFormChange)="setDocumentValue(document)" class="pb-0 pt-2"
           *ngIf="document.addToAffaireMailList && document.isRecipientAffaire" [(model)]="newMailBillingAffaire"
           label="Nouveau mail (entrer pour valider)" [form]="documentForm" propertyName="newMailBillingAffaireBilling"
           [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="true" [icon]="'mail'" [isDisplayLabel]="false"
@@ -496,7 +457,7 @@
           [isMandatory]="false">
         </generic-toggle>
 
-        <generic-input (onFormChange)="saveDraftQuotation()" class="pb-3 pt-2"
+        <generic-input (onFormChange)="setDocumentValue(document)" class="pb-3 pt-2"
           *ngIf="document.addToClientMailList && document.isRecipientClient" [(model)]="newMailBillingClient"
           label="Nouveau mail (entrer pour valider)" [form]="documentForm" propertyName="newMailBillingClientBilling"
           [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="true" [icon]="'mail'" [isDisplayLabel]="false"
@@ -543,7 +504,7 @@
           propertyName="addToAffaireMailListDigital">
         </generic-toggle>
 
-        <generic-input (onFormChange)="saveDraftQuotation()" class="pb-3 pt-2"
+        <generic-input (onFormChange)="setDocumentValue(document)" class="pb-3 pt-2"
           *ngIf="document.addToAffaireMailList && document.isRecipientAffaire" [(model)]="newMailBillingAffaire"
           label="Nouveau mail (entrer pour valider)" [form]="documentForm" propertyName="newMailBillingAffaireDigital"
           [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="true" [icon]="'mail'" [isDisplayLabel]="false"
@@ -573,7 +534,7 @@
           [isMandatory]="false">
         </generic-toggle>
 
-        <generic-input (onFormChange)="saveDraftQuotation()" class="pb-0 pt-2"
+        <generic-input (onFormChange)="setDocumentValue(document)" class="pb-0 pt-2"
           *ngIf="document.addToClientMailList && document.isRecipientClient" [(model)]="newMailBillingClient"
           label="Nouveau mail (entrer pour valider)" [form]="documentForm" propertyName="newMailBillingClientDigital"
           [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="true" [icon]="'mail'" [isDisplayLabel]="false"

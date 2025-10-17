@@ -312,17 +312,19 @@ public class PricingHelper {
                                         if (invoiceItem.getPreTaxPrice() == null)
                                             invoiceItem
                                                     .setPreTaxPrice(assoServiceProvisionType.getDefaultDeboursPrice());
-                                        else
-                                            invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice()
-                                                    .add(assoServiceProvisionType.getDefaultDeboursPrice()));
+                                        else if (invoiceItem.getPreTaxPrice()
+                                                .compareTo(assoServiceProvisionType.getDefaultDeboursPrice()) < 0)
+                                            invoiceItem
+                                                    .setPreTaxPrice(assoServiceProvisionType.getDefaultDeboursPrice());
                                     } else if (billingItem.getBillingType().getIsNonTaxable() == true
                                             && assoServiceProvisionType.getDefaultDeboursPriceNonTaxable() != null) {
                                         if (invoiceItem.getPreTaxPrice() == null)
                                             invoiceItem.setPreTaxPrice(
                                                     assoServiceProvisionType.getDefaultDeboursPriceNonTaxable());
-                                        else
-                                            invoiceItem.setPreTaxPrice(invoiceItem.getPreTaxPrice()
-                                                    .add(assoServiceProvisionType.getDefaultDeboursPriceNonTaxable()));
+                                        else if (invoiceItem.getPreTaxPrice().compareTo(
+                                                assoServiceProvisionType.getDefaultDeboursPriceNonTaxable()) < 0)
+                                            invoiceItem.setPreTaxPrice(
+                                                    assoServiceProvisionType.getDefaultDeboursPriceNonTaxable());
                                     }
                     }
         } else {

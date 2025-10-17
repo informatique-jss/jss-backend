@@ -742,7 +742,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   }
 
   changeStatus(targetStatus: IWorkflowElement<any>) {
-    if (targetStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED && !this.habilitationService.isAdministrator()) {
+    if (targetStatus.code == CUSTOMER_ORDER_STATUS_ABANDONED && instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT && this.quotation.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_OPEN && !this.habilitationService.isAdministrator()) {
       this.appService.displaySnackBar("Impossible, veuillez contacter un administrateur", true, 10);
       return;
     }

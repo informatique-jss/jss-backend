@@ -18,7 +18,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @DoNotAudit
-@Table(indexes = { @Index(name = "idx_post_view_day", columnList = "id_post,day", unique = true),
+@Table(indexes = { @Index(name = "idx_post_view_day", columnList = "id_post,day"),
 })
 public class PostView implements Serializable {
     @Id
