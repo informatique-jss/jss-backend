@@ -30,6 +30,7 @@ import { PaymentType } from '../../model/PaymentType';
 import { Quotation } from '../../model/Quotation';
 import { Service } from '../../model/Service';
 import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
+import { AssoServiceDocumentService } from '../../services/asso.service.document.service';
 import { AttachmentService } from '../../services/attachment.service';
 import { CustomerOrderCommentService } from '../../services/customer.order.comment.service';
 import { CustomerOrderService } from '../../services/customer.order.service';
@@ -78,7 +79,7 @@ export class OrderDetailsComponent implements OnInit {
 
   displayPayButton: boolean = false;
   orderDetailsForm!: FormGroup;
-
+  selectedService: Service | undefined;
   jssEmployee: Employee = { firstname: 'Journal', lastname: 'Spécial des Sociétés', title: '' } as Employee;
   currentDate = new Date();
 
@@ -99,7 +100,8 @@ export class OrderDetailsComponent implements OnInit {
     private formBuilder: FormBuilder,
     private serviceService: ServiceService,
     private quotationService: QuotationService,
-    private gtmService: GtmService
+    private gtmService: GtmService,
+    private assoServiceDocumentService: AssoServiceDocumentService
   ) { }
 
   capitalizeName = capitalizeName;
@@ -195,6 +197,7 @@ export class OrderDetailsComponent implements OnInit {
 
   loadServiceDetails(service: Service, forceLoad: boolean) {
     if (service) {
+      this.selectedService = service;
       if (!this.serviceProvisionAttachments[service.id] || forceLoad)
         this.attachementService.getAttachmentsForProvisionOfService(service).subscribe(response => {
           this.serviceProvisionAttachments[service.id] = response;
@@ -208,14 +211,6 @@ export class OrderDetailsComponent implements OnInit {
 
   disableAttachment(attachment: Attachment) {
     this.currentSelectedAttachmentForDisable = attachment;
-  }
-
-  confirmDisableAttachment(assoServiceDocument: AssoServiceDocument) {
-    if (this.currentSelectedAttachmentForDisable)
-      this.uploadAttachmentService.disableAttachment(this.currentSelectedAttachmentForDisable).subscribe(response => {
-        this.currentSelectedAttachmentForDisable = undefined;
-        this.refreshCurrentAssoAffaireOrder(assoServiceDocument);
-      })
   }
 
   dismissDisableAttachment() {
@@ -239,9 +234,7 @@ export class OrderDetailsComponent implements OnInit {
       );
   }
 
-  refreshCurrentAssoAffaireOrder(assoServiceDocument: AssoServiceDocument | null) {
-    if (assoServiceDocument)
-      this.trackUploadFile(assoServiceDocument);
+  refreshCurrentAssoAffaireOrder() {
     if (this.order)
       this.assoAffaireOrderService.getAssoAffaireOrdersForCustomerOrder(this.order).subscribe(response => {
         this.ordersAssoAffaireOrders = response;
@@ -250,6 +243,20 @@ export class OrderDetailsComponent implements OnInit {
             if (asso.id == this.selectedAssoAffaireOrder.id)
               this.changeAffaire(asso);
       })
+  }
+
+  updateAssoServiceDocument(assoServiceDocument: AssoServiceDocument) {
+    if (assoServiceDocument)
+      this.trackUploadFile(assoServiceDocument);
+
+    this.assoServiceDocumentService.getAssoServiceDocument(assoServiceDocument).subscribe(response => {
+      if (response && this.selectedService) {
+        const index = this.selectedService.assoServiceDocuments.findIndex(asso => asso.id === response.id);
+        if (index !== -1) {
+          this.selectedService.assoServiceDocuments.splice(index, 1, response);
+        }
+      }
+    });
   }
 
   downloadInvoice() {
@@ -281,8 +288,8 @@ export class OrderDetailsComponent implements OnInit {
 
   saveFieldsValue(service: Service) {
     this.serviceService.addOrUpdateService(service).subscribe(response => {
-      this.appService.displayToast("Vos informations complémentaires ont bien été enrengistrées", false, "Succès", 15000);
-      this.refreshCurrentAssoAffaireOrder(null);
+      this.appService.displayToast("Vos informations complémentaires ont bien été enregistrées", false, "Succès", 15000);
+      this.refreshCurrentAssoAffaireOrder();
     })
   }
 
