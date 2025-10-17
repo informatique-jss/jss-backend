@@ -304,11 +304,12 @@ export class CheckoutComponent implements OnInit {
 
   saveDraftQuotation() {
     if (this.quotation) {
-      if (!this.currentUser)
+      if (!this.currentUser) {
         if (this.quotation.isQuotation)
           this.quotationService.setCurrentDraftQuotation(this.quotation);
         else
           this.orderService.setCurrentDraftOrder(this.quotation);
+      }
     }
   }
 
@@ -498,7 +499,7 @@ export class CheckoutComponent implements OnInit {
   }
 
   setDocumentValue(document: Document) {
-    if (this.quotation && document.documentType.code == this.documentTypeBilling.code) {
+    if (this.quotation && (document.documentType.code == this.documentTypeBilling.code || document.documentType.code == this.documentTypeDigital.code)) {
       this.completeBillingDocument();
       if (this.currentUser) {
         if (this.quotation.isQuotation) {
