@@ -8,7 +8,6 @@ import { TrustHtmlPipe } from '../../../../libs/TrustHtmlPipe';
 import { GenericDatePickerComponent } from '../../../miscellaneous/components/forms/generic-date-picker/generic-datetime-picker.component';
 import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { GenericTextareaComponent } from '../../../miscellaneous/components/forms/generic-textarea/generic-textarea.component';
-import { GenericToggleComponent } from '../../../miscellaneous/components/forms/generic-toggle/generic-toggle.component';
 import { SelectAnnouncementNoticeTemplateFragmentComponent } from "../../../miscellaneous/components/forms/select-announcement-notice-template-fragment/select-announcement-notice-template-fragment";
 import { SelectValueServiceFieldTypeComponent } from '../../../miscellaneous/components/forms/select-value-service-field-type/select-value-service-field-type.component';
 import { Service } from '../../../my-account/model/Service';
@@ -30,11 +29,9 @@ import { ServiceFieldTypeService } from '../../services/service.field.type.servi
     GenericTextareaComponent,
     GenericDatePickerComponent,
     SelectValueServiceFieldTypeComponent,
-    GenericToggleComponent,
     SelectAnnouncementNoticeTemplateFragmentComponent]
 })
 export class NoticeTemplateComponent implements OnInit {
-
 
   @Input() service: Service | undefined;
 
@@ -322,13 +319,32 @@ export class NoticeTemplateComponent implements OnInit {
     this.setSelectedFragment(fragment.code);
   }
 
-  changeToggleValue(event: any, index: number) {
-    if (event && this.fragmentSelection[index]) {
+  changeToggleValue(announcementNoticeTemplateFragment: AnnouncementNoticeTemplateFragment, index: number) {
+    if (announcementNoticeTemplateFragment && this.fragmentSelection[index] && !this.isFragmentSelected(announcementNoticeTemplateFragment)) {
       this.selectedFragments.splice(index, 1, this.fragmentSelection[index][0]);
       this.setSelectedFragment(this.fragmentSelection[index][0].code);
     } else {
       this.selectedFragments.splice(index, 1, undefined);
+      this.setSelectedFragment("");
     }
+  }
+
+
+  isSelectedFragmentsContainsFragment(announcementNoticeTemplateFragment: AnnouncementNoticeTemplateFragment): boolean {
+    return this.selectedFragments.findIndex(announcement => announcement?.code == announcementNoticeTemplateFragment.code) == -1 ? false : true;
+
+  }
+
+  getSelectionClassForFragment(announcementNoticeTemplateFragment: AnnouncementNoticeTemplateFragment): string {
+    if (this.isSelectedFragmentsContainsFragment(announcementNoticeTemplateFragment))
+      if (this.isFragmentSelected(announcementNoticeTemplateFragment))
+        return "btn-selected-blue";
+      else
+        return "btn-selected-yellow";
+    else
+      return "btn-disabled"
+
+
   }
 
   getSectionsFragments(fragmentCodes: string[], selectedIndex: number): AnnouncementNoticeTemplateFragment[] {

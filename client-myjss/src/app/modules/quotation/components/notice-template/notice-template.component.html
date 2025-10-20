@@ -73,22 +73,30 @@
             ">
 
             <!-- Block title -->
-            <div class="mb-3">
-              <h6>
-                {{ selections.length > 0 ? getArrayInString(selections) : "Champs spécifiques : " + selections }}</h6>
+            <div class="row align-items-center">
+              <div class="col">
+                <h6 class=" mb-0">
+                  {{ selections.length > 0 ? getArrayInString(selections) : "Champs spécifiques : " + selections }}</h6>
+              </div>
+
+              <div class="col-12 mt-3" *ngIf="selections.length>1">
+                <select-announcement-notice-template-fragment [types]="selections" [(model)]="selectedFragments[i]"
+                  (modelChange)="onFragmentSelectionChange($event, i)" label="Selectionner" [form]="form"
+                  [propertyName]="'select_'+selections[0].code"
+                  [isMandatory]="false"></select-announcement-notice-template-fragment>
+              </div>
+
+              <div class="col-auto" *ngIf="selections.length==1">
+                <button type="button" (click)="changeToggleValue(selections[0], i)"
+                  class=" btn btn-icon rounded-pill fs-xl" [ngClass]="this.getSelectionClassForFragment(selections[0])">
+                  <i class="ai-check"></i>
+                </button>
+              </div>
+
             </div>
 
-            <select-announcement-notice-template-fragment *ngIf="selections.length>1" [types]="selections"
-              [(model)]="selectedFragments[i]" (modelChange)="onFragmentSelectionChange($event, i)" label="Selectionner"
-              [form]="form" [propertyName]="'select_'+selections[0].code"
-              [isMandatory]="false"></select-announcement-notice-template-fragment>
-
-            <generic-toggle *ngIf="selections.length==1" (onFormChange)="changeToggleValue($event, i)"
-              label="Selectionner" [form]="form" [propertyName]="'toggle_'+selections[0].code"
-              [isMandatory]="false"></generic-toggle>
-
             <!-- Loop over placeholder entries -->
-            <div class="" *ngIf="selectedFragments[i]">
+            <div *ngIf="selectedFragments[i]">
               <div class="my-4"
                 *ngFor="let fragmentInstance of fragmentInstancesMap.get(selectedFragments[i]!.code); let fragmentIndex=index">
 

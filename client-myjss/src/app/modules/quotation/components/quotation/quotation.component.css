@@ -90,12 +90,60 @@ h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1 {
 
 :host ::ng-deep .btn-outline-danger:hover {
   border-color: #fff;
-  background-color: #ed5050;
+  background-color: var(--ar-danger);
 }
 
 :host ::ng-deep .btn-outline-danger:hover i {
   color: var(--ar-primary);
   border-color: var(--ar-secondary);
+}
+
+:host ::ng-deep .btn-warning {
+  background-color: #f0d36a;
+}
+
+:host ::ng-deep .btn-warning i {
+  color: #ffff;
+}
+
+:host ::ng-deep .btn-warning:hover {
+  border-color: #fff;
+  background-color: var(--ar-warning);
+}
+
+:host ::ng-deep .btn-warning:hover i {
+  color: var(--ar-primary);
+  border-color: var(--ar-secondary);
+}
+
+:host ::ng-deep .btn-selected-blue {
+  background-color: var(--ar-secondary-bg);
+  border-color: var(--ar-secondary);
+}
+
+:host ::ng-deep .btn-selected-blue i {
+  color: white;
+}
+
+:host ::ng-deep .btn-selected-yellow {
+  background-color: var(--ar-tertiary-bg);
+}
+
+:host ::ng-deep .btn-selected-yellow i {
+  color: white;
+}
+
+:host ::ng-deep .btn-disabled {
+  background-color: var(--ar-gray-400);
+}
+
+:host ::ng-deep .btn-disabled:hover {
+  background-color: var(--ar-gray-400);
+  border-color: var(--ar-gray-400);
+}
+
+:host ::ng-deep .btn-disabled i {
+  color: white;
 }
 
 :host ::ng-deep .form-label {
