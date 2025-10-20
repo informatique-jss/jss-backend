@@ -254,6 +254,7 @@ export class IdentificationComponent implements OnInit {
   startQuotation() {
     this.appService.showLoadingSpinner();
     if (this.selectedQuotationType) {
+      this.trackBeginCheckout();
       if (this.currentUser) {
         if (this.selectedQuotationType.id == QUOTATION_TYPE_QUOTATION.id) {
           this.quotation.isQuotation = true;
