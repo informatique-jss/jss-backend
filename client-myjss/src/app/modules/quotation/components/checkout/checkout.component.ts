@@ -259,6 +259,7 @@ export class CheckoutComponent implements OnInit {
       if (this.quotation.isQuotation)
         this.quotationService.saveQuotation(this.quotation, !isDraft).subscribe(response => {
           if (response) {
+            this.trackPurchase(isDraft, this.quotation!.id);
             this.cleanStorageData();
             this.appService.hideLoadingSpinner();
             this.appService.openRoute(undefined, "account/quotations/details/" + response, undefined);
@@ -267,6 +268,7 @@ export class CheckoutComponent implements OnInit {
       else
         this.orderService.saveOrder(this.quotation, !isDraft).subscribe(response => {
           if (response) {
+            this.trackPurchase(isDraft, this.quotation!.id);
             this.cleanStorageData();
             this.appService.hideLoadingSpinner();
             this.appService.openRoute(undefined, "account/orders/details/" + response, undefined);
