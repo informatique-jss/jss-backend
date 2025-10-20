@@ -101,7 +101,9 @@
 
                       <!-- TEXT -->
                       <generic-input *ngIf="placeholder.dataType === SERVICE_FIELD_TYPE_TEXT"
-                        [(model)]="placeholder.label" [label]="placeholder.label + ' '+ fragmentIndex" [form]="form"
+                        [(model)]="placeholder.label"
+                        [label]="getFragmentInputLabel(placeholder, fragmentIndex, fragmentInstancesMap.get(selectedFragments[i]!.code)!)"
+                        [form]="form"
                         [propertyName]="buildFormControlName(fragmentInstance.code, placeholder, fragmentIndex)"
                         [isDisabled]="false" [isMandatory]="false" [maxLength]="255">
                       </generic-input>
@@ -109,35 +111,43 @@
                       <!-- TEXTAREA -->
                       <generic-textarea *ngIf="placeholder.dataType === SERVICE_FIELD_TYPE_TEXTAREA"
                         [ngClass]="{'w-100': placeholder.dataType === SERVICE_FIELD_TYPE_TEXTAREA}"
-                        [(model)]="placeholder.value" [label]="placeholder.label + ' '+ fragmentIndex" [form]="form"
+                        [(model)]="placeholder.value"
+                        [label]="getFragmentInputLabel(placeholder, fragmentIndex, fragmentInstancesMap.get(selectedFragments[i]!.code)!)"
+                        [form]="form"
                         [propertyName]="buildFormControlName(fragmentInstance.code, placeholder, fragmentIndex)"
                         [isDisabled]="false" [isMandatory]="false">
                       </generic-textarea>
 
                       <!-- DATE -->
                       <generic-date-picker *ngIf="placeholder.dataType === SERVICE_FIELD_TYPE_DATE"
-                        [(model)]="placeholder.value" [label]="placeholder.label + ' '+ fragmentIndex" [form]="form"
+                        [(model)]="placeholder.value"
+                        [label]="getFragmentInputLabel(placeholder, fragmentIndex, fragmentInstancesMap.get(selectedFragments[i]!.code)!)"
+                        [form]="form"
                         [propertyName]="buildFormControlName(fragmentInstance.code, placeholder, fragmentIndex)"
                         [isMandatory]="false" [isDisabled]="false">
                       </generic-date-picker>
 
                       <!-- INTEGER -->
                       <generic-input *ngIf="placeholder.dataType === SERVICE_FIELD_TYPE_INTEGER"
-                        [(model)]="placeholder.value" [label]="placeholder.label + ' '+ fragmentIndex" [form]="form"
+                        [(model)]="placeholder.value"
+                        [label]="getFragmentInputLabel(placeholder, fragmentIndex, fragmentInstancesMap.get(selectedFragments[i]!.code)!)"
+                        [form]="form"
                         [propertyName]="buildFormControlName(fragmentInstance.code, placeholder, fragmentIndex)"
                         [isDisabled]="false" type="number">
                       </generic-input>
 
                       <!-- SELECT -->
                       <select-value-service-field-type *ngIf="placeholder.dataType === SERVICE_FIELD_TYPE_SELECT"
-                        [(model)]="placeholder.value" [label]="placeholder.label + ' '+ fragmentIndex" [form]="form"
+                        [(model)]="placeholder.value"
+                        [label]="getFragmentInputLabel(placeholder, fragmentIndex, fragmentInstancesMap.get(selectedFragments[i]!.code)!)"
+                        [form]="form"
                         [propertyName]="buildFormControlName(fragmentInstance.code, placeholder, fragmentIndex)"
                         [isMandatory]="false" [isDisabled]="false">
                       </select-value-service-field-type>
 
                       <!-- DEFAULT / UNKNOWN -->
                       <generic-input *ngIf="!placeholder.dataType" [model]="placeholder.value"
-                        [label]="placeholder.label ? placeholder.label + ' '+ fragmentIndex : placeholder.code + ' '+ fragmentIndex"
+                        [label]="getFragmentInputLabel(placeholder, fragmentIndex, fragmentInstancesMap.get(selectedFragments[i]!.code)!)"
                         [form]="form"
                         [propertyName]="buildFormControlName(fragmentInstance.code, placeholder, fragmentIndex)"
                         [isMandatory]="true" [isDisabled]="false" type="text">
@@ -146,6 +156,8 @@
                     </div>
                   </div>
                 </div>
+                <hr
+                  *ngIf="fragmentInstancesMap.get(selectedFragments[i]!.code)!.length>1 && fragmentIndex < fragmentInstancesMap.get(selectedFragments[i]!.code)!.length-1">
               </div>
               <div *ngIf="selectedFragments[i] && selectedFragments[i]!.isMultiple"
                 class="row gap-2 justify-content-end">

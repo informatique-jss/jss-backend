@@ -194,6 +194,7 @@ export class NoticeTemplateComponent implements OnInit {
             i++;
           }
           text = text.replace(new RegExp(`\\[\\s*${fragmentFound.code}\\s*\\]`), `<div id="fragment-${fragmentFound.code}" class="fragment-box ${this.getFragmentClass(fragmentFound.code)}">` + fragmentTextToReplace + "</div>");
+          text = text.replace("/n", "<br>"); // if user adds a paragraph break, we want to display it
         }
       }
     }
@@ -250,8 +251,8 @@ export class NoticeTemplateComponent implements OnInit {
   }
 
   /**
-  Returns the name of the CSS class corresponding to the fragment's color.
-  */
+   Returns the name of the CSS class corresponding to the fragment's color.
+   */
   private getFragmentClass(code: string): string {
     const color = this.fragmentBordersColorsMap.get(code);
     if (!color) return 'fragment-box';
@@ -364,5 +365,20 @@ export class NoticeTemplateComponent implements OnInit {
     }
 
     this.updateDisplayText();
+  }
+
+  getFragmentInputLabel(placeholder: ServiceFieldType, fragmentIndex: number, fragmentInstances: AnnouncementNoticeTemplateFragment[]): string {
+    let baseLabel = "";
+    if (placeholder.label)
+      baseLabel = placeholder.label;
+    else
+      baseLabel = placeholder.code;
+
+    if (fragmentInstances.length > 1) {
+      let fragmentIndexCopy = fragmentIndex + 1;
+      return baseLabel + " " + fragmentIndexCopy;
+    } else {
+      return baseLabel;
+    }
   }
 }

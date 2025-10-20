@@ -214,11 +214,12 @@ export class IdentificationComponent implements OnInit {
   canStartQuotation() {
     if (this.quotation && this.quotation.assoAffaireOrders && this.quotation.assoAffaireOrders.length > 0) {
       let allAssoOk = true;
-      for (let asso of this.quotation.assoAffaireOrders) {
+      for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++) {
+        let asso = this.quotation.assoAffaireOrders[i];
         if (!asso.affaire) {
           allAssoOk = false;
         } else if (!asso.affaire.id) {
-          if (asso.affaire.isIndividual) {
+          if (!this.isRegisteredAffaire[i]) {
             if (!asso.affaire.firstname || !asso.affaire.lastname) {
               allAssoOk = false
             }
