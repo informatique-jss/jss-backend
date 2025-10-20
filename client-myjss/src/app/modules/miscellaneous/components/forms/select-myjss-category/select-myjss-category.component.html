@@ -3,7 +3,8 @@
     <label [for]="'fl-text'+uniqueId" *ngIf="isDisplayLabel && label && label.length > 0"
       class="form-label">{{label}}</label>
     <select class="form-control select-custom" [formControlName]="propertyName" [id]="'fl-text'+uniqueId"
-      [required]="isMandatory" [compareWith]="compareWithId" (blur)="blurForm()" [disabled]="isDisabled">
+      [required]="isMandatory" [compareWith]="compareWithId" (blur)="blurForm()" (focus)="focusForm()"
+      [disabled]="isDisabled">
       <option *ngFor="let type of types" [ngValue]="type">
         {{ displayLabel(type) }}
       </option>

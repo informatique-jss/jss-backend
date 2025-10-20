@@ -72,6 +72,32 @@ h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1 {
   color: #2C4057;
 }
 
+.btn.btn-outline-primary:hover {
+  color: var(--ar-secondary);
+}
+
+:host ::ng-deep .btn.btn-outline-secondary {
+  color: #2C4057;
+}
+
+:host ::ng-deep .btn-outline-danger {
+  color: var(--ar-danger);
+}
+
+:host ::ng-deep .btn-outline-danger i {
+  color: var(--ar-danger);
+}
+
+:host ::ng-deep .btn-outline-danger:hover {
+  border-color: #fff;
+  background-color: #ed5050;
+}
+
+:host ::ng-deep .btn-outline-danger:hover i {
+  color: var(--ar-primary);
+  border-color: var(--ar-secondary);
+}
+
 :host ::ng-deep .form-label {
   color: var(--ar-secondary);
 }
@@ -81,14 +107,6 @@ h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1 {
 }
 
 :host ::ng-deep .form-control:focus {
-  color: #2C4057;
-}
-
-.btn.btn-outline-primary:hover {
-  color: var(--ar-secondary);
-}
-
-:host ::ng-deep .btn.btn-outline-secondary {
   color: #2C4057;
 }
 

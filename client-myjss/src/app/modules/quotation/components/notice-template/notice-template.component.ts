@@ -35,14 +35,14 @@ import { ServiceFieldTypeService } from '../../services/service.field.type.servi
 })
 export class NoticeTemplateComponent implements OnInit {
 
+
   @Input() service: Service | undefined;
 
   templates: AnnouncementNoticeTemplate[] = [];
   fragmentsFound: AnnouncementNoticeTemplateFragment[] = [];
   selectedFragments: (AnnouncementNoticeTemplateFragment | undefined)[] = [];
   fragmentInstancesMap = new Map<string, AnnouncementNoticeTemplateFragment[]>();
-  fragmentBordersColorsMap = new Map<string, string>();
-  usableColors: string[] = ["#1c2d41", "#ed5050", "#3fca90", "#f3e3ca", "#3687d8"];
+  selectedFragmentCode: string = '';
 
   fragmentSelection: AnnouncementNoticeTemplateFragment[][] = [];
   placeholdersMap = new Map<string, ServiceFieldType[]>();
@@ -151,7 +151,6 @@ export class NoticeTemplateComponent implements OnInit {
         let fragmentFound = this.fragmentsFound.find(fragment => fragment.code == fragmentPart);
         if (fragmentFound) {
           selectionFragmentsFounds.push(fragmentFound);
-          this.fragmentBordersColorsMap.set(fragmentFound.code, this.usableColors[i % 5]);
         }
       }
       this.fragmentSelection.push(selectionFragmentsFounds);
@@ -193,7 +192,7 @@ export class NoticeTemplateComponent implements OnInit {
             fragmentTextToReplace = this.findAndReplacePlaceholders(fragmentFound, fragmentTextToReplace, this.placeholdersMap.get(fragmentFound.code) ?? [], i);
             i++;
           }
-          text = text.replace(new RegExp(`\\[\\s*${fragmentFound.code}\\s*\\]`), `<div id="fragment-${fragmentFound.code}" class="fragment-box ${this.getFragmentClass(fragmentFound.code)}">` + fragmentTextToReplace + "</div>");
+          text = text.replace(new RegExp(`\\[\\s*${fragmentFound.code}\\s*\\]`), `<div id="fragment-${fragmentFound.code}" class="fragment-box ${this.getFragmentClass(fragmentFound)}">` + fragmentTextToReplace + "</div>");
           text = text.replace("/n", "<br>"); // if user adds a paragraph break, we want to display it
         }
       }
@@ -250,16 +249,26 @@ export class NoticeTemplateComponent implements OnInit {
     return new RegExp(pattern, 'g');
   }
 
-  /**
-   Returns the name of the CSS class corresponding to the fragment's color.
-   */
-  private getFragmentClass(code: string): string {
-    const color = this.fragmentBordersColorsMap.get(code);
-    if (!color) return 'fragment-box';
+  setSelectedFragment(fragmentCode: string) {
+    if (fragmentCode != this.selectedFragmentCode) {
+      this.selectedFragmentCode = fragmentCode;
+      this.updateDisplayText();
+      this.scrollToFragment(fragmentCode);
+    }
+  }
 
-    // Sanitizes the color name to generate a valid class (e.g., #FF0000 -> ff0000)
-    const safeColor = color.replace('#', '').toLowerCase();
-    return `fragment-border-${safeColor}`;
+  isFragmentSelected(announcementNoticeTemplateFragment: AnnouncementNoticeTemplateFragment | undefined) {
+    if (announcementNoticeTemplateFragment)
+      return announcementNoticeTemplateFragment.code === this.selectedFragmentCode;
+    else
+      return false;
+  }
+
+  getFragmentClass(announcementNoticeTemplateFragment: AnnouncementNoticeTemplateFragment | undefined): string {
+    if (announcementNoticeTemplateFragment)
+      if (announcementNoticeTemplateFragment.code === this.selectedFragmentCode)
+        return "selected-fragment";
+    return "fragment-border";
   }
 
   private scrollToFragment(code: string): void {
@@ -310,13 +319,13 @@ export class NoticeTemplateComponent implements OnInit {
 
   onFragmentSelectionChange(fragment: AnnouncementNoticeTemplateFragment, index: number) {
     this.selectedFragments[index] = fragment;
-    this.scrollToFragment(fragment.code);
+    this.setSelectedFragment(fragment.code);
   }
 
   changeToggleValue(event: any, index: number) {
     if (event && this.fragmentSelection[index]) {
       this.selectedFragments.splice(index, 1, this.fragmentSelection[index][0]);
-      this.scrollToFragment(this.fragmentSelection[index][0].code);
+      this.setSelectedFragment(this.fragmentSelection[index][0].code);
     } else {
       this.selectedFragments.splice(index, 1, undefined);
     }

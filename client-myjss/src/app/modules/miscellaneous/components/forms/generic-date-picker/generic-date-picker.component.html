@@ -4,6 +4,6 @@
       class="form-label">{{label}}</label>
     <input class="form-control form-control" [min]="getDateFormated(minDate)" [max]="getDateFormated(maxDate)"
       [id]="'fl-text'+uniqueId" (change)="dateChange()" [required]="isMandatory" [formControlName]="propertyName"
-      [placeholder]="label" (blur)="blurForm()" type="date">
+      [placeholder]="label" (blur)="blurForm()" (focus)="focusForm()" type="date">
   </div>
 </div>
