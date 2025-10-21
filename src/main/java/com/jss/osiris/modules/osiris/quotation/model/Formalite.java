@@ -1,6 +1,6 @@
 package com.jss.osiris.modules.osiris.quotation.model;
-import java.io.Serializable;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -52,7 +52,7 @@ public class Formalite implements IId, Serializable {
     private CompetentAuthority waitedCompetentAuthority;
 
     @OneToMany(mappedBy = "formalite")
-    @JsonIgnoreProperties(value = { "content" })
+    @JsonIgnoreProperties(value = { "contentParsed", "payload" })
     @IndexedField
     @JsonView({ JacksonViews.OsirisDetailedView.class })
     private List<FormaliteGuichetUnique> formalitesGuichetUnique;

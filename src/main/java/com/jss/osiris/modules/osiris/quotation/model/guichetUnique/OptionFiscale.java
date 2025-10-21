@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.jss.osiris.libs.search.model.DoNotAudit;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.ConditionVersementTVA;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.DeviseCapital;
@@ -16,9 +15,7 @@ import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.RegimeImpositionBenefices2;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.RegimeImpositionTVA;
 
-import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,9 +25,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 
-@Entity
-@Cacheable(false)
-@DoNotAudit
 public class OptionFiscale implements Serializable, IId {
 
     @Id

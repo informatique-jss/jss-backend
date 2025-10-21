@@ -115,11 +115,11 @@ public class GuichetUniqueSignatureServiceImpl implements GuichetUniqueSignature
             HashMap<FormaliteGuichetUnique, String[]> documentFilenameList)
             throws OsirisException, OsirisClientMessageException {
         for (FormaliteGuichetUnique formaliteGuichetUnique : formalites) {
-            if (formaliteGuichetUnique.getContent().getPiecesJointes() != null
-                    && formaliteGuichetUnique.getContent().getPiecesJointes().size() > 0) {
+            if (formaliteGuichetUnique.getPiecesJointes() != null
+                    && formaliteGuichetUnique.getPiecesJointes().size() > 0) {
                 PiecesJointe lastSynthesis = null;
                 PiecesJointe lastBe = null;
-                for (PiecesJointe piecesJointe : formaliteGuichetUnique.getContent().getPiecesJointes()) {
+                for (PiecesJointe piecesJointe : formaliteGuichetUnique.getPiecesJointes()) {
 
                     if (piecesJointe.getTypeDocument().getCode()
                             .equals(constantService.getDocumentTypeSynthesisUnsigned().getCode())) {

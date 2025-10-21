@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import com.jss.osiris.libs.search.model.DoNotAudit;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.DeviseCapital;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.NatureDesActivite;
@@ -12,9 +11,7 @@ import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.OrigineFusionScission;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDeStatuts;
 
-import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,9 +20,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 
-@Entity
-@DoNotAudit
-@Cacheable(false)
 public class Description implements Serializable, IId {
 
     @Id

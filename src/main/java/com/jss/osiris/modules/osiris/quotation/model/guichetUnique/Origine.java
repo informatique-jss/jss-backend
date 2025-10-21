@@ -2,14 +2,11 @@ package com.jss.osiris.modules.osiris.quotation.model.guichetUnique;
 
 import java.io.Serializable;
 
-import com.jss.osiris.libs.search.model.DoNotAudit;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeOrigine;
 
-import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -18,9 +15,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 
-@Entity
-@Cacheable(false)
-@DoNotAudit
 public class Origine implements Serializable, IId {
 
     @Id

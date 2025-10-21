@@ -193,12 +193,12 @@ export class CheckoutComponent implements OnInit {
     }
   }
 
-  trackPurchase(isDraft: boolean, quotationId: number) {
+  trackPurchase(isDraft: boolean, quotationId: number, type: 'order' | 'quotation') {
     if (this.quotation)
       this.gtmService.trackPurchase(
         {
           business: {
-            type: 'order',
+            type: type,
             order_id: quotationId,
             amount: this.totalPrice,
             service: this.quotation.serviceFamilyGroup!.label,
@@ -229,7 +229,7 @@ export class CheckoutComponent implements OnInit {
         if (this.quotation.isQuotation)
           this.quotationService.saveFinalQuotation(this.quotation as Quotation, !isDraft).subscribe(response => {
             if (response && response.id) {
-              this.trackPurchase(isDraft, response.id);
+              this.trackPurchase(isDraft, response.id, 'quotation');
               this.cleanStorageData();
               this.appService.hideLoadingSpinner();
               this.loginService.refreshUserRoles().subscribe(role => {
@@ -243,7 +243,7 @@ export class CheckoutComponent implements OnInit {
         else
           this.orderService.saveFinalOrder(this.quotation as CustomerOrder, !isDraft).subscribe(response => {
             if (response && response.id) {
-              this.trackPurchase(isDraft, response.id);
+              this.trackPurchase(isDraft, response.id, 'order');
               this.cleanStorageData();
               this.appService.hideLoadingSpinner();
               this.loginService.refreshUserRoles().subscribe(role => {
@@ -259,7 +259,7 @@ export class CheckoutComponent implements OnInit {
       if (this.quotation.isQuotation)
         this.quotationService.saveQuotation(this.quotation, !isDraft).subscribe(response => {
           if (response) {
-            this.trackPurchase(isDraft, this.quotation!.id);
+            this.trackPurchase(isDraft, this.quotation!.id, 'quotation');
             this.cleanStorageData();
             this.appService.hideLoadingSpinner();
             this.appService.openRoute(undefined, "account/quotations/details/" + response, undefined);
@@ -268,7 +268,7 @@ export class CheckoutComponent implements OnInit {
       else
         this.orderService.saveOrder(this.quotation, !isDraft).subscribe(response => {
           if (response) {
-            this.trackPurchase(isDraft, this.quotation!.id);
+            this.trackPurchase(isDraft, this.quotation!.id, 'order');
             this.cleanStorageData();
             this.appService.hideLoadingSpinner();
             this.appService.openRoute(undefined, "account/orders/details/" + response, undefined);

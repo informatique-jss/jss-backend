@@ -47,8 +47,6 @@ import com.jss.osiris.modules.osiris.quotation.model.ServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 import com.jss.osiris.modules.osiris.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDocument;
-import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeFormalite;
-import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypePersonne;
 import com.jss.osiris.modules.osiris.tiers.model.BillingClosureRecipientType;
 import com.jss.osiris.modules.osiris.tiers.model.BillingClosureType;
 import com.jss.osiris.modules.osiris.tiers.model.BillingLabelType;
@@ -399,20 +397,6 @@ public interface ConstantService {
     public Department getDepartmentReunion() throws OsirisException;
 
     public PublishingDepartment getPublishingDepartmentIdf() throws OsirisException;
-
-    public TypePersonne getTypePersonnePersonnePhysique() throws OsirisException;
-
-    public TypePersonne getTypePersonnePersonneMorale() throws OsirisException;
-
-    public TypePersonne getTypePersonneExploitation() throws OsirisException;
-
-    public TypeFormalite getTypeFormaliteCessation() throws OsirisException;
-
-    public TypeFormalite getTypeFormaliteModification() throws OsirisException;
-
-    public TypeFormalite getTypeFormaliteCreation() throws OsirisException;
-
-    public TypeFormalite getTypeFormaliteCorrection() throws OsirisException;
 
     public String getStringAccountingSharedMaiblox() throws OsirisException;
 

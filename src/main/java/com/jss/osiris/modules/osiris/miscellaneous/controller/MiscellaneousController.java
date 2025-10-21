@@ -639,18 +639,6 @@ public class MiscellaneousController {
         validationHelper.validateReferential(constant.getDepartmentMartinique(), true, "DepartmentMartinique");
         validationHelper.validateReferential(constant.getDepartmentGuadeloupe(), true, "DepartmentGuadeloupe");
         validationHelper.validateReferential(constant.getDepartmentReunion(), true, "DepartmentReunion");
-        validationHelper.validateReferential(constant.getTypePersonnePersonnePhysique(), true,
-                "TypePersonnePersonnePhysique");
-        validationHelper.validateReferential(constant.getTypePersonneExploitation(), true,
-                "TypePersonneExploitation");
-        validationHelper.validateReferential(constant.getTypePersonnePersonneMorale(), true,
-                "TypePersonnePersonneMorale");
-        validationHelper.validateReferential(constant.getTypeFormaliteCessation(), true, "TypeFormaliteCessation");
-        validationHelper.validateReferential(constant.getTypeFormaliteCorrection(), true,
-                "TypeFormaliteCorrection");
-        validationHelper.validateReferential(constant.getTypeFormaliteModification(), true,
-                "TypeFormaliteModification");
-        validationHelper.validateReferential(constant.getTypeFormaliteCreation(), true, "TypeFormaliteCreation");
         validationHelper.validateReferential(constant.getBillingClosureRecipientTypeClient(), true,
                 "BillingClosureRecipientTypeClient");
         validationHelper.validateReferential(constant.getBillingClosureRecipientTypeResponsable(), true,

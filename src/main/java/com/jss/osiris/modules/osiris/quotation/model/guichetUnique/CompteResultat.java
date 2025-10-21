@@ -2,11 +2,7 @@ package com.jss.osiris.modules.osiris.quotation.model.guichetUnique;
 
 import java.io.Serializable;
 
-import com.jss.osiris.libs.search.model.DoNotAudit;
-
-import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,9 +11,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 
-@Entity
-@DoNotAudit
-@Cacheable(false)
 public class CompteResultat implements Serializable {
     @Id
     @SequenceGenerator(name = "guichet_unique_compte_resultat_sequence", sequenceName = "guichet_unique_compte_resultat_sequence", allocationSize = 1)

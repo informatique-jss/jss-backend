@@ -10,6 +10,7 @@ import com.jss.osiris.modules.osiris.quotation.model.AssoServiceTypeDocument;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDocument;
 import com.jss.osiris.modules.osiris.quotation.repository.guichetUnique.TypeDocumentRepository;
+import com.jss.osiris.modules.osiris.quotation.service.AssoServiceTypeDocumentService;
 
 @Service
 public class TypeDocumentServiceImpl implements TypeDocumentService {
