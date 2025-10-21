@@ -20476,9 +20476,11 @@ ng-autocomplete .autocomplete-container b {
 
 .selected-fragment {
   border: solid 2px var(--ar-secondary);
-  box-shadow: 10px 10px 10px #1c2d418a;
+  box-shadow: 5px 5px 10px #1c2d418a;
+  margin: -10px;
 }
 
 .fragment-border {
   border: solid 2px var(--ar-tertiary);
+  margin: 0px;
 }
