@@ -219,7 +219,7 @@ export class IdentificationComponent implements OnInit {
         if (!asso.affaire) {
           allAssoOk = false;
         } else if (!asso.affaire.id) {
-          if (!this.isRegisteredAffaire[i]) {
+          if (this.affaireTypes[i].id == individual.id) {
             if (!asso.affaire.firstname || !asso.affaire.lastname) {
               allAssoOk = false;
             }
