@@ -6,10 +6,7 @@ import com.jss.osiris.libs.search.model.DoNotAudit;
 
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.SequenceGenerator;
 
 @Entity
 @DoNotAudit
@@ -17,24 +14,10 @@ import jakarta.persistence.SequenceGenerator;
 public class Partenaire implements Serializable {
 
     @Id
-    @SequenceGenerator(name = "guichet_unique_partenaire_sequence", sequenceName = "guichet_unique_partenaire_sequence", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "guichet_unique_partenaire_sequence")
-    private Integer id;
-
     private String codifNorme;
     private String libelleCourt;
     private String denomination;
     private boolean isInpi;
-    private String created;
-    private String updated;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getCodifNorme() {
         return codifNorme;
@@ -66,22 +49,6 @@ public class Partenaire implements Serializable {
 
     public void setInpi(boolean isInpi) {
         this.isInpi = isInpi;
-    }
-
-    public String getCreated() {
-        return created;
-    }
-
-    public void setCreated(String created) {
-        this.created = created;
-    }
-
-    public String getUpdated() {
-        return updated;
-    }
-
-    public void setUpdated(String updated) {
-        this.updated = updated;
     }
 
 }

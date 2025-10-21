@@ -6,8 +6,6 @@ import java.time.LocalDate;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.DoNotAudit;
-import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.DocumentExtension;
-import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TaciteReconduction;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDocument;
 
 import jakarta.persistence.CascadeType;
@@ -31,9 +29,9 @@ public class PiecesJointe implements Serializable {
     private String nomDocument;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_content")
+    @JoinColumn(name = "id_formalite_guichet_unique")
     @JsonIgnoreProperties(value = { "piecesJointes" }, allowSetters = true)
-    Content content;
+    FormaliteGuichetUnique formaliteGuichetUnique;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_type_document")
@@ -51,10 +49,6 @@ public class PiecesJointe implements Serializable {
     @Column()
     private LocalDate finValidite;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_tacite_reconduction")
-    TaciteReconduction taciteReconduction;
-
     @Column(length = 255)
     private String autoriteDelivrance;
 
@@ -69,10 +63,6 @@ public class PiecesJointe implements Serializable {
 
     @Column(length = 255)
     private String documentBase64;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_document_extension")
-    DocumentExtension documentExtension;
 
     @Column(length = 255)
     private String sousTypeDocument;
@@ -142,14 +132,6 @@ public class PiecesJointe implements Serializable {
         this.finValidite = finValidite;
     }
 
-    public TaciteReconduction getTaciteReconduction() {
-        return taciteReconduction;
-    }
-
-    public void setTaciteReconduction(TaciteReconduction taciteReconduction) {
-        this.taciteReconduction = taciteReconduction;
-    }
-
     public String getAutoriteDelivrance() {
         return autoriteDelivrance;
     }
@@ -188,14 +170,6 @@ public class PiecesJointe implements Serializable {
 
     public void setDocumentBase64(String documentBase64) {
         this.documentBase64 = documentBase64;
-    }
-
-    public DocumentExtension getDocumentExtension() {
-        return documentExtension;
-    }
-
-    public void setDocumentExtension(DocumentExtension documentExtension) {
-        this.documentExtension = documentExtension;
     }
 
     public String getSousTypeDocument() {
@@ -238,14 +212,6 @@ public class PiecesJointe implements Serializable {
         this.codePostalLieuDelivrance = codePostalLieuDelivrance;
     }
 
-    public Content getContent() {
-        return content;
-    }
-
-    public void setContent(Content content) {
-        this.content = content;
-    }
-
     public Boolean getIsAlreadySigned() {
         return isAlreadySigned;
     }
@@ -260,6 +226,14 @@ public class PiecesJointe implements Serializable {
 
     public void setCreated(String created) {
         this.created = created;
+    }
+
+    public FormaliteGuichetUnique getFormaliteGuichetUnique() {
+        return formaliteGuichetUnique;
+    }
+
+    public void setFormaliteGuichetUnique(FormaliteGuichetUnique formaliteGuichetUnique) {
+        this.formaliteGuichetUnique = formaliteGuichetUnique;
     }
 
 }

@@ -3,12 +3,9 @@ package com.jss.osiris.modules.osiris.quotation.model.guichetUnique;
 import java.io.Serializable;
 import java.time.LocalDate;
 
-import com.jss.osiris.libs.search.model.DoNotAudit;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
-import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,9 +14,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 
-@Entity
-@Cacheable(false)
-@DoNotAudit
 public class Repreneur implements Serializable, IId {
 
     @Id

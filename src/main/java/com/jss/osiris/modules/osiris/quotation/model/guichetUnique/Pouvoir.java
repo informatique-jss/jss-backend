@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.jss.osiris.libs.search.model.DoNotAudit;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.CapaciteEngagement;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.Perimetre;
@@ -14,28 +13,17 @@ import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.StatutPourLaFormalite;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDePersonne;
 
-import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.Table;
 
-@Entity
-@Cacheable(false)
-@DoNotAudit
-@Table(indexes = {
-        @Index(name = "idx_pouvoir_composition", columnList = "id_composition"),
-        @Index(name = "idx_pouvoir_detail_cessation", columnList = "id_detail_cessation_entreprise"),
-        @Index(name = "idx_pouvoir_detail_etablissement", columnList = "id_detail_cessation_etablissement") })
 public class Pouvoir implements Serializable, IId {
 
     @Id

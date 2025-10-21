@@ -48,11 +48,6 @@ import { DomiciliationFeesComponent } from '../domiciliation-fees/domiciliation-
 import { DomiciliationComponent } from '../domiciliation/domiciliation.component';
 import { FormaliteAssociateDialog } from '../formalite-associate-dialog/formalite-associate-dialog';
 import { FormaliteComponent } from '../formalite/formalite.component';
-import { ContentComponent } from '../guichet-unique/content/content.component';
-import { EntrepriseComponent } from '../guichet-unique/entreprise/entreprise.component';
-import { IdentiteComponent } from '../guichet-unique/identite/identite.component';
-import { NatureCreationComponent } from '../guichet-unique/nature-creation/nature-creation.component';
-import { PersonnePhysiqueComponent } from '../guichet-unique/personne-physique/personne-physique.component';
 import { IncidentReportListComponent } from '../incident-report-list/incident-report-list.component';
 import { InfogreffeStatusComponent } from '../infogreffe-status/infogreffe-status.component';
 import { InvoiceManagementComponent } from '../invoice-management/invoice-management.component';
@@ -174,11 +169,6 @@ const routes: Routes = [
     RefundPaymentDialogComponent,
     ProvisionPaymentComponent,
     // Guichet unique
-    ContentComponent,
-    NatureCreationComponent,
-    PersonnePhysiqueComponent,
-    IdentiteComponent,
-    EntrepriseComponent,
     GuichetUniqueStatusComponent,
     DebourComponent,
     ActeDepositComponent,

@@ -2,16 +2,10 @@ package com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials
 
 import java.io.Serializable;
 
-import com.jss.osiris.libs.search.model.DoNotAudit;
 import com.jss.osiris.modules.osiris.miscellaneous.model.ICode;
 
-import jakarta.persistence.Cacheable;
-import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
-@Entity
-@DoNotAudit
-@Cacheable(false)
 public class TutelleCuratelle implements Serializable, ICode {
     public TutelleCuratelle(String code) {
         this.code = code;

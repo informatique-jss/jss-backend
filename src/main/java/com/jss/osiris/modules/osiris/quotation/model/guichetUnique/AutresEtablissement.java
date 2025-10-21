@@ -5,30 +5,18 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.jss.osiris.libs.search.model.DoNotAudit;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
-import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.Table;
 
-@Entity
-@Cacheable(false)
-@DoNotAudit
-@Table(indexes = {
-        @Index(name = "idx_autres_etablissement_exploitation", columnList = "id_exploitation"),
-        @Index(name = "idx_autres_etablissement_personne_morale", columnList = "id_personne_morale"),
-        @Index(name = "idx_autres_etablissement_personne_physique", columnList = "id_personne_physique") })
 public class AutresEtablissement implements Serializable, IId {
 
     @Id

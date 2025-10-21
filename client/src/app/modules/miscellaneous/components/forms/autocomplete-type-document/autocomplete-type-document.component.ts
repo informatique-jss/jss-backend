@@ -1,4 +1,4 @@
-import { Component, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { TypeDocument } from 'src/app/modules/quotation/model/guichet-unique/referentials/TypeDocument';
 import { AppService } from 'src/app/services/app.service';
@@ -14,6 +14,7 @@ import { GenericLocalAutocompleteComponent } from '../generic-local-autocomplete
 export class AutocompleteTypeDocumentComponent extends GenericLocalAutocompleteComponent<TypeDocument> implements OnInit {
 
   types: TypeDocument[] = [] as Array<TypeDocument>;
+  @Input() onlyDisplayWithAttachmentType: boolean = false;
 
   constructor(private formBuild: UntypedFormBuilder, private typeDocumentService: TypeDocumentService,
     private constantService: ConstantService,
@@ -33,7 +34,12 @@ export class AutocompleteTypeDocumentComponent extends GenericLocalAutocompleteC
 
   initTypes(): void {
     this.typeDocumentService.getTypeDocument().subscribe(response => {
-      this.types = response;
+      if (this.onlyDisplayWithAttachmentType) {
+        for (let type of response)
+          if (type.attachmentType)
+            this.types.push(type);
+      } else
+        this.types = response
     });
   }
 }

@@ -61,8 +61,6 @@ import com.jss.osiris.modules.osiris.quotation.model.ServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 import com.jss.osiris.modules.osiris.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDocument;
-import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeFormalite;
-import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypePersonne;
 import com.jss.osiris.modules.osiris.tiers.model.BillingClosureRecipientType;
 import com.jss.osiris.modules.osiris.tiers.model.BillingClosureType;
 import com.jss.osiris.modules.osiris.tiers.model.BillingLabelType;
@@ -940,41 +938,6 @@ public class ConstantServiceImpl implements ConstantService {
     @Override
     public PublishingDepartment getPublishingDepartmentIdf() throws OsirisException {
         return getConstants().getPublishingDepartmentIdf();
-    }
-
-    @Override
-    public TypePersonne getTypePersonnePersonnePhysique() throws OsirisException {
-        return getConstants().getTypePersonnePersonnePhysique();
-    }
-
-    @Override
-    public TypePersonne getTypePersonnePersonneMorale() throws OsirisException {
-        return getConstants().getTypePersonnePersonneMorale();
-    }
-
-    @Override
-    public TypePersonne getTypePersonneExploitation() throws OsirisException {
-        return getConstants().getTypePersonneExploitation();
-    }
-
-    @Override
-    public TypeFormalite getTypeFormaliteCessation() throws OsirisException {
-        return getConstants().getTypeFormaliteCessation();
-    }
-
-    @Override
-    public TypeFormalite getTypeFormaliteModification() throws OsirisException {
-        return getConstants().getTypeFormaliteModification();
-    }
-
-    @Override
-    public TypeFormalite getTypeFormaliteCreation() throws OsirisException {
-        return getConstants().getTypeFormaliteCreation();
-    }
-
-    @Override
-    public TypeFormalite getTypeFormaliteCorrection() throws OsirisException {
-        return getConstants().getTypeFormaliteCorrection();
     }
 
     @Override

@@ -2472,7 +2472,8 @@ public class QuotationController {
               if (validationRequest.getPartnerCenter() != null && validationRequest.getPartner().getId() == null)
                 validationRequest.setPartnerCenter(null);
 
-          if (formaliteGuichetUniqueService.getFormaliteGuichetUnique(formalite.getId()) == null)
+          if (formalite.getId() == null
+              || formaliteGuichetUniqueService.getFormaliteGuichetUnique(formalite.getId()) == null)
             formaliteGuichetUniqueService.addOrUpdateFormaliteGuichetUnique(formalite);
         }
     }

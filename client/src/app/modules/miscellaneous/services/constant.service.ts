@@ -679,34 +679,6 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.invoiceStatusCancelled;
   }
 
-  getTypePersonnePersonnePhysique() {
-    return this.constant.typePersonnePersonnePhysique;
-  }
-
-  getTypePersonnePersonneMorale() {
-    return this.constant.typePersonnePersonneMorale;
-  }
-
-  getTypePersonneExploitation() {
-    return this.constant.typePersonneExploitation;
-  }
-
-  getTypeFormaliteCessation() {
-    return this.constant.typeFormaliteCessation;
-  }
-
-  getTypeFormaliteModification() {
-    return this.constant.typeFormaliteModification;
-  }
-
-  getTypeFormaliteCreation() {
-    return this.constant.typeFormaliteCreation;
-  }
-
-  getTypeFormaliteCorrection() {
-    return this.constant.typeFormaliteCorrection;
-  }
-
   getSalesSharedMailbox() {
     return this.constant.salesSharedMailbox;
   }

@@ -1309,60 +1309,6 @@
           </tr>
           <tr>
             <td>
-              <radio-group-type-personne [(model)]="constant.typePersonnePersonnePhysique"
-                label="Type de personne - Personne physique" [form]="constantForm"
-                propertyName="typePersonnePersonnePhysique" [isMandatory]="true" [isDisabled]="!editMode"
-                [conditionnalRequired]="true">
-              </radio-group-type-personne>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <radio-group-type-personne [(model)]="constant.typePersonnePersonneMorale"
-                label="Type de personne - Personne morale" [form]="constantForm"
-                propertyName="typePersonnePersonneMorale" [isMandatory]="true" [isDisabled]="!editMode"
-                [conditionnalRequired]="true">
-              </radio-group-type-personne>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <radio-group-type-personne [(model)]="constant.typePersonneExploitation"
-                label="Type de personne - Exploitation" [form]="constantForm" propertyName="typePersonneExploitation"
-                [isMandatory]="true" [isDisabled]="!editMode" [conditionnalRequired]="true">
-              </radio-group-type-personne>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <select-type-formalite [(model)]="constant.typeFormaliteCessation" label="Type de formalité - Cessation"
-                [form]="constantForm" propertyName="typeFormaliteCessation" [isMandatory]="true"
-                [isDisabled]="!editMode" [conditionnalRequired]="true"></select-type-formalite>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <select-type-formalite [(model)]="constant.typeFormaliteModification"
-                label="Type de formalité - Modification" [form]="constantForm" propertyName="typeFormaliteModification"
-                [isMandatory]="true" [isDisabled]="!editMode" [conditionnalRequired]="true"></select-type-formalite>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <select-type-formalite [(model)]="constant.typeFormaliteCreation" label="Type de formalité - Création"
-                [form]="constantForm" propertyName="typeFormaliteCreation" [isMandatory]="true" [isDisabled]="!editMode"
-                [conditionnalRequired]="true"></select-type-formalite>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <select-type-formalite [(model)]="constant.typeFormaliteCorrection" label="Type de formalité - Correction"
-                [form]="constantForm" propertyName="typeFormaliteCorrection" [isMandatory]="true"
-                [isDisabled]="!editMode" [conditionnalRequired]="true"></select-type-formalite>
-            </td>
-          </tr>
-          <tr>
-            <td>
               <generic-input [(model)]="constant.accountingSharedMaiblox" label="Adresse mail de la boite Comptabilité"
                 [form]="constantForm" propertyName="accountingSharedMaiblox" [isMandatory]="true"
                 [isDisabled]="!editMode" type="email"></generic-input>

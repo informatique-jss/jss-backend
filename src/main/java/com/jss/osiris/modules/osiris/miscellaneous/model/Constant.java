@@ -31,8 +31,6 @@ import com.jss.osiris.modules.osiris.quotation.model.ServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 import com.jss.osiris.modules.osiris.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDocument;
-import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeFormalite;
-import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypePersonne;
 import com.jss.osiris.modules.osiris.tiers.model.BillingClosureRecipientType;
 import com.jss.osiris.modules.osiris.tiers.model.BillingClosureType;
 import com.jss.osiris.modules.osiris.tiers.model.BillingLabelType;
@@ -686,34 +684,6 @@ public class Constant implements Serializable, IId {
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@JoinColumn(name = "id_publishing_department_idf")
 	private PublishingDepartment publishingDepartmentIdf;
-
-	@ManyToOne
-	@JoinColumn(name = "id_type_personne_personne_physique")
-	private TypePersonne typePersonnePersonnePhysique;
-
-	@ManyToOne
-	@JoinColumn(name = "id_type_personne_personne_exploitation")
-	private TypePersonne typePersonneExploitation;
-
-	@ManyToOne
-	@JoinColumn(name = "id_type_personne_personne_morale")
-	private TypePersonne typePersonnePersonneMorale;
-
-	@ManyToOne
-	@JoinColumn(name = "id_type_formalite_cessation")
-	private TypeFormalite typeFormaliteCessation;
-
-	@ManyToOne
-	@JoinColumn(name = "id_type_formalite_correction")
-	private TypeFormalite typeFormaliteCorrection;
-
-	@ManyToOne
-	@JoinColumn(name = "id_type_formalite_modification")
-	private TypeFormalite typeFormaliteModification;
-
-	@ManyToOne
-	@JoinColumn(name = "id_type_formalite_creation")
-	private TypeFormalite typeFormaliteCreation;
 
 	@ManyToOne
 	@JoinColumn(name = "id_employee_sales_director")
@@ -1466,62 +1436,6 @@ public class Constant implements Serializable, IId {
 
 	public void setDepartmentReunion(Department departmentReunion) {
 		this.departmentReunion = departmentReunion;
-	}
-
-	public TypePersonne getTypePersonnePersonnePhysique() {
-		return typePersonnePersonnePhysique;
-	}
-
-	public void setTypePersonnePersonnePhysique(TypePersonne typePersonnePersonnePhysique) {
-		this.typePersonnePersonnePhysique = typePersonnePersonnePhysique;
-	}
-
-	public TypePersonne getTypePersonneExploitation() {
-		return typePersonneExploitation;
-	}
-
-	public void setTypePersonneExploitation(TypePersonne typePersonneExploitation) {
-		this.typePersonneExploitation = typePersonneExploitation;
-	}
-
-	public TypePersonne getTypePersonnePersonneMorale() {
-		return typePersonnePersonneMorale;
-	}
-
-	public void setTypePersonnePersonneMorale(TypePersonne typePersonnePersonneMorale) {
-		this.typePersonnePersonneMorale = typePersonnePersonneMorale;
-	}
-
-	public TypeFormalite getTypeFormaliteCessation() {
-		return typeFormaliteCessation;
-	}
-
-	public void setTypeFormaliteCessation(TypeFormalite typeFormaliteCessation) {
-		this.typeFormaliteCessation = typeFormaliteCessation;
-	}
-
-	public TypeFormalite getTypeFormaliteCorrection() {
-		return typeFormaliteCorrection;
-	}
-
-	public void setTypeFormaliteCorrection(TypeFormalite typeFormaliteCorrection) {
-		this.typeFormaliteCorrection = typeFormaliteCorrection;
-	}
-
-	public TypeFormalite getTypeFormaliteModification() {
-		return typeFormaliteModification;
-	}
-
-	public void setTypeFormaliteModification(TypeFormalite typeFormaliteModification) {
-		this.typeFormaliteModification = typeFormaliteModification;
-	}
-
-	public TypeFormalite getTypeFormaliteCreation() {
-		return typeFormaliteCreation;
-	}
-
-	public void setTypeFormaliteCreation(TypeFormalite typeFormaliteCreation) {
-		this.typeFormaliteCreation = typeFormaliteCreation;
 	}
 
 	public Employee getEmployeeSalesDirector() {

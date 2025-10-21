@@ -1,17 +1,18 @@
 package com.jss.osiris.modules.osiris.quotation.model.guichetUnique;
-import java.io.Serializable;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.jss.osiris.libs.jackson.JacksonViews;
+import com.jss.osiris.libs.jackson.RawJsonDeserializer;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 import com.jss.osiris.modules.osiris.quotation.model.Formalite;
-import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.DiffusionINSEE;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.FormaliteGuichetUniqueStatus;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.FormaliteStatusHistoryItem;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.FormeJuridique;
@@ -27,7 +28,6 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -50,10 +50,6 @@ public class FormaliteGuichetUnique implements IId, Serializable {
     @Column(length = 255)
     private String companyName;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_content")
-    Content content;
-
     private String referenceMandataire;
 
     @Column(length = 255)
@@ -68,10 +64,6 @@ public class FormaliteGuichetUnique implements IId, Serializable {
 
     @Column(columnDefinition = "TEXT")
     private String observationSignature;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_diffusion_insee")
-    DiffusionINSEE diffusionINSEE;
 
     private Boolean indicateurEntreeSortieRegistre;
 
@@ -144,6 +136,15 @@ public class FormaliteGuichetUnique implements IId, Serializable {
     @JsonView({ JacksonViews.OsirisDetailedView.class })
     private Boolean isActeDeposit;
 
+    @Column(columnDefinition = "TEXT")
+    @JsonProperty(value = "content")
+    @JsonDeserialize(using = RawJsonDeserializer.class)
+    private String payload;
+
+    @OneToMany(mappedBy = "formaliteGuichetUnique", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value = { "formaliteGuichetUnique" }, allowSetters = true)
+    List<PiecesJointe> piecesJointes;
+
     public FormaliteGuichetUniqueStatus getStatus() {
         return status;
     }
@@ -176,14 +177,6 @@ public class FormaliteGuichetUnique implements IId, Serializable {
         this.companyName = companyName;
     }
 
-    public Content getContent() {
-        return content;
-    }
-
-    public void setContent(Content content) {
-        this.content = content;
-    }
-
     public String getNomDossier() {
         return nomDossier;
     }
@@ -214,14 +207,6 @@ public class FormaliteGuichetUnique implements IId, Serializable {
 
     public void setObservationSignature(String observationSignature) {
         this.observationSignature = observationSignature;
-    }
-
-    public DiffusionINSEE getDiffusionINSEE() {
-        return diffusionINSEE;
-    }
-
-    public void setDiffusionINSEE(DiffusionINSEE diffusionINSEE) {
-        this.diffusionINSEE = diffusionINSEE;
     }
 
     public Boolean getIndicateurEntreeSortieRegistre() {
@@ -446,5 +431,21 @@ public class FormaliteGuichetUnique implements IId, Serializable {
 
     public void setIsAuthorizedToSign(Boolean isAuthorizedToSign) {
         this.isAuthorizedToSign = isAuthorizedToSign;
+    }
+
+    public String getPayload() {
+        return payload;
+    }
+
+    public void setPayload(String payload) {
+        this.payload = payload;
+    }
+
+    public List<PiecesJointe> getPiecesJointes() {
+        return piecesJointes;
+    }
+
+    public void setPiecesJointes(List<PiecesJointe> piecesJointes) {
+        this.piecesJointes = piecesJointes;
     }
 }

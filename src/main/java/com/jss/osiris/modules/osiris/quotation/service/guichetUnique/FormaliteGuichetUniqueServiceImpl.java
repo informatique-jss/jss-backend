@@ -17,6 +17,11 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule;
+import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule.Feature;
 import com.jss.osiris.libs.GlobalExceptionHandler;
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
@@ -25,6 +30,10 @@ import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisLog;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.libs.jackson.JacksonLocalDateDeserializer;
+import com.jss.osiris.libs.jackson.JacksonLocalDateSerializer;
+import com.jss.osiris.libs.jackson.JacksonLocalDateTimeSerializer;
+import com.jss.osiris.libs.jackson.JacksonTimestampMillisecondDeserializer;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceHelper;
@@ -52,6 +61,7 @@ import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.AutresEtablissement;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.Cart;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.CartRate;
+import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.Content;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.PiecesJointe;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.Rate;
@@ -241,7 +251,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             return addOrUpdateFormaliteGuichetUnique(apiFormaliteGuichetUnique);
         } else if (formalite.getProvision() != null && formalite.getProvision().size() > 0) {
             // Content field
-            savedFormaliteGuichetUnique.setContent(apiFormaliteGuichetUnique.getContent());
+            savedFormaliteGuichetUnique.setPayload(apiFormaliteGuichetUnique.getPayload());
 
             // Status field
             if (!savedFormaliteGuichetUnique.getStatus().getCode()
@@ -306,17 +316,17 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             }
 
             // Download attachments
-            savedFormaliteGuichetUnique.getContent()
+            savedFormaliteGuichetUnique
                     .setPiecesJointes(getAttachmentOfFormaliteGuichetUnique(savedFormaliteGuichetUnique));
-            if (savedFormaliteGuichetUnique.getContent().getPiecesJointes() != null
-                    && savedFormaliteGuichetUnique.getContent().getPiecesJointes().size() > 0)
-                for (PiecesJointe piecesJointe : savedFormaliteGuichetUnique.getContent().getPiecesJointes())
-                    piecesJointe.setContent(savedFormaliteGuichetUnique.getContent());
+            if (savedFormaliteGuichetUnique.getPiecesJointes() != null
+                    && savedFormaliteGuichetUnique.getPiecesJointes().size() > 0)
+                for (PiecesJointe piecesJointe : savedFormaliteGuichetUnique.getPiecesJointes())
+                    piecesJointe.setFormaliteGuichetUnique(savedFormaliteGuichetUnique);
 
             savedFormaliteGuichetUnique = addOrUpdateFormaliteGuichetUnique(savedFormaliteGuichetUnique);
 
-            if (savedFormaliteGuichetUnique.getContent().getPiecesJointes() != null
-                    && savedFormaliteGuichetUnique.getContent().getPiecesJointes().size() > 0) {
+            if (savedFormaliteGuichetUnique.getPiecesJointes() != null
+                    && savedFormaliteGuichetUnique.getPiecesJointes().size() > 0) {
                 List<TypeDocument> typeDocuments = typeDocumentService.getTypeDocument();
                 List<String> typeDocumentsToDownload = new ArrayList<String>();
                 if (typeDocuments != null)
@@ -328,7 +338,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                     Service currentService = serviceService
                             .getService(formalite.getProvision().get(0).getService().getId());
                     Boolean isRbeProvisionCreationInProgress = false;
-                    for (PiecesJointe piecesJointe : savedFormaliteGuichetUnique.getContent().getPiecesJointes()) {
+                    for (PiecesJointe piecesJointe : savedFormaliteGuichetUnique.getPiecesJointes()) {
                         if (typeDocumentsToDownload.contains(piecesJointe.getTypeDocument().getCode())) {
                             downloadPieceJointeOnProvision(formalite.getProvision().get(0), piecesJointe);
                         }
@@ -522,42 +532,64 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
     }
 
-    private String getSiretFromFormaliteGuichetUnique(FormaliteGuichetUnique formalite) {
-        if (formalite == null || formalite.getContent() == null
-                || formalite.getContent().getPersonneMorale() == null
-                        && formalite.getContent().getPersonnePhysique() == null)
+    private Content parseFormaliteGuichetUniqueContent(String contentString, Integer formalityId)
+            throws OsirisException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        SimpleModule simpleModule = new SimpleModule("SimpleModule");
+        simpleModule.addSerializer(LocalDateTime.class, new JacksonLocalDateTimeSerializer());
+        simpleModule.addSerializer(LocalDate.class, new JacksonLocalDateSerializer());
+        simpleModule.addDeserializer(LocalDateTime.class, new JacksonTimestampMillisecondDeserializer());
+        simpleModule.addDeserializer(LocalDate.class, new JacksonLocalDateDeserializer());
+        objectMapper.registerModule(simpleModule);
+        Hibernate5JakartaModule module = new Hibernate5JakartaModule();
+        module.enable(Feature.FORCE_LAZY_LOADING);
+        objectMapper.registerModule(module);
+        try {
+            return objectMapper.readValue(contentString, Content.class);
+        } catch (JsonProcessingException e) {
+            throw new OsirisException(e,
+                    "Error when reading content of formality " + formalityId);
+        }
+    }
+
+    private String getSiretFromFormaliteGuichetUnique(FormaliteGuichetUnique formalite) throws OsirisException {
+
+        Content parsedContent = parseFormaliteGuichetUniqueContent(formalite.getPayload(), formalite.getId());
+        if (formalite == null || parsedContent == null
+                || parsedContent.getPersonneMorale() == null
+                        && parsedContent.getPersonnePhysique() == null)
             return null;
 
-        if (formalite.getContent().getPersonneMorale() != null
-                && formalite.getContent().getPersonneMorale().getAutresEtablissements() != null)
-            for (AutresEtablissement other : formalite.getContent().getPersonneMorale()
+        if (parsedContent.getPersonneMorale() != null
+                && parsedContent.getPersonneMorale().getAutresEtablissements() != null)
+            for (AutresEtablissement other : parsedContent.getPersonneMorale()
                     .getAutresEtablissements()) {
                 if (other.getDescriptionEtablissement() != null
                         && other.getDescriptionEtablissement().getSiret() != null)
                     return other.getDescriptionEtablissement().getSiret();
             }
-        if (formalite.getContent().getPersonneMorale() != null
-                && formalite.getContent().getPersonneMorale()
+        if (parsedContent.getPersonneMorale() != null
+                && parsedContent.getPersonneMorale()
                         .getEtablissementPrincipal() != null
-                && formalite.getContent().getPersonneMorale()
+                && parsedContent.getPersonneMorale()
                         .getEtablissementPrincipal().getDescriptionEtablissement().getSiret() != null)
-            return formalite.getContent().getPersonneMorale()
+            return parsedContent.getPersonneMorale()
                     .getEtablissementPrincipal().getDescriptionEtablissement().getSiret();
 
-        if (formalite.getContent().getPersonnePhysique() != null
-                && formalite.getContent().getPersonnePhysique().getAutresEtablissements() != null)
-            for (AutresEtablissement other : formalite.getContent().getPersonnePhysique()
+        if (parsedContent.getPersonnePhysique() != null
+                && parsedContent.getPersonnePhysique().getAutresEtablissements() != null)
+            for (AutresEtablissement other : parsedContent.getPersonnePhysique()
                     .getAutresEtablissements()) {
                 if (other.getDescriptionEtablissement() != null
                         && other.getDescriptionEtablissement().getSiret() != null)
                     return other.getDescriptionEtablissement().getSiret();
             }
-        if (formalite.getContent().getPersonnePhysique() != null
-                && formalite.getContent().getPersonnePhysique()
+        if (parsedContent.getPersonnePhysique() != null
+                && parsedContent.getPersonnePhysique()
                         .getEtablissementPrincipal() != null
-                && formalite.getContent().getPersonnePhysique()
+                && parsedContent.getPersonnePhysique()
                         .getEtablissementPrincipal().getDescriptionEtablissement().getSiret() != null)
-            return formalite.getContent().getPersonnePhysique()
+            return parsedContent.getPersonnePhysique()
                     .getEtablissementPrincipal().getDescriptionEtablissement().getSiret();
 
         return null;
