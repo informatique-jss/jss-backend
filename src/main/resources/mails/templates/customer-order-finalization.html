@@ -233,9 +233,11 @@
                                                                 <p>➡️ <strong>Virement</strong> en indiquant cette
                                                                     référence dans le
                                                                     libellé : <span
-                                                                        th:text="${invoice.id}"></span><br />IBAN /
-                                                                    BIC : <span th:text="${ibanJss}"></span> / <span
-                                                                        th:text="${bicJss}"></span></p>
+                                                                        th:text="${invoice.id}"></span><br />Titulaire :
+                                                                    STE DE PUBLICATIONS ET PUBLICITE POUR LES
+                                                                    SOCIETES<br />
+                                                                    IBAN / BIC : <span th:text="${ibanJss}"></span> /
+                                                                    <span th:text="${bicJss}"></span></p>
                                                                 <p th:if="${cbLink!=null && !isQrCodePaymentDisabled}">
                                                                     ➡️ <strong>Carte
                                                                         bancaire</strong> en flashant le QR

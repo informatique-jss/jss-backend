@@ -14,6 +14,7 @@
 
     <mj-text color="#666666" font-size="16px" line-height="24px">
       ➡️ <strong>Virement : </strong><br />
+      Titulaire : STE DE PUBLICATIONS ET PUBLICITE POUR LES SOCIETES<br />
       IBAN / BIC : <span th:text="${ibanJss}"></span> / <span th:text="${bicJss}"></span><br />
       ➡️ <strong>Carte bancaire</strong> en vous rendant sur votre compte MyJSS (ci-dessous) ou via les liens présents dans le relevé
     </mj-text>

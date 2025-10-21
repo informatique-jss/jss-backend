@@ -28,6 +28,7 @@ import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
+import com.jss.osiris.modules.osiris.quotation.model.ProvisionScreenType;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
@@ -536,7 +537,8 @@ public class MyJssQuotationDelegate {
                                 provision.setIsLogo(false);
                                 provision.setIsNantissementDeposit(false);
                                 if (provision.getIsPublicationFlag() == null)
-                                    provision.setIsPublicationFlag(false);
+                                    provision.setIsPublicationFlag(provision.getProvisionType().getProvisionScreenType()
+                                            .getCode().equals(ProvisionScreenType.ANNOUNCEMENT));
                                 if (provision.getIsPublicationPaper() == null)
                                     provision.setIsPublicationPaper(false);
                                 if (provision.getIsPublicationReceipt() == null)
