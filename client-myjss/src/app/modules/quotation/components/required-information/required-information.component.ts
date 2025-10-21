@@ -182,6 +182,7 @@ export class RequiredInformationComponent implements OnInit {
       if (item && item.isShowNoticeTemplate && this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined && item.announcementOrder != undefined
         && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[item.announcementOrder].announcement) {
         this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[item.announcementOrder].announcement!.notice = item.displayText;
+        this.noticeTemplateDescription = item;
       }
     });
     this.mailRedirectionTypeOther = this.constantService.getMailRedirectionTypeOther();

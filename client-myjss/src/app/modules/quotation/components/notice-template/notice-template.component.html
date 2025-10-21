@@ -88,7 +88,7 @@
 
               <div class="col-auto" *ngIf="selections.length==1">
                 <button type="button" (click)="changeToggleValue(selections[0], i)"
-                  class=" btn btn-icon rounded-pill fs-xl" [ngClass]="this.getSelectionClassForFragment(selections[0])">
+                  class="btn btn-icon rounded-pill fs-xl" [ngClass]="this.getSelectionClassForFragment(selections[0])">
                   <i class="ai-check"></i>
                 </button>
               </div>
@@ -167,7 +167,7 @@
                     <div class="col align-content-end"
                       *ngIf="fragmentInstancesMap.get(selectedFragments[i]!.code)!.length>1 && fragmentIndex == fragmentInstancesMap.get(selectedFragments[i]!.code)!.length-1">
                       <div class="row justify-content-end px-3">
-                        <button type="button" class="btn btn-outline-danger rounded-4 btn-icon" aria-label="Delete"
+                        <button type="button" class="btn btn-icon btn-outline-danger rounded-4" aria-label="Delete"
                           (click)="deleteFragmentInstance(selectedFragments[i]!.code)">
                           <i class="ai-trash"></i>
                         </button>
@@ -193,12 +193,37 @@
 
     <!-- Preview section - 1/3 of width -->
     <div class="col-md-5 border-left">
-      <div class="sticky-top" style="top: 4rem;"> <!-- Optionnel : ajuste le "top" selon ton header -->
-        <h2 class="text-center">Annonce légale</h2>
-        <div class="p-3 border rounded" style="max-height: 70vh; overflow-y: auto;">
+      <div class="sticky-top row" style="top: 4rem;">
+        <div class="col">
+          <h2 class="text-center">Annonce légale</h2>
+        </div>
+        <div class="col-auto">
+          <button type="button" class="btn btn-icon btn-secondary rounded-pill" (click)="showPreviewModal()">
+            <i class="ai-search"></i>
+          </button>
+        </div>
+
+        <div class="col-12 p-3 border rounded" style="max-height: 70vh; overflow-y: auto;">
           <div class="mb-0 text-wrap" [innerHTML]="displayText | trustHtml"></div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<!-- Preview modal -->
+<ng-template #previewModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="confirmBackModalLabel">Prévisualisation de l'annonce légale</h5>
+    <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Fermer"></button>
+  </div>
+  <div class="modal-body">
+    <!-- Preview content -->
+    <div *ngIf="getNoticeTemplateDescription()" class="p-3 border rounded"
+      [innerHTML]="getNoticeTemplateDescription()!.displayText | trustHtml" style="white-space: pre-wrap;">
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Fermer</button>
+  </div>
+</ng-template>
