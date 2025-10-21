@@ -122,10 +122,15 @@
                     </div>
                   </div>
                   <div class="row" *ngIf="  !provision.isRedactedByJss">
-                    <div class="col-12 col-lg-6 form-check form-switch">
+                    <div class="col-auto form-check form-switch ">
                       <generic-toggle [(model)]="provision.announcement.isReReadByJss" label="Relecture par le JSS"
                         [form]="informationForm" [propertyName]="'isReReadByJss'+provision.order"
                         [isDisabled]="false"></generic-toggle>
+                    </div>
+                    <div class="col">
+                      <i class="col ai-circle-info fs-base" style="-webkit-text-stroke: 1px;" placement="right"
+                        ngbTooltip="La relecture s’effectue uniquement les jours ouvrés."
+                        tooltipClass="custom-tooltip"></i>
                     </div>
                   </div>
                 </div>

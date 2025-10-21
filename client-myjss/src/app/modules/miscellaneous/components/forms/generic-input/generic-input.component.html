@@ -7,7 +7,7 @@
       [class]="'ai-'+icon"></i>
     <input class="form-control form-control" [ngClass]="{'ps-45': icon}" [id]="'fl-text'+uniqueId"
       [required]="isMandatory" [maxlength]="maxLength+''" [minlength]="minLength+''" [formControlName]="propertyName"
-      [placeholder]="label" (blur)="blurForm()" (keydown.enter)="onEnterTrigger($event)"
+      [placeholder]="label" (blur)="blurForm()" (focus)="focusForm()" (keydown.enter)="onEnterTrigger($event)"
       [type]="type=='number'?'text':type" (change)="parse($event)"
       [class.is-invalid]="!doNotValidate && form.get(propertyName)?.invalid && form.get(propertyName)?.touched"
       [class.is-valid]="!doNotValidate && form.get(propertyName)?.valid && form.get(propertyName)?.touched"

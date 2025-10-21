@@ -4,8 +4,8 @@
       }}</label>
 
     <select class="form-select custom-multiselect" [formControlName]="propertyName" [id]="'fl-text'+uniqueId"
-      [required]="isMandatory" multiple [compareWith]="compareWithId" (blur)="blurForm()" [disabled]="isDisabled"
-      [class.is-invalid]="form.get(propertyName)?.invalid && form.get(propertyName)?.touched"
+      [required]="isMandatory" multiple [compareWith]="compareWithId" (blur)="blurForm()" (focus)="focusForm()"
+      [disabled]="isDisabled" [class.is-invalid]="form.get(propertyName)?.invalid && form.get(propertyName)?.touched"
       [class.is-valid]="form.get(propertyName)?.valid && form.get(propertyName)?.touched">
       <option *ngFor="let type of types" [ngValue]="type">
         {{ displayLabel(type) }}
