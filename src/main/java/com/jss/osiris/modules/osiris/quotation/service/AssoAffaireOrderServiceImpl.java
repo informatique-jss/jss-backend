@@ -47,6 +47,7 @@ import com.jss.osiris.modules.osiris.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
 import com.jss.osiris.modules.osiris.quotation.model.IWorkflowElement;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
+import com.jss.osiris.modules.osiris.quotation.model.ProvisionScreenType;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.model.SimpleProvision;
@@ -214,26 +215,44 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
         if (assoAffaireOrder.getServices() != null)
             for (Service service : assoAffaireOrder.getServices()) {
                 for (Provision provision : service.getProvisions()) {
-                    if (provision.getDomiciliation() != null
-                            && provision.getDomiciliation().getDomiciliationStatus() == null)
-                        provision.getDomiciliation().setDomiciliationStatus(domiciliationStatusService
-                                .getDomiciliationStatusByCode(DomiciliationStatus.DOMICILIATION_NEW));
 
-                    if (provision.getFormalite() != null && provision.getFormalite().getFormaliteStatus() == null)
-                        provision.getFormalite().setFormaliteStatus(
-                                formaliteStatusService
-                                        .getFormaliteStatusByCode(FormaliteStatus.FORMALITE_NEW));
+                    if (provision.getProvisionType().getProvisionScreenType().getCode()
+                            .equals(ProvisionScreenType.DOMICILIATION)) {
+                        if (provision.getDomiciliation() == null)
+                            provision.setDomiciliation(new Domiciliation());
+                        if (provision.getDomiciliation().getDomiciliationStatus() == null)
+                            provision.getDomiciliation().setDomiciliationStatus(domiciliationStatusService
+                                    .getDomiciliationStatusByCode(DomiciliationStatus.DOMICILIATION_NEW));
+                    }
 
-                    if (provision.getAnnouncement() != null
-                            && provision.getAnnouncement().getAnnouncementStatus() == null)
-                        provision.getAnnouncement().setAnnouncementStatus(announcementStatusService
-                                .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_NEW));
+                    if (provision.getProvisionType().getProvisionScreenType().getCode()
+                            .equals(ProvisionScreenType.FORMALITE)) {
+                        if (provision.getFormalite() == null)
+                            provision.setFormalite(new Formalite());
+                        if (provision.getFormalite().getFormaliteStatus() == null)
+                            provision.getFormalite().setFormaliteStatus(
+                                    formaliteStatusService
+                                            .getFormaliteStatusByCode(FormaliteStatus.FORMALITE_NEW));
+                    }
 
-                    if (provision.getSimpleProvision() != null
-                            && provision.getSimpleProvision().getSimpleProvisionStatus() == null)
-                        provision.getSimpleProvision().setSimpleProvisionStatus(simpleProvisionStatusService
-                                .getSimpleProvisionStatusByCode(
-                                        SimpleProvisionStatus.SIMPLE_PROVISION_NEW));
+                    if (provision.getProvisionType().getProvisionScreenType().getCode()
+                            .equals(ProvisionScreenType.ANNOUNCEMENT)) {
+                        if (provision.getAnnouncement() == null)
+                            provision.setAnnouncement(new Announcement());
+                        if (provision.getAnnouncement().getAnnouncementStatus() == null)
+                            provision.getAnnouncement().setAnnouncementStatus(announcementStatusService
+                                    .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_NEW));
+                    }
+
+                    if (provision.getProvisionType().getProvisionScreenType().getCode()
+                            .equals(ProvisionScreenType.STANDARD)) {
+                        if (provision.getSimpleProvision() == null)
+                            provision.setSimpleProvision(new SimpleProvision());
+                        if (provision.getSimpleProvision().getSimpleProvisionStatus() == null)
+                            provision.getSimpleProvision().setSimpleProvisionStatus(simpleProvisionStatusService
+                                    .getSimpleProvisionStatusByCode(
+                                            SimpleProvisionStatus.SIMPLE_PROVISION_NEW));
+                    }
                 }
 
             }
