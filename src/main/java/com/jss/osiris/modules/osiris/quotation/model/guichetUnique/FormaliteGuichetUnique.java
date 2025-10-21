@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -107,6 +108,7 @@ public class FormaliteGuichetUnique implements IId, Serializable {
 
     @OneToMany(mappedBy = "formaliteGuichetUnique", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "formaliteGuichetUnique" }, allowSetters = true)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Cart> carts;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -116,7 +118,7 @@ public class FormaliteGuichetUnique implements IId, Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_formalite")
-    @JsonIgnoreProperties(value = { "formalitesGuichetUnique", "formalitesInfogreffe" })
+    @JsonIgnore
     private Formalite formalite;
 
     private Integer mandataireId;
@@ -137,8 +139,8 @@ public class FormaliteGuichetUnique implements IId, Serializable {
     private Boolean isActeDeposit;
 
     @Column(columnDefinition = "TEXT")
-    @JsonProperty(value = "content")
     @JsonDeserialize(using = RawJsonDeserializer.class)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY, value = "content")
     private String payload;
 
     @OneToMany(mappedBy = "formaliteGuichetUnique", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
