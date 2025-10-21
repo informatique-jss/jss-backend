@@ -2469,7 +2469,8 @@ public class QuotationController {
         for (FormaliteGuichetUnique formalite : formalites) {
           if (formalite.getValidationsRequests() != null && formalite.getValidationsRequests().size() > 0)
             for (ValidationRequest validationRequest : formalite.getValidationsRequests())
-              if (validationRequest.getPartnerCenter() != null && validationRequest.getPartner().getId() == null)
+              if (validationRequest.getPartnerCenter() != null
+                  && validationRequest.getPartner().getCodifNorme() == null)
                 validationRequest.setPartnerCenter(null);
 
           if (formalite.getId() == null

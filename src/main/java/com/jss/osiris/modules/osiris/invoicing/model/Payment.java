@@ -7,10 +7,6 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.jss.osiris.libs.jackson.JacksonLocalDateTimeGmtDeserializer;
-import com.jss.osiris.libs.jackson.JacksonLocalDateTimeGmtSerializer;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
@@ -69,8 +65,6 @@ public class Payment implements Serializable, IId, ICreatedDate {
 	@Column(nullable = false)
 	@IndexedField
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
-	@JsonSerialize(using = JacksonLocalDateTimeGmtSerializer.class)
-	@JsonDeserialize(using = JacksonLocalDateTimeGmtDeserializer.class)
 	private LocalDateTime paymentDate;
 
 	@Column(nullable = false, columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 2)
