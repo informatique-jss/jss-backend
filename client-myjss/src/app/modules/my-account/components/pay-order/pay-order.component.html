@@ -50,6 +50,8 @@
           <p>Pour payer par virement le montant de <strong>{{invoiceSummary.remainingToPay | currency:'EUR' }}</strong>,
             utilisez les
             informations suivantes :</p>
+          <p>Titulaire : STE DE PUBLICATIONS ET PUBLICITE POUR LES SOCIETES
+          </p>
           <p>IBAN : {{JSS_IBAN}} <i style="cursor: pointer;" [copy-clipboard]="JSS_IBAN.replaceAll(' ','')"
               (copied)="notifyCopied( )" class="ai-copy" placement="right"
               ngbTooltip="Copier dans le presse-papier"></i>

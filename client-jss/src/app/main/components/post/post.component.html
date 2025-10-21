@@ -7,11 +7,18 @@
       <div class="container header-hub-bg">
         <div class="row pt-2">
           <div class="col-12">
+            <ng-container *ngIf="post.departments!=null && post.departments.length>0">
+              <a *ngFor="let department of post.departments  " style="cursor: pointer;"
+                [routerLink]='"/post/department/" + department.code'
+                class="my-2 margin-category fw-bold p-1">{{department.name}}</a> -
+            </ng-container>
             <ng-container *ngIf="post.jssCategories!=null && post.jssCategories.length>0">
               <a *ngFor="let category of post.jssCategories  " style="cursor: pointer;"
                 [routerLink]='"/post/category/" + category.slug'
                 class="my-2 margin-category fw-bold p-1">{{category.name}}</a>
             </ng-container>
+          </div>
+          <div class="col-12">
             <h1 class="mt-2"><img *ngIf="post.isPremium" class="px-0 me-1" src="/assets/images/premium-icon.svg">
               {{post.titleText}} </h1>
           </div>

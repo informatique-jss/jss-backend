@@ -14,6 +14,7 @@
     <mj-text color="#666666" font-size="16px" line-height="24px">Afin de régler cette facture d'un montant de <span th:text="${#numbers.formatDecimal(remainingToPay,1,2)}"></span> € dans les meilleurs délais, vous disposez de plusieurs moyens de paiement :</mj-text>
     <mj-text color="#666666" font-size="16px" line-height="24px">
       ➡️ <strong>Virement </strong>en indiquant cette référence dans le libellé : <strong><span th:text="${invoice.id}"></span></strong> :<br />
+      Titulaire : STE DE PUBLICATIONS ET PUBLICITE POUR LES SOCIETES<br />
       IBAN / BIC : <span th:text="${ibanJss}"></span> / <span th:text="${bicJss}"></span><br />
       <span th:if="${cbLink!=null && !isQrCodePaymentDisabled}">➡️ <strong>Carte bancaire</strong> en vous rendant sur votre compte MyJSS (ci-dessous), en flashant le QR code ci-dessous ou en cliquant <a th:href="${cbLink}" target="_blank">ici</a></span>
       <span th:if="${cbLink!=null && isQrCodePaymentDisabled}">➡️ <strong>Carte bancaire</strong> en vous rendant sur votre compte MyJSS (ci-dessous) ou en cliquant <a th:href="${cbLink}" target="_blank">ici</a></span>
