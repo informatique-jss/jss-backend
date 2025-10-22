@@ -187,10 +187,19 @@ export class NoticeTemplateComponent implements OnInit {
   private updateDisplayText(): void {
     let text = this.displayTextOriginal;
 
-    // When fragment is selected, write only the selectedFragment so placeholders can then be wrote
+    // When fragment is selected, replace [XXXX || YYYYY] by [XXXX] if XXXX is the selected fragment
     for (let selectedFragment of this.selectedFragments) {
-      if (selectedFragment)
-        text = text.replace(new RegExp(`\\[[^\\[\\]]*${selectedFragment.code}[^\\[\\]]*\\]`, 'g'), "[" + selectedFragment.code + "]");
+      if (selectedFragment) {
+        text = text.replace(/\[([^\[\]]+)\]/g, (match, group) => {
+          const items = group.split(/\s*\|\|\s*/); // split by '||' with spaces management
+          if (items.includes(selectedFragment.code)) {
+            return `[${selectedFragment.code}]`;
+          } else {
+            return match; // do not change if not found
+          }
+        });
+      }
+
       this.fragmentSelectionText = text;
     }
 
