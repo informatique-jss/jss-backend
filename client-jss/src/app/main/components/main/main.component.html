@@ -195,7 +195,8 @@
                 </a>
                 <div class="post-content pt-md-2 pt-xl-0 pt-0">
                   <h6 class="post-title card-text-truncate fs-8"><a
-                      [routerLink]='"/post/" + post.slug'>{{post.titleText}}</a>
+                      [routerLink]='"/post/" + post.slug'>{{post.departments[0]?post.departments[0].code:''}} -
+                      {{post.titleText}}</a>
                   </h6>
                   <div class="post-meta">
                     <span class="date-info small">
