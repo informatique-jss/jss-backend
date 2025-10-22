@@ -1,4 +1,6 @@
-<div class="container d-flex flex-column min-vh-100 mb-5 pb-5" *ngIf="quotation">
+<div class="container d-flex flex-column min-vh-100 mb-4"
+  [ngClass]="{ 'mb-5 pb-5' : !noticeTemplateDescription || !noticeTemplateDescription.isUsingTemplate}"
+  *ngIf="quotation">
 
   <section>
     <p class="sub-title">Sélectionnez une affaire</p>
@@ -138,7 +140,7 @@
 
                 <!-- announcement form : text area -->
                 <div class="row pt-3">
-                  <div *ngIf="  !provision.isRedactedByJss" class="col-12 row row-cols-4 px-4">
+                  <div *ngIf="!provision.isRedactedByJss" class="col-12 row row-cols-4 px-4">
 
                     <!-- Département -->
                     <div class="col-12 col-lg-4 mb-3 align-items-start">
@@ -176,6 +178,7 @@
                     </ckeditor>
                   </div>
                 </div>
+                <hr class="border-white" id="option-form-end">
               </div>
             </ng-template>
           </li>
