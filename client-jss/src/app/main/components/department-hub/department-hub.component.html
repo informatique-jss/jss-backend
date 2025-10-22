@@ -55,6 +55,11 @@
                       <div class="card-body  d-md-flex align-items-center">
                         <div class="card-flex-content">
                           <div class="d-flex flex-wrap gap-1">
+                            <ng-container *ngIf="post.departments!=null && post.departments.length>0">
+                              <a *ngFor="let department of post.departments  " style="cursor: pointer;"
+                                [routerLink]='"/post/department/" + department.code'
+                                class="badge bg-info rounded-pill px-2">{{department.name}}</a>
+                            </ng-container>
                             <a *ngFor="let cat of post.jssCategories" [routerLink]=' "/post/category/" + cat.slug'
                               class="badge bg-info rounded-pill px-2">{{ cat.name }}</a>
                             <bookmark *ngIf="currentUser" [post]="post"></bookmark>
