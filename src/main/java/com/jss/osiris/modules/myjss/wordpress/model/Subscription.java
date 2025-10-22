@@ -36,8 +36,8 @@ public class Subscription implements IId, Serializable {
     public final static String NEWSPAPER_KIOSK_BUY = "NEWSPAPER_KIOSK_BUY";
 
     @Id
-    @SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
+    @SequenceGenerator(name = "subscription_sequence", sequenceName = "subscription_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "subscription_sequence")
     private Integer id;
 
     @JsonDeserialize(using = JacksonLocalDateDeserializer.class)

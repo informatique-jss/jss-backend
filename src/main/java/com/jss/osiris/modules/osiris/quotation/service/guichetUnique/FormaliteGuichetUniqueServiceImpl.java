@@ -63,6 +63,7 @@ import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.Cart;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.CartRate;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.Content;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.FormaliteGuichetUnique;
+import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.Partenaire;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.PiecesJointe;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.Rate;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.ValidationRequest;
@@ -165,6 +166,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
     public FormaliteGuichetUnique addOrUpdateFormaliteGuichetUnique(FormaliteGuichetUnique formaliteGuichetUnique) {
         ArrayList<Cart> cartToRemove = new ArrayList<Cart>();
         HashMap<Integer, Rate> rateMap = new HashMap<Integer, Rate>();
+        HashMap<String, Partenaire> partnerMap = new HashMap<String, Partenaire>();
         if (formaliteGuichetUnique.getCarts() != null)
             for (Cart cart : formaliteGuichetUnique.getCarts()) {
                 if (!cart.getStatus().equals(cartStatusPayed) && !cart.getStatus().equals(cartStatusRefund))
@@ -179,6 +181,15 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                             } else {
                                 cartRate.setRate(rateMap.get(cartRate.getRate().getId()));
                             }
+                            // Manage dupplicate but coherent Partnaire wich cause merge error
+                            if (cartRate.getRate().getPartenaire() != null)
+                                if (partnerMap.get(cartRate.getRate().getPartenaire().getCodifNorme()) == null) {
+                                    partnerMap.put(cartRate.getRate().getPartenaire().getCodifNorme(),
+                                            cartRate.getRate().getPartenaire());
+                                } else {
+                                    cartRate.getRate().setPartenaire(
+                                            partnerMap.get(cartRate.getRate().getPartenaire().getCodifNorme()));
+                                }
                         }
                     }
             }
