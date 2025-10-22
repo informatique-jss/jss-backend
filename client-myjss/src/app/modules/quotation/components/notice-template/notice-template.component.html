@@ -1,12 +1,12 @@
 <div class="quotation-container p-4">
   <div class="row">
 
-    <div class="col-md-7">
+    <div class="col-md-7 px-4">
       <form [formGroup]="form" class="mb-4" *ngIf="service">
 
         <!--============== GENERIC BLOC ===============-->
         <!-- Block title -->
-        <h6>Champs de l'annonce</h6>
+        <h4 class="mb-3">Informations générales</h4>
 
         <div class="row row-cols-1 row-cols-lg-3 g-3">
 
@@ -65,6 +65,8 @@
             </div>
           </div>
         </div>
+
+        <h4 class="mt-5 mb-3">Spécificités</h4>
 
         <!--============== FRAGMENT BLOCS ===============-->
         <div *ngFor="let selections of fragmentSelection; let i = index" class="my-4">
@@ -192,7 +194,7 @@
     </div>
 
     <!-- Preview section - 1/3 of width -->
-    <div class="col-md-5 border-left">
+    <div class="col-md-5 border-left px-4">
       <div class="sticky-top row" style="top: 4rem;">
         <div class="col">
           <h2 class="text-center">Annonce légale</h2>

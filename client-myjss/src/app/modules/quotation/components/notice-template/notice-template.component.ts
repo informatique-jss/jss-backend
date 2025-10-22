@@ -431,8 +431,7 @@ export class NoticeTemplateComponent implements OnInit {
       return;
     }
 
-    this.previewModalInstance = this.modalService.open(content, {
-    });
+    this.previewModalInstance = this.modalService.open(content, { size: 'xl', centered: true, scrollable: false });
 
     this.previewModalInstance.result.finally(() => {
       this.previewModalInstance = undefined;
