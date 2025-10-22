@@ -13794,3 +13794,7 @@ figcaption {
   color: #666666;
   font-size: small;
 }
+
+.badge-category {
+  color: #303b4d !important;
+}

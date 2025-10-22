@@ -57,7 +57,7 @@
                         <div class="card-flex-content">
                           <div class="d-flex flex-wrap gap-1">
                             <a *ngFor="let cat of post.jssCategories" [routerLink]=' "/post/category/" + cat.slug'
-                              class="badge bg-info rounded-pill px-2">{{ cat.name }}</a>
+                              class="badge bg-info badge-category rounded-pill px-2">{{ cat.name }}</a>
                             <bookmark *ngIf="currentUser" [post]="post"></bookmark>
                           </div>
                           <h4>
@@ -87,7 +87,7 @@
                         <div class="card-flex-content">
                           <div class="d-flex flex-wrap gap-1">
                             <a *ngFor="let cat of post.jssCategories" [routerLink]=' "/post/category/" + cat.slug'
-                              class="badge bg-info rounded-pill px-2">{{ cat.name }}</a>
+                              class="badge bg-info badge-category rounded-pill px-2">{{ cat.name }}</a>
 
                             <bookmark *ngIf="currentUser" [post]="post"></bookmark>
                           </div>

@@ -39,7 +39,7 @@
                     <div class="card-body px-0">
                       <div class="row ms-0 pb-1 align-items-center">
                         <a [routerLink]='"/post/category/" + post.jssCategories[0].slug'
-                          class="badge bg-info rounded-pill col-auto me-2 px-1">{{post.jssCategories[0].name}}</a>
+                          class="badge badge-category bg-info rounded-pill col-auto me-2 px-1">{{post.jssCategories[0].name}}</a>
                         <bookmark *ngIf="currentUser" [post]="post"></bookmark>
                       </div>
                       <h6 class="mb-0 ">
@@ -64,7 +64,7 @@
                   <div class="card-body px-0">
                     <div class="row pb-1 ms-0 align-items-center">
                       <a [routerLink]='"/post/category/" + lastPosts[0].jssCategories[0].slug'
-                        class="badge bg-info rounded-pill col-auto me-2 px-1">{{lastPosts[0].jssCategories[0].name}}</a>
+                        class="badge bg-info rounded-pill badge-category col-auto me-2 px-1">{{lastPosts[0].jssCategories[0].name}}</a>
                       <bookmark *ngIf="currentUser" [post]="lastPosts[0]"></bookmark>
                     </div>
 
@@ -109,7 +109,7 @@
                     <div class=" order-1 col">
                       <div class="row align-items-center ms-0 mb-1">
                         <a [routerLink]='"/post/category/" +post.jssCategories[0].slug'
-                          class="badge bg-info rounded-pill px-1 col-auto me-2 mb-0">{{post.jssCategories[0].name}}</a>
+                          class="badge  bg-info badge-category rounded-pill px-1 col-auto me-2 mb-0">{{post.jssCategories[0].name}}</a>
                         <bookmark *ngIf="currentUser" [post]="post"></bookmark>
                       </div>
                       <h4>
@@ -656,7 +656,7 @@
             <div class="card-body">
               <div class="row pb-1 px-2 align-items-center">
                 <a [routerLink]='"/post/category/" + post.jssCategories[0].slug'
-                  class="badge bg-info rounded-pill px-1 col-auto me-2">{{post.jssCategories[0].name}}</a>
+                  class="badge bg-info badge-category rounded-pill px-1 col-auto me-2">{{post.jssCategories[0].name}}</a>
                 <bookmark *ngIf="currentUser" [post]="post"></bookmark>
               </div>
               <h4>
