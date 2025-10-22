@@ -663,7 +663,18 @@ export class RequiredInformationComponent implements OnInit {
       } else {
         this.noticeTemplateDescription.isShowNoticeTemplate = event as boolean;
         this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
+        if (event)
+          this.scrollToNoticeTemplateSection();
       }
+  }
+
+  private scrollToNoticeTemplateSection(): void {
+    setTimeout(() => {
+      const el = document.getElementById(`option-form-end`);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 0); // Timeout so the DOM is well up to date
   }
 
   hasOneTemplate(service: Service) {
