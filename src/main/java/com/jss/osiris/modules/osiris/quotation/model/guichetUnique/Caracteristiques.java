@@ -2,6 +2,7 @@ package com.jss.osiris.modules.osiris.quotation.model.guichetUnique;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
 import jakarta.persistence.GeneratedValue;
@@ -9,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 
+@JsonIgnoreProperties
 public class Caracteristiques implements Serializable, IId {
 
     @Id

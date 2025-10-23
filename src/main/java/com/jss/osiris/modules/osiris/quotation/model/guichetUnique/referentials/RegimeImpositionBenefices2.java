@@ -2,11 +2,13 @@ package com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.osiris.miscellaneous.model.ICode;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 
+@JsonIgnoreProperties
 public class RegimeImpositionBenefices2 implements Serializable, ICode {
     public RegimeImpositionBenefices2(String code) {
         this.code = code;
