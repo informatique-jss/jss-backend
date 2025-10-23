@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.DeviseCapital;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.NatureDesActivite;
@@ -20,6 +21,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Description implements Serializable, IId {
 
     @Id

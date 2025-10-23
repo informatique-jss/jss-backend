@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class LocataireGerantMandataire implements Serializable, IId {
 
     @Id

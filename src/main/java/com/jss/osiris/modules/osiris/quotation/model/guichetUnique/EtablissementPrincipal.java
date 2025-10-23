@@ -17,6 +17,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class EtablissementPrincipal implements Serializable, IId {
 
     @Id

@@ -2,6 +2,7 @@ package com.jss.osiris.modules.osiris.quotation.model.guichetUnique;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.PeriodiciteVersement;
 
@@ -13,6 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class RegimeMicroSocial implements Serializable, IId {
 
     @Id

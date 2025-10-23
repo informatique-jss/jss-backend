@@ -3,6 +3,8 @@ package com.jss.osiris.modules.osiris.quotation.model.guichetUnique;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.FetchType;
@@ -13,6 +15,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ComptesAnnuels implements Serializable {
     @Id
     @SequenceGenerator(name = "guichet_unique_comptes_annuels_sequence", sequenceName = "guichet_unique_comptes_annuels_sequence", allocationSize = 1)
