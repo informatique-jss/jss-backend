@@ -1,5 +1,8 @@
 package com.jss.osiris.modules.osiris.quotation.model.guichetUnique;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class RneLogin {
     private String username;
     private String password;
