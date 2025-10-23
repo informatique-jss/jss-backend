@@ -23,6 +23,7 @@ import jakarta.persistence.Table;
 @Table(indexes = {
         @Index(name = "idx_piece_jointe_content", columnList = "id_content"),
         @Index(name = "idx_piece_jointe_id", columnList = "attachmentId") })
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PiecesJointe implements Serializable {
 
     @Column(length = 255)
