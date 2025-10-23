@@ -8,7 +8,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.ICode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 
-@JsonIgnoreProperties
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class RegimeImpositionBenefices2 implements Serializable, ICode {
     public RegimeImpositionBenefices2(String code) {
         this.code = code;

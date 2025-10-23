@@ -2,7 +2,7 @@ package com.jss.osiris.modules.osiris.quotation.model.guichetUnique;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@JsonIgnoreProperties
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Historique {
     private String dateIntegration;
     private String codeEvenement;

@@ -22,7 +22,6 @@ import jakarta.persistence.Table;
 
 @Entity
 @DoNotAudit
-@JsonIgnoreProperties
 @Table(indexes = {
         @Index(name = "idx_validation_request_formalite", columnList = "id_formalite_guichet_unique") })
 public class ValidationRequest implements Serializable {

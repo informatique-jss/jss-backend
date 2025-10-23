@@ -7,7 +7,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.ICode;
 
 import jakarta.persistence.Id;
 
-@JsonIgnoreProperties
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TypeLiasse implements Serializable, ICode {
     public TypeLiasse(String code) {
         this.code = code;

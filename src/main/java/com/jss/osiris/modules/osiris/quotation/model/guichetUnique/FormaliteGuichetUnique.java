@@ -32,7 +32,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@JsonIgnoreProperties
 @Table(indexes = {
         @Index(name = "idx_formalite_guichet_unique_formalite", columnList = "id_formalite"),
         @Index(name = "idx_formalite_guichet_unique_status", columnList = "id_status") })

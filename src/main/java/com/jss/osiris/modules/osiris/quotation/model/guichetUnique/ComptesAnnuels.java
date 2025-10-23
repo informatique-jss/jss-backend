@@ -15,7 +15,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 
-@JsonIgnoreProperties
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ComptesAnnuels implements Serializable {
     @Id
     @SequenceGenerator(name = "guichet_unique_comptes_annuels_sequence", sequenceName = "guichet_unique_comptes_annuels_sequence", allocationSize = 1)

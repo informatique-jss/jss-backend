@@ -7,7 +7,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.ICode;
 
 import jakarta.persistence.Id;
 
-@JsonIgnoreProperties
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class RegimeImpositionTVA2 implements Serializable, ICode {
     public RegimeImpositionTVA2(String code) {
         this.code = code;

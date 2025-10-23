@@ -13,7 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 
-@JsonIgnoreProperties
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CompteResultat implements Serializable {
     @Id
     @SequenceGenerator(name = "guichet_unique_compte_resultat_sequence", sequenceName = "guichet_unique_compte_resultat_sequence", allocationSize = 1)
