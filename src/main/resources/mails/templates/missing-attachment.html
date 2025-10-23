@@ -227,10 +227,11 @@
                                                                 <p>Dans l'objectif de poursuivre rapidement le
                                                                     traitement de votre commande, pourriez-vous nous
                                                                     transmettre les pièces/informations suivantes ?</p>
-                                                                <p th:if="${isLastReminder}"><strong>Merci de nous
-                                                                        confirmer la poursuite de votre commande. Sans
-                                                                        retour de votre part sous 8 jours nous
-                                                                        l'abandonnerons.</strong></p>
+                                                                <p th:if="${isLastReminder}"><strong>Pouvez-vous nous
+                                                                        confirmer la poursuite de votre commande ou nous
+                                                                        indiquer sous quel délai vous pourrez compléter
+                                                                        le dossier ? Ce dernier va être mis en
+                                                                        attente.</strong></p>
                                                                 <ul>
                                                                     <li
                                                                         th:each="assoServiceDocument : ${assoServiceDocuments}">
