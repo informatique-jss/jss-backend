@@ -2,6 +2,9 @@ package com.jss.osiris.modules.osiris.quotation.model.guichetUnique;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties
 public class RneResult {
     private List<RneCompany> companies;
     private String lastSiret;

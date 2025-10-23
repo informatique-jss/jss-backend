@@ -2,11 +2,13 @@ package com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.osiris.miscellaneous.model.ICode;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 
+@JsonIgnoreProperties
 public class DocumentExtension implements Serializable, ICode {
     public DocumentExtension(String code) {
         this.code = code;

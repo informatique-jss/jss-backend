@@ -18,6 +18,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 
+@JsonIgnoreProperties
 public class NomsDeDomaine implements Serializable, IId {
 
     @Id

@@ -3,6 +3,7 @@ package com.jss.osiris.modules.osiris.quotation.model.guichetUnique;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.CodePays;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeVoie;
@@ -17,6 +18,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 
+@JsonIgnoreProperties
 public class AdresseDomicile implements Serializable, IId {
 
     @Id

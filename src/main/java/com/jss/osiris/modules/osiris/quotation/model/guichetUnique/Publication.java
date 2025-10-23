@@ -3,6 +3,7 @@ package com.jss.osiris.modules.osiris.quotation.model.guichetUnique;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
 import jakarta.persistence.Column;
@@ -11,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 
+@JsonIgnoreProperties
 public class Publication implements Serializable, IId {
 
     @Id
