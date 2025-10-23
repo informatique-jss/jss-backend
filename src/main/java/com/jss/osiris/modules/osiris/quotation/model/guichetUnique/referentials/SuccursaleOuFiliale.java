@@ -8,7 +8,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.ICode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 
-@JsonIgnoreProperties
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SuccursaleOuFiliale implements Serializable, ICode {
 
     public SuccursaleOuFiliale(String code) {

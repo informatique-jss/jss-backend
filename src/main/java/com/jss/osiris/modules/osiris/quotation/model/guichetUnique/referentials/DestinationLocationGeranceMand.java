@@ -8,7 +8,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.ICode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 
-@JsonIgnoreProperties
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class DestinationLocationGeranceMand implements Serializable, ICode {
     public DestinationLocationGeranceMand(String code) {
         this.code = code;

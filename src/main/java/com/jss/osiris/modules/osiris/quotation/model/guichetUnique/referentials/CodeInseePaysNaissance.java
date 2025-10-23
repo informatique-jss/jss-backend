@@ -8,7 +8,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.ICode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 
-@JsonIgnoreProperties
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CodeInseePaysNaissance implements Serializable, ICode {
     public CodeInseePaysNaissance(String code) {
         this.code = code;

@@ -8,7 +8,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.ICode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 
-@JsonIgnoreProperties
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class MotifRejetMsa implements Serializable, ICode {
     public MotifRejetMsa(String code) {
         this.code = code;
