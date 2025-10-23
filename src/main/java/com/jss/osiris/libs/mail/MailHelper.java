@@ -271,9 +271,14 @@ public class MailHelper {
 
             if (mail.getReplyTo() != null)
                 try {
-                    message.setReplyTo(
-                            new InternetAddress(mail.getReplyTo().getMail(),
-                                    mail.getReplyTo().getFirstname() + " " + mail.getReplyTo().getLastname()));
+                    if (mail.getReplyTo().getId().equals(constantService.getEmployeeSalesDirector().getId()))
+                        message.setReplyTo(
+                                new InternetAddress(constantService.getStringSalesSharedMailbox(),
+                                        "Service commercial"));
+                    else
+                        message.setReplyTo(
+                                new InternetAddress(mail.getReplyTo().getMail(),
+                                        mail.getReplyTo().getFirstname() + " " + mail.getReplyTo().getLastname()));
                 } catch (UnsupportedEncodingException e) {
                     throw new OsirisException(e, "Wrong Reply To mail for customer mail " + mail.getId());
                 }
@@ -475,6 +480,13 @@ public class MailHelper {
         } else
             ctx.setVariable("replyToEmployee",
                     mail.getReplyTo() != null ? mail.getReplyTo() : mail.getSendToMeEmployee());
+
+        if (mail.getReplyTo().getId().equals(constantService.getEmployeeSalesDirector().getId())) {
+            Employee replyEmployeeSales = new Employee();
+            replyEmployeeSales.setFirstname("Service Commercial");
+            replyEmployeeSales.setMail(constantService.getStringSalesSharedMailbox());
+            ctx.setVariable("replyToEmployee", replyEmployeeSales);
+        }
 
         IQuotation quotation = mail.getCustomerOrder() != null ? mail.getCustomerOrder() : mail.getQuotation();
         if (quotation != null) {
