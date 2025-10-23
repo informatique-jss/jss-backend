@@ -105,7 +105,7 @@ public class ResponsableServiceImpl implements ResponsableService {
 
     @Override
     public Responsable getResponsableByMail(String mail) {
-        return responsableRepository.findFirst1ByMail_MailIgnoreCase(mail);
+        return responsableRepository.findFirst1ByMail_MailIgnoreCaseAndIsActiveTrue(mail);
     }
 
     @Override

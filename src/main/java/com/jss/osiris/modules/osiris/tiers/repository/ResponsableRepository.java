@@ -147,7 +147,7 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
                         @Param("documentTypeBillingId") Integer documentTypeBillingId,
                         @Param("withNonNullTurnover") Boolean withNonNullTurnover);
 
-        Responsable findFirst1ByMail_MailIgnoreCase(String mail);
+        Responsable findFirst1ByMail_MailIgnoreCaseAndIsActiveTrue(String mail);
 
         List<Responsable> findByLastnameContainingIgnoreCaseOrFirstnameContainingIgnoreCase(String lastname,
                         String firstname);
