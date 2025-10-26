@@ -82,6 +82,10 @@ public class AssoServiceProvisionType implements Serializable, IId {
 	@Column(columnDefinition = "NUMERIC(15,2)", precision = 10, scale = 2)
 	private BigDecimal defaultDeboursPriceNonTaxable;
 
+	private Boolean isNotifyBodacc;
+	private Boolean isNotifyBalo;
+	private Boolean isNotifyJo;
+
 	public Integer getId() {
 		return id;
 	}
@@ -200,6 +204,30 @@ public class AssoServiceProvisionType implements Serializable, IId {
 
 	public void setDefaultDeboursPriceNonTaxable(BigDecimal defaultDeboursPriceNonTaxable) {
 		this.defaultDeboursPriceNonTaxable = defaultDeboursPriceNonTaxable;
+	}
+
+	public Boolean getIsNotifyBodacc() {
+		return isNotifyBodacc;
+	}
+
+	public void setIsNotifyBodacc(Boolean isNotifyBodacc) {
+		this.isNotifyBodacc = isNotifyBodacc;
+	}
+
+	public Boolean getIsNotifyBalo() {
+		return isNotifyBalo;
+	}
+
+	public void setIsNotifyBalo(Boolean isNotifyBalo) {
+		this.isNotifyBalo = isNotifyBalo;
+	}
+
+	public Boolean getIsNotifyJo() {
+		return isNotifyJo;
+	}
+
+	public void setIsNotifyJo(Boolean isNotifyJo) {
+		this.isNotifyJo = isNotifyJo;
 	}
 
 }

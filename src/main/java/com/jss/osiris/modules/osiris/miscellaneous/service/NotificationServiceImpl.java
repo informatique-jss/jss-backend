@@ -16,8 +16,11 @@ import com.jss.osiris.modules.osiris.miscellaneous.repository.NotificationReposi
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
+import com.jss.osiris.modules.osiris.quotation.model.BaloNotice;
+import com.jss.osiris.modules.osiris.quotation.model.BodaccNotice;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
+import com.jss.osiris.modules.osiris.quotation.model.JoNotice;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
@@ -296,6 +299,63 @@ public class NotificationServiceImpl implements NotificationService {
 
                         generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
                                 Notification.PROVISION_ADD_ATTACHMENT, false, null, provision, null, null);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void notifyBodaccNoticeAddToProvision(Provision provision, BodaccNotice notice) {
+        provision = provisionService.getProvision(provision.getId());
+        if (provision.getService() != null) {
+            CustomerOrder order = provision.getService().getAssoAffaireOrder().getCustomerOrder();
+            if (!isProvisionClosed(provision) && !isProvisionOpen(provision)) {
+                if (order != null
+                        && (order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)
+                                || order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.TO_BILLED))) {
+                    if (provision.getAssignedTo() != null) {
+
+                        generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
+                                Notification.PROVISION_ADD_BODACC_NOTICE, false, null, provision, null, null);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void notifyBaloNoticeAddToProvision(Provision provision, BaloNotice notice) {
+        provision = provisionService.getProvision(provision.getId());
+        if (provision.getService() != null) {
+            CustomerOrder order = provision.getService().getAssoAffaireOrder().getCustomerOrder();
+            if (!isProvisionClosed(provision) && !isProvisionOpen(provision)) {
+                if (order != null
+                        && (order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)
+                                || order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.TO_BILLED))) {
+                    if (provision.getAssignedTo() != null) {
+
+                        generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
+                                Notification.PROVISION_ADD_BALO_NOTICE, false, null, provision, null, null);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void notifyJoNoticeAddToProvision(Provision provision, JoNotice notice) {
+        provision = provisionService.getProvision(provision.getId());
+        if (provision.getService() != null) {
+            CustomerOrder order = provision.getService().getAssoAffaireOrder().getCustomerOrder();
+            if (!isProvisionClosed(provision) && !isProvisionOpen(provision)) {
+                if (order != null
+                        && (order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)
+                                || order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.TO_BILLED))) {
+                    if (provision.getAssignedTo() != null) {
+
+                        generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
+                                Notification.PROVISION_ADD_JO_NOTICE, false, null, provision, null, null);
                     }
                 }
             }

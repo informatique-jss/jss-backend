@@ -701,5 +701,41 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.INDICATORS));
             addOrUpdateBatchSettings(batchSettings);
         }
+        if (getByCode(Batch.UPDATE_BODACC_NOTICE) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.UPDATE_BODACC_NOTICE);
+            batchSettings.setLabel("Mise à jour du BODACC");
+            batchSettings.setFixedRate(1000);
+            batchSettings.setQueueSize(1);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.REFERENTIALS));
+            addOrUpdateBatchSettings(batchSettings);
+        }
+        if (getByCode(Batch.UPDATE_BALO_NOTICE) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.UPDATE_BALO_NOTICE);
+            batchSettings.setLabel("Mise à jour du BALO");
+            batchSettings.setFixedRate(1000);
+            batchSettings.setQueueSize(1);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.REFERENTIALS));
+            addOrUpdateBatchSettings(batchSettings);
+        }
+        if (getByCode(Batch.UPDATE_JO_NOTICE) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.UPDATE_JO_NOTICE);
+            batchSettings.setLabel("Mise à jour du JO Associations");
+            batchSettings.setFixedRate(1000);
+            batchSettings.setQueueSize(1);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.REFERENTIALS));
+            addOrUpdateBatchSettings(batchSettings);
+        }
     }
 }

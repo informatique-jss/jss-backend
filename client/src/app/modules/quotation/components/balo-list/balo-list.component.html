@@ -1,0 +1,21 @@
+<div class="mat-elevation-z2 form-div">
+  <div class=" full-width">
+    <table class="full-width table-fixed-layout">
+      <tr>
+        <td>
+          <generic-input [(model)]="textSearch" label="Rechercher" [form]="baloSearchForm" propertyName="textSearch"
+            [isDisabled]="false"></generic-input>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+
+  <mat-stepper orientation="vertical">
+    <mat-step *ngFor="let balo of getBaloToDisplay()">
+      <ng-template matStepLabel>
+        <p>{{balo.dateparution |date:'dd/MM/yyyy'}} - {{getLabel(balo)}}</p>
+      </ng-template>
+      <button mat-fab extended color="primary" (click)="openOnBalo(balo)">Voir sur le BALO</button>
+    </mat-step>
+  </mat-stepper>

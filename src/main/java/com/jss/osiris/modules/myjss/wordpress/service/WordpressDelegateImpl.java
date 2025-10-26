@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.myjss.wordpress.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -294,9 +295,20 @@ public class WordpressDelegateImpl implements WordpressDelegate {
                 serieService.addOrUpdateSerie(serie);
 
         List<Tag> tags = getAvailableTags();
+        List<Tag> existingTags = tagService.getAvailableTags();
+        HashMap<Integer, Tag> tagMap = new HashMap<Integer, Tag>();
+        for (Tag exisTag : existingTags)
+            tagMap.put(exisTag.getId(), exisTag);
+
         if (tags != null)
-            for (Tag tag : tags)
+            for (Tag tag : tags) {
+                Tag existingTag = tagMap.get(tag.getId());
+                if (existingTag != null && existingTag.getName().equals(tag.getName())
+                        && existingTag.getSlug().equals(tag.getSlug()))
+                    continue;
+
                 tagService.addOrUpdateTagFromWordpress(tag);
+            }
 
         List<Author> authors = getAllAuthors();
         if (authors != null)

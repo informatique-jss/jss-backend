@@ -22,4 +22,7 @@ export interface ProvisionType extends IReferential {
   recurringFrequency: CustomerOrderFrequency;
   isNotReinvoiced: boolean;
   isCanBeAddByAdmin: boolean;
+  isCouldNotifyBodacc: boolean;
+  isCouldNotifyBalo: boolean;
+  isCouldNotifyJo: boolean;
 }

@@ -6,7 +6,10 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.crm.model.Candidacy;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Notification;
+import com.jss.osiris.modules.osiris.quotation.model.BaloNotice;
+import com.jss.osiris.modules.osiris.quotation.model.BodaccNotice;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.osiris.quotation.model.JoNotice;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.reporting.model.IncidentReport;
@@ -72,4 +75,10 @@ public interface NotificationService {
         public void notifyQuotationModified(CustomerOrder customerOrder);
 
         public void notifyImmediateAffactationOfOrder(CustomerOrder customerOrder) throws OsirisException;
+
+        public void notifyBodaccNoticeAddToProvision(Provision provision, BodaccNotice notice);
+
+        public void notifyBaloNoticeAddToProvision(Provision provision, BaloNotice notice);
+
+        public void notifyJoNoticeAddToProvision(Provision provision, JoNotice notice);
 }

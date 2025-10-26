@@ -1,0 +1,25 @@
+<div class="mat-elevation-z2 form-div">
+  <div class=" full-width">
+    <table class="full-width table-fixed-layout">
+      <tr>
+        <td>
+          <generic-input [(model)]="textSearch" label="Rechercher" [form]="bodaccSearchForm" propertyName="textSearch"
+            [isDisabled]="false"></generic-input>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+
+  <mat-stepper orientation="vertical">
+    <mat-step *ngFor="let bodacc of getBodaccToDisplay()">
+      <ng-template matStepLabel>
+        <p>{{bodacc.id}} - {{bodacc.dateparution |date:'dd/MM/yyyy'}} - {{bodacc.familleavis_lib}}</p>
+      </ng-template>
+      <p>{{bodacc.typeavis_lib}} - {{bodacc.tribunal}}</p>
+      <p>{{getModificationsGenerales(bodacc)}}
+        {{getDepot(bodacc)}}
+        {{getActe(bodacc)}}</p>
+      <button mat-fab extended color="primary" (click)="openOnBodacc(bodacc)">Voir sur le BODACC</button>
+    </mat-step>
+  </mat-stepper>

@@ -223,6 +223,26 @@
           </td>
         </tr>
       </table>
+      <table class="full-width">
+        <tr *ngIf="provision.provisionType.isCouldNotifyBodacc">
+          <td>
+            <generic-toggle [(model)]="provision.isNotifyBodacc" label="Me notifier des modifications au BODACC ?"
+              [form]="optionForm" propertyName="isNotifyBodacc"></generic-toggle>
+          </td>
+        </tr>
+        <tr *ngIf="provision.provisionType.isCouldNotifyBalo">
+          <td>
+            <generic-toggle [(model)]="provision.isNotifyBalo" label="Me notifier des modifications au BALO ?"
+              [form]="optionForm" propertyName="isNotifyBalo"></generic-toggle>
+          </td>
+        </tr>
+        <tr *ngIf="provision.provisionType.isCouldNotifyJo">
+          <td>
+            <generic-toggle [(model)]="provision.isNotifyJo" label="Me notifier des modifications au JO ?"
+              [form]="optionForm" propertyName="isNotifyJo"></generic-toggle>
+          </td>
+        </tr>
+      </table>
     </div>
   </form>
 </fieldset>

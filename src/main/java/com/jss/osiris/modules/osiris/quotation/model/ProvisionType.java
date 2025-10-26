@@ -85,6 +85,10 @@ public class ProvisionType implements Serializable, IId {
 	private Boolean isNotReinvoiced;
 	private Boolean isCanBeAddByAdmin;
 
+	private Boolean isCouldNotifyBodacc;
+	private Boolean isCouldNotifyBalo;
+	private Boolean isCouldNotifyJo;
+
 	public Integer getId() {
 		return id;
 	}
@@ -220,6 +224,30 @@ public class ProvisionType implements Serializable, IId {
 
 	public void setIsCanBeAddByAdmin(Boolean isCanBeAddByAdmin) {
 		this.isCanBeAddByAdmin = isCanBeAddByAdmin;
+	}
+
+	public Boolean getIsCouldNotifyBodacc() {
+		return isCouldNotifyBodacc;
+	}
+
+	public void setIsCouldNotifyBodacc(Boolean isCouldNotifyBodacc) {
+		this.isCouldNotifyBodacc = isCouldNotifyBodacc;
+	}
+
+	public Boolean getIsCouldNotifyBalo() {
+		return isCouldNotifyBalo;
+	}
+
+	public void setIsCouldNotifyBalo(Boolean isCouldNotifyBalo) {
+		this.isCouldNotifyBalo = isCouldNotifyBalo;
+	}
+
+	public Boolean getIsCouldNotifyJo() {
+		return isCouldNotifyJo;
+	}
+
+	public void setIsCouldNotifyJo(Boolean isCouldNotifyJo) {
+		this.isCouldNotifyJo = isCouldNotifyJo;
 	}
 
 }

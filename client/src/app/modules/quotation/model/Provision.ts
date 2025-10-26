@@ -62,4 +62,7 @@ export interface Provision extends IAttachment {
   complexity: number;
   isPriority: boolean;
   customerOrderComments: CustomerOrderComment[];
+  isNotifyBodacc: boolean;
+  isNotifyBalo: boolean;
+  isNotifyJo: boolean;
 }
