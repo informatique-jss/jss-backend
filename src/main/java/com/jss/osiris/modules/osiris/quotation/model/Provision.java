@@ -240,6 +240,10 @@ public class Provision implements IId, IAttachment {
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private List<AssoProvisionPostNewspaper> assoProvisionPostNewspapers;
 
+	private Boolean isNotifyBodacc;
+	private Boolean isNotifyBalo;
+	private Boolean isNotifyJo;
+
 	public Integer getId() {
 		return id;
 	}
@@ -662,5 +666,29 @@ public class Provision implements IId, IAttachment {
 
 	public void setAssoProvisionPostNewspapers(List<AssoProvisionPostNewspaper> assoProvisionPostNewspapers) {
 		this.assoProvisionPostNewspapers = assoProvisionPostNewspapers;
+	}
+
+	public Boolean getIsNotifyBodacc() {
+		return isNotifyBodacc;
+	}
+
+	public void setIsNotifyBodacc(Boolean isNotifyBodacc) {
+		this.isNotifyBodacc = isNotifyBodacc;
+	}
+
+	public Boolean getIsNotifyBalo() {
+		return isNotifyBalo;
+	}
+
+	public void setIsNotifyBalo(Boolean isNotifyBalo) {
+		this.isNotifyBalo = isNotifyBalo;
+	}
+
+	public Boolean getIsNotifyJo() {
+		return isNotifyJo;
+	}
+
+	public void setIsNotifyJo(Boolean isNotifyJo) {
+		this.isNotifyJo = isNotifyJo;
 	}
 }

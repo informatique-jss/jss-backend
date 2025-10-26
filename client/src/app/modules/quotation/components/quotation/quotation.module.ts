@@ -39,6 +39,8 @@ import { AffaireListComponent } from '../affaire-list/affaire-list.component';
 import { AffaireComponent } from '../affaire/affaire.component';
 import { AnnouncementListComponent } from '../announcement-list/announcement-list.component';
 import { AnnouncementComponent } from '../announcement/announcement.component';
+import { BaloListComponent } from '../balo-list/balo-list.component';
+import { BodaccListComponent } from '../bodacc-list/bodacc-list.component';
 import { ChooseAssignedUserDialogComponent } from '../choose-assigned-user-dialog/choose-assigned-user-dialog.component';
 import { ChooseCompetentAuthorityDialogComponent } from '../choose-competent-authority-dialog/choose-competent-authority-dialog.component';
 import { CustomerOrderCommentComponent } from '../customer-order-comment/customer-order-comment.component';
@@ -51,6 +53,7 @@ import { FormaliteComponent } from '../formalite/formalite.component';
 import { IncidentReportListComponent } from '../incident-report-list/incident-report-list.component';
 import { InfogreffeStatusComponent } from '../infogreffe-status/infogreffe-status.component';
 import { InvoiceManagementComponent } from '../invoice-management/invoice-management.component';
+import { JoListComponent } from '../jo-list/jo-list.component';
 import { MissingAttachmentQueriesComponent } from '../missing-attachment-queries/missing-attachment-queries.component';
 import { OrderSidePanelDetailsComponent } from '../order-side-panel-details/order-side-panel-details.component';
 import { OrderSimilaritiesDialogComponent } from '../order-similarities-dialog/order-similarities-dialog.component';
@@ -197,6 +200,9 @@ const routes: Routes = [
     InvoiceListComponent,
     SuggestedQuotationsDialogComponent,
     AffaireCorrectionComponent,
+    BodaccListComponent,
+    BaloListComponent,
+    JoListComponent
   ],
   exports: [
     OrderingListComponent,

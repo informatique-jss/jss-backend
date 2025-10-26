@@ -134,6 +134,12 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("schedulling.kpi.crm.compute");
         isOk = isOk && checkProperty("schedulling.reporting.hourly.compute");
         isOk = isOk && checkProperty("schedulling.reporting.daily.compute");
+        isOk = isOk && checkProperty("jo.entry.point");
+        isOk = isOk && checkProperty("balo.entry.point");
+        isOk = isOk && checkProperty("bodacc.entry.point");
+        isOk = isOk && checkProperty("schedulling.log.osiris.bodacc.update");
+        isOk = isOk && checkProperty("schedulling.log.osiris.balo.update");
+        isOk = isOk && checkProperty("schedulling.log.osiris.jo.update");
 
         isOk = isOk && checkProperty("mail.imap.host");
         isOk = isOk && checkProperty("mail.imap.port");

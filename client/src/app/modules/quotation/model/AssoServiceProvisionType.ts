@@ -19,4 +19,7 @@ export interface AssoServiceProvisionType {
   isPriority: boolean;
   defaultDeboursPrice: number;
   defaultDeboursPriceNonTaxable: number;
+  isNotifyBodacc: boolean;
+  isNotifyBalo: boolean;
+  isNotifyJo: boolean;
 }

@@ -69,6 +69,24 @@
             </td>
           </tr>
         </table>
+        <table class="full-width">
+          <tr>
+            <td>
+              <generic-toggle [(model)]="selectedEntity.isCouldNotifyBodacc"
+                label="Peut notifier des modifications au BODACC ?" [form]="entityForm"
+                propertyName="isCouldNotifyBodacc"></generic-toggle>
+            </td>
+            <td>
+              <generic-toggle [(model)]="selectedEntity.isCouldNotifyBalo"
+                label="Peut notifier des modifications au BALO ?" [form]="entityForm"
+                propertyName="isCouldNotifyBalo"></generic-toggle>
+            </td>
+            <td>
+              <generic-toggle [(model)]="selectedEntity.isCouldNotifyJo" label="Peut notifier des modifications au JO ?"
+                [form]="entityForm" propertyName="isCouldNotifyJo"></generic-toggle>
+            </td>
+          </tr>
+        </table>
         <table class="full-width"
           *ngIf="selectedEntity.provisionScreenType && selectedEntity.provisionScreenType.code==PROVISION_SCREEN_TYPE_FORMALITE">
           <tr>

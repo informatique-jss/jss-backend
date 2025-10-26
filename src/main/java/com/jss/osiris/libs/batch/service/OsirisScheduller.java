@@ -548,4 +548,33 @@ public class OsirisScheduller {
 	 * }
 	 */
 
+	@Scheduled(cron = "${schedulling.log.osiris.bodacc.update}")
+	private void updateBodacc() {
+		try {
+			if (nodeService.shouldIBatch())
+				batchService.declareNewBatch(Batch.UPDATE_BODACC_NOTICE, 0);
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(cron = "${schedulling.log.osiris.balo.update}")
+	private void updateBalo() {
+		try {
+			if (nodeService.shouldIBatch())
+				batchService.declareNewBatch(Batch.UPDATE_BALO_NOTICE, 0);
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(cron = "${schedulling.log.osiris.jo.update}")
+	private void updateJo() {
+		try {
+			if (nodeService.shouldIBatch())
+				batchService.declareNewBatch(Batch.UPDATE_JO_NOTICE, 0);
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
 }

@@ -58,6 +58,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.LegalFormService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.SpecialOfferService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
+import com.jss.osiris.modules.osiris.quotation.facade.CompetentAuthorityFacade;
 import com.jss.osiris.modules.osiris.quotation.model.ActType;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.AffaireSearch;
@@ -76,7 +77,9 @@ import com.jss.osiris.modules.osiris.quotation.model.AssoServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceProvisionType;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceTypeFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.AttachmentMailRequest;
+import com.jss.osiris.modules.osiris.quotation.model.BaloNotice;
 import com.jss.osiris.modules.osiris.quotation.model.BankTransfert;
+import com.jss.osiris.modules.osiris.quotation.model.BodaccNotice;
 import com.jss.osiris.modules.osiris.quotation.model.BuildingDomiciliation;
 import com.jss.osiris.modules.osiris.quotation.model.CharacterPrice;
 import com.jss.osiris.modules.osiris.quotation.model.Confrere;
@@ -98,6 +101,7 @@ import com.jss.osiris.modules.osiris.quotation.model.IOrderingSearchTaggedResult
 import com.jss.osiris.modules.osiris.quotation.model.IPaperSetResult;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
 import com.jss.osiris.modules.osiris.quotation.model.IWorkflowElement;
+import com.jss.osiris.modules.osiris.quotation.model.JoNotice;
 import com.jss.osiris.modules.osiris.quotation.model.JournalType;
 import com.jss.osiris.modules.osiris.quotation.model.MailRedirectionType;
 import com.jss.osiris.modules.osiris.quotation.model.MissingAttachmentQuery;
@@ -411,6 +415,9 @@ public class QuotationController {
 
   @Autowired
   CustomerOrderAssignationService customerOrderAssignationService;
+
+  @Autowired
+  CompetentAuthorityFacade competentAuthorityFacade;
 
   @JsonView(JacksonViews.OsirisListView.class)
   @GetMapping(inputEntryPoint + "/affaire/correction")
@@ -3020,5 +3027,38 @@ public class QuotationController {
 
     return new ResponseEntity<AnnouncementNoticeTemplateFragment>(announcementNoticeTemplateFragmentService
         .addOrUpdateAnnouncementNoticeTemplateFragment(announcementNoticeTemplateFragments), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/bodacc-notice/affaire")
+  public ResponseEntity<List<BodaccNotice>> getBodaccNoticeByAffaire(Integer affaireId)
+      throws OsirisValidationException {
+    Affaire affaire = affaireService.getAffaire(affaireId);
+    if (affaire == null)
+      throw new OsirisValidationException("affaire");
+
+    return new ResponseEntity<List<BodaccNotice>>(
+        competentAuthorityFacade.getBodaccNoticeByAffaire(affaireId), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/balo-notice/affaire")
+  public ResponseEntity<List<BaloNotice>> getBaloNoticeByAffaire(Integer affaireId)
+      throws OsirisValidationException {
+    Affaire affaire = affaireService.getAffaire(affaireId);
+    if (affaire == null)
+      throw new OsirisValidationException("affaire");
+
+    return new ResponseEntity<List<BaloNotice>>(
+        competentAuthorityFacade.getBaloNoticeByAffaire(affaireId), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/jo-notice/affaire")
+  public ResponseEntity<List<JoNotice>> getJoNoticeByAffaire(Integer affaireId)
+      throws OsirisValidationException {
+    Affaire affaire = affaireService.getAffaire(affaireId);
+    if (affaire == null)
+      throw new OsirisValidationException("affaire");
+
+    return new ResponseEntity<List<JoNotice>>(
+        competentAuthorityFacade.getJoNoticeByAffaire(affaireId), HttpStatus.OK);
   }
 }

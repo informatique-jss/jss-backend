@@ -36,6 +36,21 @@
       <tiers-followup [affaire]="affaire" [editMode]="true"></tiers-followup>
     </ng-template>
   </mat-tab>
+  <mat-tab label="BODACC" *ngIf="affaire && affaire.id">
+    <ng-template matTabContent>
+      <bodacc-list [affaire]="affaire"></bodacc-list>
+    </ng-template>
+  </mat-tab>
+  <mat-tab label="BALO" *ngIf="affaire && affaire.id">
+    <ng-template matTabContent>
+      <balo-list [affaire]="affaire"></balo-list>
+    </ng-template>
+  </mat-tab>
+  <mat-tab label="JO" *ngIf="affaire && affaire.id">
+    <ng-template matTabContent>
+      <jo-list [affaire]="affaire"></jo-list>
+    </ng-template>
+  </mat-tab>
   <mat-tab label="Documents" *ngIf="affaire && affaire.id">
     <attachments [entity]="affaire" [editMode]="true" [entityType]="AFFAIRE_ENTITY_TYPE.entityType">
     </attachments>

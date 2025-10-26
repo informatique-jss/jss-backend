@@ -497,6 +497,9 @@ public class ServiceServiceImpl implements ServiceService {
             provision.setIsFormalityAdditionalDeclaration(false);
             provision.setIsCorrespondenceFees(false);
             provision.setIsSupplyFullBeCopy(false);
+            provision.setIsNotifyBalo(Boolean.TRUE.equals(assoServiceProvisionType.getIsNotifyBalo()));
+            provision.setIsNotifyBodacc(Boolean.TRUE.equals(assoServiceProvisionType.getIsNotifyBodacc()));
+            provision.setIsNotifyJo(Boolean.TRUE.equals(assoServiceProvisionType.getIsNotifyJo()));
         }
         return provision;
     }

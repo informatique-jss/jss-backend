@@ -1,0 +1,23 @@
+<div class="mat-elevation-z2 form-div">
+  <div class=" full-width">
+    <table class="full-width table-fixed-layout">
+      <tr>
+        <td>
+          <generic-input [(model)]="textSearch" label="Rechercher" [form]="joSearchForm" propertyName="textSearch"
+            [isDisabled]="false"></generic-input>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+
+  <mat-stepper orientation="vertical">
+    <mat-step *ngFor="let jo of getJoToDisplay()">
+      <ng-template matStepLabel>
+        <p>{{jo.dateparution |date:'dd/MM/yyyy'}} - {{jo.typeavis}}</p>
+      </ng-template>
+      <p>{{jo.association_type_libelle}} - {{jo.numero_rna}}</p>
+      <p>{{jo.annonce_type_facette}}</p>
+      <button mat-fab extended color="primary" (click)="openOnJo(jo)">Voir sur le JO association</button>
+    </mat-step>
+  </mat-stepper>

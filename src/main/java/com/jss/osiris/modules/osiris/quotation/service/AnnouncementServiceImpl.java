@@ -645,21 +645,21 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                     if (announcement.getFirstConfrereReminderDateTime() == null) {
                         if (announcement.getFirstConfrereSentMailDateTime() != null
                                 && announcement.getFirstConfrereSentMailDateTime()
-                                        .isBefore(LocalDateTime.now().minusDays(1 * 3))) {
+                                        .isBefore(LocalDateTime.now().minusHours(2))) {
                             toSend = true;
                             announcement.setFirstConfrereReminderDateTime(LocalDateTime.now());
                         }
                     } else if (announcement.getSecondConfrereReminderDateTime() == null) {
                         if (announcement.getFirstConfrereSentMailDateTime() != null
                                 && announcement.getFirstConfrereSentMailDateTime()
-                                        .isBefore(LocalDateTime.now().minusDays(1 * 4))) {
+                                        .isBefore(LocalDateTime.now().minusDays(1))) {
                             toSend = true;
                             announcement.setSecondConfrereReminderDateTime(LocalDateTime.now());
                         }
                     } else if (announcement.getThirdConfrereReminderDateTime() == null) {
                         if (announcement.getFirstConfrereSentMailDateTime() != null
                                 && announcement.getFirstConfrereSentMailDateTime()
-                                        .isBefore(LocalDateTime.now().minusDays(1 * 7))) {
+                                        .isBefore(LocalDateTime.now().minusDays(1 * 2))) {
                             toSend = true;
                             announcement.setThirdConfrereReminderDateTime(LocalDateTime.now());
                         }
