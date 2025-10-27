@@ -147,21 +147,21 @@ export class MainComponent implements OnInit {
 
   fillPostsForCategories() {
     if (this.firstCategory) {
-      this.postService.getTopPostByJssCategory(0, 3, this.firstCategory).subscribe(pagedPosts => {
+      this.postService.getTopPostForFirstJssCategory(0, 3).subscribe(pagedPosts => {
         if (pagedPosts.content)
           this.justiceTopPosts = pagedPosts.content;
       })
     }
 
     if (this.secondCategory) {
-      this.postService.getTopPostByJssCategory(0, 3, this.secondCategory).subscribe(pagedPosts => {
+      this.postService.getTopPostForSecondJssCategory(0, 3).subscribe(pagedPosts => {
         if (pagedPosts.content)
           this.lawTopPosts = pagedPosts.content;
       })
     }
 
     if (this.thirdCategory) {
-      this.postService.getTopPostByJssCategory(0, 3, this.thirdCategory).subscribe(pagedPosts => {
+      this.postService.getTopPostForThirdJssCategory(0, 3).subscribe(pagedPosts => {
         if (pagedPosts.content)
           this.economyTopPosts = pagedPosts.content;
       })

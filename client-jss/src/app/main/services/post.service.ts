@@ -82,6 +82,18 @@ export class PostService extends AppRestService<Post> {
     return this.getPagedList(new HttpParams().set("page", page).set("size", size).set("categoryId", jssCategory.id), "posts/top/jss-category");
   }
 
+  getTopPostForFirstJssCategory(page: number, size: number) {
+    return this.getPagedList(new HttpParams().set("page", page).set("size", size), "posts/top/jss-first-category");
+  }
+
+  getTopPostForSecondJssCategory(page: number, size: number) {
+    return this.getPagedList(new HttpParams().set("page", page).set("size", size), "posts/top/jss-second-category");
+  }
+
+  getTopPostForThirdJssCategory(page: number, size: number) {
+    return this.getPagedList(new HttpParams().set("page", page).set("size", size), "posts/top/jss-third-category");
+  }
+
   getAllPostsByJssCategory(jssCategory: JssCategory, page: number, size: number, searchText: string, isDisplayNewPosts: boolean): Observable<PagedContent<Post>> {
     let params = new HttpParams()
       .set('categoryId', jssCategory.id.toString())
