@@ -26,7 +26,6 @@ import org.springframework.data.domain.Sort.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -2239,13 +2238,4 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                                     complexity = provision.getComplexity();
         return complexity;
     }
-
-    @Autowired
-    JoNoticeServiceImpl joNoticeServiceImpl;
-
-    @Scheduled(initialDelay = 100, fixedDelay = Integer.MAX_VALUE)
-    public void test() {
-        joNoticeServiceImpl.updateJoNotices();
-    }
-
 }
