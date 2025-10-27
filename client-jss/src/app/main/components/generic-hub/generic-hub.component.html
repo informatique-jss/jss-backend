@@ -33,7 +33,7 @@
                   class="row p-0 fixed-size-img-posts">
 
                   <div *ngFor="let post of postsByEntityType[selectedEntityType.id]" class="col-12 mb-2">
-                    <article class="blog-style2 card mb-4">
+                    <article class="blog-style2 card mb-4 d-flex">
                       <div class="feature-image">
                         <div class="image-frame image-hover-style-1">
                           <a [routerLink]='"/post/" + post.slug'> <img *ngIf="post.media" class="lazyload"
@@ -41,7 +41,7 @@
                               [alt]="post.media.alt_text" class="w-100"></a>
                         </div>
                       </div>
-                      <div class="card-body  d-md-flex align-items-center">
+                      <div class="card-body  align-items-center">
                         <div class="card-flex-content">
                           <div class="d-flex flex-wrap">
                             <a *ngFor="let category of post.jssCategories"
@@ -55,6 +55,12 @@
                                 *ngIf="post.isPremium" class="pe-0" src="/assets/images/premium-icon.svg">
                               {{post.titleText}}</a>
                           </h4>
+                          <div class="row d-flex justify-content-end">
+                            <div class="col-auto"> <span class="date-info fs-9 float-lg-end">
+                                <span>Publié le {{post.date | date:'EEEE d MMMM'}}</span>
+                              </span>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </article>

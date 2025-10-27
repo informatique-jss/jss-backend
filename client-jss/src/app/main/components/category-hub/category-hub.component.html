@@ -65,6 +65,12 @@
                                 *ngIf="post.isPremium" class="pe-0" src="/assets/images/premium-icon.svg">
                               {{post.titleText}}</a>
                           </h4>
+                          <div class="row d-flex justify-content-end">
+                            <div class="col-auto"> <span class="date-info fs-9 float-lg-end">
+                                <span>Publié le {{post.date | date:'EEEE d MMMM'}}</span>
+                              </span>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </article>
