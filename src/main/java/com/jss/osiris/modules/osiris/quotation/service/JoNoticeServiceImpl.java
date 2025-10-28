@@ -44,17 +44,18 @@ public class JoNoticeServiceImpl implements JoNoticeService {
                 for (JoNotice notice : notices) {
 
                     Optional<JoNotice> currentNotice = joNoticeRepository.findById(notice.getId());
-                    boolean isNew = !currentNotice.isPresent();
 
-                    joNoticeRepository.save(notice);
+                    if (!currentNotice.isPresent()) {
+                        joNoticeRepository.save(notice);
 
-                    if (isNew && notice.getTitre() != null && notice.getTitre().length() > 0) {
-                        List<Provision> provisions = joNoticeRepository.getProvisionsToNotify(notice.getTitre(),
-                                customerOrderStatusInProgress);
-                        if (provisions != null)
-                            for (Provision provision : provisions)
-                                notificationService.notifyJoNoticeAddToProvision(provision, notice);
+                        if (notice.getTitre() != null && notice.getTitre().length() > 0) {
+                            List<Provision> provisions = joNoticeRepository.getProvisionsToNotify(notice.getTitre(),
+                                    customerOrderStatusInProgress);
+                            if (provisions != null)
+                                for (Provision provision : provisions)
+                                    notificationService.notifyJoNoticeAddToProvision(provision, notice);
 
+                        }
                     }
                 }
             }

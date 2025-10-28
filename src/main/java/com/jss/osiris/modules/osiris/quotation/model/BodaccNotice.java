@@ -17,7 +17,8 @@ import jakarta.persistence.Transient;
 
 @Entity
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Table(indexes = { @Index(name = "idx_bodacc_notice_siren", columnList = "siren") })
+@Table(indexes = { @Index(name = "idx_bodacc_notice_siren", columnList = "siren"),
+        @Index(name = "idx_bodacc_notice_date", columnList = "dateparution") })
 public class BodaccNotice {
 
     @Column(length = 15)

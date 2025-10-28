@@ -23,4 +23,7 @@ public interface BodaccNoticeRepository extends QueryCacheCrudRepository<BodaccN
     @Query("select p from Provision p join p.service s join s.assoAffaireOrder aao join aao.affaire a join aao.customerOrder co where a.siren=:siren and co.customerOrderStatus=:customerOrderStatusInProgress and p.isNotifyBodacc=true")
     public List<Provision> getProvisionsToNotify(@Param("siren") String siren,
             @Param("customerOrderStatusInProgress") CustomerOrderStatus customerOrderStatusInProgress);
+
+    @Query("select distinct siren from Affaire where siren is not null")
+    public List<String> getListOfKnownSiren();
 }
