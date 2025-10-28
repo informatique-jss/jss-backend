@@ -168,6 +168,8 @@ export class NoticeTemplateComponent implements OnInit {
         }
       }
       this.fragmentSelection.push(selectionFragmentsFounds);
+      // We initialize selectedFragments so the index are the sames as fragmentSelection ie : selectedFragments[i] = the good fragment in fragmentSelection :
+      this.selectedFragments.push(undefined);
       i++;
     }
   }
@@ -192,11 +194,10 @@ export class NoticeTemplateComponent implements OnInit {
       if (selectedFragment) {
         text = text.replace(/\[([^\[\]]+)\]/g, (match, group) => {
           const items = group.split(/\s*\|\|\s*/); // split by '||' with spaces management
-          if (items.includes(selectedFragment.code)) {
+          if (items.some((item: string) => item.trim() === selectedFragment.code)) {
             return `[${selectedFragment.code}]`;
-          } else {
-            return match; // do not change if not found
           }
+          return match; // do not change if not found
         });
       }
 
