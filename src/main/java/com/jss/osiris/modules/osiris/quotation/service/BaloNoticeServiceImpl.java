@@ -44,20 +44,21 @@ public class BaloNoticeServiceImpl implements BaloNoticeService {
                 for (BaloNotice notice : notices) {
 
                     Optional<BaloNotice> currentNotice = baloNoticeRepository.findById(notice.getIdAnnonce());
-                    boolean isNew = !currentNotice.isPresent();
 
-                    if (notice.getSirenIn() != null && notice.getSirenIn().size() > 0)
-                        notice.setSiren(notice.getSirenIn().get(0).replaceAll(" ", "").trim());
+                    if (!currentNotice.isPresent()) {
+                        if (notice.getSirenIn() != null && notice.getSirenIn().size() > 0)
+                            notice.setSiren(notice.getSirenIn().get(0).replaceAll(" ", "").trim());
 
-                    baloNoticeRepository.save(notice);
+                        baloNoticeRepository.save(notice);
 
-                    if (isNew && notice.getSiren() != null && notice.getSiren().length() > 0) {
-                        List<Provision> provisions = baloNoticeRepository.getProvisionsToNotify(notice.getSiren(),
-                                customerOrderStatusInProgress);
-                        if (provisions != null)
-                            for (Provision provision : provisions)
-                                notificationService.notifyBaloNoticeAddToProvision(provision, notice);
+                        if (notice.getSiren() != null && notice.getSiren().length() > 0) {
+                            List<Provision> provisions = baloNoticeRepository.getProvisionsToNotify(notice.getSiren(),
+                                    customerOrderStatusInProgress);
+                            if (provisions != null)
+                                for (Provision provision : provisions)
+                                    notificationService.notifyBaloNoticeAddToProvision(provision, notice);
 
+                        }
                     }
                 }
             }

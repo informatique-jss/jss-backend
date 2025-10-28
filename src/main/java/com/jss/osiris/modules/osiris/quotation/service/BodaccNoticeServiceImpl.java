@@ -40,24 +40,27 @@ public class BodaccNoticeServiceImpl implements BodaccNoticeService {
                 .getCustomerOrderStatusByCode(CustomerOrderStatus.BEING_PROCESSED);
         if (lastDate != null) {
             List<BodaccNotice> notices = bodaccDelegateService.getBodaccAfterDate(lastDate.minusDays(1));
+            List<String> knownSiren = bodaccNoticeRepository.getListOfKnownSiren();
             if (notices != null && notices.size() > 0) {
                 for (BodaccNotice notice : notices) {
 
                     Optional<BodaccNotice> currentNotice = bodaccNoticeRepository.findById(notice.getId());
-                    boolean isNew = !currentNotice.isPresent();
 
-                    if (notice.getRegistre() != null && notice.getRegistre().size() > 0)
-                        notice.setSiren(notice.getRegistre().get(0).replaceAll(" ", "").trim());
+                    if (!currentNotice.isPresent()) {
+                        if (notice.getRegistre() != null && notice.getRegistre().size() > 0)
+                            notice.setSiren(notice.getRegistre().get(0).replaceAll(" ", "").trim());
 
-                    bodaccNoticeRepository.save(notice);
+                        bodaccNoticeRepository.save(notice);
 
-                    if (isNew && notice.getSiren() != null && notice.getSiren().length() > 0) {
-                        List<Provision> provisions = bodaccNoticeRepository.getProvisionsToNotify(notice.getSiren(),
-                                customerOrderStatusInProgress);
-                        if (provisions != null)
-                            for (Provision provision : provisions)
-                                notificationService.notifyBodaccNoticeAddToProvision(provision, notice);
+                        if (notice.getSiren() != null && notice.getSiren().length() > 0
+                                && knownSiren.indexOf(notice.getSiren()) >= 0) {
+                            List<Provision> provisions = bodaccNoticeRepository.getProvisionsToNotify(notice.getSiren(),
+                                    customerOrderStatusInProgress);
+                            if (provisions != null)
+                                for (Provision provision : provisions)
+                                    notificationService.notifyBodaccNoticeAddToProvision(provision, notice);
 
+                        }
                     }
                 }
             }
