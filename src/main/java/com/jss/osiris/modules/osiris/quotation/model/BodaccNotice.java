@@ -61,7 +61,7 @@ public class BodaccNotice {
     @Column(length = 3)
     private String numerodepartement;
 
-    @Column(length = 1500)
+    @Column(length = 2000)
     private String commercant;
 
     private String siren;
