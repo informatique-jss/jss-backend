@@ -45,7 +45,7 @@ public class JoDelegateServiceImpl implements JoDelegateService {
         SSLHelper.disableCertificateValidation();
 
         ResponseEntity<JoResponse> response = new RestTemplate().exchange(
-                joEntryPoint + recordsRequestUrl + "?where=id=dateparution>='"
+                joEntryPoint + recordsRequestUrl + "?where=dateparution>='"
                         + createdAfter.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
                         + "'&limit=100&offset=" + (Math.max(page * 100 - 1, 0)),
                 HttpMethod.GET,
