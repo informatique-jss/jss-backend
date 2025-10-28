@@ -634,6 +634,37 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public Page<Post> getPostsForFirstJssCategory(Pageable pageableRequest) throws OsirisException {
+
+        JssCategory firstJssCategory = constantService.getJssCategoryHomepageFirstHighlighted();
+
+        return postRepository.findByJssCategoriesAndIsCancelled(firstJssCategory, false,
+                LocalDateTime.of(1970, 1, 1, 0, 0),
+                pageableRequest);
+    }
+
+    @Override
+    public Page<Post> getPostsForSecondJssCategory(Pageable pageableRequest) throws OsirisException {
+
+        JssCategory firstJssCategory = constantService.getJssCategoryHomepageFirstHighlighted();
+        JssCategory secondJssCategory = constantService.getJssCategoryHomepageSecondHighlighted();
+
+        return postRepository.findByJssCategoryAndIsCancelledAndNotInJssCategories(secondJssCategory, false,
+                List.of(firstJssCategory), LocalDateTime.of(1970, 1, 1, 0, 0), pageableRequest);
+    }
+
+    @Override
+    public Page<Post> getPostsForThirdJssCategory(Pageable pageableRequest) throws OsirisException {
+
+        JssCategory firstJssCategory = constantService.getJssCategoryHomepageFirstHighlighted();
+        JssCategory secondJssCategory = constantService.getJssCategoryHomepageSecondHighlighted();
+        JssCategory thirdJssCategory = constantService.getJssCategoryHomepageThirdHighlighted();
+
+        return postRepository.findByJssCategoryAndIsCancelledAndNotInJssCategories(thirdJssCategory, false,
+                List.of(firstJssCategory, secondJssCategory), LocalDateTime.of(1970, 1, 1, 0, 0), pageableRequest);
+    }
+
+    @Override
     public Page<Post> getAllPostsByTag(Pageable pageableRequest, Tag tag, String searchText,
             LocalDateTime consultationDate) throws OsirisException {
         Responsable responsable = employeeService.getCurrentMyJssUser();
