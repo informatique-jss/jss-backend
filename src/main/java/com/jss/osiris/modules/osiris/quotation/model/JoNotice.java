@@ -40,7 +40,7 @@ public class JoNotice {
     private String numero_rna;
 
     @JsonProperty("titre")
-    @Column(length = 1500)
+    @Column(length = 2000)
     private String titre;
 
     public LocalDate getDateparution() {

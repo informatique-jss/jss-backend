@@ -60,7 +60,7 @@ export class BodaccListComponent implements OnInit {
 
   getDepot(bodacc: BodaccNotice) {
     if (bodacc && bodacc.depot) {
-      let parsed = JSON.parse(bodacc.modificationsgenerales);
+      let parsed = JSON.parse(bodacc.depot);
       let out = [];
       if (parsed && parsed.typeDepot)
         out.push(parsed.typeDepot);
