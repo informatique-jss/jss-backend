@@ -983,8 +983,8 @@ public class PostServiceImpl implements PostService {
             post.setSpotifyLinkUrl(post.getAcf().getSpotifyLinkUrl());
             post.setDeezerLinkUrl(post.getAcf().getDeezerLinkUrl());
             post.setAmazonMusicLinkUrl(post.getAcf().getAmazonMusicLinkUrl());
-            post.setSeoTitle(post.getAcf().getSeoTitle());
-            post.setSeoDescription(post.getAcf().getSeoDescription());
+            post.setSeoTitle(post.getAcf().getSeo_title());
+            post.setSeoDescription(post.getAcf().getSeo_description());
             if (post.getAcf().getAssociated_post() != null) {
                 List<Post> postList = new ArrayList<Post>();
                 for (Integer postId : post.getAcf().getAssociated_post()) {
