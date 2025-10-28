@@ -643,9 +643,9 @@ public class WordpressController {
 		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
 				Sort.by(Sort.Direction.DESC, "date"));
 
-		JssCategory firstJssCategory = constantService.getJssCategoryHomepageFirstHighlighted();
+		JssCategory secondJssCategory = constantService.getJssCategoryHomepageSecondHighlighted();
 
-		if (firstJssCategory == null) {
+		if (secondJssCategory == null) {
 			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
 		}
 
@@ -662,9 +662,9 @@ public class WordpressController {
 		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
 				Sort.by(Sort.Direction.DESC, "date"));
 
-		JssCategory firstJssCategory = constantService.getJssCategoryHomepageFirstHighlighted();
+		JssCategory thirdJssCategory = constantService.getJssCategoryHomepageThirdHighlighted();
 
-		if (firstJssCategory == null) {
+		if (thirdJssCategory == null) {
 			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
 		}
 

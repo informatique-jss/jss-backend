@@ -649,7 +649,7 @@ public class PostServiceImpl implements PostService {
         JssCategory firstJssCategory = constantService.getJssCategoryHomepageFirstHighlighted();
         JssCategory secondJssCategory = constantService.getJssCategoryHomepageSecondHighlighted();
 
-        return postRepository.findByJssCategoryAndIsCancelledAndNotInFirstJssCategory(secondJssCategory, false,
+        return postRepository.findByJssCategoryAndIsCancelledAndNotInJssCategories(secondJssCategory, false,
                 List.of(firstJssCategory), LocalDateTime.of(1970, 1, 1, 0, 0), pageableRequest);
     }
 
@@ -658,9 +658,9 @@ public class PostServiceImpl implements PostService {
 
         JssCategory firstJssCategory = constantService.getJssCategoryHomepageFirstHighlighted();
         JssCategory secondJssCategory = constantService.getJssCategoryHomepageSecondHighlighted();
-        JssCategory thirdJssCategory = constantService.getJssCategoryHomepageSecondHighlighted();
+        JssCategory thirdJssCategory = constantService.getJssCategoryHomepageThirdHighlighted();
 
-        return postRepository.findByJssCategoryAndIsCancelledAndNotInFirstJssCategory(thirdJssCategory, false,
+        return postRepository.findByJssCategoryAndIsCancelledAndNotInJssCategories(thirdJssCategory, false,
                 List.of(firstJssCategory, secondJssCategory), LocalDateTime.of(1970, 1, 1, 0, 0), pageableRequest);
     }
 
