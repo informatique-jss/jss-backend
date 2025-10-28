@@ -128,8 +128,15 @@ export class PostComponent implements OnInit, AfterViewInit {
     if (this.slug) {
       this.postService.getPostBySlug(this.slug).subscribe(post => {
         this.post = post;
-        this.titleService.setTitle("Les fiches pratiques - " + post.titleText + " - MyJSS");
-        this.meta.updateTag({ name: 'description', content: post.excerptText });
+        if (post.seoTitle)
+          this.titleService.setTitle(post.seoTitle);
+        else
+          this.titleService.setTitle("Les fiches pratiques - " + post.titleText + " - MyJSS");
+        if (post.seoDescription)
+          this.meta.updateTag({ name: 'description', content: post.seoDescription });
+        else if (post.excerptText)
+          this.meta.updateTag({ name: 'description', content: post.excerptText });
+
         this.fetchComments(0);
       })
       this.cancelReply();
