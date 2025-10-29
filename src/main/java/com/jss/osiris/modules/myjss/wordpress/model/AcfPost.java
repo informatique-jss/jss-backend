@@ -13,6 +13,10 @@ public class AcfPost {
 
     private boolean sticky;
 
+    private String seo_title;
+
+    private String seo_description;
+
     private String applePodcastLinkUrl;
 
     private String spotifyLinkUrl;
@@ -54,6 +58,22 @@ public class AcfPost {
 
     public void setSticky(boolean sticky) {
         this.sticky = sticky;
+    }
+
+    public String getSeo_title() {
+        return seo_title;
+    }
+
+    public void setSeo_title(String seo_title) {
+        this.seo_title = seo_title;
+    }
+
+    public String getSeo_description() {
+        return seo_description;
+    }
+
+    public void setSeo_description(String seo_description) {
+        this.seo_description = seo_description;
     }
 
     public String getApplePodcastLinkUrl() {

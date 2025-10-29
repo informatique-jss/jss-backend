@@ -112,6 +112,12 @@ public class Post implements IId, Serializable {
     @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private String amazonMusicLinkUrl;
 
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+    private String seoTitle;
+
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+    private String seoDescription;
+
     @Transient
     private Integer[] tags;
 
@@ -532,6 +538,22 @@ public class Post implements IId, Serializable {
 
     public void setAmazonMusicLinkUrl(String amazonMusicLinkUrl) {
         this.amazonMusicLinkUrl = amazonMusicLinkUrl;
+    }
+
+    public String getSeoTitle() {
+        return seoTitle;
+    }
+
+    public void setSeoTitle(String seoTitle) {
+        this.seoTitle = seoTitle;
+    }
+
+    public String getSeoDescription() {
+        return seoDescription;
+    }
+
+    public void setSeoDescription(String seoDescription) {
+        this.seoDescription = seoDescription;
     }
 
     public Boolean getIsBookmarked() {

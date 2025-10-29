@@ -21,6 +21,7 @@ export class NoticeTemplateService extends AppRestService<AnnouncementNoticeTemp
   noticeTemplateDescriptionObservable = this.noticeTemplateDescriptionSubject.asObservable();
 
   changeNoticeTemplateDescription(noticeTemplateDescription: NoticeTemplateDescription) {
+    this.noticeTemplateDescription = noticeTemplateDescription;
     this.noticeTemplateDescriptionSubject.next(noticeTemplateDescription);
   }
 

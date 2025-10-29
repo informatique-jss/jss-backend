@@ -13,16 +13,11 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.Table;
 
 @Entity
-@Table(indexes = { @Index(name = "idx_batch_settings_id", columnList = "id_batch_settings"),
-        @Index(name = "idx_batch_settings_status", columnList = "id_node,id_batch_settings,id_batch_status"),
-        @Index(name = "idx_batch_status_status", columnList = "id_batch_settings,id_batch_status") })
 public class Batch implements IId, Serializable {
     public static final String SYNCHRONISE_WORDPRESS = "SYNCHRONISE_WORDPRESS";
     public static String REFRESH_FORMALITE_GUICHET_UNIQUE = "REFRESH_FORMALITE_GUICHET_UNIQUE";

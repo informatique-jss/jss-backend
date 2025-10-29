@@ -1,12 +1,11 @@
 package com.jss.osiris.modules.osiris.crm.service;
 
-import java.time.LocalDate;
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jss.osiris.libs.exception.OsirisException;
-import com.jss.osiris.modules.osiris.crm.model.AnalyticStatsType;
+import com.jss.osiris.modules.osiris.crm.dto.KpiWidgetDto;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrm;
-import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 public interface KpiCrmService {
 
@@ -14,13 +13,16 @@ public interface KpiCrmService {
 
     public KpiCrm getKpiCrmById(Integer id);
 
-    public void updateIndicatorsValues() throws OsirisException;
-
-    public void computeKpiCrm(Integer responsableId, LocalDate dateToCompute);
-
-    public List<AnalyticStatsType> getAggregatedKpis(KpiCrm kpiCrm, List<Responsable> responsables,
-            LocalDate startDate, LocalDate endDate);
+    public void computeKpiCrm(Integer kpiCrmId);
 
     public List<KpiCrm> getKpiCrms();
 
+    public String getKpiValues(Integer kpiCrmId, String timeScale, List<Integer> responsablesIds)
+            throws JsonProcessingException;
+
+    public void startComputeBatches() throws OsirisException;
+
+    public List<KpiWidgetDto> getKpiCrmWidget(String displayedPageCode, String timescale, List<Integer> responsables);
+
+    public List<KpiCrm> getKpiCrmsByDisplayedPageCode(String displayedPageCode);
 }

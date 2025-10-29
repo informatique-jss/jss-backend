@@ -1,5 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
 import { formatDateFrance } from '../../../../libs/FormatHelper';
 import { copyObject } from '../../../../libs/GenericHelper';
@@ -8,14 +9,12 @@ import { TrustHtmlPipe } from '../../../../libs/TrustHtmlPipe';
 import { GenericDatePickerComponent } from '../../../miscellaneous/components/forms/generic-date-picker/generic-datetime-picker.component';
 import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { GenericTextareaComponent } from '../../../miscellaneous/components/forms/generic-textarea/generic-textarea.component';
-import { GenericToggleComponent } from '../../../miscellaneous/components/forms/generic-toggle/generic-toggle.component';
 import { SelectAnnouncementNoticeTemplateFragmentComponent } from "../../../miscellaneous/components/forms/select-announcement-notice-template-fragment/select-announcement-notice-template-fragment";
 import { SelectValueServiceFieldTypeComponent } from '../../../miscellaneous/components/forms/select-value-service-field-type/select-value-service-field-type.component';
 import { Service } from '../../../my-account/model/Service';
 import { ServiceFieldType } from '../../../my-account/model/ServiceFieldType';
 import { AnnouncementNoticeTemplate } from '../../model/AnnouncementNoticeTemplate';
 import { AnnouncementNoticeTemplateFragment } from '../../model/AnnouncementNoticeTemplateFragment';
-import { NoticeTemplateDescription } from '../../model/NoticeTemplateDescription';
 import { NoticeTemplateService } from '../../services/notice.template.service';
 import { ServiceFieldTypeService } from '../../services/service.field.type.service';
 
@@ -30,19 +29,20 @@ import { ServiceFieldTypeService } from '../../services/service.field.type.servi
     GenericTextareaComponent,
     GenericDatePickerComponent,
     SelectValueServiceFieldTypeComponent,
-    GenericToggleComponent,
     SelectAnnouncementNoticeTemplateFragmentComponent]
 })
 export class NoticeTemplateComponent implements OnInit {
 
   @Input() service: Service | undefined;
 
+  @ViewChild('previewModal') previewModalView!: TemplateRef<any>;
+  previewModalInstance: any | undefined;
+
   templates: AnnouncementNoticeTemplate[] = [];
   fragmentsFound: AnnouncementNoticeTemplateFragment[] = [];
   selectedFragments: (AnnouncementNoticeTemplateFragment | undefined)[] = [];
   fragmentInstancesMap = new Map<string, AnnouncementNoticeTemplateFragment[]>();
-  fragmentBordersColorsMap = new Map<string, string>();
-  usableColors: string[] = ["#1c2d41", "#ed5050", "#3fca90", "#f3e3ca", "#3687d8"];
+  selectedFragmentCode: string = '';
 
   fragmentSelection: AnnouncementNoticeTemplateFragment[][] = [];
   placeholdersMap = new Map<string, ServiceFieldType[]>();
@@ -54,8 +54,6 @@ export class NoticeTemplateComponent implements OnInit {
   serviceFieldTypes: ServiceFieldType[] = [];
   form!: FormGroup;
 
-  noticeTemplateDescription: NoticeTemplateDescription = {} as NoticeTemplateDescription;
-
   SERVICE_FIELD_TYPE_INTEGER = SERVICE_FIELD_TYPE_INTEGER;
   SERVICE_FIELD_TYPE_TEXT = SERVICE_FIELD_TYPE_TEXT;
   SERVICE_FIELD_TYPE_TEXTAREA = SERVICE_FIELD_TYPE_TEXTAREA;
@@ -66,6 +64,7 @@ export class NoticeTemplateComponent implements OnInit {
     private fb: FormBuilder,
     private serviceFieldTypesService: ServiceFieldTypeService,
     private noticeTemplateService: NoticeTemplateService,
+    public modalService: NgbModal,
   ) { }
 
   ngOnInit(): void {
@@ -97,11 +96,26 @@ export class NoticeTemplateComponent implements OnInit {
     let noticeTemplateDescription = this.noticeTemplateService.getNoticeTemplateDescription();
     this.form.valueChanges.subscribe(() => {
       this.updateDisplayText()
-      if (noticeTemplateDescription) {
-        noticeTemplateDescription.displayText = this.displayText;
+      if (noticeTemplateDescription && this.displayText) {
+        noticeTemplateDescription.displayText = this.sanitizeDisplayText(this.displayText);
         this.noticeTemplateService.changeNoticeTemplateDescription(noticeTemplateDescription);
       }
     });
+  }
+
+  /**
+   * @returns sanitized display text used for preview and for registering the notice in the final announcement
+   */
+  sanitizeDisplayText(displayText: string): string {
+    return displayText
+      .replaceAll("<mark>", "") //deleting marks around placeholders
+      .replaceAll("</mark>", "") //deleting marks around placeholders
+      //deleting <div id="fragment- with class etc. while still keeping the content inside the <div></div>
+      .replaceAll(/<div id="fragment-[^"]*" class="fragment-box [^"]*">([\s\S]*?)<\/div>/g, '$1');
+  }
+
+  getNoticeTemplateDescription() {
+    return this.noticeTemplateService.getNoticeTemplateDescription();
   }
 
   // Map placeholders to their corresponding ServiceFieldType instances
@@ -151,10 +165,11 @@ export class NoticeTemplateComponent implements OnInit {
         let fragmentFound = this.fragmentsFound.find(fragment => fragment.code == fragmentPart);
         if (fragmentFound) {
           selectionFragmentsFounds.push(fragmentFound);
-          this.fragmentBordersColorsMap.set(fragmentFound.code, this.usableColors[i % 5]);
         }
       }
       this.fragmentSelection.push(selectionFragmentsFounds);
+      // We initialize selectedFragments so the index are the sames as fragmentSelection ie : selectedFragments[i] = the good fragment in fragmentSelection :
+      this.selectedFragments.push(undefined);
       i++;
     }
   }
@@ -174,10 +189,18 @@ export class NoticeTemplateComponent implements OnInit {
   private updateDisplayText(): void {
     let text = this.displayTextOriginal;
 
-    // When fragment is selected, write only the selectedFragment so placeholders can then be wrote
+    // When fragment is selected, replace [XXXX || YYYYY] by [XXXX] if XXXX is the selected fragment
     for (let selectedFragment of this.selectedFragments) {
-      if (selectedFragment)
-        text = text.replace(new RegExp(`\\[[^\\[\\]]*${selectedFragment.code}[^\\[\\]]*\\]`, 'g'), "[" + selectedFragment.code + "]");
+      if (selectedFragment) {
+        text = text.replace(/\[([^\[\]]+)\]/g, (match, group) => {
+          const items = group.split(/\s*\|\|\s*/); // split by '||' with spaces management
+          if (items.some((item: string) => item.trim() === selectedFragment.code)) {
+            return `[${selectedFragment.code}]`;
+          }
+          return match; // do not change if not found
+        });
+      }
+
       this.fragmentSelectionText = text;
     }
 
@@ -193,7 +216,8 @@ export class NoticeTemplateComponent implements OnInit {
             fragmentTextToReplace = this.findAndReplacePlaceholders(fragmentFound, fragmentTextToReplace, this.placeholdersMap.get(fragmentFound.code) ?? [], i);
             i++;
           }
-          text = text.replace(new RegExp(`\\[\\s*${fragmentFound.code}\\s*\\]`), `<div id="fragment-${fragmentFound.code}" class="fragment-box ${this.getFragmentClass(fragmentFound.code)}">` + fragmentTextToReplace + "</div>");
+          text = text.replace(new RegExp(`\\[\\s*${fragmentFound.code}\\s*\\]`), `<div id="fragment-${fragmentFound.code}" class="fragment-box ${this.getFragmentClass(fragmentFound)}">` + fragmentTextToReplace + "</div>");
+          text = text.replace("/n", "<br>");
         }
       }
     }
@@ -233,7 +257,6 @@ export class NoticeTemplateComponent implements OnInit {
     text = text.replace(/<p>(\s|&nbsp;|<br\s*\/?>)*<\/p>/gi, '');
     text = text.replace(/(<br\s*\/?>\s*(?:&nbsp;)?\s*){3,}/gi, '<br><br>');
 
-
     this.displayText = text;
   }
 
@@ -249,16 +272,26 @@ export class NoticeTemplateComponent implements OnInit {
     return new RegExp(pattern, 'g');
   }
 
-  /**
-  Returns the name of the CSS class corresponding to the fragment's color.
-  */
-  private getFragmentClass(code: string): string {
-    const color = this.fragmentBordersColorsMap.get(code);
-    if (!color) return 'fragment-box';
+  setSelectedFragment(fragmentCode: string) {
+    if (fragmentCode != this.selectedFragmentCode) {
+      this.selectedFragmentCode = fragmentCode;
+      this.updateDisplayText();
+      this.scrollToFragment(fragmentCode);
+    }
+  }
 
-    // Sanitizes the color name to generate a valid class (e.g., #FF0000 -> ff0000)
-    const safeColor = color.replace('#', '').toLowerCase();
-    return `fragment-border-${safeColor}`;
+  isFragmentSelected(announcementNoticeTemplateFragment: AnnouncementNoticeTemplateFragment | undefined) {
+    if (announcementNoticeTemplateFragment)
+      return announcementNoticeTemplateFragment.code === this.selectedFragmentCode;
+    else
+      return false;
+  }
+
+  getFragmentClass(announcementNoticeTemplateFragment: AnnouncementNoticeTemplateFragment | undefined): string {
+    if (announcementNoticeTemplateFragment)
+      if (announcementNoticeTemplateFragment.code === this.selectedFragmentCode)
+        return "selected-fragment";
+    return "fragment-border";
   }
 
   private scrollToFragment(code: string): void {
@@ -308,17 +341,37 @@ export class NoticeTemplateComponent implements OnInit {
   }
 
   onFragmentSelectionChange(fragment: AnnouncementNoticeTemplateFragment, index: number) {
-    this.selectedFragments[index] = fragment;
-    this.scrollToFragment(fragment.code);
+    if (fragment) {
+      this.selectedFragments[index] = fragment;
+      this.setSelectedFragment(fragment.code);
+    }
   }
 
-  changeToggleValue(event: any, index: number) {
-    if (event && this.fragmentSelection[index]) {
+  changeToggleValue(announcementNoticeTemplateFragment: AnnouncementNoticeTemplateFragment | undefined, index: number) {
+    if (announcementNoticeTemplateFragment && this.fragmentSelection[index] && !this.isFragmentSelected(announcementNoticeTemplateFragment)) {
       this.selectedFragments.splice(index, 1, this.fragmentSelection[index][0]);
-      this.scrollToFragment(this.fragmentSelection[index][0].code);
+      this.setSelectedFragment(this.fragmentSelection[index][0].code);
     } else {
       this.selectedFragments.splice(index, 1, undefined);
+      this.setSelectedFragment("");
     }
+  }
+
+  isSelectedFragmentsContainsFragment(announcementNoticeTemplateFragment: AnnouncementNoticeTemplateFragment | undefined): boolean {
+    if (announcementNoticeTemplateFragment)
+      return this.selectedFragments.findIndex(announcement => announcement?.code == announcementNoticeTemplateFragment.code) == -1 ? false : true;
+    return false;
+
+  }
+
+  getSelectionClassForFragment(announcementNoticeTemplateFragment: AnnouncementNoticeTemplateFragment | undefined): string {
+    if (this.isSelectedFragmentsContainsFragment(announcementNoticeTemplateFragment))
+      if (this.isFragmentSelected(announcementNoticeTemplateFragment))
+        return "btn-selected-blue";
+      else
+        return "btn-selected-yellow";
+    else
+      return "btn-disabled"
   }
 
   getSectionsFragments(fragmentCodes: string[], selectedIndex: number): AnnouncementNoticeTemplateFragment[] {
@@ -362,7 +415,39 @@ export class NoticeTemplateComponent implements OnInit {
         this.fragmentInstancesMap.get(fragmentCodeToAdd)!.pop();
       }
     }
-
     this.updateDisplayText();
   }
+
+  getFragmentInputLabel(placeholder: ServiceFieldType, fragmentIndex: number, fragmentInstances: AnnouncementNoticeTemplateFragment[]): string {
+    let baseLabel = "";
+    if (placeholder.label)
+      baseLabel = placeholder.label;
+    else
+      baseLabel = placeholder.code;
+
+    if (fragmentInstances.length > 1) {
+      let fragmentIndexCopy = fragmentIndex + 1;
+      return baseLabel + " " + fragmentIndexCopy;
+    } else {
+      return baseLabel;
+    }
+  }
+
+
+  showPreviewModal() {
+    this.previewModal(this.previewModalView);
+  }
+
+  previewModal(content: TemplateRef<any>) {
+    if (this.previewModalInstance) {
+      return;
+    }
+
+    this.previewModalInstance = this.modalService.open(content, { size: 'xl', centered: true, scrollable: false });
+
+    this.previewModalInstance.result.finally(() => {
+      this.previewModalInstance = undefined;
+    });
+  }
+
 }

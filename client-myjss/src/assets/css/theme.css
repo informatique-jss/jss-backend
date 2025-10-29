@@ -20472,26 +20472,15 @@ ng-autocomplete .autocomplete-container b {
   border-radius: 4px;
   padding: 0.15rem;
   margin: 0.2rem;
-  border: 2px solid transparent;
 }
 
-/* WARNING : the names of the classes has to be modified if the usableColors array of the notice-template component changes. They always have to be ISO */
-.fragment-border-1c2d41 {
-  border-color: #1c2d41;
+.selected-fragment {
+  border: solid 2px var(--ar-secondary);
+  box-shadow: 5px 5px 10px #1c2d418a;
+  margin: -10px;
 }
 
-.fragment-border-ed5050 {
-  border-color: #ed5050;
-}
-
-.fragment-border-3fca90 {
-  border-color: #3fca90;
-}
-
-.fragment-border-f3e3ca {
-  border-color: #f3e3ca;
-}
-
-.fragment-border-3687d8 {
-  border-color: #3687d8;
+.fragment-border {
+  border: solid 2px var(--ar-tertiary);
+  margin: 0px;
 }

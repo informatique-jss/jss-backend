@@ -41,6 +41,12 @@ public interface PostService {
 
         public Page<Post> getPostsByJssCategory(Pageable pageableRequest, JssCategory jssCategory);
 
+        public Page<Post> getPostsForFirstJssCategory(Pageable pageableRequest) throws OsirisException;
+
+        public Page<Post> getPostsForSecondJssCategory(Pageable pageableRequest) throws OsirisException;
+
+        public Page<Post> getPostsForThirdJssCategory(Pageable pageableRequest) throws OsirisException;
+
         public Page<Post> getAllPostsByJssCategory(Pageable pageableRequest, JssCategory jssCategory,
                         String searchText, LocalDateTime consultationDate);
 

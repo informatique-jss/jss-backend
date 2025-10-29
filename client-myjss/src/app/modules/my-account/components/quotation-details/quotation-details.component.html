@@ -180,7 +180,7 @@
                         <div class="mb-2 mb-md-3 row  " *ngIf="canEditQuotation">
                           <div class="col-md-12">
                             <single-upload [entity]="assoServiceDocument" forcedFileExtension="PDF"
-                              (endOfUpload)="refreshCurrentAssoAffaireOrder(assoServiceDocument)"
+                              (endOfUpload)="updateAssoServiceDocument(assoServiceDocument)"
                               [entityType]="ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType" [isDirectUpload]="true"
                               [attachmentType]="assoServiceDocument.typeDocument.attachmentType"
                               [typeDocument]="assoServiceDocument.typeDocument"></single-upload>
@@ -243,7 +243,7 @@
                         <div class="mb-2 mb-md-3 row  " *ngIf="canEditQuotation">
                           <div class="col-md-12">
                             <single-upload [entity]="assoServiceDocument" forcedFileExtension="PDF"
-                              (endOfUpload)="refreshCurrentAssoAffaireOrder(assoServiceDocument)"
+                              (endOfUpload)="updateAssoServiceDocument(assoServiceDocument)"
                               [entityType]="ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType" [isDirectUpload]="true"
                               [attachmentType]="assoServiceDocument.typeDocument.attachmentType"
                               [typeDocument]="assoServiceDocument.typeDocument"></single-upload>

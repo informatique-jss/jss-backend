@@ -1,7 +1,8 @@
 export interface KpiCrm {
-  id: number;
+  id: string;
   code: string;
   label: string;
-  aggregateType: string;
-  lastUpdate: Date;
+  lastUpdate: string;
+  unit: string;
 }
+

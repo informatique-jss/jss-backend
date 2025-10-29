@@ -48,6 +48,10 @@ export abstract class GenericFormComponent implements OnInit {
  */
   @Output() onFormBlur: EventEmitter<void> = new EventEmitter();
   /**
+ * Fired when focus on input
+ */
+  @Output() onFormFocus: EventEmitter<void> = new EventEmitter();
+  /**
   * Additionnal validators to check
   */
   @Input() customValidators: ValidatorFn[] | undefined;
@@ -84,6 +88,10 @@ export abstract class GenericFormComponent implements OnInit {
 
   blurForm() {
     this.onFormBlur.emit();
+  }
+
+  focusForm() {
+    this.onFormFocus.emit();
   }
 
   ngOnDestroy() {

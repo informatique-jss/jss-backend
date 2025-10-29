@@ -1,4 +1,6 @@
-<div class="container d-flex flex-column min-vh-100 mb-5 pb-5" *ngIf="quotation">
+<div class="container d-flex flex-column min-vh-100 mb-4"
+  [ngClass]="{ 'mb-5 pb-5' : !noticeTemplateDescription || !noticeTemplateDescription.isUsingTemplate}"
+  *ngIf="quotation">
 
   <section>
     <p class="sub-title">Sélectionnez une affaire</p>
@@ -122,10 +124,15 @@
                     </div>
                   </div>
                   <div class="row" *ngIf="  !provision.isRedactedByJss">
-                    <div class="col-12 col-lg-6 form-check form-switch">
+                    <div class="col-auto form-check form-switch ">
                       <generic-toggle [(model)]="provision.announcement.isReReadByJss" label="Relecture par le JSS"
                         [form]="informationForm" [propertyName]="'isReReadByJss'+provision.order"
                         [isDisabled]="false"></generic-toggle>
+                    </div>
+                    <div class="col">
+                      <i class="col ai-circle-info fs-base" style="-webkit-text-stroke: 1px;" placement="right"
+                        ngbTooltip="La relecture s’effectue uniquement les jours ouvrés."
+                        tooltipClass="custom-tooltip"></i>
                     </div>
                   </div>
                 </div>
@@ -133,7 +140,7 @@
 
                 <!-- announcement form : text area -->
                 <div class="row pt-3">
-                  <div *ngIf="  !provision.isRedactedByJss" class="col-12 row row-cols-4 px-4">
+                  <div *ngIf="!provision.isRedactedByJss" class="col-12 row row-cols-4 px-4">
 
                     <!-- Département -->
                     <div class="col-12 col-lg-4 mb-3 align-items-start">
@@ -171,6 +178,7 @@
                     </ckeditor>
                   </div>
                 </div>
+                <hr class="border-white" id="option-form-end">
               </div>
             </ng-template>
           </li>

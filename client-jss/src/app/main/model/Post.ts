@@ -27,6 +27,8 @@ export interface Post {
   isHiddenAuthor: boolean;
   postSerie: Serie[];
   isHidePremium: boolean;
+  seoTitle: string;
+  seoDescription: string;
   // Computed field
   fullAuthor: Author;
   jssCategories: JssCategory[];

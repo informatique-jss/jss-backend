@@ -29,6 +29,6 @@
     </mj-text>
   </mj-column>
 </mj-section>
-<mj-head th:replace="~{fragments/cta(title='Accéder à mon compte', buttonText='Voir mon devis',buttonUrl=${myJssEntryPoint+'/account/quotation/pay/'+customerOrder.id})}"></mj-head>
+<mj-head th:replace="~{fragments/cta(title='Accéder à mon compte', buttonText='Voir mon devis',buttonUrl=${myJssEntryPoint+'/account/quotation/pay/'+quotation.id})}"></mj-head>
 <mj-head th:replace="~{fragments/signature}"></mj-head>
 <mj-head th:replace="~{fragments/footer}"></mj-head>

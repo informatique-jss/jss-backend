@@ -1,20 +1,32 @@
 package com.jss.osiris.modules.osiris.crm.model;
 
-import java.time.LocalDate;
+import java.math.BigDecimal;
 import java.util.List;
-
-import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 public interface IKpiCrm {
 
     public String getCode();
 
-    public String getLabel();
-
     public String getAggregateType();
 
-    public List<KpiCrmValue> getComputeValue(Responsable responsable, LocalDate startDate, LocalDate enDate);
+    /**
+     * Returns the value of the aggregated KpiCrmValue if for a search, the
+     * KpiCrmValue is null to allow the calculation of the aggregated value
+     * 
+     * @return
+     */
+    public BigDecimal getDefaultValue();
 
-    public AnalyticStatsType getKpiCrmAggregatedValue(List<Responsable> responsables, LocalDate startDate,
-            LocalDate endDate);
+    /**
+     * Retreives the values of the kpi that we want to persist in DB
+     * 
+     * @param responsable
+     * @param startDate
+     * @param enDate
+     * @return
+     */
+    public List<KpiCrmValue> computeKpiCrmValues();
+
+    public String getLabelType();
+
 }

@@ -44,4 +44,15 @@ export class AppService {
     return;
   }
 
+  getTiersMenuItems(idTiers: number) {
+    let tiersMenuItems = [];
+    tiersMenuItems.push(
+      { label: "Home", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: `/tiers/crm/kpi/${idTiers}/TIERS_KPI_HOME_DISPLAY` },
+      { label: "Infos générales", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: `/tiers/crm/kpi/${idTiers}/TIERS_KPI_MAIN_DISPLAY` },
+      { label: "Business", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "" },
+      { label: "Relation client", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "" }
+    );
+    return tiersMenuItems;
+  }
+
 }

@@ -615,6 +615,63 @@ public class WordpressController {
 				postService.getPostsByJssCategory(pageable, category), HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/posts/top/jss-first-category")
+	@JsonView(JacksonViews.MyJssListView.class)
+	public ResponseEntity<Page<Post>> getTopPostForFirstJssCategory(
+			@RequestParam(required = false, defaultValue = "0") Integer page,
+			@RequestParam(required = false, defaultValue = "10") Integer size) throws OsirisException {
+
+		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
+				Sort.by(Sort.Direction.DESC, "date"));
+
+		JssCategory firstJssCategory = constantService.getJssCategoryHomepageFirstHighlighted();
+
+		if (firstJssCategory == null) {
+			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
+		}
+
+		return new ResponseEntity<Page<Post>>(
+				postService.getPostsForFirstJssCategory(pageable), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/posts/top/jss-second-category")
+	@JsonView(JacksonViews.MyJssListView.class)
+	public ResponseEntity<Page<Post>> getTopPostForSecondJssCategory(
+			@RequestParam(required = false, defaultValue = "0") Integer page,
+			@RequestParam(required = false, defaultValue = "10") Integer size) throws OsirisException {
+
+		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
+				Sort.by(Sort.Direction.DESC, "date"));
+
+		JssCategory secondJssCategory = constantService.getJssCategoryHomepageSecondHighlighted();
+
+		if (secondJssCategory == null) {
+			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
+		}
+
+		return new ResponseEntity<Page<Post>>(
+				postService.getPostsForSecondJssCategory(pageable), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/posts/top/jss-third-category")
+	@JsonView(JacksonViews.MyJssListView.class)
+	public ResponseEntity<Page<Post>> getTopPostForThirdJssCategory(
+			@RequestParam(required = false, defaultValue = "0") Integer page,
+			@RequestParam(required = false, defaultValue = "10") Integer size) throws OsirisException {
+
+		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
+				Sort.by(Sort.Direction.DESC, "date"));
+
+		JssCategory thirdJssCategory = constantService.getJssCategoryHomepageThirdHighlighted();
+
+		if (thirdJssCategory == null) {
+			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
+		}
+
+		return new ResponseEntity<Page<Post>>(
+				postService.getPostsForThirdJssCategory(pageable), HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/posts/jss-category/most-seen")
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Page<Post>> getMostSeenPostByJssCatgory(

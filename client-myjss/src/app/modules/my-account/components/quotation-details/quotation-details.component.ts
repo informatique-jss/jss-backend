@@ -21,6 +21,7 @@ import { MailComputeResult } from '../../model/MailComputeResult';
 import { Quotation } from '../../model/Quotation';
 import { Service } from '../../model/Service';
 import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
+import { AssoServiceDocumentService } from '../../services/asso.service.document.service';
 import { AttachmentService } from '../../services/attachment.service';
 import { CustomerOrderService } from '../../services/customer.order.service';
 import { InvoiceLabelResultService } from '../../services/invoice.label.result.service';
@@ -69,7 +70,7 @@ export class QuotationDetailsComponent implements OnInit {
 
   displayPayButton: boolean = false;
   quotationDetailsForm!: FormGroup;
-
+  selectedService: Service | undefined;
   dislayAlreadyFilledAttachment = false;
   canEditQuotation: boolean = false;
 
@@ -88,7 +89,8 @@ export class QuotationDetailsComponent implements OnInit {
     private customerOrderService: CustomerOrderService,
     private serviceService: ServiceService,
     private modalService: NgbModal,
-    private gtmService: GtmService
+    private gtmService: GtmService,
+    private assoServiceDocumentService: AssoServiceDocumentService
   ) { }
 
   capitalizeName = capitalizeName;
@@ -184,14 +186,6 @@ export class QuotationDetailsComponent implements OnInit {
     this.currentSelectedAttachmentForDisable = attachment;
   }
 
-  confirmDisableAttachment(assoServiceDocument: AssoServiceDocument) {
-    if (this.currentSelectedAttachmentForDisable)
-      this.uploadAttachmentService.disableAttachment(this.currentSelectedAttachmentForDisable).subscribe(response => {
-        this.currentSelectedAttachmentForDisable = undefined;
-        this.refreshCurrentAssoAffaireOrder(assoServiceDocument);
-      })
-  }
-
   dismissDisableAttachment() {
     this.currentSelectedAttachmentForDisable = undefined;
   }
@@ -213,9 +207,7 @@ export class QuotationDetailsComponent implements OnInit {
       );
   }
 
-  refreshCurrentAssoAffaireOrder(assoServiceDocument: AssoServiceDocument | null) {
-    if (assoServiceDocument)
-      this.trackUploadFile(assoServiceDocument);
+  refreshCurrentAssoAffaireOrder() {
     if (this.quotation)
       this.assoAffaireOrderService.getAssoAffaireOrdersForQuotation(this.quotation).subscribe(response => {
         this.quotationAssoAffaireOrders = response;
@@ -226,14 +218,29 @@ export class QuotationDetailsComponent implements OnInit {
       })
   }
 
+
+  updateAssoServiceDocument(assoServiceDocument: AssoServiceDocument) {
+    if (assoServiceDocument)
+      this.trackUploadFile(assoServiceDocument);
+
+    this.assoServiceDocumentService.getAssoServiceDocument(assoServiceDocument).subscribe(response => {
+      if (response && this.selectedService) {
+        const index = this.selectedService.assoServiceDocuments.findIndex(asso => asso.id === response.id);
+        if (index !== -1) {
+          this.selectedService.assoServiceDocuments.splice(index, 1, response);
+        }
+      }
+    });
+  }
+
   toggleDislayAlreadyFilledAttachment() {
     this.dislayAlreadyFilledAttachment = !this.dislayAlreadyFilledAttachment;
   }
 
   saveFieldsValue(service: Service) {
     this.serviceService.addOrUpdateService(service).subscribe(response => {
-      this.appService.displayToast("Vos informations complémentaires ont bien été enrengistrées", false, "Succès", 15000);
-      this.refreshCurrentAssoAffaireOrder(null);
+      this.appService.displayToast("Vos informations complémentaires ont bien été enregistrées", false, "Succès", 15000);
+      this.refreshCurrentAssoAffaireOrder();
     })
   }
 
@@ -247,6 +254,7 @@ export class QuotationDetailsComponent implements OnInit {
 
   loadServiceDetails(service: Service, forceLoad: boolean) {
     if (service) {
+      this.selectedService = service;
       if (!this.quotationAttachments[service.id] || forceLoad)
         this.attachementService.getAttachmentsForProvisionOfService(service).subscribe(response => {
           this.quotationAttachments[service.id] = response;

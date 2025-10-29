@@ -16,6 +16,8 @@ export interface Post {
   videoUrl: string;
   relatedPosts: Post[];
   mediaTimeLength: number;
+  seoTitle: string;
+  seoDescription: string;
   // Computed field
   fullAuthor: Author;
   myJssCategories: MyJssCategory[];

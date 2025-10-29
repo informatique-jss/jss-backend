@@ -1,7 +1,7 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ChangeEvent, CKEditorModule } from '@ckeditor/ckeditor5-angular';
-import { NgbModal, NgbNavChangeEvent, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbNavChangeEvent, NgbNavModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { Alignment, Bold, ClassicEditor, Essentials, Font, GeneralHtmlSupport, Indent, IndentBlock, Italic, Link, List, Mention, Paragraph, PasteFromOffice, RemoveFormat, Underline, Undo } from 'ckeditor5';
 import { combineLatest, Observable, of, Subscription } from 'rxjs';
 import { PROVISION_SCREEN_TYPE_ANNOUNCEMENT, PROVISION_SCREEN_TYPE_DOMICILIATION, SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
@@ -87,7 +87,8 @@ import { QuotationFileUploaderComponent } from '../quotation-file-uploader/quota
     SelectCountryComponent,
     SelectCivilityComponent,
     CKEditorModule,
-    NgbNavModule]
+    NgbNavModule,
+    NgbTooltipModule]
 })
 export class RequiredInformationComponent implements OnInit {
 
@@ -181,6 +182,7 @@ export class RequiredInformationComponent implements OnInit {
       if (item && item.isShowNoticeTemplate && this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined && item.announcementOrder != undefined
         && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[item.announcementOrder].announcement) {
         this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[item.announcementOrder].announcement!.notice = item.displayText;
+        this.noticeTemplateDescription = item;
       }
     });
     this.mailRedirectionTypeOther = this.constantService.getMailRedirectionTypeOther();
@@ -661,7 +663,18 @@ export class RequiredInformationComponent implements OnInit {
       } else {
         this.noticeTemplateDescription.isShowNoticeTemplate = event as boolean;
         this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
+        if (event)
+          this.scrollToNoticeTemplateSection();
       }
+  }
+
+  private scrollToNoticeTemplateSection(): void {
+    setTimeout(() => {
+      const el = document.getElementById(`option-form-end`);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 0); // Timeout so the DOM is well up to date
   }
 
   hasOneTemplate(service: Service) {

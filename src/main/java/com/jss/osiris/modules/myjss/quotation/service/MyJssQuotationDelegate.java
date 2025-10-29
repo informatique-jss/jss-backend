@@ -342,6 +342,9 @@ public class MyJssQuotationDelegate {
 
                     if (!found) {
                         mailService.populateMailIds(asso.getAffaire().getMails());
+                        if (asso.getAffaire().getMails() != null && asso.getAffaire().getMails().size() > 0
+                                && asso.getAffaire().getMails().get(0).getMail() == null)
+                            asso.getAffaire().setMails(null);
                         asso.setAffaire(affaireService.addOrUpdateAffaire(asso.getAffaire()));
                     }
                 }
