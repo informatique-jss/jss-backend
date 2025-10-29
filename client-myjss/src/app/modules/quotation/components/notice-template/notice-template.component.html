@@ -80,6 +80,14 @@
                 <h6 class=" mb-0">
                   {{ selections.length > 0 ? getArrayInString(selections) : "Champs spécifiques : " + selections }}</h6>
               </div>
+              <div class="col-auto">
+                <button type="button"
+                  (click)="changeToggleValue(selectedFragments[i] ? selectedFragments[i] : selections[0], i)"
+                  class="btn btn-icon rounded-pill fs-xl"
+                  [ngClass]="this.getSelectionClassForFragment(selectedFragments[i])">
+                  <i class="ai-check"></i>
+                </button>
+              </div>
 
               <div class="col-12 mt-3" *ngIf="selections.length>1">
                 <select-announcement-notice-template-fragment [types]="selections" [(model)]="selectedFragments[i]"
@@ -88,12 +96,6 @@
                   [isMandatory]="false"></select-announcement-notice-template-fragment>
               </div>
 
-              <div class="col-auto" *ngIf="selections.length==1">
-                <button type="button" (click)="changeToggleValue(selections[0], i)"
-                  class="btn btn-icon rounded-pill fs-xl" [ngClass]="this.getSelectionClassForFragment(selections[0])">
-                  <i class="ai-check"></i>
-                </button>
-              </div>
 
             </div>
 

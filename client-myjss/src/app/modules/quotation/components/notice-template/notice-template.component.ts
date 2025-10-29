@@ -347,7 +347,7 @@ export class NoticeTemplateComponent implements OnInit {
     }
   }
 
-  changeToggleValue(announcementNoticeTemplateFragment: AnnouncementNoticeTemplateFragment, index: number) {
+  changeToggleValue(announcementNoticeTemplateFragment: AnnouncementNoticeTemplateFragment | undefined, index: number) {
     if (announcementNoticeTemplateFragment && this.fragmentSelection[index] && !this.isFragmentSelected(announcementNoticeTemplateFragment)) {
       this.selectedFragments.splice(index, 1, this.fragmentSelection[index][0]);
       this.setSelectedFragment(this.fragmentSelection[index][0].code);
@@ -357,12 +357,14 @@ export class NoticeTemplateComponent implements OnInit {
     }
   }
 
-  isSelectedFragmentsContainsFragment(announcementNoticeTemplateFragment: AnnouncementNoticeTemplateFragment): boolean {
-    return this.selectedFragments.findIndex(announcement => announcement?.code == announcementNoticeTemplateFragment.code) == -1 ? false : true;
+  isSelectedFragmentsContainsFragment(announcementNoticeTemplateFragment: AnnouncementNoticeTemplateFragment | undefined): boolean {
+    if (announcementNoticeTemplateFragment)
+      return this.selectedFragments.findIndex(announcement => announcement?.code == announcementNoticeTemplateFragment.code) == -1 ? false : true;
+    return false;
 
   }
 
-  getSelectionClassForFragment(announcementNoticeTemplateFragment: AnnouncementNoticeTemplateFragment): string {
+  getSelectionClassForFragment(announcementNoticeTemplateFragment: AnnouncementNoticeTemplateFragment | undefined): string {
     if (this.isSelectedFragmentsContainsFragment(announcementNoticeTemplateFragment))
       if (this.isFragmentSelected(announcementNoticeTemplateFragment))
         return "btn-selected-blue";
