@@ -114,5 +114,4 @@ export class OverviewComponent implements OnInit {
       } as LogPayload
     );
   }
-
 }
