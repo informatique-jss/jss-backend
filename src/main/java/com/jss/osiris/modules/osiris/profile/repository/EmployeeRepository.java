@@ -25,12 +25,12 @@ public interface EmployeeRepository extends QueryCacheCrudRepository<Employee, I
     @Query(nativeQuery = true, value = "" +
             " select r.id " +
             " from responsable r " +
-            " where r.id_mail = :idMail " +
+            " where r.id_mail = :idMail and coalesce(r.is_active,false)=true " +
             " union  " +
             " select r3.id " +
             " from responsable r2  " +
             " join tiers t on t.id = r2.id_tiers and r2.can_view_all_tiers_in_web " +
             " join responsable r3 on r3.id_tiers = t.id " +
-            " where r2.id_mail = :idMail ")
+            " where r2.id_mail = :idMail and  coalesce(r3.is_active,false)=true ")
     List<Integer> getPotentialUserScope(@Param("idMail") Integer idMail);
 }

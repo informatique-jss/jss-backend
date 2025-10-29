@@ -481,7 +481,8 @@ public class MailHelper {
             ctx.setVariable("replyToEmployee",
                     mail.getReplyTo() != null ? mail.getReplyTo() : mail.getSendToMeEmployee());
 
-        if (mail.getReplyTo().getId().equals(constantService.getEmployeeSalesDirector().getId())) {
+        if (mail.getReplyTo() != null
+                && mail.getReplyTo().getId().equals(constantService.getEmployeeSalesDirector().getId())) {
             Employee replyEmployeeSales = new Employee();
             replyEmployeeSales.setFirstname("Service Commercial");
             replyEmployeeSales.setMail(constantService.getStringSalesSharedMailbox());
