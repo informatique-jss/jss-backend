@@ -137,7 +137,7 @@ public class AccountingAccountServiceImpl implements AccountingAccountService {
                                                 constantService.getPrincipalAccountingAccountLitigious());
                 accountingAccountLitigious.setAccountingAccountSubNumber(maxSubAccount);
                 accountingAccountLitigious
-                                .setLabel("Compte litigieux - " + (label != null ? label : ""));
+                                .setLabel("Compte RJ - " + (label != null ? label : ""));
                 addOrUpdateAccountingAccount(accountingAccountLitigious);
                 accountingAccountTrouple.setAccountingAccountLitigious(accountingAccountLitigious);
 

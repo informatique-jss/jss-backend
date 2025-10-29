@@ -641,6 +641,11 @@ export class CheckoutComponent implements OnInit {
         responsable.tiers.phones.splice(responsable.tiers.phones.indexOf(phone), 1);
   }
 
+  deletePhoneTiers(phone: Phone, tiers: Tiers) {
+    if (tiers)
+      tiers.phones.splice(tiers.phones.indexOf(phone), 1);
+  }
+
   addMail(document: Document, isAffaire: boolean) {
     if (document)
       if (isAffaire && this.newMailBillingAffaire && validateEmail(this.newMailBillingAffaire)) {
