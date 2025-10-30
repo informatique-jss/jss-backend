@@ -12,6 +12,7 @@ import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceSearch;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceSearchResult;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceStatus;
+import com.jss.osiris.modules.osiris.invoicing.model.Payment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Provider;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.tiers.model.BillingLabelType;
@@ -40,7 +41,7 @@ public interface InvoiceService {
 
         public void reindexInvoices() throws OsirisException;
 
-        public Invoice addOrUpdateInvoiceFromUser(Invoice invoice)
+        public Invoice addOrUpdateInvoiceFromUser(Invoice invoice, List<Payment> paymentsToUseForInvoice)
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 

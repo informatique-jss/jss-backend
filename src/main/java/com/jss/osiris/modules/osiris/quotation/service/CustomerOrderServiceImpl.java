@@ -632,13 +632,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                             .compareTo(BigDecimal.valueOf(Float.parseFloat(payementLimitRefundInEuros))) > 0)
                 throw new OsirisException(null, "Impossible to billed, too much money on customerOrder !");
 
-            Invoice invoice = generateInvoice(customerOrder);
-
-            entityManager.flush();
-            entityManager.clear();
-
-            invoice = invoiceService.getInvoice(invoice.getId());
-
             // If deposit already set, associate them to invoice
             List<Payment> paymentToMove = new ArrayList<Payment>();
             List<Payment> customerOrderPayement = paymentService.getPaymentForCustomerOrder(customerOrder);
@@ -648,10 +641,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     if (!payment.getIsCancelled())
                         paymentToMove.add(payment);
 
-            if (paymentToMove.size() > 0)
-                for (Payment payment : paymentToMove) {
-                    paymentService.movePaymentFromCustomerOrderToInvoice(payment, customerOrder, invoice);
-                }
+            generateInvoice(customerOrder, paymentToMove);
 
             entityManager.flush();
             entityManager.clear();
@@ -786,7 +776,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         return customerOrder;
     }
 
-    private Invoice generateInvoice(CustomerOrder customerOrder)
+    private Invoice generateInvoice(CustomerOrder customerOrder, List<Payment> paymentsToUseForInvoice)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         // Generate blank invoice
         Invoice invoice = new Invoice();
@@ -807,7 +797,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                             }
                     }
             }
-        invoiceService.addOrUpdateInvoiceFromUser(invoice);
+        invoiceService.addOrUpdateInvoiceFromUser(invoice, paymentsToUseForInvoice);
         return invoice;
     }
 
