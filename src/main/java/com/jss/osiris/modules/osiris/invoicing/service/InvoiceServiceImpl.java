@@ -145,7 +145,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public Invoice addOrUpdateInvoiceFromUser(Invoice invoice)
+    public Invoice addOrUpdateInvoiceFromUser(Invoice invoice, List<Payment> paymentsToUseForInvoice)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         if (!hasAtLeastOneInvoiceItemNotNull(invoice))
             throw new OsirisException(null, "No invoice item found on invoice");
@@ -276,8 +276,15 @@ public class InvoiceServiceImpl implements InvoiceService {
         }
 
         addOrUpdateInvoice(invoice);
-        if (invoice.getResponsable() != null && invoice.getRff() == null)
+
+        if (invoice.getResponsable() != null && invoice.getRff() == null) {
+            if (paymentsToUseForInvoice != null && paymentsToUseForInvoice.size() > 0)
+                for (Payment payment : paymentsToUseForInvoice) {
+                    paymentService.movePaymentFromCustomerOrderToInvoice(payment, invoice.getCustomerOrder(), invoice);
+                }
+
             generateInvoicePdf(invoice, invoice.getCustomerOrder());
+        }
 
         // Associate attachment for azure invoice
         if (invoice.getAzureInvoice() != null) {
@@ -427,7 +434,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             creditNote.setIsCreditNote(true);
             creditNote.setReverseCreditNote(invoice);
         }
-        creditNote = addOrUpdateInvoiceFromUser(creditNote);
+        creditNote = addOrUpdateInvoiceFromUser(creditNote, null);
 
         invoice.setCreditNote(creditNote);
         invoice = addOrUpdateInvoice(invoice);
@@ -503,7 +510,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         newInvoice.setIsCreditNote(true);
         newInvoice.setReverseCreditNote(invoice);
         // Create credit note
-        Invoice creditNote = addOrUpdateInvoiceFromUser(newInvoice);
+        Invoice creditNote = addOrUpdateInvoiceFromUser(newInvoice, null);
         if (newInvoice.getInvoiceItems() != null) {
             creditNote.setInvoiceStatus(constantService.getInvoiceStatusCreditNoteReceived());
             creditNote.setIsCreditNote(true);
