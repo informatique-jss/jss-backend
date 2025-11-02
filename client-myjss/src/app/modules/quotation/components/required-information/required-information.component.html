@@ -104,7 +104,7 @@
                   <div class="col-12 col-lg-6 form-check form-switch">
                     <generic-toggle [(model)]="provision.isRedactedByJss" label="Confier la rédaction au JSS"
                       [form]="informationForm" [propertyName]="'isRedactedByJss'+provision.order" [isDisabled]="false"
-                      (onToggleChange)="changeIsShowNoticeTemplate(false, provision.isRedactedByJss)"></generic-toggle>
+                      (onToggleChange)="changeIsShowNoticeTemplate(false, provision.isRedactedByJss,undefined,quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])"></generic-toggle>
                   </div>
 
                   <div class="col-12 col-lg-6 form-check form-switch" *ngIf="provision.isRedactedByJss">
@@ -115,12 +115,12 @@
 
                   <div class="row">
                     <div
-                      *ngIf="!provision.isRedactedByJss && hasOneTemplate( quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex]) && noticeTemplateDescription"
+                      *ngIf="!provision.isRedactedByJss && getPossibleTemplates( quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex]) &&  getPossibleTemplates( quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])!.length>0 && noticeTemplateDescription"
                       class="col-12 col-lg-6 form-check form-switch">
                       <generic-toggle [(model)]="noticeTemplateDescription.isUsingTemplate"
                         label="Utiliser les modèles proposés pour la rédaction" [form]="informationForm"
                         [propertyName]="'isUsingTemplate'+provision.order" [isDisabled]="false"
-                        (onToggleChange)="changeIsShowNoticeTemplate($event, provision.isRedactedByJss)"></generic-toggle>
+                        (onToggleChange)="changeIsShowNoticeTemplate($event, provision.isRedactedByJss,undefined,quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])"></generic-toggle>
                     </div>
                   </div>
                   <div class="row" *ngIf="  !provision.isRedactedByJss">
@@ -177,6 +177,18 @@
                       (ready)="onEditorReady($event, provision)" (change)="onNoticeChange($event, provision)">
                     </ckeditor>
                   </div>
+                </div>
+                <div class="d-flex flex-column flex-md-row flex-sm-wrap align-items-start"
+                  *ngIf=" noticeTemplateDescription && noticeTemplateDescription.isUsingTemplate && getPossibleTemplates(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex]) && getPossibleTemplates(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])!.length>1">
+                  <h6 class="w-100 mb-3">
+                    <i class="ai-wallet pe-2"></i>Précisez le modèle souhaité :
+                  </h6>
+                  <div
+                    *ngFor="let template of getPossibleTemplates(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])"
+                    class="btn btn-outline-secondary m-1 w-100 w-sm-auto  btn-wrap btn-service-family"
+                    [class.active]="noticeTemplateDescription && noticeTemplateDescription.selectedTemplate &&  noticeTemplateDescription.selectedTemplate.id == template.id"
+                    (click)="changeIsShowNoticeTemplate(true, provision.isRedactedByJss,template ,quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])">
+                    {{template.label}}</div>
                 </div>
                 <hr class="border-white" id="option-form-end">
               </div>

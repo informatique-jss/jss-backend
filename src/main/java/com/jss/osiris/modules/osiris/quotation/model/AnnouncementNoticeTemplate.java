@@ -23,6 +23,7 @@ public class AnnouncementNoticeTemplate implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "announcement_notice_template_sequence", sequenceName = "announcement_notice_template_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "announcement_notice_template_sequence")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Integer id;
 
 	@Column(nullable = false, length = 250)

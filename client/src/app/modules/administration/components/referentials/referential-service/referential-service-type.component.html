@@ -208,11 +208,11 @@
                   [isDisabled]="!editMode"
                   [filteredNoticeTypeFamily]="assoServiceProvisionType.noticeTypeFamily"></select-notice-type>
               </td>
-              <td
-                *ngIf="assoServiceProvisionType.noticeTypeFamily && assoServiceProvisionType.provisionType.provisionFamilyType">
-                <autocomplete-notice-template [(model)]="assoServiceProvisionType.announcementNoticeTemplate"
-                  label="Modèle d'annonce" [form]="entityForm" [propertyName]="'noticeTemplate'+index+deleteIndex"
-                  [isMandatory]="false" [isDisabled]="!editMode" [displayCode]="true"></autocomplete-notice-template>
+              <td>
+                <select-notice-template-multiple [(model)]="assoServiceProvisionType.announcementNoticeTemplates"
+                  label="Modèle d'annonce" [form]="entityForm"
+                  [propertyName]="'announcementNoticeTemplates'+index+deleteIndex" [isMandatory]="false"
+                  [isDisabled]="!editMode"></select-notice-template-multiple>
               </td>
             </tr>
           </table>

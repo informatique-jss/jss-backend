@@ -15,7 +15,7 @@ export interface AssoServiceProvisionType {
   noticeType: NoticeType;
   noticeTypeFamily: NoticeTypeFamily;
   complexity: number;
-  announcementNoticeTemplate: AnnouncementNoticeTemplate;
+  announcementNoticeTemplates: AnnouncementNoticeTemplate[];
   isPriority: boolean;
   defaultDeboursPrice: number;
   defaultDeboursPriceNonTaxable: number;
