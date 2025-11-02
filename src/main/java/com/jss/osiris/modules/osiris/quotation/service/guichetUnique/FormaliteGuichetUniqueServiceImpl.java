@@ -709,7 +709,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                             }
                         }
         invoice.setProvision(provision);
-        return invoiceService.addOrUpdateInvoiceFromUser(invoice);
+        return invoiceService.addOrUpdateInvoiceFromUser(invoice, null);
     }
 
     private Invoice generateCreditNoteFromCart(Cart cart, Provision provision)
@@ -809,7 +809,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
         invoice.setProvision(provision);
 
         return invoiceHelper.getPriceTotal(invoice).compareTo(zeroValue) > 0
-                ? invoiceService.addOrUpdateInvoiceFromUser(invoice)
+                ? invoiceService.addOrUpdateInvoiceFromUser(invoice, null)
                 : null;
     }
 

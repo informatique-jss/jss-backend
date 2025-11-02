@@ -1327,7 +1327,7 @@ public class PaymentServiceImpl implements PaymentService {
         invoice.getInvoiceItems().add(invoiceItem);
         vatService.completeVatOnInvoiceItem(invoiceItem, invoice);
 
-        Invoice centralPayInvoice = invoiceService.addOrUpdateInvoiceFromUser(invoice);
+        Invoice centralPayInvoice = invoiceService.addOrUpdateInvoiceFromUser(invoice, null);
         Payment centralPayPayment = generateNewAccountPayment(
                 invoiceItem.getPreTaxPrice().add(invoiceItem.getVatPrice()).negate(),
                 constantService.getAccountingAccountBankCentralPay(),
