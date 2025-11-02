@@ -157,6 +157,7 @@ import { SelectMailRedirectionComponent } from '../forms/select-mail-redirection
 import { SelectMyJssCategoryComponent } from '../forms/select-myjss-category/select-myjss-category.component';
 import { SelectNodeComponent } from '../forms/select-node/select-node.component';
 import { SelectNoticeFamilyComponent } from '../forms/select-notice-family/select-notice-family.component';
+import { SelectNoticeTemplateMultipleComponent } from '../forms/select-notice-template-multiple/select-notice-template.component';
 import { SelectNoticeTemplateComponent } from '../forms/select-notice-template/select-notice-template.component';
 import { SelectNoticeTypeComponent } from '../forms/select-notice-type/select-notice-type.component';
 import { SelectNotificationTypesComponent } from '../forms/select-notification-types/select-notification-types.component';
@@ -427,7 +428,8 @@ const routes: Routes = [
     SelectActiveDirectoryGroupMultipleComponent,
     AutocompleteReportingWidgetComponent,
     SelectStringComponent,
-    AutocompleteNoticeTemplateComponent
+    AutocompleteNoticeTemplateComponent,
+    SelectNoticeTemplateMultipleComponent
   ],
   exports: [
     HistoryComponent,
@@ -607,7 +609,8 @@ const routes: Routes = [
     SelectActiveDirectoryGroupMultipleComponent,
     AutocompleteReportingWidgetComponent,
     SelectStringComponent,
-    AutocompleteNoticeTemplateComponent
+    AutocompleteNoticeTemplateComponent,
+    SelectNoticeTemplateMultipleComponent
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

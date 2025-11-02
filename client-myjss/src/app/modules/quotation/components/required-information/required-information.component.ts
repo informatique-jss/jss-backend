@@ -46,6 +46,7 @@ import { Department } from '../../../profile/model/Department';
 import { Phone } from '../../../profile/model/Phone';
 import { Responsable } from '../../../profile/model/Responsable';
 import { LoginService } from '../../../profile/services/login.service';
+import { AnnouncementNoticeTemplate } from '../../model/AnnouncementNoticeTemplate';
 import { Domiciliation } from '../../model/Domiciliation';
 import { DomiciliationContractType } from '../../model/DomiciliationContractType';
 import { IQuotation } from '../../model/IQuotation';
@@ -655,17 +656,39 @@ export class RequiredInformationComponent implements OnInit {
     }
   }
 
-  changeIsShowNoticeTemplate(event: Boolean, isRedactedByJss: boolean) {
-    if (this.noticeTemplateDescription)
+  changeIsShowNoticeTemplate(event: Boolean, isRedactedByJss: boolean, selectedTemplate: AnnouncementNoticeTemplate | undefined, service: Service | undefined) {
+    if (this.noticeTemplateDescription) {
       if (isRedactedByJss) {
         this.noticeTemplateDescription.isShowNoticeTemplate = false;
         this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
-      } else {
-        this.noticeTemplateDescription.isShowNoticeTemplate = event as boolean;
-        this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
-        if (event)
-          this.scrollToNoticeTemplateSection();
+        return;
       }
+
+      if (service) {
+        this.noticeTemplateDescription.selectedTemplate = undefined;
+        this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
+        setTimeout(() => this.updateTemplate(event as boolean, selectedTemplate, service), 0);
+      } else {
+        this.noticeTemplateDescription.isShowNoticeTemplate = false;
+        this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
+      }
+
+    }
+  }
+
+  updateTemplate(isShowNoticeTemplate: boolean, selectedTemplate: AnnouncementNoticeTemplate | undefined, service: Service | undefined) {
+    if (service && this.noticeTemplateDescription) {
+      if (this.getPossibleTemplates(service) && this.getPossibleTemplates(service)!.length == 1)
+        this.noticeTemplateDescription!.selectedTemplate = this.getPossibleTemplates(service)![0];
+      else if (selectedTemplate) {
+        this.noticeTemplateDescription!.selectedTemplate = selectedTemplate;
+      } else
+        return;
+      this.noticeTemplateDescription.isShowNoticeTemplate = isShowNoticeTemplate;
+      this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
+      if (event)
+        this.scrollToNoticeTemplateSection();
+    }
   }
 
   private scrollToNoticeTemplateSection(): void {
@@ -677,16 +700,16 @@ export class RequiredInformationComponent implements OnInit {
     }, 0); // Timeout so the DOM is well up to date
   }
 
-  hasOneTemplate(service: Service) {
+  getPossibleTemplates(service: Service): AnnouncementNoticeTemplate[] | undefined {
     if (service) {
       if (service && service.serviceTypes)
         for (let st of service.serviceTypes)
           if (st.assoServiceProvisionTypes)
             for (let asso of st.assoServiceProvisionTypes)
-              if (asso.announcementNoticeTemplate)
-                return true;
+              if (asso.announcementNoticeTemplates)
+                return asso.announcementNoticeTemplates;
     }
-    return false;
+    return undefined;
   }
 
   changeProvisionNoticeTemplateDesciption(ngbEvent: NgbNavChangeEvent) {
@@ -703,7 +726,7 @@ export class RequiredInformationComponent implements OnInit {
         this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
       }
     if (destId < 10) {
-      this.changeIsShowNoticeTemplate(false, true);
+      this.changeIsShowNoticeTemplate(false, true, undefined, undefined);
     }
   }
 

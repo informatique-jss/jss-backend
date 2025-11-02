@@ -2,5 +2,5 @@ import { AnnouncementNoticeTemplate } from "../../quotation/model/AnnouncementNo
 
 export interface AssoServiceProvisionType {
   id: number;
-  announcementNoticeTemplate: AnnouncementNoticeTemplate;
+  announcementNoticeTemplates: AnnouncementNoticeTemplate[];
 }

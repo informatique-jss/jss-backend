@@ -6,6 +6,7 @@ import { ConstantService } from 'src/app/modules/miscellaneous/services/constant
 import { AssoServiceProvisionType } from 'src/app/modules/quotation/model/AssoServiceProvisionType';
 import { AssoServiceTypeDocument } from 'src/app/modules/quotation/model/AssoServiceTypeDocument';
 import { ServiceType } from 'src/app/modules/quotation/model/ServiceType';
+import { AnnouncementNoticeTemplateService } from 'src/app/modules/quotation/services/announcement.notice.template.service';
 import { NoticeTypeService } from 'src/app/modules/quotation/services/notice.type.service';
 import { ServiceFieldTypeService } from 'src/app/modules/quotation/services/service.field.type.service';
 import { ServiceTypeService } from 'src/app/modules/quotation/services/service.type.service';
@@ -24,6 +25,7 @@ export class ReferentialServiceTypeComponent extends GenericReferentialComponent
     private serviceFieldTypeService: ServiceFieldTypeService,
     private formBuilder2: FormBuilder,
     private constantService: ConstantService,
+    private announcementNoticeTemplateService: AnnouncementNoticeTemplateService,
     private appService2: AppService,) {
     super(formBuilder2, appService2);
   }

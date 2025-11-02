@@ -105,9 +105,11 @@ export class QuotationComponent implements OnInit {
     this.noticeTemplateDescriptionSubscription = this.noticeTemplateService.noticeTemplateDescriptionObservable.subscribe(item => {
       if (item) {
         this.noticeTemplateDescription = item;
-        if (this.noticeTemplateDescription.service) {
+        if (this.noticeTemplateDescription.service && this.noticeTemplateDescription.selectedTemplate) {
           this.isNoticeTemplateReadyToBeShown = true;
           this.selectedServiceInRequiredInformation = this.noticeTemplateDescription.service;
+        } else {
+          this.isNoticeTemplateReadyToBeShown = false;
         }
 
         this.isShowNoticeTemplate = item.isShowNoticeTemplate;

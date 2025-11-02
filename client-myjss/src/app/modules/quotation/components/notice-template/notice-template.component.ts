@@ -71,13 +71,9 @@ export class NoticeTemplateComponent implements OnInit {
     this.form = this.fb.group({});
 
     this.templates = [];
-    if (this.service) {
-      if (this.service && this.service.serviceTypes)
-        for (let st of this.service.serviceTypes)
-          if (st.assoServiceProvisionTypes)
-            for (let asso of st.assoServiceProvisionTypes)
-              if (asso.announcementNoticeTemplate)
-                this.templates.push(asso.announcementNoticeTemplate);
+    let noticeTemplateDescription = this.noticeTemplateService.getNoticeTemplateDescription();
+    if (this.service && noticeTemplateDescription && noticeTemplateDescription.selectedTemplate) {
+      this.templates.push(noticeTemplateDescription.selectedTemplate);
 
       this.fragmentsFound = this.templates.flatMap(template => template.announcementNoticeTemplateFragments);
       this.displayText = this.templates.map(t => t.text).join('');
@@ -93,7 +89,6 @@ export class NoticeTemplateComponent implements OnInit {
       this.prepareInitialDisplayText();
     });
 
-    let noticeTemplateDescription = this.noticeTemplateService.getNoticeTemplateDescription();
     this.form.valueChanges.subscribe(() => {
       this.updateDisplayText()
       if (noticeTemplateDescription && this.displayText) {

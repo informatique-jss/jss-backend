@@ -68,11 +68,11 @@ public class AssoServiceProvisionType implements Serializable, IId {
 	// 1 hard => 3 easy
 	private Integer complexity;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_announcement_notice_template")
+	@ManyToMany()
+	@JoinTable(name = "asso_service_type_provision_type_notice", joinColumns = @JoinColumn(name = "id_service_provision_type"), inverseJoinColumns = @JoinColumn(name = "id_announcement_notice_template"))
 	@JsonIgnoreProperties(value = { "provisionFamilyTypes" }, allowSetters = true)
 	@JsonView(JacksonViews.MyJssDetailedView.class)
-	private AnnouncementNoticeTemplate announcementNoticeTemplate;
+	private List<AnnouncementNoticeTemplate> announcementNoticeTemplates;
 
 	private Boolean isPriority;
 
@@ -174,14 +174,6 @@ public class AssoServiceProvisionType implements Serializable, IId {
 		this.complexity = complexity;
 	}
 
-	public AnnouncementNoticeTemplate getAnnouncementNoticeTemplate() {
-		return announcementNoticeTemplate;
-	}
-
-	public void setAnnouncementNoticeTemplate(AnnouncementNoticeTemplate announcementNoticeTemplate) {
-		this.announcementNoticeTemplate = announcementNoticeTemplate;
-	}
-
 	public Boolean getIsPriority() {
 		return isPriority;
 	}
@@ -228,6 +220,14 @@ public class AssoServiceProvisionType implements Serializable, IId {
 
 	public void setIsNotifyJo(Boolean isNotifyJo) {
 		this.isNotifyJo = isNotifyJo;
+	}
+
+	public List<AnnouncementNoticeTemplate> getAnnouncementNoticeTemplates() {
+		return announcementNoticeTemplates;
+	}
+
+	public void setAnnouncementNoticeTemplates(List<AnnouncementNoticeTemplate> announcementNoticeTemplates) {
+		this.announcementNoticeTemplates = announcementNoticeTemplates;
 	}
 
 }
