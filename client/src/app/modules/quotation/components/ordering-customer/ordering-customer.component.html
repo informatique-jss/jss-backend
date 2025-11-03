@@ -63,6 +63,25 @@
           </td>
         </tr>
       </table>
+      <div *ngIf="instanceOfCustomerOrderFn(quotation)">
+        <div class=" full-width">
+          <table class="full-width table-fixed-layout">
+            <tr>
+              <td>
+                <autocomplete-employee [(model)]="quotation.orderingEmployee" [form]="orderingCustomerForm"
+                  propertyName="orderingEmployee" [isMandatory]="false" [isDisabled]="!canChangeInvoicingResponsible()"
+                  label="Responsable de la création"
+                  (onOptionSelected)="assignOrderEmployee($event)"></autocomplete-employee>
+              </td>
+              <td>
+                <select-order-blockage [(model)]="quotation.orderBlockage" label="Type de blocage de la création"
+                  [form]="orderingCustomerForm" propertyName="orderBlockage" [isMandatory]="false"
+                  (onFormChange)="modifyOrderBlockage($event)" [isDisabled]="false"></select-order-blockage>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
       <table class="full-width"
         *ngIf="quotation && instanceOfCustomerOrder(quotation) &&  quotation.customerOrderAssignations && canAddAssignOrderForProduction()">
         <tr>

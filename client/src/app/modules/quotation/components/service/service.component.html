@@ -56,6 +56,14 @@
               </ng-container>
             </div>
 
+            <div class="doc-attachments"
+              *ngIf="quotation && instanceOfCustomerOrder(quotation) && quotation.pendingAttachments && editMode">
+              <select-attachment [(model)]="selectedPendingAttachments[index]" label="Pièces de la demande initiale"
+                [form]="serviceForm" [types]="quotation.pendingAttachments"
+                [propertyName]="'selectedPendingAttachments'+index" [isMandatory]="false"
+                (onUploadFile)="uploadFileFromPending($event,document )" [isDisabled]="false"></select-attachment>
+            </div>
+
             <div class="doc-actions">
               <generic-toggle [(model)]="document.isMandatory" label="Obligatoire ?" [form]="serviceForm"
                 [propertyName]="'isMandatory' + index" [isDisabled]="!editMode">

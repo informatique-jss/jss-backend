@@ -34,6 +34,10 @@ public interface AttachmentService {
                         throws OsirisException, OsirisClientMessageException, OsirisValidationException,
                         OsirisDuplicateException;
 
+        public List<Attachment> addAttachmentFromAttachment(Attachment originAttachment, Integer idEntity,
+                        String codeEntity, String entityType, AttachmentType attachmentType)
+                        throws OsirisValidationException, OsirisException;
+
         public Boolean definitivelyDeleteAttachment(Attachment attachment);
 
         public void disableAttachment(Attachment attachment);

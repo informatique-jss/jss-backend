@@ -162,6 +162,6 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
 
         List<Responsable> findByIsActiveTrue();
 
-        List<Responsable> findByMail(Mail mail);
+        List<Responsable> findByMailAndIsActive(Mail mail, boolean isActive);
 
 }

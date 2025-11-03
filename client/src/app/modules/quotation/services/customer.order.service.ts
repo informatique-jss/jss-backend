@@ -10,6 +10,7 @@ import { Announcement } from '../model/Announcement';
 import { CustomerOrder } from '../model/CustomerOrder';
 import { IQuotation } from '../model/IQuotation';
 import { Invoice } from '../model/Invoice';
+import { OrderBlockage } from '../model/OrderBlockage';
 
 @Injectable({
   providedIn: 'root'
@@ -80,6 +81,10 @@ export class CustomerOrderService extends AppRestService<IQuotation> {
     return this.get(params, "customer-order/change/invoicing-blockage", invoicingBlockage ? ("Blocage de la facturation pour cause de " + invoicingBlockage.label) : '');
   }
 
+  assignNewCustomerOrderToBilled() {
+    return this.get(new HttpParams(), "customer-order/assign/invoicing/auto");
+  }
+
   searchCustomerOrder(commercialsIds: number[], statusIds: number[]) {
     return this.getList(new HttpParams().set("commercialIds", commercialsIds.join(",")).set("statusIds", statusIds.join(',')), 'customer-order/search') as Observable<CustomerOrder[]>;
   }
@@ -91,12 +96,15 @@ export class CustomerOrderService extends AppRestService<IQuotation> {
     return this.getList(params, 'customer-order/search/invoicing') as Observable<CustomerOrder[]>;
   }
 
-  getSingleCustomerOrder(idCustomerOrder: number) {
-    return this.getById("customer-order/single", idCustomerOrder);
+  searchCustomerOrderForToOrder(employeeIds: number[]) {
+    let params = new HttpParams();
+    if (employeeIds)
+      params = params.set("employeeIds", employeeIds.join(","));
+    return this.getList(params, 'customer-order/search/order') as Observable<CustomerOrder[]>;
   }
 
-  assignNewCustomerOrderToBilled() {
-    return this.get(new HttpParams(), "customer-order/assign/invoicing/auto");
+  getSingleCustomerOrder(idCustomerOrder: number) {
+    return this.getById("customer-order/single", idCustomerOrder);
   }
 
   getCustomerOrdersByVoucher(voucher: Voucher) {
@@ -105,6 +113,24 @@ export class CustomerOrderService extends AppRestService<IQuotation> {
 
   getOrdersToAssignForFond(teamEmployee: Employee, onlyCurrentUser: boolean) {
     return this.getList(new HttpParams().set("idTeamEmployee", teamEmployee.id).set("onlyCurrentUser", onlyCurrentUser), "assign/fond/order");
+  }
+
+  assignOrderEmployee(customerOrderId: number, employee: Employee) {
+    let params = new HttpParams().set("customerOrderId", customerOrderId);
+    if (employee)
+      params = params.set("employeeId", employee.id);
+    return this.get(params, "customer-order/assign/order", employee ? ("Commande assignée à " + employee.firstname + " " + employee.lastname) : '');
+  }
+
+  modifyOrderBlockage(customerOrderId: number, orderBlockage: OrderBlockage | undefined) {
+    let params = new HttpParams().set("customerOrderId", customerOrderId);
+    if (orderBlockage)
+      params = params.set("orderingBlockageId", orderBlockage.id);
+    return this.get(params, "customer-order/change/ordering-blockage", orderBlockage ? ("Blocage de la commande pour cause de " + orderBlockage.label) : '');
+  }
+
+  assignNewCustomerOrderToOrder() {
+    return this.get(new HttpParams(), "customer-order/assign/order/auto");
   }
 
 }

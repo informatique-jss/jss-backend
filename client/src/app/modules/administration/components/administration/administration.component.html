@@ -337,6 +337,11 @@
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
           [cloneEvent]="cloneEvent.asObservable()">
         </referential-invoicing-blockage>
+        <referential-order-blockage *ngIf="selectedReferential==ORDER_BLOCAKGE_REFERENTIAL"
+          (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
+          [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"
+          [cloneEvent]="cloneEvent.asObservable()">
+        </referential-order-blockage>
         <referential-incident-responsibility *ngIf="selectedReferential==INCIDENT_RESPONSIBILITY_REFERENTIAL"
           (selectedEntityChange)="changeSelectedEntity($event)" [(editMode)]="editMode"
           [saveEvent]="saveEvent.asObservable()" [addEvent]="addEvent.asObservable()"

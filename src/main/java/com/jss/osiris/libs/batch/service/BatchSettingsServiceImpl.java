@@ -593,6 +593,18 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.MAILS));
             addOrUpdateBatchSettings(batchSettings);
         }
+        if (getByCode(Batch.CHECK_MAIL_TO_ORDER) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.CHECK_MAIL_TO_ORDER);
+            batchSettings.setLabel("Parcourir la liste des commandes reçues par mail");
+            batchSettings.setFixedRate(10000);
+            batchSettings.setQueueSize(1);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(true);
+            batchSettings.setMaxAddedNumberPerIteration(1);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.MAILS));
+            addOrUpdateBatchSettings(batchSettings);
+        }
         if (getByCode(Batch.INDEX_MAIL_TO_ENTITY) == null) {
             BatchSettings batchSettings = new BatchSettings();
             batchSettings.setCode(Batch.INDEX_MAIL_TO_ENTITY);
@@ -605,10 +617,34 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.MAILS));
             addOrUpdateBatchSettings(batchSettings);
         }
+        if (getByCode(Batch.CREATE_ORDER_FROM_MAIL) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.CREATE_ORDER_FROM_MAIL);
+            batchSettings.setLabel("Création des commandes reçues par mail");
+            batchSettings.setFixedRate(1000);
+            batchSettings.setQueueSize(10);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.MAILS));
+            addOrUpdateBatchSettings(batchSettings);
+        }
         if (getByCode(Batch.PURGE_MAIL_TO_INDEX) == null) {
             BatchSettings batchSettings = new BatchSettings();
             batchSettings.setCode(Batch.PURGE_MAIL_TO_INDEX);
             batchSettings.setLabel("Purge des mails reçus déjà indexés");
+            batchSettings.setFixedRate(60 * 1000);
+            batchSettings.setQueueSize(1);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(true);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.MAILS));
+            addOrUpdateBatchSettings(batchSettings);
+        }
+        if (getByCode(Batch.PURGE_ORDER_MAIL) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.PURGE_ORDER_MAIL);
+            batchSettings.setLabel("Purge des mails de commandes reçus");
             batchSettings.setFixedRate(60 * 1000);
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);

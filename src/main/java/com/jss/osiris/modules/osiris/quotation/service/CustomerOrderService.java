@@ -26,10 +26,12 @@ import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.IOrderingSearchTaggedResult;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
 import com.jss.osiris.modules.osiris.quotation.model.InvoicingStatistics;
+import com.jss.osiris.modules.osiris.quotation.model.OrderBlockage;
 import com.jss.osiris.modules.osiris.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.osiris.quotation.model.OrderingSearchResult;
 import com.jss.osiris.modules.osiris.quotation.model.OrderingSearchTagged;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
+import com.jss.osiris.modules.osiris.quotation.model.ToOrderStatistics;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 public interface CustomerOrderService {
@@ -169,7 +171,8 @@ public interface CustomerOrderService {
                         throws OsirisException;
 
         public List<CustomerOrder> searchCustomerOrders(List<Employee> commercials,
-                        List<CustomerOrderStatus> status, List<Employee> invoicingEmployees) throws OsirisException;
+                        List<CustomerOrderStatus> status, List<Employee> invoicingEmployees,
+                        List<Employee> orderingEmployees) throws OsirisException;
 
         public Boolean setEmergencyOnOrder(CustomerOrder customerOrder, Boolean isEnabled)
                         throws OsirisClientMessageException, OsirisValidationException, OsirisException;
@@ -181,13 +184,25 @@ public interface CustomerOrderService {
                         throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException,
                         OsirisException;
 
+        public void assignOrderingEmployee(CustomerOrder customerOrder, Employee employee)
+                        throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException,
+                        OsirisException;
+
         public void modifyInvoicingBlockage(CustomerOrder customerOrder, InvoicingBlockage invoicingBlockage)
+                        throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException,
+                        OsirisException;
+
+        public void modifyOrderingBlockage(CustomerOrder customerOrder, OrderBlockage orderingBlockage)
                         throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException,
                         OsirisException;
 
         public CustomerOrder assignNewCustomerOrderToBilled();
 
+        public CustomerOrder assignNewCustomerOrderToOrder() throws OsirisException;
+
         public InvoicingStatistics getInvoicingStatistics() throws OsirisException;
+
+        public ToOrderStatistics getToOrderStatistics() throws OsirisException;
 
         public CustomerOrder getCustomerOrderForSubscription(String subscriptionType,
                         Boolean isPriceReductionForSubscription, Integer idArticle) throws OsirisException;

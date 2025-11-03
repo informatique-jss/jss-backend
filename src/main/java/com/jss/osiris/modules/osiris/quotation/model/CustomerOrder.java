@@ -142,6 +142,11 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@JsonView({ JacksonViews.OsirisDetailedView.class, JacksonViews.MyJssDetailedView.class })
 	private List<Attachment> attachments;
 
+	@OneToMany(mappedBy = "customerOrderPending")
+	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
+	@JsonView({ JacksonViews.OsirisDetailedView.class, JacksonViews.MyJssDetailedView.class })
+	private List<Attachment> pendingAttachments;
+
 	@OneToMany(targetEntity = Document.class, mappedBy = "customerOrder", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
 	@IndexedField
@@ -289,6 +294,16 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@JoinColumn(name = "id_invoicing_blockage")
 	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	private InvoicingBlockage invoicingBlockage;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_order_blockage")
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
+	private OrderBlockage orderBlockage;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_ordering_employee")
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
+	private Employee orderingEmployee;
 
 	private LocalDate princingEffectiveDate;
 
@@ -688,6 +703,30 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public void setComplexity(Integer complexity) {
 		this.complexity = complexity;
+	}
+
+	public List<Attachment> getPendingAttachments() {
+		return pendingAttachments;
+	}
+
+	public void setPendingAttachments(List<Attachment> pendingAttachments) {
+		this.pendingAttachments = pendingAttachments;
+	}
+
+	public OrderBlockage getOrderBlockage() {
+		return orderBlockage;
+	}
+
+	public void setOrderBlockage(OrderBlockage orderBlockage) {
+		this.orderBlockage = orderBlockage;
+	}
+
+	public Employee getOrderingEmployee() {
+		return orderingEmployee;
+	}
+
+	public void setOrderingEmployee(Employee orderingEmployee) {
+		this.orderingEmployee = orderingEmployee;
 	}
 
 }

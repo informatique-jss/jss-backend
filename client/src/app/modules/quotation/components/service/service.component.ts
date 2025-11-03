@@ -12,6 +12,7 @@ import { UploadAttachmentService } from 'src/app/modules/miscellaneous/services/
 import { ASSO_SERVICE_DOCUMENT_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { formatBytes } from '../../../../libs/FormatHelper';
+import { instanceOfCustomerOrder } from '../../../../libs/TypeHelper';
 import { AssoServiceDocument } from '../../model/AssoServiceDocument';
 import { AssoServiceFieldType } from '../../model/AssoServiceFieldType';
 import { IQuotation } from '../../model/IQuotation';
@@ -39,6 +40,7 @@ export class ServiceComponent implements OnInit {
   SERVICE_FIELD_TYPE_SELECT = SERVICE_FIELD_TYPE_SELECT;
 
   serviceAttachments: IAttachment = { id: 1, attachments: [] as Attachment[] } as IAttachment;
+  selectedPendingAttachments: Attachment[] = [];
 
   constructor(
     private formBuilder: FormBuilder,
@@ -55,6 +57,7 @@ export class ServiceComponent implements OnInit {
   otherServiceType: ServiceType = this.constantService.getServiceTypeOther();
   ASSO_SERVICE_DOCUMENT_ENTITY_TYPE = ASSO_SERVICE_DOCUMENT_ENTITY_TYPE;
   formatBytes = formatBytes;
+  instanceOfCustomerOrder = instanceOfCustomerOrder;
 
   ngOnInit() {
   }
@@ -203,5 +206,13 @@ export class ServiceComponent implements OnInit {
       newFurtherInfoAssoServiceFieldType.serviceFieldType = this.constantService.getFurtherInformationServiceFieldType();;
       this.service.assoServiceFieldTypes.push(newFurtherInfoAssoServiceFieldType);
     }
+  }
+
+  uploadFileFromPending(attachement: Attachment, assoServiceDocument: AssoServiceDocument) {
+    this.uploadAttachmentService.uploadAttachmentFromAttachment(attachement, assoServiceDocument, ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType,
+      assoServiceDocument.typeDocument.attachmentType).subscribe(response => {
+        assoServiceDocument.attachments = response;
+        this.selectedPendingAttachments = [];
+      })
   }
 }

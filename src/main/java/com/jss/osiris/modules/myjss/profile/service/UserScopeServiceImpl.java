@@ -34,9 +34,7 @@ public class UserScopeServiceImpl implements UserScopeService {
     public List<Responsable> getPotentialUserScope() {
         Responsable responsable = employeeService.getCurrentMyJssUser();
         List<Responsable> responsables = responsableService.getResponsableByMail(responsable.getMail());
-        if (responsables != null)
-            return responsables.stream().filter(r -> Boolean.TRUE.equals(r.getIsActive())).toList();
-        return null;
+        return responsables;
     }
 
     @Override

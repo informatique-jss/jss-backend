@@ -1,11 +1,13 @@
 import { InvoicingBlockage } from "../../invoicing/model/InvoicingBlockage";
 import { Payment } from "../../invoicing/model/Payment";
 import { Refund } from "../../invoicing/model/Refund";
+import { Attachment } from "../../miscellaneous/model/Attachment";
 import { CustomerOrderFrequency } from "../../miscellaneous/model/CustomerOrderFrequency";
 import { Employee } from "../../profile/model/Employee";
 import { CustomerOrderAssignation } from "./CustomerOrderAssignation";
 import { CustomerOrderStatus } from './CustomerOrderStatus';
 import { IQuotation } from "./IQuotation";
+import { OrderBlockage } from "./OrderBlockage";
 import { PaperSet } from "./PaperSet";
 
 export interface CustomerOrder extends IQuotation {
@@ -29,6 +31,9 @@ export interface CustomerOrder extends IQuotation {
   isPriority: boolean;
   invoicingBlockage: InvoicingBlockage;
   invoicingEmployee: Employee;
+  orderBlockage: OrderBlockage;
+  orderingEmployee: Employee;
   productionEffectiveDateTime: Date;
   customerOrderAssignations: CustomerOrderAssignation[];
+  pendingAttachments: Attachment[];
 }

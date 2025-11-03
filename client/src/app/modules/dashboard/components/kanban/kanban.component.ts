@@ -16,6 +16,7 @@ export const PROVISION_KANBAN: string = "PROVISION_KANBAN";
 export const QUOTATION_KANBAN: string = "QUOTATION_KANBAN";
 export const INCIDENT_REPORTING_KANBAN: string = "INCIDENT_REPORTING_KANBAN";
 export const INVOICING_KANBAN: string = "INVOICING_KANBAN";
+export const ORDERING_KANBAN: string = "ORDERING_KANBAN";
 
 @Directive()
 export abstract class KanbanComponent<T, U extends IWorkflowElement<T>> {

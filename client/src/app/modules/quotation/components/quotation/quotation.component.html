@@ -108,6 +108,11 @@
             <ordering-list-tagged></ordering-list-tagged>
           </ng-template>
         </mat-tab>
+        <mat-tab label="Gestion commandes">
+          <ng-template matTabContent>
+            <kanban-order></kanban-order>
+          </ng-template>
+        </mat-tab>
       </mat-tab-group>
     </div>
     <div *ngIf="!editMode && !quotation.id && isQuotationUrl && !idQuotation">

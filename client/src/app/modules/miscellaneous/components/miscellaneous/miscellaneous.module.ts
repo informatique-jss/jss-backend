@@ -119,6 +119,7 @@ import { SelectActiveDirectoryGroupComponent } from '../forms/select-active-dire
 import { SelectAnnouncementNoticeTemplateFragmentComponent } from '../forms/select-announcement-notice-template-fragment/select-announcement-notice-template-fragment';
 import { SelectAssignationTypeComponent } from '../forms/select-assignation-type/select-assignation-type.component';
 import { SelectAttachmentTypeComponent } from '../forms/select-attachment-type/select-attachment-type.component';
+import { SelectAttachmentComponent } from '../forms/select-attachment/select-attachment.component';
 import { SelectBatchCategoryComponent } from '../forms/select-batch-category/select-batch-category.component';
 import { SelectBatchSettingsComponent } from '../forms/select-batch-settings/select-batch-settings.component';
 import { SelectBatchStatusComponent } from '../forms/select-batch-status/select-batch-status.component';
@@ -161,6 +162,7 @@ import { SelectNoticeTemplateMultipleComponent } from '../forms/select-notice-te
 import { SelectNoticeTemplateComponent } from '../forms/select-notice-template/select-notice-template.component';
 import { SelectNoticeTypeComponent } from '../forms/select-notice-type/select-notice-type.component';
 import { SelectNotificationTypesComponent } from '../forms/select-notification-types/select-notification-types.component';
+import { SelectOrderBlockageComponent } from '../forms/select-order-blockage/select-order-blockage.component';
 import { SelectPaperSetTypeComponent } from '../forms/select-paper-set-type/select-paper-set-type.component';
 import { SelectPaymentDeadlineComponent } from '../forms/select-payment-deadline/select-payment-deadline.component';
 import { SelectPaymentTypesComponent } from '../forms/select-payment-types/select-payment-types.component';
@@ -429,7 +431,9 @@ const routes: Routes = [
     AutocompleteReportingWidgetComponent,
     SelectStringComponent,
     AutocompleteNoticeTemplateComponent,
-    SelectNoticeTemplateMultipleComponent
+    SelectNoticeTemplateMultipleComponent,
+    SelectOrderBlockageComponent,
+    SelectAttachmentComponent
   ],
   exports: [
     HistoryComponent,
@@ -610,7 +614,9 @@ const routes: Routes = [
     AutocompleteReportingWidgetComponent,
     SelectStringComponent,
     AutocompleteNoticeTemplateComponent,
-    SelectNoticeTemplateMultipleComponent
+    SelectNoticeTemplateMultipleComponent,
+    SelectOrderBlockageComponent,
+    SelectAttachmentComponent
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

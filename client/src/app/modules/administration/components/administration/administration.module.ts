@@ -71,6 +71,7 @@ import { ReferentialLegalFormComponent } from '../referentials/referential-legal
 import { ReferentialMailRedirectionTypeComponent } from '../referentials/referential-mail-redirection-type/referential-mail-redirection-type.component';
 import { ReferentialNoticeTypeFamilyComponent } from '../referentials/referential-notice-type-family/referential-notice-type-family.component';
 import { ReferentialNoticeTypeComponent } from '../referentials/referential-notice-type/referential-notice-type.component';
+import { ReferentialOrderBlockageComponent } from '../referentials/referential-order-blockage/referential-order-blockage.component';
 import { ReferentialPaperSetTypeComponent } from '../referentials/referential-paper-set/referential-paper-set.component';
 import { ReferentialPaymentDeadlineTypeComponent } from '../referentials/referential-payment-deadline-type/referential-payment-deadline-type.component';
 import { ReferentialPaymentTypeComponent } from '../referentials/referential-payment-type/referential-payment-type.component';
@@ -217,7 +218,8 @@ const routes: Routes = [
     ReferentialAnnouncementNoticeTemplateFragmentComponent,
     ReferentialReportingWorkingTableComponent,
     ReferentialReportingDashboardComponent,
-    ReferentialReportingWidgetComponent
+    ReferentialReportingWidgetComponent,
+    ReferentialOrderBlockageComponent
   ], exports: [LogComponent,
     CompetentAuthorityComponent,
     ProviderComponent

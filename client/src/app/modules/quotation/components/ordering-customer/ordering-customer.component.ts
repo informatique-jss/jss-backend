@@ -21,9 +21,11 @@ import { ResponsableService } from '../../../tiers/services/responsable.service'
 import { Confrere } from '../../model/Confrere';
 import { CustomerOrderAssignation } from '../../model/CustomerOrderAssignation';
 import { IQuotation } from '../../model/IQuotation';
+import { OrderBlockage } from '../../model/OrderBlockage';
 import { OrderingSearchResult } from '../../model/OrderingSearchResult';
 import { QuotationSearchResult } from '../../model/QuotationSearchResult';
 import { CustomerOrderAssignationService } from '../../services/customer.assignation.service';
+import { CustomerOrderService } from '../../services/customer.order.service';
 import { OrderingSearchResultService } from '../../services/ordering.search.result.service';
 import { QuotationSearchResultService } from '../../services/quotation.search.result.service';
 import { QuotationService } from '../../services/quotation.service';
@@ -44,6 +46,7 @@ export class OrderingCustomerComponent implements OnInit {
   billingDocument: Document = {} as Document;
   searchedTiers: IndexEntity | undefined;
   searchedResponsable: IndexEntity | undefined;
+  instanceOfCustomerOrderFn = instanceOfCustomerOrder;
 
   customerOrderTableActions: SortTableAction<OrderingSearchResult>[] = [] as Array<SortTableAction<OrderingSearchResult>>;
   customerOrderDisplayedColumns: SortTableColumn<OrderingSearchResult>[] = [] as Array<SortTableColumn<OrderingSearchResult>>;
@@ -74,6 +77,7 @@ export class OrderingCustomerComponent implements OnInit {
     private habilitationService: HabilitationsService,
     private quotationService: QuotationService,
     private constantService: ConstantService,
+    private customerOrderService: CustomerOrderService,
     private customerOrderAssignationService: CustomerOrderAssignationService,
     public specialOfferDialog: MatDialog) { }
 
@@ -163,6 +167,10 @@ export class OrderingCustomerComponent implements OnInit {
     this.fillResponsable({ "entityId": confrere.responsable.id } as IndexEntity);
   }
 
+  canChangeInvoicingResponsible() {
+    return this.habilitationService.canChangeOrderResponsible();
+  }
+
   fillResponsable(responsable: IndexEntity) {
     this.responsableService.getResponsable(responsable.entityId).subscribe(response => {
       this.quotation.responsable = response;
@@ -215,6 +223,14 @@ export class OrderingCustomerComponent implements OnInit {
     this.customerOrderAssignationService.assignImmediatlyOrder(this.quotation.id).subscribe(response => {
       this.appService.openRoute(null, 'order/' + this.quotation.id, null);
     });
+  }
+
+  assignOrderEmployee(employee: Employee) {
+    this.customerOrderService.assignOrderEmployee(this.quotation.id, employee).subscribe();
+  }
+
+  modifyOrderBlockage(orderBlockage: OrderBlockage) {
+    this.customerOrderService.modifyOrderBlockage(this.quotation.id, orderBlockage).subscribe();
   }
 
 }

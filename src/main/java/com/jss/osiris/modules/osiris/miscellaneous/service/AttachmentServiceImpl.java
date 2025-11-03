@@ -179,6 +179,25 @@ public class AttachmentServiceImpl implements AttachmentService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    public List<Attachment> addAttachmentFromAttachment(Attachment originAttachment, Integer idEntity,
+            String codeEntity, String entityType, AttachmentType attachmentType) throws OsirisException {
+
+        originAttachment = getAttachment(originAttachment.getId());
+        Attachment attachment = new Attachment();
+        attachment.setCreatDateTime(LocalDateTime.now());
+        attachment.setAttachmentType(attachmentType);
+        attachment.setIsDisabled(false);
+        attachment.setDescription(originAttachment.getDescription());
+        attachment.setUploadedFile(originAttachment.getUploadedFile());
+        completeAttachmentConsideringType(attachment, entityType, idEntity,
+                originAttachment.getUploadedFile().getFilename(), codeEntity);
+        addOrUpdateAttachment(attachment);
+
+        return getAttachmentForEntityType(entityType, idEntity, codeEntity);
+    }
+
+    @Override
     public List<Attachment> addAttachment(InputStream file, Integer idEntity, String codeEntity, String entityType,
             AttachmentType attachmentType, String filename, Boolean replaceExistingAttachementType, String description,
             PiecesJointe piecesJointe, String pageSelection, TypeDocument typeDocument)
@@ -229,53 +248,84 @@ public class AttachmentServiceImpl implements AttachmentService {
         if (piecesJointe != null)
             attachment.setPiecesJointe(piecesJointe);
 
+        completeAttachmentConsideringType(attachment, entityType, idEntity, filename, codeEntity);
+
+        addOrUpdateAttachment(attachment);
+        attachment = getAttachment(attachment.getId());
+
+        // Batchs
+        if (entityType.equals(CompetentAuthority.class.getSimpleName()) && attachment.getAttachmentType().getId()
+                .equals(constantService.getAttachmentTypeBillingClosure().getId())) {
+            batchService.declareNewBatch(Batch.DO_OCR_ON_RECEIPT, attachment.getId());
+        } else if (entityType.equals(Provision.class.getSimpleName())
+                && (attachment.getDescription() == null || attachment.getDescription().toLowerCase().endsWith(".pdf"))
+                && attachment.getAttachmentType().getId()
+                        .equals(constantService.getAttachmentTypeProviderInvoice().getId())) {
+            if (attachment.getProvision() != null
+                    && attachment.getProvision().getService().getAssoAffaireOrder() != null
+                    && attachment.getProvision().getService().getAssoAffaireOrder().getCustomerOrder() != null) {
+                CustomerOrder customerOrder = attachment.getProvision().getService().getAssoAffaireOrder()
+                        .getCustomerOrder();
+                if (!customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.ABANDONED)
+                        && !customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED))
+                    batchService.declareNewBatch(Batch.DO_OCR_ON_INVOICE, attachment.getId());
+            } else {
+                batchService.declareNewBatch(Batch.DO_OCR_ON_INVOICE, attachment.getId());
+            }
+        }
+
+        return getAttachmentForEntityType(entityType, idEntity, codeEntity);
+    }
+
+    private void completeAttachmentConsideringType(Attachment attachment, String entityType, Integer idEntity,
+            String filename, String codeEntity) throws OsirisException {
         if (entityType.equals(Tiers.class.getSimpleName())) {
             Tiers tiers = tiersService.getTiers(idEntity);
             if (tiers == null)
-                return new ArrayList<Attachment>();
+                throw new OsirisValidationException();
             attachment.setTiers(tiers);
         } else if (entityType.equals(Responsable.class.getSimpleName())) {
             Responsable responsable = responsableService.getResponsable(idEntity);
             if (responsable == null)
-                return new ArrayList<Attachment>();
+                throw new OsirisValidationException();
             attachment.setResponsable(responsable);
         } else if (entityType.equals(Provider.class.getSimpleName())) {
             Provider provider = providerService.getProvider(idEntity);
             if (provider == null)
-                return new ArrayList<Attachment>();
+                throw new OsirisValidationException();
             attachment.setProvider(provider);
         } else if (entityType.equals(CompetentAuthority.class.getSimpleName())) {
             CompetentAuthority competentAuthority = competentAuthorityService.getCompetentAuthority(idEntity);
             if (competentAuthority == null)
-                return new ArrayList<Attachment>();
+                throw new OsirisValidationException();
             attachment.setCompetentAuthority(competentAuthority);
         } else if (entityType.equals(Quotation.class.getSimpleName())) {
             Quotation quotation = quotationService.getQuotation(idEntity);
             if (quotation == null)
-                return new ArrayList<Attachment>();
+                throw new OsirisValidationException();
             attachment.setQuotation(quotation);
         } else if (entityType.equals(Candidacy.class.getSimpleName())) {
             filename = filename + "_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
             Candidacy candidacy = candidacyService.getCandidacy(idEntity);
             if (candidacy == null)
-                return new ArrayList<Attachment>();
+                throw new OsirisValidationException();
             attachment.setCandidacy(candidacy);
         } else if (entityType.equals(TypeDocument.class.getSimpleName())) {
             TypeDocument typeDocumentAttachment = typeDocumentService.getTypeDocumentByCode(codeEntity);
             if (typeDocumentAttachment == null)
-                return new ArrayList<Attachment>();
+                throw new OsirisValidationException();
             attachment.setTypeDocumentAttachment(typeDocumentAttachment);
         } else if (entityType.equals(AssoServiceDocument.class.getSimpleName())) {
             AssoServiceDocument assoServiceDocument = assoServiceDocumentService.getAssoServiceDocument(idEntity);
             missingAttachmentQueryService.checkCompleteAttachmentListAndComment(assoServiceDocument, attachment);
             if (assoServiceDocument == null)
-                return new ArrayList<Attachment>();
+                throw new OsirisValidationException();
             attachment.setAssoServiceDocument(assoServiceDocument);
             notificationService.notifyAttachmentAddToService(assoServiceDocument.getService(), attachment);
         } else if (entityType.equals(Provision.class.getSimpleName())) {
             Provision provision = provisionService.getProvision(idEntity);
             if (provision == null)
-                return new ArrayList<Attachment>();
+                throw new OsirisValidationException();
             attachment.setProvision(provision);
 
             // Send immediatly to customer order
@@ -309,59 +359,39 @@ public class AttachmentServiceImpl implements AttachmentService {
         } else if (entityType.equals(CustomerOrder.class.getSimpleName())) {
             CustomerOrder customerOrder = customerOrderService.getCustomerOrder(idEntity);
             if (customerOrder == null)
-                return new ArrayList<Attachment>();
+                throw new OsirisValidationException();
             attachment.setCustomerOrder(customerOrder);
             // Notify user only if not a mail and by a Osiris user
             if (!attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeAutomaticMail().getId())
                     && employeeService.getCurrentEmployee() != null)
                 notificationService.notifyAttachmentAddToCustomerOrder(customerOrder, attachment);
+        } else if (entityType.equals(CustomerOrder.class.getSimpleName() + "Pending")) {
+            CustomerOrder customerOrder = customerOrderService.getCustomerOrder(idEntity);
+            if (customerOrder == null)
+                throw new OsirisValidationException();
+            attachment.setCustomerOrderPending(customerOrder);
         } else if (entityType.equals(Invoice.class.getSimpleName())) {
             Invoice invoice = invoiceService.getInvoice(idEntity);
             if (invoice == null)
-                return new ArrayList<Attachment>();
+                throw new OsirisValidationException();
             attachment.setInvoice(invoice);
         } else if (entityType.equals(Affaire.class.getSimpleName())) {
             Affaire affaire = affaireService.getAffaire(idEntity);
             if (affaire == null)
-                return new ArrayList<Attachment>();
+                throw new OsirisValidationException();
             attachment.setAffaire(affaire);
         } else if (entityType.equals(CustomerMail.class.getSimpleName())) {
             CustomerMail mail = customerMailService.getMail(idEntity);
             if (mail == null)
-                return new ArrayList<Attachment>();
+                throw new OsirisValidationException();
             attachment.setCustomerMail(mail);
         } else if (entityType.equals(MissingAttachmentQuery.class.getSimpleName())) {
             MissingAttachmentQuery missingAttachmentQuery = missingAttachmentQueryService
                     .getMissingAttachmentQuery(idEntity);
             if (missingAttachmentQuery == null)
-                return new ArrayList<Attachment>();
+                throw new OsirisValidationException();
             attachment.setMissingAttachmentQuery(missingAttachmentQuery);
         }
-        addOrUpdateAttachment(attachment);
-        attachment = getAttachment(attachment.getId());
-
-        // Batchs
-        if (entityType.equals(CompetentAuthority.class.getSimpleName()) && attachment.getAttachmentType().getId()
-                .equals(constantService.getAttachmentTypeBillingClosure().getId())) {
-            batchService.declareNewBatch(Batch.DO_OCR_ON_RECEIPT, attachment.getId());
-        } else if (entityType.equals(Provision.class.getSimpleName())
-                && (attachment.getDescription() == null || attachment.getDescription().toLowerCase().endsWith(".pdf"))
-                && attachment.getAttachmentType().getId()
-                        .equals(constantService.getAttachmentTypeProviderInvoice().getId())) {
-            if (attachment.getProvision() != null
-                    && attachment.getProvision().getService().getAssoAffaireOrder() != null
-                    && attachment.getProvision().getService().getAssoAffaireOrder().getCustomerOrder() != null) {
-                CustomerOrder customerOrder = attachment.getProvision().getService().getAssoAffaireOrder()
-                        .getCustomerOrder();
-                if (!customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.ABANDONED)
-                        && !customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BILLED))
-                    batchService.declareNewBatch(Batch.DO_OCR_ON_INVOICE, attachment.getId());
-            } else {
-                batchService.declareNewBatch(Batch.DO_OCR_ON_INVOICE, attachment.getId());
-            }
-        }
-
-        return getAttachmentForEntityType(entityType, idEntity, codeEntity);
     }
 
     private void deleteAttachment(Attachment attachment) {
@@ -424,6 +454,8 @@ public class AttachmentServiceImpl implements AttachmentService {
             attachments = attachmentRepository.findByProvisionId(idEntity);
         } else if (entityType.equals(CustomerOrder.class.getSimpleName())) {
             attachments = attachmentRepository.findByCustomerOrderId(idEntity);
+        } else if (entityType.equals(CustomerOrder.class.getSimpleName() + "Pending")) {
+            attachments = attachmentRepository.findByCustomerOrderPendingId(idEntity);
         } else if (entityType.equals(Invoice.class.getSimpleName())) {
             attachments = attachmentRepository.findByInvoiceId(idEntity);
         } else if (entityType.equals(Affaire.class.getSimpleName())) {
