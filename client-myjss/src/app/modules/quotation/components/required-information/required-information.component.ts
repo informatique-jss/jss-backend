@@ -180,7 +180,7 @@ export class RequiredInformationComponent implements OnInit {
     this.provisionTypeRbe = this.constantService.getProvisionTypeRbe();
 
     this.noticeTemplateDescriptionSubscription = this.noticeTemplateService.noticeTemplateDescriptionObservable.subscribe(item => {
-      if (item && item.isShowNoticeTemplate && this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined && item.announcementOrder != undefined
+      if (item && this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined && item.announcementOrder != undefined
         && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[item.announcementOrder].announcement) {
         this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[item.announcementOrder].announcement!.notice = item.displayText;
         this.noticeTemplateDescription = item;
@@ -665,9 +665,11 @@ export class RequiredInformationComponent implements OnInit {
       }
 
       if (service) {
-        this.noticeTemplateDescription.selectedTemplate = undefined;
         this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
-        setTimeout(() => this.updateTemplate(event as boolean, selectedTemplate, service), 0);
+        setTimeout(() => {
+          this.updateTemplate(event as boolean, selectedTemplate, service);
+          this.scrollToNoticeTemplateSection();
+        }, 0);
       } else {
         this.noticeTemplateDescription.isShowNoticeTemplate = false;
         this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
@@ -678,13 +680,24 @@ export class RequiredInformationComponent implements OnInit {
 
   updateTemplate(isShowNoticeTemplate: boolean, selectedTemplate: AnnouncementNoticeTemplate | undefined, service: Service | undefined) {
     if (service && this.noticeTemplateDescription) {
-      if (this.getPossibleTemplates(service) && this.getPossibleTemplates(service)!.length == 1)
-        this.noticeTemplateDescription!.selectedTemplate = this.getPossibleTemplates(service)![0];
-      else if (selectedTemplate) {
-        this.noticeTemplateDescription!.selectedTemplate = selectedTemplate;
-      } else
+      if (selectedTemplate) {
+        this.noticeTemplateDescription.selectedTemplate = undefined;
+        this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
+        setTimeout(() => {
+          if (this.getPossibleTemplates(service) && this.getPossibleTemplates(service)!.length == 1)
+            this.noticeTemplateDescription!.selectedTemplate = this.getPossibleTemplates(service)![0];
+          else if (selectedTemplate) {
+            this.noticeTemplateDescription!.selectedTemplate = selectedTemplate;
+          } else
+            return;
+          this.noticeTemplateDescription!.isShowNoticeTemplate = true;
+          this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription!);
+          if (event)
+            this.scrollToNoticeTemplateSection();
+        }, 0);
         return;
-      this.noticeTemplateDescription.isShowNoticeTemplate = isShowNoticeTemplate;
+      }
+      this.noticeTemplateDescription.isShowNoticeTemplate = true;
       this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
       if (event)
         this.scrollToNoticeTemplateSection();
@@ -706,7 +719,7 @@ export class RequiredInformationComponent implements OnInit {
         for (let st of service.serviceTypes)
           if (st.assoServiceProvisionTypes)
             for (let asso of st.assoServiceProvisionTypes)
-              if (asso.announcementNoticeTemplates)
+              if (asso.announcementNoticeTemplates && asso.announcementNoticeTemplates.length > 0)
                 return asso.announcementNoticeTemplates;
     }
     return undefined;
