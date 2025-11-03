@@ -433,11 +433,31 @@ public class OsirisScheduller {
 		}
 	}
 
+	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.mail.automatic.indexation}")
+	private void generateOrderFromMails() {
+		try {
+			if (nodeService.shouldIBatch())
+				batchService.declareNewBatch(Batch.CHECK_MAIL_TO_ORDER, 1);
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
 	@Scheduled(cron = "${schedulling.mail.purge.indexation}")
 	private void purgeMailDeleted() {
 		try {
 			if (nodeService.shouldIBatch())
 				batchService.declareNewBatch(Batch.PURGE_MAIL_TO_INDEX, 1);
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(cron = "${schedulling.mail.purge.order}")
+	private void purgeMailOrderDeleted() {
+		try {
+			if (nodeService.shouldIBatch())
+				batchService.declareNewBatch(Batch.PURGE_ORDER_MAIL, 1);
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}

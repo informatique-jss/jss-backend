@@ -1251,6 +1251,53 @@ public class MiscellaneousController {
                 HttpStatus.OK);
     }
 
+    @GetMapping(inputEntryPoint + "/attachment/upload/from/attachment")
+    public ResponseEntity<List<Attachment>> uploadAttachment(@RequestParam Integer idOriginAttachment,
+            @RequestParam(required = false) Integer idEntity, @RequestParam(required = false) String codeEntity,
+            @RequestParam String entityType,
+            @RequestParam Integer idAttachmentType)
+            throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+        if (idAttachmentType == null)
+            throw new OsirisValidationException("idAttachmentType");
+
+        AttachmentType attachmentType = attachmentTypeService.getAttachmentType(idAttachmentType);
+
+        if (attachmentType == null)
+            throw new OsirisValidationException("attachmentType");
+
+        if (idEntity == null && codeEntity == null)
+            throw new OsirisValidationException("idEntity or codeEntity");
+
+        if (entityType == null)
+            throw new OsirisValidationException("entityType");
+
+        Attachment originAttachment = attachmentService.getAttachment(idOriginAttachment);
+        if (originAttachment == null)
+            throw new OsirisValidationException("originAttachment");
+
+        if (!entityType.equals(Tiers.class.getSimpleName())
+                && !entityType.equals("Ofx")
+                && !entityType.equals(MissingAttachmentQuery.class.getSimpleName())
+                && !entityType.equals("Sage")
+                && !entityType.equals(Responsable.class.getSimpleName())
+                && !entityType.equals(Quotation.class.getSimpleName())
+                && !entityType.equals(CustomerOrder.class.getSimpleName())
+                && !entityType.equals(Provider.class.getSimpleName())
+                && !entityType.equals(CompetentAuthority.class.getSimpleName())
+                && !entityType.equals(Provision.class.getSimpleName())
+                && !entityType.equals(Affaire.class.getSimpleName())
+                && !entityType.equals(AssoServiceDocument.class.getSimpleName())
+                && !entityType.equals(TypeDocument.class.getSimpleName())
+                && !entityType.equals(Invoice.class.getSimpleName()))
+
+            throw new OsirisValidationException("entityType");
+
+        return new ResponseEntity<List<Attachment>>(
+                attachmentService.addAttachmentFromAttachment(originAttachment, idEntity, codeEntity, entityType,
+                        attachmentType),
+                HttpStatus.OK);
+    }
+
     @GetMapping(inputEntryPoint + "/attachment/download")
     @Transactional
     public ResponseEntity<byte[]> downloadAttachment(@RequestParam("idAttachment") Integer idAttachment)

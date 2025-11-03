@@ -15,8 +15,8 @@
 
 .document-row {
   display: grid;
-  grid-template-columns: 1fr 2fr 3fr auto;
-  grid-template-columns: 25% 20% 35% 20%;
+  grid-template-columns: 1fr 2fr 3fr 4fr auto;
+  grid-template-columns: 15% 20% 30% 15% 20%;
   align-items: center;
   gap: 16px;
   padding: 8px;

@@ -66,6 +66,9 @@ public class Batch implements IId, Serializable {
     public static String CHECK_MAIL_TO_INDEX = "CHECK_MAIL_TO_INDEX";
     public static String INDEX_MAIL_TO_ENTITY = "INDEX_MAIL_TO_ENTITY";
     public static String PURGE_MAIL_TO_INDEX = "PURGE_MAIL_TO_INDEX";
+    public static String CHECK_MAIL_TO_ORDER = "CHECK_MAIL_TO_ORDER";
+    public static String CREATE_ORDER_FROM_MAIL = "CREATE_ORDER_FROM_MAIL";
+    public static String PURGE_ORDER_MAIL = "PURGE_ORDER_MAIL";
     public static String COMPUTE_INDICATOR = "COMPUTE_INDICATOR";
     public static String PURGE_QUOTATION = "PURGE_QUOTATION";
     public static String PURGE_CUSTOMER_ORDER = "PURGE_CUSTOMER_ORDER";

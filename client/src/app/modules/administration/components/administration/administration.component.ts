@@ -94,6 +94,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
   INDICATOR_REFERENTIAL = "Indicateurs";
   INDICATOR_GROUP_REFERENTIAL = "Groupe d'indicateurs";
   INVOICING_BLOCAKGE_REFERENTIAL = "Type de blocage de facturation";
+  ORDER_BLOCAKGE_REFERENTIAL = "Type de blocage de commande";
   INCIDENT_RESPONSIBILITY_REFERENTIAL = "Type de responsable du CRI";
   INCIDENT_CAUSE_REFERENTIAL = "Cause d'incident d'un CRI";
   INCIDENT_TYPE_REFERENTIAL = "Type d'incident d'un CRI";
@@ -184,6 +185,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     this.referentials.push(this.REPORTING_WORKING_TABLE_REFERENTIAL);
     this.referentials.push(this.REPORTING_DASHBOARD_REFERENTIAL);
     this.referentials.push(this.REPORTING_WIDGET_REFERENTIAL);
+    this.referentials.push(this.ORDER_BLOCAKGE_REFERENTIAL);
     this.referentials.sort((a, b) => a.localeCompare(b));
 
     this.filteredReferentials = this.referentialForm.get("entity")?.valueChanges.pipe(

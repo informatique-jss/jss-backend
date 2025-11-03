@@ -1,3 +1,4 @@
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -54,6 +55,7 @@ import { IncidentReportListComponent } from '../incident-report-list/incident-re
 import { InfogreffeStatusComponent } from '../infogreffe-status/infogreffe-status.component';
 import { InvoiceManagementComponent } from '../invoice-management/invoice-management.component';
 import { JoListComponent } from '../jo-list/jo-list.component';
+import { KanbanOrderComponent } from '../kanban-order/kanban-order.component';
 import { MissingAttachmentQueriesComponent } from '../missing-attachment-queries/missing-attachment-queries.component';
 import { OrderSidePanelDetailsComponent } from '../order-side-panel-details/order-side-panel-details.component';
 import { OrderSimilaritiesDialogComponent } from '../order-similarities-dialog/order-similarities-dialog.component';
@@ -138,6 +140,7 @@ const routes: Routes = [
     MatDatepickerModule,
     MatCardModule,
     CKEditorModule,
+    DragDropModule
   ],
   declarations: [QuotationComponent,
     QuotationAbandonReasonDialog,
@@ -202,7 +205,8 @@ const routes: Routes = [
     AffaireCorrectionComponent,
     BodaccListComponent,
     BaloListComponent,
-    JoListComponent
+    JoListComponent,
+    KanbanOrderComponent
   ],
   exports: [
     OrderingListComponent,

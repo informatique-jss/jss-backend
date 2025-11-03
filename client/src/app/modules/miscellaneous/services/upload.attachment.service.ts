@@ -36,6 +36,19 @@ export class UploadAttachmentService extends AppRestService<IAttachment> {
     return this.uploadPost('attachment/upload', file, formData);
   }
 
+  uploadAttachmentFromAttachment(attachement: Attachment, entity: IAttachment | IAttachmentCode, entityType: string, attachmentType: AttachmentType) {
+    let params = new HttpParams();
+    if (instanceOfIAttachmentCode(entity)) {
+      params = params.set("codeEntity", entity.code + "");
+    } else {
+      params = params.set("idEntity", entity.id + "");
+    }
+    params = params.set("entityType", entityType);
+    params = params.set("idAttachmentType", attachmentType.id + "");
+    params = params.set("idOriginAttachment", attachement.id + "");
+    return this.getList(params, 'attachment/upload/from/attachment') as any as Observable<Attachment[]>;
+  }
+
   previewAttachment(attachment: Attachment) {
     this.previewFileGet(new HttpParams().set("idAttachment", attachment.id + ""), "attachment/download");
   }

@@ -128,6 +128,12 @@ public class Attachment implements Serializable, IId {
 	private CustomerOrder customerOrder;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnore
+	@JoinColumn(name = "id_customer_order_pending")
+	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
+	private CustomerOrder customerOrderPending;
+
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_invoice")
 	@JsonIgnore
 	@JsonIgnoreProperties(value = { "attachments", "provider", "customerOrder", "accountingRecords",
@@ -457,5 +463,13 @@ public class Attachment implements Serializable, IId {
 
 	public void setCandidacy(Candidacy candidacy) {
 		this.candidacy = candidacy;
+	}
+
+	public CustomerOrder getCustomerOrderPending() {
+		return customerOrderPending;
+	}
+
+	public void setCustomerOrderPending(CustomerOrder customerOrderPending) {
+		this.customerOrderPending = customerOrderPending;
 	}
 }

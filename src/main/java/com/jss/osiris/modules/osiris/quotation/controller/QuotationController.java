@@ -107,6 +107,7 @@ import com.jss.osiris.modules.osiris.quotation.model.MailRedirectionType;
 import com.jss.osiris.modules.osiris.quotation.model.MissingAttachmentQuery;
 import com.jss.osiris.modules.osiris.quotation.model.NoticeType;
 import com.jss.osiris.modules.osiris.quotation.model.NoticeTypeFamily;
+import com.jss.osiris.modules.osiris.quotation.model.OrderBlockage;
 import com.jss.osiris.modules.osiris.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.osiris.quotation.model.OrderingSearchResult;
 import com.jss.osiris.modules.osiris.quotation.model.OrderingSearchTagged;
@@ -129,6 +130,7 @@ import com.jss.osiris.modules.osiris.quotation.model.ServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceTypeFieldTypePossibleValue;
 import com.jss.osiris.modules.osiris.quotation.model.SimpleProvisionStatus;
+import com.jss.osiris.modules.osiris.quotation.model.ToOrderStatistics;
 import com.jss.osiris.modules.osiris.quotation.model.TransfertFundsType;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.ValidationRequest;
@@ -165,6 +167,7 @@ import com.jss.osiris.modules.osiris.quotation.service.MailRedirectionTypeServic
 import com.jss.osiris.modules.osiris.quotation.service.MissingAttachmentQueryService;
 import com.jss.osiris.modules.osiris.quotation.service.NoticeTypeFamilyService;
 import com.jss.osiris.modules.osiris.quotation.service.NoticeTypeService;
+import com.jss.osiris.modules.osiris.quotation.service.OrderBlockageService;
 import com.jss.osiris.modules.osiris.quotation.service.PaperSetService;
 import com.jss.osiris.modules.osiris.quotation.service.PricingHelper;
 import com.jss.osiris.modules.osiris.quotation.service.ProvisionFamilyTypeService;
@@ -418,6 +421,81 @@ public class QuotationController {
 
   @Autowired
   CompetentAuthorityFacade competentAuthorityFacade;
+
+  @Autowired
+  OrderBlockageService orderBlockageService;
+
+  @GetMapping(inputEntryPoint + "/order-blockages")
+  public ResponseEntity<List<OrderBlockage>> getOrderBlockages() {
+    return new ResponseEntity<List<OrderBlockage>>(orderBlockageService.getOrderBlockages(), HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/order-blockage")
+  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+  public ResponseEntity<OrderBlockage> addOrUpdateOrderBlockage(
+      @RequestBody OrderBlockage orderBlockages) throws OsirisValidationException, OsirisException {
+    if (orderBlockages.getId() != null)
+      validationHelper.validateReferential(orderBlockages, true, "orderBlockages");
+    validationHelper.validateString(orderBlockages.getCode(), true, "code");
+    validationHelper.validateString(orderBlockages.getLabel(), true, "label");
+
+    return new ResponseEntity<OrderBlockage>(orderBlockageService.addOrUpdateOrderBlockage(orderBlockages),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/customer-order/assign/order")
+  public ResponseEntity<Boolean> assignOrderingEmployee(@RequestParam Integer customerOrderId,
+      @RequestParam(required = false) Integer employeeId)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+
+    Employee employee = null;
+    if (employeeId != null) {
+      employee = employeeService.getEmployee(employeeId);
+      if (employee == null)
+        throw new OsirisValidationException("employee");
+    }
+
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+    if (customerOrder == null)
+      throw new OsirisValidationException("customerOrder");
+
+    customerOrderService.assignOrderingEmployee(customerOrder, employee);
+
+    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/customer-order/change/ordering-blockage")
+  public ResponseEntity<Boolean> modifyOrderginBlockage(@RequestParam Integer customerOrderId,
+      @RequestParam(required = false) Integer orderingBlockageId)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+
+    OrderBlockage orderBlockage = null;
+    if (orderingBlockageId != null) {
+      orderBlockage = orderBlockageService.getOrderBlockage(orderingBlockageId);
+      if (orderBlockage == null)
+        throw new OsirisValidationException("invoicingBlockage");
+    }
+
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+    if (customerOrder == null)
+      throw new OsirisValidationException("customerOrder");
+
+    customerOrderService.modifyOrderingBlockage(customerOrder, orderBlockage);
+
+    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/customer-order/assign/order/auto")
+  @JsonView(JacksonViews.OsirisListView.class)
+  public ResponseEntity<CustomerOrder> assignNewCustomerOrderToOrder() throws OsirisException {
+    return new ResponseEntity<CustomerOrder>(customerOrderService.assignNewCustomerOrderToOrder(), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/order/statistics")
+  public ResponseEntity<ToOrderStatistics> getToOrderStatistics() throws OsirisException {
+    return new ResponseEntity<ToOrderStatistics>(customerOrderService.getToOrderStatistics(),
+        HttpStatus.OK);
+  }
 
   @JsonView(JacksonViews.OsirisListView.class)
   @GetMapping(inputEntryPoint + "/affaire/correction")
@@ -2613,7 +2691,8 @@ public class QuotationController {
           status.add(statu);
       }
 
-    return new ResponseEntity<List<CustomerOrder>>(customerOrderService.searchCustomerOrders(commercials, status, null),
+    return new ResponseEntity<List<CustomerOrder>>(
+        customerOrderService.searchCustomerOrders(commercials, status, null, null),
         HttpStatus.OK);
   }
 
@@ -2633,7 +2712,29 @@ public class QuotationController {
           employees.add(employee);
       }
 
-    return new ResponseEntity<List<CustomerOrder>>(customerOrderService.searchCustomerOrders(null, null, employees),
+    return new ResponseEntity<List<CustomerOrder>>(
+        customerOrderService.searchCustomerOrders(null, null, employees, null),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/customer-order/search/order")
+  @JsonView(JacksonViews.OsirisListView.class)
+  public ResponseEntity<List<CustomerOrder>> searchCustomerOrderForToOrder(
+      @RequestParam(required = false) List<Integer> employeeIds)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+
+    List<Employee> employees = new ArrayList<Employee>();
+    if (employeeIds != null)
+      for (Integer id : employeeIds) {
+        Employee employee = employeeService.getEmployee(id);
+        if (employee == null)
+          throw new OsirisValidationException("employeeIds");
+        else
+          employees.add(employee);
+      }
+
+    return new ResponseEntity<List<CustomerOrder>>(
+        customerOrderService.searchCustomerOrders(null, null, null, employees),
         HttpStatus.OK);
   }
 
@@ -2861,6 +2962,7 @@ public class QuotationController {
   }
 
   @GetMapping(inputEntryPoint + "/customer-order/assign/invoicing/auto")
+  @JsonView(JacksonViews.OsirisListView.class)
   public ResponseEntity<CustomerOrder> assignNewCustomerOrderToBilled() {
     return new ResponseEntity<CustomerOrder>(customerOrderService.assignNewCustomerOrderToBilled(), HttpStatus.OK);
   }

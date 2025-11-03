@@ -110,7 +110,7 @@ public class ResponsableServiceImpl implements ResponsableService {
 
     @Override
     public List<Responsable> getResponsableByMail(Mail mail) {
-        return responsableRepository.findByMail(mail);
+        return responsableRepository.findByMailAndIsActive(mail, true);
     }
 
     @Override

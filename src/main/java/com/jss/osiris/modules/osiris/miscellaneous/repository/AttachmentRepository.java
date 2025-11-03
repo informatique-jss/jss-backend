@@ -24,6 +24,9 @@ public interface AttachmentRepository extends QueryCacheCrudRepository<Attachmen
         @Query(value = "select a.* from attachment a where id_customer_order =:idCustomerOrder", nativeQuery = true)
         List<Attachment> findByCustomerOrderId(@Param("idCustomerOrder") Integer idCustomerOrder);
 
+        @Query(value = "select a.* from attachment a where id_customer_order_pending =:idCustomerOrder", nativeQuery = true)
+        List<Attachment> findByCustomerOrderPendingId(@Param("idCustomerOrder") Integer idCustomerOrder);
+
         @Query(value = "select a.* from attachment a where id_invoice =:idInvoice", nativeQuery = true)
         List<Attachment> findByInvoiceId(@Param("idInvoice") Integer idInvoice);
 
