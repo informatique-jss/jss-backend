@@ -282,50 +282,50 @@ public class AttachmentServiceImpl implements AttachmentService {
         if (entityType.equals(Tiers.class.getSimpleName())) {
             Tiers tiers = tiersService.getTiers(idEntity);
             if (tiers == null)
-                throw new OsirisValidationException();
+                return;
             attachment.setTiers(tiers);
         } else if (entityType.equals(Responsable.class.getSimpleName())) {
             Responsable responsable = responsableService.getResponsable(idEntity);
             if (responsable == null)
-                throw new OsirisValidationException();
+                return;
             attachment.setResponsable(responsable);
         } else if (entityType.equals(Provider.class.getSimpleName())) {
             Provider provider = providerService.getProvider(idEntity);
             if (provider == null)
-                throw new OsirisValidationException();
+                return;
             attachment.setProvider(provider);
         } else if (entityType.equals(CompetentAuthority.class.getSimpleName())) {
             CompetentAuthority competentAuthority = competentAuthorityService.getCompetentAuthority(idEntity);
             if (competentAuthority == null)
-                throw new OsirisValidationException();
+                return;
             attachment.setCompetentAuthority(competentAuthority);
         } else if (entityType.equals(Quotation.class.getSimpleName())) {
             Quotation quotation = quotationService.getQuotation(idEntity);
             if (quotation == null)
-                throw new OsirisValidationException();
+                return;
             attachment.setQuotation(quotation);
         } else if (entityType.equals(Candidacy.class.getSimpleName())) {
             filename = filename + "_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
             Candidacy candidacy = candidacyService.getCandidacy(idEntity);
             if (candidacy == null)
-                throw new OsirisValidationException();
+                return;
             attachment.setCandidacy(candidacy);
         } else if (entityType.equals(TypeDocument.class.getSimpleName())) {
             TypeDocument typeDocumentAttachment = typeDocumentService.getTypeDocumentByCode(codeEntity);
             if (typeDocumentAttachment == null)
-                throw new OsirisValidationException();
+                return;
             attachment.setTypeDocumentAttachment(typeDocumentAttachment);
         } else if (entityType.equals(AssoServiceDocument.class.getSimpleName())) {
             AssoServiceDocument assoServiceDocument = assoServiceDocumentService.getAssoServiceDocument(idEntity);
             missingAttachmentQueryService.checkCompleteAttachmentListAndComment(assoServiceDocument, attachment);
             if (assoServiceDocument == null)
-                throw new OsirisValidationException();
+                return;
             attachment.setAssoServiceDocument(assoServiceDocument);
             notificationService.notifyAttachmentAddToService(assoServiceDocument.getService(), attachment);
         } else if (entityType.equals(Provision.class.getSimpleName())) {
             Provision provision = provisionService.getProvision(idEntity);
             if (provision == null)
-                throw new OsirisValidationException();
+                return;
             attachment.setProvision(provision);
 
             // Send immediatly to customer order
@@ -359,7 +359,7 @@ public class AttachmentServiceImpl implements AttachmentService {
         } else if (entityType.equals(CustomerOrder.class.getSimpleName())) {
             CustomerOrder customerOrder = customerOrderService.getCustomerOrder(idEntity);
             if (customerOrder == null)
-                throw new OsirisValidationException();
+                return;
             attachment.setCustomerOrder(customerOrder);
             // Notify user only if not a mail and by a Osiris user
             if (!attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeAutomaticMail().getId())
@@ -368,28 +368,28 @@ public class AttachmentServiceImpl implements AttachmentService {
         } else if (entityType.equals(CustomerOrder.class.getSimpleName() + "Pending")) {
             CustomerOrder customerOrder = customerOrderService.getCustomerOrder(idEntity);
             if (customerOrder == null)
-                throw new OsirisValidationException();
+                return;
             attachment.setCustomerOrderPending(customerOrder);
         } else if (entityType.equals(Invoice.class.getSimpleName())) {
             Invoice invoice = invoiceService.getInvoice(idEntity);
             if (invoice == null)
-                throw new OsirisValidationException();
+                return;
             attachment.setInvoice(invoice);
         } else if (entityType.equals(Affaire.class.getSimpleName())) {
             Affaire affaire = affaireService.getAffaire(idEntity);
             if (affaire == null)
-                throw new OsirisValidationException();
+                return;
             attachment.setAffaire(affaire);
         } else if (entityType.equals(CustomerMail.class.getSimpleName())) {
             CustomerMail mail = customerMailService.getMail(idEntity);
             if (mail == null)
-                throw new OsirisValidationException();
+                return;
             attachment.setCustomerMail(mail);
         } else if (entityType.equals(MissingAttachmentQuery.class.getSimpleName())) {
             MissingAttachmentQuery missingAttachmentQuery = missingAttachmentQueryService
                     .getMissingAttachmentQuery(idEntity);
             if (missingAttachmentQuery == null)
-                throw new OsirisValidationException();
+                return;
             attachment.setMissingAttachmentQuery(missingAttachmentQuery);
         }
     }
