@@ -18,7 +18,7 @@
     </sort-table>
   </div>
   <div
-    *ngIf="instanceOfCustomerOrderFn(quotation) && (quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED ||quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED ) ">
+    *ngIf="instanceOfCustomerOrderFn(quotation) && ((quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED ||quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED ) || quotation.invoicingEmployee)">
     <div class=" full-width">
       <table class="full-width table-fixed-layout">
         <tr>

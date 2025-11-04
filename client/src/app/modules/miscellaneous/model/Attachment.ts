@@ -17,6 +17,7 @@ export interface Attachment {
   provision: Provision;
   invoice: Invoice;
   isAlreadySent: boolean;
+  isValidated: boolean;
   typeDocument: TypeDocument;
   creatDateTime: Date;
 }

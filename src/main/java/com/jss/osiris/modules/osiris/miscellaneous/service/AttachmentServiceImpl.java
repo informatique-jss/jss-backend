@@ -442,6 +442,20 @@ public class AttachmentServiceImpl implements AttachmentService {
         addOrUpdateAttachment(attachment);
     }
 
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void validateAttachment(Attachment attachment) {
+        attachment.setIsValidated(true);
+        addOrUpdateAttachment(attachment);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void invalidateAttachment(Attachment attachment) {
+        attachment.setIsValidated(false);
+        addOrUpdateAttachment(attachment);
+    }
+
     private List<Attachment> getAttachmentForEntityType(String entityType, Integer idEntity, String codeEntity) {
         List<Attachment> attachments = new ArrayList<Attachment>();
         if (entityType.equals(Tiers.class.getSimpleName())) {

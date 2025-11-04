@@ -2,6 +2,7 @@ import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { formatBytes, formatDateTimeForSortTable } from 'src/app/libs/FormatHelper';
 import { CUSTOMER_ORDER_ENTITY_TYPE, PROVISION_ENTITY_TYPE, QUOTATION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
+import { HabilitationsService } from '../../../../services/habilitations.service';
 import { Attachment } from '../../model/Attachment';
 import { AttachmentType } from '../../model/AttachmentType';
 import { IAttachment } from '../../model/IAttachment';
@@ -39,6 +40,7 @@ export class AttachmentsComponent implements OnInit {
     public confirmationDialog: MatDialog,
     protected uploadAttachmentService: UploadAttachmentService,
     private constantService: ConstantService,
+    private habilitationsService: HabilitationsService
   ) { }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -55,6 +57,15 @@ export class AttachmentsComponent implements OnInit {
     this.displayedColumns.push({ id: "createdBy", fieldName: "uploadedFile.createdBy", label: "Ajouté par" } as SortTableColumn<Attachment>);
     this.displayedColumns.push({ id: "creationDate", fieldName: "uploadedFile.creationDate", label: "Ajouté le", valueFonction: formatDateTimeForSortTable } as SortTableColumn<Attachment>);
     this.displayedColumns.push({ id: "size", fieldName: "uploadedFile.size", label: "Taille", valueFonction: (element: Attachment, column: SortTableColumn<Attachment>) => { return element.uploadedFile.size ? formatBytes(element.uploadedFile.size, 2) : "" } } as SortTableColumn<Attachment>);
+
+    if (this.entityType == PROVISION_ENTITY_TYPE.entityType && this.habilitationsService.canAddNewInvoice())
+      this.displayedColumns.push({
+        id: "isValidated", fieldName: "isValidated", label: "Facture validée ?", valueFonction: (element: Attachment, column: SortTableColumn<Attachment>) => {
+          if (element.attachmentType.id == this.constantService.getAttachmentTypeProviderInvoice().id)
+            return element.isValidated ? "Oui" : "Non"
+          return "";
+        }
+      } as SortTableColumn<Attachment>);
 
     if (this.entityType && (this.entityType == CUSTOMER_ORDER_ENTITY_TYPE.entityType || this.entityType == QUOTATION_ENTITY_TYPE.entityType || this.entityType == PROVISION_ENTITY_TYPE.entityType))
       this.displayedColumns.push({ id: "isAlreadySent", fieldName: "isAlreadySent", label: "Envoyé au client ?", valueFonction: (element: Attachment, column: SortTableColumn<Attachment>) => { return element.isAlreadySent ? "Oui" : "Non" } } as SortTableColumn<Attachment>);
@@ -77,6 +88,25 @@ export class AttachmentsComponent implements OnInit {
         })
       }, display: true
     } as SortTableAction<Attachment>);
+
+    if (this.entityType == PROVISION_ENTITY_TYPE.entityType && this.habilitationsService.canAddNewInvoice()) {
+      this.tableActions.push({
+        actionIcon: "check", actionName: "Valider la facture fournisseur", actionClick: (column: SortTableAction<Attachment>, element: Attachment, event: any): void => {
+          this.uploadAttachmentService.validateAttachment(element).subscribe(response => {
+            element.isValidated = true;
+            this.setDataTable();
+          });
+        }, display: true
+      } as SortTableAction<Attachment>);
+      this.tableActions.push({
+        actionIcon: "close", actionName: "Invalider la facture fournisseur", actionClick: (column: SortTableAction<Attachment>, element: Attachment, event: any): void => {
+          this.uploadAttachmentService.invalidateAttachment(element).subscribe(response => {
+            element.isValidated = false;
+            this.setDataTable();
+          });
+        }, display: true
+      } as SortTableAction<Attachment>);
+    }
   }
 
   formatDateTimeForSortTable = formatDateTimeForSortTable;

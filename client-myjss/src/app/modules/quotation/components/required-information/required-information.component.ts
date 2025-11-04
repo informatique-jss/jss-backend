@@ -169,7 +169,6 @@ export class RequiredInformationComponent implements OnInit {
     private modalService: NgbModal,
     private gtmService: GtmService
   ) {
-    this.noticeTemplateDescription = noticeTemplateService.getNoticeTemplateDescription()
   }
 
   informationForm!: FormGroup;
@@ -181,6 +180,7 @@ export class RequiredInformationComponent implements OnInit {
 
     this.noticeTemplateDescriptionSubscription = this.noticeTemplateService.noticeTemplateDescriptionObservable.subscribe(item => {
       if (item && this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined && item.announcementOrder != undefined
+        && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex]
         && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[item.announcementOrder].announcement) {
         this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[item.announcementOrder].announcement!.notice = item.displayText;
         this.noticeTemplateDescription = item;
@@ -200,6 +200,7 @@ export class RequiredInformationComponent implements OnInit {
     if (!this.currentUser)
       this.initIQuotation();
     this.fetchAnnouncementReferentials();
+    this.noticeTemplateDescription = this.noticeTemplateService.getNoticeTemplateDescription();
   }
 
   initIQuotation() {
@@ -397,13 +398,13 @@ export class RequiredInformationComponent implements OnInit {
 
         if (this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex])
           for (let provision of this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions)
-            if (provision && provision.announcement && !provision.isRedactedByJss && this.noticeTemplateDescription && this.noticeTemplateDescription.isUsingTemplate && (!provision.announcement || !provision.announcement.notice || provision.announcement.notice.length == 0)) {
+            if (provision && provision.announcement && !provision.isRedactedByJss && (!this.noticeTemplateDescription || !this.noticeTemplateDescription.isUsingTemplate) && (!provision.announcement || !provision.announcement.notice || provision.announcement.notice.length == 0)) {
               this.appService.displayToast("Veuillez remplir le texte de l'annonce légale", true, "Champs obligatoires", 5000);
               return of(false);
             }
       }
 
-      if (this.noticeTemplateDescription && this.noticeTemplateDescription.announcementOrder && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[this.noticeTemplateDescription.announcementOrder])
+      if (this.noticeTemplateDescription && this.noticeTemplateDescription.announcementOrder && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex] && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[this.noticeTemplateDescription.announcementOrder])
         this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[this.noticeTemplateDescription.announcementOrder].announcement!.notice = this.noticeTemplateDescription.displayText;
 
       if (this.currentUser) {
@@ -684,10 +685,12 @@ export class RequiredInformationComponent implements OnInit {
         this.noticeTemplateDescription.selectedTemplate = undefined;
         this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
         setTimeout(() => {
-          if (this.getPossibleTemplates(service) && this.getPossibleTemplates(service)!.length == 1)
+          if (this.getPossibleTemplates(service) && this.getPossibleTemplates(service)!.length == 1) {
             this.noticeTemplateDescription!.selectedTemplate = this.getPossibleTemplates(service)![0];
-          else if (selectedTemplate) {
+            this.noticeTemplateDescription!.service = service;
+          } else if (selectedTemplate) {
             this.noticeTemplateDescription!.selectedTemplate = selectedTemplate;
+            this.noticeTemplateDescription!.service = service;
           } else
             return;
           this.noticeTemplateDescription!.isShowNoticeTemplate = true;

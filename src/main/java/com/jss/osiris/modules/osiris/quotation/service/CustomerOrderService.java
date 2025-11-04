@@ -196,7 +196,7 @@ public interface CustomerOrderService {
                         throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException,
                         OsirisException;
 
-        public CustomerOrder assignNewCustomerOrderToBilled();
+        public CustomerOrder assignNewCustomerOrderToBilled() throws OsirisException;
 
         public CustomerOrder assignNewCustomerOrderToOrder() throws OsirisException;
 

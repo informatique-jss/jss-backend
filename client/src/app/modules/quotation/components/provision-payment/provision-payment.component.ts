@@ -79,8 +79,7 @@ export class ProvisionPaymentComponent implements OnInit {
     this.paymentsDisplayedColumns.push({ id: "paymentTypeLabel", fieldName: "paymentType.label", label: "Type" } as SortTableColumn<Payment>);
     this.paymentsDisplayedColumns.push({ id: "label", fieldName: "label", label: "Libellé" } as SortTableColumn<Payment>);
     this.paymentsDisplayedColumns.push({ id: "checkNumber", fieldName: "checkNumber", label: "Numéro de chèque" } as SortTableColumn<Payment>);
-    if (this.habilitationsService.isAdministrator())
-      this.paymentsDisplayedColumns.push({ id: "isCancelled", fieldName: "isCancelled", label: "Est annulé ?" } as SortTableColumn<Payment>);
+    this.paymentsDisplayedColumns.push({ id: "isCancelled", fieldName: "isCancelled", label: "Est annulé ?", valueFonction: (element: Payment, column: SortTableColumn<Payment>) => { return element.isCancelled ? "Oui" : "Non" } } as SortTableColumn<Payment>);
     this.paymentsDisplayedColumns.push({ id: "invoice", fieldName: "invoice.manualAccountingDocumentNumber", label: "Facture associée" } as SortTableColumn<Payment>);
     this.paymentsTableActions.push({
       actionIcon: "merge_type", actionName: "Associer le paiement", actionClick: (column: SortTableAction<Payment>, element: Payment, event: any) => {
