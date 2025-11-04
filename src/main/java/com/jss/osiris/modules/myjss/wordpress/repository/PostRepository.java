@@ -26,7 +26,17 @@ import jakarta.persistence.QueryHint;
 
 public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> {
 
-        @Query("select p from Post p where p.isCancelled =:isCancelled and p.date<=CURRENT_TIMESTAMP and p.date>:consultationDate and ((:jssCategory IS NOT NULL AND :jssCategory MEMBER OF p.jssCategories) OR (:jssCategory IS NULL AND size(p.jssCategories) > 0))")
+        @Query("""
+                        select p from Post p
+                        where p.isCancelled =:isCancelled
+                        and p.date<=CURRENT_TIMESTAMP
+                        and p.date>:consultationDate
+                        and (
+                                        (:jssCategory IS NOT NULL
+                                        AND :jssCategory MEMBER OF p.jssCategories)
+                                OR (
+                                        :jssCategory IS NULL AND
+                                        size(p.jssCategories) > 0))""")
         @Synchronize("post")
         @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
         Page<Post> findByJssCategoriesAndIsCancelled(@Param("jssCategory") JssCategory jssCategory,
@@ -34,20 +44,26 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
                         Pageable pageableRequest);
 
         @Query("""
-                            SELECT DISTINCT p
-                            FROM Post p
-                            JOIN p.jssCategories c
-                            WHERE p.isCancelled = :isCancelled
-                              AND p.date <= CURRENT_TIMESTAMP
-                              AND p.date > :consultationDate
-                              AND :categoryToSelect MEMBER OF p.jssCategories
-                              AND (c NOT IN :listCategories)
+                        SELECT p
+                        FROM Post p
+                        WHERE p.isCancelled = :isCancelled
+                        AND p.date <= CURRENT_TIMESTAMP
+                        AND EXISTS (
+                                SELECT 1 FROM Post p2
+                                JOIN p2.jssCategories c1
+                                WHERE p2 = p AND c1 = :categoryToSelect
+                        )
+                        AND NOT EXISTS (
+                                SELECT 1 FROM Post p3
+                                JOIN p3.jssCategories c2
+                                WHERE p3 = p AND c2 IN :listCategories
+                        )
+
                         """)
         Page<Post> findByJssCategoryAndIsCancelledAndNotInJssCategories(
                         @Param("categoryToSelect") JssCategory categoryToSelect,
                         @Param("isCancelled") Boolean isCancelled,
                         @Param("listCategories") List<JssCategory> listCategories,
-                        LocalDateTime consultationDate,
                         Pageable pageableRequest);
 
         @Query("select p from Post p where p.isCancelled =:isCancelled AND p.date<=CURRENT_TIMESTAMP and ((:myJssCategory IS NOT NULL AND :myJssCategory MEMBER OF p.myJssCategories) OR (:myJssCategory IS NULL AND size(p.myJssCategories) > 0))")
