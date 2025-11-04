@@ -1195,6 +1195,36 @@ public class MiscellaneousController {
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING)
+    @GetMapping(inputEntryPoint + "/attachment/validate")
+    public ResponseEntity<Boolean> validateAttachment(@RequestParam Integer idAttachment)
+            throws OsirisValidationException {
+        if (idAttachment == null)
+            throw new OsirisValidationException("idAttachment");
+
+        Attachment attachment = attachmentService.getAttachment(idAttachment);
+        if (attachment == null)
+            throw new OsirisValidationException("attachment");
+
+        attachmentService.validateAttachment(attachment);
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING)
+    @GetMapping(inputEntryPoint + "/attachment/invalidate")
+    public ResponseEntity<Boolean> invalidateAttachment(@RequestParam Integer idAttachment)
+            throws OsirisValidationException {
+        if (idAttachment == null)
+            throw new OsirisValidationException("idAttachment");
+
+        Attachment attachment = attachmentService.getAttachment(idAttachment);
+        if (attachment == null)
+            throw new OsirisValidationException("attachment");
+
+        attachmentService.invalidateAttachment(attachment);
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
     @PostMapping(inputEntryPoint + "/attachment/upload")
     public ResponseEntity<List<Attachment>> uploadAttachment(@RequestParam MultipartFile file,
             @RequestParam(required = false) Integer idEntity, @RequestParam(required = false) String codeEntity,

@@ -2963,7 +2963,7 @@ public class QuotationController {
 
   @GetMapping(inputEntryPoint + "/customer-order/assign/invoicing/auto")
   @JsonView(JacksonViews.OsirisListView.class)
-  public ResponseEntity<CustomerOrder> assignNewCustomerOrderToBilled() {
+  public ResponseEntity<CustomerOrder> assignNewCustomerOrderToBilled() throws OsirisException {
     return new ResponseEntity<CustomerOrder>(customerOrderService.assignNewCustomerOrderToBilled(), HttpStatus.OK);
   }
 

@@ -233,6 +233,9 @@ public class Attachment implements Serializable, IId {
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class })
 	private Candidacy candidacy;
 
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
+	private Boolean isValidated;
+
 	public Integer getId() {
 		return id;
 	}
@@ -471,5 +474,13 @@ public class Attachment implements Serializable, IId {
 
 	public void setCustomerOrderPending(CustomerOrder customerOrderPending) {
 		this.customerOrderPending = customerOrderPending;
+	}
+
+	public Boolean getIsValidated() {
+		return isValidated;
+	}
+
+	public void setIsValidated(Boolean isValidated) {
+		this.isValidated = isValidated;
 	}
 }

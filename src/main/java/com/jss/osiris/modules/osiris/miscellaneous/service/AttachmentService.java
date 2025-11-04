@@ -42,6 +42,10 @@ public interface AttachmentService {
 
         public void disableAttachment(Attachment attachment);
 
+        public void validateAttachment(Attachment attachment);
+
+        public void invalidateAttachment(Attachment attachment);
+
         public Attachment addOrUpdateAttachment(Attachment attachment);
 
         public Boolean modifyAttachmentDate(LocalDate attachmentDate, Integer idAttachment);

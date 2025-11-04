@@ -2044,20 +2044,43 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public CustomerOrder assignNewCustomerOrderToBilled() {
-        Order order = new Order(Direction.ASC, "lastStatusUpdate");
-        Sort sort = Sort.by(Arrays.asList(order));
+    public CustomerOrder assignNewCustomerOrderToBilled() throws OsirisException {
+        Order orderSort = new Order(Direction.ASC, "lastStatusUpdate");
+        Sort sort = Sort.by(Arrays.asList(orderSort));
         Pageable pageableRequest = PageRequest.of(0, 1, sort);
-        List<CustomerOrder> customerOrders = customerOrderRepository.findNewCustomerOrderToBilled(
-                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.TO_BILLED),
+        List<CustomerOrder> customerOrders = customerOrderRepository.searchCustomerOrdersWithInvoiceToFill(
+                constantService.getAttachmentTypeProviderInvoice(),
+                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.BEING_PROCESSED),
                 pageableRequest);
 
-        if (customerOrders != null && customerOrders.size() > 0 && employeeService.getCurrentEmployee() != null) {
-            customerOrders.get(0).setInvoicingEmployee(employeeService.getCurrentEmployee());
-            return simpleAddOrUpdate(customerOrders.get(0));
-        } else {
-            return null;
+        Employee currentUser = employeeService.getCurrentEmployee();
+        CustomerOrder assignedOrder = null;
+
+        if (customerOrders != null && customerOrders.size() > 0) {
+            for (CustomerOrder order : customerOrders) {
+                if (order.getInvoicingEmployee() == null
+                        || order.getInvoicingEmployee().getId().equals(currentUser.getId())) {
+                    assignedOrder = order;
+                    break;
+                }
+            }
         }
+
+        if (assignedOrder == null)
+            customerOrderRepository.findNewCustomerOrderToBilled(
+                    customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.TO_BILLED),
+                    pageableRequest);
+
+        if (customerOrders != null && customerOrders.size() > 0) {
+            assignedOrder = customerOrders.get(0);
+            customerOrders.get(0).setInvoicingEmployee(currentUser);
+            return simpleAddOrUpdate(customerOrders.get(0));
+        }
+
+        if (currentUser != null && assignedOrder != null) {
+
+        }
+        return null;
     }
 
     @Override

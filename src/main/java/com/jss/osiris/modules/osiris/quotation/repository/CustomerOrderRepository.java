@@ -13,6 +13,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.osiris.crm.model.Voucher;
+import com.jss.osiris.modules.osiris.miscellaneous.model.AttachmentType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
@@ -233,6 +234,15 @@ public interface CustomerOrderRepository
                         "    and (0 in :status or  c.customerOrderStatus.id in :status) order by c.createdDate desc ")
         List<CustomerOrder> searchCustomerOrders(List<Integer> commercials,
                         List<Integer> status, List<Integer> invoicingEmployees, List<Integer> orderingEmployees);
+
+        @Query("select distinct c from CustomerOrder c  join c.assoAffaireOrders a  join a.services s join s.provisions p join p.attachments att  "
+                        +
+                        "  where  " +
+                        "  att.attachmentType=:attachmentType  and coalesce(att.isValidated,false) = false " +
+                        "    and   c.customerOrderStatus = :status   ")
+        List<CustomerOrder> searchCustomerOrdersWithInvoiceToFill(AttachmentType attachmentType,
+                        CustomerOrderStatus status,
+                        Pageable pageableRequest);
 
         @Query("select c from CustomerOrder c where invoicingEmployee is null and c.customerOrderStatus=:customerOrderStatusToBilled ")
         List<CustomerOrder> findNewCustomerOrderToBilled(CustomerOrderStatus customerOrderStatusToBilled,
