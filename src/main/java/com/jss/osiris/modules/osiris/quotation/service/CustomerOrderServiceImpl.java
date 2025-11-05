@@ -2037,7 +2037,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     public CustomerOrder assignNewCustomerOrderToBilled() throws OsirisException {
         Order orderSort = new Order(Direction.ASC, "lastStatusUpdate");
         Sort sort = Sort.by(Arrays.asList(orderSort));
-        Pageable pageableRequest = PageRequest.of(0, 1, sort);
+        Pageable pageableRequest = PageRequest.of(0, 100000, sort);
         List<CustomerOrder> customerOrders = customerOrderRepository.searchCustomerOrdersWithInvoiceToFill(
                 constantService.getAttachmentTypeProviderInvoice(),
                 customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.BEING_PROCESSED),
@@ -2046,7 +2046,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         Employee currentUser = employeeService.getCurrentEmployee();
         CustomerOrder assignedOrder = null;
 
-        if (customerOrders != null && customerOrders.size() > 0) {
+        if (customerOrders != null && customerOrders.size() > 0 && Math.random() > 0.5) {
             for (CustomerOrder order : customerOrders) {
                 if (order.getInvoicingEmployee() == null
                         || order.getInvoicingEmployee().getId().equals(currentUser.getId())) {
@@ -2057,7 +2057,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         }
 
         if (assignedOrder == null)
-            customerOrderRepository.findNewCustomerOrderToBilled(
+            customerOrders = customerOrderRepository.findNewCustomerOrderToBilled(
                     customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.TO_BILLED),
                     pageableRequest);
 
