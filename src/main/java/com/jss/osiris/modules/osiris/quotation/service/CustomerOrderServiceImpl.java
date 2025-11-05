@@ -516,17 +516,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             BigDecimal remainingToPay = getRemainingAmountToPayForCustomerOrder(customerOrder);
 
             Tiers tiers = customerOrder.getResponsable().getTiers();
-            boolean isDepositMandatory = false;
             boolean isPaymentTypePrelevement = false;
-            isDepositMandatory = tiers.getIsProvisionalPaymentMandatory();
 
-            if (!isDepositMandatory && customerOrder.getAssoAffaireOrders() != null)
-                for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
-                    if (asso.getAffaire() != null
-                            && Boolean.TRUE.equals(asso.getAffaire().getIsProvisionalPaymentMandatory())) {
-                        isDepositMandatory = true;
-                        break;
-                    }
+            boolean isDepositMandatory = quotationService.isDepositMandatory(customerOrder);
 
             if (tiers instanceof Tiers)
                 isPaymentTypePrelevement = ((Tiers) tiers).getPaymentType().getId()

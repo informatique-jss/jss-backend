@@ -982,4 +982,21 @@ public class QuotationServiceImpl implements QuotationService {
                 }
     }
 
+    @Override
+    public boolean isDepositMandatory(IQuotation quotation) {
+        boolean isDepositMandatory = false;
+
+        isDepositMandatory = quotation.getResponsable().getTiers().getIsProvisionalPaymentMandatory();
+
+        if (!isDepositMandatory && quotation.getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders())
+                if (asso.getAffaire() != null
+                        && Boolean.TRUE.equals(asso.getAffaire().getIsProvisionalPaymentMandatory())) {
+                    isDepositMandatory = true;
+                    break;
+                }
+
+        return isDepositMandatory;
+    }
+
 }

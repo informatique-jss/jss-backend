@@ -117,4 +117,6 @@ public interface QuotationService {
                         OsirisDuplicateException;
 
         public void switchResponsable(Quotation quotation, Responsable responsable);
+
+        public boolean isDepositMandatory(IQuotation quotation);
 }
