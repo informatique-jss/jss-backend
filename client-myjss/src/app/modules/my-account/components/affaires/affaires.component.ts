@@ -47,6 +47,7 @@ export class AffairesComponent implements OnInit {
   inputIdAffaire: number | undefined;
   responsablesForCurrentUser: Responsable[] | undefined;
   responsableCheck: boolean[] = [];
+  selectAllResponsable: boolean = true;
 
   constructor(
     private customerOrderService: CustomerOrderService,
@@ -166,6 +167,14 @@ export class AffairesComponent implements OnInit {
 
   downloadAttachment(attachment: Attachment) {
     this.uploadAttachmentService.downloadAttachment(attachment);
+  }
+
+  selectAllResponsables() {
+    if (this.responsablesForCurrentUser)
+      for (let respo of this.responsablesForCurrentUser)
+        this.responsableCheck[respo.id] = this.selectAllResponsable;
+
+    this.changeFilter();
   }
 
   getCustomerOrderStatusLabel = getCustomerOrderStatusLabel;

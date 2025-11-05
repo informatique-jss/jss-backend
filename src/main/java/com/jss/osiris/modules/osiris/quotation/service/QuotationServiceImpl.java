@@ -674,9 +674,14 @@ public class QuotationServiceImpl implements QuotationService {
             if (Boolean.TRUE.equals(currentUser.getCanViewAllTiersInWeb()))
                 responsablesToFilter.addAll(currentUser.getTiers().getResponsables());
 
-            if (responsableIdToFilter != null)
-                responsablesToFilter.removeAll(
-                        responsablesToFilter.stream().filter(r -> !responsableIdToFilter.contains(r.getId())).toList());
+            if (responsableIdToFilter == null)
+                responsableIdToFilter = new ArrayList<>();
+
+            List<Integer> responsableIdToFilterFinal = responsableIdToFilter;
+
+            responsablesToFilter.removeAll(
+                    responsablesToFilter.stream().filter(r -> !responsableIdToFilterFinal.contains(r.getId()))
+                            .toList());
 
             if (quotationStatusToFilter.size() > 0 && responsablesToFilter != null
                     && responsablesToFilter.size() > 0) {
@@ -696,7 +701,7 @@ public class QuotationServiceImpl implements QuotationService {
             }
         }
 
-        return null;
+        return new ArrayList<>();
     }
 
     @Override
