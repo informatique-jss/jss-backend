@@ -845,9 +845,14 @@ public class AffaireServiceImpl implements AffaireService {
             if (Boolean.TRUE.equals(currentUser.getCanViewAllTiersInWeb()))
                 responsablesToFilter.addAll(currentUser.getTiers().getResponsables());
 
-            if (responsableIdToFilter != null)
-                responsablesToFilter.removeAll(
-                        responsablesToFilter.stream().filter(r -> !responsableIdToFilter.contains(r.getId())).toList());
+            if (responsableIdToFilter == null)
+                responsableIdToFilter = new ArrayList<>();
+
+            List<Integer> responsableIdToFilterFinal = responsableIdToFilter;
+
+            responsablesToFilter.removeAll(
+                    responsablesToFilter.stream().filter(r -> !responsableIdToFilterFinal.contains(r.getId()))
+                            .toList());
 
             if (responsablesToFilter == null || responsablesToFilter.size() == 0)
                 return new ArrayList<Affaire>();
@@ -873,7 +878,7 @@ public class AffaireServiceImpl implements AffaireService {
             return affaireRepository.getAffairesForResponsables(pageableRequest, responsablesToFilter, searchText,
                     idAffaire);
         }
-        return null;
+        return new ArrayList<>();
     }
 
     @Override

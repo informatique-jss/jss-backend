@@ -47,6 +47,7 @@ export class QuotationsComponent implements OnInit {
   quotations: Quotation[] = [];
   responsablesForCurrentUser: Responsable[] | undefined;
   responsableCheck: boolean[] = [];
+  selectAllResponsable: boolean = true;
 
   hideSeeMore: boolean = false;
   isFirstLoading: boolean = false;
@@ -297,6 +298,14 @@ export class QuotationsComponent implements OnInit {
     if (!atLeastOne)
       this.statusFilterSendToCustomer = true;
 
+  }
+
+  selectAllResponsables() {
+    if (this.responsablesForCurrentUser)
+      for (let respo of this.responsablesForCurrentUser)
+        this.responsableCheck[respo.id] = this.selectAllResponsable;
+
+    this.changeFilter();
   }
 }
 

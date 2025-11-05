@@ -47,6 +47,7 @@ export class OrdersComponent implements OnInit {
   orders: CustomerOrder[] = [];
   responsablesForCurrentUser: Responsable[] | undefined;
   responsableCheck: boolean[] = [];
+  selectAllResponsable: boolean = true;
 
   hideSeeMore: boolean = false;
   isFirstLoading: boolean = false;
@@ -294,6 +295,14 @@ export class OrdersComponent implements OnInit {
   getLastMissingAttachmentQueryDateLabel = getLastMissingAttachmentQueryDateLabel;
   getCustomerOrderBillingMailList(order: CustomerOrder) {
     return getCustomerOrderBillingMailList(this.ordersMailComputeResult[order.id]);
+  }
+
+  selectAllResponsables() {
+    if (this.responsablesForCurrentUser)
+      for (let respo of this.responsablesForCurrentUser)
+        this.responsableCheck[respo.id] = this.selectAllResponsable;
+
+    this.changeFilter();
   }
 }
 
