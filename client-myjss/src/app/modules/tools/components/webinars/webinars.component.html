@@ -23,7 +23,28 @@
 
 <section class="dark-blue-dropdown">
   <section class="container pt-5 pb-lg-2 pb-xl-4 py-xxl-5 my-5">
-    <div class="row pb-1 pb-sm-3 pb-lg-4 d-flex align-items-center">
+    <div *ngIf="!webinarToDisplay" class="row pb-1 pb-sm-3 pb-lg-4 d-flex align-items-center">
+      <div class="col mb-5 mb-md-0">
+        <div class="text-warning flex-shrink-0 mb-4">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M12 0L12.6798 4.12733C13.2879 7.81883 16.1812 10.7121 19.8727 11.3202L24 12L19.8727 12.6798C16.1812 13.2879 13.2879 16.1812 12.6798 19.8727L12 24L11.3202 19.8727C10.7121 16.1812 7.81882 13.2879 4.12733 12.6798L0 12L4.12733 11.3202C7.81883 10.7121 10.7121 7.81882 11.3202 4.12733L12 0Z">
+            </path>
+          </svg>
+        </div>
+        <h2 class="h2 pe-xxl-5 me-xl-4 mb-5 pb-0 pb-md-5 text-white">
+          Inscrivez-vous à notre prochain webinaire
+        </h2>
+        <h4>Le JSS organise régulièrement des webinaires pour vous tenir informés de l’actualité du secteur juridique.
+        </h4>
+        <h4>Myriam de Montis, Présidente du JSS et experte en formalités légales évoque avec précision des sujets en
+          lien avec les formalités légales et l’application de nouveau textes. L’objectif étant de vous transmettre
+          les incontournables informations pratiques du moment. </h4>
+        <h4>A la fin de chaque webinaire, un temps est consacré aux questions-réponses des participants.</h4>
+      </div>
+    </div>
+
+    <div *ngIf="webinarToDisplay" class="row pb-1 pb-sm-3 pb-lg-4 d-flex align-items-center">
       <div class="col-lg-4 pe-xxl-4">
         <div class="text-warning flex-shrink-0 mb-4">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -34,8 +55,8 @@
         </div>
         <h2 class="h2 pe-xxl-5 me-xl-4 mb-md-0 text-white">
           Inscrivez-vous à notre prochain webinaire
-          <span style="color: #CEB793;">Confidentialité des données</span> <br>
-          le 26 septembre à 09h30
+          <span style="color: #CEB793;">{{webinarToDisplay.label}}</span> <br>
+          le {{webinarToDisplay.webinarDate | literalDatePipe}} à {{webinarToDisplay.webinarDate | date:'HH:mm'}}
         </h2>
       </div>
 
@@ -210,12 +231,20 @@
   </div>
 </section>
 
+<section *ngIf="lastWebinar && !webinarToDisplay" class="container my-5 py-5">
+  <div class="card-info">
+    <div class="d-flex flex-column h-100 card border-0 rounded-3 pt-5 px-5 px-lg-5">
+      <h3 class="mb-4 mb-xl-5 mx-5">Dernier webinaire du {{lastWebinar.webinarDate | literalDatePipe}} :
+        {{lastWebinar.label}}</h3>
+    </div>
+  </div>
+</section>
+
 <section class="container">
   <div class="container yellow-card my-2 my-md-3 my-xl-4 pb-2 rounded-5 overflow-hidden p-md-5 p-4">
     <div class="row justify-content-center gy-md-5 gy-4 gx-xl-5 p-4">
       <h1 class="h2 text-blue text-center text-secondary">Visionnez le dernier webinaire en replay et ne manquez aucune
-        des
-        nouveautés !
+        des nouveautés !
       </h1>
     </div>
     <div class="row justify-content-center mb-4 mb-md-2 gy-md-5 gy-4 gx-xl-5">
