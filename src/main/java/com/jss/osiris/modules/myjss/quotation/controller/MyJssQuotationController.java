@@ -1680,6 +1680,23 @@ public class MyJssQuotationController {
 				HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/quotation/is-deposit-mandatory")
+	public ResponseEntity<Boolean> isDepositMandatory(@RequestParam Integer quotationId,
+			HttpServletRequest request) throws OsirisClientMessageException, OsirisException {
+		detectFlood(request);
+		Quotation quotation = null;
+		quotation = quotationService.getQuotation(quotationId);
+
+		if (quotation == null)
+			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+
+		if (quotation.getId() != null && !myJssQuotationValidationHelper.canSeeQuotation(quotation))
+			return new ResponseEntity<Boolean>(null);
+
+		return new ResponseEntity<Boolean>(quotationService.isDepositMandatory(quotation),
+				HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/voucher/delete/order")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<Boolean> removeVoucherCustomerOrder(@RequestParam Integer customerOrderId,
