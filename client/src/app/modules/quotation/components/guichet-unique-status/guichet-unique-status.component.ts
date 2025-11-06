@@ -2,9 +2,9 @@ import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { combineLatest } from 'rxjs';
 import { GUICHET_UNIQUE_STATUS_VALIDATION_PENDING } from 'src/app/libs/Constants';
 import { formatDateFrance } from 'src/app/libs/FormatHelper';
-import { FormaliteGuichetUniqueService } from '../../miscellaneous/services/formalite.guichet.unique.service';
-import { FormaliteGuichetUnique } from '../model/guichet-unique/FormaliteGuichetUnique';
-import { ValidationRequest } from '../model/guichet-unique/ValidationRequest';
+import { FormaliteGuichetUniqueService } from '../../../miscellaneous/services/formalite.guichet.unique.service';
+import { FormaliteGuichetUnique } from '../../model/guichet-unique/FormaliteGuichetUnique';
+import { ValidationRequest } from '../../model/guichet-unique/ValidationRequest';
 
 @Component({
   selector: 'guichet-unique-status',

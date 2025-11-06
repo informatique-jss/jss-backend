@@ -204,7 +204,7 @@ export class QuotationManagementComponent implements OnInit, AfterContentChecked
   isLoadingPaperLabelResult: boolean = false;
 
   updateBillingMailResult() {
-    if (!this.isLoadingMailResult && this.quotation && this.quotation.responsable) {
+    if (!this.isLoadingMailResult && this.quotation && this.quotation.responsable && this.quotation.documents) {
       this.isLoadingMailResult = true;
       // Can't find a way to make it work correctly ...
       replaceDocument(this.constantService.getDocumentTypeBilling(), this.quotation, this.billingDocument);
