@@ -7,8 +7,8 @@
       <i class="ai-edit-alt ms-n1 me-2"></i>
       Reprendre le brouillon
     </a>
-    <a class="btn btn-sm btn-primary" role="button" (click)="cancelDraft()"
-      *ngIf=" quotation && quotation.quotationStatus.code == QUOTATION_STATUS_OPEN">
+    <a class="btn btn-sm btn-primary me-2" role="button" (click)="cancelDraft()"
+      *ngIf=" quotation && (quotation.quotationStatus.code == QUOTATION_STATUS_OPEN || quotation.quotationStatus.code == QUOTATION_STATUS_SENT_TO_CUSTOMER)">
       <i class="ai-trash ms-n1 me-2"></i>
       Abandonner
     </a>

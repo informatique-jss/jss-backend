@@ -31,6 +31,7 @@ export class BillingClosureComponent implements OnInit {
   totalToPayCb: number = 0;
   responsablesForCurrentUser: Responsable[] | undefined;
   responsableCheck: boolean[] = [];
+  selectAllResponsable: boolean = true;
 
   capitalizeName = capitalizeName;
 
@@ -205,4 +206,11 @@ export class BillingClosureComponent implements OnInit {
     }
   }
 
+  selectAllResponsables() {
+    if (this.responsablesForCurrentUser)
+      for (let respo of this.responsablesForCurrentUser)
+        this.responsableCheck[respo.id] = this.selectAllResponsable;
+
+    this.changeFilter();
+  }
 }

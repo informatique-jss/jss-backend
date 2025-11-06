@@ -11,6 +11,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Notification;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
+import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 
 public interface NotificationRepository extends QueryCacheCrudRepository<Notification, Integer> {
@@ -40,5 +41,8 @@ public interface NotificationRepository extends QueryCacheCrudRepository<Notific
 
         List<Notification> findByEmployeeAndNotificationTypeAndCandidacy(Employee toEmployee,
                         String notificationType, Candidacy candidacy);
+
+        List<Notification> findByEmployeeAndNotificationTypeAndQuotation(Employee toEmployee,
+                        String notificationType, Quotation quotation);
 
 }

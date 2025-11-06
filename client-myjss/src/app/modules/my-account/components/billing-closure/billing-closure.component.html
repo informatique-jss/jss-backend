@@ -10,8 +10,13 @@
         Responsables
       </button>
       <div ngbDropdownMenu class="dropdown-menu my-1">
+        <label class=" dropdown-item">
+          <input class="form-check-input me-2" type="checkbox" [(ngModel)]="selectAllResponsable"
+            (change)="selectAllResponsables()">
+          Sélectionner tout
+        </label>
         <label class=" dropdown-item" *ngFor="let respo of responsablesForCurrentUser">
-          <input class="form-check-input me-2" type="checkbox" value="" [(ngModel)]="responsableCheck[respo.id]"
+          <input class="form-check-input me-2" type="checkbox" [(ngModel)]="responsableCheck[respo.id]"
             (change)="changeFilter()">
           {{respo.firstname}} {{respo.lastname}}
         </label>
