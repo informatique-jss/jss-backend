@@ -34,8 +34,10 @@ import com.jss.osiris.modules.myjss.wordpress.service.JssCategoryService;
 import com.jss.osiris.modules.myjss.wordpress.service.TagService;
 import com.jss.osiris.modules.osiris.crm.model.Candidacy;
 import com.jss.osiris.modules.osiris.crm.model.CommunicationPreference;
+import com.jss.osiris.modules.osiris.crm.model.Webinar;
 import com.jss.osiris.modules.osiris.crm.service.CandidacyService;
 import com.jss.osiris.modules.osiris.crm.service.CommunicationPreferenceService;
+import com.jss.osiris.modules.osiris.crm.service.WebinarService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
@@ -58,6 +60,9 @@ public class MyJssCrmController {
 
     @Autowired
     WebinarParticipantService webinarParticipantService;
+
+    @Autowired
+    WebinarService webinarService;
 
     @Autowired
     MailHelper mailHelper;
@@ -258,6 +263,22 @@ public class MyJssCrmController {
 
         webinarParticipantService.subscribeToWebinarReplay(mail);
         return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+    }
+
+    @JsonView(JacksonViews.MyJssDetailedView.class)
+    @GetMapping(inputEntryPoint + "/webinar/last")
+    public ResponseEntity<Webinar> getLastWebinar(HttpServletRequest request) throws OsirisException {
+        detectFlood(request);
+
+        return new ResponseEntity<Webinar>(webinarService.getLastWebinar(), HttpStatus.OK);
+    }
+
+    @JsonView(JacksonViews.MyJssDetailedView.class)
+    @GetMapping(inputEntryPoint + "/webinar/next")
+    public ResponseEntity<Webinar> getNextWebinars(HttpServletRequest request) throws OsirisException {
+        detectFlood(request);
+
+        return new ResponseEntity<Webinar>(webinarService.getNextWebinar(), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/subscribe/demo")

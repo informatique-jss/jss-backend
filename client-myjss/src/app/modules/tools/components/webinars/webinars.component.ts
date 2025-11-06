@@ -2,6 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Meta, Title } from '@angular/platform-browser';
 import { validateEmail, validateFrenchPhone, validateInternationalPhone } from '../../../../libs/CustomFormsValidatorsHelper';
+import { LiteralDatePipe } from '../../../../libs/LiteralDatePipe';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { Mail } from '../../../general/model/Mail';
 import { AppService } from '../../../main/services/app.service';
@@ -9,15 +10,17 @@ import { GtmService } from '../../../main/services/gtm.service';
 import { FormSubmitPayload, PageInfo } from '../../../main/services/GtmPayload';
 import { PlatformService } from '../../../main/services/platform.service';
 import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
+import { Webinar } from '../../model/Webinar';
 import { WebinarParticipant } from '../../model/WebinarParticipant';
 import { WebinarParticipantService } from '../../services/webinar.participant.service';
+import { WebinarService } from '../../services/webinar.service';
 
 @Component({
   selector: 'webinars',
   templateUrl: './webinars.component.html',
   styleUrls: ['./webinars.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, GenericInputComponent]
+  imports: [SHARED_IMPORTS, GenericInputComponent, LiteralDatePipe]
 })
 export class WebinarsComponent implements OnInit {
   webinarParticipant: WebinarParticipant = { mail: {} as Mail } as WebinarParticipant;
@@ -25,11 +28,15 @@ export class WebinarsComponent implements OnInit {
   replayMail: string = "";
   displayForm: boolean = true;
 
+  webinarToDisplay: Webinar | undefined;
+  lastWebinar: Webinar | undefined;
+
   webinarsForm!: FormGroup;
 
   @ViewChild('formRef') formRef: ElementRef<HTMLInputElement> | undefined;
 
   constructor(private webinarParticipantService: WebinarParticipantService,
+    private webinarService: WebinarService,
     private appService: AppService,
     private gtmService: GtmService,
     private titleService: Title, private meta: Meta,
@@ -40,6 +47,13 @@ export class WebinarsComponent implements OnInit {
     this.titleService.setTitle("Webinaires - MyJSS");
     this.meta.updateTag({ name: 'description', content: "Montez en compétence sur les sujets juridiques d'entreprise. Participez à nos webinaires animés par les experts MyJSS et profitez de conseils pratiques en direct." });
     this.webinarsForm = this.formBuilder.group({});
+    this.webinarService.getLastWebinar().subscribe(last => {
+      this.lastWebinar = last;
+    })
+
+    this.webinarService.getNextWebinar().subscribe(next => {
+      this.webinarToDisplay = next;
+    })
   }
   validateEmail = validateEmail;
   validateFrenchPhone = validateFrenchPhone;
@@ -76,7 +90,6 @@ export class WebinarsComponent implements OnInit {
         });
       });
   }
-
 
   trackFormWebinarRequest() {
     this.gtmService.trackFormSubmit(

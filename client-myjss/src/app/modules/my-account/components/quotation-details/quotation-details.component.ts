@@ -63,6 +63,8 @@ export class QuotationDetailsComponent implements OnInit {
   associatedCustomerOrder: CustomerOrder | undefined;
   quotationAttachments: Attachment[][] = [];
 
+  isDepositPaymentMandatoryForQuotation: boolean = false;
+
   selectedAssoAffaireOrder: AssoAffaireOrder | undefined;
   ASSO_SERVICE_DOCUMENT_ENTITY_TYPE = ASSO_SERVICE_DOCUMENT_ENTITY_TYPE;
 
@@ -135,6 +137,9 @@ export class QuotationDetailsComponent implements OnInit {
         this.changeAffaire(this.quotationAssoAffaireOrders[0]);
       }
     })
+    this.quotationService.isDepositMandatory(this.quotation.id).subscribe((res) => {
+      this.isDepositPaymentMandatoryForQuotation = res;
+    });
     this.invoiceLabelResultService.getInvoiceLabelComputeResultForQuotation(this.quotation.id).subscribe(response => {
       this.quotationInvoiceLabelResult = response;
     })

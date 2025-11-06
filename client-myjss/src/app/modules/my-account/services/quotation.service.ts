@@ -40,6 +40,10 @@ export class QuotationService extends AppRestService<Quotation> {
     return this.get(new HttpParams().set("idCustomerOrder", idCustomerOrder), 'order/quotation');
   }
 
+  isDepositMandatory(quotationId: number): Observable<boolean> {
+    return this.get(new HttpParams().set("quotationId", quotationId), 'quotation/is-deposit-mandatory') as any as Observable<boolean>;
+  }
+
   saveQuotation(quotation: IQuotation, isValidation: boolean): Observable<number> {
     return this.postItem(new HttpParams().set("isValidation", isValidation), 'quotation/user/save', quotation) as any as Observable<number>;
   }
