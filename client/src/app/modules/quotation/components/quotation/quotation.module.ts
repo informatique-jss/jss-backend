@@ -30,7 +30,6 @@ import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { DirectDebitTransfertListComponent } from 'src/app/modules/invoicing/components/direct-debit-transfert-list/direct-debit-transfert-list.component';
 import { InvoiceListComponent } from 'src/app/modules/invoicing/components/invoice-list/invoice-list.component';
 import { MiscellaneousModule } from 'src/app/modules/miscellaneous/components/miscellaneous/miscellaneous.module';
-import { GuichetUniqueStatusComponent } from '../../guichet-unique-status/guichet-unique-status.component';
 import { ActeDepositComponent } from '../acte-deposit/acte-deposit.component';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
 import { AddAffaireComponent } from '../add-affaire/add-affaire.component';
@@ -51,6 +50,7 @@ import { DomiciliationFeesComponent } from '../domiciliation-fees/domiciliation-
 import { DomiciliationComponent } from '../domiciliation/domiciliation.component';
 import { FormaliteAssociateDialog } from '../formalite-associate-dialog/formalite-associate-dialog';
 import { FormaliteComponent } from '../formalite/formalite.component';
+import { GuichetUniqueStatusComponent } from '../guichet-unique-status/guichet-unique-status.component';
 import { IncidentReportListComponent } from '../incident-report-list/incident-report-list.component';
 import { InfogreffeStatusComponent } from '../infogreffe-status/infogreffe-status.component';
 import { InvoiceManagementComponent } from '../invoice-management/invoice-management.component';
