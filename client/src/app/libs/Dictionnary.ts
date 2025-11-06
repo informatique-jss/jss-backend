@@ -145,6 +145,7 @@ export const Dictionnary = {
   "ORDER_IMMEDIATLY_AFFECTED": "Commande affectée immédiatement",
   "ORDER_ADD_COMMENT_MYJSS": "Nouveau commentaire client",
   "MODIFIED_QUOTATION": "Modification de commande liée à un devis",
+  "ABANDONED_QUOTATION": "Devis abandonné par le client",
 };
 
 

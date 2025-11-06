@@ -22,6 +22,7 @@ import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.JoNotice;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
+import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.ProvisionService;
@@ -134,7 +135,8 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     private void generateNewNotification(Employee fromEmployee, Employee toEmployee, String notificationType,
-            boolean showPopup, Service service, Provision provision, CustomerOrder customerOrder, Candidacy candidacy) {
+            boolean showPopup, Service service, Provision provision, CustomerOrder customerOrder, Candidacy candidacy,
+            Quotation quotation) {
 
         if (toEmployee == null)
             return;
@@ -149,12 +151,16 @@ public class NotificationServiceImpl implements NotificationService {
                     .findByEmployeeAndNotificationTypeAndProvision(toEmployee, notificationType, provision);
 
         else if (customerOrder != null)
-            existingNotification = notificationRepository
-                    .findByEmployeeAndNotificationTypeAndCustomerOrder(toEmployee, notificationType, customerOrder);
+            existingNotification = notificationRepository.findByEmployeeAndNotificationTypeAndCustomerOrder(toEmployee,
+                    notificationType, customerOrder);
 
         else if (candidacy != null)
             existingNotification = notificationRepository.findByEmployeeAndNotificationTypeAndCandidacy(toEmployee,
                     notificationType, candidacy);
+
+        else if (quotation != null)
+            existingNotification = notificationRepository.findByEmployeeAndNotificationTypeAndQuotation(toEmployee,
+                    notificationType, quotation);
         else
             return;
 
@@ -173,6 +179,7 @@ public class NotificationServiceImpl implements NotificationService {
                 notification.setService(service);
                 notification.setNotificationType(notificationType);
                 notification.setCandidacy(candidacy);
+                notification.setQuotation(quotation);
             } else {
                 notification.setUpdatedBy(fromEmployee);
                 notification.setUpdatedDateTime(LocalDateTime.now());
@@ -298,7 +305,7 @@ public class NotificationServiceImpl implements NotificationService {
                             return;
 
                         generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
-                                Notification.PROVISION_ADD_ATTACHMENT, false, null, provision, null, null);
+                                Notification.PROVISION_ADD_ATTACHMENT, false, null, provision, null, null, null);
                     }
                 }
             }
@@ -317,7 +324,7 @@ public class NotificationServiceImpl implements NotificationService {
                     if (provision.getAssignedTo() != null) {
 
                         generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
-                                Notification.PROVISION_ADD_BODACC_NOTICE, false, null, provision, null, null);
+                                Notification.PROVISION_ADD_BODACC_NOTICE, false, null, provision, null, null, null);
                     }
                 }
             }
@@ -336,7 +343,7 @@ public class NotificationServiceImpl implements NotificationService {
                     if (provision.getAssignedTo() != null) {
 
                         generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
-                                Notification.PROVISION_ADD_BALO_NOTICE, false, null, provision, null, null);
+                                Notification.PROVISION_ADD_BALO_NOTICE, false, null, provision, null, null, null);
                     }
                 }
             }
@@ -355,7 +362,7 @@ public class NotificationServiceImpl implements NotificationService {
                     if (provision.getAssignedTo() != null) {
 
                         generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
-                                Notification.PROVISION_ADD_JO_NOTICE, false, null, provision, null, null);
+                                Notification.PROVISION_ADD_JO_NOTICE, false, null, provision, null, null, null);
                     }
                 }
             }
@@ -365,13 +372,13 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public void notifyIncidentReportAsked(IncidentReport incident) throws OsirisException {
         generateNewNotification(incident.getInitiatedBy(), incident.getAssignedTo(), Notification.INCIDENT_REPORT_ASKED,
-                false, null, incident.getProvision(), null, null);
+                false, null, incident.getProvision(), null, null, null);
     }
 
     @Override
     public void notifyQuotationModified(CustomerOrder customerOrder) {
         generateNewNotification(employeeService.getCurrentEmployee(), customerOrder.getResponsable().getSalesEmployee(),
-                Notification.MODIFIED_QUOTATION, false, null, null, customerOrder, null);
+                Notification.MODIFIED_QUOTATION, false, null, null, customerOrder, null, null);
     }
 
     @Override
@@ -391,7 +398,7 @@ public class NotificationServiceImpl implements NotificationService {
                             return;
 
                         generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
-                                Notification.SERVICE_ADD_ATTACHMENT, false, service, null, null, null);
+                                Notification.SERVICE_ADD_ATTACHMENT, false, service, null, null, null, null);
                     }
                 }
             }
@@ -415,7 +422,7 @@ public class NotificationServiceImpl implements NotificationService {
                             return;
 
                         generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
-                                Notification.SERVICE_ADD_INFORMATION, false, service, null, null, null);
+                                Notification.SERVICE_ADD_INFORMATION, false, service, null, null, null, null);
                     }
                 }
             }
@@ -446,7 +453,8 @@ public class NotificationServiceImpl implements NotificationService {
 
                                         generateNewNotification(employeeService.getCurrentEmployee(),
                                                 provision.getAssignedTo(),
-                                                Notification.ORDER_ADD_ATTACHMENT, false, null, null, order, null);
+                                                Notification.ORDER_ADD_ATTACHMENT, false, null, null, order, null,
+                                                null);
                                     }
                                 }
                             }
@@ -460,13 +468,22 @@ public class NotificationServiceImpl implements NotificationService {
         if (order.getResponsable() != null && order.getResponsable().getSalesEmployee() != null
                 && employeeService.getCurrentMyJssUser() != null)
             generateNewNotification(null, order.getResponsable().getSalesEmployee(),
-                    Notification.ORDER_ADD_COMMENT_MYJSS, false, null, null, order, null);
+                    Notification.ORDER_ADD_COMMENT_MYJSS, false, null, null, order, null, null);
+    }
+
+    @Override
+    public void notifyAbandonnedQuotationFromMyJss(Quotation quotation)
+            throws OsirisException {
+        if (quotation.getResponsable() != null && quotation.getResponsable().getSalesEmployee() != null
+                && employeeService.getCurrentMyJssUser() != null)
+            generateNewNotification(null, quotation.getResponsable().getSalesEmployee(),
+                    Notification.ABANDONED_QUOTATION, false, null, null, null, null, quotation);
     }
 
     @Override
     public void notifyImmediateAffactationOfOrder(CustomerOrder customerOrder) throws OsirisException {
         generateNewNotification(employeeService.getCurrentEmployee(), constantService.getEmployeeProductionDirector(),
-                Notification.ORDER_IMMEDIATLY_AFFECTED, false, null, null, customerOrder, null);
+                Notification.ORDER_IMMEDIATLY_AFFECTED, false, null, null, customerOrder, null, null);
     }
 
     private boolean isProvisionClosed(Provision provision) {
@@ -501,7 +518,8 @@ public class NotificationServiceImpl implements NotificationService {
             if (order != null && (order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)
                     || order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.TO_BILLED))) {
                 generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
-                        Notification.PROVISION_GUICHET_UNIQUE_STATUS_VALIDATED, false, null, provision, null, null);
+                        Notification.PROVISION_GUICHET_UNIQUE_STATUS_VALIDATED, false, null, provision, null, null,
+                        null);
             }
         }
     }
@@ -514,7 +532,7 @@ public class NotificationServiceImpl implements NotificationService {
             if (order != null && (order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)
                     || order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.TO_BILLED))) {
                 generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
-                        Notification.PROVISION_GUICHET_UNIQUE_STATUS_REFUSED, false, null, provision, null, null);
+                        Notification.PROVISION_GUICHET_UNIQUE_STATUS_REFUSED, false, null, provision, null, null, null);
             }
         }
     }
@@ -527,7 +545,7 @@ public class NotificationServiceImpl implements NotificationService {
             if (order != null && (order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.BEING_PROCESSED)
                     || order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.TO_BILLED))) {
                 generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
-                        Notification.PROVISION_GUICHET_UNIQUE_STATUS_SIGNED, false, null, provision, null, null);
+                        Notification.PROVISION_GUICHET_UNIQUE_STATUS_SIGNED, false, null, provision, null, null, null);
             }
         }
     }
@@ -535,7 +553,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public void notifyNewCandidacy(Candidacy candidacy) throws OsirisException {
         generateNewNotification(null, constantService.getEmployeeCandidacyResponsible(),
-                Notification.NEW_CANDIDACY_RECEIVED, false, null, null, null, candidacy);
+                Notification.NEW_CANDIDACY_RECEIVED, false, null, null, null, candidacy, null);
     }
 
     public Notification cloneNotification(Notification original) {

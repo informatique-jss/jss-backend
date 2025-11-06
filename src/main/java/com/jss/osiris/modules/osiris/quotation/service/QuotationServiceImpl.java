@@ -308,6 +308,11 @@ public class QuotationServiceImpl implements QuotationService {
             mailHelper.sendCustomerOrderCreationConfirmationOnQuotationValidation(quotation, customerOrder);
         }
 
+        // If coming from MyJss, notify sales that quotation has been abandoned
+        if (employeeService.getCurrentMyJssUser() != null && targetStatusCode.equals(QuotationStatus.ABANDONED)) {
+            notificationService.notifyAbandonnedQuotationFromMyJss(quotation);
+        }
+
         quotation.setLastStatusUpdate(LocalDateTime.now());
         quotation.setQuotationStatus(targetQuotationStatus);
         return this.addOrUpdateQuotation(quotation);

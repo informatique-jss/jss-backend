@@ -11,6 +11,7 @@ import com.jss.osiris.modules.osiris.quotation.model.BodaccNotice;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.JoNotice;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
+import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.reporting.model.IncidentReport;
 
@@ -38,6 +39,9 @@ public interface NotificationService {
                         throws OsirisException;
 
         public void notifyCommentFromMyJssAddToCustomerOrder(CustomerOrder order)
+                        throws OsirisException;
+
+        public void notifyAbandonnedQuotationFromMyJss(Quotation quotation)
                         throws OsirisException;
 
         public void notifyGuichetUniqueFormaliteStatusValidated(Provision provision) throws OsirisException;
