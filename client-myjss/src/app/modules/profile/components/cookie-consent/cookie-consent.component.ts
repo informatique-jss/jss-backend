@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { COOKIE_KEY } from '../../../../libs/Constants';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { GtmService } from '../../../main/services/gtm.service';
 
@@ -17,7 +18,7 @@ export class CookieConsentComponent implements OnInit {
   constructor(private gtm: GtmService) { }
 
   ngOnInit() {
-    const consent = localStorage.getItem(this.COOKIE_KEY);
+    const consent = localStorage.getItem(COOKIE_KEY);
     if (consent === null) {
       // Never asked
       this.showBanner = true;
@@ -27,13 +28,13 @@ export class CookieConsentComponent implements OnInit {
   }
 
   accept() {
-    localStorage.setItem(this.COOKIE_KEY, 'true');
+    localStorage.setItem(COOKIE_KEY, 'true');
     this.showBanner = false;
     this.gtm.init();
   }
 
   reject() {
-    localStorage.setItem(this.COOKIE_KEY, 'false');
+    localStorage.setItem(COOKIE_KEY, 'false');
     this.showBanner = false;
   }
 

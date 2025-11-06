@@ -13,3 +13,4 @@ export const MY_JSS_LEGAL_MENTIONS_ROUTE = "/disclaimer";
 export const MY_JSS_CGV_ROUTE = "/terms";
 export const MY_JSS_CONFIDENTIALITY_ROUTE = "/privacy-policy";
 export const MY_JSS_SIGN_IN_ROUTE = "/account/signin/jss";
+export const COOKIE_KEY = "consent-cookie";

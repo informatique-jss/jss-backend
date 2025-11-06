@@ -10,6 +10,7 @@ export interface PageViewPayload extends BasePayload {
 export interface BasePayload {
   user?: { id: number };
   page: PageInfo;
+  consent: boolean;
 }
 
 export interface CtaClickPayload extends BasePayload {

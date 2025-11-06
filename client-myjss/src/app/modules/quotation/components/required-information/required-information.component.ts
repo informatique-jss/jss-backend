@@ -720,7 +720,6 @@ export class RequiredInformationComponent implements OnInit {
   }
 
   getPossibleTemplates(service: Service): AnnouncementNoticeTemplate[] | undefined {
-    console.log(this.noticeTemplateDescription);
     if (service) {
       if (service && service.serviceTypes)
         for (let st of service.serviceTypes)
