@@ -242,7 +242,7 @@ export class QuotationsComponent implements OnInit {
     this.userPreferenceService.setUserSearchBookmark(this.statusFilterAbandonned, "quotation-statusFilterAbandonned");
     this.userPreferenceService.setUserSearchBookmark(this.currentSort, "quotation-currentSort");
     if (this.responsablesForCurrentUser && this.getCurrentSelectedResponsable())
-      this.userPreferenceService.setUserSearchBookmark(this.getCurrentSelectedResponsable()!.map(r => r.id).join(","), "quotation-responsables");
+      this.userPreferenceService.setUserSearchBookmark(this.getCurrentSelectedResponsable()!.map(r => r.id).join(","), "responsables");
   }
 
   retrieveBookmark() {
@@ -287,12 +287,13 @@ export class QuotationsComponent implements OnInit {
       this.statusFilterAbandonned = true;
       atLeastOne = true;
     }
-    if (this.userPreferenceService.getUserSearchBookmark("quotation-responsables")) {
-      let respoIds = this.userPreferenceService.getUserSearchBookmark("quotation-responsables").split(",");
+    if (this.userPreferenceService.getUserSearchBookmark("responsables")) {
+      let respoIds = this.userPreferenceService.getUserSearchBookmark("responsables").split(",");
       for (let i in this.responsableCheck)
         this.responsableCheck[i] = false;
       for (let respoId of respoIds)
         this.responsableCheck[parseInt(respoId)] = true;
+      this.selectAllResponsable = false;
     }
 
     if (!atLeastOne)

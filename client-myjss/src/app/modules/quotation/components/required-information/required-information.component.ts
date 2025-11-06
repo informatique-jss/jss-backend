@@ -201,6 +201,10 @@ export class RequiredInformationComponent implements OnInit {
       this.initIQuotation();
     this.fetchAnnouncementReferentials();
     this.noticeTemplateDescription = this.noticeTemplateService.getNoticeTemplateDescription();
+    if (!this.noticeTemplateDescription) {
+      this.noticeTemplateDescription = { service: undefined, isShowNoticeTemplate: false, displayText: "", isUsingTemplate: false } as any as NoticeTemplateDescription;
+      this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
+    }
   }
 
   initIQuotation() {
@@ -499,8 +503,7 @@ export class RequiredInformationComponent implements OnInit {
               promises.push(this.serviceService.deleteService(service));
       combineLatest(promises).subscribe(response => {
         this.appService.hideLoadingSpinner();
-        this.noticeTemplateDescription = {} as NoticeTemplateDescription;
-        this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
+        this.noticeTemplateService.clearNoticeTemplateDescription();
         this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);
         this.appService.openRoute(undefined, "quotation/services-selection", undefined);
       })
@@ -717,6 +720,7 @@ export class RequiredInformationComponent implements OnInit {
   }
 
   getPossibleTemplates(service: Service): AnnouncementNoticeTemplate[] | undefined {
+    console.log(this.noticeTemplateDescription);
     if (service) {
       if (service && service.serviceTypes)
         for (let st of service.serviceTypes)

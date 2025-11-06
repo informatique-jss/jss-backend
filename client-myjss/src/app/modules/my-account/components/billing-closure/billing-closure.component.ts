@@ -5,6 +5,7 @@ import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { TrustHtmlPipe } from '../../../../libs/TrustHtmlPipe';
 import { AppService } from '../../../main/services/app.service';
 import { PlatformService } from '../../../main/services/platform.service';
+import { UserPreferenceService } from '../../../main/services/user.preference.service';
 import { Responsable } from '../../../profile/model/Responsable';
 import { LoginService } from '../../../profile/services/login.service';
 import { ResponsableService } from '../../../profile/services/responsable.service';
@@ -39,6 +40,7 @@ export class BillingClosureComponent implements OnInit {
     private loginService: LoginService,
     private billingClosureService: BillingClosureService,
     private customerOrderService: CustomerOrderService,
+    private userPreferenceService: UserPreferenceService,
     private platformService: PlatformService,
     private appService: AppService,
     private responsableService: ResponsableService
@@ -47,19 +49,21 @@ export class BillingClosureComponent implements OnInit {
   ngOnInit() {
     this.loginService.getCurrentUser().subscribe(currentUser => {
       this.currentUser = currentUser;
-      this.refreshClosure();
-
       this.responsableService.getResponsablesForCurrentUser().subscribe(response => {
         this.responsablesForCurrentUser = response;
         if (this.responsablesForCurrentUser)
           for (let respo of this.responsablesForCurrentUser) {
             this.responsableCheck[respo.id] = true;
           }
+
+        this.retrieveBookmark();
+        this.refreshClosure();
       });
     })
   }
 
   refreshClosure() {
+    this.setBookmark();
     this.receiptValues = [];
     this.isFirstLoading = true;
     if (this.currentUser) {
@@ -114,6 +118,37 @@ export class BillingClosureComponent implements OnInit {
     if (responsable)
       return responsable.firstname + ' ' + responsable.lastname;
     return "";
+  }
+
+  setBookmark() {
+    this.userPreferenceService.setUserSearchBookmark(this.currentSort, "closure-currentSort");
+    if (this.responsablesForCurrentUser && this.getCurrentSelectedResponsable())
+      this.userPreferenceService.setUserSearchBookmark(this.getCurrentSelectedResponsable()!.map(r => r.id).join(","), "responsables");
+  }
+
+  retrieveBookmark() {
+    if (this.userPreferenceService.getUserSearchBookmark("responsables")) {
+      let respoIds = this.userPreferenceService.getUserSearchBookmark("responsables").split(",");
+      for (let i in this.responsableCheck)
+        this.responsableCheck[i] = false;
+      for (let respoId of respoIds)
+        this.responsableCheck[parseInt(respoId)] = true;
+      this.selectAllResponsable = false;
+    }
+    this.currentSort = this.userPreferenceService.getUserSearchBookmark("closure-currentSort");
+    if (!this.currentSort)
+      this.currentSort = "nameAsc";
+  }
+
+  getCurrentSelectedResponsable() {
+    let filterResponsable = undefined;
+    if (this.responsablesForCurrentUser) {
+      filterResponsable = [];
+      for (let respoForCurrentUser of this.responsablesForCurrentUser)
+        if (this.responsableCheck[respoForCurrentUser.id])
+          filterResponsable.push(respoForCurrentUser);
+    }
+    return filterResponsable;
   }
 
   allAffaires: string[] = [];

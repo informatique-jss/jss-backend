@@ -235,7 +235,7 @@ export class OrdersComponent implements OnInit {
     this.userPreferenceService.setUserSearchBookmark(this.withMissingAttachment, "order-withMissingAttachment");
     this.userPreferenceService.setUserSearchBookmark(this.currentSort, "order-currentSort");
     if (this.responsablesForCurrentUser && this.getCurrentSelectedResponsable())
-      this.userPreferenceService.setUserSearchBookmark(this.getCurrentSelectedResponsable()!.map(r => r.id).join(","), "order-responsables");
+      this.userPreferenceService.setUserSearchBookmark(this.getCurrentSelectedResponsable()!.map(r => r.id).join(","), "responsables");
   }
 
   retrieveBookmark() {
@@ -278,12 +278,13 @@ export class OrdersComponent implements OnInit {
     if (this.userPreferenceService.getUserSearchBookmark("order-withMissingAttachment")) {
       this.withMissingAttachment = true;
     }
-    if (this.userPreferenceService.getUserSearchBookmark("order-responsables")) {
-      let respoIds = this.userPreferenceService.getUserSearchBookmark("order-responsables").split(",");
+    if (this.userPreferenceService.getUserSearchBookmark("responsables")) {
+      let respoIds = this.userPreferenceService.getUserSearchBookmark("responsables").split(",");
       for (let i in this.responsableCheck)
         this.responsableCheck[i] = false;
       for (let respoId of respoIds)
         this.responsableCheck[parseInt(respoId)] = true;
+      this.selectAllResponsable = false;
     }
 
     if (!atLeastOne)
