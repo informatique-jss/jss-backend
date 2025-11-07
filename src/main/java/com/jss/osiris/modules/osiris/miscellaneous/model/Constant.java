@@ -295,6 +295,18 @@ public class Constant implements Serializable, IId {
 	private BillingType billingTypeRedactedByJss;
 
 	@ManyToOne
+	@JoinColumn(name = "id_billing_type_redacted_by_jss_simple")
+	private BillingType billingTypeRedactedByJssSimple;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billing_type_redacted_by_jss_complex")
+	private BillingType billingTypeRedactedByJssComplex;
+
+	@ManyToOne
+	@JoinColumn(name = "id_billing_type_redacted_by_jss_free")
+	private BillingType billingTypeRedactedByJssFree;
+
+	@ManyToOne
 	@JoinColumn(name = "id_payment_deadline_type")
 	private PaymentDeadlineType paymentDeadLineType30;
 
@@ -3010,6 +3022,30 @@ public class Constant implements Serializable, IId {
 
 	public void setAffaireDummyForSubscription(Affaire affaireDummyForSubscription) {
 		this.affaireDummyForSubscription = affaireDummyForSubscription;
+	}
+
+	public BillingType getBillingTypeRedactedByJssSimple() {
+		return billingTypeRedactedByJssSimple;
+	}
+
+	public void setBillingTypeRedactedByJssSimple(BillingType billingTypeRedactedByJssSimple) {
+		this.billingTypeRedactedByJssSimple = billingTypeRedactedByJssSimple;
+	}
+
+	public BillingType getBillingTypeRedactedByJssComplex() {
+		return billingTypeRedactedByJssComplex;
+	}
+
+	public void setBillingTypeRedactedByJssComplex(BillingType billingTypeRedactedByJssComplex) {
+		this.billingTypeRedactedByJssComplex = billingTypeRedactedByJssComplex;
+	}
+
+	public BillingType getBillingTypeRedactedByJssFree() {
+		return billingTypeRedactedByJssFree;
+	}
+
+	public void setBillingTypeRedactedByJssFree(BillingType billingTypeRedactedByJssFree) {
+		this.billingTypeRedactedByJssFree = billingTypeRedactedByJssFree;
 	}
 
 }

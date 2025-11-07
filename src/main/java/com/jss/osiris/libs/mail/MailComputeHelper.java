@@ -188,8 +188,7 @@ public class MailComputeHelper {
         Responsable responsable = quotation.getResponsable();
 
         if (quotationDocument == null)
-            throw new OsirisException(null,
-                    "Document " + documentType.getLabel() + " not found in IQuoation " + quotation.getId());
+            return null;
 
         if (responsable == null)
             throw new OsirisException(null,

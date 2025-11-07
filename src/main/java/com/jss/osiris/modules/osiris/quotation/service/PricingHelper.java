@@ -685,6 +685,18 @@ public class PricingHelper {
                 && billingType.getId().equals(constantService.getBillingTypeRedactedByJss().getId()))
             return true;
 
+        if (Boolean.TRUE.equals(provision.getIsRedactedByJss())
+                && billingType.getId().equals(constantService.getBillingTypeRedactedByJssComplex().getId()))
+            return true;
+
+        if (Boolean.TRUE.equals(provision.getIsRedactedByJss())
+                && billingType.getId().equals(constantService.getBillingTypeRedactedByJssFree().getId()))
+            return true;
+
+        if (Boolean.TRUE.equals(provision.getIsRedactedByJss())
+                && billingType.getId().equals(constantService.getBillingTypeRedactedByJssSimple().getId()))
+            return true;
+
         if (Boolean.TRUE.equals(provision.getIsBaloPackage())
                 && billingType.getId().equals(constantService.getBillingTypeBaloPackage().getId()))
             return true;

@@ -18,7 +18,8 @@
           <td *ngIf="provision.isLogo && provision.id && logoUrl "><img width="150px" [src]="logoUrl" />
           </td>
         </tr>
-        <tr *ngIf="displayOption(billingTypeRedactedByJss)">
+        <tr
+          *ngIf="displayOption(billingTypeRedactedByJss) || displayOption(billingTypeRedactedByJssSimple) || displayOption(billingTypeRedactedByJssComplex) || displayOption(billingTypeRedactedByJssFree)">
           <td>
             <generic-toggle [(model)]="provision.isRedactedByJss" label="Rédigé par le JSS ?" [form]="optionForm"
               (onToggleChange)="provisionChangeFunction()" propertyName="isRedactedByJss"></generic-toggle>
