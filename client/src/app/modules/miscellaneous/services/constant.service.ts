@@ -257,6 +257,18 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.billingTypeRedactedByJss;
   }
 
+  getBillingTypeRedactedByJssSimple() {
+    return this.constant.billingTypeRedactedByJssSimple;
+  }
+
+  getBillingTypeRedactedByJssComplex() {
+    return this.constant.billingTypeRedactedByJssComplex;
+  }
+
+  getBillingTypeRedactedByJssFree() {
+    return this.constant.billingTypeRedactedByJssFree;
+  }
+
   getBillingTypeBaloPackage() {
     return this.constant.billingTypeBaloPackage;
   }

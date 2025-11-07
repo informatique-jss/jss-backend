@@ -27,6 +27,9 @@ export class ProvisionOptionsComponent implements OnInit {
 
   billingTypeLogo = this.constantService.getBillingTypeLogo();
   billingTypeRedactedByJss = this.constantService.getBillingTypeRedactedByJss();
+  billingTypeRedactedByJssComplex = this.constantService.getBillingTypeRedactedByJssComplex();
+  billingTypeRedactedByJssFree = this.constantService.getBillingTypeRedactedByJssFree();
+  billingTypeRedactedByJssSimple = this.constantService.getBillingTypeRedactedByJssSimple();
   billingTypeBaloPackage = this.constantService.getBillingTypeBaloPackage();
   billingTypeBaloNormalization = this.constantService.getBillingTypeBaloNormalization();
   billingTypeBaloPublicationFlag = this.constantService.getBillingTypeBaloPublicationFlag();
@@ -81,7 +84,7 @@ export class ProvisionOptionsComponent implements OnInit {
       } else {
         this.setLogoUrl();
       }
-      if (!this.provision.isRedactedByJss) this.provision.isRedactedByJss = !this.provision.id && this.displayOption(this.billingTypeRedactedByJss);
+      if (!this.provision.isRedactedByJss) this.provision.isRedactedByJss = !this.provision.id && (this.displayOption(this.billingTypeRedactedByJss) || this.displayOption(this.billingTypeRedactedByJssComplex) || this.displayOption(this.billingTypeRedactedByJssFree) || this.displayOption(this.billingTypeRedactedByJssSimple));
       if (!this.provision.isBaloPackage) this.provision.isBaloPackage = false;
       if (!this.provision.isBaloPublicationFlag) this.provision.isBaloPublicationFlag = false;
       if (!this.provision.isPublicationReceipt) this.provision.isPublicationReceipt = false;

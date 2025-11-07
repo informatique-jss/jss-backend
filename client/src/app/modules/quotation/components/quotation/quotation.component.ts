@@ -10,6 +10,7 @@ import { instanceOfCustomerOrder } from 'src/app/libs/TypeHelper';
 import { IReferential } from 'src/app/modules/administration/model/IReferential';
 import { AssociatePaymentDialogComponent } from 'src/app/modules/invoicing/components/associate-payment-dialog/associate-payment-dialog.component';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
+import { IAttachment } from 'src/app/modules/miscellaneous/model/IAttachment';
 import { IWorkflowElement } from 'src/app/modules/miscellaneous/model/IWorkflowElement';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { NotificationService } from 'src/app/modules/miscellaneous/services/notification.service';
@@ -78,6 +79,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   CUSTOMER_ORDER_ENTITY_TYPE = CUSTOMER_ORDER_ENTITY_TYPE;
   CUSTOMER_ORDER_STATUS_BILLED = CUSTOMER_ORDER_STATUS_BILLED;
   CUSTOMER_ORDER_STATUS_ABANDONED = CUSTOMER_ORDER_STATUS_ABANDONED;
+  CUSTOMER_ORDER_STATUS_DRAFT = CUSTOMER_ORDER_STATUS_OPEN;
 
   incidentList: IncidentReport[] | undefined;
   askForNewCri: boolean = false;
@@ -107,6 +109,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
   saveObservableSubscription: Subscription = new Subscription;
   customerOrderInvoices: InvoiceSearchResult[] | undefined;
+  entityForPendingAttachments: IAttachment | undefined;
 
   hasQuotation: boolean | undefined;
 
@@ -1234,5 +1237,12 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
   canDisplayNotifications() {
     return this.habilitationService.canDisplayNotifications();
+  }
+
+  getEntityForPendingAttachments() {
+    if (this.instanceOfCustomerOrderFn(this.quotation) && this.quotation.pendingAttachments && this.quotation.pendingAttachments.length > 0 && !this.entityForPendingAttachments) {
+      this.entityForPendingAttachments = { id: this.quotation.id, attachments: this.quotation.pendingAttachments } as IAttachment;
+    }
+    return this.entityForPendingAttachments;
   }
 }

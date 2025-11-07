@@ -110,6 +110,9 @@ export interface Constant {
   billingTypeDeboursNonTaxable: BillingType;
   billingTypeLogo: BillingType;
   billingTypeRedactedByJss: BillingType;
+  billingTypeRedactedByJssSimple: BillingType;
+  billingTypeRedactedByJssComplex: BillingType;
+  billingTypeRedactedByJssFree: BillingType;
   billingTypeBaloPackage: BillingType;
   billingTypeBaloPublicationFlag: BillingType;
   billingTypeBaloNormalization: BillingType;

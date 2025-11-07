@@ -610,7 +610,7 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setCode(Batch.INDEX_MAIL_TO_ENTITY);
             batchSettings.setLabel("Indexation des mails reçus sur l'entité correspondante");
             batchSettings.setFixedRate(1000);
-            batchSettings.setQueueSize(10);
+            batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
             batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
@@ -622,7 +622,7 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setCode(Batch.CREATE_ORDER_FROM_MAIL);
             batchSettings.setLabel("Création des commandes reçues par mail");
             batchSettings.setFixedRate(1000);
-            batchSettings.setQueueSize(10);
+            batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
             batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);

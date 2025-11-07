@@ -134,22 +134,22 @@
               </td>
             </tr>
           </table>
-          <table class="full-width">
+          <table class="full-width" *ngIf="assoServiceProvisionType.provisionType">
             <tr>
               <td *ngIf="assoServiceProvisionType.provisionType.isCouldNotifyBodacc">
                 <generic-toggle [(model)]="assoServiceProvisionType.isNotifyBodacc"
                   label="Notifier des modifications au BODACC ?" [form]="entityForm"
-                  propertyName="isNotifyBodacc"></generic-toggle>
+                  [propertyName]="'isNotifyBodacc'+index"></generic-toggle>
               </td>
               <td *ngIf="assoServiceProvisionType.provisionType.isCouldNotifyBalo">
                 <generic-toggle [(model)]="assoServiceProvisionType.isNotifyBalo"
                   label="Notifier des modifications au BALO ?" [form]="entityForm"
-                  propertyName="isNotifyBalo"></generic-toggle>
+                  [propertyName]="'isNotifyBalo'+index"></generic-toggle>
               </td>
               <td *ngIf="assoServiceProvisionType.provisionType.isCouldNotifyJo">
                 <generic-toggle [(model)]="assoServiceProvisionType.isNotifyJo"
                   label="Notifier des modifications au JO ?" [form]="entityForm"
-                  propertyName="isNotifyJo"></generic-toggle>
+                  [propertyName]="'isNotifyJo'+index"></generic-toggle>
               </td>
             </tr>
           </table>

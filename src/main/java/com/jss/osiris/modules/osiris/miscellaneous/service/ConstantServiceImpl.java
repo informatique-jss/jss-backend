@@ -401,6 +401,21 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public BillingType getBillingTypeRedactedByJssSimple() throws OsirisException {
+        return getConstants().getBillingTypeRedactedByJssSimple();
+    }
+
+    @Override
+    public BillingType getBillingTypeRedactedByJssComplex() throws OsirisException {
+        return getConstants().getBillingTypeRedactedByJssComplex();
+    }
+
+    @Override
+    public BillingType getBillingTypeRedactedByJssFree() throws OsirisException {
+        return getConstants().getBillingTypeRedactedByJssFree();
+    }
+
+    @Override
     public BillingType getBillingTypeBaloPackage() throws OsirisException {
         return getConstants().getBillingTypeBaloPackage();
     }

@@ -182,6 +182,12 @@ public interface ConstantService {
 
     public BillingType getBillingTypeRedactedByJss() throws OsirisException;
 
+    public BillingType getBillingTypeRedactedByJssSimple() throws OsirisException;
+
+    public BillingType getBillingTypeRedactedByJssComplex() throws OsirisException;
+
+    public BillingType getBillingTypeRedactedByJssFree() throws OsirisException;
+
     public BillingType getBillingTypeBaloPackage() throws OsirisException;
 
     public BillingType getBillingTypeBaloNormalization() throws OsirisException;

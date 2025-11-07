@@ -465,8 +465,32 @@
           <tr>
             <td>
               <autocomplete-billing-type [(model)]="constant.billingTypeRedactedByJss"
-                label="Type de poste de facturation - Rédigé par le JSS" [form]="constantForm"
+                label="Type de poste de facturation - Rédigé par le JSS - Normal" [form]="constantForm"
                 propertyName="billingTypeRedactedByJss" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeRedactedByJssSimple"
+                label="Type de poste de facturation - Rédigé par le JSS - Simple" [form]="constantForm"
+                propertyName="billingTypeRedactedByJssSimple" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeRedactedByJssComplex"
+                label="Type de poste de facturation - Rédigé par le JSS - Complexe" [form]="constantForm"
+                propertyName="billingTypeRedactedByJssComplex" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeRedactedByJssFree"
+                label="Type de poste de facturation - Rédigé par le JSS - Prix libre" [form]="constantForm"
+                propertyName="billingTypeRedactedByJssFree" [isMandatory]="true" [isDisabled]="!editMode">
               </autocomplete-billing-type>
             </td>
           </tr>

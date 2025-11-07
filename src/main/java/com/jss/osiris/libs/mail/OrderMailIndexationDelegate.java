@@ -1,6 +1,7 @@
 package com.jss.osiris.libs.mail;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -24,6 +25,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -393,11 +396,15 @@ public class OrderMailIndexationDelegate {
 
                                 if (filename == null)
                                     filename = "attachment_" + j + ".bin";
-                                InputStream is = part.getInputStream();
-                                attachmentService.addAttachment(is, order.getId(), null,
-                                        CustomerOrder.class.getSimpleName() + "Pending",
-                                        constantService.getAttachmentTypeClientCommunication(), filename, false,
-                                        filename, null, mailFound, null);
+
+                                if (filename.toLowerCase().endsWith(".zip")) {
+                                    List<NamedInputStream> streams = extractZipStreams(part.getInputStream());
+                                    if (streams != null)
+                                        for (NamedInputStream stream : streams)
+                                            addAttachmentToCustomerOrder(stream.getStream(), order, stream.getName());
+                                } else {
+                                    addAttachmentToCustomerOrder(part.getInputStream(), order, filename);
+                                }
                             }
                         }
                     }
@@ -409,6 +416,53 @@ public class OrderMailIndexationDelegate {
             } catch (Exception e) {
                 throw new OsirisException(e, "Impossible to process message received");
             }
+        }
+    }
+
+    private void addAttachmentToCustomerOrder(InputStream is, CustomerOrder order, String filename)
+            throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException, OsirisException {
+        attachmentService.addAttachment(is, order.getId(), null,
+                CustomerOrder.class.getSimpleName() + "Pending",
+                constantService.getAttachmentTypeClientCommunication(), filename, false,
+                filename, null, null, null);
+    }
+
+    private List<NamedInputStream> extractZipStreams(InputStream zipStream) throws IOException {
+        List<NamedInputStream> files = new ArrayList<>();
+
+        try (ZipInputStream zis = new ZipInputStream(zipStream)) {
+            ZipEntry entry;
+            while ((entry = zis.getNextEntry()) != null) {
+                if (!entry.isDirectory()) {
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    zis.transferTo(baos);
+                    baos.flush();
+
+                    files.add(new NamedInputStream(entry.getName(),
+                            new ByteArrayInputStream(baos.toByteArray())));
+                }
+                zis.closeEntry();
+            }
+        }
+
+        return files;
+    }
+
+    private class NamedInputStream {
+        public final String name;
+        public final InputStream stream;
+
+        public NamedInputStream(String name, InputStream stream) {
+            this.name = name;
+            this.stream = stream;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public InputStream getStream() {
+            return stream;
         }
     }
 
