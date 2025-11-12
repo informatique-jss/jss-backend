@@ -137,7 +137,7 @@ export class BillingClosureComponent implements OnInit {
     }
     this.currentSort = this.userPreferenceService.getUserSearchBookmark("closure-currentSort");
     if (!this.currentSort)
-      this.currentSort = "nameAsc";
+      this.currentSort = "createdDateAsc";
   }
 
   getCurrentSelectedResponsable() {
