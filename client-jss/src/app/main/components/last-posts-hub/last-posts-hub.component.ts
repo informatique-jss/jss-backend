@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
@@ -22,10 +22,16 @@ import { GenericInputComponent } from '../generic-input/generic-input.component'
   imports: [SHARED_IMPORTS, GenericInputComponent, NgbTooltipModule, BookmarkComponent],
   standalone: true
 })
-export class TendencyHubComponent extends GenericHubComponent<{ id: number }> implements OnInit {
-  constructor(postService: PostService, private tagService: TagService, appService: AppService, formBuilder: FormBuilder, activeRoute: ActivatedRoute, loginService: LoginService
+export class LastPostsHubComponent extends GenericHubComponent<{ id: number }> implements OnInit {
+  constructor(postService: PostService,
+    private tagService: TagService,
+    appService: AppService,
+    formBuilder: FormBuilder,
+    activeRoute: ActivatedRoute,
+    loginService: LoginService,
+    router: Router
   ) {
-    super(appService, formBuilder, activeRoute, postService, loginService,);
+    super(appService, formBuilder, activeRoute, postService, loginService, router);
   }
   override getAllPostByEntityType(selectedEntityType: Post, page: number, pageSize: number, searchText: string): Observable<PagedContent<Post>> {
     return this.postService.getLastPosts(page, pageSize, searchText);

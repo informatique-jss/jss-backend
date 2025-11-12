@@ -1,6 +1,6 @@
 import { Directive, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
 import { AppService } from '../../../services/app.service';
 import { PagedContent } from '../../model/PagedContent';
@@ -35,10 +35,20 @@ export abstract class GenericHubComponent<T extends { id: number }> implements O
     protected activeRoute: ActivatedRoute,
     protected postService: PostService,
     protected loginService: LoginService,
+    protected router: Router,
   ) { }
 
   ngOnInit() {
     this.refresh();
+
+    this.router.events.subscribe(url => {
+      if (url instanceof NavigationEnd) {
+        let newPage = url.url.split('/');
+        if (newPage && newPage.length > 0)
+          this.page = Number.parseInt(newPage[newPage.length - 1]);
+        this.fetchPosts(this.page);
+      }
+    });
   }
 
   refresh() {
