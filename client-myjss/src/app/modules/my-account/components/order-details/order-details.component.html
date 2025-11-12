@@ -545,31 +545,31 @@
           </div>
         </ng-container>
         <div *ngIf="order">
-          <div *ngFor="let doc of order!.documents">
-            <div *ngIf="doc.documentType.code == documentTypeBilling.code">
-              <div class="d-flex align-items-center pt-4 pb-1 my-2">
-                <h3 class="h6 mb-0 me-3">Renseignements administratifs</h3>
-              </div>
-              <div class="mt-4">
-                <div *ngIf="doc.commandNumber" class="align-items-center fs-sm text-dark pb-1 mb-2">
-                  <div class="ms-2">
-                    <h6>N° de commande :</h6>
-                  </div>
-                  <div class="ms-4">
-                    {{doc.commandNumber}}
-                  </div>
+          @for (doc of order!.documents; track $index) {
+          <div *ngIf="doc.documentType.code == documentTypeBilling.code">
+            <div class="d-flex align-items-center pt-4 pb-1 my-2">
+              <h3 class="h6 mb-0 me-3">Renseignements administratifs</h3>
+            </div>
+            <div class="mt-4">
+              <div *ngIf="doc.commandNumber" class="align-items-center fs-sm text-dark pb-1 mb-2">
+                <div class="ms-2">
+                  <h6>N° de commande :</h6>
                 </div>
-                <div *ngIf="doc.externalReference" class="align-items-center fs-sm text-dark pb-1 mb-4 ">
-                  <div class="ms-2">
-                    <h6>N° de référence :</h6>
-                  </div>
-                  <div class="ms-4">
-                    {{doc.externalReference}}
-                  </div>
+                <div class="ms-4">
+                  {{doc.commandNumber}}
+                </div>
+              </div>
+              <div *ngIf="doc.externalReference" class="align-items-center fs-sm text-dark pb-1 mb-4 ">
+                <div class="ms-2">
+                  <h6>N° de référence :</h6>
+                </div>
+                <div class="ms-4">
+                  {{doc.externalReference}}
                 </div>
               </div>
             </div>
           </div>
+          }
         </div>
         <div class="d-flex align-items-center pt-2 pb-1 mb-2">
           <h3 class="h6 mb-0 me-3">Montant <span
@@ -649,8 +649,7 @@
                   </avatar>
                 </div>
               </div>
-              <div class="fs-xs text-body-secondary"> {{currentDate|date:'dd/MM/yyyy
-                HH:mm'}}
+              <div class="fs-xs text-body-secondary"> {{currentDate|date:'dd/MM/yyyy HH:mm'}}
               </div>
             </div>
             <ng-container *ngFor="let comment of customerOrderComments">
@@ -681,8 +680,7 @@
                     </avatar>
                   </div>
                 </div>
-                <div class="fs-xs text-body-secondary"> {{comment.createdDateTime|date:'dd/MM/yyyy
-                  HH:mm'}}
+                <div class="fs-xs text-body-secondary"> {{comment.createdDateTime|date:'dd/MM/yyyy HH:mm'}}
                 </div>
               </div>
             </ng-container>
