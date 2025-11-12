@@ -255,7 +255,7 @@ export class TiersComponent implements OnInit, AfterContentChecked {
 
   printLabel() {
     if (this.tiers && this.tiers.id)
-      this.tiersService.printTiersLabel(this.tiers).subscribe();
+      this.tiersService.printTiersLabel(this.tiers, undefined).subscribe();
   }
 
   addNewNotification() {
