@@ -42,11 +42,13 @@ export abstract class GenericHubComponent<T extends { id: number }> implements O
     this.refresh();
 
     this.router.events.subscribe(url => {
-      if (url instanceof NavigationEnd) {
-        let newPage = url.url.split('/');
-        if (newPage && newPage.length > 0)
-          this.page = Number.parseInt(newPage[newPage.length - 1]);
-        this.fetchPosts(this.page);
+      if (url instanceof NavigationEnd && this.activeRoute.firstChild) {
+        this.activeRoute.firstChild.paramMap.subscribe(paramsMap => {
+          let newPage = paramsMap.get("page-number");
+          if (newPage != undefined)
+            this.page = Number.parseInt(newPage);
+          this.fetchPosts(this.page);
+        })
       }
     });
   }

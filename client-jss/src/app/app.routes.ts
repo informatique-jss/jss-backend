@@ -20,7 +20,7 @@ export const routes: Routes = [
         children: [
           {
             path: ':page-number',
-            loadComponent: () => import("./main/components/category-hub/category-hub.component").then(m => m.CategoryHubComponent),
+            loadComponent: () => import("./main/components/post-category-header/post-category-header.component").then(m => m.PostCategoryHeaderComponent),
           }
         ]
       },
@@ -34,7 +34,7 @@ export const routes: Routes = [
         children: [
           {
             path: ':page-number',
-            loadComponent: () => import("./main/components/tag-hub/tag-hub.component").then(m => m.TagHubComponent),
+            loadComponent: () => import("./main/components/post-tag-header/post-tag-header.component").then(m => m.PostTagHeaderComponent),
           }
         ]
       },
@@ -48,7 +48,7 @@ export const routes: Routes = [
         children: [
           {
             path: ':page-number',
-            loadComponent: () => import("./main/components/author-hub/author-hub.component").then(m => m.AuthorHubComponent),
+            loadComponent: () => import("./main/components/post-author-header/post-author-header.component").then(m => m.PostAuthorHeaderComponent),
           }
         ]
       },
@@ -62,7 +62,7 @@ export const routes: Routes = [
         children: [
           {
             path: ':page-number',
-            loadComponent: () => import("./main/components/serie-hub/serie-hub.component").then(m => m.SerieHubComponent),
+            loadComponent: () => import("./main/components/post-serie-header/post-serie-header.component").then(m => m.PostSerieHeaderComponent),
           }
         ]
       },
@@ -72,7 +72,7 @@ export const routes: Routes = [
         children: [
           {
             path: ':page-number',
-            loadComponent: () => import("./main/components/department-hub/department-hub.component").then(m => m.DepartmentHubComponent),
+            loadComponent: () => import("./main/components/post-department-header/post-department-header.component").then(m => m.PostDepartmentHeaderComponent),
           }
         ]
       },
@@ -82,7 +82,7 @@ export const routes: Routes = [
         children: [
           {
             path: ':page-number',
-            loadComponent: () => import("./main/components/tendency-hub/tendency-hub.component").then(m => m.TendencyHubComponent),
+            loadComponent: () => import("./main/components/post-tendency-header/post-tendency-header.component").then(m => m.PostTendencyHeaderComponent),
           }
         ]
       },
@@ -92,7 +92,7 @@ export const routes: Routes = [
         children: [
           {
             path: ':page-number',
-            loadComponent: () => import("./main/components/last-posts-hub/last-posts-hub.component").then(m => m.LastPostsHubComponent),
+            loadComponent: () => import("./main/components/post-last-header/post-last-header.component").then(m => m.PostLastHeaderComponent),
           }
         ]
       },
@@ -102,7 +102,7 @@ export const routes: Routes = [
         children: [
           {
             path: ':page-number',
-            loadComponent: () => import("./main/components/most-seen-hub/most-seen-hub.component").then(m => m.MostSeenHubComponent),
+            loadComponent: () => import("./main/components/post-most-seen-header/post-most-seen-header.component").then(m => m.PostMostSeenHeaderComponent),
           }
         ]
       }, {
@@ -111,7 +111,7 @@ export const routes: Routes = [
         children: [
           {
             path: ':page-number',
-            loadComponent: () => import("./main/components/premium-hub/premium-hub.component").then(m => m.PremiumHubComponent),
+            loadComponent: () => import("./main/components/post-premium-header/post-premium-header.component").then(m => m.PostPremiumHeaderComponent),
           }
         ]
       },
