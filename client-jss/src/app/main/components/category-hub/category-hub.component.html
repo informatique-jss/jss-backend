@@ -30,7 +30,7 @@
               </div>
 
               <div class="row p-0">
-                <div *ngIf="!postsByEntityType[selectedEntityType.id] " class="pb-3">
+                <div *ngIf="!postsByEntityType[selectedEntityType.id]" class="pb-3">
                   <div class="panel-loader">
                     <div class="skeleton skeleton-header"></div>
                     <div class="skeleton skeleton-line"></div>
@@ -172,11 +172,10 @@
             </div>
           </div>
 
-
           <nav *ngIf="totalPage > 1" class="mt-4">
             <ul class="pagination justify-content-center">
               <li class="page-item" *ngFor="let p of pages" [class.active]="p === page">
-                <button class="page-link" (click)="goToPage(p)">{{ p + 1 }}</button>
+                <button class="page-link" [routerLink]="[p]">{{ p + 1 }}</button>
               </li>
             </ul>
           </nav>

@@ -90,7 +90,11 @@ public class AssoMailAuthorServiceImpl implements AssoMailAuthorService {
 
     @Override
     public AssoMailAuthor getAssoMailAuthorByMailAndAuthor(Author author) {
-        return assoMailAuthorRepository.findByMailAndAuthor(employeeService.getCurrentMyJssUser().getMail(), author);
+        if (employeeService.getCurrentMyJssUser() != null) {
+            return assoMailAuthorRepository.findByMailAndAuthor(employeeService.getCurrentMyJssUser().getMail(),
+                    author);
+        }
+        return null;
     }
 
     @Override

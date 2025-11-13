@@ -1,6 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
@@ -34,9 +34,16 @@ export class CategoryHubComponent extends GenericHubComponent<JssCategory> imple
     super.ngOnInit();
   }
 
-  constructor(private tagService: TagService, postService: PostService, loginService: LoginService, appService: AppService, formBuilder: FormBuilder, activeRoute: ActivatedRoute
+  constructor(
+    private tagService: TagService,
+    postService: PostService,
+    loginService: LoginService,
+    appService: AppService,
+    formBuilder: FormBuilder,
+    activeRoute: ActivatedRoute,
+    router: Router
   ) {
-    super(appService, formBuilder, activeRoute, postService, loginService,);
+    super(appService, formBuilder, activeRoute, postService, loginService, router);
   }
   override getAllPostByEntityType(selectedEntityType: JssCategory, page: number, pageSize: number, searchText: string, isDisplayNewPosts: boolean): Observable<PagedContent<Post>> {
     return this.postService.getAllPostsByJssCategory(selectedEntityType, page, pageSize, searchText, isDisplayNewPosts);
