@@ -3,4 +3,5 @@ export interface Webinar {
   code: string;
   label: string;
   webinarDate: Date;
+  description: string;
 }
