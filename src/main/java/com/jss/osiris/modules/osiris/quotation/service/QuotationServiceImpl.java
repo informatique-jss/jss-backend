@@ -309,7 +309,8 @@ public class QuotationServiceImpl implements QuotationService {
         }
 
         // If coming from MyJss, notify sales that quotation has been abandoned
-        if (employeeService.getCurrentMyJssUser() != null && targetStatusCode.equals(QuotationStatus.ABANDONED)) {
+        if (employeeService.getCurrentEmployee() == null && employeeService.getCurrentMyJssUser() != null
+                && targetStatusCode.equals(QuotationStatus.ABANDONED)) {
             notificationService.notifyAbandonnedQuotationFromMyJss(quotation);
         }
 
