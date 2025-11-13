@@ -19,6 +19,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderAssignation;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 import com.jss.osiris.modules.osiris.tiers.service.TiersService;
 
@@ -110,7 +111,7 @@ public class PrintDelegate {
   }
 
   @Transactional(rollbackFor = Exception.class)
-  public void printTiersLabel(Tiers tiers) throws OsirisException {
+  public void printTiersLabel(Tiers tiers, Responsable responsable) throws OsirisException {
     tiers = tiersService.getTiers(tiers.getId());
 
     String customerOrderReference = "";
@@ -132,6 +133,9 @@ public class PrintDelegate {
     if (billingLabel != null) {
       if (labelLines != null) {
         List<String> lineToPrint = new ArrayList<String>();
+        if (responsable != null) {
+          lineToPrint.add(responsable.getFirstname() + " " + responsable.getLastname());
+        }
         for (String line : labelLines) {
           if (line.contains("\r\n")) {
             lineToPrint = Arrays.asList(line.split("\r\n"));

@@ -341,4 +341,9 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
   canChooseProductionEmployeeOnITiers() {
     return this.habilitationService.canChooseProductionEmployeeOnITiers();
   }
+
+  printLabel() {
+    if (this.tiers && this.tiers.id)
+      this.tiersService.printTiersLabel(this.tiers, this.selectedResponsable).subscribe();
+  }
 }

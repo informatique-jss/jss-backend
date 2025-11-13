@@ -2053,19 +2053,18 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             }
         }
 
-        if (assignedOrder == null)
+        if (assignedOrder == null) {
             customerOrders = customerOrderRepository.findNewCustomerOrderToBilled(
                     customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.TO_BILLED),
                     pageableRequest);
 
-        if (customerOrders != null && customerOrders.size() > 0) {
-            assignedOrder = customerOrders.get(0);
-            customerOrders.get(0).setInvoicingEmployee(currentUser);
-            return simpleAddOrUpdate(customerOrders.get(0));
+            if (customerOrders != null && customerOrders.size() > 0)
+                assignedOrder = customerOrders.get(0);
         }
 
         if (currentUser != null && assignedOrder != null) {
-
+            assignedOrder.setInvoicingEmployee(currentUser);
+            return simpleAddOrUpdate(assignedOrder);
         }
         return null;
     }

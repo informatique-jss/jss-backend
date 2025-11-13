@@ -52,7 +52,10 @@ export class TiersService extends AppRestService<Tiers> {
     return this.responsable;
   }
 
-  printTiersLabel(tiers: Tiers) {
-    return this.get(new HttpParams().set("idTiers", tiers.id), "label/print", "Etiquette imprimée");
+  printTiersLabel(tiers: Tiers, responsable: Responsable | undefined | null) {
+    let params = new HttpParams().set("idTiers", tiers.id);
+    if (responsable)
+      params = params.set("idResponsable", responsable.id);
+    return this.get(params, "label/print", "Etiquette imprimée");
   }
 }

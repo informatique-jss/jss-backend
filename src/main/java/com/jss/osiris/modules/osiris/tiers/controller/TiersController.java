@@ -579,14 +579,22 @@ public class TiersController {
   }
 
   @GetMapping(inputEntryPoint + "/label/print")
-  public ResponseEntity<Boolean> printMailingLabel(@RequestParam Integer idTiers)
+  public ResponseEntity<Boolean> printMailingLabel(@RequestParam Integer idTiers,
+      @RequestParam(required = false) Integer idResponsable)
       throws OsirisValidationException, OsirisException, OsirisClientMessageException {
 
     Tiers tiers = tiersService.getTiers(idTiers);
     if (tiers == null)
       throw new OsirisValidationException("tiers");
 
-    printDelegate.printTiersLabel(tiers);
+    Responsable responsable = null;
+    if (idResponsable != null) {
+      responsable = responsableService.getResponsable(idResponsable);
+      if (responsable == null)
+        throw new OsirisValidationException("responsable");
+    }
+
+    printDelegate.printTiersLabel(tiers, responsable);
     return new ResponseEntity<Boolean>(true, HttpStatus.OK);
   }
 

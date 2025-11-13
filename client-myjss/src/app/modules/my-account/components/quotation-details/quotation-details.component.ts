@@ -15,6 +15,7 @@ import { AssoServiceDocument } from '../../model/AssoServiceDocument';
 import { Attachment } from '../../model/Attachment';
 import { BillingLabelType } from '../../model/BillingLabelType';
 import { CustomerOrder } from '../../model/CustomerOrder';
+import { DocumentType } from '../../model/DocumentType';
 import { InvoiceLabelResult } from '../../model/InvoiceLabelResult';
 import { InvoicingSummary } from '../../model/InvoicingSummary';
 import { MailComputeResult } from '../../model/MailComputeResult';
@@ -38,7 +39,11 @@ import { getClassForQuotationStatus, getQuotationStatusLabel } from '../quotatio
   templateUrl: './quotation-details.component.html',
   styleUrls: ['./quotation-details.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, SingleUploadComponent, NgbDropdownModule, NgbAccordionModule, NgbNavModule]
+  imports: [SHARED_IMPORTS,
+    SingleUploadComponent,
+    NgbDropdownModule,
+    NgbAccordionModule,
+    NgbNavModule]
 })
 export class QuotationDetailsComponent implements OnInit {
 
@@ -62,6 +67,9 @@ export class QuotationDetailsComponent implements OnInit {
   billingLabelTypeCodeAffaire!: BillingLabelType;
   associatedCustomerOrder: CustomerOrder | undefined;
   quotationAttachments: Attachment[][] = [];
+
+  documentTypeBilling!: DocumentType;
+
 
   isDepositPaymentMandatoryForQuotation: boolean = false;
 
@@ -111,7 +119,11 @@ export class QuotationDetailsComponent implements OnInit {
 
   ngOnInit() {
     this.billingLabelTypeCodeAffaire = this.constantService.getBillingLabelTypeCodeAffaire();
+    this.documentTypeBilling = this.constantService.getDocumentTypeBilling();
+
     this.quotationDetailsForm = this.formBuilder.group({});
+
+
 
     this.refreshQuotation();
   }

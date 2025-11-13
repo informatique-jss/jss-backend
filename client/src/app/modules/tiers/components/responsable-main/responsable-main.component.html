@@ -280,3 +280,7 @@
     *ngIf="editMode==false &&  selectedResponsable && selectedResponsable.id && canDisplayNotifications()">
     <mat-icon>notifications</mat-icon>
   </button>
+  <button matTooltip="Imprimer une étiquette pour le responsable" mat-fab color="accent" class="seventh-fab-button"
+    *ngIf="editMode==false &&  tiers.id" (click)="printLabel()">
+    <mat-icon>print</mat-icon>
+  </button>
