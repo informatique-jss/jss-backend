@@ -201,18 +201,21 @@ public class QuotationValidationHelper {
 
                 // If new or if from old website, grab special offer from tiers / responsable /
                 // confrere
-                if (quotation.getCustomerOrderOrigin().getId()
-                                .equals(constantService.getCustomerOrderOriginOldWebSite().getId())
-                                && (quotation.getSpecialOffers() == null || quotation.getSpecialOffers().size() == 0)
-                                || quotation.getId() == null) {
-                        Tiers tiers = quotation.getResponsable().getTiers();
+                if ((quotation.getSpecialOffers() == null || quotation.getSpecialOffers().size() == 0)
+                                && (quotation instanceof Quotation
+                                                || ((CustomerOrder) quotation).getCustomerOrderStatus() == null
+                                                || ((CustomerOrder) quotation).getCustomerOrderStatus().getCode()
+                                                                .equals(CustomerOrderStatus.DRAFT))) {
+                        if (quotation.getResponsable() != null) {
+                                Tiers tiers = quotation.getResponsable().getTiers();
 
-                        List<SpecialOffer> specialOffers = null;
-                        if (tiers.getSpecialOffers() != null && tiers.getSpecialOffers().size() > 0) {
-                                specialOffers = tiers.getSpecialOffers();
-                                quotation.setSpecialOffers(new ArrayList<SpecialOffer>());
-                                for (SpecialOffer specialOffer : specialOffers)
-                                        quotation.getSpecialOffers().add(specialOffer);
+                                List<SpecialOffer> specialOffers = null;
+                                if (tiers.getSpecialOffers() != null && tiers.getSpecialOffers().size() > 0) {
+                                        specialOffers = tiers.getSpecialOffers();
+                                        quotation.setSpecialOffers(new ArrayList<SpecialOffer>());
+                                        for (SpecialOffer specialOffer : specialOffers)
+                                                quotation.getSpecialOffers().add(specialOffer);
+                                }
                         }
                 }
 
