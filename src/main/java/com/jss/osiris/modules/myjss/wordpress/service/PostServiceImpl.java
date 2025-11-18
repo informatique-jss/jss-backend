@@ -995,6 +995,19 @@ public class PostServiceImpl implements PostService {
         }
         if (post.getAuthor() != null && post.getAuthor() > 0)
             post.setFullAuthor(authorService.getAuthor(post.getAuthor()));
+
+        if (post.getAcf().getAdditional_authors() != null && post.getAcf().getAdditional_authors().length > 0) {
+            List<Author> additionalAuthors = new ArrayList<Author>();
+            for (Integer i : post.getAcf().getAdditional_authors()) {
+                Author foundAuthor = authorService.getAuthor(i);
+                if (foundAuthor != null)
+                    additionalAuthors.add(foundAuthor);
+            }
+            post.setPostAdditionalAuthors(additionalAuthors);
+        }
+
+        post.setIsHiddenAuthor(post.getAcf().getIs_hide_author());
+
         if (post.getJss_category() != null && post.getJss_category().length > 0) {
             List<JssCategory> categories = new ArrayList<JssCategory>();
             List<JssCategory> availableCategories = jssCategoryService.getAvailableJssCategories();
