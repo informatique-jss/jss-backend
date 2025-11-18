@@ -33,7 +33,7 @@
           </svg>
         </div>
         <h2 class="h2 pe-xxl-5 me-xl-4 mb-5 pb-0 pb-md-5 text-white">
-          Inscrivez-vous à notre prochain webinaire
+          Les webinaires du JSS
         </h2>
         <h4>Le JSS organise régulièrement des webinaires pour vous tenir informés de l’actualité du secteur juridique.
         </h4>
@@ -176,10 +176,14 @@
         <div class="col-md-3">
           <div class="h6 mb-2 mb-md-0">9:40 - 10:00</div>
         </div>
-        <div class="col-md-6">
-          <h3 class="h4 mb-0">Anonymisation des données personnelles</h3>
-          <p class="pt-2 pt-md-3 mb-md-0">Dernières informations sur la confidentialité des informations personnelles
-            sur le Kbis, la fiche RNE et autres actes déposés. Qui est concerné ? Comment faire ? Quelles pièces ?</p>
+        <div *ngIf="!webinarToDisplay" class="col-md-6">
+          <h3 class="h4 mb-0">Sujet du webinaire</h3>
+          <p class="pt-2 pt-md-3 mb-md-0">Actualités du circuit des formalités ou évolutions récentes de la législation
+          </p>
+        </div>
+        <div *ngIf="webinarToDisplay" class="col-md-6">
+          <h3 class="h4 mb-0">{{webinarToDisplay.label}}</h3>
+          <p class="pt-2 pt-md-3 mb-md-0">{{webinarToDisplay.description}}</p>
         </div>
         <div class="col-md-3 text-md-end">
           <div class="d-inline-flex">

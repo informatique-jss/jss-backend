@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
@@ -24,9 +24,15 @@ import { GenericInputComponent } from '../generic-input/generic-input.component'
 })
 export class TagHubComponent extends GenericHubComponent<Tag> implements OnInit {
 
-  constructor(private tagService: TagService, postService: PostService, loginService: LoginService, appService: AppService, formBuilder: FormBuilder, activeRoute: ActivatedRoute
+  constructor(private tagService: TagService,
+    postService: PostService,
+    loginService: LoginService,
+    appService: AppService,
+    formBuilder: FormBuilder,
+    activeRoute: ActivatedRoute,
+    router: Router
   ) {
-    super(appService, formBuilder, activeRoute, postService, loginService,);
+    super(appService, formBuilder, activeRoute, postService, loginService, router);
   }
   override getAllPostByEntityType(selectedEntityType: Tag, page: number, pageSize: number, searchText: string, isDisplayNewPosts: boolean): Observable<PagedContent<Post>> {
     return this.postService.getAllPostsByTag(selectedEntityType, page, pageSize, searchText, isDisplayNewPosts);

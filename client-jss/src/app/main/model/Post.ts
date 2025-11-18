@@ -37,4 +37,5 @@ export interface Post {
   postTags: Tag[];
   media: Media;
   isPremium: boolean;
+  postAdditionalAuthors: Author[];
 }

@@ -25,4 +25,5 @@ export interface Post {
   media: Media;
   isPremium: boolean;
   isBookmarked: boolean;
+  postAdditionalAuthors: Author[];
 }

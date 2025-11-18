@@ -16,7 +16,13 @@ export const routes: Routes = [
       },
       {
         path: 'post/category/:slug',
-        loadComponent: () => import('./main/components/post-category-header/post-category-header.component').then(m => m.PostCategoryHeaderComponent)
+        loadComponent: () => import("./main/components/post-category-header/post-category-header.component").then(m => m.PostCategoryHeaderComponent),
+        children: [
+          {
+            path: ':page-number',
+            loadComponent: () => import("./main/components/post-category-header/post-category-header.component").then(m => m.PostCategoryHeaderComponent),
+          }
+        ]
       },
       {
         path: 'post/category/:slug/:isDisplayNews',
@@ -24,7 +30,13 @@ export const routes: Routes = [
       },
       {
         path: 'post/tag/:slug',
-        loadComponent: () => import('./main/components/post-tag-header/post-tag-header.component').then(m => m.PostTagHeaderComponent)
+        loadComponent: () => import('./main/components/post-tag-header/post-tag-header.component').then(m => m.PostTagHeaderComponent),
+        children: [
+          {
+            path: ':page-number',
+            loadComponent: () => import("./main/components/post-tag-header/post-tag-header.component").then(m => m.PostTagHeaderComponent),
+          }
+        ]
       },
       {
         path: 'post/tag/:slug/:isDisplayNews',
@@ -32,7 +44,13 @@ export const routes: Routes = [
       },
       {
         path: 'post/author/:slug',
-        loadComponent: () => import('./main/components/post-author-header/post-author-header.component').then(m => m.PostAuthorHeaderComponent)
+        loadComponent: () => import('./main/components/post-author-header/post-author-header.component').then(m => m.PostAuthorHeaderComponent),
+        children: [
+          {
+            path: ':page-number',
+            loadComponent: () => import("./main/components/post-author-header/post-author-header.component").then(m => m.PostAuthorHeaderComponent),
+          }
+        ]
       },
       {
         path: 'post/author/:slug/:isDisplayNews',
@@ -40,26 +58,62 @@ export const routes: Routes = [
       },
       {
         path: 'post/serie/:slug',
-        loadComponent: () => import('./main/components/post-serie-header/post-serie-header.component').then(m => m.PostSerieHeaderComponent)
+        loadComponent: () => import('./main/components/post-serie-header/post-serie-header.component').then(m => m.PostSerieHeaderComponent),
+        children: [
+          {
+            path: ':page-number',
+            loadComponent: () => import("./main/components/post-serie-header/post-serie-header.component").then(m => m.PostSerieHeaderComponent),
+          }
+        ]
       },
       {
         path: 'post/department/:code',
-        loadComponent: () => import('./main/components/post-department-header/post-department-header.component').then(m => m.PostDepartmentHeaderComponent)
+        loadComponent: () => import('./main/components/post-department-header/post-department-header.component').then(m => m.PostDepartmentHeaderComponent),
+        children: [
+          {
+            path: ':page-number',
+            loadComponent: () => import("./main/components/post-department-header/post-department-header.component").then(m => m.PostDepartmentHeaderComponent),
+          }
+        ]
       },
       {
         path: 'post/tendency',
-        loadComponent: () => import('./main/components/post-tendency-header/post-tendency-header.component').then(m => m.PostTendencyHeaderComponent)
+        loadComponent: () => import('./main/components/post-tendency-header/post-tendency-header.component').then(m => m.PostTendencyHeaderComponent),
+        children: [
+          {
+            path: ':page-number',
+            loadComponent: () => import("./main/components/post-tendency-header/post-tendency-header.component").then(m => m.PostTendencyHeaderComponent),
+          }
+        ]
       },
       {
         path: 'post/last',
-        loadComponent: () => import('./main/components/post-last-header/post-last-header.component').then(m => m.PostLastHeaderComponent)
+        loadComponent: () => import('./main/components/post-last-header/post-last-header.component').then(m => m.PostLastHeaderComponent),
+        children: [
+          {
+            path: ':page-number',
+            loadComponent: () => import("./main/components/post-last-header/post-last-header.component").then(m => m.PostLastHeaderComponent),
+          }
+        ]
       },
       {
         path: 'post/most-seen',
-        loadComponent: () => import('./main/components/post-most-seen-header/post-most-seen-header.component').then(m => m.PostMostSeenHeaderComponent)
+        loadComponent: () => import('./main/components/post-most-seen-header/post-most-seen-header.component').then(m => m.PostMostSeenHeaderComponent),
+        children: [
+          {
+            path: ':page-number',
+            loadComponent: () => import("./main/components/post-most-seen-header/post-most-seen-header.component").then(m => m.PostMostSeenHeaderComponent),
+          }
+        ]
       }, {
         path: 'post/premium',
-        loadComponent: () => import('./main/components/post-premium-header/post-premium-header.component').then(m => m.PostPremiumHeaderComponent)
+        loadComponent: () => import('./main/components/post-premium-header/post-premium-header.component').then(m => m.PostPremiumHeaderComponent),
+        children: [
+          {
+            path: ':page-number',
+            loadComponent: () => import("./main/components/post-premium-header/post-premium-header.component").then(m => m.PostPremiumHeaderComponent),
+          }
+        ]
       },
       {
         path: 'post/:slug',

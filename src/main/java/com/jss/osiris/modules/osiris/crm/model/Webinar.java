@@ -27,6 +27,10 @@ public class Webinar implements Serializable, IId {
 	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.MyJssDetailedView.class })
 	private String label;
 
+	@Column(columnDefinition = "TEXT")
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.MyJssDetailedView.class })
+	private String description;
+
 	private String code;
 
 	@JsonView(JacksonViews.MyJssDetailedView.class)
