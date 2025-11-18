@@ -35,7 +35,14 @@
           <span class="fs-sm me-2">Par :</span>
           <div class="d-flex flex-column">
             <div class="position-relative fw-semibold p-0" data-scroll data-scroll-offset="80">
-              {{post.fullAuthor.name}}
+              <div>
+                {{post.fullAuthor.name}}
+              </div>
+              <div *ngIf="post.postAdditionalAuthors && post.postAdditionalAuthors.length>0">
+                @for(author of post.postAdditionalAuthors; track $index){
+                {{author.name}}
+                }
+              </div>
               <span class="d-block position-absolute start-0 bottom-0 w-100"
                 style="background-color: currentColor; height: 1px;"></span>
             </div>
@@ -147,13 +154,20 @@
       <!-- Author widget -->
       <div class="border-top border-bottom py-4" id="author">
         <div class="d-flex align-items-start py-2">
-          <img class="d-block rounded-circle mb-3" [src]="post.fullAuthor.avatar_url_size_96" width="56"
-            alt="Author image">
-          <div class="d-md-flex w-100 ps-4">
-            <div style="max-width: 26rem;">
-              <h3 class="h5 mb-2">{{post.fullAuthor.name}}</h3>
-              <p class="fs-sm mb-0">{{post.fullAuthor.description}}</p>
+          <div class="d-md-flex w-100 ps-4 align-items-center">
+            <img class="d-block rounded-circle  me-2" [src]="post.fullAuthor.avatar_url_size_96" width="56"
+              alt="Author image">
+            <div>
+              <h3 class="h5 mb-0">{{post.fullAuthor.name}}</h3>
+              <p *ngIf="post.fullAuthor.description" class="fs-sm">{{post.fullAuthor.description}}</p>
             </div>
+            @for(author of post.postAdditionalAuthors; track $index){
+            <img class="d-block rounded-circle mx-2" [src]="author.avatar_url_size_96" width="56" alt="Author image">
+            <div>
+              <h3 class="h5 mb-0">{{author.name}}</h3>
+              <p *ngIf="author.description" class="fs-sm">{{author.description}}</p>
+            </div>
+            }
             <div class="pt-4 pt-md-0 ps-md-4 ms-md-auto">
               <h3 class="h5">Partager le post:</h3>
               <div class="d-flex">
