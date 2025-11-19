@@ -2029,7 +2029,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         Employee currentUser = employeeService.getCurrentEmployee();
         CustomerOrder assignedOrder = null;
 
-        if (customerOrders != null && customerOrders.size() > 0 && Math.random() < 0.6) {
+        if (customerOrders != null && customerOrders.size() > 0 && Math.random() < 0.3) {
             for (CustomerOrder order : customerOrders) {
                 if (order.getInvoicingEmployee() == null
                         || order.getInvoicingEmployee().getId().equals(currentUser.getId())) {
