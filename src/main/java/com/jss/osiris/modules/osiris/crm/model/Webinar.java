@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.crm.model;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
@@ -23,10 +24,17 @@ public class Webinar implements Serializable, IId {
 	private Integer id;
 
 	@Column(nullable = false)
-	@JsonView(JacksonViews.OsirisListView.class)
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.MyJssDetailedView.class })
 	private String label;
 
+	@Column(columnDefinition = "TEXT")
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.MyJssDetailedView.class })
+	private String description;
+
 	private String code;
+
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	private LocalDateTime webinarDate;
 
 	public Integer getId() {
 		return id;
@@ -52,4 +60,11 @@ public class Webinar implements Serializable, IId {
 		this.code = code;
 	}
 
+	public LocalDateTime getWebinarDate() {
+		return webinarDate;
+	}
+
+	public void setWebinarDate(LocalDateTime webinarDate) {
+		this.webinarDate = webinarDate;
+	}
 }

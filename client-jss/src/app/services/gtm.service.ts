@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { environment } from "../../environments/environment";
+import { COOKIE_KEY } from "../libs/Constants";
 import { Responsable } from "../main/model/Responsable";
 import { LoginService } from "../main/services/login.service";
 import { BasePayload, CtaClickPayload, FormSubmitPayload, PageViewPayload } from "./GtmPayload";
@@ -55,6 +56,7 @@ export class GtmService {
 
     if (this.currentUser)
       payload.user = { id: this.currentUser.id };
+    payload.consent = localStorage.getItem(COOKIE_KEY) == "true";
 
     if (payload && payload.page)
       payload.page.website = "media";

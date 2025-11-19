@@ -144,6 +144,12 @@ public class Post implements IId, Serializable {
     private Author fullAuthor;
 
     @ManyToMany
+    @JoinTable(name = "asso_post_additional_authors", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_author"))
+    @IndexedField
+    @JsonView(JacksonViews.MyJssDetailedView.class)
+    private List<Author> postAdditionalAuthors;
+
+    @ManyToMany
     @JoinTable(name = "asso_post_jss_category", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_jss_category"))
     @IndexedField
     @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
@@ -172,15 +178,15 @@ public class Post implements IId, Serializable {
     @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private List<Tag> postTags;
 
-    @ManyToMany(mappedBy = "posts", cascade = CascadeType.REMOVE)
-    @JsonIgnoreProperties(value = { "posts" }, allowSetters = true)
-    private List<ReadingFolder> readingFolders;
-
     @ManyToMany
     @JoinTable(name = "asso_post_serie", joinColumns = @JoinColumn(name = "id_post"), inverseJoinColumns = @JoinColumn(name = "id_serie"))
     @IndexedField
     @JsonView(JacksonViews.MyJssDetailedView.class)
     private List<Serie> postSerie;
+
+    @ManyToMany(mappedBy = "posts", cascade = CascadeType.REMOVE)
+    @JsonIgnoreProperties(value = { "posts" }, allowSetters = true)
+    private List<ReadingFolder> readingFolders;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_media")
@@ -338,6 +344,22 @@ public class Post implements IId, Serializable {
 
     public void setMedia(Media media) {
         this.media = media;
+    }
+
+    public List<Author> getPostAdditionalAuthors() {
+        return postAdditionalAuthors;
+    }
+
+    public void setPostAdditionalAuthors(List<Author> postAdditionalAuthors) {
+        this.postAdditionalAuthors = postAdditionalAuthors;
+    }
+
+    public Boolean getIsHideAuthor() {
+        return isHiddenAuthor;
+    }
+
+    public void setIsHideAuthor(Boolean isHiddenAuthor) {
+        this.isHiddenAuthor = isHiddenAuthor;
     }
 
     public String getTitleText() {

@@ -516,17 +516,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             BigDecimal remainingToPay = getRemainingAmountToPayForCustomerOrder(customerOrder);
 
             Tiers tiers = customerOrder.getResponsable().getTiers();
-            boolean isDepositMandatory = false;
             boolean isPaymentTypePrelevement = false;
-            isDepositMandatory = tiers.getIsProvisionalPaymentMandatory();
 
-            if (!isDepositMandatory && customerOrder.getAssoAffaireOrders() != null)
-                for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
-                    if (asso.getAffaire() != null
-                            && Boolean.TRUE.equals(asso.getAffaire().getIsProvisionalPaymentMandatory())) {
-                        isDepositMandatory = true;
-                        break;
-                    }
+            boolean isDepositMandatory = quotationService.isDepositMandatory(customerOrder);
 
             if (tiers instanceof Tiers)
                 isPaymentTypePrelevement = ((Tiers) tiers).getPaymentType().getId()
@@ -618,13 +610,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                             .compareTo(BigDecimal.valueOf(Float.parseFloat(payementLimitRefundInEuros))) > 0)
                 throw new OsirisException(null, "Impossible to billed, too much money on customerOrder !");
 
-            Invoice invoice = generateInvoice(customerOrder);
-
-            entityManager.flush();
-            entityManager.clear();
-
-            invoice = invoiceService.getInvoice(invoice.getId());
-
             // If deposit already set, associate them to invoice
             List<Payment> paymentToMove = new ArrayList<Payment>();
             List<Payment> customerOrderPayement = paymentService.getPaymentForCustomerOrder(customerOrder);
@@ -634,10 +619,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     if (!payment.getIsCancelled())
                         paymentToMove.add(payment);
 
-            if (paymentToMove.size() > 0)
-                for (Payment payment : paymentToMove) {
-                    paymentService.movePaymentFromCustomerOrderToInvoice(payment, customerOrder, invoice);
-                }
+            generateInvoice(customerOrder, paymentToMove);
 
             entityManager.flush();
             entityManager.clear();
@@ -772,7 +754,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         return customerOrder;
     }
 
-    private Invoice generateInvoice(CustomerOrder customerOrder)
+    private Invoice generateInvoice(CustomerOrder customerOrder, List<Payment> paymentsToUseForInvoice)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         // Generate blank invoice
         Invoice invoice = new Invoice();
@@ -793,7 +775,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                             }
                     }
             }
-        invoiceService.addOrUpdateInvoiceFromUser(invoice);
+        invoiceService.addOrUpdateInvoiceFromUser(invoice, paymentsToUseForInvoice);
         return invoice;
     }
 
@@ -1557,9 +1539,14 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             if (Boolean.TRUE.equals(currentUser.getCanViewAllTiersInWeb()))
                 responsablesToFilter.addAll(currentUser.getTiers().getResponsables());
 
-            if (responsableIdToFilter != null)
-                responsablesToFilter.removeAll(
-                        responsablesToFilter.stream().filter(r -> !responsableIdToFilter.contains(r.getId())).toList());
+            if (responsableIdToFilter == null)
+                responsableIdToFilter = new ArrayList<>();
+
+            List<Integer> responsableIdToFilterFinal = responsableIdToFilter;
+
+            responsablesToFilter.removeAll(
+                    responsablesToFilter.stream().filter(r -> !responsableIdToFilterFinal.contains(r.getId()))
+                            .toList());
 
             if (responsablesToFilter != null
                     && responsablesToFilter.size() > 0) {
@@ -1584,7 +1571,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             }
         }
 
-        return null;
+        return new ArrayList<>();
     }
 
     public List<CustomerOrder> searchOrdersForCurrentUserAndAffaire(Affaire affaire) throws OsirisException {

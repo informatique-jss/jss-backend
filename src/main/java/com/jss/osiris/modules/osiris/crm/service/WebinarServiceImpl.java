@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.crm.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,5 +36,15 @@ public class WebinarServiceImpl implements WebinarService {
     public Webinar addOrUpdateWebinar(
             Webinar webinar) {
         return webinarRepository.save(webinar);
+    }
+
+    @Override
+    public Webinar getNextWebinar() {
+        return webinarRepository.findFirstByWebinarDateAfterOrderByWebinarDateAsc(LocalDateTime.now());
+    }
+
+    @Override
+    public Webinar getLastWebinar() {
+        return webinarRepository.findFirstByWebinarDateBeforeOrderByWebinarDateDesc(LocalDateTime.now());
     }
 }

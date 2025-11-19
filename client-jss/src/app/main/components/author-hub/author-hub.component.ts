@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
@@ -27,9 +27,10 @@ export class AuthorHubComponent extends GenericHubComponent<Author> implements O
 
   constructor(private tagService: TagService, postService: PostService,
     loginService: LoginService, appService: AppService,
-    formBuilder: FormBuilder, activeRoute: ActivatedRoute
+    formBuilder: FormBuilder, activeRoute: ActivatedRoute,
+    router: Router
   ) {
-    super(appService, formBuilder, activeRoute, postService, loginService);
+    super(appService, formBuilder, activeRoute, postService, loginService, router);
   }
 
   override getAllPostByEntityType(selectedEntityType: Author, page: number, pageSize: number, searchText: string, isDisplayNewPosts: boolean): Observable<PagedContent<Post>> {

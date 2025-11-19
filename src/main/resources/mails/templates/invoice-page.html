@@ -289,7 +289,8 @@
             </td>
             <td class="td-with-price"
                 style="text-align: right;white-space: nowrap;border-top: solid; border-color: rgb(0,83,159)">
-                <strong><span th:text="${#numbers.formatDecimal(remainingToPay,1,2)}"></span>
+                <strong><span
+                        th:text="${remainingToPay != null && remainingToPay != 0 ? #numbers.formatDecimal(remainingToPay,1,2) : '0,00'}"></span>
                     €</strong>
             </td>
         </tr>

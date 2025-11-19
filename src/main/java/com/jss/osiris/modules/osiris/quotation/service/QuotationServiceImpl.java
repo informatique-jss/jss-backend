@@ -308,6 +308,12 @@ public class QuotationServiceImpl implements QuotationService {
             mailHelper.sendCustomerOrderCreationConfirmationOnQuotationValidation(quotation, customerOrder);
         }
 
+        // If coming from MyJss, notify sales that quotation has been abandoned
+        if (employeeService.getCurrentEmployee() == null && employeeService.getCurrentMyJssUser() != null
+                && targetStatusCode.equals(QuotationStatus.ABANDONED)) {
+            notificationService.notifyAbandonnedQuotationFromMyJss(quotation);
+        }
+
         quotation.setLastStatusUpdate(LocalDateTime.now());
         quotation.setQuotationStatus(targetQuotationStatus);
         return this.addOrUpdateQuotation(quotation);
@@ -674,9 +680,14 @@ public class QuotationServiceImpl implements QuotationService {
             if (Boolean.TRUE.equals(currentUser.getCanViewAllTiersInWeb()))
                 responsablesToFilter.addAll(currentUser.getTiers().getResponsables());
 
-            if (responsableIdToFilter != null)
-                responsablesToFilter.removeAll(
-                        responsablesToFilter.stream().filter(r -> !responsableIdToFilter.contains(r.getId())).toList());
+            if (responsableIdToFilter == null)
+                responsableIdToFilter = new ArrayList<>();
+
+            List<Integer> responsableIdToFilterFinal = responsableIdToFilter;
+
+            responsablesToFilter.removeAll(
+                    responsablesToFilter.stream().filter(r -> !responsableIdToFilterFinal.contains(r.getId()))
+                            .toList());
 
             if (quotationStatusToFilter.size() > 0 && responsablesToFilter != null
                     && responsablesToFilter.size() > 0) {
@@ -696,7 +707,7 @@ public class QuotationServiceImpl implements QuotationService {
             }
         }
 
-        return null;
+        return new ArrayList<>();
     }
 
     @Override
@@ -980,6 +991,23 @@ public class QuotationServiceImpl implements QuotationService {
                     quotation.setResponsable(responsable);
                     simpleAddOrUpdateQuotation(quotation);
                 }
+    }
+
+    @Override
+    public boolean isDepositMandatory(IQuotation quotation) {
+        boolean isDepositMandatory = false;
+
+        isDepositMandatory = quotation.getResponsable().getTiers().getIsProvisionalPaymentMandatory();
+
+        if (!isDepositMandatory && quotation.getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders())
+                if (asso.getAffaire() != null
+                        && Boolean.TRUE.equals(asso.getAffaire().getIsProvisionalPaymentMandatory())) {
+                    isDepositMandatory = true;
+                    break;
+                }
+
+        return isDepositMandatory;
     }
 
 }

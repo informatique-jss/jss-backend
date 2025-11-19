@@ -880,7 +880,7 @@ public class InvoicingController {
         if (invoice.getId() != null && invoice.getCustomerOrder() != null)
             throw new OsirisValidationException("Id");
         validateInvoice(invoice);
-        return new ResponseEntity<Invoice>(invoiceService.addOrUpdateInvoiceFromUser(invoice), HttpStatus.OK);
+        return new ResponseEntity<Invoice>(invoiceService.addOrUpdateInvoiceFromUser(invoice, null), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/invoice/cancel")

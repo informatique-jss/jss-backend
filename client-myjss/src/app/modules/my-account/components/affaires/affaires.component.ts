@@ -47,6 +47,7 @@ export class AffairesComponent implements OnInit {
   inputIdAffaire: number | undefined;
   responsablesForCurrentUser: Responsable[] | undefined;
   responsableCheck: boolean[] = [];
+  selectAllResponsable: boolean = true;
 
   constructor(
     private customerOrderService: CustomerOrderService,
@@ -148,17 +149,18 @@ export class AffairesComponent implements OnInit {
   setBookmark() {
     this.userPreferenceService.setUserSearchBookmark(this.currentSort, "affaire-currentSort");
     if (this.responsablesForCurrentUser && this.getCurrentSelectedResponsable())
-      this.userPreferenceService.setUserSearchBookmark(this.getCurrentSelectedResponsable()!.map(r => r.id).join(","), "affaire-responsables");
+      this.userPreferenceService.setUserSearchBookmark(this.getCurrentSelectedResponsable()!.map(r => r.id).join(","), "responsables");
   }
 
   retrieveBookmark() {
     this.currentSort = this.userPreferenceService.getUserSearchBookmark("affaire-currentSort");
-    if (this.userPreferenceService.getUserSearchBookmark("affaire-responsables")) {
-      let respoIds = this.userPreferenceService.getUserSearchBookmark("affaire-responsables").split(",");
+    if (this.userPreferenceService.getUserSearchBookmark("responsables")) {
+      let respoIds = this.userPreferenceService.getUserSearchBookmark("responsables").split(",");
       for (let i in this.responsableCheck)
         this.responsableCheck[i] = false;
       for (let respoId of respoIds)
         this.responsableCheck[parseInt(respoId)] = true;
+      this.selectAllResponsable = false;
     }
     if (!this.currentSort)
       this.currentSort = "nameAsc";
@@ -166,6 +168,14 @@ export class AffairesComponent implements OnInit {
 
   downloadAttachment(attachment: Attachment) {
     this.uploadAttachmentService.downloadAttachment(attachment);
+  }
+
+  selectAllResponsables() {
+    if (this.responsablesForCurrentUser)
+      for (let respo of this.responsablesForCurrentUser)
+        this.responsableCheck[respo.id] = this.selectAllResponsable;
+
+    this.changeFilter();
   }
 
   getCustomerOrderStatusLabel = getCustomerOrderStatusLabel;

@@ -80,7 +80,6 @@ export class NoticeTemplateComponent implements OnInit {
       this.displayTextOriginal = this.displayText;
       this.fragmentSelectionText = this.displayText;
     }
-
     this.serviceFieldTypesService.getServiceFieldTypes().subscribe(serviceFieldTypes => {
       this.serviceFieldTypes = serviceFieldTypes;
       this.createPlaceholdersMap();

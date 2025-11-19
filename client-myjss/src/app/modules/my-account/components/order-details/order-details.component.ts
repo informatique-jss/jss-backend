@@ -22,6 +22,7 @@ import { Attachment } from '../../model/Attachment';
 import { BillingLabelType } from '../../model/BillingLabelType';
 import { CustomerOrder } from '../../model/CustomerOrder';
 import { CustomerOrderComment } from '../../model/CustomerOrderComment';
+import { DocumentType } from '../../model/DocumentType';
 import { InvoiceLabelResult } from '../../model/InvoiceLabelResult';
 import { InvoicingSummary } from '../../model/InvoicingSummary';
 import { MailComputeResult } from '../../model/MailComputeResult';
@@ -69,6 +70,9 @@ export class OrderDetailsComponent implements OnInit {
   serviceProvisionAttachments: Attachment[][] = [];
   currentUser: Responsable | undefined;
   associatedQuotation: Quotation | undefined;
+
+  documentTypeBilling!: DocumentType;
+
 
   selectedAssoAffaireOrder: AssoAffaireOrder | undefined;
   ASSO_SERVICE_DOCUMENT_ENTITY_TYPE = ASSO_SERVICE_DOCUMENT_ENTITY_TYPE;
@@ -123,6 +127,8 @@ export class OrderDetailsComponent implements OnInit {
 
     this.paymentTypeCb = this.constantService.getPaymentTypeCB();
     this.billingLabelTypeCodeAffaire = this.constantService.getBillingLabelTypeCodeAffaire();
+    this.documentTypeBilling = this.constantService.getDocumentTypeBilling();
+
 
     this.refreshOrder();
   }

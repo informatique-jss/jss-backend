@@ -24,11 +24,12 @@ export class ToolsComponent implements OnInit {
 
   ngOnInit() {
 
-    if (this.toolsItems.length > 0 && this.router.url) {
-      this.matchRoute(this.router.url);
-    } else {
-      this.selectedTab = this.toolsItems[0];
-    }
+    if (this.toolsItems)
+      if (this.toolsItems.length > 0 && this.router.url) {
+        this.matchRoute(this.router.url);
+      } else {
+        this.selectedTab = this.toolsItems[0];
+      }
 
     this.router.events.subscribe(url => {
       if (url instanceof NavigationEnd) {

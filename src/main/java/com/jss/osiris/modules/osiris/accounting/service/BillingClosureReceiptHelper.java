@@ -470,7 +470,8 @@ public class BillingClosureReceiptHelper {
         value.setEventDateString(
                 accountingRecord.getOperationDateTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
-        String description = accountingRecord.getLabel().replaceAll("&", "<![CDATA[&]]>");
+        String description = accountingRecord.getLabel().replaceAll("&", "<![CDATA[&]]>").replaceAll("AN 2025 - ", "")
+                .replaceAll("A-Nouveau 2024 - ", "");
         value.setEventDescription(description);
 
         return value;
