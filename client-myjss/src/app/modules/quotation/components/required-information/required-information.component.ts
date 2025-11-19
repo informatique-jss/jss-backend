@@ -684,7 +684,7 @@ export class RequiredInformationComponent implements OnInit {
 
   updateTemplate(isShowNoticeTemplate: boolean, selectedTemplate: AnnouncementNoticeTemplate | undefined, service: Service | undefined) {
     if (service && this.noticeTemplateDescription) {
-      if (selectedTemplate) {
+      if (selectedTemplate || (isShowNoticeTemplate && this.getPossibleTemplates(service) && this.getPossibleTemplates(service)!.length > 0)) {
         this.noticeTemplateDescription.selectedTemplate = undefined;
         this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
         setTimeout(() => {
