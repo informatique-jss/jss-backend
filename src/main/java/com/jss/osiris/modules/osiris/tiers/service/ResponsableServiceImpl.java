@@ -249,6 +249,7 @@ public class ResponsableServiceImpl implements ResponsableService {
                 List<KpiCrmValueAggregatedByResponsable> values = kpiCrmValueService
                         .getAggregateValuesForResponsableListByResponsable(
                                 kpiCrm, responsableSearch.getStartDateKpis(), responsableSearch.getEndDateKpis(),
+                                responsableSearch.getSalesEmployee().getId(),
                                 responsableFound);
                 if (values != null) {
                     for (KpiCrmValueAggregatedByResponsable aggregatedValue : values) {

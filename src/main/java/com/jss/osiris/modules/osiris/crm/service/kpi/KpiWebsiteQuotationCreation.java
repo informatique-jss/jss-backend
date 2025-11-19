@@ -153,7 +153,7 @@ public class KpiWebsiteQuotationCreation implements IKpiThread {
 
     @Override
     public String getIcon() {
-        return null;
+        return "tablerBasket";
     }
 
     @Override

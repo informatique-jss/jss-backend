@@ -153,7 +153,7 @@ public class KpiWebsiteOrderCreation implements IKpiThread {
 
     @Override
     public String getIcon() {
-        return null;
+        return "tablerShoppingBagSearch";
     }
 
     @Override

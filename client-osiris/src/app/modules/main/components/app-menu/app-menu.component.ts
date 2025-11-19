@@ -70,14 +70,14 @@ export class AppMenuComponent implements OnInit {
   initMenu() {
     this.menuItems = [
       { label: "Menu", isTitle: true } as MenuItemType,
-      /*{
+      {
         label: "Tiers/Responsables", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "tiers",
         children: [
           { label: "Tiers", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerBuilding", url: "tiers", children: this.getTiersChildren() },
           { label: "Responsables", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "responsables", children: this.getResponsableChildren() },
           { label: "Crm", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerHeartHandshake", url: "tiers/crm/kpi/selection" }
         ]
-      } as MenuItemType,*/
+      } as MenuItemType,
       { label: "Reporting", isTitle: false, isCollapsed: true, isDisabled: false, isSpecial: false, icon: "tablerLayoutDashboard", children: this.getAllDashboardsItem() } as MenuItemType
     ]
   }
@@ -99,7 +99,7 @@ export class AppMenuComponent implements OnInit {
   }
 
   hasSubMenu(item: MenuItemType): boolean {
-    return !!item.children;
+    return (item.children != null && item.children != undefined && item.children.length > 0);
   }
 
   expandActivePaths(items: MenuItemType[]) {

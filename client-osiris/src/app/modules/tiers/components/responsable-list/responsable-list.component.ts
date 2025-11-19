@@ -23,6 +23,7 @@ import { GenericFormComponent } from '../../../miscellaneous/forms/components/ge
 import { ResponsableDto } from '../../model/ResponsableDto';
 import { ResponsableSearch } from '../../model/ResponsableSearch';
 import { ResponsableService } from '../../services/responsable.service';
+import { TiersService } from '../../services/tiers.service';
 
 @Component({
   selector: 'app-responsable-list',
@@ -34,8 +35,9 @@ import { ResponsableService } from '../../services/responsable.service';
 export class ResponsableListComponent extends GenericListComponent<ResponsableDto, ResponsableSearch> implements OnInit {
 
   eventOnClickOpenAction = new Subject<Row<ResponsableDto>[]>();
+  eventOnClickOpenTiersAction = new Subject<Row<ResponsableDto>[]>();
   eventOnClickOpenKpisAction = new Subject<Row<ResponsableDto>[]>();
-  eventOnClickOpenTiers = new Subject<Row<ResponsableDto>>();
+  eventOnClickOpenResponsable = new Subject<Row<ResponsableDto>>();
 
   kpiCrms: KpiCrm[] | undefined;
 
@@ -45,7 +47,8 @@ export class ResponsableListComponent extends GenericListComponent<ResponsableDt
     private restUserPreferenceService2: RestUserPreferenceService,
     private router: Router,
     private responsableService: ResponsableService,
-    private kpiCrmService: KpiCrmService
+    private kpiCrmService: KpiCrmService,
+    private tiersService: TiersService
   ) {
     super(offcanvasService2, formBuilder2, appService2, restUserPreferenceService2);
 
@@ -67,6 +70,12 @@ export class ResponsableListComponent extends GenericListComponent<ResponsableDt
       minNumberOfElementsRequiredToDisplay: 1
     })
     actions.push({
+      label: 'Voir le tiers',
+      eventOnClick: this.eventOnClickOpenTiersAction,
+      maxNumberOfElementsRequiredToDisplay: 1,
+      minNumberOfElementsRequiredToDisplay: 1
+    })
+    actions.push({
       label: 'Voir les KPIs pour ces responsables',
       eventOnClick: this.eventOnClickOpenKpisAction,
       minNumberOfElementsRequiredToDisplay: 1
@@ -76,13 +85,20 @@ export class ResponsableListComponent extends GenericListComponent<ResponsableDt
       this.responsableService.setSelectedResponsableUnique(row[0].original);
       this.router.navigate(['responsable/view/' + row[0].original.id]);
     });
+    this.eventOnClickOpenTiersAction.subscribe((row: Row<ResponsableDto>[]) => {
+      this.responsableService.setSelectedResponsableUnique(row[0].original);
+      this.router.navigate(['tiers/view/' + row[0].original.tiersId]);
+    });
 
     this.eventOnClickOpenKpisAction.subscribe((row: Row<ResponsableDto>[]) => {
       this.responsableService.setCurrentSelectedResponsable(row.map(r => r.original));
+      this.responsableService.setSelectedKpiStartDate(this.searchModel.startDateKpis);
+      this.responsableService.setSelectedKpiEndDate(this.searchModel.endDateKpis);
+      this.tiersService.clearKpiSelection();
       this.router.navigate(['tiers/crm/kpi/selection']);
     });
 
-    this.eventOnClickOpenTiers.subscribe((row: Row<ResponsableDto>) => {
+    this.eventOnClickOpenResponsable.subscribe((row: Row<ResponsableDto>) => {
       this.responsableService.setSelectedResponsableUnique(row.original);
       this.router.navigate(['responsable/view/' + row.original.id]);
     });
@@ -187,15 +203,35 @@ export class ResponsableListComponent extends GenericListComponent<ResponsableDt
     })
     columns.push({
       accessorFn: (originalRow: ResponsableDto, index: number) => { return originalRow.firstname + " " + originalRow.lastname }, header: 'Dénomination', enableSorting: true, cell: info => info.getValue(), meta: {
-        eventOnDoubleClick: this.eventOnClickOpenTiers
+        eventOnDoubleClick: this.eventOnClickOpenResponsable
+      }
+    })
+    columns.push({
+      accessorKey: 'tiersDenomination', header: 'Tiers', enableSorting: true, cell: info => info.getValue(), meta: {
+        eventOnDoubleClick: this.eventOnClickOpenResponsable
+      }
+    })
+    columns.push({
+      accessorKey: 'salesEmployee', header: 'Commercial', enableSorting: true, cell: info => info.getValue(), meta: {
+        eventOnDoubleClick: this.eventOnClickOpenResponsable
+      }
+    })
+    columns.push({
+      accessorKey: 'tiersCategory', header: 'Catégorie du tiers', enableSorting: true, cell: info => info.getValue(), meta: {
+        eventOnDoubleClick: this.eventOnClickOpenResponsable
+      }
+    })
+    columns.push({
+      accessorKey: 'responsableCategory', header: 'Catégorie du responsable', enableSorting: true, cell: info => info.getValue(), meta: {
+        eventOnDoubleClick: this.eventOnClickOpenResponsable
       }
     })
 
     if (this.data && this.data[0] && this.data[0].kpiValues) {
       for (let key in this.data[0].kpiValues) {
         columns.push({
-          accessorFn: (originalRow: ResponsableDto, index: number) => { return originalRow.kpiValues[key] + "" }, header: key, enableSorting: true, cell: info => info.getValue(), meta: {
-            eventOnDoubleClick: this.eventOnClickOpenTiers
+          accessorFn: (originalRow: ResponsableDto, index: number) => { return originalRow.kpiValues[key] }, header: key, enableSorting: true, cell: info => info.getValue(), meta: {
+            eventOnDoubleClick: this.eventOnClickOpenResponsable
           }
         })
       }

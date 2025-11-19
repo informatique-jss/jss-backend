@@ -1,5 +1,6 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { NgbNavModule, NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { NgIcon } from '@ng-icons/core';
 import { provideEchartsCore } from 'ngx-echarts';
@@ -46,6 +47,8 @@ export class CrmComponent implements OnInit {
   series: any[] = [];
   searchModel: any | undefined = {}
 
+  loadBookarks: boolean = true;
+
   searchForm: FormGroup = {} as FormGroup;
   Validators = Validators;
   forms: GenericSearchForm<any>[] = [];
@@ -66,12 +69,11 @@ export class CrmComponent implements OnInit {
     private kpiCrmValueService: KpiCrmValueService,
     private tiersService: TiersService,
     private kpiCrmService: KpiCrmService,
-    private responsableService: ResponsableService
+    private responsableService: ResponsableService,
+    private activeRoute: ActivatedRoute
   ) { }
 
   ngOnInit() {
-    this.selectedTiers = this.tiersService.getCurrentSelectedTiers();
-    this.selectedResponsables = this.responsableService.getCurrentSelectedResponsable();
     this.searchForm = this.formBuilder.group({});
     this.forms = [{
       accessorKey: "startDateKpis",
@@ -96,18 +98,49 @@ export class CrmComponent implements OnInit {
           required: 'La date de fin est obligatoire'
         } as Record<string, string>
       } as GenericForm<any>
+    }, {
+      accessorKey: "salesEmployee",
+      form: {
+        label: 'Commercial',
+        type: 'select',
+        selectType: 'commercial',
+      } as GenericForm<any>
     }];
 
     // Restore bookmark
     this.initSearchModel();
+
+    if (this.activeRoute.snapshot.url.toString().indexOf(",selection") >= 0) {
+      this.selectedTiers = this.tiersService.getCurrentSelectedTiers();
+      if (this.selectedTiers && this.selectedTiers.length > 0) {
+        if (this.tiersService.getSelectedKpiStartDate())
+          this.searchModel.startDateKpis = new Date(this.tiersService.getSelectedKpiStartDate()!);
+        if (this.tiersService.getSelectedKpiEndDate())
+          this.searchModel.endDateKpis = new Date(this.tiersService.getSelectedKpiEndDate()!);
+        this.loadBookarks = false;
+      }
+      this.selectedResponsables = this.responsableService.getCurrentSelectedResponsable();
+      if (this.selectedResponsables && this.selectedResponsables.length > 0) {
+        if (this.responsableService.getSelectedKpiStartDate())
+          this.searchModel.startDateKpis = new Date(this.responsableService.getSelectedKpiStartDate()!);
+        if (this.responsableService.getSelectedKpiEndDate())
+          this.searchModel.endDateKpis = new Date(this.responsableService.getSelectedKpiEndDate()!);
+        this.loadBookarks = false;
+      }
+    }
+
     this.kpiCrmService.getKpiCrm().subscribe(kpiCrms => {
       this.kpiCrms = kpiCrms;
-      this.restUserPreferenceService.getUserPreferenceValue(this.screenCode).subscribe(response => {
-        if (response) {
-          this.searchModel = JSON.parse(response) as any;
-          this.search(undefined);
-        }
-      })
+      if (this.loadBookarks) {
+        this.restUserPreferenceService.getUserPreferenceValue(this.screenCode).subscribe(response => {
+          if (response) {
+            this.searchModel = JSON.parse(response) as any;
+            this.search(undefined);
+          }
+        })
+      } else {
+        this.search(undefined);
+      }
     })
   }
 
@@ -121,7 +154,31 @@ export class CrmComponent implements OnInit {
   }
 
   initSearchModel() {
-    this.searchModel = { 'endDateKpis': undefined, 'startDateKpis': undefined }
+    this.searchModel = { 'endDateKpis': undefined, 'startDateKpis': undefined, 'salesEmployee': undefined };
+  }
+
+  search(content: TemplateRef<any> | undefined) {
+    this.searchForm.markAllAsTouched();
+
+    if (this.searchForm.valid) {
+      this.restUserPreferenceService.setUserPreference(JSON.stringify(this.searchModel), this.screenCode).subscribe();
+      if (content)
+        this.offcanvasService.dismiss(content);
+      if (this.kpiCrms) {
+        this.kpiCrmsValues = {};
+        this.kpiCrmsValuesN1 = {};
+        this.kpiCrmsValuesN2 = {};
+        this.kpiCrmsValuesEvolutionGood = {};
+        this.kpiCrmsValuesEvolution = {};
+        for (let kpiCrm of this.kpiCrms) {
+          this.searchForKpiCrmAndYearOffset(kpiCrm, 0, !this.selectedTiers && !this.selectedResponsables || this.selectedTiers.length == 0 && this.selectedResponsables.length == 0);
+          this.searchForKpiCrmAndYearOffset(kpiCrm, 1, !this.selectedTiers && !this.selectedResponsables || this.selectedTiers.length == 0 && this.selectedResponsables.length == 0);
+          this.searchForKpiCrmAndYearOffset(kpiCrm, 2, !this.selectedTiers && !this.selectedResponsables || this.selectedTiers.length == 0 && this.selectedResponsables.length == 0);
+        }
+        if (!this.selectedKpiCrm)
+          this.displayDetails(this.kpiCrms[0]);
+      }
+    }
   }
 
   displayDetails(kpiCrm: KpiCrm) {
@@ -133,14 +190,14 @@ export class CrmComponent implements OnInit {
     let isAllTiers = !this.selectedTiers && !this.selectedResponsables || this.selectedTiers.length == 0 && this.selectedResponsables.length == 0;
     let promises;
     if (isAllTiers || this.selectedTiers && this.selectedTiers.length > 0 && (!this.selectedResponsables || this.selectedResponsables.length == 0)) {
-      promises = [this.kpiCrmValueService.getKpiCrmValuePayloadAggregatedByTiersAndDate(this.selectedKpiCrm.code, this.getPreviousYear(this.searchModel.startDateKpis, 0), this.getPreviousYear(this.searchModel.endDateKpis, 0), this.selectedTiers.map(t => t.id), !this.selectedTiers || this.selectedTiers.length == 0),
-      this.kpiCrmValueService.getKpiCrmValuePayloadAggregatedByTiersAndDate(this.selectedKpiCrm.code, this.getPreviousYear(this.searchModel.startDateKpis, 1), this.getPreviousYear(this.searchModel.endDateKpis, 1), this.selectedTiers.map(t => t.id), !this.selectedTiers || this.selectedTiers.length == 0),
-      this.kpiCrmValueService.getKpiCrmValuePayloadAggregatedByTiersAndDate(this.selectedKpiCrm.code, this.getPreviousYear(this.searchModel.startDateKpis, 2), this.getPreviousYear(this.searchModel.endDateKpis, 2), this.selectedTiers.map(t => t.id), !this.selectedTiers || this.selectedTiers.length == 0),
+      promises = [this.kpiCrmValueService.getKpiCrmValuePayloadAggregatedByTiersAndDate(this.selectedKpiCrm.code, this.getPreviousYear(this.searchModel.startDateKpis, 0), this.getPreviousYear(this.searchModel.endDateKpis, 0), (this.searchModel.salesEmployee ? this.searchModel.salesEmployee.id : undefined), this.selectedTiers.map(t => t.id), !this.selectedTiers || this.selectedTiers.length == 0),
+      this.kpiCrmValueService.getKpiCrmValuePayloadAggregatedByTiersAndDate(this.selectedKpiCrm.code, this.getPreviousYear(this.searchModel.startDateKpis, 1), this.getPreviousYear(this.searchModel.endDateKpis, 1), (this.searchModel.salesEmployee ? this.searchModel.salesEmployee.id : undefined), this.selectedTiers.map(t => t.id), !this.selectedTiers || this.selectedTiers.length == 0),
+      this.kpiCrmValueService.getKpiCrmValuePayloadAggregatedByTiersAndDate(this.selectedKpiCrm.code, this.getPreviousYear(this.searchModel.startDateKpis, 2), this.getPreviousYear(this.searchModel.endDateKpis, 2), (this.searchModel.salesEmployee ? this.searchModel.salesEmployee.id : undefined), this.selectedTiers.map(t => t.id), !this.selectedTiers || this.selectedTiers.length == 0),
       ]
     } else {
-      promises = [this.kpiCrmValueService.getKpiCrmValuePayloadAggregatedByResponsableAndDate(this.selectedKpiCrm.code, this.getPreviousYear(this.searchModel.startDateKpis, 0), this.getPreviousYear(this.searchModel.endDateKpis, 0), this.selectedResponsables.map(t => t.id), false),
-      this.kpiCrmValueService.getKpiCrmValuePayloadAggregatedByResponsableAndDate(this.selectedKpiCrm.code, this.getPreviousYear(this.searchModel.startDateKpis, 1), this.getPreviousYear(this.searchModel.endDateKpis, 1), this.selectedResponsables.map(t => t.id), false),
-      this.kpiCrmValueService.getKpiCrmValuePayloadAggregatedByResponsableAndDate(this.selectedKpiCrm.code, this.getPreviousYear(this.searchModel.startDateKpis, 2), this.getPreviousYear(this.searchModel.endDateKpis, 2), this.selectedResponsables.map(t => t.id), false),
+      promises = [this.kpiCrmValueService.getKpiCrmValuePayloadAggregatedByResponsableAndDate(this.selectedKpiCrm.code, this.getPreviousYear(this.searchModel.startDateKpis, 0), this.getPreviousYear(this.searchModel.endDateKpis, 0), (this.searchModel.salesEmployee ? this.searchModel.salesEmployee.id : undefined), this.selectedResponsables.map(t => t.id), false),
+      this.kpiCrmValueService.getKpiCrmValuePayloadAggregatedByResponsableAndDate(this.selectedKpiCrm.code, this.getPreviousYear(this.searchModel.startDateKpis, 1), this.getPreviousYear(this.searchModel.endDateKpis, 1), (this.searchModel.salesEmployee ? this.searchModel.salesEmployee.id : undefined), this.selectedResponsables.map(t => t.id), false),
+      this.kpiCrmValueService.getKpiCrmValuePayloadAggregatedByResponsableAndDate(this.selectedKpiCrm.code, this.getPreviousYear(this.searchModel.startDateKpis, 2), this.getPreviousYear(this.searchModel.endDateKpis, 2), (this.searchModel.salesEmployee ? this.searchModel.salesEmployee.id : undefined), this.selectedResponsables.map(t => t.id), false),
       ]
     }
     combineLatest(promises).subscribe(series => {
@@ -164,31 +221,9 @@ export class CrmComponent implements OnInit {
       }
   }
 
-  search(content: TemplateRef<any> | undefined) {
-    this.searchForm.markAllAsTouched();
-
-    if (this.searchForm.valid) {
-      this.restUserPreferenceService.setUserPreference(JSON.stringify(this.searchModel), this.screenCode).subscribe();
-      if (content)
-        this.offcanvasService.dismiss(content);
-      if (this.kpiCrms) {
-        this.kpiCrmsValues = {};
-        this.kpiCrmsValuesN1 = {};
-        this.kpiCrmsValuesN2 = {};
-        this.kpiCrmsValuesEvolutionGood = {};
-        this.kpiCrmsValuesEvolution = {};
-        for (let kpiCrm of this.kpiCrms) {
-          this.searchForKpiCrmAndYearOffset(kpiCrm, 0, !this.selectedTiers && !this.selectedResponsables || this.selectedTiers.length == 0 && this.selectedResponsables.length == 0);
-          this.searchForKpiCrmAndYearOffset(kpiCrm, 1, !this.selectedTiers && !this.selectedResponsables || this.selectedTiers.length == 0 && this.selectedResponsables.length == 0);
-          this.searchForKpiCrmAndYearOffset(kpiCrm, 2, !this.selectedTiers && !this.selectedResponsables || this.selectedTiers.length == 0 && this.selectedResponsables.length == 0);
-        }
-      }
-    }
-  }
-
   searchForKpiCrmAndYearOffset(kpiCrm: KpiCrm, yearOffset: number, isAllTiers: boolean) {
     if (isAllTiers || this.selectedTiers && this.selectedTiers.length > 0 && (!this.selectedResponsables || this.selectedResponsables.length == 0)) {
-      this.kpiCrmValueService.getJobForAggregateValuesForTiersList(kpiCrm.code, this.getPreviousYear(this.searchModel.startDateKpis, yearOffset), this.getPreviousYear(this.searchModel.endDateKpis, yearOffset), this.selectedTiers.map(t => t.id), isAllTiers)
+      this.kpiCrmValueService.getJobForAggregateValuesForTiersList(kpiCrm.code, this.getPreviousYear(this.searchModel.startDateKpis, yearOffset), this.getPreviousYear(this.searchModel.endDateKpis, yearOffset), (this.searchModel.salesEmployee ? this.searchModel.salesEmployee.id : undefined), this.selectedTiers.map(t => t.id), isAllTiers)
         .subscribe(job => {
           let intervalId = setInterval(() => {
             this.kpiCrmValueService.getJobResultForAggregateValuesForTiersList(job.id).subscribe(jobResult => {
@@ -218,7 +253,7 @@ export class CrmComponent implements OnInit {
           }, 300);
         })
     } else {
-      this.kpiCrmValueService.getJobForAggregateValuesForResponsableList(kpiCrm.code, this.getPreviousYear(this.searchModel.startDateKpis, yearOffset), this.getPreviousYear(this.searchModel.endDateKpis, yearOffset), this.selectedResponsables.map(t => t.id), false)
+      this.kpiCrmValueService.getJobForAggregateValuesForResponsableList(kpiCrm.code, this.getPreviousYear(this.searchModel.startDateKpis, yearOffset), this.getPreviousYear(this.searchModel.endDateKpis, yearOffset), (this.searchModel.salesEmployee ? this.searchModel.salesEmployee.id : undefined), this.selectedResponsables.map(t => t.id), false)
         .subscribe(job => {
           let intervalId = setInterval(() => {
             this.kpiCrmValueService.getJobResultForAggregateValuesForResponsableList(job.id).subscribe(jobResult => {

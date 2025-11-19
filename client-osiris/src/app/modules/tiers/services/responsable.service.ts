@@ -19,6 +19,8 @@ export class ResponsableService extends AppRestService<Responsable> {
   selectedResponsable: ResponsableDto[] = [];
   selectedResponsableUnique: ResponsableDto | undefined;
   selectedResponsableUniqueChange: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  selectedKpiStartDate: Date | undefined;
+  selectedKpiEndDate: Date | undefined;
 
   getCurrentSelectedResponsable() {
     if (this.selectedResponsable.length == 0) {
@@ -32,6 +34,28 @@ export class ResponsableService extends AppRestService<Responsable> {
   setCurrentSelectedResponsable(tiers: ResponsableDto[]) {
     this.selectedResponsable = tiers;
     localStorage.setItem("selected-responsable", JSON.stringify(tiers));
+  }
+
+  setSelectedKpiStartDate(date: Date) {
+    this.selectedKpiStartDate = date;
+  }
+
+  getSelectedKpiStartDate() {
+    return this.selectedKpiStartDate;
+  }
+
+  setSelectedKpiEndDate(date: Date) {
+    this.selectedKpiEndDate = date;
+  }
+
+  getSelectedKpiEndDate() {
+    return this.selectedKpiEndDate;
+  }
+
+  clearKpiSelection() {
+    this.selectedKpiStartDate = undefined;
+    this.selectedKpiEndDate = undefined;
+    this.setCurrentSelectedResponsable([]);
   }
 
   getSelectedResponsableUnique() {

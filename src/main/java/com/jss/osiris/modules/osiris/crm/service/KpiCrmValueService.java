@@ -22,23 +22,26 @@ public interface KpiCrmValueService {
 
         public List<KpiCrmValueAggregatedByTiers> getAggregateValuesForTiersListByTiers(KpiCrm kpiCrm,
                         LocalDate startDate,
-                        LocalDate endDate, List<Tiers> tiers);
+                        LocalDate endDate, Integer salesEmployeeId, List<Tiers> tiers);
 
         public BigDecimal getAggregateValuesForTiersList(KpiCrm kpiCrm, LocalDate startDate,
-                        LocalDate endDate, List<Tiers> tiersList, boolean isAllTiers);
+                        LocalDate endDate, Integer salesEmployeeId, List<Tiers> tiersList, boolean isAllTiers);
 
         public KpiCrmValuePayload getKpiCrmValuePayloadAggregatedByTiersAndDate(KpiCrm kpiCrm, LocalDate startDate,
-                        LocalDate endDate, List<Tiers> tiersList, boolean isAllTiers);
+                        LocalDate endDate, Integer salesEmployeeId, List<Tiers> tiersList, boolean isAllTiers,
+                        boolean aggregateResponsable);
 
         public List<KpiCrmValueAggregatedByResponsable> getAggregateValuesForResponsableListByResponsable(KpiCrm kpiCrm,
                         LocalDate startDate,
-                        LocalDate endDate, List<Responsable> responsables);
+                        LocalDate endDate, Integer salesEmployeeId, List<Responsable> responsables);
 
         public BigDecimal getAggregateValuesForResponsableList(KpiCrm kpiCrm, LocalDate startDate,
-                        LocalDate endDate, List<Responsable> responsableList, boolean isAllTiers);
+                        LocalDate endDate, Integer salesEmployeeId, List<Responsable> responsableList,
+                        boolean isAllTiers);
 
         public KpiCrmValuePayload getKpiCrmValuePayloadAggregatedByResponsableAndDate(KpiCrm kpiCrm,
                         LocalDate startDate,
-                        LocalDate endDate, List<Responsable> responsableList, boolean isAllTiers);
+                        LocalDate endDate, Integer salesEmployeeId, List<Responsable> responsableList,
+                        boolean isAllTiers, boolean aggregateResponsable);
 
 }

@@ -25,7 +25,7 @@ public class KpiCrmQueueService {
     KpiCrmFacade kpiCrmFacade;
 
     public KpiCrmJob submitJobForAggregateValuesForTiersList(String kpiCrmKey, LocalDate startDate,
-            LocalDate endDate, List<Integer> tiersIds, boolean isAllTiers) {
+            LocalDate endDate, Integer salesEmployeeId, List<Integer> tiersIds, boolean isAllTiers) {
         String jobId = UUID.randomUUID().toString();
         KpiCrmJob job = new KpiCrmJob(JobStatus.QUEUED);
         job.setId(jobId);
@@ -36,7 +36,8 @@ public class KpiCrmQueueService {
             jobInProgress.setStatus(JobStatus.RUNNING);
             try {
                 jobInProgress.setResult(
-                        kpiCrmFacade.getAggregateValuesForTiersList(kpiCrmKey, startDate, endDate, tiersIds,
+                        kpiCrmFacade.getAggregateValuesForTiersList(kpiCrmKey, startDate, endDate, salesEmployeeId,
+                                tiersIds,
                                 isAllTiers));
             } catch (Exception e) {
                 System.out.println("Error on KPI Crm job");
@@ -48,7 +49,7 @@ public class KpiCrmQueueService {
     }
 
     public KpiCrmJob submitJobForAggregateValuesForResponsableList(String kpiCrmKey, LocalDate startDate,
-            LocalDate endDate, List<Integer> responsableIds, boolean isAllResponsable) {
+            LocalDate endDate, Integer salesEmployeeId, List<Integer> responsableIds, boolean isAllResponsable) {
         String jobId = UUID.randomUUID().toString();
         KpiCrmJob job = new KpiCrmJob(JobStatus.QUEUED);
         job.setId(jobId);
@@ -59,7 +60,8 @@ public class KpiCrmQueueService {
             jobInProgress.setStatus(JobStatus.RUNNING);
             try {
                 jobInProgress.setResult(
-                        kpiCrmFacade.getAggregateValuesForResponsableList(kpiCrmKey, startDate, endDate, responsableIds,
+                        kpiCrmFacade.getAggregateValuesForResponsableList(kpiCrmKey, startDate, endDate,
+                                salesEmployeeId, responsableIds,
                                 isAllResponsable));
             } catch (Exception e) {
                 System.out.println("Error on KPI Crm job");

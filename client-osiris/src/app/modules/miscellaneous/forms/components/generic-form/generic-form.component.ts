@@ -103,7 +103,7 @@ export class GenericFormComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['model'] && !changes['model'].firstChange) {
+    if (changes['model'] != null && changes['model'] != undefined && !changes['model'].firstChange) {
       const newValue = changes['model'].currentValue;
       if (this.control && this.control.value !== newValue) {
         this.control.setValue(newValue, { emitEvent: false });

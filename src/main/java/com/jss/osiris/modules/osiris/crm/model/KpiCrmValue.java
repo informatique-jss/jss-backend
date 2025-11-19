@@ -23,7 +23,7 @@ import jakarta.persistence.SequenceGenerator;
 public class KpiCrmValue implements Serializable, IId {
 
     @Id
-    @SequenceGenerator(name = "kpi_value_sequence", sequenceName = "kpi_value_sequence", allocationSize = 1)
+    @SequenceGenerator(name = "kpi_value_sequence", sequenceName = "kpi_value_sequence", allocationSize = 50)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "kpi_value_sequence")
     private Integer id;
 

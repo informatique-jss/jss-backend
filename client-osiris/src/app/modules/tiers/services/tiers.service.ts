@@ -18,6 +18,8 @@ export class TiersService extends AppRestService<Tiers> {
   selectedTiers: TiersDto[] = [];
   selectedTiersUnique: TiersDto | undefined;
   selectedTiersUniqueChange: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  selectedKpiStartDate: Date | undefined;
+  selectedKpiEndDate: Date | undefined;
 
 
   getCurrentSelectedTiers() {
@@ -40,6 +42,28 @@ export class TiersService extends AppRestService<Tiers> {
 
   getSelectedTiersUniqueChangeEvent() {
     return this.selectedTiersUniqueChange.asObservable();
+  }
+
+  setSelectedKpiStartDate(date: Date) {
+    this.selectedKpiStartDate = date;
+  }
+
+  getSelectedKpiStartDate() {
+    return this.selectedKpiStartDate;
+  }
+
+  setSelectedKpiEndDate(date: Date) {
+    this.selectedKpiEndDate = date;
+  }
+
+  getSelectedKpiEndDate() {
+    return this.selectedKpiEndDate;
+  }
+
+  clearKpiSelection() {
+    this.selectedKpiStartDate = undefined;
+    this.selectedKpiEndDate = undefined;
+    this.setCurrentSelectedTiers([]);
   }
 
   setSelectedTiersUnique(tiers: TiersDto) {

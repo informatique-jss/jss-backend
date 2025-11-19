@@ -35,7 +35,7 @@ public class KpiCrmFacade {
 
     @Transactional(rollbackFor = Exception.class)
     public BigDecimal getAggregateValuesForTiersList(String kpiCrmKey, LocalDate startDate,
-            LocalDate endDate, List<Integer> tiersIds, boolean isAllTiers) {
+            LocalDate endDate, Integer salesEmployeeId, List<Integer> tiersIds, boolean isAllTiers) {
         KpiCrm kpiCrm = kpiCrmService.getKpiCrmByCode(kpiCrmKey);
         List<Tiers> outTiers = new ArrayList<Tiers>();
         if (tiersIds != null)
@@ -43,26 +43,29 @@ public class KpiCrmFacade {
                 outTiers.add(tiersService.getTiers(tiersId));
             }
 
-        return kpiCrmValueService.getAggregateValuesForTiersList(kpiCrm, startDate, endDate, outTiers, isAllTiers);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public KpiCrmValuePayload getKpiCrmValuePayloadAggregatedByTiersAndDate(String kpiCrmKey, LocalDate startDate,
-            LocalDate endDate, List<Integer> tiersIds, boolean isAllTiers) {
-        KpiCrm kpiCrm = kpiCrmService.getKpiCrmByCode(kpiCrmKey);
-        List<Tiers> outTiers = new ArrayList<Tiers>();
-        if (tiersIds != null)
-            for (Integer tiersId : tiersIds) {
-                outTiers.add(tiersService.getTiers(tiersId));
-            }
-
-        return kpiCrmValueService.getKpiCrmValuePayloadAggregatedByTiersAndDate(kpiCrm, startDate, endDate, outTiers,
+        return kpiCrmValueService.getAggregateValuesForTiersList(kpiCrm, startDate, endDate, salesEmployeeId, outTiers,
                 isAllTiers);
     }
 
     @Transactional(rollbackFor = Exception.class)
+    public KpiCrmValuePayload getKpiCrmValuePayloadAggregatedByTiersAndDate(String kpiCrmKey, LocalDate startDate,
+            LocalDate endDate, Integer salesEmployeeId, List<Integer> tiersIds, boolean isAllTiers,
+            boolean aggregateResponsable) {
+        KpiCrm kpiCrm = kpiCrmService.getKpiCrmByCode(kpiCrmKey);
+        List<Tiers> outTiers = new ArrayList<Tiers>();
+        if (tiersIds != null)
+            for (Integer tiersId : tiersIds) {
+                outTiers.add(tiersService.getTiers(tiersId));
+            }
+
+        return kpiCrmValueService.getKpiCrmValuePayloadAggregatedByTiersAndDate(kpiCrm, startDate, endDate,
+                salesEmployeeId, outTiers,
+                isAllTiers, aggregateResponsable);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
     public BigDecimal getAggregateValuesForResponsableList(String kpiCrmKey, LocalDate startDate,
-            LocalDate endDate, List<Integer> responsableIds, boolean isAllResponsable) {
+            LocalDate endDate, Integer salesEmployeeId, List<Integer> responsableIds, boolean isAllResponsable) {
         KpiCrm kpiCrm = kpiCrmService.getKpiCrmByCode(kpiCrmKey);
         List<Responsable> outResponsables = new ArrayList<Responsable>();
         if (responsableIds != null)
@@ -70,13 +73,15 @@ public class KpiCrmFacade {
                 outResponsables.add(responsableService.getResponsable(responsableId));
             }
 
-        return kpiCrmValueService.getAggregateValuesForResponsableList(kpiCrm, startDate, endDate, outResponsables,
+        return kpiCrmValueService.getAggregateValuesForResponsableList(kpiCrm, startDate, endDate, salesEmployeeId,
+                outResponsables,
                 isAllResponsable);
     }
 
     @Transactional(rollbackFor = Exception.class)
     public KpiCrmValuePayload getKpiCrmValuePayloadAggregatedByResponsableAndDate(String kpiCrmKey, LocalDate startDate,
-            LocalDate endDate, List<Integer> responsableIds, boolean isAllResponsable) {
+            LocalDate endDate, Integer salesEmployeeId, List<Integer> responsableIds, boolean isAllResponsable,
+            boolean aggregateResponsable) {
         KpiCrm kpiCrm = kpiCrmService.getKpiCrmByCode(kpiCrmKey);
         List<Responsable> outResponsable = new ArrayList<Responsable>();
         if (responsableIds != null)
@@ -85,8 +90,9 @@ public class KpiCrmFacade {
             }
 
         return kpiCrmValueService.getKpiCrmValuePayloadAggregatedByResponsableAndDate(kpiCrm, startDate, endDate,
+                salesEmployeeId,
                 outResponsable,
-                isAllResponsable);
+                isAllResponsable, aggregateResponsable);
     }
 
 }

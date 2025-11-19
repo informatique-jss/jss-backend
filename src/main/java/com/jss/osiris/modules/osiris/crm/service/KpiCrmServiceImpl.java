@@ -9,6 +9,7 @@ import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
@@ -19,7 +20,9 @@ import com.jss.osiris.modules.osiris.crm.model.KpiCrmValue;
 import com.jss.osiris.modules.osiris.crm.repository.KpiCrmRepository;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.FlushModeType;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 
 @Service
 public class KpiCrmServiceImpl implements KpiCrmService {
@@ -84,6 +87,7 @@ public class KpiCrmServiceImpl implements KpiCrmService {
      * @throws OsirisException
      */
     @Override
+    @Transactional
     public void computeKpiCrm(Integer kpiId) throws OsirisException {
         KpiCrm kpiCrm = getKpiCrm(kpiId);
         IKpiThread kpiThread = getKpiThread(kpiCrm);
@@ -149,10 +153,11 @@ public class KpiCrmServiceImpl implements KpiCrmService {
         LocalDate startRange = LocalDate.of(year, month, 1);
         LocalDate endRange = startRange.plusMonths(1);
 
-        em.createNativeQuery(
+        Query q = em.createNativeQuery(
                 "CREATE TABLE IF NOT EXISTS " + tableName + " PARTITION OF " + tableIdPartitionName
-                        + " FOR VALUES FROM ('" + startRange + "') TO ('" + endRange + "');")
-                .executeUpdate();
+                        + " FOR VALUES FROM ('" + startRange + "') TO ('" + endRange + "');");
+        q.setFlushMode(FlushModeType.COMMIT);
+        q.executeUpdate();
     }
 
 }

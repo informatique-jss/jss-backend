@@ -1,7 +1,6 @@
-import { Component, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NgIcon } from '@ng-icons/core';
 import { CountUpModule } from 'ngx-countup';
-import { BehaviorSubject } from 'rxjs';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { KpiCrm } from '../../../main/model/KpiCrm';
 
@@ -20,7 +19,7 @@ export class KpiWidgetComponent implements OnInit {
   @Input() valueN2: number = 0;
   @Input() evolution: number = 0;
   @Input() evolutionIsGood: boolean = false;
-  @Output() onDisplayDetails: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  @Output() onDisplayDetails: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   constructor() { }
 

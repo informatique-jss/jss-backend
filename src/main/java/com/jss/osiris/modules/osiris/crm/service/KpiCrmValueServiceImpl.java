@@ -54,7 +54,7 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
     }
 
     private BigDecimal getKpiCrmValueAggregated(KpiCrm kpiCrm, List<Tiers> tiersList,
-            LocalDate startDate, LocalDate endDate, boolean isAllTiers) {
+            LocalDate startDate, LocalDate endDate, Integer salesEmployeeId, boolean isAllTiers) {
         IKpiThread kpi = kpiCrmService.getKpiThread(kpiCrm);
         if (kpi != null) {
 
@@ -69,6 +69,7 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
                         %s
                         and v.value_date<=:endDate
                         and v.id_kpi=:kpiCrm
+                        and (:salesEmployeeId=0 or r.id_commercial = :salesEmployeeId)
                         group by t.id, v.value_date)
                       """.formatted(getSqlAggregateMethod(kpi.getAggregateTypeForTimePeriod()),
                     getSqlAggregateMethod(kpi.getAggregateTypeForResponsable()),
@@ -82,6 +83,7 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
                 q.setParameter("tiersList", tiersList.stream().map(t -> t.getId()).toList());
             q.setParameter("startDate", startDate);
             q.setParameter("endDate", endDate);
+            q.setParameter("salesEmployeeId", salesEmployeeId != null ? salesEmployeeId : 0);
             q.setParameter("kpiCrm", kpiCrm.getId());
 
             return q.getSingleResult().getValue();
@@ -91,7 +93,7 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
     }
 
     private List<KpiCrmValueAggregatedByTiers> getKpiCrmValueAggregatedByTiers(KpiCrm kpiCrm, List<Tiers> tiersList,
-            LocalDate startDate, LocalDate endDate) {
+            LocalDate startDate, LocalDate endDate, Integer salesEmployeeId) {
         IKpiThread kpi = kpiCrmService.getKpiThread(kpiCrm);
         if (kpi != null) {
 
@@ -105,6 +107,7 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
                         where r.id_tiers in (:tiersList)
                         and v.value_date>=:startDate
                         and v.value_date<=:endDate
+                        and (:salesEmployeeId=0 or r.id_commercial = :salesEmployeeId)
                         and v.id_kpi=:kpiCrm
                         group by t.id, v.value_date)
                     group by id
@@ -118,6 +121,7 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
             q.setParameter("tiersList", tiersList.stream().map(t -> t.getId()).toList());
             q.setParameter("startDate", startDate);
             q.setParameter("endDate", endDate);
+            q.setParameter("salesEmployeeId", salesEmployeeId != null ? salesEmployeeId : 0);
             q.setParameter("kpiCrm", kpiCrm.getId());
 
             return q.getResultList();
@@ -127,7 +131,8 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
     }
 
     private KpiCrmValuePayload getKpiCrmValuePayloadAggregatedByTiersAndDate(KpiCrm kpiCrm, List<Tiers> tiersList,
-            LocalDate startDate, LocalDate endDate, boolean isAllTiers) {
+            LocalDate startDate, LocalDate endDate, Integer salesEmployeeId, boolean isAllTiers,
+            boolean aggregateResponsable) {
         IKpiThread kpi = kpiCrmService.getKpiThread(kpiCrm);
         if (kpi != null) {
 
@@ -139,11 +144,17 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
                        where v.value_date>=:startDate
                        %s
                        and v.value_date<=:endDate
+                       and (:salesEmployeeId=0 or r.id_commercial = :salesEmployeeId)
                        and v.id_kpi=:kpiCrm
                        group by t.id, v.value_date
                      """.formatted(getSqlAggregateMethod(kpi.getAggregateTypeForTimePeriod()),
                     isAllTiers ? "" : " and r.id_tiers in (:tiersList) ");
             ;
+
+            if (aggregateResponsable) {
+                sql = ("select value_date, %s(value) as value from (" + sql + ") group by value_date")
+                        .formatted(getSqlAggregateMethod(kpi.getAggregateTypeForResponsable()));
+            }
 
             String finalSql = String.format("""
                     select
@@ -168,6 +179,7 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
                 q.setParameter("tiersList", tiersList.stream().map(t -> t.getId()).toList());
             q.setParameter("startDate", startDate);
             q.setParameter("endDate", endDate);
+            q.setParameter("salesEmployeeId", salesEmployeeId != null ? salesEmployeeId : 0);
             q.setParameter("kpiCrm", kpiCrm.getId());
 
             return q.getSingleResult();
@@ -186,32 +198,34 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
 
     @Override
     public List<KpiCrmValueAggregatedByResponsable> getAggregateValuesForResponsableListByResponsable(KpiCrm kpiCrm,
-            LocalDate startDate,
-            LocalDate endDate, List<Responsable> responsableList) {
+            LocalDate startDate, LocalDate endDate, Integer salesEmployeeId, List<Responsable> responsableList) {
         if (kpiCrm != null)
-            return getKpiCrmValueAggregatedByResponsable(kpiCrm, responsableList, startDate, endDate);
+            return getKpiCrmValueAggregatedByResponsable(kpiCrm, responsableList, startDate, endDate, salesEmployeeId);
         return null;
     }
 
     @Override
     public BigDecimal getAggregateValuesForResponsableList(KpiCrm kpiCrm, LocalDate startDate,
-            LocalDate endDate, List<Responsable> responsableList, boolean isAllTiers) {
+            LocalDate endDate, Integer salesEmployeeId, List<Responsable> responsableList, boolean isAllTiers) {
         if (kpiCrm != null)
-            return getKpiCrmValueAggregatedbyResponsable(kpiCrm, responsableList, startDate, endDate, isAllTiers);
+            return getKpiCrmValueAggregatedbyResponsable(kpiCrm, responsableList, startDate, endDate, salesEmployeeId,
+                    isAllTiers);
         return null;
     }
 
     @Override
     public KpiCrmValuePayload getKpiCrmValuePayloadAggregatedByResponsableAndDate(KpiCrm kpiCrm, LocalDate startDate,
-            LocalDate endDate, List<Responsable> responsableList, boolean isAllTiers) {
+            LocalDate endDate, Integer salesEmployeeId, List<Responsable> responsableList, boolean isAllTiers,
+            boolean aggregateResponsable) {
         if (kpiCrm != null)
             return getKpiCrmValuePayloadAggregatedByResponsableAndDate(kpiCrm, responsableList, startDate, endDate,
-                    isAllTiers);
+                    salesEmployeeId,
+                    isAllTiers, aggregateResponsable);
         return null;
     }
 
     private BigDecimal getKpiCrmValueAggregatedbyResponsable(KpiCrm kpiCrm, List<Responsable> responsableList,
-            LocalDate startDate, LocalDate endDate, boolean isAllTiers) {
+            LocalDate startDate, LocalDate endDate, Integer salesEmployeeId, boolean isAllTiers) {
         IKpiThread kpi = kpiCrmService.getKpiThread(kpiCrm);
         if (kpi != null) {
 
@@ -224,6 +238,7 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
                         where v.value_date>=:startDate
                         %s
                         and v.value_date<=:endDate
+                        and (:salesEmployeeId=0 or r.id_commercial = :salesEmployeeId)
                         and v.id_kpi=:kpiCrm
                         group by r.id, v.value_date)
                       """.formatted(getSqlAggregateMethod(kpi.getAggregateTypeForTimePeriod()),
@@ -238,6 +253,7 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
                 q.setParameter("responsableList", responsableList.stream().map(t -> t.getId()).toList());
             q.setParameter("startDate", startDate);
             q.setParameter("endDate", endDate);
+            q.setParameter("salesEmployeeId", salesEmployeeId != null ? salesEmployeeId : 0);
             q.setParameter("kpiCrm", kpiCrm.getId());
 
             return q.getSingleResult().getValue();
@@ -247,8 +263,7 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
     }
 
     private List<KpiCrmValueAggregatedByResponsable> getKpiCrmValueAggregatedByResponsable(KpiCrm kpiCrm,
-            List<Responsable> responsableList,
-            LocalDate startDate, LocalDate endDate) {
+            List<Responsable> responsableList, LocalDate startDate, LocalDate endDate, Integer salesEmployeeId) {
         IKpiThread kpi = kpiCrmService.getKpiThread(kpiCrm);
         if (kpi != null) {
 
@@ -262,6 +277,7 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
                         and v.value_date>=:startDate
                         and v.value_date<=:endDate
                         and v.id_kpi=:kpiCrm
+                        and (:salesEmployeeId=0 or r.id_commercial = :salesEmployeeId)
                         group by r.id, v.value_date)
                     group by id
                       """.formatted(getSqlAggregateMethod(kpi.getAggregateTypeForTimePeriod()),
@@ -274,6 +290,7 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
             q.setParameter("responsableList", responsableList.stream().map(t -> t.getId()).toList());
             q.setParameter("startDate", startDate);
             q.setParameter("endDate", endDate);
+            q.setParameter("salesEmployeeId", salesEmployeeId != null ? salesEmployeeId : 0);
             q.setParameter("kpiCrm", kpiCrm.getId());
 
             return q.getResultList();
@@ -283,8 +300,8 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
     }
 
     private KpiCrmValuePayload getKpiCrmValuePayloadAggregatedByResponsableAndDate(KpiCrm kpiCrm,
-            List<Responsable> responsableList,
-            LocalDate startDate, LocalDate endDate, boolean isAllTiers) {
+            List<Responsable> responsableList, LocalDate startDate, LocalDate endDate, Integer salesEmployeeId,
+            boolean isAllTiers, boolean aggregateResponsable) {
         IKpiThread kpi = kpiCrmService.getKpiThread(kpiCrm);
         if (kpi != null) {
 
@@ -296,10 +313,16 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
                        %s
                        and v.value_date<=:endDate
                        and v.id_kpi=:kpiCrm
+                       and (:salesEmployeeId=0 or r.id_commercial = :salesEmployeeId)
                        group by r.id, v.value_date
                      """.formatted(getSqlAggregateMethod(kpi.getAggregateTypeForTimePeriod()),
                     isAllTiers ? "" : " and r.id in (:responsableList) ");
             ;
+
+            if (aggregateResponsable) {
+                sql = ("select value_date, %s(value) as value from (" + sql + ") group by value_date")
+                        .formatted(getSqlAggregateMethod(kpi.getAggregateTypeForResponsable()));
+            }
 
             String finalSql = String.format("""
                     select
@@ -324,6 +347,7 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
                 q.setParameter("responsableList", responsableList.stream().map(t -> t.getId()).toList());
             q.setParameter("startDate", startDate);
             q.setParameter("endDate", endDate);
+            q.setParameter("salesEmployeeId", salesEmployeeId != null ? salesEmployeeId : 0);
             q.setParameter("kpiCrm", kpiCrm.getId());
 
             return q.getSingleResult();
@@ -334,25 +358,27 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
 
     @Override
     public List<KpiCrmValueAggregatedByTiers> getAggregateValuesForTiersListByTiers(KpiCrm kpiCrm, LocalDate startDate,
-            LocalDate endDate, List<Tiers> tiersList) {
+            LocalDate endDate, Integer salesEmployeeId, List<Tiers> tiersList) {
         if (kpiCrm != null)
-            return getKpiCrmValueAggregatedByTiers(kpiCrm, tiersList, startDate, endDate);
+            return getKpiCrmValueAggregatedByTiers(kpiCrm, tiersList, startDate, endDate, salesEmployeeId);
         return null;
     }
 
     @Override
     public BigDecimal getAggregateValuesForTiersList(KpiCrm kpiCrm, LocalDate startDate,
-            LocalDate endDate, List<Tiers> tiersList, boolean isAllTiers) {
+            LocalDate endDate, Integer salesEmployeeId, List<Tiers> tiersList, boolean isAllTiers) {
         if (kpiCrm != null)
-            return getKpiCrmValueAggregated(kpiCrm, tiersList, startDate, endDate, isAllTiers);
+            return getKpiCrmValueAggregated(kpiCrm, tiersList, startDate, endDate, salesEmployeeId, isAllTiers);
         return null;
     }
 
     @Override
     public KpiCrmValuePayload getKpiCrmValuePayloadAggregatedByTiersAndDate(KpiCrm kpiCrm, LocalDate startDate,
-            LocalDate endDate, List<Tiers> tiersList, boolean isAllTiers) {
+            LocalDate endDate, Integer salesEmployeeId, List<Tiers> tiersList, boolean isAllTiers,
+            boolean aggregateResponsable) {
         if (kpiCrm != null)
-            return getKpiCrmValuePayloadAggregatedByTiersAndDate(kpiCrm, tiersList, startDate, endDate, isAllTiers);
+            return getKpiCrmValuePayloadAggregatedByTiersAndDate(kpiCrm, tiersList, startDate, endDate, salesEmployeeId,
+                    isAllTiers, aggregateResponsable);
         return null;
     }
 }

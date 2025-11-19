@@ -95,7 +95,10 @@ export class TanstackTableComponent<T extends IId> implements OnInit {
   }
 
   onToggleAllPageRows(checked: boolean) {
-    this.table.toggleAllPageRowsSelected(checked);
+    if (this.searchValue && this.searchValue.length > 0)
+      this.table.toggleAllPageRowsSelected(checked);
+    else
+      this.table.toggleAllRowsSelected(checked);
     this.cdr.detectChanges();
   }
 

@@ -450,7 +450,9 @@ public class TiersServiceImpl implements TiersService {
 
             if (kpi.getMaxValue() != null || kpi.getMinValue() != null) {
                 List<KpiCrmValueAggregatedByTiers> values = kpiCrmValueService.getAggregateValuesForTiersListByTiers(
-                        kpiCrm, tiersSearch.getStartDateKpis(), tiersSearch.getEndDateKpis(), tiersFound);
+                        kpiCrm, tiersSearch.getStartDateKpis(), tiersSearch.getEndDateKpis(),
+                        tiersSearch.getSalesEmployee().getId(),
+                        tiersFound);
                 if (values != null) {
                     for (KpiCrmValueAggregatedByTiers aggregatedValue : values) {
                         if (kpi.getMaxValue() != null

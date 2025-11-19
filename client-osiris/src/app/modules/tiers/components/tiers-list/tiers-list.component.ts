@@ -22,6 +22,7 @@ import { RestUserPreferenceService } from '../../../main/services/rest.user.pref
 import { GenericFormComponent } from '../../../miscellaneous/forms/components/generic-form/generic-form.component';
 import { TiersDto } from '../../model/TiersDto';
 import { TiersSearch } from '../../model/TiersSearch';
+import { ResponsableService } from '../../services/responsable.service';
 import { TiersService } from '../../services/tiers.service';
 
 @Component({
@@ -45,7 +46,8 @@ export class TiersListComponent extends GenericListComponent<TiersDto, TiersSear
     private restUserPreferenceService2: RestUserPreferenceService,
     private router: Router,
     private tiersService: TiersService,
-    private kpiCrmService: KpiCrmService
+    private kpiCrmService: KpiCrmService,
+    private responsableService: ResponsableService
   ) {
     super(offcanvasService2, formBuilder2, appService2, restUserPreferenceService2);
 
@@ -79,6 +81,9 @@ export class TiersListComponent extends GenericListComponent<TiersDto, TiersSear
 
     this.eventOnClickOpenKpisAction.subscribe((row: Row<TiersDto>[]) => {
       this.tiersService.setCurrentSelectedTiers(row.map(r => r.original));
+      this.tiersService.setSelectedKpiStartDate(this.searchModel.startDateKpis);
+      this.tiersService.setSelectedKpiEndDate(this.searchModel.endDateKpis);
+      this.responsableService.clearKpiSelection()
       this.router.navigate(['tiers/crm/kpi/selection']);
     });
 
@@ -193,7 +198,32 @@ export class TiersListComponent extends GenericListComponent<TiersDto, TiersSear
       }
     })
     columns.push({
+      accessorKey: 'tiersCategory', header: 'Catégorie', enableSorting: true, cell: info => info.getValue(), meta: {
+        eventOnDoubleClick: this.eventOnClickOpenTiers
+      }
+    })
+    columns.push({
       accessorKey: 'denomination', header: 'Dénomination', enableSorting: true, cell: info => info.getValue(), meta: {
+        eventOnDoubleClick: this.eventOnClickOpenTiers
+      }
+    })
+    columns.push({
+      accessorKey: 'salesEmployee', header: 'Commercial', enableSorting: true, cell: info => info.getValue(), meta: {
+        eventOnDoubleClick: this.eventOnClickOpenTiers
+      }
+    })
+    columns.push({
+      accessorKey: 'formalisteEmployee', header: 'Formaliste', enableSorting: true, cell: info => info.getValue(), meta: {
+        eventOnDoubleClick: this.eventOnClickOpenTiers
+      }
+    })
+    columns.push({
+      accessorKey: 'address', header: 'Adresse', enableSorting: true, cell: info => info.getValue(), meta: {
+        eventOnDoubleClick: this.eventOnClickOpenTiers
+      }
+    })
+    columns.push({
+      accessorKey: 'isNewTiers', header: 'Nouveau tiers ?', enableSorting: true, cell: info => info.getValue(), meta: {
         eventOnDoubleClick: this.eventOnClickOpenTiers
       }
     })
@@ -201,7 +231,7 @@ export class TiersListComponent extends GenericListComponent<TiersDto, TiersSear
     if (this.data && this.data[0] && this.data[0].kpiValues) {
       for (let key in this.data[0].kpiValues) {
         columns.push({
-          accessorFn: (originalRow: TiersDto, index: number) => { return originalRow.kpiValues[key] + "" }, header: key, enableSorting: true, cell: info => info.getValue(), meta: {
+          accessorFn: (originalRow: TiersDto, index: number) => { return originalRow.kpiValues[key] }, header: key, enableSorting: true, cell: info => info.getValue(), meta: {
             eventOnDoubleClick: this.eventOnClickOpenTiers
           }
         })
