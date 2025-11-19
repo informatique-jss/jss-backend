@@ -76,13 +76,6 @@ public interface CustomerOrderService {
 
         public List<CustomerOrder> findCustomerOrderByResponsable(Responsable responsable);
 
-        public List<CustomerOrder> getCustomerOrderByResponsableAndStatusAndDates(Responsable responsable,
-                        CustomerOrderStatus customerOrderStatus, Boolean isReccuring,
-                        LocalDateTime startOfDay, LocalDateTime endOfDay);
-
-        public List<CustomerOrder> getOrdersByResponsablesAndDates(List<Responsable> responsables,
-                        LocalDateTime startOfDay, LocalDateTime endOfDay);
-
         public List<OrderingSearchResult> searchOrders(OrderingSearch orderingSearch);
 
         public List<IOrderingSearchTaggedResult> searchOrdersTagged(OrderingSearchTagged orderingSearchResult);
@@ -232,4 +225,7 @@ public interface CustomerOrderService {
         public void switchResponsable(CustomerOrder order, Responsable responsable);
 
         public Integer getComplexity(CustomerOrder customerOrder) throws OsirisException;
+
+        List<CustomerOrder> getByCreatedDateBetweenAndStatus(LocalDateTime startDate, LocalDateTime endDate,
+                        CustomerOrderStatus customerOrderStatus);
 }

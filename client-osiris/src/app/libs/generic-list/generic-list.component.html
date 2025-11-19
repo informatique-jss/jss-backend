@@ -1,0 +1,89 @@
+<div class="container-fluid">
+  <app-page-title title="Liste des tiers" />
+  <div class="row g-1">
+    <div class="col-12">
+      <div class="card  ">
+        <div class="card-body p-0">
+          @if(data && columns && actions){
+          <tanstack-table [data]="data" [columns]="columns" className="" [actions]="actions" />
+          }
+          @else {
+          <div class="d-flex justify-content-center align-items-center text-secondary empty-message">
+            <ng-icon name="tablerSearch" class="fs-xl" /><span>
+              Modifiez vos filtres dans le panneau de droite pour voir les résultats.
+            </span>
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="asidebar-button d-flex">
+  <button class="btn btn-danger btn-icon rounded-end-0" (click)="open(smallSidebar)">
+    <ng-icon name="tablerSearch" class="fs-xl" />
+  </button>
+</div>
+
+<ng-template #smallSidebar let-offcanvas>
+  <ngx-simplebar style="height: 100%">
+    <div class="p-0 h-100">
+      <ng-container [ngTemplateOutlet]="content"></ng-container>
+    </div>
+  </ngx-simplebar>
+</ng-template>
+
+<!-- Content of sidebar -->
+<ng-template #content>
+  <form class="row g-3 needs-validation" novalidate [formGroup]="searchForm" (ngSubmit)="search(smallSidebar)">
+    <div class="d-flex flex-column" style="height: 100vh;">
+      <ul ngbNav #nav="ngbNav" [(activeId)]="activeFilterPanelId" [destroyOnHide]="false"
+        class="nav nav-tabs nav-justified nav-bordered nav-bordered-primary mb-0">
+        @for (searchTab of searchTabs; track searchTab.label; let index = $index) {
+        <li [ngbNavItem]="index">
+          <a href="javascript:void(0);" ngbNavLink>
+            <p class="d-inline-flex m-0 align-items-center gap-1">
+              <ng-icon [name]="searchTab.icon" class="fs-xl me-md-1" />
+              <span class="d-none d-md-inline-block">{{searchTab.label}}</span>
+            </p>
+          </a>
+          <ng-template ngbNavContent>
+            @for (form of searchTab.forms; track form.accessorKey.toString()+(form.accessorIndex?form.accessorIndex:"")
+            ) {
+            <div class="col-12 mt-2 mb-2">
+              @if(form.accessorIndex){
+              <generic-form [formGroup]="searchForm" [(model)]="searchModel[form.accessorKey][form.accessorIndex!]"
+                [label]="form.form.label" [type]="form.form.type" [inputType]="form.form.inputType"
+                [selectType]="form.form.selectType" [validators]="form.form.validators"
+                [errorMessages]="form.form.errorMessages"></generic-form>
+              }@else{
+              <generic-form [formGroup]="searchForm" [(model)]="searchModel[form.accessorKey]" [label]="form.form.label"
+                [type]="form.form.type" [inputType]="form.form.inputType" [selectType]="form.form.selectType"
+                [validators]="form.form.validators" [errorMessages]="form.form.errorMessages"></generic-form>
+              }
+            </div>
+            <hr />
+            }
+          </ng-template>
+        </li>
+        }
+      </ul>
+      <div class="flex-grow-1 overflow-auto p-3">
+        <div class="tab-content" [ngbNavOutlet]="nav"></div>
+      </div>
+      <div class="card   mb-0 d-none d-lg-flex rounded-end-0 mt-auto">
+        <div class="card-body d-flex align-items-center gap-2">
+          <button class="btn btn-primary w-100 btn-new-event" type="submit">
+            <ng-icon name="tablerSearch" class="me-2" />
+            Rechercher
+          </button>
+          <button type="button" class="btn btn-danger btn-icon" (click)="clearFilters()" title="Effacer la recherche">
+            <ng-icon name="tablerFilterOff"></ng-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</ng-template>

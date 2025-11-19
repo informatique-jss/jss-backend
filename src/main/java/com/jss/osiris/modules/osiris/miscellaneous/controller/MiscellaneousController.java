@@ -39,8 +39,6 @@ import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
 import com.jss.osiris.modules.myjss.wordpress.service.CategoryService;
 import com.jss.osiris.modules.myjss.wordpress.service.PostService;
 import com.jss.osiris.modules.myjss.wordpress.service.PublishingDepartmentService;
-import com.jss.osiris.modules.osiris.crm.model.KpiCrm;
-import com.jss.osiris.modules.osiris.crm.service.KpiCrmService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
@@ -274,9 +272,6 @@ public class MiscellaneousController {
 
     @Autowired
     PublishingDepartmentService publishingDepartmentService;
-
-    @Autowired
-    KpiCrmService kpiCrmService;
 
     @GetMapping(inputEntryPoint + "/categories")
     public ResponseEntity<List<Category>> getCategories() {
@@ -1592,11 +1587,5 @@ public class MiscellaneousController {
         }
 
         return new ResponseEntity<List<Provider>>(providers, HttpStatus.OK);
-    }
-
-    @GetMapping(inputEntryPoint + "/kpis-crm")
-    public ResponseEntity<List<KpiCrm>> getCustomerMailByConfrere()
-            throws OsirisValidationException, OsirisException {
-        return new ResponseEntity<List<KpiCrm>>(kpiCrmService.getKpiCrms(), HttpStatus.OK);
     }
 }

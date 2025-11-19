@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
+import { Toast } from '../../../libs/toast/Toast';
 
 @Injectable({
   providedIn: 'root'
@@ -9,6 +10,9 @@ export class AppService {
 
   private loadingSpinner = new BehaviorSubject<boolean>(false);
   readonly loadingSpinnerObservable = this.loadingSpinner.asObservable();
+
+  toasts: Toast[] = [];
+  private toastSource = new BehaviorSubject<Toast[]>(this.toasts);
 
   constructor(
     private router: Router,
@@ -22,8 +26,17 @@ export class AppService {
     this.loadingSpinner.next(false);
   }
 
-  displayToast(message: string, isError: boolean, title: string, delayInMili: number) {
-    // TODO
+  displayToast(message: string, isError: boolean, title: string, delayInMili?: number) {
+    if (!delayInMili) delayInMili = 5000;
+    let newToast = { isError: isError, message: message, title: title, delay: delayInMili } as Toast;
+    this.toasts.push(newToast);
+    this.toastSource.next(this.toasts);
+    if (this.toasts.indexOf(newToast) >= 0)
+      setTimeout(() => {
+        this.toasts.splice(this.toasts.indexOf(newToast), 1);
+        this.toastSource.next(this.toasts);
+      }
+        , delayInMili);
   }
 
   /**

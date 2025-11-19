@@ -1,0 +1,33 @@
+import { Component, Input, OnInit, Output } from '@angular/core';
+import { NgIcon } from '@ng-icons/core';
+import { CountUpModule } from 'ngx-countup';
+import { BehaviorSubject } from 'rxjs';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { KpiCrm } from '../../../main/model/KpiCrm';
+
+@Component({
+  selector: 'kpi-widget',
+  templateUrl: './kpi-widget.component.html',
+  styleUrls: ['./kpi-widget.component.css'],
+  standalone: true,
+  imports: [...SHARED_IMPORTS, CountUpModule, NgIcon]
+})
+export class KpiWidgetComponent implements OnInit {
+
+  @Input() kpiCrm: KpiCrm | undefined;
+  @Input() value: number = 0;
+  @Input() valueN1: number = 0;
+  @Input() valueN2: number = 0;
+  @Input() evolution: number = 0;
+  @Input() evolutionIsGood: boolean = false;
+  @Output() onDisplayDetails: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
+  constructor() { }
+
+  ngOnInit() {
+  }
+
+  displayDetails() {
+    this.onDisplayDetails.next(true);
+  }
+}

@@ -159,4 +159,22 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         @Param("withNonNullTurnover") Boolean withNonNullTurnover,
                         @Param("isNewTiers") Boolean isNewTiers);
 
+        @Query("""
+                        select t
+                        from Tiers t
+                        left join t.mails m
+                        where (:salesEmployeeId = 0 or t.salesEmployee.id = :salesEmployeeId)
+                        and (:mail = '' or m.mail = :mail)
+                        and (
+                        :label = ''
+                        or upper(coalesce(t.denomination, concat(t.firstname, t.lastname)))
+                                like concat('%', upper(:label), '%')
+                        )
+                        and (:isNewTiers = false or t.isNewTiers = true)
+                        """)
+        List<Tiers> searchForTiers(@Param("salesEmployeeId") Integer salesEmployeeId,
+                        @Param("mail") String mail,
+                        @Param("label") String label,
+                        @Param("isNewTiers") Boolean isNewTiers);
+
 }

@@ -1,8 +1,10 @@
 package com.jss.osiris.modules.osiris.tiers.service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,6 +26,10 @@ import com.jss.osiris.libs.search.service.IndexEntityService;
 import com.jss.osiris.libs.search.service.SearchService;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccountTrouple;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingAccountService;
+import com.jss.osiris.modules.osiris.crm.model.KpiCrm;
+import com.jss.osiris.modules.osiris.crm.model.KpiCrmValueAggregatedByTiers;
+import com.jss.osiris.modules.osiris.crm.service.KpiCrmService;
+import com.jss.osiris.modules.osiris.crm.service.KpiCrmValueService;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceSearch;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceSearchResult;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
@@ -38,6 +44,7 @@ import com.jss.osiris.modules.osiris.quotation.model.QuotationSearchResult;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
 import com.jss.osiris.modules.osiris.tiers.model.ITiersSearchResult;
+import com.jss.osiris.modules.osiris.tiers.model.KpiSearch;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 import com.jss.osiris.modules.osiris.tiers.model.TiersSearch;
@@ -84,6 +91,12 @@ public class TiersServiceImpl implements TiersService {
 
     @Autowired
     IndexEntityService indexEntityService;
+
+    @Autowired
+    KpiCrmValueService kpiCrmValueService;
+
+    @Autowired
+    KpiCrmService kpiCrmService;
 
     @Override
     @Transactional
@@ -406,6 +419,66 @@ public class TiersServiceImpl implements TiersService {
                         constantService.getInvoiceStatusSend().getId()),
                 this.constantService.getDocumentTypeBilling().getId(), tiersSearch.getWithNonNullTurnover(),
                 tiersSearch.getIsNewTiers());
+    }
+
+    @Override
+    public List<Tiers> searchForTiers(TiersSearch tiersSearch) throws OsirisException {
+        Integer salesEmployeeId = 0;
+        if (tiersSearch.getSalesEmployee() != null)
+            salesEmployeeId = tiersSearch.getSalesEmployee().getId();
+
+        if (tiersSearch.getMail() == null)
+            tiersSearch.setMail("");
+
+        if (tiersSearch.getLabel() == null)
+            tiersSearch.setLabel("");
+
+        if (tiersSearch.getIsNewTiers() == null)
+            tiersSearch.setIsNewTiers(false);
+
+        List<Tiers> tiersFound = tiersRepository.searchForTiers(salesEmployeeId, tiersSearch.getMail(),
+                tiersSearch.getLabel(),
+                tiersSearch.getIsNewTiers());
+
+        if (tiersSearch.getKpis() == null || tiersSearch.getKpis().size() == 0)
+            return tiersFound;
+
+        List<Integer> notKeepTiers = new ArrayList<Integer>();
+        for (KpiSearch kpi : tiersSearch.getKpis().values()) {
+            List<Integer> foundTiersForKpi = new ArrayList<Integer>();
+            KpiCrm kpiCrm = kpiCrmService.getKpiCrmByCode(kpi.getKey());
+
+            if (kpi.getMaxValue() != null || kpi.getMinValue() != null) {
+                List<KpiCrmValueAggregatedByTiers> values = kpiCrmValueService.getAggregateValuesForTiersListByTiers(
+                        kpiCrm, tiersSearch.getStartDateKpis(), tiersSearch.getEndDateKpis(), tiersFound);
+                if (values != null) {
+                    for (KpiCrmValueAggregatedByTiers aggregatedValue : values) {
+                        if (kpi.getMaxValue() != null
+                                && aggregatedValue.getValue().compareTo(new BigDecimal(kpi.getMaxValue())) > 0)
+                            notKeepTiers.add(aggregatedValue.getIdTiers());
+
+                        if (kpi.getMinValue() != null
+                                && aggregatedValue.getValue().compareTo(new BigDecimal(kpi.getMinValue())) < 0)
+                            notKeepTiers.add(aggregatedValue.getIdTiers());
+
+                        // Add Kpi value
+                        Tiers tiersToUpdate = tiersFound.stream()
+                                .filter(t -> t.getId().equals(aggregatedValue.getIdTiers())).findFirst().get();
+                        if (tiersToUpdate.getKpiValues() == null)
+                            tiersToUpdate.setKpiValues(new HashMap<String, BigDecimal>());
+                        tiersToUpdate.getKpiValues().put(kpiCrm.getLabel(), aggregatedValue.getValue());
+
+                        foundTiersForKpi.add(aggregatedValue.getIdTiers());
+                    }
+                }
+
+                // Exclude tiers with no kpi values
+                notKeepTiers.addAll(tiersFound.stream().filter(t -> !foundTiersForKpi.contains(t.getId()))
+                        .map(t -> t.getId()).toList());
+            }
+        }
+
+        return tiersFound.stream().filter(t -> !notKeepTiers.contains(t.getId())).toList();
     }
 
 }

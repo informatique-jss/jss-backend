@@ -39,9 +39,11 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentTypeService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ProviderService;
+import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.service.AffaireService;
+import com.jss.osiris.modules.osiris.tiers.facade.TiersFacade;
 import com.jss.osiris.modules.osiris.tiers.model.BillingClosureRecipientType;
 import com.jss.osiris.modules.osiris.tiers.model.BillingClosureType;
 import com.jss.osiris.modules.osiris.tiers.model.BillingLabelType;
@@ -51,6 +53,7 @@ import com.jss.osiris.modules.osiris.tiers.model.ITiersSearchResult;
 import com.jss.osiris.modules.osiris.tiers.model.PaymentDeadlineType;
 import com.jss.osiris.modules.osiris.tiers.model.RefundType;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
+import com.jss.osiris.modules.osiris.tiers.model.ResponsableSearch;
 import com.jss.osiris.modules.osiris.tiers.model.Rff;
 import com.jss.osiris.modules.osiris.tiers.model.RffFrequency;
 import com.jss.osiris.modules.osiris.tiers.model.RffSearch;
@@ -61,6 +64,8 @@ import com.jss.osiris.modules.osiris.tiers.model.TiersFollowup;
 import com.jss.osiris.modules.osiris.tiers.model.TiersFollowupType;
 import com.jss.osiris.modules.osiris.tiers.model.TiersSearch;
 import com.jss.osiris.modules.osiris.tiers.model.TiersType;
+import com.jss.osiris.modules.osiris.tiers.model.dto.ResponsableDto;
+import com.jss.osiris.modules.osiris.tiers.model.dto.TiersDto;
 import com.jss.osiris.modules.osiris.tiers.service.BillingClosureRecipientTypeService;
 import com.jss.osiris.modules.osiris.tiers.service.BillingClosureTypeService;
 import com.jss.osiris.modules.osiris.tiers.service.BillingLabelTypeService;
@@ -171,6 +176,9 @@ public class TiersController {
 
   @Autowired
   KpiCrmService kpiCrmService;
+
+  @Autowired
+  TiersFacade tiersFacade;
 
   @GetMapping(inputEntryPoint + "/rff-frequencies")
   public ResponseEntity<List<RffFrequency>> getRffFrequencies() {
@@ -638,5 +646,31 @@ public class TiersController {
 
     return new ResponseEntity<List<Responsable>>(
         responsableService.getResponsablesByTiers(tiersService.getTiers(idTiers)), HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/tiers/search")
+  public ResponseEntity<List<TiersDto>> searchTiers(@RequestBody TiersSearch tiersSearch)
+      throws OsirisException {
+
+    if (tiersSearch.getSalesEmployee() != null) {
+      Employee salesEmployee = employeeService.getEmployee(tiersSearch.getSalesEmployee().getId());
+      if (salesEmployee == null)
+        throw new OsirisValidationException("salesEmployee");
+    }
+
+    return new ResponseEntity<List<TiersDto>>(tiersFacade.searchTiers(tiersSearch), HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/responsables/search")
+  public ResponseEntity<List<ResponsableDto>> searchResponsable(@RequestBody ResponsableSearch responsableSearch)
+      throws OsirisException {
+
+    if (responsableSearch.getSalesEmployee() != null) {
+      Employee salesEmployee = employeeService.getEmployee(responsableSearch.getSalesEmployee().getId());
+      if (salesEmployee == null)
+        throw new OsirisValidationException("salesEmployee");
+    }
+
+    return new ResponseEntity<List<ResponsableDto>>(tiersFacade.searchResponsable(responsableSearch), HttpStatus.OK);
   }
 }

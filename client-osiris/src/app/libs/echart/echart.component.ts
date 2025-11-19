@@ -24,6 +24,7 @@ export class EchartComponent implements OnInit, OnDestroy {
   @Input() series: any[] | undefined;
   @Input() labelType: string = LABEL_TYPE_CATEGORY;
   @Input() title: string = "";
+  @Input() forceDisplayLegend: boolean = false;
   @Input() unit: string | undefined;
   @Output() chartInit = new EventEmitter<EChartsType>();
   @Output() categoryClicked = new EventEmitter<string>();
@@ -180,6 +181,8 @@ export class EchartComponent implements OnInit, OnDestroy {
 
     if (this.series)
       for (let serie of this.series as any) {
+        if (serie.data == null)
+          continue;
 
         serie.selectedMode = 'single';
         serie.emphasis = {
@@ -358,6 +361,9 @@ export class EchartComponent implements OnInit, OnDestroy {
     // Handle dimensions
     let computedSeries = [];
     for (let serie of this.series!) {
+      if (serie.data == null)
+        continue;
+
       let i = 0;
       const hasGroup = serie.data[0][2] != null;
 
@@ -388,7 +394,10 @@ export class EchartComponent implements OnInit, OnDestroy {
       computedSeries = this.series!;
 
     defaultOptions.series = computedSeries;
-    (defaultOptions.legend! as LegendComponentOption).show = (defaultOptions.series && defaultOptions.series.length > 1 && defaultOptions.series.length < 6);
+    if (this.forceDisplayLegend)
+      (defaultOptions.legend! as LegendComponentOption).show = true;
+    else
+      (defaultOptions.legend! as LegendComponentOption).show = (defaultOptions.series && defaultOptions.series.length > 1 && defaultOptions.series.length < 6);
 
 
     this.options = defaultOptions;

@@ -1860,20 +1860,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
-    public List<CustomerOrder> getCustomerOrderByResponsableAndStatusAndDates(Responsable responsable,
-            CustomerOrderStatus customerOrderStatus, Boolean isReccuring,
-            LocalDateTime startOfDay, LocalDateTime endOfDay) {
-        return customerOrderRepository.findByResponsableAndStatusAndCreatedDateBetween(responsable,
-                startOfDay, endOfDay, isReccuring, customerOrderStatus);
-    }
-
-    @Override
-    public List<CustomerOrder> getOrdersByResponsablesAndDates(List<Responsable> responsables,
-            LocalDateTime startOfDay, LocalDateTime endOfDay) {
-        return customerOrderRepository.findByResponsableInAndCreatedDateBetween(responsables, startOfDay, endOfDay);
-    }
-
-    @Override
     public List<CustomerOrder> searchCustomerOrders(List<Employee> commercials,
             List<CustomerOrderStatus> status, List<Employee> invoicingEmployees, List<Employee> orderingEmployees)
             throws OsirisException {
@@ -2255,6 +2241,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 .getCustomerOrderStatusByCode(CustomerOrderStatus.ABANDONED);
         voucheredOrders = customerOrderRepository.findByVoucherAndResponsable(voucher, responsable, statusAbandonned);
         return voucheredOrders;
+    }
+
+    @Override
+    public List<CustomerOrder> getByCreatedDateBetweenAndStatus(LocalDateTime startDate, LocalDateTime endDate,
+            CustomerOrderStatus customerOrderStatus) {
+        return customerOrderRepository.findByCreatedDateBetweenAndStatus(startDate, endDate, customerOrderStatus);
     }
 
     @Transactional(rollbackFor = Exception.class)

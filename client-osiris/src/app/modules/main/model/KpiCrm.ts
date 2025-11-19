@@ -4,5 +4,8 @@ export interface KpiCrm {
   label: string;
   lastUpdate: string;
   unit: string;
+  defaultValue: number;
+  labelType: string;
+  icon: string;
+  isPositiveEvolutionGood: boolean;
 }
-

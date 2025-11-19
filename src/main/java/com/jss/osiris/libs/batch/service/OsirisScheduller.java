@@ -560,7 +560,7 @@ public class OsirisScheduller {
 	@Scheduled(cron = "${schedulling.kpi.crm.compute}")
 	private void updateKpiCrms() {
 		try {
-			kpiCrmService.startComputeBatches();
+			kpiCrmService.computeKpis();
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}

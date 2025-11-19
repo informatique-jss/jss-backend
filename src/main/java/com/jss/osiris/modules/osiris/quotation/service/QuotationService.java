@@ -119,4 +119,7 @@ public interface QuotationService {
         public void switchResponsable(Quotation quotation, Responsable responsable);
 
         public boolean isDepositMandatory(IQuotation quotation);
+
+        public List<Quotation> getByCreatedDateBetweenAndStatus(LocalDateTime startDate, LocalDateTime endDate,
+                        QuotationStatus quotationStatus);
 }

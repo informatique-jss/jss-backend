@@ -30,4 +30,6 @@ public interface TiersService {
             throws OsirisClientMessageException, OsirisException, OsirisDuplicateException;
 
     public List<ITiersSearchResult> searchTiers(TiersSearch tiersSearch) throws OsirisException;
+
+    public List<Tiers> searchForTiers(TiersSearch tiersSearch) throws OsirisException;
 }

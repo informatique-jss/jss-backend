@@ -1,0 +1,30 @@
+<div class="card " *ngIf="kpiCrm">
+  <div class="card-body">
+    <a (click)="displayDetails()" class="text-muted float-end mt-n1 fs-xl pointer">
+      <ng-icon name="tablerZoomScan" />
+    </a>
+    <h5 [title]="kpiCrm.label" class="two-lines-ellipsis">{{ kpiCrm.label }}</h5>
+    <div class="d-flex align-items-center gap-2 my-3">
+      <div class="avatar-md flex-shrink-0">
+        <span class="avatar-title text-bg-primary rounded-circle fs-22">
+          <ng-icon [name]="kpiCrm.icon?kpiCrm.icon:'tablerChartBar'" class="d-flex align-items-center" />
+        </span>
+      </div>
+      <h3 class="mb-0 h3-ellipsis" [title]="value + ' '+kpiCrm.unit"><span [countUp]="value">0</span> {{ kpiCrm.unit }}
+      </h3>
+      <span class="badge badge-soft-primary fw-medium ms-2 fs-xs ms-auto"
+        [ngClass]="{'badge-soft-danger':!evolutionIsGood}">{{ (evolution!=null && evolution!=undefined)?evolution:'-' }}
+        %</span>
+    </div>
+    <p class="d-flex align-items-center gap-1 mb-0" *ngIf="valueN1!=null && valueN1!=undefined">
+      <ng-icon class="text-primary" name="tablerPointFill" />
+      <span class="text-nowrap text-muted"> N-1</span>
+      <span class="ms-auto"><b><span [countUp]="valueN1">0</span> {{ kpiCrm.unit }}</b></span>
+    </p>
+    <p class="d-flex align-items-center gap-1 mb-0" *ngIf="valueN2!=null && valueN2!=undefined">
+      <ng-icon class="text-primary" name="tablerPointFill" />
+      <span class="text-nowrap text-muted"> N-2</span>
+      <span class="ms-auto"><b><span [countUp]="valueN2">0</span> {{ kpiCrm.unit }}</b></span>
+    </p>
+  </div>
+</div>

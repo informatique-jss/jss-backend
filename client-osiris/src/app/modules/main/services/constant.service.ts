@@ -54,6 +54,10 @@ export class ConstantService extends AppRestService<Constant> {
       })
     );
   }
+
+  getActiveDirectoryGroupSales() {
+    return this.constant.activeDirectoryGroupSales;
+  }
 }
 
 @Injectable({ providedIn: 'root' })

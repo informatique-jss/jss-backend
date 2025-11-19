@@ -1,3 +1,89 @@
-<p>
-  crm works!
-</p>
+<div class="container-fluid">
+  <app-page-title title="CRM" />
+  <div class="row g-1" *ngIf="selectedKpiCrm && series && series.length>0">
+    <div class="card analytic-card">
+      <div class="card-body p-0">
+        <div class="row g-0">
+          <div class="col-12 ">
+            <div class="card-header justify-content-between border-dashed">
+              <h4 class="card-title mb-0">Analyse synthétique : {{selectedKpiCrm?selectedKpiCrm.label:''}}</h4>
+            </div>
+            <div class="card-body">
+              <div dir="ltr">
+                <app-echart [series]="series" [title]="selectedKpiCrm.label" [unit]="selectedKpiCrm.unit"
+                  [labelType]="selectedKpiCrm.labelType" [forceDisplayLegend]="true" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row row-cols-xxl-7 row-cols-md-4 row-cols-3 align-items-center">
+    @for (kpiCrm of kpiCrms; track $index) {
+    <div class="col">
+      <kpi-widget [kpiCrm]="kpiCrm" [value]="kpiCrmsValues[kpiCrm.code]" [valueN1]="kpiCrmsValuesN1[kpiCrm.code]"
+        [valueN2]="kpiCrmsValuesN2[kpiCrm.code]" [evolution]="kpiCrmsValuesEvolution[kpiCrm.code]"
+        [evolutionIsGood]="kpiCrmsValuesEvolutionGood[kpiCrm.code]" (onDisplayDetails)="displayDetails(kpiCrm)" />
+    </div>
+    }
+  </div>
+</div>
+
+<div class="asidebar-button d-flex">
+  <button class="btn btn-danger btn-icon rounded-end-0" (click)="open(smallSidebar)">
+    <ng-icon name="tablerSearch" class="fs-xl" />
+  </button>
+</div>
+
+<ng-template #smallSidebar let-offcanvas>
+  <ngx-simplebar style="height: 100%">
+    <div class="p-0 h-100">
+      <ng-container [ngTemplateOutlet]="content"></ng-container>
+    </div>
+  </ngx-simplebar>
+</ng-template>
+
+<!-- Content of sidebar -->
+<ng-template #content>
+  <form class="row g-3 needs-validation" novalidate [formGroup]="searchForm" (ngSubmit)="search(smallSidebar)">
+    <div class="d-flex flex-column" style="height: 100vh;">
+      <ul ngbNav #nav="ngbNav" activeId="0" [destroyOnHide]="false"
+        class="nav nav-tabs nav-justified nav-bordered nav-bordered-primary mb-0">
+        <li ngbNavItem="0">
+          <a href="javascript:void(0);" ngbNavLink>
+            <p class="d-inline-flex m-0 align-items-center gap-1">
+              <ng-icon name="tablerVectorTriangle" class="fs-xl me-md-1" />
+              <span class="d-none d-md-inline-block">Périmètre</span>
+            </p>
+          </a>
+          <ng-template ngbNavContent>
+            @for (form of forms; track form.accessorKey.toString()) {
+            <div class="col-12 mt-2 mb-2">
+              <generic-form [formGroup]="searchForm" [(model)]="searchModel[form.accessorKey]" [label]="form.form.label"
+                [type]="form.form.type" [inputType]="form.form.inputType" [selectType]="form.form.selectType"
+                [validators]="form.form.validators" [errorMessages]="form.form.errorMessages"></generic-form>
+            </div>
+            <hr />
+            }
+          </ng-template>
+        </li>
+      </ul>
+      <div class="flex-grow-1 overflow-auto p-3">
+        <div class="tab-content" [ngbNavOutlet]="nav"></div>
+      </div>
+      <div class="card   mb-0 d-none d-lg-flex rounded-end-0 mt-auto">
+        <div class="card-body d-flex align-items-center gap-2">
+          <button class="btn btn-primary w-100 btn-new-event" type="submit">
+            <ng-icon name="tablerRefresh" class="me-2" />
+            Raffraichir
+          </button>
+          <button type="button" class="btn btn-danger btn-icon" (click)="clearFilters()" title="Effacer la recherche">
+            <ng-icon name="tablerFilterOff"></ng-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</ng-template>
