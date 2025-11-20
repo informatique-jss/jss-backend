@@ -12,7 +12,14 @@ export class ServiceFieldTypeService extends AppRestService<ServiceFieldType> {
     super(http, "quotation");
   }
 
-  getServiceFieldTypes() {
-    return this.getList(new HttpParams(), "service-field-types");
+  // Get all ServiceFieldType. If affaireId is defined and exists, then the values of the 
+  // ServiceFieldType will be filled with the values found in the RNE
+  getServiceFieldTypes(affaireId: number | undefined) {
+    let params = new HttpParams()
+    if (affaireId)
+      params = params.set("affaireId", affaireId);
+    else
+      params = params.set("affaireId", "");
+    return this.getList(params, "service-field-types");
   }
 }

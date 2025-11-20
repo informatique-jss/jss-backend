@@ -1,5 +1,11 @@
 package com.jss.osiris.modules.osiris.quotation.service;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -112,6 +118,28 @@ public class RneDelegateServiceImpl implements RneDelegateService {
             return res.getBody();
         }
         return null;
+    }
+
+    @Override
+    public String getRawJsonBySiret(String siret)
+            throws URISyntaxException, IOException, InterruptedException, OsirisClientMessageException,
+            OsirisException {
+        SSLHelper.disableCertificateValidation();
+        HttpHeaders springHeaders = createHeaders();
+        springHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+        var httpRequestBuilder = HttpRequest.newBuilder()
+                .uri(new URI(rneEntryPoint + entrepriseRequest + "?siret=" + siret))
+                .GET();
+
+        springHeaders.forEach((name, values) -> values.forEach(value -> httpRequestBuilder.header(name, value)));
+
+        HttpRequest request = httpRequestBuilder.build();
+
+        HttpResponse<String> response = HttpClient.newBuilder().build()
+                .send(request, HttpResponse.BodyHandlers.ofString());
+
+        return response.body();
     }
 
     @Override

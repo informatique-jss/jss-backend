@@ -1,5 +1,7 @@
 package com.jss.osiris.modules.osiris.quotation.service;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -24,5 +26,9 @@ public interface RneDelegateService {
 
         public RneResult getCompanyModifiedForDay(LocalDate lastExecutionDate, String lastSiret, List<String> sirens)
                         throws OsirisException, OsirisClientMessageException;
+
+        public String getRawJsonBySiret(String siret)
+                        throws URISyntaxException, IOException, InterruptedException, OsirisClientMessageException,
+                        OsirisException;
 
 }

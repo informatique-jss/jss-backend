@@ -51,6 +51,8 @@ export class NoticeTemplateComponent implements OnInit {
   displayTextOriginal: string = '';
   fragmentSelectionText: string = '';
 
+  affaireId: number | undefined;
+
   serviceFieldTypes: ServiceFieldType[] = [];
   form!: FormGroup;
 
@@ -74,13 +76,15 @@ export class NoticeTemplateComponent implements OnInit {
     let noticeTemplateDescription = this.noticeTemplateService.getNoticeTemplateDescription();
     if (this.service && noticeTemplateDescription && noticeTemplateDescription.selectedTemplate) {
       this.templates.push(noticeTemplateDescription.selectedTemplate);
+      if (noticeTemplateDescription.assoAffaireOrder && noticeTemplateDescription.assoAffaireOrder.affaire)
+        this.affaireId = noticeTemplateDescription.assoAffaireOrder.affaire.id;
 
       this.fragmentsFound = this.templates.flatMap(template => template.announcementNoticeTemplateFragments);
       this.displayText = this.templates.map(t => t.text).join('');
       this.displayTextOriginal = this.displayText;
       this.fragmentSelectionText = this.displayText;
     }
-    this.serviceFieldTypesService.getServiceFieldTypes().subscribe(serviceFieldTypes => {
+    this.serviceFieldTypesService.getServiceFieldTypes(this.affaireId).subscribe(serviceFieldTypes => {
       this.serviceFieldTypes = serviceFieldTypes;
       this.createPlaceholdersMap();
       this.initFragmentInstancesMap();
