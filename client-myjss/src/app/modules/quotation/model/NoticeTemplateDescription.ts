@@ -1,3 +1,4 @@
+import { AssoAffaireOrder } from '../../my-account/model/AssoAffaireOrder';
 import { Service } from "../../my-account/model/Service";
 import { AnnouncementNoticeTemplate } from "./AnnouncementNoticeTemplate";
 
@@ -8,4 +9,5 @@ export interface NoticeTemplateDescription {
   announcementOrder: number;
   isUsingTemplate: Boolean;
   selectedTemplate: AnnouncementNoticeTemplate | undefined;
+  assoAffaireOrder: AssoAffaireOrder;
 }

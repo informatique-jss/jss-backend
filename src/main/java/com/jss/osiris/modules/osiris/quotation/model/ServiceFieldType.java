@@ -45,6 +45,9 @@ public class ServiceFieldType implements Serializable, IId {
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private List<ServiceTypeFieldTypePossibleValue> serviceFieldTypePossibleValues;
 
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
+	private String jsonPathToRneValue;
+
 	public List<ServiceTypeFieldTypePossibleValue> getServiceFieldTypePossibleValues() {
 		return serviceFieldTypePossibleValues;
 	}
@@ -85,4 +88,13 @@ public class ServiceFieldType implements Serializable, IId {
 	public void setDataType(String dataType) {
 		this.dataType = dataType;
 	}
+
+	public String getJsonPathToRneValue() {
+		return jsonPathToRneValue;
+	}
+
+	public void setJsonPathToRneValue(String jsonPathToRneValue) {
+		this.jsonPathToRneValue = jsonPathToRneValue;
+	}
+
 }

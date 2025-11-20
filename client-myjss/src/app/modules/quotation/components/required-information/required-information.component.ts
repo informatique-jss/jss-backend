@@ -202,8 +202,8 @@ export class RequiredInformationComponent implements OnInit {
     this.fetchAnnouncementReferentials();
     this.noticeTemplateDescription = this.noticeTemplateService.getNoticeTemplateDescription();
     if (!this.noticeTemplateDescription) {
-      this.noticeTemplateDescription = { service: undefined, isShowNoticeTemplate: false, displayText: "", isUsingTemplate: false } as any as NoticeTemplateDescription;
-      this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
+      this.noticeTemplateDescription = { service: undefined, isShowNoticeTemplate: false, displayText: "", isUsingTemplate: false, assoAffaireOrder: undefined } as any as NoticeTemplateDescription;
+      this.setAssoAffaireOrderToNoticeTemplateDescription();
     }
   }
 
@@ -278,7 +278,8 @@ export class RequiredInformationComponent implements OnInit {
         }
       }
 
-      this.changeProvisionNoticeTemplateDesciption({ nextId: this.activeId } as NgbNavChangeEvent);
+      this.setAssoAffaireOrderToNoticeTemplateDescription();
+      this.changeProvisionNoticeTemplateDescription({ nextId: this.activeId } as NgbNavChangeEvent);
 
       if (this.quotation.assoAffaireOrders[this.selectedAssoIndex].services && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services.length > 0) {
         this.selectedServiceIndex = 0;
@@ -300,6 +301,16 @@ export class RequiredInformationComponent implements OnInit {
       });
   }
 
+  // Sets AssoAffaireOrder on NoticeTemplateDescription and push the update to the service
+  setAssoAffaireOrderToNoticeTemplateDescription() {
+    if (!this.noticeTemplateDescription)
+      this.noticeTemplateDescription = this.noticeTemplateService.getNoticeTemplateDescription();
+
+    if (this.quotation && this.quotation.assoAffaireOrders && this.selectedAssoIndex && this.quotation.assoAffaireOrders[this.selectedAssoIndex]) {
+      this.noticeTemplateDescription!.assoAffaireOrder = this.quotation.assoAffaireOrders[this.selectedAssoIndex];
+    }
+    this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription!);
+  }
 
   selectCard(assoIndex: number, event: Event): void {
     // Do not propagate clic if it is on pill
@@ -458,6 +469,7 @@ export class RequiredInformationComponent implements OnInit {
         this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[3]);
         if (this.noticeTemplateDescription) {
           this.noticeTemplateDescription.isShowNoticeTemplate = false;
+          this.noticeTemplateDescription.assoAffaireOrder = this.quotation!.assoAffaireOrders[newAssoIndex];
           this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
         }
         this.appService.openRoute(undefined, "quotation/checkout", undefined);
@@ -656,7 +668,7 @@ export class RequiredInformationComponent implements OnInit {
   private emitServiceChange() {
     if (this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined && this.noticeTemplateDescription) {
       this.noticeTemplateDescription.service = this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex];
-      this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
+      this.setAssoAffaireOrderToNoticeTemplateDescription();
     }
   }
 
@@ -731,7 +743,7 @@ export class RequiredInformationComponent implements OnInit {
     return undefined;
   }
 
-  changeProvisionNoticeTemplateDesciption(ngbEvent: NgbNavChangeEvent) {
+  changeProvisionNoticeTemplateDescription(ngbEvent: NgbNavChangeEvent) {
     let destId = ngbEvent.nextId as number;
     let originId = ngbEvent.activeId as number;
 
