@@ -36,6 +36,13 @@
           </tr>
           <tr>
             <td>
+              <generic-input [(model)]="selectedEntity.jsonPathToRneValue" label="Chemin JSON du RNE vers la valeur"
+                [form]="entityForm" propertyName="jsonPathToRneValue" [isMandatory]="false" [isDisabled]="!editMode"
+                [maxLength]="2048"></generic-input>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <select-service-field-data-type [(model)]="selectedEntity.dataType" label="Type de données"
                 [form]="entityForm" propertyName="dataType" [isMandatory]="true" [isDisabled]="!editMode"
                 (onFormChange)="clearPossibleValues()"></select-service-field-data-type>
