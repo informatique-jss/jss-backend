@@ -3,6 +3,7 @@ package com.jss.osiris.modules.osiris.quotation.facade;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,12 +61,20 @@ public class ServiceFieldTypeFacade {
 
         // Building each Dto and adding it to the returned list
         for (ServiceFieldType serviceFieldType : serviceFieldTypes) {
-            JsonNode valueNode = root.at(serviceFieldType.getJsonPathToRneValue());
-            String value = null;
-            if (!valueNode.isMissingNode() && !valueNode.asText().isEmpty()) {
-                value = valueNode.asText();
+            if (serviceFieldType.getJsonPathToRneValue() != null
+                    && !serviceFieldType.getJsonPathToRneValue().isEmpty()) {
+                String value = null;
+                //
+                List<String> possiblePaths = Arrays.asList(serviceFieldType.getJsonPathToRneValue().split("\\|\\|"));
+                for (String path : possiblePaths) {
+                    JsonNode valueNode = root.at(path.trim());
+                    if (!valueNode.isMissingNode() && !valueNode.asText().isEmpty()) {
+                        value = valueNode.asText();
+                        break;
+                    }
+                }
+                serviceFieldTypeDtos.add(mapServiceFieldType(serviceFieldType, value));
             }
-            serviceFieldTypeDtos.add(mapServiceFieldType(serviceFieldType, value));
         }
         return serviceFieldTypeDtos;
     }

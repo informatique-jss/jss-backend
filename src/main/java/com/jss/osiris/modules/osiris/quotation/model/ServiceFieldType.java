@@ -24,6 +24,7 @@ public class ServiceFieldType implements Serializable, IId {
 	public static String SERVICE_FIELD_TYPE_TEXTAREA = "SERVICE_FIELD_TYPE_TEXTAREA";
 	public static String SERVICE_FIELD_TYPE_DATE = "SERVICE_FIELD_TYPE_DATE";
 	public static String SERVICE_FIELD_TYPE_SELECT = "SERVICE_FIELD_TYPE_SELECT";
+
 	@Id
 	@SequenceGenerator(name = "service_field_type_sequence", sequenceName = "service_field_type_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "service_field_type_sequence")
@@ -46,6 +47,7 @@ public class ServiceFieldType implements Serializable, IId {
 	private List<ServiceTypeFieldTypePossibleValue> serviceFieldTypePossibleValues;
 
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
+	@Column(length = 2048)
 	private String jsonPathToRneValue;
 
 	public List<ServiceTypeFieldTypePossibleValue> getServiceFieldTypePossibleValues() {

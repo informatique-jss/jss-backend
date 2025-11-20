@@ -306,7 +306,7 @@ export class RequiredInformationComponent implements OnInit {
     if (!this.noticeTemplateDescription)
       this.noticeTemplateDescription = this.noticeTemplateService.getNoticeTemplateDescription();
 
-    if (this.quotation && this.quotation.assoAffaireOrders && this.selectedAssoIndex && this.quotation.assoAffaireOrders[this.selectedAssoIndex]) {
+    if (this.quotation && this.quotation.assoAffaireOrders && this.selectedAssoIndex != undefined && this.quotation.assoAffaireOrders[this.selectedAssoIndex]) {
       this.noticeTemplateDescription!.assoAffaireOrder = this.quotation.assoAffaireOrders[this.selectedAssoIndex];
     }
     this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription!);
