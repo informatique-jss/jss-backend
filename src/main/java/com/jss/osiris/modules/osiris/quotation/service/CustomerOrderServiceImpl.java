@@ -1539,14 +1539,15 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             if (Boolean.TRUE.equals(currentUser.getCanViewAllTiersInWeb()))
                 responsablesToFilter.addAll(currentUser.getTiers().getResponsables());
 
-            if (responsableIdToFilter == null)
+            if (responsableIdToFilter != null) {
                 responsableIdToFilter = new ArrayList<>();
 
-            List<Integer> responsableIdToFilterFinal = responsableIdToFilter;
+                List<Integer> responsableIdToFilterFinal = responsableIdToFilter;
 
-            responsablesToFilter.removeAll(
-                    responsablesToFilter.stream().filter(r -> !responsableIdToFilterFinal.contains(r.getId()))
-                            .toList());
+                responsablesToFilter.removeAll(
+                        responsablesToFilter.stream().filter(r -> !responsableIdToFilterFinal.contains(r.getId()))
+                                .toList());
+            }
 
             if (responsablesToFilter != null
                     && responsablesToFilter.size() > 0) {
