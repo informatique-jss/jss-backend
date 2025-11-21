@@ -19,4 +19,5 @@ export interface ServiceType {
   isMergeable: boolean;
   hideInMyJss: boolean;
   serviceTypeLinked: ServiceType;
+  reportingGroup: string;
 }
