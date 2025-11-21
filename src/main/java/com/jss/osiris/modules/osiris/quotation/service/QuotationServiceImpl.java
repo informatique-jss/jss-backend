@@ -676,18 +676,16 @@ public class QuotationServiceImpl implements QuotationService {
 
             Responsable currentUser = employeeService.getCurrentMyJssUser();
             List<Responsable> responsablesToFilter = new ArrayList<Responsable>();
-            responsablesToFilter.add(currentUser);
-            if (Boolean.TRUE.equals(currentUser.getCanViewAllTiersInWeb()))
-                responsablesToFilter.addAll(currentUser.getTiers().getResponsables());
 
-            if (responsableIdToFilter == null)
-                responsableIdToFilter = new ArrayList<>();
+            if (responsableIdToFilter == null || responsableIdToFilter.contains(currentUser.getId()))
+                responsablesToFilter.add(currentUser);
 
-            List<Integer> responsableIdToFilterFinal = responsableIdToFilter;
-
-            responsablesToFilter.removeAll(
-                    responsablesToFilter.stream().filter(r -> !responsableIdToFilterFinal.contains(r.getId()))
-                            .toList());
+            if (Boolean.TRUE.equals(currentUser.getCanViewAllTiersInWeb())
+                    && currentUser.getTiers().getResponsables() != null)
+                for (Responsable respo : currentUser.getTiers().getResponsables()) {
+                    if (responsableIdToFilter == null || responsableIdToFilter.contains(respo.getId()))
+                        responsablesToFilter.add(respo);
+                }
 
             if (quotationStatusToFilter.size() > 0 && responsablesToFilter != null
                     && responsablesToFilter.size() > 0) {

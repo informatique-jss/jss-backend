@@ -25,7 +25,7 @@ public class AcfPost {
 
     private String amazonMusicLinkUrl;
 
-    private Integer[] additional_authors;
+    private String additional_authors;
 
     private boolean is_hide_author;
 
@@ -112,19 +112,19 @@ public class AcfPost {
         this.amazonMusicLinkUrl = amazonMusicLinkUrl;
     }
 
-    public Integer[] getAdditional_authors() {
-        return additional_authors;
-    }
-
-    public void setAdditional_authors(Integer[] additional_authors) {
-        this.additional_authors = additional_authors;
-    }
-
     public boolean getIs_hide_author() {
         return is_hide_author;
     }
 
     public void setIs_hide_author(boolean is_hide_author) {
         this.is_hide_author = is_hide_author;
+    }
+
+    public String getAdditional_authors() {
+        return additional_authors;
+    }
+
+    public void setAdditional_authors(String additional_authors) {
+        this.additional_authors = additional_authors;
     }
 }

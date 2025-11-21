@@ -5,6 +5,7 @@ import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { TrustHtmlPipe } from '../../../libs/TrustHtmlPipe';
 import { GtmService } from '../../../services/gtm.service';
 import { CtaClickPayload, PageInfo } from '../../../services/GtmPayload';
+import { PlatformService } from '../../../services/platform.service';
 import { Announcement } from '../../model/Announcement';
 import { AnnouncementService } from '../../services/announcement.service';
 import { NewsletterComponent } from "../newsletter/newsletter.component";
@@ -21,14 +22,18 @@ export class AnnouncementComponent implements OnInit {
   announcement: Announcement | undefined;
   idAnnouncement: number | undefined;
 
+  isServer = false;
+
   constructor(
     private announcementService: AnnouncementService,
     private activatedRoute: ActivatedRoute,
     private location: Location,
-    private gtmService: GtmService
+    private gtmService: GtmService,
+    private platformService: PlatformService
   ) { }
 
   ngOnInit() {
+    this.isServer = this.platformService.isServer();
     this.idAnnouncement = this.activatedRoute.snapshot.params['id'];
     if (this.idAnnouncement)
       this.announcementService.getAnnouncement(this.idAnnouncement).subscribe(response => {

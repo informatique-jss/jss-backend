@@ -2,6 +2,7 @@ package com.jss.osiris.modules.myjss.quotation.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -78,6 +79,8 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.controller.QuotationValidationHelper;
+import com.jss.osiris.modules.osiris.quotation.dto.ServiceFieldTypeDto;
+import com.jss.osiris.modules.osiris.quotation.facade.ServiceFieldTypeFacade;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceDocument;
@@ -254,6 +257,9 @@ public class MyJssQuotationController {
 
 	@Autowired
 	ServiceFieldTypeService serviceFieldTypeService;
+
+	@Autowired
+	ServiceFieldTypeFacade serviceFieldTypeFacade;
 
 	@Autowired
 	VoucherService voucherService;
@@ -1989,10 +1995,18 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/service-field-types")
-	public ResponseEntity<List<ServiceFieldType>> getServiceFieldTypes(HttpServletRequest request) {
+	public ResponseEntity<List<ServiceFieldTypeDto>> getServiceFieldTypes(
+			@RequestParam(required = false) Integer affaireId,
+			HttpServletRequest request) throws OsirisClientMessageException, OsirisException, URISyntaxException,
+			IOException, InterruptedException {
 		detectFlood(request);
+		Affaire affaire = null;
 
-		return new ResponseEntity<List<ServiceFieldType>>(serviceFieldTypeService.getServiceFieldTypes(),
+		if (affaireId != null)
+			affaire = affaireService.getAffaire(affaireId);
+
+		return new ResponseEntity<List<ServiceFieldTypeDto>>(
+				serviceFieldTypeFacade.getServiceFieldTypesDtos(affaire),
 				HttpStatus.OK);
 	}
 

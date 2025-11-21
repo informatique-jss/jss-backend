@@ -996,14 +996,17 @@ public class PostServiceImpl implements PostService {
         if (post.getAuthor() != null && post.getAuthor() > 0)
             post.setFullAuthor(authorService.getAuthor(post.getAuthor()));
 
-        if (post.getAcf().getAdditional_authors() != null && post.getAcf().getAdditional_authors().length > 0) {
+        if (post.getAcf().getAdditional_authors() != null) {
             List<Author> additionalAuthors = new ArrayList<Author>();
-            for (Integer i : post.getAcf().getAdditional_authors()) {
-                Author foundAuthor = authorService.getAuthor(i);
-                if (foundAuthor != null)
-                    additionalAuthors.add(foundAuthor);
+            List<Integer> additionnalAuthorsIds = getAdditionnalAuthorsIds(post.getAcf().getAdditional_authors());
+            if (additionnalAuthorsIds != null && additionnalAuthorsIds.size() > 0) {
+                for (Integer i : additionnalAuthorsIds) {
+                    Author foundAuthor = authorService.getAuthor(i);
+                    if (foundAuthor != null)
+                        additionalAuthors.add(foundAuthor);
+                }
+                post.setPostAdditionalAuthors(additionalAuthors);
             }
-            post.setPostAdditionalAuthors(additionalAuthors);
         }
 
         post.setIsHiddenAuthor(post.getAcf().getIs_hide_author());
@@ -1092,6 +1095,24 @@ public class PostServiceImpl implements PostService {
                 + characterPriceService.cleanString(post.getOriginalContentText())).length());
 
         return post;
+    }
+
+    private List<Integer> getAdditionnalAuthorsIds(String jsonString) {
+        if (jsonString == null || jsonString.isBlank())
+            return new ArrayList<Integer>();
+
+        String cleanedString = jsonString
+                .replaceAll("\\[", "")
+                .replaceAll("\\]", "")
+                .trim();
+
+        if (cleanedString.isEmpty())
+            return new ArrayList<Integer>();
+
+        List<String> ids = Arrays.asList(cleanedString.split(","));
+        return ids.stream()
+                .map(String::trim)
+                .map(Integer::valueOf).toList();
     }
 
     @Override

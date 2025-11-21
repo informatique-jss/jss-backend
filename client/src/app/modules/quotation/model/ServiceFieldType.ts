@@ -6,4 +6,5 @@ export interface ServiceFieldType {
   label: string;
   dataType: string;
   serviceFieldTypePossibleValues: ServiceTypeFieldTypePossibleValue[];
+  jsonPathToRneValue: string;
 }

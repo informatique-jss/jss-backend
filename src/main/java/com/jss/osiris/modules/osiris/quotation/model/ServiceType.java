@@ -101,6 +101,8 @@ public class ServiceType implements Serializable, IId {
 
 	private Boolean hideInMyJss;
 
+	private String reportingGroup;
+
 	public Integer getId() {
 		return id;
 	}
@@ -243,5 +245,13 @@ public class ServiceType implements Serializable, IId {
 
 	public void setIsRequiringNewRegisteredAffaire(Boolean isRequiringNewRegisteredAffaire) {
 		this.isRequiringNewRegisteredAffaire = isRequiringNewRegisteredAffaire;
+	}
+
+	public String getReportingGroup() {
+		return reportingGroup;
+	}
+
+	public void setReportingGroup(String reportingGroup) {
+		this.reportingGroup = reportingGroup;
 	}
 }

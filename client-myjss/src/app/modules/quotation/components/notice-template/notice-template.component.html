@@ -112,10 +112,11 @@
                   </button>
                 </div>
                 <div class="row row-cols-3 g-3" *ngIf="fragmentInstance">
-                  <div class="col" *ngFor="let placeholder of placeholdersMap.get(fragmentInstance!.code)">
+                  <div class="col" [ngClass]="{'w-100': placeholder.dataType === SERVICE_FIELD_TYPE_TEXTAREA}"
+                    *ngFor="let placeholder of placeholdersMap.get(fragmentInstance!.code)">
 
                     <!-- Wrap inputs automatically to next line -->
-                    <div class="">
+                    <div>
 
                       <!-- TEXT -->
                       <generic-input *ngIf="placeholder.dataType === SERVICE_FIELD_TYPE_TEXT"
@@ -128,7 +129,6 @@
 
                       <!-- TEXTAREA -->
                       <generic-textarea *ngIf="placeholder.dataType === SERVICE_FIELD_TYPE_TEXTAREA"
-                        [ngClass]="{'w-100': placeholder.dataType === SERVICE_FIELD_TYPE_TEXTAREA}"
                         [(model)]="placeholder.value"
                         [label]="getFragmentInputLabel(placeholder, fragmentIndex, fragmentInstancesMap.get(selectedFragments[i]!.code)!)"
                         [form]="form"
