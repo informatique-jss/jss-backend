@@ -3,7 +3,7 @@ import { environment } from "../../../../environments/environment";
 import { COOKIE_KEY } from "../../../libs/Constants";
 import { Responsable } from "../../profile/model/Responsable";
 import { LoginService } from "../../profile/services/login.service";
-import { BasePayload, BeginCheckoutPayload, CtaClickPayload, FileUploadPayload, FormSubmitPayload, LogPayload, PageViewPayload, PurchasePayload } from "./GtmPayload";
+import { BasePayload, BeginCheckoutPayload, CtaClickPayload, FileUploadPayload, FormSubmitPayload, LogPayload, PageViewPayload } from "./GtmPayload";
 import { PlatformService } from "./platform.service";
 
 export enum GtmEventName {
@@ -88,10 +88,6 @@ export class GtmService {
 
   trackFileUpload(payload: FileUploadPayload) {
     this.push(GtmEventName.FileUpload, payload);
-  }
-
-  trackPurchase(payload: PurchasePayload) {
-    this.push(GtmEventName.Purchase, payload);
   }
 
   trackLoginLogout(payload: LogPayload) {

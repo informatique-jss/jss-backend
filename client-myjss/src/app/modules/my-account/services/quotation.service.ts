@@ -44,12 +44,26 @@ export class QuotationService extends AppRestService<Quotation> {
     return this.get(new HttpParams().set("quotationId", quotationId), 'quotation/is-deposit-mandatory') as any as Observable<boolean>;
   }
 
-  saveQuotation(quotation: IQuotation, isValidation: boolean): Observable<number> {
-    return this.postItem(new HttpParams().set("isValidation", isValidation), 'quotation/user/save', quotation) as any as Observable<number>;
+  saveQuotation(quotation: IQuotation, isValidation: boolean, gaClientId: string | null): Observable<number> {
+    let params = new HttpParams();
+    params = params.set("isValidation", isValidation);
+    if (gaClientId)
+      params = params.set("gaClientId", gaClientId);
+
+    return this.postItem(params, 'quotation/user/save', quotation) as any as Observable<number>;
   }
 
-  saveFinalQuotation(quotation: Quotation, isValidation: boolean) {
-    return this.postItem(new HttpParams().set("isValidation", isValidation), 'quotation/save-order', quotation);
+  saveFinalQuotation(quotation: Quotation, isValidation: boolean, gaClientId: string | null) {
+    let params = new HttpParams();
+    params = params.set("isValidation", isValidation);
+    if (gaClientId)
+      params = params.set("gaClientId", gaClientId);
+    return this.postItem(params, 'quotation/save-order', quotation);
+  }
+
+  //TODO : delete
+  testGa4() {
+    return this.get(new HttpParams(), 'test');
   }
 
   switchResponsableForQuotation(idQuotation: number, newResponsable: Responsable) {

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { getGaClientId } from '../../../../libs/CoookieHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
 import { ConstantService } from '../../../main/services/constant.service';
@@ -63,6 +64,8 @@ export class IdentificationComponent implements OnInit {
   idFamilyGroup: number | undefined;
   idQuotationType: number | undefined;
 
+  userCookieId: string | null = "";
+
   constructor(private formBuilder: FormBuilder,
     private serviceFamilyGroupService: ServiceFamilyGroupService,
     private affaireService: AffaireService,
@@ -82,6 +85,8 @@ export class IdentificationComponent implements OnInit {
     this.idenficationForm = this.formBuilder.group({
       quotationType: []
     });
+
+    this.userCookieId = getGaClientId();
 
     this.idFamilyGroup = this.activatedRoute.snapshot.params['idFamilyGroup'];
     this.idQuotationType = this.activatedRoute.snapshot.params['idQuotationType'];
@@ -258,7 +263,7 @@ export class IdentificationComponent implements OnInit {
       if (this.currentUser) {
         if (this.selectedQuotationType.id == QUOTATION_TYPE_QUOTATION.id) {
           this.quotation.isQuotation = true;
-          this.quotationService.saveQuotation(this.quotation, false).subscribe(response => {
+          this.quotationService.saveQuotation(this.quotation, false, this.userCookieId).subscribe(response => {
             this.appService.hideLoadingSpinner();
             this.quotationService.setCurrentDraftQuotationId(response);
             this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);
@@ -266,7 +271,7 @@ export class IdentificationComponent implements OnInit {
           })
         } else if (this.selectedQuotationType.id == QUOTATION_TYPE_ORDER.id) {
           this.quotation.isQuotation = false;
-          this.orderService.saveOrder(this.quotation, false).subscribe(response => {
+          this.orderService.saveOrder(this.quotation, false, this.userCookieId).subscribe(response => {
             this.appService.hideLoadingSpinner();
             this.orderService.setCurrentDraftOrderId(response);
             this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);

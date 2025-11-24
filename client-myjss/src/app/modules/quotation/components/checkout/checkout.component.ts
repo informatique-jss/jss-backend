@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { NgbAccordionModule, NgbDropdownModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
+import { getGaClientId } from '../../../../libs/CoookieHelper';
 import { validateEmail, validateFrenchPhone, validateInternationalPhone } from '../../../../libs/CustomFormsValidatorsHelper';
 import { getDocument } from '../../../../libs/DocumentHelper';
 import { capitalizeName } from '../../../../libs/FormatHelper';
@@ -10,8 +11,6 @@ import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { Mail } from '../../../general/model/Mail';
 import { AppService } from '../../../main/services/app.service';
 import { ConstantService } from '../../../main/services/constant.service';
-import { GtmService } from '../../../main/services/gtm.service';
-import { PageInfo, PurchasePayload } from '../../../main/services/GtmPayload';
 import { AutocompleteCityComponent } from '../../../miscellaneous/components/forms/autocomplete-city/autocomplete-city.component';
 import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { GenericTextareaComponent } from '../../../miscellaneous/components/forms/generic-textarea/generic-textarea.component';
@@ -107,6 +106,8 @@ export class CheckoutComponent implements OnInit {
   idArticle: number | undefined;
   voucherCode: string | undefined;
 
+  userCookieId: string | null = "";
+
   capitalizeName = capitalizeName;
 
   serviceTypeAnnualSubscription!: ServiceType;
@@ -125,12 +126,11 @@ export class CheckoutComponent implements OnInit {
     private serviceService: ServiceService,
     private documentService: DocumentService,
     private cityService: CityService,
-    private voucherService: VoucherService,
-    private gtmService: GtmService
-
+    private voucherService: VoucherService
   ) { }
 
   async ngOnInit() {
+    this.userCookieId = getGaClientId();
     this.serviceTypeAnnualSubscription = this.constantService.getServiceTypeAnnualSubscription();
     this.serviceTypeEnterpriseAnnualSubscription = this.constantService.getServiceTypeEnterpriseAnnualSubscription();
     this.serviceTypeMonthlySubscription = this.constantService.getServiceTypeMonthlySubscription();
@@ -158,7 +158,6 @@ export class CheckoutComponent implements OnInit {
 
     if (!this.currentUser)
       this.initIQuotation();
-
   }
 
   ngOnDestroy() {
@@ -193,25 +192,6 @@ export class CheckoutComponent implements OnInit {
     }
   }
 
-  trackPurchase(isDraft: boolean, quotationId: number, type: 'order' | 'quotation') {
-    if (this.quotation)
-      this.gtmService.trackPurchase(
-        {
-          business: {
-            type: type,
-            order_id: quotationId,
-            amount: this.totalPrice,
-            service: this.quotation.serviceFamilyGroup!.label,
-            is_draft: isDraft
-          },
-          page: {
-            type: 'quotation',
-            name: 'checkout'
-          } as PageInfo
-        } as PurchasePayload
-      );
-  }
-
   onValidateOrder(isDraft: boolean) {
     this.documentForm.markAllAsTouched();
     if (this.isOrderPossible())
@@ -227,9 +207,8 @@ export class CheckoutComponent implements OnInit {
       if (this.quotation) {
         this.quotationService.setCurrentDraftQuotation(this.quotation);
         if (this.quotation.isQuotation)
-          this.quotationService.saveFinalQuotation(this.quotation as Quotation, !isDraft).subscribe(response => {
+          this.quotationService.saveFinalQuotation(this.quotation as Quotation, !isDraft, this.userCookieId).subscribe(response => {
             if (response && response.id) {
-              this.trackPurchase(isDraft, response.id, 'quotation');
               this.cleanStorageData();
               this.appService.hideLoadingSpinner();
               this.loginService.refreshUserRoles().subscribe(role => {
@@ -241,9 +220,8 @@ export class CheckoutComponent implements OnInit {
             }
           });
         else
-          this.orderService.saveFinalOrder(this.quotation as CustomerOrder, !isDraft).subscribe(response => {
+          this.orderService.saveFinalOrder(this.quotation as CustomerOrder, !isDraft, this.userCookieId).subscribe(response => {
             if (response && response.id) {
-              this.trackPurchase(isDraft, response.id, 'order');
               this.cleanStorageData();
               this.appService.hideLoadingSpinner();
               this.loginService.refreshUserRoles().subscribe(role => {
@@ -257,18 +235,16 @@ export class CheckoutComponent implements OnInit {
       }
     } else {
       if (this.quotation.isQuotation)
-        this.quotationService.saveQuotation(this.quotation, !isDraft).subscribe(response => {
+        this.quotationService.saveQuotation(this.quotation, !isDraft, this.userCookieId).subscribe(response => {
           if (response) {
-            this.trackPurchase(isDraft, this.quotation!.id, 'quotation');
             this.cleanStorageData();
             this.appService.hideLoadingSpinner();
             this.appService.openRoute(undefined, "account/quotations/details/" + response, undefined);
           }
         })
       else
-        this.orderService.saveOrder(this.quotation, !isDraft).subscribe(response => {
+        this.orderService.saveOrder(this.quotation, !isDraft, this.userCookieId).subscribe(response => {
           if (response) {
-            this.trackPurchase(isDraft, this.quotation!.id, 'order');
             this.cleanStorageData();
             this.appService.hideLoadingSpinner();
             this.appService.openRoute(undefined, "account/orders/details/" + response, undefined);
@@ -378,7 +354,7 @@ export class CheckoutComponent implements OnInit {
           if (!this.currentUser)
             this.quotationService.setCurrentDraftQuotation(this.quotation);
           else
-            this.quotationService.saveQuotation(this.quotation, false).subscribe();
+            this.quotationService.saveQuotation(this.quotation, false, this.userCookieId).subscribe();
         }
       })
   }

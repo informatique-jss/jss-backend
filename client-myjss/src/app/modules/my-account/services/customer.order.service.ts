@@ -43,12 +43,21 @@ export class CustomerOrderService extends AppRestService<CustomerOrder> {
     return this.get(new HttpParams().set("idQuotation", idQuotation), 'quotation/order');
   }
 
-  saveOrder(order: IQuotation, isValidation: boolean): Observable<number> {
-    return this.postItem(new HttpParams().set("isValidation", isValidation), 'order/user/save', order) as any as Observable<number>;
+  saveOrder(order: IQuotation, isValidation: boolean, gaClientId: string | null): Observable<number> {
+    let params = new HttpParams();
+    params = params.set("isValidation", isValidation);
+    if (gaClientId)
+      params = params.set("gaClientId", gaClientId);
+
+    return this.postItem(params, 'order/user/save', order) as any as Observable<number>;
   }
 
-  saveFinalOrder(order: CustomerOrder, isValidation: boolean) {
-    return this.postItem(new HttpParams().set("isValidation", isValidation), 'order/save-order', order);
+  saveFinalOrder(order: CustomerOrder, isValidation: boolean, gaClientId: string | null) {
+    let params = new HttpParams();
+    params = params.set("isValidation", isValidation);
+    if (gaClientId)
+      params = params.set("gaClientId", gaClientId);
+    return this.postItem(params, 'order/save-order', order);
   }
 
   switchResponsableForOrder(idOrder: number, newResponsable: Responsable) {
