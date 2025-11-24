@@ -60,12 +60,7 @@ public class KpiWebsiteOrderCreation implements IKpiThread {
         if (kpiCrm == null)
             throw new OsirisException("KpiCrm not defined for code " + getCode());
 
-        LocalDate lastDate = null;
-        KpiCrmValue lastCrmValue = kpiCrmValueService.getLastCrmValue(kpiCrm);
-        if (lastCrmValue != null)
-            lastDate = lastCrmValue.getValueDate().plusDays(1);
-        else
-            lastDate = LocalDate.of(2023, 1, 1);
+        LocalDate lastDate = kpiCrmValueService.getLastKpiCrmValueDate(kpiCrm);
 
         while (lastDate.isBefore(LocalDate.now())) {
             List<KpiCrmValue> newValues = new ArrayList<KpiCrmValue>();
@@ -115,9 +110,6 @@ public class KpiWebsiteOrderCreation implements IKpiThread {
                         }
                         nbrOrder++;
                     }
-                }
-
-                if (!(new BigDecimal(nbrOrder)).equals(getDefaultValue())) {
                 }
 
                 if (newValues != null && newValues.size() > 0) {

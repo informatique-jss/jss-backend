@@ -3,8 +3,6 @@ package com.jss.osiris.modules.osiris.crm.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
@@ -20,17 +18,10 @@ import jakarta.persistence.SequenceGenerator;
 public class KpiCrm implements Serializable, IId {
     public static final String AGGREGATE_TYPE_AVERAGE = "AGGREGATE_TYPE_AVERAGE";
     public static final String AGGREGATE_TYPE_SUM = "AGGREGATE_TYPE_SUM";
+    public static final String AGGREGATE_TYPE_LAST_VALUE = "AGGREGATE_TYPE_LAST_VALUE";
 
     public static final String GRAPH_TYPE_LINE = "line";
     public static final String GRAPH_TYPE_BAR = "bar";
-
-    // ---------- PAGES SHOWN IN OSIRIS WITH WIDGETS AND KPIS ------------------
-    public static final String TIERS_KPI_HOME_DISPLAY = "TIERS_KPI_HOME_DISPLAY";
-    public static final String TIERS_KPI_MAIN_DISPLAY = "TIERS_KPI_MAIN_DISPLAY";
-    public static final String TIERS_KPI_BUSINESS_DISPLAY = "TIERS_KPI_BUSINESS_DISPLAY";
-    public static final String TIERS_KPI_CUSTOMER_DISPLAY = "TIERS_KPI_CUSTOMER_DISPLAY";
-    public static final List<String> POSSIBLE_DISPLAYS = Arrays.asList(TIERS_KPI_HOME_DISPLAY, TIERS_KPI_MAIN_DISPLAY,
-            TIERS_KPI_BUSINESS_DISPLAY, TIERS_KPI_CUSTOMER_DISPLAY);
 
     @Id
     @SequenceGenerator(name = "kpi_sequence", sequenceName = "kpi_sequence", allocationSize = 1)
@@ -69,27 +60,10 @@ public class KpiCrm implements Serializable, IId {
     private String icon;
 
     @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
+    private String aggregateTypeForTimePeriod;
+
+    @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
     private Boolean isPositiveEvolutionGood;
-
-    public static String getTiersKpiHomeDisplay() {
-        return TIERS_KPI_HOME_DISPLAY;
-    }
-
-    public static String getTiersKpiMainDisplay() {
-        return TIERS_KPI_MAIN_DISPLAY;
-    }
-
-    public static String getTiersKpiBusinessDisplay() {
-        return TIERS_KPI_BUSINESS_DISPLAY;
-    }
-
-    public static String getTiersKpiCustomerDisplay() {
-        return TIERS_KPI_CUSTOMER_DISPLAY;
-    }
-
-    public static List<String> getPossibleDisplays() {
-        return POSSIBLE_DISPLAYS;
-    }
 
     public Integer getId() {
         return id;
@@ -193,6 +167,26 @@ public class KpiCrm implements Serializable, IId {
 
     public void setGraphType(String graphType) {
         this.graphType = graphType;
+    }
+
+    public static String getAggregateTypeLastValue() {
+        return AGGREGATE_TYPE_LAST_VALUE;
+    }
+
+    public static String getGraphTypeLine() {
+        return GRAPH_TYPE_LINE;
+    }
+
+    public static String getGraphTypeBar() {
+        return GRAPH_TYPE_BAR;
+    }
+
+    public String getAggregateTypeForTimePeriod() {
+        return aggregateTypeForTimePeriod;
+    }
+
+    public void setAggregateTypeForTimePeriod(String aggregateTypeForTimePeriod) {
+        this.aggregateTypeForTimePeriod = aggregateTypeForTimePeriod;
     }
 
 }

@@ -118,6 +118,7 @@ import com.jss.osiris.modules.osiris.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.osiris.quotation.model.ToOrderStatistics;
 import com.jss.osiris.modules.osiris.quotation.model.centralPay.CentralPayPaymentRequest;
 import com.jss.osiris.modules.osiris.quotation.repository.CustomerOrderRepository;
+import com.jss.osiris.modules.osiris.reporting.service.ReportingWorkingTableService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
@@ -1358,6 +1359,15 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         return this.searchOrders(search);
     }
 
+    @Override
+    public List<CustomerOrder> searchActiveRecurringOrder() {
+        return customerOrderRepository
+                .findAllActiveRecurringCustomerOrders(
+                        customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT),
+                        customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.WAITING_DEPOSIT),
+                        customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.ABANDONED));
+    }
+
     // Recuring
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
@@ -2311,9 +2321,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Autowired
     KpiCrmService kpiCrmService;
 
+    @Autowired
+    ReportingWorkingTableService reportingWorkingTableService;
+
     @Scheduled(initialDelay = 100, fixedDelay = Integer.MAX_VALUE)
     public void test() throws OsirisException {
-        kpiCrmService.computeKpiCrm(5);
+        kpiCrmService.computeKpiCrm(10);
         System.out.println("done");
     }
 }

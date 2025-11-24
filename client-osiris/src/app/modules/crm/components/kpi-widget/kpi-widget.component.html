@@ -1,6 +1,7 @@
 <div class="card " *ngIf="kpiCrm">
   <div class="card-body">
-    <a (click)="displayDetails()" class="text-muted float-end mt-n1 fs-xl pointer">
+    <a (click)="displayDetails()" class="text-muted float-end mt-n1 fs-xl pointer"
+      *ngIf="AGGREGATE_TYPE_LAST_VALUE!=kpiCrm.aggregateTypeForTimePeriod">
       <ng-icon name="tablerZoomScan" />
     </a>
     <h5 [title]="kpiCrm.label" class="two-lines-ellipsis">{{ kpiCrm.label }}</h5>

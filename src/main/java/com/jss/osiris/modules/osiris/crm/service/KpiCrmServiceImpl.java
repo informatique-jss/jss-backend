@@ -105,6 +105,7 @@ public class KpiCrmServiceImpl implements KpiCrmService {
         kpiCrm.setIsPositiveEvolutionGood(kpiThread.getIsPositiveEvolutionGood());
         kpiCrm.setLabelType(kpiThread.getLabelType());
         kpiCrm.setUnit(kpiThread.getUnit());
+        kpiCrm.setAggregateTypeForTimePeriod(kpiThread.getAggregateTypeForTimePeriod());
         kpiCrm.setGraphType(kpiThread.getGraphType());
         addOrUpdateKpiCrm(kpiCrm);
     }

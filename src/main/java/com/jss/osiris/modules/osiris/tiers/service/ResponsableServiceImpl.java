@@ -18,6 +18,7 @@ import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrm;
+import com.jss.osiris.modules.osiris.crm.model.KpiCrmSearchModel;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrmValueAggregatedByResponsable;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmService;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmValueService;
@@ -246,11 +247,16 @@ public class ResponsableServiceImpl implements ResponsableService {
             KpiCrm kpiCrm = kpiCrmService.getKpiCrmByCode(kpi.getKey());
 
             if (kpi.getMaxValue() != null || kpi.getMinValue() != null) {
+                KpiCrmSearchModel kpiCrmSearch = new KpiCrmSearchModel();
+                kpiCrmSearch.setAllTiers(false);
+                kpiCrmSearch.setEndDateKpis(responsableSearch.getEndDateKpis());
+                kpiCrmSearch.setStartDateKpis(responsableSearch.getStartDateKpis());
+                kpiCrmSearch.setResponsableIds(responsableFound.stream().map(t -> t.getId()).toList());
+                if (responsableSearch.getSalesEmployee() != null)
+                    kpiCrmSearch.setSalesEmployeeId(responsableSearch.getSalesEmployee().getId());
+
                 List<KpiCrmValueAggregatedByResponsable> values = kpiCrmValueService
-                        .getAggregateValuesForResponsableListByResponsable(
-                                kpiCrm, responsableSearch.getStartDateKpis(), responsableSearch.getEndDateKpis(),
-                                responsableSearch.getSalesEmployee().getId(),
-                                responsableFound);
+                        .getAggregateValuesForResponsableListByResponsable(kpiCrm, kpiCrmSearch);
                 if (values != null) {
                     for (KpiCrmValueAggregatedByResponsable aggregatedValue : values) {
                         if (kpi.getMaxValue() != null

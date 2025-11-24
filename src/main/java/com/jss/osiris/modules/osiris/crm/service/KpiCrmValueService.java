@@ -5,12 +5,11 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.jss.osiris.modules.osiris.crm.model.KpiCrm;
+import com.jss.osiris.modules.osiris.crm.model.KpiCrmSearchModel;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrmValue;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrmValueAggregatedByResponsable;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrmValueAggregatedByTiers;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrmValuePayload;
-import com.jss.osiris.modules.osiris.tiers.model.Responsable;
-import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 
 public interface KpiCrmValueService {
 
@@ -21,27 +20,24 @@ public interface KpiCrmValueService {
         public KpiCrmValue getLastCrmValue(KpiCrm kpiCrm);
 
         public List<KpiCrmValueAggregatedByTiers> getAggregateValuesForTiersListByTiers(KpiCrm kpiCrm,
-                        LocalDate startDate,
-                        LocalDate endDate, Integer salesEmployeeId, List<Tiers> tiers);
+                        KpiCrmSearchModel searchModel);
 
-        public BigDecimal getAggregateValuesForTiersList(KpiCrm kpiCrm, LocalDate startDate,
-                        LocalDate endDate, Integer salesEmployeeId, List<Tiers> tiersList, boolean isAllTiers);
-
-        public KpiCrmValuePayload getKpiCrmValuePayloadAggregatedByTiersAndDate(KpiCrm kpiCrm, LocalDate startDate,
-                        LocalDate endDate, Integer salesEmployeeId, List<Tiers> tiersList, boolean isAllTiers,
+        public KpiCrmValuePayload getKpiCrmValuePayloadAggregatedByTiersAndDate(KpiCrm kpiCrm,
+                        KpiCrmSearchModel searchModel,
                         boolean aggregateResponsable);
 
         public List<KpiCrmValueAggregatedByResponsable> getAggregateValuesForResponsableListByResponsable(KpiCrm kpiCrm,
-                        LocalDate startDate,
-                        LocalDate endDate, Integer salesEmployeeId, List<Responsable> responsables);
+                        KpiCrmSearchModel searchModel);
 
-        public BigDecimal getAggregateValuesForResponsableList(KpiCrm kpiCrm, LocalDate startDate,
-                        LocalDate endDate, Integer salesEmployeeId, List<Responsable> responsableList,
-                        boolean isAllTiers);
+        public BigDecimal getAggregateValuesForResponsableList(KpiCrm kpiCrm, KpiCrmSearchModel searchModel);
 
         public KpiCrmValuePayload getKpiCrmValuePayloadAggregatedByResponsableAndDate(KpiCrm kpiCrm,
-                        LocalDate startDate,
-                        LocalDate endDate, Integer salesEmployeeId, List<Responsable> responsableList,
-                        boolean isAllTiers, boolean aggregateResponsable);
+                        KpiCrmSearchModel searchModel, boolean aggregateResponsable);
+
+        BigDecimal getKpiCrmValueAggregatedForTiersList(KpiCrm kpiCrm, KpiCrmSearchModel searchModel);
+
+        public LocalDate getLastKpiCrmValueDate(KpiCrm kpiCrm);
+
+        void deleteKpiCrmValuesForKpiCrm(KpiCrm kpiCrm);
 
 }

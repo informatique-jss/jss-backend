@@ -14,4 +14,6 @@ public interface KpiCrmValueRepository extends QueryCacheCrudRepository<KpiCrmVa
 
         List<KpiCrmValue> findByKpiCrmAndResponsableInAndValueDateBetween(KpiCrm kpiCrm, List<Responsable> responsables,
                         LocalDate startDate, LocalDate endDate);
+
+        void deleteByKpiCrm(KpiCrm kpiCrm);
 }

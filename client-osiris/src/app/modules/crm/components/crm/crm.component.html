@@ -7,6 +7,24 @@
           <div class="col-12 ">
             <div class="card-header justify-content-between border-dashed">
               <h4 class="card-title mb-0">Analyse synthétique : {{selectedKpiCrm?selectedKpiCrm.label:''}}</h4>
+              <ul ngbNav #nav="ngbNav" [activeId]="searchModel.kpiScale"
+                class="nav nav-tabs nav-justified card-header-tabs nav-bordered">
+                <li ngbNavItem class="nav-item" [ngbNavItem]="'DAILY'" (click)="toggleGraphScale('DAILY')">
+                  <a ngbNavLink class="nav-link">
+                    <span class="d-none d-md-block">Jour</span>
+                  </a>
+                </li>
+                <li ngbNavItem class="nav-item">
+                  <a ngbNavLink class="nav-link" [ngbNavItem]="'WEEKLY'" (click)="toggleGraphScale('WEEKLY')">
+                    <span class="d-none d-md-block">Semaine</span>
+                  </a>
+                </li>
+                <li ngbNavItem class="nav-item">
+                  <a ngbNavLink class="nav-link" [ngbNavItem]="'MONTHLY'" (click)="toggleGraphScale('MONTHLY')">
+                    <span class="d-none d-md-block">Mois</span>
+                  </a>
+                </li>
+              </ul>
             </div>
             <div class="card-body">
               <div dir="ltr">
@@ -22,11 +40,13 @@
 
   <div class="row row-cols-xxl-7 row-cols-md-4 row-cols-3 align-items-center">
     @for (kpiCrm of kpiCrms; track $index) {
+    @if(kpiCrmsValues[kpiCrm.code]!=undefined && kpiCrmsValues[kpiCrm.code]!=null) {
     <div class="col">
       <kpi-widget [kpiCrm]="kpiCrm" [value]="kpiCrmsValues[kpiCrm.code]" [valueN1]="kpiCrmsValuesN1[kpiCrm.code]"
         [valueN2]="kpiCrmsValuesN2[kpiCrm.code]" [evolution]="kpiCrmsValuesEvolution[kpiCrm.code]"
         [evolutionIsGood]="kpiCrmsValuesEvolutionGood[kpiCrm.code]" (onDisplayDetails)="displayDetails(kpiCrm)" />
     </div>
+    }
     }
   </div>
 </div>
@@ -73,7 +93,7 @@
       <div class="flex-grow-1 overflow-auto p-3">
         <div class="tab-content" [ngbNavOutlet]="nav"></div>
       </div>
-      <div class="card   mb-0 d-none d-lg-flex rounded-end-0 mt-auto">
+      <div class="card mb-0 d-flex rounded-end-0 mt-auto">
         <div class="card-body d-flex align-items-center gap-2">
           <button class="btn btn-primary w-100 btn-new-event" type="submit">
             <ng-icon name="tablerRefresh" class="me-2" />

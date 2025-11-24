@@ -1,6 +1,5 @@
 package com.jss.osiris.modules.osiris.crm.controller;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +16,7 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.osiris.crm.facade.KpiCrmFacade;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrm;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrmJob;
+import com.jss.osiris.modules.osiris.crm.model.KpiCrmSearchModel;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrmValuePayload;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmQueueService;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmService;
@@ -48,19 +48,16 @@ public class KpiController {
 
         @PostMapping(inputEntryPoint + "/kpi-crm/values/tiers")
         public ResponseEntity<KpiCrmJob> getAggregateValuesForTiersList(@RequestParam String kpiCrmKey,
-                        @RequestParam LocalDate startDate, @RequestParam LocalDate endDate,
-                        @RequestParam(required = false) Integer salesEmployeeId,
-                        @RequestParam Boolean isAllTiers,
-                        @RequestBody List<Integer> tiersIds) throws OsirisValidationException {
+                        @RequestBody KpiCrmSearchModel searchModel) throws OsirisValidationException {
 
-                if (startDate == null)
+                if (searchModel.getStartDateKpis() == null)
                         throw new OsirisValidationException("startDate");
 
-                if (endDate == null)
+                if (searchModel.getEndDateKpis() == null)
                         throw new OsirisValidationException("endDate");
 
-                if (salesEmployeeId != null) {
-                        Employee employee = employeeService.getEmployee(salesEmployeeId);
+                if (searchModel.getSalesEmployeeId() != null) {
+                        Employee employee = employeeService.getEmployee(searchModel.getSalesEmployeeId());
                         if (employee == null)
                                 throw new OsirisValidationException("salesEmployeeId");
                 }
@@ -70,27 +67,23 @@ public class KpiController {
                         throw new OsirisValidationException("kpiCrm");
 
                 return new ResponseEntity<KpiCrmJob>(
-                                kpiCrmQueueService.submitJobForAggregateValuesForTiersList(kpiCrmKey, startDate,
-                                                endDate, salesEmployeeId, tiersIds, isAllTiers),
+                                kpiCrmQueueService.submitJobForAggregateValuesForTiersList(kpiCrmKey, searchModel),
                                 HttpStatus.OK);
         }
 
         @PostMapping(inputEntryPoint + "/kpi-crm/values/tiers/details")
         public ResponseEntity<KpiCrmValuePayload> getKpiCrmValuePayloadAggregatedByTiersAndDate(
                         @RequestParam String kpiCrmKey,
-                        @RequestParam LocalDate startDate, @RequestParam LocalDate endDate,
-                        @RequestParam(required = false) Integer salesEmployeeId,
-                        @RequestParam Boolean isAllTiers,
-                        @RequestBody List<Integer> tiersIds) throws OsirisValidationException {
+                        @RequestBody KpiCrmSearchModel searchModel) throws OsirisValidationException {
 
-                if (startDate == null)
+                if (searchModel.getStartDateKpis() == null)
                         throw new OsirisValidationException("startDate");
 
-                if (endDate == null)
+                if (searchModel.getEndDateKpis() == null)
                         throw new OsirisValidationException("endDate");
 
-                if (salesEmployeeId != null) {
-                        Employee employee = employeeService.getEmployee(salesEmployeeId);
+                if (searchModel.getSalesEmployeeId() != null) {
+                        Employee employee = employeeService.getEmployee(searchModel.getSalesEmployeeId());
                         if (employee == null)
                                 throw new OsirisValidationException("salesEmployeeId");
                 }
@@ -100,8 +93,8 @@ public class KpiController {
                         throw new OsirisValidationException("kpiCrm");
 
                 return new ResponseEntity<KpiCrmValuePayload>(
-                                kpiCrmFacade.getKpiCrmValuePayloadAggregatedByTiersAndDate(kpiCrmKey, startDate,
-                                                endDate, salesEmployeeId, tiersIds, isAllTiers, true),
+                                kpiCrmFacade.getKpiCrmValuePayloadAggregatedByTiersAndDate(kpiCrmKey, searchModel,
+                                                true),
                                 HttpStatus.OK);
         }
 
@@ -113,19 +106,16 @@ public class KpiController {
 
         @PostMapping(inputEntryPoint + "/kpi-crm/values/responsable")
         public ResponseEntity<KpiCrmJob> getAggregateValuesForResponsableList(@RequestParam String kpiCrmKey,
-                        @RequestParam LocalDate startDate, @RequestParam LocalDate endDate,
-                        @RequestParam(required = false) Integer salesEmployeeId,
-                        @RequestParam Boolean isAllResponsable,
-                        @RequestBody List<Integer> responsableIds) throws OsirisValidationException {
+                        @RequestBody KpiCrmSearchModel searchModel) throws OsirisValidationException {
 
-                if (startDate == null)
+                if (searchModel.getStartDateKpis() == null)
                         throw new OsirisValidationException("startDate");
 
-                if (endDate == null)
+                if (searchModel.getEndDateKpis() == null)
                         throw new OsirisValidationException("endDate");
 
-                if (salesEmployeeId != null) {
-                        Employee employee = employeeService.getEmployee(salesEmployeeId);
+                if (searchModel.getSalesEmployeeId() != null) {
+                        Employee employee = employeeService.getEmployee(searchModel.getSalesEmployeeId());
                         if (employee == null)
                                 throw new OsirisValidationException("salesEmployeeId");
                 }
@@ -135,27 +125,24 @@ public class KpiController {
                         throw new OsirisValidationException("kpiCrm");
 
                 return new ResponseEntity<KpiCrmJob>(
-                                kpiCrmQueueService.submitJobForAggregateValuesForResponsableList(kpiCrmKey, startDate,
-                                                endDate, salesEmployeeId, responsableIds, isAllResponsable),
+                                kpiCrmQueueService.submitJobForAggregateValuesForResponsableList(kpiCrmKey,
+                                                searchModel),
                                 HttpStatus.OK);
         }
 
         @PostMapping(inputEntryPoint + "/kpi-crm/values/responsable/details")
         public ResponseEntity<KpiCrmValuePayload> getKpiCrmValuePayloadAggregatedByResponsableAndDate(
                         @RequestParam String kpiCrmKey,
-                        @RequestParam LocalDate startDate, @RequestParam LocalDate endDate,
-                        @RequestParam(required = false) Integer salesEmployeeId,
-                        @RequestParam Boolean isAllResponsable,
-                        @RequestBody List<Integer> responsableIds) throws OsirisValidationException {
+                        @RequestBody KpiCrmSearchModel searchModel) throws OsirisValidationException {
 
-                if (startDate == null)
+                if (searchModel.getStartDateKpis() == null)
                         throw new OsirisValidationException("startDate");
 
-                if (endDate == null)
+                if (searchModel.getEndDateKpis() == null)
                         throw new OsirisValidationException("endDate");
 
-                if (salesEmployeeId != null) {
-                        Employee employee = employeeService.getEmployee(salesEmployeeId);
+                if (searchModel.getSalesEmployeeId() != null) {
+                        Employee employee = employeeService.getEmployee(searchModel.getSalesEmployeeId());
                         if (employee == null)
                                 throw new OsirisValidationException("salesEmployeeId");
                 }
@@ -165,8 +152,8 @@ public class KpiController {
                         throw new OsirisValidationException("kpiCrm");
 
                 return new ResponseEntity<KpiCrmValuePayload>(
-                                kpiCrmFacade.getKpiCrmValuePayloadAggregatedByResponsableAndDate(kpiCrmKey, startDate,
-                                                endDate, salesEmployeeId, responsableIds, isAllResponsable, true),
+                                kpiCrmFacade.getKpiCrmValuePayloadAggregatedByResponsableAndDate(kpiCrmKey, searchModel,
+                                                true),
                                 HttpStatus.OK);
         }
 
@@ -175,69 +162,4 @@ public class KpiController {
                         throws OsirisValidationException {
                 return new ResponseEntity<KpiCrmJob>(kpiCrmQueueService.getJobStatus(jobId), HttpStatus.OK);
         }
-
-        /*
-         * @GetMapping(inputEntryPoint + "/kpi-widgets")
-         * public ResponseEntity<List<KpiWidgetDto>>
-         * getKpiWidgetsByPageAndTimescaleForResponsables(
-         * 
-         * @RequestParam String displayedPageCode,
-         * 
-         * @RequestParam String timeScale,
-         * 
-         * @RequestParam List<Integer> responsableIds) throws OsirisValidationException
-         * {
-         * 
-         * if (displayedPageCode == null ||
-         * !KpiCrm.POSSIBLE_DISPLAYS.contains(displayedPageCode))
-         * throw new OsirisValidationException("displayedPageCode");
-         * 
-         * List<Responsable> responsables = new ArrayList<Responsable>();
-         * if (responsableIds != null) {
-         * for (Integer responsableId : responsableIds) {
-         * Responsable responsable = responsableService.getResponsable(responsableId);
-         * if (responsable == null)
-         * throw new OsirisValidationException("responsable");
-         * responsables.add(responsable);
-         * }
-         * } else {
-         * throw new OsirisValidationException("responsableIds");
-         * }
-         * 
-         * return new ResponseEntity<List<KpiWidgetDto>>(
-         * kpiCrmService.getKpiCrmWidget(displayedPageCode, timeScale, responsableIds),
-         * HttpStatus.OK);
-         * }
-         */
-        /*
-         * @GetMapping(inputEntryPoint + "/kpi-values")
-         * public ResponseEntity<String> getKpiValuesPayloadByKpiCrmForResponsables(
-         * 
-         * @RequestParam Integer kpiCrmId,
-         * 
-         * @RequestParam String timeScale,
-         * 
-         * @RequestParam List<Integer> responsableIds)
-         * throws OsirisValidationException, JsonProcessingException {
-         * 
-         * if (kpiCrmId == null && kpiCrmService.getKpiCrm(kpiCrmId) == null)
-         * throw new OsirisValidationException("kpiCrmId");
-         * 
-         * List<Responsable> responsables = new ArrayList<Responsable>();
-         * if (responsableIds != null && responsableIds.size() > 0) {
-         * for (Integer responsableId : responsableIds) {
-         * Responsable responsable = responsableService.getResponsable(responsableId);
-         * if (responsable == null)
-         * throw new OsirisValidationException("responsable");
-         * responsables.add(responsable);
-         * }
-         * } else {
-         * throw new OsirisValidationException("responsableIds");
-         * }
-         * 
-         * return new ResponseEntity<String>(
-         * kpiCrmService.getKpiValues(kpiCrmId, timeScale, responsableIds),
-         * HttpStatus.OK);
-         * }
-         */
 }

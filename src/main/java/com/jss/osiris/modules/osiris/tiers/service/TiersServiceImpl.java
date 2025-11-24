@@ -27,6 +27,7 @@ import com.jss.osiris.libs.search.service.SearchService;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccountTrouple;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrm;
+import com.jss.osiris.modules.osiris.crm.model.KpiCrmSearchModel;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrmValueAggregatedByTiers;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmService;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmValueService;
@@ -449,10 +450,16 @@ public class TiersServiceImpl implements TiersService {
             KpiCrm kpiCrm = kpiCrmService.getKpiCrmByCode(kpi.getKey());
 
             if (kpi.getMaxValue() != null || kpi.getMinValue() != null) {
-                List<KpiCrmValueAggregatedByTiers> values = kpiCrmValueService.getAggregateValuesForTiersListByTiers(
-                        kpiCrm, tiersSearch.getStartDateKpis(), tiersSearch.getEndDateKpis(),
-                        tiersSearch.getSalesEmployee().getId(),
-                        tiersFound);
+                KpiCrmSearchModel kpiCrmSearch = new KpiCrmSearchModel();
+                kpiCrmSearch.setAllTiers(false);
+                kpiCrmSearch.setEndDateKpis(tiersSearch.getEndDateKpis());
+                kpiCrmSearch.setStartDateKpis(tiersSearch.getStartDateKpis());
+                kpiCrmSearch.setTiersIds(tiersFound.stream().map(t -> t.getId()).toList());
+                if (tiersSearch.getSalesEmployee() != null)
+                    kpiCrmSearch.setSalesEmployeeId(tiersSearch.getSalesEmployee().getId());
+
+                List<KpiCrmValueAggregatedByTiers> values = kpiCrmValueService
+                        .getAggregateValuesForTiersListByTiers(kpiCrm, kpiCrmSearch);
                 if (values != null) {
                     for (KpiCrmValueAggregatedByTiers aggregatedValue : values) {
                         if (kpi.getMaxValue() != null

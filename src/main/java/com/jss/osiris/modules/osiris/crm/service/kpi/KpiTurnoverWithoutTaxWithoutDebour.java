@@ -71,7 +71,7 @@ public class KpiTurnoverWithoutTaxWithoutDebour implements IKpiThread {
 
     @Override
     public String getIcon() {
-        return null;
+        return "tablerCoinEuro";
     }
 
     @Override
@@ -100,12 +100,8 @@ public class KpiTurnoverWithoutTaxWithoutDebour implements IKpiThread {
         if (nbr <= 0)
             return;
 
-        LocalDate lastDate = null;
-        KpiCrmValue lastCrmValue = kpiCrmValueService.getLastCrmValue(kpiCrm);
-        if (lastCrmValue != null)
-            lastDate = lastCrmValue.getValueDate().plusDays(1);
-        else
-            lastDate = LocalDate.of(2023, 1, 1);
+        LocalDate lastDate = kpiCrmValueService.getLastKpiCrmValueDate(kpiCrm);
+        LocalDate today = LocalDate.now();
 
         @SuppressWarnings("unchecked")
         TypedQuery<WorkingTableTurnover> q2 = (TypedQuery<WorkingTableTurnover>) entityManager
@@ -113,11 +109,12 @@ public class KpiTurnoverWithoutTaxWithoutDebour implements IKpiThread {
                         """
                                 select id_responsable as idResponsable , cast (date_trunc('day' ,created_date) as date) as createdDate, sum(turnover_without_tax_without_debour) as turnover
                                 from reporting_turnover rt
-                                where created_date >=:startDate
+                                where created_date >=:startDate and created_date < :endDate
                                 group by id_responsable , cast (date_trunc('day' ,created_date) as date)
                                 """,
                         WorkingTableTurnover.class);
         q2.setParameter("startDate", lastDate);
+        q2.setParameter("endDate", today);
 
         List<WorkingTableTurnover> turnoverValues = q2.getResultList();
 

@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NgIcon } from '@ng-icons/core';
 import { CountUpModule } from 'ngx-countup';
+import { AGGREGATE_TYPE_LAST_VALUE } from '../../../../libs/Constants';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { KpiCrm } from '../../../main/model/KpiCrm';
 
@@ -12,6 +13,8 @@ import { KpiCrm } from '../../../main/model/KpiCrm';
   imports: [...SHARED_IMPORTS, CountUpModule, NgIcon]
 })
 export class KpiWidgetComponent implements OnInit {
+
+  AGGREGATE_TYPE_LAST_VALUE = AGGREGATE_TYPE_LAST_VALUE;
 
   @Input() kpiCrm: KpiCrm | undefined;
   @Input() value: number = 0;

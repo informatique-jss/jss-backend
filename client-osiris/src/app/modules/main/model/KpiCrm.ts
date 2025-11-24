@@ -8,4 +8,5 @@ export interface KpiCrm {
   labelType: string;
   icon: string;
   isPositiveEvolutionGood: boolean;
+  aggregateTypeForTimePeriod: string;
 }

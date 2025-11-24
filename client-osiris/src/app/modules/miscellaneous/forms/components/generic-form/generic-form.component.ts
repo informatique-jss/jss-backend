@@ -66,12 +66,12 @@ export class GenericFormComponent implements OnInit, OnChanges {
 
       if (!this.formGroup.contains(this.minKey)) {
         this.formGroup.addControl(
-          this.minKey, new FormControl(this.model[this.minKey] ?? null)
+          this.minKey, new FormControl(this.model["minValue"] ?? null)
         );
       }
       if (!this.formGroup.contains(this.maxKey)) {
         this.formGroup.addControl(
-          this.maxKey, new FormControl(this.model[this.maxKey] ?? null)
+          this.maxKey, new FormControl(this.model["maxValue"] ?? null)
         );
       }
 
@@ -83,6 +83,11 @@ export class GenericFormComponent implements OnInit, OnChanges {
       });
 
     } else {
+
+      if (this.type === 'input' && this.inputType === 'date' && typeof this.model === 'string') {
+        this.model = this.model.substring(0, 10);
+      }
+
       if (!this.formGroup.contains(this.fieldName)) {
         this.formGroup.addControl(
           this.fieldName,
@@ -104,7 +109,12 @@ export class GenericFormComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['model'] != null && changes['model'] != undefined && !changes['model'].firstChange) {
-      const newValue = changes['model'].currentValue;
+      let newValue = changes['model'].currentValue;
+
+      if (this.type === 'input' && this.inputType === 'date' && typeof newValue === 'string') {
+        newValue = newValue.substring(0, 10);
+      }
+
       if (this.control && this.control.value !== newValue) {
         this.control.setValue(newValue, { emitEvent: false });
       }

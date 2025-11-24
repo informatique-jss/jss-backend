@@ -1,7 +1,5 @@
 package com.jss.osiris.modules.osiris.crm.service;
 
-import java.time.LocalDate;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -14,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.jss.osiris.modules.osiris.crm.facade.KpiCrmFacade;
 import com.jss.osiris.modules.osiris.crm.model.JobStatus;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrmJob;
+import com.jss.osiris.modules.osiris.crm.model.KpiCrmSearchModel;
 
 @Service
 public class KpiCrmQueueService {
@@ -24,8 +23,7 @@ public class KpiCrmQueueService {
     @Autowired
     KpiCrmFacade kpiCrmFacade;
 
-    public KpiCrmJob submitJobForAggregateValuesForTiersList(String kpiCrmKey, LocalDate startDate,
-            LocalDate endDate, Integer salesEmployeeId, List<Integer> tiersIds, boolean isAllTiers) {
+    public KpiCrmJob submitJobForAggregateValuesForTiersList(String kpiCrmKey, KpiCrmSearchModel searchModel) {
         String jobId = UUID.randomUUID().toString();
         KpiCrmJob job = new KpiCrmJob(JobStatus.QUEUED);
         job.setId(jobId);
@@ -36,9 +34,7 @@ public class KpiCrmQueueService {
             jobInProgress.setStatus(JobStatus.RUNNING);
             try {
                 jobInProgress.setResult(
-                        kpiCrmFacade.getAggregateValuesForTiersList(kpiCrmKey, startDate, endDate, salesEmployeeId,
-                                tiersIds,
-                                isAllTiers));
+                        kpiCrmFacade.getAggregateValuesForTiersList(kpiCrmKey, searchModel));
             } catch (Exception e) {
                 System.out.println("Error on KPI Crm job");
             }
@@ -48,8 +44,7 @@ public class KpiCrmQueueService {
         return job;
     }
 
-    public KpiCrmJob submitJobForAggregateValuesForResponsableList(String kpiCrmKey, LocalDate startDate,
-            LocalDate endDate, Integer salesEmployeeId, List<Integer> responsableIds, boolean isAllResponsable) {
+    public KpiCrmJob submitJobForAggregateValuesForResponsableList(String kpiCrmKey, KpiCrmSearchModel searchModel) {
         String jobId = UUID.randomUUID().toString();
         KpiCrmJob job = new KpiCrmJob(JobStatus.QUEUED);
         job.setId(jobId);
@@ -60,9 +55,7 @@ public class KpiCrmQueueService {
             jobInProgress.setStatus(JobStatus.RUNNING);
             try {
                 jobInProgress.setResult(
-                        kpiCrmFacade.getAggregateValuesForResponsableList(kpiCrmKey, startDate, endDate,
-                                salesEmployeeId, responsableIds,
-                                isAllResponsable));
+                        kpiCrmFacade.getAggregateValuesForResponsableList(kpiCrmKey, searchModel));
             } catch (Exception e) {
                 System.out.println("Error on KPI Crm job");
             }

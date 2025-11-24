@@ -228,4 +228,6 @@ public interface CustomerOrderService {
 
         List<CustomerOrder> getByCreatedDateBetweenAndStatus(LocalDateTime startDate, LocalDateTime endDate,
                         CustomerOrderStatus customerOrderStatus);
+
+        List<CustomerOrder> searchActiveRecurringOrder();
 }
