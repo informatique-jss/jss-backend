@@ -9,6 +9,9 @@ public class Ga4Event {
     @JsonProperty("name")
     private String name;
 
+    @JsonProperty("page")
+    private Ga4PageInfo page;
+
     @JsonProperty("params")
     private Ga4ParamPurchase params;
 

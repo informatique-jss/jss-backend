@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -65,11 +64,6 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService {
 
         if (quotation == null)
             return;
-
-        // Fallback if no cookie found (ex: consent refused) -> anonymous tracking
-        if (gaClientId == null || gaClientId.isBlank()) {
-            gaClientId = "anon_" + UUID.randomUUID().toString();
-        }
 
         InvoicingSummary invoicingSummary = customerOrderService.getInvoicingSummaryForIQuotation(quotation);
 
@@ -159,7 +153,7 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService {
     private ResponseEntity<String> sendToGoogle(Ga4Request requestBody) {
         SSLHelper.disableCertificateValidation();
 
-        // Construction de l'URL avec les query params obligatoires
+        // Building URL query
         String urlWithParams = String.format("%s?measurement_id=%s&api_secret=%s",
                 gaUrl, measurementId, apiSecret);
 
@@ -168,7 +162,7 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService {
 
         HttpEntity<Ga4Request> entity = new HttpEntity<>(requestBody, headers);
 
-        // Envoi de la requête POST
+        // Sending POST request
         ResponseEntity<String> response = new RestTemplate().exchange(
                 urlWithParams,
                 HttpMethod.POST,

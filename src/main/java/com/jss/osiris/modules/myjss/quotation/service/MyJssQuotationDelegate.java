@@ -296,7 +296,6 @@ public class MyJssQuotationDelegate {
         googleAnalyticsService.trackPurchase(quotation, false, gaClientId);
 
         return quotation;
-
     }
 
     @Transactional(rollbackFor = Exception.class)

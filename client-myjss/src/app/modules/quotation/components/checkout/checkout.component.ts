@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { NgbAccordionModule, NgbDropdownModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
-import { getGaClientId } from '../../../../libs/CoookieHelper';
 import { validateEmail, validateFrenchPhone, validateInternationalPhone } from '../../../../libs/CustomFormsValidatorsHelper';
 import { getDocument } from '../../../../libs/DocumentHelper';
 import { capitalizeName } from '../../../../libs/FormatHelper';
@@ -106,7 +105,6 @@ export class CheckoutComponent implements OnInit {
   idArticle: number | undefined;
   voucherCode: string | undefined;
 
-  userCookieId: string | null = "";
 
   capitalizeName = capitalizeName;
 
@@ -130,7 +128,6 @@ export class CheckoutComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
-    this.userCookieId = getGaClientId();
     this.serviceTypeAnnualSubscription = this.constantService.getServiceTypeAnnualSubscription();
     this.serviceTypeEnterpriseAnnualSubscription = this.constantService.getServiceTypeEnterpriseAnnualSubscription();
     this.serviceTypeMonthlySubscription = this.constantService.getServiceTypeMonthlySubscription();
@@ -207,7 +204,7 @@ export class CheckoutComponent implements OnInit {
       if (this.quotation) {
         this.quotationService.setCurrentDraftQuotation(this.quotation);
         if (this.quotation.isQuotation)
-          this.quotationService.saveFinalQuotation(this.quotation as Quotation, !isDraft, this.userCookieId).subscribe(response => {
+          this.quotationService.saveFinalQuotation(this.quotation as Quotation, !isDraft).subscribe(response => {
             if (response && response.id) {
               this.cleanStorageData();
               this.appService.hideLoadingSpinner();
@@ -220,7 +217,7 @@ export class CheckoutComponent implements OnInit {
             }
           });
         else
-          this.orderService.saveFinalOrder(this.quotation as CustomerOrder, !isDraft, this.userCookieId).subscribe(response => {
+          this.orderService.saveFinalOrder(this.quotation as CustomerOrder, !isDraft).subscribe(response => {
             if (response && response.id) {
               this.cleanStorageData();
               this.appService.hideLoadingSpinner();
@@ -235,7 +232,7 @@ export class CheckoutComponent implements OnInit {
       }
     } else {
       if (this.quotation.isQuotation)
-        this.quotationService.saveQuotation(this.quotation, !isDraft, this.userCookieId).subscribe(response => {
+        this.quotationService.saveQuotation(this.quotation, !isDraft).subscribe(response => {
           if (response) {
             this.cleanStorageData();
             this.appService.hideLoadingSpinner();
@@ -243,7 +240,7 @@ export class CheckoutComponent implements OnInit {
           }
         })
       else
-        this.orderService.saveOrder(this.quotation, !isDraft, this.userCookieId).subscribe(response => {
+        this.orderService.saveOrder(this.quotation, !isDraft).subscribe(response => {
           if (response) {
             this.cleanStorageData();
             this.appService.hideLoadingSpinner();
@@ -294,7 +291,6 @@ export class CheckoutComponent implements OnInit {
   /**
    * Price events management
    */
-
   prepareForPricingAndCompute(isFromInit = false) {
     this.isComputingPrice = true;
     this.populateEmptyResponsable();
@@ -354,7 +350,7 @@ export class CheckoutComponent implements OnInit {
           if (!this.currentUser)
             this.quotationService.setCurrentDraftQuotation(this.quotation);
           else
-            this.quotationService.saveQuotation(this.quotation, false, this.userCookieId).subscribe();
+            this.quotationService.saveQuotation(this.quotation, false).subscribe();
         }
       })
   }
