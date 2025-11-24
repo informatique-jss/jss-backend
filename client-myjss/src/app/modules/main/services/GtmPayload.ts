@@ -29,10 +29,6 @@ export interface FileUploadPayload extends BasePayload {
   business: { type: 'quotation' | 'order'; order_id: number; documentType: string };
 }
 
-export interface PurchasePayload extends BasePayload {
-  business: { type: 'quotation' | 'order', order_id: number; amount: number; service: string, is_draft: boolean };
-}
-
 export interface LogPayload extends BasePayload {
   type: 'login' | 'logout' | 'switch';
 }
