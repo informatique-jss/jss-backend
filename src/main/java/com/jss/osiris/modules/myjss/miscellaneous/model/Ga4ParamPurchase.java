@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Ga4ParamPurchase {
+public class Ga4ParamPurchase extends Ga4PageInfo {
 
     @JsonProperty("debug_mode")
     private Boolean debugMode;

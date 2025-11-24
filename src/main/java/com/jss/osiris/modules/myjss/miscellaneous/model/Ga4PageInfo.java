@@ -4,36 +4,36 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Ga4PageInfo {
 
-    @JsonProperty("type")
-    private String type;
+    @JsonProperty("page_type")
+    private String pageType;
 
-    @JsonProperty("name")
-    private String name;
+    @JsonProperty("page_name")
+    private String pageName;
 
-    @JsonProperty("website")
-    private String website;
+    @JsonProperty("page_website")
+    private String pageWebsite;
 
-    public String getType() {
-        return type;
+    public String getPageType() {
+        return pageType;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setPageType(String type) {
+        this.pageType = type;
     }
 
-    public String getName() {
-        return name;
+    public String getPageName() {
+        return pageName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setPageName(String name) {
+        this.pageName = name;
     }
 
-    public String getWebsite() {
-        return website;
+    public String getPageWebsite() {
+        return pageWebsite;
     }
 
-    public void setWebsite(String website) {
-        this.website = website;
+    public void setPageWebsite(String website) {
+        this.pageWebsite = website;
     }
 }

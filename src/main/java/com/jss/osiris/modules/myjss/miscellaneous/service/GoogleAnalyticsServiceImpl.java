@@ -71,6 +71,10 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService {
 
         Ga4ParamPurchase params = new Ga4ParamPurchase();
 
+        params.setPageName("checkout");
+        params.setPageType("quotation");
+        params.setPageWebsite("myjss");
+
         if (devMode) {
             params.setDebugMode(devMode);
         }
