@@ -124,8 +124,14 @@ public class KpiPotentielTurnoverInProgressOrder implements IKpiThread {
 
             Responsable currentResponsable = null;
             Float quotationTurnover = 0f;
+            int i = 0;
 
             for (CustomerOrder order : orders) {
+                if (i > 100)
+                    break;
+                else
+                    i++;
+
                 if (currentResponsable == null
                         || !order.getResponsable().getId().equals(currentResponsable.getId())) {
                     if (!(new BigDecimal(quotationTurnover)).equals(getDefaultValue())) {

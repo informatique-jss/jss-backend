@@ -127,8 +127,12 @@ public class KpiPotentielTurnoverQuotation implements IKpiThread {
 
             Responsable currentResponsable = null;
             Float quotationTurnover = 0f;
-
+            int i = 0;
             for (Quotation quotation : quotations) {
+                if (i > 100)
+                    break;
+                else
+                    i++;
                 if (currentResponsable == null
                         || !quotation.getResponsable().getId().equals(currentResponsable.getId())) {
                     if (!(new BigDecimal(quotationTurnover)).equals(getDefaultValue())) {

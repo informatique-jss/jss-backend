@@ -118,7 +118,6 @@ public class KpiCurrentBalance implements IKpiThread {
         Map<AggregationKey, BigDecimal> aggregatedMap = allValues.stream()
                 .collect(Collectors.groupingBy(
                         value -> new AggregationKey(
-                                value.getKpiCrm().getId(),
                                 value.getResponsable().getId(),
                                 value.getValueDate()),
                         Collectors.reducing(
@@ -263,12 +262,10 @@ public class KpiCurrentBalance implements IKpiThread {
     }
 
     private static class AggregationKey {
-        private final Integer kpiCrmId;
         private final Integer responsableId;
         private final LocalDate valueDate;
 
-        public AggregationKey(Integer kpiCrmId, Integer responsableId, LocalDate valueDate) {
-            this.kpiCrmId = kpiCrmId;
+        public AggregationKey(Integer responsableId, LocalDate valueDate) {
             this.responsableId = responsableId;
             this.valueDate = valueDate;
         }
@@ -280,14 +277,13 @@ public class KpiCurrentBalance implements IKpiThread {
             if (o == null || getClass() != o.getClass())
                 return false;
             AggregationKey that = (AggregationKey) o;
-            return kpiCrmId == that.kpiCrmId &&
-                    responsableId == that.responsableId &&
+            return responsableId == that.responsableId &&
                     valueDate.isEqual(that.valueDate);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(kpiCrmId, responsableId, valueDate.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+            return Objects.hash(responsableId, valueDate.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
         }
     }
 }
