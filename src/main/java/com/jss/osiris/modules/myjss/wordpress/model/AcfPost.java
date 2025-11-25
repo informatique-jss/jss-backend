@@ -25,7 +25,8 @@ public class AcfPost {
 
     private String amazonMusicLinkUrl;
 
-    private String additional_authors;
+    @JsonDeserialize(using = EmptyStringAsEmptyListDeserializer.class)
+    private List<Integer> additional_authors;
 
     private boolean is_hide_author;
 
@@ -120,11 +121,11 @@ public class AcfPost {
         this.is_hide_author = is_hide_author;
     }
 
-    public String getAdditional_authors() {
+    public List<Integer> getAdditional_authors() {
         return additional_authors;
     }
 
-    public void setAdditional_authors(String additional_authors) {
+    public void setAdditional_authors(List<Integer> additional_authors) {
         this.additional_authors = additional_authors;
     }
 }
