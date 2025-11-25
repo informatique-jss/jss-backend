@@ -179,7 +179,7 @@
                   </div>
                 </div>
                 <div class="d-flex flex-column flex-md-row flex-sm-wrap align-items-start"
-                  *ngIf=" noticeTemplateDescription 
+                  *ngIf="!provision.isRedactedByJss && noticeTemplateDescription 
                   && noticeTemplateDescription.isUsingTemplate 
                   && getPossibleTemplates(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex]) 
                   && getPossibleTemplates(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])!.length>1">
