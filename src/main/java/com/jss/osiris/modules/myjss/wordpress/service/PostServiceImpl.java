@@ -998,7 +998,7 @@ public class PostServiceImpl implements PostService {
 
         if (post.getAcf().getAdditional_authors() != null) {
             List<Author> additionalAuthors = new ArrayList<Author>();
-            List<Integer> additionnalAuthorsIds = getAdditionnalAuthorsIds(post.getAcf().getAdditional_authors());
+            List<Integer> additionnalAuthorsIds = post.getAcf().getAdditional_authors();
             if (additionnalAuthorsIds != null && additionnalAuthorsIds.size() > 0) {
                 for (Integer i : additionnalAuthorsIds) {
                     Author foundAuthor = authorService.getAuthor(i);
@@ -1095,24 +1095,6 @@ public class PostServiceImpl implements PostService {
                 + characterPriceService.cleanString(post.getOriginalContentText())).length());
 
         return post;
-    }
-
-    private List<Integer> getAdditionnalAuthorsIds(String jsonString) {
-        if (jsonString == null || jsonString.isBlank())
-            return new ArrayList<Integer>();
-
-        String cleanedString = jsonString
-                .replaceAll("\\[", "")
-                .replaceAll("\\]", "")
-                .trim();
-
-        if (cleanedString.isEmpty())
-            return new ArrayList<Integer>();
-
-        List<String> ids = Arrays.asList(cleanedString.split(","));
-        return ids.stream()
-                .map(String::trim)
-                .map(Integer::valueOf).toList();
     }
 
     @Override
