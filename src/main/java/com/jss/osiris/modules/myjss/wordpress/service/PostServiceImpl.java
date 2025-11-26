@@ -840,8 +840,21 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Post getPostsBySlug(String slug) {
-        return postRepository.findBySlugAndIsCancelled(slug, false);
+    public Post getMyjssPostsBySlug(String slug) {
+        Post post = postRepository.findBySlugAndIsCancelled(slug, false);
+        if (post != null && (post.getMyJssCategories() == null || post.getMyJssCategories().size() == 0)) {
+            return null;
+        }
+        return post;
+    }
+
+    @Override
+    public Post getJssPostsBySlug(String slug) {
+        Post post = postRepository.findBySlugAndIsCancelled(slug, false);
+        if (post.getJssCategories() == null || post.getJssCategories().size() == 0) {
+            return null;
+        }
+        return post;
     }
 
     @Override

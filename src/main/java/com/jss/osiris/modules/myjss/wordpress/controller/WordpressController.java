@@ -554,13 +554,33 @@ public class WordpressController {
 				HttpStatus.OK);
 	}
 
-	@GetMapping(inputEntryPoint + "/posts/slug")
+	@GetMapping(inputEntryPoint + "/posts/myjss/slug")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
-	public ResponseEntity<Post> getPostBySlug(@RequestParam String slug, HttpServletRequest request)
+	public ResponseEntity<Post> getMyjssPostBySlug(@RequestParam String slug, HttpServletRequest request)
 			throws OsirisException {
+		if (slug == null)
+			throw new OsirisValidationException("slug");
 		if (slug != null && slug.contains("%"))
 			slug = URLDecoder.decode(slug, StandardCharsets.UTF_8);
-		Post post = postService.getPostsBySlug(slug);
+		Post post = postService.getMyjssPostsBySlug(slug);
+		if (post == null && slug.matches("[0-9]+") && slug.length() > 2) {
+			// For legacy post by id
+			post = postService.getPost(Integer.parseInt("100000" + slug));
+		}
+		if (post != null && !isCrawler(request))
+			postViewService.incrementView(post);
+		return new ResponseEntity<Post>(postService.applyPremiumAndBookmarks(post, null, null, false), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/posts/jss/slug")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<Post> getJssPostBySlug(@RequestParam String slug, HttpServletRequest request)
+			throws OsirisException {
+		if (slug == null)
+			throw new OsirisValidationException("slug");
+		if (slug != null && slug.contains("%"))
+			slug = URLDecoder.decode(slug, StandardCharsets.UTF_8);
+		Post post = postService.getJssPostsBySlug(slug);
 		if (post == null && slug.matches("[0-9]+") && slug.length() > 2) {
 			// For legacy post by id
 			post = postService.getPost(Integer.parseInt("100000" + slug));

@@ -17,7 +17,7 @@ export class PostService extends AppRestService<Post> {
   }
 
   getPostBySlug(slug: string) {
-    return this.get(new HttpParams().set("slug", slug), "posts/slug");
+    return this.get(new HttpParams().set("slug", slug), "posts/myjss/slug");
   }
 
   getPostSerieBySlug(slug: string) {

@@ -40,7 +40,7 @@ export class PostService extends AppRestService<Post> {
   }
 
   getPostBySlug(slug: string) {
-    return this.get(new HttpParams().set("slug", slug), "posts/slug");
+    return this.get(new HttpParams().set("slug", slug), "posts/jss/slug");
   }
 
   getOfferedPostByToken(validationToken: string, mail: string) {

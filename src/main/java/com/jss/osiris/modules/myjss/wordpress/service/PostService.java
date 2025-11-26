@@ -91,7 +91,9 @@ public interface PostService {
 
         public List<Post> getFirstPostsByMyJssCategories(MyJssCategory selectedMyJssCategory);
 
-        public Post getPostsBySlug(String slung);
+        public Post getMyjssPostsBySlug(String slung);
+
+        public Post getJssPostsBySlug(String slung);
 
         public List<Post> getPostExcludedId(List<Integer> postFetchedId);
 
