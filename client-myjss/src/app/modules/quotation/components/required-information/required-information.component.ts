@@ -731,6 +731,13 @@ export class RequiredInformationComponent implements OnInit {
     }, 0); // Timeout so the DOM is well up to date
   }
 
+  isToggleIsUsingTemplateDisabled(provision: Provision, service: Service): boolean {
+    if (!provision.isRedactedByJss && this.getPossibleTemplates(service) && this.noticeTemplateDescription)
+      return false;
+    else
+      return true;
+  }
+
   getPossibleTemplates(service: Service): AnnouncementNoticeTemplate[] | undefined {
     if (service) {
       if (service && service.serviceTypes)
