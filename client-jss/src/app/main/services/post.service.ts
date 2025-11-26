@@ -243,4 +243,11 @@ export class PostService extends AppRestService<Post> {
   getPostById(idPost: number) {
     return this.get(new HttpParams().set("idPost", idPost), "post/get");
   }
+
+  searchJssPosts(searchText: string) {
+    let httpParams = new HttpParams();
+    if (searchText)
+      httpParams = httpParams.set("searchText", searchText);
+    return this.getPagedList(httpParams, "search/jss/posts");
+  }
 }

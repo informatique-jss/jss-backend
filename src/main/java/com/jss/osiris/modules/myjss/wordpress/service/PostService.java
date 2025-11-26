@@ -134,4 +134,6 @@ public interface PostService {
         public List<Post> getAllPostsForJssMedia();
 
         public List<Post> getAllPostsForMyJss();
+
+        Page<Post> searchJssPosts(String searchText, Pageable pageableRequest);
 }

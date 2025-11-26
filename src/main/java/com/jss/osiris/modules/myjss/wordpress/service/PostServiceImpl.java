@@ -786,6 +786,19 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public Page<Post> searchJssPosts(String searchText, Pageable pageableRequest) {
+        if (searchText != null && searchText.trim().length() > 0) {
+            List<IndexEntity> tmpEntitiesFound = null;
+            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
+            if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
+                return searchPostAgainstEntitiesToMatch(searchText,
+                        postRepository.findJssPostAndIsCancelled(false, pageableRequest));
+            }
+        }
+        return postRepository.findJssPostAndIsCancelled(false, pageableRequest);
+    }
+
+    @Override
     public List<Post> getFirstPostsByMyJssCategories(MyJssCategory selectedMyJssCategory) {
         List<Post> firstPostsByMyJssCategory = new ArrayList<Post>();
         List<Integer> idPostsByMyJssCategory = new ArrayList<Integer>();

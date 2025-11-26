@@ -11,14 +11,15 @@ import { AppService } from '../../../services/app.service';
 import { ConstantService } from '../../../services/constant.service';
 import { PlatformService } from '../../../services/platform.service';
 import { AccountMenuItem, MAIN_ITEM_ACCOUNT, MAIN_ITEM_DASHBOARD } from '../../model/AccountMenuItem';
-import { IndexEntity } from '../../model/IndexEntity';
 import { JssCategory } from '../../model/JssCategory';
+import { Post } from '../../model/Post';
 import { PublishingDepartment } from '../../model/PublishingDepartment';
 import { Responsable } from '../../model/Responsable';
 import { DepartmentService } from '../../services/department.service';
 import { IndexEntityService } from '../../services/index.entity.service';
 import { JssCategoryService } from '../../services/jss.category.service';
 import { LoginService } from '../../services/login.service';
+import { PostService } from '../../services/post.service';
 import { AvatarComponent } from '../avatar/avatar.component';
 
 @Component({
@@ -42,7 +43,7 @@ export class HeaderComponent implements OnInit {
   searchInProgress: boolean = false;
 
   searchText: string = "";
-  indexedEntities: IndexEntity[] | undefined;
+  foundPosts: Post[] | undefined;
   searchObservableRef: Subscription | undefined;
 
   searchModalInstance: any | undefined;
@@ -77,7 +78,8 @@ export class HeaderComponent implements OnInit {
     private modalService: NgbModal,
     private eRef: ElementRef,
     private plaformService: PlatformService,
-    private constantService: ConstantService
+    private constantService: ConstantService,
+    private postService: PostService
   ) { }
 
   ngOnInit() {
@@ -181,7 +183,7 @@ export class HeaderComponent implements OnInit {
 
     this.searchModalInstance.result.finally(() => {
       this.searchModalInstance = undefined;
-      this.indexedEntities = [];
+      this.foundPosts = [];
       this.searchText = "";
       if (this.searchObservableRef)
         this.searchObservableRef.unsubscribe();
@@ -192,7 +194,7 @@ export class HeaderComponent implements OnInit {
     if (this.searchModalInstance) {
       this.searchModalInstance.dismiss('manual-close');
       this.searchModalInstance = undefined;
-      this.indexedEntities = [];
+      this.foundPosts = [];
       this.searchText = "";
       if (this.searchObservableRef)
         this.searchObservableRef.unsubscribe();
@@ -240,7 +242,7 @@ export class HeaderComponent implements OnInit {
 
   searchEntities() {
     clearTimeout(this.debounce);
-    this.indexedEntities = [];
+    this.foundPosts = [];
     this.debounce = setTimeout(() => {
       this.globalSearch();
     }, 500);
@@ -248,7 +250,7 @@ export class HeaderComponent implements OnInit {
 
   clearSearch() {
     this.searchText = '';
-    this.indexedEntities = [];
+    this.foundPosts = [];
   }
 
   globalSearch() {
@@ -257,20 +259,17 @@ export class HeaderComponent implements OnInit {
 
     this.searchInProgress = true;
     if (this.searchText && this.searchText.length > 2)
-      this.searchObservableRef = this.indexEntityService.globalSearchForPost(this.searchText).subscribe(response => {
-        this.indexedEntities = [];
-        for (let foundEntity of response) {
-          if (foundEntity && foundEntity.text) {
-            foundEntity.text = JSON.parse((foundEntity.text as string));
-            this.indexedEntities.push(foundEntity);
+      this.searchObservableRef = this.postService.searchJssPosts(this.searchText).subscribe(response => {
+        this.foundPosts = [];
+        if (response.content)
+          for (let post of response.content) {
+            this.foundPosts.push(post);
           }
-        }
-        this.searchInProgress = false;
       })
+    this.searchInProgress = false;
   }
 
   openPost() {
     this.hideSearchModal();
   }
-
 }

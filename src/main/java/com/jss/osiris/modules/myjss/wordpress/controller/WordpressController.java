@@ -38,7 +38,6 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.mail.GeneratePdfDelegate;
-import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.service.SearchService;
 import com.jss.osiris.modules.myjss.wordpress.model.AssoMailAuthor;
 import com.jss.osiris.modules.myjss.wordpress.model.AssoMailJssCategory;
@@ -1257,16 +1256,19 @@ public class WordpressController {
 				HttpStatus.OK);
 	}
 
-	@GetMapping(inputEntryPoint + "/search/post")
+	@GetMapping(inputEntryPoint + "/search/jss/posts")
 	@JsonView(JacksonViews.MyJssListView.class)
-	public ResponseEntity<List<IndexEntity>> globalSearchForEntity(@RequestParam String searchText)
+	public ResponseEntity<Page<Post>> searchJssPosts(@RequestParam String searchText)
 			throws OsirisException {
 		// TODO : leak premium
+		Pageable pageable = PageRequest.of(0, 100,
+				Sort.by(Sort.Direction.DESC, "date"));
+
 		if (searchText != null && searchText.length() > 2)
-			return new ResponseEntity<List<IndexEntity>>(
-					searchService.searchForEntities(searchText, Post.class.getSimpleName(), false),
+			return new ResponseEntity<Page<Post>>(postService.searchJssPosts(searchText, pageable),
 					HttpStatus.OK);
-		return new ResponseEntity<List<IndexEntity>>(new ArrayList<IndexEntity>(), HttpStatus.OK);
+
+		return new ResponseEntity<Page<Post>>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/announcement/search")
