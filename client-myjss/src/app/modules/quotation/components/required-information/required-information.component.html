@@ -104,7 +104,7 @@
                   <div class="col-12 col-lg-6 form-check form-switch">
                     <generic-toggle [(model)]="provision.isRedactedByJss" label="Confier la rédaction au JSS"
                       [form]="informationForm" [propertyName]="'isRedactedByJss'+provision.order" [isDisabled]="false"
-                      (onToggleChange)="changeIsShowNoticeTemplate(false, provision.isRedactedByJss,undefined,quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])"></generic-toggle>
+                      (onToggleChange)="changeIsShowNoticeTemplate(false, provision.isRedactedByJss, true, undefined,quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])"></generic-toggle>
                   </div>
 
                   <div class="col-12 col-lg-6 form-check form-switch" *ngIf="provision.isRedactedByJss">
@@ -120,7 +120,7 @@
                       <generic-toggle [(model)]="noticeTemplateDescription.isUsingTemplate"
                         label="Utiliser les modèles proposés pour la rédaction" [form]="informationForm"
                         [propertyName]="'isUsingTemplate'+provision.order" [isDisabled]="false"
-                        (onToggleChange)="changeIsShowNoticeTemplate($event, provision.isRedactedByJss,undefined,quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])"></generic-toggle>
+                        (onToggleChange)="changeIsShowNoticeTemplate($event, provision.isRedactedByJss, noticeTemplateDescription.isUsingTemplate, undefined,quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])"></generic-toggle>
                     </div>
                   </div>
                   <div class="row" *ngIf="  !provision.isRedactedByJss">
@@ -190,7 +190,7 @@
                     *ngFor="let template of getPossibleTemplates(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])"
                     class="btn btn-outline-secondary m-1 w-100 w-sm-auto btn-wrap btn-service-family"
                     [class.active]="noticeTemplateDescription && noticeTemplateDescription.selectedTemplate &&  noticeTemplateDescription.selectedTemplate.id == template.id"
-                    (click)="changeIsShowNoticeTemplate(true, provision.isRedactedByJss,template,quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])">
+                    (click)="changeIsShowNoticeTemplate(true, provision.isRedactedByJss, true, template ,quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])">
                     {{template.label}}</div>
                 </div>
                 <hr class="border-white" id="option-form-end">
