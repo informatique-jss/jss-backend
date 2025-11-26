@@ -107,20 +107,19 @@
                       (onToggleChange)="changeIsShowNoticeTemplate(false, provision.isRedactedByJss, true, undefined,quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])"></generic-toggle>
                   </div>
 
-                  <div class="col-12 col-lg-6 form-check form-switch" *ngIf="provision.isRedactedByJss">
+                  <div class="col-12 col-lg-6 form-check form-switch mt-0 mt-lg-auto" *ngIf="provision.isRedactedByJss">
                     <generic-toggle [(model)]="provision.announcement.isProofReadingDocument"
                       label="Recevoir une épreuve de relecture avant publication" [form]="informationForm"
                       [propertyName]="'isProofReadingDocument'+provision.order" [isDisabled]="false"></generic-toggle>
                   </div>
 
                   <div class="row">
-                    <div
-                      *ngIf="!provision.isRedactedByJss && getPossibleTemplates( quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])  && noticeTemplateDescription"
-                      class="col-12 col-lg-6 form-check form-switch">
+                    <div *ngIf="noticeTemplateDescription" class="col-12 col-lg-6 form-check form-switch">
                       <generic-toggle [(model)]="noticeTemplateDescription.isUsingTemplate"
                         label="Utiliser les modèles proposés pour la rédaction" [form]="informationForm"
                         [propertyName]="'isUsingTemplate'+provision.order" [isDisabled]="false"
-                        (onToggleChange)="changeIsShowNoticeTemplate($event, provision.isRedactedByJss, noticeTemplateDescription.isUsingTemplate, undefined,quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])"></generic-toggle>
+                        (onToggleChange)="changeIsShowNoticeTemplate($event, provision.isRedactedByJss,undefined,quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])"
+                        [isDisabled]="isToggleIsUsingTemplateDisabled(provision, quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])"></generic-toggle>
                     </div>
                   </div>
                   <div class="row" *ngIf="  !provision.isRedactedByJss">
