@@ -672,9 +672,15 @@ export class RequiredInformationComponent implements OnInit {
     }
   }
 
-  changeIsShowNoticeTemplate(event: Boolean, isRedactedByJss: boolean, selectedTemplate: AnnouncementNoticeTemplate | undefined, service: Service | undefined) {
+  changeIsShowNoticeTemplate(event: Boolean, isRedactedByJss: boolean, isUsingTemplate: Boolean, selectedTemplate: AnnouncementNoticeTemplate | undefined, service: Service | undefined) {
     if (this.noticeTemplateDescription) {
       if (isRedactedByJss) {
+        this.noticeTemplateDescription.isShowNoticeTemplate = false;
+        this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
+        return;
+      }
+
+      if (!isUsingTemplate) {
         this.noticeTemplateDescription.isShowNoticeTemplate = false;
         this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
         return;
@@ -764,7 +770,7 @@ export class RequiredInformationComponent implements OnInit {
         this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
       }
     if (destId < 10) {
-      this.changeIsShowNoticeTemplate(false, true, undefined, undefined);
+      this.changeIsShowNoticeTemplate(false, true, false, undefined, undefined);
     }
   }
 

@@ -104,7 +104,7 @@
                   <div class="col-12 col-lg-6 form-check form-switch">
                     <generic-toggle [(model)]="provision.isRedactedByJss" label="Confier la rédaction au JSS"
                       [form]="informationForm" [propertyName]="'isRedactedByJss'+provision.order" [isDisabled]="false"
-                      (onToggleChange)="changeIsShowNoticeTemplate(false, provision.isRedactedByJss,undefined,quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])"></generic-toggle>
+                      (onToggleChange)="changeIsShowNoticeTemplate(false, provision.isRedactedByJss, true, undefined,quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])"></generic-toggle>
                   </div>
 
                   <div class="col-12 col-lg-6 form-check form-switch mt-0 mt-lg-auto" *ngIf="provision.isRedactedByJss">
@@ -178,7 +178,7 @@
                   </div>
                 </div>
                 <div class="d-flex flex-column flex-md-row flex-sm-wrap align-items-start"
-                  *ngIf=" noticeTemplateDescription 
+                  *ngIf="!provision.isRedactedByJss && noticeTemplateDescription 
                   && noticeTemplateDescription.isUsingTemplate 
                   && getPossibleTemplates(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex]) 
                   && getPossibleTemplates(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])!.length>1">
@@ -189,7 +189,7 @@
                     *ngFor="let template of getPossibleTemplates(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])"
                     class="btn btn-outline-secondary m-1 w-100 w-sm-auto btn-wrap btn-service-family"
                     [class.active]="noticeTemplateDescription && noticeTemplateDescription.selectedTemplate &&  noticeTemplateDescription.selectedTemplate.id == template.id"
-                    (click)="changeIsShowNoticeTemplate(true, provision.isRedactedByJss,template,quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])">
+                    (click)="changeIsShowNoticeTemplate(true, provision.isRedactedByJss, true, template ,quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])">
                     {{template.label}}</div>
                 </div>
                 <hr class="border-white" id="option-form-end">
