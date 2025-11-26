@@ -129,7 +129,7 @@ public class KpiPotentielTurnoverQuotation implements IKpiThread {
             Float quotationTurnover = 0f;
             int i = 0;
             for (Quotation quotation : quotations) {
-                if (i > 100)
+                if (i > 10)
                     break;
                 else
                     i++;

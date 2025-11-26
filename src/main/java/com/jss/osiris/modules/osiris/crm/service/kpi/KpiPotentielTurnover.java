@@ -24,6 +24,9 @@ import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderStatusServic
 import com.jss.osiris.modules.osiris.reporting.model.ReportingWidget;
 import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+
 @Component
 public class KpiPotentielTurnover implements IKpiThread {
 
@@ -50,6 +53,9 @@ public class KpiPotentielTurnover implements IKpiThread {
 
     @Autowired
     ResponsableService responsableService;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public String getCode() {
@@ -115,7 +121,8 @@ public class KpiPotentielTurnover implements IKpiThread {
                 .collect(Collectors.groupingBy(
                         value -> new AggregationKey(
                                 value.getResponsable().getId(),
-                                value.getValueDate()),
+                                value.getValueDate(),
+                                value.getKpiCrm().getId()),
                         Collectors.reducing(
                                 BigDecimal.ZERO, // default value
                                 KpiCrmValue::getValue, // mapped value
@@ -140,6 +147,7 @@ public class KpiPotentielTurnover implements IKpiThread {
 
         if (aggregatedList != null && aggregatedList.size() > 0) {
             kpiCrmValueService.deleteKpiCrmValuesForKpiCrm(kpiCrm);
+            entityManager.flush();
             kpiCrmService.saveValuesForKpiAndDay(kpiCrm, aggregatedList);
         }
     }
@@ -147,10 +155,12 @@ public class KpiPotentielTurnover implements IKpiThread {
     private static class AggregationKey {
         private final Integer responsableId;
         private final LocalDate valueDate;
+        private final Integer kpiCrmId;
 
-        public AggregationKey( Integer responsableId, LocalDate valueDate) {
+        public AggregationKey(Integer responsableId, LocalDate valueDate, Integer kpiCrmId) {
             this.responsableId = responsableId;
             this.valueDate = valueDate;
+            this.kpiCrmId = kpiCrmId;
         }
 
         @Override
@@ -160,13 +170,13 @@ public class KpiPotentielTurnover implements IKpiThread {
             if (o == null || getClass() != o.getClass())
                 return false;
             AggregationKey that = (AggregationKey) o;
-            return responsableId == that.responsableId &&
+            return responsableId.equals(that.responsableId) && kpiCrmId.equals(that.kpiCrmId) &&
                     valueDate.isEqual(that.valueDate);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(responsableId, valueDate.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+            return Objects.hash(kpiCrmId, responsableId, valueDate.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
         }
 
     }

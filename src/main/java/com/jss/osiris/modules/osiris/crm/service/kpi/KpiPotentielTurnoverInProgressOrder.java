@@ -127,7 +127,7 @@ public class KpiPotentielTurnoverInProgressOrder implements IKpiThread {
             int i = 0;
 
             for (CustomerOrder order : orders) {
-                if (i > 100)
+                if (i > 10)
                     break;
                 else
                     i++;
