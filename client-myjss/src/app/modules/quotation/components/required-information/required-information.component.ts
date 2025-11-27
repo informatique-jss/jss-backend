@@ -331,7 +331,6 @@ export class RequiredInformationComponent implements OnInit {
     }
   } as any;
 
-
   onEditorReady(editor: any, provision: Provision) {
     if (!provision || !provision.announcement)
       return;
@@ -341,9 +340,12 @@ export class RequiredInformationComponent implements OnInit {
     editor.setData(initialValue);
   }
 
-  onNoticeChange(event: ChangeEvent, provision: Provision) {
-    if (provision && provision.announcement)
-      provision.announcement.notice = event.editor.getData();
+  onNoticeChange({ editor }: ChangeEvent, provision: Provision) {
+    if (provision && provision.announcement) {
+      this.noticeTemplateDescription = this.noticeTemplateService.getNoticeTemplateDescription();
+      this.noticeTemplateDescription!.displayText = editor.getData();
+      this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription!);
+    }
   }
 
   onIsCompleteChange(event: boolean, selectedAssoIndex: number, selectedServiceIndex: number, assoServiceDocumentIndex: number, assoServiceDocument: AssoServiceDocument) {
