@@ -66,14 +66,12 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
                         @Param("listCategories") List<JssCategory> listCategories,
                         Pageable pageableRequest);
 
-        @Query("select distinct p from Post p " +
+        @Query("select p from Post p " +
                         "where p.isCancelled = :isCancelled " +
                         "  and p.date <= CURRENT_TIMESTAMP " +
                         "  and ( " +
-                        "    (:myJssCategoryId IS NOT NULL AND exists (select 1 from p.myJssCategories c where c.id = :myJssCategoryId)) "
-                        +
-                        "    OR (:myJssCategoryId IS NULL AND size(p.myJssCategories) > 0) " +
-                        "  )")
+                        "  (:myJssCategoryId IS NOT NULL AND exists (select 1 from p.myJssCategories c where c.id = :myJssCategoryId)) "
+                        + "OR (:myJssCategoryId IS NULL AND size(p.myJssCategories) > 0))")
         @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
         Page<Post> findByMyJssCategoriesAndIsCancelled(
                         @Param("myJssCategoryId") Integer myJssCategoryId,
