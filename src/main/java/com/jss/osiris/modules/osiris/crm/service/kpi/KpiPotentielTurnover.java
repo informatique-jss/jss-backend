@@ -99,7 +99,7 @@ public class KpiPotentielTurnover implements IKpiThread {
 
     @Override
     public String getGraphType() {
-        return null;
+        return KpiCrm.GRAPH_TYPE_BAR;
     }
 
     @Override

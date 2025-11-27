@@ -121,5 +121,5 @@ public interface QuotationService {
         public boolean isDepositMandatory(IQuotation quotation);
 
         public List<Quotation> getByCreatedDateBetweenAndStatus(LocalDateTime startDate, LocalDateTime endDate,
-                        QuotationStatus quotationStatus);
+                        QuotationStatus quotationStatus, LocalDateTime updateStartDate, LocalDateTime updateEndDate);
 }

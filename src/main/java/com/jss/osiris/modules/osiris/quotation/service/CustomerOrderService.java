@@ -227,7 +227,8 @@ public interface CustomerOrderService {
         public Integer getComplexity(CustomerOrder customerOrder) throws OsirisException;
 
         List<CustomerOrder> getByCreatedDateBetweenAndStatus(LocalDateTime startDate, LocalDateTime endDate,
-                        CustomerOrderStatus customerOrderStatus);
+                        CustomerOrderStatus customerOrderStatus, LocalDateTime updateStartDate,
+                        LocalDateTime updateEndDate);
 
         List<CustomerOrder> searchActiveRecurringOrder();
 }

@@ -262,7 +262,7 @@ export class CrmComponent implements OnInit {
                 clearInterval(intervalId);
               }
             })
-          }, 300);
+          }, 600);
         })
     } else {
       this.kpiCrmValueService.getJobForAggregateValuesForResponsableList(kpiCrm.code, this.generateSearchModelForApi(yearOffset))

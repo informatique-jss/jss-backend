@@ -1,8 +1,7 @@
-package com.jss.osiris.modules.osiris.crm.service.kpi;
+package com.jss.osiris.modules.osiris.crm.service.kpi.quotationNumber.order;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -10,14 +9,16 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.jss.osiris.libs.audit.model.Audit;
+import com.jss.osiris.libs.audit.service.AuditService;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.crm.model.IKpiThread;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrm;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrmValue;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmService;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmValueService;
-import com.jss.osiris.modules.osiris.miscellaneous.model.CustomerOrderOrigin;
-import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.osiris.crm.service.kpi.QuotationReportingGroupHelper;
+import com.jss.osiris.modules.osiris.crm.service.kpi.ReportingGroup;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
@@ -28,7 +29,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
 @Component
-public class KpiWebsiteOrderCreation implements IKpiThread {
+public class KpiFormaliteBilledOrderNumber implements IKpiThread {
 
     @Autowired
     KpiCrmValueService kpiCrmValueService;
@@ -40,88 +41,22 @@ public class KpiWebsiteOrderCreation implements IKpiThread {
     CustomerOrderService customerOrderService;
 
     @Autowired
-    ConstantService constantService;
+    QuotationReportingGroupHelper quotationReportingGroupHelper;
 
     @PersistenceContext
     EntityManager em;
 
+    @Autowired
+    AuditService auditService;
+
     @Override
     public String getCode() {
-        return "WEBSITE_ORDER_CREATION";
+        return "FORMALITE_BILLED_ORDER_NUMBER";
     }
 
     @Override
     public BigDecimal getDefaultValue() {
         return new BigDecimal(0);
-    }
-
-    @Override
-    public void computeKpiCrmValues() throws OsirisException {
-        KpiCrm kpiCrm = kpiCrmService.getKpiCrmByCode(getCode());
-        if (kpiCrm == null)
-            throw new OsirisException("KpiCrm not defined for code " + getCode());
-
-        LocalDate lastDate = kpiCrmValueService.getLastKpiCrmValueDate(kpiCrm);
-
-        while (lastDate.isBefore(LocalDate.now())) {
-            List<KpiCrmValue> newValues = new ArrayList<KpiCrmValue>();
-
-            List<CustomerOrder> orders = customerOrderService.getByCreatedDateBetweenAndStatus(lastDate.atStartOfDay(),
-                    lastDate.atTime(23, 59, 59), null, LocalDateTime.now().minusYears(100),
-                    LocalDateTime.now().plusYears(100));
-
-            if (orders != null) {
-                orders.sort(new Comparator<CustomerOrder>() {
-                    @Override
-                    public int compare(CustomerOrder firstOrder, CustomerOrder secondOrder) {
-                        if (firstOrder.getResponsable() != null && secondOrder.getResponsable() == null)
-                            return 1;
-                        if (firstOrder.getResponsable() == null && secondOrder.getResponsable() != null)
-                            return -1;
-                        if (firstOrder.getResponsable() == null && secondOrder.getResponsable() == null)
-                            return 0;
-                        if (firstOrder.getResponsable().getId() > secondOrder.getResponsable().getId())
-                            return 1;
-                        if (firstOrder.getResponsable().getId() < secondOrder.getResponsable().getId())
-                            return -1;
-                        return 0;
-                    }
-                });
-
-                Responsable currentResponsable = null;
-                Integer nbrOrder = 0;
-                CustomerOrderOrigin originOsiris = constantService.getCustomerOrderOriginOsiris();
-
-                for (CustomerOrder order : orders) {
-                    if (!order.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.DRAFT)
-                            && order.getResponsable() != null && order.getCustomerOrderOrigin() != null
-                            && !order.getCustomerOrderOrigin().getId().equals(originOsiris.getId())) {
-                        if (currentResponsable == null
-                                || !order.getResponsable().getId().equals(currentResponsable.getId())) {
-                            if (!(new BigDecimal(nbrOrder)).equals(getDefaultValue())) {
-                                KpiCrmValue value = new KpiCrmValue();
-                                value.setKpiCrm(kpiCrm);
-                                value.setResponsable(currentResponsable);
-                                value.setValue(new BigDecimal(nbrOrder));
-                                value.setValueDate(lastDate);
-                                newValues.add(value);
-                            }
-                            currentResponsable = order.getResponsable();
-                            nbrOrder = 0;
-                        }
-                        nbrOrder++;
-                    }
-                }
-
-                if (newValues != null && newValues.size() > 0) {
-                    kpiCrmService.saveValuesForKpiAndDay(kpiCrm, newValues);
-                    em.flush();
-                    em.clear();
-                }
-            }
-
-            lastDate = lastDate.plusDays(1);
-        }
     }
 
     @Override
@@ -146,7 +81,7 @@ public class KpiWebsiteOrderCreation implements IKpiThread {
 
     @Override
     public String getIcon() {
-        return "tablerShoppingBagSearch";
+        return "tablerWriting";
     }
 
     @Override
@@ -159,4 +94,90 @@ public class KpiWebsiteOrderCreation implements IKpiThread {
         return KpiCrm.GRAPH_TYPE_BAR;
     }
 
+    @Override
+    public void computeKpiCrmValues() throws OsirisException {
+        KpiCrm kpiCrm = kpiCrmService.getKpiCrmByCode(getCode());
+        if (kpiCrm == null)
+            throw new OsirisException("KpiCrm not defined for code " + getCode());
+
+        LocalDate lastDate = kpiCrmValueService.getLastKpiCrmValueDate(kpiCrm);
+
+        while (lastDate.isBefore(LocalDate.now())) {
+            List<KpiCrmValue> newValues = new ArrayList<KpiCrmValue>();
+
+            List<CustomerOrder> orders = customerOrderService.getByCreatedDateBetweenAndStatus(lastDate.atStartOfDay(),
+                    lastDate.atTime(23, 59, 59), null, lastDate.atStartOfDay(), lastDate.atTime(23, 59, 59));
+
+            if (orders != null) {
+                orders.sort(new Comparator<CustomerOrder>() {
+                    @Override
+                    public int compare(CustomerOrder firstOrder, CustomerOrder secondOrder) {
+                        if (firstOrder.getResponsable() != null && secondOrder.getResponsable() == null)
+                            return 1;
+                        if (firstOrder.getResponsable() == null && secondOrder.getResponsable() != null)
+                            return -1;
+                        if (firstOrder.getResponsable() == null && secondOrder.getResponsable() == null)
+                            return 0;
+                        if (firstOrder.getResponsable().getId() > secondOrder.getResponsable().getId())
+                            return 1;
+                        if (firstOrder.getResponsable().getId() < secondOrder.getResponsable().getId())
+                            return -1;
+                        return 0;
+                    }
+                });
+
+                Responsable currentResponsable = null;
+                Integer nbrQuotation = 0;
+
+                for (CustomerOrder order : orders) {
+                    if (quotationReportingGroupHelper.getQuotationType(order)
+                            .equals(ReportingGroup.FORMALITIES)
+                            || quotationReportingGroupHelper.getQuotationType(order)
+                                    .equals(ReportingGroup.DEPOSIT)) {
+                        if (order.getResponsable() != null
+                                && isStatusModifiedThisDay(order, lastDate,
+                                        CustomerOrderStatus.BILLED)) {
+                            if (currentResponsable == null
+                                    || !order.getResponsable().getId().equals(currentResponsable.getId())) {
+                                if (!(new BigDecimal(nbrQuotation)).equals(getDefaultValue())) {
+                                    KpiCrmValue value = new KpiCrmValue();
+                                    value.setKpiCrm(kpiCrm);
+                                    value.setResponsable(currentResponsable);
+                                    value.setValue(new BigDecimal(nbrQuotation));
+                                    value.setValueDate(lastDate);
+                                    newValues.add(value);
+                                }
+                                currentResponsable = order.getResponsable();
+                                nbrQuotation = 0;
+                            }
+                            nbrQuotation++;
+                        }
+                    }
+                }
+
+                if (newValues != null && newValues.size() > 0) {
+                    kpiCrmService.saveValuesForKpiAndDay(kpiCrm, newValues);
+                    em.flush();
+                    em.clear();
+                }
+            }
+
+            lastDate = lastDate.plusDays(1);
+        }
+    }
+
+    private boolean isStatusModifiedThisDay(CustomerOrder order, LocalDate lastDate, String targetCode) {
+        if (order != null) {
+            List<Audit> audits = auditService.getAuditForEntityAndFieldName(CustomerOrder.class.getSimpleName(),
+                    order.getId(), targetCode, "customerOrderStatus");
+            if (audits != null) {
+                for (Audit audit : audits) {
+                    LocalDate auditDate = audit.getDatetime().toLocalDate();
+                    if (auditDate.equals(lastDate) && audit.getNewValue().equals(targetCode))
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
 }

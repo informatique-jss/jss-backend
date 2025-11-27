@@ -1009,9 +1009,11 @@ public class QuotationServiceImpl implements QuotationService {
     }
 
     @Override
-    public List<Quotation> getByCreatedDateBetweenAndStatus(LocalDateTime startDate, LocalDateTime endDate,
-            QuotationStatus quotationStatus) {
-        return quotationRepository.findByCreatedDateBetweenAndStatus(startDate, endDate, quotationStatus);
+    public List<Quotation> getByCreatedDateBetweenAndStatus(LocalDateTime createdStartDate,
+            LocalDateTime createdEndDate,
+            QuotationStatus quotationStatus, LocalDateTime updateStartDate, LocalDateTime updateEndDate) {
+        return quotationRepository.findByCreatedDateBetweenAndStatus(createdStartDate, createdEndDate, quotationStatus,
+                updateStartDate, updateEndDate);
     }
 
 }

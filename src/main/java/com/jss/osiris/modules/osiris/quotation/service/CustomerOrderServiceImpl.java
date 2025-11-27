@@ -2255,8 +2255,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     public List<CustomerOrder> getByCreatedDateBetweenAndStatus(LocalDateTime startDate, LocalDateTime endDate,
-            CustomerOrderStatus customerOrderStatus) {
-        return customerOrderRepository.findByCreatedDateBetweenAndStatus(startDate, endDate, customerOrderStatus);
+            CustomerOrderStatus customerOrderStatus, LocalDateTime updateStartDate, LocalDateTime updateEndDate) {
+        return customerOrderRepository.findByCreatedDateBetweenAndStatus(startDate, endDate, customerOrderStatus,
+                updateStartDate, updateEndDate);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -2326,7 +2327,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Scheduled(initialDelay = 100, fixedDelay = Integer.MAX_VALUE)
     public void test() throws OsirisException {
-        kpiCrmService.computeKpiCrm(9);
+        kpiCrmService.computeKpiCrm(12);
         System.out.println("done");
     }
 }

@@ -110,10 +110,13 @@ public interface QuotationRepository extends QueryCacheCrudRepository<Quotation,
                         @Param("status") QuotationStatus status);
 
         @Query("SELECT c FROM Quotation c " +
-                        "WHERE c.createdDate BETWEEN :startOfDay AND :endOfDay " +
+                        "WHERE c.createdDate BETWEEN :startOfDay AND :endOfDay and c.lastStatusUpdate BETWEEN :updatedStartDate AND :updatedEndDate  "
+                        +
                         "AND (:status IS NULL OR c.quotationStatus = :status)")
         List<Quotation> findByCreatedDateBetweenAndStatus(
                         @Param("startOfDay") LocalDateTime startOfDay,
                         @Param("endOfDay") LocalDateTime endOfDay,
-                        @Param("status") QuotationStatus quotationStatus);
+                        @Param("status") QuotationStatus quotationStatus,
+                        @Param("updatedStartDate") LocalDateTime updatedStartDate,
+                        @Param("updatedEndDate") LocalDateTime updatedEndDate);
 }
