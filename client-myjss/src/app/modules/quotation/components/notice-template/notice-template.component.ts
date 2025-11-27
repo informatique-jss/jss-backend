@@ -236,20 +236,21 @@ export class NoticeTemplateComponent implements OnInit {
       }
     }
 
-    // We take out the fragments codes and replace them with their label before displaying the text
-    text = text.replace(new RegExp('\\[|\\]', 'g'), "");
-
     for (let fragment of this.fragmentsFound) {
       if (this.selectedFragments.includes(fragment)) {
         text = text.replace(this.getRegexDoublePipeNearCode(fragment.code), "ou");
         text = text.replace(new RegExp(`(?<!["=])\\b${fragment.code}\\b(?!["])`, 'g'), fragment.label); // replacing all fragments but the one in the HTML tags (<...>)
       } else {
         // We first isolate the fragments from the ||
-        text = text.replace(this.getRegexDoublePipeNearCode(fragment.code), "");
+        text = text.replace(this.getRegexDoublePipeNearCode(fragment.code), " ");
         // Then we replace the code by the label
         text = text.replace(new RegExp(`(\\b${fragment.code}\\b)`, 'g'), "");
       }
     }
+
+    // We take out the fragments codes and replace them with their label before displaying the text
+    text = text.replace(new RegExp('\\[|\\]', 'g'), "");
+
 
     // Replace multiple consecutive <br> tags with only the first and the last
     text = text.replace(/<p>(\s|&nbsp;|<br\s*\/?>)*<\/p>/gi, '');
@@ -265,7 +266,7 @@ export class NoticeTemplateComponent implements OnInit {
     // Regex :
     // - (\\|\\|.{0,3}CODE) → || followed by up to 4 characters, then the code
     // - (CODE.{0,3}\\|\\|) → code followed by up to 4 characters, then ||
-    const pattern = `(\\|\\|.{0,3}\\b${escapedCode}\\b)|(\\b${escapedCode}\\b.{0,3}\\|\\|)`;
+    const pattern = `(\\|\\|.{0,10}\\b${escapedCode}\\b)|(\\b${escapedCode}\\b.{0,10}\\|\\|)`;
 
     return new RegExp(pattern, 'g');
   }
