@@ -750,7 +750,7 @@ public class PostServiceImpl implements PostService {
         Order order = new Order(Direction.DESC, "date");
         Sort sort = Sort.by(Arrays.asList(order));
         Pageable pageableRequest = PageRequest.of(page, 20, sort);
-        return postRepository.findByMyJssCategoriesAndIsCancelled(myJssCategory, false, pageableRequest);
+        return postRepository.findByMyJssCategoriesAndIsCancelled(myJssCategory.getId(), false, pageableRequest);
     }
 
     @Override
@@ -763,11 +763,12 @@ public class PostServiceImpl implements PostService {
                 Pageable pageableRequestForMatch = PageRequest.of(0, Integer.MAX_VALUE);
 
                 return searchPostAgainstEntitiesToMatch(searchText,
-                        postRepository.findByMyJssCategoriesAndIsCancelled(myJssCategory, false,
-                                pageableRequestForMatch));
+                        postRepository.findByMyJssCategoriesAndIsCancelled(
+                                myJssCategory != null ? myJssCategory.getId() : null, false, pageableRequestForMatch));
             }
         }
-        return postRepository.findByMyJssCategoriesAndIsCancelled(myJssCategory, false,
+        return postRepository.findByMyJssCategoriesAndIsCancelled(myJssCategory != null ? myJssCategory.getId() : null,
+                false,
                 pageableRequest);
     }
 
