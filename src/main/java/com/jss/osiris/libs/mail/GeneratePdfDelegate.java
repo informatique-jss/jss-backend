@@ -12,15 +12,20 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
+import org.apache.poi.util.IOUtils;
+import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -32,16 +37,16 @@ import org.xhtmlrenderer.pdf.ITextRenderer;
 import org.xhtmlrenderer.util.XRLog;
 
 import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Chunk;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
-import com.itextpdf.text.Font.FontFamily;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.pdf.PdfImage;
-import com.itextpdf.text.pdf.PdfName;
+import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfReader;
@@ -78,6 +83,8 @@ import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.service.ProvisionService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
+
+import ch.digitalfondue.mjml4j.Mjml4j;
 
 @org.springframework.stereotype.Service
 public class GeneratePdfDelegate {
@@ -134,23 +141,194 @@ public class GeneratePdfDelegate {
     TranslationService translationService;
 
     public static final String EMAIL_TEMPLATE_ENCODING = "UTF-8";
+    public static final String HEADER_PDF_TEMPLATE = "header-pdf";
+    public static final String FOOTER_DOMICILIATION = "footer-domiciliation";
+    public Boolean isContent = true;
 
-    public TemplateEngine emailTemplateEngine() {
+    public TemplateEngine pdfTemplateEngine(Boolean isContent) {
         final SpringTemplateEngine templateEngine = new SpringTemplateEngine();
-        templateEngine.addTemplateResolver(htmlTemplateResolver());
+        templateEngine.addTemplateResolver(htmlTemplateResolver(isContent));
         // Message source, internationalization specific to emails
         return templateEngine;
     }
 
-    private ITemplateResolver htmlTemplateResolver() {
+    private ITemplateResolver htmlTemplateResolver(Boolean isContent) {
         final ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
         templateResolver.setOrder(Integer.valueOf(1));
-        templateResolver.setPrefix("mails/templates/");
-        templateResolver.setSuffix(".html");
+        if (!isContent) {
+            templateResolver.setPrefix("mails/mjml/");
+            templateResolver.setSuffix(".mjml");
+        } else {
+            templateResolver.setPrefix("mails/templates/");
+            templateResolver.setSuffix(".html");
+        }
         templateResolver.setTemplateMode(TemplateMode.HTML);
         templateResolver.setCharacterEncoding(EMAIL_TEMPLATE_ENCODING);
         templateResolver.setCacheable(false);
         return templateResolver;
+    }
+
+    private String parseMjmlFile(String mjmlString) {
+        org.jsoup.nodes.Document xhtmlDoc = Jsoup.parse(Mjml4j.render(mjmlString), "UTF-8");
+        xhtmlDoc.outputSettings()
+                .syntax(org.jsoup.nodes.Document.OutputSettings.Syntax.xml)
+                .escapeMode(org.jsoup.nodes.Entities.EscapeMode.xhtml)
+                .charset("UTF-8");
+
+        return xhtmlDoc.html();
+    }
+
+    private String composeHtml(String headerTemplateName, String footerTemplateName, String htmlContent, Context ctx) {
+        String headerTemplate = "";
+        String footerTemplate = "";
+        if (headerTemplateName != null && headerTemplateName.length() > 1)
+            headerTemplate = parseMjmlFile(pdfTemplateEngine(false).process(headerTemplateName, ctx));
+        if (footerTemplateName != null && footerTemplateName.length() > 1)
+            footerTemplate = parseMjmlFile(pdfTemplateEngine(false).process(footerTemplateName, ctx));
+
+        org.jsoup.nodes.Document headerDoc = Jsoup.parse(headerTemplate, "UTF-8");
+        org.jsoup.nodes.Document footerDoc = Jsoup.parse(footerTemplate, "UTF-8");
+        org.jsoup.nodes.Document mainDoc = Jsoup.parse(htmlContent, "UTF-8");
+        org.jsoup.nodes.Document finalDoc = Jsoup.parse("<html><head></head><body></body></html>", "UTF-8");
+
+        finalDoc.head()
+                .append(headerDoc.head().html())
+                .append(mainDoc.head().html())
+                .append(footerDoc.head().html())
+                .append("""
+                            <style>
+                                @page {
+                                    size: A4;
+                                    margin: 40px 0px 80px 0px;
+                                }
+
+                                @font-face {
+                                    font-family: 'Roboto';
+                                    src: url('fonts/Roboto/Roboto-Regular.ttf') format('truetype');
+                                    font-weight: normal;
+                                }
+
+                                @font-face {
+                                    font-family: 'Roboto';
+                                    src: url('fonts/Roboto/Roboto-Bold.ttf') format('truetype');
+                                    font-weight: bold;
+                                }
+
+                                body {
+                                    font-family: 'Roboto', sans-serif !important;
+                                }
+
+                                strong, b {
+                                    font-family: 'Roboto';
+                                    font-weight: bold;
+                                }
+
+                                a, a * {
+                                    font-family: 'Roboto', sans-serif !important;
+                                }
+
+                                /* --- Ajustement du header MJML --- */
+                                 .mj-column-per-20,
+                                .mj-column-per-30,
+                                .mj-column-per-40,
+                                .mj-column-per-50,
+                                .mj-column-per-80 {
+                                    display: inline-block !important;
+                                    vertical-align: top !important;
+                                    }
+                                [class*="mj-column"] div {
+                                    font-family: 'Roboto', sans-serif !important;
+                                }
+
+                                    /* Ajustement de largeur : éviter retour à la ligne */
+                                .mj-column-per-20 { width: 20% !important; max-width: 20% !important; }
+                                .mj-column-per-30 { width: 30% !important; max-width: 30% !important; }
+                                .mj-column-per-40 { width: 40% !important; max-width: 40% !important; }
+                                .mj-column-per-50 { width: 50% !important; max-width: 50% !important; }
+                                .mj-column-per-70 { width: 70% !important; max-width: 70% !important; }
+
+                                /* Empêcher la ligne de se casser entre les colonnes */
+                                td[style*="direction:ltr"] {
+                                    white-space: nowrap !important;
+                                }
+                            </style>
+                        """);
+
+        // add Background image in base64 format
+        byte[] imageBytes;
+        String base64 = null;
+        try {
+            imageBytes = IOUtils.toByteArray(new ClassPathResource("images/birdBackground.png").getInputStream());
+            base64 = Base64.getEncoder().encodeToString(imageBytes);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        String backgroundDiv = String.format("""
+                <div style="position: fixed;
+                            top: 160px;
+                            left: 0;
+                            width: 595px;
+                            height: 842px;
+                            background-image: url('data:image/png;base64,%s');
+                            background-repeat: no-repeat;
+                            background-size: contain;
+                            z-index: -1;">
+                </div>
+                """, base64);
+
+        // delete margin to put background image stuck to the edge with no space on the
+        // left
+        finalDoc.select("html").attr("style", "margin: 0; padding: 0;");
+        finalDoc.body().attr("style", "margin: 0; padding: 0;");
+        finalDoc.body().prepend(backgroundDiv);
+
+        // adding the deleted margin for the rest of the document
+        StringBuilder wrappedContent = new StringBuilder();
+        wrappedContent
+                .append(headerDoc.body().html())
+                .append("<div style='margin: 40px 40px 40px 40px;'>")
+                .append(mainDoc.body().html())
+                .append("</div>");
+        if (footerTemplateName == FOOTER_DOMICILIATION) {
+            // add css to correct and fix the footer display
+            wrappedContent.append("""
+                    <div style="
+                        position: fixed;
+                        bottom: -16px;
+                        left: 140px;
+                        font-size: 14px;
+                        color: #303B4D;
+                        text-align: center;
+                        white-space: nowrap;
+
+                    ">
+                        """ + footerDoc.body().html() + """
+                        </div>
+                    """);
+        } else {
+            // add css to correct and fix the footer display
+            wrappedContent.append("""
+                    <div style="
+                        position: fixed;
+                        bottom: -30px;
+                        left: 60px;
+                        width: 100%;
+                        padding: 0 40px;
+                    ">
+                    """ + footerDoc.body().html() + """
+                    </div>
+                    """);
+        }
+
+        finalDoc.body().append(wrappedContent.toString());
+
+        finalDoc.outputSettings()
+                .syntax(org.jsoup.nodes.Document.OutputSettings.Syntax.xml)
+                .escapeMode(org.jsoup.nodes.Entities.EscapeMode.extended)
+                .charset("UTF-8");
+
+        return finalDoc.html();
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -160,10 +338,18 @@ public class GeneratePdfDelegate {
         // To avoid proxy error
         provision = provisionService.getProvision(provision.getId());
 
+        final Context ctx = new Context();
+
+        ctx.setVariable("publicationDate", announcement.getPublicationDate().format(DateTimeFormatter
+                .ofPattern("EEEE d MMMM yyyy")
+                .withLocale(Locale.FRENCH)));
+        ctx.setVariable("department",
+                announcement.getDepartment().getCode() + " - " + announcement.getDepartment().getLabel());
+        ctx.setVariable("serviceLabel", "Service : " + provision.getService().getServiceLabelToDisplay());
+
         File tempFile;
         if (!announcement.getIsComplexAnnouncement()) {
             // Generate announcement PDF
-            final Context ctx = new Context();
 
             if (provision.getAttachments() != null && provision.getAttachments().size() > 0)
                 for (Attachment attachment : provision.getAttachments())
@@ -185,24 +371,32 @@ public class GeneratePdfDelegate {
                                 .replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " ")));
 
             // Create the HTML body using Thymeleaf
-            final String htmlContent = StringEscapeUtils
-                    .unescapeHtml4(emailTemplateEngine().process("publication-flag", ctx));
+            if (isPublicationFlag) {
+                ctx.setVariable("publicationTitle", "Témoin de publication sur www.JSS.fr");
+            } else {
+                ctx.setVariable("publicationTitle", "Attestation de parution sur www.JSS.fr");
+            }
+            final String htmlContent = composeHtml("header-publication-flag", "footer-pdf", StringEscapeUtils
+                    .unescapeHtml4(pdfTemplateEngine(isContent).process("publication-flag", ctx)), ctx);
 
             OutputStream outputStream;
-            File tempFile2;
             try {
-                tempFile2 = File.createTempFile("Témoin de publication", "pdf");
-                outputStream = new FileOutputStream(tempFile2);
+                tempFile = File.createTempFile("Témoin de publication", "pdf");
+                outputStream = new FileOutputStream(tempFile);
             } catch (IOException e) {
                 throw new OsirisException(e, "Unable to create temp file");
             }
             ITextRenderer renderer = new ITextRenderer();
             XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
+            renderer = fixFontSizeHeaderRendererDisplay(renderer);
             renderer.setDocumentFromString(
-                    htmlContent.replaceAll("\\p{C}", " ").replaceAll("&", "<![CDATA[&]]>").replaceAll("<col (.*?)>", "")
+                    htmlContent.replaceAll("\\p{C}", " ").replaceAll("<col (.*?)>", "")
                             .replaceAll("line-height: normal",
-                                    "line-height: normal;padding:0;margin:0"));
+                                    "line-height: normal;padding:0;margin:0")
+                            .replaceAll("&nbsp;", "&#160;")
+                            .replaceAll("font-size:\\s*0(\\.0+)?(px|pt|em|rem|%)?;", "font-size:1px;"));
             renderer.layout();
+
             try {
                 renderer.createPDF(outputStream);
                 outputStream.close();
@@ -211,15 +405,7 @@ public class GeneratePdfDelegate {
                         "Unable to create publication flag PDF file for announcement " + announcement.getId());
             }
 
-            if (isPublicationFlag)
-                tempFile = addHeaderAndFooterOnPublicationFlag(tempFile2, announcement);
-            else
-                tempFile = addHeaderOnPublicationReceipt(tempFile2, announcement, isPublicationReceipt);
-
-            tempFile2.delete();
-
         } else {
-            // Get announcement PDF
             File complexePdf = null;
             if (provision.getAttachments() != null && provision.getAttachments().size() > 0)
                 for (Attachment attachment : provision.getAttachments())
@@ -232,10 +418,7 @@ public class GeneratePdfDelegate {
             if (complexePdf == null)
                 throw new OsirisException(null, "No announncement PDF found");
 
-            if (isPublicationFlag)
-                tempFile = addHeaderAndFooterOnPublicationFlag(complexePdf, announcement);
-            else
-                tempFile = addHeaderOnPublicationReceipt(complexePdf, announcement, isPublicationReceipt);
+            tempFile = addHeaderAndFooterOnPublicationFlag(complexePdf, announcement, isPublicationFlag);
         }
         return tempFile;
     }
@@ -289,8 +472,9 @@ public class GeneratePdfDelegate {
         ctx.setVariable("letterModels", letterModels);
 
         // Create the HTML body using Thymeleaf
-        String htmlContent = StringEscapeUtils
-                .unescapeHtml4(emailTemplateEngine().process("letter-page", ctx));
+        String htmlBody = StringEscapeUtils
+                .unescapeHtml4(pdfTemplateEngine(true).process("letter-page", ctx));
+        final String htmlContent = composeHtml(HEADER_PDF_TEMPLATE, null, htmlBody, new Context());
 
         File tempFile;
         OutputStream outputStream;
@@ -302,10 +486,13 @@ public class GeneratePdfDelegate {
         }
         ITextRenderer renderer = new ITextRenderer();
         XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
+        renderer = fixFontSizeHeaderRendererDisplay(renderer);
         renderer.setDocumentFromString(
                 htmlContent.replaceAll("\\p{C}", " ").replaceAll("&", "<![CDATA[&]]>").replaceAll("<col (.*?)>", "")
                         .replaceAll("line-height: normal",
-                                "line-height: normal;padding:0;margin:0"));
+                                "line-height: normal;padding:0;margin:0")
+                        .replaceAll("&nbsp;", "&#160;")
+                        .replaceAll("font-size:\\s*0(\\.0+)?(px|pt|em|rem|%)?;", "font-size:1px;"));
         renderer.layout();
         try {
             renderer.createPDF(outputStream);
@@ -398,7 +585,9 @@ public class GeneratePdfDelegate {
         ctx.setVariable("debitBalance", debitBalance);
 
         // Create the HTML body using Thymeleaf
-        final String htmlContent = emailTemplateEngine().process("billing-closure-receipt", ctx);
+        String htmlBody = StringEscapeUtils
+                .unescapeHtml4(pdfTemplateEngine(true).process("billing-closure-receipt", ctx));
+        final String htmlContent = composeHtml(HEADER_PDF_TEMPLATE, null, htmlBody, new Context());
 
         File tempFile;
         OutputStream outputStream;
@@ -410,8 +599,11 @@ public class GeneratePdfDelegate {
         }
         ITextRenderer renderer = new ITextRenderer();
         XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
+        renderer = fixFontSizeHeaderRendererDisplay(renderer);
         renderer.setDocumentFromString(htmlContent.replaceAll("\\p{C}", " ")
-                .replaceAll("&(?!(amp|lt|gt|quot|apos|#\\d+|#x[\\da-fA-F]+);)", "&amp;"));
+                .replaceAll("&(?!(amp|lt|gt|quot|apos|#\\d+|#x[\\da-fA-F]+);)", "&amp;")
+                .replaceAll("&nbsp;", "&#160;")
+                .replaceAll("font-size:\\s*0(\\.0+)?(px|pt|em|rem|%)?;", "font-size:1px;"));
         renderer.layout();
         try {
             renderer.createPDF(outputStream);
@@ -455,8 +647,10 @@ public class GeneratePdfDelegate {
 
         mailHelper.setQuotationPrice(quotation, ctx);
 
-        final String htmlContent = StringEscapeUtils
-                .unescapeHtml4(emailTemplateEngine().process("quotation-page", ctx));
+        String htmlBody = StringEscapeUtils
+                .unescapeHtml4(pdfTemplateEngine(true).process("quotation-page", ctx));
+        String htmlContent = composeHtml(HEADER_PDF_TEMPLATE, null, htmlBody, new Context());
+
         File tempFile;
         OutputStream outputStream;
         try {
@@ -467,8 +661,13 @@ public class GeneratePdfDelegate {
         }
         ITextRenderer renderer = new ITextRenderer();
         XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
-        renderer.setDocumentFromString(htmlContent.replaceAll("\\p{C}", " ").replaceAll("&", "<![CDATA[&]]>"));
+        renderer = fixFontSizeHeaderRendererDisplay(renderer);
+
+        renderer.setDocumentFromString(htmlContent.replaceAll("[\\u0000-\\u001F&&[^\\n\\r\\t]]", " ")
+                .replaceAll("&nbsp;", "&#160;")
+                .replaceAll("font-size:\\s*0(\\.0+)?(px|pt|em|rem|%)?;", "font-size:1px;"));
         renderer.layout();
+
         try {
             renderer.createPDF(outputStream);
             outputStream.close();
@@ -645,7 +844,9 @@ public class GeneratePdfDelegate {
         ctx.setVariable("invoiceDueDate", invoice.getDueDate().format(formatter));
 
         // Recurring
-        if (customerOrder != null) {
+        if (customerOrder != null)
+
+        {
             if (customerOrder.getRecurringStartDate() != null) {
                 ctx.setVariable("recurringStartDate",
                         customerOrder.getRecurringStartDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
@@ -656,9 +857,10 @@ public class GeneratePdfDelegate {
                             " - " + customerOrder.getCustomerOrderParentRecurring().getId());
             }
         }
-        // Create the HTML body using Thymeleaf
-        final String htmlContent = StringEscapeUtils
-                .unescapeHtml4(emailTemplateEngine().process("invoice-page", ctx));
+        // Create the HTML body using Thymeleaf and MJML
+        String htmlBody = StringEscapeUtils
+                .unescapeHtml4(pdfTemplateEngine(true).process("invoice-page", ctx));
+        String htmlContent = composeHtml(HEADER_PDF_TEMPLATE, null, htmlBody, new Context());
 
         try {
             PrintWriter out = new PrintWriter("C:\\uploads\\html.txt");
@@ -671,21 +873,41 @@ public class GeneratePdfDelegate {
         OutputStream outputStream;
         try {
             tempFile = File.createTempFile("invoice", "pdf");
+
             outputStream = new FileOutputStream(tempFile);
         } catch (IOException e) {
             throw new OsirisException(e, "Unable to create temp file");
         }
         ITextRenderer renderer = new ITextRenderer();
         XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
-        renderer.setDocumentFromString(htmlContent.replaceAll("\\p{C}", " ").replaceAll("&", "<![CDATA[&]]>"));
+
+        renderer = fixFontSizeHeaderRendererDisplay(renderer);
+        renderer.setDocumentFromString(htmlContent.replaceAll("[\\u0000-\\u001F&&[^\\n\\r\\t]]", " ")
+                .replaceAll("&nbsp;", "&#160;")
+                .replaceAll("font-size:\\s*0(\\.0+)?(px|pt|em|rem|%)?;", "font-size:1px;"));
         renderer.layout();
         try {
             renderer.createPDF(outputStream);
+            outputStream.flush();
             outputStream.close();
         } catch (DocumentException | IOException e) {
             throw new OsirisException(e, "Unable to create PDF file for invoice " + invoice.getId());
         }
         return tempFile;
+    }
+
+    private ITextRenderer fixFontSizeHeaderRendererDisplay(ITextRenderer renderer) {
+        try {
+            renderer.getFontResolver().addFont(
+                    Objects.requireNonNull(getClass().getResource("/fonts/Roboto/Roboto-Regular.ttf")).getPath(),
+                    BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+            renderer.getFontResolver().addFont(
+                    Objects.requireNonNull(getClass().getResource("/fonts/Roboto/Roboto-Bold.ttf")).getPath(),
+                    BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return renderer;
     }
 
     private List<InvoiceItem> getGroupedInvoiceItemsForDebours(List<InvoiceItem> inInvoiceItems) {
@@ -744,7 +966,8 @@ public class GeneratePdfDelegate {
         return invoiceItems;
     }
 
-    private File addHeaderAndFooterOnPublicationFlag(File pdfFile, Announcement announcement) throws OsirisException {
+    private File addHeaderAndFooterOnPublicationFlag(File pdfFile, Announcement announcement, Boolean isPublicationFlag)
+            throws OsirisException {
         String pdfPath = pdfFile.getAbsolutePath();
         File tempPdfFile;
         try {
@@ -753,10 +976,8 @@ public class GeneratePdfDelegate {
             throw new OsirisException(e, "Impossible to create temp file");
         }
         String pdfPathOut = tempPdfFile.getAbsolutePath();
-        float headerPositionX = 60;
-        float headerPositionY = PageSize.A4.getHeight() - 25;
+        float headerPositionX = 5;
         float footerPositionX = 60;
-        float footerPositionY = 10;
 
         String announcementDate = "";
         String announcementDepartment = "";
@@ -802,315 +1023,194 @@ public class GeneratePdfDelegate {
         // Loop over the pages and add a header to each page
         int n = reader.getNumberOfPages();
 
-        Font blueFont = new Font(FontFamily.TIMES_ROMAN);
-        blueFont.setColor(0, 32, 96);
-        blueFont.setSize(10);
+        BaseFont baseFontRobotoRegular;
+        BaseFont baseFontRobotoBold;
+
+        try {
+            baseFontRobotoRegular = BaseFont.createFont("fonts/Roboto/Roboto-Regular.ttf", BaseFont.IDENTITY_H,
+                    BaseFont.EMBEDDED);
+            baseFontRobotoBold = BaseFont.createFont("fonts/Roboto/Roboto-Bold.ttf", BaseFont.IDENTITY_H,
+                    BaseFont.EMBEDDED);
+        } catch (Exception e) {
+            throw new OsirisException(e, "Impossible de charger les polices Roboto");
+        }
+
+        final BaseColor MJML_COLOR = new BaseColor(48, 59, 77);
 
         for (int i = 1; i <= n; i++) {
-
             if (i == 1) {
-                PdfPTable table = new PdfPTable(1);
-                table.setTotalWidth(PageSize.A4.getWidth() - (headerPositionX * 2));
-                table.setLockedWidth(true);
-                table.getDefaultCell().setBorder(Rectangle.NO_BORDER);
-                table.getDefaultCell().setBorderColor(new BaseColor(0, 32, 96));
 
-                // Title
-                Font blueFontTitle = new Font(FontFamily.TIMES_ROMAN);
-                blueFontTitle.setColor(0, 32, 96);
-                blueFontTitle.setSize(30);
+                Font blueFontTitle = new Font(baseFontRobotoBold, 20, Font.NORMAL, MJML_COLOR);
+                Font blueFontDescription = new Font(baseFontRobotoRegular, 10, Font.NORMAL, MJML_COLOR);
+                Font blueFontDateDept = new Font(baseFontRobotoRegular, 12, Font.NORMAL, MJML_COLOR);
+                Font blueFontNoticeType = new Font(baseFontRobotoBold, 14, Font.NORMAL, MJML_COLOR);
 
-                final PdfPCell titleCell = new PdfPCell(new Phrase("www.JSS.fr", blueFontTitle));
-                titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                titleCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                titleCell.setBorderWidth(0);
-                table.addCell(titleCell);
-
-                // Subtitle
-                Font blueFontSubTitle = new Font(FontFamily.TIMES_ROMAN);
-                blueFontSubTitle.setColor(0, 32, 96);
-                blueFontSubTitle.setSize(8);
-
-                final PdfPCell subtitleCell = new PdfPCell(new Phrase(
-                        "Service de Presse En Ligne d'informations Générales, Juridiques, Judiciaires et Techniques, habilité à publier les annonces légales",
-                        blueFontSubTitle));
-                subtitleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                subtitleCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                subtitleCell.setBorderWidth(0);
-                table.addCell(subtitleCell);
-
-                final PdfPCell subtitleCell2 = new PdfPCell(
-                        new Phrase("dans les départements 75, 78, 91, 92, 93, 94 et 95", blueFontSubTitle));
-                subtitleCell2.setHorizontalAlignment(Element.ALIGN_CENTER);
-                subtitleCell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                subtitleCell2.setBorderWidth(0);
-                table.addCell(subtitleCell2);
-
-                // Type
-                Font blueFontType = new Font(FontFamily.TIMES_ROMAN);
-                blueFontType.setColor(0, 32, 96);
-                blueFontType.setSize(12);
-
-                final PdfPCell typeCell = new PdfPCell(new Phrase("Témoin de Publication", blueFontType));
-                typeCell.setPaddingTop(8);
-                typeCell.setPaddingBottom(8);
-                typeCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                typeCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                typeCell.setBorderWidth(0);
-                table.addCell(typeCell);
-
-                // Nested table informations
-                PdfPTable tableInformations = new PdfPTable(3);
-                tableInformations.setTotalWidth(PageSize.A4.getWidth() - (headerPositionX * 2));
-                tableInformations.setLockedWidth(true);
-                tableInformations.getDefaultCell().setBorder(Rectangle.BOX);
-                tableInformations.getDefaultCell().setBorderColor(new BaseColor(0, 32, 96));
-
-                final PdfPCell dateCell = new PdfPCell(new Phrase(announcementDate, blueFont));
-                dateCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                dateCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                dateCell.setBorderWidthRight(0);
-                dateCell.setBorderColor(new BaseColor(0, 32, 96));
-                tableInformations.addCell(dateCell);
-
-                final PdfPCell dummyCell = new PdfPCell(new Phrase("", blueFont));
-                dummyCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                dummyCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                dummyCell.setBorderWidthRight(0);
-                dummyCell.setBorderWidthLeft(0);
-                dummyCell.setBorderColor(new BaseColor(0, 32, 96));
-                tableInformations.addCell(dummyCell);
-
-                final PdfPCell departmentCell = new PdfPCell(new Phrase(announcementDepartment, blueFont));
-                departmentCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                departmentCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                departmentCell.setBorderWidthLeft(0);
-                departmentCell.setBorderColor(new BaseColor(0, 32, 96));
-                tableInformations.addCell(departmentCell);
-
-                table.addCell(tableInformations);
-
-                // Notice type
-                final PdfPCell noticeTypeCell = new PdfPCell(new Phrase(announcementNoticeType, blueFont));
-                noticeTypeCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                noticeTypeCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                noticeTypeCell.setBorderWidth(0);
-                noticeTypeCell.setPaddingBottom(8);
-                table.addCell(noticeTypeCell);
-
-                // Separator
-                final PdfPCell separatorCell = new PdfPCell(new Phrase("", blueFont));
-                separatorCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                separatorCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                separatorCell.setBorderWidthBottom(1);
-                separatorCell.setBorderColor(new BaseColor(0, 32, 96));
-                table.addCell(separatorCell);
-
-                table.writeSelectedRows(0, -1, headerPositionX, headerPositionY, stamper.getOverContent(i));
-
-                Image image;
-                // Add QR code
+                PdfPTable tableHeader = new PdfPTable(2);
                 try {
-                    image = Image
-                            .getInstance(qrCodeHelper
-                                    .getQrCode("https://www.jss.fr/Annonce-publiee.awp?P1=" + announcement.getId() + "",
-                                            60));
-                    PdfImage stream = new PdfImage(image, "", null);
-                    stream.put(new PdfName("QRCode"), new PdfName("P1"));
-                    image.setDirectReference(stamper.getWriter().addToBody(stream).getIndirectReference());
-                    image.setAbsolutePosition(PageSize.A4.getWidth() - 60 - 10, headerPositionY - 60);
-                    stamper.getOverContent(i).addImage(image);
-                } catch (Exception e) {
-                    throw new OsirisException(e, "Impossible to add QR Code on PDF");
+                    tableHeader.setWidths(new float[] { 5f, 95f });
+                } catch (DocumentException e) {
+                    throw new OsirisException(e, "Wrong columns sizes for PDF header");
                 }
+                tableHeader.setTotalWidth((PageSize.A4.getWidth() - (headerPositionX * 2)) * 0.98f);
+                tableHeader.setLockedWidth(true);
+
+                // --- Column 1 : Logo ---
+                final PdfPCell logoCell = new PdfPCell();
+                logoCell.setBorder(Rectangle.NO_BORDER);
+                logoCell.setPadding(0);
+                logoCell.setHorizontalAlignment(Element.ALIGN_LEFT);
+                logoCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+
+                Image logoImage;
+                try {
+                    byte[] imageBytes;
+                    imageBytes = IOUtils.toByteArray(new ClassPathResource("images/logo.png").getInputStream());
+                    logoImage = Image.getInstance(imageBytes);
+
+                    // resizing logo image
+                    float desiredWidth = 60f;
+                    float scaleFactor = desiredWidth / logoImage.getWidth();
+                    logoImage.scalePercent(scaleFactor * 100);
+                    logoCell.addElement(logoImage);
+
+                } catch (Exception e) {
+                    throw new OsirisException(e, "Impossible d'ajouter le logo au PDF");
+                }
+                tableHeader.addCell(logoCell);
+
+                // --- Column 2 : Text and title ---
+                // New interlocked Table inside first Table
+                PdfPTable textTable = new PdfPTable(1);
+                textTable.setWidthPercentage(100);
+                textTable.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+                textTable.getDefaultCell().setPadding(1);
+
+                final PdfPCell titleCell = new PdfPCell(
+                        new Phrase("Attestation de parution sur www.JSS.fr", blueFontTitle));
+                titleCell.setBorder(Rectangle.NO_BORDER);
+                titleCell.setPaddingBottom(3);
+                textTable.addCell(titleCell);
+
+                if (isPublicationFlag) {
+                    String subtitleText = "Service de Presse En Ligne d'informations Générales, Juridiques, Judiciaires et Techniques,"
+                            + " habilité à publier les annonces légales dans les départements 75, 78, 91, 92, 93, 94 et 95";
+                    final PdfPCell subtitleCell = new PdfPCell(new Phrase(subtitleText, blueFontDescription));
+                    subtitleCell.setBorder(Rectangle.NO_BORDER);
+                    subtitleCell.setPaddingBottom(3);
+                    textTable.addCell(subtitleCell);
+
+                    final PdfPCell dateDeptCell = new PdfPCell();
+                    dateDeptCell.setBorder(Rectangle.NO_BORDER);
+                    dateDeptCell.setPaddingBottom(3);
+                    Paragraph dateDeptPara = new Paragraph();
+                    dateDeptPara.add(new Chunk(announcementDate, blueFontDateDept));
+                    dateDeptPara.add(new Chunk("\n", blueFontDateDept));
+                    dateDeptPara.add(new Chunk(announcementDepartment, blueFontDateDept));
+                    dateDeptPara.add(new Chunk("\n", blueFontDateDept));
+                    dateDeptCell.addElement(dateDeptPara);
+                    textTable.addCell(dateDeptCell);
+
+                    final PdfPCell noticeTypeCell = new PdfPCell(
+                            new Phrase(announcementNoticeType, blueFontNoticeType));
+                    noticeTypeCell.setBorder(Rectangle.NO_BORDER);
+                    noticeTypeCell.setPaddingBottom(3);
+                    textTable.addCell(noticeTypeCell);
+
+                } else {
+                    String subtitleText = "Pour le " + announcementDate;
+                    final PdfPCell subtitleCell = new PdfPCell(new Phrase(subtitleText, blueFontDateDept));
+                    subtitleCell.setBorder(Rectangle.NO_BORDER);
+                    subtitleCell.setPaddingBottom(3);
+                    textTable.addCell(subtitleCell);
+
+                    String descriptionText = "Service de Presse en ligne habilité à publier les annonces légales dans les "
+                            + "départements 75, 78, 91, 92, 93, 94 et 95";
+                    final PdfPCell descriptionCell = new PdfPCell(new Phrase(descriptionText, blueFontDescription));
+                    descriptionCell.setBorder(Rectangle.NO_BORDER);
+                    descriptionCell.setPaddingBottom(3);
+                    textTable.addCell(descriptionCell);
+
+                    // 3rd and 4th line to create a fake dateDeptCell and noticeTypeCell with a
+                    // minimal height in order to keep display straight and clean
+                    // otherwise logo and text are not aligned
+                    Paragraph p3 = new Paragraph(11, " "); // 11 points leading pour la police de 11 points
+                    final PdfPCell paddingCell3 = new PdfPCell(p3);
+                    paddingCell3.setBorder(Rectangle.NO_BORDER);
+                    paddingCell3.setPaddingBottom(3);
+                    textTable.addCell(paddingCell3);
+
+                    Paragraph p4 = new Paragraph(13, " "); // 13 points leading pour la police de 13 points
+                    final PdfPCell paddingCell4 = new PdfPCell(p4);
+                    paddingCell4.setBorder(Rectangle.NO_BORDER);
+                    paddingCell4.setPaddingBottom(3);
+                    textTable.addCell(paddingCell4);
+                }
+
+                // Cell to put second text Table
+                final PdfPCell textContainerCell = new PdfPCell(textTable);
+                textContainerCell.setBorder(Rectangle.NO_BORDER);
+                textContainerCell.setBorderWidthLeft(2f);
+                textContainerCell.setBorderColorLeft(MJML_COLOR);
+                textContainerCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                textContainerCell.setPaddingLeft(5f);
+                tableHeader.addCell(textContainerCell);
+
+                float startPositionX = headerPositionX;
+                tableHeader.writeSelectedRows(0, -1, startPositionX, PageSize.A4.getHeight() - 40,
+                        stamper.getOverContent(i));
+
             }
             // add footer
-            PdfPTable tableFooter = new PdfPTable(2);
+            PdfPTable tableFooter = new PdfPTable(1);
             try {
-                tableFooter.setWidths(new int[] { 90, 10 });
+                tableFooter.setWidths(new int[] { 100 });
             } catch (DocumentException e) {
-                throw new OsirisException(e, "Wrong columns sizes for PDF");
+                throw new OsirisException(e, "Wrong columns sizes for PDF footer");
             }
             tableFooter.setTotalWidth(PageSize.A4.getWidth() - (footerPositionX * 2));
             tableFooter.setLockedWidth(true);
             tableFooter.getDefaultCell().setBorder(Rectangle.NO_BORDER);
 
-            // Separator
-            final PdfPCell separatorCell = new PdfPCell(new Phrase("", blueFont));
-            separatorCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-            separatorCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            separatorCell.setBorderWidthTop(1);
-            separatorCell.setBorderColor(new BaseColor(0, 32, 96));
-            tableFooter.addCell(separatorCell);
+            Font footerFontRegular = new Font(baseFontRobotoRegular, 10, Font.NORMAL, MJML_COLOR);
+            Font footerFontBold = new Font(baseFontRobotoBold, 10, Font.NORMAL, MJML_COLOR);
 
-            final PdfPCell separatorCell2 = new PdfPCell(new Phrase("", blueFont));
-            separatorCell2.setHorizontalAlignment(Element.ALIGN_CENTER);
-            separatorCell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            separatorCell2.setBorderWidthTop(1);
-            separatorCell2.setBorderColor(new BaseColor(0, 32, 96));
-            tableFooter.addCell(separatorCell2);
+            // --- Only one Cell
+            Paragraph detailsParagraph = new Paragraph();
+            detailsParagraph.setAlignment(Element.ALIGN_CENTER);
+            detailsParagraph.setLeading(14f);
+            detailsParagraph
+                    .add(new Chunk("SPPS - Société de Publications et de Publicité pour les Sociétés", footerFontBold));
+            detailsParagraph.add(new Chunk("\n", footerFontRegular)); // Saut de ligne
 
-            // Details 1
+            detailsParagraph.add(new Chunk("SAS au capital de 216 000 Euros", footerFontRegular));
+            detailsParagraph.add(new Chunk("\n", footerFontRegular));
 
-            Font footerFont = new Font(FontFamily.TIMES_ROMAN);
-            footerFont.setColor(0, 32, 96);
-            footerFont.setSize(8);
+            detailsParagraph.add(new Chunk("Siret", footerFontBold));
+            detailsParagraph.add(new Chunk(" 552 074 627 00043  –  ", footerFontRegular));
+            detailsParagraph.add(new Chunk("TVA IC", footerFontBold));
+            detailsParagraph.add(new Chunk(" : FR 12552074627", footerFontRegular));
+            detailsParagraph.add(new Chunk("\n", footerFontRegular));
 
-            final PdfPCell detailsCell1 = new PdfPCell(new Phrase(
-                    "https://www.jss.fr - Service de Presse En Ligne habilité pour les départements de 75, 78, 91, 92, 93, 94 et 95",
-                    footerFont));
-            detailsCell1.setHorizontalAlignment(Element.ALIGN_CENTER);
-            detailsCell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            detailsCell1.setBorderWidth(0);
-            tableFooter.addCell(detailsCell1);
+            detailsParagraph.add(new Chunk("IBAN", footerFontBold));
+            detailsParagraph.add(new Chunk(" : FR76 3000 4007 9900 0257 1438 960  ", footerFontRegular));
+            detailsParagraph.add(new Chunk("BIC", footerFontBold));
+            detailsParagraph.add(new Chunk(" : BNPAFRPPXXX", footerFontRegular));
+            detailsParagraph.add(new Chunk("\n", footerFontRegular));
 
-            final PdfPCell pageCell = new PdfPCell(new Phrase(String.format("%d / %d", i, n), footerFont));
-            pageCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-            pageCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            pageCell.setBorderWidth(0);
-            tableFooter.addCell(pageCell);
+            detailsParagraph.add(new Chunk("Présidente", footerFontBold));
+            detailsParagraph.add(new Chunk(" : Myriam de Montis", footerFontRegular));
 
-            final PdfPCell detailsCell2 = new PdfPCell(new Phrase(
-                    "10 boulevard Haussmann - 75009 PARIS - Téléphone : 01 47 03 10 10 - E-mail : annonces@jss.fr",
-                    footerFont));
-            detailsCell2.setHorizontalAlignment(Element.ALIGN_CENTER);
-            detailsCell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            detailsCell2.setBorderWidth(0);
-            tableFooter.addCell(detailsCell2);
+            final PdfPCell detailsCell = new PdfPCell(detailsParagraph);
+            detailsCell.setBorder(Rectangle.NO_BORDER);
+            detailsCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            detailsCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            tableFooter.addCell(detailsCell);
 
-            final PdfPCell pageCell2 = new PdfPCell(new Phrase("", footerFont));
-            pageCell2.setBorderWidth(0);
-            tableFooter.addCell(pageCell2);
-
-            tableFooter.writeSelectedRows(0, -1, footerPositionX, footerPositionY * 4, stamper.getOverContent(i));
+            float shiftedFooterPositionX = footerPositionX - 10f;
+            float safeFooterTopY = 80f;
+            tableFooter.writeSelectedRows(0, -1, shiftedFooterPositionX, safeFooterTopY, stamper.getOverContent(i));
         }
 
-        // Close the stamper
-        try {
-            stamper.close();
-        } catch (DocumentException | IOException e) {
-            throw new OsirisException(e, "Impossible to close PDF File stamper");
-        }
-        reader.close();
-
-        return tempPdfFile;
-    }
-
-    private File addHeaderOnPublicationReceipt(File pdfFile, Announcement announcement, boolean displayStamp)
-            throws OsirisException {
-        String pdfPath = pdfFile.getAbsolutePath();
-        File tempPdfFile;
-        try {
-            tempPdfFile = File.createTempFile("pdfFooterHeader", "Add");
-        } catch (IOException e) {
-            throw new OsirisException(e, "Impossible to create temp file");
-        }
-        String pdfPathOut = tempPdfFile.getAbsolutePath();
-        float headerPositionX = 60;
-        float headerPositionY = PageSize.A4.getHeight() - 25;
-
-        String announcementDate = "";
-
-        if (announcement.getPublicationDate() != null) {
-            LocalDate localDate = announcement.getPublicationDate();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            announcementDate = StringUtils.capitalize(localDate.format(formatter));
-        }
-
-        FileInputStream in;
-        PdfReader reader;
-        try {
-            in = new FileInputStream(pdfPath);
-            reader = new PdfReader(in);
-        } catch (IOException e) {
-            throw new OsirisException(e, "Impossible to read input PDF file");
-        }
-
-        // Create output PDF
-        FileOutputStream out;
-        PdfStamper stamper;
-        try {
-            out = new FileOutputStream(pdfPathOut);
-            stamper = new PdfStamper(reader, out);
-            XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
-        } catch (DocumentException | IOException e2) {
-            throw new OsirisException(e2, "Impossible to create output PDF file");
-        }
-
-        if (displayStamp) {
-            // Loop over the pages and add a header to each page
-            int n = reader.getNumberOfPages();
-
-            Font blueFont = new Font(FontFamily.TIMES_ROMAN);
-            blueFont.setColor(0, 32, 96);
-            blueFont.setSize(10);
-
-            for (int i = 1; i <= n; i++) {
-
-                if (i == 1) {
-                    PdfPTable table = new PdfPTable(1);
-                    table.setTotalWidth(PageSize.A4.getWidth() / 2 - 30);
-                    table.setLockedWidth(true);
-                    table.getDefaultCell().setBorder(Rectangle.BOX);
-                    table.getDefaultCell().setBorderWidth(1);
-                    table.getDefaultCell().setBorderColor(new BaseColor(0, 0, 0));
-
-                    // Title
-                    Font blackFontTitle = new Font(FontFamily.TIMES_ROMAN, 18, Font.BOLD);
-                    blackFontTitle.setColor(0, 0, 0);
-
-                    final PdfPCell titleCell = new PdfPCell(new Phrase("ATTESTATION DE PARUTION", blackFontTitle));
-                    titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                    titleCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                    titleCell.setBorderWidth(1);
-                    titleCell.setPaddingBottom(8);
-                    table.addCell(titleCell);
-
-                    // Subtitle
-                    Font blackFontSubTitle = new Font(FontFamily.TIMES_ROMAN);
-                    blackFontSubTitle.setColor(0, 0, 0);
-                    blackFontSubTitle.setSize(11);
-
-                    final PdfPCell subtitleCell = new PdfPCell(
-                            new Phrase("Pour le " + announcementDate, blackFontSubTitle));
-                    subtitleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                    subtitleCell.setPaddingTop(6);
-                    subtitleCell.setPaddingBottom(5);
-                    subtitleCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                    subtitleCell.setBorderWidth(1);
-                    table.addCell(subtitleCell);
-
-                    // Website
-                    Font blueFontType = new Font(FontFamily.TIMES_ROMAN, 20, Font.BOLD);
-                    blueFontType.setColor(38, 61, 83);
-
-                    final PdfPCell typeCell = new PdfPCell(new Phrase("www.jss.fr", blueFontType));
-                    typeCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                    typeCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                    typeCell.setBorderWidth(1);
-                    typeCell.setPaddingBottom(6);
-                    typeCell.setPaddingTop(0);
-                    table.addCell(typeCell);
-
-                    // Departments
-                    Font departmentFontType = new Font(FontFamily.TIMES_ROMAN);
-                    departmentFontType.setColor(0, 0, 0);
-                    departmentFontType.setSize(7);
-
-                    final PdfPCell typeCellDepartments = new PdfPCell(
-                            new Phrase("Habitilité sur le 75, 78, 91, 92, 93, 94, 95", departmentFontType));
-                    typeCellDepartments.setHorizontalAlignment(Element.ALIGN_CENTER);
-                    typeCellDepartments.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                    typeCellDepartments.setBorderWidth(1);
-                    typeCellDepartments.setPaddingBottom(2);
-                    table.addCell(typeCellDepartments);
-
-                    table.writeSelectedRows(0, -1, headerPositionX, headerPositionY, stamper.getOverContent(i));
-                }
-            }
-        }
-
-        // Close the stamper
         try {
             stamper.close();
         } catch (DocumentException | IOException e) {
@@ -1191,8 +1291,9 @@ public class GeneratePdfDelegate {
         ctx.setVariable("monthlyBillingAmount", monthlyBillingAmount);
 
         // Create the HTML body using Thymeleaf
-        String htmlContent = StringEscapeUtils
-                .unescapeHtml4(emailTemplateEngine().process(template, ctx));
+        String htmlBody = StringEscapeUtils
+                .unescapeHtml4(pdfTemplateEngine(true).process(template, ctx));
+        final String htmlContent = composeHtml(HEADER_PDF_TEMPLATE, FOOTER_DOMICILIATION, htmlBody, ctx);
 
         File tempFile;
         OutputStream outputStream;
@@ -1204,10 +1305,12 @@ public class GeneratePdfDelegate {
         }
         ITextRenderer renderer = new ITextRenderer();
         XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
+        renderer = fixFontSizeHeaderRendererDisplay(renderer);
         renderer.setDocumentFromString(
                 htmlContent.replaceAll("\\p{C}", " ").replaceAll("&", "<![CDATA[&]]>").replaceAll("<col (.*?)>", "")
                         .replaceAll("line-height: normal",
-                                "line-height: normal;padding:0;margin:0"));
+                                "line-height: normal;padding:0;margin:0")
+                        .replaceAll("font-size:\\s*0(\\.0+)?(px|pt|em|rem|%)?;", "font-size:1px;"));
         renderer.layout();
         try {
             renderer.createPDF(outputStream);
@@ -1215,7 +1318,7 @@ public class GeneratePdfDelegate {
         } catch (DocumentException | IOException e) {
             throw new OsirisException(e, "Unable to create PDF file for domiciliation contracts");
         }
-        return addFooterOnDomiciliationContract(tempFile);
+        return tempFile;
     }
 
     private String getMailDestinationLabel(Domiciliation domiciliation, boolean englishLangage) throws OsirisException {
@@ -1340,82 +1443,6 @@ public class GeneratePdfDelegate {
         return mailDestinationLabel;
     }
 
-    private File addFooterOnDomiciliationContract(File pdfFile) throws OsirisException {
-        String pdfPath = pdfFile.getAbsolutePath();
-        File tempPdfFile;
-        try {
-            tempPdfFile = File.createTempFile("pdfDomiciliationFooter", "Add");
-        } catch (IOException e) {
-            throw new OsirisException(e, "Impossible to create temp file");
-        }
-        String pdfPathOut = tempPdfFile.getAbsolutePath();
-        float footerPositionX = 60;
-        float footerPositionY = 6;
-
-        FileInputStream in;
-        PdfReader reader;
-        try {
-            in = new FileInputStream(pdfPath);
-            reader = new PdfReader(in);
-        } catch (IOException e) {
-            throw new OsirisException(e, "Impossible to read input PDF file");
-        }
-
-        // Create output PDF
-        FileOutputStream out;
-        PdfStamper stamper;
-        try {
-            out = new FileOutputStream(pdfPathOut);
-            stamper = new PdfStamper(reader, out);
-            XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
-        } catch (DocumentException | IOException e2) {
-            throw new OsirisException(e2, "Impossible to create output PDF file");
-        }
-
-        // Loop over the pages and add a header to each page
-        int n = reader.getNumberOfPages();
-
-        for (int i = 1; i <= n; i++) {
-
-            // add footer
-            PdfPTable tableFooter = new PdfPTable(1);
-            try {
-                tableFooter.setWidths(new int[] { 100 });
-            } catch (DocumentException e) {
-                throw new OsirisException(e, "Wrong columns sizes for PDF");
-            }
-            tableFooter.setTotalWidth(PageSize.A4.getWidth() - (footerPositionX * 2));
-            tableFooter.setLockedWidth(true);
-            tableFooter.getDefaultCell().setBorder(Rectangle.NO_BORDER);
-
-            // Details 1
-
-            Font footerFont = new Font(FontFamily.TIMES_ROMAN);
-            footerFont.setSize(10);
-
-            final PdfPCell detailsCell1 = new PdfPCell(new Phrase(
-                    "Agrément n°" + jssDomiciliationAgreementNumber + " obtenu le " + jssDomiciliationAgreementDate
-                            + " auprès de la Préfecture de Paris",
-                    footerFont));
-            detailsCell1.setHorizontalAlignment(Element.ALIGN_CENTER);
-            detailsCell1.setVerticalAlignment(Element.ALIGN_MIDDLE);
-            detailsCell1.setBorderWidth(0);
-            tableFooter.addCell(detailsCell1);
-
-            tableFooter.writeSelectedRows(0, -1, footerPositionX, footerPositionY * 4, stamper.getOverContent(i));
-        }
-
-        // Close the stamper
-        try {
-            stamper.close();
-        } catch (DocumentException | IOException e) {
-            throw new OsirisException(e, "Impossible to close PDF File stamper");
-        }
-        reader.close();
-
-        return tempPdfFile;
-    }
-
     public File generateRegistrationActPdf(Provision provision) throws OsirisException {
         final Context ctx = new Context();
 
@@ -1425,9 +1452,8 @@ public class GeneratePdfDelegate {
             if (provision.getService() != null && provision.getService().getAssoAffaireOrder() != null)
                 ctx.setVariable("customerOrder", provision.getService().getAssoAffaireOrder().getCustomerOrder());
         }
-
         final String htmlContent = StringEscapeUtils
-                .unescapeHtml4(emailTemplateEngine().process("registration-act", ctx));
+                .unescapeHtml4(pdfTemplateEngine(false).process("registration-act", ctx));
 
         File tempFile;
         OutputStream outputStream;
@@ -1480,7 +1506,7 @@ public class GeneratePdfDelegate {
         }
 
         final String htmlContent = StringEscapeUtils
-                .unescapeHtml4(emailTemplateEngine().process("tracking-sheet", ctx));
+                .unescapeHtml4(pdfTemplateEngine(false).process("registration-act", ctx));
 
         File tempFile;
         OutputStream outputStream;
