@@ -337,15 +337,19 @@ public class GeneratePdfDelegate {
             boolean isPublicationReceipt, boolean isProofReading) throws OsirisException {
         // To avoid proxy error
         provision = provisionService.getProvision(provision.getId());
+        String publicationDate = announcement.getPublicationDate().format(
+                DateTimeFormatter
+                        .ofPattern("EEEE d MMMM yyyy")
+                        .withLocale(Locale.FRENCH));
+        if (publicationDate != null && !publicationDate.isEmpty())
+            publicationDate = publicationDate.substring(0, 1).toUpperCase(Locale.FRENCH) + publicationDate.substring(1);
 
         final Context ctx = new Context();
 
-        ctx.setVariable("publicationDate", announcement.getPublicationDate().format(DateTimeFormatter
-                .ofPattern("EEEE d MMMM yyyy")
-                .withLocale(Locale.FRENCH)));
+        ctx.setVariable("publicationDate", publicationDate);
         ctx.setVariable("department",
                 announcement.getDepartment().getCode() + " - " + announcement.getDepartment().getLabel());
-        ctx.setVariable("serviceLabel", "Service : " + provision.getService().getServiceLabelToDisplay());
+        ctx.setVariable("serviceLabel", provision.getService().getServiceLabelToDisplay());
 
         File tempFile;
         if (!announcement.getIsComplexAnnouncement()) {
