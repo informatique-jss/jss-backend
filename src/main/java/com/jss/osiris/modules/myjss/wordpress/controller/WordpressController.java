@@ -1269,6 +1269,16 @@ public class WordpressController {
 		return new ResponseEntity<List<IndexEntity>>(new ArrayList<IndexEntity>(), HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/search/jss/post")
+	@JsonView(JacksonViews.MyJssListView.class)
+	public ResponseEntity<Page<Post>> globalSearchForJssPostEntity(@RequestParam String searchText)
+			throws OsirisException {
+		// TODO : leak premium
+		if (searchText != null && searchText.length() > 2)
+			return new ResponseEntity<Page<Post>>(postService.searchJssPosts(searchText), HttpStatus.OK);
+		return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/announcement/search")
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Page<Announcement>> getTopAnnouncementSearch(@RequestParam(defaultValue = "0") int page,

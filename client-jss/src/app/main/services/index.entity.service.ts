@@ -13,6 +13,6 @@ export class IndexEntityService extends AppRestService<IndexEntity> {
   }
 
   globalSearchForPost(searchText: string) {
-    return this.getList(new HttpParams().set("searchText", searchText), "search/post");
+    return this.getList(new HttpParams().set("searchText", searchText), "search/jss/post");
   }
 }
