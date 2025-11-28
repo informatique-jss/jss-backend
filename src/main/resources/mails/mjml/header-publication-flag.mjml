@@ -1,0 +1,64 @@
+<mjml>
+  <mj-head>
+    <mj-attributes>
+      <mj-text color="#303B4D" />
+    </mj-attributes>
+  </mj-head>
+  <mj-body>
+    <mj-section padding="10px" full-width="full-width">
+      <mj-column width="20%" vertical-align="middle">
+        <mj-image
+          th:src="@{classpath:/images/logo.png}"
+          width="100px"
+          align="right"
+          padding="25px 0px 10px 10px"
+        />
+      </mj-column>
+      <mj-column
+        width="70%"
+        vertical-align="middle"
+        border-left="2px solid #303B4D"
+      >
+        <mj-text font-size="24px">
+          <strong
+            ><span
+              style="white-space: nowrap; font-family: 'Roboto'"
+              th:text="${publicationTitle}"
+            >
+            </span
+          ></strong>
+        </mj-text>
+
+        <mj-text font-size="12px" line-height="1.3" padding-bottom="0px">
+          <span style="white-space: nowrap; font-family: 'Roboto'">
+            Service de Presse En Ligne d'informations Générales, Juridiques,
+            Judiciaires et Techniques,<br />
+            habilité à publier les annonces légales dans les départements 75,
+            78, 91, 92, 93, 94 et 95<br />
+          </span>
+        </mj-text>
+        <mj-text font-size="14px" line-height="1.3" padding-bottom="0px">
+          <span
+            style="white-space: nowrap; font-family: 'Roboto'"
+            th:text="${publicationDate}"
+          >
+          </span>
+          <br />
+          <span
+            style="white-space: nowrap; font-family: 'Roboto'"
+            th:text="${department}"
+          ></span>
+          <br />
+        </mj-text>
+        <mj-text font-size="16px" line-height="1.3">
+          <strong>
+            <span
+              style="font-family: 'Roboto'"
+              th:text="${serviceLabel}"
+            ></span>
+          </strong>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

@@ -177,7 +177,7 @@
         </button>
         <button mat-menu-item
           *ngIf="selectedEntity && selectedEntity.announcement && selectedEntity.announcement.confrere && selectedEntity.announcement.confrere.journalType.id==journalTypeSpel.id"
-          (click)="generatePublicationFlagMail()">
+          (click)="generatePublicationFlagMail(selectedEntity.announcement)">
           <span>Recevoir le mail de témoin de publication</span>
           <button mat-menu-item
             *ngIf="selectedEntity && selectedEntity.announcement && selectedEntity.announcement.confrere && selectedEntity.announcement.confrere.journalType.id!=journalTypeSpel.id"

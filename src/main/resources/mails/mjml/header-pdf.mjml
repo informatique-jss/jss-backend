@@ -1,0 +1,104 @@
+<mjml>
+  <mj-head>
+    <mj-attributes>
+      <mj-text color="#303B4D" />
+    </mj-attributes>
+  </mj-head>
+
+  <mj-body>
+    <!-- SECTION HEADER -->
+    <mj-section padding="0 0 20px 20px" full-width="false">
+      <!-- Colonne gauche : SPPS -->
+      <mj-column width="40%">
+        <mj-text font-size="13px" align="center" padding="10px">
+          <strong
+            >SPPS - Société de Publications et<br />de Publicité pour les
+            sociétés</strong
+          >
+        </mj-text>
+
+        <mj-text
+          font-size="11px"
+          align="center"
+          padding="10px 0 0 0"
+          line-height="1.2"
+        >
+          SAS au capital de 216 000 Euros<br />
+          Siret 552 074 627 00043 - TVA IC : 12552074627<br />
+          IBAN : FR76 3000 4007 9900 0257 1438 960<br />
+          BIC : BNPAFRPPXXX<br />
+          Présidente : Myriam de Montis
+        </mj-text>
+      </mj-column>
+
+      <!-- Colonne droite : logo + texte à côté -->
+      <mj-column width="50%" vertical-align="middle" padding-left="40px">
+        <mj-table>
+          <tr>
+            <td style="width: 50px; text-align: right; vertical-align: middle">
+              <img
+                src="classpath:/images/logo.png"
+                width="50"
+                height="auto"
+                style="display: block; margin-right: 10px"
+              />
+            </td>
+            <td
+              style="
+                border-left: 2px solid #303b4d;
+                height: 60px;
+                padding-right: 10px;
+              "
+            ></td>
+            <td style="text-align: center; vertical-align: middle">
+              <div
+                style="
+                  font-family: Roboto;
+                  font-size: 20px;
+                  color: #303b4d;
+                  line-height: 1;
+                  white-space: nowrap;
+                "
+              >
+                <strong>Journal Spécial des Sociétés</strong>
+              </div>
+              <div
+                style="
+                  font-family: Roboto;
+                  text-align: center;
+                  font-size: 11px;
+                  color: #303b4d;
+                  line-height: 1.3;
+                  margin-top: 10px;
+                "
+              >
+                Journal officiel d’annonces, d’informations générales,<br />
+                juridiques, judiciaires et techniques.<br />
+                Annonces Légales - Formalités Légales - <br />
+                Apostilles et Légalisations - Domiciliation
+              </div>
+            </td>
+          </tr>
+        </mj-table>
+
+        <mj-text font-size="11px" align="center" padding="0 0 0 80px">
+          <strong>
+            10, boulevard Haussmann - CS 40109 - 75441 Paris CEDEX 09<br />
+            Tél : 01 47 03 10 10 - SPEL :
+            <a
+              href="https://www.jss.fr"
+              style="color: #303b4d; text-decoration: none"
+              >www.jss.fr</a
+            >
+            - Plateforme :
+            <a
+              href="https://www.my.jss.fr"
+              style="color: #303b4d; text-decoration: none"
+              >www.my.jss.fr</a
+            >
+          </strong>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>
