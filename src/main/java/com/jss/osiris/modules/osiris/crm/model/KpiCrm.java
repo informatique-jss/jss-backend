@@ -17,6 +17,7 @@ import jakarta.persistence.SequenceGenerator;
 @Entity
 public class KpiCrm implements Serializable, IId {
     public static final String AGGREGATE_TYPE_AVERAGE = "AGGREGATE_TYPE_AVERAGE";
+    public static final String AGGREGATE_TYPE_WEIGHTED_AVERAGE = "AGGREGATE_TYPE_WEIGHTED_AVERAGE";
     public static final String AGGREGATE_TYPE_SUM = "AGGREGATE_TYPE_SUM";
     public static final String AGGREGATE_TYPE_LAST_VALUE = "AGGREGATE_TYPE_LAST_VALUE";
 

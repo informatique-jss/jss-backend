@@ -1,7 +1,9 @@
-package com.jss.osiris.modules.osiris.crm.service.kpi.quotationNumber.quotation;
+package com.jss.osiris.modules.osiris.crm.service.kpi;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -17,8 +19,6 @@ import com.jss.osiris.modules.osiris.crm.model.KpiCrm;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrmValue;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmService;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmValueService;
-import com.jss.osiris.modules.osiris.crm.service.kpi.QuotationReportingGroupHelper;
-import com.jss.osiris.modules.osiris.crm.service.kpi.ReportingGroup;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
@@ -29,7 +29,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
 @Component
-public class KpiOtherSentQuotationNumber implements IKpiThread {
+public class KpiClosingOpportunity implements IKpiThread {
 
     @Autowired
     KpiCrmValueService kpiCrmValueService;
@@ -40,9 +40,6 @@ public class KpiOtherSentQuotationNumber implements IKpiThread {
     @Autowired
     QuotationService quotationService;
 
-    @Autowired
-    QuotationReportingGroupHelper quotationReportingGroupHelper;
-
     @PersistenceContext
     EntityManager em;
 
@@ -51,7 +48,7 @@ public class KpiOtherSentQuotationNumber implements IKpiThread {
 
     @Override
     public String getCode() {
-        return "OTHER_SENT_QUOTATION_NUMBER";
+        return "CLOSING_OPPORTUNITY";
     }
 
     @Override
@@ -61,12 +58,12 @@ public class KpiOtherSentQuotationNumber implements IKpiThread {
 
     @Override
     public String getAggregateTypeForResponsable() {
-        return KpiCrm.AGGREGATE_TYPE_SUM;
+        return KpiCrm.AGGREGATE_TYPE_WEIGHTED_AVERAGE;
     }
 
     @Override
     public String getAggregateTypeForTimePeriod() {
-        return KpiCrm.AGGREGATE_TYPE_SUM;
+        return KpiCrm.AGGREGATE_TYPE_WEIGHTED_AVERAGE;
     }
 
     @Override
@@ -76,22 +73,22 @@ public class KpiOtherSentQuotationNumber implements IKpiThread {
 
     @Override
     public String getUnit() {
-        return null;
+        return "jours";
     }
 
     @Override
     public String getIcon() {
-        return "tablerWriting";
+        return "tablerHandLoveYou";
     }
 
     @Override
     public Boolean getIsPositiveEvolutionGood() {
-        return true;
+        return false;
     }
 
     @Override
     public String getGraphType() {
-        return KpiCrm.GRAPH_TYPE_BAR;
+        return KpiCrm.GRAPH_TYPE_LINE;
     }
 
     @Override
@@ -111,16 +108,16 @@ public class KpiOtherSentQuotationNumber implements IKpiThread {
             if (quotations != null) {
                 quotations.sort(new Comparator<Quotation>() {
                     @Override
-                    public int compare(Quotation firstOrder, Quotation secondOrder) {
-                        if (firstOrder.getResponsable() != null && secondOrder.getResponsable() == null)
+                    public int compare(Quotation firstQuotation, Quotation secondQuotation) {
+                        if (firstQuotation.getResponsable() != null && secondQuotation.getResponsable() == null)
                             return 1;
-                        if (firstOrder.getResponsable() == null && secondOrder.getResponsable() != null)
+                        if (firstQuotation.getResponsable() == null && secondQuotation.getResponsable() != null)
                             return -1;
-                        if (firstOrder.getResponsable() == null && secondOrder.getResponsable() == null)
+                        if (firstQuotation.getResponsable() == null && secondQuotation.getResponsable() == null)
                             return 0;
-                        if (firstOrder.getResponsable().getId() > secondOrder.getResponsable().getId())
+                        if (firstQuotation.getResponsable().getId() > secondQuotation.getResponsable().getId())
                             return 1;
-                        if (firstOrder.getResponsable().getId() < secondOrder.getResponsable().getId())
+                        if (firstQuotation.getResponsable().getId() < secondQuotation.getResponsable().getId())
                             return -1;
                         return 0;
                     }
@@ -128,30 +125,36 @@ public class KpiOtherSentQuotationNumber implements IKpiThread {
 
                 Responsable currentResponsable = null;
                 Integer nbrQuotation = 0;
+                long totalTimeInSeconds = 0;
 
                 for (Quotation quotation : quotations) {
-                    if (quotationReportingGroupHelper.getQuotationType(quotation)
-                            .equals(ReportingGroup.FOURNITURES)
-                            || quotationReportingGroupHelper.getQuotationType(quotation)
-                                    .equals(ReportingGroup.DOMICILIATION)
-                            || quotationReportingGroupHelper.getQuotationType(quotation)
-                                    .equals(ReportingGroup.JSS_FR)) {
-                        if (quotation.getResponsable() != null
-                                && isStatusModifiedThisDay(quotation, lastDate,
-                                        QuotationStatus.SENT_TO_CUSTOMER)) {
-                            if (currentResponsable == null
-                                    || !quotation.getResponsable().getId().equals(currentResponsable.getId())) {
-                                if (!(new BigDecimal(nbrQuotation)).equals(getDefaultValue())) {
-                                    KpiCrmValue value = new KpiCrmValue();
-                                    value.setKpiCrm(kpiCrm);
-                                    value.setResponsable(currentResponsable);
-                                    value.setValue(new BigDecimal(nbrQuotation));
-                                    value.setValueDate(lastDate);
-                                    newValues.add(value);
-                                }
-                                currentResponsable = quotation.getResponsable();
-                                nbrQuotation = 0;
+                    if (!quotation.getResponsable().getId().equals(167371))
+                        continue;
+                    Audit endAudit = getAuditWhereStatusModifiedThisDay(quotation, lastDate,
+                            QuotationStatus.VALIDATED_BY_CUSTOMER, false);
+                    if (quotation.getResponsable() != null && endAudit != null) {
+                        if (currentResponsable == null
+                                || !quotation.getResponsable().getId().equals(currentResponsable.getId())) {
+                            if (!(new BigDecimal(nbrQuotation)).equals(getDefaultValue())) {
+                                KpiCrmValue value = new KpiCrmValue();
+                                value.setKpiCrm(kpiCrm);
+                                value.setResponsable(currentResponsable);
+                                value.setValue(new BigDecimal(totalTimeInSeconds * 1.0 / 3600 / 8 / nbrQuotation)
+                                        .setScale(1, RoundingMode.HALF_EVEN));
+                                value.setWeight(nbrQuotation);
+                                value.setValueDate(lastDate);
+                                newValues.add(value);
                             }
+                            currentResponsable = quotation.getResponsable();
+                            nbrQuotation = 0;
+                            totalTimeInSeconds = 0;
+                        }
+
+                        Audit startAudit = getAuditWhereStatusModifiedThisDay(quotation, null,
+                                QuotationStatus.SENT_TO_CUSTOMER, true);
+                        if (startAudit != null) {
+                            totalTimeInSeconds += endAudit.getDatetime().toEpochSecond(ZoneOffset.UTC)
+                                    - startAudit.getDatetime().toEpochSecond(ZoneOffset.UTC);
                             nbrQuotation++;
                         }
                     }
@@ -161,7 +164,9 @@ public class KpiOtherSentQuotationNumber implements IKpiThread {
                     KpiCrmValue value = new KpiCrmValue();
                     value.setKpiCrm(kpiCrm);
                     value.setResponsable(currentResponsable);
-                    value.setValue(new BigDecimal(nbrQuotation));
+                    value.setValue(new BigDecimal(totalTimeInSeconds * 1.0 / 3600 / 8 / nbrQuotation)
+                            .setScale(1, RoundingMode.HALF_EVEN));
+                    value.setWeight(nbrQuotation);
                     value.setValueDate(lastDate);
                     newValues.add(value);
                 }
@@ -177,18 +182,29 @@ public class KpiOtherSentQuotationNumber implements IKpiThread {
         }
     }
 
-    private boolean isStatusModifiedThisDay(Quotation quotation, LocalDate lastDate, String targetCode) {
+    private Audit getAuditWhereStatusModifiedThisDay(Quotation quotation, LocalDate lastDate, String targetCode,
+            boolean isFirst) {
         if (quotation != null) {
             List<Audit> audits = auditService.getAuditForEntityAndFieldName(Quotation.class.getSimpleName(),
                     quotation.getId(), targetCode, "quotationStatus");
             if (audits != null) {
+                audits.sort(new Comparator<Audit>() {
+                    @Override
+                    public int compare(Audit audit1, Audit audit2) {
+                        if (isFirst) {
+                            return audit1.getDatetime().compareTo(audit2.getDatetime());
+                        } else {
+                            return audit2.getDatetime().compareTo(audit1.getDatetime());
+                        }
+                    }
+                });
                 for (Audit audit : audits) {
                     LocalDate auditDate = audit.getDatetime().toLocalDate();
-                    if (auditDate.equals(lastDate) && audit.getNewValue().equals(targetCode))
-                        return true;
+                    if ((lastDate == null || auditDate.equals(lastDate)) && audit.getNewValue().equals(targetCode))
+                        return audit;
                 }
             }
         }
-        return false;
+        return null;
     }
 }

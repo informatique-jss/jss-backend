@@ -1,4 +1,4 @@
-package com.jss.osiris.modules.osiris.crm.service.kpi;
+package com.jss.osiris.modules.osiris.crm.service.kpi.turnover;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -25,7 +25,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 
 @Component
-public class KpiTurnoverWithTaxWithDebour implements IKpiThread {
+public class KpiTurnoverWithoutTax implements IKpiThread {
 
     @Autowired
     KpiCrmValueService kpiCrmValueService;
@@ -41,7 +41,7 @@ public class KpiTurnoverWithTaxWithDebour implements IKpiThread {
 
     @Override
     public String getCode() {
-        return "TURNOVER_WITH_TAX_WITH_DEBOUR";
+        return "TURNOVER_WITHOUT_TAX";
     }
 
     @Override
@@ -107,7 +107,7 @@ public class KpiTurnoverWithTaxWithDebour implements IKpiThread {
         TypedQuery<WorkingTableTurnover> q2 = (TypedQuery<WorkingTableTurnover>) entityManager
                 .createNativeQuery(
                         """
-                                select id_responsable as idResponsable , cast (date_trunc('day' ,created_date) as date) as createdDate, sum(turnover_with_tax_with_debour) as turnover
+                                select id_responsable as idResponsable , cast (date_trunc('day' ,created_date) as date) as createdDate, sum(turnover_without_tax_with_debour) as turnover
                                 from reporting_turnover rt
                                 where created_date >=:startDate and created_date < :endDate
                                 group by id_responsable , cast (date_trunc('day' ,created_date) as date)

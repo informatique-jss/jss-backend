@@ -1,9 +1,8 @@
-package com.jss.osiris.modules.osiris.crm.service.kpi;
+package com.jss.osiris.modules.osiris.crm.service.kpi.turnover;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -17,14 +16,12 @@ import com.jss.osiris.modules.osiris.crm.model.KpiCrmValue;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmService;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmValueService;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
-import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
-import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.osiris.reporting.model.ReportingWidget;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 @Component
-public class KpiPotentielTurnoverInProgressOrder implements IKpiThread {
+public class KpiPotentielTurnoverReccurringOrder implements IKpiThread {
 
     @Autowired
     KpiCrmValueService kpiCrmValueService;
@@ -35,12 +32,9 @@ public class KpiPotentielTurnoverInProgressOrder implements IKpiThread {
     @Autowired
     CustomerOrderService customerOrderService;
 
-    @Autowired
-    CustomerOrderStatusService customerOrderStatusService;
-
     @Override
     public String getCode() {
-        return "POTENTIAL_TURNOVER_IN_PROGRESS_ORDER";
+        return "POTENTIAL_TURNOVER_RECCURRING_ORDER";
     }
 
     @Override
@@ -70,7 +64,7 @@ public class KpiPotentielTurnoverInProgressOrder implements IKpiThread {
 
     @Override
     public String getIcon() {
-        return "tablerLoader";
+        return "tablerCalendarRepeat";
     }
 
     @Override
@@ -99,10 +93,7 @@ public class KpiPotentielTurnoverInProgressOrder implements IKpiThread {
 
     public List<KpiCrmValue> getKpiValues(KpiCrm kpiCrm) throws OsirisException {
         List<KpiCrmValue> newValues = new ArrayList<KpiCrmValue>();
-        List<CustomerOrder> orders = customerOrderService.searchCustomerOrders(null,
-                Arrays.asList(
-                        customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.BEING_PROCESSED)),
-                null, null);
+        List<CustomerOrder> orders = customerOrderService.searchActiveRecurringOrder();
 
         if (orders != null) {
             orders.sort(new Comparator<CustomerOrder>() {
@@ -125,13 +116,11 @@ public class KpiPotentielTurnoverInProgressOrder implements IKpiThread {
             Responsable currentResponsable = null;
             Float quotationTurnover = 0f;
             int i = 0;
-
             for (CustomerOrder order : orders) {
                 if (i > 10)
                     break;
                 else
                     i++;
-
                 if (currentResponsable == null
                         || !order.getResponsable().getId().equals(currentResponsable.getId())) {
                     if (!(new BigDecimal(quotationTurnover)).equals(getDefaultValue())) {

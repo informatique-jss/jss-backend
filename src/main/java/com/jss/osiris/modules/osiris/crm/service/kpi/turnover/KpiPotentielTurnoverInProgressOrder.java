@@ -1,4 +1,4 @@
-package com.jss.osiris.modules.osiris.crm.service.kpi;
+package com.jss.osiris.modules.osiris.crm.service.kpi.turnover;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -16,16 +16,15 @@ import com.jss.osiris.modules.osiris.crm.model.KpiCrm;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrmValue;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmService;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmValueService;
-import com.jss.osiris.modules.osiris.quotation.model.Quotation;
-import com.jss.osiris.modules.osiris.quotation.model.QuotationStatus;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
-import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
-import com.jss.osiris.modules.osiris.quotation.service.QuotationStatusService;
+import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.osiris.reporting.model.ReportingWidget;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 @Component
-public class KpiPotentielTurnoverQuotation implements IKpiThread {
+public class KpiPotentielTurnoverInProgressOrder implements IKpiThread {
 
     @Autowired
     KpiCrmValueService kpiCrmValueService;
@@ -34,17 +33,14 @@ public class KpiPotentielTurnoverQuotation implements IKpiThread {
     KpiCrmService kpiCrmService;
 
     @Autowired
-    QuotationService quotationService;
-
-    @Autowired
-    QuotationStatusService quotationStatusService;
-
-    @Autowired
     CustomerOrderService customerOrderService;
+
+    @Autowired
+    CustomerOrderStatusService customerOrderStatusService;
 
     @Override
     public String getCode() {
-        return "POTENTIAL_TURNOVER_QUOTATION";
+        return "POTENTIAL_TURNOVER_IN_PROGRESS_ORDER";
     }
 
     @Override
@@ -74,7 +70,7 @@ public class KpiPotentielTurnoverQuotation implements IKpiThread {
 
     @Override
     public String getIcon() {
-        return "tablerZoomQuestion";
+        return "tablerLoader";
     }
 
     @Override
@@ -103,14 +99,15 @@ public class KpiPotentielTurnoverQuotation implements IKpiThread {
 
     public List<KpiCrmValue> getKpiValues(KpiCrm kpiCrm) throws OsirisException {
         List<KpiCrmValue> newValues = new ArrayList<KpiCrmValue>();
+        List<CustomerOrder> orders = customerOrderService.searchCustomerOrders(null,
+                Arrays.asList(
+                        customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.BEING_PROCESSED)),
+                null, null);
 
-        List<Quotation> quotations = quotationService.searchQuotation(null,
-                Arrays.asList(quotationStatusService.getQuotationStatusByCode(QuotationStatus.SENT_TO_CUSTOMER)));
-
-        if (quotations != null) {
-            quotations.sort(new Comparator<Quotation>() {
+        if (orders != null) {
+            orders.sort(new Comparator<CustomerOrder>() {
                 @Override
-                public int compare(Quotation firstOrder, Quotation secondOrder) {
+                public int compare(CustomerOrder firstOrder, CustomerOrder secondOrder) {
                     if (firstOrder.getResponsable() != null && secondOrder.getResponsable() == null)
                         return 1;
                     if (firstOrder.getResponsable() == null && secondOrder.getResponsable() != null)
@@ -128,13 +125,15 @@ public class KpiPotentielTurnoverQuotation implements IKpiThread {
             Responsable currentResponsable = null;
             Float quotationTurnover = 0f;
             int i = 0;
-            for (Quotation quotation : quotations) {
+
+            for (CustomerOrder order : orders) {
                 if (i > 10)
                     break;
                 else
                     i++;
+
                 if (currentResponsable == null
-                        || !quotation.getResponsable().getId().equals(currentResponsable.getId())) {
+                        || !order.getResponsable().getId().equals(currentResponsable.getId())) {
                     if (!(new BigDecimal(quotationTurnover)).equals(getDefaultValue())) {
                         KpiCrmValue value = new KpiCrmValue();
                         value.setKpiCrm(kpiCrm);
@@ -143,16 +142,11 @@ public class KpiPotentielTurnoverQuotation implements IKpiThread {
                         value.setValueDate(LocalDate.now());
                         newValues.add(value);
                     }
-                    currentResponsable = quotation.getResponsable();
+                    currentResponsable = order.getResponsable();
                     quotationTurnover = 0f;
                 }
-                quotationTurnover += customerOrderService.getInvoicingSummaryForIQuotation(quotation).getTotalPrice()
+                quotationTurnover += customerOrderService.getInvoicingSummaryForIQuotation(order).getTotalPrice()
                         .floatValue();
-            }
-
-            if (newValues != null && newValues.size() > 0) {
-                kpiCrmValueService.deleteKpiCrmValuesForKpiCrm(kpiCrm);
-                kpiCrmService.saveValuesForKpiAndDay(kpiCrm, newValues);
             }
         }
         return newValues;
