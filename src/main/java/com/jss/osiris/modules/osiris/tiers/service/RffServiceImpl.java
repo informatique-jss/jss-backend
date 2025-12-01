@@ -58,6 +58,26 @@ public class RffServiceImpl implements RffService {
         return null;
     }
 
+    private BigDecimal getRffForForTiers(List<IRffCompute> rffs, Integer idTiers) {
+        BigDecimal t = new BigDecimal(0);
+        for (IRffCompute rff : rffs) {
+            if (rff.getTiersId().equals(idTiers) && rff.getRffFor() != null) {
+                t = t.add(rff.getRffFor());
+            }
+        }
+        return t;
+    }
+
+    private BigDecimal getRffForAllTiers(List<IRffCompute> rffs, Integer idTiers) {
+        BigDecimal t = new BigDecimal(0);
+        for (IRffCompute rff : rffs) {
+            if (rff.getTiersId().equals(idTiers) && rff.getRffAl() != null) {
+                t = t.add(rff.getRffAl());
+            }
+        }
+        return t;
+    }
+
     @Override
     public List<Rff> getRffs(RffSearch rffSearch) throws OsirisException {
 
@@ -95,9 +115,9 @@ public class RffServiceImpl implements RffService {
                 }
 
                 if (currentRff.getIsCancelled() == false && currentRff.getIsSent() == false) {
-                    currentRff.setRffFormalite(rffCompute.getRffFor());
-                    currentRff.setRffInsertion(rffCompute.getRffAl());
-                    currentRff.setRffTotal(rffCompute.getRffAl().add(rffCompute.getRffFor()));
+                    currentRff.setRffFormalite(getRffForForTiers(rffComputes, rffCompute.getTiersId()));
+                    currentRff.setRffInsertion(getRffForAllTiers(rffComputes, rffCompute.getTiersId()));
+                    currentRff.setRffTotal(currentRff.getRffFormalite().add(currentRff.getRffInsertion()));
                 }
 
                 currentRff.setTiersId(currentRff.getTiers().getId());
