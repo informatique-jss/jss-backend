@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.libs.QueryCacheCrudRepository;
+import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrderSearchResult;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
@@ -119,4 +120,6 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
         List<AssoAffaireOrder> findByCustomerOrderOrderByAffaire(CustomerOrder customerOrder);
 
         List<AssoAffaireOrder> findByQuotationOrderByAffaire(Quotation quotation);
+
+        List<AssoAffaireOrder> findByAffaire(Affaire affaire);
 }

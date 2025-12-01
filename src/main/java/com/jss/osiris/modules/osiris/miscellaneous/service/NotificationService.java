@@ -13,6 +13,7 @@ import com.jss.osiris.modules.osiris.quotation.model.JoNotice;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
+import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.KbisRequest;
 import com.jss.osiris.modules.osiris.reporting.model.IncidentReport;
 
 public interface NotificationService {
@@ -85,4 +86,6 @@ public interface NotificationService {
         public void notifyBaloNoticeAddToProvision(Provision provision, BaloNotice notice);
 
         public void notifyJoNoticeAddToProvision(Provision provision, JoNotice notice);
+
+        public void notifyKbisAddToProvision(Provision provision, KbisRequest kbisRequest);
 }

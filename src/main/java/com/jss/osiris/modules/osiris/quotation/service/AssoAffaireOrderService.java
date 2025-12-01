@@ -7,6 +7,7 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.AffaireSearch;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrderSearchResult;
@@ -43,4 +44,6 @@ public interface AssoAffaireOrderService {
 
         public List<AssoAffaireOrder> populateTransientField(List<AssoAffaireOrder> assoAffaireOrders)
                         throws OsirisException;
+
+        List<AssoAffaireOrder> getAssoAffaireOrderByAffaire(Affaire affaire);
 }

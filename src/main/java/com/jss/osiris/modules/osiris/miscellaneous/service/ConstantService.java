@@ -278,6 +278,8 @@ public interface ConstantService {
 
     public BillingType getBillingTypeSupplyFullBeCopy() throws OsirisException;
 
+    public BillingType getBillingTypeKbis() throws OsirisException;
+
     public String getStringNantissementDepositFormeJuridiqueCode() throws OsirisException;
 
     public String getStrinSocialShareNantissementRedactionFormeJuridiqueCode() throws OsirisException;

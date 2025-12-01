@@ -49,12 +49,20 @@ public class RneDelegateServiceImpl implements RneDelegateService {
     @Value("${guichet.unique.rne.login}")
     private String rneLogin;
 
+    @Value("${guichet.unique.rne.login.update}")
+    private String rneLoginForUpdate;
+
+    @Value("${guichet.unique.rne.password.update}")
+    private String rneUniquePasswordForUpdate;
+
     private String loginRequestUrl = "/login";
     private String ssoRequestUrl = "/sso";
     private String entrepriseRequest = "/companies";
 
     private String bearerValue = null;
+    private String bearerValueForUpdate = null;
     private LocalDateTime bearerExpireDateTime = LocalDateTime.now().minusYears(100);
+    private LocalDateTime bearerExpireDateTimeForUpdate = LocalDateTime.now().minusYears(100);
 
     HttpHeaders createHeaders() throws OsirisException, OsirisClientMessageException {
         if (bearerValue == null || bearerExpireDateTime.isBefore(LocalDateTime.now()))
@@ -62,6 +70,18 @@ public class RneDelegateServiceImpl implements RneDelegateService {
         return new HttpHeaders() {
             {
                 add("Authorization", "Bearer " + bearerValue);
+                setAccept(Arrays.asList(new MediaType[] { MediaType.APPLICATION_JSON }));
+                setContentType(MediaType.APPLICATION_JSON);
+            }
+        };
+    }
+
+    HttpHeaders createHeadersForUpdate() throws OsirisException, OsirisClientMessageException {
+        if (bearerValueForUpdate == null || bearerExpireDateTimeForUpdate.isBefore(LocalDateTime.now()))
+            loginUserForUpdate();
+        return new HttpHeaders() {
+            {
+                add("Authorization", "Bearer " + bearerValueForUpdate);
                 setAccept(Arrays.asList(new MediaType[] { MediaType.APPLICATION_JSON }));
                 setContentType(MediaType.APPLICATION_JSON);
             }
@@ -146,7 +166,7 @@ public class RneDelegateServiceImpl implements RneDelegateService {
     public List<RneCompany> getCompanyByDenominationAndPostalCode(String denomination, String postalCode)
             throws OsirisException, OsirisClientMessageException {
         SSLHelper.disableCertificateValidation();
-        HttpHeaders headers = createHeaders();
+        HttpHeaders headers = createHeadersForUpdate();
         headers.setContentType(MediaType.APPLICATION_JSON);
         try {
             ResponseEntity<List<RneCompany>> res = new RestTemplate().exchange(
@@ -169,20 +189,19 @@ public class RneDelegateServiceImpl implements RneDelegateService {
             throws OsirisException, OsirisClientMessageException {
 
         SSLHelper.disableCertificateValidation();
-        HttpHeaders headers = createHeaders();
+        HttpHeaders headers = createHeadersForUpdate();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         List<RneCompany> results = new ArrayList<>();
 
         String searchAfter = lastSiret;
-        int pageSize = 250;
+        int pageSize = 100;
         boolean hasMore = true;
 
         // Minus 1 because from date is excluded
         String url = rneEntryPoint
                 + "/companies/diff?pageSize=" + pageSize
-                + "&from=" + dateSearched.minusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-                + "&to=" + dateSearched.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                + "&from=" + dateSearched.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
         HttpHeaders requestHeaders = new HttpHeaders(headers);
         if (searchAfter != null) {
@@ -237,6 +256,30 @@ public class RneDelegateServiceImpl implements RneDelegateService {
         if (res.getBody() != null && res.getBody().getToken() != null) {
             bearerValue = res.getBody().getToken();
             bearerExpireDateTime = LocalDateTime.now().plusMinutes(30);
+        }
+    }
+
+    @SuppressWarnings({ "null" })
+    private void loginUserForUpdate() throws OsirisException, OsirisClientMessageException {
+        SSLHelper.disableCertificateValidation();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        RneLogin login = new RneLogin();
+
+        login.setUsername(rneLoginForUpdate);
+        login.setPassword(rneUniquePasswordForUpdate);
+
+        ResponseEntity<RneLogInResponse> res;
+
+        res = new RestTemplate().postForEntity(
+                rneEntryPoint + ssoRequestUrl + loginRequestUrl,
+                new HttpEntity<Object>(login, headers),
+                RneLogInResponse.class);
+
+        if (res.getBody() != null && res.getBody().getToken() != null) {
+            bearerValueForUpdate = res.getBody().getToken();
+            bearerExpireDateTimeForUpdate = LocalDateTime.now().plusMinutes(30);
         }
     }
 }
