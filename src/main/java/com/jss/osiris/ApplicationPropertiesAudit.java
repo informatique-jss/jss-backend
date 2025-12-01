@@ -84,6 +84,8 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("guichet.unique.password");
         isOk = isOk && checkProperty("guichet.unique.rne.login");
         isOk = isOk && checkProperty("guichet.unique.rne.password");
+        isOk = isOk && checkProperty("guichet.unique.rne.login.update");
+        isOk = isOk && checkProperty("guichet.unique.rne.password.update");
         isOk = isOk && checkProperty("guichet.unique.signature.path.jar");
         isOk = isOk && checkProperty("guichet.unique.signature.path.configuration");
         isOk = isOk && checkProperty("guichet.unique.signature.path.input");
@@ -113,6 +115,9 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("infogreffe.auth.client.id");
         isOk = isOk && checkProperty("infogreffe.auth.grant.type");
         isOk = isOk && checkProperty("infogreffe.url");
+        isOk = isOk && checkProperty("infogreffe.kbis.entry.point");
+        isOk = isOk && checkProperty("infogreffe.kbis.login");
+        isOk = isOk && checkProperty("infogreffe.kbis.password");
         isOk = isOk && checkProperty("schedulling.infogreffe.refresh.all");
         isOk = isOk && checkProperty("schedulling.infogreffe.refresh.last.day");
         isOk = isOk && checkProperty("login.token.entry.point");
@@ -162,6 +167,9 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("my.jss.entry.point");
         isOk = isOk && checkProperty("server.my.jss.entry.point");
         isOk = isOk && checkProperty("server.jss.entry.point");
+        isOk = isOk && checkProperty("google.analytics.mp.url");
+        isOk = isOk && checkProperty("google.analytics.api-secret");
+        isOk = isOk && checkProperty("google.analytics.measurement-id");
 
         if (!isOk)
             System.exit(-1);

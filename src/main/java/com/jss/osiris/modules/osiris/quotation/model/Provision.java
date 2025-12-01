@@ -127,6 +127,7 @@ public class Provision implements IId, IAttachment {
 
 	private Integer publicationPaperAffaireNumber;
 	private Integer publicationPaperClientNumber;
+	private Integer kbisOrderedNumber;
 
 	@Column(nullable = false)
 	private Boolean isPublicationReceipt;
@@ -690,5 +691,13 @@ public class Provision implements IId, IAttachment {
 
 	public void setIsNotifyJo(Boolean isNotifyJo) {
 		this.isNotifyJo = isNotifyJo;
+	}
+
+	public Integer getKbisOrderedNumber() {
+		return kbisOrderedNumber;
+	}
+
+	public void setKbisOrderedNumber(Integer kbisOrderedNumber) {
+		this.kbisOrderedNumber = kbisOrderedNumber;
 	}
 }

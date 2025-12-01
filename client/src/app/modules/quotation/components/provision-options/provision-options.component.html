@@ -223,6 +223,13 @@
             </generic-toggle>
           </td>
         </tr>
+        <tr *ngIf="displayOption(billingTypeKbis)">
+          <td>
+            <generic-input [(model)]="provision.kbisOrderedNumber" label="Commande de KBis" [form]="optionForm"
+              propertyName="kbisOrderedNumber" [isMandatory]="false" [isDisabled]="!editMode"
+              type="number"></generic-input>
+          </td>
+        </tr>
       </table>
       <table class="full-width">
         <tr *ngIf="provision.provisionType.isCouldNotifyBodacc">

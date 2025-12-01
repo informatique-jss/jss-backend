@@ -800,6 +800,14 @@
           </tr>
           <tr>
             <td>
+              <autocomplete-billing-type [(model)]="constant.billingTypeKbis"
+                label="Type de poste de facturation - Commande de KBis" [form]="constantForm"
+                propertyName="billingTypeKbis" [isMandatory]="true" [isDisabled]="!editMode">
+              </autocomplete-billing-type>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <generic-input [(model)]="constant.stringNantissementDepositFormeJuridiqueCode "
                 label="Code de forme juridique - Depot de nantissement" [form]="constantForm"
                 propertyName="stringNantissementDepositFormeJuridiqueCode " [isMandatory]="true"

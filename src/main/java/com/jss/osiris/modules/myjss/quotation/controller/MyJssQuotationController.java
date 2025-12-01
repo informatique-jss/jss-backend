@@ -1573,12 +1573,14 @@ public class MyJssQuotationController {
 			HttpServletRequest request)
 			throws OsirisValidationException, OsirisException {
 		detectFlood(request);
+		String gaClientId = request.getHeader("gaClientId");
 
 		if (quotation.getId() != null && !myJssQuotationValidationHelper.canSeeQuotation(quotation))
 			return new ResponseEntity<Quotation>(null);
 
 		return new ResponseEntity<Quotation>(
-				(Quotation) myJssQuotationDelegate.validateAndCreateQuotation(quotation, isValidation, request),
+				(Quotation) myJssQuotationDelegate.validateAndCreateQuotation(quotation, isValidation, request,
+						gaClientId),
 				HttpStatus.OK);
 	}
 
@@ -1621,26 +1623,27 @@ public class MyJssQuotationController {
 	@PostMapping(inputEntryPoint + "/order/save-order")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<CustomerOrder> saveCutomerOrder(@RequestBody CustomerOrder order,
-			@RequestParam Boolean isValidation,
-			HttpServletRequest request)
+			@RequestParam Boolean isValidation, HttpServletRequest request)
 			throws OsirisValidationException, OsirisException {
 		detectFlood(request);
+		String gaClientId = request.getHeader("gaClientId");
 
 		if (order.getId() != null && !myJssQuotationValidationHelper.canSeeQuotation(order))
 			return new ResponseEntity<CustomerOrder>(null);
 
 		return new ResponseEntity<CustomerOrder>(
-				(CustomerOrder) myJssQuotationDelegate.validateAndCreateQuotation(order, isValidation, request),
+				(CustomerOrder) myJssQuotationDelegate.validateAndCreateQuotation(order, isValidation, request,
+						gaClientId),
 				HttpStatus.OK);
 	}
 
 	@PostMapping(inputEntryPoint + "/order/user/save")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<Integer> saveCustomerOrderFromMyJss(@RequestBody CustomerOrder order,
-			@RequestParam Boolean isValidation,
-			HttpServletRequest request)
+			@RequestParam Boolean isValidation, HttpServletRequest request)
 			throws OsirisValidationException, OsirisException {
 		detectFlood(request);
+		String gaClientId = request.getHeader("gaClientId");
 
 		if (order.getAssoAffaireOrders() == null || order.getAssoAffaireOrders().size() == 0)
 			throw new OsirisValidationException("assoAffaireOrders");
@@ -1656,17 +1659,17 @@ public class MyJssQuotationController {
 			}
 		}
 		return new ResponseEntity<Integer>(
-				myJssQuotationDelegate.saveCustomerOrderFromMyJss(order, isValidation, request).getId(),
+				myJssQuotationDelegate.saveCustomerOrderFromMyJss(order, isValidation, gaClientId, request).getId(),
 				HttpStatus.OK);
 	}
 
 	@PostMapping(inputEntryPoint + "/quotation/user/save")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<Integer> saveQuotationFromMyJss(@RequestBody Quotation order,
-			@RequestParam Boolean isValidation,
-			HttpServletRequest request)
+			@RequestParam Boolean isValidation, HttpServletRequest request)
 			throws OsirisValidationException, OsirisException {
 		detectFlood(request);
+		String gaClientId = request.getHeader("gaClientId");
 
 		if (order.getAssoAffaireOrders() == null || order.getAssoAffaireOrders().size() == 0)
 			throw new OsirisValidationException("assoAffaireOrders");
@@ -1682,7 +1685,7 @@ public class MyJssQuotationController {
 			}
 		}
 		return new ResponseEntity<Integer>(
-				myJssQuotationDelegate.saveQuotationFromMyJss(order, isValidation, request).getId(),
+				myJssQuotationDelegate.saveQuotationFromMyJss(order, isValidation, gaClientId, request).getId(),
 				HttpStatus.OK);
 	}
 

@@ -45,11 +45,15 @@ export class QuotationService extends AppRestService<Quotation> {
   }
 
   saveQuotation(quotation: IQuotation, isValidation: boolean): Observable<number> {
-    return this.postItem(new HttpParams().set("isValidation", isValidation), 'quotation/user/save', quotation) as any as Observable<number>;
+    let params = new HttpParams();
+    params = params.set("isValidation", isValidation);
+    return this.postItem(params, 'quotation/user/save', quotation) as any as Observable<number>;
   }
 
   saveFinalQuotation(quotation: Quotation, isValidation: boolean) {
-    return this.postItem(new HttpParams().set("isValidation", isValidation), 'quotation/save-order', quotation);
+    let params = new HttpParams();
+    params = params.set("isValidation", isValidation);
+    return this.postItem(params, 'quotation/save-order', quotation);
   }
 
   switchResponsableForQuotation(idQuotation: number, newResponsable: Responsable) {

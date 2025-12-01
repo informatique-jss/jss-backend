@@ -158,7 +158,7 @@
                       <select-value-service-field-type *ngIf="placeholder.dataType === SERVICE_FIELD_TYPE_SELECT"
                         [(model)]="placeholder.value"
                         [label]="getFragmentInputLabel(placeholder, fragmentIndex, fragmentInstancesMap.get(selectedFragments[i]!.code)!)"
-                        [form]="form"
+                        [form]="form" [serviceFieldType]="placeholder"
                         [propertyName]="buildFormControlName(fragmentInstance.code, placeholder, fragmentIndex)"
                         [isMandatory]="false" [isDisabled]="false">
                       </select-value-service-field-type>

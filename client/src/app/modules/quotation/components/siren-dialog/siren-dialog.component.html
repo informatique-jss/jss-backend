@@ -1,0 +1,11 @@
+<h1 mat-dialog-title>{{title}}</h1>
+<div mat-dialog-content>
+  <p>{{label}}</p>
+  <autocomplete-siren [(model)]="siren" [form]="amountForm" propertyName="siren" [isMandatory]="true" label="SIREN"
+    [isDisabled]="false" [byPassAutocompletValidator]="true" [fieldToCheckAgainstForValidation]="'siren'">
+  </autocomplete-siren>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="accent" (click)="onClose()">Annuler</button>
+  <button mat-raised-button color="warn" (click)="onConfirm()">Valider</button>
+</div>

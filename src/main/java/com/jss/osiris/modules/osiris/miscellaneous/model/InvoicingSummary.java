@@ -7,6 +7,7 @@ import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.osiris.tiers.model.BillingLabelType;
 
 public class InvoicingSummary {
+
     @JsonView(JacksonViews.MyJssDetailedView.class)
     private BigDecimal totalPrice;
 

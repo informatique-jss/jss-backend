@@ -445,6 +445,10 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.billingTypeSupplyFullBeCopy;
   }
 
+  getBillingTypeKbis() {
+    return this.constant.billingTypeKbis;
+  }
+
   getStringNantissementDepositFormeJuridiqueCode() {
     return this.constant.stringNantissementDepositFormeJuridiqueCode;
   }

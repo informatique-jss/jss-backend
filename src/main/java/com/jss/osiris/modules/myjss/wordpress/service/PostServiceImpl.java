@@ -750,7 +750,7 @@ public class PostServiceImpl implements PostService {
         Order order = new Order(Direction.DESC, "date");
         Sort sort = Sort.by(Arrays.asList(order));
         Pageable pageableRequest = PageRequest.of(page, 20, sort);
-        return postRepository.findByMyJssCategoriesAndIsCancelled(myJssCategory, false, pageableRequest);
+        return postRepository.findByMyJssCategoriesAndIsCancelled(myJssCategory.getId(), false, pageableRequest);
     }
 
     @Override
@@ -763,12 +763,27 @@ public class PostServiceImpl implements PostService {
                 Pageable pageableRequestForMatch = PageRequest.of(0, Integer.MAX_VALUE);
 
                 return searchPostAgainstEntitiesToMatch(searchText,
-                        postRepository.findByMyJssCategoriesAndIsCancelled(myJssCategory, false,
-                                pageableRequestForMatch));
+                        postRepository.findByMyJssCategoriesAndIsCancelled(
+                                myJssCategory != null ? myJssCategory.getId() : null, false, pageableRequestForMatch));
             }
         }
-        return postRepository.findByMyJssCategoriesAndIsCancelled(myJssCategory, false,
+        return postRepository.findByMyJssCategoriesAndIsCancelled(myJssCategory != null ? myJssCategory.getId() : null,
+                false,
                 pageableRequest);
+    }
+
+    @Override
+    public Page<Post> searchJssPosts(String searchText) {
+        Pageable pageableRequestForMatch = PageRequest.of(0, Integer.MAX_VALUE);
+        if (searchText != null && searchText.trim().length() > 0) {
+            List<IndexEntity> tmpEntitiesFound = null;
+            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
+            if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
+                return searchPostAgainstEntitiesToMatch(searchText,
+                        postRepository.findByJssCategoriesAndIsCancelled(null, false, pageableRequestForMatch));
+            }
+        }
+        return postRepository.findByJssCategoriesAndIsCancelled(null, false, pageableRequestForMatch);
     }
 
     @Override
@@ -998,7 +1013,7 @@ public class PostServiceImpl implements PostService {
 
         if (post.getAcf().getAdditional_authors() != null) {
             List<Author> additionalAuthors = new ArrayList<Author>();
-            List<Integer> additionnalAuthorsIds = getAdditionnalAuthorsIds(post.getAcf().getAdditional_authors());
+            List<Integer> additionnalAuthorsIds = post.getAcf().getAdditional_authors();
             if (additionnalAuthorsIds != null && additionnalAuthorsIds.size() > 0) {
                 for (Integer i : additionnalAuthorsIds) {
                     Author foundAuthor = authorService.getAuthor(i);
@@ -1095,24 +1110,6 @@ public class PostServiceImpl implements PostService {
                 + characterPriceService.cleanString(post.getOriginalContentText())).length());
 
         return post;
-    }
-
-    private List<Integer> getAdditionnalAuthorsIds(String jsonString) {
-        if (jsonString == null || jsonString.isBlank())
-            return new ArrayList<Integer>();
-
-        String cleanedString = jsonString
-                .replaceAll("\\[", "")
-                .replaceAll("\\]", "")
-                .trim();
-
-        if (cleanedString.isEmpty())
-            return new ArrayList<Integer>();
-
-        List<String> ids = Arrays.asList(cleanedString.split(","));
-        return ids.stream()
-                .map(String::trim)
-                .map(Integer::valueOf).toList();
     }
 
     @Override

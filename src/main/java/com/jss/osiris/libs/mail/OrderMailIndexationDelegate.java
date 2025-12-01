@@ -348,6 +348,7 @@ public class OrderMailIndexationDelegate {
                     order.setAssoAffaireOrders(new ArrayList<AssoAffaireOrder>());
                     order.setCreatedDate(
                             message.getReceivedDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+                    order.setDescription(message.getSubject());
                     order.setDocuments(new ArrayList<Document>());
                     order.setCustomerOrderStatus(
                             customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT));

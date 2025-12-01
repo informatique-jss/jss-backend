@@ -24,6 +24,7 @@ import com.jss.osiris.modules.osiris.quotation.model.JoNotice;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
+import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.KbisRequest;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.ProvisionService;
 import com.jss.osiris.modules.osiris.reporting.model.IncidentReport;
@@ -307,6 +308,20 @@ public class NotificationServiceImpl implements NotificationService {
                         generateNewNotification(employeeService.getCurrentEmployee(), provision.getAssignedTo(),
                                 Notification.PROVISION_ADD_ATTACHMENT, false, null, provision, null, null, null);
                     }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void notifyKbisAddToProvision(Provision provision, KbisRequest kbisRequest) {
+        provision = provisionService.getProvision(provision.getId());
+        if (provision.getService() != null) {
+            CustomerOrder order = provision.getService().getAssoAffaireOrder().getCustomerOrder();
+            if (order != null) {
+                if (kbisRequest.getEmployeeInitiator() != null) {
+                    generateNewNotification(kbisRequest.getEmployeeInitiator(), kbisRequest.getEmployeeInitiator(),
+                            Notification.PROVISION_ORDER_KBIS, false, null, provision, null, null, null);
                 }
             }
         }

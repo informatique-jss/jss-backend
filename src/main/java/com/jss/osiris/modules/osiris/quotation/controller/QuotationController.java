@@ -59,6 +59,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.SpecialOfferService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.facade.CompetentAuthorityFacade;
+import com.jss.osiris.modules.osiris.quotation.facade.QuotationFacade;
 import com.jss.osiris.modules.osiris.quotation.model.ActType;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.AffaireSearch;
@@ -424,6 +425,9 @@ public class QuotationController {
 
   @Autowired
   OrderBlockageService orderBlockageService;
+
+  @Autowired
+  QuotationFacade quotationFacade;
 
   @GetMapping(inputEntryPoint + "/order-blockages")
   public ResponseEntity<List<OrderBlockage>> getOrderBlockages() {
@@ -3163,5 +3167,29 @@ public class QuotationController {
 
     return new ResponseEntity<List<JoNotice>>(
         competentAuthorityFacade.getJoNoticeByAffaire(affaireId), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/kbis-request/siren")
+  public ResponseEntity<Attachment> getUpToDateKbisForSiren(String siren)
+      throws OsirisValidationException, OsirisException {
+    if (siren == null || siren.length() == 0)
+      throw new OsirisValidationException("siren");
+
+    return new ResponseEntity<Attachment>(quotationFacade.getUpToDateKbisForSiren(siren), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/kbis-request/order")
+  public ResponseEntity<Boolean> orderNewKbisForSiren(String siren, Integer provisionId)
+      throws OsirisException {
+    if (siren == null || siren.length() == 0)
+      throw new OsirisValidationException("siren");
+
+    Provision provision = provisionService.getProvision(provisionId);
+    if (provision == null)
+      throw new OsirisValidationException("provision");
+
+    quotationFacade.orderNewKbisForSiren(siren, provisionId);
+
+    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
   }
 }

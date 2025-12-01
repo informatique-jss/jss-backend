@@ -248,6 +248,12 @@ public class PricingHelper {
                                 .multiply(BigDecimal.valueOf(nbr)));
             }
         } else if (billingItem.getBillingType().getId()
+                .equals(constantService.getBillingTypeKbis().getId()) && provision.getKbisOrderedNumber() != null
+                && provision.getKbisOrderedNumber() > 0) {
+            invoiceItem.setLabel(invoiceItem.getLabel() + " (quantité : " + provision.getKbisOrderedNumber() + ")");
+            invoiceItem.setPreTaxPrice(
+                    billingItem.getPreTaxPrice().multiply(new BigDecimal(provision.getKbisOrderedNumber())));
+        } else if (billingItem.getBillingType().getId()
                 .equals(constantService.getBillingTypeConfrereFees().getId())) {
             // If it's an announcement published by a Confrere, apply additionnal fees and
             // JSS markup
@@ -815,6 +821,10 @@ public class PricingHelper {
 
         if (getPublicationPaperNbr(provision) > 0
                 && billingType.getId().equals(constantService.getBillingTypeShippingCosts().getId()))
+            return true;
+
+        if (provision.getKbisOrderedNumber() != null && provision.getKbisOrderedNumber() > 0
+                && billingType.getId().equals(constantService.getBillingTypeKbis().getId()))
             return true;
 
         if (Boolean.TRUE.equals(provision.getIsSupplyFullBeCopy())
