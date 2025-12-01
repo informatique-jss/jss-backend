@@ -113,6 +113,15 @@ public class KpiWebsiteOrderCreation implements IKpiThread {
                     }
                 }
 
+                if (!(new BigDecimal(nbrOrder)).equals(getDefaultValue())) {
+                    KpiCrmValue value = new KpiCrmValue();
+                    value.setKpiCrm(kpiCrm);
+                    value.setResponsable(currentResponsable);
+                    value.setValue(new BigDecimal(nbrOrder));
+                    value.setValueDate(lastDate);
+                    newValues.add(value);
+                }
+
                 if (newValues != null && newValues.size() > 0) {
                     kpiCrmService.saveValuesForKpiAndDay(kpiCrm, newValues);
                     em.flush();

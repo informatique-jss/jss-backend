@@ -39,6 +39,7 @@ public class KpiCrmValue implements Serializable, IId {
     private LocalDate valueDate;
 
     private BigDecimal value;
+    private Integer weight;
 
     public Integer getId() {
         return id;
@@ -78,6 +79,14 @@ public class KpiCrmValue implements Serializable, IId {
 
     public void setResponsable(Responsable responsable) {
         this.responsable = responsable;
+    }
+
+    public Integer getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Integer weight) {
+        this.weight = weight;
     }
 
 }

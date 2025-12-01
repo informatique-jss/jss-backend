@@ -69,9 +69,9 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
         if (kpi != null) {
 
             String sql = """
-                    select %s(value) as value
+                    select %s  as value
                     from (
-                        select t.id,v.value_date , %s(v.value) as value
+                        select t.id,v.value_date , %s  as value, sum(weight) as weight
                         from kpi_crm_value v
                         join responsable r  on r.id = v.id_responsable
                         join tiers t  on t.id = r.id_tiers
@@ -81,8 +81,8 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
                         and v.id_kpi=:kpiCrm
                         and (:salesEmployeeId=0 or r.id_commercial = :salesEmployeeId)
                         group by t.id, v.value_date)
-                      """.formatted(getSqlAggregateMethod(kpi.getAggregateTypeForTimePeriod()),
-                    getSqlAggregateMethod(kpi.getAggregateTypeForResponsable()),
+                      """.formatted(getAggregateString(kpi.getAggregateTypeForTimePeriod()),
+                    getAggregateString(kpi.getAggregateTypeForResponsable()),
                     searchModel.isAllTiers() ? "" : " and  r.id_tiers in (:tiersList) ");
             ;
 
@@ -110,9 +110,9 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
         if (kpi != null) {
 
             String sql = """
-                    select id as idTiers, %s(value) as value
+                    select id as idTiers, %s  as value
                     from (
-                        select t.id,v.value_date , %s(v.value) as value
+                        select t.id,v.value_date , %s  as value, sum(weight) as weight
                         from kpi_crm_value v
                         join responsable r  on r.id = v.id_responsable
                         join tiers t  on t.id = r.id_tiers
@@ -123,8 +123,8 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
                         and v.id_kpi=:kpiCrm
                         group by t.id, v.value_date)
                     group by id
-                      """.formatted(getSqlAggregateMethod(kpi.getAggregateTypeForTimePeriod()),
-                    getSqlAggregateMethod(kpi.getAggregateTypeForResponsable()));
+                      """.formatted(getAggregateString(kpi.getAggregateTypeForTimePeriod()),
+                    getAggregateString(kpi.getAggregateTypeForResponsable()));
             ;
 
             @SuppressWarnings("unchecked")
@@ -158,7 +158,7 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
                 scale = "month";
 
             String sql = """
-                    select t.id,date_trunc('%s',v.value_date) as value_date , %s(v.value) as value
+                    select t.id,date_trunc('%s',v.value_date) as value_date , %s  as value, sum(weight) as weight
                        from kpi_crm_value v
                        join responsable r  on r.id = v.id_responsable
                        join tiers t  on t.id = r.id_tiers
@@ -168,13 +168,13 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
                        and (:salesEmployeeId=0 or r.id_commercial = :salesEmployeeId)
                        and v.id_kpi=:kpiCrm
                        group by t.id,date_trunc('%s',v.value_date)
-                     """.formatted(scale, getSqlAggregateMethod(kpi.getAggregateTypeForTimePeriod()),
+                     """.formatted(scale, getAggregateString(kpi.getAggregateTypeForTimePeriod()),
                     searchModel.isAllTiers() ? "" : " and r.id_tiers in (:tiersList) ", scale);
             ;
 
             if (aggregateResponsable) {
-                sql = ("select value_date, %s(value) as value from (" + sql + ") group by value_date")
-                        .formatted(getSqlAggregateMethod(kpi.getAggregateTypeForResponsable()));
+                sql = ("select value_date, %s as value from (" + sql + ") group by value_date")
+                        .formatted(getAggregateString(kpi.getAggregateTypeForResponsable()));
             }
 
             String finalSql = String.format("""
@@ -211,6 +211,13 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
         return null;
     }
 
+    private String getAggregateString(String aggregateType) {
+        if (aggregateType.equals(KpiCrm.AGGREGATE_TYPE_WEIGHTED_AVERAGE)) {
+            return "sum(value*weight)/sum(weight)";
+        } else
+            return "%s(value)".formatted(getSqlAggregateMethod(aggregateType));
+    }
+
     private String getSqlAggregateMethod(String aggregateType) {
         return switch (aggregateType) {
             case KpiCrm.AGGREGATE_TYPE_SUM -> "sum";
@@ -234,9 +241,9 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
         if (kpi != null) {
 
             String sql = """
-                    select %s(value) as value
+                    select %s  as value
                     from (
-                        select r.id,v.value_date , %s(v.value) as value
+                        select r.id,v.value_date , %s  as value, sum(weight) as weight
                         from kpi_crm_value v
                         join responsable r  on r.id = v.id_responsable
                         where v.value_date>=:startDate
@@ -245,8 +252,8 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
                         and (:salesEmployeeId=0 or r.id_commercial = :salesEmployeeId)
                         and v.id_kpi=:kpiCrm
                         group by r.id, v.value_date)
-                      """.formatted(getSqlAggregateMethod(kpi.getAggregateTypeForTimePeriod()),
-                    getSqlAggregateMethod(kpi.getAggregateTypeForResponsable()),
+                      """.formatted(getAggregateString(kpi.getAggregateTypeForTimePeriod()),
+                    getAggregateString(kpi.getAggregateTypeForResponsable()),
                     searchModel.isAllTiers() ? "" : " and  r.id in (:responsableList) ");
             ;
 
@@ -273,9 +280,9 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
         if (kpi != null) {
 
             String sql = """
-                    select id as idResponsable, %s(value) as value
+                    select id as idResponsable, %s  as value
                     from (
-                        select r.id,v.value_date , %s(v.value) as value
+                        select r.id,v.value_date , %s  as value, sum(weight) as weight
                         from kpi_crm_value v
                         join responsable r  on r.id = v.id_responsable
                         where r.id in (:responsableList)
@@ -285,8 +292,8 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
                         and (:salesEmployeeId=0 or r.id_commercial = :salesEmployeeId)
                         group by r.id, v.value_date)
                     group by id
-                      """.formatted(getSqlAggregateMethod(kpi.getAggregateTypeForTimePeriod()),
-                    getSqlAggregateMethod(kpi.getAggregateTypeForResponsable()));
+                      """.formatted(getAggregateString(kpi.getAggregateTypeForTimePeriod()),
+                    getAggregateString(kpi.getAggregateTypeForResponsable()));
             ;
 
             @SuppressWarnings("unchecked")
@@ -312,7 +319,7 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
         if (kpi != null) {
 
             String sql = """
-                    select r.id,v.value_date , %s(v.value) as value
+                    select r.id,v.value_date , %s  as value, sum(weight) as weight
                        from kpi_crm_value v
                        join responsable r  on r.id = v.id_responsable
                        where v.value_date>=:startDate
@@ -321,13 +328,13 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
                        and v.id_kpi=:kpiCrm
                        and (:salesEmployeeId=0 or r.id_commercial = :salesEmployeeId)
                        group by r.id, v.value_date
-                     """.formatted(getSqlAggregateMethod(kpi.getAggregateTypeForTimePeriod()),
+                     """.formatted(getAggregateString(kpi.getAggregateTypeForTimePeriod()),
                     searchModel.isAllTiers() ? "" : " and r.id in (:responsableList) ");
             ;
 
             if (aggregateResponsable) {
-                sql = ("select value_date, %s(value) as value from (" + sql + ") group by value_date")
-                        .formatted(getSqlAggregateMethod(kpi.getAggregateTypeForResponsable()));
+                sql = ("select value_date, %s  as value from (" + sql + ") group by value_date")
+                        .formatted(getAggregateString(kpi.getAggregateTypeForResponsable()));
             }
 
             String finalSql = String.format("""

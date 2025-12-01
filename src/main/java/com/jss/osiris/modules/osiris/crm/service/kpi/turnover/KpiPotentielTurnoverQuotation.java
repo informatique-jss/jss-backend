@@ -1,8 +1,9 @@
-package com.jss.osiris.modules.osiris.crm.service.kpi;
+package com.jss.osiris.modules.osiris.crm.service.kpi.turnover;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -15,13 +16,16 @@ import com.jss.osiris.modules.osiris.crm.model.KpiCrm;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrmValue;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmService;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmValueService;
-import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.osiris.quotation.model.Quotation;
+import com.jss.osiris.modules.osiris.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
+import com.jss.osiris.modules.osiris.quotation.service.QuotationStatusService;
 import com.jss.osiris.modules.osiris.reporting.model.ReportingWidget;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 @Component
-public class KpiPotentielTurnoverReccurringOrder implements IKpiThread {
+public class KpiPotentielTurnoverQuotation implements IKpiThread {
 
     @Autowired
     KpiCrmValueService kpiCrmValueService;
@@ -30,11 +34,17 @@ public class KpiPotentielTurnoverReccurringOrder implements IKpiThread {
     KpiCrmService kpiCrmService;
 
     @Autowired
+    QuotationService quotationService;
+
+    @Autowired
+    QuotationStatusService quotationStatusService;
+
+    @Autowired
     CustomerOrderService customerOrderService;
 
     @Override
     public String getCode() {
-        return "POTENTIAL_TURNOVER_RECCURRING_ORDER";
+        return "POTENTIAL_TURNOVER_QUOTATION";
     }
 
     @Override
@@ -64,7 +74,7 @@ public class KpiPotentielTurnoverReccurringOrder implements IKpiThread {
 
     @Override
     public String getIcon() {
-        return "tablerCalendarRepeat";
+        return "tablerZoomQuestion";
     }
 
     @Override
@@ -93,12 +103,14 @@ public class KpiPotentielTurnoverReccurringOrder implements IKpiThread {
 
     public List<KpiCrmValue> getKpiValues(KpiCrm kpiCrm) throws OsirisException {
         List<KpiCrmValue> newValues = new ArrayList<KpiCrmValue>();
-        List<CustomerOrder> orders = customerOrderService.searchActiveRecurringOrder();
 
-        if (orders != null) {
-            orders.sort(new Comparator<CustomerOrder>() {
+        List<Quotation> quotations = quotationService.searchQuotation(null,
+                Arrays.asList(quotationStatusService.getQuotationStatusByCode(QuotationStatus.SENT_TO_CUSTOMER)));
+
+        if (quotations != null) {
+            quotations.sort(new Comparator<Quotation>() {
                 @Override
-                public int compare(CustomerOrder firstOrder, CustomerOrder secondOrder) {
+                public int compare(Quotation firstOrder, Quotation secondOrder) {
                     if (firstOrder.getResponsable() != null && secondOrder.getResponsable() == null)
                         return 1;
                     if (firstOrder.getResponsable() == null && secondOrder.getResponsable() != null)
@@ -116,13 +128,13 @@ public class KpiPotentielTurnoverReccurringOrder implements IKpiThread {
             Responsable currentResponsable = null;
             Float quotationTurnover = 0f;
             int i = 0;
-            for (CustomerOrder order : orders) {
+            for (Quotation quotation : quotations) {
                 if (i > 10)
                     break;
                 else
                     i++;
                 if (currentResponsable == null
-                        || !order.getResponsable().getId().equals(currentResponsable.getId())) {
+                        || !quotation.getResponsable().getId().equals(currentResponsable.getId())) {
                     if (!(new BigDecimal(quotationTurnover)).equals(getDefaultValue())) {
                         KpiCrmValue value = new KpiCrmValue();
                         value.setKpiCrm(kpiCrm);
@@ -131,11 +143,16 @@ public class KpiPotentielTurnoverReccurringOrder implements IKpiThread {
                         value.setValueDate(LocalDate.now());
                         newValues.add(value);
                     }
-                    currentResponsable = order.getResponsable();
+                    currentResponsable = quotation.getResponsable();
                     quotationTurnover = 0f;
                 }
-                quotationTurnover += customerOrderService.getInvoicingSummaryForIQuotation(order).getTotalPrice()
+                quotationTurnover += customerOrderService.getInvoicingSummaryForIQuotation(quotation).getTotalPrice()
                         .floatValue();
+            }
+
+            if (newValues != null && newValues.size() > 0) {
+                kpiCrmValueService.deleteKpiCrmValuesForKpiCrm(kpiCrm);
+                kpiCrmService.saveValuesForKpiAndDay(kpiCrm, newValues);
             }
         }
         return newValues;

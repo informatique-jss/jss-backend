@@ -1,4 +1,4 @@
-package com.jss.osiris.modules.osiris.crm.service.kpi;
+package com.jss.osiris.modules.osiris.crm.service.kpi.turnover;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
