@@ -59,6 +59,7 @@ export class ProvisionOptionsComponent implements OnInit {
   billingTypeFormalityAdditionalDeclaration = this.constantService.getBillingTypeFormalityAdditionalDeclaration();
   billingTypeCorrespondenceFees = this.constantService.getBillingTypeCorrespondenceFees();
   billingTypeSupplyFullBeCopy = this.constantService.getBillingTypeSupplyFullBeCopy();
+  billingTypeKbis = this.constantService.getBillingTypeKbis();
 
 
   attachmentTypeLogo = this.constantService.getAttachmentTypeLogo();

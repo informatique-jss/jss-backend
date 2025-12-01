@@ -65,4 +65,5 @@ export interface Provision extends IAttachment {
   isNotifyBodacc: boolean;
   isNotifyBalo: boolean;
   isNotifyJo: boolean;
+  kbisOrderedNumber: number;
 }

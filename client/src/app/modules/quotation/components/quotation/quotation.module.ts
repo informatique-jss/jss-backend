@@ -90,6 +90,7 @@ import { SelectServiceDialogComponent } from '../select-service-dialog/select-se
 import { ServiceSidePanelDetailsComponent } from '../service-side-panel-details/service-side-panel-details.component';
 import { ServiceComponent } from '../service/service.component';
 import { SimpleProvisionComponent } from '../simple-provision/simple-provision.component';
+import { SirenDialogComponent } from '../siren-dialog/siren-dialog.component';
 import { SuggestedQuotationsDialogComponent } from '../suggested-quotations-dialog/suggested-quotations-dialog.component';
 import { QuotationComponent } from './quotation.component';
 
@@ -206,7 +207,8 @@ const routes: Routes = [
     BodaccListComponent,
     BaloListComponent,
     JoListComponent,
-    KanbanOrderComponent
+    KanbanOrderComponent,
+    SirenDialogComponent
   ],
   exports: [
     OrderingListComponent,

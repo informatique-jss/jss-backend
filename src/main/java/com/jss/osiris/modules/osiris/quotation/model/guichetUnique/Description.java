@@ -50,7 +50,7 @@ public class Description implements Serializable, IId {
     @Column(columnDefinition = "NUMERIC(15,2)", precision = 15, scale = 2)
     private BigDecimal montantCapital;
 
-    private Integer capitalMinimum;
+    private BigDecimal capitalMinimum;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_devise_capital")
@@ -212,11 +212,11 @@ public class Description implements Serializable, IId {
         this.montantCapital = montantCapital;
     }
 
-    public Integer getCapitalMinimum() {
+    public BigDecimal getCapitalMinimum() {
         return capitalMinimum;
     }
 
-    public void setCapitalMinimum(Integer capitalMinimum) {
+    public void setCapitalMinimum(BigDecimal capitalMinimum) {
         this.capitalMinimum = capitalMinimum;
     }
 

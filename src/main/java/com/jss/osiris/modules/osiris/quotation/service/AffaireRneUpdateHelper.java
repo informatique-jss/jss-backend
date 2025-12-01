@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
@@ -17,7 +18,7 @@ public class AffaireRneUpdateHelper {
     @Autowired
     AffaireService affaireService;
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void updateAffaireSiretFromRne(Affaire affaire, String siren, String siret)
             throws OsirisDuplicateException, OsirisException {
         affaire = affaireService.getAffaire(affaire.getId());
@@ -28,12 +29,17 @@ public class AffaireRneUpdateHelper {
         affaireService.addOrUpdateAffaire(affaire);
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void updateAffaireFromRne(Affaire affaire, RneCompany company)
             throws OsirisDuplicateException, OsirisException {
-        affaire = affaireService.getAffaire(affaire.getId());
         affaireService.updateAffaireFromRneCompany(affaire, company);
         affaire.setLastRneUpdate(LocalDate.now());
+        affaireService.addOrUpdateAffaire(affaire);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void updateAffairelastRneCheck(Affaire affaire) throws OsirisDuplicateException, OsirisException {
+        affaire.setLastRneCheckDate(LocalDate.now());
         affaireService.addOrUpdateAffaire(affaire);
     }
 }

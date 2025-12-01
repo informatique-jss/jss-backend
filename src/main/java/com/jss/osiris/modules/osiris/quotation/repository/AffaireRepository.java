@@ -31,9 +31,6 @@ public interface AffaireRepository extends QueryCacheCrudRepository<Affaire, Int
 
         Affaire findByRna(String rna);
 
-        @Query("select max(lastRneUpdate) from Affaire a  where siret is not null and lastRneUpdate is not null ")
-        LocalDate getLastRneUpdateForAffaires();
-
         @Query(value = "select a from Affaire a where exists (select 1 from AssoAffaireOrder aao join aao.customerOrder c where aao.affaire = a  and c.responsable in :responsables) and ( lower(a.denomination) like lower(concat('%', :searchText,'%')) or lower(concat(a.firstname, ' ', a.lastname)) like lower(concat('%', :searchText,'%')) or a.siret like concat(:searchText,'%') or a.id=:idAffaire  ) ")
         List<Affaire> getAffairesForResponsables(Pageable pageableRequest,
                         @Param("responsables") List<Responsable> responsables, @Param("searchText") String searchText,
@@ -41,13 +38,13 @@ public interface AffaireRepository extends QueryCacheCrudRepository<Affaire, Int
 
         List<Affaire> findAllBySiret(String siret);
 
-        @Query(value = "select a from Affaire a where siret is null and coalesce(isIndividual , false) = false and coalesce(isToNotUpdate , false) = false ")
-        List<Affaire> getNextAffaireToUpdate();
+        @Query(value = "select a from Affaire a where siret is null and coalesce(isIndividual , false) = false and coalesce(isToNotUpdate , false) = false and (lastRneCheckDate is null or lastRneCheckDate<:lastRneCheckDate) ")
+        List<Affaire> getNextAffaireToUpdate(LocalDate lastRneCheckDate);
 
-        @Query(value = "select a from Affaire a where siret is not null  ")
-        List<Affaire> getNextAffaireToUpdateForRne();
+        @Query(value = "select a from Affaire a where siret is not null and (lastRneCheckDate is null or lastRneCheckDate<:lastRneCheckDate) and  coalesce(isToNotUpdate , false) = false order by coalesce(a.lastRneCheckDate, :defaultPastDate) asc ")
+        List<Affaire> getNextAffaireToUpdateForRne(LocalDate lastRneCheckDate, LocalDate defaultPastDate);
 
-        @Query(value = "select a from Affaire a where (siret is null or city is null) and coalesce(isIndividual , false) = false and coalesce(isToNotUpdate , false) = false ")
+        @Query(value = "select a from Affaire a where (siret is null or city is null) and coalesce(isIndividual , false) = false and coalesce(isToNotUpdate , false) = false and  coalesce(isToNotUpdate , false) = false  ")
         List<Affaire> getAffairesForCorrection();
 
 }

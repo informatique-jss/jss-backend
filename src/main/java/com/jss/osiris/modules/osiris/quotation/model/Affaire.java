@@ -195,6 +195,7 @@ public class Affaire implements IId, IAttachment {
 	private Integer employeeNumber;
 
 	private LocalDate lastRneUpdate;
+	private LocalDate lastRneCheckDate;
 
 	private Boolean isMainOffice;
 
@@ -505,5 +506,13 @@ public class Affaire implements IId, IAttachment {
 
 	public void setIsProvisionalPaymentMandatory(Boolean isProvisionalPaymentMandatory) {
 		this.isProvisionalPaymentMandatory = isProvisionalPaymentMandatory;
+	}
+
+	public LocalDate getLastRneCheckDate() {
+		return lastRneCheckDate;
+	}
+
+	public void setLastRneCheckDate(LocalDate lastRneCheckDate) {
+		this.lastRneCheckDate = lastRneCheckDate;
 	}
 }
