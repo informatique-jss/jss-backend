@@ -276,7 +276,7 @@
             [entityType]="getEntityType().entityType">
           </attachments>
           <attachments [entity]="getEntityForPendingAttachments()!" [editMode]="false"
-            *ngIf="instanceOfCustomerOrderFn(quotation) && quotation.pendingAttachments && quotation.pendingAttachments.length>0 && quotation.customerOrderStatus.code==CUSTOMER_ORDER_STATUS_DRAFT && getEntityForPendingAttachments()"
+            *ngIf="instanceOfCustomerOrderFn(quotation) && quotation.pendingAttachments && quotation.pendingAttachments.length>0  && getEntityForPendingAttachments()"
             [entityType]="getEntityType().entityType">
           </attachments>
         </mat-tab>
