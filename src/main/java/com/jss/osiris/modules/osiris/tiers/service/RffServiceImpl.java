@@ -58,20 +58,20 @@ public class RffServiceImpl implements RffService {
         return null;
     }
 
-    private BigDecimal getRffForForTiers(List<IRffCompute> rffs, Integer idTiers) {
+    private BigDecimal getRffForForTiers(List<IRffCompute> rffs, Integer idTiers, Integer year) {
         BigDecimal t = new BigDecimal(0);
         for (IRffCompute rff : rffs) {
-            if (rff.getTiersId().equals(idTiers) && rff.getRffFor() != null) {
+            if (rff.getTiersId().equals(idTiers) && rff.getRffFor() != null && rff.getEndDate().getYear() == year) {
                 t = t.add(rff.getRffFor());
             }
         }
         return t;
     }
 
-    private BigDecimal getRffForAllTiers(List<IRffCompute> rffs, Integer idTiers) {
+    private BigDecimal getRffForAllTiers(List<IRffCompute> rffs, Integer idTiers, Integer year) {
         BigDecimal t = new BigDecimal(0);
         for (IRffCompute rff : rffs) {
-            if (rff.getTiersId().equals(idTiers) && rff.getRffAl() != null) {
+            if (rff.getTiersId().equals(idTiers) && rff.getRffAl() != null && rff.getEndDate().getYear() == year) {
                 t = t.add(rff.getRffAl());
             }
         }
@@ -115,8 +115,10 @@ public class RffServiceImpl implements RffService {
                 }
 
                 if (currentRff.getIsCancelled() == false && currentRff.getIsSent() == false) {
-                    currentRff.setRffFormalite(getRffForForTiers(rffComputes, rffCompute.getTiersId()));
-                    currentRff.setRffInsertion(getRffForAllTiers(rffComputes, rffCompute.getTiersId()));
+                    currentRff.setRffFormalite(
+                            getRffForForTiers(rffComputes, rffCompute.getTiersId(), rffCompute.getEndDate().getYear()));
+                    currentRff.setRffInsertion(
+                            getRffForAllTiers(rffComputes, rffCompute.getTiersId(), rffCompute.getEndDate().getYear()));
                     currentRff.setRffTotal(currentRff.getRffFormalite().add(currentRff.getRffInsertion()));
                 }
 
