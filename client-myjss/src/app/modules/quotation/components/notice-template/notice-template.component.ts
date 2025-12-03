@@ -90,6 +90,9 @@ export class NoticeTemplateComponent implements OnInit {
       this.initFragmentInstancesMap();
       this.extractFragmentSelection(this.fragmentSelectionText);
       this.prepareInitialDisplayText();
+      setTimeout(() => {
+        this.markRnePlaceholdersAsTouched();
+      }, 0);
     });
 
     this.form.valueChanges.subscribe(() => {
@@ -98,6 +101,14 @@ export class NoticeTemplateComponent implements OnInit {
         noticeTemplateDescription.displayText = this.sanitizeDisplayText(this.displayText);
         this.noticeTemplateService.changeNoticeTemplateDescription(noticeTemplateDescription);
       }
+    });
+  }
+
+  markRnePlaceholdersAsTouched() {
+    Object.keys(this.form.controls).forEach(key => {
+      let control = this.form.get(key);
+      if (control?.value)
+        control?.markAsTouched();
     });
   }
 
