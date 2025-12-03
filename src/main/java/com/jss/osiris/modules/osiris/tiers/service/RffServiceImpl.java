@@ -58,6 +58,26 @@ public class RffServiceImpl implements RffService {
         return null;
     }
 
+    private BigDecimal getRffForForTiers(List<IRffCompute> rffs, Integer idTiers, Integer year) {
+        BigDecimal t = new BigDecimal(0);
+        for (IRffCompute rff : rffs) {
+            if (rff.getTiersId().equals(idTiers) && rff.getRffFor() != null && rff.getEndDate().getYear() == year) {
+                t = t.add(rff.getRffFor());
+            }
+        }
+        return t;
+    }
+
+    private BigDecimal getRffForAllTiers(List<IRffCompute> rffs, Integer idTiers, Integer year) {
+        BigDecimal t = new BigDecimal(0);
+        for (IRffCompute rff : rffs) {
+            if (rff.getTiersId().equals(idTiers) && rff.getRffAl() != null && rff.getEndDate().getYear() == year) {
+                t = t.add(rff.getRffAl());
+            }
+        }
+        return t;
+    }
+
     @Override
     public List<Rff> getRffs(RffSearch rffSearch) throws OsirisException {
 
@@ -73,89 +93,119 @@ public class RffServiceImpl implements RffService {
         if (rffSearch.getSalesEmployee() != null)
             idSalesEmployee = rffSearch.getSalesEmployee().getId();
 
-        List<IRffCompute> rffComputes = rffRepository.getRffComputes(constantService.getRffFrequencyAnnual().getId(),
-                constantService.getRffFrequencyQuarterly().getId(), constantService.getRffFrequencyMonthly().getId(),
-                idTiers, idResponsable, idSalesEmployee, rffSearch.getStartDate(), rffSearch.getEndDate());
+        List<Rff> rffs = rffRepository.getRffSearch(idTiers, idResponsable, idSalesEmployee, rffSearch.getStartDate(),
+                rffSearch.getEndDate());
 
-        List<Rff> finalRffs = new ArrayList<Rff>();
-        if (rffComputes != null)
-            for (IRffCompute rffCompute : rffComputes) {
-                Rff currentRff = new Rff();
-                if (rffCompute.getRffId() != null) {
-                    currentRff = getRff(rffCompute.getRffId());
-                } else {
-                    currentRff.setStartDate(rffCompute.getStartDate());
-                    currentRff.setEndDate(rffCompute.getEndDate());
-                    currentRff.setIsCancelled(false);
-                    currentRff.setIsSent(false);
-                    if (rffCompute.getResponsableId() != null)
-                        currentRff.setResponsable(responsableService.getResponsable(rffCompute.getResponsableId()));
-                    currentRff.setTiers(tiersService.getTiers(rffCompute.getTiersId()));
-                    finalRffs.add(addOrUpdateRff(currentRff));
-                }
-
-                if (currentRff.getIsCancelled() == false && currentRff.getIsSent() == false) {
-                    currentRff.setRffFormalite(rffCompute.getRffFor());
-                    currentRff.setRffInsertion(rffCompute.getRffAl());
-                    currentRff.setRffTotal(rffCompute.getRffAl().add(rffCompute.getRffFor()));
-                }
-
-                currentRff.setTiersId(currentRff.getTiers().getId());
-                if (currentRff.getTiers().getDenomination() != null)
-                    currentRff.setTiersLabel(currentRff.getTiers().getDenomination());
-                else
-                    currentRff.setTiersLabel(
-                            currentRff.getTiers().getFirstname() + " " + currentRff.getTiers().getLastname());
-
-                if (currentRff.getResponsable() != null) {
-                    currentRff.setResponsableLabel(currentRff.getResponsable().getFirstname() + " "
-                            + currentRff.getResponsable().getLastname());
-                    currentRff.setResponsableId(currentRff.getResponsable().getId());
-                }
-
-                if (currentRff.getIsCancelled() == false) {
-                    String iban = null;
-                    String bic = null;
-                    if (currentRff.getResponsable() != null && currentRff.getResponsable().getRffBic() != null
-                            && currentRff.getResponsable().getRffIban() != null
-                            && currentRff.getResponsable().getRffBic().length() > 0
-                            && currentRff.getResponsable().getRffIban().length() > 0) {
-                        iban = currentRff.getResponsable().getRffIban();
-                        bic = currentRff.getResponsable().getRffBic();
-                    } else if (currentRff.getTiers().getRffBic() != null
-                            && currentRff.getTiers().getRffIban() != null
-                            && currentRff.getTiers().getRffBic().length() > 0
-                            && currentRff.getTiers().getRffIban().length() > 0) {
-                        iban = currentRff.getTiers().getRffIban();
-                        bic = currentRff.getTiers().getRffBic();
-                    }
-                    if (iban != null && bic != null) {
-                        currentRff.setRffBic(bic);
-                        currentRff.setRffIban(iban);
-                    }
-
-                    String mail = null;
-                    if (currentRff.getResponsable() != null && currentRff.getResponsable().getRffMail() != null
-                            && currentRff.getResponsable().getRffMail().length() > 0) {
-                        mail = currentRff.getResponsable().getRffMail();
-                    } else if (currentRff.getTiers().getRffMail() != null
-                            && currentRff.getTiers().getRffMail().length() > 0) {
-                        mail = currentRff.getTiers().getRffMail();
-                    } else if (currentRff.getTiers().getMails() != null
-                            && currentRff.getTiers().getMails().size() > 0) {
-                        mail = currentRff.getTiers().getMails().get(0).getMail();
-                    }
-                    if (mail != null) {
-                        currentRff.setRffMail(mail);
-                    }
-                }
-
-                addOrUpdateRff(currentRff);
-                if (!rffSearch.getIsHideCancelledRff() || currentRff.getIsCancelled() == false)
-                    finalRffs.add(addOrUpdateRff(currentRff));
+        if (rffs != null)
+            for (Rff rff : rffs) {
+                rff.setTiersLabel(rff.getTiers().getDenomination());
+                rff.setTiersId(rff.getTiers().getId());
+                if (rff.getResponsable() != null)
+                    rff.setResponsableLabel(
+                            rff.getResponsable().getFirstname() + " " + rff.getResponsable().getLastname());
+                rff.setResponsableId(rff.getResponsable().getId());
             }
-
-        return finalRffs;
+        return rffs;
+        /*
+         * List<IRffCompute> rffComputes =
+         * rffRepository.getRffComputes(constantService.getRffFrequencyAnnual().getId(),
+         * constantService.getRffFrequencyQuarterly().getId(),
+         * constantService.getRffFrequencyMonthly().getId(),
+         * idTiers, idResponsable, idSalesEmployee, rffSearch.getStartDate(),
+         * rffSearch.getEndDate());
+         * 
+         * List<Rff> finalRffs = new ArrayList<Rff>();
+         * if (rffComputes != null)
+         * for (IRffCompute rffCompute : rffComputes) {
+         * Rff currentRff = new Rff();
+         * if (rffCompute.getRffId() != null) {
+         * currentRff = getRff(rffCompute.getRffId());
+         * } else {
+         * currentRff.setStartDate(rffCompute.getStartDate());
+         * currentRff.setEndDate(rffCompute.getEndDate());
+         * currentRff.setIsCancelled(false);
+         * currentRff.setIsSent(false);
+         * if (rffCompute.getResponsableId() != null)
+         * currentRff.setResponsable(responsableService.getResponsable(rffCompute.
+         * getResponsableId()));
+         * currentRff.setTiers(tiersService.getTiers(rffCompute.getTiersId()));
+         * finalRffs.add(addOrUpdateRff(currentRff));
+         * }
+         * 
+         * if (currentRff.getIsCancelled() == false && currentRff.getIsSent() == false)
+         * {
+         * currentRff.setRffFormalite(
+         * getRffForForTiers(rffComputes, rffCompute.getTiersId(),
+         * rffCompute.getEndDate().getYear()));
+         * currentRff.setRffInsertion(
+         * getRffForAllTiers(rffComputes, rffCompute.getTiersId(),
+         * rffCompute.getEndDate().getYear()));
+         * currentRff.setRffTotal(currentRff.getRffFormalite().add(currentRff.
+         * getRffInsertion()));
+         * }
+         * 
+         * currentRff.setTiersId(currentRff.getTiers().getId());
+         * if (currentRff.getTiers().getDenomination() != null)
+         * currentRff.setTiersLabel(currentRff.getTiers().getDenomination());
+         * else
+         * currentRff.setTiersLabel(
+         * currentRff.getTiers().getFirstname() + " " +
+         * currentRff.getTiers().getLastname());
+         * 
+         * if (currentRff.getResponsable() != null) {
+         * currentRff.setResponsableLabel(currentRff.getResponsable().getFirstname() +
+         * " "
+         * + currentRff.getResponsable().getLastname());
+         * currentRff.setResponsableId(currentRff.getResponsable().getId());
+         * }
+         * 
+         * if (currentRff.getIsCancelled() == false) {
+         * String iban = null;
+         * String bic = null;
+         * if (currentRff.getResponsable() != null &&
+         * currentRff.getResponsable().getRffBic() != null
+         * && currentRff.getResponsable().getRffIban() != null
+         * && currentRff.getResponsable().getRffBic().length() > 0
+         * && currentRff.getResponsable().getRffIban().length() > 0) {
+         * iban = currentRff.getResponsable().getRffIban();
+         * bic = currentRff.getResponsable().getRffBic();
+         * } else if (currentRff.getTiers().getRffBic() != null
+         * && currentRff.getTiers().getRffIban() != null
+         * && currentRff.getTiers().getRffBic().length() > 0
+         * && currentRff.getTiers().getRffIban().length() > 0) {
+         * iban = currentRff.getTiers().getRffIban();
+         * bic = currentRff.getTiers().getRffBic();
+         * }
+         * if (iban != null && bic != null) {
+         * currentRff.setRffBic(bic);
+         * currentRff.setRffIban(iban);
+         * }
+         * 
+         * String mail = null;
+         * if (currentRff.getResponsable() != null &&
+         * currentRff.getResponsable().getRffMail() != null
+         * && currentRff.getResponsable().getRffMail().length() > 0) {
+         * mail = currentRff.getResponsable().getRffMail();
+         * } else if (currentRff.getTiers().getRffMail() != null
+         * && currentRff.getTiers().getRffMail().length() > 0) {
+         * mail = currentRff.getTiers().getRffMail();
+         * } else if (currentRff.getTiers().getMails() != null
+         * && currentRff.getTiers().getMails().size() > 0) {
+         * mail = currentRff.getTiers().getMails().get(0).getMail();
+         * }
+         * if (mail != null) {
+         * currentRff.setRffMail(mail);
+         * }
+         * }
+         * 
+         * addOrUpdateRff(currentRff);
+         * if (!rffSearch.getIsHideCancelledRff() || currentRff.getIsCancelled() ==
+         * false)
+         * finalRffs.add(addOrUpdateRff(currentRff));
+         * }
+         * 
+         * return finalRffs;
+         */
     }
 
     @Override

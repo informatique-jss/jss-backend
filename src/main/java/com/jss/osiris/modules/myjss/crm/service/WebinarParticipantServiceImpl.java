@@ -49,7 +49,7 @@ public class WebinarParticipantServiceImpl implements WebinarParticipantService 
         WebinarParticipant existingWebinarParticipant = null;
         if (webinarParticipant != null) {
             webinarParticipant.setIsParticipating(true);
-            webinarParticipant.setWebinar(webinarService.getWebinar(1));
+            webinarParticipant.setWebinar(webinarService.getNextWebinar());
             mailService.populateMailId(webinarParticipant.getMail());
 
             existingWebinarParticipant = webinarParticipantRepository
