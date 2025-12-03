@@ -167,6 +167,9 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("my.jss.entry.point");
         isOk = isOk && checkProperty("server.my.jss.entry.point");
         isOk = isOk && checkProperty("server.jss.entry.point");
+        isOk = isOk && checkProperty("google.analytics.mp.url");
+        isOk = isOk && checkProperty("google.analytics.api-secret");
+        isOk = isOk && checkProperty("google.analytics.measurement-id");
 
         if (!isOk)
             System.exit(-1);

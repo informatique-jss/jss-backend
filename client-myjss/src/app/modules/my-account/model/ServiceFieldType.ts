@@ -5,6 +5,6 @@ export interface ServiceFieldType {
   code: string;
   label: string;
   dataType: string;
-  value: string; // Only for client purposes
+  value: string; // Value found thanks to RNE API from the back office
   serviceFieldTypePossibleValues: ServiceTypeFieldTypePossibleValue[];
 }

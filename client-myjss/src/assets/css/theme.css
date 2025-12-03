@@ -20478,9 +20478,16 @@ ng-autocomplete .autocomplete-container b {
   border: solid 2px var(--ar-secondary);
   box-shadow: 5px 5px 10px #1c2d418a;
   margin: -10px;
+  background-color: var(--ar-primary);
+  z-index: 30;
+  position: relative;
 }
 
 .fragment-border {
   border: solid 2px var(--ar-tertiary);
   margin: 0px;
+  margin-top: 0.2rem;
+  margin-bottom: 0.2rem;
+  z-index: 3;
+  position: relative;
 }

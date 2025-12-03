@@ -2192,7 +2192,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         customerOrder.setIsQuotation(false);
 
         if (employeeService.getCurrentMyJssUser() != null)
-            return myJssQuotationDelegate.saveCustomerOrderFromMyJss(customerOrder, false, null);
+            return myJssQuotationDelegate.saveCustomerOrderFromMyJss(customerOrder, false, null, null);
         else
             return customerOrder;
     }

@@ -51,6 +51,8 @@ export class NoticeTemplateComponent implements OnInit {
   displayTextOriginal: string = '';
   fragmentSelectionText: string = '';
 
+  affaireId: number | undefined;
+
   serviceFieldTypes: ServiceFieldType[] = [];
   form!: FormGroup;
 
@@ -74,18 +76,23 @@ export class NoticeTemplateComponent implements OnInit {
     let noticeTemplateDescription = this.noticeTemplateService.getNoticeTemplateDescription();
     if (this.service && noticeTemplateDescription && noticeTemplateDescription.selectedTemplate) {
       this.templates.push(noticeTemplateDescription.selectedTemplate);
+      if (noticeTemplateDescription.assoAffaireOrder && noticeTemplateDescription.assoAffaireOrder.affaire)
+        this.affaireId = noticeTemplateDescription.assoAffaireOrder.affaire.id;
 
       this.fragmentsFound = this.templates.flatMap(template => template.announcementNoticeTemplateFragments);
       this.displayText = this.templates.map(t => t.text).join('');
       this.displayTextOriginal = this.displayText;
       this.fragmentSelectionText = this.displayText;
     }
-    this.serviceFieldTypesService.getServiceFieldTypes().subscribe(serviceFieldTypes => {
+    this.serviceFieldTypesService.getServiceFieldTypes(this.affaireId).subscribe(serviceFieldTypes => {
       this.serviceFieldTypes = serviceFieldTypes;
       this.createPlaceholdersMap();
       this.initFragmentInstancesMap();
       this.extractFragmentSelection(this.fragmentSelectionText);
       this.prepareInitialDisplayText();
+      setTimeout(() => {
+        this.markRnePlaceholdersAsTouched();
+      }, 0);
     });
 
     this.form.valueChanges.subscribe(() => {
@@ -94,6 +101,14 @@ export class NoticeTemplateComponent implements OnInit {
         noticeTemplateDescription.displayText = this.sanitizeDisplayText(this.displayText);
         this.noticeTemplateService.changeNoticeTemplateDescription(noticeTemplateDescription);
       }
+    });
+  }
+
+  markRnePlaceholdersAsTouched() {
+    Object.keys(this.form.controls).forEach(key => {
+      let control = this.form.get(key);
+      if (control?.value)
+        control?.markAsTouched();
     });
   }
 
@@ -232,20 +247,21 @@ export class NoticeTemplateComponent implements OnInit {
       }
     }
 
-    // We take out the fragments codes and replace them with their label before displaying the text
-    text = text.replace(new RegExp('\\[|\\]', 'g'), "");
-
     for (let fragment of this.fragmentsFound) {
       if (this.selectedFragments.includes(fragment)) {
         text = text.replace(this.getRegexDoublePipeNearCode(fragment.code), "ou");
         text = text.replace(new RegExp(`(?<!["=])\\b${fragment.code}\\b(?!["])`, 'g'), fragment.label); // replacing all fragments but the one in the HTML tags (<...>)
       } else {
         // We first isolate the fragments from the ||
-        text = text.replace(this.getRegexDoublePipeNearCode(fragment.code), "");
+        text = text.replace(this.getRegexDoublePipeNearCode(fragment.code), " ");
         // Then we replace the code by the label
         text = text.replace(new RegExp(`(\\b${fragment.code}\\b)`, 'g'), "");
       }
     }
+
+    // We take out the fragments codes and replace them with their label before displaying the text
+    text = text.replace(new RegExp('\\[|\\]', 'g'), "");
+
 
     // Replace multiple consecutive <br> tags with only the first and the last
     text = text.replace(/<p>(\s|&nbsp;|<br\s*\/?>)*<\/p>/gi, '');
@@ -261,7 +277,7 @@ export class NoticeTemplateComponent implements OnInit {
     // Regex :
     // - (\\|\\|.{0,3}CODE) → || followed by up to 4 characters, then the code
     // - (CODE.{0,3}\\|\\|) → code followed by up to 4 characters, then ||
-    const pattern = `(\\|\\|.{0,3}\\b${escapedCode}\\b)|(\\b${escapedCode}\\b.{0,3}\\|\\|)`;
+    const pattern = `(\\|\\|.{0,10}\\b${escapedCode}\\b)|(\\b${escapedCode}\\b.{0,10}\\|\\|)`;
 
     return new RegExp(pattern, 'g');
   }

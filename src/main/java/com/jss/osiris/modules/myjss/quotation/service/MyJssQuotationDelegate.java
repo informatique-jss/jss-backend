@@ -12,6 +12,7 @@ import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.MailHelper;
+import com.jss.osiris.modules.myjss.miscellaneous.service.GoogleAnalyticsService;
 import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
@@ -94,8 +95,11 @@ public class MyJssQuotationDelegate {
     @Autowired
     UserScopeService userScopeService;
 
+    @Autowired
+    GoogleAnalyticsService googleAnalyticsService;
+
     @Transactional(rollbackFor = Exception.class)
-    public CustomerOrder saveCustomerOrderFromMyJss(CustomerOrder order, Boolean isValidation,
+    public CustomerOrder saveCustomerOrderFromMyJss(CustomerOrder order, Boolean isValidation, String gaClientId,
             HttpServletRequest request)
             throws OsirisClientMessageException, OsirisValidationException, OsirisException {
         if (order.getAssoAffaireOrders() != null)
@@ -193,11 +197,16 @@ public class MyJssQuotationDelegate {
                 customerOrderService.autoBilledProvisions(fetchOrder);
             }
         }
+
+        // Send order infos to Google Analytics
+        googleAnalyticsService.trackPurchase(order, false, gaClientId);
+
         return order;
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Quotation saveQuotationFromMyJss(Quotation quotation, Boolean isValidation, HttpServletRequest request)
+    public Quotation saveQuotationFromMyJss(Quotation quotation, Boolean isValidation, String gaClientId,
+            HttpServletRequest request)
             throws OsirisClientMessageException, OsirisValidationException, OsirisException {
         if (quotation.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders())
@@ -283,13 +292,15 @@ public class MyJssQuotationDelegate {
             quotationService.addOrUpdateQuotationStatus(quotation, QuotationStatus.TO_VERIFY);
         }
 
-        return quotation;
+        // Send quotation infos to Google Analytics
+        googleAnalyticsService.trackPurchase(quotation, false, gaClientId);
 
+        return quotation;
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public IQuotation validateAndCreateQuotation(IQuotation quotation, Boolean isValidation, HttpServletRequest request)
-            throws OsirisException {
+    public IQuotation validateAndCreateQuotation(IQuotation quotation, Boolean isValidation, HttpServletRequest request,
+            String gaClientId) throws OsirisException {
 
         Responsable responsable = null;
         Boolean hasToSendConfirmation = false;
@@ -405,6 +416,10 @@ public class MyJssQuotationDelegate {
             responsableService.updateConsentDateForCurrentUser();
         } else
             return null;
+
+        // Send quotation infos to Google Analytics
+        googleAnalyticsService.trackPurchase(quotation, false, gaClientId);
+
         return quotation;
     }
 

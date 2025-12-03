@@ -519,6 +519,7 @@ public class QuotationController {
       validationHelper.validateReferential(serviceFieldTypes, true, "serviceFieldTypes");
     validationHelper.validateString(serviceFieldTypes.getCode(), true, "code");
     validationHelper.validateString(serviceFieldTypes.getLabel(), true, "label");
+    validationHelper.validateString(serviceFieldTypes.getJsonPathToRneValue(), false, 2048, "jsonPathToRneValue");
 
     if (!serviceFieldTypes.getDataType().equals(ServiceFieldType.SERVICE_FIELD_TYPE_DATE)
         && !serviceFieldTypes.getDataType().equals(ServiceFieldType.SERVICE_FIELD_TYPE_INTEGER)

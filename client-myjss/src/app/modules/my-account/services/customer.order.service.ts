@@ -44,11 +44,15 @@ export class CustomerOrderService extends AppRestService<CustomerOrder> {
   }
 
   saveOrder(order: IQuotation, isValidation: boolean): Observable<number> {
-    return this.postItem(new HttpParams().set("isValidation", isValidation), 'order/user/save', order) as any as Observable<number>;
+    let params = new HttpParams();
+    params = params.set("isValidation", isValidation);
+    return this.postItem(params, 'order/user/save', order) as any as Observable<number>;
   }
 
   saveFinalOrder(order: CustomerOrder, isValidation: boolean) {
-    return this.postItem(new HttpParams().set("isValidation", isValidation), 'order/save-order', order);
+    let params = new HttpParams();
+    params = params.set("isValidation", isValidation);
+    return this.postItem(params, 'order/save-order', order);
   }
 
   switchResponsableForOrder(idOrder: number, newResponsable: Responsable) {
