@@ -218,4 +218,17 @@ public interface RffRepository extends QueryCacheCrudRepository<Rff, Integer> {
                         @Param("idSalesEmployee") Integer idSalesEmployee,
                         @Param("startDate") LocalDate startDate,
                         @Param("endDate") LocalDate endDate);
+
+        @Query("select r from Rff r join r.tiers t " +
+                        "         where " +
+                        "              r.startDate is not null and   r.startDate >= :startDate and r.endDate <= :endDate "
+                        +
+                        "                   and  ( :idTiers =0 or r.tiers.id = :idTiers) " +
+                        "                   and  ( :idResponsable =0 or r.responsable.id= :idResponsable) " +
+                        "                   and  ( :idSalesEmployee =0 or t.salesEmployee.id = :idSalesEmployee  ) ")
+        public List<Rff> getRffSearch(@Param("idTiers") Integer idTiers,
+                        @Param("idResponsable") Integer idResponsable,
+                        @Param("idSalesEmployee") Integer idSalesEmployee,
+                        @Param("startDate") LocalDate startDate,
+                        @Param("endDate") LocalDate endDate);
 }
