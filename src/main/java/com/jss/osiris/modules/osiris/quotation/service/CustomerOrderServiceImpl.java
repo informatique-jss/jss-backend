@@ -1,6 +1,8 @@
 package com.jss.osiris.modules.osiris.quotation.service;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -528,7 +530,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     || remainingToPay.compareTo(zeroValue) <= 0 || isPaymentTypePrelevement) {
                 targetStatusCode = CustomerOrderStatus.BEING_PROCESSED;
                 customerOrder.setProductionEffectiveDateTime(LocalDateTime.now());
-                mailHelper.sendCustomerOrderInProgressToCustomer(customerOrder, false);
+
+                mailHelper.sendCustomerOrderInProgressToCustomer(customerOrder, false,
+                        generateCustomerOrderPurchasePdf(customerOrder));
             } else {
                 targetStatusCode = CustomerOrderStatus.WAITING_DEPOSIT;
                 try {
@@ -559,7 +563,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     && !customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.ABANDONED)) {
                 if (customerOrder.getCustomerOrderStatus().getCode()
                         .equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
-                    mailHelper.sendCustomerOrderInProgressToCustomer(customerOrder, false);
+                    mailHelper.sendCustomerOrderInProgressToCustomer(customerOrder, false, null);
                 }
             }
         }
@@ -2312,5 +2316,61 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                                 if (provision.getComplexity() != null && provision.getComplexity() < complexity)
                                     complexity = provision.getComplexity();
         return complexity;
+    }
+
+    public List<Attachment> generateCustomerOrderPurchasePdf(CustomerOrder customerOrder)
+            throws OsirisClientMessageException,
+            OsirisValidationException, OsirisDuplicateException, OsirisException {
+        Boolean hasMandatoryDocument = null;
+        Boolean hasMandatoryFieldType = null;
+        File customerOrderPurchasePdf = null;
+
+        if (!customerOrder.getAssoAffaireOrders().isEmpty()) {
+            hasMandatoryDocument = customerOrder.getAssoAffaireOrders().stream()
+                    .filter(asso -> asso.getServices() != null)
+                    .flatMap(asso -> asso.getServices().stream())
+                    .anyMatch(service -> service.getAssoServiceDocuments() != null
+                            && !service.getAssoServiceDocuments().isEmpty()
+                            && service.getAssoServiceDocuments().stream()
+                                    .anyMatch(document -> document.getIsMandatory()));
+
+            hasMandatoryFieldType = customerOrder.getAssoAffaireOrders().stream()
+                    .filter(asso -> asso.getServices() != null)
+                    .flatMap(asso -> asso.getServices().stream())
+                    .anyMatch(service -> service.getAssoServiceFieldTypes() != null
+                            && !service.getAssoServiceFieldTypes().isEmpty()
+                            && service.getAssoServiceFieldTypes().stream()
+                                    .anyMatch(fieldType -> fieldType.getIsMandatory()));
+        }
+
+        if (hasMandatoryDocument || hasMandatoryFieldType)
+            customerOrderPurchasePdf = generatePdfDelegate.generationCustomerOrderPurchasePdf(customerOrder,
+                    hasMandatoryDocument, hasMandatoryFieldType);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
+        List<Attachment> attachments = new ArrayList<Attachment>();
+        try {
+            if (customerOrder != null && customerOrderPurchasePdf != null)
+                attachments = attachmentService.addAttachment(new FileInputStream(customerOrderPurchasePdf),
+                        customerOrder.getId(), null,
+                        CustomerOrder.class.getSimpleName(),
+                        constantService.getAttachmentTypePurchaseOrder(),
+                        "Bon_De_Commande_" + customerOrder.getId() + "_" + formatter.format(LocalDateTime.now())
+                                + ".pdf",
+                        false, "Bon de commande n°" + customerOrder.getId(), null, null, null);
+
+            for (Attachment attachment : attachments)
+                if (customerOrder != null && attachment.getDescription().contains(customerOrder.getId() + "")) {
+                    attachment.setCustomerOrder(customerOrder);
+                    attachmentService.addOrUpdateAttachment(attachment);
+                }
+
+        } catch (FileNotFoundException e) {
+            throw new OsirisException(e, "Impossible to read quotation PDF temp file");
+        } finally {
+            if (customerOrderPurchasePdf != null)
+                customerOrderPurchasePdf.delete();
+        }
+        return attachments;
     }
 }

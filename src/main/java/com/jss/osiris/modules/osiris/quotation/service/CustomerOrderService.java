@@ -14,6 +14,7 @@ import com.jss.osiris.modules.osiris.crm.model.Voucher;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoicingBlockage;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.InvoicingSummary;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
@@ -232,4 +233,8 @@ public interface CustomerOrderService {
         public void switchResponsable(CustomerOrder order, Responsable responsable);
 
         public Integer getComplexity(CustomerOrder customerOrder) throws OsirisException;
+
+        public List<Attachment> generateCustomerOrderPurchasePdf(CustomerOrder customerOrder)
+                        throws OsirisClientMessageException,
+                        OsirisValidationException, OsirisDuplicateException, OsirisException;
 }
