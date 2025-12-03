@@ -3,6 +3,7 @@ package com.jss.osiris.modules.osiris.crm.service.kpi;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -99,65 +100,73 @@ public class KpiClosingOpportunity implements IKpiThread {
 
         LocalDate lastDate = kpiCrmValueService.getLastKpiCrmValueDate(kpiCrm);
 
-        while (lastDate.isBefore(LocalDate.now())) {
-            List<KpiCrmValue> newValues = new ArrayList<KpiCrmValue>();
+        List<Quotation> quotations = quotationService.getByCreatedDateBetweenAndStatus(
+                LocalDateTime.now().minusYears(100), LocalDateTime.now().plusYears(100), null, lastDate.atTime(0, 0, 0),
+                LocalDate.now().minusDays(1).atTime(23, 59, 59));
 
-            List<Quotation> quotations = quotationService.getByCreatedDateBetweenAndStatus(lastDate.atStartOfDay(),
-                    lastDate.atTime(23, 59, 59), null, lastDate.atStartOfDay(), lastDate.atTime(23, 59, 59));
-
-            if (quotations != null) {
-                quotations.sort(new Comparator<Quotation>() {
-                    @Override
-                    public int compare(Quotation firstQuotation, Quotation secondQuotation) {
-                        if (firstQuotation.getResponsable() != null && secondQuotation.getResponsable() == null)
-                            return 1;
-                        if (firstQuotation.getResponsable() == null && secondQuotation.getResponsable() != null)
-                            return -1;
-                        if (firstQuotation.getResponsable() == null && secondQuotation.getResponsable() == null)
-                            return 0;
-                        if (firstQuotation.getResponsable().getId() > secondQuotation.getResponsable().getId())
-                            return 1;
-                        if (firstQuotation.getResponsable().getId() < secondQuotation.getResponsable().getId())
-                            return -1;
+        if (quotations != null) {
+            quotations.sort(new Comparator<Quotation>() {
+                @Override
+                public int compare(Quotation firstQuotation, Quotation secondQuotation) {
+                    if (firstQuotation.getResponsable() != null && secondQuotation.getResponsable() == null)
+                        return 1;
+                    if (firstQuotation.getResponsable() == null && secondQuotation.getResponsable() != null)
+                        return -1;
+                    if (firstQuotation.getResponsable() == null && secondQuotation.getResponsable() == null)
                         return 0;
-                    }
-                });
+                    if (firstQuotation.getResponsable().getId() > secondQuotation.getResponsable().getId())
+                        return 1;
+                    if (firstQuotation.getResponsable().getId() < secondQuotation.getResponsable().getId())
+                        return -1;
+                    return 0;
+                }
+            });
+
+            List<Integer> idDone = new ArrayList<Integer>();
+
+            while (lastDate.isBefore(LocalDate.now())) {
+                List<KpiCrmValue> newValues = new ArrayList<KpiCrmValue>();
 
                 Responsable currentResponsable = null;
                 Integer nbrQuotation = 0;
                 long totalTimeInSeconds = 0;
 
                 for (Quotation quotation : quotations) {
-                    if (!quotation.getResponsable().getId().equals(167371))
-                        continue;
-                    Audit endAudit = getAuditWhereStatusModifiedThisDay(quotation, lastDate,
-                            QuotationStatus.VALIDATED_BY_CUSTOMER, false);
-                    if (quotation.getResponsable() != null && endAudit != null) {
-                        if (currentResponsable == null
-                                || !quotation.getResponsable().getId().equals(currentResponsable.getId())) {
-                            if (!(new BigDecimal(nbrQuotation)).equals(getDefaultValue())) {
-                                KpiCrmValue value = new KpiCrmValue();
-                                value.setKpiCrm(kpiCrm);
-                                value.setResponsable(currentResponsable);
-                                value.setValue(new BigDecimal(totalTimeInSeconds * 1.0 / 3600 / 8 / nbrQuotation)
-                                        .setScale(1, RoundingMode.HALF_EVEN));
-                                value.setWeight(nbrQuotation);
-                                value.setValueDate(lastDate);
-                                newValues.add(value);
-                            }
-                            currentResponsable = quotation.getResponsable();
-                            nbrQuotation = 0;
-                            totalTimeInSeconds = 0;
-                        }
+                    if (!idDone.contains(quotation.getId()))
+                        if (quotation.getCreatedDate() != null
+                                && (quotation.getCreatedDate().toLocalDate().equals(lastDate)
+                                        || quotation.getCreatedDate().toLocalDate().isBefore(lastDate))) {
+                            Audit endAudit = getAuditWhereStatusModifiedThisDay(quotation, lastDate,
+                                    QuotationStatus.VALIDATED_BY_CUSTOMER, false);
+                            if (quotation.getResponsable() != null && endAudit != null) {
+                                if (currentResponsable == null
+                                        || !quotation.getResponsable().getId().equals(currentResponsable.getId())) {
+                                    if (!(new BigDecimal(nbrQuotation)).equals(getDefaultValue())) {
+                                        KpiCrmValue value = new KpiCrmValue();
+                                        value.setKpiCrm(kpiCrm);
+                                        value.setResponsable(currentResponsable);
+                                        value.setValue(
+                                                new BigDecimal(totalTimeInSeconds * 1.0 / 3600 / 8 / nbrQuotation)
+                                                        .setScale(1, RoundingMode.HALF_EVEN));
+                                        value.setWeight(nbrQuotation);
+                                        value.setValueDate(lastDate);
+                                        newValues.add(value);
+                                    }
+                                    currentResponsable = quotation.getResponsable();
+                                    nbrQuotation = 0;
+                                    totalTimeInSeconds = 0;
+                                }
 
-                        Audit startAudit = getAuditWhereStatusModifiedThisDay(quotation, null,
-                                QuotationStatus.SENT_TO_CUSTOMER, true);
-                        if (startAudit != null) {
-                            totalTimeInSeconds += endAudit.getDatetime().toEpochSecond(ZoneOffset.UTC)
-                                    - startAudit.getDatetime().toEpochSecond(ZoneOffset.UTC);
-                            nbrQuotation++;
+                                Audit startAudit = getAuditWhereStatusModifiedThisDay(quotation, null,
+                                        QuotationStatus.SENT_TO_CUSTOMER, true);
+                                if (startAudit != null) {
+                                    totalTimeInSeconds += endAudit.getDatetime().toEpochSecond(ZoneOffset.UTC)
+                                            - startAudit.getDatetime().toEpochSecond(ZoneOffset.UTC);
+                                    idDone.add(quotation.getId());
+                                    nbrQuotation++;
+                                }
+                            }
                         }
-                    }
                 }
 
                 if (!(new BigDecimal(nbrQuotation)).equals(getDefaultValue())) {
@@ -176,9 +185,10 @@ public class KpiClosingOpportunity implements IKpiThread {
                     em.flush();
                     em.clear();
                 }
+
+                lastDate = lastDate.plusDays(1);
             }
 
-            lastDate = lastDate.plusDays(1);
         }
     }
 
