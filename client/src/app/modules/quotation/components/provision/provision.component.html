@@ -232,7 +232,7 @@
   </button>
   <button mat-menu-item
     *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.announcement && currentProvisionWorkflow.announcement.confrere && currentProvisionWorkflow.announcement.confrere.journalType.id==journalTypeSpel.id"
-    (click)="generatePublicationFlagMail()">
+    (click)="generatePublicationFlagMail(currentProvisionWorkflow.announcement)">
     <span>Recevoir le mail de témoin de publication</span>
   </button>
   <button mat-menu-item
