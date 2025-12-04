@@ -347,7 +347,7 @@
                           [(ngModel)]="assoServiceFieldType.selectValue">
                           <option
                             *ngFor="let option of assoServiceFieldType.serviceFieldType.serviceFieldTypePossibleValues"
-                            [value]="option">
+                            [ngValue]="option">
                             {{option.value}}</option>
                         </select>
                       </div>
