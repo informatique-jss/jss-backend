@@ -424,6 +424,42 @@ public class GeneratePdfDelegate {
         return tempFile;
     }
 
+    public File generationCustomerOrderPurchasePdf(CustomerOrder customerOrder, Boolean hasDocuments,
+            Boolean hasFieldTypes) throws OsirisException {
+        final Context ctx = new Context();
+
+        ctx.setVariable("customerOrderId", customerOrder.getId());
+        ctx.setVariable("customerOrderCreatedDate",
+                customerOrder.getCreatedDate() != null ? customerOrder.getCreatedDate().format(DateTimeFormatter
+                        .ofPattern("dd/MM/yyyy"))
+                        : LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        ctx.setVariable("assos", customerOrder.getAssoAffaireOrders());
+        ctx.setVariable("hasDocuments", hasDocuments);
+        ctx.setVariable("hasFieldTypes", hasFieldTypes);
+
+        final String htmlContent = StringEscapeUtils
+                .unescapeHtml4(emailTemplateEngine().process("customer-order-purchase", ctx));
+        File tempFile;
+        OutputStream outputStream;
+        try {
+            tempFile = File.createTempFile("purchase", "pdf");
+            outputStream = new FileOutputStream(tempFile);
+        } catch (IOException e) {
+            throw new OsirisException(e, "Unable to create temp file");
+        }
+        ITextRenderer renderer = new ITextRenderer();
+        XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
+        renderer.setDocumentFromString(htmlContent.replaceAll("\\p{C}", " ").replaceAll("&", "<![CDATA[&]]>"));
+        renderer.layout();
+        try {
+            renderer.createPDF(outputStream);
+            outputStream.close();
+        } catch (DocumentException | IOException e) {
+            throw new OsirisException(e, "Unable to create PDF file for order " + customerOrder.getId());
+        }
+        return tempFile;
+    }
+
     public File generateQuotationPdf(Quotation quotation) throws OsirisException {
         final Context ctx = new Context();
 

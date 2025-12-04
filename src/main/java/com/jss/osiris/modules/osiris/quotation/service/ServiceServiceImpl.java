@@ -700,6 +700,12 @@ public class ServiceServiceImpl implements ServiceService {
                             .equals(constantService.getAttachmentTypeQuotation().getId()))
                         attachments.add(attachment);
 
+        if (service.getAssoAffaireOrder() != null && service.getAssoAffaireOrder().getCustomerOrder() != null)
+            if (!service.getAssoAffaireOrder().getCustomerOrder().getAttachments().isEmpty())
+                for (Attachment attachment : service.getAssoAffaireOrder().getCustomerOrder().getAttachments())
+                    if (attachment.getAttachmentType().getId()
+                            .equals(constantService.getAttachmentTypePurchaseOrder().getId()))
+                        attachments.add(attachment);
         return attachments;
     }
 

@@ -601,7 +601,9 @@ public class MyJssQuotationController {
 
 		// Can only download invoice
 		if (attachment.getCustomerOrder() != null && !attachment.getAttachmentType().getId()
-				.equals(constantService.getAttachmentTypeInvoice().getId()))
+				.equals(constantService.getAttachmentTypeInvoice().getId())
+				&& !attachment.getAttachmentType().getId()
+						.equals(constantService.getAttachmentTypePurchaseOrder().getId()))
 			canDownload = false;
 
 		if (attachment.getProvision() != null && attachment.getProvision().getService() != null

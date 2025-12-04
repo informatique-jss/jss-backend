@@ -1104,7 +1104,8 @@ public class MailHelper {
         customerMailService.addMailToQueue(mail);
     }
 
-    public void sendCustomerOrderInProgressToCustomer(CustomerOrder customerOrder, boolean sendToMe)
+    public void sendCustomerOrderInProgressToCustomer(CustomerOrder customerOrder, boolean sendToMe,
+            List<Attachment> attachments)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         CustomerMail mail = new CustomerMail();
         mail.setCustomerOrder(customerOrder);
@@ -1113,6 +1114,21 @@ public class MailHelper {
         mail.setReplyTo(customerOrder.getResponsable().getSalesEmployee());
         mail.setSendToMe(sendToMe);
         mail.setMailComputeResult(mailComputeHelper.computeMailForCustomerOrderCreationConfirmation(customerOrder));
+
+        if (attachments != null && attachments.size() > 0) {
+            for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(attachments)) {
+                if (attachment.getAttachmentType() != null &&
+                        attachment.getAttachmentType().getId()
+                                .equals(constantService.getAttachmentTypePurchaseOrder().getId())
+                        && !Boolean.TRUE.equals(attachment.getIsDisabled())) {
+                    if (mail.getAttachments() == null)
+                        mail.setAttachments(new ArrayList<Attachment>());
+                    mail.getAttachments().add(attachment);
+                    break;
+                }
+            }
+        }
+
         mail.setSubject(
                 "Votre commande n°" + customerOrder.getId() + " - " + getCustomerOrderAffaireLabel(customerOrder, null)
                         + " est en cours de traitement");

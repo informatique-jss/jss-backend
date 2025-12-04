@@ -168,6 +168,8 @@ public interface ConstantService {
 
     public AttachmentType getAttachmentTypeApplicationCv() throws OsirisException;
 
+    public AttachmentType getAttachmentTypePurchaseOrder() throws OsirisException;
+
     public Country getCountryFrance() throws OsirisException;
 
     public Country getCountryMonaco() throws OsirisException;
