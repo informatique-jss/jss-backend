@@ -4,5 +4,6 @@ import com.jss.osiris.modules.osiris.quotation.model.AnnouncementNoticeTemplateF
 
 import com.jss.osiris.libs.QueryCacheCrudRepository;
 
-public interface AnnouncementNoticeTemplateFragmentRepository extends QueryCacheCrudRepository<AnnouncementNoticeTemplateFragment, Integer> {
+public interface AnnouncementNoticeTemplateFragmentRepository
+        extends QueryCacheCrudRepository<AnnouncementNoticeTemplateFragment, Integer> {
 }
