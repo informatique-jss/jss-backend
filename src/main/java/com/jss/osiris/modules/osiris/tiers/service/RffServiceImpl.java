@@ -104,6 +104,28 @@ public class RffServiceImpl implements RffService {
                     rff.setResponsableLabel(
                             rff.getResponsable().getFirstname() + " " + rff.getResponsable().getLastname());
                 rff.setResponsableId(rff.getResponsable().getId());
+
+                String iban = null;
+                String bic = null;
+                if (rff.getResponsable() != null &&
+                        rff.getResponsable().getRffBic() != null
+                        && rff.getResponsable().getRffIban() != null
+                        && rff.getResponsable().getRffBic().length() > 0
+                        && rff.getResponsable().getRffIban().length() > 0) {
+                    iban = rff.getResponsable().getRffIban();
+                    bic = rff.getResponsable().getRffBic();
+                } else if (rff.getTiers().getRffBic() != null
+                        && rff.getTiers().getRffIban() != null
+                        && rff.getTiers().getRffBic().length() > 0
+                        && rff.getTiers().getRffIban().length() > 0) {
+                    iban = rff.getTiers().getRffIban();
+                    bic = rff.getTiers().getRffBic();
+                }
+                if (iban != null && bic != null) {
+                    rff.setRffBic(bic);
+                    rff.setRffIban(iban);
+                    addOrUpdateRff(rff);
+                }
             }
         return rffs;
         /*
