@@ -243,9 +243,12 @@ public class ServiceServiceImpl implements ServiceService {
                 for (AssoServiceTypeDocument assoServiceTypeDocument : serviceType.getAssoServiceTypeDocuments()) {
                     AssoServiceDocument newAssoServiceDocument = getAssoServiceDocumentFromAssoServiceTypeDocument(
                             assoServiceTypeDocument, service);
+                    String docLabel = assoServiceTypeDocument.getTypeDocument().getCustomLabel() != null
+                            ? assoServiceTypeDocument.getTypeDocument().getCustomLabel()
+                            : assoServiceTypeDocument.getTypeDocument().getCode();
                     if (newAssoServiceDocument.getTypeDocument() != null
-                            && !typeDocumentCodes.contains(assoServiceTypeDocument.getTypeDocument().getCode())) {
-                        typeDocumentCodes.add(assoServiceTypeDocument.getTypeDocument().getCode());
+                            && !typeDocumentCodes.contains(docLabel)) {
+                        typeDocumentCodes.add(docLabel);
                         assoServiceDocuments.add(newAssoServiceDocument);
                     }
                 }
