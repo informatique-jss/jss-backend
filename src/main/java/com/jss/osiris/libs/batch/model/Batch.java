@@ -48,6 +48,7 @@ public class Batch implements IId, Serializable {
     public static String CLEAN_AUDIT = "CLEAN_AUDIT";
     public static String UPDATE_COMPETENT_AUTHORITY = "UPDATE_COMPETENT_AUTHORITY";
     public static String UPDATE_AFFAIRE_FROM_RNE = "UPDATE_AFFAIRE_FROM_RNE";
+    public static String UPDATE_NEW_AFFAIRE_FROM_RNE = "UPDATE_NEW_AFFAIRE_FROM_RNE";
     public static String AUTOMATCH_PAYMENT = "AUTOMATCH_PAYMENT";
     public static String SEND_BILLING_CLOSURE_RECEIPT = "SEND_BILLING_CLOSURE_RECEIPT";
     public static String REINDEX_DIRECT_DEBIT_BANK_TRANSFERT = "REINDEX_DIRECT_DEBIT_BANK_TRANSFERT";
