@@ -2323,6 +2323,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Scheduled(initialDelay = 100, fixedDelay = 5000)
     public void test() throws OsirisException {
-        kpiCrmService.computeKpiCrm(35);
+        kpiCrmService.computeKpiCrm(37);
     }
 }

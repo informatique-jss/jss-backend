@@ -126,4 +126,6 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
         @Query(nativeQuery = true, value = " delete from invoice where  id  in (select id from reprise_inpi_del)")
         void deleteDuplicateInvoices();
 
+        List<Invoice> findByInvoiceStatusAndResponsableIsNotNull(InvoiceStatus invoiceStatus);
+
 }

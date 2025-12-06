@@ -213,7 +213,7 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
 
     private String getAggregateString(String aggregateType) {
         if (aggregateType.equals(KpiCrm.AGGREGATE_TYPE_WEIGHTED_AVERAGE)) {
-            return "sum(value*weight)/sum(weight)";
+            return "ceil((sum(value*weight)/sum(weight))*100)/100";
         } else
             return "%s(value)".formatted(getSqlAggregateMethod(aggregateType));
     }

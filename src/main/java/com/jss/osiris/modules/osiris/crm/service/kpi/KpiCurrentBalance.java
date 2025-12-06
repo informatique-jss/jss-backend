@@ -211,7 +211,7 @@ public class KpiCurrentBalance implements IKpiThread {
 
     public List<KpiCrmValue> getKpiValuesForInvoice(KpiCrm kpiCrm) throws OsirisException {
         List<KpiCrmValue> newValues = new ArrayList<KpiCrmValue>();
-        List<Invoice> invoices = invoiceService.getInvoicesByStatus(constantService.getInvoiceStatusSend());
+        List<Invoice> invoices = invoiceService.getInvoicesByStatus(constantService.getInvoiceStatusSend(), true);
 
         if (invoices != null) {
             invoices.sort(new Comparator<Invoice>() {

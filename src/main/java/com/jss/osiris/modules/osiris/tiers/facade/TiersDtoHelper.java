@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.tiers.facade;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -100,6 +101,6 @@ public class TiersDtoHelper {
     private String getFormatedAggregatedValue(KpiCrm kpiCrm, BigDecimal value) {
         if (kpiCrm.getUnit() != null && kpiCrm.getUnit().equals("€"))
             return String.format("%,.2f €", value);
-        return value.toString();
+        return value.setScale(2, RoundingMode.HALF_EVEN).toString();
     }
 }
