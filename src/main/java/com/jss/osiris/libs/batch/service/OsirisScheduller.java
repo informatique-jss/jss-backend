@@ -343,11 +343,21 @@ public class OsirisScheduller {
 			batchService.declareNewBatch(Batch.UPDATE_COMPETENT_AUTHORITY, null);
 	}
 
-	@Scheduled(cron = "${schedulling.affaire.rne.update}")
+	@Scheduled(cron = "${schedulling.new.affaire.rne.update}")
+	private void updateNewAffaireFromRne() {
+		try {
+			if (nodeService.shouldIBatch())
+				batchService.declareNewBatch(Batch.UPDATE_NEW_AFFAIRE_FROM_RNE, 0);
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(initialDelay = 10000, fixedDelayString = "${schedulling.affaire.rne.update}")
 	private void updateAffaireFromRne() {
 		try {
 			if (nodeService.shouldIBatch())
-				affaireService.updateAffairesFromRne();
+				batchService.declareNewBatch(Batch.UPDATE_AFFAIRE_FROM_RNE, 0);
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}

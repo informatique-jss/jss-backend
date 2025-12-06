@@ -384,7 +384,19 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setFixedRate(1000);
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
-            batchSettings.setIsOnlyOneJob(true);
+            batchSettings.setIsOnlyOneJob(false);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.REFERENTIALS));
+            addOrUpdateBatchSettings(batchSettings);
+        }
+        if (getByCode(Batch.UPDATE_NEW_AFFAIRE_FROM_RNE) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.UPDATE_NEW_AFFAIRE_FROM_RNE);
+            batchSettings.setLabel("Mise à jour des nouvelles affaires depuis le RNE");
+            batchSettings.setFixedRate(1000);
+            batchSettings.setQueueSize(1);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
             batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.REFERENTIALS));
             addOrUpdateBatchSettings(batchSettings);

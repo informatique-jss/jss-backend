@@ -736,12 +736,6 @@ public class AffaireServiceImpl implements AffaireService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void updateAffairesFromRne() throws OsirisException, OsirisClientMessageException {
-        batchService.declareNewBatch(Batch.UPDATE_AFFAIRE_FROM_RNE, 1);
-    }
-
-    @Override
     public List<Affaire> searchAffaireForCorrection() {
         List<Affaire> affaires = affaireRepository.getAffairesForCorrection();
         if (affaires != null)
@@ -753,7 +747,7 @@ public class AffaireServiceImpl implements AffaireService {
 
     @Override
     @Transactional
-    public void updateAffaireFromRne()
+    public void updateNewAffaireFromRne()
             throws OsirisException, OsirisClientMessageException, OsirisDuplicateException {
 
         // Update and search new ones
@@ -790,47 +784,54 @@ public class AffaireServiceImpl implements AffaireService {
             }
             affaireRneUpdateHelper.updateAffairelastRneCheck(affaire);
         }
+    }
+
+    @Override
+    @Transactional
+    public void updateAffaireFromRne()
+            throws OsirisException, OsirisClientMessageException, OsirisDuplicateException {
 
         // Update existing ones
+        List<Affaire> affaires = null;
+        List<String> sirets = null;
+
         List<Affaire> affairesComplete = affaireRepository.getNextAffaireToUpdateForRne(LocalDate.now(),
-                LocalDate.now().minusYears(100));
+                LocalDate.now().minusYears(200));
 
-        while (affairesComplete.size() > 0) {
-            if (affairesComplete.size() > 100)
-                affaires = affairesComplete.subList(0, 100);
-            else
-                affaires = affairesComplete;
+        if (affairesComplete.size() > 100)
+            affaires = affairesComplete.subList(0, 100);
+        else
+            affaires = affairesComplete;
 
-            Set<Affaire> affaireToMarkAsChecked = new HashSet<Affaire>();
-            affaireToMarkAsChecked.addAll(affaires);
+        Set<Affaire> affaireToMarkAsChecked = new HashSet<Affaire>();
+        affaireToMarkAsChecked.addAll(affaires);
 
-            LocalDate minusDate = affaires.stream()
-                    .map(a -> (a.getLastRneUpdate() != null ? a.getLastRneUpdate() : LocalDate.now().minusYears(100)))
-                    .min(LocalDate::compareTo)
-                    .orElse(LocalDate.now().minusYears(100));
-            RneResult result = rneDelegateService.getCompanyModifiedForDay(minusDate, null,
-                    affaires.stream().map(a -> a.getSiren()).distinct().toList());
+        LocalDate minusDate = affaires.stream()
+                .map(a -> (a.getLastRneUpdate() != null ? a.getLastRneUpdate() : LocalDate.now().minusYears(100)))
+                .min(LocalDate::compareTo)
+                .orElse(LocalDate.now().minusYears(100));
+        RneResult result = rneDelegateService.getCompanyModifiedForDay(minusDate, null,
+                affaires.stream().map(a -> a.getSiren()).distinct().toList());
 
-            for (RneCompany company : result.getCompanies()) {
-                if (company.getSiren() != null) {
-                    sirets = getSiretsFromRneCompany(company, false);
-                    if (sirets != null)
-                        for (String siret : sirets) {
-                            Optional<Affaire> affaireWithSiret = affairesComplete.stream()
-                                    .filter(a -> a.getSiret() != null && a.getSiret().equals(siret)).findFirst();
-                            if (!affaireWithSiret.isEmpty()) {
-                                affaireToMarkAsChecked.add(affaireWithSiret.get());
-                                affaireRneUpdateHelper.updateAffaireFromRne(affaireWithSiret.get(), company);
-                            }
+        for (RneCompany company : result.getCompanies()) {
+            if (company.getSiren() != null) {
+                sirets = getSiretsFromRneCompany(company, false);
+                if (sirets != null)
+                    for (String siret : sirets) {
+                        Optional<Affaire> affaireWithSiret = affairesComplete.stream()
+                                .filter(a -> a.getSiret() != null && a.getSiret().equals(siret)).findFirst();
+                        if (!affaireWithSiret.isEmpty()) {
+                            affaireToMarkAsChecked.add(affaireWithSiret.get());
+                            affaireRneUpdateHelper.updateAffaireFromRne(affaireWithSiret.get(), company);
                         }
-                }
+                    }
             }
-
-            for (Affaire affaire : affaireToMarkAsChecked)
-                affaireRneUpdateHelper.updateAffairelastRneCheck(affaire);
-            affairesComplete = affaireRepository.getNextAffaireToUpdateForRne(LocalDate.now(),
-                    LocalDate.now().minusYears(100));
         }
+
+        for (Affaire affaire : affaireToMarkAsChecked)
+            affaireRneUpdateHelper.updateAffairelastRneCheck(affaire);
+        affairesComplete = affaireRepository.getNextAffaireToUpdateForRne(LocalDate.now(),
+                LocalDate.now().minusYears(100));
     }
 
     @Override
