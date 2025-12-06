@@ -106,6 +106,8 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("schedulling.log.purge");
         isOk = isOk && checkProperty("schedulling.batch.purge");
         isOk = isOk && checkProperty("schedulling.node.priority");
+        isOk = isOk && checkProperty("schedulling.new.affaire.rne.update");
+        isOk = isOk && checkProperty("schedulling.affaire.rne.update");
         isOk = isOk && checkProperty("mail.temporized.temporization.seconds");
         isOk = isOk && checkProperty("schedulling.log.osiris.customer.bilan.publication.reminder");
         isOk = isOk && checkProperty("schedulling.log.osiris.customer.missing.attachment.queries");
