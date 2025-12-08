@@ -32,7 +32,8 @@ public interface AffaireService {
 
         public List<Affaire> getAffairesFromRna(String rna) throws OsirisException, OsirisClientMessageException;
 
-        public void updateAffairesFromRne() throws OsirisException, OsirisClientMessageException;
+        public void updateNewAffaireFromRne()
+                        throws OsirisException, OsirisClientMessageException, OsirisDuplicateException;
 
         public void updateAffaireFromRne()
                         throws OsirisException, OsirisClientMessageException, OsirisDuplicateException;
