@@ -356,10 +356,10 @@
                         class="form-label">{{assoServiceFieldType.serviceFieldType.label}}</label>
                       <div>
                         <select id="text-select" class="form-select form-select-lg"
-                          [(ngModel)]="assoServiceFieldType.selectValue">
+                          [(ngModel)]="assoServiceFieldType.selectValue" [compareWith]="compareWithId">
                           <option
                             *ngFor="let option of assoServiceFieldType.serviceFieldType.serviceFieldTypePossibleValues"
-                            [value]="option">
+                            [ngValue]="option">
                             {{option.value}}</option>
                         </select>
                       </div>

@@ -242,6 +242,9 @@
   <button mat-menu-item *ngIf="currentProvisionWorkflow" (click)="generateAttachmentsMail()">
     <span>Envoyer des pièces jointes</span>
   </button>
+  <button mat-menu-item *ngIf="currentProvisionWorkflow" (click)="requestKbis()">
+    <span>Commander un KBis</span>
+  </button>
   <button mat-menu-item
     *ngIf="currentProvisionWorkflow && currentProvisionWorkflow.domiciliation && asso.customerOrder && asso.customerOrder.isRecurring"
     (click)="generateDomiciliationContract(currentProvisionWorkflow)">

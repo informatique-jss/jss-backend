@@ -16,8 +16,7 @@
         </td>
         <td>
           <select-employee [(model)]="employeesSelected" label="Collaborateur" [form]="kanbanForm"
-            propertyName="employeesSelected" [isMandatory]="false" [isDisabled]="false"
-            [filteredAdGroups]="[adGroupFormalistes, adGroupInsertions]"></select-employee>
+            propertyName="employeesSelected" [isMandatory]="false" [isDisabled]="false"></select-employee>
         </td>
         <td>
           <button mat-raised-button color="accent" (click)="assignNewCustomerOrder()">M'attribuer une nouvelle

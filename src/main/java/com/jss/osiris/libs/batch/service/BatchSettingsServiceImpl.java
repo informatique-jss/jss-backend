@@ -384,7 +384,19 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setFixedRate(1000);
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
-            batchSettings.setIsOnlyOneJob(true);
+            batchSettings.setIsOnlyOneJob(false);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.REFERENTIALS));
+            addOrUpdateBatchSettings(batchSettings);
+        }
+        if (getByCode(Batch.UPDATE_NEW_AFFAIRE_FROM_RNE) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.UPDATE_NEW_AFFAIRE_FROM_RNE);
+            batchSettings.setLabel("Mise à jour des nouvelles affaires depuis le RNE");
+            batchSettings.setFixedRate(1000);
+            batchSettings.setQueueSize(1);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
             batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.REFERENTIALS));
             addOrUpdateBatchSettings(batchSettings);
@@ -615,6 +627,18 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setIsOnlyOneJob(false);
             batchSettings.setMaxAddedNumberPerIteration(0);
             batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.MAILS));
+            addOrUpdateBatchSettings(batchSettings);
+        }
+        if (getByCode(Batch.ORDER_KBIS) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.ORDER_KBIS);
+            batchSettings.setLabel("Commande des Kbis");
+            batchSettings.setFixedRate(1000);
+            batchSettings.setQueueSize(1);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.INFOGREFFE));
             addOrUpdateBatchSettings(batchSettings);
         }
         if (getByCode(Batch.CREATE_ORDER_FROM_MAIL) == null) {

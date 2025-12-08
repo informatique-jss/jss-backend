@@ -8,6 +8,7 @@ import { ANNOUNCEMENT_PUBLISHED, ANNOUNCEMENT_STATUS_DONE, ANNOUNCEMENT_STATUS_I
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { WorkflowDialogComponent } from 'src/app/modules/miscellaneous/components/workflow-dialog/workflow-dialog.component';
 import { NotificationService } from 'src/app/modules/miscellaneous/services/notification.service';
+import { UploadAttachmentService } from 'src/app/modules/miscellaneous/services/upload.attachment.service';
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from 'src/app/services/habilitations.service';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
@@ -31,6 +32,7 @@ import { AssoAffaireOrderService } from '../../services/asso.affaire.order.servi
 import { DomiciliationStatusService } from '../../services/domiciliation-status.service';
 import { DomiciliationService } from '../../services/domiciliation.service';
 import { FormaliteStatusService } from '../../services/formalite.status.service';
+import { KbisRequestService } from '../../services/kbis.request.service';
 import { MissingAttachmentQueryService } from '../../services/missing-attachment-query.service';
 import { ProvisionService } from '../../services/provision.service';
 import { QuotationSearchResultService } from '../../services/quotation.search.result.service';
@@ -41,6 +43,7 @@ import { ProvisionItemComponent } from '../provision-item/provision-item.compone
 import { MissingAttachmentMailDialogComponent } from '../select-attachment-type-dialog/missing-attachment-mail-dialog.component';
 import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-dialog.component';
 import { SelectMultiServiceTypeDialogComponent } from '../select-multi-service-type-dialog/select-multi-service-type-dialog.component';
+import { SirenDialogComponent } from '../siren-dialog/siren-dialog.component';
 
 @Component({
   selector: 'provision',
@@ -82,10 +85,12 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     private appService: AppService,
     public confirmationDialog: MatDialog,
     public chooseCompetentAuthorityDialog: MatDialog,
+    private uploadAttachementService: UploadAttachmentService,
     public missingAttachmentMailDialog: MatDialog,
     public selectAttachmentTypeDialog: MatDialog,
     public attachmentsDialog: MatDialog,
     public selectServiceTypeDialog: MatDialog,
+    public sirenDialog: MatDialog,
     private constantService: ConstantService,
     private formaliteStatusService: FormaliteStatusService,
     private announcementService: AnnouncementService,
@@ -100,6 +105,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
     private habilitationService: HabilitationsService,
     private notificationService: NotificationService,
     private quotationSearchResultService: QuotationSearchResultService,
+    private kbisRequestService: KbisRequestService
   ) { }
 
   affaireForm = this.formBuilder.group({});
@@ -909,5 +915,43 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
 
   canDisplayNotifications() {
     return this.habilitationService.canDisplayNotifications();
+  }
+
+  requestKbis() {
+    if (!this.habilitationService.isAdministrator())
+      return;
+    const dialogRef = this.sirenDialog.open(SirenDialogComponent, {
+    });
+
+    dialogRef.componentInstance.label = "Saisissez le SIREN du KBis à commander";
+    dialogRef.componentInstance.title = "Commander un KBis";
+    dialogRef.componentInstance.siren = this.asso.affaire ? this.asso.affaire.siren : "";
+
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      if (dialogResult) {
+        this.kbisRequestService.getUpToDateKbisForSiren(dialogResult).subscribe(response => {
+          if (response) {
+            const confirmRef = this.confirmationDialog.open(ConfirmDialogComponent, {
+            });
+
+            confirmRef.componentInstance.title = "KBis existant";
+            confirmRef.componentInstance.content = "Un KBis valable est disponible. Souhaitez-vous le visualiser ou en commander un nouveau ?";
+            confirmRef.componentInstance.closeActionText = "Commander un KBis";
+            confirmRef.componentInstance.validationActionText = "Voir le KBis";
+
+            confirmRef.afterClosed().subscribe(confirm => {
+              if (confirm)
+                this.uploadAttachementService.downloadAttachment(response);
+              else
+                this.kbisRequestService.requestKbisForSiren(dialogResult, this.currentProvisionWorkflow!).subscribe();
+            })
+
+          } else {
+            this.kbisRequestService.requestKbisForSiren(dialogResult, this.currentProvisionWorkflow!).subscribe();
+          }
+        })
+      }
+    });
+
   }
 }

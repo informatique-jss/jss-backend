@@ -15,42 +15,42 @@
 
             <!-- TEXT -->
             <div>
-              <generic-input *ngIf="placeholder.dataType === SERVICE_FIELD_TYPE_TEXT" [(model)]="placeholder.label"
+              <generic-input *ngIf="placeholder.dataType === SERVICE_FIELD_TYPE_TEXT" [model]="placeholder.value"
                 [label]="placeholder.label" [form]="form" [propertyName]="placeholder.code + '_' + placeholder.id"
-                [isDisabled]="false" [isMandatory]="false" [maxLength]="255">
+                [isDisabled]="false" [isMandatory]="true" [maxLength]="255">
               </generic-input>
             </div>
 
             <!-- TEXTAREA -->
             <div>
-              <generic-textarea *ngIf="placeholder.dataType === SERVICE_FIELD_TYPE_TEXTAREA"
-                [(model)]="placeholder.value" [label]="placeholder.label" [form]="form"
-                [propertyName]="placeholder.code + '_' + placeholder.id" [isDisabled]="false" [isMandatory]="false">
+              <generic-textarea *ngIf="placeholder.dataType === SERVICE_FIELD_TYPE_TEXTAREA" [model]="placeholder.value"
+                [label]="placeholder.label" [form]="form" [propertyName]="placeholder.code + '_' + placeholder.id"
+                [isDisabled]="false" [isMandatory]="true">
               </generic-textarea>
             </div>
 
             <!-- DATE -->
             <div>
-              <generic-date-picker *ngIf="placeholder.dataType === SERVICE_FIELD_TYPE_DATE"
-                [(model)]="placeholder.value" [label]="placeholder.label" [form]="form"
-                [propertyName]="placeholder.code + '_' + placeholder.id" [isMandatory]="false" [isDisabled]="false">
+              <generic-date-picker *ngIf="placeholder.dataType === SERVICE_FIELD_TYPE_DATE" [model]="placeholder.value"
+                [label]="placeholder.label" [form]="form" [propertyName]="placeholder.code + '_' + placeholder.id"
+                [isMandatory]="true" [isDisabled]="false">
               </generic-date-picker>
             </div>
 
             <!-- INTEGER -->
             <div>
-              <generic-input *ngIf="placeholder.dataType === SERVICE_FIELD_TYPE_INTEGER" [(model)]="placeholder.value"
+              <generic-input *ngIf="placeholder.dataType === SERVICE_FIELD_TYPE_INTEGER" [model]="placeholder.value"
                 [label]="placeholder.label" [form]="form" [propertyName]="placeholder.code + '_' + placeholder.id"
-                [isMandatory]="false" [isDisabled]="false" type="number">
+                [isMandatory]="true" [isDisabled]="false" type="number">
               </generic-input>
             </div>
 
             <!-- SELECT -->
             <div>
               <select-value-service-field-type *ngIf="placeholder.dataType === SERVICE_FIELD_TYPE_SELECT"
-                [(model)]="placeholder.value" [label]="placeholder.label" [form]="form"
+                [model]="placeholder.value" [label]="placeholder.label" [form]="form"
                 [propertyName]="placeholder.code + '_' + placeholder.id" [serviceFieldType]="placeholder"
-                [isMandatory]="false" [isDisabled]="false">
+                [isMandatory]="true" [isDisabled]="false">
               </select-value-service-field-type>
             </div>
 
@@ -91,11 +91,9 @@
               <div class="col-12 mt-3" *ngIf="selections.length>1">
                 <select-announcement-notice-template-fragment [types]="selections" [(model)]="selectedFragments[i]"
                   (modelChange)="onFragmentSelectionChange($event, i)" label="Selectionner" [form]="form"
-                  [propertyName]="'select_'+selections[0].code"
-                  [isMandatory]="false"></select-announcement-notice-template-fragment>
+                  [propertyName]="'SELECT_'+selections[0].label" [isMandatory]="isRequired(selections)">
+                </select-announcement-notice-template-fragment>
               </div>
-
-
             </div>
 
             <!-- Loop over placeholder entries -->
@@ -120,47 +118,47 @@
 
                       <!-- TEXT -->
                       <generic-input *ngIf="placeholder.dataType === SERVICE_FIELD_TYPE_TEXT"
-                        [(model)]="placeholder.label"
+                        [model]="placeholder.value"
                         [label]="getFragmentInputLabel(placeholder, fragmentIndex, fragmentInstancesMap.get(selectedFragments[i]!.code)!)"
                         [form]="form"
                         [propertyName]="buildFormControlName(fragmentInstance.code, placeholder, fragmentIndex)"
-                        [isDisabled]="false" [isMandatory]="false" [maxLength]="255">
+                        [isDisabled]="false" [isMandatory]="true" [maxLength]="255">
                       </generic-input>
 
                       <!-- TEXTAREA -->
                       <generic-textarea *ngIf="placeholder.dataType === SERVICE_FIELD_TYPE_TEXTAREA"
-                        [(model)]="placeholder.value"
+                        [model]="placeholder.value"
                         [label]="getFragmentInputLabel(placeholder, fragmentIndex, fragmentInstancesMap.get(selectedFragments[i]!.code)!)"
                         [form]="form"
                         [propertyName]="buildFormControlName(fragmentInstance.code, placeholder, fragmentIndex)"
-                        [isDisabled]="false" [isMandatory]="false">
+                        [isDisabled]="false" [isMandatory]="true">
                       </generic-textarea>
 
                       <!-- DATE -->
                       <generic-date-picker *ngIf="placeholder.dataType === SERVICE_FIELD_TYPE_DATE"
-                        [(model)]="placeholder.value"
+                        [model]="placeholder.value"
                         [label]="getFragmentInputLabel(placeholder, fragmentIndex, fragmentInstancesMap.get(selectedFragments[i]!.code)!)"
                         [form]="form"
                         [propertyName]="buildFormControlName(fragmentInstance.code, placeholder, fragmentIndex)"
-                        [isMandatory]="false" [isDisabled]="false">
+                        [isMandatory]="true" [isDisabled]="false">
                       </generic-date-picker>
 
                       <!-- INTEGER -->
                       <generic-input *ngIf="placeholder.dataType === SERVICE_FIELD_TYPE_INTEGER"
-                        [(model)]="placeholder.value"
+                        [model]="placeholder.value"
                         [label]="getFragmentInputLabel(placeholder, fragmentIndex, fragmentInstancesMap.get(selectedFragments[i]!.code)!)"
                         [form]="form"
                         [propertyName]="buildFormControlName(fragmentInstance.code, placeholder, fragmentIndex)"
-                        [isDisabled]="false" type="number">
+                        [isMandatory]="true" [isDisabled]="false" type="number">
                       </generic-input>
 
                       <!-- SELECT -->
                       <select-value-service-field-type *ngIf="placeholder.dataType === SERVICE_FIELD_TYPE_SELECT"
-                        [(model)]="placeholder.value"
+                        [model]="placeholder.value" (onFormFocus)="setSelectedFragment(fragmentInstance.code)"
                         [label]="getFragmentInputLabel(placeholder, fragmentIndex, fragmentInstancesMap.get(selectedFragments[i]!.code)!)"
                         [form]="form" [serviceFieldType]="placeholder"
                         [propertyName]="buildFormControlName(fragmentInstance.code, placeholder, fragmentIndex)"
-                        [isMandatory]="false" [isDisabled]="false">
+                        [isMandatory]="true" [isDisabled]="false">
                       </select-value-service-field-type>
 
                       <!-- DEFAULT / UNKNOWN -->

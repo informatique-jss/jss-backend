@@ -29,6 +29,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.PhoneService;
+import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.AffaireSearch;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.AnnouncementStatus;
@@ -782,5 +783,10 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                     serviceService.populateTransientField(assoAffaireOrder.getServices());
             }
         return assoAffaireOrders;
+    }
+
+    @Override
+    public List<AssoAffaireOrder> getAssoAffaireOrderByAffaire(Affaire affaire) {
+        return assoAffaireOrderRepository.findByAffaire(affaire);
     }
 }

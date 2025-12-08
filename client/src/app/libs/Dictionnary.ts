@@ -146,6 +146,7 @@ export const Dictionnary = {
   "ORDER_ADD_COMMENT_MYJSS": "Nouveau commentaire client",
   "MODIFIED_QUOTATION": "Modification de commande liée à un devis",
   "ABANDONED_QUOTATION": "Devis abandonné par le client",
+  "PROVISION_ORDER_KBIS": "Nouveau KBis commandé",
 };
 
 

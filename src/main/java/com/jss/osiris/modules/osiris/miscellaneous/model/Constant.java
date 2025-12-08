@@ -446,6 +446,10 @@ public class Constant implements Serializable, IId {
 	@JoinColumn(name = "id_billing_type_supply_full_be_copy")
 	private BillingType billingTypeSupplyFullBeCopy;
 
+	@ManyToOne
+	@JoinColumn(name = "id_billing_type_kbis")
+	private BillingType billingTypeKbis;
+
 	@Column(length = 1000)
 	private String stringNantissementDepositFormeJuridiqueCode;
 	@Column(length = 1000)
@@ -3046,6 +3050,14 @@ public class Constant implements Serializable, IId {
 
 	public void setBillingTypeRedactedByJssFree(BillingType billingTypeRedactedByJssFree) {
 		this.billingTypeRedactedByJssFree = billingTypeRedactedByJssFree;
+	}
+
+	public BillingType getBillingTypeKbis() {
+		return billingTypeKbis;
+	}
+
+	public void setBillingTypeKbis(BillingType billingTypeKbis) {
+		this.billingTypeKbis = billingTypeKbis;
 	}
 
 }

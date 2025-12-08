@@ -455,6 +455,30 @@ export class RequiredInformationComponent implements OnInit {
       return;
     }
 
+    if (this.noticeTemplateService.getNoticeTemplateForm() && !this.noticeTemplateService.getNoticeTemplateForm()!.valid) {
+      let noticeTemplateForm = this.noticeTemplateService.getNoticeTemplateForm();
+      let invalidControls: string[] = [];
+      Object.keys(noticeTemplateForm!.controls).forEach(key => {
+        let control = noticeTemplateForm!.get(key);
+        if (control?.invalid) {
+          console.log(control);
+          let controlLabel: string = "";
+          if (control.errors!['notFilled']) {
+            for (let namePart of control.errors!['notFilled'].split('_')) {
+              if (!this.isOnlyUppercase(namePart)) {
+                controlLabel = namePart;
+                break;
+              }
+            }
+            invalidControls.push(" " + controlLabel);
+          }
+        }
+
+      });
+      this.appService.displayToast("Les éléments suivants doivent être remplis pour que l'annonce légale puisse être publiée : " + invalidControls, true, "Eléments manquants", invalidControls.length * 1000);
+      return;
+    }
+
     // move forward
     if (newServiceIndex >= this.quotation.assoAffaireOrders[newAssoIndex].services.length) {
       newAssoIndex = newAssoIndex + 1;
@@ -492,6 +516,10 @@ export class RequiredInformationComponent implements OnInit {
       this.selectedServiceIndex = newServiceIndex;
     }, 0);
   }
+
+  isOnlyUppercase = (value: string): boolean => {
+    return /^[A-Z]+$/.test(value);
+  };
 
   goBackQuotationModale(content: TemplateRef<any>) {
     if (this.goBackModalInstance) {

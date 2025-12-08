@@ -48,6 +48,7 @@ public class Batch implements IId, Serializable {
     public static String CLEAN_AUDIT = "CLEAN_AUDIT";
     public static String UPDATE_COMPETENT_AUTHORITY = "UPDATE_COMPETENT_AUTHORITY";
     public static String UPDATE_AFFAIRE_FROM_RNE = "UPDATE_AFFAIRE_FROM_RNE";
+    public static String UPDATE_NEW_AFFAIRE_FROM_RNE = "UPDATE_NEW_AFFAIRE_FROM_RNE";
     public static String AUTOMATCH_PAYMENT = "AUTOMATCH_PAYMENT";
     public static String SEND_BILLING_CLOSURE_RECEIPT = "SEND_BILLING_CLOSURE_RECEIPT";
     public static String REINDEX_DIRECT_DEBIT_BANK_TRANSFERT = "REINDEX_DIRECT_DEBIT_BANK_TRANSFERT";
@@ -79,6 +80,7 @@ public class Batch implements IId, Serializable {
     public static String UPDATE_BODACC_NOTICE = "UPDATE_BODACC_NOTICE";
     public static String UPDATE_BALO_NOTICE = "UPDATE_BALO_NOTICE";
     public static String UPDATE_JO_NOTICE = "UPDATE_JO_NOTICE";
+    public static String ORDER_KBIS = "ORDER_KBIS";
 
     @Id
     @SequenceGenerator(name = "batch_sequence", sequenceName = "batch_sequence", allocationSize = 1)
