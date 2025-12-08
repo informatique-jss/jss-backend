@@ -547,6 +547,22 @@ public class MyJssQuotationController {
 		return new ResponseEntity<Boolean>(false, HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/attachment/purchase-order")
+	public ResponseEntity<Attachment> getPurchaseOrderAttachment(@RequestParam Integer idCustomerOrder)
+			throws OsirisValidationException, OsirisException {
+
+		if (idCustomerOrder == null)
+			throw new OsirisValidationException("idCustomerOrder");
+
+		CustomerOrder customerOrder = customerOrderService.getCustomerOrder(idCustomerOrder);
+
+		if (customerOrder == null)
+			throw new OsirisValidationException("customerOrder");
+
+		return new ResponseEntity<Attachment>(attachmentService.getPurchaseOrderAttachment(customerOrder),
+				HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/service/delete")
 	public ResponseEntity<Boolean> deleteService(@RequestParam Integer idService)
 			throws OsirisValidationException {

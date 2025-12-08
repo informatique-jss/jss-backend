@@ -2321,45 +2321,24 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     public List<Attachment> generateCustomerOrderPurchasePdf(CustomerOrder customerOrder)
             throws OsirisClientMessageException,
             OsirisValidationException, OsirisDuplicateException, OsirisException {
-        Boolean hasMandatoryDocument = null;
-        Boolean hasMandatoryFieldType = null;
         File customerOrderPurchasePdf = null;
 
-        if (!customerOrder.getAssoAffaireOrders().isEmpty()) {
-            hasMandatoryDocument = customerOrder.getAssoAffaireOrders().stream()
-                    .filter(asso -> asso.getServices() != null)
-                    .flatMap(asso -> asso.getServices().stream())
-                    .anyMatch(service -> service.getAssoServiceDocuments() != null
-                            && !service.getAssoServiceDocuments().isEmpty()
-                            && service.getAssoServiceDocuments().stream()
-                                    .anyMatch(document -> document.getIsMandatory()));
-
-            hasMandatoryFieldType = customerOrder.getAssoAffaireOrders().stream()
-                    .filter(asso -> asso.getServices() != null)
-                    .flatMap(asso -> asso.getServices().stream())
-                    .anyMatch(service -> service.getAssoServiceFieldTypes() != null
-                            && !service.getAssoServiceFieldTypes().isEmpty()
-                            && service.getAssoServiceFieldTypes().stream()
-                                    .anyMatch(fieldType -> fieldType.getIsMandatory()));
-        }
-
-        if (hasMandatoryDocument || hasMandatoryFieldType)
-            customerOrderPurchasePdf = generatePdfDelegate.generationCustomerOrderPurchasePdf(customerOrder,
-                    hasMandatoryDocument, hasMandatoryFieldType);
+        customerOrderPurchasePdf = generatePdfDelegate.generationCustomerOrderPurchasePdf(customerOrder);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd HHmm");
-        List<Attachment> attachments = new ArrayList<Attachment>();
+        List<Attachment> purchaseOrderAttachments = new ArrayList<Attachment>();
         try {
             if (customerOrder != null && customerOrderPurchasePdf != null)
-                attachments = attachmentService.addAttachment(new FileInputStream(customerOrderPurchasePdf),
+                purchaseOrderAttachments = attachmentService.addAttachment(
+                        new FileInputStream(customerOrderPurchasePdf),
                         customerOrder.getId(), null,
                         CustomerOrder.class.getSimpleName(),
                         constantService.getAttachmentTypePurchaseOrder(),
-                        "Bon_De_Commande_" + customerOrder.getId() + "_" + formatter.format(LocalDateTime.now())
+                        "Purchase_Order_" + customerOrder.getId() + "_" + formatter.format(LocalDateTime.now())
                                 + ".pdf",
                         false, "Bon de commande n°" + customerOrder.getId(), null, null, null);
 
-            for (Attachment attachment : attachments)
+            for (Attachment attachment : purchaseOrderAttachments)
                 if (customerOrder != null && attachment.getDescription().contains(customerOrder.getId() + "")) {
                     attachment.setCustomerOrder(customerOrder);
                     attachmentService.addOrUpdateAttachment(attachment);
@@ -2371,6 +2350,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             if (customerOrderPurchasePdf != null)
                 customerOrderPurchasePdf.delete();
         }
-        return attachments;
+        return purchaseOrderAttachments;
     }
 }

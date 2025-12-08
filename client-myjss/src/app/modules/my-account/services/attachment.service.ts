@@ -30,4 +30,8 @@ export class AttachmentService extends AppRestService<Attachment> {
   updateAttachmentDocumentDate(idAttachment: number, attachmentDate: Date) {
     return this.get(new HttpParams().set("idAttachment", idAttachment).set("attachmentDate", formatDateIso(new Date(attachmentDate))), "attachment/update/date");
   }
+
+  getPurchaseOrderAttachment(idCustomerOrder: number) {
+    return this.get(new HttpParams().set("idCustomerOrder", idCustomerOrder), "attachment/purchase-order");
+  }
 }
