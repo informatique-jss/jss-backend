@@ -116,6 +116,9 @@ public class QuotationValidationHelper {
                                         && !validationHelper.validateSiren(
                                                         affaire.getSiren().toUpperCase().replaceAll(" ", "")))
                                 throw new OsirisValidationException("SIREN");
+                        if (affaire.getSiren() != null
+                                        && (affaire.getSiret() == null || affaire.getSiret().length() == 0))
+                                throw new OsirisValidationException("SIRET");
                         if (affaire.getSiret() != null
                                         && !validationHelper.validateSiret(
                                                         affaire.getSiret().toUpperCase().replaceAll(" ", "")))
