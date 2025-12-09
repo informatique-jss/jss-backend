@@ -1,10 +1,14 @@
-<div class="card " *ngIf="kpiCrm">
+<div class="card" *ngIf="kpiCrm">
   <div class="card-body">
+    @if(!hideIcon){
     <a (click)="displayDetails()" class="text-muted float-end mt-n1 fs-xl pointer"
       *ngIf="AGGREGATE_TYPE_LAST_VALUE!=kpiCrm.aggregateTypeForTimePeriod">
       <ng-icon name="tablerZoomScan" />
     </a>
-    <h5 [title]="kpiCrm.label" class="two-lines-ellipsis">{{ kpiCrm.label }}</h5>
+    }
+    <h5 [title]="kpiCrm.label"
+      [ngClass]="{'two-lines-ellipsis': titleNbLinesEllipsis == 2, 'one-lines-ellipsis': titleNbLinesEllipsis == 1}">
+      {{ kpiCrm.label }}</h5>
     <div class="d-flex align-items-center gap-2 my-3">
       <div class="avatar-md flex-shrink-0">
         <span class="avatar-title text-bg-primary rounded-circle fs-22">

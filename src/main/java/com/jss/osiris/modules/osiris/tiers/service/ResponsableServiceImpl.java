@@ -34,12 +34,14 @@ import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
+import com.jss.osiris.modules.osiris.tiers.facade.TiersDtoHelper;
 import com.jss.osiris.modules.osiris.tiers.model.IResponsableSearchResult;
 import com.jss.osiris.modules.osiris.tiers.model.KpiSearch;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.ResponsableSearch;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 import com.jss.osiris.modules.osiris.tiers.model.TiersSearch;
+import com.jss.osiris.modules.osiris.tiers.model.dto.ResponsableDto;
 import com.jss.osiris.modules.osiris.tiers.repository.ResponsableRepository;
 
 @Service
@@ -72,6 +74,9 @@ public class ResponsableServiceImpl implements ResponsableService {
     @Autowired
     KpiCrmValueService kpiCrmValueService;
 
+    @Autowired
+    TiersDtoHelper tiersDtoHelper;
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Responsable addOrUpdateResponsable(Responsable responsable) {
@@ -93,8 +98,10 @@ public class ResponsableServiceImpl implements ResponsableService {
     }
 
     @Override
-    public List<Responsable> getResponsablesByTiers(Tiers tiers) {
-        return responsableRepository.findByTiers(tiers);
+    public List<ResponsableDto> getResponsablesByTiers(Tiers tiers) {
+        List<Responsable> respos = responsableRepository.findByTiers(tiers);
+
+        return tiersDtoHelper.mapResponsables(respos);
     }
 
     @Override

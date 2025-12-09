@@ -22,6 +22,10 @@ export class EmployeeService extends AppRestService<Employee> {
     return this.get(new HttpParams(), "user");
   }
 
+  getEmployeeByName(employeeName: string) {
+    return this.get(new HttpParams().set("employeeName", employeeName), "employee/name");
+  }
+
   addOrUpdateEmployee(employee: Employee) {
     return this.addOrUpdate(new HttpParams(), "employee", employee, "Profil mis à jour" + ((employee.backups && employee.backups.length > 0) ? ". Bonnes vacances ! 😎" : ""), "Erreur lors de la mise à jour du profil");
   }

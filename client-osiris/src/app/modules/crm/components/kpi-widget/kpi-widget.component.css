@@ -8,6 +8,15 @@
   max-height: 3em;
 }
 
+.one-lines-ellipsis {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  max-height: 3em;
+}
 
 .h3-ellipsis {
   max-width: 80%;

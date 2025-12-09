@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.tiers.model.dto;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class ResponsableDto {
 
@@ -13,6 +14,11 @@ public class ResponsableDto {
     private String tiersCategory;
     private String responsableCategory;
     private String salesEmployee;
+    private String formalisteEmployee;
+
+    // Detailed informations
+    private String mail;
+    private List<String> phones;
 
     public String getFirstname() {
         return firstname;
@@ -84,6 +90,30 @@ public class ResponsableDto {
 
     public void setSalesEmployee(String salesEmployee) {
         this.salesEmployee = salesEmployee;
+    }
+
+    public String getMail() {
+        return mail;
+    }
+
+    public void setMail(String mail) {
+        this.mail = mail;
+    }
+
+    public String getFormalisteEmployee() {
+        return formalisteEmployee;
+    }
+
+    public void setFormalisteEmployee(String formalisteEmployee) {
+        this.formalisteEmployee = formalisteEmployee;
+    }
+
+    public List<String> getPhones() {
+        return phones;
+    }
+
+    public void setPhones(List<String> phones) {
+        this.phones = phones;
     }
 
 }

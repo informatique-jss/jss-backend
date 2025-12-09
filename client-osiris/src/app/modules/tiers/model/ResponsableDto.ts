@@ -8,5 +8,8 @@ export interface ResponsableDto {
   tiersCategory: string;
   responsableCategory: string;
   salesEmployee: string;
+  formalisteEmployee: string;
+  mail: string;
+  phones: string[];
 }
 

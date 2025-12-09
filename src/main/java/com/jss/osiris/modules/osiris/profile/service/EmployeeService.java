@@ -38,4 +38,6 @@ public interface EmployeeService {
     public List<Integer> getPotentialUserScope(Integer idMail);
 
     public boolean isCurrentUserHasAdGroup(ActiveDirectoryGroup adGroup);
+
+    public Employee getEmployeeByName(String name);
 }

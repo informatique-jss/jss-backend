@@ -72,11 +72,11 @@ export class ResponsableService extends AppRestService<Responsable> {
   }
 
   getResponsablesByTiers(idTiers: number) {
-    return this.getList(new HttpParams().set("idTiers", idTiers), "responsables");
+    return this.getList(new HttpParams().set("idTiers", idTiers), "responsables") as any as Observable<ResponsableDto[]>;
   }
 
   getResponsable(id: number) {
-    return this.getById("responsable", id);
+    return this.getById("responsable", id) as any as Observable<ResponsableDto>;
   }
 
   getResponsables(value: string): Observable<PagedContent<Responsable>> {

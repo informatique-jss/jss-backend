@@ -1,0 +1,17 @@
+<!-- input -->
+<div [formGroup]="formGroup" class="form-group">
+  <ng-autocomplete [data]="data" [searchKeyword]="searchKeyword" [placeholder]="label" [attr.name]="fieldName"
+    [initialValue]="selectedItem" (selected)='optionSelected($event)' (inputChanged)='onChangeSearch($event)'
+    [itemTemplate]="itemTemplate" [notFoundTemplate]="notFoundTemplate" [minQueryLength]="expectedMinLengthInput"
+    [debounceTime]="debounceTime" (scrolledToEnd)="fetchNextPage()" #autoComp [historyIdentifier]="fieldName"
+    historyHeading="Choix récents" [isLoading]="isLoading"></ng-autocomplete>
+
+  <ng-template #itemTemplate let-item>
+    <a [innerHTML]="displayLabel(item)"></a>
+  </ng-template>
+  <ng-template #notFoundTemplate let-notFound>
+    <div innerHTML="Aucun résultat trouvé"></div>
+  </ng-template>
+
+  <div class="invalid-feedback" *ngFor="let error of errors">{{error}}</div>
+</div>

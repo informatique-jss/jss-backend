@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
@@ -48,7 +47,7 @@ public class KpiCrmServiceImpl implements KpiCrmService {
 
     @Override
     public List<KpiCrm> getKpiCrms() {
-        return IterableUtils.toList(kpiCrmRepository.findAll());
+        return kpiCrmRepository.findAllByOrderByDisplayOrderAsc();
     }
 
     @Override

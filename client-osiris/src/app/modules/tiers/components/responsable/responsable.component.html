@@ -1,5 +1,5 @@
 <div class="container-fluid" *ngIf="responsable">
-  <app-page-title [title]=" responsable.firstname +' '+responsable.lastname" />
+  <responsable-header [responsable]="responsable" />
   <div class="row g-1">
     <div class="col-12">
       <div class="card  ">

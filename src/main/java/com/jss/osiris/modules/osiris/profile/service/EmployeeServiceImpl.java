@@ -69,6 +69,13 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    public Employee getEmployeeByName(String name) {
+        String[] employeeNames = name.split(" ");
+        return employeeRepository.findByFirstnameLikeIgnoreCaseAndLastnameLikeIgnoreCase(employeeNames[0],
+                employeeNames[employeeNames.length - 1]);
+    }
+
+    @Override
     public List<Employee> getEmployees() {
         return IterableUtils.toList(employeeRepository.findAll());
     }

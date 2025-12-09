@@ -49,6 +49,7 @@ import com.jss.osiris.modules.osiris.tiers.model.KpiSearch;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 import com.jss.osiris.modules.osiris.tiers.model.TiersSearch;
+import com.jss.osiris.modules.osiris.tiers.model.dto.TiersDto;
 import com.jss.osiris.modules.osiris.tiers.repository.TiersRepository;
 
 @Service
@@ -114,6 +115,27 @@ public class TiersServiceImpl implements TiersService {
             return tiersInstance;
         }
         return null;
+    }
+
+    @Override
+    @Transactional
+    public TiersDto getTiersDto(Integer id) {
+        Tiers foundTiers = getTiers(id);
+        return mapTiersToTiersDto(foundTiers);
+    }
+
+    private TiersDto mapTiersToTiersDto(Tiers tiers) {
+
+        TiersDto dto = new TiersDto();
+        dto.setAddress(tiers.getAddress());
+        dto.setAddress(tiers.getAddress());
+        dto.setAddress(tiers.getAddress());
+        dto.setAddress(tiers.getAddress());
+        dto.setAddress(tiers.getAddress());
+        dto.setAddress(tiers.getAddress());
+        dto.setAddress(tiers.getAddress());
+
+        return dto;
     }
 
     @Override

@@ -38,11 +38,16 @@ public class TiersFacade {
         return tiersDtoHelper.mapTiers(tiersService.searchForTiers(tiersSearch));
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public TiersDto getTiersDtoByTiersId(Integer idTiers) throws OsirisException {
+        return tiersDtoHelper.mapTiers(tiersService.getTiers(idTiers));
+    }
+
     public List<ResponsableDto> searchResponsable(ResponsableSearch responsableSearch) throws OsirisException {
         if (responsableSearch.getSalesEmployee() != null)
             responsableSearch
                     .setSalesEmployee(employeeService.getEmployee(responsableSearch.getSalesEmployee().getId()));
 
-        return tiersDtoHelper.mapResponsable(responsableService.searchForResponsable(responsableSearch));
+        return tiersDtoHelper.mapResponsables(responsableService.searchForResponsable(responsableSearch));
     }
 }

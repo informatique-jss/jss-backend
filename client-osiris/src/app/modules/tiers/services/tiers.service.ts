@@ -72,7 +72,7 @@ export class TiersService extends AppRestService<Tiers> {
   }
 
   getTiersById(id: number) {
-    return this.getById("tiers", id);
+    return this.getById("tiers/detail", id) as any as Observable<TiersDto>;
   }
 
   searchTiers(tiersSearch: TiersSearch) {
@@ -81,5 +81,12 @@ export class TiersService extends AppRestService<Tiers> {
 
   deleteTiers(tiers: Tiers) {
     return this.get(new HttpParams().set("idTiers", tiers.id), "tiers/delete", "Tiers supprimé avec succès");
+  }
+
+  printTiersLabel(idTiers: number, idResponsable: number | undefined | null) {
+    let params = new HttpParams().set("idTiers", idTiers);
+    if (idResponsable)
+      params = params.set("idResponsable", idResponsable);
+    return this.get(params, "label/print", "Etiquette imprimée");
   }
 }

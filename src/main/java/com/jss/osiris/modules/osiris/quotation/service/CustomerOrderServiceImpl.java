@@ -26,7 +26,6 @@ import org.springframework.data.domain.Sort.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,7 +60,6 @@ import com.jss.osiris.modules.myjss.wordpress.service.NewspaperService;
 import com.jss.osiris.modules.myjss.wordpress.service.PostService;
 import com.jss.osiris.modules.myjss.wordpress.service.SubscriptionService;
 import com.jss.osiris.modules.osiris.crm.model.Voucher;
-import com.jss.osiris.modules.osiris.crm.service.KpiCrmService;
 import com.jss.osiris.modules.osiris.crm.service.VoucherService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
@@ -2316,13 +2314,5 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                                 if (provision.getComplexity() != null && provision.getComplexity() < complexity)
                                     complexity = provision.getComplexity();
         return complexity;
-    }
-
-    @Autowired
-    KpiCrmService kpiCrmService;
-
-    @Scheduled(initialDelay = 100, fixedDelay = 5000)
-    public void test() throws OsirisException {
-        kpiCrmService.computeKpiCrm(40);
     }
 }

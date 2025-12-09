@@ -66,6 +66,9 @@ public class KpiCrm implements Serializable, IId {
     @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
     private Boolean isPositiveEvolutionGood;
 
+    @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
+    private Boolean isToDisplayTiersMainPage;
+
     public Integer getId() {
         return id;
     }
@@ -190,4 +193,11 @@ public class KpiCrm implements Serializable, IId {
         this.aggregateTypeForTimePeriod = aggregateTypeForTimePeriod;
     }
 
+    public Boolean getIsToDisplayTiersMainPage() {
+        return isToDisplayTiersMainPage;
+    }
+
+    public void setIsToDisplayTiersMainPage(Boolean isToDisplayTiersMainPage) {
+        this.isToDisplayTiersMainPage = isToDisplayTiersMainPage;
+    }
 }

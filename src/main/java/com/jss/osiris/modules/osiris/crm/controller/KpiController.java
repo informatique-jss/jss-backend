@@ -41,7 +41,7 @@ public class KpiController {
         EmployeeService employeeService;
 
         @GetMapping(inputEntryPoint + "/kpis-crm")
-        public ResponseEntity<List<KpiCrm>> getCustomerMailByConfrere()
+        public ResponseEntity<List<KpiCrm>> getAllKpisCrm()
                         throws OsirisValidationException, OsirisException {
                 return new ResponseEntity<List<KpiCrm>>(kpiCrmService.getKpiCrms(), HttpStatus.OK);
         }

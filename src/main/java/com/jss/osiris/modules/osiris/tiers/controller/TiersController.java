@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.PrintDelegate;
 import com.jss.osiris.libs.TiersValidationHelper;
@@ -23,7 +22,6 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
-import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingRepairHelper;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
@@ -636,15 +634,19 @@ public class TiersController {
    * |============================================================================
    */
 
+  @GetMapping(inputEntryPoint + "/tiers/detail")
+  public ResponseEntity<TiersDto> getTiersDtoById(@RequestParam Integer id) throws OsirisException {
+    return new ResponseEntity<TiersDto>(tiersFacade.getTiersDtoByTiersId(id), HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/responsables")
-  @JsonView(JacksonViews.OsirisListView.class)
-  public ResponseEntity<List<Responsable>> getResponsablesByTiers(@RequestParam Integer idTiers) {
+  public ResponseEntity<List<ResponsableDto>> getResponsablesByTiers(@RequestParam Integer idTiers) {
 
     if (tiersService.getTiers(idTiers) == null) {
-      return new ResponseEntity<List<Responsable>>(new ArrayList<>(), HttpStatus.OK);
+      return new ResponseEntity<List<ResponsableDto>>(new ArrayList<>(), HttpStatus.OK);
     }
 
-    return new ResponseEntity<List<Responsable>>(
+    return new ResponseEntity<List<ResponsableDto>>(
         responsableService.getResponsablesByTiers(tiersService.getTiers(idTiers)), HttpStatus.OK);
   }
 

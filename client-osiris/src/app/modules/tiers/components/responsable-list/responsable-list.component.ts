@@ -83,7 +83,7 @@ export class ResponsableListComponent extends GenericListComponent<ResponsableDt
 
     this.eventOnClickOpenAction.subscribe((row: Row<ResponsableDto>[]) => {
       this.responsableService.setSelectedResponsableUnique(row[0].original);
-      this.router.navigate(['responsable/view/' + row[0].original.id]);
+      this.router.navigate(['tiers/view/' + row[0].original.tiersId + '/responsable/' + row[0].original.id]);
     });
     this.eventOnClickOpenTiersAction.subscribe((row: Row<ResponsableDto>[]) => {
       this.responsableService.setSelectedResponsableUnique(row[0].original);

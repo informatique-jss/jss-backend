@@ -21,6 +21,8 @@ export class KpiWidgetComponent implements OnInit {
 
   @Input() kpiCrm!: KpiCrm;
   @Input() searchModel!: KpiCrmSearchModel;
+  @Input() hideIcon: boolean = false;
+  @Input() titleNbLinesEllipsis: number = 2;
   value: number = 0;
   valueN1: number = 0;
   valueN2: number = 0;
