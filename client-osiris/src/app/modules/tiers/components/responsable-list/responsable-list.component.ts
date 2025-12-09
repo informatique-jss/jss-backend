@@ -14,9 +14,9 @@ import { GenericTableAction } from '../../../../libs/generic-list/GenericTableAc
 import { GenericTableColumn } from '../../../../libs/generic-list/GenericTableColumn';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { TanstackTableComponent } from '../../../../libs/tanstack-table/tanstack-table.component';
+import { KpiCrm } from '../../../crm/model/KpiCrm';
 import { KpiCrmService } from '../../../crm/services/kpi.crm.service';
 import { PageTitleComponent } from '../../../main/components/page-title/page-title.component';
-import { KpiCrm } from '../../../main/model/KpiCrm';
 import { AppService } from '../../../main/services/app.service';
 import { RestUserPreferenceService } from '../../../main/services/rest.user.preference.service';
 import { GenericFormComponent } from '../../../miscellaneous/forms/components/generic-form/generic-form.component';

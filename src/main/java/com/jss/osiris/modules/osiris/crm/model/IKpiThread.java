@@ -41,6 +41,10 @@ public interface IKpiThread {
 
     public String getGraphType();
 
+    public String getKpiCrmCategoryCode();
+
+    public Integer getDisplayOrder();
+
     public String getUnit();
 
     public String getIcon();

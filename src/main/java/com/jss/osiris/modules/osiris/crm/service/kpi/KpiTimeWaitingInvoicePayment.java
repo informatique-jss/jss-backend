@@ -12,6 +12,7 @@ import com.jss.osiris.libs.audit.service.AuditService;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.crm.model.IKpiThread;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrm;
+import com.jss.osiris.modules.osiris.crm.model.KpiCrmCategory;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrmValue;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmService;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmValueService;
@@ -168,5 +169,15 @@ public class KpiTimeWaitingInvoicePayment implements IKpiThread {
 
             kpiCrmService.saveValuesForKpiAndDay(kpiCrm, newValues);
         }
+    }
+
+    @Override
+    public String getKpiCrmCategoryCode() {
+        return KpiCrmCategory.ACCOUNTING;
+    }
+
+    @Override
+    public Integer getDisplayOrder() {
+        return null;
     }
 }

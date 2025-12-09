@@ -11,12 +11,14 @@ import { GenericForm } from '../../../../libs/generic-list/GenericForm';
 import { GenericSearchForm } from '../../../../libs/generic-list/GenericSearchForm';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { PageTitleComponent } from '../../../main/components/page-title/page-title.component';
-import { KpiCrm } from '../../../main/model/KpiCrm';
 import { RestUserPreferenceService } from '../../../main/services/rest.user.preference.service';
 import { GenericFormComponent } from '../../../miscellaneous/forms/components/generic-form/generic-form.component';
 import { ResponsableService } from '../../../tiers/services/responsable.service';
 import { TiersService } from '../../../tiers/services/tiers.service';
+import { KpiCrm } from '../../model/KpiCrm';
+import { KpiCrmCategory } from '../../model/KpiCrmCategory';
 import { KpiCrmSearchModel } from '../../model/KpiCrmSearchModel';
+import { KpiCrmCategoryService } from '../../services/kpi.crm.category.service';
 import { KpiCrmService } from '../../services/kpi.crm.service';
 import { KpiCrmValueService } from '../../services/kpi.crm.value.service';
 import { KpiWidgetComponent } from '../kpi-widget/kpi-widget.component';
@@ -42,6 +44,8 @@ export class CrmComponent implements OnInit {
   screenCode = 'KPI_CRM';
 
   selectedKpiCrm: KpiCrm | undefined;
+  selectedKpiCrmCategory: KpiCrmCategory | undefined;
+  kpiCrmCategories: KpiCrmCategory[] = [];
   isLoading = true;
   series: any[] = [];
   searchModel: KpiCrmSearchModel = {
@@ -61,6 +65,7 @@ export class CrmComponent implements OnInit {
   Validators = Validators;
   forms: GenericSearchForm<any>[] = [];
   kpiCrms: KpiCrm[] | undefined;
+  selectedKpiCode: string | undefined;
 
   constructor(
     private offcanvasService: NgbOffcanvas,
@@ -70,11 +75,13 @@ export class CrmComponent implements OnInit {
     private tiersService: TiersService,
     private kpiCrmService: KpiCrmService,
     private responsableService: ResponsableService,
-    private activeRoute: ActivatedRoute
+    private activeRoute: ActivatedRoute,
+    private kpiCrmCategoryService: KpiCrmCategoryService,
   ) { }
 
   ngOnInit() {
     this.searchForm = this.formBuilder.group({});
+    this.selectedKpiCode = this.activeRoute.snapshot.params["kpiCode"];
     this.searchForm.valueChanges.subscribe(res => this.isLoading = false);
     this.forms = [{
       accessorKey: "startDateKpis",
@@ -134,8 +141,27 @@ export class CrmComponent implements OnInit {
       }
     }
 
+
+
     this.kpiCrmService.getKpiCrm().subscribe(kpiCrms => {
       this.kpiCrms = kpiCrms;
+
+      this.kpiCrmCategoryService.getKpiCrmCategories().subscribe(response => {
+        this.kpiCrmCategories = response;
+        if (!this.selectedKpiCrmCategory)
+          if (!this.selectedKpiCode)
+            this.selectCategory(this.kpiCrmCategories[0]);
+          else
+            for (let k of kpiCrms) {
+              if (k.code == this.selectedKpiCode) {
+                this.selectedKpiCrm = k;
+                for (let c of this.kpiCrmCategories)
+                  if (c.code == k.kpiCrmCategory.code)
+                    this.selectCategory(c, false);
+              }
+            }
+      })
+
       if (this.loadBookarks) {
         this.restUserPreferenceService.getUserPreferenceValue(this.screenCode).subscribe(response => {
           if (response) {
@@ -167,20 +193,20 @@ export class CrmComponent implements OnInit {
         return;
 
       this.isLoading = true;
+      if (this.selectedKpiCrm)
+        this.displayDetails(this.selectedKpiCrm);
       this.restUserPreferenceService.setUserPreference(JSON.stringify(this.searchModel), this.screenCode).subscribe();
       if (content)
         this.offcanvasService.dismiss(content);
-      if (this.kpiCrms) {
-        if (!this.selectedKpiCrm)
-          this.displayDetails(this.kpiCrms[0]);
-      }
     }
   }
 
-  displayDetails(kpiCrm: KpiCrm) {
+  displayDetails(kpiCrm: KpiCrm | undefined) {
     this.selectedKpiCrm = kpiCrm;
-    if (!this.searchModel.startDateKpis || !this.searchModel.endDateKpis || !this.selectedKpiCrm)
+    if (!this.searchModel.startDateKpis || !this.searchModel.endDateKpis || !this.selectedKpiCrm) {
+      this.series = [];
       return;
+    }
 
     this.restUserPreferenceService.setUserPreference(JSON.stringify(this.searchModel), this.screenCode).subscribe();
     this.series = [];
@@ -222,5 +248,16 @@ export class CrmComponent implements OnInit {
     this.searchModel.kpiScale = scale;
     if (this.selectedKpiCrm)
       this.displayDetails(this.selectedKpiCrm);
+  }
+
+  selectCategory(category: KpiCrmCategory, selectFirstKpi = true) {
+    this.selectedKpiCrmCategory = category;
+    if (this.kpiCrms && selectFirstKpi)
+      for (let kpiCrm of this.kpiCrms)
+        if (kpiCrm && kpiCrm.kpiCrmCategory && kpiCrm.kpiCrmCategory.id == category.id) {
+          this.displayDetails(kpiCrm);
+          return;
+        }
+    this.displayDetails(this.selectedKpiCrm);
   }
 }

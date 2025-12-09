@@ -4,7 +4,7 @@ import { CountUpModule } from 'ngx-countup';
 import { AGGREGATE_TYPE_LAST_VALUE } from '../../../../libs/Constants';
 import { copyObject } from '../../../../libs/GenericHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
-import { KpiCrm } from '../../../main/model/KpiCrm';
+import { KpiCrm } from '../../model/KpiCrm';
 import { KpiCrmSearchModel } from '../../model/KpiCrmSearchModel';
 import { KpiCrmValueService } from '../../services/kpi.crm.value.service';
 

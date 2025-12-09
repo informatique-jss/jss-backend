@@ -1,18 +1,24 @@
 <div class="container-fluid">
   <app-page-title title="CRM" />
+  @if(kpiCrmCategories){
   <div class="row g-1">
     <div class="card analytic-card">
       <div class="card-body p-0">
         <div class="row g-0">
           <div class="col-12 ">
-            <div class="card-header justify-content-between ">
-
+            <div class="card-header  " style="border-bottom-style: solid;">
+              @for(category of kpiCrmCategories; track $index){
+              <a helper-text class="badge  fs-xs fw-semibold p-1 pointer"
+                [ngClass]="selectedKpiCrmCategory &&  category.id == selectedKpiCrmCategory.id ? 'text-bg-primary':'text-bg-light'"
+                (click)="selectCategory(category)">{{category.label}}</a>
+              }
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+  }
   <div class="row g-1" *ngIf="selectedKpiCrm && series && series.length>0">
     <div class="card analytic-card">
       <div class="card-body p-0">
@@ -53,7 +59,9 @@
 
   <div class="row row-cols-xxl-7 row-cols-md-4 row-cols-3 align-items-center">
     @for (kpiCrm of kpiCrms; track $index) {
-    @if(isLoading && searchModel && searchModel.startDateKpis && searchModel.endDateKpis) {
+    @if(isLoading && searchModel && searchModel.startDateKpis && searchModel.endDateKpis && selectedKpiCrmCategory &&
+    kpiCrm.kpiCrmCategory &&
+    selectedKpiCrmCategory.id == kpiCrm.kpiCrmCategory.id) {
     <div class="col">
       <kpi-widget [kpiCrm]="kpiCrm" [searchModel]="searchModel" (onDisplayDetails)="displayDetails(kpiCrm)" />
     </div>
