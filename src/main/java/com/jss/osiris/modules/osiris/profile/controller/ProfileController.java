@@ -160,6 +160,11 @@ public class ProfileController {
 		return new ResponseEntity<List<Employee>>(employeeService.getEmployees(), HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/employee/name")
+	public ResponseEntity<Employee> getEmployeeByName(@RequestParam String employeeName) {
+		return new ResponseEntity<Employee>(employeeService.getEmployeeByName(employeeName), HttpStatus.OK);
+	}
+
 	@PostMapping(inputEntryPoint + "/employee")
 	public ResponseEntity<Employee> addOrUpdateEmployee(
 			@RequestBody Employee employee) throws OsirisValidationException, OsirisException {

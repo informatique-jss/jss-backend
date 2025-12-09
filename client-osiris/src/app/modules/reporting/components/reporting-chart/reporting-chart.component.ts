@@ -4,9 +4,9 @@ import { EChartsOption } from 'echarts';
 import { provideEchartsCore } from 'ngx-echarts';
 import { EchartComponent } from '../../../../libs/echart/echart.component';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { TanstackTableComponent } from '../../../../libs/tanstack-table/tanstack-table.component';
 import { ReportingWidget } from '../../model/ReportingWidget';
 import { ReportingWidgetService } from '../../services/reporting-widget.service';
-import { TanstackTableComponent } from '../tanstack-table/tanstack-table.component';
 import { echarts } from './echarts-config';
 
 @Component({

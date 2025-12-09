@@ -2,27 +2,28 @@ package com.jss.osiris.modules.osiris.crm.service;
 
 import java.util.List;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jss.osiris.libs.exception.OsirisException;
-import com.jss.osiris.modules.osiris.crm.dto.KpiWidgetDto;
+import com.jss.osiris.modules.osiris.crm.model.IKpiThread;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrm;
+import com.jss.osiris.modules.osiris.crm.model.KpiCrmValue;
 
 public interface KpiCrmService {
+    public void computeKpis() throws OsirisException;
 
-    public KpiCrm getKpiCrmByCode(String code);
+    List<KpiCrm> getKpiCrms();
 
-    public KpiCrm getKpiCrmById(Integer id);
+    /**
+     * Method called by batch to persist the KpiValues of a KpiCrm
+     * 
+     * @throws OsirisException
+     */
+    void computeKpiCrm(Integer kpiCrmId) throws OsirisException;
 
-    public void computeKpiCrm(Integer kpiCrmId);
+    KpiCrm getKpiCrm(Integer id);
 
-    public List<KpiCrm> getKpiCrms();
+    void saveValuesForKpiAndDay(KpiCrm kpiCrm, List<KpiCrmValue> values);
 
-    public String getKpiValues(Integer kpiCrmId, String timeScale, List<Integer> responsablesIds)
-            throws JsonProcessingException;
+    KpiCrm getKpiCrmByCode(String code);
 
-    public void startComputeBatches() throws OsirisException;
-
-    public List<KpiWidgetDto> getKpiCrmWidget(String displayedPageCode, String timescale, List<Integer> responsables);
-
-    public List<KpiCrm> getKpiCrmsByDisplayedPageCode(String displayedPageCode);
+    IKpiThread getKpiThread(KpiCrm kpiCrm);
 }

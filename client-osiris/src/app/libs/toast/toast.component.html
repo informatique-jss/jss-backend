@@ -1,0 +1,8 @@
+@for( toast of toasts; track $index){
+<ngb-toast class="fade" role="alert" [delay]="toast.delay ? toast.delay : 5000">
+  <ng-template ngbToastHeader>
+    <strong class="me-auto text-body">{{toast.title}}</strong>
+  </ng-template>
+  {{toast.message}}
+</ngb-toast>
+}

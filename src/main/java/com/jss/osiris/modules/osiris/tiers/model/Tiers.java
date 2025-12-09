@@ -2,6 +2,7 @@ package com.jss.osiris.modules.osiris.tiers.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -42,6 +43,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -267,6 +269,9 @@ public class Tiers implements IAttachment, IId {
 	private Integer newIdAs400;
 
 	private Boolean isNewTiers;
+
+	@Transient
+	private HashMap<String, BigDecimal> kpiValues;
 
 	public List<Competitor> getCompetitors() {
 		return competitors;
@@ -688,6 +693,14 @@ public class Tiers implements IAttachment, IId {
 
 	public void setIsNewTiers(Boolean isNewTiers) {
 		this.isNewTiers = isNewTiers;
+	}
+
+	public HashMap<String, BigDecimal> getKpiValues() {
+		return kpiValues;
+	}
+
+	public void setKpiValues(HashMap<String, BigDecimal> kpiValues) {
+		this.kpiValues = kpiValues;
 	}
 
 }

@@ -35,5 +35,13 @@ export class TopbarComponent {
     }
   }
 
+  toggleTheme() {
+    if (this.layout.theme === 'light') {
+      this.layout.setTheme('dark')
+    } else {
+      this.layout.setTheme('light')
+    }
+  }
+
   Search = Search;
 }

@@ -1,0 +1,39 @@
+<!-- input -->
+<div [formGroup]="formGroup" class="form-group" *ngIf="type=='input'">
+  <label [for]="fieldName" class="form-label">{{ label }}</label>
+  <input [id]="fieldName" [ngClass]="{'is-invalid':errors && errors.length>0}" [formControlName]="fieldName"
+    class="form-control" [type]="inputType" />
+  <div class="invalid-feedback" *ngFor="let error of errors">{{error}}</div>
+</div>
+<!-- min max input -->
+<div [formGroup]="formGroup" class="form-group" *ngIf="type=='minmax'">
+  <label [for]="minKey" class="form-label">{{ label }}</label>
+  <div class="row">
+    <div class="col-6">
+      <input [id]="minKey" [ngClass]="{'is-invalid':errors && errors.length>0}" [formControlName]="minKey"
+        class="form-control" type="number" placeholder="Min" />
+    </div>
+    <div class="col-6">
+      <input [id]="maxKey" [ngClass]="{'is-invalid':errors && errors.length>0}" [formControlName]="maxKey"
+        class="form-control" type="number" placeholder="Max" />
+    </div>
+  </div>
+  <div class="invalid-feedback" *ngFor="let error of errors">{{error}}</div>
+</div>
+<!-- switch -->
+<div [formGroup]="formGroup" class="form-check form-switch" *ngIf="type=='switch'">
+  <input type="checkbox" class="form-check-input" [id]="fieldName" [formControlName]="fieldName">
+  <label class="form-check-label" [for]="fieldName">{{ label }}</label>
+</div>
+<!-- select -->
+<div [formGroup]="formGroup" class="form-group" *ngIf="type=='select'">
+  <label [for]="fieldName" class="form-label">{{ label }}</label>
+  <select [id]="fieldName" [ngClass]="{'is-invalid':errors && errors.length>0}" class="form-select"
+    [compareWith]="compareById" [formControlName]="fieldName">
+    <option ngValue="">Selectionnez</option>
+    @for (selectValue of selectValues; track selectValue.id) {
+    <option [ngValue]="selectValue">{{displayLabel(selectValue, selectType)}}</option>
+    }
+  </select>
+  <div class="invalid-feedback" *ngFor="let error of errors">{{error}}</div>
+</div>

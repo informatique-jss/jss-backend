@@ -18,6 +18,7 @@ import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.libs.mail.IndexationMailService;
 import com.jss.osiris.libs.node.service.NodeService;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingRecordService;
+import com.jss.osiris.modules.osiris.crm.service.KpiCrmCategoryService;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmService;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
@@ -142,6 +143,9 @@ public class OsirisScheduller {
 
 	@Autowired
 	IncidentReportStatusService incidentReportStatusService;
+
+	@Autowired
+	KpiCrmCategoryService kpiCrmCategoryService;
 
 	@Autowired
 	KpiCrmService kpiCrmService;
@@ -505,6 +509,7 @@ public class OsirisScheduller {
 			assignationTypeService.updateAssignationTypes();
 			provisionScreenTypeService.updateScreenTypes();
 			incidentReportStatusService.updateStatusReferential();
+			kpiCrmCategoryService.updateCategoryReferential();
 
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
@@ -570,7 +575,7 @@ public class OsirisScheduller {
 	@Scheduled(cron = "${schedulling.kpi.crm.compute}")
 	private void updateKpiCrms() {
 		try {
-			kpiCrmService.startComputeBatches();
+			kpiCrmService.computeKpis();
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}
