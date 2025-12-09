@@ -9,6 +9,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.jss.osiris.modules.osiris.accounting.service.AccountingAccountHelper;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrm;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
@@ -128,13 +129,18 @@ public class TiersDtoHelper {
         tiersDto.setCompetitors(
                 tiers.getCompetitors() != null ? tiers.getCompetitors().stream().map(Competitor::getLabel).toList()
                         : null);
-        tiersDto.setAccountingAccountCustomer(
-                tiers.getAccountingAccountCustomer() != null ? tiers.getAccountingAccountCustomer().getLabel() : null);
-        if (tiers.getAccountingAccountCustomer().getPrincipalAccountingAccount() != null) {
 
+        if (tiers.getAccountingAccountCustomer() != null
+                && tiers.getAccountingAccountCustomer().getPrincipalAccountingAccount() != null) {
+            tiersDto.setAccountingAccountCustomer(tiers.getAccountingAccountCustomer().getLabel() + " - " +
+                    AccountingAccountHelper.computeAccountingAccountNumber(tiers.getAccountingAccountCustomer()));
         }
-        tiersDto.setAccountingAccountDeposit(
-                tiers.getAccountingAccountDeposit() != null ? tiers.getAccountingAccountDeposit().getLabel() : null);
+
+        if (tiers.getAccountingAccountDeposit() != null
+                && tiers.getAccountingAccountDeposit().getPrincipalAccountingAccount() != null) {
+            tiersDto.setAccountingAccountDeposit(tiers.getAccountingAccountDeposit().getLabel() + " - " +
+                    AccountingAccountHelper.computeAccountingAccountNumber(tiers.getAccountingAccountDeposit()));
+        }
 
         return tiersDto;
     }
