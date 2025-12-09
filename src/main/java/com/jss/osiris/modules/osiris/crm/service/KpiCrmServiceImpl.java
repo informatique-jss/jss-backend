@@ -130,25 +130,23 @@ public class KpiCrmServiceImpl implements KpiCrmService {
     private void createPartitionsIfNotExist(KpiCrm kpiCrm) {
         String tableIdPartitionName = "kpi_crm_value_kpi_" + kpiCrm.getId();
 
-        if (kpiCrm.getLastUpdate() == null) {
-            em.createNativeQuery(
-                    "CREATE TABLE IF NOT EXISTS " + tableIdPartitionName + " PARTITION OF kpi_crm_value FOR VALUES IN ("
-                            + kpiCrm.getId() + ") PARTITION BY RANGE (value_date)")
-                    .executeUpdate();
+        em.createNativeQuery(
+                "CREATE TABLE IF NOT EXISTS " + tableIdPartitionName + " PARTITION OF kpi_crm_value FOR VALUES IN ("
+                        + kpiCrm.getId() + ") PARTITION BY RANGE (value_date)")
+                .executeUpdate();
 
-            // Creating the past tables until thisYear-1
-            for (int year = 2023; year < LocalDate.now().getYear(); year++) {
-                for (int month = 1; month <= 12; month++) {
-                    createDatePartition(tableIdPartitionName, year, month);
-                }
+        // Creating the past tables until thisYear-1
+        for (int year = 2023; year < LocalDate.now().getYear(); year++) {
+            for (int month = 1; month <= 12; month++) {
+                createDatePartition(tableIdPartitionName, year, month);
             }
-
-            // Creating the past tables of thisYear until thisMonth
-            for (int month = 1; month <= LocalDate.now().getMonthValue(); month++) {
-                createDatePartition(tableIdPartitionName, LocalDate.now().getYear(), month);
-            }
-            kpiCrm.setLastUpdate(LocalDateTime.now());
         }
+
+        // Creating the past tables of thisYear until thisMonth
+        for (int month = 1; month <= LocalDate.now().getMonthValue(); month++) {
+            createDatePartition(tableIdPartitionName, LocalDate.now().getYear(), month);
+        }
+        kpiCrm.setLastUpdate(LocalDateTime.now());
 
         // If thisMonth changed, creating the last partition for thisMonth
         if (kpiCrm.getLastUpdate().getMonth().compareTo(LocalDate.now().getMonth()) < 0) {
