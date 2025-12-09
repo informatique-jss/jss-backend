@@ -55,7 +55,7 @@ export class TiersListComponent extends GenericListComponent<TiersDto, TiersSear
 
   override ngOnInit(): void {
     this.kpiCrmService.getKpiCrm().subscribe(reponse => {
-      this.kpiCrms = reponse;
+      this.kpiCrms = reponse.sort((a: KpiCrm, b: KpiCrm) => a.kpiCrmCategory && b.kpiCrmCategory ? a.kpiCrmCategory.label.localeCompare(b.kpiCrmCategory.label) : 0);
       super.ngOnInit();
     })
   }
@@ -101,7 +101,7 @@ export class TiersListComponent extends GenericListComponent<TiersDto, TiersSear
         if (this.searchModel.kpis[key].minValue != undefined || this.searchModel.kpis[key].maxValue != undefined)
           return key;
       }
-    return "";
+    return "UNDEFINED";
   }
 
   override   getListCode(): string {
@@ -182,8 +182,17 @@ export class TiersListComponent extends GenericListComponent<TiersDto, TiersSear
       ]
     };
 
-    if (this.kpiCrms)
+    if (this.kpiCrms) {
+      let currentCategoryLabel = "";
       for (let kpiCrm of this.kpiCrms) {
+        if (kpiCrm.kpiCrmCategory && currentCategoryLabel != kpiCrm.kpiCrmCategory.label) {
+          currentCategoryLabel = kpiCrm.kpiCrmCategory.label;
+          kpiSearchTab.forms.push(
+            {
+              title: currentCategoryLabel
+            } as GenericSearchForm<TiersSearch>
+          );
+        }
         kpiSearchTab.forms.push(
           {
             accessorKey: "kpis",
@@ -195,6 +204,7 @@ export class TiersListComponent extends GenericListComponent<TiersDto, TiersSear
           } as GenericSearchForm<TiersSearch>
         );
       }
+    }
 
     searchTabs.push(kpiSearchTab);
     return searchTabs;

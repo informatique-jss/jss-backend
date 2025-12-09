@@ -81,39 +81,40 @@ export class CrmComponent implements OnInit {
 
   ngOnInit() {
     this.searchForm = this.formBuilder.group({});
-    this.selectedKpiCode = this.activeRoute.snapshot.params["kpiCode"];
+    this.selectedKpiCode = this.activeRoute.snapshot.params["kpiCode"] != "UNDEFINED" ? this.activeRoute.snapshot.params["kpiCode"] : undefined;
     this.searchForm.valueChanges.subscribe(res => this.isLoading = false);
-    this.forms = [{
-      accessorKey: "startDateKpis",
-      form: {
-        label: 'Date de début de calcul',
-        type: 'input',
-        inputType: 'date',
-        validators: [Validators.required],
-        errorMessages: {
-          required: 'La date de début est obligatoire'
-        } as Record<string, string>
-      } as GenericForm<any>
-    } as GenericSearchForm<any>,
-    {
-      accessorKey: "endDateKpis",
-      form: {
-        label: 'Date de fin de calcul',
-        type: 'input',
-        inputType: 'date',
-        validators: [Validators.required],
-        errorMessages: {
-          required: 'La date de fin est obligatoire'
-        } as Record<string, string>
-      } as GenericForm<any>
-    }, {
-      accessorKey: "salesEmployee",
-      form: {
-        label: 'Commercial',
-        type: 'select',
-        selectType: 'commercial',
-      } as GenericForm<any>
-    }];
+    this.forms = [
+      {
+        accessorKey: "startDateKpis",
+        form: {
+          label: 'Date de début de calcul',
+          type: 'input',
+          inputType: 'date',
+          validators: [Validators.required],
+          errorMessages: {
+            required: 'La date de début est obligatoire'
+          } as Record<string, string>
+        } as GenericForm<any>
+      } as GenericSearchForm<any>,
+      {
+        accessorKey: "endDateKpis",
+        form: {
+          label: 'Date de fin de calcul',
+          type: 'input',
+          inputType: 'date',
+          validators: [Validators.required],
+          errorMessages: {
+            required: 'La date de fin est obligatoire'
+          } as Record<string, string>
+        } as GenericForm<any>
+      }, {
+        accessorKey: "salesEmployee",
+        form: {
+          label: 'Commercial',
+          type: 'select',
+          selectType: 'commercial',
+        } as GenericForm<any>
+      }];
 
     // Restore bookmark
     if (this.activeRoute.snapshot.url.toString().indexOf(",selection") >= 0) {
