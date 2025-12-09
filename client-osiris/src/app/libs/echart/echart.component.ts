@@ -67,7 +67,7 @@ export class EchartComponent implements OnInit, OnDestroy {
                 let yVal = Array.isArray(p.value) ? p.value[1] : p.value;
                 if (this.unit == '€')
                   yVal = formatCurrency(yVal);
-                return `${p.marker} ${p.seriesName}: ${yVal}`;
+                return `${p.marker} ${p.seriesName}: ${yVal} ${this.unit}`;
               })
               .join('<br/>');
 

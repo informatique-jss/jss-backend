@@ -73,8 +73,8 @@ export class AppMenuComponent implements OnInit {
       {
         label: "Tiers/Responsables", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "tiers",
         children: [
-          { label: "Tiers", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerBuilding", url: "tiers", children: this.getTiersChildren() },
-          { label: "Responsables", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "responsables", children: this.getResponsableChildren() },
+          { label: this.getTiersLabel(), isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerBuilding", url: "tiers", children: this.getTiersChildren() },
+          { label: this.getResponsableLabel(), isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "responsables", children: this.getResponsableChildren() },
           { label: "Crm", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerHeartHandshake", url: "tiers/crm/kpi" }
         ]
       } as MenuItemType,
@@ -82,10 +82,24 @@ export class AppMenuComponent implements OnInit {
     ]
   }
 
+  getTiersLabel() {
+    let selectedTiers = this.tiersService.getSelectedTiersUnique();
+    if (selectedTiers)
+      return selectedTiers.denomination ? selectedTiers.denomination : (selectedTiers.firstname + ' ' + selectedTiers.lastname);
+    return "Tiers";
+  }
+
+  getResponsableLabel() {
+    let selectedResponsable = this.responsableService.getSelectedResponsableUnique();
+    if (selectedResponsable)
+      return selectedResponsable.firstname + ' ' + selectedResponsable.lastname;
+    return "Responsables";
+  }
+
   getTiersChildren() {
     let selectedTiers = this.tiersService.getSelectedTiersUnique();
     if (selectedTiers) {
-      return [{ label: selectedTiers.denomination ? selectedTiers.denomination : (selectedTiers.firstname + ' ' + selectedTiers.lastname), isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerBuilding", url: "tiers/view/" + selectedTiers.id }]
+      return [{ label: selectedTiers.denomination ? selectedTiers.denomination : (selectedTiers.firstname + ' ' + selectedTiers.lastname), isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerBuilding", url: "tiers/view/" + selectedTiers.id, children: this.getResponsableChildren() }]
     }
     return [];
   }
