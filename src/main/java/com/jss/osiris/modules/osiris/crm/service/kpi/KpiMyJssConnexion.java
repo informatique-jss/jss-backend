@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.crm.model.IKpiThread;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrm;
+import com.jss.osiris.modules.osiris.crm.model.KpiCrmCategory;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrmValue;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmService;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmValueService;
@@ -104,5 +105,15 @@ public class KpiMyJssConnexion implements IKpiThread {
     @Override
     public String getGraphType() {
         return KpiCrm.GRAPH_TYPE_BAR;
+    }
+
+    @Override
+    public String getKpiCrmCategoryCode() {
+        return KpiCrmCategory.WEBSITE;
+    }
+
+    @Override
+    public Integer getDisplayOrder() {
+        return null;
     }
 }

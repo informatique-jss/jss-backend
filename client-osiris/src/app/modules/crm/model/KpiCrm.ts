@@ -1,3 +1,4 @@
+import { KpiCrmCategory } from './KpiCrmCategory';
 export interface KpiCrm {
   id: string;
   code: string;
@@ -6,6 +7,7 @@ export interface KpiCrm {
   unit: string;
   defaultValue: number;
   labelType: string;
+  kpiCrmCategory: KpiCrmCategory;
   icon: string;
   isPositiveEvolutionGood: boolean;
   isToDisplayTiersMainPage: boolean;

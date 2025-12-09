@@ -15,9 +15,11 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.osiris.crm.facade.KpiCrmFacade;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrm;
+import com.jss.osiris.modules.osiris.crm.model.KpiCrmCategory;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrmJob;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrmSearchModel;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrmValuePayload;
+import com.jss.osiris.modules.osiris.crm.service.KpiCrmCategoryService;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmQueueService;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
@@ -39,6 +41,16 @@ public class KpiController {
 
         @Autowired
         EmployeeService employeeService;
+
+        @Autowired
+        KpiCrmCategoryService kpiCrmCategoryService;
+
+        @GetMapping(inputEntryPoint + "/kpis-crm-categories")
+        public ResponseEntity<List<KpiCrmCategory>> getKpiCrmCategories()
+                        throws OsirisValidationException, OsirisException {
+                return new ResponseEntity<List<KpiCrmCategory>>(kpiCrmCategoryService.getKpiCrmCategories(),
+                                HttpStatus.OK);
+        }
 
         @GetMapping(inputEntryPoint + "/kpis-crm")
         public ResponseEntity<List<KpiCrm>> getAllKpisCrm()

@@ -50,9 +50,18 @@
             </p>
           </a>
           <ng-template ngbNavContent>
-            @for (form of searchTab.forms; track form.accessorKey.toString()+(form.accessorIndex?form.accessorIndex:"")
-            ) {
+            @for (form of searchTab.forms; track $index; let index = $index) {
             <div class="col-12 mt-2 mb-2">
+              @if(form.title){
+              <hr *ngIf="index>0" />
+
+              <div class="col  text-center">
+                <div class="bg-light bg-opacity-50 p-2">
+                  <h5 class="m-0"> {{form.title}} </h5>
+                </div>
+              </div>
+              }@else {
+              @if(form.form && form.accessorKey){
               @if(form.accessorIndex){
               <generic-form [formGroup]="searchForm" [(model)]="searchModel[form.accessorKey][form.accessorIndex!]"
                 [label]="form.form.label" [type]="form.form.type" [inputType]="form.form.inputType"
@@ -63,8 +72,9 @@
                 [type]="form.form.type" [inputType]="form.form.inputType" [selectType]="form.form.selectType"
                 [validators]="form.form.validators" [errorMessages]="form.form.errorMessages"></generic-form>
               }
+              }
+              }
             </div>
-            <hr />
             }
           </ng-template>
         </li>

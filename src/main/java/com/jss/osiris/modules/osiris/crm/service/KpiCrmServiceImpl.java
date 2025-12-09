@@ -38,6 +38,9 @@ public class KpiCrmServiceImpl implements KpiCrmService {
     @Autowired
     KpiCrmValueService kpiCrmValueService;
 
+    @Autowired
+    KpiCrmCategoryService kpiCrmCategoryService;
+
     @PersistenceContext
     EntityManager em;
 
@@ -89,18 +92,23 @@ public class KpiCrmServiceImpl implements KpiCrmService {
     @Transactional
     public void computeKpiCrm(Integer kpiId) throws OsirisException {
         KpiCrm kpiCrm = getKpiCrm(kpiId);
-        IKpiThread kpiThread = getKpiThread(kpiCrm);
-        updateKpiCrmFromThread(kpiCrm, kpiThread);
-        if (kpiCrm != null && kpiThread != null) {
-            kpiThread.computeKpiCrmValues();
-            kpiCrm.setLastUpdate(LocalDateTime.now());
-            addOrUpdateKpiCrm(kpiCrm);
+        if (kpiCrm != null) {
+            IKpiThread kpiThread = getKpiThread(kpiCrm);
+            updateKpiCrmFromThread(kpiCrm, kpiThread);
+            if (kpiCrm != null && kpiThread != null) {
+                kpiThread.computeKpiCrmValues();
+                kpiCrm.setLastUpdate(LocalDateTime.now());
+                addOrUpdateKpiCrm(kpiCrm);
+            }
         }
     }
 
     private void updateKpiCrmFromThread(KpiCrm kpiCrm, IKpiThread kpiThread) {
+        if (kpiThread.getKpiCrmCategoryCode() != null)
+            kpiCrm.setKpiCrmCategory(kpiCrmCategoryService.getKpiCrmCategoryByCode(kpiThread.getKpiCrmCategoryCode()));
         kpiCrm.setDefaultValue(kpiThread.getDefaultValue());
         kpiCrm.setIcon(kpiThread.getIcon());
+        kpiCrm.setDisplayOrder(kpiThread.getDisplayOrder());
         kpiCrm.setIsPositiveEvolutionGood(kpiThread.getIsPositiveEvolutionGood());
         kpiCrm.setLabelType(kpiThread.getLabelType());
         kpiCrm.setUnit(kpiThread.getUnit());

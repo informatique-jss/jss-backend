@@ -12,6 +12,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 
 @Entity
@@ -55,7 +56,8 @@ public class KpiCrm implements Serializable, IId {
     private Integer displayOrder;
 
     @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
-    private String displayedPage;
+    @ManyToOne
+    KpiCrmCategory kpiCrmCategory;
 
     @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
     private String icon;
@@ -115,14 +117,6 @@ public class KpiCrm implements Serializable, IId {
 
     public void setDisplayOrder(Integer displayOrder) {
         this.displayOrder = displayOrder;
-    }
-
-    public String getDisplayedPage() {
-        return displayedPage;
-    }
-
-    public void setDisplayedPage(String displayedPage) {
-        this.displayedPage = displayedPage;
     }
 
     public String getLabelType() {
@@ -193,11 +187,16 @@ public class KpiCrm implements Serializable, IId {
         this.aggregateTypeForTimePeriod = aggregateTypeForTimePeriod;
     }
 
-    public Boolean getIsToDisplayTiersMainPage() {
-        return isToDisplayTiersMainPage;
+    public static String getAggregateTypeWeightedAverage() {
+        return AGGREGATE_TYPE_WEIGHTED_AVERAGE;
     }
 
-    public void setIsToDisplayTiersMainPage(Boolean isToDisplayTiersMainPage) {
-        this.isToDisplayTiersMainPage = isToDisplayTiersMainPage;
+    public KpiCrmCategory getKpiCrmCategory() {
+        return kpiCrmCategory;
     }
+
+    public void setKpiCrmCategory(KpiCrmCategory kpiCrmCategory) {
+        this.kpiCrmCategory = kpiCrmCategory;
+    }
+
 }

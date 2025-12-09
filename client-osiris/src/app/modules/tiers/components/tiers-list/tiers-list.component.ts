@@ -14,9 +14,9 @@ import { GenericTableAction } from '../../../../libs/generic-list/GenericTableAc
 import { GenericTableColumn } from '../../../../libs/generic-list/GenericTableColumn';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { TanstackTableComponent } from '../../../../libs/tanstack-table/tanstack-table.component';
+import { KpiCrm } from '../../../crm/model/KpiCrm';
 import { KpiCrmService } from '../../../crm/services/kpi.crm.service';
 import { PageTitleComponent } from '../../../main/components/page-title/page-title.component';
-import { KpiCrm } from '../../../main/model/KpiCrm';
 import { AppService } from '../../../main/services/app.service';
 import { RestUserPreferenceService } from '../../../main/services/rest.user.preference.service';
 import { GenericFormComponent } from '../../../miscellaneous/forms/components/generic-form/generic-form.component';
@@ -55,7 +55,7 @@ export class TiersListComponent extends GenericListComponent<TiersDto, TiersSear
 
   override ngOnInit(): void {
     this.kpiCrmService.getKpiCrm().subscribe(reponse => {
-      this.kpiCrms = reponse;
+      this.kpiCrms = reponse.sort((a: KpiCrm, b: KpiCrm) => a.kpiCrmCategory && b.kpiCrmCategory ? a.kpiCrmCategory.label.localeCompare(b.kpiCrmCategory.label) : 0);
       super.ngOnInit();
     })
   }
@@ -84,7 +84,7 @@ export class TiersListComponent extends GenericListComponent<TiersDto, TiersSear
       this.tiersService.setSelectedKpiStartDate(this.searchModel.startDateKpis);
       this.tiersService.setSelectedKpiEndDate(this.searchModel.endDateKpis);
       this.responsableService.clearKpiSelection()
-      this.router.navigate(['tiers/crm/kpi/selection']);
+      this.router.navigate(['tiers/crm/kpi/selection/' + this.getFirstKpiCodeDefined()]);
     });
 
     this.eventOnClickOpenTiers.subscribe((row: Row<TiersDto>) => {
@@ -93,6 +93,15 @@ export class TiersListComponent extends GenericListComponent<TiersDto, TiersSear
     });
 
     return actions;
+  }
+
+  getFirstKpiCodeDefined() {
+    if (this.searchModel && this.searchModel.kpis)
+      for (let key of Object.keys(this.searchModel.kpis)) {
+        if (this.searchModel.kpis[key].minValue != undefined || this.searchModel.kpis[key].maxValue != undefined)
+          return key;
+      }
+    return "UNDEFINED";
   }
 
   override   getListCode(): string {
@@ -173,8 +182,17 @@ export class TiersListComponent extends GenericListComponent<TiersDto, TiersSear
       ]
     };
 
-    if (this.kpiCrms)
+    if (this.kpiCrms) {
+      let currentCategoryLabel = "";
       for (let kpiCrm of this.kpiCrms) {
+        if (kpiCrm.kpiCrmCategory && currentCategoryLabel != kpiCrm.kpiCrmCategory.label) {
+          currentCategoryLabel = kpiCrm.kpiCrmCategory.label;
+          kpiSearchTab.forms.push(
+            {
+              title: currentCategoryLabel
+            } as GenericSearchForm<TiersSearch>
+          );
+        }
         kpiSearchTab.forms.push(
           {
             accessorKey: "kpis",
@@ -186,6 +204,7 @@ export class TiersListComponent extends GenericListComponent<TiersDto, TiersSear
           } as GenericSearchForm<TiersSearch>
         );
       }
+    }
 
     searchTabs.push(kpiSearchTab);
     return searchTabs;

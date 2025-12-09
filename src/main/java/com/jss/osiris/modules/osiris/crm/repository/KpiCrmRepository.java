@@ -10,7 +10,4 @@ public interface KpiCrmRepository extends QueryCacheCrudRepository<KpiCrm, Integ
   KpiCrm findByCode(String code);
 
   List<KpiCrm> findAllByOrderByDisplayOrderAsc();
-
-  List<KpiCrm> getKpiCrmByDisplayedPage(String displayedPage);
-
 }

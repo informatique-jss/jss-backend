@@ -99,7 +99,17 @@ export class AppMenuComponent implements OnInit {
   getTiersChildren() {
     let selectedTiers = this.tiersService.getSelectedTiersUnique();
     if (selectedTiers) {
-      return [{ label: selectedTiers.denomination ? selectedTiers.denomination : (selectedTiers.firstname + ' ' + selectedTiers.lastname), isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerBuilding", url: "tiers/view/" + selectedTiers.id, children: this.getResponsableChildren() }]
+      return [{ label: "Fiche", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerBuildingEstate", url: "tiers" },
+      { label: "Adressage", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerMapPins", url: "tiers" },
+      { label: "Devis", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerBasketQuestion", url: "tiers" },
+      { label: "Commandes", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerShoppingCart", url: "tiers" },
+      { label: "Prestations", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerBlocks", url: "tiers" },
+      { label: "Factures", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerReceiptEuro", url: "tiers" },
+      { label: "Comptes", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerAbacus", url: "tiers" },
+      { label: "RFF", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerCashMoveBack", url: "tiers" },
+      { label: "Documents", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerPaperclip", url: "tiers" },
+      { label: "Mails", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerInbox", url: "tiers" },
+      ]
     }
     return [];
   }
@@ -107,7 +117,17 @@ export class AppMenuComponent implements OnInit {
   getResponsableChildren() {
     let selectedResponsable = this.responsableService.getSelectedResponsableUnique();
     if (selectedResponsable) {
-      return [{ label: selectedResponsable.firstname + ' ' + selectedResponsable.lastname, isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUser", url: "responsable/view/" + selectedResponsable.id }]
+      return [{ label: "Fiche", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerBuildingEstate", url: "tiers" },
+      { label: "Adressage", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerMapPins", url: "tiers" },
+      { label: "Devis", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerBasketQuestion", url: "tiers" },
+      { label: "Commandes", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerShoppingCart", url: "tiers" },
+      { label: "Prestations", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerBlocks", url: "tiers" },
+      { label: "Factures", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerReceiptEuro", url: "tiers" },
+      { label: "Comptes", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerAbacus", url: "tiers" },
+      { label: "RFF", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerCashMoveBack", url: "tiers" },
+      { label: "Documents", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerPaperclip", url: "tiers" },
+      { label: "Mails", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerInbox", url: "tiers" },
+      ]
     }
     return [];
   }

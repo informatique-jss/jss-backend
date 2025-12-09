@@ -10,7 +10,7 @@ const routesCrm = [
   { path: 'responsables', loadComponent: () => import('./modules/tiers/components/responsable-list/responsable-list.component').then(m => m.ResponsableListComponent) },
   { path: 'tiers/view/:id', loadComponent: () => import('./modules/tiers/components/tiers/tiers.component').then(m => m.TiersComponent) },
   { path: 'tiers/view/:id/responsable/:id', loadComponent: () => import('./modules/tiers/components/responsable/responsable.component').then(m => m.ResponsableComponent) },
-  { path: 'tiers/crm/kpi/selection', loadComponent: () => import('./modules/crm/components/crm/crm.component').then(m => m.CrmComponent) },
+  { path: 'tiers/crm/kpi/selection/:kpiCode', loadComponent: () => import('./modules/crm/components/crm/crm.component').then(m => m.CrmComponent) },
   { path: 'tiers/crm/kpi', loadComponent: () => import('./modules/crm/components/crm/crm.component').then(m => m.CrmComponent) },
 ];
 

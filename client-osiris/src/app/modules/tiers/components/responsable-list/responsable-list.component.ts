@@ -14,9 +14,9 @@ import { GenericTableAction } from '../../../../libs/generic-list/GenericTableAc
 import { GenericTableColumn } from '../../../../libs/generic-list/GenericTableColumn';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { TanstackTableComponent } from '../../../../libs/tanstack-table/tanstack-table.component';
+import { KpiCrm } from '../../../crm/model/KpiCrm';
 import { KpiCrmService } from '../../../crm/services/kpi.crm.service';
 import { PageTitleComponent } from '../../../main/components/page-title/page-title.component';
-import { KpiCrm } from '../../../main/model/KpiCrm';
 import { AppService } from '../../../main/services/app.service';
 import { RestUserPreferenceService } from '../../../main/services/rest.user.preference.service';
 import { GenericFormComponent } from '../../../miscellaneous/forms/components/generic-form/generic-form.component';
@@ -95,7 +95,7 @@ export class ResponsableListComponent extends GenericListComponent<ResponsableDt
       this.responsableService.setSelectedKpiStartDate(this.searchModel.startDateKpis);
       this.responsableService.setSelectedKpiEndDate(this.searchModel.endDateKpis);
       this.tiersService.clearKpiSelection();
-      this.router.navigate(['tiers/crm/kpi/selection']);
+      this.router.navigate(['tiers/crm/kpi/selection/' + this.getFirstKpiCodeDefined()]);
     });
 
     this.eventOnClickOpenResponsable.subscribe((row: Row<ResponsableDto>) => {
@@ -108,6 +108,15 @@ export class ResponsableListComponent extends GenericListComponent<ResponsableDt
 
   override   getListCode(): string {
     return 'RESPONSABLE_LIST';
+  }
+
+  getFirstKpiCodeDefined() {
+    if (this.searchModel && this.searchModel.kpis)
+      for (let key of Object.keys(this.searchModel.kpis)) {
+        if (this.searchModel.kpis[key].minValue != undefined || this.searchModel.kpis[key].maxValue != undefined)
+          return key;
+      }
+    return "UNDEFINED";
   }
 
   override generateSearchTabs(): GenericSearchTab<ResponsableSearch>[] {
