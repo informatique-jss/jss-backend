@@ -717,7 +717,7 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             BatchSettings batchSettings = new BatchSettings();
             batchSettings.setCode(Batch.COMPUTE_KPI_CRM);
             batchSettings.setLabel("Calculs des KPI du CRM");
-            batchSettings.setFixedRate(5 * 60 * 1000);
+            batchSettings.setFixedRate(60 * 1000);
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
             batchSettings.setIsOnlyOneJob(false);

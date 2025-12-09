@@ -146,7 +146,6 @@ public class TiersDtoHelper {
         outResponsable.setFirstname(responsable.getFirstname());
         outResponsable.setLastname(responsable.getLastname());
         outResponsable.setId(responsable.getId());
-        outResponsable.setMail(responsable.getMail() != null ? responsable.getMail().getMail() : null);
 
         outResponsable.setKpiValues(new HashMap<String, String>());
         if (responsable.getKpiValues() != null)
