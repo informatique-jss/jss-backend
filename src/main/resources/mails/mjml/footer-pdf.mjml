@@ -7,7 +7,7 @@
   <mj-body>
     <mj-section>
       <mj-column>
-        <mj-text font-size="12px" line-height="1.6" align="center">
+        <mj-text font-size="12px" line-height="1.0" align="center">
           <strong
             >SPPS - Société de Publications et de Publicité pour les
             Sociétés</strong

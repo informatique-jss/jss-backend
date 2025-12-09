@@ -178,157 +178,61 @@ public class GeneratePdfDelegate {
         return xhtmlDoc.html();
     }
 
+    private String extractHtmlAsXhtml(String htmlSource, Boolean isBody) {
+        // Use Jsoup to get right html tags, for example '<br/>'
+        org.jsoup.nodes.Document doc = Jsoup.parse(htmlSource, "UTF-8");
+        doc.outputSettings()
+                .syntax(org.jsoup.nodes.Document.OutputSettings.Syntax.xml)
+                .escapeMode(org.jsoup.nodes.Entities.EscapeMode.extended)
+                .charset("UTF-8");
+        if (isBody)
+            return doc.body().html();
+        else
+            return doc.head().html();
+    }
+
     private String composeHtml(String headerTemplateName, String footerTemplateName, String htmlContent, Context ctx) {
-        String headerTemplate = "";
-        String footerTemplate = "";
-        if (headerTemplateName != null && headerTemplateName.length() > 1)
-            headerTemplate = parseMjmlFile(pdfTemplateEngine(false).process(headerTemplateName, ctx));
-        if (footerTemplateName != null && footerTemplateName.length() > 1)
-            footerTemplate = parseMjmlFile(pdfTemplateEngine(false).process(footerTemplateName, ctx));
+        String headerHtml = "";
+        String footerHtml = "";
+        String mainBodyHtml = "";
+        String mainHeadHtml = "";
 
-        org.jsoup.nodes.Document headerDoc = Jsoup.parse(headerTemplate, "UTF-8");
-        org.jsoup.nodes.Document footerDoc = Jsoup.parse(footerTemplate, "UTF-8");
+        if (headerTemplateName != null && headerTemplateName.length() > 1) {
+            String processedHeader = parseMjmlFile(pdfTemplateEngine(false).process(headerTemplateName, ctx));
+            headerHtml = extractHtmlAsXhtml(processedHeader, true);
+        }
+        if (footerTemplateName != null && footerTemplateName.length() > 1) {
+            String processedFooter = parseMjmlFile(pdfTemplateEngine(false).process(footerTemplateName, ctx));
+            footerHtml = extractHtmlAsXhtml(processedFooter, true);
+        }
+
+        // extract content of the body, from the template source
         org.jsoup.nodes.Document mainDoc = Jsoup.parse(htmlContent, "UTF-8");
-        org.jsoup.nodes.Document finalDoc = Jsoup.parse("<html><head></head><body></body></html>", "UTF-8");
+        mainBodyHtml = extractHtmlAsXhtml(mainDoc.html(), true);
+        // extract head part with all styles
+        mainHeadHtml = extractHtmlAsXhtml(mainDoc.html(), false);
 
-        finalDoc.head()
-                .append(headerDoc.head().html())
-                .append(mainDoc.head().html())
-                .append(footerDoc.head().html())
-                .append("""
-                            <style>
-                                @page {
-                                    size: A4;
-                                    margin: 40px 0px 80px 0px;
-                                }
-
-                                @font-face {
-                                    font-family: 'Roboto';
-                                    src: url('fonts/Roboto/Roboto-Regular.ttf') format('truetype');
-                                    font-weight: normal;
-                                }
-
-                                @font-face {
-                                    font-family: 'Roboto';
-                                    src: url('fonts/Roboto/Roboto-Bold.ttf') format('truetype');
-                                    font-weight: bold;
-                                }
-
-                                body {
-                                    font-family: 'Roboto', sans-serif !important;
-                                }
-
-                                strong, b {
-                                    font-family: 'Roboto';
-                                    font-weight: bold;
-                                }
-
-                                a, a * {
-                                    font-family: 'Roboto', sans-serif !important;
-                                }
-
-                                /* --- Ajustement du header MJML --- */
-                                 .mj-column-per-20,
-                                .mj-column-per-30,
-                                .mj-column-per-40,
-                                .mj-column-per-50,
-                                .mj-column-per-80 {
-                                    display: inline-block !important;
-                                    vertical-align: top !important;
-                                    }
-                                [class*="mj-column"] div {
-                                    font-family: 'Roboto', sans-serif !important;
-                                }
-
-                                    /* Ajustement de largeur : éviter retour à la ligne */
-                                .mj-column-per-20 { width: 20% !important; max-width: 20% !important; }
-                                .mj-column-per-30 { width: 30% !important; max-width: 30% !important; }
-                                .mj-column-per-40 { width: 40% !important; max-width: 40% !important; }
-                                .mj-column-per-50 { width: 50% !important; max-width: 50% !important; }
-                                .mj-column-per-70 { width: 70% !important; max-width: 70% !important; }
-
-                                /* Empêcher la ligne de se casser entre les colonnes */
-                                td[style*="direction:ltr"] {
-                                    white-space: nowrap !important;
-                                }
-                            </style>
-                        """);
-
-        // add Background image in base64 format
-        byte[] imageBytes;
+        // handle background image 'bird'
         String base64 = null;
         try {
-            imageBytes = IOUtils.toByteArray(new ClassPathResource("images/birdBackground.png").getInputStream());
+            byte[] imageBytes = IOUtils
+                    .toByteArray(new ClassPathResource("images/birdBackground.png").getInputStream());
             base64 = Base64.getEncoder().encodeToString(imageBytes);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        String backgroundDiv = String.format("""
-                <div style="position: fixed;
-                            top: 160px;
-                            left: 0;
-                            width: 595px;
-                            height: 842px;
-                            background-image: url('data:image/png;base64,%s');
-                            background-repeat: no-repeat;
-                            background-size: contain;
-                            z-index: -1;">
-                </div>
-                """, base64);
+        // set all parts of the template before assembling it together with thymleaf
+        ctx.setVariable("base64Background", base64);
+        ctx.setVariable("headerContent", headerHtml);
+        ctx.setVariable("footerContent", footerHtml);
+        ctx.setVariable("mainBodyContent", mainBodyHtml);
+        ctx.setVariable("mainHeadContent", mainHeadHtml);
+        ctx.setVariable("footerTemplateName", footerTemplateName);
+        ctx.setVariable("FOOTER_DOMICILIATION", FOOTER_DOMICILIATION);
 
-        // delete margin to put background image stuck to the edge with no space on the
-        // left
-        finalDoc.select("html").attr("style", "margin: 0; padding: 0;");
-        finalDoc.body().attr("style", "margin: 0; padding: 0;");
-        finalDoc.body().prepend(backgroundDiv);
-
-        // adding the deleted margin for the rest of the document
-        StringBuilder wrappedContent = new StringBuilder();
-        wrappedContent
-                .append(headerDoc.body().html())
-                .append("<div style='margin: 40px 40px 40px 40px;'>")
-                .append(mainDoc.body().html())
-                .append("</div>");
-        if (footerTemplateName == FOOTER_DOMICILIATION) {
-            // add css to correct and fix the footer display
-            wrappedContent.append("""
-                    <div style="
-                        position: fixed;
-                        bottom: -16px;
-                        left: 140px;
-                        font-size: 14px;
-                        color: #303B4D;
-                        text-align: center;
-                        white-space: nowrap;
-
-                    ">
-                        """ + footerDoc.body().html() + """
-                        </div>
-                    """);
-        } else {
-            // add css to correct and fix the footer display
-            wrappedContent.append("""
-                    <div style="
-                        position: fixed;
-                        bottom: -30px;
-                        left: 60px;
-                        width: 100%;
-                        padding: 0 40px;
-                    ">
-                    """ + footerDoc.body().html() + """
-                    </div>
-                    """);
-        }
-
-        finalDoc.body().append(wrappedContent.toString());
-
-        finalDoc.outputSettings()
-                .syntax(org.jsoup.nodes.Document.OutputSettings.Syntax.xml)
-                .escapeMode(org.jsoup.nodes.Entities.EscapeMode.extended)
-                .charset("UTF-8");
-
-        return finalDoc.html();
+        // call master template to compose the final html to generate pdf
+        return pdfTemplateEngine(isContent).process("master-compose-document", ctx);
     }
 
     @Transactional(rollbackFor = Exception.class)
