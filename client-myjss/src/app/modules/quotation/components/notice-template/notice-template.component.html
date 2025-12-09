@@ -15,7 +15,7 @@
 
             <!-- TEXT -->
             <div>
-              <generic-input *ngIf="placeholder.dataType === SERVICE_FIELD_TYPE_TEXT" [model]="placeholder.label"
+              <generic-input *ngIf="placeholder.dataType === SERVICE_FIELD_TYPE_TEXT" [model]="placeholder.value"
                 [label]="placeholder.label" [form]="form" [propertyName]="placeholder.code + '_' + placeholder.id"
                 [isDisabled]="false" [isMandatory]="true" [maxLength]="255">
               </generic-input>
@@ -91,11 +91,9 @@
               <div class="col-12 mt-3" *ngIf="selections.length>1">
                 <select-announcement-notice-template-fragment [types]="selections" [(model)]="selectedFragments[i]"
                   (modelChange)="onFragmentSelectionChange($event, i)" label="Selectionner" [form]="form"
-                  [propertyName]="'select_'+selections[0].code"
-                  [isMandatory]="false"></select-announcement-notice-template-fragment>
+                  [propertyName]="'SELECT_'+selections[0].label" [isMandatory]="isRequired(selections)">
+                </select-announcement-notice-template-fragment>
               </div>
-
-
             </div>
 
             <!-- Loop over placeholder entries -->
@@ -120,7 +118,7 @@
 
                       <!-- TEXT -->
                       <generic-input *ngIf="placeholder.dataType === SERVICE_FIELD_TYPE_TEXT"
-                        [model]="placeholder.label"
+                        [model]="placeholder.value"
                         [label]="getFragmentInputLabel(placeholder, fragmentIndex, fragmentInstancesMap.get(selectedFragments[i]!.code)!)"
                         [form]="form"
                         [propertyName]="buildFormControlName(fragmentInstance.code, placeholder, fragmentIndex)"
