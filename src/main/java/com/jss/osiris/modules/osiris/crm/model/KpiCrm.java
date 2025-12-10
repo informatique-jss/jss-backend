@@ -1,64 +1,75 @@
 package com.jss.osiris.modules.osiris.crm.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 
 @Entity
 public class KpiCrm implements Serializable, IId {
-    // TODO valeur save pour static
-    public static String OPPORTUNITY_CLOSING_AVERAGE_TIME = "OPPORTUNITY_CLOSING_AVERAGE_TIME";
-    public static String ORDER_COMPLETION_AVERAGE_TIME = "ORDER_COMPLETION_AVERAGE_TIME";
-    public static String MEASURED_REVENUE_CUMUL = "MEASURED_REVENUE_CUMUL";
-    public static String NB_INVOICE_WITH_LATE_PAYMENT = "NB_INVOICE_WITH_LATE_PAYMENT";
-    public static String OVERDUE_BALANCE = "OVERDUE_BALANCE";
-    public static String NB_OVERDUE_BALANCE = "NB_OVERDUE_BALANCE";
-    public static String PAYING_INVOICE_AVERAGE_TIME = "PAYING_INVOICE_AVERAGE_TIME";
-    public static String POTENTIAL_REVENUE_CUMUL = "POTENTIAL_REVENUE_CUMUL";
-    public static String DEMO_CUMUL = "DEMO_CUMUL";
-
     public static final String AGGREGATE_TYPE_AVERAGE = "AGGREGATE_TYPE_AVERAGE";
+    public static final String AGGREGATE_TYPE_WEIGHTED_AVERAGE = "AGGREGATE_TYPE_WEIGHTED_AVERAGE";
     public static final String AGGREGATE_TYPE_SUM = "AGGREGATE_TYPE_SUM";
+    public static final String AGGREGATE_TYPE_LAST_VALUE = "AGGREGATE_TYPE_LAST_VALUE";
 
-    // ---------- POSSIBLE SCALES OF TIME SELECTABLE FOR KPIS AND WIDGETS ----------
-    public static final String WEEKLY_PERIOD = "WEEKLY_PERIOD";
-    public static final String MONTHLY_PERIOD = "MONTHLY_PERIOD";
-    public static final String ANNUALLY_PERIOD = "ANNUALLY_PERIOD";
-
-    // ---------- PAGES SHOWN IN OSIRIS WITH WIDGETS AND KPIS ------------------
-    public static final String TIERS_KPI_HOME_DISPLAY = "TIERS_KPI_HOME_DISPLAY";
-    public static final String TIERS_KPI_MAIN_DISPLAY = "TIERS_KPI_MAIN_DISPLAY";
-    public static final String TIERS_KPI_BUSINESS_DISPLAY = "TIERS_KPI_BUSINESS_DISPLAY";
-    public static final String TIERS_KPI_CUSTOMER_DISPLAY = "TIERS_KPI_CUSTOMER_DISPLAY";
-    public static final String CRM_HOME_DISPLAY = "CRM_HOME_DISPLAY";
-    public static final List<String> POSSIBLE_DISPLAYS = Arrays.asList(TIERS_KPI_HOME_DISPLAY, TIERS_KPI_MAIN_DISPLAY,
-            TIERS_KPI_BUSINESS_DISPLAY, TIERS_KPI_CUSTOMER_DISPLAY, CRM_HOME_DISPLAY);
+    public static final String GRAPH_TYPE_LINE = "line";
+    public static final String GRAPH_TYPE_BAR = "bar";
 
     @Id
     @SequenceGenerator(name = "kpi_sequence", sequenceName = "kpi_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "kpi_sequence")
+    @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
     private Integer id;
 
+    @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
     private String code;
 
+    @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
     private String label;
 
+    @JsonView({ JacksonViews.OsirisListView.class })
     private LocalDateTime lastUpdate;
 
+    @JsonView({ JacksonViews.OsirisListView.class })
     private String unit;
 
+    @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
+    private String labelType;
+
+    @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
+    private String graphType;
+
+    @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
+    private BigDecimal defaultValue;
+
+    @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
     private Integer displayOrder;
 
-    private String displayedPage;
+    @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
+    @ManyToOne
+    KpiCrmCategory kpiCrmCategory;
+
+    @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
+    private String icon;
+
+    @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
+    private String aggregateTypeForTimePeriod;
+
+    @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
+    private Boolean isPositiveEvolutionGood;
+
+    @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
+    private Boolean isToDisplayTiersMainPage;
 
     public Integer getId() {
         return id;
@@ -108,84 +119,12 @@ public class KpiCrm implements Serializable, IId {
         this.displayOrder = displayOrder;
     }
 
-    public String getDisplayedPage() {
-        return displayedPage;
+    public String getLabelType() {
+        return labelType;
     }
 
-    public void setDisplayedPage(String displayedPage) {
-        this.displayedPage = displayedPage;
-    }
-
-    public static String getOPPORTUNITY_CLOSING_AVERAGE_TIME() {
-        return OPPORTUNITY_CLOSING_AVERAGE_TIME;
-    }
-
-    public static void setOPPORTUNITY_CLOSING_AVERAGE_TIME(String oPPORTUNITY_CLOSING_AVERAGE_TIME) {
-        OPPORTUNITY_CLOSING_AVERAGE_TIME = oPPORTUNITY_CLOSING_AVERAGE_TIME;
-    }
-
-    public static String getORDER_COMPLETION_AVERAGE_TIME() {
-        return ORDER_COMPLETION_AVERAGE_TIME;
-    }
-
-    public static void setORDER_COMPLETION_AVERAGE_TIME(String oRDER_COMPLETION_AVERAGE_TIME) {
-        ORDER_COMPLETION_AVERAGE_TIME = oRDER_COMPLETION_AVERAGE_TIME;
-    }
-
-    public static String getMEASURED_REVENUE_CUMUL() {
-        return MEASURED_REVENUE_CUMUL;
-    }
-
-    public static void setMEASURED_REVENUE_CUMUL(String mEASURED_REVENUE_CUMUL) {
-        MEASURED_REVENUE_CUMUL = mEASURED_REVENUE_CUMUL;
-    }
-
-    public static String getNB_INVOICE_WITH_LATE_PAYMENT() {
-        return NB_INVOICE_WITH_LATE_PAYMENT;
-    }
-
-    public static void setNB_INVOICE_WITH_LATE_PAYMENT(String nB_INVOICE_WITH_LATE_PAYMENT) {
-        NB_INVOICE_WITH_LATE_PAYMENT = nB_INVOICE_WITH_LATE_PAYMENT;
-    }
-
-    public static String getOVERDUE_BALANCE() {
-        return OVERDUE_BALANCE;
-    }
-
-    public static void setOVERDUE_BALANCE(String oVERDUE_BALANCE) {
-        OVERDUE_BALANCE = oVERDUE_BALANCE;
-    }
-
-    public static String getNB_OVERDUE_BALANCE() {
-        return NB_OVERDUE_BALANCE;
-    }
-
-    public static void setNB_OVERDUE_BALANCE(String nB_OVERDUE_BALANCE) {
-        NB_OVERDUE_BALANCE = nB_OVERDUE_BALANCE;
-    }
-
-    public static String getPAYING_INVOICE_AVERAGE_TIME() {
-        return PAYING_INVOICE_AVERAGE_TIME;
-    }
-
-    public static void setPAYING_INVOICE_AVERAGE_TIME(String pAYING_INVOICE_AVERAGE_TIME) {
-        PAYING_INVOICE_AVERAGE_TIME = pAYING_INVOICE_AVERAGE_TIME;
-    }
-
-    public static String getPOTENTIAL_REVENUE_CUMUL() {
-        return POTENTIAL_REVENUE_CUMUL;
-    }
-
-    public static void setPOTENTIAL_REVENUE_CUMUL(String pOTENTIAL_REVENUE_CUMUL) {
-        POTENTIAL_REVENUE_CUMUL = pOTENTIAL_REVENUE_CUMUL;
-    }
-
-    public static String getDEMO_CUMUL() {
-        return DEMO_CUMUL;
-    }
-
-    public static void setDEMO_CUMUL(String dEMO_CUMUL) {
-        DEMO_CUMUL = dEMO_CUMUL;
+    public void setLabelType(String labelType) {
+        this.labelType = labelType;
     }
 
     public static String getAggregateTypeAverage() {
@@ -196,39 +135,68 @@ public class KpiCrm implements Serializable, IId {
         return AGGREGATE_TYPE_SUM;
     }
 
-    public static String getWeeklyPeriod() {
-        return WEEKLY_PERIOD;
+    public String getIcon() {
+        return icon;
     }
 
-    public static String getMonthlyPeriod() {
-        return MONTHLY_PERIOD;
+    public void setIcon(String icon) {
+        this.icon = icon;
     }
 
-    public static String getAnnuallyPeriod() {
-        return ANNUALLY_PERIOD;
+    public Boolean getIsPositiveEvolutionGood() {
+        return isPositiveEvolutionGood;
     }
 
-    public static String getTiersKpiHomeDisplay() {
-        return TIERS_KPI_HOME_DISPLAY;
+    public void setIsPositiveEvolutionGood(Boolean isPositiveEvolutionGood) {
+        this.isPositiveEvolutionGood = isPositiveEvolutionGood;
     }
 
-    public static String getTiersKpiMainDisplay() {
-        return TIERS_KPI_MAIN_DISPLAY;
+    public BigDecimal getDefaultValue() {
+        return defaultValue;
     }
 
-    public static String getTiersKpiBusinessDisplay() {
-        return TIERS_KPI_BUSINESS_DISPLAY;
+    public void setDefaultValue(BigDecimal defaultValue) {
+        this.defaultValue = defaultValue;
     }
 
-    public static String getTiersKpiCustomerDisplay() {
-        return TIERS_KPI_CUSTOMER_DISPLAY;
+    public String getGraphType() {
+        return graphType;
     }
 
-    public static String getCrmHomeDisplay() {
-        return CRM_HOME_DISPLAY;
+    public void setGraphType(String graphType) {
+        this.graphType = graphType;
     }
 
-    public static List<String> getPossibleDisplays() {
-        return POSSIBLE_DISPLAYS;
+    public static String getAggregateTypeLastValue() {
+        return AGGREGATE_TYPE_LAST_VALUE;
     }
+
+    public static String getGraphTypeLine() {
+        return GRAPH_TYPE_LINE;
+    }
+
+    public static String getGraphTypeBar() {
+        return GRAPH_TYPE_BAR;
+    }
+
+    public String getAggregateTypeForTimePeriod() {
+        return aggregateTypeForTimePeriod;
+    }
+
+    public void setAggregateTypeForTimePeriod(String aggregateTypeForTimePeriod) {
+        this.aggregateTypeForTimePeriod = aggregateTypeForTimePeriod;
+    }
+
+    public static String getAggregateTypeWeightedAverage() {
+        return AGGREGATE_TYPE_WEIGHTED_AVERAGE;
+    }
+
+    public KpiCrmCategory getKpiCrmCategory() {
+        return kpiCrmCategory;
+    }
+
+    public void setKpiCrmCategory(KpiCrmCategory kpiCrmCategory) {
+        this.kpiCrmCategory = kpiCrmCategory;
+    }
+
 }

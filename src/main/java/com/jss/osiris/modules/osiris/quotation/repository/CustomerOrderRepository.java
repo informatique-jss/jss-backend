@@ -212,16 +212,15 @@ public interface CustomerOrderRepository
                         LocalDateTime endOfDay);
 
         @Query("SELECT c FROM CustomerOrder c " +
-                        "WHERE c.responsable = :responsable " +
-                        "AND c.createdDate BETWEEN :startOfDay AND :endOfDay " +
-                        "AND (:isRecurring IS NULL OR c.isRecurring = :isRecurring) " +
+                        "WHERE c.createdDate BETWEEN :startOfDay AND :endOfDay and c.lastStatusUpdate BETWEEN :updatedStartDate AND :updatedEndDate "
+                        +
                         "AND (:status IS NULL OR c.customerOrderStatus = :status)")
-        List<CustomerOrder> findByResponsableAndStatusAndCreatedDateBetween(
-                        @Param("responsable") Responsable responsable,
+        List<CustomerOrder> findByCreatedDateBetweenAndStatus(
                         @Param("startOfDay") LocalDateTime startOfDay,
                         @Param("endOfDay") LocalDateTime endOfDay,
-                        @Param("isRecurring") Boolean isRecurring,
-                        @Param("status") CustomerOrderStatus customerOrderStatus);
+                        @Param("status") CustomerOrderStatus customerOrderStatus,
+                        @Param("updatedStartDate") LocalDateTime updatedStartDate,
+                        @Param("updatedEndDate") LocalDateTime updatedEndDate);
 
         @Query("select c from CustomerOrder c left join c.responsable r left join fetch c.assoAffaireOrders a left join fetch a.affaire af "
                         +

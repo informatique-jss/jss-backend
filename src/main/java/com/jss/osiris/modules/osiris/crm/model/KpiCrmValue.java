@@ -23,7 +23,7 @@ import jakarta.persistence.SequenceGenerator;
 public class KpiCrmValue implements Serializable, IId {
 
     @Id
-    @SequenceGenerator(name = "kpi_value_sequence", sequenceName = "kpi_value_sequence", allocationSize = 1)
+    @SequenceGenerator(name = "kpi_value_sequence", sequenceName = "kpi_value_sequence", allocationSize = 50)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "kpi_value_sequence")
     private Integer id;
 
@@ -39,6 +39,7 @@ public class KpiCrmValue implements Serializable, IId {
     private LocalDate valueDate;
 
     private BigDecimal value;
+    private Integer weight;
 
     public Integer getId() {
         return id;
@@ -78,6 +79,14 @@ public class KpiCrmValue implements Serializable, IId {
 
     public void setResponsable(Responsable responsable) {
         this.responsable = responsable;
+    }
+
+    public Integer getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Integer weight) {
+        this.weight = weight;
     }
 
 }

@@ -6,12 +6,12 @@ import { ConstantsResolver } from './modules/main/services/constant.service';
 const routesCrm = [
   { path: 'home', loadComponent: () => import('./modules/crm/components/crm/crm.component').then(m => m.CrmComponent) },
   { path: 'dashboards/:id', loadComponent: () => import('./modules/reporting/components/reporting-dashboard/reporting-dashboard.component').then(m => m.ReportingDashboardComponent) },
-  {
-    path: 'tiers/crm/kpi/:idTiers', loadComponent: () => import('./modules/tiers/tiers-responsables.component').then(m => m.TiersResponsablesComponent),
-    children: [
-      { path: ':screen', loadComponent: () => import('./modules/tiers/components/generic-responsables-kpi/generic-responsables-kpi.component').then(m => m.GenericResponsablesKpiComponent) },
-    ],
-  },
+  { path: 'tiers', loadComponent: () => import('./modules/tiers/components/tiers-list/tiers-list.component').then(m => m.TiersListComponent) },
+  { path: 'responsables', loadComponent: () => import('./modules/tiers/components/responsable-list/responsable-list.component').then(m => m.ResponsableListComponent) },
+  { path: 'tiers/view/:id', loadComponent: () => import('./modules/tiers/components/tiers/tiers.component').then(m => m.TiersComponent) },
+  { path: 'tiers/view/:id/responsable/:id', loadComponent: () => import('./modules/tiers/components/responsable/responsable.component').then(m => m.ResponsableComponent) },
+  { path: 'tiers/crm/kpi/selection/:kpiCode', loadComponent: () => import('./modules/crm/components/crm/crm.component').then(m => m.CrmComponent) },
+  { path: 'tiers/crm/kpi', loadComponent: () => import('./modules/crm/components/crm/crm.component').then(m => m.CrmComponent) },
 ];
 
 export const routes: Routes = [

@@ -16,7 +16,7 @@ import { ServiceFieldType } from '../../../my-account/model/ServiceFieldType';
 import { AnnouncementNoticeTemplate } from '../../model/AnnouncementNoticeTemplate';
 import { AnnouncementNoticeTemplateFragment } from '../../model/AnnouncementNoticeTemplateFragment';
 import { AssoAnnouncementNoticeTemplateAnnouncementFragment } from '../../model/AssoAnnouncementNoticeTemplateAnnouncementFragment';
-import { AssoAnnouncementNoticeTemplateAnnouncementFragmentService } from '../../services/announcement.notice.template.announcement.fragment.service';
+import { AssoNoticeTemplateAnnouncementFragmentService } from '../../services/asso.notice.template.announcement.fragment.service';
 import { NoticeTemplateService } from '../../services/notice.template.service';
 import { ServiceFieldTypeService } from '../../services/service.field.type.service';
 
@@ -69,7 +69,7 @@ export class NoticeTemplateComponent implements OnInit {
     private fb: FormBuilder,
     private serviceFieldTypesService: ServiceFieldTypeService,
     private noticeTemplateService: NoticeTemplateService,
-    private assoAnnouncementFragmentService: AssoAnnouncementNoticeTemplateAnnouncementFragmentService,
+    private assoAnnouncementFragmentService: AssoNoticeTemplateAnnouncementFragmentService,
     public modalService: NgbModal,
   ) { }
 

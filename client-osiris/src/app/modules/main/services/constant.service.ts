@@ -54,6 +54,14 @@ export class ConstantService extends AppRestService<Constant> {
       })
     );
   }
+
+  getActiveDirectoryGroupSales() {
+    return this.constant.activeDirectoryGroupSales;
+  }
+
+  getCountryFrance() {
+    return this.constant.countryFrance;
+  }
 }
 
 @Injectable({ providedIn: 'root' })

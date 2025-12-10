@@ -8,7 +8,7 @@ import com.jss.osiris.libs.audit.model.Audit;
 public interface AuditService {
     public List<Audit> getAuditForEntity(String entityType, Integer entityId);
 
-    public List<Audit> getAuditForEntityAndFieldName(String entityType, Integer entityId, String status,
+    public List<Audit> getAuditForEntityAndFieldName(String entityType, Integer entityId, String value,
             String fieldName);
 
     public Audit addOrUpdateAudit(Audit audit);

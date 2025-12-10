@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatExpansionPanel } from '@angular/material/expansion';
-import { combineLatest, map } from 'rxjs';
+import { combineLatest, map, Observable } from 'rxjs';
 import { ANNOUNCEMENT_PUBLISHED, ANNOUNCEMENT_STATUS_DONE, ANNOUNCEMENT_STATUS_IN_PROGRESS, ANNOUNCEMENT_STATUS_NEW, ANNOUNCEMENT_STATUS_WAITING_CONFRERE, ANNOUNCEMENT_STATUS_WAITING_READ_CUSTOMER, FORMALITE_AUTHORITY_IN_PROGRESS, FORMALITE_AUTHORITY_NEW, FORMALITE_AUTHORITY_REJECTED, FORMALITE_AUTHORITY_VALIDATED, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, SIMPLE_PROVISION_STATUS_IN_PROGRESS, SIMPLE_PROVISION_STATUS_NEW } from 'src/app/libs/Constants';
 import { formatDateFrance } from 'src/app/libs/FormatHelper';
 import { getResponsableLabelIQuotation, getTiersLabelIQuotation } from 'src/app/modules/invoicing/components/invoice-tools';
@@ -219,7 +219,15 @@ export class ProvisionKanbanComponent extends KanbanComponent<Provision, IWorkfl
   }
 
   findEntities() {
-    return this.provisionService.searchProvisions(this.employeesSelected.map(employee => employee.id), this.statusSelected.map(status => status.code!));
+    return new Observable<Provision[]>(observer => {
+      this.provisionService.searchProvisions(this.employeesSelected.map(employee => employee.id), this.statusSelected.map(status => status.code!)).subscribe(response => {
+        response.sort(function (a: Provision, b: Provision) {
+          return new Date(a.service.assoAffaireOrder.customerOrder.productionEffectiveDateTime).getTime() - new Date(b.service.assoAffaireOrder.customerOrder.productionEffectiveDateTime).getTime();
+        });
+        observer.next(response);
+        observer.complete;
+      });
+    })
   }
 
   getEntityStatus(entity: Provision): IWorkflowElement<any> {

@@ -1,8 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Observable, Subject, retry, share, switchMap, takeUntil, tap, timer } from 'rxjs';
-import { NOTIFICATION_REFRESH_INTERVAL } from 'src/app/libs/Constants';
+import { Observable, Subject } from 'rxjs';
 import { AppRestService } from 'src/app/services/appRest.service';
 import { Notification } from '../../miscellaneous/model/Notification';
 
@@ -20,7 +19,7 @@ export class NotificationService extends AppRestService<Notification> {
   constructor(http: HttpClient,
     public notificationDialog: MatDialog) {
     super(http, "miscellaneous");
-    this.notifications = timer(1, NOTIFICATION_REFRESH_INTERVAL).pipe(
+    /*this.notifications = timer(1, NOTIFICATION_REFRESH_INTERVAL).pipe(
       switchMap(() => this.getNotificationsNumber(this.displayFuture, this.displayRead)),
       retry(),
       tap((value) => {
@@ -31,7 +30,7 @@ export class NotificationService extends AppRestService<Notification> {
       share(),
       takeUntil(this.stopPolling)
     );
-    this.notifications.subscribe();
+    this.notifications.subscribe();*/
   }
 
   ngOnDestroy() {

@@ -1775,4 +1775,12 @@ public class PaymentServiceImpl implements PaymentService {
     public List<Payment> getPaymentForCustomerOrder(CustomerOrder customerOrder) {
         return paymentRepository.findByCustomerOrder(customerOrder);
     }
+
+    @Override
+    public List<Payment> getPaymentsForResponsable(Responsable responsable) {
+        Integer responsableId = 0;
+        if (responsable != null)
+            responsableId = responsable.getId();
+        return paymentRepository.findByResponsable(responsableId);
+    }
 }
