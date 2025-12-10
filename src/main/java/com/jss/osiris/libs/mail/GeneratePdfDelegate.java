@@ -296,7 +296,7 @@ public class GeneratePdfDelegate {
             }
             ITextRenderer renderer = new ITextRenderer();
             XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
-            renderer = fixFontSizeHeaderRendererDisplay(renderer);
+            renderer = embedFontSize(renderer);
             renderer.setDocumentFromString(
                     htmlContent.replaceAll("\\p{C}", " ").replaceAll("<col (.*?)>", "")
                             .replaceAll("line-height: normal",
@@ -394,7 +394,7 @@ public class GeneratePdfDelegate {
         }
         ITextRenderer renderer = new ITextRenderer();
         XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
-        renderer = fixFontSizeHeaderRendererDisplay(renderer);
+        renderer = embedFontSize(renderer);
         renderer.setDocumentFromString(
                 htmlContent.replaceAll("\\p{C}", " ").replaceAll("&", "<![CDATA[&]]>").replaceAll("<col (.*?)>", "")
                         .replaceAll("line-height: normal",
@@ -507,7 +507,7 @@ public class GeneratePdfDelegate {
         }
         ITextRenderer renderer = new ITextRenderer();
         XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
-        renderer = fixFontSizeHeaderRendererDisplay(renderer);
+        renderer = embedFontSize(renderer);
         renderer.setDocumentFromString(htmlContent.replaceAll("\\p{C}", " ")
                 .replaceAll("&(?!(amp|lt|gt|quot|apos|#\\d+|#x[\\da-fA-F]+);)", "&amp;")
                 .replaceAll("&nbsp;", "&#160;")
@@ -569,7 +569,7 @@ public class GeneratePdfDelegate {
         }
         ITextRenderer renderer = new ITextRenderer();
         XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
-        renderer = fixFontSizeHeaderRendererDisplay(renderer);
+        renderer = embedFontSize(renderer);
 
         renderer.setDocumentFromString(htmlContent.replaceAll("[\\u0000-\\u001F&&[^\\n\\r\\t]]", " ")
                 .replaceAll("&nbsp;", "&#160;")
@@ -789,7 +789,7 @@ public class GeneratePdfDelegate {
         ITextRenderer renderer = new ITextRenderer();
         XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
 
-        renderer = fixFontSizeHeaderRendererDisplay(renderer);
+        renderer = embedFontSize(renderer);
         renderer.setDocumentFromString(htmlContent.replaceAll("[\\u0000-\\u001F&&[^\\n\\r\\t]]", " ")
                 .replaceAll("&nbsp;", "&#160;")
                 .replaceAll("font-size:\\s*0(\\.0+)?(px|pt|em|rem|%)?;", "font-size:1px;"));
@@ -804,7 +804,7 @@ public class GeneratePdfDelegate {
         return tempFile;
     }
 
-    private ITextRenderer fixFontSizeHeaderRendererDisplay(ITextRenderer renderer) {
+    private ITextRenderer embedFontSize(ITextRenderer renderer) {
         try {
             renderer.getFontResolver().addFont(
                     Objects.requireNonNull(getClass().getResource("/fonts/Roboto/Roboto-Regular.ttf")).getPath(),
@@ -1213,7 +1213,7 @@ public class GeneratePdfDelegate {
         }
         ITextRenderer renderer = new ITextRenderer();
         XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
-        renderer = fixFontSizeHeaderRendererDisplay(renderer);
+        renderer = embedFontSize(renderer);
         renderer.setDocumentFromString(
                 htmlContent.replaceAll("\\p{C}", " ").replaceAll("&", "<![CDATA[&]]>").replaceAll("<col (.*?)>", "")
                         .replaceAll("line-height: normal",
