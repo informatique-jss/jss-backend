@@ -112,9 +112,18 @@ export class AttachmentsComponent implements OnInit {
   formatDateTimeForSortTable = formatDateTimeForSortTable;
 
   downloadAllFiles() {
-    if (this.filteredAttachments)
-      for (let attachment of this.filteredAttachments)
-        this.uploadAttachmentService.downloadAttachment(attachment);
+    let attachmentIds: number[] = [];
+    if (this.filteredAttachments && this.filteredAttachments.length > 0) {
+      if (this.filteredAttachments.length <= 8)
+        for (let attachement of this.filteredAttachments)
+          this.uploadAttachmentService.downloadAttachment(attachement);
+
+      else {
+        for (let attachment of this.filteredAttachments)
+          attachmentIds.push(attachment.id);
+        this.uploadAttachmentService.downloadAttachmentsAsZip(attachmentIds);
+      }
+    }
   }
 
   setDataTable() {

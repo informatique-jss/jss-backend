@@ -1389,17 +1389,37 @@ public class MiscellaneousController {
         return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
     }
 
-    @PostMapping(inputEntryPoint + "/attachment/download-all")
-    public ResponseEntity<byte[]> downloadAllAttachments(@RequestBody List<Integer> invoiceIds)
+    @PostMapping(inputEntryPoint + "/invoice/attachment/download-all")
+    public ResponseEntity<byte[]> downloadAllAttachmentsFromInvoice(@RequestBody List<Integer> invoiceIds)
             throws OsirisValidationException, OsirisException {
 
         if (invoiceIds == null)
             throw new OsirisValidationException("invoiceIds");
+        List<Integer> attachmentIds = attachmentService.getAttachmentsFromInvoices(invoiceIds);
 
-        byte[] zipBytes = attachmentService.downloadAllInvoicesAsZip(invoiceIds);
+        byte[] zipBytes = null;
+        if (attachmentIds != null && !attachmentIds.isEmpty())
+            zipBytes = attachmentService.downloadAllAttachmentsAsZip(attachmentIds);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("filename", "factures.zip");
+        headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
+        headers.setContentLength(zipBytes.length);
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
+        return new ResponseEntity<>(zipBytes, headers, HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/attachment/download-all")
+    public ResponseEntity<byte[]> downloadAllAttachments(@RequestBody List<Integer> attachmentIds)
+            throws OsirisValidationException, OsirisException {
+        if (attachmentIds == null)
+            throw new OsirisValidationException("attachmentIds");
+
+        byte[] zipBytes = attachmentService.downloadAllAttachmentsAsZip(attachmentIds);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("filename", "documents.zip");
         headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
         headers.setContentLength(zipBytes.length);
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
