@@ -6,7 +6,7 @@ import { AssoAnnouncementNoticeTemplateAnnouncementFragment } from '../model/Ass
 @Injectable({
   providedIn: 'root'
 })
-export class AssoAnnouncementNoticeTemplateAnnouncementFragmentService extends AppRestService<AssoAnnouncementNoticeTemplateAnnouncementFragment> {
+export class AssoNoticeTemplateAnnouncementFragmentService extends AppRestService<AssoAnnouncementNoticeTemplateAnnouncementFragment> {
 
   constructor(http: HttpClient) {
     super(http, "quotation");
