@@ -5,7 +5,9 @@ import { Alignment, Bold, ClassicEditor, Clipboard, Essentials, Font, GeneralHtm
 import { Observable } from 'rxjs';
 import { AnnouncementNoticeTemplate } from 'src/app/modules/quotation/model/AnnouncementNoticeTemplate';
 import { AnnouncementNoticeTemplateFragment } from 'src/app/modules/quotation/model/AnnouncementNoticeTemplateFragment';
+import { AssoAnnouncementNoticeTemplateAnnouncementFragment } from 'src/app/modules/quotation/model/AssoAnnouncementNoticeTemplateAnnouncementFragment';
 import { AnnouncementNoticeTemplateService } from 'src/app/modules/quotation/services/announcement.notice.template.service';
+import { AssoNoticeTemplateAnnouncementFragmentService } from 'src/app/modules/quotation/services/asso.notice.template.announcement.fragment.service';
 import { AppService } from 'src/app/services/app.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
@@ -17,11 +19,15 @@ import { GenericReferentialComponent } from '../generic-referential/generic-refe
 export class ReferentialAnnouncementNoticeTemplateComponent extends GenericReferentialComponent<AnnouncementNoticeTemplate> implements OnInit {
   constructor(private announcementNoticeTemplateService: AnnouncementNoticeTemplateService,
     private formBuilder2: FormBuilder,
-    private appService2: AppService,) {
+    private appService2: AppService,
+    private assoNoticeTemplateFragmentService: AssoNoticeTemplateAnnouncementFragmentService,
+  ) {
     super(formBuilder2, appService2);
   }
 
   initialNoticeValue: string = '';
+
+  assosNoticeTemplateFragments: AssoAnnouncementNoticeTemplateAnnouncementFragment[] = [];
 
   entityForm2 = this.formBuilder2.group({
     notice: ['', Validators.required]
@@ -41,6 +47,10 @@ export class ReferentialAnnouncementNoticeTemplateComponent extends GenericRefer
 
   selectEntity(element: AnnouncementNoticeTemplate) {
     this.selectedEntity = element;
+    if (element && element.id)
+      this.assoNoticeTemplateFragmentService.getAssoAnnouncementNoticeTemplateFragmentByNoticeTemplate(element.id).subscribe(res => {
+        this.assosNoticeTemplateFragments = res;
+      });
     this.initialNoticeValue = this.selectedEntity.text
     this.selectedEntityChange.emit(this.selectedEntity);
   }
@@ -48,6 +58,7 @@ export class ReferentialAnnouncementNoticeTemplateComponent extends GenericRefer
   getAddOrUpdateObservable(): Observable<AnnouncementNoticeTemplate> {
     return this.announcementNoticeTemplateService.addOrUpdateAnnouncementNoticeTemplate(this.selectedEntity!);
   }
+
   getGetObservable(): Observable<AnnouncementNoticeTemplate[]> {
     return this.announcementNoticeTemplateService.getAnnouncementNoticeTemplates();
   }
@@ -90,6 +101,19 @@ export class ReferentialAnnouncementNoticeTemplateComponent extends GenericRefer
       if (this.selectedEntity.announcementNoticeTemplateFragments && this.selectedEntity.announcementNoticeTemplateFragments.indexOf(fragment) >= 0) {
         this.selectedEntity.announcementNoticeTemplateFragments.splice(this.selectedEntity.announcementNoticeTemplateFragments.indexOf(fragment), 1);
       }
+    }
+  }
+
+  override saveEntity(): void {
+    super.saveEntity();
+    if (this.getFormStatus()) {
+
+      this.assoNoticeTemplateFragmentService.saveAssoAnnouncementNoticeTemplateFragment(this.assosNoticeTemplateFragments).subscribe(response => {
+        this.setDataTable();
+
+      });
+    } else {
+      this.appService2.displaySnackBar("Erreur, certains champs des fragments ne sont pas correctement renseignés !", true, 15);
     }
   }
 }

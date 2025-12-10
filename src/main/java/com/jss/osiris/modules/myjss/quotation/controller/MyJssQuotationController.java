@@ -2021,8 +2021,7 @@ public class MyJssQuotationController {
 	@GetMapping(inputEntryPoint + "/asso-notice-template-fragment")
 	public ResponseEntity<List<AssoAnnouncementNoticeTemplateAnnouncementFragment>> getAssoAnnouncementNoticeTemplateFragmentByNoticeTemplate(
 			@RequestParam(required = true) Integer idNoticeTemplateAnnouncement,
-			HttpServletRequest request) throws OsirisClientMessageException, OsirisException, URISyntaxException,
-			IOException, InterruptedException {
+			HttpServletRequest request) {
 		detectFlood(request);
 
 		return new ResponseEntity<List<AssoAnnouncementNoticeTemplateAnnouncementFragment>>(

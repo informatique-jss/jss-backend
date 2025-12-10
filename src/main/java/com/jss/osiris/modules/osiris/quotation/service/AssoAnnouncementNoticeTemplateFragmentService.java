@@ -8,4 +8,8 @@ public interface AssoAnnouncementNoticeTemplateFragmentService {
 
     public List<AssoAnnouncementNoticeTemplateAnnouncementFragment> getAssoAnnouncementNoticeTemplateFragmentByNoticeTemplate(
             Integer idNoticeTemplateAnnouncement);
+
+    public List<AssoAnnouncementNoticeTemplateAnnouncementFragment> addOrUpdateAssosAnnouncementNoticeTemplateFragments(
+            List<AssoAnnouncementNoticeTemplateAnnouncementFragment> assosAnnouncementNoticeTemplateAnnouncementFragments);
+
 }

@@ -73,6 +73,7 @@ import com.jss.osiris.modules.osiris.quotation.model.AnnouncementStatus;
 import com.jss.osiris.modules.osiris.quotation.model.AssignationType;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrderSearchResult;
+import com.jss.osiris.modules.osiris.quotation.model.AssoAnnouncementNoticeTemplateAnnouncementFragment;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceProvisionType;
@@ -144,6 +145,7 @@ import com.jss.osiris.modules.osiris.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.osiris.quotation.service.AnnouncementStatusService;
 import com.jss.osiris.modules.osiris.quotation.service.AssignationTypeService;
 import com.jss.osiris.modules.osiris.quotation.service.AssoAffaireOrderService;
+import com.jss.osiris.modules.osiris.quotation.service.AssoAnnouncementNoticeTemplateFragmentService;
 import com.jss.osiris.modules.osiris.quotation.service.AssoServiceDocumentService;
 import com.jss.osiris.modules.osiris.quotation.service.AssoServiceFieldTypeService;
 import com.jss.osiris.modules.osiris.quotation.service.BankTransfertService;
@@ -428,6 +430,9 @@ public class QuotationController {
 
   @Autowired
   QuotationFacade quotationFacade;
+
+  @Autowired
+  AssoAnnouncementNoticeTemplateFragmentService assoAnnouncementNoticeTemplateFragmentService;
 
   @GetMapping(inputEntryPoint + "/order-blockages")
   public ResponseEntity<List<OrderBlockage>> getOrderBlockages() {
@@ -1396,6 +1401,27 @@ public class QuotationController {
   public ResponseEntity<List<AnnouncementNoticeTemplate>> getAnnouncementNoticeTemplates() {
     return new ResponseEntity<List<AnnouncementNoticeTemplate>>(
         announcementNoticeTemplateService.getAnnouncementNoticeTemplates(), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/asso-notice-template-fragment")
+  public ResponseEntity<List<AssoAnnouncementNoticeTemplateAnnouncementFragment>> getAssoAnnouncementNoticeTemplateFragmentByNoticeTemplate(
+      @RequestParam(required = true) Integer idNoticeTemplateAnnouncement) {
+
+    return new ResponseEntity<List<AssoAnnouncementNoticeTemplateAnnouncementFragment>>(
+        assoAnnouncementNoticeTemplateFragmentService
+            .getAssoAnnouncementNoticeTemplateFragmentByNoticeTemplate(idNoticeTemplateAnnouncement),
+        HttpStatus.OK);
+  }
+
+  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+  @PostMapping(inputEntryPoint + "/save/asso-notice-template-fragments")
+  public ResponseEntity<List<AssoAnnouncementNoticeTemplateAnnouncementFragment>> addOrUpdateAssosAnnouncementNoticeTemplateFragments(
+      @RequestBody List<AssoAnnouncementNoticeTemplateAnnouncementFragment> assosAnnouncementNoticeTemplateFragments) {
+
+    return new ResponseEntity<List<AssoAnnouncementNoticeTemplateAnnouncementFragment>>(
+        assoAnnouncementNoticeTemplateFragmentService
+            .addOrUpdateAssosAnnouncementNoticeTemplateFragments(assosAnnouncementNoticeTemplateFragments),
+        HttpStatus.OK);
   }
 
   @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
