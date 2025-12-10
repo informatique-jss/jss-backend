@@ -9,6 +9,7 @@ export interface Announcement {
   notice: string;
   isProofReadingDocument: boolean;
   isReReadByJss: boolean;
+  isUsingTemplate: boolean;
   noticeTypes: NoticeType[];
   noticeTypeFamily: NoticeTypeFamily;
 }

@@ -432,6 +432,7 @@ public class GeneratePdfDelegate {
         Boolean hasMandatoryFieldTypes = false;
         Boolean hasMandatoryDocuments = false;
         List<InvoiceItem> invoiceItems = new ArrayList<InvoiceItem>();
+        List<String> announcementNotices = new ArrayList<String>();
 
         if (customerOrder.getAssoAffaireOrders() != null && !customerOrder.getAssoAffaireOrders().isEmpty()) {
             for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
@@ -454,8 +455,14 @@ public class GeneratePdfDelegate {
                                     }
                         }
                         if (service.getProvisions() != null) {
-                            for (Provision provision : service.getProvisions())
+                            for (Provision provision : service.getProvisions()) {
                                 invoiceItems.addAll(provision.getInvoiceItems());
+
+                                if (provision.getAnnouncement() != null && !provision.getIsRedactedByJss()
+                                        && provision.getAnnouncement().getNotice() != null
+                                        && !provision.getAnnouncement().getNotice().isEmpty())
+                                    announcementNotices.add(provision.getAnnouncement().getNotice());
+                            }
                         }
                     }
                 }
@@ -485,6 +492,9 @@ public class GeneratePdfDelegate {
 
         if (!invoiceItems.isEmpty())
             ctx.setVariable("invoiceItems", invoiceItems);
+
+        if (!announcementNotices.isEmpty())
+            ctx.setVariable("announcementNotices", announcementNotices);
 
         final String htmlContent = StringEscapeUtils
                 .unescapeHtml4(emailTemplateEngine().process("customer-order-purchase", ctx));

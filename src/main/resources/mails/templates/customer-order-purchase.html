@@ -151,7 +151,18 @@
 
     </table>
 
+
     <p style="margin-top: 10px;">&#160;</p>
+    <table style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;"
+        th:if="${announcementNotices!=null}">
+        <th:block th:each="announcement, count : ${announcementNotices}">
+            <tr>
+                <td style="padding-top: 20px; text-align : left; white-space: nowrap;">
+                    <span th:text="|Texte de l'annonce ${count.count} : ${announcement}|">
+                    </span>
+                </td>
+            </tr>
+    </table>
 
     <div>
         <th:block th:if="${assos!=null}" th:each="asso : ${assos}">
