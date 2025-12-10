@@ -1,0 +1,225 @@
+<div class="container-fluid" *ngIf="tiers">
+  <tiers-header [tiers]="tiers" />
+  <div class="row g-3">
+    <!---------------- First column -------------->
+    <div class="col-xl-4">
+      <ui-card title="Informations Tiers">
+        <div card-body>
+          @if(tiers.siret){
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <div class="avatar-sm bg-light d-flex align-items-center justify-content-center rounded">
+              <ng-icon name="tablerBuildingBank" class="fs-xl"></ng-icon>
+            </div>
+            <p class="mb-0 fs-sm">{{tiers.siret}}</p>
+          </div>
+          }
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <div class="avatar-sm bg-light d-flex align-items-center justify-content-center rounded">
+              <ng-icon name="tablerMapPin" class="fs-xl"></ng-icon>
+            </div>
+            <p class="mb-0 fs-sm">{{tiers.address}} <span class="text-dark fw-semibold">{{tiers.city.label}} </span>
+            </p>
+            @if(countryFrance && tiers.country && tiers.country.code !== countryFrance.code){
+            <p class="mb-0 fs-sm">({{tiers.country.label}})</p>
+            }
+          </div>
+          @if (tiers.mails && tiers.mails.length>0){
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <div class="avatar-sm bg-light d-flex align-items-center justify-content-center rounded">
+              <ng-icon name="tablerMail" class="fs-xl" />
+            </div>
+            <p class="mb-0 fs-sm">Email
+              @for(mail of tiers.mails; track $index){
+              <a [href]="'mailto:' + mail" class="text-primary fw-semibold pointer">{{mail}}</a>
+              }
+            </p>
+          </div>
+          }
+          @if (tiers.siret){
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <div class="avatar-sm bg-light d-flex align-items-center justify-content-center rounded">
+              <ng-icon name="tablerBuildingBank" class="fs-xl" />
+            </div>
+            <p class="mb-0 fs-sm">RCS <span class="text-dark fw-semibold">{{tiers.siret}}</span>
+            </p>
+          </div>
+          }
+          @if (tiers.mailRecipient){
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <div class="avatar-sm bg-light d-flex align-items-center justify-content-center rounded">
+              <ng-icon name="tablerMailForward" class="fs-xl" />
+            </div>
+            <p class="mb-0 fs-sm">Destinataire(s) courrier : <br>
+              <span class="text-dark fw-semibold">{{tiers.mailRecipient}}</span>
+            </p>
+          </div>
+          }
+          <div class="d-flex justify-content-center gap-2 mt-4">
+            @if(tiers.salesEmployee){
+            <div class="avatar avatar-lg justify-content-center">
+              <avatar (click)="openTeamsConversation(tiers.salesEmployee)" [stringInput]="tiers.salesEmployee"
+                [size]="35" class="pointer">
+              </avatar>
+            </div>
+            }
+            @if(tiers.formalisteEmployee){
+            <div class="avatar avatar-lg justify-content-center">
+              <avatar (click)="openTeamsConversation(tiers.formalisteEmployee)" [stringInput]="tiers.formalisteEmployee"
+                [size]="35" class="pointer"></avatar>
+            </div>
+            }
+          </div>
+        </div>
+      </ui-card>
+
+      <ui-card title="Gestes commerciaux">
+        <div card-body>
+          @if(tiers.rffFormaliteRate){
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <div class="avatar-sm bg-light d-flex align-items-center justify-content-center rounded">
+              <ng-icon name="tablerGift" class="fs-xl"></ng-icon>
+            </div>
+            <p class="mb-0 fs-sm">Taux de RFF Formalité : <span
+                class="text-dark fw-semibold">{{tiers.rffFormaliteRate}}</span> %
+            </p>
+          </div>
+          }
+          @if(tiers.rffInsertionRate){
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <div class="avatar-sm bg-light d-flex align-items-center justify-content-center rounded">
+              <ng-icon name="tablerGiftCard" class="fs-xl"></ng-icon>
+            </div>
+            <p class="mb-0 fs-sm">Taux de RFF Insertion : <span
+                class="text-dark fw-semibold">{{tiers.rffInsertionRate}}</span> %
+            </p>
+          </div>
+          }
+
+          @if(tiers.specialOffers && tiers.specialOffers.length>=1){
+          <div class="d-flex ms-0 row align-items-center gap-2 mb-2">
+            <div class="col-auto avatar-sm bg-light d-flex align-items-center justify-content-center rounded">
+              <ng-icon name="tablerMoodDollar" class="fs-xl" />
+            </div>
+            <div class="col px-0">
+              <p class="col-auto mb-0  fs-sm">Tarifs spéciaux :
+                @if(tiers.specialOffers.length>1){<br>}
+              </p>
+              <div class="col-12 mb-0">
+                @for(specialOffer of tiers.specialOffers; track $index){
+                <div class="d-flex align-items-center">
+                  <ng-icon class="text-primary" name="tablerPointFill" />
+                  <span class="text-dark fw-semibold">{{specialOffer}}</span>
+                </div>
+                }
+              </div>
+            </div>
+          </div>
+          }
+        </div>
+      </ui-card>
+
+      <ui-card title="Responsables du tiers">
+        <div card-body>
+          @for (respo of tiersResponsables; track $index; let last = $last;let first = $first) {
+          <div class="justify-content-start row">
+            <div
+              class="d-flex col justify-content-between align-items-center {{!last && 'border-bottom'}} {{first ? 'pb-2' : 'py-2'}}">
+              <div class="d-flex align-items-center gap-2">
+                <div class="img-fluid rounded pointer">
+                  <avatar [stringInput]="respo.firstname+' '+ respo.lastname" [size]="40" [borderRadius]="10">
+                  </avatar>
+                </div>
+                <div>
+                  <h5 class="fs-sm mb-0 lh-base">{{ respo.firstname +" "+ respo.lastname}}</h5>
+                  @if (respo.responsableCategory) {
+                  <a class="text-muted fs-xs mb-0">{{ respo.responsableCategory }}</a>
+                  }
+                </div>
+              </div>
+            </div>
+            <div
+              class="d-flex col-auto justify-content-end align-items-center {{!last && 'border-bottom'}} {{first ? 'pb-2' : 'py-2'}}">
+              <div class="d-flex gap-1">
+                @if(respo.mail){
+                <a [href]="'mailto:' + respo.mail" class="btn btn-sm btn-icon btn-outline-primary">
+                  <ng-icon name="tablerMail" />
+                </a>
+                }
+                <a class="btn btn-sm btn-icon btn-primary" [routerLink]="'responsable/'+respo.id">
+                  <ng-icon name="tablerEye" />
+                </a>
+              </div>
+            </div>
+          </div>
+          }
+        </div>
+      </ui-card>
+
+      <ui-card title="Informations comptables">
+        <div card-body class="row">
+          <div class="col">
+            <h5 class="mb-2">Compte comptable client :</h5>
+            <p class="mb-0">{{tiers.accountingAccountCustomer}}</p>
+            <h5 class="mb-2 mt-3">Observations :</h5>
+            <p class="mb-0">{{tiers.accountingAccountDeposit}}</p>
+          </div>
+        </div>
+      </ui-card>
+    </div>
+
+    <!---------------- Second column -------------->
+    <div class="col-xl-8">
+      <div class="row row-cols-md-4 row-cols-3 align-self-stretch">
+        @for (kpiCrm of tiersKpis; track $index) {
+        <div class="col">
+          <kpi-widget class="align-self-stretch" [titleNbLinesEllipsis]="1" [kpiCrm]="kpiCrm"
+            [searchModel]="searchModel" [hideIcon]="true"></kpi-widget>
+        </div>
+        }
+      </div>
+      <ui-card title="Consignes et informations commerciales">
+        <div card-body class="row">
+          <div class="col">
+            <h5 class="mb-2">Consignes :</h5>
+            <p class="mb-0">{{tiers.instructions}}</p>
+            <h5 class="mb-2 mt-3">Observations :</h5>
+            <p class="mb-0">{{tiers.observations}}</p>
+          </div>
+          @if(tiers.competitors && tiers.competitors.length>0){
+          <div class="col-4 col-sm-3 align-items-start">
+            <h5 class="">Concurrents :</h5>
+            <ul>
+              @for(competitor of tiers.competitors; track $index){
+              <li class="mb-0">{{competitor}}</li>
+              }
+            </ul>
+          </div>
+          }
+        </div>
+      </ui-card>
+      <ui-card title="Evénements liés au tiers">
+        <div class="timeline timeline-icon-based" card-body>
+          @for (item of iconTimelineData; track $index; let last = $last; let i = $index) {
+          <div class="timeline-item d-flex align-items-stretch">
+            <div class="timeline-time pe-3 text-muted">{{ item.time }}</div>
+            <div class="timeline-dot"
+              [class]="i % 2 != 0 ? 'bg-' + item.variant + '-subtle' : 'text-bg-' + item.variant">
+              @if (item.icon) {
+              <ng-icon [name]="item.icon" [class]="i % 2 != 0 ? 'text-' + item.variant : ''" class="fs-xl"></ng-icon>
+              }
+              @if (item.avatar) {
+              <img [src]="item.avatar" alt="Avatar" class="rounded-circle" width="24" />
+              }
+            </div>
+            <div class="timeline-content ps-3 {{!last ? 'pb-4' : ''}}">
+              <h5 class="mb-1">{{ item.title }}</h5>
+              <p class="mb-1 text-muted">{{ item.description }}</p>
+              <span class="text-primary fw-semibold">By {{ item.name }}</span>
+            </div>
+          </div>
+          }
+        </div>
+      </ui-card>
+    </div>
+  </div>
+</div>

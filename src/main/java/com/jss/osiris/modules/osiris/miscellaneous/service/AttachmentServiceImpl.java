@@ -565,11 +565,10 @@ public class AttachmentServiceImpl implements AttachmentService {
         return cleanName.toString();
     }
 
-    @Transactional(rollbackFor = Exception.class)
-    public byte[] downloadAllInvoicesAsZip(List<Integer> invoiceIds) throws OsirisException {
+    @Override
+    public List<Integer> getAttachmentsFromInvoices(List<Integer> invoiceIds) throws OsirisException {
         Set<Integer> uniqueInvoiceIds = new HashSet<>(invoiceIds);
         List<Invoice> invoices = new ArrayList<Invoice>();
-        byte[] outArray = null;
 
         if (uniqueInvoiceIds != null && uniqueInvoiceIds.size() > 0) {
             for (Integer id : uniqueInvoiceIds) {
@@ -578,7 +577,6 @@ public class AttachmentServiceImpl implements AttachmentService {
         }
 
         List<Integer> attachmentIds = new ArrayList<Integer>();
-
         if (invoices != null && invoices.size() > 0)
             for (Invoice invoice : invoices)
                 if (invoice != null && invoice.getAttachments() != null && invoice.getAttachments().size() > 0)
@@ -586,6 +584,13 @@ public class AttachmentServiceImpl implements AttachmentService {
                         if (attachment.getAttachmentType().getId()
                                 .equals(constantService.getAttachmentTypeInvoice().getId()))
                             attachmentIds.add(attachment.getId());
+
+        return attachmentIds;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public byte[] downloadAllAttachmentsAsZip(List<Integer> attachmentIds) throws OsirisException {
+        byte[] outArray = null;
 
         ByteArrayOutputStream zipOutputStream = new ByteArrayOutputStream();
 

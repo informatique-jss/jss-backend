@@ -8,8 +8,10 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.DocumentType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 import com.jss.osiris.modules.osiris.tiers.model.IResponsableSearchResult;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
+import com.jss.osiris.modules.osiris.tiers.model.ResponsableSearch;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 import com.jss.osiris.modules.osiris.tiers.model.TiersSearch;
+import com.jss.osiris.modules.osiris.tiers.model.dto.ResponsableDto;
 
 public interface ResponsableService {
     public Responsable addOrUpdateResponsable(Responsable responsable);
@@ -38,7 +40,9 @@ public interface ResponsableService {
      * |============================================================================
      */
 
-    public List<Responsable> getResponsablesByTiers(Tiers tiers);
+    public List<ResponsableDto> getResponsablesByTiers(Tiers tiers);
 
     public void updateConsentDateForCurrentUser();
+
+    public List<Responsable> searchForResponsable(ResponsableSearch responsableSearch) throws OsirisException;
 }

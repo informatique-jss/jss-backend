@@ -22,9 +22,9 @@ public class AuditServiceImpl implements AuditService {
     }
 
     @Override
-    public List<Audit> getAuditForEntityAndFieldName(String entityType, Integer entityId, String status,
+    public List<Audit> getAuditForEntityAndFieldName(String entityType, Integer entityId, String value,
             String fieldName) {
-        return auditRepository.findByEntityAndEntityIdAndFieldNameAndValue(entityType, entityId, status, fieldName);
+        return auditRepository.findByEntityAndEntityIdAndFieldNameAndValue(entityType, entityId, value, fieldName);
     }
 
     @Transactional

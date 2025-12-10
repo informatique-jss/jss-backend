@@ -8,6 +8,7 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.tiers.model.ITiersSearchResult;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 import com.jss.osiris.modules.osiris.tiers.model.TiersSearch;
+import com.jss.osiris.modules.osiris.tiers.model.dto.TiersDto;
 
 public interface TiersService {
     public Tiers getTiers(Integer id);
@@ -30,4 +31,8 @@ public interface TiersService {
             throws OsirisClientMessageException, OsirisException, OsirisDuplicateException;
 
     public List<ITiersSearchResult> searchTiers(TiersSearch tiersSearch) throws OsirisException;
+
+    public List<Tiers> searchForTiers(TiersSearch tiersSearch) throws OsirisException;
+
+    public TiersDto getTiersDto(Integer id);
 }

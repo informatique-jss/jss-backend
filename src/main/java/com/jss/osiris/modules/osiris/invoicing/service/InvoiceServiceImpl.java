@@ -774,4 +774,11 @@ public class InvoiceServiceImpl implements InvoiceService {
         }
         return null;
     }
+
+    @Override
+    public List<Invoice> getInvoicesByStatus(InvoiceStatus invoiceStatus, boolean onlyCustomerInvoices) {
+        if (onlyCustomerInvoices)
+            return invoiceRepository.findByInvoiceStatusAndResponsableIsNotNull(invoiceStatus);
+        return invoiceRepository.findByInvoiceStatus(invoiceStatus);
+    }
 }

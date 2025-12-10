@@ -949,6 +949,7 @@ public class Constant implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_active_directory_group_sales")
+	@JsonView(JacksonViews.OsirisDetailedView.class)
 	private ActiveDirectoryGroup activeDirectoryGroupSales;
 
 	private LocalDate dateAccountingClosureForAccountant;

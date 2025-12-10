@@ -12,8 +12,8 @@ public interface AuditRepository extends CrudRepository<Audit, Integer> {
 
     List<Audit> findByEntityAndEntityId(String entityType, Integer entityId);
 
-    @Query("select a from Audit a where a.entity =:entityType AND a.entityId =:entityId AND a.fieldName =:fieldName AND (a.oldValue =:status OR a.newValue =:status)")
-    List<Audit> findByEntityAndEntityIdAndFieldNameAndValue(String entityType, Integer entityId, String status,
+    @Query("select a from Audit a where a.entity =:entityType AND a.entityId =:entityId AND a.fieldName =:fieldName AND (a.oldValue =:value OR a.newValue =:value)")
+    List<Audit> findByEntityAndEntityIdAndFieldNameAndValue(String entityType, Integer entityId, String value,
             String fieldName);
 
     @Modifying

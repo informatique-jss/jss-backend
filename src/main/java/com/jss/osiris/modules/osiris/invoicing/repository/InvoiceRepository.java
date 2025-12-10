@@ -111,8 +111,10 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
         List<Invoice> findInvoiceForCustomReminder(@Param("invoiceStatus") InvoiceStatus invoiceStatusSend,
                         @Param("billingLabelType") BillingLabelType billingLabelType);
 
-        @Query("select i from Invoice i where responsable in :responsables and (invoiceStatus in :invoiceStatus) ")
+        @Query("select i from Invoice i where i.responsable in :responsables and (i.invoiceStatus in :invoiceStatus) ")
         List<Invoice> searchInvoices(List<Responsable> responsables, List<InvoiceStatus> invoiceStatus);
+
+        List<Invoice> findByInvoiceStatus(InvoiceStatus invoiceStatus);
 
         List<Invoice> findByResponsableInAndInvoiceStatusInAndCreatedDateBetween(List<Responsable> responsables,
                         List<InvoiceStatus> invoiceStatus, LocalDateTime startDate, LocalDateTime endDate);
@@ -123,5 +125,7 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
         @Modifying
         @Query(nativeQuery = true, value = " delete from invoice where  id  in (select id from reprise_inpi_del)")
         void deleteDuplicateInvoices();
+
+        List<Invoice> findByInvoiceStatusAndResponsableIsNotNull(InvoiceStatus invoiceStatus);
 
 }

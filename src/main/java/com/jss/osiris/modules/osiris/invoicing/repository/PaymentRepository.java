@@ -99,4 +99,7 @@ public interface PaymentRepository extends QueryCacheCrudRepository<Payment, Int
 
         List<Payment> findByCustomerOrder(CustomerOrder customerOrder);
 
+        @Query("select p from Payment p left join p.customerOrder c left join p.invoice i where (:responsableId=0 or c.responsable.id = :responsableId or i.responsable.id = :responsableId) and ( c.responsable is not null or i.responsable is not null) and p.isCancelled=false")
+        List<Payment> findByResponsable(Integer responsableId);
+
 }

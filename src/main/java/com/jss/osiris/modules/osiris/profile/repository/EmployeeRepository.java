@@ -33,4 +33,7 @@ public interface EmployeeRepository extends QueryCacheCrudRepository<Employee, I
             " join responsable r3 on r3.id_tiers = t.id " +
             " where r2.id_mail = :idMail and  coalesce(r3.is_active,false)=true ")
     List<Integer> getPotentialUserScope(@Param("idMail") Integer idMail);
+
+    Employee findByFirstnameLikeIgnoreCaseAndLastnameLikeIgnoreCase(String firstName, String lastname);
+
 }
