@@ -421,7 +421,7 @@ export class RequiredInformationComponent implements OnInit {
             }
       }
 
-      if (this.noticeTemplateDescription && this.noticeTemplateDescription.announcementOrder && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex] && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[this.noticeTemplateDescription.announcementOrder])
+      if (this.noticeTemplateDescription && this.noticeTemplateDescription.announcementOrder && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex] && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[this.noticeTemplateDescription.announcementOrder] && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[this.noticeTemplateDescription.announcementOrder].announcement)
         this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[this.noticeTemplateDescription.announcementOrder].announcement!.notice = this.noticeTemplateDescription.displayText;
 
       if (this.currentUser) {
