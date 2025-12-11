@@ -36,6 +36,9 @@ export abstract class GenericListComponent<T extends IId, U extends Record<strin
   searchForm: FormGroup = {} as FormGroup;
   searchTabs: GenericSearchTab<U>[] = [];
 
+  pageTitle: string = "Welcome !";
+  breadcrumbPaths: { label: string; route: string; }[] = [];
+
   Validators = Validators;
 
   searchModel: U = {} as U;

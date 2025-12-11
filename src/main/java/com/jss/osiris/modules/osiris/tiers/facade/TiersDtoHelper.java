@@ -149,6 +149,7 @@ public class TiersDtoHelper {
             HashMap<String, KpiCrm> kpiCrmsMap) {
 
         ResponsableDto outResponsable = new ResponsableDto();
+        outResponsable.setCivility(responsable.getCivility() != null ? responsable.getCivility().getLabel() : null);
         outResponsable.setFirstname(responsable.getFirstname());
         outResponsable.setLastname(responsable.getLastname());
         outResponsable.setId(responsable.getId());
@@ -182,11 +183,17 @@ public class TiersDtoHelper {
 
     private ResponsableDto mapResponsableDetailsToResponsableDto(ResponsableDto responsableDto,
             Responsable responsable) {
+        responsableDto.setIsActive(responsable.getIsActive());
         responsableDto.setPhones(
                 responsable.getPhones() != null ? responsable.getPhones().stream().map(Phone::getPhoneNumber).toList()
                         : null);
         responsableDto.setMail(
                 responsable.getMail() != null ? responsable.getMail().getMail() : null);
+        responsableDto.setFunction(responsable.getFunction());
+        responsableDto.setMailRecipient(responsable.getMailRecipient());
+        responsableDto.setNumberOfGiftPostsPerMonth(responsable.getNumberOfGiftPostsPerMonth());
+        responsableDto.setCanViewAllTiersInWeb(responsable.getCanViewAllTiersInWeb());
+        responsableDto.setObservations(responsable.getObservations());
 
         return responsableDto;
     }

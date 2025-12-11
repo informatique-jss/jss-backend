@@ -55,6 +55,11 @@ export class ResponsableListComponent extends GenericListComponent<ResponsableDt
   }
 
   override ngOnInit(): void {
+    this.pageTitle = "Liste des responsables";
+    this.breadcrumbPaths = [
+      { label: "Liste des responsables", route: "/responsables" },
+    ]
+
     this.kpiCrmService.getKpiCrm().subscribe(reponse => {
       this.kpiCrms = reponse;
       super.ngOnInit();
@@ -100,7 +105,7 @@ export class ResponsableListComponent extends GenericListComponent<ResponsableDt
 
     this.eventOnClickOpenResponsable.subscribe((row: Row<ResponsableDto>) => {
       this.responsableService.setSelectedResponsableUnique(row.original);
-      this.router.navigate(['responsable/view/' + row.original.id]);
+      this.router.navigate(['tiers/view/' + row.original.tiersId + '/responsable/' + row.original.id]);
     });
 
     return actions;

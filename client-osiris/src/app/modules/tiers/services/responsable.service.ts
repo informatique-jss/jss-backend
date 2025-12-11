@@ -76,7 +76,7 @@ export class ResponsableService extends AppRestService<Responsable> {
   }
 
   getResponsable(id: number) {
-    return this.getById("responsable", id) as any as Observable<ResponsableDto>;
+    return this.getById("responsable-dto", id) as any as Observable<ResponsableDto>;
   }
 
   getResponsables(value: string): Observable<PagedContent<Responsable>> {

@@ -5,7 +5,7 @@
       <ng-content select="[badge-text]"></ng-content>
     </h5>
     <div>
-      @if (isTogglable || isReloadable || isCloseable) {
+      @if (isTogglable || isReloadable || isCloseable || customButtonIcon) {
       <div class="card-action">
         @if (isTogglable) {
         <button (click)="isCollapsed = !isCollapsed" class="card-action-item border-0">
@@ -25,6 +25,11 @@
         @if (isCloseable) {
         <button (click)="close()" class="card-action-item border-0">
           <ng-icon name="tablerX" />
+        </button>
+        }
+        @if (customButtonIcon) {
+        <button (click)="changeCustomButtonSelected()" class="card-action-item border-0">
+          <ng-icon [name]="customButtonIcon" [ngbTooltip]="customButtonTooltip" />
         </button>
         }
       </div>

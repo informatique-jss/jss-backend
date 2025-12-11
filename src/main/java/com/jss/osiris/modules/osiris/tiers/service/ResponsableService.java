@@ -45,4 +45,6 @@ public interface ResponsableService {
     public void updateConsentDateForCurrentUser();
 
     public List<Responsable> searchForResponsable(ResponsableSearch responsableSearch) throws OsirisException;
+
+    ResponsableDto getResponsableDto(Integer id);
 }

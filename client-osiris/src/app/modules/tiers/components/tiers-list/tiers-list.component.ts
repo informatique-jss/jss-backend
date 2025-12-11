@@ -58,6 +58,10 @@ export class TiersListComponent extends GenericListComponent<TiersDto, TiersSear
       this.kpiCrms = reponse.sort((a: KpiCrm, b: KpiCrm) => a.kpiCrmCategory && b.kpiCrmCategory ? a.kpiCrmCategory.label.localeCompare(b.kpiCrmCategory.label) : 0);
       super.ngOnInit();
     })
+
+    this.breadcrumbPaths = [
+      { label: "Liste des tiers", route: "/tiers" },
+    ]
   }
 
   override generateActions(): GenericTableAction<TiersDto>[] {

@@ -8,6 +8,7 @@ import { KpiWidgetComponent } from '../../../crm/components/kpi-widget/kpi-widge
 import { KpiCrm } from '../../../crm/model/KpiCrm';
 import { KpiCrmSearchModel } from '../../../crm/model/KpiCrmSearchModel';
 import { KpiCrmService } from '../../../crm/services/kpi.crm.service';
+import { PageTitleComponent } from "../../../main/components/page-title/page-title.component";
 import { ConstantService } from '../../../main/services/constant.service';
 import { AvatarComponent } from '../../../miscellaneous/components/avatar/avatar.component';
 import { Country } from '../../../profile/model/Country';
@@ -41,17 +42,24 @@ export type TimelineType = {
     NgIconComponent,
     UiCardComponent,
     AvatarComponent,
-    KpiWidgetComponent,
-  ]
+    KpiWidgetComponent, PageTitleComponent]
 })
 export class TiersComponent implements OnInit {
+
+  breadcrumbPaths: { label: string; route: string; }[] = [];
 
   tiersId: number | undefined;
   tiers: TiersDto | undefined;
 
   tiersResponsables: ResponsableDto[] = [];
 
+  tiersResponsablesToDisplay: ResponsableDto[] = [];
+
   tiersKpis: KpiCrm[] = [];
+
+  inactiveResponsablesIcon = "tablerUserOff";
+  isShowInactiveResponsable: boolean = true;
+  inactiveResponsablesTooltip: string = "Afficher les responsables inactifs";
 
   searchModel: KpiCrmSearchModel = {
     endDateKpis: new Date(),
@@ -127,8 +135,12 @@ export class TiersComponent implements OnInit {
 
   ngOnInit() {
     this.countryFrance = this.constantService.getCountryFrance();
-    if (this.activeRoute.snapshot.params['id'])
+    this.breadcrumbPaths.push({ label: "Liste des tiers", route: "/tiers/" })
+
+    if (this.activeRoute.snapshot.params['id']) {
       this.tiersId = this.activeRoute.snapshot.params['id'];
+      this.breadcrumbPaths.push({ label: "Détail du tiers", route: "/tiers/view/" + this.tiersId })
+    }
 
     if (this.tiersId) {
       this.fetchKpisForTiers();
@@ -139,6 +151,7 @@ export class TiersComponent implements OnInit {
           if (this.tiers.id)
             this.responsableService.getResponsablesByTiers(this.tiers.id).subscribe(response => {
               this.tiersResponsables = response;
+              this.showInactiveResponsables();
             });
         }
       });
@@ -178,6 +191,19 @@ export class TiersComponent implements OnInit {
         displayInTeams(res);
       }
     });
+  }
+
+  showInactiveResponsables() {
+    this.isShowInactiveResponsable = !this.isShowInactiveResponsable;
+    if (this.isShowInactiveResponsable) {
+      this.inactiveResponsablesIcon = "tablerUserCancel";
+      this.inactiveResponsablesTooltip = "Masquer les responsables inactifs";
+      this.tiersResponsablesToDisplay = this.tiersResponsables
+    } else {
+      this.inactiveResponsablesIcon = "tablerUserOff";
+      this.inactiveResponsablesTooltip = "Afficher les responsables inactifs";
+      this.tiersResponsablesToDisplay = this.tiersResponsables.filter(resp => resp.isActive == true);
+    }
   }
 
   callPhoneNumber(phone: string) {
