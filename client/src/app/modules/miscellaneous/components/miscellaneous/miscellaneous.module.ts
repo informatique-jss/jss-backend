@@ -116,6 +116,7 @@ import { SelectAccountingAccountClassComponent } from '../forms/select-accountin
 import { SelectAccountingJournalComponent } from '../forms/select-accounting-journal/select-accounting-journal.component';
 import { SelectActiveDirectoryGroupMultipleComponent } from '../forms/select-active-directory-group-multiple/select-active-directory-group-multiple.component';
 import { SelectActiveDirectoryGroupComponent } from '../forms/select-active-directory-group/select-active-directory-group.component';
+import { SelectAgeRangeComponent } from '../forms/select-age-range/select-age-range.component';
 import { SelectAnnouncementNoticeTemplateFragmentComponent } from '../forms/select-announcement-notice-template-fragment/select-announcement-notice-template-fragment';
 import { SelectAssignationTypeComponent } from '../forms/select-assignation-type/select-assignation-type.component';
 import { SelectAttachmentTypeComponent } from '../forms/select-attachment-type/select-attachment-type.component';
@@ -126,7 +127,9 @@ import { SelectBatchStatusComponent } from '../forms/select-batch-status/select-
 import { SelectBillingItemsComponent } from '../forms/select-billing-items/select-billing-items.component';
 import { SelectBillingTypeComponent } from '../forms/select-billing-type/select-billing-type.component';
 import { SelectBuildingDomicilationComponent } from '../forms/select-building-domicilation/select-building-domicilation.component';
+import { SelectBusinessSectorComponent } from '../forms/select-business-sector/select-business-sector.component';
 import { SelectCategoryComponent } from '../forms/select-category/select-category.component';
+import { SelectCompanySizeComponent } from '../forms/select-company-size/select-company-size.component';
 import { SelectCompetentAuthorityTypeComponent } from '../forms/select-competent-authority-type/select-competent-authority-type.component';
 import { SelectContractTypeComponent } from '../forms/select-contract-type/select-contract-type.component';
 import { SelectCustomerOrderFrequencyComponent } from '../forms/select-customer-order-frequency/select-customer-order-frequency.component';
@@ -136,6 +139,7 @@ import { SelectDayComponent } from '../forms/select-day/select-day.component';
 import { SelectDeliveryServiceComponent } from '../forms/select-delivery-service/select-delivery-service.component';
 import { SelectDepartmentComponent } from '../forms/select-department/select-department.component';
 import { SelectDepartmentsComponent } from '../forms/select-departments/select-departments.component';
+import { SelectDiscoveringOriginComponent } from '../forms/select-discovery-origin/select-discovery-origin.component';
 import { SelectDocumentTypeComponent } from '../forms/select-document-type/select-document-type.component';
 import { SelectEmployeeComponent } from '../forms/select-employee/select-employee.component';
 import { SelectFollowupComponent } from '../forms/select-followup/select-followup.component';
@@ -433,7 +437,11 @@ const routes: Routes = [
     AutocompleteNoticeTemplateComponent,
     SelectNoticeTemplateMultipleComponent,
     SelectOrderBlockageComponent,
-    SelectAttachmentComponent
+    SelectAttachmentComponent,
+    SelectDiscoveringOriginComponent,
+    SelectAgeRangeComponent,
+    SelectBusinessSectorComponent,
+    SelectCompanySizeComponent,
   ],
   exports: [
     HistoryComponent,
@@ -616,7 +624,11 @@ const routes: Routes = [
     AutocompleteNoticeTemplateComponent,
     SelectNoticeTemplateMultipleComponent,
     SelectOrderBlockageComponent,
-    SelectAttachmentComponent
+    SelectAttachmentComponent,
+    SelectDiscoveringOriginComponent,
+    SelectAgeRangeComponent,
+    SelectBusinessSectorComponent,
+    SelectCompanySizeComponent,
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

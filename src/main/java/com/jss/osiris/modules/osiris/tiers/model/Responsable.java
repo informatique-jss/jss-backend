@@ -173,6 +173,13 @@ public class Responsable implements IAttachment, IId {
 	private String observations;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_age_range")
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
+	private AgeRange ageRange;
+
+	private String linkedInUrl;
+
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_mail")
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private Mail mail;
@@ -632,6 +639,22 @@ public class Responsable implements IAttachment, IId {
 
 	public void setKpiValues(HashMap<String, BigDecimal> kpiValues) {
 		this.kpiValues = kpiValues;
+	}
+
+	public AgeRange getAgeRange() {
+		return ageRange;
+	}
+
+	public void setAgeRange(AgeRange ageRange) {
+		this.ageRange = ageRange;
+	}
+
+	public String getLinkedInUrl() {
+		return linkedInUrl;
+	}
+
+	public void setLinkedInUrl(String linkedInUrl) {
+		this.linkedInUrl = linkedInUrl;
 	}
 
 }

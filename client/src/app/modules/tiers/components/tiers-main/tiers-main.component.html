@@ -193,6 +193,21 @@
               <chips-competitor [(model)]="tiers.competitors" [form]="principalForm" propertyName="competitors"
                 [isMandatory]="false" [isDisabled]="!editMode" label="Concurrents"></chips-competitor>
             </td>
+            <td>
+              <select-discovery-origin [(model)]="tiers.discoveringOrigin" label="Origine de la découverte du JSS"
+                [form]="principalForm" propertyName="discoveringOrigin" [isMandatory]="false" [isDisabled]="!editMode">
+              </select-discovery-origin>
+            </td>
+            <td>
+              <select-business-sector [(model)]="tiers.businessSector" label="Secteur d'activité" [form]="principalForm"
+                propertyName="businessSector" [isMandatory]="false" [isDisabled]="!editMode">
+              </select-business-sector>
+            </td>
+            <td>
+              <select-company-size [(model)]="tiers.companySize" label="Taille de l'entreprise" [form]="principalForm"
+                propertyName="companySize" [isMandatory]="false" [isDisabled]="!editMode">
+              </select-company-size>
+            </td>
           </tr>
         </table>
         <table class="full-width">
