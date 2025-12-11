@@ -30,6 +30,9 @@ export interface TiersDto {
   competitors: string[];
   accountingAccountCustomer: string;
   accountingAccountDeposit: string;
+  isProvisionalPaymentMandatory: boolean;
+  paymentIban: string;
+  paymentBic: string;
 }
 
 

@@ -209,5 +209,4 @@ export class TiersComponent implements OnInit {
   callPhoneNumber(phone: string) {
     callNumber(phone);
   }
-
 }

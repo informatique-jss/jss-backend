@@ -171,6 +171,23 @@
             <p class="mb-0">{{tiers.accountingAccountCustomer}}</p>
             <h5 class="mb-2 mt-3">Compte comptable d'acompte :</h5>
             <p class="mb-0">{{tiers.accountingAccountDeposit}}</p>
+            <h5 class="mb-2 mt-3">Provision :</h5>
+            @if (tiers.isProvisionalPaymentMandatory) {
+            <p class="mb-0">Les provisions pour ce tiers sont <span class="text-dark fw-semibold">obligatoires</span>
+            </p>
+            } @else {
+            <p class="mb-0">Les provisions pour ce tiers <span class="text-dark fw-semibold">ne sont PAS
+                obligatoires</span>
+            </p>
+            }
+            @if (tiers.paymentIban) {
+            <h5 class="mb-2 mt-3">IBAN du tiers :</h5>
+            <p class="mb-0">{{tiers.paymentIban}}</p>
+            }
+            @if (tiers.paymentBic) {
+            <h5 class="mb-2 mt-3">BIC du tiers :</h5>
+            <p class="mb-0">{{tiers.paymentBic}}</p>
+            }
           </div>
         </div>
       </ui-card>

@@ -142,6 +142,10 @@ public class TiersDtoHelper {
                     AccountingAccountHelper.computeAccountingAccountNumber(tiers.getAccountingAccountDeposit()));
         }
 
+        tiersDto.setProvisionalPaymentMandatory(tiers.getIsProvisionalPaymentMandatory());
+        tiersDto.setPaymentIban(tiers.getPaymentIban());
+        tiersDto.setPaymentBic(tiers.getPaymentBic());
+
         return tiersDto;
     }
 
