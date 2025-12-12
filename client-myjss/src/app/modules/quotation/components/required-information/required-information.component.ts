@@ -746,14 +746,14 @@ export class RequiredInformationComponent implements OnInit {
             return;
           this.noticeTemplateDescription!.isShowNoticeTemplate = true;
           this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription!);
-          if (event)
+          if (isShowNoticeTemplate)
             this.scrollToNoticeTemplateSection();
         }, 0);
         return;
       }
-      this.noticeTemplateDescription.isShowNoticeTemplate = true;
+      this.noticeTemplateDescription.isShowNoticeTemplate = isShowNoticeTemplate;
       this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
-      if (event)
+      if (isShowNoticeTemplate)
         this.scrollToNoticeTemplateSection();
     }
   }
