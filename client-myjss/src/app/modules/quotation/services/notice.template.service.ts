@@ -15,6 +15,8 @@ export class NoticeTemplateService extends AppRestService<AnnouncementNoticeTemp
 
   noticeTemplateForm: FormGroup | undefined;
 
+  selectFragmentInfos: { index: number, isRequired: boolean, label: string }[] = [];
+
   constructor(http: HttpClient) {
     super(http, "quotation");
     this.noticeTemplateDescription = { service: undefined, isShowNoticeTemplate: false, displayText: "", isUsingTemplate: false, assoAffaireOrder: undefined } as any as NoticeTemplateDescription;
@@ -44,5 +46,13 @@ export class NoticeTemplateService extends AppRestService<AnnouncementNoticeTemp
 
   changeNoticeTemplateForm(noticeTemplateForm: FormGroup) {
     this.noticeTemplateForm = noticeTemplateForm;
+  }
+
+  getSelectFragmentInfos() {
+    return this.selectFragmentInfos;
+  }
+
+  setSelectFragmentInfos(selectFragmentInfos: any) {
+    this.selectFragmentInfos = selectFragmentInfos;
   }
 }

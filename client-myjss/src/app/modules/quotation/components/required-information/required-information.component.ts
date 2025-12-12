@@ -36,6 +36,7 @@ import { AssoServiceFieldType } from '../../../my-account/model/AssoServiceField
 import { Provision } from '../../../my-account/model/Provision';
 import { ProvisionType } from '../../../my-account/model/ProvisionType';
 import { Service } from '../../../my-account/model/Service';
+import { ServiceFieldType } from '../../../my-account/model/ServiceFieldType';
 import { ServiceType } from '../../../my-account/model/ServiceType';
 import { AssoServiceDocumentService } from '../../../my-account/services/asso.service.document.service';
 import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
@@ -61,6 +62,7 @@ import { DepartmentService } from '../../services/department.service';
 import { NoticeTemplateService } from '../../services/notice.template.service';
 import { NoticeTypeFamilyService } from '../../services/notice.type.family.service';
 import { NoticeTypeService } from '../../services/notice.type.service';
+import { ServiceFieldTypeService } from '../../services/service.field.type.service';
 import { QuotationFileUploaderComponent } from '../quotation-file-uploader/quotation-file-uploader.component';
 
 @Component({
@@ -146,6 +148,7 @@ export class RequiredInformationComponent implements OnInit {
 
   noticeTemplateDescriptionSubscription: Subscription = new Subscription;
   noticeTemplateDescription: NoticeTemplateDescription | undefined;
+  serviceFieldTypes: ServiceFieldType[] = [];
 
   goBackModalInstance: any | undefined;
 
@@ -166,6 +169,7 @@ export class RequiredInformationComponent implements OnInit {
     private constantService: ConstantService,
     private cityService: CityService,
     private noticeTemplateService: NoticeTemplateService,
+    private serviceFieldTypeService: ServiceFieldTypeService,
     private modalService: NgbModal,
     private gtmService: GtmService
   ) {
@@ -455,34 +459,17 @@ export class RequiredInformationComponent implements OnInit {
       return;
     }
 
-    if (this.noticeTemplateService.getNoticeTemplateForm() && !this.noticeTemplateService.getNoticeTemplateForm()!.valid) {
-      let noticeTemplateForm = this.noticeTemplateService.getNoticeTemplateForm();
-      let invalidControls: string[] = [];
-      Object.keys(noticeTemplateForm!.controls).forEach(key => {
-        let control = noticeTemplateForm!.get(key);
-        if (control?.invalid) {
-          console.log(control);
-          let controlLabel: string = "";
-          if (control.errors!['notFilled']) {
-            for (let namePart of control.errors!['notFilled'].split('_')) {
-              if (!this.isOnlyUppercase(namePart)) {
-                controlLabel = namePart;
-                break;
-              }
-            }
-            invalidControls.push(" " + controlLabel);
-          }
-        }
-
-      });
-      this.appService.displayToast("Les éléments suivants doivent être remplis pour que l'annonce légale puisse être publiée : " + invalidControls, true, "Eléments manquants", invalidControls.length * 1000);
-      return;
-    }
-
     // move forward
     if (newServiceIndex >= this.quotation.assoAffaireOrders[newAssoIndex].services.length) {
       newAssoIndex = newAssoIndex + 1;
       newServiceIndex = 0;
+      if (this.noticeTemplateService.getNoticeTemplateForm() && !this.noticeTemplateService.getNoticeTemplateForm()!.valid) {
+        this.serviceFieldTypeService.getServiceFieldTypes(undefined).subscribe(res => {
+          this.serviceFieldTypes = res
+          this.showToastOfInvalidControls();
+        })
+        return;
+      }
     }
 
     this.emitServiceChange();
@@ -513,13 +500,50 @@ export class RequiredInformationComponent implements OnInit {
 
     setTimeout(() => {
       this.selectedAssoIndex = newAssoIndex;
-      this.selectedServiceIndex = newServiceIndex;
+      this.selectedServiceIndex = newServiceIndex < 0 ? 0 : newServiceIndex;
     }, 0);
   }
 
   isOnlyUppercase = (value: string): boolean => {
     return /^[A-Z]+$/.test(value);
   };
+
+  private showToastOfInvalidControls() {
+    let noticeTemplateForm = this.noticeTemplateService.getNoticeTemplateForm();
+    let invalidControls: string[] = [];
+    let selectFragmentInfos = this.noticeTemplateService.getSelectFragmentInfos();
+    Object.keys(noticeTemplateForm!.controls).forEach(key => {
+      let control = noticeTemplateForm!.get(key);
+      if (control?.invalid) {
+        let controlLabel: string = "";
+        if (control.errors!['notFilled']) {
+          for (let namePart of control.errors!['notFilled'].split('_')) {
+            // if control is a SELECT
+            if (Number(namePart) >= 0) {
+              controlLabel = selectFragmentInfos.find(sel => sel.index === Number(namePart)) ? (selectFragmentInfos.find(sel => sel.index === Number(namePart))!.label) : namePart;
+              break;
+            }
+            if (!this.isOnlyUppercase(namePart)) {
+              // If control is a serviceFieldType placeholder
+              if (namePart.includes('CH -')) {
+                let existing = this.serviceFieldTypes.find(serviceFieldType => serviceFieldType.code === namePart);
+                if (existing) {
+                  controlLabel = existing.label;
+                  break;
+                }
+              }
+              // If control is a placeholder
+              controlLabel = namePart;
+              break;
+            }
+          }
+          invalidControls.push(" " + controlLabel);
+        }
+      }
+
+    });
+    this.appService.displayToast("Les éléments suivants doivent être remplis pour que l'annonce légale puisse être publiée : " + invalidControls, true, "Eléments manquants", invalidControls.length < 4 ? 4000 : invalidControls.length * 1000);
+  }
 
   goBackQuotationModale(content: TemplateRef<any>) {
     if (this.goBackModalInstance) {
