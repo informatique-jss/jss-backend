@@ -32,7 +32,6 @@ import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
-import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.KbisCommandResponse;
 import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.KbisRequest;
 import com.jss.osiris.modules.osiris.quotation.repository.infoGreffe.KbisRequestRepository;
 import com.jss.osiris.modules.osiris.quotation.service.AffaireService;
@@ -92,9 +91,9 @@ public class InfogreffeKbisServiceImpl implements InfogreffeKbisService {
     }
 
     @Override
-    public KbisRequest orderNewKbisForSiren(String siren, Provision provision) throws OsirisException {
+    public KbisRequest orderNewKbisForSiret(String siren, Provision provision) throws OsirisException {
         KbisRequest request = new KbisRequest();
-        request.setSiren(siren);
+        request.setSiret(siren);
         request.setEmployeeInitiator(employeeService.getCurrentEmployee());
         request.setProvision(provision);
         addOrUpdateKbisRequest(request);
@@ -105,8 +104,8 @@ public class InfogreffeKbisServiceImpl implements InfogreffeKbisService {
     }
 
     @Override
-    public Attachment getUpToDateKbisForSiren(String siren) throws OsirisException {
-        List<KbisRequest> requests = kbisRequestRepository.findBySiren(siren);
+    public Attachment getUpToDateKbisForSiret(String siren) throws OsirisException {
+        List<KbisRequest> requests = kbisRequestRepository.findBySiret(siren);
         if (requests != null && requests.size() > 0) {
             List<Affaire> affaires = affaireService.getAffairesBySiren(siren);
 
@@ -181,29 +180,17 @@ public class InfogreffeKbisServiceImpl implements InfogreffeKbisService {
     public void orderKbis(Integer requestId) throws OsirisException {
         KbisRequest request = getRequest(requestId);
         if (request != null) {
-            if (request.getSiren() == null)
-                throw new OsirisException("No siren defined for request " + requestId);
-
-            if (request.getDocumentId() == null || request.getDocumentId().length() == 0) {
-                String documentId = infogreffeKbisDelegate.getExtraitIdToOrder(request.getSiren());
-
-                if (documentId == null || documentId.length() == 0)
-                    throw new OsirisException(
-                            "No documentId found for siren " + request.getSiren() + " and request id " + requestId);
-
-                request.setDocumentId(documentId);
-                addOrUpdateKbisRequest(request);
-            }
+            if (request.getSiret() == null)
+                throw new OsirisException("No siret defined for request " + requestId);
 
             if (request.getUrlTelechargement() == null || request.getUrlTelechargement().length() == 0) {
-                KbisCommandResponse order = infogreffeKbisDelegate.orderDocument(request.getSiren(),
-                        request.getDocumentId());
+
+                String url = infogreffeKbisDelegate.requestKbisDownloadUrlForSiret(request.getSiret());
                 request.setDateOrder(LocalDate.now());
+                request.setUrlTelechargement(url);
+                addOrUpdateKbisRequest(request);
 
-                if (order == null)
-                    throw new OsirisException("impossible to order request " + requestId);
-
-                if (order.getUrlTelechargement() == null || order.getUrlTelechargement().length() == 0)
+                if (url == null || url.length() == 0)
                     throw new OsirisException("no url found for download document of request " + requestId);
 
                 downloadAttachment(request);

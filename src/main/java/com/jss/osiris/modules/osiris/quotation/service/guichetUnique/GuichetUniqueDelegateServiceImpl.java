@@ -36,10 +36,12 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.Formalite;
+import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.CloneFormaliteGuichetUnique;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.GuichetUniqueLogin;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.GuichetUniquePayment;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.GuichetUniqueSignature;
+import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.GuichetUniqueTransfertAgent;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.GuichetUniqueUploadedFile;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.PiecesJointe;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.FormaliteStatusHistoryItem;
@@ -93,6 +95,8 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
     private String signaturesRequestUrl = "/signatures";
     private String paymentRequestUrl = "/payment";
     private String fileRequestUrl = "/file";
+    private String formalityDraftUrl = "/formality_drafts";
+    private String transferAgentUrl = "/transfer_agent";
     private String annualAccountsRequestUrl = "/annual_accounts";
     private String acteDepositRequestUrl = "/acte_deposits";
     private String formalityStatusHistoriesUrl = "/formality_status_histories";
@@ -753,6 +757,45 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
                     for (FormaliteGuichetUnique formaliteGuichetUnique : formalite.getFormalitesGuichetUnique())
                         batchService.declareNewBatch(Batch.REFRESH_FORMALITE_GUICHET_UNIQUE,
                                 formaliteGuichetUnique.getId());
+        }
+    }
+
+    @Override
+    public void cloneFormalityByLiasseNumber(String liasseNumber)
+            throws OsirisException, OsirisClientMessageException {
+        SSLHelper.disableCertificateValidation();
+        HttpHeaders headers = createHeaders();
+
+        ResponseEntity<List<FormaliteGuichetUnique>> response = new RestTemplate().exchange(
+                guichetUniqueEntryPoint + formalitiesRequestUrl + "?liasseNumber=" + liasseNumber,
+                HttpMethod.GET, new HttpEntity<String>(headers),
+                new ParameterizedTypeReference<List<FormaliteGuichetUnique>>() {
+                });
+
+        List<FormaliteGuichetUnique> res = response.getBody();
+        if (res != null && res.size() == 1) {
+            for (FormaliteGuichetUnique formaliteGuichetUnique : res) {
+                CloneFormaliteGuichetUnique clone = new CloneFormaliteGuichetUnique();
+                clone.setSiren(formaliteGuichetUnique.getSiren());
+                clone.setCompanyName(formaliteGuichetUnique.getCompanyName());
+                clone.setNomDossier(formaliteGuichetUnique.getNomDossier());
+                clone.setContent(formaliteGuichetUnique.getPayload());
+
+                ResponseEntity<FormaliteGuichetUnique> result = new RestTemplate().postForEntity(
+                        guichetUniqueEntryPoint + formalityDraftUrl, new HttpEntity<Object>(clone, headers),
+                        FormaliteGuichetUnique.class);
+
+                if (result.getBody() != null) {
+                    GuichetUniqueTransfertAgent transfertAgent = new GuichetUniqueTransfertAgent();
+                    transfertAgent.setNewOwnerId(formaliteGuichetUnique.getMandataireId());
+
+                    new RestTemplate().put(
+                            guichetUniqueEntryPoint + formalityDraftUrl + "/" + result.getBody().getId()
+                                    + transferAgentUrl,
+                            new HttpEntity<Object>(transfertAgent, headers),
+                            String.class);
+                }
+            }
         }
     }
 }

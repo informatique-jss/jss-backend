@@ -69,4 +69,7 @@ public interface GuichetUniqueDelegateService {
         public void payFormaliteGuichetUnique(FormaliteGuichetUnique formaliteGuichetUnique)
                         throws OsirisException, OsirisClientMessageException;
 
+        void cloneFormalityByLiasseNumber(String liasseNumber)
+                        throws OsirisException, OsirisClientMessageException;
+
 }

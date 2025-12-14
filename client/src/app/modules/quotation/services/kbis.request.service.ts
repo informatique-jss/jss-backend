@@ -13,11 +13,11 @@ export class KbisRequestService extends AppRestService<Attachment> {
     super(http, "quotation");
   }
 
-  getUpToDateKbisForSiren(siren: string) {
-    return this.get(new HttpParams().set("siren", siren), "kbis-request/siren");
+  getUpToDateKbisForSiren(siret: string) {
+    return this.get(new HttpParams().set("siret", siret), "kbis-request/siret");
   }
 
-  requestKbisForSiren(siren: string, provision: Provision) {
-    return this.get(new HttpParams().set("siren", siren).set("provisionId", provision.id), "kbis-request/order", "Le KBis est en cours de commande. Une notification sera émise lorsqu'il sera disponible sur cette prestation.");
+  requestKbisForSiret(siret: string, provision: Provision) {
+    return this.get(new HttpParams().set("siret", siret).set("provisionId", provision.id), "kbis-request/order", "Le KBis est en cours de commande. Une notification sera émise lorsqu'il sera disponible sur cette prestation.");
   }
 }

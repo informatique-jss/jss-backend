@@ -43,7 +43,7 @@ import { ProvisionItemComponent } from '../provision-item/provision-item.compone
 import { MissingAttachmentMailDialogComponent } from '../select-attachment-type-dialog/missing-attachment-mail-dialog.component';
 import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-dialog.component';
 import { SelectMultiServiceTypeDialogComponent } from '../select-multi-service-type-dialog/select-multi-service-type-dialog.component';
-import { SirenDialogComponent } from '../siren-dialog/siren-dialog.component';
+import { SiretDialogComponent } from '../siren-dialog/siren-dialog.component';
 
 @Component({
   selector: 'provision',
@@ -920,12 +920,12 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   requestKbis() {
     if (!this.habilitationService.isAdministrator())
       return;
-    const dialogRef = this.sirenDialog.open(SirenDialogComponent, {
+    const dialogRef = this.sirenDialog.open(SiretDialogComponent, {
     });
 
-    dialogRef.componentInstance.label = "Saisissez le SIREN du KBis à commander";
+    dialogRef.componentInstance.label = "Saisissez le SIRET du KBis à commander";
     dialogRef.componentInstance.title = "Commander un KBis";
-    dialogRef.componentInstance.siren = this.asso.affaire ? this.asso.affaire.siren : "";
+    dialogRef.componentInstance.siret = this.asso.affaire ? this.asso.affaire.siret : "";
 
     dialogRef.afterClosed().subscribe(dialogResult => {
       if (dialogResult) {
@@ -943,11 +943,11 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
               if (confirm)
                 this.uploadAttachementService.downloadAttachment(response);
               else
-                this.kbisRequestService.requestKbisForSiren(dialogResult, this.currentProvisionWorkflow!).subscribe();
+                this.kbisRequestService.requestKbisForSiret(dialogResult, this.currentProvisionWorkflow!).subscribe();
             })
 
           } else {
-            this.kbisRequestService.requestKbisForSiren(dialogResult, this.currentProvisionWorkflow!).subscribe();
+            this.kbisRequestService.requestKbisForSiret(dialogResult, this.currentProvisionWorkflow!).subscribe();
           }
         })
       }

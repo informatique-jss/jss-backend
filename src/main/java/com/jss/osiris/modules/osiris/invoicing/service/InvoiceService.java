@@ -73,8 +73,6 @@ public interface InvoiceService {
 
         public List<Invoice> searchInvoices(List<InvoiceStatus> invoiceStatus, List<Responsable> responsables);
 
-        public void deleteDuplicateInvoices();
-
         public List<Invoice> getInvoicesForResponsablesAndDates(List<InvoiceStatus> invoiceStatus,
                         List<Responsable> responsables, LocalDateTime startDate, LocalDateTime endDate);
 }

@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -28,6 +29,7 @@ import com.jss.osiris.modules.osiris.quotation.model.BankTransfert;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.DirectDebitTransfert;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
+import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.Cart;
 import com.jss.osiris.modules.osiris.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Rff;
@@ -50,6 +52,7 @@ import jakarta.persistence.Table;
 @Table(indexes = { @Index(name = "idx_invoice_status", columnList = "id_invoice_status"),
 		@Index(name = "idx_invoice_manual_document_number", columnList = "id_competent_authority,manualAccountingDocumentNumber"),
 		@Index(name = "idx_invoice_tiers", columnList = "id_tiers"),
+		@Index(name = "idx_invoice_cart", columnList = "id_cart", unique = true),
 		@Index(name = "idx_invoice_confrere", columnList = "id_confrere"),
 		@Index(name = "idx_invoice_rff", columnList = "id_rff"),
 		@Index(name = "idx_invoice_provider", columnList = "id_provider"),
@@ -216,6 +219,11 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 	@JsonIgnoreProperties(value = { "invoices" }, allowSetters = true)
 	@JoinColumn(name = "id_rff")
 	private Rff rff;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnore
+	@JoinColumn(name = "id_cart")
+	private Cart cart;
 
 	public Integer getId() {
 		return id;
@@ -543,6 +551,14 @@ public class Invoice implements IId, IAttachment, ICreatedDate {
 
 	public void setRff(Rff rff) {
 		this.rff = rff;
+	}
+
+	public Cart getCart() {
+		return cart;
+	}
+
+	public void setCart(Cart cart) {
+		this.cart = cart;
 	}
 
 }

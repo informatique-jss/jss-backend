@@ -1,8 +1,5 @@
 package com.jss.osiris.modules.osiris.quotation.service.infoGreffe;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -14,15 +11,13 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator;
 import com.jss.osiris.libs.SSLHelper;
 import com.jss.osiris.libs.exception.OsirisException;
-import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.InfogreffeDocument;
-import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.InfogreffeSoapEnveloppeRequest;
-import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.InfogreffeSoapEnveloppeResponse;
-import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.KbisCommandRequest;
-import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.KbisCommandResponse;
-import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.VitrineRequest;
-import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.VitrineResponse;
+import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.KbisDemand;
+import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.KbisEmiter;
+import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.KbisOrder;
+import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.KbisRequestCode;
 
 @Service
 public class InfogreffeKbisDelegate {
@@ -40,6 +35,7 @@ public class InfogreffeKbisDelegate {
         XmlMapper xmlMapper = new XmlMapper();
         xmlMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
         xmlMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        xmlMapper.enable(ToXmlGenerator.Feature.WRITE_XML_DECLARATION);
 
         MappingJackson2XmlHttpMessageConverter converter = new MappingJackson2XmlHttpMessageConverter(xmlMapper);
 
@@ -48,67 +44,38 @@ public class InfogreffeKbisDelegate {
         return soapRestTemplate;
     }
 
-    private VitrineResponse requestVitrineForSiren(String siren) throws OsirisException {
+    public String requestKbisDownloadUrlForSiret(String siret) throws OsirisException {
         SSLHelper.disableCertificateValidation();
-        VitrineRequest request = new VitrineRequest(siren);
-        InfogreffeSoapEnveloppeRequest requestEnvelope = new InfogreffeSoapEnveloppeRequest(request);
+        KbisDemand demande = new KbisDemand(
+                new KbisEmiter(infogreffeLogin, infogreffePassword, new KbisRequestCode()),
+                new KbisOrder(siret.substring(0, 6), siret.substring(7)));
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_XML);
-        headers.setBasicAuth(infogreffeLogin, infogreffePassword, StandardCharsets.UTF_8);
-        headers.add("SOAPAction", "");
+        KbisCall appelService = new KbisCall(demande);
+        KbisSoapBody soapBody = new KbisSoapBody(appelService);
+        KbisSoapEnveloppe soapEnvelope = new KbisSoapEnveloppe(soapBody);
 
-        HttpEntity<InfogreffeSoapEnveloppeRequest> entity = new HttpEntity<>(requestEnvelope, headers);
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_XML);
+            headers.add("SOAPAction", "");
 
-        InfogreffeSoapEnveloppeResponse responseEnvelope = getSoapTemplate().postForObject(infogreffeEntryPoint, entity,
-                InfogreffeSoapEnveloppeResponse.class);
+            HttpEntity<KbisSoapEnveloppe> entity = new HttpEntity<>(soapEnvelope, headers);
 
-        if (responseEnvelope != null && responseEnvelope.getBody() != null) {
-            if (responseEnvelope.getBody().getFault() != null) {
-                throw new OsirisException("Erreur SOAP: " + responseEnvelope.getBody().getFault().faultstring);
+            KbisSoapResponseEnvelope responseEnvelope = getSoapTemplate().postForObject(infogreffeEntryPoint, entity,
+                    KbisSoapResponseEnvelope.class);
+
+            KbisResult resultat = responseEnvelope.getBody()
+                    .getReponseService()
+                    .getResultat();
+
+            if (resultat.isOrderInProgress()) {
+                return resultat.getUrlAcces();
+            } else {
+                throw new OsirisException("API Infogreffe error: " + resultat.getLibelleRetour());
             }
-            return responseEnvelope.getBody().getVitrineResponse();
+
+        } catch (Exception e) {
+            throw new OsirisException(e, "Erreur when calling  SOAP for Infogreffe with siret " + siret);
         }
-
-        return null;
-    }
-
-    public String getExtraitIdToOrder(String siren) throws OsirisException {
-        VitrineResponse reponse = requestVitrineForSiren(siren);
-        if (reponse != null && reponse.getDocuments() != null) {
-            Optional<InfogreffeDocument> foundDoc = reponse.getDocuments().stream()
-                    .filter(doc -> "EXTRAIT".equals(doc.getType()))
-                    .findFirst();
-
-            if (!foundDoc.isEmpty())
-                return foundDoc.get().getId();
-        }
-        return null;
-    }
-
-    public KbisCommandResponse orderDocument(String siren, String documentId) throws OsirisException {
-        SSLHelper.disableCertificateValidation();
-        KbisCommandRequest request = new KbisCommandRequest(siren, documentId, "T");
-        InfogreffeSoapEnveloppeRequest requestEnvelope = new InfogreffeSoapEnveloppeRequest(request);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_XML);
-        headers.setBasicAuth(infogreffeLogin, infogreffePassword, StandardCharsets.UTF_8);
-        headers.add("SOAPAction", "");
-
-        HttpEntity<InfogreffeSoapEnveloppeRequest> entity = new HttpEntity<>(requestEnvelope, headers);
-
-        InfogreffeSoapEnveloppeResponse responseEnvelope = getSoapTemplate().postForObject(infogreffeEntryPoint, entity,
-                InfogreffeSoapEnveloppeResponse.class);
-
-        if (responseEnvelope != null && responseEnvelope.getBody() != null) {
-            if (responseEnvelope.getBody().getFault() != null) {
-                throw new OsirisException("Erreur SOAP: " + responseEnvelope.getBody().getFault().faultstring);
-            }
-            KbisCommandResponse response = responseEnvelope.getBody().getCommandeResponse();
-            return response;
-        }
-
-        return null;
     }
 }

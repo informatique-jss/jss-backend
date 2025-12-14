@@ -250,11 +250,19 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                     .getFormalityStatusHistoriesById(savedFormaliteGuichetUnique.getId());
         }
 
-        if (apiFormaliteGuichetUnique.getValidationsRequests() != null)
+        if (apiFormaliteGuichetUnique.getValidationsRequests() != null) {
+            HashMap<String, Partenaire> partnerMap = new HashMap<String, Partenaire>();
             for (ValidationRequest validationRequest : apiFormaliteGuichetUnique.getValidationsRequests()) {
                 if (validationRequest.getPartnerCenter() != null)
                     partnerCenterRepository.save(validationRequest.getPartnerCenter());
+                if (validationRequest.getPartner() != null) {
+                    if (partnerMap.get(validationRequest.getPartner().getCodifNorme()) == null)
+                        partnerMap.put(validationRequest.getPartner().getCodifNorme(), validationRequest.getPartner());
+                    else
+                        validationRequest.setPartner(partnerMap.get(validationRequest.getPartner().getCodifNorme()));
+                }
             }
+        }
 
         boolean formalityHasNewStatus = false;
 
@@ -312,13 +320,11 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
 
                 if (generateInvoices) {
                     for (Cart currentCart : savedFormaliteGuichetUnique.getCarts()) {
-                        if (currentCart.getInvoice() == null && currentCart.getTotal() != 0) {
+                        if (currentCart.getInvoices() == null && currentCart.getTotal() != 0) {
                             if (currentCart.getStatus().equals(cartStatusPayed)) {
-                                currentCart.setInvoice(
-                                        generateInvoiceFromCart(currentCart, formalite.getProvision().get(0)));
+                                generateInvoiceFromCart(currentCart, formalite.getProvision().get(0));
                             } else if (currentCart.getStatus().equals(cartStatusRefund)) {
-                                currentCart.setInvoice(
-                                        (generateCreditNoteFromCart(currentCart, formalite.getProvision().get(0))));
+                                generateCreditNoteFromCart(currentCart, formalite.getProvision().get(0));
                             }
                         }
                     }
@@ -670,6 +676,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
         invoice.setManualAccountingDocumentNumber(cart.getMipOrderNum() + "/" +
                 cart.getId());
         invoice.setInvoiceItems(new ArrayList<InvoiceItem>());
+        invoice.setCart(cart);
 
         PaymentType paymentType = null;
 
@@ -721,6 +728,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
         invoice.setManualAccountingDocumentNumber(cart.getMipOrderNum() + "/" +
                 cart.getId());
         invoice.setInvoiceItems(new ArrayList<InvoiceItem>());
+        invoice.setCart(cart);
 
         PaymentType paymentType = null;
         if (cart.getPaymentType() == null &&

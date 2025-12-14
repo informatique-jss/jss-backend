@@ -26,6 +26,4 @@ public interface BatchService {
 
     public void purgeBatch();
 
-    public void purgeInvoice();
-
 }

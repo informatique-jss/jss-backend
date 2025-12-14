@@ -138,11 +138,6 @@ public class InvoiceServiceImpl implements InvoiceService {
         return null;
     }
 
-    @Override
-    public void deleteDuplicateInvoices() {
-        invoiceRepository.deleteDuplicateInvoices();
-    }
-
     @Transactional(rollbackFor = Exception.class)
     @Override
     public Invoice addOrUpdateInvoiceFromUser(Invoice invoice, List<Payment> paymentsToUseForInvoice)
@@ -257,15 +252,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             }
 
             if (invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypeAccount().getId())) {
-                Payment payment = paymentService.generateNewAccountPayment(invoice.getTotalPrice().negate(),
-                        invoice.getProvider().getAccountingAccountDeposit(),
-                        invoice.getProvider().getAccountingAccountProvider(),
-                        "Paiement pour la facture " + invoice.getId() + " / Fournisseur : "
-                                + invoice.getProvider().getLabel());
-                accountingRecordGenerationService.generateAccountingRecordOnOutgoingPaymentCreation(payment, false,
-                        true);
-                paymentService.manualMatchPaymentInvoicesAndCustomerOrders(payment, Arrays.asList(invoice), null, null,
-                        null, null, null);
+                invoice.setInvoiceStatus(constantService.getInvoiceStatusPayed());
             }
         } else {
             if (invoice.getManualPaymentType().getId().equals(constantService.getPaymentTypePrelevement().getId())

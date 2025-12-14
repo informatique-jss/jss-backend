@@ -27,8 +27,4 @@ public class DebourDelServiceImpl implements DebourDelService {
         return debourDelRepository.findByProvision(provision);
     }
 
-    @Override
-    public void deleteDuplicateDebourDel() {
-        debourDelRepository.deleteDuplicateDebourDel();
-    }
 }
