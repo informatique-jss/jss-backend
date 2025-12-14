@@ -14,10 +14,6 @@ public interface InvoiceItemService {
 
     public void deleteInvoiceItem(InvoiceItem invoiceItem);
 
-    public void deleteDuplicateInvoiceItem();
-
-    public void deleteDuplicateInvoiceItemOrigin();
-
     public InvoiceItem cloneInvoiceItem(InvoiceItem invoiceItem);
 
     public InvoiceItem updateInvoiceItemFromInvoice(InvoiceItem invoiceItem, BigDecimal amount);

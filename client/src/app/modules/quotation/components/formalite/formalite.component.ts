@@ -9,6 +9,7 @@ import { instanceOfCustomerOrder, instanceOfFormaliteGuichetUnique } from 'src/a
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
+import { FormaliteGuichetUniqueService } from 'src/app/modules/miscellaneous/services/formalite.guichet.unique.service';
 import { FORMALITE_ENTITY_TYPE, PROVISION_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { instanceOfFormaliteInfogreffe } from '../../../../libs/TypeHelper';
 import { HabilitationsService } from '../../../../services/habilitations.service';
@@ -67,6 +68,7 @@ export class FormaliteComponent implements OnInit {
     private userPreferenceService: UserPreferenceService,
     public associateFormaliteLiasseDialog: MatDialog,
     private confirmationDialog: MatDialog,
+    private formaliteGuichetUniqueService: FormaliteGuichetUniqueService
   ) { }
 
   formaliteForm = this.formBuilder.group({});
@@ -125,6 +127,14 @@ export class FormaliteComponent implements OnInit {
         }
       }, display: true,
     } as SortTableAction<FormaliteGuichetUnique | FormaliteInfogreffe>);
+
+    if (this.habilitationsService.isAdministrator())
+      this.tableAction.push({
+        actionIcon: 'folder_copy', actionName: "Cloner la liasse", actionClick: (column: SortTableAction<FormaliteGuichetUnique | FormaliteInfogreffe>, element: FormaliteGuichetUnique | FormaliteInfogreffe, event: any) => {
+          if (instanceOfFormaliteGuichetUnique(element))
+            this.formaliteGuichetUniqueService.cloneLiasse(element.liasseNumber).subscribe();
+        }, display: true,
+      } as SortTableAction<FormaliteGuichetUnique | FormaliteInfogreffe>);
 
     this.setFormaliteTableData();
   }

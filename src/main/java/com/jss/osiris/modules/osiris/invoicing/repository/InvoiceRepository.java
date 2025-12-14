@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
@@ -121,11 +120,5 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
 
         List<Invoice> findByResponsableInAndInvoiceStatusInAndDueDateBetween(List<Responsable> responsables,
                         List<InvoiceStatus> invoiceStatus, LocalDate startDate, LocalDate endDate);
-
-        @Modifying
-        @Query(nativeQuery = true, value = " delete from invoice where  id  in (select id from reprise_inpi_del)")
-        void deleteDuplicateInvoices();
-
-        List<Invoice> findByInvoiceStatusAndResponsableIsNotNull(InvoiceStatus invoiceStatus);
 
 }

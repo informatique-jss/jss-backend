@@ -63,7 +63,6 @@ public class Batch implements IId, Serializable {
     public static String REINDEX_RESPONSABLE = "REINDEX_RESPONSABLE";
     public static String REINDEX_TIERS = "REINDEX_TIERS";
     public static String REINDEX_POST = "REINDEX_POST";
-    public static String PURGE_INVOICE = "PURGE_INVOICE";
     public static String CHECK_MAIL_TO_INDEX = "CHECK_MAIL_TO_INDEX";
     public static String INDEX_MAIL_TO_ENTITY = "INDEX_MAIL_TO_ENTITY";
     public static String PURGE_MAIL_TO_INDEX = "PURGE_MAIL_TO_INDEX";

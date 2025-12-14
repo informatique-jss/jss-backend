@@ -27,7 +27,7 @@ public class KbisRequest {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "kbis_request_sequence")
     private Integer id;
 
-    private String siren;
+    private String siret;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_employee_initiator")
@@ -41,7 +41,7 @@ public class KbisRequest {
     @JoinColumn(name = "id_attachment")
     private Attachment attachment;
 
-    private String documentId;
+    private String orderId;
 
     @Column(length = 1000)
     private String urlTelechargement;
@@ -56,14 +56,6 @@ public class KbisRequest {
         this.id = id;
     }
 
-    public String getSiren() {
-        return siren;
-    }
-
-    public void setSiren(String siren) {
-        this.siren = siren;
-    }
-
     public Employee getEmployeeInitiator() {
         return employeeInitiator;
     }
@@ -72,12 +64,12 @@ public class KbisRequest {
         this.employeeInitiator = employeeInitiator;
     }
 
-    public String getDocumentId() {
-        return documentId;
+    public String getOrderId() {
+        return orderId;
     }
 
-    public void setDocumentId(String documentId) {
-        this.documentId = documentId;
+    public void setOrderId(String documentId) {
+        this.orderId = documentId;
     }
 
     public String getUrlTelechargement() {
@@ -110,6 +102,14 @@ public class KbisRequest {
 
     public void setAttachment(Attachment attachment) {
         this.attachment = attachment;
+    }
+
+    public String getSiret() {
+        return siret;
+    }
+
+    public void setSiret(String siret) {
+        this.siret = siret;
     }
 
 }

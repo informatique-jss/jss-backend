@@ -383,12 +383,6 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
-  public void deleteDuplicateAccountingRecord() {
-    accountingRecordRepository.deleteDuplicateAccountingRecord();
-
-  }
-
-  @Override
   public List<AccountingRecordSearchResult> searchAccountingRecords(AccountingRecordSearch accountingRecordSearch,
       boolean fetchAll) throws OsirisException {
     ArrayList<Integer> accountingAccountId = new ArrayList<Integer>();

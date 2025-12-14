@@ -7,9 +7,12 @@ import { FormaliteGuichetUnique } from '../../quotation/model/guichet-unique/For
   providedIn: 'root'
 })
 export class FormaliteGuichetUniqueService extends AppRestService<FormaliteGuichetUnique> {
-
   constructor(http: HttpClient) {
     super(http, "quotation");
+  }
+
+  cloneLiasse(liasseNumber: string) {
+    return this.get(new HttpParams().set("liasseNumber", liasseNumber), "formalite-guichet-unique/clone", "La liasse clonée est disponible dans vos brouillons. Attention à bien revérifier que toutes les options nécessaires ont été cochées.");
   }
 
   getFormaliteGuichetUniqueServiceByReference(value: string) {

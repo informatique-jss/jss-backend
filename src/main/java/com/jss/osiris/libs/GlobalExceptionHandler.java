@@ -164,7 +164,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Transactional(rollbackFor = Exception.class)
     public void purgeLogs() {
-        osirisLogRepository.deleteAll(osirisLogRepository.findLogOlderThanMonths(6));
+        osirisLogRepository.deleteAll(osirisLogRepository.findLogOlderThanMonths(3));
     }
 
 }

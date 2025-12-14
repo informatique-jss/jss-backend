@@ -7,13 +7,13 @@ import { MatDialogRef } from '@angular/material/dialog';
   templateUrl: './siren-dialog.component.html',
   styleUrls: ['./siren-dialog.component.css']
 })
-export class SirenDialogComponent implements OnInit {
+export class SiretDialogComponent implements OnInit {
 
-  constructor(public dialogRef: MatDialogRef<SirenDialogComponent>, private formBuilder: FormBuilder) { }
+  constructor(public dialogRef: MatDialogRef<SiretDialogComponent>, private formBuilder: FormBuilder) { }
 
   label: string = "";
   title: string = "";
-  siren: string = "";
+  siret: string = "";
 
   amountForm = this.formBuilder.group({});
 
@@ -21,7 +21,7 @@ export class SirenDialogComponent implements OnInit {
   }
 
   onConfirm(): void {
-    this.dialogRef.close(this.siren);
+    this.dialogRef.close(this.siret);
   }
 
   onClose(): void {

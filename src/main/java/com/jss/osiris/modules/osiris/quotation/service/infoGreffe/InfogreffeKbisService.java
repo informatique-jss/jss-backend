@@ -13,8 +13,8 @@ public interface InfogreffeKbisService {
 
     KbisRequest addOrUpdateKbisRequest(KbisRequest kbisRequest);
 
-    Attachment getUpToDateKbisForSiren(String siren) throws OsirisException;
+    Attachment getUpToDateKbisForSiret(String siren) throws OsirisException;
 
-    KbisRequest orderNewKbisForSiren(String siren, Provision provision) throws OsirisException;
+    KbisRequest orderNewKbisForSiret(String siren, Provision provision) throws OsirisException;
 
 }
