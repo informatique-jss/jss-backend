@@ -114,11 +114,11 @@
                   </div>
 
                   <div class="row">
-                    <div *ngIf="noticeTemplateDescription" class="col-12 col-lg-6 form-check form-switch">
-                      <generic-toggle [(model)]="noticeTemplateDescription.isUsingTemplate"
+                    <div [hidden]="!noticeTemplateDescription" class="col-12 col-lg-6 form-check form-switch">
+                      <generic-toggle [(model)]="noticeTemplateDescription!.isUsingTemplate"
                         label="Utiliser les modèles proposés pour la rédaction" [form]="informationForm"
                         [propertyName]="'isUsingTemplate'+provision.order" [isDisabled]="false"
-                        (onToggleChange)="changeIsShowNoticeTemplate($event, provision.isRedactedByJss, noticeTemplateDescription.isUsingTemplate, undefined,quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])"
+                        (onToggleChange)="changeIsShowNoticeTemplate($event, provision.isRedactedByJss, noticeTemplateDescription!.isUsingTemplate, undefined,quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])"
                         [isDisabled]="isToggleIsUsingTemplateDisabled(provision, quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])"></generic-toggle>
                     </div>
                   </div>
