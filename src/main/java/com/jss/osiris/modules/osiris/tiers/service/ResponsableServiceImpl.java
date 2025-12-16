@@ -41,7 +41,6 @@ import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.ResponsableSearch;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 import com.jss.osiris.modules.osiris.tiers.model.TiersSearch;
-import com.jss.osiris.modules.osiris.tiers.model.dto.ResponsableDto;
 import com.jss.osiris.modules.osiris.tiers.repository.ResponsableRepository;
 
 @Service
@@ -98,10 +97,8 @@ public class ResponsableServiceImpl implements ResponsableService {
     }
 
     @Override
-    public List<ResponsableDto> getResponsablesByTiers(Tiers tiers) {
-        List<Responsable> respos = responsableRepository.findByTiers(tiers);
-
-        return tiersDtoHelper.mapResponsables(respos);
+    public List<Responsable> getResponsablesByTiers(Tiers tiers) {
+        return responsableRepository.findByTiers(tiers);
     }
 
     @Override
@@ -109,14 +106,6 @@ public class ResponsableServiceImpl implements ResponsableService {
         Optional<Responsable> responsable = responsableRepository.findById(id);
         if (responsable.isPresent())
             return responsable.get();
-        return null;
-    }
-
-    @Override
-    public ResponsableDto getResponsableDto(Integer id) {
-        Optional<Responsable> responsable = responsableRepository.findById(id);
-        if (responsable.isPresent())
-            return tiersDtoHelper.mapResponsable(responsable.get());
         return null;
     }
 

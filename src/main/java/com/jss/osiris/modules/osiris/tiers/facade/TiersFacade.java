@@ -8,7 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.ResponsableSearch;
+import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 import com.jss.osiris.modules.osiris.tiers.model.TiersSearch;
 import com.jss.osiris.modules.osiris.tiers.model.dto.ResponsableDto;
 import com.jss.osiris.modules.osiris.tiers.model.dto.TiersDto;
@@ -50,4 +52,19 @@ public class TiersFacade {
 
         return tiersDtoHelper.mapResponsables(responsableService.searchForResponsable(responsableSearch));
     }
+
+    public List<ResponsableDto> getResponsablesByTiers(Tiers tiers) {
+        List<Responsable> respos = responsableService.getResponsablesByTiers(tiers);
+
+        return tiersDtoHelper.mapResponsables(respos);
+    }
+
+    public ResponsableDto getResponsableDto(Integer id) {
+        Responsable responsable = responsableService.getResponsable(id);
+        if (responsable != null)
+            return tiersDtoHelper.mapResponsable(responsable);
+
+        return null;
+    }
+
 }
