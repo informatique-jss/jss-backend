@@ -192,6 +192,14 @@ export class NoticeTemplateComponent implements OnInit {
       this.selectedFragments.push(undefined);
       i++;
     }
+
+    // Setting the informations of the SELECT fragments to be passed to the service for exposition for the app
+    let selectFragmentInfos: { index: number, isRequired: boolean, label: string }[] = [];
+    this.fragmentSelection.forEach((selection, index) => {
+      selectFragmentInfos.push({ index: index, isRequired: this.isRequired(selection), label: selection[0].label })
+    });
+    this.noticeTemplateService.setSelectFragmentInfos(selectFragmentInfos);
+
   }
 
   // Format and initialize the display text with placeholders converted
