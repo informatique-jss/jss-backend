@@ -4,19 +4,19 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
 public class KbisSoapBody {
 
-    @JacksonXmlProperty(localName = "AppelService", namespace = "ns2")
-    private KbisCall appelService;
+    @JacksonXmlProperty(localName = "urn:getProduitsWebServicesXML")
+    private KbisGetProduitsWebServicesXML operation;
 
-    public KbisSoapBody(KbisCall appelService) {
-        this.appelService = appelService;
+    public KbisSoapBody(KbisGetProduitsWebServicesXML op) {
+        this.operation = op;
     }
 
-    public KbisCall getAppelService() {
-        return appelService;
+    public KbisGetProduitsWebServicesXML getOperation() {
+        return operation;
     }
 
-    public void setAppelService(KbisCall appelService) {
-        this.appelService = appelService;
+    public void setOperation(KbisGetProduitsWebServicesXML operation) {
+        this.operation = operation;
     }
 
 }

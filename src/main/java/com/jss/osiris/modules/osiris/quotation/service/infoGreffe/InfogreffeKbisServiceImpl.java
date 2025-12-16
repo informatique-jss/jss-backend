@@ -1,5 +1,7 @@
 package com.jss.osiris.modules.osiris.quotation.service.infoGreffe;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestTemplate;
@@ -117,6 +120,8 @@ public class InfogreffeKbisServiceImpl implements InfogreffeKbisService {
                         return 1;
                     if (request1 == null && request2 != null)
                         return -1;
+                    if (request1.getDateOrder() == null && request2.getDateOrder() == null)
+                        return 0;
                     if (request1.getDateOrder() != null && request2.getDateOrder() == null)
                         return 1;
                     if (request1.getDateOrder() == null && request2.getDateOrder() != null)
@@ -207,31 +212,35 @@ public class InfogreffeKbisServiceImpl implements InfogreffeKbisService {
 
         RequestCallback requestCallback = request -> request.getHeaders().addAll(headers);
 
-        ResponseExtractor<ResponseEntity<InputStream>> responseExtractor = response -> ResponseEntity
+        ResponseExtractor<ResponseEntity<byte[]>> responseExtractor = response -> ResponseEntity
                 .status(response.getStatusCode())
                 .headers(response.getHeaders())
-                .body(response.getBody());
+                .body(StreamUtils.copyToByteArray(response.getBody())); // On lit tout de suite
 
-        ResponseEntity<InputStream> response = new RestTemplate().execute(
+        ResponseEntity<byte[]> response = new RestTemplate().execute(
                 kbisRequest.getUrlTelechargement(),
                 HttpMethod.GET,
                 requestCallback,
                 responseExtractor);
 
         if (response != null && response.getBody() != null && response.getStatusCode().is2xxSuccessful()) {
-            String name = "Kbis-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
-            List<Attachment> attachments = attachmentService.addAttachment(response.getBody(),
-                    kbisRequest.getProvision().getId(), null, Provision.class.getSimpleName(),
-                    constantService.getAttachmentTypeKbis(), name, false, name, null, null, null);
+            String name = "Kbis-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"))
+                    + ".pdf";
+            try (InputStream is = new ByteArrayInputStream(response.getBody())) {
+                List<Attachment> attachments = attachmentService.addAttachment(is,
+                        kbisRequest.getProvision().getId(), null, Provision.class.getSimpleName(),
+                        constantService.getAttachmentTypeKbis(), name, false, name, null, null, null);
 
-            for (Attachment attachment : attachments) {
-                if (attachment.getDescription().equals(name)) {
-                    kbisRequest.setAttachment(attachment);
-                    addOrUpdateKbisRequest(kbisRequest);
-                    break;
+                for (Attachment attachment : attachments) {
+                    if (attachment.getDescription().equals(name)) {
+                        kbisRequest.setAttachment(attachment);
+                        addOrUpdateKbisRequest(kbisRequest);
+                        break;
+                    }
                 }
+            } catch (IOException e) {
+                throw new OsirisException(e, "Error during download of kbis for request " + kbisRequest.getId());
             }
-
             Provision provision = provisionService.getProvision(kbisRequest.getProvision().getId());
             if (provision != null) {
                 provision.setKbisOrderedNumber(
