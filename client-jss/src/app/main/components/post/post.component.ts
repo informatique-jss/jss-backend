@@ -371,7 +371,7 @@ export class PostComponent implements OnInit, AfterViewInit {
     const win = this.platformService.getNativeWindow();
     if (this.post && win) {
       let url = environment.frontendUrl + "post/" + this.post.slug;
-      win.open("https://www.linkedin.com/shareArticle?mini=true&url=" + url + "&title=" + this.extractContent(this.post.titleText) + "&summary=" + this.extractContent(this.post.excerptText), "_blank");
+      win.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, "_blank");
     }
   }
 
