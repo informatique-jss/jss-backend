@@ -99,8 +99,8 @@ export class RequiredInformationComponent implements OnInit {
 
   CONFIER_ANNONCE_AU_JSS: string = "Confier l'annonce légale au JSS";
 
-  selectedAssoIndex: number = 0;
-  selectedServiceIndex: number = 0;
+  selectedAssoIndex: number | null = 0;
+  selectedServiceIndex: number | null = 0;
   selectedService: Service | null = null;
   currentUser: Responsable | undefined;
   quotation: IQuotation | undefined;
