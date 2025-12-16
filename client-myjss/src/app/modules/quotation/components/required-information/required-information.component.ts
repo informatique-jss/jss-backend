@@ -185,6 +185,7 @@ export class RequiredInformationComponent implements OnInit {
     this.noticeTemplateDescriptionSubscription = this.noticeTemplateService.noticeTemplateDescriptionObservable.subscribe(item => {
       if (item && this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined && item.announcementOrder != undefined
         && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex]
+        && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[item.announcementOrder]
         && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[item.announcementOrder].announcement) {
         this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[item.announcementOrder].announcement!.notice = item.displayText;
         this.noticeTemplateDescription = item;
@@ -238,12 +239,14 @@ export class RequiredInformationComponent implements OnInit {
 
   initIndexesAndServiceType() {
     if (this.quotation && this.quotation.assoAffaireOrders && this.quotation.assoAffaireOrders.length > 0) {
-      this.selectedAssoIndex = 0;
+      let serviceIndex = 0;
+      let assoIndex = 0;
+      this.activeId = 4;
       // Init order of provisions for multiple announcements in front-end and annouvement and domiciliation
       for (let asso of this.quotation.assoAffaireOrders) {
-        if (asso.services && asso.services.length > 0) {
+        if (assoIndex === this.selectedAssoIndex && asso.services && asso.services.length > 0) {
           for (let serv of asso.services) {
-            if (serv.provisions && serv.provisions.length > 0) {
+            if (serviceIndex === this.selectedServiceIndex && serv.provisions && serv.provisions.length > 0) {
               let i = 0;
               let index = 0;
               for (let provision of serv.provisions) {
@@ -270,6 +273,7 @@ export class RequiredInformationComponent implements OnInit {
                 index++;
               }
             }
+            serviceIndex++;
 
             if (serv.assoServiceDocuments) {
               serv.assoServiceDocuments.sort((a, b) => (b.isMandatory ? 1 : 0) - (a.isMandatory ? 1 : 0))
@@ -280,14 +284,10 @@ export class RequiredInformationComponent implements OnInit {
             }
           }
         }
+        assoIndex++;
       }
-
       this.setAssoAffaireOrderToNoticeTemplateDescription();
       this.changeProvisionNoticeTemplateDescription({ nextId: this.activeId } as NgbNavChangeEvent);
-
-      if (this.quotation.assoAffaireOrders[this.selectedAssoIndex].services && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services.length > 0) {
-        this.selectedServiceIndex = 0;
-      }
       this.emitServiceChange();
     }
   }
@@ -495,12 +495,12 @@ export class RequiredInformationComponent implements OnInit {
       if (!response)
         return;
     });
-    this.selectedAssoIndex = null;
-    this.selectedServiceIndex = null;
+
 
     setTimeout(() => {
       this.selectedAssoIndex = newAssoIndex;
       this.selectedServiceIndex = newServiceIndex < 0 ? 0 : newServiceIndex;
+      this.initIndexesAndServiceType();
     }, 0);
   }
 
