@@ -3,35 +3,53 @@ package com.jss.osiris.modules.osiris.quotation.service.infoGreffe;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
-@JacksonXmlRootElement(localName = "Envelope", namespace = "soap")
+@JacksonXmlRootElement(localName = "soapenv:Envelope")
 public class KbisSoapEnveloppe {
 
-    @JacksonXmlProperty(isAttribute = true, localName = "xmlns:soap")
-    private final String soapNamespace = "http://schemas.xmlsoap.org/soap/envelope/";
+    @JacksonXmlProperty(isAttribute = true, localName = "xmlns:soapenv")
+    private final String soapenv = "http://schemas.xmlsoap.org/soap/envelope/";
 
-    @JacksonXmlProperty(isAttribute = true, localName = "xmlns:ns2")
-    private final String serviceNamespace = "http://infogreffe.fr/ws";
+    @JacksonXmlProperty(isAttribute = true, localName = "xmlns:urn")
+    private final String urn = "urn:WebServicesProduits";
 
-    @JacksonXmlProperty(localName = "Header", namespace = "soap")
-    private final Object soapHeader = null;
+    @JacksonXmlProperty(isAttribute = true, localName = "xmlns:xsi")
+    private final String xsi = "http://www.w3.org/2001/XMLSchema-instance";
 
-    @JacksonXmlProperty(localName = "Body", namespace = "soap")
+    @JacksonXmlProperty(isAttribute = true, localName = "xmlns:xsd")
+    private final String xsd = "http://www.w3.org/2001/XMLSchema";
+
+    @JacksonXmlProperty(localName = "soapenv:Header")
+    private String header = "";
+
+    @JacksonXmlProperty(localName = "soapenv:Body")
     private KbisSoapBody body;
 
     public KbisSoapEnveloppe(KbisSoapBody body) {
         this.body = body;
     }
 
-    public String getSoapNamespace() {
-        return soapNamespace;
+    public String getSoapenv() {
+        return soapenv;
     }
 
-    public String getServiceNamespace() {
-        return serviceNamespace;
+    public String getUrn() {
+        return urn;
     }
 
-    public Object getSoapHeader() {
-        return soapHeader;
+    public String getXsi() {
+        return xsi;
+    }
+
+    public String getXsd() {
+        return xsd;
+    }
+
+    public String getHeader() {
+        return header;
+    }
+
+    public void setHeader(String header) {
+        this.header = header;
     }
 
     public KbisSoapBody getBody() {

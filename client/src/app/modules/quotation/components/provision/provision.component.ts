@@ -918,9 +918,8 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
   }
 
   requestKbis() {
-    if (!this.habilitationService.isAdministrator())
-      return;
     const dialogRef = this.sirenDialog.open(SiretDialogComponent, {
+      disableClose: true
     });
 
     dialogRef.componentInstance.label = "Saisissez le SIRET du KBis à commander";
@@ -941,7 +940,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
 
             confirmRef.afterClosed().subscribe(confirm => {
               if (confirm)
-                this.uploadAttachementService.downloadAttachment(response);
+                this.uploadAttachementService.previewAttachment(response);
               else
                 this.kbisRequestService.requestKbisForSiret(dialogResult, this.currentProvisionWorkflow!).subscribe();
             })
