@@ -113,6 +113,13 @@ export class PostComponent implements OnInit, AfterViewInit {
     this.meta.updateTag({ name: 'description', content: "Retrouvez l'actualité juridique et économique. JSS analyse pour vous les dernières annonces, formalités et tendances locales." });
 
     this.loginService.getCurrentUser().subscribe(res => this.currentUser = res);
+    if (this.post) {
+      this.meta.updateTag({ property: 'og:title', content: this.post.titleText });
+      this.meta.updateTag({ property: 'og:image', content: this.post.media.urlFull });
+      this.meta.updateTag({ property: 'og:description', content: this.post.excerptText });
+      this.meta.updateTag({ property: 'og:url', content: environment.frontendUrl + "post/" + this.post.slug });
+      this.meta.updateTag({ property: 'og:type', content: 'article' });
+    }
 
     this.newCommentForm = this.formBuilder.group({});
     this.giftForm = this.formBuilder.group({});
