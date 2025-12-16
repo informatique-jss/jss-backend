@@ -412,7 +412,8 @@ export class RequiredInformationComponent implements OnInit {
     if (this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined) {
       if (this.informationForm) {
         this.informationForm.markAllAsTouched();
-        if (!this.informationForm.valid) {
+        if (this.informationForm.invalid) {
+          console.log(this.informationForm);
           this.appService.displayToast("Veuillez remplir les champs obligatoires", true, "Champs obligatoires", 5000);
           return of(false);
         }
