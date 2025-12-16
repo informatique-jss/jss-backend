@@ -113,8 +113,6 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
         @Query("select i from Invoice i where i.responsable in :responsables and (i.invoiceStatus in :invoiceStatus) ")
         List<Invoice> searchInvoices(List<Responsable> responsables, List<InvoiceStatus> invoiceStatus);
 
-        List<Invoice> findByInvoiceStatusAndResponsableIsNotNull(InvoiceStatus invoiceStatus);
-
         List<Invoice> findByInvoiceStatus(InvoiceStatus invoiceStatus);
 
         List<Invoice> findByResponsableInAndInvoiceStatusInAndCreatedDateBetween(List<Responsable> responsables,
