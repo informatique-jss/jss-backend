@@ -36,6 +36,9 @@ public class TiersDto {
     private List<String> competitors;
     private String accountingAccountCustomer;
     private String accountingAccountDeposit;
+    private boolean isProvisionalPaymentMandatory;
+    private String paymentIban;
+    private String paymentBic;
 
     public String getDenomination() {
         return denomination;
@@ -235,5 +238,29 @@ public class TiersDto {
 
     public void setAccountingAccountDeposit(String accountingAccountDeposit) {
         this.accountingAccountDeposit = accountingAccountDeposit;
+    }
+
+    public boolean isProvisionalPaymentMandatory() {
+        return isProvisionalPaymentMandatory;
+    }
+
+    public void setProvisionalPaymentMandatory(boolean isProvisionalPaymentMandatory) {
+        this.isProvisionalPaymentMandatory = isProvisionalPaymentMandatory;
+    }
+
+    public String getPaymentIban() {
+        return paymentIban;
+    }
+
+    public void setPaymentIban(String paymentIban) {
+        this.paymentIban = paymentIban;
+    }
+
+    public String getPaymentBic() {
+        return paymentBic;
+    }
+
+    public void setPaymentBic(String paymentBic) {
+        this.paymentBic = paymentBic;
     }
 }

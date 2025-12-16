@@ -1,12 +1,127 @@
 <div class="container-fluid" *ngIf="responsable">
+  <app-page-title title="Détail du responsable" [breadcrumbPaths]="breadcrumbPaths" [isMarginBottom]="false" />
   <responsable-header [responsable]="responsable" />
-  <div class="row g-1">
-    <div class="col-12">
-      <div class="card  ">
-        <div class="card-body p-0">
-
+  <div class="row g-3">
+    <!---------------- First column -------------->
+    <div class="col-xl-4">
+      <ui-card title="Informations Responsable">
+        <div card-body>
+          @if (responsable.function){
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <div class="avatar-sm bg-light d-flex align-items-center justify-content-center rounded">
+              <ng-icon name="tablerBriefcase" class="fs-xl text-secondary"></ng-icon>
+            </div>
+            <p class="mb-0 fs-sm">{{responsable.function}}</p>
+          </div>
+          }
+          @if (responsable.mail){
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <div class="avatar-sm bg-light d-flex align-items-center justify-content-center rounded">
+              <ng-icon name="tablerMail" class="fs-xl" />
+            </div>
+            <p class="mb-0 fs-sm">Email
+              <a [href]="'mailto:' + responsable.mail" class="text-primary fw-semibold pointer">{{responsable.mail}}</a>
+            </p>
+          </div>
+          }
+          @if (responsable.mailRecipient){
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <div class="avatar-sm bg-light d-flex align-items-center justify-content-center rounded">
+              <ng-icon name="tablerMailForward" class="fs-xl" />
+            </div>
+            <p class="mb-0 fs-sm">Destinataire(s) courrier : <br>
+              <span class="text-dark fw-semibold">{{responsable.mailRecipient}}</span>
+            </p>
+          </div>
+          }
+          <div class="d-flex align-items-center gap-2 mb-2">
+            @if (responsable.canViewAllTiersInWeb){
+            <div class="avatar-sm bg-success d-flex align-items-center justify-content-center rounded">
+              <ng-icon name="tablerRosetteDiscountCheck" class="fs-xl text-secondary" />
+            </div>
+            <p class="mb-0 fs-sm">Peut voir l'ensemble du tiers sur JSS.fr<br></p>
+            } @else {
+            <div class="avatar-sm bg-danger d-flex align-items-center justify-content-center rounded">
+              <ng-icon name="tablerRosetteDiscountCheckOff" class="fs-xl text-secondary" />
+            </div>
+            <p class="mb-0 fs-sm">Ne peut voir l'ensemble du tiers sur JSS.fr<br></p>
+            }
+          </div>
+          @if (responsable.numberOfGiftPostsPerMonth){
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <div class="avatar-sm bg-light d-flex align-items-center justify-content-center rounded">
+              <ng-icon name="tablerNews" class="fs-xl" />
+            </div>
+            <p class="mb-0 fs-sm">Nombre d'articles visibles par mois : <br>
+              <span class="text-dark fw-semibold">{{responsable.numberOfGiftPostsPerMonth}}</span>
+            </p>
+          </div>
+          }
+          <div class="d-flex justify-content-center gap-2 mt-4">
+            @if(responsable.salesEmployee){
+            <div class="avatar avatar-lg justify-content-center">
+              <avatar (click)="openTeamsConversation(responsable.salesEmployee)"
+                [stringInput]="responsable.salesEmployee" [size]="35" class="pointer">
+              </avatar>
+            </div>
+            }
+            @if(responsable.formalisteEmployee){
+            <div class="avatar avatar-lg justify-content-center">
+              <avatar (click)="openTeamsConversation(responsable.formalisteEmployee)"
+                [stringInput]="responsable.formalisteEmployee" [size]="35" class="pointer"></avatar>
+            </div>
+            }
+          </div>
         </div>
+      </ui-card>
+
+    </div>
+
+    <!---------------- Second column -------------->
+    <div class="col-xl-8">
+      <div class="row row-cols-md-4 row-cols-3 align-self-stretch">
+        @for (kpiCrm of responsableKpis; track $index) {
+        <div class="col">
+          <kpi-widget class="align-self-stretch" [titleNbLinesEllipsis]="1" [kpiCrm]="kpiCrm"
+            [searchModel]="searchModel" [hideIcon]="true"></kpi-widget>
+        </div>
+        }
       </div>
+
+      <ui-card title="Consignes et informations commerciales">
+        <div card-body class="row">
+          @if(responsable.observations){
+          <div class="col">
+            <h5 class="mb-2">Observations :</h5>
+            <p class="mb-0">{{responsable.observations}}</p>
+          </div>
+          }
+        </div>
+      </ui-card>
+
+      <ui-card title="Evénements liés au responsable">
+        <div class="timeline timeline-icon-based" card-body>
+          @for (item of iconTimelineData; track $index; let last = $last; let i = $index) {
+          <div class="timeline-item d-flex align-items-stretch">
+            <div class="timeline-time pe-3 text-muted">{{ item.time }}</div>
+            <div class="timeline-dot"
+              [class]="i % 2 != 0 ? 'bg-' + item.variant + '-subtle' : 'text-bg-' + item.variant">
+              @if (item.icon) {
+              <ng-icon [name]="item.icon" [class]="i % 2 != 0 ? 'text-' + item.variant : ''" class="fs-xl"></ng-icon>
+              }
+              @if (item.avatar) {
+              <img [src]="item.avatar" alt="Avatar" class="rounded-circle" width="24" />
+              }
+            </div>
+            <div class="timeline-content ps-3 {{!last ? 'pb-4' : ''}}">
+              <h5 class="mb-1">{{ item.title }}</h5>
+              <p class="mb-1 text-muted">{{ item.description }}</p>
+              <span class="text-primary fw-semibold">By {{ item.name }}</span>
+            </div>
+          </div>
+          }
+        </div>
+      </ui-card>
     </div>
   </div>
 </div>

@@ -1,5 +1,5 @@
-import { Component, Input } from '@angular/core';
-import { NgbCollapse } from '@ng-bootstrap/ng-bootstrap';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { NgbCollapse, NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 import { NgIconComponent } from '@ng-icons/core';
 
 @Component({
@@ -9,7 +9,8 @@ import { NgIconComponent } from '@ng-icons/core';
   standalone: true,
   imports: [
     NgbCollapse,
-    NgIconComponent
+    NgIconComponent,
+    NgbTooltip,
   ]
 })
 export class UiCardComponent {
@@ -20,10 +21,15 @@ export class UiCardComponent {
   @Input() isCloseable?: boolean
   @Input() bodyClass?: string
   @Input() className?: string
+  @Input() customButtonIcon?: string
+  @Input() customButtonTooltip?: string
+
+  @Output() isCustomButtonSelected: EventEmitter<boolean> = new EventEmitter<boolean>(false);
 
   isCollapsed = false
   isReloading = false;
   isVisible = true;
+  isCustomButtonSelectedValue = false;
 
   reload() {
     this.isReloading = true;
@@ -32,5 +38,10 @@ export class UiCardComponent {
 
   close() {
     this.isVisible = false;
+  }
+
+  changeCustomButtonSelected() {
+    this.isCustomButtonSelectedValue = !this.isCustomButtonSelectedValue;
+    this.isCustomButtonSelected.next(this.isCustomButtonSelectedValue);
   }
 }
