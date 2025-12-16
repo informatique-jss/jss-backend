@@ -54,6 +54,8 @@ export class GenericFormComponent implements OnInit, OnChanges {
       throw new Error("select type not provided");
 
     if (this.type == 'minmax') {
+      if (this.model == undefined)
+        return;
       if (!('minValue' in this.model))
         throw new Error("minValue not available in provided model for minmax type")
       if (!('maxValue' in this.model))
