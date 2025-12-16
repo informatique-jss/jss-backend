@@ -5,6 +5,7 @@ import java.util.List;
 
 public class ResponsableDto {
 
+    private String civility;
     private String firstname;
     private String lastname;
     private Integer id;
@@ -17,8 +18,23 @@ public class ResponsableDto {
     private String formalisteEmployee;
 
     // Detailed informations
+    private Boolean isActive;
     private String mail;
     private List<String> phones;
+    private String function;
+    private String mailRecipient;
+    private Integer numberOfGiftPostsPerMonth;
+    private Boolean canViewAllTiersInWeb;
+    private String observations;
+
+    // Getters Setters
+    public String getCivility() {
+        return civility;
+    }
+
+    public void setCivility(String civility) {
+        this.civility = civility;
+    }
 
     public String getFirstname() {
         return firstname;
@@ -92,6 +108,14 @@ public class ResponsableDto {
         this.salesEmployee = salesEmployee;
     }
 
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
+    }
+
     public String getMail() {
         return mail;
     }
@@ -116,4 +140,43 @@ public class ResponsableDto {
         this.phones = phones;
     }
 
+    public String getFunction() {
+        return function;
+    }
+
+    public void setFunction(String function) {
+        this.function = function;
+    }
+
+    public String getMailRecipient() {
+        return mailRecipient;
+    }
+
+    public void setMailRecipient(String mailRecipient) {
+        this.mailRecipient = mailRecipient;
+    }
+
+    public Integer getNumberOfGiftPostsPerMonth() {
+        return numberOfGiftPostsPerMonth;
+    }
+
+    public void setNumberOfGiftPostsPerMonth(Integer numberOfGiftPostsPerMonth) {
+        this.numberOfGiftPostsPerMonth = numberOfGiftPostsPerMonth;
+    }
+
+    public Boolean getCanViewAllTiersInWeb() {
+        return canViewAllTiersInWeb;
+    }
+
+    public void setCanViewAllTiersInWeb(Boolean canViewAllTiersInWeb) {
+        this.canViewAllTiersInWeb = canViewAllTiersInWeb;
+    }
+
+    public String getObservations() {
+        return observations;
+    }
+
+    public void setObservations(String observations) {
+        this.observations = observations;
+    }
 }

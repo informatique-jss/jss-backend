@@ -725,6 +725,11 @@ public class TiersController {
     return new ResponseEntity<TiersDto>(tiersFacade.getTiersDtoByTiersId(id), HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/responsable-dto")
+  public ResponseEntity<ResponsableDto> getResponsableDtoById(@RequestParam Integer id) {
+    return new ResponseEntity<ResponsableDto>(responsableService.getResponsableDto(id), HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/responsables")
   public ResponseEntity<List<ResponsableDto>> getResponsablesByTiers(@RequestParam Integer idTiers) {
 

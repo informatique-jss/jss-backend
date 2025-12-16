@@ -9,6 +9,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.jss.osiris.modules.osiris.accounting.service.AccountingAccountHelper;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrm;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
@@ -128,13 +129,22 @@ public class TiersDtoHelper {
         tiersDto.setCompetitors(
                 tiers.getCompetitors() != null ? tiers.getCompetitors().stream().map(Competitor::getLabel).toList()
                         : null);
-        tiersDto.setAccountingAccountCustomer(
-                tiers.getAccountingAccountCustomer() != null ? tiers.getAccountingAccountCustomer().getLabel() : null);
-        if (tiers.getAccountingAccountCustomer().getPrincipalAccountingAccount() != null) {
 
+        if (tiers.getAccountingAccountCustomer() != null
+                && tiers.getAccountingAccountCustomer().getPrincipalAccountingAccount() != null) {
+            tiersDto.setAccountingAccountCustomer(tiers.getAccountingAccountCustomer().getLabel() + " - " +
+                    AccountingAccountHelper.computeAccountingAccountNumber(tiers.getAccountingAccountCustomer()));
         }
-        tiersDto.setAccountingAccountDeposit(
-                tiers.getAccountingAccountDeposit() != null ? tiers.getAccountingAccountDeposit().getLabel() : null);
+
+        if (tiers.getAccountingAccountDeposit() != null
+                && tiers.getAccountingAccountDeposit().getPrincipalAccountingAccount() != null) {
+            tiersDto.setAccountingAccountDeposit(tiers.getAccountingAccountDeposit().getLabel() + " - " +
+                    AccountingAccountHelper.computeAccountingAccountNumber(tiers.getAccountingAccountDeposit()));
+        }
+
+        tiersDto.setProvisionalPaymentMandatory(tiers.getIsProvisionalPaymentMandatory());
+        tiersDto.setPaymentIban(tiers.getPaymentIban());
+        tiersDto.setPaymentBic(tiers.getPaymentBic());
 
         return tiersDto;
     }
@@ -143,6 +153,7 @@ public class TiersDtoHelper {
             HashMap<String, KpiCrm> kpiCrmsMap) {
 
         ResponsableDto outResponsable = new ResponsableDto();
+        outResponsable.setCivility(responsable.getCivility() != null ? responsable.getCivility().getLabel() : null);
         outResponsable.setFirstname(responsable.getFirstname());
         outResponsable.setLastname(responsable.getLastname());
         outResponsable.setId(responsable.getId());
@@ -176,11 +187,17 @@ public class TiersDtoHelper {
 
     private ResponsableDto mapResponsableDetailsToResponsableDto(ResponsableDto responsableDto,
             Responsable responsable) {
+        responsableDto.setIsActive(responsable.getIsActive());
         responsableDto.setPhones(
                 responsable.getPhones() != null ? responsable.getPhones().stream().map(Phone::getPhoneNumber).toList()
                         : null);
         responsableDto.setMail(
                 responsable.getMail() != null ? responsable.getMail().getMail() : null);
+        responsableDto.setFunction(responsable.getFunction());
+        responsableDto.setMailRecipient(responsable.getMailRecipient());
+        responsableDto.setNumberOfGiftPostsPerMonth(responsable.getNumberOfGiftPostsPerMonth());
+        responsableDto.setCanViewAllTiersInWeb(responsable.getCanViewAllTiersInWeb());
+        responsableDto.setObservations(responsable.getObservations());
 
         return responsableDto;
     }

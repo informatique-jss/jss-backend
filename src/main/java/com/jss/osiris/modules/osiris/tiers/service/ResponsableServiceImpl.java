@@ -113,6 +113,14 @@ public class ResponsableServiceImpl implements ResponsableService {
     }
 
     @Override
+    public ResponsableDto getResponsableDto(Integer id) {
+        Optional<Responsable> responsable = responsableRepository.findById(id);
+        if (responsable.isPresent())
+            return tiersDtoHelper.mapResponsable(responsable.get());
+        return null;
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void reindexResponsable() throws OsirisException {
         List<Responsable> responsables = IterableUtils.toList(responsableRepository.findAll());

@@ -1,4 +1,5 @@
 <div class="container-fluid" *ngIf="tiers">
+  <app-page-title title="Détail du tiers" [breadcrumbPaths]="breadcrumbPaths" [isMarginBottom]="false" />
   <tiers-header [tiers]="tiers" />
   <div class="row g-3">
     <!---------------- First column -------------->
@@ -118,19 +119,26 @@
         </div>
       </ui-card>
 
-      <ui-card title="Responsables du tiers">
+      <ui-card title="Responsables du tiers" [isTogglable]="true" [isCloseable]="true" [isReloadable]="true"
+        [customButtonIcon]="inactiveResponsablesIcon" [customButtonTooltip]="inactiveResponsablesTooltip"
+        (isCustomButtonSelected)="showInactiveResponsables()">
         <div card-body>
-          @for (respo of tiersResponsables; track $index; let last = $last;let first = $first) {
+          @for (respo of tiersResponsablesToDisplay; track $index; let last = $last;let first = $first) {
+          @if(respo.isActive==undefined || (!respo.isActive && isShowInactiveResponsable)){
           <div class="justify-content-start row">
             <div
               class="d-flex col justify-content-between align-items-center {{!last && 'border-bottom'}} {{first ? 'pb-2' : 'py-2'}}">
               <div class="d-flex align-items-center gap-2">
                 <div class="img-fluid rounded pointer">
-                  <avatar [stringInput]="respo.firstname+' '+ respo.lastname" [size]="40" [borderRadius]="10">
-                  </avatar>
+                  <a [routerLink]="'responsable/'+respo.id">
+                    <avatar [stringInput]="respo.firstname+' '+ respo.lastname" [size]="40" [borderRadius]="10">
+                    </avatar>
+                  </a>
                 </div>
                 <div>
-                  <h5 class="fs-sm mb-0 lh-base">{{ respo.firstname +" "+ respo.lastname}}</h5>
+                  <h5 class="fs-sm mb-0 lh-base">{{ respo.firstname +" "+ respo.lastname}} <span
+                      class="ms-2 badge badge-square text-bg-danger topbar-badge p-1">Inactif</span>
+                  </h5>
                   @if (respo.responsableCategory) {
                   <a class="text-muted fs-xs mb-0">{{ respo.responsableCategory }}</a>
                   }
@@ -152,6 +160,7 @@
             </div>
           </div>
           }
+          }
         </div>
       </ui-card>
 
@@ -160,8 +169,25 @@
           <div class="col">
             <h5 class="mb-2">Compte comptable client :</h5>
             <p class="mb-0">{{tiers.accountingAccountCustomer}}</p>
-            <h5 class="mb-2 mt-3">Observations :</h5>
+            <h5 class="mb-2 mt-3">Compte comptable d'acompte :</h5>
             <p class="mb-0">{{tiers.accountingAccountDeposit}}</p>
+            <h5 class="mb-2 mt-3">Provision :</h5>
+            @if (tiers.isProvisionalPaymentMandatory) {
+            <p class="mb-0">Les provisions pour ce tiers sont <span class="text-dark fw-semibold">obligatoires</span>
+            </p>
+            } @else {
+            <p class="mb-0">Les provisions pour ce tiers <span class="text-dark fw-semibold">ne sont PAS
+                obligatoires</span>
+            </p>
+            }
+            @if (tiers.paymentIban) {
+            <h5 class="mb-2 mt-3">IBAN du tiers :</h5>
+            <p class="mb-0">{{tiers.paymentIban}}</p>
+            }
+            @if (tiers.paymentBic) {
+            <h5 class="mb-2 mt-3">BIC du tiers :</h5>
+            <p class="mb-0">{{tiers.paymentBic}}</p>
+            }
           </div>
         </div>
       </ui-card>
