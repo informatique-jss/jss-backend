@@ -123,7 +123,6 @@ export class ResponsableComponent implements OnInit {
   ngOnInit() {
     if (this.activeRoute.snapshot.params['id'])
       this.responsableId = this.activeRoute.snapshot.params['id'];
-    console.log(this.activeRoute.snapshot.url.find(seg => seg.path == 'view'));
 
     if (this.responsableId) {
       this.fetchKpisForResponsable();
