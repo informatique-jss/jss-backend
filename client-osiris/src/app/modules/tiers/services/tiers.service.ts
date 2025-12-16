@@ -1,15 +1,14 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { AppRestService } from '../../main/services/appRest.service';
-import { Tiers } from '../../profile/model/Tiers';
 import { TiersDto } from '../model/TiersDto';
 import { TiersSearch } from '../model/TiersSearch';
 
 @Injectable({
   providedIn: 'root'
 })
-export class TiersService extends AppRestService<Tiers> {
+export class TiersService extends AppRestService<TiersDto> {
 
   constructor(http: HttpClient) {
     super(http, "tiers");
@@ -72,14 +71,14 @@ export class TiersService extends AppRestService<Tiers> {
   }
 
   getTiersById(id: number) {
-    return this.getById("tiers/detail", id) as any as Observable<TiersDto>;
+    return this.getById("tiers/detail", id);
   }
 
   searchTiers(tiersSearch: TiersSearch) {
-    return this.postList(new HttpParams(), "tiers/search", tiersSearch) as any as Observable<TiersDto[]>;
+    return this.postList(new HttpParams(), "tiers/search", tiersSearch);
   }
 
-  deleteTiers(tiers: Tiers) {
+  deleteTiers(tiers: TiersDto) {
     return this.get(new HttpParams().set("idTiers", tiers.id), "tiers/delete", "Tiers supprimé avec succès");
   }
 

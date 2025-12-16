@@ -12,6 +12,8 @@ const routesCrm = [
   { path: 'tiers/view/:id/responsable/:id', loadComponent: () => import('./modules/tiers/components/responsable/responsable.component').then(m => m.ResponsableComponent) },
   { path: 'tiers/crm/kpi/selection/:kpiCode', loadComponent: () => import('./modules/crm/components/crm/crm.component').then(m => m.CrmComponent) },
   { path: 'tiers/crm/kpi', loadComponent: () => import('./modules/crm/components/crm/crm.component').then(m => m.CrmComponent) },
+  { path: 'quotation', loadComponent: () => import('./modules/quotation/components/quotation-list/quotation-list.component').then(m => m.QuotationListComponent) },
+  { path: 'quotation/view/:id', loadComponent: () => import('./modules/quotation/components/quotation/quotation.component').then(m => m.QuotationComponent) },
 ];
 
 export const routes: Routes = [
