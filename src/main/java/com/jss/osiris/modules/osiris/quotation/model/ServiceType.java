@@ -100,6 +100,7 @@ public class ServiceType implements Serializable, IId {
 	private ServiceType serviceTypeLinked;
 
 	private Boolean hideInMyJss;
+	private Boolean isProvisionalPaymentMandatory;
 
 	private String reportingGroup;
 
@@ -253,5 +254,13 @@ public class ServiceType implements Serializable, IId {
 
 	public void setReportingGroup(String reportingGroup) {
 		this.reportingGroup = reportingGroup;
+	}
+
+	public Boolean getIsProvisionalPaymentMandatory() {
+		return isProvisionalPaymentMandatory;
+	}
+
+	public void setIsProvisionalPaymentMandatory(Boolean isProvisionalPaymentMandatory) {
+		this.isProvisionalPaymentMandatory = isProvisionalPaymentMandatory;
 	}
 }
