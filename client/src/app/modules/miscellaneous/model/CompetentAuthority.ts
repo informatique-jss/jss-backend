@@ -32,4 +32,5 @@ export interface CompetentAuthority extends IAttachment {
   isNotToReminder: boolean;
   assoMailCompetentAuthorityServiceFamilyGroups: AssoMailCompetentAuthorityServiceFamilyGroup[];
   provider: Provider;
+  jssAccountNumber: string;
 }

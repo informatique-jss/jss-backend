@@ -20,4 +20,5 @@ export interface ServiceType {
   hideInMyJss: boolean;
   serviceTypeLinked: ServiceType;
   reportingGroup: string;
+  isProvisionalPaymentMandatory: boolean;
 }
