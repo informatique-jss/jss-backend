@@ -64,7 +64,7 @@ public class IndexationMailServiceImpl implements IndexationMailService {
         List<IndexEntity> entitiesFound = searchService.searchForEntities(idToFind + "", entityType, true);
         if (entitiesFound != null && entitiesFound.size() == 1) {
             attachmentService.addAttachment(currentExportedMail.getMailText(), entitiesFound.get(0).getEntityId(), null,
-                    CustomerOrder.class.getSimpleName(),
+                    entityType,
                     constantService.getAttachmentTypeClientCommunication(),
                     ("Mail client - " + currentExportedMail.getSubject().replace(":", " ")
                             + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd HHmm")) + ".html"),
