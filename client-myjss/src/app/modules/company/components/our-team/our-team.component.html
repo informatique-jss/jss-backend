@@ -43,9 +43,32 @@
         </ul>
       </div>
       <div class="col-md-10 col-12 p-0" data-simplebar>
-        <div *ngIf="staff[selectedTab.key]" class="mb-4 mb-lg-5 pb-4 px-3">
+        <div *ngIf="staff[selectedTab.key] && selectedTab.key != 'formalites'" class="mb-4 mb-lg-5 pb-4 px-3">
           <div class="row row-cols-2 row-cols-lg-4 flex-lg-wrap gy-lg-5 mx-n3 justify-content-center">
             <div class="col" *ngFor="let person of staff[selectedTab.key]">
+              <div class="d-block text-center text-decoration-none mt-4 mt-md-0" style="min-width: 110px;">
+                <img class="rounded-circle" [src]="'assets/img/societe/team/' + selectedTab.key + '/' + person.photo"
+                  width="120" [alt]="person.firstname">
+                <h3 class="h5 pt-4 mb-1">{{ person.firstname }} {{ person.lastname }}</h3>
+                <p class="text-body-secondary mb-0">{{ person.title }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="staff[selectedTab.key] && selectedTab.key == 'formalites'" class="mb-4 mb-lg-5 pb-4 px-3">
+          <div class="row row-cols-2 row-cols-lg-4 flex-lg-wrap gy-lg-5 mx-n3 justify-content-center">
+            <div class="col" *ngFor="let person of staff[selectedTab.key]">
+              <div class="d-block text-center text-decoration-none mt-4 mt-md-0" style="min-width: 110px;">
+                <img class="rounded-circle" [src]="'assets/img/societe/team/' + selectedTab.key + '/' + person.photo"
+                  width="120" [alt]="person.firstname">
+                <h3 class="h5 pt-4 mb-1">{{ person.firstname }} {{ person.lastname }}</h3>
+                <p class="text-body-secondary mb-0">{{ person.title }}</p>
+              </div>
+            </div>
+          </div>
+          <h4 class="mt-5 mb-2 text-center text-white">Ils nous accompagnent </h4>
+          <div class="row row-cols-2 row-cols-lg-4 flex-lg-wrap gy-lg-5 mx-n3 justify-content-center">
+            <div class="col" *ngFor="let person of staff['formalitesPartner']">
               <div class="d-block text-center text-decoration-none mt-4 mt-md-0" style="min-width: 110px;">
                 <img class="rounded-circle" [src]="'assets/img/societe/team/' + selectedTab.key + '/' + person.photo"
                   width="120" [alt]="person.firstname">
