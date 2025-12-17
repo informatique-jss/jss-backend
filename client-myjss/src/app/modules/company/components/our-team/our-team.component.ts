@@ -49,8 +49,6 @@ export class OurTeamComponent implements OnInit {
       { firstname: "Raphaël", lastname: "M.", title: "Chargé de clientèle", photo: "raphael_charge_de_clientele.jpg" },
       { firstname: "Catherine", lastname: "D.", title: "Assistante commerciale", photo: "catherine_assistante_commerciale.jpg" },
       { firstname: "Emma", lastname: "L.", title: "Assistante commerciale", photo: "emma_assistante_commerciale.jpg" },
-      { firstname: "Jean Philippe", lastname: "D.", title: "Chargé de recouvrement", photo: "jean_charge_de_recouvrement.jpg" },
-      { firstname: "Jovanka", lastname: "M.", title: "Chargé de recouvrement", photo: "jovanka_charge_de_recouvrement.jpg" },
       { firstname: "Catherine", lastname: "C.", title: "Hôtesse d'accueil", photo: "catherine_hotesse_d_accueil.jpg" },
     ],
     annonces: [
@@ -96,6 +94,8 @@ export class OurTeamComponent implements OnInit {
       { firstname: "Amal", lastname: "A.", title: "Aide Comptable", photo: "amal_aide_comptable.jpg" },
       { firstname: "Clara", lastname: "R.", title: "Agent de facturation", photo: "clara_agent_de_facturation.jpg" },
       { firstname: "Céline", lastname: "L.", title: "Agent de facturation", photo: "celine_agent_de_facturation.jpg" },
+      { firstname: "Jean Philippe", lastname: "D.", title: "Chargé de recouvrement", photo: "jean_charge_de_recouvrement.jpg" },
+      { firstname: "Jovanka", lastname: "M.", title: "Chargé de recouvrement", photo: "jovanka_charge_de_recouvrement.jpg" },
     ],
     informatique: [
       { firstname: "Frédéric", lastname: "B.", title: "Analyste Programmeur", photo: "../../../others/anonymous.svg" },
