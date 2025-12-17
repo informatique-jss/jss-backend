@@ -58,6 +58,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.LegalFormService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.SpecialOfferService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
+import com.jss.osiris.modules.osiris.quotation.dto.QuotationDto;
 import com.jss.osiris.modules.osiris.quotation.facade.CompetentAuthorityFacade;
 import com.jss.osiris.modules.osiris.quotation.facade.QuotationFacade;
 import com.jss.osiris.modules.osiris.quotation.model.ActType;
@@ -3232,5 +3233,27 @@ public class QuotationController {
     quotationFacade.orderNewKbisForSiret(siret, provisionId);
 
     return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
+  /*
+   * |============================================================================
+   * |______________________METHODS FOR OSIRIS V2_________________________________
+   * |============================================================================
+   */
+
+  @PostMapping(inputEntryPoint + "/quotation/search/v2")
+  public ResponseEntity<List<QuotationDto>> searchQuotationsDtos(@RequestBody QuotationSearch quotationSearch)
+      throws OsirisValidationException, OsirisException {
+    if (quotationSearch == null)
+      throw new OsirisValidationException("quotationSearch");
+
+    validationHelper.validateReferential(quotationSearch.getSalesEmployee(), false, "SalesEmployee");
+    if (quotationSearch.getQuotationStatus() != null)
+      for (QuotationStatus status : quotationSearch.getQuotationStatus())
+        validationHelper.validateReferential(status, false, "status");
+    List<QuotationDto> test = quotationFacade.searchQuotations(quotationSearch);
+
+    return new ResponseEntity<List<QuotationDto>>(test,
+        HttpStatus.OK);
   }
 }

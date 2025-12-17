@@ -5,4 +5,5 @@ export interface QuotationSearch {
   mail: string;
   startDate: Date;
   endDate: Date;
+  responsables: number[];
 }

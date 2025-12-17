@@ -6,6 +6,7 @@ import { NgIcon } from '@ng-icons/core';
 import { Row } from '@tanstack/angular-table';
 import { Observable, Subject } from 'rxjs';
 import { SimplebarAngularModule } from 'simplebar-angular';
+import { formatDateFrance } from '../../../../../../../client/src/app/libs/FormatHelper';
 import { GenericListComponent } from '../../../../libs/generic-list/generic-list.component';
 import { GenericForm } from '../../../../libs/generic-list/GenericForm';
 import { GenericSearchForm } from '../../../../libs/generic-list/GenericSearchForm';
@@ -33,8 +34,7 @@ import { QuotationService } from '../../services/quotation.service';
 export class QuotationListComponent extends GenericListComponent<QuotationDto, QuotationSearch> implements OnInit {
 
   eventOnClickOpenAction = new Subject<Row<QuotationDto>[]>();
-  eventOnClickOpenKpisAction = new Subject<Row<QuotationDto>[]>();
-  eventOnClickOpenTiers = new Subject<Row<QuotationDto>>();
+  eventOnClickOpenQuotation = new Subject<Row<QuotationDto>>();
 
   override pageTitle = "Liste des devis";
 
@@ -51,6 +51,7 @@ export class QuotationListComponent extends GenericListComponent<QuotationDto, Q
   }
 
   override ngOnInit(): void {
+    super.ngOnInit();
     this.breadcrumbPaths = [
       { label: "Liste des devis", route: "/quotation" },
     ]
@@ -70,7 +71,7 @@ export class QuotationListComponent extends GenericListComponent<QuotationDto, Q
       this.router.navigate(['quotation/view/' + row[0].original.id]);
     });
 
-    this.eventOnClickOpenTiers.subscribe((row: Row<QuotationDto>) => {
+    this.eventOnClickOpenQuotation.subscribe((row: Row<QuotationDto>) => {
       this.quotationService.setSelectedQuotationUnique(row.original);
       this.router.navigate(['quotation/view/' + row.original.id]);
     });
@@ -137,18 +138,53 @@ export class QuotationListComponent extends GenericListComponent<QuotationDto, Q
       }
     })
     columns.push({
+      accessorFn: (originalRow: QuotationDto, index: number) => { return formatDateFrance(originalRow.creationDate) }, header: 'Date de création', enableSorting: true, cell: info => info.getValue(), meta: {
+        eventOnDoubleClick: this.eventOnClickOpenQuotation
+      }
+    })
+    columns.push({
+      accessorKey: 'origin', header: 'Origine', enableSorting: true, cell: info => info.getValue(), meta: {
+        eventOnDoubleClick: this.eventOnClickOpenQuotation
+      }
+    })
+    columns.push({
+      accessorKey: 'affaires', header: 'Affaire(s)', enableSorting: true, cell: info => info.getValue(), meta: {
+        eventOnDoubleClick: this.eventOnClickOpenQuotation
+      }
+    })
+    columns.push({
+      accessorKey: 'services', header: 'Service(s)', enableSorting: true, cell: info => info.getValue(), meta: {
+        eventOnDoubleClick: this.eventOnClickOpenQuotation
+      }
+    })
+    columns.push({
+      accessorKey: 'status', header: 'Status', enableSorting: true, cell: info => info.getValue(), meta: {
+        eventOnDoubleClick: this.eventOnClickOpenQuotation
+      }
+    })
+    columns.push({
+      accessorKey: 'description', header: 'Description', enableSorting: true, cell: info => info.getValue(), meta: {
+        eventOnDoubleClick: this.eventOnClickOpenQuotation
+      }
+    })
+    columns.push({
+      accessorKey: 'tiers', header: 'Tiers', enableSorting: true, cell: info => info.getValue(), meta: {
+        eventOnDoubleClick: this.eventOnClickOpenQuotation
+      }
+    })
+    columns.push({
+      accessorKey: 'responsablesIds', header: 'Donneur d\'ordre', enableSorting: true, cell: info => info.getValue(), meta: {
+        eventOnDoubleClick: this.eventOnClickOpenQuotation
+      }
+    })
+    columns.push({
+      accessorKey: 'totalPrice', header: 'Prix', enableSorting: true, cell: info => info.getValue(), meta: {
+        eventOnDoubleClick: this.eventOnClickOpenQuotation
+      }
+    })
+    columns.push({
       accessorKey: 'salesEmployee', header: 'Commercial', enableSorting: true, cell: info => info.getValue(), meta: {
-        eventOnDoubleClick: this.eventOnClickOpenTiers
-      }
-    })
-    columns.push({
-      accessorKey: 'startDate', header: 'Date début', enableSorting: true, cell: info => info.getValue(), meta: {
-        eventOnDoubleClick: this.eventOnClickOpenTiers
-      }
-    })
-    columns.push({
-      accessorKey: 'endDate', header: 'Date fin', enableSorting: true, cell: info => info.getValue(), meta: {
-        eventOnDoubleClick: this.eventOnClickOpenTiers
+        eventOnDoubleClick: this.eventOnClickOpenQuotation
       }
     })
     return columns;

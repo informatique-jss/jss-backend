@@ -56,6 +56,6 @@ export class QuotationService extends AppRestService<QuotationDto> {
   }
 
   searchQuotation(quotationSearch: QuotationSearch) {
-    return this.postList(new HttpParams(), "quotation/search", quotationSearch);
+    return this.postList(new HttpParams(), "quotation/search/v2", quotationSearch);
   }
 }
