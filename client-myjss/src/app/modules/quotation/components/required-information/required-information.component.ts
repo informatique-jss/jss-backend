@@ -121,7 +121,7 @@ export class RequiredInformationComponent implements OnInit {
   checkedOnce = false;
   isBrowser = false;
 
-  activeId = 4;
+  activeId = 40;
   isOnlyAnnouncement = true;
 
   SERVICE_FIELD_TYPE_TEXT = SERVICE_FIELD_TYPE_TEXT;
@@ -236,59 +236,78 @@ export class RequiredInformationComponent implements OnInit {
     }
   }
 
-
   initIndexesAndServiceType() {
+    let announcementIndex = 0;
     if (this.quotation && this.quotation.assoAffaireOrders && this.quotation.assoAffaireOrders.length > 0) {
-      let serviceIndex = 0;
-      let assoIndex = 0;
-      this.activeId = 4;
-      // Init order of provisions for multiple announcements in front-end and annouvement and domiciliation
       for (let asso of this.quotation.assoAffaireOrders) {
-        if (assoIndex === this.selectedAssoIndex && asso.services && asso.services.length > 0) {
-          for (let serv of asso.services) {
-            if (serviceIndex === this.selectedServiceIndex && serv.provisions && serv.provisions.length > 0) {
-              let i = 0;
-              let index = 0;
-              for (let provision of serv.provisions) {
-                if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_ANNOUNCEMENT) {
-                  this.activeId = parseInt('1' + index);
-                  provision.order = ++i;
-                  if (!this.selectedRedaction[asso.services.indexOf(serv)]) {
-                    this.selectedRedaction[asso.services.indexOf(serv)] = [];
-                  }
-                  this.selectedRedaction[asso.services.indexOf(serv)][serv.provisions.indexOf(provision)] = this.CONFIER_ANNONCE_AU_JSS;
-                  if (!provision.announcement) {
-                    provision.announcement = {} as Announcement;
-                    provision.isRedactedByJss = true;
-                  }
-                } else {
-                  this.isOnlyAnnouncement = false;
-                }
-                if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_DOMICILIATION) {
-                  if (!provision.domiciliation) {
-                    this.activeId = 2;
-                    provision.domiciliation = {} as Domiciliation;
-                  }
-                }
-                index++;
+        for (let serv of asso.services) {
+          for (let provision of serv.provisions) {
+            if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_ANNOUNCEMENT) {
+              provision.order = announcementIndex;
+              announcementIndex++;
+              if (!this.selectedRedaction[asso.services.indexOf(serv)]) {
+                this.selectedRedaction[asso.services.indexOf(serv)] = [];
+              }
+              this.selectedRedaction[asso.services.indexOf(serv)][serv.provisions.indexOf(provision)] = this.CONFIER_ANNONCE_AU_JSS;
+              if (!provision.announcement) {
+                provision.announcement = {} as Announcement;
+                provision.isRedactedByJss = true;
+              }
+            } else {
+              this.isOnlyAnnouncement = false;
+            }
+            if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_DOMICILIATION) {
+              if (!provision.domiciliation) {
+                provision.domiciliation = {} as Domiciliation;
               }
             }
-            serviceIndex++;
+          }
 
-            if (serv.assoServiceDocuments) {
-              serv.assoServiceDocuments.sort((a, b) => (b.isMandatory ? 1 : 0) - (a.isMandatory ? 1 : 0))
-            }
+          if (serv.assoServiceDocuments) {
+            serv.assoServiceDocuments.sort((a, b) => (b.isMandatory ? 1 : 0) - (a.isMandatory ? 1 : 0))
+          }
 
-            if (serv.assoServiceFieldTypes) {
-              serv.assoServiceFieldTypes.sort((a, b) => (b.isMandatory ? 1 : 0) - (a.isMandatory ? 1 : 0))
-            }
+          if (serv.assoServiceFieldTypes) {
+            serv.assoServiceFieldTypes.sort((a, b) => (b.isMandatory ? 1 : 0) - (a.isMandatory ? 1 : 0))
           }
         }
-        assoIndex++;
       }
       this.setAssoAffaireOrderToNoticeTemplateDescription();
       this.changeProvisionNoticeTemplateDescription({ nextId: this.activeId } as NgbNavChangeEvent);
       this.emitServiceChange();
+    }
+  }
+
+
+  getIndexForProvision(provisionIn: Provision) {
+    let activeId = -1;
+    if (this.quotation && this.quotation.assoAffaireOrders && this.quotation.assoAffaireOrders.length > 0) {
+      for (let asso of this.quotation.assoAffaireOrders) {
+        for (let serv of asso.services) {
+          let index = 0;
+          for (let provision of serv.provisions) {
+            if (provisionIn !== provision)
+              return;
+
+            if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_ANNOUNCEMENT) {
+              activeId = parseInt('1' + index);
+              if (this.activeId && this.activeId > activeId)
+                this.activeId = activeId;
+              return;
+            }
+            if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_DOMICILIATION) {
+              if (!provision.domiciliation) {
+                activeId = parseInt('2' + index);
+                if (this.activeId && this.activeId > activeId)
+                  this.activeId = activeId;
+                return;
+              }
+            }
+            index++;
+          }
+        }
+      }
+
     }
   }
 

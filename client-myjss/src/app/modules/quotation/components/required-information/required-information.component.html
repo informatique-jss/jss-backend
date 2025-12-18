@@ -66,7 +66,7 @@
 
         <ng-container
           *ngFor="let provision of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].provisions; let provisionIndex = index">
-          <li [ngbNavItem]="parseInt('1'+provisionIndex)"
+          <li [ngbNavItem]="getIndexForProvision(provision)"
             *ngIf="provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_ANNOUNCEMENT && provision.announcement">
             <button ngbNavLink>Annonce légale {{ provision.order && provision.order>1 ? provision.order : '' }}
             </button>
@@ -197,7 +197,7 @@
             </ng-template>
           </li>
 
-          <li class="nav-item " [ngbNavItem]="2"
+          <li class="nav-item " [ngbNavItem]="getIndexForProvision(provision)"
             *ngIf="provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_DOMICILIATION && provision.domiciliation">
             <button ngbNavLink>Domiciliation</button>
             <ng-template ngbNavContent>
@@ -890,7 +890,7 @@
             </ng-template>
           </li-->
         </ng-container>
-        <li [ngbNavItem]="4" *ngIf="(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes ||
+        <li [ngbNavItem]="40" *ngIf="(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes ||
         quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments)">
           <button ngbNavLink>Documents & informations complémentaires
           </button>
