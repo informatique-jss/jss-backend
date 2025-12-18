@@ -133,6 +133,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Value("${invoicing.payment.limit.refund.euros}")
     private String payementLimitRefundInEuros;
 
+    @Value("${invoicing.provider.creation.rate}")
+    private Float providerCreationRate;
+
     @Autowired
     CustomerOrderRepository customerOrderRepository;
 
@@ -2041,7 +2044,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         Employee currentUser = employeeService.getCurrentEmployee();
         CustomerOrder assignedOrder = null;
 
-        if (customerOrders != null && customerOrders.size() > 0 && Math.random() < 0.3) {
+        if (customerOrders != null && customerOrders.size() > 0 && Math.random() < providerCreationRate) {
             for (CustomerOrder order : customerOrders) {
                 if (order.getInvoicingEmployee() == null
                         || order.getInvoicingEmployee().getId().equals(currentUser.getId())) {
