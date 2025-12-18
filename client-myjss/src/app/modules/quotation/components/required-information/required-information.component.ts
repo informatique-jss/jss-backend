@@ -121,7 +121,6 @@ export class RequiredInformationComponent implements OnInit {
   checkedOnce = false;
   isBrowser = false;
 
-  activeId = 40;
   isOnlyAnnouncement = true;
 
   SERVICE_FIELD_TYPE_TEXT = SERVICE_FIELD_TYPE_TEXT;
@@ -273,42 +272,45 @@ export class RequiredInformationComponent implements OnInit {
         }
       }
       this.setAssoAffaireOrderToNoticeTemplateDescription();
-      this.changeProvisionNoticeTemplateDescription({ nextId: this.activeId } as NgbNavChangeEvent);
+      this.changeProvisionNoticeTemplateDescription({ nextId: 40 } as NgbNavChangeEvent);
       this.emitServiceChange();
     }
   }
 
-
-  getIndexForProvision(provisionIn: Provision) {
-    let activeId = -1;
-    if (this.quotation && this.quotation.assoAffaireOrders && this.quotation.assoAffaireOrders.length > 0) {
-      for (let asso of this.quotation.assoAffaireOrders) {
-        for (let serv of asso.services) {
-          let index = 0;
-          for (let provision of serv.provisions) {
-            if (provisionIn !== provision)
-              return;
-
-            if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_ANNOUNCEMENT) {
-              activeId = parseInt('1' + index);
-              if (this.activeId && this.activeId > activeId)
-                this.activeId = activeId;
-              return;
-            }
-            if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_DOMICILIATION) {
-              if (!provision.domiciliation) {
-                activeId = parseInt('2' + index);
-                if (this.activeId && this.activeId > activeId)
-                  this.activeId = activeId;
-                return;
-              }
-            }
-            index++;
+  getIndexForProvision(provisionIndex: number, provisions: Provision[]) {
+    let index = 0;
+    let nbAnnouncement = 0;
+    for (let provision of provisions) {
+      if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_ANNOUNCEMENT) {
+        nbAnnouncement++;
+      }
+      if (provisionIndex < 0 && provisions.map(p => p.provisionType.provisionScreenType.code).indexOf(PROVISION_SCREEN_TYPE_ANNOUNCEMENT) < 0
+        && provisions.map(p => p.provisionType.provisionScreenType.code).indexOf(PROVISION_SCREEN_TYPE_DOMICILIATION) < 0)
+        return 40;
+      if (provisionIndex == index) {
+        if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_ANNOUNCEMENT) {
+          if (nbAnnouncement > 1) {
+            return index;
           }
+          return 40;
+        }
+        else if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_DOMICILIATION) {
+          return 40;
         }
       }
-
+      index++;
     }
+    return index;
+  }
+
+  getNbOfProvisionsAnnouncement(provisions: Provision[]) {
+    let nbOfProvisionsAnnouncement = 0;
+    for (let provision of provisions) {
+      if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_ANNOUNCEMENT) {
+        nbOfProvisionsAnnouncement++;
+      }
+    }
+    return nbOfProvisionsAnnouncement;
   }
 
   fetchAnnouncementReferentials() {
