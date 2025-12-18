@@ -72,9 +72,9 @@ export class OurTeamComponent implements OnInit {
       { firstname: "Caroline", lastname: "C.", title: "Assistante administrative", photo: "caroline_assistante_administrative.jpg" },
     ],
     formalitesPartner: [
-      { firstname: "Virginie", lastname: "L.", title: "Partenaire spécialisé en formalités", photo: "virginie_juriste_formaliste.jpg" },
-      { firstname: "Jessica", lastname: "R.", title: "Partenaire spécialisé en formalités", photo: "jessica_formaliste.jpg" },
-      { firstname: "Nancy", lastname: "F.", title: "Partenaire spécialisé en formalités", photo: "nancy_assistante_formaliste.jpg" },
+      { firstname: "Virginie", lastname: "L.", title: "Partenaire spécialisée en formalités", photo: "virginie_juriste_formaliste.jpg" },
+      { firstname: "Jessica", lastname: "R.", title: "Partenaire spécialisée en formalités", photo: "jessica_formaliste.jpg" },
+      { firstname: "Nancy", lastname: "F.", title: "Partenaire spécialisée en formalités", photo: "nancy_assistante_formaliste.jpg" },
     ],
     marketing: [
       { firstname: "Yseult", lastname: "V.", title: "Responsable Marketing et Communication", photo: "yseult_responsable_marketing_et_communication.jpg" },
