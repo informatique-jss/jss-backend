@@ -15,7 +15,7 @@ export class NoticeTemplateService extends AppRestService<AnnouncementNoticeTemp
 
   noticeTemplateForm: FormGroup | undefined;
 
-  selectFragmentInfos: { index: number, isRequired: boolean, label: string }[] = [];
+  selectFragmentInfosMap = new Map<number, { isRequired: boolean, label: string }>();
 
   constructor(http: HttpClient) {
     super(http, "quotation");
@@ -49,10 +49,10 @@ export class NoticeTemplateService extends AppRestService<AnnouncementNoticeTemp
   }
 
   getSelectFragmentInfos() {
-    return this.selectFragmentInfos;
+    return this.selectFragmentInfosMap;
   }
 
   setSelectFragmentInfos(selectFragmentInfos: any) {
-    this.selectFragmentInfos = selectFragmentInfos;
+    this.selectFragmentInfosMap = selectFragmentInfos;
   }
 }
