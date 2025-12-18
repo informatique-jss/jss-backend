@@ -520,7 +520,7 @@ export class RequiredInformationComponent implements OnInit {
           for (let namePart of control.errors!['notFilled'].split('_')) {
             // if control is a SELECT
             if (Number(namePart) >= 0) {
-              controlLabel = selectFragmentInfos.find(sel => sel.index === Number(namePart)) ? (selectFragmentInfos.find(sel => sel.index === Number(namePart))!.label) : namePart;
+              controlLabel = selectFragmentInfos.get(Number(namePart)) ? (selectFragmentInfos.get(Number(namePart))!.label) : namePart;
               break;
             }
             if (!this.isOnlyUppercase(namePart)) {
