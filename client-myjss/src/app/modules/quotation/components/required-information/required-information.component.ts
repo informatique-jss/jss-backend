@@ -121,7 +121,6 @@ export class RequiredInformationComponent implements OnInit {
   checkedOnce = false;
   isBrowser = false;
 
-  activeId = 40;
   isOnlyAnnouncement = true;
 
   SERVICE_FIELD_TYPE_TEXT = SERVICE_FIELD_TYPE_TEXT;
@@ -273,46 +272,35 @@ export class RequiredInformationComponent implements OnInit {
         }
       }
       this.setAssoAffaireOrderToNoticeTemplateDescription();
-      this.changeProvisionNoticeTemplateDescription({ nextId: this.activeId } as NgbNavChangeEvent);
+      this.changeProvisionNoticeTemplateDescription({ nextId: 40 } as NgbNavChangeEvent);
       this.emitServiceChange();
     }
   }
 
   getIndexForProvision(provisionIndex: number, provisions: Provision[]) {
-    let saveActiveId = this.activeId;
-    this.activeId = 40;
-    let activeId = -1;
     let index = 0;
     let nbAnnouncement = 0;
     for (let provision of provisions) {
       if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_ANNOUNCEMENT) {
         nbAnnouncement++;
       }
+      if (provisionIndex < 0 && provisions.map(p => p.provisionType.provisionScreenType.code).indexOf(PROVISION_SCREEN_TYPE_ANNOUNCEMENT) < 0
+        && provisions.map(p => p.provisionType.provisionScreenType.code).indexOf(PROVISION_SCREEN_TYPE_DOMICILIATION) < 0)
+        return 40;
       if (provisionIndex == index) {
         if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_ANNOUNCEMENT) {
           if (nbAnnouncement > 1) {
-            this.activeId = saveActiveId;
-            return 100 + index;
+            return index;
           }
-          activeId = parseInt('1' + index);
-          if (this.activeId >= activeId) {
-            this.activeId = activeId;
-            return activeId;
-          }
+          return 40;
         }
-        if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_DOMICILIATION) {
-          if (!provision.domiciliation) {
-            activeId = parseInt('2' + index);
-            if (this.activeId >= activeId) {
-              this.activeId = activeId;
-              return activeId
-            }
-          }
+        else if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_DOMICILIATION) {
+          return 40;
         }
       }
       index++;
     }
-    return 40;
+    return index;
   }
 
   getNbOfProvisionsAnnouncement(provisions: Provision[]) {

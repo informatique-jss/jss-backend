@@ -61,9 +61,8 @@
 
     <ng-container *ngIf="selectedAssoIndex!=null && selectedServiceIndex!=null && quotation.assoAffaireOrders && quotation.assoAffaireOrders[selectedAssoIndex] &&
        quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex]">
-      <ul ngbNav #nav="ngbNav" [activeId]="activeId" class="nav-tabs flex-nowrap"
+      <ul ngbNav #nav="ngbNav" [activeId]="40" class="nav-tabs flex-nowrap"
         (navChange)="changeProvisionNoticeTemplateDescription($event)">
-
         <ng-container
           *ngFor="let provision of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].provisions; let provisionIndex = index">
           <li
