@@ -1,9 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { AppRestService } from '../../main/services/appRest.service';
-import { PagedContent } from '../../main/services/PagedContent';
-import { ResponsableDto } from '../../tiers/model/ResponsableDto';
 import { QuotationDto } from '../model/QuotationDto';
 import { QuotationSearch } from '../model/QuotationSearch';
 
@@ -45,14 +43,6 @@ export class QuotationService extends AppRestService<QuotationDto> {
   setSelectedQuotationUnique(quotationDto: QuotationDto) {
     this.selectedQuotationUnique = quotationDto;
     this.selectedQuotationUniqueChange.next(true);
-  }
-
-  getQuotation(id: number) {
-    return this.getById("responsable-dto", id) as any as Observable<ResponsableDto>;
-  }
-
-  getQuotations(value: string): Observable<PagedContent<QuotationDto>> {
-    return this.getPagedList(new HttpParams().set("searchedValue", value), "quotation/search");
   }
 
   searchQuotation(quotationSearch: QuotationSearch) {

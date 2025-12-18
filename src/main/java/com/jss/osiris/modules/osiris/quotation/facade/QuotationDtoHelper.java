@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.osiris.quotation.dto.CustomerOrderDto;
 import com.jss.osiris.modules.osiris.quotation.dto.QuotationDto;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
@@ -106,5 +108,80 @@ public class QuotationDtoHelper {
     private QuotationDto mapQuotationDetailsToQuotationDto(QuotationDto quotationDto, Quotation quotation) {
 
         return quotationDto;
+    }
+
+    public List<CustomerOrderDto> mapCustomerOrders(List<CustomerOrder> customerOrders) {
+        List<CustomerOrderDto> outQuotationsDtos = new ArrayList<CustomerOrderDto>();
+        if (customerOrders != null) {
+            for (CustomerOrder quotation : customerOrders) {
+                outQuotationsDtos.add(mapCustomerOrderToCustomerOrderDto(quotation));
+            }
+        }
+        return outQuotationsDtos;
+    }
+
+    private CustomerOrderDto mapCustomerOrderToCustomerOrderDto(CustomerOrder customerOrder) {
+        CustomerOrderDto customerOrderDto = new CustomerOrderDto();
+        customerOrderDto.setId(customerOrder.getId());
+
+        if (customerOrder.getResponsable() != null) {
+            if (customerOrder.getResponsable() != null) {
+                String civility = (customerOrder.getResponsable().getCivility() != null
+                        ? customerOrder.getResponsable().getCivility().getLabel() + " "
+                        : null);
+
+                customerOrderDto.setResponsable(civility + customerOrder.getResponsable().getFirstname() + " "
+                        + customerOrder.getResponsable().getLastname());
+            }
+
+            if (customerOrder.getResponsable().getSalesEmployee() != null)
+                customerOrderDto.setSalesEmployee(
+                        customerOrder.getResponsable().getSalesEmployee().getFirstname() + " "
+                                + customerOrder.getResponsable().getSalesEmployee().getLastname());
+
+            if (customerOrder.getResponsable().getTiers() != null) {
+                Tiers tiers = customerOrder.getResponsable().getTiers();
+                customerOrderDto.setTiers(tiers.getDenomination() != null ? tiers.getDenomination()
+                        : tiers.getFirstname() + " " + tiers.getLastname());
+            }
+
+        }
+        if (customerOrder.getCreatedDate() != null) {
+            customerOrderDto.setCreationDate(customerOrder.getCreatedDate());
+        }
+
+        if (customerOrder.getCustomerOrderStatus() != null) {
+            customerOrderDto.setStatus(customerOrder.getCustomerOrderStatus().getLabel());
+        }
+
+        if (customerOrder.getAssoAffaireOrders() != null && !customerOrder.getAssoAffaireOrders().isEmpty()) {
+            List<String> affaires = new ArrayList<String>();
+            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
+                if (asso.getAffaire() != null) {
+                    affaires.add(asso.getAffaire().getDenomination());
+                }
+            }
+            customerOrderDto.setAffaires(affaires);
+
+            List<String> services = new ArrayList<String>();
+            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
+                if (asso.getServices() != null) {
+                    for (Service service : asso.getServices()) {
+                        services.add(service.getServiceLabelToDisplay());
+                    }
+                }
+            }
+            customerOrderDto.setServices(services);
+        }
+
+        if (customerOrder.getCustomerOrderOrigin() != null) {
+            customerOrderDto.setOrigin(customerOrder.getCustomerOrderOrigin().getLabel());
+        }
+
+        if (customerOrder.getDescription() != null) {
+            customerOrderDto.setDescription(customerOrder.getDescription());
+        }
+
+        return customerOrderDto;
     }
 }

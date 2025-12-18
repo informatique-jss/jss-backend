@@ -20,23 +20,23 @@ import { PageTitleComponent } from '../../../main/components/page-title/page-tit
 import { AppService } from '../../../main/services/app.service';
 import { RestUserPreferenceService } from '../../../main/services/rest.user.preference.service';
 import { GenericFormComponent } from '../../../miscellaneous/forms/components/generic-form/generic-form.component';
-import { QuotationDto } from '../../model/QuotationDto';
-import { QuotationSearch } from '../../model/QuotationSearch';
-import { QuotationService } from '../../services/quotation.service';
+import { CustomerOrderDto } from '../../model/CustomerOrderDto';
+import { CustomerOrderSearch } from '../../model/CustomerOrderSearch';
+import { CustomerOrderService } from '../../services/customer-order.service';
 
 @Component({
-  selector: 'quotation-list',
+  selector: 'customer-order-list',
   templateUrl: './../../../../libs/generic-list/generic-list.component.html',
   styleUrls: ['./../../../../libs/generic-list/generic-list.component.css'],
   imports: [...SHARED_IMPORTS, TanstackTableComponent, PageTitleComponent, NgIcon, SimplebarAngularModule, NgbNavModule, GenericFormComponent],
   standalone: true
 })
-export class QuotationListComponent extends GenericListComponent<QuotationDto, QuotationSearch> implements OnInit {
+export class CustomerOrderListComponent extends GenericListComponent<CustomerOrderDto, CustomerOrderSearch> implements OnInit {
 
-  eventOnClickOpenAction = new Subject<Row<QuotationDto>[]>();
-  eventOnClickOpenQuotation = new Subject<Row<QuotationDto>>();
+  eventOnClickOpenAction = new Subject<Row<CustomerOrderDto>[]>();
+  eventOnClickOpenQuotation = new Subject<Row<CustomerOrderDto>>();
 
-  override pageTitle = "Liste des devis";
+  override pageTitle = "Liste des commandes";
 
   constructor(private offcanvasService2: NgbOffcanvas,
     private formBuilder2: FormBuilder,
@@ -44,7 +44,7 @@ export class QuotationListComponent extends GenericListComponent<QuotationDto, Q
     private restUserPreferenceService2: RestUserPreferenceService,
     private router: Router,
     private kpiCrmService: KpiCrmService,
-    private quotationService: QuotationService,
+    private customerOrderService: CustomerOrderService,
   ) {
     super(offcanvasService2, formBuilder2, appService2, restUserPreferenceService2);
 
@@ -53,38 +53,38 @@ export class QuotationListComponent extends GenericListComponent<QuotationDto, Q
   override ngOnInit(): void {
     super.ngOnInit();
     this.breadcrumbPaths = [
-      { label: this.pageTitle, route: "/quotation" },
+      { label: this.pageTitle, route: "/customer-order" },
     ]
   }
 
-  override generateActions(): GenericTableAction<QuotationDto>[] {
-    let actions = [] as GenericTableAction<QuotationDto>[];
+  override generateActions(): GenericTableAction<CustomerOrderDto>[] {
+    let actions = [] as GenericTableAction<CustomerOrderDto>[];
     actions.push({
-      label: 'Voir le devis',
+      label: 'Voir la commande',
       eventOnClick: this.eventOnClickOpenAction,
       maxNumberOfElementsRequiredToDisplay: 1,
       minNumberOfElementsRequiredToDisplay: 1
     })
 
-    this.eventOnClickOpenAction.subscribe((row: Row<QuotationDto>[]) => {
-      this.quotationService.setSelectedQuotationUnique(row[0].original);
-      this.router.navigate(['quotation/view/' + row[0].original.id]);
+    this.eventOnClickOpenAction.subscribe((row: Row<CustomerOrderDto>[]) => {
+      this.customerOrderService.setSelectedCustomerOrderUnique(row[0].original);
+      this.router.navigate(['customer-order/view/' + row[0].original.id]);
     });
 
-    this.eventOnClickOpenQuotation.subscribe((row: Row<QuotationDto>) => {
-      this.quotationService.setSelectedQuotationUnique(row.original);
-      this.router.navigate(['quotation/view/' + row.original.id]);
+    this.eventOnClickOpenQuotation.subscribe((row: Row<CustomerOrderDto>) => {
+      this.customerOrderService.setSelectedCustomerOrderUnique(row.original);
+      this.router.navigate(['customer-order/view/' + row.original.id]);
     });
 
     return actions;
   }
 
   override getListCode(): string {
-    return 'QUOTATION_LIST';
+    return 'CUSTOMER_ORDER_LIST';
   }
 
-  override generateSearchTabs(): GenericSearchTab<QuotationSearch>[] {
-    let searchTabs = [] as GenericSearchTab<QuotationSearch>[];
+  override generateSearchTabs(): GenericSearchTab<CustomerOrderSearch>[] {
+    let searchTabs = [] as GenericSearchTab<CustomerOrderSearch>[];
     searchTabs.push({
       label: "Généraux",
       icon: 'tablerFilter',
@@ -99,26 +99,26 @@ export class QuotationListComponent extends GenericListComponent<QuotationDto, Q
             errorMessages: {
               required: 'Sélectionnez au moins un commercial'
             } as Record<string, string>
-          } as GenericForm<QuotationSearch>
-        } as GenericSearchForm<QuotationSearch>,
+          } as GenericForm<CustomerOrderSearch>
+        } as GenericSearchForm<CustomerOrderSearch>,
         {
           accessorKey: "startDate",
           form: {
             label: 'Date de début',
             type: 'input',
             inputType: 'date',
-            validators: []
-          } as GenericForm<QuotationSearch>
-        } as GenericSearchForm<QuotationSearch>,
+            validators: [],
+          } as GenericForm<CustomerOrderSearch>
+        } as GenericSearchForm<CustomerOrderSearch>,
         {
           accessorKey: "endDate",
           form: {
             label: 'Date de fin',
             type: 'input',
             inputType: 'date',
-            validators: []
-          } as GenericForm<QuotationSearch>
-        } as GenericSearchForm<QuotationSearch>,
+            validators: [],
+          } as GenericForm<CustomerOrderSearch>
+        } as GenericSearchForm<CustomerOrderSearch>,
       ]
     });
 
@@ -126,13 +126,13 @@ export class QuotationListComponent extends GenericListComponent<QuotationDto, Q
   }
 
   override generateColumns() {
-    let columns = [] as GenericTableColumn<QuotationDto>[];
+    let columns = [] as GenericTableColumn<CustomerOrderDto>[];
     columns.push({
       accessorKey: 'id', header: 'N°', enableSorting: true, cell: info => info.getValue(), meta: {
       }
     })
     columns.push({
-      accessorFn: (originalRow: QuotationDto, index: number) => { return formatDateFrance(originalRow.creationDate) }, header: 'Date de création', enableSorting: true, cell: info => info.getValue(), meta: {
+      accessorFn: (originalRow: CustomerOrderDto, index: number) => { return formatDateFrance(originalRow.creationDate) }, header: 'Date de création', enableSorting: true, cell: info => info.getValue(), meta: {
         eventOnDoubleClick: this.eventOnClickOpenQuotation
       }
     })
@@ -184,16 +184,16 @@ export class QuotationListComponent extends GenericListComponent<QuotationDto, Q
     return columns;
   }
 
-  override parseBookmarkModel(model: QuotationSearch) {
+  override parseBookmarkModel(model: CustomerOrderSearch) {
     return model;
   }
 
-  getSearchFunction(searchModel: QuotationSearch): Observable<QuotationDto[]> {
-    return this.quotationService.searchQuotation(searchModel);
+  getSearchFunction(searchModel: CustomerOrderSearch): Observable<CustomerOrderDto[]> {
+    return this.customerOrderService.searchCustomerOrder(searchModel);
   }
 
   override initSearchModel() {
-    let model = {} as QuotationSearch;
+    let model = {} as CustomerOrderSearch;
     return model;
   }
 }

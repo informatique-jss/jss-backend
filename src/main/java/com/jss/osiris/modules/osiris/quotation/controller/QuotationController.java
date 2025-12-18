@@ -58,6 +58,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.LegalFormService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.SpecialOfferService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
+import com.jss.osiris.modules.osiris.quotation.dto.CustomerOrderDto;
 import com.jss.osiris.modules.osiris.quotation.dto.QuotationDto;
 import com.jss.osiris.modules.osiris.quotation.facade.CompetentAuthorityFacade;
 import com.jss.osiris.modules.osiris.quotation.facade.QuotationFacade;
@@ -3254,6 +3255,23 @@ public class QuotationController {
     List<QuotationDto> test = quotationFacade.searchQuotations(quotationSearch);
 
     return new ResponseEntity<List<QuotationDto>>(test,
+        HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/customer-order/search/v2")
+  public ResponseEntity<List<CustomerOrderDto>> searchCustomerOrders(
+      @RequestBody OrderingSearch customerOrderSearch)
+      throws OsirisValidationException, OsirisException {
+    if (customerOrderSearch == null)
+      throw new OsirisValidationException("customerOrderSearch");
+
+    validationHelper.validateReferential(customerOrderSearch.getSalesEmployee(), false, "SalesEmployee");
+    if (customerOrderSearch.getCustomerOrderStatus() != null)
+      for (CustomerOrderStatus status : customerOrderSearch.getCustomerOrderStatus())
+        validationHelper.validateReferential(status, false, "status");
+    List<CustomerOrderDto> test = quotationFacade.searchCustomerOrders(customerOrderSearch);
+
+    return new ResponseEntity<List<CustomerOrderDto>>(test,
         HttpStatus.OK);
   }
 }

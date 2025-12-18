@@ -1581,6 +1581,29 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         return new ArrayList<>();
     }
 
+    @Override
+    public List<CustomerOrder> searchForCustomerOrders(OrderingSearch customerOrderSearch) throws OsirisException {
+
+        Integer commercialId = (customerOrderSearch.getSalesEmployee() != null)
+                ? customerOrderSearch.getSalesEmployee().getId()
+                : 0;
+
+        List<Integer> responsablesIds = (customerOrderSearch.getResponsables() != null
+                && customerOrderSearch.getResponsables().size() > 0)
+                        ? customerOrderSearch.getResponsables().stream().map(Responsable::getId).toList()
+                        : Arrays.asList(0);
+
+        List<Integer> statusIds = (customerOrderSearch.getCustomerOrderStatus() != null
+                && customerOrderSearch.getCustomerOrderStatus().size() > 0)
+                        ? customerOrderSearch.getCustomerOrderStatus().stream().map(CustomerOrderStatus::getId)
+                                .collect(Collectors.toList())
+                        : Arrays.asList(0);
+
+        return completeAdditionnalInformationForCustomerOrders(
+                customerOrderRepository.searchCustomerOrders(commercialId, responsablesIds, statusIds),
+                false);
+    }
+
     public List<CustomerOrder> searchOrdersForCurrentUserAndAffaire(Affaire affaire) throws OsirisException {
         Responsable currentUser = employeeService.getCurrentMyJssUser();
         List<Responsable> responsablesToFilter = new ArrayList<Responsable>();
