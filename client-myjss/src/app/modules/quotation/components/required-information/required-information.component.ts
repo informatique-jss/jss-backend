@@ -278,37 +278,51 @@ export class RequiredInformationComponent implements OnInit {
     }
   }
 
-
-  getIndexForProvision(provisionIn: Provision) {
+  getIndexForProvision(provisionIndex: number, provisions: Provision[]) {
+    let saveActiveId = this.activeId;
+    this.activeId = 40;
     let activeId = -1;
-    if (this.quotation && this.quotation.assoAffaireOrders && this.quotation.assoAffaireOrders.length > 0) {
-      for (let asso of this.quotation.assoAffaireOrders) {
-        for (let serv of asso.services) {
-          let index = 0;
-          for (let provision of serv.provisions) {
-            if (provisionIn !== provision)
-              return;
-
-            if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_ANNOUNCEMENT) {
-              activeId = parseInt('1' + index);
-              if (this.activeId && this.activeId > activeId)
-                this.activeId = activeId;
-              return;
+    let index = 0;
+    let nbAnnouncement = 0;
+    for (let provision of provisions) {
+      if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_ANNOUNCEMENT) {
+        nbAnnouncement++;
+      }
+      if (provisionIndex == index) {
+        if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_ANNOUNCEMENT) {
+          if (nbAnnouncement > 1) {
+            this.activeId = saveActiveId;
+            return 100 + index;
+          }
+          activeId = parseInt('1' + index);
+          if (this.activeId >= activeId) {
+            this.activeId = activeId;
+            return activeId;
+          }
+        }
+        if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_DOMICILIATION) {
+          if (!provision.domiciliation) {
+            activeId = parseInt('2' + index);
+            if (this.activeId >= activeId) {
+              this.activeId = activeId;
+              return activeId
             }
-            if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_DOMICILIATION) {
-              if (!provision.domiciliation) {
-                activeId = parseInt('2' + index);
-                if (this.activeId && this.activeId > activeId)
-                  this.activeId = activeId;
-                return;
-              }
-            }
-            index++;
           }
         }
       }
-
+      index++;
     }
+    return 40;
+  }
+
+  getNbOfProvisionsAnnouncement(provisions: Provision[]) {
+    let nbOfProvisionsAnnouncement = 0;
+    for (let provision of provisions) {
+      if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_ANNOUNCEMENT) {
+        nbOfProvisionsAnnouncement++;
+      }
+    }
+    return nbOfProvisionsAnnouncement;
   }
 
   fetchAnnouncementReferentials() {
