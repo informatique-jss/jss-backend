@@ -1,8 +1,11 @@
 package com.jss.osiris.modules.osiris.tiers.service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +17,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.osiris.crm.model.KpiCrm;
+import com.jss.osiris.modules.osiris.crm.model.KpiCrmSearchModel;
+import com.jss.osiris.modules.osiris.crm.model.KpiCrmValueAggregatedByResponsable;
+import com.jss.osiris.modules.osiris.crm.service.KpiCrmService;
+import com.jss.osiris.modules.osiris.crm.service.KpiCrmValueService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.DocumentType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
@@ -26,10 +34,14 @@ import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
+import com.jss.osiris.modules.osiris.tiers.facade.TiersDtoHelper;
 import com.jss.osiris.modules.osiris.tiers.model.IResponsableSearchResult;
+import com.jss.osiris.modules.osiris.tiers.model.KpiSearch;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
+import com.jss.osiris.modules.osiris.tiers.model.ResponsableSearch;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 import com.jss.osiris.modules.osiris.tiers.model.TiersSearch;
+import com.jss.osiris.modules.osiris.tiers.model.dto.ResponsableDto;
 import com.jss.osiris.modules.osiris.tiers.repository.ResponsableRepository;
 
 @Service
@@ -56,6 +68,15 @@ public class ResponsableServiceImpl implements ResponsableService {
     @Autowired
     EmployeeService employeeService;
 
+    @Autowired
+    KpiCrmService kpiCrmService;
+
+    @Autowired
+    KpiCrmValueService kpiCrmValueService;
+
+    @Autowired
+    TiersDtoHelper tiersDtoHelper;
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Responsable addOrUpdateResponsable(Responsable responsable) {
@@ -77,8 +98,10 @@ public class ResponsableServiceImpl implements ResponsableService {
     }
 
     @Override
-    public List<Responsable> getResponsablesByTiers(Tiers tiers) {
-        return responsableRepository.findByTiers(tiers);
+    public List<ResponsableDto> getResponsablesByTiers(Tiers tiers) {
+        List<Responsable> respos = responsableRepository.findByTiers(tiers);
+
+        return tiersDtoHelper.mapResponsables(respos);
     }
 
     @Override
@@ -86,6 +109,14 @@ public class ResponsableServiceImpl implements ResponsableService {
         Optional<Responsable> responsable = responsableRepository.findById(id);
         if (responsable.isPresent())
             return responsable.get();
+        return null;
+    }
+
+    @Override
+    public ResponsableDto getResponsableDto(Integer id) {
+        Optional<Responsable> responsable = responsableRepository.findById(id);
+        if (responsable.isPresent())
+            return tiersDtoHelper.mapResponsable(responsable.get());
         return null;
     }
 
@@ -204,5 +235,71 @@ public class ResponsableServiceImpl implements ResponsableService {
                     }
                 }
         }
+    }
+
+    @Override
+    public List<Responsable> searchForResponsable(ResponsableSearch responsableSearch) throws OsirisException {
+        Integer salesEmployeeId = 0;
+        if (responsableSearch.getSalesEmployee() != null)
+            salesEmployeeId = responsableSearch.getSalesEmployee().getId();
+
+        if (responsableSearch.getMail() == null)
+            responsableSearch.setMail("");
+
+        if (responsableSearch.getLabel() == null)
+            responsableSearch.setLabel("");
+
+        List<Responsable> responsableFound = responsableRepository.searchForResponsables(salesEmployeeId,
+                responsableSearch.getMail(),
+                responsableSearch.getLabel());
+
+        if (responsableSearch.getKpis() == null || responsableSearch.getKpis().size() == 0)
+            return responsableFound;
+
+        List<Integer> notKeepResponsable = new ArrayList<Integer>();
+        for (KpiSearch kpi : responsableSearch.getKpis().values()) {
+            List<Integer> foundResponsableForKpi = new ArrayList<Integer>();
+            KpiCrm kpiCrm = kpiCrmService.getKpiCrmByCode(kpi.getKey());
+
+            if (kpi.getMaxValue() != null || kpi.getMinValue() != null) {
+                KpiCrmSearchModel kpiCrmSearch = new KpiCrmSearchModel();
+                kpiCrmSearch.setAllTiers(false);
+                kpiCrmSearch.setEndDateKpis(responsableSearch.getEndDateKpis());
+                kpiCrmSearch.setStartDateKpis(responsableSearch.getStartDateKpis());
+                kpiCrmSearch.setResponsableIds(responsableFound.stream().map(t -> t.getId()).toList());
+                if (responsableSearch.getSalesEmployee() != null)
+                    kpiCrmSearch.setSalesEmployeeId(responsableSearch.getSalesEmployee().getId());
+
+                List<KpiCrmValueAggregatedByResponsable> values = kpiCrmValueService
+                        .getAggregateValuesForResponsableListByResponsable(kpiCrm, kpiCrmSearch);
+                if (values != null) {
+                    for (KpiCrmValueAggregatedByResponsable aggregatedValue : values) {
+                        if (kpi.getMaxValue() != null
+                                && aggregatedValue.getValue().compareTo(new BigDecimal(kpi.getMaxValue())) > 0)
+                            notKeepResponsable.add(aggregatedValue.getIdResponsable());
+
+                        if (kpi.getMinValue() != null
+                                && aggregatedValue.getValue().compareTo(new BigDecimal(kpi.getMinValue())) < 0)
+                            notKeepResponsable.add(aggregatedValue.getIdResponsable());
+
+                        // Add Kpi value
+                        Responsable responsableToUpdate = responsableFound.stream()
+                                .filter(t -> t.getId().equals(aggregatedValue.getIdResponsable())).findFirst().get();
+                        if (responsableToUpdate.getKpiValues() == null)
+                            responsableToUpdate.setKpiValues(new HashMap<String, BigDecimal>());
+                        responsableToUpdate.getKpiValues().put(kpiCrm.getLabel(), aggregatedValue.getValue());
+
+                        foundResponsableForKpi.add(aggregatedValue.getIdResponsable());
+                    }
+                }
+
+                // Exclude tiers with no kpi values
+                notKeepResponsable
+                        .addAll(responsableFound.stream().filter(t -> !foundResponsableForKpi.contains(t.getId()))
+                                .map(t -> t.getId()).toList());
+            }
+        }
+
+        return responsableFound.stream().filter(t -> !notKeepResponsable.contains(t.getId())).toList();
     }
 }

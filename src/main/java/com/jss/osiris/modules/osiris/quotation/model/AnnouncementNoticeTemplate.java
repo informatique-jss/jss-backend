@@ -43,11 +43,6 @@ public class AnnouncementNoticeTemplate implements Serializable, IId {
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private List<ProvisionFamilyType> provisionFamilyTypes;
 
-	@ManyToMany
-	@JoinTable(name = "asso_announcement_notice_template_announcement_fragment", joinColumns = @JoinColumn(name = "id_announcement_notice_template"), inverseJoinColumns = @JoinColumn(name = "id_announcement_notice_template_fragment"))
-	@JsonView(JacksonViews.MyJssDetailedView.class)
-	private List<AnnouncementNoticeTemplateFragment> announcementNoticeTemplateFragments;
-
 	public Integer getId() {
 		return id;
 	}
@@ -86,14 +81,5 @@ public class AnnouncementNoticeTemplate implements Serializable, IId {
 
 	public void setProvisionFamilyTypes(List<ProvisionFamilyType> provisionFamilyTypes) {
 		this.provisionFamilyTypes = provisionFamilyTypes;
-	}
-
-	public List<AnnouncementNoticeTemplateFragment> getAnnouncementNoticeTemplateFragments() {
-		return announcementNoticeTemplateFragments;
-	}
-
-	public void setAnnouncementNoticeTemplateFragments(
-			List<AnnouncementNoticeTemplateFragment> announcementNoticeTemplateFragments) {
-		this.announcementNoticeTemplateFragments = announcementNoticeTemplateFragments;
 	}
 }

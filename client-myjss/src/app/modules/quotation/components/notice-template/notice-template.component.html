@@ -91,11 +91,10 @@
               <div class="col-12 mt-3" *ngIf="selections.length>1">
                 <select-announcement-notice-template-fragment [types]="selections" [(model)]="selectedFragments[i]"
                   (modelChange)="onFragmentSelectionChange($event, i)" label="Selectionner" [form]="form"
-                  [propertyName]="'select_'+selections[0].code"
-                  [isMandatory]="false"></select-announcement-notice-template-fragment>
+                  [propertyName]="'SELECT_'+ i"
+                  [isMandatory]="selectFragmentInfosMap.get(i) ? selectFragmentInfosMap.get(i)!.isRequired : false">
+                </select-announcement-notice-template-fragment>
               </div>
-
-
             </div>
 
             <!-- Loop over placeholder entries -->

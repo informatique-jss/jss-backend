@@ -1,0 +1,68 @@
+<div class="page-title-head d-flex align-items-center">
+  @if(tiers){
+  <div class="card-body py-3">
+    <div class="d-flex justify-content-between align-items-center">
+      <div class="d-flex justify-content-start align-items-center gap-3">
+        @if (tiers) {
+        <div class="avatar avatar-xxl">
+          <avatar [user]="tiers" [size]="75"></avatar>
+        </div>
+        }
+        <div>
+          <!-- TODO : ajouter civilité et vérifier si isIndividual dans le tiers à remonter avant d'afficher -->
+          <h4 class="text-nowrap fw-bold mb-1"> {{tiers.denomination? tiers.denomination : (tiers.firstname +'
+            '+tiers.lastname)}}
+            @if(tiers.isNewTiers){
+            <span class="ms-2 badge badge-square text-bg-danger topbar-badge p-1">Nouveau !</span>
+            }
+          </h4>
+          <p class="text-muted mb-1">{{tiers.tiersCategory}}</p>
+          <span class="badge badge-soft-secondary fw-medium ms-2 fs-xs ms-auto">{{tiers.tiersType}}</span>
+        </div>
+      </div>
+      <div class="d-flex justify-content-end align-items-center gap-2">
+        <div ngbDropdown class="d-flex gap-2">
+          @if(tiers.phones){
+          @if(tiers.phones.length == 1){
+          <a class="btn btn-primary m-0" (click)="callPhoneNumber(tiers.phones[0])">Appeler<ng-icon name="tablerPhone"
+              class="fs-md ms-2"></ng-icon>
+          </a>
+          }
+          @if(tiers.phones.length > 1){
+          <a ngbDropdownToggle class="btn btn-primary m-auto" data-bs-toggle="dropdown">Appeler</a>
+          <ul ngbDropdownMenu class="m-auto">
+            @for(phone of tiers.phones; track $index){
+            <li class="d-flex align-items-center px-2 pointer m-auto" ngbDropdownItem><ng-icon name="tablerPhone"
+                class="fs-xl"></ng-icon><a (click)="callPhoneNumber(phone)" class="m-auto">{{phone}}</a>
+            </li>
+            }
+          </ul>
+          }
+          }
+        </div>
+        @if(tiers.id){
+        <div ngbDropdown class="d-flex gap-2">
+          <button ngbDropdownToggle class="btn btn-icon btn-dark drop-arrow-none" data-bs-toggle="dropdown">
+            <ng-icon name="tablerDots" class="fs-24"></ng-icon>
+          </button>
+          <ul ngbDropdownMenu>
+            <li ngbDropdownItem class="d-flex align-items-center pointer"><ng-icon name="tablerPrinter"
+                class="fs-xl me-2"></ng-icon><a (click)="printLabel()">Imprimer une étiquette pour le
+                tiers</a>
+            </li>
+            <!-- TODO : -->
+            <li ngbDropdownItem class="d-flex align-items-center pointer"><ng-icon name="tablerHistory"
+                class="fs-xl me-2"></ng-icon><a>Voir l'historique</a>
+            </li>
+            <li ngbDropdownItem class="d-flex align-items-center pointer"><ng-icon name="tablerTrash"
+                class="text-danger fs-xl me-2"></ng-icon><a class="text-danger" (click)="deleteTiers()">Supprimer le
+                tiers</a>
+            </li>
+          </ul>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+  }
+</div>

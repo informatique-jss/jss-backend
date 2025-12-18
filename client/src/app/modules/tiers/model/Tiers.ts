@@ -12,7 +12,10 @@ import { SpecialOffer } from "../../miscellaneous/model/SpecialOffer";
 import { TiersFollowup } from "../../miscellaneous/model/TiersFollowup";
 import { Employee } from "../../profile/model/Employee";
 import { PaymentType } from './../../miscellaneous/model/PaymentType';
+import { BusinessSector } from "./BusinessSector";
+import { CompanySize } from "./CompanySize";
 import { Competitor } from "./Competitor";
+import { DiscoveringOrigin } from "./DiscoveringOrigin";
 import { Responsable } from "./Responsable";
 import { RffFrequency } from "./RffFrequency";
 import { TiersCategory } from "./TiersCategory";
@@ -67,4 +70,7 @@ export interface Tiers extends IDocument, IAttachment {
   rffIban: string;
   rffBic: string;
   rffMail: string;
+  discoveringOrigin: DiscoveringOrigin;
+  businessSector: BusinessSector;
+  companySize: CompanySize;
 }

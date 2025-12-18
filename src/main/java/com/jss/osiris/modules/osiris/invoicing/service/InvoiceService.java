@@ -75,4 +75,6 @@ public interface InvoiceService {
 
         public List<Invoice> getInvoicesForResponsablesAndDates(List<InvoiceStatus> invoiceStatus,
                         List<Responsable> responsables, LocalDateTime startDate, LocalDateTime endDate);
+
+        List<Invoice> getInvoicesByStatus(InvoiceStatus invoiceStatus, boolean onlyCustomerInvoices);
 }

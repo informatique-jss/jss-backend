@@ -140,4 +140,6 @@ public interface PaymentService {
 
         public List<Payment> getPaymentForCustomerOrder(CustomerOrder customerOrder);
 
+        List<Payment> getPaymentsForResponsable(Responsable responsable);
+
 }

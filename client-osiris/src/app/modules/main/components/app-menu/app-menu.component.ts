@@ -7,6 +7,7 @@ import { scrollToElement } from '../../../../libs/GenericHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { ReportingDashboard } from '../../../reporting/model/ReportingDashboard';
 import { ReportingDashboardService } from '../../../reporting/services/reporting.dashboard.service';
+import { ResponsableService } from '../../../tiers/services/responsable.service';
 import { TiersService } from '../../../tiers/services/tiers.service';
 import { MenuItemType } from '../../model/MenuItemType';
 import { AppService } from '../../services/app.service';
@@ -24,6 +25,7 @@ export class AppMenuComponent implements OnInit {
     private dashboardService: ReportingDashboardService,
     private activatedRoute: ActivatedRoute,
     private tiersService: TiersService,
+    private responsableService: ResponsableService,
     private appService: AppService
   ) {
   }
@@ -55,30 +57,85 @@ export class AppMenuComponent implements OnInit {
       this.userDashboards = response;
       this.initMenu();
     })
+
+    this.tiersService.getSelectedTiersUniqueChangeEvent().subscribe(response => {
+      this.initMenu();
+    })
+
+    this.responsableService.getSelectedResponsableUniqueChangeEvent().subscribe(response => {
+      this.initMenu();
+    })
   }
 
   initMenu() {
-    this.tiersService.getSelectedTiers().subscribe(response => {
-      this.idTiers = response;
+    this.menuItems = [
+      { label: "Menu", isTitle: true } as MenuItemType,
+      {
+        label: "Tiers/Responsables", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "tiers",
+        children: [
+          { label: this.getTiersLabel(), isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerBuilding", url: "tiers", children: this.getTiersChildren() },
+          { label: this.getResponsableLabel(), isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "responsables", children: this.getResponsableChildren() },
+          { label: "Crm", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerHeartHandshake", url: "tiers/crm/kpi" }
+        ]
+      } as MenuItemType,
+      { label: "Reporting", isTitle: false, isCollapsed: true, isDisabled: false, isSpecial: false, icon: "tablerLayoutDashboard", children: this.getAllDashboardsItem() } as MenuItemType
+    ]
+  }
 
-      this.menuItems = [
-        { label: "Menu", isTitle: true } as MenuItemType,
-        {
-          label: "Tiers/Responsables", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers",
-          children: [{
-            label: "Crm", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers",
-            children: this.appService.getTiersMenuItems(this.idTiers)
-          },
-          { label: "Osiris", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerUsers", url: "" }]
-        } as MenuItemType,
-        { label: "CRM", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerApps", url: "crm" } as MenuItemType,
-        { label: "Reporting", isTitle: false, isCollapsed: true, isDisabled: false, isSpecial: false, icon: "tablerLayoutDashboard", children: this.getAllDashboardsItem() } as MenuItemType
+  getTiersLabel() {
+    let selectedTiers = this.tiersService.getSelectedTiersUnique();
+    if (selectedTiers)
+      return selectedTiers.denomination ? selectedTiers.denomination : (selectedTiers.firstname + ' ' + selectedTiers.lastname);
+    return "Tiers";
+  }
+
+  getResponsableLabel() {
+    let selectedResponsable = this.responsableService.getSelectedResponsableUnique();
+    if (selectedResponsable)
+      return selectedResponsable.firstname + ' ' + selectedResponsable.lastname;
+    return "Responsables";
+  }
+
+  getTiersChildren() {
+    let selectedTiers = this.tiersService.getSelectedTiersUnique();
+    if (selectedTiers) {
+      return [{ label: "Fiche", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerBuildingEstate", url: "tiers" },
+      { label: "Adressage", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerMapPins", url: "tiers" },
+      { label: "Devis", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerBasketQuestion", url: "tiers" },
+      { label: "Commandes", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerShoppingCart", url: "tiers" },
+      { label: "Prestations", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerBlocks", url: "tiers" },
+      { label: "Paiements", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerCash", url: "tiers" },
+      { label: "Factures", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerReceiptEuro", url: "tiers" },
+      { label: "Comptes", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerAbacus", url: "tiers" },
+      { label: "RFF", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerCashMoveBack", url: "tiers" },
+      { label: "Documents", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerPaperclip", url: "tiers" },
+      { label: "Mails", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerInbox", url: "tiers" },
       ]
-    });
+    }
+    return [];
+  }
+
+  getResponsableChildren() {
+    let selectedResponsable = this.responsableService.getSelectedResponsableUnique();
+    if (selectedResponsable) {
+      return [{ label: "Fiche", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerBuildingEstate", url: "tiers" },
+      { label: "Adressage", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerMapPins", url: "tiers" },
+      { label: "Devis", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerBasketQuestion", url: "tiers" },
+      { label: "Commandes", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerShoppingCart", url: "tiers" },
+      { label: "Prestations", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerBlocks", url: "tiers" },
+      { label: "Paiements", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerCash", url: "tiers" },
+      { label: "Factures", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerReceiptEuro", url: "tiers" },
+      { label: "Comptes", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerAbacus", url: "tiers" },
+      { label: "RFF", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerCashMoveBack", url: "tiers" },
+      { label: "Documents", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerPaperclip", url: "tiers" },
+      { label: "Mails", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerInbox", url: "tiers" },
+      ]
+    }
+    return [];
   }
 
   hasSubMenu(item: MenuItemType): boolean {
-    return !!item.children;
+    return (item.children != null && item.children != undefined && item.children.length > 0);
   }
 
   expandActivePaths(items: MenuItemType[]) {

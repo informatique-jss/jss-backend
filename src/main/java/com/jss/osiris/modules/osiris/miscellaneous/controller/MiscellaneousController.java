@@ -5,9 +5,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -39,8 +45,6 @@ import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
 import com.jss.osiris.modules.myjss.wordpress.service.CategoryService;
 import com.jss.osiris.modules.myjss.wordpress.service.PostService;
 import com.jss.osiris.modules.myjss.wordpress.service.PublishingDepartmentService;
-import com.jss.osiris.modules.osiris.crm.model.KpiCrm;
-import com.jss.osiris.modules.osiris.crm.service.KpiCrmService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
@@ -125,6 +129,8 @@ import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
 import com.jss.osiris.modules.osiris.tiers.service.TiersService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 public class MiscellaneousController {
@@ -274,9 +280,6 @@ public class MiscellaneousController {
 
     @Autowired
     PublishingDepartmentService publishingDepartmentService;
-
-    @Autowired
-    KpiCrmService kpiCrmService;
 
     @GetMapping(inputEntryPoint + "/categories")
     public ResponseEntity<List<Category>> getCategories() {
@@ -825,6 +828,24 @@ public class MiscellaneousController {
                 HttpStatus.OK);
     }
 
+    @GetMapping(inputEntryPoint + "/cities/search/name/country/postal-code")
+    @JsonView(JacksonViews.MyJssListView.class)
+    public ResponseEntity<Page<City>> getCitiesByNameAndCountryAndPostalCode(@RequestParam String name,
+            @RequestParam Integer countryId, @RequestParam String postalCode, @RequestParam Integer page,
+            @RequestParam Integer size, HttpServletRequest request) {
+
+        Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
+                Sort.by(Sort.Direction.ASC, "label"));
+
+        Country country = countryService.getCountry(countryId);
+        if (country == null)
+            return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
+
+        return new ResponseEntity<Page<City>>(
+                cityService.getCitiesByLabelAndCountryAndPostalCode(name, countryId, postalCode, pageable),
+                HttpStatus.OK);
+    }
+
     @GetMapping(inputEntryPoint + "/cities/search/competent-authority")
     public ResponseEntity<List<City>> getCitiesForCompetentAuthority(@RequestParam Integer competentAuthorityId)
             throws OsirisValidationException {
@@ -1369,17 +1390,37 @@ public class MiscellaneousController {
         return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
     }
 
-    @PostMapping(inputEntryPoint + "/attachment/download-all")
-    public ResponseEntity<byte[]> downloadAllAttachments(@RequestBody List<Integer> invoiceIds)
+    @PostMapping(inputEntryPoint + "/invoice/attachment/download-all")
+    public ResponseEntity<byte[]> downloadAllAttachmentsFromInvoice(@RequestBody List<Integer> invoiceIds)
             throws OsirisValidationException, OsirisException {
 
         if (invoiceIds == null)
             throw new OsirisValidationException("invoiceIds");
+        List<Integer> attachmentIds = attachmentService.getAttachmentsFromInvoices(invoiceIds);
 
-        byte[] zipBytes = attachmentService.downloadAllInvoicesAsZip(invoiceIds);
+        byte[] zipBytes = null;
+        if (attachmentIds != null && !attachmentIds.isEmpty())
+            zipBytes = attachmentService.downloadAllAttachmentsAsZip(attachmentIds);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("filename", "factures.zip");
+        headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
+        headers.setContentLength(zipBytes.length);
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
+        return new ResponseEntity<>(zipBytes, headers, HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/attachment/download-all")
+    public ResponseEntity<byte[]> downloadAllAttachments(@RequestBody List<Integer> attachmentIds)
+            throws OsirisValidationException, OsirisException {
+        if (attachmentIds == null)
+            throw new OsirisValidationException("attachmentIds");
+
+        byte[] zipBytes = attachmentService.downloadAllAttachmentsAsZip(attachmentIds);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("filename", "documents.zip");
         headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
         headers.setContentLength(zipBytes.length);
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
@@ -1593,11 +1634,5 @@ public class MiscellaneousController {
         }
 
         return new ResponseEntity<List<Provider>>(providers, HttpStatus.OK);
-    }
-
-    @GetMapping(inputEntryPoint + "/kpis-crm")
-    public ResponseEntity<List<KpiCrm>> getCustomerMailByConfrere()
-            throws OsirisValidationException, OsirisException {
-        return new ResponseEntity<List<KpiCrm>>(kpiCrmService.getKpiCrms(), HttpStatus.OK);
     }
 }

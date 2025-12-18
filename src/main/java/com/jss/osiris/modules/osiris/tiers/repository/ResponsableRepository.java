@@ -164,4 +164,20 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
 
         List<Responsable> findByMailAndIsActive(Mail mail, boolean isActive);
 
+        @Query("""
+                        select r
+                        from Responsable r
+                        left join r.mail m
+                        where (:salesEmployeeId = 0 or r.salesEmployee.id = :salesEmployeeId)
+                        and (:mail = '' or m.mail = :mail)
+                        and (
+                        :label = ''
+                        or upper( concat(r.firstname, r.lastname))
+                                like concat('%', upper(:label), '%')
+                        )
+                        """)
+        List<Responsable> searchForResponsables(@Param("salesEmployeeId") Integer salesEmployeeId,
+                        @Param("mail") String mail,
+                        @Param("label") String label);
+
 }

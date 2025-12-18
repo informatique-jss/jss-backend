@@ -1,7 +1,9 @@
 package com.jss.osiris.modules.osiris.tiers.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -42,6 +44,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_responsable_tiers", columnList = "id_tiers"),
@@ -170,6 +173,13 @@ public class Responsable implements IAttachment, IId {
 	private String observations;
 
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_age_range")
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
+	private AgeRange ageRange;
+
+	private String linkedInUrl;
+
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_mail")
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private Mail mail;
@@ -243,6 +253,9 @@ public class Responsable implements IAttachment, IId {
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
 	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
 	private LocalDateTime consentTermsDate;
+
+	@Transient
+	private HashMap<String, BigDecimal> kpiValues;
 
 	public Tiers getTiers() {
 		return tiers;
@@ -618,6 +631,30 @@ public class Responsable implements IAttachment, IId {
 
 	public void setConsentTermsDate(LocalDateTime consentTermsDate) {
 		this.consentTermsDate = consentTermsDate;
+	}
+
+	public HashMap<String, BigDecimal> getKpiValues() {
+		return kpiValues;
+	}
+
+	public void setKpiValues(HashMap<String, BigDecimal> kpiValues) {
+		this.kpiValues = kpiValues;
+	}
+
+	public AgeRange getAgeRange() {
+		return ageRange;
+	}
+
+	public void setAgeRange(AgeRange ageRange) {
+		this.ageRange = ageRange;
+	}
+
+	public String getLinkedInUrl() {
+		return linkedInUrl;
+	}
+
+	public void setLinkedInUrl(String linkedInUrl) {
+		this.linkedInUrl = linkedInUrl;
 	}
 
 }

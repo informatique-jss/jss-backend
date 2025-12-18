@@ -48,6 +48,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
     CustomerOrderOriginService customerOrderOriginService;
 
+    @Autowired
+    DailyConnexionService dailyConnexionService;
+
     private final SecureRandom random = new SecureRandom();
 
     private final long TOKEN_EXPIRATION_LENGTH_MINUTES = 15;
@@ -63,6 +66,13 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public Employee getEmployeeByUsername(String username) {
         return employeeRepository.findByUsernameIgnoreCase(username);
+    }
+
+    @Override
+    public Employee getEmployeeByName(String name) {
+        String[] employeeNames = name.split(" ");
+        return employeeRepository.findByFirstnameLikeIgnoreCaseAndLastnameLikeIgnoreCase(employeeNames[0],
+                employeeNames[employeeNames.length - 1]);
     }
 
     @Override
@@ -133,8 +143,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public Responsable getCurrentMyJssUser() {
         String username = activeDirectoryHelper.getCurrentUsername();
-        if (username != null && !username.equals("ANONYMOUSUSER") && !username.equals("OSIRIS"))
-            return responsableService.getResponsable(Integer.parseInt(username));
+        if (username != null && !username.equals("ANONYMOUSUSER") && !username.equals("OSIRIS")) {
+            Responsable responsable = responsableService.getResponsable(Integer.parseInt(username));
+            dailyConnexionService.declareConnexionForToday(responsable);
+            return responsable;
+        }
         return null;
     }
 

@@ -48,17 +48,19 @@
         <mat-divider></mat-divider>
         <p>Fragments associés</p>
         <table class="full-width">
-          <tr
-            *ngFor="let announcementNoticeTemplateFragment of selectedEntity.announcementNoticeTemplateFragments; let index = index">
+          <tr *ngFor="let asso of assosNoticeTemplateFragments; let index = index">
             <td>
-              <select-announcement-notice-template-fragment
-                [(model)]="selectedEntity.announcementNoticeTemplateFragments[index]" label="Fragment"
-                [form]="entityForm2" [propertyName]="'announcementNoticeTemplateFragment'+index" [isMandatory]="true"
-                [isDisabled]="!editMode"></select-announcement-notice-template-fragment>
+              <select-announcement-notice-template-fragment [(model)]="asso.announcementNoticeTemplateFragment"
+                label="Fragment" [form]="entityForm2" [propertyName]="'announcementNoticeTemplateFragment'+index"
+                [isMandatory]="true" [isDisabled]="!editMode"></select-announcement-notice-template-fragment>
             </td>
             <td>
-              <button *ngIf="editMode" (click)="deleteFragment(announcementNoticeTemplateFragment)" mat-raised-button
-                color="accent">
+              <generic-toggle [(model)]="asso.isMandatory" label="Fragment obligatoire ?" [form]="entityForm2"
+                [propertyName]="'isMandatory'+index" [isDisabled]="!editMode"></generic-toggle>
+            </td>
+            <td>
+              <button *ngIf="editMode" (click)="deleteFragment(asso.announcementNoticeTemplateFragment)"
+                mat-raised-button color="accent">
                 <mat-icon>delete</mat-icon>
               </button>
             </td>

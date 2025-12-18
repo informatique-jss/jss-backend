@@ -2,6 +2,7 @@ package com.jss.osiris.modules.osiris.tiers.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -42,6 +43,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -262,11 +264,29 @@ public class Tiers implements IAttachment, IId {
 	@JoinColumn(name = "id_rff_frequency")
 	private RffFrequency rffFrequency;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_discovering_origin")
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
+	private DiscoveringOrigin discoveringOrigin;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_business_sector")
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
+	private BusinessSector businessSector;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_company_size")
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
+	private CompanySize companySize;
+
 	@IndexedField
 	private Integer idAs400;
 	private Integer newIdAs400;
 
 	private Boolean isNewTiers;
+
+	@Transient
+	private HashMap<String, BigDecimal> kpiValues;
 
 	public List<Competitor> getCompetitors() {
 		return competitors;
@@ -688,6 +708,38 @@ public class Tiers implements IAttachment, IId {
 
 	public void setIsNewTiers(Boolean isNewTiers) {
 		this.isNewTiers = isNewTiers;
+	}
+
+	public HashMap<String, BigDecimal> getKpiValues() {
+		return kpiValues;
+	}
+
+	public void setKpiValues(HashMap<String, BigDecimal> kpiValues) {
+		this.kpiValues = kpiValues;
+	}
+
+	public DiscoveringOrigin getDiscoveringOrigin() {
+		return discoveringOrigin;
+	}
+
+	public void setDiscoveringOrigin(DiscoveringOrigin discoveringOrigin) {
+		this.discoveringOrigin = discoveringOrigin;
+	}
+
+	public BusinessSector getBusinessSector() {
+		return businessSector;
+	}
+
+	public void setBusinessSector(BusinessSector businessSector) {
+		this.businessSector = businessSector;
+	}
+
+	public CompanySize getCompanySize() {
+		return companySize;
+	}
+
+	public void setCompanySize(CompanySize companySize) {
+		this.companySize = companySize;
 	}
 
 }

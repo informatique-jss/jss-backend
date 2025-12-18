@@ -1,0 +1,39 @@
+<div class="row align-items-center text-center text-sm-start"
+  [ngClass]="showInfo ? 'justify-content-between' : 'justify-content-end'">
+  @if (showInfo) {
+  <div class="col-sm">
+    <div class="text-muted">
+      Eléments <span class="fw-semibold">{{ start }}</span> à
+      <span class="fw-semibold">{{ end }}</span> sur
+      <span class="fw-semibold">{{ totalItems }}</span>
+    </div>
+  </div>
+  }
+
+  <div class="col-sm-auto mt-3 mt-sm-0">
+    <ul class="pagination pagination-boxed mb-0 justify-content-center">
+      <li class="page-item">
+        <button class="page-link" (click)="previousPage.emit()" [disabled]="!canPreviousPage"
+          aria-label="Page précédente" type="button">
+          <ng-icon name="tablerChevronLeft" />
+        </button>
+      </li>
+
+      @for ( page of pages; track $index;let i = $index) {
+      @if($index>=pageIndex-3 && $index<=pageIndex+3){ <li class="page-item" [class.active]="pageIndex === i">
+        <button class="page-link" type="button" (click)="setPageIndex.emit(i)">
+          {{ i + 1 }}
+        </button>
+        </li>
+        }
+        }
+
+        <li class="page-item">
+          <button class="page-link" (click)="nextPage.emit()" [disabled]="!canNextPage" aria-label="Page suivante"
+            type="button">
+            <ng-icon name="tablerChevronRight" />
+          </button>
+        </li>
+    </ul>
+  </div>
+</div>

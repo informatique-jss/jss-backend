@@ -9,6 +9,7 @@ import { Mail } from "../../miscellaneous/model/Mail";
 import { Phone } from "../../miscellaneous/model/Phone";
 import { TiersFollowup } from "../../miscellaneous/model/TiersFollowup";
 import { Employee } from "../../profile/model/Employee";
+import { AgeRange } from "./AgeRange";
 import { SubscriptionPeriodType } from "./SubscriptionPeriodType";
 import { Tiers } from "./Tiers";
 import { TiersCategory } from "./TiersCategory";
@@ -50,4 +51,6 @@ export interface Responsable extends IDocument, IAttachment {
   rffMail: string;
   numberOfGiftPostsPerMonth: number;
   vouchers: Voucher[];
+  ageRange: AgeRange;
+  linkedInUrl: string;
 }

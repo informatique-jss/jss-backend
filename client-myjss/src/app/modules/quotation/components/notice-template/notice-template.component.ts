@@ -15,6 +15,8 @@ import { Service } from '../../../my-account/model/Service';
 import { ServiceFieldType } from '../../../my-account/model/ServiceFieldType';
 import { AnnouncementNoticeTemplate } from '../../model/AnnouncementNoticeTemplate';
 import { AnnouncementNoticeTemplateFragment } from '../../model/AnnouncementNoticeTemplateFragment';
+import { AssoAnnouncementNoticeTemplateAnnouncementFragment } from '../../model/AssoAnnouncementNoticeTemplateAnnouncementFragment';
+import { AssoNoticeTemplateAnnouncementFragmentService } from '../../services/asso.notice.template.announcement.fragment.service';
 import { NoticeTemplateService } from '../../services/notice.template.service';
 import { ServiceFieldTypeService } from '../../services/service.field.type.service';
 
@@ -46,10 +48,13 @@ export class NoticeTemplateComponent implements OnInit {
 
   fragmentSelection: AnnouncementNoticeTemplateFragment[][] = [];
   placeholdersMap = new Map<string, ServiceFieldType[]>();
+  assoAnnouncementFragment: AssoAnnouncementNoticeTemplateAnnouncementFragment[] = [];
 
   displayText: string = '';
   displayTextOriginal: string = '';
   fragmentSelectionText: string = '';
+
+  selectFragmentInfosMap = new Map<number, { isRequired: boolean, label: string }>();
 
   affaireId: number | undefined;
 
@@ -66,11 +71,15 @@ export class NoticeTemplateComponent implements OnInit {
     private fb: FormBuilder,
     private serviceFieldTypesService: ServiceFieldTypeService,
     private noticeTemplateService: NoticeTemplateService,
+    private assoAnnouncementFragmentService: AssoNoticeTemplateAnnouncementFragmentService,
     public modalService: NgbModal,
   ) { }
 
   ngOnInit(): void {
     this.form = this.fb.group({});
+    this.form.valueChanges.subscribe(() => {
+      this.noticeTemplateService.changeNoticeTemplateForm(this.form);
+    });
 
     this.templates = [];
     let noticeTemplateDescription = this.noticeTemplateService.getNoticeTemplateDescription();
@@ -79,21 +88,23 @@ export class NoticeTemplateComponent implements OnInit {
       if (noticeTemplateDescription.assoAffaireOrder && noticeTemplateDescription.assoAffaireOrder.affaire)
         this.affaireId = noticeTemplateDescription.assoAffaireOrder.affaire.id;
 
-      this.fragmentsFound = this.templates.flatMap(template => template.announcementNoticeTemplateFragments);
+      this.assoAnnouncementFragmentService.getAssoAnnouncementNoticeTemplateFragmentByNoticeTemplate(noticeTemplateDescription.selectedTemplate.id!).subscribe(res => {
+        this.assoAnnouncementFragment = res;
+        for (let asso of res) {
+          this.fragmentsFound.push(asso.announcementNoticeTemplateFragment)
+        }
+        this.serviceFieldTypesService.getServiceFieldTypes(this.affaireId).subscribe(serviceFieldTypes => {
+          this.serviceFieldTypes = serviceFieldTypes;
+          this.createPlaceholdersMap();
+          this.initFragmentInstancesMap();
+          this.extractFragmentSelection(this.fragmentSelectionText);
+          this.prepareInitialDisplayText();
+        });
+      });
       this.displayText = this.templates.map(t => t.text).join('');
       this.displayTextOriginal = this.displayText;
       this.fragmentSelectionText = this.displayText;
     }
-    this.serviceFieldTypesService.getServiceFieldTypes(this.affaireId).subscribe(serviceFieldTypes => {
-      this.serviceFieldTypes = serviceFieldTypes;
-      this.createPlaceholdersMap();
-      this.initFragmentInstancesMap();
-      this.extractFragmentSelection(this.fragmentSelectionText);
-      this.prepareInitialDisplayText();
-      setTimeout(() => {
-        this.markRnePlaceholdersAsTouched();
-      }, 0);
-    });
 
     this.form.valueChanges.subscribe(() => {
       this.updateDisplayText()
@@ -101,14 +112,16 @@ export class NoticeTemplateComponent implements OnInit {
         noticeTemplateDescription.displayText = this.sanitizeDisplayText(this.displayText);
         this.noticeTemplateService.changeNoticeTemplateDescription(noticeTemplateDescription);
       }
+      setTimeout(() => {
+        this.markPlaceholdersAsTouched();
+      }, 0);
     });
   }
 
-  markRnePlaceholdersAsTouched() {
+  markPlaceholdersAsTouched() {
     Object.keys(this.form.controls).forEach(key => {
       let control = this.form.get(key);
-      if (control?.value)
-        control?.markAsTouched();
+      control?.markAsTouched();
     });
   }
 
@@ -181,6 +194,13 @@ export class NoticeTemplateComponent implements OnInit {
       this.selectedFragments.push(undefined);
       i++;
     }
+
+    // Setting the informations of the SELECT fragments to be passed to the service for exposition for the app
+    this.fragmentSelection.forEach((selection, index) => {
+      this.selectFragmentInfosMap.set(index, { isRequired: this.isRequired(selection), label: selection.length > 1 ? selection.map(fragment => fragment.label).join(' ou ') : selection[0].label })
+    });
+    this.noticeTemplateService.setSelectFragmentInfos(this.selectFragmentInfosMap);
+
   }
 
   // Format and initialize the display text with placeholders converted
@@ -443,6 +463,24 @@ export class NoticeTemplateComponent implements OnInit {
     }
   }
 
+  isRequired(fragments: AnnouncementNoticeTemplateFragment[]): boolean {
+    for (let fragment of fragments) {
+      let asso = this.getAssoByFragment(fragment);
+      if (asso && asso.isMandatory) {
+        return true
+      }
+    }
+    return false;
+  }
+
+  getAssoByFragment(fragment: AnnouncementNoticeTemplateFragment): AssoAnnouncementNoticeTemplateAnnouncementFragment | null {
+    for (let asso of this.assoAnnouncementFragment) {
+      if (asso.announcementNoticeTemplateFragment.code == fragment.code) {
+        return asso;
+      }
+    }
+    return null;
+  }
 
   showPreviewModal() {
     this.previewModal(this.previewModalView);

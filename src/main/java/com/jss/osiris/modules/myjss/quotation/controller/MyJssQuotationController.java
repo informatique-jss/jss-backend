@@ -83,6 +83,7 @@ import com.jss.osiris.modules.osiris.quotation.dto.ServiceFieldTypeDto;
 import com.jss.osiris.modules.osiris.quotation.facade.ServiceFieldTypeFacade;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
+import com.jss.osiris.modules.osiris.quotation.model.AssoAnnouncementNoticeTemplateAnnouncementFragment;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.BuildingDomiciliation;
@@ -107,6 +108,7 @@ import com.jss.osiris.modules.osiris.quotation.model.ServiceTypeFieldTypePossibl
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDocument;
 import com.jss.osiris.modules.osiris.quotation.service.AffaireService;
 import com.jss.osiris.modules.osiris.quotation.service.AssoAffaireOrderService;
+import com.jss.osiris.modules.osiris.quotation.service.AssoAnnouncementNoticeTemplateFragmentService;
 import com.jss.osiris.modules.osiris.quotation.service.AssoServiceDocumentService;
 import com.jss.osiris.modules.osiris.quotation.service.BuildingDomiciliationService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderCommentService;
@@ -266,6 +268,9 @@ public class MyJssQuotationController {
 
 	@Autowired
 	ReadingFolderService readingFolderService;
+
+	@Autowired
+	AssoAnnouncementNoticeTemplateFragmentService assoAnnouncementNoticeTemplateFragmentService;
 
 	private final ConcurrentHashMap<String, AtomicLong> requestCount = new ConcurrentHashMap<>();
 	private final long rateLimit = 1000;
@@ -2010,6 +2015,18 @@ public class MyJssQuotationController {
 
 		return new ResponseEntity<List<ServiceFieldTypeDto>>(
 				serviceFieldTypeFacade.getServiceFieldTypesDtos(affaire),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/asso-notice-template-fragment")
+	public ResponseEntity<List<AssoAnnouncementNoticeTemplateAnnouncementFragment>> getAssoAnnouncementNoticeTemplateFragmentByNoticeTemplate(
+			@RequestParam(required = true) Integer idNoticeTemplateAnnouncement,
+			HttpServletRequest request) {
+		detectFlood(request);
+
+		return new ResponseEntity<List<AssoAnnouncementNoticeTemplateAnnouncementFragment>>(
+				assoAnnouncementNoticeTemplateFragmentService
+						.getAssoAnnouncementNoticeTemplateFragmentByNoticeTemplate(idNoticeTemplateAnnouncement),
 				HttpStatus.OK);
 	}
 

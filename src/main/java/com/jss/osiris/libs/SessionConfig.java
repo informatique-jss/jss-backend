@@ -55,6 +55,7 @@ public class SessionConfig {
 
                 DefaultCookieSerializer serializer = new DefaultCookieSerializer();
                 serializer.setCookieName(cookieName);
+                serializer.setCookieMaxAge(60 * 60 * 24 * 14);
 
                 if (!devMode)
                     serializer.setDomainName("jss.fr");

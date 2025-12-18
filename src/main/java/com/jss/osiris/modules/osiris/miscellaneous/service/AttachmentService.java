@@ -58,5 +58,7 @@ public interface AttachmentService {
 
         public Attachment cleanAttachmentForDelete(Attachment attachment);
 
-        public byte[] downloadAllInvoicesAsZip(List<Integer> invoicesIds) throws OsirisException;
+        public List<Integer> getAttachmentsFromInvoices(List<Integer> invoiceIds) throws OsirisException;
+
+        public byte[] downloadAllAttachmentsAsZip(List<Integer> invoicesIds) throws OsirisException;
 }

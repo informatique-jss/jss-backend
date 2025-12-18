@@ -36,6 +36,7 @@ import { AssoServiceFieldType } from '../../../my-account/model/AssoServiceField
 import { Provision } from '../../../my-account/model/Provision';
 import { ProvisionType } from '../../../my-account/model/ProvisionType';
 import { Service } from '../../../my-account/model/Service';
+import { ServiceFieldType } from '../../../my-account/model/ServiceFieldType';
 import { ServiceType } from '../../../my-account/model/ServiceType';
 import { AssoServiceDocumentService } from '../../../my-account/services/asso.service.document.service';
 import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
@@ -61,6 +62,7 @@ import { DepartmentService } from '../../services/department.service';
 import { NoticeTemplateService } from '../../services/notice.template.service';
 import { NoticeTypeFamilyService } from '../../services/notice.type.family.service';
 import { NoticeTypeService } from '../../services/notice.type.service';
+import { ServiceFieldTypeService } from '../../services/service.field.type.service';
 import { QuotationFileUploaderComponent } from '../quotation-file-uploader/quotation-file-uploader.component';
 
 @Component({
@@ -119,7 +121,6 @@ export class RequiredInformationComponent implements OnInit {
   checkedOnce = false;
   isBrowser = false;
 
-  activeId = 4;
   isOnlyAnnouncement = true;
 
   SERVICE_FIELD_TYPE_TEXT = SERVICE_FIELD_TYPE_TEXT;
@@ -146,6 +147,7 @@ export class RequiredInformationComponent implements OnInit {
 
   noticeTemplateDescriptionSubscription: Subscription = new Subscription;
   noticeTemplateDescription: NoticeTemplateDescription | undefined;
+  serviceFieldTypes: ServiceFieldType[] = [];
 
   goBackModalInstance: any | undefined;
 
@@ -166,6 +168,7 @@ export class RequiredInformationComponent implements OnInit {
     private constantService: ConstantService,
     private cityService: CityService,
     private noticeTemplateService: NoticeTemplateService,
+    private serviceFieldTypeService: ServiceFieldTypeService,
     private modalService: NgbModal,
     private gtmService: GtmService
   ) {
@@ -181,6 +184,7 @@ export class RequiredInformationComponent implements OnInit {
     this.noticeTemplateDescriptionSubscription = this.noticeTemplateService.noticeTemplateDescriptionObservable.subscribe(item => {
       if (item && this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined && item.announcementOrder != undefined
         && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex]
+        && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[item.announcementOrder]
         && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[item.announcementOrder].announcement) {
         this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].provisions[item.announcementOrder].announcement!.notice = item.displayText;
         this.noticeTemplateDescription = item;
@@ -231,61 +235,82 @@ export class RequiredInformationComponent implements OnInit {
     }
   }
 
-
   initIndexesAndServiceType() {
+    let announcementIndex = 0;
     if (this.quotation && this.quotation.assoAffaireOrders && this.quotation.assoAffaireOrders.length > 0) {
-      this.selectedAssoIndex = 0;
-      // Init order of provisions for multiple announcements in front-end and annouvement and domiciliation
       for (let asso of this.quotation.assoAffaireOrders) {
-        if (asso.services && asso.services.length > 0) {
-          for (let serv of asso.services) {
-            if (serv.provisions && serv.provisions.length > 0) {
-              let i = 0;
-              let index = 0;
-              for (let provision of serv.provisions) {
-                if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_ANNOUNCEMENT) {
-                  this.activeId = parseInt('1' + index);
-                  provision.order = ++i;
-                  if (!this.selectedRedaction[asso.services.indexOf(serv)]) {
-                    this.selectedRedaction[asso.services.indexOf(serv)] = [];
-                  }
-                  this.selectedRedaction[asso.services.indexOf(serv)][serv.provisions.indexOf(provision)] = this.CONFIER_ANNONCE_AU_JSS;
-                  if (!provision.announcement) {
-                    provision.announcement = {} as Announcement;
-                    provision.isRedactedByJss = true;
-                  }
-                } else {
-                  this.isOnlyAnnouncement = false;
-                }
-                if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_DOMICILIATION) {
-                  if (!provision.domiciliation) {
-                    this.activeId = 2;
-                    provision.domiciliation = {} as Domiciliation;
-                  }
-                }
-                index++;
+        for (let serv of asso.services) {
+          for (let provision of serv.provisions) {
+            if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_ANNOUNCEMENT) {
+              provision.order = announcementIndex;
+              announcementIndex++;
+              if (!this.selectedRedaction[asso.services.indexOf(serv)]) {
+                this.selectedRedaction[asso.services.indexOf(serv)] = [];
+              }
+              this.selectedRedaction[asso.services.indexOf(serv)][serv.provisions.indexOf(provision)] = this.CONFIER_ANNONCE_AU_JSS;
+              if (!provision.announcement) {
+                provision.announcement = {} as Announcement;
+                provision.isRedactedByJss = true;
+              }
+            } else {
+              this.isOnlyAnnouncement = false;
+            }
+            if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_DOMICILIATION) {
+              if (!provision.domiciliation) {
+                provision.domiciliation = {} as Domiciliation;
               }
             }
+          }
 
-            if (serv.assoServiceDocuments) {
-              serv.assoServiceDocuments.sort((a, b) => (b.isMandatory ? 1 : 0) - (a.isMandatory ? 1 : 0))
-            }
+          if (serv.assoServiceDocuments) {
+            serv.assoServiceDocuments.sort((a, b) => (b.isMandatory ? 1 : 0) - (a.isMandatory ? 1 : 0))
+          }
 
-            if (serv.assoServiceFieldTypes) {
-              serv.assoServiceFieldTypes.sort((a, b) => (b.isMandatory ? 1 : 0) - (a.isMandatory ? 1 : 0))
-            }
+          if (serv.assoServiceFieldTypes) {
+            serv.assoServiceFieldTypes.sort((a, b) => (b.isMandatory ? 1 : 0) - (a.isMandatory ? 1 : 0))
           }
         }
       }
-
       this.setAssoAffaireOrderToNoticeTemplateDescription();
-      this.changeProvisionNoticeTemplateDescription({ nextId: this.activeId } as NgbNavChangeEvent);
-
-      if (this.quotation.assoAffaireOrders[this.selectedAssoIndex].services && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services.length > 0) {
-        this.selectedServiceIndex = 0;
-      }
+      this.changeProvisionNoticeTemplateDescription({ nextId: 40 } as NgbNavChangeEvent);
       this.emitServiceChange();
     }
+  }
+
+  getIndexForProvision(provisionIndex: number, provisions: Provision[]) {
+    let index = 0;
+    let nbAnnouncement = 0;
+    for (let provision of provisions) {
+      if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_ANNOUNCEMENT) {
+        nbAnnouncement++;
+      }
+      if (provisionIndex < 0 && provisions.map(p => p.provisionType.provisionScreenType.code).indexOf(PROVISION_SCREEN_TYPE_ANNOUNCEMENT) < 0
+        && provisions.map(p => p.provisionType.provisionScreenType.code).indexOf(PROVISION_SCREEN_TYPE_DOMICILIATION) < 0)
+        return 40;
+      if (provisionIndex == index) {
+        if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_ANNOUNCEMENT) {
+          if (nbAnnouncement > 1) {
+            return index;
+          }
+          return 40;
+        }
+        else if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_DOMICILIATION) {
+          return 40;
+        }
+      }
+      index++;
+    }
+    return index;
+  }
+
+  getNbOfProvisionsAnnouncement(provisions: Provision[]) {
+    let nbOfProvisionsAnnouncement = 0;
+    for (let provision of provisions) {
+      if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_ANNOUNCEMENT) {
+        nbOfProvisionsAnnouncement++;
+      }
+    }
+    return nbOfProvisionsAnnouncement;
   }
 
   fetchAnnouncementReferentials() {
@@ -408,7 +433,7 @@ export class RequiredInformationComponent implements OnInit {
     if (this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined) {
       if (this.informationForm) {
         this.informationForm.markAllAsTouched();
-        if (!this.informationForm.valid) {
+        if (this.informationForm.invalid) {
           this.appService.displayToast("Veuillez remplir les champs obligatoires", true, "Champs obligatoires", 5000);
           return of(false);
         }
@@ -459,6 +484,13 @@ export class RequiredInformationComponent implements OnInit {
     if (newServiceIndex >= this.quotation.assoAffaireOrders[newAssoIndex].services.length) {
       newAssoIndex = newAssoIndex + 1;
       newServiceIndex = 0;
+      if (this.noticeTemplateService.getNoticeTemplateForm() && !this.noticeTemplateService.getNoticeTemplateForm()!.valid) {
+        this.serviceFieldTypeService.getServiceFieldTypes(undefined).subscribe(res => {
+          this.serviceFieldTypes = res
+          this.showToastOfInvalidControls();
+        })
+        return;
+      }
     }
 
     this.emitServiceChange();
@@ -484,13 +516,54 @@ export class RequiredInformationComponent implements OnInit {
       if (!response)
         return;
     });
-    this.selectedAssoIndex = null;
-    this.selectedServiceIndex = null;
+
 
     setTimeout(() => {
       this.selectedAssoIndex = newAssoIndex;
-      this.selectedServiceIndex = newServiceIndex;
+      this.selectedServiceIndex = newServiceIndex < 0 ? 0 : newServiceIndex;
+      this.initIndexesAndServiceType();
     }, 0);
+  }
+
+  isOnlyUppercase = (value: string): boolean => {
+    return /^[A-Z]+$/.test(value);
+  };
+
+  private showToastOfInvalidControls() {
+    let noticeTemplateForm = this.noticeTemplateService.getNoticeTemplateForm();
+    let invalidControls: string[] = [];
+    let selectFragmentInfos = this.noticeTemplateService.getSelectFragmentInfos();
+    Object.keys(noticeTemplateForm!.controls).forEach(key => {
+      let control = noticeTemplateForm!.get(key);
+      if (control?.invalid) {
+        let controlLabel: string = "";
+        if (control.errors!['notFilled']) {
+          for (let namePart of control.errors!['notFilled'].split('_')) {
+            // if control is a SELECT
+            if (Number(namePart) >= 0) {
+              controlLabel = selectFragmentInfos.get(Number(namePart)) ? (selectFragmentInfos.get(Number(namePart))!.label) : namePart;
+              break;
+            }
+            if (!this.isOnlyUppercase(namePart)) {
+              // If control is a serviceFieldType placeholder
+              if (namePart.includes('CH -')) {
+                let existing = this.serviceFieldTypes.find(serviceFieldType => serviceFieldType.code === namePart);
+                if (existing) {
+                  controlLabel = existing.label;
+                  break;
+                }
+              }
+              // If control is a placeholder
+              controlLabel = namePart;
+              break;
+            }
+          }
+          invalidControls.push(" " + controlLabel);
+        }
+      }
+
+    });
+    this.appService.displayToast("Les éléments suivants doivent être remplis pour que l'annonce légale puisse être publiée : " + invalidControls, true, "Eléments manquants", invalidControls.length < 4 ? 4000 : invalidControls.length * 1000);
   }
 
   goBackQuotationModale(content: TemplateRef<any>) {
@@ -718,14 +791,14 @@ export class RequiredInformationComponent implements OnInit {
             return;
           this.noticeTemplateDescription!.isShowNoticeTemplate = true;
           this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription!);
-          if (event)
+          if (isShowNoticeTemplate)
             this.scrollToNoticeTemplateSection();
         }, 0);
         return;
       }
-      this.noticeTemplateDescription.isShowNoticeTemplate = true;
+      this.noticeTemplateDescription.isShowNoticeTemplate = isShowNoticeTemplate;
       this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
-      if (event)
+      if (isShowNoticeTemplate)
         this.scrollToNoticeTemplateSection();
     }
   }
