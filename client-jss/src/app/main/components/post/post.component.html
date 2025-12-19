@@ -22,7 +22,7 @@
             <h1 class="mt-2"><img *ngIf="post.isPremium" class="px-0 me-1" src="/assets/images/premium-icon.svg">
               {{post.titleText}} </h1>
           </div>
-          <p class=""> {{post.excerptText}}</p>
+          <span class="fs-6" [innerHTML]="post.excerptText| trustHtml"></span>
 
           <hr class="d-none d-lg-block">
           <div class="row inline-row align-items-center mb-2">

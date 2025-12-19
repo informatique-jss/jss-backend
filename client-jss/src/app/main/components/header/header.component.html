@@ -273,8 +273,7 @@
                       src="/assets/images/premium-icon.svg">{{post.titleText}}</a>
                 </h4>
                 <div class="">
-                  <div class="card-truncate-6-line">{{post.excerptText}}
-                  </div>
+                  <span class="card-truncate-6-line" [innerHTML]="post.excerptText| trustHtml"></span>
                 </div>
                 <div class="row align-items-center">
                   <div class="col-lg-6"

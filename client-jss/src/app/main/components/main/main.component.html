@@ -73,8 +73,7 @@
                         [routerLink]='"/post/" + lastPosts[0].slug'><span>{{lastPosts[0].titleText}}</span> <img
                           *ngIf="lastPosts[0].isPremium" class="pe-0" src="/assets/images/premium-icon.svg"></a>
                     </h3>
-                    <p class="card-text-truncate">{{lastPosts[0].excerptText}}
-                    </p>
+                    <span class="card-text-truncate" [innerHTML]="lastPosts[0].excerptText| trustHtml"></span>
                   </div>
                 </article>
               </div>
@@ -664,8 +663,7 @@
                     class="pe-0" src="/assets/images/premium-icon.svg">
                   {{post.titleText}}</a>
               </h4>
-              <p class="card-text-truncate mb-0">{{post.excerptText}}
-              </p>
+              <span class="fs-7 card-text-truncate mb-0" [innerHTML]="post.excerptText| trustHtml"></span>
             </div>
             <div class="row align-items-center px-2">
               <div class="col-lg-6">

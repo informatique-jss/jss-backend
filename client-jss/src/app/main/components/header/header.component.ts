@@ -7,6 +7,7 @@ import { MY_JSS_HOME_ROUTE, MY_JSS_NEW_ANNOUNCEMENT_ROUTE, MY_JSS_NEW_FORMALITY_
 import { capitalizeName } from '../../../libs/FormatHelper';
 import { LiteralDatePipe } from '../../../libs/LiteralDatePipe';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
+import { TrustHtmlPipe } from "../../../libs/TrustHtmlPipe";
 import { AppService } from '../../../services/app.service';
 import { ConstantService } from '../../../services/constant.service';
 import { PlatformService } from '../../../services/platform.service';
@@ -30,7 +31,8 @@ import { AvatarComponent } from '../avatar/avatar.component';
     SHARED_IMPORTS,
     AvatarComponent,
     NgbTooltipModule,
-    LiteralDatePipe
+    LiteralDatePipe,
+    TrustHtmlPipe
   ],
   standalone: true
 })

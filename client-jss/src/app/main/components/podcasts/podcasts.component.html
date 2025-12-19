@@ -79,7 +79,7 @@
                             src="/assets/images/premium-icon.svg">
                           {{post.titleText}}
                         </h4>
-                        <p class="">{{post.excerptText}} </p>
+                        <span [innerHTML]="post.excerptText| trustHtml"></span>
                       </div>
                     </div>
                   </div>
