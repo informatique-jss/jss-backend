@@ -84,6 +84,9 @@ export class AppMenuComponent implements OnInit {
       {
         label: "Commandes", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerBasketCheck", url: "customer-order",
       } as MenuItemType,
+      {
+        label: "Prestations", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerBriefcase2", url: "provision",
+      } as MenuItemType,
       { label: "Reporting", isTitle: false, isCollapsed: true, isDisabled: false, isSpecial: false, icon: "tablerLayoutDashboard", children: this.getAllDashboardsItem() } as MenuItemType
     ]
   }

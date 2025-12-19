@@ -16,6 +16,8 @@ const routesCrm = [
   { path: 'quotation/view/:id', loadComponent: () => import('./modules/quotation/components/quotation/quotation.component').then(m => m.QuotationComponent) },
   { path: 'customer-order', loadComponent: () => import('./modules/quotation/components/customer-order-list/customer-order-list.component').then(m => m.CustomerOrderListComponent) },
   { path: 'customer-order/view/:id', loadComponent: () => import('./modules/quotation/components/customer-order/customer-order.component').then(m => m.CustomerOrderComponent) },
+  { path: 'provision', loadComponent: () => import('./modules/quotation/components/provision-list/provision-list.component').then(m => m.ProvisionListComponent) },
+  { path: 'provision/view/:id', loadComponent: () => import('./modules/quotation/components/provision/provision.component').then(m => m.ProvisionComponent) },
 ];
 
 export const routes: Routes = [

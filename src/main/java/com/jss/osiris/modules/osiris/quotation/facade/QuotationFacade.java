@@ -9,10 +9,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.quotation.dto.CustomerOrderDto;
+import com.jss.osiris.modules.osiris.quotation.dto.ProvisionDto;
 import com.jss.osiris.modules.osiris.quotation.dto.QuotationDto;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
+import com.jss.osiris.modules.osiris.quotation.model.ProvisionSearch;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.QuotationSearch;
 import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.KbisRequest;
@@ -62,6 +64,13 @@ public class QuotationFacade {
 
         List<CustomerOrder> customerOrderFound = customerOrderService.searchForCustomerOrders(customerOrderSearch);
         return quotationDtoHelper.mapCustomerOrders(customerOrderFound);
+    }
+
+    @Transactional
+    public List<ProvisionDto> searchProvisions(ProvisionSearch provisionSearch) throws OsirisException {
+
+        List<Provision> provisionsFound = provisionService.searchForProvisions(provisionSearch);
+        return quotationDtoHelper.mapProvisions(provisionsFound);
     }
 
 }

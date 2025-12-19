@@ -29,6 +29,7 @@ import com.jss.osiris.modules.osiris.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.osiris.quotation.model.IWorkflowElement;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionBoardResult;
+import com.jss.osiris.modules.osiris.quotation.model.ProvisionSearch;
 import com.jss.osiris.modules.osiris.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.osiris.quotation.repository.AnnouncementStatusRepository;
 import com.jss.osiris.modules.osiris.quotation.repository.ProvisionRepository;
@@ -147,11 +148,36 @@ public class ProvisionServiceImpl implements ProvisionService {
         excludedCustomerOrderStatus
                 .add(customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.ABANDONED));
 
-        return provisionRepository.searchProvision(formalistesIds,
+        return provisionRepository.searchProvision(formalistesIds, Arrays.asList(0), Arrays.asList(0),
                 status.stream().filter(s -> s instanceof AnnouncementStatus).toList(),
                 status.stream().filter(s -> s instanceof SimpleProvisionStatus).toList(),
                 status.stream().filter(s -> s instanceof FormaliteStatus).toList(),
                 status.stream().filter(s -> s instanceof DomiciliationStatus).toList(), excludedCustomerOrderStatus);
+    }
+
+    @Override
+    public List<Provision> searchForProvisions(ProvisionSearch provisionSearch) {
+
+        Integer commercialId = (provisionSearch.getSalesEmployee() != null)
+                ? provisionSearch.getSalesEmployee().getId()
+                : 0;
+
+        Integer formalisteId = (provisionSearch.getFormalisteEmployee() != null)
+                ? provisionSearch.getFormalisteEmployee().getId()
+                : 0;
+
+        List<Integer> responsablesIds = (provisionSearch.getResponsables() != null
+                && provisionSearch.getResponsables().size() > 0)
+                        ? provisionSearch.getResponsables()
+                        : Arrays.asList(0);
+
+        List<Integer> provisionStatus = provisionSearch.getProvisionStatus() != null
+                ? provisionSearch.getProvisionStatus().stream()
+                        .map(SimpleProvisionStatus::getId).toList()
+                : Arrays.asList(0);
+
+        return provisionRepository.searchForProvision(Arrays.asList(formalisteId), Arrays.asList(commercialId),
+                responsablesIds, provisionStatus);
     }
 
     @Transactional(rollbackFor = Exception.class)
