@@ -38,8 +38,6 @@ public interface PaymentService {
 
         public void reindexPayments() throws OsirisException;
 
-        public void deleteDuplicatePayments();
-
         public List<PaymentSearchResult> searchPayments(PaymentSearch payemntSearch);
 
         public List<Payment> getMatchingOfxPayments(PaymentSearch paymentSearch);

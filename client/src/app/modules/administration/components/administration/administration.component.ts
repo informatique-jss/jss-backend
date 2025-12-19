@@ -101,6 +101,9 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
   REPORTING_WORKING_TABLE_REFERENTIAL = "Reporting - table de travail";
   REPORTING_DASHBOARD_REFERENTIAL = "Reporting - tableau de bord";
   REPORTING_WIDGET_REFERENTIAL = "Reporting - gadgets";
+  DISCOVERING_ORIGIN_REFERENTIAL = "Origine de la découverte du JSS";
+  BUSINESS_SECTOR_REFERENTIAL = "Secteur d'activité";
+  COMPANY_SIZE_REFERENTIAL = "Taille de l'entreprise";
 
 
   constructor(private appService: AppService,
@@ -115,6 +118,8 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     this.appService.changeHeaderTitle("Administration");
     this.restoreTab();
     this.referentials.push(this.ACT_TYPE_REFERENTIAL);
+    this.referentials.push(this.COMPANY_SIZE_REFERENTIAL);
+    this.referentials.push(this.BUSINESS_SECTOR_REFERENTIAL);
     this.referentials.push(this.BUILDING_DOMICILIATION_REFERENTIAL);
     this.referentials.push(this.DOMICIALIATION_CONTRACT_TYPE_REFERENTIAL);
     this.referentials.push(this.FUND_TYPE_REFERENTIAL);
@@ -186,6 +191,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     this.referentials.push(this.REPORTING_DASHBOARD_REFERENTIAL);
     this.referentials.push(this.REPORTING_WIDGET_REFERENTIAL);
     this.referentials.push(this.ORDER_BLOCAKGE_REFERENTIAL);
+    this.referentials.push(this.DISCOVERING_ORIGIN_REFERENTIAL);
     this.referentials.sort((a, b) => a.localeCompare(b));
 
     this.filteredReferentials = this.referentialForm.get("entity")?.valueChanges.pipe(

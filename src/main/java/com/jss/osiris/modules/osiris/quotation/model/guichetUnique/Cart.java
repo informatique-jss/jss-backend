@@ -47,10 +47,9 @@ public class Cart implements Serializable {
     private String created;
     private String updated;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "cart")
     @JsonIgnore
-    @JoinColumn(name = "id_invoice")
-    private Invoice invoice;
+    private List<Invoice> invoices;
 
     public Integer getId() {
         return id;
@@ -148,11 +147,12 @@ public class Cart implements Serializable {
         this.cartRates = cartRates;
     }
 
-    public Invoice getInvoice() {
-        return invoice;
+    public List<Invoice> getInvoices() {
+        return invoices;
     }
 
-    public void setInvoice(Invoice invoice) {
-        this.invoice = invoice;
+    public void setInvoices(List<Invoice> invoices) {
+        this.invoices = invoices;
     }
+
 }

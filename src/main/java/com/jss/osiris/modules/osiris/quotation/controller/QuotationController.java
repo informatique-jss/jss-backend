@@ -1136,7 +1136,7 @@ public class QuotationController {
     if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
       throw new OsirisValidationException("MailTo");
 
-    mailHelper.sendCustomerOrderInProgressToCustomer(customerOrder, true);
+    mailHelper.sendCustomerOrderInProgressToCustomer(customerOrder, true, null);
     return new ResponseEntity<CustomerOrder>(customerOrder, HttpStatus.OK);
   }
 
@@ -2607,6 +2607,21 @@ public class QuotationController {
         formaliteGuichetUniqueService.getFormaliteGuichetUnique(idFormaliteGuichetUnique), HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/formalite-guichet-unique/clone")
+  public ResponseEntity<Boolean> cloneFormaliteGuichetUniqueService(
+      @RequestParam String liasseNumber)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException {
+
+    List<FormaliteGuichetUnique> formaliteGuichetUnique = formaliteGuichetUniqueService
+        .getFormaliteGuichetUniqueByLiasseNumber(liasseNumber);
+    if (formaliteGuichetUnique == null)
+      throw new OsirisValidationException("liasseNumber");
+
+    guichetUniqueDelegateService.cloneFormalityByLiasseNumber(liasseNumber);
+
+    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/formalite-infogreffe/search")
   public ResponseEntity<List<FormaliteInfogreffe>> getFormaliteInfogreffeServiceByReference(
       @RequestParam String value)
@@ -3195,26 +3210,26 @@ public class QuotationController {
         competentAuthorityFacade.getJoNoticeByAffaire(affaireId), HttpStatus.OK);
   }
 
-  @GetMapping(inputEntryPoint + "/kbis-request/siren")
-  public ResponseEntity<Attachment> getUpToDateKbisForSiren(String siren)
+  @GetMapping(inputEntryPoint + "/kbis-request/siret")
+  public ResponseEntity<Attachment> getUpToDateKbisForSiren(String siret)
       throws OsirisValidationException, OsirisException {
-    if (siren == null || siren.length() == 0)
+    if (siret == null || siret.length() == 0)
       throw new OsirisValidationException("siren");
 
-    return new ResponseEntity<Attachment>(quotationFacade.getUpToDateKbisForSiren(siren), HttpStatus.OK);
+    return new ResponseEntity<Attachment>(quotationFacade.getUpToDateKbisForSiret(siret), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/kbis-request/order")
-  public ResponseEntity<Boolean> orderNewKbisForSiren(String siren, Integer provisionId)
+  public ResponseEntity<Boolean> orderNewKbisForSiren(String siret, Integer provisionId)
       throws OsirisException {
-    if (siren == null || siren.length() == 0)
-      throw new OsirisValidationException("siren");
+    if (siret == null || siret.length() == 0)
+      throw new OsirisValidationException("siret");
 
     Provision provision = provisionService.getProvision(provisionId);
     if (provision == null)
       throw new OsirisValidationException("provision");
 
-    quotationFacade.orderNewKbisForSiren(siren, provisionId);
+    quotationFacade.orderNewKbisForSiret(siret, provisionId);
 
     return new ResponseEntity<Boolean>(true, HttpStatus.OK);
   }

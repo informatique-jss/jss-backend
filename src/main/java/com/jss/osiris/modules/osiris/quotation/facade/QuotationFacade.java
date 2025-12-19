@@ -21,14 +21,14 @@ public class QuotationFacade {
     ProvisionService provisionService;
 
     @Transactional(rollbackFor = Exception.class)
-    public KbisRequest orderNewKbisForSiren(String siren, Integer provisionId) throws OsirisException {
+    public KbisRequest orderNewKbisForSiret(String siret, Integer provisionId) throws OsirisException {
         Provision provision = provisionService.getProvision(provisionId);
-        return infogreffeKbisService.orderNewKbisForSiren(siren, provision);
+        return infogreffeKbisService.orderNewKbisForSiret(siret, provision);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Attachment getUpToDateKbisForSiren(String siren) throws OsirisException {
-        return infogreffeKbisService.getUpToDateKbisForSiren(siren);
+    public Attachment getUpToDateKbisForSiret(String siret) throws OsirisException {
+        return infogreffeKbisService.getUpToDateKbisForSiret(siret);
     }
 
 }

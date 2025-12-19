@@ -6,6 +6,7 @@ import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AvatarComponent } from '../../../miscellaneous/components/avatar/avatar.component';
 import { ResponsableDto } from '../../model/ResponsableDto';
 import { ResponsableService } from '../../services/responsable.service';
+import { TiersService } from '../../services/tiers.service';
 
 @Component({
   selector: 'responsable-header',
@@ -25,7 +26,10 @@ export class ResponsableHeaderComponent {
 
   @Input() responsable: ResponsableDto | undefined;
 
-  constructor(private responsableService: ResponsableService) { }
+  constructor(
+    private responsableService: ResponsableService,
+    private tiersService: TiersService,
+  ) { }
 
 
   callPhoneNumber(phone: string) {
@@ -37,6 +41,8 @@ export class ResponsableHeaderComponent {
   }
 
   printLabel() {
+    if (this.responsable && this.responsable.tiersId)
+      this.tiersService.printTiersLabel(this.responsable.tiersId, this.responsable.id).subscribe();
   }
 }
 

@@ -42,10 +42,14 @@ import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.service.AffaireService;
 import com.jss.osiris.modules.osiris.tiers.facade.TiersFacade;
+import com.jss.osiris.modules.osiris.tiers.model.AgeRange;
 import com.jss.osiris.modules.osiris.tiers.model.BillingClosureRecipientType;
 import com.jss.osiris.modules.osiris.tiers.model.BillingClosureType;
 import com.jss.osiris.modules.osiris.tiers.model.BillingLabelType;
+import com.jss.osiris.modules.osiris.tiers.model.BusinessSector;
+import com.jss.osiris.modules.osiris.tiers.model.CompanySize;
 import com.jss.osiris.modules.osiris.tiers.model.Competitor;
+import com.jss.osiris.modules.osiris.tiers.model.DiscoveringOrigin;
 import com.jss.osiris.modules.osiris.tiers.model.IResponsableSearchResult;
 import com.jss.osiris.modules.osiris.tiers.model.ITiersSearchResult;
 import com.jss.osiris.modules.osiris.tiers.model.PaymentDeadlineType;
@@ -64,10 +68,14 @@ import com.jss.osiris.modules.osiris.tiers.model.TiersSearch;
 import com.jss.osiris.modules.osiris.tiers.model.TiersType;
 import com.jss.osiris.modules.osiris.tiers.model.dto.ResponsableDto;
 import com.jss.osiris.modules.osiris.tiers.model.dto.TiersDto;
+import com.jss.osiris.modules.osiris.tiers.service.AgeRangeService;
 import com.jss.osiris.modules.osiris.tiers.service.BillingClosureRecipientTypeService;
 import com.jss.osiris.modules.osiris.tiers.service.BillingClosureTypeService;
 import com.jss.osiris.modules.osiris.tiers.service.BillingLabelTypeService;
+import com.jss.osiris.modules.osiris.tiers.service.BusinessSectorService;
+import com.jss.osiris.modules.osiris.tiers.service.CompanySizeService;
 import com.jss.osiris.modules.osiris.tiers.service.CompetitorService;
+import com.jss.osiris.modules.osiris.tiers.service.DiscoveringOriginService;
 import com.jss.osiris.modules.osiris.tiers.service.PaymentDeadlineTypeService;
 import com.jss.osiris.modules.osiris.tiers.service.RefundTypeService;
 import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
@@ -177,6 +185,84 @@ public class TiersController {
 
   @Autowired
   TiersFacade tiersFacade;
+
+  @Autowired
+  DiscoveringOriginService discoveringOriginService;
+
+  @Autowired
+  AgeRangeService ageRangeService;
+
+  @Autowired
+  BusinessSectorService businessSectorService;
+
+  @Autowired
+  CompanySizeService companySizeService;
+
+  @GetMapping(inputEntryPoint + "/company-sizes")
+  public ResponseEntity<List<CompanySize>> getCompanySizes() {
+    return new ResponseEntity<List<CompanySize>>(companySizeService.getCompanySizes(), HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/company-size")
+  public ResponseEntity<CompanySize> addOrUpdateCompanySize(
+      @RequestBody CompanySize companySizes) throws OsirisValidationException, OsirisException {
+    if (companySizes.getId() != null)
+      validationHelper.validateReferential(companySizes, true, "companySizes");
+    validationHelper.validateString(companySizes.getCode(), true, "code");
+    validationHelper.validateString(companySizes.getLabel(), true, "label");
+
+    return new ResponseEntity<CompanySize>(companySizeService.addOrUpdateCompanySize(companySizes), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/business-sectors")
+  public ResponseEntity<List<BusinessSector>> getBusinessSectors() {
+    return new ResponseEntity<List<BusinessSector>>(businessSectorService.getBusinessSectors(), HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/business-sector")
+  public ResponseEntity<BusinessSector> addOrUpdateBusinessSector(
+      @RequestBody BusinessSector businessSectors) throws OsirisValidationException, OsirisException {
+    if (businessSectors.getId() != null)
+      validationHelper.validateReferential(businessSectors, true, "businessSectors");
+    validationHelper.validateString(businessSectors.getCode(), true, "code");
+    validationHelper.validateString(businessSectors.getLabel(), true, "label");
+
+    return new ResponseEntity<BusinessSector>(businessSectorService.addOrUpdateBusinessSector(businessSectors),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/age-ranges")
+  public ResponseEntity<List<AgeRange>> getAgeRanges() {
+    return new ResponseEntity<List<AgeRange>>(ageRangeService.getAgeRanges(), HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/age-range")
+  public ResponseEntity<AgeRange> addOrUpdateAgeRange(
+      @RequestBody AgeRange ageRanges) throws OsirisValidationException, OsirisException {
+    if (ageRanges.getId() != null)
+      validationHelper.validateReferential(ageRanges, true, "ageRanges");
+    validationHelper.validateString(ageRanges.getCode(), true, "code");
+    validationHelper.validateString(ageRanges.getLabel(), true, "label");
+
+    return new ResponseEntity<AgeRange>(ageRangeService.addOrUpdateAgeRange(ageRanges), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/dicovering-origins")
+  public ResponseEntity<List<DiscoveringOrigin>> getDiscoveringOrigins() {
+    return new ResponseEntity<List<DiscoveringOrigin>>(discoveringOriginService.getDiscoveringOrigins(), HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/discovering-origin")
+  public ResponseEntity<DiscoveringOrigin> addOrUpdateDiscoveringOrigin(
+      @RequestBody DiscoveringOrigin discoveringOrigins) throws OsirisValidationException, OsirisException {
+    if (discoveringOrigins.getId() != null)
+      validationHelper.validateReferential(discoveringOrigins, true, "discoveringOrigins");
+    validationHelper.validateString(discoveringOrigins.getCode(), true, "code");
+    validationHelper.validateString(discoveringOrigins.getLabel(), true, "label");
+
+    return new ResponseEntity<DiscoveringOrigin>(
+        discoveringOriginService.addOrUpdateDiscoveringOrigin(discoveringOrigins), HttpStatus.OK);
+  }
 
   @GetMapping(inputEntryPoint + "/rff-frequencies")
   public ResponseEntity<List<RffFrequency>> getRffFrequencies() {
@@ -637,6 +723,11 @@ public class TiersController {
   @GetMapping(inputEntryPoint + "/tiers/detail")
   public ResponseEntity<TiersDto> getTiersDtoById(@RequestParam Integer id) throws OsirisException {
     return new ResponseEntity<TiersDto>(tiersFacade.getTiersDtoByTiersId(id), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/responsable-dto")
+  public ResponseEntity<ResponsableDto> getResponsableDtoById(@RequestParam Integer id) {
+    return new ResponseEntity<ResponsableDto>(responsableService.getResponsableDto(id), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/responsables")

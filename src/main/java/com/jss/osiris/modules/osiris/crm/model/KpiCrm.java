@@ -198,5 +198,4 @@ public class KpiCrm implements Serializable, IId {
     public void setKpiCrmCategory(KpiCrmCategory kpiCrmCategory) {
         this.kpiCrmCategory = kpiCrmCategory;
     }
-
 }

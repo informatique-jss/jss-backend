@@ -43,9 +43,11 @@ import { ReferentialBillingItemComponent } from '../referentials/referential-bil
 import { ReferentialBillingLabelTypeComponent } from '../referentials/referential-billing-label-type/referential-billing-label-type.component';
 import { ReferentialBillingTypeComponent } from '../referentials/referential-billing-type/referential-billing-type.component';
 import { ReferentialBuildingDomiciliationComponent } from '../referentials/referential-building-domiciliation/referential-building-domiciliation.componentt';
+import { ReferentialBusinessSectorComponent } from '../referentials/referential-business-sector/referential-business-sector.component';
 import { ReferentialCharacterPriceComponent } from '../referentials/referential-character-price/referential-character-price.component';
 import { ReferentialCityComponent } from '../referentials/referential-city/referential-city.component';
 import { ReferentialCivilityComponent } from '../referentials/referential-civility/referential-civility.component';
+import { ReferentialCompanySizeComponent } from '../referentials/referential-company-size/referential-company-size.component';
 import { ReferentialCompetentAuthorityTypeComponent } from '../referentials/referential-competent-authority-type/referential-competent-authority-type.component';
 import { ReferentialCompetitorComponent } from '../referentials/referential-competitor/referential-competitor.component';
 import { ReferentialCountryComponent } from '../referentials/referential-country/referential-country.component';
@@ -54,6 +56,7 @@ import { ReferentialCustomerOrderOriginComponent } from '../referentials/referen
 import { ReferentialDeliveryServiceComponent } from '../referentials/referential-delivery-service/referential-delivery-service.component';
 import { ReferentialDepartmentVatSettingComponent } from '../referentials/referential-department-vat-setting/referential-department-vat-setting.component';
 import { ReferentialDepartmentComponent } from '../referentials/referential-department/referential-department.component';
+import { ReferentialDiscoveringOriginComponent } from '../referentials/referential-discovering-origin/referential-discovering-origin.component';
 import { ReferentialDocumentTypeComponent } from '../referentials/referential-document-type/referential-document-type.component';
 import { ReferentialDomiciliationContractTypeComponent } from '../referentials/referential-domiciliation-contract-type/referential-domiciliation-contract-type.componentt';
 import { ReferentialFundTypeComponent } from '../referentials/referential-fund-type/referential-fund-type.component';
@@ -219,7 +222,10 @@ const routes: Routes = [
     ReferentialReportingWorkingTableComponent,
     ReferentialReportingDashboardComponent,
     ReferentialReportingWidgetComponent,
-    ReferentialOrderBlockageComponent
+    ReferentialOrderBlockageComponent,
+    ReferentialDiscoveringOriginComponent,
+    ReferentialBusinessSectorComponent,
+    ReferentialCompanySizeComponent,
   ], exports: [LogComponent,
     CompetentAuthorityComponent,
     ProviderComponent

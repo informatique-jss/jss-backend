@@ -97,6 +97,8 @@ public class Announcement implements IId {
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private Boolean isProofReadingDocument;
 
+	private Boolean isUsingTemplate;
+
 	private Boolean isPublicationReciptAlreadySent;
 	private Boolean isPublicationFlagAlreadySent;
 	private Boolean isAnnouncementAlreadySentToConfrere;
@@ -432,6 +434,14 @@ public class Announcement implements IId {
 
 	public void setIsLegacy(Boolean isLegacy) {
 		this.isLegacy = isLegacy;
+	}
+
+	public Boolean getIsUsingTemplate() {
+		return isUsingTemplate;
+	}
+
+	public void setIsUsingTemplate(Boolean isUsingTemplate) {
+		this.isUsingTemplate = isUsingTemplate;
 	}
 
 }

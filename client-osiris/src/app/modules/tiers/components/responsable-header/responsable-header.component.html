@@ -9,11 +9,13 @@
         </div>
         }
         <div>
-          <h4 class="text-nowrap fw-bold mb-1"> {{responsable.firstname +' '+responsable.lastname}}
+          <h4 class="text-nowrap fw-bold mb-1"> {{(responsable.civility ? responsable.civility : '') + ' ' +
+            responsable.firstname + ' '+responsable.lastname}}
+            @if(!responsable.isActive){
+            <span class="ms-2 badge badge-square text-bg-danger topbar-badge p-1">Inactif</span>
+            }
           </h4>
-          <p class="text-muted mb-1">{{responsable.tiersCategory}}</p>
-          <span
-            class="badge badge-soft-secondary fw-medium ms-2 fs-xs ms-auto">{{responsable.responsableCategory}}</span>
+          <p class="text-muted mb-1">{{responsable.responsableCategory}}</p>
         </div>
       </div>
       <div class="d-flex justify-content-end align-items-center gap-2">
@@ -44,11 +46,17 @@
           <ul ngbDropdownMenu>
             <li ngbDropdownItem class="d-flex align-items-center pointer"><ng-icon name="tablerPrinter"
                 class="fs-xl me-2"></ng-icon><a (click)="printLabel()">Imprimer une étiquette pour le
-                responsable</a></li>
+                responsable</a>
+            </li>
+            <!-- TODO : -->
+            <li ngbDropdownItem class="d-flex align-items-center pointer"><ng-icon name="tablerHistory"
+                class="fs-xl me-2"></ng-icon><a>Voir l'historique</a>
+            </li>
             <li ngbDropdownItem class="d-flex align-items-center pointer"><ng-icon name="tablerTrash"
                 class="text-danger fs-xl me-2"></ng-icon><a class="text-danger" (click)="deleteResponsable()">Supprimer
                 le
-                responsable</a></li>
+                responsable</a>
+            </li>
           </ul>
         </div>
         }

@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { LiteralDatePipe } from '../../../libs/LiteralDatePipe';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { TimeFormatPipe } from '../../../libs/TimeFormatPipe';
+import { TrustHtmlPipe } from "../../../libs/TrustHtmlPipe";
 import { AppService } from '../../../services/app.service';
 import { ConstantService } from '../../../services/constant.service';
 import { GtmService } from '../../../services/gtm.service';
@@ -21,7 +22,7 @@ import { TagService } from '../../services/tag.service';
   selector: 'podcasts',
   templateUrl: './podcasts.component.html',
   styleUrls: ['./podcasts.component.css'],
-  imports: [SHARED_IMPORTS, TimeFormatPipe, LiteralDatePipe],
+  imports: [SHARED_IMPORTS, TimeFormatPipe, LiteralDatePipe, TrustHtmlPipe],
   standalone: true
 })
 export class PodcastsComponent implements OnInit {

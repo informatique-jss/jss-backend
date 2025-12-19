@@ -76,6 +76,7 @@ import com.jss.osiris.modules.osiris.quotation.model.QuotationSearch;
 import com.jss.osiris.modules.osiris.quotation.model.QuotationSearchResult;
 import com.jss.osiris.modules.osiris.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
+import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 import com.jss.osiris.modules.osiris.quotation.model.centralPay.CentralPayPaymentRequest;
 import com.jss.osiris.modules.osiris.quotation.repository.QuotationRepository;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
@@ -993,19 +994,24 @@ public class QuotationServiceImpl implements QuotationService {
 
     @Override
     public boolean isDepositMandatory(IQuotation quotation) {
-        boolean isDepositMandatory = false;
 
-        isDepositMandatory = quotation.getResponsable().getTiers().getIsProvisionalPaymentMandatory();
+        if (Boolean.TRUE.equals(quotation.getResponsable().getTiers().getIsProvisionalPaymentMandatory()))
+            return true;
 
-        if (!isDepositMandatory && quotation.getAssoAffaireOrders() != null)
-            for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders())
+        if (quotation.getAssoAffaireOrders() != null)
+            for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders()) {
                 if (asso.getAffaire() != null
-                        && Boolean.TRUE.equals(asso.getAffaire().getIsProvisionalPaymentMandatory())) {
-                    isDepositMandatory = true;
-                    break;
-                }
+                        && Boolean.TRUE.equals(asso.getAffaire().getIsProvisionalPaymentMandatory()))
+                    return true;
+                if (asso.getServices() != null)
+                    for (Service service : asso.getServices())
+                        if (service.getServiceTypes() != null)
+                            for (ServiceType serviceType : service.getServiceTypes())
+                                if (Boolean.TRUE.equals(serviceType.getIsProvisionalPaymentMandatory()))
+                                    return true;
+            }
 
-        return isDepositMandatory;
+        return false;
     }
 
     @Override

@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { NgbAccordionModule, NgbDropdownModule, NgbNavModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from '../../../../../environments/environment';
 import { compareWithId } from '../../../../libs/CompareHelper';
-import { ASSO_SERVICE_DOCUMENT_ENTITY_TYPE, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, INVOICING_PAYMENT_LIMIT_REFUND_EUROS, SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
+import { ASSO_SERVICE_DOCUMENT_ENTITY_TYPE, CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, INVOICING_PAYMENT_LIMIT_REFUND_EUROS, SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
 import { capitalizeName, getListMails, getListPhones } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { TrustHtmlPipe } from '../../../../libs/TrustHtmlPipe';
@@ -50,7 +50,7 @@ import { getClassForCustomerOrderStatus, getCustomerOrderBillingMailList, getCus
   templateUrl: './order-details.component.html',
   styleUrls: ['./order-details.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, SingleUploadComponent, AvatarComponent, TrustHtmlPipe, NgbTooltipModule, NgbDropdownModule, NgbAccordionModule, NgbNavModule]
+  imports: [SHARED_IMPORTS, AvatarComponent, TrustHtmlPipe, SingleUploadComponent, NgbTooltipModule, NgbDropdownModule, NgbAccordionModule, NgbNavModule]
 })
 export class OrderDetailsComponent implements OnInit {
 
@@ -66,6 +66,7 @@ export class OrderDetailsComponent implements OnInit {
   orderPayments: Payment[] | undefined;
   CUSTOMER_ORDER_STATUS_BILLED = CUSTOMER_ORDER_STATUS_BILLED;
   CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT = CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT;
+  CUSTOMER_ORDER_STATUS_ABANDONED = CUSTOMER_ORDER_STATUS_ABANDONED;
   paymentTypeCb!: PaymentType;
   billingLabelTypeCodeAffaire!: BillingLabelType;
   serviceProvisionAttachments: Attachment[][] = [];
@@ -73,8 +74,6 @@ export class OrderDetailsComponent implements OnInit {
   associatedQuotation: Quotation | undefined;
 
   documentTypeBilling!: DocumentType;
-
-
   selectedAssoAffaireOrder: AssoAffaireOrder | undefined;
   ASSO_SERVICE_DOCUMENT_ENTITY_TYPE = ASSO_SERVICE_DOCUMENT_ENTITY_TYPE;
 
@@ -210,6 +209,16 @@ export class OrderDetailsComponent implements OnInit {
           this.serviceProvisionAttachments[service.id] = response;
         })
     }
+  }
+
+  getPurchaseOrderAttachment() {
+    if (this.order && this.order.id)
+      this.attachementService.getPurchaseOrderAttachment(this.order.id).subscribe(response => {
+        if (response)
+          this.downloadAttachment(response);
+      });
+    else
+      this.appService.displayToast("Aucun bon de commande trouvé", false, "Erreur", 15000);
   }
 
   downloadAttachment(attachment: Attachment) {

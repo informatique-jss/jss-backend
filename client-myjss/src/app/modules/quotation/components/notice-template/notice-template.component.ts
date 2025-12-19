@@ -54,6 +54,8 @@ export class NoticeTemplateComponent implements OnInit {
   displayTextOriginal: string = '';
   fragmentSelectionText: string = '';
 
+  selectFragmentInfosMap = new Map<number, { isRequired: boolean, label: string }>();
+
   affaireId: number | undefined;
 
   serviceFieldTypes: ServiceFieldType[] = [];
@@ -192,6 +194,13 @@ export class NoticeTemplateComponent implements OnInit {
       this.selectedFragments.push(undefined);
       i++;
     }
+
+    // Setting the informations of the SELECT fragments to be passed to the service for exposition for the app
+    this.fragmentSelection.forEach((selection, index) => {
+      this.selectFragmentInfosMap.set(index, { isRequired: this.isRequired(selection), label: selection.length > 1 ? selection.map(fragment => fragment.label).join(' ou ') : selection[0].label })
+    });
+    this.noticeTemplateService.setSelectFragmentInfos(this.selectFragmentInfosMap);
+
   }
 
   // Format and initialize the display text with placeholders converted

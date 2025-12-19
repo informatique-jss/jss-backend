@@ -62,9 +62,12 @@ public class TiersValidationHelper {
         if (tiers.getInsertionEmployee() == null)
             tiers.setInsertionEmployee(constantService.getEmployeeProductionDirector());
 
-        validationHelper.validateReferential(tiers.getLanguage(), true, "Language");
-        validationHelper.validateReferential(tiers.getDeliveryService(), true,
+        validationHelper.validateReferential(tiers.getLanguage(), false, "Language");
+        validationHelper.validateReferential(tiers.getBusinessSector(), false, "BusinessSector");
+        validationHelper.validateReferential(tiers.getDeliveryService(), false,
                 "DeliveryService");
+        validationHelper.validateReferential(tiers.getDiscoveringOrigin(), true,
+                "DiscoveringOrigin");
 
         validationHelper.validateString(tiers.getAddress(), true, 100, "Address");
         validationHelper.validateReferential(tiers.getCountry(), true, "Country");
@@ -193,6 +196,8 @@ public class TiersValidationHelper {
                     }
                 }
 
+                validationHelper.validateString(responsable.getLinkedInUrl(), false, 250, "LinkedInUrl");
+                validationHelper.validateReferential(responsable.getAgeRange(), false, "AgeRange");
                 validationHelper.validateReferential(responsable.getCivility(), true, "Civility");
                 validationHelper.validateString(responsable.getFirstname(), true, 40, "Firstname");
                 validationHelper.validateString(responsable.getLastname(), true, 40, "Lastname");
@@ -210,7 +215,7 @@ public class TiersValidationHelper {
                 if (responsable.getInsertionEmployee() == null)
                     responsable.setInsertionEmployee(constantService.getEmployeeProductionDirector());
 
-                validationHelper.validateReferential(responsable.getLanguage(), true, "Language");
+                validationHelper.validateReferential(responsable.getLanguage(), false, "Language");
                 validationHelper.validateString(responsable.getAddress(), false, 100, "Address");
                 validationHelper.validateReferential(responsable.getCountry(), false, "Country");
                 validationHelper.validateReferential(responsable.getCity(), false, "City");

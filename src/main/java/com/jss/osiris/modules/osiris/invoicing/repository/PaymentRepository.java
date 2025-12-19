@@ -3,7 +3,6 @@ package com.jss.osiris.modules.osiris.invoicing.repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -78,10 +77,6 @@ public interface PaymentRepository extends QueryCacheCrudRepository<Payment, Int
                         @Param("minAmount") Float minAmount, @Param("maxAmount") Float maxAmount,
                         @Param("label") String label,
                         @Param("isDisplayNonMatchedOutboundChecks") boolean isDisplayNonMatchedOutboundChecks);
-
-        @Modifying
-        @Query(nativeQuery = true, value = " delete from payment p where id_invoice in (select id from reprise_inpi_del) ")
-        void deleteDuplicatePayments();
 
         @Query("select p from Payment p left join fetch p.childrenPayments c where p.paymentDate>=:minSearchDate" +
                         " and p.bankId like 'H%' and (p.label not like 'REMISE CHEQUES BORDEREAU%' or p.paymentDate>=:minSearchCheckDate) "

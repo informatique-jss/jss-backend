@@ -128,18 +128,30 @@ export class PostComponent implements OnInit, AfterViewInit {
     if (this.slug) {
       this.postService.getPostBySlug(this.slug).subscribe(post => {
         this.post = post;
-        if (post.seoTitle)
-          this.titleService.setTitle(post.seoTitle);
-        else
-          this.titleService.setTitle("Les fiches pratiques - " + post.titleText + " - MyJSS");
-        if (post.seoDescription)
-          this.meta.updateTag({ name: 'description', content: post.seoDescription });
-        else if (post.excerptText)
-          this.meta.updateTag({ name: 'description', content: post.excerptText });
-
+        this.setMetaData();
         this.fetchComments(0);
       })
       this.cancelReply();
+    }
+  }
+
+  setMetaData() {
+    if (this.post) {
+      this.meta.updateTag({ property: 'og:title', content: this.post.titleText });
+      this.meta.updateTag({ property: 'og:image', content: this.post.media.urlFull });
+      this.meta.updateTag({ property: 'og:description', content: this.post.excerptText });
+      this.meta.updateTag({ property: 'og:url', content: environment.frontendUrl + "post/" + this.post.slug });
+      this.meta.updateTag({ property: 'og:type', content: 'article' });
+
+      if (this.post.seoTitle)
+        this.titleService.setTitle(this.post.seoTitle);
+      else
+        this.titleService.setTitle("Les fiches pratiques - " + this.post.titleText + " - MyJSS");
+      if (this.post.seoDescription)
+        this.meta.updateTag({ name: 'description', content: this.post.seoDescription });
+      else if (this.post.excerptText)
+        this.meta.updateTag({ name: 'description', content: this.post.excerptText });
+
     }
   }
 
@@ -162,7 +174,7 @@ export class PostComponent implements OnInit, AfterViewInit {
   shareOnLinkedin() {
     if (this.post && this.platformService.isBrowser()) {
       let url = environment.frontendUrl + "post/" + this.post.slug;
-      window.open("https://www.linkedin.com/shareArticle?mini=true&url=" + url + "&title=" + this.extractContent(this.post.titleText) + "&summary=" + this.extractContent(this.post.excerptText), "_blank");
+      window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, "_blank");
     }
   }
 

@@ -366,6 +366,11 @@ public class ConstantServiceImpl implements ConstantService {
     }
 
     @Override
+    public AttachmentType getAttachmentTypePurchaseOrder() throws OsirisException {
+        return getConstants().getAttachmentTypePurchaseOrder();
+    }
+
+    @Override
     public Country getCountryFrance() throws OsirisException {
         return getConstants().getCountryFrance();
     }

@@ -1,5 +1,7 @@
 package com.jss.osiris.modules.osiris.quotation.service.infoGreffe;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestTemplate;
@@ -32,7 +35,6 @@ import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
-import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.KbisCommandResponse;
 import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.KbisRequest;
 import com.jss.osiris.modules.osiris.quotation.repository.infoGreffe.KbisRequestRepository;
 import com.jss.osiris.modules.osiris.quotation.service.AffaireService;
@@ -92,9 +94,9 @@ public class InfogreffeKbisServiceImpl implements InfogreffeKbisService {
     }
 
     @Override
-    public KbisRequest orderNewKbisForSiren(String siren, Provision provision) throws OsirisException {
+    public KbisRequest orderNewKbisForSiret(String siren, Provision provision) throws OsirisException {
         KbisRequest request = new KbisRequest();
-        request.setSiren(siren);
+        request.setSiret(siren);
         request.setEmployeeInitiator(employeeService.getCurrentEmployee());
         request.setProvision(provision);
         addOrUpdateKbisRequest(request);
@@ -105,8 +107,8 @@ public class InfogreffeKbisServiceImpl implements InfogreffeKbisService {
     }
 
     @Override
-    public Attachment getUpToDateKbisForSiren(String siren) throws OsirisException {
-        List<KbisRequest> requests = kbisRequestRepository.findBySiren(siren);
+    public Attachment getUpToDateKbisForSiret(String siren) throws OsirisException {
+        List<KbisRequest> requests = kbisRequestRepository.findBySiret(siren);
         if (requests != null && requests.size() > 0) {
             List<Affaire> affaires = affaireService.getAffairesBySiren(siren);
 
@@ -118,6 +120,8 @@ public class InfogreffeKbisServiceImpl implements InfogreffeKbisService {
                         return 1;
                     if (request1 == null && request2 != null)
                         return -1;
+                    if (request1.getDateOrder() == null && request2.getDateOrder() == null)
+                        return 0;
                     if (request1.getDateOrder() != null && request2.getDateOrder() == null)
                         return 1;
                     if (request1.getDateOrder() == null && request2.getDateOrder() != null)
@@ -181,29 +185,17 @@ public class InfogreffeKbisServiceImpl implements InfogreffeKbisService {
     public void orderKbis(Integer requestId) throws OsirisException {
         KbisRequest request = getRequest(requestId);
         if (request != null) {
-            if (request.getSiren() == null)
-                throw new OsirisException("No siren defined for request " + requestId);
-
-            if (request.getDocumentId() == null || request.getDocumentId().length() == 0) {
-                String documentId = infogreffeKbisDelegate.getExtraitIdToOrder(request.getSiren());
-
-                if (documentId == null || documentId.length() == 0)
-                    throw new OsirisException(
-                            "No documentId found for siren " + request.getSiren() + " and request id " + requestId);
-
-                request.setDocumentId(documentId);
-                addOrUpdateKbisRequest(request);
-            }
+            if (request.getSiret() == null)
+                throw new OsirisException("No siret defined for request " + requestId);
 
             if (request.getUrlTelechargement() == null || request.getUrlTelechargement().length() == 0) {
-                KbisCommandResponse order = infogreffeKbisDelegate.orderDocument(request.getSiren(),
-                        request.getDocumentId());
+
+                String url = infogreffeKbisDelegate.requestKbisDownloadUrlForSiret(request.getSiret());
                 request.setDateOrder(LocalDate.now());
+                request.setUrlTelechargement(url);
+                addOrUpdateKbisRequest(request);
 
-                if (order == null)
-                    throw new OsirisException("impossible to order request " + requestId);
-
-                if (order.getUrlTelechargement() == null || order.getUrlTelechargement().length() == 0)
+                if (url == null || url.length() == 0)
                     throw new OsirisException("no url found for download document of request " + requestId);
 
                 downloadAttachment(request);
@@ -220,31 +212,35 @@ public class InfogreffeKbisServiceImpl implements InfogreffeKbisService {
 
         RequestCallback requestCallback = request -> request.getHeaders().addAll(headers);
 
-        ResponseExtractor<ResponseEntity<InputStream>> responseExtractor = response -> ResponseEntity
+        ResponseExtractor<ResponseEntity<byte[]>> responseExtractor = response -> ResponseEntity
                 .status(response.getStatusCode())
                 .headers(response.getHeaders())
-                .body(response.getBody());
+                .body(StreamUtils.copyToByteArray(response.getBody())); // On lit tout de suite
 
-        ResponseEntity<InputStream> response = new RestTemplate().execute(
+        ResponseEntity<byte[]> response = new RestTemplate().execute(
                 kbisRequest.getUrlTelechargement(),
                 HttpMethod.GET,
                 requestCallback,
                 responseExtractor);
 
         if (response != null && response.getBody() != null && response.getStatusCode().is2xxSuccessful()) {
-            String name = "Kbis-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
-            List<Attachment> attachments = attachmentService.addAttachment(response.getBody(),
-                    kbisRequest.getProvision().getId(), null, Provision.class.getSimpleName(),
-                    constantService.getAttachmentTypeKbis(), name, false, name, null, null, null);
+            String name = "Kbis-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"))
+                    + ".pdf";
+            try (InputStream is = new ByteArrayInputStream(response.getBody())) {
+                List<Attachment> attachments = attachmentService.addAttachment(is,
+                        kbisRequest.getProvision().getId(), null, Provision.class.getSimpleName(),
+                        constantService.getAttachmentTypeKbis(), name, false, name, null, null, null);
 
-            for (Attachment attachment : attachments) {
-                if (attachment.getDescription().equals(name)) {
-                    kbisRequest.setAttachment(attachment);
-                    addOrUpdateKbisRequest(kbisRequest);
-                    break;
+                for (Attachment attachment : attachments) {
+                    if (attachment.getDescription().equals(name)) {
+                        kbisRequest.setAttachment(attachment);
+                        addOrUpdateKbisRequest(kbisRequest);
+                        break;
+                    }
                 }
+            } catch (IOException e) {
+                throw new OsirisException(e, "Error during download of kbis for request " + kbisRequest.getId());
             }
-
             Provision provision = provisionService.getProvision(kbisRequest.getProvision().getId());
             if (provision != null) {
                 provision.setKbisOrderedNumber(

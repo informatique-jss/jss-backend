@@ -79,6 +79,7 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("jss.sepa.identification");
         isOk = isOk && checkProperty("jss.bic");
         isOk = isOk && checkProperty("jss.iban");
+        isOk = isOk && checkProperty("invoicing.provider.creation.rate");
         isOk = isOk && checkProperty("guichet.unique.entry.point");
         isOk = isOk && checkProperty("guichet.unique.login");
         isOk = isOk && checkProperty("guichet.unique.password");

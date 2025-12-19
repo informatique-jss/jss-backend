@@ -3,7 +3,6 @@ package com.jss.osiris.libs.batch.repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -93,18 +92,4 @@ public interface BatchRepository extends CrudRepository<Batch, Integer> {
 
         @Query(value = "select * from batch n where n.created_date<(now() - make_interval(months => :monthNbr))  ", nativeQuery = true)
         List<Batch> findBatchOlderThanMonths(@Param("monthNbr") Integer monthNbr);
-
-        @Modifying
-        @Query(nativeQuery = true, value = "" +
-                        " drop table reprise_inpi_del; " +
-                        " create table reprise_inpi_del as " +
-                        " select distinct i.id " +
-                        " from invoice i " +
-                        " join customer_order co on co.id = i.id_customer_order_for_inbound_invoice " +
-                        " join provision p on p.id = i.id_provision  " +
-                        " join formalite_guichet_unique fgu on fgu.id_formalite  = p.id_formalite  " +
-                        " where co.id_customer_order_status not in (13,12) " +
-                        " and i.id_provider in (1279  ,4552601) " +
-                        " and not exists (select 1 from cart c where c.id_invoice = i.id) and i.created_date>=(select date_accounting_closure_for_all from constant) ")
-        void createTablePurgeInvoice();
 }

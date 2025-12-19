@@ -324,18 +324,6 @@ public class BatchServiceImpl implements BatchService, ApplicationListener<Conte
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void purgeBatch() {
-        batchRepository.deleteAll(batchRepository.findBatchOlderThanMonths(4));
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public void purgeInvoice() {
-        batchRepository.createTablePurgeInvoice();
-        accountingRecordService.deleteDuplicateAccountingRecord();
-        debourDelService.deleteDuplicateDebourDel();
-        invoiceItemService.deleteDuplicateInvoiceItem();
-        invoiceItemService.deleteDuplicateInvoiceItemOrigin();
-        paymentService.deleteDuplicatePayments();
-        invoiceService.deleteDuplicateInvoices();
+        batchRepository.deleteAll(batchRepository.findBatchOlderThanMonths(1));
     }
 }

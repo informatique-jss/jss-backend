@@ -48,10 +48,16 @@
           <ul ngbDropdownMenu>
             <li ngbDropdownItem class="d-flex align-items-center pointer"><ng-icon name="tablerPrinter"
                 class="fs-xl me-2"></ng-icon><a (click)="printLabel()">Imprimer une étiquette pour le
-                tiers</a></li>
+                tiers</a>
+            </li>
+            <!-- TODO : -->
+            <li ngbDropdownItem class="d-flex align-items-center pointer"><ng-icon name="tablerHistory"
+                class="fs-xl me-2"></ng-icon><a>Voir l'historique</a>
+            </li>
             <li ngbDropdownItem class="d-flex align-items-center pointer"><ng-icon name="tablerTrash"
                 class="text-danger fs-xl me-2"></ng-icon><a class="text-danger" (click)="deleteTiers()">Supprimer le
-                tiers</a></li>
+                tiers</a>
+            </li>
           </ul>
         </div>
         }

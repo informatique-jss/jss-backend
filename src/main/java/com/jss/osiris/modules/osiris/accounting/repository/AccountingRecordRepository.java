@@ -455,10 +455,6 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         + "where is_already_exported = true and exists (select 1 from payment p where p.payment_date <=:accountingDateTime and p.bank_id is null and p.id_direct_debit_transfert = ddt.id) and (ddt.is_cancelled is null or ddt.is_cancelled=false) and (is_matched = false or exists (select 1 from payment p where p.id_direct_debit_transfert=ddt.id and p.bank_id like 'H%' and p.payment_date >:accountingDateTime))")
         List<Integer> getDirectDebitTransfertTotal(@Param("accountingDateTime") LocalDateTime accountingDateTime);
 
-        @Modifying
-        @Query(nativeQuery = true, value = "delete from accounting_record where id_invoice in (select id from reprise_inpi_del) ")
-        void deleteDuplicateAccountingRecord();
-
         @Query(nativeQuery = true, value = "select * from closed_accounting_record where id_payment =:idPayment")
         List<AccountingRecord> findClosedAccountingRecordsForPayment(@Param("idPayment") Integer idPayment);
 

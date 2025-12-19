@@ -114,6 +114,8 @@ public class CompetentAuthority implements IAttachment, IId {
 	@JoinColumn(name = "id_provider")
 	private Provider provider;
 
+	private String jssAccountNumber;
+
 	public Integer getId() {
 		return id;
 	}
@@ -313,6 +315,14 @@ public class CompetentAuthority implements IAttachment, IId {
 
 	public void setIntercommunityVat(String intercommunityVat) {
 		this.intercommunityVat = intercommunityVat;
+	}
+
+	public String getJssAccountNumber() {
+		return jssAccountNumber;
+	}
+
+	public void setJssAccountNumber(String jssAccountNumber) {
+		this.jssAccountNumber = jssAccountNumber;
 	}
 
 }

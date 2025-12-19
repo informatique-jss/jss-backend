@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -572,6 +573,10 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                     || announcement.getConfrere().getProvider().getIsRemindProviderInvoice() == false)
                 return;
 
+            if (LocalDate.now().getDayOfWeek() == DayOfWeek.SATURDAY
+                    || LocalDate.now().getDayOfWeek() == DayOfWeek.SUNDAY)
+                return;
+
             // Get provision
             Provision currentProvision = null;
             AssoAffaireOrder currentAsso = null;
@@ -623,6 +628,10 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     public void sendReminderToConfrereForAnnouncement(Announcement announcement)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         if (announcement != null) {
+            if (LocalDate.now().getDayOfWeek() == DayOfWeek.SATURDAY
+                    || LocalDate.now().getDayOfWeek() == DayOfWeek.SUNDAY)
+                return;
+
             CustomerOrder customerOrder = customerOrderService.getCustomerOrderForAnnouncement(announcement);
 
             // Get provision
