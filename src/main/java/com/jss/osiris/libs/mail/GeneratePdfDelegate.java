@@ -597,7 +597,7 @@ public class GeneratePdfDelegate {
             ctx.setVariable("announcementNotices", announcementNotices);
 
         final String htmlContent = StringEscapeUtils
-                .unescapeHtml4(emailTemplateEngine().process("customer-order-purchase", ctx));
+                .unescapeHtml4(pdfTemplateEngine(true).process("customer-order-purchase", ctx));
         File tempFile;
         OutputStream outputStream;
         try {
