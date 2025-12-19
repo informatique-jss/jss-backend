@@ -1136,7 +1136,7 @@ public class QuotationController {
     if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
       throw new OsirisValidationException("MailTo");
 
-    mailHelper.sendCustomerOrderInProgressToCustomer(customerOrder, true);
+    mailHelper.sendCustomerOrderInProgressToCustomer(customerOrder, true, null);
     return new ResponseEntity<CustomerOrder>(customerOrder, HttpStatus.OK);
   }
 

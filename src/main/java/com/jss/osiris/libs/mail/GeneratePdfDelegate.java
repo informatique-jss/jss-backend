@@ -69,6 +69,8 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
+import com.jss.osiris.modules.osiris.quotation.model.AssoServiceDocument;
+import com.jss.osiris.modules.osiris.quotation.model.AssoServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.Domiciliation;
 import com.jss.osiris.modules.osiris.quotation.model.NoticeType;
@@ -420,6 +422,99 @@ public class GeneratePdfDelegate {
             throw new OsirisException(e,
                     "Unable to create PDF file for biling closure receipt, tiers/responsable n°"
                             + (tier != null ? tier.getId() : (responsable != null ? responsable.getId() : "")));
+        }
+        return tempFile;
+    }
+
+    public File generationCustomerOrderPurchasePdf(CustomerOrder customerOrder) throws OsirisException {
+        final Context ctx = new Context();
+
+        Boolean hasMandatoryFieldTypes = false;
+        Boolean hasMandatoryDocuments = false;
+        List<InvoiceItem> invoiceItems = new ArrayList<InvoiceItem>();
+        List<String> announcementNotices = new ArrayList<String>();
+
+        if (customerOrder.getAssoAffaireOrders() != null && !customerOrder.getAssoAffaireOrders().isEmpty()) {
+            for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders()) {
+                if (asso.getServices() != null && !asso.getServices().isEmpty()) {
+                    for (Service service : asso.getServices()) {
+                        if (service.getAssoServiceDocuments() != null
+                                && !service.getAssoServiceDocuments().isEmpty()) {
+                            for (AssoServiceDocument document : service.getAssoServiceDocuments()) {
+                                if (document.getIsMandatory()) {
+                                    hasMandatoryDocuments = true;
+                                    break;
+                                }
+                            }
+                            if (service.getAssoServiceFieldTypes() != null
+                                    && !service.getAssoServiceFieldTypes().isEmpty())
+                                for (AssoServiceFieldType fieldType : service.getAssoServiceFieldTypes())
+                                    if (fieldType.getIsMandatory()) {
+                                        hasMandatoryFieldTypes = true;
+                                        break;
+                                    }
+                        }
+                        if (service.getProvisions() != null) {
+                            for (Provision provision : service.getProvisions()) {
+                                invoiceItems.addAll(provision.getInvoiceItems());
+
+                                if (provision.getAnnouncement() != null && !provision.getIsRedactedByJss()
+                                        && provision.getAnnouncement().getNotice() != null
+                                        && !provision.getAnnouncement().getNotice().isEmpty())
+                                    announcementNotices.add(provision.getAnnouncement().getNotice());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (customerOrder != null && customerOrder.getDocuments() != null) {
+            Document billingDocument = documentService.getDocumentByDocumentType(customerOrder.getDocuments(),
+                    constantService.getDocumentTypeBilling());
+            if (billingDocument != null)
+                ctx.setVariable("billingDocument", billingDocument);
+        }
+
+        ctx.setVariable("tiersReference", customerOrder.getResponsable().getTiers().getId()
+                + (customerOrder.getResponsable().getTiers().getIdAs400() != null
+                        ? ("/" + customerOrder.getResponsable().getTiers().getIdAs400())
+                        : ""));
+
+        ctx.setVariable("customerOrderId", customerOrder.getId());
+        ctx.setVariable("responsable", customerOrder.getResponsable());
+        ctx.setVariable("customerOrderCreatedDate",
+                customerOrder.getCreatedDate() != null
+                        ? customerOrder.getCreatedDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                        : LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        ctx.setVariable("assos", customerOrder.getAssoAffaireOrders());
+        ctx.setVariable("hasMandatoryDocuments", hasMandatoryDocuments);
+        ctx.setVariable("hasMandatoryFieldTypes", hasMandatoryFieldTypes);
+
+        if (!invoiceItems.isEmpty())
+            ctx.setVariable("invoiceItems", invoiceItems);
+
+        if (!announcementNotices.isEmpty())
+            ctx.setVariable("announcementNotices", announcementNotices);
+
+        final String htmlContent = StringEscapeUtils
+                .unescapeHtml4(emailTemplateEngine().process("customer-order-purchase", ctx));
+        File tempFile;
+        OutputStream outputStream;
+        try {
+            tempFile = File.createTempFile("purchase", "pdf");
+            outputStream = new FileOutputStream(tempFile);
+        } catch (IOException e) {
+            throw new OsirisException(e, "Unable to create temp file");
+        }
+        ITextRenderer renderer = new ITextRenderer();
+        XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
+        renderer.setDocumentFromString(htmlContent.replaceAll("\\p{C}", " ").replaceAll("&", "<![CDATA[&]]>"));
+        renderer.layout();
+        try {
+            renderer.createPDF(outputStream);
+            outputStream.close();
+        } catch (DocumentException | IOException e) {
+            throw new OsirisException(e, "Unable to create PDF file for order " + customerOrder.getId());
         }
         return tempFile;
     }

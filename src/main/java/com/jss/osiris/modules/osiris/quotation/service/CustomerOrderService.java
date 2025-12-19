@@ -14,6 +14,7 @@ import com.jss.osiris.modules.osiris.crm.model.Voucher;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoicingBlockage;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.InvoicingSummary;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
@@ -226,9 +227,13 @@ public interface CustomerOrderService {
 
         public Integer getComplexity(CustomerOrder customerOrder) throws OsirisException;
 
-        List<CustomerOrder> getByCreatedDateBetweenAndStatus(LocalDateTime startDate, LocalDateTime endDate,
+        public List<Attachment> generateCustomerOrderPurchasePdf(CustomerOrder customerOrder)
+                        throws OsirisClientMessageException,
+                        OsirisValidationException, OsirisDuplicateException, OsirisException;
+
+        public List<CustomerOrder> getByCreatedDateBetweenAndStatus(LocalDateTime startDate, LocalDateTime endDate,
                         CustomerOrderStatus customerOrderStatus, LocalDateTime updateStartDate,
                         LocalDateTime updateEndDate);
 
-        List<CustomerOrder> searchActiveRecurringOrder();
+        public List<CustomerOrder> searchActiveRecurringOrder();
 }

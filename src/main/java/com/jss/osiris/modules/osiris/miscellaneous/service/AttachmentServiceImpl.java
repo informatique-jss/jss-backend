@@ -638,4 +638,14 @@ public class AttachmentServiceImpl implements AttachmentService {
 
         return outArray;
     }
+
+    public Attachment getPurchaseOrderAttachment(CustomerOrder customerOrder) throws OsirisException {
+        if (customerOrder.getAttachments() != null && !customerOrder.getAttachments().isEmpty())
+            for (Attachment attachment : sortAttachmentByDateDesc(customerOrder.getAttachments()))
+                if (attachment.getAttachmentType() != null && attachment.getAttachmentType().getId()
+                        .equals(constantService.getAttachmentTypePurchaseOrder().getId()))
+                    return attachment;
+
+        return null;
+    }
 }
