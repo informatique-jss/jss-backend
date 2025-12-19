@@ -95,6 +95,11 @@
         </div>
       </div>
 
+      <div>
+        <img class="rounded-5" [src]="post.media && post.media && post.media.urlFull ? post.media.urlFull : ''"
+          alt="Post image">
+      </div>
+
       <!-- Post content -->
       <span class="fs-lg pt-2 pt-sm-3" [innerHTML]="post.contentText| trustHtml"></span>
 

@@ -139,6 +139,12 @@
                       [maxLength]="2000">
                     </generic-input>
                   </td>
+                  <td>
+                    <generic-input [(model)]="selectedcompetentAuthority.jssAccountNumber" label="Numéro de compte"
+                      [form]="entityForm2" propertyName="jssAccountNumber" [isMandatory]="false"
+                      [isDisabled]="!editMode" [maxLength]="250">
+                    </generic-input>
+                  </td>
                 </tr>
               </table>
               <table class="full-width">
