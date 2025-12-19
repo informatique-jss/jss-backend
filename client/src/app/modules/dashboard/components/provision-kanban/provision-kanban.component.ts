@@ -360,9 +360,9 @@ export class ProvisionKanbanComponent extends KanbanComponent<Provision, IWorkfl
       this.announcementService.generateAnnouncementRequestToConfrereMail(this.selectedEntity.service.assoAffaireOrder.customerOrder, this.selectedEntity.service.assoAffaireOrder, this.selectedEntity, announcement).subscribe();
   }
 
-  generatePublicationFlagMail() {
+  generatePublicationFlagMail(announcement: Announcement) {
     if (this.selectedEntity)
-      this.announcementService.generatePublicationFlagMail(this.selectedEntity.service.assoAffaireOrder.customerOrder).subscribe();
+      this.announcementService.generatePublicationFlagMail(this.selectedEntity.service.assoAffaireOrder.customerOrder, announcement).subscribe();
   }
 
   sendRibRequestToAffaire() {
