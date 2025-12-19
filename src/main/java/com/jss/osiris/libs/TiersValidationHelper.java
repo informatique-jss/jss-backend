@@ -66,7 +66,7 @@ public class TiersValidationHelper {
         validationHelper.validateReferential(tiers.getBusinessSector(), false, "BusinessSector");
         validationHelper.validateReferential(tiers.getDeliveryService(), false,
                 "DeliveryService");
-        validationHelper.validateReferential(tiers.getDiscoveringOrigin(), true,
+        validationHelper.validateReferential(tiers.getDiscoveringOrigin(), false,
                 "DiscoveringOrigin");
 
         validationHelper.validateString(tiers.getAddress(), true, 100, "Address");
