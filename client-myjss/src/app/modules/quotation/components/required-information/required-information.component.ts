@@ -378,6 +378,7 @@ export class RequiredInformationComponent implements OnInit {
 
   onNoticeChange({ editor }: ChangeEvent, provision: Provision) {
     if (provision && provision.announcement) {
+      provision.announcement.notice = editor.getData();
       this.noticeTemplateDescription = this.noticeTemplateService.getNoticeTemplateDescription();
       this.noticeTemplateDescription!.displayText = editor.getData();
       this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription!);
