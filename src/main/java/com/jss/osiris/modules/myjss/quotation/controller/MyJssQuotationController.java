@@ -1469,16 +1469,18 @@ public class MyJssQuotationController {
 	@GetMapping(inputEntryPoint + "/service-type")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<ServiceType> getServiceType(
-			@RequestParam("serviceTypeId") Integer serviceTypeId,
-			@RequestParam("isFetchOnlyMandatoryDocuments") Boolean isFetchOnlyMandatoryDocuments,
+			@RequestParam() Integer serviceTypeId,
+			@RequestParam(required = false) Boolean isFetchOnlyMandatoryDocuments,
 			HttpServletRequest request) throws OsirisException {
 		detectFlood(request);
 
 		if (serviceTypeId == null)
 			return new ResponseEntity<ServiceType>(new ServiceType(), HttpStatus.OK);
-
+		if (isFetchOnlyMandatoryDocuments == null)
+			isFetchOnlyMandatoryDocuments = false;
 		return new ResponseEntity<ServiceType>(
-				serviceTypeService.getServiceType(serviceTypeId, isFetchOnlyMandatoryDocuments),
+				serviceTypeService.getServiceType(serviceTypeId,
+						isFetchOnlyMandatoryDocuments),
 				HttpStatus.OK);
 	}
 
