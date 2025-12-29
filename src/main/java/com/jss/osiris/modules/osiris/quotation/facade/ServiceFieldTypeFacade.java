@@ -14,11 +14,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.quotation.dto.ServiceFieldTypeDto;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceFieldType;
+import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.FormeJuridique;
 import com.jss.osiris.modules.osiris.quotation.service.RneDelegateService;
 import com.jss.osiris.modules.osiris.quotation.service.ServiceFieldTypeService;
+import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.referentials.FormeJuridiqueService;
 
 @Service
 public class ServiceFieldTypeFacade {
@@ -28,6 +31,12 @@ public class ServiceFieldTypeFacade {
 
     @Autowired
     ServiceFieldTypeService serviceFieldTypeService;
+
+    @Autowired
+    FormeJuridiqueService formeJuridiqueService;
+
+    @Autowired
+    ConstantService constantService;
 
     @Transactional
     public List<ServiceFieldTypeDto> getServiceFieldTypesDtos(Affaire affaire) throws OsirisClientMessageException,
@@ -64,13 +73,20 @@ public class ServiceFieldTypeFacade {
             if (serviceFieldType.getJsonPathToRneValue() != null
                     && !serviceFieldType.getJsonPathToRneValue().isEmpty()) {
                 String value = null;
-                //
+                FormeJuridique formeJuridique = null;
                 List<String> possiblePaths = Arrays.asList(serviceFieldType.getJsonPathToRneValue().split("\\|\\|"));
+
                 for (String path : possiblePaths) {
                     JsonNode valueNode = root.at(path.trim());
                     if (!valueNode.isMissingNode() && !valueNode.asText().isEmpty()) {
-                        value = valueNode.asText();
-                        break;
+                        if (path.endsWith("formeJuridique")) {
+                            formeJuridique = formeJuridiqueService.getFormeJuridique(valueNode.asText());
+                            if (formeJuridique != null && formeJuridique.getLabelShort() != null)
+                                value = formeJuridique.getLabelShort();
+                        } else {
+                            value = valueNode.asText();
+                            break;
+                        }
                     }
                 }
                 serviceFieldTypeDtos.add(mapServiceFieldType(serviceFieldType, value));
