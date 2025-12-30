@@ -7,8 +7,8 @@ export interface ProvisionSearch {
   mail: string;
   startDate: Date;
   endDate: Date;
-  responsables: number[];
-  provisionStatus: SimpleProvisionStatus[];
+  responsables: number;
+  provisionStatus: SimpleProvisionStatus;
   affaire: string;
   waitingCompetentAuthoritySearch: string;
   guichetUniqueStatus: string;

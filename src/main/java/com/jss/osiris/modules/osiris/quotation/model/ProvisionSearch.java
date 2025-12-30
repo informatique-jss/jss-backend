@@ -1,7 +1,6 @@
 package com.jss.osiris.modules.osiris.quotation.model;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 
@@ -12,8 +11,8 @@ public class ProvisionSearch {
     private String mail;
     private LocalDate startDate;
     private LocalDate endDate;
-    private List<Integer> responsables;
-    private List<SimpleProvisionStatus> provisionStatus;
+    private Integer responsable;
+    private SimpleProvisionStatus provisionStatus;
     private String affaire;
     private String waitingCompetentAuthoritySearch;
     private String guichetUniqueStatus;
@@ -59,19 +58,19 @@ public class ProvisionSearch {
         this.endDate = endDate;
     }
 
-    public List<Integer> getResponsables() {
-        return responsables;
+    public Integer getResponsable() {
+        return responsable;
     }
 
-    public void setResponsables(List<Integer> responsables) {
-        this.responsables = responsables;
+    public void setResponsables(Integer responsable) {
+        this.responsable = responsable;
     }
 
-    public List<SimpleProvisionStatus> getProvisionStatus() {
+    public SimpleProvisionStatus getProvisionStatus() {
         return provisionStatus;
     }
 
-    public void setProvisionStatus(List<SimpleProvisionStatus> provisionStatus) {
+    public void setProvisionStatus(SimpleProvisionStatus provisionStatus) {
         this.provisionStatus = provisionStatus;
     }
 

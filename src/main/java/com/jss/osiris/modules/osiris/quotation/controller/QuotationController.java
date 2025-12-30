@@ -3286,8 +3286,7 @@ public class QuotationController {
     validationHelper.validateReferential(provisionSearch.getFormalisteEmployee(), false, "FormalisteEmployee");
 
     if (provisionSearch.getProvisionStatus() != null)
-      for (SimpleProvisionStatus status : provisionSearch.getProvisionStatus())
-        validationHelper.validateReferential(status, false, "status");
+      validationHelper.validateReferential(provisionSearch.getProvisionStatus(), false, "status");
 
     List<ProvisionDto> test = quotationFacade.searchProvisions(provisionSearch);
 

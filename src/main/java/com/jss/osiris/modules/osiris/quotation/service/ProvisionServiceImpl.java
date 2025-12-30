@@ -166,18 +166,16 @@ public class ProvisionServiceImpl implements ProvisionService {
                 ? provisionSearch.getFormalisteEmployee().getId()
                 : 0;
 
-        List<Integer> responsablesIds = (provisionSearch.getResponsables() != null
-                && provisionSearch.getResponsables().size() > 0)
-                        ? provisionSearch.getResponsables()
-                        : Arrays.asList(0);
+        Integer responsableId = provisionSearch.getResponsable() != null
+                ? provisionSearch.getResponsable()
+                : 0;
 
-        List<Integer> provisionStatus = provisionSearch.getProvisionStatus() != null
-                ? provisionSearch.getProvisionStatus().stream()
-                        .map(SimpleProvisionStatus::getId).toList()
-                : Arrays.asList(0);
+        Integer provisionStatus = provisionSearch.getProvisionStatus() != null
+                ? provisionSearch.getProvisionStatus().getId()
+                : 0;
 
         return provisionRepository.searchForProvision(Arrays.asList(formalisteId), Arrays.asList(commercialId),
-                responsablesIds, provisionStatus);
+                Arrays.asList(responsableId), Arrays.asList(provisionStatus));
     }
 
     @Transactional(rollbackFor = Exception.class)
