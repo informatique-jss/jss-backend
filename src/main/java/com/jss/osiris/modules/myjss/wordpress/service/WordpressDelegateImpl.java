@@ -312,10 +312,9 @@ public class WordpressDelegateImpl implements WordpressDelegate {
         List<Integer> postFetchedId = new ArrayList<Integer>();
         if (posts != null)
             for (Post post : posts) {
-                if (post.getSlug().contains("le-compromis-cest-la-nuance-eric-dupond-moretti")) {
-                    postService.addOrUpdatePostFromWordpress(post);
-                    postFetchedId.add(post.getId());
-                }
+                postService.addOrUpdatePostFromWordpress(post);
+                postFetchedId.add(post.getId());
+
             }
 
         List<Post> postToCancel = postService.getPostExcludedId(postFetchedId);
