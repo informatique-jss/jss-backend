@@ -255,7 +255,7 @@ public class WordpressDelegateImpl implements WordpressDelegate {
         ResponseEntity<List<Post>> response = new RestTemplate()
                 .exchange(
                         wordpressEntryPoint + postRequestUrl
-                                + "?_fields=id,acf,author,categories,jss_category,premium_percentage,myjss_category,title,excerpt,date,modified,serie,departement,featured_media,slug,sticky,applePodcastLinkUrl,spotifyLinkUrl,deezerLinkUrl,amazonMusicLinkUrl,tags,content&per_page=10&page="
+                                + "?_fields=id,acf,author,categories,jss_category,premium_percentage,is_stay_on_top,myjss_category,title,excerpt,date,modified,serie,departement,featured_media,slug,sticky,applePodcastLinkUrl,spotifyLinkUrl,deezerLinkUrl,amazonMusicLinkUrl,tags,content&per_page=10&page="
                                 + page,
                         HttpMethod.GET,
                         null,
@@ -312,8 +312,10 @@ public class WordpressDelegateImpl implements WordpressDelegate {
         List<Integer> postFetchedId = new ArrayList<Integer>();
         if (posts != null)
             for (Post post : posts) {
-                postService.addOrUpdatePostFromWordpress(post);
-                postFetchedId.add(post.getId());
+                if (post.getSlug().contains("le-compromis-cest-la-nuance-eric-dupond-moretti")) {
+                    postService.addOrUpdatePostFromWordpress(post);
+                    postFetchedId.add(post.getId());
+                }
             }
 
         List<Post> postToCancel = postService.getPostExcludedId(postFetchedId);

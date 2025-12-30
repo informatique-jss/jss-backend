@@ -101,6 +101,9 @@ public class Post implements IId, Serializable {
     private Boolean isSticky;
 
     @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+    private Boolean isStayOnTop;
+
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private String applePodcastLinkUrl;
 
     @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
@@ -632,5 +635,13 @@ public class Post implements IId, Serializable {
 
     public void setCharacterNumber(Integer characterNumber) {
         this.characterNumber = characterNumber;
+    }
+
+    public Boolean getIsStayOnTop() {
+        return isStayOnTop;
+    }
+
+    public void setIsStayOnTop(Boolean isStayOnTop) {
+        this.isStayOnTop = isStayOnTop;
     }
 }
