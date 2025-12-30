@@ -6,7 +6,7 @@ import { CityService } from '../../../../profile/services/city.service';
 import { CountryService } from '../../../../profile/services/country.service';
 import { EmployeeService } from '../../../../profile/services/employee.service';
 
-export const AUTOCOMPLETE_TYPES = ['city', 'zipCode', 'siret', 'employee', 'country'] as string[];
+export const AUTOCOMPLETE_TYPES = ['city', 'zipCode', 'siret', 'employee', 'country'] as const;
 export type AutocompleteType = typeof AUTOCOMPLETE_TYPES[number] | undefined;
 
 @Component({
