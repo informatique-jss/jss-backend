@@ -999,6 +999,7 @@ public class PostServiceImpl implements PostService {
         if (post.getAcf() != null) {
             post.setIsPremium(post.getAcf().isPremium());
             post.setIsSticky(post.getAcf().isSticky());
+            post.setIsStayOnTop(post.getAcf().getIs_stay_on_top());
             post.setPremiumPercentage(post.getAcf().getPremium_percentage());
             post.setApplePodcastLinkUrl(post.getAcf().getApplePodcastLinkUrl());
             post.setSpotifyLinkUrl(post.getAcf().getSpotifyLinkUrl());
