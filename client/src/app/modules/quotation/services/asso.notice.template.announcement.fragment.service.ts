@@ -20,4 +20,8 @@ export class AssoNoticeTemplateAnnouncementFragmentService extends AppRestServic
   saveAssoAnnouncementNoticeTemplateFragment(assosAnnouncementNoticeTemplateFragments: AssoAnnouncementNoticeTemplateAnnouncementFragment[]) {
     return this.postList(new HttpParams(), "save/asso-notice-template-fragments", assosAnnouncementNoticeTemplateFragments);
   }
+
+  deleteAssoAnnouncementNoticeTemplateFragment(assosAnnouncementNoticeTemplateFragmentId: number) {
+    return this.get(new HttpParams().set("assosAnnouncementNoticeTemplateFragmentId", assosAnnouncementNoticeTemplateFragmentId), "delete/asso-notice-template-fragment",);
+  }
 }
