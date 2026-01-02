@@ -59,8 +59,7 @@
                 [propertyName]="'isMandatory'+index" [isDisabled]="!editMode"></generic-toggle>
             </td>
             <td>
-              <button *ngIf="editMode" (click)="deleteFragment(asso.announcementNoticeTemplateFragment)"
-                mat-raised-button color="accent">
+              <button *ngIf="editMode" (click)="deleteFragment(asso)" mat-raised-button color="accent">
                 <mat-icon>delete</mat-icon>
               </button>
             </td>

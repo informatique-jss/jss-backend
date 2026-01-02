@@ -6,10 +6,12 @@ import com.jss.osiris.modules.osiris.quotation.model.AssoAnnouncementNoticeTempl
 
 public interface AssoAnnouncementNoticeTemplateFragmentService {
 
-    public List<AssoAnnouncementNoticeTemplateAnnouncementFragment> getAssoAnnouncementNoticeTemplateFragmentByNoticeTemplate(
-            Integer idNoticeTemplateAnnouncement);
+        public List<AssoAnnouncementNoticeTemplateAnnouncementFragment> getAssoAnnouncementNoticeTemplateFragmentByNoticeTemplate(
+                        Integer idNoticeTemplateAnnouncement);
 
-    public List<AssoAnnouncementNoticeTemplateAnnouncementFragment> addOrUpdateAssosAnnouncementNoticeTemplateFragments(
-            List<AssoAnnouncementNoticeTemplateAnnouncementFragment> assosAnnouncementNoticeTemplateAnnouncementFragments);
+        public List<AssoAnnouncementNoticeTemplateAnnouncementFragment> addOrUpdateAssosAnnouncementNoticeTemplateFragments(
+                        List<AssoAnnouncementNoticeTemplateAnnouncementFragment> assosAnnouncementNoticeTemplateAnnouncementFragments);
 
+        public void deleteAssosAnnouncementNoticeTemplateFragments(
+                        Integer assosAnnouncementNoticeTemplateFragmentId);
 }

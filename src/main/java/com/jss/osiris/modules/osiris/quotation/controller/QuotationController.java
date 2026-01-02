@@ -1425,6 +1425,17 @@ public class QuotationController {
   }
 
   @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+  @GetMapping(inputEntryPoint + "/delete/asso-notice-template-fragment")
+  public ResponseEntity<Boolean> deleteAssoAnnouncementNoticeTemplateFragment(
+      @RequestParam Integer assosAnnouncementNoticeTemplateFragmentId) {
+
+    assoAnnouncementNoticeTemplateFragmentService
+        .deleteAssosAnnouncementNoticeTemplateFragments(assosAnnouncementNoticeTemplateFragmentId);
+
+    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
+  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
   @PostMapping(inputEntryPoint + "/announcement-notice-template")
   public ResponseEntity<AnnouncementNoticeTemplate> addOrUpdateAnnouncementNoticeTemplate(
       @RequestBody AnnouncementNoticeTemplate announcementNoticeTemplates)
