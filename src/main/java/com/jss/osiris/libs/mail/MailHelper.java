@@ -503,7 +503,8 @@ public class MailHelper {
                                 }
 
             ctx.setVariable("customerName", getCustomerName(quotation, mail.getTiers(), mail.getResponsable()));
-            if (mail.getMailComputeResult() != null && mail.getMailComputeResult().getIsSendToAffaire()
+            if (mail.getMailComputeResult() != null && mail.getMailComputeResult().getIsSendToAffaire() != null
+                    && mail.getMailComputeResult().getIsSendToAffaire()
                     && (mail.getMailTemplate().equals(CustomerMail.TEMPLATE_CUSTOMER_ORDER_FINALIZATION)
                             || mail.getMailTemplate().equals(CustomerMail.TEMPLATE_INVOICE_REMINDER))
                     && quotation.getAssoAffaireOrders() != null && quotation.getAssoAffaireOrders().size() > 0) {
