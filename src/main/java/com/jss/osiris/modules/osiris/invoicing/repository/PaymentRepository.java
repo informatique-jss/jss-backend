@@ -109,6 +109,39 @@ public interface PaymentRepository extends QueryCacheCrudRepository<Payment, Int
                         + "(:label IS NULL OR UPPER(p.label) LIKE CONCAT('%', UPPER(CAST(:label AS string)), '%')) AND "
                         + "(:minAmount IS NULL OR p.paymentAmount >= :minAmount) AND "
                         + "(:maxAmount IS NULL OR p.paymentAmount <= :maxAmount) AND "
+                        + "(" + //
+                        "   :isAssociated IS NULL" + //
+                        "   OR (" + //
+                        "        :isAssociated = true AND (" + //
+                        "            p.invoice IS NOT NULL" + //
+                        "            OR p.customerOrder IS NOT NULL" + //
+                        "            OR p.directDebitTransfert IS NOT NULL" + //
+                        "            OR p.refund IS NOT NULL" + //
+                        "            OR p.bankTransfert IS NOT NULL" + //
+                        "            OR p.isExternallyAssociated = true" + //
+                        "            OR p.isCancelled = true" + //
+                        "            OR p.competentAuthority IS NOT NULL" + //
+                        "            OR p.provider IS NOT NULL" + //
+                        "            OR p.accountingAccount IS NOT NULL" + //
+                        "            )" + //
+                        "      )" + //
+                        "   OR (" + //
+                        "        :isAssociated = false AND (" + //
+                        "            p.invoice IS NULL" + //
+                        "            AND p.customerOrder IS NULL" + //
+                        "            AND p.directDebitTransfert IS NULL" + //
+                        "            AND p.refund IS NULL" + //
+                        "            AND p.bankTransfert IS NULL" + //
+                        "            AND p.isExternallyAssociated = false" + //
+                        "            AND p.isCancelled = false" + //
+                        "            AND p.competentAuthority IS NULL" + //
+                        "            AND p.provider IS NULL" + //
+                        "            AND p.accountingAccount IS NULL" + //
+                        "            )" + //
+                        "      )" + //
+                        ") AND "
+                        + "(:isAppoint IS NULL OR COALESCE(p.isAppoint, false) = :isAppoint) AND "
+                        + "(:isCancelled IS NULL OR COALESCE(p.isCancelled, false) = :isCancelled) AND "
                         + "(:responsableId IS NULL OR "
                         + "     EXISTS (" + //
                         "              SELECT 1 FROM p.customerOrder co1" + //
@@ -132,7 +165,9 @@ public interface PaymentRepository extends QueryCacheCrudRepository<Payment, Int
                         @Param("label") String label,
                         @Param("minAmount") Float minAmount,
                         @Param("maxAmount") Float maxAmount,
+                        @Param("isAssociated") Boolean isAssociated,
+                        @Param("isAppoint") Boolean isAppoint,
+                        @Param("isCancelled") Boolean isCancelled,
                         @Param("responsableId") Integer responsableId,
                         @Param("tiersId") Integer tiersId);
-
 }

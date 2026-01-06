@@ -6,7 +6,7 @@ import { NgIcon } from '@ng-icons/core';
 import { Row } from '@tanstack/angular-table';
 import { Observable, Subject } from 'rxjs';
 import { SimplebarAngularModule } from 'simplebar-angular';
-import { formatDateFrance } from '../../../../../../../client/src/app/libs/FormatHelper';
+import { sortableDateFormat } from '../../../../libs/DateHelper';
 import { GenericListComponent } from '../../../../libs/generic-list/generic-list.component';
 import { GenericForm } from '../../../../libs/generic-list/GenericForm';
 import { GenericSearchForm } from '../../../../libs/generic-list/GenericSearchForm';
@@ -15,7 +15,6 @@ import { GenericTableAction } from '../../../../libs/generic-list/GenericTableAc
 import { GenericTableColumn } from '../../../../libs/generic-list/GenericTableColumn';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { TanstackTableComponent } from '../../../../libs/tanstack-table/tanstack-table.component';
-import { KpiCrmService } from '../../../crm/services/kpi.crm.service';
 import { PageTitleComponent } from '../../../main/components/page-title/page-title.component';
 import { AppService } from '../../../main/services/app.service';
 import { RestUserPreferenceService } from '../../../main/services/rest.user.preference.service';
@@ -51,7 +50,6 @@ export class ProvisionListComponent extends GenericListComponent<ProvisionDto, P
     private appService2: AppService,
     private restUserPreferenceService2: RestUserPreferenceService,
     private router: Router,
-    private kpiCrmService: KpiCrmService,
     private provisionService: ProvisionService,
   ) {
     super(offcanvasService2, formBuilder2, appService2, restUserPreferenceService2);
@@ -75,12 +73,10 @@ export class ProvisionListComponent extends GenericListComponent<ProvisionDto, P
     })
 
     this.eventOnClickOpenAction.subscribe((row: Row<ProvisionDto>[]) => {
-      this.provisionService.setSelectedProvisionUnique(row[0].original);
       this.router.navigate(['provision/view/' + row[0].original.id]);
     });
 
     this.eventOnClickOpenQuotation.subscribe((row: Row<ProvisionDto>) => {
-      this.provisionService.setSelectedProvisionUnique(row.original);
       this.router.navigate(['provision/view/' + row.original.id]);
     });
 
@@ -159,7 +155,7 @@ export class ProvisionListComponent extends GenericListComponent<ProvisionDto, P
       }
     })
     columns.push({
-      accessorFn: (originalRow: ProvisionDto, index: number) => { return formatDateFrance(originalRow.productionDate) }, header: 'Date de production', enableSorting: true, cell: info => info.getValue(), meta: {
+      accessorKey: 'productionDate', header: 'Date de production', enableSorting: true, cell: info => { return sortableDateFormat(info.getValue()) }, meta: {
         eventOnDoubleClick: this.eventOnClickOpenQuotation
       }
     })

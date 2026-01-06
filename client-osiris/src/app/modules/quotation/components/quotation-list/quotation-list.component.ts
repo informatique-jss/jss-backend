@@ -6,7 +6,7 @@ import { NgIcon } from '@ng-icons/core';
 import { Row } from '@tanstack/angular-table';
 import { Observable, Subject } from 'rxjs';
 import { SimplebarAngularModule } from 'simplebar-angular';
-import { formatDateFrance } from '../../../../../../../client/src/app/libs/FormatHelper';
+import { sortableDateFormat } from '../../../../libs/DateHelper';
 import { GenericListComponent } from '../../../../libs/generic-list/generic-list.component';
 import { GenericForm } from '../../../../libs/generic-list/GenericForm';
 import { GenericSearchForm } from '../../../../libs/generic-list/GenericSearchForm';
@@ -15,7 +15,6 @@ import { GenericTableAction } from '../../../../libs/generic-list/GenericTableAc
 import { GenericTableColumn } from '../../../../libs/generic-list/GenericTableColumn';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { TanstackTableComponent } from '../../../../libs/tanstack-table/tanstack-table.component';
-import { KpiCrmService } from '../../../crm/services/kpi.crm.service';
 import { PageTitleComponent } from '../../../main/components/page-title/page-title.component';
 import { AppService } from '../../../main/services/app.service';
 import { RestUserPreferenceService } from '../../../main/services/rest.user.preference.service';
@@ -51,7 +50,6 @@ export class QuotationListComponent extends GenericListComponent<QuotationDto, Q
     private appService2: AppService,
     private restUserPreferenceService2: RestUserPreferenceService,
     private router: Router,
-    private kpiCrmService: KpiCrmService,
     private quotationService: QuotationService,
   ) {
     super(offcanvasService2, formBuilder2, appService2, restUserPreferenceService2);
@@ -75,12 +73,10 @@ export class QuotationListComponent extends GenericListComponent<QuotationDto, Q
     })
 
     this.eventOnClickOpenAction.subscribe((row: Row<QuotationDto>[]) => {
-      this.quotationService.setSelectedQuotationUnique(row[0].original);
       this.router.navigate(['quotation/view/' + row[0].original.id]);
     });
 
     this.eventOnClickOpenQuotation.subscribe((row: Row<QuotationDto>) => {
-      this.quotationService.setSelectedQuotationUnique(row.original);
       this.router.navigate(['quotation/view/' + row.original.id]);
     });
 
@@ -140,7 +136,7 @@ export class QuotationListComponent extends GenericListComponent<QuotationDto, Q
       }
     })
     columns.push({
-      accessorFn: (originalRow: QuotationDto, index: number) => { return formatDateFrance(originalRow.creationDate) }, header: 'Date de création', enableSorting: true, cell: info => info.getValue(), meta: {
+      accessorKey: 'creationDate', header: 'Date de création', enableSorting: true, cell: info => { return sortableDateFormat(info.getValue()) }, meta: {
         eventOnDoubleClick: this.eventOnClickOpenQuotation
       }
     })

@@ -23,6 +23,9 @@ public class PaymentSearch {
     private boolean isHideNoOfx;
     private TiersDto tiers;
     private ResponsableDto responsable;
+    private Boolean isAssociated;
+    private Boolean isCancelled;
+    private Boolean isAppoint;
 
     private Integer idPayment;
 
@@ -110,7 +113,7 @@ public class PaymentSearch {
         return tiers;
     }
 
-    public void setTiersId(TiersDto tiers) {
+    public void setTiers(TiersDto tiers) {
         this.tiers = tiers;
     }
 
@@ -118,7 +121,31 @@ public class PaymentSearch {
         return responsable;
     }
 
-    public void setResponsableId(ResponsableDto responsable) {
+    public void setResponsable(ResponsableDto responsable) {
         this.responsable = responsable;
+    }
+
+    public Boolean getIsAssociated() {
+        return isAssociated;
+    }
+
+    public void setIsAssociated(Boolean isAssociated) {
+        this.isAssociated = isAssociated;
+    }
+
+    public Boolean getIsCancelled() {
+        return isCancelled;
+    }
+
+    public void setIsCancelled(Boolean isCancelled) {
+        this.isCancelled = isCancelled;
+    }
+
+    public Boolean getIsAppoint() {
+        return isAppoint;
+    }
+
+    public void setIsAppoint(Boolean isAppoint) {
+        this.isAppoint = isAppoint;
     }
 }

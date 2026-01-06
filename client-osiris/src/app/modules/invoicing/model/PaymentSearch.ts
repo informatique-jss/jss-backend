@@ -9,4 +9,7 @@ export interface PaymentSearch {
     endDate: Date;
     tiers: TiersDto;
     responsable: ResponsableDto;
+    isAssociated: boolean;
+    isCancelled: boolean;
+    isAppoint: boolean;
 }

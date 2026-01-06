@@ -1812,6 +1812,8 @@ public class PaymentServiceImpl implements PaymentService {
 
         return paymentRepository.searchForPayments(startDate,
                 endDate, label, paymentSearch.getMinAmount(),
-                paymentSearch.getMaxAmount(), responsableId, tiersId);
+                paymentSearch.getMaxAmount(), paymentSearch.getIsAssociated(),
+                paymentSearch.getIsAppoint(), paymentSearch.getIsCancelled(),
+                responsableId, tiersId);
     }
 }

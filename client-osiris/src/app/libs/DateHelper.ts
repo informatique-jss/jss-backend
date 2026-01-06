@@ -1,3 +1,4 @@
+import moment from "moment";
 
 export function getPreviousYear(date: Date, offsetYear: number): Date {
   date = new Date(date);
@@ -13,4 +14,10 @@ export function getPreviousYear(date: Date, offsetYear: number): Date {
 
   return previousYearDate;
 }
+
+export function sortableDateFormat(date: Date) {
+  return moment(date).local().format("DD/MM/YYYY");
+}
+
+
 

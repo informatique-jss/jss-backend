@@ -15,6 +15,7 @@ public class PaymentDto {
     private Boolean isCancelled;
     private Boolean isAppoint;
     private Integer invoiceId;
+    private Integer customerOrderId;
     private String comment;
 
     public Integer getId() {
@@ -95,6 +96,14 @@ public class PaymentDto {
 
     public void setInvoiceId(Integer invoiceId) {
         this.invoiceId = invoiceId;
+    }
+
+    public Integer getCustomerOrderId() {
+        return customerOrderId;
+    }
+
+    public void setCustomerOrderId(Integer customerOrderId) {
+        this.customerOrderId = customerOrderId;
     }
 
     public String getComment() {

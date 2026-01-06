@@ -10,5 +10,6 @@ export interface PaymentDto {
     isCancelled: boolean;
     isAppoint: boolean;
     invoiceId: number;
+    customerOrderId: number;
     comment: string;
 }

@@ -12,13 +12,25 @@ const routesCrm = [
   { path: 'tiers/view/:id/responsable/:id', loadComponent: () => import('./modules/tiers/components/responsable/responsable.component').then(m => m.ResponsableComponent) },
   { path: 'tiers/crm/kpi/selection/:kpiCode', loadComponent: () => import('./modules/crm/components/crm/crm.component').then(m => m.CrmComponent) },
   { path: 'tiers/crm/kpi', loadComponent: () => import('./modules/crm/components/crm/crm.component').then(m => m.CrmComponent) },
+];
+
+const routesQuotation = [
   { path: 'quotation', loadComponent: () => import('./modules/quotation/components/quotation-list/quotation-list.component').then(m => m.QuotationListComponent) },
   { path: 'quotation/view/:id', loadComponent: () => import('./modules/quotation/components/quotation/quotation.component').then(m => m.QuotationComponent) },
+];
+
+const routesCustomerOrder = [
   { path: 'customer-order', loadComponent: () => import('./modules/quotation/components/customer-order-list/customer-order-list.component').then(m => m.CustomerOrderListComponent) },
   { path: 'customer-order/view/:id', loadComponent: () => import('./modules/quotation/components/customer-order/customer-order.component').then(m => m.CustomerOrderComponent) },
+];
+
+const routesProvision = [
   { path: 'provision', loadComponent: () => import('./modules/quotation/components/provision-list/provision-list.component').then(m => m.ProvisionListComponent) },
   { path: 'provision/view/:id', loadComponent: () => import('./modules/quotation/components/provision/provision.component').then(m => m.ProvisionComponent) },
-  { path: 'invoicing', loadComponent: () => import('./modules/invoicing/components/invoicing-list/invoicing-list.component').then(m => m.InvoicingListComponent) },
+];
+
+const routesInvoicing = [
+  // { path: 'invoicing', loadComponent: () => import('./modules/invoicing/components/invoicing-list/invoicing-list.component').then(m => m.InvoicingListComponent) },
   { path: 'invoicing/payments', loadComponent: () => import('./modules/invoicing/components/payment-list/payment-list.component').then(m => m.PaymentListComponent) },
 ];
 
@@ -29,7 +41,7 @@ export const routes: Routes = [
     resolve: { messages: ConstantsResolver },
     children: [
       { path: '', loadComponent: () => import('./modules/crm/components/crm/crm.component').then(m => m.CrmComponent) },
-      ...routesCrm,
+      ...routesCrm, ...routesQuotation, ...routesCustomerOrder, ...routesProvision, ...routesInvoicing,
     ]
   }
 ];

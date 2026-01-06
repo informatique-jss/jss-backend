@@ -4,9 +4,9 @@ import { Router } from '@angular/router';
 import { NgbNavModule, NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { NgIcon } from '@ng-icons/core';
 import { Row } from '@tanstack/angular-table';
-import moment from 'moment';
 import { Observable, Subject } from 'rxjs';
 import { SimplebarAngularModule } from 'simplebar-angular';
+import { sortableDateFormat } from '../../../../libs/DateHelper';
 import { formatBoolean, formatCurrency } from '../../../../libs/FormatHelper';
 import { GenericListComponent } from '../../../../libs/generic-list/generic-list.component';
 import { GenericForm } from '../../../../libs/generic-list/GenericForm';
@@ -16,7 +16,6 @@ import { GenericTableAction } from '../../../../libs/generic-list/GenericTableAc
 import { GenericTableColumn } from '../../../../libs/generic-list/GenericTableColumn';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { TanstackTableComponent } from '../../../../libs/tanstack-table/tanstack-table.component';
-import { KpiCrmService } from '../../../crm/services/kpi.crm.service';
 import { PageTitleComponent } from '../../../main/components/page-title/page-title.component';
 import { AppService } from '../../../main/services/app.service';
 import { RestUserPreferenceService } from '../../../main/services/rest.user.preference.service';
@@ -51,7 +50,6 @@ export class PaymentListComponent extends GenericListComponent<PaymentDto, Payme
     private appService2: AppService,
     private restUserPreferenceService2: RestUserPreferenceService,
     private router: Router,
-    private kpiCrmService: KpiCrmService,
     private paymentService: PaymentService,
   ) {
     super(offcanvasService2, formBuilder2, appService2, restUserPreferenceService2);
@@ -72,15 +70,23 @@ export class PaymentListComponent extends GenericListComponent<PaymentDto, Payme
       eventOnClick: this.eventOnClickOpenAction,
       maxNumberOfElementsRequiredToDisplay: 1,
       minNumberOfElementsRequiredToDisplay: 1
+    }, {
+      label: 'Voir la facture',
+      eventOnClick: this.eventOnClickOpenAction,
+      maxNumberOfElementsRequiredToDisplay: 1,
+      minNumberOfElementsRequiredToDisplay: 1
+    }, {
+      label: 'Voir la commande',
+      eventOnClick: this.eventOnClickOpenAction,
+      maxNumberOfElementsRequiredToDisplay: 1,
+      minNumberOfElementsRequiredToDisplay: 1
     })
 
     this.eventOnClickOpenAction.subscribe((row: Row<PaymentDto>[]) => {
-      this.paymentService.setSelectedPaymentUnique(row[0].original);
       this.router.navigate(['payment/view/' + row[0].original.id]);
     });
 
     this.eventOnClickOpenQuotation.subscribe((row: Row<PaymentDto>) => {
-      this.paymentService.setSelectedPaymentUnique(row.original);
       this.router.navigate(['payment/view/' + row.original.id]);
     });
 
@@ -160,6 +166,30 @@ export class PaymentListComponent extends GenericListComponent<PaymentDto, Payme
             validators: [],
           } as GenericForm<PaymentSearch>
         } as GenericSearchForm<PaymentSearch>,
+        {
+          accessorKey: "isAssociated",
+          form: {
+            label: 'Est associé ?',
+            type: 'switch',
+            validators: [],
+          } as GenericForm<PaymentSearch>
+        } as GenericSearchForm<PaymentSearch>,
+        {
+          accessorKey: "isCancelled",
+          form: {
+            label: 'Est annulé ?',
+            type: 'switch',
+            validators: [],
+          } as GenericForm<PaymentSearch>
+        } as GenericSearchForm<PaymentSearch>,
+        {
+          accessorKey: "isAppoint",
+          form: {
+            label: 'Est un appoint ?',
+            type: 'switch',
+            validators: [],
+          } as GenericForm<PaymentSearch>
+        } as GenericSearchForm<PaymentSearch>,
       ]
     });
 
@@ -173,7 +203,7 @@ export class PaymentListComponent extends GenericListComponent<PaymentDto, Payme
       }
     })
     columns.push({
-      accessorKey: 'paymentDate', header: 'Date', enableSorting: true, cell: info => { return moment(info.getValue()).local().format("DD/MM/YYYY") }, meta: {
+      accessorKey: 'paymentDate', header: 'Date', enableSorting: true, cell: info => { return sortableDateFormat(info.getValue()) }, meta: {
         eventOnDoubleClick: this.eventOnClickOpenQuotation
       }
     })
@@ -203,7 +233,7 @@ export class PaymentListComponent extends GenericListComponent<PaymentDto, Payme
       }
     })
     columns.push({
-      accessorFn: (originalRow: PaymentDto, index: number) => { return formatBoolean(originalRow.isCancelled) }, header: 'Est supprimé ?', enableSorting: true, cell: info => info.getValue(), meta: {
+      accessorFn: (originalRow: PaymentDto, index: number) => { return formatBoolean(originalRow.isCancelled) }, header: 'Est annulé ?', enableSorting: true, cell: info => info.getValue(), meta: {
         eventOnDoubleClick: this.eventOnClickOpenQuotation
       }
     })
@@ -214,6 +244,11 @@ export class PaymentListComponent extends GenericListComponent<PaymentDto, Payme
     })
     columns.push({
       accessorKey: 'invoiceId', header: 'Numéro de la facture', enableSorting: true, cell: info => info.getValue(), meta: {
+        eventOnDoubleClick: this.eventOnClickOpenQuotation
+      }
+    })
+    columns.push({
+      accessorKey: 'customerOrderId', header: 'Numéro de la commande', enableSorting: true, cell: info => info.getValue(), meta: {
         eventOnDoubleClick: this.eventOnClickOpenQuotation
       }
     })

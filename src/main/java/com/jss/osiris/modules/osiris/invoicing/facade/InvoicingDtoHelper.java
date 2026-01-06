@@ -61,6 +61,7 @@ public class InvoicingDtoHelper {
         paymentDto.setIsCancelled(payment.getIsCancelled());
         paymentDto.setIsAppoint(payment.getIsAppoint());
         paymentDto.setInvoiceId(payment.getInvoice() != null ? payment.getInvoice().getId() : null);
+        paymentDto.setCustomerOrderId(payment.getCustomerOrder() != null ? payment.getCustomerOrder().getId() : null);
         paymentDto.setComment(payment.getComment());
 
         return paymentDto;
