@@ -97,4 +97,42 @@ public interface PaymentRepository extends QueryCacheCrudRepository<Payment, Int
         @Query("select p from Payment p left join p.customerOrder c left join p.invoice i where (:responsableId=0 or c.responsable.id = :responsableId or i.responsable.id = :responsableId) and ( c.responsable is not null or i.responsable is not null) and p.isCancelled=false")
         List<Payment> findByResponsable(Integer responsableId);
 
+        /*
+         * |============================================================================
+         * |______________________METHODS FOR OSIRIS V2_________________________________
+         * |============================================================================
+         */
+
+        @Query("SELECT p FROM Payment p WHERE "
+                        + "(p.paymentDate >= :startDate) AND "
+                        + "(p.paymentDate <= :endDate) AND "
+                        + "(:label IS NULL OR UPPER(p.label) LIKE CONCAT('%', UPPER(CAST(:label AS string)), '%')) AND "
+                        + "(:minAmount IS NULL OR p.paymentAmount >= :minAmount) AND "
+                        + "(:maxAmount IS NULL OR p.paymentAmount <= :maxAmount) AND "
+                        + "(:responsableId IS NULL OR "
+                        + "     EXISTS (" + //
+                        "              SELECT 1 FROM p.customerOrder co1" + //
+                        "              WHERE co1.responsable.id = :responsableId" +
+                        "      ) OR " +
+                        "     EXISTS (" + //
+                        "              SELECT 1 FROM p.invoice i" + //
+                        "              WHERE i.responsable.id = :responsableId"
+                        + "      )) AND "
+                        + "(:tiersId IS NULL OR "
+                        + "     EXISTS (" + //
+                        "              SELECT 1 FROM p.customerOrder co1" + //
+                        "              WHERE co1.responsable.tiers.id = :tiersId" +
+                        "      ) OR " +
+                        "     EXISTS (" + //
+                        "              SELECT 1 FROM p.invoice i" + //
+                        "              WHERE i.responsable.tiers.id = :tiersId"
+                        + "      ))")
+        List<Payment> searchForPayments(@Param("startDate") LocalDateTime startDate,
+                        @Param("endDate") LocalDateTime endDate,
+                        @Param("label") String label,
+                        @Param("minAmount") Float minAmount,
+                        @Param("maxAmount") Float maxAmount,
+                        @Param("responsableId") Integer responsableId,
+                        @Param("tiersId") Integer tiersId);
+
 }

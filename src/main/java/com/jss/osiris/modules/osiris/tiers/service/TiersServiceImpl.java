@@ -11,6 +11,8 @@ import java.util.Optional;
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -488,6 +490,14 @@ public class TiersServiceImpl implements TiersService {
         }
 
         return tiersFound.stream().filter(t -> !notKeepTiers.contains(t.getId())).toList();
+    }
+
+    @Override
+    public Page<Tiers> findAllTiersByDenoOrFirstLastName(String searchText, Pageable pageable) throws OsirisException {
+        Page<Tiers> tiers = tiersRepository
+                .findByDenominationContainingIgnoreCaseOrFirstnameContainingIgnoreCaseOrLastnameContainingIgnoreCase(
+                        searchText, searchText, searchText, pageable);
+        return tiers;
     }
 
 }

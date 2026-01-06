@@ -1,12 +1,15 @@
 package com.jss.osiris.modules.osiris.invoicing.model;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.jss.osiris.modules.osiris.tiers.model.dto.ResponsableDto;
+import com.jss.osiris.modules.osiris.tiers.model.dto.TiersDto;
 
 public class PaymentSearch {
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
+
+    private LocalDate startDate;
+    private LocalDate endDate;
     private Float minAmount;
     private Float maxAmount;
     private String label;
@@ -18,22 +21,24 @@ public class PaymentSearch {
     private boolean isHideAppoint;
     @JsonProperty("isHideNoOfx")
     private boolean isHideNoOfx;
+    private TiersDto tiers;
+    private ResponsableDto responsable;
 
     private Integer idPayment;
 
-    public LocalDateTime getStartDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(LocalDateTime startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
-    public LocalDateTime getEndDate() {
+    public LocalDate getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(LocalDateTime endDate) {
+    public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
 
@@ -101,4 +106,19 @@ public class PaymentSearch {
         this.isHideNoOfx = isHideNoOfx;
     }
 
+    public TiersDto getTiers() {
+        return tiers;
+    }
+
+    public void setTiersId(TiersDto tiers) {
+        this.tiers = tiers;
+    }
+
+    public ResponsableDto getResponsable() {
+        return responsable;
+    }
+
+    public void setResponsableId(ResponsableDto responsable) {
+        this.responsable = responsable;
+    }
 }

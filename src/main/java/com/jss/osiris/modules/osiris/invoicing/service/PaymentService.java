@@ -142,4 +142,10 @@ public interface PaymentService {
 
         List<Payment> getPaymentsForResponsable(Responsable responsable);
 
+        /*
+         * |============================================================================
+         * |______________________METHODS FOR OSIRIS V2_________________________________
+         * |============================================================================
+         */
+        public List<Payment> searchForPayments(PaymentSearch paymentSearch);
 }

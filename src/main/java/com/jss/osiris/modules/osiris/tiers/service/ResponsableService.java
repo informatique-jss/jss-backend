@@ -2,6 +2,9 @@ package com.jss.osiris.modules.osiris.tiers.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.DocumentType;
@@ -14,8 +17,6 @@ import com.jss.osiris.modules.osiris.tiers.model.TiersSearch;
 
 public interface ResponsableService {
     public Responsable addOrUpdateResponsable(Responsable responsable);
-
-    public List<Responsable> getResponsables(String searchValue);
 
     public Responsable getResponsable(Integer id);
 
@@ -38,6 +39,8 @@ public interface ResponsableService {
      * |______________________METHODS FOR OSIRIS V2_________________________________
      * |============================================================================
      */
+
+    public Page<Responsable> getResponsables(String searchValue, Pageable pageable);
 
     public List<Responsable> getResponsablesByTiers(Tiers tiers);
 

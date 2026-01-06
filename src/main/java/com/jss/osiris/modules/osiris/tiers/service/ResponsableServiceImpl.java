@@ -11,6 +11,8 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -88,12 +90,12 @@ public class ResponsableServiceImpl implements ResponsableService {
     }
 
     @Override
-    public List<Responsable> getResponsables(String searchedValue) {
+    public Page<Responsable> getResponsables(String searchedValue, Pageable pageable) {
         if (searchedValue == null || searchedValue.trim().length() <= 2)
             return null;
 
         return responsableRepository.findByLastnameContainingIgnoreCaseOrFirstnameContainingIgnoreCase(searchedValue,
-                searchedValue);
+                searchedValue, pageable);
     }
 
     @Override

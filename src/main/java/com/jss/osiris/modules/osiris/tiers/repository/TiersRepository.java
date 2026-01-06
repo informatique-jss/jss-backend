@@ -3,6 +3,8 @@ package com.jss.osiris.modules.osiris.tiers.repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
@@ -176,5 +178,8 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         @Param("mail") String mail,
                         @Param("label") String label,
                         @Param("isNewTiers") Boolean isNewTiers);
+
+        Page<Tiers> findByDenominationContainingIgnoreCaseOrFirstnameContainingIgnoreCaseOrLastnameContainingIgnoreCase(
+                        String denomination, String firstname, String lastname, Pageable pageable);
 
 }

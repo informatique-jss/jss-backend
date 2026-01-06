@@ -67,7 +67,12 @@
                 [(model)]="$any(searchModel[form.accessorKey])[form.accessorIndex!]" [label]="form.form.label"
                 [type]="form.form.type" [inputType]="form.form.inputType" [selectType]="form.form.selectType"
                 [validators]="form.form.validators" [errorMessages]="form.form.errorMessages"></generic-form>
-              }@else{
+              } @else if (form.form.autocompleteType) {
+              <generic-autocomplete [formGroup]="searchForm" [(model)]="searchModel[form.accessorKey]"
+                [label]="form.form.label" [validators]="form.form.validators" [errorMessages]="form.form.errorMessages"
+                [autocompleteType]="form.form.autocompleteType">
+              </generic-autocomplete>
+              } @else{
               <generic-form [formGroup]="searchForm" [(model)]="searchModel[form.accessorKey]" [label]="form.form.label"
                 [type]="form.form.type" [inputType]="form.form.inputType" [selectType]="form.form.selectType"
                 [validators]="form.form.validators" [errorMessages]="form.form.errorMessages"></generic-form>

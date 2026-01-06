@@ -8,6 +8,7 @@ import { SimplebarAngularModule } from 'simplebar-angular';
 import { PageTitleComponent } from '../../modules/main/components/page-title/page-title.component';
 import { AppService } from '../../modules/main/services/app.service';
 import { RestUserPreferenceService } from '../../modules/main/services/rest.user.preference.service';
+import { AutocompleteComponent } from '../../modules/miscellaneous/forms/components/autocomplete/autocomplete.component';
 import { GenericFormComponent } from '../../modules/miscellaneous/forms/components/generic-form/generic-form.component';
 import { SHARED_IMPORTS } from '../SharedImports';
 import { IId } from '../tanstack-table/Iid';
@@ -23,7 +24,15 @@ import { GenericTableColumn } from './GenericTableColumn';
 @Component({
   standalone: true,
   templateUrl: './generic-list.component.html',
-  imports: [...SHARED_IMPORTS, TanstackTableComponent, PageTitleComponent, NgIcon, SimplebarAngularModule, NgbNavModule, GenericFormComponent]
+  imports: [...SHARED_IMPORTS,
+    TanstackTableComponent,
+    PageTitleComponent,
+    NgIcon,
+    SimplebarAngularModule,
+    NgbNavModule,
+    GenericFormComponent,
+    AutocompleteComponent
+  ]
 })
 export abstract class GenericListComponent<T extends IId, U extends Record<string, any>> implements OnInit {
 

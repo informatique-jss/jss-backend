@@ -46,6 +46,6 @@ export class PaymentService extends AppRestService<PaymentDto> {
   }
 
   searchPayment(paymentSearch: PaymentSearch) {
-    return this.postList(new HttpParams(), "payment/search/v2", paymentSearch);
+    return this.postList(new HttpParams(), "payments/search/v2", paymentSearch);
   }
 }

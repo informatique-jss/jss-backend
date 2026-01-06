@@ -5,7 +5,7 @@ export interface PaymentDto {
     paymentDate: Date;
     paymentAmount: number;
     paymentType: string;
-    label: string[];
+    label: string;
     isAssociated: boolean;
     isCancelled: boolean;
     isAppoint: boolean;

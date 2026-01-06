@@ -78,6 +78,10 @@ export class TiersService extends AppRestService<TiersDto> {
     return this.postList(new HttpParams(), "tiers/search", tiersSearch);
   }
 
+  getTiersFilteredByFirstnameOrLastnameOrDenomination(searchText: string, page: number, pageSize: number) {
+    return this.getPagedList(new HttpParams().set("searchText", searchText).set("page", page).set("pageSize", pageSize), "tiers/search/autocomplete");
+  }
+
   deleteTiers(tiers: TiersDto) {
     return this.get(new HttpParams().set("idTiers", tiers.id), "tiers/delete", "Tiers supprimé avec succès");
   }

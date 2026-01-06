@@ -3,6 +3,8 @@ package com.jss.osiris.modules.osiris.tiers.facade;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,6 +43,15 @@ public class TiersFacade {
     }
 
     @Transactional(rollbackFor = Exception.class)
+    public Page<TiersDto> searchTiersByDenoOrFirstLastName(String searchText, Pageable pageable)
+            throws OsirisException {
+        tiersService.findAllTiersByDenoOrFirstLastName(searchText, pageable);
+
+        return tiersDtoHelper
+                .mapTiers(tiersService.findAllTiersByDenoOrFirstLastName(searchText, pageable));
+    }
+
+    @Transactional(rollbackFor = Exception.class)
     public TiersDto getTiersDtoByTiersId(Integer idTiers) throws OsirisException {
         return tiersDtoHelper.mapTiers(tiersService.getTiers(idTiers));
     }
@@ -67,4 +78,7 @@ public class TiersFacade {
         return null;
     }
 
+    public Page<ResponsableDto> searchResponsablesByFirstOrLastName(String searchText, Pageable pageable) {
+        return tiersDtoHelper.mapResponsables(responsableService.getResponsables(searchText, pageable));
+    }
 }

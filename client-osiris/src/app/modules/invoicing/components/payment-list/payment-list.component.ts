@@ -1,27 +1,44 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
-import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+import { NgbNavModule, NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+import { NgIcon } from '@ng-icons/core';
 import { Row } from '@tanstack/angular-table';
+import moment from 'moment';
 import { Observable, Subject } from 'rxjs';
-import { formatDateFrance } from '../../../../libs/FormatHelper';
+import { SimplebarAngularModule } from 'simplebar-angular';
+import { formatBoolean, formatCurrency } from '../../../../libs/FormatHelper';
 import { GenericListComponent } from '../../../../libs/generic-list/generic-list.component';
 import { GenericForm } from '../../../../libs/generic-list/GenericForm';
 import { GenericSearchForm } from '../../../../libs/generic-list/GenericSearchForm';
 import { GenericSearchTab } from '../../../../libs/generic-list/GenericSearchTab';
 import { GenericTableAction } from '../../../../libs/generic-list/GenericTableAction';
 import { GenericTableColumn } from '../../../../libs/generic-list/GenericTableColumn';
+import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { TanstackTableComponent } from '../../../../libs/tanstack-table/tanstack-table.component';
 import { KpiCrmService } from '../../../crm/services/kpi.crm.service';
+import { PageTitleComponent } from '../../../main/components/page-title/page-title.component';
 import { AppService } from '../../../main/services/app.service';
 import { RestUserPreferenceService } from '../../../main/services/rest.user.preference.service';
+import { AutocompleteComponent } from '../../../miscellaneous/forms/components/autocomplete/autocomplete.component';
+import { GenericFormComponent } from '../../../miscellaneous/forms/components/generic-form/generic-form.component';
 import { PaymentDto } from '../../model/PaymentDto';
 import { PaymentSearch } from '../../model/PaymentSearch';
 import { PaymentService } from '../../services/payment.service';
 
 @Component({
   selector: 'payment-list',
+  standalone: true,
   templateUrl: './../../../../libs/generic-list/generic-list.component.html',
   styleUrls: ['./../../../../libs/generic-list/generic-list.component.css'],
+  imports: [...SHARED_IMPORTS,
+    TanstackTableComponent,
+    PageTitleComponent,
+    NgIcon,
+    SimplebarAngularModule,
+    NgbNavModule,
+    GenericFormComponent,
+    AutocompleteComponent]
 })
 export class PaymentListComponent extends GenericListComponent<PaymentDto, PaymentSearch> implements OnInit {
   eventOnClickOpenAction = new Subject<Row<PaymentDto>[]>();
@@ -117,7 +134,7 @@ export class PaymentListComponent extends GenericListComponent<PaymentDto, Payme
           } as GenericForm<PaymentSearch>
         } as GenericSearchForm<PaymentSearch>,
         {
-          accessorKey: "labelContent",
+          accessorKey: "label",
           form: {
             label: 'Contenu du libellé',
             type: 'input',
@@ -125,16 +142,24 @@ export class PaymentListComponent extends GenericListComponent<PaymentDto, Payme
             validators: [],
           } as GenericForm<PaymentSearch>
         } as GenericSearchForm<PaymentSearch>,
-        // TODO : add autocomplete 
-        // {
-        //   accessorKey: "tiersId",
-        //   form: {
-        //     label: 'Tiers',
-        //     type: 'input',
-        //     autocompleteType: 'text',
-        //     validators: [],
-        //   } as GenericForm<PaymentSearch>
-        // } as GenericSearchForm<PaymentSearch>,
+        {
+          accessorKey: "tiers",
+          form: {
+            label: 'Tiers',
+            type: 'autocomplete',
+            autocompleteType: 'tiers',
+            validators: [],
+          } as GenericForm<PaymentSearch>
+        } as GenericSearchForm<PaymentSearch>,
+        {
+          accessorKey: "responsable",
+          form: {
+            label: 'Responsable',
+            type: 'autocomplete',
+            autocompleteType: 'responsables',
+            validators: [],
+          } as GenericForm<PaymentSearch>
+        } as GenericSearchForm<PaymentSearch>,
       ]
     });
 
@@ -148,55 +173,55 @@ export class PaymentListComponent extends GenericListComponent<PaymentDto, Payme
       }
     })
     columns.push({
-      accessorFn: (originalRow: PaymentDto, index: number) => { return formatDateFrance(originalRow.paymentDate) }, header: 'Date de paiment', enableSorting: true, cell: info => info.getValue(), meta: {
+      accessorKey: 'paymentDate', header: 'Date', enableSorting: true, cell: info => { return moment(info.getValue()).local().format("DD/MM/YYYY") }, meta: {
         eventOnDoubleClick: this.eventOnClickOpenQuotation
       }
     })
-    // columns.push({
-    //   accessorKey: 'origin', header: 'Origine', enableSorting: true, cell: info => info.getValue(), meta: {
-    //     eventOnDoubleClick: this.eventOnClickOpenQuotation
-    //   }
-    // })
-    // columns.push({
-    //   accessorKey: 'affaires', header: 'Affaire(s)', enableSorting: true, cell: info => info.getValue(), meta: {
-    //     eventOnDoubleClick: this.eventOnClickOpenQuotation
-    //   }
-    // })
-    // columns.push({
-    //   accessorKey: 'services', header: 'Service(s)', enableSorting: true, cell: info => info.getValue(), meta: {
-    //     eventOnDoubleClick: this.eventOnClickOpenQuotation
-    //   }
-    // })
-    // columns.push({
-    //   accessorKey: 'status', header: 'Status', enableSorting: true, cell: info => info.getValue(), meta: {
-    //     eventOnDoubleClick: this.eventOnClickOpenQuotation
-    //   }
-    // })
-    // columns.push({
-    //   accessorKey: 'description', header: 'Description', enableSorting: true, cell: info => info.getValue(), meta: {
-    //     eventOnDoubleClick: this.eventOnClickOpenQuotation
-    //   }
-    // })
-    // columns.push({
-    //   accessorKey: 'tiers', header: 'Tiers', enableSorting: true, cell: info => info.getValue(), meta: {
-    //     eventOnDoubleClick: this.eventOnClickOpenQuotation
-    //   }
-    // })
-    // columns.push({
-    //   accessorKey: 'responsablesIds', header: 'Donneur d\'ordre', enableSorting: true, cell: info => info.getValue(), meta: {
-    //     eventOnDoubleClick: this.eventOnClickOpenQuotation
-    //   }
-    // })
-    // columns.push({
-    //   accessorKey: 'totalPrice', header: 'Prix', enableSorting: true, cell: info => info.getValue(), meta: {
-    //     eventOnDoubleClick: this.eventOnClickOpenQuotation
-    //   }
-    // })
-    // columns.push({
-    //   accessorKey: 'salesEmployee', header: 'Commercial', enableSorting: true, cell: info => info.getValue(), meta: {
-    //     eventOnDoubleClick: this.eventOnClickOpenQuotation
-    //   }
-    // })
+    columns.push({
+      accessorKey: 'originPayment', header: 'Paiment d\'origine', enableSorting: true, cell: info => info.getValue(), meta: {
+        eventOnDoubleClick: this.eventOnClickOpenQuotation
+      }
+    })
+    columns.push({
+      accessorFn: (originalRow: PaymentDto, index: number) => { return formatCurrency(originalRow.paymentAmount) }, header: 'Montant du paiement', enableSorting: true, cell: info => info.getValue(), meta: {
+        eventOnDoubleClick: this.eventOnClickOpenQuotation
+      }
+    })
+    columns.push({
+      accessorKey: 'paymentType', header: 'Type de paiement', enableSorting: true, cell: info => info.getValue(), meta: {
+        eventOnDoubleClick: this.eventOnClickOpenQuotation
+      }
+    })
+    columns.push({
+      accessorKey: 'label', header: 'Libellé', enableSorting: true, cell: info => info.getValue(), meta: {
+        eventOnDoubleClick: this.eventOnClickOpenQuotation
+      }
+    })
+    columns.push({
+      accessorFn: (originalRow: PaymentDto, index: number) => { return formatBoolean(originalRow.isAssociated) }, header: 'Est associé ?', enableSorting: true, cell: info => info.getValue(), meta: {
+        eventOnDoubleClick: this.eventOnClickOpenQuotation
+      }
+    })
+    columns.push({
+      accessorFn: (originalRow: PaymentDto, index: number) => { return formatBoolean(originalRow.isCancelled) }, header: 'Est supprimé ?', enableSorting: true, cell: info => info.getValue(), meta: {
+        eventOnDoubleClick: this.eventOnClickOpenQuotation
+      }
+    })
+    columns.push({
+      accessorFn: (originalRow: PaymentDto, index: number) => { return formatBoolean(originalRow.isAppoint) }, header: 'Est appoint ?', enableSorting: true, cell: info => info.getValue(), meta: {
+        eventOnDoubleClick: this.eventOnClickOpenQuotation
+      }
+    })
+    columns.push({
+      accessorKey: 'invoiceId', header: 'Numéro de la facture', enableSorting: true, cell: info => info.getValue(), meta: {
+        eventOnDoubleClick: this.eventOnClickOpenQuotation
+      }
+    })
+    columns.push({
+      accessorKey: 'comment', header: 'Commentaires', enableSorting: true, cell: info => info.getValue(), meta: {
+        eventOnDoubleClick: this.eventOnClickOpenQuotation
+      }
+    })
     return columns;
   }
 

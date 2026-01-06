@@ -19,6 +19,7 @@ import { KpiCrmService } from '../../../crm/services/kpi.crm.service';
 import { PageTitleComponent } from '../../../main/components/page-title/page-title.component';
 import { AppService } from '../../../main/services/app.service';
 import { RestUserPreferenceService } from '../../../main/services/rest.user.preference.service';
+import { AutocompleteComponent } from '../../../miscellaneous/forms/components/autocomplete/autocomplete.component';
 import { GenericFormComponent } from '../../../miscellaneous/forms/components/generic-form/generic-form.component';
 import { ProvisionDto } from '../../model/ProvisionDto';
 import { ProvisionSearch } from '../../model/ProvisionSearch';
@@ -28,7 +29,14 @@ import { ProvisionService } from '../../services/provision.service';
   selector: 'provision-list',
   templateUrl: './../../../../libs/generic-list/generic-list.component.html',
   styleUrls: ['./../../../../libs/generic-list/generic-list.component.css'],
-  imports: [...SHARED_IMPORTS, TanstackTableComponent, PageTitleComponent, NgIcon, SimplebarAngularModule, NgbNavModule, GenericFormComponent],
+  imports: [...SHARED_IMPORTS,
+    TanstackTableComponent,
+    PageTitleComponent,
+    NgIcon,
+    SimplebarAngularModule,
+    NgbNavModule,
+    GenericFormComponent,
+    AutocompleteComponent],
   standalone: true
 })
 export class ProvisionListComponent extends GenericListComponent<ProvisionDto, ProvisionSearch> implements OnInit {

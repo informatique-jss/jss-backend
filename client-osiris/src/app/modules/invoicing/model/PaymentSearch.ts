@@ -1,10 +1,12 @@
+import { ResponsableDto } from "../../tiers/model/ResponsableDto";
+import { TiersDto } from "../../tiers/model/TiersDto";
 
 export interface PaymentSearch {
     minAmount: number;
     maxAmount: number;
-    labelContent: string;
+    label: string;
     startDate: Date;
     endDate: Date;
-    tiersId: number;
-    responsableId: number;
+    tiers: TiersDto;
+    responsable: ResponsableDto;
 }
