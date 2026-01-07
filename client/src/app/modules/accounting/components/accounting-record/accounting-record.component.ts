@@ -388,7 +388,7 @@ export class AccountingRecordComponent implements OnInit {
   }
 
   sendBillingClosureReceipt() {
-    if (this.tiersToDisplay) {
+    if (this.tiersToDisplay || this.responsableToDisplay) {
       const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
         maxWidth: "400px",
         data: {
