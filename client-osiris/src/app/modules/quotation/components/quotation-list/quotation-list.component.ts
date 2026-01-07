@@ -40,10 +40,11 @@ import { QuotationService } from '../../services/quotation.service';
 })
 export class QuotationListComponent extends GenericListComponent<QuotationDto, QuotationSearch> implements OnInit {
 
+  override pageTitle = "Liste des devis";
+  override pageRoute = "/quotation";
+
   eventOnClickOpenAction = new Subject<Row<QuotationDto>[]>();
   eventOnClickOpenQuotation = new Subject<Row<QuotationDto>>();
-
-  override pageTitle = "Liste des devis";
 
   constructor(private offcanvasService2: NgbOffcanvas,
     private formBuilder2: FormBuilder,
@@ -58,9 +59,6 @@ export class QuotationListComponent extends GenericListComponent<QuotationDto, Q
 
   override ngOnInit(): void {
     super.ngOnInit();
-    this.breadcrumbPaths = [
-      { label: this.pageTitle, route: "/quotation" },
-    ]
   }
 
   override generateActions(): GenericTableAction<QuotationDto>[] {

@@ -40,10 +40,11 @@ import { ProvisionService } from '../../services/provision.service';
 })
 export class ProvisionListComponent extends GenericListComponent<ProvisionDto, ProvisionSearch> implements OnInit {
 
+  override pageTitle = "Liste des prestations";
+  override pageRoute = "/provision";
+
   eventOnClickOpenAction = new Subject<Row<ProvisionDto>[]>();
   eventOnClickOpenQuotation = new Subject<Row<ProvisionDto>>();
-
-  override pageTitle = "Liste des prestations";
 
   constructor(private offcanvasService2: NgbOffcanvas,
     private formBuilder2: FormBuilder,
@@ -53,14 +54,10 @@ export class ProvisionListComponent extends GenericListComponent<ProvisionDto, P
     private provisionService: ProvisionService,
   ) {
     super(offcanvasService2, formBuilder2, appService2, restUserPreferenceService2);
-
   }
 
   override ngOnInit(): void {
     super.ngOnInit();
-    this.breadcrumbPaths = [
-      { label: this.pageTitle, route: "/provision" },
-    ]
   }
 
   override generateActions(): GenericTableAction<ProvisionDto>[] {

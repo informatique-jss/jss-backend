@@ -40,10 +40,11 @@ import { CustomerOrderService } from '../../services/customer-order.service';
 })
 export class CustomerOrderListComponent extends GenericListComponent<CustomerOrderDto, CustomerOrderSearch> implements OnInit {
 
+  override pageTitle = "Liste des commandes";
+  override pageRoute = "/customer-order";
+
   eventOnClickOpenAction = new Subject<Row<CustomerOrderDto>[]>();
   eventOnClickOpenQuotation = new Subject<Row<CustomerOrderDto>>();
-
-  override pageTitle = "Liste des commandes";
 
   constructor(private offcanvasService2: NgbOffcanvas,
     private formBuilder2: FormBuilder,
@@ -53,14 +54,10 @@ export class CustomerOrderListComponent extends GenericListComponent<CustomerOrd
     private customerOrderService: CustomerOrderService,
   ) {
     super(offcanvasService2, formBuilder2, appService2, restUserPreferenceService2);
-
   }
 
   override ngOnInit(): void {
     super.ngOnInit();
-    this.breadcrumbPaths = [
-      { label: this.pageTitle, route: "/customer-order" },
-    ]
   }
 
   override generateActions(): GenericTableAction<CustomerOrderDto>[] {

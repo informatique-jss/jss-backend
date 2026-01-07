@@ -40,10 +40,12 @@ import { PaymentService } from '../../services/payment.service';
     AutocompleteComponent]
 })
 export class PaymentListComponent extends GenericListComponent<PaymentDto, PaymentSearch> implements OnInit {
+
   eventOnClickOpenAction = new Subject<Row<PaymentDto>[]>();
   eventOnClickOpenQuotation = new Subject<Row<PaymentDto>>();
 
   override pageTitle = "Liste des paiements";
+  override pageRoute = "/invoicing/payments";
 
   constructor(private offcanvasService2: NgbOffcanvas,
     private formBuilder2: FormBuilder,
@@ -58,9 +60,6 @@ export class PaymentListComponent extends GenericListComponent<PaymentDto, Payme
 
   override ngOnInit(): void {
     super.ngOnInit();
-    this.breadcrumbPaths = [
-      { label: this.pageTitle, route: "/invoicing/payments" },
-    ]
   }
 
   override generateActions(): GenericTableAction<PaymentDto>[] {

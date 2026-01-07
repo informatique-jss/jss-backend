@@ -42,6 +42,9 @@ import { TiersService } from '../../services/tiers.service';
 })
 export class ResponsableListComponent extends GenericListComponent<ResponsableDto, ResponsableSearch> implements OnInit {
 
+  override pageTitle = "Liste des responsables";
+  override pageRoute = "/responsables";
+
   eventOnClickOpenAction = new Subject<Row<ResponsableDto>[]>();
   eventOnClickOpenTiersAction = new Subject<Row<ResponsableDto>[]>();
   eventOnClickOpenKpisAction = new Subject<Row<ResponsableDto>[]>();
@@ -63,11 +66,6 @@ export class ResponsableListComponent extends GenericListComponent<ResponsableDt
   }
 
   override ngOnInit(): void {
-    this.pageTitle = "Liste des responsables";
-    this.breadcrumbPaths = [
-      { label: "Liste des responsables", route: "/responsables" },
-    ]
-
     this.kpiCrmService.getKpiCrm().subscribe(reponse => {
       this.kpiCrms = reponse;
       super.ngOnInit();

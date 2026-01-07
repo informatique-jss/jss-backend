@@ -45,7 +45,9 @@ export abstract class GenericListComponent<T extends IId, U extends Record<strin
   searchForm: FormGroup = {} as FormGroup;
   searchTabs: GenericSearchTab<U>[] = [];
 
-  pageTitle: string = "Welcome !";
+  abstract pageTitle: string;
+  abstract pageRoute: string;
+
   breadcrumbPaths: { label: string; route: string; }[] = [];
 
   Validators = Validators;
@@ -65,6 +67,10 @@ export abstract class GenericListComponent<T extends IId, U extends Record<strin
 
   ngOnInit() {
     this.searchForm = this.formBuilder.group({});
+
+    this.breadcrumbPaths = [
+      { label: this.pageTitle, route: this.pageRoute },
+    ]
 
     this.setColumns();
     this.actions = this.generateActions();

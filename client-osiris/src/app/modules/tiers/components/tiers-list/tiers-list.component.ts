@@ -42,6 +42,9 @@ import { TiersService } from '../../services/tiers.service';
 })
 export class TiersListComponent extends GenericListComponent<TiersDto, TiersSearch> implements OnInit {
 
+  override pageTitle = "Liste des tiers";
+  override pageRoute = "/tiers";
+
   eventOnClickOpenAction = new Subject<Row<TiersDto>[]>();
   eventOnClickOpenKpisAction = new Subject<Row<TiersDto>[]>();
   eventOnClickOpenTiers = new Subject<Row<TiersDto>>();
@@ -58,7 +61,6 @@ export class TiersListComponent extends GenericListComponent<TiersDto, TiersSear
     private responsableService: ResponsableService
   ) {
     super(offcanvasService2, formBuilder2, appService2, restUserPreferenceService2);
-
   }
 
   override ngOnInit(): void {
@@ -66,10 +68,6 @@ export class TiersListComponent extends GenericListComponent<TiersDto, TiersSear
       this.kpiCrms = reponse.sort((a: KpiCrm, b: KpiCrm) => a.kpiCrmCategory && b.kpiCrmCategory ? a.kpiCrmCategory.label.localeCompare(b.kpiCrmCategory.label) : 0);
       super.ngOnInit();
     })
-
-    this.breadcrumbPaths = [
-      { label: "Liste des tiers", route: "/tiers" },
-    ]
   }
 
   override generateActions(): GenericTableAction<TiersDto>[] {
