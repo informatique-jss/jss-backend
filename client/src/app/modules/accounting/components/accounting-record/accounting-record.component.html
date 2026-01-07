@@ -129,8 +129,8 @@
   *ngIf="toLetteredValues && toLetteredValues.length>0" (click)="letterSelectedRecords()">
   <mat-icon>spellcheck</mat-icon>
 </button>
-<button matTooltip="Envoyer un relevé de comptes" mat-fab color="accent" class="fourth-fab-button"
-  *ngIf="tiersToDisplay" (click)="sendBillingClosureReceipt()">
+<button matTooltip="Envoyer un relevé de comptes" mat-fab color="accent" class="eight-fab-button"
+  *ngIf="tiersToDisplay || responsableToDisplay" (click)="sendBillingClosureReceipt()">
   <mat-icon>outgoing_mail</mat-icon>
 </button>
 <button *ngIf="canImportSageFile()" matTooltip="Importer un fichier Sage (PNM)" mat-fab color="accent"
