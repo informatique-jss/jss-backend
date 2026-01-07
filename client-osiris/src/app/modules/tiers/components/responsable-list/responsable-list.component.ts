@@ -161,6 +161,14 @@ export class ResponsableListComponent extends GenericListComponent<ResponsableDt
           } as GenericForm<ResponsableSearch>
         } as GenericSearchForm<ResponsableSearch>,
         {
+          accessorKey: "tiersCategory",
+          form: {
+            label: 'Categorie du tiers',
+            type: 'select',
+            selectType: 'tiersCategory'
+          } as GenericForm<ResponsableSearch>
+        } as GenericSearchForm<ResponsableSearch>,
+        {
           accessorKey: "mail",
           form: {
             label: 'Mail du responsable',

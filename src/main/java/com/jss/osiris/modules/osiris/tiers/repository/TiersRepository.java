@@ -173,11 +173,13 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                                 like concat('%', upper(:label), '%')
                         )
                         and (:isNewTiers = false or t.isNewTiers = true)
+                        and (:tiersCategory = '' or t.tiersCategory.label = :tiersCategory)
                         """)
         List<Tiers> searchForTiers(@Param("salesEmployeeId") Integer salesEmployeeId,
                         @Param("mail") String mail,
                         @Param("label") String label,
-                        @Param("isNewTiers") Boolean isNewTiers);
+                        @Param("isNewTiers") Boolean isNewTiers,
+                        @Param("tiersCategory") String tiersCategory);
 
         Page<Tiers> findByDenominationContainingIgnoreCaseOrFirstnameContainingIgnoreCaseOrLastnameContainingIgnoreCase(
                         String denomination, String firstname, String lastname, Pageable pageable);

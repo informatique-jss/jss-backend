@@ -5,9 +5,10 @@ import { Employee } from "../../../../profile/model/Employee";
 import { EmployeeService } from "../../../../profile/services/employee.service";
 import { SimpleProvisionStatus } from "../../../../quotation/model/SimpleProvisonStatus";
 import { SimpleProvisionStatusService } from "../../../../quotation/services/simple.provision.status.service";
+import { TiersCategoryService } from "../../../../tiers/services/tiers.category.service";
 
 
-export const SELECT_TYPES = ['commercial', 'formaliste', 'provisionStatus'] as const;
+export const SELECT_TYPES = ['commercial', 'formaliste', 'provisionStatus', 'tiersCategory'] as const;
 export type SelectType = typeof SELECT_TYPES[number] | undefined;
 
 @Injectable({
@@ -18,6 +19,7 @@ export class SelectFormHelper {
   constructor(
     private employeeService: EmployeeService,
     private simpleProvisionStatusService: SimpleProvisionStatusService,
+    private tiersCategoryService: TiersCategoryService,
     private constantService: ConstantService
   ) { }
 
@@ -67,6 +69,17 @@ export class SelectFormHelper {
         return of(this.selectValues[type]);
       return new Observable<SimpleProvisionStatus[]>(observer => {
         this.simpleProvisionStatusService.getSimpleProvisionStatus().subscribe(response => {
+          this.selectValues[type] = response;
+          observer.next(response);
+          observer.complete;
+        })
+      })
+    }
+    if (type == 'tiersCategory') {
+      if (this.selectValues[type])
+        return of(this.selectValues[type]);
+      return new Observable<SimpleProvisionStatus[]>(observer => {
+        this.tiersCategoryService.getTiersCategories().subscribe(response => {
           this.selectValues[type] = response;
           observer.next(response);
           observer.complete;

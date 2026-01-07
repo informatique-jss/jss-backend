@@ -177,9 +177,11 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
                         or upper( concat(r.firstname, r.lastname))
                                 like concat('%', upper(:label), '%')
                         )
+                        and (:tiersCategory = '' or r.tiers.tiersCategory.label = :tiersCategory)
                         """)
         List<Responsable> searchForResponsables(@Param("salesEmployeeId") Integer salesEmployeeId,
                         @Param("mail") String mail,
-                        @Param("label") String label);
+                        @Param("label") String label,
+                        @Param("tiersCategory") String tiersCategory);
 
 }

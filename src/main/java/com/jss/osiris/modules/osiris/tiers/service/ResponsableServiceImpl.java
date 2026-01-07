@@ -240,9 +240,14 @@ public class ResponsableServiceImpl implements ResponsableService {
         if (responsableSearch.getLabel() == null)
             responsableSearch.setLabel("");
 
+        String tiersCategoryLabel = "";
+        if (responsableSearch.getTiersCategory() != null)
+            tiersCategoryLabel = responsableSearch.getTiersCategory().getLabel();
+
         List<Responsable> responsableFound = responsableRepository.searchForResponsables(salesEmployeeId,
                 responsableSearch.getMail(),
-                responsableSearch.getLabel());
+                responsableSearch.getLabel(),
+                tiersCategoryLabel);
 
         if (responsableSearch.getKpis() == null || responsableSearch.getKpis().size() == 0)
             return responsableFound;

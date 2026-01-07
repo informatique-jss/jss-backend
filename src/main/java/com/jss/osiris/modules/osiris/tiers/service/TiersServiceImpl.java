@@ -436,12 +436,16 @@ public class TiersServiceImpl implements TiersService {
         if (tiersSearch.getLabel() == null)
             tiersSearch.setLabel("");
 
+        String tiersCategoryLabel = "";
+        if (tiersSearch.getTiersCategory() != null)
+            tiersCategoryLabel = tiersSearch.getTiersCategory().getLabel();
+
         if (tiersSearch.getIsNewTiers() == null)
             tiersSearch.setIsNewTiers(false);
 
         List<Tiers> tiersFound = tiersRepository.searchForTiers(salesEmployeeId, tiersSearch.getMail(),
                 tiersSearch.getLabel(),
-                tiersSearch.getIsNewTiers());
+                tiersSearch.getIsNewTiers(), tiersCategoryLabel);
 
         if (tiersSearch.getKpis() == null || tiersSearch.getKpis().size() == 0)
             return tiersFound;

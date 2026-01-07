@@ -149,6 +149,14 @@ export class TiersListComponent extends GenericListComponent<TiersDto, TiersSear
           } as GenericForm<TiersSearch>
         } as GenericSearchForm<TiersSearch>,
         {
+          accessorKey: "tiersCategory",
+          form: {
+            label: 'Categorie du tiers',
+            type: 'select',
+            selectType: 'tiersCategory'
+          } as GenericForm<TiersSearch>
+        } as GenericSearchForm<TiersSearch>,
+        {
           accessorKey: "mail",
           form: {
             label: 'Mail du responsable',
