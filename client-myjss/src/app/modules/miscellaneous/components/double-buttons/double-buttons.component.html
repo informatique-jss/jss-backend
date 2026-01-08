@@ -1,14 +1,14 @@
 <div class="d-flex flex-column flex-md-row">
-  <button type="button" [routerLink]="orderActionRoute" (click)="trackCtaClickOrder()"
-    class="btn me-md-3 mb-2 mb-md-0 rounded-1"
-    [ngClass]="isLightButtons ? 'btn-light': 'btn-secondary'">{{orderActionLabel}}
+  <a [routerLink]="orderActionRoute" (click)="trackCtaClickOrder()" class="btn me-md-3 mb-2 mb-md-0 rounded-1"
+    [ngClass]="isLightButtons ? 'btn-light': 'btn-secondary'" role="button">
+    {{orderActionLabel}}
     <i class="ai-arrow-right ms-2"></i>
-  </button>
-  <button type="button" [routerLink]="quotationActionRoute" (click)="trackCtaClickQuotation()"
-    class="btn mb-2 mb-md-0 rounded-1"
-    [ngClass]="isLightButtons ? 'btn-outline-light': 'btn-outline-dark'">{{quotationActionLabel}}
+  </a>
+  <a [routerLink]="quotationActionRoute" (click)="trackCtaClickQuotation()" class="btn mb-2 mb-md-0 rounded-1"
+    [ngClass]="isLightButtons ? 'btn-outline-light': 'btn-outline-dark'" role="button">
+    {{quotationActionLabel}}
     <i class="ai-arrow-right ms-2"></i>
-  </button>
+  </a>
 </div>
 <div class="mt-4" *ngIf="linkLabel && linkLabel.length>0">
   <a *ngIf="!linkRouteToJssMedia" [routerLink]="linkRoute" (click)="trackCtaClickLink()"
