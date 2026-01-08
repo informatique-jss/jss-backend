@@ -293,7 +293,8 @@ public class MyJssQuotationDelegate {
         }
 
         // Send quotation infos to Google Analytics
-        googleAnalyticsService.trackPurchase(quotation, false, gaClientId);
+        if (isValidation)
+            googleAnalyticsService.trackPurchase(fetchQuotation, false, gaClientId);
 
         return quotation;
     }
@@ -418,7 +419,8 @@ public class MyJssQuotationDelegate {
             return null;
 
         // Send quotation infos to Google Analytics
-        googleAnalyticsService.trackPurchase(quotation, false, gaClientId);
+        if (isValidation)
+            googleAnalyticsService.trackPurchase(quotation, false, gaClientId);
 
         return quotation;
     }
