@@ -16,7 +16,10 @@ export function getPreviousYear(date: Date, offsetYear: number): Date {
 }
 
 export function sortableDateFormat(date: Date) {
-  return moment(date).local().format("DD/MM/YYYY");
+  if (date)
+    return moment(date).local().format("DD/MM/YYYY");
+
+  return "";
 }
 
 

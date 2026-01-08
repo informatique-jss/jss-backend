@@ -1,6 +1,7 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { MatTabChangeEvent } from '@angular/material/tabs';
+import { OSIRIS_V2_RESPONSABLE_ROUTE, OSIRIS_V2_TIERS_ROUTE } from 'src/app/libs/Constants';
 import { copyObject } from 'src/app/libs/GenericHelper';
 import { instanceOfResponsable } from 'src/app/libs/TypeHelper';
 import { InvoiceSearch } from 'src/app/modules/invoicing/model/InvoiceSearch';
@@ -19,6 +20,7 @@ import { IndexEntity } from 'src/app/routing/search/IndexEntity';
 import { RESPONSABLE_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from 'src/app/services/habilitations.service';
+import { environment } from 'src/environments/environment';
 import { UserPreferenceService } from '../../../../services/user.preference.service';
 import { Document } from "../../../miscellaneous/model/Document";
 import { EmployeeService } from '../../../profile/services/employee.service';
@@ -44,6 +46,11 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
   @Input() editMode: boolean = false;
 
   RESPONSABLE_ENTITY_TYPE = RESPONSABLE_ENTITY_TYPE;
+
+  frontendOsirisV2Url = environment.frontendUrlV2;
+
+  OSIRIS_V2_TIERS_ROUTE = OSIRIS_V2_TIERS_ROUTE;
+  OSIRIS_V2_RESPONSABLE_ROUTE = OSIRIS_V2_RESPONSABLE_ROUTE;
 
   subscriptionPeriodType12M: SubscriptionPeriodType = this.constantService.getSubscriptionPeriodType12M();
 

@@ -289,6 +289,12 @@
     *ngIf="editMode==false &&  selectedResponsable && selectedResponsable.id && canDisplayNotifications()">
     <mat-icon>notifications</mat-icon>
   </button>
+  <a matTooltip="Voir le responsable dans Osiris V2" mat-fab color="accent" class="sixth-fab-button"
+    *ngIf="editMode==false &&  selectedResponsable && selectedResponsable.id && tiers && tiers.id"
+    [href]="frontendOsirisV2Url + OSIRIS_V2_TIERS_ROUTE + tiers.id + '/'+ OSIRIS_V2_RESPONSABLE_ROUTE + selectedResponsable.id"
+    target="_blank">
+    <mat-icon>launch</mat-icon>
+  </a>
   <button matTooltip="Imprimer une étiquette pour le responsable" mat-fab color="accent" class="seventh-fab-button"
     *ngIf="editMode==false &&  tiers.id" (click)="printLabel()">
     <mat-icon>print</mat-icon>
