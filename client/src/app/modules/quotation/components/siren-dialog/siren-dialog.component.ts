@@ -21,6 +21,11 @@ export class SiretDialogComponent implements OnInit {
   }
 
   onConfirm(): void {
+    if (this.siret && (this.siret as any).siret) {
+      this.siret = (this.siret as any).siret;
+      return;
+    }
+
     this.dialogRef.close(this.siret);
   }
 
