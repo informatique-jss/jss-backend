@@ -1862,9 +1862,10 @@ public class MyJssQuotationController {
 	public ResponseEntity<Boolean> cancelQuotation(Integer quotationId, HttpServletRequest request)
 			throws OsirisValidationException, OsirisException {
 		detectFlood(request);
-
+		Responsable currentUser = employeeService.getCurrentMyJssUser();
 		Quotation quotation = quotationService.getQuotation(quotationId);
-		if (quotation == null || !myJssQuotationValidationHelper.canSeeQuotation(quotation))
+		if (quotation == null || (currentUser != null && !myJssQuotationValidationHelper.canSeeQuotation(quotation))
+				|| currentUser == null)
 			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
 
 		quotationService.addOrUpdateQuotationStatus(quotation, QuotationStatus.ABANDONED);
@@ -1893,8 +1894,11 @@ public class MyJssQuotationController {
 			throws OsirisValidationException, OsirisException {
 		detectFlood(request);
 
+		Responsable currentUser = employeeService.getCurrentMyJssUser();
 		CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
-		if (customerOrder == null || !myJssQuotationValidationHelper.canSeeQuotation(customerOrder))
+		if (customerOrder == null
+				|| (currentUser != null && !myJssQuotationValidationHelper.canSeeQuotation(customerOrder))
+				|| currentUser == null)
 			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
 
 		// cancel only if it's payment free
