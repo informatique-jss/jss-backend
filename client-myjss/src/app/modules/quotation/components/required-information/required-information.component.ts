@@ -272,7 +272,7 @@ export class RequiredInformationComponent implements OnInit {
         }
       }
       this.setAssoAffaireOrderToNoticeTemplateDescription();
-      this.changeProvisionNoticeTemplateDescription({ nextId: 40 } as NgbNavChangeEvent);
+      this.changeProvisionNoticeTemplateDescription({ nextId: (announcementIndex || announcementIndex == 0 ? announcementIndex : 40) } as NgbNavChangeEvent);
       this.emitServiceChange();
     }
   }
@@ -837,7 +837,7 @@ export class RequiredInformationComponent implements OnInit {
     let originId = ngbEvent.activeId as number;
 
     // if id is > 10 and first char begins with 1 then its an announcement tab
-    if (this.noticeTemplateDescription)
+    if (this.noticeTemplateDescription) {
       if (destId >= 10 && destId < 20) {
         this.noticeTemplateDescription.announcementOrder = this.parseInt(destId.toString().substring(1));
         this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
@@ -845,8 +845,10 @@ export class RequiredInformationComponent implements OnInit {
         this.noticeTemplateDescription.announcementOrder = this.parseInt(originId.toString().substring(1));
         this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
       }
-    if (destId < 10) {
-      this.changeIsShowNoticeTemplate(false, true, false, undefined, undefined);
+      if (destId < 10) {
+        this.noticeTemplateDescription.announcementOrder = this.parseInt(destId.toString());
+        this.changeIsShowNoticeTemplate(false, true, false, undefined, undefined);
+      }
     }
   }
 
