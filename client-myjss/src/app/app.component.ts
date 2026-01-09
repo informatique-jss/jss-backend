@@ -4,8 +4,6 @@ import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 import { SHARED_IMPORTS } from './libs/SharedImports';
 import { ConstantService } from './modules/main/services/constant.service';
-import { GtmService } from './modules/main/services/gtm.service';
-import { PageInfo, PageViewPayload } from './modules/main/services/GtmPayload';
 import { PlatformService } from './modules/main/services/platform.service';
 import { Responsable } from './modules/profile/model/Responsable';
 import { LoginService } from './modules/profile/services/login.service';
@@ -28,7 +26,6 @@ export class AppComponent {
     private constantService: ConstantService,
     private loginService: LoginService,
     private plaformService: PlatformService,
-    private gtmService: GtmService
   ) {
   }
 
@@ -56,14 +53,6 @@ export class AppComponent {
           htmlEl.classList.remove('theme-account');
         }
       });
-
-    this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe((event: NavigationEnd) => {
-        this.gtmService.trackPageView({ page: { type: "page", name: event.urlAfterRedirects } as PageInfo } as PageViewPayload);
-      });
-
-
   }
 
   refreshCurrentUser() {

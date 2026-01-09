@@ -199,7 +199,8 @@ public class MyJssQuotationDelegate {
         }
 
         // Send order infos to Google Analytics
-        googleAnalyticsService.trackPurchase(order, false, gaClientId);
+        if (isValidation)
+            googleAnalyticsService.trackPurchase(order, false, gaClientId);
 
         return order;
     }
