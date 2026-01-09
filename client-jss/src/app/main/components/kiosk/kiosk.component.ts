@@ -92,6 +92,8 @@ export class KioskComponent implements OnInit {
 
   buyNewspaper(newspaperId: number) {
     this.trackCtaClicBuy(newspaperId);
+    const url = this.frontendMyJssUrl + '/quotation/subscription/' + this.NEWSPAPER_KIOSK_BUY + '/false/' + newspaperId;
+    window.open(url, '_blank');
   }
 
   trackCtaClickDownloadExtract(newspaperId: number) {
