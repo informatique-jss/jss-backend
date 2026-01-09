@@ -42,6 +42,8 @@ import { PaymentService } from '../../services/payment.service';
 export class PaymentListComponent extends GenericListComponent<PaymentDto, PaymentSearch> implements OnInit {
 
   eventOnClickOpenAction = new Subject<Row<PaymentDto>[]>();
+  eventOnClickAddCheckPayment = new Subject<Row<PaymentDto>[]>();
+  eventOnClickImportOfxAccountingRecord = new Subject<Row<PaymentDto>[]>();
   eventOnClickOpenQuotation = new Subject<Row<PaymentDto>[]>();
   eventOnClickOpenInvoice = new Subject<Row<PaymentDto>[]>();
   eventOnClickOpenPayment = new Subject<Row<PaymentDto>>();
@@ -67,6 +69,12 @@ export class PaymentListComponent extends GenericListComponent<PaymentDto, Payme
   override generateActions(): GenericTableAction<PaymentDto>[] {
     let actions = [] as GenericTableAction<PaymentDto>[];
     actions.push({
+      label: 'Ajouter un paiement par chèque',
+      eventOnClick: this.eventOnClickAddCheckPayment,
+    }, {
+      label: 'Importer un relevé de compte (format OFX)',
+      eventOnClick: this.eventOnClickImportOfxAccountingRecord,
+    }, {
       label: 'Voir le paiement',
       eventOnClick: this.eventOnClickOpenAction,
       maxNumberOfElementsRequiredToDisplay: 1,
@@ -79,8 +87,19 @@ export class PaymentListComponent extends GenericListComponent<PaymentDto, Payme
     }, {
       label: 'Voir la commande',
       eventOnClick: this.eventOnClickOpenQuotation,
-      minNumberOfElementsRequiredToDisplay: 1
+      minNumberOfElementsRequiredToDisplay: 1,
+      maxNumberOfElementsRequiredToDisplay: 1
     })
+
+    this.eventOnClickAddCheckPayment.subscribe((row: Row<PaymentDto>[]) => {
+      // TODO :
+      // Add check payment
+    });
+
+    this.eventOnClickImportOfxAccountingRecord.subscribe((row: Row<PaymentDto>[]) => {
+      // TODO :
+      // Add check payment
+    });
 
     this.eventOnClickOpenAction.subscribe((row: Row<PaymentDto>[]) => {
       this.router.navigate(['invoicing/view/payment/' + row[0].original.id]);
