@@ -44,7 +44,8 @@ export class ProvisionListComponent extends GenericListComponent<ProvisionDto, P
   override pageRoute = "/provision";
 
   eventOnClickOpenAction = new Subject<Row<ProvisionDto>[]>();
-  eventOnClickOpenQuotation = new Subject<Row<ProvisionDto>>();
+  eventOnClickOpenQuotation = new Subject<Row<ProvisionDto>[]>();
+  eventOnClickOpenProvision = new Subject<Row<ProvisionDto>>();
 
   constructor(private offcanvasService2: NgbOffcanvas,
     private formBuilder2: FormBuilder,
@@ -63,8 +64,15 @@ export class ProvisionListComponent extends GenericListComponent<ProvisionDto, P
   override generateActions(): GenericTableAction<ProvisionDto>[] {
     let actions = [] as GenericTableAction<ProvisionDto>[];
     actions.push({
-      label: 'Voir la provision',
+      label: 'Voir la prestation',
       eventOnClick: this.eventOnClickOpenAction,
+      maxNumberOfElementsRequiredToDisplay: 1,
+      minNumberOfElementsRequiredToDisplay: 1
+    })
+
+    actions.push({
+      label: 'Voir la commande associée',
+      eventOnClick: this.eventOnClickOpenQuotation,
       maxNumberOfElementsRequiredToDisplay: 1,
       minNumberOfElementsRequiredToDisplay: 1
     })
@@ -73,9 +81,14 @@ export class ProvisionListComponent extends GenericListComponent<ProvisionDto, P
       this.router.navigate(['provision/view/' + row[0].original.id]);
     });
 
-    this.eventOnClickOpenQuotation.subscribe((row: Row<ProvisionDto>) => {
+    this.eventOnClickOpenQuotation.subscribe((row: Row<ProvisionDto>[]) => {
+      this.router.navigate(['quotation/view/' + row[0].original.customerOrderId]);
+    });
+
+    this.eventOnClickOpenProvision.subscribe((row: Row<ProvisionDto>) => {
       this.router.navigate(['provision/view/' + row.original.id]);
     });
+
 
     return actions;
   }
@@ -153,52 +166,52 @@ export class ProvisionListComponent extends GenericListComponent<ProvisionDto, P
     })
     columns.push({
       accessorKey: 'productionDate', header: 'Date de production', enableSorting: true, cell: info => { return sortableDateFormat(info.getValue()) }, meta: {
-        eventOnDoubleClick: this.eventOnClickOpenQuotation
+        eventOnDoubleClick: this.eventOnClickOpenProvision
       }
     })
     columns.push({
       accessorKey: 'customerOrderId', header: 'N° de commande', enableSorting: true, cell: info => info.getValue(), meta: {
-        eventOnDoubleClick: this.eventOnClickOpenQuotation
+        eventOnDoubleClick: this.eventOnClickOpenProvision
       }
     })
     columns.push({
       accessorKey: 'service', header: 'Service(s)', enableSorting: true, cell: info => info.getValue(), meta: {
-        eventOnDoubleClick: this.eventOnClickOpenQuotation
+        eventOnDoubleClick: this.eventOnClickOpenProvision
       }
     })
     columns.push({
       accessorKey: 'responsable', header: 'Responsable', enableSorting: true, cell: info => info.getValue(), meta: {
-        eventOnDoubleClick: this.eventOnClickOpenQuotation
+        eventOnDoubleClick: this.eventOnClickOpenProvision
       }
     })
     columns.push({
       accessorKey: 'tiers', header: 'Tiers', enableSorting: true, cell: info => info.getValue(), meta: {
-        eventOnDoubleClick: this.eventOnClickOpenQuotation
+        eventOnDoubleClick: this.eventOnClickOpenProvision
       }
     })
     columns.push({
       accessorKey: 'affaire', header: 'Affaire', enableSorting: true, cell: info => info.getValue(), meta: {
-        eventOnDoubleClick: this.eventOnClickOpenQuotation
+        eventOnDoubleClick: this.eventOnClickOpenProvision
       }
     })
     columns.push({
       accessorKey: 'confrere', header: 'Confrère', enableSorting: true, cell: info => info.getValue(), meta: {
-        eventOnDoubleClick: this.eventOnClickOpenQuotation
+        eventOnDoubleClick: this.eventOnClickOpenProvision
       }
     })
     columns.push({
       accessorKey: 'formalisteEmployee', header: 'Formaliste', enableSorting: true, cell: info => info.getValue(), meta: {
-        eventOnDoubleClick: this.eventOnClickOpenQuotation
+        eventOnDoubleClick: this.eventOnClickOpenProvision
       }
     })
     columns.push({
       accessorKey: 'provisionLabel', header: 'Nom de la prestation', enableSorting: true, cell: info => info.getValue(), meta: {
-        eventOnDoubleClick: this.eventOnClickOpenQuotation
+        eventOnDoubleClick: this.eventOnClickOpenProvision
       }
     })
     columns.push({
       accessorKey: 'competentAuthority', header: 'Autorité comptétente', enableSorting: true, cell: info => info.getValue(), meta: {
-        eventOnDoubleClick: this.eventOnClickOpenQuotation
+        eventOnDoubleClick: this.eventOnClickOpenProvision
       }
     })
     return columns;

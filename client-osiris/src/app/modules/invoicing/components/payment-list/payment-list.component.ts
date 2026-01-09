@@ -42,7 +42,9 @@ import { PaymentService } from '../../services/payment.service';
 export class PaymentListComponent extends GenericListComponent<PaymentDto, PaymentSearch> implements OnInit {
 
   eventOnClickOpenAction = new Subject<Row<PaymentDto>[]>();
-  eventOnClickOpenQuotation = new Subject<Row<PaymentDto>>();
+  eventOnClickOpenQuotation = new Subject<Row<PaymentDto>[]>();
+  eventOnClickOpenInvoice = new Subject<Row<PaymentDto>[]>();
+  eventOnClickOpenPayment = new Subject<Row<PaymentDto>>();
 
   override pageTitle = "Liste des paiements";
   override pageRoute = "/invoicing/payments";
@@ -71,22 +73,29 @@ export class PaymentListComponent extends GenericListComponent<PaymentDto, Payme
       minNumberOfElementsRequiredToDisplay: 1
     }, {
       label: 'Voir la facture',
-      eventOnClick: this.eventOnClickOpenAction,
+      eventOnClick: this.eventOnClickOpenInvoice,
       maxNumberOfElementsRequiredToDisplay: 1,
       minNumberOfElementsRequiredToDisplay: 1
     }, {
       label: 'Voir la commande',
-      eventOnClick: this.eventOnClickOpenAction,
-      maxNumberOfElementsRequiredToDisplay: 1,
+      eventOnClick: this.eventOnClickOpenQuotation,
       minNumberOfElementsRequiredToDisplay: 1
     })
 
     this.eventOnClickOpenAction.subscribe((row: Row<PaymentDto>[]) => {
-      this.router.navigate(['payment/view/' + row[0].original.id]);
+      this.router.navigate(['invoicing/view/payment/' + row[0].original.id]);
     });
 
-    this.eventOnClickOpenQuotation.subscribe((row: Row<PaymentDto>) => {
-      this.router.navigate(['payment/view/' + row.original.id]);
+    this.eventOnClickOpenQuotation.subscribe((row: Row<PaymentDto>[]) => {
+      this.router.navigate(['invoicing/view/payment/' + row[0].original.customerOrderId]);
+    });
+
+    this.eventOnClickOpenInvoice.subscribe((row: Row<PaymentDto>[]) => {
+      this.router.navigate(['invoicing/view/' + row[0].original.customerOrderId]);
+    });
+
+    this.eventOnClickOpenPayment.subscribe((row: Row<PaymentDto>) => {
+      this.router.navigate(['invoicing/view/payment/' + row.original.id]);
     });
 
     return actions;
@@ -203,57 +212,57 @@ export class PaymentListComponent extends GenericListComponent<PaymentDto, Payme
     })
     columns.push({
       accessorKey: 'paymentDate', header: 'Date', enableSorting: true, cell: info => { return sortableDateFormat(info.getValue()) }, meta: {
-        eventOnDoubleClick: this.eventOnClickOpenQuotation
+        eventOnDoubleClick: this.eventOnClickOpenPayment
       }
     })
     columns.push({
       accessorKey: 'originPayment', header: 'Paiment d\'origine', enableSorting: true, cell: info => info.getValue(), meta: {
-        eventOnDoubleClick: this.eventOnClickOpenQuotation
+        eventOnDoubleClick: this.eventOnClickOpenPayment
       }
     })
     columns.push({
       accessorFn: (originalRow: PaymentDto, index: number) => { return formatCurrency(originalRow.paymentAmount) }, header: 'Montant du paiement', enableSorting: true, cell: info => info.getValue(), meta: {
-        eventOnDoubleClick: this.eventOnClickOpenQuotation
+        eventOnDoubleClick: this.eventOnClickOpenPayment
       }
     })
     columns.push({
       accessorKey: 'paymentType', header: 'Type de paiement', enableSorting: true, cell: info => info.getValue(), meta: {
-        eventOnDoubleClick: this.eventOnClickOpenQuotation
+        eventOnDoubleClick: this.eventOnClickOpenPayment
       }
     })
     columns.push({
       accessorKey: 'label', header: 'Libellé', enableSorting: true, cell: info => info.getValue(), meta: {
-        eventOnDoubleClick: this.eventOnClickOpenQuotation
+        eventOnDoubleClick: this.eventOnClickOpenPayment
       }
     })
     columns.push({
       accessorFn: (originalRow: PaymentDto, index: number) => { return formatBoolean(originalRow.isAssociated) }, header: 'Est associé ?', enableSorting: true, cell: info => info.getValue(), meta: {
-        eventOnDoubleClick: this.eventOnClickOpenQuotation
+        eventOnDoubleClick: this.eventOnClickOpenPayment
       }
     })
     columns.push({
       accessorFn: (originalRow: PaymentDto, index: number) => { return formatBoolean(originalRow.isCancelled) }, header: 'Est annulé ?', enableSorting: true, cell: info => info.getValue(), meta: {
-        eventOnDoubleClick: this.eventOnClickOpenQuotation
+        eventOnDoubleClick: this.eventOnClickOpenPayment
       }
     })
     columns.push({
       accessorFn: (originalRow: PaymentDto, index: number) => { return formatBoolean(originalRow.isAppoint) }, header: 'Est appoint ?', enableSorting: true, cell: info => info.getValue(), meta: {
-        eventOnDoubleClick: this.eventOnClickOpenQuotation
+        eventOnDoubleClick: this.eventOnClickOpenPayment
       }
     })
     columns.push({
       accessorKey: 'invoiceId', header: 'Numéro de la facture', enableSorting: true, cell: info => info.getValue(), meta: {
-        eventOnDoubleClick: this.eventOnClickOpenQuotation
+        eventOnDoubleClick: this.eventOnClickOpenPayment
       }
     })
     columns.push({
       accessorKey: 'customerOrderId', header: 'Numéro de la commande', enableSorting: true, cell: info => info.getValue(), meta: {
-        eventOnDoubleClick: this.eventOnClickOpenQuotation
+        eventOnDoubleClick: this.eventOnClickOpenPayment
       }
     })
     columns.push({
       accessorKey: 'comment', header: 'Commentaires', enableSorting: true, cell: info => info.getValue(), meta: {
-        eventOnDoubleClick: this.eventOnClickOpenQuotation
+        eventOnDoubleClick: this.eventOnClickOpenPayment
       }
     })
     return columns;
