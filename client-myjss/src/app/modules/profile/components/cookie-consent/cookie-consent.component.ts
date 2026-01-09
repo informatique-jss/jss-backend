@@ -19,8 +19,7 @@ export class CookieConsentComponent implements OnInit {
 
   ngOnInit() {
     const consent = localStorage.getItem(COOKIE_KEY);
-    if (consent === null) {
-      // Never asked
+    if (consent === null || consent === 'false') {
       this.showBanner = true;
     } else if (consent === 'true') {
       this.accept();
@@ -36,6 +35,7 @@ export class CookieConsentComponent implements OnInit {
   reject() {
     localStorage.setItem(COOKIE_KEY, 'false');
     this.showBanner = false;
+    this.gtm.init();
   }
 
 }
