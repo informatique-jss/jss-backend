@@ -43,7 +43,30 @@
       </div>
     </div>
 
-    <generic-swiper *ngIf="topPosts && topPosts.length>0" [items]="topPosts" title="Articles à la une">
+    <!-- hiden post url to improve seo - do not use css 'display: none', less performance for seo google -->
+    <div class="seo-fallback" aria-hidden="true">
+      <ul *ngFor="let post of tendencyPosts">
+        <li>
+          <a [routerLink]="'/post/' + post.slug">{{ post.titleText }}</a>
+        </li>
+      </ul>
+    </div>
+    <div class="seo-fallback" aria-hidden="true">
+      <ul *ngFor="let post of topPosts">
+        <li>
+          <a [routerLink]="'/post/' + post.slug">{{ post.titleText }}</a>
+        </li>
+      </ul>
+    </div>
+    <div class="seo-fallback" aria-hidden="true">
+      <ul *ngFor="let post of mostSeenPosts">
+        <li>
+          <a [routerLink]="'/post/' + post.slug">{{ post.titleText }}</a>
+        </li>
+      </ul>
+    </div>
+
+    <generic-swiper *ngIf="tendencyPosts && tendencyPosts.length>0" [items]="tendencyPosts" title="Articles à la une">
       <ng-template let-post>
         <div class="h-100">
           <div class="card border-0 bg-tertiary">
