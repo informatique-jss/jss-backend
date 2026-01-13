@@ -5,10 +5,12 @@ import { ActivatedRoute } from '@angular/router';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { TrustHtmlPipe } from "../../../../libs/TrustHtmlPipe";
 import { NewsletterComponent } from '../../../general/components/newsletter/newsletter.component';
 import { AppService } from '../../../main/services/app.service';
 import { GtmService } from '../../../main/services/gtm.service';
 import { CtaClickPayload, PageInfo } from '../../../main/services/GtmPayload';
+import { PlatformService } from '../../../main/services/platform.service';
 import { AutocompletePostComponent } from '../../../miscellaneous/components/autocomplete-post/autocomplete-post.component';
 import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { SelectMyJssCategoryComponent } from '../../../miscellaneous/components/forms/select-myjss-category/select-myjss-category.component';
@@ -23,7 +25,7 @@ import { PostService } from '../../services/post.service';
   templateUrl: './practical-sheets.component.html',
   styleUrls: ['./practical-sheets.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, AutocompletePostComponent, GenericSwiperComponent, GenericInputComponent, SelectMyJssCategoryComponent, NewsletterComponent, NgbTooltipModule]
+  imports: [SHARED_IMPORTS, AutocompletePostComponent, GenericSwiperComponent, GenericInputComponent, SelectMyJssCategoryComponent, NewsletterComponent, NgbTooltipModule, TrustHtmlPipe]
 })
 
 export class PracticalSheetsComponent implements OnInit {
@@ -52,7 +54,7 @@ export class PracticalSheetsComponent implements OnInit {
   tendencyPosts: Post[] = [];
   mostSeenPosts: Post[] = [];
   page: number = 0;
-
+  isServer = false;
   practicalSheetsForm!: FormGroup;
 
   @ViewChild('searchInput') searchInput: ElementRef | undefined;
@@ -65,10 +67,11 @@ export class PracticalSheetsComponent implements OnInit {
     private myJssCategoryService: MyJssCategoryService,
     private activatedRoute: ActivatedRoute,
     private titleService: Title, private meta: Meta,
-    private gtmService: GtmService
+    private gtmService: GtmService, private platformService: PlatformService
   ) { }
 
   ngOnInit() {
+    this.isServer = this.platformService.isServer();
     this.titleService.setTitle("Les fiches pratiques - MyJSS");
     this.meta.updateTag({ name: 'description', content: "Des guides clairs pour réussir vos formalités. MyJSS vous offre des fiches pratiques pour simplifier vos démarches juridiques. L'expertise à votre portée." });
     this.practicalSheetsForm = this.formBuilder.group({});
