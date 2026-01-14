@@ -236,14 +236,15 @@ export class RequiredInformationComponent implements OnInit {
   }
 
   initIndexesAndServiceType() {
-    let announcementIndex = 0;
+    let provisionIndex = 0;
+    let announcementIndex = undefined;
     if (this.quotation && this.quotation.assoAffaireOrders && this.quotation.assoAffaireOrders.length > 0) {
       for (let asso of this.quotation.assoAffaireOrders) {
         for (let serv of asso.services) {
           for (let provision of serv.provisions) {
             if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_ANNOUNCEMENT) {
-              provision.order = announcementIndex;
-              announcementIndex++;
+              provision.order = provisionIndex;
+              announcementIndex = provisionIndex;
               if (!this.selectedRedaction[asso.services.indexOf(serv)]) {
                 this.selectedRedaction[asso.services.indexOf(serv)] = [];
               }
@@ -260,6 +261,7 @@ export class RequiredInformationComponent implements OnInit {
                 provision.domiciliation = {} as Domiciliation;
               }
             }
+            provisionIndex++;
           }
 
           if (serv.assoServiceDocuments) {
@@ -272,7 +274,7 @@ export class RequiredInformationComponent implements OnInit {
         }
       }
       this.setAssoAffaireOrderToNoticeTemplateDescription();
-      this.changeProvisionNoticeTemplateDescription({ nextId: (announcementIndex || announcementIndex == 0 ? announcementIndex : 40) } as NgbNavChangeEvent);
+      this.changeProvisionNoticeTemplateDescription({ nextId: (announcementIndex != undefined ? announcementIndex : 40) } as NgbNavChangeEvent);
       this.emitServiceChange();
     }
   }
