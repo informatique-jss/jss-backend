@@ -116,9 +116,11 @@ public class Post implements IId, Serializable {
     private String amazonMusicLinkUrl;
 
     @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+    @Column(length = 1000)
     private String seoTitle;
 
     @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+    @Column(length = 1000)
     private String seoDescription;
 
     @Transient

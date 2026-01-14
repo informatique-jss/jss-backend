@@ -534,8 +534,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 targetStatusCode = CustomerOrderStatus.BEING_PROCESSED;
                 customerOrder.setProductionEffectiveDateTime(LocalDateTime.now());
 
-                mailHelper.sendCustomerOrderInProgressToCustomer(customerOrder, false,
-                        generateCustomerOrderPurchasePdf(customerOrder));
+                // mailHelper.sendCustomerOrderInProgressToCustomer(customerOrder, false,
+                // generateCustomerOrderPurchasePdf(customerOrder));
+                mailHelper.sendCustomerOrderInProgressToCustomer(customerOrder, false, null);
             } else {
                 targetStatusCode = CustomerOrderStatus.WAITING_DEPOSIT;
                 try {
