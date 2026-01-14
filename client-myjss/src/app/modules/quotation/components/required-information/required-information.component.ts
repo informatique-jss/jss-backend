@@ -10,6 +10,7 @@ import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { Mail } from '../../../general/model/Mail';
 import { AppService } from '../../../main/services/app.service';
 import { ConstantService } from '../../../main/services/constant.service';
+import { Ga4Service } from '../../../main/services/ga4.service';
 import { GtmService } from '../../../main/services/gtm.service';
 import { FileUploadPayload, PageInfo } from '../../../main/services/GtmPayload';
 import { AutocompleteCityComponent } from '../../../miscellaneous/components/forms/autocomplete-city/autocomplete-city.component';
@@ -33,8 +34,10 @@ import { Affaire } from '../../../my-account/model/Affaire';
 import { Announcement } from '../../../my-account/model/Announcement';
 import { AssoServiceDocument } from '../../../my-account/model/AssoServiceDocument';
 import { AssoServiceFieldType } from '../../../my-account/model/AssoServiceFieldType';
+import { CustomerOrder } from '../../../my-account/model/CustomerOrder';
 import { Provision } from '../../../my-account/model/Provision';
 import { ProvisionType } from '../../../my-account/model/ProvisionType';
+import { Quotation } from '../../../my-account/model/Quotation';
 import { Service } from '../../../my-account/model/Service';
 import { ServiceFieldType } from '../../../my-account/model/ServiceFieldType';
 import { ServiceType } from '../../../my-account/model/ServiceType';
@@ -170,7 +173,8 @@ export class RequiredInformationComponent implements OnInit {
     private noticeTemplateService: NoticeTemplateService,
     private serviceFieldTypeService: ServiceFieldTypeService,
     private modalService: NgbModal,
-    private gtmService: GtmService
+    private gtmService: GtmService,
+    private ga4Service: Ga4Service,
   ) {
   }
 
@@ -452,6 +456,7 @@ export class RequiredInformationComponent implements OnInit {
 
       if (this.currentUser) {
         this.appService.showLoadingSpinner();
+        // TODO : vérifier si l'AL faite avec le modèle est bien valorisée ici ou pas.
         return this.serviceService.addOrUpdateService(this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex]) as any as Observable<boolean>;
       } else {
         if (this.quotation.isQuotation) {
@@ -507,6 +512,11 @@ export class RequiredInformationComponent implements OnInit {
           this.noticeTemplateDescription.assoAffaireOrder = this.quotation!.assoAffaireOrders[newAssoIndex];
           this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
         }
+        if (this.quotation!.isQuotation)
+          this.ga4Service.trackBeginCheckoutQuotation(this.quotation as Quotation).subscribe();
+        else
+          this.ga4Service.trackBeginCheckoutCustomerOrder(this.quotation as CustomerOrder).subscribe();
+
         this.appService.openRoute(undefined, "quotation/checkout", undefined);
       });
       return;

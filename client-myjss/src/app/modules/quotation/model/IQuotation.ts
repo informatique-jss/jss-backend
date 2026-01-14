@@ -12,4 +12,5 @@ export interface IQuotation extends IDocument {
   responsable: Responsable | undefined;
   description: string;
   voucher: Voucher;
+  lastGaClientId: string;
 }
