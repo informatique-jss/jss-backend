@@ -16,7 +16,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jss.osiris.libs.SSLHelper;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.myjss.miscellaneous.model.Ga4Event;
@@ -89,10 +88,9 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService {
         if (customerOrder != null) {
             if (customerOrder.getQuotations() != null && !customerOrder.getQuotations().isEmpty()) {
                 trackPurchase(customerOrder.getQuotations().get(0), true,
-                        customerOrder.getQuotations().get(0).getLastGaClientId()); // TODO add attribute to entity and
-                                                                                   // save the attribute at every step
+                        customerOrder.getQuotations().get(0).getLastGaClientId());
             } else {
-                trackPurchase(customerOrder, true, customerOrder.getLastGaClientId()); // TODO
+                trackPurchase(customerOrder, true, customerOrder.getLastGaClientId());
             }
         }
     }
@@ -182,10 +180,6 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService {
 
         Ga4Params params = new Ga4Params();
 
-        // TODO : delete after testing
-        if (devMode)
-            params.setDebugMode(true);
-
         // View Item List
         params.setItemListId(serviceFamily.getCode());
         params.setItemListName(serviceFamily.getLabel());
@@ -224,10 +218,6 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService {
         List<Ga4Item> items = mapServicesTypesAndAffaireToItems(Arrays.asList(serviceType), affaire);
 
         Ga4Params params = new Ga4Params();
-
-        // TODO : delete after testing
-        if (devMode)
-            params.setDebugMode(true);
 
         // Add to cart
         params.setCurrency(EUR_CURRENCY);
@@ -271,10 +261,6 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService {
         List<Ga4Item> items = mapServicesTypesAndAffaireToItems(Arrays.asList(serviceType), affaire);
 
         Ga4Params params = new Ga4Params();
-
-        // TODO : delete after testing
-        if (devMode)
-            params.setDebugMode(true);
 
         // Remove from cart
         params.setCurrency(EUR_CURRENCY);
@@ -463,16 +449,6 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<Ga4Request> entity = new HttpEntity<>(requestBody, headers);
-
-        // TODO : delete after debug
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            String debugJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(requestBody);
-            System.out.println(debugJson);
-        } catch (Exception e) {
-            System.out.println(
-                    "ERREEEEEUUUUUURRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR");
-        }
 
         // Sending POST request
         ResponseEntity<String> response = new RestTemplate().exchange(
