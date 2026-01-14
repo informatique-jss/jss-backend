@@ -200,7 +200,8 @@ export class PostComponent implements OnInit, AfterViewInit {
   setMetaData() {
     if (this.post) {
       this.meta.updateTag({ property: 'og:title', content: this.post.titleText });
-      this.meta.updateTag({ property: 'og:image', content: this.post.media.urlFull });
+      if (this.post.media)
+        this.meta.updateTag({ property: 'og:image', content: this.post.media.urlFull });
       this.meta.updateTag({ property: 'og:description', content: this.post.excerptText });
       this.meta.updateTag({ property: 'og:url', content: environment.frontendUrl + "post/" + this.post.slug });
       this.meta.updateTag({ property: 'og:type', content: 'article' });

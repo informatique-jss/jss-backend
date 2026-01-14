@@ -1,0 +1,28 @@
+<mjml>
+  <mj-head>
+    <mj-attributes>
+      <mj-text color="#303B4D" />
+    </mj-attributes>
+  </mj-head>
+  <mj-body width="595px">
+    <mj-section>
+      <mj-column width="475px" align="center">
+        <mj-text font-size="14px" padding="0px">
+          <span
+            style="
+              white-space: nowrap;
+              text-align: center;
+              font-family: 'Roboto';
+            "
+          >
+            Agrément n°<span
+              style="font-family: 'Roboto'"
+              th:text="${jssDomiciliationAgreementNumber}"
+            ></span>
+            renouvelé en 2024 auprès de la Préfecture de Paris
+          </span>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

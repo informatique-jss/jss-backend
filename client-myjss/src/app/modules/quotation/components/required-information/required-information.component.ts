@@ -236,14 +236,15 @@ export class RequiredInformationComponent implements OnInit {
   }
 
   initIndexesAndServiceType() {
-    let announcementIndex = 0;
+    let provisionIndex = 0;
+    let announcementIndex = undefined;
     if (this.quotation && this.quotation.assoAffaireOrders && this.quotation.assoAffaireOrders.length > 0) {
       for (let asso of this.quotation.assoAffaireOrders) {
         for (let serv of asso.services) {
           for (let provision of serv.provisions) {
             if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_ANNOUNCEMENT) {
-              provision.order = announcementIndex;
-              announcementIndex++;
+              provision.order = provisionIndex;
+              announcementIndex = provisionIndex;
               if (!this.selectedRedaction[asso.services.indexOf(serv)]) {
                 this.selectedRedaction[asso.services.indexOf(serv)] = [];
               }
@@ -260,6 +261,7 @@ export class RequiredInformationComponent implements OnInit {
                 provision.domiciliation = {} as Domiciliation;
               }
             }
+            provisionIndex++;
           }
 
           if (serv.assoServiceDocuments) {
@@ -272,7 +274,7 @@ export class RequiredInformationComponent implements OnInit {
         }
       }
       this.setAssoAffaireOrderToNoticeTemplateDescription();
-      this.changeProvisionNoticeTemplateDescription({ nextId: 40 } as NgbNavChangeEvent);
+      this.changeProvisionNoticeTemplateDescription({ nextId: (announcementIndex != undefined ? announcementIndex : 40) } as NgbNavChangeEvent);
       this.emitServiceChange();
     }
   }
@@ -837,7 +839,7 @@ export class RequiredInformationComponent implements OnInit {
     let originId = ngbEvent.activeId as number;
 
     // if id is > 10 and first char begins with 1 then its an announcement tab
-    if (this.noticeTemplateDescription)
+    if (this.noticeTemplateDescription) {
       if (destId >= 10 && destId < 20) {
         this.noticeTemplateDescription.announcementOrder = this.parseInt(destId.toString().substring(1));
         this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
@@ -845,8 +847,10 @@ export class RequiredInformationComponent implements OnInit {
         this.noticeTemplateDescription.announcementOrder = this.parseInt(originId.toString().substring(1));
         this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
       }
-    if (destId < 10) {
-      this.changeIsShowNoticeTemplate(false, true, false, undefined, undefined);
+      if (destId < 10) {
+        this.noticeTemplateDescription.announcementOrder = this.parseInt(destId.toString());
+        this.changeIsShowNoticeTemplate(false, true, false, undefined, undefined);
+      }
     }
   }
 

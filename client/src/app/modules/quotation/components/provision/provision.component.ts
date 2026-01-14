@@ -791,8 +791,8 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
       this.announcementService.generateAnnouncementRequestToConfrereMail(this.asso.customerOrder, this.asso, this.currentProvisionWorkflow, announcement).subscribe();
   }
 
-  generatePublicationFlagMail() {
-    this.announcementService.generatePublicationFlagMail(this.asso.customerOrder).subscribe();
+  generatePublicationFlagMail(announcement: Announcement) {
+    this.announcementService.generatePublicationFlagMail(this.asso.customerOrder, announcement).subscribe();
   }
 
   canModifyStatus() {

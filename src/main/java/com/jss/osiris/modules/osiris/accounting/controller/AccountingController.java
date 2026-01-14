@@ -619,9 +619,9 @@ public class AccountingController {
 
     @GetMapping(inputEntryPoint + "/billing-closure-receipt/send")
     public ResponseEntity<Boolean> sendBillingClosureReceipt(@RequestParam("tiersId") Integer tiersId,
-            @RequestParam("responsableId") Integer responsableId)
+            @RequestParam(required = false) Integer responsableId)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException {
-        if (tiersId == null || responsableId == null)
+        if (tiersId == null && responsableId == null)
             throw new OsirisValidationException("tiersId");
 
         accountingRecordService.getBillingClosureReceiptFile(tiersId, responsableId, false);

@@ -459,7 +459,7 @@ public class WordpressController {
 		detectFlood(request);
 
 		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
-				Sort.by(Sort.Direction.DESC, "date"));
+				Sort.by(Sort.Direction.DESC, "isStayOnTop").and(Sort.by(Sort.Direction.DESC, "date")));
 
 		return new ResponseEntity<Page<Post>>(
 				postService.computeBookmarkedPosts(postService.getJssCategoryPosts(searchText, pageable)),

@@ -1,0 +1,26 @@
+<mjml>
+  <mj-head>
+    <mj-attributes>
+      <mj-text color="#303B4D" />
+    </mj-attributes>
+  </mj-head>
+  <mj-body>
+    <mj-section>
+      <mj-column>
+        <mj-text font-size="12px" line-height="1.0" align="center">
+          <strong
+            >SPPS - Société de Publications et de Publicité pour les
+            Sociétés</strong
+          ><br />
+          SAS au capital de 216 000 Euros<br />
+          <strong> Siret</strong> 552 074 627 00043
+          &nbsp;&nbsp;&nbsp;–&nbsp;&nbsp;&nbsp; <strong>TVA IC</strong> : FR
+          12552074627<br />
+          <strong>IBAN</strong> : FR76 3000 4007 9900 0257 1438 960
+          &nbsp;&nbsp;&nbsp; <strong>BIC</strong> : BNPAFRPPXXX<br />
+          <strong>Présidente</strong> : Myriam de Montis
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

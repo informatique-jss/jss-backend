@@ -27,6 +27,7 @@ public class AssoAnnouncementNoticeTemplateAnnouncementFragment implements Seria
     @Id
     @SequenceGenerator(name = "asso_announcement_template_fragment_sequence", sequenceName = "asso_announcement_template_fragment_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "asso_announcement_template_fragment_sequence")
+    @JsonView({ JacksonViews.MyJssDetailedView.class })
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -61,7 +61,7 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService {
     public void trackPurchase(IQuotation quotation, boolean isValidation, String gaClientId)
             throws OsirisException {
 
-        // If in dev mode, we do not want to send data to Google Analytics
+        // If not in prod, we do not want to send data to Google Analytics
         if (gaUrl == null || gaUrl.isBlank()) {
             return;
         }
@@ -78,10 +78,6 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService {
         params.setPageName("checkout");
         params.setPageType("quotation");
         params.setPageWebsite("myjss");
-
-        if (devMode) {
-            params.setDebugMode(devMode);
-        }
 
         // E-commerce
         params.setTransactionId(String.valueOf(quotation.getId()));
