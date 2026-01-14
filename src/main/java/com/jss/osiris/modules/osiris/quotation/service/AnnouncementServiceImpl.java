@@ -864,6 +864,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                                     affaire.getCompetentAuthority().getCity().getLabel()));
                     }
                     announcement.setNotice(announcement.getNotice().replaceAll("</?o:p>", ""));
+                    announcement.setNotice(announcement.getNotice().replaceAll("<br>", "<br/>"));
                 }
     }
 

@@ -4,20 +4,24 @@ import { EMPTY, Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { AppService } from './app.service';
+import { GtmService } from './gtm.service';
 import { PlatformService } from './platform.service';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class HttpErrorInterceptor implements HttpInterceptor {
 
   constructor(private appService: AppService,
-    private platformService: PlatformService
+    private gtmService: GtmService,
+    private platformService: PlatformService,
   ) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
     request = request.clone({
       withCredentials: true,
-      headers: request.headers.set("domain", "myjss" + (environment.production ? '_PROD' : '_REC')).set("gaClientId", this.getGaClientId())
+      headers: request.headers.set("domain", "myjss" + (environment.production ? '_PROD' : '_REC')).set("gaClientId", this.gtmService.getGaClientId())
     });
 
 
@@ -87,19 +91,4 @@ export class HttpErrorInterceptor implements HttpInterceptor {
     );
   }
 
-  // Even if consent is not given by the user, a cookie (anonyme) is created and will be found
-  getGaClientId(): string {
-    if (this.platformService.getNativeDocument() != undefined) {
-      const match = this.platformService.getNativeDocument()!.cookie.match('(?:^|;)\\s*_ga=([^;]*)');
-      // The format is often GA1.x.UID. We want to retrieve the UID part (from the 3rd segment)
-      // Or more simply, we take everything after "GA1.x."
-      if (match && match[1]) {
-        const parts = match[1].split('.');
-        if (parts.length >= 3) {
-          return parts.slice(2).join('.'); // returns something like "123456789.987654321"
-        }
-      }
-    }
-    return ""; //  Fallback or error handling
-  }
 }

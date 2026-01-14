@@ -3,14 +3,13 @@ import { environment } from "../../../../environments/environment";
 import { COOKIE_KEY } from "../../../libs/Constants";
 import { Responsable } from "../../profile/model/Responsable";
 import { LoginService } from "../../profile/services/login.service";
-import { BasePayload, BeginCheckoutPayload, CtaClickPayload, FileUploadPayload, FormSubmitPayload, LogPayload } from "./GtmPayload";
+import { BasePayload, CtaClickPayload, FileUploadPayload, FormSubmitPayload, LogPayload } from "./GtmPayload";
 import { PlatformService } from "./platform.service";
 
 export enum GtmEventName {
   PageView = 'page_view',
   CtaClick = 'cta_click',
   FormSubmit = 'form_submit',
-  BeginCheckout = 'begin_checkout',
   FileUpload = 'file_upload',
   Purchase = 'purchase',
   Login = 'login',
@@ -77,15 +76,27 @@ export class GtmService {
     this.push(GtmEventName.FormSubmit, payload);
   }
 
-  trackBeginCheckout(payload: BeginCheckoutPayload) {
-    this.push(GtmEventName.BeginCheckout, payload);
-  }
-
   trackFileUpload(payload: FileUploadPayload) {
     this.push(GtmEventName.FileUpload, payload);
   }
 
   trackLoginLogout(payload: LogPayload) {
     this.push(GtmEventName.Login, payload);
+  }
+
+  // Even if consent is not given by the user, a cookie (anonyme) is created and will be found
+  getGaClientId(): string {
+    if (this.platformService.getNativeDocument() != undefined) {
+      const match = this.platformService.getNativeDocument()!.cookie.match('(?:^|;)\\s*_ga=([^;]*)');
+      // The format is often GA1.x.UID. We want to retrieve the UID part (from the 3rd segment)
+      // Or more simply, we take everything after "GA1.x."
+      if (match && match[1]) {
+        const parts = match[1].split('.');
+        if (parts.length >= 3) {
+          return parts.slice(2).join('.'); // returns something like "123456789.987654321"
+        }
+      }
+    }
+    return ""; //  Fallback or error handling
   }
 }

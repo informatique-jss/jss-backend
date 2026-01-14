@@ -52,6 +52,7 @@ import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.libs.mail.MailHelper;
 import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.service.SearchService;
+import com.jss.osiris.modules.myjss.miscellaneous.service.GoogleAnalyticsService;
 import com.jss.osiris.modules.myjss.profile.controller.MyJssProfileController;
 import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
 import com.jss.osiris.modules.myjss.quotation.service.MyJssQuotationDelegate;
@@ -275,6 +276,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Autowired
     SearchService searchService;
+
+    @Autowired
+    GoogleAnalyticsService googleAnalyticsService;
 
     private CustomerOrder simpleAddOrUpdate(CustomerOrder customerOrder) {
         return customerOrderRepository.save(customerOrder);
@@ -568,6 +572,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 if (customerOrder.getCustomerOrderStatus().getCode()
                         .equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
                     mailHelper.sendCustomerOrderInProgressToCustomer(customerOrder, false, null);
+                    googleAnalyticsService.trackPurchase(customerOrder);
                 }
             }
         }

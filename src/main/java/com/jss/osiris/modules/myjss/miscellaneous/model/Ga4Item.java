@@ -35,6 +35,12 @@ public class Ga4Item {
     @JsonProperty("quantity")
     private Integer quantity;
 
+    @JsonProperty("item_list_name")
+    public String itemListName;
+
+    @JsonProperty("index")
+    public Integer index;
+
     // Getters & Setters
     public String getItemId() {
         return itemId;
