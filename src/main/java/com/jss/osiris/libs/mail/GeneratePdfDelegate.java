@@ -1509,7 +1509,7 @@ public class GeneratePdfDelegate {
         }
 
         final String htmlContent = StringEscapeUtils
-                .unescapeHtml4(pdfTemplateEngine(false).process("registration-act", ctx));
+                .unescapeHtml4(pdfTemplateEngine(true).process("registration-act", ctx));
 
         File tempFile;
         OutputStream outputStream;
