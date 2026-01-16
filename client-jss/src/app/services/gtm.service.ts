@@ -10,7 +10,6 @@ export enum GtmEventName {
   PageView = 'page_view',
   CtaClick = 'cta_click',
   FormSubmit = 'form_submit',
-  BeginCheckout = 'begin_checkout',
   FileUpload = 'file_upload',
   Purchase = 'purchase',
   Login = 'login',

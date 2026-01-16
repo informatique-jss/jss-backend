@@ -13,7 +13,7 @@ public class Ga4Event {
     private Ga4PageInfo page;
 
     @JsonProperty("params")
-    private Ga4ParamPurchase params;
+    private Ga4Params params;
 
     public String getName() {
         return name;
@@ -23,11 +23,19 @@ public class Ga4Event {
         this.name = name;
     }
 
-    public Ga4ParamPurchase getParams() {
+    public Ga4PageInfo getPage() {
+        return page;
+    }
+
+    public void setPage(Ga4PageInfo page) {
+        this.page = page;
+    }
+
+    public Ga4Params getParams() {
         return params;
     }
 
-    public void setParams(Ga4ParamPurchase params) {
+    public void setParams(Ga4Params params) {
         this.params = params;
     }
 }

@@ -21,10 +21,6 @@ export interface FormSubmitPayload extends BasePayload {
   form: { type: string };
 }
 
-export interface BeginCheckoutPayload extends BasePayload {
-  business: { type: 'quotation' | 'order'; service: string };
-}
-
 export interface FileUploadPayload extends BasePayload {
   business: { type: 'quotation' | 'order'; order_id: number; documentType: string };
 }

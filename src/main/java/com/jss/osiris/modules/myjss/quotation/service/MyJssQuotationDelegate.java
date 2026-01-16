@@ -102,6 +102,8 @@ public class MyJssQuotationDelegate {
     public CustomerOrder saveCustomerOrderFromMyJss(CustomerOrder order, Boolean isValidation, String gaClientId,
             HttpServletRequest request)
             throws OsirisClientMessageException, OsirisValidationException, OsirisException {
+        order.setLastGaClientId(gaClientId);
+
         if (order.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder asso : order.getAssoAffaireOrders())
                 if (asso.getAffaire() != null && asso.getAffaire().getId() == null) {
@@ -198,10 +200,6 @@ public class MyJssQuotationDelegate {
             }
         }
 
-        // Send order infos to Google Analytics
-        if (isValidation)
-            googleAnalyticsService.trackPurchase(fetchOrder, false, gaClientId);
-
         return order;
     }
 
@@ -209,6 +207,8 @@ public class MyJssQuotationDelegate {
     public Quotation saveQuotationFromMyJss(Quotation quotation, Boolean isValidation, String gaClientId,
             HttpServletRequest request)
             throws OsirisClientMessageException, OsirisValidationException, OsirisException {
+        quotation.setLastGaClientId(gaClientId);
+
         if (quotation.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders())
                 if (asso.getAffaire() != null && asso.getAffaire().getId() == null) {
@@ -292,10 +292,6 @@ public class MyJssQuotationDelegate {
         if (isValidation != null && isValidation) {
             quotationService.addOrUpdateQuotationStatus(quotation, QuotationStatus.TO_VERIFY);
         }
-
-        // Send quotation infos to Google Analytics
-        if (isValidation)
-            googleAnalyticsService.trackPurchase(fetchQuotation, false, gaClientId);
 
         return quotation;
     }
@@ -418,10 +414,6 @@ public class MyJssQuotationDelegate {
             responsableService.updateConsentDateForCurrentUser();
         } else
             return null;
-
-        // Send quotation infos to Google Analytics
-        if (isValidation)
-            googleAnalyticsService.trackPurchase(quotationService.getQuotation(quotation.getId()), false, gaClientId);
 
         return quotation;
     }

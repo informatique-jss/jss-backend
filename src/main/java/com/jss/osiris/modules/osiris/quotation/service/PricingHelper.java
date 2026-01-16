@@ -22,6 +22,7 @@ import com.jss.osiris.modules.osiris.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.AssoSpecialOfferBillingType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.BillingItem;
 import com.jss.osiris.modules.osiris.miscellaneous.model.BillingType;
+import com.jss.osiris.modules.osiris.miscellaneous.model.InvoicingSummary;
 import com.jss.osiris.modules.osiris.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.osiris.miscellaneous.service.BillingItemService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
@@ -922,5 +923,33 @@ public class PricingHelper {
 
         quotation.setResponsable(null);
         return quotation;
+    }
+
+    public InvoicingSummary getIQuotationTotalPrice(IQuotation quotation) throws OsirisException {
+        InvoicingSummary invoicingSummary = new InvoicingSummary();
+        BigDecimal totalPriceWithoutVat = BigDecimal.ZERO;
+        BigDecimal totalVatPrice = BigDecimal.ZERO;
+        BigDecimal totalPrice = BigDecimal.ZERO;
+        BigDecimal discountAmountTotal = BigDecimal.ZERO;
+
+        for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders()) {
+            serviceService.populateTransientField(asso.getServices());
+
+            for (Service service : asso.getServices()) {
+                totalPriceWithoutVat = totalPriceWithoutVat.add(service.getServicePreTaxPrice());
+                totalVatPrice = totalVatPrice.add(service.getServiceVatPrice());
+                if (service.getServiceTotalPrice() == null)
+                    service.setServiceTotalPrice(totalVatPrice.add(totalPriceWithoutVat).subtract(discountAmountTotal));
+                totalPrice = totalPrice.add(service.getServiceTotalPrice());
+                discountAmountTotal = discountAmountTotal.add(service.getServiceDiscountAmount());
+            }
+        }
+
+        invoicingSummary.setPreTaxPriceTotal(totalPriceWithoutVat);
+        invoicingSummary.setVatTotal(totalVatPrice);
+        invoicingSummary.setTotalPrice(totalPrice);
+        invoicingSummary.setDiscountTotal(discountAmountTotal);
+
+        return invoicingSummary;
     }
 }

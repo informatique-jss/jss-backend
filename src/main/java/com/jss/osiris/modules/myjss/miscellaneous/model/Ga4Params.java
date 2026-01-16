@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Ga4ParamPurchase extends Ga4PageInfo {
+public class Ga4Params extends Ga4PageInfo {
 
     @JsonProperty("debug_mode")
     private Boolean debugMode;
@@ -49,6 +49,14 @@ public class Ga4ParamPurchase extends Ga4PageInfo {
 
     @JsonProperty("business_is_draft")
     private Boolean businessIsDraft;
+
+    // View list item event
+
+    @JsonProperty("item_list_id")
+    private String itemListId;
+
+    @JsonProperty("item_list_name")
+    private String itemListName;
 
     public Boolean getDebugMode() {
         return debugMode;
@@ -152,5 +160,21 @@ public class Ga4ParamPurchase extends Ga4PageInfo {
 
     public void setBusinessIsDraft(Boolean businessIsDraft) {
         this.businessIsDraft = businessIsDraft;
+    }
+
+    public String getItemListId() {
+        return itemListId;
+    }
+
+    public void setItemListId(String itemListId) {
+        this.itemListId = itemListId;
+    }
+
+    public String getItemListName() {
+        return itemListName;
+    }
+
+    public void setItemListName(String itemListName) {
+        this.itemListName = itemListName;
     }
 }

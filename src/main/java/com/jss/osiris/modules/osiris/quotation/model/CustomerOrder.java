@@ -320,6 +320,8 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@OneToMany(targetEntity = CustomerOrderAssignation.class, mappedBy = "customerOrder")
 	private List<CustomerOrderAssignation> customerOrderAssignations;
 
+	private String lastGaClientId;
+
 	public Integer getId() {
 		return id;
 	}
@@ -729,4 +731,11 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 		this.orderingEmployee = orderingEmployee;
 	}
 
+	public String getLastGaClientId() {
+		return lastGaClientId;
+	}
+
+	public void setLastGaClientId(String lastGaClientId) {
+		this.lastGaClientId = lastGaClientId;
+	}
 }

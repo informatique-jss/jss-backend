@@ -4,6 +4,7 @@ import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { combineLatest } from 'rxjs';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
+import { Ga4Service } from '../../../main/services/ga4.service';
 import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { GenericToggleComponent } from '../../../miscellaneous/components/forms/generic-toggle/generic-toggle.component';
 import { AssoAffaireOrder } from '../../../my-account/model/AssoAffaireOrder';
@@ -44,7 +45,8 @@ export class ServicesSelectionComponent implements OnInit {
     private orderService: CustomerOrderService,
     private loginService: LoginService,
     private appService: AppService,
-    private serviceService: ServiceService
+    private serviceService: ServiceService,
+    private ga4Service: Ga4Service
   ) { }
 
   servicesForm!: FormGroup;
@@ -100,6 +102,7 @@ export class ServicesSelectionComponent implements OnInit {
             family.services.sort((a, b) => a.label.localeCompare(b.label));
         }
         this.selectedServiceFamily = this.serviceFamilies[0];
+        this.ga4Service.trackViewItemList(this.selectedServiceFamily, this.quotation!.assoAffaireOrders[this.selectedAssoIndex!].affaire).subscribe();
         this.manageFamilySelection();
       });
 
@@ -141,6 +144,9 @@ export class ServicesSelectionComponent implements OnInit {
 
   selecteServiceFamily(serviceFamily: ServiceFamily) {
     this.selectedServiceFamily = serviceFamily;
+    if (this.selectedAssoIndex == undefined || this.quotation == undefined)
+      return;
+    this.ga4Service.trackViewItemList(serviceFamily, this.quotation.assoAffaireOrders[this.selectedAssoIndex].affaire).subscribe();
   }
 
   addServiceToCurrentAffaire(service: ServiceType, indexService: number) {
@@ -149,6 +155,7 @@ export class ServicesSelectionComponent implements OnInit {
         for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++) {
           if (this.selectedServiceTypes[i].indexOf(service) < 0) {
             this.selectedServiceTypes[i].push(service);
+            this.ga4Service.trackAddToCart(service, this.quotation.assoAffaireOrders[i].affaire).subscribe();
             this.serviceLinkToggles[i][service.id] = false;
           }
         }
@@ -157,8 +164,10 @@ export class ServicesSelectionComponent implements OnInit {
       if (this.selectedAssoIndex != null && this.selectedAssoIndex >= 0) {
         if (!this.selectedServiceTypes[this.selectedAssoIndex])
           this.selectedServiceTypes[this.selectedAssoIndex] = [];
-        if (this.selectedServiceTypes[this.selectedAssoIndex].indexOf(service) < 0)
+        if (this.selectedServiceTypes[this.selectedAssoIndex].indexOf(service) < 0) {
           this.selectedServiceTypes[this.selectedAssoIndex].push(service);
+          this.ga4Service.trackAddToCart(service).subscribe();
+        }
         this.serviceLinkToggles[this.selectedAssoIndex][service.id] = false;
       }
     }
@@ -174,14 +183,18 @@ export class ServicesSelectionComponent implements OnInit {
     if (this.applyToAllAffaires) {
       if (this.quotation && this.quotation.assoAffaireOrders) {
         for (let i = 0; i < this.quotation.assoAffaireOrders.length; i++) {
-          if (this.selectedServiceTypes[i] && this.selectedServiceTypes[i].indexOf(service) >= 0)
+          if (this.selectedServiceTypes[i] && this.selectedServiceTypes[i].indexOf(service) >= 0) {
             this.selectedServiceTypes[i].splice(this.selectedServiceTypes[i].indexOf(service), 1);
+            this.ga4Service.trackRemoveFromCart(service, this.quotation.assoAffaireOrders[i].affaire).subscribe();
+          }
         }
       }
     } else {
       if (this.selectedAssoIndex != null && this.selectedAssoIndex >= 0) {
-        if (this.selectedServiceTypes[this.selectedAssoIndex] && this.selectedServiceTypes[this.selectedAssoIndex].indexOf(service) >= 0)
+        if (this.selectedServiceTypes[this.selectedAssoIndex] && this.selectedServiceTypes[this.selectedAssoIndex].indexOf(service) >= 0) {
           this.selectedServiceTypes[this.selectedAssoIndex].splice(this.selectedServiceTypes[this.selectedAssoIndex].indexOf(service), 1);
+          this.ga4Service.trackRemoveFromCart(service).subscribe();
+        }
       }
     }
   }
