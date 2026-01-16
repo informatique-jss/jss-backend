@@ -78,6 +78,21 @@ export class AppMenuComponent implements OnInit {
           { label: "Crm", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerHeartHandshake", url: "tiers/crm/kpi" }
         ]
       } as MenuItemType,
+      {
+        label: "Devis", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerBasketQuestion", url: "quotation",
+      } as MenuItemType,
+      {
+        label: "Commandes", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerBasketCheck", url: "customer-order",
+      } as MenuItemType,
+      {
+        label: "Prestations", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerBriefcase2", url: "provision",
+      } as MenuItemType,
+      {
+        label: "Facturation", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerReceiptEuro", url: "invoicing",
+        children: [
+          { label: "Paiements", isTitle: false, isDisabled: false, isSpecial: false, icon: "tablerCash", url: "invoicing/payments" },
+        ]
+      } as MenuItemType,
       { label: "Reporting", isTitle: false, isCollapsed: true, isDisabled: false, isSpecial: false, icon: "tablerLayoutDashboard", children: this.getAllDashboardsItem() } as MenuItemType
     ]
   }

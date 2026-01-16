@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { OSIRIS_V2_TIERS_ROUTE } from 'src/app/libs/Constants';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { Notification } from 'src/app/modules/miscellaneous/model/Notification';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
@@ -15,6 +16,7 @@ import { TIERS_ENTITY_TYPE } from 'src/app/routing/search/search.component';
 import { AppService } from 'src/app/services/app.service';
 import { HabilitationsService } from 'src/app/services/habilitations.service';
 import { SearchService } from 'src/app/services/search.service';
+import { environment } from 'src/environments/environment';
 import { UserPreferenceService } from '../../../../services/user.preference.service';
 import { InvoiceSearch } from '../../../invoicing/model/InvoiceSearch';
 import { Responsable } from '../../model/Responsable';
@@ -38,6 +40,10 @@ export class TiersComponent implements OnInit, AfterContentChecked {
   createMode: boolean = false;
 
   TIERS_ENTITY_TYPE = TIERS_ENTITY_TYPE;
+
+  frontendOsirisV2Url = environment.frontendUrlV2;
+
+  OSIRIS_V2_TIERS_ROUTE = OSIRIS_V2_TIERS_ROUTE;
 
   orderingSearch: OrderingSearch = {} as OrderingSearch;
   quotationSearch: QuotationSearch = {} as QuotationSearch;

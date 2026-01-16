@@ -79,8 +79,8 @@ export class ResponsableService extends AppRestService<Responsable> {
     return this.getById("responsable-dto", id) as any as Observable<ResponsableDto>;
   }
 
-  getResponsables(value: string): Observable<PagedContent<Responsable>> {
-    return this.getPagedList(new HttpParams().set("searchedValue", value), "responsable/search");
+  searchResponsablesByName(value: string, page: number, pageSize: number): Observable<PagedContent<ResponsableDto>> {
+    return this.getPagedList(new HttpParams().set("searchedValue", value).set("page", page).set("pageSize", pageSize), "responsable/search/v2") as any as Observable<PagedContent<ResponsableDto>>;
   }
 
   searchResponsable(responsableSearch: ResponsableSearch) {

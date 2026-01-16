@@ -141,6 +141,8 @@ public interface CustomerOrderService {
                         Boolean withMissingAttachment, Integer page,
                         String sortBy) throws OsirisException;
 
+        public List<CustomerOrder> searchForCustomerOrders(OrderingSearch customerOrderSearch) throws OsirisException;
+
         public List<CustomerOrder> searchOrdersForCurrentUserAndAffaire(Affaire affaire) throws OsirisException;
 
         public List<Payment> getApplicablePaymentsForCustomerOrder(CustomerOrder customerOrder) throws OsirisException;

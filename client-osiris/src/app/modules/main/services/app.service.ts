@@ -14,6 +14,9 @@ export class AppService {
   toasts: Toast[] = [];
   private toastSource = new BehaviorSubject<Toast[]>(this.toasts);
 
+  private title: BehaviorSubject<string> = new BehaviorSubject<string>("title");
+  titleObservable = this.title.asObservable();
+
   constructor(
     private router: Router,
   ) { }
@@ -37,6 +40,10 @@ export class AppService {
         this.toastSource.next(this.toasts);
       }
         , delayInMili);
+  }
+
+  changeHeaderTitle(title: string) {
+    this.title.next(title);
   }
 
   /**

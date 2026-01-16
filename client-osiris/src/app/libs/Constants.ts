@@ -12,4 +12,7 @@ export const GRAPH_TYPE_TREEMAP = "treemap";
 export const GRAPH_TYPE_SANKEY = "sankey";
 export const GRAPH_TYPE_TABLE = "table";
 
+export const OSIRIS_TIERS_ROUTE = "tiers/";
+export const OSIRIS_RESPONSABLE_ROUTE = "responsable/";
+
 export const AGGREGATE_TYPE_LAST_VALUE = "AGGREGATE_TYPE_LAST_VALUE";

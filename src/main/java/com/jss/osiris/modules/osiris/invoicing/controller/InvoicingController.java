@@ -35,6 +35,7 @@ import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.mail.MailComputeHelper;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingAccountService;
+import com.jss.osiris.modules.osiris.invoicing.facade.InvoicingFacade;
 import com.jss.osiris.modules.osiris.invoicing.model.AzureInvoice;
 import com.jss.osiris.modules.osiris.invoicing.model.AzureReceipt;
 import com.jss.osiris.modules.osiris.invoicing.model.AzureReceiptInvoice;
@@ -54,6 +55,7 @@ import com.jss.osiris.modules.osiris.invoicing.model.OutboundCheckSearch;
 import com.jss.osiris.modules.osiris.invoicing.model.OutboundCheckSearchResult;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
 import com.jss.osiris.modules.osiris.invoicing.model.PaymentAssociate;
+import com.jss.osiris.modules.osiris.invoicing.model.PaymentDto;
 import com.jss.osiris.modules.osiris.invoicing.model.PaymentSearch;
 import com.jss.osiris.modules.osiris.invoicing.model.PaymentSearchResult;
 import com.jss.osiris.modules.osiris.invoicing.model.Refund;
@@ -175,6 +177,9 @@ public class InvoicingController {
 
     @Autowired
     InvoiceItemService invoiceItemService;
+
+    @Autowired
+    InvoicingFacade invoicingFacade;
 
     @GetMapping(inputEntryPoint + "/rff/create")
     public ResponseEntity<Invoice> generateInvoiceForRff(@RequestParam Integer idRff)
@@ -1159,6 +1164,22 @@ public class InvoicingController {
     @GetMapping(inputEntryPoint + "/invoicing/statistics")
     public ResponseEntity<InvoicingStatistics> getInvoicingStatistics() throws OsirisException {
         return new ResponseEntity<InvoicingStatistics>(customerOrderService.getInvoicingStatistics(),
+                HttpStatus.OK);
+    }
+
+    /*
+     * |============================================================================
+     * |______________________METHODS FOR OSIRIS V2_________________________________
+     * |============================================================================
+     */
+
+    @PostMapping(inputEntryPoint + "/payments/search/v2")
+    public ResponseEntity<List<PaymentDto>> searchPayments(@RequestBody PaymentSearch paymentSearch)
+            throws OsirisValidationException {
+        if (paymentSearch == null)
+            throw new OsirisValidationException("paymentSearch");
+
+        return new ResponseEntity<List<PaymentDto>>(invoicingFacade.searchForPayments(paymentSearch),
                 HttpStatus.OK);
     }
 }
