@@ -33,18 +33,21 @@ public class ServiceTypeServiceImpl implements ServiceTypeService {
     @Autowired
     BillingItemService billingItemService;
 
+    @Autowired
+    PricingHelper pricingHelper;
+
     @Override
     public List<ServiceType> getServiceTypes() {
         return IterableUtils.toList(serviceTypeRepository.findAll());
     }
 
     @Override
-    public ServiceType getServiceType(Integer id) {
+    public ServiceType getServiceType(Integer id) throws OsirisException {
         return this.getServiceType(id, false);
     }
 
     @Override
-    public ServiceType getServiceType(Integer id, Boolean isFetchOnlyMandatoryDocuments) {
+    public ServiceType getServiceType(Integer id, Boolean isFetchOnlyMandatoryDocuments) throws OsirisException {
         Optional<ServiceType> serviceType = serviceTypeRepository.findById(id);
         ServiceType serviceFinal = null;
 
@@ -55,11 +58,10 @@ public class ServiceTypeServiceImpl implements ServiceTypeService {
             if (!serviceFinal.getAssoServiceTypeFieldTypes().isEmpty() && isFetchOnlyMandatoryDocuments)
                 serviceFinal.getAssoServiceTypeFieldTypes().removeIf(asso -> !asso.getIsMandatory());
         }
-
         return getCurrentBillingItemsForServiceType(serviceFinal);
     }
 
-    private ServiceType getCurrentBillingItemsForServiceType(ServiceType serviceType) {
+    private ServiceType getCurrentBillingItemsForServiceType(ServiceType serviceType) throws OsirisException {
         BigDecimal totalPrice = new BigDecimal(0f);
         BigDecimal deboursAmount = new BigDecimal(0f);
 
@@ -68,7 +70,9 @@ public class ServiceTypeServiceImpl implements ServiceTypeService {
                 if (asso.getProvisionType() != null && asso.getProvisionType().getBillingTypes() != null
                         && !asso.getProvisionType().getBillingTypes().isEmpty())
                     for (BillingType billingType : asso.getProvisionType().getBillingTypes()) {
-                        BillingItem newBillingItem = billingItemService.getCurrentBillingItemByBillingType(billingType);
+                        BillingItem newBillingItem = null;
+                        newBillingItem = pricingHelper.getAppliableBillingItem(billingType, null);
+
                         if (newBillingItem != null) {
                             if (billingType.getIsDebour() && newBillingItem.getPreTaxPrice() != null)
                                 deboursAmount = deboursAmount.add(newBillingItem.getPreTaxPrice());

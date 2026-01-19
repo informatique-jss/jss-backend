@@ -14,5 +14,4 @@ public interface BillingItemService {
 
     public List<BillingItem> getBillingItemByBillingType(BillingType billingType);
 
-    public BillingItem getCurrentBillingItemByBillingType(BillingType billingType);
 }

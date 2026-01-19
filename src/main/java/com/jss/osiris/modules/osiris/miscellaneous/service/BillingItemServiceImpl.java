@@ -1,7 +1,5 @@
 package com.jss.osiris.modules.osiris.miscellaneous.service;
 
-import java.time.LocalDate;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,21 +34,6 @@ public class BillingItemServiceImpl implements BillingItemService {
     @Override
     public List<BillingItem> getBillingItemByBillingType(BillingType billingType) {
         return billingItemRepository.findByBillingType(billingType);
-    }
-
-    @Override
-    public BillingItem getCurrentBillingItemByBillingType(BillingType billingType) {
-        List<BillingItem> billingItems = getBillingItemByBillingType(billingType);
-
-        if (billingItems != null && billingItems.size() > 0) {
-            Optional<BillingItem> currentBillingItem = billingItems.stream()
-                    .filter(item -> item.getStartDate() != null)
-                    .filter(item -> !item.getStartDate().isAfter(LocalDate.now()))
-                    .max(Comparator.comparing(BillingItem::getStartDate));
-            if (currentBillingItem.isPresent())
-                return currentBillingItem.get();
-        }
-        return null;
     }
 
     @Override
