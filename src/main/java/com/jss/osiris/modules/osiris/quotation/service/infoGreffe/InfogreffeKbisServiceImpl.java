@@ -35,11 +35,13 @@ import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
+import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.RneCompany;
 import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.KbisRequest;
 import com.jss.osiris.modules.osiris.quotation.repository.infoGreffe.KbisRequestRepository;
 import com.jss.osiris.modules.osiris.quotation.service.AffaireService;
 import com.jss.osiris.modules.osiris.quotation.service.AssoAffaireOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.ProvisionService;
+import com.jss.osiris.modules.osiris.quotation.service.RneDelegateService;
 
 @org.springframework.stereotype.Service
 public class InfogreffeKbisServiceImpl implements InfogreffeKbisService {
@@ -73,6 +75,9 @@ public class InfogreffeKbisServiceImpl implements InfogreffeKbisService {
 
     @Autowired
     AssoAffaireOrderService assoAffaireOrderService;
+
+    @Autowired
+    RneDelegateService rneDelegateService;
 
     @Value("${infogreffe.kbis.password}")
     private String infogreffePassword;
@@ -224,8 +229,23 @@ public class InfogreffeKbisServiceImpl implements InfogreffeKbisService {
                 responseExtractor);
 
         if (response != null && response.getBody() != null && response.getStatusCode().is2xxSuccessful()) {
-            String name = "Kbis-" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"))
-                    + ".pdf";
+            String deno = null;
+            List<RneCompany> rneCompanies = rneDelegateService.getCompanyBySiret(kbisRequest.getSiret());
+            if (rneCompanies != null && !rneCompanies.isEmpty())
+                for (RneCompany rneCompany : rneCompanies)
+                    if (rneCompany.getFormality() != null && rneCompany.getFormality().getContent() != null &&
+                            rneCompany.getFormality().getContent().getPersonneMorale() != null
+                            && rneCompany.getFormality().getContent().getPersonneMorale().getIdentite() != null
+                            && rneCompany.getFormality().getContent().getPersonneMorale().getIdentite()
+                                    .getEntreprise() != null
+                            && rneCompany.getFormality().getContent().getPersonneMorale().getIdentite().getEntreprise()
+                                    .getDenomination() != null)
+                        deno = rneCompany.getFormality().getContent().getPersonneMorale().getIdentite().getEntreprise()
+                                .getDenomination();
+
+            String name = "Kbis-" + deno != null ? deno + "-"
+                    : "" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"))
+                            + ".pdf";
             try (InputStream is = new ByteArrayInputStream(response.getBody())) {
                 List<Attachment> attachments = attachmentService.addAttachment(is,
                         kbisRequest.getProvision().getId(), null, Provision.class.getSimpleName(),

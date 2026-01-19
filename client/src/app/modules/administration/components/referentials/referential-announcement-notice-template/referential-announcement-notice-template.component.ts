@@ -4,7 +4,6 @@ import { ChangeEvent } from '@ckeditor/ckeditor5-angular';
 import { Alignment, Bold, ClassicEditor, Clipboard, Essentials, Font, GeneralHtmlSupport, Indent, IndentBlock, Italic, Link, List, Mention, Paragraph, PasteFromOffice, RemoveFormat, Underline, Undo } from 'ckeditor5';
 import { Observable } from 'rxjs';
 import { AnnouncementNoticeTemplate } from 'src/app/modules/quotation/model/AnnouncementNoticeTemplate';
-import { AnnouncementNoticeTemplateFragment } from 'src/app/modules/quotation/model/AnnouncementNoticeTemplateFragment';
 import { AssoAnnouncementNoticeTemplateAnnouncementFragment } from 'src/app/modules/quotation/model/AssoAnnouncementNoticeTemplateAnnouncementFragment';
 import { AnnouncementNoticeTemplateService } from 'src/app/modules/quotation/services/announcement.notice.template.service';
 import { AssoNoticeTemplateAnnouncementFragmentService } from 'src/app/modules/quotation/services/asso.notice.template.announcement.fragment.service';
@@ -47,8 +46,8 @@ export class ReferentialAnnouncementNoticeTemplateComponent extends GenericRefer
 
   selectEntity(element: AnnouncementNoticeTemplate) {
     this.selectedEntity = element;
-    if (element && element.id)
-      this.assoNoticeTemplateFragmentService.getAssoAnnouncementNoticeTemplateFragmentByNoticeTemplate(element.id).subscribe(res => {
+    if (this.selectedEntity && this.selectedEntity.id)
+      this.assoNoticeTemplateFragmentService.getAssoAnnouncementNoticeTemplateFragmentByNoticeTemplate(this.selectedEntity.id).subscribe(res => {
         this.assosNoticeTemplateFragments = res;
       });
     this.initialNoticeValue = this.selectedEntity.text
@@ -90,27 +89,27 @@ export class ReferentialAnnouncementNoticeTemplateComponent extends GenericRefer
 
   addFragment() {
     if (this.selectedEntity) {
-      if (!this.selectedEntity.announcementNoticeTemplateFragments)
-        this.selectedEntity.announcementNoticeTemplateFragments = [];
-      this.selectedEntity.announcementNoticeTemplateFragments.push({} as AnnouncementNoticeTemplateFragment);
+      if (!this.assosNoticeTemplateFragments)
+        this.assosNoticeTemplateFragments = [];
+
+      this.assosNoticeTemplateFragments.push({ announcementNoticeTemplate: this.selectedEntity } as AssoAnnouncementNoticeTemplateAnnouncementFragment);
     }
   }
 
-  deleteFragment(fragment: AnnouncementNoticeTemplateFragment) {
-    if (this.selectedEntity) {
-      if (this.selectedEntity.announcementNoticeTemplateFragments && this.selectedEntity.announcementNoticeTemplateFragments.indexOf(fragment) >= 0) {
-        this.selectedEntity.announcementNoticeTemplateFragments.splice(this.selectedEntity.announcementNoticeTemplateFragments.indexOf(fragment), 1);
-      }
+  deleteFragment(asso: AssoAnnouncementNoticeTemplateAnnouncementFragment) {
+    if (this.assosNoticeTemplateFragments && this.assosNoticeTemplateFragments.indexOf(asso) >= 0) {
+      this.assosNoticeTemplateFragments.splice(this.assosNoticeTemplateFragments.indexOf(asso), 1);
+      this.assoNoticeTemplateFragmentService.deleteAssoAnnouncementNoticeTemplateFragment(asso.id).subscribe(response => {
+        this.setDataTable();
+      });
     }
   }
 
   override saveEntity(): void {
     super.saveEntity();
     if (this.getFormStatus()) {
-
       this.assoNoticeTemplateFragmentService.saveAssoAnnouncementNoticeTemplateFragment(this.assosNoticeTemplateFragments).subscribe(response => {
         this.setDataTable();
-
       });
     } else {
       this.appService2.displaySnackBar("Erreur, certains champs des fragments ne sont pas correctement renseignés !", true, 15);

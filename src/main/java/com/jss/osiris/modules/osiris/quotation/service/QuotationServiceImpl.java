@@ -335,7 +335,10 @@ public class QuotationServiceImpl implements QuotationService {
                         false, "Devis n°" + quotation.getId(), null, null, null);
 
             for (Attachment attachment : attachments)
-                if (quotation != null && attachment.getDescription().contains(quotation.getId() + "")) {
+                if (quotation != null && ((attachment.getUploadedFile() != null
+                        && attachment.getUploadedFile().getFilename().contains(quotation.getId() + ""))
+                        || (attachment.getDescription() != null
+                                && attachment.getDescription().contains(quotation.getId() + "")))) {
                     attachment.setQuotation(quotation);
                     attachmentService.addOrUpdateAttachment(attachment);
                 }

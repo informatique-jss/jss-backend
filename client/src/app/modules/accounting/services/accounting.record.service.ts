@@ -42,7 +42,11 @@ export class AccountingRecordService extends AppRestService<AccountingRecord> {
   }
 
   sendBillingClosureReceipt(tiers: Tiers, responsable: Responsable | undefined) {
-    return this.get(new HttpParams().set("tiersId", tiers.id).set("responsableId", responsable ? responsable.id : 'null'), "billing-closure-receipt/send", "Relevé(s) de compte envoyé(s) aux tiers / responsables");
+    let params = new HttpParams().set("tiersId", tiers.id);
+    if (responsable)
+      params = params.set("responsableId", responsable.id);
+
+    return this.get(params, "billing-closure-receipt/send", "Relevé(s) de compte envoyé(s) aux tiers / responsables");
   }
 
   deleteRecords(accountingRecord: AccountingRecordSearchResult) {

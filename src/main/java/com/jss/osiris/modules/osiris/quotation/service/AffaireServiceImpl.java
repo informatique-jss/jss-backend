@@ -207,7 +207,7 @@ public class AffaireServiceImpl implements AffaireService {
         List<Affaire> affaires = new ArrayList<Affaire>();
         if (rneCompanies != null && rneCompanies.size() > 0)
             for (RneCompany rneCompany : rneCompanies)
-                affaires.add(getAffaireFromRneCompany(rneCompany, null, true));
+                affaires.add(getAffaireFromRneCompany(rneCompany, null, false));
         return affaires;
     }
 
@@ -220,7 +220,7 @@ public class AffaireServiceImpl implements AffaireService {
         affaires = new ArrayList<Affaire>();
         if (rneCompanies != null && rneCompanies.size() > 0) {
             for (RneCompany rneCompany : rneCompanies)
-                affaires.add(getAffaireFromRneCompany(rneCompany, siret, true));
+                affaires.add(getAffaireFromRneCompany(rneCompany, siret, false));
         } else {
             return getAffairesFromSiren(siret);
         }

@@ -182,7 +182,6 @@ public class MailIndexationDelegate {
                 throw new OsirisException(e, "Impossible to process message received");
             }
         }
-
     }
 
     public void closeConnection() throws OsirisException {
@@ -225,22 +224,25 @@ public class MailIndexationDelegate {
                             Arrays.asList(fromAddresses).stream().map(Address::toString).toList())));
                     String linkMailTo = createEmailLink(extractEmail(String.join(" / ",
                             Arrays.asList(toAddresses).stream().map(Address::toString).toList())));
-                    String mailHtml = getHtmlContent(message).replace("</head>",
-                            "</head><div><p class=\"MsoNormal\">Objet : " + message.getSubject()
-                                    + "</p><br><p class=\"MsoNormal\">De : "
-                                    + fromName + " " + linkMailFrom
-                                    + "</p><p class=\"MsoNormal\">A :"
-                                    + toName + " " + linkMailTo
-                                    + "</p></div><hr/>")
-                            .replace("charset=iso-8859-1", "charset=utf-8");
 
-                    // Correct encoding
-                    mailHtml = new String(mailHtml.getBytes(StandardCharsets.UTF_8));
+                    String mailHtml = getHtmlContent(message);
+
+                    // Modify header HTML to force UTF-8 in browser
+                    mailHtml = mailHtml.replaceFirst("(?i)charset=[a-zA-Z0-9-]+", "charset=utf-8");
+                    String headerInfo = "<div><p>Objet : " + message.getSubject()
+                            + "</p><br><p class=\"MsoNormal\">De : "
+                            + fromName + " " + linkMailFrom
+                            + "</p><p class=\"MsoNormal\">A :"
+                            + toName + " " + linkMailTo
+                            + "</p></div><hr/>";
+                    mailHtml = mailHtml.replace("</head>", "</head>" + headerInfo);
+
+                    byte[] finalBytes = mailHtml.getBytes(StandardCharsets.UTF_8);
+                    mail.setMailText(new ByteArrayInputStream(finalBytes));
 
                     mail.setSubject(message.getSubject());
                     if (mail.getSubject() == null)
                         mail.setSubject(SSLHelper.randomPassword(10));
-                    mail.setMailText(new ByteArrayInputStream(mailHtml.getBytes(StandardCharsets.UTF_8)));
 
                     if (osirisMailService.attachIndexationMailToEntity(mail)) {
                         // Move to trash

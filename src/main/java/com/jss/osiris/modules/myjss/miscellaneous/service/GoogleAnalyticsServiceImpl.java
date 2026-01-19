@@ -27,6 +27,7 @@ import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.osiris.quotation.service.ServiceService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 @org.springframework.stereotype.Service
@@ -53,11 +54,14 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService {
     @Autowired
     private EmployeeService employeeService;
 
+    @Autowired
+    ServiceService serviceService;
+
     @Override
     public void trackPurchase(IQuotation quotation, boolean isValidation, String gaClientId)
             throws OsirisException {
 
-        // If in dev mode, we do not want to send data to Google Analytics
+        // If not in prod, we do not want to send data to Google Analytics
         if (gaUrl == null || gaUrl.isBlank()) {
             return;
         }
@@ -67,17 +71,13 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService {
 
         InvoicingSummary invoicingSummary = customerOrderService.getInvoicingSummaryForIQuotation(quotation);
 
-        List<Ga4Item> items = mapItems(quotation, invoicingSummary);
+        List<Ga4Item> items = mapItems(quotation);
 
         Ga4ParamPurchase params = new Ga4ParamPurchase();
 
         params.setPageName("checkout");
         params.setPageType("quotation");
         params.setPageWebsite("myjss");
-
-        if (devMode) {
-            params.setDebugMode(devMode);
-        }
 
         // E-commerce
         params.setTransactionId(String.valueOf(quotation.getId()));
@@ -117,12 +117,13 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService {
         sendToGoogle(request);
     }
 
-    private List<Ga4Item> mapItems(IQuotation quotation, InvoicingSummary invoiceSummary) {
+    private List<Ga4Item> mapItems(IQuotation quotation) throws OsirisException {
         List<Ga4Item> items = new ArrayList<>();
 
         if (quotation.getAssoAffaireOrders() != null) {
             for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders()) {
                 if (asso.getServices() != null) {
+                    asso.setServices(serviceService.populateTransientField(asso.getServices()));
                     for (Service service : asso.getServices()) {
 
                         BigDecimal nbServiceType = BigDecimal.valueOf(service.getServiceTypes().size());
@@ -136,7 +137,8 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService {
                                 if (quotation.getVoucher() != null) {
                                     item.setCoupon(quotation.getVoucher().getCode());
                                 }
-                                item.setDiscount(invoiceSummary.getDiscountTotal().divide(nbServiceType));
+                                if (service.getServiceDiscountAmount() != null)
+                                    item.setDiscount(service.getServiceDiscountAmount().divide(nbServiceType));
                                 item.setItemBrand("JSS");
                                 item.setItemCategory(serviceType.getServiceFamily().getLabel());
                                 item.setItemGroupCategory(

@@ -199,7 +199,8 @@ public class MyJssQuotationDelegate {
         }
 
         // Send order infos to Google Analytics
-        googleAnalyticsService.trackPurchase(order, false, gaClientId);
+        if (isValidation)
+            googleAnalyticsService.trackPurchase(fetchOrder, false, gaClientId);
 
         return order;
     }
@@ -293,7 +294,8 @@ public class MyJssQuotationDelegate {
         }
 
         // Send quotation infos to Google Analytics
-        googleAnalyticsService.trackPurchase(quotation, false, gaClientId);
+        if (isValidation)
+            googleAnalyticsService.trackPurchase(fetchQuotation, false, gaClientId);
 
         return quotation;
     }
@@ -418,7 +420,8 @@ public class MyJssQuotationDelegate {
             return null;
 
         // Send quotation infos to Google Analytics
-        googleAnalyticsService.trackPurchase(quotation, false, gaClientId);
+        if (isValidation)
+            googleAnalyticsService.trackPurchase(quotationService.getQuotation(quotation.getId()), false, gaClientId);
 
         return quotation;
     }

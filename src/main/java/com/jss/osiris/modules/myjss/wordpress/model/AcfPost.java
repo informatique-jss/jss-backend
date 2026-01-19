@@ -13,6 +13,8 @@ public class AcfPost {
 
     private boolean sticky;
 
+    private boolean is_stay_on_top;
+
     private String seo_title;
 
     private String seo_description;
@@ -128,4 +130,13 @@ public class AcfPost {
     public void setAdditional_authors(List<Integer> additional_authors) {
         this.additional_authors = additional_authors;
     }
+
+    public boolean getIs_stay_on_top() {
+        return is_stay_on_top;
+    }
+
+    public void setIs_stay_on_top(boolean is_stay_on_top) {
+        this.is_stay_on_top = is_stay_on_top;
+    }
+
 }

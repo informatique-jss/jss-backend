@@ -814,7 +814,7 @@ public class PostServiceImpl implements PostService {
 
         Order order = new Order(Direction.DESC, "date");
         Sort sort = Sort.by(Arrays.asList(order));
-        Pageable pageableRequest = PageRequest.of(0, 3, sort);
+        Pageable pageableRequest = PageRequest.of(0, 100, sort);
 
         if (selectedMyJssCategory != null)
             return postRepository.searchPostsByMyJssCategory(selectedMyJssCategory, pageableRequest);
@@ -999,6 +999,7 @@ public class PostServiceImpl implements PostService {
         if (post.getAcf() != null) {
             post.setIsPremium(post.getAcf().isPremium());
             post.setIsSticky(post.getAcf().isSticky());
+            post.setIsStayOnTop(post.getAcf().getIs_stay_on_top());
             post.setPremiumPercentage(post.getAcf().getPremium_percentage());
             post.setApplePodcastLinkUrl(post.getAcf().getApplePodcastLinkUrl());
             post.setSpotifyLinkUrl(post.getAcf().getSpotifyLinkUrl());

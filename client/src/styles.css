@@ -161,6 +161,13 @@ mini-fab-add mat-form-field.mat-mdc-form-field, mat-option, .mat-mdc-cell {
   z-index: 999;
 }
 
+.eight-fab-button {
+  position: fixed !important;
+  bottom: 40px !important;
+  right: 530px !important;
+  z-index: 999;
+}
+
 .mat-expansion-panel-header-description {
   flex-grow: 0 !important;
 }
