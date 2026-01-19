@@ -53,10 +53,6 @@ export class AnnouncementComponent implements OnInit {
     );
   }
 
-  goBack() {
-    this.location.back();
-  }
-
   downloadPublicationFlag() {
     if (this.announcement) {
       this.trackCtaClickDownloadFlag();

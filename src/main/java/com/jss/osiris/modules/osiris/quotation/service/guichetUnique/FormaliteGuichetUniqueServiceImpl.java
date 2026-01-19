@@ -875,7 +875,9 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             vatRate = vatRate.multiply(BigDecimal.TEN).setScale(0, RoundingMode.HALF_EVEN).divide(BigDecimal.TEN);
             Vat vat = null;
 
-            if (isVatEqual(vatRate, constantService.getVatDeductible().getRate()))
+            if (vatRate.equals(new BigDecimal(0))) {
+                vat = constantService.getVatZero();
+            } else if (isVatEqual(vatRate, constantService.getVatDeductible().getRate()))
                 vat = constantService.getVatDeductible();
             else if (isVatEqual(vatRate, constantService.getVatDeductibleTwo().getRate()))
                 vat = constantService.getVatDeductibleTwo();

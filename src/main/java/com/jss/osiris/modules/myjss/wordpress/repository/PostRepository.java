@@ -146,7 +146,7 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         @Query("select p from Post p where p.isCancelled = false and size(p.jssCategories) > 0 and p.isSticky = true AND p.date<=CURRENT_TIMESTAMP ")
         Page<Post> findJssCategoryStickyPost(Pageable pageable);
 
-        @Query("select p from Post p where :categoryArticle MEMBER OF p.postCategories and size(p.jssCategories) > 0 and p.isCancelled = :isCancelled AND p.date<=CURRENT_TIMESTAMP ")
+        @Query("select p from Post p where :categoryArticle MEMBER OF p.postCategories and size(p.jssCategories) > 0 and p.isCancelled = :isCancelled AND p.date<=CURRENT_TIMESTAMP order by coalesce(p.isStayOnTop, false) desc, p.date desc")
         Page<Post> findJssCategoryPosts(@Param("categoryArticle") Category categoryArticle,
                         @Param("isCancelled") boolean b,
                         Pageable pageableRequest);

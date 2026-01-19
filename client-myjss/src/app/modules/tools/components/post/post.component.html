@@ -82,10 +82,10 @@
       <!-- Audio player for article text with controls -->
       <div class="rounded-1 text-secondary bg-secondary text-color my-4">
         <div class="p-2">
-          <h4 class="text-secondary" style="cursor: pointer;" (click)="togglePlayPause()">
+          <span class="h4 text-secondary" style="cursor: pointer;" (click)="togglePlayPause()">
             <i class="bi mx-2" [class]="isPlaying ? 'ai-pause' : 'ai-play-filled'"></i>
             Ecouter l'article
-          </h4>
+          </span>
           <div class="mx-2 mt-3" *ngIf="isPlaying">
             <label class="" for="speedControl">Vitesse : </label>
             <span class="">{{ speechRate }}x</span>

@@ -814,7 +814,7 @@ public class PostServiceImpl implements PostService {
 
         Order order = new Order(Direction.DESC, "date");
         Sort sort = Sort.by(Arrays.asList(order));
-        Pageable pageableRequest = PageRequest.of(0, 3, sort);
+        Pageable pageableRequest = PageRequest.of(0, 100, sort);
 
         if (selectedMyJssCategory != null)
             return postRepository.searchPostsByMyJssCategory(selectedMyJssCategory, pageableRequest);

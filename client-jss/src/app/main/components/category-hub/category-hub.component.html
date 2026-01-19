@@ -61,9 +61,10 @@
                             <bookmark *ngIf="currentUser" [post]="post"></bookmark>
                           </div>
                           <h4>
-                            <a class="card-text-truncate" [routerLink]=' "/post/" + post.slug'> <img
-                                *ngIf="post.isPremium" class="pe-0" src="/assets/images/premium-icon.svg">
-                              {{post.titleText}}</a>
+                            <span role="button" tabindex="0" class="pointer card-text-truncate"
+                              [routerLink]=' "/post/" + post.slug'> <img *ngIf="post.isPremium" class="pe-0"
+                                src="/assets/images/premium-icon.svg">
+                              {{post.titleText}}</span>
                           </h4>
                           <div class="row d-flex justify-content-end">
                             <div class="col-auto"> <span class="date-info fs-9 float-lg-end">
@@ -98,10 +99,17 @@
                             <bookmark *ngIf="currentUser" [post]="post"></bookmark>
                           </div>
                           <h4>
-                            <a class="card-text-truncate" [routerLink]=' "/post/" + post.slug'> <img
-                                *ngIf="post.isPremium" class="pe-0" src="/assets/images/premium-icon.svg">
-                              {{post.titleText}}</a>
+                            <span role="button" tabindex="0" class="pointer card-text-truncate"
+                              [routerLink]=' "/post/" + post.slug'> <img *ngIf="post.isPremium" class="pe-0"
+                                src="/assets/images/premium-icon.svg">
+                              {{post.titleText}}</span>
                           </h4>
+                          <div class="row d-flex justify-content-end">
+                            <div class="col-auto"> <span class="date-info fs-9 float-lg-end">
+                                <span>Publié le {{post.date | date:'EEEE d MMMM'}}</span>
+                              </span>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </article>
@@ -118,13 +126,13 @@
                     <div class="col-md-12">
                       <div class="section-title-block d-flex pb-3">
                         <h3 class="section-widget-title">Tags liés</h3>
-
                       </div>
                     </div>
                   </div>
                   <ul class="tag-cloud list-inline">
-                    <li *ngFor="let tag of tagsByEntityType.slice(0,8)" class="list-inline-item pb-1"><a class="btn bg-light text-secondary bg-hover-danger text-hover-white bg-hover-secondary
-                        text-hover-white fs-8" [routerLink]=' "/post/tag/" + tag.slug'>{{tag.name}}</a>
+                    <li *ngFor="let tag of tagsByEntityType.slice(0,8)" class="list-inline-item pb-1">
+                      <button class="btn bg-light text-secondary bg-hover-danger text-hover-white bg-hover-secondary
+                        text-hover-white fs-8" [routerLink]=' "/post/tag/" + tag.slug'>{{tag.name}}</button>
                     </li>
                   </ul>
                 </div>
@@ -175,7 +183,7 @@
           <nav *ngIf="totalPage > 1" class="mt-4">
             <ul class="pagination justify-content-center">
               <li class="page-item" *ngFor="let p of pages" [class.active]="p === page">
-                <button class="page-link" [routerLink]="[p]">{{ p + 1 }}</button>
+                <a class="page-link" [routerLink]="[p]">{{ p + 1 }}</a>
               </li>
             </ul>
           </nav>

@@ -11,7 +11,7 @@ import { NoticeTemplateDescription } from '../model/NoticeTemplateDescription';
 })
 export class NoticeTemplateService extends AppRestService<AnnouncementNoticeTemplate> {
 
-  noticeTemplateDescription: NoticeTemplateDescription | undefined;
+  noticeTemplateDescription: NoticeTemplateDescription = {} as NoticeTemplateDescription;
 
   noticeTemplateForm: FormGroup | undefined;
 
@@ -36,7 +36,7 @@ export class NoticeTemplateService extends AppRestService<AnnouncementNoticeTemp
   }
 
   clearNoticeTemplateDescription() {
-    this.noticeTemplateDescription = undefined;
+    this.noticeTemplateDescription = {} as NoticeTemplateDescription;
     this.noticeTemplateDescriptionSubject.next(this.noticeTemplateDescription);
   }
 

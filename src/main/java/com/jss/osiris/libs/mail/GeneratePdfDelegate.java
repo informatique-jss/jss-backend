@@ -1050,7 +1050,7 @@ public class GeneratePdfDelegate {
 
                 PdfPTable tableHeader = new PdfPTable(2);
                 try {
-                    tableHeader.setWidths(new float[] { 5f, 95f });
+                    tableHeader.setWidths(new float[] { 15f, 85f });
                 } catch (DocumentException e) {
                     throw new OsirisException(e, "Wrong columns sizes for PDF header");
                 }
@@ -1075,6 +1075,7 @@ public class GeneratePdfDelegate {
                     float scaleFactor = desiredWidth / logoImage.getWidth();
                     logoImage.scalePercent(scaleFactor * 100);
                     logoCell.addElement(logoImage);
+                    logoCell.setPaddingLeft(10f);
 
                 } catch (Exception e) {
                     throw new OsirisException(e, "Impossible d'ajouter le logo au PDF");
@@ -1509,7 +1510,7 @@ public class GeneratePdfDelegate {
         }
 
         final String htmlContent = StringEscapeUtils
-                .unescapeHtml4(pdfTemplateEngine(false).process("registration-act", ctx));
+                .unescapeHtml4(pdfTemplateEngine(true).process("registration-act", ctx));
 
         File tempFile;
         OutputStream outputStream;

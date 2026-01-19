@@ -199,7 +199,8 @@ public class MyJssQuotationDelegate {
         }
 
         // Send order infos to Google Analytics
-        googleAnalyticsService.trackPurchase(order, false, gaClientId);
+        if (isValidation)
+            googleAnalyticsService.trackPurchase(fetchOrder, false, gaClientId);
 
         return order;
     }
@@ -420,7 +421,7 @@ public class MyJssQuotationDelegate {
 
         // Send quotation infos to Google Analytics
         if (isValidation)
-            googleAnalyticsService.trackPurchase(quotation, false, gaClientId);
+            googleAnalyticsService.trackPurchase(quotationService.getQuotation(quotation.getId()), false, gaClientId);
 
         return quotation;
     }

@@ -42,11 +42,11 @@
                           class="badge badge-category bg-info rounded-pill col-auto me-2 px-1">{{post.jssCategories[0].name}}</a>
                         <bookmark *ngIf="currentUser" [post]="post"></bookmark>
                       </div>
-                      <h6 class="mb-0 ">
+                      <p class="h6 mb-0">
                         <a class="card-text-truncate" [routerLink]='"/post/" + post.slug'>{{post.titleText}} <img
                             *ngIf="post.isPremium" class="pe-0" src="/assets/images/premium-icon.svg">
                         </a>
-                      </h6>
+                      </p>
                     </div>
                   </div>
                 </article>
@@ -68,11 +68,11 @@
                       <bookmark *ngIf="currentUser" [post]="lastPosts[0]"></bookmark>
                     </div>
 
-                    <h3>
+                    <p class="h3">
                       <a class="card-title-truncate"
                         [routerLink]='"/post/" + lastPosts[0].slug'><span>{{lastPosts[0].titleText}}</span> <img
                           *ngIf="lastPosts[0].isPremium" class="pe-0" src="/assets/images/premium-icon.svg"></a>
-                    </h3>
+                    </p>
                     <span class="card-text-truncate" [innerHTML]="lastPosts[0].excerptText| trustHtml"></span>
                   </div>
                 </article>
@@ -111,10 +111,10 @@
                           class="badge  bg-info badge-category rounded-pill px-1 col-auto me-2 mb-0">{{post.jssCategories[0].name}}</a>
                         <bookmark *ngIf="currentUser" [post]="post"></bookmark>
                       </div>
-                      <h4>
+                      <p class="h4">
                         <a class="card-text-truncate" [routerLink]='"/post/" + post.slug'> <img *ngIf="post.isPremium"
                             class="col-auto pe-1" src="/assets/images/premium-icon.svg">{{post.titleText}}</a>
-                      </h4>
+                      </p>
                       <div class="row align-items-end">
                         <div class="col"> <span class="date-info fs-9 float-lg-end">
                             <span>Publié le {{post.date | literalDatePipe}}</span>
@@ -193,10 +193,10 @@
                   </div>
                 </a>
                 <div class="post-content pt-md-2 pt-xl-0 pt-0">
-                  <h6 class="post-title card-text-truncate fs-8"><a
+                  <p class="h6 post-title card-text-truncate fs-8"><a
                       [routerLink]='"/post/" + post.slug'>{{post.departments[0]?post.departments[0].code:''}} -
                       {{post.titleText}}</a>
-                  </h6>
+                  </p>
                   <div class="post-meta">
                     <span class="date-info small">
                       <span class="fs-9">Publié le {{post.date | literalDatePipe}}</span>
@@ -235,9 +235,9 @@
                       class="img-fluid h-100 col-4" style="max-width: 70px; object-fit: contain;" />
 
                     <div class="col p-0">
-                      <h6 class="card-truncate-1-line mb-0 flex-grow-1 text-light fs-7">
+                      <p class="h6 card-truncate-1-line mb-0 flex-grow-1 text-light fs-7">
                         {{podcasts[0].titleText}}
-                      </h6>
+                      </p>
                       <p class="mb-0 text-light fs-8">Raide comme la Justice</p>
                     </div>
                   </div>
@@ -320,7 +320,7 @@
               <div class="row">
                 <div class="col-md-12">
                   <div class="section-title-block d-flex ">
-                    <h3 class="text-white">Au cœur de l'actualité !</h3>
+                    <p class="h3 text-white">Au cœur de l'actualité !</p>
                   </div>
                 </div>
               </div>
@@ -373,9 +373,9 @@
                   </div>
                 </a>
                 <div class="post-content">
-                  <h6 class="post-title card-text-truncate"><a
+                  <p class="h6 post-title card-text-truncate"><a
                       [routerLink]='"/post/" + post.slug'>{{post.titleText}}</a>
-                  </h6>
+                  </p>
                   <div class="post-meta">
                     <span class="date-info small">
                       <span>Publié le {{post.date | literalDatePipe}}</span>
@@ -425,9 +425,9 @@
                   </div>
                 </a>
                 <div class="post-content">
-                  <h6 class="post-title card-text-truncate"><a
+                  <p class="h6 post-title card-text-truncate"><a
                       [routerLink]='"/post/" + post.slug'>{{post.titleText}}</a>
-                  </h6>
+                  </p>
                   <div class="post-meta">
                     <span class="date-info small">
                       <span>Publié le {{post.date |literalDatePipe}}</span>
@@ -479,9 +479,9 @@
                   </div>
                 </a>
                 <div class="post-content">
-                  <h6 class="post-title card-text-truncate"><a
+                  <p class="h6 post-title card-text-truncate"><a
                       [routerLink]='"/post/" + post.slug'>{{post.titleText}}</a>
-                  </h6>
+                  </p>
                   <div class="post-meta">
                     <span class="date-info small">
                       <span>Publié le {{post.date | literalDatePipe}}</span>
@@ -541,8 +541,8 @@
             <div *ngFor="let podcast of podcasts" class="col-12 col-sm-6 col-md-4 col-lg-3 mb-2 mb-md-0">
               <div class="card h-100 bg-light-blue border-0 my-2 my-sm-0">
                 <div class="card-body d-flex flex-column align-items-center text-center justify-content-between">
-                  <h6 class="text-uppercase fs-8">Podcast</h6>
-                  <h4><a>{{podcast.titleText}}</a></h4>
+                  <p class="h6 text-uppercase fs-8">Podcast</p>
+                  <p class="h4"><a>{{podcast.titleText}}</a></p>
                   <a class="btn btn-outline-dark my-3 px-5" (click)="togglePlayPodcast(podcast)"><i
                       [ngClass]="isPlayingPodcast(podcast) ? 'bi-pause-fill' : 'bi-play-fill'"></i>
                     Écouter</a>
@@ -600,9 +600,9 @@
                   </div>
                 </a>
                 <div class="post-content">
-                  <h6 class="post-title card-text-truncate"><a
+                  <p class="h6 post-title card-text-truncate"><a
                       [routerLink]='"/post/serie/" + serie.slug'>{{serie.titleText}}</a>
-                  </h6>
+                  </p>
                 </div>
               </article>
             </div>
@@ -614,7 +614,7 @@
     <!-- Section contribute -->
     <div class="bg-secondary d-flex flex-column align-items-center mb-5">
       <div class="row p-3">
-        <h1 class="text-white">Mettez votre plume au service de l’info !</h1>
+        <span class="h1 text-white">Mettez votre plume au service de l’info !</span>
       </div>
       <div class="row px-3">
         <p class="gray-400">Vous avez une analyse, une enquête ou une opinion à partager ? Contribuez et
@@ -658,11 +658,11 @@
                   class="badge bg-info badge-category rounded-pill px-1 col-auto me-2">{{post.jssCategories[0].name}}</a>
                 <bookmark *ngIf="currentUser" [post]="post"></bookmark>
               </div>
-              <h4>
-                <a class="card-text-truncate" [routerLink]='"/post/" + post.slug'> <img *ngIf="post.isPremium"
+              <p>
+                <a class="h4 card-text-truncate" [routerLink]='"/post/" + post.slug'> <img *ngIf="post.isPremium"
                     class="pe-0" src="/assets/images/premium-icon.svg">
                   {{post.titleText}}</a>
-              </h4>
+              </p>
               <span class="fs-7 card-text-truncate mb-0" [innerHTML]="post.excerptText| trustHtml"></span>
             </div>
             <div class="row align-items-center px-2">
