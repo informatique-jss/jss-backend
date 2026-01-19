@@ -9,7 +9,7 @@ import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 public interface ServiceTypeService {
     public List<ServiceType> getServiceTypes();
 
-    public ServiceType getServiceType(Integer id);
+    public ServiceType getServiceType(Integer id) throws OsirisException;
 
     public ServiceType getServiceTypeByCode(String code);
 
@@ -17,5 +17,5 @@ public interface ServiceTypeService {
 
     public List<ServiceType> getServiceTypesForFamilyForMyJss(ServiceFamily serviceFamily) throws OsirisException;
 
-    public ServiceType getServiceType(Integer id, Boolean isFetchOnlyMandatoryDocuments);
+    public ServiceType getServiceType(Integer id, Boolean isFetchOnlyMandatoryDocuments) throws OsirisException;
 }

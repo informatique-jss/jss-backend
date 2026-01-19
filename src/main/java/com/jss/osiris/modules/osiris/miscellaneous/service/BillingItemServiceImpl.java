@@ -42,5 +42,4 @@ public class BillingItemServiceImpl implements BillingItemService {
             BillingItem billingItem) {
         return billingItemRepository.save(billingItem);
     }
-
 }

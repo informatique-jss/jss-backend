@@ -16,4 +16,7 @@ export interface ServiceType {
   hasAnnouncement: boolean;
   hasOnlyAnnouncement: boolean;
   serviceTypeLinked: ServiceType;
+  totalPreTaxPrice: number;
+  deboursAmount: number;
+  descriptionText: string;
 }

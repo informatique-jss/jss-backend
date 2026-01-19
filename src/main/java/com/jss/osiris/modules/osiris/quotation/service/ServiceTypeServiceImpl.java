@@ -1,5 +1,6 @@
 package com.jss.osiris.modules.osiris.quotation.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.osiris.miscellaneous.model.BillingItem;
+import com.jss.osiris.modules.osiris.miscellaneous.model.BillingType;
+import com.jss.osiris.modules.osiris.miscellaneous.service.BillingItemService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceProvisionType;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceTypeDocument;
@@ -26,18 +30,24 @@ public class ServiceTypeServiceImpl implements ServiceTypeService {
     @Autowired
     ConstantService constantService;
 
+    @Autowired
+    BillingItemService billingItemService;
+
+    @Autowired
+    PricingHelper pricingHelper;
+
     @Override
     public List<ServiceType> getServiceTypes() {
         return IterableUtils.toList(serviceTypeRepository.findAll());
     }
 
     @Override
-    public ServiceType getServiceType(Integer id) {
+    public ServiceType getServiceType(Integer id) throws OsirisException {
         return this.getServiceType(id, false);
     }
 
     @Override
-    public ServiceType getServiceType(Integer id, Boolean isFetchOnlyMandatoryDocuments) {
+    public ServiceType getServiceType(Integer id, Boolean isFetchOnlyMandatoryDocuments) throws OsirisException {
         Optional<ServiceType> serviceType = serviceTypeRepository.findById(id);
         ServiceType serviceFinal = null;
 
@@ -48,7 +58,30 @@ public class ServiceTypeServiceImpl implements ServiceTypeService {
             if (!serviceFinal.getAssoServiceTypeFieldTypes().isEmpty() && isFetchOnlyMandatoryDocuments)
                 serviceFinal.getAssoServiceTypeFieldTypes().removeIf(asso -> !asso.getIsMandatory());
         }
-        return serviceFinal;
+        return getCurrentBillingItemsForServiceType(serviceFinal);
+    }
+
+    private ServiceType getCurrentBillingItemsForServiceType(ServiceType serviceType) throws OsirisException {
+        BigDecimal totalPrice = new BigDecimal(0f);
+        BigDecimal deboursAmount = new BigDecimal(0f);
+
+        if (serviceType.getAssoServiceProvisionTypes() != null && !serviceType.getAssoServiceProvisionTypes().isEmpty())
+            for (AssoServiceProvisionType asso : serviceType.getAssoServiceProvisionTypes())
+                if (asso.getProvisionType() != null && asso.getProvisionType().getBillingTypes() != null
+                        && !asso.getProvisionType().getBillingTypes().isEmpty())
+                    for (BillingType billingType : asso.getProvisionType().getBillingTypes()) {
+                        BillingItem newBillingItem = null;
+                        newBillingItem = pricingHelper.getAppliableBillingItem(billingType, null);
+
+                        if (newBillingItem != null) {
+                            if (billingType.getIsDebour() && newBillingItem.getPreTaxPrice() != null)
+                                deboursAmount = deboursAmount.add(newBillingItem.getPreTaxPrice());
+                            totalPrice = totalPrice.add(newBillingItem.getPreTaxPrice());
+                        }
+                    }
+        serviceType.setTotalPreTaxPrice(totalPrice);
+        serviceType.setDeboursAmount(deboursAmount);
+        return serviceType;
     }
 
     @Override
