@@ -459,7 +459,9 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService {
                         ? serviceType.getServiceFamily().getServiceFamilyGroup().getLabel()
                         : null);
         if (service.getServiceTotalPrice() != null)
-            item.setPrice(service.getServiceTotalPrice().divide(nbServiceType, 2, RoundingMode.HALF_UP));
+            item.setPrice(service.getServiceTotalPrice().divide(nbServiceType, 2,
+                    RoundingMode.HALF_UP));
+
         item.setQuantity(1);
         return item;
     }
