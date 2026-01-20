@@ -4,7 +4,6 @@ import { EMPTY, Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { AppService } from './app.service';
-import { GtmService } from './gtm.service';
 import { PlatformService } from './platform.service';
 
 @Injectable({
@@ -13,7 +12,6 @@ import { PlatformService } from './platform.service';
 export class HttpErrorInterceptor implements HttpInterceptor {
 
   constructor(private appService: AppService,
-    private gtmService: GtmService,
     private platformService: PlatformService,
   ) { }
 
@@ -21,9 +19,8 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 
     request = request.clone({
       withCredentials: true,
-      headers: request.headers.set("domain", "myjss" + (environment.production ? '_PROD' : '_REC')).set("gaClientId", this.gtmService.getGaClientId())
+      headers: request.headers.set("domain", "myjss" + (environment.production ? '_PROD' : '_REC'))
     });
-
 
     return next.handle(request).pipe(
       tap(data => {

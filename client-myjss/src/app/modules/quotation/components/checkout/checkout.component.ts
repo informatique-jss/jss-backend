@@ -10,7 +10,7 @@ import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { Mail } from '../../../general/model/Mail';
 import { AppService } from '../../../main/services/app.service';
 import { ConstantService } from '../../../main/services/constant.service';
-import { Ga4Service } from '../../../main/services/ga4.service';
+import { GoogleAnalyticsService } from '../../../main/services/googleAnalytics.service';
 import { AutocompleteCityComponent } from '../../../miscellaneous/components/forms/autocomplete-city/autocomplete-city.component';
 import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { GenericTextareaComponent } from '../../../miscellaneous/components/forms/generic-textarea/generic-textarea.component';
@@ -126,7 +126,7 @@ export class CheckoutComponent implements OnInit {
     private documentService: DocumentService,
     private cityService: CityService,
     private voucherService: VoucherService,
-    private ga4Service: Ga4Service
+    private ga4Service: GoogleAnalyticsService
   ) { }
 
   async ngOnInit() {

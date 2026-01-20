@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { MenuItem } from '../../general/model/MenuItem';
 import { AppRestService } from '../../main/services/appRest.service';
-import { GtmService } from '../../main/services/gtm.service';
+import { GoogleAnalyticsService } from '../../main/services/googleAnalytics.service';
 import { Responsable } from '../../profile/model/Responsable';
 import { IQuotation } from '../../quotation/model/IQuotation';
 import { NoticeTemplateService } from '../../quotation/services/notice.template.service';
@@ -16,7 +16,7 @@ import { Quotation } from '../model/Quotation';
 export class QuotationService extends AppRestService<Quotation> {
   constructor(http: HttpClient,
     private noticeTemplateService: NoticeTemplateService,
-    private gtmService: GtmService
+    private googleAnalyticsService: GoogleAnalyticsService
   ) {
     super(http, "quotation");
   }
@@ -93,7 +93,7 @@ export class QuotationService extends AppRestService<Quotation> {
   }
 
   setCurrentDraftQuotation(quotation: IQuotation) {
-    quotation.lastGaClientId = this.gtmService.getGaClientId();
+    quotation.lastGaClientId = this.googleAnalyticsService.getGaClientId();
     localStorage.setItem('current-draft-quotation', JSON.stringify(quotation));
   }
 

@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Ga4Request {
+public class GoogleAnalyticsRequest {
 
     @JsonProperty("client_id")
     private String clientId;
@@ -15,7 +15,7 @@ public class Ga4Request {
     private String userId;
 
     @JsonProperty("events")
-    private List<Ga4Event> events;
+    private List<GoogleAnalyticsEvent> events;
 
     public String getClientId() {
         return clientId;
@@ -33,11 +33,11 @@ public class Ga4Request {
         this.userId = userId;
     }
 
-    public List<Ga4Event> getEvents() {
+    public List<GoogleAnalyticsEvent> getEvents() {
         return events;
     }
 
-    public void setEvents(List<Ga4Event> events) {
+    public void setEvents(List<GoogleAnalyticsEvent> events) {
         this.events = events;
     }
 }

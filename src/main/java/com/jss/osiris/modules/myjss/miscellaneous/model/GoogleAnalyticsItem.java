@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Ga4Item {
+public class GoogleAnalyticsItem {
 
     @JsonProperty("item_id")
     private String itemId;

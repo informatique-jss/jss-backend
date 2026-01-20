@@ -95,7 +95,7 @@ public class MyJssMiscellaneousController {
 		}
 	}
 
-	@PostMapping(inputEntryPoint + "/ga4/view-list-item")
+	@PostMapping(inputEntryPoint + "/google-analytics/view-list-item")
 	public ResponseEntity<Boolean> trackViewListItem(@RequestBody List<ServiceType> serviceTypes,
 			@RequestParam(required = false) Integer affaireId, @RequestParam Integer serviceFamilyId,
 			HttpServletRequest request)
@@ -123,7 +123,7 @@ public class MyJssMiscellaneousController {
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 
-	@PostMapping(inputEntryPoint + "/ga4/add-to-cart")
+	@PostMapping(inputEntryPoint + "/google-analytics/add-to-cart")
 	public ResponseEntity<Boolean> trackAddToCart(@RequestBody ServiceType serviceType,
 			@RequestParam(required = false) Integer affaireId,
 			HttpServletRequest request)
@@ -146,7 +146,7 @@ public class MyJssMiscellaneousController {
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 
-	@PostMapping(inputEntryPoint + "/ga4/remove-from-cart")
+	@PostMapping(inputEntryPoint + "/google-analytics/remove-from-cart")
 	public ResponseEntity<Boolean> trackRemoveFromCart(@RequestBody ServiceType serviceType,
 			@RequestParam(required = false) Integer affaireId, HttpServletRequest request)
 			throws OsirisClientMessageException, OsirisException {
@@ -168,7 +168,7 @@ public class MyJssMiscellaneousController {
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 
-	@PostMapping(inputEntryPoint + "/ga4/begin-checkout/quotation")
+	@PostMapping(inputEntryPoint + "/google-analytics/begin-checkout/quotation")
 	public ResponseEntity<Boolean> trackBeginCheckoutQuotation(@RequestBody Quotation quotation,
 			HttpServletRequest request)
 			throws OsirisClientMessageException, OsirisException {
@@ -181,7 +181,7 @@ public class MyJssMiscellaneousController {
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 
-	@PostMapping(inputEntryPoint + "/ga4/begin-checkout/customer-order")
+	@PostMapping(inputEntryPoint + "/google-analytics/begin-checkout/customer-order")
 	public ResponseEntity<Boolean> trackBeginCheckoutOrder(@RequestBody CustomerOrder customerOrder,
 			HttpServletRequest request)
 			throws OsirisClientMessageException, OsirisException {
@@ -194,7 +194,7 @@ public class MyJssMiscellaneousController {
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 
-	@PostMapping(inputEntryPoint + "/ga4/add_payment_info/quotation")
+	@PostMapping(inputEntryPoint + "/google-analytics/add-payment-info/quotation")
 	public ResponseEntity<Boolean> trackAddPaymentInfoQuotation(@RequestBody Quotation quotation,
 			HttpServletRequest request)
 			throws OsirisClientMessageException, OsirisException {
@@ -207,7 +207,7 @@ public class MyJssMiscellaneousController {
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 
-	@PostMapping(inputEntryPoint + "/ga4/add_payment_info/customer-order")
+	@PostMapping(inputEntryPoint + "/google-analytics/add-payment-info/customer-order")
 	public ResponseEntity<Boolean> trackAddPaymentInfoOrder(@RequestBody CustomerOrder customerOrder,
 			HttpServletRequest request)
 			throws OsirisClientMessageException, OsirisException {

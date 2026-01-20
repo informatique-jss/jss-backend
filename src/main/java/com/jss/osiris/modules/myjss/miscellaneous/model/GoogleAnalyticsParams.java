@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Ga4Params extends Ga4PageInfo {
+public class GoogleAnalyticsParams extends GoogleAnalyticsPageInfo {
 
     @JsonProperty("debug_mode")
     private Boolean debugMode;
@@ -32,7 +32,7 @@ public class Ga4Params extends Ga4PageInfo {
     private String coupon;
 
     @JsonProperty("items")
-    private List<Ga4Item> items;
+    private List<GoogleAnalyticsItem> items;
 
     // Business payload
     @JsonProperty("business_type")
@@ -114,11 +114,11 @@ public class Ga4Params extends Ga4PageInfo {
         this.coupon = coupon;
     }
 
-    public List<Ga4Item> getItems() {
+    public List<GoogleAnalyticsItem> getItems() {
         return items;
     }
 
-    public void setItems(List<Ga4Item> items) {
+    public void setItems(List<GoogleAnalyticsItem> items) {
         this.items = items;
     }
 

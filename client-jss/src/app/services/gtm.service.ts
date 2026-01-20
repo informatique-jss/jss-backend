@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
 import { environment } from "../../environments/environment";
-import { COOKIE_KEY } from "../libs/Constants";
 import { Responsable } from "../main/model/Responsable";
 import { LoginService } from "../main/services/login.service";
+import { CookieService } from "./cookie.service";
 import { BasePayload, CtaClickPayload, FormSubmitPayload } from "./GtmPayload";
 import { PlatformService } from "./platform.service";
 
@@ -24,7 +24,8 @@ export class GtmService {
   currentUser: Responsable | undefined;
 
   constructor(private platformService: PlatformService,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private cookieService: CookieService
   ) { }
 
   init() {
@@ -55,7 +56,7 @@ export class GtmService {
 
     if (this.currentUser)
       payload.user = { id: this.currentUser.id };
-    payload.consent = localStorage.getItem(COOKIE_KEY) == "true";
+    payload.consent = this.cookieService.getConsent() == true;
 
     if (payload && payload.page)
       payload.page.website = "media";

@@ -4,7 +4,7 @@ import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { combineLatest } from 'rxjs';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
-import { Ga4Service } from '../../../main/services/ga4.service';
+import { GoogleAnalyticsService } from '../../../main/services/googleAnalytics.service';
 import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { GenericToggleComponent } from '../../../miscellaneous/components/forms/generic-toggle/generic-toggle.component';
 import { AssoAffaireOrder } from '../../../my-account/model/AssoAffaireOrder';
@@ -46,7 +46,7 @@ export class ServicesSelectionComponent implements OnInit {
     private loginService: LoginService,
     private appService: AppService,
     private serviceService: ServiceService,
-    private ga4Service: Ga4Service
+    private ga4Service: GoogleAnalyticsService
   ) { }
 
   servicesForm!: FormGroup;
