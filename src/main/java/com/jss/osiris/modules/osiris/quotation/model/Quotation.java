@@ -189,6 +189,8 @@ public class Quotation implements IQuotation {
 	@JoinColumn(name = "id_voucher")
 	private Voucher voucher;
 
+	private String lastGaClientId;
+
 	public Integer getId() {
 		return id;
 	}
@@ -421,4 +423,11 @@ public class Quotation implements IQuotation {
 		this.effectiveDate = effectiveDate;
 	}
 
+	public String getLastGaClientId() {
+		return lastGaClientId;
+	}
+
+	public void setLastGaClientId(String lastGaClientId) {
+		this.lastGaClientId = lastGaClientId;
+	}
 }

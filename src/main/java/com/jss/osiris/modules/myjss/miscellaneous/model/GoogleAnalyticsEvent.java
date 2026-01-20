@@ -4,16 +4,16 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Ga4Event {
+public class GoogleAnalyticsEvent {
 
     @JsonProperty("name")
     private String name;
 
     @JsonProperty("page")
-    private Ga4PageInfo page;
+    private GoogleAnalyticsPageInfo page;
 
     @JsonProperty("params")
-    private Ga4ParamPurchase params;
+    private GoogleAnalyticsParams params;
 
     public String getName() {
         return name;
@@ -23,11 +23,19 @@ public class Ga4Event {
         this.name = name;
     }
 
-    public Ga4ParamPurchase getParams() {
+    public GoogleAnalyticsPageInfo getPage() {
+        return page;
+    }
+
+    public void setPage(GoogleAnalyticsPageInfo page) {
+        this.page = page;
+    }
+
+    public GoogleAnalyticsParams getParams() {
         return params;
     }
 
-    public void setParams(Ga4ParamPurchase params) {
+    public void setParams(GoogleAnalyticsParams params) {
         this.params = params;
     }
 }

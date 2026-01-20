@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { CookieService } from '../../../main/services/cookie.service';
 
 @Component({
   selector: 'privacy-policy',
@@ -11,7 +12,9 @@ import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 })
 export class PrivacyPolicyComponent implements OnInit {
 
-  constructor(private activatedRoute: ActivatedRoute) { }
+  constructor(private activatedRoute: ActivatedRoute,
+    private cookieService: CookieService
+  ) { }
 
   tabs = [
     { id: 'privacy-policy', label: 'Politique de confidentialité' },
@@ -33,5 +36,9 @@ export class PrivacyPolicyComponent implements OnInit {
 
   selectTab(tab: any) {
     this.selectedTab = tab;
+  }
+
+  resetCookies() {
+    this.cookieService.resetCookies();
   }
 }

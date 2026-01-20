@@ -10,6 +10,7 @@ import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { Mail } from '../../../general/model/Mail';
 import { AppService } from '../../../main/services/app.service';
 import { ConstantService } from '../../../main/services/constant.service';
+import { GoogleAnalyticsService } from '../../../main/services/googleAnalytics.service';
 import { AutocompleteCityComponent } from '../../../miscellaneous/components/forms/autocomplete-city/autocomplete-city.component';
 import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { GenericTextareaComponent } from '../../../miscellaneous/components/forms/generic-textarea/generic-textarea.component';
@@ -124,7 +125,8 @@ export class CheckoutComponent implements OnInit {
     private serviceService: ServiceService,
     private documentService: DocumentService,
     private cityService: CityService,
-    private voucherService: VoucherService
+    private voucherService: VoucherService,
+    private ga4Service: GoogleAnalyticsService
   ) { }
 
   async ngOnInit() {
@@ -203,7 +205,8 @@ export class CheckoutComponent implements OnInit {
     if (!this.currentUser) {
       if (this.quotation) {
         this.quotationService.setCurrentDraftQuotation(this.quotation);
-        if (this.quotation.isQuotation)
+        if (this.quotation.isQuotation) {
+          this.ga4Service.trackAddPaymentInfoQuotation(this.quotation as Quotation).subscribe();
           this.quotationService.saveFinalQuotation(this.quotation as Quotation, !isDraft).subscribe(response => {
             if (response && response.id) {
               this.cleanStorageData();
@@ -216,7 +219,8 @@ export class CheckoutComponent implements OnInit {
               this.rerouteToHomePage();
             }
           });
-        else
+        } else {
+          this.ga4Service.trackAddPaymentInfoCustomerOrder(this.quotation as CustomerOrder).subscribe();
           this.orderService.saveFinalOrder(this.quotation as CustomerOrder, !isDraft).subscribe(response => {
             if (response && response.id) {
               this.cleanStorageData();
@@ -229,9 +233,11 @@ export class CheckoutComponent implements OnInit {
               this.rerouteToHomePage();
             }
           });
+        }
       }
     } else {
-      if (this.quotation.isQuotation)
+      if (this.quotation.isQuotation) {
+        this.ga4Service.trackAddPaymentInfoQuotation(this.quotation as Quotation).subscribe();
         this.quotationService.saveQuotation(this.quotation, !isDraft).subscribe(response => {
           if (response) {
             this.cleanStorageData();
@@ -239,7 +245,8 @@ export class CheckoutComponent implements OnInit {
             this.appService.openRoute(undefined, "account/quotations/details/" + response, undefined);
           }
         })
-      else
+      } else {
+        this.ga4Service.trackAddPaymentInfoCustomerOrder(this.quotation as CustomerOrder).subscribe();
         this.orderService.saveOrder(this.quotation, !isDraft).subscribe(response => {
           if (response) {
             this.cleanStorageData();
@@ -247,6 +254,7 @@ export class CheckoutComponent implements OnInit {
             this.appService.openRoute(undefined, "account/orders/details/" + response, undefined);
           }
         })
+      }
     }
   }
 

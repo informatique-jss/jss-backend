@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AppRestService } from '../../main/services/appRest.service';
+import { GoogleAnalyticsService } from '../../main/services/googleAnalytics.service';
 import { Responsable } from '../../profile/model/Responsable';
 import { IQuotation } from '../../quotation/model/IQuotation';
 import { CustomerOrder } from '../model/CustomerOrder';
@@ -11,7 +12,9 @@ import { Document } from '../model/Document';
   providedIn: 'root'
 })
 export class CustomerOrderService extends AppRestService<CustomerOrder> {
-  constructor(http: HttpClient) {
+  constructor(http: HttpClient,
+    private googleAnalyticsService: GoogleAnalyticsService
+  ) {
     super(http, "quotation");
   }
 
@@ -90,6 +93,7 @@ export class CustomerOrderService extends AppRestService<CustomerOrder> {
   }
 
   setCurrentDraftOrder(quotation: IQuotation) {
+    quotation.lastGaClientId = this.googleAnalyticsService.getGaClientId();
     localStorage.setItem('current-draft-order', JSON.stringify(quotation));
   }
 

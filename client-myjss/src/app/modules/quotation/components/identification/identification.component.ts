@@ -5,7 +5,6 @@ import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
 import { ConstantService } from '../../../main/services/constant.service';
 import { GtmService } from '../../../main/services/gtm.service';
-import { BeginCheckoutPayload, PageInfo } from '../../../main/services/GtmPayload';
 import { AutocompleteCityComponent } from '../../../miscellaneous/components/forms/autocomplete-city/autocomplete-city.component';
 import { AutocompleteSiretComponent } from '../../../miscellaneous/components/forms/autocomplete-siret/autocomplete-siret.component';
 import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
@@ -238,23 +237,9 @@ export class IdentificationComponent implements OnInit {
     return false;
   }
 
-  trackBeginCheckout() {
-    if (this.selectedQuotationType && this.quotation.serviceFamilyGroup)
-      this.gtmService.trackBeginCheckout(
-        {
-          business: { type: this.selectedQuotationType.id == QUOTATION_TYPE_QUOTATION.id ? 'quotation' : 'order', service: this.quotation.serviceFamilyGroup!.label },
-          page: {
-            type: 'quotation',
-            name: 'identification'
-          } as PageInfo
-        } as BeginCheckoutPayload
-      );
-  }
-
   startQuotation() {
     this.appService.showLoadingSpinner();
     if (this.selectedQuotationType) {
-      this.trackBeginCheckout();
       if (this.currentUser) {
         if (this.selectedQuotationType.id == QUOTATION_TYPE_QUOTATION.id) {
           this.quotation.isQuotation = true;

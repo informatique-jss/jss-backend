@@ -7,7 +7,8 @@ export const environment = {
   backendUrl: "http://localhost:8080/",
   frontendUrl: "http://localhost:4202/",
   frontendJssUrl: "http://localhost:4201/",
-  frontendOsirisV2Url: "http://localhost:4203/"
+  frontendOsirisV2Url: "http://localhost:4203/",
+  cookieDomain: "localhost"
 };
 
 /*
