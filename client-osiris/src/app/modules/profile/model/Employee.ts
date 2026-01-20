@@ -1,5 +1,6 @@
+import { AutocompleteLabel } from "../../miscellaneous/model/AutocompleteLabel";
 
-export interface Employee {
+export interface Employee extends AutocompleteLabel {
   id: number;
   firstname: string;
   lastname: string;

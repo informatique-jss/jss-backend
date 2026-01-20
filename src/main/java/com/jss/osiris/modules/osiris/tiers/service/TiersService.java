@@ -2,13 +2,15 @@ package com.jss.osiris.modules.osiris.tiers.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.tiers.model.ITiersSearchResult;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 import com.jss.osiris.modules.osiris.tiers.model.TiersSearch;
-import com.jss.osiris.modules.osiris.tiers.model.dto.TiersDto;
 
 public interface TiersService {
     public Tiers getTiers(Integer id);
@@ -34,5 +36,5 @@ public interface TiersService {
 
     public List<Tiers> searchForTiers(TiersSearch tiersSearch) throws OsirisException;
 
-    public TiersDto getTiersDto(Integer id);
+    public Page<Tiers> findAllTiersByDenoOrFirstLastName(String searchText, Pageable pageable) throws OsirisException;
 }

@@ -1,4 +1,5 @@
 import { Employee } from "../../profile/model/Employee";
+import { TiersCategory } from "../../profile/model/TiersCategory";
 
 export interface ResponsableSearch {
   salesEmployee: Employee;
@@ -7,4 +8,5 @@ export interface ResponsableSearch {
   kpis: any;
   startDateKpis: Date;
   endDateKpis: Date;
+  tiersCategory: TiersCategory;
 }

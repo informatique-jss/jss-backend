@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.modules.osiris.accounting.service.AccountingAccountHelper;
@@ -37,6 +39,18 @@ public class TiersDtoHelper {
         return outTiers;
     }
 
+    public Page<TiersDto> mapTiers(Page<Tiers> tiers) {
+        List<TiersDto> outTiers = new ArrayList<TiersDto>();
+        HashMap<String, KpiCrm> kpiCrmsMap = getKpiCrmsMap();
+        if (tiers != null) {
+            for (Tiers tier : tiers) {
+                outTiers.add(mapTiersToTiersDto(tier, kpiCrmsMap));
+            }
+            return new PageImpl<>(outTiers, tiers.getPageable(), tiers.getTotalElements());
+        }
+        return new PageImpl<>(outTiers);
+    }
+
     public TiersDto mapTiers(Tiers tiers) {
         TiersDto outTiers = new TiersDto();
         HashMap<String, KpiCrm> kpiCrmsMap = getKpiCrmsMap();
@@ -57,6 +71,18 @@ public class TiersDtoHelper {
             }
         }
         return outResponsables;
+    }
+
+    public Page<ResponsableDto> mapResponsables(Page<Responsable> responsables) {
+        List<ResponsableDto> outResponsables = new ArrayList<ResponsableDto>();
+        HashMap<String, KpiCrm> kpiCrmsMap = getKpiCrmsMap();
+        if (responsables != null) {
+            for (Responsable respo : responsables) {
+                outResponsables.add(mapResponsableToResponsableDto(respo, kpiCrmsMap));
+            }
+            return new PageImpl<>(outResponsables, responsables.getPageable(), responsables.getTotalElements());
+        }
+        return new PageImpl<>(outResponsables);
     }
 
     public ResponsableDto mapResponsable(Responsable responsable) {

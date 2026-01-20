@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.jss.osiris.modules.osiris.profile.model.Employee;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 
 public class OrderingSearch {
@@ -22,6 +23,7 @@ public class OrderingSearch {
     private Boolean isDisplayOnlyRecurringCustomerOrder;
     private Boolean isDisplayOnlyParentRecurringCustomerOrder;
     private LocalDate recurringValidityDate;
+    private List<Responsable> responsables;
 
     public LocalDateTime getStartDate() {
         return startDate;
@@ -133,6 +135,14 @@ public class OrderingSearch {
 
     public void setAffaire(Affaire affaire) {
         this.affaire = affaire;
+    }
+
+    public List<Responsable> getResponsables() {
+        return responsables;
+    }
+
+    public void setResponsables(List<Responsable> responsables) {
+        this.responsables = responsables;
     }
 
 }

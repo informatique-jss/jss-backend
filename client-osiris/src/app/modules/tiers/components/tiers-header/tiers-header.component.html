@@ -54,6 +54,10 @@
             <li ngbDropdownItem class="d-flex align-items-center pointer"><ng-icon name="tablerHistory"
                 class="fs-xl me-2"></ng-icon><a>Voir l'historique</a>
             </li>
+            <li ngbDropdownItem class="d-flex align-items-center pointer"><ng-icon name="tablerExternalLink"
+                class="fs-xl me-2"></ng-icon><a [href]="frontendOsirisUrl + OSIRIS_TIERS_ROUTE + tiers.id"
+                target="_blank" class="text-secondary">Ouvrir le tiers dans Osiris V1</a>
+            </li>
             <li ngbDropdownItem class="d-flex align-items-center pointer"><ng-icon name="tablerTrash"
                 class="text-danger fs-xl me-2"></ng-icon><a class="text-danger" (click)="deleteTiers()">Supprimer le
                 tiers</a>

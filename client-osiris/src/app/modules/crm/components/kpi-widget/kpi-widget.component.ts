@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { NgIcon } from '@ng-icons/core';
 import { CountUpModule } from 'ngx-countup';
 import { AGGREGATE_TYPE_LAST_VALUE } from '../../../../libs/Constants';
+import { getPreviousYear } from '../../../../libs/DateHelper';
 import { copyObject } from '../../../../libs/GenericHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { KpiCrm } from '../../model/KpiCrm';
@@ -107,27 +108,11 @@ export class KpiWidgetComponent implements OnInit {
       newSearchModel.salesEmployee = undefined;
     }
     if (newSearchModel.startDateKpis && yearOffset)
-      newSearchModel.startDateKpis = KpiWidgetComponent.getPreviousYear(newSearchModel.startDateKpis, yearOffset);
+      newSearchModel.startDateKpis = getPreviousYear(newSearchModel.startDateKpis, yearOffset);
     if (newSearchModel.endDateKpis && yearOffset)
-      newSearchModel.endDateKpis = KpiWidgetComponent.getPreviousYear(newSearchModel.endDateKpis, yearOffset);
+      newSearchModel.endDateKpis = getPreviousYear(newSearchModel.endDateKpis, yearOffset);
     newSearchModel.isAllTiers = KpiWidgetComponent.isAllTiers(this.searchModel);
     return newSearchModel;
-  }
-
-
-  static getPreviousYear(date: Date, offsetYear: number): Date {
-    date = new Date(date);
-    const year = date.getFullYear() - offsetYear;
-    const month = date.getMonth();
-    const day = date.getDate();
-
-    const previousYearDate = new Date(year, month, day);
-
-    if (previousYearDate.getMonth() !== month) {
-      return new Date(year, month + 1, 0);
-    }
-
-    return previousYearDate;
   }
 
   static generateSearchModelForApi(searchModel: KpiCrmSearchModel, yearOffset: number) {
@@ -137,9 +122,9 @@ export class KpiWidgetComponent implements OnInit {
       newSearchModel.salesEmployee = undefined;
     }
     if (newSearchModel.startDateKpis && yearOffset)
-      newSearchModel.startDateKpis = this.getPreviousYear(newSearchModel.startDateKpis, yearOffset);
+      newSearchModel.startDateKpis = getPreviousYear(newSearchModel.startDateKpis, yearOffset);
     if (newSearchModel.endDateKpis && yearOffset)
-      newSearchModel.endDateKpis = this.getPreviousYear(newSearchModel.endDateKpis, yearOffset);
+      newSearchModel.endDateKpis = getPreviousYear(newSearchModel.endDateKpis, yearOffset);
     newSearchModel.isAllTiers = this.isAllTiers(searchModel);
     return newSearchModel;
   }

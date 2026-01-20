@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -706,7 +710,12 @@ public class TiersController {
 
   @GetMapping(inputEntryPoint + "/responsable/search")
   public ResponseEntity<List<Responsable>> getResponsables(@RequestParam String searchedValue) {
-    return new ResponseEntity<List<Responsable>>(responsableService.getResponsables(searchedValue), HttpStatus.OK);
+
+    Pageable pageable = PageRequest.of(0, 10000000, Sort.by(Sort.Direction.DESC, "lastname"));
+
+    return new ResponseEntity<List<Responsable>>(
+        responsableService.getResponsables(searchedValue, pageable).getContent(),
+        HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/tiers")
@@ -727,7 +736,7 @@ public class TiersController {
 
   @GetMapping(inputEntryPoint + "/responsable-dto")
   public ResponseEntity<ResponsableDto> getResponsableDtoById(@RequestParam Integer id) {
-    return new ResponseEntity<ResponsableDto>(responsableService.getResponsableDto(id), HttpStatus.OK);
+    return new ResponseEntity<ResponsableDto>(tiersFacade.getResponsableDto(id), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/responsables")
@@ -738,7 +747,7 @@ public class TiersController {
     }
 
     return new ResponseEntity<List<ResponsableDto>>(
-        responsableService.getResponsablesByTiers(tiersService.getTiers(idTiers)), HttpStatus.OK);
+        tiersFacade.getResponsablesByTiers(tiersService.getTiers(idTiers)), HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/tiers/search")
@@ -754,6 +763,22 @@ public class TiersController {
     return new ResponseEntity<List<TiersDto>>(tiersFacade.searchTiers(tiersSearch), HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/tiers/search/autocomplete")
+  public ResponseEntity<Page<TiersDto>> searchTiers(@RequestParam String searchText, @RequestParam Integer page,
+      @RequestParam Integer pageSize)
+      throws OsirisException {
+
+    Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(pageSize),
+        Sort.by(Sort.Direction.DESC, "denomination").and(Sort.by(Sort.Direction.DESC, "lastname")));
+
+    if (searchText == null) {
+      throw new OsirisValidationException("searchText");
+    }
+
+    return new ResponseEntity<Page<TiersDto>>(tiersFacade.searchTiersByDenoOrFirstLastName(searchText, pageable),
+        HttpStatus.OK);
+  }
+
   @PostMapping(inputEntryPoint + "/responsables/search")
   public ResponseEntity<List<ResponsableDto>> searchResponsable(@RequestBody ResponsableSearch responsableSearch)
       throws OsirisException {
@@ -765,5 +790,17 @@ public class TiersController {
     }
 
     return new ResponseEntity<List<ResponsableDto>>(tiersFacade.searchResponsable(responsableSearch), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/responsable/search/v2")
+  public ResponseEntity<Page<ResponsableDto>> getResponsables(@RequestParam String searchedValue,
+      @RequestParam Integer page, @RequestParam Integer pageSize) {
+
+    Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(pageSize),
+        Sort.by(Sort.Direction.DESC, "lastname"));
+
+    return new ResponseEntity<Page<ResponsableDto>>(
+        tiersFacade.searchResponsablesByFirstOrLastName(searchedValue, pageable),
+        HttpStatus.OK);
   }
 }

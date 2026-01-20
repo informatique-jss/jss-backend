@@ -11,6 +11,7 @@ import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.IWorkflowElement;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionBoardResult;
+import com.jss.osiris.modules.osiris.quotation.model.ProvisionSearch;
 
 public interface ProvisionService {
     public Provision getProvision(Integer id);
@@ -28,6 +29,8 @@ public interface ProvisionService {
     public File getTrackingSheetPdf(Provision provision) throws OsirisException;
 
     public List<Provision> searchProvisions(List<Employee> formalistes, List<IWorkflowElement> status);
+
+    public List<Provision> searchForProvisions(ProvisionSearch provisionSearch);
 
     public void updateProvisionStatus(Provision provision, IWorkflowElement status)
             throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException, OsirisException;

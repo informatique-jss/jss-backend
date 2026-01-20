@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgIconComponent } from "@ng-icons/core";
+import { getPreviousYear } from '../../../../libs/DateHelper';
 import { callNumber, displayInTeams } from '../../../../libs/MailHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { UiCardComponent } from '../../../../libs/ui-card/ui-card.component';
@@ -63,7 +64,7 @@ export class TiersComponent implements OnInit {
 
   searchModel: KpiCrmSearchModel = {
     endDateKpis: new Date(),
-    startDateKpis: this.getPreviousYear(new Date(), 1),
+    startDateKpis: getPreviousYear(new Date(), 1),
     salesEmployeeId: undefined,
     kpiCrmKey: '',
     tiersIds: [],
@@ -168,21 +169,6 @@ export class TiersComponent implements OnInit {
           break;
       }
     })
-  }
-
-  getPreviousYear(date: Date, offsetYear: number): Date {
-    date = new Date(date);
-    const year = date.getFullYear() - offsetYear;
-    const month = date.getMonth();
-    const day = date.getDate();
-
-    const previousYearDate = new Date(year, month, day);
-
-    if (previousYearDate.getMonth() !== month) {
-      return new Date(year, month + 1, 0);
-    }
-
-    return previousYearDate;
   }
 
   openTeamsConversation(employee: string) {

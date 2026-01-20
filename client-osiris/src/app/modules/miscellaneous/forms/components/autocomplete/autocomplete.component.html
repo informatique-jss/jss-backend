@@ -1,10 +1,12 @@
 <!-- input -->
 <div [formGroup]="formGroup" class="form-group">
-  <ng-autocomplete [data]="data" [searchKeyword]="searchKeyword" [placeholder]="label" [attr.name]="fieldName"
-    [initialValue]="selectedItem" (selected)='optionSelected($event)' (inputChanged)='onChangeSearch($event)'
-    [itemTemplate]="itemTemplate" [notFoundTemplate]="notFoundTemplate" [minQueryLength]="expectedMinLengthInput"
-    [debounceTime]="debounceTime" (scrolledToEnd)="fetchNextPage()" #autoComp [historyIdentifier]="fieldName"
-    historyHeading="Choix récents" [isLoading]="isLoading"></ng-autocomplete>
+  <label [for]="fieldName" class="form-label">{{ label }}</label>
+  <ng-autocomplete [id]="fieldName" [ngClass]="{'is-invalid':errors && errors.length>0}" [data]="data"
+    [searchKeyword]="searchKeyword" [placeholder]="label" [attr.name]="fieldName" [initialValue]="selectedItem"
+    (selected)='optionSelected($event)' (inputChanged)='onChangeSearch($event)' [itemTemplate]="itemTemplate"
+    [notFoundTemplate]="notFoundTemplate" [minQueryLength]="expectedMinLengthInput" [debounceTime]="debounceTime"
+    (scrolledToEnd)="fetchNextPage()" #autoComp [historyIdentifier]="fieldName" historyHeading="Choix récents"
+    [isLoading]="isLoading" (inputCleared)="optionSelected(undefined)"></ng-autocomplete>
 
   <ng-template #itemTemplate let-item>
     <a [innerHTML]="displayLabel(item)"></a>

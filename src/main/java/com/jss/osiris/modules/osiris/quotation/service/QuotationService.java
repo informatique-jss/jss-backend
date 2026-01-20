@@ -77,7 +77,7 @@ public interface QuotationService {
                         List<Integer> responsableIdToFilter, Integer page,
                         String sortBy);
 
-        public List<Quotation> searchQuotations(List<QuotationStatus> quotationStatus, List<Responsable> responsables);
+        public List<Quotation> searchForQuotations(QuotationSearch quotationSearch) throws OsirisException;
 
         public Integer generateValidationIdForQuotation();
 
