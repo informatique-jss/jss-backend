@@ -2,7 +2,7 @@ package com.jss.osiris.modules.myjss.miscellaneous.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Ga4PageInfo {
+public class GoogleAnalyticsPageInfo {
 
     @JsonProperty("page_type")
     private String pageType;

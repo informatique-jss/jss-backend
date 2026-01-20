@@ -19,10 +19,10 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jss.osiris.libs.SSLHelper;
 import com.jss.osiris.libs.exception.OsirisException;
-import com.jss.osiris.modules.myjss.miscellaneous.model.Ga4Event;
-import com.jss.osiris.modules.myjss.miscellaneous.model.Ga4Item;
-import com.jss.osiris.modules.myjss.miscellaneous.model.Ga4Params;
-import com.jss.osiris.modules.myjss.miscellaneous.model.Ga4Request;
+import com.jss.osiris.modules.myjss.miscellaneous.model.GoogleAnalyticsEvent;
+import com.jss.osiris.modules.myjss.miscellaneous.model.GoogleAnalyticsItem;
+import com.jss.osiris.modules.myjss.miscellaneous.model.GoogleAnalyticsParams;
+import com.jss.osiris.modules.myjss.miscellaneous.model.GoogleAnalyticsRequest;
 import com.jss.osiris.modules.osiris.miscellaneous.model.InvoicingSummary;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
@@ -119,9 +119,9 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService {
 
         InvoicingSummary invoicingSummary = customerOrderService.getInvoicingSummaryForIQuotation(quotation);
 
-        List<Ga4Item> items = mapQuotationToItems(quotation);
+        List<GoogleAnalyticsItem> items = mapQuotationToItems(quotation);
 
-        Ga4Params params = new Ga4Params();
+        GoogleAnalyticsParams params = new GoogleAnalyticsParams();
 
         params.setPageName("checkout");
         params.setPageType("quotation");
@@ -148,12 +148,12 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService {
         }
 
         // Event creation
-        Ga4Event purchaseEvent = new Ga4Event();
+        GoogleAnalyticsEvent purchaseEvent = new GoogleAnalyticsEvent();
         purchaseEvent.setName("purchase");
         purchaseEvent.setParams(params);
 
         // Request creation
-        Ga4Request request = new Ga4Request();
+        GoogleAnalyticsRequest request = new GoogleAnalyticsRequest();
 
         Responsable currentUser = employeeService.getCurrentMyJssUser();
         if (currentUser != null)
@@ -178,9 +178,9 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService {
             return;
         }
 
-        List<Ga4Item> items = mapServicesTypesAndAffaireToItems(serviceTypes, affaire);
+        List<GoogleAnalyticsItem> items = mapServicesTypesAndAffaireToItems(serviceTypes, affaire);
 
-        Ga4Params params = new Ga4Params();
+        GoogleAnalyticsParams params = new GoogleAnalyticsParams();
 
         // TODO : delete after testing
         if (devMode)
@@ -193,12 +193,12 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService {
         params.setItems(items);
 
         // Event creation
-        Ga4Event viewListItemEvent = new Ga4Event();
+        GoogleAnalyticsEvent viewListItemEvent = new GoogleAnalyticsEvent();
         viewListItemEvent.setName("view_item_list");
         viewListItemEvent.setParams(params);
 
         // Request creation
-        Ga4Request request = new Ga4Request();
+        GoogleAnalyticsRequest request = new GoogleAnalyticsRequest();
 
         Responsable currentUser = employeeService.getCurrentMyJssUser();
         if (currentUser != null)
@@ -221,9 +221,9 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService {
             return;
         }
 
-        List<Ga4Item> items = mapServicesTypesAndAffaireToItems(Arrays.asList(serviceType), affaire);
+        List<GoogleAnalyticsItem> items = mapServicesTypesAndAffaireToItems(Arrays.asList(serviceType), affaire);
 
-        Ga4Params params = new Ga4Params();
+        GoogleAnalyticsParams params = new GoogleAnalyticsParams();
 
         // TODO : delete after testing
         if (devMode)
@@ -232,19 +232,19 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService {
         // Add to cart
         params.setCurrency(EUR_CURRENCY);
         if (items.stream().filter(item -> item.getPrice() != null).toList().size() != 0)
-            params.setValue(items.stream().filter(item -> item.getPrice() != null).map(Ga4Item::getPrice)
+            params.setValue(items.stream().filter(item -> item.getPrice() != null).map(GoogleAnalyticsItem::getPrice)
                     .reduce((x, y) -> x.add(y)).get());
         else
             params.setValue(BigDecimal.ZERO);
         params.setItems(items);
 
         // Event creation
-        Ga4Event viewListItemEvent = new Ga4Event();
+        GoogleAnalyticsEvent viewListItemEvent = new GoogleAnalyticsEvent();
         viewListItemEvent.setName("add_to_cart");
         viewListItemEvent.setParams(params);
 
         // Request creation
-        Ga4Request request = new Ga4Request();
+        GoogleAnalyticsRequest request = new GoogleAnalyticsRequest();
 
         Responsable currentUser = employeeService.getCurrentMyJssUser();
         if (currentUser != null)
@@ -268,9 +268,9 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService {
             return;
         }
 
-        List<Ga4Item> items = mapServicesTypesAndAffaireToItems(Arrays.asList(serviceType), affaire);
+        List<GoogleAnalyticsItem> items = mapServicesTypesAndAffaireToItems(Arrays.asList(serviceType), affaire);
 
-        Ga4Params params = new Ga4Params();
+        GoogleAnalyticsParams params = new GoogleAnalyticsParams();
 
         // TODO : delete after testing
         if (devMode)
@@ -279,19 +279,19 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService {
         // Remove from cart
         params.setCurrency(EUR_CURRENCY);
         if (items.stream().filter(item -> item.getPrice() != null).toList().size() != 0)
-            params.setValue(items.stream().filter(item -> item.getPrice() != null).map(Ga4Item::getPrice)
+            params.setValue(items.stream().filter(item -> item.getPrice() != null).map(GoogleAnalyticsItem::getPrice)
                     .reduce((x, y) -> x.add(y)).get());
         else
             params.setValue(BigDecimal.ZERO);
         params.setItems(items);
 
         // Event creation
-        Ga4Event viewListItemEvent = new Ga4Event();
+        GoogleAnalyticsEvent viewListItemEvent = new GoogleAnalyticsEvent();
         viewListItemEvent.setName("remove_from_cart");
         viewListItemEvent.setParams(params);
 
         // Request creation
-        Ga4Request request = new Ga4Request();
+        GoogleAnalyticsRequest request = new GoogleAnalyticsRequest();
 
         Responsable currentUser = employeeService.getCurrentMyJssUser();
         if (currentUser != null)
@@ -315,21 +315,21 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService {
             return;
 
         InvoicingSummary invoicingSummary = pricingHelper.getIQuotationTotalPrice(quotation);
-        List<Ga4Item> items = mapQuotationToItems(quotation);
+        List<GoogleAnalyticsItem> items = mapQuotationToItems(quotation);
 
-        Ga4Params params = new Ga4Params();
+        GoogleAnalyticsParams params = new GoogleAnalyticsParams();
 
         params.setCurrency(EUR_CURRENCY);
         params.setValue(invoicingSummary.getTotalPrice());
         params.setItems(items);
 
         // Event creation
-        Ga4Event beginCheckoutEvent = new Ga4Event();
+        GoogleAnalyticsEvent beginCheckoutEvent = new GoogleAnalyticsEvent();
         beginCheckoutEvent.setName("begin_checkout");
         beginCheckoutEvent.setParams(params);
 
         // Request creation
-        Ga4Request request = new Ga4Request();
+        GoogleAnalyticsRequest request = new GoogleAnalyticsRequest();
 
         Responsable currentUser = employeeService.getCurrentMyJssUser();
         if (currentUser != null)
@@ -353,21 +353,21 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService {
             return;
 
         InvoicingSummary invoicingSummary = pricingHelper.getIQuotationTotalPrice(quotation);
-        List<Ga4Item> items = mapQuotationToItems(quotation);
+        List<GoogleAnalyticsItem> items = mapQuotationToItems(quotation);
 
-        Ga4Params params = new Ga4Params();
+        GoogleAnalyticsParams params = new GoogleAnalyticsParams();
 
         params.setCurrency(EUR_CURRENCY);
         params.setValue(invoicingSummary.getTotalPrice());
         params.setItems(items);
 
         // Event creation
-        Ga4Event beginCheckoutEvent = new Ga4Event();
+        GoogleAnalyticsEvent beginCheckoutEvent = new GoogleAnalyticsEvent();
         beginCheckoutEvent.setName("add_payment_info");
         beginCheckoutEvent.setParams(params);
 
         // Request creation
-        Ga4Request request = new Ga4Request();
+        GoogleAnalyticsRequest request = new GoogleAnalyticsRequest();
 
         Responsable currentUser = employeeService.getCurrentMyJssUser();
         if (currentUser != null)
@@ -379,8 +379,8 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService {
         sendToGoogle(request);
     }
 
-    private List<Ga4Item> mapQuotationToItems(IQuotation quotation) throws OsirisException {
-        List<Ga4Item> items = new ArrayList<>();
+    private List<GoogleAnalyticsItem> mapQuotationToItems(IQuotation quotation) throws OsirisException {
+        List<GoogleAnalyticsItem> items = new ArrayList<>();
 
         if (quotation.getAssoAffaireOrders() != null) {
             for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders()) {
@@ -396,7 +396,7 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService {
                                 if (quotation.getVoucher() != null) {
                                     voucherCode = quotation.getVoucher().getCode();
                                 }
-                                Ga4Item item = mapItem(serviceType, service, voucherCode, nbServiceType);
+                                GoogleAnalyticsItem item = mapItem(serviceType, service, voucherCode, nbServiceType);
                                 items.add(item);
                             }
                         }
@@ -407,9 +407,9 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService {
         return items;
     }
 
-    private List<Ga4Item> mapServicesTypesAndAffaireToItems(List<ServiceType> serviceTypes, Affaire affaire)
+    private List<GoogleAnalyticsItem> mapServicesTypesAndAffaireToItems(List<ServiceType> serviceTypes, Affaire affaire)
             throws OsirisException {
-        List<Ga4Item> items = new ArrayList<>();
+        List<GoogleAnalyticsItem> items = new ArrayList<>();
 
         BigDecimal nbServiceType = BigDecimal.valueOf(serviceTypes.size());
         Service instanciatedService = new Service();
@@ -426,15 +426,16 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService {
 
         for (Service service : instanciatedServices) {
             for (ServiceType serviceType : service.getServiceTypes()) {
-                Ga4Item item = mapItem(serviceType, service, null, nbServiceType);
+                GoogleAnalyticsItem item = mapItem(serviceType, service, null, nbServiceType);
                 items.add(item);
             }
         }
         return items;
     }
 
-    private Ga4Item mapItem(ServiceType serviceType, Service service, String voucherCode, BigDecimal nbServiceType) {
-        Ga4Item item = new Ga4Item();
+    private GoogleAnalyticsItem mapItem(ServiceType serviceType, Service service, String voucherCode,
+            BigDecimal nbServiceType) {
+        GoogleAnalyticsItem item = new GoogleAnalyticsItem();
         item.setItemId(serviceType.getId().toString());
         item.setItemName(serviceType.getLabel());
         item.setCoupon(voucherCode);
@@ -452,7 +453,7 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService {
         return item;
     }
 
-    private ResponseEntity<String> sendToGoogle(Ga4Request requestBody) {
+    private ResponseEntity<String> sendToGoogle(GoogleAnalyticsRequest requestBody) {
         SSLHelper.disableCertificateValidation();
 
         // Building URL query
@@ -462,7 +463,7 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<Ga4Request> entity = new HttpEntity<>(requestBody, headers);
+        HttpEntity<GoogleAnalyticsRequest> entity = new HttpEntity<>(requestBody, headers);
 
         // TODO : delete after debug
         ObjectMapper mapper = new ObjectMapper();

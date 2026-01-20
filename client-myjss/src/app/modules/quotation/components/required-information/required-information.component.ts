@@ -10,7 +10,7 @@ import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { Mail } from '../../../general/model/Mail';
 import { AppService } from '../../../main/services/app.service';
 import { ConstantService } from '../../../main/services/constant.service';
-import { Ga4Service } from '../../../main/services/ga4.service';
+import { GoogleAnalyticsService } from '../../../main/services/googleAnalytics.service';
 import { GtmService } from '../../../main/services/gtm.service';
 import { FileUploadPayload, PageInfo } from '../../../main/services/GtmPayload';
 import { AutocompleteCityComponent } from '../../../miscellaneous/components/forms/autocomplete-city/autocomplete-city.component';
@@ -174,7 +174,7 @@ export class RequiredInformationComponent implements OnInit {
     private serviceFieldTypeService: ServiceFieldTypeService,
     private modalService: NgbModal,
     private gtmService: GtmService,
-    private ga4Service: Ga4Service,
+    private ga4Service: GoogleAnalyticsService,
   ) {
   }
 
