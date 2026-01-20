@@ -23,12 +23,14 @@ import com.jss.osiris.modules.myjss.miscellaneous.model.GoogleAnalyticsItem;
 import com.jss.osiris.modules.myjss.miscellaneous.model.GoogleAnalyticsParams;
 import com.jss.osiris.modules.myjss.miscellaneous.model.GoogleAnalyticsRequest;
 import com.jss.osiris.modules.osiris.miscellaneous.model.InvoicingSummary;
+import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
+import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
@@ -81,6 +83,9 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService {
 
     @Autowired
     PricingHelper pricingHelper;
+
+    @Autowired
+    ConstantService constantService;
 
     @Override
     public void trackPurchase(CustomerOrder customerOrder)
@@ -397,6 +402,16 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService {
             throws OsirisException {
         List<GoogleAnalyticsItem> items = new ArrayList<>();
 
+        CustomerOrder dummyCustomerOrder = new CustomerOrder();
+        CustomerOrderStatus customerOrderStatus = customerOrderStatusService
+                .getCustomerOrderStatusByCode(CustomerOrderStatus.BEING_PROCESSED);
+        dummyCustomerOrder.setCustomerOrderStatus(customerOrderStatus);
+        dummyCustomerOrder.setResponsable(constantService.getResponsableDummyCustomerFrance());
+
+        AssoAffaireOrder assoAffaireOrder = new AssoAffaireOrder();
+        assoAffaireOrder.setAffaire(affaire);
+        assoAffaireOrder.setCustomerOrder(dummyCustomerOrder);
+
         BigDecimal nbServiceType = BigDecimal.valueOf(serviceTypes.size());
         Service instanciatedService = new Service();
 
@@ -406,6 +421,16 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService {
             instanciatedService = serviceService.generateServiceInstanceFromMultiServiceTypes(
                     Arrays.asList(serviceType), "", affaire).get(0);
             instanciatedServices.add(instanciatedService);
+        }
+
+        assoAffaireOrder.setServices(instanciatedServices);
+
+        for (Service service : instanciatedServices) {
+            if (service.getProvisions() != null)
+                for (Provision provision : service.getProvisions()) {
+                    pricingHelper.setInvoiceItemsForProvision(provision,
+                            assoAffaireOrder.getCustomerOrder(), false);
+                }
         }
 
         instanciatedServices = serviceService.populateTransientField(instanciatedServices);
