@@ -407,6 +407,30 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                 }
             }
 
+            // grap back SIREN / SIRET for secondary etablissment
+            if (Boolean.TRUE.equals(apiFormaliteGuichetUnique.getIsFormality())
+                    && apiFormaliteGuichetUnique.getTypeFormalite().getCode().equals("M")
+                    && apiFormaliteGuichetUnique.getSiren() != null) {
+                if (formalite != null && formalite.getProvision() != null && formalite.getProvision().get(0)
+                        .getService().getAssoAffaireOrder().getAffaire().getSiren() == null
+                        && formalite.getProvision().get(0)
+                                .getService().getAssoAffaireOrder().getAffaire().getSiret() == null) {
+                    Affaire affaire = formalite.getProvision().get(0).getService().getAssoAffaireOrder().getAffaire();
+                    affaire.setIsUnregistered(false);
+                    affaire.setSiren(apiFormaliteGuichetUnique.getSiren());
+                    String siret = affaire.getSiren();
+                    if (apiFormaliteGuichetUnique.getFormalityScope() != null
+                            && apiFormaliteGuichetUnique.getFormalityScope().size() == 1) {
+                        siret += apiFormaliteGuichetUnique.getFormalityScope().get(0);
+                    } else
+                        throw new OsirisException("Impossible to find SIRET for secondary immatriculation "
+                                + apiFormaliteGuichetUnique.getLiasseNumber());
+                    affaire.setSiret(siret);
+                    affaireService.addOrUpdateAffaire(affaire);
+                    affaireService.refreshAffaireFromRne(affaire);
+                }
+            }
+
             // Update provision waiting AC field
             if (savedFormaliteGuichetUnique.getStatus().getCode()
                     .equals(FormaliteGuichetUniqueStatus.VALIDATION_PENDING)
