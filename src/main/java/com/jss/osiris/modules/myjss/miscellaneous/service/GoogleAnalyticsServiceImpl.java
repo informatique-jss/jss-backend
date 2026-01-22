@@ -21,6 +21,7 @@ import com.jss.osiris.libs.SSLHelper;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.myjss.miscellaneous.model.GoogleAnalyticsEvent;
 import com.jss.osiris.modules.myjss.miscellaneous.model.GoogleAnalyticsItem;
+import com.jss.osiris.modules.myjss.miscellaneous.model.GoogleAnalyticsPageInfo;
 import com.jss.osiris.modules.myjss.miscellaneous.model.GoogleAnalyticsParams;
 import com.jss.osiris.modules.myjss.miscellaneous.model.GoogleAnalyticsRequest;
 import com.jss.osiris.modules.osiris.miscellaneous.model.InvoicingSummary;
@@ -82,6 +83,38 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService {
 
     @Autowired
     PricingHelper pricingHelper;
+
+    @Override
+    public void trackLoginLogout(String eventName, String pageName, String pageType, String gaClientId)
+            throws OsirisException {
+
+        // If not in prod, we do not want to send data to Google Analytics
+        if (gaUrl == null || gaUrl.isBlank()) {
+            return;
+        }
+
+        GoogleAnalyticsPageInfo pageInfo = new GoogleAnalyticsPageInfo();
+        pageInfo.setPageName(pageName);
+        pageInfo.setPageType(pageType);
+        pageInfo.setPageWebsite("myjss");
+
+        // Event creation
+        GoogleAnalyticsEvent loginLogoutEvent = new GoogleAnalyticsEvent();
+        loginLogoutEvent.setName(eventName);
+        loginLogoutEvent.setPage(pageInfo);
+
+        // Request creation
+        GoogleAnalyticsRequest request = new GoogleAnalyticsRequest();
+
+        Responsable currentUser = employeeService.getCurrentMyJssUser();
+        if (currentUser != null)
+            request.setUserId(currentUser.getId().toString());
+
+        request.setClientId(gaClientId);
+        request.setEvents(Collections.singletonList(loginLogoutEvent));
+
+        sendToGoogle(request);
+    }
 
     @Override
     public void trackPurchase(CustomerOrder customerOrder)

@@ -14,6 +14,9 @@ import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 @Service
 public interface GoogleAnalyticsService {
 
+        public void trackLoginLogout(String eventName, String pageName, String pageType, String gaClientId)
+                        throws OsirisException;
+
         public void trackPurchase(CustomerOrder customerOrder) throws OsirisException;
 
         public void trackViewItemList(List<ServiceType> serviceTypes, Affaire affaire, ServiceFamily itemList,

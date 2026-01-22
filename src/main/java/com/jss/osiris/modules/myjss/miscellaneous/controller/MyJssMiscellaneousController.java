@@ -95,6 +95,21 @@ public class MyJssMiscellaneousController {
 		}
 	}
 
+	@GetMapping(inputEntryPoint + "/google-analytics/login-logout")
+	public ResponseEntity<Boolean> trackLoginLogout(@RequestParam String eventName,
+			@RequestParam String pageName,
+			@RequestParam String pageType,
+			HttpServletRequest request)
+			throws OsirisClientMessageException, OsirisException {
+		detectFlood(request);
+
+		String gaClientId = request.getHeader("gaClientId");
+
+		googleAnalyticsService.trackLoginLogout(eventName, pageName, pageType, gaClientId);
+
+		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+	}
+
 	@PostMapping(inputEntryPoint + "/google-analytics/view-list-item")
 	public ResponseEntity<Boolean> trackViewListItem(@RequestBody List<ServiceType> serviceTypes,
 			@RequestParam(required = false) Integer affaireId, @RequestParam Integer serviceFamilyId,

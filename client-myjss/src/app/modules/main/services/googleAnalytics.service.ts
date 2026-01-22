@@ -18,6 +18,10 @@ export class GoogleAnalyticsService {
   constructor(protected _http: HttpClient, private platformService: PlatformService) {
   }
 
+  trackLoginLogout(eventName: string, pageName: string, pageType: string) {
+    return this.getWithGaClientId(new HttpParams().set("eventName", eventName).set("pageName", pageName).set("pageType", pageType), "google-analytics/login-logout");
+  }
+
   trackViewItemList(serviceFamily: ServiceFamily, affaire?: Affaire) {
     let params = new HttpParams();
     params = params.set("serviceFamilyId", serviceFamily.id);
@@ -60,6 +64,12 @@ export class GoogleAnalyticsService {
     let headers = new HttpHeaders();
     headers = headers.set('gaClientId', this.getGaClientId());
     return this._http.post(AppRestService.serverUrl + this.entryPoint + "/" + api, item, { params, headers });
+  }
+
+  private getWithGaClientId(params: HttpParams, api: string) {
+    let headers = new HttpHeaders();
+    headers = headers.set('gaClientId', this.getGaClientId());
+    return this._http.get(AppRestService.serverUrl + this.entryPoint + "/" + api, { params, headers });
   }
 
   // Even if consent is not given by the user, a cookie (anonyme) is created and will be found

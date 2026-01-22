@@ -10,6 +10,7 @@ import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { TrustHtmlPipe } from "../../../libs/TrustHtmlPipe";
 import { AppService } from '../../../services/app.service';
 import { ConstantService } from '../../../services/constant.service';
+import { GoogleAnalyticsService } from '../../../services/googleAnalytics.service';
 import { PlatformService } from '../../../services/platform.service';
 import { AccountMenuItem, MAIN_ITEM_ACCOUNT, MAIN_ITEM_DASHBOARD } from '../../model/AccountMenuItem';
 import { JssCategory } from '../../model/JssCategory';
@@ -81,7 +82,8 @@ export class HeaderComponent implements OnInit {
     private eRef: ElementRef,
     private plaformService: PlatformService,
     private constantService: ConstantService,
-    private postService: PostService
+    private postService: PostService,
+    private googleAnalyticsService: GoogleAnalyticsService
   ) { }
 
   ngOnInit() {
@@ -161,6 +163,7 @@ export class HeaderComponent implements OnInit {
   }
 
   disconnect() {
+    this.googleAnalyticsService.trackLoginLogout("logout", "header", "media").subscribe();
     this.loginService.signOut().subscribe(response => {
       this.currentUser = undefined;
     })

@@ -9,6 +9,7 @@ import { NewsletterComponent } from '../../../general/components/newsletter/news
 import { AppService } from '../../../main/services/app.service';
 import { GtmService } from '../../../main/services/gtm.service';
 import { CtaClickPayload, PageInfo } from '../../../main/services/GtmPayload';
+import { PlatformService } from '../../../main/services/platform.service';
 import { AutocompletePostComponent } from '../../../miscellaneous/components/autocomplete-post/autocomplete-post.component';
 import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { SelectMyJssCategoryComponent } from '../../../miscellaneous/components/forms/select-myjss-category/select-myjss-category.component';
@@ -64,8 +65,10 @@ export class PracticalSheetsComponent implements OnInit {
     private appService: AppService,
     private myJssCategoryService: MyJssCategoryService,
     private activatedRoute: ActivatedRoute,
-    private titleService: Title, private meta: Meta,
-    private gtmService: GtmService
+    private titleService: Title,
+    private meta: Meta,
+    private gtmService: GtmService,
+    private platformService: PlatformService
   ) { }
 
   ngOnInit() {
