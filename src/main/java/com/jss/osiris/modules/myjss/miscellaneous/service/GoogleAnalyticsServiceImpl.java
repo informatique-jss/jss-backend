@@ -188,9 +188,11 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService {
         // Request creation
         GoogleAnalyticsRequest request = new GoogleAnalyticsRequest();
 
-        Responsable currentUser = employeeService.getCurrentMyJssUser();
+        Responsable currentUser = quotation.getResponsable();
         if (currentUser != null)
             request.setUserId(currentUser.getId().toString());
+        else
+            throw new OsirisException("No user found for IQuotation " + quotation.getId());
 
         request.setClientId(gaClientId);
         request.setEvents(Collections.singletonList(purchaseEvent));
