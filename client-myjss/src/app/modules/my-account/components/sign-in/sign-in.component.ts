@@ -6,8 +6,7 @@ import { environment } from '../../../../../environments/environment';
 import { validateEmail } from '../../../../libs/CustomFormsValidatorsHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
-import { GtmService } from '../../../main/services/gtm.service';
-import { LogPayload, PageInfo } from '../../../main/services/GtmPayload';
+import { GoogleAnalyticsService } from '../../../main/services/googleAnalytics.service';
 import { PlatformService } from '../../../main/services/platform.service';
 import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { LoginService } from '../../../profile/services/login.service';
@@ -31,7 +30,7 @@ export class SignInComponent implements OnInit {
     private platformService: PlatformService,
     private activatedRoute: ActivatedRoute,
     private titleService: Title, private meta: Meta,
-    private gtmService: GtmService
+    private googleAnalyticsService: GoogleAnalyticsService,
   ) { }
 
 
@@ -44,13 +43,8 @@ export class SignInComponent implements OnInit {
   sendConnectionLink() {
     if (this.signinForm.valid && (validateEmail(this.inputMail) || this.inputMail.indexOf("#") > 0)) {
       this.loginService.sendConnectionLink(this.inputMail).subscribe(response => {
-        this.gtmService.trackLoginLogout({
-          type: 'login',
-          page: {
-            type: 'my-account',
-            name: 'sign-in'
-          } as PageInfo
-        } as LogPayload);
+        this.googleAnalyticsService.trackLoginLogout("login", "sign-in", "sign-in-request").subscribe();
+
         let from = this.activatedRoute.snapshot.params['from'];
         if (from && from == 'jss' && this.platformService && this.platformService.isBrowser())
           window.open(environment.frontendJssUrl, "_self");

@@ -126,7 +126,7 @@ export class CheckoutComponent implements OnInit {
     private documentService: DocumentService,
     private cityService: CityService,
     private voucherService: VoucherService,
-    private ga4Service: GoogleAnalyticsService
+    private googleAnalyticsService: GoogleAnalyticsService
   ) { }
 
   async ngOnInit() {
@@ -206,7 +206,7 @@ export class CheckoutComponent implements OnInit {
       if (this.quotation) {
         this.quotationService.setCurrentDraftQuotation(this.quotation);
         if (this.quotation.isQuotation) {
-          this.ga4Service.trackAddPaymentInfoQuotation(this.quotation as Quotation).subscribe();
+          this.googleAnalyticsService.trackAddPaymentInfoQuotation(this.quotation as Quotation).subscribe();
           this.quotationService.saveFinalQuotation(this.quotation as Quotation, !isDraft).subscribe(response => {
             if (response && response.id) {
               this.cleanStorageData();
@@ -220,7 +220,7 @@ export class CheckoutComponent implements OnInit {
             }
           });
         } else {
-          this.ga4Service.trackAddPaymentInfoCustomerOrder(this.quotation as CustomerOrder).subscribe();
+          this.googleAnalyticsService.trackAddPaymentInfoCustomerOrder(this.quotation as CustomerOrder).subscribe();
           this.orderService.saveFinalOrder(this.quotation as CustomerOrder, !isDraft).subscribe(response => {
             if (response && response.id) {
               this.cleanStorageData();
@@ -237,7 +237,7 @@ export class CheckoutComponent implements OnInit {
       }
     } else {
       if (this.quotation.isQuotation) {
-        this.ga4Service.trackAddPaymentInfoQuotation(this.quotation as Quotation).subscribe();
+        this.googleAnalyticsService.trackAddPaymentInfoQuotation(this.quotation as Quotation).subscribe();
         this.quotationService.saveQuotation(this.quotation, !isDraft).subscribe(response => {
           if (response) {
             this.cleanStorageData();
@@ -246,7 +246,7 @@ export class CheckoutComponent implements OnInit {
           }
         })
       } else {
-        this.ga4Service.trackAddPaymentInfoCustomerOrder(this.quotation as CustomerOrder).subscribe();
+        this.googleAnalyticsService.trackAddPaymentInfoCustomerOrder(this.quotation as CustomerOrder).subscribe();
         this.orderService.saveOrder(this.quotation, !isDraft).subscribe(response => {
           if (response) {
             this.cleanStorageData();
@@ -570,6 +570,7 @@ export class CheckoutComponent implements OnInit {
     if (validateEmail(this.inputMail)) {
       this.isSendingLink = true;
       this.loginService.sendConnectionLink(this.inputMail).subscribe(response => {
+        this.googleAnalyticsService.trackLoginLogout("login", "sign-in", "checkout").subscribe();
         this.isLinkSent = true;
         this.isSendingLink = false;
       })
