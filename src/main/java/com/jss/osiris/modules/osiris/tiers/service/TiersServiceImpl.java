@@ -11,6 +11,8 @@ import java.util.Optional;
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,7 +51,6 @@ import com.jss.osiris.modules.osiris.tiers.model.KpiSearch;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 import com.jss.osiris.modules.osiris.tiers.model.TiersSearch;
-import com.jss.osiris.modules.osiris.tiers.model.dto.TiersDto;
 import com.jss.osiris.modules.osiris.tiers.repository.TiersRepository;
 
 @Service
@@ -115,27 +116,6 @@ public class TiersServiceImpl implements TiersService {
             return tiersInstance;
         }
         return null;
-    }
-
-    @Override
-    @Transactional
-    public TiersDto getTiersDto(Integer id) {
-        Tiers foundTiers = getTiers(id);
-        return mapTiersToTiersDto(foundTiers);
-    }
-
-    private TiersDto mapTiersToTiersDto(Tiers tiers) {
-
-        TiersDto dto = new TiersDto();
-        dto.setAddress(tiers.getAddress());
-        dto.setAddress(tiers.getAddress());
-        dto.setAddress(tiers.getAddress());
-        dto.setAddress(tiers.getAddress());
-        dto.setAddress(tiers.getAddress());
-        dto.setAddress(tiers.getAddress());
-        dto.setAddress(tiers.getAddress());
-
-        return dto;
     }
 
     @Override
@@ -456,12 +436,16 @@ public class TiersServiceImpl implements TiersService {
         if (tiersSearch.getLabel() == null)
             tiersSearch.setLabel("");
 
+        String tiersCategoryLabel = "";
+        if (tiersSearch.getTiersCategory() != null)
+            tiersCategoryLabel = tiersSearch.getTiersCategory().getLabel();
+
         if (tiersSearch.getIsNewTiers() == null)
             tiersSearch.setIsNewTiers(false);
 
         List<Tiers> tiersFound = tiersRepository.searchForTiers(salesEmployeeId, tiersSearch.getMail(),
                 tiersSearch.getLabel(),
-                tiersSearch.getIsNewTiers());
+                tiersSearch.getIsNewTiers(), tiersCategoryLabel);
 
         if (tiersSearch.getKpis() == null || tiersSearch.getKpis().size() == 0)
             return tiersFound;
@@ -510,6 +494,14 @@ public class TiersServiceImpl implements TiersService {
         }
 
         return tiersFound.stream().filter(t -> !notKeepTiers.contains(t.getId())).toList();
+    }
+
+    @Override
+    public Page<Tiers> findAllTiersByDenoOrFirstLastName(String searchText, Pageable pageable) throws OsirisException {
+        Page<Tiers> tiers = tiersRepository
+                .findByDenominationContainingIgnoreCaseOrFirstnameContainingIgnoreCaseOrLastnameContainingIgnoreCase(
+                        searchText, searchText, searchText, pageable);
+        return tiers;
     }
 
 }

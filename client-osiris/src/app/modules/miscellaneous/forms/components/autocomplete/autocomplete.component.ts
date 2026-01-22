@@ -1,20 +1,24 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, ValidatorFn } from '@angular/forms';
+import { AutocompleteLibModule } from 'angular-ng-autocomplete';
 import { SHARED_IMPORTS } from '../../../../../libs/SharedImports';
 import { ConstantService } from '../../../../main/services/constant.service';
 import { CityService } from '../../../../profile/services/city.service';
 import { CountryService } from '../../../../profile/services/country.service';
 import { EmployeeService } from '../../../../profile/services/employee.service';
+import { ResponsableService } from '../../../../tiers/services/responsable.service';
+import { TiersService } from '../../../../tiers/services/tiers.service';
 
-export const AUTOCOMPLETE_TYPES = ['city', 'zipCode', 'siret', 'employee', 'country'] as string[];
-export type AutocompleteType = typeof AUTOCOMPLETE_TYPES[number] | undefined;
+export const AUTOCOMPLETE_TYPES_LOCAL = ['employee', 'country'] as const;
+export const AUTOCOMPLETE_TYPES_SERVER = ['city', 'zipCode', 'siret', 'tiers', 'responsables'] as const;
+export type AutocompleteType = typeof AUTOCOMPLETE_TYPES_LOCAL[number] | typeof AUTOCOMPLETE_TYPES_SERVER[number] | undefined;
 
 @Component({
   selector: 'generic-autocomplete',
   templateUrl: './autocomplete.component.html',
   styleUrls: ['./autocomplete.component.css'],
   standalone: true,
-  imports: [...SHARED_IMPORTS]
+  imports: [...SHARED_IMPORTS, AutocompleteLibModule]
 })
 export class AutocompleteComponent implements OnInit, OnChanges, AfterViewInit {
 
@@ -23,8 +27,7 @@ export class AutocompleteComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() label = '';
   @Input() validators: ValidatorFn[] | undefined;
   @Input() errorMessages: Record<string, string> | undefined;
-  @Input() autocompleteType: AutocompleteType
-  @Input() isLocalAutocomplete: boolean = true;
+  @Input() autocompleteType: AutocompleteType;
   @Output() modelChange = new EventEmitter<any>();
   @Output() onOptionSelected: EventEmitter<any> = new EventEmitter();
 
@@ -53,6 +56,8 @@ export class AutocompleteComponent implements OnInit, OnChanges, AfterViewInit {
     private employeeService: EmployeeService,
     private countryService: CountryService,
     private cityService: CityService,
+    private tiersService: TiersService,
+    private responsableService: ResponsableService,
     private constantService: ConstantService,
   ) { }
 
@@ -60,9 +65,12 @@ export class AutocompleteComponent implements OnInit, OnChanges, AfterViewInit {
     return this.formGroup.get(this.fieldName) as FormControl;
   }
 
-
+  //  ============ For local autocomplete =============
   ngOnInit() {
-    if (this.isLocalAutocomplete) {
+    if (!this.autocompleteType)
+      throw new Error("autocomplete type not provided");
+
+    if (this.isLocalAutocomplete()) {
       switch (this.autocompleteType) {
         // WARNING : if the value we want to filter the autocomplete is not "label", it has to be 
         // changed so the autocomplete manages to fetch the data ie : change searchKeyword to the value we are filtering
@@ -72,8 +80,8 @@ export class AutocompleteComponent implements OnInit, OnChanges, AfterViewInit {
           })
           break;
         case "employee":
-          this.searchKeyword = "lastname"
           this.employeeService.getEmployees().subscribe(res => {
+            res.map(employee => employee.label = employee.lastname + " " + employee.firstname)
             this.setData(res);
           })
           break;
@@ -117,32 +125,10 @@ export class AutocompleteComponent implements OnInit, OnChanges, AfterViewInit {
     }, 0);
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['model'] && !this.selectedItem) {
-      const newValue = changes['model'].currentValue;
-      this.selectedItem = newValue;
-      if (this.data && this.data[0]) {
-        const matchedItem = this.data.find(item => (item as any).id === newValue.id);
-        if (matchedItem) {
-          this.selectedItem = matchedItem;
-          this.control.setValue(matchedItem, { emitEvent: false });
-        } else {
-          this.data.push(newValue);
-          this.selectedItem = newValue;
-          this.control.setValue(newValue, { emitEvent: false });
-        }
-      }
-    }
-  }
-
-  fetchNextPage() {
-    this.page++;
-    this.fetchData();
-  }
-
+  //  ============ For remote autocomplete =============
   onChangeSearch(newVal: string) {
     // Only for remote, to fetch new values
-    if (!this.isLocalAutocomplete) {
+    if (!this.isLocalAutocomplete()) {
       this.searchValue = newVal;
       this.selectedItem = undefined;
       this.page = 0;
@@ -164,8 +150,57 @@ export class AutocompleteComponent implements OnInit, OnChanges, AfterViewInit {
           this.isLoading = false;
         })
         break;
+
+      case "tiers":
+        this.searchKeyword = "denomination";
+        this.tiersService.getTiersFilteredByFirstnameOrLastnameOrDenomination(this.searchValue, this.page, this.pageSize).subscribe(res => {
+          this.data = this.data.concat(res.content);
+          this.isLoading = false;
+        })
+        break;
+
+      case "responsables":
+        this.searchKeyword = "label";
+        this.responsableService.searchResponsablesByName(this.searchValue, this.page, this.pageSize).subscribe(res => {
+          res.content.forEach(respo => respo.label = (respo.lastname ? respo.lastname : "") + " " + (respo.firstname ? respo.firstname : ""));
+          this.data = this.data.concat(res.content);
+          this.isLoading = false;
+        })
+        break;
     }
   }
+
+  //  ============ Other methods =============
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['model'] && !this.selectedItem) {
+      const newValue = changes['model'].currentValue;
+      this.selectedItem = newValue;
+      if (this.data && this.data[0]) {
+        const matchedItem = this.data.find(item => (item as any).id === newValue.id);
+        if (matchedItem) {
+          this.selectedItem = matchedItem;
+          this.control.setValue(matchedItem, { emitEvent: false });
+        } else {
+          this.data.push(newValue);
+          this.selectedItem = newValue;
+          this.control.setValue(newValue, { emitEvent: false });
+        }
+      }
+    }
+  }
+
+  isLocalAutocomplete() {
+    if (AUTOCOMPLETE_TYPES_LOCAL.map(type => type + "").indexOf(this.autocompleteType + "") >= 0) {
+      return true;
+    }
+    return false;
+  }
+
+  fetchNextPage() {
+    this.page++;
+    this.fetchData();
+  }
+
   // Emit event to parents
   optionSelected(model: any) {
     this.model = model;
@@ -178,10 +213,10 @@ export class AutocompleteComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   displayLabel(object: any): string {
-    if (object && object.lastname)
-      return object.lastname;
     if (object && object.label)
       return object.label;
+    if (object && object.denomination)
+      return object.denomination;
     if (typeof object === "string")
       return object;
     return "";

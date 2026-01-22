@@ -146,3 +146,8 @@ export const GRAPH_TYPE_BOXPLOT = "boxplot";
 export const GRAPH_TYPE_SANKEY = "sankey";
 export const GRAPH_TYPE_TREEMAP = "treemap";
 export const GRAPH_TYPE_TABLE = "table";
+
+// Osiris V2 routes
+export const OSIRIS_V2_TIERS_ROUTE = "tiers/view/";
+export const OSIRIS_V2_RESPONSABLE_ROUTE = "responsable/";
+

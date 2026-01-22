@@ -6,13 +6,14 @@ import { SimpleProvisionStatus } from '../model/SimpleProvisonStatus';
 @Injectable({
   providedIn: 'root'
 })
-export class SimpleProvisionStatusService extends AppRestService<SimpleProvisionStatus>{
+export class SimpleProvisionStatusService extends AppRestService<SimpleProvisionStatus> {
 
   constructor(http: HttpClient) {
     super(http, "quotation");
   }
 
   getSimpleProvisionStatus() {
+    // TODO : check if works
     return this.getList(new HttpParams(), "simple-provision-status");
   }
 

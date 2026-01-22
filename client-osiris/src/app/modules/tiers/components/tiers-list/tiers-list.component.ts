@@ -19,6 +19,7 @@ import { KpiCrmService } from '../../../crm/services/kpi.crm.service';
 import { PageTitleComponent } from '../../../main/components/page-title/page-title.component';
 import { AppService } from '../../../main/services/app.service';
 import { RestUserPreferenceService } from '../../../main/services/rest.user.preference.service';
+import { AutocompleteComponent } from '../../../miscellaneous/forms/components/autocomplete/autocomplete.component';
 import { GenericFormComponent } from '../../../miscellaneous/forms/components/generic-form/generic-form.component';
 import { TiersDto } from '../../model/TiersDto';
 import { TiersSearch } from '../../model/TiersSearch';
@@ -29,10 +30,20 @@ import { TiersService } from '../../services/tiers.service';
   selector: 'tiers-list',
   templateUrl: './../../../../libs/generic-list/generic-list.component.html',
   styleUrls: ['./../../../../libs/generic-list/generic-list.component.css'],
-  imports: [...SHARED_IMPORTS, TanstackTableComponent, PageTitleComponent, NgIcon, SimplebarAngularModule, NgbNavModule, GenericFormComponent],
+  imports: [...SHARED_IMPORTS,
+    TanstackTableComponent,
+    PageTitleComponent,
+    NgIcon,
+    SimplebarAngularModule,
+    NgbNavModule,
+    GenericFormComponent,
+    AutocompleteComponent],
   standalone: true
 })
 export class TiersListComponent extends GenericListComponent<TiersDto, TiersSearch> implements OnInit {
+
+  override pageTitle = "Liste des tiers";
+  override pageRoute = "/tiers";
 
   eventOnClickOpenAction = new Subject<Row<TiersDto>[]>();
   eventOnClickOpenKpisAction = new Subject<Row<TiersDto>[]>();
@@ -50,7 +61,6 @@ export class TiersListComponent extends GenericListComponent<TiersDto, TiersSear
     private responsableService: ResponsableService
   ) {
     super(offcanvasService2, formBuilder2, appService2, restUserPreferenceService2);
-
   }
 
   override ngOnInit(): void {
@@ -58,10 +68,6 @@ export class TiersListComponent extends GenericListComponent<TiersDto, TiersSear
       this.kpiCrms = reponse.sort((a: KpiCrm, b: KpiCrm) => a.kpiCrmCategory && b.kpiCrmCategory ? a.kpiCrmCategory.label.localeCompare(b.kpiCrmCategory.label) : 0);
       super.ngOnInit();
     })
-
-    this.breadcrumbPaths = [
-      { label: "Liste des tiers", route: "/tiers" },
-    ]
   }
 
   override generateActions(): GenericTableAction<TiersDto>[] {
@@ -140,6 +146,14 @@ export class TiersListComponent extends GenericListComponent<TiersDto, TiersSear
             errorMessages: {
               required: 'Sélectionnez au moins un commercial'
             } as Record<string, string>
+          } as GenericForm<TiersSearch>
+        } as GenericSearchForm<TiersSearch>,
+        {
+          accessorKey: "tiersCategory",
+          form: {
+            label: 'Categorie du tiers',
+            type: 'select',
+            selectType: 'tiersCategory'
           } as GenericForm<TiersSearch>
         } as GenericSearchForm<TiersSearch>,
         {

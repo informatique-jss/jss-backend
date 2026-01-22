@@ -19,6 +19,7 @@ import { KpiCrmService } from '../../../crm/services/kpi.crm.service';
 import { PageTitleComponent } from '../../../main/components/page-title/page-title.component';
 import { AppService } from '../../../main/services/app.service';
 import { RestUserPreferenceService } from '../../../main/services/rest.user.preference.service';
+import { AutocompleteComponent } from '../../../miscellaneous/forms/components/autocomplete/autocomplete.component';
 import { GenericFormComponent } from '../../../miscellaneous/forms/components/generic-form/generic-form.component';
 import { ResponsableDto } from '../../model/ResponsableDto';
 import { ResponsableSearch } from '../../model/ResponsableSearch';
@@ -29,10 +30,20 @@ import { TiersService } from '../../services/tiers.service';
   selector: 'app-responsable-list',
   templateUrl: './../../../../libs/generic-list/generic-list.component.html',
   styleUrls: ['./../../../../libs/generic-list/generic-list.component.css'],
-  imports: [...SHARED_IMPORTS, TanstackTableComponent, PageTitleComponent, NgIcon, SimplebarAngularModule, NgbNavModule, GenericFormComponent],
+  imports: [...SHARED_IMPORTS,
+    TanstackTableComponent,
+    PageTitleComponent,
+    NgIcon,
+    SimplebarAngularModule,
+    NgbNavModule,
+    GenericFormComponent,
+    AutocompleteComponent],
   standalone: true
 })
 export class ResponsableListComponent extends GenericListComponent<ResponsableDto, ResponsableSearch> implements OnInit {
+
+  override pageTitle = "Liste des responsables";
+  override pageRoute = "/responsables";
 
   eventOnClickOpenAction = new Subject<Row<ResponsableDto>[]>();
   eventOnClickOpenTiersAction = new Subject<Row<ResponsableDto>[]>();
@@ -55,11 +66,6 @@ export class ResponsableListComponent extends GenericListComponent<ResponsableDt
   }
 
   override ngOnInit(): void {
-    this.pageTitle = "Liste des responsables";
-    this.breadcrumbPaths = [
-      { label: "Liste des responsables", route: "/responsables" },
-    ]
-
     this.kpiCrmService.getKpiCrm().subscribe(reponse => {
       this.kpiCrms = reponse;
       super.ngOnInit();
@@ -152,6 +158,14 @@ export class ResponsableListComponent extends GenericListComponent<ResponsableDt
             errorMessages: {
               required: 'Sélectionnez au moins un commercial'
             } as Record<string, string>
+          } as GenericForm<ResponsableSearch>
+        } as GenericSearchForm<ResponsableSearch>,
+        {
+          accessorKey: "tiersCategory",
+          form: {
+            label: 'Categorie du tiers',
+            type: 'select',
+            selectType: 'tiersCategory'
           } as GenericForm<ResponsableSearch>
         } as GenericSearchForm<ResponsableSearch>,
         {

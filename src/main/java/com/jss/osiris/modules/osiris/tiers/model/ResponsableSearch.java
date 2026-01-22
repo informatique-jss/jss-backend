@@ -14,6 +14,7 @@ public class ResponsableSearch {
 
     private LocalDate startDateKpis;
     private LocalDate endDateKpis;
+    private TiersCategory tiersCategory;
 
     public Employee getSalesEmployee() {
         return salesEmployee;
@@ -61,6 +62,14 @@ public class ResponsableSearch {
 
     public void setEndDateKpis(LocalDate endDateKpis) {
         this.endDateKpis = endDateKpis;
+    }
+
+    public TiersCategory getTiersCategory() {
+        return tiersCategory;
+    }
+
+    public void setTiersCategory(TiersCategory tiersCategory) {
+        this.tiersCategory = tiersCategory;
     }
 
 }

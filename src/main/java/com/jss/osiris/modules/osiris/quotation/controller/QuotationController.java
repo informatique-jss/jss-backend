@@ -58,6 +58,9 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.LegalFormService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.SpecialOfferService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
+import com.jss.osiris.modules.osiris.quotation.dto.CustomerOrderDto;
+import com.jss.osiris.modules.osiris.quotation.dto.ProvisionDto;
+import com.jss.osiris.modules.osiris.quotation.dto.QuotationDto;
 import com.jss.osiris.modules.osiris.quotation.facade.CompetentAuthorityFacade;
 import com.jss.osiris.modules.osiris.quotation.facade.QuotationFacade;
 import com.jss.osiris.modules.osiris.quotation.model.ActType;
@@ -118,6 +121,7 @@ import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionBoardResult;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionFamilyType;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionScreenType;
+import com.jss.osiris.modules.osiris.quotation.model.ProvisionSearch;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionType;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.QuotationAbandonReason;
@@ -3243,5 +3247,61 @@ public class QuotationController {
     quotationFacade.orderNewKbisForSiret(siret, provisionId);
 
     return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
+  /*
+   * |============================================================================
+   * |______________________METHODS FOR OSIRIS V2_________________________________
+   * |============================================================================
+   */
+
+  @PostMapping(inputEntryPoint + "/quotation/search/v2")
+  public ResponseEntity<List<QuotationDto>> searchQuotationsDtos(@RequestBody QuotationSearch quotationSearch)
+      throws OsirisValidationException, OsirisException {
+    if (quotationSearch == null)
+      throw new OsirisValidationException("quotationSearch");
+
+    validationHelper.validateReferential(quotationSearch.getSalesEmployee(), false, "SalesEmployee");
+    if (quotationSearch.getQuotationStatus() != null)
+      for (QuotationStatus status : quotationSearch.getQuotationStatus())
+        validationHelper.validateReferential(status, false, "status");
+
+    return new ResponseEntity<List<QuotationDto>>(quotationFacade.searchQuotations(quotationSearch),
+        HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/customer-order/search/v2")
+  public ResponseEntity<List<CustomerOrderDto>> searchCustomerOrders(
+      @RequestBody OrderingSearch customerOrderSearch)
+      throws OsirisValidationException, OsirisException {
+    if (customerOrderSearch == null)
+      throw new OsirisValidationException("customerOrderSearch");
+
+    validationHelper.validateReferential(customerOrderSearch.getSalesEmployee(), false, "SalesEmployee");
+    if (customerOrderSearch.getCustomerOrderStatus() != null)
+      for (CustomerOrderStatus status : customerOrderSearch.getCustomerOrderStatus())
+        validationHelper.validateReferential(status, false, "status");
+
+    return new ResponseEntity<List<CustomerOrderDto>>(quotationFacade.searchCustomerOrders(customerOrderSearch),
+        HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/provision/search/v2")
+  public ResponseEntity<List<ProvisionDto>> searchProvisions(
+      @RequestBody ProvisionSearch provisionSearch)
+      throws OsirisValidationException, OsirisException {
+    if (provisionSearch == null)
+      throw new OsirisValidationException("provisionSearch");
+
+    validationHelper.validateReferential(provisionSearch.getSalesEmployee(), false, "SalesEmployee");
+    validationHelper.validateReferential(provisionSearch.getFormalisteEmployee(), false, "FormalisteEmployee");
+
+    if (provisionSearch.getProvisionStatus() != null)
+      validationHelper.validateReferential(provisionSearch.getProvisionStatus(), false, "status");
+
+    List<ProvisionDto> test = quotationFacade.searchProvisions(provisionSearch);
+
+    return new ResponseEntity<List<ProvisionDto>>(test,
+        HttpStatus.OK);
   }
 }

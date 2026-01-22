@@ -23,6 +23,7 @@ public class TiersSearch {
     private IndexEntity tiers;
     private IndexEntity responsable;
     private Boolean withNonNullTurnover;
+    private TiersCategory tiersCategory;
 
     public LocalDate getStartDate() {
         return startDate;
@@ -120,4 +121,11 @@ public class TiersSearch {
         this.endDateKpis = endDateKpis;
     }
 
+    public TiersCategory getTiersCategory() {
+        return tiersCategory;
+    }
+
+    public void setTiersCategory(TiersCategory tiersCategory) {
+        this.tiersCategory = tiersCategory;
+    }
 }

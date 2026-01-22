@@ -105,3 +105,7 @@ export function formatCurrency(value: number, locale = 'fr-FR', currency = 'EUR'
     currency,
   }).format(value);
 }
+
+export function formatBoolean(value: boolean): string {
+  return value ? "Oui" : "Non";
+}
