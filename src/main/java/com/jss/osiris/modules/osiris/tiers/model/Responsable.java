@@ -254,6 +254,8 @@ public class Responsable implements IAttachment, IId {
 	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
 	private LocalDateTime consentTermsDate;
 
+	private Boolean isComingFromQuotation;
+
 	@Transient
 	private HashMap<String, BigDecimal> kpiValues;
 
@@ -657,4 +659,11 @@ public class Responsable implements IAttachment, IId {
 		this.linkedInUrl = linkedInUrl;
 	}
 
+	public Boolean getIsComingFromQuotation() {
+		return isComingFromQuotation;
+	}
+
+	public void setIsComingFromQuotation(Boolean isComingFromQuotation) {
+		this.isComingFromQuotation = isComingFromQuotation;
+	}
 }

@@ -26,14 +26,15 @@
         <div *ngIf="(!currentUser || !currentUser.id) && !isHiddeConnectedButton()" class="d-none d-md-block">
           <a class="btn col-md-auto btn-sm"
             [ngClass]="{'btn-outline-light': !isForQuotationNavbar, 'btn-outline-dark': isForQuotationNavbar}"
-            [routerLink]="['/account/signin']" rel="noopener">
+            [routerLink]="['/account/signin'+(actualUrl.includes('quotation')? '/quot':'')]" rel="noopener">
             Se connecter
           </a>
         </div>
 
         <!-- 'Sign In' icon visible only on small screens (d-md-none) -->
         <div *ngIf="!currentUser || !currentUser.id" class="d-block d-md-none">
-          <a class="btn col-md-auto btn-sm" [routerLink]="['/account/signin']" rel="noopener">
+          <a class="btn col-md-auto btn-sm"
+            [routerLink]="['/account/signin'+(actualUrl.includes('quotation')? '/quot':'')]" rel="noopener">
             <img [src]="anonymousConnexion" />
           </a>
 

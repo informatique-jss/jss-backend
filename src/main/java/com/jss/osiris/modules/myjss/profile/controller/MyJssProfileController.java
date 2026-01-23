@@ -87,7 +87,8 @@ public class MyJssProfileController {
 	}
 
 	@GetMapping(inputEntryPoint + "/login/token/send")
-	public ResponseEntity<String> sendTokenToResponsable(@RequestParam String mail, HttpServletRequest request)
+	public ResponseEntity<String> sendTokenToResponsable(@RequestParam String mail,
+			@RequestParam Boolean isFromQuotation, HttpServletRequest request)
 			throws OsirisException {
 		ResponseEntity<String> isFlood = detectFlood(request);
 		if (isFlood != null)
@@ -107,7 +108,7 @@ public class MyJssProfileController {
 		if (responsable == null)
 			return new ResponseEntity<String>("", HttpStatus.OK);
 
-		employeeService.sendTokenToResponsable(responsable, overrideMail);
+		employeeService.sendTokenToResponsable(responsable, overrideMail, isFromQuotation);
 		return new ResponseEntity<String>("", HttpStatus.OK);
 	}
 

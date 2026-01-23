@@ -27,7 +27,6 @@ declare var bootstrap: any;
   imports: [SHARED_IMPORTS, AvatarComponent, NgbDropdownModule, NgbCollapseModule, NgbDropdownModule]
 })
 export class TopBarComponent implements OnInit {
-
   @Input() isForQuotationNavbar: boolean = false;
 
   logoJss: string = '/assets/img/others/myjss-logos/white-logo-myjss.svg';

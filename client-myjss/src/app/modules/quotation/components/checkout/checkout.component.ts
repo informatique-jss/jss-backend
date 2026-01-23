@@ -207,7 +207,7 @@ export class CheckoutComponent implements OnInit {
         this.quotationService.setCurrentDraftQuotation(this.quotation);
         if (this.quotation.isQuotation) {
           this.googleAnalyticsService.trackAddPaymentInfoQuotation(this.quotation as Quotation).subscribe();
-          this.quotationService.saveFinalQuotation(this.quotation as Quotation, !isDraft).subscribe(response => {
+          this.quotationService.saveQuotationForAnonymousUser(this.quotation as Quotation, !isDraft).subscribe(response => {
             if (response && response.id) {
               this.cleanStorageData();
               this.appService.hideLoadingSpinner();
@@ -221,7 +221,7 @@ export class CheckoutComponent implements OnInit {
           });
         } else {
           this.googleAnalyticsService.trackAddPaymentInfoCustomerOrder(this.quotation as CustomerOrder).subscribe();
-          this.orderService.saveFinalOrder(this.quotation as CustomerOrder, !isDraft).subscribe(response => {
+          this.orderService.saveOrderForAnonymousUser(this.quotation as CustomerOrder, !isDraft).subscribe(response => {
             if (response && response.id) {
               this.cleanStorageData();
               this.appService.hideLoadingSpinner();
@@ -238,7 +238,7 @@ export class CheckoutComponent implements OnInit {
     } else {
       if (this.quotation.isQuotation) {
         this.googleAnalyticsService.trackAddPaymentInfoQuotation(this.quotation as Quotation).subscribe();
-        this.quotationService.saveQuotation(this.quotation, !isDraft).subscribe(response => {
+        this.quotationService.saveInitialQuotationForConnectedUser(this.quotation, !isDraft).subscribe(response => {
           if (response) {
             this.cleanStorageData();
             this.appService.hideLoadingSpinner();
@@ -247,7 +247,7 @@ export class CheckoutComponent implements OnInit {
         })
       } else {
         this.googleAnalyticsService.trackAddPaymentInfoCustomerOrder(this.quotation as CustomerOrder).subscribe();
-        this.orderService.saveOrder(this.quotation, !isDraft).subscribe(response => {
+        this.orderService.saveInitialOrderForConnectedUser(this.quotation, !isDraft).subscribe(response => {
           if (response) {
             this.cleanStorageData();
             this.appService.hideLoadingSpinner();
@@ -358,7 +358,7 @@ export class CheckoutComponent implements OnInit {
           if (!this.currentUser)
             this.quotationService.setCurrentDraftQuotation(this.quotation);
           else
-            this.quotationService.saveQuotation(this.quotation, false).subscribe();
+            this.quotationService.saveInitialQuotationForConnectedUser(this.quotation, false).subscribe();
         }
       })
   }
@@ -569,7 +569,7 @@ export class CheckoutComponent implements OnInit {
   sendConnectionLink() {
     if (validateEmail(this.inputMail)) {
       this.isSendingLink = true;
-      this.loginService.sendConnectionLink(this.inputMail).subscribe(response => {
+      this.loginService.sendConnectionLink(this.inputMail, true).subscribe(response => {
         this.googleAnalyticsService.trackLoginLogout("login", "sign-in", "checkout").subscribe();
         this.isLinkSent = true;
         this.isSendingLink = false;
