@@ -54,8 +54,4 @@ export class HomepageComponent implements OnInit {
       }
     });
   }
-
-  openRoute(route: string) {
-    this.appService.openRoute(null, route, undefined);
-  }
 }

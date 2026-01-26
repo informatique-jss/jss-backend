@@ -5,7 +5,6 @@ import { ActivatedRoute } from '@angular/router';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
-import { TrustHtmlPipe } from "../../../../libs/TrustHtmlPipe";
 import { NewsletterComponent } from '../../../general/components/newsletter/newsletter.component';
 import { AppService } from '../../../main/services/app.service';
 import { GtmService } from '../../../main/services/gtm.service';
@@ -25,7 +24,7 @@ import { PostService } from '../../services/post.service';
   templateUrl: './practical-sheets.component.html',
   styleUrls: ['./practical-sheets.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, AutocompletePostComponent, GenericSwiperComponent, GenericInputComponent, SelectMyJssCategoryComponent, NewsletterComponent, NgbTooltipModule, TrustHtmlPipe]
+  imports: [SHARED_IMPORTS, AutocompletePostComponent, GenericSwiperComponent, GenericInputComponent, SelectMyJssCategoryComponent, NewsletterComponent, NgbTooltipModule]
 })
 
 export class PracticalSheetsComponent implements OnInit {
@@ -66,8 +65,10 @@ export class PracticalSheetsComponent implements OnInit {
     private appService: AppService,
     private myJssCategoryService: MyJssCategoryService,
     private activatedRoute: ActivatedRoute,
-    private titleService: Title, private meta: Meta,
-    private gtmService: GtmService, private platformService: PlatformService
+    private titleService: Title,
+    private meta: Meta,
+    private gtmService: GtmService,
+    private platformService: PlatformService
   ) { }
 
   ngOnInit() {

@@ -140,6 +140,8 @@ public class FormaliteGuichetUnique implements IId, Serializable {
     @JsonView({ JacksonViews.OsirisDetailedView.class })
     private Boolean isActeDeposit;
 
+    private List<String> formalityScope;
+
     @Column(columnDefinition = "TEXT")
     @JsonDeserialize(using = RawJsonDeserializer.class)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY, value = "content")
@@ -451,5 +453,13 @@ public class FormaliteGuichetUnique implements IId, Serializable {
 
     public void setPiecesJointes(List<PiecesJointe> piecesJointes) {
         this.piecesJointes = piecesJointes;
+    }
+
+    public List<String> getFormalityScope() {
+        return formalityScope;
+    }
+
+    public void setFormalityScope(List<String> formalityScope) {
+        this.formalityScope = formalityScope;
     }
 }
