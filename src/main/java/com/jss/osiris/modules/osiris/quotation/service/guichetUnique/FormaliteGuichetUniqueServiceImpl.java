@@ -414,7 +414,8 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                 if (formalite != null && formalite.getProvision() != null && formalite.getProvision().get(0)
                         .getService().getAssoAffaireOrder().getAffaire().getSiren() == null
                         && formalite.getProvision().get(0)
-                                .getService().getAssoAffaireOrder().getAffaire().getSiret() == null) {
+                                .getService().getAssoAffaireOrder().getAffaire().getSiret() == null
+                        && formalite.getFormaliteStatus().getIsCloseState()) {
                     Affaire affaire = formalite.getProvision().get(0).getService().getAssoAffaireOrder().getAffaire();
                     affaire.setIsUnregistered(false);
                     affaire.setSiren(apiFormaliteGuichetUnique.getSiren());
