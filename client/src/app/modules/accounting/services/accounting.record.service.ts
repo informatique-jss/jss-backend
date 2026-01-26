@@ -64,4 +64,8 @@ export class AccountingRecordService extends AppRestService<AccountingRecord> {
   letterRecordsForAs400(accountingRecords: AccountingRecordSearchResult[]) {
     return this.get(new HttpParams().set("recordIds", accountingRecords.map(value => value.recordId).join(",")), "accounting-record/letter");
   }
+
+  getPayslipRecords(period: Date) {
+    return this.getList(new HttpParams().set("period", toIsoString(period)), "payslip/generate");
+  }
 }

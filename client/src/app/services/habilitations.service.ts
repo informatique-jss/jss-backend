@@ -220,6 +220,10 @@ export class HabilitationsService {
     return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE])
   }
 
+  canDisplayPayslip() {
+    return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE])
+  }
+
   canDisplaySuspiciousInvoice() {
     return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE])
   }

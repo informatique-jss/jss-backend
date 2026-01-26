@@ -104,6 +104,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
   DISCOVERING_ORIGIN_REFERENTIAL = "Origine de la découverte du JSS";
   BUSINESS_SECTOR_REFERENTIAL = "Secteur d'activité";
   COMPANY_SIZE_REFERENTIAL = "Taille de l'entreprise";
+  PAY_SLIP_LINE_TYPE_REFERENTIAL = "Type de ligne de bulletin de paie"
 
 
   constructor(private appService: AppService,
@@ -192,6 +193,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     this.referentials.push(this.REPORTING_WIDGET_REFERENTIAL);
     this.referentials.push(this.ORDER_BLOCAKGE_REFERENTIAL);
     this.referentials.push(this.DISCOVERING_ORIGIN_REFERENTIAL);
+    this.referentials.push(this.PAY_SLIP_LINE_TYPE_REFERENTIAL);
     this.referentials.sort((a, b) => a.localeCompare(b));
 
     this.filteredReferentials = this.referentialForm.get("entity")?.valueChanges.pipe(

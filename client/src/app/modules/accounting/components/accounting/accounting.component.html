@@ -36,5 +36,10 @@
         <suspicious-invoice></suspicious-invoice>
       </ng-template>
     </mat-tab>
+    <mat-tab label="OD paie" *ngIf="canDisplaySuspiciousInvoice()">
+      <ng-template matTabContent>
+        <payslip-list></payslip-list>
+      </ng-template>
+    </mat-tab>
   </mat-tab-group>
 </div>
