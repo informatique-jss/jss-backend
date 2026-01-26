@@ -23,6 +23,8 @@ public interface QuotationSearchResult {
 
     public String getServiceTypeLabel();
 
+    public String getServiceFamilyLabel();
+
     public String getAffaireLabel();
 
     public Float getTotalPrice();

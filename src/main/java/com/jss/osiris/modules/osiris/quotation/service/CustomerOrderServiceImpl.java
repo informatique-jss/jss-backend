@@ -758,6 +758,20 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     public CustomerOrder unlockCustomerOrderFromDeposit(CustomerOrder customerOrder)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException {
         if (customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
+            // Modify announcement date if in the past
+            if (customerOrder.getAssoAffaireOrders() != null)
+                for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+                    if (asso.getServices() != null)
+                        for (Service service : asso.getServices())
+                            if (service.getProvisions() != null)
+                                for (Provision provision : service.getProvisions())
+                                    if (provision.getAnnouncement() != null
+                                            && provision.getAnnouncement().getPublicationDate() != null && provision
+                                                    .getAnnouncement().getPublicationDate().isBefore(LocalDate.now())) {
+                                        provision.getAnnouncement().setPublicationDate(LocalDate.now());
+                                        provisionService.addOrUpdateProvision(provision);
+                                    }
+
             addOrUpdateCustomerOrderStatus(customerOrder, CustomerOrderStatus.BEING_PROCESSED, false);
 
             if (isOnlyJssAnnouncementOrSubscription(customerOrder, true)) {

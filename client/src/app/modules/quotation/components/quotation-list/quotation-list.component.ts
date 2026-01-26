@@ -54,6 +54,7 @@ export class QuotationListComponent implements OnInit {
       this.availableColumns.push({ id: "createdDate", fieldName: "createdDate", label: "Date de création", valueFonction: formatDateForSortTable } as SortTableColumn<QuotationSearchResult>);
       this.availableColumns.push({ id: "origin", fieldName: "customerOrderOriginLabel", label: "Origine" } as SortTableColumn<QuotationSearchResult>);
       this.availableColumns.push({ id: "affaireLabel", fieldName: "affaireLabel", label: "Affaire(s)", isShrinkColumn: true } as SortTableColumn<QuotationSearchResult>);
+      this.availableColumns.push({ id: "serviceFamilyLabel", fieldName: "serviceFamilyLabel", label: "Famille" } as SortTableColumn<QuotationSearchResult>);
       this.availableColumns.push({ id: "serviceTypeLabel", fieldName: "serviceTypeLabel", label: "Service(s)", isShrinkColumn: true } as SortTableColumn<QuotationSearchResult>);
       this.availableColumns.push({ id: "quotationStatus", fieldName: "quotationStatus", label: "Statut" } as SortTableColumn<QuotationSearchResult>);
       this.availableColumns.push({ id: "quotationDescription", fieldName: "quotationDescription", label: "Description", isShrinkColumn: true } as SortTableColumn<QuotationSearchResult>);
