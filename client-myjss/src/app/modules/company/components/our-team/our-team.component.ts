@@ -113,7 +113,7 @@ export class OurTeamComponent implements OnInit {
     if (this.platformService.getNativeDocument())
       import('jarallax').then(module => {
         module.jarallax(this.platformService.getNativeDocument()!.querySelectorAll('.jarallax'), {
-          speed: 0.5
+          speed: 0.8,
         });
       });
   }
@@ -121,5 +121,4 @@ export class OurTeamComponent implements OnInit {
   onTabClick(department: string) {
     this.selectedTab = department;
   }
-
-}
+} 

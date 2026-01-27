@@ -58,7 +58,7 @@ export class AnnouncementComponent implements OnInit {
     if (this.platformService.getNativeDocument())
       import('jarallax').then(module => {
         module.jarallax(this.platformService.getNativeDocument()!.querySelectorAll('.jarallax'), {
-          speed: 0.5
+          speed: 0.8
         });
       });
   }
