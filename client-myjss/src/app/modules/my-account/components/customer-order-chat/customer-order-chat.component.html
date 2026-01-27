@@ -1,0 +1,31 @@
+<div class="custom-chat-wrapper" *ngIf="customerOrder">
+
+  <div class="chat-window-container" *ngIf="isExpanded">
+    <div class="chat-header">
+      <span>Commande n°{{customerOrder.id}}</span>
+      <span *ngIf="customerOrder.responsable && customerOrder.responsable.salesEmployee"> -
+        {{customerOrder.responsable.salesEmployee.lastname}} </span>
+      <button (click)="toggleChat()" class="btn-close-chat">✖</button>
+    </div>
+
+    <div class="messages-list">
+      <div *ngFor="let comment of comments" class="message-item"
+        [ngClass]="{'sent': comment.employee !== null, 'received': comment.employee === null}">
+        {{ comment.comment }}
+      </div>
+    </div>
+
+    <div class="chat-footer">
+      <input type="text" [(ngModel)]="newComment.comment" (keyup.enter)="sendMessage()"
+        placeholder="Écrivez votre message..." />
+      <button (click)="sendMessage()" [disabled]="!newComment.comment.trim()">
+        <i class="bi-send" class="fs-4"></i>
+      </button>
+    </div>
+  </div>
+
+  <button class="chat-toggle-btn" (click)="toggleChat()">
+    <span>{{ isExpanded ? '✖' : '💬' }}</span>
+  </button>
+
+</div>

@@ -2401,4 +2401,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         }
         return purchaseOrderAttachments;
     }
+
+    public List<CustomerOrder> getOrdersWithNewCommentFromCustomer(Employee employee) {
+        return customerOrderRepository.findOrdersWithNewCommentFromCustomer(employee);
+    }
 }

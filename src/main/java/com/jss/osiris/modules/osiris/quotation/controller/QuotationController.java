@@ -58,6 +58,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.LegalFormService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.SpecialOfferService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
+import com.jss.osiris.modules.osiris.quotation.dto.CustomerOrderCommentDto;
 import com.jss.osiris.modules.osiris.quotation.dto.CustomerOrderDto;
 import com.jss.osiris.modules.osiris.quotation.dto.ProvisionDto;
 import com.jss.osiris.modules.osiris.quotation.dto.QuotationDto;
@@ -3303,5 +3304,45 @@ public class QuotationController {
 
     return new ResponseEntity<List<ProvisionDto>>(test,
         HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/customer-order-comment/v2")
+  public ResponseEntity<CustomerOrderCommentDto> addOrUpdateCustomerOrderComment(
+      @RequestBody CustomerOrderCommentDto customerOrderCommentDto)
+      throws OsirisValidationException, OsirisException {
+    if (customerOrderCommentDto == null)
+      throw new OsirisValidationException("customerOrderCommentDto");
+
+    if (employeeService.getCurrentEmployee() != null
+        && !employeeService.getCurrentEmployee().getId().equals(customerOrderCommentDto.getEmployee())
+        && !employeeService.getCurrentMyJssUser().getId().equals(customerOrderCommentDto.getCurrentCustomer())) {
+      throw new OsirisValidationException("not authorizes");
+    }
+
+    return new ResponseEntity<CustomerOrderCommentDto>(
+        quotationFacade.addOrUpdateCustomerOrderComment(customerOrderCommentDto),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/customer-order-comments/from-tchat")
+  public ResponseEntity<List<CustomerOrderCommentDto>> getNewCustomerCommentsFromTchat(Integer customerOrderId)
+      throws OsirisValidationException, OsirisException {
+
+    CustomerOrder customerOrder = null;
+    if (customerOrderId != null) {
+      customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+      if (customerOrder == null)
+        throw new OsirisValidationException("customerOrder");
+    }
+
+    if (employeeService.getCurrentEmployee() != null
+        && !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.SALES_GROUP))
+      return new ResponseEntity<List<CustomerOrderCommentDto>>(
+          new ArrayList<>(),
+          HttpStatus.OK);
+
+    else
+      return new ResponseEntity<List<CustomerOrderCommentDto>>(
+          quotationFacade.getCommentsFromTchatForOrder(customerOrder), HttpStatus.OK);
   }
 }

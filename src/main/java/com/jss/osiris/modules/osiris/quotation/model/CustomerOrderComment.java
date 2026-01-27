@@ -90,6 +90,11 @@ public class CustomerOrderComment implements Serializable, IId {
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class })
 	private Boolean isToDisplayToCustomer;
 
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class })
+	private Boolean isFromTchat;
+
+	private Boolean isReadByCustomer;
+
 	public Integer getId() {
 		return id;
 	}
@@ -177,4 +182,21 @@ public class CustomerOrderComment implements Serializable, IId {
 	public void setIsToDisplayToCustomer(Boolean isToDisplayToCustomer) {
 		this.isToDisplayToCustomer = isToDisplayToCustomer;
 	}
+
+	public Boolean getIsFromTchat() {
+		return isFromTchat;
+	}
+
+	public void setIsFromTchat(Boolean isFromTchat) {
+		this.isFromTchat = isFromTchat;
+	}
+
+	public Boolean getIsReadByCustomer() {
+		return isReadByCustomer;
+	}
+
+	public void setIsReadByCustomer(Boolean isReadByCustomer) {
+		this.isReadByCustomer = isReadByCustomer;
+	}
+
 }

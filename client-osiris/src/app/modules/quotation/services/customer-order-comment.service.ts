@@ -1,23 +1,23 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of, share, switchMap, timer } from 'rxjs';
 import { AppRestService } from '../../main/services/appRest.service';
-import { PagedContent } from '../../miscellaneous/model/PagedContent';
-import { Comment } from '../model/Comment';
+import { CustomerOrderCommentDto } from '../model/CustomerOrderCommentDto';
+import { CustomerOrderDto } from '../model/CustomerOrderDto';
 
 
 @Injectable({
   providedIn: 'root'
 })
-export class CommentService extends AppRestService<Comment> {
+export class CustomerOrderCommentService extends AppRestService<CustomerOrderCommentDto> {
 
   private activeOrderSource = new BehaviorSubject<CustomerOrderDto | null>(null);
   comments: Observable<CustomerOrderCommentDto[]> | undefined;
   commentsResult: CustomerOrderCommentDto[] = [];
   customerOrder: CustomerOrderDto = {} as CustomerOrderDto;
-
   constructor(http: HttpClient) {
-    super(http, "wordpress");
+    super(http, "quotation");
+
     this.comments = this.activeOrderSource.asObservable().pipe(
       switchMap(order => {
         if (!order || !order.id) {
@@ -36,22 +36,15 @@ export class CommentService extends AppRestService<Comment> {
     this.activeOrderSource.next(order);
   }
 
-
-  getParentCommentsForPost(postId: number, page: number, size: number): Observable<PagedContent<Comment>> {
-    let params = new HttpParams()
-      .set('postId', postId.toString())
-      .set('page', page.toString())
-      .set('size', size.toString());
-
-    return this.getPagedList(params, "post/comments", "", "");
+  getCommentsFromTchatForOrder(customerOrder: CustomerOrderDto) {
+    return this.getList(new HttpParams().set("customerOrderId", customerOrder.id), "customer-order-comments/from-tchat");
   }
 
-  addOrUpdateComment(comment: Comment, parentCommentId: number, postId: number) {
-    let params = new HttpParams()
+  getCustomerOrderCommentForOrder(customerOrderId: number) {
+    return this.getList(new HttpParams().set("customerOrderId", customerOrderId), "customer-order-comment/order");
+  }
 
-    if (parentCommentId)
-      params = params.set("parentCommentId", parentCommentId);
-
-    return this.addOrUpdate(params.set("postId", postId), "post/comment/add", comment, "Votre commentaire a bien été posté !", "Une erreur s'est produite lors de l'enregistrement du commentaire, merci de réessayer");
+  addOrUpdateCustomerOrderComment(customerOrderCommentDto: CustomerOrderCommentDto) {
+    return this.addOrUpdate(new HttpParams(), "customer-order-comment/v2", customerOrderCommentDto, "Enregistré", "Erreur lors de l'enregistrement");
   }
 }

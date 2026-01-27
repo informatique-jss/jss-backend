@@ -8,16 +8,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.osiris.quotation.dto.CustomerOrderCommentDto;
 import com.jss.osiris.modules.osiris.quotation.dto.CustomerOrderDto;
 import com.jss.osiris.modules.osiris.quotation.dto.ProvisionDto;
 import com.jss.osiris.modules.osiris.quotation.dto.QuotationDto;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.osiris.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionSearch;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.QuotationSearch;
 import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.KbisRequest;
+import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderCommentService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.ProvisionService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
@@ -40,6 +43,9 @@ public class QuotationFacade {
 
     @Autowired
     QuotationDtoHelper quotationDtoHelper;
+
+    @Autowired
+    CustomerOrderCommentService customerOrderCommentService;
 
     @Transactional(rollbackFor = Exception.class)
     public KbisRequest orderNewKbisForSiret(String siret, Integer provisionId) throws OsirisException {
@@ -73,4 +79,21 @@ public class QuotationFacade {
         return quotationDtoHelper.mapProvisions(provisionsFound);
     }
 
+    /***************************** TCHAT *************************/
+    @Transactional(rollbackFor = Exception.class)
+    public List<CustomerOrderCommentDto> getCommentsFromTchatForOrder(CustomerOrder customerOrder)
+            throws OsirisException {
+        List<CustomerOrderComment> customerOrderComments = customerOrderCommentService
+                .getCommentsFromTchatForOrder(customerOrder);
+        return quotationDtoHelper.mapCustomerOrderComments(customerOrderComments);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public CustomerOrderCommentDto addOrUpdateCustomerOrderComment(CustomerOrderCommentDto customerOrderCommentDto) {
+        CustomerOrderComment customerOrderComment = quotationDtoHelper
+                .mapCustomerOrderCommentDtoToCustomerOrderComment(customerOrderCommentDto);
+        customerOrderComment = customerOrderCommentService.addOrUpdateCustomerOrderComment(customerOrderComment);
+        return customerOrderCommentDto;
+
+    }
 }

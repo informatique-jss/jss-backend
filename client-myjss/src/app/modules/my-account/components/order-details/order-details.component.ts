@@ -43,6 +43,7 @@ import { PaymentService } from '../../services/payment.service';
 import { QuotationService } from '../../services/quotation.service';
 import { ServiceService } from '../../services/service.service';
 import { UploadAttachmentService } from '../../services/upload.attachment.service';
+import { CustomerOrderChatComponent } from '../customer-order-chat/customer-order-chat.component';
 import { getClassForCustomerOrderStatus, getCustomerOrderBillingMailList, getCustomerOrderStatusLabel, getLastMissingAttachmentQueryDateLabel } from '../orders/orders.component';
 
 @Component({
@@ -50,7 +51,7 @@ import { getClassForCustomerOrderStatus, getCustomerOrderBillingMailList, getCus
   templateUrl: './order-details.component.html',
   styleUrls: ['./order-details.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, AvatarComponent, TrustHtmlPipe, SingleUploadComponent, NgbTooltipModule, NgbDropdownModule, NgbAccordionModule, NgbNavModule]
+  imports: [SHARED_IMPORTS, AvatarComponent, TrustHtmlPipe, SingleUploadComponent, NgbTooltipModule, NgbDropdownModule, NgbAccordionModule, NgbNavModule, CustomerOrderChatComponent]
 })
 export class OrderDetailsComponent implements OnInit {
 

@@ -9,4 +9,6 @@ export interface CustomerOrderComment {
   currentCustomer: Responsable;
   comment: string;
   customerOrder: CustomerOrder;
+  isFromTchat: boolean;
+  isReadByCustomer: boolean;
 }

@@ -107,4 +107,11 @@ public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentServ
         }
         return addOrUpdateCustomerOrderComment(customerOrderComment);
     }
+
+    @Override
+    public List<CustomerOrderComment> getCommentsFromTchatForOrder(CustomerOrder customerOrder) {
+        return customerOrderCommentRepository
+                .findByCustomerOrderAndIsFromTchat(customerOrder, true);
+
+    }
 }

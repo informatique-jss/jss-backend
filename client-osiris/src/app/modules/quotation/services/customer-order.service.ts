@@ -16,4 +16,8 @@ export class CustomerOrderService extends AppRestService<CustomerOrderDto> {
   searchCustomerOrder(customerOrderSearch: CustomerOrderSearch) {
     return this.postList(new HttpParams(), "customer-order/search/v2", customerOrderSearch);
   }
+
+  getCustomerOrder(idCustomerOrder: number) {
+    return this.getById("customer-order", idCustomerOrder);
+  }
 }

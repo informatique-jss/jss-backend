@@ -10,9 +10,11 @@ import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 
 public interface CustomerOrderCommentRepository extends QueryCacheCrudRepository<CustomerOrderComment, Integer> {
 
-    List<CustomerOrderComment> findByCustomerOrder(CustomerOrder customerOrder);
+        List<CustomerOrderComment> findByCustomerOrder(CustomerOrder customerOrder);
 
-    List<CustomerOrderComment> findByQuotation(Quotation quotation);
+        List<CustomerOrderComment> findByQuotation(Quotation quotation);
 
-    List<CustomerOrderComment> findByProvision(Provision provision);
+        List<CustomerOrderComment> findByProvision(Provision provision);
+
+        List<CustomerOrderComment> findByCustomerOrderAndIsFromTchat(CustomerOrder customerOrder, Boolean isFromTchat);
 }

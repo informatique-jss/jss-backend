@@ -30,4 +30,6 @@ public interface CustomerOrderCommentService {
 
         public List<CustomerOrderComment> getCustomerOrderCommentForProvision(Provision provision);
 
+        public List<CustomerOrderComment> getCommentsFromTchatForOrder(CustomerOrder customerOrder);
+
 }

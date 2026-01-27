@@ -1,6 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, distinctUntilChanged, of, shareReplay, switchMap, timer } from 'rxjs';
 import { AppRestService } from '../../main/services/appRest.service';
+import { CustomerOrder } from '../model/CustomerOrder';
 import { CustomerOrderComment } from '../model/CustomerOrderComment';
 
 @Injectable({
@@ -8,8 +10,32 @@ import { CustomerOrderComment } from '../model/CustomerOrderComment';
 })
 export class CustomerOrderCommentService extends AppRestService<CustomerOrderComment> {
 
+  private activeOrderSource = new BehaviorSubject<CustomerOrder | null>(null);
+  public comments = this.activeOrderSource.asObservable().pipe(
+    distinctUntilChanged((prev, curr) => prev?.id === curr?.id),
+    switchMap(order => {
+      if (!order?.id) return of([]);
+      return timer(0, 2000).pipe(
+        switchMap(() => this.getCommentsFromTchatForOrder(order))
+      );
+    }),
+    shareReplay(1)
+  );
+  commentsResult: CustomerOrderComment[] = [];
+  customerOrder: CustomerOrder = {} as CustomerOrder;
+
   constructor(http: HttpClient) {
     super(http, "quotation");
+
+
+  }
+
+  setWatchedOrder(order: CustomerOrder | null) {
+    this.activeOrderSource.next(order);
+  }
+
+  getCommentsFromTchatForOrder(customerOrder: CustomerOrder) {
+    return this.getList(new HttpParams().set("customerOrderId", customerOrder.id), "customer-order-comments/from-tchat");
   }
 
   getCustomerOrderCommentsForCustomer(idCustomerOrder: number) {
@@ -19,4 +45,5 @@ export class CustomerOrderCommentService extends AppRestService<CustomerOrderCom
   addOrUpdateCustomerOrderComment(customerOrderComment: CustomerOrderComment) {
     return this.addOrUpdate(new HttpParams(), "customer-order-comment", customerOrderComment);
   }
+
 }
