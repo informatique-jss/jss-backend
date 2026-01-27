@@ -5,9 +5,14 @@
     </mj-attributes>
   </mj-head>
   <mj-body>
-    <mj-section>
+    <mj-section padding="0px">
       <mj-column>
-        <mj-text font-size="12px" line-height="1.0" align="center">
+        <mj-text
+          font-size="12px"
+          line-height="1.0"
+          align="center"
+          padding="0px"
+        >
           <strong
             >SPPS - Société de Publications et de Publicité pour les
             Sociétés</strong
