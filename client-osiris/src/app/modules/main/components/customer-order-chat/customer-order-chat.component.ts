@@ -15,15 +15,15 @@ import { CustomerOrderCommentService } from '../../../quotation/services/custome
 })
 export class CustomerOrderChatComponent implements OnInit {
 
-  constructor(private customerOrderCommentService: CustomerOrderCommentService,
-    private employeeService: EmployeeService
-  ) { }
-
   @Input() customerOrder: CustomerOrderDto | undefined;
   comments: CustomerOrderComment[] = [];
   isExpanded: boolean = true;
   newComment: CustomerOrderComment = { comment: '', employee: {}, currentCustomer: {} } as CustomerOrderComment;
   currentEmployee: Employee | undefined;
+
+  constructor(private customerOrderCommentService: CustomerOrderCommentService,
+    private employeeService: EmployeeService
+  ) { }
 
   ngOnInit() {
     this.employeeService.getCurrentEmployee().subscribe((response: Employee | undefined) => {
@@ -36,6 +36,7 @@ export class CustomerOrderChatComponent implements OnInit {
     this.customerOrderCommentService.comments?.subscribe((res: CustomerOrderComment[]) => {
       this.comments = res;
       this.sortComments();
+      this.scrollToLastMessage();
     });
   }
 
@@ -45,6 +46,17 @@ export class CustomerOrderChatComponent implements OnInit {
 
   toggleChat() {
     this.isExpanded = !this.isExpanded;
+    if (this.isExpanded)
+      this.scrollToLastMessage("instant");
+  }
+
+  private scrollToLastMessage(behavior: ScrollBehavior = 'smooth'): void {
+    setTimeout(() => {
+      const el = document.getElementById(`comment-${this.comments.length - 1}`);
+      if (el) {
+        el.scrollIntoView({ behavior: behavior, block: 'start' });
+      }
+    }, 100); // Timeout so the DOM is well up to date
   }
 
   sendMessage() {
@@ -59,8 +71,11 @@ export class CustomerOrderChatComponent implements OnInit {
           this.newComment.isReadByCustomer = false;
         }
         this.customerOrderCommentService.addOrUpdateCustomerOrderComment(this.newComment).subscribe(response => {
-          if (response)
-            this.newComment.comment = '';
+          if (response) {
+            this.comments.push(response);
+            this.scrollToLastMessage();
+          }
+          this.newComment.comment = '';
         })
       }
     }

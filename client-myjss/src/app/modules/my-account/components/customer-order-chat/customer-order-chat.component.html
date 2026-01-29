@@ -9,8 +9,8 @@
     </div>
 
     <div class="messages-list">
-      <div *ngFor="let comment of comments" class="message-item"
-        [ngClass]="{'sent': comment.employee === null, 'received': comment.employee !== null}">
+      <div *ngFor="let comment of comments; let i = index" class="message-item" id="{{ 'comment-' + i }}"
+        [ngClass]="{'sent': !comment.employee || !comment.employee.id, 'received': comment.employee && comment.employee.id}">
         {{ comment.comment }}
       </div>
     </div>
@@ -27,5 +27,4 @@
   <button class="chat-toggle-btn" (click)="toggleChat()">
     <span>{{ isExpanded ? '✖' : '💬' }}</span>
   </button>
-
 </div>

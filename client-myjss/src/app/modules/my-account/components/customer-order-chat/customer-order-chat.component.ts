@@ -14,27 +14,25 @@ import { CustomerOrderCommentService } from '../../services/customer.order.comme
 })
 export class CustomerOrderChatComponent implements OnInit {
 
-  constructor(private customerOrderCommentService: CustomerOrderCommentService,
-    private loginService: LoginService
-  ) { }
-
   @Input() customerOrder: CustomerOrder | undefined;
   comments: CustomerOrderComment[] = [];
   isExpanded: boolean = true;
   newComment: CustomerOrderComment = { comment: '', customerOrder: {} } as CustomerOrderComment;
   currentUser: Responsable | undefined;
 
+  constructor(private customerOrderCommentService: CustomerOrderCommentService,
+    private loginService: LoginService
+  ) { }
+
   ngOnInit() {
     this.loginService.getCurrentUser().subscribe(response => {
       this.currentUser = response;
-      // this.refreshComments();
     });
 
     this.customerOrderCommentService.comments.subscribe(res => {
-      //TODO delete :
-      console.log('Nouveaux commentaires reçus via polling :', res);
       this.comments = res;
       this.sortComments();
+      this.scrollToLastMessage()
     });
 
     if (this.customerOrder) {
@@ -48,6 +46,18 @@ export class CustomerOrderChatComponent implements OnInit {
 
   toggleChat() {
     this.isExpanded = !this.isExpanded;
+    if (this.isExpanded) {
+      this.scrollToLastMessage("instant");
+    }
+  }
+
+  private scrollToLastMessage(behavior: ScrollBehavior = 'smooth'): void {
+    setTimeout(() => {
+      const el = document.getElementById(`comment-${this.comments.length - 1}`);
+      if (el) {
+        el.scrollIntoView({ behavior: behavior, block: 'start' });
+      }
+    }, 100); // Timeout so the DOM is well up to date
   }
 
   sendMessage() {
@@ -61,8 +71,11 @@ export class CustomerOrderChatComponent implements OnInit {
           this.newComment.isReadByCustomer = true;
         }
         this.customerOrderCommentService.addOrUpdateCustomerOrderComment(this.newComment).subscribe(response => {
-          if (response)
-            this.newComment.comment = '';
+          if (response) {
+            this.comments.push(response);
+            this.scrollToLastMessage();
+          }
+          this.newComment.comment = '';
         })
       }
     }
@@ -82,5 +95,3 @@ export class CustomerOrderChatComponent implements OnInit {
     }
   }
 }
-
-

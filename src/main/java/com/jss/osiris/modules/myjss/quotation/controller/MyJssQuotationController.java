@@ -1181,23 +1181,23 @@ public class MyJssQuotationController {
 	}
 
 	@PostMapping(inputEntryPoint + "/customer-order-comment")
-	public ResponseEntity<Boolean> addOrUpdateCustomerOrderComment(
+	public ResponseEntity<CustomerOrderComment> addOrUpdateCustomerOrderComment(
 			@RequestBody CustomerOrderComment customerOrderComment) throws OsirisValidationException, OsirisException {
 		CustomerOrderComment customerOrderCommentOriginal = null;
 
 		if (customerOrderComment.getCustomerOrder() == null || customerOrderComment.getCustomerOrder().getId() == null)
-			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+			return new ResponseEntity<>(null, HttpStatus.OK);
 
 		customerOrderComment.setCustomerOrder(
 				customerOrderService.getCustomerOrder(customerOrderComment.getCustomerOrder().getId()));
 
 		if (!myJssQuotationValidationHelper.canSeeQuotation(customerOrderComment.getCustomerOrder()))
-			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+			return new ResponseEntity<>(null, HttpStatus.OK);
 
 		if (customerOrderComment.getId() != null) {
 			if (customerOrderComment.getCurrentCustomer() == null || !customerOrderComment.getCurrentCustomer().getId()
 					.equals(employeeService.getCurrentMyJssUser().getId()))
-				return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+				return new ResponseEntity<>(null, HttpStatus.OK);
 
 			customerOrderCommentOriginal = (CustomerOrderComment) validationHelper.validateReferential(
 					customerOrderComment,
@@ -1212,10 +1212,10 @@ public class MyJssQuotationController {
 					customerOrderComment.getComment(), false, true, customerOrderComment.getIsFromChat());
 		} else if (customerOrderCommentOriginal != null) {
 			customerOrderComment.setCreatedDateTime(customerOrderCommentOriginal.getCreatedDateTime());
-			customerOrderCommentService.addOrUpdateCustomerOrderComment(customerOrderComment);
+			customerOrderComment = customerOrderCommentService.addOrUpdateCustomerOrderComment(customerOrderComment);
 		}
 
-		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+		return new ResponseEntity<CustomerOrderComment>(customerOrderComment, HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/affaire/search/current")

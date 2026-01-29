@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, retry, share, Subject, switchMap, takeUntil, tap, timer } from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged, of, shareReplay, switchMap, timer } from 'rxjs';
 import { COMMENT_POST_REFRESH_INTERVAL } from '../../main/model/Constant';
 import { AppRestService } from '../../main/services/appRest.service';
 import { CustomerOrderComment } from '../model/CustomerOrderComment';
@@ -13,47 +13,24 @@ import { CustomerOrderDto } from '../model/CustomerOrderDto';
 export class CustomerOrderCommentService extends AppRestService<CustomerOrderComment> {
 
   private activeOrderSource = new BehaviorSubject<CustomerOrderDto | null>(null);
-  activeOrderSourceObservable = this.activeOrderSource.asObservable();
 
-  comments: Observable<CustomerOrderComment[]> | undefined;
+  public comments = this.activeOrderSource.asObservable().pipe(
+    distinctUntilChanged((prev, curr) => prev?.id === curr?.id),
+    switchMap(order => {
+      if (!order || !order.id) return of([]);
+      return timer(0, COMMENT_POST_REFRESH_INTERVAL).pipe(
+        switchMap(() => this.getCommentsFromChatForOrder(order))
+      );
+    }),
+    shareReplay(1)
+  );
+
   commentsResult: CustomerOrderComment[] = [];
 
   customerOrder: CustomerOrderDto = {} as CustomerOrderDto;
 
-  private stopPolling = new Subject();
-
   constructor(http: HttpClient) {
     super(http, "quotation");
-
-    // this.comments = this.activeOrderSource.asObservable().pipe(
-    //   switchMap(order => {
-    //     if (!order || !order.id) {
-    //       return of([]); // If no order (e.g.: Quote page), return an empty list
-    //     }
-    //     // Start polling (every 1000ms)
-    //     return timer(0, 1000).pipe(
-    //       switchMap(() => this.getCommentsFromChatForOrder(order)),
-    //       share()
-    //     );
-    //   })
-    // );
-
-    this.activeOrderSourceObservable.subscribe(res => {
-      if (res) {
-        this.comments = timer(1, COMMENT_POST_REFRESH_INTERVAL).pipe(
-          switchMap(() => this.getCommentsFromChatForOrder(res)),
-          retry(),
-          tap((value) => {
-            this.commentsResult = value;
-            if (!this.commentsResult)
-              this.commentsResult = [];
-          }),
-          share(),
-          takeUntil(this.stopPolling)
-        );
-        this.comments.subscribe();
-      }
-    });
   }
 
   setWatchedOrder(order: CustomerOrderDto | null) {
