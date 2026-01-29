@@ -10,7 +10,7 @@
 
     <div class="messages-list">
       <div *ngFor="let comment of comments" class="message-item"
-        [ngClass]="{'sent': comment.employee !== null, 'received': comment.employee === null}">
+        [ngClass]="{'sent': comment.employee === null, 'received': comment.employee !== null}">
         {{ comment.comment }}
       </div>
     </div>

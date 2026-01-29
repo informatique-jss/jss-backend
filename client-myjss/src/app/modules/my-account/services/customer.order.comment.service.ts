@@ -16,7 +16,7 @@ export class CustomerOrderCommentService extends AppRestService<CustomerOrderCom
     switchMap(order => {
       if (!order?.id) return of([]);
       return timer(0, 2000).pipe(
-        switchMap(() => this.getCommentsFromTchatForOrder(order))
+        switchMap(() => this.getCommentsFromChatForOrder(order))
       );
     }),
     shareReplay(1)
@@ -26,16 +26,14 @@ export class CustomerOrderCommentService extends AppRestService<CustomerOrderCom
 
   constructor(http: HttpClient) {
     super(http, "quotation");
-
-
   }
 
   setWatchedOrder(order: CustomerOrder | null) {
     this.activeOrderSource.next(order);
   }
 
-  getCommentsFromTchatForOrder(customerOrder: CustomerOrder) {
-    return this.getList(new HttpParams().set("customerOrderId", customerOrder.id), "customer-order-comments/from-tchat");
+  getCommentsFromChatForOrder(customerOrder: CustomerOrder) {
+    return this.getList(new HttpParams().set("customerOrderId", customerOrder.id), "customer-order-comments/from-chat");
   }
 
   getCustomerOrderCommentsForCustomer(idCustomerOrder: number) {
@@ -45,5 +43,4 @@ export class CustomerOrderCommentService extends AppRestService<CustomerOrderCom
   addOrUpdateCustomerOrderComment(customerOrderComment: CustomerOrderComment) {
     return this.addOrUpdate(new HttpParams(), "customer-order-comment", customerOrderComment);
   }
-
 }

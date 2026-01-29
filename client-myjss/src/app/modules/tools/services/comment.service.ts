@@ -11,31 +11,9 @@ import { Comment } from '../model/Comment';
 })
 export class CommentService extends AppRestService<Comment> {
 
-  private activeOrderSource = new BehaviorSubject<CustomerOrderDto | null>(null);
-  comments: Observable<CustomerOrderCommentDto[]> | undefined;
-  commentsResult: CustomerOrderCommentDto[] = [];
-  customerOrder: CustomerOrderDto = {} as CustomerOrderDto;
-
   constructor(http: HttpClient) {
     super(http, "wordpress");
-    this.comments = this.activeOrderSource.asObservable().pipe(
-      switchMap(order => {
-        if (!order || !order.id) {
-          return of([]); // Si pas de commande (ex: page Devis), on renvoie une liste vide
-        }
-        // Lancement du polling (toutes les 1000ms)
-        return timer(0, 1000).pipe(
-          switchMap(() => this.getCommentsFromTchatForOrder(order)),
-          share()
-        );
-      })
-    );
   }
-
-  setWatchedOrder(order: CustomerOrderDto | null) {
-    this.activeOrderSource.next(order);
-  }
-
 
   getParentCommentsForPost(postId: number, page: number, size: number): Observable<PagedContent<Comment>> {
     let params = new HttpParams()

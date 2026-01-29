@@ -753,7 +753,7 @@ public class PaymentServiceImpl implements PaymentService {
                         correspondingCustomerOrder.get(i),
                         "Nouveau paiement n°" + newPayment.getId() + " de " + newPayment.getPaymentAmount()
                                 + " € placé sur la commande",
-                        false, false);
+                        false, false, false);
 
                 customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
                         constantService.getActiveDirectoryGroupFacturation());
@@ -1222,7 +1222,7 @@ public class PaymentServiceImpl implements PaymentService {
                             invoice.getCustomerOrder(),
                             "Nouveau paiement n°" + payment.getId() + " de " + payment.getPaymentAmount()
                                     + " € placé sur la facture n°" + invoice.getId(),
-                            false, false);
+                            false, false, false);
 
                     customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
                             constantService.getActiveDirectoryGroupFacturation());

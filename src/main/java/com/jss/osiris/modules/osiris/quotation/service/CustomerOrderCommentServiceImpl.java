@@ -69,12 +69,14 @@ public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentServ
     @Transactional(rollbackFor = Exception.class)
     public CustomerOrderComment addOrUpdateCustomerOrderComment(
             CustomerOrderComment customerOrderComment) {
+        if (customerOrderComment.getCreatedDateTime() == null)
+            customerOrderComment.setCreatedDateTime(LocalDateTime.now());
         return customerOrderCommentRepository.save(customerOrderComment);
     }
 
     @Override
     public CustomerOrderComment createCustomerOrderComment(CustomerOrder customerOrder, String contentComment,
-            Boolean doNotNotify, Boolean isToDisplayToCustomer)
+            Boolean doNotNotify, Boolean isToDisplayToCustomer, Boolean isFromChat)
             throws OsirisException {
         CustomerOrderComment customerOrderComment = new CustomerOrderComment();
         customerOrderComment.setCustomerOrder(customerOrder);
@@ -92,6 +94,7 @@ public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentServ
         }
         customerOrderComment.setCreatedDateTime(LocalDateTime.now());
         customerOrderComment.setIsRead(false);
+        customerOrderComment.setIsFromChat(isFromChat);
 
         return addOrUpdateCustomerOrderComment(customerOrderComment);
     }
@@ -109,9 +112,9 @@ public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentServ
     }
 
     @Override
-    public List<CustomerOrderComment> getCommentsFromTchatForOrder(CustomerOrder customerOrder) {
+    public List<CustomerOrderComment> getCommentsFromChatForOrder(CustomerOrder customerOrder) {
         return customerOrderCommentRepository
-                .findByCustomerOrderAndIsFromTchat(customerOrder, true);
+                .findByCustomerOrderAndIsFromChat(customerOrder, true);
 
     }
 }

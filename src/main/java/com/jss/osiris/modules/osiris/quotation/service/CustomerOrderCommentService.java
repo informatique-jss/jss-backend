@@ -19,7 +19,7 @@ public interface CustomerOrderCommentService {
         public CustomerOrderComment addOrUpdateCustomerOrderComment(CustomerOrderComment customerOrderComment);
 
         public CustomerOrderComment createCustomerOrderComment(CustomerOrder customerOrder, String contentComment,
-                        Boolean doNotNotify, Boolean isToDisplayToCustomer)
+                        Boolean doNotNotify, Boolean isToDisplayToCustomer, Boolean isFromChat)
                         throws OsirisException;
 
         public CustomerOrderComment tagActiveDirectoryGroupOnCustomerOrderComment(
@@ -30,6 +30,6 @@ public interface CustomerOrderCommentService {
 
         public List<CustomerOrderComment> getCustomerOrderCommentForProvision(Provision provision);
 
-        public List<CustomerOrderComment> getCommentsFromTchatForOrder(CustomerOrder customerOrder);
+        public List<CustomerOrderComment> getCommentsFromChatForOrder(CustomerOrder customerOrder);
 
 }

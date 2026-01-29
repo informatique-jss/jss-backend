@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
-import com.jss.osiris.modules.osiris.quotation.dto.CustomerOrderCommentDto;
 import com.jss.osiris.modules.osiris.quotation.dto.CustomerOrderDto;
 import com.jss.osiris.modules.osiris.quotation.dto.ProvisionDto;
 import com.jss.osiris.modules.osiris.quotation.dto.QuotationDto;
@@ -25,6 +24,7 @@ import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.ProvisionService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
 import com.jss.osiris.modules.osiris.quotation.service.infoGreffe.InfogreffeKbisService;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 @Service
 public class QuotationFacade {
@@ -79,21 +79,27 @@ public class QuotationFacade {
         return quotationDtoHelper.mapProvisions(provisionsFound);
     }
 
-    /***************************** TCHAT *************************/
+    /***************************** CHAT *************************/
     @Transactional(rollbackFor = Exception.class)
-    public List<CustomerOrderCommentDto> getCommentsFromTchatForOrder(CustomerOrder customerOrder)
+    public List<CustomerOrderComment> getCommentsFromChatForOrder(CustomerOrder customerOrder)
             throws OsirisException {
-        List<CustomerOrderComment> customerOrderComments = customerOrderCommentService
-                .getCommentsFromTchatForOrder(customerOrder);
-        return quotationDtoHelper.mapCustomerOrderComments(customerOrderComments);
+        return customerOrderCommentService
+                .getCommentsFromChatForOrder(customerOrder);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public CustomerOrderCommentDto addOrUpdateCustomerOrderComment(CustomerOrderCommentDto customerOrderCommentDto) {
-        CustomerOrderComment customerOrderComment = quotationDtoHelper
-                .mapCustomerOrderCommentDtoToCustomerOrderComment(customerOrderCommentDto);
+    public CustomerOrderComment addOrUpdateCustomerOrderComment(CustomerOrderComment customerOrderComment) {
+        if (customerOrderComment.getCustomerOrder() == null && customerOrderComment.getCustomerOrderId() != null) {
+            CustomerOrder customerOrder = customerOrderService
+                    .getCustomerOrder(customerOrderComment.getCustomerOrderId());
+            customerOrderComment.setCustomerOrder(customerOrder);
+        }
+        if (customerOrderComment.getCurrentCustomer() == null
+                || customerOrderComment.getCurrentCustomer().getId() == null) {
+            Responsable currentUser = customerOrderComment.getCustomerOrder().getResponsable();
+            customerOrderComment.setCurrentCustomer(currentUser);
+        }
         customerOrderComment = customerOrderCommentService.addOrUpdateCustomerOrderComment(customerOrderComment);
-        return customerOrderCommentDto;
-
+        return customerOrderComment;
     }
 }

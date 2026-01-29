@@ -58,7 +58,6 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.LegalFormService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.SpecialOfferService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
-import com.jss.osiris.modules.osiris.quotation.dto.CustomerOrderCommentDto;
 import com.jss.osiris.modules.osiris.quotation.dto.CustomerOrderDto;
 import com.jss.osiris.modules.osiris.quotation.dto.ProvisionDto;
 import com.jss.osiris.modules.osiris.quotation.dto.QuotationDto;
@@ -3307,25 +3306,31 @@ public class QuotationController {
   }
 
   @PostMapping(inputEntryPoint + "/customer-order-comment/v2")
-  public ResponseEntity<CustomerOrderCommentDto> addOrUpdateCustomerOrderComment(
-      @RequestBody CustomerOrderCommentDto customerOrderCommentDto)
+  public ResponseEntity<CustomerOrderComment> saveCustomerOrderComment(
+      @RequestBody CustomerOrderComment customerOrderComment)
       throws OsirisValidationException, OsirisException {
-    if (customerOrderCommentDto == null)
-      throw new OsirisValidationException("customerOrderCommentDto");
+    if (customerOrderComment == null || customerOrderComment.getEmployee() == null
+        || customerOrderComment.getCurrentCustomer() == null || customerOrderComment.getCustomerOrderId() == null)
+      throw new OsirisValidationException(
+          "customerOrderComment or customerOrderComment.Employee or customerOrderComment.CurrentUser or CustomerOrderId");
 
     if (employeeService.getCurrentEmployee() != null
-        && !employeeService.getCurrentEmployee().getId().equals(customerOrderCommentDto.getEmployee())
-        && !employeeService.getCurrentMyJssUser().getId().equals(customerOrderCommentDto.getCurrentCustomer())) {
-      throw new OsirisValidationException("not authorizes");
+        && !employeeService.getCurrentEmployee().getId().equals(customerOrderComment.getEmployee().getId())
+        && !employeeService.getCurrentMyJssUser().getId().equals(customerOrderComment.getCurrentCustomer().getId())) {
+      throw new OsirisValidationException("not authorized");
     }
 
-    return new ResponseEntity<CustomerOrderCommentDto>(
-        quotationFacade.addOrUpdateCustomerOrderComment(customerOrderCommentDto),
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderComment.getCustomerOrderId());
+    if (customerOrder == null)
+      throw new OsirisValidationException("no customerOrder attached to comment");
+
+    return new ResponseEntity<CustomerOrderComment>(
+        quotationFacade.addOrUpdateCustomerOrderComment(customerOrderComment),
         HttpStatus.OK);
   }
 
-  @GetMapping(inputEntryPoint + "/customer-order-comments/from-tchat")
-  public ResponseEntity<List<CustomerOrderCommentDto>> getNewCustomerCommentsFromTchat(Integer customerOrderId)
+  @GetMapping(inputEntryPoint + "/customer-order-comments/from-chat")
+  public ResponseEntity<List<CustomerOrderComment>> getNewCustomerCommentsFromChat(Integer customerOrderId)
       throws OsirisValidationException, OsirisException {
 
     CustomerOrder customerOrder = null;
@@ -3337,12 +3342,10 @@ public class QuotationController {
 
     if (employeeService.getCurrentEmployee() != null
         && !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.SALES_GROUP))
-      return new ResponseEntity<List<CustomerOrderCommentDto>>(
-          new ArrayList<>(),
-          HttpStatus.OK);
+      return new ResponseEntity<List<CustomerOrderComment>>(new ArrayList<>(), HttpStatus.OK);
 
     else
-      return new ResponseEntity<List<CustomerOrderCommentDto>>(
-          quotationFacade.getCommentsFromTchatForOrder(customerOrder), HttpStatus.OK);
+      return new ResponseEntity<List<CustomerOrderComment>>(
+          quotationFacade.getCommentsFromChatForOrder(customerOrder), HttpStatus.OK);
   }
 }

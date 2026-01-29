@@ -3,7 +3,7 @@ import { NgIcon } from '@ng-icons/core';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { Employee } from '../../../profile/model/Employee';
 import { EmployeeService } from '../../../profile/services/employee.service';
-import { CustomerOrderCommentDto } from '../../../quotation/model/CustomerOrderCommentDto';
+import { CustomerOrderComment } from '../../../quotation/model/CustomerOrderComment';
 import { CustomerOrderDto } from '../../../quotation/model/CustomerOrderDto';
 import { CustomerOrderCommentService } from '../../../quotation/services/customer-order-comment.service';
 
@@ -20,13 +20,12 @@ export class CustomerOrderChatComponent implements OnInit {
   ) { }
 
   @Input() customerOrder: CustomerOrderDto | undefined;
-  comments: CustomerOrderCommentDto[] = [];
+  comments: CustomerOrderComment[] = [];
   isExpanded: boolean = true;
-  newComment: CustomerOrderCommentDto = { comment: '' } as CustomerOrderCommentDto;
+  newComment: CustomerOrderComment = { comment: '', employee: {}, currentCustomer: {} } as CustomerOrderComment;
   currentEmployee: Employee | undefined;
 
   ngOnInit() {
-
     this.employeeService.getCurrentEmployee().subscribe((response: Employee | undefined) => {
       this.currentEmployee = response;
     });
@@ -34,7 +33,7 @@ export class CustomerOrderChatComponent implements OnInit {
     if (this.customerOrder)
       this.customerOrderCommentService.setWatchedOrder(this.customerOrder);
 
-    this.customerOrderCommentService.comments?.subscribe((res: CustomerOrderCommentDto[]) => {
+    this.customerOrderCommentService.comments?.subscribe((res: CustomerOrderComment[]) => {
       this.comments = res;
       this.sortComments();
     });
@@ -53,10 +52,10 @@ export class CustomerOrderChatComponent implements OnInit {
 
       if (this.newComment && this.newComment.comment.replace(/<(?:.|\n)*?>/gm, ' ').length > 0) {
         if (this.newComment.id == undefined) {
-          this.newComment.employee = this.currentEmployee!.id;
+          this.newComment.employee = this.currentEmployee!;
           if (this.customerOrder)
-            this.newComment.customerOrder = this.customerOrder.id;
-          this.newComment.isFromTchat = true;
+            this.newComment.customerOrderId = this.customerOrder.id;
+          this.newComment.isFromChat = true;
           this.newComment.isReadByCustomer = false;
         }
         this.customerOrderCommentService.addOrUpdateCustomerOrderComment(this.newComment).subscribe(response => {
@@ -69,9 +68,7 @@ export class CustomerOrderChatComponent implements OnInit {
 
   sortComments() {
     if (this.comments && this.currentEmployee) {
-      this.comments.sort((b: CustomerOrderCommentDto, a: CustomerOrderCommentDto) => new Date(b.createdDateTime).getTime() - new Date(a.createdDateTime).getTime());
+      this.comments.sort((b: CustomerOrderComment, a: CustomerOrderComment) => new Date(b.createdDateTime).getTime() - new Date(a.createdDateTime).getTime());
     }
   }
 }
-
-

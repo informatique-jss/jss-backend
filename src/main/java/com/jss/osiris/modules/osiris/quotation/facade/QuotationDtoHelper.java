@@ -1,22 +1,18 @@
 package com.jss.osiris.modules.osiris.quotation.facade;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.jss.osiris.libs.exception.OsirisException;
-import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
-import com.jss.osiris.modules.osiris.quotation.dto.CustomerOrderCommentDto;
 import com.jss.osiris.modules.osiris.quotation.dto.CustomerOrderDto;
 import com.jss.osiris.modules.osiris.quotation.dto.ProvisionDto;
 import com.jss.osiris.modules.osiris.quotation.dto.QuotationDto;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
-import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
@@ -287,56 +283,5 @@ public class QuotationDtoHelper {
         // provisionDto.setCreationdate(provision.getSimpleProvision().getSimpleProvisionStatus().getPredecessors().get(0).getdate());
 
         return provisionDto;
-    }
-
-    public List<CustomerOrderCommentDto> mapCustomerOrderComments(List<CustomerOrderComment> customerOrderComments) {
-        List<CustomerOrderCommentDto> outCustomerOrderCommentDtos = new ArrayList<CustomerOrderCommentDto>();
-        if (customerOrderComments != null) {
-            for (CustomerOrderComment comment : customerOrderComments) {
-                outCustomerOrderCommentDtos.add(mapCustomerOrderCommentToCustomerOrderCommentDto(comment));
-            }
-        }
-        return outCustomerOrderCommentDtos;
-    }
-
-    public CustomerOrderCommentDto mapCustomerOrderCommentToCustomerOrderCommentDto(
-            CustomerOrderComment customerOrderComment) {
-        CustomerOrderCommentDto customerOrderCommentDto = new CustomerOrderCommentDto();
-        StringBuilder builder = new StringBuilder();
-
-        customerOrderCommentDto.setId(customerOrderComment.getId());
-        customerOrderCommentDto.setComment(customerOrderComment.getComment());
-        customerOrderCommentDto.setCreatedDateTime(customerOrderComment.getCreatedDateTime());
-        return customerOrderCommentDto;
-    }
-
-    public CustomerOrderComment mapCustomerOrderCommentDtoToCustomerOrderComment(
-            CustomerOrderCommentDto customerOrderCommentDto) {
-        CustomerOrderComment customerOrderComment = new CustomerOrderComment();
-
-        Employee employee = employeeService.getCurrentEmployee();
-        Responsable responsable = null;
-
-        if (employee == null)
-            responsable = employeeService.getCurrentMyJssUser();
-
-        if (employee != null)
-            customerOrderComment.setEmployee(employee);
-
-        if (responsable != null)
-            customerOrderComment.setCurrentCustomer(responsable);
-
-        if (customerOrderCommentDto.getComment() != null)
-            customerOrderComment.setComment(customerOrderCommentDto.getComment());
-
-        if (customerOrderCommentDto.getCustomerOrder() != null)
-            customerOrderComment.setCustomerOrder(
-                    customerOrderService.getCustomerOrder(customerOrderCommentDto.getCustomerOrder()));
-
-        customerOrderComment.setCreatedDateTime(LocalDateTime.now());
-        customerOrderComment.setIsFromTchat(customerOrderCommentDto.getIsFromTchat());
-        customerOrderComment.setIsRead(customerOrderCommentDto.getIsRead());
-        customerOrderComment.setIsReadByCustomer(customerOrderCommentDto.getIsReadByCustomer());
-        return customerOrderComment;
     }
 }

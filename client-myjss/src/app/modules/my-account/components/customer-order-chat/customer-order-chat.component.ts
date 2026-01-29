@@ -21,7 +21,7 @@ export class CustomerOrderChatComponent implements OnInit {
   @Input() customerOrder: CustomerOrder | undefined;
   comments: CustomerOrderComment[] = [];
   isExpanded: boolean = true;
-  newComment: CustomerOrderComment = { comment: '' } as CustomerOrderComment;
+  newComment: CustomerOrderComment = { comment: '', customerOrder: {} } as CustomerOrderComment;
   currentUser: Responsable | undefined;
 
   ngOnInit() {
@@ -31,6 +31,7 @@ export class CustomerOrderChatComponent implements OnInit {
     });
 
     this.customerOrderCommentService.comments.subscribe(res => {
+      //TODO delete :
       console.log('Nouveaux commentaires reçus via polling :', res);
       this.comments = res;
       this.sortComments();
@@ -54,17 +55,14 @@ export class CustomerOrderChatComponent implements OnInit {
 
       if (this.newComment && this.newComment.comment.replace(/<(?:.|\n)*?>/gm, ' ').length > 0) {
         if (this.newComment.id == undefined) {
-          if (this.currentUser)
-            this.newComment.currentCustomer = this.currentUser;
           if (this.customerOrder)
-            this.newComment.customerOrder = this.customerOrder;
-          this.newComment.isFromTchat = true;
-          this.newComment.isReadByCustomer = false;
+            this.newComment.customerOrder.id = this.customerOrder.id;
+          this.newComment.isFromChat = true;
+          this.newComment.isReadByCustomer = true;
         }
         this.customerOrderCommentService.addOrUpdateCustomerOrderComment(this.newComment).subscribe(response => {
           if (response)
             this.newComment.comment = '';
-          this.refreshComments();
         })
       }
     }

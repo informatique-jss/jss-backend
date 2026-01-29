@@ -500,7 +500,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                                                 savedFormaliteGuichetUnique.getStatus().getCode())
                                                         .getLabel()
                                                 + ")",
-                                        false, false);
+                                        false, false, false);
 
                         notificationService
                                 .notifyGuichetUniqueFormaliteStatusRefused(formalite.getProvision().get(0));
@@ -521,7 +521,7 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                                                 .getProvision().get(0).getService().getAssoAffaireOrder()
                                                 .getCustomerOrder(),
                                         "Formalité GU n°" + savedFormaliteGuichetUnique.getLiasseNumber() + " validée",
-                                        false, false);
+                                        false, false, false);
 
                         notificationService
                                 .notifyGuichetUniqueFormaliteStatusValidated(formalite.getProvision().get(0));

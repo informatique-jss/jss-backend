@@ -16,5 +16,5 @@ public interface CustomerOrderCommentRepository extends QueryCacheCrudRepository
 
         List<CustomerOrderComment> findByProvision(Provision provision);
 
-        List<CustomerOrderComment> findByCustomerOrderAndIsFromTchat(CustomerOrder customerOrder, Boolean isFromTchat);
+        List<CustomerOrderComment> findByCustomerOrderAndIsFromChat(CustomerOrder customerOrder, Boolean isFromChat);
 }

@@ -29,6 +29,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(indexes = {
@@ -91,9 +92,12 @@ public class CustomerOrderComment implements Serializable, IId {
 	private Boolean isToDisplayToCustomer;
 
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class })
-	private Boolean isFromTchat;
+	private Boolean isFromChat;
 
 	private Boolean isReadByCustomer;
+
+	@Transient
+	private Integer customerOrderId;
 
 	public Integer getId() {
 		return id;
@@ -183,12 +187,12 @@ public class CustomerOrderComment implements Serializable, IId {
 		this.isToDisplayToCustomer = isToDisplayToCustomer;
 	}
 
-	public Boolean getIsFromTchat() {
-		return isFromTchat;
+	public Boolean getIsFromChat() {
+		return isFromChat;
 	}
 
-	public void setIsFromTchat(Boolean isFromTchat) {
-		this.isFromTchat = isFromTchat;
+	public void setIsFromChat(Boolean isFromChat) {
+		this.isFromChat = isFromChat;
 	}
 
 	public Boolean getIsReadByCustomer() {
@@ -199,4 +203,11 @@ public class CustomerOrderComment implements Serializable, IId {
 		this.isReadByCustomer = isReadByCustomer;
 	}
 
+	public Integer getCustomerOrderId() {
+		return customerOrderId;
+	}
+
+	public void setCustomerOrderId(Integer customerOrderId) {
+		this.customerOrderId = customerOrderId;
+	}
 }
