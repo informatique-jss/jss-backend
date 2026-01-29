@@ -81,14 +81,6 @@ export class CustomerOrderChatComponent implements OnInit {
     }
   }
 
-  refreshComments() {
-    if (this.customerOrder)
-      this.customerOrderCommentService.getCustomerOrderCommentsForCustomer(this.customerOrder.id).subscribe(response => {
-        this.comments = response;
-        this.sortComments()
-      });
-  }
-
   sortComments() {
     if (this.comments && this.currentUser) {
       this.comments.sort((b: CustomerOrderComment, a: CustomerOrderComment) => new Date(b.createdDateTime).getTime() - new Date(a.createdDateTime).getTime());

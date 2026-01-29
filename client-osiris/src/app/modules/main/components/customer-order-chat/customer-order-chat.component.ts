@@ -68,6 +68,7 @@ export class CustomerOrderChatComponent implements OnInit {
           if (this.customerOrder)
             this.newComment.customerOrderId = this.customerOrder.id;
           this.newComment.isFromChat = true;
+          this.newComment.isToDisplayToCustomer = true;
           this.newComment.isReadByCustomer = false;
         }
         this.customerOrderCommentService.addOrUpdateCustomerOrderComment(this.newComment).subscribe(response => {

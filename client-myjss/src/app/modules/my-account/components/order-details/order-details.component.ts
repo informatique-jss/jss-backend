@@ -43,7 +43,6 @@ import { PaymentService } from '../../services/payment.service';
 import { QuotationService } from '../../services/quotation.service';
 import { ServiceService } from '../../services/service.service';
 import { UploadAttachmentService } from '../../services/upload.attachment.service';
-import { CustomerOrderChatComponent } from '../customer-order-chat/customer-order-chat.component';
 import { getClassForCustomerOrderStatus, getCustomerOrderBillingMailList, getCustomerOrderStatusLabel, getLastMissingAttachmentQueryDateLabel } from '../orders/orders.component';
 
 @Component({
@@ -51,7 +50,7 @@ import { getClassForCustomerOrderStatus, getCustomerOrderBillingMailList, getCus
   templateUrl: './order-details.component.html',
   styleUrls: ['./order-details.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, AvatarComponent, TrustHtmlPipe, SingleUploadComponent, NgbTooltipModule, NgbDropdownModule, NgbAccordionModule, NgbNavModule, CustomerOrderChatComponent]
+  imports: [SHARED_IMPORTS, AvatarComponent, TrustHtmlPipe, SingleUploadComponent, NgbTooltipModule, NgbDropdownModule, NgbAccordionModule, NgbNavModule]
 })
 export class OrderDetailsComponent implements OnInit {
 
@@ -61,7 +60,7 @@ export class OrderDetailsComponent implements OnInit {
   orderInvoiceLabelResult: InvoiceLabelResult | undefined;
   orderMailComputeResult: MailComputeResult | undefined;
   digitalMailComputeResult: MailComputeResult | undefined;
-  customerOrderComments: CustomerOrderComment[] | undefined;
+  comments: CustomerOrderComment[] = [];
   orderPhysicalMailComputeResult: InvoiceLabelResult | undefined;
   invoiceSummary: InvoicingSummary | undefined;
   orderPayments: Payment[] | undefined;
@@ -80,7 +79,7 @@ export class OrderDetailsComponent implements OnInit {
 
   currentSelectedAttachmentForDisable: Attachment | undefined;
 
-  newCustomerOrderComment: CustomerOrderComment = {} as CustomerOrderComment;
+  newComment: CustomerOrderComment = { comment: '', customerOrder: {} } as CustomerOrderComment;
 
   displayPayButton: boolean = false;
   orderDetailsForm!: FormGroup;
@@ -130,6 +129,10 @@ export class OrderDetailsComponent implements OnInit {
     this.billingLabelTypeCodeAffaire = this.constantService.getBillingLabelTypeCodeAffaire();
     this.documentTypeBilling = this.constantService.getDocumentTypeBilling();
 
+    this.customerOrderCommentService.comments.subscribe((res: CustomerOrderComment[]) => {
+      this.comments = res;
+      this.sortComments();
+    });
 
     this.refreshOrder();
   }
@@ -139,6 +142,9 @@ export class OrderDetailsComponent implements OnInit {
       this.order = response;
       this.appService.hideLoadingSpinner();
       this.loadOrderDetails();
+      if (this.order) {
+        this.customerOrderCommentService.setWatchedOrder(this.order);
+      }
     })
   }
 
@@ -284,23 +290,47 @@ export class OrderDetailsComponent implements OnInit {
   refreshCustomerOrderComments() {
     if (this.order)
       this.customerOrderCommentService.getCustomerOrderCommentsForCustomer(this.order.id).subscribe(response => {
-        this.customerOrderComments = response;
+        this.comments = response;
       })
   }
 
   addCustomerOrderComment() {
-    if (this.newCustomerOrderComment && this.newCustomerOrderComment.comment.replace(/<(?:.|\n)*?>/gm, ' ').length > 0 && this.order) {
-      this.newCustomerOrderComment.customerOrder = this.order;
-    }
-    this.customerOrderCommentService.addOrUpdateCustomerOrderComment(this.newCustomerOrderComment).subscribe(response => {
-      this.newCustomerOrderComment = {} as CustomerOrderComment;
-      this.refreshCustomerOrderComments();
-    })
+    if (this.newComment.comment.trim().length > 0)
+      if (this.newComment && this.newComment.comment.replace(/<(?:.|\n)*?>/gm, ' ').length > 0) {
+        if (this.newComment.id == undefined) {
+          if (this.order)
+            this.newComment.customerOrder.id = this.order.id;
+          this.newComment.isFromChat = true;
+          this.newComment.isReadByCustomer = true;
+        }
+        this.customerOrderCommentService.addOrUpdateCustomerOrderComment(this.newComment).subscribe(response => {
+          if (response) {
+            this.comments.push(response);
+            this.scrollToLastMessage();
+          }
+          this.newComment.comment = '';
+        })
+      }
   }
 
+  sortComments() {
+    if (this.comments && this.currentUser)
+      this.comments.sort((b: CustomerOrderComment, a: CustomerOrderComment) => new Date(b.createdDateTime).getTime() - new Date(a.createdDateTime).getTime());
+  }
+
+  private scrollToLastMessage(behavior: ScrollBehavior = 'smooth'): void {
+    setTimeout(() => {
+      const el = document.getElementById('send-message');
+      if (el) {
+        el.scrollIntoView({ behavior: behavior, block: 'end' });
+      }
+    }, 100); // Timeout so the DOM is well up to date
+  }
+
+
   editCustomerOrderComment(comment: CustomerOrderComment) {
-    this.newCustomerOrderComment = comment;
-    this.newCustomerOrderComment.comment = this.newCustomerOrderComment.comment.replace(/<[^>]+>/g, '');
+    this.newComment = comment;
+    this.newComment.comment = this.newComment.comment.replace(/<[^>]+>/g, '');
   }
 
   saveFieldsValue(service: Service) {
@@ -325,6 +355,10 @@ export class OrderDetailsComponent implements OnInit {
         this.refreshOrder();
       });
     }
+  }
+
+  ngOnDestroy() {
+    this.customerOrderCommentService.setWatchedOrder(null);
   }
 
   compareWithId = compareWithId;
