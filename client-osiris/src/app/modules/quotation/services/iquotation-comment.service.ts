@@ -10,16 +10,16 @@ import { CustomerOrderDto } from '../model/CustomerOrderDto';
 @Injectable({
   providedIn: 'root'
 })
-export class CustomerOrderCommentService extends AppRestService<CustomerOrderComment> {
+export class IQuotationCommentService extends AppRestService<CustomerOrderComment> {
 
-  private activeOrderSource = new BehaviorSubject<CustomerOrderDto | null>(null);
+  private activeOrderSource = new BehaviorSubject<number | null>(null);
 
   public comments = this.activeOrderSource.asObservable().pipe(
-    distinctUntilChanged((prev, curr) => prev?.id === curr?.id),
-    switchMap(order => {
-      if (!order || !order.id) return of([]);
+    distinctUntilChanged((prev, curr) => prev === curr),
+    switchMap(orderId => {
+      if (!orderId) return of([]);
       return timer(0, COMMENT_POST_REFRESH_INTERVAL).pipe(
-        switchMap(() => this.getCommentsFromChatForOrder(order))
+        switchMap(() => this.getCommentsFromChatForOrder(orderId))
       );
     }),
     shareReplay(1)
@@ -33,16 +33,16 @@ export class CustomerOrderCommentService extends AppRestService<CustomerOrderCom
     super(http, "quotation");
   }
 
-  setWatchedOrder(order: CustomerOrderDto | null) {
+  setWatchedOrder(order: number | null) {
     this.activeOrderSource.next(order);
   }
 
-  getCommentsFromChatForOrder(customerOrder: CustomerOrderDto) {
-    return this.getList(new HttpParams().set("customerOrderId", customerOrder.id), "customer-order-comments/from-chat");
+  getCommentsFromChatForOrder(iQuotationId: number) {
+    return this.getList(new HttpParams().set("customerOrderId", iQuotationId), "customer-order-comments/from-chat");
   }
 
-  getCustomerOrderCommentForOrder(customerOrderId: number) {
-    return this.getList(new HttpParams().set("customerOrderId", customerOrderId), "customer-order-comment/order");
+  getCustomerOrderCommentForOrder(iQuotationId: number) {
+    return this.getList(new HttpParams().set("customerOrderId", iQuotationId), "customer-order-comment/order");
   }
 
   addOrUpdateCustomerOrderComment(customerOrderComment: CustomerOrderComment) {

@@ -1,0 +1,67 @@
+<div class="custom-chat-wrapper gap-2" *ngIf="iQuotationId">
+
+  <div class="chat-window-container w-100" [class.minimized]="!isExpanded">
+    <button (click)="toggleChat()" type="button" class="chat-header btn btn-light">
+      <span>Commande n°{{iQuotationId}} </span>
+      <!-- <button (click)="toggleChat()" class="btn-close-chat">✖</button> -->
+    </button>
+
+    <div class="messages-list" *ngIf="isExpanded">
+      <div *ngFor="let comment of comments; let i = index" class="message-item" id="{{ 'comment-' + i }}"
+        [ngClass]="{'sent':  comment.employee && comment.employee.id, 'received': !comment.employee || !comment.employee.id}">
+        {{ comment.comment }}
+      </div>
+    </div>
+
+    <div class="chat-footer" *ngIf="isExpanded">
+      <input type="text" [(ngModel)]="newComment.comment" (keyup.enter)="sendMessage()"
+        placeholder="Écrivez votre message..." />
+      <button (click)="sendMessage()" [disabled]="!newComment.comment.trim()">
+        <ng-icon name="tablerSend"></ng-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="chat-window-container  w-100" [class.minimized]="!isExpanded">
+    <button (click)="toggleChat()" type="button" class="chat-header btn btn-light">
+      <span>Commande n°{{iQuotationId}} </span>
+      <!-- <button (click)="toggleChat()" class="btn-close-chat">✖</button> -->
+    </button>
+
+    <div class="messages-list" *ngIf="isExpanded">
+      <div *ngFor="let comment of comments; let i = index" class="message-item" id="{{ 'comment-' + i }}"
+        [ngClass]="{'sent':  comment.employee && comment.employee.id, 'received': !comment.employee || !comment.employee.id}">
+        {{ comment.comment }}
+      </div>
+    </div>
+
+    <div class="chat-footer" *ngIf="isExpanded">
+      <input type="text" [(ngModel)]="newComment.comment" (keyup.enter)="sendMessage()"
+        placeholder="Écrivez votre message..." />
+      <button (click)="sendMessage()" [disabled]="!newComment.comment.trim()">
+        <ng-icon name="tablerSend"></ng-icon>
+      </button>
+    </div>
+  </div>
+  <div class="chat-window-container  w-100" [class.minimized]="!isExpanded">
+    <button (click)="toggleChat()" type="button" class="chat-header btn btn-light">
+      <span>Commande n°{{iQuotationId}} </span>
+      <!-- <button (click)="toggleChat()" class="btn-close-chat">✖</button> -->
+    </button>
+
+    <div class="messages-list" *ngIf="isExpanded">
+      <div *ngFor="let comment of comments; let i = index" class="message-item" id="{{ 'comment-' + i }}"
+        [ngClass]="{'sent':  comment.employee && comment.employee.id, 'received': !comment.employee || !comment.employee.id}">
+        {{ comment.comment }}
+      </div>
+    </div>
+
+    <div class="chat-footer" *ngIf="isExpanded">
+      <input type="text" [(ngModel)]="newComment.comment" (keyup.enter)="sendMessage()"
+        placeholder="Écrivez votre message..." />
+      <button (click)="sendMessage()" [disabled]="!newComment.comment.trim()">
+        <ng-icon name="tablerSend"></ng-icon>
+      </button>
+    </div>
+  </div>
+</div>

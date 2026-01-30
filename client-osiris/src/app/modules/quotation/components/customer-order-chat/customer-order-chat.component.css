@@ -1,9 +1,12 @@
 .custom-chat-wrapper {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
+  bottom: 5px;
+  right: 5px;
   z-index: 1050;
+  flex-direction: row-reverse;
+  display: flex;
   font-family: 'Roboto', sans-serif;
+  width: 99%;
 }
 
 /* Le bouton rond flottant */
@@ -28,38 +31,46 @@
   transform: scale(1.1);
 }
 
+.chat-window-container.minimized {
+  height: 45px;
+}
+
 /* La fenêtre de chat */
 .chat-window-container {
-  position: absolute;
-  bottom: 80px;
-  /* Placé juste au dessus du bouton */
-  right: 0;
-  width: 350px;
-  height: 500px;
+  max-width: 350px;
+  /* On enlève height: 500px ici */
   background-color: white;
   border-radius: 12px;
   display: flex;
   flex-direction: column;
   box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
-  border: 1px solid #ddd;
+  transition: all 0.3s ease;
+  /* Transition fluide pour la réduction */
+  overflow: hidden;
 }
 
-/* Un petit bandeau en haut du chat */
+/* On fixe la hauteur de la liste des messages pour garder la fenêtre à 500px au total */
+.messages-list {
+  height: 380px;
+  /* On définit la hauteur ici au lieu du conteneur global */
+  padding: 15px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  background: white;
+}
+
 .chat-header {
+  height: 45px;
+  /* Hauteur fixe pour le header */
   background-color: #303B4D;
   color: white;
-  padding: 12px;
+  padding: 0 15px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-top-left-radius: 12px;
-  border-top-right-radius: 12px;
-}
-
-.messages-list {
-  flex: 1;
-  padding: 15px;
-  overflow-y: auto;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
 }
 
 .message-item {
@@ -125,15 +136,6 @@
   font-size: 14px;
   line-height: 1.4;
   color: #333;
-}
-
-.messages-list {
-  flex: 1;
-  padding: 15px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  /* Aligne les messages verticalement */
 }
 
 .message-item {

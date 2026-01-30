@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
-import { CustomerOrderChatComponent } from '../../../main/components/customer-order-chat/customer-order-chat.component';
 import { CustomerOrderDto } from '../../model/CustomerOrderDto';
-import { CustomerOrderCommentService } from '../../services/customer-order-comment.service';
 import { CustomerOrderService } from '../../services/customer-order.service';
+import { IQuotationCommentService } from '../../services/iquotation-comment.service';
+import { CustomerOrderChatComponent } from '../customer-order-chat/customer-order-chat.component';
 
 @Component({
   selector: 'customer-order',
@@ -20,7 +20,7 @@ export class CustomerOrderComponent implements OnInit {
 
   constructor(
     private customerOrderService: CustomerOrderService,
-    private customerOrderCommentService: CustomerOrderCommentService,
+    private customerOrderCommentService: IQuotationCommentService,
     private activatedRoute: ActivatedRoute,
   ) { }
 
@@ -30,7 +30,7 @@ export class CustomerOrderComponent implements OnInit {
       this.customerOrderService.getCustomerOrder(this.idCustomerOrder).subscribe(response => {
         if (response) {
           this.customerOrder = response;
-          this.customerOrderCommentService.setWatchedOrder(response);
+          this.customerOrderCommentService.setWatchedOrder(response.id);
         }
       });
   }

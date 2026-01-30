@@ -33,6 +33,10 @@ export class CustomerOrderCommentService extends AppRestService<CustomerOrderCom
     this.activeOrderSource.next(order);
   }
 
+  getWatchedOrder() {
+    return this.activeOrderSource;
+  }
+
   getCommentsFromChatForOrder(customerOrder: CustomerOrder) {
     return this.getList(new HttpParams().set("customerOrderId", customerOrder.id), "customer-order-comments/from-chat");
   }
