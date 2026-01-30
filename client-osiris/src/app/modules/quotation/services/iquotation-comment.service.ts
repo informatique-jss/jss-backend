@@ -38,11 +38,11 @@ export class IQuotationCommentService extends AppRestService<CustomerOrderCommen
   }
 
   getCommentsFromChatForOrder(iQuotationId: number) {
-    return this.getList(new HttpParams().set("customerOrderId", iQuotationId), "customer-order-comments/from-chat");
+    return this.getList(new HttpParams().set("iQuotationId", iQuotationId), "customer-order-comments/from-chat");
   }
 
   getCustomerOrderCommentForOrder(iQuotationId: number) {
-    return this.getList(new HttpParams().set("customerOrderId", iQuotationId), "customer-order-comment/order");
+    return this.getList(new HttpParams().set("iQuotationId", iQuotationId), "customer-order-comment/order");
   }
 
   addOrUpdateCustomerOrderComment(customerOrderComment: CustomerOrderComment) {

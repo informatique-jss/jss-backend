@@ -143,7 +143,7 @@ export class OrderDetailsComponent implements OnInit {
       this.appService.hideLoadingSpinner();
       this.loadOrderDetails();
       if (this.order) {
-        this.customerOrderCommentService.setWatchedOrder(this.order);
+        this.customerOrderCommentService.setWatchedOrder(this.order.id);
       }
     })
   }

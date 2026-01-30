@@ -11,11 +11,11 @@ import { CustomerOrderComment } from '../model/CustomerOrderComment';
 })
 export class CustomerOrderCommentService extends AppRestService<CustomerOrderComment> {
 
-  private activeOrderSource = new BehaviorSubject<CustomerOrder | null>(null);
+  private activeOrderSource = new BehaviorSubject<number | null>(null);
   public comments = this.activeOrderSource.asObservable().pipe(
-    distinctUntilChanged((prev, curr) => prev?.id === curr?.id),
+    distinctUntilChanged((prev, curr) => prev === curr),
     switchMap(order => {
-      if (!order || !order.id) return of([]);
+      if (!order) return of([]);
       return timer(0, COMMENT_POST_REFRESH_INTERVAL).pipe(
         switchMap(() => this.getCommentsFromChatForOrder(order))
       );
@@ -29,7 +29,7 @@ export class CustomerOrderCommentService extends AppRestService<CustomerOrderCom
     super(http, "quotation");
   }
 
-  setWatchedOrder(order: CustomerOrder | null) {
+  setWatchedOrder(order: number | null) {
     this.activeOrderSource.next(order);
   }
 
@@ -37,12 +37,12 @@ export class CustomerOrderCommentService extends AppRestService<CustomerOrderCom
     return this.activeOrderSource;
   }
 
-  getCommentsFromChatForOrder(customerOrder: CustomerOrder) {
-    return this.getList(new HttpParams().set("customerOrderId", customerOrder.id), "customer-order-comments/from-chat");
+  getCommentsFromChatForOrder(iQuotationId: number) {
+    return this.getList(new HttpParams().set("iQuotationId", iQuotationId), "customer-order-comments/from-chat");
   }
 
-  getCustomerOrderCommentsForCustomer(idCustomerOrder: number) {
-    return this.getList(new HttpParams().set("idCustomerOrder", idCustomerOrder), "customer-order-comments/customer");
+  getCustomerOrderCommentsForCustomer(iQuotationId: number) {
+    return this.getList(new HttpParams().set("iQuotationId", iQuotationId), "customer-order-comments/customer");
   }
 
   addOrUpdateCustomerOrderComment(customerOrderComment: CustomerOrderComment) {

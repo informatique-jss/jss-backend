@@ -3330,15 +3330,11 @@ public class QuotationController {
   }
 
   @GetMapping(inputEntryPoint + "/customer-order-comments/from-chat")
-  public ResponseEntity<List<CustomerOrderComment>> getNewCustomerCommentsFromChat(Integer customerOrderId)
+  public ResponseEntity<List<CustomerOrderComment>> getNewCustomerCommentsFromChat(Integer iQuotationId)
       throws OsirisValidationException, OsirisException {
 
-    CustomerOrder customerOrder = null;
-    if (customerOrderId != null) {
-      customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
-      if (customerOrder == null)
-        throw new OsirisValidationException("customerOrder");
-    }
+    if (iQuotationId == null)
+      throw new OsirisValidationException("iQuotationId");
 
     if (employeeService.getCurrentEmployee() != null
         && !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.SALES_GROUP))
@@ -3346,6 +3342,6 @@ public class QuotationController {
 
     else
       return new ResponseEntity<List<CustomerOrderComment>>(
-          quotationFacade.getCommentsFromChatForOrder(customerOrder), HttpStatus.OK);
+          quotationFacade.getCommentsFromChatForIQuotation(iQuotationId), HttpStatus.OK);
   }
 }

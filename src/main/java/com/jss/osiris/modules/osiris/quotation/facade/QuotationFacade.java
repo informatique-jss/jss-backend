@@ -81,10 +81,15 @@ public class QuotationFacade {
 
     /***************************** CHAT *************************/
     @Transactional(rollbackFor = Exception.class)
-    public List<CustomerOrderComment> getCommentsFromChatForOrder(CustomerOrder customerOrder)
+    public List<CustomerOrderComment> getCommentsFromChatForIQuotation(Integer iQuotationId)
             throws OsirisException {
-        return customerOrderCommentService
-                .getCommentsFromChatForOrder(customerOrder);
+
+        CustomerOrder customerOrder = customerOrderService.getCustomerOrder(iQuotationId);
+        if (customerOrder != null)
+            return customerOrderCommentService.getCommentsFromChatForOrder(customerOrder);
+
+        Quotation quotation = quotationService.getQuotation(iQuotationId);
+        return customerOrderCommentService.getCustomerOrderCommentForQuotation(quotation);
     }
 
     @Transactional(rollbackFor = Exception.class)
