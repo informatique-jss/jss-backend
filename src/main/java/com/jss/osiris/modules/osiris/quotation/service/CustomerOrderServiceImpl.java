@@ -768,6 +768,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                                     if (provision.getAnnouncement() != null
                                             && provision.getAnnouncement().getPublicationDate() != null && provision
                                                     .getAnnouncement().getPublicationDate().isBefore(LocalDate.now())) {
+                                        provision = provisionService.getProvision(provision.getId());
                                         provision.getAnnouncement().setPublicationDate(LocalDate.now());
                                         provisionService.addOrUpdateProvision(provision);
                                     }

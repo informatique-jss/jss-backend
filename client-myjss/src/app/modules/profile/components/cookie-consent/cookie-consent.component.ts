@@ -21,11 +21,13 @@ export class CookieConsentComponent implements OnInit {
   ngOnInit() {
     const consent = this.cookieService.getConsent();
     if (consent === null) {
+      this.cookieService.setConsent(false);
       this.showBanner = true;
     } else if (consent === true) {
       this.accept();
     } else if (consent === false) {
       this.reject();
+      this.showBanner = true;
     }
   }
 

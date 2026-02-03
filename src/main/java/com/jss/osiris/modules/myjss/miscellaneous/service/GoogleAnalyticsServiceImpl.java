@@ -16,7 +16,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jss.osiris.libs.SSLHelper;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.myjss.miscellaneous.model.GoogleAnalyticsEvent;
@@ -499,16 +498,6 @@ public class GoogleAnalyticsServiceImpl implements GoogleAnalyticsService {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<GoogleAnalyticsRequest> entity = new HttpEntity<>(requestBody, headers);
-
-        // TODO : delete after debug
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            String debugJson = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(requestBody);
-            System.out.println(debugJson);
-        } catch (Exception e) {
-            System.out.println(
-                    "ERREEEEEUUUUUURRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR");
-        }
 
         // Sending POST request
         ResponseEntity<String> response = new RestTemplate().exchange(
