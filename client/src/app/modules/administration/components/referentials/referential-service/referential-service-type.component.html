@@ -90,6 +90,13 @@
                 [isDisabled]="!editMode"></select-service-family>
             </td>
           </tr>
+          <tr>
+            <td>
+              <generic-textarea [(model)]="selectedEntity.descriptionText" label="Descriptif" [form]="entityForm"
+                propertyName="descriptionText" [isMandatory]="false" [isDisabled]="!editMode"
+                [numberOfLines]="5"></generic-textarea>
+            </td>
+          </tr>
         </table>
         <table class="full-width">
           <tr>
