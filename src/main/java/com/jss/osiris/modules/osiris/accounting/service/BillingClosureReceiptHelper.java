@@ -370,9 +370,11 @@ public class BillingClosureReceiptHelper {
                     LocalDateTime.of(constantService.getDateAccountingClosureForAccountant().getYear(), 1, 1, 0, 1, 0));
 
             List<AccountingRecordSearchResult> results = accountingRecordService.searchAccountingRecords(search, false);
-            if (results != null)
+            if (results != null && !results.isEmpty())
                 for (AccountingRecordSearchResult result : results)
                     values.add(getBillingClosureReceiptValueForAs400(result));
+            else
+                values.remove(values.size() - 1);
         }
 
         return values;
