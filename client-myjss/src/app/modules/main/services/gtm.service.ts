@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
-import { Router } from "@angular/router";
+import { NavigationEnd, Router } from "@angular/router";
+import { filter } from "rxjs";
 import { environment } from "../../../../environments/environment";
 import { Responsable } from "../../profile/model/Responsable";
 import { LoginService } from "../../profile/services/login.service";
@@ -49,9 +50,18 @@ export class GtmService {
       this.currentUser = response;
     })
 
-    this.push(GtmEventName.PageView, { page: { type: "page", name: this.router.url } as PageInfo } as PageViewPayload);
+    this.pushCurrentRoute();
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event: NavigationEnd) => {
+        this.pushCurrentRoute();
+      });
 
     this.isInitialized = true;
+  }
+
+  pushCurrentRoute() {
+    this.push(GtmEventName.PageView, { page: { type: "page", name: this.router.url } as PageInfo } as PageViewPayload);
   }
 
   private push(event: GtmEventName, payload: BasePayload) {
