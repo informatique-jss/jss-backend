@@ -138,7 +138,7 @@ public interface CustomerOrderService {
 
         public List<CustomerOrder> searchOrdersForCurrentUser(List<String> customerOrderStatus,
                         List<Integer> responsableIdToFilter,
-                        Boolean withMissingAttachment, Integer page,
+                        Boolean requiringAttention, Integer page,
                         String sortBy) throws OsirisException;
 
         public List<CustomerOrder> searchOrdersForCurrentUserAndAffaire(Affaire affaire) throws OsirisException;
