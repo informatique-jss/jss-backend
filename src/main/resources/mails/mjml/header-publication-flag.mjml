@@ -5,7 +5,7 @@
     </mj-attributes>
   </mj-head>
   <mj-body>
-    <mj-section padding="10px" full-width="full-width">
+    <mj-section padding="0px" full-width="full-width">
       <mj-column width="20%" vertical-align="middle">
         <mj-image
           th:src="@{classpath:/images/logo.png}"
@@ -22,7 +22,7 @@
         <mj-text font-size="24px">
           <strong
             ><span
-              style="white-space: nowrap; font-family: 'Roboto'"
+              style="white-space: nowrap; font-family: &quot;Roboto&quot;"
               th:text="${publicationTitle}"
             >
             </span
@@ -30,7 +30,7 @@
         </mj-text>
 
         <mj-text font-size="12px" line-height="1.3" padding-bottom="0px">
-          <span style="white-space: nowrap; font-family: 'Roboto'">
+          <span style="white-space: nowrap; font-family: &quot;Roboto&quot;">
             Service de Presse En Ligne d'informations Générales, Juridiques,
             Judiciaires et Techniques,<br />
             habilité à publier les annonces légales dans les départements 75,
@@ -39,13 +39,13 @@
         </mj-text>
         <mj-text font-size="14px" line-height="1.3" padding-bottom="0px">
           <span
-            style="white-space: nowrap; font-family: 'Roboto'"
+            style="white-space: nowrap; font-family: &quot;Roboto&quot;"
             th:text="${publicationDate}"
           >
           </span>
           <br />
           <span
-            style="white-space: nowrap; font-family: 'Roboto'"
+            style="white-space: nowrap; font-family: &quot;Roboto&quot;"
             th:text="${department}"
           ></span>
           <br />
@@ -53,7 +53,7 @@
         <mj-text font-size="16px" line-height="1.3">
           <strong>
             <span
-              style="font-family: 'Roboto'"
+              style="font-family: &quot;Roboto&quot;"
               th:text="${serviceLabel}"
             ></span>
           </strong>
