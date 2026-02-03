@@ -177,20 +177,21 @@ public class BillingClosureReceiptHelper {
                 // Send to each responsable
                 if (tier instanceof Tiers && ((Tiers) tier).getResponsables() != null)
                     for (Responsable tiersResponsable : tier.getResponsables()) {
-
-                        List<BillingClosureReceiptValue> values = generateBillingClosureValuesForITiers(null,
-                                tiersResponsable, isOrderingByEventDate, false, false, false);
-                        if (values.size() > 0) {
-                            try {
-                                sendBillingClosureReceiptFile(
-                                        generatePdfDelegate.getBillingClosureReceiptFile(null, tiersResponsable,
-                                                values),
-                                        null, tiersResponsable);
-                            } catch (Exception e) {
-                                globalExceptionHandler.persistLog(
-                                        new OsirisException(e,
-                                                "Impossible to generate billing closure for Tiers " + tiersId),
-                                        OsirisLog.UNHANDLED_LOG);
+                        if (tiersResponsable.getIsActive()) {
+                            List<BillingClosureReceiptValue> values = generateBillingClosureValuesForITiers(null,
+                                    tiersResponsable, isOrderingByEventDate, false, false, false);
+                            if (values.size() > 0) {
+                                try {
+                                    sendBillingClosureReceiptFile(
+                                            generatePdfDelegate.getBillingClosureReceiptFile(null, tiersResponsable,
+                                                    values),
+                                            null, tiersResponsable);
+                                } catch (Exception e) {
+                                    globalExceptionHandler.persistLog(
+                                            new OsirisException(e,
+                                                    "Impossible to generate billing closure for Tiers " + tiersId),
+                                            OsirisLog.UNHANDLED_LOG);
+                                }
                             }
                         }
                     }
