@@ -1,9 +1,10 @@
 import { Injectable } from "@angular/core";
+import { Router } from "@angular/router";
 import { environment } from "../../environments/environment";
 import { Responsable } from "../main/model/Responsable";
 import { LoginService } from "../main/services/login.service";
 import { CookieService } from "./cookie.service";
-import { BasePayload, CtaClickPayload, FormSubmitPayload } from "./GtmPayload";
+import { BasePayload, CtaClickPayload, FormSubmitPayload, PageInfo, PageViewPayload } from "./GtmPayload";
 import { PlatformService } from "./platform.service";
 
 export enum GtmEventName {
@@ -25,7 +26,8 @@ export class GtmService {
 
   constructor(private platformService: PlatformService,
     private loginService: LoginService,
-    private cookieService: CookieService
+    private cookieService: CookieService,
+    private router: Router
   ) { }
 
   init() {
@@ -46,6 +48,8 @@ export class GtmService {
     this.loginService.getCurrentUser().subscribe(response => {
       this.currentUser = response;
     })
+
+    this.push(GtmEventName.PageView, { page: { type: "page", name: this.router.url } as PageInfo } as PageViewPayload);
 
     this.isInitialized = true;
   }

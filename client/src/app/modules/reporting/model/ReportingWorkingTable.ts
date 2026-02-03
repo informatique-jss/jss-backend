@@ -4,4 +4,5 @@ export interface ReportingWorkingTable extends IReferential {
   sqlText: string;
   reportingUpdateFrequency: string;
   viewName: string;
+  isToPersist: boolean;
 }
