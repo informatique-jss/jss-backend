@@ -6,8 +6,7 @@ import { capitalizeName } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { MenuItem } from '../../../general/model/MenuItem';
 import { AppService } from '../../../main/services/app.service';
-import { GtmService } from '../../../main/services/gtm.service';
-import { LogPayload, PageInfo } from '../../../main/services/GtmPayload';
+import { GoogleAnalyticsService } from '../../../main/services/googleAnalytics.service';
 import { PlatformService } from '../../../main/services/platform.service';
 import { AvatarComponent } from '../../../miscellaneous/components/avatar/avatar.component';
 import { AccountMenuItem, MAIN_ITEM_ACCOUNT, MAIN_ITEM_DASHBOARD } from '../../../my-account/model/AccountMenuItem';
@@ -66,7 +65,7 @@ export class TopBarComponent implements OnInit {
     private orderService: CustomerOrderService,
     private cdr: ChangeDetectorRef,
     private platformService: PlatformService,
-    private gtmService: GtmService
+    private googleAnalyticsService: GoogleAnalyticsService
   ) { }
 
   capitalizeName = capitalizeName;
@@ -134,22 +133,11 @@ export class TopBarComponent implements OnInit {
     });
   }
 
-  trackLog() {
-    this.gtmService.trackLoginLogout(
-      {
-        type: 'switch',
-        page: {
-          type: 'my-account',
-          name: 'sign-in'
-        } as PageInfo
-      } as LogPayload
-    );
-  }
 
   switchAccount(account: Responsable) {
     this.appService.showLoadingSpinner();
     this.loginService.switchUser(account.id).subscribe(response => {
-      this.trackLog();
+      this.googleAnalyticsService.trackLoginLogout("switch", "sign-in", "my-account").subscribe();
       // switch current quotation
       if (this.quotationService.getCurrentDraftQuotationId() || this.orderService.getCurrentDraftOrderId()) {
         this.loginService.getCurrentUser().subscribe(currentUser => {

@@ -85,14 +85,17 @@
                                     th:text="${responsable.cedexComplement}"></span></span>
                         </td>
                         <td
-                            th:if="${billingDocument!=null} and ${billingDocument.isRecipientAffaire} and ${assos!=null} and ${assos[0]!=null}">
-                            <span th:if="${assos[0].denomination!=null}"
-                                th:text="${assos[0].denomination}"></span><br />
-                            <span th:if="${assos[0].address}" th:text="${assos[0].address}"></span><br />
-                            <span><span th:if="${assos[0].postalCode!=null}" th:text="${assos[0].postalCode}"></span>
-                                <span th:if="${assos[0].city!=null}" th:text="${assos[0].city.label}"></span><span
-                                    th:if="${assos[0].cedexComplement}"
-                                    th:text="${assos[0].cedexComplement}"></span></span>
+                            th:if="${billingDocument!=null} and ${billingDocument.isRecipientAffaire} and ${assos!=null} and ${assos[0]!=null} and ${assos[0].affaire!=null}">
+                            <span th:if="${assos[0].affaire.denomination!=null}"
+                                th:text="${assos[0].affaire.denomination}"></span><br />
+                            <span th:if="${assos[0].affaire.address}"
+                                th:text="${assos[0].affaire.address}"></span><br />
+                            <span><span th:if="${assos[0].affaire.postalCode!=null}"
+                                    th:text="${assos[0].affaire.postalCode}"></span>
+                                <span th:if="${assos[0].affaire.city!=null}"
+                                    th:text="${assos[0].affaire.city.label}"></span><span
+                                    th:if="${assos[0].affaire.cedexComplement}"
+                                    th:text="${assos[0].affaire.cedexComplement}"></span></span>
                         </td>
                     </tr>
                 </table>

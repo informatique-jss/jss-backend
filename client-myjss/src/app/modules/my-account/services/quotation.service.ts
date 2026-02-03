@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { MenuItem } from '../../general/model/MenuItem';
 import { AppRestService } from '../../main/services/appRest.service';
+import { GoogleAnalyticsService } from '../../main/services/googleAnalytics.service';
 import { Responsable } from '../../profile/model/Responsable';
 import { IQuotation } from '../../quotation/model/IQuotation';
 import { NoticeTemplateService } from '../../quotation/services/notice.template.service';
@@ -13,12 +14,15 @@ import { Quotation } from '../model/Quotation';
   providedIn: 'root'
 })
 export class QuotationService extends AppRestService<Quotation> {
-  constructor(http: HttpClient, private noticeTemplateService: NoticeTemplateService) {
+  constructor(http: HttpClient,
+    private noticeTemplateService: NoticeTemplateService,
+    private googleAnalyticsService: GoogleAnalyticsService
+  ) {
     super(http, "quotation");
   }
 
-  searchQuotationsForCurrentUser(quotationStatus: string[], page: number, sorter: string, responsablesToFilter: Responsable[] | undefined) {
-    let params = new HttpParams().set("page", page).set("sortBy", sorter);
+  searchQuotationsForCurrentUser(quotationStatus: string[], page: number, sorter: string, requiringAttention: boolean, responsablesToFilter: Responsable[] | undefined) {
+    let params = new HttpParams().set("page", page).set("sortBy", sorter).set("requiringAttention", requiringAttention);
     if (responsablesToFilter && responsablesToFilter.length > 0)
       params = params.set("responsableIdsToFilter", responsablesToFilter.map(r => r.id).join(","));
     return this.postList(params, "quotation/search/current", quotationStatus);
@@ -89,6 +93,7 @@ export class QuotationService extends AppRestService<Quotation> {
   }
 
   setCurrentDraftQuotation(quotation: IQuotation) {
+    quotation.lastGaClientId = this.googleAnalyticsService.getGaClientId();
     localStorage.setItem('current-draft-quotation', JSON.stringify(quotation));
   }
 

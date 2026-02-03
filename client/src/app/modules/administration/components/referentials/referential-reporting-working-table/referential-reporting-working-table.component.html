@@ -38,6 +38,14 @@
             </td>
           </tr>
           <tr>
+            <td>
+              <generic-toggle [(model)]="selectedEntity.isToPersist" label="Est persistée en table ?"
+                [form]="entityForm" propertyName="isToPersist" [isDisabled]="!editMode"></generic-toggle>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
             <td colspan="2">
               <generic-textarea [(model)]="selectedEntity.sqlText" label="Requête SQL" [form]="entityForm"
                 propertyName="sqlText" [isMandatory]="true" [isDisabled]="!editMode"

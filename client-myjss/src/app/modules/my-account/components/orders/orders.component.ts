@@ -39,7 +39,7 @@ export class OrdersComponent implements OnInit {
   statusFilterBilled: boolean = false;
   statusFilterToBilled: boolean = false;
   statusFilterPayed: boolean = false;
-  withMissingAttachment: boolean = false;
+  requiringAttention: boolean = false;
 
   currentSort: string = "createdDateDesc";
   currentPage: number = 0;
@@ -103,7 +103,7 @@ export class OrdersComponent implements OnInit {
       this.statusFilterBilled = false;
       this.statusFilterToBilled = false;
       this.statusFilterPayed = false;
-      this.withMissingAttachment = false;
+      this.requiringAttention = false;
 
       if (inputSearchStatus == CUSTOMER_ORDER_STATUS_BEING_PROCESSED)
         this.statusFilterBeingProcessed = true;
@@ -113,7 +113,7 @@ export class OrdersComponent implements OnInit {
         this.statusFilterBilled = true;
       if (inputSearchStatus == CUSTOMER_ORDER_STATUS_REQUIRE_ATTENTION) {
         this.statusFilterBeingProcessed = true;
-        this.withMissingAttachment = true;
+        this.requiringAttention = true;
       }
     }
 
@@ -140,7 +140,7 @@ export class OrdersComponent implements OnInit {
 
     this.appService.showLoadingSpinner();
 
-    this.currentSearchRef = this.customerOrderService.searchOrdersForCurrentUser(status, this.withMissingAttachment, this.currentPage, this.currentSort, this.getCurrentSelectedResponsable()).subscribe(response => {
+    this.currentSearchRef = this.customerOrderService.searchOrdersForCurrentUser(status, this.requiringAttention, this.currentPage, this.currentSort, this.getCurrentSelectedResponsable()).subscribe(response => {
       this.appService.hideLoadingSpinner();
       if (response) {
         this.orders.push(...response);
@@ -232,7 +232,7 @@ export class OrdersComponent implements OnInit {
     this.userPreferenceService.setUserSearchBookmark(this.statusFilterBilled, "order-statusFilterBilled");
     this.userPreferenceService.setUserSearchBookmark(this.statusFilterToBilled, "order-statusFilterToBilled");
     this.userPreferenceService.setUserSearchBookmark(this.statusFilterPayed, "order-statusFilterPayed");
-    this.userPreferenceService.setUserSearchBookmark(this.withMissingAttachment, "order-withMissingAttachment");
+    this.userPreferenceService.setUserSearchBookmark(this.requiringAttention, "order-requiringAttention");
     this.userPreferenceService.setUserSearchBookmark(this.currentSort, "order-currentSort");
     if (this.responsablesForCurrentUser && this.getCurrentSelectedResponsable())
       this.userPreferenceService.setUserSearchBookmark(this.getCurrentSelectedResponsable()!.map(r => r.id).join(","), "responsables");
@@ -275,8 +275,8 @@ export class OrdersComponent implements OnInit {
       this.statusFilterPayed = true;
       atLeastOne = true;
     }
-    if (this.userPreferenceService.getUserSearchBookmark("order-withMissingAttachment")) {
-      this.withMissingAttachment = true;
+    if (this.userPreferenceService.getUserSearchBookmark("order-requiringAttention")) {
+      this.requiringAttention = true;
     }
     if (this.userPreferenceService.getUserSearchBookmark("responsables")) {
       let respoIds = this.userPreferenceService.getUserSearchBookmark("responsables").split(",");

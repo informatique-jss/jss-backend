@@ -5,7 +5,7 @@
     </mj-attributes>
   </mj-head>
   <mj-body>
-    <mj-section padding="10px" full-width="full-width">
+    <mj-section padding="0px" full-width="full-width">
       <mj-column width="20%" vertical-align="middle">
         <mj-image
           th:src="@{classpath:/images/logo.png}"

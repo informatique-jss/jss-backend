@@ -69,4 +69,8 @@ public interface IQuotation extends IId, IAttachment, IDocument {
 	public Voucher getVoucher();
 
 	public void setVoucher(Voucher voucher);
+
+	public String getLastGaClientId();
+
+	public void setLastGaClientId(String lastGaClientId);
 }

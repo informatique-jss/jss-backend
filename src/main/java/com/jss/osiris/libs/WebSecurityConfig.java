@@ -107,6 +107,8 @@ public class WebSecurityConfig {
 				.requestMatchers(HttpMethod.GET, "/myjss/crm/webinar/next").permitAll()
 				.requestMatchers(HttpMethod.GET, "/myjss/crm/webinar/last").permitAll()
 				.requestMatchers(HttpMethod.POST, "/myjss/crm/subscribe/candidacy").permitAll()
+				.requestMatchers(HttpMethod.GET, "/myjss/miscellaneous/google-analytics/**").permitAll()
+				.requestMatchers(HttpMethod.POST, "/myjss/miscellaneous/google-analytics/**").permitAll()
 				.requestMatchers(HttpMethod.GET, "/quotation/payment/cb/order/deposit").permitAll()
 				.requestMatchers(HttpMethod.GET, "/quotation/payment/cb/quotation/deposit").permitAll()
 				.requestMatchers(HttpMethod.POST, "/quotation/payment/cb/order/deposit/validate").permitAll()

@@ -53,9 +53,11 @@ public class ReportingWorkingTableServiceImpl implements ReportingWorkingTableSe
     public ReportingWorkingTable addOrUpdateReportingWorkingTable(
             ReportingWorkingTable reportingWorkingTable) {
 
-        em.createNativeQuery(
-                "DROP MATERIALIZED VIEW IF EXISTS " + tablePrefix + reportingWorkingTable.getViewName() + " CASCADE")
-                .executeUpdate();
+        if (!Boolean.TRUE.equals(reportingWorkingTable.getIsToPersist()))
+            em.createNativeQuery(
+                    "DROP MATERIALIZED VIEW IF EXISTS " + tablePrefix + reportingWorkingTable.getViewName()
+                            + " CASCADE")
+                    .executeUpdate();
 
         return reportingWorkingTableRepository.save(reportingWorkingTable);
     }
@@ -68,18 +70,24 @@ public class ReportingWorkingTableServiceImpl implements ReportingWorkingTableSe
 
         if (tables != null)
             for (ReportingWorkingTable table : tables) {
-                Boolean viewExists = (Boolean) em.createNativeQuery(
-                        "SELECT EXISTS (SELECT 1 FROM pg_matviews WHERE matviewname = :name)")
-                        .setParameter("name", tablePrefix + table.getViewName())
-                        .getSingleResult();
+                if (Boolean.TRUE.equals(table.getIsToPersist())) {
+                    if (!table.getSqlText().toUpperCase().startsWith("MERGE INTO"))
+                        throw new OsirisException("No merge query for working table id " + table.getId());
+                    em.createNativeQuery(table.getSqlText()).executeUpdate();
+                } else {
+                    Boolean viewExists = (Boolean) em.createNativeQuery(
+                            "SELECT EXISTS (SELECT 1 FROM pg_matviews WHERE matviewname = :name)")
+                            .setParameter("name", tablePrefix + table.getViewName())
+                            .getSingleResult();
 
-                if (!viewExists) {
-                    String createSql = "CREATE MATERIALIZED VIEW " + tablePrefix + table.getViewName() + " AS "
-                            + table.getSqlText();
-                    em.createNativeQuery(createSql).executeUpdate();
-                } else
-                    em.createNativeQuery("REFRESH MATERIALIZED VIEW " + tablePrefix + table.getViewName())
-                            .executeUpdate();
+                    if (!viewExists) {
+                        String createSql = "CREATE MATERIALIZED VIEW " + tablePrefix + table.getViewName() + " AS "
+                                + table.getSqlText();
+                        em.createNativeQuery(createSql).executeUpdate();
+                    } else
+                        em.createNativeQuery("REFRESH MATERIALIZED VIEW " + tablePrefix + table.getViewName())
+                                .executeUpdate();
+                }
             }
 
         List<ReportingWidget> widgets = reportingWidgetService.getReportingWidgetsByFrequency(reportingFrequency);

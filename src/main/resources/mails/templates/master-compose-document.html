@@ -8,10 +8,27 @@
     <style>
         @page {
             size: A4;
-            margin: 40px 0px 80px 0px;
+            margin-top: 40px;
+            margin-bottom: 4cm;
+            margin-left: 0;
+            margin-right: 0;
+
+            @bottom-center {
+                content: element(footer-container);
+                width: 100%;
+            }
         }
 
-        /* // use Roboto font */
+        #footer-container {
+            position: running(footer-container);
+            width: 100%;
+            text-align: center;
+        }
+
+        #body-content {
+            margin: 30px 40px;
+        }
+
         @font-face {
             font-family: 'Roboto';
             src: url('fonts/Roboto/Roboto-Regular.ttf') format('truetype');
@@ -101,7 +118,7 @@
 
         .background-bird {
             position: fixed;
-            top: 160px;
+            top: 180px;
             left: 0;
             width: 595px;
             height: 842px;
@@ -120,37 +137,24 @@
     <div th:if="${base64Background}" class="background-bird">
     </div>
 
-    <div th:utext="${headerContent}"></div>
-
-    <div id="body-content" style="margin: 30px 40px 40px 40px;">
-        <div th:utext="${mainBodyContent}"></div>
-    </div>
-
-    <th:block th:if="${footerContent}">
+    <div id="footer-container" th:if="${footerContent}" style="width: 100%; text-align: center;">
         <div th:switch="${footerTemplateName}">
-            <div th:case="${FOOTER_DOMICILIATION}" style="
-                    position: fixed;
-                    bottom: -16px;
-                    left: 140px;
-                    font-size: 14px;
-                    font-family: 'Roboto', sans-serif;
-                    color: #303B4D;
-                    text-align: center;
-                    white-space: nowrap;">
+            <div th:case="${FOOTER_DOMICILIATION}"
+                style="font-size: 14px; color: #303B4D; text-align: center; padding-bottom: 20px; margin-left: 150px">
                 <div th:utext="${footerContent}"></div>
             </div>
 
-            <div th:case="*" style="
-                    position: fixed;
-                    bottom: -30px;
-                    left: 60px;
-                    font-family: 'Roboto', sans-serif;
-                    width: 100%;
-                    padding: 0 40px;">
-                <div th:utext="${footerContent}"></div>
+            <div th:case="*" style="display: block; width: 100%; text-align: center;">
+                <div th:utext="${footerContent}" style="display: inline-block; width: 100%; margin-left: 180px"></div>
             </div>
         </div>
-    </th:block>
+    </div>
+
+    <div th:utext="${headerContent}"></div>
+
+    <div id="body-content">
+        <div th:utext="${mainBodyContent}"></div>
+    </div>
 
 </body>
 

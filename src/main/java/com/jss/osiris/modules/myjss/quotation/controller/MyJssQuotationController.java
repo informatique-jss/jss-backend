@@ -302,7 +302,7 @@ public class MyJssQuotationController {
 	@PostMapping(inputEntryPoint + "/order/search/current")
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<CustomerOrder>> searchOrdersForCurrentUser(
-			@RequestBody List<String> customerOrderStatus, @RequestParam boolean withMissingAttachment,
+			@RequestBody List<String> customerOrderStatus, @RequestParam boolean requiringAttention,
 			@RequestParam Integer page, @RequestParam String sortBy,
 			@RequestParam(required = false) List<Integer> responsableIdsToFilter)
 			throws OsirisException {
@@ -318,7 +318,7 @@ public class MyJssQuotationController {
 
 		return new ResponseEntity<List<CustomerOrder>>(
 				customerOrderService.searchOrdersForCurrentUser(customerOrderStatus, responsableIdsToFilter,
-						withMissingAttachment, page,
+						requiringAttention, page,
 						sortBy),
 				HttpStatus.OK);
 	}
@@ -352,7 +352,8 @@ public class MyJssQuotationController {
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Quotation>> searchQuotationsForCurrentUser(
 			@RequestParam(required = false) List<Integer> responsableIdsToFilter,
-			@RequestBody List<String> quotationStatus, @RequestParam Integer page, @RequestParam String sortBy)
+			@RequestBody List<String> quotationStatus, @RequestParam Boolean requiringAttention,
+			@RequestParam Integer page, @RequestParam String sortBy)
 			throws OsirisClientMessageException {
 		if (quotationStatus == null || quotationStatus.size() == 0)
 			return new ResponseEntity<List<Quotation>>(new ArrayList<Quotation>(), HttpStatus.OK);
@@ -365,7 +366,8 @@ public class MyJssQuotationController {
 			sortBy = "createdDateDesc";
 
 		return new ResponseEntity<List<Quotation>>(
-				quotationService.searchQuotationsForCurrentUser(quotationStatus, responsableIdsToFilter, page, sortBy),
+				quotationService.searchQuotationsForCurrentUser(quotationStatus, responsableIdsToFilter,
+						requiringAttention, page, sortBy),
 				HttpStatus.OK);
 	}
 
