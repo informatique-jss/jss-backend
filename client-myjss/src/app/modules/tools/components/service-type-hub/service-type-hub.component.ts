@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
 import { environment } from '../../../../../environments/environment';
 import { SERVICE_FIELD_TYPE_SELECT } from '../../../../libs/Constants';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
@@ -100,6 +98,7 @@ export class ServiceTypeHubComponent implements OnInit {
   }
 
   exportToPDF() {
+    /*
     const doc = new jsPDF();
     const title = this.serviceType?.customLabel || 'Service';
     const pricing = this.serviceType?.totalPreTaxPrice;
@@ -161,5 +160,6 @@ export class ServiceTypeHubComponent implements OnInit {
       doc.text(descriptionText, 14, finalY + 7, { maxWidth: 180 });
     }
     doc.save(`Infos-${title}.pdf`);
+    */
   }
 }
