@@ -90,8 +90,9 @@ export class KioskComponent implements OnInit {
     this.newspaperService.getPdfForUser(newspaperId);
   }
 
-  buyNewspaper(newspaperId: number) {
+  buyNewspaper(newspaperId: number, event: any) {
     this.trackCtaClicBuy(newspaperId);
+    this.appService.openMyJssRoute(event, "/quotation/subscription/" + this.NEWSPAPER_KIOSK_BUY + '/false/' + newspaperId, true);
   }
 
   trackCtaClickDownloadExtract(newspaperId: number) {
