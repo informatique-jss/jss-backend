@@ -10,7 +10,7 @@ import { AppService } from '../../modules/main/services/app.service';
 import { RestUserPreferenceService } from '../../modules/main/services/rest.user.preference.service';
 import { GenericFormComponent } from '../../modules/miscellaneous/forms/components/generic-form/generic-form.component';
 import { SHARED_IMPORTS } from '../SharedImports';
-import { IId } from '../tanstack-table/Iid';
+import { IId } from '../tanstack-table/IId';
 import { TanstackTableComponent } from '../tanstack-table/tanstack-table.component';
 import { GenericSearchTab } from './GenericSearchTab';
 import { GenericTableAction } from './GenericTableAction';

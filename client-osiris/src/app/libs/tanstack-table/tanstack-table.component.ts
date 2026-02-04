@@ -8,7 +8,7 @@ import * as XLSX from "xlsx";
 import { GenericTableAction } from '../generic-list/GenericTableAction';
 import { SHARED_IMPORTS } from '../SharedImports';
 import { TanstackTablePaginationComponent } from '../tanstack-table-pagination/tanstack-table-pagination.component';
-import { IId } from './Iid';
+import { IId } from './IId';
 
 @Component({
   selector: 'tanstack-table',
