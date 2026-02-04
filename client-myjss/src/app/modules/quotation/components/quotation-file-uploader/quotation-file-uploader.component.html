@@ -87,7 +87,7 @@
   <div class="col-12 col-md-6">
     <single-upload [entity]="entity" [entityType]="ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType" [isDirectUpload]="true"
       [attachmentType]="entity.typeDocument.attachmentType" [typeDocument]="entity.typeDocument"
-      forcedFileExtension="PDF" (endOfUpload)="onUploadComplete($event)" (progressChange)="updateUploadProgress($event)"
+      (endOfUpload)="onUploadComplete($event)" (progressChange)="updateUploadProgress($event)"
       (isErrorChange)="handleErrorChange($event)">>
     </single-upload>
   </div>
