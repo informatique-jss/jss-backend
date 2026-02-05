@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -808,16 +807,12 @@ public class GeneratePdfDelegate {
             ArrayList<Payment> invoicePayment = new ArrayList<Payment>();
             if (invoice.getPayments() != null)
                 for (Payment payment : invoice.getPayments()) {
-                    if (!payment.getIsCancelled())
-                        invoicePayment.add(payment);
-                }
-
-            if (customerOrder.getPayments() != null)
-                for (Payment payment : customerOrder.getPayments())
                     if (!payment.getIsCancelled()) {
+                        payment.setOriginPaymentAmount(getTopPayment(payment).getPaymentAmount());
                         invoicePayment.add(payment);
                         remainingToPay = remainingToPay.subtract(payment.getPaymentAmount());
                     }
+                }
 
             if (invoicePayment.size() > 0)
                 ctx.setVariable("payments", invoicePayment);
@@ -865,13 +860,6 @@ public class GeneratePdfDelegate {
                 .unescapeHtml4(pdfTemplateEngine(true).process("invoice-page", ctx));
         String htmlContent = composeHtml(HEADER_PDF_TEMPLATE, null, htmlBody, new Context());
 
-        try {
-            PrintWriter out = new PrintWriter("C:\\uploads\\html.txt");
-            out.println(htmlContent);
-            out.close();
-        } catch (Exception e) {
-
-        }
         File tempFile;
         OutputStream outputStream;
         try {
@@ -897,6 +885,12 @@ public class GeneratePdfDelegate {
             throw new OsirisException(e, "Unable to create PDF file for invoice " + invoice.getId());
         }
         return tempFile;
+    }
+
+    private Payment getTopPayment(Payment payment) {
+        if (payment.getOriginPayment() != null)
+            return getTopPayment(payment.getOriginPayment());
+        return payment;
     }
 
     private ITextRenderer embedFontSize(ITextRenderer renderer) {

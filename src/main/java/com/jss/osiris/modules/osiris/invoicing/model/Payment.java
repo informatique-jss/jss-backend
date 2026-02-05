@@ -72,6 +72,9 @@ public class Payment implements Serializable, IId, ICreatedDate {
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class })
 	private BigDecimal paymentAmount;
 
+	@Transient
+	private BigDecimal originPaymentAmount;
+
 	@OneToMany(mappedBy = "payment")
 	@JsonIgnoreProperties(value = { "payment" }, allowSetters = true)
 	private List<AccountingRecord> accountingRecords;
@@ -418,6 +421,14 @@ public class Payment implements Serializable, IId, ICreatedDate {
 
 	public void setMatchAutomation(String matchAutomation) {
 		this.matchAutomation = matchAutomation;
+	}
+
+	public BigDecimal getOriginPaymentAmount() {
+		return originPaymentAmount;
+	}
+
+	public void setOriginPaymentAmount(BigDecimal originPaymentAmount) {
+		this.originPaymentAmount = originPaymentAmount;
 	}
 
 }

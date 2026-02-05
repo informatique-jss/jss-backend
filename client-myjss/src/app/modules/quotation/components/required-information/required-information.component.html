@@ -895,7 +895,7 @@
         </ng-container>
         <li
           [ngbNavItem]="getIndexForProvision(-1, quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].provisions)"
-          *ngIf="(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes ||
+          *ngIf="currentUser && (quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes ||
           quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments)">
           <button ngbNavLink>Pièces justificatives à deposer
           </button>

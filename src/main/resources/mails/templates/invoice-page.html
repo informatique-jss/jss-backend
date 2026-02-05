@@ -277,7 +277,8 @@
         </tr>
         <tr th:if="${payments.size()>0}" th:each="payment : ${payments}">
             <td>
-                Acompte <span th:text="${payment.label}"></span>
+                Acompte <span th:text="${payment.label}"></span> (<span
+                    th:text="${#numbers.formatDecimal(payment.originPaymentAmount,1,2)}"></span> €)
             </td>
             <td class="td-with-price" style="text-align: right;white-space: nowrap;">
                 - <span th:text="${#numbers.formatDecimal(payment.paymentAmount,1,2)}"></span>
@@ -287,7 +288,7 @@
         <tr th:if="(${invoice.isCreditNote==null} or ${invoice.isCreditNote==false})">
             <td style="border-top: solid; border-color: rgb(0,83,159)">
                 <span th:if="${remainingToPay!=null} and ${remainingToPay>0 }">Restant dû</span><span
-                    th:if="${remainingToPay==null} or ${remainingToPay==0 }">Solde</span>
+                    th:if="${remainingToPay==null} or ${remainingToPay==0 }">Solde en votre faveur</span>
             </td>
             <td class="td-with-price"
                 style="text-align: right;white-space: nowrap;border-top: solid; border-color: rgb(0,83,159)">
