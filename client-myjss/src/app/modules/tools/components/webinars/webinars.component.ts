@@ -61,7 +61,7 @@ export class WebinarsComponent implements OnInit {
 
 
   subscribeWebinar(event: any): any {
-    if (!this.webinarParticipant.firstname || !this.webinarParticipant.lastname || !this.webinarParticipant.mail.mail) {
+    if (!this.webinarParticipant.firstname || !this.webinarParticipant.lastname || !this.webinarParticipant.mail.mail || !this.webinarParticipant.phoneNumber) {
       this.appService.displayToast("Merci de remplir les champs obligatoires", true, "Une erreur s’est produite...", 3000);
       return;
     }
