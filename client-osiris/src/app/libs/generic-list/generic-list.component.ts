@@ -11,7 +11,7 @@ import { RestUserPreferenceService } from '../../modules/main/services/rest.user
 import { AutocompleteComponent } from '../../modules/miscellaneous/forms/components/autocomplete/autocomplete.component';
 import { GenericFormComponent } from '../../modules/miscellaneous/forms/components/generic-form/generic-form.component';
 import { SHARED_IMPORTS } from '../SharedImports';
-import { IId } from '../tanstack-table/Iid';
+import { IId } from '../tanstack-table/IId';
 import { TanstackTableComponent } from '../tanstack-table/tanstack-table.component';
 import { GenericSearchTab } from './GenericSearchTab';
 import { GenericTableAction } from './GenericTableAction';

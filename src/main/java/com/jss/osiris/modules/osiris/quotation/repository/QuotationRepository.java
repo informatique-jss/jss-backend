@@ -32,6 +32,7 @@ public interface QuotationRepository extends QueryCacheCrudRepository<Quotation,
                         + " t2.id as tiersId,"
                         + " origin.label as customerOrderOriginLabel,"
                         + " STRING_AGG(DISTINCT service.service_label_to_display,', ') as serviceTypeLabel,"
+                        + "STRING_AGG(distinct (select distinct STRING_AGG(sf.label,', ') from asso_service_service_type asst join service_type st on st.id = asst.id_service_type join service_family sf on sf.id = st.id_service_family where asst.id_service = service.id),', ') as serviceFamilyLabel, "
                         + " sum(COALESCE(i.pre_tax_price,0)+COALESCE(i.vat_price,0)-COALESCE(i.discount_amount,0)) as totalPrice ,"
                         + " STRING_AGG(DISTINCT case when af.denomination is not null and af.denomination!='' then af.denomination else af.firstname || ' '||af.lastname end  || ' ('||city.label ||')' ,', ') as affaireLabel,"
                         + " co.description as quotationDescription"

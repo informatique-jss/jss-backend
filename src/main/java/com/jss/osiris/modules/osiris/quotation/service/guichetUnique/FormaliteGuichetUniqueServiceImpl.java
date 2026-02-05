@@ -407,6 +407,31 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                 }
             }
 
+            // grap back SIREN / SIRET for secondary etablissment
+            if (Boolean.TRUE.equals(apiFormaliteGuichetUnique.getIsFormality())
+                    && apiFormaliteGuichetUnique.getTypeFormalite().getCode().equals("M")
+                    && apiFormaliteGuichetUnique.getSiren() != null) {
+                if (formalite != null && formalite.getProvision() != null && formalite.getProvision().get(0)
+                        .getService().getAssoAffaireOrder().getAffaire().getSiren() == null
+                        && formalite.getProvision().get(0)
+                                .getService().getAssoAffaireOrder().getAffaire().getSiret() == null
+                        && formalite.getFormaliteStatus().getIsCloseState()) {
+                    Affaire affaire = formalite.getProvision().get(0).getService().getAssoAffaireOrder().getAffaire();
+                    affaire.setIsUnregistered(false);
+                    affaire.setSiren(apiFormaliteGuichetUnique.getSiren());
+                    String siret = affaire.getSiren();
+                    if (apiFormaliteGuichetUnique.getFormalityScope() != null
+                            && apiFormaliteGuichetUnique.getFormalityScope().size() == 1) {
+                        siret += apiFormaliteGuichetUnique.getFormalityScope().get(0);
+                    } else
+                        throw new OsirisException("Impossible to find SIRET for secondary immatriculation "
+                                + apiFormaliteGuichetUnique.getLiasseNumber());
+                    affaire.setSiret(siret);
+                    affaireService.addOrUpdateAffaire(affaire);
+                    affaireService.refreshAffaireFromRne(affaire);
+                }
+            }
+
             // Update provision waiting AC field
             if (savedFormaliteGuichetUnique.getStatus().getCode()
                     .equals(FormaliteGuichetUniqueStatus.VALIDATION_PENDING)
@@ -875,7 +900,9 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             vatRate = vatRate.multiply(BigDecimal.TEN).setScale(0, RoundingMode.HALF_EVEN).divide(BigDecimal.TEN);
             Vat vat = null;
 
-            if (isVatEqual(vatRate, constantService.getVatDeductible().getRate()))
+            if (vatRate.equals(new BigDecimal(0))) {
+                vat = constantService.getVatZero();
+            } else if (isVatEqual(vatRate, constantService.getVatDeductible().getRate()))
                 vat = constantService.getVatDeductible();
             else if (isVatEqual(vatRate, constantService.getVatDeductibleTwo().getRate()))
                 vat = constantService.getVatDeductibleTwo();

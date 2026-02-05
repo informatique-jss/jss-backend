@@ -248,7 +248,8 @@
         </mat-tab>
         <mat-tab label="Comptes" *ngIf="selectedResponsable">
           <ng-template matTabContent>
-            <accounting-record [responsableToDisplay]="selectedResponsable"></accounting-record>
+            <accounting-record [responsableToDisplay]="selectedResponsable"
+              [tiersToDisplay]="tiers"></accounting-record>
           </ng-template>
         </mat-tab>
         <mat-tab label="RFF" *ngIf="rffSearch && rffSearch.responsable">

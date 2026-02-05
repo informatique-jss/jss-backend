@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Ga4Item {
+public class GoogleAnalyticsItem {
 
     @JsonProperty("item_id")
     private String itemId;
@@ -34,6 +34,12 @@ public class Ga4Item {
 
     @JsonProperty("quantity")
     private Integer quantity;
+
+    @JsonProperty("item_list_name")
+    public String itemListName;
+
+    @JsonProperty("index")
+    public Integer index;
 
     // Getters & Setters
     public String getItemId() {

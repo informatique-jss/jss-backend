@@ -6,8 +6,7 @@ import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CU
 import { capitalizeName } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
-import { GtmService } from '../../../main/services/gtm.service';
-import { LogPayload, PageInfo } from '../../../main/services/GtmPayload';
+import { GoogleAnalyticsService } from '../../../main/services/googleAnalytics.service';
 import { AvatarComponent } from '../../../miscellaneous/components/avatar/avatar.component';
 import { Responsable } from '../../../profile/model/Responsable';
 import { LoginService } from '../../../profile/services/login.service';
@@ -47,7 +46,7 @@ export class OverviewComponent implements OnInit {
     private dashboardUserStatisticsService: DashboardUserStatisticsService,
     public modalService: NgbModal,
     private responsableService: ResponsableService,
-    private gtmService: GtmService,
+    private googleAnalyticsService: GoogleAnalyticsService,
     private sanitizer: DomSanitizer
   ) { }
 
@@ -58,7 +57,7 @@ export class OverviewComponent implements OnInit {
       // I'm coming to login in, ok
       if (params["aToken"] && params["userId"]) {
         this.loginService.logUser(parseInt(params["userId"]), params["aToken"]).subscribe(response => {
-          this.trackLog();
+          this.googleAnalyticsService.trackLoginLogout("login", "sign-in", "my-account").subscribe();
           this.appService.openRoute(null, "account/overview", undefined);
         });
       }
@@ -102,17 +101,4 @@ export class OverviewComponent implements OnInit {
   cancelAcceptation() {
     this.acceptTerms = false;
   }
-
-  trackLog() {
-    this.gtmService.trackLoginLogout(
-      {
-        type: 'login',
-        page: {
-          type: 'my-account',
-          name: 'sign-in'
-        } as PageInfo
-      } as LogPayload
-    );
-  }
-
 }

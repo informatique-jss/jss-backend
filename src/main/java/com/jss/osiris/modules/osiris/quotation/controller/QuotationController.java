@@ -1140,7 +1140,7 @@ public class QuotationController {
     if (mailComputeResult.getRecipientsMailTo() == null || mailComputeResult.getRecipientsMailTo().size() == 0)
       throw new OsirisValidationException("MailTo");
 
-    mailHelper.sendCustomerOrderInProgressToCustomer(customerOrder, true);
+    mailHelper.sendCustomerOrderInProgressToCustomer(customerOrder, true, null);
     return new ResponseEntity<CustomerOrder>(customerOrder, HttpStatus.OK);
   }
 
@@ -1426,6 +1426,17 @@ public class QuotationController {
         assoAnnouncementNoticeTemplateFragmentService
             .addOrUpdateAssosAnnouncementNoticeTemplateFragments(assosAnnouncementNoticeTemplateFragments),
         HttpStatus.OK);
+  }
+
+  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+  @GetMapping(inputEntryPoint + "/delete/asso-notice-template-fragment")
+  public ResponseEntity<Boolean> deleteAssoAnnouncementNoticeTemplateFragment(
+      @RequestParam Integer assosAnnouncementNoticeTemplateFragmentId) {
+
+    assoAnnouncementNoticeTemplateFragmentService
+        .deleteAssosAnnouncementNoticeTemplateFragments(assosAnnouncementNoticeTemplateFragmentId);
+
+    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
   }
 
   @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)

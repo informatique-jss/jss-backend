@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.osiris.quotation.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -103,6 +104,19 @@ public class ServiceType implements Serializable, IId {
 	private Boolean isProvisionalPaymentMandatory;
 
 	private String reportingGroup;
+
+	@Transient
+	@JsonView({ JacksonViews.MyJssDetailedView.class })
+	private BigDecimal totalPreTaxPrice;
+
+	@Transient
+	@JsonView({ JacksonViews.MyJssDetailedView.class })
+	private BigDecimal deboursAmount;
+
+	@Column(columnDefinition = "TEXT")
+	@JsonView({ JacksonViews.MyJssDetailedView.class,
+			JacksonViews.OsirisDetailedView.class })
+	private String descriptionText;
 
 	public Integer getId() {
 		return id;
@@ -263,4 +277,29 @@ public class ServiceType implements Serializable, IId {
 	public void setIsProvisionalPaymentMandatory(Boolean isProvisionalPaymentMandatory) {
 		this.isProvisionalPaymentMandatory = isProvisionalPaymentMandatory;
 	}
+
+	public String getDescriptionText() {
+		return descriptionText;
+	}
+
+	public void setDescriptionText(String descriptionText) {
+		this.descriptionText = descriptionText;
+	}
+
+	public Number getTotalPreTaxPrice() {
+		return totalPreTaxPrice;
+	}
+
+	public void setTotalPreTaxPrice(BigDecimal totalPreTaxPrice) {
+		this.totalPreTaxPrice = totalPreTaxPrice;
+	}
+
+	public Number getDeboursAmount() {
+		return deboursAmount;
+	}
+
+	public void setDeboursAmount(BigDecimal deboursAmount) {
+		this.deboursAmount = deboursAmount;
+	}
+
 }

@@ -10,7 +10,7 @@ import { Provision } from '../model/Provision';
 @Injectable({
   providedIn: 'root'
 })
-export class AnnouncementService extends AppRestService<Announcement>{
+export class AnnouncementService extends AppRestService<Announcement> {
 
   constructor(http: HttpClient) {
     super(http, "quotation");
@@ -44,8 +44,8 @@ export class AnnouncementService extends AppRestService<Announcement>{
     return this.getList(new HttpParams().set("idCustomerOrder", customerOrder.id).set("idAnnouncement", announcement.id).set("idProvision", provision.id).set("idAssoAffaireOrder", asso.id), "mail/generate/confrere/request", "Mail envoyé !", "Erreur lors de l'envoi du mail");
   }
 
-  generatePublicationFlagMail(customerOrder: CustomerOrder) {
-    return this.getList(new HttpParams().set("idCustomerOrder", customerOrder.id), "mail/generate/publication/flag", "Mail envoyé !", "Erreur lors de l'envoi du mail");
+  generatePublicationFlagMail(customerOrder: CustomerOrder, announcement: Announcement) {
+    return this.getList(new HttpParams().set("idCustomerOrder", customerOrder.id).set("idAnnouncement", announcement.id), "mail/generate/publication/flag", "Mail envoyé !", "Erreur lors de l'envoi du mail");
   }
 
   getAnnouncements(announcementSearch: AnnouncementSearch) {

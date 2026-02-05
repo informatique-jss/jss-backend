@@ -32,10 +32,13 @@ export class SelectFormHelper {
       return new Observable<Employee[]>(observer => {
         this.employeeService.getEmployees().subscribe(response => {
           let adSales = this.constantService.getActiveDirectoryGroupSales();
+          let adDirection = this.constantService.getActiveDirectoryGroupDirection();
           let outEmployees = [];
-          if (adSales && response)
+          if (response)
             for (let employee of response) {
-              if (employee.isActive && employee.adPath && employee.adPath.indexOf(adSales.activeDirectoryPath) >= 0)
+              if (adSales && employee.isActive && employee.adPath && employee.adPath.indexOf(adSales.activeDirectoryPath) >= 0)
+                outEmployees.push(employee);
+              else if (adDirection && employee.isActive && employee.adPath && employee.adPath.indexOf(adDirection.activeDirectoryPath) >= 0)
                 outEmployees.push(employee);
             }
           let values = outEmployees.sort((a, b) => a.lastname.localeCompare(b.lastname));

@@ -277,7 +277,7 @@ public class PostServiceImpl implements PostService {
             post.setTitleText(StringEscapeUtils.unescapeHtml4(post.getTitle().getRendered()).replaceAll("<[^>]*>", ""));
         if (post.getExcerpt() != null)
             post.setExcerptText(
-                    StringEscapeUtils.unescapeHtml4(post.getExcerpt().getRendered().replaceAll("<[^>]*>", "")));
+                    StringEscapeUtils.unescapeHtml4(post.getExcerpt().getRendered()));
         if (post.getContent() != null) {
             post.setOriginalContentText(StringEscapeUtils.unescapeHtml4(post.getContent().getRendered()));
         }
@@ -415,6 +415,12 @@ public class PostServiceImpl implements PostService {
                     post.getOriginalContentText().replaceFirst(escapeRegexSpecialChars(wordpressQuoteClasses),
                             "blockquote"));
 
+        }
+
+        String quoteRegex = "«\\s?([^»]+)\\s?»";
+        if (post.getExcerptText() != null) {
+            post.setExcerptText(
+                    post.getExcerptText().replaceAll(quoteRegex, "« <em>$1</em> »"));
         }
 
         // We modify all the <cite> tag classes with good format
@@ -808,7 +814,7 @@ public class PostServiceImpl implements PostService {
 
         Order order = new Order(Direction.DESC, "date");
         Sort sort = Sort.by(Arrays.asList(order));
-        Pageable pageableRequest = PageRequest.of(0, 3, sort);
+        Pageable pageableRequest = PageRequest.of(0, 100, sort);
 
         if (selectedMyJssCategory != null)
             return postRepository.searchPostsByMyJssCategory(selectedMyJssCategory, pageableRequest);
@@ -993,6 +999,7 @@ public class PostServiceImpl implements PostService {
         if (post.getAcf() != null) {
             post.setIsPremium(post.getAcf().isPremium());
             post.setIsSticky(post.getAcf().isSticky());
+            post.setIsStayOnTop(post.getAcf().getIs_stay_on_top());
             post.setPremiumPercentage(post.getAcf().getPremium_percentage());
             post.setApplePodcastLinkUrl(post.getAcf().getApplePodcastLinkUrl());
             post.setSpotifyLinkUrl(post.getAcf().getSpotifyLinkUrl());

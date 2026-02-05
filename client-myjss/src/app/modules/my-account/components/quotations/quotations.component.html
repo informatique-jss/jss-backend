@@ -63,6 +63,14 @@
             (change)="changeFilter()">
           Abandonnée
         </label>
+        <label class=" dropdown-item">
+          <hr class="dropdown-divider">
+        </label>
+        <label class=" dropdown-item">
+          <input class="form-check-input me-2" type="checkbox" value="" [(ngModel)]="requiringAttention"
+            (change)="changeFilter()">
+          Qui requiert mon attention
+        </label>
       </div>
     </div>
     <div ngbDropdown class="btn-group dropdown ">

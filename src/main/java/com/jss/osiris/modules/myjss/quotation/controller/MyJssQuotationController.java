@@ -302,7 +302,7 @@ public class MyJssQuotationController {
 	@PostMapping(inputEntryPoint + "/order/search/current")
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<CustomerOrder>> searchOrdersForCurrentUser(
-			@RequestBody List<String> customerOrderStatus, @RequestParam boolean withMissingAttachment,
+			@RequestBody List<String> customerOrderStatus, @RequestParam boolean requiringAttention,
 			@RequestParam Integer page, @RequestParam String sortBy,
 			@RequestParam(required = false) List<Integer> responsableIdsToFilter)
 			throws OsirisException {
@@ -318,7 +318,7 @@ public class MyJssQuotationController {
 
 		return new ResponseEntity<List<CustomerOrder>>(
 				customerOrderService.searchOrdersForCurrentUser(customerOrderStatus, responsableIdsToFilter,
-						withMissingAttachment, page,
+						requiringAttention, page,
 						sortBy),
 				HttpStatus.OK);
 	}
@@ -352,7 +352,8 @@ public class MyJssQuotationController {
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Quotation>> searchQuotationsForCurrentUser(
 			@RequestParam(required = false) List<Integer> responsableIdsToFilter,
-			@RequestBody List<String> quotationStatus, @RequestParam Integer page, @RequestParam String sortBy)
+			@RequestBody List<String> quotationStatus, @RequestParam Boolean requiringAttention,
+			@RequestParam Integer page, @RequestParam String sortBy)
 			throws OsirisClientMessageException {
 		if (quotationStatus == null || quotationStatus.size() == 0)
 			return new ResponseEntity<List<Quotation>>(new ArrayList<Quotation>(), HttpStatus.OK);
@@ -365,7 +366,8 @@ public class MyJssQuotationController {
 			sortBy = "createdDateDesc";
 
 		return new ResponseEntity<List<Quotation>>(
-				quotationService.searchQuotationsForCurrentUser(quotationStatus, responsableIdsToFilter, page, sortBy),
+				quotationService.searchQuotationsForCurrentUser(quotationStatus, responsableIdsToFilter,
+						requiringAttention, page, sortBy),
 				HttpStatus.OK);
 	}
 
@@ -552,6 +554,22 @@ public class MyJssQuotationController {
 		return new ResponseEntity<Boolean>(false, HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/attachment/purchase-order")
+	public ResponseEntity<Attachment> getPurchaseOrderAttachment(@RequestParam Integer idCustomerOrder)
+			throws OsirisValidationException, OsirisException {
+
+		if (idCustomerOrder == null)
+			throw new OsirisValidationException("idCustomerOrder");
+
+		CustomerOrder customerOrder = customerOrderService.getCustomerOrder(idCustomerOrder);
+
+		if (customerOrder == null)
+			throw new OsirisValidationException("customerOrder");
+
+		return new ResponseEntity<Attachment>(attachmentService.getPurchaseOrderAttachment(customerOrder),
+				HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/service/delete")
 	public ResponseEntity<Boolean> deleteService(@RequestParam Integer idService)
 			throws OsirisValidationException {
@@ -606,7 +624,9 @@ public class MyJssQuotationController {
 
 		// Can only download invoice
 		if (attachment.getCustomerOrder() != null && !attachment.getAttachmentType().getId()
-				.equals(constantService.getAttachmentTypeInvoice().getId()))
+				.equals(constantService.getAttachmentTypeInvoice().getId())
+				&& !attachment.getAttachmentType().getId()
+						.equals(constantService.getAttachmentTypePurchaseOrder().getId()))
 			canDownload = false;
 
 		if (attachment.getProvision() != null && attachment.getProvision().getService() != null
@@ -1451,16 +1471,18 @@ public class MyJssQuotationController {
 	@GetMapping(inputEntryPoint + "/service-type")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<ServiceType> getServiceType(
-			@RequestParam("serviceTypeId") Integer serviceTypeId,
-			@RequestParam("isFetchOnlyMandatoryDocuments") Boolean isFetchOnlyMandatoryDocuments,
+			@RequestParam() Integer serviceTypeId,
+			@RequestParam(required = false) Boolean isFetchOnlyMandatoryDocuments,
 			HttpServletRequest request) throws OsirisException {
 		detectFlood(request);
 
 		if (serviceTypeId == null)
 			return new ResponseEntity<ServiceType>(new ServiceType(), HttpStatus.OK);
-
+		if (isFetchOnlyMandatoryDocuments == null)
+			isFetchOnlyMandatoryDocuments = false;
 		return new ResponseEntity<ServiceType>(
-				serviceTypeService.getServiceType(serviceTypeId, isFetchOnlyMandatoryDocuments),
+				serviceTypeService.getServiceType(serviceTypeId,
+						isFetchOnlyMandatoryDocuments),
 				HttpStatus.OK);
 	}
 
@@ -1844,9 +1866,10 @@ public class MyJssQuotationController {
 	public ResponseEntity<Boolean> cancelQuotation(Integer quotationId, HttpServletRequest request)
 			throws OsirisValidationException, OsirisException {
 		detectFlood(request);
-
+		Responsable currentUser = employeeService.getCurrentMyJssUser();
 		Quotation quotation = quotationService.getQuotation(quotationId);
-		if (quotation == null || !myJssQuotationValidationHelper.canSeeQuotation(quotation))
+		if (quotation == null || (currentUser != null && !myJssQuotationValidationHelper.canSeeQuotation(quotation))
+				|| currentUser == null)
 			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
 
 		quotationService.addOrUpdateQuotationStatus(quotation, QuotationStatus.ABANDONED);
@@ -1875,8 +1898,11 @@ public class MyJssQuotationController {
 			throws OsirisValidationException, OsirisException {
 		detectFlood(request);
 
+		Responsable currentUser = employeeService.getCurrentMyJssUser();
 		CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
-		if (customerOrder == null || !myJssQuotationValidationHelper.canSeeQuotation(customerOrder))
+		if (customerOrder == null
+				|| (currentUser != null && !myJssQuotationValidationHelper.canSeeQuotation(customerOrder))
+				|| currentUser == null)
 			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
 
 		// cancel only if it's payment free

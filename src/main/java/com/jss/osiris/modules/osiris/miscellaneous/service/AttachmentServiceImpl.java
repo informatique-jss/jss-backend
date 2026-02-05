@@ -362,7 +362,9 @@ public class AttachmentServiceImpl implements AttachmentService {
                 return;
             attachment.setCustomerOrder(customerOrder);
             // Notify user only if not a mail and by a Osiris user
-            if (!attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeAutomaticMail().getId())
+            if (attachment.getAttachmentType() != null
+                    && !attachment.getAttachmentType().getId()
+                            .equals(constantService.getAttachmentTypeAutomaticMail().getId())
                     && employeeService.getCurrentEmployee() != null)
                 notificationService.notifyAttachmentAddToCustomerOrder(customerOrder, attachment);
         } else if (entityType.equals(CustomerOrder.class.getSimpleName() + "Pending")) {
@@ -637,5 +639,15 @@ public class AttachmentServiceImpl implements AttachmentService {
         }
 
         return outArray;
+    }
+
+    public Attachment getPurchaseOrderAttachment(CustomerOrder customerOrder) throws OsirisException {
+        if (customerOrder.getAttachments() != null && !customerOrder.getAttachments().isEmpty())
+            for (Attachment attachment : sortAttachmentByDateDesc(customerOrder.getAttachments()))
+                if (attachment.getAttachmentType() != null && attachment.getAttachmentType().getId()
+                        .equals(constantService.getAttachmentTypePurchaseOrder().getId()))
+                    return attachment;
+
+        return null;
     }
 }

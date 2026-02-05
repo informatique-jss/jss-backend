@@ -702,7 +702,6 @@ public class ServiceServiceImpl implements ServiceService {
                     if (attachment.getAttachmentType().getId()
                             .equals(constantService.getAttachmentTypeQuotation().getId()))
                         attachments.add(attachment);
-
         return attachments;
     }
 

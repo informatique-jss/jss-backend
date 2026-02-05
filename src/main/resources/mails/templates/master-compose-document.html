@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fr" style="margin: 0; padding: 0;">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Document PDF</title>
+
+    <style>
+        @page {
+            size: A4;
+            margin-top: 40px;
+            margin-bottom: 4cm;
+            margin-left: 0;
+            margin-right: 0;
+
+            @bottom-center {
+                content: element(footer-container);
+                width: 100%;
+            }
+        }
+
+        #footer-container {
+            position: running(footer-container);
+            width: 100%;
+            text-align: center;
+        }
+
+        #body-content {
+            margin: 30px 40px;
+        }
+
+        @font-face {
+            font-family: 'Roboto';
+            src: url('fonts/Roboto/Roboto-Regular.ttf') format('truetype');
+            font-weight: normal;
+        }
+
+        @font-face {
+            font-family: 'Roboto';
+            src: url('fonts/Roboto/Roboto-Bold.ttf') format('truetype');
+            font-weight: bold;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        strong,
+        b {
+            font-family: 'Roboto';
+            font-weight: bold;
+        }
+
+        a,
+        a * {
+            font-family: 'Roboto', sans-serif !important;
+        }
+
+        .mj-column-per-40 div,
+        .mj-column-per-40 td,
+        .mj-column-per-50 div,
+        .mj-column-per-50 td,
+        .mj-column-per-70 div,
+        .mj-column-per-70 td,
+        .mj-column-per-100 div,
+        .mj-column-per-100 td,
+        .mj-column-per-40 strong,
+        .mj-column-per-50 strong,
+        .mj-column-per-70 strong,
+        .mj-column-per-100 strong {
+            font-family: 'Roboto', sans-serif !important;
+        }
+
+        /* --- adjusting header MJML --- */
+        .mj-column-per-20,
+        .mj-column-per-30,
+        .mj-column-per-40,
+        .mj-column-per-50,
+        .mj-column-per-80 {
+            display: inline-block !important;
+            vertical-align: top !important;
+        }
+
+        [class*="mj-column"] div {
+            font-family: 'Roboto', sans-serif !important;
+        }
+
+        .mj-column-per-20 {
+            width: 20% !important;
+            max-width: 20% !important;
+        }
+
+        .mj-column-per-30 {
+            width: 30% !important;
+            max-width: 30% !important;
+        }
+
+        .mj-column-per-40 {
+            width: 40% !important;
+            max-width: 40% !important;
+        }
+
+        .mj-column-per-50 {
+            width: 50% !important;
+            max-width: 50% !important;
+        }
+
+        .mj-column-per-70 {
+            width: 70% !important;
+            max-width: 70% !important;
+        }
+
+        td[style*="direction:ltr"] {
+            white-space: nowrap !important;
+        }
+
+        .background-bird {
+            position: fixed;
+            top: 180px;
+            left: 0;
+            width: 595px;
+            height: 842px;
+            background-image: url('data:image/png;base64,[[${base64Background}]]');
+            background-repeat: no-repeat;
+            background-size: contain;
+            z-index: -1;
+        }
+    </style>
+
+    <th:block th:if="${mainHeadContent}" th:utext="${mainHeadContent}" />
+</head>
+
+<body style="margin: 0; padding: 0;">
+
+    <div th:if="${base64Background}" class="background-bird">
+    </div>
+
+    <div id="footer-container" th:if="${footerContent}" style="width: 100%; text-align: center;">
+        <div th:switch="${footerTemplateName}">
+            <div th:case="${FOOTER_DOMICILIATION}"
+                style="font-size: 14px; color: #303B4D; text-align: center; padding-bottom: 20px; margin-left: 150px">
+                <div th:utext="${footerContent}"></div>
+            </div>
+
+            <div th:case="*" style="display: block; width: 100%; text-align: center;">
+                <div th:utext="${footerContent}" style="display: inline-block; width: 100%; margin-left: 180px"></div>
+            </div>
+        </div>
+    </div>
+
+    <div th:utext="${headerContent}"></div>
+
+    <div id="body-content">
+        <div th:utext="${mainBodyContent}"></div>
+    </div>
+
+</body>
+
+</html>

@@ -270,6 +270,10 @@ public class Constant implements Serializable, IId {
 	private AttachmentType attachmentTypeApplicationCv;
 
 	@ManyToOne
+	@JoinColumn(name = "id_attachment_type_purchase_order")
+	private AttachmentType attachmentTypePurchaseOrder;
+
+	@ManyToOne
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@JoinColumn(name = "id_country_france")
 	private Country countryFrance;
@@ -933,6 +937,7 @@ public class Constant implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_active_directory_group_direction")
+	@JsonView(JacksonViews.OsirisDetailedView.class)
 	private ActiveDirectoryGroup activeDirectoryGroupDirection;
 
 	@ManyToOne
@@ -3059,6 +3064,14 @@ public class Constant implements Serializable, IId {
 
 	public void setBillingTypeKbis(BillingType billingTypeKbis) {
 		this.billingTypeKbis = billingTypeKbis;
+	}
+
+	public AttachmentType getAttachmentTypePurchaseOrder() {
+		return attachmentTypePurchaseOrder;
+	}
+
+	public void setAttachmentTypePurchaseOrder(AttachmentType attachmentTypePurchaseOrder) {
+		this.attachmentTypePurchaseOrder = attachmentTypePurchaseOrder;
 	}
 
 }

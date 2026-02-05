@@ -336,7 +336,10 @@ public class QuotationServiceImpl implements QuotationService {
                         false, "Devis n°" + quotation.getId(), null, null, null);
 
             for (Attachment attachment : attachments)
-                if (quotation != null && attachment.getDescription().contains(quotation.getId() + "")) {
+                if (quotation != null && ((attachment.getUploadedFile() != null
+                        && attachment.getUploadedFile().getFilename().contains(quotation.getId() + ""))
+                        || (attachment.getDescription() != null
+                                && attachment.getDescription().contains(quotation.getId() + "")))) {
                     attachment.setQuotation(quotation);
                     attachmentService.addOrUpdateAttachment(attachment);
                 }
@@ -663,7 +666,7 @@ public class QuotationServiceImpl implements QuotationService {
     }
 
     public List<Quotation> searchQuotationsForCurrentUser(List<String> customerOrderStatus,
-            List<Integer> responsableIdToFilter, Integer page,
+            List<Integer> responsableIdToFilter, Boolean requiringAttention, Integer page,
             String sortBy) {
         List<QuotationStatus> quotationStatusToFilter = new ArrayList<QuotationStatus>();
 
@@ -702,8 +705,16 @@ public class QuotationServiceImpl implements QuotationService {
 
                 Sort sort = Sort.by(Arrays.asList(order));
                 Pageable pageableRequest = PageRequest.of(page, 10, sort);
-                return populateTransientField(quotationRepository.searchQuotationsForCurrentUser(responsablesToFilter,
-                        quotationStatusToFilter, pageableRequest));
+
+                List<Quotation> quotationsFound = quotationRepository.searchQuotationsForCurrentUser(
+                        responsablesToFilter, quotationStatusToFilter, pageableRequest);
+
+                if (requiringAttention) {
+                    quotationsFound = quotationsFound.stream().filter(quotation -> quotation.getQuotationStatus()
+                            .getCode().equals(QuotationStatus.SENT_TO_CUSTOMER)).toList();
+                }
+
+                return populateTransientField(quotationsFound);
             }
         }
 

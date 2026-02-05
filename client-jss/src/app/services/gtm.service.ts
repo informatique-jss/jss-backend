@@ -1,16 +1,17 @@
 import { Injectable } from "@angular/core";
+import { NavigationEnd, Router } from "@angular/router";
+import { filter } from "rxjs";
 import { environment } from "../../environments/environment";
-import { COOKIE_KEY } from "../libs/Constants";
 import { Responsable } from "../main/model/Responsable";
 import { LoginService } from "../main/services/login.service";
-import { BasePayload, CtaClickPayload, FormSubmitPayload, PageViewPayload } from "./GtmPayload";
+import { CookieService } from "./cookie.service";
+import { BasePayload, CtaClickPayload, FormSubmitPayload, PageInfo, PageViewPayload } from "./GtmPayload";
 import { PlatformService } from "./platform.service";
 
 export enum GtmEventName {
   PageView = 'page_view',
   CtaClick = 'cta_click',
   FormSubmit = 'form_submit',
-  BeginCheckout = 'begin_checkout',
   FileUpload = 'file_upload',
   Purchase = 'purchase',
   Login = 'login',
@@ -25,7 +26,9 @@ export class GtmService {
   currentUser: Responsable | undefined;
 
   constructor(private platformService: PlatformService,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private cookieService: CookieService,
+    private router: Router
   ) { }
 
   init() {
@@ -47,7 +50,18 @@ export class GtmService {
       this.currentUser = response;
     })
 
+    this.pushCurrentRoute();
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event: NavigationEnd) => {
+        this.pushCurrentRoute();
+      });
+
     this.isInitialized = true;
+  }
+
+  pushCurrentRoute() {
+    this.push(GtmEventName.PageView, { page: { type: "page", name: this.router.url } as PageInfo } as PageViewPayload);
   }
 
   private push(event: GtmEventName, payload: BasePayload) {
@@ -56,7 +70,7 @@ export class GtmService {
 
     if (this.currentUser)
       payload.user = { id: this.currentUser.id };
-    payload.consent = localStorage.getItem(COOKIE_KEY) == "true";
+    payload.consent = this.cookieService.getConsent() == true;
 
     if (payload && payload.page)
       payload.page.website = "media";
@@ -67,10 +81,6 @@ export class GtmService {
     if (!environment.production) {
       console.log('[GTM]', eventData);
     }
-  }
-
-  trackPageView(payload: PageViewPayload) {
-    this.push(GtmEventName.PageView, payload);
   }
 
   trackCtaClick(payload: CtaClickPayload) {

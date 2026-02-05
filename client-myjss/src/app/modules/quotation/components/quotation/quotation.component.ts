@@ -94,6 +94,8 @@ export class QuotationComponent implements OnInit {
 
     if (this.quotationService.getCurrentDraftQuotationStep() && this.router.url.indexOf(this.quotationService.getCurrentDraftQuotationStep()!) < 0) {
       this.appService.openRoute(undefined, this.quotationService.getCurrentDraftQuotationStep()!, undefined);
+    } else if (this.router.url.indexOf("new") >= 0) {
+      // DO NOTHING, let go to identification with good selection of services
     } else {
       if (this.myJssQuotationItems.length > 0 && this.router.url) {
         if (!this.matchRoute(this.router.url))

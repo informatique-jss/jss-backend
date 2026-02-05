@@ -7,8 +7,10 @@ import { MY_JSS_HOME_ROUTE, MY_JSS_NEW_ANNOUNCEMENT_ROUTE, MY_JSS_NEW_FORMALITY_
 import { capitalizeName } from '../../../libs/FormatHelper';
 import { LiteralDatePipe } from '../../../libs/LiteralDatePipe';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
+import { TrustHtmlPipe } from "../../../libs/TrustHtmlPipe";
 import { AppService } from '../../../services/app.service';
 import { ConstantService } from '../../../services/constant.service';
+import { GoogleAnalyticsService } from '../../../services/googleAnalytics.service';
 import { PlatformService } from '../../../services/platform.service';
 import { AccountMenuItem, MAIN_ITEM_ACCOUNT, MAIN_ITEM_DASHBOARD } from '../../model/AccountMenuItem';
 import { JssCategory } from '../../model/JssCategory';
@@ -30,7 +32,8 @@ import { AvatarComponent } from '../avatar/avatar.component';
     SHARED_IMPORTS,
     AvatarComponent,
     NgbTooltipModule,
-    LiteralDatePipe
+    LiteralDatePipe,
+    TrustHtmlPipe
   ],
   standalone: true
 })
@@ -79,7 +82,8 @@ export class HeaderComponent implements OnInit {
     private eRef: ElementRef,
     private plaformService: PlatformService,
     private constantService: ConstantService,
-    private postService: PostService
+    private postService: PostService,
+    private googleAnalyticsService: GoogleAnalyticsService
   ) { }
 
   ngOnInit() {
@@ -159,6 +163,7 @@ export class HeaderComponent implements OnInit {
   }
 
   disconnect() {
+    this.googleAnalyticsService.trackLoginLogout("logout", "header", "media").subscribe();
     this.loginService.signOut().subscribe(response => {
       this.currentUser = undefined;
     })

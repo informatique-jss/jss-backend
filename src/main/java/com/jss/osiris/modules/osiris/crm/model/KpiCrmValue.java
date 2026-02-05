@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.DoNotAudit;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
+import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 import jakarta.persistence.Entity;
@@ -35,6 +36,10 @@ public class KpiCrmValue implements Serializable, IId {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_responsable")
     private Responsable responsable;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_sales_employee_overrided")
+    private Employee overridedSalesEmployee;
 
     private LocalDate valueDate;
 
@@ -87,6 +92,14 @@ public class KpiCrmValue implements Serializable, IId {
 
     public void setWeight(Integer weight) {
         this.weight = weight;
+    }
+
+    public Employee getOverridedSalesEmployee() {
+        return overridedSalesEmployee;
+    }
+
+    public void setOverridedSalesEmployee(Employee overridedSalesEmployee) {
+        this.overridedSalesEmployee = overridedSalesEmployee;
     }
 
 }

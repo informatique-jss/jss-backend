@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormControl, FormGroup, ValidatorFn } from '@angular/forms';
 import { SHARED_IMPORTS } from '../../../../../libs/SharedImports';
-import { IId } from '../../../../../libs/tanstack-table/Iid';
+import { IId } from '../../../../../libs/tanstack-table/IId';
 import { displayLabel } from './display-label-helper';
 import { SelectFormHelper, SelectType } from './select-form-helper';
 

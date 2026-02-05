@@ -17,7 +17,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(indexes = { @Index(name = "idx_daily_connexion_date", columnList = "connexion_date"),
-        @Index(name = "idx_daily_connexion_date_responsable", columnList = "id_responsable,connexion_date"),
+        @Index(name = "idx_daily_connexion_date_responsable", columnList = "id_responsable,connexion_date", unique = true),
 })
 public class DailyConnexion {
     @Id

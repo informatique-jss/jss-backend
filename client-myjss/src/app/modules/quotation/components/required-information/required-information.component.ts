@@ -10,6 +10,7 @@ import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { Mail } from '../../../general/model/Mail';
 import { AppService } from '../../../main/services/app.service';
 import { ConstantService } from '../../../main/services/constant.service';
+import { GoogleAnalyticsService } from '../../../main/services/googleAnalytics.service';
 import { GtmService } from '../../../main/services/gtm.service';
 import { FileUploadPayload, PageInfo } from '../../../main/services/GtmPayload';
 import { AutocompleteCityComponent } from '../../../miscellaneous/components/forms/autocomplete-city/autocomplete-city.component';
@@ -33,8 +34,10 @@ import { Affaire } from '../../../my-account/model/Affaire';
 import { Announcement } from '../../../my-account/model/Announcement';
 import { AssoServiceDocument } from '../../../my-account/model/AssoServiceDocument';
 import { AssoServiceFieldType } from '../../../my-account/model/AssoServiceFieldType';
+import { CustomerOrder } from '../../../my-account/model/CustomerOrder';
 import { Provision } from '../../../my-account/model/Provision';
 import { ProvisionType } from '../../../my-account/model/ProvisionType';
+import { Quotation } from '../../../my-account/model/Quotation';
 import { Service } from '../../../my-account/model/Service';
 import { ServiceFieldType } from '../../../my-account/model/ServiceFieldType';
 import { ServiceType } from '../../../my-account/model/ServiceType';
@@ -170,7 +173,8 @@ export class RequiredInformationComponent implements OnInit {
     private noticeTemplateService: NoticeTemplateService,
     private serviceFieldTypeService: ServiceFieldTypeService,
     private modalService: NgbModal,
-    private gtmService: GtmService
+    private gtmService: GtmService,
+    private ga4Service: GoogleAnalyticsService,
   ) {
   }
 
@@ -236,14 +240,15 @@ export class RequiredInformationComponent implements OnInit {
   }
 
   initIndexesAndServiceType() {
-    let announcementIndex = 0;
+    let provisionIndex = 0;
+    let announcementIndex = undefined;
     if (this.quotation && this.quotation.assoAffaireOrders && this.quotation.assoAffaireOrders.length > 0) {
       for (let asso of this.quotation.assoAffaireOrders) {
         for (let serv of asso.services) {
           for (let provision of serv.provisions) {
             if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_ANNOUNCEMENT) {
-              provision.order = announcementIndex;
-              announcementIndex++;
+              provision.order = provisionIndex;
+              announcementIndex = provisionIndex;
               if (!this.selectedRedaction[asso.services.indexOf(serv)]) {
                 this.selectedRedaction[asso.services.indexOf(serv)] = [];
               }
@@ -260,6 +265,7 @@ export class RequiredInformationComponent implements OnInit {
                 provision.domiciliation = {} as Domiciliation;
               }
             }
+            provisionIndex++;
           }
 
           if (serv.assoServiceDocuments) {
@@ -272,7 +278,7 @@ export class RequiredInformationComponent implements OnInit {
         }
       }
       this.setAssoAffaireOrderToNoticeTemplateDescription();
-      this.changeProvisionNoticeTemplateDescription({ nextId: 40 } as NgbNavChangeEvent);
+      this.changeProvisionNoticeTemplateDescription({ nextId: (announcementIndex != undefined ? announcementIndex : 40) } as NgbNavChangeEvent);
       this.emitServiceChange();
     }
   }
@@ -378,6 +384,7 @@ export class RequiredInformationComponent implements OnInit {
 
   onNoticeChange({ editor }: ChangeEvent, provision: Provision) {
     if (provision && provision.announcement) {
+      provision.announcement.notice = editor.getData();
       this.noticeTemplateDescription = this.noticeTemplateService.getNoticeTemplateDescription();
       this.noticeTemplateDescription!.displayText = editor.getData();
       this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription!);
@@ -506,6 +513,11 @@ export class RequiredInformationComponent implements OnInit {
           this.noticeTemplateDescription.assoAffaireOrder = this.quotation!.assoAffaireOrders[newAssoIndex];
           this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
         }
+        if (this.quotation!.isQuotation)
+          this.ga4Service.trackBeginCheckoutQuotation(this.quotation as Quotation).subscribe();
+        else
+          this.ga4Service.trackBeginCheckoutCustomerOrder(this.quotation as CustomerOrder).subscribe();
+
         this.appService.openRoute(undefined, "quotation/checkout", undefined);
       });
       return;
@@ -836,7 +848,7 @@ export class RequiredInformationComponent implements OnInit {
     let originId = ngbEvent.activeId as number;
 
     // if id is > 10 and first char begins with 1 then its an announcement tab
-    if (this.noticeTemplateDescription)
+    if (this.noticeTemplateDescription) {
       if (destId >= 10 && destId < 20) {
         this.noticeTemplateDescription.announcementOrder = this.parseInt(destId.toString().substring(1));
         this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
@@ -844,8 +856,10 @@ export class RequiredInformationComponent implements OnInit {
         this.noticeTemplateDescription.announcementOrder = this.parseInt(originId.toString().substring(1));
         this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
       }
-    if (destId < 10) {
-      this.changeIsShowNoticeTemplate(false, true, false, undefined, undefined);
+      if (destId < 10) {
+        this.noticeTemplateDescription.announcementOrder = this.parseInt(destId.toString());
+        this.changeIsShowNoticeTemplate(false, true, false, undefined, undefined);
+      }
     }
   }
 

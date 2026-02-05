@@ -21,4 +21,5 @@ export interface ServiceType {
   serviceTypeLinked: ServiceType;
   reportingGroup: string;
   isProvisionalPaymentMandatory: boolean;
+  descriptionText: string;
 }

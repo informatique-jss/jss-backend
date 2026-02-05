@@ -177,20 +177,21 @@ public class BillingClosureReceiptHelper {
                 // Send to each responsable
                 if (tier instanceof Tiers && ((Tiers) tier).getResponsables() != null)
                     for (Responsable tiersResponsable : tier.getResponsables()) {
-
-                        List<BillingClosureReceiptValue> values = generateBillingClosureValuesForITiers(null,
-                                tiersResponsable, isOrderingByEventDate, false, false, false);
-                        if (values.size() > 0) {
-                            try {
-                                sendBillingClosureReceiptFile(
-                                        generatePdfDelegate.getBillingClosureReceiptFile(null, tiersResponsable,
-                                                values),
-                                        null, tiersResponsable);
-                            } catch (Exception e) {
-                                globalExceptionHandler.persistLog(
-                                        new OsirisException(e,
-                                                "Impossible to generate billing closure for Tiers " + tiersId),
-                                        OsirisLog.UNHANDLED_LOG);
+                        if (tiersResponsable.getIsActive()) {
+                            List<BillingClosureReceiptValue> values = generateBillingClosureValuesForITiers(null,
+                                    tiersResponsable, isOrderingByEventDate, false, false, false);
+                            if (values.size() > 0) {
+                                try {
+                                    sendBillingClosureReceiptFile(
+                                            generatePdfDelegate.getBillingClosureReceiptFile(null, tiersResponsable,
+                                                    values),
+                                            null, tiersResponsable);
+                                } catch (Exception e) {
+                                    globalExceptionHandler.persistLog(
+                                            new OsirisException(e,
+                                                    "Impossible to generate billing closure for Tiers " + tiersId),
+                                            OsirisLog.UNHANDLED_LOG);
+                                }
                             }
                         }
                     }
@@ -365,12 +366,15 @@ public class BillingClosureReceiptHelper {
             search.setAccountingAccount(tiers.getAccountingAccountCustomer());
             search.setIsFromAs400(true);
             search.setHideLettered(true);
-            search.setStartDate(LocalDateTime.of(LocalDate.now().getYear(), 1, 1, 0, 1, 0));
+            search.setStartDate(
+                    LocalDateTime.of(constantService.getDateAccountingClosureForAccountant().getYear(), 1, 1, 0, 1, 0));
 
             List<AccountingRecordSearchResult> results = accountingRecordService.searchAccountingRecords(search, false);
-            if (results != null)
+            if (results != null && !results.isEmpty())
                 for (AccountingRecordSearchResult result : results)
                     values.add(getBillingClosureReceiptValueForAs400(result));
+            else
+                values.remove(values.size() - 1);
         }
 
         return values;
