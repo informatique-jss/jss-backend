@@ -27,9 +27,13 @@ export class SelectPublishingDepartmentComponent extends GenericSelectComponent<
     });
   }
 
+  override sortTypes(): void {
+    this.types.sort((a, b) => a.code.localeCompare(b.code));
+  }
+
   override displayLabel(object: any): string {
     return (object)
-      ? ((object.code !== null && object.code !== undefined && object.code.toString().trim() !== '' && object.code.toString() !== '0')
+      ? ((object.code !== null && object.code !== undefined && object.code.toString().trim() !== '' && object.code.toString().trim() !== '0')
         ? (object.code + " - " + object.name)
         : object.name)
       : '';

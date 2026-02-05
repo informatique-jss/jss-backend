@@ -24,7 +24,7 @@ export abstract class GenericSelectComponent<T> extends GenericFormComponent imp
   callOnNgInit(): void {
     this.initTypes();
     if (this.types) {
-      this.types.sort((a, b) => this.displayLabel(a).localeCompare(this.displayLabel(b)));
+      this.sortTypes();
 
       const control = this.form?.get(this.propertyName);
       if (control && (control.value === null || control.value === undefined) && this.types.length > 0) {
@@ -38,6 +38,10 @@ export abstract class GenericSelectComponent<T> extends GenericFormComponent imp
           this.selectionChange.emit(this.model);
         }
       );
+  }
+
+  sortTypes() {
+    this.types.sort((a, b) => this.displayLabel(a).localeCompare(this.displayLabel(b)));
   }
 
   abstract initTypes(): void;
