@@ -23,7 +23,7 @@ export class CustomerOrderChatComponent implements OnInit {
   @ViewChildren('messageItem') messageElements!: QueryList<ElementRef>;
 
   commentListByIQuotation: CustomerOrderComment[][] = [];
-  newComment: CustomerOrderComment = { comment: '', employee: {}, currentCustomer: {} } as CustomerOrderComment;
+  newComments: Map<number, CustomerOrderComment> = new Map<number, CustomerOrderComment>();
   currentEmployee: Employee | undefined;
 
   currentIQuotationList: number[] = [];
@@ -101,28 +101,36 @@ export class CustomerOrderChatComponent implements OnInit {
     }, 100); //Timeout so the DOM is well up to date
   }
 
-  sendMessage(iQuotationId: number) {
-    if (this.newComment.comment.trim().length > 0)
+  getCommentModel(iQuotationId: number): CustomerOrderComment {
+    if (!this.newComments.get(iQuotationId))
+      this.newComments.set(iQuotationId, { comment: '' } as CustomerOrderComment);
+    return this.newComments.get(iQuotationId)!;
+  }
 
-      if (this.newComment && this.newComment.comment.replace(/<(?:.|\n)*?>/gm, ' ').length > 0) {
-        if (this.newComment.id == undefined) {
-          this.newComment.employee = this.currentEmployee!;
-          this.newComment.isFromChat = true;
-          this.newComment.isToDisplayToCustomer = true;
-          this.newComment.isReadByCustomer = false;
-          this.newComment.isRead = true;
-          this.newComment.customerOrderId = iQuotationId;
-        }
-        this.iQuotationCommentService.addOrUpdateCustomerOrderComment(this.newComment).subscribe(response => {
-          if (response) {
-            if (!this.commentListByIQuotation[iQuotationId])
-              this.commentListByIQuotation[iQuotationId] = [];
-            this.commentListByIQuotation[iQuotationId].push(response);
-            this.scrollToLastMessageOfConversation(iQuotationId);
+  sendMessage(iQuotationId: number) {
+    let draft = this.getCommentModel(iQuotationId);
+
+    if (draft)
+      if (draft.comment.trim().length > 0)
+        if (draft && draft.comment.replace(/<(?:.|\n)*?>/gm, ' ').length > 0) {
+          if (draft.id == undefined) {
+            draft.employee = this.currentEmployee!;
+            draft.isFromChat = true;
+            draft.isToDisplayToCustomer = true;
+            draft.isReadByCustomer = false;
+            draft.isRead = true;
+            draft.customerOrderId = iQuotationId;
           }
-          this.newComment.comment = '';
-        })
-      }
+          this.iQuotationCommentService.addOrUpdateCustomerOrderComment(draft).subscribe(response => {
+            if (response) {
+              if (!this.commentListByIQuotation[iQuotationId])
+                this.commentListByIQuotation[iQuotationId] = [];
+              this.commentListByIQuotation[iQuotationId].push(response);
+              this.scrollToLastMessageOfConversation(iQuotationId);
+            }
+            this.newComments.set(iQuotationId, { comment: '' } as CustomerOrderComment);
+          })
+        }
   }
 
   closeChat(iQuotationId: number) {

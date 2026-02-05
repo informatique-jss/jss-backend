@@ -145,7 +145,7 @@ public class QuotationFacade {
 
         Employee currentEmployee = employeeService.getCurrentEmployee();
 
-        List<Employee> employeesThatIBackupAndMe = employeeService.getMyEmployeeThatIBackUp(currentEmployee);
+        List<Employee> employeesThatIBackupAndMe = employeeService.getMyHolidaymaker(currentEmployee);
 
         for (Employee employee : employeesThatIBackupAndMe) {
             List<CustomerOrderComment> commentsFoundsForEmployee = customerOrderCommentService
@@ -163,15 +163,6 @@ public class QuotationFacade {
             }
         }
 
-        comments.sort((c1, c2) -> c1.getCreatedDateTime().compareTo(c2.getCreatedDateTime()));
-
-        comments.sort((c1, c2) -> {
-            Integer c1IQuotationId = c1.getCustomerOrder() != null ? c1.getCustomerOrder().getId()
-                    : c1.getQuotation().getId();
-            Integer c2IQuotationId = c2.getCustomerOrder() != null ? c2.getCustomerOrder().getId()
-                    : c2.getQuotation().getId();
-            return c1IQuotationId.compareTo(c2IQuotationId);
-        });
         return comments;
     }
 

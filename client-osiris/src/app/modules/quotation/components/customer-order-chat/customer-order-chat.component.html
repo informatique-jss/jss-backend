@@ -64,10 +64,11 @@
     </div>
 
     <div class="chat-footer " *ngIf="getIsExpandedMap(iQuotationId)">
-      <input type="text" [(ngModel)]="newComment.comment" (keyup.enter)="sendMessage(iQuotationId)"
+      <input type="text" [(ngModel)]="getCommentModel(iQuotationId).comment" (keyup.enter)="sendMessage(iQuotationId)"
         placeholder="Écrivez votre message..." />
-      <button (click)="sendMessage(iQuotationId)" [disabled]="!newComment.comment.trim()">
-        <ng-icon name="tablerSend"></ng-icon>
+      <button (click)="sendMessage(iQuotationId)" type="button" class="btn btn-secondary rounded-circle btn-icon"
+        [disabled]="!getCommentModel(iQuotationId).comment || getCommentModel(iQuotationId).comment.trim().length == 0">
+        <ng-icon name="tablerSend" class="fs-lg" />
       </button>
     </div>
   </div>

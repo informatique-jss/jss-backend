@@ -34,6 +34,6 @@ public interface CustomerOrderCommentRepository extends QueryCacheCrudRepository
                                         r = c.customerOrder.responsable
                                         or r = c.quotation.responsable
                                 )
-                                )""")
+                                ) order by c.createdDateTime asc, c.customerOrder.id asc, c.quotation.id asc """)
         List<CustomerOrderComment> findUnreadCommmentsForSalesEmployee(Employee employee);
 }
