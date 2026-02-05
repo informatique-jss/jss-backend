@@ -2176,14 +2176,14 @@ public class MyJssQuotationController {
 		if (iQuotationId == null)
 			throw new OsirisValidationException("iQuotationId");
 
-		if (employeeService.getCurrentEmployee() != null
-				&& !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.SALES_GROUP))
-			return new ResponseEntity<List<CustomerOrderComment>>(
-					new ArrayList<>(),
-					HttpStatus.OK);
-		else
-			return new ResponseEntity<List<CustomerOrderComment>>(
-					quotationFacade.getCommentsFromChatForIQuotations(Arrays.asList(iQuotationId)).get(iQuotationId),
-					HttpStatus.OK);
+		IQuotation quotation = quotationService.getQuotation(iQuotationId);
+		if (quotation == null)
+			quotation = customerOrderService.getCustomerOrder(iQuotationId);
+		if (quotation == null || !myJssQuotationValidationHelper.canSeeQuotation(quotation))
+			return new ResponseEntity<List<CustomerOrderComment>>(new ArrayList<CustomerOrderComment>(), HttpStatus.OK);
+
+		return new ResponseEntity<List<CustomerOrderComment>>(
+				quotationFacade.getCommentsFromChatForIQuotations(Arrays.asList(iQuotationId)).get(iQuotationId),
+				HttpStatus.OK);
 	}
 }

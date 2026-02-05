@@ -1637,7 +1637,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 customerOrderRepository.searchCustomerOrders(commercialId, responsablesIds, statusIds),
                 false);
     }
-                
+
     private Predicate<CustomerOrder> generateRequiringAttentionPredicate() throws OsirisException {
         InvoiceStatus invoicePayed = constantService.getInvoiceStatusPayed();
         InvoiceStatus invoiceCancelled = constantService.getInvoiceStatusCancelled();
@@ -2459,7 +2459,4 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         return purchaseOrderAttachments;
     }
 
-    public List<CustomerOrder> getOrdersWithNewCommentFromCustomer(Employee employee) {
-        return customerOrderRepository.findOrdersWithNewCommentFromCustomer(employee);
-    }
 }

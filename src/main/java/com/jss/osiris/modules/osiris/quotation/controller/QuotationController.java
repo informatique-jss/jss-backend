@@ -3350,12 +3350,7 @@ public class QuotationController {
     if (iQuotationId == null)
       throw new OsirisValidationException("iQuotationId");
 
-    if (employeeService.getCurrentEmployee() != null
-        && !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.SALES_GROUP))
-      return new ResponseEntity<Integer>(-1, HttpStatus.OK);
-
-    else
-      return new ResponseEntity<Integer>(
-          quotationFacade.getTiersIdByIQuotationId(iQuotationId), HttpStatus.OK);
+    return new ResponseEntity<Integer>(
+        quotationFacade.getTiersIdByIQuotationId(iQuotationId), HttpStatus.OK);
   }
 }

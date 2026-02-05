@@ -279,10 +279,4 @@ public interface CustomerOrderRepository
         List<CustomerOrder> searchCustomerOrders(Integer commercial, List<Integer> responsables,
                         List<Integer> status);
 
-        // TODO valider query Alex
-        @Query("select c from CustomerOrder c join c.responsable r join c.customerOrderComments cc"
-                        + "  where r.salesEmployee.id in :employee "
-                        + "  and cc.currentCustomer is not null and cc.isRead <> true and cc.isToDisplayToCustomer = false")
-        List<CustomerOrder> findOrdersWithNewCommentFromCustomer(Employee employee);
-
 }

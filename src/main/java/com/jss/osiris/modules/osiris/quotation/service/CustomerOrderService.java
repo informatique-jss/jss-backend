@@ -239,5 +239,4 @@ public interface CustomerOrderService {
 
         public List<CustomerOrder> searchActiveRecurringOrder();
 
-        public List<CustomerOrder> getOrdersWithNewCommentFromCustomer(Employee employee);
 }
