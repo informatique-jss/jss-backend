@@ -12409,11 +12409,11 @@ blockquote p {
 }
 
 .section-title-link:hover {
-  color: #ff3e30;
+  color: #667892;
 }
 
 .section-title-link:hover svg {
-  fill: #ff3e30;
+  fill: #667892;
   transform: translate3d(4px, 0, 0);
 }
 
