@@ -91,7 +91,7 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	private Integer validationId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_responsable")
+	@JoinColumn(name = "id_responsable", nullable = false)
 	@IndexedField
 	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,

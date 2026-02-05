@@ -2,33 +2,12 @@
   position: fixed;
   bottom: 5px;
   right: 5px;
-  z-index: 1050;
+  z-index: 1000;
   flex-direction: row-reverse;
+  align-items: end;
   display: flex;
   font-family: 'Roboto', sans-serif;
   width: 99%;
-}
-
-/* Le bouton rond flottant */
-.chat-toggle-btn {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background-color: #303B4D;
-  /* Votre MJML_COLOR */
-  color: white;
-  border: none;
-  font-size: 24px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.2s ease;
-}
-
-.chat-toggle-btn:hover {
-  transform: scale(1.1);
 }
 
 .chat-window-container.minimized {
@@ -38,15 +17,14 @@
 /* La fenêtre de chat */
 .chat-window-container {
   max-width: 350px;
-  /* On enlève height: 500px ici */
   background-color: white;
-  border-radius: 12px;
+  border-radius: 2rem;
   display: flex;
   flex-direction: column;
   box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
   /* Transition fluide pour la réduction */
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 
 /* On fixe la hauteur de la liste des messages pour garder la fenêtre à 500px au total */
@@ -69,6 +47,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.header-expanded {
   border-bottom-left-radius: 0px;
   border-bottom-right-radius: 0px;
 }
@@ -166,4 +147,40 @@
   border-bottom-left-radius: 4px;
   /* Effet bulle gauche */
   border: 1px solid #ddd;
+}
+
+.card-action-item {
+  background-color: #e4e4e4;
+  color: black;
+}
+
+.card-action-item:hover {
+  background-color: #ffffff3b;
+  color: white;
+}
+
+/* Scroll text of header */
+
+.text-window {
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+  /* Progressive mask on edges */
+  mask-image: linear-gradient(to right, black 95%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, black 95%, transparent 100%);
+}
+
+.scroll-text {
+  display: inline-block;
+  width: max-content;
+  /* Important: for the element to be wider than the parent */
+  transition: transform 2s ease-in-out;
+  /* Ajustable speed */
+  will-change: transform;
+}
+
+/* Trigger the animation using the calculated variable */
+.chat-header:hover .scroll-text {
+  transform: translateX(var(--scroll-x, 0));
 }

@@ -36,6 +36,7 @@ import jakarta.persistence.Transient;
 		@Index(name = "idx_customer_order_comment_provision", columnList = "id_provision"),
 		@Index(name = "idx_customer_order_comment_quotation", columnList = "id_quotation"),
 		@Index(name = "idx_customer_order_comment_customer_order", columnList = "id_customer_order"),
+		@Index(name = "idx_customer_order_comment_is_read", columnList = "is_read")
 })
 public class CustomerOrderComment implements Serializable, IId {
 
@@ -98,6 +99,12 @@ public class CustomerOrderComment implements Serializable, IId {
 
 	@Transient
 	private Integer customerOrderId;
+
+	@Transient
+	private String tiersDenomination;
+
+	@Transient
+	private Integer tiersId;
 
 	public Integer getId() {
 		return id;
@@ -209,5 +216,21 @@ public class CustomerOrderComment implements Serializable, IId {
 
 	public void setCustomerOrderId(Integer customerOrderId) {
 		this.customerOrderId = customerOrderId;
+	}
+
+	public String getTiersDenomination() {
+		return tiersDenomination;
+	}
+
+	public void setTiersDenomination(String tiersDenomination) {
+		this.tiersDenomination = tiersDenomination;
+	}
+
+	public Integer getTiersId() {
+		return tiersId;
+	}
+
+	public void setTiersId(Integer tiersId) {
+		this.tiersId = tiersId;
 	}
 }

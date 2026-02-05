@@ -1,6 +1,9 @@
 package com.jss.osiris.modules.osiris.quotation.facade;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.osiris.profile.model.Employee;
+import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.dto.CustomerOrderDto;
 import com.jss.osiris.modules.osiris.quotation.dto.ProvisionDto;
 import com.jss.osiris.modules.osiris.quotation.dto.QuotationDto;
@@ -25,6 +30,7 @@ import com.jss.osiris.modules.osiris.quotation.service.ProvisionService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
 import com.jss.osiris.modules.osiris.quotation.service.infoGreffe.InfogreffeKbisService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
+import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 
 @Service
 public class QuotationFacade {
@@ -46,6 +52,9 @@ public class QuotationFacade {
 
     @Autowired
     CustomerOrderCommentService customerOrderCommentService;
+
+    @Autowired
+    EmployeeService employeeService;
 
     @Transactional(rollbackFor = Exception.class)
     public KbisRequest orderNewKbisForSiret(String siret, Integer provisionId) throws OsirisException {
@@ -81,15 +90,97 @@ public class QuotationFacade {
 
     /***************************** CHAT *************************/
     @Transactional(rollbackFor = Exception.class)
-    public List<CustomerOrderComment> getCommentsFromChatForIQuotation(Integer iQuotationId)
+    public Map<Integer, List<CustomerOrderComment>> getCommentsFromChatForIQuotations(List<Integer> iQuotationIds)
             throws OsirisException {
 
-        CustomerOrder customerOrder = customerOrderService.getCustomerOrder(iQuotationId);
-        if (customerOrder != null)
-            return customerOrderCommentService.getCommentsFromChatForOrder(customerOrder);
+        Map<Integer, List<CustomerOrderComment>> commentsForIQuotationsMap = new HashMap<Integer, List<CustomerOrderComment>>();
 
-        Quotation quotation = quotationService.getQuotation(iQuotationId);
-        return customerOrderCommentService.getCustomerOrderCommentForQuotation(quotation);
+        for (Integer iQuotationId : iQuotationIds) {
+            CustomerOrder customerOrder = customerOrderService.getCustomerOrder(iQuotationId);
+            if (customerOrder != null)
+                commentsForIQuotationsMap.put(iQuotationId,
+                        customerOrderCommentService.getCustomerOrderCommentForOrder(customerOrder));
+
+            Quotation quotation = quotationService.getQuotation(iQuotationId);
+            if (quotation != null)
+                commentsForIQuotationsMap.put(iQuotationId,
+                        customerOrderCommentService.getCustomerOrderCommentForQuotation(quotation));
+        }
+        return commentsForIQuotationsMap;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public List<CustomerOrderComment> getCommentsListFromChatForIQuotations(List<Integer> iQuotationIds)
+            throws OsirisException {
+        List<CustomerOrderComment> comments = new ArrayList<>();
+        List<CustomerOrderComment> commentsListForIQuotations = new ArrayList<>();
+
+        Tiers tiers = null;
+        for (Integer iQuotationId : iQuotationIds) {
+            CustomerOrder customerOrder = customerOrderService.getCustomerOrder(iQuotationId);
+            if (customerOrder != null) {
+                comments = customerOrderCommentService.getCustomerOrderCommentForOrder(customerOrder);
+                tiers = customerOrder.getResponsable().getTiers();
+            } else {
+                Quotation quotation = quotationService.getQuotation(iQuotationId);
+                if (quotation != null) {
+                    comments = customerOrderCommentService.getCustomerOrderCommentForQuotation(quotation);
+                    tiers = quotation.getResponsable().getTiers();
+                }
+            }
+
+            for (CustomerOrderComment comment : comments) {
+                populateCustomerOrderCommentTransientField(tiers, iQuotationId, comment);
+            }
+            commentsListForIQuotations.addAll(comments);
+        }
+
+        commentsListForIQuotations.sort((c1, c2) -> c1.getCreatedDateTime().compareTo(c2.getCreatedDateTime()));
+        return commentsListForIQuotations;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public List<CustomerOrderComment> getUnreadCommentsListFromChatForEmployee() {
+        List<CustomerOrderComment> comments = new ArrayList<>();
+
+        Employee currentEmployee = employeeService.getCurrentEmployee();
+
+        List<Employee> employeesThatIBackupAndMe = employeeService.getMyEmployeeThatIBackUp(currentEmployee);
+
+        for (Employee employee : employeesThatIBackupAndMe) {
+            List<CustomerOrderComment> commentsFoundsForEmployee = customerOrderCommentService
+                    .getUnreadCustomerOrderCommentForSalesEmployee(employee);
+            comments.addAll(commentsFoundsForEmployee);
+        }
+
+        for (CustomerOrderComment comment : comments) {
+            if (comment.getCustomerOrder() != null) {
+                populateCustomerOrderCommentTransientField(comment.getCustomerOrder().getResponsable().getTiers(),
+                        comment.getCustomerOrder().getId(), comment);
+            } else {
+                populateCustomerOrderCommentTransientField(comment.getQuotation().getResponsable().getTiers(),
+                        comment.getQuotation().getId(), comment);
+            }
+        }
+
+        comments.sort((c1, c2) -> c1.getCreatedDateTime().compareTo(c2.getCreatedDateTime()));
+
+        comments.sort((c1, c2) -> {
+            Integer c1IQuotationId = c1.getCustomerOrder() != null ? c1.getCustomerOrder().getId()
+                    : c1.getQuotation().getId();
+            Integer c2IQuotationId = c2.getCustomerOrder() != null ? c2.getCustomerOrder().getId()
+                    : c2.getQuotation().getId();
+            return c1IQuotationId.compareTo(c2IQuotationId);
+        });
+        return comments;
+    }
+
+    private void populateCustomerOrderCommentTransientField(Tiers tiers, Integer iQuotationId,
+            CustomerOrderComment comment) {
+        comment.setCustomerOrderId(iQuotationId);
+        comment.setTiersDenomination(tiers.getDenomination() != null ? tiers.getDenomination()
+                : (tiers.getFirstname() + " " + tiers.getLastname()));
+        comment.setTiersId(tiers.getId());
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -106,5 +197,19 @@ public class QuotationFacade {
         }
         customerOrderComment = customerOrderCommentService.addOrUpdateCustomerOrderComment(customerOrderComment);
         return customerOrderComment;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public Integer getTiersIdByIQuotationId(Integer iQuotationId) throws OsirisException {
+
+        CustomerOrder customerOrder = customerOrderService.getCustomerOrder(iQuotationId);
+        if (customerOrder != null)
+            return customerOrder.getResponsable().getTiers().getId();
+
+        Quotation quotation = quotationService.getQuotation(iQuotationId);
+        if (quotation != null)
+            return quotation.getResponsable().getTiers().getId();
+
+        return -1;
     }
 }

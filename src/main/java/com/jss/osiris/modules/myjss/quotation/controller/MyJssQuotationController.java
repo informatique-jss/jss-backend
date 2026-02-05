@@ -2179,6 +2179,7 @@ public class MyJssQuotationController {
 					HttpStatus.OK);
 		else
 			return new ResponseEntity<List<CustomerOrderComment>>(
-					quotationFacade.getCommentsFromChatForIQuotation(iQuotationId), HttpStatus.OK);
+					quotationFacade.getCommentsFromChatForIQuotations(Arrays.asList(iQuotationId)).get(iQuotationId),
+					HttpStatus.OK);
 	}
 }

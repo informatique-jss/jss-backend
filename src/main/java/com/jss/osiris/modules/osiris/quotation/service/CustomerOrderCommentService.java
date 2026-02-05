@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.miscellaneous.model.ActiveDirectoryGroup;
+import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
@@ -27,6 +28,8 @@ public interface CustomerOrderCommentService {
                         ActiveDirectoryGroup activeDirectoryGroup);
 
         public List<CustomerOrderComment> getCustomerOrderCommentForQuotation(Quotation quotation);
+
+        public List<CustomerOrderComment> getUnreadCustomerOrderCommentForSalesEmployee(Employee employee);
 
         public List<CustomerOrderComment> getCustomerOrderCommentForProvision(Provision provision);
 

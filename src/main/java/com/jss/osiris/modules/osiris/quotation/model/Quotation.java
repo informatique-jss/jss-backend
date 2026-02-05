@@ -55,7 +55,7 @@ public class Quotation implements IQuotation {
 	private Integer validationId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_responsable")
+	@JoinColumn(name = "id_responsable", nullable = false)
 	@IndexedField
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
 			JacksonViews.OsirisListView.class,

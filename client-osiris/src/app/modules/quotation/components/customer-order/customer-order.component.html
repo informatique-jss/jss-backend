@@ -1,4 +1,7 @@
 <p>
   customer-order works!
+
+  <button type="button" class="btn btn-primary" (click)="openChatForOrder()">
+    Ouvrir le chat de la commande
+  </button>
 </p>
-<customer-order-chat *ngIf="customerOrder" [iQuotationId]="customerOrder.id"></customer-order-chat>

@@ -1,5 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { AppRestService } from '../../main/services/appRest.service';
 import { QuotationDto } from '../model/QuotationDto';
 import { QuotationSearch } from '../model/QuotationSearch';
@@ -15,5 +16,9 @@ export class QuotationService extends AppRestService<QuotationDto> {
 
   searchQuotation(quotationSearch: QuotationSearch) {
     return this.postList(new HttpParams(), "quotation/search/v2", quotationSearch);
+  }
+
+  getTiersByIQuotation(iQuotationId: number) {
+    return this.get(new HttpParams().set("iQuotationId", iQuotationId), "quotation/tiers") as any as Observable<number>;
   }
 }

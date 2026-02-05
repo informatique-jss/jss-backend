@@ -10,5 +10,8 @@ export interface CustomerOrderComment {
   customerOrderId: number;
   isFromChat: boolean;
   isReadByCustomer: boolean;
+  isRead: boolean;
   isToDisplayToCustomer: boolean;
+  tiersDenomination: string;
+  tiersId: number;
 }

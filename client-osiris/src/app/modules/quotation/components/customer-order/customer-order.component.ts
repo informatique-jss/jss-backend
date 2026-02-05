@@ -4,13 +4,12 @@ import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { CustomerOrderDto } from '../../model/CustomerOrderDto';
 import { CustomerOrderService } from '../../services/customer-order.service';
 import { IQuotationCommentService } from '../../services/iquotation-comment.service';
-import { CustomerOrderChatComponent } from '../customer-order-chat/customer-order-chat.component';
 
 @Component({
   selector: 'customer-order',
   templateUrl: './customer-order.component.html',
   styleUrls: ['./customer-order.component.css'],
-  imports: [SHARED_IMPORTS, CustomerOrderChatComponent],
+  imports: [SHARED_IMPORTS],
   standalone: true
 })
 export class CustomerOrderComponent implements OnInit {
@@ -20,7 +19,7 @@ export class CustomerOrderComponent implements OnInit {
 
   constructor(
     private customerOrderService: CustomerOrderService,
-    private customerOrderCommentService: IQuotationCommentService,
+    private iQuotationCommentService: IQuotationCommentService,
     private activatedRoute: ActivatedRoute,
   ) { }
 
@@ -30,10 +29,12 @@ export class CustomerOrderComponent implements OnInit {
       this.customerOrderService.getCustomerOrder(this.idCustomerOrder).subscribe(response => {
         if (response) {
           this.customerOrder = response;
-          this.customerOrderCommentService.setWatchedOrder(response.id);
         }
       });
   }
 
-
+  openChatForOrder() {
+    if (this.customerOrder)
+      this.iQuotationCommentService.openChatForOrder(this.customerOrder.id);
+  }
 }
