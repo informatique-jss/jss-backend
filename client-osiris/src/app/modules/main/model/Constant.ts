@@ -4,6 +4,7 @@ import { Country } from "../../profile/model/Country";
 export interface Constant {
   id: number;
   activeDirectoryGroupSales: ActiveDirectoryGroup;
+  activeDirectoryGroupFormalites: ActiveDirectoryGroup;
   activeDirectoryGroupDirection: ActiveDirectoryGroup;
   countryFrance: Country;
 }

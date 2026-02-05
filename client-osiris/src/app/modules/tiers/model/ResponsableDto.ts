@@ -1,4 +1,6 @@
-export interface ResponsableDto {
+import { AutocompleteLabel } from "../../miscellaneous/model/AutocompleteLabel";
+
+export interface ResponsableDto extends AutocompleteLabel {
   id: number;
   civility: string;
   lastname: string;

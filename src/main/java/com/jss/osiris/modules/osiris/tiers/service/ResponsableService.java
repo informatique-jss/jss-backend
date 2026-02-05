@@ -2,6 +2,9 @@ package com.jss.osiris.modules.osiris.tiers.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.DocumentType;
@@ -11,12 +14,9 @@ import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.ResponsableSearch;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 import com.jss.osiris.modules.osiris.tiers.model.TiersSearch;
-import com.jss.osiris.modules.osiris.tiers.model.dto.ResponsableDto;
 
 public interface ResponsableService {
     public Responsable addOrUpdateResponsable(Responsable responsable);
-
-    public List<Responsable> getResponsables(String searchValue);
 
     public Responsable getResponsable(Integer id);
 
@@ -40,11 +40,11 @@ public interface ResponsableService {
      * |============================================================================
      */
 
-    public List<ResponsableDto> getResponsablesByTiers(Tiers tiers);
+    public Page<Responsable> getResponsables(String searchValue, Pageable pageable);
+
+    public List<Responsable> getResponsablesByTiers(Tiers tiers);
 
     public void updateConsentDateForCurrentUser();
 
     public List<Responsable> searchForResponsable(ResponsableSearch responsableSearch) throws OsirisException;
-
-    ResponsableDto getResponsableDto(Integer id);
 }

@@ -16,6 +16,7 @@ import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
+import com.jss.osiris.modules.osiris.quotation.model.QuotationSearch;
 import com.jss.osiris.modules.osiris.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderStatusService;
@@ -78,9 +79,13 @@ public class DashboardUserStatisticsServiceImpl implements DashboardUserStatisti
 
             // compute quotationToValidate
             statistics.setQuotationToValidate(0);
-            List<Quotation> quotationToValidate = quotationService.searchQuotations(
-                    Arrays.asList(quotationStatusService.getQuotationStatusByCode(QuotationStatus.SENT_TO_CUSTOMER)),
-                    listResponsables);
+
+            QuotationSearch quotationSearch = new QuotationSearch();
+            quotationSearch.setResponsables(listResponsables);
+            quotationSearch.setQuotationStatus(
+                    Arrays.asList(quotationStatusService.getQuotationStatusByCode(QuotationStatus.SENT_TO_CUSTOMER)));
+            List<Quotation> quotationToValidate = quotationService.searchForQuotations(quotationSearch);
+
             if (quotationToValidate != null)
                 statistics.setQuotationToValidate(quotationToValidate.size());
 
@@ -120,9 +125,13 @@ public class DashboardUserStatisticsServiceImpl implements DashboardUserStatisti
 
             // compute quotationToValidate
             statistics.setQuotationDraft(0);
-            List<Quotation> quotationDraft = quotationService.searchQuotations(
-                    Arrays.asList(quotationStatusService.getQuotationStatusByCode(QuotationStatus.DRAFT)),
-                    listResponsables);
+
+            QuotationSearch quotationSearchDraft = new QuotationSearch();
+            quotationSearchDraft.setResponsables(listResponsables);
+            quotationSearchDraft.setQuotationStatus(
+                    Arrays.asList(quotationStatusService.getQuotationStatusByCode(QuotationStatus.DRAFT)));
+            List<Quotation> quotationDraft = quotationService.searchForQuotations(quotationSearchDraft);
+
             if (quotationDraft != null)
                 statistics.setQuotationDraft(quotationDraft.size());
 

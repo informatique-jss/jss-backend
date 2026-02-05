@@ -59,6 +59,10 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.activeDirectoryGroupSales;
   }
 
+  getActiveDirectoryGroupFormalites() {
+    return this.constant.activeDirectoryGroupFormalites;
+  }
+  
   getActiveDirectoryGroupDirection() {
     return this.constant.activeDirectoryGroupDirection;
   }

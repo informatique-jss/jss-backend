@@ -271,4 +271,12 @@ public interface CustomerOrderRepository
         List<CustomerOrder> findCustomerOrderByForcedEmployeeAndStatusAssigned(CustomerOrderStatus customerOrderStatus,
                         Employee assignedUser);
 
+        @Query("select c from CustomerOrder c join c.responsable r join fetch c.assoAffaireOrders a join fetch a.affaire af "
+                        +
+                        "  where (0 in :commercial or r.salesEmployee.id in :commercial) " +
+                        "    and (0 in :responsables or  c.responsable.id in :responsables) " +
+                        "    and (0 in :status or  c.customerOrderStatus.id in :status) order by c.createdDate desc ")
+        List<CustomerOrder> searchCustomerOrders(Integer commercial, List<Integer> responsables,
+                        List<Integer> status);
+
 }

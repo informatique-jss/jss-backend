@@ -8,4 +8,5 @@ export interface TiersSearch {
   kpis: any;
   startDateKpis: Date;
   endDateKpis: Date;
+  tiersCategory: string;
 }

@@ -53,15 +53,37 @@ public interface ProvisionRepository extends QueryCacheCrudRepository<Provision,
 
         @Query("select p from Provision p left join p.announcement " +
                         " left join p.simpleProvision left join p.domiciliation left join p.formalite " +
-                        " join fetch p.service s join fetch s.assoAffaireOrder a join fetch a.affaire  join fetch a.customerOrder co "
+                        " join fetch p.service s join fetch s.assoAffaireOrder a join fetch a.affaire join fetch a.customerOrder co "
                         +
                         " where (p.announcement.announcementStatus in (:announcementStatus) or" +
                         " p.formalite.formaliteStatus in (:formaliteStatus) or " +
                         " p.simpleProvision.simpleProvisionStatus in (:simpleProvisionStatus) or " +
-                        " p.domiciliation.domiciliationStatus in (:domiciliationStatus))  " +
-                        " and    (0 in :formalisteIds or p.assignedTo.id in :formalisteIds) and co.customerOrderStatus not in (:excludedCustomerOrderStatus)    ")
-        List<Provision> searchProvision(List<Integer> formalisteIds, List<IWorkflowElement> announcementStatus,
-                        List<IWorkflowElement> simpleProvisionStatus, List<IWorkflowElement> formaliteStatus,
+                        " p.domiciliation.domiciliationStatus in (:domiciliationStatus)) " +
+                        " and (0 in :responsables or  co.responsable.id in :responsables) " +
+                        " and (0 in :formalisteIds or p.assignedTo.id in :formalisteIds) " +
+                        " and (0 in :commercialIds or co.responsable.salesEmployee.id in :commercialIds) " +
+                        " and co.customerOrderStatus not in (:excludedCustomerOrderStatus)")
+        List<Provision> searchProvision(List<Integer> formalisteIds,
+                        List<Integer> commercialIds,
+                        List<Integer> responsables,
+                        List<IWorkflowElement> announcementStatus,
+                        List<IWorkflowElement> simpleProvisionStatus,
+                        List<IWorkflowElement> formaliteStatus,
                         List<IWorkflowElement> domiciliationStatus,
                         List<CustomerOrderStatus> excludedCustomerOrderStatus);
+
+        @Query("select p from Provision p left join p.announcement " +
+                        " left join p.simpleProvision left join p.domiciliation left join p.formalite " +
+                        " join fetch p.service s join fetch s.assoAffaireOrder a join fetch a.affaire join fetch a.customerOrder co "
+                        +
+                        " where " +
+                        "(0 in :simpleProvisionStatus or p.simpleProvision.simpleProvisionStatus.id in (:simpleProvisionStatus)) "
+                        +
+                        " and (0 in :responsables or  co.responsable.id in :responsables) " +
+                        " and (0 in :formalisteIds or p.assignedTo.id in :formalisteIds) " +
+                        " and (0 in :commercialIds or co.responsable.salesEmployee.id in :commercialIds)")
+        List<Provision> searchForProvision(List<Integer> formalisteIds,
+                        List<Integer> commercialIds,
+                        List<Integer> responsables,
+                        List<Integer> simpleProvisionStatus);
 }
