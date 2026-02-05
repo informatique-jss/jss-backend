@@ -1119,6 +1119,7 @@ public class GeneratePdfDelegate {
                             new Phrase(announcementNoticeType, blueFontNoticeType));
                     noticeTypeCell.setBorder(Rectangle.NO_BORDER);
                     noticeTypeCell.setPaddingBottom(3);
+                    noticeTypeCell.setNoWrap(false);
                     textTable.addCell(noticeTypeCell);
 
                 } else {
