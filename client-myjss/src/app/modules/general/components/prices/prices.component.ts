@@ -52,7 +52,7 @@ export class PricesComponent implements OnInit {
   }
 
   getPricesByMail(event: any) {
-    if (!this.firstName || !this.lastName || !this.mail) {
+    if (!this.firstName || !this.lastName || !this.mail || !this.phoneNumber) {
       return;
     }
 
