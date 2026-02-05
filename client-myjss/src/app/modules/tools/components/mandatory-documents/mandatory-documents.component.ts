@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Meta, Title } from '@angular/platform-browser';
-import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 import { SERVICE_FIELD_TYPE_SELECT } from '../../../../libs/Constants';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { NewsletterComponent } from '../../../general/components/newsletter/newsletter.component';
@@ -20,7 +19,7 @@ import { ServiceTypeService } from '../../../quotation/services/service.type.ser
   templateUrl: './mandatory-documents.component.html',
   styleUrls: ['./mandatory-documents.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, GenericInputComponent, NewsletterComponent, NgbTooltip]
+  imports: [SHARED_IMPORTS, GenericInputComponent, NewsletterComponent]
 })
 export class MandatoryDocumentsComponent implements OnInit {
 

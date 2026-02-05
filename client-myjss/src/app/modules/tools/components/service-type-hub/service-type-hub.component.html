@@ -6,14 +6,16 @@
       <li class="breadcrumb-item"><a routerLink="/tools">Outils</a></li>
       <li class="breadcrumb-item"><a routerLink="/tools/mandatory-documents">Pièces obligatoires</a>
       </li>
-      <li class="breadcrumb-item"><a><span *ngIf="serviceType">{{ serviceType.customLabel }}</span></a>
+      <li class="breadcrumb-item"><a><span *ngIf="serviceType">{{ serviceType.serviceFamily.customLabel }} - {{
+            serviceType.customLabel }}</span></a>
       </li>
     </ol>
   </nav>
 
   <div class="row align-items-center pt-md-2 pt-lg-3 pt-xl-4 pb-lg-2 pb-xl-3">
     <div class="col-md-6 col-xl-6">
-      <h1 class="h1 pe-xxl-5 me-xl-2 mb-md-0 text-white" *ngIf="serviceType">{{ serviceType.customLabel }}</h1>
+      <h1 class="h1 pe-xxl-5 me-xl-2 mb-md-0 text-white" *ngIf="serviceType">{{ serviceType.serviceFamily.customLabel }}
+        - {{ serviceType.customLabel }}</h1>
     </div>
 
     <div class="col-md-3 col-xl-2 d-flex justify-content-end">
@@ -106,7 +108,7 @@
               <ng-container *ngIf="currentUser && serviceType.totalPreTaxPrice && serviceType.totalPreTaxPrice>0">
                 <h6 id="pricing">Tarifs</h6>
                 <div class="col-12 col-md-4 g-2 mb-2">
-                  <span>Prix total HT (€) : {{serviceType.totalPreTaxPrice}} <span
+                  <span>Prix total estimé (HT) : {{serviceType.totalPreTaxPrice}} €<span
                       *ngIf="serviceType.deboursAmount && serviceType.deboursAmount>0"> (dont débours
                       {{serviceType.deboursAmount}}
                       €) </span>
