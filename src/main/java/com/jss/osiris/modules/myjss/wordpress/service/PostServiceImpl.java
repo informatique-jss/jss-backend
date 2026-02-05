@@ -1085,8 +1085,8 @@ public class PostServiceImpl implements PostService {
             }
             post.setDepartments(departments);
         }
+        List<Tag> tags = new ArrayList<Tag>();
         if (post.getTags() != null && post.getTags().length > 0) {
-            List<Tag> tags = new ArrayList<Tag>();
             List<Tag> availableTags = tagService.getAvailableTags();
             for (Integer i : post.getTags()) {
                 for (Tag tag : availableTags) {
@@ -1096,8 +1096,8 @@ public class PostServiceImpl implements PostService {
                     }
                 }
             }
-            post.setPostTags(tags);
         }
+        post.setPostTags(tags);
 
         if (post.getSerie() != null && post.getSerie().length > 0) {
             List<Serie> series = new ArrayList<Serie>();
