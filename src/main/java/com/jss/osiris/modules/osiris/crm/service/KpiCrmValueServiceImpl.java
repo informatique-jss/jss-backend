@@ -79,11 +79,12 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
                         %s
                         and v.value_date<=:endDate
                         and v.id_kpi=:kpiCrm
-                        and (:salesEmployeeId=0 or r.id_commercial = :salesEmployeeId)
+                        and (:salesEmployeeId=0 or coalesce(v.id_sales_employee_overrided, r.id_commercial) = :salesEmployeeId)
                         group by t.id, v.value_date)
-                      """.formatted(getAggregateString(kpi.getAggregateTypeForTimePeriod()),
-                    getAggregateString(kpi.getAggregateTypeForResponsable()),
-                    searchModel.isAllTiers() ? "" : " and  r.id_tiers in (:tiersList) ");
+                      """
+                    .formatted(getAggregateString(kpi.getAggregateTypeForTimePeriod()),
+                            getAggregateString(kpi.getAggregateTypeForResponsable()),
+                            searchModel.isAllTiers() ? "" : " and  r.id_tiers in (:tiersList) ");
             ;
 
             @SuppressWarnings("unchecked")
@@ -119,12 +120,13 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
                         where r.id_tiers in (:tiersList)
                         and v.value_date>=:startDate
                         and v.value_date<=:endDate
-                        and (:salesEmployeeId=0 or r.id_commercial = :salesEmployeeId)
+                        and (:salesEmployeeId=0 or coalesce(v.id_sales_employee_overrided, r.id_commercial) = :salesEmployeeId)
                         and v.id_kpi=:kpiCrm
                         group by t.id, v.value_date)
                     group by id
-                      """.formatted(getAggregateString(kpi.getAggregateTypeForTimePeriod()),
-                    getAggregateString(kpi.getAggregateTypeForResponsable()));
+                      """
+                    .formatted(getAggregateString(kpi.getAggregateTypeForTimePeriod()),
+                            getAggregateString(kpi.getAggregateTypeForResponsable()));
             ;
 
             @SuppressWarnings("unchecked")
@@ -165,11 +167,12 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
                        where v.value_date>=:startDate
                        %s
                        and v.value_date<=:endDate
-                       and (:salesEmployeeId=0 or r.id_commercial = :salesEmployeeId)
+                       and (:salesEmployeeId=0 or coalesce(v.id_sales_employee_overrided, r.id_commercial) = :salesEmployeeId)
                        and v.id_kpi=:kpiCrm
                        group by t.id,date_trunc('%s',v.value_date)
-                     """.formatted(scale, getAggregateString(kpi.getAggregateTypeForTimePeriod()),
-                    searchModel.isAllTiers() ? "" : " and r.id_tiers in (:tiersList) ", scale);
+                     """
+                    .formatted(scale, getAggregateString(kpi.getAggregateTypeForTimePeriod()),
+                            searchModel.isAllTiers() ? "" : " and r.id_tiers in (:tiersList) ", scale);
             ;
 
             if (aggregateResponsable) {
@@ -249,12 +252,13 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
                         where v.value_date>=:startDate
                         %s
                         and v.value_date<=:endDate
-                        and (:salesEmployeeId=0 or r.id_commercial = :salesEmployeeId)
+                        and (:salesEmployeeId=0 or coalesce(v.id_sales_employee_overrided, r.id_commercial) = :salesEmployeeId)
                         and v.id_kpi=:kpiCrm
                         group by r.id, v.value_date)
-                      """.formatted(getAggregateString(kpi.getAggregateTypeForTimePeriod()),
-                    getAggregateString(kpi.getAggregateTypeForResponsable()),
-                    searchModel.isAllTiers() ? "" : " and  r.id in (:responsableList) ");
+                      """
+                    .formatted(getAggregateString(kpi.getAggregateTypeForTimePeriod()),
+                            getAggregateString(kpi.getAggregateTypeForResponsable()),
+                            searchModel.isAllTiers() ? "" : " and  r.id in (:responsableList) ");
             ;
 
             @SuppressWarnings("unchecked")
@@ -289,11 +293,12 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
                         and v.value_date>=:startDate
                         and v.value_date<=:endDate
                         and v.id_kpi=:kpiCrm
-                        and (:salesEmployeeId=0 or r.id_commercial = :salesEmployeeId)
+                        and (:salesEmployeeId=0 or coalesce(v.id_sales_employee_overrided, r.id_commercial) = :salesEmployeeId)
                         group by r.id, v.value_date)
                     group by id
-                      """.formatted(getAggregateString(kpi.getAggregateTypeForTimePeriod()),
-                    getAggregateString(kpi.getAggregateTypeForResponsable()));
+                      """
+                    .formatted(getAggregateString(kpi.getAggregateTypeForTimePeriod()),
+                            getAggregateString(kpi.getAggregateTypeForResponsable()));
             ;
 
             @SuppressWarnings("unchecked")
@@ -326,10 +331,11 @@ public class KpiCrmValueServiceImpl implements KpiCrmValueService {
                        %s
                        and v.value_date<=:endDate
                        and v.id_kpi=:kpiCrm
-                       and (:salesEmployeeId=0 or r.id_commercial = :salesEmployeeId)
+                       and (:salesEmployeeId=0 or coalesce(v.id_sales_employee_overrided, r.id_commercial) = :salesEmployeeId)
                        group by r.id, v.value_date
-                     """.formatted(getAggregateString(kpi.getAggregateTypeForTimePeriod()),
-                    searchModel.isAllTiers() ? "" : " and r.id in (:responsableList) ");
+                     """
+                    .formatted(getAggregateString(kpi.getAggregateTypeForTimePeriod()),
+                            searchModel.isAllTiers() ? "" : " and r.id in (:responsableList) ");
             ;
 
             if (aggregateResponsable) {

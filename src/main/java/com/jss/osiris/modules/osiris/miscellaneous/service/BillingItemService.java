@@ -13,4 +13,5 @@ public interface BillingItemService {
     public BillingItem addOrUpdateBillingItem(BillingItem billingItem);
 
     public List<BillingItem> getBillingItemByBillingType(BillingType billingType);
+
 }

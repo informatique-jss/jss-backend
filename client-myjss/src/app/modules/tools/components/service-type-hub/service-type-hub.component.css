@@ -1,0 +1,31 @@
+.border-bottom {
+  transition: all 0.3s ease;
+  border-left: 3px solid transparent;
+
+  a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    padding: 10px 0;
+  }
+
+  &:hover {
+    a {
+      color: var(--ar-gray-700);
+    }
+  }
+
+}
+
+
+h6[id] {
+  scroll-margin-top: 150px;
+}
+
+aside.sticky-top {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 120px;
+  align-self: flex-start;
+  height: auto;
+}

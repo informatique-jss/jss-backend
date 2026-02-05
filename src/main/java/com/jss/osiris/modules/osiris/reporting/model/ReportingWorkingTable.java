@@ -29,6 +29,8 @@ public class ReportingWorkingTable implements Serializable, IId {
 
 	private String viewName;
 
+	private Boolean isToPersist;
+
 	public Integer getId() {
 		return id;
 	}
@@ -67,6 +69,14 @@ public class ReportingWorkingTable implements Serializable, IId {
 
 	public void setViewName(String viewName) {
 		this.viewName = viewName;
+	}
+
+	public Boolean getIsToPersist() {
+		return isToPersist;
+	}
+
+	public void setIsToPersist(Boolean isToPersist) {
+		this.isToPersist = isToPersist;
 	}
 
 }

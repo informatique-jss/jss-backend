@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.IterableUtils;
@@ -67,6 +68,7 @@ import com.jss.osiris.modules.osiris.crm.service.VoucherService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceLabelResult;
+import com.jss.osiris.modules.osiris.invoicing.model.InvoiceStatus;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoicingBlockage;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceItemService;
@@ -111,6 +113,7 @@ import com.jss.osiris.modules.osiris.quotation.model.OrderingSearchResult;
 import com.jss.osiris.modules.osiris.quotation.model.OrderingSearchTagged;
 import com.jss.osiris.modules.osiris.quotation.model.PaperSet;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
+import com.jss.osiris.modules.osiris.quotation.model.ProvisionScreenType;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
@@ -767,6 +770,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                                     if (provision.getAnnouncement() != null
                                             && provision.getAnnouncement().getPublicationDate() != null && provision
                                                     .getAnnouncement().getPublicationDate().isBefore(LocalDate.now())) {
+                                        provision = provisionService.getProvision(provision.getId());
                                         provision.getAnnouncement().setPublicationDate(LocalDate.now());
                                         provisionService.addOrUpdateProvision(provision);
                                     }
@@ -1549,7 +1553,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     public List<CustomerOrder> searchOrdersForCurrentUser(List<String> customerOrderStatus,
             List<Integer> responsableIdToFilter,
-            Boolean withMissingAttachment, Integer page,
+            Boolean requiringAttention, Integer page,
             String sortBy) throws OsirisException {
         List<CustomerOrderStatus> customerOrderStatusToFilter = new ArrayList<CustomerOrderStatus>();
         boolean displayPayed = false;
@@ -1596,16 +1600,18 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
                 Sort sort = Sort.by(Arrays.asList(order));
                 Pageable pageableRequest = PageRequest.of(page, 10, sort);
-                return completeAdditionnalInformationForCustomerOrders(
-                        customerOrderRepository.searchOrdersForCurrentUser(responsablesToFilter,
-                                customerOrderStatusToFilter, pageableRequest, customerOrderStatusBilled, displayPayed,
-                                withMissingAttachment, AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT,
-                                FormaliteStatus.FORMALITE_WAITING_DOCUMENT,
-                                SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT),
-                        false);
+                List<CustomerOrder> customerOrdersFound = customerOrderRepository.searchOrdersForCurrentUser(
+                        responsablesToFilter,
+                        customerOrderStatusToFilter, customerOrderStatusBilled, displayPayed,
+                        pageableRequest);
+
+                if (requiringAttention.equals(Boolean.TRUE)) {
+                    Predicate<CustomerOrder> requiringAttentionPredicate = generateRequiringAttentionPredicate();
+                    customerOrdersFound = customerOrdersFound.stream().filter(requiringAttentionPredicate).toList();
+                }
+                return completeAdditionnalInformationForCustomerOrders(customerOrdersFound, false);
             }
         }
-
         return new ArrayList<>();
     }
 
@@ -1630,6 +1636,57 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         return completeAdditionnalInformationForCustomerOrders(
                 customerOrderRepository.searchCustomerOrders(commercialId, responsablesIds, statusIds),
                 false);
+    }
+                
+    private Predicate<CustomerOrder> generateRequiringAttentionPredicate() throws OsirisException {
+        InvoiceStatus invoicePayed = constantService.getInvoiceStatusPayed();
+        InvoiceStatus invoiceCancelled = constantService.getInvoiceStatusCancelled();
+
+        return new Predicate<CustomerOrder>() {
+            @Override
+            public boolean test(CustomerOrder customerOrder) {
+                // Wainting for deposit orders OR
+                boolean isWaitingDeposit = CustomerOrderStatus.WAITING_DEPOSIT
+                        .equals(customerOrder.getCustomerOrderStatus().getCode());
+
+                // Reminded invoices orders OR
+                boolean isInvoiceReminded = customerOrder.getInvoices().stream()
+                        .anyMatch(invoice -> invoice.getFirstReminderDateTime() != null
+                                && (!invoice.getInvoiceStatus().getCode().equals(invoicePayed.getCode())
+                                        || !invoice.getInvoiceStatus().getCode()
+                                                .equals(invoiceCancelled.getCode())));
+
+                // Waiting for missing documents orders
+                boolean isMissingAttachement = false;
+                if (CustomerOrderStatus.BEING_PROCESSED
+                        .equals(customerOrder.getCustomerOrderStatus().getCode()))
+                    for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+                        for (Service service : asso.getServices())
+                            if (service.getMissingAttachmentQueries() != null)
+                                for (Provision provision : service.getProvisions())
+                                    if (isProvisionStatusMissingAttachement(provision)) {
+                                        isMissingAttachement = true;
+                                        break;
+                                    }
+                return isWaitingDeposit || isInvoiceReminded || isMissingAttachement;
+            }
+        };
+    }
+
+    private boolean isProvisionStatusMissingAttachement(Provision provision) {
+        provision = provisionService.getProvision(provision.getId());
+        if (provision.getProvisionType().getProvisionScreenType().getCode()
+                .equals(ProvisionScreenType.ANNOUNCEMENT)
+                && provision.getAnnouncement().getAnnouncementStatus().getCode()
+                        .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT))
+            return true;
+        if (provision.getProvisionType().getProvisionScreenType().getCode()
+                .equals(ProvisionScreenType.FORMALITE)
+                && provision.getFormalite().getFormaliteStatus().getCode()
+                        .equals(FormaliteStatus.FORMALITE_WAITING_DOCUMENT))
+            return true;
+
+        return false;
     }
 
     public List<CustomerOrder> searchOrdersForCurrentUserAndAffaire(Affaire affaire) throws OsirisException {

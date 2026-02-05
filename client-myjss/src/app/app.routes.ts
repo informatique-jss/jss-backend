@@ -117,6 +117,10 @@ const routesTools = [
     ]
   },
   { path: 'post/:slug', loadComponent: () => import('./modules/tools/components/post/post.component').then(m => m.PostComponent) },
+  {
+    path: 'tools/mandatory-documents/service-type/:service-type-id',
+    loadComponent: () => import("./modules/tools/components/service-type-hub/service-type-hub.component").then(m => m.ServiceTypeHubComponent)
+  }
 ];
 
 export const routes: Routes = [

@@ -1089,8 +1089,15 @@ public class GeneratePdfDelegate {
                 textTable.getDefaultCell().setBorder(Rectangle.NO_BORDER);
                 textTable.getDefaultCell().setPadding(1);
 
-                final PdfPCell titleCell = new PdfPCell(
-                        new Phrase("Attestation de parution sur www.JSS.fr", blueFontTitle));
+                final PdfPCell titleCell;
+                if (isPublicationFlag) {
+                    titleCell = new PdfPCell(
+                            new Phrase("Témoin de publication sur www.JSS.fr", blueFontTitle));
+                } else {
+                    titleCell = new PdfPCell(
+                            new Phrase("Attestation de parution sur www.JSS.fr", blueFontTitle));
+                }
+
                 titleCell.setBorder(Rectangle.NO_BORDER);
                 titleCell.setPaddingBottom(3);
                 textTable.addCell(titleCell);

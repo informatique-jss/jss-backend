@@ -62,6 +62,10 @@ export class ConstantService extends AppRestService<Constant> {
   getActiveDirectoryGroupFormalites() {
     return this.constant.activeDirectoryGroupFormalites;
   }
+  
+  getActiveDirectoryGroupDirection() {
+    return this.constant.activeDirectoryGroupDirection;
+  }
 
   getCountryFrance() {
     return this.constant.countryFrance;
