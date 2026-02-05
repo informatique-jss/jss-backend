@@ -256,7 +256,7 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
                                     + (formaliteInfogreffe.getGreffeDestinataire() != null
                                             ? formaliteInfogreffe.getGreffeDestinataire().getNom()
                                             : ""),
-                            false, false);
+                            false, false, false);
 
                     customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
                             constantService.getActiveDirectoryGroupFormalites());
@@ -273,7 +273,7 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
                                     + (formaliteInfogreffe.getGreffeDestinataire() != null
                                             ? formaliteInfogreffe.getGreffeDestinataire().getNom()
                                             : ""),
-                            false, false);
+                            false, false, false);
 
                     customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
                             constantService.getActiveDirectoryGroupFormalites());

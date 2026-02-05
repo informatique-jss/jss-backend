@@ -42,3 +42,5 @@ export const PROVISION_SCREEN_TYPE_FORMALITE = "FORMALITE";
 export const PROVISION_SCREEN_TYPE_STANDARD = "STANDARD";
 
 export const COOKIE_KEY = "consent-cookie";
+
+export const COMMENT_POST_REFRESH_INTERVAL: number = 2000;

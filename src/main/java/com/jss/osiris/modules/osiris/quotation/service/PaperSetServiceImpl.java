@@ -78,7 +78,7 @@ public class PaperSetServiceImpl implements PaperSetService {
                 "L'action " + paperSet.getPaperSetType().getLabel() + " n°" + paperSet.getId()
                         + " a été annulée (emplacement n°" + paperSet.getLocationNumber() + "). "
                         + paperSet.getValidationComment(),
-                false, false);
+                false, false, false);
 
         customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
                 constantService.getActiveDirectoryGroupFormalites());
@@ -93,7 +93,7 @@ public class PaperSetServiceImpl implements PaperSetService {
                 "L'action " + paperSet.getPaperSetType().getLabel() + " n°" + paperSet.getId()
                         + " a été effectuée (emplacement n°" + paperSet.getLocationNumber() + "). "
                         + paperSet.getValidationComment(),
-                false, false);
+                false, false, false);
 
         customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
                 constantService.getActiveDirectoryGroupFormalites());

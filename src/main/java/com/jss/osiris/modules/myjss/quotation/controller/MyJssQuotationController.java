@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.ValidationHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
@@ -80,6 +81,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.controller.QuotationValidationHelper;
 import com.jss.osiris.modules.osiris.quotation.dto.ServiceFieldTypeDto;
+import com.jss.osiris.modules.osiris.quotation.facade.QuotationFacade;
 import com.jss.osiris.modules.osiris.quotation.facade.ServiceFieldTypeFacade;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
@@ -271,6 +273,12 @@ public class MyJssQuotationController {
 
 	@Autowired
 	AssoAnnouncementNoticeTemplateFragmentService assoAnnouncementNoticeTemplateFragmentService;
+
+	@Autowired
+	ActiveDirectoryHelper activeDirectoryHelper;
+
+	@Autowired
+	QuotationFacade quotationFacade;
 
 	private final ConcurrentHashMap<String, AtomicLong> requestCount = new ConcurrentHashMap<>();
 	private final long rateLimit = 1000;
@@ -1175,18 +1183,23 @@ public class MyJssQuotationController {
 	}
 
 	@PostMapping(inputEntryPoint + "/customer-order-comment")
-	public ResponseEntity<Boolean> addOrUpdateCustomerOrderComment(
+	public ResponseEntity<CustomerOrderComment> addOrUpdateCustomerOrderComment(
 			@RequestBody CustomerOrderComment customerOrderComment) throws OsirisValidationException, OsirisException {
 		CustomerOrderComment customerOrderCommentOriginal = null;
 
-		if (customerOrderComment.getCustomerOrder() == null
-				|| !myJssQuotationValidationHelper.canSeeQuotation(customerOrderComment.getCustomerOrder()))
-			return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+		if (customerOrderComment.getCustomerOrder() == null || customerOrderComment.getCustomerOrder().getId() == null)
+			return new ResponseEntity<>(null, HttpStatus.OK);
+
+		customerOrderComment.setCustomerOrder(
+				customerOrderService.getCustomerOrder(customerOrderComment.getCustomerOrder().getId()));
+
+		if (!myJssQuotationValidationHelper.canSeeQuotation(customerOrderComment.getCustomerOrder()))
+			return new ResponseEntity<>(null, HttpStatus.OK);
 
 		if (customerOrderComment.getId() != null) {
 			if (customerOrderComment.getCurrentCustomer() == null || !customerOrderComment.getCurrentCustomer().getId()
 					.equals(employeeService.getCurrentMyJssUser().getId()))
-				return new ResponseEntity<Boolean>(false, HttpStatus.OK);
+				return new ResponseEntity<>(null, HttpStatus.OK);
 
 			customerOrderCommentOriginal = (CustomerOrderComment) validationHelper.validateReferential(
 					customerOrderComment,
@@ -1198,13 +1211,13 @@ public class MyJssQuotationController {
 
 		if (customerOrderComment.getId() == null) {
 			customerOrderCommentService.createCustomerOrderComment(customerOrderComment.getCustomerOrder(),
-					customerOrderComment.getComment(), false, true);
+					customerOrderComment.getComment(), false, true, customerOrderComment.getIsFromChat());
 		} else if (customerOrderCommentOriginal != null) {
 			customerOrderComment.setCreatedDateTime(customerOrderCommentOriginal.getCreatedDateTime());
-			customerOrderCommentService.addOrUpdateCustomerOrderComment(customerOrderComment);
+			customerOrderComment = customerOrderCommentService.addOrUpdateCustomerOrderComment(customerOrderComment);
 		}
 
-		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+		return new ResponseEntity<CustomerOrderComment>(customerOrderComment, HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/affaire/search/current")
@@ -2154,5 +2167,23 @@ public class MyJssQuotationController {
 				"Paiement de la facture pour la commande n°" + String.join(", ",
 						orders.stream().map(c -> c.getId().toString()).collect(Collectors.toList())));
 		return new ResponseEntity<>("{\"link\":\"" + link + "\"}", HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/customer-order-comments/from-chat")
+	public ResponseEntity<List<CustomerOrderComment>> getNewCustomerCommentsFromChat(Integer iQuotationId)
+			throws OsirisValidationException, OsirisException {
+
+		if (iQuotationId == null)
+			throw new OsirisValidationException("iQuotationId");
+
+		if (employeeService.getCurrentEmployee() != null
+				&& !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.SALES_GROUP))
+			return new ResponseEntity<List<CustomerOrderComment>>(
+					new ArrayList<>(),
+					HttpStatus.OK);
+		else
+			return new ResponseEntity<List<CustomerOrderComment>>(
+					quotationFacade.getCommentsFromChatForIQuotations(Arrays.asList(iQuotationId)).get(iQuotationId),
+					HttpStatus.OK);
 	}
 }

@@ -37,6 +37,9 @@ public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentServ
     @Autowired
     ConstantService constantService;
 
+    @Autowired
+    CustomerOrderService customerOrderService;
+
     @Override
     public List<CustomerOrderComment> getCustomerOrderComments() {
         return IterableUtils.toList(customerOrderCommentRepository.findAll());
@@ -50,6 +53,11 @@ public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentServ
     @Override
     public List<CustomerOrderComment> getCustomerOrderCommentForQuotation(Quotation quotation) {
         return customerOrderCommentRepository.findByQuotation(quotation);
+    }
+
+    @Override
+    public List<CustomerOrderComment> getUnreadCustomerOrderCommentForSalesEmployee(Employee employee) {
+        return customerOrderCommentRepository.findUnreadCommmentsForSalesEmployee(employee);
     }
 
     @Override
@@ -69,12 +77,18 @@ public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentServ
     @Transactional(rollbackFor = Exception.class)
     public CustomerOrderComment addOrUpdateCustomerOrderComment(
             CustomerOrderComment customerOrderComment) {
+        if (customerOrderComment.getIsRead() == null)
+            customerOrderComment.setIsRead(false);
+        if (customerOrderComment.getIsReadByCustomer() == null)
+            customerOrderComment.setIsReadByCustomer(false);
+        if (customerOrderComment.getCreatedDateTime() == null)
+            customerOrderComment.setCreatedDateTime(LocalDateTime.now());
         return customerOrderCommentRepository.save(customerOrderComment);
     }
 
     @Override
     public CustomerOrderComment createCustomerOrderComment(CustomerOrder customerOrder, String contentComment,
-            Boolean doNotNotify, Boolean isToDisplayToCustomer)
+            Boolean doNotNotify, Boolean isToDisplayToCustomer, Boolean isFromChat)
             throws OsirisException {
         CustomerOrderComment customerOrderComment = new CustomerOrderComment();
         customerOrderComment.setCustomerOrder(customerOrder);
@@ -92,6 +106,8 @@ public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentServ
         }
         customerOrderComment.setCreatedDateTime(LocalDateTime.now());
         customerOrderComment.setIsRead(false);
+        customerOrderComment.setIsReadByCustomer(false);
+        customerOrderComment.setIsFromChat(isFromChat);
 
         return addOrUpdateCustomerOrderComment(customerOrderComment);
     }
@@ -106,5 +122,12 @@ public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentServ
             customerOrderComment.getActiveDirectoryGroups().add(activeDirectoryGroup);
         }
         return addOrUpdateCustomerOrderComment(customerOrderComment);
+    }
+
+    @Override
+    public List<CustomerOrderComment> getCommentsFromChatForOrder(CustomerOrder customerOrder) {
+        return customerOrderCommentRepository
+                .findByCustomerOrderAndIsFromChat(customerOrder, true);
+
     }
 }

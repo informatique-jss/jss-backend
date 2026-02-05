@@ -645,8 +645,7 @@
         <div class="simplebar-content-wrapper" tabindex="0" role="region" style="height: auto;  ">
           <div class="simplebar-content" style="padding: 24px 38px 0px;">
             <!-- Message -->
-            <div class="ms-auto mb-3" style="max-width: 392px;"
-              *ngIf="!customerOrderComments || customerOrderComments.length==0">
+            <div class="ms-auto mb-3" style="max-width: 392px;" *ngIf="comments.length==0">
               <div class="d-flex align-items-end mb-2">
                 <div class="message-box-end bg-primary text-white"><span class="break-line">Posez votre question
                     ci-dessous !</span></div>
@@ -659,8 +658,9 @@
               <div class="fs-xs text-body-secondary"> {{currentDate|date:'dd/MM/yyyy HH:mm'}}
               </div>
             </div>
-            <ng-container *ngFor="let comment of customerOrderComments">
-              <div class="mb-3" style="max-width: 392px;" *ngIf="comment.currentCustomer">
+            <div *ngFor="let comment of comments; let i = index">
+              <!--Message sent-->
+              <div class="mb-3" style="max-width: 392px;" *ngIf="!comment.employee || !comment.employee.id">
                 <div class="d-flex align-items-end mb-2">
                   <div class="flex-shrink-0 pe-2 me-1">
                     <avatar class="avatar-select" [user]="comment.currentCustomer" [size]="40"></avatar>
@@ -668,16 +668,12 @@
                   <div class="message-box-start text-dark"><span class="break-line"
                       [innerHTML]="comment.comment | trustHtml"></span></div>
                 </div>
-                <div class="fs-xs text-body-secondary text-end"> {{comment.createdDateTime|date:'dd/MM/yyyy HH:mm'}} <i
-                    class="ai-edit " style="cursor: pointer;"
-                    *ngIf="comment.currentCustomer && currentUser &&  comment.currentCustomer.id == currentUser.id"
-                    placement="right" ngbTooltip="Modifier le commentaire"
-                    (click)="editCustomerOrderComment(comment)"></i>
+                <div class="fs-xs text-body-secondary text-end"> {{comment.createdDateTime|date:'dd/MM/yyyy HH:mm'}}
                 </div>
               </div>
 
-              <!-- Message -->
-              <div class="ms-auto mb-3" style="max-width: 392px;" *ngIf="comment.employee">
+              <!-- Message received -->
+              <div class="ms-auto mb-3" style="max-width: 392px;" *ngIf="comment.employee && comment.employee.id">
                 <div class="d-flex align-items-end mb-2">
                   <div class="message-box-end bg-primary text-white break-line"><span
                       [innerHTML]="comment.comment | trustHtml"></span> </div>
@@ -690,7 +686,7 @@
                 <div class="fs-xs text-body-secondary"> {{comment.createdDateTime|date:'dd/MM/yyyy HH:mm'}}
                 </div>
               </div>
-            </ng-container>
+            </div>
           </div>
         </div>
       </div>
@@ -698,9 +694,9 @@
   </div>
   <div class="card-footer w-100 border-0 mx-0 px-4">
     <div class="d-flex flex-column flex-md-row align-items-end border rounded-3 pb-3 pe-3 mx-sm-3">
-      <textarea [(ngModel)]="newCustomerOrderComment.comment" class="form-control border-0" rows="3"
-        placeholder="Ecrivez un message" style="resize: none;"></textarea>
-      <div class="nav flex-nowrap align-items-center">
+      <textarea [(ngModel)]="newComment.comment" class="form-control border-0" rows="3" placeholder="Ecrivez un message"
+        style="resize: none;"></textarea>
+      <div class="nav flex-nowrap align-items-center" id="send-message">
         <button class="btn btn-sm btn-secondary ms-3" type="button" (click)="addCustomerOrderComment()">Envoyer</button>
       </div>
     </div>

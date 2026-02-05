@@ -3,7 +3,10 @@ package com.jss.osiris.modules.osiris.quotation.facade;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.dto.CustomerOrderDto;
 import com.jss.osiris.modules.osiris.quotation.dto.ProvisionDto;
 import com.jss.osiris.modules.osiris.quotation.dto.QuotationDto;
@@ -13,14 +16,18 @@ import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
+import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 
 @org.springframework.stereotype.Service
 public class QuotationDtoHelper {
 
-    // @Autowired
-    // private CustomerOrderService customerOrderService;
+    @Autowired
+    private EmployeeService employeeService;
+
+    @Autowired
+    CustomerOrderService customerOrderService;
 
     public List<QuotationDto> mapQuotations(List<Quotation> quotations) throws OsirisException {
         List<QuotationDto> outQuotationsDtos = new ArrayList<QuotationDto>();

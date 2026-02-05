@@ -29,12 +29,14 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(indexes = {
 		@Index(name = "idx_customer_order_comment_provision", columnList = "id_provision"),
 		@Index(name = "idx_customer_order_comment_quotation", columnList = "id_quotation"),
 		@Index(name = "idx_customer_order_comment_customer_order", columnList = "id_customer_order"),
+		@Index(name = "idx_customer_order_comment_is_read", columnList = "is_read")
 })
 public class CustomerOrderComment implements Serializable, IId {
 
@@ -89,6 +91,20 @@ public class CustomerOrderComment implements Serializable, IId {
 
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class })
 	private Boolean isToDisplayToCustomer;
+
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class })
+	private Boolean isFromChat;
+
+	private Boolean isReadByCustomer;
+
+	@Transient
+	private Integer customerOrderId;
+
+	@Transient
+	private String tiersDenomination;
+
+	@Transient
+	private Integer tiersId;
 
 	public Integer getId() {
 		return id;
@@ -176,5 +192,45 @@ public class CustomerOrderComment implements Serializable, IId {
 
 	public void setIsToDisplayToCustomer(Boolean isToDisplayToCustomer) {
 		this.isToDisplayToCustomer = isToDisplayToCustomer;
+	}
+
+	public Boolean getIsFromChat() {
+		return isFromChat;
+	}
+
+	public void setIsFromChat(Boolean isFromChat) {
+		this.isFromChat = isFromChat;
+	}
+
+	public Boolean getIsReadByCustomer() {
+		return isReadByCustomer;
+	}
+
+	public void setIsReadByCustomer(Boolean isReadByCustomer) {
+		this.isReadByCustomer = isReadByCustomer;
+	}
+
+	public Integer getCustomerOrderId() {
+		return customerOrderId;
+	}
+
+	public void setCustomerOrderId(Integer customerOrderId) {
+		this.customerOrderId = customerOrderId;
+	}
+
+	public String getTiersDenomination() {
+		return tiersDenomination;
+	}
+
+	public void setTiersDenomination(String tiersDenomination) {
+		this.tiersDenomination = tiersDenomination;
+	}
+
+	public Integer getTiersId() {
+		return tiersId;
+	}
+
+	public void setTiersId(Integer tiersId) {
+		this.tiersId = tiersId;
 	}
 }

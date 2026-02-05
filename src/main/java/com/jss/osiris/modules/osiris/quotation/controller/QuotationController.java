@@ -3304,4 +3304,58 @@ public class QuotationController {
     return new ResponseEntity<List<ProvisionDto>>(test,
         HttpStatus.OK);
   }
+
+  @PostMapping(inputEntryPoint + "/customer-order-comment/v2")
+  public ResponseEntity<CustomerOrderComment> saveCustomerOrderComment(
+      @RequestBody CustomerOrderComment customerOrderComment)
+      throws OsirisValidationException, OsirisException {
+    if (customerOrderComment == null
+        || (customerOrderComment.getCustomerOrderId() == null && customerOrderComment.getCustomerOrder() == null))
+      throw new OsirisValidationException(
+          "customerOrderComment or customerOrderComment.Employee or customerOrderComment.CurrentUser or CustomerOrderId");
+
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderComment.getCustomerOrderId());
+    if (customerOrder == null)
+      throw new OsirisValidationException("no customerOrder attached to comment");
+
+    return new ResponseEntity<CustomerOrderComment>(
+        quotationFacade.addOrUpdateCustomerOrderComment(customerOrderComment),
+        HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/customer-order-comments/from-chat")
+  public ResponseEntity<List<CustomerOrderComment>> getCustomerCommentsFromChatForIQuotations(
+      @RequestBody List<Integer> iQuotationIds)
+      throws OsirisValidationException, OsirisException {
+
+    if (iQuotationIds == null)
+      throw new OsirisValidationException("iQuotationId");
+
+    else
+      return new ResponseEntity<List<CustomerOrderComment>>(
+          quotationFacade.getCommentsListFromChatForIQuotations(iQuotationIds), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/customer-order-comments/unread")
+  public ResponseEntity<List<CustomerOrderComment>> getUnreadCustomerCommentsFromChatForEmployee()
+      throws OsirisValidationException, OsirisException {
+    return new ResponseEntity<List<CustomerOrderComment>>(
+        quotationFacade.getUnreadCommentsListFromChatForEmployee(), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/quotation/tiers")
+  public ResponseEntity<Integer> getTiersIdByIQuotationId(@RequestParam Integer iQuotationId)
+      throws OsirisValidationException, OsirisException {
+
+    if (iQuotationId == null)
+      throw new OsirisValidationException("iQuotationId");
+
+    if (employeeService.getCurrentEmployee() != null
+        && !activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.SALES_GROUP))
+      return new ResponseEntity<Integer>(-1, HttpStatus.OK);
+
+    else
+      return new ResponseEntity<Integer>(
+          quotationFacade.getTiersIdByIQuotationId(iQuotationId), HttpStatus.OK);
+  }
 }

@@ -238,4 +238,6 @@ public interface CustomerOrderService {
                         LocalDateTime updateEndDate);
 
         public List<CustomerOrder> searchActiveRecurringOrder();
+
+        public List<CustomerOrder> getOrdersWithNewCommentFromCustomer(Employee employee);
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.miscellaneous.model.ActiveDirectoryGroup;
+import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
@@ -19,7 +20,7 @@ public interface CustomerOrderCommentService {
         public CustomerOrderComment addOrUpdateCustomerOrderComment(CustomerOrderComment customerOrderComment);
 
         public CustomerOrderComment createCustomerOrderComment(CustomerOrder customerOrder, String contentComment,
-                        Boolean doNotNotify, Boolean isToDisplayToCustomer)
+                        Boolean doNotNotify, Boolean isToDisplayToCustomer, Boolean isFromChat)
                         throws OsirisException;
 
         public CustomerOrderComment tagActiveDirectoryGroupOnCustomerOrderComment(
@@ -28,6 +29,10 @@ public interface CustomerOrderCommentService {
 
         public List<CustomerOrderComment> getCustomerOrderCommentForQuotation(Quotation quotation);
 
+        public List<CustomerOrderComment> getUnreadCustomerOrderCommentForSalesEmployee(Employee employee);
+
         public List<CustomerOrderComment> getCustomerOrderCommentForProvision(Provision provision);
+
+        public List<CustomerOrderComment> getCommentsFromChatForOrder(CustomerOrder customerOrder);
 
 }
