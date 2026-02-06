@@ -38,6 +38,7 @@ import com.jss.osiris.modules.osiris.accounting.model.AccountingRecordSearch;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingRecordSearchResult;
 import com.jss.osiris.modules.osiris.accounting.model.FaeResult;
 import com.jss.osiris.modules.osiris.accounting.model.FnpResult;
+import com.jss.osiris.modules.osiris.accounting.model.PaySlipLineType;
 import com.jss.osiris.modules.osiris.accounting.model.PrincipalAccountingAccount;
 import com.jss.osiris.modules.osiris.accounting.model.SuspiciousInvoiceResult;
 import com.jss.osiris.modules.osiris.accounting.model.TreasureResult;
@@ -45,6 +46,8 @@ import com.jss.osiris.modules.osiris.accounting.service.AccountingAccountClassSe
 import com.jss.osiris.modules.osiris.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingJournalService;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingRecordService;
+import com.jss.osiris.modules.osiris.accounting.service.NibelisService;
+import com.jss.osiris.modules.osiris.accounting.service.PaySlipLineTypeService;
 import com.jss.osiris.modules.osiris.accounting.service.PrincipalAccountingAccountService;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
@@ -83,6 +86,41 @@ public class AccountingController {
 
     @Autowired
     ActiveDirectoryHelper activeDirectoryHelper;
+
+    @Autowired
+    PaySlipLineTypeService paySlipLineTypeService;
+
+    @Autowired
+    NibelisService nibelisService;
+
+    @GetMapping(inputEntryPoint + "/pay-slip-line-types")
+    public ResponseEntity<List<PaySlipLineType>> getPaySlipLineTypes() {
+        return new ResponseEntity<List<PaySlipLineType>>(paySlipLineTypeService.getPaySlipLineTypes(), HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/pay-slip-line-type")
+    public ResponseEntity<PaySlipLineType> addOrUpdatePaySlipLineType(
+            @RequestBody PaySlipLineType paySlipLineType) throws OsirisValidationException, OsirisException {
+        if (paySlipLineType.getId() != null)
+            validationHelper.validateReferential(paySlipLineType, true, "paySlipLineTypes");
+        validationHelper.validateString(paySlipLineType.getCode(), true, "code");
+        validationHelper.validateString(paySlipLineType.getLabel(), true, "label");
+        validationHelper.validateReferential(paySlipLineType.getAccountingAccount(), true, "accountingAccount");
+
+        return new ResponseEntity<PaySlipLineType>(paySlipLineTypeService.addOrUpdatePaySlipLineType(paySlipLineType),
+                HttpStatus.OK);
+    }
+
+    @GetMapping(inputEntryPoint + "/payslip/generate")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE)
+    public ResponseEntity<List<AccountingRecord>> generatePayslip(
+            @RequestParam("period") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate period)
+            throws OsirisException {
+        if (period == null)
+            throw new OsirisValidationException("period");
+        return new ResponseEntity<List<AccountingRecord>>(
+                nibelisService.generateAccountingRecordForPayslip(period, false), HttpStatus.OK);
+    }
 
     @GetMapping(inputEntryPoint + "/principal-accounting-accounts")
     public ResponseEntity<List<PrincipalAccountingAccount>> getPrincipalAccountingAccounts() {

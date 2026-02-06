@@ -149,6 +149,9 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("schedulling.log.osiris.balo.update");
         isOk = isOk && checkProperty("schedulling.log.osiris.jo.update");
         isOk = isOk && checkProperty("schedulling.mail.purge.order");
+        isOk = isOk && checkProperty("nibelis.api.baseurl");
+        isOk = isOk && checkProperty("nibelis.api.username");
+        isOk = isOk && checkProperty("nibelis.api.password");
 
         isOk = isOk && checkProperty("mail.imap.host");
         isOk = isOk && checkProperty("mail.imap.port");
