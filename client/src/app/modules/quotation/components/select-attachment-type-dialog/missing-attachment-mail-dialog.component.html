@@ -24,19 +24,19 @@
   <p>Pièces demandées : </p>
   <div *ngIf="selectedAssoServiceDocument && selectedAssoServiceDocument.length>0">
     <table class="full-width">
-      <tr *ngFor="let assoServiceDocument of selectedAssoServiceDocument; let index = index">
+      <tr *ngFor="let assoServiceDocument of selectedAssoServiceDocument ">
         <td style="width: 300px;">
           {{assoServiceDocument.typeDocument.customLabel}} - {{assoServiceDocument.typeDocument.attachmentType.label}}
           {{assoServiceDocument.isMandatory? " - Obligatoire":""}}
         </td>
         <td colspan="3">
           <generic-textarea [(model)]="assoServiceDocument.formalisteComment" label="Commentaire du formaliste"
-            [form]="attachmentTypeForm" [propertyName]="'formalisteCommentAttachment'+index" [isMandatory]="false"
-            [isDisabled]="!editMode" [numberOfLines]="3"></generic-textarea>
+            [form]="attachmentTypeForm" [propertyName]="'formalisteCommentAttachment'+assoServiceDocument.id"
+            [isMandatory]="false" [isDisabled]="!editMode" [numberOfLines]="3"></generic-textarea>
         </td>
         <td style="width: 80px;">
-          <button mat-raised-button color="accent" (click)="deleteAssoServiceDocument(index)" *ngIf="editMode"
-            matTooltip="Supprimer de la sélection"><mat-icon style="margin : 0" class="pointer">
+          <button mat-raised-button color="accent" (click)="deleteAssoServiceDocument(assoServiceDocument.id!)"
+            *ngIf="editMode" matTooltip="Supprimer de la sélection"><mat-icon style="margin : 0" class="pointer">
               delete</mat-icon></button>
         </td>
       </tr>
@@ -47,19 +47,19 @@
   <p>Champs demandés : </p>
   <div *ngIf="selectedAssoServiceFieldType && selectedAssoServiceFieldType.length>0">
     <table class="full-width">
-      <tr *ngFor="let assoServiceFieldType of selectedAssoServiceFieldType; let index = index">
+      <tr *ngFor="let assoServiceFieldType of selectedAssoServiceFieldType ">
         <td style="width: 300px;">
           {{assoServiceFieldType.serviceFieldType.label}}
           {{assoServiceFieldType.isMandatory? " - Obligatoire":""}}
         </td>
         <td colspan="3">
           <generic-textarea [(model)]="assoServiceFieldType.formalisteComment" label="Commentaire du formaliste"
-            [form]="attachmentTypeForm" [propertyName]="'formalisteCommentFieldType'+index" [isMandatory]="false"
-            [isDisabled]="!editMode" [numberOfLines]="3"></generic-textarea>
+            [form]="attachmentTypeForm" [propertyName]="'formalisteCommentFieldType'+assoServiceFieldType.id"
+            [isMandatory]="false" [isDisabled]="!editMode" [numberOfLines]="3"></generic-textarea>
         </td>
         <td style="width: 80px;">
-          <button mat-raised-button color="accent" (click)="deleteAssoServiceFieldType(index)" *ngIf="editMode"
-            matTooltip="Supprimer de la sélection"><mat-icon style="margin : 0" class="pointer">
+          <button mat-raised-button color="accent" (click)="deleteAssoServiceFieldType(assoServiceFieldType.id)"
+            *ngIf="editMode" matTooltip="Supprimer de la sélection"><mat-icon style="margin : 0" class="pointer">
               delete</mat-icon></button>
         </td>
       </tr>
