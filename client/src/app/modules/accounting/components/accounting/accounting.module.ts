@@ -22,6 +22,7 @@ import { AddAccountingRecordComponent } from "../add-accounting-record/add-accou
 import { CounterPartDialogComponent } from "../counter-part-dialog/counter-part-dialog.component";
 import { FaeComponent } from "../fae/fae.component";
 import { FnpComponent } from "../fnp/fnp.component";
+import { PayslipListComponent } from "../payslip-list/payslip-list.component";
 import { SuspiciousInvoiceComponent } from '../suspicious-invoice/suspicious-invoice.component';
 import { TreasureComponent } from "../treasure/treasure.component";
 import { AccountingBalanceGeneraleComponent } from "./../accounting-balance-generale/accounting-balance-generale.component";
@@ -67,7 +68,8 @@ const routes: Routes = [
     FnpComponent,
     TreasureComponent,
     SuspiciousInvoiceComponent,
-    CounterPartDialogComponent
+    CounterPartDialogComponent,
+    PayslipListComponent
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }

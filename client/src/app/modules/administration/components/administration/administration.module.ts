@@ -76,6 +76,7 @@ import { ReferentialNoticeTypeFamilyComponent } from '../referentials/referentia
 import { ReferentialNoticeTypeComponent } from '../referentials/referential-notice-type/referential-notice-type.component';
 import { ReferentialOrderBlockageComponent } from '../referentials/referential-order-blockage/referential-order-blockage.component';
 import { ReferentialPaperSetTypeComponent } from '../referentials/referential-paper-set/referential-paper-set.component';
+import { ReferentialPaySlipLineTypeComponent } from '../referentials/referential-pay-slip-line-type/referential-pay-slip-line-type.component';
 import { ReferentialPaymentDeadlineTypeComponent } from '../referentials/referential-payment-deadline-type/referential-payment-deadline-type.component';
 import { ReferentialPaymentTypeComponent } from '../referentials/referential-payment-type/referential-payment-type.component';
 import { ReferentialPrincipalAccountingAccountComponent } from '../referentials/referential-principal-accounting-account/referential-principal-accounting-account.component';
@@ -226,6 +227,7 @@ const routes: Routes = [
     ReferentialDiscoveringOriginComponent,
     ReferentialBusinessSectorComponent,
     ReferentialCompanySizeComponent,
+    ReferentialPaySlipLineTypeComponent,
   ], exports: [LogComponent,
     CompetentAuthorityComponent,
     ProviderComponent

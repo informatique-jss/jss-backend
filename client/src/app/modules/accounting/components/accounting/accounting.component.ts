@@ -32,6 +32,10 @@ export class AccountingComponent implements OnInit {
     return this.habilitationService.canDisplayTreasure();
   }
 
+  canDisplayPayslip() {
+    return this.habilitationService.canDisplayPayslip();
+  }
+
   canDisplaySuspiciousInvoice() {
     return this.habilitationService.canDisplaySuspiciousInvoice();
   }
