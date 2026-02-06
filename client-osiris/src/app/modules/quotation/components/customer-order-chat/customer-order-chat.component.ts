@@ -17,8 +17,6 @@ import { QuotationService } from '../../services/quotation.service';
 })
 export class CustomerOrderChatComponent implements OnInit {
 
-  private observer: IntersectionObserver | null = null;
-
   // Get all message elements from the DOM
   @ViewChildren('messageItem') messageElements!: QueryList<ElementRef>;
 
@@ -63,7 +61,7 @@ export class CustomerOrderChatComponent implements OnInit {
   private fetchUnreadCommentsForEmployee() {
     this.iQuotationCommentService.getUnreadCommentsForEmployee().subscribe(commentsFound => {
       for (let comment of commentsFound) {
-        let workingIQuotation = comment.customerOrderId;
+        let workingIQuotation = comment.iQuotationId;
         if (!this.commentListByIQuotation[workingIQuotation])
           this.commentListByIQuotation[workingIQuotation] = [];
         if (!this.commentListByIQuotation[workingIQuotation].find(comm => comm.id == comment.id))
@@ -80,7 +78,7 @@ export class CustomerOrderChatComponent implements OnInit {
     this.scrollToLastMessageOfConversation(iQuotationId, 'instant');
 
     this.iQuotationCommentService.getCommentsFromChatForIQuotations(this.currentIQuotationList).subscribe(res => {
-      this.commentListByIQuotation[iQuotationId] = res.filter(comment => comment.customerOrderId == iQuotationId);
+      this.commentListByIQuotation[iQuotationId] = res.filter(comment => comment.iQuotationId == iQuotationId);
       this.scrollToLastMessageOfConversation(iQuotationId, 'instant');
     });
   }
@@ -119,7 +117,7 @@ export class CustomerOrderChatComponent implements OnInit {
             draft.isToDisplayToCustomer = true;
             draft.isReadByCustomer = false;
             draft.isRead = true;
-            draft.customerOrderId = iQuotationId;
+            draft.iQuotationId = iQuotationId;
           }
           this.iQuotationCommentService.addOrUpdateCustomerOrderComment(draft).subscribe(response => {
             if (response) {
@@ -201,7 +199,5 @@ export class CustomerOrderChatComponent implements OnInit {
   ngOnDestroy() {
     this.iQuotationCommentService.emptyWatchedIQuotations();
     clearInterval(this.pollingInterval);
-    if (this.observer)
-      this.observer.disconnect();
   }
 }

@@ -18,6 +18,7 @@ import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.QuotationSearch;
 import com.jss.osiris.modules.osiris.quotation.model.QuotationStatus;
+import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderCommentService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
@@ -47,6 +48,9 @@ public class DashboardUserStatisticsServiceImpl implements DashboardUserStatisti
 
     @Autowired
     ConstantService constantService;
+
+    @Autowired
+    CustomerOrderCommentService customerOrderCommentService;
 
     @Override
     public DashboardUserStatistics getDashboardUserStatistics() throws OsirisException {
@@ -135,6 +139,17 @@ public class DashboardUserStatisticsServiceImpl implements DashboardUserStatisti
             if (quotationDraft != null)
                 statistics.setQuotationDraft(quotationDraft.size());
 
+            // compute quotations with unread comments
+            List<Quotation> quotationsWithUnreadComments = customerOrderCommentService
+                    .getQuotationsWithUnreadCommentsForResponsable(listResponsables.get(0));
+
+            statistics.setUnreadCommentsForQuotations(quotationsWithUnreadComments.size());
+
+            // compute customer orders with unread comments
+            List<CustomerOrder> ordersWithUnreadComments = customerOrderCommentService
+                    .getCustomerOrdersWithUnreadCommentsForResponsable(listResponsables.get(0));
+
+            statistics.setUnreadCommentsForCustomerOrders(ordersWithUnreadComments.size());
         }
 
         return statistics;

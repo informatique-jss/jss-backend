@@ -168,7 +168,7 @@ public class QuotationFacade {
 
     private void populateCustomerOrderCommentTransientField(Tiers tiers, Integer iQuotationId,
             CustomerOrderComment comment) {
-        comment.setCustomerOrderId(iQuotationId);
+        comment.setiQuotationId(iQuotationId);
         comment.setTiersDenomination(tiers.getDenomination() != null ? tiers.getDenomination()
                 : (tiers.getFirstname() + " " + tiers.getLastname()));
         comment.setTiersId(tiers.getId());
@@ -176,14 +176,28 @@ public class QuotationFacade {
 
     @Transactional(rollbackFor = Exception.class)
     public CustomerOrderComment addOrUpdateCustomerOrderComment(CustomerOrderComment customerOrderComment) {
-        if (customerOrderComment.getCustomerOrder() == null && customerOrderComment.getCustomerOrderId() != null) {
+        if (customerOrderComment.getCustomerOrder() == null && customerOrderComment.getCustomerOrder() == null
+                && customerOrderComment.getQuotation() == null
+                && customerOrderComment.getiQuotationId() != null) {
             CustomerOrder customerOrder = customerOrderService
-                    .getCustomerOrder(customerOrderComment.getCustomerOrderId());
-            customerOrderComment.setCustomerOrder(customerOrder);
+                    .getCustomerOrder(customerOrderComment.getiQuotationId());
+
+            if (customerOrder != null)
+                customerOrderComment.setCustomerOrder(customerOrder);
+            else {
+                Quotation quotation = quotationService.getQuotation(customerOrderComment.getiQuotationId());
+                if (quotation != null)
+                    customerOrderComment.setQuotation(quotation);
+            }
         }
         if (customerOrderComment.getCurrentCustomer() == null
                 || customerOrderComment.getCurrentCustomer().getId() == null) {
-            Responsable currentUser = customerOrderComment.getCustomerOrder().getResponsable();
+            Responsable currentUser = null;
+            if (customerOrderComment.getCustomerOrder() != null)
+                currentUser = customerOrderComment.getCustomerOrder().getResponsable();
+            else
+                currentUser = customerOrderComment.getQuotation().getResponsable();
+
             customerOrderComment.setCurrentCustomer(currentUser);
         }
         customerOrderComment = customerOrderCommentService.addOrUpdateCustomerOrderComment(customerOrderComment);
@@ -202,5 +216,34 @@ public class QuotationFacade {
             return quotation.getResponsable().getTiers().getId();
 
         return -1;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public List<CustomerOrder> getCustomerOrdersWithUnreadCommentsForMyJssUser() {
+        Responsable currentUser = employeeService.getCurrentMyJssUser();
+        if (currentUser == null)
+            return new ArrayList<>();
+
+        return customerOrderCommentService.getCustomerOrdersWithUnreadCommentsForResponsable(currentUser);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public List<Quotation> getQuotationsWithUnreadCommentsForMyJssUser() {
+        Responsable currentUser = employeeService.getCurrentMyJssUser();
+        if (currentUser == null)
+            return new ArrayList<>();
+
+        return customerOrderCommentService.getQuotationsWithUnreadCommentsForResponsable(currentUser);
+    }
+
+    // WARNING : Check in caller if for iQuotationId there is an existing quotation
+    // or customerOrder
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean getIsQuotation(Integer iQuotationId) {
+        Quotation quotation = quotationService.getQuotation(iQuotationId);
+        if (quotation != null)
+            return true;
+
+        return false;
     }
 }

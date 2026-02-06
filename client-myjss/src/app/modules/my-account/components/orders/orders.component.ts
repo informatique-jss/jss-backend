@@ -2,7 +2,7 @@ import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbAccordionModule, NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
-import { CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_PAYED, CUSTOMER_ORDER_STATUS_REQUIRE_ATTENTION, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT } from '../../../../libs/Constants';
+import { CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_PAYED, CUSTOMER_ORDER_STATUS_REQUIRE_ATTENTION, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, CUSTOMER_ORDER_WITH_UNREAD_COMMENTS } from '../../../../libs/Constants';
 import { capitalizeName, formatDateFrance } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
@@ -15,6 +15,7 @@ import { InvoiceLabelResult } from '../../model/InvoiceLabelResult';
 import { MailComputeResult } from '../../model/MailComputeResult';
 import { Service } from '../../model/Service';
 import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
+import { CustomerOrderCommentService } from '../../services/customer.order.comment.service';
 import { CustomerOrderService } from '../../services/customer.order.service';
 import { InvoiceLabelResultService } from '../../services/invoice.label.result.service';
 import { MailComputeResultService } from '../../services/mail.compute.result.service';
@@ -40,6 +41,7 @@ export class OrdersComponent implements OnInit {
   statusFilterToBilled: boolean = false;
   statusFilterPayed: boolean = false;
   requiringAttention: boolean = false;
+  withUnreadCommmentsOnOrders: boolean = false;
 
   currentSort: string = "createdDateDesc";
   currentPage: number = 0;
@@ -63,6 +65,7 @@ export class OrdersComponent implements OnInit {
 
   constructor(
     private customerOrderService: CustomerOrderService,
+    private customerOrderCommentService: CustomerOrderCommentService,
     private assoAffaireOrderService: AssoAffaireOrderService,
     private appService: AppService,
     private invoiceLabelResultService: InvoiceLabelResultService,
@@ -104,6 +107,7 @@ export class OrdersComponent implements OnInit {
       this.statusFilterToBilled = false;
       this.statusFilterPayed = false;
       this.requiringAttention = false;
+      this.withUnreadCommmentsOnOrders = false;
 
       if (inputSearchStatus == CUSTOMER_ORDER_STATUS_BEING_PROCESSED)
         this.statusFilterBeingProcessed = true;
@@ -115,6 +119,8 @@ export class OrdersComponent implements OnInit {
         this.statusFilterBeingProcessed = true;
         this.requiringAttention = true;
       }
+      if (inputSearchStatus == CUSTOMER_ORDER_WITH_UNREAD_COMMENTS)
+        this.withUnreadCommmentsOnOrders = true;
     }
 
 
@@ -140,15 +146,29 @@ export class OrdersComponent implements OnInit {
 
     this.appService.showLoadingSpinner();
 
-    this.currentSearchRef = this.customerOrderService.searchOrdersForCurrentUser(status, this.requiringAttention, this.currentPage, this.currentSort, this.getCurrentSelectedResponsable()).subscribe(response => {
-      this.appService.hideLoadingSpinner();
-      if (response) {
-        this.orders.push(...response);
-        if (response.length < 10)
-          this.hideSeeMore = true;
-      }
-      this.isFirstLoading = false;
-    })
+    // If coming from : orders with unread comments
+    if (this.withUnreadCommmentsOnOrders) {
+      this.currentSearchRef = this.customerOrderCommentService.searchOrdersWithUnreadComments().subscribe(response => {
+        this.orders = [];
+        this.appService.hideLoadingSpinner();
+        if (response) {
+          this.orders.push(...response);
+          if (response.length < 10)
+            this.hideSeeMore = true;
+        }
+        this.isFirstLoading = false;
+      })
+    } else {
+      this.currentSearchRef = this.customerOrderService.searchOrdersForCurrentUser(status, this.requiringAttention, this.currentPage, this.currentSort, this.getCurrentSelectedResponsable()).subscribe(response => {
+        this.appService.hideLoadingSpinner();
+        if (response) {
+          this.orders.push(...response);
+          if (response.length < 10)
+            this.hideSeeMore = true;
+        }
+        this.isFirstLoading = false;
+      })
+    }
   }
 
   getCurrentSelectedResponsable() {

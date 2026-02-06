@@ -3310,13 +3310,14 @@ public class QuotationController {
       @RequestBody CustomerOrderComment customerOrderComment)
       throws OsirisValidationException, OsirisException {
     if (customerOrderComment == null
-        || (customerOrderComment.getCustomerOrderId() == null && customerOrderComment.getCustomerOrder() == null))
+        || (customerOrderComment.getiQuotationId() == null && customerOrderComment.getCustomerOrder() == null))
       throw new OsirisValidationException(
           "customerOrderComment or customerOrderComment.Employee or customerOrderComment.CurrentUser or CustomerOrderId");
 
-    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderComment.getCustomerOrderId());
-    if (customerOrder == null)
-      throw new OsirisValidationException("no customerOrder attached to comment");
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderComment.getiQuotationId());
+    Quotation quotation = quotationService.getQuotation(customerOrderComment.getiQuotationId());
+    if (customerOrder == null && quotation == null)
+      throw new OsirisValidationException("no customerOrder nor quotation attached to comment");
 
     return new ResponseEntity<CustomerOrderComment>(
         quotationFacade.addOrUpdateCustomerOrderComment(customerOrderComment),
@@ -3328,7 +3329,7 @@ public class QuotationController {
       @RequestBody List<Integer> iQuotationIds)
       throws OsirisValidationException, OsirisException {
 
-    if (iQuotationIds == null)
+    if (iQuotationIds == null || iQuotationIds.size() == 0)
       throw new OsirisValidationException("iQuotationId");
 
     else
@@ -3337,10 +3338,21 @@ public class QuotationController {
   }
 
   @GetMapping(inputEntryPoint + "/customer-order-comments/unread")
-  public ResponseEntity<List<CustomerOrderComment>> getUnreadCustomerCommentsFromChatForEmployee()
-      throws OsirisValidationException, OsirisException {
+  public ResponseEntity<List<CustomerOrderComment>> getUnreadCustomerCommentsFromChatForEmployee() {
     return new ResponseEntity<List<CustomerOrderComment>>(
         quotationFacade.getUnreadCommentsListFromChatForEmployee(), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/quotation/is-quotation")
+  public ResponseEntity<Boolean> getIsQuotation(Integer iQuotationId) throws OsirisValidationException {
+
+    if (quotationService.getQuotation(iQuotationId) == null
+        && customerOrderService.getCustomerOrder(iQuotationId) == null) {
+      throw new OsirisValidationException("Quotation of CustomerOrder not existing for iQuotationId");
+    }
+
+    return new ResponseEntity<Boolean>(
+        quotationFacade.getIsQuotation(iQuotationId), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/quotation/tiers")

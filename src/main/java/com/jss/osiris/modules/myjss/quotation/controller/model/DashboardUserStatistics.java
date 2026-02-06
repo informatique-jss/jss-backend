@@ -26,6 +26,12 @@ public class DashboardUserStatistics {
     @JsonView(JacksonViews.MyJssDetailedView.class)
     private Integer quotationDraft;
 
+    @JsonView(JacksonViews.MyJssDetailedView.class)
+    private Integer unreadCommentsForCustomerOrders;
+
+    @JsonView(JacksonViews.MyJssDetailedView.class)
+    private Integer unreadCommentsForQuotations;
+
     public Integer getCustomerOrderInProgress() {
         return customerOrderInProgress;
     }
@@ -82,4 +88,19 @@ public class DashboardUserStatistics {
         this.quotationDraft = quotationDraft;
     }
 
+    public Integer getUnreadCommentsForCustomerOrders() {
+        return unreadCommentsForCustomerOrders;
+    }
+
+    public void setUnreadCommentsForCustomerOrders(Integer unreadCommentsForCustomerOrders) {
+        this.unreadCommentsForCustomerOrders = unreadCommentsForCustomerOrders;
+    }
+
+    public Integer getUnreadCommentsForQuotations() {
+        return unreadCommentsForQuotations;
+    }
+
+    public void setUnreadCommentsForQuotations(Integer unreadCommentsForQuotations) {
+        this.unreadCommentsForQuotations = unreadCommentsForQuotations;
+    }
 }

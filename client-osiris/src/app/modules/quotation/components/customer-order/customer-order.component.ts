@@ -35,6 +35,6 @@ export class CustomerOrderComponent implements OnInit {
 
   openChatForOrder() {
     if (this.customerOrder)
-      this.iQuotationCommentService.openChatForOrder(this.customerOrder.id);
+      this.iQuotationCommentService.openChatForIQuotation(this.customerOrder.id);
   }
 }
