@@ -79,7 +79,7 @@ export class OrderDetailsComponent implements OnInit {
 
   currentSelectedAttachmentForDisable: Attachment | undefined;
 
-  newComment: CustomerOrderComment = { comment: '', customerOrder: {} } as CustomerOrderComment;
+  newComment: CustomerOrderComment = { comment: '' } as CustomerOrderComment;
 
   displayPayButton: boolean = false;
   orderDetailsForm!: FormGroup;
@@ -299,7 +299,7 @@ export class OrderDetailsComponent implements OnInit {
       if (this.newComment && this.newComment.comment.replace(/<(?:.|\n)*?>/gm, ' ').length > 0) {
         if (this.newComment.id == undefined) {
           if (this.order)
-            this.newComment.customerOrder.id = this.order.id;
+            this.newComment.iQuotationId = this.order.id;
           this.newComment.isFromChat = true;
           this.newComment.isReadByCustomer = true;
         }

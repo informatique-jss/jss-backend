@@ -28,7 +28,7 @@ export class IQuotationCommentService extends AppRestService<CustomerOrderCommen
     return this.IQuotationChangeObservable;
   }
 
-  openChatForOrder(iQuotationId: number) {
+  openChatForIQuotation(iQuotationId: number) {
     if (iQuotationId) {
       this.addToWatchedIQuotations(iQuotationId);
       this.toggleIsExpanded(iQuotationId);
@@ -47,6 +47,8 @@ export class IQuotationCommentService extends AppRestService<CustomerOrderCommen
   }
 
   addToWatchedIQuotations(iQuotationId: number) {
+    if (!iQuotationId)
+      return;
     if (this.watchedIQuotations.indexOf(iQuotationId) < 0) {
       this.watchedIQuotations.push(iQuotationId);
       localStorage.setItem('watched-iquotations-chat', JSON.stringify(this.watchedIQuotations));

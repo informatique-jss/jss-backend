@@ -11,4 +11,5 @@ export interface CustomerOrderComment {
   customerOrder: CustomerOrder;
   isFromChat: boolean;
   isReadByCustomer: boolean;
+  iQuotationId: number;
 }

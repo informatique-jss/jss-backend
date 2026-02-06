@@ -1,10 +1,11 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, distinctUntilChanged, of, shareReplay, switchMap, timer } from 'rxjs';
+import { BehaviorSubject, distinctUntilChanged, Observable, of, shareReplay, switchMap, timer } from 'rxjs';
 import { COMMENT_POST_REFRESH_INTERVAL } from '../../../libs/Constants';
 import { AppRestService } from '../../main/services/appRest.service';
 import { CustomerOrder } from '../model/CustomerOrder';
 import { CustomerOrderComment } from '../model/CustomerOrderComment';
+import { Quotation } from '../model/Quotation';
 
 @Injectable({
   providedIn: 'root'
@@ -46,6 +47,14 @@ export class CustomerOrderCommentService extends AppRestService<CustomerOrderCom
   }
 
   addOrUpdateCustomerOrderComment(customerOrderComment: CustomerOrderComment) {
-    return this.addOrUpdate(new HttpParams(), "customer-order-comment", customerOrderComment);
+    return this.addOrUpdate(new HttpParams(), "customer-order-comment/v2", customerOrderComment);
+  }
+
+  searchOrdersWithUnreadComments() {
+    return this.getList(new HttpParams(), "customer-order-comments/orders-with-unread") as any as Observable<CustomerOrder[]>;
+  }
+
+  searchQuotationsWithUnreadComments() {
+    return this.getList(new HttpParams(), "customer-order-comments/quotations-with-unread") as any as Observable<Quotation[]>;
   }
 }

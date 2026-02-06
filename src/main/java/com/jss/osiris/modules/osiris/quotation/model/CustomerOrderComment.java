@@ -98,7 +98,7 @@ public class CustomerOrderComment implements Serializable, IId {
 	private Boolean isReadByCustomer;
 
 	@Transient
-	private Integer customerOrderId;
+	private Integer iquotationId;
 
 	@Transient
 	private String tiersDenomination;
@@ -210,12 +210,12 @@ public class CustomerOrderComment implements Serializable, IId {
 		this.isReadByCustomer = isReadByCustomer;
 	}
 
-	public Integer getCustomerOrderId() {
-		return customerOrderId;
+	public Integer getiQuotationId() {
+		return iquotationId;
 	}
 
-	public void setCustomerOrderId(Integer customerOrderId) {
-		this.customerOrderId = customerOrderId;
+	public void setiQuotationId(Integer iquotationId) {
+		this.iquotationId = iquotationId;
 	}
 
 	public String getTiersDenomination() {
