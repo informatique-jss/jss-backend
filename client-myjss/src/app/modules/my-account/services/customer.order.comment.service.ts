@@ -12,16 +12,7 @@ import { Quotation } from '../model/Quotation';
 export class CustomerOrderCommentService extends AppRestService<CustomerOrderComment> {
 
   private activeOrderSource = new BehaviorSubject<number | null>(null);
-  // public comments = this.activeOrderSource.asObservable().pipe(
-  //   distinctUntilChanged((prev, curr) => prev === curr),
-  //   switchMap(order => {
-  //     if (!order) return of([]);
-  //     return timer(0, COMMENT_POST_REFRESH_INTERVAL).pipe(
-  //       switchMap(() => this.getCommentsFromChatForOrder(order))
-  //     );
-  //   }),
-  //   shareReplay(1)
-  // );
+
   commentsResult: CustomerOrderComment[] = [];
   customerOrder: CustomerOrder = {} as CustomerOrder;
 
