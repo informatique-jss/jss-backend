@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { CustomerOrderCommentService } from '../../../../../../../client-myjss/src/app/modules/my-account/services/customer.order.comment.service';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { ToastComponent } from '../../../../libs/toast/toast.component';
 import { CustomerOrderChatComponent } from "../../../quotation/components/customer-order-chat/customer-order-chat.component";
 import { CustomerOrderDto } from '../../../quotation/model/CustomerOrderDto';
+import { IQuotationCommentService } from '../../../quotation/services/iquotation-comment.service';
 import { LoadingComponent } from '../loading/loading.component';
 import { VerticalLayoutComponent } from '../vertical-layout/vertical-layout.component';
 
@@ -21,13 +21,10 @@ export class DefaultComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private customerOrderCommentService: CustomerOrderCommentService
+    private customerOrderCommentService: IQuotationCommentService
   ) { }
 
   ngOnInit() {
-    this.customerOrderCommentService.getWatchedOrder().subscribe(order => {
-
-    });
   }
 
   ngOnDestroy() {

@@ -21,4 +21,12 @@ export class QuotationService extends AppRestService<QuotationDto> {
   getTiersByIQuotation(iQuotationId: number) {
     return this.get(new HttpParams().set("iQuotationId", iQuotationId), "quotation/tiers") as any as Observable<number>;
   }
+
+  getQuotation(quotationId: number) {
+    return this.getById("quotation", quotationId)
+  }
+
+  getIsQuotation(iQuotationId: number) {
+    return this.get(new HttpParams().set("iQuotationId", iQuotationId), "quotation/is-quotation");
+  }
 }

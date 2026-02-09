@@ -9,6 +9,7 @@ import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 public interface CustomerOrderCommentService {
         public List<CustomerOrderComment> getCustomerOrderComments();
@@ -31,8 +32,14 @@ public interface CustomerOrderCommentService {
 
         public List<CustomerOrderComment> getUnreadCustomerOrderCommentForSalesEmployee(Employee employee);
 
+        public List<CustomerOrderComment> getUnreadCustomerOrderCommentForResponsable(Responsable responsable);
+
         public List<CustomerOrderComment> getCustomerOrderCommentForProvision(Provision provision);
 
         public List<CustomerOrderComment> getCommentsFromChatForOrder(CustomerOrder customerOrder);
+
+        public List<CustomerOrder> getCustomerOrdersWithUnreadCommentsForResponsable(Responsable responsable);
+
+        public List<Quotation> getQuotationsWithUnreadCommentsForResponsable(Responsable responsable);
 
 }

@@ -79,13 +79,15 @@ export class OrderDetailsComponent implements OnInit {
 
   currentSelectedAttachmentForDisable: Attachment | undefined;
 
-  newComment: CustomerOrderComment = { comment: '', customerOrder: {} } as CustomerOrderComment;
+  newComment: CustomerOrderComment = { comment: '' } as CustomerOrderComment;
 
   displayPayButton: boolean = false;
   orderDetailsForm!: FormGroup;
   selectedService: Service | undefined;
   jssEmployee: Employee = { firstname: 'Journal', lastname: 'Spécial des Sociétés', title: '' } as Employee;
   currentDate = new Date();
+
+  pollingInterval: any;
 
   constructor(
     private constantService: ConstantService,
@@ -129,12 +131,11 @@ export class OrderDetailsComponent implements OnInit {
     this.billingLabelTypeCodeAffaire = this.constantService.getBillingLabelTypeCodeAffaire();
     this.documentTypeBilling = this.constantService.getDocumentTypeBilling();
 
-    this.customerOrderCommentService.comments.subscribe((res: CustomerOrderComment[]) => {
-      this.comments = res;
-      this.sortComments();
-    });
-
     this.refreshOrder();
+
+    this.pollingInterval = setInterval(() => {
+      this.fetchUnreadCommentsForCurrentUser();
+    }, 2000);
   }
 
   refreshOrder() {
@@ -287,11 +288,34 @@ export class OrderDetailsComponent implements OnInit {
       this.customerOrderService.downloadInvoice(this.order);
   }
 
+  private fetchUnreadCommentsForCurrentUser() {
+    if (this.order)
+      this.customerOrderCommentService.getUnreadCommentsForResponsableAndIQuotation(this.order.id).subscribe(commentsFound => {
+        for (let comment of commentsFound) {
+          if (!this.comments)
+            this.comments = [];
+          if (!this.comments.find(comm => comm.id == comment.id))
+            this.comments.push(comment);
+        }
+        this.sortComments();
+      });
+  }
+
   refreshCustomerOrderComments() {
     if (this.order)
       this.customerOrderCommentService.getCustomerOrderCommentsForCustomer(this.order.id).subscribe(response => {
         this.comments = response;
+        this.markCommentsAsReadByCustomer();
       })
+  }
+
+  markCommentsAsReadByCustomer() {
+    for (let comment of this.comments) {
+      if (!comment.isReadByCustomer) {
+        comment.isReadByCustomer = true;
+        this.customerOrderCommentService.addOrUpdateCustomerOrderComment(comment).subscribe();
+      }
+    }
   }
 
   addCustomerOrderComment() {
@@ -299,7 +323,7 @@ export class OrderDetailsComponent implements OnInit {
       if (this.newComment && this.newComment.comment.replace(/<(?:.|\n)*?>/gm, ' ').length > 0) {
         if (this.newComment.id == undefined) {
           if (this.order)
-            this.newComment.customerOrder.id = this.order.id;
+            this.newComment.iquotationId = this.order.id;
           this.newComment.isFromChat = true;
           this.newComment.isReadByCustomer = true;
         }

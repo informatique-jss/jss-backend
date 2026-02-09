@@ -1168,18 +1168,78 @@ public class MyJssQuotationController {
 	@GetMapping(inputEntryPoint + "/customer-order-comments/customer")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<List<CustomerOrderComment>> getCustomerOrderCommentsForCustomer(
-			@RequestParam Integer idCustomerOrder)
-			throws OsirisValidationException {
-		if (idCustomerOrder == null)
+			@RequestParam Integer iQuotationId) throws OsirisException {
+		if (iQuotationId == null)
 			throw new OsirisValidationException("id");
 
-		CustomerOrder customerOrder = customerOrderService.getCustomerOrder(idCustomerOrder);
-		if (customerOrder == null || !myJssQuotationValidationHelper.canSeeQuotation(customerOrder))
+		CustomerOrder customerOrder = customerOrderService.getCustomerOrder(iQuotationId);
+		Quotation quotation = quotationService.getQuotation(iQuotationId);
+
+		if (customerOrder == null && quotation == null)
+			return new ResponseEntity<List<CustomerOrderComment>>(new ArrayList<CustomerOrderComment>(), HttpStatus.OK);
+
+		if (customerOrder != null && !myJssQuotationValidationHelper.canSeeQuotation(customerOrder))
+			return new ResponseEntity<List<CustomerOrderComment>>(new ArrayList<CustomerOrderComment>(), HttpStatus.OK);
+
+		if (quotation != null && !myJssQuotationValidationHelper.canSeeQuotation(quotation))
 			return new ResponseEntity<List<CustomerOrderComment>>(new ArrayList<CustomerOrderComment>(), HttpStatus.OK);
 
 		return new ResponseEntity<List<CustomerOrderComment>>(
-				customerOrderService.getCustomerOrderCommentsForCustomer(customerOrder),
+				quotationFacade.getCommentsListFromChatForIQuotations(Arrays.asList(iQuotationId)),
 				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/customer-order-comments/unread-for-iquotation")
+	public ResponseEntity<List<CustomerOrderComment>> getUnreadCustomerCommentsFromChatForMyJssCurrentUser(
+			@RequestParam Integer iQuotationId) {
+
+		if (iQuotationId == null)
+			return new ResponseEntity<>(null, HttpStatus.OK);
+
+		CustomerOrder order = customerOrderService.getCustomerOrder(iQuotationId);
+		if ((order != null && !myJssQuotationValidationHelper.canSeeQuotation(order))) {
+			return new ResponseEntity<List<CustomerOrderComment>>(new ArrayList<CustomerOrderComment>(),
+					HttpStatus.OK);
+		}
+
+		Quotation quotation = quotationService.getQuotation(iQuotationId);
+		if (quotation != null && !myJssQuotationValidationHelper.canSeeQuotation(quotation)) {
+			return new ResponseEntity<List<CustomerOrderComment>>(new ArrayList<CustomerOrderComment>(),
+					HttpStatus.OK);
+		}
+
+		if (order == null && quotation == null) {
+			return new ResponseEntity<List<CustomerOrderComment>>(new ArrayList<CustomerOrderComment>(),
+					HttpStatus.OK);
+		}
+
+		return new ResponseEntity<List<CustomerOrderComment>>(
+				quotationFacade.getUnreadCommentsListFromChatForMyJssCurrentUserByIQuotation(iQuotationId),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/customer-order-comments/orders-with-unread")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<List<CustomerOrder>> getOrdersWithUnreadCommentsForMyJssUser() {
+
+		List<CustomerOrder> customerOrders = quotationFacade.getCustomerOrdersWithUnreadCommentsForMyJssUser();
+		for (CustomerOrder customerOrder : customerOrders) {
+			if (customerOrder == null || !myJssQuotationValidationHelper.canSeeQuotation(customerOrder))
+				return new ResponseEntity<List<CustomerOrder>>(new ArrayList<CustomerOrder>(), HttpStatus.OK);
+		}
+		return new ResponseEntity<List<CustomerOrder>>(customerOrders, HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/customer-order-comments/quotations-with-unread")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<List<Quotation>> getQuotationsWithUnreadCommentsForMyJssUser() {
+
+		List<Quotation> quotations = quotationFacade.getQuotationsWithUnreadCommentsForMyJssUser();
+		for (Quotation quotation : quotations) {
+			if (quotation == null || !myJssQuotationValidationHelper.canSeeQuotation(quotation))
+				return new ResponseEntity<List<Quotation>>(new ArrayList<Quotation>(), HttpStatus.OK);
+		}
+		return new ResponseEntity<List<Quotation>>(quotations, HttpStatus.OK);
 	}
 
 	@PostMapping(inputEntryPoint + "/customer-order-comment")
@@ -1218,6 +1278,26 @@ public class MyJssQuotationController {
 		}
 
 		return new ResponseEntity<CustomerOrderComment>(customerOrderComment, HttpStatus.OK);
+	}
+
+	@PostMapping(inputEntryPoint + "/customer-order-comment/v2")
+	public ResponseEntity<CustomerOrderComment> addOrUpdateCustomerOrderCommentV2(
+			@RequestBody CustomerOrderComment customerOrderComment) throws OsirisValidationException, OsirisException {
+
+		if (customerOrderComment == null
+				|| (customerOrderComment.getiquotationId() == null && customerOrderComment.getCustomerOrder() == null
+						&& customerOrderComment.getQuotation() == null))
+			throw new OsirisValidationException(
+					"customerOrderComment or customerOrder && quotation && iQuotationId null");
+
+		CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderComment.getiquotationId());
+		Quotation quotation = quotationService.getQuotation(customerOrderComment.getiquotationId());
+		if (customerOrder == null && quotation == null)
+			throw new OsirisValidationException("no customerOrder nor quotation attached to comment");
+
+		return new ResponseEntity<CustomerOrderComment>(
+				quotationFacade.addOrUpdateCustomerOrderComment(customerOrderComment),
+				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/affaire/search/current")
@@ -2170,7 +2250,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/customer-order-comments/from-chat")
-	public ResponseEntity<List<CustomerOrderComment>> getNewCustomerCommentsFromChat(Integer iQuotationId)
+	public ResponseEntity<List<CustomerOrderComment>> getNewCustomerCommentsFromChat(@RequestParam Integer iQuotationId)
 			throws OsirisValidationException, OsirisException {
 
 		if (iQuotationId == null)
@@ -2183,7 +2263,7 @@ public class MyJssQuotationController {
 			return new ResponseEntity<List<CustomerOrderComment>>(new ArrayList<CustomerOrderComment>(), HttpStatus.OK);
 
 		return new ResponseEntity<List<CustomerOrderComment>>(
-				quotationFacade.getCommentsFromChatForIQuotations(Arrays.asList(iQuotationId)).get(iQuotationId),
+				quotationFacade.getCommentsListFromChatForIQuotations(Arrays.asList(iQuotationId)),
 				HttpStatus.OK);
 	}
 }

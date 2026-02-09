@@ -36,4 +36,20 @@ public interface CustomerOrderCommentRepository extends QueryCacheCrudRepository
                                 )
                                 ) order by c.createdDateTime asc, c.customerOrder.id asc, c.quotation.id asc """)
         List<CustomerOrderComment> findUnreadCommmentsForSalesEmployee(Employee employee);
+
+        @Query("""
+                        select c
+                        from CustomerOrderComment c
+                        where c.isReadByCustomer = false
+                                and c.isFromChat = true
+                                and exists (
+                                select 1
+                                from Responsable r
+                                where r.id = :responsableId
+                                and (
+                                        r = c.customerOrder.responsable
+                                        or r = c.quotation.responsable
+                                )
+                                ) order by c.createdDateTime asc, c.customerOrder.id asc, c.quotation.id asc """)
+        List<CustomerOrderComment> findUnreadCommmentsForResponsable(Integer responsableId);
 }

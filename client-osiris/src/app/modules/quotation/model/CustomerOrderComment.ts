@@ -7,7 +7,7 @@ export interface CustomerOrderComment {
   employee: Employee;
   currentCustomer: Responsable;
   comment: string;
-  customerOrderId: number;
+  iquotationId: number;
   isFromChat: boolean;
   isReadByCustomer: boolean;
   isRead: boolean;

@@ -21,6 +21,7 @@ import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.repository.CustomerOrderCommentRepository;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 @Service
 public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentService {
@@ -58,6 +59,29 @@ public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentServ
     @Override
     public List<CustomerOrderComment> getUnreadCustomerOrderCommentForSalesEmployee(Employee employee) {
         return customerOrderCommentRepository.findUnreadCommmentsForSalesEmployee(employee);
+    }
+
+    @Override
+    public List<CustomerOrderComment> getUnreadCustomerOrderCommentForResponsable(Responsable responsable) {
+        return customerOrderCommentRepository.findUnreadCommmentsForResponsable(responsable.getId());
+    }
+
+    @Override
+    public List<CustomerOrder> getCustomerOrdersWithUnreadCommentsForResponsable(Responsable responsable) {
+        List<CustomerOrderComment> comments = customerOrderCommentRepository
+                .findUnreadCommmentsForResponsable(responsable.getId());
+
+        return comments.stream().filter(comment -> comment.getCustomerOrder() != null)
+                .map(CustomerOrderComment::getCustomerOrder).distinct().toList();
+    }
+
+    @Override
+    public List<Quotation> getQuotationsWithUnreadCommentsForResponsable(Responsable responsable) {
+        List<CustomerOrderComment> comments = customerOrderCommentRepository
+                .findUnreadCommmentsForResponsable(responsable.getId());
+
+        return comments.stream().filter(comment -> comment.getQuotation() != null)
+                .map(CustomerOrderComment::getQuotation).distinct().toList();
     }
 
     @Override
