@@ -100,15 +100,15 @@ public class QuotationFacade {
             CustomerOrder customerOrder = customerOrderService.getCustomerOrder(iQuotationId);
             if (customerOrder != null) {
                 commentsFound = customerOrderCommentService
-                        .getCustomerOrderCommentForOrder(customerOrder);
+                        .getCustomerOrderCommentForOrder(customerOrder, true);
                 populateCustomerOrderCommentsTransientFields(customerOrder.getResponsable().getTiers(), iQuotationId,
                         commentsFound);
                 commentsForIQuotationsMap.put(iQuotationId,
-                        customerOrderCommentService.getCustomerOrderCommentForOrder(customerOrder));
+                        customerOrderCommentService.getCustomerOrderCommentForOrder(customerOrder, true));
             }
             Quotation quotation = quotationService.getQuotation(iQuotationId);
             if (quotation != null) {
-                commentsFound = customerOrderCommentService.getCustomerOrderCommentForQuotation(quotation);
+                commentsFound = customerOrderCommentService.getCustomerOrderCommentForQuotation(quotation, true);
                 populateCustomerOrderCommentsTransientFields(quotation.getResponsable().getTiers(), iQuotationId,
                         commentsFound);
                 commentsForIQuotationsMap.put(iQuotationId, commentsFound);
@@ -127,12 +127,12 @@ public class QuotationFacade {
         for (Integer iQuotationId : iQuotationIds) {
             CustomerOrder customerOrder = customerOrderService.getCustomerOrder(iQuotationId);
             if (customerOrder != null) {
-                comments = customerOrderCommentService.getCustomerOrderCommentForOrder(customerOrder);
+                comments = customerOrderCommentService.getCustomerOrderCommentForOrder(customerOrder, true);
                 tiers = customerOrder.getResponsable().getTiers();
             } else {
                 Quotation quotation = quotationService.getQuotation(iQuotationId);
                 if (quotation != null) {
-                    comments = customerOrderCommentService.getCustomerOrderCommentForQuotation(quotation);
+                    comments = customerOrderCommentService.getCustomerOrderCommentForQuotation(quotation, true);
                     tiers = quotation.getResponsable().getTiers();
                 }
             }
@@ -194,6 +194,31 @@ public class QuotationFacade {
     }
 
     @Transactional(rollbackFor = Exception.class)
+    public void markAllCommentsAsReadForIQuotation(Integer quotationId, Boolean setReadByCustomer,
+            Boolean setReadByEmployee) {
+        CustomerOrder customerOrder = customerOrderService.getCustomerOrder(quotationId);
+        Quotation quotation = quotationService.getQuotation(quotationId);
+
+        List<CustomerOrderComment> comments = new ArrayList<CustomerOrderComment>();
+        if (customerOrder != null) {
+            comments = customerOrderCommentService.getCustomerOrderCommentForOrder(customerOrder, true);
+        } else if (quotation != null) {
+            comments = customerOrderCommentService.getCustomerOrderCommentForQuotation(quotation, true);
+        }
+
+        for (CustomerOrderComment comment : comments) {
+            if (setReadByCustomer && !Boolean.TRUE.equals(comment.getIsReadByCustomer())) {
+                comment.setIsReadByCustomer(true);
+                customerOrderCommentService.addOrUpdateCustomerOrderComment(comment);
+            }
+            if (setReadByEmployee && !Boolean.TRUE.equals(comment.getIsRead())) {
+                comment.setIsRead(true);
+                customerOrderCommentService.addOrUpdateCustomerOrderComment(comment);
+            }
+        }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
     public List<CustomerOrderComment> getUnreadCommentsListFromChatForMyJssCurrentUserByIQuotation(
             Integer iQuotationId) {
 
@@ -231,33 +256,16 @@ public class QuotationFacade {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public CustomerOrderComment addOrUpdateCustomerOrderComment(CustomerOrderComment customerOrderComment) {
-        if (customerOrderComment.getCustomerOrder() == null && customerOrderComment.getCustomerOrder() == null
-                && customerOrderComment.getQuotation() == null
-                && customerOrderComment.getiquotationId() != null) {
-            CustomerOrder customerOrder = customerOrderService
-                    .getCustomerOrder(customerOrderComment.getiquotationId());
+    public CustomerOrderComment addOrUpdateCustomerOrderComment(String customerOrderComment, Integer quotationId,
+            Boolean isFromCustomer)
+            throws OsirisException {
 
-            if (customerOrder != null)
-                customerOrderComment.setCustomerOrder(customerOrder);
-            else {
-                Quotation quotation = quotationService.getQuotation(customerOrderComment.getiquotationId());
-                if (quotation != null)
-                    customerOrderComment.setQuotation(quotation);
-            }
-        }
-        if (customerOrderComment.getCurrentCustomer() == null
-                || customerOrderComment.getCurrentCustomer().getId() == null) {
-            Responsable currentUser = null;
-            if (customerOrderComment.getCustomerOrder() != null)
-                currentUser = customerOrderComment.getCustomerOrder().getResponsable();
-            else
-                currentUser = customerOrderComment.getQuotation().getResponsable();
+        CustomerOrder customerOrder = customerOrderService.getCustomerOrder(quotationId);
+        Quotation quotation = quotationService.getQuotation(quotationId);
 
-            customerOrderComment.setCurrentCustomer(currentUser);
-        }
-        customerOrderComment = customerOrderCommentService.addOrUpdateCustomerOrderComment(customerOrderComment);
-        return customerOrderComment;
+        return customerOrderCommentService.createCustomerOrderComment(customerOrder, quotation, customerOrderComment,
+                !isFromCustomer, true);
+
     }
 
     @Transactional(rollbackFor = Exception.class)

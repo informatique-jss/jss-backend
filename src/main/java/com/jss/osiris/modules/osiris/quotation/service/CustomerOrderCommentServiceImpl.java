@@ -47,12 +47,18 @@ public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentServ
     }
 
     @Override
-    public List<CustomerOrderComment> getCustomerOrderCommentForOrder(CustomerOrder customerOrder) {
+    public List<CustomerOrderComment> getCustomerOrderCommentForOrder(CustomerOrder customerOrder,
+            Boolean IsToDisplayToCustomer) {
+        if (Boolean.TRUE.equals(IsToDisplayToCustomer))
+            return customerOrderCommentRepository.findByCustomerOrderAndIsToDisplayToCustomer(customerOrder, true);
         return customerOrderCommentRepository.findByCustomerOrder(customerOrder);
     }
 
     @Override
-    public List<CustomerOrderComment> getCustomerOrderCommentForQuotation(Quotation quotation) {
+    public List<CustomerOrderComment> getCustomerOrderCommentForQuotation(Quotation quotation,
+            Boolean IsToDisplayToCustomer) {
+        if (Boolean.TRUE.equals(IsToDisplayToCustomer))
+            return customerOrderCommentRepository.findByQuotationAndIsToDisplayToCustomer(quotation, true);
         return customerOrderCommentRepository.findByQuotation(quotation);
     }
 
@@ -111,27 +117,31 @@ public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentServ
     }
 
     @Override
-    public CustomerOrderComment createCustomerOrderComment(CustomerOrder customerOrder, String contentComment,
-            Boolean doNotNotify, Boolean isToDisplayToCustomer, Boolean isFromChat)
+    public CustomerOrderComment createCustomerOrderComment(CustomerOrder customerOrder, Quotation quotation,
+            String contentComment, Boolean doNotNotify, Boolean isToDisplayToCustomer)
             throws OsirisException {
         CustomerOrderComment customerOrderComment = new CustomerOrderComment();
         customerOrderComment.setCustomerOrder(customerOrder);
+        customerOrderComment.setQuotation(quotation);
         customerOrderComment.setComment(contentComment);
 
         Employee employee = employeeService.getCurrentEmployee();
         if (employee != null)
             customerOrderComment.setEmployee(employee);
-        else if (!doNotNotify) {
+
+        if (isToDisplayToCustomer && !doNotNotify)
             customerOrderComment.setCurrentCustomer(employeeService.getCurrentMyJssUser());
+
+        if (!doNotNotify) {
             customerOrderComment.setActiveDirectoryGroups(new ArrayList<ActiveDirectoryGroup>());
             customerOrderComment.getActiveDirectoryGroups().add(constantService.getActiveDirectoryGroupSales());
-            customerOrderComment.setIsToDisplayToCustomer(isToDisplayToCustomer);
             notificationService.notifyCommentFromMyJssAddToCustomerOrder(customerOrder);
         }
+
+        customerOrderComment.setIsToDisplayToCustomer(isToDisplayToCustomer);
         customerOrderComment.setCreatedDateTime(LocalDateTime.now());
         customerOrderComment.setIsRead(false);
         customerOrderComment.setIsReadByCustomer(false);
-        customerOrderComment.setIsFromChat(isFromChat);
 
         return addOrUpdateCustomerOrderComment(customerOrderComment);
     }
@@ -148,10 +158,4 @@ public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentServ
         return addOrUpdateCustomerOrderComment(customerOrderComment);
     }
 
-    @Override
-    public List<CustomerOrderComment> getCommentsFromChatForOrder(CustomerOrder customerOrder) {
-        return customerOrderCommentRepository
-                .findByCustomerOrderAndIsFromChat(customerOrder, true);
-
-    }
 }

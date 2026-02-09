@@ -310,24 +310,14 @@ export class OrderDetailsComponent implements OnInit {
   }
 
   markCommentsAsReadByCustomer() {
-    for (let comment of this.comments) {
-      if (!comment.isReadByCustomer) {
-        comment.isReadByCustomer = true;
-        this.customerOrderCommentService.addOrUpdateCustomerOrderComment(comment).subscribe();
-      }
-    }
+    if (this.order && this.order.id)
+      this.customerOrderCommentService.markAllCommentsAsReadForIQuotation(this.order.id).subscribe();
   }
 
   addCustomerOrderComment() {
-    if (this.newComment.comment.trim().length > 0)
+    if (this.newComment.comment.trim().length > 0 && this.order)
       if (this.newComment && this.newComment.comment.replace(/<(?:.|\n)*?>/gm, ' ').length > 0) {
-        if (this.newComment.id == undefined) {
-          if (this.order)
-            this.newComment.iquotationId = this.order.id;
-          this.newComment.isFromChat = true;
-          this.newComment.isReadByCustomer = true;
-        }
-        this.customerOrderCommentService.addOrUpdateCustomerOrderComment(this.newComment).subscribe(response => {
+        this.customerOrderCommentService.addOrUpdateCustomerOrderComment(this.newComment.comment, this.order.id).subscribe(response => {
           if (response) {
             this.comments.push(response);
             this.scrollToLastMessage();

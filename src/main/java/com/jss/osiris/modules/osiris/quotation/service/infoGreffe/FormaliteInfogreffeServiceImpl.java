@@ -252,11 +252,12 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
                     CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
                             formaliteInfogreffe.getFormalite()
                                     .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
+                            null,
                             "Formalité Infogreffe n°" + formaliteInfogreffe.getReferenceTechnique() + " rejetée par "
                                     + (formaliteInfogreffe.getGreffeDestinataire() != null
                                             ? formaliteInfogreffe.getGreffeDestinataire().getNom()
                                             : ""),
-                            false, false, false);
+                            false, false);
 
                     customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
                             constantService.getActiveDirectoryGroupFormalites());
@@ -269,11 +270,12 @@ public class FormaliteInfogreffeServiceImpl implements FormaliteInfogreffeServic
                     CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
                             formaliteInfogreffe.getFormalite()
                                     .getProvision().get(0).getService().getAssoAffaireOrder().getCustomerOrder(),
+                            null,
                             "Formalité Infogreffe n°" + formaliteInfogreffe.getReferenceTechnique() + " validée par "
                                     + (formaliteInfogreffe.getGreffeDestinataire() != null
                                             ? formaliteInfogreffe.getGreffeDestinataire().getNom()
                                             : ""),
-                            false, false, false);
+                            false, false);
 
                     customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
                             constantService.getActiveDirectoryGroupFormalites());

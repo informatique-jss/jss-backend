@@ -111,15 +111,7 @@ export class CustomerOrderChatComponent implements OnInit {
     if (draft)
       if (draft.comment.trim().length > 0)
         if (draft && draft.comment.replace(/<(?:.|\n)*?>/gm, ' ').length > 0) {
-          if (draft.id == undefined) {
-            draft.employee = this.currentEmployee!;
-            draft.isFromChat = true;
-            draft.isToDisplayToCustomer = true;
-            draft.isReadByCustomer = false;
-            draft.isRead = true;
-            draft.iquotationId = iQuotationId;
-          }
-          this.iQuotationCommentService.addOrUpdateCustomerOrderComment(draft).subscribe(response => {
+          this.iQuotationCommentService.addOrUpdateCustomerOrderComment(draft.comment, iQuotationId).subscribe(response => {
             if (response) {
               if (!this.commentListByIQuotation[iQuotationId])
                 this.commentListByIQuotation[iQuotationId] = [];
@@ -163,11 +155,10 @@ export class CustomerOrderChatComponent implements OnInit {
     return commentsForIQuotation.filter(comment => !comment.employee || !comment.employee.id).filter(comment => comment.isRead !== true).length;
   }
 
-  markAsRead(comment: CustomerOrderComment) {
-    if (comment && !comment.isRead) {
-      comment.isRead = true;
-      this.iQuotationCommentService.addOrUpdateCustomerOrderComment(comment).subscribe();
-    }
+  markAsRead(iQuotationId: number) {
+    this.iQuotationCommentService.markAllCommentsAsReadForIQuotation(iQuotationId).subscribe(res => {
+      this.fetchCommentsForIQuotationsAndScroll(iQuotationId);
+    });
   }
 
   handleMouseEnter(event: MouseEvent) {

@@ -750,10 +750,10 @@ public class PaymentServiceImpl implements PaymentService {
 
             if (!isMovedFromInvoice) {
                 CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
-                        correspondingCustomerOrder.get(i),
+                        correspondingCustomerOrder.get(i), null,
                         "Nouveau paiement n°" + newPayment.getId() + " de " + newPayment.getPaymentAmount()
                                 + " € placé sur la commande",
-                        false, false, false);
+                        false, false);
 
                 customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
                         constantService.getActiveDirectoryGroupFacturation());
@@ -1219,10 +1219,10 @@ public class PaymentServiceImpl implements PaymentService {
 
                 if (!isMovedFromCustomerOrder && invoice.getCustomerOrder() != null) {
                     CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
-                            invoice.getCustomerOrder(),
+                            invoice.getCustomerOrder(), null,
                             "Nouveau paiement n°" + payment.getId() + " de " + payment.getPaymentAmount()
                                     + " € placé sur la facture n°" + invoice.getId(),
-                            false, false, false);
+                            false, false);
 
                     customerOrderCommentService.tagActiveDirectoryGroupOnCustomerOrderComment(customerOrderComment,
                             constantService.getActiveDirectoryGroupFacturation());

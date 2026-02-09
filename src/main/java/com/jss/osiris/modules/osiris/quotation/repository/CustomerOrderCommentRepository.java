@@ -17,15 +17,19 @@ public interface CustomerOrderCommentRepository extends QueryCacheCrudRepository
 
         List<CustomerOrderComment> findByQuotation(Quotation quotation);
 
+        List<CustomerOrderComment> findByQuotationAndIsToDisplayToCustomer(Quotation quotation,
+                        boolean isToDisplayToCustomer);
+
         List<CustomerOrderComment> findByProvision(Provision provision);
 
-        List<CustomerOrderComment> findByCustomerOrderAndIsFromChat(CustomerOrder customerOrder, Boolean isFromChat);
+        List<CustomerOrderComment> findByCustomerOrderAndIsToDisplayToCustomer(CustomerOrder customerOrder,
+                        Boolean IsToDisplayToCustomer);
 
         @Query("""
                         select c
                         from CustomerOrderComment c
                         where c.isRead = false
-                                and c.isFromChat = true
+                                and c.isToDisplayToCustomer = true
                                 and exists (
                                 select 1
                                 from Responsable r
@@ -41,7 +45,7 @@ public interface CustomerOrderCommentRepository extends QueryCacheCrudRepository
                         select c
                         from CustomerOrderComment c
                         where c.isReadByCustomer = false
-                                and c.isFromChat = true
+                                and c.isToDisplayToCustomer = true
                                 and exists (
                                 select 1
                                 from Responsable r

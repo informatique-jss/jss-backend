@@ -46,8 +46,7 @@
     <div class="messages-list" *ngIf="getIsExpandedMap(iQuotationId)">
       @if(commentListByIQuotation[iQuotationId] && commentListByIQuotation[iQuotationId].length > 0){
       @for(comment of commentListByIQuotation[iQuotationId]; track comment.id; let i = $index) {
-      <div class="message-item" [id]="'comment-'+ iQuotationId +'-'+ i" (focus)="markAsRead(comment)"
-        (mouseenter)="markAsRead(comment)"
+      <div class="message-item" [id]="'comment-'+ iQuotationId +'-'+ i"
         [ngClass]="{'sent':  comment.employee && comment.employee.id, 'received': !comment.employee || !comment.employee.id, 'mb-0': $last}">
         {{ comment.comment }}
       </div>
@@ -65,7 +64,7 @@
 
     <div class="chat-footer " *ngIf="getIsExpandedMap(iQuotationId)">
       <input type="text" [(ngModel)]="getCommentModel(iQuotationId).comment" (keyup.enter)="sendMessage(iQuotationId)"
-        placeholder="Écrivez votre message..." />
+        (focus)="markAsRead(iQuotationId)" placeholder="Écrivez votre message..." />
       <button (click)="sendMessage(iQuotationId)" type="button" class="btn btn-secondary rounded-circle btn-icon"
         [disabled]="!getCommentModel(iQuotationId).comment || getCommentModel(iQuotationId).comment.trim().length == 0">
         <ng-icon name="tablerSend" class="fs-lg" />

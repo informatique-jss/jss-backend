@@ -302,23 +302,14 @@ export class QuotationDetailsComponent implements OnInit {
   }
 
   markCommentsAsReadByCustomer() {
-    for (let comment of this.comments)
-      if (!comment.isReadByCustomer) {
-        comment.isReadByCustomer = true;
-        this.customerOrderCommentService.addOrUpdateCustomerOrderComment(comment).subscribe();
-      }
+    if (this.quotation && this.quotation.id)
+      this.customerOrderCommentService.markAllCommentsAsReadForIQuotation(this.quotation.id).subscribe();
   }
 
   addCustomerOrderComment() {
-    if (this.newComment.comment.trim().length > 0)
+    if (this.newComment.comment.trim().length > 0 && this.quotation)
       if (this.newComment && this.newComment.comment.replace(/<(?:.|\n)*?>/gm, ' ').length > 0) {
-        if (this.newComment.id == undefined) {
-          if (this.quotation)
-            this.newComment.iquotationId = this.quotation.id;
-          this.newComment.isFromChat = true;
-          this.newComment.isReadByCustomer = true;
-        }
-        this.customerOrderCommentService.addOrUpdateCustomerOrderComment(this.newComment).subscribe(response => {
+        this.customerOrderCommentService.addOrUpdateCustomerOrderComment(this.newComment.comment, this.quotation.id).subscribe(response => {
           if (response) {
             this.comments.push(response);
             this.scrollToLastMessage();

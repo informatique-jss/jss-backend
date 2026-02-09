@@ -12,7 +12,6 @@ public class CustomerOrderCommentDto {
     private LocalDateTime createdDateTime;
     private Boolean isRead;
     private Boolean isToDisplayToCustomer;
-    private Boolean isFromChat;
     private Boolean isReadByCustomer;
 
     public Integer getId() {
@@ -53,14 +52,6 @@ public class CustomerOrderCommentDto {
 
     public void setIsToDisplayToCustomer(Boolean isToDisplayToCustomer) {
         this.isToDisplayToCustomer = isToDisplayToCustomer;
-    }
-
-    public Boolean getIsFromChat() {
-        return isFromChat;
-    }
-
-    public void setIsFromChat(Boolean isFromChat) {
-        this.isFromChat = isFromChat;
     }
 
     public Boolean getIsReadByCustomer() {

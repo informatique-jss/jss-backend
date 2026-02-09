@@ -8,7 +8,6 @@ export interface CustomerOrderComment {
   currentCustomer: Responsable;
   comment: string;
   iquotationId: number;
-  isFromChat: boolean;
   isReadByCustomer: boolean;
   isRead: boolean;
   isToDisplayToCustomer: boolean;

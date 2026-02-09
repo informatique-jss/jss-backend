@@ -105,7 +105,11 @@ export class IQuotationCommentService extends AppRestService<CustomerOrderCommen
     return this.getList(new HttpParams(), "customer-order-comments/unread");
   }
 
-  addOrUpdateCustomerOrderComment(customerOrderComment: CustomerOrderComment) {
-    return this.addOrUpdate(new HttpParams(), "customer-order-comment/v2", customerOrderComment, "Enregistré", "Erreur lors de l'enregistrement");
+  addOrUpdateCustomerOrderComment(customerOrderComment: string, quotationId: number) {
+    return this.addOrUpdate(new HttpParams().set("quotationId", quotationId), "customer-order-comment/v2", customerOrderComment as any);
+  }
+
+  markAllCommentsAsReadForIQuotation(quotationId: number) {
+    return this.get(new HttpParams().set("quotationId", quotationId), "customer-order-comments/read");
   }
 }

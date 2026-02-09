@@ -632,7 +632,7 @@ public class QuotationController {
       throw new OsirisValidationException("customerOrderId");
 
     return new ResponseEntity<List<CustomerOrderComment>>(
-        customerOrderCommentService.getCustomerOrderCommentForOrder(customerOrder), HttpStatus.OK);
+        customerOrderCommentService.getCustomerOrderCommentForOrder(customerOrder, false), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/customer-order-comment/quotation")
@@ -646,7 +646,7 @@ public class QuotationController {
       throw new OsirisValidationException("quotationId");
 
     return new ResponseEntity<List<CustomerOrderComment>>(
-        customerOrderCommentService.getCustomerOrderCommentForQuotation(quotation), HttpStatus.OK);
+        customerOrderCommentService.getCustomerOrderCommentForQuotation(quotation, false), HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/customer-order-comment/provision")
@@ -3307,22 +3307,36 @@ public class QuotationController {
   }
 
   @PostMapping(inputEntryPoint + "/customer-order-comment/v2")
-  public ResponseEntity<CustomerOrderComment> saveCustomerOrderComment(
-      @RequestBody CustomerOrderComment customerOrderComment)
-      throws OsirisValidationException, OsirisException {
-    if (customerOrderComment == null
-        || (customerOrderComment.getiquotationId() == null && customerOrderComment.getCustomerOrder() == null))
-      throw new OsirisValidationException(
-          "customerOrderComment or customerOrderComment.Employee or customerOrderComment.CurrentUser or CustomerOrderId");
+  public ResponseEntity<CustomerOrderComment> addOrUpdateCustomerOrderCommentV2(@RequestParam Integer quotationId,
+      @RequestBody String customerOrderComment) throws OsirisValidationException, OsirisException {
 
-    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderComment.getiquotationId());
-    Quotation quotation = quotationService.getQuotation(customerOrderComment.getiquotationId());
+    if (quotationId == null)
+      throw new OsirisValidationException("quotationId");
+
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(quotationId);
+    Quotation quotation = quotationService.getQuotation(quotationId);
     if (customerOrder == null && quotation == null)
       throw new OsirisValidationException("no customerOrder nor quotation attached to comment");
 
     return new ResponseEntity<CustomerOrderComment>(
-        quotationFacade.addOrUpdateCustomerOrderComment(customerOrderComment),
+        quotationFacade.addOrUpdateCustomerOrderComment(customerOrderComment, quotationId, false),
         HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/customer-order-comments/read")
+  public ResponseEntity<Boolean> markAllCommentsAsReadForIQuotation(@RequestParam Integer quotationId)
+      throws OsirisValidationException, OsirisException {
+
+    if (quotationId == null)
+      throw new OsirisValidationException("quotationId");
+
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(quotationId);
+    Quotation quotation = quotationService.getQuotation(quotationId);
+    if (customerOrder == null && quotation == null)
+      throw new OsirisValidationException("no customerOrder nor quotation attached to comment");
+
+    quotationFacade.markAllCommentsAsReadForIQuotation(quotationId, false, true);
+    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/customer-order-comments/from-chat")

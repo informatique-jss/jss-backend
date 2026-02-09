@@ -32,8 +32,12 @@ export class CustomerOrderCommentService extends AppRestService<CustomerOrderCom
     return this.getList(new HttpParams().set("iQuotationId", iQuotationId), "customer-order-comments/from-chat");
   }
 
-  addOrUpdateCustomerOrderComment(customerOrderComment: CustomerOrderComment) {
-    return this.addOrUpdate(new HttpParams(), "customer-order-comment/v2", customerOrderComment);
+  addOrUpdateCustomerOrderComment(customerOrderComment: string, quotationId: number) {
+    return this.addOrUpdate(new HttpParams().set("quotationId", quotationId), "customer-order-comment/v2", customerOrderComment as any);
+  }
+
+  markAllCommentsAsReadForIQuotation(quotationId: number) {
+    return this.get(new HttpParams().set("quotationId", quotationId), "customer-order-comments/read");
   }
 
   getUnreadCommentsForResponsableAndIQuotation(iQuotationId: number) {

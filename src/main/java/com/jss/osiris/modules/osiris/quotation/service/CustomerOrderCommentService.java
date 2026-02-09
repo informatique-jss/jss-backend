@@ -16,27 +16,28 @@ public interface CustomerOrderCommentService {
 
         public CustomerOrderComment getCustomerOrderComment(Integer id);
 
-        public List<CustomerOrderComment> getCustomerOrderCommentForOrder(CustomerOrder customerOrder);
+        public List<CustomerOrderComment> getCustomerOrderCommentForOrder(CustomerOrder customerOrder,
+                        Boolean IsToDisplayToCustomer);
+
+        public List<CustomerOrderComment> getCustomerOrderCommentForQuotation(Quotation quotation,
+                        Boolean IsToDisplayToCustomer);
+
+        public List<CustomerOrderComment> getCustomerOrderCommentForProvision(Provision provision);
 
         public CustomerOrderComment addOrUpdateCustomerOrderComment(CustomerOrderComment customerOrderComment);
 
-        public CustomerOrderComment createCustomerOrderComment(CustomerOrder customerOrder, String contentComment,
-                        Boolean doNotNotify, Boolean isToDisplayToCustomer, Boolean isFromChat)
+        public CustomerOrderComment createCustomerOrderComment(CustomerOrder customerOrder, Quotation quotation,
+                        String contentComment,
+                        Boolean doNotNotify, Boolean isToDisplayToCustomer)
                         throws OsirisException;
 
         public CustomerOrderComment tagActiveDirectoryGroupOnCustomerOrderComment(
                         CustomerOrderComment customerOrderComment,
                         ActiveDirectoryGroup activeDirectoryGroup);
 
-        public List<CustomerOrderComment> getCustomerOrderCommentForQuotation(Quotation quotation);
-
         public List<CustomerOrderComment> getUnreadCustomerOrderCommentForSalesEmployee(Employee employee);
 
         public List<CustomerOrderComment> getUnreadCustomerOrderCommentForResponsable(Responsable responsable);
-
-        public List<CustomerOrderComment> getCustomerOrderCommentForProvision(Provision provision);
-
-        public List<CustomerOrderComment> getCommentsFromChatForOrder(CustomerOrder customerOrder);
 
         public List<CustomerOrder> getCustomerOrdersWithUnreadCommentsForResponsable(Responsable responsable);
 

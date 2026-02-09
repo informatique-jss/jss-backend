@@ -441,6 +441,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void disableAttachment(Attachment attachment) {
         attachment.setIsDisabled(true);
+        attachment.setIsValidated(true);
         addOrUpdateAttachment(attachment);
     }
 
