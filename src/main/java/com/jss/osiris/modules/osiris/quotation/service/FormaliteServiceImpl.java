@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
-import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Formalite;
 import com.jss.osiris.modules.osiris.quotation.repository.FormaliteRepository;
 
@@ -44,7 +43,6 @@ public class FormaliteServiceImpl implements FormaliteService {
 
     @Override
     public List<Formalite> getFormaliteForGURefresh() throws OsirisException {
-        return formaliteRepository.getFormaliteForGURefresh(
-                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.BILLED).getId());
+        return formaliteRepository.getFormaliteForGURefresh();
     }
 }

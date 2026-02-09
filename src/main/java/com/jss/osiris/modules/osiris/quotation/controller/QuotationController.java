@@ -1314,7 +1314,8 @@ public class QuotationController {
     if (affaireSearch.getLabel() == null
         && affaireSearch.getStatus() == null && affaireSearch.getCustomerOrders() == null
         && affaireSearch.getAffaire() == null && affaireSearch.getWaitedCompetentAuthority() == null
-        && affaireSearch.getCommercial() == null && affaireSearch.getFormaliteGuichetUniqueStatus() == null)
+        && affaireSearch.getCommercial() == null && affaireSearch.getFormaliteGuichetUniqueStatus() == null
+        && !Boolean.TRUE.equals(affaireSearch.getIsMissingQueriesToManualRemind()))
       throw new OsirisValidationException("Label or AssignedTo or Responsible or Status");
 
     if (affaireSearch.getLabel() == null)

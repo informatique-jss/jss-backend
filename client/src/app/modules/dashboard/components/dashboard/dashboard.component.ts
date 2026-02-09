@@ -189,7 +189,6 @@ export class DashboardComponent implements OnInit {
         this.affaireSearcAuthorityRejected.assignedTo = this.currentEmployee;
         this.affaireSearcAuthorityRejected.status = this.formaliteStatus.filter(stauts => stauts.code == FORMALITE_AUTHORITY_REJECTED);
 
-        this.affaireSearchMissingAttachmentQueryManually.commercial = this.currentEmployee;
         this.affaireSearchMissingAttachmentQueryManually.isMissingQueriesToManualRemind = true;
 
         this.affaireSearcAuthorityValidated.assignedTo = this.currentEmployee;
