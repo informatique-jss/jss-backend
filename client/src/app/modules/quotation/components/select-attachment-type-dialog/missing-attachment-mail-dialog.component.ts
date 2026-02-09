@@ -125,13 +125,17 @@ export class MissingAttachmentMailDialogComponent implements OnInit {
     this.setTableValues();
   }
 
-  deleteAssoServiceDocument(index: number) {
-    this.selectedAssoServiceDocument.splice(index, 1);
+  deleteAssoServiceDocument(id: number) {
+    for (let i = 0; i < this.selectedAssoServiceDocument.length; i++)
+      if (this.selectedAssoServiceDocument[i].id == id)
+        this.selectedAssoServiceDocument.splice(i, 1);
     this.setTableValues();
   }
 
-  deleteAssoServiceFieldType(index: number) {
-    this.selectedAssoServiceFieldType.splice(index, 1);
+  deleteAssoServiceFieldType(id: number) {
+    for (let i = 0; i < this.selectedAssoServiceFieldType.length; i++)
+      if (this.selectedAssoServiceFieldType[i].id == id)
+        this.selectedAssoServiceFieldType.splice(i, 1);
     this.setTableValues();
   }
 

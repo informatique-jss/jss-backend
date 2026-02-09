@@ -154,7 +154,7 @@ public class NibelisServiceImpl implements NibelisService {
                     AccountingAccount targetAccountingAccount = payslipType.getAccountingAccount();
                     if (targetAccountingAccount == null) {
                         isError = true;
-                    } else {
+                    } else if (payslip.getEmployerAmount() != null) {
                         if (payMap.get(targetAccountingAccount.getId()) == null)
                             payMap.put(targetAccountingAccount.getId(), 0f);
                         payMap.put(targetAccountingAccount.getId(),
