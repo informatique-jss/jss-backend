@@ -32,6 +32,8 @@ public interface CustomerOrderCommentService {
 
         public List<CustomerOrderComment> getUnreadCustomerOrderCommentForSalesEmployee(Employee employee);
 
+        public List<CustomerOrderComment> getUnreadCustomerOrderCommentForResponsable(Responsable responsable);
+
         public List<CustomerOrderComment> getCustomerOrderCommentForProvision(Provision provision);
 
         public List<CustomerOrderComment> getCommentsFromChatForOrder(CustomerOrder customerOrder);

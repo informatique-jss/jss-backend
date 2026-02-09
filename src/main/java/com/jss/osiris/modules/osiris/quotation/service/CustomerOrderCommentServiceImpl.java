@@ -62,6 +62,11 @@ public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentServ
     }
 
     @Override
+    public List<CustomerOrderComment> getUnreadCustomerOrderCommentForResponsable(Responsable responsable) {
+        return customerOrderCommentRepository.findUnreadCommmentsForResponsable(responsable.getId());
+    }
+
+    @Override
     public List<CustomerOrder> getCustomerOrdersWithUnreadCommentsForResponsable(Responsable responsable) {
         List<CustomerOrderComment> comments = customerOrderCommentRepository
                 .findUnreadCommmentsForResponsable(responsable.getId());

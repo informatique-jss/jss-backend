@@ -210,11 +210,11 @@ public class CustomerOrderComment implements Serializable, IId {
 		this.isReadByCustomer = isReadByCustomer;
 	}
 
-	public Integer getiQuotationId() {
+	public Integer getiquotationId() {
 		return iquotationId;
 	}
 
-	public void setiQuotationId(Integer iquotationId) {
+	public void setiquotationId(Integer iquotationId) {
 		this.iquotationId = iquotationId;
 	}
 

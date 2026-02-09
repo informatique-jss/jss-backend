@@ -94,17 +94,25 @@ public class QuotationFacade {
             throws OsirisException {
 
         Map<Integer, List<CustomerOrderComment>> commentsForIQuotationsMap = new HashMap<Integer, List<CustomerOrderComment>>();
+        List<CustomerOrderComment> commentsFound = new ArrayList<>();
 
         for (Integer iQuotationId : iQuotationIds) {
             CustomerOrder customerOrder = customerOrderService.getCustomerOrder(iQuotationId);
-            if (customerOrder != null)
+            if (customerOrder != null) {
+                commentsFound = customerOrderCommentService
+                        .getCustomerOrderCommentForOrder(customerOrder);
+                populateCustomerOrderCommentsTransientFields(customerOrder.getResponsable().getTiers(), iQuotationId,
+                        commentsFound);
                 commentsForIQuotationsMap.put(iQuotationId,
                         customerOrderCommentService.getCustomerOrderCommentForOrder(customerOrder));
-
+            }
             Quotation quotation = quotationService.getQuotation(iQuotationId);
-            if (quotation != null)
-                commentsForIQuotationsMap.put(iQuotationId,
-                        customerOrderCommentService.getCustomerOrderCommentForQuotation(quotation));
+            if (quotation != null) {
+                commentsFound = customerOrderCommentService.getCustomerOrderCommentForQuotation(quotation);
+                populateCustomerOrderCommentsTransientFields(quotation.getResponsable().getTiers(), iQuotationId,
+                        commentsFound);
+                commentsForIQuotationsMap.put(iQuotationId, commentsFound);
+            }
         }
         return commentsForIQuotationsMap;
     }
@@ -129,9 +137,7 @@ public class QuotationFacade {
                 }
             }
 
-            for (CustomerOrderComment comment : comments) {
-                populateCustomerOrderCommentTransientField(tiers, iQuotationId, comment);
-            }
+            populateCustomerOrderCommentsTransientFields(tiers, iQuotationId, comments);
             commentsListForIQuotations.addAll(comments);
         }
 
@@ -166,9 +172,59 @@ public class QuotationFacade {
         return comments;
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public List<CustomerOrderComment> getUnreadCommentsListFromChatForMyJssCurrentUser() {
+
+        Responsable currentMyJssUser = employeeService.getCurrentMyJssUser();
+
+        List<CustomerOrderComment> commentsFoundsForMyJssUser = customerOrderCommentService
+                .getUnreadCustomerOrderCommentForResponsable(currentMyJssUser);
+
+        for (CustomerOrderComment comment : commentsFoundsForMyJssUser) {
+            if (comment.getCustomerOrder() != null) {
+                populateCustomerOrderCommentTransientField(comment.getCustomerOrder().getResponsable().getTiers(),
+                        comment.getCustomerOrder().getId(), comment);
+            } else {
+                populateCustomerOrderCommentTransientField(comment.getQuotation().getResponsable().getTiers(),
+                        comment.getQuotation().getId(), comment);
+            }
+        }
+
+        return commentsFoundsForMyJssUser;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public List<CustomerOrderComment> getUnreadCommentsListFromChatForMyJssCurrentUserByIQuotation(
+            Integer iQuotationId) {
+
+        Responsable currentMyJssUser = employeeService.getCurrentMyJssUser();
+
+        List<CustomerOrderComment> commentsFoundsForMyJssUser = customerOrderCommentService
+                .getUnreadCustomerOrderCommentForResponsable(currentMyJssUser);
+
+        for (CustomerOrderComment comment : commentsFoundsForMyJssUser) {
+            if (comment.getCustomerOrder() != null) {
+                populateCustomerOrderCommentTransientField(comment.getCustomerOrder().getResponsable().getTiers(),
+                        comment.getCustomerOrder().getId(), comment);
+            } else {
+                populateCustomerOrderCommentTransientField(comment.getQuotation().getResponsable().getTiers(),
+                        comment.getQuotation().getId(), comment);
+            }
+        }
+
+        return commentsFoundsForMyJssUser.stream().filter(com -> com.getiquotationId().equals(iQuotationId)).toList();
+    }
+
+    private void populateCustomerOrderCommentsTransientFields(Tiers tiers, Integer iQuotationId,
+            List<CustomerOrderComment> comments) {
+        for (CustomerOrderComment comment : comments) {
+            populateCustomerOrderCommentTransientField(tiers, iQuotationId, comment);
+        }
+    }
+
     private void populateCustomerOrderCommentTransientField(Tiers tiers, Integer iQuotationId,
             CustomerOrderComment comment) {
-        comment.setiQuotationId(iQuotationId);
+        comment.setiquotationId(iQuotationId);
         comment.setTiersDenomination(tiers.getDenomination() != null ? tiers.getDenomination()
                 : (tiers.getFirstname() + " " + tiers.getLastname()));
         comment.setTiersId(tiers.getId());
@@ -178,14 +234,14 @@ public class QuotationFacade {
     public CustomerOrderComment addOrUpdateCustomerOrderComment(CustomerOrderComment customerOrderComment) {
         if (customerOrderComment.getCustomerOrder() == null && customerOrderComment.getCustomerOrder() == null
                 && customerOrderComment.getQuotation() == null
-                && customerOrderComment.getiQuotationId() != null) {
+                && customerOrderComment.getiquotationId() != null) {
             CustomerOrder customerOrder = customerOrderService
-                    .getCustomerOrder(customerOrderComment.getiQuotationId());
+                    .getCustomerOrder(customerOrderComment.getiquotationId());
 
             if (customerOrder != null)
                 customerOrderComment.setCustomerOrder(customerOrder);
             else {
-                Quotation quotation = quotationService.getQuotation(customerOrderComment.getiQuotationId());
+                Quotation quotation = quotationService.getQuotation(customerOrderComment.getiquotationId());
                 if (quotation != null)
                     customerOrderComment.setQuotation(quotation);
             }

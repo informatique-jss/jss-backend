@@ -61,7 +61,7 @@ export class CustomerOrderChatComponent implements OnInit {
   private fetchUnreadCommentsForEmployee() {
     this.iQuotationCommentService.getUnreadCommentsForEmployee().subscribe(commentsFound => {
       for (let comment of commentsFound) {
-        let workingIQuotation = comment.iQuotationId;
+        let workingIQuotation = comment.iquotationId;
         if (!this.commentListByIQuotation[workingIQuotation])
           this.commentListByIQuotation[workingIQuotation] = [];
         if (!this.commentListByIQuotation[workingIQuotation].find(comm => comm.id == comment.id))
@@ -78,7 +78,7 @@ export class CustomerOrderChatComponent implements OnInit {
     this.scrollToLastMessageOfConversation(iQuotationId, 'instant');
 
     this.iQuotationCommentService.getCommentsFromChatForIQuotations(this.currentIQuotationList).subscribe(res => {
-      this.commentListByIQuotation[iQuotationId] = res.filter(comment => comment.iQuotationId == iQuotationId);
+      this.commentListByIQuotation[iQuotationId] = res.filter(comment => comment.iquotationId == iQuotationId);
       this.scrollToLastMessageOfConversation(iQuotationId, 'instant');
     });
   }
@@ -117,7 +117,7 @@ export class CustomerOrderChatComponent implements OnInit {
             draft.isToDisplayToCustomer = true;
             draft.isReadByCustomer = false;
             draft.isRead = true;
-            draft.iQuotationId = iQuotationId;
+            draft.iquotationId = iQuotationId;
           }
           this.iQuotationCommentService.addOrUpdateCustomerOrderComment(draft).subscribe(response => {
             if (response) {

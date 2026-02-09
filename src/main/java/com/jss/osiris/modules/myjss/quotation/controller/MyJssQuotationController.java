@@ -1189,6 +1189,35 @@ public class MyJssQuotationController {
 				HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/customer-order-comments/unread-for-iquotation")
+	public ResponseEntity<List<CustomerOrderComment>> getUnreadCustomerCommentsFromChatForMyJssCurrentUser(
+			@RequestParam Integer iQuotationId) {
+
+		if (iQuotationId == null)
+			return new ResponseEntity<>(null, HttpStatus.OK);
+
+		CustomerOrder order = customerOrderService.getCustomerOrder(iQuotationId);
+		if ((order != null && !myJssQuotationValidationHelper.canSeeQuotation(order))) {
+			return new ResponseEntity<List<CustomerOrderComment>>(new ArrayList<CustomerOrderComment>(),
+					HttpStatus.OK);
+		}
+
+		Quotation quotation = quotationService.getQuotation(iQuotationId);
+		if (quotation != null && !myJssQuotationValidationHelper.canSeeQuotation(quotation)) {
+			return new ResponseEntity<List<CustomerOrderComment>>(new ArrayList<CustomerOrderComment>(),
+					HttpStatus.OK);
+		}
+
+		if (order == null && quotation == null) {
+			return new ResponseEntity<List<CustomerOrderComment>>(new ArrayList<CustomerOrderComment>(),
+					HttpStatus.OK);
+		}
+
+		return new ResponseEntity<List<CustomerOrderComment>>(
+				quotationFacade.getUnreadCommentsListFromChatForMyJssCurrentUserByIQuotation(iQuotationId),
+				HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/customer-order-comments/orders-with-unread")
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	public ResponseEntity<List<CustomerOrder>> getOrdersWithUnreadCommentsForMyJssUser() {
@@ -1256,13 +1285,13 @@ public class MyJssQuotationController {
 			@RequestBody CustomerOrderComment customerOrderComment) throws OsirisValidationException, OsirisException {
 
 		if (customerOrderComment == null
-				|| (customerOrderComment.getiQuotationId() == null && customerOrderComment.getCustomerOrder() == null
+				|| (customerOrderComment.getiquotationId() == null && customerOrderComment.getCustomerOrder() == null
 						&& customerOrderComment.getQuotation() == null))
 			throw new OsirisValidationException(
 					"customerOrderComment or customerOrder && quotation && iQuotationId null");
 
-		CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderComment.getiQuotationId());
-		Quotation quotation = quotationService.getQuotation(customerOrderComment.getiQuotationId());
+		CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderComment.getiquotationId());
+		Quotation quotation = quotationService.getQuotation(customerOrderComment.getiquotationId());
 		if (customerOrder == null && quotation == null)
 			throw new OsirisValidationException("no customerOrder nor quotation attached to comment");
 
@@ -2221,7 +2250,7 @@ public class MyJssQuotationController {
 	}
 
 	@GetMapping(inputEntryPoint + "/customer-order-comments/from-chat")
-	public ResponseEntity<List<CustomerOrderComment>> getNewCustomerCommentsFromChat(Integer iQuotationId)
+	public ResponseEntity<List<CustomerOrderComment>> getNewCustomerCommentsFromChat(@RequestParam Integer iQuotationId)
 			throws OsirisValidationException, OsirisException {
 
 		if (iQuotationId == null)
@@ -2234,7 +2263,7 @@ public class MyJssQuotationController {
 			return new ResponseEntity<List<CustomerOrderComment>>(new ArrayList<CustomerOrderComment>(), HttpStatus.OK);
 
 		return new ResponseEntity<List<CustomerOrderComment>>(
-				quotationFacade.getCommentsFromChatForIQuotations(Arrays.asList(iQuotationId)).get(iQuotationId),
+				quotationFacade.getCommentsListFromChatForIQuotations(Arrays.asList(iQuotationId)),
 				HttpStatus.OK);
 	}
 }

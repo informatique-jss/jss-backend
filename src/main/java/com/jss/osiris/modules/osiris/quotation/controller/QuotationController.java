@@ -3310,12 +3310,12 @@ public class QuotationController {
       @RequestBody CustomerOrderComment customerOrderComment)
       throws OsirisValidationException, OsirisException {
     if (customerOrderComment == null
-        || (customerOrderComment.getiQuotationId() == null && customerOrderComment.getCustomerOrder() == null))
+        || (customerOrderComment.getiquotationId() == null && customerOrderComment.getCustomerOrder() == null))
       throw new OsirisValidationException(
           "customerOrderComment or customerOrderComment.Employee or customerOrderComment.CurrentUser or CustomerOrderId");
 
-    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderComment.getiQuotationId());
-    Quotation quotation = quotationService.getQuotation(customerOrderComment.getiQuotationId());
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderComment.getiquotationId());
+    Quotation quotation = quotationService.getQuotation(customerOrderComment.getiquotationId());
     if (customerOrder == null && quotation == null)
       throw new OsirisValidationException("no customerOrder nor quotation attached to comment");
 

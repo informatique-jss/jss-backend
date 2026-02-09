@@ -100,6 +100,8 @@ export class QuotationDetailsComponent implements OnInit {
   canEditQuotation: boolean = false;
   currentDate = new Date();
 
+  pollingInterval: any;
+
   constructor(
     private constantService: ConstantService,
     private activatedRoute: ActivatedRoute,
@@ -140,12 +142,12 @@ export class QuotationDetailsComponent implements OnInit {
     this.documentTypeBilling = this.constantService.getDocumentTypeBilling();
 
     this.quotationDetailsForm = this.formBuilder.group({});
-    this.customerOrderCommentService.comments.subscribe((res: CustomerOrderComment[]) => {
-      this.comments = res;
-      this.sortComments();
-    });
 
     this.refreshQuotation();
+
+    this.pollingInterval = setInterval(() => {
+      this.fetchUnreadCommentsForCurrentUser();
+    }, 2000);
   }
 
   refreshQuotation() {
@@ -278,11 +280,33 @@ export class QuotationDetailsComponent implements OnInit {
     this.dislayAlreadyFilledAttachment = !this.dislayAlreadyFilledAttachment;
   }
 
+  private fetchUnreadCommentsForCurrentUser() {
+    if (this.quotation)
+      this.customerOrderCommentService.getUnreadCommentsForResponsableAndIQuotation(this.quotation.id).subscribe(commentsFound => {
+        for (let comment of commentsFound) {
+          if (!this.comments)
+            this.comments = [];
+          if (!this.comments.find(comm => comm.id == comment.id))
+            this.comments.push(comment);
+        }
+        this.sortComments();
+      });
+  }
+
   refreshCustomerOrderComments() {
     if (this.quotation)
       this.customerOrderCommentService.getCustomerOrderCommentsForCustomer(this.quotation.id).subscribe(response => {
         this.comments = response;
+        this.markCommentsAsReadByCustomer();
       })
+  }
+
+  markCommentsAsReadByCustomer() {
+    for (let comment of this.comments)
+      if (!comment.isReadByCustomer) {
+        comment.isReadByCustomer = true;
+        this.customerOrderCommentService.addOrUpdateCustomerOrderComment(comment).subscribe();
+      }
   }
 
   addCustomerOrderComment() {
@@ -290,7 +314,7 @@ export class QuotationDetailsComponent implements OnInit {
       if (this.newComment && this.newComment.comment.replace(/<(?:.|\n)*?>/gm, ' ').length > 0) {
         if (this.newComment.id == undefined) {
           if (this.quotation)
-            this.newComment.iQuotationId = this.quotation.id;
+            this.newComment.iquotationId = this.quotation.id;
           this.newComment.isFromChat = true;
           this.newComment.isReadByCustomer = true;
         }
