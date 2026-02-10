@@ -545,7 +545,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             } else {
                 targetStatusCode = CustomerOrderStatus.WAITING_DEPOSIT;
                 try {
-                    mailHelper.sendCustomerOrderDepositMailToCustomer(customerOrder, false, false);
+                    BigDecimal depositAmount = getInvoicingSummaryForIQuotation(customerOrder).getTotalPrice()
+                            .multiply(oneHundredValue)
+                            .setScale(0, RoundingMode.HALF_EVEN).divide(oneHundredValue);
+                    depositAmount = BigDecimal.ZERO;
+                    if (depositAmount.compareTo(zeroValue) > 0)
+                        mailHelper.sendCustomerOrderDepositMailToCustomer(customerOrder, false, false);
                 } catch (OsirisClientMessageException e) {
                 }
             }
@@ -1261,8 +1266,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             }
 
             if (toSend) {
-                mailHelper.sendCustomerOrderDepositMailToCustomer(customerOrder, false, true);
-                addOrUpdateCustomerOrder(customerOrder, false, true);
+                BigDecimal depositAmount = getInvoicingSummaryForIQuotation(customerOrder).getTotalPrice()
+                        .multiply(oneHundredValue)
+                        .setScale(0, RoundingMode.HALF_EVEN).divide(oneHundredValue);
+                if (depositAmount.compareTo(zeroValue) > 0) {
+                    mailHelper.sendCustomerOrderDepositMailToCustomer(customerOrder, false, true);
+                    addOrUpdateCustomerOrder(customerOrder, false, true);
+                }
             }
         }
     }
