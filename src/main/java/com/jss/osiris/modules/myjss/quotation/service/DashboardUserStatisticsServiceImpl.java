@@ -74,7 +74,8 @@ public class DashboardUserStatisticsServiceImpl implements DashboardUserStatisti
             // compute customerOrderRequieringAttention
             statistics.setCustomerOrderInProgress(0);
             List<CustomerOrder> customerOrderRequieringAttention = customerOrderService.searchOrdersForCurrentUser(
-                    Arrays.asList(CustomerOrderStatus.BEING_PROCESSED),
+                    Arrays.asList(CustomerOrderStatus.BEING_PROCESSED, CustomerOrderStatus.WAITING_DEPOSIT,
+                            CustomerOrderStatus.BILLED),
                     listResponsables.stream().map(respo -> respo.getId()).toList(),
                     true, 0, "");
 

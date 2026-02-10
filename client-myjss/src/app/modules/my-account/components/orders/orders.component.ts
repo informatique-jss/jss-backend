@@ -117,6 +117,8 @@ export class OrdersComponent implements OnInit {
         this.statusFilterBilled = true;
       if (inputSearchStatus == CUSTOMER_ORDER_STATUS_REQUIRE_ATTENTION) {
         this.statusFilterBeingProcessed = true;
+        this.statusFilterWaitingDeposit = true;
+        this.statusFilterBilled = true;
         this.requiringAttention = true;
       }
       if (inputSearchStatus == CUSTOMER_ORDER_WITH_UNREAD_COMMENTS)

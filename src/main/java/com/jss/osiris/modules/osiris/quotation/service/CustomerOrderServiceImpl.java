@@ -1556,6 +1556,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             String sortBy) throws OsirisException {
         List<CustomerOrderStatus> customerOrderStatusToFilter = new ArrayList<CustomerOrderStatus>();
         boolean displayPayed = false;
+        if (requiringAttention == null)
+            requiringAttention = false;
 
         if (customerOrderStatus != null && customerOrderStatus.size() > 0) {
             for (String customerOrderStatusCode : customerOrderStatus) {
@@ -1598,13 +1600,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     order = new Order(Direction.ASC, "customerOrderStatus");
 
                 Sort sort = Sort.by(Arrays.asList(order));
-                Pageable pageableRequest = PageRequest.of(page, 10, sort);
+                Pageable pageableRequest = PageRequest.of(page, !requiringAttention ? 10 : Integer.MAX_VALUE, sort);
                 List<CustomerOrder> customerOrdersFound = customerOrderRepository.searchOrdersForCurrentUser(
                         responsablesToFilter,
                         customerOrderStatusToFilter, customerOrderStatusBilled, displayPayed,
                         pageableRequest);
 
-                if (requiringAttention.equals(Boolean.TRUE)) {
+                if (requiringAttention) {
                     Predicate<CustomerOrder> requiringAttentionPredicate = generateRequiringAttentionPredicate();
                     customerOrdersFound = customerOrdersFound.stream().filter(requiringAttentionPredicate).toList();
                 }
@@ -1638,9 +1640,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     private Predicate<CustomerOrder> generateRequiringAttentionPredicate() throws OsirisException {
-        InvoiceStatus invoicePayed = constantService.getInvoiceStatusPayed();
-        InvoiceStatus invoiceCancelled = constantService.getInvoiceStatusCancelled();
-
+        InvoiceStatus invoiceToPay = constantService.getInvoiceStatusSend();
+        CustomerOrderStatus orderStatusInProgress = customerOrderStatusService
+                .getCustomerOrderStatusByCode(CustomerOrderStatus.BEING_PROCESSED);
         return new Predicate<CustomerOrder>() {
             @Override
             public boolean test(CustomerOrder customerOrder) {
@@ -1648,26 +1650,29 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 boolean isWaitingDeposit = CustomerOrderStatus.WAITING_DEPOSIT
                         .equals(customerOrder.getCustomerOrderStatus().getCode());
 
+                if (isWaitingDeposit)
+                    return true;
+
                 // Reminded invoices orders OR
                 boolean isInvoiceReminded = customerOrder.getInvoices().stream()
                         .anyMatch(invoice -> invoice.getFirstReminderDateTime() != null
-                                && (!invoice.getInvoiceStatus().getCode().equals(invoicePayed.getCode())
-                                        || !invoice.getInvoiceStatus().getCode()
-                                                .equals(invoiceCancelled.getCode())));
+                                && invoice.getInvoiceStatus().getId().equals(invoiceToPay.getId()));
+
+                if (isInvoiceReminded)
+                    return true;
 
                 // Waiting for missing documents orders
-                boolean isMissingAttachement = false;
-                if (CustomerOrderStatus.BEING_PROCESSED
-                        .equals(customerOrder.getCustomerOrderStatus().getCode()))
+                if (orderStatusInProgress.getId().equals(customerOrder.getCustomerOrderStatus().getId())
+                        && customerOrder.getAssoAffaireOrders() != null)
                     for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
-                        for (Service service : asso.getServices())
-                            if (service.getMissingAttachmentQueries() != null)
-                                for (Provision provision : service.getProvisions())
-                                    if (isProvisionStatusMissingAttachement(provision)) {
-                                        isMissingAttachement = true;
-                                        break;
-                                    }
-                return isWaitingDeposit || isInvoiceReminded || isMissingAttachement;
+                        if (asso.getServices() != null)
+                            for (Service service : asso.getServices())
+                                if (service.getMissingAttachmentQueries() != null)
+                                    for (Provision provision : service.getProvisions())
+                                        if (isProvisionStatusMissingAttachement(provision)) {
+                                            return true;
+                                        }
+                return false;
             }
         };
     }
@@ -1683,6 +1688,11 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 .equals(ProvisionScreenType.FORMALITE)
                 && provision.getFormalite().getFormaliteStatus().getCode()
                         .equals(FormaliteStatus.FORMALITE_WAITING_DOCUMENT))
+            return true;
+        if (provision.getProvisionType().getProvisionScreenType().getCode()
+                .equals(ProvisionScreenType.STANDARD)
+                && provision.getSimpleProvision().getSimpleProvisionStatus().getCode()
+                        .equals(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT))
             return true;
 
         return false;
