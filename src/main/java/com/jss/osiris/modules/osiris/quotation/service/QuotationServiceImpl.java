@@ -704,7 +704,12 @@ public class QuotationServiceImpl implements QuotationService {
                     order = new Order(Direction.ASC, "customerOrderStatus");
 
                 Sort sort = Sort.by(Arrays.asList(order));
-                Pageable pageableRequest = PageRequest.of(page, 10, sort);
+                Pageable pageableRequest = PageRequest.of(page, 10, sort); // /!\ pay attention, if new predicate are
+                                                                           // implemented for requiringAttention, take
+                                                                           // care of expanding pagination to maximum to
+                                                                           // correctly backend filter afterward (cf
+                                                                           // customerOrderServiceImpl for same
+                                                                           // behavior)
 
                 List<Quotation> quotationsFound = quotationRepository.searchQuotationsForCurrentUser(
                         responsablesToFilter, quotationStatusToFilter, pageableRequest);
