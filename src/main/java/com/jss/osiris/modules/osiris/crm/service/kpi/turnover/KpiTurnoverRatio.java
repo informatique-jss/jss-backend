@@ -17,6 +17,8 @@ import com.jss.osiris.modules.osiris.crm.model.KpiCrmValue;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmService;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmValueService;
 import com.jss.osiris.modules.osiris.crm.service.kpi.model.WorkingTableTurnoverRatio;
+import com.jss.osiris.modules.osiris.profile.model.Employee;
+import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.reporting.model.ReportingWidget;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
@@ -39,6 +41,11 @@ public class KpiTurnoverRatio implements IKpiThread {
 
     @Autowired
     ResponsableService responsableService;
+
+    @Autowired
+    EmployeeService employeeService;
+
+    private HashMap<Integer, Employee> employeeCache = new HashMap<Integer, Employee>();
 
     @Override
     public String getCode() {
@@ -112,14 +119,15 @@ public class KpiTurnoverRatio implements IKpiThread {
                                      idResponsable ,
                                      createdDate ,
                                      turnover /(sum(turnover) over (partition by id_tiers)) as turnover,
-                                     sum(turnover) over (partition by id_tiers) as tiersTurnover
+                                     sum(turnover) over (partition by id_tiers) as tiersTurnover,
+                                     id_commercial as idCommercial
                                  from
                                      (
                                      select
                                          id_responsable as idResponsable ,
                                          cast (date_trunc('day' , created_date) as date) as createdDate,
                                          sum(turnover_without_tax_without_debour) as turnover,
-                                         rt.id_tiers
+                                         rt.id_tiers, rt.id_commercial
                                      from
                                          reporting_turnover rt
                                      join responsable r on
@@ -128,7 +136,7 @@ public class KpiTurnoverRatio implements IKpiThread {
                                          created_date >=:startDate
                                          and created_date < :endDate
                                      group by
-                                         id_responsable ,
+                                         id_responsable ,rt.id_commercial,
                                          cast (date_trunc('day' , created_date) as date),
                                          rt.id_tiers)
                                          where turnover >0
@@ -151,6 +159,7 @@ public class KpiTurnoverRatio implements IKpiThread {
                     KpiCrmValue value = new KpiCrmValue();
                     value.setKpiCrm(kpiCrm);
                     value.setResponsable(responsableCache.get(turnoverValue.getIdResponsable()));
+                    value.setOverridedSalesEmployee(getEmployee(turnoverValue.getIdCommercial()));
                     value.setValue(turnoverValue.getTurnover().multiply(new BigDecimal(100)));
                     value.setWeight(turnoverValue.getTiersTurnover().intValue());
                     value.setValueDate(turnoverValue.getCreatedDate().toLocalDate());
@@ -160,6 +169,16 @@ public class KpiTurnoverRatio implements IKpiThread {
 
             kpiCrmService.saveValuesForKpiAndDay(kpiCrm, newValues);
         }
+    }
+
+    private Employee getEmployee(Integer idEmployee) {
+        if (idEmployee == null) {
+            return null;
+        }
+        if (employeeCache.get(idEmployee) == null) {
+            employeeCache.put(idEmployee, employeeService.getEmployee(idEmployee));
+        }
+        return employeeCache.get(idEmployee);
     }
 
     @Override

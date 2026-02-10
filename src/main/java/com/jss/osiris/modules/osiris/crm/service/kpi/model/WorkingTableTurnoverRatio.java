@@ -5,16 +5,18 @@ import java.sql.Date;
 
 public class WorkingTableTurnoverRatio {
     private Integer idResponsable;
+    private Integer idCommercial;
     private Date createdDate;
     private BigDecimal turnover;
     private BigDecimal tiersTurnover;
 
     public WorkingTableTurnoverRatio(Integer idResponsable, Date createdDate, BigDecimal turnover,
-            BigDecimal tiersTurnover) {
+            BigDecimal tiersTurnover, Integer idCommercial) {
         this.idResponsable = idResponsable;
         this.createdDate = createdDate;
         this.turnover = turnover;
         this.tiersTurnover = tiersTurnover;
+        this.idCommercial = idCommercial;
     }
 
     public Integer getIdResponsable() {
@@ -47,6 +49,14 @@ public class WorkingTableTurnoverRatio {
 
     public void setTiersTurnover(BigDecimal tiersTurnover) {
         this.tiersTurnover = tiersTurnover;
+    }
+
+    public Integer getIdCommercial() {
+        return idCommercial;
+    }
+
+    public void setIdCommercial(Integer idCommercial) {
+        this.idCommercial = idCommercial;
     }
 
 }
