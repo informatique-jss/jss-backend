@@ -105,7 +105,11 @@ public class AccountingController {
             validationHelper.validateReferential(paySlipLineType, true, "paySlipLineTypes");
         validationHelper.validateString(paySlipLineType.getCode(), true, "code");
         validationHelper.validateString(paySlipLineType.getLabel(), true, "label");
-        validationHelper.validateReferential(paySlipLineType.getAccountingAccount(), true, "accountingAccount");
+        validationHelper.validateReferential(paySlipLineType.getAccountingAccountCredit(), false, "accountingAccount");
+        validationHelper.validateReferential(paySlipLineType.getAccountingAccountDebit(), false, "accountingAccount");
+
+        if (paySlipLineType.getIsUseEmployerPart() == null)
+            paySlipLineType.setIsUseEmployerPart(false);
 
         return new ResponseEntity<PaySlipLineType>(paySlipLineTypeService.addOrUpdatePaySlipLineType(paySlipLineType),
                 HttpStatus.OK);

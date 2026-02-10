@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.transaction.Transactional;
 
@@ -12,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.jss.osiris.libs.exception.OsirisException;
-import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingJournal;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.osiris.accounting.model.PaySlipLineType;
@@ -138,55 +138,76 @@ public class NibelisServiceImpl implements NibelisService {
     public List<AccountingRecord> generateAccountingRecordForPayslip(LocalDate period, boolean persist)
             throws OsirisException {
         List<PaySlip> payslips = getAllPaySlips(period);
-        HashMap<Integer, Float> payMap = new HashMap<Integer, Float>();
+
+        Map<Integer, BigDecimal> balanceMap = new HashMap<>();
         boolean isError = false;
 
         if (payslips != null) {
             for (PaySlip payslip : payslips) {
-                PaySlipLineType payslipType = paySlipLineTypeService.getPaySlipLineTypeByLabel(payslip.getLabel());
-                if (payslipType == null) {
+                PaySlipLineType type = paySlipLineTypeService.getPaySlipLineTypeByLabel(payslip.getLabel());
+
+                if (type == null) {
                     isError = true;
                     PaySlipLineType lineType = new PaySlipLineType();
                     lineType.setLabel(payslip.getLabel());
                     lineType.setCode(lineType.getLabel().replaceAll(" ", "_").toUpperCase());
                     paySlipLineTypeService.addOrUpdatePaySlipLineType(lineType);
-                } else if (!Boolean.TRUE.equals(payslipType.getIsNotToUse())) {
-                    AccountingAccount targetAccountingAccount = payslipType.getAccountingAccount();
-                    if (targetAccountingAccount == null) {
-                        isError = true;
-                    } else if (payslip.getEmployerAmount() != null) {
-                        if (payMap.get(targetAccountingAccount.getId()) == null)
-                            payMap.put(targetAccountingAccount.getId(), 0f);
-                        payMap.put(targetAccountingAccount.getId(),
-                                payMap.get(targetAccountingAccount.getId())
-                                        + (Boolean.TRUE.equals(payslipType.getIsOnCredit()) ? 1 : -1)
-                                                * payslip.getEmployerAmount().floatValue());
-                    }
+                    continue;
+                }
+
+                if (Boolean.TRUE.equals(type.getIsNotToUse())) {
+                    continue;
+                }
+
+                BigDecimal amount = BigDecimal.ZERO;
+                if (Boolean.TRUE.equals(type.getIsUseEmployerPart()) && payslip.getEmployerAmount() != null) {
+                    amount = new BigDecimal(payslip.getEmployerAmount().toString());
+                } else if (payslip.getEmployeeAmount() != null) {
+                    amount = new BigDecimal(payslip.getEmployeeAmount().toString());
+                }
+
+                amount = amount.abs();
+
+                if (amount.compareTo(BigDecimal.ZERO) == 0)
+                    continue;
+
+                if (type.getAccountingAccountDebit() != null) {
+                    balanceMap.merge(type.getAccountingAccountDebit().getId(), amount, BigDecimal::add);
+                }
+
+                if (type.getAccountingAccountCredit() != null) {
+                    balanceMap.merge(type.getAccountingAccountCredit().getId(), amount.negate(), BigDecimal::add);
                 }
             }
         }
 
         if (isError) {
-            throw new OsirisException("Error when generating payslip, please check referential");
+            throw new OsirisException("Error: Missing mapping for some payslip lines.");
         }
 
         AccountingJournal miscellaneousJournal = constantService.getAccountingJournalMiscellaneousOperations();
-        List<AccountingRecord> records = new ArrayList<AccountingRecord>();
+        List<AccountingRecord> records = new ArrayList<>();
 
-        for (Integer accountId : payMap.keySet()) {
-            AccountingRecord accountingRecord = new AccountingRecord();
-            accountingRecord.setOperationDateTime(period.atTime(12, 0));
-            accountingRecord.setAccountingAccount(accountingAccountService.getAccountingAccount(accountId));
-            accountingRecord.setAccountingJournal(miscellaneousJournal);
-            accountingRecord.setLabel("Paie " + period.getMonthValue() + "-" + period.getYear());
-            if (payMap.get(accountId) > 0) {
-                accountingRecord.setCreditAmount(new BigDecimal(payMap.get(accountId)));
-            } else if (payMap.get(accountId) < 0) {
-                accountingRecord.setDebitAmount(new BigDecimal(Math.abs(payMap.get(accountId))));
-            } else {
+        for (Map.Entry<Integer, BigDecimal> entry : balanceMap.entrySet()) {
+            BigDecimal balance = entry.getValue();
+
+            if (balance.compareTo(BigDecimal.ZERO) == 0)
                 continue;
+
+            AccountingRecord record = new AccountingRecord();
+            record.setOperationDateTime(period.atTime(12, 0));
+            record.setAccountingAccount(accountingAccountService.getAccountingAccount(entry.getKey()));
+            record.setAccountingJournal(miscellaneousJournal);
+            record.setLabel("Paie " + period.getMonthValue() + "-" + period.getYear());
+
+            if (balance.compareTo(BigDecimal.ZERO) > 0) {
+                record.setDebitAmount(balance);
+                record.setCreditAmount(BigDecimal.ZERO);
+            } else {
+                record.setDebitAmount(BigDecimal.ZERO);
+                record.setCreditAmount(balance.abs());
             }
-            records.add(accountingRecord);
+            records.add(record);
         }
         return records;
     }

@@ -25,13 +25,17 @@ public class PaySlipLineType implements Serializable, IId {
 	private String label;
 
 	@ManyToOne
-	@JoinColumn(name = "id_accounting_account")
-	private AccountingAccount accountingAccount;
+	@JoinColumn(name = "id_accounting_account_debit")
+	private AccountingAccount accountingAccountDebit;
+
+	@ManyToOne
+	@JoinColumn(name = "id_accounting_account_credit")
+	private AccountingAccount accountingAccountCredit;
 
 	private String code;
 
-	private Boolean isOnCredit;
 	private Boolean isNotToUse;
+	private Boolean isUseEmployerPart;
 
 	public Integer getId() {
 		return id;
@@ -57,20 +61,20 @@ public class PaySlipLineType implements Serializable, IId {
 		this.code = code;
 	}
 
-	public AccountingAccount getAccountingAccount() {
-		return accountingAccount;
+	public AccountingAccount getAccountingAccountDebit() {
+		return accountingAccountDebit;
 	}
 
-	public void setAccountingAccount(AccountingAccount accountingAccount) {
-		this.accountingAccount = accountingAccount;
+	public void setAccountingAccountDebit(AccountingAccount accountingAccountDebit) {
+		this.accountingAccountDebit = accountingAccountDebit;
 	}
 
-	public Boolean getIsOnCredit() {
-		return isOnCredit;
+	public AccountingAccount getAccountingAccountCredit() {
+		return accountingAccountCredit;
 	}
 
-	public void setIsOnCredit(Boolean isOnCredit) {
-		this.isOnCredit = isOnCredit;
+	public void setAccountingAccountCredit(AccountingAccount accountingAccountCredit) {
+		this.accountingAccountCredit = accountingAccountCredit;
 	}
 
 	public Boolean getIsNotToUse() {
@@ -79,6 +83,14 @@ public class PaySlipLineType implements Serializable, IId {
 
 	public void setIsNotToUse(Boolean isNotToUse) {
 		this.isNotToUse = isNotToUse;
+	}
+
+	public Boolean getIsUseEmployerPart() {
+		return isUseEmployerPart;
+	}
+
+	public void setIsUseEmployerPart(Boolean isUseEmployerPart) {
+		this.isUseEmployerPart = isUseEmployerPart;
 	}
 
 }

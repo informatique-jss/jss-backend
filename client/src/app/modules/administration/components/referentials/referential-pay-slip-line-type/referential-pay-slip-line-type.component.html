@@ -36,21 +36,28 @@
           </tr>
           <tr>
             <td>
-              <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccount" [form]="entityForm"
-                propertyName="accountingAccount" [isMandatory]="true"
-                label="Compte comptable"></autocomplete-accounting-account>
+              <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccountDebit" [form]="entityForm"
+                propertyName="accountingAccountDebit" [isMandatory]="false"
+                label="Compte comptable débit"></autocomplete-accounting-account>
             </td>
           </tr>
           <tr>
             <td>
-              <generic-toggle [(model)]="selectedEntity.isOnCredit" label="A placer au crédit ?" [form]="entityForm"
-                propertyName="isOnCredit" [isDisabled]="!editMode"></generic-toggle>
+              <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccountCredit" [form]="entityForm"
+                propertyName="accountingAccountCredit" [isMandatory]="false"
+                label="Compte comptable crédit"></autocomplete-accounting-account>
             </td>
           </tr>
           <tr>
             <td>
               <generic-toggle [(model)]="selectedEntity.isNotToUse" label="Ne pas utiliser ?" [form]="entityForm"
                 propertyName="isNotToUse" [isDisabled]="!editMode"></generic-toggle>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <generic-toggle [(model)]="selectedEntity.isUseEmployerPart" label="Utiliser la part employeur ?"
+                [form]="entityForm" propertyName="isUseEmployerPart" [isDisabled]="!editMode"></generic-toggle>
             </td>
           </tr>
         </table>

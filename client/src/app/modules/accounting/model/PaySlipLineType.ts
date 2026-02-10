@@ -4,7 +4,8 @@ export interface PaySlipLineType {
   id: number;
   code: string;
   label: string;
-  accountingAccount: AccountingAccount;
-  isOnCredit: boolean;
+  accountingAccountDebit: AccountingAccount;
+  accountingAccountCredit: AccountingAccount;
   isNotToUse: boolean;
+  isUseEmployerPart: boolean;
 }

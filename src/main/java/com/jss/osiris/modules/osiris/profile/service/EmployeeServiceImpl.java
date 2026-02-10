@@ -234,6 +234,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         responsable.setLoginToken(token);
         responsable.setLoginTokenExpirationDateTime(LocalDateTime.now().plusMinutes(TOKEN_EXPIRATION_LENGTH_MINUTES));
+        responsableService.addOrUpdateResponsable(responsable);
         mailHelper.sendNewTokenMail(responsable, overrideMail);
     }
 
