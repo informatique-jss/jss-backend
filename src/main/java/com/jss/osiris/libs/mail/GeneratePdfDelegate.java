@@ -50,6 +50,7 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
+import com.jss.osiris.libs.PdfTools;
 import com.jss.osiris.libs.PictureHelper;
 import com.jss.osiris.libs.QrCodeHelper;
 import com.jss.osiris.libs.azure.TranslationService;
@@ -140,6 +141,9 @@ public class GeneratePdfDelegate {
 
     @Autowired
     TranslationService translationService;
+
+    @Autowired
+    PdfTools pdfTools;
 
     public static final String EMAIL_TEMPLATE_ENCODING = "UTF-8";
     public static final String HEADER_PDF_TEMPLATE = "header-pdf";
@@ -843,8 +847,6 @@ public class GeneratePdfDelegate {
 
         // Recurring
         if (customerOrder != null)
-
-        {
             if (customerOrder.getRecurringStartDate() != null) {
                 ctx.setVariable("recurringStartDate",
                         customerOrder.getRecurringStartDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
@@ -854,7 +856,7 @@ public class GeneratePdfDelegate {
                     ctx.setVariable("recurringParentId",
                             " - " + customerOrder.getCustomerOrderParentRecurring().getId());
             }
-        }
+
         // Create the HTML body using Thymeleaf and MJML
         String htmlBody = StringEscapeUtils
                 .unescapeHtml4(pdfTemplateEngine(true).process("invoice-page", ctx));
@@ -883,6 +885,46 @@ public class GeneratePdfDelegate {
             outputStream.close();
         } catch (DocumentException | IOException e) {
             throw new OsirisException(e, "Unable to create PDF file for invoice " + invoice.getId());
+        }
+
+        File tempFileGcv = generateCgvPdf();
+
+        File finalInvoice = pdfTools.mergePdfs(List.of(tempFile, tempFileGcv));
+
+        tempFile.delete();
+        tempFileGcv.delete();
+
+        return finalInvoice;
+    }
+
+    private File generateCgvPdf() throws OsirisException {
+        String htmlBody = StringEscapeUtils
+                .unescapeHtml4(pdfTemplateEngine(true).process("invoice-page-cgv", new Context()));
+        String htmlContent = composeHtml(HEADER_PDF_TEMPLATE, null, htmlBody, new Context());
+
+        File tempFile;
+        OutputStream outputStream;
+        try {
+            tempFile = File.createTempFile("invoice", "pdf");
+
+            outputStream = new FileOutputStream(tempFile);
+        } catch (IOException e) {
+            throw new OsirisException(e, "Unable to create temp file");
+        }
+        ITextRenderer renderer = new ITextRenderer();
+        XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
+
+        renderer = embedFontSize(renderer);
+        renderer.setDocumentFromString(htmlContent.replaceAll("[\\u0000-\\u001F&&[^\\n\\r\\t]]", " ")
+                .replaceAll("&nbsp;", "&#160;")
+                .replaceAll("font-size:\\s*0(\\.0+)?(px|pt|em|rem|%)?;", "font-size:1px;"));
+        renderer.layout();
+        try {
+            renderer.createPDF(outputStream);
+            outputStream.flush();
+            outputStream.close();
+        } catch (DocumentException | IOException e) {
+            throw new OsirisException(e, "Unable to create PDF file for cgv");
         }
         return tempFile;
     }
