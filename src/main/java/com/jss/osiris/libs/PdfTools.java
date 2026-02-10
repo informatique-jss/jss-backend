@@ -5,16 +5,22 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.springframework.stereotype.Service;
 
+import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PRStream;
+import com.itextpdf.text.pdf.PdfCopy;
+import com.itextpdf.text.pdf.PdfImportedPage;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfNumber;
 import com.itextpdf.text.pdf.PdfObject;
@@ -153,4 +159,31 @@ public class PdfTools {
         }
     }
 
+    public File mergePdfs(List<File> filesToMerge) throws OsirisException {
+        File mergedFile;
+        try {
+            mergedFile = File.createTempFile("merged_invoice", ".pdf");
+        } catch (IOException e) {
+            throw new OsirisException(e, "Error creating merging file");
+        }
+        try (FileOutputStream os = new FileOutputStream(mergedFile)) {
+            Document document = new Document();
+            PdfCopy copy = new PdfCopy(document, os);
+            document.open();
+
+            for (File file : filesToMerge) {
+                PdfReader reader = new PdfReader(file.getAbsolutePath());
+                int n = reader.getNumberOfPages();
+                for (int page = 1; page <= n; page++) {
+                    PdfImportedPage importedPage = copy.getImportedPage(reader, page);
+                    copy.addPage(importedPage);
+                }
+                reader.close();
+            }
+            document.close();
+        } catch (Exception e) {
+            throw new OsirisException(e, "Error merging");
+        }
+        return mergedFile;
+    }
 }
