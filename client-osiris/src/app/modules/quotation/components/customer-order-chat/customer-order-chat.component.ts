@@ -2,6 +2,7 @@ import { Component, ElementRef, OnInit, QueryList, ViewChildren } from '@angular
 import { NgIcon } from '@ng-icons/core';
 import { formatDateHourFrance } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { TrustHtmlPipe } from '../../../../libs/TrustHtmlPipe';
 import { AppService } from '../../../main/services/app.service';
 import { Employee } from '../../../profile/model/Employee';
 import { EmployeeService } from '../../../profile/services/employee.service';
@@ -12,7 +13,7 @@ import { QuotationService } from '../../services/quotation.service';
 @Component({
   selector: 'customer-order-chat',
   templateUrl: './customer-order-chat.component.html',
-  styleUrls: ['./customer-order-chat.component.css'], imports: [SHARED_IMPORTS, NgIcon],
+  styleUrls: ['./customer-order-chat.component.css'], imports: [SHARED_IMPORTS, NgIcon, TrustHtmlPipe],
   standalone: true
 })
 export class CustomerOrderChatComponent implements OnInit {
