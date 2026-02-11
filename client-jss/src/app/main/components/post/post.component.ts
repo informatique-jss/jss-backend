@@ -211,7 +211,7 @@ export class PostComponent implements OnInit, AfterViewInit {
   private fetchNextPrevArticleAndSerieAndComments(post: Post) {
     if (post.postSerie && post.postSerie.length > 0) {
       this.seriePost = post.postSerie[0];
-      this.postService.getAllPostsBySerie(this.seriePost, 0, 50, "").subscribe(res => {
+      this.postService.getAllPostsBySerie(this.seriePost, 0, 15, "").subscribe(res => {
         if (res && res.content.length > 0)
           this.postsOfSerie = res.content;
       });
