@@ -236,7 +236,7 @@
                           </p>
                         </div>
                         <button type="button" class="btn btn-link btn-sm px-2 mt-2 hover-bg-light "
-                          [routerLink]='"/account/quotations/details/" + quotation.id'>
+                          [routerLink]='"/account/quotations/details/" + quotation.id + (withUnreadCommmentsOnQuotations ? "/with-unread":"")'>
                           <i class="ai-file-text me-2"></i>Détails du devis
                         </button>
                         <button type="button" class="btn btn-link btn-sm px-2 mt-2 hover-bg-light "

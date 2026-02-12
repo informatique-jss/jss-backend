@@ -1,6 +1,6 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { NgbAccordionModule, NgbDropdownModule, NgbModal, NgbNavModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { compareWithId } from '../../../../libs/CompareHelper';
 import { ASSO_SERVICE_DOCUMENT_ENTITY_TYPE, INVOICING_PAYMENT_LIMIT_REFUND_EUROS, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_VALIDATED_BY_CUSTOMER, SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
@@ -99,6 +99,8 @@ export class QuotationDetailsComponent implements OnInit {
   dislayAlreadyFilledAttachment = false;
   canEditQuotation: boolean = false;
   currentDate = new Date();
+
+  WITH_UNREAD = "with-unread";
 
   pollingInterval: any;
 
@@ -307,6 +309,7 @@ export class QuotationDetailsComponent implements OnInit {
   }
 
   addCustomerOrderComment() {
+    this.markCommentsAsReadByCustomer();
     if (this.newComment.comment.trim().length > 0 && this.quotation)
       if (this.newComment && this.newComment.comment.replace(/<(?:.|\n)*?>/gm, ' ').length > 0) {
         this.customerOrderCommentService.addOrUpdateCustomerOrderComment(this.newComment.comment, this.quotation.id).subscribe(response => {
@@ -360,6 +363,9 @@ export class QuotationDetailsComponent implements OnInit {
       if (!this.quotationAttachments[service.id] || forceLoad)
         this.attachementService.getAttachmentsForProvisionOfService(service).subscribe(response => {
           this.quotationAttachments[service.id] = response;
+          let url: UrlSegment[] = this.activatedRoute.snapshot.url;
+          if (url.join('/').toString().includes(this.WITH_UNREAD))
+            this.scrollToLastMessage();
         })
     }
   }
@@ -424,6 +430,12 @@ export class QuotationDetailsComponent implements OnInit {
     this.validatedQuotationModalInstance.result.finally(() => {
       this.validatedQuotationModalInstance = undefined;
     });
+  }
+
+
+  ngOnDestroy() {
+    this.customerOrderCommentService.setWatchedOrder(null);
+    clearInterval(this.pollingInterval);
   }
 
   compareWithId = compareWithId;

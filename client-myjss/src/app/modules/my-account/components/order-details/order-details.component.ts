@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, UrlSegment } from '@angular/router';
 import { NgbAccordionModule, NgbDropdownModule, NgbNavModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from '../../../../../environments/environment';
 import { compareWithId } from '../../../../libs/CompareHelper';
@@ -88,6 +88,8 @@ export class OrderDetailsComponent implements OnInit {
   currentDate = new Date();
 
   pollingInterval: any;
+
+  WITH_UNREAD = "with-unread";
 
   constructor(
     private constantService: ConstantService,
@@ -215,6 +217,9 @@ export class OrderDetailsComponent implements OnInit {
       if (!this.serviceProvisionAttachments[service.id] || forceLoad)
         this.attachementService.getAttachmentsForProvisionOfService(service).subscribe(response => {
           this.serviceProvisionAttachments[service.id] = response;
+          let url: UrlSegment[] = this.activatedRoute.snapshot.url;
+          if (url.join('/').toString().includes(this.WITH_UNREAD))
+            this.scrollToLastMessage();
         })
     }
   }
@@ -315,6 +320,7 @@ export class OrderDetailsComponent implements OnInit {
   }
 
   addCustomerOrderComment() {
+    this.markCommentsAsReadByCustomer();
     if (this.newComment.comment.trim().length > 0 && this.order)
       if (this.newComment && this.newComment.comment.replace(/<(?:.|\n)*?>/gm, ' ').length > 0) {
         this.customerOrderCommentService.addOrUpdateCustomerOrderComment(this.newComment.comment, this.order.id).subscribe(response => {
@@ -373,6 +379,7 @@ export class OrderDetailsComponent implements OnInit {
 
   ngOnDestroy() {
     this.customerOrderCommentService.setWatchedOrder(null);
+    clearInterval(this.pollingInterval);
   }
 
   compareWithId = compareWithId;
