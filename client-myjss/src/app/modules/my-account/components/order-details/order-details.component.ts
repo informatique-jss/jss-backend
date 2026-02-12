@@ -379,7 +379,7 @@ export class OrderDetailsComponent implements OnInit {
     let id = null;
     if (service)
       for (let provision of service.provisions)
-        if (provision.announcement) {
+        if (provision.announcement && provision.announcement.confrere && this.jssSpel && provision.announcement.confrere.code == this.jssSpel.code) {
           id = provision.announcement.id;
           break;
         }

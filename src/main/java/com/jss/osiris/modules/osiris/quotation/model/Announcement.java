@@ -52,7 +52,7 @@ public class Announcement implements IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_confrere")
-	@JsonView({ JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private Confrere confrere;
 
 	@ManyToOne(fetch = FetchType.LAZY)
