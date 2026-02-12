@@ -21,6 +21,7 @@ import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
 import { AssoServiceDocument } from '../../model/AssoServiceDocument';
 import { Attachment } from '../../model/Attachment';
 import { BillingLabelType } from '../../model/BillingLabelType';
+import { Confrere } from '../../model/Confrere';
 import { CustomerOrder } from '../../model/CustomerOrder';
 import { CustomerOrderComment } from '../../model/CustomerOrderComment';
 import { DocumentType } from '../../model/DocumentType';
@@ -86,7 +87,7 @@ export class OrderDetailsComponent implements OnInit {
   selectedService: Service | undefined;
   jssEmployee: Employee = { firstname: 'Journal', lastname: 'Spécial des Sociétés', title: '' } as Employee;
   currentDate = new Date();
-
+  jssSpel: Confrere | undefined;
   pollingInterval: any;
 
   constructor(
@@ -130,6 +131,7 @@ export class OrderDetailsComponent implements OnInit {
     this.paymentTypeCb = this.constantService.getPaymentTypeCB();
     this.billingLabelTypeCodeAffaire = this.constantService.getBillingLabelTypeCodeAffaire();
     this.documentTypeBilling = this.constantService.getDocumentTypeBilling();
+    this.jssSpel = this.constantService.getConfrereJssSpel();
 
     this.refreshOrder();
 
@@ -369,6 +371,20 @@ export class OrderDetailsComponent implements OnInit {
         this.refreshOrder();
       });
     }
+  }
+
+  goToJssAnnouncement(service: Service, event: any) {
+    event.stopPropagation();
+    event.preventDefault();
+    let id = null;
+    if (service)
+      for (let provision of service.provisions)
+        if (provision.announcement) {
+          id = provision.announcement.id;
+          break;
+        }
+    if (id)
+      this.appService.openJssRoute(event, "announcement/" + id, true);
   }
 
   ngOnDestroy() {

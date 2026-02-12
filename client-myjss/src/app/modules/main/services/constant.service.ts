@@ -177,6 +177,12 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.languageFrench;
   }
 
+
+  getConfrereJssSpel() {
+    return this.constant.confrereJssSpel;
+  }
+
+
   getDomiciliationContractTypeRouteEmailAndMail() {
     return this.constant.domiciliationContractTypeRouteEmailAndMail;
   }
