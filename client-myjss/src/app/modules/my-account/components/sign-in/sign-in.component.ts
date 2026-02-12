@@ -23,6 +23,7 @@ export class SignInComponent implements OnInit {
   inputMail: string = '';
   mailValidator = Validators.email;
   signinForm!: FormGroup;
+  isComesFromQuotation: boolean = false;
 
   constructor(private formBuilder: FormBuilder,
     private appService: AppService,
@@ -35,6 +36,9 @@ export class SignInComponent implements OnInit {
 
 
   ngOnInit() {
+    if (this.activatedRoute.snapshot.params['from'] === 'quot') //we don't use 'quotation' because if quotation is in the url the theme set is not the good one 
+      this.isComesFromQuotation = true;
+
     this.titleService.setTitle("Connexion - MyJSS");
     this.meta.updateTag({ name: 'description', content: "Connectez-vous à votre espace client sécurisé MyJSS pour suivre vos dossiers, gérer vos formalités et consulter tous vos documents juridiques en un seul clic." });
     this.signinForm = this.formBuilder.group({});
@@ -42,9 +46,8 @@ export class SignInComponent implements OnInit {
 
   sendConnectionLink() {
     if (this.signinForm.valid && (validateEmail(this.inputMail) || this.inputMail.indexOf("#") > 0)) {
-      this.loginService.sendConnectionLink(this.inputMail).subscribe(response => {
+      this.loginService.sendConnectionLink(this.inputMail, this.isComesFromQuotation).subscribe(response => {
         this.googleAnalyticsService.trackLoginLogout("login", "sign-in", "sign-in-request").subscribe();
-
         let from = this.activatedRoute.snapshot.params['from'];
         if (from && from == 'jss' && this.platformService && this.platformService.isBrowser())
           window.open(environment.frontendJssUrl, "_self");

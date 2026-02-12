@@ -31,7 +31,8 @@ public interface EmployeeService {
 
     public boolean modifyResponsablePassword(Responsable responsable, String newPassword) throws OsirisException;
 
-    public void sendTokenToResponsable(Responsable responsable, String overrideMail) throws OsirisException;
+    public void sendTokenToResponsable(Responsable responsable, String overrideMail, Boolean isFromQuotation)
+            throws OsirisException;
 
     public List<Employee> findEmployeesInTheSameOU(Employee employee);
 

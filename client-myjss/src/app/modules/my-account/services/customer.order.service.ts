@@ -46,13 +46,13 @@ export class CustomerOrderService extends AppRestService<CustomerOrder> {
     return this.get(new HttpParams().set("idQuotation", idQuotation), 'quotation/order');
   }
 
-  saveOrder(order: IQuotation, isValidation: boolean): Observable<number> {
+  saveInitialOrderForConnectedUser(order: IQuotation, isValidation: boolean): Observable<number> {
     let params = new HttpParams();
     params = params.set("isValidation", isValidation);
     return this.postItem(params, 'order/user/save', order) as any as Observable<number>;
   }
 
-  saveFinalOrder(order: CustomerOrder, isValidation: boolean) {
+  saveOrderForAnonymousUser(order: CustomerOrder, isValidation: boolean) {
     let params = new HttpParams();
     params = params.set("isValidation", isValidation);
     return this.postItem(params, 'order/save-order', order);

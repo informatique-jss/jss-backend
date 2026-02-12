@@ -648,7 +648,8 @@ public class MailHelper {
 
         if (mail.getResponsable() != null) {
             ctx.setVariable("tokenLink",
-                    loginTokenEntryPoint + "?userId=" + mail.getResponsable().getId() + "&aToken="
+                    loginTokenEntryPoint + "?userId=" + mail.getResponsable().getId() + "&isFromQuotation="
+                            + Boolean.TRUE.equals(mail.getResponsable().getIsComingFromQuotation()) + "&aToken="
                             + mail.getResponsable().getLoginToken());
         }
 
