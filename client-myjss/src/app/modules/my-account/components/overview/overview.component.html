@@ -34,7 +34,7 @@
       <div class="col-md-4 col-sm-6" *ngIf="statistics.quotationToValidate && statistics.quotationToValidate>0">
         <div class="h-100 bg-secondary rounded-3 text-center p-4 stat-card d-flex flex-column justify-content-between"
           [routerLink]="'/account/quotations/search/'+QUOTATION_STATUS_SENT_TO_CUSTOMER">
-          <h2 class="h6 pb-2 mb-1">Devis à valider</h2>
+          <h2 class="h6 pb-2 mb-1">Devis qui requièrent votre attention</h2>
           <div class="h2 text-primary mb-2">{{statistics.quotationToValidate}}</div>
         </div>
       </div>

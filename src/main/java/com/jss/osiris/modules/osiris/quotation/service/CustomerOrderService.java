@@ -3,6 +3,7 @@ package com.jss.osiris.modules.osiris.quotation.service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.springframework.http.ResponseEntity;
 
@@ -141,6 +142,8 @@ public interface CustomerOrderService {
                         String sortBy) throws OsirisException;
 
         public List<CustomerOrder> searchForCustomerOrders(OrderingSearch customerOrderSearch) throws OsirisException;
+
+        public Predicate<CustomerOrder> getRequiringAttentionPredicate() throws OsirisException;
 
         public List<CustomerOrder> searchOrdersForCurrentUserAndAffaire(Affaire affaire) throws OsirisException;
 
