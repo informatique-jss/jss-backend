@@ -1607,7 +1607,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         pageableRequest);
 
                 if (requiringAttention) {
-                    Predicate<CustomerOrder> requiringAttentionPredicate = generateRequiringAttentionPredicate();
+                    Predicate<CustomerOrder> requiringAttentionPredicate = getRequiringAttentionPredicate();
                     customerOrdersFound = customerOrdersFound.stream().filter(requiringAttentionPredicate).toList();
                 }
                 return completeAdditionnalInformationForCustomerOrders(customerOrdersFound, false);
@@ -1639,7 +1639,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 false);
     }
 
-    private Predicate<CustomerOrder> generateRequiringAttentionPredicate() throws OsirisException {
+    public Predicate<CustomerOrder> getRequiringAttentionPredicate() throws OsirisException {
         InvoiceStatus invoiceToPay = constantService.getInvoiceStatusSend();
         CustomerOrderStatus orderStatusInProgress = customerOrderStatusService
                 .getCustomerOrderStatusByCode(CustomerOrderStatus.BEING_PROCESSED);
