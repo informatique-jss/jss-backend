@@ -226,6 +226,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    @Transactional
     public void sendTokenToResponsable(Responsable responsable, String overrideMail, Boolean isFromQuotation)
             throws OsirisException {
         responsable = responsableService.getResponsable(responsable.getId());
