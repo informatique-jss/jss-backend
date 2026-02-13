@@ -253,9 +253,9 @@ public class QuotationValidationHelper {
                 if (quotation.getAssoAffaireOrders().get(0).getAffaire() == null) {
                         throw new OsirisValidationException("No affaire");
                 }
-                if (quotation.getAssoAffaireOrders().get(0).getServices() == null
-                                || quotation.getAssoAffaireOrders().get(0).getServices().size() == 0)
-                        throw new OsirisValidationException("No service");
+                // if (quotation.getAssoAffaireOrders().get(0).getServices() == null
+                // || quotation.getAssoAffaireOrders().get(0).getServices().size() == 0)
+                // throw new OsirisValidationException("No service");
 
                 if (quotation.getDocuments() != null && quotation.getDocuments().size() > 0) {
                         for (Document document : quotation.getDocuments()) {
@@ -275,7 +275,7 @@ public class QuotationValidationHelper {
 
                                 if (assoAffaireOrder.getServices() == null
                                                 || assoAffaireOrder.getServices().size() == 0)
-                                        throw new OsirisClientMessageException("Au moins un service est nécessaire");
+                                        continue;
 
                                 for (Service service : assoAffaireOrder.getServices())
                                         if (service.getProvisions() == null

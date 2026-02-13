@@ -74,10 +74,12 @@ import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.ActiveDirectoryGroup;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.osiris.miscellaneous.model.City;
 import com.jss.osiris.modules.osiris.miscellaneous.model.CompetentAuthority;
 import com.jss.osiris.modules.osiris.miscellaneous.model.CustomerOrderOrigin;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.InvoicingSummary;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Notification;
 import com.jss.osiris.modules.osiris.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
@@ -96,6 +98,7 @@ import com.jss.osiris.modules.osiris.quotation.model.AssignationType;
 import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceFieldType;
+import com.jss.osiris.modules.osiris.quotation.model.Confrere;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
@@ -2379,5 +2382,133 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 customerOrderPurchasePdf.delete();
         }
         return purchaseOrderAttachments;
+    }
+
+    private static Responsable respo = null;
+    private static Confrere confrereJss = null;
+    private static AnnouncementStatus announcementStatus = null;
+    private static AssignationType orderAssignationType = null;
+    private static Employee hpEmployee = null;
+
+    @Autowired
+    AssignationTypeService assignationTypeService;
+
+    @Transactional(rollbackFor = Exception.class)
+    public void create(String text, String siret, String email) throws OsirisClientMessageException, OsirisException {
+        CustomerOrder customerOrder = new CustomerOrder();
+        if (respo == null)
+            respo = responsableService.getResponsable(5830299);
+
+        if (confrereJss == null)
+            confrereJss = constantService.getConfrereJssSpel();
+
+        if (announcementStatus == null)
+            announcementStatus = announcementStatusService
+                    .getAnnouncementStatusByCode(AnnouncementStatus.ANNOUNCEMENT_IN_PROGRESS);
+
+        if (orderAssignationType == null)
+            orderAssignationType = assignationTypeService.getAssignationType(113279);
+
+        if (hpEmployee == null)
+            hpEmployee = employeeService.getEmployee(112857);
+
+        customerOrder.setResponsable(respo);
+        customerOrder.setIsQuotation(false);
+        customerOrder.setCreatedDate(LocalDateTime.now());
+        customerOrder.setCustomerOrderOrigin(constantService.getCustomerOrderOriginOsiris());
+        customerOrder.setCustomerOrderStatus(
+                customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT));
+
+        Affaire affaire = affaireService.getAffairesFromSiret(siret).get(0);
+        if (affaire == null)
+            throw new OsirisException("no affaire found for siret " + siret);
+        affaireService.addOrUpdateAffaire(affaire);
+
+        if (affaire.getMails() == null)
+            affaire.setMails(new ArrayList<Mail>());
+        affaire.getMails().add(new Mail(email));
+
+        affaireService.addOrUpdateAffaire(affaire);
+
+        AssoAffaireOrder asso = new AssoAffaireOrder();
+        asso.setAffaire(affaire);
+        asso.setCustomerOrder(customerOrder);
+        customerOrder.setAssoAffaireOrders(List.of(asso));
+
+        simpleAddOrUpdate(customerOrder);
+        entityManager.flush();
+        entityManager.clear();
+
+        customerOrder = getCustomerOrder(customerOrder.getId());
+
+        quotationValidationHelper.completeIQuotationDocuments(customerOrder, true);
+        customerOrder = getCustomerOrder(customerOrder.getId());
+        simpleAddOrUpdate(customerOrder);
+        quotationValidationHelper.validateQuotationAndCustomerOrder(customerOrder, null);
+        simpleAddOrUpdate(customerOrder);
+        City city = customerOrder.getAssoAffaireOrders().get(0).getAffaire().getCity();
+        ServiceType serviceType = serviceTypeService.getServiceType(260);
+        Service service = serviceService
+                .generateServiceInstanceFromMultiServiceTypes(List.of(serviceType), null, affaire).get(0);
+        asso.setServices(List.of(service));
+        assoAffaireOrderService.addOrUpdateAssoAffaireOrderFromUser(asso);
+
+        quotationValidationHelper.validateQuotationAndCustomerOrder(customerOrder, null);
+        customerOrder.getAssoAffaireOrders().get(0).getServices().get(0).getProvisions().get(0)
+                .setAssignedTo(hpEmployee);
+        addOrUpdateCustomerOrder(customerOrder, true, false);
+        entityManager.flush();
+        entityManager.clear();
+        customerOrder = getCustomerOrder(customerOrder.getId());
+
+        Announcement announcement = customerOrder.getAssoAffaireOrders().get(0).getServices().get(0).getProvisions()
+                .get(0).getAnnouncement();
+        announcement.setNotice(text);
+        if (affaire.getPostalCode().substring(0, 2).equals("75"))
+            announcement.setConfrere(confrereJss);
+        if (affaire.getPostalCode().substring(0, 2).equals("78"))
+            announcement.setConfrere(confrereJss);
+        if (affaire.getPostalCode().substring(0, 2).equals("91"))
+            announcement.setConfrere(confrereJss);
+        if (affaire.getPostalCode().substring(0, 2).equals("92"))
+            announcement.setConfrere(confrereJss);
+        if (affaire.getPostalCode().substring(0, 2).equals("93"))
+            announcement.setConfrere(confrereJss);
+        if (affaire.getPostalCode().substring(0, 2).equals("94"))
+            announcement.setConfrere(confrereJss);
+        if (affaire.getPostalCode().substring(0, 2).equals("95"))
+            announcement.setConfrere(confrereJss);
+
+        announcementService.addOrUpdateAnnouncement(announcement);
+
+        entityManager.flush();
+        entityManager.clear();
+        customerOrder = getCustomerOrder(customerOrder.getId());
+
+        customerOrderAssignationService
+                .addOrUpdateCustomerOrderAssignation(customerOrder.getCustomerOrderAssignations().get(0), hpEmployee);
+        customerOrderAssignationService.assignImmediatlyOrder(customerOrder);
+        entityManager.flush();
+        entityManager.clear();
+        customerOrder = getCustomerOrder(customerOrder.getId());
+        quotationValidationHelper.validateQuotationAndCustomerOrder(customerOrder, CustomerOrderStatus.BEING_PROCESSED);
+        addOrUpdateCustomerOrderStatusFromUser(customerOrder, CustomerOrderStatus.BEING_PROCESSED);
+
+        // uncheck redac by jss
+        Provision provision = customerOrder.getAssoAffaireOrders().get(0).getServices().get(0).getProvisions()
+                .get(0);
+        provision.setIsRedactedByJss(false);
+        provisionService.addOrUpdateProvision(provision);
+
+        entityManager.flush();
+        entityManager.clear();
+        customerOrder = getCustomerOrder(customerOrder.getId());
+        asso = customerOrder.getAssoAffaireOrders().get(0);
+        announcement = asso.getServices().get(0).getProvisions()
+                .get(0).getAnnouncement();
+        announcement.setAnnouncementStatus(announcementStatus);
+        assoAffaireOrderService.addOrUpdateAssoAffaireOrderFromUser(asso);
+
+        reinitInvoicing(customerOrder);
     }
 }

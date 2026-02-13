@@ -82,7 +82,7 @@ public class CustomerOrderAssignationServiceImpl implements CustomerOrderAssigna
         customerOrderAssignation.setEmployee(employee);
 
         addOrUpdateCustomerOrderAssignation(customerOrderAssignation);
-        if (employee != null && employee.getId().equals(employeeService.getCurrentEmployee().getId())) {
+        if (employee != null) {
             assignToEmployee(customerOrderAssignation, employeeService.getCurrentEmployee());
         }
         return customerOrderAssignation;

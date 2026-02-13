@@ -3,9 +3,11 @@ package com.jss.osiris.modules.osiris.quotation.service;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,12 +18,22 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.IterableUtils;
+import org.apache.commons.text.StringEscapeUtils;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -1025,4 +1037,185 @@ public class QuotationServiceImpl implements QuotationService {
                 updateStartDate, updateEndDate);
     }
 
+    @Scheduled(initialDelay = 100, fixedDelay = 5000)
+    public void test2() throws IOException, OsirisException {
+        test();
+    }
+
+    @Autowired
+    CustomerOrderServiceImpl customerOrderServiceImpl;
+
+    private void test() throws IOException, OsirisException {
+        boolean modeReel = true;
+
+        FileInputStream file = new FileInputStream("C:/t/caisses.xlsx");
+        Workbook workbook = new XSSFWorkbook(file);
+        DataFormatter dataFormatter = new DataFormatter(java.util.Locale.FRANCE); // Vital pour gérer les dates et
+                                                                                  // nombres sans format
+        // scientifique
+
+        // Boucle sur les 4 onglets
+        Sheet sheet = workbook.getSheetAt(3);
+        System.out.println("Traitement de l'onglet : " + sheet.getSheetName());
+
+        // On suppose que la ligne 0 est le header, on commence à 1
+        for (int rowIndex = 2; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
+            Row row = sheet.getRow(rowIndex);
+            if (row == null)
+                continue;
+
+            // 1. Extraction des données (Mapping manuel rapide)
+            // Attention aux index de colonnes (0 based)
+            String codeCaisse = getVal(row, 0, dataFormatter);
+            String denomination = getVal(row, 1, dataFormatter);
+            String adrSiege = getVal(row, 2, dataFormatter);
+            String cpSiege = getVal(row, 3, dataFormatter);
+            String villeSiege = getVal(row, 4, dataFormatter);
+            String siret = getVal(row, 5, dataFormatter);
+            String greffe = getVal(row, 6, dataFormatter);
+            String denoAbsorbante = getVal(row, 7, dataFormatter);
+            String dateAGE1 = getVal(row, 8, dataFormatter);
+            String heureAGE1 = getVal(row, 9, dataFormatter);
+            String lieuAgo = getVal(row, 10, dataFormatter);
+            String addresseAgo = getVal(row, 11, dataFormatter);
+            String cpAgo = getVal(row, 12, dataFormatter);
+            String villeAgo = getVal(row, 13, dataFormatter);
+            String dateAgo = getVal(row, 14, dataFormatter);
+            String heureAgo = getVal(row, 15, dataFormatter);
+            String email = getVal(row, 16, dataFormatter);
+
+            // Si une donnée critique manque, on skip
+            if (email.isEmpty() || denomination.isEmpty())
+                System.err.println("Erreur");
+
+            // 2. Remplacement dans le template
+            String texteFinal = StringEscapeUtils.unescapeHtml4(modelString)
+                    .replace("(DENOMINATION DE LA CAISSE ABSORBEE)", denomination)
+                    .replace("DENOMINATION DE LA CAISSE ABSORBANTE", denoAbsorbante)
+                    .replace("(adresse du siège)", adrSiege + " " + cpSiege + " " + villeSiege)
+                    .replace("(N° SIREN)", siret.substring(0, 9))
+                    .replace("(greffe)", villeSiege)
+                    .replace("(date AGO/AGE2)", dateAgo)
+                    .replace("(date AGE1)", dateAGE1)
+                    .replace("(heure AGE1)", heureAGE1)
+                    .replace("(heure AGO/AGE2)", heureAgo)
+                    .replace("(Lieu AGO/AGE2 et adresse AGO/AGE2)",
+                            lieuAgo + ", " + addresseAgo + " " + cpAgo + " " + villeAgo)
+                    .replace("{{GREFFE}}", greffe);
+
+            // 3. Appel ERP
+            System.out.println("Création commande pour : " + denomination);
+
+            if (modeReel) {
+                try {
+                    // Ta méthode existante qui prend le texte et l'email
+                    customerOrderServiceImpl.create(texteFinal, siret, email);
+                } catch (Exception e) {
+                    throw new OsirisException(e, "Erreur pour le siret " + siret);
+                }
+            } else {
+                System.out.println("---- PREVIEW ----");
+                System.out.println(texteFinal);
+                System.out.println("-----------------");
+            }
+        }
+        workbook.close();
+
+    }
+
+    private String getVal(Row row, int colIndex, DataFormatter formatter) {
+        Cell cell = row.getCell(colIndex);
+        if (cell == null)
+            return "";
+
+        // Si c'est une cellule de type Date (Excel stocke les dates en NUMERIC)
+        if (cell.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(cell)) {
+            DateTimeFormatter frenchFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            return cell.getDateCellValue()
+                    .toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate()
+                    .format(frenchFormatter);
+        }
+
+        // Pour le reste (texte, SIRET, etc.), on garde le formateur standard
+        return formatter.formatCellValue(cell).trim();
+    }
+
+    private static String modelString = "<p style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:36.0pt;font-size:11.0pt;font-family:\"Calibri\",sans-serif;text-align:justify;'><span style=\"font-family: Calibri, sans-serif;\">CAISSE DE CREDIT MUTUEL (DENOMINATION DE LA CAISSE ABSORBANTE)</span></p>\r\n"
+            + //
+            "<p style='margin-top:0cm;margin-right:0cm;margin-bottom:0cm;margin-left:36.0pt;font-size:11.0pt;font-family:\"Calibri\",sans-serif;text-align:justify;'><span style=\"font-family: Calibri, sans-serif;\">Soci&eacute;t&eacute; coop&eacute;rative &agrave; capital variable et &agrave; responsabilit&eacute; statutairement limit&eacute;e</span></p>\r\n"
+            + //
+            "<p style='margin-top:0cm;margin-right:0cm;margin-bottom:0cm;margin-left:36.0pt;font-size:11.0pt;font-family:\"Calibri\",sans-serif;text-align:justify;'><span style=\"font-family: Calibri, sans-serif;\">Si&egrave;ge social : (adresse du si&egrave;ge)</span></p>\r\n"
+            + //
+            "<p style='margin-top:0cm;margin-right:0cm;margin-bottom:0cm;margin-left:36.0pt;font-size:11.0pt;font-family:\"Calibri\",sans-serif;text-align:justify;'><span style=\"font-family: Calibri, sans-serif;\">(N&deg; SIREN) RCS (greffe)</span></p>\r\n"
+            + //
+            "<p style='margin-top:0cm;margin-right:0cm;margin-bottom:0cm;margin-left:36.0pt;font-size:11.0pt;font-family:\"Calibri\",sans-serif;text-align:justify;'><span style=\"font-family: Calibri, sans-serif;\">Les soci&eacute;taires sont inform&eacute;s que les assembl&eacute;es g&eacute;n&eacute;rales de la Caisse de Cr&eacute;dit Mutuel ci-dessus sont convoqu&eacute;es par le Conseil d&apos;Administration :</span></p>\r\n"
+            + //
+            "<p style='margin-top:0cm;margin-right:0cm;margin-bottom:0cm;margin-left:36.0pt;font-size:11.0pt;font-family:\"Calibri\",sans-serif;text-align:justify;'><span style=\"font-family: Calibri, sans-serif;\">&nbsp;</span></p>\r\n"
+            + //
+            "<p style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:36.0pt;font-size:11.0pt;font-family:\"Calibri\",sans-serif;text-align:justify;'><span style=\"font-family: Calibri, sans-serif;\">1) En Assembl&eacute;e G&eacute;n&eacute;rale Extraordinaire le (date AGE1) &agrave; (heure AGE1) au si&egrave;ge de la Caisse avec l&apos;ordre du jour suivant :</span></p>\r\n"
+            + //
+            "<ol style=\"list-style-type: decimal;margin-left: 78.9px;\">\r\n" + //
+            "    <li style=\"font-family: Calibri, sans-serif;\">Bienvenue, ouverture de l&apos;Assembl&eacute;e G&eacute;n&eacute;rale Extraordinaire, constitution du bureau.</li>\r\n"
+            + //
+            "    <li style=\"font-family: Calibri, sans-serif;\">Pr&eacute;sentation du projet de fusion des Caisses de Cr&eacute;dit Mutuel de &laquo; (DENOMINATION DE LA CAISSE ABSORBEE) &raquo; et de &laquo; DENOMINATION DE LA CAISSE ABSORBANTE &raquo; par voie d&apos;absorption par la Caisse de Cr&eacute;dit Mutuel de &laquo; DENOMINATION DE LA CAISSE ABSORBANTE &raquo;,</li>\r\n"
+            + //
+            "    <li style=\"font-family: Calibri, sans-serif;\">Lecture du rapport du Conseil d&rsquo;Administration, du rapport du Conseil de Surveillance et de l&apos;Inspection,</li>\r\n"
+            + //
+            "    <li style=\"font-family: Calibri, sans-serif;\">Ratification de la convention de fusion,</li>\r\n" + //
+            "    <li style=\"font-family: Calibri, sans-serif;\">Fixation du nombre de postes au Conseil d&rsquo;Administration et nomination des Administrateurs(trices),</li>\r\n"
+            + //
+            "    <li style=\"font-family: Calibri, sans-serif;\">Fixation du nombre de postes au Conseil de Surveillance et nomination des Conseillers(&egrave;res),</li>\r\n"
+            + //
+            "    <li style=\"font-family: Calibri, sans-serif;\">Modifications des statuts cons&eacute;cutives &agrave; la fusion,</li>\r\n"
+            + //
+            "    <li style=\"font-family: Calibri, sans-serif;\">Pouvoirs pour les formalit&eacute;s,</li>\r\n" + //
+            "    <li style=\"font-family: Calibri, sans-serif;\">Cl&ocirc;ture de l&apos;Assembl&eacute;e G&eacute;n&eacute;rale Extraordinaire.</li>\r\n"
+            + //
+            "</ol>\r\n" + //
+            "<p style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:36.0pt;font-size:11.0pt;font-family:\"Calibri\",sans-serif;'><span style=\"font-family: Calibri, sans-serif;\">&nbsp;</span></p>\r\n"
+            + //
+            "<p style='margin-top:0cm;margin-right:0cm;margin-bottom:0cm;margin-left:36.0pt;font-size:11.0pt;font-family:\"Calibri\",sans-serif;text-align:justify;'><span style=\"font-family: Calibri, sans-serif;\">ATTENTION : dans l&apos;hypoth&egrave;se o&ugrave; le quorum pr&eacute;vu par les statuts de la Caisse ne serait pas atteint, le Conseil d&apos;Administration convoque d&egrave;s &agrave; pr&eacute;sent une deuxi&egrave;me Assembl&eacute;e G&eacute;n&eacute;rale Extraordinaire selon les modalit&eacute;s indiqu&eacute;es au point 3) ci-apr&egrave;s.</span></p>\r\n"
+            + //
+            "<p style='margin-top:0cm;margin-right:0cm;margin-bottom:0cm;margin-left:36.0pt;font-size:11.0pt;font-family:\"Calibri\",sans-serif;'><span style=\"font-family: Calibri, sans-serif;\">&nbsp;</span></p>\r\n"
+            + //
+            "<p style='margin-top:0cm;margin-right:0cm;margin-bottom:0cm;margin-left:36.0pt;font-size:11.0pt;font-family:\"Calibri\",sans-serif;'><span style=\"font-family: Calibri, sans-serif;\">2) En Assembl&eacute;e G&eacute;n&eacute;rale Ordinaire le (date AGO/AGE2) &agrave; (heure AGO/AGE2) &agrave; l&apos;adresse suivante :</span></p>\r\n"
+            + //
+            "<p style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:36.0pt;font-size:11.0pt;font-family:\"Calibri\",sans-serif;'><span style=\"font-family: Calibri, sans-serif;\">(Lieu AGO/AGE2 et adresse AGO/AGE2)</span></p>\r\n"
+            + //
+            "<p style='margin-top:0cm;margin-right:0cm;margin-bottom:0cm;margin-left:36.0pt;font-size:11.0pt;font-family:\"Calibri\",sans-serif;'><span style=\"font-family: Calibri, sans-serif;\">&nbsp;</span></p>\r\n"
+            + //
+            "<p style='margin-top:0cm;margin-right:0cm;margin-bottom:0cm;margin-left:36.0pt;font-size:11.0pt;font-family:\"Calibri\",sans-serif;'><span style=\"font-family: Calibri, sans-serif;\">Avec l&apos;ordre du jour suivant :</span></p>\r\n"
+            + //
+            "<ol style=\"list-style-type: decimal;margin-left: 71.8px;\">\r\n" + //
+            "    <li style=\"font-family: Calibri, sans-serif;\">Bienvenue, ouverture de l&apos;Assembl&eacute;e G&eacute;n&eacute;rale Ordinaire, constitution du bureau.</li>\r\n"
+            + //
+            "    <li style=\"font-family: Calibri, sans-serif;\">Compte rendu d&apos;activit&eacute;.</li>\r\n" + //
+            "    <li style=\"font-family: Calibri, sans-serif;\">Pr&eacute;sentation du bilan et du compte de r&eacute;sultat.</li>\r\n"
+            + //
+            "    <li style=\"font-family: Calibri, sans-serif;\">Rapport du Conseil de Surveillance et certification des comptes.</li>\r\n"
+            + //
+            "    <li style=\"font-family: Calibri, sans-serif;\">Approbation du bilan et du compte de r&eacute;sultat.</li>\r\n"
+            + //
+            "    <li style=\"font-family: Calibri, sans-serif;\">Affectation du r&eacute;sultat.</li>\r\n" + //
+            "    <li style=\"font-family: Calibri, sans-serif;\">Variation du capital social.</li>\r\n" + //
+            "    <li style=\"font-family: Calibri, sans-serif;\">Quitus et d&eacute;charge au Conseil d&apos;Administration.</li>\r\n"
+            + //
+            "    <li style=\"font-family: Calibri, sans-serif;\">Elections au Conseil d&apos;Administration.</li>\r\n" + //
+            "    <li style=\"font-family: Calibri, sans-serif;\">Elections au Conseil de Surveillance.</li>\r\n" + //
+            "    <li style=\"font-family: Calibri, sans-serif;\">Pouvoirs pour les formalit&eacute;s.</li>\r\n" + //
+            "    <li style=\"font-family: Calibri, sans-serif;\">Communications diverses.</li>\r\n" + //
+            "    <li style=\"font-family: Calibri, sans-serif;\">Cl&ocirc;ture de l&apos;Assembl&eacute;e G&eacute;n&eacute;rale Ordinaire.</li>\r\n"
+            + //
+            "</ol>\r\n" + //
+            "<p style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:35.4pt;font-size:11.0pt;font-family:\"Calibri\",sans-serif;text-align:justify;'><span style=\"font-family: Calibri, sans-serif;\">Les candidatures sont &agrave; adresser au si&egrave;ge de la Caisse 30 jours au moins avant la date de l&apos;Assembl&eacute;e G&eacute;n&eacute;rale.</span></p>\r\n"
+            + //
+            "<p style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:35.4pt;font-size:11.0pt;font-family:\"Calibri\",sans-serif;'><span style=\"font-family: Calibri, sans-serif;\">3) En Assembl&eacute;e G&eacute;n&eacute;rale Extraordinaire</span></p>\r\n"
+            + //
+            "<p style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:35.4pt;font-size:11.0pt;font-family:\"Calibri\",sans-serif;text-align:justify;'><span style=\"font-family: Calibri, sans-serif;\">A la suite imm&eacute;diate de l&apos;assembl&eacute;e ordinaire et dans les m&ecirc;mes conditions, cette deuxi&egrave;me assembl&eacute;e extraordinaire est convoqu&eacute;e pour se tenir dans l&apos;hypoth&egrave;se o&ugrave; le nombre minimum requis de soci&eacute;taires ne pourra &ecirc;tre r&eacute;uni lors de la premi&egrave;re Assembl&eacute;e G&eacute;n&eacute;rale Extraordinaire, afin de d&eacute;lib&eacute;rer sur l&apos;ordre du jour pr&eacute;cis&eacute; ci-dessus, sous le point 1).</span></p>\r\n"
+            + //
+            "<p style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:35.4pt;font-size:11.0pt;font-family:\"Calibri\",sans-serif;text-align:justify;'><span style=\"font-family: Calibri, sans-serif;\">Les votes pourront se faire 15 jours calendaires avant la tenue de l&apos;Assembl&eacute;e G&eacute;n&eacute;rale Ordinaire sur votre espace de banque &agrave; distance ou dans votre Caisse aux jours et horaires habituels d&apos;ouverture ou lors de l&rsquo;assembl&eacute;e g&eacute;n&eacute;rale. Les documents statutaires pourront &ecirc;tre consult&eacute;s sur place ainsi que sur votre espace de banque &agrave; distance.</span></p>\r\n"
+            + //
+            "<p style='margin-top:0cm;margin-right:0cm;margin-bottom:8.0pt;margin-left:35.4pt;font-size:11.0pt;font-family:\"Calibri\",sans-serif;text-align:justify;'><span style=\"font-family: Calibri, sans-serif;\">Le Pr&eacute;sident du Conseil d&apos;Administration</span></p>";
 }

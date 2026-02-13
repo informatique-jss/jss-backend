@@ -412,6 +412,7 @@ public class ServiceServiceImpl implements ServiceService {
 
     private Provision completeNoticesFromAnnouncementProvision(Provision provision,
             List<AssoServiceProvisionType> assoAnnouncementMergeable, Affaire affaire) throws OsirisException {
+        affaire = affaireService.getAffaire(affaire.getId());
         List<NoticeType> noticeTypes = new ArrayList<>();
         List<NoticeTypeFamily> noticeTypeFamilies = new ArrayList<>();
         String noticeTemplate = "";
