@@ -1432,6 +1432,7 @@ public class MyJssQuotationController {
               provision.getAnnouncement()
                   .setNoticeTypeFamily(provisionIn.getAnnouncement().getNoticeTypeFamily());
               provision.setIsRedactedByJss(provisionIn.getIsRedactedByJss());
+              provision.setIsDoNotGenerateAnnouncement(provisionIn.getIsDoNotGenerateAnnouncement());
               provision.getAnnouncement()
                   .setIsProofReadingDocument(
                       provisionIn.getAnnouncement().getIsProofReadingDocument());
