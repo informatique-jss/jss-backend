@@ -118,7 +118,7 @@ public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentServ
 
     @Override
     public CustomerOrderComment createCustomerOrderComment(CustomerOrder customerOrder, Quotation quotation,
-            String contentComment, Boolean doNotNotify, Boolean isToDisplayToCustomer)
+            String contentComment, Boolean notifySales, Boolean isToDisplayToCustomer)
             throws OsirisException {
         CustomerOrderComment customerOrderComment = new CustomerOrderComment();
         customerOrderComment.setCustomerOrder(customerOrder);
@@ -129,10 +129,10 @@ public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentServ
         if (employee != null)
             customerOrderComment.setEmployee(employee);
 
-        if (isToDisplayToCustomer && !doNotNotify)
+        if (isToDisplayToCustomer && notifySales)
             customerOrderComment.setCurrentCustomer(employeeService.getCurrentMyJssUser());
 
-        if (!doNotNotify) {
+        if (notifySales) {
             customerOrderComment.setActiveDirectoryGroups(new ArrayList<ActiveDirectoryGroup>());
             customerOrderComment.getActiveDirectoryGroups().add(constantService.getActiveDirectoryGroupSales());
             notificationService.notifyCommentFromMyJssAddToCustomerOrder(customerOrder);

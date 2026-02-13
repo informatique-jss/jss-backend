@@ -264,7 +264,7 @@ public class QuotationFacade {
         Quotation quotation = quotationService.getQuotation(quotationId);
 
         return customerOrderCommentService.createCustomerOrderComment(customerOrder, quotation, customerOrderComment,
-                !isFromCustomer, true);
+                isFromCustomer, true);
 
     }
 
