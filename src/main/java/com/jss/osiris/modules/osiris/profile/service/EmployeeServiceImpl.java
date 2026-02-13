@@ -145,7 +145,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         String username = activeDirectoryHelper.getCurrentUsername();
         if (username != null && !username.equals("ANONYMOUSUSER") && !username.equals("OSIRIS")) {
             Responsable responsable = responsableService.getResponsable(Integer.parseInt(username));
-            dailyConnexionService.declareConnexionForToday(responsable);
+            // TODO : refactor to avoid constaint exception that failed the login
+            // dailyConnexionService.declareConnexionForToday(responsable);
             return responsable;
         }
         return null;
