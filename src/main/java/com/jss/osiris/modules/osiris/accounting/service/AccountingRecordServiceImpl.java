@@ -403,6 +403,9 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
     if (accountingRecordSearch.getHideLettered() == null)
       accountingRecordSearch.setHideLettered(false);
 
+    if (accountingRecordSearch.getHideCancelled() == null)
+      accountingRecordSearch.setHideCancelled(false);
+
     if (accountingRecordSearch.getIsFromAs400() == null)
       accountingRecordSearch.setIsFromAs400(false);
 
@@ -447,6 +450,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
           journalId,
           accountingRecordSearch.getTiersId(),
           accountingRecordSearch.getHideLettered(),
+          accountingRecordSearch.getHideCancelled(),
           accountingRecordSearch.getIsFromAs400(),
           accountingRecordSearch.getStartDate().withHour(0).withMinute(0),
           accountingRecordSearch.getEndDate().withHour(23).withMinute(59),
@@ -464,6 +468,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
           journalId,
           accountingRecordSearch.getTiersId(),
           accountingRecordSearch.getHideLettered(),
+          accountingRecordSearch.getHideCancelled(),
           accountingRecordSearch.getIsFromAs400(),
           accountingRecordSearch.getStartDate().withHour(0).withMinute(0),
           accountingRecordSearch.getEndDate().withHour(23).withMinute(59),

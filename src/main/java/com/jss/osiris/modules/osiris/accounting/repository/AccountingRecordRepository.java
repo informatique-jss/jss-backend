@@ -112,6 +112,13 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         " and (:idPayment = 0 or (r.id_payment  = :idPayment or r.id_customer_order = :idCustomerOrder or r.id_invoice = :idInvoice "
                         +
                         " or r.id_refund = :idRefund or r.id_bank_transfert = :idBankTransfert ))" +
+                        " and (case when :hideCancelled = true and id_payment is not null " +
+                        "        then  " +
+                        "        case when r.id_contre_passe is not null then false " +
+                        "        when r.id_contre_passe is null and exists (select 1 from accounting_record ar2 where ar2.id_contre_passe = r.id and ar2.id_contre_passe is not null) then false "
+                        + "        else true end " +
+                        "        else true end " +
+                        "        ) " +
                         " order by  r.operation_date_time  limit :limit" +
                         " " +
                         " ")
@@ -121,6 +128,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         @Param("journalId") Integer journalId,
                         @Param("tiersId") Integer tiersId,
                         @Param("hideLettered") Boolean hideLettered,
+                        @Param("hideCancelled") Boolean hideCancelled,
                         @Param("isFromAs400") Boolean isFromAs400,
                         @Param("startDate") LocalDateTime startDate,
                         @Param("endDate") LocalDateTime endDate,
@@ -197,6 +205,13 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         " and (:idPayment = 0 or (r.id_payment  = :idPayment or r.id_customer_order = :idCustomerOrder or r.id_invoice = :idInvoice "
                         +
                         " or r.id_refund = :idRefund or r.id_bank_transfert = :idBankTransfert ))" +
+                        " and (case when :hideCancelled = true and id_payment is not null " +
+                        "        then  " +
+                        "        case when r.id_contre_passe is not null then false " +
+                        "        when r.id_contre_passe is null and exists (select 1 from accounting_record ar2 where ar2.id_contre_passe = r.id and ar2.id_contre_passe is not null) then false "
+                        + "        else true end " +
+                        "        else true end " +
+                        "        ) " +
                         " order by  r.operation_date_time  limit :limit" +
                         " " +
                         " ")
@@ -206,6 +221,7 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
                         @Param("journalId") Integer journalId,
                         @Param("tiersId") Integer tiersId,
                         @Param("hideLettered") Boolean hideLettered,
+                        @Param("hideCancelled") Boolean hideCancelled,
                         @Param("isFromAs400") Boolean isFromAs400,
                         @Param("startDate") LocalDateTime startDate,
                         @Param("endDate") LocalDateTime endDate,
