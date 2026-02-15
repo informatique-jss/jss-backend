@@ -9,6 +9,7 @@ public class AccountingRecordSearch {
   private LocalDateTime startDate;
   private LocalDateTime endDate;
   private Boolean hideLettered;
+  private Boolean hideCancelled;
   private Integer tiersId;
 
   private Integer idPayment;
@@ -129,6 +130,14 @@ public class AccountingRecordSearch {
 
   public void setIsManual(Boolean isManual) {
     this.isManual = isManual;
+  }
+
+  public Boolean getHideCancelled() {
+    return hideCancelled;
+  }
+
+  public void setHideCancelled(Boolean hideCancelled) {
+    this.hideCancelled = hideCancelled;
   }
 
 }

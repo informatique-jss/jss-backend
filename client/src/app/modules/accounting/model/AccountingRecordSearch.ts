@@ -9,6 +9,7 @@ export interface AccountingRecordSearch {
   startDate: Date | undefined;
   endDate: Date | undefined;
   hideLettered: boolean;
+  hideCancelled: boolean;
   tiersId: number;
   idPayment: number;
   idCustomerOrder: number;
