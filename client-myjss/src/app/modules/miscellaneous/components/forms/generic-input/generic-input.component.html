@@ -5,10 +5,10 @@
     <i class="fs-lg position-absolute top-50 start-0 ms-3" *ngIf="icon"
       [ngClass]="{'translate-middle-y' : !isDisplayLabel,'translate-quarter-y' : isDisplayLabel}"
       [class]="'ai-'+icon"></i>
-    <input class="form-control form-control" [ngClass]="{'ps-45': icon}" [id]="'fl-text'+uniqueId"
-      [required]="isMandatory" [maxlength]="maxLength+''" [minlength]="minLength+''" [formControlName]="propertyName"
-      [placeholder]="label" (blur)="blurForm()" (focus)="focusForm()" (keydown.enter)="onEnterTrigger($event)"
-      [type]="type=='number'?'text':type" (change)="parse($event)"
+    <input class="form-control" [ngClass]="{'ps-45': icon, 'disable-borders': isDisableBorders}"
+      [id]="'fl-text'+uniqueId" [required]="isMandatory" [maxlength]="maxLength+''" [minlength]="minLength+''"
+      [formControlName]="propertyName" [placeholder]="label" (blur)="blurForm()" (focus)="focusForm()"
+      (keydown.enter)="onEnterTrigger($event)" [type]="type=='number'?'text':type" (change)="parse($event)"
       [class.is-invalid]="!doNotValidate && form.get(propertyName)?.invalid && form.get(propertyName)?.touched"
       [class.is-valid]="!doNotValidate && form.get(propertyName)?.valid && form.get(propertyName)?.touched"
       [autocomplete]="isAutocompleteAvailable" [autocapitalize]="isAutocompleteAvailable" (paste)="onPaste($event)">

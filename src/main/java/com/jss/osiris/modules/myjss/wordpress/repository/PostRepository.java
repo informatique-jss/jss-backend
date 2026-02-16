@@ -93,6 +93,18 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         @Query("select p from Post p where p.isCancelled =:isCancelled AND p.date<=CURRENT_TIMESTAMP and :category MEMBER OF p.postCategories")
         Page<Post> findByPostCategoriesAndIsCancelled(Category category, Boolean isCancelled, Pageable pageableRequest);
 
+        @Query("select p from Post p " +
+                        "where p.isCancelled = :isCancelled " +
+                        "  and p.date <= CURRENT_TIMESTAMP " +
+                        "  and ( " +
+                        "  (:myJssCategoryId IS NOT NULL AND exists (select 1 from p.myJssCategories c where c.id = :myJssCategoryId)) "
+                        + "OR (:myJssCategoryId IS NULL AND size(p.myJssCategories) > 0))" +
+                        "  and ( " +
+                        "  (:categoryId IS NOT NULL AND exists (select 1 from p.postCategories c where c.id = :categoryId)) "
+                        + "OR (:categoryId IS NULL AND size(p.postCategories) > 0))")
+        Page<Post> findByPostCategoriesAndMyJssCategoriesAndIsCancelled(Integer categoryId, Integer myJssCategoryId,
+                        Boolean isCancelled, Pageable pageableRequest);
+
         Post findBySlugAndIsCancelled(String slug, Boolean isCancelled);
 
         @Query("select p from Post p where id not in :postFetchedId AND p.date<=CURRENT_TIMESTAMP and coalesce(isLegacy,false)=false ")
