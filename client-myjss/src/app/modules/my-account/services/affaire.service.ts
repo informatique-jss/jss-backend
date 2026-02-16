@@ -17,7 +17,7 @@ export class AffaireService extends AppRestService<Affaire> {
     return this.getById("affaire", affaireId);
   }
 
-  getAffaireBySiret(siretOrSiren: string, page: number, pageSize: number) {
+  getAffairesBySiret(siretOrSiren: string, page: number, pageSize: number) {
     let params = new HttpParams();
     params = params.set("siretOrSiren", siretOrSiren);
 
