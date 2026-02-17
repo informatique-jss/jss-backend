@@ -159,24 +159,43 @@ public class NibelisServiceImpl implements NibelisService {
                     continue;
                 }
 
-                BigDecimal amount = BigDecimal.ZERO;
-                if (Boolean.TRUE.equals(type.getIsUseEmployerPart()) && payslip.getEmployerAmount() != null) {
-                    amount = new BigDecimal(payslip.getEmployerAmount().toString());
-                } else if (payslip.getEmployeeAmount() != null) {
-                    amount = new BigDecimal(payslip.getEmployeeAmount().toString());
-                }
-
-                amount = amount.abs();
-
-                if (amount.compareTo(BigDecimal.ZERO) == 0)
-                    continue;
-
                 if (type.getAccountingAccountDebit() != null) {
-                    balanceMap.merge(type.getAccountingAccountDebit().getId(), amount, BigDecimal::add);
+                    BigDecimal debitAmount = BigDecimal.ZERO;
+                    if (Boolean.TRUE.equals(type.getIsUseEmployerPart()) && payslip.getEmployerAmount() != null) {
+                        debitAmount = new BigDecimal(payslip.getEmployerAmount().toString()).abs();
+                    } else if (payslip.getEmployeeAmount() != null) {
+                        debitAmount = new BigDecimal(payslip.getEmployeeAmount().toString()).abs();
+                    }
+
+                    if (debitAmount.compareTo(BigDecimal.ZERO) != 0) {
+                        balanceMap.merge(type.getAccountingAccountDebit().getId(), debitAmount, BigDecimal::add);
+                    }
                 }
 
                 if (type.getAccountingAccountCredit() != null) {
-                    balanceMap.merge(type.getAccountingAccountCredit().getId(), amount.negate(), BigDecimal::add);
+                    BigDecimal creditAmount = BigDecimal.ZERO;
+                    String accNumber = type.getAccountingAccountCredit().getPrincipalAccountingAccount().getCode();
+
+                    if (accNumber != null && accNumber.startsWith("43")) {
+                        BigDecimal partPatronale = payslip.getEmployerAmount() != null
+                                ? new BigDecimal(payslip.getEmployerAmount().toString()).abs()
+                                : BigDecimal.ZERO;
+                        BigDecimal partSalariale = payslip.getEmployeeAmount() != null
+                                ? new BigDecimal(payslip.getEmployeeAmount().toString()).abs()
+                                : BigDecimal.ZERO;
+                        creditAmount = partPatronale.add(partSalariale);
+                    } else {
+                        if (Boolean.TRUE.equals(type.getIsUseEmployerPart()) && payslip.getEmployerAmount() != null) {
+                            creditAmount = new BigDecimal(payslip.getEmployerAmount().toString()).abs();
+                        } else if (payslip.getEmployeeAmount() != null) {
+                            creditAmount = new BigDecimal(payslip.getEmployeeAmount().toString()).abs();
+                        }
+                    }
+
+                    if (creditAmount.compareTo(BigDecimal.ZERO) != 0) {
+                        balanceMap.merge(type.getAccountingAccountCredit().getId(), creditAmount.negate(),
+                                BigDecimal::add);
+                    }
                 }
             }
         }
