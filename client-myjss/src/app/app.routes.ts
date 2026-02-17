@@ -22,7 +22,6 @@ const routesMyAccount = [
       { path: 'orders', loadComponent: () => import('./modules/my-account/components/orders/orders.component').then(m => m.OrdersComponent) },
       { path: 'orders/search/:statusCode', loadComponent: () => import('./modules/my-account/components/orders/orders.component').then(m => m.OrdersComponent) },
       { path: 'orders/details/:id', loadComponent: () => import('./modules/my-account/components/order-details/order-details.component').then(m => m.OrderDetailsComponent) },
-      { path: 'orders/details/:id/with-unread', loadComponent: () => import('./modules/my-account/components/order-details/order-details.component').then(m => m.OrderDetailsComponent) },
       { path: 'order/address/edit/:idOrder', loadComponent: () => import('./modules/my-account/components/edit-address/edit-address.component').then(m => m.EditAddressComponent) },
       { path: 'order/pay/:idOrder', loadComponent: () => import('./modules/my-account/components/pay-order/pay-order.component').then(m => m.PayOrderComponent) },
       { path: 'quotation/pay/:idQuotation', loadComponent: () => import('./modules/my-account/components/pay-quotation/pay-quotation.component').then(m => m.PayQuotationComponent) },

@@ -487,6 +487,15 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
+    public void notifyCommentFromMyJssAddToQuotation(Quotation quotation)
+            throws OsirisException {
+        if (quotation.getResponsable() != null && quotation.getResponsable().getSalesEmployee() != null
+                && employeeService.getCurrentMyJssUser() != null)
+            generateNewNotification(null, quotation.getResponsable().getSalesEmployee(),
+                    Notification.QUOTATION_ADD_COMMENT_MYJSS, false, null, null, null, null, quotation);
+    }
+
+    @Override
     public void notifyAbandonnedQuotationFromMyJss(Quotation quotation)
             throws OsirisException {
         if (quotation.getResponsable() != null && quotation.getResponsable().getSalesEmployee() != null
