@@ -4,6 +4,7 @@ import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
+import { getRawTextFromHtml } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { NewsletterComponent } from '../../../general/components/newsletter/newsletter.component';
 import { AppService } from '../../../main/services/app.service';
@@ -58,6 +59,8 @@ export class PracticalSheetsComponent implements OnInit {
 
   @ViewChild('searchInput') searchInput: ElementRef | undefined;
   @ViewChild('autocomplePost') autocomplePost: AutocompletePostComponent | undefined;
+
+  getRawTextFromHtml = getRawTextFromHtml;
 
   constructor(
     private formBuilder: FormBuilder,

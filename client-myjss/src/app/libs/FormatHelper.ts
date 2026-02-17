@@ -97,3 +97,7 @@ export function toIsoString(date: Date) {
 export function getTimeReading(html: string): string {
   return Math.ceil(html.replace(/<[^>]+>/g, '').split(' ').length / 220) + " min";
 }
+
+export function getRawTextFromHtml(html: string): string {
+  return html.replace(/<[^>]+>/g, '');
+}
