@@ -35,7 +35,6 @@ import { Affaire } from '../../../my-account/model/Affaire';
 import { Announcement } from '../../../my-account/model/Announcement';
 import { AssoServiceDocument } from '../../../my-account/model/AssoServiceDocument';
 import { AssoServiceFieldType } from '../../../my-account/model/AssoServiceFieldType';
-import { AttachmentType } from '../../../my-account/model/AttachmentType';
 import { CustomerOrder } from '../../../my-account/model/CustomerOrder';
 import { Provision } from '../../../my-account/model/Provision';
 import { ProvisionType } from '../../../my-account/model/ProvisionType';
@@ -129,8 +128,6 @@ export class RequiredInformationComponent implements OnInit {
   checkedOnce = false;
   isBrowser = false;
 
-  fileNoticeAnnouncement: any = {};
-
   isOnlyAnnouncement = true;
 
   SERVICE_FIELD_TYPE_TEXT = SERVICE_FIELD_TYPE_TEXT;
@@ -162,7 +159,6 @@ export class RequiredInformationComponent implements OnInit {
   serviceFieldTypes: ServiceFieldType[] = [];
 
   goBackModalInstance: any | undefined;
-  attachmentTypeApplicationCv!: AttachmentType;
   currentTab: string = 'documents';
 
   constructor(
@@ -194,7 +190,6 @@ export class RequiredInformationComponent implements OnInit {
 
   async ngOnInit() {
     this.provisionTypeRbe = this.constantService.getProvisionTypeRbe();
-    this.attachmentTypeApplicationCv = this.constantService.getAttachmentTypeApplicationCv();
     this.noticeTemplateDescriptionSubscription = this.noticeTemplateService.noticeTemplateDescriptionObservable.subscribe(item => {
       if (item && this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined && item.announcementOrder != undefined
         && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex]
