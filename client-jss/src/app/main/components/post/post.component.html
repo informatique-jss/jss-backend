@@ -172,7 +172,7 @@
                     <h3>Notre série "{{seriePost.name}}"</h3>
                   </div>
                   <div class="row pb-2">
-                    <strong>{{seriePost.excerptText}}</strong>
+                    <strong>{{getRawTextFromHtml(seriePost.excerptText)}}</strong>
                   </div>
                   <div class="row" *ngFor="let seriePost of postsOfSerie">
                     <li *ngIf="seriePost.id!=post.id">
@@ -193,7 +193,7 @@
                 <div class="bg-blue-400 d-flex justify-content-center align-items-center flex-column text-center p-4"
                   style="position: relative; " *ngIf="post.isPremium && !post.isHidePremium">
                   <h2 class="fw-bold">Vous souhaitez lire la suite ?</h2>
-                  <p>Lisez cette article pour seulement 1 € ou abonnez-vous pour profiter de cet article en
+                  <p>Lisez cet article pour seulement 1 € ou abonnez-vous pour profiter de cet article en
                     intégralité et de bien d'autres !</p>
                   <div class="row gap-2 justify-content-center">
                     <a class="col-auto btn btn-secondary mt-3" style="cursor: pointer;"

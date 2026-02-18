@@ -22,7 +22,7 @@
                         <a class="card-title-truncate cursor-pointer"
                           [href]="frontendJssUrl + 'post/' + post.slug ">{{post.titleText}}</a>
                       </h3>
-                      <p class="card-text-truncate">{{post.excerptText}}</p>
+                      <p class="card-text-truncate">{{getRawTextFromHtml(post.excerptText)}}</p>
                       <div class="d-flex flex-wrap align-items-center mt-n2">
                         <span class="fs-sm text-body-secondary mt-2">Publié le {{post.date | date:'EEEE d MMMM'}}</span>
                         <span class="fs-xs opacity-20 mt-2 mx-3">|</span>

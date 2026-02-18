@@ -814,7 +814,6 @@ public class GeneratePdfDelegate {
                     if (!payment.getIsCancelled()) {
                         payment.setOriginPaymentAmount(getTopPayment(payment).getPaymentAmount());
                         invoicePayment.add(payment);
-                        remainingToPay = remainingToPay.subtract(payment.getPaymentAmount());
                     }
                 }
 

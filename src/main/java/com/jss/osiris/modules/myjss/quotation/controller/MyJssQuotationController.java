@@ -314,6 +314,12 @@ public class MyJssQuotationController {
       @RequestParam Integer page, @RequestParam String sortBy,
       @RequestParam(required = false) List<Integer> responsableIdsToFilter)
       throws OsirisException {
+
+    if (Boolean.TRUE.equals(requiringAttention)) {
+      customerOrderStatus.addAll(List.of(CustomerOrderStatus.BEING_PROCESSED, CustomerOrderStatus.BILLED,
+          CustomerOrderStatus.WAITING_DEPOSIT));
+    }
+
     if (customerOrderStatus == null || customerOrderStatus.size() == 0)
       return new ResponseEntity<List<CustomerOrder>>(new ArrayList<CustomerOrder>(), HttpStatus.OK);
 
@@ -363,6 +369,11 @@ public class MyJssQuotationController {
       @RequestBody List<String> quotationStatus, @RequestParam Boolean requiringAttention,
       @RequestParam Integer page, @RequestParam String sortBy)
       throws OsirisClientMessageException {
+
+    if (Boolean.TRUE.equals(requiringAttention)) {
+      quotationStatus.addAll(List.of(QuotationStatus.SENT_TO_CUSTOMER));
+    }
+
     if (quotationStatus == null || quotationStatus.size() == 0)
       return new ResponseEntity<List<Quotation>>(new ArrayList<Quotation>(), HttpStatus.OK);
 

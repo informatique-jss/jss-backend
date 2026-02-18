@@ -54,7 +54,8 @@
             <div class="card card-carousel">
               <div class="card-body">
                 <h3 class="card-title card-title-truncate" [routerLink]="'/post/'+post.slug">{{post.titleText}}</h3>
-                <p class="card-text text-gray card-text-truncate" [routerLink]="'/post/'+post.slug">{{post.excerptText}}
+                <p class="card-text text-gray card-text-truncate" [routerLink]="'/post/'+post.slug">
+                  {{getRawTextFromHtml(post.excerptText)}}
                 </p>
               </div>
               <div class="card-footer ">
@@ -363,7 +364,7 @@
               <h3 class="h4 card-title card-title-truncate">
                 <a [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
               </h3>
-              <p class="card-text card-text-truncate">{{post.excerptText}}</p>
+              <p class="card-text card-text-truncate">{{getRawTextFromHtml(post.excerptText)}}</p>
             </div>
             <div class="card-footer pt-3">
               <div class="d-flex align-items-center text-decoration-none pb-2">
