@@ -45,6 +45,8 @@ export const PROVISION_SCREEN_TYPE_ANNOUNCEMENT = "ANNOUNCEMENT";
 export const PROVISION_SCREEN_TYPE_FORMALITE = "FORMALITE";
 export const PROVISION_SCREEN_TYPE_STANDARD = "STANDARD";
 
+export const PROVISION_ENTITY_TYPE: EntityType = { entityType: 'Provision', tabName: 'Prestation', entryPoint: 'provision/null' };
+
 export const COOKIE_KEY = "consent-cookie";
 
 export const COMMENT_POST_REFRESH_INTERVAL: number = 2000;

@@ -4,7 +4,7 @@
     [attr.accept]="'.'+forcedFileExtension">
   <h6>Choisissez un fichier ou déposez-le ici</h6>
   <i class="ai-upload fs-1 mb-3"></i>
-  <p *ngIf="!forcedFileExtension" class="max-size">Formats acceptés : PDF, JPEG, PNG, jusqu'à
+  <p *ngIf="!forcedFileExtension" class="max-size">Formats acceptés : PDF, Word, JPEG, PNG, jusqu'à
     {{MAX_SIZE_UPLOAD_FILES_IN_MO}}</p>
   <p *ngIf="forcedFileExtension" class="max-size">Formats acceptés : {{forcedFileExtension.toUpperCase()}} jusqu'à
     {{MAX_SIZE_UPLOAD_FILES_IN_MO}}</p>

@@ -109,6 +109,7 @@ import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceTypeFieldTypePossibleValue;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDocument;
 import com.jss.osiris.modules.osiris.quotation.service.AffaireService;
+import com.jss.osiris.modules.osiris.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.osiris.quotation.service.AssoAffaireOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.AssoAnnouncementNoticeTemplateFragmentService;
 import com.jss.osiris.modules.osiris.quotation.service.AssoServiceDocumentService;
@@ -279,6 +280,9 @@ public class MyJssQuotationController {
 
   @Autowired
   QuotationFacade quotationFacade;
+
+  @Autowired
+  AnnouncementService announcementService;
 
   private final ConcurrentHashMap<String, AtomicLong> requestCount = new ConcurrentHashMap<>();
   private final long rateLimit = 1000;
@@ -2247,6 +2251,14 @@ public class MyJssQuotationController {
 
     return new ResponseEntity<List<CustomerOrderComment>>(
         quotationFacade.getCommentsListFromChatForIQuotations(Arrays.asList(iQuotationId)),
+        HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/extract-text-from-file")
+  public ResponseEntity<String> getNoticeFromFile(@RequestParam("file") MultipartFile file)
+      throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
+
+    return new ResponseEntity<String>(announcementService.getNoticeFromFile(file),
         HttpStatus.OK);
   }
 }

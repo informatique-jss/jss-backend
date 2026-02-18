@@ -4,7 +4,7 @@ import { ChangeEvent, CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { NgbModal, NgbNavChangeEvent, NgbNavModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { Alignment, Bold, ClassicEditor, Essentials, Font, GeneralHtmlSupport, Indent, IndentBlock, Italic, Link, List, Mention, Paragraph, PasteFromOffice, RemoveFormat, Underline, Undo } from 'ckeditor5';
 import { combineLatest, Observable, of, Subscription } from 'rxjs';
-import { PROVISION_SCREEN_TYPE_ANNOUNCEMENT, PROVISION_SCREEN_TYPE_DOMICILIATION, SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
+import { PROVISION_ENTITY_TYPE, PROVISION_SCREEN_TYPE_ANNOUNCEMENT, PROVISION_SCREEN_TYPE_DOMICILIATION, SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
 import { validateEmail, validateFrenchPhone, validateInternationalPhone } from '../../../../libs/CustomFormsValidatorsHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { Mail } from '../../../general/model/Mail';
@@ -30,10 +30,12 @@ import { SelectMultipleNoticeTypeComponent } from '../../../miscellaneous/compon
 import { SelectNoticeTypeFamilyComponent } from '../../../miscellaneous/components/forms/select-notice-type-family/select-notice-type-family.component';
 import { SelectStringComponent } from '../../../miscellaneous/components/forms/select-string/select-string.component';
 import { SelectValueServiceFieldTypeComponent } from '../../../miscellaneous/components/forms/select-value-service-field-type/select-value-service-field-type.component';
+import { SingleUploadComponent } from '../../../miscellaneous/components/forms/single-upload/single-upload.component';
 import { Affaire } from '../../../my-account/model/Affaire';
 import { Announcement } from '../../../my-account/model/Announcement';
 import { AssoServiceDocument } from '../../../my-account/model/AssoServiceDocument';
 import { AssoServiceFieldType } from '../../../my-account/model/AssoServiceFieldType';
+import { AttachmentType } from '../../../my-account/model/AttachmentType';
 import { CustomerOrder } from '../../../my-account/model/CustomerOrder';
 import { Provision } from '../../../my-account/model/Provision';
 import { ProvisionType } from '../../../my-account/model/ProvisionType';
@@ -59,6 +61,7 @@ import { NoticeTemplateDescription } from '../../model/NoticeTemplateDescription
 import { NoticeType } from '../../model/NoticeType';
 import { NoticeTypeFamily } from '../../model/NoticeTypeFamily';
 import { ServiceFamily } from '../../model/ServiceFamily';
+import { AnnouncementService } from '../../services/announcement.service';
 import { CityService } from '../../services/city.service';
 import { CivilityService } from '../../services/civility.service';
 import { DepartmentService } from '../../services/department.service';
@@ -94,11 +97,13 @@ import { QuotationFileUploaderComponent } from '../quotation-file-uploader/quota
     SelectCivilityComponent,
     CKEditorModule,
     NgbNavModule,
-    NgbTooltipModule]
+    NgbTooltipModule,
+    SingleUploadComponent]
 })
 export class RequiredInformationComponent implements OnInit {
 
   @ViewChild('confirmBackModal') confirmBackModal!: TemplateRef<any>;
+  @ViewChild(SingleUploadComponent) singleUploadComponent: SingleUploadComponent | undefined;
 
   CONFIER_ANNONCE_AU_JSS: string = "Confier l'annonce légale au JSS";
 
@@ -124,6 +129,8 @@ export class RequiredInformationComponent implements OnInit {
   checkedOnce = false;
   isBrowser = false;
 
+  fileNoticeAnnouncement: any = {};
+
   isOnlyAnnouncement = true;
 
   SERVICE_FIELD_TYPE_TEXT = SERVICE_FIELD_TYPE_TEXT;
@@ -133,6 +140,7 @@ export class RequiredInformationComponent implements OnInit {
   SERVICE_FIELD_TYPE_SELECT = SERVICE_FIELD_TYPE_SELECT;
   PROVISION_SCREEN_TYPE_DOMICILIATION = PROVISION_SCREEN_TYPE_DOMICILIATION;
   PROVISION_SCREEN_TYPE_ANNOUNCEMENT = PROVISION_SCREEN_TYPE_ANNOUNCEMENT;
+  PROVISION_ENTITY_TYPE = PROVISION_ENTITY_TYPE;
 
   provisionTypeRbe!: ProvisionType;
 
@@ -147,13 +155,14 @@ export class RequiredInformationComponent implements OnInit {
   serviceFamilies: ServiceFamily[] = [];
 
   ckEditorHeader = ClassicEditor;
+  editorInstance: any;
 
   noticeTemplateDescriptionSubscription: Subscription = new Subscription;
   noticeTemplateDescription: NoticeTemplateDescription | undefined;
   serviceFieldTypes: ServiceFieldType[] = [];
 
   goBackModalInstance: any | undefined;
-
+  attachmentTypeApplicationCv!: AttachmentType;
   currentTab: string = 'documents';
 
   constructor(
@@ -175,6 +184,7 @@ export class RequiredInformationComponent implements OnInit {
     private modalService: NgbModal,
     private gtmService: GtmService,
     private ga4Service: GoogleAnalyticsService,
+    private announcementService: AnnouncementService
   ) {
   }
 
@@ -184,7 +194,7 @@ export class RequiredInformationComponent implements OnInit {
 
   async ngOnInit() {
     this.provisionTypeRbe = this.constantService.getProvisionTypeRbe();
-
+    this.attachmentTypeApplicationCv = this.constantService.getAttachmentTypeApplicationCv();
     this.noticeTemplateDescriptionSubscription = this.noticeTemplateService.noticeTemplateDescriptionObservable.subscribe(item => {
       if (item && this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined && item.announcementOrder != undefined
         && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex]
@@ -374,9 +384,9 @@ export class RequiredInformationComponent implements OnInit {
   } as any;
 
   onEditorReady(editor: any, provision: Provision) {
+    this.editorInstance = editor;
     if (!provision || !provision.announcement)
       return;
-
     const initialValue = provision.announcement.notice?.length > 0 ? provision.announcement.notice : "";
 
     editor.setData(initialValue);
@@ -918,4 +928,15 @@ export class RequiredInformationComponent implements OnInit {
     return false;
   }
 
+  updateNoticeAnnouncement(last: any, provision: Provision) {
+    if (this.singleUploadComponent && this.singleUploadComponent.files && this.singleUploadComponent.files.length > 0)
+      this.announcementService.getNoticeFromFile(this.singleUploadComponent.files[0]).subscribe(response => {
+        if (response && provision) {
+          provision.announcement!.notice = response;
+          if (this.editorInstance) {
+            this.editorInstance.setData(response);
+          }
+        }
+      });
+  }
 }

@@ -1,9 +1,12 @@
 package com.jss.osiris.modules.osiris.quotation.service;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -13,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -20,6 +24,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.parser.PdfReaderContentParser;
@@ -53,6 +58,9 @@ import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.repository.AnnouncementRepository;
+
+import fr.opensagres.poi.xwpf.converter.xhtml.XHTMLConverter;
+import fr.opensagres.poi.xwpf.converter.xhtml.XHTMLOptions;
 
 @org.springframework.stereotype.Service
 public class AnnouncementServiceImpl implements AnnouncementService {
@@ -975,5 +983,28 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                             }
             }
         return announcements;
+    }
+
+    public String getNoticeFromFile(MultipartFile file) throws OsirisException {
+        InputStream inputStream = null;
+        try {
+            inputStream = file.getInputStream();
+        } catch (IOException e) {
+            throw new OsirisException(e, "Unable to get notice from announcement file");
+        }
+        XWPFDocument document = null;
+        XHTMLOptions options = XHTMLOptions.create();
+        OutputStream out = new ByteArrayOutputStream();
+        try {
+            document = new XWPFDocument(inputStream);
+            XHTMLConverter.getInstance().convert(document, out, options);
+        } catch (IOException e) {
+            throw new OsirisException(e, "Unable to convert content file into html string");
+        }
+
+        // Delete margin, white spaces
+        String finalNoticeAnnouncement = out.toString().replaceAll("margin(-[a-z]+)?\\s*:\\s*[^;]+;", "");
+        finalNoticeAnnouncement = finalNoticeAnnouncement.replaceAll("\\s{2,}", " ");
+        return finalNoticeAnnouncement;
     }
 }

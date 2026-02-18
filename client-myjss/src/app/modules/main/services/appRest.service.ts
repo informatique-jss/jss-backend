@@ -75,6 +75,17 @@ export abstract class AppRestService<T> {
     return this._http.post(AppRestService.serverUrl + this.entryPoint + "/" + api, item, { params, context }) as Observable<T>;
   }
 
+  postItemAsText(params: HttpParams, api: string, item?: any, successfulMessage: string = "", errorMessage: string = ""): Observable<string> {
+    let context: HttpContext = new HttpContext();
+    context.set(this.successfulToken, successfulMessage).set(this.errorToken, errorMessage);
+
+    return this._http.post(AppRestService.serverUrl + this.entryPoint + "/" + api, item, {
+      params,
+      context,
+      responseType: 'text'
+    });
+  }
+
   getById(api: string, id: number, successfulMessage: string = "", errorMessage: string = ""): Observable<T> {
     let params = new HttpParams().set('id', id);
     let context: HttpContext = new HttpContext();
@@ -194,5 +205,4 @@ export abstract class AppRestService<T> {
         stringParams += paramKey + params.get(paramKey);
     return stringParams;
   }
-
 }
