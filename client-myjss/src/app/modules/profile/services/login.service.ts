@@ -1,11 +1,13 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of, Subscriber } from 'rxjs';
 import { AppService } from '../../main/services/app.service';
 import { AppRestService } from '../../main/services/appRest.service';
 import { PlatformService } from '../../main/services/platform.service';
+import { CustomerOrderService } from '../../my-account/services/customer.order.service';
 import { QuotationService } from '../../my-account/services/quotation.service';
 import { Responsable } from '../model/Responsable';
+import { ResponsableService } from './responsable.service';
 
 export const ADMINISTRATEURS: string = 'ROLE_OSIRIS_ADMINISTRATEURS';
 export const ACCOUNTING: string = 'ROLE_OSIRIS_COMPTABILITÉ';
@@ -18,7 +20,9 @@ export class LoginService extends AppRestService<Responsable> {
 
   constructor(http: HttpClient, private appService: AppService,
     private quotationService: QuotationService,
-    private plateformService: PlatformService
+    private customerOrderService: CustomerOrderService,
+    private plateformService: PlatformService,
+    private responsableService: ResponsableService,
   ) {
     super(http, "profile");
   }
@@ -27,16 +31,41 @@ export class LoginService extends AppRestService<Responsable> {
   private currentUserChange = new BehaviorSubject<boolean>(true);
   currentUserChangeMessage = this.currentUserChange.asObservable();
 
-  logUser(userId: number, aToken: string) {
+  logUser(userId: number, aToken: string, isFromQuotation: boolean) {
     return new Observable<Boolean>(observer => {
       this.get(new HttpParams().set("userId", userId).set("aToken", aToken), "login").subscribe(response => {
-        this.quotationService.cleanStorageData();
         this.refreshUserRoles().subscribe(response => {
-          observer.next(true);
-          observer.complete();
+          if (!isFromQuotation) {
+            this.quotationService.cleanStorageData();
+            this.completeObserver(observer);
+          } else {
+            this.responsableService.getResponsable(userId).subscribe(responsable => {
+              // if the user where in a quotation draft then we save it in the db to retrieve it later in quotation steps
+              let quotation = this.quotationService.getCurrentDraftQuotation();
+              if (quotation) {
+                quotation.responsable = responsable;
+                this.quotationService.saveQuotationForAnonymousUser(quotation!, false).subscribe(response => {
+                  this.quotationService.setCurrentDraftQuotationId(response.id)
+                  this.completeObserver(observer);
+                });
+              } else { // if no quotation then its a customer order
+                let customerOrder = this.customerOrderService.getCurrentDraftOrder();
+                customerOrder!.responsable = responsable;
+                this.customerOrderService.saveOrderForAnonymousUser(customerOrder!, false).subscribe(response => {
+                  this.customerOrderService.setCurrentDraftOrderId(response.id)
+                  this.completeObserver(observer);
+                });
+              }
+            });
+          }
         })
       })
     })
+  }
+
+  private completeObserver(observer: Subscriber<Boolean>) {
+    observer.next(true);
+    observer.complete();
   }
 
   switchUser(newUserId: number) {
@@ -66,8 +95,8 @@ export class LoginService extends AppRestService<Responsable> {
     })
   }
 
-  sendConnectionLink(mail: string) {
-    return this.get(new HttpParams().set("mail", mail), 'login/token/send', "Le lien de connexion vous a été envoyé", "Erreur lors de l'envoi du lien, veuillez vérifier votre saisie");
+  sendConnectionLink(mail: string, isFromQuotation: boolean) {
+    return this.get(new HttpParams().set("mail", mail).set("isFromQuotation", isFromQuotation), 'login/token/send', "Le lien de connexion vous a été envoyé", "Erreur lors de l'envoi du lien, veuillez vérifier votre saisie");
   }
 
   signOut() {

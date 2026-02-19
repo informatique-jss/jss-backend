@@ -47,8 +47,8 @@
       @if(commentListByIQuotation[iQuotationId] && commentListByIQuotation[iQuotationId].length > 0){
       @for(comment of commentListByIQuotation[iQuotationId]; track comment.id; let i = $index) {
       <div class="message-item" [id]="'comment-'+ iQuotationId +'-'+ i"
-        [ngClass]="{'sent':  comment.employee && comment.employee.id, 'received': !comment.employee || !comment.employee.id, 'mb-0': $last}">
-        {{ comment.comment }}
+        [ngClass]="{'sent':  comment.employee && comment.employee.id, 'received': !comment.employee || !comment.employee.id, 'mb-0': $last}"
+        [innerHTML]="comment.comment | trustHtml">
       </div>
       @if($last){
       <div class="d-flex  mt-0"

@@ -247,15 +247,16 @@ public class QuotationValidationHelper {
                                                 "Le donneur d'ordre ne doit pas être un prospect");
                 }
 
-                if (quotation.getAssoAffaireOrders() == null || quotation.getAssoAffaireOrders().size() == 0)
-                        throw new OsirisValidationException("No asso affaire order");
+                // Validating assoAffaireOrders and services if exists
+                if (quotation.getAssoAffaireOrders() != null && quotation.getAssoAffaireOrders().size() > 0)
+                        validateAssoAffaireOrder(quotation, isCustomerOrder);
+        }
 
+        private void validateAssoAffaireOrder(IQuotation quotation, boolean isCustomerOrder)
+                        throws OsirisValidationException, OsirisException, OsirisClientMessageException {
                 if (quotation.getAssoAffaireOrders().get(0).getAffaire() == null) {
                         throw new OsirisValidationException("No affaire");
                 }
-                if (quotation.getAssoAffaireOrders().get(0).getServices() == null
-                                || quotation.getAssoAffaireOrders().get(0).getServices().size() == 0)
-                        throw new OsirisValidationException("No service");
 
                 if (quotation.getDocuments() != null && quotation.getDocuments().size() > 0) {
                         for (Document document : quotation.getDocuments()) {
@@ -263,7 +264,6 @@ public class QuotationValidationHelper {
                         }
                 }
 
-                CustomerOrderFrequency lastProvisionFrequency = null;
                 if (quotation.getAssoAffaireOrders() != null)
                         for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
                                 if (assoAffaireOrder.getAffaire() == null)
@@ -273,38 +273,55 @@ public class QuotationValidationHelper {
                                                                 assoAffaireOrder.getAffaire(), true,
                                                                 "Affaire"));
 
-                                if (assoAffaireOrder.getServices() == null
-                                                || assoAffaireOrder.getServices().size() == 0)
-                                        throw new OsirisClientMessageException("Au moins un service est nécessaire");
-
-                                for (Service service : assoAffaireOrder.getServices())
-                                        if (service.getProvisions() == null
-                                                        || service.getProvisions().size() == 0)
-                                                throw new OsirisClientMessageException(
-                                                                "Chaque service doit avoir au moins une prestation");
-
-                                for (Service service : assoAffaireOrder.getServices())
-                                        for (Provision provision : service.getProvisions()) {
-                                                validateProvision(provision, isCustomerOrder,
-                                                                quotation, false);
-
-                                                // Check unique frequency in all customer order
-                                                if (provision.getProvisionType().getIsRecurring() != null
-                                                                && provision.getProvisionType().getIsRecurring()
-                                                                && provision.getProvisionType()
-                                                                                .getRecurringFrequency() != null) {
-                                                        if (lastProvisionFrequency != null && !lastProvisionFrequency
-                                                                        .getId()
-                                                                        .equals(provision.getProvisionType()
-                                                                                        .getRecurringFrequency()
-                                                                                        .getId()))
-                                                                throw new OsirisClientMessageException(
-                                                                                "Une seule fréquence de récurence est possible pour l'ensemble des prestations récurrentes de la commande");
-                                                        lastProvisionFrequency = provision.getProvisionType()
-                                                                        .getRecurringFrequency();
-                                                }
-                                        }
+                                if (assoAffaireOrder.getServices() != null
+                                                && assoAffaireOrder.getServices().size() < 0)
+                                        for (Service service : assoAffaireOrder.getServices())
+                                                validateService(quotation, isCustomerOrder, service);
                         }
+
+                if (quotation.getAssoAffaireOrders().size() > 1) {
+                        Document billingDocument = documentService.getBillingDocument(quotation.getDocuments());
+                        // If recipient affaire and no override, we can't determine what affaire to use
+                        if (billingDocument != null && billingDocument.getIsRecipientAffaire()
+                                        && (billingDocument.getMailsAffaire() == null
+                                                        || billingDocument.getMailsAffaire().size() == 0))
+                                throw new OsirisValidationException("Too many affaire");
+                }
+        }
+
+        private void validateService(IQuotation quotation, boolean isCustomerOrder, Service service)
+                        throws OsirisClientMessageException, OsirisValidationException, OsirisException {
+                if (service.getProvisions() == null
+                                || service.getProvisions().size() == 0)
+                        throw new OsirisClientMessageException(
+                                        "Chaque service doit avoir au moins une prestation");
+
+                CustomerOrderFrequency lastProvisionFrequency = null;
+
+                for (Provision provision : service.getProvisions()) {
+                        validateProvision(provision, isCustomerOrder,
+                                        quotation, false);
+                        // Check unique frequency in all customer order
+                        if (provision.getProvisionType()
+                                        .getIsRecurring() != null
+                                        && provision.getProvisionType()
+                                                        .getIsRecurring()
+                                        && provision.getProvisionType()
+                                                        .getRecurringFrequency() != null) {
+                                if (lastProvisionFrequency != null
+                                                && !lastProvisionFrequency
+                                                                .getId()
+                                                                .equals(provision
+                                                                                .getProvisionType()
+                                                                                .getRecurringFrequency()
+                                                                                .getId()))
+                                        throw new OsirisClientMessageException(
+                                                        "Une seule fréquence de récurence est possible pour l'ensemble des prestations récurrentes de la commande");
+                                lastProvisionFrequency = provision
+                                                .getProvisionType()
+                                                .getRecurringFrequency();
+                        }
+                }
 
                 // Check recursivity
                 if (isCustomerOrder && ((CustomerOrder) quotation).getIsRecurring() != null
@@ -321,16 +338,6 @@ public class QuotationValidationHelper {
                         ((CustomerOrder) quotation).setRecurringPeriodStartDate(LocalDate.now());
                         ((CustomerOrder) quotation).setRecurringPeriodEndDate(LocalDate.now().plusYears(100));
                 }
-
-                if (quotation.getAssoAffaireOrders().size() > 1) {
-                        Document billingDocument = documentService.getBillingDocument(quotation.getDocuments());
-                        // If recipient affaire and no override, we can't determine what affaire to use
-                        if (billingDocument != null && billingDocument.getIsRecipientAffaire()
-                                        && (billingDocument.getMailsAffaire() == null
-                                                        || billingDocument.getMailsAffaire().size() == 0))
-                                throw new OsirisValidationException("Too many affaire");
-                }
-
         }
 
         @Transactional(rollbackFor = Exception.class)

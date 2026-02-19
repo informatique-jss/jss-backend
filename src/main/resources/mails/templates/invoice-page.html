@@ -276,19 +276,30 @@
             </td>
         </tr>
         <tr th:if="${payments.size()>0}" th:each="payment : ${payments}">
-            <td>
+            <td style="border-top: solid; border-color: rgb(0,83,159)">
                 Acompte <span th:text="${payment.label}"></span> (<span
                     th:text="${#numbers.formatDecimal(payment.originPaymentAmount,1,2)}"></span> €)
             </td>
-            <td class="td-with-price" style="text-align: right;white-space: nowrap;">
+            <td class="td-with-price"
+                style="text-align: right;white-space: nowrap;border-top: solid; border-color: rgb(0,83,159)">
                 - <span th:text="${#numbers.formatDecimal(payment.paymentAmount,1,2)}"></span>
                 €
             </td>
         </tr>
+        <tr th:if="${refunds.size()>0}" th:each="refund : ${refunds}">
+            <td style="border-top: solid; border-color: rgb(0,83,159)">
+                <strong><span th:text="${refund.label}"></span></strong>
+            </td>
+            <td class="td-with-price"
+                style="text-align: right;white-space: nowrap;border-top: solid; border-color: rgb(0,83,159)">
+                <strong>- <span th:text="${#numbers.formatDecimal(refund.refundAmount,1,2)}"></span>
+                    €</strong>
+            </td>
+        </tr>
         <tr th:if="(${invoice.isCreditNote==null} or ${invoice.isCreditNote==false})">
             <td style="border-top: solid; border-color: rgb(0,83,159)">
-                <span th:if="${remainingToPay!=null} and ${remainingToPay>0 }">Restant dû</span><span
-                    th:if="${remainingToPay==null} or ${remainingToPay==0 }">Solde en votre faveur</span>
+                <span th:if="${remainingToPay!=null} and ${remainingToPay>=0 }">Restant dû</span><span
+                    th:if="${remainingToPay==null}">Solde en votre faveur</span>
             </td>
             <td class="td-with-price"
                 style="text-align: right;white-space: nowrap;border-top: solid; border-color: rgb(0,83,159)">
@@ -297,15 +308,7 @@
                     €</strong>
             </td>
         </tr>
-        <tr th:if="${refunds.size()>0}" th:each="refund : ${refunds}">
-            <td>
-                <strong><span th:text="${refund.label}"></span></strong>
-            </td>
-            <td class="td-with-price" style="text-align: right;white-space: nowrap;">
-                <strong>- <span th:text="${#numbers.formatDecimal(refund.refundAmount,1,2)}"></span>
-                    €</strong>
-            </td>
-        </tr>
+
     </table>
     <p style="font-size: 12px;" th:if="${!isPrelevementType}"><strong>Echéance de paiement : <span
                 th:text="${invoiceDueDate}"></span></strong></p>

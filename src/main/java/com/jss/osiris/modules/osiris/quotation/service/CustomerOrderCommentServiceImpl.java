@@ -118,30 +118,34 @@ public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentServ
 
     @Override
     public CustomerOrderComment createCustomerOrderComment(CustomerOrder customerOrder, Quotation quotation,
-            String contentComment, Boolean doNotNotify, Boolean isToDisplayToCustomer)
+            String contentComment, Boolean isFromCustomer, Boolean isToDisplayToCustomer)
             throws OsirisException {
         CustomerOrderComment customerOrderComment = new CustomerOrderComment();
         customerOrderComment.setCustomerOrder(customerOrder);
         customerOrderComment.setQuotation(quotation);
         customerOrderComment.setComment(contentComment);
 
+        customerOrderComment.setIsReadByCustomer(false);
         Employee employee = employeeService.getCurrentEmployee();
         if (employee != null)
             customerOrderComment.setEmployee(employee);
 
-        if (isToDisplayToCustomer && !doNotNotify)
+        if (isToDisplayToCustomer && isFromCustomer)
             customerOrderComment.setCurrentCustomer(employeeService.getCurrentMyJssUser());
 
-        if (!doNotNotify) {
+        if (isFromCustomer) {
+            customerOrderComment.setIsReadByCustomer(true);
             customerOrderComment.setActiveDirectoryGroups(new ArrayList<ActiveDirectoryGroup>());
             customerOrderComment.getActiveDirectoryGroups().add(constantService.getActiveDirectoryGroupSales());
-            notificationService.notifyCommentFromMyJssAddToCustomerOrder(customerOrder);
+            if (customerOrder != null && customerOrder.getResponsable() != null)
+                notificationService.notifyCommentFromMyJssAddToCustomerOrder(customerOrder);
+            else
+                notificationService.notifyCommentFromMyJssAddToQuotation(quotation);
         }
 
         customerOrderComment.setIsToDisplayToCustomer(isToDisplayToCustomer);
         customerOrderComment.setCreatedDateTime(LocalDateTime.now());
         customerOrderComment.setIsRead(false);
-        customerOrderComment.setIsReadByCustomer(false);
 
         return addOrUpdateCustomerOrderComment(customerOrderComment);
     }

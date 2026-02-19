@@ -15,7 +15,7 @@
   </div>
   <div class="ms-auto">
     <a class="btn btn-sm btn-secondary" role="button" (click)="getPurchaseOrderAttachment()"
-      *ngIf=" order && order.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_OPEN && order.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT && order.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_ABANDONED ">
+      *ngIf=" order && order.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_OPEN && order.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_ABANDONED ">
       <i class="ai-download ms-n1 me-2"></i>
       Voir le bon de commande
     </a>

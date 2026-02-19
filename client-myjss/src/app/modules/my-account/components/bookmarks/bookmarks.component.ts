@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from '../../../../../environments/environment';
+import { getRawTextFromHtml } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
 import { Post } from '../../../tools/model/Post';
@@ -25,6 +26,8 @@ export class BookmarksComponent implements OnInit {
   idReadingFolder: number | undefined;
   frontendJssUrl = environment.frontendJssUrl;
   readingFolder: ReadingFolder | undefined;
+
+  getRawTextFromHtml = getRawTextFromHtml;
 
   constructor(private postService: PostService, private appService: AppService,
     private activeRoute: ActivatedRoute, private readingFolderService: ReadingFolderService

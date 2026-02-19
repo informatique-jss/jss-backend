@@ -42,6 +42,9 @@ public interface NotificationService {
         public void notifyCommentFromMyJssAddToCustomerOrder(CustomerOrder order)
                         throws OsirisException;
 
+        public void notifyCommentFromMyJssAddToQuotation(Quotation quotation)
+                        throws OsirisException;
+
         public void notifyAbandonnedQuotationFromMyJss(Quotation quotation)
                         throws OsirisException;
 

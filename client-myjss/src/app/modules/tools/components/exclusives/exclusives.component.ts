@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
+import { getRawTextFromHtml } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
 import { ConstantService } from '../../../main/services/constant.service';
@@ -32,6 +33,7 @@ export class ExclusivesComponent implements OnInit {
   totalPages: number = 0;
 
   exclusivePostsForm!: FormGroup;
+  getRawTextFromHtml = getRawTextFromHtml;
 
   @ViewChild('exclusivitySection') exclusivitySection!: ElementRef;
 

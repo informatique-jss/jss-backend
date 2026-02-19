@@ -86,12 +86,12 @@ export class OrdersComponent implements OnInit {
           this.responsableCheck[respo.id] = true;
         }
       this.retrieveBookmark();
-      this.refreshOrders();
+      this.refreshOrders(true);
     });
   }
 
-  refreshOrders() {
-    if (!this.statusFilterOpen && !this.statusFilterWaitingDeposit && !this.statusFilterBeingProcessed && !this.statusFilterToBilled && !this.statusFilterBilled && !this.statusFilterPayed) {
+  refreshOrders(firstRefresh: boolean) {
+    if (!this.statusFilterOpen && !this.statusFilterWaitingDeposit && !this.statusFilterBeingProcessed && !this.statusFilterToBilled && !this.statusFilterBilled && !this.statusFilterPayed && !this.requiringAttention) {
       this.orders = [];
       return;
     }
@@ -99,7 +99,7 @@ export class OrdersComponent implements OnInit {
     this.setBookmark();
 
     let inputSearchStatus = this.activatedRoute.snapshot.params['statusCode'];
-    if (inputSearchStatus) {
+    if (inputSearchStatus && firstRefresh) {
       this.statusFilterOpen = false;
       this.statusFilterWaitingDeposit = false;
       this.statusFilterBeingProcessed = false;
@@ -116,9 +116,6 @@ export class OrdersComponent implements OnInit {
       if (inputSearchStatus == CUSTOMER_ORDER_STATUS_BILLED)
         this.statusFilterBilled = true;
       if (inputSearchStatus == CUSTOMER_ORDER_STATUS_REQUIRE_ATTENTION) {
-        this.statusFilterBeingProcessed = true;
-        this.statusFilterWaitingDeposit = true;
-        this.statusFilterBilled = true;
         this.requiringAttention = true;
       }
       if (inputSearchStatus == CUSTOMER_ORDER_WITH_UNREAD_COMMENTS)
@@ -188,7 +185,7 @@ export class OrdersComponent implements OnInit {
     this.currentPage = 0;
     this.orders = [];
     this.hideSeeMore = false;
-    this.refreshOrders();
+    this.refreshOrders(false);
   }
 
   changeSort(sorter: string) {
@@ -196,12 +193,12 @@ export class OrdersComponent implements OnInit {
     this.orders = [];
     this.currentSort = sorter;
     this.hideSeeMore = false;
-    this.refreshOrders();
+    this.refreshOrders(false);
   }
 
   loadMore() {
     this.currentPage++;
-    this.refreshOrders();
+    this.refreshOrders(false);
   }
 
   loadOrderDetails(order: CustomerOrder) {
@@ -228,7 +225,7 @@ export class OrdersComponent implements OnInit {
         this.quotationToCancel = undefined;
         this.currentPage = 0;
         this.orders = [];
-        this.refreshOrders();
+        this.refreshOrders(false);
       });
     }
   }

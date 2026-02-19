@@ -60,12 +60,12 @@ export class OurTeamComponent implements OnInit {
     ],
     formalites: [
       { firstname: "Géraldine", lastname: "M.", title: "Formaliste Senior", photo: "geraldine_formaliste_senior.jpg" },
-      { firstname: "Léa", lastname: "H.", title: "Formaliste Sénior", photo: "lea_formaliste_senior.jpg" },
       { firstname: "Murielle", lastname: "R.", title: "Formaliste Senior", photo: "murielle_formaliste_senior.jpg" },
       { firstname: "Léa", lastname: "P.", title: "Formaliste", photo: "lea_formaliste.jpg" },
       { firstname: "Chuan", lastname: "H.", title: "Formaliste", photo: "chuan_formaliste.jpg" },
       { firstname: "Damien", lastname: "G.", title: "Formaliste", photo: "damien_formaliste.jpg" },
       { firstname: "Nicolas", lastname: "J.", title: "Formaliste", photo: "nicolas_juriste_formaliste.jpg" },
+      { firstname: "Polina", lastname: "G.", title: "Formaliste", photo: "polina_juriste_formaliste.png" },
       { firstname: "Estelle", lastname: "N.", title: "Assistante formaliste", photo: "estelle_assistante_formaliste.jpg" },
       { firstname: "Anne-Esther", lastname: "G.", title: "Assistante formaliste", photo: "anne_esther_assistante_formaliste.jpg" },
       { firstname: "Nathalie", lastname: "D.", title: "Assistante administrative", photo: "nathalie_assistante_administrative.jpg" },

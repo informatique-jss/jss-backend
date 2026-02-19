@@ -28,7 +28,7 @@ public interface CustomerOrderCommentService {
 
         public CustomerOrderComment createCustomerOrderComment(CustomerOrder customerOrder, Quotation quotation,
                         String contentComment,
-                        Boolean doNotNotify, Boolean isToDisplayToCustomer)
+                        Boolean notifySales, Boolean isToDisplayToCustomer)
                         throws OsirisException;
 
         public CustomerOrderComment tagActiveDirectoryGroupOnCustomerOrderComment(

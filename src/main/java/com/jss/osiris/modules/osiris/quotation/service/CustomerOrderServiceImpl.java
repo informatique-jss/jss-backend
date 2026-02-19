@@ -536,6 +536,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         .equals(constantService.getPaymentTypePrelevement().getId());
 
             if (!isDepositMandatory && !targetStatusCode.equals(CustomerOrderStatus.WAITING_DEPOSIT)
+                    && !customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT)
                     || remainingToPay.compareTo(zeroValue) <= 0 || isPaymentTypePrelevement) {
                 targetStatusCode = CustomerOrderStatus.BEING_PROCESSED;
                 customerOrder.setProductionEffectiveDateTime(LocalDateTime.now());
@@ -545,7 +546,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             } else {
                 targetStatusCode = CustomerOrderStatus.WAITING_DEPOSIT;
                 try {
-                    mailHelper.sendCustomerOrderDepositMailToCustomer(customerOrder, false, false);
+                    mailHelper.sendCustomerOrderDepositMailToCustomer(customerOrder, false, false,
+                            generateCustomerOrderPurchasePdf(customerOrder));
                 } catch (OsirisClientMessageException e) {
                 }
             }
@@ -1261,7 +1263,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             }
 
             if (toSend) {
-                mailHelper.sendCustomerOrderDepositMailToCustomer(customerOrder, false, true);
+                mailHelper.sendCustomerOrderDepositMailToCustomer(customerOrder, false, true, null);
                 addOrUpdateCustomerOrder(customerOrder, false, true);
             }
         }
@@ -1607,7 +1609,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         pageableRequest);
 
                 if (requiringAttention) {
-                    Predicate<CustomerOrder> requiringAttentionPredicate = generateRequiringAttentionPredicate();
+                    Predicate<CustomerOrder> requiringAttentionPredicate = getRequiringAttentionPredicate();
                     customerOrdersFound = customerOrdersFound.stream().filter(requiringAttentionPredicate).toList();
                 }
                 return completeAdditionnalInformationForCustomerOrders(customerOrdersFound, false);
@@ -1639,7 +1641,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 false);
     }
 
-    private Predicate<CustomerOrder> generateRequiringAttentionPredicate() throws OsirisException {
+    public Predicate<CustomerOrder> getRequiringAttentionPredicate() throws OsirisException {
         InvoiceStatus invoiceToPay = constantService.getInvoiceStatusSend();
         CustomerOrderStatus orderStatusInProgress = customerOrderStatusService
                 .getCustomerOrderStatusByCode(CustomerOrderStatus.BEING_PROCESSED);

@@ -145,7 +145,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         String username = activeDirectoryHelper.getCurrentUsername();
         if (username != null && !username.equals("ANONYMOUSUSER") && !username.equals("OSIRIS")) {
             Responsable responsable = responsableService.getResponsable(Integer.parseInt(username));
-            dailyConnexionService.declareConnexionForToday(responsable);
+            // TODO : refactor to avoid constaint exception that failed the login
+            // dailyConnexionService.declareConnexionForToday(responsable);
             return responsable;
         }
         return null;
@@ -225,13 +226,16 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public void sendTokenToResponsable(Responsable responsable, String overrideMail) throws OsirisException {
+    @Transactional
+    public void sendTokenToResponsable(Responsable responsable, String overrideMail, Boolean isFromQuotation)
+            throws OsirisException {
         responsable = responsableService.getResponsable(responsable.getId());
 
         byte bytes[] = new byte[512];
         random.nextBytes(bytes);
         String token = String.valueOf(Hex.encode(bytes));
 
+        responsable.setIsComingFromQuotation(isFromQuotation);
         responsable.setLoginToken(token);
         responsable.setLoginTokenExpirationDateTime(LocalDateTime.now().plusMinutes(TOKEN_EXPIRATION_LENGTH_MINUTES));
         responsableService.addOrUpdateResponsable(responsable);

@@ -100,6 +100,7 @@ export class AccountingRecordComponent implements OnInit {
     if (this.tiersToDisplay && this.tiersToDisplay.id) {
       this.accountingRecordSearch.tiersId = this.tiersToDisplay.id;
       this.accountingRecordSearch.hideLettered = true;
+      this.accountingRecordSearch.hideCancelled = true;
       this.searchRecords();
     } else if (this.accountingRecordSearch && this.accountingRecordSearch.idPayment)
       this.searchRecords();
