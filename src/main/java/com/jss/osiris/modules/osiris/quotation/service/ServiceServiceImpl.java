@@ -2,6 +2,9 @@ package com.jss.osiris.modules.osiris.quotation.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -39,7 +42,10 @@ import com.jss.osiris.modules.osiris.quotation.model.ProvisionType;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 import com.jss.osiris.modules.osiris.quotation.model.SimpleProvisionStatus;
+import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.FormaliteGuichetUnique;
+import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.ValidationRequest;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.FormeJuridique;
+import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.ValidationsRequestStatus;
 import com.jss.osiris.modules.osiris.quotation.repository.ServiceRepository;
 
 @org.springframework.stereotype.Service
@@ -750,13 +756,14 @@ public class ServiceServiceImpl implements ServiceService {
                 removeDisabledAttachments(service);
                 removeUnusedAssoServiceDocument(service);
 
-                if (service.getProvisions() != null)
+                if (service.getProvisions() != null) {
+                    boolean hasCompleteWaitingAcLabel = false;
                     for (Provision provision : service.getProvisions()) {
                         if (provision.getAnnouncement() != null
                                 && provision.getAnnouncement().getConfrere() != null)
                             service.setConfrereLabel(provision.getAnnouncement().getConfrere().getLabel());
 
-                        if (provision.getSimpleProvision() != null
+                        if (!hasCompleteWaitingAcLabel && provision.getSimpleProvision() != null
                                 && provision.getSimpleProvision().getSimpleProvisionStatus() != null
                                 && provision.getSimpleProvision().getSimpleProvisionStatus().getCode()
                                         .equals(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT_AUTHORITY)
@@ -764,13 +771,49 @@ public class ServiceServiceImpl implements ServiceService {
                             service.setWaitingAcLabel(
                                     provision.getSimpleProvision().getWaitedCompetentAuthority().getLabel());
 
-                        if (provision.getFormalite() != null && provision.getFormalite().getFormaliteStatus() != null
-                                && provision.getFormalite().getFormaliteStatus().getCode()
-                                        .equals(FormaliteStatus.FORMALITE_WAITING_DOCUMENT_AUTHORITY)
-                                && provision.getFormalite().getWaitedCompetentAuthority() != null)
-                            service.setWaitingAcLabel(
-                                    provision.getFormalite().getWaitedCompetentAuthority().getLabel());
+                        String competentAuthorityLabel = null;
+                        LocalDateTime lastSentLiasse = null;
+                        if (provision.getFormalite() != null) {
+                            List<FormaliteGuichetUnique> formaliteGuichetUniques = provision.getFormalite()
+                                    .getFormalitesGuichetUnique();
+
+                            for (FormaliteGuichetUnique formaliteGuichetUnique : formaliteGuichetUniques)
+                                if (formaliteGuichetUnique.getStatus() != null
+                                        && Boolean.FALSE.equals(formaliteGuichetUnique.getStatus().getIsCloseState())) {
+                                    ValidationRequest validationRequest = formaliteGuichetUnique
+                                            .getValidationsRequests().stream()
+                                            .filter(valReq -> ValidationsRequestStatus.VALIDATION_PENDING
+                                                    .equals(valReq.getStatus().getCode())
+                                                    || ValidationsRequestStatus.AMENDED
+                                                            .equals(valReq.getStatus().getCode()))
+                                            .toList().get(0);
+
+                                    competentAuthorityLabel = validationRequest.getPartnerCenter().getName();
+                                    hasCompleteWaitingAcLabel = true;
+                                    if (validationRequest.getUpdated() != null)
+                                        lastSentLiasse = OffsetDateTime.parse(validationRequest.getUpdated())
+                                                .toLocalDateTime();
+                                    break;
+                                }
+
+                            if (!hasCompleteWaitingAcLabel && provision.getFormalite().getFormaliteStatus() != null
+                                    && provision.getFormalite().getFormaliteStatus().getCode()
+                                            .equals(FormaliteStatus.FORMALITE_WAITING_DOCUMENT_AUTHORITY)
+                                    && provision.getFormalite().getWaitedCompetentAuthority() != null)
+                                competentAuthorityLabel = provision.getFormalite().getWaitedCompetentAuthority()
+                                        .getLabel();
+                        }
+                        if (competentAuthorityLabel != null) {
+                            StringBuilder sb = new StringBuilder();
+                            sb.append(competentAuthorityLabel);
+                            if (lastSentLiasse != null) {
+                                sb.append(" depuis le ");
+                                sb.append(lastSentLiasse.format(DateTimeFormatter.ofPattern("dd/MM/yyyy à HH:mm")));
+                            }
+                            service.setWaitingAcLabel(sb.toString());
+                        }
                     }
+                }
             }
         return services;
     }

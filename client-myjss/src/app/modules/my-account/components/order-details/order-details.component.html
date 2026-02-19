@@ -133,12 +133,12 @@
         <button ngbAccordionButton class="border-top flex-column">
           <div class="row d-flex justify-content-between align-items-center w-100">
             <div class="col-md-auto col-md-10 order-1">
-              <h4 class="h6 mb-2">
-                <a>{{service.serviceLabelToDisplay}}</a>
+              <h4 class="h6 mb-2 d-flex flex-row">
+                <a class="me-3">{{service.serviceLabelToDisplay}}</a>
+                <div class="text-body-secondary fs-sm pb-1">
+                  <span class="badge bg-info bg-opacity-10 text-info fs-xs">{{service.serviceStatus}}</span>
+                </div>
               </h4>
-              <div class="text-body-secondary fs-sm pb-1">
-                <span class="badge bg-info bg-opacity-10 text-info fs-xs">{{service.serviceStatus}}</span>
-              </div>
             </div>
             <div class="col-md-auto col order-md-3 order-3 "
               *ngIf="serviceProvisionAttachments[service.id] && serviceProvisionAttachments[service.id].length>0">
@@ -163,11 +163,9 @@
             <div class="col-md-auto col order-md-2 order-2 " *ngIf="service.confrereLabel">
               <div class="fs-sm text-body-secondary">Annonce publiée sur {{service.confrereLabel}}
                 <span *ngIf="jssSpel && jssSpel.label && service.confrereLabel == jssSpel.label">
-                  (Consulter l'annonce sur
-                  <a class="text-decoration-none z-index-10 text-body-secondary"
-                    (click)="goToJssAnnouncement(service, $event )">
-                    JSS.fr
-                  </a>)
+                  (consulter l'annonce sur
+                  <a class="z-index-10 text-body-secondary" (click)="goToJssAnnouncement(service, $event )">
+                    JSS.fr</a>)
                 </span>
               </div>
             </div>
