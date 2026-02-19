@@ -458,6 +458,7 @@ export class RequiredInformationComponent implements OnInit {
 
       if (this.currentUser) {
         this.appService.showLoadingSpinner();
+        // TODO : vérifier si l'AL faite avec le modèle est bien valorisée ici ou pas.
         return this.serviceService.addOrUpdateService(this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex]) as any as Observable<boolean>;
       } else {
         if (this.quotation.isQuotation) {
