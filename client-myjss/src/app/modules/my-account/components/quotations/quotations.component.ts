@@ -98,7 +98,7 @@ export class QuotationsComponent implements OnInit {
   }
 
   refreshQuotations(firstRefresh: boolean) {
-    if (!this.statusFilterOpen && !this.statusFilterToVerify && !this.statusFilterWaitingConfrere && !this.statusFilterSendToCustomer && !this.statusFilterValidatedByCustomer && !this.statusFilterRefusedByCustomer && !this.statusFilterAbandonned) {
+    if (!this.requiringAttention && !this.statusFilterOpen && !this.statusFilterToVerify && !this.statusFilterWaitingConfrere && !this.statusFilterSendToCustomer && !this.statusFilterValidatedByCustomer && !this.statusFilterRefusedByCustomer && !this.statusFilterAbandonned) {
       this.quotations = [];
       return;
     }
