@@ -2,7 +2,7 @@ import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbAccordionModule, NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
-import { QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_QUOTATION_WAITING_CONFRERE, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, QUOTATION_STATUS_VALIDATED_BY_CUSTOMER } from '../../../../libs/Constants';
+import { QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_QUOTATION_WAITING_CONFRERE, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_REQUIRE_ATTENTION, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, QUOTATION_STATUS_VALIDATED_BY_CUSTOMER, QUOTATION_WITH_UNREAD_COMMENTS } from '../../../../libs/Constants';
 import { capitalizeName } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
@@ -14,6 +14,7 @@ import { InvoiceLabelResult } from '../../model/InvoiceLabelResult';
 import { MailComputeResult } from '../../model/MailComputeResult';
 import { Quotation } from '../../model/Quotation';
 import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
+import { CustomerOrderCommentService } from '../../services/customer.order.comment.service';
 import { InvoiceLabelResultService } from '../../services/invoice.label.result.service';
 import { MailComputeResultService } from '../../services/mail.compute.result.service';
 import { QuotationService } from '../../services/quotation.service';
@@ -40,6 +41,8 @@ export class QuotationsComponent implements OnInit {
   statusFilterValidatedByCustomer: boolean = false;
   statusFilterRefusedByCustomer: boolean = false;
   statusFilterAbandonned: boolean = false;
+  requiringAttention: boolean = false;
+  withUnreadCommmentsOnQuotations: boolean = false;
 
   currentSort: string = "createdDateDesc";
   currentPage: number = 0;
@@ -67,6 +70,7 @@ export class QuotationsComponent implements OnInit {
 
   constructor(
     private quotationService: QuotationService,
+    private customerOrderCommentService: CustomerOrderCommentService,
     private assoAffaireOrderService: AssoAffaireOrderService,
     private appService: AppService,
     private invoiceLabelResultService: InvoiceLabelResultService,
@@ -89,12 +93,12 @@ export class QuotationsComponent implements OnInit {
           this.responsableCheck[respo.id] = true;
         }
       this.retrieveBookmark();
-      this.refreshQuotations();
+      this.refreshQuotations(true);
     });
   }
 
-  refreshQuotations() {
-    if (!this.statusFilterOpen && !this.statusFilterToVerify && !this.statusFilterWaitingConfrere && !this.statusFilterSendToCustomer && !this.statusFilterValidatedByCustomer && !this.statusFilterRefusedByCustomer && !this.statusFilterAbandonned) {
+  refreshQuotations(firstRefresh: boolean) {
+    if (!this.requiringAttention && !this.statusFilterOpen && !this.statusFilterToVerify && !this.statusFilterWaitingConfrere && !this.statusFilterSendToCustomer && !this.statusFilterValidatedByCustomer && !this.statusFilterRefusedByCustomer && !this.statusFilterAbandonned) {
       this.quotations = [];
       return;
     }
@@ -102,7 +106,7 @@ export class QuotationsComponent implements OnInit {
     this.setBookmark();
 
     let inputSearchStatus = this.activatedRoute.snapshot.params['statusCode'];
-    if (inputSearchStatus) {
+    if (inputSearchStatus && firstRefresh) {
       this.statusFilterOpen = false;
       this.statusFilterToVerify = false;
       this.statusFilterWaitingConfrere = false;
@@ -110,11 +114,19 @@ export class QuotationsComponent implements OnInit {
       this.statusFilterValidatedByCustomer = false;
       this.statusFilterRefusedByCustomer = false;
       this.statusFilterAbandonned = false;
+      this.requiringAttention = false;
+      this.withUnreadCommmentsOnQuotations = false;
 
       if (inputSearchStatus == QUOTATION_STATUS_SENT_TO_CUSTOMER)
         this.statusFilterSendToCustomer = true;
       if (inputSearchStatus == QUOTATION_STATUS_OPEN)
         this.statusFilterOpen = true;
+      if (inputSearchStatus == QUOTATION_STATUS_REQUIRE_ATTENTION) {
+        this.requiringAttention = true;
+      }
+      if (inputSearchStatus == QUOTATION_WITH_UNREAD_COMMENTS)
+        this.withUnreadCommmentsOnQuotations = true;
+
     }
 
     let status: string[] = [];
@@ -140,13 +152,27 @@ export class QuotationsComponent implements OnInit {
       this.currentSearchRef.unsubscribe();
 
     this.appService.showLoadingSpinner();
-    this.currentSearchRef = this.quotationService.searchQuotationsForCurrentUser(status, this.currentPage, this.currentSort, this.getCurrentSelectedResponsable()).subscribe(response => {
-      this.appService.hideLoadingSpinner();
-      this.quotations.push(...response);
-      this.isFirstLoading = false;
-      if (response.length < 10)
-        this.hideSeeMore = true;
-    })
+
+    if (this.withUnreadCommmentsOnQuotations) {
+      this.currentSearchRef = this.customerOrderCommentService.searchQuotationsWithUnreadComments().subscribe(response => {
+        this.quotations = [];
+        this.appService.hideLoadingSpinner();
+        if (response) {
+          this.quotations.push(...response);
+          if (response.length < 10)
+            this.hideSeeMore = true;
+        }
+        this.isFirstLoading = false;
+      })
+    } else {
+      this.currentSearchRef = this.quotationService.searchQuotationsForCurrentUser(status, this.currentPage, this.currentSort, this.requiringAttention, this.getCurrentSelectedResponsable()).subscribe(response => {
+        this.appService.hideLoadingSpinner();
+        this.quotations.push(...response);
+        this.isFirstLoading = false;
+        if (response.length < 10)
+          this.hideSeeMore = true;
+      })
+    }
   }
 
   getCurrentSelectedResponsable() {
@@ -164,7 +190,7 @@ export class QuotationsComponent implements OnInit {
     this.currentPage = 0;
     this.quotations = [];
     this.hideSeeMore = false;
-    this.refreshQuotations();
+    this.refreshQuotations(false);
   }
 
   changeSort(sorter: string) {
@@ -172,12 +198,12 @@ export class QuotationsComponent implements OnInit {
     this.quotations = [];
     this.currentSort = sorter;
     this.hideSeeMore = false;
-    this.refreshQuotations();
+    this.refreshQuotations(false);
   }
 
   loadMore() {
     this.currentPage++;
-    this.refreshQuotations();
+    this.refreshQuotations(false);
   }
 
   loadQuotationDetails(quotation: Quotation) {
@@ -213,7 +239,7 @@ export class QuotationsComponent implements OnInit {
         this.quotationToCancel = undefined;
         this.currentPage = 0;
         this.quotations = [];
-        this.refreshQuotations();
+        this.refreshQuotations(false);
       });
     }
   }
@@ -240,6 +266,7 @@ export class QuotationsComponent implements OnInit {
     this.userPreferenceService.setUserSearchBookmark(this.statusFilterValidatedByCustomer, "quotation-statusFilterValidatedByCustomer");
     this.userPreferenceService.setUserSearchBookmark(this.statusFilterRefusedByCustomer, "quotation-statusFilterRefusedByCustomer");
     this.userPreferenceService.setUserSearchBookmark(this.statusFilterAbandonned, "quotation-statusFilterAbandonned");
+    this.userPreferenceService.setUserSearchBookmark(this.requiringAttention, "quotation-requiringAttention");
     this.userPreferenceService.setUserSearchBookmark(this.currentSort, "quotation-currentSort");
     if (this.responsablesForCurrentUser && this.getCurrentSelectedResponsable())
       this.userPreferenceService.setUserSearchBookmark(this.getCurrentSelectedResponsable()!.map(r => r.id).join(","), "responsables");
@@ -286,6 +313,9 @@ export class QuotationsComponent implements OnInit {
     if (this.userPreferenceService.getUserSearchBookmark("quotation-statusFilterAbandonned")) {
       this.statusFilterAbandonned = true;
       atLeastOne = true;
+    }
+    if (this.userPreferenceService.getUserSearchBookmark("quotation-requiringAttention")) {
+      this.requiringAttention = true;
     }
     if (this.userPreferenceService.getUserSearchBookmark("responsables")) {
       let respoIds = this.userPreferenceService.getUserSearchBookmark("responsables").split(",");

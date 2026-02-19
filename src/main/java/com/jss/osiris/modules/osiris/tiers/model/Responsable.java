@@ -63,7 +63,7 @@ public class Responsable implements IAttachment, IId {
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_tiers")
+	@JoinColumn(name = "id_tiers", nullable = false)
 	@IndexedField
 	@JsonIgnoreProperties(value = { "responsables", "attachments" }, allowSetters = true)
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
@@ -253,6 +253,8 @@ public class Responsable implements IAttachment, IId {
 	@JsonSerialize(using = JacksonLocalDateTimeSerializer.class)
 	@JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
 	private LocalDateTime consentTermsDate;
+
+	private Boolean isComingFromQuotation;
 
 	@Transient
 	private HashMap<String, BigDecimal> kpiValues;
@@ -657,4 +659,11 @@ public class Responsable implements IAttachment, IId {
 		this.linkedInUrl = linkedInUrl;
 	}
 
+	public Boolean getIsComingFromQuotation() {
+		return isComingFromQuotation;
+	}
+
+	public void setIsComingFromQuotation(Boolean isComingFromQuotation) {
+		this.isComingFromQuotation = isComingFromQuotation;
+	}
 }

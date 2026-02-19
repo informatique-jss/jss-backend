@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
+import { getRawTextFromHtml } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
 import { ConstantService } from '../../../main/services/constant.service';
@@ -30,6 +31,8 @@ export class AnnouncementComponent implements OnInit {
   quotationTypeOrder: QuotationType = QUOTATION_TYPE_ORDER;
   quotationTypeQuotation: QuotationType = QUOTATION_TYPE_QUOTATION;
 
+  getRawTextFromHtml = getRawTextFromHtml;
+
   constructor(private appService: AppService,
     private constantService: ConstantService,
     private postService: PostService,
@@ -58,7 +61,7 @@ export class AnnouncementComponent implements OnInit {
     if (this.platformService.getNativeDocument())
       import('jarallax').then(module => {
         module.jarallax(this.platformService.getNativeDocument()!.querySelectorAll('.jarallax'), {
-          speed: 0.5
+          speed: 0.8
         });
       });
   }

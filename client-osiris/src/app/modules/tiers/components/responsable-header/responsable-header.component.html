@@ -52,10 +52,14 @@
             <li ngbDropdownItem class="d-flex align-items-center pointer"><ng-icon name="tablerHistory"
                 class="fs-xl me-2"></ng-icon><a>Voir l'historique</a>
             </li>
+            <li ngbDropdownItem class="d-flex align-items-center pointer"><ng-icon name="tablerExternalLink"
+                class="fs-xl me-2"></ng-icon><a
+                [href]="frontendOsirisUrl + OSIRIS_TIERS_ROUTE + OSIRIS_RESPONSABLE_ROUTE + responsable.id"
+                target="_blank" class="text-secondary">Ouvrir le responsable dans Osiris V1</a>
+            </li>
             <li ngbDropdownItem class="d-flex align-items-center pointer"><ng-icon name="tablerTrash"
                 class="text-danger fs-xl me-2"></ng-icon><a class="text-danger" (click)="deleteResponsable()">Supprimer
-                le
-                responsable</a>
+                le responsable</a>
             </li>
           </ul>
         </div>

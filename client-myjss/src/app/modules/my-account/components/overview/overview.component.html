@@ -8,49 +8,60 @@
     </div>
     <!-- Stats -->
     <div class="row g-3 g-xl-4">
+      <div class="col-md-4 col-sm-6"
+        *ngIf="statistics.unreadCommentsForCustomerOrders && statistics.unreadCommentsForCustomerOrders>0">
+        <div class="h-100 bg-secondary rounded-3 text-center p-4 stat-card d-flex flex-column justify-content-between"
+          [routerLink]="'/account/orders/search/'+CUSTOMER_ORDER_STATUS_WITH_UNREAD_COMMENTS">
+          <h2 class="h6 pb-2 mb-1">Commandes avec messages non lus</h2>
+          <div class="h2 text-primary mb-2">{{statistics.unreadCommentsForCustomerOrders}}</div>
+        </div>
+      </div>
+      <div class="col-md-4 col-sm-6"
+        *ngIf="statistics.unreadCommentsForQuotations && statistics.unreadCommentsForQuotations>0">
+        <div class="h-100 bg-secondary rounded-3 text-center p-4 stat-card d-flex flex-column justify-content-between"
+          [routerLink]="'/account/quotations/search/'+QUOTATION_STATUS_WITH_UNREAD_COMMENTS">
+          <h2 class="h6 pb-2 mb-1">Devis avec messages non lus</h2>
+          <div class="h2 text-primary mb-2">{{statistics.unreadCommentsForQuotations}}</div>
+        </div>
+      </div>
       <div class="col-md-4 col-sm-6" *ngIf="statistics.customerOrderInProgress && statistics.customerOrderInProgress>0">
-        <div class="h-100 bg-secondary rounded-3 text-center p-4 stat-card"
+        <div class="h-100 bg-secondary rounded-3 text-center p-4 stat-card d-flex flex-column justify-content-between"
           [routerLink]="'/account/orders/search/'+CUSTOMER_ORDER_STATUS_BEING_PROCESSED">
           <h2 class="h6 pb-2 mb-1">Commandes en cours</h2>
           <div class="h2 text-primary mb-2">{{statistics.customerOrderInProgress}}</div>
         </div>
       </div>
       <div class="col-md-4 col-sm-6" *ngIf="statistics.quotationToValidate && statistics.quotationToValidate>0">
-        <div class="h-100 bg-secondary rounded-3 text-center p-4 stat-card"
+        <div class="h-100 bg-secondary rounded-3 text-center p-4 stat-card d-flex flex-column justify-content-between"
           [routerLink]="'/account/quotations/search/'+QUOTATION_STATUS_SENT_TO_CUSTOMER">
-          <h2 class="h6 pb-2 mb-1">Devis à valider</h2>
+          <h2 class="h6 pb-2 mb-1">Devis qui requièrent votre attention</h2>
           <div class="h2 text-primary mb-2">{{statistics.quotationToValidate}}</div>
         </div>
       </div>
       <div class="col-md-4 col-sm-6" *ngIf="statistics.invoiceToPay && statistics.invoiceToPay>0">
-        <div class="h-100 bg-secondary rounded-3 text-center p-4 stat-card" routerLink="/account/closure">
+        <div class="h-100 bg-secondary rounded-3 text-center p-4 stat-card d-flex flex-column justify-content-between"
+          routerLink="/account/closure">
           <h2 class="h6 pb-2 mb-1">Facture en attente de paiement</h2>
           <div class="h2 text-primary mb-2">{{statistics.invoiceToPay}}</div>
         </div>
       </div>
-      <!-- <div class="col-md-4 col-sm-6" *ngIf="statistics.invoiceAfterDueDate && statistics.invoiceAfterDueDate>0">
-        <div class="h-100 bg-secondary rounded-3 text-center p-4 stat-card">
-          <h2 class="h6 pb-2 mb-1">Facture en retard de paiement</h2>
-          <div class="h2 text-primary mb-2">{{statistics.invoiceAfterDueDate}}</div>
-        </div>
-      </div> -->
       <div class="col-md-4 col-sm-6"
         *ngIf="statistics.customerOrderRequieringAttention && statistics.customerOrderRequieringAttention>0">
-        <div class="h-100 bg-secondary rounded-3 text-center p-4 stat-card"
+        <div class="h-100 bg-secondary rounded-3 text-center p-4 stat-card d-flex flex-column justify-content-between"
           [routerLink]="'/account/orders/search/'+CUSTOMER_ORDER_STATUS_REQUIRE_ATTENTION">
           <h2 class="h6 pb-2 mb-1">Commandes qui requierent votre attention</h2>
           <div class="h2 text-primary mb-2">{{statistics.customerOrderRequieringAttention}}</div>
         </div>
       </div>
       <div class="col-md-4 col-sm-6" *ngIf="statistics.customerOrderDraft && statistics.customerOrderDraft>0">
-        <div class="h-100 bg-secondary rounded-3 text-center p-4 stat-card"
+        <div class="h-100 bg-secondary rounded-3 text-center p-4 stat-card d-flex flex-column justify-content-between"
           [routerLink]="'/account/orders/search/'+CUSTOMER_ORDER_STATUS_OPEN">
           <h2 class="h6 pb-2 mb-1">Brouillons de commandes </h2>
           <div class="h2 text-primary mb-2">{{statistics.customerOrderDraft}}</div>
         </div>
       </div>
       <div class="col-md-4 col-sm-6" *ngIf="statistics.quotationDraft && statistics.quotationDraft>0">
-        <div class="h-100 bg-secondary rounded-3 text-center p-4 stat-card"
+        <div class="h-100 bg-secondary rounded-3 text-center p-4 stat-card d-flex flex-column justify-content-between"
           [routerLink]="'/account/quotations/search/'+QUOTATION_STATUS_OPEN">
           <h2 class="h6 pb-2 mb-1">Brouillons de devis </h2>
           <div class="h2 text-primary mb-2">{{statistics.quotationDraft}}</div>

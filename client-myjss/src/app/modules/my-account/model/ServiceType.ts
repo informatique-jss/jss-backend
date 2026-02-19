@@ -1,3 +1,4 @@
+import { ServiceFamily } from "../../quotation/model/ServiceFamily";
 import { AssoServiceProvisionType } from "./AssoServiceProvisionType";
 import { AssoServiceTypeDocument } from "./AssoServiceTypeDocument";
 import { AssoServiceTypeFieldType } from "./AssoServiceTypeFieldType";
@@ -16,4 +17,8 @@ export interface ServiceType {
   hasAnnouncement: boolean;
   hasOnlyAnnouncement: boolean;
   serviceTypeLinked: ServiceType;
+  totalPreTaxPrice: number;
+  deboursAmount: number;
+  descriptionText: string;
+  serviceFamily: ServiceFamily;
 }

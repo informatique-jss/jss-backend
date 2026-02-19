@@ -11,6 +11,8 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,7 +43,6 @@ import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.ResponsableSearch;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 import com.jss.osiris.modules.osiris.tiers.model.TiersSearch;
-import com.jss.osiris.modules.osiris.tiers.model.dto.ResponsableDto;
 import com.jss.osiris.modules.osiris.tiers.repository.ResponsableRepository;
 
 @Service
@@ -89,19 +90,17 @@ public class ResponsableServiceImpl implements ResponsableService {
     }
 
     @Override
-    public List<Responsable> getResponsables(String searchedValue) {
+    public Page<Responsable> getResponsables(String searchedValue, Pageable pageable) {
         if (searchedValue == null || searchedValue.trim().length() <= 2)
             return null;
 
         return responsableRepository.findByLastnameContainingIgnoreCaseOrFirstnameContainingIgnoreCase(searchedValue,
-                searchedValue);
+                searchedValue, pageable);
     }
 
     @Override
-    public List<ResponsableDto> getResponsablesByTiers(Tiers tiers) {
-        List<Responsable> respos = responsableRepository.findByTiers(tiers);
-
-        return tiersDtoHelper.mapResponsables(respos);
+    public List<Responsable> getResponsablesByTiers(Tiers tiers) {
+        return responsableRepository.findByTiers(tiers);
     }
 
     @Override
@@ -109,14 +108,6 @@ public class ResponsableServiceImpl implements ResponsableService {
         Optional<Responsable> responsable = responsableRepository.findById(id);
         if (responsable.isPresent())
             return responsable.get();
-        return null;
-    }
-
-    @Override
-    public ResponsableDto getResponsableDto(Integer id) {
-        Optional<Responsable> responsable = responsableRepository.findById(id);
-        if (responsable.isPresent())
-            return tiersDtoHelper.mapResponsable(responsable.get());
         return null;
     }
 
@@ -249,9 +240,14 @@ public class ResponsableServiceImpl implements ResponsableService {
         if (responsableSearch.getLabel() == null)
             responsableSearch.setLabel("");
 
+        String tiersCategoryLabel = "";
+        if (responsableSearch.getTiersCategory() != null)
+            tiersCategoryLabel = responsableSearch.getTiersCategory().getLabel();
+
         List<Responsable> responsableFound = responsableRepository.searchForResponsables(salesEmployeeId,
                 responsableSearch.getMail(),
-                responsableSearch.getLabel());
+                responsableSearch.getLabel(),
+                tiersCategoryLabel);
 
         if (responsableSearch.getKpis() == null || responsableSearch.getKpis().size() == 0)
             return responsableFound;

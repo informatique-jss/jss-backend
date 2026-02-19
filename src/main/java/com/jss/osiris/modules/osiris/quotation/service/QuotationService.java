@@ -74,10 +74,10 @@ public interface QuotationService {
                         OsirisValidationException, OsirisDuplicateException, OsirisException;
 
         public List<Quotation> searchQuotationsForCurrentUser(List<String> quotationStatus,
-                        List<Integer> responsableIdToFilter, Integer page,
+                        List<Integer> responsableIdToFilter, Boolean requiringAttention, Integer page,
                         String sortBy);
 
-        public List<Quotation> searchQuotations(List<QuotationStatus> quotationStatus, List<Responsable> responsables);
+        public List<Quotation> searchForQuotations(QuotationSearch quotationSearch) throws OsirisException;
 
         public Integer generateValidationIdForQuotation();
 

@@ -895,9 +895,46 @@
         </ng-container>
         <li
           [ngbNavItem]="getIndexForProvision(-1, quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].provisions)"
-          *ngIf="(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes ||
-        quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments)">
-          <button ngbNavLink>Documents & informations complémentaires
+          *ngIf="currentUser && (quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes ||
+          quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments)">
+          <button ngbNavLink>Pièces justificatives à déposer
+          </button>
+          <ng-template ngbNavContent>
+            <div
+              *ngIf="currentUser && hasMandatoryDocuments(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments)"
+              class="quotation-container mb-4">
+              <h6 class="mb-3 d-flex align-items-center">
+                <i class="ai-paperclip pe-2"></i> Pièces obligatoires
+              </h6>
+              <div class="mb-3"
+                *ngFor="let assoServiceDocument of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments; let i = index">
+                <ng-container *ngIf="assoServiceDocument.isMandatory">
+                  <quotation-file-uploader [entity]="assoServiceDocument"
+                    (isUploadComplete)="onIsCompleteChange($event, selectedAssoIndex, selectedServiceIndex, i, assoServiceDocument)"
+                    (isUploadDeleted)="onIsUploadDelete($event, selectedAssoIndex, selectedServiceIndex, i, assoServiceDocument)"></quotation-file-uploader>
+                </ng-container>
+              </div>
+            </div>
+            <div
+              *ngIf="currentUser && hasNonMandatoryDocuments(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments)"
+              class="quotation-container mb-4">
+              <h6 class="mb-3 d-flex align-items-center">
+                <i class="ai-paperclip pe-2"></i> Pièces optionnelles
+              </h6>
+              <div class="mb-3"
+                *ngFor="let assoServiceDocument of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments; let i = index">
+                <ng-container *ngIf="!assoServiceDocument.isMandatory">
+                  <quotation-file-uploader [entity]="assoServiceDocument"
+                    (isUploadComplete)="onIsCompleteChange($event, selectedAssoIndex, selectedServiceIndex, i, assoServiceDocument)"
+                    (isUploadDeleted)="onIsUploadDelete($event, selectedAssoIndex, selectedServiceIndex, i, assoServiceDocument)"></quotation-file-uploader>
+                </ng-container>
+              </div>
+            </div>
+          </ng-template>
+        </li>
+        <li [ngbNavItem]="50" *ngIf="(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes ||
+          quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments)">
+          <button ngbNavLink>Informations complémentaires
           </button>
           <ng-template ngbNavContent>
             <div class="quotation-container">
@@ -973,36 +1010,6 @@
                     </ng-container>
                   </ng-container>
                 </div>
-              </div>
-            </div>
-            <div
-              *ngIf="currentUser && hasMandatoryDocuments(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments)"
-              class="quotation-container mb-4">
-              <h6 class="mb-3 d-flex align-items-center">
-                <i class="ai-paperclip pe-2"></i> Pièces obligatoires
-              </h6>
-              <div class="mb-3"
-                *ngFor="let assoServiceDocument of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments; let i = index">
-                <ng-container *ngIf="assoServiceDocument.isMandatory">
-                  <quotation-file-uploader [entity]="assoServiceDocument"
-                    (isUploadComplete)="onIsCompleteChange($event, selectedAssoIndex, selectedServiceIndex, i, assoServiceDocument)"
-                    (isUploadDeleted)="onIsUploadDelete($event, selectedAssoIndex, selectedServiceIndex, i, assoServiceDocument)"></quotation-file-uploader>
-                </ng-container>
-              </div>
-            </div>
-            <div
-              *ngIf="currentUser && hasNonMandatoryDocuments(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments)"
-              class="quotation-container mb-4">
-              <h6 class="mb-3 d-flex align-items-center">
-                <i class="ai-paperclip pe-2"></i> Pièces optionnelles
-              </h6>
-              <div class="mb-3"
-                *ngFor="let assoServiceDocument of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments; let i = index">
-                <ng-container *ngIf="!assoServiceDocument.isMandatory">
-                  <quotation-file-uploader [entity]="assoServiceDocument"
-                    (isUploadComplete)="onIsCompleteChange($event, selectedAssoIndex, selectedServiceIndex, i, assoServiceDocument)"
-                    (isUploadDeleted)="onIsUploadDelete($event, selectedAssoIndex, selectedServiceIndex, i, assoServiceDocument)"></quotation-file-uploader>
-                </ng-container>
               </div>
             </div>
           </ng-template>

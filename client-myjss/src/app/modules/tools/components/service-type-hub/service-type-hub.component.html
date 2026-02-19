@@ -1,0 +1,169 @@
+<section class="container pt-5 mt-5">
+  <!-- Breadcrumb-->
+  <nav aria-label="breadcrumb">
+    <ol class="pt-lg-5 pb-lg-4 pb-2 breadcrumb">
+      <li class="breadcrumb-item"><a routerLink="/">Accueil</a></li>
+      <li class="breadcrumb-item"><a routerLink="/tools">Outils</a></li>
+      <li class="breadcrumb-item"><a routerLink="/tools/mandatory-documents">Pièces obligatoires</a>
+      </li>
+      <li class="breadcrumb-item"><a><span *ngIf="serviceType">{{ serviceType.serviceFamily.customLabel }} - {{
+            serviceType.customLabel }}</span></a>
+      </li>
+    </ol>
+  </nav>
+
+  <div class="row align-items-center pt-md-2 pt-lg-3 pt-xl-4 pb-lg-2 pb-xl-3">
+    <div class="col-md-6 col-xl-6">
+      <h1 class="h1 pe-xxl-5 me-xl-2 mb-md-0 text-white" *ngIf="serviceType">{{ serviceType.serviceFamily.customLabel }}
+        - {{ serviceType.customLabel }}</h1>
+    </div>
+
+    <div class="col-md-3 col-xl-2 d-flex justify-content-end">
+      <span class="fs-sm me-2">Partager la page :</span>
+      <div class="d-flex">
+        <a class="nav-link p-1" (click)="shareByMail()" title="mail" aria-label="mail">
+          <i class="ai-mail"></i>
+        </a>
+      </div>
+    </div>
+    <div class="col-md-3 col-xl-3 offset-xl-1 d-flex justify-content-end">
+      <!-- TODO : When PDF will be available for download, uncomment
+       <button type="button" class="ms-3 btn btn-outline-secondary btn-sm d-flex align-items-center "
+        *ngIf="serviceType && (serviceType.assoServiceTypeDocuments || serviceType.assoServiceTypeFieldTypes) "
+        (click)="exportToPDF()" ngbTooltip="Télécharger le PDF" tooltipClass="custom-tooltip" placement="top">
+        <i class="bi bi-download"></i>
+        <span class="d-none d-lg-inline ms-1">Télécharger le PDF</span>
+      </button> -->
+    </div>
+  </div>
+</section>
+
+<section class="container py-5">
+  <div class="row">
+    <div class="col-8">
+      <ng-container *ngIf="serviceType">
+        <div class="card dark-blue-dropdown rounded-3 mt-3 ">
+
+          <div class="drop-down-body card-header">
+            <div class="row ps-4 pe-5 me-5 ms-2">
+              <ng-container *ngIf="hasMandatoryDocuments()">
+                <h6 *ngIf="hasMandatoryDocuments" id="mandatoryDocuments">Documents obligatoires</h6>
+                <ng-container *ngFor="let item of  serviceType.assoServiceTypeDocuments">
+                  <div class="col-12 g-2" *ngIf="item.isMandatory">
+                    <li class="d-flex pb-2 mb-1">
+                      <span class="bg-primary mt-2 checkbox-custom"></span>
+                      <span class="text-decoration-none text-gray">{{item.typeDocument.customLabel}}</span>
+                      <button type="button"
+                        class="ms-3 btn btn-outline-secondary btn-sm d-flex align-items-center btn-icon-only"
+                        *ngIf="item.typeDocument.attachments && item.typeDocument.attachments[0]"
+                        (click)="downloadAttachment(item.typeDocument.attachments[0])"
+                        ngbTooltip="Télécharger le modèle" tooltipClass="custom-tooltip" placement="top">
+                        <i class="bi bi-download"></i>
+                        <span class="d-none d-lg-inline ms-1">Télécharger le modèle</span>
+                      </button>
+                    </li>
+                  </div>
+                </ng-container>
+              </ng-container>
+              <hr *ngIf="hasNonMandatoryDocuments()">
+              <ng-container *ngIf="hasNonMandatoryDocuments()">
+                <h6 id="optionalDocuments">Documents optionnels</h6>
+                <ng-container *ngFor="let item of  serviceType.assoServiceTypeDocuments">
+                  <div class="col-12 g-2" *ngIf="!item.isMandatory">
+                    <li class="d-flex pb-2 mb-1">
+                      <span class="bg-primary mt-2 checkbox-custom"></span>
+                      <span class="text-decoration-none text-gray">{{item.typeDocument.customLabel}}</span>
+                      <button type="button"
+                        class="ms-3 btn btn-outline-secondary btn-sm d-flex align-items-center btn-icon-only"
+                        *ngIf="item.typeDocument.attachments && item.typeDocument.attachments[0]"
+                        (click)="downloadAttachment(item.typeDocument.attachments[0])"
+                        ngbTooltip="Télécharger le modèle" tooltipClass="custom-tooltip" placement="top">
+                        <i class="bi bi-download"></i>
+                        <span class="d-none d-lg-inline ms-1">Télécharger le modèle</span>
+                      </button>
+                    </li>
+                  </div>
+                </ng-container>
+              </ng-container>
+              <hr
+                *ngIf="serviceType && serviceType.assoServiceTypeFieldTypes&& serviceType.assoServiceTypeFieldTypes.length>0" />
+              <ng-container
+                *ngIf="serviceType && serviceType.assoServiceTypeFieldTypes && serviceType.assoServiceTypeFieldTypes.length>0">
+                <h6 id="information">Informations complémentaires</h6>
+                <div class="col-12 col-md-6 col- g-2" *ngFor="let item of  serviceType.assoServiceTypeFieldTypes">
+                  <li class="d-flex pb-2 mb-1">
+                    <span class="bg-primary mt-2 checkbox-custom"></span>
+                    <span class="text-decoration-none text-gray">{{item.serviceFieldType.label}} <span
+                        *ngIf="item.serviceFieldType.dataType ==SERVICE_FIELD_TYPE_SELECT ">{{getPossibleFieldsValuesForSelect(item.serviceFieldType)}}</span></span>
+                  </li>
+                </div>
+              </ng-container>
+              <div class="g-2 ms-4"
+                *ngIf="serviceType && (!serviceType.assoServiceTypeDocuments || serviceType.assoServiceTypeDocuments.length==0) &&  (!serviceType.assoServiceTypeFieldTypes || serviceType.assoServiceTypeFieldTypes.length==0)">
+                <li class="d-flex pb-2 mb-1">
+                  <span class="text-decoration-none text-gray">Aucun document nécessaire, contactez notre service pour
+                    plus d'information</span>
+                </li>
+              </div>
+              <hr *ngIf="currentUser && serviceType.totalPreTaxPrice && serviceType.totalPreTaxPrice>0" />
+              <ng-container *ngIf="currentUser && serviceType.totalPreTaxPrice && serviceType.totalPreTaxPrice>0">
+                <h6 id="pricing">Tarifs</h6>
+                <div class="col-12 col-md-4 g-2 mb-2">
+                  <span>Prix total estimé (HT) : {{serviceType.totalPreTaxPrice}} €<span
+                      *ngIf="serviceType.deboursAmount && serviceType.deboursAmount>0"> (dont débours
+                      {{serviceType.deboursAmount}}
+                      €) </span>
+                  </span>
+                </div>
+              </ng-container>
+              <hr *ngIf="serviceType.descriptionText && serviceType.descriptionText.length>0" />
+              <ng-container *ngIf="serviceType.descriptionText && serviceType.descriptionText.length>0">
+                <h6>Description </h6>
+                <div id="description" class="col-12 g-2 mb-2">
+                  <span>{{serviceType.descriptionText}}
+                  </span>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+    <aside class="col-3 me-5 sticky-top pt-2">
+      <h4 *ngIf="showSummary()" class="pt-3 pt-lg-1 mb-4">Sommaire</h4>
+      <ul class="list-unstyled mb-lg-5 mb-4">
+        <li *ngIf="hasMandatoryDocuments()" class="border-bottom "
+          [class.active]="activeSection === 'mandatoryDocuments'">
+          <span class="h6 mb-0">
+            <a href="#mandatoryDocuments" (click)="scrollTo('mandatoryDocuments', $event)">Documents obligatoires</a>
+          </span>
+        </li>
+        <li *ngIf="hasNonMandatoryDocuments()" class="border-bottom"
+          [class.active]="activeSection === 'optionalDocuments'">
+          <span class="h6 mb-0">
+            <a href="#optionalDocuments" (click)="scrollTo('optionalDocuments', $event)">Documents optionnels</a>
+          </span>
+        </li>
+        <li
+          *ngIf="serviceType && serviceType.assoServiceTypeFieldTypes&& serviceType.assoServiceTypeFieldTypes.length>0"
+          class="border-bottom" [class.active]="activeSection === 'information'">
+          <span class="h6 mb-0">
+            <a href="#information" (click)="scrollTo('information', $event)">Informations complémentaires</a>
+          </span>
+        </li>
+        <li *ngIf="currentUser" class="border-bottom" [class.active]="activeSection === 'pricing'">
+          <span class="h6 mb-0">
+            <a href="#pricing" (click)="scrollTo('pricing', $event)">Tarifs</a>
+          </span>
+        </li>
+        <li *ngIf="serviceType &&serviceType.descriptionText && serviceType.descriptionText.length>0"
+          class="border-bottom" [class.active]="activeSection === 'description'">
+          <span class="h6 mb-0">
+            <a href="#description" (click)="scrollTo('description', $event)">Description</a>
+          </span>
+        </li>
+      </ul>
+    </aside>
+  </div>
+</section>

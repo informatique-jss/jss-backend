@@ -12,6 +12,7 @@ import { AppService } from '../../../main/services/app.service';
 import { ConstantService } from '../../../main/services/constant.service';
 import { GtmService } from '../../../main/services/gtm.service';
 import { FileUploadPayload, PageInfo } from '../../../main/services/GtmPayload';
+import { PlatformService } from '../../../main/services/platform.service';
 import { AvatarComponent } from '../../../miscellaneous/components/avatar/avatar.component';
 import { SingleUploadComponent } from '../../../miscellaneous/components/forms/single-upload/single-upload.component';
 import { Employee } from '../../../profile/model/Employee';
@@ -60,7 +61,7 @@ export class OrderDetailsComponent implements OnInit {
   orderInvoiceLabelResult: InvoiceLabelResult | undefined;
   orderMailComputeResult: MailComputeResult | undefined;
   digitalMailComputeResult: MailComputeResult | undefined;
-  customerOrderComments: CustomerOrderComment[] | undefined;
+  comments: CustomerOrderComment[] = [];
   orderPhysicalMailComputeResult: InvoiceLabelResult | undefined;
   invoiceSummary: InvoicingSummary | undefined;
   orderPayments: Payment[] | undefined;
@@ -79,13 +80,16 @@ export class OrderDetailsComponent implements OnInit {
 
   currentSelectedAttachmentForDisable: Attachment | undefined;
 
-  newCustomerOrderComment: CustomerOrderComment = {} as CustomerOrderComment;
+  newComment: CustomerOrderComment = { comment: '' } as CustomerOrderComment;
 
   displayPayButton: boolean = false;
   orderDetailsForm!: FormGroup;
   selectedService: Service | undefined;
   jssEmployee: Employee = { firstname: 'Journal', lastname: 'Spécial des Sociétés', title: '' } as Employee;
   currentDate = new Date();
+
+  pollingInterval: any;
+  isAlreadyScrolledOnceToMessages: boolean = false;
 
   constructor(
     private constantService: ConstantService,
@@ -105,7 +109,8 @@ export class OrderDetailsComponent implements OnInit {
     private serviceService: ServiceService,
     private quotationService: QuotationService,
     private gtmService: GtmService,
-    private assoServiceDocumentService: AssoServiceDocumentService
+    private assoServiceDocumentService: AssoServiceDocumentService,
+    private platefomService: PlatformService
   ) { }
 
   capitalizeName = capitalizeName;
@@ -129,7 +134,6 @@ export class OrderDetailsComponent implements OnInit {
     this.billingLabelTypeCodeAffaire = this.constantService.getBillingLabelTypeCodeAffaire();
     this.documentTypeBilling = this.constantService.getDocumentTypeBilling();
 
-
     this.refreshOrder();
   }
 
@@ -138,6 +142,9 @@ export class OrderDetailsComponent implements OnInit {
       this.order = response;
       this.appService.hideLoadingSpinner();
       this.loadOrderDetails();
+      if (this.order) {
+        this.customerOrderCommentService.setWatchedOrder(this.order.id);
+      }
     })
   }
 
@@ -151,6 +158,7 @@ export class OrderDetailsComponent implements OnInit {
         this.changeAffaire(this.ordersAssoAffaireOrders[0]);
         if (this.ordersAssoAffaireOrders[0].services && this.ordersAssoAffaireOrders[0].services.length > 0)
           this.loadServiceDetails(this.ordersAssoAffaireOrders[0].services[0], false);
+        this.initiateUnreadCommentsPolling();
       }
     })
     this.invoiceLabelResultService.getInvoiceLabelComputeResultForCustomerOrder(this.order.id).subscribe(response => {
@@ -177,12 +185,19 @@ export class OrderDetailsComponent implements OnInit {
       if (this.invoiceSummary.remainingToPay && this.order?.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_OPEN && this.order!.servicesList == this.constantService.getServiceTypeKioskNewspaperBuy().label)
         this.displayPayButton = true;
     })
-    this.refreshCustomerOrderComments();
+    this.getCustomerOrderComments();
     this.loginService.getCurrentUser().subscribe(response => this.currentUser = response);
     this.quotationService.getQuotationForCustomerOrder(this.order.id).subscribe(response => {
       if (response && response.id)
         this.associatedQuotation = response;
     })
+  }
+
+  initiateUnreadCommentsPolling() {
+    if (this.platefomService.isBrowser())
+      this.pollingInterval = setInterval(() => {
+        this.fetchUnreadCommentsForCurrentUser();
+      }, 2000);
   }
 
   getCustomerOrderBillingMailList() {
@@ -280,26 +295,52 @@ export class OrderDetailsComponent implements OnInit {
       this.customerOrderService.downloadInvoice(this.order);
   }
 
-  refreshCustomerOrderComments() {
+  private fetchUnreadCommentsForCurrentUser() {
+    if (this.order)
+      this.customerOrderCommentService.getUnreadCommentsForResponsableAndIQuotation(this.order.id).subscribe(commentsFound => {
+        if (!this.comments)
+          this.comments = [];
+        this.comments.push(...commentsFound.filter(comm => this.comments.map(com => com.id).indexOf(comm.id) < 0));
+        if (!this.isAlreadyScrolledOnceToMessages && commentsFound.length > 0) {
+          this.isAlreadyScrolledOnceToMessages = true;
+          this.scrollToLastMessage();
+        }
+      });
+  }
+
+  getCustomerOrderComments() {
     if (this.order)
       this.customerOrderCommentService.getCustomerOrderCommentsForCustomer(this.order.id).subscribe(response => {
-        this.customerOrderComments = response;
+        this.comments = response;
       })
   }
 
   addCustomerOrderComment() {
-    if (this.newCustomerOrderComment && this.newCustomerOrderComment.comment.replace(/<(?:.|\n)*?>/gm, ' ').length > 0 && this.order) {
-      this.newCustomerOrderComment.customerOrder = this.order;
-    }
-    this.customerOrderCommentService.addOrUpdateCustomerOrderComment(this.newCustomerOrderComment).subscribe(response => {
-      this.newCustomerOrderComment = {} as CustomerOrderComment;
-      this.refreshCustomerOrderComments();
-    })
+    if (this.newComment.comment.trim().length > 0 && this.order)
+      if (this.newComment && this.newComment.comment.replace(/<(?:.|\n)*?>/gm, ' ').length > 0) {
+        this.customerOrderCommentService.addOrUpdateCustomerOrderComment(this.newComment.comment, this.order.id).subscribe(response => {
+          if (response) {
+            this.comments.push(response);
+            this.scrollToLastMessage();
+          }
+          this.newComment.comment = '';
+        })
+      }
   }
 
-  editCustomerOrderComment(comment: CustomerOrderComment) {
-    this.newCustomerOrderComment = comment;
-    this.newCustomerOrderComment.comment = this.newCustomerOrderComment.comment.replace(/<[^>]+>/g, '');
+  private scrollToLastMessage(behavior: ScrollBehavior = 'smooth'): void {
+    this.markCommentsAsReadByCustomer();
+    setTimeout(() => {
+      const el = document.getElementById('send-message');
+      if (el) {
+        el.scrollIntoView({ behavior: behavior, block: 'start' });
+      }
+    }, 200); // Timeout so the DOM is well up to date
+  }
+
+  private markCommentsAsReadByCustomer() {
+    if (this.order && this.order.id)
+      this.customerOrderCommentService.markAllCommentsAsReadForIQuotation(this.order.id).subscribe(res => res);
   }
 
   saveFieldsValue(service: Service) {
@@ -324,6 +365,11 @@ export class OrderDetailsComponent implements OnInit {
         this.refreshOrder();
       });
     }
+  }
+
+  ngOnDestroy() {
+    this.customerOrderCommentService.setWatchedOrder(null);
+    clearInterval(this.pollingInterval);
   }
 
   compareWithId = compareWithId;

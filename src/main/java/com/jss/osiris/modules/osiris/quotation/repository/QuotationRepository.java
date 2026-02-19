@@ -77,8 +77,13 @@ public interface QuotationRepository extends QueryCacheCrudRepository<Quotation,
                         @Param("quotationStatusToFilter") List<QuotationStatus> quotationStatusToFilter,
                         Pageable pageableRequest);
 
-        @Query("select q from Quotation q where responsable in :responsables and quotationStatus in :quotationStatus")
-        List<Quotation> searchQuotations(List<Responsable> responsables, List<QuotationStatus> quotationStatus);
+        @Query("select q from Quotation q join q.responsable r join fetch q.assoAffaireOrders a join fetch a.affaire af "
+                        +
+                        "  where (0 in :commercial or r.salesEmployee.id in :commercial) " +
+                        "    and (0 in :responsables or  q.responsable.id in :responsables) " +
+                        "    and (0 in :status or  q.quotationStatus.id in :status) order by q.createdDate desc ")
+        List<Quotation> searchQuotation(Integer commercial, List<Integer> responsables,
+                        List<Integer> status);
 
         @Query(value = "SELECT nextval('validation_id_quotation_sequence')", nativeQuery = true)
         Integer generateValidationIdForQuotation();

@@ -6,4 +6,6 @@ export interface DashboardUserStatistics {
   customerOrderRequieringAttention: number;
   customerOrderDraft: number;
   quotationDraft: number;
+  unreadCommentsForCustomerOrders: number;
+  unreadCommentsForQuotations: number;
 }

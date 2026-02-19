@@ -1,21 +1,28 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { NgbAccordionModule, NgbDropdownModule, NgbModal, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAccordionModule, NgbDropdownModule, NgbModal, NgbNavModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { compareWithId } from '../../../../libs/CompareHelper';
 import { ASSO_SERVICE_DOCUMENT_ENTITY_TYPE, INVOICING_PAYMENT_LIMIT_REFUND_EUROS, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_VALIDATED_BY_CUSTOMER, SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
 import { capitalizeName, getListMails, getListPhones } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
+import { TrustHtmlPipe } from '../../../../libs/TrustHtmlPipe';
 import { AppService } from '../../../main/services/app.service';
 import { ConstantService } from '../../../main/services/constant.service';
 import { GtmService } from '../../../main/services/gtm.service';
 import { FileUploadPayload, PageInfo } from '../../../main/services/GtmPayload';
+import { PlatformService } from '../../../main/services/platform.service';
+import { AvatarComponent } from '../../../miscellaneous/components/avatar/avatar.component';
 import { SingleUploadComponent } from '../../../miscellaneous/components/forms/single-upload/single-upload.component';
+import { Employee } from '../../../profile/model/Employee';
+import { Responsable } from '../../../profile/model/Responsable';
+import { LoginService } from '../../../profile/services/login.service';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
 import { AssoServiceDocument } from '../../model/AssoServiceDocument';
 import { Attachment } from '../../model/Attachment';
 import { BillingLabelType } from '../../model/BillingLabelType';
 import { CustomerOrder } from '../../model/CustomerOrder';
+import { CustomerOrderComment } from '../../model/CustomerOrderComment';
 import { DocumentType } from '../../model/DocumentType';
 import { InvoiceLabelResult } from '../../model/InvoiceLabelResult';
 import { InvoicingSummary } from '../../model/InvoicingSummary';
@@ -25,6 +32,7 @@ import { Service } from '../../model/Service';
 import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
 import { AssoServiceDocumentService } from '../../services/asso.service.document.service';
 import { AttachmentService } from '../../services/attachment.service';
+import { CustomerOrderCommentService } from '../../services/customer.order.comment.service';
 import { CustomerOrderService } from '../../services/customer.order.service';
 import { InvoiceLabelResultService } from '../../services/invoice.label.result.service';
 import { InvoicingSummaryService } from '../../services/invoicing.summary.service';
@@ -44,7 +52,10 @@ import { getClassForQuotationStatus, getQuotationStatusLabel } from '../quotatio
     SingleUploadComponent,
     NgbDropdownModule,
     NgbAccordionModule,
-    NgbNavModule]
+    NgbNavModule,
+    NgbTooltipModule,
+    TrustHtmlPipe,
+    AvatarComponent]
 })
 export class QuotationDetailsComponent implements OnInit {
 
@@ -68,9 +79,13 @@ export class QuotationDetailsComponent implements OnInit {
   billingLabelTypeCodeAffaire!: BillingLabelType;
   associatedCustomerOrder: CustomerOrder | undefined;
   quotationAttachments: Attachment[][] = [];
+  comments: CustomerOrderComment[] = [];
+  currentUser: Responsable | undefined;
 
   documentTypeBilling!: DocumentType;
 
+  newComment: CustomerOrderComment = { comment: '' } as CustomerOrderComment;
+  jssEmployee: Employee = { firstname: 'Journal', lastname: 'Spécial des Sociétés', title: '' } as Employee;
 
   isDepositPaymentMandatoryForQuotation: boolean = false;
 
@@ -84,6 +99,10 @@ export class QuotationDetailsComponent implements OnInit {
   selectedService: Service | undefined;
   dislayAlreadyFilledAttachment = false;
   canEditQuotation: boolean = false;
+  currentDate = new Date();
+
+  pollingInterval: any;
+  isAlreadyScrolledOnceToMessages: boolean = false;
 
   constructor(
     private constantService: ConstantService,
@@ -98,10 +117,13 @@ export class QuotationDetailsComponent implements OnInit {
     private appService: AppService,
     private formBuilder: FormBuilder,
     private customerOrderService: CustomerOrderService,
+    private loginService: LoginService,
     private serviceService: ServiceService,
     private modalService: NgbModal,
     private gtmService: GtmService,
-    private assoServiceDocumentService: AssoServiceDocumentService
+    private assoServiceDocumentService: AssoServiceDocumentService,
+    private customerOrderCommentService: CustomerOrderCommentService,
+    private platefomService: PlatformService
   ) { }
 
   capitalizeName = capitalizeName;
@@ -123,8 +145,6 @@ export class QuotationDetailsComponent implements OnInit {
     this.documentTypeBilling = this.constantService.getDocumentTypeBilling();
 
     this.quotationDetailsForm = this.formBuilder.group({});
-
-
 
     this.refreshQuotation();
   }
@@ -148,6 +168,7 @@ export class QuotationDetailsComponent implements OnInit {
       this.quotationAssoAffaireOrders = response;
       if (this.quotationAssoAffaireOrders && this.quotationAssoAffaireOrders.length > 0) {
         this.changeAffaire(this.quotationAssoAffaireOrders[0]);
+        this.initiateUnreadCommentsPolling();
       }
     })
     this.quotationService.isDepositMandatory(this.quotation.id).subscribe((res) => {
@@ -171,6 +192,10 @@ export class QuotationDetailsComponent implements OnInit {
         && this.quotation && this.canEditQuotation)
         this.displayPayButton = this.quotation.quotationStatus.code == QUOTATION_STATUS_SENT_TO_CUSTOMER;
     })
+    this.loginService.getCurrentUser().subscribe(response => this.currentUser = response);
+
+    this.getCustomerOrderComments();
+
     this.customerOrderService.getCustomerOrderForQuotation(this.quotation.id).subscribe(response => {
       if (response && response.id) {
         this.associatedCustomerOrder = response;
@@ -178,6 +203,13 @@ export class QuotationDetailsComponent implements OnInit {
           this.openValidatedQuotationModal();
       }
     })
+  }
+
+  initiateUnreadCommentsPolling() {
+    if (this.platefomService.isBrowser())
+      this.pollingInterval = setInterval(() => {
+        this.fetchUnreadCommentsForCurrentUser();
+      }, 2000);
   }
 
   getQuotationBillingMailList() {
@@ -253,6 +285,60 @@ export class QuotationDetailsComponent implements OnInit {
 
   toggleDislayAlreadyFilledAttachment() {
     this.dislayAlreadyFilledAttachment = !this.dislayAlreadyFilledAttachment;
+  }
+
+  private fetchUnreadCommentsForCurrentUser() {
+    if (this.quotation)
+      this.customerOrderCommentService.getUnreadCommentsForResponsableAndIQuotation(this.quotation.id).subscribe(commentsFound => {
+        if (!this.comments)
+          this.comments = [];
+        this.comments.push(...commentsFound.filter(comm => this.comments.map(com => com.id).indexOf(comm.id) < 0));
+        if (!this.isAlreadyScrolledOnceToMessages && commentsFound.length > 0) {
+          this.isAlreadyScrolledOnceToMessages = true;
+          this.scrollToLastMessage();
+        }
+      });
+  }
+
+  getCustomerOrderComments() {
+    if (this.quotation)
+      this.customerOrderCommentService.getCustomerOrderCommentsForCustomer(this.quotation.id).subscribe(response => {
+        this.comments = response;
+      })
+  }
+
+  addCustomerOrderComment() {
+    this.markCommentsAsReadByCustomer();
+    if (this.newComment.comment.trim().length > 0 && this.quotation)
+      if (this.newComment && this.newComment.comment.replace(/<(?:.|\n)*?>/gm, ' ').length > 0) {
+        this.customerOrderCommentService.addOrUpdateCustomerOrderComment(this.newComment.comment, this.quotation.id).subscribe(response => {
+          if (response) {
+            this.comments.push(response);
+            this.scrollToLastMessage();
+          }
+          this.newComment.comment = '';
+        })
+      }
+  }
+
+  private scrollToLastMessage(behavior: ScrollBehavior = 'smooth'): void {
+    this.markCommentsAsReadByCustomer();
+    setTimeout(() => {
+      const el = document.getElementById('send-message');
+      if (el) {
+        el.scrollIntoView({ behavior: behavior, block: 'start' });
+      }
+    }, 200); // Timeout so the DOM is well up to date
+  }
+
+  private markCommentsAsReadByCustomer() {
+    if (this.quotation && this.quotation.id)
+      this.customerOrderCommentService.markAllCommentsAsReadForIQuotation(this.quotation.id).subscribe(res => res);
+  }
+
+  editCustomerOrderComment(comment: CustomerOrderComment) {
+    this.newComment = comment;
+    this.newComment.comment = this.newComment.comment.replace(/<[^>]+>/g, '');
   }
 
   saveFieldsValue(service: Service) {
@@ -340,6 +426,11 @@ export class QuotationDetailsComponent implements OnInit {
     this.validatedQuotationModalInstance.result.finally(() => {
       this.validatedQuotationModalInstance = undefined;
     });
+  }
+
+  ngOnDestroy() {
+    this.customerOrderCommentService.setWatchedOrder(null);
+    clearInterval(this.pollingInterval);
   }
 
   compareWithId = compareWithId;

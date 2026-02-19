@@ -260,7 +260,7 @@ public class MissingAttachmentQueryServiceImpl implements MissingAttachmentQuery
 
                     // After 'break' add comment
                     CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
-                            assoServiceDocument.getService().getAssoAffaireOrder().getCustomerOrder(),
+                            assoServiceDocument.getService().getAssoAffaireOrder().getCustomerOrder(), null,
                             "La demande de pièces manquantes du " + missingAttachmentQuery.getCreatedDateTime()
                                     .format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + " a été complétée",
                             false, false);

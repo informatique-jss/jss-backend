@@ -217,7 +217,7 @@ public class MyJssMiscellaneousController {
 
 		String gaClientId = request.getHeader("gaClientId");
 
-		googleAnalyticsService.trackBeginCheckout(quotation, gaClientId);
+		googleAnalyticsService.trackAddPaymentInfo(quotation, gaClientId);
 
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
@@ -230,7 +230,7 @@ public class MyJssMiscellaneousController {
 
 		String gaClientId = request.getHeader("gaClientId");
 
-		googleAnalyticsService.trackBeginCheckout(customerOrder, gaClientId);
+		googleAnalyticsService.trackAddPaymentInfo(customerOrder, gaClientId);
 
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}

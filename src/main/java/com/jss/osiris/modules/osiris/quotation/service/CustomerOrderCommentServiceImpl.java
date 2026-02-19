@@ -21,6 +21,7 @@ import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.repository.CustomerOrderCommentRepository;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 @Service
 public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentService {
@@ -37,19 +38,56 @@ public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentServ
     @Autowired
     ConstantService constantService;
 
+    @Autowired
+    CustomerOrderService customerOrderService;
+
     @Override
     public List<CustomerOrderComment> getCustomerOrderComments() {
         return IterableUtils.toList(customerOrderCommentRepository.findAll());
     }
 
     @Override
-    public List<CustomerOrderComment> getCustomerOrderCommentForOrder(CustomerOrder customerOrder) {
+    public List<CustomerOrderComment> getCustomerOrderCommentForOrder(CustomerOrder customerOrder,
+            Boolean IsToDisplayToCustomer) {
+        if (Boolean.TRUE.equals(IsToDisplayToCustomer))
+            return customerOrderCommentRepository.findByCustomerOrderAndIsToDisplayToCustomer(customerOrder, true);
         return customerOrderCommentRepository.findByCustomerOrder(customerOrder);
     }
 
     @Override
-    public List<CustomerOrderComment> getCustomerOrderCommentForQuotation(Quotation quotation) {
+    public List<CustomerOrderComment> getCustomerOrderCommentForQuotation(Quotation quotation,
+            Boolean IsToDisplayToCustomer) {
+        if (Boolean.TRUE.equals(IsToDisplayToCustomer))
+            return customerOrderCommentRepository.findByQuotationAndIsToDisplayToCustomer(quotation, true);
         return customerOrderCommentRepository.findByQuotation(quotation);
+    }
+
+    @Override
+    public List<CustomerOrderComment> getUnreadCustomerOrderCommentForSalesEmployee(Employee employee) {
+        return customerOrderCommentRepository.findUnreadCommmentsForSalesEmployee(employee);
+    }
+
+    @Override
+    public List<CustomerOrderComment> getUnreadCustomerOrderCommentForResponsable(Responsable responsable) {
+        return customerOrderCommentRepository.findUnreadCommmentsForResponsable(responsable.getId());
+    }
+
+    @Override
+    public List<CustomerOrder> getCustomerOrdersWithUnreadCommentsForResponsable(Responsable responsable) {
+        List<CustomerOrderComment> comments = customerOrderCommentRepository
+                .findUnreadCommmentsForResponsable(responsable.getId());
+
+        return comments.stream().filter(comment -> comment.getCustomerOrder() != null)
+                .map(CustomerOrderComment::getCustomerOrder).distinct().toList();
+    }
+
+    @Override
+    public List<Quotation> getQuotationsWithUnreadCommentsForResponsable(Responsable responsable) {
+        List<CustomerOrderComment> comments = customerOrderCommentRepository
+                .findUnreadCommmentsForResponsable(responsable.getId());
+
+        return comments.stream().filter(comment -> comment.getQuotation() != null)
+                .map(CustomerOrderComment::getQuotation).distinct().toList();
     }
 
     @Override
@@ -69,27 +107,43 @@ public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentServ
     @Transactional(rollbackFor = Exception.class)
     public CustomerOrderComment addOrUpdateCustomerOrderComment(
             CustomerOrderComment customerOrderComment) {
+        if (customerOrderComment.getIsRead() == null)
+            customerOrderComment.setIsRead(false);
+        if (customerOrderComment.getIsReadByCustomer() == null)
+            customerOrderComment.setIsReadByCustomer(false);
+        if (customerOrderComment.getCreatedDateTime() == null)
+            customerOrderComment.setCreatedDateTime(LocalDateTime.now());
         return customerOrderCommentRepository.save(customerOrderComment);
     }
 
     @Override
-    public CustomerOrderComment createCustomerOrderComment(CustomerOrder customerOrder, String contentComment,
-            Boolean doNotNotify, Boolean isToDisplayToCustomer)
+    public CustomerOrderComment createCustomerOrderComment(CustomerOrder customerOrder, Quotation quotation,
+            String contentComment, Boolean isFromCustomer, Boolean isToDisplayToCustomer)
             throws OsirisException {
         CustomerOrderComment customerOrderComment = new CustomerOrderComment();
         customerOrderComment.setCustomerOrder(customerOrder);
+        customerOrderComment.setQuotation(quotation);
         customerOrderComment.setComment(contentComment);
 
+        customerOrderComment.setIsReadByCustomer(false);
         Employee employee = employeeService.getCurrentEmployee();
         if (employee != null)
             customerOrderComment.setEmployee(employee);
-        else if (!doNotNotify) {
+
+        if (isToDisplayToCustomer && isFromCustomer)
             customerOrderComment.setCurrentCustomer(employeeService.getCurrentMyJssUser());
+
+        if (isFromCustomer) {
+            customerOrderComment.setIsReadByCustomer(true);
             customerOrderComment.setActiveDirectoryGroups(new ArrayList<ActiveDirectoryGroup>());
             customerOrderComment.getActiveDirectoryGroups().add(constantService.getActiveDirectoryGroupSales());
-            customerOrderComment.setIsToDisplayToCustomer(isToDisplayToCustomer);
-            notificationService.notifyCommentFromMyJssAddToCustomerOrder(customerOrder);
+            if (customerOrder != null && customerOrder.getResponsable() != null)
+                notificationService.notifyCommentFromMyJssAddToCustomerOrder(customerOrder);
+            else
+                notificationService.notifyCommentFromMyJssAddToQuotation(quotation);
         }
+
+        customerOrderComment.setIsToDisplayToCustomer(isToDisplayToCustomer);
         customerOrderComment.setCreatedDateTime(LocalDateTime.now());
         customerOrderComment.setIsRead(false);
 
@@ -107,4 +161,5 @@ public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentServ
         }
         return addOrUpdateCustomerOrderComment(customerOrderComment);
     }
+
 }

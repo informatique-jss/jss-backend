@@ -3,6 +3,8 @@ package com.jss.osiris.modules.osiris.tiers.repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -149,14 +151,14 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
 
         Responsable findFirst1ByIsActiveAndMail_MailIgnoreCase(Boolean isActive, String mail);
 
-        List<Responsable> findByLastnameContainingIgnoreCaseOrFirstnameContainingIgnoreCase(String lastname,
-                        String firstname);
-
         /*
          * |============================================================================
          * |______________________METHODS FOR OSIRIS V2_________________________________
          * |============================================================================
          */
+
+        Page<Responsable> findByLastnameContainingIgnoreCaseOrFirstnameContainingIgnoreCase(String lastname,
+                        String firstname, Pageable pageable);
 
         List<Responsable> findByTiers(Tiers tiers);
 
@@ -175,9 +177,11 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
                         or upper( concat(r.firstname, r.lastname))
                                 like concat('%', upper(:label), '%')
                         )
+                        and (:tiersCategory = '' or r.tiers.tiersCategory.label = :tiersCategory)
                         """)
         List<Responsable> searchForResponsables(@Param("salesEmployeeId") Integer salesEmployeeId,
                         @Param("mail") String mail,
-                        @Param("label") String label);
+                        @Param("label") String label,
+                        @Param("tiersCategory") String tiersCategory);
 
 }

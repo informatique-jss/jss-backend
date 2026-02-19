@@ -2,7 +2,7 @@ import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_REQUIRE_ATTENTION, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_SENT_TO_CUSTOMER } from '../../../../libs/Constants';
+import { CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_REQUIRE_ATTENTION, CUSTOMER_ORDER_WITH_UNREAD_COMMENTS, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_WITH_UNREAD_COMMENTS } from '../../../../libs/Constants';
 import { capitalizeName } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
@@ -13,6 +13,7 @@ import { LoginService } from '../../../profile/services/login.service';
 import { ResponsableService } from '../../../profile/services/responsable.service';
 import { DashboardUserStatistics } from '../../../quotation/model/DashboardUserStatistics';
 import { DashboardUserStatisticsService } from '../../../quotation/services/dashboard.user.statistics.service';
+import { QuotationService } from '../../services/quotation.service';
 
 @Component({
   selector: 'overview',
@@ -29,10 +30,12 @@ export class OverviewComponent implements OnInit {
 
   QUOTATION_STATUS_SENT_TO_CUSTOMER = QUOTATION_STATUS_SENT_TO_CUSTOMER;
   QUOTATION_STATUS_OPEN = QUOTATION_STATUS_OPEN;
+  QUOTATION_STATUS_WITH_UNREAD_COMMENTS = QUOTATION_WITH_UNREAD_COMMENTS;
   CUSTOMER_ORDER_STATUS_OPEN = CUSTOMER_ORDER_STATUS_OPEN;
   CUSTOMER_ORDER_STATUS_BILLED = CUSTOMER_ORDER_STATUS_BILLED;
   CUSTOMER_ORDER_STATUS_BEING_PROCESSED = CUSTOMER_ORDER_STATUS_BEING_PROCESSED;
   CUSTOMER_ORDER_STATUS_REQUIRE_ATTENTION = CUSTOMER_ORDER_STATUS_REQUIRE_ATTENTION;
+  CUSTOMER_ORDER_STATUS_WITH_UNREAD_COMMENTS = CUSTOMER_ORDER_WITH_UNREAD_COMMENTS;
 
   appointmentUrl: SafeResourceUrl | undefined;
 
@@ -47,18 +50,24 @@ export class OverviewComponent implements OnInit {
     public modalService: NgbModal,
     private responsableService: ResponsableService,
     private googleAnalyticsService: GoogleAnalyticsService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private quotationService: QuotationService
   ) { }
 
   capitalizeName = capitalizeName;
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
+      let currentQuotationRoute = this.quotationService.getCurrentDraftQuotationStep();
       // I'm coming to login in, ok
       if (params["aToken"] && params["userId"]) {
-        this.loginService.logUser(parseInt(params["userId"]), params["aToken"]).subscribe(response => {
+        this.loginService.logUser(parseInt(params["userId"]), params["aToken"], params["isFromQuotation"] == "true").subscribe(response => {
           this.googleAnalyticsService.trackLoginLogout("login", "sign-in", "my-account").subscribe();
-          this.appService.openRoute(null, "account/overview", undefined);
+          if (params["isFromQuotation"] == "true") {
+            this.appService.openRoute(null, currentQuotationRoute ? currentQuotationRoute : "quotation", undefined);
+          } else {
+            this.appService.openRoute(null, "account/overview", undefined);
+          }
         });
       }
     });
@@ -101,4 +110,4 @@ export class OverviewComponent implements OnInit {
   cancelAcceptation() {
     this.acceptTerms = false;
   }
-}
+} 

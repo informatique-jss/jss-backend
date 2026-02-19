@@ -8,7 +8,7 @@ import { SelectFormHelper, SelectType } from './select-form-helper';
 export const INPUT_TYPES = ['checkbox', 'text', 'datetime-local', 'date', 'email', 'number', 'password', 'tel'] as const;
 export type InputType = typeof INPUT_TYPES[number];
 
-export const FORM_TYPES = ['input', 'switch', 'select', 'minmax'] as const;
+export const FORM_TYPES = ['input', 'switch', 'select', 'minmax', 'autocomplete'] as const;
 export type FormType = typeof FORM_TYPES[number];
 
 @Component({

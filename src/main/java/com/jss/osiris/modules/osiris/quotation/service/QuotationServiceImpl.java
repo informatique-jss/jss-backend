@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -386,7 +387,7 @@ public class QuotationServiceImpl implements QuotationService {
         }
 
         if (quotationSearch.getStartDate() == null)
-            quotationSearch.setStartDate(LocalDateTime.now().minusYears(100));
+            quotationSearch.setStartDate(LocalDate.now().minusYears(100));
 
         if (quotationSearch.getEndDate() == null)
             quotationSearch.setEndDate(LocalDateTime.now().plusYears(100));
@@ -394,7 +395,7 @@ public class QuotationServiceImpl implements QuotationService {
         return quotationRepository.findQuotations(
                 salesEmployeeId,
                 statusId,
-                quotationSearch.getStartDate().withHour(0).withMinute(0),
+                LocalDateTime.of(quotationSearch.getStartDate(), LocalTime.of(0, 0)),
                 quotationSearch.getEndDate().withHour(23).withMinute(59), customerOrderId, affaireId, 0);
     }
 
@@ -665,7 +666,7 @@ public class QuotationServiceImpl implements QuotationService {
     }
 
     public List<Quotation> searchQuotationsForCurrentUser(List<String> customerOrderStatus,
-            List<Integer> responsableIdToFilter, Integer page,
+            List<Integer> responsableIdToFilter, Boolean requiringAttention, Integer page,
             String sortBy) {
         List<QuotationStatus> quotationStatusToFilter = new ArrayList<QuotationStatus>();
 
@@ -703,9 +704,24 @@ public class QuotationServiceImpl implements QuotationService {
                     order = new Order(Direction.ASC, "customerOrderStatus");
 
                 Sort sort = Sort.by(Arrays.asList(order));
-                Pageable pageableRequest = PageRequest.of(page, 10, sort);
-                return populateTransientField(quotationRepository.searchQuotationsForCurrentUser(responsablesToFilter,
-                        quotationStatusToFilter, pageableRequest));
+                Pageable pageableRequest = PageRequest.of(page,
+                        Boolean.TRUE.equals(requiringAttention) ? Integer.MAX_VALUE : 10, sort); // /!\ pay attention,
+                                                                                                 // if new predicate are
+                // implemented for requiringAttention, take
+                // care of expanding pagination to maximum to
+                // correctly backend filter afterward (cf
+                // customerOrderServiceImpl for same
+                // behavior)
+
+                List<Quotation> quotationsFound = quotationRepository.searchQuotationsForCurrentUser(
+                        responsablesToFilter, quotationStatusToFilter, pageableRequest);
+
+                if (requiringAttention) {
+                    quotationsFound = quotationsFound.stream().filter(quotation -> quotation.getQuotationStatus()
+                            .getCode().equals(QuotationStatus.SENT_TO_CUSTOMER)).toList();
+                }
+
+                return populateTransientField(quotationsFound);
             }
         }
 
@@ -713,12 +729,26 @@ public class QuotationServiceImpl implements QuotationService {
     }
 
     @Override
-    public List<Quotation> searchQuotations(List<QuotationStatus> quotationStatus, List<Responsable> responsables) {
-        if (quotationStatus != null && quotationStatus.size() > 0 && quotationStatus.size() > 0
-                && responsables != null && responsables.size() > 0) {
-            return quotationRepository.searchQuotations(responsables, quotationStatus);
-        }
-        return null;
+    public List<Quotation> searchForQuotations(QuotationSearch quotationSearch) throws OsirisException {
+
+        Integer commercialId = (quotationSearch.getSalesEmployee() != null)
+                ? quotationSearch.getSalesEmployee().getId()
+                : 0;
+
+        List<Integer> responsablesIds = (quotationSearch.getResponsables() != null
+                && quotationSearch.getResponsables().size() > 0)
+                        ? quotationSearch.getResponsables().stream().map(Responsable::getId).toList()
+                        : Arrays.asList(0);
+
+        List<Integer> statusIds = (quotationSearch.getQuotationStatus() != null
+                && quotationSearch.getQuotationStatus().size() > 0)
+                        ? quotationSearch.getQuotationStatus().stream().map(QuotationStatus::getId)
+                                .collect(Collectors.toList())
+                        : Arrays.asList(0);
+
+        return completeAdditionnalInformationForQuotations(
+                quotationRepository.searchQuotation(commercialId, responsablesIds, statusIds),
+                false);
     }
 
     private List<Quotation> populateTransientField(List<Quotation> quotations) {

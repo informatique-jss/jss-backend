@@ -18,9 +18,94 @@
   </div>
 </section>
 
-<section class="background-opacity">
-  <div class="container overflow-hidden">
-    <div *ngIf="!tendencyPosts || tendencyPosts.length == 0" class="row">
+<div *ngIf="isServer">
+  <div class="seo-fallback" aria-hidden="true">
+    <ul *ngFor="let post of tendencyPosts">
+      <li>
+        <a [routerLink]="'/post/' + post.slug">{{ post.titleText }}</a>
+      </li>
+    </ul>
+  </div>
+  <div class="seo-fallback" aria-hidden="true">
+    <ul *ngFor="let post of topPosts">
+      <li>
+        <a [routerLink]="'/post/' + post.slug">{{ post.titleText }}</a>
+      </li>
+    </ul>
+  </div>
+  <div class="seo-fallback" aria-hidden="true">
+    <ul *ngFor="let post of mostSeenPosts">
+      <li>
+        <a [routerLink]="'/post/' + post.slug">{{ post.titleText }}</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div *ngIf="!isServer">
+  <section class="background-opacity">
+    <div class="container overflow-hidden">
+      <div *ngIf="!tendencyPosts || tendencyPosts.length == 0" class="row">
+        <div class="card col m-3" aria-hidden="true" *ngFor="let _ of [].constructor(3)">
+          <div class="position-relative placeholder-wave">
+            <div class="card-img-top placeholder ratio ratio-16x9"></div>
+            <i class="ai-image position-absolute top-50 start-50 translate-middle fs-1 opacity-50"></i>
+          </div>
+          <div class="card-body">
+            <h5 class="card-title placeholder-glow">
+              <span class="placeholder col-6"></span>
+              <span class="visually-hidden">Heading</span>
+            </h5>
+            <p class="card-text placeholder-glow">
+              <span class="placeholder placeholder-sm col-7 me-2"></span>
+              <span class="placeholder placeholder-sm col-4"></span>
+              <span class="placeholder placeholder-sm col-4 me-2"></span>
+              <span class="placeholder placeholder-sm col-6"></span>
+              <span class="placeholder placeholder-sm col-8"></span>
+            </p>
+            <p tabindex="-1" class="btn btn-primary disabled placeholder col-6 placeholder-wave"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- hiden post url to improve seo - do not use css 'display: none', less performance for seo google -->
+
+      <generic-swiper *ngIf="tendencyPosts && tendencyPosts.length>0" [items]="tendencyPosts" title="Articles à la une">
+        <ng-template let-post>
+          <div class="h-100">
+            <div class="card border-0 bg-tertiary">
+              <img class="card-img-top" *ngIf="post.media" [routerLink]="'/post/'+post.slug"
+                [src]="post.media && post.media.urlMediumLarge ? post.media.urlMediumLarge : post.media.urlFull"
+                alt="Post image">
+              <div class="card-body pb-4">
+                <div class="d-flex align-items-center mb-4 mt-n1">
+                  <span class="fs-sm text-body-secondary">{{post.date | date:'dd/MM/yyyy'}}</span>
+                  <span class="fs-xs opacity-20 mx-3">|</span>
+                  <a class="badge text-nav fs-xs border" *ngIf="post.postTags[0]"
+                    (click)="openTagSearch(post.postTags[0].slug, $event)">{{post.postTags[0].name}}</a>
+                </div>
+                <h3 class="h4 card-title card-title-truncate">
+                  <a [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
+                </h3>
+                <p class="card-text card-text-truncate">{{getRawTextFromHtml(post.excerptText)}}</p>
+              </div>
+              <div class="card-footer pt-3">
+                <div class="d-flex align-items-center text-decoration-none pb-2">
+                  <img class="rounded-circle"
+                    [src]="post.fullAuthor.avatar_url_size_48 ? post.fullAuthor.avatar_url_size_48 : post.fullAuthor.avatar_url_size_24 ? post.fullAuthor.avatar_url_size_24 : post.fullAuthor.avatar_url_size_96 "
+                    width="48" alt="Post author">
+                  <h6 class="ps-3 mb-0">{{post.fullAuthor.name}}</h6>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </generic-swiper>
+    </div>
+  </section>
+
+  <section class="container overflow-hidden">
+    <div *ngIf="!topPosts || topPosts.length==0" class="row">
       <div class="card col m-3" aria-hidden="true" *ngFor="let _ of [].constructor(3)">
         <div class="position-relative placeholder-wave">
           <div class="card-img-top placeholder ratio ratio-16x9"></div>
@@ -42,14 +127,12 @@
         </div>
       </div>
     </div>
-
-    <generic-swiper *ngIf="topPosts && topPosts.length>0" [items]="topPosts" title="Articles à la une">
+    <generic-swiper *ngIf="topPosts && topPosts.length>0" [items]="topPosts" title="Nos derniers articles">
       <ng-template let-post>
         <div class="h-100">
           <div class="card border-0 bg-tertiary">
             <img class="card-img-top" *ngIf="post.media " [routerLink]="'/post/'+post.slug"
-              [src]="post.media && post.media.urlMediumLarge ? post.media.urlMediumLarge : post.media.urlFull"
-              alt="Post image">
+              [src]="post.media && post.media.urlLarge ? post.media.urlLarge : post.media.urlFull" alt="Post image">
             <div class="card-body pb-4">
               <div class="d-flex align-items-center mb-4 mt-n1">
                 <span class="fs-sm text-body-secondary">{{post.date | date:'dd/MM/yyyy'}}</span>
@@ -60,7 +143,7 @@
               <h3 class="h4 card-title card-title-truncate">
                 <a [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
               </h3>
-              <p class="card-text card-text-truncate">{{post.excerptText}}</p>
+              <p class="card-text card-text-truncate">{{getRawTextFromHtml(post.excerptText)}}</p>
             </div>
             <div class="card-footer pt-3">
               <div class="d-flex align-items-center text-decoration-none pb-2">
@@ -74,123 +157,67 @@
         </div>
       </ng-template>
     </generic-swiper>
-  </div>
-</section>
+  </section>
 
-<section class="container overflow-hidden">
-  <div *ngIf="!topPosts || topPosts.length==0" class="row">
-    <div class="card col m-3" aria-hidden="true" *ngFor="let _ of [].constructor(3)">
-      <div class="position-relative placeholder-wave">
-        <div class="card-img-top placeholder ratio ratio-16x9"></div>
-        <i class="ai-image position-absolute top-50 start-50 translate-middle fs-1 opacity-50"></i>
-      </div>
-      <div class="card-body">
-        <h5 class="card-title placeholder-glow">
-          <span class="placeholder col-6"></span>
-          <span class="visually-hidden">Heading</span>
-        </h5>
-        <p class="card-text placeholder-glow">
-          <span class="placeholder placeholder-sm col-7 me-2"></span>
-          <span class="placeholder placeholder-sm col-4"></span>
-          <span class="placeholder placeholder-sm col-4 me-2"></span>
-          <span class="placeholder placeholder-sm col-6"></span>
-          <span class="placeholder placeholder-sm col-8"></span>
-        </p>
-        <p tabindex="-1" class="btn btn-primary disabled placeholder col-6 placeholder-wave"></p>
-      </div>
-    </div>
-  </div>
-
-  <generic-swiper *ngIf="topPosts && topPosts.length>0" [items]="topPosts" title="Nos derniers articles">
-    <ng-template let-post>
-      <div class="h-100">
-        <div class="card border-0 bg-tertiary">
-          <img class="card-img-top" *ngIf="post.media " [routerLink]="'/post/'+post.slug"
-            [src]="post.media && post.media.urlLarge ? post.media.urlLarge : post.media.urlFull" alt="Post image">
-          <div class="card-body pb-4">
-            <div class="d-flex align-items-center mb-4 mt-n1">
-              <span class="fs-sm text-body-secondary">{{post.date | date:'dd/MM/yyyy'}}</span>
-              <span class="fs-xs opacity-20 mx-3">|</span>
-              <a class="badge text-nav fs-xs border" *ngIf="post.postTags[0]"
-                (click)="openTagSearch(post.postTags[0].slug, $event)">{{post.postTags[0].name}}</a>
-            </div>
-            <h3 class="h4 card-title card-title-truncate">
-              <a [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
-            </h3>
-            <p class="card-text card-text-truncate">{{post.excerptText}}</p>
+  <section class="background-opacity">
+    <div class="container overflow-hidden ">
+      <div *ngIf="!mostSeenPosts || mostSeenPosts.length==0" class="row">
+        <div class="card col m-3" aria-hidden="true" *ngFor="let _ of [].constructor(3)">
+          <div class="position-relative placeholder-wave">
+            <div class="card-img-top placeholder ratio ratio-16x9"></div>
+            <i class="ai-image position-absolute top-50 start-50 translate-middle fs-1 opacity-50"></i>
           </div>
-          <div class="card-footer pt-3">
-            <div class="d-flex align-items-center text-decoration-none pb-2">
-              <img class="rounded-circle"
-                [src]="post.fullAuthor.avatar_url_size_48 ? post.fullAuthor.avatar_url_size_48 : post.fullAuthor.avatar_url_size_24 ? post.fullAuthor.avatar_url_size_24 : post.fullAuthor.avatar_url_size_96 "
-                width="48" alt="Post author">
-              <h6 class="ps-3 mb-0">{{post.fullAuthor.name}}</h6>
-            </div>
+          <div class="card-body">
+            <h5 class="card-title placeholder-glow">
+              <span class="placeholder col-6"></span>
+              <span class="visually-hidden">Heading</span>
+            </h5>
+            <p class="card-text placeholder-glow">
+              <span class="placeholder placeholder-sm col-7 me-2"></span>
+              <span class="placeholder placeholder-sm col-4"></span>
+              <span class="placeholder placeholder-sm col-4 me-2"></span>
+              <span class="placeholder placeholder-sm col-6"></span>
+              <span class="placeholder placeholder-sm col-8"></span>
+            </p>
+            <p tabindex="-1" class="btn btn-primary disabled placeholder col-6 placeholder-wave"></p>
           </div>
         </div>
       </div>
-    </ng-template>
-  </generic-swiper>
-</section>
 
-<section class="background-opacity">
-  <div class="container overflow-hidden ">
-    <div *ngIf="!mostSeenPosts || mostSeenPosts.length==0" class="row">
-      <div class="card col m-3" aria-hidden="true" *ngFor="let _ of [].constructor(3)">
-        <div class="position-relative placeholder-wave">
-          <div class="card-img-top placeholder ratio ratio-16x9"></div>
-          <i class="ai-image position-absolute top-50 start-50 translate-middle fs-1 opacity-50"></i>
-        </div>
-        <div class="card-body">
-          <h5 class="card-title placeholder-glow">
-            <span class="placeholder col-6"></span>
-            <span class="visually-hidden">Heading</span>
-          </h5>
-          <p class="card-text placeholder-glow">
-            <span class="placeholder placeholder-sm col-7 me-2"></span>
-            <span class="placeholder placeholder-sm col-4"></span>
-            <span class="placeholder placeholder-sm col-4 me-2"></span>
-            <span class="placeholder placeholder-sm col-6"></span>
-            <span class="placeholder placeholder-sm col-8"></span>
-          </p>
-          <p tabindex="-1" class="btn btn-primary disabled placeholder col-6 placeholder-wave"></p>
-        </div>
-      </div>
-    </div>
-
-    <generic-swiper *ngIf="mostSeenPosts && mostSeenPosts.length>0" [items]="mostSeenPosts"
-      title="Articles les plus vus">
-      <ng-template let-post>
-        <div class="h-100">
-          <div class="card border-0 bg-tertiary">
-            <img class="card-img-top" *ngIf="post.media" [routerLink]="'/post/'+post.slug"
-              [src]="post.media && post.media.urlLarge ? post.media.urlLarge : post.media.urlFull" alt="Post image">
-            <div class="card-body pb-4">
-              <div class="d-flex align-items-center mb-4 mt-n1">
-                <span class="fs-sm text-body-secondary">{{post.date | date:'dd/MM/yyyy'}}</span>
-                <span class="fs-xs opacity-20 mx-3">|</span>
-                <a class="badge text-nav fs-xs border" *ngIf="post.postTags[0]"
-                  (click)="openTagSearch(post.postTags[0].slug, $event)">{{post.postTags[0].name}}</a>
+      <generic-swiper *ngIf="mostSeenPosts && mostSeenPosts.length>0" [items]="mostSeenPosts"
+        title="Articles les plus vus">
+        <ng-template let-post>
+          <div class="h-100">
+            <div class="card border-0 bg-tertiary">
+              <img class="card-img-top" *ngIf="post.media" [routerLink]="'/post/'+post.slug"
+                [src]="post.media && post.media.urlLarge ? post.media.urlLarge : post.media.urlFull" alt="Post image">
+              <div class="card-body pb-4">
+                <div class="d-flex align-items-center mb-4 mt-n1">
+                  <span class="fs-sm text-body-secondary">{{post.date | date:'dd/MM/yyyy'}}</span>
+                  <span class="fs-xs opacity-20 mx-3">|</span>
+                  <a class="badge text-nav fs-xs border" *ngIf="post.postTags[0]"
+                    (click)="openTagSearch(post.postTags[0].slug, $event)">{{post.postTags[0].name}}</a>
+                </div>
+                <h3 class="h4 card-title">
+                  <a [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
+                </h3>
+                <p class="card-text card-text-truncate">{{getRawTextFromHtml(post.excerptText)}}</p>
               </div>
-              <h3 class="h4 card-title">
-                <a [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
-              </h3>
-              <p class="card-text card-text-truncate">{{post.excerptText}}</p>
-            </div>
-            <div class="card-footer pt-3">
-              <div class="d-flex align-items-center text-decoration-none pb-2">
-                <img class="rounded-circle"
-                  [src]="post.fullAuthor.avatar_url_size_48 ? post.fullAuthor.avatar_url_size_48 : post.fullAuthor.avatar_url_size_24 ? post.fullAuthor.avatar_url_size_24 : post.fullAuthor.avatar_url_size_96 "
-                  width="48" alt="Post author">
-                <h6 class="ps-3 mb-0">{{post.fullAuthor.name}}</h6>
+              <div class="card-footer pt-3">
+                <div class="d-flex align-items-center text-decoration-none pb-2">
+                  <img class="rounded-circle"
+                    [src]="post.fullAuthor.avatar_url_size_48 ? post.fullAuthor.avatar_url_size_48 : post.fullAuthor.avatar_url_size_24 ? post.fullAuthor.avatar_url_size_24 : post.fullAuthor.avatar_url_size_96 "
+                    width="48" alt="Post author">
+                  <h6 class="ps-3 mb-0">{{post.fullAuthor.name}}</h6>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </ng-template>
-    </generic-swiper>
-  </div>
-</section>
+        </ng-template>
+      </generic-swiper>
+    </div>
+  </section>
+</div>
 
 <!-- Second search -->
 <section class="container py-5">

@@ -18,9 +18,9 @@ export class CustomerOrderService extends AppRestService<CustomerOrder> {
     super(http, "quotation");
   }
 
-  searchOrdersForCurrentUser(customerOrderStatus: string[], withMissingAttachment: boolean, page: number, sorter: string, responsablesToFilter: Responsable[] | undefined) {
+  searchOrdersForCurrentUser(customerOrderStatus: string[], requiringAttention: boolean, page: number, sorter: string, responsablesToFilter: Responsable[] | undefined) {
 
-    let params = new HttpParams().set("page", page).set("sortBy", sorter).set("withMissingAttachment", withMissingAttachment);
+    let params = new HttpParams().set("page", page).set("sortBy", sorter).set("requiringAttention", requiringAttention);
     if (responsablesToFilter && responsablesToFilter.length > 0)
       params = params.set("responsableIdsToFilter", responsablesToFilter.map(r => r.id).join(","));
     return this.postList(params, "order/search/current", customerOrderStatus);
@@ -46,13 +46,13 @@ export class CustomerOrderService extends AppRestService<CustomerOrder> {
     return this.get(new HttpParams().set("idQuotation", idQuotation), 'quotation/order');
   }
 
-  saveOrder(order: IQuotation, isValidation: boolean): Observable<number> {
+  saveInitialOrderForConnectedUser(order: IQuotation, isValidation: boolean): Observable<number> {
     let params = new HttpParams();
     params = params.set("isValidation", isValidation);
     return this.postItem(params, 'order/user/save', order) as any as Observable<number>;
   }
 
-  saveFinalOrder(order: CustomerOrder, isValidation: boolean) {
+  saveOrderForAnonymousUser(order: CustomerOrder, isValidation: boolean) {
     let params = new HttpParams();
     params = params.set("isValidation", isValidation);
     return this.postItem(params, 'order/save-order', order);

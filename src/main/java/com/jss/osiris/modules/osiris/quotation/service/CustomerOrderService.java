@@ -3,6 +3,7 @@ package com.jss.osiris.modules.osiris.quotation.service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.springframework.http.ResponseEntity;
 
@@ -22,7 +23,6 @@ import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.Announcement;
 import com.jss.osiris.modules.osiris.quotation.model.AssignationType;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
-import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.IOrderingSearchTaggedResult;
 import com.jss.osiris.modules.osiris.quotation.model.IQuotation;
@@ -138,16 +138,18 @@ public interface CustomerOrderService {
 
         public List<CustomerOrder> searchOrdersForCurrentUser(List<String> customerOrderStatus,
                         List<Integer> responsableIdToFilter,
-                        Boolean withMissingAttachment, Integer page,
+                        Boolean requiringAttention, Integer page,
                         String sortBy) throws OsirisException;
+
+        public List<CustomerOrder> searchForCustomerOrders(OrderingSearch customerOrderSearch) throws OsirisException;
+
+        public Predicate<CustomerOrder> getRequiringAttentionPredicate() throws OsirisException;
 
         public List<CustomerOrder> searchOrdersForCurrentUserAndAffaire(Affaire affaire) throws OsirisException;
 
         public List<Payment> getApplicablePaymentsForCustomerOrder(CustomerOrder customerOrder) throws OsirisException;
 
         public InvoicingSummary getInvoicingSummaryForIQuotation(IQuotation customerOrder) throws OsirisException;
-
-        public List<CustomerOrderComment> getCustomerOrderCommentsForCustomer(CustomerOrder customerOrder);
 
         public List<CustomerOrder> searchOrders(List<CustomerOrderStatus> customerOrderStatus,
                         Boolean withMissingAttachment,
@@ -236,4 +238,5 @@ public interface CustomerOrderService {
                         LocalDateTime updateEndDate);
 
         public List<CustomerOrder> searchActiveRecurringOrder();
+
 }

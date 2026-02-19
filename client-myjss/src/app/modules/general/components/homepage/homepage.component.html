@@ -151,7 +151,7 @@
               <span class="h4 card-title card-title-truncate">
                 <a [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
               </span>
-              <p class="card-text card-text-truncate">{{post.excerptText}}</p>
+              <p class="card-text card-text-truncate">{{getRawTextFromHtml(post.excerptText)}}</p>
             </div>
             <div class="card-footer pt-3">
               <div class="d-flex align-items-center text-decoration-none pb-2">

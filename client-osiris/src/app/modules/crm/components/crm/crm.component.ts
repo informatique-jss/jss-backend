@@ -6,6 +6,7 @@ import { NgIcon } from '@ng-icons/core';
 import { provideEchartsCore } from 'ngx-echarts';
 import { combineLatest } from 'rxjs';
 import { SimplebarAngularModule } from 'simplebar-angular';
+import { getPreviousYear } from '../../../../libs/DateHelper';
 import { EchartComponent } from '../../../../libs/echart/echart.component';
 import { GenericForm } from '../../../../libs/generic-list/GenericForm';
 import { GenericSearchForm } from '../../../../libs/generic-list/GenericSearchForm';
@@ -241,7 +242,7 @@ export class CrmComponent implements OnInit {
   shiftDate(serie: any, offset: number) {
     if (serie && serie.length > 0)
       for (let d of serie) {
-        d[0] = KpiWidgetComponent.getPreviousYear(new Date(d[0]), offset)
+        d[0] = getPreviousYear(new Date(d[0]), offset)
       }
   }
 

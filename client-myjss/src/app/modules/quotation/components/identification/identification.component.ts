@@ -4,7 +4,6 @@ import { ActivatedRoute } from '@angular/router';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
 import { ConstantService } from '../../../main/services/constant.service';
-import { GtmService } from '../../../main/services/gtm.service';
 import { AutocompleteCityComponent } from '../../../miscellaneous/components/forms/autocomplete-city/autocomplete-city.component';
 import { AutocompleteSiretComponent } from '../../../miscellaneous/components/forms/autocomplete-siret/autocomplete-siret.component';
 import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
@@ -13,7 +12,6 @@ import { RadioGroupAffaireTypeComponent } from '../../../miscellaneous/component
 import { SelectCountryComponent } from '../../../miscellaneous/components/forms/select-country/select-country.component';
 import { Affaire } from '../../../my-account/model/Affaire';
 import { AssoAffaireOrder } from '../../../my-account/model/AssoAffaireOrder';
-import { AffaireService } from '../../../my-account/services/affaire.service';
 import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
 import { QuotationService } from '../../../my-account/services/quotation.service';
 import { Responsable } from '../../../profile/model/Responsable';
@@ -64,7 +62,6 @@ export class IdentificationComponent implements OnInit {
 
   constructor(private formBuilder: FormBuilder,
     private serviceFamilyGroupService: ServiceFamilyGroupService,
-    private affaireService: AffaireService,
     private constantService: ConstantService,
     private quotationService: QuotationService,
     private orderService: CustomerOrderService,
@@ -72,7 +69,6 @@ export class IdentificationComponent implements OnInit {
     private appService: AppService,
     private cityService: CityService,
     private activatedRoute: ActivatedRoute,
-    private gtmService: GtmService
   ) { }
 
   idenficationForm!: FormGroup;
@@ -243,7 +239,7 @@ export class IdentificationComponent implements OnInit {
       if (this.currentUser) {
         if (this.selectedQuotationType.id == QUOTATION_TYPE_QUOTATION.id) {
           this.quotation.isQuotation = true;
-          this.quotationService.saveQuotation(this.quotation, false).subscribe(response => {
+          this.quotationService.saveInitialQuotationForConnectedUser(this.quotation, false).subscribe(response => {
             this.appService.hideLoadingSpinner();
             this.quotationService.setCurrentDraftQuotationId(response);
             this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);
@@ -251,7 +247,7 @@ export class IdentificationComponent implements OnInit {
           })
         } else if (this.selectedQuotationType.id == QUOTATION_TYPE_ORDER.id) {
           this.quotation.isQuotation = false;
-          this.orderService.saveOrder(this.quotation, false).subscribe(response => {
+          this.orderService.saveInitialOrderForConnectedUser(this.quotation, false).subscribe(response => {
             this.appService.hideLoadingSpinner();
             this.orderService.setCurrentDraftOrderId(response);
             this.quotationService.setCurrentDraftQuotationStep(this.appService.getAllQuotationMenuItems()[1]);

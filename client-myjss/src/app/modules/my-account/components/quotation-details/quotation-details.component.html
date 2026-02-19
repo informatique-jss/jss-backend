@@ -30,7 +30,7 @@
   *ngIf="quotation && quotation.quotationStatus && quotation.quotationStatus.code == QUOTATION_STATUS_SENT_TO_CUSTOMER && isDepositPaymentMandatoryForQuotation">
   <i class="ai-circle-info fs-xl"></i>
   <div class="ps-2">Payez votre acompte pour lancer le traitement de votre commande !</div>
-  <a class="btn btn-sm btn-primary  mt-3 mt-md-0 ms-4" [routerLink]=' "/account/order/pay/" + quotation.id'>
+  <a class="btn btn-sm btn-primary  mt-3 mt-md-0 ms-4" [routerLink]=' "/account/quotation/pay/" + quotation.id'>
     <i class="ai-cart ms-n1 me-2"></i>
     <span>Payer l'acompte</span>
   </a>
@@ -554,7 +554,74 @@
     </div>
   </section>
 </div>
+<section class="card border-0  " *ngIf="quotation">
+  <div class="card-body">
+    <div class="d-flex align-items-center mt-sm-n1 mb-0">
+      <i class="ai-message text-primary lead pe-1 me-2"></i>
+      <h2 class="h4 mb-0">Echangez avec notre équipe</h2>
+    </div>
+    <div class="simplebar-mask">
+      <div class="simplebar-offset" style="right: 0px; bottom: 0px;">
+        <div class="simplebar-content-wrapper" tabindex="0" role="region" style="height: auto;  ">
+          <div class="simplebar-content" style="padding: 24px 38px 0px;">
+            <!-- Message -->
+            <div class="ms-auto mb-3" style="max-width: 392px;" *ngIf="comments.length==0">
+              <div class="d-flex align-items-end mb-2">
+                <div class="message-box-end bg-primary text-white"><span class="break-line">Posez votre question
+                    ci-dessous !</span></div>
+                <div class="flex-shrink-0 ps-2 ms-1">
+                  <avatar class="avatar-select" [user]="jssEmployee" [size]="40" placement="right"
+                    [ngbTooltip]="jssEmployee.firstname + ' '+jssEmployee.lastname  ">
+                  </avatar>
+                </div>
+              </div>
+              <div class="fs-xs text-body-secondary"> {{currentDate|date:'dd/MM/yyyy HH:mm'}}
+              </div>
+            </div>
+            <div *ngFor="let comment of comments; let i = index">
+              <!--Message sent-->
+              <div class="mb-3" style="max-width: 392px;" *ngIf="!comment.employee || !comment.employee.id">
+                <div class="d-flex align-items-end mb-2">
+                  <div class="flex-shrink-0 pe-2 me-1">
+                    <avatar class="avatar-select" [user]="comment.currentCustomer" [size]="40"></avatar>
+                  </div>
+                  <div class="message-box-start text-dark"><span class="break-line"
+                      [innerHTML]="comment.comment | trustHtml"></span></div>
+                </div>
+                <div class="fs-xs text-body-secondary text-end"> {{comment.createdDateTime|date:'dd/MM/yyyy HH:mm'}}
+                </div>
+              </div>
 
+              <!-- Message received -->
+              <div class="ms-auto mb-3" style="max-width: 392px;" *ngIf="comment.employee && comment.employee.id">
+                <div class="d-flex align-items-end mb-2">
+                  <div class="message-box-end bg-primary text-white break-line"><span
+                      [innerHTML]="comment.comment | trustHtml"></span> </div>
+                  <div class="flex-shrink-0 ps-2 ms-1">
+                    <avatar class="avatar-select" [user]="comment.employee" [size]="40" placement="right"
+                      [ngbTooltip]="comment.employee.firstname + ' '+comment.employee.lastname +' - '+comment.employee.title ">
+                    </avatar>
+                  </div>
+                </div>
+                <div class="fs-xs text-body-secondary"> {{comment.createdDateTime|date:'dd/MM/yyyy HH:mm'}}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card-footer w-100 border-0 mx-0 px-4">
+    <div class="d-flex flex-column flex-md-row align-items-end border rounded-3 pb-3 pe-3 mx-sm-3">
+      <textarea [(ngModel)]="newComment.comment" class="form-control border-0" rows="3" placeholder="Ecrivez un message"
+        style="resize: none;"></textarea>
+      <div class="nav flex-nowrap align-items-center" id="send-message">
+        <button class="btn btn-sm btn-secondary ms-3" type="button" (click)="addCustomerOrderComment()">Envoyer</button>
+      </div>
+    </div>
+  </div>
+</section>
 
 <ng-template #validatedQuotationModal let-modal>
   <div class="modal-header">

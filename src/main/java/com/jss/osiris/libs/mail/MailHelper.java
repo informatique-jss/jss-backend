@@ -648,7 +648,8 @@ public class MailHelper {
 
         if (mail.getResponsable() != null) {
             ctx.setVariable("tokenLink",
-                    loginTokenEntryPoint + "?userId=" + mail.getResponsable().getId() + "&aToken="
+                    loginTokenEntryPoint + "?userId=" + mail.getResponsable().getId() + "&isFromQuotation="
+                            + Boolean.TRUE.equals(mail.getResponsable().getIsComingFromQuotation()) + "&aToken="
                             + mail.getResponsable().getLoginToken());
         }
 
@@ -878,7 +879,7 @@ public class MailHelper {
     }
 
     public void sendCustomerOrderDepositMailToCustomer(CustomerOrder customerOrder, boolean sendToMe,
-            boolean isReminder)
+            boolean isReminder, List<Attachment> attachments)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
 
         CustomerMail mail = new CustomerMail();
@@ -899,6 +900,20 @@ public class MailHelper {
             mail.setCbLink(
                     paymentCbEntryPoint + "/order/deposit?customerOrderId=" + customerOrder.getId() + "&mail="
                             + mailComputeResult.getRecipientsMailTo().get(0).getMail());
+        }
+
+        if (attachments != null && attachments.size() > 0) {
+            for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(attachments)) {
+                if (attachment.getAttachmentType() != null &&
+                        attachment.getAttachmentType().getId()
+                                .equals(constantService.getAttachmentTypePurchaseOrder().getId())
+                        && !Boolean.TRUE.equals(attachment.getIsDisabled())) {
+                    if (mail.getAttachments() == null)
+                        mail.setAttachments(new ArrayList<Attachment>());
+                    mail.getAttachments().add(attachment);
+                    break;
+                }
+            }
         }
 
         mail.setReplyTo(customerOrder.getResponsable().getSalesEmployee());

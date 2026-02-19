@@ -4,6 +4,7 @@ import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
+import { getRawTextFromHtml } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { NewsletterComponent } from '../../../general/components/newsletter/newsletter.component';
 import { AppService } from '../../../main/services/app.service';
@@ -53,11 +54,13 @@ export class PracticalSheetsComponent implements OnInit {
   tendencyPosts: Post[] = [];
   mostSeenPosts: Post[] = [];
   page: number = 0;
-
+  isServer = false;
   practicalSheetsForm!: FormGroup;
 
   @ViewChild('searchInput') searchInput: ElementRef | undefined;
   @ViewChild('autocomplePost') autocomplePost: AutocompletePostComponent | undefined;
+
+  getRawTextFromHtml = getRawTextFromHtml;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -72,6 +75,7 @@ export class PracticalSheetsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.isServer = this.platformService.isServer();
     this.titleService.setTitle("Les fiches pratiques - MyJSS");
     this.meta.updateTag({ name: 'description', content: "Des guides clairs pour réussir vos formalités. MyJSS vous offre des fiches pratiques pour simplifier vos démarches juridiques. L'expertise à votre portée." });
     this.practicalSheetsForm = this.formBuilder.group({});

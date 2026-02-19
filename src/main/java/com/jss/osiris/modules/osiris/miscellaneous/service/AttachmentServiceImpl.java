@@ -362,7 +362,9 @@ public class AttachmentServiceImpl implements AttachmentService {
                 return;
             attachment.setCustomerOrder(customerOrder);
             // Notify user only if not a mail and by a Osiris user
-            if (!attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeAutomaticMail().getId())
+            if (attachment.getAttachmentType() != null
+                    && !attachment.getAttachmentType().getId()
+                            .equals(constantService.getAttachmentTypeAutomaticMail().getId())
                     && employeeService.getCurrentEmployee() != null)
                 notificationService.notifyAttachmentAddToCustomerOrder(customerOrder, attachment);
         } else if (entityType.equals(CustomerOrder.class.getSimpleName() + "Pending")) {
@@ -439,6 +441,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void disableAttachment(Attachment attachment) {
         attachment.setIsDisabled(true);
+        attachment.setIsValidated(true);
         addOrUpdateAttachment(attachment);
     }
 

@@ -355,7 +355,7 @@ public class OrderMailIndexationDelegate {
                     order = customerOrderService.addOrUpdateCustomerOrder(order, false, false);
 
                     // Comment order with mail text
-                    customerOrderCommentService.createCustomerOrderComment(order, mailHtml, true, false);
+                    customerOrderCommentService.createCustomerOrderComment(order, null, mailHtml, true, false);
 
                     // Add initial demande
                     attachMailToCustomerOrder(message.getSubject(), mailHtmlWithAddresse, order);

@@ -21,8 +21,8 @@ export class QuotationService extends AppRestService<Quotation> {
     super(http, "quotation");
   }
 
-  searchQuotationsForCurrentUser(quotationStatus: string[], page: number, sorter: string, responsablesToFilter: Responsable[] | undefined) {
-    let params = new HttpParams().set("page", page).set("sortBy", sorter);
+  searchQuotationsForCurrentUser(quotationStatus: string[], page: number, sorter: string, requiringAttention: boolean, responsablesToFilter: Responsable[] | undefined) {
+    let params = new HttpParams().set("page", page).set("sortBy", sorter).set("requiringAttention", requiringAttention);
     if (responsablesToFilter && responsablesToFilter.length > 0)
       params = params.set("responsableIdsToFilter", responsablesToFilter.map(r => r.id).join(","));
     return this.postList(params, "quotation/search/current", quotationStatus);
@@ -48,13 +48,13 @@ export class QuotationService extends AppRestService<Quotation> {
     return this.get(new HttpParams().set("quotationId", quotationId), 'quotation/is-deposit-mandatory') as any as Observable<boolean>;
   }
 
-  saveQuotation(quotation: IQuotation, isValidation: boolean): Observable<number> {
+  saveInitialQuotationForConnectedUser(quotation: IQuotation, isValidation: boolean): Observable<number> {
     let params = new HttpParams();
     params = params.set("isValidation", isValidation);
     return this.postItem(params, 'quotation/user/save', quotation) as any as Observable<number>;
   }
 
-  saveFinalQuotation(quotation: Quotation, isValidation: boolean) {
+  saveQuotationForAnonymousUser(quotation: Quotation, isValidation: boolean) {
     let params = new HttpParams();
     params = params.set("isValidation", isValidation);
     return this.postItem(params, 'quotation/save-order', quotation);

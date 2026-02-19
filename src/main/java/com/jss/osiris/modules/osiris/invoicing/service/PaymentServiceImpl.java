@@ -3,6 +3,7 @@ package com.jss.osiris.modules.osiris.invoicing.service;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingAccountService;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingRecordGenerationService;
 import com.jss.osiris.modules.osiris.accounting.service.AccountingRecordService;
+import com.jss.osiris.modules.osiris.invoicing.facade.InvoicingDtoHelper;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceLabelResult;
@@ -176,6 +178,9 @@ public class PaymentServiceImpl implements PaymentService {
     @Autowired
     PictureHelper pictureHelper;
 
+    @Autowired
+    InvoicingDtoHelper invoicingDtoHelper;
+
     @Override
     public Payment getPayment(Integer id) {
         Optional<Payment> payment = paymentRepository.findById(id);
@@ -226,16 +231,16 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public List<PaymentSearchResult> searchPayments(PaymentSearch paymentSearch) {
         if (paymentSearch.getStartDate() == null)
-            paymentSearch.setStartDate(LocalDateTime.now().minusYears(100));
+            paymentSearch.setStartDate(LocalDate.now().minusYears(100));
 
         if (paymentSearch.getEndDate() == null)
-            paymentSearch.setEndDate(LocalDateTime.now().plusYears(100));
+            paymentSearch.setEndDate(LocalDate.now().plusYears(100));
 
         if (paymentSearch.getIdPayment() == null)
             paymentSearch.setIdPayment(0);
 
-        return paymentRepository.findPayments(paymentSearch.getStartDate().withHour(0).withMinute(0),
-                paymentSearch.getEndDate().withHour(23).withMinute(59), paymentSearch.getMinAmount(),
+        return paymentRepository.findPayments(paymentSearch.getStartDate().atStartOfDay(),
+                paymentSearch.getEndDate().atTime(23, 59, 59), paymentSearch.getMinAmount(),
                 paymentSearch.getMaxAmount(),
                 paymentSearch.getLabel(), paymentSearch.isHideAssociatedPayments(),
                 paymentSearch.isHideCancelledPayments(), paymentSearch.isHideAppoint(), paymentSearch.isHideNoOfx(),
@@ -245,10 +250,10 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public List<Payment> getMatchingOfxPayments(PaymentSearch paymentSearch) {
         if (paymentSearch.getStartDate() == null)
-            paymentSearch.setStartDate(LocalDateTime.now().minusYears(100));
+            paymentSearch.setStartDate(LocalDate.now().minusYears(100));
 
         if (paymentSearch.getEndDate() == null)
-            paymentSearch.setEndDate(LocalDateTime.now().plusYears(100));
+            paymentSearch.setEndDate(LocalDate.now().plusYears(100));
 
         if (paymentSearch.getIdPayment() == null)
             paymentSearch.setIdPayment(0);
@@ -264,8 +269,8 @@ public class PaymentServiceImpl implements PaymentService {
 
         List<Payment> finalPayments = new ArrayList<Payment>();
         List<Payment> payments = paymentRepository.findPaymentsForOfxMatching(
-                paymentSearch.getStartDate().withHour(0).withMinute(0),
-                paymentSearch.getEndDate().withHour(23).withMinute(59), LocalDateTime.of(2024, 1, 1, 0, 0, 0),
+                paymentSearch.getStartDate().atStartOfDay(),
+                paymentSearch.getEndDate().atTime(23, 59, 59), LocalDateTime.of(2024, 1, 1, 0, 0, 0),
                 LocalDateTime.of(2025, 1, 1, 0, 0, 0), paymentSearch.getMinAmount(),
                 paymentSearch.getMaxAmount(),
                 paymentSearch.getLabel());
@@ -745,7 +750,7 @@ public class PaymentServiceImpl implements PaymentService {
 
             if (!isMovedFromInvoice) {
                 CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
-                        correspondingCustomerOrder.get(i),
+                        correspondingCustomerOrder.get(i), null,
                         "Nouveau paiement n°" + newPayment.getId() + " de " + newPayment.getPaymentAmount()
                                 + " € placé sur la commande",
                         false, false);
@@ -1214,7 +1219,7 @@ public class PaymentServiceImpl implements PaymentService {
 
                 if (!isMovedFromCustomerOrder && invoice.getCustomerOrder() != null) {
                     CustomerOrderComment customerOrderComment = customerOrderCommentService.createCustomerOrderComment(
-                            invoice.getCustomerOrder(),
+                            invoice.getCustomerOrder(), null,
                             "Nouveau paiement n°" + payment.getId() + " de " + payment.getPaymentAmount()
                                     + " € placé sur la facture n°" + invoice.getId(),
                             false, false);
@@ -1777,5 +1782,38 @@ public class PaymentServiceImpl implements PaymentService {
         if (responsable != null)
             responsableId = responsable.getId();
         return paymentRepository.findByResponsable(responsableId);
+    }
+
+    @Override
+    public List<Payment> searchForPayments(PaymentSearch paymentSearch) {
+        LocalDateTime startDate = LocalDateTime.of(2000, 01, 01, 0, 0);
+        LocalDateTime endDate = LocalDateTime.of(2100, 01, 01, 0, 0);
+
+        if (paymentSearch.getStartDate() != null) {
+            startDate = paymentSearch.getStartDate().atStartOfDay();
+        }
+        if (paymentSearch.getEndDate() != null) {
+            endDate = paymentSearch.getEndDate().atTime(23, 59, 59);
+        }
+        String label = paymentSearch.getLabel();
+        if (label != null && label.trim().isEmpty()) {
+            label = null;
+        }
+
+        Integer responsableId = null;
+        if (paymentSearch.getResponsable() != null) {
+            responsableId = paymentSearch.getResponsable().getId();
+        }
+
+        Integer tiersId = null;
+        if (paymentSearch.getTiers() != null) {
+            tiersId = paymentSearch.getTiers().getId();
+        }
+
+        return paymentRepository.searchForPayments(startDate,
+                endDate, label, paymentSearch.getMinAmount(),
+                paymentSearch.getMaxAmount(), paymentSearch.getIsAssociated(),
+                paymentSearch.getIsAppoint(), paymentSearch.getIsCancelled(),
+                responsableId, tiersId);
     }
 }

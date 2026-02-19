@@ -26,6 +26,7 @@ const routesMyAccount = [
       { path: 'order/pay/:idOrder', loadComponent: () => import('./modules/my-account/components/pay-order/pay-order.component').then(m => m.PayOrderComponent) },
       { path: 'quotation/pay/:idQuotation', loadComponent: () => import('./modules/my-account/components/pay-quotation/pay-quotation.component').then(m => m.PayQuotationComponent) },
       { path: 'quotations/details/:id', loadComponent: () => import('./modules/my-account/components/quotation-details/quotation-details.component').then(m => m.QuotationDetailsComponent) },
+      { path: 'quotations/details/:id/with-unread', loadComponent: () => import('./modules/my-account/components/quotation-details/quotation-details.component').then(m => m.QuotationDetailsComponent) },
       { path: 'quotation/address/edit/:idQuotation', loadComponent: () => import('./modules/my-account/components/edit-address/edit-address.component').then(m => m.EditAddressComponent) },
       { path: 'affaires', loadComponent: () => import('./modules/my-account/components/affaires/affaires.component').then(m => m.AffairesComponent) },
       { path: 'affaires/:idAffaire', loadComponent: () => import('./modules/my-account/components/affaires/affaires.component').then(m => m.AffairesComponent) },
@@ -117,6 +118,10 @@ const routesTools = [
     ]
   },
   { path: 'post/:slug', loadComponent: () => import('./modules/tools/components/post/post.component').then(m => m.PostComponent) },
+  {
+    path: 'tools/mandatory-documents/service-type/:service-type-id',
+    loadComponent: () => import("./modules/tools/components/service-type-hub/service-type-hub.component").then(m => m.ServiceTypeHubComponent)
+  }
 ];
 
 export const routes: Routes = [

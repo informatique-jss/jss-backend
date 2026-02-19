@@ -5,9 +5,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -51,6 +51,7 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
+import com.jss.osiris.libs.PdfTools;
 import com.jss.osiris.libs.PictureHelper;
 import com.jss.osiris.libs.QrCodeHelper;
 import com.jss.osiris.libs.azure.TranslationService;
@@ -141,6 +142,9 @@ public class GeneratePdfDelegate {
 
     @Autowired
     TranslationService translationService;
+
+    @Autowired
+    PdfTools pdfTools;
 
     public static final String EMAIL_TEMPLATE_ENCODING = "UTF-8";
     public static final String HEADER_PDF_TEMPLATE = "header-pdf";
@@ -328,7 +332,7 @@ public class GeneratePdfDelegate {
             if (complexePdf == null)
                 throw new OsirisException(null, "No announncement PDF found");
 
-            tempFile = addHeaderAndFooterOnPublicationFlag(complexePdf, announcement, isPublicationFlag);
+            tempFile = addHeaderAndFooterOnPublicationFlag(complexePdf, announcement, provision, isPublicationFlag);
         }
         return tempFile;
     }
@@ -808,16 +812,11 @@ public class GeneratePdfDelegate {
             ArrayList<Payment> invoicePayment = new ArrayList<Payment>();
             if (invoice.getPayments() != null)
                 for (Payment payment : invoice.getPayments()) {
-                    if (!payment.getIsCancelled())
-                        invoicePayment.add(payment);
-                }
-
-            if (customerOrder.getPayments() != null)
-                for (Payment payment : customerOrder.getPayments())
                     if (!payment.getIsCancelled()) {
+                        payment.setOriginPaymentAmount(getTopPayment(payment).getPaymentAmount());
                         invoicePayment.add(payment);
-                        remainingToPay = remainingToPay.subtract(payment.getPaymentAmount());
                     }
+                }
 
             if (invoicePayment.size() > 0)
                 ctx.setVariable("payments", invoicePayment);
@@ -848,8 +847,6 @@ public class GeneratePdfDelegate {
 
         // Recurring
         if (customerOrder != null)
-
-        {
             if (customerOrder.getRecurringStartDate() != null) {
                 ctx.setVariable("recurringStartDate",
                         customerOrder.getRecurringStartDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
@@ -859,21 +856,15 @@ public class GeneratePdfDelegate {
                     ctx.setVariable("recurringParentId",
                             " - " + customerOrder.getCustomerOrderParentRecurring().getId());
             }
-        }
+
         // Create the HTML body using Thymeleaf and MJML
         String htmlBody = StringEscapeUtils
                 .unescapeHtml4(pdfTemplateEngine(true).process("invoice-page", ctx));
         String htmlContent = composeHtml(HEADER_PDF_TEMPLATE, null, htmlBody, new Context());
 
-        try {
-            PrintWriter out = new PrintWriter("C:\\uploads\\html.txt");
-            out.println(htmlContent);
-            out.close();
-        } catch (Exception e) {
-
-        }
         File tempFile;
         OutputStream outputStream;
+        File finalInvoice;
         try {
             tempFile = File.createTempFile("invoice", "pdf");
 
@@ -893,10 +884,22 @@ public class GeneratePdfDelegate {
             renderer.createPDF(outputStream);
             outputStream.flush();
             outputStream.close();
+
+            finalInvoice = pdfTools.mergePdfs(List.of(Files.newInputStream(tempFile.toPath()),
+                    getClass().getClassLoader().getResourceAsStream("mails/CGV_JSS.pdf")));
         } catch (DocumentException | IOException e) {
             throw new OsirisException(e, "Unable to create PDF file for invoice " + invoice.getId());
         }
-        return tempFile;
+
+        tempFile.delete();
+
+        return finalInvoice;
+    }
+
+    private Payment getTopPayment(Payment payment) {
+        if (payment.getOriginPayment() != null)
+            return getTopPayment(payment.getOriginPayment());
+        return payment;
     }
 
     private ITextRenderer embedFontSize(ITextRenderer renderer) {
@@ -969,7 +972,8 @@ public class GeneratePdfDelegate {
         return invoiceItems;
     }
 
-    private File addHeaderAndFooterOnPublicationFlag(File pdfFile, Announcement announcement, Boolean isPublicationFlag)
+    private File addHeaderAndFooterOnPublicationFlag(File pdfFile, Announcement announcement, Provision provision,
+            Boolean isPublicationFlag)
             throws OsirisException {
         String pdfPath = pdfFile.getAbsolutePath();
         File tempPdfFile;
@@ -985,6 +989,7 @@ public class GeneratePdfDelegate {
         String announcementDate = "";
         String announcementDepartment = "";
         String announcementNoticeType = "";
+        String serviceLabel = "";
 
         if (announcement.getDepartment() != null)
             announcementDepartment = announcement.getDepartment().getCode() + " - "
@@ -996,6 +1001,9 @@ public class GeneratePdfDelegate {
         if (announcement.getNoticeTypes() != null && announcement.getNoticeTypes().size() > 0)
             announcementNoticeType += " / " + announcement.getNoticeTypes().stream().map(NoticeType::getLabel)
                     .collect(Collectors.joining(" - "));
+
+        if (provision.getService().getServiceLabelToDisplay() != null)
+            serviceLabel = provision.getService().getServiceLabelToDisplay();
 
         if (announcement.getPublicationDate() != null) {
             LocalDate localDate = announcement.getPublicationDate();
@@ -1046,7 +1054,7 @@ public class GeneratePdfDelegate {
                 Font blueFontTitle = new Font(baseFontRobotoBold, 20, Font.NORMAL, MJML_COLOR);
                 Font blueFontDescription = new Font(baseFontRobotoRegular, 10, Font.NORMAL, MJML_COLOR);
                 Font blueFontDateDept = new Font(baseFontRobotoRegular, 12, Font.NORMAL, MJML_COLOR);
-                Font blueFontNoticeType = new Font(baseFontRobotoBold, 14, Font.NORMAL, MJML_COLOR);
+                Font blueFontService = new Font(baseFontRobotoBold, 14, Font.NORMAL, MJML_COLOR);
 
                 PdfPTable tableHeader = new PdfPTable(2);
                 try {
@@ -1120,13 +1128,6 @@ public class GeneratePdfDelegate {
                     dateDeptPara.add(new Chunk("\n", blueFontDateDept));
                     dateDeptCell.addElement(dateDeptPara);
                     textTable.addCell(dateDeptCell);
-
-                    final PdfPCell noticeTypeCell = new PdfPCell(
-                            new Phrase(announcementNoticeType, blueFontNoticeType));
-                    noticeTypeCell.setBorder(Rectangle.NO_BORDER);
-                    noticeTypeCell.setPaddingBottom(3);
-                    textTable.addCell(noticeTypeCell);
-
                 } else {
                     String subtitleText = "Pour le " + announcementDate;
                     final PdfPCell subtitleCell = new PdfPCell(new Phrase(subtitleText, blueFontDateDept));
@@ -1149,13 +1150,21 @@ public class GeneratePdfDelegate {
                     paddingCell3.setBorder(Rectangle.NO_BORDER);
                     paddingCell3.setPaddingBottom(3);
                     textTable.addCell(paddingCell3);
-
-                    Paragraph p4 = new Paragraph(13, " "); // 13 points leading pour la police de 13 points
-                    final PdfPCell paddingCell4 = new PdfPCell(p4);
-                    paddingCell4.setBorder(Rectangle.NO_BORDER);
-                    paddingCell4.setPaddingBottom(3);
-                    textTable.addCell(paddingCell4);
                 }
+
+                final PdfPCell noticeTypeCell = new PdfPCell(
+                        new Phrase(announcementNoticeType, blueFontDateDept));
+                noticeTypeCell.setBorder(Rectangle.NO_BORDER);
+                noticeTypeCell.setPaddingBottom(3);
+                noticeTypeCell.setNoWrap(false);
+                textTable.addCell(noticeTypeCell);
+
+                final PdfPCell serviceCell = new PdfPCell(
+                        new Phrase(serviceLabel, blueFontService));
+                serviceCell.setBorder(Rectangle.NO_BORDER);
+                serviceCell.setPaddingBottom(3);
+                serviceCell.setNoWrap(false);
+                textTable.addCell(serviceCell);
 
                 // Cell to put second text Table
                 final PdfPCell textContainerCell = new PdfPCell(textTable);

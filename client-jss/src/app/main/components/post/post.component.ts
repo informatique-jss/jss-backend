@@ -7,7 +7,7 @@ import { Observable, Subscription } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { MY_JSS_SIGN_IN_ROUTE } from '../../../libs/Constants';
 import { validateEmail } from '../../../libs/CustomFormsValidatorsHelper';
-import { getTimeReading } from '../../../libs/FormatHelper';
+import { getRawTextFromHtml, getTimeReading } from '../../../libs/FormatHelper';
 import { LiteralDatePipe } from '../../../libs/LiteralDatePipe';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { TrustHtmlPipe } from '../../../libs/TrustHtmlPipe';
@@ -74,6 +74,8 @@ export class PostComponent implements OnInit, AfterViewInit {
   currentUser: Responsable | undefined;
 
   numberOfSharingPostRemaining: number = 0;
+
+  getRawTextFromHtml = getRawTextFromHtml;
 
   @ViewChildren('sliderPage') sliderPage!: QueryList<any>;
   frontendMyJssUrl = environment.frontendMyJssUrl;

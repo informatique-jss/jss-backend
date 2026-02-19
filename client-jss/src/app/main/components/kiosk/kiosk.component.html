@@ -44,9 +44,11 @@
                 <h5>JSS N.{{newspaper.newspaperIssueNumber}}</h5>
               </div>
               <div class="col-auto">
-                <a class="col-auto btn-secondary rounded-circle btn-circle-md fs-4"
-                  [href]='frontendMyJssUrl+"/quotation/subscription/" + NEWSPAPER_KIOSK_BUY + "/" + false + "/" + newspaper.id'
-                  target="_blank" (click)="buyNewspaper(newspaper.id)"><i class="bi-cart"></i></a>
+                <button type="button"
+                  class="btn btn-secondary rounded-circle btn-circle-md fs-4 border-0 d-inline-flex align-items-center justify-content-center"
+                  (click)="buyNewspaper(newspaper.id, $event)">
+                  <i class="bi-cart"></i>
+                </button>
               </div>
             </div>
           </div>

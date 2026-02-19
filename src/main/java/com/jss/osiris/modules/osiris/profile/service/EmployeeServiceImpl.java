@@ -227,13 +227,15 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     @Transactional
-    public void sendTokenToResponsable(Responsable responsable, String overrideMail) throws OsirisException {
+    public void sendTokenToResponsable(Responsable responsable, String overrideMail, Boolean isFromQuotation)
+            throws OsirisException {
         responsable = responsableService.getResponsable(responsable.getId());
 
         byte bytes[] = new byte[512];
         random.nextBytes(bytes);
         String token = String.valueOf(Hex.encode(bytes));
 
+        responsable.setIsComingFromQuotation(isFromQuotation);
         responsable.setLoginToken(token);
         responsable.setLoginTokenExpirationDateTime(LocalDateTime.now().plusMinutes(TOKEN_EXPIRATION_LENGTH_MINUTES));
         responsableService.addOrUpdateResponsable(responsable);

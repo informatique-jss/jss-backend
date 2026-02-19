@@ -173,19 +173,13 @@ public interface CustomerOrderRepository
 
         @Query("select c from CustomerOrder c " +
                         " where responsable in :responsableToFilter " +
-                        " and (customerOrderStatus in :customerorderStatusToFilter and coalesce(c.isPayed,false)=false or customerOrderStatus=:customerOrderStatusBilled and coalesce(c.isPayed,false)=true and :displayPayed=true)"
-                        +
-                        " and (:withMissingAttachment=false or exists (select 1 from AssoAffaireOrder aao join aao.services s join s.missingAttachmentQueries mq join s.provisions p  left join p.formalite f  on f.formaliteStatus.code = :formaliteStatusWaitingDoc left join p.simpleProvision sp  on sp.simpleProvisionStatus.code = :simpleProvisionStatusWaitingDoc left join p.announcement a on a.announcementStatus.code = :announcementStatusWaitingDoc where aao.customerOrder=c   and (a is not null or f is not null or sp is not null)  ) )")
+                        " and (customerOrderStatus in :customerorderStatusToFilter and coalesce(c.isPayed,false)=false or customerOrderStatus=:customerOrderStatusBilled and coalesce(c.isPayed,false)=true and :displayPayed=true)")
         List<CustomerOrder> searchOrdersForCurrentUser(
                         @Param("responsableToFilter") List<Responsable> responsablesToFilter,
                         @Param("customerorderStatusToFilter") List<CustomerOrderStatus> customerOrderStatusToFilter,
-                        Pageable pageableRequest,
                         @Param("customerOrderStatusBilled") CustomerOrderStatus customerOrderStatusBilled,
                         @Param("displayPayed") boolean displayPayed,
-                        @Param("withMissingAttachment") boolean withMissingAttachment,
-                        @Param("announcementStatusWaitingDoc") String announcementStatusWaitingDoc,
-                        @Param("formaliteStatusWaitingDoc") String formaliteStatusWaitingDoc,
-                        @Param("simpleProvisionStatusWaitingDoc") String simpleProvisionStatusWaitingDoc);
+                        Pageable pageableRequest);
 
         @Query("select c from CustomerOrder c " +
                         " where  " +
@@ -276,5 +270,13 @@ public interface CustomerOrderRepository
         @Query("select c from CustomerOrder c join c.customerOrderAssignations a where  c.customerOrderStatus=:customerOrderStatus and a.isAssigned=false and  a.employee = :assignedUser  order by c.productionEffectiveDateTime")
         List<CustomerOrder> findCustomerOrderByForcedEmployeeAndStatusAssigned(CustomerOrderStatus customerOrderStatus,
                         Employee assignedUser);
+
+        @Query("select c from CustomerOrder c join c.responsable r join fetch c.assoAffaireOrders a join fetch a.affaire af "
+                        +
+                        "  where (0 in :commercial or r.salesEmployee.id in :commercial) " +
+                        "    and (0 in :responsables or  c.responsable.id in :responsables) " +
+                        "    and (0 in :status or  c.customerOrderStatus.id in :status) order by c.createdDate desc ")
+        List<CustomerOrder> searchCustomerOrders(Integer commercial, List<Integer> responsables,
+                        List<Integer> status);
 
 }

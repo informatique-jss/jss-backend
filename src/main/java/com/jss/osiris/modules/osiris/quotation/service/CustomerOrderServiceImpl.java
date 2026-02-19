@@ -12,9 +12,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.IterableUtils;
@@ -67,6 +67,7 @@ import com.jss.osiris.modules.osiris.crm.service.VoucherService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceLabelResult;
+import com.jss.osiris.modules.osiris.invoicing.model.InvoiceStatus;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoicingBlockage;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceItemService;
@@ -111,6 +112,7 @@ import com.jss.osiris.modules.osiris.quotation.model.OrderingSearchResult;
 import com.jss.osiris.modules.osiris.quotation.model.OrderingSearchTagged;
 import com.jss.osiris.modules.osiris.quotation.model.PaperSet;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
+import com.jss.osiris.modules.osiris.quotation.model.ProvisionScreenType;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
@@ -534,17 +536,18 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         .equals(constantService.getPaymentTypePrelevement().getId());
 
             if (!isDepositMandatory && !targetStatusCode.equals(CustomerOrderStatus.WAITING_DEPOSIT)
+                    && !customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.WAITING_DEPOSIT)
                     || remainingToPay.compareTo(zeroValue) <= 0 || isPaymentTypePrelevement) {
                 targetStatusCode = CustomerOrderStatus.BEING_PROCESSED;
                 customerOrder.setProductionEffectiveDateTime(LocalDateTime.now());
 
-                // mailHelper.sendCustomerOrderInProgressToCustomer(customerOrder, false,
-                // generateCustomerOrderPurchasePdf(customerOrder));
-                mailHelper.sendCustomerOrderInProgressToCustomer(customerOrder, false, null);
+                mailHelper.sendCustomerOrderInProgressToCustomer(customerOrder, false,
+                        generateCustomerOrderPurchasePdf(customerOrder));
             } else {
                 targetStatusCode = CustomerOrderStatus.WAITING_DEPOSIT;
                 try {
-                    mailHelper.sendCustomerOrderDepositMailToCustomer(customerOrder, false, false);
+                    mailHelper.sendCustomerOrderDepositMailToCustomer(customerOrder, false, false,
+                            generateCustomerOrderPurchasePdf(customerOrder));
                 } catch (OsirisClientMessageException e) {
                 }
             }
@@ -1260,7 +1263,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             }
 
             if (toSend) {
-                mailHelper.sendCustomerOrderDepositMailToCustomer(customerOrder, false, true);
+                mailHelper.sendCustomerOrderDepositMailToCustomer(customerOrder, false, true, null);
                 addOrUpdateCustomerOrder(customerOrder, false, true);
             }
         }
@@ -1551,10 +1554,12 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     public List<CustomerOrder> searchOrdersForCurrentUser(List<String> customerOrderStatus,
             List<Integer> responsableIdToFilter,
-            Boolean withMissingAttachment, Integer page,
+            Boolean requiringAttention, Integer page,
             String sortBy) throws OsirisException {
         List<CustomerOrderStatus> customerOrderStatusToFilter = new ArrayList<CustomerOrderStatus>();
         boolean displayPayed = false;
+        if (requiringAttention == null)
+            requiringAttention = false;
 
         if (customerOrderStatus != null && customerOrderStatus.size() > 0) {
             for (String customerOrderStatusCode : customerOrderStatus) {
@@ -1597,18 +1602,102 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                     order = new Order(Direction.ASC, "customerOrderStatus");
 
                 Sort sort = Sort.by(Arrays.asList(order));
-                Pageable pageableRequest = PageRequest.of(page, 10, sort);
-                return completeAdditionnalInformationForCustomerOrders(
-                        customerOrderRepository.searchOrdersForCurrentUser(responsablesToFilter,
-                                customerOrderStatusToFilter, pageableRequest, customerOrderStatusBilled, displayPayed,
-                                withMissingAttachment, AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT,
-                                FormaliteStatus.FORMALITE_WAITING_DOCUMENT,
-                                SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT),
-                        false);
+                Pageable pageableRequest = PageRequest.of(page, !requiringAttention ? 10 : Integer.MAX_VALUE, sort);
+                List<CustomerOrder> customerOrdersFound = customerOrderRepository.searchOrdersForCurrentUser(
+                        responsablesToFilter,
+                        customerOrderStatusToFilter, customerOrderStatusBilled, displayPayed,
+                        pageableRequest);
+
+                if (requiringAttention) {
+                    Predicate<CustomerOrder> requiringAttentionPredicate = getRequiringAttentionPredicate();
+                    customerOrdersFound = customerOrdersFound.stream().filter(requiringAttentionPredicate).toList();
+                }
+                return completeAdditionnalInformationForCustomerOrders(customerOrdersFound, false);
             }
         }
-
         return new ArrayList<>();
+    }
+
+    @Override
+    public List<CustomerOrder> searchForCustomerOrders(OrderingSearch customerOrderSearch) throws OsirisException {
+
+        Integer commercialId = (customerOrderSearch.getSalesEmployee() != null)
+                ? customerOrderSearch.getSalesEmployee().getId()
+                : 0;
+
+        List<Integer> responsablesIds = (customerOrderSearch.getResponsables() != null
+                && customerOrderSearch.getResponsables().size() > 0)
+                        ? customerOrderSearch.getResponsables().stream().map(Responsable::getId).toList()
+                        : Arrays.asList(0);
+
+        List<Integer> statusIds = (customerOrderSearch.getCustomerOrderStatus() != null
+                && customerOrderSearch.getCustomerOrderStatus().size() > 0)
+                        ? customerOrderSearch.getCustomerOrderStatus().stream().map(CustomerOrderStatus::getId)
+                                .collect(Collectors.toList())
+                        : Arrays.asList(0);
+
+        return completeAdditionnalInformationForCustomerOrders(
+                customerOrderRepository.searchCustomerOrders(commercialId, responsablesIds, statusIds),
+                false);
+    }
+
+    public Predicate<CustomerOrder> getRequiringAttentionPredicate() throws OsirisException {
+        InvoiceStatus invoiceToPay = constantService.getInvoiceStatusSend();
+        CustomerOrderStatus orderStatusInProgress = customerOrderStatusService
+                .getCustomerOrderStatusByCode(CustomerOrderStatus.BEING_PROCESSED);
+        return new Predicate<CustomerOrder>() {
+            @Override
+            public boolean test(CustomerOrder customerOrder) {
+                // Wainting for deposit orders OR
+                boolean isWaitingDeposit = CustomerOrderStatus.WAITING_DEPOSIT
+                        .equals(customerOrder.getCustomerOrderStatus().getCode());
+
+                if (isWaitingDeposit)
+                    return true;
+
+                // Reminded invoices orders OR
+                boolean isInvoiceReminded = customerOrder.getInvoices().stream()
+                        .anyMatch(invoice -> invoice.getFirstReminderDateTime() != null
+                                && invoice.getInvoiceStatus().getId().equals(invoiceToPay.getId()));
+
+                if (isInvoiceReminded)
+                    return true;
+
+                // Waiting for missing documents orders
+                if (orderStatusInProgress.getId().equals(customerOrder.getCustomerOrderStatus().getId())
+                        && customerOrder.getAssoAffaireOrders() != null)
+                    for (AssoAffaireOrder asso : customerOrder.getAssoAffaireOrders())
+                        if (asso.getServices() != null)
+                            for (Service service : asso.getServices())
+                                if (service.getMissingAttachmentQueries() != null)
+                                    for (Provision provision : service.getProvisions())
+                                        if (isProvisionStatusMissingAttachement(provision)) {
+                                            return true;
+                                        }
+                return false;
+            }
+        };
+    }
+
+    private boolean isProvisionStatusMissingAttachement(Provision provision) {
+        provision = provisionService.getProvision(provision.getId());
+        if (provision.getProvisionType().getProvisionScreenType().getCode()
+                .equals(ProvisionScreenType.ANNOUNCEMENT)
+                && provision.getAnnouncement().getAnnouncementStatus().getCode()
+                        .equals(AnnouncementStatus.ANNOUNCEMENT_WAITING_DOCUMENT))
+            return true;
+        if (provision.getProvisionType().getProvisionScreenType().getCode()
+                .equals(ProvisionScreenType.FORMALITE)
+                && provision.getFormalite().getFormaliteStatus().getCode()
+                        .equals(FormaliteStatus.FORMALITE_WAITING_DOCUMENT))
+            return true;
+        if (provision.getProvisionType().getProvisionScreenType().getCode()
+                .equals(ProvisionScreenType.STANDARD)
+                && provision.getSimpleProvision().getSimpleProvisionStatus().getCode()
+                        .equals(SimpleProvisionStatus.SIMPLE_PROVISION_WAITING_DOCUMENT))
+            return true;
+
+        return false;
     }
 
     public List<CustomerOrder> searchOrdersForCurrentUserAndAffaire(Affaire affaire) throws OsirisException {
@@ -1846,35 +1935,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         }
 
         return invoicingSummary;
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public List<CustomerOrderComment> getCustomerOrderCommentsForCustomer(CustomerOrder customerOrder) {
-        customerOrder = getCustomerOrder(customerOrder.getId());
-        List<CustomerOrderComment> customerOrderComments = new ArrayList<CustomerOrderComment>();
-        if (customerOrder.getCustomerOrderComments() != null)
-            for (CustomerOrderComment customerOrderComment : customerOrder.getCustomerOrderComments())
-                if (customerOrderComment.getIsToDisplayToCustomer() != null
-                        && customerOrderComment.getIsToDisplayToCustomer())
-                    customerOrderComments.add(customerOrderComment);
-
-        if (customerOrderComments.size() > 0)
-            customerOrderComments.sort(new Comparator<CustomerOrderComment>() {
-                @Override
-                public int compare(CustomerOrderComment c0, CustomerOrderComment c1) {
-                    if (c0 == null && c1 == null)
-                        return 0;
-                    if (c0 != null && c1 == null)
-                        return 1;
-                    if (c0 == null && c1 != null)
-                        return -1;
-                    if (c1 != null && c0 != null)
-                        return c0.getCreatedDateTime().compareTo(c1.getCreatedDateTime());
-                    return 0;
-                }
-            });
-        return customerOrderComments;
     }
 
     @Override
@@ -2380,4 +2440,5 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
         }
         return purchaseOrderAttachments;
     }
+
 }

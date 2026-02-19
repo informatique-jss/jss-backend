@@ -1,0 +1,75 @@
+<div class="custom-chat-wrapper gap-2 me-1" *ngIf="currentIQuotationList">
+
+  @for(iQuotationId of currentIQuotationList; track iQuotationId){
+  <div class="chat-window-container w-100 position-relative" [class.minimized]="!getIsExpandedMap(iQuotationId)">
+    @if(getUnreadCommentsCount(iQuotationId) > 0){
+    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger z-2000">
+      {{getUnreadCommentsCount(iQuotationId)}}
+      <span class="visually-hidden">unread messages</span>
+    </span>
+    }
+    <button (click)="toggleChat(iQuotationId)" type="button"
+      class="chat-header btn btn-light d-flex align-items-center justify-content-between"
+      [ngClass]="{'header-expanded': getIsExpandedMap(iQuotationId)}" (mouseenter)="handleMouseEnter($event)"
+      (mouseleave)="handleMouseLeave($event)">
+
+
+      <div class="text-window">
+        <span class="scroll-text">
+          Commande n°{{iQuotationId}}
+          {{(commentListByIQuotation[iQuotationId] &&
+          commentListByIQuotation[iQuotationId].length > 0 &&
+          commentListByIQuotation[iQuotationId][0].currentCustomer) ?
+          '- ' + commentListByIQuotation[iQuotationId][0].currentCustomer.firstname + ' ' +
+          commentListByIQuotation[iQuotationId][0].currentCustomer.lastname : ''}}
+          {{(commentListByIQuotation[iQuotationId] &&
+          commentListByIQuotation[iQuotationId].length > 0 &&
+          commentListByIQuotation[iQuotationId][0].currentCustomer) ?
+          '- ' + commentListByIQuotation[iQuotationId][0].tiersDenomination: ''}}
+        </span>
+      </div>
+      <div class="card-action ">
+        <button (click)="openRouteForTiers(iQuotationId); $event.stopPropagation()"
+          class="pointer card-action-item border-0 btn-outline-dark" preventDefault>
+          <ng-icon name="tablerUsers" />
+        </button>
+        <button [routerLink]="'/customer-order/view/' + iQuotationId" type="button" (click)="$event.stopPropagation()"
+          class="card-action-item border-0" preventDefault>
+          <ng-icon name="tablerShoppingBagEdit" />
+        </button>
+        <button (click)="closeChat(iQuotationId);$event.stopPropagation()" class="card-action-item border-0">
+          <ng-icon name="tablerX" />
+        </button>
+      </div>
+    </button>
+
+    <div class="messages-list" *ngIf="getIsExpandedMap(iQuotationId)">
+      @if(commentListByIQuotation[iQuotationId] && commentListByIQuotation[iQuotationId].length > 0){
+      @for(comment of commentListByIQuotation[iQuotationId]; track comment.id; let i = $index) {
+      <div class="message-item" [id]="'comment-'+ iQuotationId +'-'+ i"
+        [ngClass]="{'sent':  comment.employee && comment.employee.id, 'received': !comment.employee || !comment.employee.id, 'mb-0': $last}"
+        [innerHTML]="comment.comment | trustHtml">
+      </div>
+      @if($last){
+      <div class="d-flex  mt-0"
+        [ngClass]="{'justify-content-end':  comment.employee && comment.employee.id, 'justify-content-start': !comment.employee || !comment.employee.id}">
+        <span class="text-muted small">
+          {{formatDateHourFrance(comment.createdDateTime)}}
+        </span>
+      </div>
+      }
+      }
+      }
+    </div>
+
+    <div class="chat-footer " *ngIf="getIsExpandedMap(iQuotationId)">
+      <input type="text" [(ngModel)]="getCommentModel(iQuotationId).comment" (keyup.enter)="sendMessage(iQuotationId)"
+        (focus)="markAsRead(iQuotationId)" placeholder="Écrivez votre message..." />
+      <button (click)="sendMessage(iQuotationId)" type="button" class="btn btn-secondary rounded-circle btn-icon"
+        [disabled]="!getCommentModel(iQuotationId).comment || getCommentModel(iQuotationId).comment.trim().length == 0">
+        <ng-icon name="tablerSend" class="fs-lg" />
+      </button>
+    </div>
+  </div>
+  }
+</div>

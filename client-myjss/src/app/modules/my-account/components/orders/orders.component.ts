@@ -2,7 +2,7 @@ import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbAccordionModule, NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
-import { CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_PAYED, CUSTOMER_ORDER_STATUS_REQUIRE_ATTENTION, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT } from '../../../../libs/Constants';
+import { CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_PAYED, CUSTOMER_ORDER_STATUS_REQUIRE_ATTENTION, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, CUSTOMER_ORDER_WITH_UNREAD_COMMENTS } from '../../../../libs/Constants';
 import { capitalizeName, formatDateFrance } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
@@ -15,6 +15,7 @@ import { InvoiceLabelResult } from '../../model/InvoiceLabelResult';
 import { MailComputeResult } from '../../model/MailComputeResult';
 import { Service } from '../../model/Service';
 import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
+import { CustomerOrderCommentService } from '../../services/customer.order.comment.service';
 import { CustomerOrderService } from '../../services/customer.order.service';
 import { InvoiceLabelResultService } from '../../services/invoice.label.result.service';
 import { MailComputeResultService } from '../../services/mail.compute.result.service';
@@ -39,7 +40,8 @@ export class OrdersComponent implements OnInit {
   statusFilterBilled: boolean = false;
   statusFilterToBilled: boolean = false;
   statusFilterPayed: boolean = false;
-  withMissingAttachment: boolean = false;
+  requiringAttention: boolean = false;
+  withUnreadCommmentsOnOrders: boolean = false;
 
   currentSort: string = "createdDateDesc";
   currentPage: number = 0;
@@ -63,6 +65,7 @@ export class OrdersComponent implements OnInit {
 
   constructor(
     private customerOrderService: CustomerOrderService,
+    private customerOrderCommentService: CustomerOrderCommentService,
     private assoAffaireOrderService: AssoAffaireOrderService,
     private appService: AppService,
     private invoiceLabelResultService: InvoiceLabelResultService,
@@ -83,12 +86,12 @@ export class OrdersComponent implements OnInit {
           this.responsableCheck[respo.id] = true;
         }
       this.retrieveBookmark();
-      this.refreshOrders();
+      this.refreshOrders(true);
     });
   }
 
-  refreshOrders() {
-    if (!this.statusFilterOpen && !this.statusFilterWaitingDeposit && !this.statusFilterBeingProcessed && !this.statusFilterToBilled && !this.statusFilterBilled && !this.statusFilterPayed) {
+  refreshOrders(firstRefresh: boolean) {
+    if (!this.statusFilterOpen && !this.statusFilterWaitingDeposit && !this.statusFilterBeingProcessed && !this.statusFilterToBilled && !this.statusFilterBilled && !this.statusFilterPayed && !this.requiringAttention) {
       this.orders = [];
       return;
     }
@@ -96,14 +99,15 @@ export class OrdersComponent implements OnInit {
     this.setBookmark();
 
     let inputSearchStatus = this.activatedRoute.snapshot.params['statusCode'];
-    if (inputSearchStatus) {
+    if (inputSearchStatus && firstRefresh) {
       this.statusFilterOpen = false;
       this.statusFilterWaitingDeposit = false;
       this.statusFilterBeingProcessed = false;
       this.statusFilterBilled = false;
       this.statusFilterToBilled = false;
       this.statusFilterPayed = false;
-      this.withMissingAttachment = false;
+      this.requiringAttention = false;
+      this.withUnreadCommmentsOnOrders = false;
 
       if (inputSearchStatus == CUSTOMER_ORDER_STATUS_BEING_PROCESSED)
         this.statusFilterBeingProcessed = true;
@@ -112,9 +116,10 @@ export class OrdersComponent implements OnInit {
       if (inputSearchStatus == CUSTOMER_ORDER_STATUS_BILLED)
         this.statusFilterBilled = true;
       if (inputSearchStatus == CUSTOMER_ORDER_STATUS_REQUIRE_ATTENTION) {
-        this.statusFilterBeingProcessed = true;
-        this.withMissingAttachment = true;
+        this.requiringAttention = true;
       }
+      if (inputSearchStatus == CUSTOMER_ORDER_WITH_UNREAD_COMMENTS)
+        this.withUnreadCommmentsOnOrders = true;
     }
 
 
@@ -140,15 +145,29 @@ export class OrdersComponent implements OnInit {
 
     this.appService.showLoadingSpinner();
 
-    this.currentSearchRef = this.customerOrderService.searchOrdersForCurrentUser(status, this.withMissingAttachment, this.currentPage, this.currentSort, this.getCurrentSelectedResponsable()).subscribe(response => {
-      this.appService.hideLoadingSpinner();
-      if (response) {
-        this.orders.push(...response);
-        if (response.length < 10)
-          this.hideSeeMore = true;
-      }
-      this.isFirstLoading = false;
-    })
+    // If coming from : orders with unread comments
+    if (this.withUnreadCommmentsOnOrders) {
+      this.currentSearchRef = this.customerOrderCommentService.searchOrdersWithUnreadComments().subscribe(response => {
+        this.orders = [];
+        this.appService.hideLoadingSpinner();
+        if (response) {
+          this.orders.push(...response);
+          if (response.length < 10)
+            this.hideSeeMore = true;
+        }
+        this.isFirstLoading = false;
+      })
+    } else {
+      this.currentSearchRef = this.customerOrderService.searchOrdersForCurrentUser(status, this.requiringAttention, this.currentPage, this.currentSort, this.getCurrentSelectedResponsable()).subscribe(response => {
+        this.appService.hideLoadingSpinner();
+        if (response) {
+          this.orders.push(...response);
+          if (response.length < 10)
+            this.hideSeeMore = true;
+        }
+        this.isFirstLoading = false;
+      })
+    }
   }
 
   getCurrentSelectedResponsable() {
@@ -166,7 +185,7 @@ export class OrdersComponent implements OnInit {
     this.currentPage = 0;
     this.orders = [];
     this.hideSeeMore = false;
-    this.refreshOrders();
+    this.refreshOrders(false);
   }
 
   changeSort(sorter: string) {
@@ -174,12 +193,12 @@ export class OrdersComponent implements OnInit {
     this.orders = [];
     this.currentSort = sorter;
     this.hideSeeMore = false;
-    this.refreshOrders();
+    this.refreshOrders(false);
   }
 
   loadMore() {
     this.currentPage++;
-    this.refreshOrders();
+    this.refreshOrders(false);
   }
 
   loadOrderDetails(order: CustomerOrder) {
@@ -206,7 +225,7 @@ export class OrdersComponent implements OnInit {
         this.quotationToCancel = undefined;
         this.currentPage = 0;
         this.orders = [];
-        this.refreshOrders();
+        this.refreshOrders(false);
       });
     }
   }
@@ -232,7 +251,7 @@ export class OrdersComponent implements OnInit {
     this.userPreferenceService.setUserSearchBookmark(this.statusFilterBilled, "order-statusFilterBilled");
     this.userPreferenceService.setUserSearchBookmark(this.statusFilterToBilled, "order-statusFilterToBilled");
     this.userPreferenceService.setUserSearchBookmark(this.statusFilterPayed, "order-statusFilterPayed");
-    this.userPreferenceService.setUserSearchBookmark(this.withMissingAttachment, "order-withMissingAttachment");
+    this.userPreferenceService.setUserSearchBookmark(this.requiringAttention, "order-requiringAttention");
     this.userPreferenceService.setUserSearchBookmark(this.currentSort, "order-currentSort");
     if (this.responsablesForCurrentUser && this.getCurrentSelectedResponsable())
       this.userPreferenceService.setUserSearchBookmark(this.getCurrentSelectedResponsable()!.map(r => r.id).join(","), "responsables");
@@ -275,8 +294,8 @@ export class OrdersComponent implements OnInit {
       this.statusFilterPayed = true;
       atLeastOne = true;
     }
-    if (this.userPreferenceService.getUserSearchBookmark("order-withMissingAttachment")) {
-      this.withMissingAttachment = true;
+    if (this.userPreferenceService.getUserSearchBookmark("order-requiringAttention")) {
+      this.requiringAttention = true;
     }
     if (this.userPreferenceService.getUserSearchBookmark("responsables")) {
       let respoIds = this.userPreferenceService.getUserSearchBookmark("responsables").split(",");
