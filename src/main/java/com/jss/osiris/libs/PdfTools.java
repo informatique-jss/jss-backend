@@ -159,7 +159,7 @@ public class PdfTools {
         }
     }
 
-    public File mergePdfs(List<File> filesToMerge) throws OsirisException {
+    public File mergePdfs(List<InputStream> filesToMerge) throws OsirisException {
         File mergedFile;
         try {
             mergedFile = File.createTempFile("merged_invoice", ".pdf");
@@ -171,8 +171,8 @@ public class PdfTools {
             PdfCopy copy = new PdfCopy(document, os);
             document.open();
 
-            for (File file : filesToMerge) {
-                PdfReader reader = new PdfReader(file.getAbsolutePath());
+            for (InputStream file : filesToMerge) {
+                PdfReader reader = new PdfReader(file);
                 int n = reader.getNumberOfPages();
                 for (int page = 1; page <= n; page++) {
                     PdfImportedPage importedPage = copy.getImportedPage(reader, page);

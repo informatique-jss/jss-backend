@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -863,6 +864,7 @@ public class GeneratePdfDelegate {
 
         File tempFile;
         OutputStream outputStream;
+        File finalInvoice;
         try {
             tempFile = File.createTempFile("invoice", "pdf");
 
@@ -882,50 +884,16 @@ public class GeneratePdfDelegate {
             renderer.createPDF(outputStream);
             outputStream.flush();
             outputStream.close();
+
+            finalInvoice = pdfTools.mergePdfs(List.of(Files.newInputStream(tempFile.toPath()),
+                    getClass().getClassLoader().getResourceAsStream("mails/CGV_JSS.pdf")));
         } catch (DocumentException | IOException e) {
             throw new OsirisException(e, "Unable to create PDF file for invoice " + invoice.getId());
         }
 
-        File tempFileGcv = generateCgvPdf();
-
-        File finalInvoice = pdfTools.mergePdfs(List.of(tempFile, tempFileGcv));
-
         tempFile.delete();
-        tempFileGcv.delete();
 
         return finalInvoice;
-    }
-
-    private File generateCgvPdf() throws OsirisException {
-        String htmlBody = StringEscapeUtils
-                .unescapeHtml4(pdfTemplateEngine(true).process("invoice-page-cgv", new Context()));
-        String htmlContent = composeHtml(HEADER_PDF_TEMPLATE, null, htmlBody, new Context());
-
-        File tempFile;
-        OutputStream outputStream;
-        try {
-            tempFile = File.createTempFile("invoice", "pdf");
-
-            outputStream = new FileOutputStream(tempFile);
-        } catch (IOException e) {
-            throw new OsirisException(e, "Unable to create temp file");
-        }
-        ITextRenderer renderer = new ITextRenderer();
-        XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
-
-        renderer = embedFontSize(renderer);
-        renderer.setDocumentFromString(htmlContent.replaceAll("[\\u0000-\\u001F&&[^\\n\\r\\t]]", " ")
-                .replaceAll("&nbsp;", "&#160;")
-                .replaceAll("font-size:\\s*0(\\.0+)?(px|pt|em|rem|%)?;", "font-size:1px;"));
-        renderer.layout();
-        try {
-            renderer.createPDF(outputStream);
-            outputStream.flush();
-            outputStream.close();
-        } catch (DocumentException | IOException e) {
-            throw new OsirisException(e, "Unable to create PDF file for cgv");
-        }
-        return tempFile;
     }
 
     private Payment getTopPayment(Payment payment) {
