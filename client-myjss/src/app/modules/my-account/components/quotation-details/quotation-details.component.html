@@ -30,7 +30,7 @@
   *ngIf="quotation && quotation.quotationStatus && quotation.quotationStatus.code == QUOTATION_STATUS_SENT_TO_CUSTOMER && isDepositPaymentMandatoryForQuotation">
   <i class="ai-circle-info fs-xl"></i>
   <div class="ps-2">Payez votre acompte pour lancer le traitement de votre commande !</div>
-  <a class="btn btn-sm btn-primary  mt-3 mt-md-0 ms-4" [routerLink]=' "/account/order/pay/" + quotation.id'>
+  <a class="btn btn-sm btn-primary  mt-3 mt-md-0 ms-4" [routerLink]=' "/account/quotation/pay/" + quotation.id'>
     <i class="ai-cart ms-n1 me-2"></i>
     <span>Payer l'acompte</span>
   </a>
