@@ -48,6 +48,9 @@ public class WebinarParticipant implements Serializable {
 
     private Boolean isParticipating;
 
+    @Column(columnDefinition = "TEXT")
+    private String question;
+
     @ManyToOne
     @JoinTable(name = "asso_webinar_participant", joinColumns = @JoinColumn(name = "id_webinar_participant"), inverseJoinColumns = @JoinColumn(name = "id_webinar"))
     @IndexedField
@@ -108,6 +111,14 @@ public class WebinarParticipant implements Serializable {
 
     public void setWebinar(Webinar webinar) {
         this.webinar = webinar;
+    }
+
+    public String getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(String question) {
+        this.question = question;
     }
 
 }

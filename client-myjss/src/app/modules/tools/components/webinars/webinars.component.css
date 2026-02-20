@@ -21,3 +21,7 @@ generic-input {
 .form-control::placeholder {
   color: var(--ar-info-text-emphasis);
 }
+
+generic-textarea {
+  border: none;
+}

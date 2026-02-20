@@ -201,7 +201,7 @@
                                 <th:block th:if="${assoServiceDocument.attachments != null}"
                                     th:each="attachment : ${assoServiceDocument.attachments}">
                                     <span
-                                        th:if="${attachment.typeDocument.code == assoServiceDocument.typeDocument.code}">
+                                        th:if="${attachment.typeDocument!=null} and ${attachment.typeDocument.code == assoServiceDocument.typeDocument.code}">
                                         <span th:text="${attachment.description}"></span>
                                     </span>
                                     <th:block th:with="attachmentFound=true"></th:block>

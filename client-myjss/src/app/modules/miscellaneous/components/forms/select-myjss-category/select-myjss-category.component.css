@@ -10,7 +10,7 @@
 .select-wrapper i.chevron {
   position: absolute;
   right: 21px;
-  top: 65%;
+  top: 50%;
   transform: translateY(-50%);
   pointer-events: none;
   color: var(--ar-secondary);

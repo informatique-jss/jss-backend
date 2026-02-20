@@ -87,7 +87,6 @@ export class OrderDetailsComponent implements OnInit {
   selectedService: Service | undefined;
   jssEmployee: Employee = { firstname: 'Journal', lastname: 'Spécial des Sociétés', title: '' } as Employee;
   currentDate = new Date();
-
   pollingInterval: any;
   isAlreadyScrolledOnceToMessages: boolean = false;
 
@@ -365,6 +364,11 @@ export class OrderDetailsComponent implements OnInit {
         this.refreshOrder();
       });
     }
+  }
+
+  goToJssAnnouncement(service: Service, event: any) {
+    if (service && service.jssAnnouncementId)
+      this.appService.openJssRoute(event, "announcement/" + service.jssAnnouncementId, true);
   }
 
   ngOnDestroy() {

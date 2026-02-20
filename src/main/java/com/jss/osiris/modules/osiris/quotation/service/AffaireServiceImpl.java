@@ -255,7 +255,10 @@ public class AffaireServiceImpl implements AffaireService {
                         for (String siretFromRne : sirets) {
                             Affaire affaireFromRne = getAffaireFromRneCompany(rneCompany, siretFromRne, false);
                             if (affaireFromRne != null)
-                                affaires.add(affaireFromRne);
+                                if (affaireFromRne.getIsMainOffice())
+                                    affaires.addFirst(affaireFromRne);
+                                else
+                                    affaires.add(affaireFromRne);
                             if (affaires.size() > 50)
                                 return affaires;
                         }

@@ -7,7 +7,9 @@ import { AppService } from '../../../main/services/app.service';
 import { ConstantService } from '../../../main/services/constant.service';
 import { PlatformService } from '../../../main/services/platform.service';
 import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
+import { SelectMyJssCategoryComponent } from '../../../miscellaneous/components/forms/select-myjss-category/select-myjss-category.component';
 import { Category } from '../../model/Category';
+import { MyJssCategory } from '../../model/MyJssCategory';
 import { Post } from '../../model/Post';
 import { PostService } from '../../services/post.service';
 
@@ -16,7 +18,7 @@ import { PostService } from '../../services/post.service';
   templateUrl: './exclusives.component.html',
   styleUrls: ['./exclusives.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, GenericInputComponent]
+  imports: [SHARED_IMPORTS, SelectMyJssCategoryComponent, GenericInputComponent]
 })
 export class ExclusivesComponent implements OnInit {
 
@@ -25,11 +27,14 @@ export class ExclusivesComponent implements OnInit {
   debounce: any;
   isLoading: boolean = false;
   searchObservableRef: Subscription | undefined;
-  categoryExclusive!: Category;
+  categoryExclusive: Category | undefined;
+  selectedMyJssCategory: MyJssCategory | undefined;
+  myJssCategories: MyJssCategory[] = [];
+  allMyJssCategories: MyJssCategory = { id: -1, name: 'Tout', slug: "all-categories", categoryOrder: 1 };
 
   currentPage: number = 0;
   page: number = 0;
-  pageSize: number = 10;
+  pageSize: number = 50;
   totalPages: number = 0;
 
   exclusivePostsForm!: FormGroup;
@@ -46,7 +51,9 @@ export class ExclusivesComponent implements OnInit {
 
   ngOnInit() {
     this.exclusivePostsForm = this.formBuilder.group({});
-    this.categoryExclusive = this.constantService.getCategoryExclusivity();
+    this.categoryExclusive = this.constantService.getCategoryArticle();
+    this.myJssCategories.push(this.allMyJssCategories);
+    this.selectedMyJssCategory = this.myJssCategories[0];
     this.searchPosts(0);
   }
 
@@ -74,7 +81,7 @@ export class ExclusivesComponent implements OnInit {
     if (this.searchObservableRef)
       this.searchObservableRef.unsubscribe();
     if (this.categoryExclusive)
-      this.searchObservableRef = this.postService.searchMyJssPostsByCategory(this.searchText, this.categoryExclusive, page, this.pageSize).subscribe(response => {
+      this.searchObservableRef = this.postService.searchPostsByMyJssCategoryAndCategory(this.searchText, this.selectedMyJssCategory, this.categoryExclusive, page, this.pageSize).subscribe(response => {
         if (response && response.content) {
           this.searchResults = response.content;
           this.currentPage = 0;

@@ -12,7 +12,7 @@ import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-au
 @Component({
   selector: 'autocomplete-siret',
   templateUrl: './../generic-autocomplete/generic-autocomplete.component.html',
-  styleUrls: ['./../generic-autocomplete/generic-autocomplete.component.css'],
+  styleUrls: ['./autocomplete-siret.component.css'],
   standalone: true,
   imports: [SHARED_IMPORTS, AutocompleteLibModule]
 })
@@ -29,7 +29,7 @@ export class AutocompleteSiretComponent extends GenericAutocompleteComponent<Aff
 
   searchEntities(value: string): Observable<PagedContent<Affaire>> {
     this.infoToDisplay = undefined;
-    return this.affaireService.getAffaireBySiret(value, this.page, this.pageSize);
+    return this.affaireService.getAffairesBySiret(value, this.page, this.pageSize);
   }
 
   override mapResponse(response: Affaire[]): Affaire[] {

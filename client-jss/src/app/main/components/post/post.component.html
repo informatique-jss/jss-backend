@@ -57,7 +57,7 @@
               </div>
               }
               <div class="mt-1">
-                <span class="list-inline-item d-lg-block fs-8">{{post.date | literalDatePipe}}</span>
+                <span class="list-inline-item d-lg-block fs-8">{{post.date | literalDateTimePipe}}</span>
                 <span class="list-inline-item d-lg-block fs-8">{{getTimeReading(post.contentText)}}</span>
               </div>
             </div>
@@ -169,7 +169,7 @@
               <div class="my-2" *ngIf="seriePost">
                 <div class="serie-border p-3">
                   <div class="row">
-                    <h3>Notre série "{{seriePost.name}}"</h3>
+                    <h3>Notre série «{{seriePost.name}}»</h3>
                   </div>
                   <div class="row pb-2">
                     <strong>{{getRawTextFromHtml(seriePost.excerptText)}}</strong>
