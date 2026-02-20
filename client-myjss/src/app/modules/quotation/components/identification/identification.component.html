@@ -5,14 +5,16 @@
 
   <section class="quotation-container">
     <div class="d-flex flex-column flex-md-row flex-sm-wrap align-items-start">
-      <h6 class="w-100 mb-3">
+      <h6 class="w-100 mb-3 align-items-center">
         <i class="ai-wallet pe-2"></i>Quel type de demande souhaitez-vous ?
+        <osi-tooltip class="ms-2"></osi-tooltip>
       </h6>
       <div *ngFor="let quotationType of quotationTypes"
         class="btn btn-outline-secondary m-1 w-100 w-sm-auto  btn-wrap btn-service-family"
         [class.active]="selectedQuotationType && selectedQuotationType.id == quotationType.id"
         (click)="changeQuotationType(quotationType)">
         {{quotationType.label}}</div>
+      <!-- <osi-tooltip class="ms-2"></osi-tooltip> -->
     </div>
   </section>
 
@@ -235,6 +237,7 @@
   </div>
   <div
     class="position-fixed bottom-0 start-0 w-100 bg-light shadow-sm p-3 m-0 d-flex justify-content-end align-items-center z-1030">
+    <osi-tooltip class="me-2"></osi-tooltip>
     <button type="button" class="btn btn-secondary rounded-1  mx-0 mx-sm-5 d-flex align-items-center"
       *ngIf="canStartQuotation()" (click)="startQuotation()"> <span class="me-2">Démarrer</span>
       <i class="ai-arrow-right d-none d-sm-inline"></i>

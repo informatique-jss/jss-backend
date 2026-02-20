@@ -10,6 +10,7 @@ import { GenericInputComponent } from '../../../miscellaneous/components/forms/g
 import { GenericToggleComponent } from '../../../miscellaneous/components/forms/generic-toggle/generic-toggle.component';
 import { RadioGroupAffaireTypeComponent } from '../../../miscellaneous/components/forms/radio-group-affaire-type/radio-group-affaire-type.component';
 import { SelectCountryComponent } from '../../../miscellaneous/components/forms/select-country/select-country.component';
+import { OsiTooltipComponent } from "../../../miscellaneous/components/osi-tooltip/osi-tooltip.component";
 import { Affaire } from '../../../my-account/model/Affaire';
 import { AssoAffaireOrder } from '../../../my-account/model/AssoAffaireOrder';
 import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
@@ -34,7 +35,8 @@ import { ServiceFamilyGroupService } from '../../services/service.family.group.s
     AutocompleteSiretComponent,
     SelectCountryComponent,
     GenericToggleComponent,
-    AutocompleteCityComponent]
+    AutocompleteCityComponent,
+    OsiTooltipComponent]
 })
 export class IdentificationComponent implements OnInit {
 
