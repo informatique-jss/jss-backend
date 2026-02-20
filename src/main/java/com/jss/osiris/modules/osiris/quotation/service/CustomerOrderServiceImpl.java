@@ -2427,7 +2427,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         false, "Bon de commande n°" + customerOrder.getId(), null, null, null);
 
             for (Attachment attachment : purchaseOrderAttachments)
-                if (customerOrder != null && attachment.getDescription().contains(customerOrder.getId() + "")) {
+                if (customerOrder != null && attachment.getDescription() != null
+                        && attachment.getDescription().contains(customerOrder.getId() + "")) {
                     attachment.setCustomerOrder(customerOrder);
                     attachmentService.addOrUpdateAttachment(attachment);
                 }
