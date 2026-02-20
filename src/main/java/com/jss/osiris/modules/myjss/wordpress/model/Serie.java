@@ -27,7 +27,8 @@ public class Serie implements Serializable {
 
     private Integer count;
 
-    private Integer serieOrder;
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
+    private Boolean isStayOnTop;
 
     @Transient
     private AcfSerie acf;
@@ -108,12 +109,12 @@ public class Serie implements Serializable {
         this.picture = picture;
     }
 
-    public Integer getSerieOrder() {
-        return serieOrder;
+    public Boolean getIsStayOnTop() {
+        return isStayOnTop;
     }
 
-    public void setSerieOrder(Integer serieOrder) {
-        this.serieOrder = serieOrder;
+    public void setIsStayOnTop(Boolean isStayOnTop) {
+        this.isStayOnTop = isStayOnTop;
     }
 
 }
