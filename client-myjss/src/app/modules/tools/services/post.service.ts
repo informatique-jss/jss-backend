@@ -84,6 +84,19 @@ export class PostService extends AppRestService<Post> {
     return this.getPagedList(httpParams, "search/posts/category");
   }
 
+  searchPostsByMyJssCategoryAndCategory(searchText: string, myJssCategory: MyJssCategory | undefined, category: Category | undefined, page: number, size: number) {
+    let httpParams = new HttpParams();
+    if (searchText)
+      httpParams = httpParams.set("searchText", searchText);
+    if (myJssCategory && myJssCategory.id)
+      httpParams = httpParams.set("myJssCategoryId", myJssCategory.id);
+    if (category && category.id)
+      httpParams = httpParams.set("categoryId", category.id);
+
+    httpParams = httpParams.set("page", page).set("size", size);
+    return this.getPagedList(httpParams, "search/categories");
+  }
+
   getPostsByMyJssCategory(myJssCategory: MyJssCategory, page: number, size: number) {
     return this.getPagedList(new HttpParams().set("myJssCategoryId", myJssCategory.id ? myJssCategory.id : "null").set("page", page).set("size", size), "posts/myjss-category");
   }

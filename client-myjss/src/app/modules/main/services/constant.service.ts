@@ -165,6 +165,10 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.serviceFamilyGroupOther;
   }
 
+  getCategoryArticle() {
+    return this.constant.categoryArticle;
+  }
+
   getCategoryExclusivity() {
     return this.constant.categoryExclusivity;
   }

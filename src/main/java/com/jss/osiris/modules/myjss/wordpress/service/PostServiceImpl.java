@@ -814,6 +814,26 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public Page<Post> searchPostsByCategoryAndMyJssCategory(String searchText, Category category,
+            MyJssCategory myJssCategory, Pageable pageableRequest) {
+        if (searchText != null && searchText.trim().length() > 0) {
+            List<IndexEntity> tmpEntitiesFound = null;
+            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
+            if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
+                return searchPostAgainstEntitiesToMatch(searchText,
+                        postRepository.findByPostCategoriesAndMyJssCategoriesAndIsCancelled(
+                                category != null ? category.getId() : null,
+                                myJssCategory != null ? myJssCategory.getId() : null,
+                                false, pageableRequest));
+            }
+        }
+        return postRepository.findByPostCategoriesAndMyJssCategoriesAndIsCancelled(
+                category != null ? category.getId() : null,
+                myJssCategory != null ? myJssCategory.getId() : null,
+                false, pageableRequest);
+    }
+
+    @Override
     public List<Post> getFirstPostsByMyJssCategories(MyJssCategory selectedMyJssCategory) {
         List<Post> firstPostsByMyJssCategory = new ArrayList<Post>();
         List<Integer> idPostsByMyJssCategory = new ArrayList<Integer>();
