@@ -41,12 +41,11 @@ public class Confrere implements IId, Serializable {
 	private Integer id;
 
 	@Column(nullable = false, length = 20)
-	@JsonView({ JacksonViews.MyJssDetailedView.class })
 	private String code;
 
 	@Column(length = 100)
 	@IndexedField
-	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private String label;
 
 	@ManyToMany
