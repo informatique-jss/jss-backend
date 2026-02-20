@@ -42,7 +42,7 @@ public class SerieServiceImpl implements SerieService {
 
     @Override
     public Page<Serie> getSeries(Pageable pageableRequest) {
-        return serieRepository.findAll(pageableRequest);
+        return serieRepository.findSeries(pageableRequest);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class SerieServiceImpl implements SerieService {
         if (serie.getAcf() != null) {
             serie.setExcerptText(serie.getAcf().getExcerpt());
             serie.setTitleText(serie.getAcf().getTitle());
-            serie.setSerieOrder(serie.getAcf().getOrdre());
+            serie.setIsStayOnTop(serie.getAcf().getIs_stay_on_top());
             if (serie.getAcf().getPicture() != null)
                 serie.setPicture(mediaService.getMedia(serie.getAcf().getPicture()));
         }

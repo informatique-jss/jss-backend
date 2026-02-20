@@ -136,6 +136,16 @@ export const routes: Routes = [
         loadComponent: () => import('./main/components/podcasts/podcasts.component').then(m => m.PodcastsComponent)
       },
       {
+        path: 'series',
+        loadComponent: () => import('./main/components/series/series.component').then(m => m.SeriesComponent),
+        children: [
+          {
+            path: ':page-number',
+            loadComponent: () => import('./main/components/series/series.component').then(m => m.SeriesComponent),
+          }
+        ]
+      },
+      {
         path: 'subscription',
         loadComponent: () => import('./main/components/subscription/subscription.component').then(m => m.SubscriptionComponent)
       },
