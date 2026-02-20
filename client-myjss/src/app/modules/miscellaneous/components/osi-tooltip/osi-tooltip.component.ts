@@ -1,6 +1,8 @@
-import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { PlatformService } from '../../../main/services/platform.service';
+import { TooltipEntry } from '../../model/TooltipEntry';
+import { TooltipEntryService } from '../../services/tooltip.entry.service';
 
 @Component({
   selector: 'osi-tooltip',
@@ -14,18 +16,27 @@ export class OsiTooltipComponent implements OnInit {
   @ViewChild('tooltip') tooltipRef!: ElementRef<HTMLElement>;
   @ViewChild('trigger') triggerRef!: ElementRef<HTMLElement>;
 
-  isTooltipAppeared = false;
+  @Input() tootltipCodeToDisplay: string | undefined;
 
-  tooltipText: string | undefined;
+  tooltipsEntries: TooltipEntry[] = [];
+  tooltipToDisplay: TooltipEntry | undefined;
+
   leftPosition: number = 0;
   topPosition: number = 0;
 
-  constructor(private platefomService: PlatformService
+  isTooltipAppeared = false;
+
+  constructor(
+    private platefomService: PlatformService,
+    private tooltipService: TooltipEntryService,
+
   ) { }
 
   ngOnInit() {
-    // TODO
-    this.tooltipText = "Besoin d'aide ? Contactez-nous !  ";
+    this.tooltipService.getTooltipEntries().subscribe(res => {
+      this.tooltipsEntries = res;
+      this.tooltipToDisplay = this.tooltipsEntries.find(tooltip => tooltip.code == this.tootltipCodeToDisplay);
+    });
   }
 
   show() {
