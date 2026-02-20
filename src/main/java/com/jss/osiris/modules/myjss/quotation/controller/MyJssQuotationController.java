@@ -1416,6 +1416,7 @@ public class MyJssQuotationController {
     }
 
     if (canUpdateProvision) {
+      Provision provisionToDelete = null;
       for (Provision provision : serviceFetched.getProvisions()) {
         for (Provision provisionIn : service.getProvisions()) {
           IWorkflowElement status = getProvisionStatus(provision);
@@ -1424,18 +1425,22 @@ public class MyJssQuotationController {
 
           if (provision.getId().equals(provisionIn.getId())) {
             if (provision.getAnnouncement() != null) {
-              provision.getAnnouncement().setNotice(provisionIn.getAnnouncement().getNotice());
-              provision.getAnnouncement().setDepartment(provisionIn.getAnnouncement().getDepartment());
-              provision.getAnnouncement().setNoticeTypes(provisionIn.getAnnouncement().getNoticeTypes());
-              provision.getAnnouncement()
-                  .setPublicationDate(provisionIn.getAnnouncement().getPublicationDate());
-              provision.getAnnouncement()
-                  .setNoticeTypeFamily(provisionIn.getAnnouncement().getNoticeTypeFamily());
-              provision.setIsRedactedByJss(provisionIn.getIsRedactedByJss());
-              provision.setIsDoNotGenerateAnnouncement(provisionIn.getIsDoNotGenerateAnnouncement());
-              provision.getAnnouncement()
-                  .setIsProofReadingDocument(
-                      provisionIn.getAnnouncement().getIsProofReadingDocument());
+              if (Boolean.TRUE.equals(provision.getIsDoNotGenerateAnnouncement())) {
+                provisionToDelete = provision;
+              } else {
+                provision.getAnnouncement().setNotice(provisionIn.getAnnouncement().getNotice());
+                provision.getAnnouncement().setDepartment(provisionIn.getAnnouncement().getDepartment());
+                provision.getAnnouncement().setNoticeTypes(provisionIn.getAnnouncement().getNoticeTypes());
+                provision.getAnnouncement()
+                    .setPublicationDate(provisionIn.getAnnouncement().getPublicationDate());
+                provision.getAnnouncement()
+                    .setNoticeTypeFamily(provisionIn.getAnnouncement().getNoticeTypeFamily());
+                provision.setIsRedactedByJss(provisionIn.getIsRedactedByJss());
+                provision.setIsDoNotGenerateAnnouncement(provisionIn.getIsDoNotGenerateAnnouncement());
+                provision.getAnnouncement()
+                    .setIsProofReadingDocument(
+                        provisionIn.getAnnouncement().getIsProofReadingDocument());
+              }
             }
             if (provisionIn.getDomiciliation() != null) {
               if (provisionIn.getDomiciliation().getMails() != null)
@@ -1449,6 +1454,9 @@ public class MyJssQuotationController {
           }
         }
       }
+
+      if (provisionToDelete != null)
+        service.getProvisions().remove(provisionToDelete);
     }
 
     serviceService.addOrUpdateServiceFromUser(serviceFetched);

@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -99,18 +98,6 @@ public class ServiceServiceImpl implements ServiceService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Service addOrUpdateServiceFromUser(Service service) throws OsirisException {
-        Iterator<Provision> provisions = null;
-        if (service.getProvisions() != null)
-            provisions = service.getProvisions().iterator();
-
-        while (provisions.hasNext()) {
-            Provision provision = provisions.next();
-            if (provision.getAnnouncement() != null && provision.getIsDoNotGenerateAnnouncement() != null
-                    && !provision.getIsDoNotGenerateAnnouncement()) {
-                provisions.remove();
-            }
-        }
-
         addOrUpdateService(service);
 
         if (service.getAssoAffaireOrder() != null && service.getAssoAffaireOrder().getCustomerOrder() != null)
