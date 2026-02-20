@@ -57,8 +57,7 @@
               </div>
               }
               <div class="mt-1">
-                <span class="list-inline-item d-lg-block fs-8">{{post.date | literalDatePipe}}
-                  à {{post.date | date:'HH:mm'}} </span>
+                <span class="list-inline-item d-lg-block fs-8">{{post.date | literalDateTimePipe}}</span>
                 <span class="list-inline-item d-lg-block fs-8">{{getTimeReading(post.contentText)}}</span>
               </div>
             </div>
