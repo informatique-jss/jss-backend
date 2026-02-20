@@ -385,6 +385,13 @@ public class PostServiceImpl implements PostService {
                     .replace("srcset=\"" + wordpressMediaBaseUrl, "srcset=\"" + apacheMediaBaseUrl)
                     .replace(" " + wordpressMediaBaseUrl, " " + apacheMediaBaseUrl);
 
+            // always center picture horizontally
+            if (Pattern.compile("class\\s*=\\s*\"", Pattern.CASE_INSENSITIVE).matcher(updatedImgTag).find()) {
+                updatedImgTag = updatedImgTag.replaceFirst("(?i)class\\s*=\\s*\"", "class=\"d-block mx-auto ");
+            } else {
+                updatedImgTag = updatedImgTag.replaceFirst("(?i)<img\\s+", "<img class=\"d-block mx-auto\" ");
+            }
+
             imgMatcher.appendReplacement(sb, Matcher.quoteReplacement(updatedImgTag));
         }
         imgMatcher.appendTail(sb);
