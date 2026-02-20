@@ -514,7 +514,6 @@ public class Constant implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_confrere_jss_spel")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Confrere confrereJssSpel;
 
 	@ManyToOne

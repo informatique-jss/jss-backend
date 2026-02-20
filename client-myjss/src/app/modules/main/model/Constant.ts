@@ -1,6 +1,5 @@
 import { AttachmentType } from "../../my-account/model/AttachmentType";
 import { BillingLabelType } from "../../my-account/model/BillingLabelType";
-import { Confrere } from "../../my-account/model/Confrere";
 import { DocumentType } from "../../my-account/model/DocumentType";
 import { PaymentType } from "../../my-account/model/PaymentType";
 import { ProvisionType } from "../../my-account/model/ProvisionType";
@@ -39,7 +38,6 @@ export interface Constant {
   categoryExclusivity: Category;
   attachmentTypeApplicationCv: AttachmentType;
   languageFrench: Language;
-  confrereJssSpel: Confrere;
   mailRedirectionTypeOther: MailRedirectionType;
   domiciliationContractTypeRouteEmailAndMail: DomiciliationContractType;
   domiciliationContractTypeRouteMail: DomiciliationContractType;

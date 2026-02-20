@@ -760,8 +760,12 @@ public class ServiceServiceImpl implements ServiceService {
                     boolean hasCompleteWaitingAcLabel = false;
                     for (Provision provision : service.getProvisions()) {
                         if (provision.getAnnouncement() != null
-                                && provision.getAnnouncement().getConfrere() != null)
+                                && provision.getAnnouncement().getConfrere() != null) {
                             service.setConfrereLabel(provision.getAnnouncement().getConfrere().getLabel());
+                            if (provision.getAnnouncement().getConfrere().getId()
+                                    .equals(constantService.getConfrereJssSpel().getId()))
+                                service.setJssAnnouncementId(provision.getAnnouncement().getId());
+                        }
 
                         if (!hasCompleteWaitingAcLabel && provision.getSimpleProvision() != null
                                 && provision.getSimpleProvision().getSimpleProvisionStatus() != null

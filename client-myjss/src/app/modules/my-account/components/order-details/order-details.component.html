@@ -162,9 +162,10 @@
           <div class="row d-flex justify-content-between align-items-center w-100">
             <div class="col-md-auto col order-md-2 order-2 " *ngIf="service.confrereLabel">
               <div class="fs-sm text-body-secondary">Annonce publiée sur {{service.confrereLabel}}
-                <span *ngIf="jssSpel && jssSpel.label && service.confrereLabel == jssSpel.label">
+                <span *ngIf="service.jssAnnouncementId">
                   (consulter l'annonce sur
-                  <a class="z-index-10 text-body-secondary" (click)="goToJssAnnouncement(service, $event )">
+                  <a class="z-index-10 text-body-secondary"
+                    (click)="goToJssAnnouncement(service, $event );$event.stopPropagation();$event.preventDefault();">
                     JSS.fr</a>)
                 </span>
               </div>
