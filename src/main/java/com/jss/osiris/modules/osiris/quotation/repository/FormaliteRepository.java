@@ -17,6 +17,6 @@ public interface FormaliteRepository extends QueryCacheCrudRepository<Formalite,
             " join asso_affaire_order aao on aao.id = s.id_asso_affaire_order " +
             " join customer_order co on co.id = aao.id_customer_order  " +
             " join formalite_status fs2 on fs2.id = f.id_formalite_status   " +
-            " where f.id in (select id_formalite from formalite_guichet_unique fgu where id_formalite is not null and id_status not in (select code from status where coalesce(is_close_state,false) = false)) ")
+            " where f.id in (select id_formalite from formalite_guichet_unique fgu where id_formalite is not null and id_status not in (select code from status where coalesce(is_close_state,false) = true)) ")
     List<Formalite> getFormaliteForGURefresh();
 }

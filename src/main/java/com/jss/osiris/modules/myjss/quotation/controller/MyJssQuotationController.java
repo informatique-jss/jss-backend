@@ -314,6 +314,12 @@ public class MyJssQuotationController {
       @RequestParam Integer page, @RequestParam String sortBy,
       @RequestParam(required = false) List<Integer> responsableIdsToFilter)
       throws OsirisException {
+
+    if (Boolean.TRUE.equals(requiringAttention)) {
+      customerOrderStatus.addAll(List.of(CustomerOrderStatus.BEING_PROCESSED, CustomerOrderStatus.BILLED,
+          CustomerOrderStatus.WAITING_DEPOSIT));
+    }
+
     if (customerOrderStatus == null || customerOrderStatus.size() == 0)
       return new ResponseEntity<List<CustomerOrder>>(new ArrayList<CustomerOrder>(), HttpStatus.OK);
 
@@ -363,6 +369,11 @@ public class MyJssQuotationController {
       @RequestBody List<String> quotationStatus, @RequestParam Boolean requiringAttention,
       @RequestParam Integer page, @RequestParam String sortBy)
       throws OsirisClientMessageException {
+
+    if (Boolean.TRUE.equals(requiringAttention)) {
+      quotationStatus.addAll(List.of(QuotationStatus.SENT_TO_CUSTOMER));
+    }
+
     if (quotationStatus == null || quotationStatus.size() == 0)
       return new ResponseEntity<List<Quotation>>(new ArrayList<Quotation>(), HttpStatus.OK);
 
@@ -1416,6 +1427,7 @@ public class MyJssQuotationController {
     }
 
     if (canUpdateProvision) {
+      Provision provisionToDelete = null;
       for (Provision provision : serviceFetched.getProvisions()) {
         for (Provision provisionIn : service.getProvisions()) {
           IWorkflowElement status = getProvisionStatus(provision);
@@ -1424,17 +1436,22 @@ public class MyJssQuotationController {
 
           if (provision.getId().equals(provisionIn.getId())) {
             if (provision.getAnnouncement() != null) {
-              provision.getAnnouncement().setNotice(provisionIn.getAnnouncement().getNotice());
-              provision.getAnnouncement().setDepartment(provisionIn.getAnnouncement().getDepartment());
-              provision.getAnnouncement().setNoticeTypes(provisionIn.getAnnouncement().getNoticeTypes());
-              provision.getAnnouncement()
-                  .setPublicationDate(provisionIn.getAnnouncement().getPublicationDate());
-              provision.getAnnouncement()
-                  .setNoticeTypeFamily(provisionIn.getAnnouncement().getNoticeTypeFamily());
-              provision.setIsRedactedByJss(provisionIn.getIsRedactedByJss());
-              provision.getAnnouncement()
-                  .setIsProofReadingDocument(
-                      provisionIn.getAnnouncement().getIsProofReadingDocument());
+              if (Boolean.TRUE.equals(provision.getIsDoNotGenerateAnnouncement())) {
+                provisionToDelete = provision;
+              } else {
+                provision.getAnnouncement().setNotice(provisionIn.getAnnouncement().getNotice());
+                provision.getAnnouncement().setDepartment(provisionIn.getAnnouncement().getDepartment());
+                provision.getAnnouncement().setNoticeTypes(provisionIn.getAnnouncement().getNoticeTypes());
+                provision.getAnnouncement()
+                    .setPublicationDate(provisionIn.getAnnouncement().getPublicationDate());
+                provision.getAnnouncement()
+                    .setNoticeTypeFamily(provisionIn.getAnnouncement().getNoticeTypeFamily());
+                provision.setIsRedactedByJss(provisionIn.getIsRedactedByJss());
+                provision.setIsDoNotGenerateAnnouncement(provisionIn.getIsDoNotGenerateAnnouncement());
+                provision.getAnnouncement()
+                    .setIsProofReadingDocument(
+                        provisionIn.getAnnouncement().getIsProofReadingDocument());
+              }
             }
             if (provisionIn.getDomiciliation() != null) {
               if (provisionIn.getDomiciliation().getMails() != null)
@@ -1448,6 +1465,9 @@ public class MyJssQuotationController {
           }
         }
       }
+
+      if (provisionToDelete != null)
+        service.getProvisions().remove(provisionToDelete);
     }
 
     serviceService.addOrUpdateServiceFromUser(serviceFetched);

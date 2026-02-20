@@ -12,6 +12,7 @@ import { AppService } from '../../../main/services/app.service';
 import { ConstantService } from '../../../main/services/constant.service';
 import { GtmService } from '../../../main/services/gtm.service';
 import { FileUploadPayload, PageInfo } from '../../../main/services/GtmPayload';
+import { PlatformService } from '../../../main/services/platform.service';
 import { AvatarComponent } from '../../../miscellaneous/components/avatar/avatar.component';
 import { SingleUploadComponent } from '../../../miscellaneous/components/forms/single-upload/single-upload.component';
 import { Employee } from '../../../profile/model/Employee';
@@ -86,8 +87,8 @@ export class OrderDetailsComponent implements OnInit {
   selectedService: Service | undefined;
   jssEmployee: Employee = { firstname: 'Journal', lastname: 'Spécial des Sociétés', title: '' } as Employee;
   currentDate = new Date();
-
   pollingInterval: any;
+  isAlreadyScrolledOnceToMessages: boolean = false;
 
   constructor(
     private constantService: ConstantService,
@@ -107,7 +108,8 @@ export class OrderDetailsComponent implements OnInit {
     private serviceService: ServiceService,
     private quotationService: QuotationService,
     private gtmService: GtmService,
-    private assoServiceDocumentService: AssoServiceDocumentService
+    private assoServiceDocumentService: AssoServiceDocumentService,
+    private platefomService: PlatformService
   ) { }
 
   capitalizeName = capitalizeName;
@@ -132,10 +134,6 @@ export class OrderDetailsComponent implements OnInit {
     this.documentTypeBilling = this.constantService.getDocumentTypeBilling();
 
     this.refreshOrder();
-
-    this.pollingInterval = setInterval(() => {
-      this.fetchUnreadCommentsForCurrentUser();
-    }, 2000);
   }
 
   refreshOrder() {
@@ -159,6 +157,7 @@ export class OrderDetailsComponent implements OnInit {
         this.changeAffaire(this.ordersAssoAffaireOrders[0]);
         if (this.ordersAssoAffaireOrders[0].services && this.ordersAssoAffaireOrders[0].services.length > 0)
           this.loadServiceDetails(this.ordersAssoAffaireOrders[0].services[0], false);
+        this.initiateUnreadCommentsPolling();
       }
     })
     this.invoiceLabelResultService.getInvoiceLabelComputeResultForCustomerOrder(this.order.id).subscribe(response => {
@@ -185,12 +184,19 @@ export class OrderDetailsComponent implements OnInit {
       if (this.invoiceSummary.remainingToPay && this.order?.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_OPEN && this.order!.servicesList == this.constantService.getServiceTypeKioskNewspaperBuy().label)
         this.displayPayButton = true;
     })
-    this.refreshCustomerOrderComments();
+    this.getCustomerOrderComments();
     this.loginService.getCurrentUser().subscribe(response => this.currentUser = response);
     this.quotationService.getQuotationForCustomerOrder(this.order.id).subscribe(response => {
       if (response && response.id)
         this.associatedQuotation = response;
     })
+  }
+
+  initiateUnreadCommentsPolling() {
+    if (this.platefomService.isBrowser())
+      this.pollingInterval = setInterval(() => {
+        this.fetchUnreadCommentsForCurrentUser();
+      }, 2000);
   }
 
   getCustomerOrderBillingMailList() {
@@ -291,27 +297,21 @@ export class OrderDetailsComponent implements OnInit {
   private fetchUnreadCommentsForCurrentUser() {
     if (this.order)
       this.customerOrderCommentService.getUnreadCommentsForResponsableAndIQuotation(this.order.id).subscribe(commentsFound => {
-        for (let comment of commentsFound) {
-          if (!this.comments)
-            this.comments = [];
-          if (!this.comments.find(comm => comm.id == comment.id))
-            this.comments.push(comment);
+        if (!this.comments)
+          this.comments = [];
+        this.comments.push(...commentsFound.filter(comm => this.comments.map(com => com.id).indexOf(comm.id) < 0));
+        if (!this.isAlreadyScrolledOnceToMessages && commentsFound.length > 0) {
+          this.isAlreadyScrolledOnceToMessages = true;
+          this.scrollToLastMessage();
         }
-        this.sortComments();
       });
   }
 
-  refreshCustomerOrderComments() {
+  getCustomerOrderComments() {
     if (this.order)
       this.customerOrderCommentService.getCustomerOrderCommentsForCustomer(this.order.id).subscribe(response => {
         this.comments = response;
-        this.markCommentsAsReadByCustomer();
       })
-  }
-
-  markCommentsAsReadByCustomer() {
-    if (this.order && this.order.id)
-      this.customerOrderCommentService.markAllCommentsAsReadForIQuotation(this.order.id).subscribe();
   }
 
   addCustomerOrderComment() {
@@ -327,24 +327,19 @@ export class OrderDetailsComponent implements OnInit {
       }
   }
 
-  sortComments() {
-    if (this.comments && this.currentUser)
-      this.comments.sort((b: CustomerOrderComment, a: CustomerOrderComment) => new Date(b.createdDateTime).getTime() - new Date(a.createdDateTime).getTime());
-  }
-
   private scrollToLastMessage(behavior: ScrollBehavior = 'smooth'): void {
+    this.markCommentsAsReadByCustomer();
     setTimeout(() => {
       const el = document.getElementById('send-message');
       if (el) {
-        el.scrollIntoView({ behavior: behavior, block: 'end' });
+        el.scrollIntoView({ behavior: behavior, block: 'start' });
       }
-    }, 100); // Timeout so the DOM is well up to date
+    }, 200); // Timeout so the DOM is well up to date
   }
 
-
-  editCustomerOrderComment(comment: CustomerOrderComment) {
-    this.newComment = comment;
-    this.newComment.comment = this.newComment.comment.replace(/<[^>]+>/g, '');
+  private markCommentsAsReadByCustomer() {
+    if (this.order && this.order.id)
+      this.customerOrderCommentService.markAllCommentsAsReadForIQuotation(this.order.id).subscribe(res => res);
   }
 
   saveFieldsValue(service: Service) {
@@ -371,8 +366,14 @@ export class OrderDetailsComponent implements OnInit {
     }
   }
 
+  goToJssAnnouncement(service: Service, event: any) {
+    if (service && service.jssAnnouncementId)
+      this.appService.openJssRoute(event, "announcement/" + service.jssAnnouncementId, true);
+  }
+
   ngOnDestroy() {
     this.customerOrderCommentService.setWatchedOrder(null);
+    clearInterval(this.pollingInterval);
   }
 
   compareWithId = compareWithId;

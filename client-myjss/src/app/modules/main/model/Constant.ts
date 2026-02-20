@@ -35,6 +35,7 @@ export interface Constant {
   myJssCategoryApostille: MyJssCategory;
   myJssCategoryDocument: MyJssCategory;
   serviceFamilyGroupAnnouncement: ServiceFamilyGroup;
+  categoryArticle: Category;
   categoryExclusivity: Category;
   attachmentTypeApplicationCv: AttachmentType;
   languageFrench: Language;

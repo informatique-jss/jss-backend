@@ -11,6 +11,7 @@ export const serverRoutes: ServerRoute[] = [
   { path: 'quotation/checkout', renderMode: RenderMode.Client },
   { path: 'account/signin', renderMode: RenderMode.Prerender },
   { path: 'account/signout', renderMode: RenderMode.Client },
+  { path: 'account/**', renderMode: RenderMode.Client },
 
   { path: 'services', renderMode: RenderMode.Prerender },
 

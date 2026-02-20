@@ -51,6 +51,10 @@
             [form]="accountingRecordForm" propertyName="hideLettered"></generic-toggle>
         </td>
         <td class="toggle-td">
+          <generic-toggle [(model)]="accountingRecordSearch.hideCancelled" label="Cacher paiements annulés ?"
+            [form]="accountingRecordForm" propertyName="hideCancelled"></generic-toggle>
+        </td>
+        <td class="toggle-td">
           <generic-toggle [(model)]="accountingRecordSearch.isFromAs400" label="Depuis l'AS400 ?"
             [form]="accountingRecordForm" propertyName="isFromAs400"></generic-toggle>
         </td>

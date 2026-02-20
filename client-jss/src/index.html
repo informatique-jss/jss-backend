@@ -15,6 +15,21 @@
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700&family=Open+Sans&display=swap" rel="stylesheet">
 
+  <script>
+    // Block "Le guichet des formalités" plugin injection
+    const observer = new MutationObserver((mutations) => {
+      const pluginElement = document.getElementById('lgdf-slider');
+      if (pluginElement) {
+        pluginElement.remove();
+      }
+    });
+
+    observer.observe(document.documentElement, {
+      childList: true,
+      subtree: true
+    });
+  </script>
+
 </head>
 
 <body>

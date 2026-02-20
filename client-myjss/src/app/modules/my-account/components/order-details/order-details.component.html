@@ -15,7 +15,7 @@
   </div>
   <div class="ms-auto">
     <a class="btn btn-sm btn-secondary" role="button" (click)="getPurchaseOrderAttachment()"
-      *ngIf=" order && order.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_OPEN && order.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT && order.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_ABANDONED ">
+      *ngIf=" order && order.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_OPEN && order.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_ABANDONED ">
       <i class="ai-download ms-n1 me-2"></i>
       Voir le bon de commande
     </a>
@@ -133,12 +133,12 @@
         <button ngbAccordionButton class="border-top flex-column">
           <div class="row d-flex justify-content-between align-items-center w-100">
             <div class="col-md-auto col-md-10 order-1">
-              <h4 class="h6 mb-2">
-                <a>{{service.serviceLabelToDisplay}}</a>
+              <h4 class="h6 mb-2 d-flex flex-row">
+                <a class="me-3">{{service.serviceLabelToDisplay}}</a>
+                <div class="text-body-secondary fs-sm pb-1">
+                  <span class="badge bg-info bg-opacity-10 text-info fs-xs">{{service.serviceStatus}}</span>
+                </div>
               </h4>
-              <div class="text-body-secondary fs-sm pb-1">
-                <span class="badge bg-info bg-opacity-10 text-info fs-xs">{{service.serviceStatus}}</span>
-              </div>
             </div>
             <div class="col-md-auto col order-md-3 order-3 "
               *ngIf="serviceProvisionAttachments[service.id] && serviceProvisionAttachments[service.id].length>0">
@@ -161,8 +161,14 @@
           </div>
           <div class="row d-flex justify-content-between align-items-center w-100">
             <div class="col-md-auto col order-md-2 order-2 " *ngIf="service.confrereLabel">
-              <div class="fs-sm text-body-secondary">Annonce publiée sur {{service.confrereLabel}}</div>
-              <!-- TODO : ajouter le lien vers le SPEL jss ou autre-->
+              <div class="fs-sm text-body-secondary">Annonce publiée sur {{service.confrereLabel}}
+                <span *ngIf="service.jssAnnouncementId">
+                  (consulter l'annonce sur
+                  <a class="z-index-10 text-body-secondary"
+                    (click)="goToJssAnnouncement(service, $event );$event.stopPropagation();$event.preventDefault();">
+                    JSS.fr</a>)
+                </span>
+              </div>
             </div>
           </div>
           <div class="row d-flex justify-content-between align-items-center w-100">

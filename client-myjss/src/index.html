@@ -27,6 +27,21 @@
 
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-element-bundle.min.js"></script>
 
+  <script>
+    // Block "Le guichet des formalités" plugin injection
+    const observer = new MutationObserver((mutations) => {
+      const pluginElement = document.getElementById('lgdf-slider');
+      if (pluginElement) {
+        pluginElement.remove();
+      }
+    });
+
+    observer.observe(document.documentElement, {
+      childList: true,
+      subtree: true
+    });
+  </script>
+
 </head>
 
 <body>

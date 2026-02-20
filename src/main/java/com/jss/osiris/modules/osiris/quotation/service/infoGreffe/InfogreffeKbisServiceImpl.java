@@ -243,9 +243,9 @@ public class InfogreffeKbisServiceImpl implements InfogreffeKbisService {
                         deno = rneCompany.getFormality().getContent().getPersonneMorale().getIdentite().getEntreprise()
                                 .getDenomination();
 
-            String name = "Kbis-" + deno != null ? deno + "-"
-                    : "" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"))
-                            + ".pdf";
+            String name = "Kbis-" + (deno != null ? deno + "-" : "")
+                    + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"))
+                    + ".pdf";
             try (InputStream is = new ByteArrayInputStream(response.getBody())) {
                 List<Attachment> attachments = attachmentService.addAttachment(is,
                         kbisRequest.getProvision().getId(), null, Provision.class.getSimpleName(),

@@ -93,12 +93,12 @@ export class QuotationsComponent implements OnInit {
           this.responsableCheck[respo.id] = true;
         }
       this.retrieveBookmark();
-      this.refreshQuotations();
+      this.refreshQuotations(true);
     });
   }
 
-  refreshQuotations() {
-    if (!this.statusFilterOpen && !this.statusFilterToVerify && !this.statusFilterWaitingConfrere && !this.statusFilterSendToCustomer && !this.statusFilterValidatedByCustomer && !this.statusFilterRefusedByCustomer && !this.statusFilterAbandonned) {
+  refreshQuotations(firstRefresh: boolean) {
+    if (!this.requiringAttention && !this.statusFilterOpen && !this.statusFilterToVerify && !this.statusFilterWaitingConfrere && !this.statusFilterSendToCustomer && !this.statusFilterValidatedByCustomer && !this.statusFilterRefusedByCustomer && !this.statusFilterAbandonned) {
       this.quotations = [];
       return;
     }
@@ -106,7 +106,7 @@ export class QuotationsComponent implements OnInit {
     this.setBookmark();
 
     let inputSearchStatus = this.activatedRoute.snapshot.params['statusCode'];
-    if (inputSearchStatus) {
+    if (inputSearchStatus && firstRefresh) {
       this.statusFilterOpen = false;
       this.statusFilterToVerify = false;
       this.statusFilterWaitingConfrere = false;
@@ -122,7 +122,7 @@ export class QuotationsComponent implements OnInit {
       if (inputSearchStatus == QUOTATION_STATUS_OPEN)
         this.statusFilterOpen = true;
       if (inputSearchStatus == QUOTATION_STATUS_REQUIRE_ATTENTION) {
-        this.requiringAttention = false;
+        this.requiringAttention = true;
       }
       if (inputSearchStatus == QUOTATION_WITH_UNREAD_COMMENTS)
         this.withUnreadCommmentsOnQuotations = true;
@@ -190,7 +190,7 @@ export class QuotationsComponent implements OnInit {
     this.currentPage = 0;
     this.quotations = [];
     this.hideSeeMore = false;
-    this.refreshQuotations();
+    this.refreshQuotations(false);
   }
 
   changeSort(sorter: string) {
@@ -198,12 +198,12 @@ export class QuotationsComponent implements OnInit {
     this.quotations = [];
     this.currentSort = sorter;
     this.hideSeeMore = false;
-    this.refreshQuotations();
+    this.refreshQuotations(false);
   }
 
   loadMore() {
     this.currentPage++;
-    this.refreshQuotations();
+    this.refreshQuotations(false);
   }
 
   loadQuotationDetails(quotation: Quotation) {
@@ -239,7 +239,7 @@ export class QuotationsComponent implements OnInit {
         this.quotationToCancel = undefined;
         this.currentPage = 0;
         this.quotations = [];
-        this.refreshQuotations();
+        this.refreshQuotations(false);
       });
     }
   }

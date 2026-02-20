@@ -13,6 +13,7 @@ import { LoginService } from '../../../profile/services/login.service';
 import { ResponsableService } from '../../../profile/services/responsable.service';
 import { DashboardUserStatistics } from '../../../quotation/model/DashboardUserStatistics';
 import { DashboardUserStatisticsService } from '../../../quotation/services/dashboard.user.statistics.service';
+import { QuotationService } from '../../services/quotation.service';
 
 @Component({
   selector: 'overview',
@@ -49,18 +50,24 @@ export class OverviewComponent implements OnInit {
     public modalService: NgbModal,
     private responsableService: ResponsableService,
     private googleAnalyticsService: GoogleAnalyticsService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private quotationService: QuotationService
   ) { }
 
   capitalizeName = capitalizeName;
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
+      let currentQuotationRoute = this.quotationService.getCurrentDraftQuotationStep();
       // I'm coming to login in, ok
       if (params["aToken"] && params["userId"]) {
-        this.loginService.logUser(parseInt(params["userId"]), params["aToken"]).subscribe(response => {
+        this.loginService.logUser(parseInt(params["userId"]), params["aToken"], params["isFromQuotation"] == "true").subscribe(response => {
           this.googleAnalyticsService.trackLoginLogout("login", "sign-in", "my-account").subscribe();
-          this.appService.openRoute(null, "account/overview", undefined);
+          if (params["isFromQuotation"] == "true") {
+            this.appService.openRoute(null, currentQuotationRoute ? currentQuotationRoute : "quotation", undefined);
+          } else {
+            this.appService.openRoute(null, "account/overview", undefined);
+          }
         });
       }
     });

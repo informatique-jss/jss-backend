@@ -49,6 +49,8 @@ import jakarta.persistence.Transient;
 @Table(indexes = { @Index(name = "idx_customer_order_status", columnList = "id_customer_order_status"),
 		@Index(name = "idx_customer_order_responsable", columnList = "id_responsable"),
 		@Index(name = "idx_customer_order_assigned_to", columnList = "id_assigned_to"),
+		@Index(name = "idx_customer_order_invoicing_by", columnList = "id_invoicing_employee"),
+		@Index(name = "idx_customer_order_ordering_by", columnList = "id_ordering_employee"),
 		@Index(name = "idx_customer_order_parent_recurring", columnList = "id_customer_order_parent_recurring"),
 		@Index(name = "idx_customer_order_tiers", columnList = "id_tiers") })
 public class CustomerOrder implements IQuotation, ICreatedDate {
@@ -91,7 +93,7 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	private Integer validationId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_responsable", nullable = false)
+	@JoinColumn(name = "id_responsable")
 	@IndexedField
 	@JsonIgnoreProperties(value = { "attachments" }, allowSetters = true)
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,

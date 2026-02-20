@@ -209,12 +209,11 @@ public class QuotationFacade {
         for (CustomerOrderComment comment : comments) {
             if (setReadByCustomer && !Boolean.TRUE.equals(comment.getIsReadByCustomer())) {
                 comment.setIsReadByCustomer(true);
-                customerOrderCommentService.addOrUpdateCustomerOrderComment(comment);
             }
             if (setReadByEmployee && !Boolean.TRUE.equals(comment.getIsRead())) {
                 comment.setIsRead(true);
-                customerOrderCommentService.addOrUpdateCustomerOrderComment(comment);
             }
+            customerOrderCommentService.addOrUpdateCustomerOrderComment(comment);
         }
     }
 
@@ -264,7 +263,7 @@ public class QuotationFacade {
         Quotation quotation = quotationService.getQuotation(quotationId);
 
         return customerOrderCommentService.createCustomerOrderComment(customerOrder, quotation, customerOrderComment,
-                !isFromCustomer, true);
+                isFromCustomer, true);
 
     }
 

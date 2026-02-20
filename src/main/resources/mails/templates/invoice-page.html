@@ -276,19 +276,30 @@
             </td>
         </tr>
         <tr th:if="${payments.size()>0}" th:each="payment : ${payments}">
-            <td>
+            <td style="border-top: solid; border-color: rgb(0,83,159)">
                 Acompte <span th:text="${payment.label}"></span> (<span
                     th:text="${#numbers.formatDecimal(payment.originPaymentAmount,1,2)}"></span> €)
             </td>
-            <td class="td-with-price" style="text-align: right;white-space: nowrap;">
+            <td class="td-with-price"
+                style="text-align: right;white-space: nowrap;border-top: solid; border-color: rgb(0,83,159)">
                 - <span th:text="${#numbers.formatDecimal(payment.paymentAmount,1,2)}"></span>
                 €
             </td>
         </tr>
+        <tr th:if="${refunds.size()>0}" th:each="refund : ${refunds}">
+            <td style="border-top: solid; border-color: rgb(0,83,159)">
+                <strong><span th:text="${refund.label}"></span></strong>
+            </td>
+            <td class="td-with-price"
+                style="text-align: right;white-space: nowrap;border-top: solid; border-color: rgb(0,83,159)">
+                <strong>- <span th:text="${#numbers.formatDecimal(refund.refundAmount,1,2)}"></span>
+                    €</strong>
+            </td>
+        </tr>
         <tr th:if="(${invoice.isCreditNote==null} or ${invoice.isCreditNote==false})">
             <td style="border-top: solid; border-color: rgb(0,83,159)">
-                <span th:if="${remainingToPay!=null} and ${remainingToPay>0 }">Restant dû</span><span
-                    th:if="${remainingToPay==null} or ${remainingToPay==0 }">Solde en votre faveur</span>
+                <span th:if="${remainingToPay!=null} and ${remainingToPay>=0 }">Restant dû</span><span
+                    th:if="${remainingToPay==null}">Solde en votre faveur</span>
             </td>
             <td class="td-with-price"
                 style="text-align: right;white-space: nowrap;border-top: solid; border-color: rgb(0,83,159)">
@@ -297,15 +308,7 @@
                     €</strong>
             </td>
         </tr>
-        <tr th:if="${refunds.size()>0}" th:each="refund : ${refunds}">
-            <td>
-                <strong><span th:text="${refund.label}"></span></strong>
-            </td>
-            <td class="td-with-price" style="text-align: right;white-space: nowrap;">
-                <strong>- <span th:text="${#numbers.formatDecimal(refund.refundAmount,1,2)}"></span>
-                    €</strong>
-            </td>
-        </tr>
+
     </table>
     <p style="font-size: 12px;" th:if="${!isPrelevementType}"><strong>Echéance de paiement : <span
                 th:text="${invoiceDueDate}"></span></strong></p>
@@ -317,192 +320,6 @@
         TVA acquittée sur les débits</p>
     <p style="font-size: 12px;">Les règlements par chèque ne sont plus acceptés et peuvent se faire par carte bleue ou
         virement</p>
-    <div class="page-break">
-        <table style="width:690px">
-            <tr>
-                <td style="font-size: 20px;text-align: center;font-weight: bolder;">CONDITIONS GENERALES DE VENTE
-                </td>
-            </tr>
-        </table>
-        <table style="padding-left: 20px; padding-right:20px;width:690px;text-align: center;font-weight: bold;">
-            <tr>
-                <td>Toute commande passée avec notre Société implique l’acceptation pure et simple des présentes
-                    conditions générales.
-                    Toutes les dispositions contraires sont nulles. </td>
-            </tr>
-        </table>
-        <table style="width:690px;">
-            <tr>
-                <td class="cgv">
-                    <h4>ACCEPTATION</h4>
-                    <p>Tout ordre d’insertion, de formalité ou de prestations annexes doit être accompagné d’un bon de
-                        commande précis. Aucun ordre n’est accepté par téléphone.
-                        Tout ordre devra, mentionner clairement le nom, l’adresse et le mail du donneur d’ordre, de
-                        l’affaire,
-                        la prestation demandée, le libellé de la facture, l’adresse de facturation, la référence de
-                        commande
-                        ou du devis si établi. Toute particularité doit être spécifiée pour le bon traitement de la
-                        commande.
-                        Les annulations, les suspensions ou modifications ne sont reconnues comme telles que dans la
-                        mesure où elles sont faites par écrit sous réserve du respect des délais prévus par les supports
-                        et
-                        fournisseurs pour la remise des documents ou des dates limites d’annulation. Faute de respect de
-                        ces dispositions, les travaux et démarches engagées seront facturés. </p>
-                    <h4>CONDITIONS DE REALISATION DES COMMANDES</h4>
-                    <p><u>Annonces légales</u> : Les annonces légales paraissent sous la responsabilité de
-                        l’annonceur, dans le
-                        cas où un texte destiné à être publié serait rédigé partiellement ou totalement par lui. Le
-                        Journal décline toute responsabilité quant aux erreurs qui apparaîtraient lors de la
-                        publication,
-                        n’ayant pas la possibilité de le contrôler par rapport à l’acte correspondant.
-                        Le service des annonces se réserve le droit d’apporter certaines modifications ou corrections
-                        aux projets d’insertions rédigés par le donneur d’ordre afin de se conformer aux exigences
-                        légales
-                        en vigueur. L’Annonceur s’interdit expressément de diffuser des Publicités ayant un caractère
-                        illicite,
-                        contraires à l’ordre public, aux bonnes mœurs. L’Annonceur garantit en outre que les Publicités
-                        ne sont pas
-                        diffamatoires, obscènes, haineuses, pornographiques ou blasphématoires, ou tout autre message
-                        qui pourrait constituer un crime ou un délit et ne portent pas atteinte aux droits des tiers.
-                        A ce titre, l’Annonceur garantit donc l’Editeur contre tout dommage, condamnation, frais ou
-                        coûts relatifs à toute demande, action et/ou réclamation formulée à son encontre et fondée sur
-                        l’atteinte par l’Annonceur à un quelconque droit d’un tiers.
-                        L’Editeur peut, à tout moment, refuser de diffuser ou interrompre toute diffusion d’une
-                        Publicité contraire à cette interdiction, et plus généralement en cas de Publicité qui ne
-                        correspondrait
-                        pas à la ligne éditoriale des Supports ou qui serait contraire aux intérêts matériels ou moraux
-                        de
-                        l’Editeur, sans que l’Annonceur et/ou son Mandataire ne puisse prétendre à aucune
-                        indemnité.<br />
-                        <u>Formalités</u> : Les documents et déclarations transmis par le donneur d’ordre au
-                        service des
-                        formalités sont présentés comme tels sous la responsabilité du donneur d’ordre. Dans le cas où
-                        un document
-                        destiné à être déposé ou présenté au Registre du Commerce, Centre de Formalité des Entreprises,
-                        Répertoire des Métiers, I.N.P.I, Trésor Public, I.N.S.E.E, Préfectures, Traducteurs, Huissiers
-                        de Justice, Consulats ou Ambassades ou tout autre organisme, serait rédigé partiellement ou
-                        totalement par le donneur d’ordre, le Journal Spécial des Sociétés décline toute responsabilité
-                        quant aux erreurs, qui apparaîtraient lors de la retranscription de ces documents par les
-                        organismes
-                        susvisés. Un pouvoir dûment rempli et signé au profit du Journal Spécial des Sociétés doit
-                        accompagner les
-                        demandes de formalités.
-                        Le service des formalités se réserve le droit d’apporter certaines recommandations quant aux
-                        documents rédigés par le donneur d’ordre, cela afin de se conformer aux exigences légales en
-                        vigueur. <br />
-                        <u>Formations</u> : Les frais de participation comprennent : la formation et les documents
-                        pédagogiques. Toute annulation qui ne sera pas effectuée 7 jours au moins avant la date de la
-                        formation ne
-                        pourra donner lieu au remboursement. La Direction se réserve quant à elle le droit d’annuler la
-                        formation faute d’un nombre suffisant de participants. <br />
-                        <u>Abonnement</u> :
-                        Les abonnements souscrits à nos publications sont à leur échéance reconduits tacitement.
-                        Néanmoins, l’abonné peut y mettre un terme par mail : <a
-                            href="mailto:contact@jss.fr">contact@jss.fr</a> <br />
-                        <u>Domiciliation</u> :
-                        Il convient de se reporter au contrat de domiciliation signé.
-                        Le Journal Spécial des Sociétés est libéré de l’obligation d’exécution des commandes de clients
-                        pour tous cas fortuits ou de force majeure (grèves totales, partielles, inondations, incendies,
-                        pandémies etc…).
-                    </p>
-                    <h4>DOCUMENTS FOURNIS</h4>
-                    <p>
-                        <u>Insertions et formalités</u> :
-                        Les délais relatifs aux démarches mentionnés sur les devis et bons de commande ne sont donnés
-                        qu’à titre indicatif. Ils ne deviennent effectifs qu’à la réception de tous les éléments
-                        constitutifs de la demande. Les éléments et fichiers (moins de 5MO) devront être de qualité
-                        suffisante et être
-                        conformes aux spécifications techniques du service des Insertions et des Formalités.
-                        Le JSS n’est pas responsable des accidents ou pertes survenus aux documents, formulaires ou tous
-                        autres actes transmis, en dehors du Journal Spécial des Sociétés.
-                    </p>
-
-                </td>
-                <td class="cgv" style="padding-left: 10px;">
-                    <p style="margin-top:10px;">L’annonce publiée est justifiée soit par l’envoi du Journal publicateur,
-                        d’une attestation de
-                        parution ou d’un témoin de publication. L’accomplissement des formalités est justifié soit par
-                        l’envoi de
-                        K-bis à jour, certificat de dépôt, de récépissé, synthèse ou toute autre attestation délivrée
-                        par les
-                        organismes mentionnés ci-dessus.
-                        Tout retard dans l’envoi des justificatifs ne saurait conduire au non-règlement ou au décalage
-                        du règlement.</p>
-                    <h4>CONDITIONS DE FACTURATION</h4>
-                    <p>Les factures sont émises au nom du donneur d’ordre, ou à l’affaire, ou à une tierce entité à
-                        préciser lors de la commande.
-                        Le prix de la publication d’une annonce légale est fixé par décret ministériel annuellement
-                        selon soit un prix forfaitaire par type de forme et d’évènement, soit au nombre de caractères
-                        publiées de
-                        filet à filet. Les prix appliqués sont ceux fixés au jour de la parution de l’annonce.
-                        La formalité est facturée sur la base des tarifs JSS en vigueur et mis à jour chaque année et
-                        sur la base des conditions tarifaires propres à chaque valideur en vigueur.
-                        Les prix annoncés, notamment au travers de devis, sont estimatifs jusqu’à l’émission de la
-                        facture définitive, le JSS ne pouvant présumer des aléas de facturation liés au traitement de
-                        formalités
-                        par les différentes autorités compétentes sollicitées pour l’exécution d’une commande. </p>
-                    <h4>CONDITIONS DE REGLEMENT</h4>
-                    <p>En fonction des accords commerciaux, les factures sont payables par acompte, à réception ou dans
-                        un délai de 30 jours, conformément à l’article L.441-10 C.Com.
-                        Suivant l’importance ou la nature du travail à exécuter comme une dissolution/liquidation un
-                        acompte sera réclamé au moment de la commande. Cet acompte sera déduit de la facture. Un solde
-                        créditeur
-                        sera alors remboursé par virement ou un solde débiteur sera à régler dans un délai de 30 jours.
-                        Les chèques ne sont plus admis.
-                        Tout règlement par virement ou CB depuis l’étranger générant des frais bancaires à notre
-                        encontre, entraînera une facturation complémentaire pour frais d’encaissement.
-                        Les frais d’oppositions sur chèques perdus sont à la charge du client ou de l’affaire. .</p>
-                    <p>
-                        Tout règlement par virement ou CB depuis l’étranger générant des frais bancaires à notre
-                        encontre, entraînera une facturation complémentaire pour frais d’encaissement.</p>
-                    <p>
-                        Les frais d’oppositions sur chèques perdus sont à la charge du client ou de l’affaire.</p>
-                    <h4>RETARD DE REGLEMENT</h4>
-                    <p>Le délai pour régler les sommes dues ne peut dépasser quarante-cinq jours à compter de la date
-                        d'émission de la facture
-                        En cas de retard de paiement, le JSS se réserve le droit de suspendre l’exécution des ordres en
-                        cours. Les sommes facturées qui n’ont pas été payées à l’échéance prévue portent de plein droit
-                        intérêt au taux légal. Les frais de recouvrement étant à la charge du débiteur.
-                        Tout retard dans le paiement du prix entraînera l’envoi d’une lettre simple. Si cette lettre
-                        n’était pas
-                        suivie d’effet, dans les 20 jours de son envoi, le client recevrait une lettre recommandée avec
-                        A.R
-                        valant mise en demeure. Sept jours à compter de l’émission de cette lettre, le client sera
-                        redevable
-                        du prix de la facture majorée de 3 fois le taux d’intérêt légal, le JSS pourra alors prendre
-                        toutes les
-                        mesures nécessaires afin de se faire payer et notamment engager la responsabilité contractuelle
-                        du
-                        donneur d’ordre. En cas de défaillance d’un intermédiaire titulaire d’un mandat de paiement
-                        et/ou
-                        d’un engagement de paiement, le donneur d’ordre s’engage en dernier ressort à régler la créance
-                        impayée, car il est considéré légalement comme le débiteur, conformément à l’art. 1998 du Code
-                        civil.
-                        Nos conditions particulières sont disponibles sur simple demande. </p>
-                    <h4>RECLAMATION</h4>
-                    <p>Toute réclamation à l’exécution d’un ordre de publication doit être portée à notre connaissance 7
-                        jours francs après la date d’envoi des journaux.
-                        Toute correction à un ordre de formalité doit être portée à notre connaissance 7 jours francs
-                        après
-                        la date d’envoi des documents.
-                        La demande devra être accompagnée d’un justificatif. Selon la cause, l’ordre pourra faire
-                        l’objet
-                        d’une facturation.
-                        Toute réclamation sur les éléments de la facture doit être portée à notre connaissance
-                        (<a href="mailto:contact@jss.fr">contact@jss.fr</a>) dans un délai maximum de 7 jours francs à
-                        compter
-                        de sa réception. </p>
-                    <h4>ELECTION DU DOMICILE DE JURIDICTION</h4>
-                    <p>L’élection de domicile est faite à l’adresse indiquée en tête de nos factures.
-                        En cas de contestation relative à l’exécution du contrat de vente ou au paiement du prix, ainsi
-                        qu’en
-                        cas d’interprétation sur l ‘exécution des clauses et conditions sus-indiquées, le Tribunal de
-                        Commerce de PARIS sera seul compétent, même en cas de pluralité des défendeurs.</p>
-                    <p class="date-maj">11/12/2025</p>
-                </td>
-            </tr>
-        </table>
-    </div>
 </body>
 
 </html>

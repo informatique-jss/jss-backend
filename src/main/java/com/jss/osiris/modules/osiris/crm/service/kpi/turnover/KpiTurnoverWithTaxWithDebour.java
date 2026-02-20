@@ -17,6 +17,8 @@ import com.jss.osiris.modules.osiris.crm.model.KpiCrmValue;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmService;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmValueService;
 import com.jss.osiris.modules.osiris.crm.service.kpi.model.WorkingTableTurnover;
+import com.jss.osiris.modules.osiris.profile.model.Employee;
+import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.reporting.model.ReportingWidget;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
@@ -39,6 +41,11 @@ public class KpiTurnoverWithTaxWithDebour implements IKpiThread {
 
     @Autowired
     ResponsableService responsableService;
+
+    @Autowired
+    EmployeeService employeeService;
+
+    private HashMap<Integer, Employee> employeeCache = new HashMap<Integer, Employee>();
 
     @Override
     public String getCode() {
@@ -108,10 +115,10 @@ public class KpiTurnoverWithTaxWithDebour implements IKpiThread {
         TypedQuery<WorkingTableTurnover> q2 = (TypedQuery<WorkingTableTurnover>) entityManager
                 .createNativeQuery(
                         """
-                                select id_responsable as idResponsable , cast (date_trunc('day' ,created_date) as date) as createdDate, sum(turnover_with_tax_with_debour) as turnover
+                                select id_responsable as idResponsable , cast (date_trunc('day' ,created_date) as date) as createdDate, sum(turnover_with_tax_with_debour) as turnover,id_commercial as idCommercial
                                 from reporting_turnover rt
                                 where created_date >=:startDate and created_date < :endDate
-                                group by id_responsable , cast (date_trunc('day' ,created_date) as date)
+                                group by id_responsable , cast (date_trunc('day' ,created_date) as date),id_commercial
                                 """,
                         WorkingTableTurnover.class);
         q2.setParameter("startDate", lastDate);
@@ -132,6 +139,7 @@ public class KpiTurnoverWithTaxWithDebour implements IKpiThread {
                     value.setKpiCrm(kpiCrm);
                     value.setResponsable(responsableCache.get(turnoverValue.getIdResponsable()));
                     value.setValue(turnoverValue.getTurnover());
+                    value.setOverridedSalesEmployee(getEmployee(turnoverValue.getIdCommercial()));
                     value.setValueDate(turnoverValue.getCreatedDate().toLocalDate());
                     newValues.add(value);
                 }
@@ -139,6 +147,16 @@ public class KpiTurnoverWithTaxWithDebour implements IKpiThread {
 
             kpiCrmService.saveValuesForKpiAndDay(kpiCrm, newValues);
         }
+    }
+
+    private Employee getEmployee(Integer idEmployee) {
+        if (idEmployee == null) {
+            return null;
+        }
+        if (employeeCache.get(idEmployee) == null) {
+            employeeCache.put(idEmployee, employeeService.getEmployee(idEmployee));
+        }
+        return employeeCache.get(idEmployee);
     }
 
     @Override

@@ -385,6 +385,13 @@ public class PostServiceImpl implements PostService {
                     .replace("srcset=\"" + wordpressMediaBaseUrl, "srcset=\"" + apacheMediaBaseUrl)
                     .replace(" " + wordpressMediaBaseUrl, " " + apacheMediaBaseUrl);
 
+            // always center picture horizontally
+            if (Pattern.compile("class\\s*=\\s*\"", Pattern.CASE_INSENSITIVE).matcher(updatedImgTag).find()) {
+                updatedImgTag = updatedImgTag.replaceFirst("(?i)class\\s*=\\s*\"", "class=\"d-block mx-auto ");
+            } else {
+                updatedImgTag = updatedImgTag.replaceFirst("(?i)<img\\s+", "<img class=\"d-block mx-auto\" ");
+            }
+
             imgMatcher.appendReplacement(sb, Matcher.quoteReplacement(updatedImgTag));
         }
         imgMatcher.appendTail(sb);
@@ -804,6 +811,26 @@ public class PostServiceImpl implements PostService {
             }
         }
         return postRepository.findByPostCategoriesAndIsCancelled(category, false, pageableRequest);
+    }
+
+    @Override
+    public Page<Post> searchPostsByCategoryAndMyJssCategory(String searchText, Category category,
+            MyJssCategory myJssCategory, Pageable pageableRequest) {
+        if (searchText != null && searchText.trim().length() > 0) {
+            List<IndexEntity> tmpEntitiesFound = null;
+            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
+            if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
+                return searchPostAgainstEntitiesToMatch(searchText,
+                        postRepository.findByPostCategoriesAndMyJssCategoriesAndIsCancelled(
+                                category != null ? category.getId() : null,
+                                myJssCategory != null ? myJssCategory.getId() : null,
+                                false, pageableRequest));
+            }
+        }
+        return postRepository.findByPostCategoriesAndMyJssCategoriesAndIsCancelled(
+                category != null ? category.getId() : null,
+                myJssCategory != null ? myJssCategory.getId() : null,
+                false, pageableRequest);
     }
 
     @Override

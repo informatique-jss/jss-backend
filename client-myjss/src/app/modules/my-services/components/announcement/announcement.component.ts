@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
+import { getRawTextFromHtml } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
 import { ConstantService } from '../../../main/services/constant.service';
@@ -29,6 +30,8 @@ export class AnnouncementComponent implements OnInit {
   serviceFamilyGroupAnnouncement: ServiceFamilyGroup | undefined;
   quotationTypeOrder: QuotationType = QUOTATION_TYPE_ORDER;
   quotationTypeQuotation: QuotationType = QUOTATION_TYPE_QUOTATION;
+
+  getRawTextFromHtml = getRawTextFromHtml;
 
   constructor(private appService: AppService,
     private constantService: ConstantService,
