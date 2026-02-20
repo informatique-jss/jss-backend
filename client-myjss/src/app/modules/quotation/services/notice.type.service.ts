@@ -15,4 +15,5 @@ export class NoticeTypeService extends AppRestService<NoticeType> {
   getNoticeTypes() {
     return this.getListCached(new HttpParams(), "notice-types");
   }
+
 }

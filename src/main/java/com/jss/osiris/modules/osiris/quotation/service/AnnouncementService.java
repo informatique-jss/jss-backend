@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
@@ -107,5 +108,7 @@ public interface AnnouncementService {
         public List<Announcement> getLastSevenDaysAnnouncements() throws OsirisException;
 
         public List<Announcement> getAllAnnouncementsForWebsite() throws OsirisException;
+
+        public String getNoticeFromFile(MultipartFile file) throws OsirisException;
 
 }
