@@ -7,7 +7,7 @@ import { Observable, Subscription } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { MY_JSS_SIGN_IN_ROUTE } from '../../../libs/Constants';
 import { validateEmail } from '../../../libs/CustomFormsValidatorsHelper';
-import { getTimeReading } from '../../../libs/FormatHelper';
+import { getRawTextFromHtml, getTimeReading } from '../../../libs/FormatHelper';
 import { LiteralDateTimePipe } from '../../../libs/LiteralDateTimePipe';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { TrustHtmlPipe } from '../../../libs/TrustHtmlPipe';
