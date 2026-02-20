@@ -11,8 +11,6 @@ public interface SerieRepository extends QueryCacheCrudRepository<Serie, Integer
 
     Serie findBySlug(String slug);
 
-    Page<Serie> findAll(Pageable pageableRequest);
-
     @Query("SELECT s FROM Post p " +
             "JOIN p.postSerie s " +
             "WHERE p.date = (SELECT MAX(p2.date) FROM Post p2 JOIN p2.postSerie s2 WHERE s2.id = s.id) " +
