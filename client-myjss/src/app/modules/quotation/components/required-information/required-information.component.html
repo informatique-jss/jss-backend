@@ -9,7 +9,8 @@
       <!-- Show card with ngFor -->
       <div *ngFor="let asso of quotation.assoAffaireOrders;let indexAsso = index" class="col-12 col-sm-6 col-lg-4 my-2">
         <div class="white-card card rounded-1 d-flex flex-column h-100 p-4 " *ngIf="asso.affaire"
-          [ngClass]="{'selected': selectedAssoIndex == indexAsso}" (click)="selectCard(indexAsso, $event)">
+          [ngClass]="{'selected': selectedAssoIndex == indexAsso, 'border-tertiary border-2': selectedAssoIndex != indexAsso}"
+          (click)="selectCard(indexAsso, $event)">
           <div class="row d-flex flex-row align-items-center">
             <i class="ai-briefcase col-1"></i>
             <h6 class="col m-0"> {{asso.affaire.siret?(asso.affaire.siret + ' - '):''}}{{
