@@ -33,7 +33,9 @@
             [collapsed]="currentUser!=undefined && (getBillingDocument()==null || !getBillingDocument()!.isCommandNumberMandatory && !isExtRefMandatory )">
             <h6 ngbAccordionHeader>
               <button ngbAccordionButton class="card-header"><i class="ai-note me-2"></i> Renseignements
-                administratifs</button>
+                administratifs <osi-tooltip *ngIf="currentUser"
+                  tootltipCodeToDisplay="MYJSS_QUOTATION_CHECKOUT_DEFAULT_PARAMS" class="ms-2"></osi-tooltip></button>
+
             </h6>
             <div ngbAccordionCollapse>
               <ng-container *ngFor="let doc of quotation.documents">
@@ -75,7 +77,8 @@
           <div ngbAccordionItem class="card mb-4" [collapsed]="currentUser!=undefined">
             <h6 ngbAccordionHeader>
               <button ngbAccordionButton class="card-header"><i class="ai-note me-2"></i> Libellé de facturation et
-                adressage</button>
+                adressage<osi-tooltip *ngIf="currentUser"
+                  tootltipCodeToDisplay="MYJSS_QUOTATION_CHECKOUT_DEFAULT_PARAMS" class="ms-2"></osi-tooltip></button>
             </h6>
             <div ngbAccordionCollapse>
               <div ngbAccordionBody class="card-body pt-2">
@@ -164,11 +167,13 @@
       <div ngbAccordionCollapse>
         <div ngbAccordionBody class="card-body pt-2">
           <ng-template>
-            <div class="mb-3">
-              <generic-toggle [(model)]="isNotIndividualTiers" label="Vous représentez une entreprise ?"
-                [isMandatory]="false" [form]="documentForm" propertyName="isIndividual"
-                (onToggleChange)="toggleTiersIndividual()">
+            <div class="row mb-3 align-items-center">
+              <generic-toggle class="col-auto" [(model)]="isNotIndividualTiers"
+                label="Vous représentez une entreprise ?" [isMandatory]="false" [form]="documentForm"
+                propertyName="isIndividual" (onToggleChange)="toggleTiersIndividual()">
               </generic-toggle>
+              <osi-tooltip tootltipCodeToDisplay="MYJSS_QUOTATION_CHECKOUT_PARTICULAR_CUSTOMER"
+                class="col-auto mb-1"></osi-tooltip>
             </div>
             <ng-container *ngIf="!quotation.responsable.tiers.isIndividual">
               <div class="mb-3">

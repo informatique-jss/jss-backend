@@ -25,14 +25,14 @@
           <tr>
             <td>
               <generic-input [(model)]="selectedEntity.code" label="Codification" [form]="entityForm"
-                propertyName="code" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="20"></generic-input>
+                propertyName="code" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="60"></generic-input>
             </td>
           </tr>
           <tr>
             <td>
               <generic-input [(model)]="selectedEntity.label" label="Texte de description du tooltip"
                 [form]="entityForm" propertyName="label" [isMandatory]="true" [isDisabled]="!editMode"
-                [maxLength]="100"></generic-input>
+                [maxLength]="300"></generic-input>
             </td>
           </tr>
           <tr>

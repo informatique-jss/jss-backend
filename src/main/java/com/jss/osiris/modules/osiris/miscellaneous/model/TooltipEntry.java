@@ -17,11 +17,13 @@ public class TooltipEntry implements Serializable, IId {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tooltip_entry_sequence")
 	private Integer id;
 
-	@Column(nullable = false)
+	@Column(nullable = false, length = 300)
 	private String label;
 
+	@Column(nullable = false, length = 60)
 	private String code;
 
+	@Column(nullable = false)
 	private Boolean isVisible;
 
 	public Integer getId() {

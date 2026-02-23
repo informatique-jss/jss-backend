@@ -4,9 +4,9 @@
 
     <h2>{{selectedTab?.label?.substring(2)}}</h2>
 
-    <div class="d-flex justify-content-between align-items-center flex-wrap">
+    <div class="d-flex justify-content-between align-items-center row pb-3">
       <!-- Nav tabs -->
-      <ul class="nav nav-tabs align-items-center d-flex flex-wrap mb-2" role="tablist">
+      <ul class="col-auto nav nav-tabs align-items-center mb-0" role="tablist">
         <li class="nav-item d-flex align-items-center rounded-4" *ngFor="let item of myJssQuotationItems;">
           <i class="ai-chevron-right quotation-nav-link me-2 fs-5" *ngIf="item!=myJssQuotationItems[0]"></i>
           <a class="quotation-nav-link nav-link rounded-1 " [class.active]="item == selectedTab"
@@ -16,7 +16,10 @@
         </li>
       </ul>
 
-      <div class="btn btn-outline-secondary mb-2" (click)="cleanStorageData()">Effacer</div>
+      <div class="col-auto d-flex align-items-center">
+        <osi-tooltip tootltipCodeToDisplay="MYJSS_QUOTATION_GENERAL_CANCEL" class="me-2"></osi-tooltip>
+        <div class="btn btn-outline-secondary" (click)="cleanStorageData()">Effacer</div>
+      </div>
     </div>
   </div>
 </section>

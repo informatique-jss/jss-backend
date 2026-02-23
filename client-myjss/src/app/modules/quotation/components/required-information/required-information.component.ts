@@ -30,6 +30,7 @@ import { SelectMultipleNoticeTypeComponent } from '../../../miscellaneous/compon
 import { SelectNoticeTypeFamilyComponent } from '../../../miscellaneous/components/forms/select-notice-type-family/select-notice-type-family.component';
 import { SelectStringComponent } from '../../../miscellaneous/components/forms/select-string/select-string.component';
 import { SelectValueServiceFieldTypeComponent } from '../../../miscellaneous/components/forms/select-value-service-field-type/select-value-service-field-type.component';
+import { OsiTooltipComponent } from "../../../miscellaneous/components/osi-tooltip/osi-tooltip.component";
 import { Affaire } from '../../../my-account/model/Affaire';
 import { Announcement } from '../../../my-account/model/Announcement';
 import { AssoServiceDocument } from '../../../my-account/model/AssoServiceDocument';
@@ -94,7 +95,7 @@ import { QuotationFileUploaderComponent } from '../quotation-file-uploader/quota
     SelectCivilityComponent,
     CKEditorModule,
     NgbNavModule,
-    NgbTooltipModule]
+    NgbTooltipModule, OsiTooltipComponent]
 })
 export class RequiredInformationComponent implements OnInit {
 
