@@ -190,7 +190,7 @@
                     </ckeditor>
                   </div>
                 </div>
-                <div class="d-flex flex-column flex-md-row flex-sm-wrap align-items-start"
+                <div class="d-flex flex-column flex-md-row flex-sm-wrap align-items-center"
                   *ngIf="!provision.isRedactedByJss && noticeTemplateDescription
                   && noticeTemplateDescription.isUsingTemplate
                   && getPossibleTemplates(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])
@@ -198,14 +198,14 @@
                   <h6 class="w-100 mb-3">
                     <i class="ai-wallet pe-2"></i>Précisez le modèle souhaité :
                   </h6>
-                  <osi-tooltip tootltipCodeToDisplay="MYJSS_QUOTATION_REQUIRED_INFO_MULTI_TEMPLATE"
-                    class="col-auto mb-1"></osi-tooltip>
                   <div
                     *ngFor="let template of getPossibleTemplates(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])"
                     class="btn btn-outline-secondary m-1 w-100 w-sm-auto btn-wrap btn-service-family"
                     [class.active]="noticeTemplateDescription && noticeTemplateDescription.selectedTemplate &&  noticeTemplateDescription.selectedTemplate.id == template.id"
                     (click)="changeIsShowNoticeTemplate(true, provision.isRedactedByJss, true, template ,quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])">
                     {{template.label}}</div>
+                  <osi-tooltip tootltipCodeToDisplay="MYJSS_QUOTATION_REQUIRED_INFO_MULTI_TEMPLATE"
+                    class="col-auto ms-2"></osi-tooltip>
                 </div>
                 <hr class="border-white" id="option-form-end">
               </div>
