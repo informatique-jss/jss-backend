@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { NgbAccordionModule, NgbDropdownModule, NgbNavModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { filter, forkJoin, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { compareWithId } from '../../../../libs/CompareHelper';
 import { ASSO_SERVICE_DOCUMENT_ENTITY_TYPE, CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, INVOICING_PAYMENT_LIMIT_REFUND_EUROS, SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
@@ -90,6 +91,8 @@ export class OrderDetailsComponent implements OnInit {
   pollingInterval: any;
   isAlreadyScrolledOnceToMessages: boolean = false;
 
+  private destroy$ = new Subject<void>();
+
   constructor(
     private constantService: ConstantService,
     private activatedRoute: ActivatedRoute,
@@ -137,59 +140,75 @@ export class OrderDetailsComponent implements OnInit {
   }
 
   refreshOrder() {
-    this.customerOrderService.getCustomerOrder(this.activatedRoute.snapshot.params['id']).subscribe(response => {
-      this.order = response;
-      this.appService.hideLoadingSpinner();
-      this.loadOrderDetails();
-      if (this.order) {
-        this.customerOrderCommentService.setWatchedOrder(this.order.id);
+    const orderId = this.activatedRoute.snapshot.params['id'];
+
+    this.customerOrderService.getCustomerOrder(orderId).pipe(
+      tap(order => {
+        this.order = order;
+        if (order) {
+          this.customerOrderCommentService.setWatchedOrder(order.id);
+        }
+      }),
+      filter(order => !!order),
+      switchMap(order => {
+        // Execute all order dependencies in parallel
+        return forkJoin({
+          assoAffaires: this.assoAffaireOrderService.getAssoAffaireOrdersForCustomerOrder(order),
+          invoiceLabel: this.invoiceLabelResultService.getInvoiceLabelComputeResultForCustomerOrder(order.id),
+          mailBilling: this.mailComputeResultService.getMailComputeResultForBillingForCustomerOrder(order.id),
+          digitalMail: this.mailComputeResultService.getMailComputeResultForDigitalForCustomerOrder(order),
+          physicalMail: this.invoiceLabelResultService.getPhysicalMailComputeResultForBillingForCustomerOrder(order),
+          payments: this.paymentService.getApplicablePaymentsForCustomerOrder(order),
+          summary: this.invoicingSummaryService.getInvoicingSummaryForCustomerOrder(order.id),
+          initialComments: this.customerOrderCommentService.getCustomerOrderCommentsForCustomer(order.id),
+          user: this.loginService.getCurrentUser(),
+          quotation: this.quotationService.getQuotationForCustomerOrder(order.id)
+        });
+      }),
+      takeUntil(this.destroy$)
+    ).subscribe((res) => {
+      this.ordersAssoAffaireOrders = res.assoAffaires;
+      if (this.ordersAssoAffaireOrders?.length > 0) {
+        this.changeAffaire(this.ordersAssoAffaireOrders[0]);
+        if (this.ordersAssoAffaireOrders[0].services?.length > 0)
+          this.loadServiceDetails(this.ordersAssoAffaireOrders[0].services[0], false);
       }
-    })
+
+      this.orderInvoiceLabelResult = res.invoiceLabel;
+      this.orderMailComputeResult = res.mailBilling;
+      this.digitalMailComputeResult = res.digitalMail;
+      this.orderPhysicalMailComputeResult = res.physicalMail;
+      this.orderPayments = res.payments;
+      this.invoiceSummary = res.summary;
+      this.comments = res.initialComments || [];
+      this.currentUser = res.user;
+
+      if (res.quotation?.id)
+        this.associatedQuotation = res.quotation;
+
+      this.checkDisplayPayButton();
+
+      this.initiateUnreadCommentsPolling();
+    });
   }
 
-  loadOrderDetails() {
-    if (!this.order)
-      return;
+  private checkDisplayPayButton() {
+    this.displayPayButton = false;
 
-    this.assoAffaireOrderService.getAssoAffaireOrdersForCustomerOrder(this.order).subscribe(response => {
-      this.ordersAssoAffaireOrders = response;
-      if (this.ordersAssoAffaireOrders && this.ordersAssoAffaireOrders.length > 0) {
-        this.changeAffaire(this.ordersAssoAffaireOrders[0]);
-        if (this.ordersAssoAffaireOrders[0].services && this.ordersAssoAffaireOrders[0].services.length > 0)
-          this.loadServiceDetails(this.ordersAssoAffaireOrders[0].services[0], false);
-        this.initiateUnreadCommentsPolling();
-      }
-    })
-    this.invoiceLabelResultService.getInvoiceLabelComputeResultForCustomerOrder(this.order.id).subscribe(response => {
-      this.orderInvoiceLabelResult = response;
-    })
-    this.mailComputeResultService.getMailComputeResultForBillingForCustomerOrder(this.order.id).subscribe(response => {
-      this.orderMailComputeResult = response;
-    })
-    this.mailComputeResultService.getMailComputeResultForDigitalForCustomerOrder(this.order).subscribe(response => {
-      this.digitalMailComputeResult = response;
-    })
-    this.invoiceLabelResultService.getPhysicalMailComputeResultForBillingForCustomerOrder(this.order).subscribe(response => {
-      this.orderPhysicalMailComputeResult = response;
-    })
-    this.paymentService.getApplicablePaymentsForCustomerOrder(this.order).subscribe(response => {
-      this.orderPayments = response;
-    })
-    this.invoicingSummaryService.getInvoicingSummaryForCustomerOrder(this.order.id).subscribe(response => {
-      this.invoiceSummary = response;
-      if (this.invoiceSummary.remainingToPay && Math.abs(this.invoiceSummary.remainingToPay) > INVOICING_PAYMENT_LIMIT_REFUND_EUROS && this.order!.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_OPEN)
-        this.displayPayButton = true;
-      if (this.invoiceSummary.remainingToPay && this.order?.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_OPEN && this.order!.servicesList == this.constantService.getServiceTypeUniqueArticleBuy().label)
-        this.displayPayButton = true;
-      if (this.invoiceSummary.remainingToPay && this.order?.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_OPEN && this.order!.servicesList == this.constantService.getServiceTypeKioskNewspaperBuy().label)
-        this.displayPayButton = true;
-    })
-    this.getCustomerOrderComments();
-    this.loginService.getCurrentUser().subscribe(response => this.currentUser = response);
-    this.quotationService.getQuotationForCustomerOrder(this.order.id).subscribe(response => {
-      if (response && response.id)
-        this.associatedQuotation = response;
-    })
+    if (!this.invoiceSummary?.remainingToPay || this.order?.customerOrderStatus.code === CUSTOMER_ORDER_STATUS_OPEN) {
+      return;
+    }
+
+    const remaining = Math.abs(this.invoiceSummary.remainingToPay);
+    const serviceList = this.order?.servicesList;
+
+    const overRefundLimit = remaining > INVOICING_PAYMENT_LIMIT_REFUND_EUROS;
+    const isArticleBuy = serviceList === this.constantService.getServiceTypeUniqueArticleBuy().label;
+    const isKioskBuy = serviceList === this.constantService.getServiceTypeKioskNewspaperBuy().label;
+
+    if (overRefundLimit || isArticleBuy || isKioskBuy) {
+      this.displayPayButton = true;
+    }
   }
 
   initiateUnreadCommentsPolling() {
@@ -318,10 +337,8 @@ export class OrderDetailsComponent implements OnInit {
     if (this.newComment.comment.trim().length > 0 && this.order)
       if (this.newComment && this.newComment.comment.replace(/<(?:.|\n)*?>/gm, ' ').length > 0) {
         this.customerOrderCommentService.addOrUpdateCustomerOrderComment(this.newComment.comment, this.order.id).subscribe(response => {
-          if (response) {
+          if (response)
             this.comments.push(response);
-            this.scrollToLastMessage();
-          }
           this.newComment.comment = '';
         })
       }
@@ -332,7 +349,7 @@ export class OrderDetailsComponent implements OnInit {
     setTimeout(() => {
       const el = document.getElementById('send-message');
       if (el) {
-        el.scrollIntoView({ behavior: behavior, block: 'start' });
+        el.scrollIntoView({ behavior: behavior, block: 'end' });
       }
     }, 200); // Timeout so the DOM is well up to date
   }
@@ -372,6 +389,9 @@ export class OrderDetailsComponent implements OnInit {
   }
 
   ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+
     this.customerOrderCommentService.setWatchedOrder(null);
     clearInterval(this.pollingInterval);
   }
