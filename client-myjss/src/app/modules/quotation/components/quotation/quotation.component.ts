@@ -8,6 +8,7 @@ import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { MenuItem } from '../../../general/model/MenuItem';
 import { AppService } from '../../../main/services/app.service';
 import { PlatformService } from '../../../main/services/platform.service';
+import { OsiTooltipComponent } from "../../../miscellaneous/components/osi-tooltip/osi-tooltip.component";
 import { CustomerOrder } from '../../../my-account/model/CustomerOrder';
 import { Service } from '../../../my-account/model/Service';
 import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
@@ -22,7 +23,7 @@ import { NoticeTemplateComponent } from '../notice-template/notice-template.comp
   templateUrl: './quotation.component.html',
   styleUrls: ['./quotation.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, NoticeTemplateComponent]
+  imports: [SHARED_IMPORTS, NoticeTemplateComponent, OsiTooltipComponent]
 })
 export class QuotationComponent implements OnInit {
   myJssQuotationItems!: MenuItem[];

@@ -18,6 +18,7 @@ import { GenericToggleComponent } from '../../../miscellaneous/components/forms/
 import { SelectBillingLabelTypeComponent } from '../../../miscellaneous/components/forms/select-billing-label-type/select-billing-label-type.component';
 import { SelectCivilityComponent } from '../../../miscellaneous/components/forms/select-civility/select-civility.component';
 import { SelectCountryComponent } from '../../../miscellaneous/components/forms/select-country/select-country.component';
+import { OsiTooltipComponent } from "../../../miscellaneous/components/osi-tooltip/osi-tooltip.component";
 import { BillingLabelType } from '../../../my-account/model/BillingLabelType';
 import { CustomerOrder } from '../../../my-account/model/CustomerOrder';
 import { Document } from '../../../my-account/model/Document';
@@ -52,8 +53,7 @@ import { CityService } from '../../services/city.service';
     SelectBillingLabelTypeComponent,
     NgbDropdownModule,
     NgbNavModule,
-    NgbAccordionModule
-  ]
+    NgbAccordionModule, OsiTooltipComponent]
 })
 export class CheckoutComponent implements OnInit {
 

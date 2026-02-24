@@ -7,6 +7,7 @@ import { AppService } from '../../../main/services/app.service';
 import { GoogleAnalyticsService } from '../../../main/services/googleAnalytics.service';
 import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { GenericToggleComponent } from '../../../miscellaneous/components/forms/generic-toggle/generic-toggle.component';
+import { OsiTooltipComponent } from "../../../miscellaneous/components/osi-tooltip/osi-tooltip.component";
 import { AssoAffaireOrder } from '../../../my-account/model/AssoAffaireOrder';
 import { ServiceType } from '../../../my-account/model/ServiceType';
 import { CustomerOrderService } from '../../../my-account/services/customer.order.service';
@@ -23,7 +24,7 @@ import { ServiceFamilyService } from '../../services/service.family.service';
   templateUrl: './services-selection.component.html',
   styleUrls: ['./services-selection.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, GenericInputComponent, NgbNavModule, GenericToggleComponent]
+  imports: [SHARED_IMPORTS, GenericInputComponent, NgbNavModule, GenericToggleComponent, OsiTooltipComponent]
 })
 export class ServicesSelectionComponent implements OnInit {
 

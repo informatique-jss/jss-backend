@@ -9,6 +9,7 @@ import { validateEmail } from '../../../../libs/CustomFormsValidatorsHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
 import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
+import { OsiTooltipComponent } from "../../../miscellaneous/components/osi-tooltip/osi-tooltip.component";
 import { InvoicingSummary } from '../../model/InvoicingSummary';
 import { MailComputeResult } from '../../model/MailComputeResult';
 import { MyJssImage } from '../../model/MyJssImage';
@@ -21,7 +22,7 @@ import { MyJssImageService } from '../../services/my.jss.image.service';
   templateUrl: './pay-quotation.component.html',
   styleUrls: ['./pay-quotation.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, GenericInputComponent, CopyClipboardDirective, NgbNavModule, NgbTooltip]
+  imports: [SHARED_IMPORTS, GenericInputComponent, CopyClipboardDirective, NgbNavModule, NgbTooltip, OsiTooltipComponent]
 })
 export class PayQuotationComponent implements OnInit {
   idQuotation: number | undefined;

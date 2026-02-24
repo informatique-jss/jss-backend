@@ -104,10 +104,15 @@
                 <h6><i class="ai-grid me-2"></i>Option</h6>
                 <div class="row g-4 align-items-center">
 
-                  <div class="col-12 col-lg-6 form-check form-switch">
-                    <generic-toggle [(model)]="provision.isRedactedByJss" label="Confier la rédaction au JSS"
-                      [form]="informationForm" [propertyName]="'isRedactedByJss'+provision.order" [isDisabled]="false"
-                      (onToggleChange)="changeIsShowNoticeTemplate(false, provision.isRedactedByJss, true, undefined,quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])"></generic-toggle>
+                  <div class="col-12 col-lg-6 form-check form-switch ">
+                    <div class="row align-items-center">
+                      <generic-toggle class="col-auto" [(model)]="provision.isRedactedByJss"
+                        label="Confier la rédaction au JSS" [form]="informationForm"
+                        [propertyName]="'isRedactedByJss'+provision.order" [isDisabled]="false"
+                        (onToggleChange)="changeIsShowNoticeTemplate(false, provision.isRedactedByJss, true, undefined,quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])"></generic-toggle>
+                      <osi-tooltip tootltipCodeToDisplay="MYJSS_QUOTATION_REQUIRED_INFO_WRITE_AL"
+                        class="col-auto mb-1"></osi-tooltip>
+                    </div>
                   </div>
 
                   <div class="col-12 col-lg-6 form-check form-switch mt-0 mt-lg-auto" *ngIf="provision.isRedactedByJss">
@@ -116,13 +121,15 @@
                       [propertyName]="'isProofReadingDocument'+provision.order" [isDisabled]="false"></generic-toggle>
                   </div>
 
-                  <div class="row">
-                    <div [hidden]="!noticeTemplateDescription" class="col-12 col-lg-6 form-check form-switch">
-                      <generic-toggle [(model)]="noticeTemplateDescription!.isUsingTemplate"
+                  <div [hidden]="!noticeTemplateDescription" class="row col-12 col-lg-6 form-check form-switch">
+                    <div class="row align-items-center">
+                      <generic-toggle class="col-auto" [(model)]="noticeTemplateDescription!.isUsingTemplate"
                         label="Utiliser les modèles proposés pour la rédaction" [form]="informationForm"
                         [propertyName]="'isUsingTemplate'+provision.order" [isDisabled]="false"
                         (onToggleChange)="changeIsShowNoticeTemplate($event, provision.isRedactedByJss, noticeTemplateDescription!.isUsingTemplate, undefined,quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])"
                         [isDisabled]="isToggleIsUsingTemplateDisabled(provision, quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])"></generic-toggle>
+                      <osi-tooltip tootltipCodeToDisplay="MYJSS_QUOTATION_REQUIRED_INFO_USE_TEMPLATE"
+                        class="col-auto mb-1"></osi-tooltip>
                     </div>
                   </div>
                   <div class="row" *ngIf="  !provision.isRedactedByJss">
@@ -174,13 +181,17 @@
                   <div
                     *ngIf=" !provision.isRedactedByJss && (!noticeTemplateDescription || !noticeTemplateDescription.isUsingTemplate)"
                     class="col-12 pb-5">
-                    <label for="announcementTextarea" class="form-label">Texte de l'annonce</label>
+                    <div class="row align-items-center justify-content-between">
+                      <label for="announcementTextarea" class="form-label col-auto">Texte de l'annonce</label>
+                      <osi-tooltip tootltipCodeToDisplay="MYJSS_QUOTATION_REQUIRED_INFO_FILL_AL_TXT"
+                        class="col-auto"></osi-tooltip>
+                    </div>
                     <ckeditor id="announcementTextarea" [editor]="ckEditorHeader" [config]="config"
                       (ready)="onEditorReady($event, provision)" (change)="onNoticeChange($event, provision)">
                     </ckeditor>
                   </div>
                 </div>
-                <div class="d-flex flex-column flex-md-row flex-sm-wrap align-items-start"
+                <div class="d-flex flex-column flex-md-row flex-sm-wrap align-items-center"
                   *ngIf="!provision.isRedactedByJss && noticeTemplateDescription
                   && noticeTemplateDescription.isUsingTemplate
                   && getPossibleTemplates(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])
@@ -194,6 +205,8 @@
                     [class.active]="noticeTemplateDescription && noticeTemplateDescription.selectedTemplate &&  noticeTemplateDescription.selectedTemplate.id == template.id"
                     (click)="changeIsShowNoticeTemplate(true, provision.isRedactedByJss, true, template ,quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])">
                     {{template.label}}</div>
+                  <osi-tooltip tootltipCodeToDisplay="MYJSS_QUOTATION_REQUIRED_INFO_MULTI_TEMPLATE"
+                    class="col-auto ms-2"></osi-tooltip>
                 </div>
                 <hr class="border-white" id="option-form-end">
               </div>
@@ -894,18 +907,22 @@
             </ng-template>
           </li-->
         </ng-container>
-        <li
+        <li class="row"
           [ngbNavItem]="getIndexForProvision(-1, quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].provisions)"
           *ngIf="currentUser && (quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes ||
           quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments)">
-          <button ngbNavLink>Pièces justificatives à déposer
+          <button class="col-auto" ngbNavLink>Pièces justificatives à déposer
           </button>
+          <osi-tooltip tootltipCodeToDisplay="MYJSS_QUOTATION_REQUIRED_INFO_ADD_FILES"
+            class="col-auto me-5"></osi-tooltip>
           <ng-template ngbNavContent>
             <div
               *ngIf="currentUser && hasMandatoryDocuments(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments)"
               class="quotation-container mb-4">
               <h6 class="mb-3 d-flex align-items-center">
                 <i class="ai-paperclip pe-2"></i> Pièces obligatoires
+                <!-- TODO : DELETE after AMOA validation : <osi-tooltip
+                  tootltipCodeToDisplay="MYJSS_QUOTATION_REQUIRED_INFO_ADD_FILES" class="ms-3"></osi-tooltip> -->
               </h6>
               <div class="mb-3"
                 *ngFor="let assoServiceDocument of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments; let i = index">
@@ -933,10 +950,12 @@
             </div>
           </ng-template>
         </li>
-        <li [ngbNavItem]="50" *ngIf="(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes ||
+        <li class="row" [ngbNavItem]="50" *ngIf="(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes ||
           quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments)">
-          <button ngbNavLink>Informations complémentaires
+          <button class="col-auto" ngbNavLink>Informations complémentaires
           </button>
+          <osi-tooltip tootltipCodeToDisplay="MYJSS_QUOTATION_REQUIRED_INFO_ADDITIONAL_INFO"
+            class="col-auto me-5"></osi-tooltip>
           <ng-template ngbNavContent>
             <div class="quotation-container">
               <h6><i class="ai-circle-info me-2"></i>Information</h6>
@@ -1023,12 +1042,16 @@
 
   <div
     class="position-fixed bottom-0 start-0 w-100 bg-light shadow-sm p-3 m-0 d-flex justify-content-between align-items-center z-1030">
-    <button type="button" class="btn btn-secondary rounded-1 mx-0 mx-sm-5 d-flex align-items-center"
-      (click)="moveToService((selectedServiceIndex-1), selectedAssoIndex)"
-      *ngIf="selectedServiceIndex!=null && selectedAssoIndex!=null">
-      <i class="ai-arrow-left d-none d-sm-inline"></i>
-      <span class="ms-2 ms-lg-2">Étape précédente </span>
-    </button>
+    <div class="row align-items-center">
+      <button type="button" class="col-auto btn btn-secondary rounded-1 mx-0 ms-sm-5 d-flex align-items-center"
+        (click)="moveToService((selectedServiceIndex-1), selectedAssoIndex)"
+        *ngIf="selectedServiceIndex!=null && selectedAssoIndex!=null">
+        <i class="ai-arrow-left d-none d-sm-inline"></i>
+        <span class="ms-2 ms-lg-2">Étape précédente </span>
+      </button>
+      <osi-tooltip tootltipCodeToDisplay="MYJSS_QUOTATION_SERV_SELECTION_CANCEL"
+        class="d-none d-md-block col-auto"></osi-tooltip>
+    </div>
 
     <button type="button" class="btn btn-secondary rounded-1  mx-0 mx-sm-5 d-flex align-items-center"
       *ngIf="canSaveQuotation() && selectedServiceIndex!=null && selectedAssoIndex!=null"

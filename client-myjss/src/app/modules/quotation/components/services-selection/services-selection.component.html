@@ -1,8 +1,14 @@
 <div class="container d-flex flex-column min-vh-100 pb-5 mb-5 custom-container">
 
   <section>
-    <p class="sub-title" *ngIf="quotation && quotation.assoAffaireOrders && quotation.assoAffaireOrders.length>0  ">
-      Sélectionnez une affaire</p>
+    <div class="row justify-content-start align-items-center mt-4 ">
+      <p class="sub-title col-auto my-auto"
+        *ngIf="quotation && quotation.assoAffaireOrders && quotation.assoAffaireOrders.length>0  ">
+        Sélectionnez une affaire
+      </p>
+      <osi-tooltip *ngIf="quotation && quotation.assoAffaireOrders && quotation.assoAffaireOrders.length>1"
+        tootltipCodeToDisplay="MYJSS_QUOTATION_SERV_SELECTION_AFFAIRE" class="col-auto"></osi-tooltip>
+    </div>
 
     <div class="w-100" *ngIf="!quotation ">
       <p class="card-text placeholder-glow">
@@ -68,10 +74,12 @@
                 class="{{serviceFamily.myJssIcon}} me-2"></i>{{serviceFamily.customLabel}}</button>
             <ng-template ngbNavContent *ngIf="selectedServiceFamily">
               <div class="quotation-container">
-                <div class="pb-3">
-                  <generic-input [(model)]="searchtext" label="Rechercher" [form]="servicesForm"
+                <div class="pb-3 row">
+                  <generic-input class="col" [(model)]="searchtext" label="Rechercher" [form]="servicesForm"
                     propertyName="servicesSearched" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="false"
                     [icon]="'search'"></generic-input>
+                  <osi-tooltip tootltipCodeToDisplay="MYJSS_QUOTATION_SERV_SELECTION_SERVICES"
+                    class="col-auto"></osi-tooltip>
                 </div>
                 <!-- Stacked checkboxes -->
                 <div class="d-flex flex-column flex-md-row flex-wrap">
@@ -103,6 +111,8 @@
             </ng-template>
           </li>
         </ng-container>
+        <osi-tooltip tootltipCodeToDisplay="MYJSS_QUOTATION_SERV_SELECTION_SERVICE_FAMILY"
+          class="col-auto"></osi-tooltip>
       </ng-container>
     </ul>
     <div [ngbNavOutlet]="nav" class="mt-2"></div>
@@ -131,16 +141,27 @@
 
   <div
     class="position-fixed bottom-0 start-0 w-100 bg-light shadow-sm p-3 m-0 d-flex justify-content-between align-items-center z-1030">
-    <button type="button" class="btn btn-secondary rounded-1 mx-0 mx-sm-5 d-flex align-items-center"
+    <button type="button" class="col-auto btn btn-secondary rounded-1 mx-0 ms-sm-5 d-flex align-items-center"
       (click)="goBackQuotation()">
       <i class="ai-arrow-left d-none d-sm-inline"></i>
       <span class="ms-2 ms-lg-2">Étape précédente </span>
     </button>
 
-    <button type="button" class="btn btn-secondary rounded-1  mx-0 mx-sm-5 d-flex align-items-center"
-      *ngIf="canSaveQuotation()" (click)="saveQuotation()"> <span class="me-2">Étape
-        suivante</span>
-      <i class="ai-arrow-right d-none d-sm-inline"></i>
-    </button>
+
+    <div class="row align-items-center">
+      <osi-tooltip
+        *ngIf="canSaveQuotation() && quotation && quotation.assoAffaireOrders && quotation.assoAffaireOrders.length === 1"
+        tootltipCodeToDisplay="MYJSS_QUOTATION_SERV_SELECTION_NEXT_UNI"
+        class="d-none d-md-block col-auto"></osi-tooltip>
+      <osi-tooltip
+        *ngIf="canSaveQuotation() && quotation && quotation.assoAffaireOrders && quotation.assoAffaireOrders.length > 1"
+        tootltipCodeToDisplay="MYJSS_QUOTATION_SERV_SELECTION_NEXT_MULTI"
+        class="d-none d-md-block col-auto"></osi-tooltip>
+      <button type="button" class="col-auto btn btn-secondary rounded-1 mx-0 mx-sm-5 ms-sm-2 d-flex align-items-center"
+        *ngIf="canSaveQuotation()" (click)="saveQuotation()"> <span class="me-2">Étape
+          suivante</span>
+        <i class="ai-arrow-right d-none d-sm-inline"></i>
+      </button>
+    </div>
   </div>
 </div>
