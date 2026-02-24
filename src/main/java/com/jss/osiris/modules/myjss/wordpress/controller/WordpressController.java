@@ -214,9 +214,7 @@ public class WordpressController {
 
 		detectFlood(request);
 
-		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
-				Sort.by(Sort.Direction.ASC, "serieOrder"));
-
+		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size));
 		return new ResponseEntity<Page<Serie>>(
 				serieService.getSeries(pageable), HttpStatus.OK);
 	}

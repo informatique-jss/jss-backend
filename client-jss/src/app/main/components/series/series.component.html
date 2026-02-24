@@ -1,0 +1,94 @@
+<div *ngIf="series">
+  <div class="container">
+    <div class="bg-container">
+      <div class="w-100 justify-content-between">
+        <div class="container header-hub-bg d-flex align-items-center rounded-1" *ngIf="topSerie">
+          <div class="row w-100">
+            <div class="col-12">
+              <div class="row d-flex align-items-center flex-wrap py-2">
+                <div class="col">
+                  <p class="text-muted mb-1">Notre série à la une</p>
+                  <a [routerLink]='"/post/serie/" + topSerie.slug'>
+                    <h1 class="fw-bold mb-2">{{ topSerie.name }}</h1>
+                  </a>
+                  <div class="text-body">{{topSerie.excerptText}}</div>
+                </div>
+                <div class=" col mb-1 w-100">
+                  <a [routerLink]='"/post/serie/" + topSerie.slug'><img *ngIf="topSerie.picture"
+                      [src]="topSerie.picture.urlMediumLarge || topSerie.picture.urlFull"
+                      [alt]="topSerie.picture.alt_text" class="banner-img rounded-1"></a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row pt-5" *ngIf="!series ||  series.length>0">
+          <div class="col-md-12">
+            <div class="section-title-block d-flex pb-3">
+              <h3 class="section-widget-title">Toutes nos séries</h3>
+            </div>
+          </div>
+          <div *ngIf="!series" class="pb-3">
+            <div class="panel-loader">
+              <div class="skeleton skeleton-header"></div>
+              <div class="skeleton skeleton-line"></div>
+              <div class="skeleton skeleton-line"></div>
+              <div class="skeleton skeleton-line short"></div>
+              <div class="skeleton skeleton-block"></div>
+            </div>
+          </div>
+          <div *ngIf="page == 0 && series && series.slice(1).length>0" class="row p-0 fixed-size-img-series">
+            <div *ngFor="let serie of series.slice(1)" class="col-12 col-md-4 mb-2">
+              <article class="border-0 card h-100">
+                <div class="card-img px-1 d-flex">
+                  <div class="image-hover-style-1 w-100">
+                    <a [routerLink]='"/post/serie/" + serie.slug'> <img *ngIf="serie.picture" class="lazyload"
+                        [src]="serie.picture.urlMediumLarge!=null ? serie.picture.urlMediumLarge : serie.picture.urlFull"
+                        [alt]="serie.picture.alt_text" class="w-100"> </a>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <p>
+                    <a class="h4 card-text-truncate" [routerLink]='"/post/serie/" + serie.slug'>
+                      {{serie.titleText}}</a>
+                  </p>
+                  <span class="fs-7 card-text-truncate mb-0" [innerHTML]="serie.excerptText| trustHtml"></span>
+                </div>
+              </article>
+            </div>
+          </div>
+          <div *ngIf="page!=0 && series && series.length>0" class="row p-0 fixed-size-img-series">
+            <div *ngFor="let serie of series" class="col-12 col-md-4 mb-2">
+              <article class="border-0 card h-100">
+                <div class="card-img px-1 d-flex">
+                  <div class="image-hover-style-1 w-100">
+                    <a [routerLink]='"/post/serie/" + serie.slug'> <img *ngIf="serie.picture" class="lazyload"
+                        [src]="serie.picture.urlMediumLarge!=null ? serie.picture.urlMediumLarge : serie.picture.urlFull"
+                        [alt]="serie.picture.alt_text" class="w-100"> </a>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <p>
+                    <a class="h4 card-text-truncate" [routerLink]='"/post/serie/" + serie.slug'>
+                      {{serie.titleText}}</a>
+                  </p>
+                  <span class="fs-7 card-text-truncate mb-0" [innerHTML]="serie.excerptText| trustHtml"></span>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+
+        <nav *ngIf="totalPage > 1" class="mt-4">
+          <ul class="pagination justify-content-center">
+            <li class="page-item" *ngFor="let p of pages" [class.active]="p === page">
+              <a class="page-link" [routerLink]="[p]">{{ p + 1 }}</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+</div>
