@@ -241,7 +241,8 @@ public class MyJssMiscellaneousController {
 	}
 
 	@GetMapping(inputEntryPoint + "/tooltip-entries")
-	public ResponseEntity<List<TooltipEntry>> getTooltipEntries() {
+	public ResponseEntity<List<TooltipEntry>> getTooltipEntries(HttpServletRequest request) {
+		detectFlood(request);
 		return new ResponseEntity<List<TooltipEntry>>(tooltipEntryService.getTooltipEntries(), HttpStatus.OK);
 	}
 }
