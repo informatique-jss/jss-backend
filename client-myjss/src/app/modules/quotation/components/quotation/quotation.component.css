@@ -192,6 +192,7 @@ h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1 {
 
 :host ::ng-deep .card.selected, .card:hover {
   border: 3px solid var(--ar-secondary);
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
 :host ::ng-deep .card:hover {

@@ -8269,6 +8269,11 @@ textarea.form-control-lg {
   border-color: rgba(var(--ar-secondary-rgb), var(--ar-border-opacity)) !important;
 }
 
+.border-tertiary {
+  --ar-border-opacity: 1;
+  border-color: rgba(var(--ar-tertiary-rgb), var(--ar-border-opacity)) !important;
+}
+
 .border-success {
   --ar-border-opacity: 1;
   border-color: rgba(var(--ar-success-rgb), var(--ar-border-opacity)) !important;
