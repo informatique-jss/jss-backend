@@ -141,7 +141,7 @@ public class BillingClosureReceiptHelper {
                     && !billingClosureDocument
                             .getBillingClosureType().getId()
                             .equals(constantService.getBillingClosureTypeAffaire().getId());
-
+            // TODO affichier remainingDebitAmount dans template
             if (downloadFile) {
                 List<BillingClosureReceiptValue> values = generateBillingClosureValuesForITiers(tier, responsable,
                         isOrderingByEventDate, false, false, false);
@@ -431,7 +431,7 @@ public class BillingClosureReceiptHelper {
             MailComputeResult mailComputeResult = mailComputeHelper
                     .computeMailForCustomerOrderFinalizationAndInvoice(invoice.getCustomerOrder(), false);
             value.setEventCbLink(paymentCbEntryPoint + "/order/invoice?mail="
-                    + mailComputeResult.getRecipientsMailTo().get(0).getMail() + "&customerOrderId="
+                    + "test" + "&customerOrderId="
                     + invoice.getCustomerOrder().getId());
         }
 
