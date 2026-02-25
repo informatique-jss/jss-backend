@@ -61,10 +61,15 @@
         <label class=" dropdown-item">
           <hr class="dropdown-divider">
         </label>
-        <label class=" dropdown-item">
-          <input class="form-check-input me-2" type="checkbox" value="" [(ngModel)]="requiringAttention"
+        <label class=" dropdown-item d-flex align-items-center">
+          <input class="form-check-input me-2 mt-0" type="checkbox" value="" [(ngModel)]="requiringAttention"
             (change)="changeFilter()">
-          Qui requiert mon attention
+          <div class="row  ms-1">
+            <ng-container class="col-auto">
+              Qui requiert <br> mon attention
+            </ng-container>
+            <osi-tooltip tootltipCodeToDisplay="MYJSS_ACCOUNT_REQUIRING_ATTENTION" class="col-auto "></osi-tooltip>
+          </div>
         </label>
       </div>
     </div>
