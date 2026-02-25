@@ -356,9 +356,11 @@ public class MyJssQuotationController {
 
   @GetMapping(inputEntryPoint + "/dashboard/user/statistics")
   @JsonView(JacksonViews.MyJssDetailedView.class)
-  public ResponseEntity<DashboardUserStatistics> getDashboardUserStatistics()
+  public ResponseEntity<DashboardUserStatistics> getDashboardUserStatistics(
+      @RequestParam(required = false) List<Integer> filteredResponsableIds)
       throws OsirisException {
-    return new ResponseEntity<DashboardUserStatistics>(dashboardUserStatisticsService.getDashboardUserStatistics(),
+    return new ResponseEntity<DashboardUserStatistics>(
+        dashboardUserStatisticsService.getDashboardUserStatistics(filteredResponsableIds),
         HttpStatus.OK);
   }
 

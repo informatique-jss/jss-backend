@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.myjss.quotation.service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,6 +25,7 @@ import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderStatusServic
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationStatusService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
+import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
 
 @Service
 public class DashboardUserStatisticsServiceImpl implements DashboardUserStatisticsService {
@@ -52,13 +54,24 @@ public class DashboardUserStatisticsServiceImpl implements DashboardUserStatisti
         @Autowired
         CustomerOrderCommentService customerOrderCommentService;
 
+        @Autowired
+        ResponsableService responsableService;
+
         @Override
-        public DashboardUserStatistics getDashboardUserStatistics() throws OsirisException {
+        public DashboardUserStatistics getDashboardUserStatistics(List<Integer> responsableIds) throws OsirisException {
                 DashboardUserStatistics statistics = new DashboardUserStatistics();
-                List<Responsable> listResponsables = Arrays.asList(employeeService.getCurrentMyJssUser());
+                List<Responsable> listResponsables = new ArrayList<Responsable>();
 
-                if (listResponsables != null && listResponsables.size() > 0) {
+                if (responsableIds != null && !responsableIds.isEmpty())
+                        for (Integer id : responsableIds) {
+                                Responsable newResponsable = responsableService.getResponsable(id);
+                                listResponsables.add(newResponsable);
+                        }
 
+                if (listResponsables == null || listResponsables.isEmpty())
+                        listResponsables.add(employeeService.getCurrentMyJssUser());
+
+                if (listResponsables != null && !listResponsables.isEmpty()) {
                         // compute customerOrderInProgress
                         statistics.setCustomerOrderInProgress(0);
                         List<CustomerOrder> customerOrderInProgress = customerOrderService.searchOrders(
