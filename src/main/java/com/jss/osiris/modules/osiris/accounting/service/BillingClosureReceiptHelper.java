@@ -141,7 +141,6 @@ public class BillingClosureReceiptHelper {
                     && !billingClosureDocument
                             .getBillingClosureType().getId()
                             .equals(constantService.getBillingClosureTypeAffaire().getId());
-            // TODO affichier remainingDebitAmount dans template
             if (downloadFile) {
                 List<BillingClosureReceiptValue> values = generateBillingClosureValuesForITiers(tier, responsable,
                         isOrderingByEventDate, false, false, false);
