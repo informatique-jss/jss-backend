@@ -39,7 +39,7 @@ app.use('/**', async (req, res, next) => {
   const cacheKey = req.originalUrl;
   const cached = ssrCache[cacheKey];
 
-  if (cached && Date.now() - 1 > Date.now()) {
+  if (cached && cached.expiresAt > Date.now()) {
     console.log(`Cache hit for ${cacheKey}`);
     res.send(cached.body);
     return;
