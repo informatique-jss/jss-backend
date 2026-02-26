@@ -136,7 +136,7 @@ export class QuotationComponent implements OnInit {
 
 
       this.appService.hideLoadingSpinner();
-      this.appService.openRoute(event, "/quotation/checkout/", undefined);
+      this.appService.openRoute(event, "/quotation/checkout/" + this.idArticle, undefined);
     });
   }
 
@@ -199,13 +199,6 @@ export class QuotationComponent implements OnInit {
       return index <= this.myJssQuotationItems.map(e => e.route).indexOf(currentStep);
     }
     return false;
-  }
-
-  goToStep(item: MenuItem) {
-    if (this.isStepAccessible(item)) {
-      this.quotationService.setCurrentDraftQuotationStep(item);
-      this.appService.openRoute(undefined, item.route, undefined);
-    }
   }
 
   ngAfterContentChecked(): void {
