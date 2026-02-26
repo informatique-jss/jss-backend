@@ -49,7 +49,8 @@ public class WebinarParticipant implements Serializable {
     private Boolean isParticipating;
 
     @Column(columnDefinition = "TEXT")
-    private String question;
+    @JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisListView.class })
+    private String comment;
 
     @ManyToOne
     @JoinTable(name = "asso_webinar_participant", joinColumns = @JoinColumn(name = "id_webinar_participant"), inverseJoinColumns = @JoinColumn(name = "id_webinar"))
@@ -113,12 +114,12 @@ public class WebinarParticipant implements Serializable {
         this.webinar = webinar;
     }
 
-    public String getQuestion() {
-        return question;
+    public String getComment() {
+        return comment;
     }
 
-    public void setQuestion(String question) {
-        this.question = question;
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
 }

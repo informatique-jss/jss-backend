@@ -35,6 +35,7 @@ export class WebinarParticipantComponent implements OnInit {
     this.displayedColumnsWebinarParticipants.push({ id: "name", fieldName: "firstname " + "lastname", label: "Prénom & nom", valueFonction: (element: WebinarParticipant, column: SortTableColumn<WebinarParticipant>) => { return (element.firstname + " " + element.lastname) } } as SortTableColumn<WebinarParticipant>);
     this.displayedColumnsWebinarParticipants.push({ id: "mail", fieldName: "mail.mail", label: "Mail" } as SortTableColumn<WebinarParticipant>);
     this.displayedColumnsWebinarParticipants.push({ id: "phoneNumber", fieldName: "phoneNumber", label: "Numéro de téléphone" } as SortTableColumn<WebinarParticipant>);
+    this.displayedColumnsWebinarParticipants.push({ id: "comment", fieldName: "comment", label: "Commentaire" } as SortTableColumn<WebinarParticipant>);
 
     this.tableActionWebinarParticipant.push({
       actionIcon: "delete", actionName: "Supprimer le participant", actionClick: (column: SortTableAction<WebinarParticipant>, element: WebinarParticipant, event: any) => {
