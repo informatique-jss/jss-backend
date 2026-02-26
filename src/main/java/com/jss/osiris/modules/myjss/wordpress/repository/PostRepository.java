@@ -21,6 +21,7 @@ import com.jss.osiris.modules.myjss.wordpress.model.PublishingDepartment;
 import com.jss.osiris.modules.myjss.wordpress.model.ReadingFolder;
 import com.jss.osiris.modules.myjss.wordpress.model.Serie;
 import com.jss.osiris.modules.myjss.wordpress.model.Tag;
+import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 import jakarta.persistence.QueryHint;
 
@@ -214,4 +215,19 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
 
         @Query("select p from Post p where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and size(p.myJssCategories) > 0 ")
         List<Post> findAllMyJssPost();
+
+        @Query("""
+                        SELECT po
+                        FROM CustomerOrder co
+                        JOIN co.assoAffaireOrders aao
+                        JOIN aao.services s
+                        JOIN s.provisions p
+                        JOIN p.assoProvisionPostNewspapers apn
+                        JOIN apn.post po
+                        WHERE co.responsable = :responsable
+                        AND co.customerOrderStatus.id = 12
+                                                                        """)
+        List<Post> findAllJssPostPurchasedByResponsable(Responsable responsable);
+
+        Post findByIdAndIsCancelled(Integer id, boolean isCancelled);
 }

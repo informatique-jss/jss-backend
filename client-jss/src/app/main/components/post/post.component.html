@@ -19,7 +19,8 @@
             </ng-container>
           </div>
           <div class="col-12">
-            <h1 class="mt-2"><img *ngIf="post.isPremium" class="px-0 me-1" src="/assets/images/premium-icon.svg">
+            <h1 class="mt-2"><img *ngIf="post.isPremium" class="px-0 me-1" src="/assets/images/premium-icon.svg"><img
+                *ngIf="post.isHidePremium" class="pe-0 me-1" src="/assets/images/premium-icon.svg">
               {{post.titleText}} </h1>
           </div>
           <span class="fs-6" [innerHTML]="post.excerptText| trustHtml"></span>
@@ -211,6 +212,7 @@
                     <a *ngFor="let relatedPost of post.relatedPosts.slice(0, 3)"
                       [routerLink]='"/post/" + relatedPost.slug' class="card-truncate-1">
                       <h6 class="m-0 p-1"><img *ngIf="relatedPost.isPremium" class="px-0 me-1"
+                          src="/assets/images/premium-icon.svg"><img *ngIf="post.isHidePremium" class="pe-0 me-1"
                           src="/assets/images/premium-icon.svg">&#9632; {{relatedPost.titleText}}</h6>
                     </a>
                   </div>
@@ -281,7 +283,9 @@
                           <p class="mb-1"><i class="bi bi-arrow-left"></i> Article précédent</p>
                           <h6 class="post-title card-text-truncate">
                             <a [routerLink]='"/post/" + previousPost.slug'><img *ngIf="previousPost.isPremium"
-                                class="px-0 me-1" src="/assets/images/premium-icon.svg">
+                                class="px-0 me-1" src="/assets/images/premium-icon.svg"><img
+                                *ngIf="previousPost.isHidePremium" class="pe-0 me-1"
+                                src="/assets/images/premium-icon.svg">
                               {{previousPost.titleText}}</a>
                           </h6>
                         </div>
@@ -293,7 +297,8 @@
                           <p class="mb-1 text-end">Article suivant <i class="bi bi-arrow-right"></i></p>
                           <h6 class="post-title text-end card-text-truncate">
                             <a [routerLink]='"/post/" + nextPost.slug'><img *ngIf="nextPost.isPremium" class="px-0 me-1"
-                                src="/assets/images/premium-icon.svg">
+                                src="/assets/images/premium-icon.svg"><img *ngIf="nextPost.isHidePremium"
+                                class="pe-0 me-1" src="/assets/images/premium-icon.svg">
                               {{nextPost.titleText}}</a>
                           </h6>
                         </div>

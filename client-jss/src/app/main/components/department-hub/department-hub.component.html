@@ -67,6 +67,7 @@
                           <h4>
                             <span role="button" tabindex="0" class="pointer card-text-truncate"
                               [routerLink]=' "/post/" + post.slug'> <img *ngIf="post.isPremium" class="pe-0"
+                                src="/assets/images/premium-icon.svg"><img *ngIf="post.isHidePremium" class="ms-1 pe-0"
                                 src="/assets/images/premium-icon.svg">
                               {{post.titleText}}</span>
                           </h4>
@@ -105,6 +106,7 @@
                           <h4>
                             <span role="button" tabindex="0" class="pointer card-text-truncate"
                               [routerLink]=' "/post/" + post.slug'> <img *ngIf="post.isPremium" class="pe-0"
+                                src="/assets/images/premium-icon.svg"><img *ngIf="post.isHidePremium" class="ms-1 pe-0"
                                 src="/assets/images/premium-icon.svg">
                               {{post.titleText}}</span>
                           </h4>

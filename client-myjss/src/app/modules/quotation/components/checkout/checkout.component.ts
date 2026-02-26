@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { NgbAccordionModule, NgbDropdownModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { validateEmail, validateFrenchPhone, validateInternationalPhone } from '../../../../libs/CustomFormsValidatorsHelper';
@@ -35,6 +36,7 @@ import { Phone } from '../../../profile/model/Phone';
 import { Responsable } from '../../../profile/model/Responsable';
 import { Tiers } from '../../../profile/model/Tiers';
 import { LoginService } from '../../../profile/services/login.service';
+import { PostService } from '../../../tools/services/post.service';
 import { IQuotation } from '../../model/IQuotation';
 import { CityService } from '../../services/city.service';
 
@@ -101,11 +103,10 @@ export class CheckoutComponent implements OnInit {
 
   mailToConfirm: string | undefined;
 
-  subscriptionType: string | undefined;
-  isPriceReductionForSubscription: boolean = false;
   idArticle: number | undefined;
-  voucherCode: string | undefined;
+  postTitle: string | undefined;
 
+  voucherCode: string | undefined;
 
   capitalizeName = capitalizeName;
 
@@ -126,7 +127,9 @@ export class CheckoutComponent implements OnInit {
     private documentService: DocumentService,
     private cityService: CityService,
     private voucherService: VoucherService,
-    private googleAnalyticsService: GoogleAnalyticsService
+    private googleAnalyticsService: GoogleAnalyticsService,
+    private activatedRoute: ActivatedRoute,
+    private postservice: PostService,
   ) { }
 
   async ngOnInit() {
@@ -135,6 +138,12 @@ export class CheckoutComponent implements OnInit {
     this.serviceTypeMonthlySubscription = this.constantService.getServiceTypeMonthlySubscription();
     this.serviceTypeUniqueArticleBuy = this.constantService.getServiceTypeUniqueArticleBuy();
     this.serviceTypeKioskNewspaperBuy = this.constantService.getServiceTypeKioskNewspaperBuy();
+
+    this.idArticle = this.activatedRoute.snapshot.params['id-article'];
+    if (this.idArticle)
+      this.postservice.getPostById(this.idArticle).subscribe(res => {
+        this.postTitle = res.titleText;
+      })
 
     this.documentForm = this.formBuilder.group({});
 

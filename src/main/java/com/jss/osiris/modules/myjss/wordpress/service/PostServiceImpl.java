@@ -888,6 +888,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public Post getPostsById(Integer id) {
+        return postRepository.findByIdAndIsCancelled(id, false);
+    }
+
+    @Override
     public Post getPostsBySlug(String slug) {
         return postRepository.findBySlugAndIsCancelled(slug, false);
     }
@@ -1154,5 +1159,13 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<Post> getAllPostsForMyJss() {
         return postRepository.findAllMyJssPost();
+    }
+
+    public List<Post> getPurchasedPostsForCurrentUser() {
+        Responsable responsable = employeeService.getCurrentMyJssUser();
+        if (responsable == null)
+            return new ArrayList<>();
+
+        return postRepository.findAllJssPostPurchasedByResponsable(responsable);
     }
 }
