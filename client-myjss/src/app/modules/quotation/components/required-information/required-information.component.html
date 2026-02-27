@@ -911,18 +911,15 @@
           [ngbNavItem]="getIndexForProvision(-1, quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].provisions)"
           *ngIf="currentUser && (quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes ||
           quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments)">
-          <button class="col-auto" ngbNavLink>Pièces justificatives à déposer
+          <button class="col-auto py-0 pe-2" ngbNavLink>Pièces justificatives à déposer <osi-tooltip
+              tootltipCodeToDisplay="MYJSS_QUOTATION_REQUIRED_INFO_ADD_FILES" class="col-auto ms-2 mt-1"></osi-tooltip>
           </button>
-          <osi-tooltip tootltipCodeToDisplay="MYJSS_QUOTATION_REQUIRED_INFO_ADD_FILES"
-            class="col-auto me-5"></osi-tooltip>
           <ng-template ngbNavContent>
             <div
               *ngIf="currentUser && hasMandatoryDocuments(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments)"
               class="quotation-container mb-4">
               <h6 class="mb-3 d-flex align-items-center">
                 <i class="ai-paperclip pe-2"></i> Pièces obligatoires
-                <!-- TODO : DELETE after AMOA validation : <osi-tooltip
-                  tootltipCodeToDisplay="MYJSS_QUOTATION_REQUIRED_INFO_ADD_FILES" class="ms-3"></osi-tooltip> -->
               </h6>
               <div class="mb-3"
                 *ngFor="let assoServiceDocument of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments; let i = index">
@@ -952,10 +949,10 @@
         </li>
         <li class="row" [ngbNavItem]="50" *ngIf="(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes ||
           quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments)">
-          <button class="col-auto" ngbNavLink>Informations complémentaires
+          <button class="col-auto py-0 pe-2" ngbNavLink>Informations complémentaires<osi-tooltip
+              tootltipCodeToDisplay="MYJSS_QUOTATION_REQUIRED_INFO_ADDITIONAL_INFO"
+              class="col-auto ms-2 mt-1"></osi-tooltip>
           </button>
-          <osi-tooltip tootltipCodeToDisplay="MYJSS_QUOTATION_REQUIRED_INFO_ADDITIONAL_INFO"
-            class="col-auto me-5"></osi-tooltip>
           <ng-template ngbNavContent>
             <div class="quotation-container">
               <h6><i class="ai-circle-info me-2"></i>Information</h6>
