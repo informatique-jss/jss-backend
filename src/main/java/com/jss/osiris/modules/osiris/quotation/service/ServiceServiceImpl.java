@@ -763,7 +763,12 @@ public class ServiceServiceImpl implements ServiceService {
                                 && provision.getAnnouncement().getConfrere() != null) {
                             service.setConfrereLabel(provision.getAnnouncement().getConfrere().getLabel());
                             if (provision.getAnnouncement().getConfrere().getId()
-                                    .equals(constantService.getConfrereJssSpel().getId()))
+                                    .equals(constantService.getConfrereJssSpel().getId())
+                                    && (provision.getAnnouncement().getAnnouncementStatus().getCode()
+                                            .equals(AnnouncementStatus.ANNOUNCEMENT_PUBLISHED)
+                                            || provision.getAnnouncement().getAnnouncementStatus().getCode()
+                                                    .equals(AnnouncementStatus.ANNOUNCEMENT_DONE))
+                                    && !provision.getAnnouncement().getPublicationDate().isAfter(LocalDate.now()))
                                 service.setJssAnnouncementId(provision.getAnnouncement().getId());
                         }
 

@@ -164,7 +164,7 @@
               <div class="fs-sm text-body-secondary">Annonce publiée sur {{service.confrereLabel}}
                 <span *ngIf="service.jssAnnouncementId">
                   (consulter l'annonce sur
-                  <a class="z-index-10 text-body-secondary"
+                  <a class="z-index-10 text-body-secondary text-decoration-none"
                     (click)="goToJssAnnouncement(service, $event );$event.stopPropagation();$event.preventDefault();">
                     JSS.fr</a>)
                 </span>
