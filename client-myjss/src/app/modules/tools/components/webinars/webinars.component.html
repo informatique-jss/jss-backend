@@ -87,10 +87,9 @@
               [isMandatory]="true" [isDisabled]="false" [maxLength]="250" type="text"></generic-input>
           </div>
           <div class="col-12">
-            <generic-textarea class="form-control form-control-lg" [(model)]="webinarParticipant.question"
-              label="question" placeholder="Poser une question" [form]="webinarsForm" propertyName="question"
+            <generic-textarea class="form-control form-control-lg" [(model)]="webinarParticipant.comment"
+              label="Commentaire" placeholder="Poser une question" [form]="webinarsForm" propertyName="comment"
               [isMandatory]="false" [isDisabled]="false" [maxLength]="500" [numberOfLines]="4"></generic-textarea>
-
           </div>
           <div class="col-12">
             <div class="form-check mb-4">

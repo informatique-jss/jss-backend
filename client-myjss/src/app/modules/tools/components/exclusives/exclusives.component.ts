@@ -51,7 +51,7 @@ export class ExclusivesComponent implements OnInit {
 
   ngOnInit() {
     this.exclusivePostsForm = this.formBuilder.group({});
-    this.categoryExclusive = this.constantService.getCategoryArticle();
+    this.categoryExclusive = this.constantService.getCategoryExclusivity();
     this.myJssCategories.push(this.allMyJssCategories);
     this.selectedMyJssCategory = this.myJssCategories[0];
     this.searchPosts(0);
