@@ -430,7 +430,7 @@ public class BillingClosureReceiptHelper {
             MailComputeResult mailComputeResult = mailComputeHelper
                     .computeMailForCustomerOrderFinalizationAndInvoice(invoice.getCustomerOrder(), false);
             value.setEventCbLink(paymentCbEntryPoint + "/order/invoice?mail="
-                    + "test" + "&customerOrderId="
+                    + mailComputeResult.getRecipientsMailTo().get(0).getMail() + "&customerOrderId="
                     + invoice.getCustomerOrder().getId());
         }
 

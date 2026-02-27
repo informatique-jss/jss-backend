@@ -436,8 +436,8 @@ public class GeneratePdfDelegate {
 
         if (billingClosureDocument != null)
             if (billingClosureDocument.getBillingClosureType() != null
-                    && billingClosureDocument.getBillingClosureType().getCode()
-                            .equals(constantService.getBillingClosureTypeAffaire().getCode()))
+                    && billingClosureDocument.getBillingClosureType().getId()
+                            .equals(constantService.getBillingClosureTypeAffaire().getId()))
                 isBillingClosureTypeAffaire = true;
 
         ctx.setVariable("isBillingClosureTypeAffaire", isBillingClosureTypeAffaire);
