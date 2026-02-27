@@ -8,6 +8,8 @@ export interface AssoAffaireOrderSearchResult {
   provisionTypeLabel: string;
   statusLabel: string;
   assoId: number;
+  salesEmployeeId: number;
+  assignedToId: number;
   customerOrderId: number;
   provisionId: number;
   isEmergency: boolean;

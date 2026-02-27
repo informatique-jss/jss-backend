@@ -14,7 +14,9 @@ public interface AssoAffaireOrderSearchResult {
 
 	public String getConfrereLabel();
 
-	public String getAssignedToId();
+	public Integer getSalesEmployeeId();
+
+	public Integer getAssignedToId();
 
 	public String getProvisionTypeLabel();
 
