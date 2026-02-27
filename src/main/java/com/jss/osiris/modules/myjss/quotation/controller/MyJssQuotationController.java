@@ -2276,10 +2276,9 @@ public class MyJssQuotationController {
   }
 
   @PostMapping(inputEntryPoint + "/extract-text-from-file")
-  public ResponseEntity<Notice> getNoticeFromFile(@RequestParam("file") MultipartFile file)
+  public ResponseEntity<Notice> getNoticeFromFile(@RequestParam("file") MultipartFile file, HttpServletRequest request)
       throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
-
-    return new ResponseEntity<Notice>(announcementService.getNoticeFromFile(file),
-        HttpStatus.OK);
+    detectFlood(request);
+    return new ResponseEntity<Notice>(announcementService.getNoticeFromFile(file), HttpStatus.OK);
   }
 }

@@ -61,10 +61,10 @@ import { NoticeTemplateDescription } from '../../model/NoticeTemplateDescription
 import { NoticeType } from '../../model/NoticeType';
 import { NoticeTypeFamily } from '../../model/NoticeTypeFamily';
 import { ServiceFamily } from '../../model/ServiceFamily';
-import { AnnouncementService } from '../../services/announcement.service';
 import { CityService } from '../../services/city.service';
 import { CivilityService } from '../../services/civility.service';
 import { DepartmentService } from '../../services/department.service';
+import { NoticeService } from '../../services/notice.service';
 import { NoticeTemplateService } from '../../services/notice.template.service';
 import { NoticeTypeFamilyService } from '../../services/notice.type.family.service';
 import { NoticeTypeService } from '../../services/notice.type.service';
@@ -180,7 +180,7 @@ export class RequiredInformationComponent implements OnInit {
     private modalService: NgbModal,
     private gtmService: GtmService,
     private ga4Service: GoogleAnalyticsService,
-    private announcementService: AnnouncementService
+    private noticeService: NoticeService
   ) {
   }
 
@@ -926,7 +926,7 @@ export class RequiredInformationComponent implements OnInit {
 
   updateNoticeAnnouncement(last: any, provision: Provision) {
     if (last && last.length > 0)
-      this.announcementService.getNoticeFromFile(last[0]).subscribe(response => {
+      this.noticeService.getNoticeFromFile(last[0]).subscribe(response => {
         if (response && provision)
           this.noticeValue = response.notice;
       });
