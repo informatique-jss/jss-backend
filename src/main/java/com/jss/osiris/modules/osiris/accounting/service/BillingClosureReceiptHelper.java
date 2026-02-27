@@ -141,7 +141,6 @@ public class BillingClosureReceiptHelper {
                     && !billingClosureDocument
                             .getBillingClosureType().getId()
                             .equals(constantService.getBillingClosureTypeAffaire().getId());
-
             if (downloadFile) {
                 List<BillingClosureReceiptValue> values = generateBillingClosureValuesForITiers(tier, responsable,
                         isOrderingByEventDate, false, false, false);
