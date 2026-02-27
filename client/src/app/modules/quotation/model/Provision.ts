@@ -54,6 +54,8 @@ export interface Provision extends IAttachment {
   isRneUpdate: boolean;
   isVacationUpdateBeneficialOwners: boolean;
   isFormalityAdditionalDeclaration: boolean;
+  isOverrideCharacterNumber: boolean;
+  overridedCharacterNumber: number;
   isCorrespondenceFees: boolean;
   isSupplyFullBeCopy: boolean;
   providerInvoices: Invoice[];

@@ -205,6 +205,9 @@ public class Provision implements IId, IAttachment {
 	@Column(nullable = false)
 	private Boolean isSupplyFullBeCopy;
 
+	private Boolean isOverrideCharacterNumber;
+	private Integer overridedCharacterNumber;
+
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Boolean isDoNotGenerateAnnouncement;
 
@@ -699,5 +702,21 @@ public class Provision implements IId, IAttachment {
 
 	public void setKbisOrderedNumber(Integer kbisOrderedNumber) {
 		this.kbisOrderedNumber = kbisOrderedNumber;
+	}
+
+	public Boolean getIsOverrideCharacterNumber() {
+		return isOverrideCharacterNumber;
+	}
+
+	public void setIsOverrideCharacterNumber(Boolean isOverrideCharacterNumber) {
+		this.isOverrideCharacterNumber = isOverrideCharacterNumber;
+	}
+
+	public Integer getOverridedCharacterNumber() {
+		return overridedCharacterNumber;
+	}
+
+	public void setOverridedCharacterNumber(Integer overridedCharacterNumber) {
+		this.overridedCharacterNumber = overridedCharacterNumber;
 	}
 }
