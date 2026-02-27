@@ -30,6 +30,7 @@ import { SelectMultipleNoticeTypeComponent } from '../../../miscellaneous/compon
 import { SelectNoticeTypeFamilyComponent } from '../../../miscellaneous/components/forms/select-notice-type-family/select-notice-type-family.component';
 import { SelectStringComponent } from '../../../miscellaneous/components/forms/select-string/select-string.component';
 import { SelectValueServiceFieldTypeComponent } from '../../../miscellaneous/components/forms/select-value-service-field-type/select-value-service-field-type.component';
+import { SingleUploadComponent } from '../../../miscellaneous/components/forms/single-upload/single-upload.component';
 import { OsiTooltipComponent } from "../../../miscellaneous/components/osi-tooltip/osi-tooltip.component";
 import { Affaire } from '../../../my-account/model/Affaire';
 import { Announcement } from '../../../my-account/model/Announcement';
@@ -60,6 +61,7 @@ import { NoticeTemplateDescription } from '../../model/NoticeTemplateDescription
 import { NoticeType } from '../../model/NoticeType';
 import { NoticeTypeFamily } from '../../model/NoticeTypeFamily';
 import { ServiceFamily } from '../../model/ServiceFamily';
+import { AnnouncementService } from '../../services/announcement.service';
 import { CityService } from '../../services/city.service';
 import { CivilityService } from '../../services/civility.service';
 import { DepartmentService } from '../../services/department.service';
@@ -94,7 +96,7 @@ import { QuotationFileUploaderComponent } from '../quotation-file-uploader/quota
     SelectCountryComponent,
     SelectCivilityComponent,
     CKEditorModule,
-    NgbNavModule,
+    NgbNavModule, SingleUploadComponent,
     NgbTooltipModule, OsiTooltipComponent]
 })
 export class RequiredInformationComponent implements OnInit {
@@ -134,7 +136,8 @@ export class RequiredInformationComponent implements OnInit {
   SERVICE_FIELD_TYPE_SELECT = SERVICE_FIELD_TYPE_SELECT;
   PROVISION_SCREEN_TYPE_DOMICILIATION = PROVISION_SCREEN_TYPE_DOMICILIATION;
   PROVISION_SCREEN_TYPE_ANNOUNCEMENT = PROVISION_SCREEN_TYPE_ANNOUNCEMENT;
-
+  entityType = "Fichier";
+  entityFile = {} as any;
   provisionTypeRbe!: ProvisionType;
 
   mailRedirectionTypeOther!: MailRedirectionType;
@@ -156,6 +159,7 @@ export class RequiredInformationComponent implements OnInit {
   goBackModalInstance: any | undefined;
 
   currentTab: string = 'documents';
+  noticeValue: string = "";
 
   constructor(
     private formBuilder: FormBuilder,
@@ -176,6 +180,7 @@ export class RequiredInformationComponent implements OnInit {
     private modalService: NgbModal,
     private gtmService: GtmService,
     private ga4Service: GoogleAnalyticsService,
+    private announcementService: AnnouncementService
   ) {
   }
 
@@ -919,4 +924,11 @@ export class RequiredInformationComponent implements OnInit {
     return false;
   }
 
+  updateNoticeAnnouncement(last: any, provision: Provision) {
+    if (last && last.length > 0)
+      this.announcementService.getNoticeFromFile(last[0]).subscribe(response => {
+        if (response && provision)
+          this.noticeValue = response.notice;
+      });
+  }
 }

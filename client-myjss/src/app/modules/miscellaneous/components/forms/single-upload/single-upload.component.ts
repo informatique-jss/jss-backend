@@ -26,6 +26,8 @@ export class SingleUploadComponent implements OnInit {
   @Output() progressChange = new EventEmitter<any>();
   @Output() isErrorChange = new EventEmitter<boolean>();
   @Input() forcedFileExtension: string = '';
+  @Output() fileDropped = new EventEmitter<any>();
+  @Input() fullSize = true;
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
@@ -68,6 +70,7 @@ export class SingleUploadComponent implements OnInit {
       this.filename = this.files[0].name;
     this.attachmentForm.markAllAsTouched();
     this.checkFiles();
+    this.fileDropped.emit(this.files);
     if (this.isDirectUpload)
       this.uploadFiles();
   }
