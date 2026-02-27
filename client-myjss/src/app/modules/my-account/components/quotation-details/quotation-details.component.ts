@@ -2,6 +2,7 @@ import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { NgbAccordionModule, NgbDropdownModule, NgbModal, NgbNavModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { filter, forkJoin, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { compareWithId } from '../../../../libs/CompareHelper';
 import { ASSO_SERVICE_DOCUMENT_ENTITY_TYPE, INVOICING_PAYMENT_LIMIT_REFUND_EUROS, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_VALIDATED_BY_CUSTOMER, SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
 import { capitalizeName, getListMails, getListPhones } from '../../../../libs/FormatHelper';
@@ -104,6 +105,8 @@ export class QuotationDetailsComponent implements OnInit {
   pollingInterval: any;
   isAlreadyScrolledOnceToMessages: boolean = false;
 
+  private destroy$ = new Subject<void>();
+
   constructor(
     private constantService: ConstantService,
     private activatedRoute: ActivatedRoute,
@@ -151,58 +154,72 @@ export class QuotationDetailsComponent implements OnInit {
 
   refreshQuotation() {
     this.dislayAlreadyFilledAttachment = false;
-    this.quotationService.getQuotation(this.activatedRoute.snapshot.params['id']).subscribe(response => {
-      this.quotation = response;
-      this.canEditQuotation = this.quotation.quotationStatus.code != QUOTATION_STATUS_VALIDATED_BY_CUSTOMER
-        && this.quotation.quotationStatus.code != QUOTATION_STATUS_ABANDONED && this.quotation.quotationStatus.code != QUOTATION_STATUS_REFUSED_BY_CUSTOMER;
-      this.appService.hideLoadingSpinner();
-      this.loadQuotationDetails();
-    })
-  }
+    const quotationId = this.activatedRoute.snapshot.params['id'];
 
-  loadQuotationDetails() {
-    if (!this.quotation)
-      return;
-
-    this.assoAffaireOrderService.getAssoAffaireOrdersForQuotation(this.quotation).subscribe(response => {
-      this.quotationAssoAffaireOrders = response;
-      if (this.quotationAssoAffaireOrders && this.quotationAssoAffaireOrders.length > 0) {
+    this.quotationService.getQuotation(quotationId).pipe(
+      tap(response => {
+        this.quotation = response;
+        if (this.quotation) {
+          this.canEditQuotation = this.quotation.quotationStatus.code != QUOTATION_STATUS_VALIDATED_BY_CUSTOMER
+            && this.quotation.quotationStatus.code != QUOTATION_STATUS_ABANDONED
+            && this.quotation.quotationStatus.code != QUOTATION_STATUS_REFUSED_BY_CUSTOMER;
+        }
+      }),
+      filter(quotation => !!quotation), // Stoppe si la quotation est vide
+      switchMap(quotation => {
+        // Exécution de toutes les requêtes en parallèle
+        return forkJoin({
+          assoAffaires: this.assoAffaireOrderService.getAssoAffaireOrdersForQuotation(quotation!),
+          depositMandatory: this.quotationService.isDepositMandatory(quotation!.id),
+          invoiceLabel: this.invoiceLabelResultService.getInvoiceLabelComputeResultForQuotation(quotation!.id),
+          mailBilling: this.mailComputeResultService.getMailComputeResultForBillingForQuotation(quotation!.id),
+          digitalMail: this.mailComputeResultService.getMailComputeResultForDigitalForQuotation(quotation!),
+          physicalMail: this.invoiceLabelResultService.getPhysicalMailComputeResultForBillingForQuotation(quotation!),
+          summary: this.invoicingSummaryService.getInvoicingSummaryForQuotation(quotation!.id),
+          user: this.loginService.getCurrentUser(),
+          initialComments: this.customerOrderCommentService.getCustomerOrderCommentsForCustomer(quotation!.id),
+          associatedOrder: this.customerOrderService.getCustomerOrderForQuotation(quotation!.id)
+        });
+      }),
+      takeUntil(this.destroy$)
+    ).subscribe(res => {
+      // 1. Affectation des données
+      this.quotationAssoAffaireOrders = res.assoAffaires;
+      if (this.quotationAssoAffaireOrders?.length > 0) {
         this.changeAffaire(this.quotationAssoAffaireOrders[0]);
+      }
+
+      this.isDepositPaymentMandatoryForQuotation = res.depositMandatory;
+      this.quotationInvoiceLabelResult = res.invoiceLabel;
+      this.quotationMailComputeResult = res.mailBilling;
+      this.quotationDigitalMailComputeResult = res.digitalMail;
+      this.quotationPhysicalMailComputeResult = res.physicalMail;
+      this.invoiceSummary = res.summary;
+      this.currentUser = res.user;
+      this.comments = res.initialComments || [];
+
+      // 2. Traitement de la commande associée
+      if (res.associatedOrder && res.associatedOrder.id) {
+        this.associatedCustomerOrder = res.associatedOrder;
+        this.openValidatedQuotationModal();
+      }
+
+      this.checkDisplayPayButton();
+
+      if (this.quotationAssoAffaireOrders?.length > 0) {
         this.initiateUnreadCommentsPolling();
       }
-    })
-    this.quotationService.isDepositMandatory(this.quotation.id).subscribe((res) => {
-      this.isDepositPaymentMandatoryForQuotation = res;
     });
-    this.invoiceLabelResultService.getInvoiceLabelComputeResultForQuotation(this.quotation.id).subscribe(response => {
-      this.quotationInvoiceLabelResult = response;
-    })
-    this.mailComputeResultService.getMailComputeResultForBillingForQuotation(this.quotation.id).subscribe(response => {
-      this.quotationMailComputeResult = response;
-    })
-    this.mailComputeResultService.getMailComputeResultForDigitalForQuotation(this.quotation).subscribe(response => {
-      this.quotationDigitalMailComputeResult = response;
-    })
-    this.invoiceLabelResultService.getPhysicalMailComputeResultForBillingForQuotation(this.quotation).subscribe(response => {
-      this.quotationPhysicalMailComputeResult = response;
-    })
-    this.invoicingSummaryService.getInvoicingSummaryForQuotation(this.quotation.id).subscribe(response => {
-      this.invoiceSummary = response;
-      if (this.invoiceSummary.remainingToPay && Math.abs(this.invoiceSummary.remainingToPay) > INVOICING_PAYMENT_LIMIT_REFUND_EUROS
-        && this.quotation && this.canEditQuotation)
-        this.displayPayButton = this.quotation.quotationStatus.code == QUOTATION_STATUS_SENT_TO_CUSTOMER;
-    })
-    this.loginService.getCurrentUser().subscribe(response => this.currentUser = response);
+  }
 
-    this.getCustomerOrderComments();
-
-    this.customerOrderService.getCustomerOrderForQuotation(this.quotation.id).subscribe(response => {
-      if (response && response.id) {
-        this.associatedCustomerOrder = response;
-        if (this.associatedCustomerOrder)
-          this.openValidatedQuotationModal();
-      }
-    })
+  private checkDisplayPayButton() {
+    this.displayPayButton = false;
+    if (this.invoiceSummary?.remainingToPay
+      && Math.abs(this.invoiceSummary.remainingToPay) > INVOICING_PAYMENT_LIMIT_REFUND_EUROS
+      && this.quotation
+      && this.canEditQuotation) {
+      this.displayPayButton = this.quotation.quotationStatus.code == QUOTATION_STATUS_SENT_TO_CUSTOMER;
+    }
   }
 
   initiateUnreadCommentsPolling() {
@@ -429,6 +446,9 @@ export class QuotationDetailsComponent implements OnInit {
   }
 
   ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+
     this.customerOrderCommentService.setWatchedOrder(null);
     clearInterval(this.pollingInterval);
   }
