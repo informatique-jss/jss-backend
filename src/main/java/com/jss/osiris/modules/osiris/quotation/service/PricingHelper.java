@@ -192,8 +192,13 @@ public class PricingHelper {
         if (billingItem.getBillingType().getIsPriceBasedOnCharacterNumber()) {
             CharacterPrice characterPrice = characterPriceService.getCharacterPrice(provision);
             if (characterPrice != null) {
+                Integer characterNumber = characterPriceService.getCharacterNumber(provision, false);
+                if (Boolean.TRUE.equals(provision.getIsOverrideCharacterNumber())
+                        && provision.getOverridedCharacterNumber() != null
+                        && provision.getOverridedCharacterNumber() > 0)
+                    characterNumber = provision.getOverridedCharacterNumber();
                 BigDecimal price = characterPrice.getPrice()
-                        .multiply(BigDecimal.valueOf(characterPriceService.getCharacterNumber(provision, false)));
+                        .multiply(BigDecimal.valueOf(characterNumber));
                 invoiceItem.setPreTaxPrice(price);
 
                 // Add notice type indication for announcements
@@ -209,7 +214,7 @@ public class PricingHelper {
 
                 if (noticeFamiliyType != null && noticeTypes.size() > 0)
                     invoiceItem.setLabel(invoiceItem.getLabel() + " ("
-                            + characterPriceService.getCharacterNumber(provision, false)
+                            + characterNumber
                             + " caractères"
                             + (provision.getAnnouncement() != null
                                     && provision.getAnnouncement().getPublicationDate() != null
@@ -224,7 +229,7 @@ public class PricingHelper {
                             + String.join(" / ", noticeTypes) + ")");
                 else
                     invoiceItem.setLabel(invoiceItem.getLabel() + " ("
-                            + characterPriceService.getCharacterNumber(provision, false) + ")");
+                            + characterNumber + ")");
 
                 if (provision.getAnnouncement().getDepartment() != null)
                     invoiceItem.setLabel(
