@@ -237,7 +237,7 @@
             </generic-toggle>
           </td>
         </tr>
-        <tr *ngIf="provision.announcement && provision.announcement.id">
+        <tr *ngIf="provision.announcement && provision.announcement.id && provision.isOverrideCharacterNumber">
           <td>
             <generic-input [(model)]="provision.overridedCharacterNumber" label="Nombre de caractères forcé"
               [form]="optionForm" propertyName="overridedCharacterNumber" [isMandatory]="false" [isDisabled]="!editMode"
