@@ -784,20 +784,24 @@ public class ServiceServiceImpl implements ServiceService {
                             for (FormaliteGuichetUnique formaliteGuichetUnique : formaliteGuichetUniques)
                                 if (formaliteGuichetUnique.getStatus() != null
                                         && Boolean.FALSE.equals(formaliteGuichetUnique.getStatus().getIsCloseState())) {
-                                    ValidationRequest validationRequest = formaliteGuichetUnique
+                                    List<ValidationRequest> validationRequests = formaliteGuichetUnique
                                             .getValidationsRequests().stream()
                                             .filter(valReq -> ValidationsRequestStatus.VALIDATION_PENDING
                                                     .equals(valReq.getStatus().getCode())
                                                     || ValidationsRequestStatus.AMENDED
                                                             .equals(valReq.getStatus().getCode()))
-                                            .toList().get(0);
+                                            .toList();
 
-                                    competentAuthorityLabel = validationRequest.getPartnerCenter().getName();
-                                    hasCompleteWaitingAcLabel = true;
-                                    if (validationRequest.getUpdated() != null)
-                                        lastSentLiasse = OffsetDateTime.parse(validationRequest.getUpdated())
-                                                .toLocalDateTime();
-                                    break;
+                                    if (validationRequests != null && validationRequests.size() > 0) {
+                                        ValidationRequest validationRequest = validationRequests.get(0);
+
+                                        competentAuthorityLabel = validationRequest.getPartnerCenter().getName();
+                                        hasCompleteWaitingAcLabel = true;
+                                        if (validationRequest.getUpdated() != null)
+                                            lastSentLiasse = OffsetDateTime.parse(validationRequest.getUpdated())
+                                                    .toLocalDateTime();
+                                        break;
+                                    }
                                 }
 
                             if (!hasCompleteWaitingAcLabel && provision.getFormalite().getFormaliteStatus() != null
