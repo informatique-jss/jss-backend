@@ -61,15 +61,18 @@ public class DashboardUserStatisticsServiceImpl implements DashboardUserStatisti
         public DashboardUserStatistics getDashboardUserStatistics(List<Integer> responsableIds) throws OsirisException {
                 DashboardUserStatistics statistics = new DashboardUserStatistics();
                 List<Responsable> listResponsables = new ArrayList<Responsable>();
+                Responsable currentUser = employeeService.getCurrentMyJssUser();
 
-                if (responsableIds != null && !responsableIds.isEmpty())
-                        for (Integer id : responsableIds) {
-                                Responsable newResponsable = responsableService.getResponsable(id);
-                                listResponsables.add(newResponsable);
+                if (currentUser != null && Boolean.TRUE.equals(currentUser.getCanViewAllTiersInWeb())
+                                && currentUser.getTiers().getResponsables() != null)
+                        for (Responsable respo : currentUser.getTiers().getResponsables()) {
+                                if (responsableIds != null && responsableIds.contains(respo.getId()))
+                                        listResponsables.add(respo);
                         }
 
-                if (listResponsables == null || listResponsables.isEmpty())
-                        listResponsables.add(employeeService.getCurrentMyJssUser());
+                if ((responsableIds == null || listResponsables == null || listResponsables.isEmpty())
+                                && currentUser != null)
+                        listResponsables.add(currentUser);
 
                 if (listResponsables != null && !listResponsables.isEmpty()) {
                         // compute customerOrderInProgress
