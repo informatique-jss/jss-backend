@@ -80,7 +80,7 @@
             [propertyName]="'isRegisteredAffaire'+indexAsso">
           </generic-toggle>
           <osi-tooltip tootltipCodeToDisplay="MYJSS_QUOTATION_IDENTIFICATION_EXISTING_AFFAIRE"
-            class="col-auto "></osi-tooltip>
+            class="col-auto ps-0 mb-1"></osi-tooltip>
         </div>
         <!-- Choose affaire by SIRET -->
         <div *ngIf="isRegisteredAffaire[indexAsso] ">
@@ -234,12 +234,12 @@
   </div>
   <div class="row justify-content-end align-items-center m-0" *ngIf="quotation.serviceFamilyGroup">
     <osi-tooltip tootltipCodeToDisplay="MYJSS_QUOTATION_IDENTIFICATION_ADD_AFFAIRE" class="col-auto "></osi-tooltip>
-    <a class="col-auto p-md-4 ps-md-0" (click)="addAffaire()"><strong>Ajouter une affaire</strong></a>
+    <a class="col-auto p-md-4 ps-md-0 mb-1" (click)="addAffaire()"><strong class="mb-2">Ajouter une affaire</strong></a>
   </div>
   <div
     class="position-fixed bottom-0 start-0 w-100 bg-light shadow-sm p-3 m-0 d-flex justify-content-end align-items-center z-1030">
     <osi-tooltip *ngIf="canStartQuotation()" tootltipCodeToDisplay="MYJSS_QUOTATION_IDENTIFICATION_START"
-      class="col-auto "></osi-tooltip>
+      class="col-auto mt-1"></osi-tooltip>
     <button type="button" class="btn btn-secondary rounded-1  mx-0 mx-sm-5 ms-sm-2 d-flex align-items-center"
       *ngIf="canStartQuotation()" (click)="startQuotation()">
       <span class="me-2">Démarrer</span>

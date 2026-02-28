@@ -423,12 +423,24 @@ public class GeneratePdfDelegate {
         final Context ctx = new Context();
 
         Document billingDocument = null;
+        Document billingClosureDocument = null;
+        Boolean isBillingClosureTypeAffaire = false;
 
-        if (tier != null)
+        if (tier != null) {
             billingDocument = documentService.getBillingDocument(tier.getDocuments());
-        else if (responsable != null)
+            billingClosureDocument = documentService.getBillingClosureDocument(tier.getDocuments());
+        } else if (responsable != null) {
             billingDocument = documentService.getBillingDocument(responsable.getDocuments());
+            billingClosureDocument = documentService.getBillingClosureDocument(responsable.getDocuments());
+        }
 
+        if (billingClosureDocument != null)
+            if (billingClosureDocument.getBillingClosureType() != null
+                    && billingClosureDocument.getBillingClosureType().getId()
+                            .equals(constantService.getBillingClosureTypeAffaire().getId()))
+                isBillingClosureTypeAffaire = true;
+
+        ctx.setVariable("isBillingClosureTypeAffaire", isBillingClosureTypeAffaire);
         ctx.setVariable("commandNumber", null);
         if (billingDocument != null && billingDocument.getIsCommandNumberMandatory() != null
                 && billingDocument.getIsCommandNumberMandatory()

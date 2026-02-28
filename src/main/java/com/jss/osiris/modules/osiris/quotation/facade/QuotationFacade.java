@@ -1,12 +1,14 @@
 package com.jss.osiris.modules.osiris.quotation.facade;
 
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
@@ -14,25 +16,33 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.dto.CustomerOrderDto;
+import com.jss.osiris.modules.osiris.quotation.dto.GuichetUniqueDepositInfoDto;
 import com.jss.osiris.modules.osiris.quotation.dto.ProvisionDto;
 import com.jss.osiris.modules.osiris.quotation.dto.QuotationDto;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
+import com.jss.osiris.modules.osiris.quotation.model.MissingAttachmentQuery;
 import com.jss.osiris.modules.osiris.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionSearch;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.QuotationSearch;
+import com.jss.osiris.modules.osiris.quotation.model.Service;
+import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.FormaliteGuichetUnique;
+import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.ValidationRequest;
+import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.FormaliteGuichetUniqueStatus;
 import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.KbisRequest;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderCommentService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.ProvisionService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
+import com.jss.osiris.modules.osiris.quotation.service.ServiceService;
+import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.FormaliteGuichetUniqueService;
 import com.jss.osiris.modules.osiris.quotation.service.infoGreffe.InfogreffeKbisService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 
-@Service
+@org.springframework.stereotype.Service
 public class QuotationFacade {
 
     @Autowired
@@ -55,6 +65,12 @@ public class QuotationFacade {
 
     @Autowired
     EmployeeService employeeService;
+
+    @Autowired
+    ServiceService serviceService;
+
+    @Autowired
+    FormaliteGuichetUniqueService formaliteGuichetUniqueService;
 
     @Transactional(rollbackFor = Exception.class)
     public KbisRequest orderNewKbisForSiret(String siret, Integer provisionId) throws OsirisException {
@@ -308,5 +324,98 @@ public class QuotationFacade {
             return true;
 
         return false;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public List<GuichetUniqueDepositInfoDto> getGuichetUniqueDatesDtosForService(Integer serviceId)
+            throws OsirisException {
+
+        List<GuichetUniqueDepositInfoDto> guichetUniqueDepositInfoDtos = new ArrayList<>();
+        Service service = serviceService.getService(serviceId);
+
+        for (Provision provision : service.getProvisions())
+            if (provision.getFormalite() != null)
+                if (provision.getFormalite().getFormalitesGuichetUnique() != null)
+                    for (FormaliteGuichetUnique formaliteGuichetUnique : provision.getFormalite()
+                            .getFormalitesGuichetUnique()) {
+                        formaliteGuichetUnique = formaliteGuichetUniqueService
+                                .getFormaliteGuichetUnique(formaliteGuichetUnique.getId());
+                        if (formaliteGuichetUnique != null && !isFormaliteGuCancelled(formaliteGuichetUnique)) {
+                            GuichetUniqueDepositInfoDto currentGuInfoDto = new GuichetUniqueDepositInfoDto();
+                            // Deposit date
+                            currentGuInfoDto.setDepositDate(
+                                    OffsetDateTime.parse(formaliteGuichetUnique.getCreated()).toLocalDate());
+
+                            // Waiting for validation
+                            if (formaliteGuichetUnique.getValidationsRequests() != null
+                                    && formaliteGuichetUnique.getValidationsRequests().size() > 0) {
+                                LocalDate lastValidationRequestDate = formaliteGuichetUnique
+                                        .getValidationsRequests().stream()
+                                        .map(val -> OffsetDateTime.parse(val.getCreated()).toLocalDate())
+                                        .max(Comparator.naturalOrder()).get();
+
+                                currentGuInfoDto.setWaitingForValidationFromDate(lastValidationRequestDate);
+
+                                String partnerCenterName = "";
+                                for (ValidationRequest validationRequest : formaliteGuichetUnique
+                                        .getValidationsRequests()) {
+                                    if (validationRequest.getPartnerCenter() != null && !partnerCenterName
+                                            .contains(validationRequest.getPartnerCenter().getName())) {
+                                        partnerCenterName = partnerCenterName
+                                                + validationRequest.getPartnerCenter().getName() + ", ";
+                                    }
+                                }
+                                currentGuInfoDto.setWaitingForValidationPartnerCenterName(partnerCenterName);
+                            }
+
+                            // If validated
+                            if (formaliteGuichetUnique.getStatus().getCode()
+                                    .equals(FormaliteGuichetUniqueStatus.VALIDATED))
+                                currentGuInfoDto
+                                        .setValidationDate(OffsetDateTime.parse(formaliteGuichetUnique.getStatusDate())
+                                                .toLocalDate());
+
+                            guichetUniqueDepositInfoDtos.add(currentGuInfoDto);
+                        }
+                    }
+
+        addMissingAttachmentQueryToGuDepositInfoDtos(service, guichetUniqueDepositInfoDtos);
+
+        return guichetUniqueDepositInfoDtos;
+    }
+
+    private boolean isFormaliteGuCancelled(FormaliteGuichetUnique formaliteGuichetUnique) {
+        return FormaliteGuichetUniqueStatus.ERROR
+                .equals(formaliteGuichetUnique.getStatus().getCode())
+                || FormaliteGuichetUniqueStatus.EXPIRED
+                        .equals(formaliteGuichetUnique.getStatus().getCode())
+                || FormaliteGuichetUniqueStatus.REJECTED
+                        .equals(formaliteGuichetUnique.getStatus().getCode());
+    }
+
+    private void addMissingAttachmentQueryToGuDepositInfoDtos(Service service,
+            List<GuichetUniqueDepositInfoDto> guichetUniqueDepositInfoDtos) {
+
+        List<MissingAttachmentQuery> missingAttachmentsQueries = service.getMissingAttachmentQueries();
+        missingAttachmentsQueries = missingAttachmentsQueries.stream()
+                .sorted((o1, o2) -> o1.getCreatedDateTime().compareTo(o2.getCreatedDateTime())).toList();
+
+        if (missingAttachmentsQueries != null && !missingAttachmentsQueries.isEmpty()) {
+            for (GuichetUniqueDepositInfoDto guichetUniqueDepositInfoDto : guichetUniqueDepositInfoDtos) {
+                List<LocalDate> askingMissingDocumentDates = new ArrayList<>();
+                for (MissingAttachmentQuery missingAttachmentQuery : missingAttachmentsQueries) {
+                    if (missingAttachmentQuery.getCreatedDateTime().toLocalDate()
+                            .isAfter(guichetUniqueDepositInfoDto.getDepositDate())
+                            && missingAttachmentQuery.getCreatedDateTime().toLocalDate()
+                                    .isBefore(guichetUniqueDepositInfoDto.getValidationDate() != null
+                                            ? guichetUniqueDepositInfoDto.getValidationDate()
+                                            : LocalDate.MAX)) {
+                        askingMissingDocumentDates.add(missingAttachmentQuery.getCreatedDateTime().toLocalDate());
+                    }
+                }
+                guichetUniqueDepositInfoDto.setAskingMissingDocumentDates(askingMissingDocumentDates);
+            }
+
+        }
     }
 }

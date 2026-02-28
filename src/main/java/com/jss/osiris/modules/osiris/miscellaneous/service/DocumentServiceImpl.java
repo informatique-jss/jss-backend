@@ -126,6 +126,9 @@ public class DocumentServiceImpl implements DocumentService {
             for (Mail mail : document.getMailsAffaire())
                 documentToMergeTo.getMailsAffaire().add(mail);
 
+        if (document.getReminderMail() != null)
+            documentToMergeTo.setReminderMail(document.getReminderMail());
+
         documentToMergeTo.setIsResponsableOnBilling(document.getIsResponsableOnBilling());
         documentToMergeTo.setIsCommandNumberMandatory(document.getIsCommandNumberMandatory());
         documentToMergeTo.setCommandNumber(document.getCommandNumber());

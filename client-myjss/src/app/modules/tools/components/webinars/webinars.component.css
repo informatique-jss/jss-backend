@@ -2,24 +2,8 @@ generic-input {
   border: none;
 }
 
-.input-group-border {
-  border-color: var(--ar-primary);
-}
-
 .text-blue {
   color: var(--ar-heading-secondary-color);
-}
-
-.form-control {
-  color: var(--ar-info-text-emphasis);
-}
-
-.form-control:focus {
-  color: var(--ar-info-text-emphasis);
-}
-
-.form-control::placeholder {
-  color: var(--ar-info-text-emphasis);
 }
 
 generic-textarea {

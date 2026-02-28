@@ -65,7 +65,8 @@
       </p>
     </div>
 
-    <ul ngbNav #nav="ngbNav" [destroyOnHide]="false" [activeId]="activeId" class="nav-tabs border-3 border-secondary">
+    <ul ngbNav #nav="ngbNav" [destroyOnHide]="false" [activeId]="activeId"
+      class="nav-tabs border-3 border-secondary align-items-start">
       <ng-container *ngIf="serviceFamilies">
         <ng-container *ngFor="let serviceFamily of serviceFamilies;let serviceFamilyIndex=index">
           <li [ngbNavItem]="serviceFamilyIndex" class="nav-item "
@@ -112,7 +113,7 @@
           </li>
         </ng-container>
         <osi-tooltip tootltipCodeToDisplay="MYJSS_QUOTATION_SERV_SELECTION_SERVICE_FAMILY"
-          class="col-auto"></osi-tooltip>
+          class="col-auto  align-self-center mt-1"></osi-tooltip>
       </ng-container>
     </ul>
     <div [ngbNavOutlet]="nav" class="mt-2"></div>
@@ -152,11 +153,11 @@
       <osi-tooltip
         *ngIf="canSaveQuotation() && quotation && quotation.assoAffaireOrders && quotation.assoAffaireOrders.length === 1"
         tootltipCodeToDisplay="MYJSS_QUOTATION_SERV_SELECTION_NEXT_UNI"
-        class="d-none d-md-block col-auto"></osi-tooltip>
+        class="d-none d-md-block col-auto mt-1"></osi-tooltip>
       <osi-tooltip
         *ngIf="canSaveQuotation() && quotation && quotation.assoAffaireOrders && quotation.assoAffaireOrders.length > 1"
         tootltipCodeToDisplay="MYJSS_QUOTATION_SERV_SELECTION_NEXT_MULTI"
-        class="d-none d-md-block col-auto"></osi-tooltip>
+        class="d-none d-md-block col-auto mt-1"></osi-tooltip>
       <button type="button" class="col-auto btn btn-secondary rounded-1 mx-0 mx-sm-5 ms-sm-2 d-flex align-items-center"
         *ngIf="canSaveQuotation()" (click)="saveQuotation()"> <span class="me-2">Étape
           suivante</span>

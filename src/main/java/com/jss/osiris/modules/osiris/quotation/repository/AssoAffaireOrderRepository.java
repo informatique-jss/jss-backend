@@ -27,6 +27,7 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         +
                         " r.firstname || ' '||r.lastname as responsableLabel," +
                         " cf.label as confrereLabel," +
+                        " t2.id_commercial as salesEmployeeId," +
                         " e2.id as assignedToId," +
                         " pf.label ||' - '||pt.label as provisionTypeLabel," +
                         " coalesce(ans.label,fs.label,doms.label, sps.label) as statusLabel," +
@@ -97,7 +98,7 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
                         +
                         " and (COALESCE(:status) =0 or coalesce(ans.id,fs.id,doms.id,sps.id) in (:status) ) " +
                         " group by a.denomination, a.firstname , a.lastname,  " +
-                        "  t2.denomination, t2.firstname , t2.lastname,  " +
+                        "  t2.denomination, t2.firstname , t2.lastname,t2.id_commercial,  " +
                         "  r.firstname , r.lastname, asso.id, " +
                         "  a.address ,a.postal_Code ,ci.label ,c.created_date,c.production_effective_date_time,  " +
                         "  cf.label,e2.id , pf.label ,pt.label,ans.label,fs.label,doms.label,  sps.label, "

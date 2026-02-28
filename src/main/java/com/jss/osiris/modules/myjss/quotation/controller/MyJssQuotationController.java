@@ -81,6 +81,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.controller.QuotationValidationHelper;
+import com.jss.osiris.modules.osiris.quotation.dto.GuichetUniqueDepositInfoDto;
 import com.jss.osiris.modules.osiris.quotation.dto.ServiceFieldTypeDto;
 import com.jss.osiris.modules.osiris.quotation.facade.QuotationFacade;
 import com.jss.osiris.modules.osiris.quotation.facade.ServiceFieldTypeFacade;
@@ -361,9 +362,33 @@ public class MyJssQuotationController {
 
   @GetMapping(inputEntryPoint + "/dashboard/user/statistics")
   @JsonView(JacksonViews.MyJssDetailedView.class)
-  public ResponseEntity<DashboardUserStatistics> getDashboardUserStatistics()
+  public ResponseEntity<DashboardUserStatistics> getDashboardUserStatistics(
+      @RequestParam(required = false) List<Integer> filteredResponsableIds, HttpServletRequest request)
       throws OsirisException {
-    return new ResponseEntity<DashboardUserStatistics>(dashboardUserStatisticsService.getDashboardUserStatistics(),
+    detectFlood(request);
+
+    Responsable currentUser = employeeService.getCurrentMyJssUser();
+    if (currentUser == null)
+      return new ResponseEntity<DashboardUserStatistics>(new DashboardUserStatistics(), HttpStatus.OK);
+
+    if (filteredResponsableIds != null) {
+      if (!Boolean.TRUE.equals(currentUser.getCanViewAllTiersInWeb()))
+        return new ResponseEntity<DashboardUserStatistics>(new DashboardUserStatistics(), HttpStatus.OK);
+
+      for (Integer queryResponsable : filteredResponsableIds) {
+        boolean found = false;
+        for (Responsable responsable : currentUser.getTiers().getResponsables()) {
+          if (responsable.getId().equals(queryResponsable)) {
+            found = true;
+          }
+        }
+        if (!found)
+          return new ResponseEntity<DashboardUserStatistics>(new DashboardUserStatistics(), HttpStatus.OK);
+      }
+    }
+
+    return new ResponseEntity<DashboardUserStatistics>(
+        dashboardUserStatisticsService.getDashboardUserStatistics(filteredResponsableIds),
         HttpStatus.OK);
   }
 
@@ -2280,5 +2305,22 @@ public class MyJssQuotationController {
       throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
     detectFlood(request);
     return new ResponseEntity<Notice>(announcementService.getNoticeFromFile(file), HttpStatus.OK);
+  }
+  
+  @GetMapping(inputEntryPoint + "/formalite-guichet-unique/dates-dtos")
+  public ResponseEntity<List<GuichetUniqueDepositInfoDto>> getGuichetUniqueDatesDtosForService(
+      @RequestParam Integer serviceId, HttpServletRequest request)
+      throws OsirisValidationException, OsirisException {
+    detectFlood(request);
+
+    if (serviceId == null)
+      throw new OsirisValidationException("serviceId");
+
+    Service service = serviceService.getService(serviceId);
+    if (service == null)
+      throw new OsirisValidationException("service");
+
+    return new ResponseEntity<List<GuichetUniqueDepositInfoDto>>(
+        quotationFacade.getGuichetUniqueDatesDtosForService(serviceId), HttpStatus.OK);
   }
 }
