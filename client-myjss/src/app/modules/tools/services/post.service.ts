@@ -20,6 +20,10 @@ export class PostService extends AppRestService<Post> {
     return this.get(new HttpParams().set("slug", slug), "posts/slug");
   }
 
+  getPostById(id: number) {
+    return this.get(new HttpParams().set("id", id), "post/id");
+  }
+
   getPostSerieBySlug(slug: string) {
     return this.getList(new HttpParams().set("slug", slug), "posts/serie/slug");
   }
@@ -124,8 +128,12 @@ export class PostService extends AppRestService<Post> {
   getTendencyPosts() {
     return this.getList(new HttpParams(), "posts/myjss/tendency");
   }
+
   getMostSeenPosts() {
     return this.getList(new HttpParams(), "posts/myjss/most-seen");
   }
 
+  getPurchasedPosts() {
+    return this.getList(new HttpParams(), "posts/jss/purchased");
+  }
 }

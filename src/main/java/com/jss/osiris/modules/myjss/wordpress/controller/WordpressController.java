@@ -459,11 +459,12 @@ public class WordpressController {
 		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size));
 
 		return new ResponseEntity<Page<Post>>(
-				postService.computeBookmarkedPosts(postService.getJssCategoryPosts(searchText, pageable)),
+				postService.applyPremiumAndBookmarks(postService.getJssCategoryPosts(searchText, pageable)),
 				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/myjss/top")
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Post>> getTopMyJssPosts(@RequestParam Integer page) throws OsirisException {
 		return new ResponseEntity<List<Post>>(postService.getMyJssCategoryPosts(page),
 				HttpStatus.OK);
@@ -491,8 +492,23 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/myjss/most-seen")
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Post>> getMyJssPostsMostSeen() throws OsirisException {
 		return new ResponseEntity<List<Post>>(postService.getMyJssCategoryPostMostSeen(),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/posts/jss/purchased")
+	@JsonView(JacksonViews.MyJssListView.class)
+	public ResponseEntity<List<Post>> getJssPostsPurchased(HttpServletRequest request) throws OsirisException {
+		detectFlood(request);
+
+		Responsable responsable = employeeService.getCurrentMyJssUser();
+
+		if (responsable == null)
+			throw new OsirisValidationException("currentUser");
+
+		return new ResponseEntity<List<Post>>(postService.getPurchasedPostsForCurrentUser(),
 				HttpStatus.OK);
 	}
 
@@ -524,8 +540,8 @@ public class WordpressController {
 		Pageable pageableRequest = PageRequest.of(page, ValidationHelper.limitPageSize(size),
 				Sort.by(Sort.Direction.DESC, "date"));
 
-		return new ResponseEntity<Page<Post>>(
-				postService.getJssCategoryStickyPost(pageableRequest),
+		return new ResponseEntity<Page<Post>>(postService.applyPremiumAndBookmarks(
+				postService.getJssCategoryStickyPost(pageableRequest)),
 				HttpStatus.OK);
 	}
 
@@ -564,6 +580,21 @@ public class WordpressController {
 		}
 		if (post != null && !isCrawler(request))
 			postViewService.incrementView(post);
+		return new ResponseEntity<Post>(postService.applyPremiumAndBookmarks(post, null, null, false), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/post/id")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<Post> getPostById(@RequestParam Integer id, HttpServletRequest request)
+			throws OsirisException {
+		if (id == null)
+			throw new OsirisValidationException("Id is required");
+
+		Post post = postService.getPostsById(id);
+
+		if (post != null && !isCrawler(request))
+			postViewService.incrementView(post);
+
 		return new ResponseEntity<Post>(postService.applyPremiumAndBookmarks(post, null, null, false), HttpStatus.OK);
 	}
 

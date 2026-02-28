@@ -134,7 +134,9 @@
           <div class="row d-flex justify-content-between align-items-center w-100">
             <div class="col-md-auto col-md-10 order-1">
               <h4 class="h6 mb-2 d-flex flex-row">
-                <a class="me-3">{{service.serviceLabelToDisplay}}</a>
+                <a class="me-3 flex-fill">{{service.serviceLabelToDisplay}}</a>
+                <a *ngIf="getPost(service) as post" class=" flex-fill" [href]="frontendJssUrl + 'post/' + post.slug">{{
+                  post.titleText }}</a>
                 <div class="text-body-secondary fs-sm pb-1">
                   <span class="badge bg-info bg-opacity-10 text-info fs-xs">{{service.serviceStatus}}</span>
                 </div>

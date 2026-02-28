@@ -20,6 +20,7 @@ import { SingleUploadComponent } from '../../../miscellaneous/components/forms/s
 import { Employee } from '../../../profile/model/Employee';
 import { Responsable } from '../../../profile/model/Responsable';
 import { LoginService } from '../../../profile/services/login.service';
+import { Post } from '../../../tools/model/Post';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
 import { AssoServiceDocument } from '../../model/AssoServiceDocument';
 import { Attachment } from '../../model/Attachment';
@@ -241,6 +242,10 @@ export class OrderDetailsComponent implements OnInit {
 
   changeAffaire(asso: AssoAffaireOrder) {
     this.selectedAssoAffaireOrder = asso;
+  }
+
+  getPost(service: any): Post | null {
+    return service?.provisions?.[0]?.assoProvisionPostNewspapers?.[0]?.post ?? null;
   }
 
   loadServiceDetails(service: Service, forceLoad: boolean) {

@@ -44,7 +44,8 @@
                       </div>
                       <p class="h6 mb-0">
                         <a class="card-text-truncate" [routerLink]='"/post/" + post.slug'>{{post.titleText}} <img
-                            *ngIf="post.isPremium" class="pe-0" src="/assets/images/premium-icon.svg">
+                            *ngIf="post.isPremium" class="pe-0" src="/assets/images/premium-icon.svg"><img
+                            *ngIf="post.isHidePremium" class="pe-0" src="/assets/images/premium-icon.svg">
                         </a>
                       </p>
                     </div>
@@ -71,7 +72,8 @@
                     <p class="h3">
                       <a class="card-title-truncate"
                         [routerLink]='"/post/" + lastPosts[0].slug'><span>{{lastPosts[0].titleText}}</span> <img
-                          *ngIf="lastPosts[0].isPremium" class="pe-0" src="/assets/images/premium-icon.svg"></a>
+                          *ngIf="lastPosts[0].isPremium" class="pe-0" src="/assets/images/premium-icon.svg"><img
+                          *ngIf="lastPosts[0].isHidePremium" class="pe-0" src="/assets/images/premium-icon.svg"></a>
                     </p>
                     <span class="card-text-truncate" [innerHTML]="lastPosts[0].excerptText| trustHtml"></span>
                   </div>
@@ -113,7 +115,8 @@
                       </div>
                       <p class="h4">
                         <a class="card-text-truncate" [routerLink]='"/post/" + post.slug'> <img *ngIf="post.isPremium"
-                            class="col-auto pe-1" src="/assets/images/premium-icon.svg">{{post.titleText}}</a>
+                            class="col-auto pe-1" src="/assets/images/premium-icon.svg"><img *ngIf="post.isHidePremium"
+                            class="pe-0" src="/assets/images/premium-icon.svg">{{post.titleText}}</a>
                       </p>
                       <div class="row align-items-end">
                         <div class="col"> <span class="date-info fs-9 float-lg-end">
@@ -668,7 +671,8 @@
               </div>
               <p>
                 <a class="h4 card-text-truncate" [routerLink]='"/post/" + post.slug'> <img *ngIf="post.isPremium"
-                    class="pe-0" src="/assets/images/premium-icon.svg">
+                    class="pe-0" src="/assets/images/premium-icon.svg"><img *ngIf="post.isHidePremium" class="pe-0"
+                    src="/assets/images/premium-icon.svg">
                   {{post.titleText}}</a>
               </p>
               <span class="fs-7 card-text-truncate mb-0" [innerHTML]="post.excerptText| trustHtml"></span>

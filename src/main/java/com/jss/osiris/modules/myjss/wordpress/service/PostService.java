@@ -96,6 +96,8 @@ public interface PostService {
 
         public List<Post> getFirstPostsByMyJssCategories(MyJssCategory selectedMyJssCategory);
 
+        public Post getPostsById(Integer id);
+
         public Post getPostsBySlug(String slung);
 
         public List<Post> getPostExcludedId(List<Integer> postFetchedId);
@@ -139,4 +141,6 @@ public interface PostService {
         public List<Post> getAllPostsForJssMedia();
 
         public List<Post> getAllPostsForMyJss();
+
+        public List<Post> getPurchasedPostsForCurrentUser();
 }
