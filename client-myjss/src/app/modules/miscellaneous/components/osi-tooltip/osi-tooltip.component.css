@@ -35,8 +35,8 @@ button:after {
   z-index: 4;
   animation: slide 1.3s ease-out forwards;
 
-  /* 
-  CSS Gradient - complete browser support from http://www.colorzilla.com/gradient-editor/ 
+  /*
+  CSS Gradient - complete browser support from http://www.colorzilla.com/gradient-editor/
   */
   background: -moz-linear-gradient(left, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.8) 50%, rgba(128, 186, 232, 0) 99%, rgba(125, 185, 232, 0) 100%);
   /* FF3.6+ */
@@ -112,4 +112,8 @@ button:after {
   100% {
     transform: translateX(100%);
   }
+}
+
+.btn-trigger {
+  pointer-events: auto;
 }

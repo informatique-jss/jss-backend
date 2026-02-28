@@ -917,7 +917,7 @@
             </ng-template>
           </li-->
         </ng-container>
-        <li class="row"
+        <li class="row z-4"
           [ngbNavItem]="getIndexForProvision(-1, quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].provisions)"
           *ngIf="currentUser && (quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes ||
           quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments)">
@@ -957,7 +957,7 @@
             </div>
           </ng-template>
         </li>
-        <li class="row" [ngbNavItem]="50" *ngIf="(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes ||
+        <li class="row z-3" [ngbNavItem]="50" *ngIf="(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes ||
           quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments)">
           <button class="col-auto py-0 pe-2" ngbNavLink>Informations complémentaires<osi-tooltip
               tootltipCodeToDisplay="MYJSS_QUOTATION_REQUIRED_INFO_ADDITIONAL_INFO"
