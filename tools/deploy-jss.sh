@@ -1,10 +1,29 @@
-cd ..
-cd client-jss
+#!/bin/bash
+cd ../client-jss
 rm dist/* -R
 npm install  
 ng build --configuration production
-ssh -t jss@jss.fr 'sudo  /usr/bin/systemctl stop ssr.service;exit'
-ssh -t jss@jss.fr 'rm -R /appli/jss/*;exit'
-scp -r dist/* jss@jss.fr:/appli/jss/.
-ssh -t jss@jss.fr 'chown jss:appli /appli/jss/*;exit'
-ssh -t jss@jss.fr 'sudo  /usr/bin/systemctl start ssr.service;exit'
+
+tar -czf deploy.tar.gz -C dist .
+scp deploy.tar.gz jss@jss.fr:/tmp/deploy.tar.gz
+
+ssh -t jss@jss.fr << 'EOF'
+  rm -rf /tmp/deploy_unzipped
+  mkdir -p /tmp/deploy_unzipped
+  
+  tar -xzf /tmp/deploy.tar.gz -C /tmp/deploy_unzipped
+  
+  sudo /usr/bin/systemctl stop ssr.service
+  
+  rm -R /appli/jss/*
+  mv /tmp/deploy_unzipped/* /appli/jss/.
+  
+  chown -R jss:appli /appli/jss/
+  sudo /usr/bin/systemctl start ssr.service
+  
+  rm /tmp/deploy.tar.gz
+  rm -rf /tmp/deploy_unzipped
+  exit
+EOF
+
+rm deploy.tar.gz
