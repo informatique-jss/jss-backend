@@ -81,14 +81,13 @@ export class OverviewComponent implements OnInit {
     this.loginService.getCurrentUser().subscribe(response => {
       if (response) {
         this.currentUser = response;
-        if (this.currentUser.canViewAllTiersInWeb)
-          this.responsableService.getResponsablesForCurrentUser().subscribe(response => {
-            if (response) {
-              this.responsablesForCurrentUser = response;
-              this.retrieveBookmark();
-              this.refreshStats();
-            }
-          });
+        this.responsableService.getResponsablesForCurrentUser().subscribe(response => {
+          if (response) {
+            this.responsablesForCurrentUser = response;
+            this.retrieveBookmark();
+            this.refreshStats();
+          }
+        });
 
         if (this.currentUser && this.currentUser.salesEmployee && this.currentUser.salesEmployee.bookingPageUrl)
           this.appointmentUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.currentUser.salesEmployee.bookingPageUrl);

@@ -24,5 +24,4 @@ export interface Responsable {
   country: Country;
   documents: Document[];
   consentTermsDate: Date;
-  canViewAllTiersInWeb: boolean;
 }
