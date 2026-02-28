@@ -357,9 +357,33 @@ public class MyJssQuotationController {
 
   @GetMapping(inputEntryPoint + "/dashboard/user/statistics")
   @JsonView(JacksonViews.MyJssDetailedView.class)
-  public ResponseEntity<DashboardUserStatistics> getDashboardUserStatistics()
+  public ResponseEntity<DashboardUserStatistics> getDashboardUserStatistics(
+      @RequestParam(required = false) List<Integer> filteredResponsableIds, HttpServletRequest request)
       throws OsirisException {
-    return new ResponseEntity<DashboardUserStatistics>(dashboardUserStatisticsService.getDashboardUserStatistics(),
+    detectFlood(request);
+
+    Responsable currentUser = employeeService.getCurrentMyJssUser();
+    if (currentUser == null)
+      return new ResponseEntity<DashboardUserStatistics>(new DashboardUserStatistics(), HttpStatus.OK);
+
+    if (filteredResponsableIds != null) {
+      if (!Boolean.TRUE.equals(currentUser.getCanViewAllTiersInWeb()))
+        return new ResponseEntity<DashboardUserStatistics>(new DashboardUserStatistics(), HttpStatus.OK);
+
+      for (Integer queryResponsable : filteredResponsableIds) {
+        boolean found = false;
+        for (Responsable responsable : currentUser.getTiers().getResponsables()) {
+          if (responsable.getId().equals(queryResponsable)) {
+            found = true;
+          }
+        }
+        if (!found)
+          return new ResponseEntity<DashboardUserStatistics>(new DashboardUserStatistics(), HttpStatus.OK);
+      }
+    }
+
+    return new ResponseEntity<DashboardUserStatistics>(
+        dashboardUserStatisticsService.getDashboardUserStatistics(filteredResponsableIds),
         HttpStatus.OK);
   }
 
