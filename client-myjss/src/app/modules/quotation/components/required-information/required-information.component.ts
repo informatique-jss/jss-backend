@@ -102,6 +102,7 @@ import { QuotationFileUploaderComponent } from '../quotation-file-uploader/quota
 export class RequiredInformationComponent implements OnInit {
 
   @ViewChild('confirmBackModal') confirmBackModal!: TemplateRef<any>;
+  @ViewChild('uploadWordFile') uploadWordFile!: SingleUploadComponent;
 
   CONFIER_ANNONCE_AU_JSS: string = "Confier l'annonce légale au JSS";
 
@@ -136,7 +137,7 @@ export class RequiredInformationComponent implements OnInit {
   SERVICE_FIELD_TYPE_SELECT = SERVICE_FIELD_TYPE_SELECT;
   PROVISION_SCREEN_TYPE_DOMICILIATION = PROVISION_SCREEN_TYPE_DOMICILIATION;
   PROVISION_SCREEN_TYPE_ANNOUNCEMENT = PROVISION_SCREEN_TYPE_ANNOUNCEMENT;
-  entityType = "Fichier";
+  entityType = "WordFile";
   entityFile = {} as any;
   provisionTypeRbe!: ProvisionType;
 
@@ -924,11 +925,12 @@ export class RequiredInformationComponent implements OnInit {
     return false;
   }
 
-  updateNoticeAnnouncement(last: any, provision: Provision) {
-    if (last && last.length > 0)
-      this.noticeService.getNoticeFromFile(last[0]).subscribe(response => {
+  updateNoticeAnnouncement(files: any, provision: Provision) {
+    if (files && files.length > 0)
+      this.noticeService.getNoticeFromFile(files[0]).subscribe(response => {
         if (response && provision)
           this.noticeValue = response.notice;
+        this.uploadWordFile.resetForm();
       });
   }
 }

@@ -192,13 +192,13 @@
                   </div>
 
                   <div
-                    *ngIf=" !provision.isRedactedByJss && (!noticeTemplateDescription || !noticeTemplateDescription.isUsingTemplate)"
+                    *ngIf="currentUser &&  !provision.isRedactedByJss && (!noticeTemplateDescription || !noticeTemplateDescription.isUsingTemplate)"
                     class="col-12 pb-5 compact-upload-container">
                     <label class="form-label">Importer un fichier Word pour remplir le champ de texte de
                       l'annonce</label>
                     <single-upload [entity]="entityFile" [entityType]="entityType" [isDirectUpload]="false"
-                      forcedFileExtension="DOCX" (fileDropped)="updateNoticeAnnouncement($event, provision)"
-                      [fullSize]="false"></single-upload>
+                      #uploadWordFile forcedFileExtension="DOCX"
+                      (fileDropped)="updateNoticeAnnouncement($event, provision)" [fullSize]="false"></single-upload>
                   </div>
                 </div>
                 <div class="d-flex flex-column flex-md-row flex-sm-wrap align-items-center"

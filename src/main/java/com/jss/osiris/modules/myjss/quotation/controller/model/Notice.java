@@ -1,18 +1,15 @@
 package com.jss.osiris.modules.myjss.quotation.controller.model;
 
-import jakarta.persistence.Column;
-
 public class Notice {
 
-    @Column(columnDefinition = "TEXT")
-    private String Notice;
+    private String notice;
 
     public String getNotice() {
-        return Notice;
+        return notice;
     }
 
     public void setNotice(String notice) {
-        Notice = notice;
+        this.notice = notice;
     }
 
 }
