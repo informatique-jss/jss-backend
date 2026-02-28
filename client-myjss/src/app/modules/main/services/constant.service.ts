@@ -77,28 +77,12 @@ export class ConstantService extends AppRestService<Constant> {
     );
   }
 
-  getPaymentTypeAccount() {
-    return this.constant.paymentTypeAccount;
-  }
-
-  getPaymentTypeEspeces() {
-    return this.constant.paymentTypeEspeces;
-  }
-
-  getPaymentTypeCheques() {
-    return this.constant.paymentTypeCheques;
-  }
-
   getPaymentTypeCB() {
     return this.constant.paymentTypeCB;
   }
 
   getPaymentTypeVirement() {
     return this.constant.paymentTypeVirement;
-  }
-
-  getPaymentTypePrelevement() {
-    return this.constant.paymentTypePrelevement;
   }
 
   getDocumentTypeDigital() {
@@ -163,10 +147,6 @@ export class ConstantService extends AppRestService<Constant> {
 
   getServiceFamilyGroupOther() {
     return this.constant.serviceFamilyGroupOther;
-  }
-
-  getCategoryArticle() {
-    return this.constant.categoryArticle;
   }
 
   getCategoryExclusivity() {
