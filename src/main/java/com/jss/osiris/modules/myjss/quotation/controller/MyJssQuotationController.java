@@ -80,6 +80,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.MailService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.PhoneService;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.controller.QuotationValidationHelper;
+import com.jss.osiris.modules.osiris.quotation.dto.GuichetUniqueDepositInfoDto;
 import com.jss.osiris.modules.osiris.quotation.dto.ServiceFieldTypeDto;
 import com.jss.osiris.modules.osiris.quotation.facade.QuotationFacade;
 import com.jss.osiris.modules.osiris.quotation.facade.ServiceFieldTypeFacade;
@@ -2268,5 +2269,22 @@ public class MyJssQuotationController {
     return new ResponseEntity<List<CustomerOrderComment>>(
         quotationFacade.getCommentsListFromChatForIQuotations(Arrays.asList(iQuotationId)),
         HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/formalite-guichet-unique/dates-dtos")
+  public ResponseEntity<List<GuichetUniqueDepositInfoDto>> getGuichetUniqueDatesDtosForService(
+      @RequestParam Integer serviceId, HttpServletRequest request)
+      throws OsirisValidationException, OsirisException {
+    detectFlood(request);
+
+    if (serviceId == null)
+      throw new OsirisValidationException("serviceId");
+
+    Service service = serviceService.getService(serviceId);
+    if (service == null)
+      throw new OsirisValidationException("service");
+
+    return new ResponseEntity<List<GuichetUniqueDepositInfoDto>>(
+        quotationFacade.getGuichetUniqueDatesDtosForService(serviceId), HttpStatus.OK);
   }
 }

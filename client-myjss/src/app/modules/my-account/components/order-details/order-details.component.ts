@@ -7,6 +7,7 @@ import { environment } from '../../../../../environments/environment';
 import { compareWithId } from '../../../../libs/CompareHelper';
 import { ASSO_SERVICE_DOCUMENT_ENTITY_TYPE, CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, INVOICING_PAYMENT_LIMIT_REFUND_EUROS, SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
 import { capitalizeName, getListMails, getListPhones } from '../../../../libs/FormatHelper';
+import { LiteralDatePipe } from '../../../../libs/LiteralDatePipe';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { TrustHtmlPipe } from '../../../../libs/TrustHtmlPipe';
 import { AppService } from '../../../main/services/app.service';
@@ -26,6 +27,7 @@ import { BillingLabelType } from '../../model/BillingLabelType';
 import { CustomerOrder } from '../../model/CustomerOrder';
 import { CustomerOrderComment } from '../../model/CustomerOrderComment';
 import { DocumentType } from '../../model/DocumentType';
+import { GuichetUniqueDepositInfoDto } from '../../model/GuichetUniqueDepositInfoDto';
 import { InvoiceLabelResult } from '../../model/InvoiceLabelResult';
 import { InvoicingSummary } from '../../model/InvoicingSummary';
 import { MailComputeResult } from '../../model/MailComputeResult';
@@ -33,11 +35,13 @@ import { Payment } from '../../model/Payment';
 import { PaymentType } from '../../model/PaymentType';
 import { Quotation } from '../../model/Quotation';
 import { Service } from '../../model/Service';
+import { StepperGuichetUniqueObject } from '../../model/StepperGuichetUniqueObject';
 import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
 import { AssoServiceDocumentService } from '../../services/asso.service.document.service';
 import { AttachmentService } from '../../services/attachment.service';
 import { CustomerOrderCommentService } from '../../services/customer.order.comment.service';
 import { CustomerOrderService } from '../../services/customer.order.service';
+import { FormaliteGuichetUniqueService } from '../../services/formalite.guichet.unique.service';
 import { InvoiceLabelResultService } from '../../services/invoice.label.result.service';
 import { InvoicingSummaryService } from '../../services/invoicing.summary.service';
 import { MailComputeResultService } from '../../services/mail.compute.result.service';
@@ -52,7 +56,7 @@ import { getClassForCustomerOrderStatus, getCustomerOrderBillingMailList, getCus
   templateUrl: './order-details.component.html',
   styleUrls: ['./order-details.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, AvatarComponent, TrustHtmlPipe, SingleUploadComponent, NgbTooltipModule, NgbDropdownModule, NgbAccordionModule, NgbNavModule]
+  imports: [SHARED_IMPORTS, AvatarComponent, TrustHtmlPipe, SingleUploadComponent, NgbTooltipModule, NgbDropdownModule, NgbAccordionModule, NgbNavModule, LiteralDatePipe]
 })
 export class OrderDetailsComponent implements OnInit {
 
@@ -78,6 +82,10 @@ export class OrderDetailsComponent implements OnInit {
   documentTypeBilling!: DocumentType;
   selectedAssoAffaireOrder: AssoAffaireOrder | undefined;
   ASSO_SERVICE_DOCUMENT_ENTITY_TYPE = ASSO_SERVICE_DOCUMENT_ENTITY_TYPE;
+
+  guichetUniqueDepositInfoDtos: GuichetUniqueDepositInfoDto[] = [];
+  isCurrentGuichetUniqueDepositInfoNotNull: boolean = false;
+  stepperObjectList: StepperGuichetUniqueObject[][] = [];
 
   currentSelectedAttachmentForDisable: Attachment | undefined;
 
@@ -112,6 +120,7 @@ export class OrderDetailsComponent implements OnInit {
     private quotationService: QuotationService,
     private gtmService: GtmService,
     private assoServiceDocumentService: AssoServiceDocumentService,
+    private formaliteGuichetUniqueService: FormaliteGuichetUniqueService,
     private platefomService: PlatformService
   ) { }
 
@@ -242,6 +251,51 @@ export class OrderDetailsComponent implements OnInit {
           this.serviceProvisionAttachments[service.id] = response;
         })
     }
+  }
+
+  setIsGuichetUniqueInfosNotNull(service: Service) {
+    this.formaliteGuichetUniqueService.getGuichetUniqueDatesDtosForServices(service.id).subscribe(res => {
+      this.isCurrentGuichetUniqueDepositInfoNotNull = false;
+      if (res && res.length > 0)
+        this.isCurrentGuichetUniqueDepositInfoNotNull = true;
+    });
+  }
+
+  loadGuichetUniqueInfos(service: Service) {
+    this.guichetUniqueDepositInfoDtos = [];
+    this.stepperObjectList = [];
+    this.formaliteGuichetUniqueService.getGuichetUniqueDatesDtosForServices(service.id).subscribe(res => {
+      this.guichetUniqueDepositInfoDtos = res;
+      let i = 0;
+      for (let guDepositInfo of this.guichetUniqueDepositInfoDtos) {
+        let isWaintingForValidationPartnerDateInserted = false;
+        let stepperObjects: StepperGuichetUniqueObject[] = [];
+        // Deposit date
+        stepperObjects.push({ date: guDepositInfo.depositDate, stepperType: "deposit", waitingForValidationPartnerCenterName: undefined })
+
+        // Missing doc dates (already sorted by date asc) + insertion of wainting for validation date in between if needed
+        for (let askingMissingDocDate of guDepositInfo.askingMissingDocumentDates) {
+          if (askingMissingDocDate < guDepositInfo.waitingForValidationFromDate)
+            stepperObjects.push({ date: askingMissingDocDate, stepperType: "missing_doc", waitingForValidationPartnerCenterName: guDepositInfo.waitingForValidationPartnerCenterName })
+          else if (askingMissingDocDate > guDepositInfo.waitingForValidationFromDate && !isWaintingForValidationPartnerDateInserted) {
+            stepperObjects.push({ date: guDepositInfo.waitingForValidationFromDate, stepperType: "waiting_validation", waitingForValidationPartnerCenterName: guDepositInfo.waitingForValidationPartnerCenterName })
+            isWaintingForValidationPartnerDateInserted = true;
+          } else
+            stepperObjects.push({ date: askingMissingDocDate, stepperType: "missing_doc", waitingForValidationPartnerCenterName: guDepositInfo.waitingForValidationPartnerCenterName })
+        }
+
+        // Waiting for validation date
+        if (!isWaintingForValidationPartnerDateInserted) {
+          stepperObjects.push({ date: guDepositInfo.waitingForValidationFromDate, stepperType: "waiting_validation", waitingForValidationPartnerCenterName: guDepositInfo.waitingForValidationPartnerCenterName });
+        }
+
+        // Validation date
+        stepperObjects.push({ date: guDepositInfo.validationDate, stepperType: "validation", waitingForValidationPartnerCenterName: undefined })
+
+        this.stepperObjectList[i] = stepperObjects;
+        i++;
+      }
+    });
   }
 
   getPurchaseOrderAttachment() {
