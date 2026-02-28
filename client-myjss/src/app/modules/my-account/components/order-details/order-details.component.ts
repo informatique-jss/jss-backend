@@ -2,10 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { NgbAccordionModule, NgbDropdownModule, NgbNavModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { filter, forkJoin, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { compareWithId } from '../../../../libs/CompareHelper';
 import { ASSO_SERVICE_DOCUMENT_ENTITY_TYPE, CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, INVOICING_PAYMENT_LIMIT_REFUND_EUROS, SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE_SELECT, SERVICE_FIELD_TYPE_TEXT, SERVICE_FIELD_TYPE_TEXTAREA } from '../../../../libs/Constants';
 import { capitalizeName, getListMails, getListPhones } from '../../../../libs/FormatHelper';
+import { LiteralDatePipe } from '../../../../libs/LiteralDatePipe';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { TrustHtmlPipe } from '../../../../libs/TrustHtmlPipe';
 import { AppService } from '../../../main/services/app.service';
@@ -26,6 +28,7 @@ import { BillingLabelType } from '../../model/BillingLabelType';
 import { CustomerOrder } from '../../model/CustomerOrder';
 import { CustomerOrderComment } from '../../model/CustomerOrderComment';
 import { DocumentType } from '../../model/DocumentType';
+import { GuichetUniqueDepositInfoDto } from '../../model/GuichetUniqueDepositInfoDto';
 import { InvoiceLabelResult } from '../../model/InvoiceLabelResult';
 import { InvoicingSummary } from '../../model/InvoicingSummary';
 import { MailComputeResult } from '../../model/MailComputeResult';
@@ -33,11 +36,13 @@ import { Payment } from '../../model/Payment';
 import { PaymentType } from '../../model/PaymentType';
 import { Quotation } from '../../model/Quotation';
 import { Service } from '../../model/Service';
+import { StepperGuichetUniqueObject } from '../../model/StepperGuichetUniqueObject';
 import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
 import { AssoServiceDocumentService } from '../../services/asso.service.document.service';
 import { AttachmentService } from '../../services/attachment.service';
 import { CustomerOrderCommentService } from '../../services/customer.order.comment.service';
 import { CustomerOrderService } from '../../services/customer.order.service';
+import { FormaliteGuichetUniqueService } from '../../services/formalite.guichet.unique.service';
 import { InvoiceLabelResultService } from '../../services/invoice.label.result.service';
 import { InvoicingSummaryService } from '../../services/invoicing.summary.service';
 import { MailComputeResultService } from '../../services/mail.compute.result.service';
@@ -52,7 +57,7 @@ import { getClassForCustomerOrderStatus, getCustomerOrderBillingMailList, getCus
   templateUrl: './order-details.component.html',
   styleUrls: ['./order-details.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, AvatarComponent, TrustHtmlPipe, SingleUploadComponent, NgbTooltipModule, NgbDropdownModule, NgbAccordionModule, NgbNavModule]
+  imports: [SHARED_IMPORTS, AvatarComponent, TrustHtmlPipe, SingleUploadComponent, NgbTooltipModule, NgbDropdownModule, NgbAccordionModule, NgbNavModule, LiteralDatePipe]
 })
 export class OrderDetailsComponent implements OnInit {
 
@@ -79,6 +84,10 @@ export class OrderDetailsComponent implements OnInit {
   selectedAssoAffaireOrder: AssoAffaireOrder | undefined;
   ASSO_SERVICE_DOCUMENT_ENTITY_TYPE = ASSO_SERVICE_DOCUMENT_ENTITY_TYPE;
 
+  guichetUniqueDepositInfoDtos: GuichetUniqueDepositInfoDto[] = [];
+  isCurrentGuichetUniqueDepositInfoNotNull: boolean = false;
+  stepperObjectList: StepperGuichetUniqueObject[][] = [];
+
   currentSelectedAttachmentForDisable: Attachment | undefined;
 
   newComment: CustomerOrderComment = { comment: '' } as CustomerOrderComment;
@@ -90,6 +99,8 @@ export class OrderDetailsComponent implements OnInit {
   currentDate = new Date();
   pollingInterval: any;
   isAlreadyScrolledOnceToMessages: boolean = false;
+
+  private destroy$ = new Subject<void>();
 
   constructor(
     private constantService: ConstantService,
@@ -110,6 +121,7 @@ export class OrderDetailsComponent implements OnInit {
     private quotationService: QuotationService,
     private gtmService: GtmService,
     private assoServiceDocumentService: AssoServiceDocumentService,
+    private formaliteGuichetUniqueService: FormaliteGuichetUniqueService,
     private platefomService: PlatformService
   ) { }
 
@@ -138,59 +150,75 @@ export class OrderDetailsComponent implements OnInit {
   }
 
   refreshOrder() {
-    this.customerOrderService.getCustomerOrder(this.activatedRoute.snapshot.params['id']).subscribe(response => {
-      this.order = response;
-      this.appService.hideLoadingSpinner();
-      this.loadOrderDetails();
-      if (this.order) {
-        this.customerOrderCommentService.setWatchedOrder(this.order.id);
+    const orderId = this.activatedRoute.snapshot.params['id'];
+
+    this.customerOrderService.getCustomerOrder(orderId).pipe(
+      tap(order => {
+        this.order = order;
+        if (order) {
+          this.customerOrderCommentService.setWatchedOrder(order.id);
+        }
+      }),
+      filter(order => !!order),
+      switchMap(order => {
+        // Execute all order dependencies in parallel
+        return forkJoin({
+          assoAffaires: this.assoAffaireOrderService.getAssoAffaireOrdersForCustomerOrder(order),
+          invoiceLabel: this.invoiceLabelResultService.getInvoiceLabelComputeResultForCustomerOrder(order.id),
+          mailBilling: this.mailComputeResultService.getMailComputeResultForBillingForCustomerOrder(order.id),
+          digitalMail: this.mailComputeResultService.getMailComputeResultForDigitalForCustomerOrder(order),
+          physicalMail: this.invoiceLabelResultService.getPhysicalMailComputeResultForBillingForCustomerOrder(order),
+          payments: this.paymentService.getApplicablePaymentsForCustomerOrder(order),
+          summary: this.invoicingSummaryService.getInvoicingSummaryForCustomerOrder(order.id),
+          initialComments: this.customerOrderCommentService.getCustomerOrderCommentsForCustomer(order.id),
+          user: this.loginService.getCurrentUser(),
+          quotation: this.quotationService.getQuotationForCustomerOrder(order.id)
+        });
+      }),
+      takeUntil(this.destroy$)
+    ).subscribe((res) => {
+      this.ordersAssoAffaireOrders = res.assoAffaires;
+      if (this.ordersAssoAffaireOrders?.length > 0) {
+        this.changeAffaire(this.ordersAssoAffaireOrders[0]);
+        if (this.ordersAssoAffaireOrders[0].services?.length > 0)
+          this.loadServiceDetails(this.ordersAssoAffaireOrders[0].services[0], false);
       }
-    })
+
+      this.orderInvoiceLabelResult = res.invoiceLabel;
+      this.orderMailComputeResult = res.mailBilling;
+      this.digitalMailComputeResult = res.digitalMail;
+      this.orderPhysicalMailComputeResult = res.physicalMail;
+      this.orderPayments = res.payments;
+      this.invoiceSummary = res.summary;
+      this.comments = res.initialComments || [];
+      this.currentUser = res.user;
+
+      if (res.quotation?.id)
+        this.associatedQuotation = res.quotation;
+
+      this.checkDisplayPayButton();
+
+      this.initiateUnreadCommentsPolling();
+    });
   }
 
-  loadOrderDetails() {
-    if (!this.order)
-      return;
+  private checkDisplayPayButton() {
+    this.displayPayButton = false;
 
-    this.assoAffaireOrderService.getAssoAffaireOrdersForCustomerOrder(this.order).subscribe(response => {
-      this.ordersAssoAffaireOrders = response;
-      if (this.ordersAssoAffaireOrders && this.ordersAssoAffaireOrders.length > 0) {
-        this.changeAffaire(this.ordersAssoAffaireOrders[0]);
-        if (this.ordersAssoAffaireOrders[0].services && this.ordersAssoAffaireOrders[0].services.length > 0)
-          this.loadServiceDetails(this.ordersAssoAffaireOrders[0].services[0], false);
-        this.initiateUnreadCommentsPolling();
-      }
-    })
-    this.invoiceLabelResultService.getInvoiceLabelComputeResultForCustomerOrder(this.order.id).subscribe(response => {
-      this.orderInvoiceLabelResult = response;
-    })
-    this.mailComputeResultService.getMailComputeResultForBillingForCustomerOrder(this.order.id).subscribe(response => {
-      this.orderMailComputeResult = response;
-    })
-    this.mailComputeResultService.getMailComputeResultForDigitalForCustomerOrder(this.order).subscribe(response => {
-      this.digitalMailComputeResult = response;
-    })
-    this.invoiceLabelResultService.getPhysicalMailComputeResultForBillingForCustomerOrder(this.order).subscribe(response => {
-      this.orderPhysicalMailComputeResult = response;
-    })
-    this.paymentService.getApplicablePaymentsForCustomerOrder(this.order).subscribe(response => {
-      this.orderPayments = response;
-    })
-    this.invoicingSummaryService.getInvoicingSummaryForCustomerOrder(this.order.id).subscribe(response => {
-      this.invoiceSummary = response;
-      if (this.invoiceSummary.remainingToPay && Math.abs(this.invoiceSummary.remainingToPay) > INVOICING_PAYMENT_LIMIT_REFUND_EUROS && this.order!.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_OPEN)
-        this.displayPayButton = true;
-      if (this.invoiceSummary.remainingToPay && this.order?.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_OPEN && this.order!.servicesList == this.constantService.getServiceTypeUniqueArticleBuy().label)
-        this.displayPayButton = true;
-      if (this.invoiceSummary.remainingToPay && this.order?.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_OPEN && this.order!.servicesList == this.constantService.getServiceTypeKioskNewspaperBuy().label)
-        this.displayPayButton = true;
-    })
-    this.getCustomerOrderComments();
-    this.loginService.getCurrentUser().subscribe(response => this.currentUser = response);
-    this.quotationService.getQuotationForCustomerOrder(this.order.id).subscribe(response => {
-      if (response && response.id)
-        this.associatedQuotation = response;
-    })
+    if (!this.invoiceSummary?.remainingToPay || this.order?.customerOrderStatus.code === CUSTOMER_ORDER_STATUS_OPEN) {
+      return;
+    }
+
+    const remaining = Math.abs(this.invoiceSummary.remainingToPay);
+    const serviceList = this.order?.servicesList;
+
+    const overRefundLimit = remaining > INVOICING_PAYMENT_LIMIT_REFUND_EUROS;
+    const isArticleBuy = serviceList === this.constantService.getServiceTypeUniqueArticleBuy().label;
+    const isKioskBuy = serviceList === this.constantService.getServiceTypeKioskNewspaperBuy().label;
+
+    if (overRefundLimit || isArticleBuy || isKioskBuy) {
+      this.displayPayButton = true;
+    }
   }
 
   initiateUnreadCommentsPolling() {
@@ -228,6 +256,51 @@ export class OrderDetailsComponent implements OnInit {
           this.serviceProvisionAttachments[service.id] = response;
         })
     }
+  }
+
+  setIsGuichetUniqueInfosNotNull(service: Service) {
+    this.formaliteGuichetUniqueService.getGuichetUniqueDatesDtosForServices(service.id).subscribe(res => {
+      this.isCurrentGuichetUniqueDepositInfoNotNull = false;
+      if (res && res.length > 0)
+        this.isCurrentGuichetUniqueDepositInfoNotNull = true;
+    });
+  }
+
+  loadGuichetUniqueInfos(service: Service) {
+    this.guichetUniqueDepositInfoDtos = [];
+    this.stepperObjectList = [];
+    this.formaliteGuichetUniqueService.getGuichetUniqueDatesDtosForServices(service.id).subscribe(res => {
+      this.guichetUniqueDepositInfoDtos = res;
+      let i = 0;
+      for (let guDepositInfo of this.guichetUniqueDepositInfoDtos) {
+        let isWaintingForValidationPartnerDateInserted = false;
+        let stepperObjects: StepperGuichetUniqueObject[] = [];
+        // Deposit date
+        stepperObjects.push({ date: guDepositInfo.depositDate, stepperType: "deposit", waitingForValidationPartnerCenterName: undefined })
+
+        // Missing doc dates (already sorted by date asc) + insertion of wainting for validation date in between if needed
+        for (let askingMissingDocDate of guDepositInfo.askingMissingDocumentDates) {
+          if (askingMissingDocDate < guDepositInfo.waitingForValidationFromDate)
+            stepperObjects.push({ date: askingMissingDocDate, stepperType: "missing_doc", waitingForValidationPartnerCenterName: guDepositInfo.waitingForValidationPartnerCenterName })
+          else if (askingMissingDocDate > guDepositInfo.waitingForValidationFromDate && !isWaintingForValidationPartnerDateInserted) {
+            stepperObjects.push({ date: guDepositInfo.waitingForValidationFromDate, stepperType: "waiting_validation", waitingForValidationPartnerCenterName: guDepositInfo.waitingForValidationPartnerCenterName })
+            isWaintingForValidationPartnerDateInserted = true;
+          } else
+            stepperObjects.push({ date: askingMissingDocDate, stepperType: "missing_doc", waitingForValidationPartnerCenterName: guDepositInfo.waitingForValidationPartnerCenterName })
+        }
+
+        // Waiting for validation date
+        if (!isWaintingForValidationPartnerDateInserted) {
+          stepperObjects.push({ date: guDepositInfo.waitingForValidationFromDate, stepperType: "waiting_validation", waitingForValidationPartnerCenterName: guDepositInfo.waitingForValidationPartnerCenterName });
+        }
+
+        // Validation date
+        stepperObjects.push({ date: guDepositInfo.validationDate, stepperType: "validation", waitingForValidationPartnerCenterName: undefined })
+
+        this.stepperObjectList[i] = stepperObjects;
+        i++;
+      }
+    });
   }
 
   getPurchaseOrderAttachment() {
@@ -323,10 +396,8 @@ export class OrderDetailsComponent implements OnInit {
     if (this.newComment.comment.trim().length > 0 && this.order)
       if (this.newComment && this.newComment.comment.replace(/<(?:.|\n)*?>/gm, ' ').length > 0) {
         this.customerOrderCommentService.addOrUpdateCustomerOrderComment(this.newComment.comment, this.order.id).subscribe(response => {
-          if (response) {
+          if (response)
             this.comments.push(response);
-            this.scrollToLastMessage();
-          }
           this.newComment.comment = '';
         })
       }
@@ -337,7 +408,7 @@ export class OrderDetailsComponent implements OnInit {
     setTimeout(() => {
       const el = document.getElementById('send-message');
       if (el) {
-        el.scrollIntoView({ behavior: behavior, block: 'start' });
+        el.scrollIntoView({ behavior: behavior, block: 'end' });
       }
     }, 200); // Timeout so the DOM is well up to date
   }
@@ -377,6 +448,9 @@ export class OrderDetailsComponent implements OnInit {
   }
 
   ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+
     this.customerOrderCommentService.setWatchedOrder(null);
     clearInterval(this.pollingInterval);
   }

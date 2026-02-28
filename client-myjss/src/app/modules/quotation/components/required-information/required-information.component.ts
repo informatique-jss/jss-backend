@@ -30,6 +30,7 @@ import { SelectMultipleNoticeTypeComponent } from '../../../miscellaneous/compon
 import { SelectNoticeTypeFamilyComponent } from '../../../miscellaneous/components/forms/select-notice-type-family/select-notice-type-family.component';
 import { SelectStringComponent } from '../../../miscellaneous/components/forms/select-string/select-string.component';
 import { SelectValueServiceFieldTypeComponent } from '../../../miscellaneous/components/forms/select-value-service-field-type/select-value-service-field-type.component';
+import { SingleUploadComponent } from '../../../miscellaneous/components/forms/single-upload/single-upload.component';
 import { OsiTooltipComponent } from "../../../miscellaneous/components/osi-tooltip/osi-tooltip.component";
 import { Affaire } from '../../../my-account/model/Affaire';
 import { Announcement } from '../../../my-account/model/Announcement';
@@ -63,6 +64,7 @@ import { ServiceFamily } from '../../model/ServiceFamily';
 import { CityService } from '../../services/city.service';
 import { CivilityService } from '../../services/civility.service';
 import { DepartmentService } from '../../services/department.service';
+import { NoticeService } from '../../services/notice.service';
 import { NoticeTemplateService } from '../../services/notice.template.service';
 import { NoticeTypeFamilyService } from '../../services/notice.type.family.service';
 import { NoticeTypeService } from '../../services/notice.type.service';
@@ -94,12 +96,13 @@ import { QuotationFileUploaderComponent } from '../quotation-file-uploader/quota
     SelectCountryComponent,
     SelectCivilityComponent,
     CKEditorModule,
-    NgbNavModule,
+    NgbNavModule, SingleUploadComponent,
     NgbTooltipModule, OsiTooltipComponent]
 })
 export class RequiredInformationComponent implements OnInit {
 
   @ViewChild('confirmBackModal') confirmBackModal!: TemplateRef<any>;
+  @ViewChild('uploadWordFile') uploadWordFile!: SingleUploadComponent;
 
   CONFIER_ANNONCE_AU_JSS: string = "Confier l'annonce légale au JSS";
 
@@ -134,7 +137,8 @@ export class RequiredInformationComponent implements OnInit {
   SERVICE_FIELD_TYPE_SELECT = SERVICE_FIELD_TYPE_SELECT;
   PROVISION_SCREEN_TYPE_DOMICILIATION = PROVISION_SCREEN_TYPE_DOMICILIATION;
   PROVISION_SCREEN_TYPE_ANNOUNCEMENT = PROVISION_SCREEN_TYPE_ANNOUNCEMENT;
-
+  entityType = "WordFile";
+  entityFile = {} as any;
   provisionTypeRbe!: ProvisionType;
 
   mailRedirectionTypeOther!: MailRedirectionType;
@@ -156,6 +160,7 @@ export class RequiredInformationComponent implements OnInit {
   goBackModalInstance: any | undefined;
 
   currentTab: string = 'documents';
+  noticeValue: string = "";
 
   constructor(
     private formBuilder: FormBuilder,
@@ -176,6 +181,7 @@ export class RequiredInformationComponent implements OnInit {
     private modalService: NgbModal,
     private gtmService: GtmService,
     private ga4Service: GoogleAnalyticsService,
+    private noticeService: NoticeService
   ) {
   }
 
@@ -919,4 +925,12 @@ export class RequiredInformationComponent implements OnInit {
     return false;
   }
 
+  updateNoticeAnnouncement(files: any, provision: Provision) {
+    if (files && files.length > 0)
+      this.noticeService.getNoticeFromFile(files[0]).subscribe(response => {
+        if (response && provision)
+          this.noticeValue = response.notice;
+        this.uploadWordFile.resetForm();
+      });
+  }
 }

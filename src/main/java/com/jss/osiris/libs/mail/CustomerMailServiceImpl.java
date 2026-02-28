@@ -142,8 +142,7 @@ public class CustomerMailServiceImpl implements CustomerMailService {
                 || mail.getMailTemplate().equals(CustomerMail.TEMPLATE_CUSTOMER_ORDER_FINALIZATION)
                 || mail.getMailTemplate().equals(CustomerMail.TEMPLATE_SEND_CREDIT_NOTE)
                 || mail.getMailTemplate().equals(CustomerMail.TEMPLATE_SEND_PUBLICATION_FLAG)
-                || mail.getMailTemplate().equals(CustomerMail.TEMPLATE_SEND_PUBLICATION_RECEIPT)
-                || mail.getMailTemplate().equals(CustomerMail.TEMPLATE_SEND_ATTACHMENTS)))
+                || mail.getMailTemplate().equals(CustomerMail.TEMPLATE_SEND_PUBLICATION_RECEIPT))) // mail.getMailTemplate().equals(CustomerMail.TEMPLATE_SEND_ATTACHMENTS)
             manageTemporization(mail);
         else
             batchService.declareNewBatch(Batch.SEND_MAIL, mail.getId());

@@ -230,6 +230,20 @@
               type="number"></generic-input>
           </td>
         </tr>
+        <tr *ngIf="provision.announcement && provision.announcement.id">
+          <td>
+            <generic-toggle [(model)]="provision.isOverrideCharacterNumber" label="Modifier le nombre de caractères ?"
+              (onToggleChange)="provisionChangeFunction()" [form]="optionForm" propertyName="isOverrideCharacterNumber">
+            </generic-toggle>
+          </td>
+        </tr>
+        <tr *ngIf="provision.announcement && provision.announcement.id && provision.isOverrideCharacterNumber">
+          <td>
+            <generic-input [(model)]="provision.overridedCharacterNumber" label="Nombre de caractères forcé"
+              [form]="optionForm" propertyName="overridedCharacterNumber" [isMandatory]="false" [isDisabled]="!editMode"
+              type="number"></generic-input>
+          </td>
+        </tr>
       </table>
       <table class="full-width">
         <tr *ngIf="provision.provisionType.isCouldNotifyBodacc">

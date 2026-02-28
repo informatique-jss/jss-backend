@@ -6,4 +6,5 @@ export interface WebinarParticipant {
   lastname: string;
   mail: Mail;
   phoneNumber: string;
+  comment: string;
 }

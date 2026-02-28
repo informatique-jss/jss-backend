@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -13,6 +14,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.collections4.IterableUtils;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -20,6 +24,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.parser.PdfReaderContentParser;
@@ -36,6 +41,7 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.GeneratePdfDelegate;
 import com.jss.osiris.libs.mail.MailHelper;
+import com.jss.osiris.modules.myjss.quotation.controller.model.Notice;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
@@ -975,5 +981,44 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                             }
             }
         return announcements;
+    }
+
+    public Notice getNoticeFromFile(MultipartFile file) throws OsirisException {
+        try (InputStream is = file.getInputStream();
+                XWPFDocument document = new XWPFDocument(is)) {
+
+            StringBuilder htmlBuilder = new StringBuilder();
+            htmlBuilder.append("<div>");
+
+            List<XWPFParagraph> paragraphs = document.getParagraphs();
+            for (XWPFParagraph paragraph : paragraphs) {
+                htmlBuilder.append("<p>");
+
+                for (XWPFRun run : paragraph.getRuns()) {
+                    String text = run.getText(0);
+                    if (text != null) {
+                        if (run.isBold())
+                            htmlBuilder.append("<b>");
+                        if (run.isItalic())
+                            htmlBuilder.append("<i>");
+
+                        htmlBuilder.append(text);
+
+                        if (run.isItalic())
+                            htmlBuilder.append("</i>");
+                        if (run.isBold())
+                            htmlBuilder.append("</b>");
+                    }
+                }
+                htmlBuilder.append("</p>");
+            }
+
+            htmlBuilder.append("</div>");
+            Notice notice = new Notice();
+            notice.setNotice(htmlBuilder.toString().replaceAll("\\s{2,}", " "));
+            return notice;
+        } catch (IOException e) {
+            throw new OsirisException(e, "Unable to process the announcement file with Apache POI");
+        }
     }
 }

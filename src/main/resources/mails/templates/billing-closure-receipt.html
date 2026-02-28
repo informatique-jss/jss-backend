@@ -92,6 +92,10 @@
                             th:text="${#temporals.format(values.directDebitTransfertDate, 'dd/MM/yyyy')}">
                         </span></strong></span>
                 </br>
+                <span
+                    th:if="${values.remainingDebitAmount!=null && values.remainingDebitAmount>0 && values.remainingDebitAmount != values.debitAmount && isBillingClosureTypeAffaire!=null && isBillingClosureTypeAffaire==true }">Reste
+                    à payer : <span th:text="${#numbers.formatDecimal(values.remainingDebitAmount,1,2)}">
+                    </span> €</span>
             </td>
             <td th:classappend="${values.displayBottomBorder} ? border-table : none-class"
                 th:if="${values.eventDescription!=null} and ${values.eventDateString==null}"

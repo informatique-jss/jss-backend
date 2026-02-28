@@ -128,7 +128,7 @@
   <div ngbAccordion [closeOthers]="true" *ngIf="selectedAssoAffaireOrder.services">
     <div ngbAccordionItem [collapsed]="index!=0"
       *ngFor="let service of selectedAssoAffaireOrder.services; let index =index"
-      (show)="loadServiceDetails(service,false)">
+      (show)="loadServiceDetails(service,false); setIsGuichetUniqueInfosNotNull(service);">
       <h2 ngbAccordionHeader>
         <button ngbAccordionButton class="border-top flex-column">
           <div class="row d-flex justify-content-between align-items-center w-100">
@@ -166,7 +166,7 @@
               <div class="fs-sm text-body-secondary">Annonce publiée sur {{service.confrereLabel}}
                 <span *ngIf="service.jssAnnouncementId">
                   (consulter l'annonce sur
-                  <a class="z-index-10 text-body-secondary"
+                  <a class="z-index-10 text-body-secondary text-decoration-none"
                     (click)="goToJssAnnouncement(service, $event );$event.stopPropagation();$event.preventDefault();">
                     JSS.fr</a>)
                 </span>
@@ -195,7 +195,61 @@
                   </div>
                 </ng-template>
               </li>
-              <li [ngbNavItem]="1" *ngIf="service.assoServiceDocuments && service.assoServiceDocuments.length>0">
+              <li [ngbNavItem]="1" *ngIf="service && isCurrentGuichetUniqueDepositInfoNotNull">
+                <button ngbNavLink (click)="loadGuichetUniqueInfos(service)">Voir l&#39;état des dépôts</button>
+                <ng-template ngbNavContent>
+                  <p class="pt-3">Consultez ci-dessous l&#39;avancement des dépôts réalisés</p>
+                  <div *ngFor="let stepperObjects of stepperObjectList; let indexLiasse=index" class="row">
+                    <h5 *ngIf="stepperObjectList.length>1" class="mt-4">Liasse {{indexLiasse+1}}</h5>
+                    <div class="steps steps-horizontal-md steps-hoverable">
+                      <div *ngFor="let step of stepperObjects; let stepIndex=index" class="step">
+                        @if(step.stepperType==='deposit'){
+                        <div class="step-number">
+                          <div class="step-number-inner">0{{stepIndex+1}}</div>
+                        </div>
+                        <div class="step-body pt-2">
+                          <p class="mb-0">Dossier envoyé le <span class="fw-bold">{{step.date |
+                              literalDatePipe}}</span>.</p>
+                        </div>
+                        }
+                        @if(step.stepperType==='missing_doc'){
+                        <div class="step-number">
+                          <div class="step-number-inner">0{{stepIndex+1}}</div>
+                        </div>
+                        <div class="step-body pt-2">
+                          <p class="mb-0">Pièce manquante demandée le <span class="fw-bold">{{step.date |
+                              literalDatePipe}}</span>.</p>
+                        </div>
+                        }
+                        @if(step.stepperType==='waiting_validation'){
+                        <div class="step-number">
+                          <div class="step-number-inner">0{{stepIndex+1}}</div>
+                        </div>
+                        <div class="step-body pt-2">
+                          <p class="mb-0">En attente de validation </p>
+                          <p *ngIf="step.waitingForValidationPartnerCenterName" class="mb-0">par <span
+                              class="fw-bold">{{step.waitingForValidationPartnerCenterName}}</span></p>
+                          <p class="mb-0">depuis le <span class="fw-bold">{{step.date | literalDatePipe}}</span>.</p>
+                        </div>
+                        }
+                        @if(step.stepperType==='validation'){
+                        <div class="step-number">
+                          <div class="step-number-inner">0{{stepIndex+1}}</div>
+                        </div>
+                        <div class="step-body pt-2">
+                          <p class="mb-0" *ngIf="step.date">Dossier validé le
+                            <span class="fw-bold">{{step.date | literalDatePipe}}</span>.
+                          </p>
+                          <p class="mb-0" *ngIf="!step.date">En attente de validation du dossier.
+                          </p>
+                        </div>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                </ng-template>
+              </li>
+              <li [ngbNavItem]="2" *ngIf="service.assoServiceDocuments && service.assoServiceDocuments.length>0">
                 <button ngbNavLink>Déposer des documents</button>
                 <ng-template ngbNavContent>
                   <div class="alert alert-info d-flex mb-0 mb-2" role="alert">
@@ -329,7 +383,7 @@
                   </div>
                 </ng-template>
               </li>
-              <li [ngbNavItem]="2" *ngIf="service.assoServiceFieldTypes && service.assoServiceFieldTypes.length>0">
+              <li [ngbNavItem]="3" *ngIf="service.assoServiceFieldTypes && service.assoServiceFieldTypes.length>0">
                 <button ngbNavLink>Indiquer des informations</button>
                 <ng-template ngbNavContent>
                   <div class="alert alert-info d-flex mb-2" role="alert">
@@ -388,7 +442,7 @@
                   </div>
                 </ng-template>
               </li>
-              <li [ngbNavItem]="3"
+              <li [ngbNavItem]="4"
                 *ngIf="serviceProvisionAttachments && serviceProvisionAttachments[service.id]  && serviceProvisionAttachments[service.id].length>0">
                 <button ngbNavLink>Documents disponibles <span class="badge bg-success"
                     style="margin-left: 10px;"></span></button>
