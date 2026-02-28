@@ -134,7 +134,6 @@ export class QuotationComponent implements OnInit {
       else
         this.customerOrderService.setCurrentDraftOrder(this.customerOrder);
 
-
       this.appService.hideLoadingSpinner();
       this.appService.openRoute(event, "/quotation/checkout/", undefined);
     });

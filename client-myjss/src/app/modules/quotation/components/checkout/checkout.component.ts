@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
 import { NgbAccordionModule, NgbDropdownModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { validateEmail, validateFrenchPhone, validateInternationalPhone } from '../../../../libs/CustomFormsValidatorsHelper';
@@ -36,7 +35,6 @@ import { Phone } from '../../../profile/model/Phone';
 import { Responsable } from '../../../profile/model/Responsable';
 import { Tiers } from '../../../profile/model/Tiers';
 import { LoginService } from '../../../profile/services/login.service';
-import { PostService } from '../../../tools/services/post.service';
 import { IQuotation } from '../../model/IQuotation';
 import { CityService } from '../../services/city.service';
 
@@ -103,7 +101,6 @@ export class CheckoutComponent implements OnInit {
 
   mailToConfirm: string | undefined;
 
-  idArticle: number | undefined;
   postTitle: string | undefined;
 
   voucherCode: string | undefined;
@@ -128,8 +125,6 @@ export class CheckoutComponent implements OnInit {
     private cityService: CityService,
     private voucherService: VoucherService,
     private googleAnalyticsService: GoogleAnalyticsService,
-    private activatedRoute: ActivatedRoute,
-    private postservice: PostService,
   ) { }
 
   async ngOnInit() {
@@ -138,12 +133,6 @@ export class CheckoutComponent implements OnInit {
     this.serviceTypeMonthlySubscription = this.constantService.getServiceTypeMonthlySubscription();
     this.serviceTypeUniqueArticleBuy = this.constantService.getServiceTypeUniqueArticleBuy();
     this.serviceTypeKioskNewspaperBuy = this.constantService.getServiceTypeKioskNewspaperBuy();
-
-    this.idArticle = this.activatedRoute.snapshot.params['id-article'];
-    if (this.idArticle)
-      this.postservice.getPostById(this.idArticle).subscribe(res => {
-        this.postTitle = res.titleText;
-      })
 
     this.documentForm = this.formBuilder.group({});
 
@@ -197,6 +186,7 @@ export class CheckoutComponent implements OnInit {
         this.quotation = this.orderService.getCurrentDraftOrder()!;
       }
       this.prepareForPricingAndCompute();
+      this.setPostTitle();
     }
   }
 
@@ -761,5 +751,15 @@ export class CheckoutComponent implements OnInit {
         if (doc.documentType.id == this.constantService.getDocumentTypeBilling().id)
           return doc
     return null;
+  }
+
+  setPostTitle() {
+    if (this.quotation && this.quotation.assoAffaireOrders && this.quotation.assoAffaireOrders[0]
+      && this.quotation.assoAffaireOrders[0].services && this.quotation.assoAffaireOrders[0].services[0]
+      && this.quotation.assoAffaireOrders[0].services[0].provisions && this.quotation.assoAffaireOrders[0].services[0].provisions[0]
+      && this.quotation.assoAffaireOrders[0].services[0].provisions[0].assoProvisionPostNewspapers && this.quotation.assoAffaireOrders[0].services[0].provisions[0].assoProvisionPostNewspapers[0]
+      && this.quotation.assoAffaireOrders[0].services[0].provisions[0].assoProvisionPostNewspapers[0].post
+    )
+      this.postTitle = this.quotation.assoAffaireOrders[0].services[0].provisions[0].assoProvisionPostNewspapers[0].post.titleText;
   }
 }

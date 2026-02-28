@@ -464,6 +464,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/myjss/top")
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Post>> getTopMyJssPosts(@RequestParam Integer page) throws OsirisException {
 		return new ResponseEntity<List<Post>>(postService.getMyJssCategoryPosts(page),
 				HttpStatus.OK);
@@ -491,12 +492,14 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/myjss/most-seen")
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Post>> getMyJssPostsMostSeen() throws OsirisException {
 		return new ResponseEntity<List<Post>>(postService.getMyJssCategoryPostMostSeen(),
 				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/jss/purchased")
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Post>> getJssPostsPurchased(HttpServletRequest request) throws OsirisException {
 		detectFlood(request);
 
