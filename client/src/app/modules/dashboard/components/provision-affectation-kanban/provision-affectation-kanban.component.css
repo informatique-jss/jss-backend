@@ -237,6 +237,10 @@
   background-color: #f3c5c0;
 }
 
+.card-warning {
+  background-color: #eeb35b;
+}
+
 .wrapper-div {
   position: relative;
   overflow-y: auto;

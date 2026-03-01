@@ -11,4 +11,5 @@ export interface TiersSearch {
   endDate: Date;
   label: string;
   isNewTiers: boolean;
+  isToTakeCare: boolean;
 }

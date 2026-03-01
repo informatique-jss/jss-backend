@@ -85,9 +85,8 @@
               </generic-textarea>
             </td>
             <td style="vertical-align: baseline;">
-              <radio-group-language [(model)]="tiers.language" [form]="principalForm" propertyName="language"
-                [isDisabled]="!editMode" label="Langue de communication">
-              </radio-group-language>
+              <generic-toggle [(model)]="tiers.isToTakeCare" label="Est à prendre soin ?" [form]="principalForm"
+                propertyName="isToTakeCare" [isDisabled]="!editMode"></generic-toggle>
             </td>
             <td>
               <select-delivery-service [(model)]="tiers.deliveryService" label="Service de livraison"

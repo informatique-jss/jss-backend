@@ -23,6 +23,7 @@ public class TiersSearch {
     private IndexEntity tiers;
     private IndexEntity responsable;
     private Boolean withNonNullTurnover;
+    private Boolean isToTakeCare;
     private TiersCategory tiersCategory;
 
     public LocalDate getStartDate() {
@@ -127,5 +128,13 @@ public class TiersSearch {
 
     public void setTiersCategory(TiersCategory tiersCategory) {
         this.tiersCategory = tiersCategory;
+    }
+
+    public Boolean getIsToTakeCare() {
+        return isToTakeCare;
+    }
+
+    public void setIsToTakeCare(Boolean isToTakeCare) {
+        this.isToTakeCare = isToTakeCare;
     }
 }

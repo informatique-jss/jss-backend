@@ -177,7 +177,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
         this.customerOrderService.getCustomerOrder(this.idQuotation).subscribe(response => {
           this.quotation = response;
           if (instanceOfCustomerOrder(this.quotation) && !this.isForIntegration)
-            this.appService.changeHeaderTitle("Commande " + this.quotation.id + " du " + formatDateFrance(this.quotation.createdDate) + " - " +
+            this.appService.changeHeaderTitle((this.isWarningQuotation() ? "⚠ " : '') + "Commande " + this.quotation.id + " du " + formatDateFrance(this.quotation.createdDate) + " - " +
               (this.quotation.customerOrderStatus != null ? this.quotation.customerOrderStatus.label : "") + (this.quotation.isGifted ? (" - Offerte") : "") + (this.quotation.customerOrderOrigin && this.quotation.customerOrderOrigin.id == this.constantService.getCustomerOrderOriginMyJss().id ? (" - MyJSS") : ""));
           this.setOpenStatus();
           this.updateDocumentsEvent.next(this.quotation);
@@ -1244,5 +1244,21 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
       this.entityForPendingAttachments = { id: this.quotation.id, attachments: this.quotation.pendingAttachments } as IAttachment;
     }
     return this.entityForPendingAttachments;
+  }
+
+  isWarningQuotation() {
+    if (this.quotation && this.quotation.id) {
+      if (this.quotation.responsable && this.quotation.responsable.tiers.isToTakeCare)
+        return true;
+      if (this.quotation.assoAffaireOrders)
+        for (let asso of this.quotation.assoAffaireOrders)
+          if (asso.services)
+            for (let service of asso.services)
+              if (service.provisions)
+                for (let provision of service.provisions)
+                  if (provision.isEmergency || provision.isPriority)
+                    return true;
+    }
+    return false;
   }
 }

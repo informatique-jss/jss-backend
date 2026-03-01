@@ -89,7 +89,7 @@ export class TiersListComponent implements OnInit {
       } as SortTableAction<ResponsableSearchResult>);
 
       this.displayedColumnsTiers.push({ id: "tiersId", fieldName: "tiersId", label: "N°" } as SortTableColumn<TiersSearchResult>);
-      this.displayedColumnsTiers.push({ id: "tiersLabel", fieldName: "tiersLabel", label: "Tiers" } as SortTableColumn<TiersSearchResult>);
+      this.displayedColumnsTiers.push({ id: "tiersLabel", fieldName: "tiersLabel", label: "Tiers", colorWarnFunction: (element: TiersSearchResult) => { return element.isToTakeCare } } as SortTableColumn<TiersSearchResult>);
       this.displayedColumnsTiers.push({ id: "tiersCategory", fieldName: "tiersCategory", label: "Catégorie du tiers" } as SortTableColumn<TiersSearchResult>);
       this.displayedColumnsTiers.push({ id: "salesEmployee", fieldName: "salesEmployeeId", label: "Commercial", displayAsEmployee: true } as SortTableColumn<TiersSearchResult>);
 

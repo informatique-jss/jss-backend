@@ -271,3 +271,7 @@
 .card-priority {
   background-color: #f3c5c0;
 }
+
+.card-warning {
+  background-color: #eeb35b;
+}
