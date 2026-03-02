@@ -674,9 +674,12 @@ public class QuotationServiceImpl implements QuotationService {
             for (String customerOrderStatusCode : customerOrderStatus) {
                 QuotationStatus customerOrderStatusFetched = quotationStatusService
                         .getQuotationStatusByCode(customerOrderStatusCode);
-                if (customerOrderStatusFetched != null
-                        && !customerOrderStatusFetched.getCode().equals(QuotationStatus.ABANDONED))
+                if (customerOrderStatusFetched != null)
                     quotationStatusToFilter.add(customerOrderStatusFetched);
+                if (customerOrderStatusFetched != null
+                        && customerOrderStatusFetched.getCode().equals(QuotationStatus.REFUSED_BY_CUSTOMER))
+                    quotationStatusToFilter.add(quotationStatusService
+                            .getQuotationStatusByCode(QuotationStatus.ABANDONED));
             }
 
             Responsable currentUser = employeeService.getCurrentMyJssUser();
