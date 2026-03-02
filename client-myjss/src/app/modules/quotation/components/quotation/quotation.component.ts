@@ -136,7 +136,7 @@ export class QuotationComponent implements OnInit {
 
 
       this.appService.hideLoadingSpinner();
-      this.appService.openRoute(event, "/quotation/checkout/" + this.idArticle, undefined);
+      this.appService.openRoute(event, "/quotation/checkout/", undefined);
     });
   }
 

@@ -69,7 +69,6 @@ const routesQuotation = [
         loadComponent: () => import('./modules/quotation/components/required-information/required-information.component').then(m => m.RequiredInformationComponent),
       },
       { path: 'checkout', component: CheckoutComponent },
-      { path: 'checkout/:id-article', component: CheckoutComponent },
       { path: 'new/:idFamilyGroup/:idQuotationType', component: IdentificationComponent },
     ]
   }, {
