@@ -128,7 +128,7 @@
   <div ngbAccordion [closeOthers]="true" *ngIf="selectedAssoAffaireOrder.services">
     <div ngbAccordionItem [collapsed]="index!=0"
       *ngFor="let service of selectedAssoAffaireOrder.services; let index =index"
-      (show)="loadServiceDetails(service,false); setIsGuichetUniqueInfosNotNull(service);">
+      (show)="loadServiceDetails(service,false); loadGuichetUniqueInfos(service);">
       <h2 ngbAccordionHeader>
         <button ngbAccordionButton class="border-top flex-column">
           <div class="row d-flex justify-content-between align-items-center w-100">
@@ -196,7 +196,7 @@
                 </ng-template>
               </li>
               <li [ngbNavItem]="1" *ngIf="service && isCurrentGuichetUniqueDepositInfoNotNull">
-                <button ngbNavLink (click)="loadGuichetUniqueInfos(service)">Voir l&#39;état des dépôts</button>
+                <button ngbNavLink>Voir l&#39;état des dépôts</button>
                 <ng-template ngbNavContent>
                   <p class="pt-3">Consultez ci-dessous l&#39;avancement des dépôts réalisés</p>
                   <div *ngFor="let stepperObjects of stepperObjectList; let indexLiasse=index" class="row">
