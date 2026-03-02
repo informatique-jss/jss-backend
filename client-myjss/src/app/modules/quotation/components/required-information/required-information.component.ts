@@ -925,6 +925,15 @@ export class RequiredInformationComponent implements OnInit {
     return false;
   }
 
+  isLastMandatoryDocument(assoServiceDocument: AssoServiceDocument): boolean {
+    if (this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined && this.quotation.assoAffaireOrders[this.selectedAssoIndex] && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex] && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].assoServiceDocuments) {
+      let lastAsso = this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].assoServiceDocuments.filter(asso => asso.isMandatory)[this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].assoServiceDocuments.filter(asso => asso.isMandatory).length - 1];
+      if (assoServiceDocument.id === lastAsso.id)
+        return true;
+    }
+    return false;
+  }
+
   updateNoticeAnnouncement(files: any, provision: Provision) {
     if (files && files.length > 0)
       this.noticeService.getNoticeFromFile(files[0]).subscribe(response => {
