@@ -937,6 +937,16 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
         return formaliteGuichetUniqueRepository.findByLiasseNumber(value);
     }
 
+    @Override
+    public boolean isFormaliteGuCancelled(FormaliteGuichetUnique formaliteGuichetUnique) {
+        return FormaliteGuichetUniqueStatus.ERROR
+                .equals(formaliteGuichetUnique.getStatus().getCode())
+                || FormaliteGuichetUniqueStatus.EXPIRED
+                        .equals(formaliteGuichetUnique.getStatus().getCode())
+                || FormaliteGuichetUniqueStatus.REJECTED
+                        .equals(formaliteGuichetUnique.getStatus().getCode());
+    }
+
     private Boolean createNewRbeProvisionForRbeAttachmentFromLiasse(PiecesJointe piecesJointe, Service currentService)
             throws OsirisException {
 

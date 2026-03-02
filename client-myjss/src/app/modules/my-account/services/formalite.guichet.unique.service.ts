@@ -13,7 +13,7 @@ export class FormaliteGuichetUniqueService extends AppRestService<FormaliteGuich
     super(http, "quotation");
   }
 
-  getGuichetUniqueDatesDtosForServices(serviceId: number) {
+  getGuichetUniqueDatesDtosForService(serviceId: number) {
     return this.getList(new HttpParams().set("serviceId", serviceId), "formalite-guichet-unique/dates-dtos") as any as Observable<GuichetUniqueDepositInfoDto[]>;
   }
 }

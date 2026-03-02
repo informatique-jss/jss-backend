@@ -22,4 +22,6 @@ public interface FormaliteGuichetUniqueService {
     public List<FormaliteGuichetUnique> getFormaliteGuichetUniqueToSign();
 
     public List<FormaliteGuichetUnique> getFormaliteGuichetUniqueByLiasseNumber(String value);
+
+    public boolean isFormaliteGuCancelled(FormaliteGuichetUnique formaliteGuichetUnique);
 }
