@@ -497,6 +497,7 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/jss/purchased")
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Post>> getJssPostsPurchased(HttpServletRequest request) throws OsirisException {
 		detectFlood(request);
 
