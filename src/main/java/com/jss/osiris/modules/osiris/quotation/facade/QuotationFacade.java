@@ -66,6 +66,9 @@ public class QuotationFacade {
     @Autowired
     FormaliteGuichetUniqueService formaliteGuichetUniqueService;
 
+    @Autowired
+    FormaliteGuichetUniqueDtoHelper formaliteGuichetUniqueDtoHelper;
+
     @Transactional(rollbackFor = Exception.class)
     public KbisRequest orderNewKbisForSiret(String siret, Integer provisionId) throws OsirisException {
         Provision provision = provisionService.getProvision(provisionId);
@@ -339,14 +342,15 @@ public class QuotationFacade {
                         if (formaliteGuichetUnique != null
                                 && !formaliteGuichetUniqueService.isFormaliteGuCancelled(formaliteGuichetUnique)) {
                             // get and set guInfosDtos
-                            GuichetUniqueDepositInfoDto currentGuInfoDto = quotationDtoHelper
+                            GuichetUniqueDepositInfoDto currentGuInfoDto = formaliteGuichetUniqueDtoHelper
                                     .getCurrentGuInfoDto(formaliteGuichetUnique);
                             guichetUniqueDepositInfoDtos.add(currentGuInfoDto);
                         }
                     }
 
         // Adding PM to guichetUniqueDepositInfoDtos dates
-        quotationDtoHelper.addMissingAttachmentQueryToGuDepositInfoDtos(service, guichetUniqueDepositInfoDtos);
+        formaliteGuichetUniqueDtoHelper.addMissingAttachmentQueryToGuDepositInfoDtos(service,
+                guichetUniqueDepositInfoDtos);
 
         return guichetUniqueDepositInfoDtos;
     }
