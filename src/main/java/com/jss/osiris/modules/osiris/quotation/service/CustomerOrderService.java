@@ -225,7 +225,7 @@ public interface CustomerOrderService {
         public List<CustomerOrder> findCustomerOrderByForcedEmployeeAssigned(CustomerOrderStatus customerOrderStatus,
                         Employee assignedUser);
 
-        public void switchResponsable(CustomerOrder order, Responsable responsable);
+        public void switchResponsable(CustomerOrder order, Responsable responsable) throws OsirisException;
 
         public Integer getComplexity(CustomerOrder customerOrder) throws OsirisException;
 
