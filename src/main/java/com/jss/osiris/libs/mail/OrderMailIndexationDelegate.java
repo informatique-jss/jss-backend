@@ -112,13 +112,17 @@ public class OrderMailIndexationDelegate {
     private String outlookDefaultUrl;
     @Value("${mail.imap.shared.username}")
     private String sharedMailboxUsername;
-    @Value("${mail.imap.shared.folder.order.input}")
-    private String inputOrderFolder;
+    @Value("${mail.imap.shared.folder.order.input.formalite}")
+    private String inputOrderFormaliteFolder;
+
+    @Value("${mail.imap.shared.folder.order.input.announcement}")
+    private String inputOrderAnnouncementFolder;
 
     private Integer numberDaysToKeepInTrash = 60;
 
     private Store store = null;
-    private Folder folderInbox = null;
+    private Folder folderInboxFormalite = null;
+    private Folder folderInboxAnnouncement = null;
     private Folder folderTrash = null;
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}",
@@ -187,20 +191,31 @@ public class OrderMailIndexationDelegate {
             }
         }
 
-        if (folderInbox != null && folderInbox.isOpen())
+        if (folderInboxFormalite != null && folderInboxFormalite.isOpen())
             try {
-                folderInbox.close();
+                folderInboxFormalite.close();
             } catch (MessagingException e) {
                 throw new OsirisException(e, "Impossible to close INBOX folder");
             }
 
         try {
-            folderInbox = store.getFolder(inputOrderFolder);
+            folderInboxFormalite = store.getFolder(inputOrderFormaliteFolder);
         } catch (MessagingException e) {
             throw new OsirisException(e, "Impossible to find INBOX folder");
         }
         try {
-            folderInbox.open(Folder.READ_WRITE);
+            folderInboxFormalite.open(Folder.READ_WRITE);
+        } catch (MessagingException e) {
+            throw new OsirisException(e, "Impossible to write into INBOX folder");
+        }
+
+        try {
+            folderInboxAnnouncement = store.getFolder(inputOrderAnnouncementFolder);
+        } catch (MessagingException e) {
+            throw new OsirisException(e, "Impossible to find INBOX folder");
+        }
+        try {
+            folderInboxAnnouncement.open(Folder.READ_WRITE);
         } catch (MessagingException e) {
             throw new OsirisException(e, "Impossible to write into INBOX folder");
         }
@@ -230,11 +245,11 @@ public class OrderMailIndexationDelegate {
         }
     }
 
-    public void checkMailsToIndex() throws OsirisException {
+    public void checkMailsToIndexFormalites() throws OsirisException {
         connectMailbox();
         Message[] messages;
         try {
-            messages = folderInbox.getMessages();
+            messages = folderInboxFormalite.getMessages();
         } catch (MessagingException e) {
             throw new OsirisException(e, "Impossible to get messages from INBOX folder");
         }
@@ -251,11 +266,34 @@ public class OrderMailIndexationDelegate {
 
     }
 
+    public void checkMailsToIndexAnnouncements() throws OsirisException {
+        connectMailbox();
+        Message[] messages;
+        try {
+            messages = folderInboxAnnouncement.getMessages();
+        } catch (MessagingException e) {
+            throw new OsirisException(e, "Impossible to get messages from INBOX folder");
+        }
+        // for all messages received in inbox folder, launch a batch calling method
+        // exportMailToFile()
+        for (Message message : messages) {
+            try {
+                batchService.declareNewBatch(Batch.CREATE_ORDER_FROM_MAIL_ANNOUNCEMENT,
+                        (Integer.parseInt((message.getReceivedDate().getTime() / 1000) + "")));
+            } catch (MessagingException e) {
+                throw new OsirisException(e, "Impossible to process message received");
+            }
+        }
+
+    }
+
     public void closeConnection() throws OsirisException {
         try {
             if (store.isConnected()) {
-                if (folderInbox != null)
-                    folderInbox.close(true);
+                if (folderInboxFormalite != null)
+                    folderInboxFormalite.close(true);
+                if (folderInboxAnnouncement != null)
+                    folderInboxAnnouncement.close(true);
                 if (folderTrash != null)
                     folderTrash.close(true);
                 if (store != null)
@@ -267,11 +305,21 @@ public class OrderMailIndexationDelegate {
     }
 
     @Transactional
-    public void exportMailToOrder(Integer id) throws OsirisException {
+    public void exportMailToOrderFormalite(Integer id) throws OsirisException {
+        exportMailToOrder(id, false);
+    }
+
+    @Transactional
+    public void exportMailToOrderAnnouncement(Integer id) throws OsirisException {
+        exportMailToOrder(id, true);
+    }
+
+    private void exportMailToOrder(Integer id, Boolean isFromAnnouncementMailbox) throws OsirisException {
         connectMailbox();
         Integer messageCount;
+        Folder sourceFolder = isFromAnnouncementMailbox ? folderInboxAnnouncement : folderInboxFormalite;
         try {
-            messageCount = folderInbox.getMessageCount();
+            messageCount = sourceFolder.getMessageCount();
         } catch (MessagingException e) {
             throw new OsirisException(e, "Impossible to get messages from INBOX folder");
         }
@@ -279,7 +327,7 @@ public class OrderMailIndexationDelegate {
         // InputStream to call method addAttachment
         for (int i = 1; i <= messageCount; i++) {
             try {
-                Message message = folderInbox.getMessage(i);
+                Message message = sourceFolder.getMessage(i);
                 if (Integer.parseInt((message.getReceivedDate().getTime() / 1000) + "") == id) {
 
                     // Extract html
@@ -345,6 +393,7 @@ public class OrderMailIndexationDelegate {
                     }
 
                     order.setCustomerOrderOrigin(constantService.getCustomerOrderOriginOsiris());
+                    order.setIsFromAnnouncementMailbox(isFromAnnouncementMailbox);
                     order.setAssoAffaireOrders(new ArrayList<AssoAffaireOrder>());
                     order.setCreatedDate(
                             message.getReceivedDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
@@ -411,7 +460,7 @@ public class OrderMailIndexationDelegate {
                     }
 
                     // Move to trash
-                    folderInbox.copyMessages(new Message[] { message }, folderTrash);
+                    folderInboxFormalite.copyMessages(new Message[] { message }, folderTrash);
                     message.setFlag(Flag.DELETED, true);
                 }
             } catch (Exception e) {
@@ -522,7 +571,6 @@ public class OrderMailIndexationDelegate {
         return htmlContent;
     }
 
-    // create link href tag like <a href="mailto:...">...</a>
     private String createEmailLink(String email) {
         if (email != null) {
             return "<a href=\"mailto:" + email + "\">" + email + "</a>";
@@ -541,7 +589,6 @@ public class OrderMailIndexationDelegate {
                 false, null, null, null, null);
     }
 
-    // exctract email from text
     private String extractEmail(String adresses) {
         if (adresses != null) {
             String emailPattern = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}";
@@ -555,7 +602,6 @@ public class OrderMailIndexationDelegate {
         return adresses;
     }
 
-    // method to get images from html and display it into attachment
     private String processMultipart(Multipart multipart) throws Exception {
         StringBuilder htmlBuilder = new StringBuilder();
         Map<String, String> base64Images = new HashMap<>();

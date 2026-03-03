@@ -2154,13 +2154,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public CustomerOrder assignNewCustomerOrderToOrder() throws OsirisException {
+    public CustomerOrder assignNewCustomerOrderToOrder(Boolean isForInsertions) throws OsirisException {
         Order order = new Order(Direction.ASC, "createdDate");
         Sort sort = Sort.by(Arrays.asList(order));
         Pageable pageableRequest = PageRequest.of(0, 1, sort);
         List<CustomerOrder> customerOrders = customerOrderRepository.findNewCustomerOrderToOrder(
                 customerOrderStatusService.getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT),
-                constantService.getCustomerOrderOriginOsiris(),
+                constantService.getCustomerOrderOriginOsiris(), isForInsertions,
                 pageableRequest);
 
         if (customerOrders != null && customerOrders.size() > 0 && employeeService.getCurrentEmployee() != null) {

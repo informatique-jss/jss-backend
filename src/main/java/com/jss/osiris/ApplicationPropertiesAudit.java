@@ -165,7 +165,8 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("mail.imap.secret.value");
         isOk = isOk && checkProperty("mail.imap.secret.id");
         isOk = isOk && checkProperty("mail.imap.shared.username");
-        isOk = isOk && checkProperty("mail.imap.shared.folder.order.input");
+        isOk = isOk && checkProperty("mail.imap.shared.folder.order.input.formalite");
+        isOk = isOk && checkProperty("mail.imap.shared.folder.order.input.announcement");
         isOk = isOk && checkProperty("schedulling.mail.automatic.indexation");
         isOk = isOk && checkProperty("outlook.default.url");
         isOk = isOk && checkProperty("microsoft.host");

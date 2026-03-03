@@ -241,9 +241,9 @@ public interface CustomerOrderRepository
         List<CustomerOrder> findNewCustomerOrderToBilled(CustomerOrderStatus customerOrderStatusToBilled,
                         Pageable pageableRequest);
 
-        @Query("select c from CustomerOrder c where orderingEmployee is null and c.customerOrderStatus=:customerOrderStatusDraft and c.customerOrderOrigin=:origin ")
+        @Query("select c from CustomerOrder c where orderingEmployee is null and c.customerOrderStatus=:customerOrderStatusDraft and c.customerOrderOrigin=:origin and coalesce(c.isFromAnnouncementMailbox,false)=:isForInsertions ")
         List<CustomerOrder> findNewCustomerOrderToOrder(CustomerOrderStatus customerOrderStatusDraft,
-                        CustomerOrderOrigin origin,
+                        CustomerOrderOrigin origin, Boolean isForInsertions,
                         Pageable pageableRequest);
 
         @Query("select c from CustomerOrder c where c.customerOrderStatus<>:statusAbandonned AND (:responsable IS NULL OR c.responsable = :responsable) and voucher=:voucher")

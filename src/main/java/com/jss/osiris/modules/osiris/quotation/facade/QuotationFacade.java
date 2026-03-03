@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.dto.CustomerOrderDto;
@@ -26,6 +27,7 @@ import com.jss.osiris.modules.osiris.quotation.model.QuotationSearch;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.KbisRequest;
+import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderAssignationService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderCommentService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.ProvisionService;
@@ -68,6 +70,12 @@ public class QuotationFacade {
 
     @Autowired
     FormaliteGuichetUniqueDtoHelper formaliteGuichetUniqueDtoHelper;
+
+    @Autowired
+    CustomerOrderAssignationService customerOrderAssignationService;
+
+    @Autowired
+    ConstantService constantService;
 
     @Transactional(rollbackFor = Exception.class)
     public KbisRequest orderNewKbisForSiret(String siret, Integer provisionId) throws OsirisException {
@@ -353,5 +361,22 @@ public class QuotationFacade {
                 guichetUniqueDepositInfoDtos);
 
         return guichetUniqueDepositInfoDtos;
+    }
+
+    @Transactional
+    public CustomerOrder assignLinkedOrderToInsertion(Integer quotationId) throws OsirisException {
+        Quotation quotation = quotationService.getQuotation(quotationId);
+        Employee employee = employeeService.getCurrentEmployee();
+        if (employee != null
+                && employee.getAdPath()
+                        .contains(constantService.getActiveDirectoryGroupInsertions().getActiveDirectoryPath())
+                && quotation.getCustomerOrders() != null && quotation.getCustomerOrders().size() > 0) {
+            if (quotation.getCustomerOrders().get(0).getCustomerOrderAssignations() != null) {
+                customerOrderAssignationService
+                        .assignImmediatlyOrderForInsertions(quotation.getCustomerOrders().get(0));
+                return quotation.getCustomerOrders().get(0);
+            }
+        }
+        return null;
     }
 }

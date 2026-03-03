@@ -322,6 +322,8 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@OneToMany(targetEntity = CustomerOrderAssignation.class, mappedBy = "customerOrder")
 	private List<CustomerOrderAssignation> customerOrderAssignations;
 
+	private Boolean isFromAnnouncementMailbox;
+
 	private String lastGaClientId;
 
 	public Integer getId() {
@@ -739,5 +741,13 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public void setLastGaClientId(String lastGaClientId) {
 		this.lastGaClientId = lastGaClientId;
+	}
+
+	public Boolean getIsFromAnnouncementMailbox() {
+		return isFromAnnouncementMailbox;
+	}
+
+	public void setIsFromAnnouncementMailbox(Boolean isFromAnnouncementMailbox) {
+		this.isFromAnnouncementMailbox = isFromAnnouncementMailbox;
 	}
 }

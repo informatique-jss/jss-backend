@@ -12,18 +12,21 @@ import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.OrderMailIndexationDelegate;
 
 @Service
-public class CheckMailToOrderThread implements IOsirisThread {
+public class CreateOrderAnnouncementFromMailThread implements IOsirisThread {
+
     @Autowired
     OrderMailIndexationDelegate orderMailIndexationDelegate;
 
+    @Override
     public String getBatchCode() {
-        return Batch.CHECK_MAIL_TO_ORDER;
+        return Batch.CREATE_ORDER_FROM_MAIL_ANNOUNCEMENT;
     }
 
     @Transactional(rollbackFor = Exception.class)
+    @Override
     public void executeTask(Integer entityId)
             throws OsirisValidationException, OsirisException, OsirisClientMessageException,
             OsirisDuplicateException {
-        orderMailIndexationDelegate.checkMailsToIndex();
+        orderMailIndexationDelegate.exportMailToOrderAnnouncement(entityId);
     }
 }

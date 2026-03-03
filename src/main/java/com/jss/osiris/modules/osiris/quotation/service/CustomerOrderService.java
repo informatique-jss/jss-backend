@@ -194,7 +194,7 @@ public interface CustomerOrderService {
 
         public CustomerOrder assignNewCustomerOrderToBilled() throws OsirisException;
 
-        public CustomerOrder assignNewCustomerOrderToOrder() throws OsirisException;
+        public CustomerOrder assignNewCustomerOrderToOrder(Boolean isForInsertions) throws OsirisException;
 
         public InvoicingStatistics getInvoicingStatistics() throws OsirisException;
 

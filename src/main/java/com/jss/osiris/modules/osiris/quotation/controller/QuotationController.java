@@ -501,7 +501,14 @@ public class QuotationController {
   @GetMapping(inputEntryPoint + "/customer-order/assign/order/auto")
   @JsonView(JacksonViews.OsirisListView.class)
   public ResponseEntity<CustomerOrder> assignNewCustomerOrderToOrder() throws OsirisException {
-    return new ResponseEntity<CustomerOrder>(customerOrderService.assignNewCustomerOrderToOrder(), HttpStatus.OK);
+    return new ResponseEntity<CustomerOrder>(customerOrderService.assignNewCustomerOrderToOrder(false), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/customer-order/assign/order/auto/insertions")
+  @JsonView(JacksonViews.OsirisListView.class)
+  public ResponseEntity<CustomerOrder> assignNewCustomerOrderToOrderForInsertions() throws OsirisException {
+    return new ResponseEntity<CustomerOrder>(customerOrderService.assignNewCustomerOrderToOrder(true),
+        HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/order/statistics")
@@ -3096,6 +3103,21 @@ public class QuotationController {
     return new ResponseEntity<Boolean>(true, HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/customer-order-assignation/assign/immediatly/insertions")
+  @PreAuthorize(ActiveDirectoryHelper.TEAM_RESPONSIBLE)
+  public ResponseEntity<Boolean> assignImmediatlyOrderForInsertions(Integer idCustomerOrder)
+      throws OsirisException {
+
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(idCustomerOrder);
+
+    if (customerOrder == null)
+      throw new OsirisValidationException("customerOrder");
+
+    customerOrderAssignationService.assignImmediatlyOrderForInsertions(customerOrder);
+
+    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/assign/new/fond/priority")
   @JsonView(JacksonViews.OsirisListView.class)
   public ResponseEntity<Integer> getNextPriorityOrderForFond() throws OsirisException {
@@ -3248,6 +3270,16 @@ public class QuotationController {
     quotationFacade.orderNewKbisForSiret(siret, provisionId);
 
     return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/quotation/assign/linked")
+  public ResponseEntity<CustomerOrder> assignLinkedOrderToInsertion(Integer quotationId)
+      throws OsirisException {
+    Quotation quotation = quotationService.getQuotation(quotationId);
+    if (quotation == null)
+      throw new OsirisValidationException("provision");
+
+    return new ResponseEntity<CustomerOrder>(quotationFacade.assignLinkedOrderToInsertion(quotationId), HttpStatus.OK);
   }
 
   /*

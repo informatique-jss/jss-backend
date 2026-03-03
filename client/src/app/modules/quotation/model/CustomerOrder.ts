@@ -36,4 +36,5 @@ export interface CustomerOrder extends IQuotation {
   productionEffectiveDateTime: Date;
   customerOrderAssignations: CustomerOrderAssignation[];
   pendingAttachments: Attachment[];
+  isFromAnnouncementMailbox: boolean;
 }

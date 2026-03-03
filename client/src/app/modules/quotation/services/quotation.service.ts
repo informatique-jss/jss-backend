@@ -68,4 +68,8 @@ export class QuotationService extends AppRestService<IQuotation> {
   getQuotationByAffaire(affaire: Affaire) {
     return this.getList(new HttpParams().set("idAffaire", affaire.id), 'quotations/affaire');
   }
+
+  assignLinkedOrderToInsertion(quotation: IQuotation) {
+    return this.get(new HttpParams().set("quotationId", quotation.id), 'quotation/assign/linked');
+  }
 }
