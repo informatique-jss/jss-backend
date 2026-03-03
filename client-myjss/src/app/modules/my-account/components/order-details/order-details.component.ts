@@ -258,49 +258,48 @@ export class OrderDetailsComponent implements OnInit {
     }
   }
 
-  setIsGuichetUniqueInfosNotNull(service: Service) {
-    this.formaliteGuichetUniqueService.getGuichetUniqueDatesDtosForServices(service.id).subscribe(res => {
+  loadGuichetUniqueInfos(service: Service) {
+    this.guichetUniqueDepositInfoDtos = [];
+    this.stepperObjectList = [];
+    this.formaliteGuichetUniqueService.getGuichetUniqueDatesDtosForService(service.id).subscribe(res => {
+      this.setGuichetUniqueInfos(res);
       this.isCurrentGuichetUniqueDepositInfoNotNull = false;
       if (res && res.length > 0)
         this.isCurrentGuichetUniqueDepositInfoNotNull = true;
     });
   }
 
-  loadGuichetUniqueInfos(service: Service) {
-    this.guichetUniqueDepositInfoDtos = [];
-    this.stepperObjectList = [];
-    this.formaliteGuichetUniqueService.getGuichetUniqueDatesDtosForServices(service.id).subscribe(res => {
-      this.guichetUniqueDepositInfoDtos = res;
-      let i = 0;
-      for (let guDepositInfo of this.guichetUniqueDepositInfoDtos) {
-        let isWaintingForValidationPartnerDateInserted = false;
-        let stepperObjects: StepperGuichetUniqueObject[] = [];
-        // Deposit date
-        stepperObjects.push({ date: guDepositInfo.depositDate, stepperType: "deposit", waitingForValidationPartnerCenterName: undefined })
+  setGuichetUniqueInfos(res: GuichetUniqueDepositInfoDto[]) {
+    this.guichetUniqueDepositInfoDtos = res;
+    let i = 0;
+    for (let guDepositInfo of this.guichetUniqueDepositInfoDtos) {
+      let isWaintingForValidationPartnerDateInserted = false;
+      let stepperObjects: StepperGuichetUniqueObject[] = [];
+      // Deposit date
+      stepperObjects.push({ date: guDepositInfo.depositDate, stepperType: "deposit", waitingForValidationPartnerCenterName: undefined })
 
-        // Missing doc dates (already sorted by date asc) + insertion of wainting for validation date in between if needed
-        for (let askingMissingDocDate of guDepositInfo.askingMissingDocumentDates) {
-          if (askingMissingDocDate < guDepositInfo.waitingForValidationFromDate)
-            stepperObjects.push({ date: askingMissingDocDate, stepperType: "missing_doc", waitingForValidationPartnerCenterName: guDepositInfo.waitingForValidationPartnerCenterName })
-          else if (askingMissingDocDate > guDepositInfo.waitingForValidationFromDate && !isWaintingForValidationPartnerDateInserted) {
-            stepperObjects.push({ date: guDepositInfo.waitingForValidationFromDate, stepperType: "waiting_validation", waitingForValidationPartnerCenterName: guDepositInfo.waitingForValidationPartnerCenterName })
-            isWaintingForValidationPartnerDateInserted = true;
-          } else
-            stepperObjects.push({ date: askingMissingDocDate, stepperType: "missing_doc", waitingForValidationPartnerCenterName: guDepositInfo.waitingForValidationPartnerCenterName })
-        }
-
-        // Waiting for validation date
-        if (!isWaintingForValidationPartnerDateInserted) {
-          stepperObjects.push({ date: guDepositInfo.waitingForValidationFromDate, stepperType: "waiting_validation", waitingForValidationPartnerCenterName: guDepositInfo.waitingForValidationPartnerCenterName });
-        }
-
-        // Validation date
-        stepperObjects.push({ date: guDepositInfo.validationDate, stepperType: "validation", waitingForValidationPartnerCenterName: undefined })
-
-        this.stepperObjectList[i] = stepperObjects;
-        i++;
+      // Missing doc dates (already sorted by date asc) + insertion of wainting for validation date in between if needed
+      for (let askingMissingDocDate of guDepositInfo.askingMissingDocumentDates) {
+        if (askingMissingDocDate < guDepositInfo.waitingForValidationFromDate)
+          stepperObjects.push({ date: askingMissingDocDate, stepperType: "missing_doc", waitingForValidationPartnerCenterName: guDepositInfo.waitingForValidationPartnerCenterName })
+        else if (askingMissingDocDate > guDepositInfo.waitingForValidationFromDate && !isWaintingForValidationPartnerDateInserted) {
+          stepperObjects.push({ date: guDepositInfo.waitingForValidationFromDate, stepperType: "waiting_validation", waitingForValidationPartnerCenterName: guDepositInfo.waitingForValidationPartnerCenterName })
+          isWaintingForValidationPartnerDateInserted = true;
+        } else
+          stepperObjects.push({ date: askingMissingDocDate, stepperType: "missing_doc", waitingForValidationPartnerCenterName: guDepositInfo.waitingForValidationPartnerCenterName })
       }
-    });
+
+      // Waiting for validation date
+      if (!isWaintingForValidationPartnerDateInserted) {
+        stepperObjects.push({ date: guDepositInfo.waitingForValidationFromDate, stepperType: "waiting_validation", waitingForValidationPartnerCenterName: guDepositInfo.waitingForValidationPartnerCenterName });
+      }
+
+      // Validation date
+      stepperObjects.push({ date: guDepositInfo.validationDate, stepperType: "validation", waitingForValidationPartnerCenterName: undefined })
+
+      this.stepperObjectList[i] = stepperObjects;
+      i++;
+    }
   }
 
   getPurchaseOrderAttachment() {

@@ -72,7 +72,7 @@ public class Refund implements Serializable, IId {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_customer_order")
-	@JsonIgnoreProperties(value = { "deposits" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "deposits", "assoAffaireOrders" }, allowSetters = true)
 	@IndexedField
 	private CustomerOrder customerOrder;
 

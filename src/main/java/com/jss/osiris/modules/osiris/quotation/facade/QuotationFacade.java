@@ -1,9 +1,6 @@
 package com.jss.osiris.modules.osiris.quotation.facade;
 
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +18,6 @@ import com.jss.osiris.modules.osiris.quotation.dto.ProvisionDto;
 import com.jss.osiris.modules.osiris.quotation.dto.QuotationDto;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
-import com.jss.osiris.modules.osiris.quotation.model.MissingAttachmentQuery;
 import com.jss.osiris.modules.osiris.quotation.model.OrderingSearch;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionSearch;
@@ -29,8 +25,6 @@ import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.QuotationSearch;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.FormaliteGuichetUnique;
-import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.ValidationRequest;
-import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.FormaliteGuichetUniqueStatus;
 import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.KbisRequest;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderCommentService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
@@ -71,6 +65,9 @@ public class QuotationFacade {
 
     @Autowired
     FormaliteGuichetUniqueService formaliteGuichetUniqueService;
+
+    @Autowired
+    FormaliteGuichetUniqueDtoHelper formaliteGuichetUniqueDtoHelper;
 
     @Transactional(rollbackFor = Exception.class)
     public KbisRequest orderNewKbisForSiret(String siret, Integer provisionId) throws OsirisException {
@@ -284,20 +281,6 @@ public class QuotationFacade {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Integer getTiersIdByIQuotationId(Integer iQuotationId) throws OsirisException {
-
-        CustomerOrder customerOrder = customerOrderService.getCustomerOrder(iQuotationId);
-        if (customerOrder != null)
-            return customerOrder.getResponsable().getTiers().getId();
-
-        Quotation quotation = quotationService.getQuotation(iQuotationId);
-        if (quotation != null)
-            return quotation.getResponsable().getTiers().getId();
-
-        return -1;
-    }
-
-    @Transactional(rollbackFor = Exception.class)
     public List<CustomerOrder> getCustomerOrdersWithUnreadCommentsForMyJssUser() {
         Responsable currentUser = employeeService.getCurrentMyJssUser();
         if (currentUser == null)
@@ -313,6 +296,22 @@ public class QuotationFacade {
             return new ArrayList<>();
 
         return customerOrderCommentService.getQuotationsWithUnreadCommentsForResponsable(currentUser);
+    }
+
+    /***************************** END of CHAT *************************/
+
+    @Transactional(rollbackFor = Exception.class)
+    public Integer getTiersIdByIQuotationId(Integer iQuotationId) throws OsirisException {
+
+        CustomerOrder customerOrder = customerOrderService.getCustomerOrder(iQuotationId);
+        if (customerOrder != null)
+            return customerOrder.getResponsable().getTiers().getId();
+
+        Quotation quotation = quotationService.getQuotation(iQuotationId);
+        if (quotation != null)
+            return quotation.getResponsable().getTiers().getId();
+
+        return -1;
     }
 
     // WARNING : Check in caller if for iQuotationId there is an existing quotation
@@ -340,82 +339,19 @@ public class QuotationFacade {
                             .getFormalitesGuichetUnique()) {
                         formaliteGuichetUnique = formaliteGuichetUniqueService
                                 .getFormaliteGuichetUnique(formaliteGuichetUnique.getId());
-                        if (formaliteGuichetUnique != null && !isFormaliteGuCancelled(formaliteGuichetUnique)) {
-                            GuichetUniqueDepositInfoDto currentGuInfoDto = new GuichetUniqueDepositInfoDto();
-                            // Deposit date
-                            currentGuInfoDto.setDepositDate(
-                                    OffsetDateTime.parse(formaliteGuichetUnique.getCreated()).toLocalDate());
-
-                            // Waiting for validation
-                            if (formaliteGuichetUnique.getValidationsRequests() != null
-                                    && formaliteGuichetUnique.getValidationsRequests().size() > 0) {
-                                LocalDate lastValidationRequestDate = formaliteGuichetUnique
-                                        .getValidationsRequests().stream()
-                                        .map(val -> OffsetDateTime.parse(val.getCreated()).toLocalDate())
-                                        .max(Comparator.naturalOrder()).get();
-
-                                currentGuInfoDto.setWaitingForValidationFromDate(lastValidationRequestDate);
-
-                                String partnerCenterName = "";
-                                for (ValidationRequest validationRequest : formaliteGuichetUnique
-                                        .getValidationsRequests()) {
-                                    if (validationRequest.getPartnerCenter() != null && !partnerCenterName
-                                            .contains(validationRequest.getPartnerCenter().getName())) {
-                                        partnerCenterName = partnerCenterName
-                                                + validationRequest.getPartnerCenter().getName() + ", ";
-                                    }
-                                }
-                                currentGuInfoDto.setWaitingForValidationPartnerCenterName(partnerCenterName);
-                            }
-
-                            // If validated
-                            if (formaliteGuichetUnique.getStatus().getCode()
-                                    .equals(FormaliteGuichetUniqueStatus.VALIDATED))
-                                currentGuInfoDto
-                                        .setValidationDate(OffsetDateTime.parse(formaliteGuichetUnique.getStatusDate())
-                                                .toLocalDate());
-
+                        if (formaliteGuichetUnique != null
+                                && !formaliteGuichetUniqueService.isFormaliteGuCancelled(formaliteGuichetUnique)) {
+                            // get and set guInfosDtos
+                            GuichetUniqueDepositInfoDto currentGuInfoDto = formaliteGuichetUniqueDtoHelper
+                                    .getCurrentGuInfoDto(formaliteGuichetUnique);
                             guichetUniqueDepositInfoDtos.add(currentGuInfoDto);
                         }
                     }
 
-        addMissingAttachmentQueryToGuDepositInfoDtos(service, guichetUniqueDepositInfoDtos);
+        // Adding PM to guichetUniqueDepositInfoDtos dates
+        formaliteGuichetUniqueDtoHelper.addMissingAttachmentQueryToGuDepositInfoDtos(service,
+                guichetUniqueDepositInfoDtos);
 
         return guichetUniqueDepositInfoDtos;
-    }
-
-    private boolean isFormaliteGuCancelled(FormaliteGuichetUnique formaliteGuichetUnique) {
-        return FormaliteGuichetUniqueStatus.ERROR
-                .equals(formaliteGuichetUnique.getStatus().getCode())
-                || FormaliteGuichetUniqueStatus.EXPIRED
-                        .equals(formaliteGuichetUnique.getStatus().getCode())
-                || FormaliteGuichetUniqueStatus.REJECTED
-                        .equals(formaliteGuichetUnique.getStatus().getCode());
-    }
-
-    private void addMissingAttachmentQueryToGuDepositInfoDtos(Service service,
-            List<GuichetUniqueDepositInfoDto> guichetUniqueDepositInfoDtos) {
-
-        List<MissingAttachmentQuery> missingAttachmentsQueries = service.getMissingAttachmentQueries();
-        missingAttachmentsQueries = missingAttachmentsQueries.stream()
-                .sorted((o1, o2) -> o1.getCreatedDateTime().compareTo(o2.getCreatedDateTime())).toList();
-
-        if (missingAttachmentsQueries != null && !missingAttachmentsQueries.isEmpty()) {
-            for (GuichetUniqueDepositInfoDto guichetUniqueDepositInfoDto : guichetUniqueDepositInfoDtos) {
-                List<LocalDate> askingMissingDocumentDates = new ArrayList<>();
-                for (MissingAttachmentQuery missingAttachmentQuery : missingAttachmentsQueries) {
-                    if (missingAttachmentQuery.getCreatedDateTime().toLocalDate()
-                            .isAfter(guichetUniqueDepositInfoDto.getDepositDate())
-                            && missingAttachmentQuery.getCreatedDateTime().toLocalDate()
-                                    .isBefore(guichetUniqueDepositInfoDto.getValidationDate() != null
-                                            ? guichetUniqueDepositInfoDto.getValidationDate()
-                                            : LocalDate.MAX)) {
-                        askingMissingDocumentDates.add(missingAttachmentQuery.getCreatedDateTime().toLocalDate());
-                    }
-                }
-                guichetUniqueDepositInfoDto.setAskingMissingDocumentDates(askingMissingDocumentDates);
-            }
-
-        }
     }
 }
