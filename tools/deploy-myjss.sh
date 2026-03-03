@@ -5,7 +5,7 @@ npm install
 ng build --configuration production
 
 tar -czf deploy.tar.gz -C dist .
-scp deploy.tar.gz jss@my.jss.fr:/tmp/deploy.tar.gz
+scp deploy.tar.gz myjss@my.jss.fr:/tmp/deploy.tar.gz
 
 ssh -t myjss@my.jss.fr << 'EOF'
   rm -rf /tmp/deploy_unzipped
@@ -16,7 +16,7 @@ ssh -t myjss@my.jss.fr << 'EOF'
   sudo /usr/bin/systemctl stop ssr.service
   
   rm -R /appli/myjss/*
-  mv /tmp/deploy_unzipped/* /appli/myjss/.
+   cp /tmp/deploy_unzipped/. /appli/myjss/. -R
   
   chown -R myjss:appli /appli/myjss/
   sudo /usr/bin/systemctl start ssr.service

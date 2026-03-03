@@ -16,7 +16,7 @@ ssh -t jss@jss.fr << 'EOF'
   sudo /usr/bin/systemctl stop ssr.service
   
   rm -R /appli/jss/*
-  mv /tmp/deploy_unzipped/* /appli/jss/.
+    cp /tmp/deploy_unzipped/. /appli/jss/. -R
   
   chown -R jss:appli /appli/jss/
   sudo /usr/bin/systemctl start ssr.service
