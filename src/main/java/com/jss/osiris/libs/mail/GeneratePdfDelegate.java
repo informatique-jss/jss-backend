@@ -577,7 +577,12 @@ public class GeneratePdfDelegate {
                                 if (provision.getAnnouncement() != null && !provision.getIsRedactedByJss()
                                         && provision.getAnnouncement().getNotice() != null
                                         && !provision.getAnnouncement().getNotice().isEmpty())
-                                    announcementNotices.add(provision.getAnnouncement().getNotice());
+                                    if (provision.getAnnouncement().getNotice() != null
+                                            && !provision.getAnnouncement().getNotice().equals(""))
+                                        announcementNotices.add(provision.getAnnouncement().getNotice()
+                                                .replaceAll("<br style=\"mso-special-character: line-break;\">",
+                                                        "<br/>")
+                                                .replaceAll("<br>", "<br/>").replaceAll("&nbsp;", " "));
                             }
                         }
                     }

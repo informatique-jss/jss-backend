@@ -984,6 +984,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     public Notice getNoticeFromFile(MultipartFile file) throws OsirisException {
+
         try (InputStream is = file.getInputStream();
                 XWPFDocument document = new XWPFDocument(is)) {
 
@@ -992,11 +993,12 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
             List<XWPFParagraph> paragraphs = document.getParagraphs();
             for (XWPFParagraph paragraph : paragraphs) {
+                // add tag p to keep automatic breakline in doc
                 htmlBuilder.append("<p>");
 
                 for (XWPFRun run : paragraph.getRuns()) {
                     String text = run.getText(0);
-                    if (text != null) {
+                    if (text != null && !text.isEmpty()) {
                         if (run.isBold())
                             htmlBuilder.append("<b>");
                         if (run.isItalic())
@@ -1008,14 +1010,30 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                             htmlBuilder.append("</i>");
                         if (run.isBold())
                             htmlBuilder.append("</b>");
+
+                        // add a security space between blocs/runs
+                        htmlBuilder.append(" ");
+                    }
+
+                    // find manual breakline and replace with tag
+                    if (!run.getCTR().getBrList().isEmpty()) {
+                        htmlBuilder.append("<br/>");
                     }
                 }
                 htmlBuilder.append("</p>");
             }
 
             htmlBuilder.append("</div>");
+
+            // remove double space
+            String finalHtml = htmlBuilder.toString()
+                    .replaceAll("[ ]{2,}", " ")
+                    .replace(" </p>", "</p>")
+                    .replace("<p> ", "<p>")
+                    .replace(" <br/>", "<br/>");
+
             Notice notice = new Notice();
-            notice.setNotice(htmlBuilder.toString().replaceAll("\\s{2,}", " "));
+            notice.setNotice(finalHtml.trim());
             return notice;
         } catch (IOException e) {
             throw new OsirisException(e, "Unable to process the announcement file with Apache POI");
