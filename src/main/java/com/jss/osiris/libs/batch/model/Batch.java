@@ -81,6 +81,7 @@ public class Batch implements IId, Serializable {
     public static String UPDATE_BODACC_NOTICE = "UPDATE_BODACC_NOTICE";
     public static String UPDATE_BALO_NOTICE = "UPDATE_BALO_NOTICE";
     public static String UPDATE_JO_NOTICE = "UPDATE_JO_NOTICE";
+    public static String MAIL_TRACKING_CONTACT = "MAIL_TRACKING_CONTACT";
     public static String ORDER_KBIS = "ORDER_KBIS";
 
     @Id

@@ -606,4 +606,14 @@ public class OsirisScheduller {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}
 	}
+
+	@Scheduled(initialDelay = 60000, fixedDelayString = "${schedulling.mail.tracker.contact}")
+	private void trackingContactMail() {
+		try {
+			if (nodeService.shouldIBatch())
+				batchService.declareNewBatch(Batch.MAIL_TRACKING_CONTACT, 0);
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
 }

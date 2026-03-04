@@ -581,6 +581,18 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.WEBSITES));
             addOrUpdateBatchSettings(batchSettings);
         }
+        if (getByCode(Batch.MAIL_TRACKING_CONTACT) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.MAIL_TRACKING_CONTACT);
+            batchSettings.setLabel("Suivi des mails contact@jss.fr");
+            batchSettings.setFixedRate(1000);
+            batchSettings.setQueueSize(1);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(true);
+            batchSettings.setMaxAddedNumberPerIteration(1);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.INDICATORS));
+            addOrUpdateBatchSettings(batchSettings);
+        }
         if (getByCode(Batch.CHECK_MAIL_TO_INDEX) == null) {
             BatchSettings batchSettings = new BatchSettings();
             batchSettings.setCode(Batch.CHECK_MAIL_TO_INDEX);

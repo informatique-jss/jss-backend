@@ -149,6 +149,7 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("schedulling.log.osiris.balo.update");
         isOk = isOk && checkProperty("schedulling.log.osiris.jo.update");
         isOk = isOk && checkProperty("schedulling.mail.purge.order");
+        isOk = isOk && checkProperty("schedulling.mail.tracker.contact");
         isOk = isOk && checkProperty("nibelis.api.baseurl");
         isOk = isOk && checkProperty("nibelis.api.username");
         isOk = isOk && checkProperty("nibelis.api.password");
@@ -167,6 +168,7 @@ public class ApplicationPropertiesAudit {
         isOk = isOk && checkProperty("mail.imap.shared.username");
         isOk = isOk && checkProperty("mail.imap.shared.folder.order.input.formalite");
         isOk = isOk && checkProperty("mail.imap.shared.folder.order.input.announcement");
+        isOk = isOk && checkProperty("mail.imap.shared.folder.order.input.classement");
         isOk = isOk && checkProperty("schedulling.mail.automatic.indexation");
         isOk = isOk && checkProperty("outlook.default.url");
         isOk = isOk && checkProperty("microsoft.host");
