@@ -984,6 +984,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     public Notice getNoticeFromFile(MultipartFile file) throws OsirisException {
+
         try (InputStream is = file.getInputStream();
                 XWPFDocument document = new XWPFDocument(is)) {
 
@@ -992,7 +993,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
             List<XWPFParagraph> paragraphs = document.getParagraphs();
             for (XWPFParagraph paragraph : paragraphs) {
-                // force tag p to keep manual breakline
+                // add tag p to keep automatic breakline in doc
                 htmlBuilder.append("<p>");
 
                 for (XWPFRun run : paragraph.getRuns()) {
@@ -1009,19 +1010,27 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                             htmlBuilder.append("</i>");
                         if (run.isBold())
                             htmlBuilder.append("</b>");
-                        // add a space between bloc/run
+
+                        // add a security space between blocs/runs
                         htmlBuilder.append(" ");
                     }
 
+                    // find manual breakline and replace with tag
+                    if (!run.getCTR().getBrList().isEmpty()) {
+                        htmlBuilder.append("<br/>");
+                    }
                 }
                 htmlBuilder.append("</p>");
             }
 
             htmlBuilder.append("</div>");
+
             // remove double space
-            String finalHtml = htmlBuilder.toString().replaceAll("[ ]{2,}", " ")
+            String finalHtml = htmlBuilder.toString()
+                    .replaceAll("[ ]{2,}", " ")
                     .replace(" </p>", "</p>")
-                    .replace("<p> ", "<p>");
+                    .replace("<p> ", "<p>")
+                    .replace(" <br/>", "<br/>");
 
             Notice notice = new Notice();
             notice.setNotice(finalHtml.trim());
