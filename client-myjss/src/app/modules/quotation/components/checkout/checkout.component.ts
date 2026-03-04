@@ -177,6 +177,7 @@ export class CheckoutComponent implements OnInit {
         this.orderService.getCustomerOrder(parseInt(this.orderService.getCurrentDraftOrderId()!)).subscribe(response => {
           this.quotation = response;
           this.prepareForPricingAndCompute(true);
+          this.setPostTitle();
         });
       }
     } else {
