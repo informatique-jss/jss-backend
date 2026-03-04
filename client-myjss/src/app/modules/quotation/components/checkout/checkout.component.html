@@ -598,7 +598,7 @@
                     <h3 class="h5 mb-2 text-blue">{{service.serviceLabelToDisplay}}
                     </h3>
                     <p *ngIf="postTitle" class="card-text small">
-                      Article : {{postTitle}}
+                      {{postTitle}}
                     </p>
                     <p class="card-text small" *ngIf="!postTitle">
                       <strong>{{service.assoServiceDocuments.length == 0 ? 'Aucun ' :
