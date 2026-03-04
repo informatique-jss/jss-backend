@@ -36,6 +36,10 @@
         .border-table {
             border-bottom: 1px solid rgb(0, 83, 159);
         }
+
+        .border-table {
+            border-top: 1px dotted rgb(0, 83, 159);
+        }
     </style>
 </head>
 
@@ -79,9 +83,10 @@
         </thead>
         <tr th:each="values : ${billingClosureValues}">
             <td class="td-date " th:if="${values.eventDateString!=null}"
-                th:classappend="${values.displayBottomBorder} ? border-table : none-class"><span
-                    th:text="${values.eventDateString}"></span></td>
-            <td th:classappend="${values.displayBottomBorder} ? border-table : none-class"
+                th:classappend="|${values.displayBottomBorder ? 'border-table' : 'none-class'} ${values.displaySmallTopBorder ? 'none-class' : 'none-class'}|">
+                <span th:text="${values.eventDateString}"></span>
+            </td>
+            <td th:classappend="|${values.displayBottomBorder ? 'border-table' : 'none-class'} ${values.displaySmallTopBorder ? 'border-table-top' : 'none-class'}|"
                 th:if="${values.eventDescription!=null} and ${values.eventDateString!=null}"
                 style="border-right: solid;border-color: rgb(0,83,159)">
                 <span th:utext="${values.eventDescription}"></span> <span
@@ -92,27 +97,25 @@
                             th:text="${#temporals.format(values.directDebitTransfertDate, 'dd/MM/yyyy')}">
                         </span></strong></span>
                 </br>
-                <span
-                    th:if="${values.remainingDebitAmount!=null && values.remainingDebitAmount>0 && values.remainingDebitAmount != values.debitAmount && isBillingClosureTypeAffaire!=null && isBillingClosureTypeAffaire==true }">Reste
-                    à payer : <span th:text="${#numbers.formatDecimal(values.remainingDebitAmount,1,2)}">
-                    </span> €</span>
             </td>
-            <td th:classappend="${values.displayBottomBorder} ? border-table : none-class"
+            <td th:classappend="|${values.displayBottomBorder ? 'border-table' : 'none-class'} ${values.displaySmallTopBorder ? 'border-table-top' : 'none-class'}|"
                 th:if="${values.eventDescription!=null} and ${values.eventDateString==null}"
                 style="padding-top: 20px;padding-bottom: 20px;padding-left: 10px;border-right: solid;border-color: rgb(0,83,159)"
                 colspan="2">
                 <strong><span th:utext="${values.eventDescription}"></span></strong>
             </td>
-            <td th:classappend="${values.displayBottomBorder} ? border-table : none-class" class="td-with-price  "
-                style="border-right: solid;border-color: rgb(0,83,159)" th:if="${values.debitAmount!=null}"><span
+            <td th:classappend="|${values.displayBottomBorder ? 'border-table' : 'none-class'} ${values.displaySmallTopBorder ? 'border-table-top' : 'none-class'}|"
+                class="td-with-price  " style="border-right: solid;border-color: rgb(0,83,159)"
+                th:if="${values.debitAmount!=null}"><span
                     th:text="${#numbers.formatDecimal(values.debitAmount,1,2)}"></span> €</td>
-            <td th:classappend="${values.displayBottomBorder} ? border-table : none-class" class="td-with-price  "
-                style="border-right: solid;border-color: rgb(0,83,159)" th:if="${values.debitAmount==null}"></td>
-            <td th:classappend="${values.displayBottomBorder} ? border-table : none-class" class="td-with-price  "
-                th:if="${values.creditAmount!=null}"><span
+            <td th:classappend="|${values.displayBottomBorder ? 'border-table' : 'none-class'} ${values.displaySmallTopBorder ? 'border-table-top' : 'none-class'}|"
+                class="td-with-price  " style="border-right: solid;border-color: rgb(0,83,159)"
+                th:if="${values.debitAmount==null}"></td>
+            <td th:classappend="|${values.displayBottomBorder ? 'border-table' : 'none-class'} ${values.displaySmallTopBorder ? 'border-table-top' : 'none-class'}|"
+                class="td-with-price  " th:if="${values.creditAmount!=null}"><span
                     th:text="${#numbers.formatDecimal(values.creditAmount,1,2)}"></span> €</td>
-            <td th:classappend="${values.displayBottomBorder} ? border-table : none-class" class="td-with-price  "
-                th:if="${values.creditAmount==null}"></td>
+            <td th:classappend="|${values.displayBottomBorder ? 'border-table' : 'none-class'} ${values.displaySmallTopBorder ? 'border-table-top' : 'none-class'}|"
+                class="td-with-price  " th:if="${values.creditAmount==null}"></td>
         </tr>
     </table>
     <table

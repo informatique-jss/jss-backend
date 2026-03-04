@@ -51,6 +51,7 @@ import com.jss.osiris.modules.osiris.accounting.model.BillingClosureReceiptValue
 import com.jss.osiris.modules.osiris.invoicing.model.ICreatedDate;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
+import com.jss.osiris.modules.osiris.invoicing.model.RemainingToPay;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
@@ -229,9 +230,10 @@ public class BillingClosureReceiptHelper {
                                 !status.getCode().equals(CustomerOrderStatus.ABANDONED))
                         .collect(Collectors.toList()), false, null);
 
+        boolean hadSomeValues = false;
         // Find invoices
         for (Responsable responsableToCheck : responsableList) {
-            boolean hadSomeValues = false;
+            hadSomeValues = false;
             values.add(new BillingClosureReceiptValue(
                     (responsableToCheck.getFirstname() + " " + responsableToCheck.getLastname())));
             List<Invoice> invoices = invoiceService.searchInvoices(
@@ -257,6 +259,13 @@ public class BillingClosureReceiptHelper {
                             for (Payment payment : invoice.getPayments())
                                 if (!payment.getIsCancelled())
                                     allInputs.add(payment);
+                        BigDecimal remainingToPay = invoiceService.getRemainingAmountToPayForInvoice(invoice);
+                        if (remainingToPay.compareTo(new BigDecimal(0)) > 0) {
+                            RemainingToPay valueRemaining = new RemainingToPay();
+                            valueRemaining.setCreatedDate(LocalDateTime.now());
+                            valueRemaining.setRemainingToPay(remainingToPay);
+                            allInputs.add(valueRemaining);
+                        }
                     }
                 }
 
@@ -282,10 +291,13 @@ public class BillingClosureReceiptHelper {
                                     customerOrder = payment.getCustomerOrder();
                                 else if (payment.getInvoice() != null)
                                     customerOrder = payment.getInvoice().getCustomerOrder();
-                                values.add(getBillingClosureReceiptValueForDeposit(payment, customerOrder, true));
+                                values.add(getBillingClosureReceiptValueForDeposit(payment, customerOrder, false));
                             } else {
-                                values.add(getBillingClosureReceiptValueForPayment(payment, true));
+                                values.add(getBillingClosureReceiptValueForPayment(payment, false));
                             }
+                        }
+                        if (input instanceof RemainingToPay) {
+                            values.add(getBillingClosureReceiptValueForRemainingToPay((RemainingToPay) input));
                         }
                     }
                 }
@@ -342,13 +354,22 @@ public class BillingClosureReceiptHelper {
                                                     .indexOf(payment) == invoice.getCustomerOrder().getPayments().size()
                                                             - 1));
                         }
+                        BigDecimal remainingToPay = invoiceService.getRemainingAmountToPayForInvoice(invoice);
                         if (invoice.getPayments() != null && invoice.getPayments().size() > 0) {
                             valueInvoice.setDisplayBottomBorder(false);
                             for (Payment payment : invoice.getPayments())
                                 if (!payment.getIsCancelled() && !payment.getIsDeposit())
                                     values.add(getBillingClosureReceiptValueForPayment(payment,
-                                            invoice.getPayments().indexOf(payment) == invoice.getPayments().size()
-                                                    - 1));
+                                            remainingToPay.compareTo(new BigDecimal(0)) <= 0 &&
+                                                    invoice.getPayments()
+                                                            .indexOf(payment) == invoice.getPayments().size()
+                                                                    - 1));
+                        }
+                        if (remainingToPay.compareTo(new BigDecimal(0)) > 0) {
+                            RemainingToPay valueRemaining = new RemainingToPay();
+                            valueRemaining.setCreatedDate(LocalDateTime.now());
+                            valueRemaining.setRemainingToPay(remainingToPay);
+                            values.add(getBillingClosureReceiptValueForRemainingToPay(valueRemaining));
                         }
 
                     }
@@ -372,7 +393,7 @@ public class BillingClosureReceiptHelper {
             if (results != null && !results.isEmpty())
                 for (AccountingRecordSearchResult result : results)
                     values.add(getBillingClosureReceiptValueForAs400(result));
-            else
+            else if (!hadSomeValues)
                 values.remove(values.size() - 1);
         }
 
@@ -499,6 +520,20 @@ public class BillingClosureReceiptHelper {
         value.setEventDateTime(payment.getPaymentDate());
         value.setEventDateString(payment.getPaymentDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         value.setEventDescription(payment.getLabel().replaceAll("&", "<![CDATA[&]]>"));
+
+        return value;
+    }
+
+    private BillingClosureReceiptValue getBillingClosureReceiptValueForRemainingToPay(RemainingToPay remainingToPay) {
+
+        BillingClosureReceiptValue value = new BillingClosureReceiptValue();
+        value.setDisplayBottomBorder(true);
+        value.setDisplaySmallTopBorder(true);
+        value.setDebitAmount(remainingToPay.getRemainingToPay());
+        value.setEventDescription("Reste à payer");
+        value.setCreditAmount(null);
+        value.setEventDateTime(remainingToPay.getCreatedDate());
+        value.setEventDateString("");
 
         return value;
     }
