@@ -44,6 +44,7 @@ import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.GuichetUnique
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.GuichetUniqueTransfertAgent;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.GuichetUniqueUploadedFile;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.PiecesJointe;
+import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.RegularizationRequest;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.FormaliteStatusHistoryItem;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDocument;
 import com.jss.osiris.modules.osiris.quotation.repository.guichetUnique.FormaliteGuichetUniqueRepository;
@@ -98,6 +99,7 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
     private String formalityDraftUrl = "/formality_drafts";
     private String transferAgentUrl = "/transfer_agent";
     private String annualAccountsRequestUrl = "/annual_accounts";
+    private String regularizationRequestUrl = "/regularization_requests";
     private String acteDepositRequestUrl = "/acte_deposits";
     private String formalityStatusHistoriesUrl = "/formality_status_histories";
     private String annualAccountStatusHistoriesUrl = "/annual_account_status_histories";
@@ -148,8 +150,8 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
             throws OsirisException, OsirisClientMessageException {
         List<FormaliteGuichetUnique> formalites = new ArrayList<FormaliteGuichetUnique>();
         formalites.addAll(getFormalitiesByDate(createdAfter, updatedAfter));
-        // formalites.addAll(getAnnualAccountsByDate(createdAfter, updatedAfter));
-        // formalites.addAll(getActeDepositsByDate(createdAfter, updatedAfter));
+        formalites.addAll(getAnnualAccountsByDate(createdAfter, updatedAfter));
+        formalites.addAll(getActeDepositsByDate(createdAfter, updatedAfter));
         return formalites;
     }
 
@@ -283,6 +285,26 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
                 guichetUniqueEntryPoint + formalitiesRequestUrl + "/" + id + formalityStatusHistoriesUrl,
                 HttpMethod.GET, new HttpEntity<String>(headers),
                 new ParameterizedTypeReference<List<FormaliteStatusHistoryItem>>() {
+                });
+
+        if (response.getBody() != null) {
+            return response.getBody();
+        } else {
+            throw new OsirisException(null, "Guichet unique formality not found for id " + id);
+        }
+    }
+
+    @Override
+    @SuppressWarnings({ "all" })
+    public List<RegularizationRequest> getFormalityRegularizationRequestById(Integer id)
+            throws OsirisException, OsirisClientMessageException {
+        SSLHelper.disableCertificateValidation();
+        HttpHeaders headers = createHeaders();
+
+        ResponseEntity<List<RegularizationRequest>> response = new RestTemplate().exchange(
+                guichetUniqueEntryPoint + regularizationRequestUrl + "?validationRequest.formality=" + id,
+                HttpMethod.GET, new HttpEntity<String>(headers),
+                new ParameterizedTypeReference<List<RegularizationRequest>>() {
                 });
 
         if (response.getBody() != null) {
@@ -545,6 +567,26 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
         }
     }
 
+    @Override
+    @SuppressWarnings({ "all" })
+    public List<RegularizationRequest> getAnnualAccountRegularizationRequestById(Integer id)
+            throws OsirisException, OsirisClientMessageException {
+        SSLHelper.disableCertificateValidation();
+        HttpHeaders headers = createHeaders();
+
+        ResponseEntity<List<RegularizationRequest>> response = new RestTemplate().exchange(
+                guichetUniqueEntryPoint + regularizationRequestUrl + "?validationRequest.formality=" + id,
+                HttpMethod.GET, new HttpEntity<String>(headers),
+                new ParameterizedTypeReference<List<RegularizationRequest>>() {
+                });
+
+        if (response.getBody() != null) {
+            return response.getBody();
+        } else {
+            throw new OsirisException(null, "Guichet unique formality not found for id " + id);
+        }
+    }
+
     private List<FormaliteGuichetUnique> getActeDepositsByDate(LocalDateTime createdAfter, LocalDateTime updatedAfter)
             throws OsirisException, OsirisClientMessageException {
         List<FormaliteGuichetUnique> formalites = new ArrayList<FormaliteGuichetUnique>();
@@ -651,6 +693,26 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
                 guichetUniqueEntryPoint + acteDepositRequestUrl + "/" + id + acteDepositStatusHistoriesUrl,
                 HttpMethod.GET, new HttpEntity<String>(headers),
                 new ParameterizedTypeReference<List<FormaliteStatusHistoryItem>>() {
+                });
+
+        if (response.getBody() != null) {
+            return response.getBody();
+        } else {
+            throw new OsirisException(null, "Guichet unique formality not found for id " + id);
+        }
+    }
+
+    @Override
+    @SuppressWarnings({ "all" })
+    public List<RegularizationRequest> getActeDepositRegularizationRequestById(Integer id)
+            throws OsirisException, OsirisClientMessageException {
+        SSLHelper.disableCertificateValidation();
+        HttpHeaders headers = createHeaders();
+
+        ResponseEntity<List<RegularizationRequest>> response = new RestTemplate().exchange(
+                guichetUniqueEntryPoint + regularizationRequestUrl + "?validationRequest.acteDeposit=" + id,
+                HttpMethod.GET, new HttpEntity<String>(headers),
+                new ParameterizedTypeReference<List<RegularizationRequest>>() {
                 });
 
         if (response.getBody() != null) {

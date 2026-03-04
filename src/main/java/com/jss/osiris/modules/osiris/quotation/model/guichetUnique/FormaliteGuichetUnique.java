@@ -96,6 +96,12 @@ public class FormaliteGuichetUnique implements IId, Serializable {
 
     @OneToMany(mappedBy = "formaliteGuichetUnique", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "formaliteGuichetUnique" }, allowSetters = true)
+    @JsonProperty("regularizationRequests")
+    @JsonAlias({ "annualAccountValidationRequests", "acteDepositValidationRequests" })
+    private List<RegularizationRequest> regularizationRequests;
+
+    @OneToMany(mappedBy = "formaliteGuichetUnique", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value = { "formaliteGuichetUnique" }, allowSetters = true)
     @JsonProperty("formaliteStatusHistoryItems")
     @JsonAlias({ "annualAccountStatusHistories", "acteDepositValidationRequests" })
     private List<FormaliteStatusHistoryItem> formaliteStatusHistoryItems;
@@ -461,5 +467,13 @@ public class FormaliteGuichetUnique implements IId, Serializable {
 
     public void setFormalityScope(List<String> formalityScope) {
         this.formalityScope = formalityScope;
+    }
+
+    public List<RegularizationRequest> getRegularizationRequests() {
+        return regularizationRequests;
+    }
+
+    public void setRegularizationRequests(List<RegularizationRequest> regularizationRequest) {
+        this.regularizationRequests = regularizationRequest;
     }
 }

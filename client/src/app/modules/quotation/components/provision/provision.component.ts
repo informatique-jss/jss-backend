@@ -5,6 +5,7 @@ import { MatAccordion } from '@angular/material/expansion';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
 import { ANNOUNCEMENT_PUBLISHED, ANNOUNCEMENT_STATUS_DONE, ANNOUNCEMENT_STATUS_IN_PROGRESS, ANNOUNCEMENT_STATUS_WAITING_READ_CUSTOMER, CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY, QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY } from 'src/app/libs/Constants';
+import { formatDateTimeFrance } from 'src/app/libs/FormatHelper';
 import { ConfirmDialogComponent } from 'src/app/modules/miscellaneous/components/confirm-dialog/confirm-dialog.component';
 import { WorkflowDialogComponent } from 'src/app/modules/miscellaneous/components/workflow-dialog/workflow-dialog.component';
 import { NotificationService } from 'src/app/modules/miscellaneous/services/notification.service';
@@ -39,6 +40,7 @@ import { QuotationSearchResultService } from '../../services/quotation.search.re
 import { ServiceService } from '../../services/service.service';
 import { SimpleProvisionStatusService } from '../../services/simple.provision.status.service';
 import { ChooseCompetentAuthorityDialogComponent } from '../choose-competent-authority-dialog/choose-competent-authority-dialog.component';
+import { ChooseRejectionCauseDialogComponent } from '../choose-rejection-cause-dialog/choose-rejection-cause-dialog.component';
 import { ProvisionItemComponent } from '../provision-item/provision-item.component';
 import { MissingAttachmentMailDialogComponent } from '../select-attachment-type-dialog/missing-attachment-mail-dialog.component';
 import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-dialog.component';
@@ -703,6 +705,36 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
             this.saveAsso();
           }
         });
+      } else if (provision.formalite.formalitesGuichetUnique) {
+        for (let formaliteGuichetUnique of provision.formalite.formalitesGuichetUnique) {
+          if (formaliteGuichetUnique.regularizationRequests) {
+            for (let regularization of formaliteGuichetUnique.regularizationRequests) {
+              if (!regularization.rejectionCause) {
+                saveAsso = false;
+                const dialogRef = this.chooseCompetentAuthorityDialog.open(ChooseRejectionCauseDialogComponent, {
+                  maxWidth: "400px",
+                });
+
+                let created = new Date(regularization.created);
+                dialogRef.componentInstance.title = "Description du rejet";
+                dialogRef.componentInstance.label = "Quel est la cause du rejet du " + formatDateTimeFrance(created) + " ?";
+                dialogRef.componentInstance.formaliteGuichetUnique = formaliteGuichetUnique;
+                dialogRef.componentInstance.regularizationRequest = regularization;
+                dialogRef.afterClosed().subscribe(dialogResult => {
+                  if (dialogResult && dialogResult != false && provision.formalite) {
+                    provision.formalite.formaliteStatus = status;
+                    regularization.rejectionCause = dialogResult;
+                    this.saveAsso();
+                  }
+                });
+                return;
+              }
+            }
+          }
+        }
+
+        if (saveAsso)
+          provision.formalite.formaliteStatus = status;
       } else {
         provision.formalite.formaliteStatus = status;
       }

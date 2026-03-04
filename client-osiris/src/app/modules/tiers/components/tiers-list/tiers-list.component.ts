@@ -255,7 +255,7 @@ export class TiersListComponent extends GenericListComponent<TiersDto, TiersSear
       }
     })
     columns.push({
-      accessorFn: (originalRow: TiersDto, index: number) => { return originalRow.address + " " + originalRow.city.label }, header: 'Adresse', enableSorting: true, cell: info => info.getValue(), meta: {
+      accessorFn: (originalRow: TiersDto, index: number) => { return originalRow.address + " " + (originalRow.city ? originalRow.city.label : '') }, header: 'Adresse', enableSorting: true, cell: info => info.getValue(), meta: {
         eventOnDoubleClick: this.eventOnClickOpenTiers
       }
     })

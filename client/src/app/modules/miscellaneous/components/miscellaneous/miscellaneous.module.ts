@@ -181,6 +181,7 @@ import { SelectQuotationAbandonReasonComponent } from '../forms/select-quotation
 import { SelectQuotationStatusComponent } from '../forms/select-quotation-status/select-quotation-status.component';
 import { SelectRefundTypeComponent } from '../forms/select-refund-type/select-refund-type.component';
 import { SelectRegionsComponent } from '../forms/select-regions/select-regions.component';
+import { SelectRejectionCauseComponent } from '../forms/select-rejection-cause/select-rejection-cause.component';
 import { SelectReportingDatasetComponent } from '../forms/select-reporting-dataset/select-reporting-dataset.component';
 import { SelectReportingFrequencyComponent } from '../forms/select-reporting-frequency/select-reporting-frequency.component';
 import { SelectResponsableComponent } from '../forms/select-responsable/select-responsable.component';
@@ -442,6 +443,7 @@ const routes: Routes = [
     SelectAgeRangeComponent,
     SelectBusinessSectorComponent,
     SelectCompanySizeComponent,
+    SelectRejectionCauseComponent,
   ],
   exports: [
     HistoryComponent,
@@ -629,6 +631,7 @@ const routes: Routes = [
     SelectAgeRangeComponent,
     SelectBusinessSectorComponent,
     SelectCompanySizeComponent,
+    SelectRejectionCauseComponent,
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

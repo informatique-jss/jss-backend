@@ -47,6 +47,10 @@ export class HabilitationsService {
     return this.loginService.hasGroup([TEAM_RESPONSIBLE])
   }
 
+  canDisplayNonJssRejectionCause() {
+    return this.loginService.hasGroup([TEAM_RESPONSIBLE])
+  }
+
   canViewIndicatorModule() {
     return true;
   }

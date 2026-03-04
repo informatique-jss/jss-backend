@@ -33,6 +33,16 @@
                   [innerHTML]="'Observations : '+validation.validationObservation| trustHtml"></li>
               </ul>
             </ul>
+            <p *ngIf="formaliteGuichetUnique.regularizationRequests">Liste des rejets : </p>
+            <ul *ngFor="let regularizationRequest of  formaliteGuichetUnique.regularizationRequests">
+              <li>{{regularizationRequest.created |date:'dd/MM/yyyy HH:mm'}} - Deadline au
+                {{regularizationRequest.deadline |date:'dd/MM/yyyy HH:mm'}}</li>
+              <ul>
+                <li>Statut : {{getRegularisationStatus(regularizationRequest.status)}} </li>
+                <li *ngIf="regularizationRequest.rejectionCause">Cause du rejet :
+                  {{regularizationRequest.rejectionCause.label}} </li>
+              </ul>
+            </ul>
           </mat-step>
         </ng-container>
       </mat-vertical-stepper>

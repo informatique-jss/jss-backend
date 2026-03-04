@@ -69,4 +69,14 @@ export class GuichetUniqueStatusComponent implements OnInit {
     out += formalite.liasseNumber + " - " + date;
     return out;
   }
+
+  getRegularisationStatus(label: string): string {
+    if (label == "IN_PROGRESS")
+      return "Demande en cours";
+    if (label == "REGULARIZED")
+      return "Demande régularisée";
+    if (label == "DROPPED")
+      return "Demande abandonnée (si la formalité a été validée ou rejetée)";
+    return label;
+  }
 }

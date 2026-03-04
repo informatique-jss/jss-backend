@@ -1,0 +1,16 @@
+<h1 mat-dialog-title>{{title}}</h1>
+<div mat-dialog-content>
+  <p>{{label}}</p>
+  <table class="full-width ">
+    <tr>
+      <td>
+        <select-rejection-cause [(model)]="rejectionCause" label="Cause du rejet" [form]="regularizationRequestForm"
+          propertyName="rejectionCause" [isMandatory]="true" [isDisabled]="false "></select-rejection-cause>
+      </td>
+    </tr>
+  </table>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="accent" (click)="closeDialog()">Annuler</button>
+  <button mat-raised-button color="warn" (click)="chooseRejectionCause()">Valider</button>
+</div>

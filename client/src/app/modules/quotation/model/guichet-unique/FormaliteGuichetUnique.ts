@@ -1,5 +1,6 @@
 import { Formalite } from "../Formalite";
 import { FormaliteStatusHistoryItem } from "./FormaliteStatusHistoryItem";
+import { RegularizationRequest } from "./RegularizationRequest";
 import { ValidationRequest } from "./ValidationRequest";
 import { Status } from "./referentials/Status";
 
@@ -16,4 +17,5 @@ export interface FormaliteGuichetUnique {
   formaliteStatusHistoryItems: FormaliteStatusHistoryItem[];
   status: Status;
   isAuthorizedToSign: boolean;
+  regularizationRequests: RegularizationRequest[];
 }

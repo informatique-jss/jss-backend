@@ -83,6 +83,7 @@ import com.jss.osiris.modules.osiris.quotation.model.NoticeType;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
+import com.jss.osiris.modules.osiris.quotation.service.CharacterPriceService;
 import com.jss.osiris.modules.osiris.quotation.service.ProvisionService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
@@ -142,6 +143,9 @@ public class GeneratePdfDelegate {
 
     @Autowired
     TranslationService translationService;
+
+    @Autowired
+    CharacterPriceService characterPriceService;
 
     @Autowired
     PdfTools pdfTools;
@@ -577,7 +581,8 @@ public class GeneratePdfDelegate {
                                 if (provision.getAnnouncement() != null && !provision.getIsRedactedByJss()
                                         && provision.getAnnouncement().getNotice() != null
                                         && !provision.getAnnouncement().getNotice().isEmpty())
-                                    announcementNotices.add(provision.getAnnouncement().getNotice());
+                                    announcementNotices.add(
+                                            characterPriceService.cleanString(provision.getAnnouncement().getNotice()));
                             }
                         }
                     }

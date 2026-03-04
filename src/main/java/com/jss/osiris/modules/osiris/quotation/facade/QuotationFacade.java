@@ -24,6 +24,7 @@ import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionSearch;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.QuotationSearch;
+import com.jss.osiris.modules.osiris.quotation.model.RejectionCause;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.KbisRequest;
@@ -32,6 +33,7 @@ import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderCommentServi
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.ProvisionService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
+import com.jss.osiris.modules.osiris.quotation.service.RejectionCauseService;
 import com.jss.osiris.modules.osiris.quotation.service.ServiceService;
 import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.FormaliteGuichetUniqueService;
 import com.jss.osiris.modules.osiris.quotation.service.infoGreffe.InfogreffeKbisService;
@@ -76,6 +78,9 @@ public class QuotationFacade {
 
     @Autowired
     ConstantService constantService;
+
+    @Autowired
+    RejectionCauseService rejectionCauseService;
 
     @Transactional(rollbackFor = Exception.class)
     public KbisRequest orderNewKbisForSiret(String siret, Integer provisionId) throws OsirisException {
@@ -378,5 +383,15 @@ public class QuotationFacade {
             }
         }
         return null;
+    }
+
+    @Transactional
+    public void changeRejectionCauseForFormaliteGuichetUnique(Integer idFormaliteGuichetUnique,
+            Integer idRegularizationRequest, Integer idRejectionCause) throws OsirisException {
+        FormaliteGuichetUnique formalite = formaliteGuichetUniqueService
+                .getFormaliteGuichetUnique(idFormaliteGuichetUnique);
+        RejectionCause rejectionCause = rejectionCauseService.getRejectionCause(idRejectionCause);
+        formaliteGuichetUniqueService.changeRejectionCauseForFormaliteGuichetUnique(formalite, rejectionCause,
+                idRegularizationRequest);
     }
 }
