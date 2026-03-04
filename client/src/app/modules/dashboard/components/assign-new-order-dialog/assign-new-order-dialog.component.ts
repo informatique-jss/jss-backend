@@ -2,7 +2,12 @@ import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
+import { ActiveDirectoryGroupService } from 'src/app/modules/miscellaneous/services/active.directory.group.service';
+import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
+import { Employee } from 'src/app/modules/profile/model/Employee';
+import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
 import { CustomerOrderAssignationService } from 'src/app/modules/quotation/services/customer.assignation.service';
+import { CustomerOrderService } from 'src/app/modules/quotation/services/customer.order.service';
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
@@ -16,22 +21,41 @@ export class AssignNewOrderDialogComponent implements OnInit {
 
   constructor(private customerOrderAssignationService: CustomerOrderAssignationService,
     public dialogRef: MatDialogRef<AssignNewOrderDialogComponent>,
-    private appService: AppService
+    private appService: AppService,
+    private employeeService: EmployeeService,
+    private constantService: ConstantService,
+    private activeDirectoryGroupService: ActiveDirectoryGroupService,
+    private orderService: CustomerOrderService
   ) { }
 
   foundOrder: number | undefined;
   isLoading = false;
   complexity: number = 3;
+  isInsertionEmployee = false;
+  currentEmployee: Employee | undefined;
 
   ngOnInit() {
     this.isLoading = true;
-    this.customerOrderAssignationService.getNextPriorityOrderForFond().subscribe(priorityFond => {
-      if (priorityFond) {
+    this.orderService.assignNewCustomerOrderToOrderForInsertions().subscribe(response => {
+      if (this.isInsertionEmployee && response) {
         this.isLoading = false;
-        this.foundOrder = priorityFond;
-      } else {
-        this.nextStep();
+        this.foundOrder = response.id;
       }
+      else {
+        this.customerOrderAssignationService.getNextPriorityOrderForFond().subscribe(priorityFond => {
+          if (priorityFond) {
+            this.isLoading = false;
+            this.foundOrder = priorityFond;
+          } else {
+            this.nextStep();
+          }
+        })
+      }
+    });
+
+    this.employeeService.getCurrentEmployee().subscribe(employee => {
+      this.currentEmployee = employee;
+      this.isInsertionEmployee = this.activeDirectoryGroupService.isEmployeeInGroupList(this.currentEmployee, [this.constantService.getActiveDirectoryGroupInsertions()])
     })
   }
 

@@ -44,7 +44,7 @@ public class KpiCrmCategoryServiceImpl implements KpiCrmCategoryService {
     @Transactional(rollbackFor = Exception.class)
     public void updateCategoryReferential() throws OsirisException {
         updateStatus(KpiCrmCategory.QUOTATION, "Devis");
-        updateStatus(KpiCrmCategory.ACCOUNTING, "Comptabiltié");
+        updateStatus(KpiCrmCategory.ACCOUNTING, "Comptabilité");
         updateStatus(KpiCrmCategory.CUSTOMER_ORDER, "Commandes");
         updateStatus(KpiCrmCategory.TURNOVER, "CA");
         updateStatus(KpiCrmCategory.WEBSITE, "Site");

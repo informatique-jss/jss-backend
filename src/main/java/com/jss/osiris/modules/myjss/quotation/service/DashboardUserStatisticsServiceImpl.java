@@ -1,6 +1,7 @@
 package com.jss.osiris.modules.myjss.quotation.service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,6 +25,7 @@ import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderStatusServic
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationStatusService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
+import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
 
 @Service
 public class DashboardUserStatisticsServiceImpl implements DashboardUserStatisticsService {
@@ -52,102 +54,112 @@ public class DashboardUserStatisticsServiceImpl implements DashboardUserStatisti
         @Autowired
         CustomerOrderCommentService customerOrderCommentService;
 
+        @Autowired
+        ResponsableService responsableService;
+
         @Override
-        public DashboardUserStatistics getDashboardUserStatistics() throws OsirisException {
+        public DashboardUserStatistics getDashboardUserStatistics(List<Integer> responsableIds) throws OsirisException {
                 DashboardUserStatistics statistics = new DashboardUserStatistics();
-                List<Responsable> listResponsables = Arrays.asList(employeeService.getCurrentMyJssUser());
+                List<Responsable> listResponsables = new ArrayList<Responsable>();
+                Responsable currentUser = employeeService.getCurrentMyJssUser();
 
-                if (listResponsables != null && listResponsables.size() > 0) {
+                if (responsableIds != null)
+                        for (Responsable respo : currentUser.getTiers().getResponsables()) {
+                                if (responsableIds.contains(respo.getId()))
+                                        listResponsables.add(respo);
+                        }
 
-                        // compute customerOrderInProgress
-                        statistics.setCustomerOrderInProgress(0);
-                        List<CustomerOrder> customerOrderInProgress = customerOrderService.searchOrders(
-                                        Arrays.asList(
-                                                        customerOrderStatusService
-                                                                        .getCustomerOrderStatusByCode(
-                                                                                        CustomerOrderStatus.BEING_PROCESSED),
-                                                        customerOrderStatusService.getCustomerOrderStatusByCode(
-                                                                        CustomerOrderStatus.TO_BILLED)),
-                                        false,
-                                        listResponsables);
-                        if (customerOrderInProgress != null)
-                                statistics.setCustomerOrderInProgress(customerOrderInProgress.size());
+                if (listResponsables.size() == 0)
+                        listResponsables.add(currentUser);
 
-                        // compute customerOrderRequieringAttention
-                        statistics.setCustomerOrderRequieringAttention(0);
-                        List<CustomerOrder> customerOrderRequieringAttention = customerOrderService
-                                        .searchOrdersForCurrentUser(
-                                                        Arrays.asList(CustomerOrderStatus.BEING_PROCESSED,
-                                                                        CustomerOrderStatus.WAITING_DEPOSIT,
-                                                                        CustomerOrderStatus.BILLED),
-                                                        listResponsables.stream().map(respo -> respo.getId()).toList(),
-                                                        true, 0, "");
+                // compute customerOrderInProgress
+                statistics.setCustomerOrderInProgress(0);
+                List<CustomerOrder> customerOrderInProgress = customerOrderService.searchOrders(
+                                Arrays.asList(
+                                                customerOrderStatusService
+                                                                .getCustomerOrderStatusByCode(
+                                                                                CustomerOrderStatus.BEING_PROCESSED),
+                                                customerOrderStatusService.getCustomerOrderStatusByCode(
+                                                                CustomerOrderStatus.TO_BILLED)),
+                                false,
+                                listResponsables);
+                if (customerOrderInProgress != null)
+                        statistics.setCustomerOrderInProgress(customerOrderInProgress.size());
 
-                        statistics.setCustomerOrderRequieringAttention(customerOrderRequieringAttention.size());
+                // compute customerOrderRequieringAttention
+                statistics.setCustomerOrderRequieringAttention(0);
+                List<CustomerOrder> customerOrderRequieringAttention = customerOrderService
+                                .searchOrdersForCurrentUser(
+                                                Arrays.asList(CustomerOrderStatus.BEING_PROCESSED,
+                                                                CustomerOrderStatus.WAITING_DEPOSIT,
+                                                                CustomerOrderStatus.BILLED),
+                                                listResponsables.stream().map(respo -> respo.getId()).toList(),
+                                                true, 0, "");
 
-                        // compute quotationToValidate
-                        statistics.setQuotationToValidate(0);
+                statistics.setCustomerOrderRequieringAttention(customerOrderRequieringAttention.size());
 
-                        QuotationSearch quotationSearch = new QuotationSearch();
-                        quotationSearch.setResponsables(listResponsables);
-                        quotationSearch.setQuotationStatus(
-                                        Arrays.asList(quotationStatusService
-                                                        .getQuotationStatusByCode(QuotationStatus.SENT_TO_CUSTOMER)));
-                        List<Quotation> quotationToValidate = quotationService.searchForQuotations(quotationSearch);
+                // compute quotationToValidate
+                statistics.setQuotationToValidate(0);
 
-                        if (quotationToValidate != null)
-                                statistics.setQuotationToValidate(quotationToValidate.size());
+                QuotationSearch quotationSearch = new QuotationSearch();
+                quotationSearch.setResponsables(listResponsables);
+                quotationSearch.setQuotationStatus(
+                                Arrays.asList(quotationStatusService
+                                                .getQuotationStatusByCode(QuotationStatus.SENT_TO_CUSTOMER)));
+                List<Quotation> quotationToValidate = quotationService.searchForQuotations(quotationSearch);
 
-                        // compute invoiceToPay
-                        statistics.setInvoiceToPay(0);
-                        List<Invoice> invoiceToPay = invoiceService
-                                        .searchInvoices(Arrays.asList(constantService.getInvoiceStatusSend()),
-                                                        listResponsables);
-                        if (invoiceToPay != null)
-                                statistics.setInvoiceToPay(invoiceToPay.size());
+                if (quotationToValidate != null)
+                        statistics.setQuotationToValidate(quotationToValidate.size());
 
-                        // compute invoiceAfterDueDate
-                        statistics.setInvoiceAfterDueDate(0);
-                        if (invoiceToPay != null && invoiceToPay.size() > 0)
-                                for (Invoice invoice : invoiceToPay)
-                                        if (invoice.getDueDate().isBefore(LocalDate.now()))
-                                                statistics.setInvoiceToPay(statistics.getInvoiceToPay() + 1);
+                // compute invoiceToPay
+                statistics.setInvoiceToPay(0);
+                List<Invoice> invoiceToPay = invoiceService
+                                .searchInvoices(Arrays.asList(constantService.getInvoiceStatusSend()),
+                                                listResponsables);
+                if (invoiceToPay != null)
+                        statistics.setInvoiceToPay(invoiceToPay.size());
 
-                        // compute customerOrderDraft
-                        statistics.setCustomerOrderDraft(0);
-                        List<CustomerOrder> customerOrderDraft = customerOrderService.searchOrders(
-                                        Arrays.asList(customerOrderStatusService
-                                                        .getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT)),
-                                        false,
-                                        listResponsables);
-                        if (customerOrderDraft != null)
-                                statistics.setCustomerOrderDraft(customerOrderDraft.size());
+                // compute invoiceAfterDueDate
+                statistics.setInvoiceAfterDueDate(0);
+                if (invoiceToPay != null && invoiceToPay.size() > 0)
+                        for (Invoice invoice : invoiceToPay)
+                                if (invoice.getDueDate().isBefore(LocalDate.now()))
+                                        statistics.setInvoiceToPay(statistics.getInvoiceToPay() + 1);
 
-                        // compute quotationToValidate
-                        statistics.setQuotationDraft(0);
+                // compute customerOrderDraft
+                statistics.setCustomerOrderDraft(0);
+                List<CustomerOrder> customerOrderDraft = customerOrderService.searchOrders(
+                                Arrays.asList(customerOrderStatusService
+                                                .getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT)),
+                                false,
+                                listResponsables);
+                if (customerOrderDraft != null)
+                        statistics.setCustomerOrderDraft(customerOrderDraft.size());
 
-                        QuotationSearch quotationSearchDraft = new QuotationSearch();
-                        quotationSearchDraft.setResponsables(listResponsables);
-                        quotationSearchDraft.setQuotationStatus(
-                                        Arrays.asList(quotationStatusService
-                                                        .getQuotationStatusByCode(QuotationStatus.DRAFT)));
-                        List<Quotation> quotationDraft = quotationService.searchForQuotations(quotationSearchDraft);
+                // compute quotationToValidate
+                statistics.setQuotationDraft(0);
 
-                        if (quotationDraft != null)
-                                statistics.setQuotationDraft(quotationDraft.size());
+                QuotationSearch quotationSearchDraft = new QuotationSearch();
+                quotationSearchDraft.setResponsables(listResponsables);
+                quotationSearchDraft.setQuotationStatus(
+                                Arrays.asList(quotationStatusService
+                                                .getQuotationStatusByCode(QuotationStatus.DRAFT)));
+                List<Quotation> quotationDraft = quotationService.searchForQuotations(quotationSearchDraft);
 
-                        // compute quotations with unread comments
-                        List<Quotation> quotationsWithUnreadComments = customerOrderCommentService
-                                        .getQuotationsWithUnreadCommentsForResponsable(listResponsables.get(0));
+                if (quotationDraft != null)
+                        statistics.setQuotationDraft(quotationDraft.size());
 
-                        statistics.setUnreadCommentsForQuotations(quotationsWithUnreadComments.size());
+                // compute quotations with unread comments
+                List<Quotation> quotationsWithUnreadComments = customerOrderCommentService
+                                .getQuotationsWithUnreadCommentsForResponsable(listResponsables.get(0));
 
-                        // compute customer orders with unread comments
-                        List<CustomerOrder> ordersWithUnreadComments = customerOrderCommentService
-                                        .getCustomerOrdersWithUnreadCommentsForResponsable(listResponsables.get(0));
+                statistics.setUnreadCommentsForQuotations(quotationsWithUnreadComments.size());
 
-                        statistics.setUnreadCommentsForCustomerOrders(ordersWithUnreadComments.size());
-                }
+                // compute customer orders with unread comments
+                List<CustomerOrder> ordersWithUnreadComments = customerOrderCommentService
+                                .getCustomerOrdersWithUnreadCommentsForResponsable(listResponsables.get(0));
+
+                statistics.setUnreadCommentsForCustomerOrders(ordersWithUnreadComments.size());
 
                 return statistics;
         }

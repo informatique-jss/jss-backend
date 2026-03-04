@@ -1,5 +1,6 @@
-<div class="h-100 rounded-1 download-card p-4 d-flex flex-column align-items-center justify-content-center"
-  (click)="onCardClick()" (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)" (drop)="onDrop($event)">
+<div class="rounded-1 download-card p-4 d-flex flex-column align-items-center justify-content-center"
+  [ngClass]="[fullSize ? 'h-100' : 'h-75']" (click)="onCardClick()" (dragover)="onDragOver($event)"
+  (dragleave)="onDragLeave($event)" (drop)="onDrop($event)">
   <input class="form-control d-none" type="file" (change)="onFileSelected($event)" #fileInput
     [attr.accept]="'.'+forcedFileExtension">
   <h6>Choisissez un fichier ou déposez-le ici</h6>

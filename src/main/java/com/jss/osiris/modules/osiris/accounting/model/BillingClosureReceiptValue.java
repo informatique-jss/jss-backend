@@ -34,6 +34,9 @@ public class BillingClosureReceiptValue {
     private boolean displayBottomBorder;
 
     @JsonView(JacksonViews.MyJssListView.class)
+    private boolean displaySmallTopBorder;
+
+    @JsonView(JacksonViews.MyJssListView.class)
     private LocalDate directDebitTransfertDate;
 
     @JsonView(JacksonViews.MyJssListView.class)
@@ -172,6 +175,14 @@ public class BillingClosureReceiptValue {
 
     public void setRemainingDebitAmount(BigDecimal remainingDebitAmount) {
         this.remainingDebitAmount = remainingDebitAmount;
+    }
+
+    public boolean isDisplaySmallTopBorder() {
+        return displaySmallTopBorder;
+    }
+
+    public void setDisplaySmallTopBorder(boolean displaySmallTopBorder) {
+        this.displaySmallTopBorder = displaySmallTopBorder;
     }
 
 }

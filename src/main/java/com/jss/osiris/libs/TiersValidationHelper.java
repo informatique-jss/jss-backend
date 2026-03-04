@@ -1,6 +1,7 @@
 package com.jss.osiris.libs;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,14 +13,20 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Phone;
 import com.jss.osiris.modules.osiris.miscellaneous.model.SpecialOffer;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.osiris.tiers.model.ITiersSearchResult;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
+import com.jss.osiris.modules.osiris.tiers.model.TiersSearch;
+import com.jss.osiris.modules.osiris.tiers.service.TiersService;
 
 @Service
 public class TiersValidationHelper {
 
     @Autowired
     private ValidationHelper validationHelper;
+
+    @Autowired
+    TiersService tiersService;
 
     @Autowired
     private ConstantService constantService;
@@ -46,6 +53,14 @@ public class TiersValidationHelper {
             validationHelper.validateString(tiers.getDenomination(), true, 80, "Denomination");
             if (tiers.getIntercommunityVat() != null && tiers.getIntercommunityVat().length() > 20)
                 throw new OsirisValidationException("IntercommunityVat");
+        }
+
+        if (Boolean.TRUE.equals(tiers.getIsToTakeCare())) {
+            TiersSearch tiersSearch = new TiersSearch();
+            tiersSearch.setIsToTakeCare(true);
+            List<ITiersSearchResult> tiersToCare = tiersService.searchTiers(tiersSearch);
+            if (tiersToCare != null && tiersToCare.size() >= 20)
+                throw new OsirisClientMessageException("Impossible d'avoir plus de 20 tiers à risque");
         }
 
         validationHelper.validateReferential(tiers.getTiersCategory(), false, "TiersCategory");

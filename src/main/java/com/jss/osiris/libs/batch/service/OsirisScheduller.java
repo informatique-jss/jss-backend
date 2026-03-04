@@ -444,8 +444,10 @@ public class OsirisScheduller {
 	@Scheduled(initialDelay = 500, fixedDelayString = "${schedulling.mail.automatic.indexation}")
 	private void generateOrderFromMails() {
 		try {
-			if (nodeService.shouldIBatch())
+			if (nodeService.shouldIBatch()) {
 				batchService.declareNewBatch(Batch.CHECK_MAIL_TO_ORDER, 1);
+				batchService.declareNewBatch(Batch.CHECK_MAIL_TO_ORDER_ANNOUNCEMENT, 1);
+			}
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}
@@ -600,6 +602,16 @@ public class OsirisScheduller {
 		try {
 			if (nodeService.shouldIBatch())
 				batchService.declareNewBatch(Batch.UPDATE_JO_NOTICE, 0);
+		} catch (Exception e) {
+			globalExceptionHandler.handleExceptionOsiris(e);
+		}
+	}
+
+	@Scheduled(initialDelay = 60000, fixedDelayString = "${schedulling.mail.tracker.contact}")
+	private void trackingContactMail() {
+		try {
+			if (nodeService.shouldIBatch())
+				batchService.declareNewBatch(Batch.MAIL_TRACKING_CONTACT, 0);
 		} catch (Exception e) {
 			globalExceptionHandler.handleExceptionOsiris(e);
 		}

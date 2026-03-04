@@ -19,7 +19,6 @@ public class Category implements Serializable {
     private String name;
 
     @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
-
     private String slug;
 
     private Integer count;

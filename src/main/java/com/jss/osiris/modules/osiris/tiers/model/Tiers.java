@@ -127,6 +127,9 @@ public class Tiers implements IAttachment, IId {
 	@Column(nullable = false)
 	private Boolean isSepaMandateReceived;
 
+	@JsonView({ JacksonViews.OsirisDetailedView.class, JacksonViews.OsirisListView.class })
+	private Boolean isToTakeCare;
+
 	@OneToMany(mappedBy = "tiers", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnoreProperties(value = { "tiers" }, allowSetters = true)
 	private List<Responsable> responsables;
@@ -740,6 +743,14 @@ public class Tiers implements IAttachment, IId {
 
 	public void setCompanySize(CompanySize companySize) {
 		this.companySize = companySize;
+	}
+
+	public Boolean getIsToTakeCare() {
+		return isToTakeCare;
+	}
+
+	public void setIsToTakeCare(Boolean isToTakeCare) {
+		this.isToTakeCare = isToTakeCare;
 	}
 
 }

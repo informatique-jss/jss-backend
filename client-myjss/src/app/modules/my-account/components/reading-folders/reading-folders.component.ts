@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { environment } from '../../../../../environments/environment';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
 import { GenericInputComponent } from "../../../miscellaneous/components/forms/generic-input/generic-input.component";
+import { Post } from '../../../tools/model/Post';
 import { ReadingFolder } from '../../../tools/model/ReadingFolder';
 import { PostService } from '../../../tools/services/post.service';
 import { ReadingFolderService } from '../../../tools/services/reading.folder.service';
@@ -23,6 +25,10 @@ export class ReadingFoldersComponent implements OnInit {
   folderToDelete: ReadingFolder | undefined;
   readingFolderForm!: FormGroup;
 
+  purchasedPosts: Post[] = [];
+
+  frontendJssUrl = environment.frontendJssUrl;
+
   constructor(private readingFolderService: ReadingFolderService,
     private appService: AppService,
     private formBuilder: FormBuilder,
@@ -32,6 +38,13 @@ export class ReadingFoldersComponent implements OnInit {
   ngOnInit() {
     this.readingFolderForm = this.formBuilder.group({});
     this.fetchReadingFolders();
+    this.fetchPurchasedPosts();
+  }
+
+  fetchPurchasedPosts() {
+    this.postService.getPurchasedPosts().subscribe(res => {
+      this.purchasedPosts = res;
+    });
   }
 
   fetchReadingFolders() {

@@ -20,6 +20,10 @@ export class PostService extends AppRestService<Post> {
     return this.get(new HttpParams().set("slug", slug), "posts/slug");
   }
 
+  getPostById(id: number) {
+    return this.get(new HttpParams().set("id", id), "post/id");
+  }
+
   getPostSerieBySlug(slug: string) {
     return this.getList(new HttpParams().set("slug", slug), "posts/serie/slug");
   }
@@ -84,6 +88,19 @@ export class PostService extends AppRestService<Post> {
     return this.getPagedList(httpParams, "search/posts/category");
   }
 
+  searchPostsByMyJssCategoryAndCategory(searchText: string, myJssCategory: MyJssCategory | undefined, category: Category | undefined, page: number, size: number) {
+    let httpParams = new HttpParams();
+    if (searchText)
+      httpParams = httpParams.set("searchText", searchText);
+    if (myJssCategory && myJssCategory.id)
+      httpParams = httpParams.set("myJssCategoryId", myJssCategory.id);
+    if (category && category.id)
+      httpParams = httpParams.set("categoryId", category.id);
+
+    httpParams = httpParams.set("page", page).set("size", size);
+    return this.getPagedList(httpParams, "search/categories");
+  }
+
   getPostsByMyJssCategory(myJssCategory: MyJssCategory, page: number, size: number) {
     return this.getPagedList(new HttpParams().set("myJssCategoryId", myJssCategory.id ? myJssCategory.id : "null").set("page", page).set("size", size), "posts/myjss-category");
   }
@@ -111,8 +128,12 @@ export class PostService extends AppRestService<Post> {
   getTendencyPosts() {
     return this.getList(new HttpParams(), "posts/myjss/tendency");
   }
+
   getMostSeenPosts() {
     return this.getList(new HttpParams(), "posts/myjss/most-seen");
   }
 
+  getPurchasedPosts() {
+    return this.getList(new HttpParams(), "posts/jss/purchased");
+  }
 }

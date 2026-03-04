@@ -487,7 +487,8 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
                     }
                 }
 
-                if (provision.getAnnouncement() != null) {
+                if (provision.getAnnouncement() != null
+                        && !Boolean.TRUE.equals(provision.getIsDoNotGenerateAnnouncement())) {
                     Announcement announcement = provision.getAnnouncement();
 
                     if (announcement.getId() == null)

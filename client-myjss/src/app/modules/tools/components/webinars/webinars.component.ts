@@ -10,6 +10,7 @@ import { GtmService } from '../../../main/services/gtm.service';
 import { FormSubmitPayload, PageInfo } from '../../../main/services/GtmPayload';
 import { PlatformService } from '../../../main/services/platform.service';
 import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
+import { GenericTextareaComponent } from '../../../miscellaneous/components/forms/generic-textarea/generic-textarea.component';
 import { Webinar } from '../../model/Webinar';
 import { WebinarParticipant } from '../../model/WebinarParticipant';
 import { WebinarParticipantService } from '../../services/webinar.participant.service';
@@ -20,7 +21,7 @@ import { WebinarService } from '../../services/webinar.service';
   templateUrl: './webinars.component.html',
   styleUrls: ['./webinars.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, GenericInputComponent, LiteralDatePipe]
+  imports: [SHARED_IMPORTS, GenericInputComponent, LiteralDatePipe, GenericTextareaComponent]
 })
 export class WebinarsComponent implements OnInit {
   webinarParticipant: WebinarParticipant = { mail: {} as Mail } as WebinarParticipant;

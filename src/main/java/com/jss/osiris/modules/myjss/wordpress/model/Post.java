@@ -138,7 +138,7 @@ public class Post implements IId, Serializable {
     private String contentText;
 
     @Transient
-    @JsonView(JacksonViews.MyJssDetailedView.class)
+    @JsonView({ JacksonViews.MyJssListView.class, JacksonViews.MyJssDetailedView.class })
     private Boolean isHidePremium;
 
     // Computed field

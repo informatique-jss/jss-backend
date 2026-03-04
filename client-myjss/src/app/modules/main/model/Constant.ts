@@ -15,12 +15,8 @@ import { MyJssCategory } from "../../tools/model/MyJssCategory";
 
 export interface Constant {
   id: number;
-  paymentTypePrelevement: PaymentType;
   paymentTypeVirement: PaymentType;
   paymentTypeCB: PaymentType;
-  paymentTypeEspeces: PaymentType;
-  paymentTypeCheques: PaymentType;
-  paymentTypeAccount: PaymentType;
   billingLabelTypeCodeAffaire: BillingLabelType;
   billingLabelTypeOther: BillingLabelType;
   billingLabelTypeCustomer: BillingLabelType;

@@ -581,6 +581,18 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
             batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.WEBSITES));
             addOrUpdateBatchSettings(batchSettings);
         }
+        if (getByCode(Batch.MAIL_TRACKING_CONTACT) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.MAIL_TRACKING_CONTACT);
+            batchSettings.setLabel("Suivi des mails contact@jss.fr");
+            batchSettings.setFixedRate(1000);
+            batchSettings.setQueueSize(1);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(true);
+            batchSettings.setMaxAddedNumberPerIteration(1);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.INDICATORS));
+            addOrUpdateBatchSettings(batchSettings);
+        }
         if (getByCode(Batch.CHECK_MAIL_TO_INDEX) == null) {
             BatchSettings batchSettings = new BatchSettings();
             batchSettings.setCode(Batch.CHECK_MAIL_TO_INDEX);
@@ -596,7 +608,19 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
         if (getByCode(Batch.CHECK_MAIL_TO_ORDER) == null) {
             BatchSettings batchSettings = new BatchSettings();
             batchSettings.setCode(Batch.CHECK_MAIL_TO_ORDER);
-            batchSettings.setLabel("Parcourir la liste des commandes reçues par mail");
+            batchSettings.setLabel("Parcourir la liste des commandes reçues par mail - Formalités");
+            batchSettings.setFixedRate(10000);
+            batchSettings.setQueueSize(1);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(true);
+            batchSettings.setMaxAddedNumberPerIteration(1);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.MAILS));
+            addOrUpdateBatchSettings(batchSettings);
+        }
+        if (getByCode(Batch.CHECK_MAIL_TO_ORDER_ANNOUNCEMENT) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.CHECK_MAIL_TO_ORDER_ANNOUNCEMENT);
+            batchSettings.setLabel("Parcourir la liste des commandes reçues par mail - Annonces");
             batchSettings.setFixedRate(10000);
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);
@@ -632,7 +656,19 @@ public class BatchSettingsServiceImpl implements BatchSettingsService {
         if (getByCode(Batch.CREATE_ORDER_FROM_MAIL) == null) {
             BatchSettings batchSettings = new BatchSettings();
             batchSettings.setCode(Batch.CREATE_ORDER_FROM_MAIL);
-            batchSettings.setLabel("Création des commandes reçues par mail");
+            batchSettings.setLabel("Création des commandes reçues par mail - Formalités");
+            batchSettings.setFixedRate(1000);
+            batchSettings.setQueueSize(1);
+            batchSettings.setIsActive(true);
+            batchSettings.setIsOnlyOneJob(false);
+            batchSettings.setMaxAddedNumberPerIteration(0);
+            batchSettings.setBatchCategory(batchCategoryService.getBatchCategoryByCode(BatchCategory.MAILS));
+            addOrUpdateBatchSettings(batchSettings);
+        }
+        if (getByCode(Batch.CREATE_ORDER_FROM_MAIL_ANNOUNCEMENT) == null) {
+            BatchSettings batchSettings = new BatchSettings();
+            batchSettings.setCode(Batch.CREATE_ORDER_FROM_MAIL_ANNOUNCEMENT);
+            batchSettings.setLabel("Création des commandes reçues par mail - Annonces");
             batchSettings.setFixedRate(1000);
             batchSettings.setQueueSize(1);
             batchSettings.setIsActive(true);

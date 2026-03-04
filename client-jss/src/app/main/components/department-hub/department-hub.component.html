@@ -67,6 +67,7 @@
                           <h4>
                             <span role="button" tabindex="0" class="pointer card-text-truncate"
                               [routerLink]=' "/post/" + post.slug'> <img *ngIf="post.isPremium" class="pe-0"
+                                src="/assets/images/premium-icon.svg"><img *ngIf="post.isHidePremium" class="ms-1 pe-0"
                                 src="/assets/images/premium-icon.svg">
                               {{post.titleText}}</span>
                           </h4>
@@ -105,6 +106,7 @@
                           <h4>
                             <span role="button" tabindex="0" class="pointer card-text-truncate"
                               [routerLink]=' "/post/" + post.slug'> <img *ngIf="post.isPremium" class="pe-0"
+                                src="/assets/images/premium-icon.svg"><img *ngIf="post.isHidePremium" class="ms-1 pe-0"
                                 src="/assets/images/premium-icon.svg">
                               {{post.titleText}}</span>
                           </h4>
@@ -131,7 +133,7 @@
                   <ul class="tag-cloud list-inline">
                     <li *ngFor="let tag of tagsByEntityType.slice(0,8)" class="list-inline-item pb-1">
                       <button class="btn bg-light text-secondary bg-hover-danger text-hover-white bg-hover-secondary
-                        text-hover-white" [routerLink]=' "/post/" + tag.slug'>{{tag.name}}</button>
+                        text-hover-white" [routerLink]=' "/post/tag/" + tag.slug'>{{tag.name}}</button>
                     </li>
                   </ul>
                 </div>

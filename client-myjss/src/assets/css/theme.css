@@ -8269,6 +8269,11 @@ textarea.form-control-lg {
   border-color: rgba(var(--ar-secondary-rgb), var(--ar-border-opacity)) !important;
 }
 
+.border-tertiary {
+  --ar-border-opacity: 1;
+  border-color: rgba(var(--ar-tertiary-rgb), var(--ar-border-opacity)) !important;
+}
+
 .border-success {
   --ar-border-opacity: 1;
   border-color: rgba(var(--ar-success-rgb), var(--ar-border-opacity)) !important;
@@ -15768,6 +15773,18 @@ label {
 .was-validated :valid:not(:required):not(.form-check-input):not(.btn):focus,
 .is-valid:not(:required):not(.form-check-input):not(.btn):focus {
   border-color: var(--ar-gray-700) !important;
+}
+
+/* if we dont want borders on the input, add disable-borders class to the input */
+.was-validated .disable-borders :valid:not(:required):not(.form-check-input):not(.btn),
+.is-valid:not(:required):not(.form-check-input):not(.btn) {
+  background: none;
+  border-color: transparent !important;
+}
+
+.was-validated .disable-borders :valid:not(:required):not(.form-check-input):not(.btn):focus,
+.is-valid:not(:required):not(.form-check-input):not(.btn):focus {
+  border-color: transparent !important;
 }
 
 .was-validated .input-group :valid:not(:required):not(.btn) {

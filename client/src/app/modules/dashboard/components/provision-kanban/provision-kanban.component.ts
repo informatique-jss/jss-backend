@@ -466,12 +466,10 @@ export class ProvisionKanbanComponent extends KanbanComponent<Provision, IWorkfl
 
   assignNewCustomerOrder() {
     if (this.currentUser) {
-      if (this.currentUser.id == 4065231 || this.currentUser.id == 4124621)
-        return;
       this.provisionService.searchProvisions([this.currentUser.id], [FORMALITE_AUTHORITY_NEW, FORMALITE_AUTHORITY_IN_PROGRESS, FORMALITE_AUTHORITY_REJECTED, FORMALITE_AUTHORITY_VALIDATED, SIMPLE_PROVISION_STATUS_IN_PROGRESS, SIMPLE_PROVISION_STATUS_NEW, ANNOUNCEMENT_STATUS_NEW, ANNOUNCEMENT_STATUS_IN_PROGRESS]).subscribe(response => {
 
-        if (response && response.length > 5) {
-          this.appService.displaySnackBar("Vous avez trop de dossiers encore à traiter pour vous assigner une nouvelle commande", true, 5);
+        if (response && response.length > 3) {
+          this.appService.displaySnackBar("Vous avez trop de dossiers encore à traiter pour vous assigner une nouvelle commande (max. 3)", true, 5);
           return;
         }
         const dialogRef = this.assignNewOrderDialog.open(AssignNewOrderDialogComponent, {

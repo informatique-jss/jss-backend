@@ -84,6 +84,7 @@ import { ReferentialProvisionTypeComponent } from '../referentials/referential-p
 import { ReferentialQuotationAbandonReasonComponent } from '../referentials/referential-quotation-abandon-reason/referential-quotation-abandon-reason';
 import { ReferentialRefundTypeComponent } from '../referentials/referential-refund-type/referential-refund-type.component';
 import { ReferentialRegionComponent } from '../referentials/referential-region/referential-region.component';
+import { ReferentialRejectionCauseComponent } from '../referentials/referential-rejection-cause/referential-rejection-cause.component';
 import { ReferentialReportingDashboardComponent } from '../referentials/referential-reporting-dashboard/referential-reporting-dashboard.component';
 import { ReferentialReportingWidgetComponent } from '../referentials/referential-reporting-widget/referential-reporting-widget.component';
 import { ReferentialReportingWorkingTableComponent } from '../referentials/referential-reporting-working-table/referential-reporting-working-table.component';
@@ -97,6 +98,7 @@ import { ReferentialSubscriptionPeriodTypeComponent } from '../referentials/refe
 import { ReferentialTiersCategoryComponent } from '../referentials/referential-tiers-category/referential-tiers-category.component';
 import { ReferentialTiersFollowupTypeComponent } from '../referentials/referential-tiers-followup-type/referential-tiers-followup-type.component';
 import { ReferentialTiersTypeComponent } from '../referentials/referential-tiers-type/referential-tiers-type.component';
+import { ReferentialTooltipEntryComponent } from '../referentials/referential-tooltip-entry/referential-tooltip-entry.component';
 import { ReferentialTransfertFundsTypeComponent } from '../referentials/referential-transfert-fund-type/referential-transfert-fund-type.component';
 import { ReferentialTypeDocumentComponent } from '../referentials/referential-type-document/referential-type-document.component';
 import { ReferentialVatCollectionTypeComponent } from '../referentials/referential-vat-collection-type/referential-vat-collection-type.component';
@@ -228,6 +230,8 @@ const routes: Routes = [
     ReferentialBusinessSectorComponent,
     ReferentialCompanySizeComponent,
     ReferentialPaySlipLineTypeComponent,
+    ReferentialTooltipEntryComponent,
+    ReferentialRejectionCauseComponent
   ], exports: [LogComponent,
     CompetentAuthorityComponent,
     ProviderComponent

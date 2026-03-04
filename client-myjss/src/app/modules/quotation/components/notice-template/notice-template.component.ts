@@ -11,6 +11,7 @@ import { GenericInputComponent } from '../../../miscellaneous/components/forms/g
 import { GenericTextareaComponent } from '../../../miscellaneous/components/forms/generic-textarea/generic-textarea.component';
 import { SelectAnnouncementNoticeTemplateFragmentComponent } from "../../../miscellaneous/components/forms/select-announcement-notice-template-fragment/select-announcement-notice-template-fragment";
 import { SelectValueServiceFieldTypeComponent } from '../../../miscellaneous/components/forms/select-value-service-field-type/select-value-service-field-type.component';
+import { OsiTooltipComponent } from "../../../miscellaneous/components/osi-tooltip/osi-tooltip.component";
 import { Service } from '../../../my-account/model/Service';
 import { ServiceFieldType } from '../../../my-account/model/ServiceFieldType';
 import { AnnouncementNoticeTemplate } from '../../model/AnnouncementNoticeTemplate';
@@ -31,7 +32,7 @@ import { ServiceFieldTypeService } from '../../services/service.field.type.servi
     GenericTextareaComponent,
     GenericDatePickerComponent,
     SelectValueServiceFieldTypeComponent,
-    SelectAnnouncementNoticeTemplateFragmentComponent]
+    SelectAnnouncementNoticeTemplateFragmentComponent, OsiTooltipComponent]
 })
 export class NoticeTemplateComponent implements OnInit {
 

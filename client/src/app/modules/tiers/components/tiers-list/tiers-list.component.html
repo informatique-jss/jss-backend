@@ -16,11 +16,6 @@
                   </autocomplete-employee>
                 </td>
                 <td>
-                  <autocomplete-tiers-individual [(model)]="tiersSearch.tiers" [form]="tiersSearchForm"
-                    propertyName="tiers" [isMandatory]="false" label="Tiers"
-                    [authorizeNonIndividualTiers]="true"></autocomplete-tiers-individual>
-                </td>
-                <td>
                   <generic-input [(model)]="tiersSearch.mail" label="E-mail" [form]="tiersSearchForm"
                     propertyName="mail" [isMandatory]="false" [isDisabled]="false"></generic-input>
                 </td>
@@ -39,6 +34,10 @@
                 <td>
                   <generic-toggle [(model)]="tiersSearch.isNewTiers" label="Nouveau tiers ?" [form]="tiersSearchForm"
                     propertyName="isNewTiers"></generic-toggle>
+                </td>
+                <td>
+                  <generic-toggle [(model)]="tiersSearch.isToTakeCare" label="Est à risque ?" [form]="tiersSearchForm"
+                    propertyName="isToTakeCare"></generic-toggle>
                 </td>
                 <td class="fab-td-button">
                   <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchTiers()" class="add-button">

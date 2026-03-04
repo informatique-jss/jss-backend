@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 import { Toast } from '../../../libs/toast/Toast';
 import { MenuItem } from '../../general/model/MenuItem';
 import { AccountMenuItem, MAIN_ITEM_ACCOUNT, MAIN_ITEM_DASHBOARD } from '../../my-account/model/AccountMenuItem';
+import { PlatformService } from './platform.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +18,7 @@ export class AppService {
   readonly loadingSpinnerObservable = this.loadingSpinner.asObservable();
 
   constructor(
-    private router: Router,
+    private router: Router, private platformService: PlatformService
   ) { }
 
   showLoadingSpinner(): void {
@@ -56,6 +58,13 @@ export class AppService {
     }
     return;
   }
+
+  openJssRoute(event: any, route: string, inNewWindows = true) {
+    const win = this.platformService.getNativeWindow();
+    if (win)
+      win.open(environment.frontendJssUrl + route, inNewWindows ? "_blank" : "_self");
+  }
+
 
   openOsirisV2Route(event: any, route: string, sameWindowEndFonction: any) {
     // TODO
@@ -109,7 +118,7 @@ export class AppService {
     menuItem.push({ label: "Nos fiches pratiques", iconClass: "ai-wallet", route: "/tools/practical-sheets" } as MenuItem);
     menuItem.push({ label: "Pièces obligatoires", iconClass: "ai-user-check", route: "/tools/mandatory-documents" } as MenuItem);
     menuItem.push({ label: "Webinaires", iconClass: "ai-chart", route: "/tools/webinars" } as MenuItem);
-    //menuItem.push({ label: "Nos exclus", iconClass: "ai-slider", route: "/tools/exclusives" } as MenuItem);
+    menuItem.push({ label: "Nos exclus", iconClass: "ai-slider", route: "/tools/exclusives" } as MenuItem);
 
     return menuItem;
   }

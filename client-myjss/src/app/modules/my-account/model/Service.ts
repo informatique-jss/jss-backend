@@ -20,4 +20,5 @@ export interface Service extends IAttachment {
   lastMissingAttachmentQueryDateTime: Date;
   provisions: Provision[];
   serviceLabelToDisplay: string;
+  jssAnnouncementId: number;
 }

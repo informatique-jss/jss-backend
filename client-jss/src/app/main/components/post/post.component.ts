@@ -8,7 +8,7 @@ import { environment } from '../../../../environments/environment';
 import { MY_JSS_SIGN_IN_ROUTE } from '../../../libs/Constants';
 import { validateEmail } from '../../../libs/CustomFormsValidatorsHelper';
 import { getRawTextFromHtml, getTimeReading } from '../../../libs/FormatHelper';
-import { LiteralDatePipe } from '../../../libs/LiteralDatePipe';
+import { LiteralDateTimePipe } from '../../../libs/LiteralDateTimePipe';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { TrustHtmlPipe } from '../../../libs/TrustHtmlPipe';
 import { AppService } from '../../../services/app.service';
@@ -41,7 +41,7 @@ declare var tns: any;
   selector: 'app-post',
   templateUrl: './post.component.html',
   styleUrls: ['./post.component.css'],
-  imports: [SHARED_IMPORTS, TrustHtmlPipe, AvatarComponent, GenericInputComponent, GenericTextareaComponent, NewsletterComponent, BookmarkComponent, LiteralDatePipe],
+  imports: [SHARED_IMPORTS, TrustHtmlPipe, AvatarComponent, GenericInputComponent, GenericTextareaComponent, NewsletterComponent, BookmarkComponent, LiteralDateTimePipe],
   standalone: true
 })
 export class PostComponent implements OnInit, AfterViewInit {
@@ -213,7 +213,7 @@ export class PostComponent implements OnInit, AfterViewInit {
   private fetchNextPrevArticleAndSerieAndComments(post: Post) {
     if (post.postSerie && post.postSerie.length > 0) {
       this.seriePost = post.postSerie[0];
-      this.postService.getAllPostsBySerie(this.seriePost, 0, 50, "").subscribe(res => {
+      this.postService.getAllPostsBySerie(this.seriePost, 0, 15, "").subscribe(res => {
         if (res && res.content.length > 0)
           this.postsOfSerie = res.content;
       });

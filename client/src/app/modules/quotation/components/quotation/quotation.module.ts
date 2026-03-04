@@ -43,6 +43,7 @@ import { BaloListComponent } from '../balo-list/balo-list.component';
 import { BodaccListComponent } from '../bodacc-list/bodacc-list.component';
 import { ChooseAssignedUserDialogComponent } from '../choose-assigned-user-dialog/choose-assigned-user-dialog.component';
 import { ChooseCompetentAuthorityDialogComponent } from '../choose-competent-authority-dialog/choose-competent-authority-dialog.component';
+import { ChooseRejectionCauseDialogComponent } from '../choose-rejection-cause-dialog/choose-rejection-cause-dialog.component';
 import { CustomerOrderCommentComponent } from '../customer-order-comment/customer-order-comment.component';
 import { CustomerOrderPaymentComponent } from '../customer-order-payment/customer-order-payment.component';
 import { DebourComponent } from '../debour/debour.component';
@@ -208,7 +209,8 @@ const routes: Routes = [
     BaloListComponent,
     JoListComponent,
     KanbanOrderComponent,
-    SiretDialogComponent
+    SiretDialogComponent,
+    ChooseRejectionCauseDialogComponent
   ],
   exports: [
     OrderingListComponent,

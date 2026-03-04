@@ -48,9 +48,12 @@
            'drop-invalid': activeDraggedStatusId !== null && !isValidDropTarget(status.label!)
          }" (cdkDropListDropped)="drop($event)">
             <div *ngFor="let order of status.entities" cdkDrag class="task-card"
-              [ngClass]="{'card-priority':order.isPriority}" (cdkDragStarted)="onDragStarted(status.id!,order)"
-              (cdkDragEnded)="onDragEnded()" (click)="fetchEntityAndOpenPanel(order)">
+              [ngClass]="{'card-priority':order.isPriority ,'card-warning':order.responsable && order.responsable.tiers.isToTakeCare}"
+              (cdkDragStarted)="onDragStarted(status.id!,order)" (cdkDragEnded)="onDragEnded()"
+              (click)="fetchEntityAndOpenPanel(order)">
               <div class="card-content">
+                <mat-icon *ngIf="order.isPriority">speed</mat-icon><mat-icon
+                  *ngIf="order.responsable && order.responsable.tiers.isToTakeCare">warning</mat-icon>
                 <strong>{{getFrenchDateWithoutYear(order.productionEffectiveDateTime)}} - {{order.servicesList}}
                 </strong> <mat-icon color="warn" *ngIf="order.isHasNotifications">notifications</mat-icon>
                 <p style="margin-bottom: 0px;">{{getTiersLabelIQuotation(order)}}</p>

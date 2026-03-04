@@ -76,6 +76,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.PaymentType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Provider;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Region;
 import com.jss.osiris.modules.osiris.miscellaneous.model.SpecialOffer;
+import com.jss.osiris.modules.osiris.miscellaneous.model.TooltipEntry;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Vat;
 import com.jss.osiris.modules.osiris.miscellaneous.model.VatCollectionType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.WeekDay;
@@ -105,6 +106,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.PaymentTypeService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ProviderService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.RegionService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.SpecialOfferService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.TooltipEntryService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.VatCollectionTypeService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.VatService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.WeekDayService;
@@ -280,6 +282,26 @@ public class MiscellaneousController {
 
     @Autowired
     PublishingDepartmentService publishingDepartmentService;
+
+    @Autowired
+    TooltipEntryService tooltipEntryService;
+
+    @GetMapping(inputEntryPoint + "/tooltip-entries")
+    public ResponseEntity<List<TooltipEntry>> getTooltipEntries() {
+        return new ResponseEntity<List<TooltipEntry>>(tooltipEntryService.getTooltipEntries(), HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/tooltip-entry")
+    public ResponseEntity<TooltipEntry> addOrUpdateTooltipEntry(
+            @RequestBody TooltipEntry tooltipEntries) throws OsirisValidationException, OsirisException {
+        if (tooltipEntries.getId() != null)
+            validationHelper.validateReferential(tooltipEntries, true, "tooltipEntries");
+        validationHelper.validateString(tooltipEntries.getCode(), true, "code");
+        validationHelper.validateString(tooltipEntries.getLabel(), true, "label");
+
+        return new ResponseEntity<TooltipEntry>(tooltipEntryService.addOrUpdateTooltipEntry(tooltipEntries),
+                HttpStatus.OK);
+    }
 
     @GetMapping(inputEntryPoint + "/categories")
     public ResponseEntity<List<Category>> getCategories() {

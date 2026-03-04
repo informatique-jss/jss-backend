@@ -7,6 +7,7 @@ import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.osiris.quotation.model.Formalite;
+import com.jss.osiris.modules.osiris.quotation.model.RejectionCause;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.FormaliteGuichetUnique;
 
 public interface FormaliteGuichetUniqueService {
@@ -22,4 +23,9 @@ public interface FormaliteGuichetUniqueService {
     public List<FormaliteGuichetUnique> getFormaliteGuichetUniqueToSign();
 
     public List<FormaliteGuichetUnique> getFormaliteGuichetUniqueByLiasseNumber(String value);
+
+    public boolean isFormaliteGuCancelled(FormaliteGuichetUnique formaliteGuichetUnique);
+
+    public void changeRejectionCauseForFormaliteGuichetUnique(FormaliteGuichetUnique formalite,
+            RejectionCause rejectionCause, Integer idRegularizationRequest);
 }

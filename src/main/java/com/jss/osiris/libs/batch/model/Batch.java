@@ -67,7 +67,9 @@ public class Batch implements IId, Serializable {
     public static String INDEX_MAIL_TO_ENTITY = "INDEX_MAIL_TO_ENTITY";
     public static String PURGE_MAIL_TO_INDEX = "PURGE_MAIL_TO_INDEX";
     public static String CHECK_MAIL_TO_ORDER = "CHECK_MAIL_TO_ORDER";
+    public static String CHECK_MAIL_TO_ORDER_ANNOUNCEMENT = "CHECK_MAIL_TO_ORDER_ANNOUNCEMENT";
     public static String CREATE_ORDER_FROM_MAIL = "CREATE_ORDER_FROM_MAIL";
+    public static String CREATE_ORDER_FROM_MAIL_ANNOUNCEMENT = "CREATE_ORDER_FROM_MAIL_ANNOUNCEMENT";
     public static String PURGE_ORDER_MAIL = "PURGE_ORDER_MAIL";
     public static String COMPUTE_INDICATOR = "COMPUTE_INDICATOR";
     public static String PURGE_QUOTATION = "PURGE_QUOTATION";
@@ -79,6 +81,7 @@ public class Batch implements IId, Serializable {
     public static String UPDATE_BODACC_NOTICE = "UPDATE_BODACC_NOTICE";
     public static String UPDATE_BALO_NOTICE = "UPDATE_BALO_NOTICE";
     public static String UPDATE_JO_NOTICE = "UPDATE_JO_NOTICE";
+    public static String MAIL_TRACKING_CONTACT = "MAIL_TRACKING_CONTACT";
     public static String ORDER_KBIS = "ORDER_KBIS";
 
     @Id

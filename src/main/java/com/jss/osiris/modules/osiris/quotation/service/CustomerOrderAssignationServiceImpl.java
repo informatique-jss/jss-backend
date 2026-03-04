@@ -504,6 +504,28 @@ public class CustomerOrderAssignationServiceImpl implements CustomerOrderAssigna
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    public void assignImmediatlyOrderForInsertions(CustomerOrder customerOrder) throws OsirisException {
+        customerOrder = customerOrderService.getCustomerOrder(customerOrder.getId());
+        if (customerOrder.getCustomerOrderAssignations() != null)
+            for (CustomerOrderAssignation customerOrderAssignation : customerOrder.getCustomerOrderAssignations()) {
+                if (Boolean.FALSE.equals(customerOrderAssignation.getIsAssigned())) {
+                    customerOrderAssignation.setEmployee(employeeService.getCurrentEmployee());
+                    customerOrderAssignation.setIsAssigned(true);
+                    addOrUpdateCustomerOrderAssignation(customerOrderAssignation);
+                }
+            }
+
+        for (AssoAffaireOrder assoAffaireOrder : customerOrder.getAssoAffaireOrders())
+            if (assoAffaireOrder.getServices() != null)
+                for (Service service : assoAffaireOrder.getServices())
+                    if (service.getProvisions() != null)
+                        for (Provision provision : service.getProvisions()) {
+                            assignNewProvisionToUser(provision);
+                        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public List<CustomerOrder> getOrdersToAssignForFond(Employee employee, boolean onlyCurrentUser)
             throws OsirisException {
         List<CustomerOrder> orders = new ArrayList<CustomerOrder>();

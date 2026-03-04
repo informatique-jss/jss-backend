@@ -11,7 +11,7 @@ export interface Provision {
   provisionType: ProvisionType;
   isEmergency: boolean;
   isRedactedByJss: boolean;
-  assoProvisionPostNewspaper: AssoProvisionPostNewspaper[];
+  assoProvisionPostNewspapers: AssoProvisionPostNewspaper[];
   // Only for front to display the announcements in the good order
   order: number;
   provisionFamilyType: ProvisionFamilyType;

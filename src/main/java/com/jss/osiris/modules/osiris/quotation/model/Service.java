@@ -44,7 +44,8 @@ public class Service implements Serializable, IId {
 	@OneToMany(targetEntity = Provision.class, mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "service" }, allowSetters = true)
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
-			JacksonViews.OsirisDetailedView.class })
+			JacksonViews.OsirisDetailedView.class }) // TODO : remove MyJSS dependency with provision ! this shall not
+														// be pushed to customer !!
 	@IndexedField
 	private List<Provision> provisions;
 
@@ -119,6 +120,10 @@ public class Service implements Serializable, IId {
 	@Transient
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private String confrereLabel;
+
+	@Transient
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	private Integer jssAnnouncementId;
 
 	@Transient
 	@JsonView(JacksonViews.MyJssDetailedView.class)
@@ -284,6 +289,14 @@ public class Service implements Serializable, IId {
 
 	public void setWaitingAcLabel(String waitingAcLabel) {
 		this.waitingAcLabel = waitingAcLabel;
+	}
+
+	public Integer getJssAnnouncementId() {
+		return jssAnnouncementId;
+	}
+
+	public void setJssAnnouncementId(Integer jssAnnouncementId) {
+		this.jssAnnouncementId = jssAnnouncementId;
 	}
 
 }

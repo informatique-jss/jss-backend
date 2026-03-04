@@ -58,6 +58,15 @@ public class WebinarParticipantServiceImpl implements WebinarParticipantService 
             if (existingWebinarParticipant == null) {
                 addOrUpdateWebinarParticipant(webinarParticipant);
                 mailHelper.sendConfirmationSubscriptionWebinarMyJss(webinarParticipant);
+                if (webinarParticipant.getComment() != null && webinarParticipant.getMail().getMail() != null &&
+                        webinarParticipant.getFirstname() != null &&
+                        webinarParticipant.getLastname() != null && webinarParticipant.getPhoneNumber() != null
+                        && !webinarParticipant.getComment().isEmpty()) {
+                    mailHelper.sendContactFormNotificationMail(webinarParticipant.getMail().getMail(),
+                            webinarParticipant.getFirstname(),
+                            webinarParticipant.getLastname(), webinarParticipant.getPhoneNumber(),
+                            webinarParticipant.getComment());
+                }
                 return webinarParticipant;
             } else {
                 existingWebinarParticipant.setIsParticipating(true);

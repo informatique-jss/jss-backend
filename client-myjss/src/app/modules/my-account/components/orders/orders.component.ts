@@ -7,6 +7,7 @@ import { capitalizeName, formatDateFrance } from '../../../../libs/FormatHelper'
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
 import { UserPreferenceService } from '../../../main/services/user.preference.service';
+import { OsiTooltipComponent } from "../../../miscellaneous/components/osi-tooltip/osi-tooltip.component";
 import { Responsable } from '../../../profile/model/Responsable';
 import { ResponsableService } from '../../../profile/services/responsable.service';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
@@ -28,7 +29,7 @@ declare var bootstrap: any;
   templateUrl: './orders.component.html',
   styleUrls: ['./orders.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, NgbDropdownModule, NgbAccordionModule]
+  imports: [SHARED_IMPORTS, NgbDropdownModule, NgbAccordionModule, OsiTooltipComponent]
 })
 export class OrdersComponent implements OnInit {
   @ViewChild('cancelQuotationModal') cancelQuotationModal!: TemplateRef<any>;

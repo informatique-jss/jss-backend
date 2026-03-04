@@ -5,10 +5,6 @@
   border: 3px solid transparent;
 }
 
-.card.selected {
-  border: 3px solid var(--ar-secondary);
-}
-
 .pill {
   position: relative;
   z-index: 1;
@@ -34,4 +30,26 @@
   /* background-color: #fff; */
   color: var(--ar-gray-100);
   border: 1px solid #ccc;
+}
+
+.nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
+  border-color: var(--ar-secondary);
+  border-width: 3px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  color: var(--ar-primary);
+  background-color: var(--ar-secondary-bg);
+  transition: transform 0.1s ease-in-out;
+  transform: scale(1.01);
+}
+
+.nav-tabs .nav-link, .nav-tabs .nav-item.show .nav-link {
+  border-color: var(--ar-tertiary);
+  border-bottom: transparent;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  color: var(--ar-secondary);
+  background-color: var(--ar-primary);
+  border-bottom-width: 3px;
+  transition: transform 0.1s ease-in-out;
 }

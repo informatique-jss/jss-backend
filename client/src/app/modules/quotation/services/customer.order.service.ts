@@ -133,4 +133,8 @@ export class CustomerOrderService extends AppRestService<IQuotation> {
     return this.get(new HttpParams(), "customer-order/assign/order/auto");
   }
 
+  assignNewCustomerOrderToOrderForInsertions() {
+    return this.get(new HttpParams(), "customer-order/assign/order/auto/insertions");
+  }
+
 }

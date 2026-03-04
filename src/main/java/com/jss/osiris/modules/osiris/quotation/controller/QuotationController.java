@@ -129,6 +129,7 @@ import com.jss.osiris.modules.osiris.quotation.model.QuotationSearch;
 import com.jss.osiris.modules.osiris.quotation.model.QuotationSearchResult;
 import com.jss.osiris.modules.osiris.quotation.model.QuotationStatus;
 import com.jss.osiris.modules.osiris.quotation.model.RecordType;
+import com.jss.osiris.modules.osiris.quotation.model.RejectionCause;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceFamily;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceFamilyGroup;
@@ -185,6 +186,7 @@ import com.jss.osiris.modules.osiris.quotation.service.QuotationAbandonReasonSer
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationStatusService;
 import com.jss.osiris.modules.osiris.quotation.service.RecordTypeService;
+import com.jss.osiris.modules.osiris.quotation.service.RejectionCauseService;
 import com.jss.osiris.modules.osiris.quotation.service.RnaDelegateService;
 import com.jss.osiris.modules.osiris.quotation.service.ServiceFamilyGroupService;
 import com.jss.osiris.modules.osiris.quotation.service.ServiceFamilyService;
@@ -438,6 +440,27 @@ public class QuotationController {
   @Autowired
   AssoAnnouncementNoticeTemplateFragmentService assoAnnouncementNoticeTemplateFragmentService;
 
+  @Autowired
+  RejectionCauseService rejectionCauseService;
+
+  @GetMapping(inputEntryPoint + "/rejection-causes")
+  public ResponseEntity<List<RejectionCause>> getRejectionCauses() {
+    return new ResponseEntity<List<RejectionCause>>(rejectionCauseService.getRejectionCauses(), HttpStatus.OK);
+  }
+
+  @PostMapping(inputEntryPoint + "/rejection-cause")
+  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+  public ResponseEntity<RejectionCause> addOrUpdateRejectionCause(
+      @RequestBody RejectionCause rejectionCauses) throws OsirisValidationException, OsirisException {
+    if (rejectionCauses.getId() != null)
+      validationHelper.validateReferential(rejectionCauses, true, "rejectionCauses");
+    validationHelper.validateString(rejectionCauses.getCode(), true, "code");
+    validationHelper.validateString(rejectionCauses.getLabel(), true, "label");
+
+    return new ResponseEntity<RejectionCause>(rejectionCauseService.addOrUpdateRejectionCause(rejectionCauses),
+        HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/order-blockages")
   public ResponseEntity<List<OrderBlockage>> getOrderBlockages() {
     return new ResponseEntity<List<OrderBlockage>>(orderBlockageService.getOrderBlockages(), HttpStatus.OK);
@@ -501,7 +524,14 @@ public class QuotationController {
   @GetMapping(inputEntryPoint + "/customer-order/assign/order/auto")
   @JsonView(JacksonViews.OsirisListView.class)
   public ResponseEntity<CustomerOrder> assignNewCustomerOrderToOrder() throws OsirisException {
-    return new ResponseEntity<CustomerOrder>(customerOrderService.assignNewCustomerOrderToOrder(), HttpStatus.OK);
+    return new ResponseEntity<CustomerOrder>(customerOrderService.assignNewCustomerOrderToOrder(false), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/customer-order/assign/order/auto/insertions")
+  @JsonView(JacksonViews.OsirisListView.class)
+  public ResponseEntity<CustomerOrder> assignNewCustomerOrderToOrderForInsertions() throws OsirisException {
+    return new ResponseEntity<CustomerOrder>(customerOrderService.assignNewCustomerOrderToOrder(true),
+        HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/order/statistics")
@@ -3096,6 +3126,21 @@ public class QuotationController {
     return new ResponseEntity<Boolean>(true, HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/customer-order-assignation/assign/immediatly/insertions")
+  @PreAuthorize(ActiveDirectoryHelper.TEAM_RESPONSIBLE)
+  public ResponseEntity<Boolean> assignImmediatlyOrderForInsertions(Integer idCustomerOrder)
+      throws OsirisException {
+
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(idCustomerOrder);
+
+    if (customerOrder == null)
+      throw new OsirisValidationException("customerOrder");
+
+    customerOrderAssignationService.assignImmediatlyOrderForInsertions(customerOrder);
+
+    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
   @GetMapping(inputEntryPoint + "/assign/new/fond/priority")
   @JsonView(JacksonViews.OsirisListView.class)
   public ResponseEntity<Integer> getNextPriorityOrderForFond() throws OsirisException {
@@ -3246,6 +3291,35 @@ public class QuotationController {
       throw new OsirisValidationException("provision");
 
     quotationFacade.orderNewKbisForSiret(siret, provisionId);
+
+    return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/quotation/assign/linked")
+  public ResponseEntity<CustomerOrder> assignLinkedOrderToInsertion(Integer quotationId)
+      throws OsirisException {
+    Quotation quotation = quotationService.getQuotation(quotationId);
+    if (quotation == null)
+      throw new OsirisValidationException("provision");
+
+    return new ResponseEntity<CustomerOrder>(quotationFacade.assignLinkedOrderToInsertion(quotationId), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/formalite-guichet-unique/rejection/cause")
+  public ResponseEntity<Boolean> changeRejectionCauseForFormaliteGuichetUnique(Integer idFormaliteGuichetUnique,
+      Integer idRegularizationRequest, Integer idRejectionCause)
+      throws OsirisException {
+    FormaliteGuichetUnique formalite = formaliteGuichetUniqueService
+        .getFormaliteGuichetUnique(idFormaliteGuichetUnique);
+    if (formalite == null)
+      throw new OsirisValidationException("formalite");
+
+    RejectionCause rejectionCause = rejectionCauseService.getRejectionCause(idRejectionCause);
+    if (rejectionCause == null)
+      throw new OsirisValidationException("rejectionCause");
+
+    quotationFacade.changeRejectionCauseForFormaliteGuichetUnique(
+        idFormaliteGuichetUnique, idRegularizationRequest, idRejectionCause);
 
     return new ResponseEntity<Boolean>(true, HttpStatus.OK);
   }

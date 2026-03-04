@@ -82,7 +82,7 @@ dependencies {
 }
  
 group = 'com.jss.osiris'
-version = '34' 
+version = '35' 
 description = 'Outil Sympa, Interactif, Révolutionnairement Intuitif et Simple'
 sourceCompatibility = '17'
 targetCompatibility = '17'

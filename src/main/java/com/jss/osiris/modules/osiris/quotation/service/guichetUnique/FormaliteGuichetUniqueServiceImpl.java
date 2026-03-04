@@ -56,6 +56,7 @@ import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Formalite;
 import com.jss.osiris.modules.osiris.quotation.model.FormaliteStatus;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
+import com.jss.osiris.modules.osiris.quotation.model.RejectionCause;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.AutresEtablissement;
@@ -66,6 +67,7 @@ import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.FormaliteGuic
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.Partenaire;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.PiecesJointe;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.Rate;
+import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.RegularizationRequest;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.ValidationRequest;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.FormaliteGuichetUniqueStatus;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.FormaliteStatusHistoryItem;
@@ -194,6 +196,10 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                     }
             }
 
+        if (formaliteGuichetUnique.getRegularizationRequests() != null)
+            for (RegularizationRequest regularizationRequest : formaliteGuichetUnique.getRegularizationRequests())
+                regularizationRequest.setFormaliteGuichetUnique(formaliteGuichetUnique);
+
         if (cartToRemove.size() > 0)
             formaliteGuichetUnique.getCarts().removeAll(cartToRemove);
 
@@ -228,9 +234,12 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             formalite = formaliteService.getFormalite(formalite.getId());
 
         List<FormaliteStatusHistoryItem> apiFormaliteStatusHistoryItems = new ArrayList<FormaliteStatusHistoryItem>();
+        List<RegularizationRequest> apiRegularizationRequests = new ArrayList<RegularizationRequest>();
         FormaliteGuichetUnique apiFormaliteGuichetUnique = null;
 
         // Fetch API version
+
+        // History
         if (savedFormaliteGuichetUnique.getIsAnnualAccounts() != null
                 && savedFormaliteGuichetUnique.getIsAnnualAccounts()) {
             apiFormaliteGuichetUnique = guichetUniqueDelegateService
@@ -248,6 +257,18 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                     .getFormalityById(savedFormaliteGuichetUnique.getId());
             apiFormaliteStatusHistoryItems = guichetUniqueDelegateService
                     .getFormalityStatusHistoriesById(savedFormaliteGuichetUnique.getId());
+        }
+
+        // Regularization
+        if (Boolean.TRUE.equals(savedFormaliteGuichetUnique.getIsAnnualAccounts())) {
+            apiRegularizationRequests = guichetUniqueDelegateService
+                    .getAnnualAccountRegularizationRequestById(savedFormaliteGuichetUnique.getId());
+        } else if (Boolean.TRUE.equals(savedFormaliteGuichetUnique.getIsActeDeposit())) {
+            apiRegularizationRequests = guichetUniqueDelegateService
+                    .getActeDepositRegularizationRequestById(savedFormaliteGuichetUnique.getId());
+        } else {
+            apiRegularizationRequests = guichetUniqueDelegateService
+                    .getFormalityRegularizationRequestById(savedFormaliteGuichetUnique.getId());
         }
 
         if (apiFormaliteGuichetUnique.getValidationsRequests() != null) {
@@ -385,6 +406,26 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             for (FormaliteStatusHistoryItem formaliteStatusHistoryItem : savedFormaliteGuichetUnique
                     .getFormaliteStatusHistoryItems())
                 formaliteStatusHistoryItem.setFormaliteGuichetUnique(savedFormaliteGuichetUnique);
+
+            // update regularization items
+            if (apiRegularizationRequests != null) {
+                if (savedFormaliteGuichetUnique.getRegularizationRequests() != null)
+                    for (RegularizationRequest regularizationRequest : savedFormaliteGuichetUnique
+                            .getRegularizationRequests()) {
+                        for (RegularizationRequest regularizationRequestApi : apiRegularizationRequests) {
+                            if (regularizationRequestApi.getId().equals(regularizationRequest.getId())) {
+                                regularizationRequestApi.setRejectionCause(regularizationRequest.getRejectionCause());
+                            }
+                        }
+                    }
+
+                savedFormaliteGuichetUnique.setRegularizationRequests(apiRegularizationRequests);
+                for (RegularizationRequest regularizationRequest : savedFormaliteGuichetUnique
+                        .getRegularizationRequests()) {
+                    savedFormaliteGuichetUnique.setRegularizationRequests(apiRegularizationRequests);
+                    regularizationRequest.setFormaliteGuichetUnique(savedFormaliteGuichetUnique);
+                }
+            }
 
             savedFormaliteGuichetUnique = addOrUpdateFormaliteGuichetUnique(savedFormaliteGuichetUnique);
 
@@ -573,7 +614,21 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
             }
         }
         return savedFormaliteGuichetUnique;
+    }
 
+    public void changeRejectionCauseForFormaliteGuichetUnique(FormaliteGuichetUnique formalite,
+            RejectionCause rejectionCause, Integer idRegularizationRequest) {
+        if (formalite != null && formalite.getRegularizationRequests() != null) {
+            for (RegularizationRequest regularizationRequest : formalite.getRegularizationRequests()) {
+                if (regularizationRequest.getId().equals(idRegularizationRequest)) {
+                    if (regularizationRequest.getRejectionCause() == null) {
+                        regularizationRequest.setRejectionCause(rejectionCause);
+                        addOrUpdateFormaliteGuichetUnique(formalite);
+                        return;
+                    }
+                }
+            }
+        }
     }
 
     private Content parseFormaliteGuichetUniqueContent(String contentString, Integer formalityId)
@@ -935,6 +990,16 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
     @Override
     public List<FormaliteGuichetUnique> getFormaliteGuichetUniqueByLiasseNumber(String value) {
         return formaliteGuichetUniqueRepository.findByLiasseNumber(value);
+    }
+
+    @Override
+    public boolean isFormaliteGuCancelled(FormaliteGuichetUnique formaliteGuichetUnique) {
+        return FormaliteGuichetUniqueStatus.ERROR
+                .equals(formaliteGuichetUnique.getStatus().getCode())
+                || FormaliteGuichetUniqueStatus.EXPIRED
+                        .equals(formaliteGuichetUnique.getStatus().getCode())
+                || FormaliteGuichetUniqueStatus.REJECTED
+                        .equals(formaliteGuichetUnique.getStatus().getCode());
     }
 
     private Boolean createNewRbeProvisionForRbeAttachmentFromLiasse(PiecesJointe piecesJointe, Service currentService)

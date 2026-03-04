@@ -18,6 +18,7 @@ import { GenericToggleComponent } from '../../../miscellaneous/components/forms/
 import { SelectBillingLabelTypeComponent } from '../../../miscellaneous/components/forms/select-billing-label-type/select-billing-label-type.component';
 import { SelectCivilityComponent } from '../../../miscellaneous/components/forms/select-civility/select-civility.component';
 import { SelectCountryComponent } from '../../../miscellaneous/components/forms/select-country/select-country.component';
+import { OsiTooltipComponent } from "../../../miscellaneous/components/osi-tooltip/osi-tooltip.component";
 import { BillingLabelType } from '../../../my-account/model/BillingLabelType';
 import { CustomerOrder } from '../../../my-account/model/CustomerOrder';
 import { Document } from '../../../my-account/model/Document';
@@ -52,8 +53,7 @@ import { CityService } from '../../services/city.service';
     SelectBillingLabelTypeComponent,
     NgbDropdownModule,
     NgbNavModule,
-    NgbAccordionModule
-  ]
+    NgbAccordionModule, OsiTooltipComponent]
 })
 export class CheckoutComponent implements OnInit {
 
@@ -101,11 +101,9 @@ export class CheckoutComponent implements OnInit {
 
   mailToConfirm: string | undefined;
 
-  subscriptionType: string | undefined;
-  isPriceReductionForSubscription: boolean = false;
-  idArticle: number | undefined;
-  voucherCode: string | undefined;
+  postTitle: string | undefined;
 
+  voucherCode: string | undefined;
 
   capitalizeName = capitalizeName;
 
@@ -126,7 +124,7 @@ export class CheckoutComponent implements OnInit {
     private documentService: DocumentService,
     private cityService: CityService,
     private voucherService: VoucherService,
-    private googleAnalyticsService: GoogleAnalyticsService
+    private googleAnalyticsService: GoogleAnalyticsService,
   ) { }
 
   async ngOnInit() {
@@ -179,6 +177,7 @@ export class CheckoutComponent implements OnInit {
         this.orderService.getCustomerOrder(parseInt(this.orderService.getCurrentDraftOrderId()!)).subscribe(response => {
           this.quotation = response;
           this.prepareForPricingAndCompute(true);
+          this.setPostTitle();
         });
       }
     } else {
@@ -188,6 +187,7 @@ export class CheckoutComponent implements OnInit {
         this.quotation = this.orderService.getCurrentDraftOrder()!;
       }
       this.prepareForPricingAndCompute();
+      this.setPostTitle();
     }
   }
 
@@ -752,5 +752,15 @@ export class CheckoutComponent implements OnInit {
         if (doc.documentType.id == this.constantService.getDocumentTypeBilling().id)
           return doc
     return null;
+  }
+
+  setPostTitle() {
+    if (this.quotation && this.quotation.assoAffaireOrders && this.quotation.assoAffaireOrders[0]
+      && this.quotation.assoAffaireOrders[0].services && this.quotation.assoAffaireOrders[0].services[0]
+      && this.quotation.assoAffaireOrders[0].services[0].provisions && this.quotation.assoAffaireOrders[0].services[0].provisions[0]
+      && this.quotation.assoAffaireOrders[0].services[0].provisions[0].assoProvisionPostNewspapers && this.quotation.assoAffaireOrders[0].services[0].provisions[0].assoProvisionPostNewspapers[0]
+      && this.quotation.assoAffaireOrders[0].services[0].provisions[0].assoProvisionPostNewspapers[0].post
+    )
+      this.postTitle = this.quotation.assoAffaireOrders[0].services[0].provisions[0].assoProvisionPostNewspapers[0].post.titleText;
   }
 }

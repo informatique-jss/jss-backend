@@ -23,7 +23,7 @@ export class AutocompletePostComponent extends GenericAutocompleteComponent<Post
 
   @Input() myJssCategory: MyJssCategory | undefined;
 
-  additionalCategory: MyJssCategory = { id: -1, name: 'Tout', slug: "all-categories", categoryOrder: 1 };
+  allMyJssCategory: MyJssCategory = { id: -1, name: 'Tout', slug: "all-categories", categoryOrder: 1 };
 
   postResults: Post[] = [];
   searchText: string = "";
@@ -46,8 +46,8 @@ export class AutocompletePostComponent extends GenericAutocompleteComponent<Post
   override ngOnInit(): void {
     super.ngOnInit();
     this.autocompletePostForm = this.formBuild.group({});
-    if (!this.additionalCategory)
-      this.myJssCategoryService.getMyJssCategories().subscribe(res => this.additionalCategory = res[0]);
+    if (!this.allMyJssCategory)
+      this.myJssCategoryService.getMyJssCategories().subscribe(res => this.allMyJssCategory = res[0]);
   }
 
   changeMyJssCategory() {

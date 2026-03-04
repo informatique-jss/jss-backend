@@ -89,6 +89,7 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         "          concat(e2.firstname,' ',e2.lastname) as formalisteLabel, " +
                         "          e2.id as formalisteId, " +
                         "          t.is_new_tiers as isNewTiers, " +
+                        "          t.is_to_take_care as isToTakeCare, " +
                         "          blt.label as billingLabelType, " +
                         "          sum( case when i.id_invoice_status =115359  then -1 else 1 end * (ii.pre_tax_price-coalesce (ii.discount_amount, 0) ) ) as turnoverAmountWithoutTax, "
                         +
@@ -132,13 +133,14 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         " where " +
                         "    ( :tiersId =0 or t.id = :tiersId) " +
                         "   and ( :isNewTiers =false or coalesce(t.is_new_tiers,false) = true) " +
+                        "   and ( :isToTakeCare =false or coalesce(t.is_to_take_care,false) = true) " +
                         " and  ( :salesEmployeeId =0 or e1.id = :salesEmployeeId) " +
                         " and (:mail='' or exists (select 1 from asso_tiers_mail a join mail m on m.id = a.id_mail where t.id = a.id_tiers and lower(m.mail) like '%' || lower(trim(:mail)) || '%')) "
                         +
                         " and (CAST(:label as text) ='' or CAST(r.id as text) = upper(CAST(:label as text)) or  upper(concat(r.firstname, ' ',r.lastname))  like '%' || trim(upper(CAST(:label as text)))  || '%' or  upper(t.denomination)  like '%' || trim(upper(CAST(:label as text)))  || '%' or  upper(concat(t.firstname, ' ',t.lastname))  like '%' || trim(upper(CAST(:label as text)))  || '%' ) "
                         +
                         " group by " +
-                        " 	 t.is_new_tiers, coalesce(t.denomination, " +
+                        " 	 t.is_new_tiers,t.is_to_take_care , coalesce(t.denomination, " +
                         " 	concat(t.firstname, " +
                         " 	' ', " +
                         " 	t.lastname)), " +
@@ -159,7 +161,8 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         @Param("invoiceStatusIds") List<Integer> invoiceStatusIds,
                         @Param("documentTypeBillingId") Integer documentTypeBillingId,
                         @Param("withNonNullTurnover") Boolean withNonNullTurnover,
-                        @Param("isNewTiers") Boolean isNewTiers);
+                        @Param("isNewTiers") Boolean isNewTiers,
+                        @Param("isToTakeCare") Boolean isToTakeCare);
 
         @Query("""
                         select t

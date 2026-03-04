@@ -214,9 +214,7 @@ public class WordpressController {
 
 		detectFlood(request);
 
-		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size),
-				Sort.by(Sort.Direction.DESC, "serieOrder"));
-
+		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size));
 		return new ResponseEntity<Page<Serie>>(
 				serieService.getSeries(pageable), HttpStatus.OK);
 	}
@@ -461,11 +459,12 @@ public class WordpressController {
 		Pageable pageable = PageRequest.of(page, ValidationHelper.limitPageSize(size));
 
 		return new ResponseEntity<Page<Post>>(
-				postService.computeBookmarkedPosts(postService.getJssCategoryPosts(searchText, pageable)),
+				postService.applyPremiumAndBookmarks(postService.getJssCategoryPosts(searchText, pageable)),
 				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/myjss/top")
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Post>> getTopMyJssPosts(@RequestParam Integer page) throws OsirisException {
 		return new ResponseEntity<List<Post>>(postService.getMyJssCategoryPosts(page),
 				HttpStatus.OK);
@@ -493,8 +492,23 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/myjss/most-seen")
+	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<Post>> getMyJssPostsMostSeen() throws OsirisException {
 		return new ResponseEntity<List<Post>>(postService.getMyJssCategoryPostMostSeen(),
+				HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/posts/jss/purchased")
+	@JsonView(JacksonViews.MyJssListView.class)
+	public ResponseEntity<List<Post>> getJssPostsPurchased(HttpServletRequest request) throws OsirisException {
+		detectFlood(request);
+
+		Responsable responsable = employeeService.getCurrentMyJssUser();
+
+		if (responsable == null)
+			throw new OsirisValidationException("currentUser");
+
+		return new ResponseEntity<List<Post>>(postService.getPurchasedPostsForCurrentUser(),
 				HttpStatus.OK);
 	}
 
@@ -526,8 +540,8 @@ public class WordpressController {
 		Pageable pageableRequest = PageRequest.of(page, ValidationHelper.limitPageSize(size),
 				Sort.by(Sort.Direction.DESC, "date"));
 
-		return new ResponseEntity<Page<Post>>(
-				postService.getJssCategoryStickyPost(pageableRequest),
+		return new ResponseEntity<Page<Post>>(postService.applyPremiumAndBookmarks(
+				postService.getJssCategoryStickyPost(pageableRequest)),
 				HttpStatus.OK);
 	}
 
@@ -566,6 +580,21 @@ public class WordpressController {
 		}
 		if (post != null && !isCrawler(request))
 			postViewService.incrementView(post);
+		return new ResponseEntity<Post>(postService.applyPremiumAndBookmarks(post, null, null, false), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/post/id")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	public ResponseEntity<Post> getPostById(@RequestParam Integer id, HttpServletRequest request)
+			throws OsirisException {
+		if (id == null)
+			throw new OsirisValidationException("Id is required");
+
+		Post post = postService.getPostsById(id);
+
+		if (post != null && !isCrawler(request))
+			postViewService.incrementView(post);
+
 		return new ResponseEntity<Post>(postService.applyPremiumAndBookmarks(post, null, null, false), HttpStatus.OK);
 	}
 
@@ -1033,6 +1062,32 @@ public class WordpressController {
 
 		return new ResponseEntity<Page<Post>>(
 				postService.searchPostsByCategory(searchText, categoryExclusive, pageableRequest), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/search/categories")
+	public ResponseEntity<Page<Post>> searchPostsByMyJssCategoryAndCategory(
+			@RequestParam(required = false) String searchText,
+			@RequestParam(required = false) Integer myJssCategoryId,
+			@RequestParam(required = false) Integer categoryId,
+			@RequestParam(required = false, defaultValue = "0") Integer page,
+			@RequestParam(required = false, defaultValue = "10") Integer size,
+			HttpServletRequest request) {
+		detectFlood(request);
+
+		if (searchText == null || searchText.trim().length() == 0)
+			searchText = "";
+		searchText = searchText.trim().toLowerCase();
+
+		MyJssCategory myJssCategory = myJssCategoryService.getMyJssCategory(myJssCategoryId);
+		Category category = categoryService.getCategory(categoryId);
+
+		Order order = new Order(Direction.DESC, "titleText");
+		Sort sort = Sort.by(Arrays.asList(order));
+		Pageable pageableRequest = PageRequest.of(page, ValidationHelper.limitPageSize(size), sort);
+
+		return new ResponseEntity<Page<Post>>(
+				postService.searchPostsByCategoryAndMyJssCategory(searchText, category, myJssCategory, pageableRequest),
+				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/myjss-category")

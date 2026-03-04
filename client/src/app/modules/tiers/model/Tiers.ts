@@ -25,6 +25,7 @@ export interface Tiers extends IDocument, IAttachment {
   id: number;
   denomination: string | null;
   isIndividual: boolean;
+  isToTakeCare: boolean;
   deliveryService: DeliveryService;
   intercom: string;
   intercommunityVat: string | null;

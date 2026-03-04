@@ -50,6 +50,8 @@ export class GenericInputComponent extends GenericFormComponent implements OnIni
 
   @Input() canPaste: boolean = true;
 
+  @Input() isDisableBorders: boolean = false;
+
   constructor(
     private formBuilder2: UntypedFormBuilder
   ) {

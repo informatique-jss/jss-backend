@@ -14,6 +14,8 @@ import { IAttachment } from 'src/app/modules/miscellaneous/model/IAttachment';
 import { IWorkflowElement } from 'src/app/modules/miscellaneous/model/IWorkflowElement';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { NotificationService } from 'src/app/modules/miscellaneous/services/notification.service';
+import { Employee } from 'src/app/modules/profile/model/Employee';
+import { EmployeeService } from 'src/app/modules/profile/services/employee.service';
 import { IncidentReport } from 'src/app/modules/reporting/model/IncidentReport';
 import { IncidentReportService } from 'src/app/modules/reporting/services/incident.report.service';
 import { BillingLabelType } from 'src/app/modules/tiers/model/BillingLabelType';
@@ -32,6 +34,7 @@ import { HabilitationsService } from '../../../../services/habilitations.service
 import { InvoiceSearchResult } from '../../../invoicing/model/InvoiceSearchResult';
 import { InvoiceSearchResultService } from '../../../invoicing/services/invoice.search.result.service';
 import { WorkflowDialogComponent } from '../../../miscellaneous/components/workflow-dialog/workflow-dialog.component';
+import { ActiveDirectoryGroupService } from '../../../miscellaneous/services/active.directory.group.service';
 import { Affaire } from '../../model/Affaire';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
 import { CustomerOrder } from '../../model/CustomerOrder';
@@ -41,6 +44,7 @@ import { Provision } from '../../model/Provision';
 import { QuotationStatus } from '../../model/QuotationStatus';
 import { Service } from '../../model/Service';
 import { VatBase } from '../../model/VatBase';
+import { CustomerOrderAssignationService } from '../../services/customer.assignation.service';
 import { CustomerOrderService } from '../../services/customer.order.service';
 import { CustomerOrderStatusService } from '../../services/customer.order.status.service';
 import { OrderingSearchResultService } from '../../services/ordering.search.result.service';
@@ -110,12 +114,14 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   saveObservableSubscription: Subscription = new Subscription;
   customerOrderInvoices: InvoiceSearchResult[] | undefined;
   entityForPendingAttachments: IAttachment | undefined;
+  currentEmployee: Employee | undefined;
 
   hasQuotation: boolean | undefined;
 
   constructor(private appService: AppService,
     private quotationService: QuotationService,
     private customerOrderService: CustomerOrderService,
+    private customerOrderAssignationService: CustomerOrderAssignationService,
     private quotationStatusService: QuotationStatusService,
     private customerOrderStatusService: CustomerOrderStatusService,
     private validationIdQuotationService: ValidationIdQuotationService,
@@ -145,6 +151,8 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     private notificationService: NotificationService,
     private incidentReportService: IncidentReportService,
     private quotationSearchResultService: QuotationSearchResultService,
+    private activeDirectoryGroupService: ActiveDirectoryGroupService,
+    private employeeService: EmployeeService,
     private changeDetectorRef: ChangeDetectorRef) { }
 
   quotationForm = this.formBuilder.group({});
@@ -154,6 +162,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
   }
 
   ngOnInit() {
+    this.employeeService.getCurrentEmployee().subscribe(currentEmployee => {
+      this.currentEmployee = currentEmployee;
+    })
+
     if (!this.idQuotation)
       this.idQuotation = this.activatedRoute.snapshot.params.id;
     let url: UrlSegment[] = this.activatedRoute.snapshot.url;
@@ -177,7 +189,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
         this.customerOrderService.getCustomerOrder(this.idQuotation).subscribe(response => {
           this.quotation = response;
           if (instanceOfCustomerOrder(this.quotation) && !this.isForIntegration)
-            this.appService.changeHeaderTitle("Commande " + this.quotation.id + " du " + formatDateFrance(this.quotation.createdDate) + " - " +
+            this.appService.changeHeaderTitle((this.isWarningQuotation() ? "⚠ " : '') + "Commande " + this.quotation.id + " du " + formatDateFrance(this.quotation.createdDate) + " - " +
               (this.quotation.customerOrderStatus != null ? this.quotation.customerOrderStatus.label : "") + (this.quotation.isGifted ? (" - Offerte") : "") + (this.quotation.customerOrderOrigin && this.quotation.customerOrderOrigin.id == this.constantService.getCustomerOrderOriginMyJss().id ? (" - MyJSS") : ""));
           this.setOpenStatus();
           this.updateDocumentsEvent.next(this.quotation);
@@ -793,7 +805,15 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     if (!this.instanceOfCustomerOrder) {
       this.quotationService.updateQuotationStatus(this.quotation, targetStatus.code).subscribe(response => {
         this.quotation = response;
-        this.appService.openRoute(null, '/quotation/' + this.quotation.id, null);
+        if (this.currentEmployee && targetStatus.code == VALIDATED_BY_CUSTOMER && this.activeDirectoryGroupService.isEmployeeInGroupList(this.currentEmployee, [this.constantService.getActiveDirectoryGroupInsertions()])) {
+          this.quotationService.assignLinkedOrderToInsertion(this.quotation).subscribe(order => {
+            if (order)
+              this.appService.openRoute(null, '/order/' + order.id, null);
+            else
+              this.appService.openRoute(null, '/quotation/' + this.quotation.id, null);
+          })
+        } else
+          this.appService.openRoute(null, '/quotation/' + this.quotation.id, null);
       });
     } else {
       let hasPayment = false;
@@ -825,12 +845,39 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
             this.appService.openRoute(null, '/order/' + this.quotation.id, null);
         });
       } else {
-        this.customerOrderService.updateCustomerStatus(this.quotation, targetStatus.code)
-          .subscribe(response => {
-            this.quotation = response;
-            this.appService.openRoute(null, '/order/' + this.quotation.id, null);
+        if ((this.quotation as CustomerOrder).isFromAnnouncementMailbox && (targetStatus.code == CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT || targetStatus.code == CUSTOMER_ORDER_STATUS_BEING_PROCESSED)
+          && this.currentEmployee && this.activeDirectoryGroupService.isEmployeeInGroupList(this.currentEmployee, [this.constantService.getActiveDirectoryGroupInsertions()])) {
+          const dialogConfirm = this.confirmationDialog.open(ConfirmDialogComponent, {
+            maxWidth: "400px",
+            data: {
+              title: "Assignation de la commande",
+              content: "Souhaitez-vous réaliser cette commande ? ",
+              closeActionText: "Non",
+              validationActionText: "Oui"
+            }
           });
 
+          dialogConfirm.afterClosed().subscribe(userConfirmed => {
+            this.customerOrderService.updateCustomerStatus(this.quotation, targetStatus.code)
+              .subscribe(response => {
+                if (userConfirmed) {
+                  this.customerOrderAssignationService.assignImmediatlyOrderForInsertions(this.quotation).subscribe(reponse =>{
+                     this.quotation = response;
+                  this.appService.openRoute(null, '/order/' + this.quotation.id, null);
+                  })
+              } else {
+                  this.quotation = response;
+                  this.appService.openRoute(null, '/order/' + this.quotation.id, null);
+                }
+              });
+          });
+        } else {
+          this.customerOrderService.updateCustomerStatus(this.quotation, targetStatus.code)
+            .subscribe(response => {
+              this.quotation = response;
+              this.appService.openRoute(null, '/order/' + this.quotation.id, null);
+            });
+        }
       }
     }
   }
@@ -1244,5 +1291,21 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
       this.entityForPendingAttachments = { id: this.quotation.id, attachments: this.quotation.pendingAttachments } as IAttachment;
     }
     return this.entityForPendingAttachments;
+  }
+
+  isWarningQuotation() {
+    if (this.quotation && this.quotation.id) {
+      if (this.quotation.responsable && this.quotation.responsable.tiers.isToTakeCare)
+        return true;
+      if (this.quotation.assoAffaireOrders)
+        for (let asso of this.quotation.assoAffaireOrders)
+          if (asso.services)
+            for (let service of asso.services)
+              if (service.provisions)
+                for (let provision of service.provisions)
+                  if (provision.isEmergency || provision.isPriority)
+                    return true;
+    }
+    return false;
   }
 }

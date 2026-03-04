@@ -35,13 +35,17 @@
           <div class="picture d-flex justify-content-center" *ngIf="qrCodeRecourse">
             <img id="img" [src]="qrCodeRecourse">
           </div>
-          <div class="text-center pt-1 pt-sm-2">
-            <div class="btn-group   " role="group" aria-label="Outline button group">
+          <div class="text-center justify-content-center align-items-center row pt-1 pt-sm-2">
+            <div class="col-auto ">
+              <osi-tooltip class="" tootltipCodeToDisplay="MYJSS_ACCOUNT_PAY_ORDER"></osi-tooltip>
+            </div>
+            <div class="btn-group col-auto" role="group" aria-label="Outline button group">
               <button type="button" class="btn btn-primary" (click)="payedCb()" *ngIf="qrCodeImage">Payer en
                 ligne</button>
               <button type="button" class="btn btn-outline-secondary"
                 [routerLink]='"/account/quotations/details/" + this.idQuotation'>Fermer</button>
             </div>
+            <div class="col-auto px-4 ms-2 me-2"></div>
           </div>
         </ng-template>
       </li>

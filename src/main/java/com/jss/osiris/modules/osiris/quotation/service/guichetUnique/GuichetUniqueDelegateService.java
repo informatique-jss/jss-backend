@@ -10,6 +10,7 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.PiecesJointe;
+import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.RegularizationRequest;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.FormaliteStatusHistoryItem;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDocument;
 
@@ -27,16 +28,25 @@ public interface GuichetUniqueDelegateService {
         public List<FormaliteStatusHistoryItem> getFormalityStatusHistoriesById(Integer id)
                         throws OsirisException, OsirisClientMessageException;
 
+        public List<RegularizationRequest> getFormalityRegularizationRequestById(Integer id)
+                        throws OsirisException, OsirisClientMessageException;
+
         public FormaliteGuichetUnique getAnnualAccountById(Integer id)
                         throws OsirisException, OsirisClientMessageException;
 
         public List<FormaliteStatusHistoryItem> getAnnualAccountStatusHistoriesById(Integer id)
                         throws OsirisException, OsirisClientMessageException;
 
+        public List<RegularizationRequest> getAnnualAccountRegularizationRequestById(Integer id)
+                        throws OsirisException, OsirisClientMessageException;
+
         public FormaliteGuichetUnique getActeDepositById(Integer id)
                         throws OsirisException, OsirisClientMessageException;
 
         public List<FormaliteStatusHistoryItem> getActeDepositStatusHistoriesById(Integer id)
+                        throws OsirisException, OsirisClientMessageException;
+
+        public List<RegularizationRequest> getActeDepositRegularizationRequestById(Integer id)
                         throws OsirisException, OsirisClientMessageException;
 
         public List<PiecesJointe> getActeDepositAttachments(FormaliteGuichetUnique formaliteGuichetUnique)

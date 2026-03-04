@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.jss.osiris.libs.exception.OsirisException;
-import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.dto.CustomerOrderDto;
 import com.jss.osiris.modules.osiris.quotation.dto.ProvisionDto;
 import com.jss.osiris.modules.osiris.quotation.dto.QuotationDto;
@@ -22,9 +21,6 @@ import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 
 @org.springframework.stereotype.Service
 public class QuotationDtoHelper {
-
-    @Autowired
-    private EmployeeService employeeService;
 
     @Autowired
     CustomerOrderService customerOrderService;

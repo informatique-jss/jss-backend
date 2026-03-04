@@ -26,8 +26,10 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.myjss.miscellaneous.model.Sitemap;
 import com.jss.osiris.modules.myjss.miscellaneous.service.GoogleAnalyticsService;
+import com.jss.osiris.modules.osiris.miscellaneous.model.TooltipEntry;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.StorageFileService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.TooltipEntryService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
@@ -57,6 +59,9 @@ public class MyJssMiscellaneousController {
 
 	@Autowired
 	ConstantService constantService;
+
+	@Autowired
+	TooltipEntryService tooltipEntryService;
 
 	@Value("${upload.file.directory}")
 	private String uploadFolder;
@@ -235,4 +240,9 @@ public class MyJssMiscellaneousController {
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/tooltip-entries")
+	public ResponseEntity<List<TooltipEntry>> getTooltipEntries(HttpServletRequest request) {
+		detectFlood(request);
+		return new ResponseEntity<List<TooltipEntry>>(tooltipEntryService.getTooltipEntries(), HttpStatus.OK);
+	}
 }

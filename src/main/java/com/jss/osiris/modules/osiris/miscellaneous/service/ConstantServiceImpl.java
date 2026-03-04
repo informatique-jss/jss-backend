@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule;
 import com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule.Feature;
@@ -103,16 +105,15 @@ public class ConstantServiceImpl implements ConstantService {
         if (constantCache != null && lastPutCache.isAfter(LocalDateTime.now().minusMinutes(5)))
             return constantCache;
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        SimpleModule simpleModule = new SimpleModule("SimpleModule");
-        simpleModule.addSerializer(LocalDateTime.class, new JacksonLocalDateTimeSerializer());
-        simpleModule.addSerializer(LocalDate.class, new JacksonLocalDateSerializer());
-        simpleModule.addDeserializer(LocalDateTime.class, new JacksonTimestampMillisecondDeserializer());
-        simpleModule.addDeserializer(LocalDate.class, new JacksonLocalDateDeserializer());
-        objectMapper.registerModule(simpleModule);
-        Hibernate5JakartaModule module = new Hibernate5JakartaModule();
-        module.enable(Feature.FORCE_LAZY_LOADING);
-        objectMapper.registerModule(module);
+        ObjectMapper objectMapper = JsonMapper.builder()
+                .configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false)
+                .addModule(new SimpleModule()
+                        .addSerializer(LocalDateTime.class, new JacksonLocalDateTimeSerializer())
+                        .addSerializer(LocalDate.class, new JacksonLocalDateSerializer())
+                        .addDeserializer(LocalDateTime.class, new JacksonTimestampMillisecondDeserializer())
+                        .addDeserializer(LocalDate.class, new JacksonLocalDateDeserializer()))
+                .addModule(new Hibernate5JakartaModule().enable(Feature.FORCE_LAZY_LOADING))
+                .build();
         try {
             constantCache = objectMapper.writerWithView(JacksonViews.MyJssDetailedView.class)
                     .writeValueAsString(getConstants());

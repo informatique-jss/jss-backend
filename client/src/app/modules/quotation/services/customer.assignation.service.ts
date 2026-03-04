@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { AppRestService } from 'src/app/services/appRest.service';
 import { CustomerOrderAssignation } from '../model/CustomerOrderAssignation';
 import { CustomerOrderAssignationStatistics } from '../model/CustomerOrderAssignationStatistics';
+import { IQuotation } from '../model/IQuotation';
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +24,10 @@ export class CustomerOrderAssignationService extends AppRestService<CustomerOrde
 
   assignImmediatlyOrder(idCustomerOrder: number) {
     return this.get(new HttpParams().set("idCustomerOrder", idCustomerOrder), "customer-order-assignation/assign/immediatly");
+  }
+
+  assignImmediatlyOrderForInsertions(quotation: IQuotation) {
+    return this.get(new HttpParams().set("idCustomerOrder", quotation.id), "customer-order-assignation/assign/immediatly/insertions");
   }
 
   getNextPriorityOrderForFond() {

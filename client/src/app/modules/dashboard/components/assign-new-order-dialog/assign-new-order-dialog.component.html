@@ -1,5 +1,14 @@
 <div class=" form-div">
   <mat-vertical-stepper #stepper (selectionChange)="onStepChange($event)">
+    <mat-step label="Commandes à créer" state="prio_fond" [editable]="false">
+      <div *ngIf="isLoading" style="display: flex; align-items: center; gap: 8px;">
+        <span>Recherche d'une commande à créer</span>
+        <mat-spinner diameter="20"></mat-spinner>
+      </div>
+      <div *ngIf="foundOrder">
+        <button mat-raised-button color="accent" (click)="onConfirm()">Voir la commande n°{{foundOrder}}</button>
+      </div>
+    </mat-step>
     <mat-step label="Commandes prioritaires du fond" state="prio_fond" [editable]="false">
       <div *ngIf="isLoading" style="display: flex; align-items: center; gap: 8px;">
         <span>Recherche d'une commande prioritaire sur le fond</span>

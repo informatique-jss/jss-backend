@@ -248,7 +248,7 @@ export class KanbanOrderComponent extends KanbanComponent<CustomerOrder, OrderBl
     }, 100);
   }
 
-  assignNewCustomerOrderToBilled() {
+  assignNewCustomerOrderToOrder() {
     this.orderService.assignNewCustomerOrderToOrder().subscribe(response => {
       if (response) {
         this.openOrder(null, response as CustomerOrder);

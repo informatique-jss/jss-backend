@@ -83,6 +83,7 @@ import com.jss.osiris.modules.osiris.quotation.model.NoticeType;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
+import com.jss.osiris.modules.osiris.quotation.service.CharacterPriceService;
 import com.jss.osiris.modules.osiris.quotation.service.ProvisionService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
@@ -142,6 +143,9 @@ public class GeneratePdfDelegate {
 
     @Autowired
     TranslationService translationService;
+
+    @Autowired
+    CharacterPriceService characterPriceService;
 
     @Autowired
     PdfTools pdfTools;
@@ -423,12 +427,24 @@ public class GeneratePdfDelegate {
         final Context ctx = new Context();
 
         Document billingDocument = null;
+        Document billingClosureDocument = null;
+        Boolean isBillingClosureTypeAffaire = false;
 
-        if (tier != null)
+        if (tier != null) {
             billingDocument = documentService.getBillingDocument(tier.getDocuments());
-        else if (responsable != null)
+            billingClosureDocument = documentService.getBillingClosureDocument(tier.getDocuments());
+        } else if (responsable != null) {
             billingDocument = documentService.getBillingDocument(responsable.getDocuments());
+            billingClosureDocument = documentService.getBillingClosureDocument(responsable.getDocuments());
+        }
 
+        if (billingClosureDocument != null)
+            if (billingClosureDocument.getBillingClosureType() != null
+                    && billingClosureDocument.getBillingClosureType().getId()
+                            .equals(constantService.getBillingClosureTypeAffaire().getId()))
+                isBillingClosureTypeAffaire = true;
+
+        ctx.setVariable("isBillingClosureTypeAffaire", isBillingClosureTypeAffaire);
         ctx.setVariable("commandNumber", null);
         if (billingDocument != null && billingDocument.getIsCommandNumberMandatory() != null
                 && billingDocument.getIsCommandNumberMandatory()
@@ -565,7 +581,8 @@ public class GeneratePdfDelegate {
                                 if (provision.getAnnouncement() != null && !provision.getIsRedactedByJss()
                                         && provision.getAnnouncement().getNotice() != null
                                         && !provision.getAnnouncement().getNotice().isEmpty())
-                                    announcementNotices.add(provision.getAnnouncement().getNotice());
+                                    announcementNotices.add(
+                                            characterPriceService.cleanString(provision.getAnnouncement().getNotice()));
                             }
                         }
                     }

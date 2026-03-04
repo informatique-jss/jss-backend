@@ -411,6 +411,9 @@ public class TiersServiceImpl implements TiersService {
         if (tiersSearch.getWithNonNullTurnover() == null)
             tiersSearch.setWithNonNullTurnover(false);
 
+        if (tiersSearch.getIsToTakeCare() == null)
+            tiersSearch.setIsToTakeCare(false);
+
         if (tiersSearch.getIsNewTiers() == null)
             tiersSearch.setIsNewTiers(false);
 
@@ -421,7 +424,7 @@ public class TiersServiceImpl implements TiersService {
                 Arrays.asList(constantService.getInvoiceStatusPayed().getId(),
                         constantService.getInvoiceStatusSend().getId()),
                 this.constantService.getDocumentTypeBilling().getId(), tiersSearch.getWithNonNullTurnover(),
-                tiersSearch.getIsNewTiers());
+                tiersSearch.getIsNewTiers(), tiersSearch.getIsToTakeCare());
     }
 
     @Override

@@ -463,7 +463,6 @@ public class Constant implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_payment_type_prelevement")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private PaymentType paymentTypePrelevement;
 
 	@ManyToOne
@@ -478,17 +477,14 @@ public class Constant implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_payment_type_especes")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private PaymentType paymentTypeEspeces;
 
 	@ManyToOne
 	@JoinColumn(name = "id_payment_type_cheques")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private PaymentType paymentTypeCheques;
 
 	@ManyToOne
 	@JoinColumn(name = "id_payment_type_account")
-	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private PaymentType paymentTypeAccount;
 
 	@ManyToOne
@@ -522,10 +518,12 @@ public class Constant implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_domiciliation_constract_type_route_mail")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private DomiciliationContractType domiciliationContractTypeRouteMail;
 
 	@ManyToOne
 	@JoinColumn(name = "id_domiciliation_constract_type_route_email_mail")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private DomiciliationContractType domiciliationContractTypeRouteEmailAndMail;
 
 	@ManyToOne
@@ -534,6 +532,7 @@ public class Constant implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_mail_redirection_type_other")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private MailRedirectionType mailRedirectionTypeOther;
 
 	@ManyToOne
@@ -730,6 +729,7 @@ public class Constant implements Serializable, IId {
 	private DeliveryService deliveryServiceJss;
 
 	@ManyToOne
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	@JoinColumn(name = "id_language_french")
 	private Language languageFrench;
 
@@ -976,6 +976,7 @@ public class Constant implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_category_interview")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Category categoryInterview;
 
 	@ManyToOne
@@ -985,10 +986,12 @@ public class Constant implements Serializable, IId {
 
 	@ManyToOne
 	@JoinColumn(name = "id_category_article")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Category categoryArticle;
 
 	@ManyToOne
 	@JoinColumn(name = "id_category_serie")
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Category categorySerie;
 
 	@ManyToOne

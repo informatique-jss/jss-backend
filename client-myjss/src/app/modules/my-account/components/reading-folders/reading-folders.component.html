@@ -28,6 +28,28 @@
   </div>
 
 </section>
+<section *ngIf="purchasedPosts && purchasedPosts.length>0" class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4 my-4">
+  <div class="card-body">
+    <div class="d-flex justify-content-between flex-wrap gap-2 mt-sm-n1 pb-4 mb-0 mb-lg-1 mb-xl-3">
+      <div class="d-flex align-items-center">
+        <i class="bi-bookmark-fill text-dark rounded-circle lead pe-1 me-2"></i>
+        <h2 class="h4 mb-0">Mes articles achetés</h2>
+      </div>
+    </div>
+    <div class="row g-3">
+      <div class="col-12 col-md-6 col-lg-4 col-xl-3" *ngFor="let post of purchasedPosts; let i = index">
+        <a class="reading-folder-card position-relative text-white rounded-5 overflow-hidden p-3" [ngStyle]="{'background-image': 'url(' +
+        (post && post.media && post.media.urlFull ?
+          post.media.urlFull : post.media && post.media.urlThumbnail ?
+           post.media.urlThumbnail : '') + ')'}" [href]="frontendJssUrl + 'post/' + post.slug">
+        </a>
+        <a class="text-decoration-none" [href]="frontendJssUrl + 'post/' + post.slug">
+          <h6>{{ post.titleText }}</h6>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- Modal de suppression -->
 <ng-template #deletionModal let-modal>

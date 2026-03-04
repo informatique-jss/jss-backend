@@ -6,14 +6,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.dto.CustomerOrderDto;
+import com.jss.osiris.modules.osiris.quotation.dto.GuichetUniqueDepositInfoDto;
 import com.jss.osiris.modules.osiris.quotation.dto.ProvisionDto;
 import com.jss.osiris.modules.osiris.quotation.dto.QuotationDto;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
@@ -23,16 +24,23 @@ import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionSearch;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.QuotationSearch;
+import com.jss.osiris.modules.osiris.quotation.model.RejectionCause;
+import com.jss.osiris.modules.osiris.quotation.model.Service;
+import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.FormaliteGuichetUnique;
 import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.KbisRequest;
+import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderAssignationService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderCommentService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.ProvisionService;
 import com.jss.osiris.modules.osiris.quotation.service.QuotationService;
+import com.jss.osiris.modules.osiris.quotation.service.RejectionCauseService;
+import com.jss.osiris.modules.osiris.quotation.service.ServiceService;
+import com.jss.osiris.modules.osiris.quotation.service.guichetUnique.FormaliteGuichetUniqueService;
 import com.jss.osiris.modules.osiris.quotation.service.infoGreffe.InfogreffeKbisService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 
-@Service
+@org.springframework.stereotype.Service
 public class QuotationFacade {
 
     @Autowired
@@ -55,6 +63,24 @@ public class QuotationFacade {
 
     @Autowired
     EmployeeService employeeService;
+
+    @Autowired
+    ServiceService serviceService;
+
+    @Autowired
+    FormaliteGuichetUniqueService formaliteGuichetUniqueService;
+
+    @Autowired
+    FormaliteGuichetUniqueDtoHelper formaliteGuichetUniqueDtoHelper;
+
+    @Autowired
+    CustomerOrderAssignationService customerOrderAssignationService;
+
+    @Autowired
+    ConstantService constantService;
+
+    @Autowired
+    RejectionCauseService rejectionCauseService;
 
     @Transactional(rollbackFor = Exception.class)
     public KbisRequest orderNewKbisForSiret(String siret, Integer provisionId) throws OsirisException {
@@ -268,20 +294,6 @@ public class QuotationFacade {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Integer getTiersIdByIQuotationId(Integer iQuotationId) throws OsirisException {
-
-        CustomerOrder customerOrder = customerOrderService.getCustomerOrder(iQuotationId);
-        if (customerOrder != null)
-            return customerOrder.getResponsable().getTiers().getId();
-
-        Quotation quotation = quotationService.getQuotation(iQuotationId);
-        if (quotation != null)
-            return quotation.getResponsable().getTiers().getId();
-
-        return -1;
-    }
-
-    @Transactional(rollbackFor = Exception.class)
     public List<CustomerOrder> getCustomerOrdersWithUnreadCommentsForMyJssUser() {
         Responsable currentUser = employeeService.getCurrentMyJssUser();
         if (currentUser == null)
@@ -299,6 +311,22 @@ public class QuotationFacade {
         return customerOrderCommentService.getQuotationsWithUnreadCommentsForResponsable(currentUser);
     }
 
+    /***************************** END of CHAT *************************/
+
+    @Transactional(rollbackFor = Exception.class)
+    public Integer getTiersIdByIQuotationId(Integer iQuotationId) throws OsirisException {
+
+        CustomerOrder customerOrder = customerOrderService.getCustomerOrder(iQuotationId);
+        if (customerOrder != null)
+            return customerOrder.getResponsable().getTiers().getId();
+
+        Quotation quotation = quotationService.getQuotation(iQuotationId);
+        if (quotation != null)
+            return quotation.getResponsable().getTiers().getId();
+
+        return -1;
+    }
+
     // WARNING : Check in caller if for iQuotationId there is an existing quotation
     // or customerOrder
     @Transactional(rollbackFor = Exception.class)
@@ -308,5 +336,62 @@ public class QuotationFacade {
             return true;
 
         return false;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public List<GuichetUniqueDepositInfoDto> getGuichetUniqueDatesDtosForService(Integer serviceId)
+            throws OsirisException {
+
+        List<GuichetUniqueDepositInfoDto> guichetUniqueDepositInfoDtos = new ArrayList<>();
+        Service service = serviceService.getService(serviceId);
+
+        for (Provision provision : service.getProvisions())
+            if (provision.getFormalite() != null)
+                if (provision.getFormalite().getFormalitesGuichetUnique() != null)
+                    for (FormaliteGuichetUnique formaliteGuichetUnique : provision.getFormalite()
+                            .getFormalitesGuichetUnique()) {
+                        formaliteGuichetUnique = formaliteGuichetUniqueService
+                                .getFormaliteGuichetUnique(formaliteGuichetUnique.getId());
+                        if (formaliteGuichetUnique != null
+                                && !formaliteGuichetUniqueService.isFormaliteGuCancelled(formaliteGuichetUnique)) {
+                            // get and set guInfosDtos
+                            GuichetUniqueDepositInfoDto currentGuInfoDto = formaliteGuichetUniqueDtoHelper
+                                    .getCurrentGuInfoDto(formaliteGuichetUnique);
+                            guichetUniqueDepositInfoDtos.add(currentGuInfoDto);
+                        }
+                    }
+
+        // Adding PM to guichetUniqueDepositInfoDtos dates
+        formaliteGuichetUniqueDtoHelper.addMissingAttachmentQueryToGuDepositInfoDtos(service,
+                guichetUniqueDepositInfoDtos);
+
+        return guichetUniqueDepositInfoDtos;
+    }
+
+    @Transactional
+    public CustomerOrder assignLinkedOrderToInsertion(Integer quotationId) throws OsirisException {
+        Quotation quotation = quotationService.getQuotation(quotationId);
+        Employee employee = employeeService.getCurrentEmployee();
+        if (employee != null
+                && employee.getAdPath()
+                        .contains(constantService.getActiveDirectoryGroupInsertions().getActiveDirectoryPath())
+                && quotation.getCustomerOrders() != null && quotation.getCustomerOrders().size() > 0) {
+            if (quotation.getCustomerOrders().get(0).getCustomerOrderAssignations() != null) {
+                customerOrderAssignationService
+                        .assignImmediatlyOrderForInsertions(quotation.getCustomerOrders().get(0));
+                return quotation.getCustomerOrders().get(0);
+            }
+        }
+        return null;
+    }
+
+    @Transactional
+    public void changeRejectionCauseForFormaliteGuichetUnique(Integer idFormaliteGuichetUnique,
+            Integer idRegularizationRequest, Integer idRejectionCause) throws OsirisException {
+        FormaliteGuichetUnique formalite = formaliteGuichetUniqueService
+                .getFormaliteGuichetUnique(idFormaliteGuichetUnique);
+        RejectionCause rejectionCause = rejectionCauseService.getRejectionCause(idRejectionCause);
+        formaliteGuichetUniqueService.changeRejectionCauseForFormaliteGuichetUnique(formalite, rejectionCause,
+                idRegularizationRequest);
     }
 }
