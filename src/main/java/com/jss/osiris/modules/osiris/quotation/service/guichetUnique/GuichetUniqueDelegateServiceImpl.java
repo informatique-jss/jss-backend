@@ -302,7 +302,8 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
         HttpHeaders headers = createHeaders();
 
         ResponseEntity<List<RegularizationRequest>> response = new RestTemplate().exchange(
-                guichetUniqueEntryPoint + regularizationRequestUrl + "?validationRequest.formality=" + id,
+                guichetUniqueEntryPoint + regularizationRequestUrl
+                        + "?depositType=formality&validationRequest.formality=" + id,
                 HttpMethod.GET, new HttpEntity<String>(headers),
                 new ParameterizedTypeReference<List<RegularizationRequest>>() {
                 });
@@ -575,7 +576,8 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
         HttpHeaders headers = createHeaders();
 
         ResponseEntity<List<RegularizationRequest>> response = new RestTemplate().exchange(
-                guichetUniqueEntryPoint + regularizationRequestUrl + "?validationRequest.formality=" + id,
+                guichetUniqueEntryPoint + regularizationRequestUrl
+                        + "?depositType=annualAccount&validationRequest.annualAccount=" + id,
                 HttpMethod.GET, new HttpEntity<String>(headers),
                 new ParameterizedTypeReference<List<RegularizationRequest>>() {
                 });
@@ -710,7 +712,8 @@ public class GuichetUniqueDelegateServiceImpl implements GuichetUniqueDelegateSe
         HttpHeaders headers = createHeaders();
 
         ResponseEntity<List<RegularizationRequest>> response = new RestTemplate().exchange(
-                guichetUniqueEntryPoint + regularizationRequestUrl + "?validationRequest.acteDeposit=" + id,
+                guichetUniqueEntryPoint + regularizationRequestUrl
+                        + "?depositType=acteDeposit&validationRequest.acteDeposit=" + id,
                 HttpMethod.GET, new HttpEntity<String>(headers),
                 new ParameterizedTypeReference<List<RegularizationRequest>>() {
                 });
