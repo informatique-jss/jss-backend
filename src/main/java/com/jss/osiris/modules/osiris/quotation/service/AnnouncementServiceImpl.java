@@ -992,11 +992,12 @@ public class AnnouncementServiceImpl implements AnnouncementService {
 
             List<XWPFParagraph> paragraphs = document.getParagraphs();
             for (XWPFParagraph paragraph : paragraphs) {
+                // force tag p to keep manual breakline
                 htmlBuilder.append("<p>");
 
                 for (XWPFRun run : paragraph.getRuns()) {
                     String text = run.getText(0);
-                    if (text != null) {
+                    if (text != null && !text.isEmpty()) {
                         if (run.isBold())
                             htmlBuilder.append("<b>");
                         if (run.isItalic())
@@ -1008,14 +1009,22 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                             htmlBuilder.append("</i>");
                         if (run.isBold())
                             htmlBuilder.append("</b>");
+                        // add a space between bloc/run
+                        htmlBuilder.append(" ");
                     }
+
                 }
                 htmlBuilder.append("</p>");
             }
 
             htmlBuilder.append("</div>");
+            // remove double space
+            String finalHtml = htmlBuilder.toString().replaceAll("[ ]{2,}", " ")
+                    .replace(" </p>", "</p>")
+                    .replace("<p> ", "<p>");
+
             Notice notice = new Notice();
-            notice.setNotice(htmlBuilder.toString().replaceAll("\\s{2,}", " "));
+            notice.setNotice(finalHtml.trim());
             return notice;
         } catch (IOException e) {
             throw new OsirisException(e, "Unable to process the announcement file with Apache POI");
