@@ -5,6 +5,7 @@ import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jss.osiris.libs.search.model.DoNotAudit;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
@@ -24,6 +25,8 @@ public class RegularizationObject implements Serializable {
     private RegularizationRequest regularizationRequest;
 
     private String type;
+
+    @Column(columnDefinition = "TEXT")
     private String observation;
     private String fieldName;
     private String fileName;
