@@ -279,15 +279,16 @@ export class OrderDetailsComponent implements OnInit {
       stepperObjects.push({ date: guDepositInfo.depositDate, stepperType: "deposit", waitingForValidationPartnerCenterName: undefined })
 
       // Missing doc dates (already sorted by date asc) + insertion of wainting for validation date in between if needed
-      for (let askingMissingDocDate of guDepositInfo.askingMissingDocumentDates) {
-        if (askingMissingDocDate < guDepositInfo.waitingForValidationFromDate)
-          stepperObjects.push({ date: askingMissingDocDate, stepperType: "missing_doc", waitingForValidationPartnerCenterName: guDepositInfo.waitingForValidationPartnerCenterName })
-        else if (askingMissingDocDate > guDepositInfo.waitingForValidationFromDate && !isWaintingForValidationPartnerDateInserted) {
-          stepperObjects.push({ date: guDepositInfo.waitingForValidationFromDate, stepperType: "waiting_validation", waitingForValidationPartnerCenterName: guDepositInfo.waitingForValidationPartnerCenterName })
-          isWaintingForValidationPartnerDateInserted = true;
-        } else
-          stepperObjects.push({ date: askingMissingDocDate, stepperType: "missing_doc", waitingForValidationPartnerCenterName: guDepositInfo.waitingForValidationPartnerCenterName })
-      }
+      if (guDepositInfo.askingMissingDocumentDates)
+        for (let askingMissingDocDate of guDepositInfo.askingMissingDocumentDates) {
+          if (askingMissingDocDate < guDepositInfo.waitingForValidationFromDate)
+            stepperObjects.push({ date: askingMissingDocDate, stepperType: "missing_doc", waitingForValidationPartnerCenterName: guDepositInfo.waitingForValidationPartnerCenterName })
+          else if (askingMissingDocDate > guDepositInfo.waitingForValidationFromDate && !isWaintingForValidationPartnerDateInserted) {
+            stepperObjects.push({ date: guDepositInfo.waitingForValidationFromDate, stepperType: "waiting_validation", waitingForValidationPartnerCenterName: guDepositInfo.waitingForValidationPartnerCenterName })
+            isWaintingForValidationPartnerDateInserted = true;
+          } else
+            stepperObjects.push({ date: askingMissingDocDate, stepperType: "missing_doc", waitingForValidationPartnerCenterName: guDepositInfo.waitingForValidationPartnerCenterName })
+        }
 
       // Waiting for validation date
       if (!isWaintingForValidationPartnerDateInserted) {
