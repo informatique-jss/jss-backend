@@ -59,10 +59,12 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.libs.mail.model.LetterModel;
+import com.jss.osiris.libs.mail.model.MailComputeResult;
 import com.jss.osiris.libs.mail.model.VatMail;
 import com.jss.osiris.modules.osiris.accounting.model.BillingClosureReceiptValue;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
+import com.jss.osiris.modules.osiris.invoicing.model.InvoiceLabelResult;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceItemService;
@@ -87,6 +89,7 @@ import com.jss.osiris.modules.osiris.quotation.service.CharacterPriceService;
 import com.jss.osiris.modules.osiris.quotation.service.ProvisionService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
+import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
 
 import ch.digitalfondue.mjml4j.Mjml4j;
 
@@ -149,6 +152,9 @@ public class GeneratePdfDelegate {
 
     @Autowired
     PdfTools pdfTools;
+
+    @Autowired
+    ResponsableService responsableService;
 
     public static final String EMAIL_TEMPLATE_ENCODING = "UTF-8";
     public static final String HEADER_PDF_TEMPLATE = "header-pdf";
@@ -576,7 +582,9 @@ public class GeneratePdfDelegate {
                         }
                         if (service.getProvisions() != null) {
                             for (Provision provision : service.getProvisions()) {
-                                invoiceItems.addAll(provision.getInvoiceItems());
+                                for (InvoiceItem invoiceItem : provision.getInvoiceItems())
+                                    if (!invoiceItem.getBillingItem().getBillingType().getIsDebour())
+                                        invoiceItems.add(invoiceItem);
 
                                 if (provision.getAnnouncement() != null && !provision.getIsRedactedByJss()
                                         && provision.getAnnouncement().getNotice() != null
@@ -594,12 +602,78 @@ public class GeneratePdfDelegate {
                     constantService.getDocumentTypeBilling());
             if (billingDocument != null)
                 ctx.setVariable("billingDocument", billingDocument);
+
+            MailComputeResult mailComputeResultDigital = mailComputeHelper
+                    .computeMailForGenericDigitalDocument(customerOrder);
+            List<String> digitalMails = new ArrayList<String>();
+            if (mailComputeResultDigital != null && mailComputeResultDigital.getRecipientsMailTo() != null)
+                for (Mail mail : mailComputeResultDigital.getRecipientsMailTo()) {
+                    if (mail.getMail() != null) {
+                        digitalMails.add(mail.getMail());
+                    }
+                }
+            if (mailComputeResultDigital != null && mailComputeResultDigital.getRecipientsMailCc() != null)
+                for (Mail mail : mailComputeResultDigital.getRecipientsMailCc()) {
+                    if (mail.getMail() != null) {
+                        digitalMails.add(mail.getMail());
+                    }
+                }
+            String finalDigitalMails = String.join(", ", digitalMails);
+            if (finalDigitalMails.length() > 0)
+                ctx.setVariable("digitalMails", finalDigitalMails);
+
+            MailComputeResult mailComputeResultBilling = mailComputeHelper
+                    .computeMailForCustomerOrderFinalizationAndInvoice(customerOrder, false);
+            List<String> billingMails = new ArrayList<String>();
+            if (mailComputeResultDigital != null && mailComputeResultDigital.getRecipientsMailTo() != null)
+                for (Mail mail : mailComputeResultBilling.getRecipientsMailTo()) {
+                    if (mail.getMail() != null) {
+                        billingMails.add(mail.getMail());
+                    }
+                }
+            if (mailComputeResultDigital != null && mailComputeResultDigital.getRecipientsMailCc() != null)
+                for (Mail mail : mailComputeResultBilling.getRecipientsMailCc()) {
+                    if (mail.getMail() != null) {
+                        billingMails.add(mail.getMail());
+                    }
+                }
+            if (billingDocument != null && billingDocument.getReminderMail() != null)
+                billingMails.add(billingDocument.getReminderMail().getMail());
+            String finalBillingMails = String.join(", ", billingMails);
+            if (finalDigitalMails.length() > 0)
+                ctx.setVariable("billingMails", finalBillingMails);
+
+            InvoiceLabelResult invoiceLabelResult = invoiceHelper.computeInvoiceLabelResult(
+                    documentService.getBillingDocument(customerOrder.getDocuments()), customerOrder,
+                    responsableService.getResponsable(customerOrder.getResponsable().getId()));
+            if (invoiceLabelResult != null) {
+                if (invoiceLabelResult.getBillingLabel() != null)
+                    ctx.setVariable("billingLabel", invoiceLabelResult.getBillingLabel());
+                if (invoiceLabelResult.getBillingLabelAddress() != null)
+                    ctx.setVariable("billingLabelAddress", invoiceLabelResult.getBillingLabelAddress());
+                if (invoiceLabelResult.getBillingLabelPostalCode() != null)
+                    ctx.setVariable("billingLabelPostalCode", invoiceLabelResult.getBillingLabelPostalCode());
+                if (invoiceLabelResult.getBillingLabelCity() != null)
+                    ctx.setVariable("billingLabelCity",
+                            invoiceLabelResult.getBillingLabelCity().getLabel() != null
+                                    ? invoiceLabelResult.getBillingLabelCity().getLabel()
+                                    : "");
+                if (invoiceLabelResult.getBillingLabelCountry() != null)
+                    ctx.setVariable("billingLabelCountry",
+                            invoiceLabelResult.getBillingLabelCountry().getLabel() != null
+                                    ? invoiceLabelResult.getBillingLabelCountry().getLabel()
+                                    : "");
+
+            }
         }
 
-        ctx.setVariable("tiersReference", customerOrder.getResponsable().getTiers().getId()
-                + (customerOrder.getResponsable().getTiers().getIdAs400() != null
-                        ? ("/" + customerOrder.getResponsable().getTiers().getIdAs400())
-                        : ""));
+        if (customerOrder.getDescription() != null && customerOrder.getDescription().length() > 0)
+            ctx.setVariable("comment", customerOrder.getDescription());
+        ctx.setVariable("tiersReference",
+                customerOrder.getResponsable().getTiers().getId()
+                        + (customerOrder.getResponsable().getTiers().getIdAs400() != null
+                                ? ("/" + customerOrder.getResponsable().getTiers().getIdAs400())
+                                : ""));
 
         ctx.setVariable("customerOrderId", customerOrder.getId());
         ctx.setVariable("responsable", customerOrder.getResponsable());
