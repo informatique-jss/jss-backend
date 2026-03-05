@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
-import { LastPostsHubComponent } from "../last-posts-hub/last-posts-hub.component";
+import { MostSeenHubComponent } from "../most-seen-hub/most-seen-hub.component";
 
 @Component({
   selector: 'post-most-seen-header',
   templateUrl: './post-most-seen-header.component.html',
-  imports: [SHARED_IMPORTS, LastPostsHubComponent],
+  imports: [SHARED_IMPORTS, MostSeenHubComponent],
   standalone: true
 })
 export class PostMostSeenHeaderComponent implements OnInit {
