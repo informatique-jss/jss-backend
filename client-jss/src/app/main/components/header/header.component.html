@@ -271,7 +271,7 @@
                   <a class="card-text-truncate" (click)="openPost( )" [routerLink]='"/post/" + post.slug'> <img
                       *ngIf="post.isPremium" class="col-auto pe-1" src="/assets/images/premium-icon.svg"><img
                       *ngIf="post.isHidePremium" class="ms-1 pe-0"
-                      src="/assets/images/premium-icon.svg">{{post.titleText}}</a>
+                      src="/assets/images/subscribed-icon.svg">{{post.titleText}}</a>
                 </h4>
                 <div class="">
                   <span class="card-truncate-6-line" [innerHTML]="post.excerptText| trustHtml"></span>
