@@ -20,7 +20,7 @@
           </div>
           <div class="col-12">
             <h1 class="mt-2"><img *ngIf="post.isPremium" class="px-0 me-1" src="/assets/images/premium-icon.svg"><img
-                *ngIf="post.isHidePremium" class="pe-0 me-1" src="/assets/images/premium-icon.svg">
+                *ngIf="post.isHidePremium" class="pe-0 me-1" src="/assets/images/subscribed-icon.svg">
               {{post.titleText}} </h1>
           </div>
           <span class="fs-6" [innerHTML]="post.excerptText| trustHtml"></span>
@@ -213,7 +213,7 @@
                       [routerLink]='"/post/" + relatedPost.slug' class="card-truncate-1">
                       <h6 class="m-0 p-1"><img *ngIf="relatedPost.isPremium" class="px-0 me-1"
                           src="/assets/images/premium-icon.svg"><img *ngIf="post.isHidePremium" class="pe-0 me-1"
-                          src="/assets/images/premium-icon.svg">&#9632; {{relatedPost.titleText}}</h6>
+                          src="/assets/images/subscribed-icon.svg">&#9632; {{relatedPost.titleText}}</h6>
                     </a>
                   </div>
                 </div>
@@ -285,7 +285,7 @@
                             <a [routerLink]='"/post/" + previousPost.slug'><img *ngIf="previousPost.isPremium"
                                 class="px-0 me-1" src="/assets/images/premium-icon.svg"><img
                                 *ngIf="previousPost.isHidePremium" class="pe-0 me-1"
-                                src="/assets/images/premium-icon.svg">
+                                src="/assets/images/subscribed-icon.svg">
                               {{previousPost.titleText}}</a>
                           </h6>
                         </div>
@@ -298,7 +298,7 @@
                           <h6 class="post-title text-end card-text-truncate">
                             <a [routerLink]='"/post/" + nextPost.slug'><img *ngIf="nextPost.isPremium" class="px-0 me-1"
                                 src="/assets/images/premium-icon.svg"><img *ngIf="nextPost.isHidePremium"
-                                class="pe-0 me-1" src="/assets/images/premium-icon.svg">
+                                class="pe-0 me-1" src="/assets/images/subscribed-icon.svg">
                               {{nextPost.titleText}}</a>
                           </h6>
                         </div>
