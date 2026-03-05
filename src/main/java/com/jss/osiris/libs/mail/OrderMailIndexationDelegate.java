@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -13,14 +12,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,7 +26,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,10 +49,6 @@ import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderStatusService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.service.ResponsableService;
-import com.microsoft.aad.msal4j.ClientCredentialFactory;
-import com.microsoft.aad.msal4j.ClientCredentialParameters;
-import com.microsoft.aad.msal4j.ConfidentialClientApplication;
-import com.microsoft.aad.msal4j.IAuthenticationResult;
 
 import jakarta.mail.Address;
 import jakarta.mail.BodyPart;
@@ -65,10 +57,7 @@ import jakarta.mail.Folder;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Multipart;
-import jakarta.mail.NoSuchProviderException;
 import jakarta.mail.Part;
-import jakarta.mail.Session;
-import jakarta.mail.Store;
 import jakarta.mail.internet.MimeUtility;
 
 @Service
@@ -86,44 +75,10 @@ public class OrderMailIndexationDelegate {
     @Autowired
     CustomerOrderStatusService customerOrderStatusService;
 
-    @Value("${mail.imap.host}")
-    private String mailImapHost;
-    @Value("${mail.imap.port}")
-    private String mailImapPort;
-    @Value("${mail.imap.username}")
-    private String mailImapUsername;
-    @Value("${mail.imap.app.id}")
-    private String mailImapAppId;
-    @Value("${mail.imap.tenant.id}")
-    private String mailImapTenantId;
-    @Value("${mail.imap.secret.value}")
-    private String mailImapSecretValue;
-    @Value("${mail.imap.auth}")
-    private String mailImapAuth;
-    @Value("${mail.imap.ssl.enable}")
-    private String mailImapEnable;
-    @Value("${mail.imap.auth.mechanisms}")
-    private String mailImapMechanism;
-    @Value("${mail.imap.tls.version}")
-    private String mailImapTlsVersion;
-    @Value("${microsoft.host}")
-    private String microsoftHost;
-    @Value("${outlook.default.url}")
-    private String outlookDefaultUrl;
-    @Value("${mail.imap.shared.username}")
-    private String sharedMailboxUsername;
-    @Value("${mail.imap.shared.folder.order.input.formalite}")
-    private String inputOrderFormaliteFolder;
-
-    @Value("${mail.imap.shared.folder.order.input.announcement}")
-    private String inputOrderAnnouncementFolder;
+    @Autowired
+    MailSharedDelegate mailSharedDelegate;
 
     private Integer numberDaysToKeepInTrash = 60;
-
-    private Store store = null;
-    private Folder folderInboxFormalite = null;
-    private Folder folderInboxAnnouncement = null;
-    private Folder folderTrash = null;
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}",
             Pattern.CASE_INSENSITIVE);
@@ -143,181 +98,68 @@ public class OrderMailIndexationDelegate {
     @Autowired
     AttachmentService attachmentService;
 
-    private String getAccessToken() throws OsirisException {
-        try {
-            ConfidentialClientApplication app = ConfidentialClientApplication
-                    .builder(mailImapAppId, ClientCredentialFactory.createFromSecret(mailImapSecretValue))
-                    .authority(microsoftHost + mailImapTenantId).build();
-            ClientCredentialParameters parameters = ClientCredentialParameters
-                    .builder(Collections.singleton(outlookDefaultUrl)).build();
-
-            IAuthenticationResult result = app.acquireToken(parameters).join();
-            return result.accessToken();
-
-        } catch (MalformedURLException ex) {
-            throw new OsirisException(ex, "Wrong client-id or client-secret");
-        }
-    }
-
-    private Session getSessionToAccessMail() {
-        Properties properties = new Properties();
-        properties.setProperty("mail.imap.ssl.protocols", mailImapTlsVersion);
-        properties.put("mail.imap.ssl.enable", mailImapEnable);
-        properties.put("mail.imap.ssl.trust", "*");
-        properties.put("mail.imap.starttls.enable", "true");
-        properties.put("mail.imap.auth", mailImapAuth);
-        properties.put("mail.imap.auth.mechanisms", mailImapMechanism);
-
-        Session session = Session.getInstance(properties, null);
-        return session;
-    }
-
-    private void connectMailbox() throws OsirisException {
-        if (store == null || !store.isConnected()) {
-            String accessToken = getAccessToken();
-            try {
-                store = getSessionToAccessMail().getStore("imap");
-            } catch (NoSuchProviderException e) {
-                throw new OsirisException(e, "IMAP store not found");
-            }
-
-            try {
-                store.connect(mailImapHost, Integer.parseInt(mailImapPort), sharedMailboxUsername,
-                        accessToken);
-            } catch (NumberFormatException e) {
-                throw new OsirisException(e, "Malformated connection to IMAP");
-            } catch (MessagingException e) {
-                throw new OsirisException(e, "Impossible to connect to IMAP");
-            }
-        }
-
-        if (folderInboxFormalite != null && folderInboxFormalite.isOpen())
-            try {
-                folderInboxFormalite.close();
-            } catch (MessagingException e) {
-                throw new OsirisException(e, "Impossible to close INBOX folder");
-            }
-
-        try {
-            folderInboxFormalite = store.getFolder(inputOrderFormaliteFolder);
-        } catch (MessagingException e) {
-            throw new OsirisException(e, "Impossible to find INBOX folder");
-        }
-        try {
-            folderInboxFormalite.open(Folder.READ_WRITE);
-        } catch (MessagingException e) {
-            throw new OsirisException(e, "Impossible to write into INBOX folder");
-        }
-
-        try {
-            folderInboxAnnouncement = store.getFolder(inputOrderAnnouncementFolder);
-        } catch (MessagingException e) {
-            throw new OsirisException(e, "Impossible to find INBOX folder");
-        }
-        try {
-            folderInboxAnnouncement.open(Folder.READ_WRITE);
-        } catch (MessagingException e) {
-            throw new OsirisException(e, "Impossible to write into INBOX folder");
-        }
-
-        if (folderTrash != null && folderTrash.isOpen())
-            try {
-                folderTrash.close();
-            } catch (MessagingException e) {
-                throw new OsirisException(e, "Impossible to close TRASH folder");
-            }
-
-        try {
-            String trashName = "Éléments supprimés";
-            for (Folder f : store.getDefaultFolder().list())
-                if (f.getFullName().equals("Deleted Items")) {
-                    trashName = "Deleted Items";
-                    break;
-                }
-            folderTrash = store.getFolder(trashName);
-        } catch (MessagingException e) {
-            throw new OsirisException(e, "Impossible to find Trash folder");
-        }
-        try {
-            folderTrash.open(Folder.READ_WRITE);
-        } catch (MessagingException e) {
-            throw new OsirisException(e, "Impossible to write into Trash folder");
-        }
-    }
-
     public void checkMailsToIndexFormalites() throws OsirisException {
-        connectMailbox();
-        Message[] messages;
-        try {
-            messages = folderInboxFormalite.getMessages();
-        } catch (MessagingException e) {
-            throw new OsirisException(e, "Impossible to get messages from INBOX folder");
-        }
-        // for all messages received in inbox folder, launch a batch calling method
-        // exportMailToFile()
-        for (Message message : messages) {
+        mailSharedDelegate.executeWithLock(() -> {
+            Message[] messages;
             try {
-                batchService.declareNewBatch(Batch.CREATE_ORDER_FROM_MAIL,
-                        (Integer.parseInt((message.getReceivedDate().getTime() / 1000) + "")));
+                messages = mailSharedDelegate.getFolderInboxFormalite().getMessages();
             } catch (MessagingException e) {
-                throw new OsirisException(e, "Impossible to process message received");
+                throw new OsirisException(e, "Impossible to get messages from INBOX folder");
             }
-        }
-
+            for (Message message : messages) {
+                try {
+                    batchService.declareNewBatch(Batch.CREATE_ORDER_FROM_MAIL,
+                            (Integer.parseInt((message.getReceivedDate().getTime() / 1000) + "")));
+                } catch (MessagingException e) {
+                    throw new OsirisException(e, "Impossible to process message received");
+                }
+            }
+            return null;
+        });
     }
 
     public void checkMailsToIndexAnnouncements() throws OsirisException {
-        connectMailbox();
-        Message[] messages;
-        try {
-            messages = folderInboxAnnouncement.getMessages();
-        } catch (MessagingException e) {
-            throw new OsirisException(e, "Impossible to get messages from INBOX folder");
-        }
-        // for all messages received in inbox folder, launch a batch calling method
-        // exportMailToFile()
-        for (Message message : messages) {
+        mailSharedDelegate.executeWithLock(() -> {
+            Message[] messages;
             try {
-                batchService.declareNewBatch(Batch.CREATE_ORDER_FROM_MAIL_ANNOUNCEMENT,
-                        (Integer.parseInt((message.getReceivedDate().getTime() / 1000) + "")));
+                messages = mailSharedDelegate.getFolderInboxAnnouncement().getMessages();
             } catch (MessagingException e) {
-                throw new OsirisException(e, "Impossible to process message received");
+                throw new OsirisException(e, "Impossible to get messages from INBOX folder");
             }
-        }
-
-    }
-
-    public void closeConnection() throws OsirisException {
-        try {
-            if (store.isConnected()) {
-                if (folderInboxFormalite != null)
-                    folderInboxFormalite.close(true);
-                if (folderInboxAnnouncement != null)
-                    folderInboxAnnouncement.close(true);
-                if (folderTrash != null)
-                    folderTrash.close(true);
-                if (store != null)
-                    store.close();
+            // for all messages received in inbox folder, launch a batch calling method
+            // exportMailToFile()
+            for (Message message : messages) {
+                try {
+                    batchService.declareNewBatch(Batch.CREATE_ORDER_FROM_MAIL_ANNOUNCEMENT,
+                            (Integer.parseInt((message.getReceivedDate().getTime() / 1000) + "")));
+                } catch (MessagingException e) {
+                    throw new OsirisException(e, "Impossible to process message received");
+                }
             }
-        } catch (MessagingException e) {
-            throw new OsirisException(e, "Error when closing connection folder/store");
-        }
+            return null;
+        });
     }
 
     @Transactional
     public void exportMailToOrderFormalite(Integer id) throws OsirisException {
-        exportMailToOrder(id, false);
+        mailSharedDelegate.executeWithLock(() -> {
+            exportMailToOrder(id, false);
+            return null;
+        });
     }
 
     @Transactional
     public void exportMailToOrderAnnouncement(Integer id) throws OsirisException {
-        exportMailToOrder(id, true);
+        mailSharedDelegate.executeWithLock(() -> {
+            exportMailToOrder(id, true);
+            return null;
+        });
     }
 
     private void exportMailToOrder(Integer id, Boolean isFromAnnouncementMailbox) throws OsirisException {
-        connectMailbox();
         Integer messageCount;
-        Folder sourceFolder = isFromAnnouncementMailbox ? folderInboxAnnouncement : folderInboxFormalite;
+        Folder sourceFolder = isFromAnnouncementMailbox ? mailSharedDelegate.getFolderInboxAnnouncement()
+                : mailSharedDelegate.getFolderInboxFormalite();
         try {
             messageCount = sourceFolder.getMessageCount();
         } catch (MessagingException e) {
@@ -453,19 +295,33 @@ public class OrderMailIndexationDelegate {
                                         for (NamedInputStream stream : streams)
                                             addAttachmentToCustomerOrder(stream.getStream(), order, stream.getName());
                                 } else {
-                                    addAttachmentToCustomerOrder(part.getInputStream(), order, filename);
+                                    addAttachmentToCustomerOrder(downloadAttachment(part), order,
+                                            filename);
                                 }
                             }
                         }
                     }
 
                     // Move to trash
-                    folderInboxFormalite.copyMessages(new Message[] { message }, folderTrash);
+                    sourceFolder.copyMessages(new Message[] { message }, mailSharedDelegate.getFolderTrash());
                     message.setFlag(Flag.DELETED, true);
                 }
             } catch (Exception e) {
                 throw new OsirisException(e, "Impossible to process message received");
             }
+        }
+        try {
+            sourceFolder.expunge();
+        } catch (Exception e) {
+            throw new OsirisException(e, "Impossible to process message received");
+        }
+    }
+
+    public ByteArrayInputStream downloadAttachment(BodyPart part) throws Exception {
+        try (InputStream is = part.getInputStream();
+                ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+            is.transferTo(os);
+            return new ByteArrayInputStream(os.toByteArray());
         }
     }
 
@@ -517,11 +373,10 @@ public class OrderMailIndexationDelegate {
     }
 
     public void purgeDeletedElements() throws OsirisException {
-        connectMailbox();
         try {
             Message[] messages;
             try {
-                messages = folderTrash.getMessages();
+                messages = mailSharedDelegate.getFolderTrash().getMessages();
             } catch (MessagingException e) {
                 throw new OsirisException(e, "Impossible to get messages from Trash folder");
             }
@@ -538,7 +393,7 @@ public class OrderMailIndexationDelegate {
                 }
             }
 
-            folderTrash.expunge();
+            mailSharedDelegate.getFolderTrash().expunge();
         } catch (MessagingException e) {
             throw new OsirisException(e, "Impossible to write into Trash folder");
         }

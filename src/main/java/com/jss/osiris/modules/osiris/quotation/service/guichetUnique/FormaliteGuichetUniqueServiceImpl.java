@@ -413,18 +413,12 @@ public class FormaliteGuichetUniqueServiceImpl implements FormaliteGuichetUnique
                     for (RegularizationRequest regularizationRequest : savedFormaliteGuichetUnique
                             .getRegularizationRequests()) {
                         for (RegularizationRequest regularizationRequestApi : apiRegularizationRequests) {
+                            regularizationRequest.setFormaliteGuichetUnique(savedFormaliteGuichetUnique);
                             if (regularizationRequestApi.getId().equals(regularizationRequest.getId())) {
                                 regularizationRequestApi.setRejectionCause(regularizationRequest.getRejectionCause());
                             }
                         }
                     }
-
-                savedFormaliteGuichetUnique.setRegularizationRequests(apiRegularizationRequests);
-                for (RegularizationRequest regularizationRequest : savedFormaliteGuichetUnique
-                        .getRegularizationRequests()) {
-                    savedFormaliteGuichetUnique.setRegularizationRequests(apiRegularizationRequests);
-                    regularizationRequest.setFormaliteGuichetUnique(savedFormaliteGuichetUnique);
-                }
             }
 
             savedFormaliteGuichetUnique = addOrUpdateFormaliteGuichetUnique(savedFormaliteGuichetUnique);

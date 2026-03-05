@@ -780,7 +780,7 @@ public class ServiceServiceImpl implements ServiceService {
                             service.setWaitingAcLabel(
                                     provision.getSimpleProvision().getWaitedCompetentAuthority().getLabel());
 
-                        String competentAuthorityLabel = null;
+                        String competentAuthorityLabel = "";
                         LocalDateTime lastSentLiasse = null;
                         if (provision.getFormalite() != null) {
                             List<FormaliteGuichetUnique> formaliteGuichetUniques = provision.getFormalite()
@@ -800,7 +800,8 @@ public class ServiceServiceImpl implements ServiceService {
                                     if (validationRequests != null && validationRequests.size() > 0) {
                                         ValidationRequest validationRequest = validationRequests.get(0);
 
-                                        competentAuthorityLabel = validationRequest.getPartnerCenter().getName();
+                                        if (validationRequest.getPartnerCenter() != null)
+                                            competentAuthorityLabel = validationRequest.getPartnerCenter().getName();
                                         hasCompleteWaitingAcLabel = true;
                                         if (validationRequest.getUpdated() != null)
                                             lastSentLiasse = OffsetDateTime.parse(validationRequest.getUpdated())
