@@ -94,10 +94,10 @@ public class FormaliteGuichetUnique implements IId, Serializable {
     @JsonAlias({ "annualAccountValidationRequests", "acteDepositValidationRequests" })
     private List<ValidationRequest> validationsRequests;
 
-    @OneToMany(mappedBy = "formaliteGuichetUnique", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "formaliteGuichetUnique", cascade = { CascadeType.MERGE, CascadeType.DETACH,
+            CascadeType.PERSIST, CascadeType.REFRESH }, fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "formaliteGuichetUnique" }, allowSetters = true)
     @JsonProperty("regularizationRequests")
-    @JsonAlias({ "annualAccountValidationRequests", "acteDepositValidationRequests" })
     private List<RegularizationRequest> regularizationRequests;
 
     @OneToMany(mappedBy = "formaliteGuichetUnique", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

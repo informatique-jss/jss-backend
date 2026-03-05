@@ -36,22 +36,35 @@ export class AssignNewOrderDialogComponent implements OnInit {
 
   ngOnInit() {
     this.isLoading = true;
-    this.orderService.assignNewCustomerOrderToOrderForInsertions().subscribe(response => {
-      if (this.isInsertionEmployee && response) {
-        this.isLoading = false;
-        this.foundOrder = response.id;
-      }
-      else {
-        this.customerOrderAssignationService.getNextPriorityOrderForFond().subscribe(priorityFond => {
-          if (priorityFond) {
-            this.isLoading = false;
-            this.foundOrder = priorityFond;
-          } else {
-            this.nextStep();
-          }
-        })
-      }
-    });
+    if (this.isInsertionEmployee) {
+      this.orderService.assignNewCustomerOrderToOrderForInsertions().subscribe(response => {
+        if (response) {
+          this.isLoading = false;
+          this.foundOrder = response.id;
+        }
+        else {
+          this.nextStep();
+          this.customerOrderAssignationService.getNextPriorityOrderForFond().subscribe(priorityFond => {
+            if (priorityFond) {
+              this.isLoading = false;
+              this.foundOrder = priorityFond;
+            } else {
+              this.nextStep();
+            }
+          })
+        }
+      });
+    } else {
+      this.nextStep();
+      this.customerOrderAssignationService.getNextPriorityOrderForFond().subscribe(priorityFond => {
+        if (priorityFond) {
+          this.isLoading = false;
+          this.foundOrder = priorityFond;
+        } else {
+          this.nextStep();
+        }
+      })
+    }
 
     this.employeeService.getCurrentEmployee().subscribe(employee => {
       this.currentEmployee = employee;

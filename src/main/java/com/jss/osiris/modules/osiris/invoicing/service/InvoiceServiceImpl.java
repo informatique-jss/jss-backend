@@ -270,7 +270,9 @@ public class InvoiceServiceImpl implements InvoiceService {
                     paymentService.movePaymentFromCustomerOrderToInvoice(payment, invoice.getCustomerOrder(), invoice);
                 }
 
-            generateInvoicePdf(invoice, invoice.getCustomerOrder());
+            if (invoice.getRff() == null
+                    && (invoice.getReverseCreditNote() == null || invoice.getReverseCreditNote().getRff() == null))
+                generateInvoicePdf(invoice, invoice.getCustomerOrder());
         }
 
         // Associate attachment for azure invoice
