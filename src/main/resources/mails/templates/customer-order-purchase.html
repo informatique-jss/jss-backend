@@ -247,6 +247,33 @@
             </th:block>
         </th:block>
     </div>
+
+    <div style="margin-bottom: 10px;">
+        <span th:if="${digitalMails!=null}">
+            Les pièces numériques seront envoyées à : <span th:text="${digitalMails}"></span>
+        </span><br />
+    </div>
+    <div style="margin-bottom: 10px;">
+        <span th:if="${billingLabel!=null}">
+            La facture sera libellée à : <br />
+            <span th:text="${billingLabel}"></span><br />
+            <span th:text="${billingLabelAddress}"></span><br />
+            <span><span th:text="${billingLabelPostalCode}"></span> <span th:text="${billingLabelCity}"></span> <span
+                    th:text="${billingLabelCountry}"></span>
+            </span>
+        </span><br />
+    </div>
+    <div style="margin-bottom: 10px;">
+        <span th:if="${billingMails!=null}">
+            La facture sera envoyée à : <span th:text="${billingMails}"></span>
+        </span> <br />
+    </div>
+
+    <div>
+        <span th:if="${comment!=null}">
+            Vos commentaires : <span th:text="${comment}"></span>
+        </span>
+    </div>
     <div class="page-break"></div>
 
     <table style="width:690px">
