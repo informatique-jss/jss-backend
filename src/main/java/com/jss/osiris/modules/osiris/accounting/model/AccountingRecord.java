@@ -146,6 +146,8 @@ public class AccountingRecord implements Serializable, IId {
 
 	private LocalDateTime letteringDateTimeOld;
 
+	private String equilibrated;
+
 	public Integer getId() {
 		return id;
 	}
@@ -384,6 +386,14 @@ public class AccountingRecord implements Serializable, IId {
 
 	public void setLetteringDateTimeOld(LocalDateTime letteringDateTimeOld) {
 		this.letteringDateTimeOld = letteringDateTimeOld;
+	}
+
+	public String getEquilibrated() {
+		return equilibrated;
+	}
+
+	public void setEquilibrated(String equilibrated) {
+		this.equilibrated = equilibrated;
 	}
 
 }

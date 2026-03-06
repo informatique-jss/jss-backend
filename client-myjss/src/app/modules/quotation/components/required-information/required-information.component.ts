@@ -121,7 +121,7 @@ export class RequiredInformationComponent implements OnInit {
 
   minDatePublication: Date = new Date();
 
-  isDoNotGenerateAnnouncement: boolean = true;
+  isDoNotGenerateAnnouncement: boolean = false;
   selectionRedaction: string[] = [this.CONFIER_ANNONCE_AU_JSS, "Je m'occupe de la publication de l'annonce légale"];
   selectedRedaction: string[][] = [];
 
@@ -627,11 +627,8 @@ export class RequiredInformationComponent implements OnInit {
   }
 
   changeDoNotGenerateAnnouncement(selection: string, provision: Provision) {
-    provision.isDoNotGenerateAnnouncement = true;
-    if (selection != this.CONFIER_ANNONCE_AU_JSS) {
-      this.isDoNotGenerateAnnouncement = false;
-      provision.isDoNotGenerateAnnouncement = false;
-    } else {
+    provision.isDoNotGenerateAnnouncement = false;
+    if (selection == this.selectionRedaction[1]) {
       this.isDoNotGenerateAnnouncement = true;
       provision.isDoNotGenerateAnnouncement = true;
     }
