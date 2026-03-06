@@ -9,6 +9,8 @@ public interface ITiersSearchResult {
 
     Integer getTiersId();
 
+    String getTiersTypeLabel();
+
     String getSalesEmployeeLabel();
 
     String getformalisteLabel();

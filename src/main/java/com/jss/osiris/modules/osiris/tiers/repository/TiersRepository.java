@@ -75,6 +75,7 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         "          tc.label as tiersCategory, " +
                         "          concat(t.address, ' ', city.label) as address, tc.label as tiersCategory, " +
                         "          t.id as tiersId, " +
+                        "          tt.label as tiersTypeLabel, " +
                         "          concat(e1.firstname, " +
                         "          ' ', " +
                         "          e1.lastname) as salesEmployeeLabel, " +
@@ -130,6 +131,8 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         "          bt.id = bi.id_billing_type " +
                         "  left join nbr_for on " +
                         "         nbr_for.id_tiers = t.id " +
+                        "  left join tiers_type tt on " +
+                        "         tt.id = t.id_tiers_type " +
                         " where " +
                         "    ( :tiersId =0 or t.id = :tiersId) " +
                         "   and ( :isNewTiers =false or coalesce(t.is_new_tiers,false) = true) " +
@@ -147,7 +150,7 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         " 	tc.label,concat(t.address, ' ', city.label) , " +
                         " 	coalesce(concat(e1.firstname, " +
                         " 	' ', " +
-                        " 	e1.lastname)), concat(e2.firstname,' ',e2.lastname),e2.id," +
+                        " 	e1.lastname)), concat(e2.firstname,' ',e2.lastname),e2.id, tt.label," +
                         " 	 e1.id, " +
                         " 	blt.label ,t.id   having :withNonNullTurnover=false or sum( (ii.pre_tax_price-coalesce (ii.discount_amount, 0) ) )>0 "
                         +
