@@ -1014,7 +1014,8 @@ public class MailHelper {
 
     public void sendCustomerDemoRequestToCommercial(String mailAdress, String firstName, String lastName,
             String phoneNumber) throws OsirisException {
-        String explaination = firstName + " " + lastName + " - " + mailAdress;
+        String explaination = firstName + " " + lastName + " - " + mailAdress + " - "
+                + (phoneNumber != null && phoneNumber.length() > 0 ? phoneNumber + " - " : "");
         sendCustomerMailForMyJssMail(constantService.getStringMyJssDemoRequestMail(), explaination,
                 constantService.getStringMyJssDemoRequestMail(),
                 "Notification de demande de démo client",
@@ -1055,7 +1056,8 @@ public class MailHelper {
 
     public void sendCustomerPricesRequestToCommercial(String mailAdress, String firstName, String lastName,
             String phoneNumber) throws OsirisException {
-        String explaination = firstName + " " + lastName + " - " + mailAdress;
+        String explaination = firstName + " " + lastName + " - " + mailAdress + " - "
+                + (phoneNumber != null && phoneNumber.length() > 0 ? phoneNumber + " - " : "");
         sendCustomerMailForMyJssMail(constantService.getStringMyJssDemoRequestMail(), explaination,
                 constantService.getStringMyJssDemoRequestMail(),
                 "Notification de demande de tarif",

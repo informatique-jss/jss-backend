@@ -71,7 +71,8 @@ public class MailSharedDelegate {
                     connectMailbox();
                     return action.call();
                 } finally {
-                    store.close();
+                    if (store != null)
+                        store.close();
                     store = null;
                     mailboxLock.unlock();
                 }
