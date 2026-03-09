@@ -129,10 +129,15 @@
             [form]="contactForm" propertyName="lastname" [isMandatory]="true" [isDisabled]="false" [maxLength]="50"
             type="text"></generic-input>
         </div>
-        <div class="col-sm-12">
+        <div class="col-sm-6">
           <generic-input class="form-control form-control-lg" [(model)]="mail" placeholder="E-mail professionnel*"
             label="E-mail professionnel*" [form]="contactForm" propertyName="mail" [isMandatory]="true"
             [isDisabled]="false" [maxLength]="250" type="email"></generic-input>
+        </div>
+        <div class="col-sm-6">
+          <generic-input class="form-control form-control-lg" [(model)]="phoneNumber" placeholder="Numéro de téléphone"
+            label="Numéro de téléphone" [form]="contactForm" propertyName="phoneNumber" [isMandatory]="false"
+            [isDisabled]="false" [maxLength]="12" type="text"></generic-input>
         </div>
         <div class="col-sm-12">
           <generic-textarea class="form-control form-control-lg" [(model)]="message" label="Message*"
