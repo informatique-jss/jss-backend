@@ -8,7 +8,7 @@ import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 public interface NewspaperService {
 
-    public Newspaper addOrUpdateNewspaper(Newspaper Newspaper);
+    public Newspaper addOrUpdateNewspaper(Newspaper newspaper);
 
     public Newspaper getNewspaper(Integer newspaperId);
 

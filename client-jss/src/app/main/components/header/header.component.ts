@@ -18,7 +18,6 @@ import { Post } from '../../model/Post';
 import { PublishingDepartment } from '../../model/PublishingDepartment';
 import { Responsable } from '../../model/Responsable';
 import { DepartmentService } from '../../services/department.service';
-import { IndexEntityService } from '../../services/index.entity.service';
 import { JssCategoryService } from '../../services/jss.category.service';
 import { LoginService } from '../../services/login.service';
 import { PostService } from '../../services/post.service';
@@ -50,6 +49,8 @@ export class HeaderComponent implements OnInit {
   searchObservableRef: Subscription | undefined;
 
   searchModalInstance: any | undefined;
+  isWithKiosk: boolean = false;
+  sortSearch: string = "rank";
 
   currentUser: Responsable | undefined;
 
@@ -76,7 +77,6 @@ export class HeaderComponent implements OnInit {
     private departmentService: DepartmentService,
     private jssCategoryService: JssCategoryService,
     private appService: AppService,
-    private indexEntityService: IndexEntityService,
     private loginService: LoginService,
     private modalService: NgbModal,
     private eRef: ElementRef,
@@ -264,7 +264,7 @@ export class HeaderComponent implements OnInit {
 
     this.searchInProgress = true;
     if (this.searchText && this.searchText.length > 2)
-      this.searchObservableRef = this.postService.searchForPost(this.searchText).subscribe(response => {
+      this.searchObservableRef = this.postService.searchForPost(this.searchText, this.sortSearch, this.isWithKiosk).subscribe(response => {
         this.posts = [];
         for (let postFound of response.content) {
           if (postFound) {

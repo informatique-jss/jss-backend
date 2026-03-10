@@ -25,8 +25,8 @@ public class NewspaperServiceImpl implements NewspaperService {
     @Autowired
     SubscriptionService subscriptionService;
 
-    public Newspaper addOrUpdateNewspaper(Newspaper Newspaper) {
-        return newspaperRepository.save(Newspaper);
+    public Newspaper addOrUpdateNewspaper(Newspaper newspaper) {
+        return newspaperRepository.save(newspaper);
     }
 
     @Override

@@ -786,11 +786,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Page<Post> searchJssPosts(String searchText) {
+    public Page<Post> searchJssPosts(String searchText, String sortBy) {
         Pageable pageableRequestForMatch = PageRequest.of(0, Integer.MAX_VALUE);
         if (searchText != null && searchText.trim().length() > 0) {
             List<IndexEntity> tmpEntitiesFound = null;
-            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
+            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false, sortBy);
             if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
                 return searchPostAgainstEntitiesToMatch(searchText,
                         postRepository.findByJssCategoriesAndIsCancelled(null, false, pageableRequestForMatch));

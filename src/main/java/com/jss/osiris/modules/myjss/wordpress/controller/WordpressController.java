@@ -1325,11 +1325,15 @@ public class WordpressController {
 
 	@GetMapping(inputEntryPoint + "/search/jss/post")
 	@JsonView(JacksonViews.MyJssListView.class)
-	public ResponseEntity<Page<Post>> globalSearchForJssPostEntity(@RequestParam String searchText)
+	public ResponseEntity<Page<Post>> globalSearchForJssPostEntity(@RequestParam String searchText,
+			@RequestParam String sortBy, @RequestParam Boolean searchWithKiosk)
 			throws OsirisException {
 		// TODO : leak premium
+		// TODO : faire pareil que le sort mais avec les articles kiosk + tester le
+		// sortBy
 		if (searchText != null && searchText.length() > 2)
-			return new ResponseEntity<Page<Post>>(postService.searchJssPosts(searchText), HttpStatus.OK);
+			return new ResponseEntity<Page<Post>>(postService.searchJssPosts(searchText, sortBy),
+					HttpStatus.OK);
 		return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
 	}
 

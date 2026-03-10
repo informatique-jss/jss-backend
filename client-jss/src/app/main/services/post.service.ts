@@ -244,7 +244,7 @@ export class PostService extends AppRestService<Post> {
     return this.get(new HttpParams().set("idPost", idPost), "post/get");
   }
 
-  searchForPost(searchText: string) {
-    return this.getPagedList(new HttpParams().set("searchText", searchText), "search/jss/post");
+  searchForPost(searchText: string, sorter: string, searchWithKiosk: boolean) {
+    return this.getPagedList(new HttpParams().set("searchText", searchText).set("sortBy", sorter).set("searchWithKiosk", searchWithKiosk), "search/jss/post");
   }
 }

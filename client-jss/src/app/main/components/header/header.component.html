@@ -213,7 +213,6 @@
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </header>
@@ -231,23 +230,49 @@
         <h2 class="mb-4">Rechercher des articles du JSS</h2>
         <!-- Search form START -->
         <form class="position-relative w-100">
-          <div class="mb-2 input-group-lg mb-0 position-relative">
-            <!-- Search input -->
-            <input class="form-control mb-0 pe-6" type="text" name="search" placeholder="Que recherchez-vous ?"
-              autocomplete='off' autocomplete="nope" [(ngModel)]="searchText" (keydown)="searchEntities()"
-              [ngModelOptions]="{standalone: true}" autocorrect="off" autocapitalize="off" spellcheck="false">
+          <div class="row mt-0 mb-1 align-items-center">
+            <div class="col ms-1 mt-0 mb-2 form-check form-switch custom-toggle mt-2">
+              <input color="primary" type="checkbox" class="form-check-input" [id]="isWithKiosk" [required]="false">
+              <label class="form-check-label" [for]="isWithKiosk">Inclure le Kiosque JSS ?</label>
+            </div>
+            <div class="col me-2">
+              <div class="select-wrapper row align-items-center">
+                <label for="sortSearch" class="col-auto mb-0 form-label">Trier par : </label>
+                <select class="col form-control" id="sortSearch" name="sortSearch" [(ngModel)]="sortSearch">
+                  <option value="rank">
+                    Pertinence
+                  </option>
+                  <option value="dateAsc">
+                    Date croissante
+                  </option>
+                  <option value="dateDesc">
+                    Date décroissante
+                  </option>
+                </select>
+                <i class="bi-chevron-down chevron btn-search position-absolute start-93"></i>
+              </div>
+            </div>
           </div>
-          <div *ngIf="searchInProgress" class="position-absolute top-50 translate-middle-y end-4 me-4"
-            style="z-index: 2;">
-            <div class="spinner-border spinner-border-sm text-secondary" role="status" aria-hidden="true"></div>
+          <div class="mb-2 mb-0 position-relative">
+            <div class="input-group-lg">
+              <!-- Search input -->
+              <input class="form-control mb-0 pe-6" type="text" name="search" placeholder="Que recherchez-vous ?"
+                autocomplete='off' autocomplete="nope" [(ngModel)]="searchText" (keydown)="searchEntities()"
+                [ngModelOptions]="{standalone: true}" autocorrect="off" autocapitalize="off" spellcheck="false">
+            </div>
+            <div *ngIf="searchInProgress" class="position-absolute top-50 translate-middle-y end-4 me-4"
+              style="z-index: 2;">
+              <div class="spinner-border spinner-border-sm text-secondary" role="status" aria-hidden="true"></div>
+            </div>
+            <!-- Search button -->
+            <button type="button" class="position-absolute end-0 top-0 btn h-100 border-0">
+              <i class="bi bi-search display-8"></i>
+            </button>
           </div>
-          <!-- Search button -->
-          <button type="button" class="position-absolute end-0 top-0 btn h-100 border-0">
-            <i class="bi bi-search display-8"></i>
-          </button>
         </form>
         <!-- Search form END -->
-        <p class="small mb-0">ex : droit des sociétés, tribunal d'instance, TUP </p>
+        <p class="small mb-0">exemple : bâtonnier de Paris, trafic de stupéfiants, liquidation judiciaire...</p>
+
       </div>
     </div>
     <div class="row">
