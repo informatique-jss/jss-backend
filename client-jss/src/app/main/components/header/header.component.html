@@ -238,7 +238,8 @@
             <div class="col me-2">
               <div class="select-wrapper row align-items-center">
                 <label for="sortSearch" class="col-auto mb-0 form-label">Trier par : </label>
-                <select class="col form-control" id="sortSearch" name="sortSearch" [(ngModel)]="sortSearch">
+                <select class="col form-control" id="sortSearch" name="sortSearch" [(ngModel)]="sortSearch"
+                  (change)="globalSearch()">
                   <option value="rank">
                     Pertinence
                   </option>

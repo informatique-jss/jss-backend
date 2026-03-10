@@ -1329,8 +1329,7 @@ public class WordpressController {
 			@RequestParam String sortBy, @RequestParam Boolean searchWithKiosk)
 			throws OsirisException {
 		// TODO : leak premium
-		// TODO : faire pareil que le sort mais avec les articles kiosk + tester le
-		// sortBy
+		// TODO : faire pareil que le sort mais avec les articles kiosk
 		if (searchText != null && searchText.length() > 2)
 			return new ResponseEntity<Page<Post>>(postService.searchJssPosts(searchText, sortBy),
 					HttpStatus.OK);

@@ -261,9 +261,8 @@ export class HeaderComponent implements OnInit {
   globalSearch() {
     if (this.searchObservableRef)
       this.searchObservableRef.unsubscribe();
-
-    this.searchInProgress = true;
-    if (this.searchText && this.searchText.length > 2)
+    if (this.searchText && this.searchText.length > 2) {
+      this.searchInProgress = true;
       this.searchObservableRef = this.postService.searchForPost(this.searchText, this.sortSearch, this.isWithKiosk).subscribe(response => {
         this.posts = [];
         for (let postFound of response.content) {
@@ -273,6 +272,7 @@ export class HeaderComponent implements OnInit {
         }
         this.searchInProgress = false;
       })
+    }
   }
 
   openPost() {

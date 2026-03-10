@@ -748,7 +748,7 @@ public class PostServiceImpl implements PostService {
         Pageable pageableRequestForMatch = PageRequest.of(0, Integer.MAX_VALUE);
         if (searchText != null && searchText.trim().length() > 0) {
             return searchPostAgainstEntitiesToMatch(searchText,
-                    postRepository.findByJssCategoriesAndIsCancelled(null, false, pageableRequestForMatch), null);
+                    postRepository.findByJssCategoriesAndIsCancelled(null, false, pageableRequestForMatch), sortBy);
         }
         return postRepository.findByJssCategoriesAndIsCancelled(null, false, pageableRequestForMatch);
     }
