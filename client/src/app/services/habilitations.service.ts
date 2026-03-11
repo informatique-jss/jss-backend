@@ -295,6 +295,10 @@ export class HabilitationsService {
   canImportSageFile() {
     return this.loginService.hasGroup([ADMINISTRATEURS, ACCOUNTING_RESPONSIBLE]);
   }
+
+  canCreateVoucher() {
+    return this.loginService.hasGroup([ADMINISTRATEURS]);
+  }
 }
 
 
