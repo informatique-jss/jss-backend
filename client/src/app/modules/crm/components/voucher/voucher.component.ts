@@ -7,6 +7,7 @@ import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAc
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { CustomerOrder } from 'src/app/modules/quotation/model/CustomerOrder';
 import { CustomerOrderService } from 'src/app/modules/quotation/services/customer.order.service';
+import { HabilitationsService } from '../../../../services/habilitations.service';
 import { Voucher } from '../../model/Voucher';
 import { VoucherService } from '../../services/voucher.service';
 import { NewVoucherDialogComponent } from '../new-voucher-dialog/new-voucher-dialog.component';
@@ -29,7 +30,8 @@ export class VoucherComponent implements OnInit {
     private customerOrderService: CustomerOrderService,
     private formBuilder: FormBuilder,
     public confirmationDialog: MatDialog,
-    public newVoucherDialog: MatDialog
+    public newVoucherDialog: MatDialog,
+    private habilitationsService: HabilitationsService
   ) { }
 
   ngOnInit() {
@@ -71,6 +73,10 @@ export class VoucherComponent implements OnInit {
   formatEurosForSortTable = formatEurosForSortTable;
   formatPercentForSortTable = formatPercentForSortTable;
   formatDateForSortTable = formatDateForSortTable;
+
+  canCreateVoucher() {
+    return this.habilitationsService.canCreateVoucher();
+  }
 
   createVoucher() {
     const dialogRef = this.newVoucherDialog.open(NewVoucherDialogComponent, {
