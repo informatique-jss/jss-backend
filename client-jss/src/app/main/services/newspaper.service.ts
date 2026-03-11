@@ -28,4 +28,8 @@ export class NewspaperService extends AppRestService<Newspaper> {
   getSeeableNewspapersForCurrentUser() {
     return this.getList(new HttpParams(), "newspapers/list-seeable-newpapers") as any as Observable<number[]>;
   }
+
+  searchForKioskNewspapers(searchText: string, sorter: string) {
+    return this.getPagedList(new HttpParams().set("searchText", searchText).set("sortBy", sorter), "search/jss/newspapers");
+  }
 }

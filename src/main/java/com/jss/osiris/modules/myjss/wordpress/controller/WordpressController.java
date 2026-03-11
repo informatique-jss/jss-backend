@@ -61,6 +61,7 @@ import com.jss.osiris.modules.myjss.wordpress.service.AuthorService;
 import com.jss.osiris.modules.myjss.wordpress.service.CategoryService;
 import com.jss.osiris.modules.myjss.wordpress.service.JssCategoryService;
 import com.jss.osiris.modules.myjss.wordpress.service.MyJssCategoryService;
+import com.jss.osiris.modules.myjss.wordpress.service.NewspaperPageService;
 import com.jss.osiris.modules.myjss.wordpress.service.NewspaperService;
 import com.jss.osiris.modules.myjss.wordpress.service.PostService;
 import com.jss.osiris.modules.myjss.wordpress.service.PostViewService;
@@ -164,6 +165,9 @@ public class WordpressController {
 
 	@Autowired
 	NewspaperService newspaperService;
+
+	@Autowired
+	NewspaperPageService newspaperPageService;
 
 	@Autowired
 	EmployeeService employeeService;
@@ -1326,12 +1330,21 @@ public class WordpressController {
 	@GetMapping(inputEntryPoint + "/search/jss/post")
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Page<Post>> globalSearchForJssPostEntity(@RequestParam String searchText,
-			@RequestParam String sortBy, @RequestParam Boolean searchWithKiosk)
+			@RequestParam String sortBy)
 			throws OsirisException {
 		// TODO : leak premium
-		// TODO : faire pareil que le sort mais avec les articles kiosk
 		if (searchText != null && searchText.length() > 2)
 			return new ResponseEntity<Page<Post>>(postService.searchJssPosts(searchText, sortBy),
+					HttpStatus.OK);
+		return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/search/jss/newspapers")
+	@JsonView(JacksonViews.MyJssListView.class)
+	public ResponseEntity<Page<Newspaper>> globalSearchForNewspaper(@RequestParam String searchText,
+			@RequestParam String sortBy) throws OsirisException {
+		if (searchText != null && searchText.length() > 2)
+			return new ResponseEntity<Page<Newspaper>>(newspaperPageService.searchNewspapers(searchText, sortBy),
 					HttpStatus.OK);
 		return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
 	}

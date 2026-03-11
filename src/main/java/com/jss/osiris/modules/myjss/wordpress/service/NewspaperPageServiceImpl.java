@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.itextpdf.text.pdf.PdfReader;
@@ -34,6 +38,22 @@ public class NewspaperPageServiceImpl implements NewspaperPageService {
 
     public NewspaperPage addOrUpdateNewspaperPage(NewspaperPage newspaperPage) {
         return newspaperPageRepository.save(newspaperPage);
+    }
+
+    @Override
+    public Page<Newspaper> searchNewspapers(String searchText, String sortBy) {
+        Sort sort = Sort.unsorted();
+        if ("dateAsc".equalsIgnoreCase(sortBy))
+            sort = Sort.by("newspaper.date").ascending();
+        else if ("dateDesc".equalsIgnoreCase(sortBy))
+            sort = Sort.by("newspaper.date").descending();
+
+        Pageable pageable = PageRequest.of(0, 1000, sort);
+
+        if (searchText != null && searchText.trim().length() > 0)
+            return newspaperPageRepository.findByContent(searchText, pageable);
+
+        return newspaperService.getNewspapers(pageable);
     }
 
     @Transactional
@@ -73,7 +93,7 @@ public class NewspaperPageServiceImpl implements NewspaperPageService {
 
                 NewspaperPage page = new NewspaperPage();
 
-                // Nettoyage systématique : on supprime les caractères NULL et on trim
+                // Systematic cleaning: remove NULL characters and trim
                 page.setContent(cleanTextContent(textContent));
                 page.setPageNumber(i);
                 page.setNewspaper(newspaper);
@@ -81,10 +101,10 @@ public class NewspaperPageServiceImpl implements NewspaperPageService {
                 createdPages.add(page);
                 newspaperPageRepository.save(page);
 
-                // On flushe par lot pour la performance
+                // Flush in batches for performance
                 if (i % 50 == 0) {
                     entityManager.flush();
-                    entityManager.clear(); // Libère la mémoire du contexte de persistance
+                    entityManager.clear(); // Releases memory from the persistence context
                 }
             }
             return createdPages;
@@ -98,13 +118,11 @@ public class NewspaperPageServiceImpl implements NewspaperPageService {
     }
 
     private String cleanTextContent(String content) {
-        if (content == null) {
+        if (content == null)
             return "";
-        }
-        // Supprime le caractère NULL (\u0000) qui fait planter PostgreSQL
-        // On peut aussi en profiter pour supprimer d'autres caractères de contrôle non
-        // imprimables
+
+        // Removes the NULL character (\u0000) that causes PostgreSQL to fail
         return content.replace("\u0000", "")
-                .replace("\\u0000", ""); // Sécurité supplémentaire pour certaines lib de parsing
+                .replace("\\u0000", ""); // Additional security for certain parsing libraries
     }
 }
