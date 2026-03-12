@@ -84,7 +84,7 @@ public interface PostService {
 
         public Page<Post> searchPostsByMyJssCategory(String searchTitle, MyJssCategory myJssCategory, Pageable page);
 
-        public Page<Post> searchJssPosts(String searchText);
+        public Page<Post> searchJssPosts(String searchText, String sortBy);
 
         public Page<Post> searchPostsByCategory(String searchText, Category category,
                         Pageable pageableRequest);

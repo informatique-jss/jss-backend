@@ -9,8 +9,11 @@ import java.util.List;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.jss.osiris.libs.search.service.SearchService;
 import com.jss.osiris.modules.myjss.wordpress.model.Newspaper;
 import com.jss.osiris.modules.myjss.wordpress.model.Subscription;
 import com.jss.osiris.modules.myjss.wordpress.repository.NewspaperRepository;
@@ -25,8 +28,11 @@ public class NewspaperServiceImpl implements NewspaperService {
     @Autowired
     SubscriptionService subscriptionService;
 
-    public Newspaper addOrUpdateNewspaper(Newspaper Newspaper) {
-        return newspaperRepository.save(Newspaper);
+    @Autowired
+    SearchService searchService;
+
+    public Newspaper addOrUpdateNewspaper(Newspaper newspaper) {
+        return newspaperRepository.save(newspaper);
     }
 
     @Override
@@ -37,6 +43,11 @@ public class NewspaperServiceImpl implements NewspaperService {
     @Override
     public List<Newspaper> getNewspapers() {
         return IterableUtils.toList(newspaperRepository.findAll());
+    }
+
+    @Override
+    public Page<Newspaper> getNewspapers(Pageable pageable) {
+        return newspaperRepository.findAll(pageable);
     }
 
     @Override

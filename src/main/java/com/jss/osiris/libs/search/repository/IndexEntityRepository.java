@@ -27,14 +27,37 @@ public interface IndexEntityRepository extends QueryCacheCrudRepository<IndexEnt
         // searchQuery,
         // @Param("numberOfResult") Integer numberOfResult);
 
-        @Query(nativeQuery = true, value = "select entity_id, entity_type, text, created_date,id_employee_createdy_by,udpated_date,id_employee_updated_by from (SELECT index_entity.* , ts_rank_cd(ts_text, websearch_to_tsquery(:searchQuery)) AS rank FROM index_entity WHERE entity_type=:entityType and websearch_to_tsquery(:searchQuery)  @@ ts_text) t ORDER BY (case when entity_type in ('Tiers', 'Responsable') then 0.1 else 0 end) + rank desc LIMIT :numberOfResult")
+        @Query(nativeQuery = true, value = """
+                        select entity_id, entity_type, text, created_date,id_employee_createdy_by,udpated_date,id_employee_updated_by
+                        from (
+                                SELECT index_entity.* , ts_rank_cd(ts_text, websearch_to_tsquery(:searchQuery)) AS rank
+                                FROM index_entity
+                                WHERE entity_type=:entityType and websearch_to_tsquery(:searchQuery)  @@ ts_text
+                        ) t
+                        ORDER BY case
+                                when :sortBy='rank' then (case when entity_type in ('Tiers', 'Responsable') then 0.1 else 0 end)
+                                when :sortBy='dateAsc' then -EXTRACT(EPOCH FROM coalesce(created_date, '1970-01-01 00:00:00'))
+                                when :sortBy='dateDesc' then  EXTRACT(EPOCH FROM coalesce(created_date, '1970-01-01 00:00:00'))
+                        end
+                        + rank desc LIMIT :numberOfResult
+                        """)
         List<IndexEntity> searchForEntities(@Param("searchQuery") String searchQuery,
-                        @Param("entityType") String entityType,
+                        @Param("entityType") String entityType, @Param("sortBy") String sortBy,
                         @Param("numberOfResult") Integer numberOfResult);
 
-        @Query(nativeQuery = true, value = "select entity_id, entity_type, text, created_date,id_employee_createdy_by,udpated_date,id_employee_updated_by from (SELECT index_entity.* , similarity(text, :searchQuery)  AS rank FROM index_entity ) t where  entity_type=:entityType and text ILIKE '%'||  :searchQuery ||'%' ORDER BY (case when entity_type in ('Tiers', 'Responsable') then 0.1 else 0 end) + rank desc LIMIT :numberOfResult")
+        @Query(nativeQuery = true, value = """
+                        select entity_id, entity_type, text, created_date,id_employee_createdy_by,udpated_date,id_employee_updated_by
+                        from (SELECT index_entity.* , similarity(text, :searchQuery)  AS rank FROM index_entity ) t
+                        where  entity_type=:entityType and text ILIKE '%'||  :searchQuery ||'%'
+                        ORDER BY case
+                                when :sortBy='rank' then (case when entity_type in ('Tiers', 'Responsable') then 0.1 else 0 end)
+                                when :sortBy='dateAsc' then EXTRACT(EPOCH FROM COALESCE(created_date, '1970-01-01 00:00:00'))
+                                when :sortBy='dateDesc' then  -EXTRACT(EPOCH FROM COALESCE(created_date, '1970-01-01 00:00:00'))
+                                end
+                                + rank desc LIMIT :numberOfResult
+                        """)
         List<IndexEntity> searchForContainsSimilarEntities(@Param("searchQuery") String searchQuery,
-                        @Param("entityType") String entityType,
+                        @Param("entityType") String entityType, @Param("sortBy") String sortBy,
                         @Param("numberOfResult") Integer numberOfResult);
 
         // @Query(nativeQuery = true, value = "select entity_id, entity_type, text,

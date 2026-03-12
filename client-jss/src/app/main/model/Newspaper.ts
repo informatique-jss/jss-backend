@@ -1,6 +1,6 @@
 export interface Newspaper {
     id: number;
-    publicationDate: Date;
+    date: Date;
     titleText: string;
     newspaperCategory: string;
     newspaperIssueNumber: string;

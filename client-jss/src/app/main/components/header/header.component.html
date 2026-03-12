@@ -213,7 +213,6 @@
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </header>
@@ -231,27 +230,57 @@
         <h2 class="mb-4">Rechercher des articles du JSS</h2>
         <!-- Search form START -->
         <form class="position-relative w-100">
-          <div class="mb-2 input-group-lg mb-0 position-relative">
-            <!-- Search input -->
-            <input class="form-control mb-0 pe-6" type="text" name="search" placeholder="Que recherchez-vous ?"
-              autocomplete='off' autocomplete="nope" [(ngModel)]="searchText" (keydown)="searchEntities()"
-              [ngModelOptions]="{standalone: true}" autocorrect="off" autocapitalize="off" spellcheck="false">
+          <div class="row mt-0 mb-1 align-items-center">
+            <div class="col ms-1 mt-0 mb-2 form-check form-switch custom-toggle mt-2">
+              <input color="primary" type="checkbox" class="form-check-input" [(ngModel)]="isWithKiosk"
+                name="isWithKiosk" id="isWithKiosk" required="false" (change)="globalSearch()">
+              <label class="form-check-label" for="isWithKiosk">Inclure le Kiosque JSS ?</label>
+            </div>
+            <div class="col me-2">
+              <div class="select-wrapper row align-items-center">
+                <label for="sortSearch" class="col-auto mb-0 form-label">Trier par : </label>
+                <select class="col form-control" id="sortSearch" name="sortSearch" [(ngModel)]="sortSearch"
+                  (change)="globalSearch()">
+                  <option value="rank">
+                    Pertinence
+                  </option>
+                  <option value="dateAsc">
+                    Date croissante
+                  </option>
+                  <option value="dateDesc">
+                    Date décroissante
+                  </option>
+                </select>
+                <i class="bi-chevron-down chevron btn-search position-absolute start-93"></i>
+              </div>
+            </div>
           </div>
-          <div *ngIf="searchInProgress" class="position-absolute top-50 translate-middle-y end-4 me-4"
-            style="z-index: 2;">
-            <div class="spinner-border spinner-border-sm text-secondary" role="status" aria-hidden="true"></div>
+          <div class="mb-2 mb-0 position-relative">
+            <div class="input-group-lg">
+              <!-- Search input -->
+              <input class="form-control mb-0 pe-6" type="text" name="search" placeholder="Que recherchez-vous ?"
+                autocomplete='off' autocomplete="nope" [(ngModel)]="searchText" (keydown)="searchEntities()"
+                [ngModelOptions]="{standalone: true}" autocorrect="off" autocapitalize="off" spellcheck="false">
+            </div>
+            <div *ngIf="searchInProgress" class="position-absolute top-50 translate-middle-y end-4 me-4"
+              style="z-index: 2;">
+              <div class="spinner-border spinner-border-sm text-secondary" role="status" aria-hidden="true"></div>
+            </div>
+            <!-- Search button -->
+            <button type="button" class="position-absolute end-0 top-0 btn h-100 border-0">
+              <i class="bi bi-search display-8"></i>
+            </button>
           </div>
-          <!-- Search button -->
-          <button type="button" class="position-absolute end-0 top-0 btn h-100 border-0">
-            <i class="bi bi-search display-8"></i>
-          </button>
         </form>
         <!-- Search form END -->
-        <p class="small mb-0">ex : droit des sociétés, tribunal d'instance, TUP </p>
+        <p class="small mb-0">exemple : bâtonnier de Paris, trafic de stupéfiants, liquidation judiciaire...</p>
+
       </div>
     </div>
-    <div class="row">
-      <div *ngIf="posts" class="col-lg-8 mx-auto">
+    <div></div>
+    <div *ngIf="!searchInProgress" class="row">
+      <div *ngIf="posts" class="col-lg-5 mx-auto">
+        <h3 *ngIf="isWithKiosk && posts && posts.length > 0" class="">Les articles JSS</h3>
         <div *ngFor="let post of posts">
           <article data-aos="fade-up" class="blog-style2 card my-3">
             <div class="feature-image order-1 order-lg-0">
@@ -292,6 +321,51 @@
                       <span>Publié le {{post.date | literalDatePipe}}</span>
                     </span>
                   </div>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+      <!-- TODO : FAIRE LE LIEN VERS LE BON ARTICLE DU KIOSK (AVEC LA ROUTE ETC) -->
+      <div *ngIf="newspapers && newspapers.length > 0" class="col-lg-5 mx-auto">
+        <h3 *ngIf="isWithKiosk && newspapers && newspapers.length > 0" class="">Les archives du kiosque JSS</h3>
+        <div *ngFor="let newspaper of newspapers">
+          <article data-aos="fade-up" class="blog-style2 card my-3">
+
+            <div class="feature-image order-1 order-lg-0">
+              <div class="image-frame image-hover-style-1">
+                <a (click)="openPost()" [routerLink]='"/tochange/" + newspaper.newspaperIssueNumber'>
+
+                  <img *ngIf="newspaper.newspaperImage" class="lazyload w-100"
+                    style="object-fit: cover; aspect-ratio: 16/9; max-height: 250px;"
+                    [src]="'data:image/jpeg;base64,'+ newspaper.newspaperImage" alt="Couverture du magazine">
+
+                  <img *ngIf="!newspaper.newspaperImage" class="w-100"
+                    style="object-fit: cover; aspect-ratio: 16/9; max-height: 250px;"
+                    src="assets/images/kiosk/jss_11.jpg" alt="Couverture par défaut">
+
+                </a>
+              </div>
+            </div>
+
+            <div data-aos="fade-in" class="ms-3 card-body d-flex flex-column flex-lg-row align-items-stretch p-0">
+              <div class="order-0 order-lg-1 w-100">
+
+                <div class="row align-items-center ms-0 mb-1" *ngIf="newspaper.newspaperCategory">
+                  <div class="badge bg-info rounded-pill px-1 col-auto me-2 mb-0">{{newspaper.newspaperCategory == "JDS"
+                    ?
+                    "Journal de la Seine" : "Journal Spécial des Société"}}</div>
+                </div>
+
+                <h4>
+                  <a class="card-text-truncate" (click)="openPost()"
+                    [routerLink]='"/tochange/" + newspaper.newspaperIssueNumber'>
+                    Numéro {{newspaper.newspaperIssueNumber}} </a>
+                </h4>
+
+                <div class="">
+                  <span class="card-truncate-6-line text-muted">Publié en {{newspaper.date | date:'MMMM yyyy'}}</span>
                 </div>
               </div>
             </div>
