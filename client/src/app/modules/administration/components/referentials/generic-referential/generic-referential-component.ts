@@ -2,6 +2,7 @@ import { Directive, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Observable, Subscription } from 'rxjs';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
+import { SortTableElement } from 'src/app/modules/miscellaneous/model/SortTableElement';
 import { AppService } from 'src/app/services/app.service';
 import { IReferential } from '../../../model/IReferential';
 
@@ -122,5 +123,19 @@ export abstract class GenericReferentialComponent<T extends IReferential> implem
     let filterValueCast = (filterValue as HTMLInputElement);
     filterValue = filterValueCast.value.trim();
     this.searchText = filterValue.toLowerCase();
+  }
+
+  // filterPredicate(record: SortTableElement<T>, filter: any) {
+  //   if (filter == "")
+  //     return true;
+  //   let search: string = "";
+  //   search += record.rawValue.label;
+  //   return search.toLowerCase().indexOf(filter.toLowerCase()) >= 0;
+  // }
+
+  filterPredicate = (record: SortTableElement<T>, filter: any) => {
+    if (filter == "") return true;
+    let search: string = record.rawValue.label || "";
+    return search.toLowerCase().indexOf(filter.toLowerCase()) >= 0;
   }
 }
