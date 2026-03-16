@@ -114,7 +114,6 @@ public class MailSharedDelegate {
         properties.put("mail.imap.timeout", "60000");
         properties.put("mail.imap.connectionpoolsize", "5");
         properties.put("mail.imap.fetchsize", "819200");
-        properties.put("mail.debug", "true");
 
         Session session = Session.getInstance(properties, null);
         return session;
@@ -143,6 +142,12 @@ public class MailSharedDelegate {
             folderInboxAnnouncement = ensureOpen(folderInboxAnnouncement, inputOrderAnnouncementFolder);
             folderTrash = ensureOpen(folderTrash, "Deleted Items");
         } catch (MessagingException e) {
+            try {
+                store.close();
+            } catch (MessagingException e1) {
+                store = null;
+                throw new OsirisException(e, "IMAP Connection lost or failed");
+            }
             store = null;
             throw new OsirisException(e, "IMAP Connection lost or failed");
         }
