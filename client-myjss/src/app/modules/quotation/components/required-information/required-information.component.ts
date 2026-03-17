@@ -498,7 +498,8 @@ export class RequiredInformationComponent implements OnInit {
     if (newServiceIndex >= this.quotation.assoAffaireOrders[newAssoIndex].services.length) {
       newAssoIndex = newAssoIndex + 1;
       newServiceIndex = 0;
-      if (this.noticeTemplateService.getNoticeTemplateForm() && !this.noticeTemplateService.getNoticeTemplateForm()!.valid) {
+      if (this.noticeTemplateDescription && this.noticeTemplateDescription.isUsingTemplate && this.noticeTemplateService.getNoticeTemplateForm()
+        && !this.noticeTemplateService.getNoticeTemplateForm()!.valid) {
         this.serviceFieldTypeService.getServiceFieldTypes(undefined).subscribe(res => {
           this.serviceFieldTypes = res
           this.showToastOfInvalidControls();
@@ -767,6 +768,7 @@ export class RequiredInformationComponent implements OnInit {
     if (this.noticeTemplateDescription) {
       if (isRedactedByJss) {
         this.noticeTemplateDescription.isShowNoticeTemplate = false;
+        this.noticeTemplateDescription.isUsingTemplate = false;
         this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
         return;
       }
