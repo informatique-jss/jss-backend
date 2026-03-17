@@ -284,7 +284,7 @@ public class Tiers implements IAttachment, IId {
 
 	@ManyToMany
 	@JoinTable(name = "asso_tiers_group", joinColumns = @JoinColumn(name = "id_tiers"), inverseJoinColumns = @JoinColumn(name = "id_tiers_group"))
-	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.OsirisDetailedView.class })
 	private List<TiersGroup> tiersGroups;
 
 	@IndexedField
