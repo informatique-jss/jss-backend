@@ -53,3 +53,10 @@
   border-bottom-width: 3px;
   transition: transform 0.1s ease-in-out;
 }
+
+.updload-file-container {
+  border: 3px solid var(--ar-secondary);
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
