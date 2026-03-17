@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.ValidationHelper;
+import com.jss.osiris.libs.VoucherValidationHelper;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
@@ -68,6 +69,9 @@ public class CrmController {
 
         @Autowired
         CustomerOrderService customerOrderService;
+
+        @Autowired
+        VoucherValidationHelper voucherValidationHelper;
 
         @JsonView(JacksonViews.MyJssDetailedView.class)
         @GetMapping(inputEntryPoint + "/communication-preferences/communication-preference")
@@ -341,17 +345,22 @@ public class CrmController {
                                 HttpStatus.OK);
         }
 
+        @GetMapping(inputEntryPoint + "/voucher")
+        @JsonView(JacksonViews.OsirisListView.class)
+        public ResponseEntity<Voucher> getVoucherByCode(@RequestParam String codeVoucher)
+                        throws OsirisValidationException {
+                if (codeVoucher == null)
+                        throw new OsirisValidationException("codeVoucher");
+                return new ResponseEntity<Voucher>(
+                                voucherService.getVoucherByCode(codeVoucher.trim().replaceAll(" ", "")),
+                                HttpStatus.OK);
+        }
+
         @PostMapping(inputEntryPoint + "/voucher")
         @JsonView({ JacksonViews.OsirisListView.class })
         public ResponseEntity<Voucher> addOrUpdateVoucher(
                         @RequestBody Voucher voucher) throws OsirisValidationException, OsirisException {
-                if (voucher == null || (voucher.getDiscountRate() == null && voucher.getDiscountAmount() == null))
-                        throw new OsirisValidationException("amountVoucher");
-                if (voucher.getId() != null)
-                        validationHelper.validateReferential(voucher, true, "Voucher");
-                validationHelper.validateString(voucher.getCode(), true, "code");
-                validationHelper.validateBigDecimal(voucher.getDiscountAmount(), false, "discountAmount");
-
+                voucherValidationHelper.validateVoucher(voucher);
                 return new ResponseEntity<Voucher>(voucherService.addOrUpdateVoucher(voucher), HttpStatus.OK);
         }
 
