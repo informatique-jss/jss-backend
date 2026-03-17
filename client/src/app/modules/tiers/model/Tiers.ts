@@ -19,6 +19,7 @@ import { DiscoveringOrigin } from "./DiscoveringOrigin";
 import { Responsable } from "./Responsable";
 import { RffFrequency } from "./RffFrequency";
 import { TiersCategory } from "./TiersCategory";
+import { TiersGroup } from "./TiersGroup";
 import { TiersType } from "./TiersType";
 
 export interface Tiers extends IDocument, IAttachment {
@@ -43,6 +44,7 @@ export interface Tiers extends IDocument, IAttachment {
   competitors: Competitor[];
   tiersType: TiersType;
   tiersCategory: TiersCategory;
+  tiersGroups: TiersGroup[];
   civility: Civility;
   firstname: string | null;
   lastname: string | null;

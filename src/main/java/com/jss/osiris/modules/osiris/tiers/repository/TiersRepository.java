@@ -12,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.osiris.tiers.model.ITiersSearchResult;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
+import com.jss.osiris.modules.osiris.tiers.model.TiersGroup;
 import com.jss.osiris.modules.osiris.tiers.model.TiersType;
 
 import jakarta.persistence.QueryHint;
@@ -177,12 +178,14 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         )
                         and (:isNewTiers = false or t.isNewTiers = true)
                         and (:tiersCategory = '' or t.tiersCategory.label = :tiersCategory)
+                        and (:tiersGroup is null or (:tiersGroup is not null and :tiersGroup MEMBER OF t.tiersGroups) )
                         """)
         List<Tiers> searchForTiers(@Param("salesEmployeeId") Integer salesEmployeeId,
                         @Param("mail") String mail,
                         @Param("label") String label,
                         @Param("isNewTiers") Boolean isNewTiers,
-                        @Param("tiersCategory") String tiersCategory);
+                        @Param("tiersCategory") String tiersCategory,
+                        @Param("tiersGroup") TiersGroup tiersGroup);
 
         Page<Tiers> findByDenominationContainingIgnoreCaseOrFirstnameContainingIgnoreCaseOrLastnameContainingIgnoreCase(
                         String denomination, String firstname, String lastname, Pageable pageable);

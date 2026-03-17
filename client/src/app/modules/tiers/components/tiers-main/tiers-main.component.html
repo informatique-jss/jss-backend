@@ -60,6 +60,15 @@
                 [isDisabled]="!editMode" [isMandatory]="true" propertyName="tiersCategory"></select-tiers-category>
             </td>
             <td>
+              <chips-tiers-group [(model)]="tiers.tiersGroups" [form]="principalForm" propertyName="tiersGroups"
+                [isMandatory]="false" [isDisabled]="!editMode" label="Groupes"></chips-tiers-group>
+            </td>
+
+            <td>
+              <chips-special-offers [(model)]="tiers.specialOffers" [form]="principalForm" propertyName="specialOffers"
+                [isDisabled]="!editMode"></chips-special-offers>
+            </td>
+            <td>
               <autocomplete-employee [(model)]="tiers.salesEmployee" [isDisabled]="!editMode" label="Commercial"
                 [form]="principalForm" propertyName="salesEmployee" [isMandatory]="true"></autocomplete-employee>
             </td>

@@ -16,6 +16,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.tiers.model.ITiersSearchResult;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 import com.jss.osiris.modules.osiris.tiers.model.Tiers;
+import com.jss.osiris.modules.osiris.tiers.model.TiersGroup;
 import com.jss.osiris.modules.osiris.tiers.model.TiersSearch;
 import com.jss.osiris.modules.osiris.tiers.service.TiersService;
 
@@ -109,6 +110,12 @@ public class TiersValidationHelper {
         if (tiers.getSpecialOffers() != null) {
             for (SpecialOffer specialOffer : tiers.getSpecialOffers()) {
                 validationHelper.validateReferential(specialOffer, false, "specialOffer");
+            }
+        }
+
+        if (tiers.getTiersGroups() != null) {
+            for (TiersGroup tiersGroup : tiers.getTiersGroups()) {
+                validationHelper.validateReferential(tiersGroup, false, "tiersGroup");
             }
         }
 
