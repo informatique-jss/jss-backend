@@ -39,7 +39,7 @@
           <div class="row align-items-center">
             <!-- Les boutons pills -->
             <a *ngFor="let serviceType of selectedServiceTypes[indexAsso]"
-              class="btn rounded-pill mt-2 ms-1 mt-md-3 ms-md-0 col-auto pill text-wrap text-break"
+              class="btn rounded-pill mt-2 ms-1 mt-md-3 col-auto pill text-wrap text-break"
               [ngClass]="{'btn-secondary': selectedAssoIndex == indexAsso,'btn-outline-primary':selectedAssoIndex != indexAsso}"
               (click)="removeServiceFromCurrentAffaire(serviceType);$event.stopPropagation()">
               {{getFamilyLabelForService(serviceType)}} - {{serviceType.customLabel }} <i class="ai-cross ms-2"></i>
@@ -72,7 +72,8 @@
           <li [ngbNavItem]="serviceFamilyIndex" class="nav-item "
             *ngIf="quotation && selectedAssoIndex!=null && shouldDisplayServiceFamily(serviceFamily, quotation.assoAffaireOrders[selectedAssoIndex])">
             <button class="nav-link quotation-tabs" ngbNavLink (click)="selecteServiceFamily(serviceFamily)"> <i
-                class="{{serviceFamily.myJssIcon}} me-2"></i>{{serviceFamily.customLabel}}</button>
+                class="{{serviceFamily.myJssIcon}} me-2"></i>{{serviceFamily.customLabel + ' (' +
+              getNumberOfShownServices(serviceFamily.services)+')'}}</button>
             <ng-template ngbNavContent *ngIf="selectedServiceFamily">
               <div class="quotation-container">
                 <div class="pb-3 row">
@@ -85,9 +86,7 @@
                 <!-- Stacked checkboxes -->
                 <div class="d-flex flex-column flex-md-row flex-wrap">
                   <ng-container *ngFor="let service of selectedServiceFamily.services ; let indexService  =index">
-                    <div class="form-check service-item m-1"
-                      *ngIf="service.customLabel.toLocaleLowerCase().indexOf(searchtext.toLocaleLowerCase())>=0 && selectedAssoIndex!=null
-              && (quotation && selectedAssoIndex!=null && quotation.assoAffaireOrders[selectedAssoIndex].affaire.siret && service.isRequiringNewRegisteredAffaire || quotation && selectedAssoIndex!=null && !quotation.assoAffaireOrders[selectedAssoIndex].affaire.siret && service.isRequiringNewUnregisteredAffaire)">
+                    <div class="form-check service-item m-1" *ngIf="shouldDisplayService(service)">
                       <input class="form-check-input" type="checkbox" [id]="'ex-check-'+indexService"
                         (click)="removeServiceFromCurrentAffaire(service)"
                         *ngIf="getServiceIndexInCurrentAffaire(service)>=0" checked>
