@@ -48,6 +48,7 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
                         " 	t.lastname)) tiersLabel, " +
                         " 	tc.label as tiersCategory, " +
                         " 	t.id as tiersId, " +
+                        " 	tt.label as tiersTypeLabel, " +
                         " 	r.id as responsableId, " +
                         " 	concat(r.firstname, " +
                         " 	' ', " +
@@ -111,6 +112,8 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
                         " 	bt.id = bi.id_billing_type " +
                         " left join nbr_for on " +
                         " 	nbr_for.id_responsable = r.id left join confrere cf on cf.id_responsable = r.id " +
+                        "  left join tiers_type tt on " +
+                        "         tt.id = t.id_tiers_type " +
                         " where  " +
                         "  ( :tiersId =0 or t.id = :tiersId) " +
                         " and  ( :salesEmployeeId =0 or e2.id = :salesEmployeeId) " +
@@ -129,6 +132,7 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
                         " 	' ', " +
                         " 	r.lastname) , " +
                         " 	tc2.label , " +
+                        " 	tt.label , " +
                         " 	coalesce(concat(e2.firstname, " +
                         " 	' ', " +
                         " 	e2.lastname)," +
