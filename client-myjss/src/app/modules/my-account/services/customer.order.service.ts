@@ -42,6 +42,10 @@ export class CustomerOrderService extends AppRestService<CustomerOrder> {
     this.downloadGet(new HttpParams().set("customerOrderId", order.id + ""), "attachment/invoice/download");
   }
 
+  downloadLastInvoiceAndCreditNote(order: CustomerOrder) {
+    this.downloadGet(new HttpParams().set("customerOrderId", order.id + ""), "attachment/invoice-credit-note/download");
+  }
+
   getCustomerOrderForQuotation(idQuotation: number) {
     return this.get(new HttpParams().set("idQuotation", idQuotation), 'quotation/order');
   }

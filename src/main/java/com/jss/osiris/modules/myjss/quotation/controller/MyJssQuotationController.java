@@ -23,6 +23,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -757,6 +758,26 @@ public class MyJssQuotationController {
           return downloadAttachment(invoice.getAttachments().get(0).getId());
 
     return new ResponseEntity<byte[]>(null, new HttpHeaders(), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/attachment/invoice-credit-note/download")
+  @Transactional
+  public ResponseEntity<byte[]> downloadAttachmentLastInvoiceAndCreditNote(
+      @RequestParam("customerOrderId") Integer customerOrderId)
+      throws OsirisValidationException, OsirisException {
+
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+    if (customerOrder == null || !myJssQuotationValidationHelper.canSeeQuotation(customerOrder))
+      return new ResponseEntity<byte[]>(null, new HttpHeaders(), HttpStatus.OK);
+
+    byte[] zipBytes = attachmentService.downloadLastInvoiceWithCreditNoteAsZip(customerOrder);
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("filename", "documents.zip");
+    headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
+    headers.setContentLength(zipBytes.length);
+    headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
+    return new ResponseEntity<byte[]>(zipBytes, headers, HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/attachment/asso-service-document")
@@ -2306,7 +2327,7 @@ public class MyJssQuotationController {
     detectFlood(request);
     return new ResponseEntity<Notice>(announcementService.getNoticeFromFile(file), HttpStatus.OK);
   }
-  
+
   @GetMapping(inputEntryPoint + "/formalite-guichet-unique/dates-dtos")
   public ResponseEntity<List<GuichetUniqueDepositInfoDto>> getGuichetUniqueDatesDtosForService(
       @RequestParam Integer serviceId, HttpServletRequest request)

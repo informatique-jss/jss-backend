@@ -1,6 +1,6 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { NgbAccordionModule, NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAccordionModule, NgbDropdownModule, NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_BEING_PROCESSED, CUSTOMER_ORDER_STATUS_BILLED, CUSTOMER_ORDER_STATUS_OPEN, CUSTOMER_ORDER_STATUS_PAYED, CUSTOMER_ORDER_STATUS_REQUIRE_ATTENTION, CUSTOMER_ORDER_STATUS_TO_BILLED, CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT, CUSTOMER_ORDER_WITH_UNREAD_COMMENTS } from '../../../../libs/Constants';
 import { capitalizeName, formatDateFrance } from '../../../../libs/FormatHelper';
@@ -11,16 +11,19 @@ import { OsiTooltipComponent } from "../../../miscellaneous/components/osi-toolt
 import { Responsable } from '../../../profile/model/Responsable';
 import { ResponsableService } from '../../../profile/services/responsable.service';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
+import { Attachment } from '../../model/Attachment';
 import { CustomerOrder } from '../../model/CustomerOrder';
 import { InvoiceLabelResult } from '../../model/InvoiceLabelResult';
 import { MailComputeResult } from '../../model/MailComputeResult';
 import { Service } from '../../model/Service';
 import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
+import { AttachmentService } from '../../services/attachment.service';
 import { CustomerOrderCommentService } from '../../services/customer.order.comment.service';
 import { CustomerOrderService } from '../../services/customer.order.service';
 import { InvoiceLabelResultService } from '../../services/invoice.label.result.service';
 import { MailComputeResultService } from '../../services/mail.compute.result.service';
 import { QuotationService } from '../../services/quotation.service';
+import { UploadAttachmentService } from '../../services/upload.attachment.service';
 
 declare var bootstrap: any;
 
@@ -29,9 +32,10 @@ declare var bootstrap: any;
   templateUrl: './orders.component.html',
   styleUrls: ['./orders.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, NgbDropdownModule, NgbAccordionModule, OsiTooltipComponent]
+  imports: [SHARED_IMPORTS, NgbDropdownModule, NgbAccordionModule, OsiTooltipComponent, NgbTooltipModule]
 })
 export class OrdersComponent implements OnInit {
+
   @ViewChild('cancelQuotationModal') cancelQuotationModal!: TemplateRef<any>;
   cancelQuotationModalInstance: any | undefined;
 
@@ -51,13 +55,18 @@ export class OrdersComponent implements OnInit {
   responsablesForCurrentUser: Responsable[] | undefined;
   responsableCheck: boolean[] = [];
   selectAllResponsable: boolean = true;
+  expandedOrder: CustomerOrder | undefined;
 
   hideSeeMore: boolean = false;
   isFirstLoading: boolean = false;
 
   capitalizeName = capitalizeName;
   CUSTOMER_ORDER_STATUS_BILLED = CUSTOMER_ORDER_STATUS_BILLED;
+  CUSTOMER_ORDER_STATUS_PAYED = CUSTOMER_ORDER_STATUS_PAYED;
+  CUSTOMER_ORDER_STATUS_TO_BILLED = CUSTOMER_ORDER_STATUS_TO_BILLED;
   CUSTOMER_ORDER_STATUS_DRAFT = CUSTOMER_ORDER_STATUS_OPEN;
+  CUSTOMER_ORDER_STATUS_BEING_PROCESSED = CUSTOMER_ORDER_STATUS_BEING_PROCESSED;
+  CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT = CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT;
 
   ordersAssoAffaireOrders: AssoAffaireOrder[][] = [];
   ordersInvoiceLabelResult: InvoiceLabelResult[] = [];
@@ -75,7 +84,9 @@ export class OrdersComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private modalService: NgbModal,
     private quotationService: QuotationService,
-    private responsableService: ResponsableService
+    private responsableService: ResponsableService,
+    private attachementService: AttachmentService,
+    private uploadAttachmentService: UploadAttachmentService,
   ) { }
 
   ngOnInit() {
@@ -206,6 +217,7 @@ export class OrdersComponent implements OnInit {
     if (!this.ordersAssoAffaireOrders[order.id]) {
       this.assoAffaireOrderService.getAssoAffaireOrdersForCustomerOrder(order).subscribe(response => {
         this.ordersAssoAffaireOrders[order.id] = response;
+
       })
       this.invoiceLabelResultService.getInvoiceLabelComputeResultForCustomerOrder(order.id).subscribe(response => {
         this.ordersInvoiceLabelResult[order.id] = response;
@@ -214,6 +226,11 @@ export class OrdersComponent implements OnInit {
         this.ordersMailComputeResult[order.id] = response;
       })
     }
+
+    this.expandedOrder = undefined;
+    this.customerOrderService.getCustomerOrder(order.id).subscribe(response => {
+      this.expandedOrder = response;
+    });
   }
 
   quotationToCancel: CustomerOrder | undefined;
@@ -324,6 +341,39 @@ export class OrdersComponent implements OnInit {
         this.responsableCheck[respo.id] = this.selectAllResponsable;
 
     this.changeFilter();
+  }
+
+  resumeDraft(idOrder: number, event: any) {
+    this.appService.openRoute(event, "quotation/resume/order/" + idOrder, undefined);
+  }
+
+  goToJssAnnouncement(service: Service, event: any) {
+    if (service && service.jssAnnouncementId)
+      this.appService.openJssRoute(event, "announcement/" + service.jssAnnouncementId, true);
+  }
+
+  getPurchaseOrderAttachment(order: CustomerOrder) {
+    if (order && order.id)
+      this.attachementService.getPurchaseOrderAttachment(order.id).subscribe(response => {
+        if (response)
+          this.downloadAttachment(response);
+      });
+    else
+      this.appService.displayToast("Aucun bon de commande trouvé", false, "Erreur", 15000);
+  }
+
+  downloadAttachment(attachment: Attachment) {
+    this.uploadAttachmentService.downloadAttachment(attachment);
+  }
+
+  downloadInvoice(order: CustomerOrder) {
+    if (order)
+      this.customerOrderService.downloadInvoice(order);
+  }
+
+  downloadLastInvoiceAndCreditNote(order: CustomerOrder) {
+    if (order)
+      this.customerOrderService.downloadLastInvoiceAndCreditNote(order);
   }
 }
 
