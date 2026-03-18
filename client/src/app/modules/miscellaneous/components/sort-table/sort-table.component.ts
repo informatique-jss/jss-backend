@@ -170,27 +170,14 @@ export class SortTableComponent<T> implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    // S'assurer que si le prédicat change, on re-paramètre le sorter
-    if (changes['values'] || changes['filterPredicate']) {
+    if (changes.values != undefined && this.values) {
       this.refreshValues();
       this.setSorter();
     }
-
-    if (changes['filterText']) {
+    if (changes.filterText != undefined && this.values) {
       this.applyFilter();
     }
-    console.log('Filter Predicate received:', this.filterPredicate);
   }
-
-  // ngOnChanges(changes: SimpleChanges) {
-  //   if (changes.values != undefined && this.values) {
-  //     this.refreshValues();
-  //     this.setSorter();
-  //   }
-  //   if (changes.filterText != undefined && this.values) {
-  //     this.applyFilter();
-  //   }
-  // }
 
   setSorter() {
     setTimeout(() => {
@@ -220,15 +207,6 @@ export class SortTableComponent<T> implements OnInit {
         }
         return "";
       };
-
-      // this.dataSource.filterPredicate = (data: SortTableElement<T>, filter) => {
-      //   if (!this.filterPredicate) {
-      //     const dataStr = JSON.stringify(data).toLowerCase();
-      //     return dataStr.indexOf(filter) != -1;
-      //   } else {
-      //     return this.filterPredicate(data, filter);
-      //   }
-      // }
 
       this.dataSource.filterPredicate = (data: SortTableElement<T>, filter: string) => {
         // On vérifie dynamiquement l'existence de l'input à chaque exécution du filtre

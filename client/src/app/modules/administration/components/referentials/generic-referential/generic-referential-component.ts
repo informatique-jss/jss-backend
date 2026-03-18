@@ -19,10 +19,13 @@ export abstract class GenericReferentialComponent<T extends IReferential> implem
   @Input() cloneEvent: Observable<void> | undefined;
   cloneEventSubscription: Subscription | undefined;
   @Output() selectedEntityChange: EventEmitter<T> = new EventEmitter<T>();
+  @Input() filterPredicate: ((record: SortTableElement<T>, filter: string) => boolean) | undefined;
   entities: T[] = [] as Array<T>;
   displayedColumns: SortTableColumn<T>[] = [];
   searchText: string | undefined;
   idRowSelected: number | undefined;
+
+  // Définition par défaut (peut être surchargée par l'enfant)
 
   constructor(
     private formBuilder: FormBuilder,
@@ -125,17 +128,4 @@ export abstract class GenericReferentialComponent<T extends IReferential> implem
     this.searchText = filterValue.toLowerCase();
   }
 
-  // filterPredicate(record: SortTableElement<T>, filter: any) {
-  //   if (filter == "")
-  //     return true;
-  //   let search: string = "";
-  //   search += record.rawValue.label;
-  //   return search.toLowerCase().indexOf(filter.toLowerCase()) >= 0;
-  // }
-
-  filterPredicate = (record: SortTableElement<T>, filter: any) => {
-    if (filter == "") return true;
-    let search: string = record.rawValue.label || "";
-    return search.toLowerCase().indexOf(filter.toLowerCase()) >= 0;
-  }
 }
