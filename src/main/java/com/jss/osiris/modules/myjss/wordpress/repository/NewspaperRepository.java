@@ -3,6 +3,8 @@ package com.jss.osiris.modules.myjss.wordpress.repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -13,4 +15,6 @@ public interface NewspaperRepository extends QueryCacheCrudRepository<Newspaper,
 
     @Query("SELECT n FROM Newspaper n WHERE n.date >= :start AND n.date < :end")
     List<Newspaper> findByDateRange(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+    Page<Newspaper> findAll(Pageable pageable);
 }
