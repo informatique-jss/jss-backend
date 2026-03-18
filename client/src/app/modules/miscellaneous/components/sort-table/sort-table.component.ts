@@ -209,7 +209,6 @@ export class SortTableComponent<T> implements OnInit {
       };
 
       this.dataSource.filterPredicate = (data: SortTableElement<T>, filter: string) => {
-        // On vérifie dynamiquement l'existence de l'input à chaque exécution du filtre
         if (this.filterPredicate) {
           return this.filterPredicate(data, filter);
         }
