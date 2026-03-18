@@ -979,7 +979,13 @@ public class AnnouncementServiceImpl implements AnnouncementService {
                                     announcement.setAffaireSiren(announcement.getProvisions().get(0).getService()
                                             .getAssoAffaireOrder().getAffaire().getSiren());
                             }
+
+                if (Boolean.TRUE.equals(announcement.getIsAnonymised()) && announcement.getAnonymisedNotice() != null
+                        && !announcement.getAnonymisedNotice().isEmpty()) {
+                    announcement.setNotice(null);
+                }            
             }
+
         return announcements;
     }
 
