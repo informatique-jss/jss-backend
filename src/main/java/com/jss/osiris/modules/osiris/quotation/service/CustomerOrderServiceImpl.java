@@ -574,10 +574,10 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 if (customerOrder.getCustomerOrderStatus().getCode()
                         .equals(CustomerOrderStatus.WAITING_DEPOSIT)) {
                     mailHelper.sendCustomerOrderInProgressToCustomer(customerOrder, false, null);
-                    if (customerOrder.getCustomerOrderOrigin().getId()
-                            .equals(constantService.getCustomerOrderOriginMyJss().getId()))
-                        googleAnalyticsService.trackPurchase(customerOrder);
                 }
+                if (customerOrder.getCustomerOrderOrigin().getId()
+                        .equals(constantService.getCustomerOrderOriginMyJss().getId()))
+                    googleAnalyticsService.trackPurchase(customerOrder);
             }
         }
 
