@@ -2,7 +2,6 @@ import { Directive, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Observable, Subscription } from 'rxjs';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
-import { SortTableElement } from 'src/app/modules/miscellaneous/model/SortTableElement';
 import { AppService } from 'src/app/services/app.service';
 import { IReferential } from '../../../model/IReferential';
 
@@ -19,13 +18,10 @@ export abstract class GenericReferentialComponent<T extends IReferential> implem
   @Input() cloneEvent: Observable<void> | undefined;
   cloneEventSubscription: Subscription | undefined;
   @Output() selectedEntityChange: EventEmitter<T> = new EventEmitter<T>();
-  @Input() filterPredicate: ((record: SortTableElement<T>, filter: string) => boolean) | undefined;
   entities: T[] = [] as Array<T>;
   displayedColumns: SortTableColumn<T>[] = [];
   searchText: string | undefined;
   idRowSelected: number | undefined;
-
-  // Définition par défaut (peut être surchargée par l'enfant)
 
   constructor(
     private formBuilder: FormBuilder,
