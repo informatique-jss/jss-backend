@@ -97,6 +97,7 @@ import { ReferentialSpecialOfferComponent } from '../referentials/referential-sp
 import { ReferentialSubscriptionPeriodTypeComponent } from '../referentials/referential-subscription-period-type/referential-subscription-period-type.component';
 import { ReferentialTiersCategoryComponent } from '../referentials/referential-tiers-category/referential-tiers-category.component';
 import { ReferentialTiersFollowupTypeComponent } from '../referentials/referential-tiers-followup-type/referential-tiers-followup-type.component';
+import { ReferentialTiersGroupComponent } from '../referentials/referential-tiers-group/referential-tiers-group.component';
 import { ReferentialTiersTypeComponent } from '../referentials/referential-tiers-type/referential-tiers-type.component';
 import { ReferentialTooltipEntryComponent } from '../referentials/referential-tooltip-entry/referential-tooltip-entry.component';
 import { ReferentialTransfertFundsTypeComponent } from '../referentials/referential-transfert-fund-type/referential-transfert-fund-type.component';
@@ -231,7 +232,8 @@ const routes: Routes = [
     ReferentialCompanySizeComponent,
     ReferentialPaySlipLineTypeComponent,
     ReferentialTooltipEntryComponent,
-    ReferentialRejectionCauseComponent
+    ReferentialRejectionCauseComponent,
+    ReferentialTiersGroupComponent
   ], exports: [LogComponent,
     CompetentAuthorityComponent,
     ProviderComponent
