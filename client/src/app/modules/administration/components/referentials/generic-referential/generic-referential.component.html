@@ -7,7 +7,7 @@
   <div class="table-container-scroll mat-elevation-z2">
     <sort-table [columns]="displayedColumns" [values]="entities" tableName="Référentiel" [noMaxHeight]="true"
       [noPaddingBottom]="true" (onRowClick)="selectEntity($event)" [idRowSelected]="idRowSelected"
-      [filterText]="searchText" [filterPredicate]="filterPredicate">
+      [filterText]="searchText">
     </sort-table>
   </div>
 </div>
