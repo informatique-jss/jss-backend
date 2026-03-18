@@ -1,7 +1,5 @@
 package com.jss.osiris.modules.osiris.profile.service;
 
-import java.security.SecureRandom;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -10,7 +8,6 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.codec.Hex;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,10 +47,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Autowired
     DailyConnexionService dailyConnexionService;
-
-    private final SecureRandom random = new SecureRandom();
-
-    private final long TOKEN_EXPIRATION_LENGTH_MINUTES = 15;
 
     @Override
     public Employee getEmployee(Integer id) {
@@ -230,14 +223,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public void sendTokenToResponsable(Responsable responsable, String overrideMail, Boolean isFromQuotation)
             throws OsirisException {
         responsable = responsableService.getResponsable(responsable.getId());
-
-        byte bytes[] = new byte[512];
-        random.nextBytes(bytes);
-        String token = String.valueOf(Hex.encode(bytes));
-
         responsable.setIsComingFromQuotation(isFromQuotation);
-        responsable.setLoginToken(token);
-        responsable.setLoginTokenExpirationDateTime(LocalDateTime.now().plusMinutes(TOKEN_EXPIRATION_LENGTH_MINUTES));
         responsableService.addOrUpdateResponsable(responsable);
         mailHelper.sendNewTokenMail(responsable, overrideMail);
     }
