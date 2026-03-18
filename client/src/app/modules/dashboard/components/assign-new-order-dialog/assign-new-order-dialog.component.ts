@@ -36,12 +36,31 @@ export class AssignNewOrderDialogComponent implements OnInit {
 
   ngOnInit() {
     this.isLoading = true;
-    this.orderService.assignNewCustomerOrderToOrderForInsertions().subscribe(response => {
-      if (this.isInsertionEmployee && response) {
-        this.isLoading = false;
-        this.foundOrder = response.id;
-      }
-      else {
+
+    this.employeeService.getCurrentEmployee().subscribe(employee => {
+      this.currentEmployee = employee;
+      this.isInsertionEmployee = this.activeDirectoryGroupService.isEmployeeInGroupList(this.currentEmployee, [this.constantService.getActiveDirectoryGroupInsertions()])
+
+      if (this.isInsertionEmployee) {
+        this.orderService.assignNewCustomerOrderToOrderForInsertions().subscribe(response => {
+          if (response) {
+            this.isLoading = false;
+            this.foundOrder = response.id;
+          }
+          else {
+            this.nextStep();
+            this.customerOrderAssignationService.getNextPriorityOrderForFond().subscribe(priorityFond => {
+              if (priorityFond) {
+                this.isLoading = false;
+                this.foundOrder = priorityFond;
+              } else {
+                this.nextStep();
+              }
+            })
+          }
+        });
+      } else {
+        this.nextStep();
         this.customerOrderAssignationService.getNextPriorityOrderForFond().subscribe(priorityFond => {
           if (priorityFond) {
             this.isLoading = false;
@@ -51,11 +70,6 @@ export class AssignNewOrderDialogComponent implements OnInit {
           }
         })
       }
-    });
-
-    this.employeeService.getCurrentEmployee().subscribe(employee => {
-      this.currentEmployee = employee;
-      this.isInsertionEmployee = this.activeDirectoryGroupService.isEmployeeInGroupList(this.currentEmployee, [this.constantService.getActiveDirectoryGroupInsertions()])
     })
   }
 

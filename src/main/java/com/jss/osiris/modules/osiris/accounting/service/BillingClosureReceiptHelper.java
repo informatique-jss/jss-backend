@@ -260,7 +260,7 @@ public class BillingClosureReceiptHelper {
                                 if (!payment.getIsCancelled())
                                     allInputs.add(payment);
                         BigDecimal remainingToPay = invoiceService.getRemainingAmountToPayForInvoice(invoice);
-                        if (remainingToPay.compareTo(new BigDecimal(0)) > 0) {
+                        if (remainingToPay.compareTo(invoice.getTotalPrice()) < 0) {
                             RemainingToPay valueRemaining = new RemainingToPay();
                             valueRemaining.setCreatedDate(LocalDateTime.now());
                             valueRemaining.setRemainingToPay(remainingToPay);
@@ -365,7 +365,7 @@ public class BillingClosureReceiptHelper {
                                                             .indexOf(payment) == invoice.getPayments().size()
                                                                     - 1));
                         }
-                        if (remainingToPay.compareTo(new BigDecimal(0)) > 0) {
+                        if (remainingToPay.compareTo(invoice.getTotalPrice()) < 0) {
                             RemainingToPay valueRemaining = new RemainingToPay();
                             valueRemaining.setCreatedDate(LocalDateTime.now());
                             valueRemaining.setRemainingToPay(remainingToPay);
@@ -529,9 +529,9 @@ public class BillingClosureReceiptHelper {
         BillingClosureReceiptValue value = new BillingClosureReceiptValue();
         value.setDisplayBottomBorder(true);
         value.setDisplaySmallTopBorder(true);
-        value.setDebitAmount(remainingToPay.getRemainingToPay());
+        value.setCreditAmount(remainingToPay.getRemainingToPay());
         value.setEventDescription("Reste à payer");
-        value.setCreditAmount(null);
+        value.setDebitAmount(null);
         value.setEventDateTime(remainingToPay.getCreatedDate());
         value.setEventDateString("");
 

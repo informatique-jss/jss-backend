@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.core.exc.StreamWriteException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.jss.osiris.libs.audit.model.Audit;
+import com.jss.osiris.libs.audit.service.AuditService;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.myjss.miscellaneous.model.Sitemap;
 import com.jss.osiris.modules.myjss.miscellaneous.model.UrlEntry;
@@ -69,6 +71,9 @@ public class SitemapServiceImpl implements SitemapService {
     SerieService serieService;
 
     @Autowired
+    AuditService auditService;
+
+    @Autowired
     PublishingDepartmentService publishingDepartmentService;
 
     private static final int MAX_URLS_PER_FILE = 45000;
@@ -107,8 +112,18 @@ public class SitemapServiceImpl implements SitemapService {
 
             for (int j = fromIndex; j < toIndex; j++) {
                 Announcement announcement = announcements.get(j);
+                LocalDate lastModDate = announcement.getPublicationDate();
+
+                if (Boolean.TRUE.equals(announcement.getIsAnonymised())) {
+                    List<Audit> noticeAudit = auditService.getAuditForEntityAndFieldName(
+                            Announcement.class.getSimpleName(),
+                            announcement.getId(), announcement.getAnonymisedNotice(), "anonymisedNotice");
+                    if (noticeAudit != null && !noticeAudit.isEmpty()) {
+                        lastModDate = noticeAudit.get(0).getDatetime().toLocalDate();
+                    }
+                }
                 entries.add(new UrlEntry(jssMediaEntryPoint + "/announcement/" + announcement.getId(),
-                        announcement.getPublicationDate().toString(), "yearly", "0.0"));
+                        lastModDate.toString(), "yearly", "0.0"));
             }
 
             Sitemap sitemap = new Sitemap(entries);

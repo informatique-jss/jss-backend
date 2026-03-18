@@ -86,6 +86,10 @@ export class AnnouncementComponent implements OnInit {
   initialNoticeValue: string = "";
   initialHeaderValue: string = "";
 
+  initialAnonymisedNoticeValue: string = "";
+
+
+
   constructor(private formBuilder: UntypedFormBuilder,
     private characterPriceService: CharacterPriceService,
     private constantService: ConstantService,
@@ -158,6 +162,7 @@ export class AnnouncementComponent implements OnInit {
       this.updateCharacterPrice();
       this.initialNoticeValue = this.announcement.notice;
       this.initialHeaderValue = this.announcement.noticeHeader;
+      this.initialAnonymisedNoticeValue = this.announcement.anonymisedNotice;
     }
   }
 
@@ -170,6 +175,7 @@ export class AnnouncementComponent implements OnInit {
 
 
   ckEditorNotice = ClassicEditor;
+  ckEditorAnonymisedNotice = ClassicEditor;
   ckEditorHeader = ClassicEditor;
   config = {
     toolbar: ['undo', 'redo', '|', 'fontFamily', 'fontSize', 'bold', 'italic', 'underline', 'fontColor', 'fontBackgroundColor', '|',
@@ -260,6 +266,10 @@ export class AnnouncementComponent implements OnInit {
     this.noticeChangeFunction();
   }
 
+  onAnonymisedNoticeChange(event: ChangeEvent) {
+    this.announcement.anonymisedNotice = event.editor.getData();
+  }
+
   onNoticeHeaderChange(event: ChangeEvent) {
     this.announcement.noticeHeader = event.editor.getData();
     this.noticeChangeFunction();
@@ -278,16 +288,19 @@ export class AnnouncementComponent implements OnInit {
 
   cleanNotice() {
     // remove img tag
-    if (this.announcement.notice) {
-      this.announcement.notice = this.announcement.notice.replace(/<img[^>]*>/g, "");
-      this.announcement.notice = this.announcement.notice.replace(/&quot;/g, "'");
-      this.announcement.notice = this.announcement.notice.replace(/<wbr>/g, "");
-    }
-    if (this.announcement.noticeHeader) {
-      this.announcement.noticeHeader = this.announcement.noticeHeader.replace(/<img[^>]*>/g, "");
-      this.announcement.notice = this.announcement.notice.replace(/&quot;/g, "'");
-      this.announcement.notice = this.announcement.notice.replace(/<wbr>/g, "");
-    }
+
+    this.announcement.notice = this.sanitizeText(this.announcement.notice);
+    this.announcement.anonymisedNotice = this.sanitizeText(this.announcement.anonymisedNotice);
+    this.announcement.noticeHeader = this.sanitizeText(this.announcement.noticeHeader);
+  }
+
+  private sanitizeText(text: string) {
+
+    if (!text) return text;
+    return text
+      .replace(/<img[^>]*>/g, "")
+      .replace(/&quot;/g, "'")
+      .replace(/<wbr>/g, "");
   }
 
   updateHeaderFree() {

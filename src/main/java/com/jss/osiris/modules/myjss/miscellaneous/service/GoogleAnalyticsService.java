@@ -14,21 +14,27 @@ import com.jss.osiris.modules.osiris.quotation.model.ServiceType;
 @Service
 public interface GoogleAnalyticsService {
 
-        public void trackLoginLogout(String eventName, String pageName, String pageType, String gaClientId)
+        public void trackLoginLogout(String eventName, String pageName, String pageType, String gaClientId,
+                        String gaSessionId)
                         throws OsirisException;
 
-        public void trackPurchase(CustomerOrder customerOrder) throws OsirisException;
+        public void trackPurchase(CustomerOrder customerOrder)
+                        throws OsirisException;
 
         public void trackViewItemList(List<ServiceType> serviceTypes, Affaire affaire, ServiceFamily itemList,
-                        String gaClientId) throws OsirisException;
+                        String gaClientId, String gaSessionId) throws OsirisException;
 
-        public void trackAddToCart(ServiceType serviceType, Affaire affaire, String gaClientId) throws OsirisException;
-
-        public void trackRemoveFromCart(ServiceType serviceTypes, Affaire affaire, String gaClientId)
+        public void trackAddToCart(ServiceType serviceType, Affaire affaire, String gaClientId, String gaSessionId)
                         throws OsirisException;
 
-        public void trackBeginCheckout(IQuotation quotation, String gaClientId) throws OsirisException;
+        public void trackRemoveFromCart(ServiceType serviceTypes, Affaire affaire, String gaClientId,
+                        String gaSessionId)
+                        throws OsirisException;
 
-        public void trackAddPaymentInfo(IQuotation quotation, String gaClientId) throws OsirisException;
+        public void trackBeginCheckout(IQuotation quotation, String gaClientId, String gaSessionId)
+                        throws OsirisException;
+
+        public void trackAddPaymentInfo(IQuotation quotation, String gaClientId, String gaSessionId)
+                        throws OsirisException;
 
 }

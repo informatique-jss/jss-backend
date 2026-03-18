@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -640,6 +641,27 @@ public class AttachmentServiceImpl implements AttachmentService {
         }
 
         return outArray;
+    }
+
+    @Override
+    public byte[] downloadLastInvoiceWithCreditNoteAsZip(CustomerOrder customerOrder) throws OsirisException {
+        if (customerOrder.getInvoices() != null) {
+            List<Invoice> sortedInvoices = customerOrder.getInvoices().stream()
+                    .sorted(Comparator.comparing(Invoice::getCreatedDate).reversed()).toList();
+
+            for (Invoice invoice : sortedInvoices)
+                if (invoice.getCreditNote() != null) {
+                    Invoice creditNoteInvoice = invoice.getCreditNote();
+                    List<Integer> attachmentsToDownload = invoice.getAttachments().stream().map(Attachment::getId)
+                            .collect(Collectors.toCollection(ArrayList::new));
+                    List<Integer> attachmentsCreditNote = new ArrayList<>(creditNoteInvoice.getAttachments().stream()
+                            .map(Attachment::getId).toList());
+                    attachmentsToDownload.addAll(attachmentsCreditNote);
+
+                    return downloadAllAttachmentsAsZip(attachmentsToDownload);
+                }
+        }
+        return null;
     }
 
     public Attachment getPurchaseOrderAttachment(CustomerOrder customerOrder) throws OsirisException {

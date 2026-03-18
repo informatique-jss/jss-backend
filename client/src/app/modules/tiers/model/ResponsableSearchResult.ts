@@ -5,6 +5,7 @@ export interface ResponsableSearchResult {
   responsableCategory: string;
   responsableId: number;
   tiersId: number;
+  tiersTypeLabel: string;
   salesEmployeeLabel: string;
   salesEmployeeId: number;
   firstOrderDay: Date;

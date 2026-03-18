@@ -15,4 +15,5 @@ export interface CustomerOrder extends IQuotation {
   affairesList: string;
   servicesList: string;
   hasMissingInformations: boolean;
+  hasCreditNote: boolean;
 }

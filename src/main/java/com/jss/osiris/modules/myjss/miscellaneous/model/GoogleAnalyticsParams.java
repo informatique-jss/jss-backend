@@ -3,6 +3,7 @@ package com.jss.osiris.modules.myjss.miscellaneous.model;
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -10,19 +11,24 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class GoogleAnalyticsParams extends GoogleAnalyticsPageInfo {
 
     @JsonProperty("debug_mode")
-    private Boolean debugMode;
+    private boolean debugMode;
+
+    @JsonProperty("session_id")
+    private long sessionId;
 
     // E-commerce standard
     @JsonProperty("transaction_id")
     private String transactionId;
 
     @JsonProperty("value")
+    @JsonFormat(shape = JsonFormat.Shape.NUMBER_FLOAT)
     private BigDecimal value;
 
     @JsonProperty("currency")
     private String currency;
 
     @JsonProperty("tax")
+    @JsonFormat(shape = JsonFormat.Shape.NUMBER_FLOAT)
     private BigDecimal tax;
 
     @JsonProperty("shipping")
@@ -57,14 +63,6 @@ public class GoogleAnalyticsParams extends GoogleAnalyticsPageInfo {
 
     @JsonProperty("item_list_name")
     private String itemListName;
-
-    public Boolean getDebugMode() {
-        return debugMode;
-    }
-
-    public void setDebugMode(Boolean debugMode) {
-        this.debugMode = debugMode;
-    }
 
     public String getTransactionId() {
         return transactionId;
@@ -177,4 +175,21 @@ public class GoogleAnalyticsParams extends GoogleAnalyticsPageInfo {
     public void setItemListName(String itemListName) {
         this.itemListName = itemListName;
     }
+
+    public long getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(long sessionId) {
+        this.sessionId = sessionId;
+    }
+
+    public boolean getDebugMode() {
+        return debugMode;
+    }
+
+    public void setDebugMode(boolean debugMode) {
+        this.debugMode = debugMode;
+    }
+
 }

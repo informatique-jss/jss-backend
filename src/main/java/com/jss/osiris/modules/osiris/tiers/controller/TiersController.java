@@ -68,6 +68,7 @@ import com.jss.osiris.modules.osiris.tiers.model.Tiers;
 import com.jss.osiris.modules.osiris.tiers.model.TiersCategory;
 import com.jss.osiris.modules.osiris.tiers.model.TiersFollowup;
 import com.jss.osiris.modules.osiris.tiers.model.TiersFollowupType;
+import com.jss.osiris.modules.osiris.tiers.model.TiersGroup;
 import com.jss.osiris.modules.osiris.tiers.model.TiersSearch;
 import com.jss.osiris.modules.osiris.tiers.model.TiersType;
 import com.jss.osiris.modules.osiris.tiers.model.dto.ResponsableDto;
@@ -89,6 +90,7 @@ import com.jss.osiris.modules.osiris.tiers.service.SubscriptionPeriodTypeService
 import com.jss.osiris.modules.osiris.tiers.service.TiersCategoryService;
 import com.jss.osiris.modules.osiris.tiers.service.TiersFollowupService;
 import com.jss.osiris.modules.osiris.tiers.service.TiersFollowupTypeService;
+import com.jss.osiris.modules.osiris.tiers.service.TiersGroupService;
 import com.jss.osiris.modules.osiris.tiers.service.TiersService;
 import com.jss.osiris.modules.osiris.tiers.service.TiersTypeService;
 
@@ -201,6 +203,9 @@ public class TiersController {
 
   @Autowired
   CompanySizeService companySizeService;
+
+  @Autowired
+  TiersGroupService tiersGroupService;
 
   @GetMapping(inputEntryPoint + "/company-sizes")
   public ResponseEntity<List<CompanySize>> getCompanySizes() {
@@ -711,7 +716,7 @@ public class TiersController {
   @GetMapping(inputEntryPoint + "/responsable/search")
   public ResponseEntity<List<Responsable>> getResponsables(@RequestParam String searchedValue) {
 
-    Pageable pageable = PageRequest.of(0, 10000000, Sort.by(Sort.Direction.DESC, "lastname"));
+    Pageable pageable = PageRequest.of(0, 100, Sort.by(Sort.Direction.DESC, "lastname"));
 
     return new ResponseEntity<List<Responsable>>(
         responsableService.getResponsables(searchedValue, pageable).getContent(),
@@ -802,5 +807,23 @@ public class TiersController {
     return new ResponseEntity<Page<ResponsableDto>>(
         tiersFacade.searchResponsablesByFirstOrLastName(searchedValue, pageable),
         HttpStatus.OK);
+  }
+
+  @PreAuthorize(ActiveDirectoryHelper.ADMINISTRATEUR)
+  @PostMapping(inputEntryPoint + "/tiers-group")
+  public ResponseEntity<TiersGroup> addOrUpdateTiersGroup(
+      @RequestBody TiersGroup tiersGroup) throws OsirisValidationException, OsirisException {
+    if (tiersGroup.getId() != null)
+      validationHelper.validateReferential(tiersGroup, true, "tiersGroup");
+    validationHelper.validateString(tiersGroup.getCode(), true, 20, "code");
+    validationHelper.validateString(tiersGroup.getLabel(), true, 100, "label");
+
+    return new ResponseEntity<TiersGroup>(tiersGroupService.addOrUpdateTiersGroup(tiersGroup),
+        HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/tiers-groups")
+  public ResponseEntity<List<TiersGroup>> getTiersGroups() {
+    return new ResponseEntity<List<TiersGroup>>(tiersGroupService.getTiersGroups(), HttpStatus.OK);
   }
 }

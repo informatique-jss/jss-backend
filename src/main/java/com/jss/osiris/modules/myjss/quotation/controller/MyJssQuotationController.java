@@ -23,6 +23,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -757,6 +758,26 @@ public class MyJssQuotationController {
           return downloadAttachment(invoice.getAttachments().get(0).getId());
 
     return new ResponseEntity<byte[]>(null, new HttpHeaders(), HttpStatus.OK);
+  }
+
+  @GetMapping(inputEntryPoint + "/attachment/invoice-credit-note/download")
+  @Transactional
+  public ResponseEntity<byte[]> downloadAttachmentLastInvoiceAndCreditNote(
+      @RequestParam("customerOrderId") Integer customerOrderId)
+      throws OsirisValidationException, OsirisException {
+
+    CustomerOrder customerOrder = customerOrderService.getCustomerOrder(customerOrderId);
+    if (customerOrder == null || !myJssQuotationValidationHelper.canSeeQuotation(customerOrder))
+      return new ResponseEntity<byte[]>(null, new HttpHeaders(), HttpStatus.OK);
+
+    byte[] zipBytes = attachmentService.downloadLastInvoiceWithCreditNoteAsZip(customerOrder);
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("filename", "documents.zip");
+    headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
+    headers.setContentLength(zipBytes.length);
+    headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
+    return new ResponseEntity<byte[]>(zipBytes, headers, HttpStatus.OK);
   }
 
   @GetMapping(inputEntryPoint + "/attachment/asso-service-document")
@@ -1723,17 +1744,18 @@ public class MyJssQuotationController {
   @PostMapping(inputEntryPoint + "/quotation/save-order")
   @JsonView(JacksonViews.MyJssDetailedView.class)
   public ResponseEntity<Quotation> saveQuotation(@RequestBody Quotation quotation, @RequestParam Boolean isValidation,
+      @RequestParam String gaClientId,
+      @RequestParam String gaSessionId,
       HttpServletRequest request)
       throws OsirisValidationException, OsirisException {
     detectFlood(request);
-    String gaClientId = request.getHeader("gaClientId");
 
     if (quotation.getId() != null && !myJssQuotationValidationHelper.canSeeQuotation(quotation))
       return new ResponseEntity<Quotation>(null);
 
     return new ResponseEntity<Quotation>(
         (Quotation) myJssQuotationDelegate.validateAndCreateQuotation(quotation, isValidation, request,
-            gaClientId),
+            gaClientId, gaSessionId),
         HttpStatus.OK);
   }
 
@@ -1776,27 +1798,29 @@ public class MyJssQuotationController {
   @PostMapping(inputEntryPoint + "/order/save-order")
   @JsonView(JacksonViews.MyJssDetailedView.class)
   public ResponseEntity<CustomerOrder> saveCutomerOrder(@RequestBody CustomerOrder order,
+      @RequestParam String gaClientId,
+      @RequestParam String gaSessionId,
       @RequestParam Boolean isValidation, HttpServletRequest request)
       throws OsirisValidationException, OsirisException {
     detectFlood(request);
-    String gaClientId = request.getHeader("gaClientId");
 
     if (order.getId() != null && !myJssQuotationValidationHelper.canSeeQuotation(order))
       return new ResponseEntity<CustomerOrder>(null);
 
     return new ResponseEntity<CustomerOrder>(
         (CustomerOrder) myJssQuotationDelegate.validateAndCreateQuotation(order, isValidation, request,
-            gaClientId),
+            gaClientId, gaSessionId),
         HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/order/user/save")
   @JsonView(JacksonViews.MyJssDetailedView.class)
   public ResponseEntity<Integer> saveCustomerOrderFromMyJss(@RequestBody CustomerOrder order,
+      @RequestParam String gaClientId,
+      @RequestParam String gaSessionId,
       @RequestParam Boolean isValidation, HttpServletRequest request)
       throws OsirisValidationException, OsirisException {
     detectFlood(request);
-    String gaClientId = request.getHeader("gaClientId");
 
     if (order.getAssoAffaireOrders() == null || order.getAssoAffaireOrders().size() == 0)
       throw new OsirisValidationException("assoAffaireOrders");
@@ -1812,17 +1836,18 @@ public class MyJssQuotationController {
       }
     }
     return new ResponseEntity<Integer>(
-        myJssQuotationDelegate.saveCustomerOrderFromMyJss(order, isValidation, gaClientId, request).getId(),
+        myJssQuotationDelegate.saveCustomerOrderFromMyJss(order, isValidation, gaClientId, gaSessionId).getId(),
         HttpStatus.OK);
   }
 
   @PostMapping(inputEntryPoint + "/quotation/user/save")
   @JsonView(JacksonViews.MyJssDetailedView.class)
   public ResponseEntity<Integer> saveQuotationFromMyJss(@RequestBody Quotation order,
+      @RequestParam String gaClientId,
+      @RequestParam String gaSessionId,
       @RequestParam Boolean isValidation, HttpServletRequest request)
       throws OsirisValidationException, OsirisException {
     detectFlood(request);
-    String gaClientId = request.getHeader("gaClientId");
 
     if (order.getAssoAffaireOrders() == null || order.getAssoAffaireOrders().size() == 0)
       throw new OsirisValidationException("assoAffaireOrders");
@@ -1838,7 +1863,7 @@ public class MyJssQuotationController {
       }
     }
     return new ResponseEntity<Integer>(
-        myJssQuotationDelegate.saveQuotationFromMyJss(order, isValidation, gaClientId, request).getId(),
+        myJssQuotationDelegate.saveQuotationFromMyJss(order, isValidation, gaClientId, gaSessionId).getId(),
         HttpStatus.OK);
   }
 
@@ -2306,7 +2331,7 @@ public class MyJssQuotationController {
     detectFlood(request);
     return new ResponseEntity<Notice>(announcementService.getNoticeFromFile(file), HttpStatus.OK);
   }
-  
+
   @GetMapping(inputEntryPoint + "/formalite-guichet-unique/dates-dtos")
   public ResponseEntity<List<GuichetUniqueDepositInfoDto>> getGuichetUniqueDatesDtosForService(
       @RequestParam Integer serviceId, HttpServletRequest request)

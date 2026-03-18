@@ -1,8 +1,8 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { NgbAccordionModule, NgbDropdownModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAccordionModule, NgbDropdownModule, NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
-import { QUOTATION_STATUS_ABANDONED, QUOTATION_STATUS_OPEN, QUOTATION_STATUS_QUOTATION_WAITING_CONFRERE, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_REQUIRE_ATTENTION, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, QUOTATION_STATUS_VALIDATED_BY_CUSTOMER, QUOTATION_WITH_UNREAD_COMMENTS } from '../../../../libs/Constants';
+import { QUOTATION_STATUS_OPEN, QUOTATION_STATUS_QUOTATION_WAITING_CONFRERE, QUOTATION_STATUS_REFUSED_BY_CUSTOMER, QUOTATION_STATUS_REQUIRE_ATTENTION, QUOTATION_STATUS_SENT_TO_CUSTOMER, QUOTATION_STATUS_TO_VERIFY, QUOTATION_STATUS_VALIDATED_BY_CUSTOMER, QUOTATION_WITH_UNREAD_COMMENTS } from '../../../../libs/Constants';
 import { capitalizeName } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
@@ -27,12 +27,16 @@ declare var bootstrap: any;
   templateUrl: './quotations.component.html',
   styleUrls: ['./quotations.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, NgbDropdownModule, NgbAccordionModule]
+  imports: [SHARED_IMPORTS, NgbDropdownModule, NgbAccordionModule, NgbTooltipModule]
 })
 export class QuotationsComponent implements OnInit {
 
   @ViewChild('cancelQuotationModal') cancelQuotationModal!: TemplateRef<any>;
   cancelQuotationModalInstance: any | undefined;
+
+  @ViewChild('validateNewQuotationModal') validateNewQuotationModal!: TemplateRef<any>;
+  validateNewQuotationModalInstance: any | undefined;
+
 
   statusFilterOpen: boolean = false;
   statusFilterToVerify: boolean = false;
@@ -40,7 +44,6 @@ export class QuotationsComponent implements OnInit {
   statusFilterSendToCustomer: boolean = true;
   statusFilterValidatedByCustomer: boolean = false;
   statusFilterRefusedByCustomer: boolean = false;
-  statusFilterAbandonned: boolean = false;
   requiringAttention: boolean = false;
   withUnreadCommmentsOnQuotations: boolean = false;
 
@@ -63,7 +66,10 @@ export class QuotationsComponent implements OnInit {
 
   QUOTATION_STATUS_REFUSED_BY_CUSTOMER = QUOTATION_STATUS_REFUSED_BY_CUSTOMER;
   QUOTATION_STATUS_VALIDATED_BY_CUSTOMER = QUOTATION_STATUS_VALIDATED_BY_CUSTOMER;
+  QUOTATION_STATUS_SENT_TO_CUSTOMER = QUOTATION_STATUS_SENT_TO_CUSTOMER;
+  QUOTATION_STATUS_TO_VERIFY = QUOTATION_STATUS_TO_VERIFY;
   QUOTATION_STATUS_OPEN = QUOTATION_STATUS_OPEN;
+  QUOTATION_STATUS_ABANDONED = QUOTATION_STATUS_ABANDONED;
 
 
   currentSearchRef: Subscription | undefined;
@@ -98,7 +104,7 @@ export class QuotationsComponent implements OnInit {
   }
 
   refreshQuotations(firstRefresh: boolean) {
-    if (!this.requiringAttention && !this.statusFilterOpen && !this.statusFilterToVerify && !this.statusFilterWaitingConfrere && !this.statusFilterSendToCustomer && !this.statusFilterValidatedByCustomer && !this.statusFilterRefusedByCustomer && !this.statusFilterAbandonned) {
+    if (!this.requiringAttention && !this.statusFilterOpen && !this.statusFilterToVerify && !this.statusFilterWaitingConfrere && !this.statusFilterSendToCustomer && !this.statusFilterValidatedByCustomer && !this.statusFilterRefusedByCustomer) {
       this.quotations = [];
       return;
     }
@@ -113,7 +119,6 @@ export class QuotationsComponent implements OnInit {
       this.statusFilterSendToCustomer = false;
       this.statusFilterValidatedByCustomer = false;
       this.statusFilterRefusedByCustomer = false;
-      this.statusFilterAbandonned = false;
       this.requiringAttention = false;
       this.withUnreadCommmentsOnQuotations = false;
 
@@ -142,8 +147,6 @@ export class QuotationsComponent implements OnInit {
       status.push(QUOTATION_STATUS_VALIDATED_BY_CUSTOMER);
     if (this.statusFilterRefusedByCustomer)
       status.push(QUOTATION_STATUS_REFUSED_BY_CUSTOMER);
-    if (this.statusFilterAbandonned)
-      status.push(QUOTATION_STATUS_ABANDONED);
 
     if (this.currentPage == 0)
       this.isFirstLoading = true;
@@ -166,6 +169,7 @@ export class QuotationsComponent implements OnInit {
       })
     } else {
       this.currentSearchRef = this.quotationService.searchQuotationsForCurrentUser(status, this.currentPage, this.currentSort, this.requiringAttention, this.getCurrentSelectedResponsable()).subscribe(response => {
+        this.quotations = [];
         this.appService.hideLoadingSpinner();
         this.quotations.push(...response);
         this.isFirstLoading = false;
@@ -258,6 +262,35 @@ export class QuotationsComponent implements OnInit {
     });
   }
 
+  openNewQuotationValidationModal(quotationToValidate: Quotation) {
+    if (this.validateNewQuotationModalInstance)
+      return;
+
+    this.validateNewQuotationModalInstance = this.modalService.open(this.validateNewQuotationModal, {});
+
+    this.validateNewQuotationModalInstance.result.then(
+      (result: string) => {
+        if (result === 'confirm') {
+          this.sendQuotationValidation(quotationToValidate);
+        }
+        this.validateNewQuotationModalInstance = undefined;
+      },
+      (reason: string) => {
+        this.validateNewQuotationModalInstance = undefined;
+      }
+    );
+  }
+
+  sendQuotationValidation(quotation: Quotation) {
+    if (quotation && quotation.id) {
+      this.appService.showLoadingSpinner();
+      this.quotationService.validateQuotation(quotation.id).subscribe(res => {
+        this.refreshQuotations(false);
+        this.appService.hideLoadingSpinner();
+      });
+    }
+  }
+
   setBookmark() {
     this.userPreferenceService.setUserSearchBookmark(this.statusFilterOpen, "quotation-statusFilterOpen");
     this.userPreferenceService.setUserSearchBookmark(this.statusFilterToVerify, "quotation-statusFilterToVerify");
@@ -265,7 +298,6 @@ export class QuotationsComponent implements OnInit {
     this.userPreferenceService.setUserSearchBookmark(this.statusFilterSendToCustomer, "quotation-statusFilterSendToCustomer");
     this.userPreferenceService.setUserSearchBookmark(this.statusFilterValidatedByCustomer, "quotation-statusFilterValidatedByCustomer");
     this.userPreferenceService.setUserSearchBookmark(this.statusFilterRefusedByCustomer, "quotation-statusFilterRefusedByCustomer");
-    this.userPreferenceService.setUserSearchBookmark(this.statusFilterAbandonned, "quotation-statusFilterAbandonned");
     this.userPreferenceService.setUserSearchBookmark(this.requiringAttention, "quotation-requiringAttention");
     this.userPreferenceService.setUserSearchBookmark(this.currentSort, "quotation-currentSort");
     if (this.responsablesForCurrentUser && this.getCurrentSelectedResponsable())
@@ -284,7 +316,6 @@ export class QuotationsComponent implements OnInit {
     this.statusFilterSendToCustomer = false;
     this.statusFilterValidatedByCustomer = false;
     this.statusFilterRefusedByCustomer = false;
-    this.statusFilterAbandonned = false;
 
     if (this.userPreferenceService.getUserSearchBookmark("quotation-statusFilterOpen")) {
       this.statusFilterOpen = true;
@@ -310,10 +341,6 @@ export class QuotationsComponent implements OnInit {
       this.statusFilterRefusedByCustomer = true;
       atLeastOne = true;
     }
-    if (this.userPreferenceService.getUserSearchBookmark("quotation-statusFilterAbandonned")) {
-      this.statusFilterAbandonned = true;
-      atLeastOne = true;
-    }
     if (this.userPreferenceService.getUserSearchBookmark("quotation-requiringAttention")) {
       this.requiringAttention = true;
     }
@@ -337,6 +364,10 @@ export class QuotationsComponent implements OnInit {
         this.responsableCheck[respo.id] = this.selectAllResponsable;
 
     this.changeFilter();
+  }
+
+  resumeDraft(idQuotation: number, event: any) {
+    this.appService.openRoute(event, "quotation/resume/quotation/" + idQuotation, undefined);
   }
 }
 
@@ -367,7 +398,5 @@ export function getClassForQuotationStatus(quotation: Quotation) {
     return "bg-success text-success";
   if (quotation.quotationStatus.code == QUOTATION_STATUS_REFUSED_BY_CUSTOMER)
     return "bg-danger text-danger";
-  if (quotation.quotationStatus.code == QUOTATION_STATUS_ABANDONED)
-    return "bg-dark text-dark";
   return "bg-dark text-light";
 }

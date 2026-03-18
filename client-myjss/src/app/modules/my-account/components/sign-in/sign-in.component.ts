@@ -36,7 +36,7 @@ export class SignInComponent implements OnInit {
 
 
   ngOnInit() {
-    if (this.activatedRoute.snapshot.params['from'] === 'quot') //we don't use 'quotation' because if quotation is in the url the theme set is not the good one 
+    if (this.activatedRoute.snapshot.params['from'] === 'quot') //we don't use 'quotation' because if quotation is in the url the theme set is not the good one
       this.isComesFromQuotation = true;
 
     this.titleService.setTitle("Connexion - MyJSS");
@@ -47,7 +47,6 @@ export class SignInComponent implements OnInit {
   sendConnectionLink() {
     if (this.signinForm.valid && (validateEmail(this.inputMail) || this.inputMail.indexOf("#") > 0)) {
       this.loginService.sendConnectionLink(this.inputMail, this.isComesFromQuotation).subscribe(response => {
-        this.googleAnalyticsService.trackLoginLogout("login", "sign-in", "sign-in-request").subscribe();
         let from = this.activatedRoute.snapshot.params['from'];
         if (from && from == 'jss' && this.platformService && this.platformService.isBrowser())
           window.open(environment.frontendJssUrl, "_self");

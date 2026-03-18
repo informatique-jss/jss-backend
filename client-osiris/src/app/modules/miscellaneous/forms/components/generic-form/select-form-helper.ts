@@ -2,13 +2,15 @@ import { Injectable } from "@angular/core";
 import { Observable, of } from "rxjs";
 import { ConstantService } from "../../../../main/services/constant.service";
 import { Employee } from "../../../../profile/model/Employee";
+import { TiersGroup } from "../../../../profile/model/TiersGroup";
 import { EmployeeService } from "../../../../profile/services/employee.service";
 import { SimpleProvisionStatus } from "../../../../quotation/model/SimpleProvisonStatus";
 import { SimpleProvisionStatusService } from "../../../../quotation/services/simple.provision.status.service";
 import { TiersCategoryService } from "../../../../tiers/services/tiers.category.service";
+import { TiersGroupService } from "../../../../tiers/services/tiers.group.service";
 
 
-export const SELECT_TYPES = ['commercial', 'formaliste', 'provisionStatus', 'tiersCategory'] as const;
+export const SELECT_TYPES = ['commercial', 'formaliste', 'provisionStatus', 'tiersCategory', 'tiersGroup'] as const;
 export type SelectType = typeof SELECT_TYPES[number] | undefined;
 
 @Injectable({
@@ -20,6 +22,7 @@ export class SelectFormHelper {
     private employeeService: EmployeeService,
     private simpleProvisionStatusService: SimpleProvisionStatusService,
     private tiersCategoryService: TiersCategoryService,
+    private tiersGroupService: TiersGroupService,
     private constantService: ConstantService
   ) { }
 
@@ -83,6 +86,17 @@ export class SelectFormHelper {
         return of(this.selectValues[type]);
       return new Observable<SimpleProvisionStatus[]>(observer => {
         this.tiersCategoryService.getTiersCategories().subscribe(response => {
+          this.selectValues[type] = response;
+          observer.next(response);
+          observer.complete;
+        })
+      })
+    }
+    if (type == 'tiersGroup') {
+      if (this.selectValues[type])
+        return of(this.selectValues[type]);
+      return new Observable<TiersGroup[]>(observer => {
+        this.tiersGroupService.getTiersGroups().subscribe(response => {
           this.selectValues[type] = response;
           observer.next(response);
           observer.complete;

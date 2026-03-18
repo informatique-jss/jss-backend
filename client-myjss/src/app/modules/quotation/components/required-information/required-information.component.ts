@@ -121,7 +121,7 @@ export class RequiredInformationComponent implements OnInit {
 
   minDatePublication: Date = new Date();
 
-  isDoNotGenerateAnnouncement: boolean = true;
+  isDoNotGenerateAnnouncement: boolean = false;
   selectionRedaction: string[] = [this.CONFIER_ANNONCE_AU_JSS, "Je m'occupe de la publication de l'annonce légale"];
   selectedRedaction: string[][] = [];
 
@@ -498,7 +498,8 @@ export class RequiredInformationComponent implements OnInit {
     if (newServiceIndex >= this.quotation.assoAffaireOrders[newAssoIndex].services.length) {
       newAssoIndex = newAssoIndex + 1;
       newServiceIndex = 0;
-      if (this.noticeTemplateService.getNoticeTemplateForm() && !this.noticeTemplateService.getNoticeTemplateForm()!.valid) {
+      if (this.noticeTemplateDescription && this.noticeTemplateDescription.isUsingTemplate && this.noticeTemplateService.getNoticeTemplateForm()
+        && !this.noticeTemplateService.getNoticeTemplateForm()!.valid) {
         this.serviceFieldTypeService.getServiceFieldTypes(undefined).subscribe(res => {
           this.serviceFieldTypes = res
           this.showToastOfInvalidControls();
@@ -627,11 +628,8 @@ export class RequiredInformationComponent implements OnInit {
   }
 
   changeDoNotGenerateAnnouncement(selection: string, provision: Provision) {
-    provision.isDoNotGenerateAnnouncement = true;
-    if (selection != this.CONFIER_ANNONCE_AU_JSS) {
-      this.isDoNotGenerateAnnouncement = false;
-      provision.isDoNotGenerateAnnouncement = false;
-    } else {
+    provision.isDoNotGenerateAnnouncement = false;
+    if (selection == this.selectionRedaction[1]) {
       this.isDoNotGenerateAnnouncement = true;
       provision.isDoNotGenerateAnnouncement = true;
     }
@@ -770,6 +768,7 @@ export class RequiredInformationComponent implements OnInit {
     if (this.noticeTemplateDescription) {
       if (isRedactedByJss) {
         this.noticeTemplateDescription.isShowNoticeTemplate = false;
+        this.noticeTemplateDescription.isUsingTemplate = false;
         this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
         return;
       }
@@ -922,6 +921,15 @@ export class RequiredInformationComponent implements OnInit {
     }
     if (isLastIndex && alreadyFoundIds.indexOf(assoServiceFieldType.serviceFieldType.id) < 0)
       return true;
+    return false;
+  }
+
+  isLastMandatoryDocument(assoServiceDocument: AssoServiceDocument): boolean {
+    if (this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined && this.quotation.assoAffaireOrders[this.selectedAssoIndex] && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex] && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].assoServiceDocuments) {
+      let lastAsso = this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].assoServiceDocuments.filter(asso => asso.isMandatory)[this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].assoServiceDocuments.filter(asso => asso.isMandatory).length - 1];
+      if (assoServiceDocument.id === lastAsso.id)
+        return true;
+    }
     return false;
   }
 

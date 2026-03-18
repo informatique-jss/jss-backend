@@ -1,0 +1,20 @@
+<mat-form-field class="full-width" [formGroup]="form!">
+  <mat-label>{{label}}</mat-label>
+  <mat-chip-grid #chipListTiersGroup>
+    <mat-chip-row *ngFor="let tiersGroup of model" (removed)="removeElement(tiersGroup)">
+      {{tiersGroup.label}}
+      <button matChipRemove *ngIf="!isDisabled">
+        <mat-icon>cancel</mat-icon>
+      </button>
+    </mat-chip-row>
+    <input matInput placeholder="Choisir un groupe" [formControlName]="propertyName" #tiersGroupInput
+      [matChipInputFor]="chipListTiersGroup" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
+      [disabled]="isDisabled" [matAutocomplete]="autoComplete">
+  </mat-chip-grid>
+  <mat-autocomplete autoActiveFirstOption #autoComplete="matAutocomplete" [displayWith]="displayLabel"
+    (optionSelected)="addTiersGroup($event)">
+    <mat-option *ngFor="let tiersGroup of filteredTiersGroups | async" [value]="tiersGroup">
+      {{tiersGroup.label}}
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>

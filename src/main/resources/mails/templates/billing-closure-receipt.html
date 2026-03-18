@@ -37,7 +37,7 @@
             border-bottom: 1px solid rgb(0, 83, 159);
         }
 
-        .border-table {
+        .border-table-top {
             border-top: 1px dotted rgb(0, 83, 159);
         }
     </style>
@@ -83,10 +83,10 @@
         </thead>
         <tr th:each="values : ${billingClosureValues}">
             <td class="td-date " th:if="${values.eventDateString!=null}"
-                th:classappend="|${values.displayBottomBorder ? 'border-table' : 'none-class'} ${values.displaySmallTopBorder ? 'none-class' : 'none-class'}|">
+                th:classappend="|${values.displayBottomBorder ? 'border-table' : 'none-class'} |">
                 <span th:text="${values.eventDateString}"></span>
             </td>
-            <td th:classappend="|${values.displayBottomBorder ? 'border-table' : 'none-class'} ${values.displaySmallTopBorder ? 'border-table-top' : 'none-class'}|"
+            <td th:classappend="|${values.displayBottomBorder ? 'border-table' : 'none-class'}|"
                 th:if="${values.eventDescription!=null} and ${values.eventDateString!=null}"
                 style="border-right: solid;border-color: rgb(0,83,159)">
                 <span th:utext="${values.eventDescription}"></span> <span
@@ -98,7 +98,7 @@
                         </span></strong></span>
                 </br>
             </td>
-            <td th:classappend="|${values.displayBottomBorder ? 'border-table' : 'none-class'} ${values.displaySmallTopBorder ? 'border-table-top' : 'none-class'}|"
+            <td th:classappend="|${values.displayBottomBorder ? 'border-table' : 'none-class'}|"
                 th:if="${values.eventDescription!=null} and ${values.eventDateString==null}"
                 style="padding-top: 20px;padding-bottom: 20px;padding-left: 10px;border-right: solid;border-color: rgb(0,83,159)"
                 colspan="2">

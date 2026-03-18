@@ -712,7 +712,7 @@ export class ProvisionComponent implements OnInit, AfterContentChecked {
               if (!regularization.rejectionCause) {
                 saveAsso = false;
                 const dialogRef = this.chooseCompetentAuthorityDialog.open(ChooseRejectionCauseDialogComponent, {
-                  maxWidth: "400px",
+                  width: "800px",
                 });
 
                 let created = new Date(regularization.created);
