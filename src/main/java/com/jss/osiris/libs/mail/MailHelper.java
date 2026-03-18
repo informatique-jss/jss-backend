@@ -454,14 +454,14 @@ public class MailHelper {
         return generatePdfDelegate.generateGenericFromHtml(htmlContent, mail.getId());
     }
 
-    private void setContextVariable(Context ctx, CustomerMail mail, boolean setPlainPictures)
+    private void setContextVariable(Context ctx, CustomerMail mail, boolean isForPdf)
             throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         // Prepare the evaluation context
         ctx.setVariable("instagram", "instagram");
         ctx.setVariable("facebook", "facebook");
         ctx.setVariable("linkedin", "linkedin");
         ctx.setVariable("twitter", "twitter");
-        if (setPlainPictures)
+        if (isForPdf)
             ctx.setVariable("jssHeaderPicturePlain", "/images/jss-header.png");
         else
             ctx.setVariable("jssHeaderPicture", "jssHeaderPicture");
@@ -654,15 +654,19 @@ public class MailHelper {
         }
 
         if (mail.getResponsable() != null && mail.getMailTemplate().equals(CustomerMail.TEMPLATE_SEND_TOKEN)) {
-            Responsable responsable = responsableService.getResponsable(mail.getResponsable().getId());
+            String token = "";
+            if (!isForPdf) {
+                Responsable responsable = responsableService.getResponsable(mail.getResponsable().getId());
 
-            byte bytes[] = new byte[512];
-            random.nextBytes(bytes);
-            String token = String.valueOf(Hex.encode(bytes));
-            responsable.setLoginToken(token);
-            responsable
-                    .setLoginTokenExpirationDateTime(LocalDateTime.now().plusMinutes(TOKEN_EXPIRATION_LENGTH_MINUTES));
-            responsableService.addOrUpdateResponsable(responsable);
+                byte bytes[] = new byte[512];
+                random.nextBytes(bytes);
+                token = String.valueOf(Hex.encode(bytes));
+                responsable.setLoginToken(token);
+                responsable
+                        .setLoginTokenExpirationDateTime(
+                                LocalDateTime.now().plusMinutes(TOKEN_EXPIRATION_LENGTH_MINUTES));
+                responsableService.addOrUpdateResponsable(responsable);
+            }
             ctx.setVariable("tokenLink",
                     loginTokenEntryPoint + "?userId=" + mail.getResponsable().getId() + "&isFromQuotation="
                             + Boolean.TRUE.equals(mail.getResponsable().getIsComingFromQuotation()) + "&aToken="
