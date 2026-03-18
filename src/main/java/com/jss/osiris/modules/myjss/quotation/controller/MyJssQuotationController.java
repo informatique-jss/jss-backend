@@ -1072,8 +1072,8 @@ public class MyJssQuotationController {
 
   @GetMapping(inputEntryPoint + "/billing-label-types")
   @JsonView(JacksonViews.MyJssListView.class)
-  public ResponseEntity<List<BillingLabelType>> getBillingLabels() {
-    return new ResponseEntity<List<BillingLabelType>>(billingLabelTypeService.getBillingLabelTypes(),
+  public ResponseEntity<List<BillingLabelType>> getBillingLabels() throws OsirisException {
+    return new ResponseEntity<List<BillingLabelType>>(billingLabelTypeService.getBillingLabelTypesExcludingOtherType(),
         HttpStatus.OK);
   }
 
@@ -2306,7 +2306,7 @@ public class MyJssQuotationController {
     detectFlood(request);
     return new ResponseEntity<Notice>(announcementService.getNoticeFromFile(file), HttpStatus.OK);
   }
-  
+
   @GetMapping(inputEntryPoint + "/formalite-guichet-unique/dates-dtos")
   public ResponseEntity<List<GuichetUniqueDepositInfoDto>> getGuichetUniqueDatesDtosForService(
       @RequestParam Integer serviceId, HttpServletRequest request)

@@ -359,57 +359,7 @@
         [propertyName]="'billingLabelType'+document.billingLabelType.code" [isMandatory]="true" [isDisabled]="false"
         (change)="setDocumentValue(document)">
       </select-billing-label-type>
-      <div class="pt-4">
-        <form [formGroup]="documentForm">
-          <div
-            *ngIf="document.billingLabelType && document.billingLabelType.code && document.billingLabelType.id == billingLabelTypeOther.id">
-            <div class="row mb-3">
-              <div class="col">
-                <generic-input (onFormChange)="setDocumentValue(document)" [(model)]="document.billingLabel"
-                  label="Libellé" [form]="documentForm" propertyName="billingLabel" [maxLength]="200"
-                  [isMandatory]="true" [isDisabled]="false"></generic-input>
-              </div>
 
-              <div class="col">
-                <generic-input (onFormChange)="setDocumentValue(document)" [(model)]="document.billingAddress"
-                  label="Adresse" [form]="documentForm" propertyName="billingAddress" [isMandatory]="true"
-                  [isDisabled]="false" [maxLength]="200"></generic-input>
-              </div>
-
-            </div>
-
-            <div class="row mb-3">
-              <div class="col-md-4">
-                <generic-input (onFormChange)="setDocumentValue(document)" class="col-md-4"
-                  [(model)]="document.billingPostalCode" label="Code postal" [form]="documentForm"
-                  (onFormBlur)="findCityForDocument(document)" propertyName="docPostalCode" [isMandatory]="true"
-                  [isDisabled]="false" [maxLength]="10" (change)="computeQuotationPrice(false)">
-                </generic-input>
-              </div>
-
-              <div class="col-md-4">
-                <autocomplete-city [(model)]="document.billingLabelCity" [form]="documentForm"
-                  [modelCountry]="document.billingLabelCountry" label="Ville"
-                  propertyName="autocompleteDocCity"></autocomplete-city>
-              </div>
-
-              <div class="col-md-4">
-                <select-country [(model)]="document.billingLabelCountry" label="Pays" [form]="documentForm"
-                  propertyName="billingCountry" [isMandatory]="true" [isDisabled]="false"
-                  (change)="setDocumentValue(document)"></select-country>
-              </div>
-            </div>
-
-            <div class="row mb-3">
-              <div class="col-md-4">
-                <generic-input (onFormChange)="setDocumentValue(document)" [(model)]="document.cedexComplement"
-                  label="Complément CEDEX" [form]="documentForm" propertyName="billingCedexComplement"
-                  [isMandatory]="false" [isDisabled]="false" [maxLength]="20"></generic-input>
-              </div>
-            </div>
-          </div>
-        </form>
-      </div>
     </div>
     <hr>
     <div class="d-flex align-items-center pb-1 mb-2">
