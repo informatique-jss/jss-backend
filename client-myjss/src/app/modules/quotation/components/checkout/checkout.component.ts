@@ -338,9 +338,6 @@ export class CheckoutComponent implements OnInit {
   completeBillingDocument() {
     if (this.quotation && this.quotation.documents) {
       let billingDocument = getDocument(this.constantService.getDocumentTypeBilling(), this.quotation);
-      if (billingDocument && billingDocument.billingLabelType.id == this.constantService.getBillingLabelTypeOther().id)
-        if (!billingDocument.billingLabelCountry)
-          billingDocument.billingLabelCountry = this.constantService.getResponsableDummyCustomerFrance().tiers.country;
       if (!billingDocument.billingLabelCity)
         billingDocument.billingLabelCity = this.constantService.getResponsableDummyCustomerFrance().tiers.city;
 
