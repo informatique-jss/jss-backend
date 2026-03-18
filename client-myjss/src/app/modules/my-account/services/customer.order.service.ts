@@ -48,13 +48,15 @@ export class CustomerOrderService extends AppRestService<CustomerOrder> {
 
   saveInitialOrderForConnectedUser(order: IQuotation, isValidation: boolean): Observable<number> {
     let params = new HttpParams();
-    params = params.set("isValidation", isValidation);
+    params = params.set("isValidation", isValidation).set("gaClientId", this.googleAnalyticsService.getAnalyticsIds().clientId ? this.googleAnalyticsService.getAnalyticsIds().clientId! : "")
+      .set("gaSessionId", this.googleAnalyticsService.getAnalyticsIds().sessionId ? this.googleAnalyticsService.getAnalyticsIds().sessionId! : "");
     return this.postItem(params, 'order/user/save', order) as any as Observable<number>;
   }
 
   saveOrderForAnonymousUser(order: CustomerOrder, isValidation: boolean) {
     let params = new HttpParams();
-    params = params.set("isValidation", isValidation);
+    params = params.set("isValidation", isValidation).set("gaClientId", this.googleAnalyticsService.getAnalyticsIds().clientId ? this.googleAnalyticsService.getAnalyticsIds().clientId! : "")
+      .set("gaSessionId", this.googleAnalyticsService.getAnalyticsIds().sessionId ? this.googleAnalyticsService.getAnalyticsIds().sessionId! : "");
     return this.postItem(params, 'order/save-order', order);
   }
 
@@ -93,7 +95,6 @@ export class CustomerOrderService extends AppRestService<CustomerOrder> {
   }
 
   setCurrentDraftOrder(quotation: IQuotation) {
-    quotation.lastGaClientId = this.googleAnalyticsService.getGaClientId();
     localStorage.setItem('current-draft-order', JSON.stringify(quotation));
   }
 
