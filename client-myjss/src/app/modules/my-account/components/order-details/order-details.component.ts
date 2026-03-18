@@ -442,11 +442,6 @@ export class OrderDetailsComponent implements OnInit {
     }
   }
 
-  goToJssAnnouncement(service: Service, event: any) {
-    if (service && service.jssAnnouncementId)
-      this.appService.openJssRoute(event, "announcement/" + service.jssAnnouncementId, true);
-  }
-
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
