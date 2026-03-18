@@ -282,6 +282,11 @@ public class Tiers implements IAttachment, IId {
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private CompanySize companySize;
 
+	@ManyToMany
+	@JoinTable(name = "asso_tiers_tiers_group", joinColumns = @JoinColumn(name = "id_tiers"), inverseJoinColumns = @JoinColumn(name = "id_tiers_group"))
+	@JsonView({ JacksonViews.OsirisDetailedView.class })
+	private List<TiersGroup> tiersGroups;
+
 	@IndexedField
 	private Integer idAs400;
 	private Integer newIdAs400;
@@ -751,6 +756,14 @@ public class Tiers implements IAttachment, IId {
 
 	public void setIsToTakeCare(Boolean isToTakeCare) {
 		this.isToTakeCare = isToTakeCare;
+	}
+
+	public List<TiersGroup> getTiersGroups() {
+		return tiersGroups;
+	}
+
+	public void setTiersGroups(List<TiersGroup> tiersGroups) {
+		this.tiersGroups = tiersGroups;
 	}
 
 }

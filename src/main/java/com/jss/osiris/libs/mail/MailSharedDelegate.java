@@ -71,9 +71,7 @@ public class MailSharedDelegate {
                     connectMailbox();
                     return action.call();
                 } finally {
-                    if (store != null)
-                        store.close();
-                    store = null;
+                    closeStore();
                     mailboxLock.unlock();
                 }
             } else {
@@ -114,7 +112,6 @@ public class MailSharedDelegate {
         properties.put("mail.imap.timeout", "60000");
         properties.put("mail.imap.connectionpoolsize", "5");
         properties.put("mail.imap.fetchsize", "819200");
-        properties.put("mail.debug", "true");
 
         Session session = Session.getInstance(properties, null);
         return session;
@@ -131,8 +128,7 @@ public class MailSharedDelegate {
                 try {
                     store.getPersonalNamespaces();
                 } catch (MessagingException e) {
-                    store.close();
-                    store = null;
+                    closeStore();
                     throw new OsirisException(e, "IMAP store lost or failed");
                 }
             }
@@ -143,7 +139,21 @@ public class MailSharedDelegate {
             folderInboxAnnouncement = ensureOpen(folderInboxAnnouncement, inputOrderAnnouncementFolder);
             folderTrash = ensureOpen(folderTrash, "Deleted Items");
         } catch (MessagingException e) {
-            store = null;
+            try {
+                store.close();
+            } catch (MessagingException e1) {
+                try {
+                    closeStore();
+                } catch (MessagingException e2) {
+                    throw new OsirisException(e, "IMAP Connection lost or failed");
+                }
+                throw new OsirisException(e, "IMAP Connection lost or failed");
+            }
+            try {
+                closeStore();
+            } catch (MessagingException e1) {
+                throw new OsirisException(e, "IMAP Connection lost or failed");
+            }
             throw new OsirisException(e, "IMAP Connection lost or failed");
         }
     }
@@ -172,5 +182,15 @@ public class MailSharedDelegate {
 
     public Folder getFolderClassement() throws OsirisException {
         return folderClassement;
+    }
+
+    private void closeStore() throws MessagingException {
+        if (store != null)
+            store.close();
+        store = null;
+        folderInboxFormalite = null;
+        folderClassement = null;
+        folderInboxAnnouncement = null;
+        folderTrash = null;
     }
 }

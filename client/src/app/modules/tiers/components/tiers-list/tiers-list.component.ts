@@ -51,6 +51,7 @@ export class TiersListComponent implements OnInit {
 
       this.displayedColumnsResponsables.push({ id: "tiersId", fieldName: "tiersId", label: "N°" } as SortTableColumn<ResponsableSearchResult>);
       this.displayedColumnsResponsables.push({ id: "tiersLabel", fieldName: "tiersLabel", label: "Tiers" } as SortTableColumn<ResponsableSearchResult>);
+      this.displayedColumnsResponsables.push({ id: "tiersTypeLabel", fieldName: "tiersTypeLabel", label: "Type de tiers" } as SortTableColumn<ResponsableSearchResult>);
       this.displayedColumnsResponsables.push({ id: "tiersCategory", fieldName: "tiersCategory", label: "Catégorie du tiers" } as SortTableColumn<ResponsableSearchResult>);
       this.displayedColumnsResponsables.push({ id: "responsableLabel", fieldName: "responsableLabel", label: "Responsable" } as SortTableColumn<ResponsableSearchResult>);
       this.displayedColumnsResponsables.push({ id: "responsableCategory", fieldName: "responsableCategory", label: "Catégorie du responsable" } as SortTableColumn<ResponsableSearchResult>);
@@ -90,6 +91,7 @@ export class TiersListComponent implements OnInit {
 
       this.displayedColumnsTiers.push({ id: "tiersId", fieldName: "tiersId", label: "N°" } as SortTableColumn<TiersSearchResult>);
       this.displayedColumnsTiers.push({ id: "tiersLabel", fieldName: "tiersLabel", label: "Tiers", colorWarnFunction: (element: TiersSearchResult) => { return element.isToTakeCare } } as SortTableColumn<TiersSearchResult>);
+      this.displayedColumnsTiers.push({ id: "tiersTypeLabel", fieldName: "tiersTypeLabel", label: "Type de tiers" } as SortTableColumn<TiersSearchResult>);
       this.displayedColumnsTiers.push({ id: "tiersCategory", fieldName: "tiersCategory", label: "Catégorie du tiers" } as SortTableColumn<TiersSearchResult>);
       this.displayedColumnsTiers.push({ id: "salesEmployee", fieldName: "salesEmployeeId", label: "Commercial", displayAsEmployee: true } as SortTableColumn<TiersSearchResult>);
 
@@ -159,9 +161,9 @@ export class TiersListComponent implements OnInit {
 
   searchResponsables() {
     if (this.tiersSearchForm.valid && this.responsableSearch) {
-      if (this.responsableSearch.startDate)
+      if (this.responsableSearch && this.responsableSearch.startDate)
         this.responsableSearch.startDate = new Date(this.responsableSearch.startDate.setHours(12))
-      if (this.responsableSearch.endDate)
+      if (this.responsableSearch && this.responsableSearch.endDate)
         this.responsableSearch.endDate = new Date(this.responsableSearch.endDate.setHours(12))
       this.userPreferenceService.setUserSearchBookmark(this.responsableSearch, "responsables");
       this.responsableSearchResultService.getResponsableSearch(this.responsableSearch).subscribe(response => {

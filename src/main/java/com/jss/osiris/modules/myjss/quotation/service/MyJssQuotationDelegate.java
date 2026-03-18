@@ -100,9 +100,10 @@ public class MyJssQuotationDelegate {
 
     @Transactional(rollbackFor = Exception.class)
     public CustomerOrder saveCustomerOrderFromMyJss(CustomerOrder order, Boolean isValidation, String gaClientId,
-            HttpServletRequest request)
+            String gaSessionId)
             throws OsirisClientMessageException, OsirisValidationException, OsirisException {
         order.setLastGaClientId(gaClientId);
+        order.setGaSessionId(gaSessionId);
 
         if (order.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder asso : order.getAssoAffaireOrders())
@@ -205,9 +206,10 @@ public class MyJssQuotationDelegate {
 
     @Transactional(rollbackFor = Exception.class)
     public Quotation saveQuotationFromMyJss(Quotation quotation, Boolean isValidation, String gaClientId,
-            HttpServletRequest request)
+            String gaSessionId)
             throws OsirisClientMessageException, OsirisValidationException, OsirisException {
         quotation.setLastGaClientId(gaClientId);
+        quotation.setGaSessionId(gaSessionId);
 
         if (quotation.getAssoAffaireOrders() != null)
             for (AssoAffaireOrder asso : quotation.getAssoAffaireOrders())
@@ -298,8 +300,10 @@ public class MyJssQuotationDelegate {
 
     @Transactional(rollbackFor = Exception.class)
     public IQuotation validateAndCreateQuotation(IQuotation quotation, Boolean isValidation, HttpServletRequest request,
-            String gaClientId) throws OsirisException {
+            String gaClientId, String gaSessionId) throws OsirisException {
 
+        quotation.setGaSessionId(gaSessionId);
+        quotation.setLastGaClientId(gaClientId);
         Responsable responsable = null;
         Boolean hasToSendConfirmation = false;
         Boolean shouldConnectUserAtTheEnd = true;

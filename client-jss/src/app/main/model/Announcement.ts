@@ -13,5 +13,6 @@ export interface Announcement {
   affaireLabel: string;
   affaireSiren: string;
   isLegacy: boolean;
+  anonymisedNotice: string;
 }
 

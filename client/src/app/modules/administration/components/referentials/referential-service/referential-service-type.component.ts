@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { PROVISION_SCREEN_TYPE_ANNOUNCEMENT } from 'src/app/libs/Constants';
+import { SortTableElement } from 'src/app/modules/miscellaneous/model/SortTableElement';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { AssoServiceProvisionType } from 'src/app/modules/quotation/model/AssoServiceProvisionType';
 import { AssoServiceTypeDocument } from 'src/app/modules/quotation/model/AssoServiceTypeDocument';
@@ -32,6 +33,14 @@ export class ReferentialServiceTypeComponent extends GenericReferentialComponent
 
   PROVISION_SCREEN_TYPE_ANNOUNCEMENT = PROVISION_SCREEN_TYPE_ANNOUNCEMENT;
   deleteIndex: number = 1;
+
+  filterPredicate = (record: SortTableElement<ServiceType>, filter: any) => {
+    if (filter == "")
+      return true;
+    let search: string = "";
+    search += record.rawValue.label;
+    return search.toLowerCase().indexOf(filter.toLowerCase()) >= 0;
+  }
 
   getAddOrUpdateObservable(): Observable<ServiceType> {
     return this.serviceService.addOrUpdateServiceType(this.selectedEntity!);
@@ -115,5 +124,6 @@ export class ReferentialServiceTypeComponent extends GenericReferentialComponent
         assoServiceProvisionType.noticeType = undefined!;
     }
   }
+
 
 }

@@ -23,6 +23,7 @@ export class ContactComponent implements OnInit {
   lastName: string = "";
   mail: string = "";
   message: string = "";
+  phoneNumber: string = "";
   emailJss = "contact@jss.fr";
   isConditionAccepted: boolean = false;
   contactForm!: FormGroup;
@@ -71,7 +72,7 @@ export class ContactComponent implements OnInit {
       return;
     }
 
-    this.mailService.subscribeContactForm(this.mail, this.firstName, this.lastName, this.message).subscribe(response => {
+    this.mailService.subscribeContactForm(this.mail, this.firstName, this.lastName, this.message, this.phoneNumber).subscribe(response => {
       this.trackFormContact();
       if (response) {
         this.appService.displayToast("Vous allez recevoir un mail de confirmation.", false, "Demande reçue", 3000);

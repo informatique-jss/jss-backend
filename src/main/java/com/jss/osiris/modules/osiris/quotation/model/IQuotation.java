@@ -73,4 +73,9 @@ public interface IQuotation extends IId, IAttachment, IDocument {
 	public String getLastGaClientId();
 
 	public void setLastGaClientId(String lastGaClientId);
+
+	public String getGaSessionId();
+
+	public void setGaSessionId(String gaSessionId);
+
 }

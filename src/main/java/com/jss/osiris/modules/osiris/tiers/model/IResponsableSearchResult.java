@@ -9,6 +9,8 @@ public interface IResponsableSearchResult {
 
     Integer getTiersId();
 
+    String getTiersTypeLabel();
+
     Integer getResponsableId();
 
     String getResponsableLabel();

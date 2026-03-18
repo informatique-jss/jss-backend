@@ -25,7 +25,7 @@ export class MailService extends AppRestService<Boolean> {
     return this.get(httpParams, "subscribe/prices");
   }
 
-  subscribeContactForm(mail: string, firstName: string, lastName: string, message: string) {
-    return this.get(new HttpParams().set("mail", mail).set("firstName", firstName).set("lastName", lastName).set("message", message), "subscribe/contact");
+  subscribeContactForm(mail: string, firstName: string, lastName: string, message: string, phoneNumber: string) {
+    return this.get(new HttpParams().set("mail", mail).set("firstName", firstName).set("lastName", lastName).set("phoneNumber", phoneNumber).set("message", message), "subscribe/contact");
   }
 }

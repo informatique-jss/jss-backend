@@ -27,4 +27,7 @@ export interface Announcement {
   isComplexAnnouncement: boolean;
   firstConfrereSentMailDateTime: boolean;
   characterNumber: number;
+  isAnonymised: boolean;
+  anonymisedNotice: string;
+
 }

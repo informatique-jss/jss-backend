@@ -104,13 +104,13 @@ public class MyJssMiscellaneousController {
 	public ResponseEntity<Boolean> trackLoginLogout(@RequestParam String eventName,
 			@RequestParam String pageName,
 			@RequestParam String pageType,
+			@RequestParam String gaClientId,
+			@RequestParam String gaSessionId,
 			HttpServletRequest request)
 			throws OsirisClientMessageException, OsirisException {
 		detectFlood(request);
 
-		String gaClientId = request.getHeader("gaClientId");
-
-		googleAnalyticsService.trackLoginLogout(eventName, pageName, pageType, gaClientId);
+		googleAnalyticsService.trackLoginLogout(eventName, pageName, pageType, gaClientId, gaSessionId);
 
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
@@ -118,11 +118,11 @@ public class MyJssMiscellaneousController {
 	@PostMapping(inputEntryPoint + "/google-analytics/view-list-item")
 	public ResponseEntity<Boolean> trackViewListItem(@RequestBody List<ServiceType> serviceTypes,
 			@RequestParam(required = false) Integer affaireId, @RequestParam Integer serviceFamilyId,
+			@RequestParam String gaClientId,
+			@RequestParam String gaSessionId,
 			HttpServletRequest request)
 			throws OsirisClientMessageException, OsirisException {
 		detectFlood(request);
-
-		String gaClientId = request.getHeader("gaClientId");
 
 		Affaire affaire = null;
 		if (affaireId == null)
@@ -138,7 +138,7 @@ public class MyJssMiscellaneousController {
 		if (serviceFamily == null)
 			throw new OsirisValidationException("serviceFamilyId");
 
-		googleAnalyticsService.trackViewItemList(serviceTypes, affaire, serviceFamily, gaClientId);
+		googleAnalyticsService.trackViewItemList(serviceTypes, affaire, serviceFamily, gaClientId, gaSessionId);
 
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
@@ -146,11 +146,11 @@ public class MyJssMiscellaneousController {
 	@PostMapping(inputEntryPoint + "/google-analytics/add-to-cart")
 	public ResponseEntity<Boolean> trackAddToCart(@RequestBody ServiceType serviceType,
 			@RequestParam(required = false) Integer affaireId,
+			@RequestParam String gaClientId,
+			@RequestParam String gaSessionId,
 			HttpServletRequest request)
 			throws OsirisClientMessageException, OsirisException {
 		detectFlood(request);
-
-		String gaClientId = request.getHeader("gaClientId");
 
 		Affaire affaire = null;
 		if (affaireId == null)
@@ -161,18 +161,18 @@ public class MyJssMiscellaneousController {
 		if (affaire == null)
 			throw new OsirisValidationException("affaire");
 
-		googleAnalyticsService.trackAddToCart(serviceType, affaire, gaClientId);
+		googleAnalyticsService.trackAddToCart(serviceType, affaire, gaClientId, gaSessionId);
 
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 
 	@PostMapping(inputEntryPoint + "/google-analytics/remove-from-cart")
 	public ResponseEntity<Boolean> trackRemoveFromCart(@RequestBody ServiceType serviceType,
+			@RequestParam String gaClientId,
+			@RequestParam String gaSessionId,
 			@RequestParam(required = false) Integer affaireId, HttpServletRequest request)
 			throws OsirisClientMessageException, OsirisException {
 		detectFlood(request);
-
-		String gaClientId = request.getHeader("gaClientId");
 
 		Affaire affaire = null;
 		if (affaireId == null)
@@ -183,59 +183,59 @@ public class MyJssMiscellaneousController {
 		if (affaire == null)
 			throw new OsirisValidationException("affaire");
 
-		googleAnalyticsService.trackRemoveFromCart(serviceType, affaire, gaClientId);
+		googleAnalyticsService.trackRemoveFromCart(serviceType, affaire, gaClientId, gaSessionId);
 
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 
 	@PostMapping(inputEntryPoint + "/google-analytics/begin-checkout/quotation")
 	public ResponseEntity<Boolean> trackBeginCheckoutQuotation(@RequestBody Quotation quotation,
+			@RequestParam String gaClientId,
+			@RequestParam String gaSessionId,
 			HttpServletRequest request)
 			throws OsirisClientMessageException, OsirisException {
 		detectFlood(request);
 
-		String gaClientId = request.getHeader("gaClientId");
-
-		googleAnalyticsService.trackBeginCheckout(quotation, gaClientId);
+		googleAnalyticsService.trackBeginCheckout(quotation, gaClientId, gaSessionId);
 
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 
 	@PostMapping(inputEntryPoint + "/google-analytics/begin-checkout/customer-order")
 	public ResponseEntity<Boolean> trackBeginCheckoutOrder(@RequestBody CustomerOrder customerOrder,
+			@RequestParam String gaClientId,
+			@RequestParam String gaSessionId,
 			HttpServletRequest request)
 			throws OsirisClientMessageException, OsirisException {
 		detectFlood(request);
 
-		String gaClientId = request.getHeader("gaClientId");
-
-		googleAnalyticsService.trackBeginCheckout(customerOrder, gaClientId);
+		googleAnalyticsService.trackBeginCheckout(customerOrder, gaClientId, gaSessionId);
 
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 
 	@PostMapping(inputEntryPoint + "/google-analytics/add-payment-info/quotation")
 	public ResponseEntity<Boolean> trackAddPaymentInfoQuotation(@RequestBody Quotation quotation,
+			@RequestParam String gaClientId,
+			@RequestParam String gaSessionId,
 			HttpServletRequest request)
 			throws OsirisClientMessageException, OsirisException {
 		detectFlood(request);
 
-		String gaClientId = request.getHeader("gaClientId");
-
-		googleAnalyticsService.trackAddPaymentInfo(quotation, gaClientId);
+		googleAnalyticsService.trackAddPaymentInfo(quotation, gaClientId, gaSessionId);
 
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 
 	@PostMapping(inputEntryPoint + "/google-analytics/add-payment-info/customer-order")
 	public ResponseEntity<Boolean> trackAddPaymentInfoOrder(@RequestBody CustomerOrder customerOrder,
+			@RequestParam String gaClientId,
+			@RequestParam String gaSessionId,
 			HttpServletRequest request)
 			throws OsirisClientMessageException, OsirisException {
 		detectFlood(request);
 
-		String gaClientId = request.getHeader("gaClientId");
-
-		googleAnalyticsService.trackAddPaymentInfo(customerOrder, gaClientId);
+		googleAnalyticsService.trackAddPaymentInfo(customerOrder, gaClientId, gaSessionId);
 
 		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}

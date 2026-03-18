@@ -101,10 +101,6 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 			JacksonViews.OsirisDetailedView.class })
 	private Responsable responsable;
 
-	// @ManyToOne(fetch = FetchType.LAZY)
-	// @JoinColumn(name = "id_confrere")
-	// private Confrere confrere;
-
 	@ManyToMany
 	@JoinTable(name = "asso_customer_order_special_offer", joinColumns = @JoinColumn(name = "id_customer_order"), inverseJoinColumns = @JoinColumn(name = "id_special_offer"))
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
@@ -325,6 +321,7 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	private Boolean isFromAnnouncementMailbox;
 
 	private String lastGaClientId;
+	private String gaSessionId;
 
 	@Transient
 	@JsonView(JacksonViews.MyJssDetailedView.class)
@@ -761,5 +758,13 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public void setHasCreditNote(Boolean hasCreditNote) {
 		this.hasCreditNote = hasCreditNote;
+	}
+
+	public String getGaSessionId() {
+		return gaSessionId;
+	}
+
+	public void setGaSessionId(String gaSessionId) {
+		this.gaSessionId = gaSessionId;
 	}
 }
