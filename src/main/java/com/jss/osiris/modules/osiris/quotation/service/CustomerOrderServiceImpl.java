@@ -282,7 +282,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     @Autowired
     GoogleAnalyticsService googleAnalyticsService;
 
-    private CustomerOrder simpleAddOrUpdate(CustomerOrder customerOrder) {
+    private CustomerOrder simpleAddOrUpdate(CustomerOrder customerOrder) throws OsirisException {
+        batchService.declareNewBatch(Batch.REINDEX_CUSTOMER_ORDER, customerOrder.getId());
         return customerOrderRepository.save(customerOrder);
     }
 
@@ -418,8 +419,6 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                         .equals(constantService.getCustomerOrderOriginOsiris().getId())
                 && customerOrder.getCustomerOrderStatus().getCode().equals(CustomerOrderStatus.DRAFT) && isFromUser)
             addOrUpdateCustomerOrderStatus(customerOrder, CustomerOrderStatus.BEING_PROCESSED, isFromUser);
-
-        batchService.declareNewBatch(Batch.REINDEX_CUSTOMER_ORDER, customerOrder.getId());
         return customerOrder;
     }
 
@@ -2380,7 +2379,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
 
     @Override
     @Transactional
-    public void switchResponsable(CustomerOrder order, Responsable responsable) {
+    public void switchResponsable(CustomerOrder order, Responsable responsable) throws OsirisException {
         order = getCustomerOrder(order.getId());
         List<Responsable> userScope = userScopeService.getPotentialUserScope();
 

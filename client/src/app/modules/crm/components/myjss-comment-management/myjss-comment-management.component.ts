@@ -2,6 +2,7 @@ import { AfterContentChecked, ChangeDetectorRef, Component, OnInit } from '@angu
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTabChangeEvent } from '@angular/material/tabs';
+import { POST_SOURCE_JSS, POST_SOURCE_MYJSS } from 'src/app/libs/Constants';
 import { formatDateTimeForSortTable } from 'src/app/libs/FormatHelper';
 import { EditCommentDialogComponent } from 'src/app/modules/miscellaneous/components/edit-comment-dialog.component/edit-comment-dialog-component.component';
 import { SortTableAction } from 'src/app/modules/miscellaneous/model/SortTableAction';
@@ -86,7 +87,10 @@ export class MyjssCommentManagementComponent implements OnInit, AfterContentChec
 
     this.tableActionComment.push({
       actionIcon: "open_in_new", actionName: "Voir le commentaire dans l'article", actionClick: (column: SortTableAction<Comment>, element: Comment, event: any) => {
-        this.appService.openMyJssRoute("post/" + element.post.slug + "#" + element.id);
+        if (element.post.source == POST_SOURCE_JSS)
+          this.appService.openJssRoute("post/" + element.post.slug + "#" + element.id);
+        if (element.post.source == POST_SOURCE_MYJSS)
+          this.appService.openMyJssRoute("post/" + element.post.slug + "#" + element.id);
       }, display: true,
     } as SortTableAction<Comment>);
 
