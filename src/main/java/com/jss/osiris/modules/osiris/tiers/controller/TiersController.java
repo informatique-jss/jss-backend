@@ -711,7 +711,7 @@ public class TiersController {
   @GetMapping(inputEntryPoint + "/responsable/search")
   public ResponseEntity<List<Responsable>> getResponsables(@RequestParam String searchedValue) {
 
-    Pageable pageable = PageRequest.of(0, 10000000, Sort.by(Sort.Direction.DESC, "lastname"));
+    Pageable pageable = PageRequest.of(0, 100, Sort.by(Sort.Direction.DESC, "lastname"));
 
     return new ResponseEntity<List<Responsable>>(
         responsableService.getResponsables(searchedValue, pageable).getContent(),

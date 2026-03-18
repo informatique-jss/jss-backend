@@ -161,8 +161,12 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
          * |============================================================================
          */
 
-        Page<Responsable> findByLastnameContainingIgnoreCaseOrFirstnameContainingIgnoreCase(String lastname,
-                        String firstname, Pageable pageable);
+        @Query("""
+                        select r from Responsable r
+                        where :searchValue = ''
+                        or upper(concat(r.firstname, ' ', r.lastname)) like upper(concat('%', :searchValue, '%'))
+                        """)
+        Page<Responsable> findResponsableByName(String searchValue, Pageable pageable);
 
         List<Responsable> findByTiers(Tiers tiers);
 
