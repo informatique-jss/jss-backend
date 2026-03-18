@@ -22,7 +22,7 @@ public interface IndexEntityRepository extends QueryCacheCrudRepository<IndexEnt
         // created_date,id_employee_createdy_by,udpated_date,id_employee_updated_by from
         // (SELECT index_entity.* , similarity(text, :searchQuery) AS rank FROM
         // index_entity ) t ORDER BY (case when entity_type in ('Tiers', 'Responsable')
-        // then 0.1 else 0 end) + rank desc LIMIT :numberOfResult")
+        // then 0.1 else 0 end) LIMIT :numberOfResult")
         // List<IndexEntity> searchForDeepSimilarEntities(@Param("searchQuery") String
         // searchQuery,
         // @Param("numberOfResult") Integer numberOfResult);
@@ -36,10 +36,10 @@ public interface IndexEntityRepository extends QueryCacheCrudRepository<IndexEnt
                         ) t
                         ORDER BY case
                                 when :sortBy='rank' then (case when entity_type in ('Tiers', 'Responsable') then 0.1 else 0 end)
-                                when :sortBy='dateAsc' then -EXTRACT(EPOCH FROM coalesce(created_date, '1970-01-01 00:00:00'))
-                                when :sortBy='dateDesc' then  EXTRACT(EPOCH FROM coalesce(created_date, '1970-01-01 00:00:00'))
+                                when :sortBy='dateAsc' then EXTRACT(EPOCH FROM coalesce(created_date, '1970-01-01 00:00:00'))
+                                when :sortBy='dateDesc' then  -EXTRACT(EPOCH FROM coalesce(created_date, '1970-01-01 00:00:00'))
                         end
-                        + rank desc LIMIT :numberOfResult
+                        LIMIT :numberOfResult
                         """)
         List<IndexEntity> searchForEntities(@Param("searchQuery") String searchQuery,
                         @Param("entityType") String entityType, @Param("sortBy") String sortBy,
@@ -54,7 +54,7 @@ public interface IndexEntityRepository extends QueryCacheCrudRepository<IndexEnt
                                 when :sortBy='dateAsc' then EXTRACT(EPOCH FROM COALESCE(created_date, '1970-01-01 00:00:00'))
                                 when :sortBy='dateDesc' then  -EXTRACT(EPOCH FROM COALESCE(created_date, '1970-01-01 00:00:00'))
                                 end
-                                + rank desc LIMIT :numberOfResult
+                                LIMIT :numberOfResult
                         """)
         List<IndexEntity> searchForContainsSimilarEntities(@Param("searchQuery") String searchQuery,
                         @Param("entityType") String entityType, @Param("sortBy") String sortBy,

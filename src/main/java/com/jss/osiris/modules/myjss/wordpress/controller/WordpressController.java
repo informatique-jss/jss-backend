@@ -1292,8 +1292,10 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/tags/all/publishing-department")
-	public ResponseEntity<List<Tag>> getAllTagsByPublishingDepartment(@RequestParam String departmentCode)
+	public ResponseEntity<List<Tag>> getAllTagsByPublishingDepartment(@RequestParam String departmentCode,
+			HttpServletRequest request)
 			throws OsirisException {
+		detectFlood(request);
 
 		if (departmentCode == null)
 			return new ResponseEntity<List<Tag>>(new ArrayList<Tag>(), HttpStatus.OK);
@@ -1308,8 +1310,9 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/tags/all/premium")
-	public ResponseEntity<List<Tag>> getAllTagsByPremiumPosts()
+	public ResponseEntity<List<Tag>> getAllTagsByPremiumPosts(HttpServletRequest request)
 			throws OsirisException {
+		detectFlood(request);
 
 		return new ResponseEntity<List<Tag>>(tagService.getAllTagsByPremiumPosts(),
 				HttpStatus.OK);
@@ -1317,8 +1320,10 @@ public class WordpressController {
 
 	@GetMapping(inputEntryPoint + "/search/post")
 	@JsonView(JacksonViews.MyJssListView.class)
-	public ResponseEntity<List<IndexEntity>> globalSearchForEntity(@RequestParam String searchText)
+	public ResponseEntity<List<IndexEntity>> globalSearchForEntity(@RequestParam String searchText,
+			HttpServletRequest request)
 			throws OsirisException {
+		detectFlood(request);
 		// TODO : leak premium
 		if (searchText != null && searchText.length() > 2)
 			return new ResponseEntity<List<IndexEntity>>(
@@ -1330,8 +1335,9 @@ public class WordpressController {
 	@GetMapping(inputEntryPoint + "/search/jss/post")
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<Page<Post>> globalSearchForJssPostEntity(@RequestParam String searchText,
-			@RequestParam String sortBy)
+			@RequestParam String sortBy, HttpServletRequest request)
 			throws OsirisException {
+		detectFlood(request);
 		// TODO : leak premium
 		if (searchText != null && searchText.length() > 2)
 			return new ResponseEntity<Page<Post>>(postService.searchJssPosts(searchText, sortBy),
@@ -1339,14 +1345,15 @@ public class WordpressController {
 		return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
 	}
 
-	@GetMapping(inputEntryPoint + "/search/jss/newspapers")
+	@GetMapping(inputEntryPoint + "/search/jss/newspaper-pages")
 	@JsonView(JacksonViews.MyJssListView.class)
-	public ResponseEntity<Page<Newspaper>> globalSearchForNewspaper(@RequestParam String searchText,
+	public ResponseEntity<List<IndexEntity>> globalSearchForNewspaper(@RequestParam String searchText,
 			@RequestParam String sortBy) throws OsirisException {
 		if (searchText != null && searchText.length() > 2)
-			return new ResponseEntity<Page<Newspaper>>(newspaperPageService.searchNewspapers(searchText, sortBy),
+			return new ResponseEntity<List<IndexEntity>>(
+					newspaperPageService.searchNewspapersEntities(searchText, sortBy),
 					HttpStatus.OK);
-		return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
+		return new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/announcement/search")

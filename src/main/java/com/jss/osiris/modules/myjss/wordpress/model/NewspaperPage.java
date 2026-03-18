@@ -36,6 +36,7 @@ public class NewspaperPage implements IId, Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_newspaper")
+    @IndexedField
     private Newspaper newspaper;
 
     public Integer getId() {

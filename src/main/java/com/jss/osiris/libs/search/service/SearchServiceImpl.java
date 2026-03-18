@@ -70,9 +70,6 @@ public class SearchServiceImpl implements SearchService {
         return searchForEntities(search, entityType, onlyExactMatch, null);
     }
 
-    // TODO : faire pareil que le sort mais avec les articles kiosk + faire le sort
-    // sur searchForEntities (pas sur la première qui est en jpa, mais sur les
-    // autres)
     @Override
     public List<IndexEntity> searchForEntities(String search, String entityType, boolean onlyExactMatch,
             String sortBy) {

@@ -335,13 +335,14 @@
 
             <div class="feature-image order-1 order-lg-0">
               <div class="image-frame image-hover-style-1">
-                <a (click)="openPost()" [routerLink]='"/tochange/" + newspaper.newspaperIssueNumber'>
+                <a (click)="openPost()" [routerLink]='"/tochange/" + newspaper.text.newspaper.newspaperIssueNumber'>
 
-                  <img *ngIf="newspaper.newspaperImage" class="lazyload w-100"
+                  <img *ngIf="newspaper.text.newspaper.newspaperImage" class="lazyload w-100"
                     style="object-fit: cover; aspect-ratio: 16/9; max-height: 250px;"
-                    [src]="'data:image/jpeg;base64,'+ newspaper.newspaperImage" alt="Couverture du magazine">
+                    [src]="'data:image/jpeg;base64,'+ newspaper.text.newspaper.newspaperImage"
+                    alt="Couverture du magazine">
 
-                  <img *ngIf="!newspaper.newspaperImage" class="w-100"
+                  <img *ngIf="!newspaper.text.newspaper.newspaperImage" class="w-100"
                     style="object-fit: cover; aspect-ratio: 16/9; max-height: 250px;"
                     src="assets/images/kiosk/jss_11.jpg" alt="Couverture par défaut">
 
@@ -352,20 +353,23 @@
             <div data-aos="fade-in" class="ms-3 card-body d-flex flex-column flex-lg-row align-items-stretch p-0">
               <div class="order-0 order-lg-1 w-100">
 
-                <div class="row align-items-center ms-0 mb-1" *ngIf="newspaper.newspaperCategory">
-                  <div class="badge bg-info rounded-pill px-1 col-auto me-2 mb-0">{{newspaper.newspaperCategory == "JDS"
+                <div class="row align-items-center ms-0 mb-1" *ngIf="newspaper.text.newspaper.newspaperCategory">
+                  <div class="badge bg-info rounded-pill px-1 col-auto me-2 mb-0">
+                    {{newspaper.text.newspaper.newspaperCategory ==
+                    "JDS"
                     ?
                     "Journal de la Seine" : "Journal Spécial des Société"}}</div>
                 </div>
 
                 <h4>
                   <a class="card-text-truncate" (click)="openPost()"
-                    [routerLink]='"/tochange/" + newspaper.newspaperIssueNumber'>
-                    Numéro {{newspaper.newspaperIssueNumber}} </a>
+                    [routerLink]='"/tochange/" + newspaper.text.newspaper.newspaperIssueNumber'>
+                    Numéro {{newspaper.text.newspaper.newspaperIssueNumber}} </a>
                 </h4>
 
                 <div class="">
-                  <span class="card-truncate-6-line text-muted">Publié en {{newspaper.date | date:'MMMM yyyy'}}</span>
+                  <span class="card-truncate-6-line text-muted">Publié en {{newspaper.text.newspaper.date
+                    | date:'MMMM yyyy'}}</span>
                 </div>
               </div>
             </div>
