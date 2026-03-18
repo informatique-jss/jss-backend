@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Affaire } from '../../my-account/model/Affaire';
 import { CustomerOrder } from '../../my-account/model/CustomerOrder';
@@ -11,15 +11,17 @@ import { PlatformService } from './platform.service';
 @Injectable({
   providedIn: 'root'
 })
-export class GoogleAnalyticsService {
+export class GoogleAnalyticsService extends AppRestService<string> {
 
-  entryPoint: String = "miscellaneous";
+  measurementId = "0BY856TTFM";
 
-  constructor(protected _http: HttpClient, private platformService: PlatformService) {
+  constructor(http: HttpClient, private platformService: PlatformService) {
+    super(http, "miscellaneous");
   }
 
   trackLoginLogout(eventName: string, pageName: string, pageType: string) {
-    return this.getWithGaClientId(new HttpParams().set("eventName", eventName).set("pageName", pageName).set("pageType", pageType), "google-analytics/login-logout");
+    return this.get(new HttpParams().set("eventName", eventName).set("pageName", pageName).set("pageType", pageType).set("gaClientId", this.getAnalyticsIds().clientId ? this.getAnalyticsIds().clientId! : "")
+      .set("gaSessionId", this.getAnalyticsIds().sessionId ? this.getAnalyticsIds().sessionId! : ""), "google-analytics/login-logout");
   }
 
   trackViewItemList(serviceFamily: ServiceFamily, affaire?: Affaire) {
@@ -27,64 +29,85 @@ export class GoogleAnalyticsService {
     params = params.set("serviceFamilyId", serviceFamily.id);
     if (affaire && affaire.id)
       params = params.set("affaireId", affaire.id);
-    return this.postListWithGaClient(params, "google-analytics/view-list-item", serviceFamily.services);
+    return this.postList(params.set("gaClientId", this.getAnalyticsIds().clientId ? this.getAnalyticsIds().clientId! : "")
+      .set("gaSessionId", this.getAnalyticsIds().sessionId ? this.getAnalyticsIds().sessionId! : ""), "google-analytics/view-list-item", serviceFamily.services);
   }
 
   trackAddToCart(service: ServiceType, affaire?: Affaire) {
     let params = new HttpParams();
     if (affaire && affaire.id)
       params = params.set("affaireId", affaire.id);
-    return this.postListWithGaClient(params, "google-analytics/add-to-cart", service);
+    return this.postList(params.set("gaClientId", this.getAnalyticsIds().clientId ? this.getAnalyticsIds().clientId! : "")
+      .set("gaSessionId", this.getAnalyticsIds().sessionId ? this.getAnalyticsIds().sessionId! : ""), "google-analytics/add-to-cart", service);
   }
 
   trackRemoveFromCart(service: ServiceType, affaire?: Affaire) {
     let params = new HttpParams();
     if (affaire && affaire.id)
       params = params.set("affaireId", affaire.id);
-    return this.postListWithGaClient(params, "google-analytics/remove-from-cart", service);
+    return this.postList(params.set("gaClientId", this.getAnalyticsIds().clientId ? this.getAnalyticsIds().clientId! : "")
+      .set("gaSessionId", this.getAnalyticsIds().sessionId ? this.getAnalyticsIds().sessionId! : ""), "google-analytics/remove-from-cart", service);
   }
 
   trackBeginCheckoutQuotation(quotation: Quotation) {
-    return this.postListWithGaClient(new HttpParams(), "google-analytics/begin-checkout/quotation", quotation);
+    return this.postList(new HttpParams().set("gaClientId", this.getAnalyticsIds().clientId ? this.getAnalyticsIds().clientId! : "")
+      .set("gaSessionId", this.getAnalyticsIds().sessionId ? this.getAnalyticsIds().sessionId! : ""), "google-analytics/begin-checkout/quotation", quotation);
   }
 
   trackBeginCheckoutCustomerOrder(customerOrder: CustomerOrder) {
-    return this.postListWithGaClient(new HttpParams(), "google-analytics/begin-checkout/customer-order", customerOrder);
+    return this.postList(new HttpParams().set("gaClientId", this.getAnalyticsIds().clientId ? this.getAnalyticsIds().clientId! : "")
+      .set("gaSessionId", this.getAnalyticsIds().sessionId ? this.getAnalyticsIds().sessionId! : ""), "google-analytics/begin-checkout/customer-order", customerOrder);
   }
 
   trackAddPaymentInfoQuotation(quotation: Quotation) {
-    return this.postListWithGaClient(new HttpParams(), "google-analytics/add-payment-info/quotation", quotation);
+    return this.postList(new HttpParams().set("gaClientId", this.getAnalyticsIds().clientId ? this.getAnalyticsIds().clientId! : "")
+      .set("gaSessionId", this.getAnalyticsIds().sessionId ? this.getAnalyticsIds().sessionId! : ""), "google-analytics/add-payment-info/quotation", quotation);
   }
 
   trackAddPaymentInfoCustomerOrder(customerOrder: CustomerOrder) {
-    return this.postListWithGaClient(new HttpParams(), "google-analytics/add-payment-info/customer-order", customerOrder);
+    return this.postList(new HttpParams().set("gaClientId", this.getAnalyticsIds().clientId ? this.getAnalyticsIds().clientId! : "")
+      .set("gaSessionId", this.getAnalyticsIds().sessionId ? this.getAnalyticsIds().sessionId! : ""), "google-analytics/add-payment-info/customer-order", customerOrder);
   }
 
-  private postListWithGaClient(params: HttpParams, api: string, item?: any) {
-    let headers = new HttpHeaders();
-    headers = headers.set('gaClientId', this.getGaClientId());
-    return this._http.post(AppRestService.serverUrl + this.entryPoint + "/" + api, item, { params, headers });
+  private getCookie(name: string): string | null {
+    const nameLenPlus = (name.length + 1);
+    return document.cookie
+      .split(';')
+      .map(c => c.trim())
+      .filter(cookie => cookie.substring(0, nameLenPlus) === `${name}=`)
+      .map(cookie => decodeURIComponent(cookie.substring(nameLenPlus)))[0] || null;
   }
 
-  private getWithGaClientId(params: HttpParams, api: string) {
-    let headers = new HttpHeaders();
-    headers = headers.set('gaClientId', this.getGaClientId());
-    return this._http.get(AppRestService.serverUrl + this.entryPoint + "/" + api, { params, headers });
-  }
+  getAnalyticsIds() {
+    const cleanId = this.measurementId.replace('G-', '');
+    let sessionCookie = this.getCookie(`_ga_${cleanId}`);
+    if (sessionCookie == null)
+      sessionCookie = this.getCookie("_ga_XXXXXXXXX");
+    const clientCookie = this.getCookie('_ga');
 
-  // Even if consent is not given by the user, a cookie (anonyme) is created and will be found
-  getGaClientId(): string {
-    if (this.platformService.getNativeDocument() != undefined) {
-      const match = this.platformService.getNativeDocument()!.cookie.match('(?:^|;)\\s*_ga=([^;]*)');
-      // The format is often GA1.x.UID. We want to retrieve the UID part (from the 3rd segment)
-      // Or more simply, we take everything after "GA1.x."
-      if (match && match[1]) {
-        const parts = match[1].split('.');
-        if (parts.length >= 3) {
-          return parts.slice(2).join('.'); // returns something like "123456789.987654321"
-        }
-      }
+    if (sessionCookie) {
+      const parts = sessionCookie.split('.');
+      const sessionId = this.extractSessionId(parts[2]);
+
+      const clientId = clientCookie ? clientCookie.split('.').slice(-2).join('.') : null;
+
+      return { clientId, sessionId };
     }
-    return ""; //  Fallback or error handling
+    return {};
+  }
+
+  extractSessionId(cookieValue: string): string | null {
+    if (cookieValue.includes('$')) {
+      const parts = cookieValue.split('$');
+      const sPart = parts.find(p => p.startsWith('s'));
+      return sPart ? sPart.substring(1) : null; // On enlève le 's'
+    }
+
+    if (cookieValue.includes('.')) {
+      const parts = cookieValue.split('.');
+      return parts[2] || null;
+    }
+
+    return null;
   }
 }

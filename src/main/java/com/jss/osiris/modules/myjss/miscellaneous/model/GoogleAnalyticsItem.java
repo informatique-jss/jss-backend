@@ -2,6 +2,7 @@ package com.jss.osiris.modules.myjss.miscellaneous.model;
 
 import java.math.BigDecimal;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -27,9 +28,11 @@ public class GoogleAnalyticsItem {
     private String coupon;
 
     @JsonProperty("discount")
+    @JsonFormat(shape = JsonFormat.Shape.NUMBER_FLOAT)
     private BigDecimal discount;
 
     @JsonProperty("price")
+    @JsonFormat(shape = JsonFormat.Shape.NUMBER_FLOAT)
     private BigDecimal price;
 
     @JsonProperty("quantity")

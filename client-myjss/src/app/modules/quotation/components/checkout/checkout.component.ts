@@ -570,7 +570,6 @@ export class CheckoutComponent implements OnInit {
     if (validateEmail(this.inputMail)) {
       this.isSendingLink = true;
       this.loginService.sendConnectionLink(this.inputMail, true).subscribe(response => {
-        this.googleAnalyticsService.trackLoginLogout("login", "sign-in", "checkout").subscribe();
         this.isLinkSent = true;
         this.isSendingLink = false;
       })

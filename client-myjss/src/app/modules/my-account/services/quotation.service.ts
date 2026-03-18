@@ -50,13 +50,15 @@ export class QuotationService extends AppRestService<Quotation> {
 
   saveInitialQuotationForConnectedUser(quotation: IQuotation, isValidation: boolean): Observable<number> {
     let params = new HttpParams();
-    params = params.set("isValidation", isValidation);
+    params = params.set("isValidation", isValidation).set("gaClientId", this.googleAnalyticsService.getAnalyticsIds().clientId ? this.googleAnalyticsService.getAnalyticsIds().clientId! : "")
+      .set("gaSessionId", this.googleAnalyticsService.getAnalyticsIds().sessionId ? this.googleAnalyticsService.getAnalyticsIds().sessionId! : "");
     return this.postItem(params, 'quotation/user/save', quotation) as any as Observable<number>;
   }
 
   saveQuotationForAnonymousUser(quotation: Quotation, isValidation: boolean) {
     let params = new HttpParams();
-    params = params.set("isValidation", isValidation);
+    params = params.set("isValidation", isValidation).set("gaClientId", this.googleAnalyticsService.getAnalyticsIds().clientId ? this.googleAnalyticsService.getAnalyticsIds().clientId! : "")
+      .set("gaSessionId", this.googleAnalyticsService.getAnalyticsIds().sessionId ? this.googleAnalyticsService.getAnalyticsIds().sessionId! : "");
     return this.postItem(params, 'quotation/save-order', quotation);
   }
 
@@ -93,7 +95,6 @@ export class QuotationService extends AppRestService<Quotation> {
   }
 
   setCurrentDraftQuotation(quotation: IQuotation) {
-    quotation.lastGaClientId = this.googleAnalyticsService.getGaClientId();
     localStorage.setItem('current-draft-quotation', JSON.stringify(quotation));
   }
 
