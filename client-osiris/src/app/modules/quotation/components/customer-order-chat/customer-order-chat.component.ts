@@ -1,4 +1,5 @@
 import { Component, ElementRef, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { NgIcon } from '@ng-icons/core';
 import { formatDateHourFrance } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
@@ -21,6 +22,8 @@ export class CustomerOrderChatComponent implements OnInit {
   // Get all message elements from the DOM
   @ViewChildren('messageItem') messageElements!: QueryList<ElementRef>;
 
+  originalPageTitle: string | undefined;
+
   commentListByIQuotation: CustomerOrderComment[][] = [];
   newComments: Map<number, CustomerOrderComment> = new Map<number, CustomerOrderComment>();
   currentEmployee: Employee | undefined;
@@ -35,10 +38,12 @@ export class CustomerOrderChatComponent implements OnInit {
     private iQuotationCommentService: IQuotationCommentService,
     private employeeService: EmployeeService,
     private quotationService: QuotationService,
-    private appService: AppService
+    private appService: AppService,
+    private titleService: Title
   ) { }
 
   ngOnInit() {
+    this.originalPageTitle = this.titleService.getTitle();
     this.employeeService.getCurrentEmployee().subscribe((response: Employee | undefined) => {
       this.currentEmployee = response;
     });
@@ -72,6 +77,7 @@ export class CustomerOrderChatComponent implements OnInit {
           this.iQuotationCommentService.addToWatchedIQuotations(workingIQuotation);
       }
       this.sortComments();
+      this.updateBrowserTabTitleWithUnreadCount();
     });
   }
 
@@ -159,6 +165,7 @@ export class CustomerOrderChatComponent implements OnInit {
   markAsRead(iQuotationId: number) {
     this.iQuotationCommentService.markAllCommentsAsReadForIQuotation(iQuotationId).subscribe(res => {
       this.fetchCommentsForIQuotationsAndScroll(iQuotationId);
+      this.updateBrowserTabTitleWithUnreadCount();
     });
   }
 
@@ -188,8 +195,28 @@ export class CustomerOrderChatComponent implements OnInit {
       text.style.setProperty('--scroll-x', '0px');
   }
 
+  private updateBrowserTabTitleWithUnreadCount() {
+    let totalUnread = 0;
+
+    if (this.currentIQuotationList && this.currentIQuotationList.length > 0) {
+      for (const iQuotationId of this.currentIQuotationList) {
+        totalUnread += this.getUnreadCommentsCount(iQuotationId);
+      }
+    }
+
+    if (totalUnread > 0) {
+      this.titleService.setTitle(`(${totalUnread}) ${this.originalPageTitle}`);
+    } else {
+      if (this.originalPageTitle)
+        this.titleService.setTitle(this.originalPageTitle);
+      else
+        this.titleService.setTitle("OSIRIS");
+    }
+  }
+
   ngOnDestroy() {
     this.iQuotationCommentService.emptyWatchedIQuotations();
     clearInterval(this.pollingInterval);
+    this.titleService.setTitle(this.originalPageTitle ? this.originalPageTitle : "OSIRIS");
   }
 }

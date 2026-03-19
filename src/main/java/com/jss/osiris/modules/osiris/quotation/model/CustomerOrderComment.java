@@ -103,6 +103,9 @@ public class CustomerOrderComment implements Serializable, IId {
 	@Transient
 	private Integer tiersId;
 
+	@Transient
+	private Boolean isQuotation;
+
 	public Integer getId() {
 		return id;
 	}
@@ -221,5 +224,13 @@ public class CustomerOrderComment implements Serializable, IId {
 
 	public void setTiersId(Integer tiersId) {
 		this.tiersId = tiersId;
+	}
+
+	public Boolean getIsQuotation() {
+		return isQuotation;
+	}
+
+	public void setIsQuotation(Boolean isQuotation) {
+		this.isQuotation = isQuotation;
 	}
 }

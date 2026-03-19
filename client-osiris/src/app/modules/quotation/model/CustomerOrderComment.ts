@@ -13,4 +13,5 @@ export interface CustomerOrderComment {
   isToDisplayToCustomer: boolean;
   tiersDenomination: string;
   tiersId: number;
+  isQuotation: boolean;
 }

@@ -278,6 +278,11 @@ public class QuotationFacade {
         comment.setTiersDenomination(tiers.getDenomination() != null ? tiers.getDenomination()
                 : (tiers.getFirstname() + " " + tiers.getLastname()));
         comment.setTiersId(tiers.getId());
+        if (comment.getCustomerOrder() == null || comment.getCustomerOrder().getId() == null) {
+            comment.setIsQuotation(true);
+        } else {
+            comment.setIsQuotation(false);
+        }
     }
 
     @Transactional(rollbackFor = Exception.class)
