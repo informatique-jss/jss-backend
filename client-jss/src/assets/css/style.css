@@ -11690,6 +11690,30 @@ a strong:hover {
   color: var(--ar-primary);
 }
 
+a em {
+  color: var(--ar-blue-medium);
+}
+
+a em:hover {
+  color: var(--ar-primary);
+}
+
+a span {
+  color: var(--ar-blue-medium);
+}
+
+a span:hover {
+  color: var(--ar-primary);
+}
+
+p a {
+  color: var(--ar-blue-medium);
+}
+
+p a:hover {
+  color: var(--ar-primary);
+}
+
 iframe {
   border: 0;
   outline: none;
