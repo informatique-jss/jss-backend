@@ -289,6 +289,7 @@ public class PostServiceImpl implements PostService {
         reformatQuotes(post);
         reformatTables(post);
         reformatFootnotes(post);
+        reformatCoupletForALireAussi(post);
 
         addOrUpdatePost(computePost(post));
         batchService.declareNewBatch(Batch.REINDEX_POST, post.getId());
@@ -480,6 +481,35 @@ public class PostServiceImpl implements PostService {
                     post.getOriginalContentText().replace("<a href=\"#" + id + "-link\" target=\"_blank\"",
                             "<a onclick=\"scrollToElement('" + id + "-link')\" style=\"cursor: pointer;\""));
         }
+    }
+
+    private void reformatCoupletForALireAussi(Post post) {
+        if (post.getOriginalContentText() == null)
+            return;
+
+        String content = post.getOriginalContentText();
+
+        Pattern pattern = Pattern.compile(
+                "(?s)<pre[^>]*class=\"[^\"]*wp-block-verse[^\"]*\"[^>]*>(.*?)</pre>");
+        Matcher matcher = pattern.matcher(content);
+
+        StringBuffer result = new StringBuffer();
+
+        while (matcher.find()) {
+            String innerHtml = matcher.group(1);
+
+            String replacement = "<div class=\"my-2\"><div class=\"serie-border p-1\"><div class=\"row \">" +
+                    "<h3>A lire aussi</h3></div><div class=\"row ms-1\">" +
+                    "<strong class=\"fs-6 text-muted\">" +
+                    innerHtml.replace("<a ", "<a class=\"text-muted\" ") +
+                    "</strong></div></div></div>";
+
+            matcher.appendReplacement(result, Matcher.quoteReplacement(replacement));
+        }
+        matcher.appendTail(result);
+
+        System.out.print(result.toString());
+        post.setOriginalContentText(result.toString());
     }
 
     @Override

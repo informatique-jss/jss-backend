@@ -175,7 +175,7 @@
                   <div class="row pb-2">
                     <strong>{{getRawTextFromHtml(seriePost.excerptText)}}</strong>
                   </div>
-                  <div class="row" *ngFor="let seriePost of postsOfSerie">
+                  <div class="row ms-1" *ngFor="let seriePost of postsOfSerie">
                     <li *ngIf="seriePost.id!=post.id">
                       <a style="color: var(--ar-blue-medium);"
                         [routerLink]=' "/post/" + seriePost.slug'>{{seriePost.titleText}}</a>
