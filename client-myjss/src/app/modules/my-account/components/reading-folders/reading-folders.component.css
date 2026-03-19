@@ -33,3 +33,47 @@
   padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
 }
+
+
+.btn-edit {
+  --ar-btn-close-color: var(--ar-primary);
+  --ar-btn-close-opacity: 0.55;
+  --ar-btn-close-hover-opacity: 0.85;
+  --ar-btn-close-focus-shadow: none;
+  --ar-btn-close-focus-opacity: 0.85;
+  --ar-btn-close-disabled-opacity: 0.3;
+  --ar-btn-close-white-filter: invert(1) grayscale(100%) brightness(200%);
+  box-sizing: content-box;
+  width: 1.375em;
+  height: 1.375em;
+  padding: 0.25em 0.25em;
+  color: var(--ar-btn-close-color);
+  background: transparent var(--ar-btn-close-bg) center/1.375em auto no-repeat;
+  border: 0;
+  border-radius: 1rem;
+  opacity: var(--ar-btn-close-opacity);
+}
+
+.btn-edit:hover {
+  color: var(--ar-btn-close-color);
+  text-decoration: none;
+  opacity: var(--ar-btn-close-hover-opacity);
+}
+
+.btn-edit:focus {
+  outline: 0;
+  box-shadow: var(--ar-btn-close-focus-shadow);
+  opacity: var(--ar-btn-close-focus-opacity);
+}
+
+.btn-edit:disabled, .btn-edit.disabled {
+  pointer-events: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  opacity: var(--ar-btn-close-disabled-opacity);
+}
+
+.btn-edit-white {
+  filter: var(--ar-btn-close-white-filter);
+}
