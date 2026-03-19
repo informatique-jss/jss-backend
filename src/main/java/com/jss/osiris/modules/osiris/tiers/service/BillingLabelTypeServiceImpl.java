@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.tiers.model.BillingLabelType;
 import com.jss.osiris.modules.osiris.tiers.repository.BillingLabelTypeRepository;
@@ -25,12 +24,6 @@ public class BillingLabelTypeServiceImpl implements BillingLabelTypeService {
     @Override
     public List<BillingLabelType> getBillingLabelTypes() {
         return IterableUtils.toList(billingLabelTypeRepository.findAll());
-    }
-
-    @Override
-    public List<BillingLabelType> getBillingLabelTypesExcludingOtherType() throws OsirisException {
-        return IterableUtils
-                .toList(billingLabelTypeRepository.findAllExcluding(constantService.getBillingLabelTypeOther()));
     }
 
     @Override

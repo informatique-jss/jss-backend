@@ -25,8 +25,12 @@ export class SelectBillingLabelTypeComponent extends GenericSelectComponent<Bill
 
   initTypes(): void {
     this.billingLabelTypeService.getBillingLabelTypes().subscribe(response => {
-      this.types = response;
-    })
+      if (response) {
+        for (let billingLabelType of response)
+          if (billingLabelType.id != this.constantService.getBillingLabelTypeOther().id)
+            this.types.push(billingLabelType);
+      }
+    });
   }
 
   override displayLabel(object: any): string {
