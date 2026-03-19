@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { AppRestService } from './appRest.service';
 import { PlatformService } from './platform.service';
@@ -6,36 +6,59 @@ import { PlatformService } from './platform.service';
 @Injectable({
   providedIn: 'root'
 })
-export class GoogleAnalyticsService {
+export class GoogleAnalyticsService extends AppRestService<string> {
 
-  entryPoint: String = "miscellaneous";
+  measurementId = "0BY856TTFM";
 
-  constructor(protected _http: HttpClient, private platformService: PlatformService) {
+  constructor(http: HttpClient, private platformService: PlatformService) {
+    super(http, "miscellaneous");
   }
 
   trackLoginLogout(eventName: string, pageName: string, pageType: string) {
-    return this.getWithGaClientId(new HttpParams().set("eventName", eventName).set("pageName", pageName).set("pageType", pageType), "google-analytics/login-logout");
+    return this.get(new HttpParams().set("eventName", eventName).set("pageName", pageName).set("pageType", pageType)
+      .set("gaClientId", this.getAnalyticsIds().clientId ? this.getAnalyticsIds().clientId! : "")
+      .set("gaSessionId", this.getAnalyticsIds().sessionId ? this.getAnalyticsIds().sessionId! : ""), "google-analytics/login-logout");
   }
 
-  private getWithGaClientId(params: HttpParams, api: string) {
-    let headers = new HttpHeaders();
-    headers = headers.set('gaClientId', this.getGaClientId());
-    return this._http.get(AppRestService.serverUrl + this.entryPoint + "/" + api, { params, headers });
+  private getCookie(name: string): string | null {
+    const nameLenPlus = (name.length + 1);
+    return document.cookie
+      .split(';')
+      .map(c => c.trim())
+      .filter(cookie => cookie.substring(0, nameLenPlus) === `${name}=`)
+      .map(cookie => decodeURIComponent(cookie.substring(nameLenPlus)))[0] || null;
   }
 
-  // Even if consent is not given by the user, a cookie (anonyme) is created and will be found
-  getGaClientId(): string {
-    if (this.platformService.getNativeDocument() != undefined) {
-      const match = this.platformService.getNativeDocument()!.cookie.match('(?:^|;)\\s*_ga=([^;]*)');
-      // The format is often GA1.x.UID. We want to retrieve the UID part (from the 3rd segment)
-      // Or more simply, we take everything after "GA1.x."
-      if (match && match[1]) {
-        const parts = match[1].split('.');
-        if (parts.length >= 3) {
-          return parts.slice(2).join('.'); // returns something like "123456789.987654321"
-        }
-      }
+  getAnalyticsIds() {
+    const cleanId = this.measurementId.replace('G-', '');
+    let sessionCookie = this.getCookie(`_ga_${cleanId}`);
+    if (sessionCookie == null)
+      sessionCookie = this.getCookie("_ga_XXXXXXXXX");
+    const clientCookie = this.getCookie('_ga');
+
+    if (sessionCookie) {
+      const parts = sessionCookie.split('.');
+      const sessionId = this.extractSessionId(parts[2]);
+
+      const clientId = clientCookie ? clientCookie.split('.').slice(-2).join('.') : null;
+
+      return { clientId, sessionId };
     }
-    return ""; //  Fallback or error handling    
+    return {};
+  }
+
+  extractSessionId(cookieValue: string): string | null {
+    if (cookieValue.includes('$')) {
+      const parts = cookieValue.split('$');
+      const sPart = parts.find(p => p.startsWith('s'));
+      return sPart ? sPart.substring(1) : null; // On enlève le 's'
+    }
+
+    if (cookieValue.includes('.')) {
+      const parts = cookieValue.split('.');
+      return parts[2] || null;
+    }
+
+    return null;
   }
 }

@@ -64,7 +64,7 @@ export class SortTableComponent<T> implements OnInit {
     this.employeeService.getEmployees().subscribe(res => {
       this.allEmployees = res;
       this.refreshValues();
-    })
+    });
 
     // Restore displayed columns
     let prefColumns = this.userPreferenceService.getUserDisplayColumnsForTable(this.tableName);
@@ -208,14 +208,13 @@ export class SortTableComponent<T> implements OnInit {
         return "";
       };
 
-      this.dataSource.filterPredicate = (data: SortTableElement<T>, filter) => {
-        if (!this.filterPredicate) {
-          const dataStr = JSON.stringify(data).toLowerCase();
-          return dataStr.indexOf(filter) != -1;
-        } else {
+      this.dataSource.filterPredicate = (data: SortTableElement<T>, filter: string) => {
+        if (this.filterPredicate) {
           return this.filterPredicate(data, filter);
         }
-      }
+        const dataStr = JSON.stringify(data).toLowerCase();
+        return dataStr.indexOf(filter) != -1;
+      };
     });
   }
 

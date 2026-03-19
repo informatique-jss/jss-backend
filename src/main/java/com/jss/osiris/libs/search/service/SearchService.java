@@ -10,6 +10,9 @@ public interface SearchService {
 
     public List<IndexEntity> searchForEntities(String search, String entityType, boolean onlyExactMatch);
 
+    public List<IndexEntity> searchForEntities(String search, String entityType, boolean onlyExactMatch,
+            String sortBy);
+
     public List<IndexEntity> searchForEntitiesById(Integer id, List<String> entityTypeToSearch);
 
     public List<IndexEntity> searchForEntitiesByIds(List<Integer> ids, String entityTypeToSearch);

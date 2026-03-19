@@ -365,6 +365,7 @@ public class TiersServiceImpl implements TiersService {
         tiers.setPhones(null);
         tiers.setCompetitors(null);
         tiers.setSpecialOffers(null);
+        tiers.setTiersGroups(null);
 
         accountingAccountService.deleteAccountingAccount(tiers.getAccountingAccountCustomer());
         accountingAccountService.deleteAccountingAccount(tiers.getAccountingAccountDeposit());
@@ -448,7 +449,7 @@ public class TiersServiceImpl implements TiersService {
 
         List<Tiers> tiersFound = tiersRepository.searchForTiers(salesEmployeeId, tiersSearch.getMail(),
                 tiersSearch.getLabel(),
-                tiersSearch.getIsNewTiers(), tiersCategoryLabel);
+                tiersSearch.getIsNewTiers(), tiersCategoryLabel, tiersSearch.getTiersGroup());
 
         if (tiersSearch.getKpis() == null || tiersSearch.getKpis().size() == 0)
             return tiersFound;

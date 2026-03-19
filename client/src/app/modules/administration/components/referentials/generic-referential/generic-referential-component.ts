@@ -123,4 +123,5 @@ export abstract class GenericReferentialComponent<T extends IReferential> implem
     filterValue = filterValueCast.value.trim();
     this.searchText = filterValue.toLowerCase();
   }
+
 }

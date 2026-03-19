@@ -782,6 +782,15 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
             for (AssoAffaireOrder assoAffaireOrder : assoAffaireOrders) {
                 if (assoAffaireOrder.getServices() != null)
                     serviceService.populateTransientField(assoAffaireOrder.getServices());
+
+                if (assoAffaireOrder.getCustomerOrder() != null) {
+                    assoAffaireOrder.getCustomerOrder().setHasCreditNote(false);
+                    for (Invoice invoice : assoAffaireOrder.getCustomerOrder().getInvoices())
+                        if (invoice.getCreditNote() != null) {
+                            assoAffaireOrder.getCustomerOrder().setHasCreditNote(true);
+                            break;
+                        }
+                }
             }
         return assoAffaireOrders;
     }

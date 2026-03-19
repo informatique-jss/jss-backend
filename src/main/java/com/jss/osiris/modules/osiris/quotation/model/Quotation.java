@@ -164,7 +164,6 @@ public class Quotation implements IQuotation {
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
 			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
-
 	public String servicesList;
 
 	@Transient
@@ -190,6 +189,7 @@ public class Quotation implements IQuotation {
 	private Voucher voucher;
 
 	private String lastGaClientId;
+	private String gaSessionId;
 
 	public Integer getId() {
 		return id;
@@ -429,5 +429,13 @@ public class Quotation implements IQuotation {
 
 	public void setLastGaClientId(String lastGaClientId) {
 		this.lastGaClientId = lastGaClientId;
+	}
+
+	public String getGaSessionId() {
+		return gaSessionId;
+	}
+
+	public void setGaSessionId(String gaSessionId) {
+		this.gaSessionId = gaSessionId;
 	}
 }

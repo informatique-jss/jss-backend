@@ -34,6 +34,7 @@ export class GenericFormComponent implements OnInit, OnChanges {
   maxKey = 'maxValue';
   displayLabel = displayLabel;
   selectValues: IId[] | undefined;
+  emptyFilter = null;
 
   constructor(
     private selectFormHelper: SelectFormHelper

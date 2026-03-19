@@ -97,6 +97,13 @@ public class Announcement implements IId {
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private Boolean isProofReadingDocument;
 
+	@Column(columnDefinition = "TEXT")
+	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
+	private String anonymisedNotice;
+
+	@JsonView({  JacksonViews.OsirisDetailedView.class })
+	private Boolean isAnonymised;
+
 	private Boolean isUsingTemplate;
 
 	private Boolean isPublicationReciptAlreadySent;
@@ -146,6 +153,22 @@ public class Announcement implements IId {
 
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Boolean isLegacy;
+
+	public String getAnonymisedNotice() {
+		return anonymisedNotice;
+	}
+
+	public void setAnonymisedNotice(String anonymisedNotice) {
+		this.anonymisedNotice = anonymisedNotice;
+	}
+
+	public Boolean getIsAnonymised() {
+		return isAnonymised;
+	}
+
+	public void setIsAnonymised(Boolean isAnonymised) {
+		this.isAnonymised = isAnonymised;
+	}
 
 	public Integer getId() {
 		return id;
@@ -257,6 +280,7 @@ public class Announcement implements IId {
 
 	public void setIsPublicationFlagAlreadySent(Boolean isPublicationFlagAlreadySent) {
 		this.isPublicationFlagAlreadySent = isPublicationFlagAlreadySent;
+
 	}
 
 	public Integer getActuLegaleId() {

@@ -151,3 +151,7 @@ export const GRAPH_TYPE_TABLE = "table";
 export const OSIRIS_V2_TIERS_ROUTE = "tiers/view/";
 export const OSIRIS_V2_RESPONSABLE_ROUTE = "responsable/";
 
+// Post sources
+export const POST_SOURCE_JSS = "JSS";
+export const POST_SOURCE_MYJSS = "MYJSS";
+

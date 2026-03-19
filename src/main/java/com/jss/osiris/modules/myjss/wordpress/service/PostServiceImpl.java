@@ -153,22 +153,22 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<Post> getJssCategoryPostTendency(String searchText, Pageable pageableRequest) throws OsirisException {
-        if (searchText != null) {
-            List<IndexEntity> tmpEntitiesFound = null;
-            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
-            if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
-                return searchPostAgainstEntitiesToMatch(searchText,
-                        postRepository.findJssCategoryPostTendency(LocalDate.now().minusDays(7), getCategoryArticle(),
-                                pageableRequest));
-            }
-        }
+        if (searchText != null)
+            return searchPostAgainstEntitiesToMatch(searchText,
+                    postRepository.findJssCategoryPostTendency(LocalDate.now().minusDays(7), getCategoryArticle(),
+                            Post.SOURCE_JSS,
+                            pageableRequest),
+                    null);
+
         return postRepository.findJssCategoryPostTendency(LocalDate.now().minusDays(7), getCategoryArticle(),
+                Post.SOURCE_JSS,
                 pageableRequest);
     }
 
     @Override
     public List<Post> getMyJssCategoryPostTendency() throws OsirisException {
         List<Integer> idPosts = postRepository.findMyJssCategoryPostTendency(LocalDate.now().minusDays(7),
+                Post.SOURCE_MYJSS,
                 PageRequest.of(0, 5));
         if (idPosts != null)
             return IterableUtils.toList(postRepository.findAllById(idPosts));
@@ -177,7 +177,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Post> getMyJssCategoryPostMostSeen() throws OsirisException {
-        List<Integer> idPosts = postRepository.findMyJssCategoryPostMostSeen(PageRequest.of(0, 5));
+        List<Integer> idPosts = postRepository.findMyJssCategoryPostMostSeen(Post.SOURCE_MYJSS, PageRequest.of(0, 5));
         if (idPosts != null)
             return IterableUtils.toList(postRepository.findAllById(idPosts));
         return null;
@@ -190,7 +190,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<Post> getMostSeenPostByTag(Pageable pageableRequest, Tag tag) {
-        return postRepository.findMostSeenPostTag(pageableRequest, tag);
+        return postRepository.findMostSeenPostTag(pageableRequest, tag, Post.SOURCE_JSS);
     }
 
     @Override
@@ -200,40 +200,40 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<Post> getMostSeenPostBySerie(Pageable pageableRequest, Serie serie) {
-        return postRepository.findMostSeenPostSerie(pageableRequest, serie);
+        return postRepository.findMostSeenPostSerie(pageableRequest, serie, Post.SOURCE_JSS);
     }
 
     @Override
     public Page<Post> getMostSeenPremiumPost(Pageable pageableRequest) {
-        return postRepository.findMostSeenPremiumPosts(pageableRequest);
+        return postRepository.findMostSeenPremiumPosts(pageableRequest, Post.SOURCE_JSS);
     }
 
     @Override
     public Page<Post> getMostSeenPostByPublishingDepartment(Pageable pageableRequest,
             PublishingDepartment publishingDepartment) throws OsirisException {
         return postRepository.findMostSeenPostPublishingDepartment(pageableRequest, getCategoryArticle(),
-                publishingDepartment);
+                publishingDepartment, Post.SOURCE_JSS);
     }
 
     @Override
     public Page<Post> getMostSeenPostByIdf(Pageable pageableRequest) throws OsirisException {
-        return postRepository.findMostSeenPostsIdf(pageableRequest, getCategoryArticle());
+        return postRepository.findMostSeenPostsIdf(pageableRequest, getCategoryArticle(), Post.SOURCE_JSS);
     }
 
     @Override
     public Page<Post> getJssCategoryPostMostSeen(Pageable pageableRequest) throws OsirisException {
-        return postRepository.findJssCategoryPostMostSeen(pageableRequest);
+        return postRepository.findJssCategoryPostMostSeen(Post.SOURCE_JSS, pageableRequest);
     }
 
     @Override
     public Page<Post> getJssCategoryStickyPost(Pageable pageableRequest) throws OsirisException {
-        return postRepository.findJssCategoryPostSticky(pageableRequest);
+        return postRepository.findJssCategoryPostSticky(Post.SOURCE_JSS, pageableRequest);
     }
 
     @Override
     public Page<Post> getMyJssCategoryStickyPost(Pageable pageableRequest, MyJssCategory myJssCategory)
             throws OsirisException {
-        return postRepository.findMyJssCategoryStickyPost(myJssCategory, pageableRequest);
+        return postRepository.findMyJssCategoryStickyPost(myJssCategory, Post.SOURCE_MYJSS, pageableRequest);
     }
 
     @Override
@@ -485,17 +485,12 @@ public class PostServiceImpl implements PostService {
     @Override
     public Page<Post> getJssCategoryPosts(String searchText, Pageable pageableRequest) throws OsirisException {
 
-        if (searchText != null && !searchText.equals("")) {
-            List<IndexEntity> tmpEntitiesFound = null;
-            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
-            if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
-                return searchPostAgainstEntitiesToMatch(searchText,
-                        postRepository.findJssCategoryPosts(getCategoryArticle(), false,
-                                pageableRequest));
-            }
-        }
-
-        return postRepository.findJssCategoryPosts(getCategoryArticle(), false,
+        if (searchText != null && !searchText.equals(""))
+            return searchPostAgainstEntitiesToMatch(searchText,
+                    postRepository.findJssCategoryPosts(getCategoryArticle(), false, Post.SOURCE_JSS,
+                            pageableRequest),
+                    null);
+        return postRepository.findJssCategoryPosts(getCategoryArticle(), false, Post.SOURCE_JSS,
                 pageableRequest);
     }
 
@@ -504,7 +499,7 @@ public class PostServiceImpl implements PostService {
         Order order = new Order(Direction.DESC, "date");
         Sort sort = Sort.by(Arrays.asList(order));
         Pageable pageableRequest = PageRequest.of(page, 20, sort);
-        return postRepository.findMyJssCategoryPosts(false, pageableRequest);
+        return postRepository.findMyJssCategoryPosts(false, Post.SOURCE_MYJSS, pageableRequest);
     }
 
     @Override
@@ -519,16 +514,15 @@ public class PostServiceImpl implements PostService {
             assoMailJssCategoryService.updateJssCategoryConsultationDate(mail, jssCategory);
         }
 
-        if (searchText != null && !searchText.equals("")) {
-            List<IndexEntity> tmpEntitiesFound = null;
-            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
-            if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
-                return searchPostAgainstEntitiesToMatch(searchText,
-                        postRepository.findByJssCategoriesAndIsCancelled(jssCategory, false, consultationDate,
-                                pageableRequest));
-            }
-        }
-        posts = postRepository.findByJssCategoriesAndIsCancelled(jssCategory, false, consultationDate, pageableRequest);
+        if (searchText != null && !searchText.equals(""))
+            return searchPostAgainstEntitiesToMatch(searchText,
+                    postRepository.findByJssCategoriesAndIsCancelled(jssCategory, false, consultationDate,
+                            Post.SOURCE_JSS,
+                            pageableRequest),
+                    null);
+
+        posts = postRepository.findByJssCategoriesAndIsCancelled(jssCategory, false, consultationDate, Post.SOURCE_JSS,
+                pageableRequest);
         return posts;
     }
 
@@ -606,15 +600,16 @@ public class PostServiceImpl implements PostService {
         return post;
     }
 
-    private Page<Post> searchPostAgainstEntitiesToMatch(String searchText, Page<Post> entityToMatchWithResearch) {
+    private Page<Post> searchPostAgainstEntitiesToMatch(String searchText, Page<Post> entityToMatchWithResearch,
+            String sortBy) {
         List<IndexEntity> tmpEntitiesFound = null;
         List<Post> matchingPosts = new ArrayList<Post>();
 
-        tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
+        tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false, sortBy);
         if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
             if (entityToMatchWithResearch != null) {
-                for (Post post : entityToMatchWithResearch) {
-                    for (IndexEntity entity : tmpEntitiesFound) {
+                for (IndexEntity entity : tmpEntitiesFound) {
+                    for (Post post : entityToMatchWithResearch) {
                         if (post.getId().equals(entity.getEntityId()))
                             matchingPosts.add(post);
                     }
@@ -629,20 +624,17 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<Post> getAllPostsByIdf(Pageable pageableRequest, String searchText) throws OsirisException {
-        if (searchText != null && !searchText.equals("")) {
-            List<IndexEntity> tmpEntitiesFound = null;
-            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
-            if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
-                return searchPostAgainstEntitiesToMatch(searchText,
-                        postRepository.findPostsIdf(getCategoryArticle(), pageableRequest));
-            }
-        }
-        return postRepository.findPostsIdf(getCategoryArticle(), pageableRequest);
+        if (searchText != null && !searchText.equals(""))
+            return searchPostAgainstEntitiesToMatch(searchText,
+                    postRepository.findPostsIdf(getCategoryArticle(), pageableRequest, Post.SOURCE_JSS), null);
+
+        return postRepository.findPostsIdf(getCategoryArticle(), pageableRequest, Post.SOURCE_JSS);
     }
 
     @Override
     public Page<Post> getPostsByJssCategory(Pageable pageableRequest, JssCategory jssCategory) {
         return postRepository.findByJssCategoriesAndIsCancelled(jssCategory, false, LocalDateTime.of(1970, 1, 1, 0, 0),
+                Post.SOURCE_JSS,
                 pageableRequest);
     }
 
@@ -652,7 +644,7 @@ public class PostServiceImpl implements PostService {
         JssCategory firstJssCategory = constantService.getJssCategoryHomepageFirstHighlighted();
 
         return postRepository.findByJssCategoriesAndIsCancelled(firstJssCategory, false,
-                LocalDateTime.of(1970, 1, 1, 0, 0),
+                LocalDateTime.of(1970, 1, 1, 0, 0), Post.SOURCE_JSS,
                 pageableRequest);
     }
 
@@ -684,15 +676,11 @@ public class PostServiceImpl implements PostService {
         if (responsable != null)
             assoMailTagService.updateTagConsultationDate(responsable.getMail(), tag);
 
-        if (searchText != null && !searchText.equals("")) {
-            List<IndexEntity> tmpEntitiesFound = null;
-            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
-            if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
-                return searchPostAgainstEntitiesToMatch(searchText, postRepository.findByPostTagsAndIsCancelled(tag,
-                        getCategoryArticle(), false, consultationDate, pageableRequest));
-            }
-        }
+        if (searchText != null && !searchText.equals(""))
+            return searchPostAgainstEntitiesToMatch(searchText, postRepository.findByPostTagsAndIsCancelled(tag,
+                    getCategoryArticle(), false, consultationDate, Post.SOURCE_JSS, pageableRequest), null);
         return postRepository.findByPostTagsAndIsCancelled(tag, getCategoryArticle(), false, consultationDate,
+                Post.SOURCE_JSS,
                 pageableRequest);
     }
 
@@ -704,28 +692,19 @@ public class PostServiceImpl implements PostService {
         if (responsable != null)
             assoMailAuthorService.updateAuthorConsultationDate(responsable.getMail(), author);
 
-        if (searchText != null && !searchText.equals("")) {
-            List<IndexEntity> tmpEntitiesFound = null;
-            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
-            if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
-                return searchPostAgainstEntitiesToMatch(searchText, postRepository
-                        .findByFullAuthorAndIsCancelled(author, false, consultationDate, pageableRequest));
-            }
-        }
+        if (searchText != null && !searchText.equals(""))
+            return searchPostAgainstEntitiesToMatch(searchText, postRepository
+                    .findByFullAuthorAndIsCancelled(author, false, consultationDate, pageableRequest), null);
         return postRepository.findByFullAuthorAndIsCancelled(author, false, consultationDate, pageableRequest);
     }
 
     @Override
     public Page<Post> getAllPostsBySerie(Pageable pageableRequest, Serie serie, String searchText) {
-        if (searchText != null && !searchText.equals("")) {
-            List<IndexEntity> tmpEntitiesFound = null;
-            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
-            if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
-                return searchPostAgainstEntitiesToMatch(searchText,
-                        postRepository.findByPostSerieAndIsCancelled(serie, false,
-                                pageableRequest));
-            }
-        }
+        if (searchText != null && !searchText.equals(""))
+            return searchPostAgainstEntitiesToMatch(searchText,
+                    postRepository.findByPostSerieAndIsCancelled(serie, false,
+                            pageableRequest),
+                    null);
         return postRepository.findByPostSerieAndIsCancelled(serie, false, pageableRequest);
     }
 
@@ -733,28 +712,19 @@ public class PostServiceImpl implements PostService {
     public Page<Post> getAllPostsByPublishingDepartment(Pageable pageableRequest,
             PublishingDepartment publishingDepartment, String searchText) throws OsirisException {
 
-        if (searchText != null && !searchText.equals("")) {
-            List<IndexEntity> tmpEntitiesFound = null;
-            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
-            if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
-                return searchPostAgainstEntitiesToMatch(searchText, postRepository.findByDepartmentsAndIsCancelled(
-                        getCategoryArticle(), publishingDepartment, false, pageableRequest));
-            }
-        }
+        if (searchText != null && !searchText.equals(""))
+            return searchPostAgainstEntitiesToMatch(searchText, postRepository.findByDepartmentsAndIsCancelled(
+                    getCategoryArticle(), publishingDepartment, false, Post.SOURCE_JSS, pageableRequest), null);
         return postRepository.findByDepartmentsAndIsCancelled(getCategoryArticle(), publishingDepartment, false,
+                Post.SOURCE_JSS,
                 pageableRequest);
     }
 
     @Override
     public Page<Post> getAllPremiumPosts(String searchText, Pageable pageableRequest) throws OsirisException {
-        if (searchText != null && !searchText.equals("")) {
-            List<IndexEntity> tmpEntitiesFound = null;
-            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
-            if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
-                return searchPostAgainstEntitiesToMatch(searchText, postRepository.findActivePremiumPosts(
-                        getCategoryArticle(), pageableRequest));
-            }
-        }
+        if (searchText != null && !searchText.equals(""))
+            return searchPostAgainstEntitiesToMatch(searchText, postRepository.findActivePremiumPosts(
+                    getCategoryArticle(), pageableRequest), null);
         return postRepository.findActivePremiumPosts(getCategoryArticle(), pageableRequest);
     }
 
@@ -763,74 +733,62 @@ public class PostServiceImpl implements PostService {
         Order order = new Order(Direction.DESC, "date");
         Sort sort = Sort.by(Arrays.asList(order));
         Pageable pageableRequest = PageRequest.of(page, 20, sort);
-        return postRepository.findByMyJssCategoriesAndIsCancelled(myJssCategory.getId(), false, pageableRequest);
+        return postRepository.findByMyJssCategoriesAndIsCancelled(myJssCategory.getId(), false, Post.SOURCE_MYJSS,
+                pageableRequest);
     }
 
     @Override
     public Page<Post> searchPostsByMyJssCategory(String searchText, MyJssCategory myJssCategory,
             Pageable pageableRequest) {
         if (searchText != null && searchText.trim().length() > 0) {
-            List<IndexEntity> tmpEntitiesFound = null;
-            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
-            if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
-                Pageable pageableRequestForMatch = PageRequest.of(0, Integer.MAX_VALUE);
+            Pageable pageableRequestForMatch = PageRequest.of(0, Integer.MAX_VALUE);
 
-                return searchPostAgainstEntitiesToMatch(searchText,
-                        postRepository.findByMyJssCategoriesAndIsCancelled(
-                                myJssCategory != null ? myJssCategory.getId() : null, false, pageableRequestForMatch));
-            }
+            return searchPostAgainstEntitiesToMatch(searchText,
+                    postRepository.findByMyJssCategoriesAndIsCancelled(
+                            myJssCategory != null ? myJssCategory.getId() : null, false, Post.SOURCE_MYJSS,
+                            pageableRequestForMatch),
+                    null);
         }
         return postRepository.findByMyJssCategoriesAndIsCancelled(myJssCategory != null ? myJssCategory.getId() : null,
-                false,
-                pageableRequest);
+                false, Post.SOURCE_MYJSS, pageableRequest);
     }
 
     @Override
-    public Page<Post> searchJssPosts(String searchText) {
+    public Page<Post> searchJssPosts(String searchText, String sortBy) {
         Pageable pageableRequestForMatch = PageRequest.of(0, Integer.MAX_VALUE);
         if (searchText != null && searchText.trim().length() > 0) {
-            List<IndexEntity> tmpEntitiesFound = null;
-            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
-            if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
-                return searchPostAgainstEntitiesToMatch(searchText,
-                        postRepository.findByJssCategoriesAndIsCancelled(null, false, pageableRequestForMatch));
-            }
+            return searchPostAgainstEntitiesToMatch(searchText,
+                    postRepository.findByJssCategoriesAndIsCancelled(null, false, Post.SOURCE_JSS,
+                            pageableRequestForMatch),
+                    sortBy);
         }
-        return postRepository.findByJssCategoriesAndIsCancelled(null, false, pageableRequestForMatch);
+        return postRepository.findByJssCategoriesAndIsCancelled(null, false, Post.SOURCE_JSS, pageableRequestForMatch);
     }
 
     @Override
     public Page<Post> searchPostsByCategory(String searchText, Category category,
             Pageable pageableRequest) {
-        if (searchText != null && searchText.trim().length() > 0) {
-            List<IndexEntity> tmpEntitiesFound = null;
-            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
-            if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
-                return searchPostAgainstEntitiesToMatch(searchText,
-                        postRepository.findByPostCategoriesAndIsCancelled(category, false, pageableRequest));
-            }
-        }
+        if (searchText != null && searchText.trim().length() > 0)
+            return searchPostAgainstEntitiesToMatch(searchText,
+                    postRepository.findByPostCategoriesAndIsCancelled(category, false, pageableRequest), null);
         return postRepository.findByPostCategoriesAndIsCancelled(category, false, pageableRequest);
     }
 
     @Override
     public Page<Post> searchPostsByCategoryAndMyJssCategory(String searchText, Category category,
             MyJssCategory myJssCategory, Pageable pageableRequest) {
-        if (searchText != null && searchText.trim().length() > 0) {
-            List<IndexEntity> tmpEntitiesFound = null;
-            tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false);
-            if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
-                return searchPostAgainstEntitiesToMatch(searchText,
-                        postRepository.findByPostCategoriesAndMyJssCategoriesAndIsCancelled(
-                                category != null ? category.getId() : null,
-                                myJssCategory != null ? myJssCategory.getId() : null,
-                                false, pageableRequest));
-            }
-        }
+        if (searchText != null && searchText.trim().length() > 0)
+            return searchPostAgainstEntitiesToMatch(searchText,
+                    postRepository.findByPostCategoriesAndMyJssCategoriesAndIsCancelled(
+                            category != null ? category.getId() : null,
+                            myJssCategory != null ? myJssCategory.getId() : null,
+                            false, Post.SOURCE_MYJSS, pageableRequest),
+                    null);
+
         return postRepository.findByPostCategoriesAndMyJssCategoriesAndIsCancelled(
                 category != null ? category.getId() : null,
                 myJssCategory != null ? myJssCategory.getId() : null,
-                false, pageableRequest);
+                false, Post.SOURCE_MYJSS, pageableRequest);
     }
 
     @Override
@@ -870,11 +828,11 @@ public class PostServiceImpl implements PostService {
     @Override
     public Page<Post> getTopPostWithDepartment(Pageable pageableRequest)
             throws OsirisException {
-        return postRepository.findPostsIdf(getCategoryArticle(), pageableRequest);
+        return postRepository.findPostsIdf(getCategoryArticle(), pageableRequest, Post.SOURCE_JSS);
     }
 
     private Page<Post> getJssCategoryPostsByCategory(Pageable pageableRequest, Category category) {
-        return postRepository.findJssCategoryPosts(category, false, pageableRequest);
+        return postRepository.findJssCategoryPosts(category, false, Post.SOURCE_JSS, pageableRequest);
     }
 
     @Override
@@ -1077,6 +1035,7 @@ public class PostServiceImpl implements PostService {
                 }
             }
             post.setJssCategories(categories);
+            post.setSource(Post.SOURCE_JSS);
         }
         if (post.getMyjss_category() != null && post.getMyjss_category().length > 0) {
             List<MyJssCategory> categories = new ArrayList<MyJssCategory>();
@@ -1090,6 +1049,7 @@ public class PostServiceImpl implements PostService {
                 }
             }
             post.setMyJssCategories(categories);
+            post.setSource(Post.SOURCE_MYJSS);
         }
         if (post.getCategories() != null && post.getCategories().length > 0) {
             List<Category> categories = new ArrayList<Category>();
@@ -1153,12 +1113,12 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Post> getAllPostsForJssMedia() {
-        return postRepository.findAllJssPost();
+        return postRepository.findAllJssPost(Post.SOURCE_JSS);
     }
 
     @Override
     public List<Post> getAllPostsForMyJss() {
-        return postRepository.findAllMyJssPost();
+        return postRepository.findAllMyJssPost(Post.SOURCE_MYJSS);
     }
 
     public List<Post> getPurchasedPostsForCurrentUser() {

@@ -2,6 +2,7 @@ export interface TiersSearchResult {
   tiersLabel: string;
   tiersCategory: string;
   tiersId: number;
+  tiersTypeLabel: string;
   address: string;
   salesEmployeeLabel: string;
   salesEmployeeId: number;

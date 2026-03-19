@@ -130,6 +130,10 @@
                 <generic-toggle [(model)]="announcement.isComplexAnnouncement" label="Annonce complexe ?"
                   [form]="announcementForm" propertyName="isComplexAnnouncement"></generic-toggle>
               </td>
+              <td>
+                <generic-toggle [(model)]="announcement.isAnonymised" label="Annonce anonymisée"
+                  [form]="announcementForm" propertyName="isAnonymised"></generic-toggle>
+              </td>
             </tr>
           </table>
           <table class="full-width" *ngIf="!announcement.isComplexAnnouncement">
@@ -180,6 +184,18 @@
                 </ckeditor>
               </td>
             </tr>
+
+            <tr *ngIf="announcement.isAnonymised">
+              <td>
+                <div *ngIf="!editMode">
+                  <hr>
+                  <span [innerHTML]="announcement.anonymisedNotice | trustHtml" class="announce-container"></span>
+                </div>
+                <ckeditor *ngIf="editMode" [editor]="ckEditorAnonymisedNotice" [config]="config"
+                  [data]="initialAnonymisedNoticeValue" (change)="onAnonymisedNoticeChange($event)">
+                </ckeditor>
+              </td>
+            </tr>
           </table>
           <table class="full-width" *ngIf="announcement.isComplexAnnouncement">
             <tr *ngIf="announcement.id">
@@ -203,6 +219,7 @@
               </td>
             </tr>
           </table>
+          <hr *ngIf="!editMode">
           <table class="full-width">
             <tr>
               <td
@@ -219,27 +236,6 @@
               </td>
             </tr>
           </table>
-          <div *ngIf="!announcement.isComplexAnnouncement">
-            <p>Liste des mots-clés disponibles :</p>
-            <ul>
-              <li>&#123;prenom&#125;</li>
-              <li>&#123;nom&#125;</li>
-              <li>&#123;civilite&#125;</li>
-              <li>&#123;adresse&#125;</li>
-              <li>&#123;denomination&#125;</li>
-              <li>&#123;sigle&#125;</li>
-              <li>&#123;ville&#125;</li>
-              <li>&#123;codePostal&#125;</li>
-              <li>&#123;activitePrincipale&#125;</li>
-              <li>&#123;capitalSocial&#125;</li>
-              <li>&#123;formeJuridique&#125;</li>
-              <li>&#123;autoriteCompetenteDenomination&#125;</li>
-              <li>&#123;autoriteCompetenteVille&#125;</li>
-              <li>&#123;siren&#125;</li>
-              <li>&#123;siret&#125;</li>
-              <li>&#123;rna&#125;</li>
-            </ul>
-          </div>
         </div>
       </fieldset>
     </mat-tab>

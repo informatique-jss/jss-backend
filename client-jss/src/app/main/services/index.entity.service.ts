@@ -15,4 +15,8 @@ export class IndexEntityService extends AppRestService<IndexEntity> {
   globalSearchForPost(searchText: string) {
     return this.getList(new HttpParams().set("searchText", searchText), "search/jss/post");
   }
+
+  globalSearchForNewspaperPages(searchText: string, sortBy: string) {
+    return this.getList(new HttpParams().set("searchText", searchText).set("sortBy", sortBy), "search/jss/newspaper-pages");
+  }
 }

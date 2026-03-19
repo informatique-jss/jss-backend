@@ -288,4 +288,18 @@ export class ServicesSelectionComponent implements OnInit {
     }
     return false;
   }
+
+  shouldDisplayService(service: ServiceType): any {
+    return service.customLabel.toLocaleLowerCase().indexOf(this.searchtext.toLocaleLowerCase()) >= 0 && this.selectedAssoIndex != null
+      && (this.quotation && this.selectedAssoIndex != null && this.quotation.assoAffaireOrders[this.selectedAssoIndex].affaire.siret && service.isRequiringNewRegisteredAffaire
+        || this.quotation && this.selectedAssoIndex != null && !this.quotation.assoAffaireOrders[this.selectedAssoIndex].affaire.siret && service.isRequiringNewUnregisteredAffaire);
+  }
+
+  getNumberOfShownServices(services: ServiceType[]) {
+    let nbOfShownServices: number = 0;
+    for (let service of services)
+      if (this.shouldDisplayService(service))
+        nbOfShownServices++;
+    return nbOfShownServices;
+  }
 }

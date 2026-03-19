@@ -22,6 +22,11 @@ export class VoucherService extends AppRestService<Voucher> {
     return this.get(new HttpParams().set("idVoucher", id), "voucher")
   }
 
+  getVoucherByCode(code: string) {
+    return this.get(new HttpParams().set("codeVoucher", code), "voucher")
+  }
+
+
   getAllVouchers(isDisplayOnlyActiveVouchers: boolean) {
     return this.getList(new HttpParams().set("isDisplayOnlyActiveVouchers", isDisplayOnlyActiveVouchers), "vouchers");
   }

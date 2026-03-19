@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.security.SecureRandom;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,6 +28,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.crypto.codec.Hex;
 import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -131,6 +134,10 @@ public class MailHelper {
     private static final String PNG_MIME = "image/png";
 
     private boolean disableCbLink = false;
+
+    private final SecureRandom random = new SecureRandom();
+
+    private final long TOKEN_EXPIRATION_LENGTH_MINUTES = 15;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -447,14 +454,14 @@ public class MailHelper {
         return generatePdfDelegate.generateGenericFromHtml(htmlContent, mail.getId());
     }
 
-    private void setContextVariable(Context ctx, CustomerMail mail, boolean setPlainPictures)
+    private void setContextVariable(Context ctx, CustomerMail mail, boolean isForPdf)
             throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         // Prepare the evaluation context
         ctx.setVariable("instagram", "instagram");
         ctx.setVariable("facebook", "facebook");
         ctx.setVariable("linkedin", "linkedin");
         ctx.setVariable("twitter", "twitter");
-        if (setPlainPictures)
+        if (isForPdf)
             ctx.setVariable("jssHeaderPicturePlain", "/images/jss-header.png");
         else
             ctx.setVariable("jssHeaderPicture", "jssHeaderPicture");
@@ -646,11 +653,24 @@ public class MailHelper {
             ctx.setVariable("provisionDetails", mail.getExplaination().split("removeme"));
         }
 
-        if (mail.getResponsable() != null) {
+        if (mail.getResponsable() != null && mail.getMailTemplate().equals(CustomerMail.TEMPLATE_SEND_TOKEN)) {
+            String token = "";
+            if (!isForPdf) {
+                Responsable responsable = responsableService.getResponsable(mail.getResponsable().getId());
+
+                byte bytes[] = new byte[512];
+                random.nextBytes(bytes);
+                token = String.valueOf(Hex.encode(bytes));
+                responsable.setLoginToken(token);
+                responsable
+                        .setLoginTokenExpirationDateTime(
+                                LocalDateTime.now().plusMinutes(TOKEN_EXPIRATION_LENGTH_MINUTES));
+                responsableService.addOrUpdateResponsable(responsable);
+            }
             ctx.setVariable("tokenLink",
                     loginTokenEntryPoint + "?userId=" + mail.getResponsable().getId() + "&isFromQuotation="
                             + Boolean.TRUE.equals(mail.getResponsable().getIsComingFromQuotation()) + "&aToken="
-                            + mail.getResponsable().getLoginToken());
+                            + token);
         }
 
         if (mail.getSubscription() != null) {
@@ -1822,6 +1842,8 @@ public class MailHelper {
                     && (affaire.getSiren() != null || affaire.getSiret() != null)) {
                 label += "  / RCS " + (affaire.getSiret() != null ? affaire.getSiret() : affaire.getSiren());
             }
+            label += " / "
+                    + provision.getService().getServiceLabelToDisplay();
             label += " / "
                     + provision.getProvisionFamilyType().getLabel();
             label += " / "
