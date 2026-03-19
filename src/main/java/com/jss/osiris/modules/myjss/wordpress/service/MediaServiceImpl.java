@@ -2,6 +2,7 @@ package com.jss.osiris.modules.myjss.wordpress.service;
 
 import java.util.Optional;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -92,7 +93,8 @@ public class MediaServiceImpl implements MediaService {
             if (media.getAuthor() != null && media.getAuthor() > 0)
                 media.setFullAuthor(authorService.getAuthor(media.getAuthor()));
             if (media.getCaption() != null && media.getCaption().getRendered() != null)
-                media.setCaptionText(media.getCaption().getRendered().replaceAll("<[^>]*>", ""));
+                media.setCaptionText(
+                        StringEscapeUtils.unescapeHtml4(media.getCaption().getRendered().replaceAll("<[^>]*>", "")));
         }
         return media;
     }
