@@ -17,7 +17,6 @@ import com.jss.osiris.modules.myjss.profile.service.UserScopeService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 import com.jss.osiris.modules.osiris.miscellaneous.model.SpecialOffer;
-import com.jss.osiris.modules.osiris.miscellaneous.repository.DocumentTypeRepository;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentTypeService;
@@ -47,8 +46,6 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @org.springframework.stereotype.Service
 public class MyJssQuotationDelegate {
-
-    private final DocumentTypeRepository documentTypeRepository;
 
     @Autowired
     ResponsableService responsableService;
@@ -100,10 +97,6 @@ public class MyJssQuotationDelegate {
 
     @Autowired
     GoogleAnalyticsService googleAnalyticsService;
-
-    MyJssQuotationDelegate(DocumentTypeRepository documentTypeRepository) {
-        this.documentTypeRepository = documentTypeRepository;
-    }
 
     @Transactional(rollbackFor = Exception.class)
     public CustomerOrder saveCustomerOrderFromMyJss(CustomerOrder order, Boolean isValidation, String gaClientId,
@@ -158,16 +151,6 @@ public class MyJssQuotationDelegate {
         if (employeeService.getCurrentMyJssUser() != null
                 && employeeService.getCurrentMyJssUser().getConsentTermsDate() == null) {
             responsableService.updateConsentDateForCurrentUser();
-        }
-
-        // check if billing document is not type 'other'
-        if (order.getDocuments() != null) {
-            for (Document document : order.getDocuments()) {
-                if (document.getDocumentType().getId().equals(constantService.getDocumentTypeBilling().getId())
-                        && document.getBillingLabelType().getId()
-                                .equals(constantService.getBillingLabelTypeOther().getId()))
-                    throw new OsirisException(null, "Wrong billingLabelType 'Other' for DocumentType 'Billing'");
-            }
         }
 
         CustomerOrder fetchOrder = null;
@@ -273,15 +256,6 @@ public class MyJssQuotationDelegate {
         if (employeeService.getCurrentMyJssUser() != null
                 && employeeService.getCurrentMyJssUser().getConsentTermsDate() == null) {
             responsableService.updateConsentDateForCurrentUser();
-        }
-
-        if (quotation.getDocuments() != null) {
-            for (Document document : quotation.getDocuments()) {
-                if (document.getDocumentType().getId().equals(constantService.getDocumentTypeBilling().getId())
-                        && document.getBillingLabelType().getId()
-                                .equals(constantService.getBillingLabelTypeOther().getId()))
-                    throw new OsirisException(null, "Wrong billingLabelType 'Other' for DocumentType 'Billing'");
-            }
         }
 
         Quotation fetchQuotation = null;
