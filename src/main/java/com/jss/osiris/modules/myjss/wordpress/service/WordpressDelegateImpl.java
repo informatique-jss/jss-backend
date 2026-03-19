@@ -314,7 +314,6 @@ public class WordpressDelegateImpl implements WordpressDelegate {
             for (Post post : posts) {
                 postService.addOrUpdatePostFromWordpress(post);
                 postFetchedId.add(post.getId());
-
             }
 
         List<Post> postToCancel = postService.getPostExcludedId(postFetchedId);
