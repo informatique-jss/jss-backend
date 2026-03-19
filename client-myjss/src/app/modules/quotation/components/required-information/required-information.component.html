@@ -87,7 +87,7 @@
                       </select-string>
                     </div>
                   </div>
-                  <div class="col-md-5" *ngIf="isDoNotGenerateAnnouncement">
+                  <div class="col-md-5" *ngIf="!isDoNotGenerateAnnouncement">
                     <label class="col col-form-label" for="announcementPublicationDate">Date de publication
                       souhaitée*</label>
                     <div class="col">
@@ -100,7 +100,7 @@
               </div>
 
               <!-- announcement form : Option -->
-              <div *ngIf="isDoNotGenerateAnnouncement" class="quotation-container mb-2">
+              <div *ngIf="!isDoNotGenerateAnnouncement" class="quotation-container mb-2">
                 <h6><i class="ai-grid me-2"></i>Option</h6>
                 <div class="row g-4 align-items-center">
 

@@ -1093,7 +1093,7 @@ public class MyJssQuotationController {
 
   @GetMapping(inputEntryPoint + "/billing-label-types")
   @JsonView(JacksonViews.MyJssListView.class)
-  public ResponseEntity<List<BillingLabelType>> getBillingLabels() {
+  public ResponseEntity<List<BillingLabelType>> getBillingLabels() throws OsirisException {
     return new ResponseEntity<List<BillingLabelType>>(billingLabelTypeService.getBillingLabelTypes(),
         HttpStatus.OK);
   }
