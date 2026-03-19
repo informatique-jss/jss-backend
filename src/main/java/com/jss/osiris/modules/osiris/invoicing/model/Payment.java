@@ -97,7 +97,7 @@ public class Payment implements Serializable, IId, ICreatedDate {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_refund")
-	@JsonIgnoreProperties(value = { "accountingRecords", "payments" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "accountingRecords", "payments", "customerOrder" }, allowSetters = true)
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Refund refund;
 

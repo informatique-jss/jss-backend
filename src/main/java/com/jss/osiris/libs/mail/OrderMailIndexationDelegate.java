@@ -373,7 +373,7 @@ public class OrderMailIndexationDelegate {
     }
 
     public void purgeDeletedElements() throws OsirisException {
-        try {
+        mailSharedDelegate.executeWithLock(() -> {
             Message[] messages;
             try {
                 messages = mailSharedDelegate.getFolderTrash().getMessages();
@@ -394,9 +394,8 @@ public class OrderMailIndexationDelegate {
             }
 
             mailSharedDelegate.getFolderTrash().expunge();
-        } catch (MessagingException e) {
-            throw new OsirisException(e, "Impossible to write into Trash folder");
-        }
+            return null;
+        });
     }
 
     public static List<String> extractExternalEmails(String mailText) {

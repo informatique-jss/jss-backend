@@ -197,7 +197,7 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	private List<Invoice> providerInvoices;
 
 	@OneToMany(targetEntity = Refund.class, mappedBy = "customerOrder")
-	@JsonIgnoreProperties(value = { "customerOrder" }, allowSetters = true)
+	@JsonIgnoreProperties(value = { "customerOrder", "payments" }, allowSetters = true)
 	private List<Refund> refunds;
 
 	@ManyToOne(fetch = FetchType.LAZY)

@@ -15,13 +15,18 @@
         <div class="reading-folder-card position-relative text-white rounded-5 overflow-hidden p-3" [ngStyle]="{'background-image': 'url(' +
         (folder.posts && folder.posts.length>0 && folder.posts[0].media && folder.posts[0].media.urlFull ?
           folder.posts[0].media.urlFull : folder.posts && folder.posts.length>0 && folder.posts[0].media && folder.posts[0].media.urlThumbnail ?
-           folder.posts[0].media.urlThumbnail : '/assets/images/image-story-1898.png') + ')'}"
+           folder.posts[0].media.urlThumbnail : '/assets/img/account/reading_folder.png') + ')'}"
           [routerLink]='"/account/reading-folders/" + folder.id'>
           <h5 class="folder-title m-0">{{ folder.label }}</h5>
           <button *ngIf="folder.id !== -1" type="button"
             class="btn-close btn-close-white position-absolute top-0 end-0 m-2" aria-label="Close"
             (click)="openDeletionModal(deletionModal, folder); $event.stopPropagation();">
           </button>
+          <button class="btn-edit btn-edit-white position-absolute top-0 start-0 m-2" aria-label="Edit"
+            (click)="openEditionModal(editionModal, folder); $event.stopPropagation();">
+            <i class="bi bi-pencil-square"></i>
+          </button>
+
         </div>
       </div>
     </div>
@@ -63,7 +68,7 @@
   <div class="modal-footer">
     <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Annuler</button>
     <button type="button" class="btn btn-danger ms-2"
-      (click)="deleteReadingFolder(folderToDelete!); modal.dismiss()">Confirmer</button>
+      (click)="deleteReadingFolder(activeFolder!); modal.dismiss()">Confirmer</button>
   </div>
 </ng-template>
 
@@ -81,5 +86,22 @@
   <div class="modal-footer">
     <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Annuler</button>
     <button type="button" class="btn btn-danger ms-2" (click)="createReadingFolder();modal.dismiss()">Confirmer</button>
+  </div>
+</ng-template>
+
+<!-- Modal de modification -->
+<ng-template #editionModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="confirmBackModalLabel">Modifier le nom de la liste de lecture</h5>
+    <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Fermer"></button>
+  </div>
+  <div class="modal-body">
+    <generic-input class="mt-4" [(model)]="activeFolder.label" label="Nom du dossier" [form]="readingFolderForm"
+      propertyName="activeFolder" [isMandatory]="true" [isDisabled]="false" [isDisplayLabel]="true"
+      [isDisplayLabel]="false"></generic-input>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Annuler</button>
+    <button type="button" class="btn btn-danger ms-2" (click)="editReadingFolder(); modal.dismiss()">Confirmer</button>
   </div>
 </ng-template>
