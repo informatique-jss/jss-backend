@@ -38,28 +38,6 @@
   </section>
 
   <section>
-    <div class="pb-3 row align-items-center"
-      *ngIf="selectedAssoIndex!=null && selectedServiceIndex!=null && quotation.assoAffaireOrders && quotation.assoAffaireOrders[selectedAssoIndex].affaire">
-      <strong class="col-auto">
-        <span>
-          {{quotation.assoAffaireOrders[selectedAssoIndex].affaire.siret?(quotation.assoAffaireOrders[selectedAssoIndex].affaire.siret
-          + ' - '):''}}{{
-          quotation.assoAffaireOrders[selectedAssoIndex].affaire.denomination
-          ?quotation.assoAffaireOrders[selectedAssoIndex].affaire.denomination :
-          (quotation.assoAffaireOrders[selectedAssoIndex].affaire.firstname+ ' ' +
-          quotation.assoAffaireOrders[selectedAssoIndex].affaire.lastname) }}
-          - {{quotation.assoAffaireOrders[selectedAssoIndex].affaire.address + ' '+
-          quotation.assoAffaireOrders[selectedAssoIndex].affaire.city.label }}
-          {{quotation.assoAffaireOrders[selectedAssoIndex].affaire.city.postalCode ?
-          ' '+ quotation.assoAffaireOrders[selectedAssoIndex].affaire.city.postalCode : ''}}
-        </span>
-      </strong>
-      <a class="btn btn-secondary rounded-pill mt-2 ms-0 ms-md-0 col-auto pill text-wrap text-break fs-xs"
-        *ngIf="quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex]">
-        {{quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].serviceLabelToDisplay }}
-      </a>
-    </div>
-
     <ng-container *ngIf="selectedAssoIndex!=null && selectedServiceIndex!=null && quotation.assoAffaireOrders && quotation.assoAffaireOrders[selectedAssoIndex] &&
        quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex]">
       <ul ngbNav #nav="ngbNav" [activeId]="40" class="nav-tabs flex-nowrap border-3 border-secondary"
@@ -121,7 +99,9 @@
                       [propertyName]="'isProofReadingDocument'+provision.order" [isDisabled]="false"></generic-toggle>
                   </div>
 
-                  <div [hidden]="!noticeTemplateDescription" class="row col-12 col-lg-6 form-check form-switch">
+                  <div
+                    [hidden]="getPossibleTemplates(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex]) == undefined"
+                    class="row col-12 col-lg-6 form-check form-switch">
                     <div class="row align-items-center">
                       <generic-toggle class="col-auto" [(model)]="noticeTemplateDescription!.isUsingTemplate"
                         label="Utiliser les modèles proposés pour la rédaction" [form]="informationForm"
