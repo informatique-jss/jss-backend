@@ -681,7 +681,7 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     dialogRef.componentInstance.title = "Workflow des commandes";
   }
 
-  deleteProvision(provision: Provision) {
+  deleteProvision(service: Service, provision: Provision) {
     if (!this.habilitationService.canByPassProvisionLockOnBilledOrder())
       if (instanceOfCustomerOrder(this.quotation) && this.quotation.customerOrderStatus && (this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED || this.quotation.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED)) {
         this.displaySnakBarLockProvision();
@@ -714,15 +714,15 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
 
       dialogConfirm.afterClosed().subscribe(userConfirmed => {
         if (userConfirmed) {
-          this.deleteProvisionDialog(provision);
+          this.deleteProvisionDialog(service, provision);
         }
       });
     } else {
-      this.deleteProvisionDialog(provision);
+      this.deleteProvisionDialog(service, provision);
     }
   }
 
-  deleteProvisionDialog(provision: Provision) {
+  deleteProvisionDialog(service: Service, provision: Provision) {
     const dialogRef = this.confirmationDialog.open(ConfirmDialogComponent, {
       maxWidth: "400px",
       data: {
@@ -734,15 +734,18 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     });
     dialogRef.afterClosed().subscribe(response => {
       if (response) {
-        this.provisionService.deleteProvision(provision).subscribe(response => {
-          if (!this.instanceOfCustomerOrder) {
-            this.editMode = false;
-            this.appService.openRoute(null, '/quotation/' + this.quotation.id, null);
-          } else {
-            this.editMode = false;
-            this.appService.openRoute(null, '/order/' + this.quotation.id, null);
-          }
-        });
+        if (provision.id == null)
+          service.provisions.splice(service.provisions.indexOf(provision), 1);
+        else
+          this.provisionService.deleteProvision(provision).subscribe(response => {
+            if (!this.instanceOfCustomerOrder) {
+              this.editMode = false;
+              this.appService.openRoute(null, '/quotation/' + this.quotation.id, null);
+            } else {
+              this.editMode = false;
+              this.appService.openRoute(null, '/order/' + this.quotation.id, null);
+            }
+          });
       }
     });
   }
@@ -861,11 +864,11 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
             this.customerOrderService.updateCustomerStatus(this.quotation, targetStatus.code)
               .subscribe(response => {
                 if (userConfirmed) {
-                  this.customerOrderAssignationService.assignImmediatlyOrderForInsertions(this.quotation).subscribe(reponse =>{
-                     this.quotation = response;
-                  this.appService.openRoute(null, '/order/' + this.quotation.id, null);
+                  this.customerOrderAssignationService.assignImmediatlyOrderForInsertions(this.quotation).subscribe(reponse => {
+                    this.quotation = response;
+                    this.appService.openRoute(null, '/order/' + this.quotation.id, null);
                   })
-              } else {
+                } else {
                   this.quotation = response;
                   this.appService.openRoute(null, '/order/' + this.quotation.id, null);
                 }
