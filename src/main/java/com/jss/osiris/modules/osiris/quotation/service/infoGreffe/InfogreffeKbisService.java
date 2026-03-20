@@ -17,4 +17,6 @@ public interface InfogreffeKbisService {
 
     KbisRequest orderNewKbisForSiret(String siren, Provision provision) throws OsirisException;
 
+    void nullifyProvisionId(Integer provisionId);
+
 }

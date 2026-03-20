@@ -162,4 +162,9 @@ public class CustomerOrderCommentServiceImpl implements CustomerOrderCommentServ
         return addOrUpdateCustomerOrderComment(customerOrderComment);
     }
 
+    @Override
+    public void nullifyProvisionId(Integer provisionId) {
+        customerOrderCommentRepository.nullifyProvisionId(provisionId);
+    }
+
 }

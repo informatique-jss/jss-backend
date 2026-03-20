@@ -275,4 +275,9 @@ public class InfogreffeKbisServiceImpl implements InfogreffeKbisService {
         }
     }
 
+    @Override
+    public void nullifyProvisionId(Integer provisionId) {
+        kbisRequestRepository.nullifyProvisionId(provisionId);
+    }
+
 }

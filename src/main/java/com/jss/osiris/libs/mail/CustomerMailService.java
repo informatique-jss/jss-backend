@@ -36,4 +36,8 @@ public interface CustomerMailService {
 
     public CustomerMail cancelCustomerMail(CustomerMail mail) throws OsirisException;
 
+    public void nullifyProvisionId(Integer idProvision);
+
+    public void nullifyIdMissingAttachementQuery(Integer idMissingAttachementQuery);
+
 }

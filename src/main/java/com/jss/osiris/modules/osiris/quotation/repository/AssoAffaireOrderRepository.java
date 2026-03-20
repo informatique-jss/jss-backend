@@ -123,4 +123,6 @@ public interface AssoAffaireOrderRepository extends QueryCacheCrudRepository<Ass
         List<AssoAffaireOrder> findByQuotationOrderByAffaire(Quotation quotation);
 
         List<AssoAffaireOrder> findByAffaire(Affaire affaire);
+
+      
 }

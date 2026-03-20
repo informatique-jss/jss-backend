@@ -2,6 +2,7 @@ package com.jss.osiris.modules.osiris.miscellaneous.repository;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -58,5 +59,13 @@ public interface AttachmentRepository extends QueryCacheCrudRepository<Attachmen
         @Query(value = "select a.* from attachment a where id_candidacy =:idCandidacy", nativeQuery = true)
         List<Attachment> findByCandidacyId(
                         @Param("idCandidacy") Integer idCandidacy);
+
+        @Modifying
+        @Query(value = "update attachment set id_provision = null where id_provision = :idProvision", nativeQuery = true)
+        void nullifyProvisionId(@Param("idProvision") Integer idProvision);
+
+        @Modifying
+        @Query(value = "update attachment set id_asso_service_document = null where id_asso_service_document in (select id from asso_service_document where id_service = :idService)", nativeQuery = true)
+        void nullifyIdAssoServiceDoc(@Param("idService") Integer idService);
 
 }

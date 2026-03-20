@@ -17,9 +17,12 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.libs.mail.GeneratePdfDelegate;
+import com.jss.osiris.modules.osiris.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.AnnouncementStatus;
@@ -33,6 +36,7 @@ import com.jss.osiris.modules.osiris.quotation.model.ProvisionSearch;
 import com.jss.osiris.modules.osiris.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.osiris.quotation.repository.AnnouncementStatusRepository;
 import com.jss.osiris.modules.osiris.quotation.repository.ProvisionRepository;
+import com.jss.osiris.modules.osiris.quotation.service.infoGreffe.InfogreffeKbisService;
 
 @Service
 public class ProvisionServiceImpl implements ProvisionService {
@@ -60,6 +64,21 @@ public class ProvisionServiceImpl implements ProvisionService {
 
     @Autowired
     NotificationService notificationService;
+
+    @Autowired
+    CustomerMailService customerMailService;
+
+    @Autowired
+    InvoiceItemService invoiceItemService;
+
+    @Autowired
+    DocumentService documentService;
+
+    @Autowired
+    CustomerOrderCommentService customerOrderCommentService;
+
+    @Autowired
+    InfogreffeKbisService InfogreffeKbisService;
 
     @Override
     public Provision getProvision(Integer id) {
@@ -93,21 +112,37 @@ public class ProvisionServiceImpl implements ProvisionService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public Boolean deleteProvision(Provision provision) {
-        provision = getProvision(provision.getId());
+        deleteProvision(provision, false);
+        return true;
+    }
+
+    @Override
+    public void deleteProvision(Provision provision, boolean permanentlyDeleteAttachments) {
+        Integer provisionId = provision.getId();
+        customerMailService.nullifyProvisionId(provisionId);
+        notificationService.deleteNotificationByIdProvision(provisionId);
+        documentService.deleteDocumentsByProvisionId(provisionId);
+        customerOrderCommentService.nullifyProvisionId(provisionId);
+        InfogreffeKbisService.nullifyProvisionId(provisionId);
         if (provision.getAttachments() != null && provision.getAttachments().size() > 0) {
             for (Attachment attachment : provision.getAttachments()) {
-                attachmentService.cleanAttachmentForDelete(attachment);
+                if (permanentlyDeleteAttachments)
+                    attachmentService.definitivelyDeleteAttachment(attachment);
+                else
+                    attachmentService.cleanAttachmentForDelete(attachment);
             }
+
+            attachmentService.nullifyProvisionId(provisionId);
         }
+
         provisionRepository.delete(provision);
         if (provision.getService().getAssoAffaireOrder().getCustomerOrder() != null
                 && provision.getService().getAssoAffaireOrder().getCustomerOrder().getQuotations() != null
                 && provision.getService().getAssoAffaireOrder().getCustomerOrder().getQuotations().size() > 0)
             notificationService
                     .notifyQuotationModified(provision.getService().getAssoAffaireOrder().getCustomerOrder());
-        return true;
     }
 
     @Override

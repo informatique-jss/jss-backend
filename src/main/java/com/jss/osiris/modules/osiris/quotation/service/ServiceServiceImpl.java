@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
@@ -92,6 +93,12 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Autowired
     NotificationService notificationService;
+
+    @Autowired
+    MissingAttachmentQueryService missingAttachmentQueryService;
+
+    @Autowired
+    CustomerMailService customerMailService;
 
     @Override
     public Service getService(Integer id) {
@@ -175,8 +182,7 @@ public class ServiceServiceImpl implements ServiceService {
     @Transactional(rollbackFor = Exception.class)
     public Boolean deleteServiceFromUser(Service service) {
         service = getService(service.getId());
-        deleteService(service, false);
-
+        deleteService(service);
         if (service.getAssoAffaireOrder().getCustomerOrder() != null
                 && service.getAssoAffaireOrder().getCustomerOrder().getQuotations() != null
                 && service.getAssoAffaireOrder().getCustomerOrder().getQuotations().size() > 0)
@@ -184,19 +190,23 @@ public class ServiceServiceImpl implements ServiceService {
         return true;
     }
 
-    private Boolean deleteService(Service service, boolean permanentlyDeleteAttachments) {
+    private Boolean deleteService(Service service) {
+        Integer serviceId = service.getId();
         if (service.getProvisions() != null && service.getProvisions().size() > 0) {
             for (Provision provision : service.getProvisions()) {
-                if (provision.getAttachments() != null && provision.getAttachments().size() > 0) {
-                    for (Attachment attachment : provision.getAttachments()) {
-                        if (permanentlyDeleteAttachments)
-                            attachmentService.definitivelyDeleteAttachment(attachment);
-                        else
-                            attachmentService.cleanAttachmentForDelete(attachment);
-                    }
-                }
+                provisionService.deleteProvision(provision, false);
             }
         }
+        if (service.getAssoAffaireOrder() != null)
+            assoAffaireOrderService.deleteById(service.getAssoAffaireOrder().getId());
+        attachmentService.nullifyIdAssoServiceDoc(serviceId);
+        missingAttachmentQueryService.deleteAssoServiceDocMissingAttachmentQueryByServiceId(serviceId);
+        assoServiceDocumentService.deleteAssoServiceDocumentByServiceId(serviceId);
+        missingAttachmentQueryService.deleteAssoFieldTypeMissingAttachmentQueryByServiceId(serviceId);
+        assoServiceFieldTypeService.deleteAssoServiceFieldTypeByServiceId(serviceId);
+        customerMailService.nullifyIdMissingAttachementQuery(serviceId);
+        serviceRepository.deleteAssociationsByServiceId(serviceId);
+
         serviceRepository.delete(service);
         return true;
     }
@@ -970,4 +980,5 @@ public class ServiceServiceImpl implements ServiceService {
         service.setServiceVatPrice(vatPrice);
         service.setServiceDiscountAmount(discountAmount);
     }
+
 }

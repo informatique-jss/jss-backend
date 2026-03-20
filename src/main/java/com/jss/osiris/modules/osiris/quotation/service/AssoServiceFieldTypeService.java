@@ -6,4 +6,6 @@ public interface AssoServiceFieldTypeService {
     public AssoServiceFieldType getAssoServiceFieldType(Integer id);
 
     public AssoServiceFieldType addOrUpdateServiceFieldType(AssoServiceFieldType assoServiceFieldType);
+
+    public void deleteAssoServiceFieldTypeByServiceId(Integer serviceId);
 }

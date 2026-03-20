@@ -2,6 +2,7 @@ package com.jss.osiris.modules.osiris.quotation.repository;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -52,4 +53,17 @@ public interface MissingAttachmentQueryRepository extends QueryCacheCrudReposito
                         @Param("customerOrderStatusIdAbandonned") Integer customerOrderStatusIdAbandonned);
 
         List<MissingAttachmentQuery> findByService(Service service);
+
+        @Modifying
+        @Query(value = "DELETE FROM asso_service_document_missing_attachment_query WHERE id_asso_service_document in (select id from asso_service_document where id_service = :serviceId)", nativeQuery = true)
+        void deleteAssoServiceDocMissingAttachmentQueryByServiceId(@Param("serviceId") Integer serviceId);
+
+        @Modifying
+        @Query(value = "DELETE FROM asso_service_field_type_missing_attachment_query WHERE id_missing_attchment_query in (select id from missing_attachment_query where id_service = :serviceId)", nativeQuery = true)
+        void deleteAssoFieldTypeMissingAttachmentQueryByServiceId(@Param("serviceId") Integer serviceId);
+
+        @Modifying
+        @Query(value = "update missing_attachment_query set id_service = null where id_service = :idService", nativeQuery = true)
+        void nullifyServiceId(@Param("idService") Integer idService);
+
 }

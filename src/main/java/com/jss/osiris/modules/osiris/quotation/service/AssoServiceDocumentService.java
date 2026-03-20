@@ -6,4 +6,6 @@ public interface AssoServiceDocumentService {
     public AssoServiceDocument getAssoServiceDocument(Integer id);
 
     public AssoServiceDocument addOrUpdateAssoServiceDocument(AssoServiceDocument AssoServiceDocument);
+
+    public void deleteAssoServiceDocumentByServiceId(Integer serviceId);
 }

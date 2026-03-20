@@ -2,6 +2,7 @@ package com.jss.osiris.modules.osiris.miscellaneous.repository;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -44,5 +45,9 @@ public interface NotificationRepository extends QueryCacheCrudRepository<Notific
 
         List<Notification> findByEmployeeAndNotificationTypeAndQuotation(Employee toEmployee,
                         String notificationType, Quotation quotation);
+        
+        @Modifying
+        @Query("delete from Notification n where n.provision.id = :idProvision")
+        void deleteNotificationByIdProvision(@Param("idProvision") Integer idProvision);
 
 }

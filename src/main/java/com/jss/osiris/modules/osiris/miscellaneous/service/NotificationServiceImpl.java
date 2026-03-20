@@ -609,4 +609,9 @@ public class NotificationServiceImpl implements NotificationService {
 
         return clone;
     }
+
+    @Override
+    public void deleteNotificationByIdProvision(Integer idProvision) {
+        notificationRepository.deleteNotificationByIdProvision(idProvision);
+    }
 }

@@ -34,4 +34,10 @@ public interface MissingAttachmentQueryService {
         public void checkCompleteAttachmentListAndComment(AssoServiceDocument assoServiceDocument,
                         Attachment attachment)
                         throws OsirisException;
+
+        public void deleteAssoServiceDocMissingAttachmentQueryByServiceId(Integer serviceId);
+
+        public void deleteAssoFieldTypeMissingAttachmentQueryByServiceId(Integer serviceId);
+
+        public void nullifyIdService(Integer idService);
 }
