@@ -207,6 +207,10 @@ export class PostComponent implements OnInit, AfterViewInit {
       this.meta.updateTag({ property: 'og:description', content: this.post.excerptText });
       this.meta.updateTag({ property: 'og:url', content: environment.frontendUrl + "post/" + this.post.slug });
       this.meta.updateTag({ property: 'og:type', content: 'article' });
+      if (this.post && this.post.date) {
+        const dateString = new Date(this.post.date).toDateString();
+        this.meta.updateTag({ property: 'og:date', content: dateString });
+      }
     }
   }
 
