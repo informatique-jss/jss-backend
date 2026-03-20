@@ -291,7 +291,7 @@ export class OrderDetailsComponent implements OnInit {
         }
 
       // Waiting for validation date
-      if (!isWaintingForValidationPartnerDateInserted) {
+      if (!isWaintingForValidationPartnerDateInserted && guDepositInfo.waitingForValidationFromDate) {
         stepperObjects.push({ date: guDepositInfo.waitingForValidationFromDate, stepperType: "waiting_validation", waitingForValidationPartnerCenterName: guDepositInfo.waitingForValidationPartnerCenterName });
       }
 
