@@ -30,7 +30,4 @@ public interface ServiceService {
         public boolean isServiceHasMissingInformations(Service service);
 
         public List<Service> populateTransientField(List<Service> services) throws OsirisException;
-
-         
-
 }

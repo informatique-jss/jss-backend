@@ -980,5 +980,4 @@ public class ServiceServiceImpl implements ServiceService {
         service.setServiceVatPrice(vatPrice);
         service.setServiceDiscountAmount(discountAmount);
     }
-
 }
