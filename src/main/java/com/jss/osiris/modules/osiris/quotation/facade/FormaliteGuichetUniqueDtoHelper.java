@@ -91,7 +91,9 @@ public class FormaliteGuichetUniqueDtoHelper {
                                                 askingMissingDocumentDates.add(missingAttachmentQuery
                                                                 .getCreatedDateTime().toLocalDate());
 
-                                guichetUniqueDepositInfoDto.setAskingMissingDocumentDates(askingMissingDocumentDates);
+                                guichetUniqueDepositInfoDto.setAskingMissingDocumentDates(
+                                                askingMissingDocumentDates.size() == 0 ? null
+                                                                : askingMissingDocumentDates);
                         }
         }
 
