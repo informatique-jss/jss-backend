@@ -1,7 +1,8 @@
 import { Directive, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
+import { isInt } from '../../../libs/FormatHelper';
 import { AppService } from '../../../services/app.service';
 import { PagedContent } from '../../model/PagedContent';
 import { Post } from '../../model/Post';
@@ -39,25 +40,29 @@ export abstract class GenericHubComponent<T extends { id: number }> implements O
   ) { }
 
   ngOnInit() {
-    this.refresh();
-
+    if (this.activeRoute.snapshot.firstChild)
+      this.initPageNumber(this.activeRoute.snapshot.firstChild!.params['page-number']);
     this.router.events.subscribe(url => {
-      if (url instanceof NavigationEnd && this.activeRoute.firstChild) {
-        this.activeRoute.firstChild.paramMap.subscribe(paramsMap => {
-          let newPage = paramsMap.get("page-number");
-          if (newPage != undefined)
-            this.page = Number.parseInt(newPage);
-          this.fetchPosts(this.page);
-        })
+      if ((url instanceof NavigationStart)) {
+        this.initPageNumber(url.url)
       }
     });
+    this.refresh();
+  }
+
+  initPageNumber(url: string) {
+    let urlParam = url.split("/");
+    this.page = 0;
+    if (isInt(urlParam[urlParam.length - 1]))
+      this.page = parseInt(urlParam[urlParam.length - 1]);
+    this.refresh();
   }
 
   refresh() {
     if (this.activeRoute.snapshot.params['isDisplayNews'])
       this.isDisplayNewPosts = this.activeRoute.snapshot.params['isDisplayNews'];
     this.hubForm = this.formBuilder.group({});
-    this.fetchPosts(0);
+    this.fetchPosts();
     this.fetchTags();
     this.fetchMostSeenPosts();
     this.loginService.getCurrentUser().subscribe(user => {
@@ -70,9 +75,9 @@ export abstract class GenericHubComponent<T extends { id: number }> implements O
   abstract getAllTagByEntityType(selectedEntityType: T, isDisplayNewPosts: boolean): Observable<Array<Tag>>;
   abstract getMostSeenPostByEntityType(selectedEntityType: T, page: number, pageSize: number): Observable<PagedContent<Post>>
 
-  fetchPosts(page: number) {
+  fetchPosts() {
     if (this.selectedEntityType && this.selectedEntityType.id && (!this.searchText || this.searchText.length > 2))
-      this.getAllPostByEntityType(this.selectedEntityType, page, this.pageSize, this.searchText, this.isDisplayNewPosts).subscribe(data => {
+      this.getAllPostByEntityType(this.selectedEntityType, this.page, this.pageSize, this.searchText, this.isDisplayNewPosts).subscribe(data => {
         if (data && this.selectedEntityType && !this.searchText) {
           this.postsByEntityType[this.selectedEntityType.id] = data.content;
         }
@@ -99,26 +104,20 @@ export abstract class GenericHubComponent<T extends { id: number }> implements O
   }
 
   searchForPosts() {
-    if (this.searchText && this.searchText.length > 2) {
-      clearTimeout(this.debounce);
-      this.searchResults = [];
+    this.page = 0;
+    clearTimeout(this.debounce);
+    this.searchResults = [];
 
-      this.debounce = setTimeout(() => {
-        this.fetchPosts(0);
-      }, 500);
-    }
+    this.debounce = setTimeout(() => {
+      this.fetchPosts();
+      this.fetchTags();
+      this.fetchMostSeenPosts();
+    }, 500);
   }
 
   clearSearch() {
     this.searchText = '';
     this.searchResults = [];
-  }
-
-  goToPage(pageNumber: number): void {
-    if (pageNumber >= 0 && pageNumber < this.totalPage) {
-      this.page = pageNumber;
-      this.fetchPosts(pageNumber);
-    }
   }
 
   get pages(): number[] {

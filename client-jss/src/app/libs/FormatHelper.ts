@@ -12,6 +12,12 @@ export function capitalize(word: string) {
   return word[0].toUpperCase() + word.substr(1).toLowerCase();
 }
 
+export function isInt(value: any) {
+  return !isNaN(value) &&
+    parseInt(value) == value &&
+    !isNaN(parseInt(value, 10));
+}
+
 export function capitalizeName(name: string): string {
   if (!name) return "";
 
