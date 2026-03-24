@@ -59,12 +59,4 @@ public interface AttachmentRepository extends QueryCacheCrudRepository<Attachmen
         @Query(value = "select a.* from attachment a where id_candidacy =:idCandidacy", nativeQuery = true)
         List<Attachment> findByCandidacyId(
                         @Param("idCandidacy") Integer idCandidacy);
-
-        @Modifying
-        @Query("UPDATE Attachment a SET a.provision = NULL WHERE a.provision.id = :idProvision")
-        void nullifyProvisionId(@Param("idProvision") Integer idProvision);
-
-        @Modifying
-        @Query("UPDATE Attachment a SET a.assoServiceDocument = NULL WHERE a.assoServiceDocument.id IN (SELECT asd.id FROM AssoServiceDocument asd WHERE asd.service.id = :idService)")
-        void nullifyIdAssoServiceDoc(@Param("idService") Integer idService);
 }

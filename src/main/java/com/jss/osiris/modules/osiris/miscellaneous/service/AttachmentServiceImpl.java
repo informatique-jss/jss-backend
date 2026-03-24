@@ -673,14 +673,4 @@ public class AttachmentServiceImpl implements AttachmentService {
 
         return null;
     }
-
-    @Override
-    public void nullifyProvisionId(Integer provisionId) {
-        attachmentRepository.nullifyProvisionId(provisionId);
-    }
-
-    @Override
-    public void nullifyIdAssoServiceDoc(Integer serviceId) {
-        attachmentRepository.nullifyIdAssoServiceDoc(serviceId);
-    }
 }
