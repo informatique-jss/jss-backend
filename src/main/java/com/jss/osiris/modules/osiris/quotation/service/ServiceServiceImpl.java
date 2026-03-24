@@ -19,6 +19,8 @@ import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.mail.CustomerMailService;
+import com.jss.osiris.libs.mail.model.CustomerMail;
+import com.jss.osiris.libs.mail.repository.CustomerMailRepository;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
@@ -47,6 +49,7 @@ import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.FormaliteGuic
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.ValidationRequest;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.FormeJuridique;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.ValidationsRequestStatus;
+import com.jss.osiris.modules.osiris.quotation.repository.AssoAffaireOrderRepository;
 import com.jss.osiris.modules.osiris.quotation.repository.ServiceRepository;
 
 @org.springframework.stereotype.Service
@@ -74,6 +77,9 @@ public class ServiceServiceImpl implements ServiceService {
     AssoAffaireOrderService assoAffaireOrderService;
 
     @Autowired
+    AssoAffaireOrderRepository assoAffaireOrderRepository;
+
+    @Autowired
     AssoServiceDocumentService assoServiceDocumentService;
 
     @Autowired
@@ -99,6 +105,9 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Autowired
     CustomerMailService customerMailService;
+
+    @Autowired
+    CustomerMailRepository customerMailRepository;
 
     @Override
     public Service getService(Integer id) {
@@ -180,9 +189,9 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean deleteServiceFromUser(Service service) {
+    public Boolean deleteServiceFromUser(Service service) throws OsirisException {
         service = getService(service.getId());
-        deleteService(service);
+        deleteServiceAndDependencies(service);
         if (service.getAssoAffaireOrder().getCustomerOrder() != null
                 && service.getAssoAffaireOrder().getCustomerOrder().getQuotations() != null
                 && service.getAssoAffaireOrder().getCustomerOrder().getQuotations().size() > 0)
@@ -190,22 +199,57 @@ public class ServiceServiceImpl implements ServiceService {
         return true;
     }
 
-    private Boolean deleteService(Service service) {
-        Integer serviceId = service.getId();
-        if (service.getProvisions() != null && service.getProvisions().size() > 0) {
-            for (Provision provision : service.getProvisions()) {
-                provisionService.deleteProvision(provision, false);
+    private Boolean deleteServiceAndDependencies(Service service) throws OsirisException {
+
+        List<Provision> provisions = service.getProvisions();
+        if (provisions != null && provisions.size() > 0) {
+            for (Provision provision : provisions) {
+                provisionService.deleteProvisionAndDependencies(provision, false);
             }
         }
-        if (service.getAssoAffaireOrder() != null)
-            assoAffaireOrderService.deleteById(service.getAssoAffaireOrder().getId());
-        attachmentService.nullifyIdAssoServiceDoc(serviceId);
-        missingAttachmentQueryService.deleteAssoServiceDocMissingAttachmentQueryByServiceId(serviceId);
-        assoServiceDocumentService.deleteAssoServiceDocumentByServiceId(serviceId);
-        missingAttachmentQueryService.deleteAssoFieldTypeMissingAttachmentQueryByServiceId(serviceId);
-        assoServiceFieldTypeService.deleteAssoServiceFieldTypeByServiceId(serviceId);
-        customerMailService.nullifyIdMissingAttachementQuery(serviceId);
-        serviceRepository.deleteAssociationsByServiceId(serviceId);
+        List<AssoServiceDocument> assoServiceDocuments = service.getAssoServiceDocuments();
+        if (assoServiceDocuments != null && assoServiceDocuments.size() > 0) {
+            for (AssoServiceDocument doc : assoServiceDocuments) {
+
+                if (doc.getAttachments() != null && doc.getAttachments().size() > 0) {
+                    for (Attachment att : doc.getAttachments()) {
+                        if (att != null) {
+                            att.setAssoServiceDocument(null);
+                        }
+                    }
+                }
+            }
+        }
+        if (service.getMissingAttachmentQueries() != null && service.getMissingAttachmentQueries().size() > 0) {
+            for (MissingAttachmentQuery maq : service.getMissingAttachmentQueries()) {
+                if (maq.getAssoServiceDocument() != null)
+                    maq.getAssoServiceDocument().clear();
+                if (maq.getAssoServiceFieldType() != null)
+                    maq.getAssoServiceFieldType().clear();
+            }
+        }
+        if (service.getAssoServiceDocuments() != null && service.getAssoServiceDocuments().size() > 0)
+            service.getAssoServiceDocuments().clear();
+        if (service.getAssoServiceFieldTypes() != null && service.getAssoServiceFieldTypes().size() > 0)
+            service.getAssoServiceFieldTypes().clear();
+
+        if (service.getMissingAttachmentQueries() != null && service.getMissingAttachmentQueries().size() > 0) {
+            for (MissingAttachmentQuery maq : service.getMissingAttachmentQueries()) {
+                List<CustomerMail> mails = customerMailRepository.findByMissingAttachmentQueryId(maq.getId());
+                if (mails != null && mails.size() > 0) {
+                    for (CustomerMail mail : mails) {
+                        mail.setMissingAttachmentQuery(null);
+                    }
+                }
+            }
+        }
+        if (service.getMissingAttachmentQueries() != null && service.getMissingAttachmentQueries().size() > 0) {
+            for (MissingAttachmentQuery maq : service.getMissingAttachmentQueries()) {
+                maq.setService(null);
+            }
+        }
+        if (service.getServiceTypes() != null && service.getServiceTypes().size() > 0)
+            service.getServiceTypes().clear();
 
         serviceRepository.delete(service);
         return true;

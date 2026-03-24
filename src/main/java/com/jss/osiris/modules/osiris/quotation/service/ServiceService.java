@@ -18,7 +18,7 @@ public interface ServiceService {
         public Boolean addOrUpdateServices(List<ServiceType> services, Integer assoAffaireOrderId,
                         String customLabel, Affaire affaire) throws OsirisException;
 
-        public Boolean deleteServiceFromUser(Service service);
+        public Boolean deleteServiceFromUser(Service service) throws OsirisException;
 
         public Service modifyServiceType(List<ServiceType> serviceType, Service service) throws OsirisException;
 

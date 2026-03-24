@@ -46,6 +46,4 @@ public interface AssoAffaireOrderService {
                         throws OsirisException;
 
         List<AssoAffaireOrder> getAssoAffaireOrderByAffaire(Affaire affaire);
-
-        public void deleteById(Integer id);
 }

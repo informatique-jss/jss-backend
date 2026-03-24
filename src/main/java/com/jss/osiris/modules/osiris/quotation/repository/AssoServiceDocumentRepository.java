@@ -11,6 +11,9 @@ public interface AssoServiceDocumentRepository extends QueryCacheCrudRepository<
 
     @Modifying
     @Query("DELETE FROM AssoServiceDocument a WHERE a.service.id = :serviceId")
-    void deleteByServiceId(@Param("serviceId") Integer serviceId);
+    void deleteByServiceIdd(@Param("serviceId") Integer serviceId);
+
+    @Modifying
+    int deleteByServiceId(Integer serviceId);
 
 }

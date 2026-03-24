@@ -38,6 +38,4 @@ public interface DocumentService {
     public Document cloneOrMergeDocument(Document document, Document documentToMergeTo);
 
     public Document findDocumentByDocumentTypeAndResponsable(DocumentType documentType, Responsable responsable);
-
-    public void deleteDocumentsByProvisionId(Integer provisionId);
 }

@@ -805,7 +805,7 @@ public class QuotationController {
   }
 
   @GetMapping(inputEntryPoint + "/service/delete")
-  public ResponseEntity<Boolean> deleteService(@RequestParam Integer serviceId) throws OsirisValidationException {
+  public ResponseEntity<Boolean> deleteService(@RequestParam Integer serviceId) throws OsirisException {
 
     Service service = serviceService.getService(serviceId);
     if (service == null)
@@ -1321,7 +1321,7 @@ public class QuotationController {
   }
 
   @GetMapping(inputEntryPoint + "/provision/delete")
-  public ResponseEntity<Boolean> deleteProvision(@RequestParam Integer provisionId) throws OsirisValidationException {
+  public ResponseEntity<Boolean> deleteProvision(@RequestParam Integer provisionId) throws OsirisException {
     Provision provision = provisionService.getProvision(provisionId);
     if (provision == null)
       throw new OsirisValidationException("provision");

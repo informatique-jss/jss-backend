@@ -29,9 +29,4 @@ public class AssoServiceDocumentServiceImpl implements AssoServiceDocumentServic
             AssoServiceDocument assoServiceDocument) {
         return assoServiceDocumentRepository.save(assoServiceDocument);
     }
-
-    @Override
-    public void deleteAssoServiceDocumentByServiceId(Integer serviceId) {
-        assoServiceDocumentRepository.deleteByServiceId(serviceId);
-    }
 }

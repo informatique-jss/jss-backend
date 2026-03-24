@@ -42,6 +42,4 @@ public interface CustomerOrderCommentService {
         public List<CustomerOrder> getCustomerOrdersWithUnreadCommentsForResponsable(Responsable responsable);
 
         public List<Quotation> getQuotationsWithUnreadCommentsForResponsable(Responsable responsable);
-
-        public void nullifyProvisionId(Integer provisionId);
 }

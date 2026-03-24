@@ -524,15 +524,4 @@ public class CustomerMailServiceImpl implements CustomerMailService {
         if (canSend)
             mailHelper.getMailSender().send(message);
     }
-
-    @Override
-    public void nullifyProvisionId(Integer idProvision) {
-        customerMailRepository.nullifyProvisionId(idProvision);
-    }
-
-    @Override
-    public void nullifyIdMissingAttachementQuery(Integer idMissingAttachementQuery) {
-        customerMailRepository.nullifyIdMissingAttachementQuery(idMissingAttachementQuery);
-    }
-
 }

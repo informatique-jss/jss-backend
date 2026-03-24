@@ -149,9 +149,4 @@ public class DocumentServiceImpl implements DocumentService {
         documentToMergeTo.setAddToClientMailList(document.getAddToClientMailList());
         return documentToMergeTo;
     }
-
-    @Override
-    public void deleteDocumentsByProvisionId(Integer provisionId) {
-        documentRepository.deleteDocumentsByProvisionId(provisionId);
-    }
 }

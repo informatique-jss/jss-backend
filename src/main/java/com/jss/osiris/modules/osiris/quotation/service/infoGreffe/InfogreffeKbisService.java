@@ -16,7 +16,4 @@ public interface InfogreffeKbisService {
     Attachment getUpToDateKbisForSiret(String siren) throws OsirisException;
 
     KbisRequest orderNewKbisForSiret(String siren, Provision provision) throws OsirisException;
-
-    void nullifyProvisionId(Integer provisionId);
-
 }

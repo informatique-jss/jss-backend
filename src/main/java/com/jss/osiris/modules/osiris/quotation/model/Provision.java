@@ -3,9 +3,11 @@ package com.jss.osiris.modules.osiris.quotation.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
+import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.myjss.wordpress.model.AssoProvisionPostNewspaper;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
@@ -14,7 +16,9 @@ import com.jss.osiris.modules.osiris.invoicing.model.Payment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IAttachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Notification;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
+import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.KbisRequest;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -99,6 +103,18 @@ public class Provision implements IId, IAttachment {
 	@OneToMany(targetEntity = InvoiceItem.class, mappedBy = "provision", cascade = CascadeType.REMOVE)
 	@JsonIgnoreProperties(value = { "provision", "originProviderInvoice" }, allowSetters = true)
 	private List<InvoiceItem> invoiceItems;
+
+	@OneToMany(targetEntity = Notification.class, mappedBy = "provision")
+	@JsonIgnore
+	private List<Notification> notifications;
+
+	@OneToMany(targetEntity = CustomerMail.class, mappedBy = "provision")
+	@JsonIgnore
+	private List<CustomerMail> customerMails;
+
+	@OneToMany(targetEntity = KbisRequest.class, mappedBy = "provision")
+	@JsonIgnore
+	private List<KbisRequest> kbisRequests;
 
 	@Transient
 	private List<InvoiceItem> invoiceItemsGrouped;
@@ -211,7 +227,7 @@ public class Provision implements IId, IAttachment {
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Boolean isDoNotGenerateAnnouncement;
 
-	@OneToMany(targetEntity = Attachment.class, mappedBy = "provision", cascade = CascadeType.REMOVE)
+	@OneToMany(targetEntity = Attachment.class, mappedBy = "provision")
 	@JsonIgnoreProperties(value = { "provision", "invoice" }, allowSetters = true)
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private List<Attachment> attachments;
@@ -247,6 +263,26 @@ public class Provision implements IId, IAttachment {
 	private Boolean isNotifyBodacc;
 	private Boolean isNotifyBalo;
 	private Boolean isNotifyJo;
+
+	public List<KbisRequest> getKbisRequests() {
+		return kbisRequests;
+	}
+
+	public List<CustomerMail> getCustomerMails() {
+		return customerMails;
+	}
+
+	public List<Notification> getNotifications() {
+		return notifications;
+	}
+
+	public void setNotifications(List<Notification> notifications) {
+		this.notifications = notifications;
+	}
+
+	public void setCustomerMails(List<CustomerMail> customerMails) {
+		this.customerMails = customerMails;
+	}
 
 	public Integer getId() {
 		return id;

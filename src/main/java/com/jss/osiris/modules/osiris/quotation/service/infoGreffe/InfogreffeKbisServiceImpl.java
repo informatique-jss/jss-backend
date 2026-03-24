@@ -274,10 +274,4 @@ public class InfogreffeKbisServiceImpl implements InfogreffeKbisService {
                     + (response != null ? response.getStatusCode() : "N/A"));
         }
     }
-
-    @Override
-    public void nullifyProvisionId(Integer provisionId) {
-        kbisRequestRepository.nullifyProvisionId(provisionId);
-    }
-
 }

@@ -63,7 +63,6 @@ public interface MissingAttachmentQueryRepository extends QueryCacheCrudReposito
         void deleteAssoFieldTypeMissingAttachmentQueryByServiceId(@Param("serviceId") Integer serviceId);
 
         @Modifying
-        @Query(value = "update missing_attachment_query set id_service = null where id_service = :idService", nativeQuery = true)
+        @Query("UPDATE MissingAttachmentQuery m SET m.service = NULL WHERE m.service.id = :idService")
         void nullifyServiceId(@Param("idService") Integer idService);
-
 }

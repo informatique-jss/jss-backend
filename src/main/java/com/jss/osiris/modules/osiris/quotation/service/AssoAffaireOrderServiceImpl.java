@@ -799,9 +799,4 @@ public class AssoAffaireOrderServiceImpl implements AssoAffaireOrderService {
     public List<AssoAffaireOrder> getAssoAffaireOrderByAffaire(Affaire affaire) {
         return assoAffaireOrderRepository.findByAffaire(affaire);
     }
-
-    @Override
-    public void deleteById(Integer id) {
-        assoAffaireOrderRepository.deleteById(id);
-    }
 }

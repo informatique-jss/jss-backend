@@ -622,7 +622,7 @@ public class MyJssQuotationController {
 
   @GetMapping(inputEntryPoint + "/service/delete")
   public ResponseEntity<Boolean> deleteService(@RequestParam Integer idService)
-      throws OsirisValidationException {
+      throws OsirisException {
 
     Service service = serviceService.getService(idService);
     if (service == null)

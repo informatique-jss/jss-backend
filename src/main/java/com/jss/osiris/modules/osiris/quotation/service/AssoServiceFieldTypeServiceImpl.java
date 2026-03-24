@@ -27,9 +27,4 @@ public class AssoServiceFieldTypeServiceImpl implements AssoServiceFieldTypeServ
     public AssoServiceFieldType addOrUpdateServiceFieldType(AssoServiceFieldType assoServiceFieldType) {
         return assoServiceFieldTypeRepository.save(assoServiceFieldType);
     }
-
-    @Override
-    public void deleteAssoServiceFieldTypeByServiceId(Integer serviceId) {
-        assoServiceFieldTypeRepository.deleteAssoServiceFieldTypeByServiceId(serviceId);
-    }
 }

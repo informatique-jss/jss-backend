@@ -272,20 +272,4 @@ public class MissingAttachmentQueryServiceImpl implements MissingAttachmentQuery
             }
         }
     }
-
-    @Override
-    public void deleteAssoServiceDocMissingAttachmentQueryByServiceId(Integer serviceId) {
-        missingAttachmentQueryRepository.deleteAssoServiceDocMissingAttachmentQueryByServiceId(serviceId);
-    }
-
-    @Override
-    public void deleteAssoFieldTypeMissingAttachmentQueryByServiceId(Integer serviceId) {
-        missingAttachmentQueryRepository.deleteAssoFieldTypeMissingAttachmentQueryByServiceId(serviceId);
-
-    }
-
-    @Override
-    public void nullifyIdService(Integer idService) {
-        missingAttachmentQueryRepository.nullifyServiceId(idService);
-    }
 }

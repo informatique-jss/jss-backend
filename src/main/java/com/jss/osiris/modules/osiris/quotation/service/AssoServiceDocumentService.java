@@ -5,7 +5,5 @@ import com.jss.osiris.modules.osiris.quotation.model.AssoServiceDocument;
 public interface AssoServiceDocumentService {
     public AssoServiceDocument getAssoServiceDocument(Integer id);
 
-    public AssoServiceDocument addOrUpdateAssoServiceDocument(AssoServiceDocument AssoServiceDocument);
-
-    public void deleteAssoServiceDocumentByServiceId(Integer serviceId);
+    public AssoServiceDocument addOrUpdateAssoServiceDocument(AssoServiceDocument AssoServiceDocument); 
 }
