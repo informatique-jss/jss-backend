@@ -197,11 +197,10 @@
                   <p>Débloquez immédiatement cet article pour 1 €, ou abonnez-vous pour accéder à l'ensemble de nos
                     contenus.</p>
                   <div class="row gap-2 justify-content-center">
-                    <a class="col-auto btn btn-secondary mt-3" style="cursor: pointer;"
-                      [href]='frontendMyJssUrl+"/quotation/subscription/" + ONE_POST_SUBSCRIPTION + "/" + false + "/" + post.id'
-                      target="_blank">Lire
-                      pour 1 €</a>
-                    <a class="col-auto btn btn-yellow mt-3" style="cursor: pointer;" href="subscription">S'abonner</a>
+                    <button class="col-auto btn btn-secondary mt-3" style="cursor: pointer;"
+                      (click)="buyUniquePost(post.id)" target="_blank">Lire pour 1 €</button>
+                    <button class="col-auto btn btn-yellow mt-3" style="cursor: pointer;"
+                      (click)="routeToSubscription()">S'abonner</button>
                   </div>
                 </div>
 
