@@ -15,7 +15,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -652,11 +651,11 @@ public class AttachmentServiceImpl implements AttachmentService {
             for (Invoice invoice : sortedInvoices)
                 if (invoice.getCreditNote() != null) {
                     Invoice creditNoteInvoice = invoice.getCreditNote();
-                    List<Integer> attachmentsToDownload = invoice.getAttachments().stream().map(Attachment::getId)
-                            .collect(Collectors.toCollection(ArrayList::new));
-                    List<Integer> attachmentsCreditNote = new ArrayList<>(creditNoteInvoice.getAttachments().stream()
-                            .map(Attachment::getId).toList());
-                    attachmentsToDownload.addAll(attachmentsCreditNote);
+                    List<Integer> attachmentsToDownload = new ArrayList<>();
+                    Integer attachmentInvoiceId = invoice.getAttachments().get(0).getId();
+                    Integer attachmentCreditNoteId = creditNoteInvoice.getAttachments().get(0).getId();
+                    attachmentsToDownload.add(attachmentInvoiceId);
+                    attachmentsToDownload.add(attachmentCreditNoteId);
 
                     return downloadAllAttachmentsAsZip(attachmentsToDownload);
                 }
