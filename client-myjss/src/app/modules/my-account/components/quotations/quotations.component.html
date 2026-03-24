@@ -181,8 +181,7 @@
                           </button>
                         </div>
                         <div *ngIf="quotation.responsable && quotation.responsable.tiers && !quotation.responsable.tiers.isProvisionalPaymentMandatory 
-                          && (quotation.quotationStatus.code == QUOTATION_STATUS_SENT_TO_CUSTOMER
-                          || quotation.quotationStatus.code == QUOTATION_STATUS_TO_VERIFY)" class="col-auto p-0">
+                          && quotation.quotationStatus.code == QUOTATION_STATUS_SENT_TO_CUSTOMER" class="col-auto p-0">
                           <button type="button" class="btn btn-primary btn-icon rounded-circle" aria-label="bill"
                             placement="top" ngbTooltip="Validez votre devis."
                             (click)="$event.stopPropagation(); openNewQuotationValidationModal(quotation); $event.preventDefault();">
