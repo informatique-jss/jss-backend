@@ -238,15 +238,19 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void updateBookmarkPost(Post post, ReadingFolder readingFolder, Responsable responsable) {
-        if (readingFolder.getPosts() != null)
-            readingFolder.getPosts().add(post);
+        if (readingFolder != null
+                && readingFolder.getMail().getId().equals(responsable.getMail().getId()))
+            if (readingFolder.getPosts() != null)
+                readingFolder.getPosts().add(post);
+            else
+                readingFolder.setPosts(Arrays.asList(post));
+
         else {
             readingFolder = readingFolderService.initReadingFolderForCurrentUser();
-            if (readingFolder != null)
+            if (readingFolder != null && readingFolder.getPosts() != null)
                 readingFolder.getPosts().add(post);
         }
         readingFolderService.addOrUpdateReadingFolder(readingFolder, responsable);
-
     }
 
     @Override

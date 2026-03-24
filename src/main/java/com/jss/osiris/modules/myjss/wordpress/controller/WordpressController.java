@@ -252,7 +252,7 @@ public class WordpressController {
 		ReadingFolder readingFolder = null;
 		if (idReadingFolder != null)
 			readingFolder = readingFolderService.getReadingFolder(idReadingFolder);
-		if (readingFolder != null && readingFolder.getMail().getId().equals(responsable.getMail().getId())) {
+		else {
 			postService.updateBookmarkPost(post, readingFolder, responsable);
 			return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 		}
