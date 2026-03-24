@@ -75,6 +75,10 @@ export abstract class GenericHubComponent<T extends { id: number }> implements O
   abstract getAllTagByEntityType(selectedEntityType: T, isDisplayNewPosts: boolean): Observable<Array<Tag>>;
   abstract getMostSeenPostByEntityType(selectedEntityType: T, page: number, pageSize: number): Observable<PagedContent<Post>>
 
+  getRouterUrl() {
+    return this.router.url.split('/').slice(0, -1).join('/');
+  }
+
   fetchPosts() {
     if (this.selectedEntityType && this.selectedEntityType.id && (!this.searchText || this.searchText.length > 2))
       this.getAllPostByEntityType(this.selectedEntityType, this.page, this.pageSize, this.searchText, this.isDisplayNewPosts).subscribe(data => {

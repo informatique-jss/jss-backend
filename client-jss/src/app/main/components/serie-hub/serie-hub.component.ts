@@ -46,5 +46,4 @@ export class SerieHubComponent extends GenericHubComponent<Serie> implements OnI
   override getMostSeenPostByEntityType(selectedEntityType: Serie, page: number, pageSize: number): Observable<PagedContent<Post>> {
     return this.postService.getMostSeenPostBySerie(selectedEntityType, page, pageSize);
   }
-
 }
