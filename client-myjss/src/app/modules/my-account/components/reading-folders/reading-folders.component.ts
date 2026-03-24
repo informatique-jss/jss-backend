@@ -55,8 +55,6 @@ export class ReadingFoldersComponent implements OnInit {
           this.postService.getBookmarkPostsByMailAndReadingFolders(readingFolder.id, 0, 1).subscribe(response => {
             if (response)
               readingFolder.posts = response.content;
-            if (readingFolder.posts && readingFolder.posts.length > 0 && readingFolder.posts[0].media && readingFolder.posts[0].media.urlFull)
-              console.log(readingFolder.posts[0].media.urlFull);
           });
       }
     });
