@@ -24,4 +24,13 @@ export class ResponsableService extends AppRestService<Responsable> {
   getResponsables(value: string): Observable<Responsable[]> {
     return this.getList(new HttpParams().set("searchedValue", value), "responsable/search");
   }
+
+
+  transferResponsable(oldResponsibleId: number, newResponsibleId: number) {
+    const params = new HttpParams()
+      .set("oldResponsibleId", oldResponsibleId)
+      .set("newResponsibleId", newResponsibleId);
+    return this.getList(params, "responsable/transfer");
+  }
+
 }

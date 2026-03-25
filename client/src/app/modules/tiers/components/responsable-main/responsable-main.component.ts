@@ -1,5 +1,6 @@
 import { AfterContentChecked, ChangeDetectorRef, Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { OSIRIS_V2_RESPONSABLE_ROUTE, OSIRIS_V2_TIERS_ROUTE } from 'src/app/libs/Constants';
 import { copyObject } from 'src/app/libs/GenericHelper';
@@ -13,6 +14,7 @@ import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableCo
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { NotificationService } from 'src/app/modules/miscellaneous/services/notification.service';
+import { TransferResponsibleDialogComponent } from 'src/app/modules/quotation/components/transfer-responsible-dialog/transfer-responsible-dialog.component';
 import { AffaireSearch } from 'src/app/modules/quotation/model/AffaireSearch';
 import { OrderingSearch } from 'src/app/modules/quotation/model/OrderingSearch';
 import { QuotationSearch } from 'src/app/modules/quotation/model/QuotationSearch';
@@ -91,7 +93,8 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
     private changeDetectorRef: ChangeDetectorRef,
     protected tiersCategoryService: TiersCategoryService,
     private userPreferenceService: UserPreferenceService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    public transferResponsibleDialogComponent: MatDialog
   ) { }
 
   ngAfterContentChecked(): void {
@@ -352,5 +355,13 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
   printLabel() {
     if (this.tiers && this.tiers.id)
       this.tiersService.printTiersLabel(this.tiers, this.selectedResponsable).subscribe();
+  }
+
+  transferResponsible() {
+    const dialogRef = this.transferResponsibleDialogComponent.open(TransferResponsibleDialogComponent, {
+      maxWidth: "600px",
+    });
+    if (this.selectedResponsable)
+      dialogRef.componentInstance.selectedResponsable = this.selectedResponsable;
   }
 }

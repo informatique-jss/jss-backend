@@ -728,6 +728,13 @@ public class TiersController {
     return new ResponseEntity<Tiers>(tiersService.getTiersFromUser(id), HttpStatus.OK);
   }
 
+  @GetMapping(inputEntryPoint + "/responsable/transfer")
+  public ResponseEntity<Responsable> transferResponsable(@RequestParam Integer oldResponsableId,
+      @RequestParam Integer newResponsableId) {
+    return new ResponseEntity<Responsable>(responsableService.transferResponsable(oldResponsableId, newResponsableId),
+        HttpStatus.OK);
+  }
+
   /*
    * |============================================================================
    * |______________________METHODS FOR OSIRIS V2_________________________________
