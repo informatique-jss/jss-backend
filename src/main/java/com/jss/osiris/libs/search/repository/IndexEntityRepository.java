@@ -27,8 +27,8 @@ public interface IndexEntityRepository extends QueryCacheCrudRepository<IndexEnt
                         ) t
                         ORDER BY case
                                 when :sortBy='rank' then (case when entity_type in ('Tiers', 'Responsable') then 0.1 else 0 end) + rank
-                                when :sortBy='dateAsc' then EXTRACT(EPOCH FROM coalesce(created_date, '1970-01-01 00:00:00'))
-                                when :sortBy='dateDesc' then -EXTRACT(EPOCH FROM coalesce(created_date, '1970-01-01 00:00:00'))
+                                when :sortBy='dateAsc' then -EXTRACT(EPOCH FROM coalesce(created_date, '1970-01-01 00:00:00'))
+                                when :sortBy='dateDesc' then EXTRACT(EPOCH FROM coalesce(created_date, '1970-01-01 00:00:00'))
                         end
                         desc LIMIT :numberOfResult
                         """)
@@ -42,8 +42,8 @@ public interface IndexEntityRepository extends QueryCacheCrudRepository<IndexEnt
                         where  entity_type=:entityType and text ILIKE '%'||  :searchQuery ||'%'
                         ORDER BY case
                                 when :sortBy='rank' then (case when entity_type in ('Tiers', 'Responsable') then 0.1 else 0 end) + rank
-                                when :sortBy='dateAsc' then EXTRACT(EPOCH FROM COALESCE(created_date, '1970-01-01 00:00:00'))
-                                when :sortBy='dateDesc' then  -EXTRACT(EPOCH FROM COALESCE(created_date, '1970-01-01 00:00:00'))
+                                when :sortBy='dateAsc' then -EXTRACT(EPOCH FROM COALESCE(created_date, '1970-01-01 00:00:00'))
+                                when :sortBy='dateDesc' then  EXTRACT(EPOCH FROM COALESCE(created_date, '1970-01-01 00:00:00'))
                                 end
                                 desc LIMIT :numberOfResult
                         """)

@@ -13,11 +13,14 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(indexes = { @Index(name = "idx_id_newspaper", columnList = "id_newspaper", unique = false) })
 public class NewspaperPage implements IId, Serializable {
 
     @Id
@@ -32,6 +35,7 @@ public class NewspaperPage implements IId, Serializable {
     private String content;
 
     @JsonView(JacksonViews.MyJssListView.class)
+    @IndexedField
     private Integer pageNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
