@@ -222,8 +222,7 @@
                           <p class="mb-0">En attente de validation </p>
                           <p *ngIf="step.waitingForValidationPartnerCenterName" class="mb-0">par <span
                               class="fw-bold">{{step.waitingForValidationPartnerCenterName}}</span></p>
-                          <p class="mb-0">depuis le <span class="fw-bold">{{step.date}} - {{step.date |
-                              literalDatePipe}}</span>.</p>
+                          <p class="mb-0">depuis le <span class="fw-bold">{{step.date | literalDatePipe}}</span>.</p>
                         </div>
                         }
                         @if(step.stepperType==='validation'){
