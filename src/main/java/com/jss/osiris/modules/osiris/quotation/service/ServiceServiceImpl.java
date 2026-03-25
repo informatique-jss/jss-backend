@@ -48,7 +48,6 @@ import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.FormaliteGuic
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.ValidationRequest;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.FormeJuridique;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.ValidationsRequestStatus;
-import com.jss.osiris.modules.osiris.quotation.repository.AssoAffaireOrderRepository;
 import com.jss.osiris.modules.osiris.quotation.repository.ServiceRepository;
 
 @org.springframework.stereotype.Service
@@ -74,9 +73,6 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Autowired
     AssoAffaireOrderService assoAffaireOrderService;
-
-    @Autowired
-    AssoAffaireOrderRepository assoAffaireOrderRepository;
 
     @Autowired
     AssoServiceDocumentService assoServiceDocumentService;
