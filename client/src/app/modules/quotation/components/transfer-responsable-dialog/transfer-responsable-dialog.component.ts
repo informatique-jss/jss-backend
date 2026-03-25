@@ -8,11 +8,11 @@ import { AppService } from 'src/app/services/app.service';
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
 
 @Component({
-  selector: 'transfer-responsible-dialog',
-  templateUrl: './transfer-responsible-dialog.component.html',
-  styleUrls: ['./transfer-responsible-dialog.component.css']
+  selector: 'transfer-responsable-dialog',
+  templateUrl: './transfer-responsable-dialog.component.html',
+  styleUrls: ['./transfer-responsable-dialog.component.css']
 })
-export class TransferResponsibleDialogComponent implements OnInit {
+export class TransferResponsableDialogComponent implements OnInit {
 
   selectedResponsable: Responsable = {} as Responsable;
   newResponsable: Responsable | undefined;
@@ -30,26 +30,24 @@ export class TransferResponsibleDialogComponent implements OnInit {
   }
 
 
-  transferResponsibleForm = this.formBuilder.group({
+  transferResponsableForm = this.formBuilder.group({
   });
 
   getFormStatus(): boolean {
-    return this.transferResponsibleForm.valid;
+    return this.transferResponsableForm.valid;
   }
 
-  transferResponsible() {
-
+  transferResponsable() {
     if (!this.selectedResponsable || !this.newResponsable) {
-      this.appService.displaySnackBar("Veuillez renseigner un nouveau responsable", true, 30);
+      this.appService.displaySnackBar("Veuillez renseigner le nouveau responsable", true, 30);
       return;
     }
     if (this.newResponsable?.id == this.selectedResponsable.id) {
-      this.appService.displaySnackBar("Veuillez choisir un responsable différent de l'actuel", true, 30);
+      this.appService.displaySnackBar("Veuillez choisir un responsable différent du responsable actuel", true, 30);
     } else {
       this.responsableService.transferResponsable(this.selectedResponsable.id, this.newResponsable.id)
       this.dialogRef.close(this.selectedResponsable);
     }
-
   }
 
   closeDialog() {

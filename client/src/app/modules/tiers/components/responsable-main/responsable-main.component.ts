@@ -14,7 +14,7 @@ import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableCo
 import { CityService } from 'src/app/modules/miscellaneous/services/city.service';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { NotificationService } from 'src/app/modules/miscellaneous/services/notification.service';
-import { TransferResponsibleDialogComponent } from 'src/app/modules/quotation/components/transfer-responsible-dialog/transfer-responsible-dialog.component';
+import { TransferResponsableDialogComponent } from 'src/app/modules/quotation/components/transfer-responsable-dialog/transfer-responsable-dialog.component';
 import { AffaireSearch } from 'src/app/modules/quotation/model/AffaireSearch';
 import { OrderingSearch } from 'src/app/modules/quotation/model/OrderingSearch';
 import { QuotationSearch } from 'src/app/modules/quotation/model/QuotationSearch';
@@ -94,7 +94,7 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
     protected tiersCategoryService: TiersCategoryService,
     private userPreferenceService: UserPreferenceService,
     private notificationService: NotificationService,
-    public transferResponsibleDialogComponent: MatDialog
+    public transferResponsableDialogComponent: MatDialog
   ) { }
 
   ngAfterContentChecked(): void {
@@ -357,8 +357,8 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
       this.tiersService.printTiersLabel(this.tiers, this.selectedResponsable).subscribe();
   }
 
-  transferResponsible() {
-    const dialogRef = this.transferResponsibleDialogComponent.open(TransferResponsibleDialogComponent, {
+  openDialogTransferResponsable() {
+    const dialogRef = this.transferResponsableDialogComponent.open(TransferResponsableDialogComponent, {
       maxWidth: "600px",
     });
     if (this.selectedResponsable)

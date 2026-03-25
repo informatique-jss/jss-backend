@@ -302,6 +302,6 @@
   </button>
   <button matTooltip="Transférer le responsable" mat-fab color="accent" class="eight-fab-button"
     *ngIf="editMode==false &&  selectedResponsable && selectedResponsable.id && tiers && tiers.id"
-    (click)="transferResponsible()">
+    (click)="openDialogTransferResponsable()">
     <mat-icon>forward</mat-icon>
   </button>

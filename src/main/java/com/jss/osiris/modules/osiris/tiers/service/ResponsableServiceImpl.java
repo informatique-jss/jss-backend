@@ -297,4 +297,10 @@ public class ResponsableServiceImpl implements ResponsableService {
 
         return responsableFound.stream().filter(t -> !notKeepResponsable.contains(t.getId())).toList();
     }
+
+    @Override
+    public Responsable transferResponsable(Integer oldResponsableId, Integer newResponsableId) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'transferResponsable'");
+    }
 }

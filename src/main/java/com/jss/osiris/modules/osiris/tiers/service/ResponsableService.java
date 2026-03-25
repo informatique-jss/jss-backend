@@ -34,6 +34,8 @@ public interface ResponsableService {
 
     public Document applyParametersDocumentToQuotation(DocumentType documentType, Responsable responsable);
 
+    public Responsable transferResponsable(Integer oldResponsableId, Integer newResponsableId);
+
     /*
      * |============================================================================
      * |______________________METHODS FOR OSIRIS V2_________________________________
