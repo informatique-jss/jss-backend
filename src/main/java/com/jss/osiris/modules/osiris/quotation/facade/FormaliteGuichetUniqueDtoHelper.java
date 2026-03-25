@@ -20,8 +20,9 @@ public class FormaliteGuichetUniqueDtoHelper {
         public GuichetUniqueDepositInfoDto getCurrentGuInfoDto(FormaliteGuichetUnique formaliteGuichetUnique) {
                 GuichetUniqueDepositInfoDto currentGuInfoDto = new GuichetUniqueDepositInfoDto();
                 // Deposit date
-                currentGuInfoDto.setDepositDate(
-                                OffsetDateTime.parse(formaliteGuichetUnique.getCreated()).toLocalDate());
+                if (formaliteGuichetUnique.getCreated() != null)
+                        currentGuInfoDto.setDepositDate(
+                                        OffsetDateTime.parse(formaliteGuichetUnique.getCreated()).toLocalDate());
 
                 // Waiting for validation
                 if (formaliteGuichetUnique.getValidationsRequests() != null
