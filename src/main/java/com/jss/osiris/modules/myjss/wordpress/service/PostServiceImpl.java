@@ -509,7 +509,6 @@ public class PostServiceImpl implements PostService {
         }
         matcher.appendTail(result);
 
-        System.out.print(result.toString());
         post.setOriginalContentText(result.toString());
     }
 
