@@ -1,13 +1,11 @@
 package com.jss.osiris.modules.myjss.wordpress.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.jss.osiris.modules.myjss.wordpress.model.Post;
 import com.jss.osiris.modules.myjss.wordpress.model.ReadingFolder;
 import com.jss.osiris.modules.osiris.profile.service.EmployeeService;
 import com.jss.osiris.modules.osiris.quotation.repository.ReadingFolderRepository;
@@ -59,7 +57,6 @@ public class ReadingFolderServiceImpl implements ReadingFolderService {
                 readingFolder = new ReadingFolder();
                 readingFolder.setLabel("Mes favoris");
                 readingFolder.setMail(responsable.getMail());
-                readingFolder.setPosts(new ArrayList<Post>());
                 return addOrUpdateReadingFolder(readingFolder, responsable);
             } else
                 return this.getAvailableReadingFoldersByResponsable(responsable).get(0);

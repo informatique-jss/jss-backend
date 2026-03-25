@@ -252,11 +252,9 @@ public class WordpressController {
 		ReadingFolder readingFolder = null;
 		if (idReadingFolder != null)
 			readingFolder = readingFolderService.getReadingFolder(idReadingFolder);
-		else {
-			postService.updateBookmarkPost(post, readingFolder, responsable);
-			return new ResponseEntity<Boolean>(true, HttpStatus.OK);
-		}
-		return new ResponseEntity<Boolean>(false, HttpStatus.BAD_REQUEST);
+
+		postService.updateBookmarkPost(post, readingFolder, responsable);
+		return new ResponseEntity<Boolean>(true, HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/post/bookmark/delete")
