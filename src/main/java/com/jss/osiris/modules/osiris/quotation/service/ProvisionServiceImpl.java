@@ -124,11 +124,10 @@ public class ProvisionServiceImpl implements ProvisionService {
         List<CustomerMail> mails = provision.getCustomerMails();
         if (mails != null && mails.size() > 0)
             mails.forEach(mail -> mail.setProvision(null));
-
         List<Notification> notifications = provision.getNotifications();
-        if (notifications != null && notifications.size() > 0)
-            notificationService.deleteNotifications(notifications);
-
+        if (notifications != null && notifications.size() > 0) {
+            notifications.forEach(notification -> notificationService.deleteNotification(notification));
+        }
         List<CustomerOrderComment> customerOrderComments = customerOrderCommentService
                 .getCustomerOrderCommentForProvision(provision);
         if (customerOrderComments != null && customerOrderComments.size() > 0)

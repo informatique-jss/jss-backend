@@ -20,7 +20,6 @@ import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.libs.mail.model.CustomerMail;
-import com.jss.osiris.libs.mail.repository.CustomerMailRepository;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
@@ -105,9 +104,6 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Autowired
     CustomerMailService customerMailService;
-
-    @Autowired
-    CustomerMailRepository customerMailRepository;
 
     @Override
     public Service getService(Integer id) {
@@ -235,10 +231,17 @@ public class ServiceServiceImpl implements ServiceService {
 
         if (service.getMissingAttachmentQueries() != null && service.getMissingAttachmentQueries().size() > 0) {
             for (MissingAttachmentQuery maq : service.getMissingAttachmentQueries()) {
-                List<CustomerMail> mails = customerMailRepository.findByMissingAttachmentQueryId(maq.getId());
-                if (mails != null && mails.size() > 0) {
-                    for (CustomerMail mail : mails) {
-                        mail.setMissingAttachmentQuery(null);
+                if (provisions != null && provisions.size() > 0) {
+                    for (Provision provision : provisions) {
+                        if (provision.getCustomerMails() != null && provision.getCustomerMails().size() > 0) {
+                            for (CustomerMail mail : provision.getCustomerMails()) {
+                                if (mail.getMissingAttachmentQuery() != null
+                                        && mail.getMissingAttachmentQuery().getId().equals(maq.getId())) {
+
+                                    mail.setMissingAttachmentQuery(null);
+                                }
+                            }
+                        }
                     }
                 }
             }

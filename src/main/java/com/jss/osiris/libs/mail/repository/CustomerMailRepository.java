@@ -39,6 +39,4 @@ public interface CustomerMailRepository extends QueryCacheCrudRepository<Custome
 
         @Query("select m from CustomerMail m where isCancelled=false and isSent = false and toSendAfter is not null and customerOrder=:customerOrder ")
         List<CustomerMail> findTemporizedMailsForCustomerOrder(@Param("customerOrder") CustomerOrder customerOrder);
-
-        List<CustomerMail> findByMissingAttachmentQueryId(Integer id);
 }
