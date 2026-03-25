@@ -91,4 +91,6 @@ public interface NotificationService {
         public void notifyJoNoticeAddToProvision(Provision provision, JoNotice notice);
 
         public void notifyKbisAddToProvision(Provision provision, KbisRequest kbisRequest);
+
+        public void deleteNotifications(List<Notification> notifications);
 }

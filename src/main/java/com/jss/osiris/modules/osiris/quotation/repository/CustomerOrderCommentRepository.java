@@ -2,9 +2,7 @@ package com.jss.osiris.modules.osiris.quotation.repository;
 
 import java.util.List;
 
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import com.jss.osiris.libs.QueryCacheCrudRepository;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
@@ -58,8 +56,4 @@ public interface CustomerOrderCommentRepository extends QueryCacheCrudRepository
                                 )
                                 ) order by c.createdDateTime asc, c.customerOrder.id asc, c.quotation.id asc """)
         List<CustomerOrderComment> findUnreadCommmentsForResponsable(Integer responsableId);
-
-        @Modifying
-        @Query(value = "UPDATE customer_order_comment set id_provision = null where id_provision = :idProvision", nativeQuery = true)
-        void nullifyProvisionId(@Param("idProvision") Integer idProvision);
 }

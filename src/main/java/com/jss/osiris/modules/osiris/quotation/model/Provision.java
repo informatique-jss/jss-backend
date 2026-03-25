@@ -264,32 +264,20 @@ public class Provision implements IId, IAttachment {
 	private Boolean isNotifyBalo;
 	private Boolean isNotifyJo;
 
-	public List<KbisRequest> getKbisRequests() {
-		return kbisRequests;
-	}
-
-	public List<CustomerMail> getCustomerMails() {
-		return customerMails;
-	}
-
-	public List<Notification> getNotifications() {
-		return notifications;
-	}
-
-	public void setNotifications(List<Notification> notifications) {
-		this.notifications = notifications;
-	}
-
-	public void setCustomerMails(List<CustomerMail> customerMails) {
-		this.customerMails = customerMails;
-	}
-
 	public Integer getId() {
 		return id;
 	}
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public Service getService() {
+		return service;
+	}
+
+	public void setService(Service service) {
+		this.service = service;
 	}
 
 	public ProvisionType getProvisionType() {
@@ -324,12 +312,60 @@ public class Provision implements IId, IAttachment {
 		this.announcement = announcement;
 	}
 
+	public SimpleProvision getSimpleProvision() {
+		return simpleProvision;
+	}
+
+	public void setSimpleProvision(SimpleProvision simpleProvision) {
+		this.simpleProvision = simpleProvision;
+	}
+
+	public Formalite getFormalite() {
+		return formalite;
+	}
+
+	public void setFormalite(Formalite formalite) {
+		this.formalite = formalite;
+	}
+
 	public List<InvoiceItem> getInvoiceItems() {
 		return invoiceItems;
 	}
 
 	public void setInvoiceItems(List<InvoiceItem> invoiceItems) {
 		this.invoiceItems = invoiceItems;
+	}
+
+	public List<Notification> getNotifications() {
+		return notifications;
+	}
+
+	public void setNotifications(List<Notification> notifications) {
+		this.notifications = notifications;
+	}
+
+	public List<CustomerMail> getCustomerMails() {
+		return customerMails;
+	}
+
+	public void setCustomerMails(List<CustomerMail> customerMails) {
+		this.customerMails = customerMails;
+	}
+
+	public List<KbisRequest> getKbisRequests() {
+		return kbisRequests;
+	}
+
+	public void setKbisRequests(List<KbisRequest> kbisRequests) {
+		this.kbisRequests = kbisRequests;
+	}
+
+	public List<InvoiceItem> getInvoiceItemsGrouped() {
+		return invoiceItemsGrouped;
+	}
+
+	public void setInvoiceItemsGrouped(List<InvoiceItem> invoiceItemsGrouped) {
+		this.invoiceItemsGrouped = invoiceItemsGrouped;
 	}
 
 	public Employee getAssignedTo() {
@@ -348,22 +384,6 @@ public class Provision implements IId, IAttachment {
 		this.isLogo = isLogo;
 	}
 
-	public List<Attachment> getAttachments() {
-		return attachments;
-	}
-
-	public void setAttachments(List<Attachment> attachments) {
-		this.attachments = attachments;
-	}
-
-	public Formalite getFormalite() {
-		return formalite;
-	}
-
-	public void setFormalite(Formalite formalite) {
-		this.formalite = formalite;
-	}
-
 	public Boolean getIsRedactedByJss() {
 		return isRedactedByJss;
 	}
@@ -378,6 +398,54 @@ public class Provision implements IId, IAttachment {
 
 	public void setIsBaloPackage(Boolean isBaloPackage) {
 		this.isBaloPackage = isBaloPackage;
+	}
+
+	public Boolean getIsBaloPublicationFlag() {
+		return isBaloPublicationFlag;
+	}
+
+	public void setIsBaloPublicationFlag(Boolean isBaloPublicationFlag) {
+		this.isBaloPublicationFlag = isBaloPublicationFlag;
+	}
+
+	public Boolean getIsBaloNormalization() {
+		return isBaloNormalization;
+	}
+
+	public void setIsBaloNormalization(Boolean isBaloNormalization) {
+		this.isBaloNormalization = isBaloNormalization;
+	}
+
+	public Boolean getIsPublicationPaper() {
+		return isPublicationPaper;
+	}
+
+	public void setIsPublicationPaper(Boolean isPublicationPaper) {
+		this.isPublicationPaper = isPublicationPaper;
+	}
+
+	public Integer getPublicationPaperAffaireNumber() {
+		return publicationPaperAffaireNumber;
+	}
+
+	public void setPublicationPaperAffaireNumber(Integer publicationPaperAffaireNumber) {
+		this.publicationPaperAffaireNumber = publicationPaperAffaireNumber;
+	}
+
+	public Integer getPublicationPaperClientNumber() {
+		return publicationPaperClientNumber;
+	}
+
+	public void setPublicationPaperClientNumber(Integer publicationPaperClientNumber) {
+		this.publicationPaperClientNumber = publicationPaperClientNumber;
+	}
+
+	public Integer getKbisOrderedNumber() {
+		return kbisOrderedNumber;
+	}
+
+	public void setKbisOrderedNumber(Integer kbisOrderedNumber) {
+		this.kbisOrderedNumber = kbisOrderedNumber;
 	}
 
 	public Boolean getIsPublicationReceipt() {
@@ -492,6 +560,14 @@ public class Provision implements IId, IAttachment {
 		this.isChronopostFees = isChronopostFees;
 	}
 
+	public Boolean getIsApplicationFees() {
+		return isApplicationFees;
+	}
+
+	public void setIsApplicationFees(Boolean isApplicationFees) {
+		this.isApplicationFees = isApplicationFees;
+	}
+
 	public Boolean getIsBankCheque() {
 		return isBankCheque;
 	}
@@ -508,6 +584,14 @@ public class Provision implements IId, IAttachment {
 		this.isComplexeFile = isComplexeFile;
 	}
 
+	public Boolean getIsBilan() {
+		return isBilan;
+	}
+
+	public void setIsBilan(Boolean isBilan) {
+		this.isBilan = isBilan;
+	}
+
 	public Boolean getIsDocumentScanning() {
 		return isDocumentScanning;
 	}
@@ -522,6 +606,14 @@ public class Provision implements IId, IAttachment {
 
 	public void setIsEmergency(Boolean isEmergency) {
 		this.isEmergency = isEmergency;
+	}
+
+	public Boolean getIsRneUpdate() {
+		return isRneUpdate;
+	}
+
+	public void setIsRneUpdate(Boolean isRneUpdate) {
+		this.isRneUpdate = isRneUpdate;
 	}
 
 	public Boolean getIsVacationUpdateBeneficialOwners() {
@@ -548,68 +640,44 @@ public class Provision implements IId, IAttachment {
 		this.isCorrespondenceFees = isCorrespondenceFees;
 	}
 
-	public Boolean getIsPublicationPaper() {
-		return isPublicationPaper;
+	public Boolean getIsSupplyFullBeCopy() {
+		return isSupplyFullBeCopy;
 	}
 
-	public void setIsPublicationPaper(Boolean isPublicationPaper) {
-		this.isPublicationPaper = isPublicationPaper;
+	public void setIsSupplyFullBeCopy(Boolean isSupplyFullBeCopy) {
+		this.isSupplyFullBeCopy = isSupplyFullBeCopy;
 	}
 
-	public Integer getPublicationPaperAffaireNumber() {
-		return publicationPaperAffaireNumber;
+	public Boolean getIsOverrideCharacterNumber() {
+		return isOverrideCharacterNumber;
 	}
 
-	public void setPublicationPaperAffaireNumber(Integer publicationPaperAffaireNumber) {
-		this.publicationPaperAffaireNumber = publicationPaperAffaireNumber;
+	public void setIsOverrideCharacterNumber(Boolean isOverrideCharacterNumber) {
+		this.isOverrideCharacterNumber = isOverrideCharacterNumber;
 	}
 
-	public Integer getPublicationPaperClientNumber() {
-		return publicationPaperClientNumber;
+	public Integer getOverridedCharacterNumber() {
+		return overridedCharacterNumber;
 	}
 
-	public void setPublicationPaperClientNumber(Integer publicationPaperClientNumber) {
-		this.publicationPaperClientNumber = publicationPaperClientNumber;
+	public void setOverridedCharacterNumber(Integer overridedCharacterNumber) {
+		this.overridedCharacterNumber = overridedCharacterNumber;
 	}
 
-	public SimpleProvision getSimpleProvision() {
-		return simpleProvision;
+	public Boolean getIsDoNotGenerateAnnouncement() {
+		return isDoNotGenerateAnnouncement;
 	}
 
-	public void setSimpleProvision(SimpleProvision simpleProvision) {
-		this.simpleProvision = simpleProvision;
+	public void setIsDoNotGenerateAnnouncement(Boolean isDoNotGenerateAnnouncement) {
+		this.isDoNotGenerateAnnouncement = isDoNotGenerateAnnouncement;
 	}
 
-	public Boolean getIsBilan() {
-		return isBilan;
+	public List<Attachment> getAttachments() {
+		return attachments;
 	}
 
-	public void setIsBilan(Boolean isBilan) {
-		this.isBilan = isBilan;
-	}
-
-	public Boolean getIsApplicationFees() {
-		return isApplicationFees;
-	}
-
-	public void setIsApplicationFees(Boolean isApplicationFees) {
-		this.isApplicationFees = isApplicationFees;
-	}
-
-	public Boolean getIsBaloPublicationFlag() {
-		return isBaloPublicationFlag;
-	}
-
-	public void setIsBaloPublicationFlag(Boolean isBaloPublicationFlag) {
-		this.isBaloPublicationFlag = isBaloPublicationFlag;
-	}
-
-	public Boolean getIsBaloNormalization() {
-		return isBaloNormalization;
-	}
-
-	public void setIsBaloNormalization(Boolean isBaloNormalization) {
-		this.isBaloNormalization = isBaloNormalization;
+	public void setAttachments(List<Attachment> attachments) {
+		this.attachments = attachments;
 	}
 
 	public List<Invoice> getProviderInvoices() {
@@ -628,22 +696,6 @@ public class Provision implements IId, IAttachment {
 		this.payments = payments;
 	}
 
-	public Boolean getIsRneUpdate() {
-		return isRneUpdate;
-	}
-
-	public void setIsRneUpdate(Boolean isRneUpdate) {
-		this.isRneUpdate = isRneUpdate;
-	}
-
-	public Service getService() {
-		return service;
-	}
-
-	public void setService(Service service) {
-		this.service = service;
-	}
-
 	public LocalDateTime getLastStatusReminderAcDateTime() {
 		return lastStatusReminderAcDateTime;
 	}
@@ -658,30 +710,6 @@ public class Provision implements IId, IAttachment {
 
 	public void setLastCompetentAuthorityReminderDateTime(LocalDateTime lastCompetentAuthorityReminderDateTime) {
 		this.lastCompetentAuthorityReminderDateTime = lastCompetentAuthorityReminderDateTime;
-	}
-
-	public Boolean getIsSupplyFullBeCopy() {
-		return isSupplyFullBeCopy;
-	}
-
-	public void setIsSupplyFullBeCopy(Boolean isSupplyFullBeCopy) {
-		this.isSupplyFullBeCopy = isSupplyFullBeCopy;
-	}
-
-	public List<InvoiceItem> getInvoiceItemsGrouped() {
-		return invoiceItemsGrouped;
-	}
-
-	public void setInvoiceItemsGrouped(List<InvoiceItem> invoiceItemsGrouped) {
-		this.invoiceItemsGrouped = invoiceItemsGrouped;
-	}
-
-	public Boolean getIsDoNotGenerateAnnouncement() {
-		return isDoNotGenerateAnnouncement;
-	}
-
-	public void setIsDoNotGenerateAnnouncement(Boolean isDoNotGenerateAnnouncement) {
-		this.isDoNotGenerateAnnouncement = isDoNotGenerateAnnouncement;
 	}
 
 	public Integer getComplexity() {
@@ -732,27 +760,4 @@ public class Provision implements IId, IAttachment {
 		this.isNotifyJo = isNotifyJo;
 	}
 
-	public Integer getKbisOrderedNumber() {
-		return kbisOrderedNumber;
-	}
-
-	public void setKbisOrderedNumber(Integer kbisOrderedNumber) {
-		this.kbisOrderedNumber = kbisOrderedNumber;
-	}
-
-	public Boolean getIsOverrideCharacterNumber() {
-		return isOverrideCharacterNumber;
-	}
-
-	public void setIsOverrideCharacterNumber(Boolean isOverrideCharacterNumber) {
-		this.isOverrideCharacterNumber = isOverrideCharacterNumber;
-	}
-
-	public Integer getOverridedCharacterNumber() {
-		return overridedCharacterNumber;
-	}
-
-	public void setOverridedCharacterNumber(Integer overridedCharacterNumber) {
-		this.overridedCharacterNumber = overridedCharacterNumber;
-	}
 }

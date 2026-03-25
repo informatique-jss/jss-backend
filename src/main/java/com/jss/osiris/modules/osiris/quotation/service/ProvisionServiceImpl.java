@@ -23,7 +23,6 @@ import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Notification;
-import com.jss.osiris.modules.osiris.miscellaneous.repository.NotificationRepository;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.NotificationService;
@@ -39,7 +38,6 @@ import com.jss.osiris.modules.osiris.quotation.model.ProvisionBoardResult;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionSearch;
 import com.jss.osiris.modules.osiris.quotation.model.SimpleProvisionStatus;
 import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.KbisRequest;
-import com.jss.osiris.modules.osiris.quotation.repository.AnnouncementStatusRepository;
 import com.jss.osiris.modules.osiris.quotation.repository.ProvisionRepository;
 import com.jss.osiris.modules.osiris.quotation.service.infoGreffe.InfogreffeKbisService;
 
@@ -48,9 +46,6 @@ public class ProvisionServiceImpl implements ProvisionService {
 
     @Autowired
     ProvisionRepository provisionRepository;
-
-    @Autowired
-    AnnouncementStatusRepository announcementStatusRepository;
 
     @Autowired
     CustomerOrderStatusService customerOrderStatusService;
@@ -69,9 +64,6 @@ public class ProvisionServiceImpl implements ProvisionService {
 
     @Autowired
     NotificationService notificationService;
-
-    @Autowired
-    NotificationRepository notificationRepository;
 
     @Autowired
     CustomerMailService customerMailService;
@@ -135,12 +127,12 @@ public class ProvisionServiceImpl implements ProvisionService {
 
         List<Notification> notifications = provision.getNotifications();
         if (notifications != null && notifications.size() > 0)
-            notificationRepository.deleteAll(notifications);
+            notificationService.deleteNotifications(notifications);
 
-        List<CustomerOrderComment> customerOrders = customerOrderCommentService
+        List<CustomerOrderComment> customerOrderComments = customerOrderCommentService
                 .getCustomerOrderCommentForProvision(provision);
-        if (customerOrders != null && customerOrders.size() > 0)
-            customerOrders.forEach(customerOrder -> customerOrder.setProvision(null));
+        if (customerOrderComments != null && customerOrderComments.size() > 0)
+            customerOrderComments.forEach(customerOrder -> customerOrder.setProvision(null));
 
         List<KbisRequest> kbisRequests = provision.getKbisRequests();
         if (kbisRequests != null && kbisRequests.size() > 0) {
