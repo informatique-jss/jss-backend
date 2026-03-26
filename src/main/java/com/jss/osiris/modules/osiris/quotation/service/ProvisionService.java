@@ -35,5 +35,5 @@ public interface ProvisionService {
     public void updateProvisionStatus(Provision provision, IWorkflowElement status)
             throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException, OsirisException;
 
-    public void deleteProvisionAndDependencies(Provision provision, boolean permanentlyDeleteAttachments) throws OsirisException;
+    public void deleteProvisionAndDependencies(Provision provision) throws OsirisException;
 }

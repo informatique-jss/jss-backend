@@ -114,12 +114,12 @@ public class ProvisionServiceImpl implements ProvisionService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean deleteProvision(Provision provision) throws OsirisException {
-        deleteProvisionAndDependencies(provision, false);
+        deleteProvisionAndDependencies(provision);
         return true;
     }
 
     @Override
-    public void deleteProvisionAndDependencies(Provision provision, boolean permanentlyDeleteAttachments)
+    public void deleteProvisionAndDependencies(Provision provision)
             throws OsirisException {
         List<CustomerMail> mails = provision.getCustomerMails();
         if (mails != null && mails.size() > 0)
@@ -142,10 +142,7 @@ public class ProvisionServiceImpl implements ProvisionService {
         }
         if (provision.getAttachments() != null && provision.getAttachments().size() > 0) {
             for (Attachment attachment : provision.getAttachments()) {
-                if (permanentlyDeleteAttachments)
-                    attachmentService.definitivelyDeleteAttachment(attachment);
-                else
-                    attachmentService.cleanAttachmentForDelete(attachment);
+                attachmentService.cleanAttachmentForDelete(attachment);
             }
             provision.getAttachments().forEach(t -> t.setProvision(null));
         }

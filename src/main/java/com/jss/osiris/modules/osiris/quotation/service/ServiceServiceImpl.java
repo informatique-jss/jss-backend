@@ -196,7 +196,7 @@ public class ServiceServiceImpl implements ServiceService {
         List<Provision> provisions = service.getProvisions();
         if (provisions != null && provisions.size() > 0) {
             for (Provision provision : provisions) {
-                provisionService.deleteProvisionAndDependencies(provision, false);
+                provisionService.deleteProvisionAndDependencies(provision);
             }
         }
         List<AssoServiceDocument> assoServiceDocuments = service.getAssoServiceDocuments();
@@ -214,16 +214,12 @@ public class ServiceServiceImpl implements ServiceService {
         }
         if (service.getMissingAttachmentQueries() != null && service.getMissingAttachmentQueries().size() > 0) {
             for (MissingAttachmentQuery maq : service.getMissingAttachmentQueries()) {
-                if (maq.getAssoServiceDocument() != null)
-                    maq.getAssoServiceDocument().clear();
-                if (maq.getAssoServiceFieldType() != null)
-                    maq.getAssoServiceFieldType().clear();
+                maq.setAssoServiceDocument(null);
+                maq.setAssoServiceFieldType(null);
             }
         }
-        if (service.getAssoServiceDocuments() != null && service.getAssoServiceDocuments().size() > 0)
-            service.getAssoServiceDocuments().clear();
-        if (service.getAssoServiceFieldTypes() != null && service.getAssoServiceFieldTypes().size() > 0)
-            service.getAssoServiceFieldTypes().clear();
+        service.setAssoServiceDocuments(null);
+        service.setAssoServiceFieldTypes(null);
 
         if (service.getMissingAttachmentQueries() != null && service.getMissingAttachmentQueries().size() > 0) {
             for (MissingAttachmentQuery maq : service.getMissingAttachmentQueries()) {
@@ -247,9 +243,7 @@ public class ServiceServiceImpl implements ServiceService {
                 maq.setService(null);
             }
         }
-        if (service.getServiceTypes() != null && service.getServiceTypes().size() > 0)
-            service.getServiceTypes().clear();
-
+        service.setServiceTypes(null);
         serviceRepository.delete(service);
         return true;
     }
@@ -707,7 +701,7 @@ public class ServiceServiceImpl implements ServiceService {
             if (newAssos.size() > 0)
                 finalAssos.addAll(newAssos);
 
-            service.getAssoServiceDocuments().clear();
+            service.setAssoServiceDocuments(null);
             if (finalAssos.size() > 0)
                 for (AssoServiceDocument asso : finalAssos)
                     service.getAssoServiceDocuments().add(asso);
