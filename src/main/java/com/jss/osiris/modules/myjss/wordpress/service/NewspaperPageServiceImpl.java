@@ -41,7 +41,7 @@ public class NewspaperPageServiceImpl implements NewspaperPageService {
     public List<IndexEntity> searchNewspapersEntities(String searchText, String sortBy) {
         if (searchText != null && searchText.trim().length() > 0)
             return searchService.searchForEntities(searchText,
-                    NewspaperPage.class.getSimpleName(), false, sortBy);
+                    NewspaperPage.class.getSimpleName(), false, sortBy, true);
 
         return null;
     }

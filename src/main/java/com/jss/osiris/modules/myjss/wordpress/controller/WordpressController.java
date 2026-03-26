@@ -1337,6 +1337,10 @@ public class WordpressController {
 			throws OsirisException {
 		detectFlood(request);
 		// TODO : leak premium
+
+		if (sortBy != null && !sortBy.equals("rank") && !sortBy.equals("dateAsc") && !sortBy.equals("dateDesc"))
+			throw new OsirisValidationException("sortBy");
+
 		if (searchText != null && searchText.length() > 2)
 			return new ResponseEntity<Page<Post>>(postService.searchJssPosts(searchText, sortBy),
 					HttpStatus.OK);
@@ -1346,7 +1350,12 @@ public class WordpressController {
 	@GetMapping(inputEntryPoint + "/search/jss/newspaper-pages")
 	@JsonView(JacksonViews.MyJssListView.class)
 	public ResponseEntity<List<IndexEntity>> globalSearchForNewspaper(@RequestParam String searchText,
-			@RequestParam String sortBy) throws OsirisException {
+			@RequestParam String sortBy, HttpServletRequest request) throws OsirisException {
+		detectFlood(request);
+
+		if (sortBy != null && !sortBy.equals("rank") && !sortBy.equals("dateAsc") && !sortBy.equals("dateDesc"))
+			throw new OsirisValidationException("sortBy");
+
 		if (searchText != null && searchText.length() > 2)
 			return new ResponseEntity<List<IndexEntity>>(
 					newspaperPageService.searchNewspapersEntities(searchText, sortBy),
