@@ -244,11 +244,11 @@
                   <option value="rank">
                     Pertinence
                   </option>
-                  <option value="dateAsc">
-                    Date croissante
-                  </option>
                   <option value="dateDesc">
-                    Date décroissante
+                    Articles les plus récents
+                  </option>
+                  <option value="dateAsc">
+                    Articles les moins récents
                   </option>
                 </select>
                 <i class="bi-chevron-down chevron btn-search position-absolute start-93"></i>
@@ -364,7 +364,7 @@
                 <h4>
                   <a class="card-text-truncate" (click)="openPost()"
                     [routerLink]='"/tochange/" + newspaper.text.newspaper.newspaperIssueNumber'>
-                    Numéro {{newspaper.text.newspaper.newspaperIssueNumber}} </a>
+                    Numéro {{newspaper.text.newspaper.newspaperIssueNumber}} - page {{newspaper.text.pageNumber}}</a>
                 </h4>
 
                 <div class="">

@@ -422,6 +422,10 @@ public class OrderMailIndexationDelegate {
             Multipart multipart = (Multipart) message.getContent();
             htmlContent = processMultipart(multipart);
         }
+
+        if (htmlContent == null || htmlContent.trim().length() == 0) {
+            htmlContent = "<html><body>" + message.getContent().toString() + "</body></html>";
+        }
         return htmlContent;
     }
 

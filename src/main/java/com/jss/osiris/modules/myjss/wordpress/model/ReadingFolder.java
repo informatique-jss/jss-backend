@@ -7,8 +7,8 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -39,7 +39,7 @@ public class ReadingFolder implements Serializable {
     @JoinColumn(name = "id_mail", nullable = false)
     private Mail mail;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "asso_reading_folder_post", joinColumns = @JoinColumn(name = "id_reading_folder"), inverseJoinColumns = @JoinColumn(name = "id_post"))
     private List<Post> posts;
 
