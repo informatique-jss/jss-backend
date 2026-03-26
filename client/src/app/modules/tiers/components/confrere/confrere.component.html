@@ -40,15 +40,13 @@
                   <tr>
                     <td>
                       <autocomplete-responsable [(model)]="searchedResponsable" [form]="entityForm2"
-                        propertyName="responsable" [isMandatory]="false"
-                        [isDisabled]="!editMode || (selectedConfrere!=undefined && selectedConfrere!=null )"
+                        propertyName="responsable" [isMandatory]="false" [isDisabled]="!editMode "
                         (onOptionSelected)="fillResponsable($event)"
                         label="Responsable associé"></autocomplete-responsable>
                     </td>
                     <td>
                       <autocomplete-provider [(model)]="selectedConfrere.provider" [form]="entityForm2"
-                        propertyName="provider" [isMandatory]="false" [isDisabled]="!editMode"
-                        [isDisabled]="!editMode || (selectedConfrere!=undefined && selectedConfrere!=null && selectedConfrere.provider!=undefined && selectedConfrere.provider!=null)"
+                        propertyName="provider" [isMandatory]="false" [isDisabled]="!editMode" [isDisabled]="!editMode "
                         label="Fournisseur associé"></autocomplete-provider>
                     </td>
                   </tr>
