@@ -635,7 +635,7 @@ public class PostServiceImpl implements PostService {
         List<IndexEntity> tmpEntitiesFound = null;
         List<Post> matchingPosts = new ArrayList<Post>();
 
-        tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false, sortBy);
+        tmpEntitiesFound = searchService.searchForEntities(searchText, Post.class.getSimpleName(), false, sortBy, true);
         if (tmpEntitiesFound != null && tmpEntitiesFound.size() > 0) {
             if (entityToMatchWithResearch != null) {
                 for (IndexEntity entity : tmpEntitiesFound) {
