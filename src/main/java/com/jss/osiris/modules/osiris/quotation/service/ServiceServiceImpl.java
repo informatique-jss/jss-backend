@@ -18,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.mail.CustomerMailService;
+import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
@@ -92,6 +94,12 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Autowired
     NotificationService notificationService;
+
+    @Autowired
+    MissingAttachmentQueryService missingAttachmentQueryService;
+
+    @Autowired
+    CustomerMailService customerMailService;
 
     @Override
     public Service getService(Integer id) {
@@ -173,10 +181,9 @@ public class ServiceServiceImpl implements ServiceService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Boolean deleteServiceFromUser(Service service) {
+    public Boolean deleteServiceFromUser(Service service) throws OsirisException {
         service = getService(service.getId());
-        deleteService(service, false);
-
+        deleteServiceAndDependencies(service);
         if (service.getAssoAffaireOrder().getCustomerOrder() != null
                 && service.getAssoAffaireOrder().getCustomerOrder().getQuotations() != null
                 && service.getAssoAffaireOrder().getCustomerOrder().getQuotations().size() > 0)
@@ -184,19 +191,59 @@ public class ServiceServiceImpl implements ServiceService {
         return true;
     }
 
-    private Boolean deleteService(Service service, boolean permanentlyDeleteAttachments) {
-        if (service.getProvisions() != null && service.getProvisions().size() > 0) {
-            for (Provision provision : service.getProvisions()) {
-                if (provision.getAttachments() != null && provision.getAttachments().size() > 0) {
-                    for (Attachment attachment : provision.getAttachments()) {
-                        if (permanentlyDeleteAttachments)
-                            attachmentService.definitivelyDeleteAttachment(attachment);
-                        else
-                            attachmentService.cleanAttachmentForDelete(attachment);
+    private Boolean deleteServiceAndDependencies(Service service) throws OsirisException {
+
+        List<Provision> provisions = service.getProvisions();
+        if (provisions != null && provisions.size() > 0) {
+            for (Provision provision : provisions) {
+                provisionService.deleteProvisionAndDependencies(provision);
+            }
+        }
+        List<AssoServiceDocument> assoServiceDocuments = service.getAssoServiceDocuments();
+        if (assoServiceDocuments != null && assoServiceDocuments.size() > 0) {
+            for (AssoServiceDocument doc : assoServiceDocuments) {
+
+                if (doc.getAttachments() != null && doc.getAttachments().size() > 0) {
+                    for (Attachment att : doc.getAttachments()) {
+                        if (att != null) {
+                            att.setAssoServiceDocument(null);
+                        }
                     }
                 }
             }
         }
+        if (service.getMissingAttachmentQueries() != null && service.getMissingAttachmentQueries().size() > 0) {
+            for (MissingAttachmentQuery maq : service.getMissingAttachmentQueries()) {
+                maq.setAssoServiceDocument(null);
+                maq.setAssoServiceFieldType(null);
+            }
+        }
+        service.setAssoServiceDocuments(null);
+        service.setAssoServiceFieldTypes(null);
+
+        if (service.getMissingAttachmentQueries() != null && service.getMissingAttachmentQueries().size() > 0) {
+            for (MissingAttachmentQuery maq : service.getMissingAttachmentQueries()) {
+                if (provisions != null && provisions.size() > 0) {
+                    for (Provision provision : provisions) {
+                        if (provision.getCustomerMails() != null && provision.getCustomerMails().size() > 0) {
+                            for (CustomerMail mail : provision.getCustomerMails()) {
+                                if (mail.getMissingAttachmentQuery() != null
+                                        && mail.getMissingAttachmentQuery().getId().equals(maq.getId())) {
+
+                                    mail.setMissingAttachmentQuery(null);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (service.getMissingAttachmentQueries() != null && service.getMissingAttachmentQueries().size() > 0) {
+            for (MissingAttachmentQuery maq : service.getMissingAttachmentQueries()) {
+                maq.setService(null);
+            }
+        }
+        service.setServiceTypes(null);
         serviceRepository.delete(service);
         return true;
     }
@@ -654,7 +701,7 @@ public class ServiceServiceImpl implements ServiceService {
             if (newAssos.size() > 0)
                 finalAssos.addAll(newAssos);
 
-            service.getAssoServiceDocuments().clear();
+            service.setAssoServiceDocuments(null);
             if (finalAssos.size() > 0)
                 for (AssoServiceDocument asso : finalAssos)
                     service.getAssoServiceDocuments().add(asso);

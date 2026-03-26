@@ -17,12 +17,18 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.libs.mail.GeneratePdfDelegate;
+import com.jss.osiris.libs.mail.model.CustomerMail;
+import com.jss.osiris.modules.osiris.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Notification;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.NotificationService;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.AnnouncementStatus;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderComment;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderStatus;
 import com.jss.osiris.modules.osiris.quotation.model.DomiciliationStatus;
 import com.jss.osiris.modules.osiris.quotation.model.FormaliteStatus;
@@ -31,17 +37,15 @@ import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionBoardResult;
 import com.jss.osiris.modules.osiris.quotation.model.ProvisionSearch;
 import com.jss.osiris.modules.osiris.quotation.model.SimpleProvisionStatus;
-import com.jss.osiris.modules.osiris.quotation.repository.AnnouncementStatusRepository;
+import com.jss.osiris.modules.osiris.quotation.model.infoGreffe.KbisRequest;
 import com.jss.osiris.modules.osiris.quotation.repository.ProvisionRepository;
+import com.jss.osiris.modules.osiris.quotation.service.infoGreffe.InfogreffeKbisService;
 
 @Service
 public class ProvisionServiceImpl implements ProvisionService {
 
     @Autowired
     ProvisionRepository provisionRepository;
-
-    @Autowired
-    AnnouncementStatusRepository announcementStatusRepository;
 
     @Autowired
     CustomerOrderStatusService customerOrderStatusService;
@@ -60,6 +64,21 @@ public class ProvisionServiceImpl implements ProvisionService {
 
     @Autowired
     NotificationService notificationService;
+
+    @Autowired
+    CustomerMailService customerMailService;
+
+    @Autowired
+    InvoiceItemService invoiceItemService;
+
+    @Autowired
+    DocumentService documentService;
+
+    @Autowired
+    CustomerOrderCommentService customerOrderCommentService;
+
+    @Autowired
+    InfogreffeKbisService infogreffeKbisService;
 
     @Override
     public Provision getProvision(Integer id) {
@@ -93,13 +112,39 @@ public class ProvisionServiceImpl implements ProvisionService {
     }
 
     @Override
-    @Transactional
-    public Boolean deleteProvision(Provision provision) {
-        provision = getProvision(provision.getId());
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean deleteProvision(Provision provision) throws OsirisException {
+        deleteProvisionAndDependencies(provision);
+        return true;
+    }
+
+    @Override
+    public void deleteProvisionAndDependencies(Provision provision)
+            throws OsirisException {
+        List<CustomerMail> mails = provision.getCustomerMails();
+        if (mails != null && mails.size() > 0)
+            mails.forEach(mail -> mail.setProvision(null));
+        List<Notification> notifications = provision.getNotifications();
+        if (notifications != null && notifications.size() > 0) {
+            notifications.forEach(notification -> notificationService.deleteNotification(notification));
+        }
+        List<CustomerOrderComment> customerOrderComments = customerOrderCommentService
+                .getCustomerOrderCommentForProvision(provision);
+        if (customerOrderComments != null && customerOrderComments.size() > 0)
+            customerOrderComments.forEach(customerOrder -> customerOrder.setProvision(null));
+
+        List<KbisRequest> kbisRequests = provision.getKbisRequests();
+        if (kbisRequests != null && kbisRequests.size() > 0) {
+            kbisRequests.forEach(kbisRequest -> {
+                kbisRequest.setAttachment(null);
+                kbisRequest.setProvision(null);
+            });
+        }
         if (provision.getAttachments() != null && provision.getAttachments().size() > 0) {
             for (Attachment attachment : provision.getAttachments()) {
                 attachmentService.cleanAttachmentForDelete(attachment);
             }
+            provision.getAttachments().forEach(t -> t.setProvision(null));
         }
         provisionRepository.delete(provision);
         if (provision.getService().getAssoAffaireOrder().getCustomerOrder() != null
@@ -107,7 +152,6 @@ public class ProvisionServiceImpl implements ProvisionService {
                 && provision.getService().getAssoAffaireOrder().getCustomerOrder().getQuotations().size() > 0)
             notificationService
                     .notifyQuotationModified(provision.getService().getAssoAffaireOrder().getCustomerOrder());
-        return true;
     }
 
     @Override

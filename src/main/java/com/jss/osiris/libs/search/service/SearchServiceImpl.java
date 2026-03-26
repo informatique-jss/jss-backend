@@ -67,12 +67,16 @@ public class SearchServiceImpl implements SearchService {
 
     @Override
     public List<IndexEntity> searchForEntities(String search, String entityType, boolean onlyExactMatch) {
-        return searchForEntities(search, entityType, onlyExactMatch, null);
+        return searchForEntities(search, entityType, onlyExactMatch, null, false);
     }
 
     @Override
     public List<IndexEntity> searchForEntities(String search, String entityType, boolean onlyExactMatch,
-            String sortBy) {
+            String sortBy, Boolean loadAllFoundEntities) {
+
+        if (loadAllFoundEntities)
+            maxNumberOfResults = Integer.MAX_VALUE;
+
         List<IndexEntity> entities = null;
         if (sortBy == null)
             sortBy = "rank";
