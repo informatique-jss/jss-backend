@@ -41,7 +41,7 @@
                     <td>
                       <autocomplete-responsable [(model)]="searchedResponsable" [form]="entityForm2"
                         propertyName="responsable" [isMandatory]="false"
-                        [isDisabled]="!editMode || (selectedConfrere!=undefined && selectedConfrere!=null && selectedConfrere.responsable!=undefined && selectedConfrere.responsable!=null)"
+                        [isDisabled]="!editMode || (selectedConfrere!=undefined && selectedConfrere!=null )"
                         (onOptionSelected)="fillResponsable($event)"
                         label="Responsable associé"></autocomplete-responsable>
                     </td>
