@@ -7987,7 +7987,7 @@ fieldset:disabled .btn {
 }
 
 .text-primary {
-  color: #3366ff !important;
+  color: var(--ar-primary) !important;
 }
 
 .text-secondary {
