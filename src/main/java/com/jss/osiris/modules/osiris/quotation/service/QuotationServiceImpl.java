@@ -704,7 +704,7 @@ public class QuotationServiceImpl implements QuotationService {
                     order = new Order(Direction.ASC, "createdDate");
 
                 if (sortBy.equals("statusAsc"))
-                    order = new Order(Direction.ASC, "customerOrderStatus");
+                    order = new Order(Direction.ASC, "quotationStatus");
 
                 Sort sort = Sort.by(Arrays.asList(order));
                 Pageable pageableRequest = PageRequest.of(page,
