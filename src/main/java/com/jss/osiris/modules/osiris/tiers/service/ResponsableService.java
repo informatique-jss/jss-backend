@@ -34,13 +34,12 @@ public interface ResponsableService {
 
     public Document applyParametersDocumentToQuotation(DocumentType documentType, Responsable responsable);
 
-    public Responsable transferResponsable(Integer oldResponsableId, Integer newResponsableId);
-
     /*
      * |============================================================================
      * |______________________METHODS FOR OSIRIS V2_________________________________
      * |============================================================================
      */
+    public Responsable transferResponsable(Integer oldResponsableId, Integer newResponsableId) throws OsirisException;
 
     public Page<Responsable> getResponsables(String searchValue, Pageable pageable);
 

@@ -13,6 +13,7 @@ import com.jss.osiris.libs.jackson.JacksonLocalDateTimeDeserializer;
 import com.jss.osiris.libs.jackson.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
+import com.jss.osiris.modules.osiris.accounting.model.AccountingRecord;
 import com.jss.osiris.modules.osiris.crm.model.Voucher;
 import com.jss.osiris.modules.osiris.invoicing.model.ICreatedDate;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
@@ -326,6 +327,10 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	@Transient
 	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private Boolean hasCreditNote;
+
+	@OneToMany(mappedBy = "customerOrder", fetch = FetchType.LAZY)
+	@JsonIgnore
+	private List<AccountingRecord> accountingRecords;
 
 	public Integer getId() {
 		return id;
@@ -767,4 +772,13 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	public void setGaSessionId(String gaSessionId) {
 		this.gaSessionId = gaSessionId;
 	}
+
+	public List<AccountingRecord> getAccountingRecords() {
+		return accountingRecords;
+	}
+
+	public void setAccountingRecords(List<AccountingRecord> accountingRecords) {
+		this.accountingRecords = accountingRecords;
+	}
+
 }

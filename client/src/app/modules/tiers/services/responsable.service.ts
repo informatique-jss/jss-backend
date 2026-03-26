@@ -25,7 +25,7 @@ export class ResponsableService extends AppRestService<Responsable> {
     return this.getList(new HttpParams().set("searchedValue", value), "responsable/search");
   }
 
-  transferResponsable(oldResponsibleId: number, newResponsibleId: number) {
-    return this.get(new HttpParams().set("oldResponsibleId", oldResponsibleId).set("newResponsibleId", newResponsibleId), "responsable/transfer", "responsable transféré", "Erreur lors du transfert du responsable");
+  transferResponsable(oldResponsableId: number, newResponsableId: number) {
+    return this.get(new HttpParams().set("oldResponsableId", oldResponsableId).set("newResponsableId", newResponsableId), "responsable/transfer", "responsable transféré", "Erreur lors du transfert du responsable");
   }
 }

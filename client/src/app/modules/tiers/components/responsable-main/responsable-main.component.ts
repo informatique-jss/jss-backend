@@ -358,10 +358,14 @@ export class ResponsableMainComponent implements OnInit, AfterContentChecked {
   }
 
   openDialogTransferResponsable() {
-    const dialogRef = this.transferResponsableDialogComponent.open(TransferResponsableDialogComponent, {
-      maxWidth: "600px",
+    const dialogRef = this.transferResponsableDialogComponent.open(
+      TransferResponsableDialogComponent,
+      { maxWidth: '600px' }
+    );
+    dialogRef.afterOpened().subscribe(() => {
+      if (this.selectedResponsable) {
+        dialogRef.componentInstance.selectedResponsable = this.selectedResponsable;
+      }
     });
-    if (this.selectedResponsable)
-      dialogRef.componentInstance.selectedResponsable = this.selectedResponsable;
   }
 }

@@ -29,7 +29,6 @@ export class TransferResponsableDialogComponent implements OnInit {
   ngOnChanges(changes: SimpleChanges) {
   }
 
-
   transferResponsableForm = this.formBuilder.group({
   });
 
@@ -45,9 +44,11 @@ export class TransferResponsableDialogComponent implements OnInit {
     if (this.newResponsable?.id == this.selectedResponsable.id) {
       this.appService.displaySnackBar("Veuillez choisir un responsable différent du responsable actuel", true, 30);
     } else {
-      this.responsableService.transferResponsable(this.selectedResponsable.id, this.newResponsable.id)
-      this.dialogRef.close(this.selectedResponsable);
+      this.responsableService.transferResponsable(this.selectedResponsable.id, this.newResponsable.id).subscribe(response => {
+        this.appService.openRoute(null, '/tiers/responsable/' + response.id, null);
+      });
     }
+    this.dialogRef.close(this.selectedResponsable);
   }
 
   closeDialog() {
@@ -57,6 +58,6 @@ export class TransferResponsableDialogComponent implements OnInit {
   fillResponsable(responsable: IndexEntity) {
     this.responsableService.getResponsable(responsable.entityId).subscribe(response => {
       this.newResponsable = response;
-    })
+    });
   }
 }

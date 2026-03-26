@@ -728,18 +728,18 @@ public class TiersController {
     return new ResponseEntity<Tiers>(tiersService.getTiersFromUser(id), HttpStatus.OK);
   }
 
-  @GetMapping(inputEntryPoint + "/responsable/transfer")
-  public ResponseEntity<Responsable> transferResponsable(@RequestParam Integer oldResponsableId,
-      @RequestParam Integer newResponsableId) {
-    return new ResponseEntity<Responsable>(responsableService.transferResponsable(oldResponsableId, newResponsableId),
-        HttpStatus.OK);
-  }
-
   /*
    * |============================================================================
    * |______________________METHODS FOR OSIRIS V2_________________________________
    * |============================================================================
    */
+
+  @GetMapping(inputEntryPoint + "/responsable/transfer")
+  public ResponseEntity<ResponsableDto> transferResponsable(@RequestParam Integer oldResponsableId,
+      @RequestParam Integer newResponsableId) throws OsirisException {
+    return new ResponseEntity<ResponsableDto>(tiersFacade.getNewResponsableDto(oldResponsableId, newResponsableId),
+        HttpStatus.OK);
+  }
 
   @GetMapping(inputEntryPoint + "/tiers/detail")
   public ResponseEntity<TiersDto> getTiersDtoById(@RequestParam Integer id) throws OsirisException {
