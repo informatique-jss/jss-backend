@@ -393,8 +393,6 @@ public class BillingClosureReceiptHelper {
             if (results != null && !results.isEmpty())
                 for (AccountingRecordSearchResult result : results)
                     values.add(getBillingClosureReceiptValueForAs400(result));
-            else if (!hadSomeValues)
-                values.remove(values.size() - 1);
         }
 
         return values;
