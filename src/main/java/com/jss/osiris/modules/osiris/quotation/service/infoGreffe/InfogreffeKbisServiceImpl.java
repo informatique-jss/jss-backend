@@ -274,5 +274,4 @@ public class InfogreffeKbisServiceImpl implements InfogreffeKbisService {
                     + (response != null ? response.getStatusCode() : "N/A"));
         }
     }
-
 }
