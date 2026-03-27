@@ -1,7 +1,7 @@
 #!/bin/bash
 cd ../client-myjss
 rm dist/* -R
-#npm install  
+npm install  
 ng build --configuration recette
 
 tar -czf deploy.tar.gz -C dist .
