@@ -252,7 +252,7 @@ public class InfogreffeKbisServiceImpl implements InfogreffeKbisService {
                         constantService.getAttachmentTypeKbis(), name, false, name, null, null, null);
 
                 for (Attachment attachment : attachments) {
-                    if (attachment.getDescription().equals(name)) {
+                    if (name.equals(attachment.getDescription())) {
                         kbisRequest.setAttachment(attachment);
                         addOrUpdateKbisRequest(kbisRequest);
                         break;
