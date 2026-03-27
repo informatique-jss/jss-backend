@@ -61,14 +61,7 @@ export class CategoryHubComponent extends GenericHubComponent<JssCategory> imple
     if (this.searchText || this.selectedCategory) {
       this.selectedEntityType = this.selectedCategory;
       this.jssCategoryChange.emit(this.selectedCategory);
-      clearTimeout(this.debounce);
-      this.searchResults = [];
-
-      this.debounce = setTimeout(() => {
-        this.fetchPosts(0);
-        this.fetchTags();
-        this.fetchMostSeenPosts();
-      }, 500);
+      super.searchForPosts();
     }
   }
 }

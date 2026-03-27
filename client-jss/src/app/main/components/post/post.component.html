@@ -9,7 +9,7 @@
           <div class="col-12">
             <ng-container *ngIf="post.departments!=null && post.departments.length>0">
               <a *ngFor="let department of post.departments  " style="cursor: pointer;"
-                [routerLink]='"/post/department/" + department.code'
+                [routerLink]='"/post/department/" + department.code + "/page" '
                 class="my-2 margin-category fw-bold p-1">{{department.name}}</a> -
             </ng-container>
             <ng-container *ngIf="post.jssCategories!=null && post.jssCategories.length>0">

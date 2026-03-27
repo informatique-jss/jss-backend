@@ -182,10 +182,14 @@
             </div>
           </div>
 
+
           <nav *ngIf="totalPage > 1" class="mt-4">
             <ul class="pagination justify-content-center">
-              <li class="page-item" *ngFor="let p of pages" [class.active]="p === page">
-                <a class="page-link" [routerLink]="[p]">{{ p + 1 }}</a>
+              <li class="page-item" *ngFor="let p of pages" [class.active]="p === page" [class.disabled]="p === page">
+                <a class="page-link" [routerLink]="p == 0 ? ['/post/category/'+selectedCategory!.slug] : [p]"
+                  [style.pointer-events]="p === page ? 'none' : 'auto'">
+                  {{ p + 1 }}
+                </a>
               </li>
             </ul>
           </nav>
