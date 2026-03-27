@@ -56,19 +56,11 @@ export class DepartmentHubComponent extends GenericHubComponent<PublishingDepart
     return this.postService.getMostSeenPostByPublishingDepartment(selectedEntityType, page, pageSize);
   }
 
-
   override searchForPosts() {
     if (this.searchText || this.selectedPublishingDepartment) {
       this.selectedEntityType = this.selectedPublishingDepartment;
       this.departmentChange.emit(this.selectedPublishingDepartment);
-      clearTimeout(this.debounce);
-      this.searchResults = [];
-
-      this.debounce = setTimeout(() => {
-        this.fetchPosts(0);
-        this.fetchTags();
-        this.fetchMostSeenPosts();
-      }, 500);
+      super.searchForPosts();
     }
   }
 }

@@ -227,7 +227,7 @@ public class SitemapServiceImpl implements SitemapService {
 
         List<PublishingDepartment> departments = publishingDepartmentService.getAvailableDepartments();
         for (PublishingDepartment department : departments)
-            entries.add(new UrlEntry(jssMediaEntryPoint + "/post/department/" + department.getCode()));
+            entries.add(new UrlEntry(jssMediaEntryPoint + "/post/department/" + department.getCode() + "/page"));
 
         entries.add(new UrlEntry(jssMediaEntryPoint + "/home"));
         entries.add(new UrlEntry(jssMediaEntryPoint + "/announcement/search"));

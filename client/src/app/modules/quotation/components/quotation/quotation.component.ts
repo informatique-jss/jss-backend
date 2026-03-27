@@ -263,6 +263,10 @@ export class QuotationComponent implements OnInit, AfterContentChecked {
     return this.habilitationsService.canOfferCustomerOrder();
   }
 
+  canCreateCustomerOrder() {
+    return this.habilitationsService.canCreateCustomerOrder();
+  }
+
   canReinitInvoicing() {
     return this.habilitationsService.canReinitInvoicing();
   }

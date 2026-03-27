@@ -87,10 +87,10 @@
           <ul class="navbar-nav me-auto">
             <li class="nav-item dropdown"> <a class="nav-link" *ngIf="idfPublishingDepartment"
                 [ngClass]="{'active': getCurrentRoute().includes('/post/department') && getCurrentRoute().includes('/post/department')}"
-                [routerLink]='"post/department/"+ idfPublishingDepartment.code'>Ile-de-France</a>
+                [routerLink]='"post/department/"+ idfPublishingDepartment.code + "/page" '>Ile-de-France</a>
               <ul class="dropdown-menu">
                 <li> <a *ngFor="let department of departments" class="dropdown-item"
-                    [routerLink]='"/post/department/" + department.code'
+                    [routerLink]='"/post/department/" + department.code + "/page" '
                     (click)="openDepartment()">{{department.code.trim().length>0 &&
                     department.code!="0" ?(department.code+ " - ")
                     :""}}{{department.name}}</a>
@@ -165,7 +165,7 @@
             <ul class="list-unstyled ps-3" *ngIf="showDepartments">
               <li *ngFor="let department of departments" class="py-1">
                 <a class="text-white dropdown-item" (click)="openDepartment()"
-                  [routerLink]='"/post/department/" + department.code'>
+                  [routerLink]='"/post/department/" + department.code + "/page" '>
                   {{department.code !== '0' ? department.code + ' - ' : ''}}{{department.name}}
                 </a>
               </li>
@@ -225,7 +225,7 @@
   </div>
   <div class="modal-body">
     <div class="row align-items-center"
-      [ngClass]="{'h-50': posts && posts.length>0, 'h-100':  !posts || posts.length<=0}">
+      [ngClass]="{'h-50': (posts && posts.length>0) || (newspapers && newspapers.length>0) , 'h-100':  !(posts && posts.length>0) && !(newspapers && newspapers.length>0)}">
       <div class="col-lg-5 mx-auto mb-5">
         <h2 class="mb-4">Rechercher des articles du JSS</h2>
         <!-- Search form START -->

@@ -227,9 +227,10 @@
                             </button>
                           </div>
                         </ng-template>
-                        <div *ngIf="order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT 
+                        <div
+                          *ngIf="order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT 
                           || order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BEING_PROCESSED 
-                          || order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED && !expandedOrder.isPayed "
+                          || order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED && !expandedOrder.isPayed "
                           class="col-auto p-0">
                           <button type="button" class="btn btn-primary btn-icon rounded-circle" aria-label="deposit"
                             placement="top" ngbTooltip="Payer un acompte."

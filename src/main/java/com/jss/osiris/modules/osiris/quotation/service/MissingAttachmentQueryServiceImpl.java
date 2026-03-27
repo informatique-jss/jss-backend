@@ -272,5 +272,4 @@ public class MissingAttachmentQueryServiceImpl implements MissingAttachmentQuery
             }
         }
     }
-
 }

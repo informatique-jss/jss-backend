@@ -11,7 +11,6 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.referentials.TypeDocument;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -46,7 +45,7 @@ public class AssoServiceDocument implements Serializable, IId {
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private TypeDocument typeDocument;
 
-	@OneToMany(mappedBy = "assoServiceDocument", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "assoServiceDocument", fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "assoServiceDocument" }, allowSetters = true)
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.OsirisDetailedView.class })
 	private List<Attachment> attachments;
