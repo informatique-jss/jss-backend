@@ -28,14 +28,16 @@
 
                 <!-- Toggle for "Newsletter du journal JSS" -->
                 <generic-toggle [(model)]="communicationPreference.isSubscribedToNewspaperNewletter"
-                  label="Recevoir la newsletter du journal JSS" [form]="communicationPreferenceForm"
-                  (click)="toggleNewspaperNewsletter()" propertyName="isSubscribedToNewspaperNewletter">
+                  label="Recevoir la NewsLetter du JSS pour accéder au concentré de l’actualité parue sur notre média"
+                  [form]="communicationPreferenceForm" (click)="toggleNewspaperNewsletter()"
+                  propertyName="isSubscribedToNewspaperNewletter">
                 </generic-toggle>
 
                 <!-- Toggle for "Newsletter marketing de MyJSS" -->
                 <generic-toggle [(model)]="communicationPreference.isSubscribedToCorporateNewsletter"
-                  label="Newsletter marketing de MyJSS" [form]="communicationPreferenceForm"
-                  (click)="toggleCorporateNewsletter()" propertyName="isSubscribedToCorporateNewsletter">
+                  label="Recevoir la NewsLetter MyJSS pour rester informé des dernières actualités du marché des formalités et annonces légales"
+                  [form]="communicationPreferenceForm" (click)="toggleCorporateNewsletter()"
+                  propertyName="isSubscribedToCorporateNewsletter">
                 </generic-toggle>
               </form>
             </div>
