@@ -259,6 +259,7 @@ export class PracticalSheetsComponent implements OnInit {
       }
     });
   }
+
   getMostSeenPosts() {
     this.postService.getMostSeenPosts().subscribe(response => {
       if (response && response.length > 0) {
