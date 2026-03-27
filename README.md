@@ -7,3 +7,5 @@ TODO before production deployment for version 36 :
     update post set source='JSS' where id in (select post.id from post inner join asso_post_jss_category apjc on post.id = apjc.id_post) ; 
     update post set source='MYJSS' where id in (select post.id from post inner join asso_post_myjss_category apjc on post.id = apjc.id_post) ; 
 
+- insertion new Webinar :
+    insert into webinar (id, code, label, webinar_date ) values (nextval('webinar_sequence'), 'WEB-3', 'Donation, succession, quel est l’impact sur les formalités légales ?', '2026-04-16 09:30:00.000' );
