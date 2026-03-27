@@ -23,8 +23,10 @@ public class UploadedFile implements Serializable, IId {
 	@Id
 	@SequenceGenerator(name = "uploaded_file_sequence", sequenceName = "uploaded_file_sequence", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "uploaded_file_sequence")
+	@JsonView(JacksonViews.MyJssListView.class)
 	private Integer id;
 
+	@JsonView(JacksonViews.MyJssListView.class)
 	private String filename;
 
 	@Column(columnDefinition = "TEXT")
