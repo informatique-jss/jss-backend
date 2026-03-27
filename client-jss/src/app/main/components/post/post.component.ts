@@ -498,5 +498,11 @@ export class PostComponent implements OnInit, AfterViewInit {
     this.audioService.seekTo(+value);
   }
 
+  buyUniquePost(postId: number) {
+    this.appService.openMyJssRoute(null, "/quotation/subscription/" + ONE_POST_SUBSCRIPTION + "/" + false + "/" + postId, true);
+  }
 
+  routeToSubscription() {
+    this.appService.openRoute(null, "subscription/", true);
+  }
 }

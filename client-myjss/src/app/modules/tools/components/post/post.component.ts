@@ -358,4 +358,8 @@ export class PostComponent implements OnInit, AfterViewInit {
           return true;
     return false;
   }
+
+  isServer() {
+    return this.platformService.isServer();
+  }
 }

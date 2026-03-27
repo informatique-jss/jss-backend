@@ -101,6 +101,7 @@ export class QuotationDetailsComponent implements OnInit {
   dislayAlreadyFilledAttachment = false;
   canEditQuotation: boolean = false;
   currentDate = new Date();
+  quotationId: number | undefined;
 
   pollingInterval: any;
   isAlreadyScrolledOnceToMessages: boolean = false;
@@ -149,67 +150,72 @@ export class QuotationDetailsComponent implements OnInit {
 
     this.quotationDetailsForm = this.formBuilder.group({});
 
-    this.refreshQuotation();
+    this.activatedRoute.params.subscribe(params => {
+      this.quotationId = params['id'];
+      if (this.quotationId) {
+        this.refreshQuotation();
+      }
+    });
   }
 
   refreshQuotation() {
     this.dislayAlreadyFilledAttachment = false;
-    const quotationId = this.activatedRoute.snapshot.params['id'];
 
-    this.quotationService.getQuotation(quotationId).pipe(
-      tap(response => {
-        this.quotation = response;
-        if (this.quotation) {
-          this.canEditQuotation = this.quotation.quotationStatus.code != QUOTATION_STATUS_VALIDATED_BY_CUSTOMER
-            && this.quotation.quotationStatus.code != QUOTATION_STATUS_ABANDONED
-            && this.quotation.quotationStatus.code != QUOTATION_STATUS_REFUSED_BY_CUSTOMER;
+    if (this.quotationId)
+      this.quotationService.getQuotation(this.quotationId).pipe(
+        tap(response => {
+          this.quotation = response;
+          if (this.quotation) {
+            this.canEditQuotation = this.quotation.quotationStatus.code != QUOTATION_STATUS_VALIDATED_BY_CUSTOMER
+              && this.quotation.quotationStatus.code != QUOTATION_STATUS_ABANDONED
+              && this.quotation.quotationStatus.code != QUOTATION_STATUS_REFUSED_BY_CUSTOMER;
+          }
+        }),
+        filter(quotation => !!quotation), // Stoppe si la quotation est vide
+        switchMap(quotation => {
+          // Exécution de toutes les requêtes en parallèle
+          return forkJoin({
+            assoAffaires: this.assoAffaireOrderService.getAssoAffaireOrdersForQuotation(quotation!),
+            depositMandatory: this.quotationService.isDepositMandatory(quotation!.id),
+            invoiceLabel: this.invoiceLabelResultService.getInvoiceLabelComputeResultForQuotation(quotation!.id),
+            mailBilling: this.mailComputeResultService.getMailComputeResultForBillingForQuotation(quotation!.id),
+            digitalMail: this.mailComputeResultService.getMailComputeResultForDigitalForQuotation(quotation!),
+            physicalMail: this.invoiceLabelResultService.getPhysicalMailComputeResultForBillingForQuotation(quotation!),
+            summary: this.invoicingSummaryService.getInvoicingSummaryForQuotation(quotation!.id),
+            user: this.loginService.getCurrentUser(),
+            initialComments: this.customerOrderCommentService.getCustomerOrderCommentsForCustomer(quotation!.id),
+            associatedOrder: this.customerOrderService.getCustomerOrderForQuotation(quotation!.id)
+          });
+        }),
+        takeUntil(this.destroy$)
+      ).subscribe(res => {
+        // 1. Affectation des données
+        this.quotationAssoAffaireOrders = res.assoAffaires;
+        if (this.quotationAssoAffaireOrders?.length > 0) {
+          this.changeAffaire(this.quotationAssoAffaireOrders[0]);
         }
-      }),
-      filter(quotation => !!quotation), // Stoppe si la quotation est vide
-      switchMap(quotation => {
-        // Exécution de toutes les requêtes en parallèle
-        return forkJoin({
-          assoAffaires: this.assoAffaireOrderService.getAssoAffaireOrdersForQuotation(quotation!),
-          depositMandatory: this.quotationService.isDepositMandatory(quotation!.id),
-          invoiceLabel: this.invoiceLabelResultService.getInvoiceLabelComputeResultForQuotation(quotation!.id),
-          mailBilling: this.mailComputeResultService.getMailComputeResultForBillingForQuotation(quotation!.id),
-          digitalMail: this.mailComputeResultService.getMailComputeResultForDigitalForQuotation(quotation!),
-          physicalMail: this.invoiceLabelResultService.getPhysicalMailComputeResultForBillingForQuotation(quotation!),
-          summary: this.invoicingSummaryService.getInvoicingSummaryForQuotation(quotation!.id),
-          user: this.loginService.getCurrentUser(),
-          initialComments: this.customerOrderCommentService.getCustomerOrderCommentsForCustomer(quotation!.id),
-          associatedOrder: this.customerOrderService.getCustomerOrderForQuotation(quotation!.id)
-        });
-      }),
-      takeUntil(this.destroy$)
-    ).subscribe(res => {
-      // 1. Affectation des données
-      this.quotationAssoAffaireOrders = res.assoAffaires;
-      if (this.quotationAssoAffaireOrders?.length > 0) {
-        this.changeAffaire(this.quotationAssoAffaireOrders[0]);
-      }
 
-      this.isDepositPaymentMandatoryForQuotation = res.depositMandatory;
-      this.quotationInvoiceLabelResult = res.invoiceLabel;
-      this.quotationMailComputeResult = res.mailBilling;
-      this.quotationDigitalMailComputeResult = res.digitalMail;
-      this.quotationPhysicalMailComputeResult = res.physicalMail;
-      this.invoiceSummary = res.summary;
-      this.currentUser = res.user;
-      this.comments = res.initialComments || [];
+        this.isDepositPaymentMandatoryForQuotation = res.depositMandatory;
+        this.quotationInvoiceLabelResult = res.invoiceLabel;
+        this.quotationMailComputeResult = res.mailBilling;
+        this.quotationDigitalMailComputeResult = res.digitalMail;
+        this.quotationPhysicalMailComputeResult = res.physicalMail;
+        this.invoiceSummary = res.summary;
+        this.currentUser = res.user;
+        this.comments = res.initialComments || [];
 
-      // 2. Traitement de la commande associée
-      if (res.associatedOrder && res.associatedOrder.id) {
-        this.associatedCustomerOrder = res.associatedOrder;
-        this.openValidatedQuotationModal();
-      }
+        // 2. Traitement de la commande associée
+        if (res.associatedOrder && res.associatedOrder.id) {
+          this.associatedCustomerOrder = res.associatedOrder;
+          this.openValidatedQuotationModal();
+        }
 
-      this.checkDisplayPayButton();
+        this.checkDisplayPayButton();
 
-      if (this.quotationAssoAffaireOrders?.length > 0) {
-        this.initiateUnreadCommentsPolling();
-      }
-    });
+        if (this.quotationAssoAffaireOrders?.length > 0) {
+          this.initiateUnreadCommentsPolling();
+        }
+      });
   }
 
   private checkDisplayPayButton() {

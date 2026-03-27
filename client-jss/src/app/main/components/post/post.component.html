@@ -9,7 +9,7 @@
           <div class="col-12">
             <ng-container *ngIf="post.departments!=null && post.departments.length>0">
               <a *ngFor="let department of post.departments  " style="cursor: pointer;"
-                [routerLink]='"/post/department/" + department.code'
+                [routerLink]='"/post/department/" + department.code + "/page" '
                 class="my-2 margin-category fw-bold p-1">{{department.name}}</a> -
             </ng-container>
             <ng-container *ngIf="post.jssCategories!=null && post.jssCategories.length>0">
@@ -197,11 +197,10 @@
                   <p>Débloquez immédiatement cet article pour 1 €, ou abonnez-vous pour accéder à l'ensemble de nos
                     contenus.</p>
                   <div class="row gap-2 justify-content-center">
-                    <a class="col-auto btn btn-secondary mt-3" style="cursor: pointer;"
-                      [href]='frontendMyJssUrl+"/quotation/subscription/" + ONE_POST_SUBSCRIPTION + "/" + false + "/" + post.id'
-                      target="_blank">Lire
-                      pour 1 €</a>
-                    <a class="col-auto btn btn-yellow mt-3" style="cursor: pointer;" href="subscription">S'abonner</a>
+                    <button class="col-auto btn btn-secondary mt-3" style="cursor: pointer;"
+                      (click)="buyUniquePost(post.id)" target="_blank">Lire pour 1 €</button>
+                    <button class="col-auto btn btn-yellow mt-3" style="cursor: pointer;"
+                      (click)="routeToSubscription()">S'abonner</button>
                   </div>
                 </div>
 
@@ -405,23 +404,23 @@
                           <form class="row needs-validation g-4" novalidate>
                             <div class="col-sm-4">
                               <generic-input [(model)]="newComment.authorFirstName" label="Prénom*"
-                                [form]="newCommentForm" propertyName="firstname" [isMandatory]="true"
+                                [form]="newCommentForm" propertyName="firstnameNotConnected" [isMandatory]="true"
                                 [isDisabled]="false" [isDisplayLabel]="true"></generic-input>
                             </div>
                             <div class="col-sm-4">
                               <generic-input [(model)]="newComment.authorLastName" label="Nom" [form]="newCommentForm"
-                                propertyName="lastname" [isMandatory]="false" [isDisabled]="false"
+                                propertyName="lastnameNotConnected" [isMandatory]="false" [isDisabled]="false"
                                 [isDisplayLabel]="true"></generic-input>
                             </div>
                             <div class="col-sm-4">
                               <generic-input [(model)]="newComment.mail.mail" label="Email*" [form]="newCommentForm"
-                                propertyName="mail" [isMandatory]="true" [isDisabled]="false"
+                                propertyName="mailNotConnected" [isMandatory]="true" [isDisabled]="false"
                                 [isDisplayLabel]="true"></generic-input>
                             </div>
                             <div class="col-12">
                               <generic-textarea [(model)]="newComment.content" label="Commentaire*"
-                                [form]="newCommentForm" propertyName="comment" [isMandatory]="true" [isDisabled]="false"
-                                [numberOfLines]="5"></generic-textarea>
+                                [form]="newCommentForm" propertyName="commentNotConnected" [isMandatory]="true"
+                                [isDisabled]="false" [numberOfLines]="5"></generic-textarea>
                             </div>
                             <div class="col-12">
                               <button class="btn btn-secondary" type="submit" (click)="postComment()">Publier</button>
@@ -429,7 +428,7 @@
                           </form>
                         </div>
                       </div>
-                      <!-- Comment form connected user -->
+                      <!-- Comment form for connected user -->
                       <div *ngIf="currentUser" id="commentForm"
                         class="card border-2 pt-2 p-md-2 p-xl-3 p-xxl-4 mt-5 mt-md-0 mb-4">
                         <div class="card-body">
@@ -449,8 +448,8 @@
                           <form class="row needs-validation g-4" novalidate>
                             <div class="col-12">
                               <generic-textarea [(model)]="newComment.content" label="Commentaire*"
-                                [form]="newCommentForm" propertyName="comment" [isMandatory]="true" [isDisabled]="false"
-                                [numberOfLines]="5"></generic-textarea>
+                                [form]="newCommentForm" propertyName="commentConnected" [isMandatory]="true"
+                                [isDisabled]="false" [numberOfLines]="5"></generic-textarea>
                             </div>
                             <div class="col-12">
                               <button class="btn btn-secondary" type="submit" (click)="postComment()">Publier</button>

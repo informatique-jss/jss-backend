@@ -533,9 +533,9 @@ export class CheckoutComponent implements OnInit {
     }
   }
 
-  setVoucherAndComputePricing(quotation: Voucher) {
-    if (quotation && this.quotation) {
-      this.quotation.voucher = quotation;
+  setVoucherAndComputePricing(voucher: Voucher) {
+    if (voucher && this.quotation) {
+      this.quotation.voucher = voucher;
       this.prepareForPricingAndCompute();
       this.appService.displayToast("Le code de réduction a été appliqué", false, "", 5000);
     }

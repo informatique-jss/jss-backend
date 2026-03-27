@@ -348,7 +348,7 @@
 
     <!-- Sidebar (offcanvas on sreens < 992px) -->
     <aside class="col-lg-3 offset-xl-1  mt-4 mt-lg-0 d-none d-lg-block">
-      <ng-container [ngTemplateOutlet]="asideColumn"></ng-container>
+      <ng-container *ngIf="!isServer()" [ngTemplateOutlet]="asideColumn"></ng-container>
     </aside>
   </div>
 </section>
