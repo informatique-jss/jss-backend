@@ -737,7 +737,14 @@ public class TiersController {
   @GetMapping(inputEntryPoint + "/responsable/transfer")
   public ResponseEntity<ResponsableDto> transferResponsable(@RequestParam Integer oldResponsableId,
       @RequestParam Integer newResponsableId) throws OsirisException {
-    return new ResponseEntity<ResponsableDto>(tiersFacade.getNewResponsableDto(oldResponsableId, newResponsableId),
+
+    Responsable oldResponsable = responsableService.getResponsable(oldResponsableId);
+    Responsable newResponsable = responsableService.getResponsable(newResponsableId);
+    if (newResponsable == null)
+      throw new OsirisClientMessageException("Le responsable avec l'id " + newResponsableId + " n'éxiste pas");
+    if (oldResponsable == null)
+      throw new OsirisClientMessageException("Le responsable avec l'id " + oldResponsableId + " n'éxiste pas");
+    return new ResponseEntity<ResponsableDto>(tiersFacade.transferResponsable(oldResponsable, newResponsable),
         HttpStatus.OK);
   }
 

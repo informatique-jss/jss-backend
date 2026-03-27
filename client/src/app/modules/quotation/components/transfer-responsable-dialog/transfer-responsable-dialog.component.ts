@@ -1,4 +1,4 @@
-import { Component, OnInit, SimpleChanges } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Responsable } from 'src/app/modules/tiers/model/Responsable';
@@ -12,7 +12,7 @@ import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dia
   templateUrl: './transfer-responsable-dialog.component.html',
   styleUrls: ['./transfer-responsable-dialog.component.css']
 })
-export class TransferResponsableDialogComponent implements OnInit {
+export class TransferResponsableDialogComponent {
 
   selectedResponsable: Responsable = {} as Responsable;
   newResponsable: Responsable | undefined;
@@ -22,13 +22,6 @@ export class TransferResponsableDialogComponent implements OnInit {
     private responsableService: ResponsableService,
     private appService: AppService,
   ) { }
-
-  ngOnInit() {
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-  }
-
   transferResponsableForm = this.formBuilder.group({
   });
 

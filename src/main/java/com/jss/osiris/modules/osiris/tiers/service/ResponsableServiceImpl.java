@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingRecord;
@@ -27,6 +28,7 @@ import com.jss.osiris.modules.osiris.crm.model.KpiCrmValueAggregatedByResponsabl
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmService;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmValueService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
+import com.jss.osiris.modules.osiris.invoicing.model.Payment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.DocumentType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
@@ -303,15 +305,15 @@ public class ResponsableServiceImpl implements ResponsableService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Responsable transferResponsable(Integer oldResponsableId, Integer newResponsableId) throws OsirisException {
+    public Responsable transferResponsable(Responsable oldResponsable, Responsable newResponsable)
+            throws OsirisException {
 
-        Responsable oldResponsable = getResponsable(oldResponsableId);
-        Responsable newResponsable = getResponsable(newResponsableId);
-
-        if (newResponsable == null || Boolean.FALSE.equals(newResponsable.getIsActive()))
-            throw new OsirisException("Responsable with id " + newResponsableId + " not found or inactive");
-        if (oldResponsable == null || Boolean.FALSE.equals(newResponsable.getIsActive()))
-            throw new OsirisException("Responsable with id " + oldResponsableId + " not found or inactive");
+        if (Boolean.FALSE.equals(newResponsable.getIsActive()))
+            throw new OsirisClientMessageException(
+                    "Le responsable avec l'id " + newResponsable.getId() + " est inactif");
+        if (Boolean.FALSE.equals(oldResponsable.getIsActive()))
+            throw new OsirisClientMessageException(
+                    "Le responsable avec l'id " + oldResponsable.getId() + " est inactif");
 
         List<CustomerOrder> transferredCustomerOrders = new ArrayList<>();
         List<Invoice> transferredInvoices = new ArrayList<>();
@@ -381,17 +383,32 @@ public class ResponsableServiceImpl implements ResponsableService {
 
         Tiers oldTiers = oldResponsable.getTiers();
         Tiers newTiers = newResponsable.getTiers();
+
         // transfer accountings of transferred orders
         for (CustomerOrder customerOrder : transferredCustomerOrders) {
-            if (customerOrder.getAccountingRecords() != null && customerOrder.getAccountingRecords().size() > 0) {
-                for (AccountingRecord record : customerOrder.getAccountingRecords()) {
-                    AccountingAccount newAccount = mapToNewTiersAccount(record.getAccountingAccount(), oldTiers,
-                            newTiers);
-                    if (newAccount != null) {
-                        record.setAccountingAccount(newAccount);
+            List<Payment> payments = customerOrder.getPayments();
+            if (payments != null && payments.size() > 0) {
+                List<Payment> filteredPayments = payments.stream()
+                        .filter(payment -> !payment.getIsCancelled())
+                        .toList();
+                if (filteredPayments != null && filteredPayments.size() > 0) {
+                    for (Payment filteredPayment : filteredPayments) {
+                        if (filteredPayment.getAccountingRecords() != null
+                                && filteredPayment.getAccountingRecords().size() > 0) {
+                            for (AccountingRecord record : filteredPayment.getAccountingRecords()) {
+                                AccountingAccount newAccount = mapToNewTiersAccount(record.getAccountingAccount(),
+                                        oldTiers,
+                                        newTiers);
+                                if (newAccount != null) {
+                                    record.setAccountingAccount(newAccount);
+                                }
+                            }
+                        }
                     }
                 }
+
             }
+
         }
         // transfer accounting of transferred invoices
         for (Invoice invoice : transferredInvoices) {

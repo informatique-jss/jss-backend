@@ -39,7 +39,8 @@ public interface ResponsableService {
      * |______________________METHODS FOR OSIRIS V2_________________________________
      * |============================================================================
      */
-    public Responsable transferResponsable(Integer oldResponsableId, Integer newResponsableId) throws OsirisException;
+    public Responsable transferResponsable(Responsable oldResponsable, Responsable newResponsable)
+            throws OsirisException;
 
     public Page<Responsable> getResponsables(String searchValue, Pageable pageable);
 
