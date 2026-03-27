@@ -276,6 +276,10 @@ export class HabilitationsService {
     return this.loginService.hasGroup([ADMINISTRATEURS])
   }
 
+  canCreateCustomerOrder() {
+    return this.loginService.hasGroup([ADMINISTRATEURS, ACCOUNTING_RESPONSIBLE, ACCOUNTING, TEAM_RESPONSIBLE])
+  }
+
   canImportInfogreffeInvoice() {
     return this.loginService.hasGroup([ADMINISTRATEURS]);
   }

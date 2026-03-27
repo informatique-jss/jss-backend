@@ -332,7 +332,8 @@
   <mat-icon>edit</mat-icon>
 </button>
 <button [matTooltip]="instanceOfCustomerOrder?'Ajouter une commande' : 'Ajouter un devis'" mat-fab color="accent"
-  class="fab-button" *ngIf="editMode==false && (quotation.id==undefined || quotation.id==null)"
+  class="fab-button"
+  *ngIf="editMode==false && (quotation.id==undefined || quotation.id==null) && (!instanceOfCustomerOrder || canCreateCustomerOrder())"
   (click)="createQuotation()">
   <mat-icon>add</mat-icon>
 </button>
