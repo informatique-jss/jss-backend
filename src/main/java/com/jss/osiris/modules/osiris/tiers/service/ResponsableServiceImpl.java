@@ -406,9 +406,7 @@ public class ResponsableServiceImpl implements ResponsableService {
                         }
                     }
                 }
-
             }
-
         }
         // transfer accounting of transferred invoices
         for (Invoice invoice : transferredInvoices) {
@@ -422,7 +420,6 @@ public class ResponsableServiceImpl implements ResponsableService {
                 }
             }
         }
-
     }
 
     private AccountingAccount mapToNewTiersAccount(AccountingAccount oldAccountingAccount, Tiers oldTiers,
