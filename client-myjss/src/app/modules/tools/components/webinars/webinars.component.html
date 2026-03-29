@@ -55,7 +55,7 @@
         </div>
         <h2 class="h2 pe-xxl-5 me-xl-4 mb-md-0 text-white">
           Inscrivez-vous à notre prochain webinaire
-          <span style="color: #CEB793;">{{webinarToDisplay.label}}</span> <br>
+          <br /><span style="color: #CEB793;">{{webinarToDisplay.label}}</span> <br>
           le {{webinarToDisplay.webinarDate | literalDatePipe}} à {{webinarToDisplay.webinarDate | date:'HH:mm'}}
         </h2>
       </div>
@@ -116,26 +116,24 @@
 
 <section class="container overflow-hidden py-5 my-5">
   <div class="row">
-    <h2 class="h2 pb-3 mb-lg-4 text-white">Myriam de Montis, spécialiste des annonces légales et formalités</h2>
+    <h2 class="h2 pb-3 mb-lg-4 text-white">Myriam de Montis, Présidente du JSS et Géraldine Masson, Responsable
+      formaliste</h2>
   </div>
   <div class="card-info">
     <div class="row g-4">
       <div class="col-md-4 order-md-1">
-        <img class="object-fit-cover rounded-circle" src="assets/img/my-jss-tools/MM.png" alt="Image">
+        <img class="object-fit-cover rounded-circle" src="assets/img/my-jss-tools/MM_GM.png" alt="Image">
       </div>
       <div class="col-md-8 order-md-2">
         <div class="d-flex flex-column h-100 card border-0 rounded-3 pt-5 px-4 px-lg-5">
           <p class="mb-4 mb-xl-5">Présidente du Journal Spécial des Sociétés, Myriam de Montis accompagne depuis plus de
-            30 ans les entreprises dans leurs démarches juridiques.<br>
-            Son expertise en annonces légales et formalités d’entreprises fait d’elle une référente dans le
-            domaine.<br><br>
-            Elle suit quotidiennement les évolutions réglementaires et éclaire les professionnels sur leurs
-            obligations.<br>
-            Grâce à son expérience, elle apporte un regard concrêt et opérationnel sur ces enjeux complexes et participe
-            aux réflexions menées par les différents acteurs réglementaires du marché.<br><br>
-            À travers nos webinaires, Myriam de Montis décrypte entre autre le Guichet unique et
-            répond aux questions des participants.<br><br>
-            Ne manquez pas la prochaine édition !
+            30 ans les entreprises dans leurs démarches juridiques.
+            Elle participe aux réflexions menées par les différents acteurs réglementaires du marché et son expertise en
+            annonces et formalités légales fait d’elle une référente dans le domaine.<br><br>
+            Géraldine Masson est également une experte des formalités grâce à ses 15 ans d’expérience dans ce milieu.
+            Elles suivent quotidiennement les évolutions réglementaires et éclairent les professionnels sur leurs
+            obligations avec un regard concret et opérationnel sur ces enjeux complexes. <br><br>
+            Ne manquez pas le prochain webinaire !
           </p>
         </div>
       </div>
@@ -146,7 +144,7 @@
 <section class="container mb-lg-2 mt-lg-3 my-xl-4 my-xxl-5">
   <div class="d-md-flex align-items-center justify-content-between pt-2 pt-sm-3 pb-3 mt-md-3 mb-3 mb-lg-4">
     <div class="d-flex align-items-center mb-4 mb-md-0">
-      <h2 class="h2 mb-0">Les temps forts du webinaire</h2>
+      <h2 class="h2 mb-0">Les temps forts du webinaire du 16 avril : </h2>
       <div class="text-warning flex-shrink-0 ps-sm-1 ms-3">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
           <path
@@ -160,18 +158,22 @@
     <div class="tab-pane fade show active" id="dayOne" role="tabpanel">
       <div class="row py-3 my-2 my-md-3">
         <div class="col-md-3">
-          <div class="h6 mb-2 mb-md-0">9:30 - 9:40</div>
+          <div class="h6 mb-2 mb-md-0">9:30 - 9:35</div>
         </div>
         <div class="col-md-6">
           <h3 class="h4 mb-0">Introduction </h3>
-          <p class="pt-2 pt-md-3 mb-md-0">Tour d’horizon des dernières actualités juridiques liées aux formalités
-            d’entreprise.</p>
+          <!-- <p class="pt-2 pt-md-3 mb-md-0">Tour d’horizon des dernières actualités juridiques liées aux formalités
+            d’entreprise.</p> -->
         </div>
         <div class="col-md-3 text-md-end">
           <div class="d-inline-flex">
-            <div class="bg-light flex-shrink-0 rounded-circle position-relative z-4" style="padding: 3px;">
+            <div class="bg-light flex-shrink-0 rounded-circle position-relative z-4 me-2" style="padding: 3px;">
               <img class="rounded-circle" src="assets/img/societe/team/direction/myriam_presidente.jpg" width="48"
                 alt="Avatar">
+            </div>
+            <div class="bg-light flex-shrink-0 rounded-circle position-relative z-4" style="padding: 3px;">
+              <img class="rounded-circle" src="assets/img/societe/team/formalites/geraldine_formaliste_senior.jpg"
+                width="48" alt="Avatar">
             </div>
           </div>
         </div>
@@ -179,7 +181,7 @@
       <hr>
       <div class="row py-3 my-2 my-md-3">
         <div class="col-md-3">
-          <div class="h6 mb-2 mb-md-0">9:40 - 10:00</div>
+          <div class="h6 mb-2 mb-md-0">9:35 - 10:00</div>
         </div>
         <div *ngIf="!webinarToDisplay" class="col-md-6">
           <h3 class="h4 mb-0">Sujet du webinaire</h3>
@@ -187,14 +189,22 @@
           </p>
         </div>
         <div *ngIf="webinarToDisplay" class="col-md-6">
-          <h3 class="h4 mb-0">{{webinarToDisplay.label}}</h3>
-          <p class="pt-2 pt-md-3 mb-md-0">{{webinarToDisplay.description}}</p>
+          <h3 class="h4 mb-0">Mise à jour des associés de sociétés civiles</h3>
+          <p class="pt-2 pt-md-3 mb-md-0">Qui est associé en cas de démembrement de parts ?<br>
+            Quelles formalités suite à une donation ou une cession de parts ?<br>
+            Quel est l’impact du décès d’un associé ou d’un gérant-associé sur le kbis ?<br>
+            Comment mettre à jour le kbis de la société sur plusieurs années ?<br>
+            Comment anonymiser les adresses personnelles des dirigeants ?</p>
         </div>
         <div class="col-md-3 text-md-end">
           <div class="d-inline-flex">
-            <div class="bg-light flex-shrink-0 rounded-circle position-relative z-4" style="padding: 3px;">
+            <div class="bg-light flex-shrink-0 rounded-circle position-relative z-4 me-2" style="padding: 3px;">
               <img class="rounded-circle" src="assets/img/societe/team/direction/myriam_presidente.jpg" width="48"
                 alt="Avatar">
+            </div>
+            <div class="bg-light flex-shrink-0 rounded-circle position-relative z-4" style="padding: 3px;">
+              <img class="rounded-circle" src="assets/img/societe/team/formalites/geraldine_formaliste_senior.jpg"
+                width="48" alt="Avatar">
             </div>
           </div>
         </div>
@@ -202,17 +212,46 @@
       <hr>
       <div class="row py-3 my-2 my-md-3">
         <div class="col-md-3">
-          <div class="h6 mb-2 mb-md-0">10:00 - 10:15</div>
+          <div class="h6 mb-2 mb-md-0">10:00 - 10:10</div>
+        </div>
+        <div class="col-md-6">
+          <h3 class="h4 mb-0">Radiation de la société</h3>
+          <p class="pt-2 pt-md-3 mb-md-0">
+            Dans quel cas une radiation d’office peut impacter la société ?<br>
+            Quelles sont les formalités dans le cas de dissolution ou liquidation de la société ?</p>
+        </div>
+        <div class="col-md-3 text-md-end">
+          <div class="d-inline-flex">
+            <div class="bg-light flex-shrink-0 rounded-circle position-relative z-4 me-2" style="padding: 3px;">
+              <img class="rounded-circle" src="assets/img/societe/team/direction/myriam_presidente.jpg" width="48"
+                alt="Avatar">
+            </div>
+            <div class="bg-light flex-shrink-0 rounded-circle position-relative z-4" style="padding: 3px;">
+              <img class="rounded-circle" src="assets/img/societe/team/formalites/geraldine_formaliste_senior.jpg"
+                width="48" alt="Avatar">
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr>
+      <div class="row py-3 my-2 my-md-3">
+        <div class="col-md-3">
+          <div class="h6 mb-2 mb-md-0">10:10 - 10:20</div>
         </div>
         <div class="col-md-6">
           <h3 class="h4 mb-0">Les conseils du JSS</h3>
-          <p class="pt-2 pt-md-3 mb-md-0">Les bonnes pratiques à observer et l’accompagnement que propose le JSS. </p>
+          <p class="pt-2 pt-md-3 mb-md-0">
+            Les bonnes pratiques à observer et l’accompagnement que propose le JSS.</p>
         </div>
         <div class="col-md-3 text-md-end">
           <div class="d-inline-flex">
-            <div class="bg-light flex-shrink-0 rounded-circle position-relative z-4" style="padding: 3px;">
+            <div class="bg-light flex-shrink-0 rounded-circle position-relative z-4 me-2" style="padding: 3px;">
               <img class="rounded-circle" src="assets/img/societe/team/direction/myriam_presidente.jpg" width="48"
                 alt="Avatar">
+            </div>
+            <div class="bg-light flex-shrink-0 rounded-circle position-relative z-4" style="padding: 3px;">
+              <img class="rounded-circle" src="assets/img/societe/team/formalites/geraldine_formaliste_senior.jpg"
+                width="48" alt="Avatar">
             </div>
           </div>
         </div>
@@ -220,18 +259,22 @@
       <hr>
       <div class="row py-3 my-2 my-md-3">
         <div class="col-md-3">
-          <div class="h6 mb-2 mb-md-0">10:15 - 10:30</div>
+          <div class="h6 mb-2 mb-md-0">10:20 - 10:30</div>
         </div>
         <div class="col-md-6">
-          <h3 class="h4 mb-0">Questions/réponses avec notre experte</h3>
-          <p class="pt-2 pt-md-3 mb-md-0">Échanges en direct pour répondre aux interrogations des participants et
-            clarifier les points essentiels.</p>
+          <h3 class="h4 mb-0"> Questions/réponses avec nos expertes</h3>
+          <p class="pt-2 pt-md-3 mb-md-0">
+            Échanges en direct pour répondre aux interrogations des participants et clarifier les points essentiels.</p>
         </div>
         <div class="col-md-3 text-md-end">
           <div class="d-inline-flex">
-            <div class="bg-light flex-shrink-0 rounded-circle position-relative z-4" style="padding: 3px;">
+            <div class="bg-light flex-shrink-0 rounded-circle position-relative z-4 me-2" style="padding: 3px;">
               <img class="rounded-circle" src="assets/img/societe/team/direction/myriam_presidente.jpg" width="48"
                 alt="Avatar">
+            </div>
+            <div class="bg-light flex-shrink-0 rounded-circle position-relative z-4" style="padding: 3px;">
+              <img class="rounded-circle" src="assets/img/societe/team/formalites/geraldine_formaliste_senior.jpg"
+                width="48" alt="Avatar">
             </div>
           </div>
         </div>

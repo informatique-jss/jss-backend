@@ -642,6 +642,27 @@ public class AttachmentServiceImpl implements AttachmentService {
         return outArray;
     }
 
+    @Override
+    public byte[] downloadLastInvoiceWithCreditNoteAsZip(CustomerOrder customerOrder) throws OsirisException {
+        if (customerOrder.getInvoices() != null) {
+            List<Invoice> sortedInvoices = customerOrder.getInvoices().stream()
+                    .sorted(Comparator.comparing(Invoice::getCreatedDate).reversed()).toList();
+
+            for (Invoice invoice : sortedInvoices)
+                if (invoice.getCreditNote() != null) {
+                    Invoice creditNoteInvoice = invoice.getCreditNote();
+                    List<Integer> attachmentsToDownload = new ArrayList<>();
+                    Integer attachmentInvoiceId = invoice.getAttachments().get(0).getId();
+                    Integer attachmentCreditNoteId = creditNoteInvoice.getAttachments().get(0).getId();
+                    attachmentsToDownload.add(attachmentInvoiceId);
+                    attachmentsToDownload.add(attachmentCreditNoteId);
+
+                    return downloadAllAttachmentsAsZip(attachmentsToDownload);
+                }
+        }
+        return null;
+    }
+
     public Attachment getPurchaseOrderAttachment(CustomerOrder customerOrder) throws OsirisException {
         if (customerOrder.getAttachments() != null && !customerOrder.getAttachments().isEmpty())
             for (Attachment attachment : sortAttachmentByDateDesc(customerOrder.getAttachments()))

@@ -19,7 +19,6 @@ import { SelectBillingLabelTypeComponent } from '../../../miscellaneous/componen
 import { SelectCivilityComponent } from '../../../miscellaneous/components/forms/select-civility/select-civility.component';
 import { SelectCountryComponent } from '../../../miscellaneous/components/forms/select-country/select-country.component';
 import { OsiTooltipComponent } from "../../../miscellaneous/components/osi-tooltip/osi-tooltip.component";
-import { BillingLabelType } from '../../../my-account/model/BillingLabelType';
 import { CustomerOrder } from '../../../my-account/model/CustomerOrder';
 import { Document } from '../../../my-account/model/Document';
 import { DocumentType } from '../../../my-account/model/DocumentType';
@@ -78,7 +77,6 @@ export class CheckoutComponent implements OnInit {
   documentTypeBilling!: DocumentType;
   documentTypeDigital!: DocumentType;
   documentTypePaper!: DocumentType;
-  billingLabelTypeOther!: BillingLabelType;
   isExtRefMandatory: boolean = false;
 
   documentForm!: FormGroup;
@@ -139,7 +137,6 @@ export class CheckoutComponent implements OnInit {
     this.documentTypeBilling = this.constantService.getDocumentTypeBilling();
     this.documentTypeDigital = this.constantService.getDocumentTypeDigital();
     this.documentTypePaper = this.constantService.getDocumentTypePaper();
-    this.billingLabelTypeOther = this.constantService.getBillingLabelTypeOther();
 
     await this.loginService.getCurrentUser().subscribe(response => {
       this.currentUser = response;
@@ -338,9 +335,6 @@ export class CheckoutComponent implements OnInit {
   completeBillingDocument() {
     if (this.quotation && this.quotation.documents) {
       let billingDocument = getDocument(this.constantService.getDocumentTypeBilling(), this.quotation);
-      if (billingDocument && billingDocument.billingLabelType.id == this.constantService.getBillingLabelTypeOther().id)
-        if (!billingDocument.billingLabelCountry)
-          billingDocument.billingLabelCountry = this.constantService.getResponsableDummyCustomerFrance().tiers.country;
       if (!billingDocument.billingLabelCity)
         billingDocument.billingLabelCity = this.constantService.getResponsableDummyCustomerFrance().tiers.city;
 
@@ -539,9 +533,9 @@ export class CheckoutComponent implements OnInit {
     }
   }
 
-  setVoucherAndComputePricing(quotation: Voucher) {
-    if (quotation && this.quotation) {
-      this.quotation.voucher = quotation;
+  setVoucherAndComputePricing(voucher: Voucher) {
+    if (voucher && this.quotation) {
+      this.quotation.voucher = voucher;
       this.prepareForPricingAndCompute();
       this.appService.displayToast("Le code de réduction a été appliqué", false, "", 5000);
     }

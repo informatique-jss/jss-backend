@@ -93,6 +93,11 @@ export class AppService {
     return;
   }
 
+  openJssRoute(route: string) {
+    window.open(environment.frontendJSSUrl + route, "_blank");
+    return;
+  }
+
   addPersonnalNotification(
     callback: (() => void),
     preLoadedNotifications: Notification[] | undefined,

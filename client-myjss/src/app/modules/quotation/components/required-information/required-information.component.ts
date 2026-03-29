@@ -499,7 +499,8 @@ export class RequiredInformationComponent implements OnInit {
     if (newServiceIndex >= this.quotation.assoAffaireOrders[newAssoIndex].services.length) {
       newAssoIndex = newAssoIndex + 1;
       newServiceIndex = 0;
-      if (this.noticeTemplateService.getNoticeTemplateForm() && !this.noticeTemplateService.getNoticeTemplateForm()!.valid) {
+      if (this.noticeTemplateDescription && this.noticeTemplateDescription.isUsingTemplate && this.noticeTemplateService.getNoticeTemplateForm()
+        && !this.noticeTemplateService.getNoticeTemplateForm()!.valid) {
         this.serviceFieldTypeService.getServiceFieldTypes(undefined).subscribe(res => {
           this.serviceFieldTypes = res
           this.showToastOfInvalidControls();
@@ -768,6 +769,7 @@ export class RequiredInformationComponent implements OnInit {
     if (this.noticeTemplateDescription) {
       if (isRedactedByJss) {
         this.noticeTemplateDescription.isShowNoticeTemplate = false;
+        this.noticeTemplateDescription.isUsingTemplate = false;
         this.noticeTemplateService.changeNoticeTemplateDescription(this.noticeTemplateDescription);
         return;
       }
@@ -920,6 +922,15 @@ export class RequiredInformationComponent implements OnInit {
     }
     if (isLastIndex && alreadyFoundIds.indexOf(assoServiceFieldType.serviceFieldType.id) < 0)
       return true;
+    return false;
+  }
+
+  isLastMandatoryDocument(assoServiceDocument: AssoServiceDocument): boolean {
+    if (this.quotation && this.selectedAssoIndex != undefined && this.selectedServiceIndex != undefined && this.quotation.assoAffaireOrders[this.selectedAssoIndex] && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex] && this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].assoServiceDocuments) {
+      let lastAsso = this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].assoServiceDocuments.filter(asso => asso.isMandatory)[this.quotation.assoAffaireOrders[this.selectedAssoIndex].services[this.selectedServiceIndex].assoServiceDocuments.filter(asso => asso.isMandatory).length - 1];
+      if (assoServiceDocument.id === lastAsso.id)
+        return true;
+    }
     return false;
   }
 

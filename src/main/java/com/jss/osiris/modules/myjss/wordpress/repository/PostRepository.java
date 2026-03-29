@@ -37,11 +37,11 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
                                         AND :jssCategory MEMBER OF p.jssCategories)
                                 OR (
                                         :jssCategory IS NULL AND
-                                        size(p.jssCategories) > 0))""")
+                                        p.source=:source))""")
         @Synchronize("post")
         @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
         Page<Post> findByJssCategoriesAndIsCancelled(@Param("jssCategory") JssCategory jssCategory,
-                        @Param("isCancelled") Boolean isCancelled, LocalDateTime consultationDate,
+                        @Param("isCancelled") Boolean isCancelled, LocalDateTime consultationDate, String source,
                         Pageable pageableRequest);
 
         @Query("""
@@ -72,11 +72,11 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
                         "  and p.date <= CURRENT_TIMESTAMP " +
                         "  and ( " +
                         "  (:myJssCategoryId IS NOT NULL AND exists (select 1 from p.myJssCategories c where c.id = :myJssCategoryId)) "
-                        + "OR (:myJssCategoryId IS NULL AND size(p.myJssCategories) > 0))")
+                        + "OR (:myJssCategoryId IS NULL AND p.source=:source))")
         @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
         Page<Post> findByMyJssCategoriesAndIsCancelled(
                         @Param("myJssCategoryId") Integer myJssCategoryId,
-                        @Param("isCancelled") Boolean isCancelled,
+                        @Param("isCancelled") Boolean isCancelled, String source,
                         Pageable pageableRequest);
 
         @Query("select p from Post p " +
@@ -84,11 +84,11 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
                         "  and p.date <= CURRENT_TIMESTAMP " +
                         "  and ( " +
                         "  (:jssCategoryId IS NOT NULL AND exists (select 1 from p.jssCategories c where c.id = :jssCategoryId)) "
-                        + "OR (:jssCategoryId IS NULL AND size(p.jssCategories) > 0))")
+                        + "OR (:jssCategoryId IS NULL AND p.source=:source))")
         @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
         Page<Post> findByJssCategoriesAndIsCancelled(
                         @Param("jssCategoryId") Integer jssCategoryId,
-                        @Param("isCancelled") Boolean isCancelled,
+                        @Param("isCancelled") Boolean isCancelled, String source,
                         Pageable pageableRequest);
 
         @Query("select p from Post p where p.isCancelled =:isCancelled AND p.date<=CURRENT_TIMESTAMP and :category MEMBER OF p.postCategories")
@@ -101,12 +101,12 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
                         "  and p.date <= CURRENT_TIMESTAMP " +
                         "  and ( " +
                         "  (:myJssCategoryId IS NOT NULL AND exists (select 1 from p.myJssCategories c where c.id = :myJssCategoryId)) "
-                        + "OR (:myJssCategoryId IS NULL AND size(p.myJssCategories) > 0))" +
+                        + "OR (:myJssCategoryId IS NULL AND p.source=:source))" +
                         "  and ( " +
                         "  (:categoryId IS NOT NULL AND exists (select 1 from p.postCategories c where c.id = :categoryId)) "
                         + "OR (:categoryId IS NULL AND size(p.postCategories) > 0))")
         Page<Post> findByPostCategoriesAndMyJssCategoriesAndIsCancelled(Integer categoryId, Integer myJssCategoryId,
-                        Boolean isCancelled, Pageable pageableRequest);
+                        Boolean isCancelled, String source, Pageable pageableRequest);
 
         Post findBySlugAndIsCancelled(String slug, Boolean isCancelled);
 
@@ -115,93 +115,64 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
         List<Post> findPostExcludIds(@Param("postFetchedId") List<Integer> postFetchedId);
 
-        @Query("select p from Post p join p.postViews v where p.isCancelled = false and size(p.jssCategories) > 0 and v.day >= :oneWeekAgo and :category MEMBER OF p.postCategories group by p.id order by sum(v.count) desc ")
-        @Synchronize("post")
-        @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
+        @Query("select p from Post p join p.postViews v where p.isCancelled = false and p.source=:source and v.day >= :oneWeekAgo and :category MEMBER OF p.postCategories group by p.id order by sum(v.count) desc ")
         Page<Post> findJssCategoryPostTendency(@Param("oneWeekAgo") LocalDate oneWeekAgo,
-                        @Param("category") Category category, Pageable pageable);
+                        @Param("category") Category category, String source, Pageable pageable);
 
-        @Query("select p.id from Post p join p.postViews v where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and size(p.myJssCategories) > 0 and v.day >= :oneWeekAgo group by p.id order by sum(v.count) desc ")
-        @Synchronize("post")
-        @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
-        List<Integer> findMyJssCategoryPostTendency(@Param("oneWeekAgo") LocalDate oneWeekAgo,
+        @Query("select p.id from Post p join p.postViews v where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and p.source=:source and v.day >= :oneWeekAgo group by p.id order by sum(v.count) desc ")
+        List<Integer> findMyJssCategoryPostTendency(@Param("oneWeekAgo") LocalDate oneWeekAgo, String source,
                         Pageable pageable);
 
-        @Query("select p.id from Post p join p.postViews v where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and size(p.myJssCategories) > 0 group by p.id order by sum(v.count) desc ")
-        @Synchronize("post")
-        @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
-        List<Integer> findMyJssCategoryPostMostSeen(Pageable pageable);
+        @Query("select p.id from Post p join p.postViews v where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and p.source=:source group by p.id order by sum(v.count) desc ")
+        List<Integer> findMyJssCategoryPostMostSeen(String source, Pageable pageable);
 
         @Query("select p from Post p join p.postViews v where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and :jssCategory MEMBER OF p.jssCategories group by p.id order by sum(v.count) desc ")
         @Synchronize("post")
         @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
         Page<Post> findMostSeenPostJssCategory(Pageable pageable, @Param("jssCategory") JssCategory jssCategory);
 
-        @Query("select p from Post p join p.postViews v where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and size(p.jssCategories) > 0 group by p.id order by sum(v.count) desc ")
-        @Synchronize("post")
-        @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
-        Page<Post> findJssCategoryPostMostSeen(Pageable pageable);
+        @Query("select p from Post p join p.postViews v where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and p.source=:source group by p.id order by sum(v.count) desc ")
+        Page<Post> findJssCategoryPostMostSeen(String source, Pageable pageable);
 
-        @Query("select p from Post p where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and size(p.jssCategories) > 0 and p.isSticky=true ")
-        @Synchronize("post")
-        @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
-        Page<Post> findJssCategoryPostSticky(Pageable pageable);
+        @Query("select p from Post p where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and p.source=:source and p.isSticky=true ")
+        Page<Post> findJssCategoryPostSticky(String source, Pageable pageable);
 
-        @Query("select p from Post p where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and size(p.myJssCategories) > 0 and (:category member of p.myJssCategories) and p.isSticky=true ")
-        @Synchronize("post")
-        @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
-        Page<Post> findMyJssCategoryStickyPost(MyJssCategory category, Pageable pageable);
+        @Query("select p from Post p where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and p.source=:source and (:category member of p.myJssCategories) and p.isSticky=true ")
+        Page<Post> findMyJssCategoryStickyPost(MyJssCategory category, String source, Pageable pageable);
 
-        @Query("select p from Post p join p.postViews v where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and :tag MEMBER OF p.postTags and size(p.jssCategories) > 0 group by p.id order by sum(v.count) desc ")
-        @Synchronize("post")
-        @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
-        Page<Post> findMostSeenPostTag(Pageable pageable, @Param("tag") Tag tag);
+        @Query("select p from Post p join p.postViews v where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and :tag MEMBER OF p.postTags and p.source=:source group by p.id order by sum(v.count) desc ")
+        Page<Post> findMostSeenPostTag(Pageable pageable, @Param("tag") Tag tag, String source);
 
-        @Query("select p from Post p join p.postViews v where p.isCancelled = false and coalesce(p.isHiddenAuthor,false)=false AND p.date<=CURRENT_TIMESTAMP and p.fullAuthor =:author and size(p.jssCategories) > 0 group by p.id order by sum(v.count) desc ")
-        @Synchronize("post")
-        @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
+        @Query("select p from Post p join p.postViews v where p.isCancelled = false and coalesce(p.isHiddenAuthor,false)=false AND p.date<=CURRENT_TIMESTAMP and p.fullAuthor =:author and p.source=:source group by p.id order by sum(v.count) desc ")
         Page<Post> findMostSeenPostAuthor(Pageable pageable, @Param("author") Author author);
 
-        @Query("select p from Post p join p.postViews v where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and :serie MEMBER OF p.postSerie and size(p.jssCategories) > 0 group by p.id order by sum(v.count) desc ")
-        @Synchronize("post")
-        @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
-        Page<Post> findMostSeenPostSerie(Pageable pageable, @Param("serie") Serie serie);
+        @Query("select p from Post p join p.postViews v where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and :serie MEMBER OF p.postSerie and p.source=:source group by p.id order by sum(v.count) desc ")
+        Page<Post> findMostSeenPostSerie(Pageable pageable, @Param("serie") Serie serie, String source);
 
-        @Query("select p from Post p join p.postViews v where p.isCancelled = false AND p.isPremium = true AND p.date<=CURRENT_TIMESTAMP and size(p.jssCategories) > 0 group by p.id order by sum(v.count) desc ")
-        @Synchronize("post")
-        @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
-        Page<Post> findMostSeenPremiumPosts(Pageable pageable);
+        @Query("select p from Post p join p.postViews v where p.isCancelled = false AND p.isPremium = true AND p.date<=CURRENT_TIMESTAMP and p.source=:source group by p.id order by sum(v.count) desc ")
+        Page<Post> findMostSeenPremiumPosts(Pageable pageable, String source);
 
-        @Query("select p from Post p join p.postViews v where :category MEMBER OF p.postCategories AND p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and :publishingDepartment MEMBER OF p.departments and size(p.jssCategories) > 0 group by p.id order by sum(v.count) desc ")
-        @Synchronize("post")
-        @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
+        @Query("select p from Post p join p.postViews v where :category MEMBER OF p.postCategories AND p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and :publishingDepartment MEMBER OF p.departments and p.source=:source group by p.id order by sum(v.count) desc ")
         Page<Post> findMostSeenPostPublishingDepartment(Pageable pageable, Category category,
-                        @Param("publishingDepartment") PublishingDepartment publishingDepartment);
+                        @Param("publishingDepartment") PublishingDepartment publishingDepartment, String source);
 
-        @Query("select p from Post p join p.postViews v where :category MEMBER OF p.postCategories AND p.isCancelled = false and size(p.departments)>0 and size(p.jssCategories) > 0 group by p.id order by sum(v.count) desc ")
-        @Synchronize("post")
-        @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
-        Page<Post> findMostSeenPostsIdf(Pageable pageable, Category category);
+        @Query("select p from Post p join p.postViews v where :category MEMBER OF p.postCategories AND p.isCancelled = false and size(p.departments)>0 and p.source=:source group by p.id order by sum(v.count) desc ")
+        Page<Post> findMostSeenPostsIdf(Pageable pageable, Category category, String source);
 
-        @Query("select p from Post p where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and :category MEMBER OF p.postCategories and size(p.departments) > 0 and size(p.jssCategories) > 0 ")
-        @Synchronize("post")
-        @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
-        Page<Post> findPostsIdf(Category category, Pageable pageable);
+        @Query("select p from Post p where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and :category MEMBER OF p.postCategories and size(p.departments) > 0 and p.source=:source ")
+        Page<Post> findPostsIdf(Category category, Pageable pageable, String source);
 
-        @Query("select p from Post p where p.isCancelled = false and size(p.jssCategories) > 0 and p.isSticky = true AND p.date<=CURRENT_TIMESTAMP ")
-        @Synchronize("post")
-        @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
-        Page<Post> findJssCategoryStickyPost(Pageable pageable);
+        @Query("select p from Post p where p.isCancelled = false and p.source=:source and p.isSticky = true AND p.date<=CURRENT_TIMESTAMP ")
+        Page<Post> findJssCategoryStickyPost(Pageable pageable, String source);
 
-        @Query("select p from Post p where :categoryArticle MEMBER OF p.postCategories and size(p.jssCategories) > 0 and p.isCancelled = :isCancelled AND p.date<=CURRENT_TIMESTAMP order by coalesce(p.isStayOnTop, false) desc, p.date desc")
+        /* TODO */
+        @Query("select p from Post p where :categoryArticle MEMBER OF p.postCategories and p.source=:source and p.isCancelled = :isCancelled AND p.date<=CURRENT_TIMESTAMP order by coalesce(p.isStayOnTop, false) desc, p.date desc")
         Page<Post> findJssCategoryPosts(@Param("categoryArticle") Category categoryArticle,
-                        @Param("isCancelled") boolean b,
+                        @Param("isCancelled") boolean b, String source,
                         Pageable pageableRequest);
 
-        @Query("select p from Post p where size(p.myJssCategories) > 0 and p.isCancelled = :isCancelled AND p.date<=CURRENT_TIMESTAMP ")
-        @Synchronize("post")
-        @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
-        List<Post> findMyJssCategoryPosts(@Param("isCancelled") boolean b,
+        @Query("select p from Post p where p.source=:source and p.isCancelled = :isCancelled AND p.date<=CURRENT_TIMESTAMP ")
+        List<Post> findMyJssCategoryPosts(@Param("isCancelled") boolean b, String source,
                         Pageable pageableRequest);
 
         @Synchronize("post")
@@ -213,10 +184,9 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
         List<Post> findByPostSerieAndIsCancelled(Serie serie, boolean b);
 
-        @Query("SELECT p FROM Post p WHERE :tag MEMBER OF p.postTags AND :category MEMBER OF p.postCategories AND p.isCancelled = :b and p.date<=CURRENT_TIMESTAMP and p.date>:consultationDate  and size(p.jssCategories) > 0")
-        @Synchronize("post")
-        @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
+        @Query("SELECT p FROM Post p WHERE :tag MEMBER OF p.postTags AND :category MEMBER OF p.postCategories AND p.isCancelled = :b and p.date<=CURRENT_TIMESTAMP and p.date>:consultationDate  and p.source=:source")
         Page<Post> findByPostTagsAndIsCancelled(Tag tag, Category category, boolean b, LocalDateTime consultationDate,
+                        String source,
                         Pageable pageableRequest);
 
         @Query("SELECT p FROM Post p WHERE p.fullAuthor =:author AND p.isCancelled = :b and coalesce(p.isHiddenAuthor,false)=false AND p.date<=CURRENT_TIMESTAMP AND p.date>:consultationDate AND p.date<=CURRENT_TIMESTAMP ")
@@ -230,9 +200,9 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
         Page<Post> findByPostSerieAndIsCancelled(Serie serie, boolean b, Pageable pageableRequest);
 
-        @Query("select p from Post p where p.isCancelled = :isCancelled AND p.date<=CURRENT_TIMESTAMP and size(p.jssCategories) > 0 and :publishingDepartment MEMBER OF p.departments and :category MEMBER OF p.postCategories")
+        @Query("select p from Post p where p.isCancelled = :isCancelled AND p.date<=CURRENT_TIMESTAMP and  p.source=:source and :publishingDepartment MEMBER OF p.departments and :category MEMBER OF p.postCategories")
         Page<Post> findByDepartmentsAndIsCancelled(Category category, PublishingDepartment publishingDepartment,
-                        boolean isCancelled,
+                        boolean isCancelled, String source,
                         Pageable pageableRequest);
 
         @Query("select p from Post p where p.isCancelled = false and :jssCategories member of p.jssCategories and p.date>:date AND p.date<=CURRENT_TIMESTAMP ")
@@ -266,11 +236,11 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
         Page<Post> findActivePremiumPosts(@Param("category") Category category, Pageable pageable);
 
-        @Query("select p from Post p where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and size(p.jssCategories) > 0 ")
-        List<Post> findAllJssPost();
+        @Query("select p from Post p where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and p.source =:source")
+        List<Post> findAllJssPost(@Param("source") String source);
 
-        @Query("select p from Post p where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and size(p.myJssCategories) > 0 ")
-        List<Post> findAllMyJssPost();
+        @Query("select p from Post p where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and p.source=:source")
+        List<Post> findAllMyJssPost(@Param("source") String source);
 
         @Query("""
                         SELECT po

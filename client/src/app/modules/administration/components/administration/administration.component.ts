@@ -104,9 +104,10 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
   DISCOVERING_ORIGIN_REFERENTIAL = "Origine de la découverte du JSS";
   BUSINESS_SECTOR_REFERENTIAL = "Secteur d'activité";
   COMPANY_SIZE_REFERENTIAL = "Taille de l'entreprise";
-  PAY_SLIP_LINE_TYPE_REFERENTIAL = "Type de ligne de bulletin de paie"
-  TOOLTIP_ENTRY_REFERENTIAL = "Description des tooltips"
-  REJECTION_CAUSE_REFERENTIAL = "Cause des rejets GU"
+  PAY_SLIP_LINE_TYPE_REFERENTIAL = "Type de ligne de bulletin de paie";
+  TOOLTIP_ENTRY_REFERENTIAL = "Description des tooltips";
+  REJECTION_CAUSE_REFERENTIAL = "Cause des rejets GU";
+  TIERS_GROUP_REFERENTIAL = "Groupes de tiers";
 
 
   constructor(private appService: AppService,
@@ -198,6 +199,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     this.referentials.push(this.PAY_SLIP_LINE_TYPE_REFERENTIAL);
     this.referentials.push(this.TOOLTIP_ENTRY_REFERENTIAL);
     this.referentials.push(this.REJECTION_CAUSE_REFERENTIAL);
+    this.referentials.push(this.TIERS_GROUP_REFERENTIAL);
     this.referentials.sort((a, b) => a.localeCompare(b));
 
     this.filteredReferentials = this.referentialForm.get("entity")?.valueChanges.pipe(

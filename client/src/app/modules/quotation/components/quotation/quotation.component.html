@@ -211,9 +211,11 @@
                               </avatar-chip>
                               <ng-template></ng-template>
                               <mat-panel-description style="height:40px">
-                                <mat-icon color="accent" *ngIf="!editMode" matTooltip="Supprimer la prestation"
-                                  style="padding-right: 20px;"
-                                  (click)="deleteProvision(provision);$event.stopPropagation()" class="pointer">
+                                <mat-icon color="accent"
+                                  *ngIf="(!editMode && provision.id) || (!provision.id && editMode)"
+                                  matTooltip="Supprimer la prestation" style="padding-right: 20px;"
+                                  (click)="deleteProvision(service, provision);$event.stopPropagation()"
+                                  class="pointer">
                                   delete</mat-icon>
                                 <mat-icon color="accent" *ngIf="editMode" matTooltip="Dupliquer la prestation"
                                   (click)="duplicateProvision(service,provision)" class="pointer">
@@ -330,7 +332,8 @@
   <mat-icon>edit</mat-icon>
 </button>
 <button [matTooltip]="instanceOfCustomerOrder?'Ajouter une commande' : 'Ajouter un devis'" mat-fab color="accent"
-  class="fab-button" *ngIf="editMode==false && (quotation.id==undefined || quotation.id==null)"
+  class="fab-button"
+  *ngIf="editMode==false && (quotation.id==undefined || quotation.id==null) && (!instanceOfCustomerOrder || canCreateCustomerOrder())"
   (click)="createQuotation()">
   <mat-icon>add</mat-icon>
 </button>

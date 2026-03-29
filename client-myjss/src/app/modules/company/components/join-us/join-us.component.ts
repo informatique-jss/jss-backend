@@ -29,7 +29,6 @@ export class JoinUsComponent implements OnInit {
 
   images: string[] = [
     "assets/img/myjss-services/apostilles/myjss_occupe_tout.jpg",
-    "assets/img/societe/join-us/team.jpg",
     "assets/img/societe/join-us/Carrousel 1.jpg",
     "assets/img/societe/join-us/Carrousel 2.jpg",
     "assets/img/societe/join-us/Carrousel2.jpg",

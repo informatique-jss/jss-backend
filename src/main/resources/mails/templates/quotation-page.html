@@ -92,8 +92,8 @@
                 </td>
                 <td style="padding-top: 20px;text-align : center" th:if="${asso.affaire.denomination==null} "
                     colspan="2">
-                    <strong><span th:text="${asso.affaire.civility.label}"></span> <span
-                            th:text="${asso.affaire.firstname}"></span> <span
+                    <strong><span th:if="${asso.affaire.civility}" th:text="${asso.affaire.civility.label}"></span>
+                        <span th:text="${asso.affaire.firstname}"></span> <span
                             th:text="${asso.affaire.lastname}"></span></strong>
                 </td>
             </tr>

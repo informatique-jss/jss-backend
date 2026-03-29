@@ -31,12 +31,12 @@ public class Newspaper implements IId, Serializable {
     @Id
     @SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
-    @IndexedField
     @JsonView(JacksonViews.MyJssDetailedView.class)
     private Integer id;
 
     @Column(columnDefinition = "TEXT")
     @JsonView(JacksonViews.MyJssListView.class)
+    @IndexedField
     private String titleText;
 
     @JsonDeserialize(using = JacksonLocalDateTimeDeserializer.class)
@@ -45,10 +45,12 @@ public class Newspaper implements IId, Serializable {
     private LocalDateTime date;
 
     @JsonView(JacksonViews.MyJssListView.class)
+    @IndexedField
     private Integer newspaperIssueNumber;
 
     // Constants : JOURNAL_SPECIAL_DES_SOCIETES or ANNONCES_DE_LA_SEINE
     @JsonView(JacksonViews.MyJssListView.class)
+    @IndexedField
     private String newspaperCategory;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -61,6 +63,7 @@ public class Newspaper implements IId, Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_uploaded_file_image")
+    @IndexedField
     private UploadedFile uploadedFileImage;
 
     @Transient

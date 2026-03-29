@@ -43,9 +43,10 @@
                         <bookmark *ngIf="currentUser" [post]="post"></bookmark>
                       </div>
                       <p class="h6 mb-0">
-                        <a class="card-text-truncate" [routerLink]='"/post/" + post.slug'>{{post.titleText}} <img
-                            *ngIf="post.isPremium" class="pe-0" src="/assets/images/premium-icon.svg"><img
-                            *ngIf="post.isHidePremium" class="pe-0" src="/assets/images/subscribed-icon.svg">
+                        <a class="card-text-truncate text-primary"
+                          [routerLink]='"/post/" + post.slug'>{{post.titleText}} <img *ngIf="post.isPremium"
+                            class="pe-0" src="/assets/images/premium-icon.svg"><img *ngIf="post.isHidePremium"
+                            class="pe-0" src="/assets/images/subscribed-icon.svg">
                         </a>
                       </p>
                     </div>
@@ -70,10 +71,10 @@
                     </div>
 
                     <p class="h3">
-                      <a class="card-title-truncate"
-                        [routerLink]='"/post/" + lastPosts[0].slug'><span>{{lastPosts[0].titleText}}</span> <img
-                          *ngIf="lastPosts[0].isPremium" class="pe-0" src="/assets/images/premium-icon.svg"><img
-                          *ngIf="lastPosts[0].isHidePremium" class="pe-0" src="/assets/images/subscribed-icon.svg"></a>
+                      <a class="card-title-truncate" [routerLink]='"/post/" + lastPosts[0].slug'><span
+                          class="text-primary">{{lastPosts[0].titleText}}</span> <img *ngIf="lastPosts[0].isPremium"
+                          class="pe-0" src="/assets/images/premium-icon.svg"><img *ngIf="lastPosts[0].isHidePremium"
+                          class="pe-0" src="/assets/images/subscribed-icon.svg"></a>
                     </p>
                     <span class="card-text-truncate" [innerHTML]="lastPosts[0].excerptText| trustHtml"></span>
                   </div>
@@ -114,9 +115,10 @@
                         <bookmark *ngIf="currentUser" [post]="post"></bookmark>
                       </div>
                       <p class="h4">
-                        <a class="card-text-truncate" [routerLink]='"/post/" + post.slug'> <img *ngIf="post.isPremium"
-                            class="col-auto pe-1" src="/assets/images/premium-icon.svg"><img *ngIf="post.isHidePremium"
-                            class="pe-0" src="/assets/images/subscribed-icon.svg">{{post.titleText}}</a>
+                        <a class="card-text-truncate text-primary" [routerLink]='"/post/" + post.slug'> <img
+                            *ngIf="post.isPremium" class="col-auto pe-1" src="/assets/images/premium-icon.svg"><img
+                            *ngIf="post.isHidePremium" class="pe-0"
+                            src="/assets/images/subscribed-icon.svg">{{post.titleText}}</a>
                       </p>
                       <div class="row align-items-end">
                         <div class="col"> <span class="date-info fs-9 float-lg-end">
@@ -174,7 +176,7 @@
                 <div class="col-md-12">
                   <div class="section-title-block d-flex pb-3">
                     <h2 class="section-widget-title h3">Ile-de-France</h2>
-                    <a class="text-uppercase section-title-link" [routerLink]="'/post/department/'+idf.code">
+                    <a class="text-uppercase section-title-link" [routerLink]="'/post/department/'+idf.code + '/page' ">
                       Voir tous
                       <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path
@@ -234,8 +236,9 @@
 
                   <!-- Line 1 : image + title -->
                   <div class="d-flex align-items-center mb-2 row flex-row">
-                    <img src="assets/images/homepage/raide-comme-la-justice.png" alt="raide-comme-la-justice image"
-                      class="img-fluid h-100 col-4" style="max-width: 70px; object-fit: contain;" />
+                    <img src="assets/images/homepage/raide-comme-la-justice-hub-img.svg"
+                      alt="raide-comme-la-justice image" class="img-fluid h-100 col-4"
+                      style="max-width: 70px; object-fit: contain;" />
 
                     <div class="col p-0">
                       <p class="h6 card-truncate-1-line mb-0 flex-grow-1 text-light fs-7">
@@ -537,8 +540,9 @@
           <div *ngIf="podcasts && podcasts.length>0" class="row">
             <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-none d-sm-block">
               <div class="image-hover-style-1">
-                <a routerLink="/podcasts"> <img class="lazyload" src="assets/images/homepage/raide-comme-la-justice.png"
-                    alt="raide-comme-la-justice image" class="w-100"></a>
+                <a routerLink="/podcasts"> <img class="lazyload"
+                    src="assets/images/homepage/raide-comme-la-justice-hub-img.svg" alt="raide-comme-la-justice image"
+                    class="w-100"></a>
               </div>
             </div>
             <div *ngFor="let podcast of podcasts" class="col-12 col-sm-6 col-md-4 col-lg-3 mb-2 mb-md-0">

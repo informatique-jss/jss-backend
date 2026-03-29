@@ -31,9 +31,14 @@ import jakarta.persistence.Transient;
 @Table(indexes = { @Index(name = "idx_post_slug", columnList = "is_cancelled,slug", unique = true),
         @Index(name = "idx_post_author", columnList = "is_cancelled,id_author"),
         @Index(name = "idx_post_cancelled", columnList = "is_cancelled"),
-        @Index(name = "idx_post_publication_date", columnList = "is_cancelled,date")
+        @Index(name = "idx_post_publication_date", columnList = "is_cancelled,date"),
+        @Index(name = "idx_post_source", columnList = "source")
 })
 public class Post implements IId, Serializable {
+
+    public static final String SOURCE_JSS = "JSS";
+    public static final String SOURCE_MYJSS = "MYJSS";
+
     @Id
     @JsonView({ JacksonViews.OsirisListView.class, JacksonViews.MyJssDetailedView.class,
             JacksonViews.MyJssListView.class })
@@ -230,6 +235,10 @@ public class Post implements IId, Serializable {
     private List<PostView> postViews;
 
     private Integer characterNumber;
+
+    @JsonView({ JacksonViews.OsirisListView.class })
+    @Column(name = "source")
+    private String source;
 
     public Integer getId() {
         return id;
@@ -646,4 +655,13 @@ public class Post implements IId, Serializable {
     public void setIsStayOnTop(Boolean isStayOnTop) {
         this.isStayOnTop = isStayOnTop;
     }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
 }

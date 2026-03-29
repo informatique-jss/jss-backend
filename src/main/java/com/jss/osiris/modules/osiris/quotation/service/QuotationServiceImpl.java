@@ -674,9 +674,12 @@ public class QuotationServiceImpl implements QuotationService {
             for (String customerOrderStatusCode : customerOrderStatus) {
                 QuotationStatus customerOrderStatusFetched = quotationStatusService
                         .getQuotationStatusByCode(customerOrderStatusCode);
-                if (customerOrderStatusFetched != null
-                        && !customerOrderStatusFetched.getCode().equals(QuotationStatus.ABANDONED))
+                if (customerOrderStatusFetched != null)
                     quotationStatusToFilter.add(customerOrderStatusFetched);
+                if (customerOrderStatusFetched != null
+                        && customerOrderStatusFetched.getCode().equals(QuotationStatus.REFUSED_BY_CUSTOMER))
+                    quotationStatusToFilter.add(quotationStatusService
+                            .getQuotationStatusByCode(QuotationStatus.ABANDONED));
             }
 
             Responsable currentUser = employeeService.getCurrentMyJssUser();
@@ -701,7 +704,7 @@ public class QuotationServiceImpl implements QuotationService {
                     order = new Order(Direction.ASC, "createdDate");
 
                 if (sortBy.equals("statusAsc"))
-                    order = new Order(Direction.ASC, "customerOrderStatus");
+                    order = new Order(Direction.ASC, "quotationStatus");
 
                 Sort sort = Sort.by(Arrays.asList(order));
                 Pageable pageableRequest = PageRequest.of(page,

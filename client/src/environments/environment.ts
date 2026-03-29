@@ -7,6 +7,7 @@ export const environment = {
   hmr: true,
   backendUrl: "http://localhost:8080/",
   frontendUrl: "http://localhost:4200/",
+  frontendJSSUrl: "http://localhost:4201/",
   frontendMyJSSUrl: "http://localhost:4202/",
   frontendUrlV2: "http://localhost:4203/",
 };

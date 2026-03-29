@@ -44,5 +44,4 @@ public interface NotificationRepository extends QueryCacheCrudRepository<Notific
 
         List<Notification> findByEmployeeAndNotificationTypeAndQuotation(Employee toEmployee,
                         String notificationType, Quotation quotation);
-
 }

@@ -64,4 +64,6 @@ public interface AttachmentService {
         public List<Integer> getAttachmentsFromInvoices(List<Integer> invoiceIds) throws OsirisException;
 
         public byte[] downloadAllAttachmentsAsZip(List<Integer> invoicesIds) throws OsirisException;
+
+        public byte[] downloadLastInvoiceWithCreditNoteAsZip(CustomerOrder customerOrder) throws OsirisException;
 }

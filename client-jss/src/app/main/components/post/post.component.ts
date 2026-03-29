@@ -207,6 +207,10 @@ export class PostComponent implements OnInit, AfterViewInit {
       this.meta.updateTag({ property: 'og:description', content: this.post.excerptText });
       this.meta.updateTag({ property: 'og:url', content: environment.frontendUrl + "post/" + this.post.slug });
       this.meta.updateTag({ property: 'og:type', content: 'article' });
+      if (this.post && this.post.date) {
+        const dateString = new Date(this.post.date).toDateString();
+        this.meta.updateTag({ property: 'og:date', content: dateString });
+      }
     }
   }
 
@@ -494,5 +498,11 @@ export class PostComponent implements OnInit, AfterViewInit {
     this.audioService.seekTo(+value);
   }
 
+  buyUniquePost(postId: number) {
+    this.appService.openMyJssRoute(null, "/quotation/subscription/" + ONE_POST_SUBSCRIPTION + "/" + false + "/" + postId, true);
+  }
 
+  routeToSubscription() {
+    this.appService.openRoute(null, "subscription/", true);
+  }
 }

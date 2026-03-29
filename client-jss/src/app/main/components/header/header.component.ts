@@ -1,7 +1,7 @@
 import { Component, ElementRef, HostListener, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
-import { Subscription } from 'rxjs';
+import { forkJoin, of, Subscription } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { MY_JSS_HOME_ROUTE, MY_JSS_NEW_ANNOUNCEMENT_ROUTE, MY_JSS_NEW_FORMALITY_ROUTE, MY_JSS_SIGN_IN_ROUTE } from '../../../libs/Constants';
 import { capitalizeName } from '../../../libs/FormatHelper';
@@ -13,6 +13,7 @@ import { ConstantService } from '../../../services/constant.service';
 import { GoogleAnalyticsService } from '../../../services/googleAnalytics.service';
 import { PlatformService } from '../../../services/platform.service';
 import { AccountMenuItem, MAIN_ITEM_ACCOUNT, MAIN_ITEM_DASHBOARD } from '../../model/AccountMenuItem';
+import { IndexEntity } from '../../model/IndexEntity';
 import { JssCategory } from '../../model/JssCategory';
 import { Post } from '../../model/Post';
 import { PublishingDepartment } from '../../model/PublishingDepartment';
@@ -21,6 +22,7 @@ import { DepartmentService } from '../../services/department.service';
 import { IndexEntityService } from '../../services/index.entity.service';
 import { JssCategoryService } from '../../services/jss.category.service';
 import { LoginService } from '../../services/login.service';
+import { NewspaperService } from '../../services/newspaper.service';
 import { PostService } from '../../services/post.service';
 import { AvatarComponent } from '../avatar/avatar.component';
 
@@ -47,9 +49,12 @@ export class HeaderComponent implements OnInit {
 
   searchText: string = "";
   posts: Post[] | undefined;
+  newspapers: IndexEntity[] | undefined;
   searchObservableRef: Subscription | undefined;
 
   searchModalInstance: any | undefined;
+  isWithKiosk: boolean = false;
+  sortSearch: string = "rank";
 
   currentUser: Responsable | undefined;
 
@@ -76,13 +81,14 @@ export class HeaderComponent implements OnInit {
     private departmentService: DepartmentService,
     private jssCategoryService: JssCategoryService,
     private appService: AppService,
-    private indexEntityService: IndexEntityService,
     private loginService: LoginService,
     private modalService: NgbModal,
     private eRef: ElementRef,
     private plaformService: PlatformService,
     private constantService: ConstantService,
     private postService: PostService,
+    private newspaperService: NewspaperService,
+    private indexEntityService: IndexEntityService,
     private googleAnalyticsService: GoogleAnalyticsService
   ) { }
 
@@ -259,24 +265,39 @@ export class HeaderComponent implements OnInit {
   }
 
   globalSearch() {
+    this.newspapers = [];
     if (this.searchObservableRef)
       this.searchObservableRef.unsubscribe();
 
-    this.searchInProgress = true;
-    if (this.searchText && this.searchText.length > 2)
-      this.searchObservableRef = this.postService.searchForPost(this.searchText).subscribe(response => {
-        this.posts = [];
-        for (let postFound of response.content) {
-          if (postFound) {
-            this.posts.push(postFound);
+    if (this.searchText && this.searchText.length > 2) {
+      this.searchInProgress = true;
+
+      const posts$ = this.postService.searchForPost(this.searchText, this.sortSearch);
+      // If isWithKiosk is false, return an immediate stream containing empty content for newspapers
+      const newspapers$ = this.isWithKiosk ? this.indexEntityService.globalSearchForNewspaperPages(this.searchText, this.sortSearch) : of([]);
+
+      this.searchObservableRef = forkJoin({ postsRes: posts$, newspapersRes: newspapers$ }).subscribe({
+        next: (results) => {
+          this.posts = (results.postsRes?.content || []).filter((post: any) => !!post); // we filter posts that are not defined
+
+          if (this.isWithKiosk) {
+            this.newspapers = (results.newspapersRes || []).filter((newspaper: any) => !!newspaper); // we filter posts that are not defined
+            if (this.newspapers)
+              for (let newspaper of this.newspapers)
+                newspaper.text = JSON.parse(newspaper.text);
           }
+        },
+        error: () => {
+          this.searchInProgress = false;
+        },
+        complete: () => {
+          this.searchInProgress = false;
         }
-        this.searchInProgress = false;
-      })
+      });
+    }
   }
 
   openPost() {
     this.hideSearchModal();
   }
-
 }

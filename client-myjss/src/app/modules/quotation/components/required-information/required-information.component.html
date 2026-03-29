@@ -38,28 +38,6 @@
   </section>
 
   <section>
-    <div class="pb-3 row align-items-center"
-      *ngIf="selectedAssoIndex!=null && selectedServiceIndex!=null && quotation.assoAffaireOrders && quotation.assoAffaireOrders[selectedAssoIndex].affaire">
-      <strong class="col-auto">
-        <span>
-          {{quotation.assoAffaireOrders[selectedAssoIndex].affaire.siret?(quotation.assoAffaireOrders[selectedAssoIndex].affaire.siret
-          + ' - '):''}}{{
-          quotation.assoAffaireOrders[selectedAssoIndex].affaire.denomination
-          ?quotation.assoAffaireOrders[selectedAssoIndex].affaire.denomination :
-          (quotation.assoAffaireOrders[selectedAssoIndex].affaire.firstname+ ' ' +
-          quotation.assoAffaireOrders[selectedAssoIndex].affaire.lastname) }}
-          - {{quotation.assoAffaireOrders[selectedAssoIndex].affaire.address + ' '+
-          quotation.assoAffaireOrders[selectedAssoIndex].affaire.city.label }}
-          {{quotation.assoAffaireOrders[selectedAssoIndex].affaire.city.postalCode ?
-          ' '+ quotation.assoAffaireOrders[selectedAssoIndex].affaire.city.postalCode : ''}}
-        </span>
-      </strong>
-      <a class="btn btn-secondary rounded-pill mt-2 ms-0 ms-md-0 col-auto pill text-wrap text-break fs-xs"
-        *ngIf="quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex]">
-        {{quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].serviceLabelToDisplay }}
-      </a>
-    </div>
-
     <ng-container *ngIf="selectedAssoIndex!=null && selectedServiceIndex!=null && quotation.assoAffaireOrders && quotation.assoAffaireOrders[selectedAssoIndex] &&
        quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex]">
       <ul ngbNav #nav="ngbNav" [activeId]="40" class="nav-tabs flex-nowrap border-3 border-secondary"
@@ -121,7 +99,9 @@
                       [propertyName]="'isProofReadingDocument'+provision.order" [isDisabled]="false"></generic-toggle>
                   </div>
 
-                  <div [hidden]="!noticeTemplateDescription" class="row col-12 col-lg-6 form-check form-switch">
+                  <div
+                    [hidden]="getPossibleTemplates(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex]) == undefined"
+                    class="row col-12 col-lg-6 form-check form-switch">
                     <div class="row align-items-center">
                       <generic-toggle class="col-auto" [(model)]="noticeTemplateDescription!.isUsingTemplate"
                         label="Utiliser les modèles proposés pour la rédaction" [form]="informationForm"
@@ -927,32 +907,34 @@
           <ng-template ngbNavContent>
             <div
               *ngIf="currentUser && hasMandatoryDocuments(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments)"
-              class="quotation-container mb-4">
-              <h6 class="mb-3 d-flex align-items-center">
-                <i class="ai-paperclip pe-2"></i> Pièces obligatoires
+              class="updload-file-container mb-4">
+              <h6 class="d-flex align-items-center bg-white rounded-3 pb-3 pt-4 ps-3 m-0">
+                <i class="ai-paperclip pe-2 m-0"></i> Pièces obligatoires
               </h6>
-              <div class="mb-3"
-                *ngFor="let assoServiceDocument of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments; let i = index">
-                <ng-container *ngIf="assoServiceDocument.isMandatory">
+              <div
+                *ngFor="let assoServiceDocument of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments; let i = index; let last = last">
+                <div *ngIf="assoServiceDocument.isMandatory" class="quotation-container"
+                  [ngClass]="{'mb-0 rounded-bottom-3': isLastMandatoryDocument(assoServiceDocument), 'mb-3':!isLastMandatoryDocument(assoServiceDocument)}">
                   <quotation-file-uploader [entity]="assoServiceDocument"
                     (isUploadComplete)="onIsCompleteChange($event, selectedAssoIndex, selectedServiceIndex, i, assoServiceDocument)"
                     (isUploadDeleted)="onIsUploadDelete($event, selectedAssoIndex, selectedServiceIndex, i, assoServiceDocument)"></quotation-file-uploader>
-                </ng-container>
+                </div>
               </div>
             </div>
             <div
               *ngIf="currentUser && hasNonMandatoryDocuments(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments)"
-              class="quotation-container mb-4">
-              <h6 class="mb-3 d-flex align-items-center">
-                <i class="ai-paperclip pe-2"></i> Pièces optionnelles
+              class="updload-file-container mb-4">
+              <h6 class="d-flex align-items-center bg-white rounded-3 pb-3 pt-4 ps-3 m-0">
+                <i class="ai-paperclip pe-2 m-0"></i> Pièces facultatives
               </h6>
-              <div class="mb-3"
-                *ngFor="let assoServiceDocument of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments; let i = index">
-                <ng-container *ngIf="!assoServiceDocument.isMandatory">
+              <div
+                *ngFor="let assoServiceDocument of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments; let i = index; let last = last">
+                <div *ngIf="!assoServiceDocument.isMandatory" class="quotation-container"
+                  [ngClass]="{'mb-0 rounded-bottom-3': last, 'mb-3':!last}">
                   <quotation-file-uploader [entity]="assoServiceDocument"
                     (isUploadComplete)="onIsCompleteChange($event, selectedAssoIndex, selectedServiceIndex, i, assoServiceDocument)"
                     (isUploadDeleted)="onIsUploadDelete($event, selectedAssoIndex, selectedServiceIndex, i, assoServiceDocument)"></quotation-file-uploader>
-                </ng-container>
+                </div>
               </div>
             </div>
           </ng-template>

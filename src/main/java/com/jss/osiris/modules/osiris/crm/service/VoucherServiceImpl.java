@@ -96,14 +96,17 @@ public class VoucherServiceImpl implements VoucherService {
         Integer voucherUsesTotal = 0;
         Responsable responsableQuotation = null;
 
-        if (voucher.getIsCancelled())
-            return null;
+        if (voucher == null)
+            throw new OsirisClientMessageException("Coupon non valide");
+
+        if (voucher != null && voucher.getIsCancelled())
+            throw new OsirisClientMessageException("Coupon expiré");
 
         if (employeeService.getCurrentMyJssUser() != null) {
             responsableQuotation = employeeService.getCurrentMyJssUser();
         }
 
-        if (!voucher.getResponsables().isEmpty()) {
+        if (voucher != null && !voucher.getResponsables().isEmpty()) {
             if (responsableQuotation == null)
                 return null;
 
@@ -127,8 +130,8 @@ public class VoucherServiceImpl implements VoucherService {
 
         voucherUsesTotal = customerOrderService.getCustomerOrdersByVoucherAndResponsable(voucher, null).size();
 
-        if ((voucher.getPerUserLimit() != null && voucherUsesPerResponsable >= voucher.getPerUserLimit() - 1)
-                || (voucher.getTotalLimit() != null && voucherUsesTotal >= voucher.getTotalLimit() - 1))
+        if ((voucher.getPerUserLimit() != null && voucherUsesPerResponsable >= voucher.getPerUserLimit())
+                || (voucher.getTotalLimit() != null && voucherUsesTotal >= voucher.getTotalLimit()))
             return null;
 
         quotation.setVoucher(voucher);

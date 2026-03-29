@@ -16,7 +16,9 @@
 
       <div class="text-window">
         <span class="scroll-text">
-          Commande n°{{iQuotationId}}
+          {{ commentListByIQuotation[iQuotationId] &&
+          commentListByIQuotation[iQuotationId].length > 0 &&
+          commentListByIQuotation[iQuotationId][0].isQuotation ? "Devis " : "Commande " }} n°{{iQuotationId}}
           {{(commentListByIQuotation[iQuotationId] &&
           commentListByIQuotation[iQuotationId].length > 0 &&
           commentListByIQuotation[iQuotationId][0].currentCustomer) ?

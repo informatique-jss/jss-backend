@@ -99,6 +99,7 @@ export class OrderDetailsComponent implements OnInit {
   currentDate = new Date();
   pollingInterval: any;
   isAlreadyScrolledOnceToMessages: boolean = false;
+  orderId: number | undefined;
 
   private destroy$ = new Subject<void>();
 
@@ -146,60 +147,64 @@ export class OrderDetailsComponent implements OnInit {
     this.billingLabelTypeCodeAffaire = this.constantService.getBillingLabelTypeCodeAffaire();
     this.documentTypeBilling = this.constantService.getDocumentTypeBilling();
 
-    this.refreshOrder();
+    this.activatedRoute.params.subscribe(params => {
+      this.orderId = params['id'];
+      if (this.orderId) {
+        this.refreshOrder();
+      }
+    });
   }
 
   refreshOrder() {
-    const orderId = this.activatedRoute.snapshot.params['id'];
-
-    this.customerOrderService.getCustomerOrder(orderId).pipe(
-      tap(order => {
-        this.order = order;
-        if (order) {
-          this.customerOrderCommentService.setWatchedOrder(order.id);
+    if (this.orderId)
+      this.customerOrderService.getCustomerOrder(this.orderId).pipe(
+        tap(order => {
+          this.order = order;
+          if (order) {
+            this.customerOrderCommentService.setWatchedOrder(order.id);
+          }
+        }),
+        filter(order => !!order),
+        switchMap(order => {
+          // Execute all order dependencies in parallel
+          return forkJoin({
+            assoAffaires: this.assoAffaireOrderService.getAssoAffaireOrdersForCustomerOrder(order),
+            invoiceLabel: this.invoiceLabelResultService.getInvoiceLabelComputeResultForCustomerOrder(order.id),
+            mailBilling: this.mailComputeResultService.getMailComputeResultForBillingForCustomerOrder(order.id),
+            digitalMail: this.mailComputeResultService.getMailComputeResultForDigitalForCustomerOrder(order),
+            physicalMail: this.invoiceLabelResultService.getPhysicalMailComputeResultForBillingForCustomerOrder(order),
+            payments: this.paymentService.getApplicablePaymentsForCustomerOrder(order),
+            summary: this.invoicingSummaryService.getInvoicingSummaryForCustomerOrder(order.id),
+            initialComments: this.customerOrderCommentService.getCustomerOrderCommentsForCustomer(order.id),
+            user: this.loginService.getCurrentUser(),
+            quotation: this.quotationService.getQuotationForCustomerOrder(order.id)
+          });
+        }),
+        takeUntil(this.destroy$)
+      ).subscribe((res) => {
+        this.ordersAssoAffaireOrders = res.assoAffaires;
+        if (this.ordersAssoAffaireOrders?.length > 0) {
+          this.changeAffaire(this.ordersAssoAffaireOrders[0]);
+          if (this.ordersAssoAffaireOrders[0].services?.length > 0)
+            this.loadServiceDetails(this.ordersAssoAffaireOrders[0].services[0], false);
         }
-      }),
-      filter(order => !!order),
-      switchMap(order => {
-        // Execute all order dependencies in parallel
-        return forkJoin({
-          assoAffaires: this.assoAffaireOrderService.getAssoAffaireOrdersForCustomerOrder(order),
-          invoiceLabel: this.invoiceLabelResultService.getInvoiceLabelComputeResultForCustomerOrder(order.id),
-          mailBilling: this.mailComputeResultService.getMailComputeResultForBillingForCustomerOrder(order.id),
-          digitalMail: this.mailComputeResultService.getMailComputeResultForDigitalForCustomerOrder(order),
-          physicalMail: this.invoiceLabelResultService.getPhysicalMailComputeResultForBillingForCustomerOrder(order),
-          payments: this.paymentService.getApplicablePaymentsForCustomerOrder(order),
-          summary: this.invoicingSummaryService.getInvoicingSummaryForCustomerOrder(order.id),
-          initialComments: this.customerOrderCommentService.getCustomerOrderCommentsForCustomer(order.id),
-          user: this.loginService.getCurrentUser(),
-          quotation: this.quotationService.getQuotationForCustomerOrder(order.id)
-        });
-      }),
-      takeUntil(this.destroy$)
-    ).subscribe((res) => {
-      this.ordersAssoAffaireOrders = res.assoAffaires;
-      if (this.ordersAssoAffaireOrders?.length > 0) {
-        this.changeAffaire(this.ordersAssoAffaireOrders[0]);
-        if (this.ordersAssoAffaireOrders[0].services?.length > 0)
-          this.loadServiceDetails(this.ordersAssoAffaireOrders[0].services[0], false);
-      }
 
-      this.orderInvoiceLabelResult = res.invoiceLabel;
-      this.orderMailComputeResult = res.mailBilling;
-      this.digitalMailComputeResult = res.digitalMail;
-      this.orderPhysicalMailComputeResult = res.physicalMail;
-      this.orderPayments = res.payments;
-      this.invoiceSummary = res.summary;
-      this.comments = res.initialComments || [];
-      this.currentUser = res.user;
+        this.orderInvoiceLabelResult = res.invoiceLabel;
+        this.orderMailComputeResult = res.mailBilling;
+        this.digitalMailComputeResult = res.digitalMail;
+        this.orderPhysicalMailComputeResult = res.physicalMail;
+        this.orderPayments = res.payments;
+        this.invoiceSummary = res.summary;
+        this.comments = res.initialComments || [];
+        this.currentUser = res.user;
 
-      if (res.quotation?.id)
-        this.associatedQuotation = res.quotation;
+        if (res.quotation?.id)
+          this.associatedQuotation = res.quotation;
 
-      this.checkDisplayPayButton();
+        this.checkDisplayPayButton();
 
-      this.initiateUnreadCommentsPolling();
-    });
+        this.initiateUnreadCommentsPolling();
+      });
   }
 
   private checkDisplayPayButton() {
@@ -291,7 +296,7 @@ export class OrderDetailsComponent implements OnInit {
         }
 
       // Waiting for validation date
-      if (!isWaintingForValidationPartnerDateInserted) {
+      if (!isWaintingForValidationPartnerDateInserted && guDepositInfo.waitingForValidationFromDate) {
         stepperObjects.push({ date: guDepositInfo.waitingForValidationFromDate, stepperType: "waiting_validation", waitingForValidationPartnerCenterName: guDepositInfo.waitingForValidationPartnerCenterName });
       }
 
@@ -440,11 +445,6 @@ export class OrderDetailsComponent implements OnInit {
         this.refreshOrder();
       });
     }
-  }
-
-  goToJssAnnouncement(service: Service, event: any) {
-    if (service && service.jssAnnouncementId)
-      this.appService.openJssRoute(event, "announcement/" + service.jssAnnouncementId, true);
   }
 
   ngOnDestroy() {

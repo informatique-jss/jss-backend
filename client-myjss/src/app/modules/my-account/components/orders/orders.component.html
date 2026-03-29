@@ -124,12 +124,12 @@
       </div>
 
       <div ngbAccordion [closeOthers]="true">
-        <div ngbAccordionItem *ngFor="let order of orders" (show)="loadOrderDetails(order)">
+        <div ngbAccordionItem #accordionItem="ngbAccordionItem" *ngFor="let order of orders"
+          (show)="loadOrderDetails(order)">
           <h2 ngbAccordionHeader>
             <button ngbAccordionButton class="border-top">
               <div class="container-fluid">
-                <div class="row g-2 w-100">
-
+                <div *ngIf="accordionItem.collapsed" class="row g-2 w-100">
                   <div class="col-12 col-sm-2 d-flex align-items-center flex-column">
                     <div class="fs-sm text-body-secondary fw-bold text-center">
                       n°{{order.id}}
@@ -169,6 +169,149 @@
                     <div class="fs-sm fw-medium text-dark">
                       {{order.responsable.firstname}}
                       {{order.responsable.lastname}}</div>
+                  </div>
+                </div>
+                <div *ngIf="!accordionItem.collapsed " class="row g-2 w-100">
+                  <div class="row g-2 w-100 mb-3 justify-content-between">
+                    <div class="col-12 col-sm-auto d-flex align-items-center">
+                      <div class="fs-xl fw-bold">
+                        n°{{order.id}}
+                        <i class="ai-triangle-alert fs-base text-danger ms-2" style="-webkit-text-stroke: 1px;"
+                          placement="right" *ngIf="order.hasMissingInformations"
+                          ngbTooltip="Des renseignements complémentaires sont nécessaires : veuillez vous reporter au détail de la commande"></i>
+                      </div>
+                      <span class="badge bg-opacity-10 fs-xs text-wrap ms-3"
+                        [ngClass]="getClassForCustomerOrderStatus(order)" style="white-space: normal;">
+                        {{getCustomerOrderStatusLabel(order)}}
+                      </span>
+                    </div>
+                    <!-- Action buttons -->
+                    <div class="col-12 col-sm-auto" *ngIf="!expandedOrder">
+                      <div class="row gap-1">
+                        <div class="spinner-grow text-primary mt-2" role="status">
+                          <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <div class="spinner-grow text-primary mt-2" role="status">
+                          <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <div class="spinner-grow text-primary mt-2" role="status">
+                          <span class="visually-hidden">Loading...</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-auto" *ngIf="expandedOrder">
+                      <div class="row gap-1">
+                        <div *ngIf="expandedOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_DRAFT"
+                          class="col-auto p-0">
+                          <button type="button" class="btn btn-primary btn-icon rounded-circle" aria-label="Edit"
+                            placement="top" ngbTooltip="Reprenez votre brouillon."
+                            (click)=" $event.stopPropagation(); resumeDraft(expandedOrder.id, $event); $event.preventDefault();">
+                            <i class="ai-edit-alt"></i>
+                          </button>
+                        </div>
+                        <div class="col-auto p-0">
+                          <button type="button" class="btn btn-primary btn-icon rounded-circle" aria-label="see"
+                            placement="top" ngbTooltip="Consultez le détail de votre commande."
+                            [routerLink]='"/account/orders/details/" + expandedOrder.id'>
+                            <i class="ai-show"></i>
+                          </button>
+                        </div>
+                        <!-- TODO : En attente retour discussion AMOA/Alex -->
+                        <ng-template *ngFor="let asso of expandedOrder.assoAffaireOrders">
+                          <div *ngFor="let service of asso.services" class="col-auto p-0">
+                            <button type="button" class="btn btn-primary btn-icon rounded-circle" aria-label="see"
+                              placement="top"
+                              [ngbTooltip]="'Consultez votre annonce légale : ' + asso.affaire.denomination + ' - ' "
+                              (click)="$event.stopPropagation(); goToJssAnnouncement(service, $event ); $event.preventDefault();">
+                              <i class="ai-search"></i>
+                            </button>
+                          </div>
+                        </ng-template>
+                        <div
+                          *ngIf="order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT 
+                          || order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BEING_PROCESSED 
+                          || order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED && !expandedOrder.isPayed "
+                          class="col-auto p-0">
+                          <button type="button" class="btn btn-primary btn-icon rounded-circle" aria-label="deposit"
+                            placement="top" ngbTooltip="Payer un acompte."
+                            [routerLink]=' "/account/order/pay/" + expandedOrder.id'>
+                            <i class="ai-card"></i>
+                          </button>
+                        </div>
+                        <div
+                          *ngIf="expandedOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED && !expandedOrder.isPayed "
+                          class="col-auto p-0">
+                          <button type="button" class="btn btn-primary btn-icon rounded-circle" aria-label="bill"
+                            placement="top" ngbTooltip="Payer votre facture."
+                            [routerLink]=' "/account/order/pay/" + order.id'>
+                            <i class="ai-dollar fs-xs position-absolute"></i>
+                            <i class="ai-file fs-xl position-absolute"></i>
+                          </button>
+                        </div>
+                        <div *ngIf="expandedOrder.customerOrderStatus.code != CUSTOMER_ORDER_STATUS_DRAFT"
+                          class="col-auto p-0">
+                          <button type="button" class="btn btn-primary btn-icon rounded-circle" aria-label="order"
+                            placement="top" ngbTooltip="Téléchargez votre Bon de commande."
+                            (click)="$event.stopPropagation(); getPurchaseOrderAttachment(expandedOrder); $event.preventDefault();">
+                            <i class="ai-cloud-download"></i>
+                          </button>
+                        </div>
+                        <div *ngIf="expandedOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED 
+                            || expandedOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_PAYED"
+                          class="col-auto p-0">
+                          <button type="button" class="btn btn-primary btn-icon rounded-circle"
+                            (click)="$event.stopPropagation(); downloadInvoice(order); $event.preventDefault();"
+                            aria-label="download-bill" placement="top" ngbTooltip="Téléchargez votre facture.">
+                            <i class="ai-arrow-down fs-xs position-absolute"></i>
+                            <i class="ai-file fs-xl position-absolute"></i>
+                          </button>
+                        </div>
+                        <div *ngIf="expandedOrder.hasCreditNote && 
+                        (expandedOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED 
+                          || expandedOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_PAYED
+                          || expandedOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED)"
+                          class="col-auto p-0">
+                          <button
+                            (click)="$event.stopPropagation(); downloadLastInvoiceAndCreditNote(expandedOrder); $event.preventDefault();"
+                            type="button" class="btn btn-primary btn-icon rounded-circle" aria-label="download-bills"
+                            placement="top" ngbTooltip="Téléchargez votre avoir et la facture qui y est associée.">
+                            <i class="ai-arrow-down fs-xs position-absolute"></i>
+                            <i class="ai-folder fs-xl position-absolute"></i>
+                          </button>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                  <div class="row g-2 w-100">
+                    <div class="col-12 col-sm-3">
+                      <div class="fs-sm text-body-secondary fw-bold mb-1">Date de commande</div>
+                      <div class="fs-sm fw-medium text-dark">
+                        {{order.createdDate | date:'dd/MM/yyyy'}}
+                      </div>
+                    </div>
+
+                    <div class="col-12 col-sm-3">
+                      <div class="fs-sm text-body-secondary fw-bold mb-1">Affaire</div>
+                      <div class="fs-sm fw-medium text-dark">
+                        {{capitalizeName(order.affairesList)}}
+                      </div>
+                    </div>
+
+                    <div class="col-12 col-sm-3">
+                      <div class="fs-sm text-body-secondary fw-bold mb-1">Services</div>
+                      <div class="fs-sm fw-medium text-dark">
+                        {{order.servicesList}}
+                      </div>
+                    </div>
+
+                    <div class="col-12 col-sm-3"
+                      *ngIf="order.responsable && responsablesForCurrentUser && responsablesForCurrentUser.length>0">
+                      <div class="fs-sm text-body-secondary mb-2">Responsable</div>
+                      <div class="fs-sm fw-medium text-dark">
+                        {{order.responsable.firstname}}
+                        {{order.responsable.lastname}}</div>
+                    </div>
                   </div>
                 </div>
               </div>

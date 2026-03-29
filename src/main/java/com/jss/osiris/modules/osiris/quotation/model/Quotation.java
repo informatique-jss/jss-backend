@@ -164,7 +164,6 @@ public class Quotation implements IQuotation {
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
 			JacksonViews.OsirisListView.class,
 			JacksonViews.OsirisDetailedView.class })
-
 	public String servicesList;
 
 	@Transient

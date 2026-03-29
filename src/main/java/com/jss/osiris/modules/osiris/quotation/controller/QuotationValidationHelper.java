@@ -139,6 +139,23 @@ public class QuotationValidationHelper {
                                 quotation = quotationService.getQuotation(quotation.getId());
                 }
 
+                // when order from myjss, check if billing document is not type 'other'
+                if (quotation.getCustomerOrderOrigin() != null && quotation.getCustomerOrderOrigin().getId()
+                                .equals(constantService.getCustomerOrderOriginMyJss().getId())) {
+                        if (quotation.getDocuments() != null) {
+                                for (Document document : quotation.getDocuments()) {
+                                        if (document.getDocumentType().getId()
+                                                        .equals(constantService.getDocumentTypeBilling().getId())
+                                                        && document.getBillingLabelType().getId()
+                                                                        .equals(constantService
+                                                                                        .getBillingLabelTypeOther()
+                                                                                        .getId()))
+                                                throw new OsirisException(null,
+                                                                "Wrong billingLabelType 'Other' for DocumentType 'Billing'");
+                                }
+                        }
+                }
+
                 if (quotation.getId() == null && quotation.getCustomerOrderOrigin() == null) {
                         quotation.setCreatedDate(LocalDateTime.now());
 

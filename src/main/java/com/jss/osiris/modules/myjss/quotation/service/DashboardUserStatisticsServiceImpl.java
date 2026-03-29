@@ -124,7 +124,7 @@ public class DashboardUserStatisticsServiceImpl implements DashboardUserStatisti
                 if (invoiceToPay != null && invoiceToPay.size() > 0)
                         for (Invoice invoice : invoiceToPay)
                                 if (invoice.getDueDate().isBefore(LocalDate.now()))
-                                        statistics.setInvoiceToPay(statistics.getInvoiceToPay() + 1);
+                                        statistics.setInvoiceToPay(statistics.getInvoiceToPay());
 
                 // compute customerOrderDraft
                 statistics.setCustomerOrderDraft(0);

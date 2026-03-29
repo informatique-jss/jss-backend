@@ -89,6 +89,7 @@ import { ChipsProvisionFamilyTypeComponent } from '../forms/chips-provision-fami
 import { ChipsResponsableComponent } from '../forms/chips-responsable/chips-responsable.component';
 import { ChipsServiceTypeComponent } from '../forms/chips-service-type/chips-service-type.component';
 import { ChipsSpecialOffersComponent } from '../forms/chips-special-offers/chips-special-offers.component';
+import { ChipsTiersGroupComponent } from '../forms/chips-tiers-group/chips-tiers-group.component';
 import { ChipsTypeDocumentComponent } from '../forms/chips-type-document/chips-type-document.component';
 import { GenericCheckboxComponent } from '../forms/generic-checkbox/generic-checkbox.component';
 import { GenericChipsInputComponent } from '../forms/generic-chips-input/generic-chips-input.component';
@@ -319,6 +320,7 @@ const routes: Routes = [
     SelectAccountingAccountClassComponent,
     SelectCompetentAuthorityTypeComponent,
     ChipsCompetitorComponent,
+    ChipsTiersGroupComponent,
     SelectBillingItemsComponent,
     SelectJournalTypeComponent,
     TrustHtmlPipe,
@@ -632,6 +634,7 @@ const routes: Routes = [
     SelectBusinessSectorComponent,
     SelectCompanySizeComponent,
     SelectRejectionCauseComponent,
+    ChipsTiersGroupComponent
   ], providers: [
     { provide: DateAdapter, useClass: CustomDateAdapter }
     , SortTableComponent

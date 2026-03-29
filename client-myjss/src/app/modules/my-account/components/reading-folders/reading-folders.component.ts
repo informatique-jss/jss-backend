@@ -22,7 +22,7 @@ export class ReadingFoldersComponent implements OnInit {
   readingFolders: ReadingFolder[] = [];
   newReadingFolder: ReadingFolder = {} as ReadingFolder;
 
-  folderToDelete: ReadingFolder | undefined;
+  activeFolder: ReadingFolder = {} as ReadingFolder;
   readingFolderForm!: FormGroup;
 
   purchasedPosts: Post[] = [];
@@ -61,7 +61,12 @@ export class ReadingFoldersComponent implements OnInit {
   }
 
   openDeletionModal(content: any, folder: ReadingFolder) {
-    this.folderToDelete = folder;
+    this.activeFolder = folder;
+    this.modalService.open(content, { centered: true, size: 'md' });
+  }
+
+  openEditionModal(content: any, folder: ReadingFolder) {
+    this.activeFolder = folder;
     this.modalService.open(content, { centered: true, size: 'md' });
   }
 
@@ -85,4 +90,14 @@ export class ReadingFoldersComponent implements OnInit {
         this.readingFolders.splice(this.readingFolders.indexOf(readingFolder), 1);
     });
   }
+
+  editReadingFolder() {
+    if (this.activeFolder && this.activeFolder.label.length > 0) {
+      this.readingFolderService.createReadingFolder(this.activeFolder).subscribe(response => {
+        if (response)
+          this.activeFolder = response;
+      });
+    }
+  }
+
 }

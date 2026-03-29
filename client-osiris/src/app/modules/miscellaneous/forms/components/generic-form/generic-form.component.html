@@ -30,7 +30,7 @@
   <label [for]="fieldName" class="form-label">{{ label }}</label>
   <select [id]="fieldName" [ngClass]="{'is-invalid':errors && errors.length>0}" class="form-select"
     [compareWith]="compareById" [formControlName]="fieldName">
-    <option ngValue="">Selectionnez</option>
+    <option [ngValue]="emptyFilter">Selectionnez</option>
     @for (selectValue of selectValues; track selectValue.id) {
     <option [ngValue]="selectValue">{{displayLabel(selectValue, selectType)}}</option>
     }

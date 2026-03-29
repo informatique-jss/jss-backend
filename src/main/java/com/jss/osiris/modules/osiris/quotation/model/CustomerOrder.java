@@ -323,6 +323,10 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 	private String lastGaClientId;
 	private String gaSessionId;
 
+	@Transient
+	@JsonView(JacksonViews.MyJssDetailedView.class)
+	private Boolean hasCreditNote;
+
 	public Integer getId() {
 		return id;
 	}
@@ -746,6 +750,14 @@ public class CustomerOrder implements IQuotation, ICreatedDate {
 
 	public void setIsFromAnnouncementMailbox(Boolean isFromAnnouncementMailbox) {
 		this.isFromAnnouncementMailbox = isFromAnnouncementMailbox;
+	}
+
+	public Boolean getHasCreditNote() {
+		return hasCreditNote;
+	}
+
+	public void setHasCreditNote(Boolean hasCreditNote) {
+		this.hasCreditNote = hasCreditNote;
 	}
 
 	public String getGaSessionId() {

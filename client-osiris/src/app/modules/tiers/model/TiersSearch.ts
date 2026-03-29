@@ -1,4 +1,6 @@
 import { Employee } from "../../profile/model/Employee";
+import { TiersCategory } from "../../profile/model/TiersCategory";
+import { TiersGroup } from "../../profile/model/TiersGroup";
 
 export interface TiersSearch {
   salesEmployee: Employee;
@@ -8,5 +10,6 @@ export interface TiersSearch {
   kpis: any;
   startDateKpis: Date;
   endDateKpis: Date;
-  tiersCategory: string;
+  tiersCategory: TiersCategory;
+  tiersGroup: TiersGroup;
 }

@@ -8,7 +8,7 @@
             propertyName="isDisplayActiveVoucher" (modelChange)="getAllVouchers()"></generic-toggle>
         </td>
 
-        <td class="fab-td-button">
+        <td class="fab-td-button" *ngIf="canCreateVoucher()">
           <button mat-mini-fab color="warn" matTooltip="Créer un coupon" (click)="createVoucher()" class="add-button">
             <mat-icon>add</mat-icon>
           </button>

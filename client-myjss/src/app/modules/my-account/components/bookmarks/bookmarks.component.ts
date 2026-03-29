@@ -66,4 +66,8 @@ export class BookmarksComponent implements OnInit {
           post.isBookmarked = true;
       });
   }
+
+  goBackToFolders(event: any) {
+    this.appService.openRoute(event, "/account/reading-folders", undefined);
+  }
 }

@@ -63,11 +63,13 @@ export class AffairesComponent implements OnInit {
 
   ngOnInit() {
     this.affaireForm = this.formBuilder.group({});
-    this.inputIdAffaire = this.activatedRoute.snapshot.params['idAffaire'];
-    if (this.inputIdAffaire && this.inputIdAffaire > 0) {
-      this.searchText = this.inputIdAffaire + "";
-      return;
-    }
+    this.activatedRoute.params.subscribe(params => {
+      this.inputIdAffaire = params['idAffaire'];
+      if (this.inputIdAffaire && this.inputIdAffaire > 0) {
+        this.searchText = this.inputIdAffaire + "";
+        return;
+      }
+    });
 
     this.appService.showLoadingSpinner();
     this.responsableService.getResponsablesForCurrentUser().subscribe(response => {

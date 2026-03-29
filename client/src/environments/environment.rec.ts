@@ -3,5 +3,6 @@ export const environment = {
   backendUrl: "http://rec-server.osiris.jss.fr/",
   frontendUrl: "http://rec.osiris.jss.fr/",
   frontendUrlV2: "http://rec-v2.osiris.jss.fr/",
-  frontendMyJSSUrl: "http://rec.my.jss.fr/"
+  frontendMyJSSUrl: "http://rec.my.jss.fr/",
+  frontendJSSUrl: "http://rec.jss.fr/"
 };

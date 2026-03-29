@@ -67,7 +67,7 @@ export const routes: Routes = [
         ]
       },
       {
-        path: 'post/department/:code',
+        path: 'post/department/:code/page',
         loadComponent: () => import('./main/components/post-department-header/post-department-header.component').then(m => m.PostDepartmentHeaderComponent),
         children: [
           {
