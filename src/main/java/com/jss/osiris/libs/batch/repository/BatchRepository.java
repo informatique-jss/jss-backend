@@ -3,6 +3,7 @@ package com.jss.osiris.libs.batch.repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -20,6 +21,8 @@ public interface BatchRepository extends CrudRepository<Batch, Integer> {
                         BatchStatus batchStatusByCode);
 
         List<Batch> findByBatchSettingsAndBatchStatus(BatchSettings batchSetting, BatchStatus batchStatus);
+
+        List<Batch> findByBatchSettingsAndBatchStatus(BatchSettings batchSetting, BatchStatus batchStatus, Pageable pageableRequest);
 
         List<Batch> findByBatchSettingsAndEntityIdAndBatchStatusIn(BatchSettings batchSetting, Integer entityId,
                         List<BatchStatus> batchStatus);

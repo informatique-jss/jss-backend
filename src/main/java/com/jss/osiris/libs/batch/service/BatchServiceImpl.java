@@ -11,6 +11,8 @@ import java.util.concurrent.Future;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextClosedEvent;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -106,8 +108,9 @@ public class BatchServiceImpl implements BatchService, ApplicationListener<Conte
                         lastBatchCheck.put(batchSetting.getId(), LocalDateTime.now());
                         int numberAdded = 0;
 
+                         Pageable pageableRequest = PageRequest.of(0, 1000);
                         List<Batch> batchs = batchRepository.findByBatchSettingsAndBatchStatus(batchSetting,
-                                batchStatusService.getBatchStatusByCode(BatchStatus.NEW));
+                                batchStatusService.getBatchStatusByCode(BatchStatus.NEW),pageableRequest);
                         if (batchs != null && batchs.size() > 0)
                             for (Batch batch : batchs)
                                 if (!entityCurrentlyRunning(batch))
