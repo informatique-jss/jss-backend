@@ -77,12 +77,14 @@
                     <tr>
                         <td th:if="${billingDocument!=null} and ${billingDocument.isRecipientClient}">
                             <span th:text="${responsable.firstname}+' ' +${responsable.lastname}"></span><br />
-                            <span th:if="${responsable.address}" th:text="${responsable.address}"></span><br />
-                            <span><span th:if="${responsable.postalCode!=null}"
-                                    th:text="${responsable.postalCode}"></span> <span th:if="${responsable.city!=null}"
-                                    th:text="${responsable.city.label}"></span><span
-                                    th:if="${responsable.cedexComplement}"
-                                    th:text="${responsable.cedexComplement}"></span></span>
+                            <span th:if="${responsable.tiers} ${responsable.tiers.adress!=null}"
+                                th:text="${responsable.tiers.address}"></span><br />
+                            <span><span th:if="${responsable.tiers.postalCode!=null}"
+                                    th:text="${responsable.tiers.postalCode}"></span> <span
+                                    th:if="${responsable.tiers.city!=null}"
+                                    th:text="${responsable.tiers.city.label}"></span><span
+                                    th:if="${responsable.tiers.cedexComplement}"
+                                    th:text="${responsable.tiers.cedexComplement}"></span></span>
                         </td>
                         <td
                             th:if="${billingDocument!=null} and ${billingDocument.isRecipientAffaire} and ${assos!=null} and ${assos[0]!=null} and ${assos[0].affaire!=null}">
