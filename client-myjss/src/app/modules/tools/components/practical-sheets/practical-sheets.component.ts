@@ -77,6 +77,7 @@ export class PracticalSheetsComponent implements OnInit {
     private meta: Meta,
     private gtmService: GtmService,
     private constantService: ConstantService,
+    private activeRoute: ActivatedRoute,
     private platformService: PlatformService
   ) { }
 
@@ -107,6 +108,11 @@ export class PracticalSheetsComponent implements OnInit {
       }
     });
 
+    if (this.activeRoute.snapshot.params['seoPageForPosts'] >= 0) {
+      this.currentSeoPageNumber = Number(this.activeRoute.snapshot.params['seoPageForPosts']);
+    } else {
+      this.currentSeoPageNumber = 0;
+    }
     this.postService.searchMyJssPostsByCategory("", this.categoryArticle, this.currentSeoPageNumber, 10).subscribe(res => {
       this.allPostsForSeo = res.content;
     });
@@ -239,23 +245,6 @@ export class PracticalSheetsComponent implements OnInit {
       if (this.autocomplePost)
         this.autocomplePost.triggerSearch(this.searchText);
     }
-  }
-
-  /**********  SEO methods ***********/
-  searchNextSeoPage() {
-    if (this.categoryArticle)
-      this.postService.searchMyJssPostsByCategory("", this.categoryArticle, this.currentSeoPageNumber + 1, 10).subscribe(res => {
-        this.allPostsForSeo = res.content;
-        this.currentSeoPageNumber = this.currentSeoPageNumber + 1;
-      });
-  }
-
-  searchPreviousSeoPage() {
-    if (this.categoryArticle && this.currentSeoPageNumber)
-      this.postService.searchMyJssPostsByCategory("", this.categoryArticle, this.currentSeoPageNumber - 1, 10).subscribe(res => {
-        this.allPostsForSeo = res.content;
-        this.currentSeoPageNumber = this.currentSeoPageNumber - 1;
-      });
   }
 
   /**************** posts carousel ***********************/

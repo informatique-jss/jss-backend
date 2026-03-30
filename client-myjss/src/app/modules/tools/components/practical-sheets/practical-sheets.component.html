@@ -298,18 +298,16 @@
 
   <!-- For SEO purpose only -->
   <ng-container *ngIf="isServer">
-    <div>
-      <div class="row">
-        <div class="col-12" *ngFor="let post of allPostsForSeo">
-          <li>
-            <a [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
-          </li>
-        </div>
+    <div class="row">
+      <div class="col-12" *ngFor="let post of allPostsForSeo">
+        <li>
+          <a [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
+        </li>
       </div>
     </div>
     <div>
-      <a (click)="searchPreviousSeoPage()">Page précédente</a>
-      <a (click)="searchNextSeoPage()">Page suivante</a>
+      <a [href]="'/tools/practical-sheets/page/'+(currentSeoPageNumber - 1)">Page précédente</a>
+      <a [href]="'/tools/practical-sheets/page/'+(currentSeoPageNumber + 1)">Page suivante</a>
     </div>
   </ng-container>
 
