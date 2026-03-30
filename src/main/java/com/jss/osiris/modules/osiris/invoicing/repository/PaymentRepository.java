@@ -170,4 +170,8 @@ public interface PaymentRepository extends QueryCacheCrudRepository<Payment, Int
                         @Param("isCancelled") Boolean isCancelled,
                         @Param("responsableId") Integer responsableId,
                         @Param("tiersId") Integer tiersId);
+
+        @Query("SELECT p FROM Payment p left JOIN FETCH p.accountingRecords  left join fetch p.refund where p.id between :fromId and :endId and (p.originPayment is  null or exists (select 1 from Payment p2  where  p.originPayment.id  = p2.id and  p2.paymentType<>p.paymentType and (p2.paymentType.id in (114735, 114757, 72562)  or p2.label like '% CDN%')   ) )    order by p.id")
+        List<Payment> findPaymentsForReconciliation(@Param("fromId") Integer fromId,
+                        @Param("endId") Integer endId);
 }

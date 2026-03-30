@@ -1785,6 +1785,11 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+    public List<Payment> getPaymentsForReconciliation(Integer fromId, Integer endId) {
+        return paymentRepository.findPaymentsForReconciliation(fromId, endId);
+    }
+
+    @Override
     public List<Payment> searchForPayments(PaymentSearch paymentSearch) {
         LocalDateTime startDate = LocalDateTime.of(2000, 01, 01, 0, 0);
         LocalDateTime endDate = LocalDateTime.of(2100, 01, 01, 0, 0);

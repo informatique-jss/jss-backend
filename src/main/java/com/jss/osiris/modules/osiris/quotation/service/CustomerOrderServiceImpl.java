@@ -28,6 +28,7 @@ import org.springframework.data.domain.Sort.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,6 +63,7 @@ import com.jss.osiris.modules.myjss.wordpress.service.AssoProvisionPostNewspaper
 import com.jss.osiris.modules.myjss.wordpress.service.NewspaperService;
 import com.jss.osiris.modules.myjss.wordpress.service.PostService;
 import com.jss.osiris.modules.myjss.wordpress.service.SubscriptionService;
+import com.jss.osiris.modules.osiris.accounting.service.ReconciliationServiceImpl;
 import com.jss.osiris.modules.osiris.crm.model.Voucher;
 import com.jss.osiris.modules.osiris.crm.service.VoucherService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
@@ -2439,5 +2441,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                 customerOrderPurchasePdf.delete();
         }
         return purchaseOrderAttachments;
+    }
+
+    @Autowired
+    ReconciliationServiceImpl reconciliationServiceImpl;
+
+    @Scheduled(initialDelay = 100, fixedDelay = 1000)
+    public void test() throws OsirisException {
+        reconciliationServiceImpl.validateAllPayments();
     }
 }

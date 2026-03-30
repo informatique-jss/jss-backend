@@ -19,6 +19,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.ActiveDirectoryHelper;
@@ -247,6 +248,7 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
+  @Transactional(propagation = Propagation.REQUIRES_NEW) // TOREMOVE
   public AccountingRecord addOrUpdateAccountingRecord(AccountingRecord accountingRecord,
       boolean byPassOperationDateTimeCheck) throws OsirisException {
     // Do not save null or 0 € records

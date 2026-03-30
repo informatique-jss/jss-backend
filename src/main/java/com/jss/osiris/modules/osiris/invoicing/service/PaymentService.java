@@ -148,4 +148,6 @@ public interface PaymentService {
          * |============================================================================
          */
         public List<Payment> searchForPayments(PaymentSearch paymentSearch);
+
+        public List<Payment> getPaymentsForReconciliation(Integer fromId, Integer endId);
 }
