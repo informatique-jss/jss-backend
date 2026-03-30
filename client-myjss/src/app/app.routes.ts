@@ -112,6 +112,7 @@ const routesTools = [
     children: [
       { path: 'practical-sheets/:slug', loadComponent: () => import('./modules/tools/components/practical-sheets/practical-sheets.component').then(m => m.PracticalSheetsComponent) },
       { path: 'practical-sheets', loadComponent: () => import('./modules/tools/components/practical-sheets/practical-sheets.component').then(m => m.PracticalSheetsComponent) },
+      { path: 'practical-sheets/page/:seoPageForPosts', loadComponent: () => import('./modules/tools/components/practical-sheets/practical-sheets.component').then(m => m.PracticalSheetsComponent) },
       { path: 'mandatory-documents', loadComponent: () => import('./modules/tools/components/mandatory-documents/mandatory-documents.component').then(m => m.MandatoryDocumentsComponent) },
       { path: 'webinars', loadComponent: () => import('./modules/tools/components/webinars/webinars.component').then(m => m.WebinarsComponent) },
       { path: 'exclusives', loadComponent: () => import('./modules/tools/components/exclusives/exclusives.component').then(m => m.ExclusivesComponent) },
