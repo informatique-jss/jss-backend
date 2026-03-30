@@ -701,7 +701,7 @@ public class ServiceServiceImpl implements ServiceService {
             if (newAssos.size() > 0)
                 finalAssos.addAll(newAssos);
 
-            service.setAssoServiceDocuments(null);
+            service.setAssoServiceDocuments(new ArrayList<>());
             if (finalAssos.size() > 0)
                 for (AssoServiceDocument asso : finalAssos)
                     service.getAssoServiceDocuments().add(asso);
