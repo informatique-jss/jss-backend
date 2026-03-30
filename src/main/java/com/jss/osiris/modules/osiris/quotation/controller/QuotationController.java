@@ -3127,7 +3127,6 @@ public class QuotationController {
   }
 
   @GetMapping(inputEntryPoint + "/customer-order-assignation/assign/immediatly/insertions")
-  @PreAuthorize(ActiveDirectoryHelper.TEAM_RESPONSIBLE)
   public ResponseEntity<Boolean> assignImmediatlyOrderForInsertions(Integer idCustomerOrder)
       throws OsirisException {
 
