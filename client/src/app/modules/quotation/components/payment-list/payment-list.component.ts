@@ -326,7 +326,7 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
   }
 
   cancelPayment(payment: PaymentSearchResult) {
-    this.paymentService.cancelpayment(payment.id).subscribe(response => {
+    this.paymentService.cancelPayment(payment.id).subscribe(response => {
       this.appService.openRoute(null, '/invoicing', null);
     });
   }
