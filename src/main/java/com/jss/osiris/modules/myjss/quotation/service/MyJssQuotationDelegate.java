@@ -196,7 +196,7 @@ public class MyJssQuotationDelegate {
         if (isValidation != null && isValidation) {
             customerOrderService.addOrUpdateCustomerOrderStatus(fetchOrder, CustomerOrderStatus.BEING_PROCESSED, true);
             if (customerOrderService.isOnlyJssAnnouncementOrSubscription(fetchOrder, true)) {
-                quotationValidationHelper.validateQuotationAndCustomerOrder(fetchOrder, null);
+                quotationValidationHelper.validateQuotationAndCustomerOrder(fetchOrder, null, true);
                 customerOrderService.autoBilledProvisions(fetchOrder);
             }
         }
@@ -369,7 +369,7 @@ public class MyJssQuotationDelegate {
         }
 
         // Validate Quotation or CustomerOrder
-        quotationValidationHelper.validateQuotationAndCustomerOrder(quotation, null);
+        quotationValidationHelper.validateQuotationAndCustomerOrder(quotation, null, true);
 
         // Associate subscription
         if (quotation.getAssoAffaireOrders() != null)
