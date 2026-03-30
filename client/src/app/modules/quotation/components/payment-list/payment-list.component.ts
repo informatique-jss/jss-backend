@@ -101,10 +101,24 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
 
     if (this.overrideIconAction == "") {
       this.tableAction.push({
+
         actionIcon: "visibility", actionName: "Voir le détail du paiement", actionClick: (column: SortTableAction<PaymentSearchResult>, element: PaymentSearchResult, event: any) => {
           this.paymentDetailsDialogService.displayPaymentDetailsDialog(element as any);
         }, display: true,
       } as SortTableAction<PaymentSearchResult>);
+
+      if (this.habilitationService.canCancelPayment()) {
+        this.tableAction.push({
+          actionIcon: "cancel", actionName: "Annuler le paiement", actionClick: (column: SortTableAction<PaymentSearchResult>, element: PaymentSearchResult, event: any) => {
+            if (!element.isCancelled && !element.isAssociated) {
+              this.cancelPayment(element);
+            }
+            else {
+              this.appService.displaySnackBar("L'annulation n'est pas possible sur un paiement déjà annulé ou associé", true, 15);
+            }
+          }, display: true,
+        } as SortTableAction<PaymentSearchResult>);
+      }
 
       if (this.habilitationService.canModifyPaymentAssociation()) {
         this.tableAction.push({
@@ -304,6 +318,12 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
       if (response) {
         this.paymentService.putInAccount(payment, response).subscribe(response => this.searchPayments());
       }
+    });
+  }
+
+  cancelPayment(payment: PaymentSearchResult) {
+    this.paymentService.cancelPayment(payment.id).subscribe(response => {
+      this.searchPayments();
     });
   }
 }

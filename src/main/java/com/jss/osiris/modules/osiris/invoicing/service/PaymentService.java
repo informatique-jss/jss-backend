@@ -148,4 +148,6 @@ public interface PaymentService {
          * |============================================================================
          */
         public List<Payment> searchForPayments(PaymentSearch paymentSearch);
+
+        public Payment cancelPayment(Payment payment) throws OsirisException, OsirisValidationException;
 }
