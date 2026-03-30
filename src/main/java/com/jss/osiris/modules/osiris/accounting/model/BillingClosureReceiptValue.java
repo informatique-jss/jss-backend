@@ -54,6 +54,8 @@ public class BillingClosureReceiptValue {
     @JsonView(JacksonViews.MyJssListView.class)
     private Integer idCustomerOrder;
 
+    private Boolean isToExcludeFromTotal;
+
     public BillingClosureReceiptValue() {
     }
 
@@ -183,6 +185,14 @@ public class BillingClosureReceiptValue {
 
     public void setDisplaySmallTopBorder(boolean displaySmallTopBorder) {
         this.displaySmallTopBorder = displaySmallTopBorder;
+    }
+
+    public Boolean getIsToExcludeFromTotal() {
+        return isToExcludeFromTotal;
+    }
+
+    public void setIsToExcludeFromTotal(Boolean isToExcludeFromTotal) {
+        this.isToExcludeFromTotal = isToExcludeFromTotal;
     }
 
 }
