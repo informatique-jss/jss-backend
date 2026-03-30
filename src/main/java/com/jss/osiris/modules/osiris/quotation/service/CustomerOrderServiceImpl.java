@@ -779,7 +779,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             addOrUpdateCustomerOrderStatus(customerOrder, CustomerOrderStatus.BEING_PROCESSED, false);
 
             if (isOnlyJssAnnouncementOrSubscription(customerOrder, true)) {
-                quotationValidationHelper.validateQuotationAndCustomerOrder(customerOrder, null);
+                quotationValidationHelper.validateQuotationAndCustomerOrder(customerOrder, null, false);
                 autoBilledProvisions(customerOrder);
             }
         }

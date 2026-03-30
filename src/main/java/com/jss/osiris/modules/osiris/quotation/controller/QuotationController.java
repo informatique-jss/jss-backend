@@ -1921,7 +1921,7 @@ public class QuotationController {
   @PostMapping(inputEntryPoint + "/quotation")
   public ResponseEntity<Quotation> addOrUpdateQuotation(@RequestBody Quotation quotation)
       throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
-    validateQuotationAndCustomerOrder(quotation);
+    validateQuotationAndCustomerOrder(quotation, false);
 
     QuotationStatus openQuotationStatus = quotationStatusService.getQuotationStatusByCode(QuotationStatus.DRAFT);
     if (openQuotationStatus == null)
@@ -2008,7 +2008,7 @@ public class QuotationController {
   @PostMapping(inputEntryPoint + "/customer-order")
   public ResponseEntity<CustomerOrder> addOrUpdateCustomerOrder(@RequestBody CustomerOrder customerOrder)
       throws OsirisException, OsirisValidationException, OsirisClientMessageException, OsirisDuplicateException {
-    validateQuotationAndCustomerOrder(customerOrder);
+    validateQuotationAndCustomerOrder(customerOrder, false);
     CustomerOrderStatus customerOrderStatus = customerOrderStatusService
         .getCustomerOrderStatusByCode(CustomerOrderStatus.DRAFT);
     if (customerOrderStatus == null)
@@ -2034,7 +2034,7 @@ public class QuotationController {
 
     customerOrder = customerOrderService.getCustomerOrder(customerOrder.getId());
     if (!targetStatusCode.equals(CustomerOrderStatus.ABANDONED)) {
-      quotationValidationHelper.validateQuotationAndCustomerOrder(customerOrder, targetStatusCode);
+      quotationValidationHelper.validateQuotationAndCustomerOrder(customerOrder, targetStatusCode, false);
     }
     boolean found = true;
     if (customerOrder.getCustomerOrderStatus() != null) {
@@ -2060,7 +2060,7 @@ public class QuotationController {
       throws OsirisValidationException, OsirisException, OsirisClientMessageException, OsirisDuplicateException {
     quotation = quotationService.getQuotation(quotation.getId());
     if (!targetStatusCode.equals(QuotationStatus.ABANDONED))
-      validateQuotationAndCustomerOrder(quotation);
+      validateQuotationAndCustomerOrder(quotation, false);
     boolean found = true;
     if (quotation.getQuotationStatus() != null) {
       if (quotation.getQuotationStatus().getSuccessors() != null)
@@ -2079,9 +2079,9 @@ public class QuotationController {
         HttpStatus.OK);
   }
 
-  private void validateQuotationAndCustomerOrder(IQuotation quotation)
+  private void validateQuotationAndCustomerOrder(IQuotation quotation, Boolean isFromMyJss)
       throws OsirisValidationException, OsirisException, OsirisClientMessageException {
-    quotationValidationHelper.validateQuotationAndCustomerOrder(quotation, null);
+    quotationValidationHelper.validateQuotationAndCustomerOrder(quotation, null, isFromMyJss);
   }
 
   @PostMapping(inputEntryPoint + "/affaire")
