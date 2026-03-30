@@ -1173,12 +1173,12 @@ public class InvoicingController {
      * |============================================================================
      */
 
-    @GetMapping(inputEntryPoint + "/payments/cancelPayment")
+    @GetMapping(inputEntryPoint + "/payment/cancel")
     @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE)
     public ResponseEntity<PaymentDto> cancelPayment(@RequestParam Integer paymentId) throws OsirisException {
         Payment payment = paymentService.getPayment(paymentId);
         if (payment == null)
-            throw new OsirisClientMessageException("Le paiement avec l'id " + paymentId + " n'existe pas");
+            throw new OsirisValidationException("paymentId");
 
         return new ResponseEntity<PaymentDto>(invoicingFacade.cancelPayment(payment),
                 HttpStatus.OK);

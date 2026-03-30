@@ -232,10 +232,6 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
     return undefined;
   }
 
-  isPaymentNotAssociatedAndNotCancelled(payment: PaymentSearchResult) {
-    return payment.isExternallyAssociated == false && payment.isCancelled == false;
-  }
-
   searchPayments() {
     if (this.paymentForm.valid) {
       if (this.paymentSearch.startDate)
@@ -327,7 +323,7 @@ export class PaymentListComponent implements OnInit, AfterContentChecked {
 
   cancelPayment(payment: PaymentSearchResult) {
     this.paymentService.cancelPayment(payment.id).subscribe(response => {
-      this.appService.openRoute(null, '/invoicing', null);
+      this.searchPayments();
     });
   }
 }
