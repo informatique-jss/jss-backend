@@ -283,8 +283,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     GoogleAnalyticsService googleAnalyticsService;
 
     private CustomerOrder simpleAddOrUpdate(CustomerOrder customerOrder) throws OsirisException {
+        customerOrder = customerOrderRepository.save(customerOrder);
         batchService.declareNewBatch(Batch.REINDEX_CUSTOMER_ORDER, customerOrder.getId());
-        return customerOrderRepository.save(customerOrder);
+        return customerOrder;
     }
 
     @Override
