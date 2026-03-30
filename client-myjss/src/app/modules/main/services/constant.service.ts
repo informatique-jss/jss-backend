@@ -153,6 +153,10 @@ export class ConstantService extends AppRestService<Constant> {
     return this.constant.categoryExclusivity;
   }
 
+  getCategoryArticle() {
+    return this.constant.categoryArticle;
+  }
+
   getAttachmentTypeApplicationCv() {
     return this.constant.attachmentTypeApplicationCv;
   }
