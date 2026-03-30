@@ -127,7 +127,8 @@ public class QuotationValidationHelper {
         }
 
         @Transactional(rollbackFor = Exception.class)
-        public void validateQuotationAndCustomerOrder(IQuotation quotation, String targetStatusCode, Boolean isFromUser)
+        public void validateQuotationAndCustomerOrder(IQuotation quotation, String targetStatusCode,
+                        Boolean isFromMyJss)
                         throws OsirisValidationException, OsirisException, OsirisClientMessageException {
                 boolean isOpen = false;
 
@@ -145,7 +146,7 @@ public class QuotationValidationHelper {
                                                 .equals(constantService.getCustomerOrderOriginMyJss().getId())) {
                         if (quotation.getDocuments() != null) {
                                 for (Document document : quotation.getDocuments()) {
-                                        if (isFromUser && document.getDocumentType().getId()
+                                        if (isFromMyJss && document.getDocumentType().getId()
                                                         .equals(constantService.getDocumentTypeBilling().getId())
                                                         && document.getBillingLabelType().getId()
                                                                         .equals(constantService
