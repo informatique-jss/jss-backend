@@ -83,4 +83,8 @@ export class PaymentService extends AppRestService<Payment> {
     return this.postList(new HttpParams(), "payment/ofx/match", paymentSearch);
   }
 
+  cancelpayment(paymentId: number) {
+    return this.get(new HttpParams().set("paymentId", paymentId), "payments/cancelPayment", "Paiement annulé", "Erreur lors de l'annulation du paiement");
+  }
+
 }

@@ -12,7 +12,7 @@ export class HabilitationsService {
   }
 
   canCancelPayment() {
-    return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE])
+    return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE, ADMINISTRATEURS])
   }
 
   canAddAssignOrderForProduction() {
