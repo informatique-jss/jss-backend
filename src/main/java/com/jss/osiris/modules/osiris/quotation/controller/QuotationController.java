@@ -2079,9 +2079,9 @@ public class QuotationController {
         HttpStatus.OK);
   }
 
-  private void validateQuotationAndCustomerOrder(IQuotation quotation, Boolean isFromUser)
+  private void validateQuotationAndCustomerOrder(IQuotation quotation, Boolean isFromMyJss)
       throws OsirisValidationException, OsirisException, OsirisClientMessageException {
-    quotationValidationHelper.validateQuotationAndCustomerOrder(quotation, null, isFromUser);
+    quotationValidationHelper.validateQuotationAndCustomerOrder(quotation, null, isFromMyJss);
   }
 
   @PostMapping(inputEntryPoint + "/affaire")
