@@ -532,6 +532,7 @@ public class BillingClosureReceiptHelper {
         value.setDebitAmount(null);
         value.setEventDateTime(remainingToPay.getCreatedDate());
         value.setEventDateString("");
+        value.setIsToExcludeFromTotal(true);
 
         return value;
     }
@@ -800,14 +801,16 @@ public class BillingClosureReceiptHelper {
                 if (receiptValue.getDebitAmount() != null) {
                     currentCell.setCellValue(receiptValue.getDebitAmount()
                             .setScale(2, RoundingMode.HALF_EVEN).doubleValue());
-                    debit = debit.add(receiptValue.getDebitAmount());
+                    if (!Boolean.TRUE.equals(receiptValue.getIsToExcludeFromTotal()))
+                        debit = debit.add(receiptValue.getDebitAmount());
                 }
                 currentCell.setCellStyle(styleCurrency);
                 currentCell = currentRow.createCell(currentColumn++);
                 if (receiptValue.getCreditAmount() != null) {
-                    credit = credit.add(receiptValue.getCreditAmount());
                     currentCell.setCellValue(receiptValue.getCreditAmount()
                             .setScale(2, RoundingMode.HALF_EVEN).doubleValue());
+                    if (!Boolean.TRUE.equals(receiptValue.getIsToExcludeFromTotal()))
+                        credit = credit.add(receiptValue.getCreditAmount());
                 }
                 currentCell.setCellStyle(styleCurrency);
             }
