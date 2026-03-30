@@ -8,6 +8,7 @@ import { getRawTextFromHtml } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { NewsletterComponent } from '../../../general/components/newsletter/newsletter.component';
 import { AppService } from '../../../main/services/app.service';
+import { ConstantService } from '../../../main/services/constant.service';
 import { GtmService } from '../../../main/services/gtm.service';
 import { CtaClickPayload, PageInfo } from '../../../main/services/GtmPayload';
 import { PlatformService } from '../../../main/services/platform.service';
@@ -15,6 +16,7 @@ import { AutocompletePostComponent } from '../../../miscellaneous/components/aut
 import { GenericInputComponent } from '../../../miscellaneous/components/forms/generic-input/generic-input.component';
 import { SelectMyJssCategoryComponent } from '../../../miscellaneous/components/forms/select-myjss-category/select-myjss-category.component';
 import { GenericSwiperComponent } from '../../../miscellaneous/components/generic-swiper/generic-swiper.component';
+import { Category } from '../../model/Category';
 import { MyJssCategory } from '../../model/MyJssCategory';
 import { Post } from '../../model/Post';
 import { MyJssCategoryService } from '../../services/myjss.category.service';
@@ -49,6 +51,9 @@ export class PracticalSheetsComponent implements OnInit {
 
   expandedCardIndex: number = -1;
   postsByMyJssCategory: { [key: number]: Array<Post> } = {};
+  allPostsForSeo: Post[] = [];
+  currentSeoPageNumber: number = 0;
+  categoryArticle: Category | undefined;
 
   topPosts: Post[] = [];
   tendencyPosts: Post[] = [];
@@ -71,6 +76,7 @@ export class PracticalSheetsComponent implements OnInit {
     private titleService: Title,
     private meta: Meta,
     private gtmService: GtmService,
+    private constantService: ConstantService,
     private platformService: PlatformService
   ) { }
 
@@ -79,6 +85,7 @@ export class PracticalSheetsComponent implements OnInit {
     this.titleService.setTitle("Les fiches pratiques - MyJSS");
     this.meta.updateTag({ name: 'description', content: "Des guides clairs pour réussir vos formalités. MyJSS vous offre des fiches pratiques pour simplifier vos démarches juridiques. L'expertise à votre portée." });
     this.practicalSheetsForm = this.formBuilder.group({});
+    this.categoryArticle = this.constantService.getCategoryArticle();
     this.myJssCategories.push(this.allMyJssCategories);
     this.myJssCategoryService.getMyJssCategories().subscribe(response => {
       if (response) {
@@ -98,6 +105,10 @@ export class PracticalSheetsComponent implements OnInit {
         },
         );
       }
+    });
+
+    this.postService.searchMyJssPostsByCategory("", this.categoryArticle, this.currentSeoPageNumber, 10).subscribe(res => {
+      this.allPostsForSeo = res.content;
     });
 
     let slug = this.activatedRoute.snapshot.params['slug'];
@@ -228,6 +239,23 @@ export class PracticalSheetsComponent implements OnInit {
       if (this.autocomplePost)
         this.autocomplePost.triggerSearch(this.searchText);
     }
+  }
+
+  /**********  SEO methods ***********/
+  searchNextSeoPage() {
+    if (this.categoryArticle)
+      this.postService.searchMyJssPostsByCategory("", this.categoryArticle, this.currentSeoPageNumber + 1, 10).subscribe(res => {
+        this.allPostsForSeo = res.content;
+        this.currentSeoPageNumber = this.currentSeoPageNumber + 1;
+      });
+  }
+
+  searchPreviousSeoPage() {
+    if (this.categoryArticle && this.currentSeoPageNumber)
+      this.postService.searchMyJssPostsByCategory("", this.categoryArticle, this.currentSeoPageNumber - 1, 10).subscribe(res => {
+        this.allPostsForSeo = res.content;
+        this.currentSeoPageNumber = this.currentSeoPageNumber - 1;
+      });
   }
 
   /**************** posts carousel ***********************/
