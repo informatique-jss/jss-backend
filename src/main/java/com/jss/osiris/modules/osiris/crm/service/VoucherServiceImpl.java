@@ -102,14 +102,15 @@ public class VoucherServiceImpl implements VoucherService {
         if (voucher != null && voucher.getIsCancelled())
             throw new OsirisClientMessageException("Coupon expiré");
 
-        if (employeeService.getCurrentMyJssUser() != null) {
-            responsableQuotation = employeeService.getCurrentMyJssUser();
-        }
+        responsableQuotation = employeeService.getCurrentMyJssUser();
+
+        if (responsableQuotation == null)
+            responsableQuotation = quotation.getResponsable();
+
+        if (responsableQuotation == null)
+            return null;
 
         if (voucher != null && !voucher.getResponsables().isEmpty()) {
-            if (responsableQuotation == null)
-                return null;
-
             boolean found = false;
             for (Responsable responsable : voucher.getResponsables())
                 if (responsableQuotation.getId().equals(responsable.getId())) {
