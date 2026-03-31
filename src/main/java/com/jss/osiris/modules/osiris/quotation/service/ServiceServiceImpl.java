@@ -202,7 +202,7 @@ public class ServiceServiceImpl implements ServiceService {
         List<AssoServiceDocument> assoServiceDocuments = service.getAssoServiceDocuments();
         if (assoServiceDocuments != null && assoServiceDocuments.size() > 0) {
             for (AssoServiceDocument doc : assoServiceDocuments) {
-
+                doc.setService(null);
                 if (doc.getAttachments() != null && doc.getAttachments().size() > 0) {
                     for (Attachment att : doc.getAttachments()) {
                         if (att != null) {
@@ -216,6 +216,11 @@ public class ServiceServiceImpl implements ServiceService {
             for (MissingAttachmentQuery maq : service.getMissingAttachmentQueries()) {
                 maq.setAssoServiceDocument(null);
                 maq.setAssoServiceFieldType(null);
+            }
+        }
+        if (service.getAssoServiceFieldTypes() != null && service.getAssoServiceFieldTypes().size() > 0) {
+            for (AssoServiceFieldType assoServiceFieldType : service.getAssoServiceFieldTypes()) {
+                assoServiceFieldType.setService(null);
             }
         }
         service.setAssoServiceDocuments(null);
