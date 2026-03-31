@@ -166,9 +166,9 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> getMyJssCategoryPostTendency() throws OsirisException {
-        List<Integer> idPosts = postRepository.findMyJssCategoryPostTendency(LocalDate.now().minusDays(7),
-                Post.SOURCE_MYJSS,
+    public List<Post> getMyJssCategoryArticlePostTendency() throws OsirisException {
+        List<Integer> idPosts = postRepository.findMyJssCategoryArticlePostTendency(LocalDate.now().minusDays(7),
+                Post.SOURCE_MYJSS, getCategoryArticle().getId(),
                 PageRequest.of(0, 5));
         if (idPosts != null)
             return IterableUtils.toList(postRepository.findAllById(idPosts));
@@ -176,8 +176,9 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> getMyJssCategoryPostMostSeen() throws OsirisException {
-        List<Integer> idPosts = postRepository.findMyJssCategoryPostMostSeen(Post.SOURCE_MYJSS, PageRequest.of(0, 5));
+    public List<Post> getMyJssCategoryMostSeenArticlePosts() throws OsirisException {
+        List<Integer> idPosts = postRepository.findMyJssCategoryMostSeenArticlePosts(Post.SOURCE_MYJSS,
+                getCategoryArticle().getId(), PageRequest.of(0, 5));
         if (idPosts != null)
             return IterableUtils.toList(postRepository.findAllById(idPosts));
         return null;
@@ -525,11 +526,12 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> getMyJssCategoryPosts(int page) throws OsirisException {
+    public List<Post> getMyJssCategoryArticlePosts(int page) throws OsirisException {
         Order order = new Order(Direction.DESC, "date");
         Sort sort = Sort.by(Arrays.asList(order));
         Pageable pageableRequest = PageRequest.of(page, 20, sort);
-        return postRepository.findMyJssCategoryPosts(false, Post.SOURCE_MYJSS, pageableRequest);
+        return postRepository.findMyJssCategoryArticlePosts(false, Post.SOURCE_MYJSS, getCategoryArticle().getId(),
+                pageableRequest);
     }
 
     @Override
@@ -759,28 +761,32 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Page<Post> getPostsByMyJssCategory(int page, MyJssCategory myJssCategory) {
+    public Page<Post> getPostsByMyJssCategory(int page, MyJssCategory myJssCategory) throws OsirisException {
         Order order = new Order(Direction.DESC, "date");
         Sort sort = Sort.by(Arrays.asList(order));
         Pageable pageableRequest = PageRequest.of(page, 20, sort);
-        return postRepository.findByMyJssCategoriesAndIsCancelled(myJssCategory.getId(), false, Post.SOURCE_MYJSS,
+        return postRepository.findByCategoryAndMyJssCategoriesAndIsCancelled(myJssCategory.getId(), false,
+                Post.SOURCE_MYJSS,
+                getCategoryArticle().getId(),
                 pageableRequest);
     }
 
     @Override
     public Page<Post> searchPostsByMyJssCategory(String searchText, MyJssCategory myJssCategory,
-            Pageable pageableRequest) {
+            Pageable pageableRequest) throws OsirisException {
         if (searchText != null && searchText.trim().length() > 0) {
             Pageable pageableRequestForMatch = PageRequest.of(0, Integer.MAX_VALUE);
 
             return searchPostAgainstEntitiesToMatch(searchText,
-                    postRepository.findByMyJssCategoriesAndIsCancelled(
+                    postRepository.findByCategoryAndMyJssCategoriesAndIsCancelled(
                             myJssCategory != null ? myJssCategory.getId() : null, false, Post.SOURCE_MYJSS,
+                            getCategoryArticle().getId(),
                             pageableRequestForMatch),
                     null);
         }
-        return postRepository.findByMyJssCategoriesAndIsCancelled(myJssCategory != null ? myJssCategory.getId() : null,
-                false, Post.SOURCE_MYJSS, pageableRequest);
+        return postRepository.findByCategoryAndMyJssCategoriesAndIsCancelled(
+                myJssCategory != null ? myJssCategory.getId() : null,
+                false, Post.SOURCE_MYJSS, getCategoryArticle().getId(), pageableRequest);
     }
 
     @Override
@@ -822,7 +828,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> getFirstPostsByMyJssCategories(MyJssCategory selectedMyJssCategory) {
+    public List<Post> getFirstArticlePostsByMyJssCategories(MyJssCategory selectedMyJssCategory) {
         List<Post> firstPostsByMyJssCategory = new ArrayList<Post>();
         List<Integer> idPostsByMyJssCategory = new ArrayList<Integer>();
         List<Post> tmpPostsByMyJssCategory = new ArrayList<Post>();

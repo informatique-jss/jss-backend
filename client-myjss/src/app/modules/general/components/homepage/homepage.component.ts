@@ -51,7 +51,7 @@ export class HomepageComponent implements OnInit {
     this.serviceFamilyGroupFormality = this.constantService.getServiceFamilyGroupFormality();
     this.titleService.setTitle("Annonces légales - Formalités légales - MyJSS");
     this.meta.updateTag({ name: 'description', content: "MyJSS est votre partenaire unique pour vos annonces légales et formalités légales. Profitez d'une plateforme intuitive et de l'expertise de nos juristes dédiés." });
-    this.postService.getTendencyPosts().subscribe(response => {
+    this.postService.getTendencyArticlePosts().subscribe(response => {
       if (response && response.length > 0) {
         this.tendencyPosts = response;
       }

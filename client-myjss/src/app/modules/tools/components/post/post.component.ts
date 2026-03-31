@@ -113,11 +113,11 @@ export class PostComponent implements OnInit, AfterViewInit {
     });
     this.refreshPost();
 
-    this.postService.getMostSeenPosts().subscribe(posts => {
+    this.postService.getMostSeenArticlePosts().subscribe(posts => {
       this.hotPosts = posts;
     });
 
-    this.postService.getTopPosts(0).subscribe(posts => {
+    this.postService.getTopArticlePosts(0).subscribe(posts => {
       this.recentPosts = posts;
     });
 
