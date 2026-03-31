@@ -77,7 +77,7 @@
                     <tr>
                         <td th:if="${billingDocument!=null} and ${billingDocument.isRecipientClient}">
                             <span th:text="${responsable.firstname}+' ' +${responsable.lastname}"></span><br />
-                            <span th:if="${responsable.tiers} ${responsable.tiers.adress!=null}"
+                            <span th:if="${responsable.tiers} and ${responsable.tiers.address!=null}"
                                 th:text="${responsable.tiers.address}"></span><br />
                             <span><span th:if="${responsable.tiers.postalCode!=null}"
                                     th:text="${responsable.tiers.postalCode}"></span> <span
