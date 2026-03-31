@@ -63,7 +63,7 @@
             </h3>
             <p class="d-sm-none d-md-block card-text-truncate">{{getRawTextFromHtml(post.excerptText)}}</p>
             <div class="d-flex flex-wrap align-items-center mt-n2">
-              <span class="fs-sm text-body-secondary mt-2">Publié le {{post.date | date:'EEEE d MMMM'}}</span>
+              <span class="fs-sm text-body-secondary mt-2">Publié le {{post.date | date:'EEEE d MMMM y'}}</span>
               <span class="fs-xs opacity-20 mt-2 mx-3">|</span>
               <a *ngFor="let tag of post.postTags" [routerLink]="'/tag/'+tag.slug"
                 class="badge text-nav fs-xs border mt-2">{{tag.slug}}</a>
