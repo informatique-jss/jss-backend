@@ -4,7 +4,10 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
 import com.jss.osiris.modules.osiris.invoicing.model.PaymentDto;
 import com.jss.osiris.modules.osiris.invoicing.model.PaymentSearch;
@@ -22,5 +25,11 @@ public class InvoicingFacade {
     public List<PaymentDto> searchForPayments(PaymentSearch paymentSearch) {
         List<Payment> payments = paymentService.searchForPayments(paymentSearch);
         return invoicingDtoHelper.mapPayments(payments);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public PaymentDto cancelPayment(Payment payment) throws OsirisValidationException, OsirisException {
+        Payment cancelledPayment = paymentService.cancelPayment(payment);
+        return invoicingDtoHelper.mapPayment(cancelledPayment);
     }
 }

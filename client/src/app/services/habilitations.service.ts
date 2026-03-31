@@ -11,6 +11,10 @@ export class HabilitationsService {
   ) {
   }
 
+  canCancelPayment() {
+    return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE])
+  }
+
   canAddAssignOrderForProduction() {
     return this.loginService.hasGroup([TEAM_RESPONSIBLE]);
   }
