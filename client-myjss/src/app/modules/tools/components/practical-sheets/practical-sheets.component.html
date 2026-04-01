@@ -254,7 +254,7 @@
     </div>
   </div>
 
-  <ng-container *ngIf="!secondSearchText">
+  <ng-container *ngIf="!isServer && !secondSearchText">
     <ng-container *ngFor="let myJssCategory of myJssCategories;">
       <div class="accordion-item border-top mb-0"
         *ngIf="!myJssCategory.id || (myJssCategory.id>=0 && !postsByMyJssCategory[myJssCategory.id]==undefined)">
@@ -296,7 +296,22 @@
     </ng-container>
   </ng-container>
 
-  <ng-container *ngIf="secondSearchText && secondSelectedMyJssCategory.id == allMyJssCategories.id">
+  <!-- For SEO purpose only -->
+  <ng-container *ngIf="isServer">
+    <div class="row">
+      <div class="col-12" *ngFor="let post of allPostsForSeo">
+        <li>
+          <a [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
+        </li>
+      </div>
+    </div>
+    <div>
+      <a [href]="'/tools/practical-sheets/page/'+(currentSeoPageNumber - 1)">Page précédente</a>
+      <a [href]="'/tools/practical-sheets/page/'+(currentSeoPageNumber + 1)">Page suivante</a>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="secondSearchText && secondSelectedMyJssCategory.id == allMyJssCategories.id && !isServer">
     <ng-container *ngFor="let myJssCategory of myJssCategories;">
       <ng-container
         *ngIf="myJssCategory.id && secondSearchResults[myJssCategory.id] && secondSearchResults[myJssCategory.id].length>0">
@@ -327,7 +342,7 @@
     </ng-container>
   </ng-container>
 
-  <ng-container *ngIf="secondSearchText && secondSelectedMyJssCategory">
+  <ng-container *ngIf="secondSearchText && secondSelectedMyJssCategory && !isServer">
     <ng-container
       *ngIf="secondSelectedMyJssCategory.id && secondSearchResults[secondSelectedMyJssCategory.id] && secondSearchResults[secondSelectedMyJssCategory.id].length>0">
       <div class="card dark-blue-dropdown rounded-3 mt-3">

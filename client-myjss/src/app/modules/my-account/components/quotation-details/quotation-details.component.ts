@@ -211,10 +211,10 @@ export class QuotationDetailsComponent implements OnInit {
         }
 
         this.checkDisplayPayButton();
-
         if (this.quotationAssoAffaireOrders?.length > 0) {
           this.initiateUnreadCommentsPolling();
         }
+        this.appService.hideLoadingSpinner();
       });
   }
 

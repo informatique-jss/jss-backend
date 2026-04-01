@@ -1173,6 +1173,17 @@ public class InvoicingController {
      * |============================================================================
      */
 
+    @GetMapping(inputEntryPoint + "/payment/cancel")
+    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE)
+    public ResponseEntity<PaymentDto> cancelPayment(@RequestParam Integer paymentId) throws OsirisException {
+        Payment payment = paymentService.getPayment(paymentId);
+        if (payment == null)
+            throw new OsirisValidationException("paymentId");
+
+        return new ResponseEntity<PaymentDto>(invoicingFacade.cancelPayment(payment),
+                HttpStatus.OK);
+    }
+
     @PostMapping(inputEntryPoint + "/payments/search/v2")
     public ResponseEntity<List<PaymentDto>> searchPayments(@RequestBody PaymentSearch paymentSearch)
             throws OsirisValidationException {

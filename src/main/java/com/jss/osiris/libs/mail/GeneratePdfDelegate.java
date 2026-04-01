@@ -507,6 +507,9 @@ public class GeneratePdfDelegate {
 
         if (billingClosureValues != null && billingClosureValues.size() > 0)
             for (BillingClosureReceiptValue billingClosureValue : billingClosureValues) {
+                if (Boolean.TRUE.equals(billingClosureValue.getIsToExcludeFromTotal()))
+                    continue;
+
                 balance += billingClosureValue.getCreditAmount() != null
                         ? billingClosureValue.getCreditAmount().doubleValue()
                         : 0;
@@ -1212,24 +1215,9 @@ public class GeneratePdfDelegate {
                     subtitleCell.setBorder(Rectangle.NO_BORDER);
                     subtitleCell.setPaddingBottom(3);
                     textTable.addCell(subtitleCell);
-
-                    final PdfPCell dateDeptCell = new PdfPCell();
-                    dateDeptCell.setBorder(Rectangle.NO_BORDER);
-                    dateDeptCell.setPaddingBottom(3);
-                    Paragraph dateDeptPara = new Paragraph();
-                    dateDeptPara.add(new Chunk(announcementDate, blueFontDateDept));
-                    dateDeptPara.add(new Chunk("\n", blueFontDateDept));
-                    dateDeptPara.add(new Chunk(announcementDepartment, blueFontDateDept));
-                    dateDeptPara.add(new Chunk("\n", blueFontDateDept));
-                    dateDeptCell.addElement(dateDeptPara);
-                    textTable.addCell(dateDeptCell);
+                    textTable.addCell(
+                            addDateAndDepartementCell(announcementDate, announcementDepartment, blueFontDateDept));
                 } else {
-                    String subtitleText = "Pour le " + announcementDate;
-                    final PdfPCell subtitleCell = new PdfPCell(new Phrase(subtitleText, blueFontDateDept));
-                    subtitleCell.setBorder(Rectangle.NO_BORDER);
-                    subtitleCell.setPaddingBottom(3);
-                    textTable.addCell(subtitleCell);
-
                     String descriptionText = "Service de Presse en ligne habilité à publier les annonces légales dans les "
                             + "départements 75, 78, 91, 92, 93, 94 et 95";
                     final PdfPCell descriptionCell = new PdfPCell(new Phrase(descriptionText, blueFontDescription));
@@ -1237,14 +1225,8 @@ public class GeneratePdfDelegate {
                     descriptionCell.setPaddingBottom(3);
                     textTable.addCell(descriptionCell);
 
-                    // 3rd and 4th line to create a fake dateDeptCell and noticeTypeCell with a
-                    // minimal height in order to keep display straight and clean
-                    // otherwise logo and text are not aligned
-                    Paragraph p3 = new Paragraph(11, " "); // 11 points leading pour la police de 11 points
-                    final PdfPCell paddingCell3 = new PdfPCell(p3);
-                    paddingCell3.setBorder(Rectangle.NO_BORDER);
-                    paddingCell3.setPaddingBottom(3);
-                    textTable.addCell(paddingCell3);
+                    textTable.addCell(addDateAndDepartementCell("Pour le " + announcementDate, announcementDepartment,
+                            blueFontDateDept));
                 }
 
                 final PdfPCell noticeTypeCell = new PdfPCell(
@@ -1334,6 +1316,20 @@ public class GeneratePdfDelegate {
         reader.close();
 
         return tempPdfFile;
+    }
+
+    private PdfPCell addDateAndDepartementCell(String announcementDate, String announcementDepartment,
+            Font blueFontDateDept) {
+        final PdfPCell dateDeptCell = new PdfPCell();
+        dateDeptCell.setBorder(Rectangle.NO_BORDER);
+        dateDeptCell.setPaddingBottom(3);
+        Paragraph dateDeptPara = new Paragraph();
+        dateDeptPara.add(new Chunk(announcementDate, blueFontDateDept));
+        dateDeptPara.add(new Chunk("\n", blueFontDateDept));
+        dateDeptPara.add(new Chunk(announcementDepartment, blueFontDateDept));
+        dateDeptPara.add(new Chunk("\n", blueFontDateDept));
+        dateDeptCell.addElement(dateDeptPara);
+        return dateDeptCell;
     }
 
     public File generateDomiciliationContract(Provision provision)
