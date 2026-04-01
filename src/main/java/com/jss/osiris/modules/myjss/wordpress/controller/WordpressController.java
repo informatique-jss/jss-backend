@@ -83,6 +83,7 @@ import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.osiris.quotation.service.ProvisionService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -171,6 +172,9 @@ public class WordpressController {
 
 	@Autowired
 	EmployeeService employeeService;
+
+	@Autowired
+	ProvisionService provisionService;
 
 	// Crawler user-agents
 	private static final List<String> CRAWLER_USER_AGENTS = Arrays.asList("Googlebot", "Bingbot", "Slurp",
@@ -1449,6 +1453,48 @@ public class WordpressController {
 			headers = new HttpHeaders();
 			headers.setContentLength(data.length);
 			headers.add("filename", "Témoin de parution n°" + announcement.getId() + ".pdf");
+			headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
+
+			// Compute content type
+			String mimeType = null;
+			try {
+				mimeType = Files.probeContentType(file.toPath());
+			} catch (IOException e) {
+				throw new OsirisException(e, "Unable to read file " + file.getAbsolutePath());
+			}
+			if (mimeType == null)
+				mimeType = "application/pdf";
+			headers.set("content-type", mimeType);
+			file.delete();
+		}
+		return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/publication/receipt/download")
+	public ResponseEntity<byte[]> downloadPublicationReceipt(@RequestParam("idAnnouncement") Integer idAnnouncement,
+			@RequestParam("idProvision") Integer idProvision)
+			throws OsirisValidationException, OsirisException {
+		byte[] data = null;
+		HttpHeaders headers = null;
+
+		Announcement announcement = announcementService.getAnnouncement(idAnnouncement);
+		Provision provision = provisionService.getProvision(idProvision);
+
+		if (announcement == null)
+			throw new OsirisValidationException("Annonce non trouvée");
+
+		File file = generatePdfDelegate.generatePublicationForAnnouncement(announcement, provision, false, true, false);
+
+		if (file != null) {
+			try {
+				data = Files.readAllBytes(file.toPath());
+			} catch (IOException e) {
+				throw new OsirisException(e, "Unable to read file " + file.getAbsolutePath());
+			}
+
+			headers = new HttpHeaders();
+			headers.setContentLength(data.length);
+			headers.add("filename", "Attestation de publication n°" + announcement.getId() + ".pdf");
 			headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
 
 			// Compute content type

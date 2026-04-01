@@ -43,9 +43,8 @@ public class Service implements Serializable, IId {
 
 	@OneToMany(targetEntity = Provision.class, mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	@JsonIgnoreProperties(value = { "service" }, allowSetters = true)
-	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
-			JacksonViews.OsirisDetailedView.class }) // TODO : remove MyJSS dependency with provision ! this shall not
-														// be pushed to customer !!
+	@JsonView({ JacksonViews.MyJssDetailedView.class,
+			JacksonViews.OsirisDetailedView.class }) // TODO : remove MyJSS dependency with provision !
 	@IndexedField
 	private List<Provision> provisions;
 
