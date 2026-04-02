@@ -155,7 +155,7 @@
     </table>
 
 
-    <p style="margin-top: 10px;">&#160;</p>
+    <p style="margin-top: 10px;"> </p>
     <table style="border : solid; border-color: rgb(0,83,159);width: 680px;margin-top: 20px;"
         th:if="${announcementNotices!=null}">
         <th:block th:each="announcement, count : ${announcementNotices}">
@@ -189,8 +189,8 @@
             <th:block th:if="${asso.services!=null} and ${service.assoServiceDocuments!=null}"
                 th:each="service : ${asso.services}">
 
-                <li><span>Service - </span><span th:text="${service.serviceLabelToDisplay}"></span> : <span
-                        th:if="${service.customerComment}" th:text="${service.customerComment}"></span></li>
+                <p><strong><span>Service - </span><span th:text="${service.serviceLabelToDisplay}"></span> : <span
+                            th:if="${service.customerComment}" th:text="${service.customerComment}"></span></strong></p>
                 <th:block th:if="${service.assoServiceDocuments!=null}">
                     <ul>
                         <li th:each="assoServiceDocument : ${service.assoServiceDocuments}">
@@ -273,13 +273,14 @@
                             </tr>
                         </table>
                         <th:block th:each="service : ${servicesWithAttach}">
-                            <li>
-                                <span>Service - </span>
-                                <span th:text="${service.serviceLabelToDisplay}"></span>
-                                <span th:if="${service.customerComment}">
-                                    : <span th:text="${service.customerComment}"></span>
-                                </span>
-                            </li>
+                            <p><strong>
+                                    <span>Service - </span>
+                                    <span th:text="${service.serviceLabelToDisplay}"></span> : <span
+                                        th:if="${service.customerComment}">
+                                        : <span th:text="${service.customerComment}"></span>
+                                    </span>
+                                </strong>
+                            </p>
 
                             <!-- documents that have attachements-->
                             <th:block th:with="docsWithAttach=${service.assoServiceDocuments.?[attachments != null

@@ -716,7 +716,6 @@ public class GeneratePdfDelegate {
         renderer = embedFontSize(renderer);
         renderer.setDocumentFromString(htmlContent.replaceAll("[\\u0000-\\u001F&&[^\\n\\r\\t]]", " ")
                 .replaceAll("\\p{C}", " ").replaceAll("&", "<![CDATA[&]]>")
-                .replaceAll("&nbsp;", "&#160;")
                 .replaceAll("font-size:\\s*0(\\.0+)?(px|pt|em|rem|%)?;", "font-size:1px;"));
         renderer.layout();
         try {
