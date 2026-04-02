@@ -46,16 +46,17 @@
         .td-with-price {
             width: 130px;
         }
+
+
+        .no-page-break {
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
     </style>
 </head>
 
 <body style="background-color: #FFFFFF; margin: 0; padding: 0; -webkit-text-size-adjust: none; text-size-adjust: none;">
-    <table>
-        <tr>
-            <td><img width="690px" th:src="@{classpath:/images/invoice-page1-header.png}" src="picture.png" />
-            </td>
-        </tr>
-    </table>
+
     <table style="table-layout: fixed;width: 690px;margin-top: 20px;">
         <tr>
             <td style="text-align: left;">
@@ -188,64 +189,113 @@
         <th:block th:if="${assos!=null}" th:each="asso : ${assos}">
             <th:block th:if="${asso.services!=null} and ${service.assoServiceDocuments!=null}"
                 th:each="service : ${asso.services}">
-                <li><span>Service - </span><span th:text="${service.serviceLabelToDisplay}"></span> : <span
-                        th:if="${service.customerComment}" th:text="${service.customerComment}"></span></li>
+                <span>Service - </span><span th:text="${service.serviceLabelToDisplay}"></span> : <span
+                    th:if="${service.customerComment}" th:text="${service.customerComment}"></span>
                 <th:block th:if="${service.assoServiceDocuments!=null}">
                     <ul>
                         <li th:each="assoServiceDocument : ${service.assoServiceDocuments}">
 
                             <span th:if="${assoServiceDocument.isMandatory}">
-                                <span th:text="${assoServiceDocument.typeDocument.customLabel}"></span> :
-
-                                <th:block th:with="attachmentFound=false"></th:block>
-                                <th:block th:if="${assoServiceDocument.attachments != null}"
-                                    th:each="attachment : ${assoServiceDocument.attachments}">
-                                    <span
-                                        th:if="${attachment.typeDocument!=null} and ${assoServiceDocument.typeDocument!=null} and ${attachment.typeDocument.code == assoServiceDocument.typeDocument.code}">
-                                        <span th:text="${attachment.description}"></span>
-                                    </span>
-                                    <th:block th:with="attachmentFound=true"></th:block>
-                                </th:block>
-                                <span th:if="!attachmentFound">
-                                    à fournir
-                                </span>
+                                <span th:text="${assoServiceDocument.typeDocument.customLabel}"></span>
                             </span>
                         </li>
+                    </ul>
 
-                        <div th:if="${hasMandatoryFieldTypes}">
+                    <div th:if="${hasMandatoryFieldTypes}" class="no-page-break">
+                        <table style="width:690px">
+                            <tr>
+                                <td style="font-size: 16px;text-align: center;font-weight: bolder;">Informations
+                                    requises
+                                </td>
+                            </tr>
+                        </table>
+
+                        <ul>
                             <li th:if="${service.assoServiceFieldTypes!=null}"
                                 th:each="assoServiceFieldType : ${service.assoServiceFieldTypes}">
+
                                 <span th:if="${assoServiceFieldType.isMandatory}">
-                                    <span th:text="${assoServiceFieldType.serviceFieldType.label}"> </span> :
+                                    <span th:text="${assoServiceFieldType.serviceFieldType.label}"></span> :
+
                                     <span th:switch="${assoServiceFieldType.serviceFieldType.dataType}">
 
-                                        <span th:case="${SERVICE_FIELD_TYPE_INTEGER}"
-                                            th:text="${assoServiceFieldType.serviceFieldType?.integerValue ?: 'A renseigner'}">
+                                        <span
+                                            th:case="${assoServiceFieldType.serviceFieldType.SERVICE_FIELD_TYPE_INTEGER}"
+                                            th:text="${assoServiceFieldType.integerValue != null ? 
+                                                assoServiceFieldType.integerValue  : 'À renseigner'}"></span>
+
+                                        <span
+                                            th:case="${assoServiceFieldType.serviceFieldType.SERVICE_FIELD_TYPE_SELECT}"
+                                            th:text="${assoServiceFieldType.selectValue != null ? 
+                                                assoServiceFieldType.selectValue.value  : 'À renseigner'}"></span>
+
+                                        <span th:case="${assoServiceFieldType.serviceFieldType.SERVICE_FIELD_TYPE_TEXT}"
+                                            th:text="${not #strings.isEmpty(assoServiceFieldType.stringValue) 
+                                                ? assoServiceFieldType.stringValue 
+                                                : 'À renseigner'}">
                                         </span>
 
-                                        <span th:case="${SERVICE_FIELD_TYPE_TEXT}"
-                                            th:text="${assoServiceFieldType.serviceFieldType?.stringValue ?: 'A renseigner'}">
+                                        <span
+                                            th:case="${assoServiceFieldType.serviceFieldType.SERVICE_FIELD_TYPE_TEXTAREA}"
+                                            th:text="${not #strings.isEmpty(assoServiceFieldType.textAreaValue) 
+                                                        ? assoServiceFieldType.textAreaValue 
+                                                        : 'À renseigner'}">
                                         </span>
 
-                                        <span th:case="${SERVICE_FIELD_TYPE_TEXTAREA}"
-                                            th:text="${assoServiceFieldType.serviceFieldType?.textAreaValue ?: 'A renseigner'}">
+                                        <span th:case="${assoServiceFieldType.serviceFieldType.SERVICE_FIELD_TYPE_DATE}"
+                                            th:text="${assoServiceFieldType.dateValue != null 
+                                                    ? #temporals.format(assoServiceFieldType.dateValue, 'dd/MM/yyyy') 
+                                                    : 'À renseigner'}">
                                         </span>
-
-                                        <span th:case="${SERVICE_FIELD_TYPE_DATE}"
-                                            th:text="${assoServiceFieldType.serviceFieldType?.dateValue ?: 'A renseigner'}">
-                                        </span>
-
-                                        <span th:case="*"> A renseigner
-                                        </span>
-
+                                        <span th:case="*"> À renseigner</span>
                                     </span>
                                 </span>
                             </li>
-                        </div>
-                    </ul>
+                        </ul>
+                    </div>
+
                 </th:block>
             </th:block>
         </th:block>
+        <div class="no-page-break">
+            <th:block th:if="${assos != null}" th:each="asso : ${assos}">
+                <!-- build services list that have at least one document and one attachment-->
+                <th:block th:with="servicesWithAttach=${asso.services.?[assoServiceDocuments != null 
+                        and !assoServiceDocuments.?[attachments != null and !attachments.isEmpty()].isEmpty()]}">
+
+                    <!-- display only if service has at least one attachement-->
+                    <th:block th:if="${!servicesWithAttach.isEmpty()}">
+                        <table style="width:690px">
+                            <tr>
+                                <td style="font-size: 16px;text-align: center;font-weight: bolder;">
+                                    Pièces déjà fournies
+                                </td>
+                            </tr>
+                        </table>
+                        <th:block th:each="service : ${servicesWithAttach}">
+                            <li>
+                                <span>Service - </span>
+                                <span th:text="${service.serviceLabelToDisplay}"></span>
+                                <span th:if="${service.customerComment}">
+                                    : <span th:text="${service.customerComment}"></span>
+                                </span>
+                            </li>
+
+                            <!-- documents that have attachements-->
+                            <th:block th:with="docsWithAttach=${service.assoServiceDocuments.?[attachments != null
+                                     and !attachments.isEmpty()]}">
+                                <ul>
+                                    <li th:each="doc : ${docsWithAttach}">
+                                        <span th:text="${doc.typeDocument.customLabel}"></span> :
+                                        <span th:each="att : ${doc.attachments}" th:text="${att.description}"></span>
+                                    </li>
+                                </ul>
+                            </th:block>
+                        </th:block>
+                    </th:block>
+                </th:block>
+            </th:block>
+        </div>
     </div>
 
     <div style="margin-bottom: 10px;">
