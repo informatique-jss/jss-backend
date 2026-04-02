@@ -54,6 +54,7 @@ export class QuotationsComponent implements OnInit {
   responsablesForCurrentUser: Responsable[] | undefined;
   responsableCheck: boolean[] = [];
   selectAllResponsable: boolean = true;
+  expandedQuotation: Quotation | undefined;
 
   hideSeeMore: boolean = false;
   isFirstLoading: boolean = false;
@@ -222,6 +223,11 @@ export class QuotationsComponent implements OnInit {
         this.quotationsMailComputeResult[quotation.id] = response;
       })
     }
+
+    this.expandedQuotation = undefined;
+    this.quotationService.getQuotation(quotation.id).subscribe(response => {
+      this.expandedQuotation = response;
+    });
   }
 
   getQuotationBillingMailList(quotation: Quotation) {

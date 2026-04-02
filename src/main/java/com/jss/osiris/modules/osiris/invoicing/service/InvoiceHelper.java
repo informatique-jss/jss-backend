@@ -128,6 +128,7 @@ public class InvoiceHelper {
             invoiceLabelResult.setIsResponsableOnBilling(billingDocument.getIsResponsableOnBilling());
             invoiceLabelResult.setIsCommandNumberMandatory(billingDocument.getIsCommandNumberMandatory());
             invoiceLabelResult.setCommandNumber(billingDocument.getCommandNumber());
+            invoiceLabelResult.setExternalReference(billingDocument.getExternalReference());
             invoiceLabelResult.setLabelOrigin("la configuration Facture / Autres du donneur d'ordre");
             if (invoiceLabelResult.getBillingLabel() == null || invoiceLabelResult.getBillingLabel().length() == 0)
                 throw new OsirisClientMessageException("Aucun libellé trouvé pour la facture");
@@ -151,6 +152,7 @@ public class InvoiceHelper {
             invoiceLabelResult.setIsResponsableOnBilling(billingDocument.getIsResponsableOnBilling());
             invoiceLabelResult.setIsCommandNumberMandatory(billingDocument.getIsCommandNumberMandatory());
             invoiceLabelResult.setCommandNumber(billingDocument.getCommandNumber());
+            invoiceLabelResult.setExternalReference(billingDocument.getExternalReference());
             invoiceLabelResult.setLabelOrigin("les informations de l'affaire");
 
         } else {
@@ -170,6 +172,7 @@ public class InvoiceHelper {
             invoiceLabelResult.setIsResponsableOnBilling(billingDocument.getIsResponsableOnBilling());
             invoiceLabelResult.setIsCommandNumberMandatory(billingDocument.getIsCommandNumberMandatory());
             invoiceLabelResult.setCommandNumber(billingDocument.getCommandNumber());
+            invoiceLabelResult.setExternalReference(billingDocument.getExternalReference());
 
             invoiceLabelResult.setBillingLabelAddress(orderingCustomer.getTiers().getAddress());
             invoiceLabelResult.setBillingLabelPostalCode(orderingCustomer.getTiers().getPostalCode());
