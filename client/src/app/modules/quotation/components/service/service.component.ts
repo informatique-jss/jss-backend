@@ -13,6 +13,7 @@ import { ASSO_SERVICE_DOCUMENT_ENTITY_TYPE } from 'src/app/routing/search/search
 import { AppService } from 'src/app/services/app.service';
 import { formatBytes } from '../../../../libs/FormatHelper';
 import { instanceOfCustomerOrder } from '../../../../libs/TypeHelper';
+import { HabilitationsService } from '../../../../services/habilitations.service';
 import { AssoServiceDocument } from '../../model/AssoServiceDocument';
 import { AssoServiceFieldType } from '../../model/AssoServiceFieldType';
 import { IQuotation } from '../../model/IQuotation';
@@ -50,7 +51,8 @@ export class ServiceComponent implements OnInit {
     public selectServiceTypeDialog: MatDialog,
     private constantService: ConstantService,
     private appService: AppService,
-    private uploadAttachmentService: UploadAttachmentService
+    private uploadAttachmentService: UploadAttachmentService,
+    private habilitationService: HabilitationsService
   ) { }
 
   serviceForm = this.formBuilder.group({});
@@ -80,6 +82,10 @@ export class ServiceComponent implements OnInit {
       return false;
     else
       return true;
+  }
+
+  canAddFurtherInformationField() {
+    return this.habilitationService.canAddFurtherInformationField();
   }
 
   commentDocument(document: AssoServiceDocument) {
