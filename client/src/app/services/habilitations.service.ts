@@ -15,6 +15,10 @@ export class HabilitationsService {
     return this.loginService.hasGroup([ACCOUNTING_RESPONSIBLE])
   }
 
+  canAddFurtherInformationField() {
+    return this.loginService.hasGroup([ADMINISTRATEURS]);
+  }
+
   canAddAssignOrderForProduction() {
     return this.loginService.hasGroup([TEAM_RESPONSIBLE]);
   }
