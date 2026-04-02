@@ -47,7 +47,6 @@
             width: 130px;
         }
 
-
         .no-page-break {
             page-break-inside: avoid;
             break-inside: avoid;
@@ -189,8 +188,9 @@
         <th:block th:if="${assos!=null}" th:each="asso : ${assos}">
             <th:block th:if="${asso.services!=null} and ${service.assoServiceDocuments!=null}"
                 th:each="service : ${asso.services}">
-                <span>Service - </span><span th:text="${service.serviceLabelToDisplay}"></span> : <span
-                    th:if="${service.customerComment}" th:text="${service.customerComment}"></span>
+
+                <li><span>Service - </span><span th:text="${service.serviceLabelToDisplay}"></span> : <span
+                        th:if="${service.customerComment}" th:text="${service.customerComment}"></span></li>
                 <th:block th:if="${service.assoServiceDocuments!=null}">
                     <ul>
                         <li th:each="assoServiceDocument : ${service.assoServiceDocuments}">
