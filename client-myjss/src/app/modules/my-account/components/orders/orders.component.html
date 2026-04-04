@@ -201,6 +201,20 @@
                     </div>
                     <div class="col-12 col-sm-auto" *ngIf="expandedOrder">
                       <div class="row gap-1">
+                        <div *ngFor="let asso of expandedOrder.assoAffaireOrders" class="col-auto p-0">
+                          <button class="btn btn-primary btn-icon rounded-circle" role="button"
+                            ngbTooltip="Renseignez l’IBAN pour les remboursements."
+                            [routerLink]='"/account/affaire/edit/order/" + asso.affaire.id + "/" + expandedOrder.id'
+                            *ngIf="(!asso.affaire.paymentIban || !asso.affaire.paymentBic || !asso.affaire.mails || asso.affaire.mails.length==0) && invoiceSummary && invoiceSummary.billingLabelType && invoiceSummary.billingLabelType.id == billingLabelTypeCodeAffaire.id ;else just_edit_affaire">
+                            <i class="ai-edit"></i>
+                          </button>
+                          <ng-template #just_edit_affaire> <a class="btn btn-sm  mt-3 mt-md-0 ms-md-auto btn-secondary"
+                              role="button"
+                              [routerLink]='"/account/affaire/edit/order/" + asso.affaire.id + "/" + this.expandedOrder.id'>
+                              <i class="ai-edit ms-n1 me-2"></i>
+                              Modifier
+                            </a></ng-template>
+                        </div>
                         <div *ngIf="expandedOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_DRAFT"
                           class="col-auto p-0">
                           <button type="button" class="btn btn-primary btn-icon rounded-circle" aria-label="Edit"
@@ -216,17 +230,6 @@
                             <i class="ai-show"></i>
                           </button>
                         </div>
-                        <!-- TODO : En attente retour discussion AMOA/Alex -->
-                        <ng-template *ngFor="let asso of expandedOrder.assoAffaireOrders">
-                          <div *ngFor="let service of asso.services" class="col-auto p-0">
-                            <button type="button" class="btn btn-primary btn-icon rounded-circle" aria-label="see"
-                              placement="top"
-                              [ngbTooltip]="'Consultez votre annonce légale : ' + asso.affaire.denomination + ' - ' "
-                              (click)="$event.stopPropagation(); goToJssAnnouncement(service, $event ); $event.preventDefault();">
-                              <i class="ai-search"></i>
-                            </button>
-                          </div>
-                        </ng-template>
                         <div
                           *ngIf="order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT 
                           || order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BEING_PROCESSED 
@@ -354,6 +357,37 @@
                           </div>
                         </div>
 
+                        <!-- Has AL and can download publication flags etc... -->
+                        <div
+                          *ngIf="expandedOrder && (service.serviceStatus.includes('Terminé') || service.serviceStatus.includes('Publié'))">
+                          <div *ngFor="let provision of service.provisions">
+                            <div *ngIf="provision && provision.announcement" class="mx-3 row">
+                              <div class="col-auto p-0 ms-1">
+                                <button type="button" class="btn btn-secondary btn-icon rounded-circle" aria-label="see"
+                                  placement="top"
+                                  [ngbTooltip]="'Consultez votre annonce légale : ' + asso.affaire.denomination + ' - ' "
+                                  (click)="$event.stopPropagation(); goToJssAnnouncement(service, $event ); $event.preventDefault();">
+                                  <i class="ai-search"></i>
+                                </button>
+                              </div>
+                              <div class="col-auto p-0 ms-1">
+                                <button type="button" class="btn btn-secondary btn-icon rounded-circle" aria-label="see"
+                                  placement="top" [ngbTooltip]="'Téléchargez votre attestation de parution.'"
+                                  (click)="$event.stopPropagation(); downloadPublicationReceipt(provision.announcement, provision); $event.preventDefault();">
+                                  <i class="ai-award"></i>
+                                </button>
+                              </div>
+                              <div class="col-auto p-0 ms-1">
+                                <button type="button" class="btn btn-secondary btn-icon rounded-circle" aria-label="see"
+                                  placement="top" [ngbTooltip]="'Téléchargez votre témoin de parution.'"
+                                  (click)="$event.stopPropagation(); downloadPublicationFlag(provision.announcement); $event.preventDefault();">
+                                  <i class="ai-pen"></i>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
                         <!-- Statut -->
                         <div class="mt-2 mt-sm-0 ps-2 ps-sm-3 text-nowrap">
                           <span class="badge bg-info bg-opacity-10 text-info fs-xs">
@@ -398,10 +432,6 @@
                             <span class="placeholder placeholder-sm col-4"></span>
                           </p>
                         </div>
-                        <button type="button" class="btn btn-link btn-sm px-2 mt-2 hover-bg-light "
-                          [routerLink]='"/account/orders/details/" + order.id'>
-                          <i class="ai-file-text me-2"></i>Détails de la commande
-                        </button>
                         <button type="button" class="btn btn-link btn-sm px-2 mt-2 hover-bg-light "
                           *ngIf="order.customerOrderStatus.code==CUSTOMER_ORDER_STATUS_DRAFT"
                           (click)="cancelDraft(order); $event.stopPropagation();">
