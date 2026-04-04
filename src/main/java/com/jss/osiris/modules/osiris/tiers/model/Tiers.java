@@ -186,7 +186,6 @@ public class Tiers implements IAttachment, IId {
 	@IndexedField
 	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
 			JacksonViews.OsirisDetailedView.class })
-
 	private String address;
 
 	@Column(length = 10)
