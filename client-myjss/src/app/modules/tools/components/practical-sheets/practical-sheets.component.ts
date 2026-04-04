@@ -93,7 +93,7 @@ export class PracticalSheetsComponent implements OnInit {
         this.myJssCategories.push(...response);
         this.selectedMyJssCategory = this.myJssCategories[0];
         this.secondSelectedMyJssCategory = this.myJssCategories[0];
-        this.postService.getFirstPostsByMyJssCategory(this.secondSearchText, undefined).subscribe(response => {
+        this.postService.getFirstArticlePostsByMyJssCategory(this.secondSearchText, undefined).subscribe(response => {
           for (let post of response) {
             for (let category of post.myJssCategories) {
               if (category.id) {
@@ -261,7 +261,7 @@ export class PracticalSheetsComponent implements OnInit {
     } else {
       if (!doNotOverriteSelectedCategory)
         this.selectedMyJssCategory = this.allMyJssCategories;
-      this.postService.getTopPosts(this.page).subscribe(response => {
+      this.postService.getTopArticlePosts(this.page).subscribe(response => {
         if (response) {
           this.topPosts = response;
         }
@@ -270,7 +270,7 @@ export class PracticalSheetsComponent implements OnInit {
   }
 
   getTendencyPosts() {
-    this.postService.getTendencyPosts().subscribe(response => {
+    this.postService.getTendencyArticlePosts().subscribe(response => {
       if (response && response.length > 0) {
         this.tendencyPosts.push(...response);
       }
@@ -278,7 +278,7 @@ export class PracticalSheetsComponent implements OnInit {
   }
 
   getMostSeenPosts() {
-    this.postService.getMostSeenPosts().subscribe(response => {
+    this.postService.getMostSeenArticlePosts().subscribe(response => {
       if (response && response.length > 0) {
         this.mostSeenPosts.push(...response);
       }
