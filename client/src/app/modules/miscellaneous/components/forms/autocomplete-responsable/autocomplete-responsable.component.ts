@@ -18,6 +18,7 @@ export class AutocompleteResponsableComponent extends GenericAutocompleteCompone
   }
 
   @Input() onlyActive: boolean = true;
+  @Input() previewAction: boolean = true;
 
   searchEntities(value: string): Observable<IndexEntity[]> {
     return this.indexEntityService.getResponsableByKeyword(value, this.onlyActive);
@@ -39,6 +40,8 @@ export class AutocompleteResponsableComponent extends GenericAutocompleteCompone
   }
 
   override  getPreviewActionLinkFunction(entity: IndexEntity): string[] | undefined {
+    if (!this.previewAction)
+      return undefined;
     return ['/tiers/responsable', entity.entityId + ""];
   }
 

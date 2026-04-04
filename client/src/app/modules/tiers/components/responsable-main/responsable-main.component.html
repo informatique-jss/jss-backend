@@ -300,3 +300,8 @@
     *ngIf="editMode==false &&  tiers.id" (click)="printLabel()">
     <mat-icon>print</mat-icon>
   </button>
+  <button matTooltip="Transférer le responsable" mat-fab color="accent" class="eight-fab-button"
+    *ngIf="editMode==false &&  selectedResponsable && selectedResponsable.id && selectedResponsable.isActive"
+    (click)="openDialogTransferResponsable()">
+    <mat-icon>forward</mat-icon>
+  </button>
