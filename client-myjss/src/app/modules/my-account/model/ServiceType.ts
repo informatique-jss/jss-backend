@@ -19,6 +19,8 @@ export interface ServiceType {
   serviceTypeLinked: ServiceType;
   totalPreTaxPrice: number;
   deboursAmount: number;
+  announcementOnlyTotalPreTaxPrice: number;
+  announcementOnlyDeboursAmount: number;
   descriptionText: string;
   serviceFamily: ServiceFamily;
 }

@@ -109,10 +109,28 @@
               <ng-container *ngIf="currentUser && serviceType.totalPreTaxPrice && serviceType.totalPreTaxPrice>0">
                 <h6 id="pricing">Tarifs</h6>
                 <div class="col-12 col-md-4 g-2 mb-2">
-                  <span>Prix total estimé (HT) : {{serviceType.totalPreTaxPrice}} €<span
+                  <span class="text-nowrap"
+                    *ngIf="serviceType.announcementOnlyTotalPreTaxPrice && serviceType.announcementOnlyTotalPreTaxPrice<=0">Prix
+                    total
+                    estimé (HT) : {{serviceType.totalPreTaxPrice}} €<span
                       *ngIf="serviceType.deboursAmount && serviceType.deboursAmount>0"> (dont débours
-                      {{serviceType.deboursAmount}}
-                      €) </span>
+                      {{serviceType.deboursAmount}}€) </span>
+                  </span>
+                  <div
+                    *ngIf="serviceType.announcementOnlyTotalPreTaxPrice && serviceType.announcementOnlyTotalPreTaxPrice>=0">
+                    <span class="text-nowrap">Prix
+                      estimé pour l’annonce légale seule (HT) : {{serviceType.announcementOnlyTotalPreTaxPrice}} €<span
+                        *ngIf="serviceType.announcementOnlyDeboursAmount && serviceType.announcementOnlyDeboursAmount>0">
+                        (dont débours
+                        {{serviceType.announcementOnlyDeboursAmount}}€) </span>
+                    </span> <br />
+                  </div>
+                  <span class="text-nowrap">Prix
+                    estimé pour l’annonce légale et les formalités associées (HT) :
+                    {{serviceType.totalPreTaxPrice}} €<span
+                      *ngIf="serviceType.deboursAmount && serviceType.deboursAmount>0">
+                      (dont débours
+                      {{serviceType.deboursAmount}}€) </span>
                   </span>
                 </div>
               </ng-container>
