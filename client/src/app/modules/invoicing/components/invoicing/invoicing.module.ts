@@ -31,6 +31,7 @@ import { BankBalanceComponent } from "../bank-balance/bank-balance.component";
 import { BankTransfertListComponent } from '../bank-transfert-list/bank-transfert-list.component';
 import { DirectDebitTransfertListComponent } from '../direct-debit-transfert-list/direct-debit-transfert-list.component';
 import { EditAmountInvoiceItemDialogComponent } from "../edit-amount-invoice-item-dialog/edit-amount-invoice-item-dialog.component";
+import { GuMatchingComponent } from "../gu-matching/gu-matching.component";
 import { InvoiceDetailsComponent } from "../invoice-details/invoice-details.component";
 import { InvoicePaymentTableComponent } from "../invoice-payment-table/invoice-payment-table.component";
 import { InvoicePaymentComponent } from "../invoice-payment/invoice-payment.component";
@@ -96,6 +97,7 @@ const routes: Routes = [
     ReceiptReconciliationEditDialogComponent,
     EditRefundLabelDialogComponent,
     OutboundCheckListComponent,
+    GuMatchingComponent,
     BankBalanceComponent,
     EditAmountInvoiceItemDialogComponent,
     OfxMatchingComponent,

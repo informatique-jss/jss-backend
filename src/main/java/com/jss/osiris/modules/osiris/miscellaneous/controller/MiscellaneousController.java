@@ -1304,6 +1304,7 @@ public class MiscellaneousController {
 
         if (!entityType.equals(Tiers.class.getSimpleName())
                 && !entityType.equals("Ofx")
+                && !entityType.equals("InpiInvoicingExtract")
                 && !entityType.equals(MissingAttachmentQuery.class.getSimpleName())
                 && !entityType.equals("Sage")
                 && !entityType.equals(Responsable.class.getSimpleName())

@@ -64,6 +64,7 @@ import com.jss.osiris.modules.osiris.invoicing.model.RefundSearchResult;
 import com.jss.osiris.modules.osiris.invoicing.service.AzureInvoiceService;
 import com.jss.osiris.modules.osiris.invoicing.service.AzureReceiptInvoiceService;
 import com.jss.osiris.modules.osiris.invoicing.service.AzureReceiptService;
+import com.jss.osiris.modules.osiris.invoicing.service.InpiInvoicingExtractService;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceHelper;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceItemService;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
@@ -180,6 +181,9 @@ public class InvoicingController {
 
     @Autowired
     InvoicingFacade invoicingFacade;
+
+    @Autowired
+    InpiInvoicingExtractService inpiInvoicingExtractService;
 
     @GetMapping(inputEntryPoint + "/rff/create")
     public ResponseEntity<Invoice> generateInvoiceForRff(@RequestParam Integer idRff)
