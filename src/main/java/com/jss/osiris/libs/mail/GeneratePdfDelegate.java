@@ -306,7 +306,11 @@ public class GeneratePdfDelegate {
 
             OutputStream outputStream;
             try {
-                tempFile = File.createTempFile("Témoin de publication", "pdf");
+                if (isPublicationFlag)
+                    tempFile = File.createTempFile("Témoin de publication", "pdf");
+                else
+                    tempFile = File.createTempFile("Attestation de parution", ".pdf");
+
                 outputStream = new FileOutputStream(tempFile);
             } catch (IOException e) {
                 throw new OsirisException(e, "Unable to create temp file");
