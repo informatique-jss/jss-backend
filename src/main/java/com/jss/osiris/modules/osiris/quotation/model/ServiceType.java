@@ -113,14 +113,6 @@ public class ServiceType implements Serializable, IId {
 	@JsonView({ JacksonViews.MyJssDetailedView.class })
 	private BigDecimal deboursAmount;
 
-	@Transient
-	@JsonView({ JacksonViews.MyJssDetailedView.class })
-	private BigDecimal announcementOnlyDeboursAmount;
-
-	@Transient
-	@JsonView({ JacksonViews.MyJssDetailedView.class })
-	private BigDecimal announcementOnlyTotalPreTaxPrice;
-
 	@Column(columnDefinition = "TEXT")
 	@JsonView({ JacksonViews.MyJssDetailedView.class,
 			JacksonViews.OsirisDetailedView.class })
@@ -308,22 +300,6 @@ public class ServiceType implements Serializable, IId {
 
 	public void setDeboursAmount(BigDecimal deboursAmount) {
 		this.deboursAmount = deboursAmount;
-	}
-
-	public BigDecimal getAnnouncementOnlyDeboursAmount() {
-		return announcementOnlyDeboursAmount;
-	}
-
-	public void setAnnouncementOnlyDeboursAmount(BigDecimal announcementOnlyDeboursAmount) {
-		this.announcementOnlyDeboursAmount = announcementOnlyDeboursAmount;
-	}
-
-	public BigDecimal getAnnouncementOnlyTotalPreTaxPrice() {
-		return announcementOnlyTotalPreTaxPrice;
-	}
-
-	public void setAnnouncementOnlyTotalPreTaxPrice(BigDecimal announcementOnlyTotalPreTaxPrice) {
-		this.announcementOnlyTotalPreTaxPrice = announcementOnlyTotalPreTaxPrice;
 	}
 
 }

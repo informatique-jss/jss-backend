@@ -58,14 +58,15 @@ public class ServiceTypeServiceImpl implements ServiceTypeService {
             if (!serviceFinal.getAssoServiceTypeFieldTypes().isEmpty() && isFetchOnlyMandatoryDocuments)
                 serviceFinal.getAssoServiceTypeFieldTypes().removeIf(asso -> !asso.getIsMandatory());
         }
+        if (serviceFinal.getServiceTypeLinked() != null)
+            serviceFinal
+                    .setServiceTypeLinked(getCurrentBillingItemsForServiceType(serviceFinal.getServiceTypeLinked()));
         return getCurrentBillingItemsForServiceType(serviceFinal);
     }
 
     private ServiceType getCurrentBillingItemsForServiceType(ServiceType serviceType) throws OsirisException {
         BigDecimal totalPreTaxPrice = new BigDecimal(0f);
         BigDecimal deboursAmount = new BigDecimal(0f);
-        BigDecimal announcementOnlyTotalPreTaxPrice = new BigDecimal(0f);
-        BigDecimal announcementOnlyDeboursAmount = new BigDecimal(0f);
 
         if (serviceType.getAssoServiceProvisionTypes() != null && !serviceType.getAssoServiceProvisionTypes().isEmpty())
             for (AssoServiceProvisionType asso : serviceType.getAssoServiceProvisionTypes())
@@ -78,44 +79,24 @@ public class ServiceTypeServiceImpl implements ServiceTypeService {
                         if (newBillingItem != null && billingType.getAccountingAccountProduct() != null
                                 && !Boolean.TRUE.equals(asso.getProvisionType().getIsNotReinvoiced())
                                 && (!billingType.getIsOptionnal())
-                                && (billingType.getIsDebour() == null || !billingType.getIsDebour())) {
+                                && (billingType.getIsDebour() == null || !billingType.getIsDebour()))
                             totalPreTaxPrice = totalPreTaxPrice.add(newBillingItem.getPreTaxPrice());
-
-                            if (asso.getProvisionType().getProvisionScreenType().getId()
-                                    .equals(constantService.getProvisionScreenTypeAnnouncement().getId()))
-                                announcementOnlyTotalPreTaxPrice = announcementOnlyTotalPreTaxPrice
-                                        .add(newBillingItem.getPreTaxPrice());
-                        }
 
                         if (Boolean.TRUE.equals(billingType.getIsDebour())) {
                             if (billingType.getIsNonTaxable() == false
-                                    && asso.getDefaultDeboursPrice() != null) {
+                                    && asso.getDefaultDeboursPrice() != null)
                                 deboursAmount = deboursAmount.add(asso.getDefaultDeboursPrice());
 
-                                if (asso.getProvisionType().getProvisionScreenType().getId()
-                                        .equals(constantService.getProvisionScreenTypeAnnouncement().getId()))
-                                    announcementOnlyDeboursAmount = announcementOnlyDeboursAmount
-                                            .add(asso.getDefaultDeboursPrice());
-
-                            } else if (billingType.getIsNonTaxable() == true
-                                    && asso.getDefaultDeboursPriceNonTaxable() != null) {
+                            else if (billingType.getIsNonTaxable() == true
+                                    && asso.getDefaultDeboursPriceNonTaxable() != null)
                                 deboursAmount = deboursAmount
                                         .add(asso.getDefaultDeboursPriceNonTaxable());
-
-                                if (asso.getProvisionType().getProvisionScreenType().getId()
-                                        .equals(constantService.getProvisionScreenTypeAnnouncement().getId()))
-                                    announcementOnlyDeboursAmount = announcementOnlyDeboursAmount
-                                            .add(asso.getDefaultDeboursPrice());
-                            }
                         }
                     }
-
         totalPreTaxPrice = totalPreTaxPrice.add(deboursAmount);
-        announcementOnlyTotalPreTaxPrice = announcementOnlyTotalPreTaxPrice.add(announcementOnlyDeboursAmount);
         serviceType.setTotalPreTaxPrice(totalPreTaxPrice);
         serviceType.setDeboursAmount(deboursAmount);
-        serviceType.setAnnouncementOnlyTotalPreTaxPrice(announcementOnlyTotalPreTaxPrice);
-        serviceType.setAnnouncementOnlyDeboursAmount(announcementOnlyDeboursAmount);
+
         return serviceType;
     }
 
