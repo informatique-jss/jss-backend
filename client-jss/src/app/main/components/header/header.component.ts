@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { forkJoin, of, Subscription } from 'rxjs';
@@ -39,8 +39,7 @@ import { AvatarComponent } from '../avatar/avatar.component';
   ],
   standalone: true
 })
-export class HeaderComponent implements OnInit {
-
+export class HeaderComponent implements OnInit, OnDestroy {
   departments: PublishingDepartment[] = [];
   categories: JssCategory[] = [];
   categoriesByOrder: JssCategory[] = [];
@@ -51,6 +50,7 @@ export class HeaderComponent implements OnInit {
   posts: Post[] | undefined;
   newspapers: IndexEntity[] | undefined;
   searchObservableRef: Subscription | undefined;
+  newspaperImages: any[] = [];
 
   searchModalInstance: any | undefined;
   isWithKiosk: boolean = false;
@@ -195,6 +195,7 @@ export class HeaderComponent implements OnInit {
     this.searchModalInstance.result.finally(() => {
       this.searchModalInstance = undefined;
       this.posts = [];
+      this.newspapers = [];
       this.searchText = "";
       if (this.searchObservableRef)
         this.searchObservableRef.unsubscribe();
@@ -283,8 +284,21 @@ export class HeaderComponent implements OnInit {
           if (this.isWithKiosk) {
             this.newspapers = (results.newspapersRes || []).filter((newspaper: any) => !!newspaper); // we filter posts that are not defined
             if (this.newspapers)
-              for (let newspaper of this.newspapers)
+              for (let newspaper of this.newspapers) {
                 newspaper.text = JSON.parse(newspaper.text);
+                this.newspaperService.getNewspaperFrontImage(newspaper.text.id).subscribe((res: Blob) => {
+                  const id = newspaper.text.id;
+
+                  console.log("TYPE:", res);
+                  console.log("instanceof Blob:", res instanceof Blob)
+                  if (this.newspaperImages[id]) {
+                    URL.revokeObjectURL(this.newspaperImages[id]);
+                  }
+
+                  const imageUrl = URL.createObjectURL(res);
+                  this.newspaperImages[id] = imageUrl;
+                });
+              }
           }
         },
         error: () => {
@@ -294,6 +308,27 @@ export class HeaderComponent implements OnInit {
           this.searchInProgress = false;
         }
       });
+    }
+  }
+
+  getYearDate(date: any) {
+    date = new Date(date);
+    const year = date.getFullYear();
+    return year;
+  }
+
+  getNewspaperImage(newspaperId: number): any {
+    if (this.newspaperImages[newspaperId])
+      return this.newspaperImages[newspaperId];
+
+    return undefined;
+  }
+
+  ngOnDestroy(): void {
+    for (const key in this.newspaperImages) {
+      if (this.newspaperImages[key]) {
+        URL.revokeObjectURL(this.newspaperImages[key]);
+      }
     }
   }
 

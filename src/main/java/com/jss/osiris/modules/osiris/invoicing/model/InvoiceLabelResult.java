@@ -35,6 +35,10 @@ public class InvoiceLabelResult {
 
     @JsonView(JacksonViews.MyJssDetailedView.class)
     private String commandNumber;
+
+    @JsonView(JacksonViews.MyJssDetailedView.class)
+    private String externalReference;
+
     private String labelOrigin;
 
     public String getBillingLabel() {
@@ -107,6 +111,14 @@ public class InvoiceLabelResult {
 
     public void setCommandNumber(String commandNumber) {
         this.commandNumber = commandNumber;
+    }
+
+    public String getExternalReference() {
+        return externalReference;
+    }
+
+    public void setExternalReference(String externalReference) {
+        this.externalReference = externalReference;
     }
 
     public String getLabelOrigin() {

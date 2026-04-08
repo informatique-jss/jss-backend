@@ -230,6 +230,16 @@
                             <i class="ai-show"></i>
                           </button>
                         </div>
+                        <ng-template *ngFor="let asso of expandedOrder.assoAffaireOrders">
+                          <div *ngFor="let service of asso.services" class="col-auto p-0">
+                            <button type="button" class="btn btn-primary btn-icon rounded-circle" aria-label="see"
+                              placement="top"
+                              [ngbTooltip]="'Consultez votre annonce légale : ' + asso.affaire.denomination + ' - ' "
+                              (click)="$event.stopPropagation(); goToJssAnnouncement(service, $event ); $event.preventDefault();">
+                              <i class="ai-search"></i>
+                            </button>
+                          </div>
+                        </ng-template>
                         <div
                           *ngIf="order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT 
                           || order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BEING_PROCESSED 
@@ -419,9 +429,30 @@
                 <div class="card border-0 bg-secondary  my-3">
                   <div class="card-body">
                     <div class="row g-4">
+                      <!-- Bloc : Client ref -->
+                      <div class="col"
+                        *ngIf="ordersInvoiceLabelResult[order.id] && ordersInvoiceLabelResult[order.id].externalReference && ordersInvoiceLabelResult[order.id].commandNumber || (expandedOrder && expandedOrder.description)">
+                        <div
+                          *ngIf="ordersInvoiceLabelResult[order.id] && ordersInvoiceLabelResult[order.id].externalReference && ordersInvoiceLabelResult[order.id].commandNumber">
+                          <div class="fs-sm fw-medium text-dark mb-1">Votre référence :</div>
+                          <div class="fs-sm">
+                            {{ ordersInvoiceLabelResult[order.id].externalReference }}<br>
+                          </div>
+                          <div class="fs-sm fw-medium text-dark mb-1 mt-2">Votre n° de commande annuel :</div>
+                          <div class="fs-sm">
+                            {{ ordersInvoiceLabelResult[order.id].commandNumber }}<br>
+                          </div>
+                        </div>
+                        <div *ngIf="expandedOrder && expandedOrder.description">
+                          <div class="fs-sm fw-medium text-dark mb-1 mt-2">Vos informations :</div>
+                          <div class="fs-sm">
+                            {{ expandedOrder.description }}
+                          </div>
+                        </div>
+                      </div>
 
                       <!-- Bloc : Envoi de la facture -->
-                      <div class="col-sm-6 col-lg-4">
+                      <div class="col">
                         <div class="fs-sm fw-medium text-dark mb-1">Envoi de la facture à :</div>
                         <div class="fs-sm" *ngIf="ordersMailComputeResult[order.id]">
                           {{ getCustomerOrderBillingMailList(order) }}
@@ -432,6 +463,10 @@
                             <span class="placeholder placeholder-sm col-4"></span>
                           </p>
                         </div>
+                        <button type="button" class="btn btn-link btn-sm px-2 mt-2 hover-bg-light mx-1"
+                          [routerLink]='"/account/orders/details/" + order.id'>
+                          <i class="ai-file-text me-2"></i>Détails de la commande
+                        </button>
                         <button type="button" class="btn btn-link btn-sm px-2 mt-2 hover-bg-light "
                           *ngIf="order.customerOrderStatus.code==CUSTOMER_ORDER_STATUS_DRAFT"
                           (click)="cancelDraft(order); $event.stopPropagation();">
@@ -440,7 +475,7 @@
                       </div>
 
                       <!-- Bloc : Libellé de facturation -->
-                      <div class="col-sm-6 col-lg-5" *ngIf="ordersInvoiceLabelResult[order.id]">
+                      <div class="col" *ngIf="ordersInvoiceLabelResult[order.id]">
                         <div class="fs-sm fw-medium text-dark mb-1">Libellé de facturation :</div>
                         <div class="fs-sm">
                           {{ ordersInvoiceLabelResult[order.id].billingLabel }}<br>

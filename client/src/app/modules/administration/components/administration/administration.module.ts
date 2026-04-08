@@ -66,6 +66,7 @@ import { ReferentialIncidentResponsibilityComponent } from '../referentials/refe
 import { ReferentialIncidentTypeComponent } from '../referentials/referential-incident-type/referential-incident-type.component';
 import { ReferentialIndicatorGroupComponent } from '../referentials/referential-indicator-group/referential-indicator-group.component';
 import { ReferentialIndicatorComponent } from '../referentials/referential-indicator/referential-indicator.component';
+import { ReferentialInformationBannerComponent } from '../referentials/referential-information-banner/referential-information-banner.component';
 import { ReferentialInvoiceStatusComponent } from '../referentials/referential-invoice-status/referential-invoice-status.component';
 import { ReferentialInvoicingBlockageComponent } from '../referentials/referential-invoicing-blockage/referential-invoicing-blockage.component';
 import { ReferentialJournalTypeComponent } from '../referentials/referential-journal-type/referential-journal-type.component';
@@ -233,7 +234,8 @@ const routes: Routes = [
     ReferentialPaySlipLineTypeComponent,
     ReferentialTooltipEntryComponent,
     ReferentialRejectionCauseComponent,
-    ReferentialTiersGroupComponent
+    ReferentialTiersGroupComponent,
+    ReferentialInformationBannerComponent
   ], exports: [LogComponent,
     CompetentAuthorityComponent,
     ProviderComponent

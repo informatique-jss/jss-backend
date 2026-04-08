@@ -108,7 +108,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
   TOOLTIP_ENTRY_REFERENTIAL = "Description des tooltips";
   REJECTION_CAUSE_REFERENTIAL = "Cause des rejets GU";
   TIERS_GROUP_REFERENTIAL = "Groupes de tiers";
-
+  INFORMATION_BANNER_REFERENTIAL = "Bandeau d'information";
 
   constructor(private appService: AppService,
     private formBuilder: FormBuilder,
@@ -200,6 +200,7 @@ export class AdministrationComponent implements OnInit, AfterContentChecked {
     this.referentials.push(this.TOOLTIP_ENTRY_REFERENTIAL);
     this.referentials.push(this.REJECTION_CAUSE_REFERENTIAL);
     this.referentials.push(this.TIERS_GROUP_REFERENTIAL);
+    this.referentials.push(this.INFORMATION_BANNER_REFERENTIAL);
     this.referentials.sort((a, b) => a.localeCompare(b));
 
     this.filteredReferentials = this.referentialForm.get("entity")?.valueChanges.pipe(

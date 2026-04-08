@@ -285,7 +285,6 @@ public class ServiceServiceImpl implements ServiceService {
         ArrayList<String> typeDocumentCodes = new ArrayList<String>();
         ArrayList<AssoServiceFieldType> assoServiceFieldTypes = new ArrayList<AssoServiceFieldType>();
         ArrayList<Integer> serviceFieldTypeIds = new ArrayList<Integer>();
-        Boolean alreadyHasFurtherInformationServiceFieldType = false;
 
         ArrayList<AssoServiceProvisionType> assoServiceProvisionTypes = new ArrayList<AssoServiceProvisionType>();
 
@@ -322,12 +321,6 @@ public class ServiceServiceImpl implements ServiceService {
                                     .contains(assoServiceTypeFieldType.getServiceFieldType().getId())) {
                         serviceFieldTypeIds.add(assoServiceTypeFieldType.getServiceFieldType().getId());
                         assoServiceFieldTypes.add(newAssoServiceFieldType);
-
-                        if (!alreadyHasFurtherInformationServiceFieldType
-                                && newAssoServiceFieldType.getServiceFieldType().getId()
-                                        .equals(constantService.getFurtherInformationServiceFieldType().getId()))
-                            alreadyHasFurtherInformationServiceFieldType = true;
-
                     }
                 }
         }
@@ -337,15 +330,6 @@ public class ServiceServiceImpl implements ServiceService {
             service.getProvisions().addAll(mergeProvisionTypes(assoServiceProvisionTypes, service, affaire));
         else
             service.setProvisions(mergeProvisionTypes(assoServiceProvisionTypes, service, affaire));
-
-        // Always add further information field
-        if (!alreadyHasFurtherInformationServiceFieldType) {
-            AssoServiceFieldType newAssoServiceFieldType = new AssoServiceFieldType();
-            newAssoServiceFieldType.setIsMandatory(false);
-            newAssoServiceFieldType.setService(service);
-            newAssoServiceFieldType.setServiceFieldType(constantService.getFurtherInformationServiceFieldType());
-            assoServiceFieldTypes.add(newAssoServiceFieldType);
-        }
 
         service.setAssoServiceFieldTypes(assoServiceFieldTypes);
         service.setAssoServiceDocuments(assoServiceDocuments);

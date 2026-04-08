@@ -28,4 +28,14 @@ export class NewspaperService extends AppRestService<Newspaper> {
   getSeeableNewspapersForCurrentUser() {
     return this.getList(new HttpParams(), "newspapers/list-seeable-newpapers") as any as Observable<number[]>;
   }
+
+  getNewspaperFrontImage(newspaperId: number): Observable<Blob> {
+    return this._http.get(
+      AppRestService.serverUrl + this.entryPoint + "/newspaper/front-image",
+      {
+        params: new HttpParams().set("newspaperId", newspaperId),
+        responseType: 'blob'
+      }
+    );
+  }
 }

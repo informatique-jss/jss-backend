@@ -1613,6 +1613,15 @@ public class WordpressController {
 		return new ResponseEntity<List<Newspaper>>(newspaperService.getNewspaperForYear(year), HttpStatus.OK);
 	}
 
+	@GetMapping(inputEntryPoint + "/newspaper/front-image")
+	public ResponseEntity<byte[]> getNewspaperFrontImage(HttpServletRequest request, Integer newspaperId)
+			throws OsirisValidationException, IOException {
+
+		detectFlood(request);
+
+		return new ResponseEntity<byte[]>(newspaperService.getNewspaperFrontImage(newspaperId), HttpStatus.OK);
+	}
+
 	@GetMapping(inputEntryPoint + "/newspapers/can-see-all-newpapers")
 	public ResponseEntity<Boolean> canSeeAllNewspapersOfKiosk(HttpServletRequest request)
 			throws OsirisValidationException, IOException {

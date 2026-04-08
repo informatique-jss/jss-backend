@@ -26,8 +26,10 @@ import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.myjss.miscellaneous.model.Sitemap;
 import com.jss.osiris.modules.myjss.miscellaneous.service.GoogleAnalyticsService;
+import com.jss.osiris.modules.osiris.miscellaneous.model.InformationBanner;
 import com.jss.osiris.modules.osiris.miscellaneous.model.TooltipEntry;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.InformationBannerService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.StorageFileService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.TooltipEntryService;
 import com.jss.osiris.modules.osiris.quotation.model.Affaire;
@@ -62,6 +64,9 @@ public class MyJssMiscellaneousController {
 
 	@Autowired
 	TooltipEntryService tooltipEntryService;
+
+	@Autowired
+	InformationBannerService informationBannerService;
 
 	@Value("${upload.file.directory}")
 	private String uploadFolder;
@@ -244,5 +249,12 @@ public class MyJssMiscellaneousController {
 	public ResponseEntity<List<TooltipEntry>> getTooltipEntries(HttpServletRequest request) {
 		detectFlood(request);
 		return new ResponseEntity<List<TooltipEntry>>(tooltipEntryService.getTooltipEntries(), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/information-banner")
+	public ResponseEntity<InformationBanner> getInformationBanner(HttpServletRequest request) {
+		detectFlood(request);
+		return new ResponseEntity<InformationBanner>(informationBannerService.getActiveInformationBanner(),
+				HttpStatus.OK);
 	}
 }

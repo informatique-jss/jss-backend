@@ -85,6 +85,7 @@ import com.jss.osiris.modules.osiris.quotation.model.NoticeType;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
+import com.jss.osiris.modules.osiris.quotation.model.ServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.service.CharacterPriceService;
 import com.jss.osiris.modules.osiris.quotation.service.ProvisionService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
@@ -580,12 +581,15 @@ public class GeneratePdfDelegate {
                                 }
                             }
                             if (service.getAssoServiceFieldTypes() != null
-                                    && !service.getAssoServiceFieldTypes().isEmpty())
-                                for (AssoServiceFieldType fieldType : service.getAssoServiceFieldTypes())
-                                    if (fieldType.getIsMandatory()) {
+                                    && !service.getAssoServiceFieldTypes().isEmpty()) {
+
+                                for (AssoServiceFieldType fieldType : service.getAssoServiceFieldTypes()) {
+                                    if (fieldType.getIsMandatory() != null && fieldType.getIsMandatory()) {
+                                        fieldType.getServiceFieldType().getDataType();
                                         hasMandatoryFieldTypes = true;
-                                        break;
                                     }
+                                }
+                            }
                         }
                         if (service.getProvisions() != null) {
                             for (Provision provision : service.getProvisions()) {
@@ -698,8 +702,11 @@ public class GeneratePdfDelegate {
         if (!announcementNotices.isEmpty())
             ctx.setVariable("announcementNotices", announcementNotices);
 
-        final String htmlContent = StringEscapeUtils
+        // Create the HTML body using Thymeleaf
+        String htmlBody = StringEscapeUtils
                 .unescapeHtml4(pdfTemplateEngine(true).process("customer-order-purchase", ctx));
+        final String htmlContent = composeHtml(HEADER_PDF_TEMPLATE, null, htmlBody, new Context());
+
         File tempFile;
         OutputStream outputStream;
         try {
@@ -710,7 +717,10 @@ public class GeneratePdfDelegate {
         }
         ITextRenderer renderer = new ITextRenderer();
         XRLog.setLevel(XRLog.CSS_PARSE, Level.SEVERE);
-        renderer.setDocumentFromString(htmlContent.replaceAll("\\p{C}", " ").replaceAll("&", "<![CDATA[&]]>"));
+        renderer = embedFontSize(renderer);
+        renderer.setDocumentFromString(htmlContent.replaceAll("[\\u0000-\\u001F&&[^\\n\\r\\t]]", " ")
+                .replaceAll("\\p{C}", " ").replaceAll("&", "<![CDATA[&]]>")
+                .replaceAll("font-size:\\s*0(\\.0+)?(px|pt|em|rem|%)?;", "font-size:1px;"));
         renderer.layout();
         try {
             renderer.createPDF(outputStream);
