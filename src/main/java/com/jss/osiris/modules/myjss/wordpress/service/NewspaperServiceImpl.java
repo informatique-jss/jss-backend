@@ -62,6 +62,16 @@ public class NewspaperServiceImpl implements NewspaperService {
     }
 
     @Override
+    public byte[] getNewspaperFrontImage(Integer newspaperId) throws IOException {
+        Newspaper newspaper = newspaperRepository.findById(newspaperId).orElse(null);
+
+        if (newspaper != null && newspaper.getUploadedFileImage() != null)
+            return Files.readAllBytes(Paths.get(newspaper.getUploadedFileImage().getPath()));
+
+        return null;
+    }
+
+    @Override
     public Boolean canSeeAllNewspapersOfKiosk(Responsable responsable) throws IOException {
 
         List<Subscription> subscriptions = subscriptionService.getSubscriptionsForMail(responsable.getMail());

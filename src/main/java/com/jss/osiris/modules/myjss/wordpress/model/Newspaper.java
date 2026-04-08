@@ -32,6 +32,7 @@ public class Newspaper implements IId, Serializable {
     @SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
     @JsonView(JacksonViews.MyJssDetailedView.class)
+    @IndexedField
     private Integer id;
 
     @Column(columnDefinition = "TEXT")
