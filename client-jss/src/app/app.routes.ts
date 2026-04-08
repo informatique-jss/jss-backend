@@ -154,6 +154,10 @@ export const routes: Routes = [
         loadComponent: () => import('./main/components/kiosk/kiosk.component').then(m => m.KioskComponent)
       },
       {
+        path: 'kiosk/:year/:issue',
+        loadComponent: () => import('./main/components/kiosk/kiosk.component').then(m => m.KioskComponent)
+      },
+      {
         path: 'newsletter',
         loadComponent: () => import('./main/components/newsletter/newsletter.component').then(m => m.NewsletterComponent)
       },

@@ -195,6 +195,7 @@ export class HeaderComponent implements OnInit {
     this.searchModalInstance.result.finally(() => {
       this.searchModalInstance = undefined;
       this.posts = [];
+      this.newspapers = [];
       this.searchText = "";
       if (this.searchObservableRef)
         this.searchObservableRef.unsubscribe();
@@ -295,6 +296,12 @@ export class HeaderComponent implements OnInit {
         }
       });
     }
+  }
+
+  getYearDate(date: any) {
+    date = new Date(date);
+    const year = date.getFullYear();
+    return year;
   }
 
   openPost() {
