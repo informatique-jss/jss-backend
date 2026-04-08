@@ -58,11 +58,14 @@ public class ServiceTypeServiceImpl implements ServiceTypeService {
             if (!serviceFinal.getAssoServiceTypeFieldTypes().isEmpty() && isFetchOnlyMandatoryDocuments)
                 serviceFinal.getAssoServiceTypeFieldTypes().removeIf(asso -> !asso.getIsMandatory());
         }
+        if (serviceFinal.getServiceTypeLinked() != null)
+            serviceFinal
+                    .setServiceTypeLinked(getCurrentBillingItemsForServiceType(serviceFinal.getServiceTypeLinked()));
         return getCurrentBillingItemsForServiceType(serviceFinal);
     }
 
     private ServiceType getCurrentBillingItemsForServiceType(ServiceType serviceType) throws OsirisException {
-        BigDecimal totalPrice = new BigDecimal(0f);
+        BigDecimal totalPreTaxPrice = new BigDecimal(0f);
         BigDecimal deboursAmount = new BigDecimal(0f);
 
         if (serviceType.getAssoServiceProvisionTypes() != null && !serviceType.getAssoServiceProvisionTypes().isEmpty())
@@ -73,14 +76,27 @@ public class ServiceTypeServiceImpl implements ServiceTypeService {
                         BillingItem newBillingItem = null;
                         newBillingItem = pricingHelper.getAppliableBillingItem(billingType, null);
 
-                        if (newBillingItem != null) {
-                            if (billingType.getIsDebour() && newBillingItem.getPreTaxPrice() != null)
-                                deboursAmount = deboursAmount.add(newBillingItem.getPreTaxPrice());
-                            totalPrice = totalPrice.add(newBillingItem.getPreTaxPrice());
+                        if (newBillingItem != null && billingType.getAccountingAccountProduct() != null
+                                && !Boolean.TRUE.equals(asso.getProvisionType().getIsNotReinvoiced())
+                                && (!billingType.getIsOptionnal())
+                                && (billingType.getIsDebour() == null || !billingType.getIsDebour()))
+                            totalPreTaxPrice = totalPreTaxPrice.add(newBillingItem.getPreTaxPrice());
+
+                        if (Boolean.TRUE.equals(billingType.getIsDebour())) {
+                            if (billingType.getIsNonTaxable() == false
+                                    && asso.getDefaultDeboursPrice() != null)
+                                deboursAmount = deboursAmount.add(asso.getDefaultDeboursPrice());
+
+                            else if (billingType.getIsNonTaxable() == true
+                                    && asso.getDefaultDeboursPriceNonTaxable() != null)
+                                deboursAmount = deboursAmount
+                                        .add(asso.getDefaultDeboursPriceNonTaxable());
                         }
                     }
-        serviceType.setTotalPreTaxPrice(totalPrice);
+        totalPreTaxPrice = totalPreTaxPrice.add(deboursAmount);
+        serviceType.setTotalPreTaxPrice(totalPreTaxPrice);
         serviceType.setDeboursAmount(deboursAmount);
+
         return serviceType;
     }
 
