@@ -1,0 +1,53 @@
+.notice-banner {
+  background: rgba(245, 247, 250, 0.45);
+  border: 1px solid #d0d4da;
+  padding: 14px 18px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1); 
+  width: 100%; 
+}
+
+.no-scroll {
+  animation: none !important;
+  transform: translateY(0) !important;
+}
+
+.fixed-title {
+  font-weight: bold;
+  margin-bottom: 8px;
+  line-height: 1.2;
+  display: flex;   
+  gap: 8px;             
+}
+
+/*Scrolling area */
+.scroll-container {
+  max-height: 65px;  
+  overflow: hidden;
+}
+
+.scroll-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: vertical-scroll 12s linear infinite;
+}
+
+/* Pause when hovering */
+.notice-banner:hover .scroll-content {
+  animation-play-state: paused;
+}
+
+.msg-block {
+  font-size: 14px;
+  line-height: 20px; 
+}
+
+@keyframes vertical-scroll {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-50%);
+  }
+}
