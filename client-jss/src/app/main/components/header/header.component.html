@@ -329,7 +329,6 @@
             </article>
           </div>
         </div>
-        <!-- TODO : FAIRE LE LIEN VERS LE BON ARTICLE DU KIOSK (AVEC LA ROUTE ETC) -->
         <div *ngIf="newspapers && newspapers.length > 0" class="col">
           <h3 *ngIf="isWithKiosk && newspapers && newspapers.length > 0" class="">Les archives du kiosque JSS</h3>
           <div *ngFor="let newspaper of newspapers">
@@ -339,12 +338,11 @@
                 <div class="image-frame image-hover-style-1">
                   <a (click)="openPost()" [routerLink]='"/tochange/" + newspaper.text.newspaper.newspaperIssueNumber'>
 
-                    <img *ngIf="newspaper.text.newspaper.newspaperImage" class="lazyload w-100"
+                    <img *ngIf="getNewspaperImage(newspaper.text.newspaper.id)" class="lazyload w-100"
                       style="object-fit: cover; aspect-ratio: 16/9; max-height: 250px;"
-                      [src]="'data:image/jpeg;base64,'+ newspaper.text.newspaper.newspaperImage"
-                      alt="Couverture du magazine">
+                      [src]="getNewspaperImage(newspaper.text.newspaper.id)" alt="Couverture du magazine">
 
-                    <img *ngIf="!newspaper.text.newspaper.newspaperImage" class="w-100"
+                    <img *ngIf="!getNewspaperImage(newspaper.text.newspaper.id)" class="w-100"
                       style="object-fit: cover; aspect-ratio: 16/9; max-height: 250px;"
                       src="assets/images/kiosk/jss_11.jpg" alt="Couverture par défaut">
 
