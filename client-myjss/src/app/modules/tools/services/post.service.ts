@@ -59,7 +59,7 @@ export class PostService extends AppRestService<Post> {
     return this.get(new HttpParams().set("idPost", post.id), "post/bookmark/delete") as any as Observable<boolean>;
   }
 
-  getFirstPostsByMyJssCategory(searchText: string, myJssCategory: MyJssCategory | undefined) {
+  getFirstArticlePostsByMyJssCategory(searchText: string, myJssCategory: MyJssCategory | undefined) {
     let httpParams = new HttpParams();
     if (searchText)
       httpParams = httpParams.set("searchText", searchText);
@@ -121,15 +121,15 @@ export class PostService extends AppRestService<Post> {
     return this.get(new HttpParams().set("idPost", post.id), "post/previous");
   }
 
-  getTopPosts(page: number) {
+  getTopArticlePosts(page: number) {
     return this.getList(new HttpParams().set("page", page), "posts/myjss/top");
   }
 
-  getTendencyPosts() {
+  getTendencyArticlePosts() {
     return this.getList(new HttpParams(), "posts/myjss/tendency");
   }
 
-  getMostSeenPosts() {
+  getMostSeenArticlePosts() {
     return this.getList(new HttpParams(), "posts/myjss/most-seen");
   }
 

@@ -471,8 +471,8 @@ public class WordpressController {
 
 	@GetMapping(inputEntryPoint + "/posts/myjss/top")
 	@JsonView(JacksonViews.MyJssListView.class)
-	public ResponseEntity<List<Post>> getTopMyJssPosts(@RequestParam Integer page) throws OsirisException {
-		return new ResponseEntity<List<Post>>(postService.getMyJssCategoryPosts(page),
+	public ResponseEntity<List<Post>> getTopMyJssArticlePosts(@RequestParam Integer page) throws OsirisException {
+		return new ResponseEntity<List<Post>>(postService.getMyJssCategoryArticlePosts(page),
 				HttpStatus.OK);
 	}
 
@@ -492,15 +492,15 @@ public class WordpressController {
 
 	@GetMapping(inputEntryPoint + "/posts/myjss/tendency")
 	@JsonView(JacksonViews.MyJssListView.class)
-	public ResponseEntity<List<Post>> getMyJssCategoryPostsTendency() throws OsirisException {
-		return new ResponseEntity<List<Post>>(postService.getMyJssCategoryPostTendency(),
+	public ResponseEntity<List<Post>> getMyJssCategoryArticlePostsTendency() throws OsirisException {
+		return new ResponseEntity<List<Post>>(postService.getMyJssCategoryArticlePostTendency(),
 				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/myjss/most-seen")
 	@JsonView(JacksonViews.MyJssListView.class)
-	public ResponseEntity<List<Post>> getMyJssPostsMostSeen() throws OsirisException {
-		return new ResponseEntity<List<Post>>(postService.getMyJssCategoryPostMostSeen(),
+	public ResponseEntity<List<Post>> getMyJssMostSeenArticlePosts() throws OsirisException {
+		return new ResponseEntity<List<Post>>(postService.getMyJssCategoryMostSeenArticlePosts(),
 				HttpStatus.OK);
 	}
 
@@ -1000,12 +1000,13 @@ public class WordpressController {
 
 	@GetMapping(inputEntryPoint + "/posts/top/myjss-category")
 	public ResponseEntity<Page<Post>> getTopPostByMyJssCategory(@RequestParam Integer page,
-			@RequestParam Integer myJssCategoryId) {
+			@RequestParam Integer myJssCategoryId) throws OsirisException {
 		MyJssCategory myJssCategory = myJssCategoryService.getMyJssCategory(myJssCategoryId);
 		if (myJssCategory == null)
 			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
 
-		return new ResponseEntity<Page<Post>>(postService.getPostsByMyJssCategory(page, myJssCategory), HttpStatus.OK);
+		return new ResponseEntity<Page<Post>>(postService.getPostsByMyJssCategory(page, myJssCategory),
+				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/myjss-categories")
@@ -1015,14 +1016,16 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/first-myjss-category")
-	public ResponseEntity<List<Post>> getFirstPostsByMyJssCategories(@RequestParam(required = false) String searchText,
-			@RequestParam(required = false) Integer myJssCategoryId, HttpServletRequest request) {
+	public ResponseEntity<List<Post>> getFirstArticlePostsByMyJssCategories(
+			@RequestParam(required = false) String searchText,
+			@RequestParam(required = false) Integer myJssCategoryId,
+			HttpServletRequest request) {
 		detectFlood(request);
 		MyJssCategory myJssCategory = null;
 		if (myJssCategoryId != null)
 			myJssCategory = myJssCategoryService.getMyJssCategory(myJssCategoryId);
 
-		return new ResponseEntity<List<Post>>(postService.getFirstPostsByMyJssCategories(myJssCategory),
+		return new ResponseEntity<List<Post>>(postService.getFirstArticlePostsByMyJssCategories(myJssCategory),
 				HttpStatus.OK);
 	}
 
@@ -1031,7 +1034,7 @@ public class WordpressController {
 			@RequestParam(required = false) Integer myJssCategoryId,
 			@RequestParam(required = false, defaultValue = "0") Integer page,
 			@RequestParam(required = false, defaultValue = "10") Integer size,
-			HttpServletRequest request) {
+			HttpServletRequest request) throws OsirisException {
 		detectFlood(request);
 
 		if (searchText == null || searchText.trim().length() == 0)
@@ -1087,7 +1090,7 @@ public class WordpressController {
 		MyJssCategory myJssCategory = myJssCategoryService.getMyJssCategory(myJssCategoryId);
 		Category category = categoryService.getCategory(categoryId);
 
-		Order order = new Order(Direction.DESC, "titleText");
+		Order order = new Order(Direction.DESC, "date");
 		Sort sort = Sort.by(Arrays.asList(order));
 		Pageable pageableRequest = PageRequest.of(page, ValidationHelper.limitPageSize(size), sort);
 
@@ -1101,7 +1104,7 @@ public class WordpressController {
 			@RequestParam(required = false) String searchText,
 			@RequestParam(required = false, defaultValue = "0") Integer page,
 			@RequestParam(required = false, defaultValue = "10") Integer size,
-			HttpServletRequest request) {
+			HttpServletRequest request) throws OsirisException {
 		detectFlood(request);
 
 		MyJssCategory myJssCategory = myJssCategoryService.getMyJssCategory(myJssCategoryId);
