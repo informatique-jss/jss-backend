@@ -69,10 +69,10 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
                         " 	max(nbr_for.announcementNbr) as announcementNbr, " +
                         " 	max(nbr_for.formalityNbr) as formalityNbr, " +
                         " 	blt.label as billingLabelType, string_agg(cf.label, ', ' order by cf.label) as confrere, " +
-                        " 	sum(rt.turnover_without_tax_with_debour) as turnoverAmountWithoutTax, " +
-                        " 	sum(rt.turnover_with_tax_with_debour) as turnoverAmountWithTax, " +
-                        " 	sum(rt.turnover_without_tax_without_debour) as turnoverAmountWithoutDebourWithoutTax, " +
-                        " 	sum(rt.turnover_with_tax_without_debour) as turnoverAmountWithoutDebourWithTax " +
+                        " 	max(rt.turnover_without_tax_with_debour) as turnoverAmountWithoutTax, " +
+                        " 	max(rt.turnover_with_tax_with_debour) as turnoverAmountWithTax, " +
+                        " 	max(rt.turnover_without_tax_without_debour) as turnoverAmountWithoutDebourWithoutTax, " +
+                        " 	max(rt.turnover_with_tax_without_debour) as turnoverAmountWithoutDebourWithTax " +
                         " from " +
                         " 	tiers t " +
                         " left join tiers_category tc on " +
@@ -100,9 +100,18 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
                         " 	i.customer_order_id = co2.id " +
                         " 	and i.id_invoice_status in (:invoiceStatusIds) and  i.created_date>=:startDate and i.created_date<=:endDate "
                         +
-                        " left join reporting_turnover rt on " +
-                        " 	rt.id_responsable = r.id " +
-                        " 	and rt.created_date>=:startDate and rt.created_date<=:endDate "
+                        "  left join (" +
+                        "    select " +
+                        "        id_responsable," +
+                        "        sum(turnover_without_tax_with_debour) as turnover_without_tax_with_debour," +
+                        "        sum(turnover_with_tax_with_debour) as turnover_with_tax_with_debour," +
+                        "        sum(turnover_without_tax_without_debour) as turnover_without_tax_without_debour," +
+                        "        sum(turnover_with_tax_without_debour) as turnover_with_tax_without_debour" +
+                        "    from reporting_turnover" +
+                        "    where created_date >= :startDate " +
+                        "      and created_date <= :endDate" +
+                        "    group by id_responsable" +
+                        "  ) rt on rt.id_responsable = r.id"
                         +
                         " left join nbr_for on " +
                         " 	nbr_for.id_responsable = r.id left join confrere cf on cf.id_responsable = r.id " +
@@ -115,6 +124,8 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
                         " and ( :mail='' or exists (select 1 from mail m  where r.id_mail = m.id and lower(m.mail) like '%' || lower(trim(:mail))  || '%')) "
                         +
                         " and (CAST(:label as text) ='' or CAST(r.id as text) = upper(CAST(:label as text)) or  upper(concat(r.firstname, ' ',r.lastname))  like '%' || trim(upper(CAST(:label as text)))  || '%' or  upper(t.denomination)  like '%' || trim(upper(CAST(:label as text)))  || '%'  ) "
+                        +
+                        " and (:withNonNullTurnover = false or coalesce(rt.turnover_without_tax_with_debour, 0) > 0)"
                         +
                         " group by " +
                         " 	coalesce(t.denomination, " +
@@ -133,7 +144,9 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
                         " 	concat(e1.firstname, " +
                         " 	' ', " +
                         " 	e1.lastname)), " +
-                        " 	blt.label, e2.id ,t.id, r.id having :withNonNullTurnover=false or rt.turnover_without_tax_with_debour>0")
+                        " 	blt.label, e2.id ,t.id, r.id"
+                        +
+                        "")
         List<IResponsableSearchResult> searchResponsable(@Param("tiersId") Integer tiersId,
                         @Param("responsableId") Integer responsableId,
                         @Param("salesEmployeeId") Integer salesEmployeeId,

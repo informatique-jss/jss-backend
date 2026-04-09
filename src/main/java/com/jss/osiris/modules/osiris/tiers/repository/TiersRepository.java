@@ -84,7 +84,7 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         "          min(co2.created_date) as firstOrderDay, " +
                         "          max(co2.created_date) as lastOrderDay,  " +
                         "          min(a1.created_date) as createdDateDay, " +
-                        "          max(nbr_for.announcementJssNbr) as announcementJssNbr, " +
+                        "          min(nbr_for.announcementJssNbr) as announcementJssNbr, " +
                         "          max(nbr_for.announcementConfrereNbr) as announcementConfrereNbr, " +
                         "          max(nbr_for.announcementNbr) as announcementNbr, " +
                         "          max(nbr_for.formalityNbr) as formalityNbr, " +
@@ -93,14 +93,10 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         "          t.is_new_tiers as isNewTiers, " +
                         "          t.is_to_take_care as isToTakeCare, " +
                         "          blt.label as billingLabelType, " +
-                        "          sum( case when i.id_invoice_status =115359  then -1 else 1 end * (ii.pre_tax_price-coalesce (ii.discount_amount, 0) ) ) as turnoverAmountWithoutTax, "
-                        +
-                        "          sum(case when i.id_invoice_status =115359  then -1 else 1 end *( ii.pre_tax_price + coalesce (ii.vat_price, 0)-coalesce (ii.discount_amount, 0)) ) as turnoverAmountWithTax, "
-                        +
-                        "          sum(case when i.id_invoice_status =115359  then -1 else 1 end * case when bt.id is not null and bt.is_debour is not null and bt.is_debour then 0 else 1 end * (ii.pre_tax_price-coalesce (ii.discount_amount, 0) ) ) as turnoverAmountWithoutDebourWithoutTax, "
-                        +
-                        "          sum(case when i.id_invoice_status =115359  then -1 else 1 end * case when bt.id is not null and bt.is_debour is not null and bt.is_debour then 0 else 1 end * (ii.pre_tax_price + coalesce (ii.vat_price, 0)-coalesce (ii.discount_amount, 0) ) ) as turnoverAmountWithoutDebourWithTax "
-                        +
+                        " 	   max(rt.turnover_without_tax_with_debour) as turnoverAmountWithoutTax, " +
+                        " 	   max(rt.turnover_with_tax_with_debour) as turnoverAmountWithTax, " +
+                        " 	   max(rt.turnover_without_tax_without_debour) as turnoverAmountWithoutDebourWithoutTax, " +
+                        " 	   max(rt.turnover_with_tax_without_debour) as turnoverAmountWithoutDebourWithTax " +
                         "  from " +
                         "          tiers t left join city on city.id =  t.id_city " +
                         "  left join tiers_category tc on " +
@@ -124,12 +120,19 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         "          i.customer_order_id = co2.id " +
                         "          and i.id_invoice_status in (:invoiceStatusIds) and  i.created_date>=:startDate and i.created_date<=:endDate "
                         +
-                        "  left join invoice_item ii on " +
-                        "          ii.id_invoice = i.id " +
-                        "  left join billing_item bi on " +
-                        "          bi.id = ii.id_billing_item " +
-                        "  left join billing_type bt on " +
-                        "          bt.id = bi.id_billing_type " +
+                        "  left join (" +
+                        "    select " +
+                        "        id_tiers," +
+                        "        sum(turnover_without_tax_with_debour) as turnover_without_tax_with_debour," +
+                        "        sum(turnover_with_tax_with_debour) as turnover_with_tax_with_debour," +
+                        "        sum(turnover_without_tax_without_debour) as turnover_without_tax_without_debour," +
+                        "        sum(turnover_with_tax_without_debour) as turnover_with_tax_without_debour" +
+                        "    from reporting_turnover" +
+                        "    where created_date >= :startDate " +
+                        "      and created_date <= :endDate" +
+                        "    group by id_tiers" +
+                        "  ) rt on rt.id_tiers = t.id"
+                        +
                         "  left join nbr_for on " +
                         "         nbr_for.id_tiers = t.id " +
                         "  left join tiers_type tt on " +
@@ -143,6 +146,8 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         +
                         " and (CAST(:label as text) ='' or CAST(r.id as text) = upper(CAST(:label as text)) or  upper(concat(r.firstname, ' ',r.lastname))  like '%' || trim(upper(CAST(:label as text)))  || '%' or  upper(t.denomination)  like '%' || trim(upper(CAST(:label as text)))  || '%' or  upper(concat(t.firstname, ' ',t.lastname))  like '%' || trim(upper(CAST(:label as text)))  || '%' ) "
                         +
+                        " and (:withNonNullTurnover = false or coalesce(rt.turnover_without_tax_with_debour, 0) > 0)"
+                        +
                         " group by " +
                         " 	 t.is_new_tiers,t.is_to_take_care , coalesce(t.denomination, " +
                         " 	concat(t.firstname, " +
@@ -153,7 +158,7 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         " 	' ', " +
                         " 	e1.lastname)), concat(e2.firstname,' ',e2.lastname),e2.id, tt.label," +
                         " 	 e1.id, " +
-                        " 	blt.label ,t.id   having :withNonNullTurnover=false or sum( (ii.pre_tax_price-coalesce (ii.discount_amount, 0) ) )>0 "
+                        " 	blt.label, t.id"
                         +
                         "")
         List<ITiersSearchResult> searchTiers(@Param("tiersId") Integer tiersId,
