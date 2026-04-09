@@ -123,4 +123,6 @@ public interface InvoiceRepository extends QueryCacheCrudRepository<Invoice, Int
 
         List<Invoice> findByInvoiceStatusAndResponsableIsNotNull(InvoiceStatus invoiceStatus);
 
+        List<Invoice> findByCreatedDateBetween(LocalDateTime startDate, LocalDateTime endDate);
+
 }

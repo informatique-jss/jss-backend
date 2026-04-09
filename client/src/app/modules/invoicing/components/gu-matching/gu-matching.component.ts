@@ -1,27 +1,47 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UploadAttachementDialogComponent } from 'src/app/modules/miscellaneous/components/upload-attachement-dialog/upload-attachement-dialog.component';
 import { IAttachment } from 'src/app/modules/miscellaneous/model/IAttachment';
+import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { INPI_INVOICING_EXTRACT_ENTITY_TYPE } from 'src/app/routing/search/search.component';
+import { GuMatchingResult } from '../../model/GuMatchingResult';
+import { GuMatchingService } from '../../services/gu.matching.service';
 
 @Component({
   selector: 'gu-matching',
   templateUrl: './gu-matching.component.html',
   styleUrls: ['./gu-matching.component.css'],
 })
-export class GuMatchingComponent {
+export class GuMatchingComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
     public confirmationDialog: MatDialog,
     public uploadAttachementDialog: MatDialog,
-    private constantService: ConstantService
+    private constantService: ConstantService,
+    private guMatchingService: GuMatchingService
   ) { }
 
 
   uploadAttachementDialogRef: MatDialogRef<UploadAttachementDialogComponent> | undefined;
+  guMatchingResults: GuMatchingResult[] | undefined;
+  startDate: Date | undefined;
+  endDate: Date | undefined;
+  displayedColumns: SortTableColumn<GuMatchingResult>[] = [];
+  guMatchingForm = this.formBuilder.group({
+  });
+
+  ngOnInit() {
+    this.displayedColumns.push({ id: "date", fieldName: "date", label: "Date" } as SortTableColumn<GuMatchingResult>);
+    this.displayedColumns.push({ id: "invoiceId", fieldName: "invoiceId", label: "Id" } as SortTableColumn<GuMatchingResult>);
+    this.displayedColumns.push({ id: "liasseNumber", fieldName: "liasseNumber", label: "Numéro de liasse" } as SortTableColumn<GuMatchingResult>);
+    this.displayedColumns.push({ id: "customerOrderId", fieldName: "customerOrderId", label: "Numéro de commande" } as SortTableColumn<GuMatchingResult>);
+    this.displayedColumns.push({ id: "inpiAmount", fieldName: "inpiAmount", label: "Montant INPI" } as SortTableColumn<GuMatchingResult>);
+    this.displayedColumns.push({ id: "osirisAmount", fieldName: "osirisAmount", label: "Montant Osiris" } as SortTableColumn<GuMatchingResult>);
+    this.displayedColumns.push({ id: "matchingStatus", fieldName: "matchingStatus", label: "Résultat du rapprochement" } as SortTableColumn<GuMatchingResult>);
+  }
 
 
   importInpiInvoicingExtractFile() {
@@ -31,6 +51,13 @@ export class GuMatchingComponent {
     this.uploadAttachementDialogRef.componentInstance.entityType = INPI_INVOICING_EXTRACT_ENTITY_TYPE.entityType;
     this.uploadAttachementDialogRef.componentInstance.forcedAttachmentType = this.constantService.getAttachmentTypeBillingClosure();
     this.uploadAttachementDialogRef.afterClosed().subscribe(response => { });
+  }
 
+  matchInpiExtractWithOsiris() {
+    if (this.guMatchingForm.valid && this.startDate && this.endDate) {
+      this.guMatchingService.getInpiExtractAndOsirisMatchingResult(this.startDate, this.endDate).subscribe(response => {
+        this.guMatchingResults = response;
+      })
+    }
   }
 }

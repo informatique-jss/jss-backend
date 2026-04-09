@@ -4,30 +4,29 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
+import com.jss.osiris.libs.search.model.DoNotAudit;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
 import jakarta.persistence.Index;
-import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
 @Entity
+@DoNotAudit
+@IdClass(CompositeInpiInvoicingEntityKey.class)
 @Table(indexes = {
-		@Index(name = "idx_inpi_invoice_extract", columnList = "inpi_order,is_credit_note",unique = true) })
-public class InpiInvoicingExtract implements Serializable, IId {
+		@Index(name = "idx_inpi_invoice_extract", columnList = "inpi_order,is_credit_note", unique = true) })
+public class InpiInvoicingExtract implements Serializable {
 
 	@Id
-	@SequenceGenerator(name = "inpi_invoicing_extract_sequence", sequenceName = "inpi_invoicing_extract_sequence", allocationSize = 1)
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "inpi_invoicing_extract_sequence")
-	private Integer id;
+	private Integer inpiOrder;
+
+	@Id
+	private boolean isCreditNote;
 
 	private LocalDate accountingDate;
-
-	private Integer inpiOrder;
 
 	private LocalDate applicationDate;
 
@@ -36,23 +35,26 @@ public class InpiInvoicingExtract implements Serializable, IId {
 
 	private BigDecimal vatPrice;
 
-	@Column(nullable = false)
-	private Boolean isCreditNote;
-
 	private String liasseNumber;
 
 	private String denomination;
 
 	private String clientReference;
 
-	private String label;
-
-	public Integer getId() {
-		return id;
+	public Integer getInpiOrder() {
+		return inpiOrder;
 	}
 
-	public void setId(Integer id) {
-		this.id = id;
+	public void setInpiOrder(Integer inpiOrder) {
+		this.inpiOrder = inpiOrder;
+	}
+
+	public boolean isCreditNote() {
+		return isCreditNote;
+	}
+
+	public void setCreditNote(boolean isCreditNote) {
+		this.isCreditNote = isCreditNote;
 	}
 
 	public LocalDate getAccountingDate() {
@@ -61,14 +63,6 @@ public class InpiInvoicingExtract implements Serializable, IId {
 
 	public void setAccountingDate(LocalDate accountingDate) {
 		this.accountingDate = accountingDate;
-	}
-
-	public Integer getInpiOrder() {
-		return inpiOrder;
-	}
-
-	public void setInpiOrder(Integer inpiOrder) {
-		this.inpiOrder = inpiOrder;
 	}
 
 	public LocalDate getApplicationDate() {
@@ -93,14 +87,6 @@ public class InpiInvoicingExtract implements Serializable, IId {
 
 	public void setVatPrice(BigDecimal vatPrice) {
 		this.vatPrice = vatPrice;
-	}
-
-	public Boolean getIsCreditNote() {
-		return isCreditNote;
-	}
-
-	public void setIsCreditNote(Boolean isCreditNote) {
-		this.isCreditNote = isCreditNote;
 	}
 
 	public String getLiasseNumber() {
@@ -134,5 +120,7 @@ public class InpiInvoicingExtract implements Serializable, IId {
 	public void setLabel(String label) {
 		this.label = label;
 	}
+
+	private String label;
 
 }

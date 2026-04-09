@@ -77,4 +77,6 @@ public interface InvoiceService {
                         List<Responsable> responsables, LocalDateTime startDate, LocalDateTime endDate);
 
         List<Invoice> getInvoicesByStatus(InvoiceStatus invoiceStatus, boolean onlyCustomerInvoices);
+
+        public List<Invoice> getInvoicesByCreatedDateBetween(LocalDateTime startDate, LocalDateTime endDate);
 }
