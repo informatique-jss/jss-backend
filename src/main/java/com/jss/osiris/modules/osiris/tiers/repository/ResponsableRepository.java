@@ -102,7 +102,7 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
                         +
                         " left join reporting_turnover rt on " +
                         " 	rt.id_responsable = r.id " +
-                        " 	and rt.created_date>=:startDate and i.created_date<=:endDate "
+                        " 	and rt.created_date>=:startDate and rt.created_date<=:endDate "
                         +
                         " left join billing_item bi on " +
                         " 	bi.id = ii.id_billing_item " +
@@ -137,7 +137,7 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
                         " 	concat(e1.firstname, " +
                         " 	' ', " +
                         " 	e1.lastname)), " +
-                        " 	blt.label, e2.id ,t.id, r.id having :withNonNullTurnover=false"
+                        " 	blt.label, e2.id ,t.id, r.id having :withNonNullTurnover=false or sum( (ii.pre_tax_price-coalesce (ii.discount_amount, 0) ) )>0"
                         +
                         "")
         List<IResponsableSearchResult> searchResponsable(@Param("tiersId") Integer tiersId,

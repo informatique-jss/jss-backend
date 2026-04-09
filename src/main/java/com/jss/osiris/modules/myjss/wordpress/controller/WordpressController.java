@@ -1417,8 +1417,10 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/publication/flag/download")
-	public ResponseEntity<byte[]> downloadPublicationFlag(@RequestParam("idAnnouncement") Integer idAnnouncement)
+	public ResponseEntity<byte[]> downloadPublicationFlag(@RequestParam("idAnnouncement") Integer idAnnouncement,
+			HttpServletRequest request)
 			throws OsirisValidationException, OsirisException {
+		detectFlood(request);
 		byte[] data = null;
 		HttpHeaders headers = null;
 
@@ -1475,8 +1477,9 @@ public class WordpressController {
 
 	@GetMapping(inputEntryPoint + "/publication/receipt/download")
 	public ResponseEntity<byte[]> downloadPublicationReceipt(@RequestParam("idAnnouncement") Integer idAnnouncement,
-			@RequestParam("idProvision") Integer idProvision)
+			@RequestParam("idProvision") Integer idProvision, HttpServletRequest request)
 			throws OsirisValidationException, OsirisException {
+		detectFlood(request);
 		byte[] data = null;
 		HttpHeaders headers = null;
 
@@ -1657,8 +1660,10 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/newspaper/download")
-	public ResponseEntity<byte[]> getPdfForUser(@RequestParam("newspaperId") Integer newspaperId)
+	public ResponseEntity<byte[]> getPdfForUser(@RequestParam("newspaperId") Integer newspaperId,
+			HttpServletRequest request)
 			throws OsirisValidationException, OsirisException {
+		detectFlood(request);
 		byte[] data = null;
 		HttpHeaders headers = null;
 		boolean canSeeFullNewspaper = false;
