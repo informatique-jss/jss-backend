@@ -289,11 +289,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
                 this.newspaperService.getNewspaperFrontImage(newspaper.text.id).subscribe((res: Blob) => {
                   const id = newspaper.text.id;
 
-                  console.log("TYPE:", res);
-                  console.log("instanceof Blob:", res instanceof Blob)
-                  if (this.newspaperImages[id]) {
+                  if (this.newspaperImages[id])
                     URL.revokeObjectURL(this.newspaperImages[id]);
-                  }
 
                   const imageUrl = URL.createObjectURL(res);
                   this.newspaperImages[id] = imageUrl;
