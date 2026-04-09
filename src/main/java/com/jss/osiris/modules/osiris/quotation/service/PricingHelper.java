@@ -105,6 +105,7 @@ public class PricingHelper {
     public IQuotation getAndSetInvoiceItemsForQuotation(IQuotation quotation, boolean persistInvoiceItem)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
         if (quotation.getAssoAffaireOrders() != null) {
+            List<InvoiceItem> emergencyWrapper = new ArrayList<InvoiceItem>();
             for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
                 if (assoAffaireOrder.getServices() != null)
                     for (Service service : assoAffaireOrder.getServices())
@@ -112,11 +113,50 @@ public class PricingHelper {
                             provision.setService(service);
                             service.setAssoAffaireOrder(assoAffaireOrder);
                             if (provision.getProvisionType() != null && provision.getProvisionType().getId() != null)
-                                setInvoiceItemsForProvision(provision, quotation, persistInvoiceItem);
+                                setInvoiceItemsForProvision(provision, quotation,
+                                        persistInvoiceItem, emergencyWrapper);
                         }
             }
+            computePricingForEmergencyInvoiceItem(quotation, emergencyWrapper, persistInvoiceItem);
         }
         return quotation;
+    }
+
+    private void computePricingForEmergencyInvoiceItem(IQuotation quotation, List<InvoiceItem> emergencyWrapper,
+            boolean persistInvoiceItem) {
+
+        if (emergencyWrapper != null && !emergencyWrapper.isEmpty()
+                && quotation.getAssoAffaireOrders() != null) {
+            BigDecimal maxAmountVacation = zeroValue;
+            BigDecimal maxVatVacation = zeroValue;
+            InvoiceItem emergencyInvoiceItem = emergencyWrapper.get(0);
+
+            for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
+                if (assoAffaireOrder.getServices() != null)
+                    for (Service service : assoAffaireOrder.getServices())
+                        for (Provision provision : service.getProvisions()) {
+                            for (InvoiceItem item : provision.getInvoiceItems())
+                                if (item.getBillingItem() != null
+                                        && item.getBillingItem().getBillingType() != null
+                                        && Boolean.TRUE.equals(item.getBillingItem().getBillingType()
+                                                .getIsVacation()))
+                                    if (item.getPreTaxPrice() != null && item.getPreTaxPrice()
+                                            .compareTo(maxAmountVacation) > 0) {
+                                        maxAmountVacation = item.getPreTaxPrice();
+                                        maxVatVacation = item.getVatPrice();
+                                    }
+
+                        }
+            }
+
+            if (emergencyInvoiceItem != null
+                    && emergencyInvoiceItem.getPreTaxPrice().compareTo(maxAmountVacation) < 0) {
+                emergencyInvoiceItem.setPreTaxPrice(maxAmountVacation);
+                emergencyInvoiceItem.setVatPrice(maxVatVacation);
+                if (persistInvoiceItem)
+                    invoiceItemService.addOrUpdateInvoiceItem(emergencyInvoiceItem);
+            }
+        }
     }
 
     private List<SpecialOffer> getAppliableSpecialOffersForQuotation(IQuotation quotation) {
@@ -402,12 +442,11 @@ public class PricingHelper {
         return nbr;
     }
 
-    public void setInvoiceItemsForProvision(Provision provision, IQuotation quotation, boolean persistInvoiceItem)
+    public void setInvoiceItemsForProvision(Provision provision, IQuotation quotation,
+            boolean persistInvoiceItem, List<InvoiceItem> emergencyInvoiceItem)
             throws OsirisException, OsirisClientMessageException, OsirisValidationException {
-
         if (provision == null)
             return;
-
         if (quotation != null && provision != null) {
             if (provision.getInvoiceItems() == null)
                 provision.setInvoiceItems(new ArrayList<InvoiceItem>());
@@ -432,7 +471,6 @@ public class PricingHelper {
                             && !Boolean.TRUE.equals(provision.getProvisionType().getIsNotReinvoiced())
                             && (!billingItem.getBillingType().getIsOptionnal()
                                     || hasOption(billingItem.getBillingType(), provision))) {
-
                         InvoiceItem invoiceItem = null;
 
                         if (provision.getInvoiceItems() != null && provision.getInvoiceItems().size() > 0)
@@ -489,6 +527,14 @@ public class PricingHelper {
                             invoiceItem.setPreTaxPrice(zeroValue);
                             invoiceItem.setVatPrice(zeroValue);
                             invoiceItem.setDiscountAmount(zeroValue);
+                        }
+
+                        if (Boolean.TRUE.equals(provision.getIsEmergency()) &&
+                                billingType.getId().equals(constantService.getBillingTypeEmergency().getId())) {
+                            emergencyInvoiceItem.add(invoiceItem);
+                            emergencyInvoiceItem.get(0).setPreTaxPrice(zeroValue);
+                            emergencyInvoiceItem.get(0).setVatPrice(zeroValue);
+                            emergencyInvoiceItem.get(0).setDiscountAmount(zeroValue);
                         }
 
                         if (invoiceItem.getPreTaxPrice() == null)

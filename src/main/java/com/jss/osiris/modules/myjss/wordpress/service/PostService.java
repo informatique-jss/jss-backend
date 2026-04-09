@@ -31,7 +31,7 @@ public interface PostService {
 
         public Page<Post> getJssCategoryPosts(String searchText, Pageable pageableRequest) throws OsirisException;
 
-        public List<Post> getMyJssCategoryPosts(int page) throws OsirisException;
+        public List<Post> getMyJssCategoryArticlePosts(int page) throws OsirisException;
 
         public Page<Post> getPostInterview(Pageable pageableRequest) throws OsirisException;
 
@@ -82,7 +82,8 @@ public interface PostService {
 
         public Page<Post> getMostSeenPostByIdf(Pageable pageableRequest) throws OsirisException;
 
-        public Page<Post> searchPostsByMyJssCategory(String searchTitle, MyJssCategory myJssCategory, Pageable page);
+        public Page<Post> searchPostsByMyJssCategory(String searchTitle, MyJssCategory myJssCategory, Pageable page)
+                        throws OsirisException;
 
         public Page<Post> searchJssPosts(String searchText, String sortBy);
 
@@ -92,9 +93,9 @@ public interface PostService {
         public Page<Post> searchPostsByCategoryAndMyJssCategory(String searchText, Category category,
                         MyJssCategory myJssCategory, Pageable pageableRequest);
 
-        public Page<Post> getPostsByMyJssCategory(int page, MyJssCategory myJssCategory);
+        public Page<Post> getPostsByMyJssCategory(int page, MyJssCategory myJssCategory) throws OsirisException;
 
-        public List<Post> getFirstPostsByMyJssCategories(MyJssCategory selectedMyJssCategory);
+        public List<Post> getFirstArticlePostsByMyJssCategories(MyJssCategory selectedMyJssCategory);
 
         public Post getPostsById(Integer id);
 
@@ -107,9 +108,9 @@ public interface PostService {
         public Page<Post> getJssCategoryPostTendency(String searchText, Pageable pageableRequest)
                         throws OsirisException;
 
-        public List<Post> getMyJssCategoryPostTendency() throws OsirisException;
+        public List<Post> getMyJssCategoryArticlePostTendency() throws OsirisException;
 
-        public List<Post> getMyJssCategoryPostMostSeen() throws OsirisException;
+        public List<Post> getMyJssCategoryMostSeenArticlePosts() throws OsirisException;
 
         public Page<Post> getJssCategoryPostMostSeen(Pageable pageableRequest) throws OsirisException;
 

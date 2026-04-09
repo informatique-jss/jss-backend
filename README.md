@@ -9,3 +9,6 @@ TODO before production deployment for version 36 :
 
 - insertion new Webinar :
     insert into webinar (id, code, label, webinar_date ) values (nextval('webinar_sequence'), 'WEB-3', 'Donation, succession, quel est l’impact sur les formalités légales ?', '2026-04-16 09:30:00.000' );
+
+TODO Before production deployment and REC deployemnt of version 37 :
+- for OSI-9835 : reindex newspaperPages as we added the newspaperr id as an indexedField for retrieving newspaper images when entities are found.

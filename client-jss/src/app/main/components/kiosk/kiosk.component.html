@@ -22,9 +22,11 @@
           <div class="col" *ngFor="let newspaper of newspapersToDisplay">
             <div (mouseenter)="openReadExtractButton(newspaper.id)" (mouseleave)="closeReadExtractButton()"
               class="container kiosk-container position-relative px-lg-5 py-2 header-hub-bg rounded-2 text-center">
-              <img *ngIf="newspaper.newspaperImage" class="kiosk-img h-100 rounded-1"
+              <img [ngClass]="'newspaper-' + newspaper.newspaperIssueNumber === shakingIssue ? 'shake-highlight' : ''"
+                *ngIf="newspaper.newspaperImage" class="kiosk-img h-100 rounded-1"
                 [src]="'data:image/jpeg;base64,'+ newspaper.newspaperImage">
-              <img *ngIf="!newspaper.newspaperImage" class="kiosk-img h-100 rounded-1"
+              <img [ngClass]="'newspaper-' + newspaper.newspaperIssueNumber === shakingIssue ? 'shake-highlight' : ''"
+                *ngIf="!newspaper.newspaperImage" class="kiosk-img h-100 rounded-1"
                 src="assets/images/kiosk/jss_11.jpg">
               <div *ngIf="jssEditionNumberHovered == newspaper.id"
                 class="position-absolute top-0 start-0 w-100 h-100 justify-content-center d-flex align-items-center bg-gray rounded-1">
@@ -39,9 +41,10 @@
               <p class="badge date-pill-bg rounded-pill col-auto me-2 px-1 text-black p-1">{{newspaper.date |
                 date:'MMMM yyyy'}}</p>
             </div>
-            <div class="row  mx-2 justify-content-between align-items-end">
+            <div class="row mx-2 justify-content-between align-items-end">
               <div class="col-auto">
-                <h5>JSS N.{{newspaper.newspaperIssueNumber}}</h5>
+                <h5 [attr.id]="'newspaper-' + newspaper.newspaperIssueNumber">JSS
+                  N.{{newspaper.newspaperIssueNumber}}</h5>
               </div>
               <div class="col-auto">
                 <button type="button"

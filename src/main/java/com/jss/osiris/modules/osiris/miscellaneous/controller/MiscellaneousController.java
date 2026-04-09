@@ -68,6 +68,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Department;
 import com.jss.osiris.modules.osiris.miscellaneous.model.DepartmentVatSetting;
 import com.jss.osiris.modules.osiris.miscellaneous.model.DocumentType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Gift;
+import com.jss.osiris.modules.osiris.miscellaneous.model.InformationBanner;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Language;
 import com.jss.osiris.modules.osiris.miscellaneous.model.LegalForm;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Notification;
@@ -98,6 +99,7 @@ import com.jss.osiris.modules.osiris.miscellaneous.service.DepartmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DepartmentVatSettingService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.DocumentTypeService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.GiftService;
+import com.jss.osiris.modules.osiris.miscellaneous.service.InformationBannerService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.LanguageService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.LegalFormService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.NotificationService;
@@ -285,6 +287,28 @@ public class MiscellaneousController {
 
     @Autowired
     TooltipEntryService tooltipEntryService;
+
+    @Autowired
+    InformationBannerService informationBannerService;
+
+    @GetMapping(inputEntryPoint + "/information-banners")
+    public ResponseEntity<List<InformationBanner>> getInformationBanners() {
+        return new ResponseEntity<List<InformationBanner>>(informationBannerService.getInformationBanners(),
+                HttpStatus.OK);
+    }
+
+    @PostMapping(inputEntryPoint + "/information-banner")
+    public ResponseEntity<InformationBanner> addOrUpdateInformationBanner(
+            @RequestBody InformationBanner informationBanners) throws OsirisValidationException, OsirisException {
+        if (informationBanners.getId() != null)
+            validationHelper.validateReferential(informationBanners, true, "informationBanners");
+        validationHelper.validateString(informationBanners.getCode(), true, "code");
+        validationHelper.validateString(informationBanners.getLabel(), true, "label");
+        validationHelper.validateString(informationBanners.getText(), true, "text");
+        
+        return new ResponseEntity<InformationBanner>(
+                informationBannerService.addOrUpdateInformationBanner(informationBanners), HttpStatus.OK);
+    }
 
     @GetMapping(inputEntryPoint + "/tooltip-entries")
     public ResponseEntity<List<TooltipEntry>> getTooltipEntries() {

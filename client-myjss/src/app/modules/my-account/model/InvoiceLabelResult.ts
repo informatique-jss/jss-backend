@@ -9,4 +9,5 @@ export interface InvoiceLabelResult {
   billingLabelCity: City;
   billingLabelCountry: Country;
   commandNumber: string;
+  externalReference: string;
 }
