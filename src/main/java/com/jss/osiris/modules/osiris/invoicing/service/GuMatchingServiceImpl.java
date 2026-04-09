@@ -1,8 +1,10 @@
 package com.jss.osiris.modules.osiris.invoicing.service;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -12,10 +14,12 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.invoicing.model.GuMatchingResultDto;
 import com.jss.osiris.modules.osiris.invoicing.model.InpiInvoicingExtract;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.invoicing.model.MatchingStatusEnum;
+import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.quotation.model.guichetUnique.Cart;
 
 @Service
@@ -30,16 +34,24 @@ public class GuMatchingServiceImpl implements GuMatchingService {
     @Autowired
     InvoiceHelper invoiceHelper;
 
+    @Autowired
+    ConstantService constantService;
+
+    private static final BigDecimal TOLERANCE = new BigDecimal("0.02");
+
     @Override
-    public List<GuMatchingResultDto> getInpiMatchingResult(LocalDate startDate,
-            LocalDate endDate) {
+    public List<GuMatchingResultDto> getInpiMatchingResult(LocalDateTime startDate,
+            LocalDateTime endDate) throws OsirisException {
         List<GuMatchingResultDto> guMatchingResult = new ArrayList<>();
 
         List<InpiInvoicingExtract> inpiExtract = inpiInvoicingExtractService
-                .getInpiInvoicingExtractByDateBetween(startDate, endDate);
+                .getInpiInvoicingExtractByDateBetween(startDate.toLocalDate(), endDate.toLocalDate());
 
-        List<Invoice> invoices = invoiceService.getInvoicesByCreatedDateBetween(startDate.atStartOfDay(),
-                endDate.plusDays(1).atStartOfDay());
+        List<Invoice> invoices = invoiceService.getInvoicesByProviderAndInvoiceStatusInAndCreatedDateBetween(
+                constantService.getCompetentAuthorityInpi().getProvider(),
+                Arrays.asList(constantService.getInvoiceStatusReceived(), constantService.getInvoiceStatusPayed()),
+                startDate,
+                endDate);
 
         Map<String, Invoice> osirisInvoicesByInpiOrder = new HashMap<String, Invoice>();
         // Prepare map of osiris invoices by inpi order
@@ -85,6 +97,7 @@ public class GuMatchingServiceImpl implements GuMatchingService {
             BigDecimal osirisAmount = invoiceHelper.getPriceTotal(invoice);
 
             if (inpiAmount.compareTo(osirisAmount) != 0) {
+                // if (isAmountMismatch(inpiAmount, osirisAmount)) {
                 guMatchingResult
                         .add(buildGuMatchingResultDto(inpiExtr, invoice, MatchingStatusEnum.AMOUNT_MISMATCH.label));
             }
@@ -123,7 +136,7 @@ public class GuMatchingServiceImpl implements GuMatchingService {
             dto.setInvoiceId(invoice.getId());
             dto.setOsirisAmount(invoiceHelper.getPriceTotal(invoice));
             dto.setDate(invoice.getCreatedDate().toLocalDate());
-            dto.setCustomerOrderId(invoice.getCustomerOrder().getId());
+            dto.setCustomerOrderId(invoice.getCustomerOrder() != null ? invoice.getCustomerOrder().getId() : null);
             if (inpi == null) {
                 dto.setLiasseNumber(invoice.getCart().getFormaliteGuichetUnique() != null
                         ? invoice.getCart().getFormaliteGuichetUnique().getLiasseNumber()
@@ -133,6 +146,23 @@ public class GuMatchingServiceImpl implements GuMatchingService {
         dto.setMatchingStatus(matchingStatus);
 
         return dto;
+    }
+
+    private boolean isAmountMismatch(BigDecimal inpiAmount, BigDecimal osirisAmount) {
+
+        BigDecimal inpiNorm = normalize(inpiAmount);
+        BigDecimal osirisNorm = normalize(osirisAmount);
+
+        if (inpiNorm == null || osirisNorm == null)
+            return true;
+
+        BigDecimal diff = inpiNorm.subtract(osirisNorm).abs();
+
+        return diff.compareTo(TOLERANCE) > 0;
+    }
+
+    private BigDecimal normalize(BigDecimal value) {
+        return value.setScale(2, RoundingMode.HALF_UP);
     }
 
 }

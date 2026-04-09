@@ -772,7 +772,11 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public List<Invoice> getInvoicesByCreatedDateBetween(LocalDateTime startDate, LocalDateTime endDate) {
-        return invoiceRepository.findByCreatedDateBetween(startDate, endDate);
+    public List<Invoice> getInvoicesByProviderAndInvoiceStatusInAndCreatedDateBetween(Provider provider,
+            List<InvoiceStatus> invoiceStatus,
+            LocalDateTime startDate,
+            LocalDateTime endDate) {
+        return invoiceRepository.findByProviderAndInvoiceStatusInAndCreatedDateBetween(provider, invoiceStatus,
+                startDate, endDate);
     }
 }

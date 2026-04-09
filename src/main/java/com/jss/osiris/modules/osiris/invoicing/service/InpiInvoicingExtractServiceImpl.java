@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -34,6 +34,8 @@ public class InpiInvoicingExtractServiceImpl implements InpiInvoicingExtractServ
 
     private static final Pattern NUMERO_PATTERN = Pattern.compile("N[°º]?\\s*(\\d+)", Pattern.CASE_INSENSITIVE);
 
+    private static final Pattern GENERIC_NUMBER_PATTERN = Pattern.compile("(\\d{6,})");
+
     private static final Pattern CREDIT_NOTE_PATTERN = Pattern.compile("(approvisionnement|rembt)",
             Pattern.CASE_INSENSITIVE);
 
@@ -51,7 +53,7 @@ public class InpiInvoicingExtractServiceImpl implements InpiInvoicingExtractServ
         List<InpiInvoicingExtract> results = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+                new InputStreamReader(inputStream, Charset.forName("Windows-1252")))) {
 
             reader.readLine();
             String line;
@@ -59,8 +61,6 @@ public class InpiInvoicingExtractServiceImpl implements InpiInvoicingExtractServ
 
                 String[] values = line.split(";", -1);
                 InpiInvoicingExtract row = new InpiInvoicingExtract();
-                if (values[1] == null || values[1].isEmpty())
-                    return null;
                 row.setInpiOrder(extractInpiOrderNumber(values[1]));
                 row.setPreTaxPrice(sum(parseBigDecimal(values[3]), parseBigDecimal(values[4]),
                         parseBigDecimal(values[7]), parseBigDecimal(values[8])));
@@ -89,7 +89,8 @@ public class InpiInvoicingExtractServiceImpl implements InpiInvoicingExtractServ
     }
 
     private Integer extractInpiOrderNumber(String label) {
-
+        if (label == null)
+            return null;
         Matcher cdeMatcher = REMBT_PATTERN.matcher(label);
         if (cdeMatcher.find()) {
             return parseInteger(cdeMatcher.group(1));
@@ -99,13 +100,27 @@ public class InpiInvoicingExtractServiceImpl implements InpiInvoicingExtractServ
         if (numeroMatcher.find()) {
             return parseInteger(numeroMatcher.group(1));
         }
+
+        Matcher fallBackMatcher = GENERIC_NUMBER_PATTERN.matcher(label);
+        if (fallBackMatcher.find()) {
+            return parseInteger(fallBackMatcher.group(1));
+        }
         return null;
     }
 
     private BigDecimal parseBigDecimal(String val) {
+
         if (val == null || val.isBlank())
             return BigDecimal.ZERO;
-        return new BigDecimal(val.trim().replace(",", "."));
+
+        String cleanedVal = val.trim().replace(",", ".").replace('\u00A0', ' ').replace(" ", "")
+                .replaceAll("[^0-9eE.\\-]", "");
+
+        if (cleanedVal.isEmpty())
+            return BigDecimal.ZERO;
+
+        return new BigDecimal(cleanedVal);
+
     }
 
     private BigDecimal sum(BigDecimal... values) {

@@ -6,6 +6,7 @@ import { IAttachment } from 'src/app/modules/miscellaneous/model/IAttachment';
 import { SortTableColumn } from 'src/app/modules/miscellaneous/model/SortTableColumn';
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 import { INPI_INVOICING_EXTRACT_ENTITY_TYPE } from 'src/app/routing/search/search.component';
+import { AppService } from 'src/app/services/app.service';
 import { GuMatchingResult } from '../../model/GuMatchingResult';
 import { GuMatchingService } from '../../services/gu.matching.service';
 
@@ -21,7 +22,8 @@ export class GuMatchingComponent implements OnInit {
     public confirmationDialog: MatDialog,
     public uploadAttachementDialog: MatDialog,
     private constantService: ConstantService,
-    private guMatchingService: GuMatchingService
+    private guMatchingService: GuMatchingService,
+    private appService: AppService
   ) { }
 
 
@@ -50,7 +52,8 @@ export class GuMatchingComponent implements OnInit {
     this.uploadAttachementDialogRef.componentInstance.entity = { id: 1 } as IAttachment;
     this.uploadAttachementDialogRef.componentInstance.entityType = INPI_INVOICING_EXTRACT_ENTITY_TYPE.entityType;
     this.uploadAttachementDialogRef.componentInstance.forcedAttachmentType = this.constantService.getAttachmentTypeBillingClosure();
-    this.uploadAttachementDialogRef.afterClosed().subscribe(response => { });
+    this.uploadAttachementDialogRef.afterClosed().subscribe(response => {
+    });
   }
 
   matchInpiExtractWithOsiris() {
