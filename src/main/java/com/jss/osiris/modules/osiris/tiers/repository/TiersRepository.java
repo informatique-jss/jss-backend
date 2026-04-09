@@ -84,7 +84,7 @@ public interface TiersRepository extends QueryCacheCrudRepository<Tiers, Integer
                         "          min(co2.created_date) as firstOrderDay, " +
                         "          max(co2.created_date) as lastOrderDay,  " +
                         "          min(a1.created_date) as createdDateDay, " +
-                        "          min(nbr_for.announcementJssNbr) as announcementJssNbr, " +
+                        "          max(nbr_for.announcementJssNbr) as announcementJssNbr, " +
                         "          max(nbr_for.announcementConfrereNbr) as announcementConfrereNbr, " +
                         "          max(nbr_for.announcementNbr) as announcementNbr, " +
                         "          max(nbr_for.formalityNbr) as formalityNbr, " +
