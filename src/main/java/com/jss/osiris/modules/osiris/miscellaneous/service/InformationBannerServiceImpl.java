@@ -43,12 +43,6 @@ public class InformationBannerServiceImpl implements InformationBannerService {
     @Transactional(rollbackFor = Exception.class)
     public InformationBanner addOrUpdateInformationBanner(
             InformationBanner informationBanner) throws OsirisClientMessageException {
-        if (Boolean.TRUE.equals(informationBanner.getIsActive())) {
-            if (getActiveInformationBanner() != null) {
-                throw new OsirisClientMessageException(
-                        "Un bandeau d'information actif existe déja. Veuillez le désactiver avant d'en créer un nouveau");
-            }
-        }
         return informationBannerRepository.save(informationBanner);
     }
 }

@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { InformationBanner } from '../../../miscellaneous/model/InformationBanner';
 
 
 @Component({
-    selector: 'app-information-banner',
+    selector: 'information-banner',
     standalone: true,
     imports: [CommonModule],
     templateUrl: './information-banner.component.html',
@@ -11,7 +12,7 @@ import { Component, Input } from '@angular/core';
 })
 export class InformationBannerComponent {
 
-    @Input() message: string = "";
+    @Input() informationBanner = {} as InformationBanner;
 
 
 }
