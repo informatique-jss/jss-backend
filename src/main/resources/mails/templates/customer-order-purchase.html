@@ -290,7 +290,12 @@
                                 <ul>
                                     <li th:each="doc : ${docsWithAttach}">
                                         <span th:text="${doc.typeDocument.customLabel}"></span> :
-                                        <span th:each="att : ${doc.attachments}" th:text="${att.description}"></span>
+                                        <ul th:each="att : ${doc.attachments}">
+                                            <li>
+                                                <span th:text="${att.description}"></span>
+                                            </li>
+                                        </ul> <br>
+
                                     </li>
                                 </ul>
                             </th:block>
