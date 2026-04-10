@@ -58,9 +58,21 @@ export class GuMatchingComponent implements OnInit {
 
   matchInpiExtractWithOsiris() {
     if (this.guMatchingForm.valid && this.startDate && this.endDate) {
+      if (this.startDate >= this.endDate) {
+        this.appService.displaySnackBar("Veuillez renseigner une date de début antérieure à la date de fin", true, 10);
+        return;
+      }
       this.guMatchingService.getInpiExtractAndOsirisMatchingResult(this.startDate, this.endDate).subscribe(response => {
-        this.guMatchingResults = response;
+        if (response && response.length > 0) {
+          this.guMatchingResults = response;
+        }
+        else {
+          this.appService.displaySnackBar("Pas d'écarts trouvés pour cette plage de recherche", false, 10);
+        }
       })
+    } else {
+      this.appService.displaySnackBar("🙄 Merci de saisir une plage de recherche", false, 10);
     }
+
   }
 }
