@@ -336,7 +336,8 @@
 
               <div class="feature-image order-1 order-lg-0">
                 <div class="image-frame image-hover-style-1">
-                  <a (click)="openPost()" [routerLink]='"/tochange/" + newspaper.text.newspaper.newspaperIssueNumber'>
+                  <a (click)="openPost()" [routerLink]='"/kiosk/" + getYearDate(newspaper.text.newspaper.date) + "/" +
+                      newspaper.text.newspaper.newspaperIssueNumber'>
 
                     <img *ngIf="getNewspaperImage(newspaper.text.newspaper.id)" class="lazyload w-100"
                       style="object-fit: cover; aspect-ratio: 16/9; max-height: 250px;"
