@@ -719,6 +719,11 @@ public class AccountingRecordServiceImpl implements AccountingRecordService {
   }
 
   @Override
+  public List<AccountingRecord> getClosedAccountingRecordsForInvoice(Invoice invoice) {
+    return accountingRecordRepository.findClosedAccountingRecordsForInvoice(invoice.getId());
+  }
+
+  @Override
   public List<AccountingBalanceViewTitle> getBilan(LocalDateTime startDate, LocalDateTime endDate) {
     List<AccountingBalanceBilan> accountingRecords = accountingRecordRepository
         .getAccountingRecordAggregateByAccountingNumber(startDate.withHour(0).withMinute(0),

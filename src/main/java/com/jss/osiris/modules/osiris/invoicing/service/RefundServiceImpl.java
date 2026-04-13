@@ -200,6 +200,10 @@ public class RefundServiceImpl implements RefundService {
         if (payment.getIsAppoint() == false)
             accountingRecordGenerationService.generateAccountingRecordsForRefundGeneration(refund);
 
+        if (!refund.getIsAlreadyExported()) {
+            accountingRecordGenerationService.generateAccountingRecordsForRefundExport(refund);
+        }
+
         return this.addOrUpdateRefund(refund);
     }
 
@@ -278,12 +282,8 @@ public class RefundServiceImpl implements RefundService {
                                         139),
                                 false));
 
-                if (!completeRefund.getIsAlreadyExported()) {
-                    accountingRecordGenerationService.generateAccountingRecordsForRefundExport(completeRefund);
-                    addOrUpdateRefund(completeRefund);
-                }
-
                 completeRefund.setIsAlreadyExported(true);
+                addOrUpdateRefund(completeRefund);
             }
 
             xml = xmlMapper.writeValueAsString(document);
