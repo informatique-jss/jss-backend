@@ -29,7 +29,7 @@ public class InvoicingFacade {
 
     @Transactional(rollbackFor = Exception.class)
     public PaymentDto cancelPayment(Payment payment) throws OsirisValidationException, OsirisException {
-        Payment cancelledPayment = paymentService.cancelPayment(payment);
+        Payment cancelledPayment = paymentService.cancelPayment(payment, null);
         return invoicingDtoHelper.mapPayment(cancelledPayment);
     }
 }
