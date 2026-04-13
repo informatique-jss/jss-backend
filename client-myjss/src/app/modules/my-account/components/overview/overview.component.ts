@@ -83,7 +83,7 @@ export class OverviewComponent implements OnInit {
     });
 
     this.isLoadingStats = true;
-    this.loginService.getCurrentUser().subscribe(response => {
+    this.loginService.getCurrentUser(true).subscribe(response => {
       if (response) {
         this.currentUser = response;
         this.responsableService.getResponsablesForCurrentUser().subscribe(response => {
