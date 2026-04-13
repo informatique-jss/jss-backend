@@ -198,7 +198,7 @@
 
                 <p>
                     <strong>
-                        Service - <span th:text="${service.serviceLabelToDisplay}"></span>:
+                        Service - <span th:text="${service.serviceLabelToDisplay}"></span> : 
 
                     </strong>
                 </p>
@@ -242,7 +242,7 @@
                 <ul>
                     <li th:each="field : ${service.assoServiceFieldTypes}" th:if="${field.isMandatory}">
 
-                        <span th:text="${field.serviceFieldType.label}"></span> :
+                        <span th:text="${field.serviceFieldType.label}"></span> : 
                         <span th:switch="${field.serviceFieldType.dataType}">
 
                             <span th:case="SERVICE_FIELD_TYPE_INTEGER"
@@ -305,7 +305,7 @@
                         <li th:each="doc : ${service.assoServiceDocuments}"
                             th:if="${doc.attachments != null and doc.attachments.size() > 0}">
 
-                            <span th:text="${doc.typeDocument.customLabel}"></span>
+                            <span th:text="${doc.typeDocument.customLabel}"></span> :
                             <ul>
                                 <li th:each="att : ${doc.attachments}">
                                     <span th:text="${att.description}"></span>
