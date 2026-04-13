@@ -81,4 +81,10 @@ public class TiersFacade {
     public Page<ResponsableDto> searchResponsablesByFirstOrLastName(String searchText, Pageable pageable) {
         return tiersDtoHelper.mapResponsables(responsableService.getResponsables(searchText, pageable));
     }
+
+    public ResponsableDto transfertResponsable(Responsable oldResponsable, Responsable newResponsable)
+            throws OsirisException {
+        Responsable replacingResponsable = responsableService.transferResponsable(oldResponsable, newResponsable);
+        return tiersDtoHelper.mapResponsable(replacingResponsable);
+    }
 }
