@@ -300,11 +300,14 @@ public class MiscellaneousController {
     @PostMapping(inputEntryPoint + "/information-banner")
     public ResponseEntity<InformationBanner> addOrUpdateInformationBanner(
             @RequestBody InformationBanner informationBanner) throws OsirisValidationException, OsirisException {
-        if (informationBanner != null && Boolean.TRUE.equals(informationBanner.getIsActive())) {
-            if (informationBannerService.getActiveInformationBanner() != null) {
-                throw new OsirisClientMessageException(
-                        "Un bandeau d'information actif existe déja. Veuillez le désactiver avant d'en créer un nouveau");
-            }
+
+        InformationBanner existingActiveBanner = informationBannerService.getActiveInformationBanner();
+
+        if (informationBanner != null && Boolean.TRUE.equals(informationBanner.getIsActive())
+                && existingActiveBanner != null
+                && existingActiveBanner.getId() != informationBanner.getId()) {
+            throw new OsirisClientMessageException(
+                    "Un bandeau d'information actif existe déja. Veuillez le désactiver avant d'en créer un nouveau");
         }
         if (informationBanner.getId() != null)
             validationHelper.validateReferential(informationBanner, true, "informationBanners");
