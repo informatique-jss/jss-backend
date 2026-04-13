@@ -19,16 +19,21 @@ import org.springframework.transaction.annotation.Transactional;
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
 import com.jss.osiris.modules.osiris.accounting.model.AccountingRecord;
+import com.jss.osiris.modules.osiris.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrm;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrmSearchModel;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrmValueAggregatedByResponsable;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmService;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmValueService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
+import com.jss.osiris.modules.osiris.invoicing.model.InvoiceStatus;
 import com.jss.osiris.modules.osiris.invoicing.model.Payment;
+import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.DocumentType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
@@ -82,6 +87,12 @@ public class ResponsableServiceImpl implements ResponsableService {
 
     @Autowired
     TiersDtoHelper tiersDtoHelper;
+
+    @Autowired
+    InvoiceService invoiceService;
+
+    @Autowired
+    AccountingRecordService accountingRecordService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -308,13 +319,6 @@ public class ResponsableServiceImpl implements ResponsableService {
     public Responsable transferResponsable(Responsable oldResponsable, Responsable newResponsable)
             throws OsirisException {
 
-        if (Boolean.FALSE.equals(newResponsable.getIsActive()))
-            throw new OsirisClientMessageException(
-                    "Le responsable avec l'id " + newResponsable.getId() + " est inactif");
-        if (Boolean.FALSE.equals(oldResponsable.getIsActive()))
-            throw new OsirisClientMessageException(
-                    "Le responsable avec l'id " + oldResponsable.getId() + " est inactif");
-
         List<CustomerOrder> transferredCustomerOrders = new ArrayList<>();
         List<Invoice> transferredInvoices = new ArrayList<>();
 
@@ -326,10 +330,12 @@ public class ResponsableServiceImpl implements ResponsableService {
             transferAccountingRecords(newResponsable, oldResponsable, transferredCustomerOrders, transferredInvoices);
         }
         oldResponsable.setIsActive(Boolean.FALSE);
+        addOrUpdateResponsable(newResponsable);
         return newResponsable;
     }
 
-    private void transferQuotations(Responsable oldResponsable, Responsable newResponsable) {
+    private void transferQuotations(Responsable oldResponsable, Responsable newResponsable)
+            throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException, OsirisException {
 
         List<Quotation> quotations = oldResponsable.getQuotations();
         if (quotations != null && quotations.size() > 0) {
@@ -337,8 +343,10 @@ public class ResponsableServiceImpl implements ResponsableService {
                 String quotationStatus = quotation.getQuotationStatus().getCode();
                 if (!quotationStatus.equals(QuotationStatus.VALIDATED_BY_CUSTOMER)
                         && !quotationStatus.equals(QuotationStatus.REFUSED_BY_CUSTOMER)
-                        && !quotationStatus.equals(QuotationStatus.ABANDONED))
+                        && !quotationStatus.equals(QuotationStatus.ABANDONED)) {
                     quotation.setResponsable(newResponsable);
+                    quotationService.addOrUpdateQuotation(quotation);
+                }
             }
         }
     }
@@ -347,39 +355,41 @@ public class ResponsableServiceImpl implements ResponsableService {
             List<Invoice> transferredInvoices) throws OsirisException {
 
         List<Invoice> invoices = oldResponsable.getInvoices();
+        InvoiceStatus statusSent = constantService.getInvoiceStatusSend();
+
         if (invoices != null && invoices.size() > 0) {
             for (Invoice invoice : invoices) {
-                boolean isStatusSent = constantService.getInvoiceStatusSend().getId()
-                        .equals(invoice.getInvoiceStatus().getId());
-                if (isStatusSent) {
+                if (invoice.getInvoiceStatus().getId().equals(statusSent.getId())) {
                     invoice.setResponsable(newResponsable);
                     transferredInvoices.add(invoice);
+                    invoiceService.addOrUpdateInvoice(invoice);
                 }
             }
         }
     }
 
     private void transferCustomerOrders(Responsable oldResponsable, Responsable newResponsable,
-            List<CustomerOrder> transferredCustomerOrders) {
+            List<CustomerOrder> transferredCustomerOrders)
+            throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException, OsirisException {
 
         List<CustomerOrder> customerOrders = oldResponsable.getCustomerOrders();
         if (customerOrders != null && customerOrders.size() > 0) {
             for (CustomerOrder customerOrder : customerOrders) {
                 String customerOrderstatus = customerOrder.getCustomerOrderStatus().getCode();
-                boolean isPayed = Boolean.TRUE.equals(customerOrder.getIsPayed());
-                boolean shouldTransfer = !customerOrderstatus.equals(CustomerOrderStatus.BILLED)
+                if (!customerOrderstatus.equals(CustomerOrderStatus.BILLED)
                         && !customerOrderstatus.equals(CustomerOrderStatus.ABANDONED)
-                        || (customerOrderstatus.equals(CustomerOrderStatus.BILLED) && !isPayed);
-                if (shouldTransfer) {
+                        || (customerOrderstatus.equals(CustomerOrderStatus.BILLED)
+                                && !Boolean.TRUE.equals(customerOrder.getIsPayed()))) {
                     customerOrder.setResponsable(newResponsable);
                     transferredCustomerOrders.add(customerOrder);
+                    customerOrderService.addOrUpdateCustomerOrder(customerOrder, false, false);
                 }
             }
         }
     }
 
     private void transferAccountingRecords(Responsable newResponsable, Responsable oldResponsable,
-            List<CustomerOrder> transferredCustomerOrders, List<Invoice> transferredInvoices) {
+            List<CustomerOrder> transferredCustomerOrders, List<Invoice> transferredInvoices) throws OsirisException {
 
         Tiers oldTiers = oldResponsable.getTiers();
         Tiers newTiers = newResponsable.getTiers();
@@ -401,6 +411,7 @@ public class ResponsableServiceImpl implements ResponsableService {
                                         newTiers);
                                 if (newAccount != null) {
                                     record.setAccountingAccount(newAccount);
+                                    accountingRecordService.addOrUpdateAccountingRecord(record, false);
                                 }
                             }
                         }
@@ -425,16 +436,16 @@ public class ResponsableServiceImpl implements ResponsableService {
     private AccountingAccount mapToNewTiersAccount(AccountingAccount oldAccountingAccount, Tiers oldTiers,
             Tiers newTiers) {
 
-        if (oldAccountingAccount.equals(oldTiers.getAccountingAccountCustomer())) {
+        if (oldAccountingAccount.getId().equals(oldTiers.getAccountingAccountCustomer().getId())) {
             return newTiers.getAccountingAccountCustomer();
         }
-        if (oldAccountingAccount.equals(oldTiers.getAccountingAccountDeposit())) {
+        if (oldAccountingAccount.getId().equals(oldTiers.getAccountingAccountDeposit().getId())) {
             return newTiers.getAccountingAccountDeposit();
         }
-        if (oldAccountingAccount.equals(oldTiers.getAccountingAccountLitigious())) {
+        if (oldAccountingAccount.getId().equals(oldTiers.getAccountingAccountLitigious().getId())) {
             return newTiers.getAccountingAccountLitigious();
         }
-        if (oldAccountingAccount.equals(oldTiers.getAccountingAccountSuspicious())) {
+        if (oldAccountingAccount.getId().equals(oldTiers.getAccountingAccountSuspicious().getId())) {
             return newTiers.getAccountingAccountSuspicious();
         }
         return null;

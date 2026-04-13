@@ -740,11 +740,22 @@ public class TiersController {
 
     Responsable oldResponsable = responsableService.getResponsable(oldResponsableId);
     Responsable newResponsable = responsableService.getResponsable(newResponsableId);
+
     if (newResponsable == null)
       throw new OsirisClientMessageException("Le responsable avec l'id " + newResponsableId + " n'existe pas");
+
     if (oldResponsable == null)
       throw new OsirisClientMessageException("Le responsable avec l'id " + oldResponsableId + " n'existe pas");
-    return new ResponseEntity<ResponsableDto>(tiersFacade.transferResponsable(oldResponsable, newResponsable),
+
+    if (Boolean.FALSE.equals(newResponsable.getIsActive()))
+      throw new OsirisClientMessageException(
+          "Le responsable avec l'id " + newResponsable.getId() + " est inactif");
+
+    if (Boolean.FALSE.equals(oldResponsable.getIsActive()))
+      throw new OsirisClientMessageException(
+          "Le responsable avec l'id " + oldResponsable.getId() + " est inactif");
+
+    return new ResponseEntity<ResponsableDto>(tiersFacade.transfertResponsable(oldResponsable, newResponsable),
         HttpStatus.OK);
   }
 
