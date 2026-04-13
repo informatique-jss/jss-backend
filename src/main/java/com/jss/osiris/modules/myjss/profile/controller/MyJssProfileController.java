@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -292,10 +293,22 @@ public class MyJssProfileController {
 		Responsable currentUser = employeeService.getCurrentMyJssUser();
 
 		if (currentUser != null && Boolean.TRUE.equals(currentUser.getCanViewAllTiersInWeb())) {
-			return new ResponseEntity<List<Responsable>>(
-					tiersService.getTiers(currentUser.getTiers().getId()).getResponsables().stream()
-							.filter(r -> Boolean.TRUE.equals(r.getIsActive())).toList(),
-					HttpStatus.OK);
+			List<Responsable> responsables = tiersService.getTiers(currentUser.getTiers().getId()).getResponsables();
+
+			responsables.sort(new Comparator<Responsable>() {
+				@Override
+				public int compare(Responsable firstRespo, Responsable secondRespo) {
+					if (firstRespo.getIsActive() != null && secondRespo.getIsActive() == null)
+						return -1;
+					if (firstRespo.getIsActive() == null && secondRespo.getIsActive() != null)
+						return 1;
+					if (firstRespo.getIsActive() == null && secondRespo.getIsActive() == null)
+						return 0;
+					return Boolean.compare(secondRespo.getIsActive(), firstRespo.getIsActive());
+				}
+			});
+
+			return new ResponseEntity<List<Responsable>>(responsables, HttpStatus.OK);
 		}
 		return new ResponseEntity<List<Responsable>>(new ArrayList<Responsable>(), HttpStatus.OK);
 	}

@@ -16,16 +16,30 @@
       Responsables
     </button>
     <div ngbDropdownMenu class="dropdown-menu my-1">
+
       <label class="dropdown-item">
-        <input class="form-check-input me-2" type="checkbox" [(ngModel)]="selectAllResponsable"
-          (change)="selectAllResponsables()">
-        Sélectionner tout
+        <input class="form-check-input me-2" type="checkbox" [(ngModel)]="selectAllActiveResponsable"
+          (change)="selectAllActiveResponsables()">
+        <strong>Sélectionner tout</strong>
       </label>
-      <label class="dropdown-item" *ngFor="let respo of responsablesForCurrentUser">
-        <input class="form-check-input me-2" type="checkbox" [(ngModel)]="responsableCheck[respo.id]"
-          (change)="refreshStats()">
-        {{respo.firstname}} {{respo.lastname}}
-      </label>
+
+      <div class="dropdown-divider"></div>
+      <ng-container *ngFor="let respo of responsablesForCurrentUser; let i = index">
+        <ng-container *ngIf="i > 0 && !respo.isActive && responsablesForCurrentUser[i-1].isActive">
+          <div class="dropdown-divider"></div>
+          <label class="dropdown-item">
+            <input class="form-check-input me-2" type="checkbox" [(ngModel)]="selectAllInactiveResponsable"
+              (change)="selectAllInactiveResponsables()">
+            <strong>Ajouter les inactifs</strong>
+          </label>
+        </ng-container>
+
+        <label class="dropdown-item">
+          <input class="form-check-input me-2" type="checkbox" [(ngModel)]="responsableCheck[respo.id]"
+            (change)="refreshStats()">
+          {{respo.firstname}} {{respo.lastname}}
+        </label>
+      </ng-container>
     </div>
   </div>
 </div>

@@ -49,7 +49,8 @@ export class OverviewComponent implements OnInit {
   acceptTerms: boolean = false;
   responsablesForCurrentUser: Responsable[] | undefined;
   responsableCheck: boolean[] = [];
-  selectAllResponsable: boolean = false;
+  selectAllActiveResponsable: boolean = false;
+  selectAllInactiveResponsable: boolean = false;
 
   constructor(private route: ActivatedRoute,
     private appService: AppService,
@@ -129,11 +130,21 @@ export class OverviewComponent implements OnInit {
     this.acceptTerms = false;
   }
 
-  selectAllResponsables() {
+  selectAllActiveResponsables() {
     if (this.responsablesForCurrentUser)
-      for (let respo of this.responsablesForCurrentUser)
-        this.responsableCheck[respo.id] = this.selectAllResponsable;
+      for (let respo of this.responsablesForCurrentUser) {
+        if (respo.isActive)
+          this.responsableCheck[respo.id] = this.selectAllActiveResponsable;
+      }
+    this.refreshStats();
+  }
 
+  selectAllInactiveResponsables() {
+    if (this.responsablesForCurrentUser)
+      for (let respo of this.responsablesForCurrentUser) {
+        if (!respo.isActive)
+          this.responsableCheck[respo.id] = this.selectAllInactiveResponsable;
+      }
     this.refreshStats();
   }
 
@@ -169,7 +180,8 @@ export class OverviewComponent implements OnInit {
       for (let respoId of respoIds) {
         this.responsableCheck[parseInt(respoId)] = true;
       }
-      this.selectAllResponsable = false;
+      this.selectAllActiveResponsable = false;
+      this.selectAllInactiveResponsable = false;
     }
   }
 }

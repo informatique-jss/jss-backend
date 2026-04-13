@@ -47,7 +47,8 @@ export class AffairesComponent implements OnInit {
   inputIdAffaire: number | undefined;
   responsablesForCurrentUser: Responsable[] | undefined;
   responsableCheck: boolean[] = [];
-  selectAllResponsable: boolean = true;
+  selectAllActiveResponsable: boolean = true;
+  selectAllInactiveResponsable: boolean = false;
 
   constructor(
     private customerOrderService: CustomerOrderService,
@@ -148,6 +149,24 @@ export class AffairesComponent implements OnInit {
     }
   }
 
+  selectAllActiveResponsables() {
+    if (this.responsablesForCurrentUser)
+      for (let respo of this.responsablesForCurrentUser) {
+        if (respo.isActive)
+          this.responsableCheck[respo.id] = this.selectAllActiveResponsable;
+      }
+    this.changeFilter();
+  }
+
+  selectAllInactiveResponsables() {
+    if (this.responsablesForCurrentUser)
+      for (let respo of this.responsablesForCurrentUser) {
+        if (!respo.isActive)
+          this.responsableCheck[respo.id] = this.selectAllInactiveResponsable;
+      }
+    this.changeFilter();
+  }
+
   setBookmark() {
     this.userPreferenceService.setUserSearchBookmark(this.currentSort, "affaire-currentSort");
     if (this.responsablesForCurrentUser && this.getCurrentSelectedResponsable())
@@ -162,7 +181,8 @@ export class AffairesComponent implements OnInit {
         this.responsableCheck[i] = false;
       for (let respoId of respoIds)
         this.responsableCheck[parseInt(respoId)] = true;
-      this.selectAllResponsable = false;
+      this.selectAllActiveResponsable = false;
+      this.selectAllInactiveResponsable = false;
     }
     if (!this.currentSort)
       this.currentSort = "nameAsc";
@@ -170,14 +190,6 @@ export class AffairesComponent implements OnInit {
 
   downloadAttachment(attachment: Attachment) {
     this.uploadAttachmentService.downloadAttachment(attachment);
-  }
-
-  selectAllResponsables() {
-    if (this.responsablesForCurrentUser)
-      for (let respo of this.responsablesForCurrentUser)
-        this.responsableCheck[respo.id] = this.selectAllResponsable;
-
-    this.changeFilter();
   }
 
   getCustomerOrderStatusLabel = getCustomerOrderStatusLabel;

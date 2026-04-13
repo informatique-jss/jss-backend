@@ -73,6 +73,9 @@ public class Responsable implements IAttachment, IId {
 
 	@Column(nullable = false)
 	@IndexedField
+	@JsonView({ JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	private Boolean isActive;
 
 	@Column(nullable = false)
