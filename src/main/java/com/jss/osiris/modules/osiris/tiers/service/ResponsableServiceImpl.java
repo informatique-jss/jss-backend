@@ -18,12 +18,22 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jss.osiris.libs.batch.model.Batch;
 import com.jss.osiris.libs.batch.service.BatchService;
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
+import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
+import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.modules.osiris.accounting.model.AccountingAccount;
+import com.jss.osiris.modules.osiris.accounting.model.AccountingRecord;
+import com.jss.osiris.modules.osiris.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrm;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrmSearchModel;
 import com.jss.osiris.modules.osiris.crm.model.KpiCrmValueAggregatedByResponsable;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmService;
 import com.jss.osiris.modules.osiris.crm.service.KpiCrmValueService;
+import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
+import com.jss.osiris.modules.osiris.invoicing.model.InvoiceStatus;
+import com.jss.osiris.modules.osiris.invoicing.model.Payment;
+import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Document;
 import com.jss.osiris.modules.osiris.miscellaneous.model.DocumentType;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
@@ -77,6 +87,12 @@ public class ResponsableServiceImpl implements ResponsableService {
 
     @Autowired
     TiersDtoHelper tiersDtoHelper;
+
+    @Autowired
+    InvoiceService invoiceService;
+
+    @Autowired
+    AccountingRecordService accountingRecordService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -296,5 +312,142 @@ public class ResponsableServiceImpl implements ResponsableService {
         }
 
         return responsableFound.stream().filter(t -> !notKeepResponsable.contains(t.getId())).toList();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Responsable transferResponsable(Responsable oldResponsable, Responsable newResponsable)
+            throws OsirisException {
+
+        List<CustomerOrder> transferredCustomerOrders = new ArrayList<>();
+        List<Invoice> transferredInvoices = new ArrayList<>();
+
+        transferCustomerOrders(oldResponsable, newResponsable, transferredCustomerOrders);
+        transferInvoices(oldResponsable, newResponsable, transferredInvoices);
+        transferQuotations(oldResponsable, newResponsable);
+
+        if (oldResponsable.getTiers().getId() != newResponsable.getTiers().getId()) {
+            transferAccountingRecords(newResponsable, oldResponsable, transferredCustomerOrders, transferredInvoices);
+        }
+        oldResponsable.setIsActive(Boolean.FALSE);
+        addOrUpdateResponsable(newResponsable);
+        return newResponsable;
+    }
+
+    private void transferQuotations(Responsable oldResponsable, Responsable newResponsable)
+            throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException, OsirisException {
+
+        List<Quotation> quotations = oldResponsable.getQuotations();
+        if (quotations != null && quotations.size() > 0) {
+            for (Quotation quotation : quotations) {
+                String quotationStatus = quotation.getQuotationStatus().getCode();
+                if (!quotationStatus.equals(QuotationStatus.VALIDATED_BY_CUSTOMER)
+                        && !quotationStatus.equals(QuotationStatus.REFUSED_BY_CUSTOMER)
+                        && !quotationStatus.equals(QuotationStatus.ABANDONED)) {
+                    quotation.setResponsable(newResponsable);
+                    quotationService.addOrUpdateQuotation(quotation);
+                }
+            }
+        }
+    }
+
+    private void transferInvoices(Responsable oldResponsable, Responsable newResponsable,
+            List<Invoice> transferredInvoices) throws OsirisException {
+
+        List<Invoice> invoices = oldResponsable.getInvoices();
+        InvoiceStatus statusSent = constantService.getInvoiceStatusSend();
+
+        if (invoices != null && invoices.size() > 0) {
+            for (Invoice invoice : invoices) {
+                if (invoice.getInvoiceStatus().getId().equals(statusSent.getId())) {
+                    invoice.setResponsable(newResponsable);
+                    transferredInvoices.add(invoice);
+                    invoiceService.addOrUpdateInvoice(invoice);
+                }
+            }
+        }
+    }
+
+    private void transferCustomerOrders(Responsable oldResponsable, Responsable newResponsable,
+            List<CustomerOrder> transferredCustomerOrders)
+            throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException, OsirisException {
+
+        List<CustomerOrder> customerOrders = oldResponsable.getCustomerOrders();
+        if (customerOrders != null && customerOrders.size() > 0) {
+            for (CustomerOrder customerOrder : customerOrders) {
+                String customerOrderstatus = customerOrder.getCustomerOrderStatus().getCode();
+                if (!customerOrderstatus.equals(CustomerOrderStatus.BILLED)
+                        && !customerOrderstatus.equals(CustomerOrderStatus.ABANDONED)
+                        || (customerOrderstatus.equals(CustomerOrderStatus.BILLED)
+                                && !Boolean.TRUE.equals(customerOrder.getIsPayed()))) {
+                    customerOrder.setResponsable(newResponsable);
+                    transferredCustomerOrders.add(customerOrder);
+                    customerOrderService.addOrUpdateCustomerOrder(customerOrder, false, false);
+                }
+            }
+        }
+    }
+
+    private void transferAccountingRecords(Responsable newResponsable, Responsable oldResponsable,
+            List<CustomerOrder> transferredCustomerOrders, List<Invoice> transferredInvoices) throws OsirisException {
+
+        Tiers oldTiers = oldResponsable.getTiers();
+        Tiers newTiers = newResponsable.getTiers();
+
+        // transfer accountings of transferred orders
+        for (CustomerOrder customerOrder : transferredCustomerOrders) {
+            List<Payment> payments = customerOrder.getPayments();
+            if (payments != null && payments.size() > 0) {
+                List<Payment> filteredPayments = payments.stream()
+                        .filter(payment -> !payment.getIsCancelled())
+                        .toList();
+                if (filteredPayments != null && filteredPayments.size() > 0) {
+                    for (Payment filteredPayment : filteredPayments) {
+                        if (filteredPayment.getAccountingRecords() != null
+                                && filteredPayment.getAccountingRecords().size() > 0) {
+                            for (AccountingRecord record : filteredPayment.getAccountingRecords()) {
+                                AccountingAccount newAccount = mapToNewTiersAccount(record.getAccountingAccount(),
+                                        oldTiers,
+                                        newTiers);
+                                if (newAccount != null) {
+                                    record.setAccountingAccount(newAccount);
+                                    accountingRecordService.addOrUpdateAccountingRecord(record, false);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        // transfer accounting of transferred invoices
+        for (Invoice invoice : transferredInvoices) {
+            if (invoice.getAccountingRecords() != null && invoice.getAccountingRecords().size() > 0) {
+                for (AccountingRecord record : invoice.getAccountingRecords()) {
+                    AccountingAccount newAccount = mapToNewTiersAccount(record.getAccountingAccount(), oldTiers,
+                            newTiers);
+                    if (newAccount != null) {
+                        record.setAccountingAccount(newAccount);
+                    }
+                }
+            }
+        }
+    }
+
+    private AccountingAccount mapToNewTiersAccount(AccountingAccount oldAccountingAccount, Tiers oldTiers,
+            Tiers newTiers) {
+
+        if (oldAccountingAccount.getId().equals(oldTiers.getAccountingAccountCustomer().getId())) {
+            return newTiers.getAccountingAccountCustomer();
+        }
+        if (oldAccountingAccount.getId().equals(oldTiers.getAccountingAccountDeposit().getId())) {
+            return newTiers.getAccountingAccountDeposit();
+        }
+        if (oldAccountingAccount.getId().equals(oldTiers.getAccountingAccountLitigious().getId())) {
+            return newTiers.getAccountingAccountLitigious();
+        }
+        if (oldAccountingAccount.getId().equals(oldTiers.getAccountingAccountSuspicious().getId())) {
+            return newTiers.getAccountingAccountSuspicious();
+        }
+        return null;
     }
 }

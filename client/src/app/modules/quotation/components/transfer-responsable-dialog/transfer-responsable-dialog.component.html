@@ -1,0 +1,27 @@
+<h1 mat-dialog-title>Transférer le responsable</h1>
+<div mat-dialog-content>
+  <form [formGroup]="transferResponsableForm">
+    <table class="full-width ">
+      <p>Responsable actuel :</p>
+      <tr>
+        <td>
+          <autocomplete-responsable [(model)]="selectedResponsable" [form]="transferResponsableForm"
+            propertyName="selectedResponsable" label="Responsable" [isDisabled]="true" [previewAction]="false">
+          </autocomplete-responsable>
+        </td>
+      </tr>
+      <p>Nouveau responsable :</p>
+      <tr>
+        <td>
+          <autocomplete-responsable [(model)]="newResponsable" [form]="transferResponsableForm"
+            propertyName="newResponsable" [isMandatory]="true" (onOptionSelected)="fillResponsable($event)"
+            label="Responsable"></autocomplete-responsable>
+        </td>
+      </tr>
+    </table>
+  </form>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-raised-button color="accent" (click)="closeDialog()">Annuler</button>
+  <button mat-raised-button color="warn" (click)="transferResponsable()">Valider</button>
+</div>

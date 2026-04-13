@@ -977,6 +977,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Transactional(rollbackFor = Exception.class)
+    @Override
     public Payment cancelPayment(Payment paymentToCancel, LocalDateTime cancellationDateTime)
             throws OsirisException, OsirisValidationException {
         paymentToCancel = getPayment(paymentToCancel.getId());
