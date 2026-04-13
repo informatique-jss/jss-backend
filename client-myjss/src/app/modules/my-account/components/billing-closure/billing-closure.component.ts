@@ -32,7 +32,8 @@ export class BillingClosureComponent implements OnInit {
   totalToPayCb: number = 0;
   responsablesForCurrentUser: Responsable[] | undefined;
   responsableCheck: boolean[] = [];
-  selectAllResponsable: boolean = true;
+  selectAllActiveResponsable: boolean = true;
+  selectAllInactiveResponsable: boolean = false;
 
   capitalizeName = capitalizeName;
 
@@ -133,7 +134,8 @@ export class BillingClosureComponent implements OnInit {
         this.responsableCheck[i] = false;
       for (let respoId of respoIds)
         this.responsableCheck[parseInt(respoId)] = true;
-      this.selectAllResponsable = false;
+      this.selectAllActiveResponsable = false;
+      this.selectAllInactiveResponsable = false;
     }
     this.currentSort = this.userPreferenceService.getUserSearchBookmark("closure-currentSort");
     if (!this.currentSort)
@@ -241,11 +243,22 @@ export class BillingClosureComponent implements OnInit {
     }
   }
 
-  selectAllResponsables() {
-    if (this.responsablesForCurrentUser)
-      for (let respo of this.responsablesForCurrentUser)
-        this.responsableCheck[respo.id] = this.selectAllResponsable;
 
+  selectAllActiveResponsables() {
+    if (this.responsablesForCurrentUser)
+      for (let respo of this.responsablesForCurrentUser) {
+        if (respo.isActive)
+          this.responsableCheck[respo.id] = this.selectAllActiveResponsable;
+      }
+    this.changeFilter();
+  }
+
+  selectAllInactiveResponsables() {
+    if (this.responsablesForCurrentUser)
+      for (let respo of this.responsablesForCurrentUser) {
+        if (!respo.isActive)
+          this.responsableCheck[respo.id] = this.selectAllInactiveResponsable;
+      }
     this.changeFilter();
   }
 }

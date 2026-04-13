@@ -24,4 +24,5 @@ export interface Responsable {
   country: Country;
   documents: Document[];
   consentTermsDate: Date;
+  isActive: boolean;
 }
