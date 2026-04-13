@@ -12,3 +12,6 @@ TODO before production deployment for version 36 :
 
 TODO Before production deployment and REC deployemnt of version 37 :
 - for OSI-9835 : reindex newspaperPages as we added the newspaperr id as an indexedField for retrieving newspaper images when entities are found.
+- OSI-9891 : mettre à jour le champ servic_type_linked de la table service_type qui est faux (en PROD uniquement, car déjà corrigé en REC) :
+        ALTER TABLE osiris.service_type RENAME COLUMN service_type_linked TO id_service_type_linked;
+        ALTER TABLE osiris.service_type ALTER COLUMN id_service_type_linked TYPE int4 USING id_service_type_linked::int4; 

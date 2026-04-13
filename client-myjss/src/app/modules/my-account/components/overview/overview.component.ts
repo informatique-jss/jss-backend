@@ -9,6 +9,7 @@ import { AppService } from '../../../main/services/app.service';
 import { GoogleAnalyticsService } from '../../../main/services/googleAnalytics.service';
 import { UserPreferenceService } from '../../../main/services/user.preference.service';
 import { AvatarComponent } from '../../../miscellaneous/components/avatar/avatar.component';
+import { InformationBanner } from '../../../miscellaneous/model/InformationBanner';
 import { InformationBannerService } from '../../../miscellaneous/services/information.banner.service';
 import { Responsable } from '../../../profile/model/Responsable';
 import { LoginService } from '../../../profile/services/login.service';
@@ -30,8 +31,7 @@ export class OverviewComponent implements OnInit {
   currentUser: Responsable | undefined;
   statistics: DashboardUserStatistics | undefined;
   isLoadingStats: boolean = false;
-  showBanner: boolean = true;
-  message: string = "";
+  informationBanner = {} as InformationBanner;
 
   QUOTATION_STATUS_SENT_TO_CUSTOMER = QUOTATION_STATUS_SENT_TO_CUSTOMER;
   QUOTATION_STATUS_OPEN = QUOTATION_STATUS_OPEN;
@@ -114,7 +114,7 @@ export class OverviewComponent implements OnInit {
 
     this.informationBannerService.getInformationbanner().subscribe(response => {
       if (response && response.text)
-        this.message = response.text;
+        this.informationBanner.text = response.text;
     });
   }
 

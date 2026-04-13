@@ -299,15 +299,21 @@ public class MiscellaneousController {
 
     @PostMapping(inputEntryPoint + "/information-banner")
     public ResponseEntity<InformationBanner> addOrUpdateInformationBanner(
-            @RequestBody InformationBanner informationBanners) throws OsirisValidationException, OsirisException {
-        if (informationBanners.getId() != null)
-            validationHelper.validateReferential(informationBanners, true, "informationBanners");
-        validationHelper.validateString(informationBanners.getCode(), true, "code");
-        validationHelper.validateString(informationBanners.getLabel(), true, "label");
-        validationHelper.validateString(informationBanners.getText(), true, "text");
-        
+            @RequestBody InformationBanner informationBanner) throws OsirisValidationException, OsirisException {
+        if (informationBanner != null && Boolean.TRUE.equals(informationBanner.getIsActive())) {
+            if (informationBannerService.getActiveInformationBanner() != null) {
+                throw new OsirisClientMessageException(
+                        "Un bandeau d'information actif existe déja. Veuillez le désactiver avant d'en créer un nouveau");
+            }
+        }
+        if (informationBanner.getId() != null)
+            validationHelper.validateReferential(informationBanner, true, "informationBanners");
+        validationHelper.validateString(informationBanner.getCode(), true, "code");
+        validationHelper.validateString(informationBanner.getLabel(), true, "label");
+        validationHelper.validateString(informationBanner.getText(), true, "text");
+
         return new ResponseEntity<InformationBanner>(
-                informationBannerService.addOrUpdateInformationBanner(informationBanners), HttpStatus.OK);
+                informationBannerService.addOrUpdateInformationBanner(informationBanner), HttpStatus.OK);
     }
 
     @GetMapping(inputEntryPoint + "/tooltip-entries")
