@@ -96,7 +96,7 @@ export class LoginService extends AppRestService<Responsable> {
   }
 
   sendConnectionLink(mail: string, isFromQuotation: boolean) {
-    return this.get(new HttpParams().set("mail", mail).set("isFromQuotation", isFromQuotation), 'login/token/send', "Le lien de connexion vous a été envoyé", "Erreur lors de l'envoi du lien, veuillez vérifier votre saisie");
+    return this.get(new HttpParams().set("mail", mail).set("isFromQuotation", isFromQuotation), 'login/token/send', "Si votre adresse mail est bien présente dans notre base, un mail contenant un lien de connexion vous sera envoyé", "Erreur lors de l'envoi du lien, veuillez vérifier votre saisie");
   }
 
   signOut() {
