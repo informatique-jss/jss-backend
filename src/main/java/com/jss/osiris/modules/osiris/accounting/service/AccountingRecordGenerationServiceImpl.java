@@ -462,6 +462,11 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
         BigDecimal balance = new BigDecimal(0);
         Integer operationId = getNewTemporaryOperationId();
 
+        List<AccountingRecord> invoiceAccountingRecords = invoice.getAccountingRecords();
+        if (invoiceAccountingRecords == null || invoiceAccountingRecords.size() == 0) {
+            invoiceAccountingRecords = accountingRecordService.getClosedAccountingRecordsForInvoice(invoice);
+        }
+
         if (invoice.getAccountingRecords() != null)
             for (AccountingRecord accountingRecord : invoice.getAccountingRecords()) {
                 if (accountingRecord.getAccountingJournal().getId()
@@ -685,6 +690,8 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                 accountingRecordService.addOrUpdateAccountingRecord(counterPart, false);
                 letterCounterPartRecords(accountingRecord, counterPart);
             }
+        else
+            throw new OsirisException("no records found");
 
         checkBalance(balance);
         letterInvoice(invoice);
@@ -782,7 +789,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
     }
 
     @Override
-    public void generateAccountingRecordOnPaymentCancellation(Payment payment)
+    public void generateAccountingRecordOnPaymentCancellation(Payment payment, LocalDateTime cancellationDateTime)
             throws OsirisException, OsirisValidationException {
         AccountingJournal bankJournal = constantService.getAccountingJournalMiscellaneousOperations();
 
@@ -812,7 +819,7 @@ public class AccountingRecordGenerationServiceImpl implements AccountingRecordGe
                     balance = balance.add(accountingRecord.getDebitAmount());
 
                 AccountingRecord counterPart = getCounterPart(accountingRecord, operationId, bankJournal,
-                        "Annulation du paiement " + payment.getId(), null);
+                        "Annulation du paiement " + payment.getId(), cancellationDateTime);
 
                 newAccountingRecords.add(counterPart);
                 accountingRecord.setContrePasse(counterPart);
