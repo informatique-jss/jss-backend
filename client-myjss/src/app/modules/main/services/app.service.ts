@@ -48,11 +48,11 @@ export class AppService {
    * @param sameWindowEndFonction : function to execute at the end of open with simple click
    * @returns
    */
-  openRoute(event: any, route: string, sameWindowEndFonction: any) {
+  openRoute(event: any, route: string, sameWindowEndFonction: any, replaceUrl: boolean = false) {
     if (event && (event.ctrlKey || event.button && event.button == "1")) {
       window.open(location.origin + "/" + route, "_blank");
     } else {
-      this.router.navigate(['/' + route])
+      this.router.navigate(['/' + route], { replaceUrl })
       if (sameWindowEndFonction)
         sameWindowEndFonction();
     }
