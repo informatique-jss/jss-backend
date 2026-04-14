@@ -94,7 +94,7 @@ public class GuMatchingServiceImpl implements GuMatchingService {
             BigDecimal inpiAmount = inpiExtr.getPreTaxPrice()
                     .add(inpiExtr.getVatPrice());
 
-            BigDecimal osirisAmount = invoiceHelper.getPriceTotal(invoice);
+            BigDecimal osirisAmount = invoice.getTotalPrice();
 
             if (isAmountMismatch(inpiAmount, osirisAmount)) {
                 guMatchingResult
@@ -133,7 +133,7 @@ public class GuMatchingServiceImpl implements GuMatchingService {
 
         if (invoice != null) {
             dto.setInvoiceId(invoice.getId());
-            dto.setOsirisAmount(invoiceHelper.getPriceTotal(invoice));
+            dto.setOsirisAmount(invoice.getTotalPrice());
             dto.setDate(invoice.getCreatedDate().toLocalDate());
             dto.setCustomerOrderId(invoice.getCustomerOrder() != null ? invoice.getCustomerOrder().getId() : null);
             if (inpi == null) {
