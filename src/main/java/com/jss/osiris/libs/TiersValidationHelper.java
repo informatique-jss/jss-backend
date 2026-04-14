@@ -52,7 +52,7 @@ public class TiersValidationHelper {
                 tiers.setSiret(null);
 
             validationHelper.validateString(tiers.getDenomination(), true, 80, "Denomination");
-            if (tiers.getIntercommunityVat() != null && tiers.getIntercommunityVat().length() > 20)
+            if (tiers.getIntercommunityVat() != null && tiers.getIntercommunityVat().length() > 24)
                 throw new OsirisValidationException("IntercommunityVat");
         }
 
