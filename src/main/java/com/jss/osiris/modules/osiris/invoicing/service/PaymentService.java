@@ -2,6 +2,7 @@ package com.jss.osiris.modules.osiris.invoicing.service;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.jss.osiris.libs.exception.OsirisClientMessageException;
@@ -147,6 +148,10 @@ public interface PaymentService {
          * |______________________METHODS FOR OSIRIS V2_________________________________
          * |============================================================================
          */
+
+        public Payment cancelPayment(Payment paymentToCancel, LocalDateTime cancellationDateTime)
+                        throws OsirisException, OsirisValidationException;
+
         public List<Payment> searchForPayments(PaymentSearch paymentSearch);
 
         public List<Payment> getPaymentsForReconciliation(Integer fromId, Integer endId);

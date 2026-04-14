@@ -1405,7 +1405,15 @@ public class WordpressController {
 		if (announcement == null)
 			return new ResponseEntity<Announcement>(new Announcement(), HttpStatus.OK);
 
-		return new ResponseEntity<Announcement>(announcementService.getAnnouncementForWebSite(announcement),
+		Announcement announcementResult = announcementService.getAnnouncementForWebSite(announcement);
+
+		if (Boolean.TRUE.equals(announcementResult.getIsAnonymised())
+				&& announcementResult.getAnonymisedNotice() != null
+				&& !announcementResult.getAnonymisedNotice().isEmpty()) {
+			announcementResult.setNotice(null);
+		}
+
+		return new ResponseEntity<Announcement>(announcementResult,
 				HttpStatus.OK);
 	}
 

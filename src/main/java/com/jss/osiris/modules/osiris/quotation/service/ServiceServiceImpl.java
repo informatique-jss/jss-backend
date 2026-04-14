@@ -202,7 +202,7 @@ public class ServiceServiceImpl implements ServiceService {
         List<AssoServiceDocument> assoServiceDocuments = service.getAssoServiceDocuments();
         if (assoServiceDocuments != null && assoServiceDocuments.size() > 0) {
             for (AssoServiceDocument doc : assoServiceDocuments) {
-
+                doc.setService(null);
                 if (doc.getAttachments() != null && doc.getAttachments().size() > 0) {
                     for (Attachment att : doc.getAttachments()) {
                         if (att != null) {
@@ -216,6 +216,11 @@ public class ServiceServiceImpl implements ServiceService {
             for (MissingAttachmentQuery maq : service.getMissingAttachmentQueries()) {
                 maq.setAssoServiceDocument(null);
                 maq.setAssoServiceFieldType(null);
+            }
+        }
+        if (service.getAssoServiceFieldTypes() != null && service.getAssoServiceFieldTypes().size() > 0) {
+            for (AssoServiceFieldType assoServiceFieldType : service.getAssoServiceFieldTypes()) {
+                assoServiceFieldType.setService(null);
             }
         }
         service.setAssoServiceDocuments(null);
@@ -280,7 +285,6 @@ public class ServiceServiceImpl implements ServiceService {
         ArrayList<String> typeDocumentCodes = new ArrayList<String>();
         ArrayList<AssoServiceFieldType> assoServiceFieldTypes = new ArrayList<AssoServiceFieldType>();
         ArrayList<Integer> serviceFieldTypeIds = new ArrayList<Integer>();
-        Boolean alreadyHasFurtherInformationServiceFieldType = false;
 
         ArrayList<AssoServiceProvisionType> assoServiceProvisionTypes = new ArrayList<AssoServiceProvisionType>();
 
@@ -317,12 +321,6 @@ public class ServiceServiceImpl implements ServiceService {
                                     .contains(assoServiceTypeFieldType.getServiceFieldType().getId())) {
                         serviceFieldTypeIds.add(assoServiceTypeFieldType.getServiceFieldType().getId());
                         assoServiceFieldTypes.add(newAssoServiceFieldType);
-
-                        if (!alreadyHasFurtherInformationServiceFieldType
-                                && newAssoServiceFieldType.getServiceFieldType().getId()
-                                        .equals(constantService.getFurtherInformationServiceFieldType().getId()))
-                            alreadyHasFurtherInformationServiceFieldType = true;
-
                     }
                 }
         }
@@ -332,15 +330,6 @@ public class ServiceServiceImpl implements ServiceService {
             service.getProvisions().addAll(mergeProvisionTypes(assoServiceProvisionTypes, service, affaire));
         else
             service.setProvisions(mergeProvisionTypes(assoServiceProvisionTypes, service, affaire));
-
-        // Always add further information field
-        if (!alreadyHasFurtherInformationServiceFieldType) {
-            AssoServiceFieldType newAssoServiceFieldType = new AssoServiceFieldType();
-            newAssoServiceFieldType.setIsMandatory(false);
-            newAssoServiceFieldType.setService(service);
-            newAssoServiceFieldType.setServiceFieldType(constantService.getFurtherInformationServiceFieldType());
-            assoServiceFieldTypes.add(newAssoServiceFieldType);
-        }
 
         service.setAssoServiceFieldTypes(assoServiceFieldTypes);
         service.setAssoServiceDocuments(assoServiceDocuments);
@@ -701,7 +690,7 @@ public class ServiceServiceImpl implements ServiceService {
             if (newAssos.size() > 0)
                 finalAssos.addAll(newAssos);
 
-            service.setAssoServiceDocuments(null);
+            service.setAssoServiceDocuments(new ArrayList<>());
             if (finalAssos.size() > 0)
                 for (AssoServiceDocument asso : finalAssos)
                     service.getAssoServiceDocuments().add(asso);

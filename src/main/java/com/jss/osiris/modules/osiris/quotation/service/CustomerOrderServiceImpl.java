@@ -285,8 +285,9 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     GoogleAnalyticsService googleAnalyticsService;
 
     private CustomerOrder simpleAddOrUpdate(CustomerOrder customerOrder) throws OsirisException {
+        customerOrder = customerOrderRepository.save(customerOrder);
         batchService.declareNewBatch(Batch.REINDEX_CUSTOMER_ORDER, customerOrder.getId());
-        return customerOrderRepository.save(customerOrder);
+        return customerOrder;
     }
 
     @Override
@@ -780,7 +781,7 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             addOrUpdateCustomerOrderStatus(customerOrder, CustomerOrderStatus.BEING_PROCESSED, false);
 
             if (isOnlyJssAnnouncementOrSubscription(customerOrder, true)) {
-                quotationValidationHelper.validateQuotationAndCustomerOrder(customerOrder, null);
+                quotationValidationHelper.validateQuotationAndCustomerOrder(customerOrder, null, false);
                 autoBilledProvisions(customerOrder);
             }
         }
@@ -1052,6 +1053,13 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             customerOrder2.setAttachments(attachments);
         }
 
+        Voucher voucher = null;
+        if (quotation.getVoucher() != null)
+            voucher = voucherService.checkVoucherValidity(quotation, quotation.getVoucher());
+
+        if (voucher != null)
+            customerOrder2.setVoucher(voucher);
+
         if (quotation.getAssoAffaireOrders() != null)
             for (int assoIndex = 0; assoIndex < quotation.getAssoAffaireOrders().size(); assoIndex++) {
                 AssoAffaireOrder quotationAsso = quotation.getAssoAffaireOrders().get(assoIndex);
@@ -1070,7 +1078,8 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
                                 for (Attachment attachment : quotationServiceDocument.getAttachments()) {
                                     Attachment newAttachment = attachmentService.cloneAttachment(attachment);
                                     newAttachment
-                                            .setAssoServiceDocument(customerOrder2.getAssoAffaireOrders().get(assoIndex)
+                                            .setAssoServiceDocument(customerOrder2.getAssoAffaireOrders()
+                                                    .get(assoIndex)
                                                     .getServices().get(serviceIndex).getAssoServiceDocuments()
                                                     .get(assoServiceDocumentIndex));
                                     attachmentService.addOrUpdateAttachment(newAttachment);

@@ -503,6 +503,9 @@ public class GeneratePdfDelegate {
 
         if (billingClosureValues != null && billingClosureValues.size() > 0)
             for (BillingClosureReceiptValue billingClosureValue : billingClosureValues) {
+                if (Boolean.TRUE.equals(billingClosureValue.getIsToExcludeFromTotal()))
+                    continue;
+
                 balance += billingClosureValue.getCreditAmount() != null
                         ? billingClosureValue.getCreditAmount().doubleValue()
                         : 0;

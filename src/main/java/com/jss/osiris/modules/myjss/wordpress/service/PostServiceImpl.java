@@ -195,7 +195,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Page<Post> getMostSeenPostByAuthor(Pageable pageableRequest, Author author) {
-        return postRepository.findMostSeenPostAuthor(pageableRequest, author);
+        return postRepository.findMostSeenPostAuthor(pageableRequest, author, Post.SOURCE_JSS);
     }
 
     @Override

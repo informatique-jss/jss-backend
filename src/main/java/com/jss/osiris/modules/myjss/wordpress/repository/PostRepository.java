@@ -144,7 +144,7 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         Page<Post> findMostSeenPostTag(Pageable pageable, @Param("tag") Tag tag, String source);
 
         @Query("select p from Post p join p.postViews v where p.isCancelled = false and coalesce(p.isHiddenAuthor,false)=false AND p.date<=CURRENT_TIMESTAMP and p.fullAuthor =:author and p.source=:source group by p.id order by sum(v.count) desc ")
-        Page<Post> findMostSeenPostAuthor(Pageable pageable, @Param("author") Author author);
+        Page<Post> findMostSeenPostAuthor(Pageable pageable, @Param("author") Author author, String source);
 
         @Query("select p from Post p join p.postViews v where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and :serie MEMBER OF p.postSerie and p.source=:source group by p.id order by sum(v.count) desc ")
         Page<Post> findMostSeenPostSerie(Pageable pageable, @Param("serie") Serie serie, String source);

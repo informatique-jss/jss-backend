@@ -127,7 +127,8 @@ public class QuotationValidationHelper {
         }
 
         @Transactional(rollbackFor = Exception.class)
-        public void validateQuotationAndCustomerOrder(IQuotation quotation, String targetStatusCode)
+        public void validateQuotationAndCustomerOrder(IQuotation quotation, String targetStatusCode,
+                        Boolean isFromMyJss)
                         throws OsirisValidationException, OsirisException, OsirisClientMessageException {
                 boolean isOpen = false;
 
@@ -140,11 +141,12 @@ public class QuotationValidationHelper {
                 }
 
                 // when order from myjss, check if billing document is not type 'other'
-                if (quotation.getCustomerOrderOrigin() != null && quotation.getCustomerOrderOrigin().getId()
-                                .equals(constantService.getCustomerOrderOriginMyJss().getId())) {
+                if (quotation.getCustomerOrderOrigin() != null
+                                && quotation.getCustomerOrderOrigin().getId()
+                                                .equals(constantService.getCustomerOrderOriginMyJss().getId())) {
                         if (quotation.getDocuments() != null) {
                                 for (Document document : quotation.getDocuments()) {
-                                        if (document.getDocumentType().getId()
+                                        if (isFromMyJss && document.getDocumentType().getId()
                                                         .equals(constantService.getDocumentTypeBilling().getId())
                                                         && document.getBillingLabelType().getId()
                                                                         .equals(constantService

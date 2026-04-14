@@ -32,6 +32,7 @@ export interface Constant {
   myJssCategoryDocument: MyJssCategory;
   serviceFamilyGroupAnnouncement: ServiceFamilyGroup;
   categoryExclusivity: Category;
+  categoryArticle: Category;
   attachmentTypeApplicationCv: AttachmentType;
   languageFrench: Language;
   mailRedirectionTypeOther: MailRedirectionType;
