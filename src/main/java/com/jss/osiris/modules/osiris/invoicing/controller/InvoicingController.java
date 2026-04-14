@@ -1174,7 +1174,6 @@ public class InvoicingController {
     }
 
     @GetMapping(inputEntryPoint + "/gu-matching")
-    @PreAuthorize(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE)
     public ResponseEntity<List<GuMatchingResultDto>> getInpiExtractAndOsirisMatchingResult(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate)

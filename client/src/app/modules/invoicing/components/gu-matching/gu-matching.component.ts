@@ -70,7 +70,7 @@ export class GuMatchingComponent implements OnInit {
         }
         else {
           this.guMatchingResults = [];
-          this.appService.displaySnackBar("Pas d'écarts trouvés pour cette plage de recherche", true, 10);
+          this.appService.displaySnackBar("Pas d'écart trouvé pour cette plage de recherche", true, 10);
         }
       })
     } else {

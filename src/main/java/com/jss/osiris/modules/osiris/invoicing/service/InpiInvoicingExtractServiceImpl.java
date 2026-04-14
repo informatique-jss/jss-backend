@@ -58,14 +58,6 @@ public class InpiInvoicingExtractServiceImpl implements InpiInvoicingExtractServ
             // saveAll failure (DB, constraint, etc.)
             throw new OsirisClientMessageException("Erreur lors de l'enregistrement des données INPI");
 
-        } catch (OsirisException oe) {
-            throw oe;
-
-        } catch (Exception e) {
-            // parsing or unexpected errors
-            throw new OsirisException(
-                    e,
-                    "Error while parsing INPI invoicing extract file");
         }
     }
 
