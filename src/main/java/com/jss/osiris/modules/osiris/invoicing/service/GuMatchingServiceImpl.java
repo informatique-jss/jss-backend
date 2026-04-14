@@ -37,7 +37,7 @@ public class GuMatchingServiceImpl implements GuMatchingService {
     @Autowired
     ConstantService constantService;
 
-    private static final BigDecimal TOLERANCE = new BigDecimal("0.02");
+    private static final BigDecimal TOLERANCE = new BigDecimal("0.01");
 
     @Override
     public List<GuMatchingResultDto> getInpiMatchingResult(LocalDateTime startDate,
@@ -96,8 +96,7 @@ public class GuMatchingServiceImpl implements GuMatchingService {
 
             BigDecimal osirisAmount = invoiceHelper.getPriceTotal(invoice);
 
-            if (inpiAmount.compareTo(osirisAmount) != 0) {
-                // if (isAmountMismatch(inpiAmount, osirisAmount)) {
+            if (isAmountMismatch(inpiAmount, osirisAmount)) {
                 guMatchingResult
                         .add(buildGuMatchingResultDto(inpiExtr, invoice, MatchingStatusEnum.AMOUNT_MISMATCH.label));
             }
@@ -162,7 +161,7 @@ public class GuMatchingServiceImpl implements GuMatchingService {
     }
 
     private BigDecimal normalize(BigDecimal value) {
-        return value.setScale(2, RoundingMode.HALF_UP);
+        return value.setScale(2, RoundingMode.HALF_EVEN);
     }
 
 }

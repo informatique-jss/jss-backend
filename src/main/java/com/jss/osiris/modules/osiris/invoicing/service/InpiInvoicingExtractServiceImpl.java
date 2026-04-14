@@ -14,9 +14,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.modules.osiris.invoicing.model.InpiInvoicingExtract;
 import com.jss.osiris.modules.osiris.invoicing.repository.InpiInvoicingExtractRepository;
@@ -42,10 +44,29 @@ public class InpiInvoicingExtractServiceImpl implements InpiInvoicingExtractServ
     @Override
     @Transactional(rollbackFor = Exception.class)
     public List<Attachment> uploadInpiInvoicingExtractFile(InputStream file) throws OsirisException {
+        try {
+            List<InpiInvoicingExtract> extracts = parseInpiInvoicingExtractFile(file);
 
-        List<InpiInvoicingExtract> inpiInvoicingExtracts = parseInpiInvoicingExtractFile(file);
-        inpiInvoicingExtractRepository.saveAll(inpiInvoicingExtracts);
-        return null;
+            if (extracts == null || extracts.isEmpty()) {
+                throw new OsirisClientMessageException("Le fichier INPI est vide ou invalide");
+            }
+
+            inpiInvoicingExtractRepository.saveAll(extracts);
+            return List.of();
+
+        } catch (DataAccessException dae) {
+            // saveAll failure (DB, constraint, etc.)
+            throw new OsirisClientMessageException("Erreur lors de l'enregistrement des données INPI");
+
+        } catch (OsirisException oe) {
+            throw oe;
+
+        } catch (Exception e) {
+            // parsing or unexpected errors
+            throw new OsirisException(
+                    e,
+                    "Error while parsing INPI invoicing extract file");
+        }
     }
 
     public List<InpiInvoicingExtract> parseInpiInvoicingExtractFile(InputStream inputStream) throws OsirisException {
@@ -58,8 +79,14 @@ public class InpiInvoicingExtractServiceImpl implements InpiInvoicingExtractServ
             reader.readLine();
             String line;
             while ((line = reader.readLine()) != null) {
+                if (line.trim().isEmpty()) {
+                    continue; // skip empty lines
+                }
 
                 String[] values = line.split(";", -1);
+                if (values[1] != null && values[1].toUpperCase().contains("RAC VIREMENT")) {
+                    continue; // skipe lines that have RAC VIREMENT
+                }
                 InpiInvoicingExtract row = new InpiInvoicingExtract();
                 row.setInpiOrder(extractInpiOrderNumber(values[1]));
                 row.setPreTaxPrice(sum(parseBigDecimal(values[3]), parseBigDecimal(values[4]),
@@ -113,7 +140,7 @@ public class InpiInvoicingExtractServiceImpl implements InpiInvoicingExtractServ
         if (val == null || val.isBlank())
             return BigDecimal.ZERO;
 
-        String cleanedVal = val.trim().replace(",", ".").replace('\u00A0', ' ').replace(" ", "")
+        String cleanedVal = val.trim().replace('\u2212', '-').replace(",", ".").replace('\u00A0', ' ').replace(" ", "")
                 .replaceAll("[^0-9eE.\\-]", "");
 
         if (cleanedVal.isEmpty())

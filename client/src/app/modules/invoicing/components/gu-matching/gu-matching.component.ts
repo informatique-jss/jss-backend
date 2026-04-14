@@ -52,7 +52,9 @@ export class GuMatchingComponent implements OnInit {
     this.uploadAttachementDialogRef.componentInstance.entity = { id: 1 } as IAttachment;
     this.uploadAttachementDialogRef.componentInstance.entityType = INPI_INVOICING_EXTRACT_ENTITY_TYPE.entityType;
     this.uploadAttachementDialogRef.componentInstance.forcedAttachmentType = this.constantService.getAttachmentTypeBillingClosure();
-    this.uploadAttachementDialogRef.afterClosed().subscribe(response => {
+    this.uploadAttachementDialogRef.afterClosed().subscribe(result => {
+
+
     });
   }
 
@@ -67,11 +69,12 @@ export class GuMatchingComponent implements OnInit {
           this.guMatchingResults = response;
         }
         else {
-          this.appService.displaySnackBar("Pas d'écarts trouvés pour cette plage de recherche", false, 10);
+          this.guMatchingResults = [];
+          this.appService.displaySnackBar("Pas d'écarts trouvés pour cette plage de recherche", true, 10);
         }
       })
     } else {
-      this.appService.displaySnackBar("🙄 Merci de saisir une plage de recherche", false, 10);
+      this.appService.displaySnackBar("🙄 Merci de saisir une plage de recherche", true, 10);
     }
 
   }
