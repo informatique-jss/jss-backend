@@ -17,11 +17,9 @@ import com.jss.osiris.libs.ActiveDirectoryHelper;
 import com.jss.osiris.libs.audit.model.Audit;
 import com.jss.osiris.libs.audit.service.AuditService;
 import com.jss.osiris.libs.batch.model.Batch;
-import com.jss.osiris.libs.node.model.Node;
 import com.jss.osiris.libs.search.model.DoNotAudit;
 import com.jss.osiris.libs.search.model.IndexEntity;
 import com.jss.osiris.libs.search.repository.IndexEntityRepository;
-import com.jss.osiris.modules.osiris.miscellaneous.model.IId;
 
 @Service
 public class AuditEntityInterceptor implements Interceptor {
@@ -79,74 +77,77 @@ public class AuditEntityInterceptor implements Interceptor {
 
     private void auditEntity(Object[] previousState, Object[] currentState, Object entity,
             Object id, String[] propertyNames) {
-        if (!entity.getClass().getName().equals(IndexEntity.class.getName())
-                && !entity.getClass().getName().equals(Batch.class.getName())
-                && !entity.getClass().getName().equals(Node.class.getName())
-                && id instanceof Integer && isAuditAuthorized(entity)) {
-            for (int i = 0; i < previousState.length; i++) {
-                Object oldField = previousState[i];
-                Object newField = currentState[i];
-                if (oldField != null && WRAPPER_TYPES.contains(oldField.getClass())
-                        || newField != null && WRAPPER_TYPES.contains(newField.getClass())) {
-                    if (newField != null && oldField == null
-                            || newField == null && oldField != null
-                            || (newField != null && !newField.equals(oldField))) {
-                        Audit audit = new Audit();
-                        audit.setUsername(activeDirectoryHelper.getCurrentUsername());
-                        audit.setDatetime(LocalDateTime.now());
-                        audit.setEntity(entity.getClass().getSimpleName());
-                        audit.setEntityId((Integer) id);
-                        if (newField != null)
-                            audit.setNewValue(newField.toString());
-                        if (oldField != null)
-                            audit.setOldValue(oldField.toString());
-                        audit.setFieldName(propertyNames[i]);
-                        auditService.addOrUpdateAudit(audit);
-                    }
-                } else {
-                    String oldCode = getCodeValue(oldField);
-                    String newCode = getCodeValue(newField);
-                    if (newCode != null && oldCode == null
-                            || newCode == null && oldCode != null
-                            || (newCode != null && !newCode.equals(oldCode))) {
-                        Audit audit = new Audit();
-                        audit.setUsername(activeDirectoryHelper.getCurrentUsername());
-                        audit.setDatetime(LocalDateTime.now());
-                        audit.setEntity(entity.getClass().getSimpleName());
-                        audit.setEntityId((Integer) id);
-                        if (newCode != null)
-                            audit.setNewValue(newCode.toString());
-                        if (oldCode != null)
-                            audit.setOldValue(oldCode.toString());
-                        audit.setFieldName(propertyNames[i]);
-                        auditService.addOrUpdateAudit(audit);
-                    } else if (oldField != null && oldField instanceof IId
-                            || newField != null && newField instanceof IId) {
-                        Integer newId = null;
-                        Integer oldId = null;
-                        if (newField != null)
-                            newId = ((IId) newField).getId();
-                        if (oldField != null)
-                            oldId = ((IId) oldField).getId();
-                        if (newId != null && oldId == null
-                                || newId == null && oldId != null
-                                || (newId != null && !newId.equals(oldId))) {
-                            Audit audit = new Audit();
-                            audit.setUsername(activeDirectoryHelper.getCurrentUsername());
-                            audit.setDatetime(LocalDateTime.now());
-                            audit.setEntity(entity.getClass().getSimpleName());
-                            audit.setEntityId((Integer) id);
-                            if (newId != null)
-                                audit.setNewValue(newId.toString());
-                            if (oldId != null)
-                                audit.setOldValue(oldId.toString());
-                            audit.setFieldName(propertyNames[i]);
-                            auditService.addOrUpdateAudit(audit);
-                        }
-                    }
-                }
-            }
-        }
+        return;
+        /*
+         * if (!entity.getClass().getName().equals(IndexEntity.class.getName())
+         * && !entity.getClass().getName().equals(Batch.class.getName())
+         * && !entity.getClass().getName().equals(Node.class.getName())
+         * && id instanceof Integer && isAuditAuthorized(entity)) {
+         * for (int i = 0; i < previousState.length; i++) {
+         * Object oldField = previousState[i];
+         * Object newField = currentState[i];
+         * if (oldField != null && WRAPPER_TYPES.contains(oldField.getClass())
+         * || newField != null && WRAPPER_TYPES.contains(newField.getClass())) {
+         * if (newField != null && oldField == null
+         * || newField == null && oldField != null
+         * || (newField != null && !newField.equals(oldField))) {
+         * Audit audit = new Audit();
+         * audit.setUsername(activeDirectoryHelper.getCurrentUsername());
+         * audit.setDatetime(LocalDateTime.now());
+         * audit.setEntity(entity.getClass().getSimpleName());
+         * audit.setEntityId((Integer) id);
+         * if (newField != null)
+         * audit.setNewValue(newField.toString());
+         * if (oldField != null)
+         * audit.setOldValue(oldField.toString());
+         * audit.setFieldName(propertyNames[i]);
+         * auditService.addOrUpdateAudit(audit);
+         * }
+         * } else {
+         * String oldCode = getCodeValue(oldField);
+         * String newCode = getCodeValue(newField);
+         * if (newCode != null && oldCode == null
+         * || newCode == null && oldCode != null
+         * || (newCode != null && !newCode.equals(oldCode))) {
+         * Audit audit = new Audit();
+         * audit.setUsername(activeDirectoryHelper.getCurrentUsername());
+         * audit.setDatetime(LocalDateTime.now());
+         * audit.setEntity(entity.getClass().getSimpleName());
+         * audit.setEntityId((Integer) id);
+         * if (newCode != null)
+         * audit.setNewValue(newCode.toString());
+         * if (oldCode != null)
+         * audit.setOldValue(oldCode.toString());
+         * audit.setFieldName(propertyNames[i]);
+         * auditService.addOrUpdateAudit(audit);
+         * } else if (oldField != null && oldField instanceof IId
+         * || newField != null && newField instanceof IId) {
+         * Integer newId = null;
+         * Integer oldId = null;
+         * if (newField != null)
+         * newId = ((IId) newField).getId();
+         * if (oldField != null)
+         * oldId = ((IId) oldField).getId();
+         * if (newId != null && oldId == null
+         * || newId == null && oldId != null
+         * || (newId != null && !newId.equals(oldId))) {
+         * Audit audit = new Audit();
+         * audit.setUsername(activeDirectoryHelper.getCurrentUsername());
+         * audit.setDatetime(LocalDateTime.now());
+         * audit.setEntity(entity.getClass().getSimpleName());
+         * audit.setEntityId((Integer) id);
+         * if (newId != null)
+         * audit.setNewValue(newId.toString());
+         * if (oldId != null)
+         * audit.setOldValue(oldId.toString());
+         * audit.setFieldName(propertyNames[i]);
+         * auditService.addOrUpdateAudit(audit);
+         * }
+         * }
+         * }
+         * }
+         * }
+         */
     }
 
     private String getCodeValue(Object entity) {

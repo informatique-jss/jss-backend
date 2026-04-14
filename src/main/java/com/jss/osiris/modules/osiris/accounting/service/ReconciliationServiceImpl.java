@@ -35,13 +35,12 @@ public class ReconciliationServiceImpl {
 
         currentClosedAccountingDate = constantService.getDateAccountingClosureForAccountant();
 
-        Integer lastProcessedId = 1;
-        int pageSize = 50000;
+        Integer lastProcessedId = 6320758;
+        int pageSize = 1000;
 
         while (lastProcessedId < 8369620) {
             Integer endId = lastProcessedId + pageSize;
-            List<Payment> payments = new ArrayList<Payment>(); // paymentService.getPaymentsForReconciliation(lastProcessedId,
-                                                               // endId);
+            List<Payment> payments = paymentService.getPaymentsForReconciliation(lastProcessedId, endId);
             lastProcessedId = lastProcessedId + pageSize;
 
             for (Payment payment : payments) {
