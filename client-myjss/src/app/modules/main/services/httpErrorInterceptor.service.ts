@@ -56,8 +56,10 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 
           // If HTTP 403, user not logged in
           if (error.status == 403) {
-            if (doNotRedirectOnNonAuthenticated != "true" && this.platformService.isBrowser() && window.location.href.indexOf('/account') >= 0 && window.location.href.indexOf('/account/signin') < 0)
+            if (doNotRedirectOnNonAuthenticated != "true" && this.platformService.isBrowser() && window.location.href.indexOf('/account') >= 0 && window.location.href.indexOf('/account/signin') < 0) {
+              this.appService.hideLoadingSpinner();
               this.appService.openRoute(undefined, "/account/signin", undefined);
+            }
             return EMPTY;
           } else if (error.status == 0) {
             // Server unavailable or user not connected to network => ignore error
