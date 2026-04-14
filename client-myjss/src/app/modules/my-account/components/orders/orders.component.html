@@ -2,23 +2,37 @@
   <h1 class="h2 mb-0">Commandes</h1>
   <div class="ms-auto">
     <div ngbDropdown [autoClose]="'outside'" class="btn-group dropdown" style="margin-right: 10px;"
-      *ngIf="responsablesForCurrentUser && responsablesForCurrentUser.length>0">
+      *ngIf="responsablesForCurrentUser && responsablesForCurrentUser.length > 0">
       <button type="button" class="btn btn-outline-secondary dropdown-toggle" ngbDropdownToggle aria-haspopup="true"
         aria-expanded="false">
         <i class="ai-filter me-2"></i>
         Responsables
       </button>
       <div ngbDropdownMenu class="dropdown-menu my-1">
-        <label class=" dropdown-item">
-          <input class="form-check-input me-2" type="checkbox" [(ngModel)]="selectAllResponsable"
-            (change)="selectAllResponsables()">
-          Sélectionner tout
+
+        <label class="dropdown-item">
+          <input class="form-check-input me-2" type="checkbox" [(ngModel)]="selectAllActiveResponsable"
+            (change)="selectAllActiveResponsables()">
+          <strong>Sélectionner tout</strong>
         </label>
-        <label class=" dropdown-item" *ngFor="let respo of responsablesForCurrentUser">
-          <input class="form-check-input me-2" type="checkbox" [(ngModel)]="responsableCheck[respo.id]"
-            (change)="changeFilter()">
-          {{respo.firstname}} {{respo.lastname}}
-        </label>
+
+        <div class="dropdown-divider"></div>
+        <ng-container *ngFor="let respo of responsablesForCurrentUser; let i = index">
+          <ng-container *ngIf="i > 0 && !respo.isActive && responsablesForCurrentUser[i-1].isActive">
+            <div class="dropdown-divider"></div>
+            <label class="dropdown-item">
+              <input class="form-check-input me-2" type="checkbox" [(ngModel)]="selectAllInactiveResponsable"
+                (change)="selectAllInactiveResponsables()">
+              <strong>Ajouter les inactifs</strong>
+            </label>
+          </ng-container>
+
+          <label class="dropdown-item">
+            <input class="form-check-input me-2" type="checkbox" [(ngModel)]="responsableCheck[respo.id]"
+              (change)="changeFilter()">
+            {{respo.firstname}} {{respo.lastname}}
+          </label>
+        </ng-container>
       </div>
     </div>
     <div ngbDropdown [autoClose]="'outside'" class="btn-group dropdown" style="margin-right: 10px;">
@@ -201,6 +215,20 @@
                     </div>
                     <div class="col-12 col-sm-auto" *ngIf="expandedOrder">
                       <div class="row gap-1">
+                        <div *ngFor="let asso of expandedOrder.assoAffaireOrders" class="col-auto p-0">
+                          <button class="btn btn-primary btn-icon rounded-circle" role="button"
+                            ngbTooltip="Renseignez l’IBAN pour les remboursements."
+                            [routerLink]='"/account/affaire/edit/order/" + asso.affaire.id + "/" + expandedOrder.id'
+                            *ngIf="(!asso.affaire.paymentIban || !asso.affaire.paymentBic || !asso.affaire.mails || asso.affaire.mails.length==0) && invoiceSummary && invoiceSummary.billingLabelType && invoiceSummary.billingLabelType.id == billingLabelTypeCodeAffaire.id ;else just_edit_affaire">
+                            <i class="ai-edit"></i>
+                          </button>
+                          <ng-template #just_edit_affaire> <a class="btn btn-sm  mt-3 mt-md-0 ms-md-auto btn-secondary"
+                              role="button"
+                              [routerLink]='"/account/affaire/edit/order/" + asso.affaire.id + "/" + this.expandedOrder.id'>
+                              <i class="ai-edit ms-n1 me-2"></i>
+                              Modifier
+                            </a></ng-template>
+                        </div>
                         <div *ngIf="expandedOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_DRAFT"
                           class="col-auto p-0">
                           <button type="button" class="btn btn-primary btn-icon rounded-circle" aria-label="Edit"
@@ -216,7 +244,6 @@
                             <i class="ai-show"></i>
                           </button>
                         </div>
-                        <!-- TODO : En attente retour discussion AMOA/Alex -->
                         <ng-template *ngFor="let asso of expandedOrder.assoAffaireOrders">
                           <div *ngFor="let service of asso.services" class="col-auto p-0">
                             <button type="button" class="btn btn-primary btn-icon rounded-circle" aria-label="see"
@@ -228,8 +255,8 @@
                           </div>
                         </ng-template>
                         <div
-                          *ngIf="order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT 
-                          || order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BEING_PROCESSED 
+                          *ngIf="order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT
+                          || order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BEING_PROCESSED
                           || order.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED && !expandedOrder.isPayed "
                           class="col-auto p-0">
                           <button type="button" class="btn btn-primary btn-icon rounded-circle" aria-label="deposit"
@@ -256,7 +283,7 @@
                             <i class="ai-cloud-download"></i>
                           </button>
                         </div>
-                        <div *ngIf="expandedOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED 
+                        <div *ngIf="expandedOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED
                             || expandedOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_PAYED"
                           class="col-auto p-0">
                           <button type="button" class="btn btn-primary btn-icon rounded-circle"
@@ -266,8 +293,8 @@
                             <i class="ai-file fs-xl position-absolute"></i>
                           </button>
                         </div>
-                        <div *ngIf="expandedOrder.hasCreditNote && 
-                        (expandedOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED 
+                        <div *ngIf="expandedOrder.hasCreditNote &&
+                        (expandedOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_BILLED
                           || expandedOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_PAYED
                           || expandedOrder.customerOrderStatus.code == CUSTOMER_ORDER_STATUS_TO_BILLED)"
                           class="col-auto p-0">
@@ -354,6 +381,37 @@
                           </div>
                         </div>
 
+                        <!-- Has AL and can download publication flags etc... -->
+                        <div
+                          *ngIf="expandedOrder && (service.serviceStatus.includes('Terminé') || service.serviceStatus.includes('Publié'))">
+                          <div *ngFor="let provision of service.provisions">
+                            <div *ngIf="provision && provision.announcement" class="mx-3 row">
+                              <div class="col-auto p-0 ms-1">
+                                <button type="button" class="btn btn-secondary btn-icon rounded-circle" aria-label="see"
+                                  placement="top"
+                                  [ngbTooltip]="'Consultez votre annonce légale : ' + asso.affaire.denomination + ' - ' "
+                                  (click)="$event.stopPropagation(); goToJssAnnouncement(service, $event ); $event.preventDefault();">
+                                  <i class="ai-search"></i>
+                                </button>
+                              </div>
+                              <div class="col-auto p-0 ms-1">
+                                <button type="button" class="btn btn-secondary btn-icon rounded-circle" aria-label="see"
+                                  placement="top" [ngbTooltip]="'Téléchargez votre attestation de parution.'"
+                                  (click)="$event.stopPropagation(); downloadPublicationReceipt(provision.announcement, provision); $event.preventDefault();">
+                                  <i class="ai-award"></i>
+                                </button>
+                              </div>
+                              <div class="col-auto p-0 ms-1">
+                                <button type="button" class="btn btn-secondary btn-icon rounded-circle" aria-label="see"
+                                  placement="top" [ngbTooltip]="'Téléchargez votre témoin de parution.'"
+                                  (click)="$event.stopPropagation(); downloadPublicationFlag(provision.announcement); $event.preventDefault();">
+                                  <i class="ai-pen"></i>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
                         <!-- Statut -->
                         <div class="mt-2 mt-sm-0 ps-2 ps-sm-3 text-nowrap">
                           <span class="badge bg-info bg-opacity-10 text-info fs-xs">
@@ -385,9 +443,30 @@
                 <div class="card border-0 bg-secondary  my-3">
                   <div class="card-body">
                     <div class="row g-4">
+                      <!-- Bloc : Client ref -->
+                      <div class="col"
+                        *ngIf="ordersInvoiceLabelResult[order.id] && ordersInvoiceLabelResult[order.id].externalReference && ordersInvoiceLabelResult[order.id].commandNumber || (expandedOrder && expandedOrder.description)">
+                        <div
+                          *ngIf="ordersInvoiceLabelResult[order.id] && ordersInvoiceLabelResult[order.id].externalReference && ordersInvoiceLabelResult[order.id].commandNumber">
+                          <div class="fs-sm fw-medium text-dark mb-1">Votre référence :</div>
+                          <div class="fs-sm">
+                            {{ ordersInvoiceLabelResult[order.id].externalReference }}<br>
+                          </div>
+                          <div class="fs-sm fw-medium text-dark mb-1 mt-2">Votre n° de commande annuel :</div>
+                          <div class="fs-sm">
+                            {{ ordersInvoiceLabelResult[order.id].commandNumber }}<br>
+                          </div>
+                        </div>
+                        <div *ngIf="expandedOrder && expandedOrder.description">
+                          <div class="fs-sm fw-medium text-dark mb-1 mt-2">Vos informations :</div>
+                          <div class="fs-sm">
+                            {{ expandedOrder.description }}
+                          </div>
+                        </div>
+                      </div>
 
                       <!-- Bloc : Envoi de la facture -->
-                      <div class="col-sm-6 col-lg-4">
+                      <div class="col">
                         <div class="fs-sm fw-medium text-dark mb-1">Envoi de la facture à :</div>
                         <div class="fs-sm" *ngIf="ordersMailComputeResult[order.id]">
                           {{ getCustomerOrderBillingMailList(order) }}
@@ -398,7 +477,7 @@
                             <span class="placeholder placeholder-sm col-4"></span>
                           </p>
                         </div>
-                        <button type="button" class="btn btn-link btn-sm px-2 mt-2 hover-bg-light "
+                        <button type="button" class="btn btn-link btn-sm px-2 mt-2 hover-bg-light mx-1"
                           [routerLink]='"/account/orders/details/" + order.id'>
                           <i class="ai-file-text me-2"></i>Détails de la commande
                         </button>
@@ -410,7 +489,7 @@
                       </div>
 
                       <!-- Bloc : Libellé de facturation -->
-                      <div class="col-sm-6 col-lg-5" *ngIf="ordersInvoiceLabelResult[order.id]">
+                      <div class="col" *ngIf="ordersInvoiceLabelResult[order.id]">
                         <div class="fs-sm fw-medium text-dark mb-1">Libellé de facturation :</div>
                         <div class="fs-sm">
                           {{ ordersInvoiceLabelResult[order.id].billingLabel }}<br>

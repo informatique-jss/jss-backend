@@ -9,25 +9,29 @@ import { AppService } from '../../../main/services/app.service';
 import { GoogleAnalyticsService } from '../../../main/services/googleAnalytics.service';
 import { UserPreferenceService } from '../../../main/services/user.preference.service';
 import { AvatarComponent } from '../../../miscellaneous/components/avatar/avatar.component';
+import { InformationBanner } from '../../../miscellaneous/model/InformationBanner';
+import { InformationBannerService } from '../../../miscellaneous/services/information.banner.service';
 import { Responsable } from '../../../profile/model/Responsable';
 import { LoginService } from '../../../profile/services/login.service';
 import { ResponsableService } from '../../../profile/services/responsable.service';
 import { DashboardUserStatistics } from '../../../quotation/model/DashboardUserStatistics';
 import { DashboardUserStatisticsService } from '../../../quotation/services/dashboard.user.statistics.service';
 import { QuotationService } from '../../services/quotation.service';
+import { InformationBannerComponent } from "../information-banner/information-banner.component";
 
 @Component({
   selector: 'overview',
   templateUrl: './overview.component.html',
   styleUrls: ['./overview.component.css'],
   standalone: true,
-  imports: [SHARED_IMPORTS, AvatarComponent, NgbDropdownModule]
+  imports: [SHARED_IMPORTS, AvatarComponent, NgbDropdownModule, InformationBannerComponent]
 })
 export class OverviewComponent implements OnInit {
 
   currentUser: Responsable | undefined;
   statistics: DashboardUserStatistics | undefined;
   isLoadingStats: boolean = false;
+  informationBanner = {} as InformationBanner;
 
   QUOTATION_STATUS_SENT_TO_CUSTOMER = QUOTATION_STATUS_SENT_TO_CUSTOMER;
   QUOTATION_STATUS_OPEN = QUOTATION_STATUS_OPEN;
@@ -45,7 +49,8 @@ export class OverviewComponent implements OnInit {
   acceptTerms: boolean = false;
   responsablesForCurrentUser: Responsable[] | undefined;
   responsableCheck: boolean[] = [];
-  selectAllResponsable: boolean = false;
+  selectAllActiveResponsable: boolean = false;
+  selectAllInactiveResponsable: boolean = false;
 
   constructor(private route: ActivatedRoute,
     private appService: AppService,
@@ -57,6 +62,7 @@ export class OverviewComponent implements OnInit {
     private sanitizer: DomSanitizer,
     private quotationService: QuotationService,
     private userPreferenceService: UserPreferenceService,
+    private informationBannerService: InformationBannerService
   ) { }
 
   capitalizeName = capitalizeName;
@@ -78,7 +84,7 @@ export class OverviewComponent implements OnInit {
     });
 
     this.isLoadingStats = true;
-    this.loginService.getCurrentUser().subscribe(response => {
+    this.loginService.getCurrentUser(true).subscribe(response => {
       if (response) {
         this.currentUser = response;
         this.responsableService.getResponsablesForCurrentUser().subscribe(response => {
@@ -107,6 +113,10 @@ export class OverviewComponent implements OnInit {
       }
     });
 
+    this.informationBannerService.getInformationbanner().subscribe(response => {
+      if (response && response.text)
+        this.informationBanner.text = response.text;
+    });
   }
 
   acceptTermsForCurrentUser() {
@@ -120,11 +130,21 @@ export class OverviewComponent implements OnInit {
     this.acceptTerms = false;
   }
 
-  selectAllResponsables() {
+  selectAllActiveResponsables() {
     if (this.responsablesForCurrentUser)
-      for (let respo of this.responsablesForCurrentUser)
-        this.responsableCheck[respo.id] = this.selectAllResponsable;
+      for (let respo of this.responsablesForCurrentUser) {
+        if (respo.isActive)
+          this.responsableCheck[respo.id] = this.selectAllActiveResponsable;
+      }
+    this.refreshStats();
+  }
 
+  selectAllInactiveResponsables() {
+    if (this.responsablesForCurrentUser)
+      for (let respo of this.responsablesForCurrentUser) {
+        if (!respo.isActive)
+          this.responsableCheck[respo.id] = this.selectAllInactiveResponsable;
+      }
     this.refreshStats();
   }
 
@@ -160,8 +180,8 @@ export class OverviewComponent implements OnInit {
       for (let respoId of respoIds) {
         this.responsableCheck[parseInt(respoId)] = true;
       }
-      this.selectAllResponsable = false;
+      this.selectAllActiveResponsable = false;
+      this.selectAllInactiveResponsable = false;
     }
   }
-
 }

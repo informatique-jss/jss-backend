@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
+import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../../../environments/environment';
 import { SHARED_IMPORTS } from '../../../libs/SharedImports';
 import { AppService } from '../../../services/app.service';
 import { GtmService } from '../../../services/gtm.service';
 import { CtaClickPayload, PageInfo } from '../../../services/GtmPayload';
+import { PlatformService } from '../../../services/platform.service';
 import { Newspaper } from '../../model/Newspaper';
 import { Responsable } from '../../model/Responsable';
 import { NEWSPAPER_KIOSK_BUY } from '../../model/Subscription';
@@ -19,7 +21,7 @@ import { NewsletterComponent } from "../newsletter/newsletter.component";
   imports: [SHARED_IMPORTS, NewsletterComponent],
   standalone: true
 })
-export class KioskComponent implements OnInit {
+export class KioskComponent implements OnInit, AfterViewInit {
 
   currentUser: Responsable | undefined;
   isSubscribed: boolean = false;
@@ -31,14 +33,19 @@ export class KioskComponent implements OnInit {
   jssEditionNumberHovered: number = 0;
   newspapersToDisplay: Newspaper[] = [];
   years: number[] = [2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014, 2013, 2012, 2011, 2010, 2009, 2008, 2007];
-
+  issueNumber: string | undefined;
+  shakingIssue: string | undefined;
 
   constructor(
     private newspaperService: NewspaperService,
     private loginService: LoginService,
     private gtmService: GtmService,
-    private titleService: Title, private meta: Meta,
-    private appService: AppService) { }
+    private titleService: Title,
+    private meta: Meta,
+    private activatedRoute: ActivatedRoute,
+    private appService: AppService,
+    private platformService: PlatformService,
+  ) { }
 
   ngOnInit() {
     this.titleService.setTitle("Toutes les éditions du Journal Spécial des Sociétés - JSS");
@@ -59,20 +66,53 @@ export class KioskComponent implements OnInit {
       }
     });
 
+    let currentYear = 2023
+    if (this.activatedRoute.snapshot.params['year'])
+      currentYear = this.activatedRoute.snapshot.params['year'];
+
+    this.yearOpened = currentYear;
+
+    if (this.activatedRoute.snapshot.params['issue'])
+      this.issueNumber = this.activatedRoute.snapshot.params['issue'];
+
+  }
+
+  ngAfterViewInit(): void {
     this.fetchNewspapersForSelectedYear();
   }
 
   openTab(event: any, year: number) {
     event.preventDefault();
     this.yearOpened = year;
+    this.shakingIssue = undefined;
+    this.issueNumber = undefined;
     this.fetchNewspapersForSelectedYear()
   }
 
   private fetchNewspapersForSelectedYear() {
     this.newspaperService.getNewspapersForYear(this.yearOpened).subscribe(newspapers => {
       this.newspapersToDisplay = newspapers;
+      if (this.issueNumber) {
+        this.scrollToView('newspaper-' + this.issueNumber);
+      }
     });
   }
+
+  scrollToView(newspaperId: any) {
+    if (this.platformService.isServer())
+      return;
+    setTimeout(() => {
+      const element = this.platformService
+        .getNativeDocument()!
+        .getElementById(newspaperId);
+
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "center" });
+        this.shakingIssue = newspaperId;
+      }
+    });
+  }
+
 
   openReadExtractButton(newspaperId: number) {
     this.jssEditionNumberHovered = newspaperId;

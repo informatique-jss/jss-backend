@@ -53,9 +53,7 @@ public class AssoAffaireOrder implements Serializable, IId {
 	@JoinColumn(name = "id_customer_order")
 	@JsonIgnoreProperties(value = { "assoAffaireOrders", "invoices", "deposits", "payments",
 			"accountingRecords" }, allowSetters = true)
-	@JsonView({ JacksonViews.MyJssDetailedView.class, JacksonViews.MyJssListView.class,
-			JacksonViews.OsirisListView.class,
-			JacksonViews.OsirisDetailedView.class })
+	@JsonView({ JacksonViews.OsirisListView.class, JacksonViews.OsirisDetailedView.class })
 	@IndexedField
 	private CustomerOrder customerOrder;
 

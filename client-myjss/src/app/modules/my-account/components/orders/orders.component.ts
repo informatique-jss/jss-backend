@@ -6,21 +6,28 @@ import { CUSTOMER_ORDER_STATUS_ABANDONED, CUSTOMER_ORDER_STATUS_BEING_PROCESSED,
 import { capitalizeName, formatDateFrance } from '../../../../libs/FormatHelper';
 import { SHARED_IMPORTS } from '../../../../libs/SharedImports';
 import { AppService } from '../../../main/services/app.service';
+import { ConstantService } from '../../../main/services/constant.service';
 import { UserPreferenceService } from '../../../main/services/user.preference.service';
 import { OsiTooltipComponent } from "../../../miscellaneous/components/osi-tooltip/osi-tooltip.component";
 import { Responsable } from '../../../profile/model/Responsable';
 import { ResponsableService } from '../../../profile/services/responsable.service';
+import { Announcement } from '../../model/Announcement';
 import { AssoAffaireOrder } from '../../model/AssoAffaireOrder';
 import { Attachment } from '../../model/Attachment';
+import { BillingLabelType } from '../../model/BillingLabelType';
 import { CustomerOrder } from '../../model/CustomerOrder';
 import { InvoiceLabelResult } from '../../model/InvoiceLabelResult';
+import { InvoicingSummary } from '../../model/InvoicingSummary';
 import { MailComputeResult } from '../../model/MailComputeResult';
+import { Provision } from '../../model/Provision';
 import { Service } from '../../model/Service';
+import { AnnouncementService } from '../../services/announcement.service';
 import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
 import { AttachmentService } from '../../services/attachment.service';
 import { CustomerOrderCommentService } from '../../services/customer.order.comment.service';
 import { CustomerOrderService } from '../../services/customer.order.service';
 import { InvoiceLabelResultService } from '../../services/invoice.label.result.service';
+import { InvoicingSummaryService } from '../../services/invoicing.summary.service';
 import { MailComputeResultService } from '../../services/mail.compute.result.service';
 import { QuotationService } from '../../services/quotation.service';
 import { UploadAttachmentService } from '../../services/upload.attachment.service';
@@ -54,7 +61,8 @@ export class OrdersComponent implements OnInit {
   orders: CustomerOrder[] = [];
   responsablesForCurrentUser: Responsable[] | undefined;
   responsableCheck: boolean[] = [];
-  selectAllResponsable: boolean = true;
+  selectAllActiveResponsable: boolean = true;
+  selectAllInactiveResponsable: boolean = false;
   expandedOrder: CustomerOrder | undefined;
 
   hideSeeMore: boolean = false;
@@ -67,11 +75,13 @@ export class OrdersComponent implements OnInit {
   CUSTOMER_ORDER_STATUS_DRAFT = CUSTOMER_ORDER_STATUS_OPEN;
   CUSTOMER_ORDER_STATUS_BEING_PROCESSED = CUSTOMER_ORDER_STATUS_BEING_PROCESSED;
   CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT = CUSTOMER_ORDER_STATUS_WAITING_DEPOSIT;
+  billingLabelTypeCodeAffaire!: BillingLabelType;
 
   ordersAssoAffaireOrders: AssoAffaireOrder[][] = [];
   ordersInvoiceLabelResult: InvoiceLabelResult[] = [];
   ordersMailComputeResult: MailComputeResult[] = [];
   currentSearchRef: Subscription | undefined;
+  invoiceSummary: InvoicingSummary | undefined;
 
   constructor(
     private customerOrderService: CustomerOrderService,
@@ -87,10 +97,14 @@ export class OrdersComponent implements OnInit {
     private responsableService: ResponsableService,
     private attachementService: AttachmentService,
     private uploadAttachmentService: UploadAttachmentService,
+    private announcementService: AnnouncementService,
+    private invoicingSummaryService: InvoicingSummaryService,
+    private constantService: ConstantService,
   ) { }
 
   ngOnInit() {
     this.appService.showLoadingSpinner();
+    this.billingLabelTypeCodeAffaire = this.constantService.getBillingLabelTypeCodeAffaire();
     this.responsableService.getResponsablesForCurrentUser().subscribe(response => {
       this.responsablesForCurrentUser = response;
       if (this.responsablesForCurrentUser)
@@ -217,14 +231,16 @@ export class OrdersComponent implements OnInit {
     if (!this.ordersAssoAffaireOrders[order.id]) {
       this.assoAffaireOrderService.getAssoAffaireOrdersForCustomerOrder(order).subscribe(response => {
         this.ordersAssoAffaireOrders[order.id] = response;
-
-      })
+      });
       this.invoiceLabelResultService.getInvoiceLabelComputeResultForCustomerOrder(order.id).subscribe(response => {
         this.ordersInvoiceLabelResult[order.id] = response;
-      })
+      });
       this.mailComputeResultService.getMailComputeResultForBillingForCustomerOrder(order.id).subscribe(response => {
         this.ordersMailComputeResult[order.id] = response;
-      })
+      });
+      this.invoicingSummaryService.getInvoicingSummaryForCustomerOrder(order.id).subscribe(response => {
+        this.invoiceSummary = response;
+      });
     }
 
     this.expandedOrder = undefined;
@@ -321,7 +337,8 @@ export class OrdersComponent implements OnInit {
         this.responsableCheck[i] = false;
       for (let respoId of respoIds)
         this.responsableCheck[parseInt(respoId)] = true;
-      this.selectAllResponsable = false;
+      this.selectAllActiveResponsable = false;
+      this.selectAllInactiveResponsable = false;
     }
 
     if (!atLeastOne)
@@ -335,11 +352,22 @@ export class OrdersComponent implements OnInit {
     return getCustomerOrderBillingMailList(this.ordersMailComputeResult[order.id]);
   }
 
-  selectAllResponsables() {
-    if (this.responsablesForCurrentUser)
-      for (let respo of this.responsablesForCurrentUser)
-        this.responsableCheck[respo.id] = this.selectAllResponsable;
 
+  selectAllActiveResponsables() {
+    if (this.responsablesForCurrentUser)
+      for (let respo of this.responsablesForCurrentUser) {
+        if (respo.isActive)
+          this.responsableCheck[respo.id] = this.selectAllActiveResponsable;
+      }
+    this.changeFilter();
+  }
+
+  selectAllInactiveResponsables() {
+    if (this.responsablesForCurrentUser)
+      for (let respo of this.responsablesForCurrentUser) {
+        if (!respo.isActive)
+          this.responsableCheck[respo.id] = this.selectAllInactiveResponsable;
+      }
     this.changeFilter();
   }
 
@@ -350,6 +378,14 @@ export class OrdersComponent implements OnInit {
   goToJssAnnouncement(service: Service, event: any) {
     if (service && service.jssAnnouncementId)
       this.appService.openJssRoute(event, "announcement/" + service.jssAnnouncementId, true);
+  }
+
+  downloadPublicationFlag(announcement: Announcement) {
+    this.announcementService.downloadPublicationFlag(announcement);
+  }
+
+  downloadPublicationReceipt(announcement: Announcement, provision: Provision) {
+    this.announcementService.downloadPublicationReceipt(announcement, provision);
   }
 
   getPurchaseOrderAttachment(order: CustomerOrder) {

@@ -25,4 +25,6 @@ public interface NewspaperService {
 
     public List<Integer> getSeeableNewspapersForResponsable(Responsable responsable);
 
+    public byte[] getNewspaperFrontImage(Integer newspaperId) throws IOException;
+
 }

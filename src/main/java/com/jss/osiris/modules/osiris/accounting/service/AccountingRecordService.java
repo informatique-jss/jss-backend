@@ -90,6 +90,8 @@ public interface AccountingRecordService {
 
         public List<AccountingRecord> getClosedAccountingRecordsForPayment(Payment payment);
 
+        public List<AccountingRecord> getClosedAccountingRecordsForInvoice(Invoice invoice);
+
         public List<AccountingBalanceViewTitle> getBilan(LocalDateTime startDate, LocalDateTime endDate);
 
         public List<AccountingBalanceViewTitle> getProfitAndLost(LocalDateTime startDate, LocalDateTime endDate);

@@ -83,6 +83,7 @@ import com.jss.osiris.modules.osiris.quotation.model.Provision;
 import com.jss.osiris.modules.osiris.quotation.model.Service;
 import com.jss.osiris.modules.osiris.quotation.service.AnnouncementService;
 import com.jss.osiris.modules.osiris.quotation.service.CustomerOrderService;
+import com.jss.osiris.modules.osiris.quotation.service.ProvisionService;
 import com.jss.osiris.modules.osiris.tiers.model.Responsable;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -171,6 +172,9 @@ public class WordpressController {
 
 	@Autowired
 	EmployeeService employeeService;
+
+	@Autowired
+	ProvisionService provisionService;
 
 	// Crawler user-agents
 	private static final List<String> CRAWLER_USER_AGENTS = Arrays.asList("Googlebot", "Bingbot", "Slurp",
@@ -467,8 +471,8 @@ public class WordpressController {
 
 	@GetMapping(inputEntryPoint + "/posts/myjss/top")
 	@JsonView(JacksonViews.MyJssListView.class)
-	public ResponseEntity<List<Post>> getTopMyJssPosts(@RequestParam Integer page) throws OsirisException {
-		return new ResponseEntity<List<Post>>(postService.getMyJssCategoryPosts(page),
+	public ResponseEntity<List<Post>> getTopMyJssArticlePosts(@RequestParam Integer page) throws OsirisException {
+		return new ResponseEntity<List<Post>>(postService.getMyJssCategoryArticlePosts(page),
 				HttpStatus.OK);
 	}
 
@@ -488,15 +492,15 @@ public class WordpressController {
 
 	@GetMapping(inputEntryPoint + "/posts/myjss/tendency")
 	@JsonView(JacksonViews.MyJssListView.class)
-	public ResponseEntity<List<Post>> getMyJssCategoryPostsTendency() throws OsirisException {
-		return new ResponseEntity<List<Post>>(postService.getMyJssCategoryPostTendency(),
+	public ResponseEntity<List<Post>> getMyJssCategoryArticlePostsTendency() throws OsirisException {
+		return new ResponseEntity<List<Post>>(postService.getMyJssCategoryArticlePostTendency(),
 				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/myjss/most-seen")
 	@JsonView(JacksonViews.MyJssListView.class)
-	public ResponseEntity<List<Post>> getMyJssPostsMostSeen() throws OsirisException {
-		return new ResponseEntity<List<Post>>(postService.getMyJssCategoryPostMostSeen(),
+	public ResponseEntity<List<Post>> getMyJssMostSeenArticlePosts() throws OsirisException {
+		return new ResponseEntity<List<Post>>(postService.getMyJssCategoryMostSeenArticlePosts(),
 				HttpStatus.OK);
 	}
 
@@ -996,12 +1000,13 @@ public class WordpressController {
 
 	@GetMapping(inputEntryPoint + "/posts/top/myjss-category")
 	public ResponseEntity<Page<Post>> getTopPostByMyJssCategory(@RequestParam Integer page,
-			@RequestParam Integer myJssCategoryId) {
+			@RequestParam Integer myJssCategoryId) throws OsirisException {
 		MyJssCategory myJssCategory = myJssCategoryService.getMyJssCategory(myJssCategoryId);
 		if (myJssCategory == null)
 			return new ResponseEntity<>(new PageImpl<>(Collections.emptyList()), HttpStatus.OK);
 
-		return new ResponseEntity<Page<Post>>(postService.getPostsByMyJssCategory(page, myJssCategory), HttpStatus.OK);
+		return new ResponseEntity<Page<Post>>(postService.getPostsByMyJssCategory(page, myJssCategory),
+				HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/myjss-categories")
@@ -1011,14 +1016,16 @@ public class WordpressController {
 	}
 
 	@GetMapping(inputEntryPoint + "/posts/first-myjss-category")
-	public ResponseEntity<List<Post>> getFirstPostsByMyJssCategories(@RequestParam(required = false) String searchText,
-			@RequestParam(required = false) Integer myJssCategoryId, HttpServletRequest request) {
+	public ResponseEntity<List<Post>> getFirstArticlePostsByMyJssCategories(
+			@RequestParam(required = false) String searchText,
+			@RequestParam(required = false) Integer myJssCategoryId,
+			HttpServletRequest request) {
 		detectFlood(request);
 		MyJssCategory myJssCategory = null;
 		if (myJssCategoryId != null)
 			myJssCategory = myJssCategoryService.getMyJssCategory(myJssCategoryId);
 
-		return new ResponseEntity<List<Post>>(postService.getFirstPostsByMyJssCategories(myJssCategory),
+		return new ResponseEntity<List<Post>>(postService.getFirstArticlePostsByMyJssCategories(myJssCategory),
 				HttpStatus.OK);
 	}
 
@@ -1027,7 +1034,7 @@ public class WordpressController {
 			@RequestParam(required = false) Integer myJssCategoryId,
 			@RequestParam(required = false, defaultValue = "0") Integer page,
 			@RequestParam(required = false, defaultValue = "10") Integer size,
-			HttpServletRequest request) {
+			HttpServletRequest request) throws OsirisException {
 		detectFlood(request);
 
 		if (searchText == null || searchText.trim().length() == 0)
@@ -1083,7 +1090,7 @@ public class WordpressController {
 		MyJssCategory myJssCategory = myJssCategoryService.getMyJssCategory(myJssCategoryId);
 		Category category = categoryService.getCategory(categoryId);
 
-		Order order = new Order(Direction.DESC, "titleText");
+		Order order = new Order(Direction.DESC, "date");
 		Sort sort = Sort.by(Arrays.asList(order));
 		Pageable pageableRequest = PageRequest.of(page, ValidationHelper.limitPageSize(size), sort);
 
@@ -1097,7 +1104,7 @@ public class WordpressController {
 			@RequestParam(required = false) String searchText,
 			@RequestParam(required = false, defaultValue = "0") Integer page,
 			@RequestParam(required = false, defaultValue = "10") Integer size,
-			HttpServletRequest request) {
+			HttpServletRequest request) throws OsirisException {
 		detectFlood(request);
 
 		MyJssCategory myJssCategory = myJssCategoryService.getMyJssCategory(myJssCategoryId);
@@ -1405,7 +1412,15 @@ public class WordpressController {
 		if (announcement == null)
 			return new ResponseEntity<Announcement>(new Announcement(), HttpStatus.OK);
 
-		return new ResponseEntity<Announcement>(announcementService.getAnnouncementForWebSite(announcement),
+		Announcement announcementResult = announcementService.getAnnouncementForWebSite(announcement);
+
+		if (Boolean.TRUE.equals(announcementResult.getIsAnonymised())
+				&& announcementResult.getAnonymisedNotice() != null
+				&& !announcementResult.getAnonymisedNotice().isEmpty()) {
+			announcementResult.setNotice(null);
+		}
+
+		return new ResponseEntity<Announcement>(announcementResult,
 				HttpStatus.OK);
 	}
 
@@ -1449,6 +1464,48 @@ public class WordpressController {
 			headers = new HttpHeaders();
 			headers.setContentLength(data.length);
 			headers.add("filename", "Témoin de parution n°" + announcement.getId() + ".pdf");
+			headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
+
+			// Compute content type
+			String mimeType = null;
+			try {
+				mimeType = Files.probeContentType(file.toPath());
+			} catch (IOException e) {
+				throw new OsirisException(e, "Unable to read file " + file.getAbsolutePath());
+			}
+			if (mimeType == null)
+				mimeType = "application/pdf";
+			headers.set("content-type", mimeType);
+			file.delete();
+		}
+		return new ResponseEntity<byte[]>(data, headers, HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/publication/receipt/download")
+	public ResponseEntity<byte[]> downloadPublicationReceipt(@RequestParam("idAnnouncement") Integer idAnnouncement,
+			@RequestParam("idProvision") Integer idProvision)
+			throws OsirisValidationException, OsirisException {
+		byte[] data = null;
+		HttpHeaders headers = null;
+
+		Announcement announcement = announcementService.getAnnouncement(idAnnouncement);
+		Provision provision = provisionService.getProvision(idProvision);
+
+		if (announcement == null)
+			throw new OsirisValidationException("Annonce non trouvée");
+
+		File file = generatePdfDelegate.generatePublicationForAnnouncement(announcement, provision, false, true, false);
+
+		if (file != null) {
+			try {
+				data = Files.readAllBytes(file.toPath());
+			} catch (IOException e) {
+				throw new OsirisException(e, "Unable to read file " + file.getAbsolutePath());
+			}
+
+			headers = new HttpHeaders();
+			headers.setContentLength(data.length);
+			headers.add("filename", "Attestation de publication n°" + announcement.getId() + ".pdf");
 			headers.setAccessControlExposeHeaders(Arrays.asList("filename"));
 
 			// Compute content type
@@ -1565,6 +1622,15 @@ public class WordpressController {
 		detectFlood(request);
 
 		return new ResponseEntity<List<Newspaper>>(newspaperService.getNewspaperForYear(year), HttpStatus.OK);
+	}
+
+	@GetMapping(inputEntryPoint + "/newspaper/front-image")
+	public ResponseEntity<byte[]> getNewspaperFrontImage(HttpServletRequest request, Integer newspaperId)
+			throws OsirisValidationException, IOException {
+
+		detectFlood(request);
+
+		return new ResponseEntity<byte[]>(newspaperService.getNewspaperFrontImage(newspaperId), HttpStatus.OK);
 	}
 
 	@GetMapping(inputEntryPoint + "/newspapers/can-see-all-newpapers")

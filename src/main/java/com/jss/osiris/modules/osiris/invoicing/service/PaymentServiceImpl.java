@@ -469,7 +469,7 @@ public class PaymentServiceImpl implements PaymentService {
                         .compareTo(payment.getPaymentAmount().setScale(2, RoundingMode.HALF_EVEN)) == 0) {
                     payment.setCheckDepositNumber(lastPayment.getCheckDepositNumber());
                     addOrUpdatePayment(payment);
-                    cancelPayment(payment);
+                    cancelPayment(payment, payment.getPaymentDate());
                     return;
                 }
             }
@@ -742,7 +742,7 @@ public class PaymentServiceImpl implements PaymentService {
             }
 
             // Generate one deposit per customer order
-            cancelPayment(payment);
+            cancelPayment(payment, null);
             Payment newPayment = generateNewPaymentFromPayment(payment, effectivePayment, true,
                     correspondingCustomerOrder.get(i).getResponsable().getTiers().getAccountingAccountDeposit());
             newPayment.setCustomerOrder(correspondingCustomerOrder.get(i));
@@ -808,7 +808,7 @@ public class PaymentServiceImpl implements PaymentService {
                                             .parseInt(payementLimitRefundInEuros))) <= 0)
                         effectivePayment = remainingMoney;
 
-                    cancelPayment(payment);
+                    cancelPayment(payment, null);
                     Payment newPayment = generateNewPaymentFromPayment(payment, effectivePayment, false,
                             correspondingInvoices.get(i).getResponsable().getTiers().getAccountingAccountCustomer());
                     newPayment.setInvoice(correspondingInvoices.get(i));
@@ -828,7 +828,7 @@ public class PaymentServiceImpl implements PaymentService {
                                 "Wrong amount to pay on invoice " + correspondingInvoices.get(i).getId()
                                         + " and payment bank id " + payment.getBankId() + " " + payment.getId());
                     // It's a provider refund
-                    cancelPayment(payment);
+                    cancelPayment(payment, null);
                     Payment newPayment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
                             correspondingInvoices.get(i).getProvider().getAccountingAccountProvider());
                     newPayment.setInvoice(correspondingInvoices.get(i));
@@ -852,7 +852,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .setScale(0, RoundingMode.HALF_EVEN).divide(oneHundredValue);
 
         if (paymentAmount.compareTo(invoiceAmount) <= 0) {
-            cancelPayment(payment);
+            cancelPayment(payment, null);
             Payment newPayment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
                     payment.getTargetAccountingAccount());
             if (correspondingInvoice.getRff() != null)
@@ -902,7 +902,7 @@ public class PaymentServiceImpl implements PaymentService {
             refundService.addOrUpdateRefund(refund);
             payment.setRefund(refund);
             addOrUpdatePayment(payment);
-            cancelPayment(payment);
+            cancelPayment(payment, payment.getPaymentDate());
         }
     }
 
@@ -927,7 +927,7 @@ public class PaymentServiceImpl implements PaymentService {
             debitTransfertService.addOrUpdateDirectDebitTransfert(directDebitTransfert);
             payment.setDirectDebitTransfert(directDebitTransfert);
             addOrUpdatePayment(payment);
-            cancelPayment(payment);
+            cancelPayment(payment, payment.getPaymentDate());
         }
     }
 
@@ -951,7 +951,7 @@ public class PaymentServiceImpl implements PaymentService {
             bankTransfertService.addOrUpdateBankTransfert(bankTransfert);
             payment.setBankTransfert(bankTransfert);
             addOrUpdatePayment(payment);
-            cancelPayment(payment);
+            cancelPayment(payment, payment.getPaymentDate());
         }
     }
 
@@ -966,23 +966,26 @@ public class PaymentServiceImpl implements PaymentService {
         if (inAmount.compareTo(checkAmount) == 0) {
             inPayment.setPaymentType(constantService.getPaymentTypeCheques());
             addOrUpdatePayment(inPayment);
-            cancelPayment(inPayment);
+            cancelPayment(inPayment, inPayment.getPaymentDate());
             checkPayment.setOriginPayment(inPayment);
             addOrUpdatePayment(checkPayment);
         }
     }
 
     public void cancelAppoint(Payment payment) throws OsirisException, OsirisValidationException {
-        cancelPayment(payment);
+        cancelPayment(payment, null);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Payment cancelPayment(Payment paymentToCancel) throws OsirisException, OsirisValidationException {
+    @Override
+    public Payment cancelPayment(Payment paymentToCancel, LocalDateTime cancellationDateTime)
+            throws OsirisException, OsirisValidationException {
         paymentToCancel = getPayment(paymentToCancel.getId());
         if (paymentToCancel.getIsCancelled())
             return paymentToCancel;
         paymentToCancel.setIsCancelled(true);
-        accountingRecordGenerationService.generateAccountingRecordOnPaymentCancellation(paymentToCancel);
+        accountingRecordGenerationService.generateAccountingRecordOnPaymentCancellation(paymentToCancel,
+                cancellationDateTime);
         return addOrUpdatePayment(paymentToCancel);
     }
 
@@ -1256,7 +1259,7 @@ public class PaymentServiceImpl implements PaymentService {
     public Payment movePaymentToWaitingAccount(Payment payment)
             throws OsirisException, OsirisValidationException, OsirisClientMessageException {
         payment = getPayment(payment.getId());
-        cancelPayment(payment);
+        cancelPayment(payment, null);
         Payment newPayment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
                 accountingAccountService.getWaitingAccountingAccount());
         // If not from bank or null, set it to default bank account
@@ -1363,7 +1366,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public void unassociateInboundPaymentFromInvoice(Payment payment, Invoice invoice)
             throws OsirisException, OsirisValidationException, OsirisClientMessageException {
-        cancelPayment(payment);
+        cancelPayment(payment, null);
         Payment newPayment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
                 accountingAccountService.getWaitingAccountingAccount());
         newPayment.setTargetAccountingAccount(accountingAccountService.getWaitingAccountingAccount());
@@ -1653,7 +1656,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public void putPaymentInAccount(Payment payment, AccountingAccount accountingAccount)
             throws OsirisException, OsirisValidationException, OsirisClientMessageException {
-        cancelPayment(payment);
+        cancelPayment(payment, null);
         Payment newPayment = null;
         if (payment.getPaymentAmount().compareTo(zeroValue) > 0) {
             newPayment = generateNewPaymentFromPayment(payment, payment.getPaymentAmount(), false,
@@ -1689,7 +1692,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Transactional(rollbackFor = Exception.class)
     public Payment cutPayment(Payment payment, BigDecimal amount)
             throws OsirisException, OsirisValidationException, OsirisClientMessageException {
-        cancelPayment(payment);
+        cancelPayment(payment, null);
         Payment newPayment1 = null;
         Payment newPayment2 = null;
         if (payment.getPaymentAmount().compareTo(zeroValue) > 0) {

@@ -69,14 +69,10 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
                         " 	max(nbr_for.announcementNbr) as announcementNbr, " +
                         " 	max(nbr_for.formalityNbr) as formalityNbr, " +
                         " 	blt.label as billingLabelType, string_agg(cf.label, ', ' order by cf.label) as confrere, " +
-                        " 	sum( case when i.id_invoice_status =115359  then -1 else 1 end *(ii.pre_tax_price-coalesce (ii.discount_amount, 0) ) ) as turnoverAmountWithoutTax, "
-                        +
-                        " 	sum( case when i.id_invoice_status =115359  then -1 else 1 end *(ii.pre_tax_price + coalesce (ii.vat_price, 0)-coalesce (ii.discount_amount, 0)) ) as turnoverAmountWithTax, "
-                        +
-                        " 	sum(case when i.id_invoice_status =115359  then -1 else 1 end *case when bt.id is not null and bt.is_debour is not null and bt.is_debour then 0 else 1 end * (ii.pre_tax_price-coalesce (ii.discount_amount, 0) ) ) as turnoverAmountWithoutDebourWithoutTax, "
-                        +
-                        " 	sum(case when i.id_invoice_status =115359  then -1 else 1 end *case when bt.id is not null and bt.is_debour is not null and bt.is_debour then 0 else 1 end * (ii.pre_tax_price + coalesce (ii.vat_price, 0)-coalesce (ii.discount_amount, 0) ) ) as turnoverAmountWithoutDebourWithTax "
-                        +
+                        " 	sum(rt.turnover_without_tax_with_debour) as turnoverAmountWithoutTax, " +
+                        " 	sum(rt.turnover_with_tax_with_debour) as turnoverAmountWithTax, " +
+                        " 	sum(rt.turnover_without_tax_without_debour) as turnoverAmountWithoutDebourWithoutTax, " +
+                        " 	sum(rt.turnover_with_tax_without_debour) as turnoverAmountWithoutDebourWithTax " +
                         " from " +
                         " 	tiers t " +
                         " left join tiers_category tc on " +
@@ -104,8 +100,10 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
                         " 	i.customer_order_id = co2.id " +
                         " 	and i.id_invoice_status in (:invoiceStatusIds) and  i.created_date>=:startDate and i.created_date<=:endDate "
                         +
-                        " left join invoice_item ii on " +
-                        " 	ii.id_invoice = i.id " +
+                        " left join reporting_turnover rt on " +
+                        " 	rt.id_responsable = r.id " +
+                        " 	and rt.created_date>=:startDate and i.created_date<=:endDate "
+                        +
                         " left join billing_item bi on " +
                         " 	bi.id = ii.id_billing_item " +
                         " left join billing_type bt on " +
@@ -139,7 +137,7 @@ public interface ResponsableRepository extends QueryCacheCrudRepository<Responsa
                         " 	concat(e1.firstname, " +
                         " 	' ', " +
                         " 	e1.lastname)), " +
-                        " 	blt.label, e2.id ,t.id, r.id having :withNonNullTurnover=false or sum( (ii.pre_tax_price-coalesce (ii.discount_amount, 0) ) )>0 "
+                        " 	blt.label, e2.id ,t.id, r.id having :withNonNullTurnover=false"
                         +
                         "")
         List<IResponsableSearchResult> searchResponsable(@Param("tiersId") Integer tiersId,

@@ -474,6 +474,9 @@ public interface AccountingRecordRepository extends QueryCacheCrudRepository<Acc
         @Query(nativeQuery = true, value = "select * from closed_accounting_record where id_payment =:idPayment")
         List<AccountingRecord> findClosedAccountingRecordsForPayment(@Param("idPayment") Integer idPayment);
 
+        @Query(nativeQuery = true, value = "select * from closed_accounting_record where id_invoice =:idInvoice")
+        List<AccountingRecord> findClosedAccountingRecordsForInvoice(@Param("idInvoice") Integer idInvoice);
+
         @Query("select sum(coalesce(a.creditAmount,0)) as creditAmount, " +
                         " sum(coalesce(a.debitAmount,0)) as debitAmount, pa.code as accountingAccountNumber "
                         +

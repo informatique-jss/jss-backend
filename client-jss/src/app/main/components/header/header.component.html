@@ -277,103 +277,101 @@
 
       </div>
     </div>
-    <div></div>
-    <div *ngIf="!searchInProgress" class="row">
-      <div *ngIf="posts" class="col-lg-5 mx-auto">
-        <h3 *ngIf="isWithKiosk && posts && posts.length > 0" class="">Les articles JSS</h3>
-        <div *ngFor="let post of posts">
-          <article data-aos="fade-up" class="blog-style2 card my-3">
-            <div class="feature-image order-1 order-lg-0">
-              <div class="image-frame image-hover-style-1">
-                <a (click)="openPost( )" [routerLink]='"/post/" + post.slug'> <img class="lazyload" *ngIf="post.media"
-                    [src]="post.media.urlLarge!=null ? post.media.urlLarge : post.media.urlFull"
-                    [alt]="post.media.alt_text" class="w-100"></a>
+    <div class="container">
+      <div *ngIf="!searchInProgress" class="row justify-content-between gap-2">
+        <div *ngIf="posts" class="col">
+          <h3 *ngIf="isWithKiosk && posts && posts.length > 0" class="">Les articles JSS</h3>
+          <div *ngFor="let post of posts">
+            <article data-aos="fade-up" class="blog-style2 card my-3">
+              <div class="feature-image order-1 order-lg-0">
+                <div class="image-frame image-hover-style-1">
+                  <a [routerLink]='"/post/" + post.slug'> <img class="lazyload" *ngIf="post.media"
+                      [src]="post.media.urlLarge!=null ? post.media.urlLarge : post.media.urlFull"
+                      [alt]="post.media.alt_text" class="w-100"></a>
+                </div>
               </div>
-            </div>
-            <div data-aos="fade-in" class="ms-3 card-body d-flex flex-column flex-lg-row align-items-stretch p-0">
-              <div class="order-0 order-lg-1">
-                <div class="row align-items-center ms-0 mb-1" *ngIf="post.jssCategories && post.jssCategories.length>0">
-                  <a (click)="openCategoryPosts()" [routerLink]='"/post/category/" + post.jssCategories[0].slug'
-                    class="badge bg-info rounded-pill px-1 col-auto me-2 mb-0">{{post.jssCategories[0].name}}</a>
-                </div>
-                <h4>
-                  <a class="card-text-truncate" (click)="openPost( )" [routerLink]='"/post/" + post.slug'> <img
-                      *ngIf="post.isPremium" class="col-auto pe-1" src="/assets/images/premium-icon.svg"><img
-                      *ngIf="post.isHidePremium" class="ms-1 pe-0"
-                      src="/assets/images/subscribed-icon.svg">{{post.titleText}}</a>
-                </h4>
-                <div class="">
-                  <span class="card-truncate-6-line" [innerHTML]="post.excerptText| trustHtml"></span>
-                </div>
-                <div class="row align-items-center">
-                  <div class="col-lg-6"
-                    *ngIf="post.isHiddenAuthor==undefined || post.isHiddenAuthor==null || post.isHiddenAuthor==false">
-                    <div class="author-block">
-                      <ul class="avatar list-inline mb-0">
-                        <li class="list-inline-item align-items-center" *ngIf="post.fullAuthor"><a class="fs-9"><img
-                              [src]="post.fullAuthor.avatar_url_size_24" [alt]="post.fullAuthor.name" placement="top"
-                              [ngbTooltip]="post.fullAuthor.name">
-                            {{post.fullAuthor.name}}</a></li>
-                      </ul>
+              <div data-aos="fade-in" class="ms-3 card-body d-flex flex-column flex-lg-row align-items-stretch p-0">
+                <div class="order-0 order-lg-1">
+                  <div class="row align-items-center ms-0 mb-1"
+                    *ngIf="post.jssCategories && post.jssCategories.length>0">
+                    <a (click)="openCategoryPosts()" (click)="openPost()"
+                      [routerLink]='"/post/category/" + post.jssCategories[0].slug'
+                      class="badge bg-info rounded-pill px-1 col-auto me-2 mb-0">{{post.jssCategories[0].name}}</a>
+                  </div>
+                  <h4>
+                    <a class="card-text-truncate" (click)="openPost()" [routerLink]='"/post/" + post.slug'> <img
+                        *ngIf="post.isPremium" class="col-auto pe-1" src="/assets/images/premium-icon.svg"><img
+                        *ngIf="post.isHidePremium" class="ms-1 pe-0"
+                        src="/assets/images/subscribed-icon.svg">{{post.titleText}}</a>
+                  </h4>
+                  <div class="">
+                    <span class="card-truncate-6-line" [innerHTML]="post.excerptText| trustHtml"></span>
+                  </div>
+                  <div class="row align-items-center">
+                    <div class="col-lg-6"
+                      *ngIf="post.isHiddenAuthor==undefined || post.isHiddenAuthor==null || post.isHiddenAuthor==false">
+                      <div class="author-block">
+                        <ul class="avatar list-inline mb-0">
+                          <li class="list-inline-item align-items-center" *ngIf="post.fullAuthor"><a class="fs-9"><img
+                                [src]="post.fullAuthor.avatar_url_size_24" [alt]="post.fullAuthor.name" placement="top"
+                                [ngbTooltip]="post.fullAuthor.name">
+                              {{post.fullAuthor.name}}</a></li>
+                        </ul>
+                      </div>
+                    </div>
+                    <div class="col-lg-6"> <span class="date-info fs-9 float-lg-end">
+                        <span>Publié le {{post.date | literalDatePipe}}</span>
+                      </span>
                     </div>
                   </div>
-                  <div class="col-lg-6"> <span class="date-info fs-9 float-lg-end">
-                      <span>Publié le {{post.date | literalDatePipe}}</span>
-                    </span>
-                  </div>
                 </div>
               </div>
-            </div>
-          </article>
+            </article>
+          </div>
         </div>
-      </div>
-      <!-- TODO : FAIRE LE LIEN VERS LE BON ARTICLE DU KIOSK (AVEC LA ROUTE ETC) -->
-      <div *ngIf="newspapers && newspapers.length > 0" class="col-lg-5 mx-auto">
-        <h3 *ngIf="isWithKiosk && newspapers && newspapers.length > 0" class="">Les archives du kiosque JSS</h3>
-        <div *ngFor="let newspaper of newspapers">
-          <article data-aos="fade-up" class="blog-style2 card my-3">
+        <div *ngIf="newspapers && newspapers.length > 0" class="col">
+          <h3 *ngIf="isWithKiosk && newspapers && newspapers.length > 0" class="">Les archives du kiosque JSS</h3>
+          <div *ngFor="let newspaper of newspapers">
+            <article data-aos="fade-up" class="blog-style2 card my-3">
 
-            <div class="feature-image order-1 order-lg-0">
-              <div class="image-frame image-hover-style-1">
-                <a (click)="openPost()" [routerLink]='"/tochange/" + newspaper.text.newspaper.newspaperIssueNumber'>
+              <div class="feature-image order-1 order-lg-0">
+                <div class="image-frame image-hover-style-1">
+                  <a (click)="openPost()" [routerLink]='"/kiosk/" + getYearDate(newspaper.text.newspaper.date) + "/" +
+                      newspaper.text.newspaper.newspaperIssueNumber'>
 
-                  <img *ngIf="newspaper.text.newspaper.newspaperImage" class="lazyload w-100"
-                    style="object-fit: cover; aspect-ratio: 16/9; max-height: 250px;"
-                    [src]="'data:image/jpeg;base64,'+ newspaper.text.newspaper.newspaperImage"
-                    alt="Couverture du magazine">
+                    <img *ngIf="getNewspaperImage(newspaper.text.newspaper.id)" class="lazyload w-100"
+                      style="object-fit: cover; aspect-ratio: 16/9; max-height: 250px;"
+                      [src]="getNewspaperImage(newspaper.text.newspaper.id)" alt="Couverture du magazine">
 
-                  <img *ngIf="!newspaper.text.newspaper.newspaperImage" class="w-100"
-                    style="object-fit: cover; aspect-ratio: 16/9; max-height: 250px;"
-                    src="assets/images/kiosk/jss_11.jpg" alt="Couverture par défaut">
+                    <img *ngIf="!getNewspaperImage(newspaper.text.newspaper.id)" class="w-100"
+                      style="object-fit: cover; aspect-ratio: 16/9; max-height: 250px;"
+                      src="assets/images/kiosk/jss_11.jpg" alt="Couverture par défaut">
 
-                </a>
-              </div>
-            </div>
-
-            <div data-aos="fade-in" class="ms-3 card-body d-flex flex-column flex-lg-row align-items-stretch p-0">
-              <div class="order-0 order-lg-1 w-100">
-
-                <div class="row align-items-center ms-0 mb-1" *ngIf="newspaper.text.newspaper.newspaperCategory">
-                  <div class="badge bg-info rounded-pill px-1 col-auto me-2 mb-0">
-                    {{newspaper.text.newspaper.newspaperCategory ==
-                    "JDS"
-                    ?
-                    "Journal de la Seine" : "Journal Spécial des Société"}}</div>
-                </div>
-
-                <h4>
-                  <a class="card-text-truncate" (click)="openPost()"
-                    [routerLink]='"/tochange/" + newspaper.text.newspaper.newspaperIssueNumber'>
-                    Numéro {{newspaper.text.newspaper.newspaperIssueNumber}} - page {{newspaper.text.pageNumber}}</a>
-                </h4>
-
-                <div class="">
-                  <span class="card-truncate-6-line text-muted">Publié en {{newspaper.text.newspaper.date
-                    | date:'MMMM yyyy'}}</span>
+                  </a>
                 </div>
               </div>
-            </div>
-          </article>
+
+              <div data-aos="fade-in" class="ms-3 card-body d-flex flex-column flex-lg-row align-items-stretch p-0">
+                <div class="order-0 order-lg-1 w-100">
+
+                  <div class="row align-items-center ms-0 mb-1" *ngIf="newspaper.text.newspaper.newspaperCategory">
+                    <div class="badge bg-info rounded-pill px-1 col-auto me-2 mb-0">
+                      {{newspaper.text.newspaper.newspaperCategory ==
+                      "JDS"
+                      ?
+                      "Journal de la Seine" : "Journal Spécial des Société"}}</div>
+                  </div>
+
+                  <h4>
+                    <a class="card-text-truncate" (click)="openPost()" [routerLink]='"/kiosk/" + getYearDate(newspaper.text.newspaper.date) + "/" +
+                      newspaper.text.newspaper.newspaperIssueNumber'>{{newspaper.text.newspaper.date
+                      | date:'yyyy'}} - Numéro {{newspaper.text.newspaper.newspaperIssueNumber}} - page
+                      {{newspaper.text.pageNumber}}</a>
+                  </h4>
+                </div>
+              </div>
+            </article>
+          </div>
         </div>
       </div>
     </div>

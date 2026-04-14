@@ -37,7 +37,7 @@ public interface AccountingRecordGenerationService {
                         boolean isOriginalPayment)
                         throws OsirisException, OsirisValidationException, OsirisClientMessageException;
 
-        public void generateAccountingRecordOnPaymentCancellation(Payment payment)
+        public void generateAccountingRecordOnPaymentCancellation(Payment payment, LocalDateTime cancellationDateTime)
                         throws OsirisException, OsirisValidationException;
 
         public void generateAccountingRecordsForSaleOnInvoicePayment(Invoice invoice, Payment payment,

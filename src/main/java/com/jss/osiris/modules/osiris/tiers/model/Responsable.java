@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -17,6 +18,7 @@ import com.jss.osiris.libs.jackson.JacksonLocalDateTimeSerializer;
 import com.jss.osiris.libs.jackson.JacksonViews;
 import com.jss.osiris.libs.search.model.IndexedField;
 import com.jss.osiris.modules.osiris.crm.model.Voucher;
+import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.miscellaneous.model.City;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Civility;
@@ -28,6 +30,8 @@ import com.jss.osiris.modules.osiris.miscellaneous.model.Language;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Mail;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Phone;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.osiris.quotation.model.Quotation;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -73,6 +77,9 @@ public class Responsable implements IAttachment, IId {
 
 	@Column(nullable = false)
 	@IndexedField
+	@JsonView({ JacksonViews.MyJssListView.class,
+			JacksonViews.OsirisListView.class,
+			JacksonViews.OsirisDetailedView.class })
 	private Boolean isActive;
 
 	@Column(nullable = false)
@@ -258,6 +265,18 @@ public class Responsable implements IAttachment, IId {
 
 	@Transient
 	private HashMap<String, BigDecimal> kpiValues;
+
+	@OneToMany(targetEntity = CustomerOrder.class, mappedBy = "responsable", fetch = FetchType.LAZY)
+	@JsonIgnore
+	private List<CustomerOrder> customerOrders;
+
+	@OneToMany(targetEntity = Invoice.class, mappedBy = "responsable", fetch = FetchType.LAZY)
+	@JsonIgnore
+	private List<Invoice> invoices;
+
+	@OneToMany(targetEntity = Quotation.class, mappedBy = "responsable", fetch = FetchType.LAZY)
+	@JsonIgnore
+	private List<Quotation> quotations;
 
 	public Tiers getTiers() {
 		return tiers;
@@ -666,4 +685,29 @@ public class Responsable implements IAttachment, IId {
 	public void setIsComingFromQuotation(Boolean isComingFromQuotation) {
 		this.isComingFromQuotation = isComingFromQuotation;
 	}
+
+	public List<CustomerOrder> getCustomerOrders() {
+		return customerOrders;
+	}
+
+	public void setCustomerOrders(List<CustomerOrder> customerOrders) {
+		this.customerOrders = customerOrders;
+	}
+
+	public List<Invoice> getInvoices() {
+		return invoices;
+	}
+
+	public void setInvoices(List<Invoice> invoices) {
+		this.invoices = invoices;
+	}
+
+	public List<Quotation> getQuotations() {
+		return quotations;
+	}
+
+	public void setQuotations(List<Quotation> quotations) {
+		this.quotations = quotations;
+	}
+
 }

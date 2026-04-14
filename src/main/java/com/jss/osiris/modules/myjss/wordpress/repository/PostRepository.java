@@ -68,15 +68,19 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
                         Pageable pageableRequest);
 
         @Query("select p from Post p " +
+                        "join p.postCategories pc " +
                         "where p.isCancelled = :isCancelled " +
+                        "  and pc.id = :categoryId " +
                         "  and p.date <= CURRENT_TIMESTAMP " +
                         "  and ( " +
                         "  (:myJssCategoryId IS NOT NULL AND exists (select 1 from p.myJssCategories c where c.id = :myJssCategoryId)) "
-                        + "OR (:myJssCategoryId IS NULL AND p.source=:source))")
+                        + "OR (:myJssCategoryId IS NULL AND p.source=:source)) ")
         @QueryHints({ @QueryHint(name = "org.hibernate.cacheable", value = "true") })
-        Page<Post> findByMyJssCategoriesAndIsCancelled(
+        Page<Post> findByCategoryAndMyJssCategoriesAndIsCancelled(
                         @Param("myJssCategoryId") Integer myJssCategoryId,
-                        @Param("isCancelled") Boolean isCancelled, String source,
+                        @Param("isCancelled") Boolean isCancelled,
+                        String source,
+                        @Param("categoryId") Integer categoryId,
                         Pageable pageableRequest);
 
         @Query("select p from Post p " +
@@ -115,12 +119,13 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
         Page<Post> findJssCategoryPostTendency(@Param("oneWeekAgo") LocalDate oneWeekAgo,
                         @Param("category") Category category, String source, Pageable pageable);
 
-        @Query("select p.id from Post p join p.postViews v where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and p.source=:source and v.day >= :oneWeekAgo group by p.id order by sum(v.count) desc ")
-        List<Integer> findMyJssCategoryPostTendency(@Param("oneWeekAgo") LocalDate oneWeekAgo, String source,
+        @Query("select p.id from Post p join p.postViews v join p.postCategories c where p.isCancelled = false AND c.id = :categoryId AND p.date<=CURRENT_TIMESTAMP and p.source=:source and v.day >= :oneWeekAgo group by p.id order by sum(v.count) desc ")
+        List<Integer> findMyJssCategoryArticlePostTendency(@Param("oneWeekAgo") LocalDate oneWeekAgo, String source,
+                        @Param("categoryId") Integer categoryId,
                         Pageable pageable);
 
-        @Query("select p.id from Post p join p.postViews v where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and p.source=:source group by p.id order by sum(v.count) desc ")
-        List<Integer> findMyJssCategoryPostMostSeen(String source, Pageable pageable);
+        @Query("select p.id from Post p join p.postViews v join p.postCategories c where p.isCancelled = false AND c.id = :categoryId AND p.date<=CURRENT_TIMESTAMP and p.source=:source group by p.id order by sum(v.count) desc ")
+        List<Integer> findMyJssCategoryMostSeenArticlePosts(String source, Integer categoryId, Pageable pageable);
 
         @Query("select p from Post p join p.postViews v where p.isCancelled = false AND p.date<=CURRENT_TIMESTAMP and :jssCategory MEMBER OF p.jssCategories group by p.id order by sum(v.count) desc ")
         Page<Post> findMostSeenPostJssCategory(Pageable pageable, @Param("jssCategory") JssCategory jssCategory);
@@ -165,9 +170,9 @@ public interface PostRepository extends QueryCacheCrudRepository<Post, Integer> 
                         @Param("isCancelled") boolean b, String source,
                         Pageable pageableRequest);
 
-        @Query("select p from Post p where p.source=:source and p.isCancelled = :isCancelled AND p.date<=CURRENT_TIMESTAMP ")
-        List<Post> findMyJssCategoryPosts(@Param("isCancelled") boolean b, String source,
-                        Pageable pageableRequest);
+        @Query("select p from Post p join p.postCategories pc where p.source=:source and p.isCancelled = :isCancelled AND pc.id = :categoryId AND p.date<=CURRENT_TIMESTAMP ")
+        List<Post> findMyJssCategoryArticlePosts(@Param("isCancelled") boolean b, String source,
+                        @Param("categoryId") Integer categoryId, Pageable pageableRequest);
 
         Page<Post> findByPostCategoriesAndIsCancelledAndDepartments(Category categoryArticle, boolean b,
                         PublishingDepartment department, Pageable pageableRequest);
