@@ -285,7 +285,8 @@
         </invoice-payment>
       </ng-template>
     </mat-tab>
-    <mat-tab label="Suivi" *ngIf="invoice.id && invoice.invoiceStatus.id==invoiceStatusSend.id ">
+    <mat-tab label="Suivi"
+      *ngIf="invoice.id && (invoice.invoiceStatus.id==invoiceStatusSend.id || invoice.invoiceStatus.id==invoiceStatusPayed.id) ">
       <ng-template matTabContent>
         <div>
           <ul>
