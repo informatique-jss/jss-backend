@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -207,8 +206,6 @@ public class ResponsableServiceImpl implements ResponsableService {
                 tiersSearch.getStartDate().atTime(0, 0),
                 tiersSearch.getEndDate().atTime(23, 59, 59), tiersSearch.getLabel(),
                 constantService.getConfrereJssSpel().getId(),
-                Arrays.asList(constantService.getInvoiceStatusPayed().getId(),
-                        constantService.getInvoiceStatusSend().getId()),
                 this.constantService.getDocumentTypeBilling().getId(), tiersSearch.getWithNonNullTurnover());
     }
 
