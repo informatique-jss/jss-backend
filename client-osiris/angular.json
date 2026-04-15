@@ -31,8 +31,7 @@
                 "silenceDeprecations": [
                   "color-functions",
                   "global-builtin",
-                  "import",
-                  "mixed-decls"
+                  "import"
                 ]
               }
             },

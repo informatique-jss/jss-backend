@@ -52,16 +52,6 @@ html[data-layout="topnav"] {
         }
 
         .navbar-nav {
-
-            @include media-breakpoint-up(lg) {
-                .nav-item {
-                    &:first-of-type {
-                        .nav-link {
-                            padding-left: 0;
-                        }
-                    }
-                }
-            }
             .nav-link {
                 display: flex;
                 align-items: center;
@@ -118,6 +108,16 @@ html[data-layout="topnav"] {
                         transform: rotate(-90deg);
                     }
 
+                }
+            }
+
+            @include media-breakpoint-up(lg) {
+                .nav-item {
+                    &:first-of-type {
+                        .nav-link {
+                            padding-left: 0;
+                        }
+                    }
                 }
             }
         }
