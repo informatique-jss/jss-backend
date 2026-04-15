@@ -40,6 +40,7 @@ import com.jss.osiris.modules.osiris.accounting.service.AccountingRecordService;
 import com.jss.osiris.modules.osiris.crm.model.Candidacy;
 import com.jss.osiris.modules.osiris.crm.service.CandidacyService;
 import com.jss.osiris.modules.osiris.invoicing.model.Invoice;
+import com.jss.osiris.modules.osiris.invoicing.service.InpiInvoicingExtractService;
 import com.jss.osiris.modules.osiris.invoicing.service.InvoiceService;
 import com.jss.osiris.modules.osiris.invoicing.service.PaymentService;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
@@ -151,6 +152,9 @@ public class AttachmentServiceImpl implements AttachmentService {
     @Autowired
     CandidacyService candidacyService;
 
+    @Autowired
+    InpiInvoicingExtractService inpiInvoicingExtractService;
+
     @Override
     public List<Attachment> getAttachments() {
         return IterableUtils.toList(attachmentRepository.findAll());
@@ -210,6 +214,13 @@ public class AttachmentServiceImpl implements AttachmentService {
             else
                 return null;
 
+        if (entityType.equals("InpiInvoicingExtract")) {
+            if (activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_GROUP)
+                    || activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP))
+                return this.inpiInvoicingExtractService.uploadInpiInvoicingExtractFile(file);
+            else
+                return null;
+        }
         if (entityType.equals("Sage")) {
             if (activeDirectoryHelper.isUserHasGroup(ActiveDirectoryHelper.ACCOUNTING_RESPONSIBLE_GROUP))
                 this.accountingRecordService.generateAccountingRecordForSageRecord(file);
