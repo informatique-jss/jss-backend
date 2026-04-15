@@ -11,9 +11,11 @@ Footer START -->
           <div class="row">
             <div class="col-12">
               <ul class="nav flex-column text-primary-hover">
-                <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
+                <li class="nav-item">@for (category of jssCategories; track category) {
+                  <a class="nav-link pt-0 px-0" style="cursor: pointer;"
                     [routerLink]='"/post/category/" + category.slug'
-                    *ngFor="let category of jssCategories">{{category.name}}</a></li>
+                  >{{category.name}}</a>
+                }</li>
               </ul>
             </div>
           </div>
@@ -23,9 +25,11 @@ Footer START -->
           <div class="row">
             <div class="col-12">
               <ul class="nav flex-column text-primary-hover">
-                <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
+                <li class="nav-item">@for (department of departments; track department) {
+                  <a class="nav-link pt-0 px-0" style="cursor: pointer;"
                     [routerLink]='"/post/department/" + department.code + "/page" '
-                    *ngFor="let department of departments">{{department.name}}</a></li>
+                  >{{department.name}}</a>
+                }</li>
               </ul>
             </div>
           </div>
@@ -36,96 +40,96 @@ Footer START -->
             <div class="col-12">
               <ul class="nav flex-column text-primary-hover">
                 <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
-                    routerLink="/subscription">S'abonner</a></li>
+                routerLink="/subscription">S'abonner</a></li>
                 <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
-                    routerLink="/podcasts">Podcasts</a></li>
+                routerLink="/podcasts">Podcasts</a></li>
                 <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
-                    routerLink="/contribute">Contribuer</a></li>
+                routerLink="/contribute">Contribuer</a></li>
                 <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
-                    routerLink="/kiosk">Kiosque</a>
-                </li>
-              </ul>
-            </div>
+                routerLink="/kiosk">Kiosque</a>
+              </li>
+            </ul>
           </div>
         </div>
-        <div class="col-md-6 col-lg-2 mb-4">
-          <p class="h5 mb-4">Nos services</p>
-          <div class="row">
-            <div class="col-12">
-              <ul class="nav flex-column text-primary-hover">
-                <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
-                    [href]="frontendMyJssUrl+MY_JSS_SERVICES_ANNOUNCEMENT_ROUTE" target="_blank">Annonces légales</a>
-                </li>
-                <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
-                    [href]="frontendMyJssUrl+MY_JSS_SERVICES_FORMALITY_ROUTE" target="_blank">Formalités légales</a>
-                </li>
-                <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
-                    [href]="frontendMyJssUrl+MY_JSS_SERVICES_APOSITLLE_ROUTE"
-                    target="_blank">Apostilles-Légalisation</a></li>
-                <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
-                    [href]="frontendMyJssUrl+MY_JSS_SERVICES_DOMICILIATION_ROUTE" target="_blank">Domiciliation</a></li>
-                <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
-                    [href]="frontendMyJssUrl+MY_JSS_SERVICES_DOCUMENT_ROUTE" target="_blank">Fourniture de documents</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6 col-lg-2 mb-4">
-          <p class="h5 mb-4">Le JSS</p>
-          <div class="row">
-            <div class="col-12">
-              <ul class="nav flex-column text-primary-hover">
-                <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
-                    [href]="frontendMyJssUrl+MY_JSS_WHO_ARE_WE_ROUTE" target="_blank">Qui sommes-nous ?</a></li>
-                <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
-                    [href]="frontendMyJssUrl+MY_JSS_JOIN_US_ROUTE" target="_blank">Nous
-                    rejoindre</a></li>
-                <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
-                    [href]="frontendMyJssUrl+MY_JSS_LEGAL_MENTIONS_ROUTE" target="_blank">Mentions légales</a></li>
-                <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
-                    [href]="frontendMyJssUrl+MY_JSS_CGV_ROUTE" target="_blank">CGV</a>
-                </li>
-                <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
-                    [href]="frontendMyJssUrl+MY_JSS_CONFIDENTIALITY_ROUTE" target="_blank">Politique de
-                    confidentialité</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6 col-lg-2 mb-4">
-          <ul class="nav">
-            <li class="nav-item">
-              <a class="nav-link px-2 fs-5" href="https://www.facebook.com/Journal.Special.des.Societes"
-                target="_blank"><i class="fab fa-facebook-square"></i></a>
+      </div>
+      <div class="col-md-6 col-lg-2 mb-4">
+        <p class="h5 mb-4">Nos services</p>
+        <div class="row">
+          <div class="col-12">
+            <ul class="nav flex-column text-primary-hover">
+              <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
+              [href]="frontendMyJssUrl+MY_JSS_SERVICES_ANNOUNCEMENT_ROUTE" target="_blank">Annonces légales</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link px-2 fs-5" href="https://www.linkedin.com/company/journal-special-des-societes/"
-                target="_blank"><i class="fab fa-linkedin"></i></a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link px-2 fs-5" href="https://www.instagram.com/journalspecialdessocietes/"
-                target="_blank"><i class="fab fa-instagram-square"></i></a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link px-2 fs-5" href="https://bsky.app/profile/jss-media.bsky.social" target="_blank">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bluesky"
-                  viewBox="0 0 16 16">
-                  <path
-                    d="M3.468 1.948C5.303 3.325 7.276 6.118 8 7.616c.725-1.498 2.698-4.29 4.532-5.668C13.855.955 16 .186 16 2.632c0 .489-.28 4.105-.444 4.692-.572 2.04-2.653 2.561-4.504 2.246 3.236.551 4.06 2.375 2.281 4.2-3.376 3.464-4.852-.87-5.23-1.98-.07-.204-.103-.3-.103-.218 0-.081-.033.014-.102.218-.379 1.11-1.855 5.444-5.231 1.98-1.778-1.825-.955-3.65 2.28-4.2-1.85.315-3.932-.205-4.503-2.246C.28 6.737 0 3.12 0 2.632 0 .186 2.145.955 3.468 1.948" />
+            <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
+            [href]="frontendMyJssUrl+MY_JSS_SERVICES_FORMALITY_ROUTE" target="_blank">Formalités légales</a>
+          </li>
+          <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
+            [href]="frontendMyJssUrl+MY_JSS_SERVICES_APOSITLLE_ROUTE"
+          target="_blank">Apostilles-Légalisation</a></li>
+          <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
+          [href]="frontendMyJssUrl+MY_JSS_SERVICES_DOMICILIATION_ROUTE" target="_blank">Domiciliation</a></li>
+          <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
+          [href]="frontendMyJssUrl+MY_JSS_SERVICES_DOCUMENT_ROUTE" target="_blank">Fourniture de documents</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+<div class="col-md-6 col-lg-2 mb-4">
+  <p class="h5 mb-4">Le JSS</p>
+  <div class="row">
+    <div class="col-12">
+      <ul class="nav flex-column text-primary-hover">
+        <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
+        [href]="frontendMyJssUrl+MY_JSS_WHO_ARE_WE_ROUTE" target="_blank">Qui sommes-nous ?</a></li>
+        <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
+          [href]="frontendMyJssUrl+MY_JSS_JOIN_US_ROUTE" target="_blank">Nous
+        rejoindre</a></li>
+        <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
+        [href]="frontendMyJssUrl+MY_JSS_LEGAL_MENTIONS_ROUTE" target="_blank">Mentions légales</a></li>
+        <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
+        [href]="frontendMyJssUrl+MY_JSS_CGV_ROUTE" target="_blank">CGV</a>
+      </li>
+      <li class="nav-item"><a class="nav-link pt-0 px-0" style="cursor: pointer;"
+        [href]="frontendMyJssUrl+MY_JSS_CONFIDENTIALITY_ROUTE" target="_blank">Politique de
+      confidentialité</a>
+    </li>
+  </ul>
+</div>
+</div>
+</div>
+<div class="col-md-6 col-lg-2 mb-4">
+  <ul class="nav">
+    <li class="nav-item">
+      <a class="nav-link px-2 fs-5" href="https://www.facebook.com/Journal.Special.des.Societes"
+        target="_blank"><i class="fab fa-facebook-square"></i></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link px-2 fs-5" href="https://www.linkedin.com/company/journal-special-des-societes/"
+          target="_blank"><i class="fab fa-linkedin"></i></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link px-2 fs-5" href="https://www.instagram.com/journalspecialdessocietes/"
+            target="_blank"><i class="fab fa-instagram-square"></i></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link px-2 fs-5" href="https://bsky.app/profile/jss-media.bsky.social" target="_blank">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bluesky"
+                viewBox="0 0 16 16">
+                <path
+                  d="M3.468 1.948C5.303 3.325 7.276 6.118 8 7.616c.725-1.498 2.698-4.29 4.532-5.668C13.855.955 16 .186 16 2.632c0 .489-.28 4.105-.444 4.692-.572 2.04-2.653 2.561-4.504 2.246 3.236.551 4.06 2.375 2.281 4.2-3.376 3.464-4.852-.87-5.23-1.98-.07-.204-.103-.3-.103-.218 0-.081-.033.014-.102.218-.379 1.11-1.855 5.444-5.231 1.98-1.778-1.825-.955-3.65 2.28-4.2-1.85.315-3.932-.205-4.503-2.246C.28 6.737 0 3.12 0 2.632 0 .186 2.145.955 3.468 1.948" />
                 </svg>
               </a>
             </li>
           </ul>
           <p class="h5 mb-4"><a class="nav-link pt-0" style="cursor: pointer;" routerLink="/contact">Contact</a>
-          </p>
-        </div>
+        </p>
       </div>
-      <!-- Widgets END -->
     </div>
-  </section>
-  <!-- Hot topics END -->
+    <!-- Widgets END -->
+  </div>
+</section>
+<!-- Hot topics END -->
 
 
 </footer>
