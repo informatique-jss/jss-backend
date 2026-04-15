@@ -305,11 +305,41 @@
         </li>
       </div>
     </div>
-    <div>
-      <a [href]="'/tools/practical-sheets/page/'+(currentSeoPageNumber - 1)">Page précédente</a>
-      <a [href]="'/tools/practical-sheets/page/'+(currentSeoPageNumber + 1)">Page suivante</a>
+    <div class="d-flex justify-content-center align-items-center gap-2 mt-4" *ngIf="totalPages > 1">
+      <!-- Prev -->
+      <a *ngIf="currentSeoPageNumber > 1" [href]="currentSeoPageNumber === 2 
+        ? '/tools/practical-sheets' 
+        : '/tools/practical-sheets/page/' + (currentSeoPageNumber - 1)" class="btn btn-outline-secondary btn-sm">
+        ← Page précédente
+      </a>
+      <!-- Page 1 -->
+      <a href="/tools/practical-sheets" class="btn btn-sm"
+        [ngClass]="currentSeoPageNumber === 1 ? 'btn-primary fw-bold' : 'btn-outline-secondary'">
+        1
+      </a>
+      <!-- dynamic pages -->
+      <ng-container *ngFor="let page of getVisiblePages()">
+        <span *ngIf="page === -1" class="px-1">…</span>
+        <a *ngIf="page !== -1 && page !== 1 && page !== totalPages" [href]="'/tools/practical-sheets/page/' + page"
+          class="btn btn-sm"
+          [ngClass]="currentSeoPageNumber === page ? 'btn-primary fw-bold' : 'btn-outline-secondary'">
+          {{ page }}
+        </a>
+      </ng-container>
+      <!-- Last page -->
+      <a *ngIf="totalPages > 1" [href]="'/tools/practical-sheets/page/' + totalPages" class="btn btn-sm"
+        [ngClass]="currentSeoPageNumber === totalPages ? 'btn-primary fw-bold' : 'btn-outline-secondary'">
+        {{ totalPages }}
+      </a>
+      <!-- Next -->
+      <a *ngIf="currentSeoPageNumber < totalPages" [href]="'/tools/practical-sheets/page/' + (currentSeoPageNumber + 1)"
+        class="btn btn-outline-secondary btn-sm">
+        Page suivante →
+      </a>
+
     </div>
   </ng-container>
+  <!-- End of SEO purpose only -->
 
   <ng-container *ngIf="secondSearchText && secondSelectedMyJssCategory.id == allMyJssCategories.id && !isServer">
     <ng-container *ngFor="let myJssCategory of myJssCategories;">
