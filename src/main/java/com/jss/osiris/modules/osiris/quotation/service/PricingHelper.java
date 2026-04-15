@@ -128,14 +128,17 @@ public class PricingHelper {
         if (emergencyWrapper != null && !emergencyWrapper.isEmpty()
                 && quotation.getAssoAffaireOrders() != null) {
             BigDecimal maxAmountVacation = zeroValue;
+            BigDecimal maxAmountTraitement = zeroValue;
             BigDecimal maxVatVacation = zeroValue;
+            BigDecimal maxVatTraitement = zeroValue;
+            Boolean hasVacation = false;
             InvoiceItem emergencyInvoiceItem = emergencyWrapper.get(0);
 
             for (AssoAffaireOrder assoAffaireOrder : quotation.getAssoAffaireOrders()) {
                 if (assoAffaireOrder.getServices() != null)
                     for (Service service : assoAffaireOrder.getServices())
                         for (Provision provision : service.getProvisions()) {
-                            for (InvoiceItem item : provision.getInvoiceItems())
+                            for (InvoiceItem item : provision.getInvoiceItems()) {
                                 if (item.getBillingItem() != null
                                         && item.getBillingItem().getBillingType() != null
                                         && Boolean.TRUE.equals(item.getBillingItem().getBillingType()
@@ -144,18 +147,31 @@ public class PricingHelper {
                                             .compareTo(maxAmountVacation) > 0) {
                                         maxAmountVacation = item.getPreTaxPrice();
                                         maxVatVacation = item.getVatPrice();
+                                        hasVacation = true;
                                     }
-
+                                if (item.getBillingItem() != null
+                                        && item.getBillingItem().getBillingType() != null
+                                        && Boolean.TRUE.equals(item.getBillingItem().getBillingType()
+                                                .getIsTraitement()))
+                                    if (item.getPreTaxPrice() != null && item.getPreTaxPrice()
+                                            .compareTo(maxAmountVacation) > 0) {
+                                        maxAmountTraitement = item.getPreTaxPrice();
+                                        maxVatTraitement = item.getVatPrice();
+                                    }
+                            }
                         }
             }
-
             if (emergencyInvoiceItem != null
-                    && emergencyInvoiceItem.getPreTaxPrice().compareTo(maxAmountVacation) < 0) {
+                    && emergencyInvoiceItem.getPreTaxPrice().compareTo(maxAmountVacation) < 0
+                    && hasVacation) {
                 emergencyInvoiceItem.setPreTaxPrice(maxAmountVacation);
                 emergencyInvoiceItem.setVatPrice(maxVatVacation);
-                if (persistInvoiceItem)
-                    invoiceItemService.addOrUpdateInvoiceItem(emergencyInvoiceItem);
+            } else if (emergencyInvoiceItem != null && !hasVacation && maxAmountTraitement.compareTo(zeroValue) > 0) {
+                emergencyInvoiceItem.setPreTaxPrice(maxAmountTraitement);
+                emergencyInvoiceItem.setVatPrice(maxVatTraitement);
             }
+            if (persistInvoiceItem)
+                invoiceItemService.addOrUpdateInvoiceItem(emergencyInvoiceItem);
         }
     }
 
