@@ -287,9 +287,12 @@ public class ServiceServiceImpl implements ServiceService {
         ArrayList<Integer> serviceFieldTypeIds = new ArrayList<Integer>();
 
         ArrayList<AssoServiceProvisionType> assoServiceProvisionTypes = new ArrayList<AssoServiceProvisionType>();
-
+        Boolean forceNonMergeable = false;
         Service service = new Service();
         service.setServiceTypes(serviceTypes);
+
+        if (serviceTypes.size() == 1)
+            forceNonMergeable = true;
 
         for (ServiceType serviceType : serviceTypes) {
             // fill all provisions type in list
@@ -326,10 +329,22 @@ public class ServiceServiceImpl implements ServiceService {
         }
 
         // Merge provisions Type before create instances
+        List<Provision> provisions = new ArrayList<Provision>();
+        if (forceNonMergeable) {
+            for (AssoServiceProvisionType assoServiceProvisionType : assoServiceProvisionTypes)
+                if (assoServiceProvisionType.getProvisionType() != null)
+                    provisions.add(generateProvisionFromProvisionType(assoServiceProvisionType.getProvisionType(),
+                            service, assoServiceProvisionType, assoServiceProvisionType.getIsPriority()));
+        }
+
+        if (!forceNonMergeable)
+            provisions = mergeProvisionTypes(assoServiceProvisionTypes, service, affaire);
+
         if (service.getProvisions() != null && service.getProvisions().size() > 0)
-            service.getProvisions().addAll(mergeProvisionTypes(assoServiceProvisionTypes, service, affaire));
+            service.getProvisions()
+                    .addAll(provisions);
         else
-            service.setProvisions(mergeProvisionTypes(assoServiceProvisionTypes, service, affaire));
+            service.setProvisions(provisions);
 
         service.setAssoServiceFieldTypes(assoServiceFieldTypes);
         service.setAssoServiceDocuments(assoServiceDocuments);
