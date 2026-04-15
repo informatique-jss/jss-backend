@@ -1,409 +1,512 @@
-<div class="d-flex align-items-center mb-4" *ngIf="quotation">
-  <h1 class="h2 mb-0 me-3">Devis {{quotation.id}}</h1> <span class="badge bg-opacity-10   "
-    [ngClass]="getClassForQuotationStatus(quotation)">{{getQuotationStatusLabel(quotation)}}</span>
+@if (quotation) {
+  <div class="d-flex align-items-center mb-4">
+    <h1 class="h2 mb-0 me-3">Devis {{quotation.id}}</h1> <span class="badge bg-opacity-10   "
+  [ngClass]="getClassForQuotationStatus(quotation)">{{getQuotationStatusLabel(quotation)}}</span>
   <div class="ms-auto">
-    <a class="btn btn-sm  me-2 btn-primary" role="button" (click)="resumeDraft($event)"
-      *ngIf=" quotation && quotation.quotationStatus.code == QUOTATION_STATUS_OPEN">
-      <i class="ai-edit-alt ms-n1 me-2"></i>
-      Reprendre le brouillon
-    </a>
-    <a class="btn btn-sm btn-primary me-2" role="button" (click)="cancelDraft()"
-      *ngIf=" quotation && (quotation.quotationStatus.code == QUOTATION_STATUS_OPEN || quotation.quotationStatus.code == QUOTATION_STATUS_SENT_TO_CUSTOMER)">
-      <i class="ai-trash ms-n1 me-2"></i>
-      Abandonner
-    </a>
-    <a class="btn btn-sm btn-primary" role="button" (click)="openNewQuotationValidationModal()"
-      *ngIf=" quotation && quotation.quotationStatus.code == QUOTATION_STATUS_SENT_TO_CUSTOMER && !quotation.responsable?.tiers?.isProvisionalPaymentMandatory">
-      <i class="ai-check ms-n1 me-2"></i>
-      Valider le devis
-    </a>
-  </div>
-</div>
-<div class="alert alert-info d-flex mb-2" role="alert"
-  *ngIf="associatedCustomerOrder && quotation && quotation.quotationStatus.code == QUOTATION_STATUS_VALIDATED_BY_CUSTOMER">
-  <i class="ai-circle-info fs-xl"></i>
-  <div class="ps-2">Ce devis validé a donné lieu à la commande n°<a style="cursor: pointer; text-decoration: underline;"
-      [routerLink]='"/account/orders/details/" + associatedCustomerOrder.id'>{{associatedCustomerOrder.id}}</a>
-  </div>
-</div>
-<div class="alert alert-danger d-flex  flex-column flex-md-row align-items-center mb-0 mb-2" role="alert"
-  *ngIf="quotation && quotation.quotationStatus && quotation.quotationStatus.code == QUOTATION_STATUS_SENT_TO_CUSTOMER && isDepositPaymentMandatoryForQuotation">
-  <i class="ai-circle-info fs-xl"></i>
-  <div class="ps-2">Payez votre acompte pour lancer le traitement de votre commande !</div>
-  <a class="btn btn-sm btn-primary  mt-3 mt-md-0 ms-4" [routerLink]=' "/account/quotation/pay/" + quotation.id'>
-    <i class="ai-cart ms-n1 me-2"></i>
-    <span>Payer l'acompte</span>
-  </a>
-</div>
-<div class="d-flex flex-column flex-md-row align-items-center mb-4"
-  *ngIf="quotation && quotationAssoAffaireOrders && quotationAssoAffaireOrders.length>1 && selectedAssoAffaireOrder">
-  <div class="ms-auto">
-    <div ngbDropdown class="btn-group dropdown" style="margin-right: 10px;">
-      <button type="button" class="btn btn-secondary dropdown-toggle" ngbDropdownToggle aria-haspopup="true"
-        aria-expanded="false">
-        <i class="ai-briefcase me-2"></i>
-        Affaire :
-        {{capitalizeName(selectedAssoAffaireOrder.affaire.denomination?selectedAssoAffaireOrder.affaire.denomination:(selectedAssoAffaireOrder.affaire.firstname
-        +"
-        "+selectedAssoAffaireOrder.affaire.lastname))}}{{selectedAssoAffaireOrder.affaire.city?(" -
-        "+capitalizeName(selectedAssoAffaireOrder.affaire.city.label)):""}}
-      </button>
-      <div ngbDropdownMenu class="dropdown-menu my-1">
-        <label class=" dropdown-item" *ngFor="let asso of quotationAssoAffaireOrders">
-          <a class="dropdown-item" style="cursor: pointer;" (click)="changeAffaire(asso) ">
-            {{capitalizeName(asso.affaire.denomination?asso.affaire.denomination:(asso.affaire.firstname
-            +"
-            "+asso.affaire.lastname))}}{{asso.affaire.city?(" -
-            "+capitalizeName(asso.affaire.city.label)):""}}
-          </a>
-        </label>
-      </div>
-    </div>
-  </div>
-</div>
-<section class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4 mb-4" *ngIf="quotation && selectedAssoAffaireOrder">
-  <div class="card-body">
-    <div class="d-flex flex-column flex-md-row align-items-center mt-sm-n1 pb-4 mb-0 mb-lg-1 mb-xl-3">
-      <i class="ai-briefcase text-primary lead pe-1 me-2"></i>
-      <h2 class="h4 mb-0">
-        Affaire :
-        {{capitalizeName(selectedAssoAffaireOrder.affaire.denomination?selectedAssoAffaireOrder.affaire.denomination:(selectedAssoAffaireOrder.affaire.firstname
-        +" "+selectedAssoAffaireOrder.affaire.lastname))}} </h2>
-      <a class="btn btn-sm  ms-auto btn-danger" role="button"
-        [routerLink]='"/account/affaire/edit/quotation/" + selectedAssoAffaireOrder.affaire.id + "/" + this.quotation.id'
-        *ngIf="(!selectedAssoAffaireOrder.affaire.paymentIban || !selectedAssoAffaireOrder.affaire.paymentBic || !selectedAssoAffaireOrder.affaire.mails || selectedAssoAffaireOrder.affaire.mails.length==0) && invoiceSummary && invoiceSummary.billingLabelType && invoiceSummary.billingLabelType.id == billingLabelTypeCodeAffaire.id ;else just_edit_affaire">
-        <i class="ai-edit ms-n1 me-2"></i>
-        Indiquer <span
-          *ngIf="(!selectedAssoAffaireOrder.affaire.paymentIban || !selectedAssoAffaireOrder.affaire.paymentBic)">&nbsp;l'IBAN</span>
-        <span
-          *ngIf="(!selectedAssoAffaireOrder.affaire.paymentIban || !selectedAssoAffaireOrder.affaire.paymentBic) && (!selectedAssoAffaireOrder.affaire.mails || selectedAssoAffaireOrder.affaire.mails.length==0)">&nbsp;et</span>
-        <span
-          *ngIf="(!selectedAssoAffaireOrder.affaire.mails || selectedAssoAffaireOrder.affaire.mails.length==0)">&nbsp;le
-          mail</span>
+    @if ( quotation && quotation.quotationStatus.code == QUOTATION_STATUS_OPEN) {
+      <a class="btn btn-sm  me-2 btn-primary" role="button" (click)="resumeDraft($event)"
+        >
+        <i class="ai-edit-alt ms-n1 me-2"></i>
+        Reprendre le brouillon
       </a>
-      <ng-template #just_edit_affaire> <a class="btn btn-sm  mt-3 mt-md-0 ms-md-auto btn-secondary" role="button"
-          [routerLink]='"/account/affaire/edit/quotation/" + selectedAssoAffaireOrder.affaire.id + "/" + this.quotation.id'>
-          <i class="ai-edit ms-n1 me-2"></i>
-          Modifier
-        </a></ng-template>
-    </div>
-    <div class="d-flex align-items-center pb-1 mb-2">
-      <h3 class="h6 mb-0 me-3" *ngIf="selectedAssoAffaireOrder.affaire.siret">
-        {{selectedAssoAffaireOrder.affaire.legalForm?selectedAssoAffaireOrder.affaire.legalForm.label:""}} -
-        {{selectedAssoAffaireOrder.affaire.siret }}</h3>
-      <h3 class="h6 mb-0 me-3" *ngIf="!selectedAssoAffaireOrder.affaire.siret">
-        Société non enregistrée
-      </h3>
-    </div>
-    <p class="mb-0">{{selectedAssoAffaireOrder.affaire.address}}<br>{{selectedAssoAffaireOrder.affaire.postalCode}}
-      {{selectedAssoAffaireOrder.affaire.city?selectedAssoAffaireOrder.affaire.city.label:""}}<br></p>
-    <p class="mb-0 mt-1" *ngIf="selectedAssoAffaireOrder.affaire.competentAuthority">
-      RCS : {{capitalizeName(selectedAssoAffaireOrder.affaire.competentAuthority.label)}}</p>
-    <div class="d-flex align-items-center me-3 mt-2"
-      *ngIf="selectedAssoAffaireOrder.affaire.mails && selectedAssoAffaireOrder.affaire.mails.length>0">
-      <i class="ai-mail me-1"></i>
-      {{getListMails(selectedAssoAffaireOrder.affaire.mails)}}
-    </div>
-    <div class="d-flex align-items-center me-3"
-      *ngIf="selectedAssoAffaireOrder.affaire.phones && selectedAssoAffaireOrder.affaire.phones.length>0">
-      <i class="ai-phone me-1"></i>
-      {{getListPhones(selectedAssoAffaireOrder.affaire.phones)}}
-    </div>
-    <div class="d-flex align-items-center me-3 mt-2" *ngIf="selectedAssoAffaireOrder.affaire.paymentIban">
-      <i class="ai-wallet me-1"></i>
-      {{selectedAssoAffaireOrder.affaire.paymentIban}} / {{selectedAssoAffaireOrder.affaire.paymentBic}}
-    </div>
+    }
+    @if ( quotation && (quotation.quotationStatus.code == QUOTATION_STATUS_OPEN || quotation.quotationStatus.code == QUOTATION_STATUS_SENT_TO_CUSTOMER)) {
+      <a class="btn btn-sm btn-primary me-2" role="button" (click)="cancelDraft()"
+        >
+        <i class="ai-trash ms-n1 me-2"></i>
+        Abandonner
+      </a>
+    }
+    @if ( quotation && quotation.quotationStatus.code == QUOTATION_STATUS_SENT_TO_CUSTOMER && !quotation.responsable?.tiers?.isProvisionalPaymentMandatory) {
+      <a class="btn btn-sm btn-primary" role="button" (click)="openNewQuotationValidationModal()"
+        >
+        <i class="ai-check ms-n1 me-2"></i>
+        Valider le devis
+      </a>
+    }
   </div>
-
-</section>
-<section class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4 mb-4" *ngIf="quotation && selectedAssoAffaireOrder">
-  <div class="card-body">
-    <div class="d-flex align-items-center mt-sm-n1 mb-0">
-      <i class="ai-layer text-primary lead pe-1 me-2"></i>
-      <h2 class="h4 mb-0">Services commandés</h2>
-    </div>
+</div>
+}
+@if (associatedCustomerOrder && quotation && quotation.quotationStatus.code == QUOTATION_STATUS_VALIDATED_BY_CUSTOMER) {
+  <div class="alert alert-info d-flex mb-2" role="alert"
+    >
+    <i class="ai-circle-info fs-xl"></i>
+    <div class="ps-2">Ce devis validé a donné lieu à la commande n°<a style="cursor: pointer; text-decoration: underline;"
+    [routerLink]='"/account/orders/details/" + associatedCustomerOrder.id'>{{associatedCustomerOrder.id}}</a>
   </div>
-
-  <div ngbAccordion [closeOthers]="true" *ngIf="selectedAssoAffaireOrder.services">
-    <div ngbAccordionItem [collapsed]="index!=0"
-      *ngFor="let service of selectedAssoAffaireOrder.services; let index =index"
-      (show)="loadServiceDetails(service,false)">
-      <h2 ngbAccordionHeader>
-        <button ngbAccordionButton class="border-top">
-          <div class="row d-flex justify-content-between align-items-center w-100">
-            <div class="col-md-auto col-md-10">
-              <h4 class="h6 mb-2">
-                <a>{{service.serviceLabelToDisplay}}</a>
-              </h4>
-              <div class="text-body-secondary fs-sm">
-                <span class="badge bg-info bg-opacity-10 text-info fs-xs">{{service.serviceStatus}}</span>
-              </div>
-            </div>
-            <div class="col-md-auto col" *ngIf="service.confrereLabel">
-              <div class="fs-sm text-body-secondary">Annonce publiée sur {{service.confrereLabel}}</div>
-              <!-- TODO : ajouter le lien vers le SPEL jss ou autre-->
-            </div>
-            <div class="col-md-auto col justify-content-end d-flex">
-              <div class="text-body-secondary fs-sm">
-                {{service.serviceTotalPrice | currency:'EUR' }}
-              </div>
-            </div>
-          </div>
+</div>
+}
+@if (quotation && quotation.quotationStatus && quotation.quotationStatus.code == QUOTATION_STATUS_SENT_TO_CUSTOMER && isDepositPaymentMandatoryForQuotation) {
+  <div class="alert alert-danger d-flex  flex-column flex-md-row align-items-center mb-0 mb-2" role="alert"
+    >
+    <i class="ai-circle-info fs-xl"></i>
+    <div class="ps-2">Payez votre acompte pour lancer le traitement de votre commande !</div>
+    <a class="btn btn-sm btn-primary  mt-3 mt-md-0 ms-4" [routerLink]=' "/account/quotation/pay/" + quotation.id'>
+      <i class="ai-cart ms-n1 me-2"></i>
+      <span>Payer l'acompte</span>
+    </a>
+  </div>
+}
+@if (quotation && quotationAssoAffaireOrders && quotationAssoAffaireOrders.length>1 && selectedAssoAffaireOrder) {
+  <div class="d-flex flex-column flex-md-row align-items-center mb-4"
+    >
+    <div class="ms-auto">
+      <div ngbDropdown class="btn-group dropdown" style="margin-right: 10px;">
+        <button type="button" class="btn btn-secondary dropdown-toggle" ngbDropdownToggle aria-haspopup="true"
+          aria-expanded="false">
+          <i class="ai-briefcase me-2"></i>
+          Affaire :
+          {{capitalizeName(selectedAssoAffaireOrder.affaire.denomination?selectedAssoAffaireOrder.affaire.denomination:(selectedAssoAffaireOrder.affaire.firstname
+          +"
+          "+selectedAssoAffaireOrder.affaire.lastname))}}{{selectedAssoAffaireOrder.affaire.city?(" -
+          "+capitalizeName(selectedAssoAffaireOrder.affaire.city.label)):""}}
         </button>
-      </h2>
-      <div ngbAccordionCollapse>
-        <div ngbAccordionBody>
-          <ng-template>
-            <ul ngbNav #nav="ngbNav" [activeId]="0" class="nav-tabs  justify-content-center">
-              <li [ngbNavItem]="0" *ngIf="quotation && quotation.description">
-                <button ngbNavLink>Informations complémentaires</button>
-                <ng-template ngbNavContent>
-                  <div>
-                    <label for="text-textarea" class="form-label">Commentaire</label>
-                    <div> <textarea class="form-control" id="text-textarea" [(ngModel)]="quotation.description" rows="5"
-                        disabled="true"></textarea>
-                    </div>
-                  </div>
-                </ng-template>
-              </li>
-              <li [ngbNavItem]="1" *ngIf="service.assoServiceDocuments && service.assoServiceDocuments.length>0">
-                <button ngbNavLink>Déposer des documents</button>
-                <ng-template ngbNavContent>
-                  <div class="alert alert-info d-flex mb-0 mb-2" role="alert" *ngIf="canEditQuotation">
-                    <i class="ai-circle-info fs-xl"></i>
-                    <div class="ps-2">Vous pouvez téléverser ci-dessous les documents nécessaires au traitement du
-                      service</div>
-                  </div>
-                  <h5 class="pt-3">Pièces obligatoires</h5>
-                  <div class="list-group">
-                    <ng-container *ngFor="let assoServiceDocument of service.assoServiceDocuments;let index = index">
-                      <div class="list-group-item list-group-item-action flex-column align-items-start py-3 "
-                        [ngClass]="{'border-top-1':index>0}" style="border-width: 2px;"
-                        *ngIf="assoServiceDocument.isMandatory">
-                        <div class="d-flex flex-wrap w-100 justify-content-between">
-                          <h6>{{assoServiceDocument.typeDocument.customLabel}}</h6>
-                        </div>
-                        <p class="fs-sm  "
-                          *ngIf="assoServiceDocument.formalisteComment && assoServiceDocument.formalisteComment.length>0">
-                          {{assoServiceDocument.formalisteComment}}</p>
-                        <div class="mb-2 mb-md-3 row  " *ngIf="canEditQuotation">
-                          <div class="col-md-12">
-                            <single-upload [entity]="assoServiceDocument" forcedFileExtension="PDF"
-                              (endOfUpload)="updateAssoServiceDocument(assoServiceDocument)"
-                              [entityType]="ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType" [isDirectUpload]="true"
-                              [attachmentType]="assoServiceDocument.typeDocument.attachmentType"
-                              [typeDocument]="assoServiceDocument.typeDocument"></single-upload>
-                          </div>
-                        </div>
-                        <div class="table-responsive"
-                          *ngIf="assoServiceDocument.attachments && assoServiceDocument.attachments.length>0">
-                          <table class="table table-hover mb-0">
-                            <thead>
-                              <tr>
-                                <th style="width: 5%;">#</th>
-                                <th>Nom</th>
-                                <th class="d-none d-md-table-cell" style="width: 20%;">Type</th>
-                                <th class="d-none d-lg-table-cell" style="width: 20%;">Date de dépôt</th>
-                                <th style="width: 10%;"></th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr *ngFor="let attachment of assoServiceDocument.attachments; let i = index">
-                                <th scope="row">{{i + 1}}</th>
-                                <td class="text-wrap" style="min-width: 150px;">{{attachment.description}}</td>
-                                <td class="d-none d-md-table-cell">{{attachment.attachmentType.label}}</td>
-                                <td class="d-none d-lg-table-cell">{{attachment.creatDateTime | date:'dd/MM/yyyy'}}</td>
-                                <td>
-                                  <button type="button" class="btn btn-secondary btn-icon btn-sm"
-                                    aria-label="Télécharger" placement="right" ngbTooltip="Télécharger"
-                                    (click)="downloadAttachment(attachment)">
-                                    <i class="ai-download"></i>
-                                  </button>
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    </ng-container>
-                    <div class="text-center pt-3" *ngIf="!dislayAlreadyFilledAttachment">
-                      <i class="ai-circle-plus text-info small text-decoration-none mx-1"></i>
-                      <a class="text-info small text-decoration-none"
-                        (click)="toggleDislayAlreadyFilledAttachment()">Voir les pièces déjà renseignées</a>
-                    </div>
-                    <div class="text-center pt-3" *ngIf="dislayAlreadyFilledAttachment">
-                      <i class="ai-circle-minus text-info small text-decoration-none mx-1"></i>
-                      <a class="text-info small text-decoration-none"
-                        (click)="toggleDislayAlreadyFilledAttachment()">Masquer les pièces déjà renseignées</a>
-                    </div>
-                  </div>
-                  <h5 class="pt-3">Pièces optionnelles</h5>
-                  <div class="list-group">
-                    <ng-container *ngFor="let assoServiceDocument of service.assoServiceDocuments;let index = index">
-                      <div class="list-group-item list-group-item-action flex-column align-items-start py-3 "
-                        [ngClass]="{'border-top-1':index>0}" style="border-width: 2px;"
-                        *ngIf="!assoServiceDocument.isMandatory">
-                        <div class="d-flex flex-wrap w-100 justify-content-between">
-                          <h6>{{assoServiceDocument.typeDocument.customLabel}}</h6>
-                        </div>
-                        <p class="fs-sm  "
-                          *ngIf="assoServiceDocument.formalisteComment && assoServiceDocument.formalisteComment.length>0">
-                          {{assoServiceDocument.formalisteComment}}</p>
-                        <div class="mb-2 mb-md-3 row  " *ngIf="canEditQuotation">
-                          <div class="col-md-12">
-                            <single-upload [entity]="assoServiceDocument" forcedFileExtension="PDF"
-                              (endOfUpload)="updateAssoServiceDocument(assoServiceDocument)"
-                              [entityType]="ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType" [isDirectUpload]="true"
-                              [attachmentType]="assoServiceDocument.typeDocument.attachmentType"
-                              [typeDocument]="assoServiceDocument.typeDocument"></single-upload>
-                          </div>
-                        </div>
-                        <div class="table-responsive"
-                          *ngIf="assoServiceDocument.attachments && assoServiceDocument.attachments.length>0">
-                          <table class="table table-hover mb-0">
-                            <thead>
-                              <tr>
-                                <th style="width: 5%;">#</th>
-                                <th>Nom</th>
-                                <th class="d-none d-md-table-cell" style="width: 20%;">Type</th>
-                                <th class="d-none d-lg-table-cell" style="width: 20%;">Date de dépôt</th>
-                                <th style="width: 10%;"></th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr *ngFor="let attachment of assoServiceDocument.attachments; let i = index">
-                                <th scope="row">{{i + 1}}</th>
-                                <td class="text-wrap" style="min-width: 150px;">{{attachment.description}}</td>
-                                <td class="d-none d-md-table-cell">{{attachment.attachmentType.label}}</td>
-                                <td class="d-none d-lg-table-cell">{{attachment.creatDateTime | date:'dd/MM/yyyy'}}</td>
-                                <td>
-                                  <button type="button" class="btn btn-secondary btn-icon btn-sm"
-                                    aria-label="Télécharger" placement="right" ngbTooltip="Télécharger"
-                                    (click)="downloadAttachment(attachment)">
-                                    <i class="ai-download"></i>
-                                  </button>
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    </ng-container>
-                    <div class="text-center pt-3" *ngIf="!dislayAlreadyFilledAttachment">
-                      <i class="ai-circle-plus text-info small text-decoration-none mx-1"></i>
-                      <a class="text-info small text-decoration-none"
-                        (click)="toggleDislayAlreadyFilledAttachment()">Voir les pièces déjà renseignées</a>
-                    </div>
-                    <div class="text-center pt-3" *ngIf="dislayAlreadyFilledAttachment">
-                      <i class="ai-circle-minus text-info small text-decoration-none mx-1"></i>
-                      <a class="text-info small text-decoration-none"
-                        (click)="toggleDislayAlreadyFilledAttachment()">Masquer les pièces déjà renseignées</a>
-                    </div>
-                  </div>
-                </ng-template>
-              </li>
-              <li [ngbNavItem]="2" *ngIf=" service.assoServiceFieldTypes && service.assoServiceFieldTypes.length>0">
-                <button ngbNavLink>Indiquer des informations</button>
-                <ng-template ngbNavContent>
-                  <div class="alert alert-info d-flex mb-2" role="alert">
-                    <i class="ai-circle-info fs-xl"></i>
-                    <div class="ps-2">Vous pouvez renseigner ci-dessous les informations complémentaires nécessaires au
-                      traitement du service</div>
-                  </div>
-                  <div *ngFor="let assoServiceFieldType of service.assoServiceFieldTypes; let i = index">
-                    <div class="mb-3" *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_TEXT">
-                      <label for="text-input" class="form-label">{{assoServiceFieldType.serviceFieldType.label}}</label>
-                      <div> <input class="form-control" id="text-input" [(ngModel)]="assoServiceFieldType.stringValue"
-                          maxLength="250" />
-                      </div>
-                    </div>
-                    <div class="mb-3"
-                      *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_TEXTAREA">
-                      <label for="text-textarea"
-                        class="form-label">{{assoServiceFieldType.serviceFieldType.label}}</label>
-                      <div> <textarea class="form-control" id="text-textarea"
-                          [(ngModel)]="assoServiceFieldType.textAreaValue" rows="5"></textarea>
-                      </div>
-                    </div>
-                    <div class="mb-3" *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_DATE">
-                      <label for="text-date" class="form-label">{{assoServiceFieldType.serviceFieldType.label}}</label>
-                      <div> <input class="form-control" id="text-date" type="date"
-                          [(ngModel)]="assoServiceFieldType.dateValue" />
-                      </div>
-                    </div>
-                    <div class="mb-3"
-                      *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_INTEGER">
-                      <label for="text-integer"
-                        class="form-label">{{assoServiceFieldType.serviceFieldType.label}}</label>
-                      <div> <input class="form-control" id="integer" type="number"
-                          [(ngModel)]="assoServiceFieldType.integerValue" />
-                      </div>
-                    </div>
-                    <div class="mb-3" *ngIf="assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_SELECT">
-                      <label for="text-select"
-                        class="form-label">{{assoServiceFieldType.serviceFieldType.label}}</label>
-                      <div>
-                        <select id="text-select" class="form-select form-select-lg" [compareWith]="compareWithId"
-                          [(ngModel)]="assoServiceFieldType.selectValue">
-                          <option
-                            *ngFor="let option of assoServiceFieldType.serviceFieldType.serviceFieldTypePossibleValues"
-                            [ngValue]="option">
-                            {{option.value}}</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="text-center pt-1 pt-sm-2" *ngIf="canEditQuotation">
-                    <div class="btn-group   " role="group" aria-label="Outline button group">
-                      <button type="button" class="btn btn-primary"
-                        (click)="saveFieldsValue(service)">Enregistrer</button>
-                    </div>
-                  </div>
-                </ng-template>
-              </li>
-
-              <li [ngbNavItem]="3"
-                *ngIf="quotationAttachments && quotationAttachments[service.id] && quotationAttachments[service.id].length>0">
-                <button ngbNavLink>Documents disponibles <span class="badge bg-success"
-                    style="margin-left: 10px;"></span></button>
-                <ng-template ngbNavContent>
-                  <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                      <thead>
-                        <tr>
-                          <th style="width: 5%;">#</th>
-                          <th>Nom</th>
-                          <th class="d-none d-md-table-cell" style="width: 20%;">Type</th>
-                          <th class="d-none d-lg-table-cell" style="width: 20%;">Date de dépôt</th>
-                          <th style="width: 10%;"></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr *ngFor="let attachment of quotationAttachments[service.id]; let i = index">
-                          <th scope="row">{{i + 1}}</th>
-                          <td class="text-wrap" style="min-width: 150px;">{{attachment.description}}</td>
-                          <td class="d-none d-md-table-cell">{{attachment.attachmentType.label}}</td>
-                          <td class="d-none d-lg-table-cell">{{attachment.creatDateTime | date:'dd/MM/yyyy'}}</td>
-                          <td>
-                            <button type="button" class="btn btn-secondary btn-icon btn-sm" aria-label="Télécharger"
-                              placement="right" ngbTooltip="Télécharger" (click)="downloadAttachment(attachment)">
-                              <i class="ai-download"></i>
-                            </button>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </ng-template>
-              </li>
-            </ul>
-            <div [ngbNavOutlet]="nav" class="mt-2"></div>
-          </ng-template>
+        <div ngbDropdownMenu class="dropdown-menu my-1">
+          @for (asso of quotationAssoAffaireOrders; track asso) {
+            <label class=" dropdown-item">
+              <a class="dropdown-item" style="cursor: pointer;" (click)="changeAffaire(asso) ">
+                {{capitalizeName(asso.affaire.denomination?asso.affaire.denomination:(asso.affaire.firstname
+                +"
+                "+asso.affaire.lastname))}}{{asso.affaire.city?(" -
+                "+capitalizeName(asso.affaire.city.label)):""}}
+              </a>
+            </label>
+          }
         </div>
       </div>
     </div>
   </div>
+}
+@if (quotation && selectedAssoAffaireOrder) {
+  <section class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4 mb-4">
+    <div class="card-body">
+      <div class="d-flex flex-column flex-md-row align-items-center mt-sm-n1 pb-4 mb-0 mb-lg-1 mb-xl-3">
+        <i class="ai-briefcase text-primary lead pe-1 me-2"></i>
+        <h2 class="h4 mb-0">
+          Affaire :
+          {{capitalizeName(selectedAssoAffaireOrder.affaire.denomination?selectedAssoAffaireOrder.affaire.denomination:(selectedAssoAffaireOrder.affaire.firstname
+        +" "+selectedAssoAffaireOrder.affaire.lastname))}} </h2>
+        @if ((!selectedAssoAffaireOrder.affaire.paymentIban || !selectedAssoAffaireOrder.affaire.paymentBic || !selectedAssoAffaireOrder.affaire.mails || selectedAssoAffaireOrder.affaire.mails.length==0) && invoiceSummary && invoiceSummary.billingLabelType && invoiceSummary.billingLabelType.id == billingLabelTypeCodeAffaire.id ) {
+          <a class="btn btn-sm  ms-auto btn-danger" role="button"
+            [routerLink]='"/account/affaire/edit/quotation/" + selectedAssoAffaireOrder.affaire.id + "/" + this.quotation.id'
+            >
+            <i class="ai-edit ms-n1 me-2"></i>
+            Indiquer @if ((!selectedAssoAffaireOrder.affaire.paymentIban || !selectedAssoAffaireOrder.affaire.paymentBic)) {
+            <span
+            >&nbsp;l'IBAN</span>
+          }
+          @if ((!selectedAssoAffaireOrder.affaire.paymentIban || !selectedAssoAffaireOrder.affaire.paymentBic) && (!selectedAssoAffaireOrder.affaire.mails || selectedAssoAffaireOrder.affaire.mails.length==0)) {
+            <span
+            >&nbsp;et</span>
+          }
+          @if ((!selectedAssoAffaireOrder.affaire.mails || selectedAssoAffaireOrder.affaire.mails.length==0)) {
+            <span
+              >&nbsp;le
+            mail</span>
+          }
+        </a>
+      } @else {
+        <a class="btn btn-sm  mt-3 mt-md-0 ms-md-auto btn-secondary" role="button"
+          [routerLink]='"/account/affaire/edit/quotation/" + selectedAssoAffaireOrder.affaire.id + "/" + this.quotation.id'>
+          <i class="ai-edit ms-n1 me-2"></i>
+          Modifier
+        </a>
+      }
+      <ng-template #just_edit_affaire> <a class="btn btn-sm  mt-3 mt-md-0 ms-md-auto btn-secondary" role="button"
+        [routerLink]='"/account/affaire/edit/quotation/" + selectedAssoAffaireOrder.affaire.id + "/" + this.quotation.id'>
+        <i class="ai-edit ms-n1 me-2"></i>
+        Modifier
+      </a></ng-template>
+    </div>
+    <div class="d-flex align-items-center pb-1 mb-2">
+      @if (selectedAssoAffaireOrder.affaire.siret) {
+        <h3 class="h6 mb-0 me-3">
+          {{selectedAssoAffaireOrder.affaire.legalForm?selectedAssoAffaireOrder.affaire.legalForm.label:""}} -
+        {{selectedAssoAffaireOrder.affaire.siret }}</h3>
+      }
+      @if (!selectedAssoAffaireOrder.affaire.siret) {
+        <h3 class="h6 mb-0 me-3">
+          Société non enregistrée
+        </h3>
+      }
+    </div>
+    <p class="mb-0">{{selectedAssoAffaireOrder.affaire.address}}<br>{{selectedAssoAffaireOrder.affaire.postalCode}}
+      {{selectedAssoAffaireOrder.affaire.city?selectedAssoAffaireOrder.affaire.city.label:""}}<br></p>
+      @if (selectedAssoAffaireOrder.affaire.competentAuthority) {
+        <p class="mb-0 mt-1">
+        RCS : {{capitalizeName(selectedAssoAffaireOrder.affaire.competentAuthority.label)}}</p>
+      }
+      @if (selectedAssoAffaireOrder.affaire.mails && selectedAssoAffaireOrder.affaire.mails.length>0) {
+        <div class="d-flex align-items-center me-3 mt-2"
+          >
+          <i class="ai-mail me-1"></i>
+          {{getListMails(selectedAssoAffaireOrder.affaire.mails)}}
+        </div>
+      }
+      @if (selectedAssoAffaireOrder.affaire.phones && selectedAssoAffaireOrder.affaire.phones.length>0) {
+        <div class="d-flex align-items-center me-3"
+          >
+          <i class="ai-phone me-1"></i>
+          {{getListPhones(selectedAssoAffaireOrder.affaire.phones)}}
+        </div>
+      }
+      @if (selectedAssoAffaireOrder.affaire.paymentIban) {
+        <div class="d-flex align-items-center me-3 mt-2">
+          <i class="ai-wallet me-1"></i>
+          {{selectedAssoAffaireOrder.affaire.paymentIban}} / {{selectedAssoAffaireOrder.affaire.paymentBic}}
+        </div>
+      }
+    </div>
+  </section>
+}
+@if (quotation && selectedAssoAffaireOrder) {
+  <section class="card border-0 py-1 p-md-2 p-xl-3 p-xxl-4 mb-4">
+    <div class="card-body">
+      <div class="d-flex align-items-center mt-sm-n1 mb-0">
+        <i class="ai-layer text-primary lead pe-1 me-2"></i>
+        <h2 class="h4 mb-0">Services commandés</h2>
+      </div>
+    </div>
+    @if (selectedAssoAffaireOrder.services) {
+      <div ngbAccordion [closeOthers]="true">
+        @for (service of selectedAssoAffaireOrder.services; track service; let index = $index) {
+          <div ngbAccordionItem [collapsed]="index!=0"
+            (show)="loadServiceDetails(service,false)">
+            <h2 ngbAccordionHeader>
+              <button ngbAccordionButton class="border-top">
+                <div class="row d-flex justify-content-between align-items-center w-100">
+                  <div class="col-md-auto col-md-10">
+                    <h4 class="h6 mb-2">
+                      <a>{{service.serviceLabelToDisplay}}</a>
+                    </h4>
+                    <div class="text-body-secondary fs-sm">
+                      <span class="badge bg-info bg-opacity-10 text-info fs-xs">{{service.serviceStatus}}</span>
+                    </div>
+                  </div>
+                  @if (service.confrereLabel) {
+                    <div class="col-md-auto col">
+                      <div class="fs-sm text-body-secondary">Annonce publiée sur {{service.confrereLabel}}</div>
+                      <!-- TODO : ajouter le lien vers le SPEL jss ou autre-->
+                    </div>
+                  }
+                  <div class="col-md-auto col justify-content-end d-flex">
+                    <div class="text-body-secondary fs-sm">
+                      {{service.serviceTotalPrice | currency:'EUR' }}
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </h2>
+            <div ngbAccordionCollapse>
+              <div ngbAccordionBody>
+                <ng-template>
+                  <ul ngbNav #nav="ngbNav" [activeId]="0" class="nav-tabs  justify-content-center">
+                    @if (quotation && quotation.description) {
+                      <li [ngbNavItem]="0">
+                        <button ngbNavLink>Informations complémentaires</button>
+                        <ng-template ngbNavContent>
+                          <div>
+                            <label for="text-textarea" class="form-label">Commentaire</label>
+                            <div> <textarea class="form-control" id="text-textarea" [(ngModel)]="quotation.description" rows="5"
+                            disabled="true"></textarea>
+                          </div>
+                        </div>
+                      </ng-template>
+                    </li>
+                  }
+                  @if (service.assoServiceDocuments && service.assoServiceDocuments.length>0) {
+                    <li [ngbNavItem]="1">
+                      <button ngbNavLink>Déposer des documents</button>
+                      <ng-template ngbNavContent>
+                        @if (canEditQuotation) {
+                          <div class="alert alert-info d-flex mb-0 mb-2" role="alert">
+                            <i class="ai-circle-info fs-xl"></i>
+                            <div class="ps-2">Vous pouvez téléverser ci-dessous les documents nécessaires au traitement du
+                            service</div>
+                          </div>
+                        }
+                        <h5 class="pt-3">Pièces obligatoires</h5>
+                        <div class="list-group">
+                          @for (assoServiceDocument of service.assoServiceDocuments; track assoServiceDocument; let index = $index) {
+                            @if (assoServiceDocument.isMandatory) {
+                              <div class="list-group-item list-group-item-action flex-column align-items-start py-3 "
+                                [ngClass]="{'border-top-1':index>0}" style="border-width: 2px;"
+                                >
+                                <div class="d-flex flex-wrap w-100 justify-content-between">
+                                  <h6>{{assoServiceDocument.typeDocument.customLabel}}</h6>
+                                </div>
+                                @if (assoServiceDocument.formalisteComment && assoServiceDocument.formalisteComment.length>0) {
+                                  <p class="fs-sm  "
+                                    >
+                                  {{assoServiceDocument.formalisteComment}}</p>
+                                }
+                                @if (canEditQuotation) {
+                                  <div class="mb-2 mb-md-3 row  ">
+                                    <div class="col-md-12">
+                                      <single-upload [entity]="assoServiceDocument" forcedFileExtension="PDF"
+                                        (endOfUpload)="updateAssoServiceDocument(assoServiceDocument)"
+                                        [entityType]="ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType" [isDirectUpload]="true"
+                                        [attachmentType]="assoServiceDocument.typeDocument.attachmentType"
+                                      [typeDocument]="assoServiceDocument.typeDocument"></single-upload>
+                                    </div>
+                                  </div>
+                                }
+                                @if (assoServiceDocument.attachments && assoServiceDocument.attachments.length>0) {
+                                  <div class="table-responsive"
+                                    >
+                                    <table class="table table-hover mb-0">
+                                      <thead>
+                                        <tr>
+                                          <th style="width: 5%;">#</th>
+                                          <th>Nom</th>
+                                          <th class="d-none d-md-table-cell" style="width: 20%;">Type</th>
+                                          <th class="d-none d-lg-table-cell" style="width: 20%;">Date de dépôt</th>
+                                          <th style="width: 10%;"></th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        @for (attachment of assoServiceDocument.attachments; track attachment; let i = $index) {
+                                          <tr>
+                                            <th scope="row">{{i + 1}}</th>
+                                            <td class="text-wrap" style="min-width: 150px;">{{attachment.description}}</td>
+                                            <td class="d-none d-md-table-cell">{{attachment.attachmentType.label}}</td>
+                                            <td class="d-none d-lg-table-cell">{{attachment.creatDateTime | date:'dd/MM/yyyy'}}</td>
+                                            <td>
+                                              <button type="button" class="btn btn-secondary btn-icon btn-sm"
+                                                aria-label="Télécharger" placement="right" ngbTooltip="Télécharger"
+                                                (click)="downloadAttachment(attachment)">
+                                                <i class="ai-download"></i>
+                                              </button>
+                                            </td>
+                                          </tr>
+                                        }
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                }
+                              </div>
+                            }
+                          }
+                          @if (!dislayAlreadyFilledAttachment) {
+                            <div class="text-center pt-3">
+                              <i class="ai-circle-plus text-info small text-decoration-none mx-1"></i>
+                              <a class="text-info small text-decoration-none"
+                              (click)="toggleDislayAlreadyFilledAttachment()">Voir les pièces déjà renseignées</a>
+                            </div>
+                          }
+                          @if (dislayAlreadyFilledAttachment) {
+                            <div class="text-center pt-3">
+                              <i class="ai-circle-minus text-info small text-decoration-none mx-1"></i>
+                              <a class="text-info small text-decoration-none"
+                              (click)="toggleDislayAlreadyFilledAttachment()">Masquer les pièces déjà renseignées</a>
+                            </div>
+                          }
+                        </div>
+                        <h5 class="pt-3">Pièces optionnelles</h5>
+                        <div class="list-group">
+                          @for (assoServiceDocument of service.assoServiceDocuments; track assoServiceDocument; let index = $index) {
+                            @if (!assoServiceDocument.isMandatory) {
+                              <div class="list-group-item list-group-item-action flex-column align-items-start py-3 "
+                                [ngClass]="{'border-top-1':index>0}" style="border-width: 2px;"
+                                >
+                                <div class="d-flex flex-wrap w-100 justify-content-between">
+                                  <h6>{{assoServiceDocument.typeDocument.customLabel}}</h6>
+                                </div>
+                                @if (assoServiceDocument.formalisteComment && assoServiceDocument.formalisteComment.length>0) {
+                                  <p class="fs-sm  "
+                                    >
+                                  {{assoServiceDocument.formalisteComment}}</p>
+                                }
+                                @if (canEditQuotation) {
+                                  <div class="mb-2 mb-md-3 row  ">
+                                    <div class="col-md-12">
+                                      <single-upload [entity]="assoServiceDocument" forcedFileExtension="PDF"
+                                        (endOfUpload)="updateAssoServiceDocument(assoServiceDocument)"
+                                        [entityType]="ASSO_SERVICE_DOCUMENT_ENTITY_TYPE.entityType" [isDirectUpload]="true"
+                                        [attachmentType]="assoServiceDocument.typeDocument.attachmentType"
+                                      [typeDocument]="assoServiceDocument.typeDocument"></single-upload>
+                                    </div>
+                                  </div>
+                                }
+                                @if (assoServiceDocument.attachments && assoServiceDocument.attachments.length>0) {
+                                  <div class="table-responsive"
+                                    >
+                                    <table class="table table-hover mb-0">
+                                      <thead>
+                                        <tr>
+                                          <th style="width: 5%;">#</th>
+                                          <th>Nom</th>
+                                          <th class="d-none d-md-table-cell" style="width: 20%;">Type</th>
+                                          <th class="d-none d-lg-table-cell" style="width: 20%;">Date de dépôt</th>
+                                          <th style="width: 10%;"></th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        @for (attachment of assoServiceDocument.attachments; track attachment; let i = $index) {
+                                          <tr>
+                                            <th scope="row">{{i + 1}}</th>
+                                            <td class="text-wrap" style="min-width: 150px;">{{attachment.description}}</td>
+                                            <td class="d-none d-md-table-cell">{{attachment.attachmentType.label}}</td>
+                                            <td class="d-none d-lg-table-cell">{{attachment.creatDateTime | date:'dd/MM/yyyy'}}</td>
+                                            <td>
+                                              <button type="button" class="btn btn-secondary btn-icon btn-sm"
+                                                aria-label="Télécharger" placement="right" ngbTooltip="Télécharger"
+                                                (click)="downloadAttachment(attachment)">
+                                                <i class="ai-download"></i>
+                                              </button>
+                                            </td>
+                                          </tr>
+                                        }
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                }
+                              </div>
+                            }
+                          }
+                          @if (!dislayAlreadyFilledAttachment) {
+                            <div class="text-center pt-3">
+                              <i class="ai-circle-plus text-info small text-decoration-none mx-1"></i>
+                              <a class="text-info small text-decoration-none"
+                              (click)="toggleDislayAlreadyFilledAttachment()">Voir les pièces déjà renseignées</a>
+                            </div>
+                          }
+                          @if (dislayAlreadyFilledAttachment) {
+                            <div class="text-center pt-3">
+                              <i class="ai-circle-minus text-info small text-decoration-none mx-1"></i>
+                              <a class="text-info small text-decoration-none"
+                              (click)="toggleDislayAlreadyFilledAttachment()">Masquer les pièces déjà renseignées</a>
+                            </div>
+                          }
+                        </div>
+                      </ng-template>
+                    </li>
+                  }
+                  @if ( service.assoServiceFieldTypes && service.assoServiceFieldTypes.length>0) {
+                    <li [ngbNavItem]="2">
+                      <button ngbNavLink>Indiquer des informations</button>
+                      <ng-template ngbNavContent>
+                        <div class="alert alert-info d-flex mb-2" role="alert">
+                          <i class="ai-circle-info fs-xl"></i>
+                          <div class="ps-2">Vous pouvez renseigner ci-dessous les informations complémentaires nécessaires au
+                          traitement du service</div>
+                        </div>
+                        @for (assoServiceFieldType of service.assoServiceFieldTypes; track assoServiceFieldType; let i = $index) {
+                          <div>
+                            @if (assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_TEXT) {
+                              <div class="mb-3">
+                                <label for="text-input" class="form-label">{{assoServiceFieldType.serviceFieldType.label}}</label>
+                                <div> <input class="form-control" id="text-input" [(ngModel)]="assoServiceFieldType.stringValue"
+                                  maxLength="250" />
+                                </div>
+                              </div>
+                            }
+                            @if (assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_TEXTAREA) {
+                              <div class="mb-3"
+                                >
+                                <label for="text-textarea"
+                                class="form-label">{{assoServiceFieldType.serviceFieldType.label}}</label>
+                                <div> <textarea class="form-control" id="text-textarea"
+                                [(ngModel)]="assoServiceFieldType.textAreaValue" rows="5"></textarea>
+                              </div>
+                            </div>
+                          }
+                          @if (assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_DATE) {
+                            <div class="mb-3">
+                              <label for="text-date" class="form-label">{{assoServiceFieldType.serviceFieldType.label}}</label>
+                              <div> <input class="form-control" id="text-date" type="date"
+                                [(ngModel)]="assoServiceFieldType.dateValue" />
+                              </div>
+                            </div>
+                          }
+                          @if (assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_INTEGER) {
+                            <div class="mb-3"
+                              >
+                              <label for="text-integer"
+                              class="form-label">{{assoServiceFieldType.serviceFieldType.label}}</label>
+                              <div> <input class="form-control" id="integer" type="number"
+                                [(ngModel)]="assoServiceFieldType.integerValue" />
+                              </div>
+                            </div>
+                          }
+                          @if (assoServiceFieldType.serviceFieldType.dataType==SERVICE_FIELD_TYPE_SELECT) {
+                            <div class="mb-3">
+                              <label for="text-select"
+                              class="form-label">{{assoServiceFieldType.serviceFieldType.label}}</label>
+                              <div>
+                                <select id="text-select" class="form-select form-select-lg" [compareWith]="compareWithId"
+                                  [(ngModel)]="assoServiceFieldType.selectValue">
+                                  @for (option of assoServiceFieldType.serviceFieldType.serviceFieldTypePossibleValues; track option) {
+                                    <option
+                                      [ngValue]="option">
+                                    {{option.value}}</option>
+                                  }
+                                </select>
+                              </div>
+                            </div>
+                          }
+                        </div>
+                      }
+                      @if (canEditQuotation) {
+                        <div class="text-center pt-1 pt-sm-2">
+                          <div class="btn-group   " role="group" aria-label="Outline button group">
+                            <button type="button" class="btn btn-primary"
+                            (click)="saveFieldsValue(service)">Enregistrer</button>
+                          </div>
+                        </div>
+                      }
+                    </ng-template>
+                  </li>
+                }
+                @if (quotationAttachments && quotationAttachments[service.id] && quotationAttachments[service.id].length>0) {
+                  <li [ngbNavItem]="3"
+                    >
+                    <button ngbNavLink>Documents disponibles <span class="badge bg-success"
+                    style="margin-left: 10px;"></span></button>
+                    <ng-template ngbNavContent>
+                      <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                          <thead>
+                            <tr>
+                              <th style="width: 5%;">#</th>
+                              <th>Nom</th>
+                              <th class="d-none d-md-table-cell" style="width: 20%;">Type</th>
+                              <th class="d-none d-lg-table-cell" style="width: 20%;">Date de dépôt</th>
+                              <th style="width: 10%;"></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            @for (attachment of quotationAttachments[service.id]; track attachment; let i = $index) {
+                              <tr>
+                                <th scope="row">{{i + 1}}</th>
+                                <td class="text-wrap" style="min-width: 150px;">{{attachment.description}}</td>
+                                <td class="d-none d-md-table-cell">{{attachment.attachmentType.label}}</td>
+                                <td class="d-none d-lg-table-cell">{{attachment.creatDateTime | date:'dd/MM/yyyy'}}</td>
+                                <td>
+                                  <button type="button" class="btn btn-secondary btn-icon btn-sm" aria-label="Télécharger"
+                                    placement="right" ngbTooltip="Télécharger" (click)="downloadAttachment(attachment)">
+                                    <i class="ai-download"></i>
+                                  </button>
+                                </td>
+                              </tr>
+                            }
+                          </tbody>
+                        </table>
+                      </div>
+                    </ng-template>
+                  </li>
+                }
+              </ul>
+              <div [ngbNavOutlet]="nav" class="mt-2"></div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+}
 </section>
+}
 <div class="row row-cols-1 row-cols-md-2 g-4 mb-4">
   <!-- Address -->
   <section class="col">
@@ -412,63 +515,83 @@
         <div class="d-flex flex-column flex-md-row align-items-center mt-sm-n1 pb-4 mb-1 mb-lg-2">
           <i class="ai-map-pin text-primary lead pe-1 me-2"></i>
           <h2 class="h4 mb-0">Adresses</h2>
-          <a class="btn btn-sm btn-secondary mt-3 mt-md-0 ms-md-auto"
-            [routerLink]='"/account/quotation/address/edit/" + quotation.id' *ngIf="canEditQuotation && quotation">
-            <i class="ai-edit ms-n1 me-2"></i>
-            Modifier
-          </a>
+          @if (canEditQuotation && quotation) {
+            <a class="btn btn-sm btn-secondary mt-3 mt-md-0 ms-md-auto"
+              [routerLink]='"/account/quotation/address/edit/" + quotation.id'>
+              <i class="ai-edit ms-n1 me-2"></i>
+              Modifier
+            </a>
+          }
         </div>
         <div class="d-flex align-items-center pb-1 mb-2">
           <h3 class="h6 mb-0 me-3">Libellé de facturation</h3>
         </div>
-        <p class="mb-0" *ngIf="quotationInvoiceLabelResult">
-          {{quotationInvoiceLabelResult.billingLabel}}<br>{{quotationInvoiceLabelResult.billingLabelAddress
-          }}<br>{{quotationInvoiceLabelResult.billingLabelPostalCode }}
-          {{quotationInvoiceLabelResult.billingLabelCity?quotationInvoiceLabelResult.billingLabelCity.label:""}}<span
-            *ngIf="quotationInvoiceLabelResult.commandNumber && quotationInvoiceLabelResult.commandNumber.length>0"><br>Commande
-            {{quotationInvoiceLabelResult.commandNumber }}</span></p>
-        <div class="col-sm-7 col-md-5 mb-4 mb-md-0" *ngIf="!quotationInvoiceLabelResult">
-          <p class="card-text placeholder-glow">
-            <span class="placeholder placeholder-sm col-7 me-2"></span>
-            <span class="placeholder placeholder-sm col-4"></span>
-            <span class="placeholder placeholder-sm col-4"></span>
-          </p>
-        </div>
-        <div class="col-sm-7 col-md-5 mb-4 mb-md-0" *ngIf="!quotationMailComputeResult">
-          <p class="card-text placeholder-glow">
-            <span class="placeholder placeholder-sm col-7 me-2"></span>
-          </p>
-        </div>
-        <div class="text-body-secondary fw-medium d-flex flex-wrap flex-sm-nowrap align-items-center my-1"
-          *ngIf="quotationMailComputeResult">
-          <div class="d-flex align-items-center me-3">
-            <i class="ai-mail me-1"></i>
-            {{getQuotationBillingMailList()}}
+        @if (quotationInvoiceLabelResult) {
+          <p class="mb-0">
+            {{quotationInvoiceLabelResult.billingLabel}}<br>{{quotationInvoiceLabelResult.billingLabelAddress
+            }}<br>{{quotationInvoiceLabelResult.billingLabelPostalCode }}
+            {{quotationInvoiceLabelResult.billingLabelCity?quotationInvoiceLabelResult.billingLabelCity.label:""}}@if (quotationInvoiceLabelResult.commandNumber && quotationInvoiceLabelResult.commandNumber.length>0) {
+            <span
+              ><br>Commande
+            {{quotationInvoiceLabelResult.commandNumber }}</span>
+          }</p>
+        }
+        @if (!quotationInvoiceLabelResult) {
+          <div class="col-sm-7 col-md-5 mb-4 mb-md-0">
+            <p class="card-text placeholder-glow">
+              <span class="placeholder placeholder-sm col-7 me-2"></span>
+              <span class="placeholder placeholder-sm col-4"></span>
+              <span class="placeholder placeholder-sm col-4"></span>
+            </p>
           </div>
-        </div>
+        }
+        @if (!quotationMailComputeResult) {
+          <div class="col-sm-7 col-md-5 mb-4 mb-md-0">
+            <p class="card-text placeholder-glow">
+              <span class="placeholder placeholder-sm col-7 me-2"></span>
+            </p>
+          </div>
+        }
+        @if (quotationMailComputeResult) {
+          <div class="text-body-secondary fw-medium d-flex flex-wrap flex-sm-nowrap align-items-center my-1"
+            >
+            <div class="d-flex align-items-center me-3">
+              <i class="ai-mail me-1"></i>
+              {{getQuotationBillingMailList()}}
+            </div>
+          </div>
+        }
         <div class="d-flex align-items-center pt-4 pb-1 my-2">
           <h3 class="h6 mb-0 me-3">Adresse d'envoi des documents</h3>
         </div>
-        <div class="text-body-secondary fw-medium d-flex flex-wrap flex-sm-nowrap align-iteems-center my-1"
-          *ngIf="quotationDigitalMailComputeResult">
-          <div class="d-flex align-items-center me-3">
-            <i class="ai-mail me-1"></i>
-            {{getQuotationDigitalMailList()}}
+        @if (quotationDigitalMailComputeResult) {
+          <div class="text-body-secondary fw-medium d-flex flex-wrap flex-sm-nowrap align-iteems-center my-1"
+            >
+            <div class="d-flex align-items-center me-3">
+              <i class="ai-mail me-1"></i>
+              {{getQuotationDigitalMailList()}}
+            </div>
           </div>
-        </div>
-        <p class="mb-0" *ngIf="quotationPhysicalMailComputeResult">
-          {{quotationPhysicalMailComputeResult.billingLabel}}<br>{{quotationPhysicalMailComputeResult.billingLabelAddress
-          }}<br>{{quotationPhysicalMailComputeResult.billingLabelPostalCode }}
-          {{quotationPhysicalMailComputeResult.billingLabelCity?quotationPhysicalMailComputeResult.billingLabelCity.label:""}}<span
-            *ngIf="quotationPhysicalMailComputeResult.commandNumber && quotationPhysicalMailComputeResult.commandNumber.length>0"><br>Commande
-            {{quotationPhysicalMailComputeResult.commandNumber }}</span></p>
-        <div class="col-sm-7 col-md-5 mb-4 mb-md-0" *ngIf="!quotationPhysicalMailComputeResult">
-          <p class="card-text placeholder-glow">
-            <span class="placeholder placeholder-sm col-7 me-2"></span>
-            <span class="placeholder placeholder-sm col-4"></span>
-            <span class="placeholder placeholder-sm col-4"></span>
-          </p>
-        </div>
+        }
+        @if (quotationPhysicalMailComputeResult) {
+          <p class="mb-0">
+            {{quotationPhysicalMailComputeResult.billingLabel}}<br>{{quotationPhysicalMailComputeResult.billingLabelAddress
+            }}<br>{{quotationPhysicalMailComputeResult.billingLabelPostalCode }}
+            {{quotationPhysicalMailComputeResult.billingLabelCity?quotationPhysicalMailComputeResult.billingLabelCity.label:""}}@if (quotationPhysicalMailComputeResult.commandNumber && quotationPhysicalMailComputeResult.commandNumber.length>0) {
+            <span
+              ><br>Commande
+            {{quotationPhysicalMailComputeResult.commandNumber }}</span>
+          }</p>
+        }
+        @if (!quotationPhysicalMailComputeResult) {
+          <div class="col-sm-7 col-md-5 mb-4 mb-md-0">
+            <p class="card-text placeholder-glow">
+              <span class="placeholder placeholder-sm col-7 me-2"></span>
+              <span class="placeholder placeholder-sm col-4"></span>
+              <span class="placeholder placeholder-sm col-4"></span>
+            </p>
+          </div>
+        }
       </div>
     </div>
   </section>
@@ -481,147 +604,171 @@
         <div class="d-flex flex-column flex-md-row align-items-center mt-sm-n1 pb-4 mb-1 mb-lg-2">
           <i class="ai-wallet text-primary lead pe-1 me-2"></i>
           <h2 class="h4 mb-0">Facturation</h2>
-          <a class="btn btn-sm btn-secondary mt-3 mt-md-0 ms-md-auto"
-            *ngIf="quotation && invoiceSummary && displayPayButton"
-            [routerLink]='"/account/quotation/pay/" + quotation.id'>
-            <i class="ai-cart ms-n1 me-2"></i>Payer un acompte
-          </a>
-        </div>
-        <div *ngIf="quotation">
-          @for (doc of quotation!.documents; track $index) {
-          <div *ngIf="doc.documentType.code == documentTypeBilling.code">
-            <div class="d-flex align-items-center pt-4 pb-1 my-2">
-              <h3 class="h6 mb-0 me-3">Renseignements administratifs</h3>
-            </div>
-            <div class="mt-4">
-              <div *ngIf="doc.commandNumber" class="align-items-center fs-sm text-dark pb-1 mb-2">
-                <div class="ms-2">
-                  <h6>N° de commande :</h6>
-                </div>
-                <div class="ms-4">
-                  {{doc.commandNumber}}
-                </div>
-              </div>
-              <div *ngIf="doc.externalReference" class="align-items-center fs-sm text-dark pb-1 mb-4 ">
-                <div class="ms-2">
-                  <h6>N° de référence :</h6>
-                </div>
-                <div class="ms-4">
-                  {{doc.externalReference}}
-                </div>
-              </div>
-            </div>
-          </div>
+          @if (quotation && invoiceSummary && displayPayButton) {
+            <a class="btn btn-sm btn-secondary mt-3 mt-md-0 ms-md-auto"
+              [routerLink]='"/account/quotation/pay/" + quotation.id'>
+              <i class="ai-cart ms-n1 me-2"></i>Payer un acompte
+            </a>
           }
         </div>
+        @if (quotation) {
+          <div>
+            @for (doc of quotation!.documents; track $index) {
+              @if (doc.documentType.code == documentTypeBilling.code) {
+                <div>
+                  <div class="d-flex align-items-center pt-4 pb-1 my-2">
+                    <h3 class="h6 mb-0 me-3">Renseignements administratifs</h3>
+                  </div>
+                  <div class="mt-4">
+                    @if (doc.commandNumber) {
+                      <div class="align-items-center fs-sm text-dark pb-1 mb-2">
+                        <div class="ms-2">
+                          <h6>N° de commande :</h6>
+                        </div>
+                        <div class="ms-4">
+                          {{doc.commandNumber}}
+                        </div>
+                      </div>
+                    }
+                    @if (doc.externalReference) {
+                      <div class="align-items-center fs-sm text-dark pb-1 mb-4 ">
+                        <div class="ms-2">
+                          <h6>N° de référence :</h6>
+                        </div>
+                        <div class="ms-4">
+                          {{doc.externalReference}}
+                        </div>
+                      </div>
+                    }
+                  </div>
+                </div>
+              }
+            }
+          </div>
+        }
 
         <div class="d-flex align-items-center pt-2 pb-1 mb-2">
           <h3 class="h6 mb-0 me-3">Montant prévisionnel</h3>
         </div>
-        <div class="col-sm-7 col-md-5 mb-4 mb-md-0" *ngIf="!invoiceSummary">
-          <p class="card-text placeholder-glow">
-            <span class="placeholder placeholder-sm col-7 me-2"></span>
-            <span class="placeholder placeholder-sm col-4"></span>
-            <span class="placeholder placeholder-sm col-4"></span>
-            <span class="placeholder placeholder-sm col-4"></span>
-            <span class="placeholder placeholder-sm col-4"></span>
-          </p>
-        </div>
-        <div class="  mt-4" *ngIf="invoiceSummary">
-          <div class="d-flex align-items-center fs-sm text-dark pb-1 mb-2">
-            <span class="ms-2">Prix HT</span>
-            <span class="ms-auto">{{invoiceSummary.preTaxPriceTotal | currency:'EUR' }}</span>
+        @if (!invoiceSummary) {
+          <div class="col-sm-7 col-md-5 mb-4 mb-md-0">
+            <p class="card-text placeholder-glow">
+              <span class="placeholder placeholder-sm col-7 me-2"></span>
+              <span class="placeholder placeholder-sm col-4"></span>
+              <span class="placeholder placeholder-sm col-4"></span>
+              <span class="placeholder placeholder-sm col-4"></span>
+              <span class="placeholder placeholder-sm col-4"></span>
+            </p>
           </div>
-          <div class="d-flex align-items-center fs-sm text-dark pb-1 mb-2">
-            <span class="ms-2">TVA</span>
-            <span class="ms-auto">{{invoiceSummary.vatTotal| currency:'EUR' }}</span>
+        }
+        @if (invoiceSummary) {
+          <div class="  mt-4">
+            <div class="d-flex align-items-center fs-sm text-dark pb-1 mb-2">
+              <span class="ms-2">Prix HT</span>
+              <span class="ms-auto">{{invoiceSummary.preTaxPriceTotal | currency:'EUR' }}</span>
+            </div>
+            <div class="d-flex align-items-center fs-sm text-dark pb-1 mb-2">
+              <span class="ms-2">TVA</span>
+              <span class="ms-auto">{{invoiceSummary.vatTotal| currency:'EUR' }}</span>
+            </div>
+            @if (invoiceSummary.discountTotal && invoiceSummary.discountTotal>0) {
+              <div class="d-flex align-items-center fs-sm text-dark pb-1 mb-2"
+                >
+                <span class="ms-2">Remise</span>
+                <span class="ms-auto">{{invoiceSummary.discountTotal| currency:'EUR' }}</span>
+              </div>
+            }
+            <div class="d-flex align-items-center fs-sm text-dark pb-1 mb-2">
+              <span class="ms-2">
+                <h6>Prix estimatif</h6>
+              </span>
+              <span class="ms-auto">
+                <h6>{{invoiceSummary.totalPrice| currency:'EUR' }}</h6>
+              </span>
+            </div>
           </div>
-          <div class="d-flex align-items-center fs-sm text-dark pb-1 mb-2"
-            *ngIf="invoiceSummary.discountTotal && invoiceSummary.discountTotal>0">
-            <span class="ms-2">Remise</span>
-            <span class="ms-auto">{{invoiceSummary.discountTotal| currency:'EUR' }}</span>
-          </div>
-          <div class="d-flex align-items-center fs-sm text-dark pb-1 mb-2">
-            <span class="ms-2">
-              <h6>Prix estimatif</h6>
-            </span>
-            <span class="ms-auto">
-              <h6>{{invoiceSummary.totalPrice| currency:'EUR' }}</h6>
-            </span>
-          </div>
-        </div>
+        }
       </div>
     </div>
   </section>
 </div>
-<section class="card border-0  " *ngIf="quotation">
-  <div class="card-body">
-    <div class="d-flex align-items-center mt-sm-n1 mb-0">
-      <i class="ai-message text-primary lead pe-1 me-2"></i>
-      <h2 class="h4 mb-0">Echangez avec notre équipe</h2>
-    </div>
-    <div class="simplebar-mask">
-      <div class="simplebar-offset" style="right: 0px; bottom: 0px;">
-        <div class="simplebar-content-wrapper" tabindex="0" role="region" style="height: auto;  ">
-          <div class="simplebar-content" style="padding: 24px 38px 0px;">
-            <!-- Message -->
-            <div class="ms-auto mb-3" style="max-width: 392px;" *ngIf="comments.length==0">
-              <div class="d-flex align-items-end mb-2">
-                <div class="message-box-end bg-primary text-white"><span class="break-line">Posez votre question
+@if (quotation) {
+  <section class="card border-0  ">
+    <div class="card-body">
+      <div class="d-flex align-items-center mt-sm-n1 mb-0">
+        <i class="ai-message text-primary lead pe-1 me-2"></i>
+        <h2 class="h4 mb-0">Echangez avec notre équipe</h2>
+      </div>
+      <div class="simplebar-mask">
+        <div class="simplebar-offset" style="right: 0px; bottom: 0px;">
+          <div class="simplebar-content-wrapper" tabindex="0" role="region" style="height: auto;  ">
+            <div class="simplebar-content" style="padding: 24px 38px 0px;">
+              <!-- Message -->
+              @if (comments.length==0) {
+                <div class="ms-auto mb-3" style="max-width: 392px;">
+                  <div class="d-flex align-items-end mb-2">
+                    <div class="message-box-end bg-primary text-white"><span class="break-line">Posez votre question
                     ci-dessous !</span></div>
-                <div class="flex-shrink-0 ps-2 ms-1">
-                  <avatar class="avatar-select" [user]="jssEmployee" [size]="40" placement="right"
-                    [ngbTooltip]="jssEmployee.firstname + ' '+jssEmployee.lastname  ">
-                  </avatar>
-                </div>
-              </div>
-              <div class="fs-xs text-body-secondary"> {{currentDate|date:'dd/MM/yyyy HH:mm'}}
-              </div>
-            </div>
-            <div *ngFor="let comment of comments; let i = index">
-              <!--Message sent-->
-              <div class="mb-3" style="max-width: 392px;" *ngIf="!comment.employee || !comment.employee.id">
-                <div class="d-flex align-items-end mb-2">
-                  <div class="flex-shrink-0 pe-2 me-1">
-                    <avatar class="avatar-select" [user]="comment.currentCustomer" [size]="40"></avatar>
+                    <div class="flex-shrink-0 ps-2 ms-1">
+                      <avatar class="avatar-select" [user]="jssEmployee" [size]="40" placement="right"
+                        [ngbTooltip]="jssEmployee.firstname + ' '+jssEmployee.lastname  ">
+                      </avatar>
+                    </div>
                   </div>
-                  <div class="message-box-start text-dark"><span class="break-line"
-                      [innerHTML]="comment.comment | trustHtml"></span></div>
-                </div>
-                <div class="fs-xs text-body-secondary text-end"> {{comment.createdDateTime|date:'dd/MM/yyyy HH:mm'}}
-                </div>
-              </div>
-
-              <!-- Message received -->
-              <div class="ms-auto mb-3" style="max-width: 392px;" *ngIf="comment.employee && comment.employee.id">
-                <div class="d-flex align-items-end mb-2">
-                  <div class="message-box-end bg-primary text-white break-line"><span
-                      [innerHTML]="comment.comment | trustHtml"></span> </div>
-                  <div class="flex-shrink-0 ps-2 ms-1">
-                    <avatar class="avatar-select" [user]="comment.employee" [size]="40" placement="right"
-                      [ngbTooltip]="comment.employee.firstname + ' '+comment.employee.lastname +' - '+comment.employee.title ">
-                    </avatar>
+                  <div class="fs-xs text-body-secondary"> {{currentDate|date:'dd/MM/yyyy HH:mm'}}
                   </div>
                 </div>
-                <div class="fs-xs text-body-secondary"> {{comment.createdDateTime|date:'dd/MM/yyyy HH:mm'}}
+              }
+              @for (comment of comments; track comment; let i = $index) {
+                <div>
+                  <!--Message sent-->
+                  @if (!comment.employee || !comment.employee.id) {
+                    <div class="mb-3" style="max-width: 392px;">
+                      <div class="d-flex align-items-end mb-2">
+                        <div class="flex-shrink-0 pe-2 me-1">
+                          <avatar class="avatar-select" [user]="comment.currentCustomer" [size]="40"></avatar>
+                        </div>
+                        <div class="message-box-start text-dark"><span class="break-line"
+                        [innerHTML]="comment.comment | trustHtml"></span></div>
+                      </div>
+                      <div class="fs-xs text-body-secondary text-end"> {{comment.createdDateTime|date:'dd/MM/yyyy HH:mm'}}
+                      </div>
+                    </div>
+                  }
+                  <!-- Message received -->
+                  @if (comment.employee && comment.employee.id) {
+                    <div class="ms-auto mb-3" style="max-width: 392px;">
+                      <div class="d-flex align-items-end mb-2">
+                        <div class="message-box-end bg-primary text-white break-line"><span
+                        [innerHTML]="comment.comment | trustHtml"></span> </div>
+                        <div class="flex-shrink-0 ps-2 ms-1">
+                          <avatar class="avatar-select" [user]="comment.employee" [size]="40" placement="right"
+                            [ngbTooltip]="comment.employee.firstname + ' '+comment.employee.lastname +' - '+comment.employee.title ">
+                          </avatar>
+                        </div>
+                      </div>
+                      <div class="fs-xs text-body-secondary"> {{comment.createdDateTime|date:'dd/MM/yyyy HH:mm'}}
+                      </div>
+                    </div>
+                  }
                 </div>
-              </div>
+              }
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  <div class="card-footer w-100 border-0 mx-0 px-4">
-    <div class="d-flex flex-column flex-md-row align-items-end border rounded-3 pb-3 pe-3 mx-sm-3">
-      <textarea [(ngModel)]="newComment.comment" class="form-control border-0" rows="3" placeholder="Ecrivez un message"
+    <div class="card-footer w-100 border-0 mx-0 px-4">
+      <div class="d-flex flex-column flex-md-row align-items-end border rounded-3 pb-3 pe-3 mx-sm-3">
+        <textarea [(ngModel)]="newComment.comment" class="form-control border-0" rows="3" placeholder="Ecrivez un message"
         style="resize: none;"></textarea>
-      <div class="nav flex-nowrap align-items-center" id="send-message">
-        <button class="btn btn-sm btn-secondary ms-3" type="button" (click)="addCustomerOrderComment()">Envoyer</button>
+        <div class="nav flex-nowrap align-items-center" id="send-message">
+          <button class="btn btn-sm btn-secondary ms-3" type="button" (click)="addCustomerOrderComment()">Envoyer</button>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
+}
 
 <ng-template #validatedQuotationModal let-modal>
   <div class="modal-header">
@@ -630,12 +777,14 @@
   </div>
   <div class="modal-body">Ce devis est validé, voulez-vous consulter plutôt la commande associée ?
   </div>
-  <div class="modal-footer" *ngIf="associatedCustomerOrder">
-    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Annuler</button>
-    <button type="button" class="btn btn-danger ms-2"
-      [routerLink]='"/account/orders/details/" + associatedCustomerOrder.id' (click)="modal.dismiss()">Voir la
+  @if (associatedCustomerOrder) {
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Annuler</button>
+      <button type="button" class="btn btn-danger ms-2"
+        [routerLink]='"/account/orders/details/" + associatedCustomerOrder.id' (click)="modal.dismiss()">Voir la
       commande</button>
-  </div>
+    </div>
+  }
 </ng-template>
 
 <ng-template #cancelQuotationModal let-modal>
@@ -648,7 +797,7 @@
   <div class="modal-footer">
     <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Annuler</button>
     <button type="button" class="btn btn-danger ms-2"
-      (click)="finalCancelDraft($event );$event.stopPropagation();modal.dismiss()">Abandonner</button>
+    (click)="finalCancelDraft($event );$event.stopPropagation();modal.dismiss()">Abandonner</button>
   </div>
 </ng-template>
 
@@ -662,6 +811,6 @@
   <div class="modal-footer">
     <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Annuler</button>
     <button type="button" class="btn btn-danger ms-2"
-      (click)="sendQuotationValidation($event );$event.stopPropagation();modal.dismiss()">Confirmer</button>
+    (click)="sendQuotationValidation($event );$event.stopPropagation();modal.dismiss()">Confirmer</button>
   </div>
 </ng-template>

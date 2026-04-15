@@ -1,9 +1,13 @@
-<div class="position-relative " *ngIf="form && form.get(propertyName)">
-  <div [formGroup]="form!" class="needs-validation">
-    <label [for]="'fl-text'+uniqueId" *ngIf="isDisplayLabel && label!=null && label!=undefined && label.length>0"
-      class="form-label">{{label}}</label>
-    <input class="form-control form-control" [min]="getDateFormated(minDate)" [max]="getDateFormated(maxDate)"
-      [id]="'fl-text'+uniqueId" (change)="dateChange()" [required]="isMandatory" [formControlName]="propertyName"
-      [placeholder]="label" (blur)="blurForm()" (focus)="focusForm()" type="date">
-  </div>
-</div>
+@if (form && form.get(propertyName)) {
+  <div class="position-relative ">
+    <div [formGroup]="form!" class="needs-validation">
+      @if (isDisplayLabel && label!=null && label!=undefined && label.length>0) {
+        <label [for]="'fl-text'+uniqueId"
+        class="form-label">{{label}}</label>
+      }
+      <input class="form-control form-control" [min]="getDateFormated(minDate)" [max]="getDateFormated(maxDate)"
+        [id]="'fl-text'+uniqueId" (change)="dateChange()" [required]="isMandatory" [formControlName]="propertyName"
+        [placeholder]="label" (blur)="blurForm()" (focus)="focusForm()" type="date">
+      </div>
+    </div>
+  }

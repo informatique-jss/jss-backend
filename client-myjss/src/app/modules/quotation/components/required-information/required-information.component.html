@@ -1,1055 +1,1097 @@
-<div class="container d-flex flex-column min-vh-100 mb-4"
-  [ngClass]="{ 'mb-5 pb-5' : !noticeTemplateDescription || !noticeTemplateDescription.isUsingTemplate}"
-  *ngIf="quotation">
-
-  <section>
-    <p class="sub-title">Sélectionnez une affaire</p>
-
-    <div class="row mb-5">
-      <!-- Show card with ngFor -->
-      <div *ngFor="let asso of quotation.assoAffaireOrders;let indexAsso = index" class="col-12 col-sm-6 col-lg-4 my-2">
-        <div class="white-card card rounded-1 d-flex flex-column h-100 p-4 " *ngIf="asso.affaire"
-          [ngClass]="{'selected': selectedAssoIndex == indexAsso, 'border-tertiary border-2': selectedAssoIndex != indexAsso}"
-          (click)="selectCard(indexAsso, $event)">
-          <div class="row d-flex flex-row align-items-center">
-            <i class="ai-briefcase col-1"></i>
-            <h6 class="col m-0"> {{asso.affaire.siret?(asso.affaire.siret + ' - '):''}}{{
-              asso.affaire.denomination
-              ?asso.affaire.denomination : (asso.affaire.firstname+ ' ' +
-              asso.affaire.lastname) }} - {{asso.affaire.address + ' ' + asso.affaire.city.label }}
-              {{asso.affaire.city.postalCode ? ' '+ asso.affaire.city.postalCode : ''}}</h6>
-          </div>
-
-          <div class="row align-items-center" *ngIf="asso.services">
-            <!-- Pill buttons -->
-            <a *ngFor="let service of asso.services; let indexService = index"
+@if (quotation) {
+  <div class="container d-flex flex-column min-vh-100 mb-4"
+    [ngClass]="{ 'mb-5 pb-5' : !noticeTemplateDescription || !noticeTemplateDescription.isUsingTemplate}"
+    >
+    <section>
+      <p class="sub-title">Sélectionnez une affaire</p>
+      <div class="row mb-5">
+        <!-- Show card with ngFor -->
+        @for (asso of quotation.assoAffaireOrders; track asso; let indexAsso = $index) {
+          <div class="col-12 col-sm-6 col-lg-4 my-2">
+            @if (asso.affaire) {
+              <div class="white-card card rounded-1 d-flex flex-column h-100 p-4 "
+                [ngClass]="{'selected': selectedAssoIndex == indexAsso, 'border-tertiary border-2': selectedAssoIndex != indexAsso}"
+                (click)="selectCard(indexAsso, $event)">
+                <div class="row d-flex flex-row align-items-center">
+                  <i class="ai-briefcase col-1"></i>
+                  <h6 class="col m-0"> {{asso.affaire.siret?(asso.affaire.siret + ' - '):''}}{{
+                    asso.affaire.denomination
+                    ?asso.affaire.denomination : (asso.affaire.firstname+ ' ' +
+                    asso.affaire.lastname) }} - {{asso.affaire.address + ' ' + asso.affaire.city.label }}
+                  {{asso.affaire.city.postalCode ? ' '+ asso.affaire.city.postalCode : ''}}</h6>
+                </div>
+                @if (asso.services) {
+                  <div class="row align-items-center">
+                    <!-- Pill buttons -->
+                    @for (service of asso.services; track service; let indexService = $index) {
+                      <a
               (click)="moveToService(indexService, indexAsso!)" [ngClass]="{
        'btn-secondary': indexAsso == selectedAssoIndex && indexService == selectedServiceIndex,
        'btn-outline-primary': indexAsso != selectedAssoIndex || indexService != selectedServiceIndex
      }" class="btn rounded-pill mt-2 ms-1 mt-md-3 ms-md-0 col-auto pill text-wrap text-break">
-              {{ service.serviceLabelToDisplay }}
-              <i *ngIf="indexAsso == selectedAssoIndex && indexService == selectedServiceIndex"
-                class="ai-circle-arrow-right ms-2"></i>
-            </a>
+                        {{ service.serviceLabelToDisplay }}
+                        @if (indexAsso == selectedAssoIndex && indexService == selectedServiceIndex) {
+                          <i
+                          class="ai-circle-arrow-right ms-2"></i>
+                        }
+                      </a>
+                    }
+                  </div>
+                }
+              </div>
+            }
           </div>
+        }
+      </div>
+    </section>
+    <section>
+      @if (selectedAssoIndex!=null && selectedServiceIndex!=null && quotation.assoAffaireOrders && quotation.assoAffaireOrders[selectedAssoIndex] &&
+        quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex]) {
+        <ul ngbNav #nav="ngbNav" [activeId]="40" class="nav-tabs flex-nowrap border-3 border-secondary"
+          (navChange)=" changeProvisionNoticeTemplateDescription($event)">
+          @for (provision of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].provisions; track provision; let provisionIndex = $index) {
+            @if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_ANNOUNCEMENT && provision.announcement) {
+              <li
+                [ngbNavItem]="getIndexForProvision(provisionIndex, quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].provisions)"
+                >
+                <button ngbNavLink>Annonce légale {{
+                  getNbOfProvisionsAnnouncement(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].provisions)>1
+                  ? provision.order+1 : '' }}
+                </button>
+                <ng-template ngbNavContent>
+                  <div class="quotation-container">
+                    <h6><i class="ai-circle-info me-2"></i>Information</h6>
+                    <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                      @if (!isOnlyAnnouncement) {
+                        <div class="col-md-5">
+                          <label class="col-form-label" for="announcementPublicationDate">Publication souhaitée*</label>
+                          <div class="col">
+                            <select-string [types]="selectionRedaction" [isMandatory]="false" [form]="informationForm"
+                              [propertyName]="'selectionRedaction'+provision.order"
+                              [(model)]="selectedRedaction[selectedServiceIndex][provisionIndex]"
+                              (selectionChange)="changeDoNotGenerateAnnouncement($event, provision)">
+                            </select-string>
+                          </div>
+                        </div>
+                      }
+                      @if (!isDoNotGenerateAnnouncement) {
+                        <div class="col-md-5">
+                          <label class="col col-form-label" for="announcementPublicationDate">Date de publication
+                          souhaitée*</label>
+                          <div class="col">
+                            <generic-date-picker [(model)]="provision.announcement.publicationDate" [form]="informationForm"
+                              [propertyName]="'publicationDate'+provision.order" [isMandatory]="false" [isDisabled]="false"
+                            [minDate]="minDatePublication"></generic-date-picker>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                  <!-- announcement form : Option -->
+                  @if (!isDoNotGenerateAnnouncement) {
+                    <div class="quotation-container mb-2">
+                      <h6><i class="ai-grid me-2"></i>Option</h6>
+                      <div class="row g-4 align-items-center">
+                        <div class="col-12 col-lg-6 form-check form-switch ">
+                          <div class="row align-items-center">
+                            <generic-toggle class="col-auto" [(model)]="provision.isRedactedByJss"
+                              label="Confier la rédaction au JSS" [form]="informationForm"
+                              [propertyName]="'isRedactedByJss'+provision.order" [isDisabled]="false"
+                            (onToggleChange)="changeIsShowNoticeTemplate(false, provision.isRedactedByJss, true, undefined,quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])"></generic-toggle>
+                            <osi-tooltip tootltipCodeToDisplay="MYJSS_QUOTATION_REQUIRED_INFO_WRITE_AL"
+                            class="col-auto mb-1"></osi-tooltip>
+                          </div>
+                        </div>
+                        @if (provision.isRedactedByJss) {
+                          <div class="col-12 col-lg-6 form-check form-switch mt-0 mt-lg-auto">
+                            <generic-toggle [(model)]="provision.announcement.isProofReadingDocument"
+                              label="Recevoir une épreuve de relecture avant publication" [form]="informationForm"
+                            [propertyName]="'isProofReadingDocument'+provision.order" [isDisabled]="false"></generic-toggle>
+                          </div>
+                        }
+                        <div
+                          [hidden]="getPossibleTemplates(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex]) == undefined"
+                          class="row col-12 col-lg-6 form-check form-switch">
+                          <div class="row align-items-center">
+                            <generic-toggle class="col-auto" [(model)]="noticeTemplateDescription!.isUsingTemplate"
+                              label="Utiliser les modèles proposés pour la rédaction" [form]="informationForm"
+                              [propertyName]="'isUsingTemplate'+provision.order" [isDisabled]="false"
+                              (onToggleChange)="changeIsShowNoticeTemplate($event, provision.isRedactedByJss, noticeTemplateDescription!.isUsingTemplate, undefined,quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])"
+                            [isDisabled]="isToggleIsUsingTemplateDisabled(provision, quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])"></generic-toggle>
+                            <osi-tooltip tootltipCodeToDisplay="MYJSS_QUOTATION_REQUIRED_INFO_USE_TEMPLATE"
+                            class="col-auto mb-1"></osi-tooltip>
+                          </div>
+                        </div>
+                        @if (  !provision.isRedactedByJss) {
+                          <div class="row">
+                            <div class="col-auto form-check form-switch ">
+                              <generic-toggle [(model)]="provision.announcement.isReReadByJss" label="Relecture par le JSS"
+                                [form]="informationForm" [propertyName]="'isReReadByJss'+provision.order"
+                              [isDisabled]="false"></generic-toggle>
+                            </div>
+                            <div class="col">
+                              <i class="col ai-circle-info fs-base" style="-webkit-text-stroke: 1px;" placement="right"
+                                ngbTooltip="La relecture s’effectue uniquement les jours ouvrés."
+                              tooltipClass="custom-tooltip"></i>
+                            </div>
+                          </div>
+                        }
+                      </div>
+                      <hr>
+                        <!-- announcement form : text area -->
+                        <div class="row pt-3">
+                          @if (!provision.isRedactedByJss) {
+                            <div class="col-12 row row-cols-4 px-4">
+                              <!-- Département -->
+                              <div class="col-12 col-lg-4 mb-3 align-items-start">
+                                <select-department [(model)]="provision.announcement.department"
+                                  label="Département de publication" [form]="informationForm"
+                                  [propertyName]="'department'+provision.order" [isMandatory]="true"
+                                [isDisabled]="false"></select-department>
+                              </div>
+                              <!-- Rubrique -->
+                              <div class="col-12 col-lg-4 mb-3 align-items-start">
+                                <select-notice-type-family [(model)]="provision.announcement.noticeTypeFamily"
+                                  label="Rubrique de publication" [form]="informationForm"
+                                  [propertyName]="'noticeTypeFamily'+provision.order" [isMandatory]="true"
+                                [isDisabled]="false"></select-notice-type-family>
+                              </div>
+                              <!-- Sous-rubrique -->
+                              @if (provision.announcement.noticeTypeFamily && noticeTypes) {
+                                <div class="col-12 col-lg-4 mb-3 align-items-start"
+                                  >
+                                  <select-multiple-notice-type [(model)]="provision.announcement.noticeTypes"
+                                    label="Sous-rubrique(s) de publication" [form]="informationForm"
+                                    [noticeTypeFamily]="provision.announcement.noticeTypeFamily"
+                                    [propertyName]="'noticeTypes'+provision.order" [isMandatory]="true"
+                                  [isDisabled]="false"></select-multiple-notice-type>
+                                </div>
+                              }
+                            </div>
+                          }
+                          @if ( !provision.isRedactedByJss && (!noticeTemplateDescription || !noticeTemplateDescription.isUsingTemplate)) {
+                            <div
+                              class="col-12 pb-5">
+                              <div class="row align-items-center justify-content-between">
+                                <label for="announcementTextarea" class="form-label col-auto">Texte de l'annonce</label>
+                                <osi-tooltip tootltipCodeToDisplay="MYJSS_QUOTATION_REQUIRED_INFO_FILL_AL_TXT"
+                                class="col-auto"></osi-tooltip>
+                              </div>
+                              <ckeditor id="announcementTextarea" [editor]="ckEditorHeader" [config]="config" [data]="noticeValue"
+                                (ready)="onEditorReady($event, provision)" (change)="onNoticeChange($event, provision)">
+                              </ckeditor>
+                            </div>
+                          }
+                          @if (currentUser &&  !provision.isRedactedByJss && (!noticeTemplateDescription || !noticeTemplateDescription.isUsingTemplate)) {
+                            <div
+                              class="col-12 pb-5 compact-upload-container">
+                              <label class="form-label">Importer un fichier Word pour remplir le champ de texte de
+                              l'annonce</label>
+                              <single-upload [entity]="entityFile" [entityType]="entityType" [isDirectUpload]="false"
+                                #uploadWordFile forcedFileExtension="DOCX"
+                              (fileDropped)="updateNoticeAnnouncement($event, provision)" [fullSize]="false"></single-upload>
+                            </div>
+                          }
+                        </div>
+                        @if (!provision.isRedactedByJss && noticeTemplateDescription
+                          && noticeTemplateDescription.isUsingTemplate
+                          && getPossibleTemplates(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])
+                          && getPossibleTemplates(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])!.length>1) {
+                          <div class="d-flex flex-column flex-md-row flex-sm-wrap align-items-center"
+                            >
+                            <h6 class="w-100 mb-3">
+                              <i class="ai-wallet pe-2"></i>Précisez le modèle souhaité :
+                            </h6>
+                            @for (template of getPossibleTemplates(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex]); track template) {
+                              <div
+                                class="btn btn-outline-secondary m-1 w-100 w-sm-auto btn-wrap btn-service-family"
+                                [class.active]="noticeTemplateDescription && noticeTemplateDescription.selectedTemplate &&  noticeTemplateDescription.selectedTemplate.id == template.id"
+                                (click)="changeIsShowNoticeTemplate(true, provision.isRedactedByJss, true, template ,quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])">
+                              {{template.label}}</div>
+                            }
+                            <osi-tooltip tootltipCodeToDisplay="MYJSS_QUOTATION_REQUIRED_INFO_MULTI_TEMPLATE"
+                            class="col-auto ms-2"></osi-tooltip>
+                          </div>
+                        }
+                        <hr class="border-white" id="option-form-end">
+                      </div>
+                    }
+                  </ng-template>
+                </li>
+              }
+              @if (provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_DOMICILIATION && provision.domiciliation) {
+                <li class="nav-item "
+                  [ngbNavItem]="getIndexForProvision(provisionIndex, quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].provisions)"
+                  >
+                  <button ngbNavLink>Domiciliation</button>
+                  <ng-template ngbNavContent>
+                    <div class="quotation-container">
+                      <h6><i class="ai-home me-2"></i>Domiciliation</h6>
+                      <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                        <div class="col-md-6">
+                          <select-contract-type [(model)]="provision.domiciliation.domiciliationContractType"
+                            label="Type de contrat" [form]="informationForm" propertyName="domiciliationContractType"
+                          [isMandatory]="false" [isDisabled]="false"></select-contract-type>
+                        </div>
+                        <div class="col-md-6">
+                          <select-language [(model)]="provision.domiciliation.language" [form]="informationForm"
+                            [isAutoSelectLanguageFrench]="true" [isDisabled]="false" propertyName="language"
+                          label="Langue de contrat"></select-language>
+                        </div>
+                      </div>
+                      <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                        <div class="col-md-6">
+                          <select-mail-redirection [(model)]="provision.domiciliation.mailRedirectionType"
+                            label="Adresse de redirection" [form]="informationForm" propertyName="mailRedirectionType"
+                          [isMandatory]="false" [isDisabled]="false"></select-mail-redirection>
+                        </div>
+                        <div class="col-md-6">
+                          <select-building-domiciliation [(model)]="provision.domiciliation.buildingDomiciliation"
+                            [isDisabled]="false" label="Adresse de domiciliation" [form]="informationForm"
+                          propertyName="buildingDomiciliation" [isMandatory]="false"></select-building-domiciliation>
+                        </div>
+                      </div>
+                      <!-- Describe adress -->
+                      @if (mustDecribeAdress(provision.domiciliation)) {
+                        <div>
+                          <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                            <div class="col-md-6">
+                              <generic-input [(model)]="provision.domiciliation.address" label="Adresse"
+                                [form]="informationForm" propertyName="address" [isMandatory]="false" [isDisabled]="false"
+                              [maxLength]="60"></generic-input>
+                            </div>
+                            <div class="col-md-6">
+                              <generic-input [(model)]="provision.domiciliation.cedexComplement" label="Complément CEDEX"
+                                [form]="informationForm" propertyName="domCedexComplement" [isMandatory]="false"
+                              [isDisabled]="false" [maxLength]="60"></generic-input>
+                            </div>
+                          </div>
+                          <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                            <div class="col-md-2">
+                              <generic-input [(model)]="provision.domiciliation.postalCode" label="Code postal"
+                                [form]="informationForm" propertyName="domPostalCode" [isMandatory]="false"
+                                (onFormBlur)="findCityForDomiciliation(provision.domiciliation)" [isDisabled]="false"
+                                [maxLength]="10">
+                              </generic-input>
+                            </div>
+                            <div class="col-md-5">
+                              <autocomplete-city [(model)]="provision.domiciliation.city" [form]="informationForm"
+                                [modelCountry]="provision.domiciliation.country" [isMandatory]="false" label="Ville"
+                              propertyName="domAutocompleteCity"></autocomplete-city>
+                            </div>
+                            <div class="col-md-5">
+                              <select-country class="col-md-5" [(model)]="provision.domiciliation.country" label="Pays"
+                                [form]="informationForm" propertyName="domCountry" [isMandatory]="false" [isDisabled]="false">
+                              </select-country>
+                            </div>
+                          </div>
+                          <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                            <div class="col">
+                              <generic-input class="col mt-3" [(model)]="newMailDomiciliation"
+                                label="Adresse(s) mail(s) (entrer pour valider)" [form]="informationForm"
+                                propertyName="newMailsDom" [isMandatory]="false" [isDisabled]="false" type="email"
+                              [icon]="'mail'" (onEnter)="addMailDomiciliation(provision.domiciliation)"></generic-input>
+                              <ul class="list-group mt-1">
+                                @for (mail of provision.domiciliation.mails; track mail) {
+                                  <li class="list-group-item py-0">
+                                    <div class="d-flex flex-wrap w-100">
+                                      <div>
+                                        <a class="nav-link fs-xl p-2"
+                                          (click)="deleteMailDomiciliation(mail, provision.domiciliation)">
+                                          <i class="ai-trash"></i>
+                                        </a>
+                                      </div>
+                                      <div class="mt-auto mb-auto">{{mail.mail}}</div>
+                                    </div>
+                                  </li>
+                                }
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                    <!-------------- Activité ---------------->
+                    <div class="quotation-container">
+                      <h6><i class="ai-briefcase me-2"></i>Activité</h6>
+                      @if (mustDecribeAdresse(provision.domiciliation)) {
+                        <div class="row form-switch justify-content-start p-0 pt-md-2 g-3"
+                          >
+                          <div class="col">
+                            <generic-textarea [(model)]="provision.domiciliation.activityDescription"
+                              label="Activité de la société" [form]="informationForm" propertyName="activityDescription"
+                              [isMandatory]="false" [isDisabled]="false">
+                            </generic-textarea>
+                          </div>
+                        </div>
+                      }
+                      <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                        <div class="col">
+                          <generic-input [(model)]="provision.domiciliation.activityAddress" label="Adresse"
+                            [form]="informationForm" propertyName="activityAddress" [isMandatory]="false" [isDisabled]="false"
+                            [maxLength]="60">
+                          </generic-input>
+                        </div>
+                      </div>
+                      <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                        <div class="col-md-2">
+                          <generic-input [(model)]="provision.domiciliation.activityPostalCode" label="Code postal"
+                            [form]="informationForm" propertyName="domActivityPostalCode" [isMandatory]="false"
+                            (onFormBlur)="findCityForActivityDomiciliation(provision.domiciliation)" [isDisabled]="false"
+                            [maxLength]="10">
+                          </generic-input>
+                        </div>
+                        <div class="col-md-5">
+                          <autocomplete-city [(model)]="provision.domiciliation.activityCity" [form]="informationForm"
+                            [modelCountry]="provision.domiciliation.activityCountry" [isMandatory]="false" label="Ville"
+                          propertyName="domActivityAutocompleteCity"></autocomplete-city>
+                        </div>
+                        <div class="col-md-5">
+                          <select-country class="col-md-5" [(model)]="provision.domiciliation.activityCountry" label="Pays"
+                            [form]="informationForm" propertyName="domActivityCountry" [isMandatory]="false"
+                            [isDisabled]="false">
+                          </select-country>
+                        </div>
+                      </div>
+                      <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                        <div class="col">
+                          <generic-textarea [(model)]="provision.domiciliation.activityDescription"
+                            label="Rédiger toute les informations liées à votre activité" [form]="informationForm"
+                            propertyName="activityDescription" [isMandatory]="false" [isDisabled]="false">
+                          </generic-textarea>
+                        </div>
+                      </div>
+                    </div>
+                    <!-------------- Adresse de conservation des documents comptables ---------------->
+                    <div class="quotation-container">
+                      <h6><i class="ai-briefcase me-2"></i>Adresse de conservation des documents comptables</h6>
+                      <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                        <div class="col">
+                          <generic-input [(model)]="provision.domiciliation.accountingDocumentsConservationAddress"
+                            label="Adresse" [form]="informationForm" propertyName="accountingDocumentsConservationAddress"
+                            [isMandatory]="false" [isDisabled]="false" [maxLength]="60">
+                          </generic-input>
+                        </div>
+                      </div>
+                      <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                        <div class="col">
+                          <generic-input [(model)]="provision.domiciliation.accountingDocumentsConservationCedexComplement"
+                            label="Complément d'adresse (facultatif)" [form]="informationForm"
+                            propertyName="accountingDocumentsConservationCedexComplement" [isMandatory]="false"
+                            [isDisabled]="false" [maxLength]="60">
+                          </generic-input>
+                        </div>
+                      </div>
+                      <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                        <div class="col-md-2">
+                          <generic-input [(model)]="provision.domiciliation.accountingDocumentsConservationPostalCode"
+                            label="Code postal" [form]="informationForm"
+                            propertyName="accountingDocumentsConservationPostalCode" [isMandatory]="false"
+                            (onFormBlur)="findCityForAccountingDomiciliation(provision.domiciliation)" [isDisabled]="false"
+                            [maxLength]="10">
+                          </generic-input>
+                        </div>
+                        <div class="col-md-5">
+                          <autocomplete-city [(model)]="provision.domiciliation.accountingDocumentsConservationCity"
+                            [form]="informationForm"
+                            [modelCountry]="provision.domiciliation.accountingDocumentsConservationCountry"
+                            [isMandatory]="false" label="Ville"
+                          propertyName="accountingDocumentsConservationCity"></autocomplete-city>
+                        </div>
+                        <div class="col-md-5">
+                          <select-country class="col-md-5"
+                            [(model)]="provision.domiciliation.accountingDocumentsConservationCountry" label="Pays"
+                            [form]="informationForm" propertyName="accountingDocumentsConservationCountry"
+                            [isMandatory]="false" [isDisabled]="false">
+                          </select-country>
+                        </div>
+                      </div>
+                    </div>
+                    <!-------------- Représentant légal ---------------->
+                    <div class="quotation-container">
+                      <h6 class="col"><i class="ai-user me-2"></i>Représentant légal</h6>
+                      <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                        <generic-toggle [(model)]="provision.domiciliation.isLegalPerson" label="Personne morale ?"
+                        [form]="informationForm" propertyName="isLegalPerson"></generic-toggle>
+                      </div>
+                      <!-- If not personne morale -->
+                      @if (!provision.domiciliation.isLegalPerson) {
+                        <div>
+                          <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                            <div class="col-md-2">
+                              <select-civility [(model)]="provision.domiciliation.legalGardianCivility" label="Civilité"
+                                [form]="informationForm" propertyName="legalGardianCivility" [isMandatory]="false"
+                                [isDisabled]="false">
+                              </select-civility>
+                            </div>
+                            <div class="col-md-5">
+                              <generic-input [(model)]="provision.domiciliation.legalGardianLastname" label="Nom"
+                                [form]="informationForm" propertyName="legalGardianLastname" [isMandatory]="false"
+                                [isDisabled]="false" [maxLength]="20">
+                              </generic-input>
+                            </div>
+                            <div class="col-md-5">
+                              <generic-input [(model)]="provision.domiciliation.legalGardianFirstname" label="Prénom"
+                                [form]="informationForm" propertyName="legalGardianFirstname" [isMandatory]="false"
+                                [isDisabled]="false" [maxLength]="20">
+                              </generic-input>
+                            </div>
+                          </div>
+                          <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                            <div class="col">
+                              <generic-input [(model)]="provision.domiciliation.legalGardianAddress" label="Adresse"
+                                [form]="informationForm" propertyName="legalGardianAddress" [isMandatory]="false"
+                                [isDisabled]="false" [maxLength]="60">
+                              </generic-input>
+                            </div>
+                          </div>
+                          <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                            <div class="col-md-2">
+                              <generic-input [(model)]="provision.domiciliation.legalGardianPostalCode" label="Code postal"
+                                [form]="informationForm" propertyName="legalGardianPostalCode" [isMandatory]="false"
+                                (onFormBlur)="findCityForLegalGardianDomiciliation(provision.domiciliation)"
+                                [isDisabled]="false" [maxLength]="10">
+                              </generic-input>
+                            </div>
+                            <div class="col-md-5">
+                              <autocomplete-city [(model)]="provision.domiciliation.legalGardianCity" [form]="informationForm"
+                                [modelCountry]="provision.domiciliation.legalGardianCountry" [isMandatory]="false" label="Ville"
+                              propertyName="legalGardianAutocompleteCity"></autocomplete-city>
+                            </div>
+                            <div class="col-md-5">
+                              <select-country class="col-md-5" [(model)]="provision.domiciliation.legalGardianCountry"
+                                label="Pays" [form]="informationForm" propertyName="legalGardianCountry" [isMandatory]="false"
+                                [isDisabled]="false">
+                              </select-country>
+                            </div>
+                          </div>
+                          <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                            <div class="col-md-6">
+                              <generic-input [(model)]="provision.domiciliation.legalGardianJob" label="Fonction"
+                                [form]="informationForm" propertyName="legalGardianJob" [isMandatory]="false"
+                                [isDisabled]="false" [maxLength]="20">
+                              </generic-input>
+                            </div>
+                            <div class="col-md-6">
+                              <generic-input class="col mt-3" [(model)]="newMailLegalGardian"
+                                label="Adresse(s) mail(s) (entrer pour valider)" [form]="informationForm"
+                                propertyName="newMailLegalGardian" [isMandatory]="false" [isDisabled]="false" type="email"
+                              [icon]="'mail'" (onEnter)="addLegalGardianMail(provision.domiciliation)"></generic-input>
+                              <ul class="list-group mt-1">
+                                @for (mail of provision.domiciliation.legalGardianMails; track mail) {
+                                  <li class="list-group-item py-0">
+                                    <div class="d-flex flex-wrap w-100">
+                                      <div>
+                                        <a class="nav-link fs-xl p-2"
+                                          (click)="deleteLegalGardianMail(mail, provision.domiciliation)">
+                                          <i class="ai-trash"></i>
+                                        </a>
+                                      </div>
+                                      <div class="mt-auto mb-auto">{{mail.mail}}</div>
+                                    </div>
+                                  </li>
+                                }
+                              </ul>
+                            </div>
+                          </div>
+                          <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                            <div class="col-md-2">
+                              <generic-date-picker [(model)]="provision.domiciliation.legalGardianBirthdate"
+                                label="Date de naissance" [form]="informationForm" propertyName="legalGardianBirthdate"
+                                [isMandatory]="false" [isDisabled]="false" [maxDate]="getCurrentDate()">
+                              </generic-date-picker>
+                            </div>
+                            <div class="col-md-6">
+                              <generic-input [(model)]="provision.domiciliation.legalGardianPlaceOfBirth"
+                                label="Lieu de naissance" [form]="informationForm" propertyName="legalGardianPlaceOfBirth"
+                                [isMandatory]="false" [isDisabled]="false" [maxLength]="60">
+                              </generic-input>
+                            </div>
+                            <div class="col-md-4">
+                              <generic-input class="col-md-6 mt-0" [(model)]="newPhoneLegalGardian"
+                                label="Téléphone(s) (entrer pour valider)" [form]="informationForm"
+                                propertyName="newPhoneLegalGardian" [isMandatory]="false" [isDisabled]="false" [icon]="'phone'"
+                                [maxLength]="13" (onEnter)="addDomiciliationPhone(provision.domiciliation)">
+                              </generic-input>
+                              <ul class="list-group">
+                                @for (phone of provision.domiciliation.legalGardianPhones; track phone) {
+                                  <li class="list-group-item py-0"
+                                    >
+                                    <div class="d-flex flex-wrap w-100">
+                                      <div>
+                                        <a class="nav-link fs-xl p-2"
+                                          (click)="deletePhoneForDomiciliation(phone, provision.domiciliation)">
+                                          <i class="ai-trash"></i>
+                                        </a>
+                                      </div>
+                                      <div class="mt-auto mb-auto">{{phone.phoneNumber}}</div>
+                                    </div>
+                                  </li>
+                                }
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      }
+                      <!-- If personne morale -->
+                      @if (provision.domiciliation.isLegalPerson) {
+                        <div>
+                          <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                            <div class="col-md-6">
+                              <autocomplete-legal-form [(model)]="provision.domiciliation.legalGardianLegalForm"
+                                [form]="informationForm" label="Forme juridique" [isDisabled]="false"
+                                propertyName="legalGardianLegalForm" [isMandatory]="true">
+                              </autocomplete-legal-form>
+                            </div>
+                            <div class="col-md-6">
+                              <generic-input [(model)]="provision.domiciliation.legalGardianDenomination" label="Dénomination"
+                                [form]="informationForm" propertyName="legalGardianDenomination" [isMandatory]="false"
+                                [isDisabled]="false" [maxLength]="60">
+                              </generic-input>
+                            </div>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  </ng-template>
+                </li>
+              }
+              <!--li class="nav-item " [ngbNavItem]="3" *ngIf="provision.provisionType.code == provisionTypeRbe.code">
+              <button ngbNavLink>Déclaration des Bénéficiares Effectifs de la société</button>
+              <ng-template ngbNavContent>
+                <div *ngFor="let beneficialOwner of modifiedBeneficialOwners; let beIndex = index"
+                  class="quotation-container">
+                  <h6><i class="ai-home me-2"></i>État civil : Bénéficiaire Effectif {{beIndex+1}}</h6>
+                  <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                    <div class="col-md-6">
+                      <generic-date-picker [(model)]="beneficialOwner.creationDate"
+                        label="Date à laquelle la personne est devenue bénéficiaire effectif" [form]="informationForm"
+                        [propertyName]="'beBeneficialOwnerCreationDate'+beIndex" [isMandatory]="false"
+                      [isDisabled]="false"></generic-date-picker>
+                    </div>
+                  </div>
+                  <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                    <div class="col-md-3">
+                      <generic-input [(model)]="beneficialOwner.birthName" label="Nom de naissance"
+                        [form]="informationForm" [propertyName]="'beBirthName'+beIndex" [isMandatory]="false"
+                      [isDisabled]="false"></generic-input>
+                    </div>
+                    <div class="col-md-3">
+                      <generic-input [(model)]="beneficialOwner.usedName" label="Nom d'usage" [form]="informationForm"
+                      [propertyName]="'beUsedName'+beIndex" [isMandatory]="false" [isDisabled]="false"></generic-input>
+                    </div>
+                    <div class="col-md-3">
+                      <generic-input [(model)]="beneficialOwner.firstNames" label="Prénoms" [form]="informationForm"
+                        [propertyName]="'beFirstNames'+beIndex" [isMandatory]="false"
+                      [isDisabled]="false"></generic-input>
+                    </div>
+                    <div class="col-md-3">
+                      <generic-input [(model)]="beneficialOwner.pseudonym" label="Pseudonyme" [form]="informationForm"
+                      [propertyName]="'bePseudonym'+beIndex" [isMandatory]="false" [isDisabled]="false"></generic-input>
+                    </div>
+                  </div>
+                  <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                    <div class="col-md-2">
+                      <generic-date-picker [(model)]="beneficialOwner.birthDate" label="Né le" [form]="informationForm"
+                        [propertyName]="'beBirthDate'+beIndex" [isMandatory]="false"
+                      [isDisabled]="false"></generic-date-picker>
+                    </div>
+                    <div class="col-md-2">
+                      <generic-input [(model)]="beneficialOwner.birthDepartement" label="Numéro de Département"
+                        [form]="informationForm" [propertyName]="'beBirthDepartement'+beIndex" [isMandatory]="false"
+                      [isDisabled]="false"></generic-input>
+                    </div>
+                    <div class="col-md-4">
+                      <generic-input [(model)]="beneficialOwner.birthCity" label="Commune" [form]="informationForm"
+                      [propertyName]="'beBirthCity'+beIndex" [isMandatory]="false" [isDisabled]="false"></generic-input>
+                    </div>
+                    <div class="col-md-2">
+                      <select-country [(model)]="beneficialOwner.birthCountry" label="Pays" [form]="informationForm"
+                        [propertyName]="'beBirthCountry'+beIndex" [isMandatory]="false"
+                      [isDisabled]="false"></select-country>
+                    </div>
+                    <div class="col-md-2">
+                      <select-country [(model)]="beneficialOwner.nationality" label="Nationalité" [form]="informationForm"
+                        [propertyName]="'beNationality'+beIndex" [isMandatory]="false"
+                      [isDisabled]="false"></select-country>
+                    </div>
+                  </div>
+                  <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                    <div class="col-md-6">
+                      <generic-input [(model)]="beneficialOwner.residenceAddress"
+                        label="Domicile (rés., bât., n°, voie, lieu-dit)" [form]="informationForm"
+                        [propertyName]="'residenceAddress'+beIndex" [isMandatory]="false"
+                      [isDisabled]="false"></generic-input>
+                    </div>
+                    <div class="col-md-2">
+                      <generic-input [(model)]="beneficialOwner.postalCode" label="Code postal" [form]="informationForm"
+                        [propertyName]="'bePostalCode'+beIndex" [isMandatory]="false"
+                      [isDisabled]="false"></generic-input>
+                    </div>
+                    <div class="col-md-2">
+                      <generic-input [(model)]="beneficialOwner.city" label="Commune" [form]="informationForm"
+                      [propertyName]="'beCity'+beIndex" [isMandatory]="false" [isDisabled]="false"></generic-input>
+                    </div>
+                    <div class="col-md-2">
+                      <select-country [(model)]="beneficialOwner.country" label="Pays" [form]="informationForm"
+                      [propertyName]="'beCountry'+beIndex" [isMandatory]="false" [isDisabled]="false"></select-country>
+                    </div>
+                  </div-->
+                  <!-- Modalités du contrôle exercé par le bénéficiaire effectif sur la société -->
+                  <!--h6 class=" mt-5"><i class="ai-home me-2"></i>Modalités du contrôle exercé par le bénéficiaire effectif
+                  sur la société
+                </h6-->
+                <!-- ========== CAPITAL ============= -->
+                <!--div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+                <div class="col-md-6">
+                  <generic-toggle [(model)]="beneficialOwner.isOwnerOfMoreThanQuarterOfCapital"
+                    label="Détention de plus de 25 % du capital ?" [form]="informationForm"
+                    [propertyName]="'isOwnerOfMoreThanQuarterOfCapital'+ beIndex" [isMandatory]="false"
+                  [isDisabled]="false"></generic-toggle>
+                </div>
+                <div *ngIf="beneficialOwner.isOwnerOfMoreThanQuarterOfCapital" class="col-md-6">
+                  <generic-input [(model)]="beneficialOwner.totalPercentageOfOwnedCapital"
+                    label="Préciser le pourcentage total (en %)" [form]="informationForm"
+                    [propertyName]="'totalPercentageOfOwnedCapital'+beIndex" [isMandatory]="false"
+                  [isDisabled]="false" [maxLength]="6"></generic-input>
+                </div>
+              </div>
+              <div *ngIf="beneficialOwner.isOwnerOfMoreThanQuarterOfCapital"
+                class="row form-switch p-0 pt-md-2 g-3  ms-2 ms-md-5">
+                <div class="row">
+                  <generic-toggle class="col" [(model)]="beneficialOwner.isDirectOwnershipOfCapital"
+                    label="Détention directe" [form]="informationForm"
+                    [propertyName]="'isDirectOwnershipOfCapital'+beIndex" [isMandatory]="false"
+                  [isDisabled]="false"></generic-toggle>
+                </div-->
+                <!-- Direct -->
+                <!--div
+                *ngIf="beneficialOwner.isOwnerOfMoreThanQuarterOfCapital && beneficialOwner.isDirectOwnershipOfCapital"
+                class="row align-items-start">
+                <div class="col">
+                  <generic-input [(model)]="beneficialOwner.directFullCapitalOwnershipPercentage"
+                    label="Pleine propriété (en %)" [form]="informationForm"
+                    [propertyName]="'directFullCapitalOwnershipPercentage'+beIndex" [isMandatory]="false"
+                  [isDisabled]="false" [maxLength]="6"></generic-input>
+                </div>
+                <div class="col">
+                  <generic-input [(model)]="beneficialOwner.directBareCapitalOwnershipPercentage"
+                    label="Nue-propriété (en %)" [form]="informationForm"
+                    [propertyName]="'directBareCapitalOwnershipPercentage'+beIndex" [isMandatory]="false"
+                  [isDisabled]="false" [maxLength]="6"></generic-input>
+                </div>
+              </div>
+            </div-->
+            <!-- Indirect : Détention par le biais d’une indivision (joint ownership)-->
+            <!--div *ngIf="beneficialOwner.isOwnerOfMoreThanQuarterOfCapital"
+            class="row form-switch p-0 pt-md-2 g-3 ms-2 ms-md-5 my-4">
+            <div class="row">
+              <generic-toggle class="col" [(model)]="beneficialOwner.isIndirectOwnershipOfCapital"
+                label="Détention indirecte" [form]="informationForm"
+                [propertyName]="'isIndirectOwnershipOfCapital'+beIndex" [isMandatory]="false"
+              [isDisabled]="false"></generic-toggle>
+            </div>
+            <div *ngIf="beneficialOwner.isIndirectOwnershipOfCapital" class="col-md-12">
+              <div class="row align-items-center mb-2">
+                <span class="col-auto">Détention par le biais d’une indivision :</span>
+                <generic-input class="col-5 col-md-2 p-0 ms-3 ms-md-0"
+                  [(model)]="beneficialOwner.jointCapitalTotalOwnershipPercentage" label=""
+                  [form]="informationForm" [propertyName]="'jointCapitalTotalOwnershipPercentage'+beIndex"
+                [isMandatory]="false" [isDisabled]="false" [maxLength]="6"></generic-input>
+                <span class="col-auto">%</span>
+              </div>
+            </div>
+            <div *ngIf="beneficialOwner.isIndirectOwnershipOfCapital" class="row align-items-start">
+              <div class="col">
+                <generic-input [(model)]="beneficialOwner.jointCapitalFullOwnershipPercentage"
+                  label="dont en pleine propriété (en %)" [form]="informationForm"
+                  [propertyName]="'jointCapitalFullOwnershipPercentage'+beIndex" [isMandatory]="false"
+                [isDisabled]="false" [maxLength]="6"></generic-input>
+              </div>
+              <div class="col">
+                <generic-input [(model)]="beneficialOwner.jointCapitalBareOwnershipPercentage"
+                  label="Nue-propriété (en %)" [form]="informationForm"
+                  [propertyName]="'jointCapitalBareOwnershipPercentage'+beIndex" [isMandatory]="false"
+                [isDisabled]="false" [maxLength]="6"></generic-input>
+              </div>
+            </div-->
+            <!-- Indirect : Détention par le biais d’une ou plusieurs personnes morales -->
+            <!--div
+            *ngIf="beneficialOwner.isOwnerOfMoreThanQuarterOfCapital && beneficialOwner.isIndirectOwnershipOfCapital"
+            class="col-md-12">
+            <div class="row align-items-center mb-2">
+              <span class="col-auto">Détention par le biais d'une ou plusieurs personnes morales :</span>
+              <generic-input class="col-5 col-md-2 p-0 ms-3 ms-md-0"
+                [(model)]="beneficialOwner.moralPersonTotalCapitalOwnershipPercentage" label=""
+                [form]="informationForm" [propertyName]="'moralPersonTotalCapitalOwnershipPercentage'+beIndex"
+              [isMandatory]="false" [isDisabled]="false" [maxLength]="6"></generic-input>
+              <span class="col-auto">%</span>
+            </div>
+          </div>
+          <div
+            *ngIf="beneficialOwner.isOwnerOfMoreThanQuarterOfCapital && beneficialOwner.isIndirectOwnershipOfCapital"
+            class="row align-items-start">
+            <div class="col">
+              <generic-input [(model)]="beneficialOwner.moralPersonCapitalFullOwnershipPercentage"
+                label="dont en pleine propriété (en %)" [form]="informationForm"
+                [propertyName]="'moralPersonCapitalFullOwnershipPercentage'+beIndex" [isMandatory]="false"
+              [isDisabled]="false" [maxLength]="6"></generic-input>
+            </div>
+            <div class="col">
+              <generic-input [(model)]="beneficialOwner.moralPersonCapitalBareOwnershipPercentage"
+                label="Nue-propriété (en %)" [form]="informationForm"
+                [propertyName]="'moralPersonCapitalBareOwnershipPercentage'+beIndex" [isMandatory]="false"
+              [isDisabled]="false" [maxLength]="6"></generic-input>
+            </div>
+          </div>
+        </div>
+        <hr-->
+        <!-- ================= VOTES RIGHTS ================= -->
+        <!--div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+        <div class="col-md-6">
+          <generic-toggle [(model)]="beneficialOwner.isOwnerOfMoreThanQuarterOfVotesRights"
+            label="Détention de plus de 25 % des droits de vote ?" [form]="informationForm"
+            [propertyName]="'isOwnerOfMoreThanQuarterOfVotesRights'+ beIndex" [isMandatory]="false"
+          [isDisabled]="false"></generic-toggle>
+        </div>
+        <div *ngIf="beneficialOwner.isOwnerOfMoreThanQuarterOfVotesRights" class="col-md-6">
+          <generic-input [(model)]="beneficialOwner.totalPercentageOfVotesRights"
+            label="Préciser le pourcentage total (en %)" [form]="informationForm"
+            [propertyName]="'totalPercentageOfVotesRights'+beIndex" [isMandatory]="false" [isDisabled]="false"
+          [maxLength]="6"></generic-input>
+        </div>
+      </div>
+      <div *ngIf="beneficialOwner.isOwnerOfMoreThanQuarterOfVotesRights"
+        class="row form-switch p-0 pt-md-2 g-3  ms-2 ms-md-5">
+        <div class="row">
+          <generic-toggle class="col" [(model)]="beneficialOwner.isDirectOwnershipOfVotesRights"
+            label="Détention directe" [form]="informationForm"
+            [propertyName]="'isDirectOwnershipOfVotesRights'+beIndex" [isMandatory]="false"
+          [isDisabled]="false"></generic-toggle>
+        </div-->
+        <!-- Direct -->
+        <!--div *ngIf="beneficialOwner.isDirectOwnershipOfVotesRights"
+        class="row align-items-start mb-4 mb-md-2">
+        <div class="col-md-4">
+          <generic-input [(model)]="beneficialOwner.directFullVotesRightsOwnershipPercentage"
+            label="Pleine propriété (en %)" [form]="informationForm"
+            [propertyName]="'directFullVotesRightsOwnershipPercentage'+beIndex" [isMandatory]="false"
+          [isDisabled]="false" [maxLength]="6"></generic-input>
+        </div>
+        <div class="col-md-4">
+          <generic-input [(model)]="beneficialOwner.directBareVotesRightsOwnershipPercentage"
+            label="Nue-propriété (en %)" [form]="informationForm"
+            [propertyName]="'directBareVotesRightsOwnershipPercentage'+beIndex" [isMandatory]="false"
+          [isDisabled]="false" [maxLength]="6"></generic-input>
+        </div>
+        <div class="col-md-4">
+          <generic-input [(model)]="beneficialOwner.directUsufructVotesRightsOwnershipPercentage"
+            label="Usufruit (en %)" [form]="informationForm"
+            [propertyName]="'directUsufructVotesRightsOwnershipPercentage'+beIndex" [isMandatory]="false"
+          [isDisabled]="false" [maxLength]="6"></generic-input>
+        </div>
+      </div>
+    </div-->
+    <!-- Indirect : Détention par le biais d’une indivision-->
+    <!--div *ngIf="beneficialOwner.isOwnerOfMoreThanQuarterOfVotesRights"
+    class="row form-switch p-0 pt-md-2 g-3 ms-2 ms-md-5 my-4">
+    <div class="row">
+      <generic-toggle class="col" [(model)]="beneficialOwner.isIndirectOwnershipOfVotesRights"
+        label="Détention indirecte" [form]="informationForm"
+        [propertyName]="'isIndirectOwnershipOfVotesRights'+beIndex" [isMandatory]="false"
+      [isDisabled]="false"></generic-toggle>
+    </div>
+    <div *ngIf="beneficialOwner.isIndirectOwnershipOfVotesRights" class="col-md-12">
+      <div class="row align-items-center mb-2">
+        <span class="col-auto">Détention par le biais d’une indivision :</span>
+        <generic-input class="col-5 col-md-2 p-0 ms-3 ms-md-0"
+          [(model)]="beneficialOwner.jointVotesRightsTotalOwnershipPercentage" label=""
+          [form]="informationForm" [propertyName]="'jointVotesRightsTotalOwnershipPercentage'+beIndex"
+        [isMandatory]="false" [isDisabled]="false" [maxLength]="6"></generic-input>
+        <span class="col-auto">%</span>
+      </div>
+    </div>
+    <div *ngIf="beneficialOwner.isIndirectOwnershipOfVotesRights" class="row align-items-start">
+      <div class="col-md-4">
+        <generic-input [(model)]="beneficialOwner.jointVotesRightsFullOwnershipPercentage"
+          label="dont en pleine propriété (en %)" [form]="informationForm"
+          [propertyName]="'jointVotesRightsFullOwnershipPercentage'+beIndex" [isMandatory]="false"
+        [isDisabled]="false" [maxLength]="6"></generic-input>
+      </div>
+      <div class="col-md-4">
+        <generic-input [(model)]="beneficialOwner.jointVotesRightsBareOwnershipPercentage"
+          label="Nue-propriété (en %)" [form]="informationForm"
+          [propertyName]="'jointVotesRightsBareOwnershipPercentage'+beIndex" [isMandatory]="false"
+        [isDisabled]="false" [maxLength]="6"></generic-input>
+      </div>
+      <div class="col-md-4">
+        <generic-input [(model)]="beneficialOwner.jointVotesRightsUsufructOwnershipPercentage"
+          label="Usufruit (en %)" [form]="informationForm"
+          [propertyName]="'jointVotesRightsUsufructOwnershipPercentage'+beIndex" [isMandatory]="false"
+        [isDisabled]="false" [maxLength]="6"></generic-input>
+      </div>
+    </div-->
+    <!-- Indirect : Détention par le biais d’une ou plusieurs personnes morales-->
+    <!--div
+    *ngIf="beneficialOwner.isOwnerOfMoreThanQuarterOfVotesRights && beneficialOwner.isIndirectOwnershipOfVotesRights"
+    class="col-md-12">
+    <div class="row align-items-center mb-2">
+      <span class="col-auto">Détention par le biais d'une ou plusieurs personnes morales :</span>
+      <generic-input class="col-5 col-md-2 p-0 ms-3 ms-md-0"
+        [(model)]="beneficialOwner.moralPersonTotalVotesRightsOwnershipPercentage" label=""
+        [form]="informationForm"
+        [propertyName]="'moralPersonTotalVotesRightsOwnershipPercentage'+beIndex" [isMandatory]="false"
+      [isDisabled]="false" [maxLength]="6"></generic-input>
+      <span class="col-auto">%</span>
+    </div>
+  </div>
+  <div
+    *ngIf="beneficialOwner.isOwnerOfMoreThanQuarterOfVotesRights && beneficialOwner.isIndirectOwnershipOfVotesRights"
+    class="row align-items-start">
+    <div class="col-md-4">
+      <generic-input [(model)]="beneficialOwner.moralPersonVotesRightsFullOwnershipPercentage"
+        label="dont en pleine propriété (en %)" [form]="informationForm"
+        [propertyName]="'moralPersonVotesRightsFullOwnershipPercentage'+beIndex" [isMandatory]="false"
+      [isDisabled]="false" [maxLength]="6"></generic-input>
+    </div>
+    <div class="col-md-4">
+      <generic-input [(model)]="beneficialOwner.moralPersonVotesRightsBareOwnershipPercentage"
+        label="Nue-propriété (en %)" [form]="informationForm"
+        [propertyName]="'moralPersonVotesRightsBareOwnershipPercentage'+beIndex" [isMandatory]="false"
+      [isDisabled]="false" [maxLength]="6"></generic-input>
+    </div>
+    <div class="col-md-4">
+      <generic-input [(model)]="beneficialOwner.moralPersonVotesRightsUsufructOwnershipPercentage"
+        label="Usufruit (en %)" [form]="informationForm"
+        [propertyName]="'moralPersonVotesRightsUsufructOwnershipPercentage'+beIndex"
+      [isMandatory]="false" [isDisabled]="false" [maxLength]="6"></generic-input>
+    </div>
+  </div>
+</div>
+<hr-->
+<!-- Other means to control the company -->
+<!--div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+<div class="col-md-6">
+  <generic-toggle [(model)]="beneficialOwner.isOtherMeansForControl"
+    [label]="'Exercice par tout autre moyen d\'un pouvoir de contrôle sur la société déclarante' + (beneficialOwner.isOtherMeansForControl ? ' :' : '.')"
+    [form]="informationForm" [propertyName]="'isOtherMeansForControl'+beIndex" [isMandatory]="false"
+  [isDisabled]="false"></generic-toggle>
+</div>
+</div>
+<div *ngIf="beneficialOwner.isOtherMeansForControl"
+  class="row form-switch p-0 pt-md-2 g-3  ms-2 ms-md-5">
+  <generic-toggle class="col" [(model)]="beneficialOwner.isDeterminesAGDecisionsByVotingRights"
+    label="Détermination en fait, par les droits de vote dont il dispose, des décisions dans les assemblées générales de la société déclarante."
+    [form]="informationForm" [propertyName]="'isDeterminesAGDecisionsByVotingRights'+beIndex"
+  [isMandatory]="false" [isDisabled]="false"></generic-toggle>
+</div>
+<div *ngIf="beneficialOwner.isOtherMeansForControl"
+  class="row form-switch p-0 pt-md-2 g-3  ms-2 ms-md-5">
+  <generic-toggle class="col" [(model)]="beneficialOwner.isCanNominateDismissBoardMembers"
+    label="Détention du pouvoir de nommer ou de révoquer la majorité des membres des organes d'administration, de direction ou de surveillance de la société déclarante."
+    [form]="informationForm" [propertyName]="'isCanNominateDismissBoardMembers'+beIndex"
+  [isMandatory]="false" [isDisabled]="false"></generic-toggle>
+</div>
+<div
+  *ngIf="!beneficialOwner.isOwnerOfMoreThanQuarterOfCapital && !beneficialOwner.isOwnerOfMoreThanQuarterOfVotesRights && !beneficialOwner.isOtherMeansForControl"
+  class="row form-switch justify-content-start p-0 pt-md-2 g-3">
+  <hr>
+    <div class="col">
+      <generic-toggle [(model)]="beneficialOwner.isBETheLegalRepresentative"
+        label="A défaut de choix de l'une des options figurant ci-dessus, le bénéficiaire effectif est le représentant légal de la société"
+        [form]="informationForm" [propertyName]="'isBETheLegalRepresentative'+ beIndex"
+      [isMandatory]="false" [isDisabled]="false"></generic-toggle>
+    </div>
+  </div>
+</div>
+<div class="row justify-content-between g-3">
+  <div class="col-auto">
+    <a class="btn btn-outline-primary" (click)="deleteLastBeneficialOwner()"><i
+    class="ai-trash me-2"></i>Supprimer le bénéficiare effectif</a>
+  </div>
+  <div class="col-auto">
+    <a class="btn btn-secondary" (click)="addBeneficialOwner()"><i class="ai-circle-plus me-2"></i>Ajouter
+  un bénéficiare effectif</a>
+</div>
+</div>
+</ng-template>
+</li-->
+}
+@if (currentUser && (quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes ||
+  quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments)) {
+  <li class="row z-4"
+    [ngbNavItem]="getIndexForProvision(-1, quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].provisions)"
+    >
+    <button class="col-auto py-0 pe-2" ngbNavLink>Pièces justificatives à déposer <osi-tooltip
+    tootltipCodeToDisplay="MYJSS_QUOTATION_REQUIRED_INFO_ADD_FILES" class="col-auto ms-2 mt-1"></osi-tooltip>
+  </button>
+  <ng-template ngbNavContent>
+    @if (currentUser && hasMandatoryDocuments(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments)) {
+      <div
+        class="updload-file-container mb-4">
+        <h6 class="d-flex align-items-center bg-white rounded-3 pb-3 pt-4 ps-3 m-0">
+          <i class="ai-paperclip pe-2 m-0"></i> Pièces obligatoires
+        </h6>
+        @for (assoServiceDocument of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments; track assoServiceDocument; let i = $index; let last = $last) {
+          <div
+            >
+            @if (assoServiceDocument.isMandatory) {
+              <div class="quotation-container"
+                [ngClass]="{'mb-0 rounded-bottom-3': isLastMandatoryDocument(assoServiceDocument), 'mb-3':!isLastMandatoryDocument(assoServiceDocument)}">
+                <quotation-file-uploader [entity]="assoServiceDocument"
+                  (isUploadComplete)="onIsCompleteChange($event, selectedAssoIndex, selectedServiceIndex, i, assoServiceDocument)"
+                (isUploadDeleted)="onIsUploadDelete($event, selectedAssoIndex, selectedServiceIndex, i, assoServiceDocument)"></quotation-file-uploader>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+    @if (currentUser && hasNonMandatoryDocuments(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments)) {
+      <div
+        class="updload-file-container mb-4">
+        <h6 class="d-flex align-items-center bg-white rounded-3 pb-3 pt-4 ps-3 m-0">
+          <i class="ai-paperclip pe-2 m-0"></i> Pièces facultatives
+        </h6>
+        @for (assoServiceDocument of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments; track assoServiceDocument; let i = $index; let last = $last) {
+          <div
+            >
+            @if (!assoServiceDocument.isMandatory) {
+              <div class="quotation-container"
+                [ngClass]="{'mb-0 rounded-bottom-3': last, 'mb-3':!last}">
+                <quotation-file-uploader [entity]="assoServiceDocument"
+                  (isUploadComplete)="onIsCompleteChange($event, selectedAssoIndex, selectedServiceIndex, i, assoServiceDocument)"
+                (isUploadDeleted)="onIsUploadDelete($event, selectedAssoIndex, selectedServiceIndex, i, assoServiceDocument)"></quotation-file-uploader>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  </ng-template>
+</li>
+}
+@if ((quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes ||
+  quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments)) {
+  <li class="row z-3" [ngbNavItem]="50">
+    <button class="col-auto py-0 pe-2" ngbNavLink>Informations complémentaires<osi-tooltip
+      tootltipCodeToDisplay="MYJSS_QUOTATION_REQUIRED_INFO_ADDITIONAL_INFO"
+    class="col-auto ms-2 mt-1"></osi-tooltip>
+  </button>
+  <ng-template ngbNavContent>
+    <div class="quotation-container">
+      <h6><i class="ai-circle-info me-2"></i>Information</h6>
+      <div class="pb-3">
+        <div class="row g-3 align-items-start">
+          @if (quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes.length ==0) {
+            <span
+              >Aucune
+            information à remplir pour ce service, vous pouvez cliquer sur le bouton étape suivante.</span>
+          }
+          @for (serviceType of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].serviceTypes; track serviceType; let serviceTypeIndex = $index) {
+            @if (quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].serviceTypes.length>1 &&  serviceType.assoServiceTypeFieldTypes.length>0) {
+              <h6 class="mb-0" [ngClass]="{'mt-5':serviceTypeIndex>0}"
+                >
+                {{serviceType.label}}
+              </h6>
+            }
+            @for (assoServiceFieldType of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes; track assoServiceFieldType; let i = $index) {
+              @if (isDisplayFieldForServiceType(assoServiceFieldType, serviceType,serviceTypeIndex==quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].serviceTypes.length-1)) {
+                @if (isDisplayDependantField(assoServiceFieldType)) {
+                  <!-- TEXT -->
+                  @if (assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_TEXT) {
+                    <div class="col-12 col-md-6 col-lg-4"
+                      >
+                      <generic-input [(model)]="assoServiceFieldType.stringValue"
+                        [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
+                        [form]="informationForm" [propertyName]="'stringFieldType'+i" [isMandatory]="false"
+                        [maxLength]="255">
+                      </generic-input>
+                    </div>
+                  }
+                  <!-- TEXTAREA -->
+                  @if (assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_TEXTAREA) {
+                    <div class="col-12 "
+                      >
+                      <generic-textarea [(model)]="assoServiceFieldType.textAreaValue"
+                        [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
+                        [form]="informationForm" [maxLength]="255" [propertyName]="'textAreaFieldType'+i"
+                        [isMandatory]="false">
+                      </generic-textarea>
+                    </div>
+                  }
+                  <!-- DATE -->
+                  @if (assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_DATE) {
+                    <div class="col-12 col-md-6 col-lg-4"
+                      >
+                      <div class="form-group w-auto">
+                        <generic-date-picker [(model)]="assoServiceFieldType.dateValue"
+                          [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
+                          [form]="informationForm" [propertyName]="'dateFieldType'+i" [isMandatory]="false">
+                        </generic-date-picker>
+                      </div>
+                    </div>
+                  }
+                  <!-- INTEGER -->
+                  @if (assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_INTEGER) {
+                    <div class="col-12 col-md-6 col-lg-4"
+                      >
+                      <generic-input [(model)]="assoServiceFieldType.integerValue"
+                        [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
+                        [form]="informationForm" [propertyName]="'integerFieldType'+i" [isMandatory]="false"
+                        type="number">
+                      </generic-input>
+                    </div>
+                  }
+                  <!-- SELECT -->
+                  @if (assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_SELECT) {
+                    <div class="col-12 col-md-6 col-lg-4"
+                      >
+                      <select-value-service-field-type [(model)]="assoServiceFieldType.selectValue"
+                        [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
+                        [form]="informationForm" [propertyName]="'selectFieldType'+i"
+                        [serviceFieldType]="assoServiceFieldType.serviceFieldType" [isMandatory]="false">
+                      </select-value-service-field-type>
+                    </div>
+                  }
+                }
+              }
+            }
+          }
         </div>
       </div>
     </div>
-  </section>
-
-  <section>
-    <ng-container *ngIf="selectedAssoIndex!=null && selectedServiceIndex!=null && quotation.assoAffaireOrders && quotation.assoAffaireOrders[selectedAssoIndex] &&
-       quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex]">
-      <ul ngbNav #nav="ngbNav" [activeId]="40" class="nav-tabs flex-nowrap border-3 border-secondary"
-        (navChange)=" changeProvisionNoticeTemplateDescription($event)">
-        <ng-container
-          *ngFor="let provision of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].provisions; let provisionIndex = index">
-          <li
-            [ngbNavItem]="getIndexForProvision(provisionIndex, quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].provisions)"
-            *ngIf="provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_ANNOUNCEMENT && provision.announcement">
-            <button ngbNavLink>Annonce légale {{
-              getNbOfProvisionsAnnouncement(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].provisions)>1
-              ? provision.order+1 : '' }}
-            </button>
-            <ng-template ngbNavContent>
-              <div class="quotation-container">
-                <h6><i class="ai-circle-info me-2"></i>Information</h6>
-                <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-                  <div class="col-md-5" *ngIf="!isOnlyAnnouncement">
-                    <label class="col-form-label" for="announcementPublicationDate">Publication souhaitée*</label>
-                    <div class="col">
-                      <select-string [types]="selectionRedaction" [isMandatory]="false" [form]="informationForm"
-                        [propertyName]="'selectionRedaction'+provision.order"
-                        [(model)]="selectedRedaction[selectedServiceIndex][provisionIndex]"
-                        (selectionChange)="changeDoNotGenerateAnnouncement($event, provision)">
-                      </select-string>
-                    </div>
-                  </div>
-                  <div class="col-md-5" *ngIf="!isDoNotGenerateAnnouncement">
-                    <label class="col col-form-label" for="announcementPublicationDate">Date de publication
-                      souhaitée*</label>
-                    <div class="col">
-                      <generic-date-picker [(model)]="provision.announcement.publicationDate" [form]="informationForm"
-                        [propertyName]="'publicationDate'+provision.order" [isMandatory]="false" [isDisabled]="false"
-                        [minDate]="minDatePublication"></generic-date-picker>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- announcement form : Option -->
-              <div *ngIf="!isDoNotGenerateAnnouncement" class="quotation-container mb-2">
-                <h6><i class="ai-grid me-2"></i>Option</h6>
-                <div class="row g-4 align-items-center">
-
-                  <div class="col-12 col-lg-6 form-check form-switch ">
-                    <div class="row align-items-center">
-                      <generic-toggle class="col-auto" [(model)]="provision.isRedactedByJss"
-                        label="Confier la rédaction au JSS" [form]="informationForm"
-                        [propertyName]="'isRedactedByJss'+provision.order" [isDisabled]="false"
-                        (onToggleChange)="changeIsShowNoticeTemplate(false, provision.isRedactedByJss, true, undefined,quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])"></generic-toggle>
-                      <osi-tooltip tootltipCodeToDisplay="MYJSS_QUOTATION_REQUIRED_INFO_WRITE_AL"
-                        class="col-auto mb-1"></osi-tooltip>
-                    </div>
-                  </div>
-
-                  <div class="col-12 col-lg-6 form-check form-switch mt-0 mt-lg-auto" *ngIf="provision.isRedactedByJss">
-                    <generic-toggle [(model)]="provision.announcement.isProofReadingDocument"
-                      label="Recevoir une épreuve de relecture avant publication" [form]="informationForm"
-                      [propertyName]="'isProofReadingDocument'+provision.order" [isDisabled]="false"></generic-toggle>
-                  </div>
-
-                  <div
-                    [hidden]="getPossibleTemplates(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex]) == undefined"
-                    class="row col-12 col-lg-6 form-check form-switch">
-                    <div class="row align-items-center">
-                      <generic-toggle class="col-auto" [(model)]="noticeTemplateDescription!.isUsingTemplate"
-                        label="Utiliser les modèles proposés pour la rédaction" [form]="informationForm"
-                        [propertyName]="'isUsingTemplate'+provision.order" [isDisabled]="false"
-                        (onToggleChange)="changeIsShowNoticeTemplate($event, provision.isRedactedByJss, noticeTemplateDescription!.isUsingTemplate, undefined,quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])"
-                        [isDisabled]="isToggleIsUsingTemplateDisabled(provision, quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])"></generic-toggle>
-                      <osi-tooltip tootltipCodeToDisplay="MYJSS_QUOTATION_REQUIRED_INFO_USE_TEMPLATE"
-                        class="col-auto mb-1"></osi-tooltip>
-                    </div>
-                  </div>
-                  <div class="row" *ngIf="  !provision.isRedactedByJss">
-                    <div class="col-auto form-check form-switch ">
-                      <generic-toggle [(model)]="provision.announcement.isReReadByJss" label="Relecture par le JSS"
-                        [form]="informationForm" [propertyName]="'isReReadByJss'+provision.order"
-                        [isDisabled]="false"></generic-toggle>
-                    </div>
-                    <div class="col">
-                      <i class="col ai-circle-info fs-base" style="-webkit-text-stroke: 1px;" placement="right"
-                        ngbTooltip="La relecture s’effectue uniquement les jours ouvrés."
-                        tooltipClass="custom-tooltip"></i>
-                    </div>
-                  </div>
-                </div>
-                <hr>
-
-                <!-- announcement form : text area -->
-                <div class="row pt-3">
-                  <div *ngIf="!provision.isRedactedByJss" class="col-12 row row-cols-4 px-4">
-
-                    <!-- Département -->
-                    <div class="col-12 col-lg-4 mb-3 align-items-start">
-                      <select-department [(model)]="provision.announcement.department"
-                        label="Département de publication" [form]="informationForm"
-                        [propertyName]="'department'+provision.order" [isMandatory]="true"
-                        [isDisabled]="false"></select-department>
-                    </div>
-
-                    <!-- Rubrique -->
-                    <div class="col-12 col-lg-4 mb-3 align-items-start">
-                      <select-notice-type-family [(model)]="provision.announcement.noticeTypeFamily"
-                        label="Rubrique de publication" [form]="informationForm"
-                        [propertyName]="'noticeTypeFamily'+provision.order" [isMandatory]="true"
-                        [isDisabled]="false"></select-notice-type-family>
-                    </div>
-
-                    <!-- Sous-rubrique -->
-                    <div class="col-12 col-lg-4 mb-3 align-items-start"
-                      *ngIf="provision.announcement.noticeTypeFamily && noticeTypes">
-                      <select-multiple-notice-type [(model)]="provision.announcement.noticeTypes"
-                        label="Sous-rubrique(s) de publication" [form]="informationForm"
-                        [noticeTypeFamily]="provision.announcement.noticeTypeFamily"
-                        [propertyName]="'noticeTypes'+provision.order" [isMandatory]="true"
-                        [isDisabled]="false"></select-multiple-notice-type>
-                    </div>
-                  </div>
-
-                  <div
-                    *ngIf=" !provision.isRedactedByJss && (!noticeTemplateDescription || !noticeTemplateDescription.isUsingTemplate)"
-                    class="col-12 pb-5">
-                    <div class="row align-items-center justify-content-between">
-                      <label for="announcementTextarea" class="form-label col-auto">Texte de l'annonce</label>
-                      <osi-tooltip tootltipCodeToDisplay="MYJSS_QUOTATION_REQUIRED_INFO_FILL_AL_TXT"
-                        class="col-auto"></osi-tooltip>
-                    </div>
-                    <ckeditor id="announcementTextarea" [editor]="ckEditorHeader" [config]="config" [data]="noticeValue"
-                      (ready)="onEditorReady($event, provision)" (change)="onNoticeChange($event, provision)">
-                    </ckeditor>
-                  </div>
-
-                  <div
-                    *ngIf="currentUser &&  !provision.isRedactedByJss && (!noticeTemplateDescription || !noticeTemplateDescription.isUsingTemplate)"
-                    class="col-12 pb-5 compact-upload-container">
-                    <label class="form-label">Importer un fichier Word pour remplir le champ de texte de
-                      l'annonce</label>
-                    <single-upload [entity]="entityFile" [entityType]="entityType" [isDirectUpload]="false"
-                      #uploadWordFile forcedFileExtension="DOCX"
-                      (fileDropped)="updateNoticeAnnouncement($event, provision)" [fullSize]="false"></single-upload>
-                  </div>
-                </div>
-                <div class="d-flex flex-column flex-md-row flex-sm-wrap align-items-center"
-                  *ngIf="!provision.isRedactedByJss && noticeTemplateDescription
-                  && noticeTemplateDescription.isUsingTemplate
-                  && getPossibleTemplates(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])
-                  && getPossibleTemplates(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])!.length>1">
-                  <h6 class="w-100 mb-3">
-                    <i class="ai-wallet pe-2"></i>Précisez le modèle souhaité :
-                  </h6>
-                  <div
-                    *ngFor="let template of getPossibleTemplates(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])"
-                    class="btn btn-outline-secondary m-1 w-100 w-sm-auto btn-wrap btn-service-family"
-                    [class.active]="noticeTemplateDescription && noticeTemplateDescription.selectedTemplate &&  noticeTemplateDescription.selectedTemplate.id == template.id"
-                    (click)="changeIsShowNoticeTemplate(true, provision.isRedactedByJss, true, template ,quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex])">
-                    {{template.label}}</div>
-                  <osi-tooltip tootltipCodeToDisplay="MYJSS_QUOTATION_REQUIRED_INFO_MULTI_TEMPLATE"
-                    class="col-auto ms-2"></osi-tooltip>
-                </div>
-                <hr class="border-white" id="option-form-end">
-              </div>
-            </ng-template>
-          </li>
-
-          <li class="nav-item "
-            [ngbNavItem]="getIndexForProvision(provisionIndex, quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].provisions)"
-            *ngIf="provision.provisionType.provisionScreenType.code == PROVISION_SCREEN_TYPE_DOMICILIATION && provision.domiciliation">
-            <button ngbNavLink>Domiciliation</button>
-            <ng-template ngbNavContent>
-              <div class="quotation-container">
-                <h6><i class="ai-home me-2"></i>Domiciliation</h6>
-                <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-                  <div class="col-md-6">
-                    <select-contract-type [(model)]="provision.domiciliation.domiciliationContractType"
-                      label="Type de contrat" [form]="informationForm" propertyName="domiciliationContractType"
-                      [isMandatory]="false" [isDisabled]="false"></select-contract-type>
-                  </div>
-                  <div class="col-md-6">
-                    <select-language [(model)]="provision.domiciliation.language" [form]="informationForm"
-                      [isAutoSelectLanguageFrench]="true" [isDisabled]="false" propertyName="language"
-                      label="Langue de contrat"></select-language>
-                  </div>
-                </div>
-                <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-                  <div class="col-md-6">
-                    <select-mail-redirection [(model)]="provision.domiciliation.mailRedirectionType"
-                      label="Adresse de redirection" [form]="informationForm" propertyName="mailRedirectionType"
-                      [isMandatory]="false" [isDisabled]="false"></select-mail-redirection>
-                  </div>
-                  <div class="col-md-6">
-                    <select-building-domiciliation [(model)]="provision.domiciliation.buildingDomiciliation"
-                      [isDisabled]="false" label="Adresse de domiciliation" [form]="informationForm"
-                      propertyName="buildingDomiciliation" [isMandatory]="false"></select-building-domiciliation>
-                  </div>
-                </div>
-                <!-- Describe adress -->
-                <div *ngIf="mustDecribeAdress(provision.domiciliation)">
-                  <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-                    <div class="col-md-6">
-                      <generic-input [(model)]="provision.domiciliation.address" label="Adresse"
-                        [form]="informationForm" propertyName="address" [isMandatory]="false" [isDisabled]="false"
-                        [maxLength]="60"></generic-input>
-                    </div>
-                    <div class="col-md-6">
-                      <generic-input [(model)]="provision.domiciliation.cedexComplement" label="Complément CEDEX"
-                        [form]="informationForm" propertyName="domCedexComplement" [isMandatory]="false"
-                        [isDisabled]="false" [maxLength]="60"></generic-input>
-                    </div>
-                  </div>
-                  <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-                    <div class="col-md-2">
-                      <generic-input [(model)]="provision.domiciliation.postalCode" label="Code postal"
-                        [form]="informationForm" propertyName="domPostalCode" [isMandatory]="false"
-                        (onFormBlur)="findCityForDomiciliation(provision.domiciliation)" [isDisabled]="false"
-                        [maxLength]="10">
-                      </generic-input>
-                    </div>
-                    <div class="col-md-5">
-                      <autocomplete-city [(model)]="provision.domiciliation.city" [form]="informationForm"
-                        [modelCountry]="provision.domiciliation.country" [isMandatory]="false" label="Ville"
-                        propertyName="domAutocompleteCity"></autocomplete-city>
-                    </div>
-                    <div class="col-md-5">
-                      <select-country class="col-md-5" [(model)]="provision.domiciliation.country" label="Pays"
-                        [form]="informationForm" propertyName="domCountry" [isMandatory]="false" [isDisabled]="false">
-                      </select-country>
-                    </div>
-                  </div>
-                  <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-                    <div class="col">
-                      <generic-input class="col mt-3" [(model)]="newMailDomiciliation"
-                        label="Adresse(s) mail(s) (entrer pour valider)" [form]="informationForm"
-                        propertyName="newMailsDom" [isMandatory]="false" [isDisabled]="false" type="email"
-                        [icon]="'mail'" (onEnter)="addMailDomiciliation(provision.domiciliation)"></generic-input>
-                      <ul class="list-group mt-1">
-                        <li class="list-group-item py-0" *ngFor="let mail of provision.domiciliation.mails">
-                          <div class="d-flex flex-wrap w-100">
-                            <div>
-                              <a class="nav-link fs-xl p-2"
-                                (click)="deleteMailDomiciliation(mail, provision.domiciliation)">
-                                <i class="ai-trash"></i>
-                              </a>
-                            </div>
-                            <div class="mt-auto mb-auto">{{mail.mail}}</div>
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-------------- Activité ---------------->
-              <div class="quotation-container">
-                <h6><i class="ai-briefcase me-2"></i>Activité</h6>
-                <div class="row form-switch justify-content-start p-0 pt-md-2 g-3"
-                  *ngIf="mustDecribeAdresse(provision.domiciliation)">
-                  <div class="col">
-                    <generic-textarea [(model)]="provision.domiciliation.activityDescription"
-                      label="Activité de la société" [form]="informationForm" propertyName="activityDescription"
-                      [isMandatory]="false" [isDisabled]="false">
-                    </generic-textarea>
-                  </div>
-                </div>
-                <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-                  <div class="col">
-                    <generic-input [(model)]="provision.domiciliation.activityAddress" label="Adresse"
-                      [form]="informationForm" propertyName="activityAddress" [isMandatory]="false" [isDisabled]="false"
-                      [maxLength]="60">
-                    </generic-input>
-                  </div>
-                </div>
-                <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-                  <div class="col-md-2">
-                    <generic-input [(model)]="provision.domiciliation.activityPostalCode" label="Code postal"
-                      [form]="informationForm" propertyName="domActivityPostalCode" [isMandatory]="false"
-                      (onFormBlur)="findCityForActivityDomiciliation(provision.domiciliation)" [isDisabled]="false"
-                      [maxLength]="10">
-                    </generic-input>
-                  </div>
-                  <div class="col-md-5">
-                    <autocomplete-city [(model)]="provision.domiciliation.activityCity" [form]="informationForm"
-                      [modelCountry]="provision.domiciliation.activityCountry" [isMandatory]="false" label="Ville"
-                      propertyName="domActivityAutocompleteCity"></autocomplete-city>
-                  </div>
-                  <div class="col-md-5">
-                    <select-country class="col-md-5" [(model)]="provision.domiciliation.activityCountry" label="Pays"
-                      [form]="informationForm" propertyName="domActivityCountry" [isMandatory]="false"
-                      [isDisabled]="false">
-                    </select-country>
-                  </div>
-                </div>
-                <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-                  <div class="col">
-                    <generic-textarea [(model)]="provision.domiciliation.activityDescription"
-                      label="Rédiger toute les informations liées à votre activité" [form]="informationForm"
-                      propertyName="activityDescription" [isMandatory]="false" [isDisabled]="false">
-                    </generic-textarea>
-                  </div>
-                </div>
-              </div>
-
-              <!-------------- Adresse de conservation des documents comptables ---------------->
-              <div class="quotation-container">
-                <h6><i class="ai-briefcase me-2"></i>Adresse de conservation des documents comptables</h6>
-                <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-                  <div class="col">
-                    <generic-input [(model)]="provision.domiciliation.accountingDocumentsConservationAddress"
-                      label="Adresse" [form]="informationForm" propertyName="accountingDocumentsConservationAddress"
-                      [isMandatory]="false" [isDisabled]="false" [maxLength]="60">
-                    </generic-input>
-                  </div>
-                </div>
-                <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-                  <div class="col">
-                    <generic-input [(model)]="provision.domiciliation.accountingDocumentsConservationCedexComplement"
-                      label="Complément d'adresse (facultatif)" [form]="informationForm"
-                      propertyName="accountingDocumentsConservationCedexComplement" [isMandatory]="false"
-                      [isDisabled]="false" [maxLength]="60">
-                    </generic-input>
-                  </div>
-                </div>
-                <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-                  <div class="col-md-2">
-                    <generic-input [(model)]="provision.domiciliation.accountingDocumentsConservationPostalCode"
-                      label="Code postal" [form]="informationForm"
-                      propertyName="accountingDocumentsConservationPostalCode" [isMandatory]="false"
-                      (onFormBlur)="findCityForAccountingDomiciliation(provision.domiciliation)" [isDisabled]="false"
-                      [maxLength]="10">
-                    </generic-input>
-                  </div>
-                  <div class="col-md-5">
-                    <autocomplete-city [(model)]="provision.domiciliation.accountingDocumentsConservationCity"
-                      [form]="informationForm"
-                      [modelCountry]="provision.domiciliation.accountingDocumentsConservationCountry"
-                      [isMandatory]="false" label="Ville"
-                      propertyName="accountingDocumentsConservationCity"></autocomplete-city>
-                  </div>
-                  <div class="col-md-5">
-                    <select-country class="col-md-5"
-                      [(model)]="provision.domiciliation.accountingDocumentsConservationCountry" label="Pays"
-                      [form]="informationForm" propertyName="accountingDocumentsConservationCountry"
-                      [isMandatory]="false" [isDisabled]="false">
-                    </select-country>
-                  </div>
-                </div>
-              </div>
-
-              <!-------------- Représentant légal ---------------->
-              <div class="quotation-container">
-                <h6 class="col"><i class="ai-user me-2"></i>Représentant légal</h6>
-                <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-                  <generic-toggle [(model)]="provision.domiciliation.isLegalPerson" label="Personne morale ?"
-                    [form]="informationForm" propertyName="isLegalPerson"></generic-toggle>
-                </div>
-                <!-- If not personne morale -->
-                <div *ngIf="!provision.domiciliation.isLegalPerson">
-                  <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-                    <div class="col-md-2">
-                      <select-civility [(model)]="provision.domiciliation.legalGardianCivility" label="Civilité"
-                        [form]="informationForm" propertyName="legalGardianCivility" [isMandatory]="false"
-                        [isDisabled]="false">
-                      </select-civility>
-                    </div>
-                    <div class="col-md-5">
-                      <generic-input [(model)]="provision.domiciliation.legalGardianLastname" label="Nom"
-                        [form]="informationForm" propertyName="legalGardianLastname" [isMandatory]="false"
-                        [isDisabled]="false" [maxLength]="20">
-                      </generic-input>
-                    </div>
-                    <div class="col-md-5">
-                      <generic-input [(model)]="provision.domiciliation.legalGardianFirstname" label="Prénom"
-                        [form]="informationForm" propertyName="legalGardianFirstname" [isMandatory]="false"
-                        [isDisabled]="false" [maxLength]="20">
-                      </generic-input>
-                    </div>
-                  </div>
-                  <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-                    <div class="col">
-                      <generic-input [(model)]="provision.domiciliation.legalGardianAddress" label="Adresse"
-                        [form]="informationForm" propertyName="legalGardianAddress" [isMandatory]="false"
-                        [isDisabled]="false" [maxLength]="60">
-                      </generic-input>
-                    </div>
-                  </div>
-                  <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-                    <div class="col-md-2">
-                      <generic-input [(model)]="provision.domiciliation.legalGardianPostalCode" label="Code postal"
-                        [form]="informationForm" propertyName="legalGardianPostalCode" [isMandatory]="false"
-                        (onFormBlur)="findCityForLegalGardianDomiciliation(provision.domiciliation)"
-                        [isDisabled]="false" [maxLength]="10">
-                      </generic-input>
-                    </div>
-                    <div class="col-md-5">
-                      <autocomplete-city [(model)]="provision.domiciliation.legalGardianCity" [form]="informationForm"
-                        [modelCountry]="provision.domiciliation.legalGardianCountry" [isMandatory]="false" label="Ville"
-                        propertyName="legalGardianAutocompleteCity"></autocomplete-city>
-                    </div>
-                    <div class="col-md-5">
-                      <select-country class="col-md-5" [(model)]="provision.domiciliation.legalGardianCountry"
-                        label="Pays" [form]="informationForm" propertyName="legalGardianCountry" [isMandatory]="false"
-                        [isDisabled]="false">
-                      </select-country>
-                    </div>
-                  </div>
-                  <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-                    <div class="col-md-6">
-                      <generic-input [(model)]="provision.domiciliation.legalGardianJob" label="Fonction"
-                        [form]="informationForm" propertyName="legalGardianJob" [isMandatory]="false"
-                        [isDisabled]="false" [maxLength]="20">
-                      </generic-input>
-                    </div>
-                    <div class="col-md-6">
-                      <generic-input class="col mt-3" [(model)]="newMailLegalGardian"
-                        label="Adresse(s) mail(s) (entrer pour valider)" [form]="informationForm"
-                        propertyName="newMailLegalGardian" [isMandatory]="false" [isDisabled]="false" type="email"
-                        [icon]="'mail'" (onEnter)="addLegalGardianMail(provision.domiciliation)"></generic-input>
-                      <ul class="list-group mt-1">
-                        <li class="list-group-item py-0" *ngFor="let mail of provision.domiciliation.legalGardianMails">
-                          <div class="d-flex flex-wrap w-100">
-                            <div>
-                              <a class="nav-link fs-xl p-2"
-                                (click)="deleteLegalGardianMail(mail, provision.domiciliation)">
-                                <i class="ai-trash"></i>
-                              </a>
-                            </div>
-                            <div class="mt-auto mb-auto">{{mail.mail}}</div>
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                  <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-                    <div class="col-md-2">
-                      <generic-date-picker [(model)]="provision.domiciliation.legalGardianBirthdate"
-                        label="Date de naissance" [form]="informationForm" propertyName="legalGardianBirthdate"
-                        [isMandatory]="false" [isDisabled]="false" [maxDate]="getCurrentDate()">
-                      </generic-date-picker>
-                    </div>
-                    <div class="col-md-6">
-                      <generic-input [(model)]="provision.domiciliation.legalGardianPlaceOfBirth"
-                        label="Lieu de naissance" [form]="informationForm" propertyName="legalGardianPlaceOfBirth"
-                        [isMandatory]="false" [isDisabled]="false" [maxLength]="60">
-                      </generic-input>
-                    </div>
-                    <div class="col-md-4">
-                      <generic-input class="col-md-6 mt-0" [(model)]="newPhoneLegalGardian"
-                        label="Téléphone(s) (entrer pour valider)" [form]="informationForm"
-                        propertyName="newPhoneLegalGardian" [isMandatory]="false" [isDisabled]="false" [icon]="'phone'"
-                        [maxLength]="13" (onEnter)="addDomiciliationPhone(provision.domiciliation)">
-                      </generic-input>
-                      <ul class="list-group">
-                        <li class="list-group-item py-0"
-                          *ngFor="let phone of provision.domiciliation.legalGardianPhones">
-                          <div class="d-flex flex-wrap w-100">
-                            <div>
-                              <a class="nav-link fs-xl p-2"
-                                (click)="deletePhoneForDomiciliation(phone, provision.domiciliation)">
-                                <i class="ai-trash"></i>
-                              </a>
-                            </div>
-                            <div class="mt-auto mb-auto">{{phone.phoneNumber}}</div>
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- If personne morale -->
-                <div *ngIf="provision.domiciliation.isLegalPerson">
-                  <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-                    <div class="col-md-6">
-                      <autocomplete-legal-form [(model)]="provision.domiciliation.legalGardianLegalForm"
-                        [form]="informationForm" label="Forme juridique" [isDisabled]="false"
-                        propertyName="legalGardianLegalForm" [isMandatory]="true">
-                      </autocomplete-legal-form>
-                    </div>
-                    <div class="col-md-6">
-                      <generic-input [(model)]="provision.domiciliation.legalGardianDenomination" label="Dénomination"
-                        [form]="informationForm" propertyName="legalGardianDenomination" [isMandatory]="false"
-                        [isDisabled]="false" [maxLength]="60">
-                      </generic-input>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </ng-template>
-          </li>
-
-          <!--li class="nav-item " [ngbNavItem]="3" *ngIf="provision.provisionType.code == provisionTypeRbe.code">
-            <button ngbNavLink>Déclaration des Bénéficiares Effectifs de la société</button>
-            <ng-template ngbNavContent>
-              <div *ngFor="let beneficialOwner of modifiedBeneficialOwners; let beIndex = index"
-                class="quotation-container">
-                <h6><i class="ai-home me-2"></i>État civil : Bénéficiaire Effectif {{beIndex+1}}</h6>
-                <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-                  <div class="col-md-6">
-                    <generic-date-picker [(model)]="beneficialOwner.creationDate"
-                      label="Date à laquelle la personne est devenue bénéficiaire effectif" [form]="informationForm"
-                      [propertyName]="'beBeneficialOwnerCreationDate'+beIndex" [isMandatory]="false"
-                      [isDisabled]="false"></generic-date-picker>
-                  </div>
-                </div>
-                <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-                  <div class="col-md-3">
-                    <generic-input [(model)]="beneficialOwner.birthName" label="Nom de naissance"
-                      [form]="informationForm" [propertyName]="'beBirthName'+beIndex" [isMandatory]="false"
-                      [isDisabled]="false"></generic-input>
-                  </div>
-                  <div class="col-md-3">
-                    <generic-input [(model)]="beneficialOwner.usedName" label="Nom d'usage" [form]="informationForm"
-                      [propertyName]="'beUsedName'+beIndex" [isMandatory]="false" [isDisabled]="false"></generic-input>
-                  </div>
-                  <div class="col-md-3">
-                    <generic-input [(model)]="beneficialOwner.firstNames" label="Prénoms" [form]="informationForm"
-                      [propertyName]="'beFirstNames'+beIndex" [isMandatory]="false"
-                      [isDisabled]="false"></generic-input>
-                  </div>
-                  <div class="col-md-3">
-                    <generic-input [(model)]="beneficialOwner.pseudonym" label="Pseudonyme" [form]="informationForm"
-                      [propertyName]="'bePseudonym'+beIndex" [isMandatory]="false" [isDisabled]="false"></generic-input>
-                  </div>
-                </div>
-                <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-                  <div class="col-md-2">
-                    <generic-date-picker [(model)]="beneficialOwner.birthDate" label="Né le" [form]="informationForm"
-                      [propertyName]="'beBirthDate'+beIndex" [isMandatory]="false"
-                      [isDisabled]="false"></generic-date-picker>
-                  </div>
-                  <div class="col-md-2">
-                    <generic-input [(model)]="beneficialOwner.birthDepartement" label="Numéro de Département"
-                      [form]="informationForm" [propertyName]="'beBirthDepartement'+beIndex" [isMandatory]="false"
-                      [isDisabled]="false"></generic-input>
-                  </div>
-                  <div class="col-md-4">
-                    <generic-input [(model)]="beneficialOwner.birthCity" label="Commune" [form]="informationForm"
-                      [propertyName]="'beBirthCity'+beIndex" [isMandatory]="false" [isDisabled]="false"></generic-input>
-                  </div>
-                  <div class="col-md-2">
-                    <select-country [(model)]="beneficialOwner.birthCountry" label="Pays" [form]="informationForm"
-                      [propertyName]="'beBirthCountry'+beIndex" [isMandatory]="false"
-                      [isDisabled]="false"></select-country>
-                  </div>
-                  <div class="col-md-2">
-                    <select-country [(model)]="beneficialOwner.nationality" label="Nationalité" [form]="informationForm"
-                      [propertyName]="'beNationality'+beIndex" [isMandatory]="false"
-                      [isDisabled]="false"></select-country>
-                  </div>
-                </div>
-                <div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-                  <div class="col-md-6">
-                    <generic-input [(model)]="beneficialOwner.residenceAddress"
-                      label="Domicile (rés., bât., n°, voie, lieu-dit)" [form]="informationForm"
-                      [propertyName]="'residenceAddress'+beIndex" [isMandatory]="false"
-                      [isDisabled]="false"></generic-input>
-                  </div>
-                  <div class="col-md-2">
-                    <generic-input [(model)]="beneficialOwner.postalCode" label="Code postal" [form]="informationForm"
-                      [propertyName]="'bePostalCode'+beIndex" [isMandatory]="false"
-                      [isDisabled]="false"></generic-input>
-                  </div>
-                  <div class="col-md-2">
-                    <generic-input [(model)]="beneficialOwner.city" label="Commune" [form]="informationForm"
-                      [propertyName]="'beCity'+beIndex" [isMandatory]="false" [isDisabled]="false"></generic-input>
-                  </div>
-                  <div class="col-md-2">
-                    <select-country [(model)]="beneficialOwner.country" label="Pays" [form]="informationForm"
-                      [propertyName]="'beCountry'+beIndex" [isMandatory]="false" [isDisabled]="false"></select-country>
-                  </div>
-                </div-->
-          <!-- Modalités du contrôle exercé par le bénéficiaire effectif sur la société -->
-          <!--h6 class=" mt-5"><i class="ai-home me-2"></i>Modalités du contrôle exercé par le bénéficiaire effectif
-                  sur la société
-                </h6-->
-          <!-- ========== CAPITAL ============= -->
-          <!--div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-                  <div class="col-md-6">
-                    <generic-toggle [(model)]="beneficialOwner.isOwnerOfMoreThanQuarterOfCapital"
-                      label="Détention de plus de 25 % du capital ?" [form]="informationForm"
-                      [propertyName]="'isOwnerOfMoreThanQuarterOfCapital'+ beIndex" [isMandatory]="false"
-                      [isDisabled]="false"></generic-toggle>
-                  </div>
-                  <div *ngIf="beneficialOwner.isOwnerOfMoreThanQuarterOfCapital" class="col-md-6">
-                    <generic-input [(model)]="beneficialOwner.totalPercentageOfOwnedCapital"
-                      label="Préciser le pourcentage total (en %)" [form]="informationForm"
-                      [propertyName]="'totalPercentageOfOwnedCapital'+beIndex" [isMandatory]="false"
-                      [isDisabled]="false" [maxLength]="6"></generic-input>
-                  </div>
-                </div>
-                <div *ngIf="beneficialOwner.isOwnerOfMoreThanQuarterOfCapital"
-                  class="row form-switch p-0 pt-md-2 g-3  ms-2 ms-md-5">
-                  <div class="row">
-                    <generic-toggle class="col" [(model)]="beneficialOwner.isDirectOwnershipOfCapital"
-                      label="Détention directe" [form]="informationForm"
-                      [propertyName]="'isDirectOwnershipOfCapital'+beIndex" [isMandatory]="false"
-                      [isDisabled]="false"></generic-toggle>
-                  </div-->
-          <!-- Direct -->
-          <!--div
-                    *ngIf="beneficialOwner.isOwnerOfMoreThanQuarterOfCapital && beneficialOwner.isDirectOwnershipOfCapital"
-                    class="row align-items-start">
-                    <div class="col">
-                      <generic-input [(model)]="beneficialOwner.directFullCapitalOwnershipPercentage"
-                        label="Pleine propriété (en %)" [form]="informationForm"
-                        [propertyName]="'directFullCapitalOwnershipPercentage'+beIndex" [isMandatory]="false"
-                        [isDisabled]="false" [maxLength]="6"></generic-input>
-                    </div>
-                    <div class="col">
-                      <generic-input [(model)]="beneficialOwner.directBareCapitalOwnershipPercentage"
-                        label="Nue-propriété (en %)" [form]="informationForm"
-                        [propertyName]="'directBareCapitalOwnershipPercentage'+beIndex" [isMandatory]="false"
-                        [isDisabled]="false" [maxLength]="6"></generic-input>
-                    </div>
-                  </div>
-                </div-->
-
-          <!-- Indirect : Détention par le biais d’une indivision (joint ownership)-->
-          <!--div *ngIf="beneficialOwner.isOwnerOfMoreThanQuarterOfCapital"
-                  class="row form-switch p-0 pt-md-2 g-3 ms-2 ms-md-5 my-4">
-                  <div class="row">
-                    <generic-toggle class="col" [(model)]="beneficialOwner.isIndirectOwnershipOfCapital"
-                      label="Détention indirecte" [form]="informationForm"
-                      [propertyName]="'isIndirectOwnershipOfCapital'+beIndex" [isMandatory]="false"
-                      [isDisabled]="false"></generic-toggle>
-                  </div>
-
-                  <div *ngIf="beneficialOwner.isIndirectOwnershipOfCapital" class="col-md-12">
-                    <div class="row align-items-center mb-2">
-                      <span class="col-auto">Détention par le biais d’une indivision :</span>
-                      <generic-input class="col-5 col-md-2 p-0 ms-3 ms-md-0"
-                        [(model)]="beneficialOwner.jointCapitalTotalOwnershipPercentage" label=""
-                        [form]="informationForm" [propertyName]="'jointCapitalTotalOwnershipPercentage'+beIndex"
-                        [isMandatory]="false" [isDisabled]="false" [maxLength]="6"></generic-input>
-                      <span class="col-auto">%</span>
-                    </div>
-                  </div>
-                  <div *ngIf="beneficialOwner.isIndirectOwnershipOfCapital" class="row align-items-start">
-                    <div class="col">
-                      <generic-input [(model)]="beneficialOwner.jointCapitalFullOwnershipPercentage"
-                        label="dont en pleine propriété (en %)" [form]="informationForm"
-                        [propertyName]="'jointCapitalFullOwnershipPercentage'+beIndex" [isMandatory]="false"
-                        [isDisabled]="false" [maxLength]="6"></generic-input>
-                    </div>
-                    <div class="col">
-                      <generic-input [(model)]="beneficialOwner.jointCapitalBareOwnershipPercentage"
-                        label="Nue-propriété (en %)" [form]="informationForm"
-                        [propertyName]="'jointCapitalBareOwnershipPercentage'+beIndex" [isMandatory]="false"
-                        [isDisabled]="false" [maxLength]="6"></generic-input>
-                    </div>
-                  </div-->
-
-          <!-- Indirect : Détention par le biais d’une ou plusieurs personnes morales -->
-          <!--div
-                    *ngIf="beneficialOwner.isOwnerOfMoreThanQuarterOfCapital && beneficialOwner.isIndirectOwnershipOfCapital"
-                    class="col-md-12">
-                    <div class="row align-items-center mb-2">
-                      <span class="col-auto">Détention par le biais d'une ou plusieurs personnes morales :</span>
-                      <generic-input class="col-5 col-md-2 p-0 ms-3 ms-md-0"
-                        [(model)]="beneficialOwner.moralPersonTotalCapitalOwnershipPercentage" label=""
-                        [form]="informationForm" [propertyName]="'moralPersonTotalCapitalOwnershipPercentage'+beIndex"
-                        [isMandatory]="false" [isDisabled]="false" [maxLength]="6"></generic-input>
-                      <span class="col-auto">%</span>
-                    </div>
-                  </div>
-                  <div
-                    *ngIf="beneficialOwner.isOwnerOfMoreThanQuarterOfCapital && beneficialOwner.isIndirectOwnershipOfCapital"
-                    class="row align-items-start">
-                    <div class="col">
-                      <generic-input [(model)]="beneficialOwner.moralPersonCapitalFullOwnershipPercentage"
-                        label="dont en pleine propriété (en %)" [form]="informationForm"
-                        [propertyName]="'moralPersonCapitalFullOwnershipPercentage'+beIndex" [isMandatory]="false"
-                        [isDisabled]="false" [maxLength]="6"></generic-input>
-                    </div>
-                    <div class="col">
-                      <generic-input [(model)]="beneficialOwner.moralPersonCapitalBareOwnershipPercentage"
-                        label="Nue-propriété (en %)" [form]="informationForm"
-                        [propertyName]="'moralPersonCapitalBareOwnershipPercentage'+beIndex" [isMandatory]="false"
-                        [isDisabled]="false" [maxLength]="6"></generic-input>
-                    </div>
-                  </div>
-                </div>
-                <hr-->
-          <!-- ================= VOTES RIGHTS ================= -->
-          <!--div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-                  <div class="col-md-6">
-                    <generic-toggle [(model)]="beneficialOwner.isOwnerOfMoreThanQuarterOfVotesRights"
-                      label="Détention de plus de 25 % des droits de vote ?" [form]="informationForm"
-                      [propertyName]="'isOwnerOfMoreThanQuarterOfVotesRights'+ beIndex" [isMandatory]="false"
-                      [isDisabled]="false"></generic-toggle>
-                  </div>
-                  <div *ngIf="beneficialOwner.isOwnerOfMoreThanQuarterOfVotesRights" class="col-md-6">
-                    <generic-input [(model)]="beneficialOwner.totalPercentageOfVotesRights"
-                      label="Préciser le pourcentage total (en %)" [form]="informationForm"
-                      [propertyName]="'totalPercentageOfVotesRights'+beIndex" [isMandatory]="false" [isDisabled]="false"
-                      [maxLength]="6"></generic-input>
-                  </div>
-                </div>
-                <div *ngIf="beneficialOwner.isOwnerOfMoreThanQuarterOfVotesRights"
-                  class="row form-switch p-0 pt-md-2 g-3  ms-2 ms-md-5">
-                  <div class="row">
-                    <generic-toggle class="col" [(model)]="beneficialOwner.isDirectOwnershipOfVotesRights"
-                      label="Détention directe" [form]="informationForm"
-                      [propertyName]="'isDirectOwnershipOfVotesRights'+beIndex" [isMandatory]="false"
-                      [isDisabled]="false"></generic-toggle>
-                  </div-->
-          <!-- Direct -->
-          <!--div *ngIf="beneficialOwner.isDirectOwnershipOfVotesRights"
-                    class="row align-items-start mb-4 mb-md-2">
-                    <div class="col-md-4">
-                      <generic-input [(model)]="beneficialOwner.directFullVotesRightsOwnershipPercentage"
-                        label="Pleine propriété (en %)" [form]="informationForm"
-                        [propertyName]="'directFullVotesRightsOwnershipPercentage'+beIndex" [isMandatory]="false"
-                        [isDisabled]="false" [maxLength]="6"></generic-input>
-                    </div>
-                    <div class="col-md-4">
-                      <generic-input [(model)]="beneficialOwner.directBareVotesRightsOwnershipPercentage"
-                        label="Nue-propriété (en %)" [form]="informationForm"
-                        [propertyName]="'directBareVotesRightsOwnershipPercentage'+beIndex" [isMandatory]="false"
-                        [isDisabled]="false" [maxLength]="6"></generic-input>
-                    </div>
-                    <div class="col-md-4">
-                      <generic-input [(model)]="beneficialOwner.directUsufructVotesRightsOwnershipPercentage"
-                        label="Usufruit (en %)" [form]="informationForm"
-                        [propertyName]="'directUsufructVotesRightsOwnershipPercentage'+beIndex" [isMandatory]="false"
-                        [isDisabled]="false" [maxLength]="6"></generic-input>
-                    </div>
-                  </div>
-                </div-->
-
-          <!-- Indirect : Détention par le biais d’une indivision-->
-          <!--div *ngIf="beneficialOwner.isOwnerOfMoreThanQuarterOfVotesRights"
-                  class="row form-switch p-0 pt-md-2 g-3 ms-2 ms-md-5 my-4">
-                  <div class="row">
-                    <generic-toggle class="col" [(model)]="beneficialOwner.isIndirectOwnershipOfVotesRights"
-                      label="Détention indirecte" [form]="informationForm"
-                      [propertyName]="'isIndirectOwnershipOfVotesRights'+beIndex" [isMandatory]="false"
-                      [isDisabled]="false"></generic-toggle>
-                  </div>
-
-                  <div *ngIf="beneficialOwner.isIndirectOwnershipOfVotesRights" class="col-md-12">
-                    <div class="row align-items-center mb-2">
-                      <span class="col-auto">Détention par le biais d’une indivision :</span>
-                      <generic-input class="col-5 col-md-2 p-0 ms-3 ms-md-0"
-                        [(model)]="beneficialOwner.jointVotesRightsTotalOwnershipPercentage" label=""
-                        [form]="informationForm" [propertyName]="'jointVotesRightsTotalOwnershipPercentage'+beIndex"
-                        [isMandatory]="false" [isDisabled]="false" [maxLength]="6"></generic-input>
-                      <span class="col-auto">%</span>
-                    </div>
-                  </div>
-                  <div *ngIf="beneficialOwner.isIndirectOwnershipOfVotesRights" class="row align-items-start">
-                    <div class="col-md-4">
-                      <generic-input [(model)]="beneficialOwner.jointVotesRightsFullOwnershipPercentage"
-                        label="dont en pleine propriété (en %)" [form]="informationForm"
-                        [propertyName]="'jointVotesRightsFullOwnershipPercentage'+beIndex" [isMandatory]="false"
-                        [isDisabled]="false" [maxLength]="6"></generic-input>
-                    </div>
-                    <div class="col-md-4">
-                      <generic-input [(model)]="beneficialOwner.jointVotesRightsBareOwnershipPercentage"
-                        label="Nue-propriété (en %)" [form]="informationForm"
-                        [propertyName]="'jointVotesRightsBareOwnershipPercentage'+beIndex" [isMandatory]="false"
-                        [isDisabled]="false" [maxLength]="6"></generic-input>
-                    </div>
-                    <div class="col-md-4">
-                      <generic-input [(model)]="beneficialOwner.jointVotesRightsUsufructOwnershipPercentage"
-                        label="Usufruit (en %)" [form]="informationForm"
-                        [propertyName]="'jointVotesRightsUsufructOwnershipPercentage'+beIndex" [isMandatory]="false"
-                        [isDisabled]="false" [maxLength]="6"></generic-input>
-                    </div>
-                  </div-->
-
-          <!-- Indirect : Détention par le biais d’une ou plusieurs personnes morales-->
-          <!--div
-                    *ngIf="beneficialOwner.isOwnerOfMoreThanQuarterOfVotesRights && beneficialOwner.isIndirectOwnershipOfVotesRights"
-                    class="col-md-12">
-                    <div class="row align-items-center mb-2">
-                      <span class="col-auto">Détention par le biais d'une ou plusieurs personnes morales :</span>
-                      <generic-input class="col-5 col-md-2 p-0 ms-3 ms-md-0"
-                        [(model)]="beneficialOwner.moralPersonTotalVotesRightsOwnershipPercentage" label=""
-                        [form]="informationForm"
-                        [propertyName]="'moralPersonTotalVotesRightsOwnershipPercentage'+beIndex" [isMandatory]="false"
-                        [isDisabled]="false" [maxLength]="6"></generic-input>
-                      <span class="col-auto">%</span>
-                    </div>
-                  </div>
-                  <div
-                    *ngIf="beneficialOwner.isOwnerOfMoreThanQuarterOfVotesRights && beneficialOwner.isIndirectOwnershipOfVotesRights"
-                    class="row align-items-start">
-                    <div class="col-md-4">
-                      <generic-input [(model)]="beneficialOwner.moralPersonVotesRightsFullOwnershipPercentage"
-                        label="dont en pleine propriété (en %)" [form]="informationForm"
-                        [propertyName]="'moralPersonVotesRightsFullOwnershipPercentage'+beIndex" [isMandatory]="false"
-                        [isDisabled]="false" [maxLength]="6"></generic-input>
-                    </div>
-                    <div class="col-md-4">
-                      <generic-input [(model)]="beneficialOwner.moralPersonVotesRightsBareOwnershipPercentage"
-                        label="Nue-propriété (en %)" [form]="informationForm"
-                        [propertyName]="'moralPersonVotesRightsBareOwnershipPercentage'+beIndex" [isMandatory]="false"
-                        [isDisabled]="false" [maxLength]="6"></generic-input>
-                    </div>
-                    <div class="col-md-4">
-                      <generic-input [(model)]="beneficialOwner.moralPersonVotesRightsUsufructOwnershipPercentage"
-                        label="Usufruit (en %)" [form]="informationForm"
-                        [propertyName]="'moralPersonVotesRightsUsufructOwnershipPercentage'+beIndex"
-                        [isMandatory]="false" [isDisabled]="false" [maxLength]="6"></generic-input>
-                    </div>
-                  </div>
-                </div>
-                <hr-->
-          <!-- Other means to control the company -->
-          <!--div class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-                  <div class="col-md-6">
-                    <generic-toggle [(model)]="beneficialOwner.isOtherMeansForControl"
-                      [label]="'Exercice par tout autre moyen d\'un pouvoir de contrôle sur la société déclarante' + (beneficialOwner.isOtherMeansForControl ? ' :' : '.')"
-                      [form]="informationForm" [propertyName]="'isOtherMeansForControl'+beIndex" [isMandatory]="false"
-                      [isDisabled]="false"></generic-toggle>
-                  </div>
-                </div>
-                <div *ngIf="beneficialOwner.isOtherMeansForControl"
-                  class="row form-switch p-0 pt-md-2 g-3  ms-2 ms-md-5">
-                  <generic-toggle class="col" [(model)]="beneficialOwner.isDeterminesAGDecisionsByVotingRights"
-                    label="Détermination en fait, par les droits de vote dont il dispose, des décisions dans les assemblées générales de la société déclarante."
-                    [form]="informationForm" [propertyName]="'isDeterminesAGDecisionsByVotingRights'+beIndex"
-                    [isMandatory]="false" [isDisabled]="false"></generic-toggle>
-                </div>
-                <div *ngIf="beneficialOwner.isOtherMeansForControl"
-                  class="row form-switch p-0 pt-md-2 g-3  ms-2 ms-md-5">
-                  <generic-toggle class="col" [(model)]="beneficialOwner.isCanNominateDismissBoardMembers"
-                    label="Détention du pouvoir de nommer ou de révoquer la majorité des membres des organes d'administration, de direction ou de surveillance de la société déclarante."
-                    [form]="informationForm" [propertyName]="'isCanNominateDismissBoardMembers'+beIndex"
-                    [isMandatory]="false" [isDisabled]="false"></generic-toggle>
-                </div>
-                <div
-                  *ngIf="!beneficialOwner.isOwnerOfMoreThanQuarterOfCapital && !beneficialOwner.isOwnerOfMoreThanQuarterOfVotesRights && !beneficialOwner.isOtherMeansForControl"
-                  class="row form-switch justify-content-start p-0 pt-md-2 g-3">
-                  <hr>
-                  <div class="col">
-                    <generic-toggle [(model)]="beneficialOwner.isBETheLegalRepresentative"
-                      label="A défaut de choix de l'une des options figurant ci-dessus, le bénéficiaire effectif est le représentant légal de la société"
-                      [form]="informationForm" [propertyName]="'isBETheLegalRepresentative'+ beIndex"
-                      [isMandatory]="false" [isDisabled]="false"></generic-toggle>
-                  </div>
-                </div>
-
-              </div>
-              <div class="row justify-content-between g-3">
-                <div class="col-auto">
-                  <a class="btn btn-outline-primary" (click)="deleteLastBeneficialOwner()"><i
-                      class="ai-trash me-2"></i>Supprimer le bénéficiare effectif</a>
-                </div>
-                <div class="col-auto">
-                  <a class="btn btn-secondary" (click)="addBeneficialOwner()"><i class="ai-circle-plus me-2"></i>Ajouter
-                    un bénéficiare effectif</a>
-                </div>
-              </div>
-            </ng-template>
-          </li-->
-        </ng-container>
-        <li class="row z-4"
-          [ngbNavItem]="getIndexForProvision(-1, quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].provisions)"
-          *ngIf="currentUser && (quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes ||
-          quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments)">
-          <button class="col-auto py-0 pe-2" ngbNavLink>Pièces justificatives à déposer <osi-tooltip
-              tootltipCodeToDisplay="MYJSS_QUOTATION_REQUIRED_INFO_ADD_FILES" class="col-auto ms-2 mt-1"></osi-tooltip>
-          </button>
-          <ng-template ngbNavContent>
-            <div
-              *ngIf="currentUser && hasMandatoryDocuments(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments)"
-              class="updload-file-container mb-4">
-              <h6 class="d-flex align-items-center bg-white rounded-3 pb-3 pt-4 ps-3 m-0">
-                <i class="ai-paperclip pe-2 m-0"></i> Pièces obligatoires
-              </h6>
-              <div
-                *ngFor="let assoServiceDocument of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments; let i = index; let last = last">
-                <div *ngIf="assoServiceDocument.isMandatory" class="quotation-container"
-                  [ngClass]="{'mb-0 rounded-bottom-3': isLastMandatoryDocument(assoServiceDocument), 'mb-3':!isLastMandatoryDocument(assoServiceDocument)}">
-                  <quotation-file-uploader [entity]="assoServiceDocument"
-                    (isUploadComplete)="onIsCompleteChange($event, selectedAssoIndex, selectedServiceIndex, i, assoServiceDocument)"
-                    (isUploadDeleted)="onIsUploadDelete($event, selectedAssoIndex, selectedServiceIndex, i, assoServiceDocument)"></quotation-file-uploader>
-                </div>
-              </div>
-            </div>
-            <div
-              *ngIf="currentUser && hasNonMandatoryDocuments(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments)"
-              class="updload-file-container mb-4">
-              <h6 class="d-flex align-items-center bg-white rounded-3 pb-3 pt-4 ps-3 m-0">
-                <i class="ai-paperclip pe-2 m-0"></i> Pièces facultatives
-              </h6>
-              <div
-                *ngFor="let assoServiceDocument of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments; let i = index; let last = last">
-                <div *ngIf="!assoServiceDocument.isMandatory" class="quotation-container"
-                  [ngClass]="{'mb-0 rounded-bottom-3': last, 'mb-3':!last}">
-                  <quotation-file-uploader [entity]="assoServiceDocument"
-                    (isUploadComplete)="onIsCompleteChange($event, selectedAssoIndex, selectedServiceIndex, i, assoServiceDocument)"
-                    (isUploadDeleted)="onIsUploadDelete($event, selectedAssoIndex, selectedServiceIndex, i, assoServiceDocument)"></quotation-file-uploader>
-                </div>
-              </div>
-            </div>
-          </ng-template>
-        </li>
-        <li class="row z-3" [ngbNavItem]="50" *ngIf="(quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes ||
-          quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceDocuments)">
-          <button class="col-auto py-0 pe-2" ngbNavLink>Informations complémentaires<osi-tooltip
-              tootltipCodeToDisplay="MYJSS_QUOTATION_REQUIRED_INFO_ADDITIONAL_INFO"
-              class="col-auto ms-2 mt-1"></osi-tooltip>
-          </button>
-          <ng-template ngbNavContent>
-            <div class="quotation-container">
-              <h6><i class="ai-circle-info me-2"></i>Information</h6>
-              <div class="pb-3">
-                <div class="row g-3 align-items-start">
-                  <span
-                    *ngIf="quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes.length ==0">Aucune
-                    information à remplir pour ce service, vous pouvez cliquer sur le bouton étape suivante.</span>
-                  <ng-container
-                    *ngFor="let serviceType of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].serviceTypes;let serviceTypeIndex = index">
-                    <h6 class="mb-0" [ngClass]="{'mt-5':serviceTypeIndex>0}"
-                      *ngIf="quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].serviceTypes.length>1 &&  serviceType.assoServiceTypeFieldTypes.length>0">
-                      {{serviceType.label}}
-                    </h6>
-                    <ng-container
-                      *ngFor="let assoServiceFieldType of quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].assoServiceFieldTypes; let i = index">
-                      <ng-container
-                        *ngIf="isDisplayFieldForServiceType(assoServiceFieldType, serviceType,serviceTypeIndex==quotation.assoAffaireOrders[selectedAssoIndex].services[selectedServiceIndex].serviceTypes.length-1)">
-                        <ng-container *ngIf="isDisplayDependantField(assoServiceFieldType)">
-                          <!-- TEXT -->
-                          <div class="col-12 col-md-6 col-lg-4"
-                            *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_TEXT">
-                            <generic-input [(model)]="assoServiceFieldType.stringValue"
-                              [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
-                              [form]="informationForm" [propertyName]="'stringFieldType'+i" [isMandatory]="false"
-                              [maxLength]="255">
-                            </generic-input>
-                          </div>
-
-                          <!-- TEXTAREA -->
-                          <div class="col-12 "
-                            *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_TEXTAREA">
-                            <generic-textarea [(model)]="assoServiceFieldType.textAreaValue"
-                              [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
-                              [form]="informationForm" [maxLength]="255" [propertyName]="'textAreaFieldType'+i"
-                              [isMandatory]="false">
-                            </generic-textarea>
-                          </div>
-
-                          <!-- DATE -->
-                          <div class="col-12 col-md-6 col-lg-4"
-                            *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_DATE">
-                            <div class="form-group w-auto">
-                              <generic-date-picker [(model)]="assoServiceFieldType.dateValue"
-                                [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
-                                [form]="informationForm" [propertyName]="'dateFieldType'+i" [isMandatory]="false">
-                              </generic-date-picker>
-                            </div>
-                          </div>
-
-                          <!-- INTEGER -->
-                          <div class="col-12 col-md-6 col-lg-4"
-                            *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_INTEGER">
-                            <generic-input [(model)]="assoServiceFieldType.integerValue"
-                              [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
-                              [form]="informationForm" [propertyName]="'integerFieldType'+i" [isMandatory]="false"
-                              type="number">
-                            </generic-input>
-                          </div>
-
-                          <!-- SELECT -->
-                          <div class="col-12 col-md-6 col-lg-4"
-                            *ngIf="assoServiceFieldType.serviceFieldType.dataType == SERVICE_FIELD_TYPE_SELECT">
-                            <select-value-service-field-type [(model)]="assoServiceFieldType.selectValue"
-                              [label]="assoServiceFieldType.serviceFieldType.label+(assoServiceFieldType.isMandatory?'*':'')"
-                              [form]="informationForm" [propertyName]="'selectFieldType'+i"
-                              [serviceFieldType]="assoServiceFieldType.serviceFieldType" [isMandatory]="false">
-                            </select-value-service-field-type>
-                          </div>
-                        </ng-container>
-                      </ng-container>
-                    </ng-container>
-                  </ng-container>
-                </div>
-              </div>
-            </div>
-          </ng-template>
-        </li>
-      </ul>
-      <div [ngbNavOutlet]="nav"></div>
-    </ng-container>
-  </section>
-
-
-  <div
-    class="position-fixed bottom-0 start-0 w-100 bg-light shadow-sm p-3 m-0 d-flex justify-content-between align-items-center z-1030">
-    <div class="row align-items-center">
+  </ng-template>
+</li>
+}
+</ul>
+<div [ngbNavOutlet]="nav"></div>
+}
+</section>
+<div
+  class="position-fixed bottom-0 start-0 w-100 bg-light shadow-sm p-3 m-0 d-flex justify-content-between align-items-center z-1030">
+  <div class="row align-items-center">
+    @if (selectedServiceIndex!=null && selectedAssoIndex!=null) {
       <button type="button" class="col-auto btn btn-secondary rounded-1 mx-0 ms-sm-5 d-flex align-items-center"
         (click)="moveToService((selectedServiceIndex-1), selectedAssoIndex)"
-        *ngIf="selectedServiceIndex!=null && selectedAssoIndex!=null">
+        >
         <i class="ai-arrow-left d-none d-sm-inline"></i>
         <span class="ms-2 ms-lg-2">Étape précédente </span>
       </button>
-      <osi-tooltip tootltipCodeToDisplay="MYJSS_QUOTATION_SERV_SELECTION_CANCEL"
-        class="d-none d-md-block col-auto"></osi-tooltip>
-    </div>
-
-    <button type="button" class="btn btn-secondary rounded-1  mx-0 mx-sm-5 d-flex align-items-center"
-      *ngIf="canSaveQuotation() && selectedServiceIndex!=null && selectedAssoIndex!=null"
-      (click)="moveToService((selectedServiceIndex+1), selectedAssoIndex)"> <span class="me-2">Étape
-        suivante</span>
-      <i class="ai-arrow-right d-none d-sm-inline"></i>
-    </button>
+    }
+    <osi-tooltip tootltipCodeToDisplay="MYJSS_QUOTATION_SERV_SELECTION_CANCEL"
+    class="d-none d-md-block col-auto"></osi-tooltip>
   </div>
+  @if (canSaveQuotation() && selectedServiceIndex!=null && selectedAssoIndex!=null) {
+    <button type="button" class="btn btn-secondary rounded-1  mx-0 mx-sm-5 d-flex align-items-center"
+      (click)="moveToService((selectedServiceIndex+1), selectedAssoIndex)"> <span class="me-2">Étape
+    suivante</span>
+    <i class="ai-arrow-right d-none d-sm-inline"></i>
+  </button>
+}
 </div>
+</div>
+}
 
 <!-- Modal de confirmation -->
 <ng-template #confirmBackModal let-modal>

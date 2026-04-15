@@ -29,64 +29,78 @@
       <div class="input-group custom-input-group">
         <generic-input [(model)]="searchText" label="Rechercher" [form]="exclusivePostsForm" [isDisableBorders]="true"
           propertyName="secondSearchText" [isMandatory]="false" [isDisabled]="false" [isDisplayLabel]="false"
-          (onFormChange)="searchForPosts()" [icon]="'search'" class="btn-search col"></generic-input>
+        (onFormChange)="searchForPosts()" [icon]="'search'" class="btn-search col"></generic-input>
         <span class="border-end border-input"></span>
         <select-myjss-category class="cursor-pointer d-flex align-items-center"
           [additionnalType]="this.myJssCategories[0]" [(model)]="selectedMyJssCategory" [form]="exclusivePostsForm"
           propertyName="secondSelectedMyJssCategory" [isMandatory]="false" (onFormChange)="searchForPosts()"
-          [isDisabled]="false"></select-myjss-category>
+        [isDisabled]="false"></select-myjss-category>
       </div>
 
     </div>
   </div>
-  <div class="accordion-item border-top mb-0" *ngIf="isLoading">
-    <div class="accordion-header">
-      <p class="article placeholder-glow">
-        <span class="placeholder placeholder-sm col-7 me-2"></span>
-        <span class="placeholder placeholder-sm col-4"></span>
-        <span class="placeholder placeholder-sm col-4 me-2"></span>
-        <span class="placeholder placeholder-sm col-6"></span>
-        <span class="placeholder placeholder-sm col-8"></span>
-      </p>
+  @if (isLoading) {
+    <div class="accordion-item border-top mb-0">
+      <div class="accordion-header">
+        <p class="article placeholder-glow">
+          <span class="placeholder placeholder-sm col-7 me-2"></span>
+          <span class="placeholder placeholder-sm col-4"></span>
+          <span class="placeholder placeholder-sm col-4 me-2"></span>
+          <span class="placeholder placeholder-sm col-6"></span>
+          <span class="placeholder placeholder-sm col-8"></span>
+        </p>
+      </div>
     </div>
-  </div>
-  <div *ngIf="searchResults && searchResults.length>0 ">
-    <div *ngFor="let post of searchResults">
-      <article class="row g-0 border-0 mb-5">
-        <img class="col-sm-5 col-lg-4 rounded-5 post-image" [routerLink]="'/post/'+post.slug"
-          [src]="post.media && post.media.urlLarge ? post.media.urlLarge : (post.media && post.media.urlFull ? post.media.urlFull : 'assets/img/account/blog/list/01.jpg')"
-          alt="Post image">
-        <div class="col-sm-7 col-lg-8">
-          <div class="pt-4 pb-sm-4 ps-sm-4 pe-lg-4">
-            <h3>
-              <a class="card-title-truncate" [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
-            </h3>
-            <p class="d-sm-none d-md-block card-text-truncate">{{getRawTextFromHtml(post.excerptText)}}</p>
-            <div class="d-flex flex-wrap align-items-center mt-n2">
-              <span class="fs-sm text-body-secondary mt-2">Publié le {{post.date | date:'EEEE d MMMM y'}}</span>
-              <span class="fs-xs opacity-20 mt-2 mx-3">|</span>
-              <a *ngFor="let tag of post.postTags" [routerLink]="'/tag/'+tag.slug"
-                class="badge text-nav fs-xs border mt-2">{{tag.slug}}</a>
-            </div>
+  }
+  @if (searchResults && searchResults.length>0 ) {
+    <div>
+      @for (post of searchResults; track post) {
+        <div>
+          <article class="row g-0 border-0 mb-5">
+            <img class="col-sm-5 col-lg-4 rounded-5 post-image" [routerLink]="'/post/'+post.slug"
+              [src]="post.media && post.media.urlLarge ? post.media.urlLarge : (post.media && post.media.urlFull ? post.media.urlFull : 'assets/img/account/blog/list/01.jpg')"
+              alt="Post image">
+              <div class="col-sm-7 col-lg-8">
+                <div class="pt-4 pb-sm-4 ps-sm-4 pe-lg-4">
+                  <h3>
+                    <a class="card-title-truncate" [routerLink]="'/post/'+post.slug">{{post.titleText}}</a>
+                  </h3>
+                  <p class="d-sm-none d-md-block card-text-truncate">{{getRawTextFromHtml(post.excerptText)}}</p>
+                  <div class="d-flex flex-wrap align-items-center mt-n2">
+                    <span class="fs-sm text-body-secondary mt-2">Publié le {{post.date | date:'EEEE d MMMM y'}}</span>
+                    <span class="fs-xs opacity-20 mt-2 mx-3">|</span>
+                    @for (tag of post.postTags; track tag) {
+                      <a [routerLink]="'/tag/'+tag.slug"
+                      class="badge text-nav fs-xs border mt-2">{{tag.slug}}</a>
+                    }
+                  </div>
+                </div>
+              </div>
+            </article>
           </div>
-        </div>
-      </article>
-    </div>
-  </div>
+        }
+      </div>
+    }
 
-  <div *ngIf="(!searchResults || searchResults.length==0) && !isLoading">
-    <p> Aucun article trouvé</p>
-  </div>
+    @if ((!searchResults || searchResults.length==0) && !isLoading) {
+      <div>
+        <p> Aucun article trouvé</p>
+      </div>
+    }
 
-  <div class="row gy-3 align-items-center mt-lg-5 pt-2 pt-md-3 pt-lg-0 mb-md-2 mb-xl-4">
-    <div class="col-12 text-end order-md-1 order-1">
-      <nav *ngIf="totalPages > 1" aria-label="Page navigation">
-        <ul class="pagination pagination-sm justify-content-end">
-          <li class="page-item" *ngFor="let p of pages" [class.active]="p === page">
-            <a class="page-link" (click)="goToPage(p)">{{ p + 1 }}</a>
-          </li>
-        </ul>
-      </nav>
+    <div class="row gy-3 align-items-center mt-lg-5 pt-2 pt-md-3 pt-lg-0 mb-md-2 mb-xl-4">
+      <div class="col-12 text-end order-md-1 order-1">
+        @if (totalPages > 1) {
+          <nav aria-label="Page navigation">
+            <ul class="pagination pagination-sm justify-content-end">
+              @for (p of pages; track p) {
+                <li class="page-item" [class.active]="p === page">
+                  <a class="page-link" (click)="goToPage(p)">{{ p + 1 }}</a>
+                </li>
+              }
+            </ul>
+          </nav>
+        }
+      </div>
     </div>
-  </div>
-</section>
+  </section>
