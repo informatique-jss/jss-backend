@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -1328,18 +1331,50 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
             }
 
         if (printRegisteredLetter) {
+            File file = null;
             for (CustomerOrder customerOrder : customerOrders) {
                 try {
                     if (competentAuthority != null)
-                        printDelegate.printRegisteredLabel(invoiceLabelResult, customerOrder);
+                        // printDelegate.printRegisteredLabel(invoiceLabelResult, customerOrder);
+                        file = generatePdfDelegate.printRegisteredLabelPdf(invoiceLabelResult, customerOrder);
                     else
-                        printDelegate.printRegisteredLabel(mailComputeHelper.computePaperLabelResult(customerOrder),
+                        // printDelegate.printRegisteredLabel(mailComputeHelper.computePaperLabelResult(customerOrder),customerOrder);
+                        file = generatePdfDelegate.printRegisteredLabelPdf(
+                                mailComputeHelper.computePaperLabelResult(customerOrder),
                                 customerOrder);
-                } catch (NumberFormatException e) {
+
                 } catch (Exception e) {
                     throw new OsirisException(e, "Error when printing label");
                 }
+                if (file != null) {
+
+                    Path targetDir = Paths.get("C:\\uploads");
+                    try {
+                        Files.createDirectories(targetDir);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    String fileName = "registered_label_order_" + customerOrder.getId() +
+                            "_" +
+                            DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")
+                                    .format(LocalDateTime.now())
+                            +
+                            ".pdf";
+
+                    Path targetPath = targetDir.resolve(fileName);
+                    try {
+                        Files.move(
+                                file.toPath(),
+                                targetPath,
+                                StandardCopyOption.REPLACE_EXISTING);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
             }
+
         }
         if (printLetters) {
             byte[] data = null;

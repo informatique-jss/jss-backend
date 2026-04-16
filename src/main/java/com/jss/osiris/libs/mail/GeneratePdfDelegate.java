@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import java.util.Locale;
@@ -80,6 +81,7 @@ import com.jss.osiris.modules.osiris.quotation.model.AssoAffaireOrder;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceDocument;
 import com.jss.osiris.modules.osiris.quotation.model.AssoServiceFieldType;
 import com.jss.osiris.modules.osiris.quotation.model.CustomerOrder;
+import com.jss.osiris.modules.osiris.quotation.model.CustomerOrderAssignation;
 import com.jss.osiris.modules.osiris.quotation.model.Domiciliation;
 import com.jss.osiris.modules.osiris.quotation.model.NoticeType;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
@@ -160,6 +162,88 @@ public class GeneratePdfDelegate {
     public static final String HEADER_PDF_TEMPLATE = "header-pdf";
     public static final String FOOTER_DOMICILIATION = "footer-domiciliation";
     public Boolean isContent = true;
+
+    public File printRegisteredLabelPdf(
+            InvoiceLabelResult label,
+            CustomerOrder customerOrder) throws OsirisException {
+
+        String customerOrderReference = "";
+        if (customerOrder != null) {
+            customerOrderReference = customerOrder.getId() + "";
+
+            if (customerOrder.getCustomerOrderAssignations() != null) {
+                Employee employee = null;
+                for (CustomerOrderAssignation customerOrderAssignation : customerOrder.getCustomerOrderAssignations())
+                    if (customerOrderAssignation.getId().equals(constantService.getAssignationTypeFormaliste().getId()))
+                        employee = customerOrderAssignation.getEmployee();
+
+                if (employee != null) {
+                    customerOrderReference += "/" + employee.getFirstname().substring(0, 1).toUpperCase()
+                            + employee.getLastname().substring(0, 1).toUpperCase();
+                }
+            }
+        }
+
+        if (label.getBillingLabelCity() == null) {
+            List<String> lines = Arrays.asList(label.getBillingLabelAddress().split("\\R"));
+            if (lines != null && lines.size() > 1) {
+                label.setBillingLabelAddress(lines.get(0));
+                label.setBillingLabelPostalCode("");
+                for (int i = 1; i < lines.size(); i++)
+                    label.setBillingLabelPostalCode(label.getBillingLabelPostalCode() + " " + lines.get(i));
+            }
+        }
+
+        Context ctx = new Context();
+
+        ctx.setVariable("customerOrderReference", customerOrderReference);
+
+        List<String> recipientLabel = label.getBillingLabel() != null
+                ? Arrays.asList(label.getBillingLabel().split("\\n"))
+                : List.of();
+
+        ctx.setVariable("recipientLabel", recipientLabel);
+        String city = label.getBillingLabelCity() != null
+                ? clean(label.getBillingLabelCity().getLabel())
+                : "";
+
+        String country = (label.getBillingLabelCountry() == null
+                || label.getBillingLabelCountry().getId()
+                        .equals(constantService.getCountryFrance().getId()))
+                                ? ""
+                                : clean(label.getBillingLabelCountry().getLabel());
+
+        ctx.setVariable("recipientAddress", clean(label.getBillingLabelAddress()) + "\n"
+                + clean(label.getBillingLabelPostalCode()) + " " + clean(label.getBillingLabelComplementCedex()) +
+                " " + city + " " + country);
+
+        ctx.setVariable("senderName", "JOURNAL SPECIAL DES SOCIETES");
+        ctx.setVariable("senderStreet", "10 BOULEVARD HAUSSMANN");
+        ctx.setVariable("senderPostalAndCity", "75009 PARIS");
+
+        try {
+            File pdf = File.createTempFile("registered-label", ".pdf");
+            String htmlContent = pdfTemplateEngine(true).process("registered-label", ctx);
+            try (OutputStream os = new FileOutputStream(pdf)) {
+                ITextRenderer renderer = new ITextRenderer();
+                renderer.setDocumentFromString(htmlContent);
+                renderer.layout();
+                renderer.createPDF(os);
+            }
+            return pdf;
+
+        } catch (Exception e) {
+            throw new OsirisException(e, "Unable to generate registered label PDF");
+        }
+    }
+
+    private String clean(String value) {
+        if (value == null)
+            return "";
+        return StringUtils.stripAccents(value)
+                .replaceAll("\\p{C}", "")
+                .toUpperCase();
+    }
 
     public TemplateEngine pdfTemplateEngine(Boolean isContent) {
         final SpringTemplateEngine templateEngine = new SpringTemplateEngine();
