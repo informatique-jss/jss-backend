@@ -223,6 +223,7 @@ public class GeneratePdfDelegate {
 
         try {
             File pdf = File.createTempFile("registered-label", ".pdf");
+
             String htmlContent = pdfTemplateEngine(true).process("registered-label", ctx);
             try (OutputStream os = new FileOutputStream(pdf)) {
                 ITextRenderer renderer = new ITextRenderer();
