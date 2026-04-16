@@ -8075,6 +8075,10 @@ fieldset:disabled .btn {
   background-attachment: scroll;
 }
 
+.no-scroll-modal {
+  overflow-y: hidden !important;
+}
+
 .bg-primary {
   background-color: #3366ff !important;
 }
