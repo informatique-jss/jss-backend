@@ -125,7 +125,7 @@
                 </tr>
                 <tr *ngIf="billingMailComputeResult">
                   <td>
-                    <div *ngIf="billingMailComputeResult?.isSendToAffaire">
+                    <div *ngIf="billingMailComputeResult.isSendToAffaire">
                       <p>Les mails pour l'envoi à l'affaire sont les suivants (récupérés depuis les
                         {{billingMailComputeResult.mailToAffaireOrigin}}) :</p>
                       <ul>
@@ -203,7 +203,7 @@
               <table class="full-width">
                 <tr *ngIf="digitalMailComputeResult">
                   <td>
-                    <div *ngIf="digitalMailComputeResult?.isSendToAffaire">
+                    <div *ngIf="digitalMailComputeResult.isSendToAffaire">
                       <p>Les mails pour l'envoi à l'affaire sont les suivants (récupérés depuis les
                         {{digitalMailComputeResult.mailToAffaireOrigin}}) :</p>
                       <ul>

@@ -4,8 +4,8 @@
       <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
     </mat-form-field>
     @if (editMode) {
-      <span matTooltip=" Créer un nouveau responsable" matTooltipPosition="above"><button
-        (click)="addResponsable()" mat-mini-fab color="warn" class="mini-fab-add">
+    <span matTooltip=" Créer un nouveau responsable" matTooltipPosition="above"><button (click)="addResponsable()"
+        mat-mini-fab color="warn" class="mini-fab-add">
         <mat-icon>add</mat-icon>
       </button></span>
     }
@@ -13,335 +13,330 @@
   <div class="table-container-scroll">
     <sort-table [columns]="displayedColumns" (onRowClick)="selectResponsable($event)" [values]="tiers.responsables"
       [noPaddingBottom]="true" [noMaxHeight]="true" tableName="Responsables" [filterText]="searchText"
-    [actions]="tableActions" [idRowSelected]="selectedResponsable?selectedResponsable.id:undefined"></sort-table>
+      [actions]="tableActions" [idRowSelected]="selectedResponsable?selectedResponsable.id:undefined"></sort-table>
   </div>
   <div [hidden]="selectedResponsable==null" class="responsable-tabs">
     @if (selectedResponsable!=null) {
-      <form [formGroup]="principalForm">
-        <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
-          <mat-tab label="Fiche du responsable">
-            <div class="full-width">
-              <fieldset [disabled]="editMode==false" class="fieldset-no-border">
-                <table class="full-width">
-                  <tr>
-                    <td>
-                      <generic-input [(model)]="selectedResponsable.id" label="N° client/prospect" [form]="principalForm"
+    <form [formGroup]="principalForm">
+      <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
+        <mat-tab label="Fiche du responsable">
+          <div class="full-width">
+            <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+              <table class="full-width">
+                <tr>
+                  <td>
+                    <generic-input [(model)]="selectedResponsable.id" label="N° client/prospect" [form]="principalForm"
                       propertyName="id" [isDisabled]="true"></generic-input>
-                    </td>
-                  </tr>
-                </table>
-                <table class="full-width">
-                  <tr>
-                    <td>
-                      <radio-group-civility [(model)]="selectedResponsable.civility" [form]="principalForm"
+                  </td>
+                </tr>
+              </table>
+              <table class="full-width">
+                <tr>
+                  <td>
+                    <radio-group-civility [(model)]="selectedResponsable.civility" [form]="principalForm"
                       [isDisabled]="!editMode" propertyName="civility" label="Civilité"></radio-group-civility>
-                    </td>
-                    <td>
-                      <generic-input [(model)]="selectedResponsable.lastname" label="Nom" [form]="principalForm"
-                        propertyName="lastname" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="40">
-                      </generic-input>
-                    </td>
-                    <td>
-                      <generic-input [(model)]="selectedResponsable.firstname" label="Prénom" [form]="principalForm"
-                        propertyName="firstname" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="40">
-                      </generic-input>
-                    </td>
-                    <td>
-                      <generic-toggle [(model)]="selectedResponsable.isActive" label="Actif ?" [form]="principalForm"
+                  </td>
+                  <td>
+                    <generic-input [(model)]="selectedResponsable.lastname" label="Nom" [form]="principalForm"
+                      propertyName="lastname" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="40">
+                    </generic-input>
+                  </td>
+                  <td>
+                    <generic-input [(model)]="selectedResponsable.firstname" label="Prénom" [form]="principalForm"
+                      propertyName="firstname" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="40">
+                    </generic-input>
+                  </td>
+                  <td>
+                    <generic-toggle [(model)]="selectedResponsable.isActive" label="Actif ?" [form]="principalForm"
                       [isDisabled]="!editMode" propertyName="isActive"></generic-toggle>
-                    </td>
-                  </tr>
-                </table>
-                <table class="full-width">
-                  <tr>
-                    <td>
-                      <generic-input [(model)]="tiers.id" label="N° de client" [form]="principalForm"
+                  </td>
+                </tr>
+              </table>
+              <table class="full-width">
+                <tr>
+                  <td>
+                    <generic-input [(model)]="tiers.id" label="N° de client" [form]="principalForm"
                       propertyName="idTiers" [isDisabled]="true"></generic-input>
-                    </td>
-                    <td>
-                      <select-tiers-type [(model)]="selectedResponsable.tiersType" label="Type" [form]="principalForm"
+                  </td>
+                  <td>
+                    <select-tiers-type [(model)]="selectedResponsable.tiersType" label="Type" [form]="principalForm"
                       propertyName="tiersType" [isMandatory]="true" [isDisabled]="!editMode"></select-tiers-type>
-                    </td>
-                    <td>
-                      <select-tiers-category [(model)]="selectedResponsable.tiersCategory" label="Catégorie"
-                        [form]="principalForm" propertyName="tiersCategory" [isDisabled]="!editMode"
-                        [isMandatory]="false">
-                      </select-tiers-category>
-                    </td>
-                    <td>
-                      <generic-input [(model)]="selectedResponsable.function" label="Fonction" [form]="principalForm"
+                  </td>
+                  <td>
+                    <select-tiers-category [(model)]="selectedResponsable.tiersCategory" label="Catégorie"
+                      [form]="principalForm" propertyName="tiersCategory" [isDisabled]="!editMode"
+                      [isMandatory]="false">
+                    </select-tiers-category>
+                  </td>
+                  <td>
+                    <generic-input [(model)]="selectedResponsable.function" label="Fonction" [form]="principalForm"
                       propertyName="function" [maxLength]="100"></generic-input>
-                    </td>
-                  </tr>
-                </table>
-                <table class="full-width">
-                  <tr>
-                    <td>
-                      <autocomplete-employee [(model)]="selectedResponsable.salesEmployee" [form]="principalForm"
-                        label="Commercial" propertyName="salesEmployee" [isMandatory]="true" [isDisabled]="!editMode">
-                      </autocomplete-employee>
-                    </td>
-                    <td>
-                      @if (!editMode || canChooseProductionEmployeeOnITiers()) {
-                        <autocomplete-employee
-                          [(model)]="selectedResponsable.formalisteEmployee" label="Formaliste" [form]="principalForm"
-                          propertyName="formalisteEmployee" [isDisabled]="!editMode ">
-                        </autocomplete-employee>
-                      }
-                      <td>
-                        @if (!editMode || canChooseProductionEmployeeOnITiers()) {
-                          <autocomplete-employee
-                            [(model)]="selectedResponsable.insertionEmployee" label="Publiciste" [isDisabled]="!editMode  "
-                            [form]="principalForm" propertyName="insertionEmployee">
-                          </autocomplete-employee>
-                        }
-                      </td>
-                    </tr>
-                  </table>
-                  <table class="full-width">
-                    <tr>
-                      <td>
-                        <generic-textarea [(model)]="selectedResponsable.mailRecipient" label="Destinataire(s) courrier"
-                          [form]="principalForm" propertyName="mailRecipient" [isDisabled]="!editMode"
-                        (filterInput)="limitTextareaSize(3)"></generic-textarea>
-                      </td>
-                      <td style="vertical-align: baseline;">
-                        <radio-group-language [(model)]="selectedResponsable.language" [form]="principalForm"
-                          [isDisabled]="!editMode" propertyName="language" label="Langue de communication">
-                        </radio-group-language>
-                      </td>
-                      <td>
-                        <generic-input [(model)]="selectedResponsable.loginWeb" label="Numéro de compte JSS.FR"
-                          [form]="principalForm" propertyName="loginWeb" [isMandatory]="false"
-                        [isDisabled]="true"></generic-input>
-                      </td>
-                      <td>
-                        <generic-input [(model)]="selectedResponsable.numberOfGiftPostsPerMonth"
-                          label="Nombre d'articles offrables par mois" [form]="principalForm"
-                          propertyName="numberOfGiftPostsPerMonth" [isMandatory]="false" [isDisabled]="!editMode"
-                        type="number"></generic-input>
-                      </td>
-                      <td>
-                        <generic-toggle [(model)]="selectedResponsable.canViewAllTiersInWeb"
-                          label="JSS.fr : peut voir l'ensemble du tiers ? " [form]="principalForm"
-                        propertyName="canViewAllTiersInWeb"></generic-toggle>
-                      </td>
-                    </tr>
-                  </table>
-                  <table class="full-width">
-                    <tr>
-                      <td>
-                        <generic-input [(model)]="selectedResponsable.address" label="Adresse" [form]="principalForm"
-                        propertyName="address" [isMandatory]="false" [maxLength]="60"></generic-input>
-                      </td>
-                      <td>
-                        <autocomplete-postal-code [(model)]="selectedResponsable.postalCode" [form]="principalForm"
-                          [byPassAutocompletValidator]="true" propertyName="postalCode" [isMandatory]="false"
-                          label="Code postal" [isDisabled]="!editMode"
-                          [conditionnalRequired]="selectedResponsable.country != null && selectedResponsable.country.id ==franceCountry.id "
-                        (onOptionSelected)="fillCity($event)"></autocomplete-postal-code>
-                      </td>
-                      <td>
-                        <generic-input [(model)]="selectedResponsable.cedexComplement" label="Complément CEDEX"
-                          [form]="principalForm" propertyName="cedexComplement" [isMandatory]="false"
-                        [isDisabled]="!editMode" [maxLength]="20"></generic-input>
-                      </td>
-                      <td>
-                        <autocomplete-city [(model)]="selectedResponsable.city" [modelCountry]="selectedResponsable.country"
-                          [preFilterPostalCode]="selectedResponsable.postalCode" [form]="principalForm" propertyName="city"
-                          [isMandatory]="false" [isDisabled]="!editMode" label="Ville"
-                          (onOptionSelected)="fillPostalCode($event)">
-                        </autocomplete-city>
-                      </td>
-                      <td>
-                        <autocomplete-country [(model)]="selectedResponsable.country" [form]="principalForm" label="Pays"
-                        [isDisabled]="!editMode" propertyName="country" [isMandatory]="false"></autocomplete-country>
-                      </td>
-                      <td>
-                        <generic-input [(model)]="selectedResponsable.building" label="Bâtiment" [form]="principalForm"
-                        propertyName="building" [maxLength]="20"></generic-input>
-                      </td>
-                      <td>
-                        <generic-input [(model)]="selectedResponsable.floor" label="Etage" [form]="principalForm"
-                        propertyName="floor" [maxLength]="8"></generic-input>
-                      </tr>
-                    </table>
-                    <table class="full-width">
-                      <tr>
-                        <td>
-                          <single-chips-mail label="Mails" [(model)]="selectedResponsable.mail" [form]="principalForm"
-                          propertyName="mails" [isDisabled]="!editMode"></single-chips-mail>
-                        </td>
-                        <td>
-                          <chips-phone label="Téléphones" [(model)]="selectedResponsable.phones" [form]="principalForm"
-                          propertyName="phones" [isDisabled]="!editMode"></chips-phone>
-                        </td>
-                        <td>
-                          <select-age-range [(model)]="selectedResponsable.ageRange" label="Tranche d'âge"
-                            [form]="principalForm" propertyName="ageRange" [isDisabled]="!editMode" [isMandatory]="false">
-                          </select-age-range>
-                        </td>
-                        <td>
-                          <generic-input [(model)]="selectedResponsable.linkedInUrl" label="Profil LinkedIn"
-                          [form]="principalForm" propertyName="linkedInUrl" [maxLength]="250"></generic-input>
-                        </td>
-                      </tr>
-                    </table>
-                    <table class="full-width">
-                      <tr>
-                        <generic-textarea [(model)]="selectedResponsable.observations"
-                          label="Observations / Informations complémentaires" [form]="principalForm"
-                          propertyName="observations" [isDisabled]="!editMode" [numberOfLines]="4">
-                        </generic-textarea>
-                      </tr>
-                    </table>
-                  </fieldset>
-                </div>
-                @if (!editMode && selectedResponsable) {
-                  <button
-                    [matTooltip]="'Renouveler le mot de passe JSS.fr pour '+selectedResponsable.firstname+' '+ selectedResponsable.lastname"
-                    mat-fab color="accent" class="second-fab-button"
-                    (click)="renewPassword()">
-                    <mat-icon>password</mat-icon>
-                  </button>
-                }
-              </mat-tab>
-              @if (isResponsableTypeProspect()==false) {
-                <mat-tab label="Pièces et facturation">
-                  <settlement-billing [tiers]="selectedResponsable!" [editMode]="editMode"></settlement-billing>
-                </mat-tab>
-              }
-              @if (selectedResponsable?.id!=null && selectedResponsable?.id!=undefined) {
-                <mat-tab label="Documents">
-                  <attachments [entity]="selectedResponsable!" [editMode]="true"
-                    [entityType]="RESPONSABLE_ENTITY_TYPE.entityType">
-                  </attachments>
-                </mat-tab>
-              }
-              @if (selectedResponsable.id) {
-                <mat-tab label="Mails">
-                  <ng-template matTabContent>
-                    <automatic-mail-list [responsable]="selectedResponsable">
-                    </automatic-mail-list>
-                  </ng-template>
-                </mat-tab>
-              }
-              @if (tiers.id!=null && tiers.id!=undefined) {
-                <mat-tab label="Devis">
-                  <ng-template matTabContent>
-                    @if (this.quotationSearch.customerOrders && this.quotationSearch.customerOrders.length>0) {
-                      <quotation-list class="integration-component"
-                        [quotationSearch]="quotationSearch" [isForTiersIntegration]="true">
-                      </quotation-list>
+                  </td>
+                </tr>
+              </table>
+              <table class="full-width">
+                <tr>
+                  <td>
+                    <autocomplete-employee [(model)]="selectedResponsable.salesEmployee" [form]="principalForm"
+                      label="Commercial" propertyName="salesEmployee" [isMandatory]="true" [isDisabled]="!editMode">
+                    </autocomplete-employee>
+                  </td>
+                  <td>
+                    @if (!editMode || canChooseProductionEmployeeOnITiers()) {
+                    <autocomplete-employee [(model)]="selectedResponsable.formalisteEmployee" label="Formaliste"
+                      [form]="principalForm" propertyName="formalisteEmployee" [isDisabled]="!editMode ">
+                    </autocomplete-employee>
                     }
-                  </ng-template>
-                </mat-tab>
-              }
-              @if (tiers.id!=null && tiers.id!=undefined) {
-                <mat-tab label="Commandes">
-                  <ng-template matTabContent>
-                    @if (this.orderingSearch.customerOrders && this.orderingSearch.customerOrders.length>0) {
-                      <ordering-list class="integration-component"
-                        [orderingSearch]="orderingSearch" [isForTiersIntegration]="true">
-                      </ordering-list>
+                  <td>
+                    @if (!editMode || canChooseProductionEmployeeOnITiers()) {
+                    <autocomplete-employee [(model)]="selectedResponsable.insertionEmployee" label="Publiciste"
+                      [isDisabled]="!editMode  " [form]="principalForm" propertyName="insertionEmployee">
+                    </autocomplete-employee>
                     }
-                  </ng-template>
-                </mat-tab>
-              }
-              @if (tiers.id!=null && tiers.id!=undefined) {
-                <mat-tab label="Prestations">
-                  <ng-template matTabContent>
-                    @if (this.provisionSearch.customerOrders && this.provisionSearch.customerOrders.length>0) {
-                      <provision-list class="integration-component"
-                        [affaireSearch]="provisionSearch" [isForTiersIntegration]="true">
-                      </provision-list>
-                    }
-                  </ng-template>
-                </mat-tab>
-              }
-              @if (tiers.id!=null && tiers.id!=undefined) {
-                <mat-tab label="Factures">
-                  <ng-template matTabContent>
-                    @if (this.invoiceSearch.customerOrders && this.invoiceSearch.customerOrders.length>0) {
-                      <invoice-list
-                      [invoiceSearch]="invoiceSearch" [isForTiersIntegration]="true"></invoice-list>
-                    }
-                  </ng-template>
-                </mat-tab>
-              }
-              @if (selectedResponsable) {
-                <mat-tab label="Comptes">
-                  <ng-template matTabContent>
-                    <accounting-record [responsableToDisplay]="selectedResponsable"
-                    [tiersToDisplay]="tiers"></accounting-record>
-                  </ng-template>
-                </mat-tab>
-              }
-              @if (rffSearch && rffSearch.responsable) {
-                <mat-tab label="RFF">
-                  <ng-template matTabContent>
-                    <div class="mat-elevation-z2 form-div">
-                      <rff-list [rffSearch]="rffSearch" [isForTiersIntegration]="true"></rff-list>
-                    </div>
-                  </ng-template>
-                </mat-tab>
-              }
-              <mat-tab label="CRI">
-                <ng-template matTabContent>
-                  <incident-report-list [responsable]="selectedResponsable"></incident-report-list>
-                </ng-template>
-              </mat-tab>
-              @if (selectedResponsable?.id!=null && selectedResponsable?.id!=undefined) {
-                <mat-tab label="Suivi">
-                  <ng-template matTabContent>
-                    <tiers-followup [tiers]="selectedResponsable!" [editMode]="editMode"></tiers-followup>
-                  </ng-template>
-                </mat-tab>
-              }
-              @if (selectedResponsable?.id!=null && selectedResponsable?.id!=undefined) {
-                <mat-tab label="Historique">
-                  <ng-template matTabContent>
-                    <history [entity]="selectedResponsable" [entityType]="RESPONSABLE_ENTITY_TYPE"></history>
-                  </ng-template>
-                </mat-tab>
-              }
-              @if (selectedResponsable && selectedResponsable.id) {
-                <mat-tab label="Préférences de communication">
-                  <ng-template matTabContent>
-                    <div class="mat-elevation-z2 form-div">
-                      <communication-preference [responsable]="selectedResponsable"></communication-preference>
-                    </div>
-                  </ng-template>
-                </mat-tab>
-              }
-            </mat-tab-group>
-          </form>
+                  </td>
+                </tr>
+              </table>
+              <table class="full-width">
+                <tr>
+                  <td>
+                    <generic-textarea [(model)]="selectedResponsable.mailRecipient" label="Destinataire(s) courrier"
+                      [form]="principalForm" propertyName="mailRecipient" [isDisabled]="!editMode"
+                      (filterInput)="limitTextareaSize(3)"></generic-textarea>
+                  </td>
+                  <td style="vertical-align: baseline;">
+                    <radio-group-language [(model)]="selectedResponsable.language" [form]="principalForm"
+                      [isDisabled]="!editMode" propertyName="language" label="Langue de communication">
+                    </radio-group-language>
+                  </td>
+                  <td>
+                    <generic-input [(model)]="selectedResponsable.loginWeb" label="Numéro de compte JSS.FR"
+                      [form]="principalForm" propertyName="loginWeb" [isMandatory]="false"
+                      [isDisabled]="true"></generic-input>
+                  </td>
+                  <td>
+                    <generic-input [(model)]="selectedResponsable.numberOfGiftPostsPerMonth"
+                      label="Nombre d'articles offrables par mois" [form]="principalForm"
+                      propertyName="numberOfGiftPostsPerMonth" [isMandatory]="false" [isDisabled]="!editMode"
+                      type="number"></generic-input>
+                  </td>
+                  <td>
+                    <generic-toggle [(model)]="selectedResponsable.canViewAllTiersInWeb"
+                      label="JSS.fr : peut voir l'ensemble du tiers ? " [form]="principalForm"
+                      propertyName="canViewAllTiersInWeb"></generic-toggle>
+                  </td>
+                </tr>
+              </table>
+              <table class="full-width">
+                <tr>
+                  <td>
+                    <generic-input [(model)]="selectedResponsable.address" label="Adresse" [form]="principalForm"
+                      propertyName="address" [isMandatory]="false" [maxLength]="60"></generic-input>
+                  </td>
+                  <td>
+                    <autocomplete-postal-code [(model)]="selectedResponsable.postalCode" [form]="principalForm"
+                      [byPassAutocompletValidator]="true" propertyName="postalCode" [isMandatory]="false"
+                      label="Code postal" [isDisabled]="!editMode"
+                      [conditionnalRequired]="selectedResponsable.country != null && selectedResponsable.country.id ==franceCountry.id "
+                      (onOptionSelected)="fillCity($event)"></autocomplete-postal-code>
+                  </td>
+                  <td>
+                    <generic-input [(model)]="selectedResponsable.cedexComplement" label="Complément CEDEX"
+                      [form]="principalForm" propertyName="cedexComplement" [isMandatory]="false"
+                      [isDisabled]="!editMode" [maxLength]="20"></generic-input>
+                  </td>
+                  <td>
+                    <autocomplete-city [(model)]="selectedResponsable.city" [modelCountry]="selectedResponsable.country"
+                      [preFilterPostalCode]="selectedResponsable.postalCode" [form]="principalForm" propertyName="city"
+                      [isMandatory]="false" [isDisabled]="!editMode" label="Ville"
+                      (onOptionSelected)="fillPostalCode($event)">
+                    </autocomplete-city>
+                  </td>
+                  <td>
+                    <autocomplete-country [(model)]="selectedResponsable.country" [form]="principalForm" label="Pays"
+                      [isDisabled]="!editMode" propertyName="country" [isMandatory]="false"></autocomplete-country>
+                  </td>
+                  <td>
+                    <generic-input [(model)]="selectedResponsable.building" label="Bâtiment" [form]="principalForm"
+                      propertyName="building" [maxLength]="20"></generic-input>
+                  </td>
+                  <td>
+                    <generic-input [(model)]="selectedResponsable.floor" label="Etage" [form]="principalForm"
+                      propertyName="floor" [maxLength]="8"></generic-input>
+                </tr>
+              </table>
+              <table class="full-width">
+                <tr>
+                  <td>
+                    <single-chips-mail label="Mails" [(model)]="selectedResponsable.mail" [form]="principalForm"
+                      propertyName="mails" [isDisabled]="!editMode"></single-chips-mail>
+                  </td>
+                  <td>
+                    <chips-phone label="Téléphones" [(model)]="selectedResponsable.phones" [form]="principalForm"
+                      propertyName="phones" [isDisabled]="!editMode"></chips-phone>
+                  </td>
+                  <td>
+                    <select-age-range [(model)]="selectedResponsable.ageRange" label="Tranche d'âge"
+                      [form]="principalForm" propertyName="ageRange" [isDisabled]="!editMode" [isMandatory]="false">
+                    </select-age-range>
+                  </td>
+                  <td>
+                    <generic-input [(model)]="selectedResponsable.linkedInUrl" label="Profil LinkedIn"
+                      [form]="principalForm" propertyName="linkedInUrl" [maxLength]="250"></generic-input>
+                  </td>
+                </tr>
+              </table>
+              <table class="full-width">
+                <tr>
+                  <generic-textarea [(model)]="selectedResponsable.observations"
+                    label="Observations / Informations complémentaires" [form]="principalForm"
+                    propertyName="observations" [isDisabled]="!editMode" [numberOfLines]="4">
+                  </generic-textarea>
+                </tr>
+              </table>
+            </fieldset>
+          </div>
+          @if (!editMode && selectedResponsable) {
+          <button
+            [matTooltip]="'Renouveler le mot de passe JSS.fr pour '+selectedResponsable.firstname+' '+ selectedResponsable.lastname"
+            mat-fab color="accent" class="second-fab-button" (click)="renewPassword()">
+            <mat-icon>password</mat-icon>
+          </button>
+          }
+        </mat-tab>
+        @if (isResponsableTypeProspect()==false) {
+        <mat-tab label="Pièces et facturation">
+          <settlement-billing [tiers]="selectedResponsable!" [editMode]="editMode"></settlement-billing>
+        </mat-tab>
         }
-      </div>
-      @if (editMode==false &&  selectedResponsable && selectedResponsable.id && canDisplayNotifications()) {
-        <button matTooltip="Ajouter une notification sur ce responsable" mat-fab color="accent" class="fourth-fab-button"
-          (click)="addNewNotification();$event.stopPropagation()" [matBadge]="getNotificationForResponsable().length"
-          [matBadgeHidden]="getNotificationForResponsable().length<=0" matBadgePosition="below after" matBadgeColor="warn"
-          >
-          <mat-icon>notifications</mat-icon>
-        </button>
-      }
-      @if (editMode==false &&  selectedResponsable && selectedResponsable.id && tiers && tiers.id) {
-        <a matTooltip="Voir le responsable dans Osiris V2" mat-fab color="accent" class="sixth-fab-button"
-          [href]="frontendOsirisV2Url + OSIRIS_V2_TIERS_ROUTE + tiers.id + '/'+ OSIRIS_V2_RESPONSABLE_ROUTE + selectedResponsable.id"
-          target="_blank">
-          <mat-icon>launch</mat-icon>
-        </a>
-      }
-      @if (editMode==false &&  tiers.id) {
-        <button matTooltip="Imprimer une étiquette pour le responsable" mat-fab color="accent" class="seventh-fab-button"
-          (click)="printLabel()">
-          <mat-icon>print</mat-icon>
-        </button>
-      }
-      @if (editMode==false &&  selectedResponsable && selectedResponsable.id && selectedResponsable.isActive) {
-        <button matTooltip="Transférer le responsable" mat-fab color="accent" class="eight-fab-button"
-          (click)="openDialogTransferResponsable()">
-          <mat-icon>forward</mat-icon>
-        </button>
-      }
+        @if (selectedResponsable.id!=null && selectedResponsable.id!=undefined) {
+        <mat-tab label="Documents">
+          <attachments [entity]="selectedResponsable!" [editMode]="true"
+            [entityType]="RESPONSABLE_ENTITY_TYPE.entityType">
+          </attachments>
+        </mat-tab>
+        }
+        @if (selectedResponsable.id) {
+        <mat-tab label="Mails">
+          <ng-template matTabContent>
+            <automatic-mail-list [responsable]="selectedResponsable">
+            </automatic-mail-list>
+          </ng-template>
+        </mat-tab>
+        }
+        @if (tiers.id!=null && tiers.id!=undefined) {
+        <mat-tab label="Devis">
+          <ng-template matTabContent>
+            @if (this.quotationSearch.customerOrders && this.quotationSearch.customerOrders.length>0) {
+            <quotation-list class="integration-component" [quotationSearch]="quotationSearch"
+              [isForTiersIntegration]="true">
+            </quotation-list>
+            }
+          </ng-template>
+        </mat-tab>
+        }
+        @if (tiers.id!=null && tiers.id!=undefined) {
+        <mat-tab label="Commandes">
+          <ng-template matTabContent>
+            @if (this.orderingSearch.customerOrders && this.orderingSearch.customerOrders.length>0) {
+            <ordering-list class="integration-component" [orderingSearch]="orderingSearch"
+              [isForTiersIntegration]="true">
+            </ordering-list>
+            }
+          </ng-template>
+        </mat-tab>
+        }
+        @if (tiers.id!=null && tiers.id!=undefined) {
+        <mat-tab label="Prestations">
+          <ng-template matTabContent>
+            @if (this.provisionSearch.customerOrders && this.provisionSearch.customerOrders.length>0) {
+            <provision-list class="integration-component" [affaireSearch]="provisionSearch"
+              [isForTiersIntegration]="true">
+            </provision-list>
+            }
+          </ng-template>
+        </mat-tab>
+        }
+        @if (tiers.id!=null && tiers.id!=undefined) {
+        <mat-tab label="Factures">
+          <ng-template matTabContent>
+            @if (this.invoiceSearch.customerOrders && this.invoiceSearch.customerOrders.length>0) {
+            <invoice-list [invoiceSearch]="invoiceSearch" [isForTiersIntegration]="true"></invoice-list>
+            }
+          </ng-template>
+        </mat-tab>
+        }
+        @if (selectedResponsable) {
+        <mat-tab label="Comptes">
+          <ng-template matTabContent>
+            <accounting-record [responsableToDisplay]="selectedResponsable"
+              [tiersToDisplay]="tiers"></accounting-record>
+          </ng-template>
+        </mat-tab>
+        }
+        @if (rffSearch && rffSearch.responsable) {
+        <mat-tab label="RFF">
+          <ng-template matTabContent>
+            <div class="mat-elevation-z2 form-div">
+              <rff-list [rffSearch]="rffSearch" [isForTiersIntegration]="true"></rff-list>
+            </div>
+          </ng-template>
+        </mat-tab>
+        }
+        <mat-tab label="CRI">
+          <ng-template matTabContent>
+            <incident-report-list [responsable]="selectedResponsable"></incident-report-list>
+          </ng-template>
+        </mat-tab>
+        @if (selectedResponsable.id!=null && selectedResponsable.id!=undefined) {
+        <mat-tab label="Suivi">
+          <ng-template matTabContent>
+            <tiers-followup [tiers]="selectedResponsable!" [editMode]="editMode"></tiers-followup>
+          </ng-template>
+        </mat-tab>
+        }
+        @if (selectedResponsable.id!=null && selectedResponsable.id!=undefined) {
+        <mat-tab label="Historique">
+          <ng-template matTabContent>
+            <history [entity]="selectedResponsable" [entityType]="RESPONSABLE_ENTITY_TYPE"></history>
+          </ng-template>
+        </mat-tab>
+        }
+        @if (selectedResponsable && selectedResponsable.id) {
+        <mat-tab label="Préférences de communication">
+          <ng-template matTabContent>
+            <div class="mat-elevation-z2 form-div">
+              <communication-preference [responsable]="selectedResponsable"></communication-preference>
+            </div>
+          </ng-template>
+        </mat-tab>
+        }
+      </mat-tab-group>
+    </form>
+    }
+  </div>
+  @if (editMode==false && selectedResponsable && selectedResponsable.id && canDisplayNotifications()) {
+  <button matTooltip="Ajouter une notification sur ce responsable" mat-fab color="accent" class="fourth-fab-button"
+    (click)="addNewNotification();$event.stopPropagation()" [matBadge]="getNotificationForResponsable().length"
+    [matBadgeHidden]="getNotificationForResponsable().length<=0" matBadgePosition="below after" matBadgeColor="warn">
+    <mat-icon>notifications</mat-icon>
+  </button>
+  }
+  @if (editMode==false && selectedResponsable && selectedResponsable.id && tiers && tiers.id) {
+  <a matTooltip="Voir le responsable dans Osiris V2" mat-fab color="accent" class="sixth-fab-button"
+    [href]="frontendOsirisV2Url + OSIRIS_V2_TIERS_ROUTE + tiers.id + '/'+ OSIRIS_V2_RESPONSABLE_ROUTE + selectedResponsable.id"
+    target="_blank">
+    <mat-icon>launch</mat-icon>
+  </a>
+  }
+  @if (editMode==false && tiers.id) {
+  <button matTooltip="Imprimer une étiquette pour le responsable" mat-fab color="accent" class="seventh-fab-button"
+    (click)="printLabel()">
+    <mat-icon>print</mat-icon>
+  </button>
+  }
+  @if (editMode==false && selectedResponsable && selectedResponsable.id && selectedResponsable.isActive) {
+  <button matTooltip="Transférer le responsable" mat-fab color="accent" class="eight-fab-button"
+    (click)="openDialogTransferResponsable()">
+    <mat-icon>forward</mat-icon>
+  </button>
+  }

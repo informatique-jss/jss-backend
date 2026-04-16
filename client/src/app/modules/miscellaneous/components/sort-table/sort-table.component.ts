@@ -348,30 +348,30 @@ export class SortTableComponent<T> implements OnInit {
   exportToExcel() {
     if (!this.columns || !this.dataSource.data) return;
 
-    // 1. Préparer les entêtes (uniquement les colonnes visibles)
-    const visibleColumns = this.columns.filter(c => c.display !== false);
-    const headers = visibleColumns.map(c => c.label || c.id);
+    // 1. On filtre les colonnes visibles (display !== false)
+    const activeColumns = this.columns.filter(c => c.display !== false);
 
-    // 2. Préparer les données
+    // 2. On prépare les en-têtes (Labels)
+    const headers = activeColumns.map(c => c.label || c.id);
+
+    // 3. On prépare les données en extrayant les valeurs formatées de element.columns
     const data = this.dataSource.data.map(row => {
-      return visibleColumns.map(column => {
-        // On récupère la valeur déjà formatée que tu as dans element.columns
+      return activeColumns.map(column => {
         const value = row.columns[column.id];
 
-        // Si c'est un objet (ex: Employee), on prend le nom, sinon la valeur brute
-        if (column.displayAsEmployee && value) {
-          return `${value.firstname} ${value.lastname}`;
+        if (column.displayAsEmployee && value && typeof value === 'object') {
+          const employee = value as unknown as Employee;
+          return `${employee.firstname || ''} ${employee.lastname || ''}`.trim();
         }
-        return value;
+        return value !== null && value !== undefined ? value : '';
       });
     });
 
-    // 3. Créer le fichier Excel avec SheetJS
     const worksheet = XLSX.utils.aoa_to_sheet([headers, ...data]);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, this.tableName || "Export");
+    XLSX.utils.book_append_sheet(workbook, worksheet, this.tableName || 'Données');
 
-    // 4. Téléchargement
-    XLSX.writeFile(workbook, `${this.tableName || 'export'}_${new Date().getTime()}.xlsx`);
+    const fileName = `${this.tableName || 'export'}_${new Date().getTime()}.xlsx`;
+    XLSX.writeFile(workbook, fileName);
   }
 }
