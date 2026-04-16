@@ -114,9 +114,10 @@ export class OverviewComponent implements OnInit {
     });
 
     this.informationBannerService.getInformationbanner().subscribe(response => {
-      if (response && response.text)
+      if (response && response.text) {
         this.informationBanner.text = response.text;
-      this.informationBanner.label = response.label;
+        this.informationBanner.label = response.label;
+      }
     });
   }
 
