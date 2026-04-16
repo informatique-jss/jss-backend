@@ -4,6 +4,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Observable, Subscription } from 'rxjs';
 import { getObjectPropertybyString } from 'src/app/libs/FormatHelper';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
+import * as XLSX from 'xlsx';
 import { AppService } from '../../../../services/app.service';
 import { Employee } from '../../../profile/model/Employee';
 import { EmployeeService } from '../../../profile/services/employee.service';
@@ -12,11 +13,11 @@ import { SortTableColumn } from '../../model/SortTableColumn';
 import { SortTableElement, SortTableElementActions, SortTableElementColumns, SortTableElementColumnsLink, SortTableElementColumnsStatus, SortTableElementWarn } from '../../model/SortTableElement';
 
 @Component({
-    selector: 'sort-table',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    templateUrl: './sort-table.component.html',
-    styleUrls: ['./sort-table.component.css'],
-    standalone: false
+  selector: 'sort-table',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './sort-table.component.html',
+  styleUrls: ['./sort-table.component.css'],
+  standalone: false
 })
 
 export class SortTableComponent<T> implements OnInit {
@@ -344,4 +345,33 @@ export class SortTableComponent<T> implements OnInit {
       this.appService.openRoute(event, link, null);
   }
 
+  exportToExcel() {
+    if (!this.columns || !this.dataSource.data) return;
+
+    // 1. Préparer les entêtes (uniquement les colonnes visibles)
+    const visibleColumns = this.columns.filter(c => c.display !== false);
+    const headers = visibleColumns.map(c => c.label || c.id);
+
+    // 2. Préparer les données
+    const data = this.dataSource.data.map(row => {
+      return visibleColumns.map(column => {
+        // On récupère la valeur déjà formatée que tu as dans element.columns
+        const value = row.columns[column.id];
+
+        // Si c'est un objet (ex: Employee), on prend le nom, sinon la valeur brute
+        if (column.displayAsEmployee && value) {
+          return `${value.firstname} ${value.lastname}`;
+        }
+        return value;
+      });
+    });
+
+    // 3. Créer le fichier Excel avec SheetJS
+    const worksheet = XLSX.utils.aoa_to_sheet([headers, ...data]);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, this.tableName || "Export");
+
+    // 4. Téléchargement
+    XLSX.writeFile(workbook, `${this.tableName || 'export'}_${new Date().getTime()}.xlsx`);
+  }
 }
