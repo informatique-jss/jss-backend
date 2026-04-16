@@ -5,9 +5,10 @@ import { HabilitationsService } from 'src/app/services/habilitations.service';
 import { UserPreferenceService } from '../../../../services/user.preference.service';
 
 @Component({
-  selector: 'invoicing',
-  templateUrl: './invoicing.component.html',
-  styleUrls: ['./invoicing.component.css']
+    selector: 'invoicing',
+    templateUrl: './invoicing.component.html',
+    styleUrls: ['./invoicing.component.css'],
+    standalone: false
 })
 export class InvoiceComponent implements OnInit {
 

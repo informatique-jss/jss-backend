@@ -11,9 +11,10 @@ import { BatchService } from '../../services/batch.service';
 import { BatchStatusService } from '../../services/batch.status.service';
 
 @Component({
-  selector: 'batch-list',
-  templateUrl: './batch-list.component.html',
-  styleUrls: ['./batch-list.component.css']
+    selector: 'batch-list',
+    templateUrl: './batch-list.component.html',
+    styleUrls: ['./batch-list.component.css'],
+    standalone: false
 })
 export class BatchListComponent implements OnInit {
 

@@ -6,9 +6,10 @@ import { GenericRadioGroupComponent } from '../generic-radio-group/generic-radio
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'radio-group-billing-closure',
-  templateUrl: '../generic-radio-group/generic-radio-group-code.component.html',
-  styleUrls: ['../generic-radio-group/generic-radio-group.component.css']
+    selector: 'radio-group-billing-closure',
+    templateUrl: '../generic-radio-group/generic-radio-group-code.component.html',
+    styleUrls: ['../generic-radio-group/generic-radio-group.component.css'],
+    standalone: false
 })
 export class RadioGroupBillingClosureComponent extends GenericRadioGroupComponent<BillingClosureType> implements OnInit {
   types: BillingClosureType[] = [] as Array<BillingClosureType>;

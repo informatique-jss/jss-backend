@@ -12,9 +12,10 @@ import { Payment } from '../../model/Payment';
 import { PaymentDetailsDialogService } from '../../services/payment.details.dialog.service';
 
 @Component({
-  selector: 'bank-balance',
-  templateUrl: './bank-balance.component.html',
-  styleUrls: ['./bank-balance.component.css']
+    selector: 'bank-balance',
+    templateUrl: './bank-balance.component.html',
+    styleUrls: ['./bank-balance.component.css'],
+    standalone: false
 })
 export class BankBalanceComponent implements OnInit {
   accountingAccountJss: AccountingAccount = this.constantService.getAccountingAccountBankJss();

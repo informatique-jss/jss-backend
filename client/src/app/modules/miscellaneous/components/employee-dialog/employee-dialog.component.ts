@@ -4,9 +4,10 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { Employee } from '../../../profile/model/Employee';
 
 @Component({
-  selector: 'app-employee-dialog',
-  templateUrl: './employee-dialog.component.html',
-  styleUrls: ['./employee-dialog.component.css']
+    selector: 'app-employee-dialog',
+    templateUrl: './employee-dialog.component.html',
+    styleUrls: ['./employee-dialog.component.css'],
+    standalone: false
 })
 export class EmployeeDialogComponent implements OnInit {
 

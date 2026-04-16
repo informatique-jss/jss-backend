@@ -10,9 +10,10 @@ import { Provision } from '../../model/Provision';
 import { ConfrereService } from '../../services/confrere.service';
 
 @Component({
-  selector: 'provision-options',
-  templateUrl: './provision-options.component.html',
-  styleUrls: ['./provision-options.component.css']
+    selector: 'provision-options',
+    templateUrl: './provision-options.component.html',
+    styleUrls: ['./provision-options.component.css'],
+    standalone: false
 })
 export class ProvisionOptionsComponent implements OnInit {
 

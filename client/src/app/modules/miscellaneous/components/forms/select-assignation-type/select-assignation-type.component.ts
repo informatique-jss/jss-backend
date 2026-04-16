@@ -6,9 +6,10 @@ import { GenericSelectComponent } from "../generic-select/generic-select.compone
 import { AppService } from "src/app/services/app.service";
 
 @Component({
-  selector: 'select-assignation-type',
-  templateUrl: './select-assignation-type.component.html',
-  styleUrls: ['./select-assignation-type.component.css']
+    selector: 'select-assignation-type',
+    templateUrl: './select-assignation-type.component.html',
+    styleUrls: ['./select-assignation-type.component.css'],
+    standalone: false
 })
 export class SelectAssignationTypeComponent extends GenericSelectComponent<AssignationType> implements OnInit {
 

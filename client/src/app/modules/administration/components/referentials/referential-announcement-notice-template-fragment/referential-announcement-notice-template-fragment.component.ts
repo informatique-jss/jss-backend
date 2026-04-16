@@ -9,9 +9,10 @@ import { AppService } from 'src/app/services/app.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({
-  selector: 'referential-announcement-notice-template-fragment',
-  templateUrl: './referential-announcement-notice-template-fragment.component.html',
-  styleUrls: ['./../generic-referential/generic-referential.component.css']
+    selector: 'referential-announcement-notice-template-fragment',
+    templateUrl: './referential-announcement-notice-template-fragment.component.html',
+    styleUrls: ['./../generic-referential/generic-referential.component.css'],
+    standalone: false
 })
 export class ReferentialAnnouncementNoticeTemplateFragmentComponent extends GenericReferentialComponent<AnnouncementNoticeTemplateFragment> implements OnInit {
   constructor(private announcementNoticeTemplateFragmentService: AnnouncementNoticeTemplateFragmentService,

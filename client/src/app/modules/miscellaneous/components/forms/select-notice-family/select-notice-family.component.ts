@@ -6,9 +6,10 @@ import { GenericSelectComponent } from '../generic-select/generic-select.compone
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'select-notice-family',
-  templateUrl: './select-notice-family.component.html',
-  styleUrls: ['./select-notice-family.component.css']
+    selector: 'select-notice-family',
+    templateUrl: './select-notice-family.component.html',
+    styleUrls: ['./select-notice-family.component.css'],
+    standalone: false
 })
 export class SelectNoticeFamilyComponent extends GenericSelectComponent<NoticeTypeFamily> implements OnInit {
 

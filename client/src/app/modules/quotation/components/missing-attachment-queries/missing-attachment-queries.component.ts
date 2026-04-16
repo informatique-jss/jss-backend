@@ -11,9 +11,10 @@ import { MissingAttachmentQueryService } from '../../services/missing-attachment
 import { MissingAttachmentMailDialogComponent } from '../select-attachment-type-dialog/missing-attachment-mail-dialog.component';
 
 @Component({
-  selector: 'missing-attachment-queries',
-  templateUrl: './missing-attachment-queries.component.html',
-  styleUrls: ['./missing-attachment-queries.component.css']
+    selector: 'missing-attachment-queries',
+    templateUrl: './missing-attachment-queries.component.html',
+    styleUrls: ['./missing-attachment-queries.component.css'],
+    standalone: false
 })
 export class MissingAttachmentQueriesComponent implements OnInit {
 

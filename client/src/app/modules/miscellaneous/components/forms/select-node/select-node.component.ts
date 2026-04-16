@@ -6,9 +6,10 @@ import { GenericMultipleSelectComponent } from '../generic-select/generic-multip
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'select-node',
-  templateUrl: './../generic-select/generic-multiple-select.component.html',
-  styleUrls: ['./../generic-select/generic-select.component.html']
+    selector: 'select-node',
+    templateUrl: './../generic-select/generic-multiple-select.component.html',
+    styleUrls: ['./../generic-select/generic-select.component.html'],
+    standalone: false
 })
 
 export class SelectNodeComponent extends GenericMultipleSelectComponent<Node> implements OnInit {

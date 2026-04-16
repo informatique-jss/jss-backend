@@ -14,9 +14,10 @@ import { EditRefundLabelDialogComponent } from 'src/app/modules/miscellaneous/co
 import { RefundService } from '../../services/refund.service';
 
 @Component({
-  selector: 'refund-list',
-  templateUrl: './refund-list.component.html',
-  styleUrls: ['./refund-list.component.css']
+    selector: 'refund-list',
+    templateUrl: './refund-list.component.html',
+    styleUrls: ['./refund-list.component.css'],
+    standalone: false
 })
 export class RefundListComponent implements OnInit, AfterContentChecked {
 

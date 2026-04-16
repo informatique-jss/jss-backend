@@ -3,9 +3,10 @@ import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { ECharts, EChartsOption } from 'echarts';
 
 @Component({
-  selector: 'bar-chart',
-  templateUrl: './bar-chart.component.html',
-  styleUrls: ['./bar-chart.component.css']
+    selector: 'bar-chart',
+    templateUrl: './bar-chart.component.html',
+    styleUrls: ['./bar-chart.component.css'],
+    standalone: false
 })
 export class BarChartComponent implements OnChanges {
 

@@ -8,9 +8,10 @@ import { VoucherService } from '../../../../crm/services/voucher.service';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
 
 @Component({
-  selector: 'autocomplete-voucher',
-  templateUrl: '../generic-autocomplete/generic-autocomplete.component.html',
-  styleUrls: ['../generic-autocomplete/generic-autocomplete.component.css']
+    selector: 'autocomplete-voucher',
+    templateUrl: '../generic-autocomplete/generic-autocomplete.component.html',
+    styleUrls: ['../generic-autocomplete/generic-autocomplete.component.css'],
+    standalone: false
 })
 export class AutocompleteVoucherComponent extends GenericAutocompleteComponent<Voucher, Voucher> implements OnInit {
 

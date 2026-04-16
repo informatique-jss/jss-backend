@@ -10,9 +10,10 @@ import { AppService } from 'src/app/services/app.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({
-  selector: 'referential-building-domiciliation',
-  templateUrl: 'referential-building-domiciliation.componentt.html',
-  styleUrls: ['./../generic-referential/generic-referential.component.css']
+    selector: 'referential-building-domiciliation',
+    templateUrl: 'referential-building-domiciliation.componentt.html',
+    styleUrls: ['./../generic-referential/generic-referential.component.css'],
+    standalone: false
 })
 export class ReferentialBuildingDomiciliationComponent extends GenericReferentialComponent<BuildingDomiciliation> implements OnInit {
   constructor(private buildingDomiciliationService: BuildingDomiciliationService,

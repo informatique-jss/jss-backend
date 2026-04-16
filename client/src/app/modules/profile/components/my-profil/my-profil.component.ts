@@ -9,9 +9,10 @@ import { Employee } from '../../model/Employee';
 import { EmployeeService } from '../../services/employee.service';
 
 @Component({
-  selector: 'my-profil',
-  templateUrl: './my-profil.component.html',
-  styleUrls: ['./my-profil.component.css']
+    selector: 'my-profil',
+    templateUrl: './my-profil.component.html',
+    styleUrls: ['./my-profil.component.css'],
+    standalone: false
 })
 export class MyProfilComponent implements OnInit {
 

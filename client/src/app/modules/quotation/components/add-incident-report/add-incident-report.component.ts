@@ -12,9 +12,10 @@ import { Provision } from '../../model/Provision';
 import { AssoAffaireOrderService } from '../../services/asso.affaire.order.service';
 
 @Component({
-  selector: 'add-incident-report',
-  templateUrl: './add-incident-report.component.html',
-  styleUrls: ['./add-incident-report.component.css']
+    selector: 'add-incident-report',
+    templateUrl: './add-incident-report.component.html',
+    styleUrls: ['./add-incident-report.component.css'],
+    standalone: false
 })
 export class AddIncidentReportComponent implements OnInit {
 

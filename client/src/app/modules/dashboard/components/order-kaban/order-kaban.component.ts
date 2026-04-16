@@ -26,9 +26,10 @@ import { KanbanComponent, ORDER_KANBAN } from '../kanban/kanban.component';
 
 
 @Component({
-  selector: 'order-kaban',
-  templateUrl: './order-kaban.component.html',
-  styleUrls: ['./order-kaban.component.css']
+    selector: 'order-kaban',
+    templateUrl: './order-kaban.component.html',
+    styleUrls: ['./order-kaban.component.css'],
+    standalone: false
 })
 export class OrderKabanComponent extends KanbanComponent<CustomerOrder, CustomerOrderStatus> implements OnInit {
 

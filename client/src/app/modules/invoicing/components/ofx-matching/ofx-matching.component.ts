@@ -18,9 +18,10 @@ import { PaymentService } from '../../services/payment.service';
 import { AssociatePaymentDialogComponent } from '../associate-payment-dialog/associate-payment-dialog.component';
 
 @Component({
-  selector: 'ofx-matching',
-  templateUrl: './ofx-matching.component.html',
-  styleUrls: ['./ofx-matching.component.css']
+    selector: 'ofx-matching',
+    templateUrl: './ofx-matching.component.html',
+    styleUrls: ['./ofx-matching.component.css'],
+    standalone: false
 })
 export class OfxMatchingComponent implements OnInit {
 

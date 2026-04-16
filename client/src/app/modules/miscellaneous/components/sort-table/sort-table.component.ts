@@ -12,10 +12,11 @@ import { SortTableColumn } from '../../model/SortTableColumn';
 import { SortTableElement, SortTableElementActions, SortTableElementColumns, SortTableElementColumnsLink, SortTableElementColumnsStatus, SortTableElementWarn } from '../../model/SortTableElement';
 
 @Component({
-  selector: 'sort-table',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './sort-table.component.html',
-  styleUrls: ['./sort-table.component.css']
+    selector: 'sort-table',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    templateUrl: './sort-table.component.html',
+    styleUrls: ['./sort-table.component.css'],
+    standalone: false
 })
 
 export class SortTableComponent<T> implements OnInit {

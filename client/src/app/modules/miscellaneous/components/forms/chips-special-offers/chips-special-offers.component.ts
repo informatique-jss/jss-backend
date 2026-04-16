@@ -12,9 +12,10 @@ import { GenericChipsComponent } from '../generic-chips/generic-chips.component'
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'chips-special-offers',
-  templateUrl: './chips-special-offers.component.html',
-  styleUrls: ['./chips-special-offers.component.css']
+    selector: 'chips-special-offers',
+    templateUrl: './chips-special-offers.component.html',
+    styleUrls: ['./chips-special-offers.component.css'],
+    standalone: false
 })
 export class ChipsSpecialOffersComponent extends GenericChipsComponent<SpecialOffer> implements OnInit {
 

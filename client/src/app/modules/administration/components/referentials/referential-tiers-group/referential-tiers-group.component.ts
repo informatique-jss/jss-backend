@@ -7,9 +7,10 @@ import { TiersGroupService } from '../../../../quotation/services/tiers-group.se
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({
-  selector: 'referential-tiers-group',
-  templateUrl: './../generic-referential/generic-referential.component.html',
-  styleUrls: ['./../generic-referential/generic-referential.component.css']
+    selector: 'referential-tiers-group',
+    templateUrl: './../generic-referential/generic-referential.component.html',
+    styleUrls: ['./../generic-referential/generic-referential.component.css'],
+    standalone: false
 })
 export class ReferentialTiersGroupComponent extends GenericReferentialComponent<TiersGroup> implements OnInit {
   constructor(private tiersGroupService: TiersGroupService,

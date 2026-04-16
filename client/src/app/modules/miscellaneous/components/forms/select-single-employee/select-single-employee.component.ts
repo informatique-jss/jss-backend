@@ -8,9 +8,10 @@ import { ConstantService } from '../../../services/constant.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
 
 @Component({
-  selector: 'select-single-employee',
-  templateUrl: './select-single-employee.component.html',
-  styleUrls: ['./../generic-select/generic-select.component.html']
+    selector: 'select-single-employee',
+    templateUrl: './select-single-employee.component.html',
+    styleUrls: ['./../generic-select/generic-select.component.html'],
+    standalone: false
 })
 
 export class SelectSingleEmployeeComponent extends GenericSelectComponent<Employee> implements OnInit {

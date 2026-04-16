@@ -8,9 +8,10 @@ import { GenericChipsComponent } from '../generic-chips/generic-chips.component'
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'chips-principal-accounting-account',
-  templateUrl: './chips-principal-accounting-account.component.html',
-  styleUrls: ['./chips-principal-accounting-account.component.css']
+    selector: 'chips-principal-accounting-account',
+    templateUrl: './chips-principal-accounting-account.component.html',
+    styleUrls: ['./chips-principal-accounting-account.component.css'],
+    standalone: false
 })
 export class ChipsPrincipalAccountingAccountComponent extends GenericChipsComponent<PrincipalAccountingAccount> implements OnInit {
 

@@ -8,9 +8,10 @@ import { BaloNotice } from '../../model/BaloNotice';
 import { BaloNoticeService } from '../../services/balo-notice.service';
 
 @Component({
-  selector: 'balo-list',
-  templateUrl: './balo-list.component.html',
-  styleUrls: ['./balo-list.component.css']
+    selector: 'balo-list',
+    templateUrl: './balo-list.component.html',
+    styleUrls: ['./balo-list.component.css'],
+    standalone: false
 })
 export class BaloListComponent implements OnInit {
   balos: BaloNotice[] | undefined;

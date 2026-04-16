@@ -9,9 +9,10 @@ import { UploadAttachementDialogComponent } from '../upload-attachement-dialog/u
 import { IAttachmentCode } from '../../model/IAttachmentCode';
 
 @Component({
-  selector: 'single-attachment',
-  templateUrl: './single-attachment.component.html',
-  styleUrls: ['./single-attachment.component.css']
+    selector: 'single-attachment',
+    templateUrl: './single-attachment.component.html',
+    styleUrls: ['./single-attachment.component.css'],
+    standalone: false
 })
 export class SingleAttachmentComponent implements OnInit {
 

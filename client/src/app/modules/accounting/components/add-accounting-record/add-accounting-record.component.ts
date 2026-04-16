@@ -14,9 +14,10 @@ import { AccountingRecord } from '../../model/AccountingRecord';
 import { AccountingRecordService } from '../../services/accounting.record.service';
 import { CounterPartDialogComponent } from '../counter-part-dialog/counter-part-dialog.component';
 @Component({
-  selector: 'add-accounting-record',
-  templateUrl: './add-accounting-record.component.html',
-  styleUrls: ['./add-accounting-record.component.css']
+    selector: 'add-accounting-record',
+    templateUrl: './add-accounting-record.component.html',
+    styleUrls: ['./add-accounting-record.component.css'],
+    standalone: false
 })
 export class AddAccountingRecordComponent implements OnInit {
 

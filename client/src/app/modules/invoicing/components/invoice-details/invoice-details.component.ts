@@ -29,9 +29,10 @@ import { EditAmountInvoiceItemDialogComponent } from '../edit-amount-invoice-ite
 import { getAffaireList, getAffaireListArray, getCustomerOrderNameForInvoice, getLetteringDate, getRemainingToPay, getResponsableName } from '../invoice-tools';
 
 @Component({
-  selector: 'invoice-details',
-  templateUrl: './invoice-details.component.html',
-  styleUrls: ['./invoice-details.component.css']
+    selector: 'invoice-details',
+    templateUrl: './invoice-details.component.html',
+    styleUrls: ['./invoice-details.component.css'],
+    standalone: false
 })
 export class InvoiceDetailsComponent implements OnInit {
 

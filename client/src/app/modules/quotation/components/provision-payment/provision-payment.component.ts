@@ -18,9 +18,10 @@ import { Invoice } from '../../model/Invoice';
 import { Provision } from '../../model/Provision';
 
 @Component({
-  selector: 'provision-payment',
-  templateUrl: './provision-payment.component.html',
-  styleUrls: ['./provision-payment.component.css']
+    selector: 'provision-payment',
+    templateUrl: './provision-payment.component.html',
+    styleUrls: ['./provision-payment.component.css'],
+    standalone: false
 })
 export class ProvisionPaymentComponent implements OnInit {
 

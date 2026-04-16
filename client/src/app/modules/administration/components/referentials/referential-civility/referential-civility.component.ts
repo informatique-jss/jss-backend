@@ -7,9 +7,10 @@ import { AppService } from 'src/app/services/app.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({
-  selector: 'referential-civility',
-  templateUrl: './../generic-referential/generic-referential.component.html',
-  styleUrls: ['./../generic-referential/generic-referential.component.css']
+    selector: 'referential-civility',
+    templateUrl: './../generic-referential/generic-referential.component.html',
+    styleUrls: ['./../generic-referential/generic-referential.component.css'],
+    standalone: false
 })
 export class ReferentialCivilityComponent extends GenericReferentialComponent<Civility> implements OnInit {
   constructor(private civilityService: CivilityService,

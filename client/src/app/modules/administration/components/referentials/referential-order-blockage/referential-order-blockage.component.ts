@@ -7,9 +7,10 @@ import { OrderBlockageService } from 'src/app/modules/quotation/services/order.b
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({
-  selector: 'referential-order-blockage',
-  templateUrl: './../generic-referential/generic-referential.component.html',
-  styleUrls: ['./../generic-referential/generic-referential.component.css']
+    selector: 'referential-order-blockage',
+    templateUrl: './../generic-referential/generic-referential.component.html',
+    styleUrls: ['./../generic-referential/generic-referential.component.css'],
+    standalone: false
 })
 export class ReferentialOrderBlockageComponent extends GenericReferentialComponent<OrderBlockage> implements OnInit {
   constructor(private orderBlockageService: OrderBlockageService,

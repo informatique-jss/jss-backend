@@ -16,9 +16,10 @@ import { AssociatePaymentDialogComponent } from '../associate-payment-dialog/ass
 import { getRemainingToPay } from '../invoice-tools';
 
 @Component({
-  selector: 'invoice-payment',
-  templateUrl: './invoice-payment.component.html',
-  styleUrls: ['./invoice-payment.component.css']
+    selector: 'invoice-payment',
+    templateUrl: './invoice-payment.component.html',
+    styleUrls: ['./invoice-payment.component.css'],
+    standalone: false
 })
 export class InvoicePaymentComponent implements OnInit, AfterContentChecked {
 

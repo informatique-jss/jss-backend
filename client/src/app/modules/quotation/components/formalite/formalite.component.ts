@@ -28,9 +28,10 @@ import { FormaliteStatusService } from '../../services/formalite.status.service'
 import { FormaliteAssociateDialog } from '../formalite-associate-dialog/formalite-associate-dialog';
 
 @Component({
-  selector: 'formalite',
-  templateUrl: './formalite.component.html',
-  styleUrls: ['./formalite.component.css']
+    selector: 'formalite',
+    templateUrl: './formalite.component.html',
+    styleUrls: ['./formalite.component.css'],
+    standalone: false
 })
 export class FormaliteComponent implements OnInit {
 

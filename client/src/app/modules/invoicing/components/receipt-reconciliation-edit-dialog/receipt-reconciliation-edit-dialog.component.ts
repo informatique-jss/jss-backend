@@ -5,9 +5,10 @@ import { AzureReceiptInvoice } from '../../model/AzureReceiptInvoice';
 import { AzureReceiptInvoiceService } from '../../services/azure.receipt.invoice.service';
 
 @Component({
-  selector: 'app-receipt-reconciliation-edit-dialog',
-  templateUrl: './receipt-reconciliation-edit-dialog.component.html',
-  styleUrls: ['./receipt-reconciliation-edit-dialog.component.css']
+    selector: 'app-receipt-reconciliation-edit-dialog',
+    templateUrl: './receipt-reconciliation-edit-dialog.component.html',
+    styleUrls: ['./receipt-reconciliation-edit-dialog.component.css'],
+    standalone: false
 })
 export class ReceiptReconciliationEditDialogComponent implements OnInit {
 

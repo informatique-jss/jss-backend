@@ -8,9 +8,10 @@ import { GenericChipsComponent } from '../generic-chips/generic-chips.component'
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'chips-payment-type',
-  templateUrl: './chips-payment-type.component.html',
-  styleUrls: ['./chips-payment-type.component.css']
+    selector: 'chips-payment-type',
+    templateUrl: './chips-payment-type.component.html',
+    styleUrls: ['./chips-payment-type.component.css'],
+    standalone: false
 })
 export class ChipsPaymentTypeComponent extends GenericChipsComponent<PaymentType> implements OnInit {
 

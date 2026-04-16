@@ -19,9 +19,10 @@ import { IndicatorService } from '../../services/indicator.service';
 import { IndicatorValueService } from '../../services/indicator.value.service';
 
 @Component({
-  selector: 'indicator-detailed',
-  templateUrl: './indicator-detailed.component.html',
-  styleUrls: ['./indicator-detailed.component.css']
+    selector: 'indicator-detailed',
+    templateUrl: './indicator-detailed.component.html',
+    styleUrls: ['./indicator-detailed.component.css'],
+    standalone: false
 })
 export class IndicatorDetailedComponent implements OnInit {
 

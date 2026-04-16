@@ -7,9 +7,10 @@ import { RejectionCauseService } from 'src/app/modules/quotation/services/reject
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({
-  selector: 'referential-rejection-cause',
-  templateUrl: './../generic-referential/generic-referential.component.html',
-  styleUrls: ['./../generic-referential/generic-referential.component.css']
+    selector: 'referential-rejection-cause',
+    templateUrl: './../generic-referential/generic-referential.component.html',
+    styleUrls: ['./../generic-referential/generic-referential.component.css'],
+    standalone: false
 })
 export class ReferentialRejectionCauseComponent extends GenericReferentialComponent<RejectionCause> implements OnInit {
   constructor(private rejectionCauseService: RejectionCauseService,

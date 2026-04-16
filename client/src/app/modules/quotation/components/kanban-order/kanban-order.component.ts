@@ -26,9 +26,10 @@ import { Notification } from '../../../../modules/miscellaneous/model/Notificati
 import { RestUserPreferenceService } from '../../../../services/rest.user.preference.service';
 
 @Component({
-  selector: 'kanban-order',
-  templateUrl: './kanban-order.component.html',
-  styleUrls: ['./kanban-order.component.css']
+    selector: 'kanban-order',
+    templateUrl: './kanban-order.component.html',
+    styleUrls: ['./kanban-order.component.css'],
+    standalone: false
 })
 export class KanbanOrderComponent extends KanbanComponent<CustomerOrder, OrderBlockage> implements OnInit {
 

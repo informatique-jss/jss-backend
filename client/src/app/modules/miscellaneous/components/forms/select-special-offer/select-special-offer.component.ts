@@ -6,9 +6,10 @@ import { SpecialOfferService } from '../../../services/special.offer.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
 
 @Component({
-  selector: 'select-special-offer',
-  templateUrl: './../generic-select/generic-select.component.html',
-  styleUrls: ['./../generic-select/generic-select.component.css']
+    selector: 'select-special-offer',
+    templateUrl: './../generic-select/generic-select.component.html',
+    styleUrls: ['./../generic-select/generic-select.component.css'],
+    standalone: false
 })
 export class SelectSpecialOfferComponent extends GenericSelectComponent<SpecialOffer> implements OnInit {
 

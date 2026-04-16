@@ -11,9 +11,10 @@ import { ConstantService } from '../../../services/constant.service';
 import { GenericChipsComponent } from '../generic-chips/generic-chips.component';
 
 @Component({
-  selector: 'chips-service-type',
-  templateUrl: './chips-service-type.component.html',
-  styleUrls: ['./chips-service-type.component.css']
+    selector: 'chips-service-type',
+    templateUrl: './chips-service-type.component.html',
+    styleUrls: ['./chips-service-type.component.css'],
+    standalone: false
 })
 export class ChipsServiceTypeComponent extends GenericChipsComponent<ServiceType> implements OnInit {
 

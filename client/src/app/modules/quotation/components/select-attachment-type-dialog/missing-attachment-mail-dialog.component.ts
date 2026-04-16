@@ -18,9 +18,10 @@ import { MissingAttachmentQueryService } from '../../services/missing-attachment
 import { SelectAttachmentsDialogComponent } from '../select-attachments-dialog/select-attachment-dialog.component';
 
 @Component({
-  selector: 'app-select-attachment-type-dialog',
-  templateUrl: './missing-attachment-mail-dialog.component.html',
-  styleUrls: ['./missing-attachment-mail-dialog.component.css']
+    selector: 'app-select-attachment-type-dialog',
+    templateUrl: './missing-attachment-mail-dialog.component.html',
+    styleUrls: ['./missing-attachment-mail-dialog.component.css'],
+    standalone: false
 })
 export class MissingAttachmentMailDialogComponent implements OnInit {
   entity: IAttachment = { id: 1 } as IAttachment;

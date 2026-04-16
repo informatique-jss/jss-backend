@@ -11,9 +11,10 @@ import { OutboundCheckSearchResultService } from '../../services/outbound.check.
 import { PaymentDetailsDialogService } from '../../services/payment.details.dialog.service';
 
 @Component({
-  selector: 'outbound-check-list',
-  templateUrl: './outbound-check-list.component.html',
-  styleUrls: ['./outbound-check-list.component.css']
+    selector: 'outbound-check-list',
+    templateUrl: './outbound-check-list.component.html',
+    styleUrls: ['./outbound-check-list.component.css'],
+    standalone: false
 })
 export class OutboundCheckListComponent implements OnInit, AfterContentChecked {
   @Input() outboundCheckSearch: OutboundCheckSearch = {} as OutboundCheckSearch;

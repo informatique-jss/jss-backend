@@ -4,9 +4,10 @@ import { AppService } from 'src/app/services/app.service';
 import { GenericFormComponent } from '../generic-form.components';
 
 @Component({
-  selector: 'generic-datetime-picker',
-  templateUrl: './generic-datetime-picker.component.html',
-  styleUrls: ['./generic-datetime-picker.component.css']
+    selector: 'generic-datetime-picker',
+    templateUrl: './generic-datetime-picker.component.html',
+    styleUrls: ['./generic-datetime-picker.component.css'],
+    standalone: false
 })
 export class GenericDatetimePickerComponent extends GenericFormComponent implements OnInit {
 

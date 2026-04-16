@@ -7,9 +7,10 @@ import { GenericChipsComponent } from '../generic-chips/generic-chips.component'
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'chips-mail',
-  templateUrl: './chips-mail.component.html',
-  styleUrls: ['./chips-mail.component.css']
+    selector: 'chips-mail',
+    templateUrl: './chips-mail.component.html',
+    styleUrls: ['./chips-mail.component.css'],
+    standalone: false
 })
 export class ChipsMailComponent extends GenericChipsComponent<Mail> implements OnInit {
 

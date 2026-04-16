@@ -10,9 +10,10 @@ import { HabilitationsService } from 'src/app/services/habilitations.service';
 import { Notification } from '../../../miscellaneous/model/Notification';
 
 @Component({
-  selector: 'provision-side-panel-details',
-  templateUrl: './provision-side-panel-details.component.html',
-  styleUrls: ['./provision-side-panel-details.component.css']
+    selector: 'provision-side-panel-details',
+    templateUrl: './provision-side-panel-details.component.html',
+    styleUrls: ['./provision-side-panel-details.component.css'],
+    standalone: false
 })
 export class ProvisionSidePanelDetailsComponent implements OnInit {
 

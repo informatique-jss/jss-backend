@@ -12,9 +12,10 @@ import { IndicatorGroupService } from '../../services/indicator-group.service';
 import { IndicatorValueService } from '../../services/indicator.value.service';
 
 @Component({
-  selector: 'my-indicators',
-  templateUrl: './my-indicators.component.html',
-  styleUrls: ['./my-indicators.component.css']
+    selector: 'my-indicators',
+    templateUrl: './my-indicators.component.html',
+    styleUrls: ['./my-indicators.component.css'],
+    standalone: false
 })
 export class MyIndicatorsComponent implements OnInit {
 

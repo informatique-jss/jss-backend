@@ -20,9 +20,10 @@ import { ResponsableService } from '../../services/responsable.service';
 import { TiersService } from '../../services/tiers.service';
 
 @Component({
-  selector: 'settlement-billing',
-  templateUrl: './settlement-billing.component.html',
-  styleUrls: ['./settlement-billing.component.css']
+    selector: 'settlement-billing',
+    templateUrl: './settlement-billing.component.html',
+    styleUrls: ['./settlement-billing.component.css'],
+    standalone: false
 })
 export class SettlementBillingComponent implements OnInit, AfterContentChecked {
 

@@ -6,9 +6,10 @@ import { GenericSelectComponent } from '../generic-select/generic-select.compone
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'select-billing-items',
-  templateUrl: './select-billing-items.component.html',
-  styleUrls: ['./select-billing-items.component.css']
+    selector: 'select-billing-items',
+    templateUrl: './select-billing-items.component.html',
+    styleUrls: ['./select-billing-items.component.css'],
+    standalone: false
 })
 export class SelectBillingItemsComponent extends GenericSelectComponent<BillingItem> implements OnInit {
 

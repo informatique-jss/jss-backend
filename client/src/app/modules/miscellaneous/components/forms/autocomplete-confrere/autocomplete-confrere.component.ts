@@ -10,9 +10,10 @@ import { ConfrereDialogComponent } from '../../confreres-dialog/confreres-dialog
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
 
 @Component({
-  selector: 'autocomplete-confrere',
-  templateUrl: './autocomplete-confrere.component.html',
-  styleUrls: ['../generic-autocomplete/generic-autocomplete.component.css'],
+    selector: 'autocomplete-confrere',
+    templateUrl: './autocomplete-confrere.component.html',
+    styleUrls: ['../generic-autocomplete/generic-autocomplete.component.css'],
+    standalone: false
 })
 export class AutocompleteConfrereComponent extends GenericAutocompleteComponent<Confrere, Confrere> implements OnInit {
 

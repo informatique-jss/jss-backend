@@ -7,9 +7,10 @@ import { BusinessSectorService } from 'src/app/modules/tiers/services/business.s
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({
-  selector: 'referential-business-sector',
-  templateUrl: './../generic-referential/generic-referential.component.html',
-  styleUrls: ['./../generic-referential/generic-referential.component.css']
+    selector: 'referential-business-sector',
+    templateUrl: './../generic-referential/generic-referential.component.html',
+    styleUrls: ['./../generic-referential/generic-referential.component.css'],
+    standalone: false
 })
 export class ReferentialBusinessSectorComponent extends GenericReferentialComponent<BusinessSector> implements OnInit {
   constructor(private businessSectorService: BusinessSectorService,

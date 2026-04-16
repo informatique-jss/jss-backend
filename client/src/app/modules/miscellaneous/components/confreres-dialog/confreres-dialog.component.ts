@@ -8,9 +8,10 @@ import { SortTableColumn } from '../../model/SortTableColumn';
 import { SortTableElement } from '../../model/SortTableElement';
 
 @Component({
-  selector: 'confreres-dialog',
-  templateUrl: './confreres-dialog.component.html',
-  styleUrls: ['./confreres-dialog.component.css']
+    selector: 'confreres-dialog',
+    templateUrl: './confreres-dialog.component.html',
+    styleUrls: ['./confreres-dialog.component.css'],
+    standalone: false
 })
 export class ConfrereDialogComponent implements OnInit {
 

@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
 
 @Component({
-  selector: 'recurring-ordering-list',
-  templateUrl: './recurring-ordering-list.component.html',
-  styleUrls: ['./recurring-ordering-list.component.css']
+    selector: 'recurring-ordering-list',
+    templateUrl: './recurring-ordering-list.component.html',
+    styleUrls: ['./recurring-ordering-list.component.css'],
+    standalone: false
 })
 export class RecurringOrderingListComponent implements OnInit {
 

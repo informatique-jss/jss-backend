@@ -8,9 +8,10 @@ import { GenericChipsComponent } from '../generic-chips/generic-chips.component'
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'chips-forme-juridique',
-  templateUrl: './chips-forme-juridique.component.html',
-  styleUrls: ['./chips-forme-juridique.component.css']
+    selector: 'chips-forme-juridique',
+    templateUrl: './chips-forme-juridique.component.html',
+    styleUrls: ['./chips-forme-juridique.component.css'],
+    standalone: false
 })
 export class ChipsFormeJuridiqueComponent extends GenericChipsComponent<FormeJuridique> implements OnInit {
 

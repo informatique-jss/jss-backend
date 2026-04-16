@@ -7,9 +7,10 @@ import { GenericSelectComponent } from '../generic-select/generic-select.compone
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'select-payment-types',
-  templateUrl: './select-payment-types.component.html',
-  styleUrls: ['./select-payment-types.component.css']
+    selector: 'select-payment-types',
+    templateUrl: './select-payment-types.component.html',
+    styleUrls: ['./select-payment-types.component.css'],
+    standalone: false
 })
 export class SelectPaymentTypesComponent extends GenericSelectComponent<PaymentType> implements OnInit {
 

@@ -9,9 +9,10 @@ import { HabilitationsService } from '../../../../services/habilitations.service
 import { UserPreferenceService } from '../../../../services/user.preference.service';
 
 @Component({
-  selector: 'app-administration',
-  templateUrl: './administration.component.html',
-  styleUrls: ['./administration.component.css']
+    selector: 'app-administration',
+    templateUrl: './administration.component.html',
+    styleUrls: ['./administration.component.css'],
+    standalone: false
 })
 export class AdministrationComponent implements OnInit, AfterContentChecked {
 

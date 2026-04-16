@@ -7,9 +7,10 @@ import { AppService } from 'src/app/services/app.service';
 
 
 @Component({
-  selector: 'select-followup',
-  templateUrl: './select-followup.component.html',
-  styleUrls: ['./select-followup.component.css']
+    selector: 'select-followup',
+    templateUrl: './select-followup.component.html',
+    styleUrls: ['./select-followup.component.css'],
+    standalone: false
 })
 export class SelectFollowupComponent extends GenericSelectComponent<TiersFollowupType> implements OnInit {
 

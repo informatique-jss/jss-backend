@@ -7,9 +7,10 @@ import { AppService } from 'src/app/services/app.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({
-  selector: 'referential-accounting-account-class',
-  templateUrl: './../generic-referential/generic-referential.component.html',
-  styleUrls: ['./../generic-referential/generic-referential.component.css']
+    selector: 'referential-accounting-account-class',
+    templateUrl: './../generic-referential/generic-referential.component.html',
+    styleUrls: ['./../generic-referential/generic-referential.component.css'],
+    standalone: false
 })
 export class ReferentialAccountingAccountClassComponent extends GenericReferentialComponent<AccountingAccountClass> implements OnInit {
   constructor(private accountingAccountClassService: AccountingAccountClassService,

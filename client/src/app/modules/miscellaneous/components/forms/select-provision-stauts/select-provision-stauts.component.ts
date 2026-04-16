@@ -13,9 +13,10 @@ import { IWorkflowElement } from '../../../model/IWorkflowElement';
 import { GenericMultipleSelectComponent } from '../generic-select/generic-multiple-select.component';
 
 @Component({
-  selector: 'select-provision-stauts',
-  templateUrl: './select-provision-stauts.component.html',
-  styleUrls: ['./select-provision-stauts.component.css']
+    selector: 'select-provision-stauts',
+    templateUrl: './select-provision-stauts.component.html',
+    styleUrls: ['./select-provision-stauts.component.css'],
+    standalone: false
 })
 export class SelectProvisionStautsComponent extends GenericMultipleSelectComponent<IWorkflowElement<any>> implements OnInit {
 

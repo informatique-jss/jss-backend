@@ -6,9 +6,10 @@ import { ServiceType } from '../../model/ServiceType';
 import { ServiceService } from '../../services/service.service';
 
 @Component({
-  selector: 'select-multi-service-type-dialog',
-  templateUrl: './select-multi-service-type-dialog.component.html',
-  styleUrls: ['./select-multi-service-type-dialog.component.css']
+    selector: 'select-multi-service-type-dialog',
+    templateUrl: './select-multi-service-type-dialog.component.html',
+    styleUrls: ['./select-multi-service-type-dialog.component.css'],
+    standalone: false
 })
 export class SelectMultiServiceTypeDialogComponent implements OnInit {
 

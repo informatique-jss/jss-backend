@@ -13,9 +13,10 @@ import { CustomerOrderService } from '../../services/customer.order.service';
 import { QuotationService } from '../../services/quotation.service';
 
 @Component({
-  selector: 'announcement-list',
-  templateUrl: './announcement-list.component.html',
-  styleUrls: ['./announcement-list.component.css']
+    selector: 'announcement-list',
+    templateUrl: './announcement-list.component.html',
+    styleUrls: ['./announcement-list.component.css'],
+    standalone: false
 })
 export class AnnouncementListComponent implements OnInit, AfterContentChecked {
 

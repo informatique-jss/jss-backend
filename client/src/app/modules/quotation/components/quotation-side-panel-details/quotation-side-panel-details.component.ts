@@ -23,9 +23,10 @@ import { Notification } from '../../../miscellaneous/model/Notification';
 
 
 @Component({
-  selector: 'quotation-side-panel-details',
-  templateUrl: './quotation-side-panel-details.component.html',
-  styleUrls: ['./quotation-side-panel-details.component.css']
+    selector: 'quotation-side-panel-details',
+    templateUrl: './quotation-side-panel-details.component.html',
+    styleUrls: ['./quotation-side-panel-details.component.css'],
+    standalone: false
 })
 export class QuotationSidePanelDetailsComponent implements OnInit {
 

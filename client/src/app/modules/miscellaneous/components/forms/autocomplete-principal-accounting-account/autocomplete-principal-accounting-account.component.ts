@@ -6,9 +6,10 @@ import { GenericLocalAutocompleteComponent } from '../generic-local-autocomplete
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'autocomplete-principal-accounting-account',
-  templateUrl: '../generic-local-autocomplete/generic-local-autocomplete.component.html',
-  styleUrls: ['../generic-local-autocomplete/generic-local-autocomplete.component.css'],
+    selector: 'autocomplete-principal-accounting-account',
+    templateUrl: '../generic-local-autocomplete/generic-local-autocomplete.component.html',
+    styleUrls: ['../generic-local-autocomplete/generic-local-autocomplete.component.css'],
+    standalone: false
 })
 export class AutocompletePrincipalAccountingAccountComponent extends GenericLocalAutocompleteComponent<PrincipalAccountingAccount> implements OnInit {
 

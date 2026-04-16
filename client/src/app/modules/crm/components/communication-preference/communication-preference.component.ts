@@ -7,9 +7,10 @@ import { CommunicationPreferenceService } from '../../services/communication.pre
 
 
 @Component({
-  selector: 'communication-preference',
-  templateUrl: './communication-preference.component.html',
-  styleUrls: ['./communication-preference.component.css']
+    selector: 'communication-preference',
+    templateUrl: './communication-preference.component.html',
+    styleUrls: ['./communication-preference.component.css'],
+    standalone: false
 })
 export class CommunicationPreferenceComponent implements OnInit, AfterContentChecked {
 

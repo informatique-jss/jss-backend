@@ -6,9 +6,10 @@ import { GenericSelectComponent } from '../generic-select/generic-select.compone
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'select-refund-type',
-  templateUrl: './select-refund-type.component.html',
-  styleUrls: ['./select-refund-type.component.css']
+    selector: 'select-refund-type',
+    templateUrl: './select-refund-type.component.html',
+    styleUrls: ['./select-refund-type.component.css'],
+    standalone: false
 })
 export class SelectRefundTypeComponent extends GenericSelectComponent<RefundType> implements OnInit {
 

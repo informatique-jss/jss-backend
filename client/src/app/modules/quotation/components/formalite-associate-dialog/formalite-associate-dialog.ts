@@ -5,9 +5,10 @@ import { FormaliteDialogChoose } from '../../model/FormaliteDialogChoose';
 import { ConstantService } from "src/app/modules/miscellaneous/services/constant.service";
 
 @Component({
-  selector: 'formalite-associate-dialog',
-  templateUrl: './formalite-associate-dialog.html',
-  styleUrls: ['./formalite-associate-dialog.css']
+    selector: 'formalite-associate-dialog',
+    templateUrl: './formalite-associate-dialog.html',
+    styleUrls: ['./formalite-associate-dialog.css'],
+    standalone: false
 })
 export class FormaliteAssociateDialog implements OnInit {
 

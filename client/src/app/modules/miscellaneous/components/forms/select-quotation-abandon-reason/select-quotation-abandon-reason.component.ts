@@ -6,9 +6,10 @@ import { GenericSelectComponent } from '../generic-select/generic-select.compone
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'select-quotation-abandon-reason',
-  templateUrl: './../generic-select/generic-select.component.html',
-  styleUrls: ['./../generic-select/generic-select.component.html']
+    selector: 'select-quotation-abandon-reason',
+    templateUrl: './../generic-select/generic-select.component.html',
+    styleUrls: ['./../generic-select/generic-select.component.html'],
+    standalone: false
 })
 export class SelectQuotationAbandonReasonComponent extends GenericSelectComponent<QuotationAbandonReason> implements OnInit {
 

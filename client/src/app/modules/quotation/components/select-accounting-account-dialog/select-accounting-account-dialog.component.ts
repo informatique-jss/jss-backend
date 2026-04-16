@@ -6,9 +6,10 @@ import { PrincipalAccountingAccount } from 'src/app/modules/accounting/model/Pri
 import { ConstantService } from 'src/app/modules/miscellaneous/services/constant.service';
 
 @Component({
-  selector: 'app-select-accounting-account-dialog',
-  templateUrl: './select-accounting-account-dialog.component.html',
-  styleUrls: ['./select-accounting-account-dialog.component.css']
+    selector: 'app-select-accounting-account-dialog',
+    templateUrl: './select-accounting-account-dialog.component.html',
+    styleUrls: ['./select-accounting-account-dialog.component.css'],
+    standalone: false
 })
 export class SelectAccountingAccountDialogComponent implements OnInit {
 

@@ -7,9 +7,10 @@ import { GenericSelectComponent } from '../generic-select/generic-select.compone
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'select-subscription-period',
-  templateUrl: './select-subscription-period.component.html',
-  styleUrls: ['./select-subscription-period.component.css']
+    selector: 'select-subscription-period',
+    templateUrl: './select-subscription-period.component.html',
+    styleUrls: ['./select-subscription-period.component.css'],
+    standalone: false
 })
 export class SelectSubscriptionPeriodComponent extends GenericSelectComponent<SubscriptionPeriodType> implements OnInit {
 

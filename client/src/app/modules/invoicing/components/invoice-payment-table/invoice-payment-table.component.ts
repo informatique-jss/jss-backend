@@ -12,9 +12,10 @@ import { AssociatePaymentDialogComponent } from '../associate-payment-dialog/ass
 import { getAmountPayed, getRemainingToPay } from '../invoice-tools';
 
 @Component({
-  selector: 'invoice-payment-table',
-  templateUrl: './invoice-payment-table.component.html',
-  styleUrls: ['./invoice-payment-table.component.css']
+    selector: 'invoice-payment-table',
+    templateUrl: './invoice-payment-table.component.html',
+    styleUrls: ['./invoice-payment-table.component.css'],
+    standalone: false
 })
 export class InvoicePaymentTableComponent implements OnInit {
 

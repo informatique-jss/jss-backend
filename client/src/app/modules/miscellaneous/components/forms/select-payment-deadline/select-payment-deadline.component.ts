@@ -6,9 +6,10 @@ import { GenericSelectComponent } from '../generic-select/generic-select.compone
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'select-payment-deadline',
-  templateUrl: './select-payment-deadline.component.html',
-  styleUrls: ['./select-payment-deadline.component.css']
+    selector: 'select-payment-deadline',
+    templateUrl: './select-payment-deadline.component.html',
+    styleUrls: ['./select-payment-deadline.component.css'],
+    standalone: false
 })
 export class SelectPaymentDeadlineComponent extends GenericSelectComponent<PaymentDeadlineType> implements OnInit {
 

@@ -6,9 +6,10 @@ import { ENVOI_EN_COURS, ENVOYE_AU_GRF, RECU_PAR_LE_GRF, REJETE_DEF_GRF, REJETE_
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
 
 @Component({
-  selector: 'select-formalite-infogreffe-status',
-  templateUrl: '../generic-select/generic-select.component.html',
-  styleUrls: ['../generic-select/generic-select.component.css']
+    selector: 'select-formalite-infogreffe-status',
+    templateUrl: '../generic-select/generic-select.component.html',
+    styleUrls: ['../generic-select/generic-select.component.css'],
+    standalone: false
 })
 
 export class SelectFormaliteInfogreffeStatusComponent extends GenericSelectComponent<string> implements OnInit {

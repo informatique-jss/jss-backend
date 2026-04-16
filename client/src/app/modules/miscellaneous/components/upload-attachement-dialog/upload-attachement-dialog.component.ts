@@ -6,9 +6,10 @@ import { IAttachmentCode } from '../../model/IAttachmentCode';
 import { instanceOfIAttachmentCode } from '../../../../libs/TypeHelper';
 
 @Component({
-  selector: 'upload-attachement-dialog',
-  templateUrl: './upload-attachement-dialog.component.html',
-  styleUrls: ['./upload-attachement-dialog.component.css']
+    selector: 'upload-attachement-dialog',
+    templateUrl: './upload-attachement-dialog.component.html',
+    styleUrls: ['./upload-attachement-dialog.component.css'],
+    standalone: false
 })
 export class UploadAttachementDialogComponent implements OnInit {
 

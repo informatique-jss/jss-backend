@@ -1,9 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'grade',
-  templateUrl: './grade.component.html',
-  styleUrls: ['./grade.component.css']
+    selector: 'grade',
+    templateUrl: './grade.component.html',
+    styleUrls: ['./grade.component.css'],
+    standalone: false
 })
 export class GradeComponent implements OnInit {
 

@@ -7,9 +7,10 @@ import { HabilitationsService } from '../../../../../services/habilitations.serv
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
 
 @Component({
-  selector: 'select-rejection-cause',
-  templateUrl: './../generic-select/generic-select.component.html',
-  styleUrls: ['./../generic-select/generic-select.component.css']
+    selector: 'select-rejection-cause',
+    templateUrl: './../generic-select/generic-select.component.html',
+    styleUrls: ['./../generic-select/generic-select.component.css'],
+    standalone: false
 })
 export class SelectRejectionCauseComponent extends GenericSelectComponent<RejectionCause> implements OnInit {
 

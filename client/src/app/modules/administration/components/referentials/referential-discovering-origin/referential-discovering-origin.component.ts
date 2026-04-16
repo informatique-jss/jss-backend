@@ -7,9 +7,10 @@ import { DiscoveringOriginService } from 'src/app/modules/tiers/services/discove
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({
-  selector: 'referential-discovering-origin',
-  templateUrl: './../generic-referential/generic-referential.component.html',
-  styleUrls: ['./../generic-referential/generic-referential.component.css']
+    selector: 'referential-discovering-origin',
+    templateUrl: './../generic-referential/generic-referential.component.html',
+    styleUrls: ['./../generic-referential/generic-referential.component.css'],
+    standalone: false
 })
 export class ReferentialDiscoveringOriginComponent extends GenericReferentialComponent<DiscoveringOrigin> implements OnInit {
   constructor(private discoveringOriginService: DiscoveringOriginService,

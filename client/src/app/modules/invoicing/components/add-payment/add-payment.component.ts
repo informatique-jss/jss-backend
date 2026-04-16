@@ -6,9 +6,10 @@ import { Payment } from '../../model/Payment';
 import { PaymentService } from '../../services/payment.service';
 
 @Component({
-  selector: 'add-payment',
-  templateUrl: './add-payment.component.html',
-  styleUrls: ['./add-payment.component.css']
+    selector: 'add-payment',
+    templateUrl: './add-payment.component.html',
+    styleUrls: ['./add-payment.component.css'],
+    standalone: false
 })
 export class AddPaymentComponent implements OnInit {
 

@@ -9,9 +9,10 @@ import { ConstantService } from '../../../services/constant.service';
 import { GenericAutocompleteComponent } from '../generic-autocomplete/generic-autocomplete.component';
 
 @Component({
-  selector: 'autocomplete-payment',
-  templateUrl: '../generic-autocomplete/generic-autocomplete.component.html',
-  styleUrls: ['../generic-autocomplete/generic-autocomplete.component.css']
+    selector: 'autocomplete-payment',
+    templateUrl: '../generic-autocomplete/generic-autocomplete.component.html',
+    styleUrls: ['../generic-autocomplete/generic-autocomplete.component.css'],
+    standalone: false
 })
 export class AutocompletePaymentComponent extends GenericAutocompleteComponent<PaymentSearchResult, PaymentSearchResult> implements OnInit {
 

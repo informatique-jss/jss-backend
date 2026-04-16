@@ -5,9 +5,10 @@ import { SERVICE_FIELD_TYPE_DATE, SERVICE_FIELD_TYPE_INTEGER, SERVICE_FIELD_TYPE
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'select-service-field-data-type',
-  templateUrl: '../generic-select/generic-select.component.html',
-  styleUrls: ['../generic-select/generic-select.component.css']
+    selector: 'select-service-field-data-type',
+    templateUrl: '../generic-select/generic-select.component.html',
+    styleUrls: ['../generic-select/generic-select.component.css'],
+    standalone: false
 })
 
 export class SelectServiceFieldDataTypeComponent extends GenericSelectComponent<string> implements OnInit {

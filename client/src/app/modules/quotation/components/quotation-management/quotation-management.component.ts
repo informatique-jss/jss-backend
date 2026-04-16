@@ -22,9 +22,10 @@ import { MailComputeResultService } from '../../services/mail.compute.result.ser
 import { RecordTypeService } from '../../services/record.type.service';
 
 @Component({
-  selector: 'quotation-management',
-  templateUrl: './quotation-management.component.html',
-  styleUrls: ['./quotation-management.component.css']
+    selector: 'quotation-management',
+    templateUrl: './quotation-management.component.html',
+    styleUrls: ['./quotation-management.component.css'],
+    standalone: false
 })
 export class QuotationManagementComponent implements OnInit, AfterContentChecked {
 

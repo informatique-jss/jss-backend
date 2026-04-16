@@ -6,9 +6,10 @@ import { OsirisLog } from '../../model/OsirisLog';
 import { OsirisLogService } from '../../services/osiris.log.service';
 
 @Component({
-  selector: 'view-log',
-  templateUrl: './view-log.component.html',
-  styleUrls: ['./view-log.component.css']
+    selector: 'view-log',
+    templateUrl: './view-log.component.html',
+    styleUrls: ['./view-log.component.css'],
+    standalone: false
 })
 export class ViewLogComponent implements OnInit, AfterContentChecked {
 

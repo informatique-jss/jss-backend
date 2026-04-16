@@ -12,9 +12,10 @@ import { Tiers } from '../../model/Tiers';
 import { TiersType } from '../../model/TiersType';
 
 @Component({
-  selector: 'tiers-main',
-  templateUrl: './tiers-main.component.html',
-  styleUrls: ['./tiers-main.component.css']
+    selector: 'tiers-main',
+    templateUrl: './tiers-main.component.html',
+    styleUrls: ['./tiers-main.component.css'],
+    standalone: false
 })
 
 export class PrincipalComponent implements OnInit {

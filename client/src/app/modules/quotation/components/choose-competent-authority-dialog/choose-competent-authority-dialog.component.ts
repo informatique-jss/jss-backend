@@ -5,9 +5,10 @@ import { CompetentAuthority } from '../../../miscellaneous/model/CompetentAuthor
 import { AddAffaireDialogComponent } from '../add-affaire-dialog/add-affaire-dialog.component';
 
 @Component({
-  selector: 'choose-competent-authority-dialog',
-  templateUrl: './choose-competent-authority-dialog.component.html',
-  styleUrls: ['./choose-competent-authority-dialog.component.css']
+    selector: 'choose-competent-authority-dialog',
+    templateUrl: './choose-competent-authority-dialog.component.html',
+    styleUrls: ['./choose-competent-authority-dialog.component.css'],
+    standalone: false
 })
 export class ChooseCompetentAuthorityDialogComponent implements OnInit {
 

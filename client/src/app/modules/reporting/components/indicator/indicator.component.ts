@@ -5,9 +5,10 @@ import { HabilitationsService } from 'src/app/services/habilitations.service';
 import { UserPreferenceService } from 'src/app/services/user.preference.service';
 
 @Component({
-  selector: 'indicator',
-  templateUrl: './indicator.component.html',
-  styleUrls: ['./indicator.component.css']
+    selector: 'indicator',
+    templateUrl: './indicator.component.html',
+    styleUrls: ['./indicator.component.css'],
+    standalone: false
 })
 export class IndicatorComponent implements OnInit {
 

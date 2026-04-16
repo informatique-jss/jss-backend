@@ -6,9 +6,10 @@ import { IncidentType } from '../../../../reporting/model/IncidentType';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
 
 @Component({
-  selector: 'select-incident-type',
-  templateUrl: './../generic-select/generic-select.component.html',
-  styleUrls: ['./../generic-select/generic-select.component.css']
+    selector: 'select-incident-type',
+    templateUrl: './../generic-select/generic-select.component.html',
+    styleUrls: ['./../generic-select/generic-select.component.css'],
+    standalone: false
 })
 export class SelectIncidentTypeComponent extends GenericSelectComponent<IncidentType> implements OnInit {
 

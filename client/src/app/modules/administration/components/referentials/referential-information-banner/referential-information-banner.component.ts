@@ -7,9 +7,10 @@ import { AppService } from 'src/app/services/app.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({
-  selector: 'referential-information-banner',
-  templateUrl: './referential-information-banner.component.html',
-  styleUrls: ['./../generic-referential/generic-referential.component.css']
+    selector: 'referential-information-banner',
+    templateUrl: './referential-information-banner.component.html',
+    styleUrls: ['./../generic-referential/generic-referential.component.css'],
+    standalone: false
 })
 export class ReferentialInformationBannerComponent extends GenericReferentialComponent<InformationBanner> implements OnInit {
   constructor(private informationBannerService: InformationBannerService,

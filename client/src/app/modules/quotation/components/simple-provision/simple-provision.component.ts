@@ -14,9 +14,10 @@ import { SimpleProvisionStatus } from '../../model/SimpleProvisonStatus';
 import { SimpleProvisionStatusService } from '../../services/simple.provision.status.service';
 
 @Component({
-  selector: 'simple-provision',
-  templateUrl: './simple-provision.component.html',
-  styleUrls: ['./simple-provision.component.css']
+    selector: 'simple-provision',
+    templateUrl: './simple-provision.component.html',
+    styleUrls: ['./simple-provision.component.css'],
+    standalone: false
 })
 export class SimpleProvisionComponent implements OnInit {
 

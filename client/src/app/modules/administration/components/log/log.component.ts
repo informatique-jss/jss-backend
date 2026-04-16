@@ -8,9 +8,10 @@ import { OsirisLog } from '../../model/OsirisLog';
 import { OsirisLogService } from '../../services/osiris.log.service';
 
 @Component({
-  selector: 'log',
-  templateUrl: './log.component.html',
-  styleUrls: ['./log.component.css']
+    selector: 'log',
+    templateUrl: './log.component.html',
+    styleUrls: ['./log.component.css'],
+    standalone: false
 })
 export class LogComponent implements OnInit {
 

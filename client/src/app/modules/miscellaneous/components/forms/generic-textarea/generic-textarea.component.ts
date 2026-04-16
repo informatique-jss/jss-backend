@@ -5,9 +5,10 @@ import { AppService } from 'src/app/services/app.service';
 
 
 @Component({
-  selector: 'generic-textarea',
-  templateUrl: './generic-textarea.component.html',
-  styleUrls: ['./generic-textarea.component.css']
+    selector: 'generic-textarea',
+    templateUrl: './generic-textarea.component.html',
+    styleUrls: ['./generic-textarea.component.css'],
+    standalone: false
 })
 export class GenericTextareaComponent extends GenericFormComponent implements OnInit {
   /**

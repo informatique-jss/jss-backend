@@ -10,9 +10,10 @@ import { ProvisionBoardResultAggregated } from '../../model/ProvisionBoardResult
 import { ProvisionBoardResultService } from '../../services/provision.board.result.service';
 
 @Component({
-  selector: 'provision-board',
-  templateUrl: './provision-board.component.html',
-  styleUrls: ['./provision-board.component.css']
+    selector: 'provision-board',
+    templateUrl: './provision-board.component.html',
+    styleUrls: ['./provision-board.component.css'],
+    standalone: false
 })
 export class ProvisionBoardComponent implements OnInit {
 

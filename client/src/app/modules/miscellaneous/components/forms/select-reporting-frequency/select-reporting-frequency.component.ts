@@ -5,9 +5,10 @@ import { AppService } from 'src/app/services/app.service';
 import { GenericSelectComponent } from '../generic-select/generic-select.component';
 
 @Component({
-  selector: 'select-reporting-frequency',
-  templateUrl: './../generic-select/generic-select.component.html',
-  styleUrls: ['./../generic-select/generic-select.component.css']
+    selector: 'select-reporting-frequency',
+    templateUrl: './../generic-select/generic-select.component.html',
+    styleUrls: ['./../generic-select/generic-select.component.css'],
+    standalone: false
 })
 export class SelectReportingFrequencyComponent extends GenericSelectComponent<string> implements OnInit {
 

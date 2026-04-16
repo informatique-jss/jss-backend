@@ -3,9 +3,10 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
-  selector: 'amount-dialog',
-  templateUrl: './amount-dialog.component.html',
-  styleUrls: ['./amount-dialog.component.css']
+    selector: 'amount-dialog',
+    templateUrl: './amount-dialog.component.html',
+    styleUrls: ['./amount-dialog.component.css'],
+    standalone: false
 })
 export class AmountDialogComponent implements OnInit {
 

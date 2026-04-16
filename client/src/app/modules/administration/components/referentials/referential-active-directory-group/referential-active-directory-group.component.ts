@@ -7,9 +7,10 @@ import { AppService } from 'src/app/services/app.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({
-  selector: 'referential-active-directory-group',
-  templateUrl: './referential-active-directory-group.component.html',
-  styleUrls: ['./../generic-referential/generic-referential.component.css']
+    selector: 'referential-active-directory-group',
+    templateUrl: './referential-active-directory-group.component.html',
+    styleUrls: ['./../generic-referential/generic-referential.component.css'],
+    standalone: false
 })
 export class ReferentialActiveDirectoryGroupComponent extends GenericReferentialComponent<ActiveDirectoryGroup> implements OnInit {
   constructor(private activeDirectoryGroupService: ActiveDirectoryGroupService,

@@ -7,9 +7,10 @@ import { TypeDocumentService } from '../../../services/guichet-unique/type.docum
 import { GenericLocalAutocompleteComponent } from '../generic-local-autocomplete/generic-local-autocomplete.component';
 
 @Component({
-  selector: 'autocomplete-type-document',
-  templateUrl: '../generic-local-autocomplete/generic-local-autocomplete.component.html',
-  styleUrls: ['../generic-local-autocomplete/generic-local-autocomplete.component.css'],
+    selector: 'autocomplete-type-document',
+    templateUrl: '../generic-local-autocomplete/generic-local-autocomplete.component.html',
+    styleUrls: ['../generic-local-autocomplete/generic-local-autocomplete.component.css'],
+    standalone: false
 })
 export class AutocompleteTypeDocumentComponent extends GenericLocalAutocompleteComponent<TypeDocument> implements OnInit {
 

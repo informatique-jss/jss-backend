@@ -7,9 +7,10 @@ import { QuotationStatus } from 'src/app/modules/quotation/model/QuotationStatus
 import { QuotationStatusService } from '../../services/quotation-status.service';
 
 @Component({
-  selector: 'suggested-quotations-dialog',
-  templateUrl: './suggested-quotations-dialog.component.html',
-  styleUrls: ['./suggested-quotations-dialog.component.css']
+    selector: 'suggested-quotations-dialog',
+    templateUrl: './suggested-quotations-dialog.component.html',
+    styleUrls: ['./suggested-quotations-dialog.component.css'],
+    standalone: false
 })
 export class SuggestedQuotationsDialogComponent implements OnInit {
 

@@ -23,9 +23,10 @@ import { getAffaireListForProviderInvoice } from '../invoice-tools';
 import { ReceiptReconciliationEditDialogComponent } from '../receipt-reconciliation-edit-dialog/receipt-reconciliation-edit-dialog.component';
 
 @Component({
-  selector: 'receipt-reconciliation',
-  templateUrl: './receipt-reconciliation.component.html',
-  styleUrls: ['./receipt-reconciliation.component.css']
+    selector: 'receipt-reconciliation',
+    templateUrl: './receipt-reconciliation.component.html',
+    styleUrls: ['./receipt-reconciliation.component.css'],
+    standalone: false
 })
 export class ReceiptReconciliationComponent implements OnInit {
 

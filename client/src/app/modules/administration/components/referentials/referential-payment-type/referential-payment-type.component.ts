@@ -7,9 +7,10 @@ import { AppService } from 'src/app/services/app.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({
-  selector: 'referential-payment-type',
-  templateUrl: './referential-payment-type.component.html',
-  styleUrls: ['./../generic-referential/generic-referential.component.css']
+    selector: 'referential-payment-type',
+    templateUrl: './referential-payment-type.component.html',
+    styleUrls: ['./../generic-referential/generic-referential.component.css'],
+    standalone: false
 })
 export class ReferentialPaymentTypeComponent extends GenericReferentialComponent<PaymentType> implements OnInit {
   constructor(private paymentTypeService: PaymentTypeService,

@@ -7,9 +7,10 @@ import { GenericRadioGroupComponent } from '../generic-radio-group/generic-radio
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'radio-group-language',
-  templateUrl: '../generic-radio-group/generic-radio-group.component.html',
-  styleUrls: ['../generic-radio-group/generic-radio-group.component.css']
+    selector: 'radio-group-language',
+    templateUrl: '../generic-radio-group/generic-radio-group.component.html',
+    styleUrls: ['../generic-radio-group/generic-radio-group.component.css'],
+    standalone: false
 })
 export class RadioGroupLanguageComponent extends GenericRadioGroupComponent<Language> implements OnInit {
   types: Language[] = [] as Array<Language>;

@@ -7,9 +7,10 @@ import { AppService } from 'src/app/services/app.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({
-  selector: 'referential-service-family-group',
-  templateUrl: './referential-service-family-group.component.html',
-  styleUrls: ['./../generic-referential/generic-referential.component.css']
+    selector: 'referential-service-family-group',
+    templateUrl: './referential-service-family-group.component.html',
+    styleUrls: ['./../generic-referential/generic-referential.component.css'],
+    standalone: false
 })
 export class ReferentialServiceFamilyGroupComponent extends GenericReferentialComponent<ServiceFamilyGroup> implements OnInit {
   constructor(private serviceFamilyGroupService: ServiceFamilyGroupService,

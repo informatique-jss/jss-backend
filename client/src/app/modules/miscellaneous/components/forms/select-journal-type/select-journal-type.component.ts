@@ -6,9 +6,10 @@ import { GenericMultipleSelectComponent } from '../generic-select/generic-multip
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'select-journal-type',
-  templateUrl: './select-journal-type.component.html',
-  styleUrls: ['./select-journal-type.component.css']
+    selector: 'select-journal-type',
+    templateUrl: './select-journal-type.component.html',
+    styleUrls: ['./select-journal-type.component.css'],
+    standalone: false
 })
 export class SelectJournalTypeComponent extends GenericMultipleSelectComponent<JournalType> implements OnInit {
 

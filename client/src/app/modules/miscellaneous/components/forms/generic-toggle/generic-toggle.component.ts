@@ -4,9 +4,10 @@ import { AppService } from 'src/app/services/app.service';
 import { GenericFormComponent } from '../generic-form.components';
 
 @Component({
-  selector: 'generic-toggle',
-  templateUrl: './generic-toggle.component.html',
-  styleUrls: ['./generic-toggle.component.css']
+    selector: 'generic-toggle',
+    templateUrl: './generic-toggle.component.html',
+    styleUrls: ['./generic-toggle.component.css'],
+    standalone: false
 })
 export class GenericToggleComponent extends GenericFormComponent implements OnInit {
   /**

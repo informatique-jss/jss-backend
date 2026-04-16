@@ -6,9 +6,10 @@ import { GenericSelectComponent } from '../generic-select/generic-select.compone
 import { AppService } from 'src/app/services/app.service';
 
 @Component({
-  selector: 'select-provision-family',
-  templateUrl: './select-provision-family.component.html',
-  styleUrls: ['./select-provision-family.component.css']
+    selector: 'select-provision-family',
+    templateUrl: './select-provision-family.component.html',
+    styleUrls: ['./select-provision-family.component.css'],
+    standalone: false
 })
 export class SelectProvisionFamilyComponent extends GenericSelectComponent<ProvisionFamilyType> implements OnInit {
 

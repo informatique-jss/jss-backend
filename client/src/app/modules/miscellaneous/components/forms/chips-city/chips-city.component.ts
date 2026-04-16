@@ -9,10 +9,11 @@ import { CityService } from '../../../services/city.service';
 import { GenericChipsComponent } from '../generic-chips/generic-chips.component';
 
 @Component({
-  selector: 'chips-city',
-  templateUrl: './chips-city.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  styleUrls: ['./chips-city.component.css']
+    selector: 'chips-city',
+    templateUrl: './chips-city.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    styleUrls: ['./chips-city.component.css'],
+    standalone: false
 })
 export class ChipsCityComponent extends GenericChipsComponent<City> implements OnInit {
 

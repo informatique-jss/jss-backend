@@ -7,9 +7,10 @@ import { ConstantService } from 'src/app/modules/miscellaneous/services/constant
 import { Affaire } from 'src/app/modules/quotation/model/Affaire';
 
 @Component({
-  selector: 'add-affaire',
-  templateUrl: './add-affaire.component.html',
-  styleUrls: ['./add-affaire.component.css']
+    selector: 'add-affaire',
+    templateUrl: './add-affaire.component.html',
+    styleUrls: ['./add-affaire.component.css'],
+    standalone: false
 })
 export class AddAffaireComponent implements OnInit, AfterContentChecked {
 

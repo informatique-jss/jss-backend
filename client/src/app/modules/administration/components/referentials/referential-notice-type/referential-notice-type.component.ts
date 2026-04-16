@@ -7,9 +7,10 @@ import { AppService } from 'src/app/services/app.service';
 import { GenericReferentialComponent } from '../generic-referential/generic-referential-component';
 
 @Component({
-  selector: 'referential-notice-type',
-  templateUrl: 'referential-notice-type.component.html',
-  styleUrls: ['./../generic-referential/generic-referential.component.css']
+    selector: 'referential-notice-type',
+    templateUrl: 'referential-notice-type.component.html',
+    styleUrls: ['./../generic-referential/generic-referential.component.css'],
+    standalone: false
 })
 export class ReferentialNoticeTypeComponent extends GenericReferentialComponent<NoticeType> implements OnInit {
   constructor(private noticeTypeService: NoticeTypeService,
