@@ -1,270 +1,348 @@
 <fieldset [disabled]="editMode==false" class="fieldset-no-border">
-  <form [formGroup]="optionForm" *ngIf=" provision">
-    <div class="form-div">
-      <table class="full-width">
-        <tr *ngIf="displayOption(billingTypeLogo)">
-          <td>
-            <generic-toggle [(model)]="provision.isLogo" label="Logo ?" [form]="optionForm" propertyName="isLogo"
-              (onToggleChange)="provisionChangeFunction()"
-              [hint]="(provision.id)?undefined:'Veuiller enregistrer pour pouvoir ajouter le logo'">
-            </generic-toggle>
-          </td>
-          <td *ngIf="provision.isLogo && provision.id">
-            <single-attachment [entity]="provision!" [entityType]="PROVISION_ENTITY_TYPE.entityType"
-              [editMode]="editMode" [attachmentTypeToDisplay]="attachmentTypeLogo"
-              (onUploadedFile)="updateAttachments($event)">
-            </single-attachment>
-          </td>
-          <td *ngIf="provision.isLogo && provision.id && logoUrl "><img width="150px" [src]="logoUrl" />
-          </td>
-        </tr>
-        <tr
-          *ngIf="displayOption(billingTypeRedactedByJss) || displayOption(billingTypeRedactedByJssSimple) || displayOption(billingTypeRedactedByJssComplex) || displayOption(billingTypeRedactedByJssFree)">
-          <td>
-            <generic-toggle [(model)]="provision.isRedactedByJss" label="Rédigé par le JSS ?" [form]="optionForm"
-              (onToggleChange)="provisionChangeFunction()" propertyName="isRedactedByJss"></generic-toggle>
-          </td>
-        </tr>
-        <tr *ngIf="displayOption(billingTypeBaloPackage)">
-          <td>
-            <generic-toggle [(model)]="provision.isBaloPackage" label="Forfait Image BALO ?" [form]="optionForm"
-              (onToggleChange)="provisionChangeFunction()" propertyName="isBaloPackage"></generic-toggle>
-          </td>
-        </tr>
-        <tr *ngIf="displayOption(billingTypeBaloNormalization)">
-          <td>
-            <generic-toggle [(model)]="provision.isBaloNormalization" label="Frais de normalisation BALO ?"
-              [form]="optionForm" (onToggleChange)="provisionChangeFunction()"
-              propertyName="isBaloNormalization"></generic-toggle>
-          </td>
-        </tr>
-        <tr *ngIf="displayOption(billingTypeBaloPublicationFlag)">
-          <td>
-            <generic-toggle [(model)]="provision.isBaloPublicationFlag" label="Justificatif numérique BALO ?"
-              [form]="optionForm" (onToggleChange)="provisionChangeFunction()"
-              propertyName="isBaloPublicationFlag"></generic-toggle>
-          </td>
-        </tr>
-        <tr *ngIf="displayOption(billingTypePublicationReceipt) && provision.announcement && provision.announcement.confrere
-         && provision.announcement.confrere.journalType.id==journalTypePaper.id">
-          <td>
-            <generic-toggle [(model)]="provision.isPublicationReceipt" label="Justificatif de parution ?"
-              (onToggleChange)="provisionChangeFunction()" [form]="optionForm" propertyName="isPublicationReceipt">
-            </generic-toggle>
-          </td>
-        </tr>
-        <tr *ngIf="displayOption(billingTypePublicationPaper) && provision.announcement && provision.announcement.confrere
-         && provision.announcement.confrere.journalType.id==journalTypePaper.id">
-          <td>
-            <generic-toggle [(model)]="provision.isPublicationPaper" label="Envoi de journaux papier ?"
-              [form]="optionForm" (onToggleChange)="provisionChangeFunction()" propertyName="isPublicationPaper">
-            </generic-toggle>
-          </td>
-        </tr>
-        <tr *ngIf="displayOption(billingTypePublicationFlag)  && provision.announcement && provision.announcement.confrere
-      && provision.announcement.confrere.journalType.id==journalTypeSpel.id">
-          <td>
-            <generic-toggle [(model)]="provision.isPublicationFlag" label="Témoin de Parution ?" [form]="optionForm"
-              (onToggleChange)="provisionChangeFunction()" propertyName="isPublicationFlag"></generic-toggle>
-          </td>
-        </tr>
-        <tr *ngIf="displayOption(billingTypeNantissementDeposit) && canDisplayNantissementDeposit()">
-          <td>
-            <generic-toggle [(model)]="provision.isNantissementDeposit" label="Dépôt de Nantissement ?"
-              (onToggleChange)="provisionChangeFunction()" [form]="optionForm" propertyName="isNantissementDeposit">
-            </generic-toggle>
-          </td>
-        </tr>
-        <tr *ngIf="displayOption(billingTypeSocialShareNantissementRedaction)  && canDisplayNantissementSocialShare()">
-          <td>
-            <generic-toggle [(model)]="provision.isSocialShareNantissementRedaction"
-              (onToggleChange)="provisionChangeFunction()"
-              label="Rédaction de Bordereaux de nantissement de parts sociales ?" [form]="optionForm"
-              propertyName="isSocialShareNantissementRedaction"></generic-toggle>
-          </td>
-        </tr>
-        <tr *ngIf="displayOption(billingTypeBusinnessNantissementRedaction)  && canDisplayNantissementBusiness()">
-          <td>
-            <generic-toggle [(model)]="provision.isBusinnessNantissementRedaction"
-              label="Rédaction de Bordereaux de nantissement de fonds de commerce ?" [form]="optionForm"
-              (onToggleChange)="changeNantissementDeposit(provision.isSellerPrivilegeRedaction);provisionChangeFunction()"
-              propertyName="isBusinnessNantissementRedaction"></generic-toggle>
-          </td>
-        </tr>
-        <tr *ngIf="displayOption(billingTypeSellerPrivilegeRedaction)">
-          <td>
-            <generic-toggle [(model)]="provision.isSellerPrivilegeRedaction"
-              label="Rédaction de Bordereaux de privilège vendeur ?" [form]="optionForm"
-              (onToggleChange)="provisionChangeFunction()" propertyName="isSellerPrivilegeRedaction"></generic-toggle>
-          </td>
-        </tr>
-        <tr *ngIf="displayOption(billingTypeTreatmentMultipleModiciation)">
-          <td>
-            <generic-toggle [(model)]="provision.isTreatmentMultipleModiciation"
-              label="Traitement - Modification Multiple ?" [form]="optionForm"
-              (onToggleChange)="toggleIsMultipleTreatment();provisionChangeFunction()"
-              propertyName="isTreatmentMultipleModiciation">
-            </generic-toggle>
-          </td>
-        </tr>
-        <tr *ngIf="displayOption(billingTypeVacationMultipleModification)">
-          <td>
-            <generic-toggle [(model)]="provision.isVacationMultipleModification"
-              label="Vacation - Modification Multiple ?" [form]="optionForm"
-              (onToggleChange)="toggleIsMultipleVacation();provisionChangeFunction()"
-              propertyName="isVacationMultipleModification">
-            </generic-toggle>
-          </td>
-        </tr>
-        <tr *ngIf="displayOption(billingTypeRegisterPurchase)">
-          <td>
-            <generic-toggle [(model)]="provision.isRegisterPurchase" label="Achat de Registre ?" [form]="optionForm"
-              (onToggleChange)="provisionChangeFunction()" propertyName="isRegisterPurchase"></generic-toggle>
-          </td>
-        </tr>
-        <tr *ngIf="displayOption(billingTypeRegisterInitials)">
-          <td>
-            <generic-toggle [(model)]="provision.isRegisterInitials" label="Paraphe de Registre ?" [form]="optionForm"
-              (onToggleChange)="provisionChangeFunction()" propertyName="isRegisterInitials"></generic-toggle>
-          </td>
-        </tr>
-        <tr *ngIf="displayOption(billingTypeRegisterShippingCosts)">
-          <td>
-            <generic-toggle [(model)]="provision.isRegisterShippingCosts" label="Frais de Port de Registre ?"
-              (onToggleChange)="provisionChangeFunction()" [form]="optionForm" propertyName="isRegisterShippingCosts">
-            </generic-toggle>
-          </td>
-        </tr>
-        <tr *ngIf="displayOption(billingTypeFeasibilityStudy)">
-          <td>
-            <generic-toggle [(model)]="provision.isFeasibilityStudy" label="Etude de faisabilité ?" [form]="optionForm"
-              (onToggleChange)="provisionChangeFunction()" propertyName="isFeasibilityStudy"></generic-toggle>
-          </td>
-        </tr>
-        <tr *ngIf="displayOption(billingTypeChronopostFees)">
-          <td>
-            <generic-toggle [(model)]="provision.isChronopostFees" label="Frais de ports ?" [form]="optionForm"
-              (onToggleChange)="provisionChangeFunction()" propertyName="isChronopostFees"></generic-toggle>
-          </td>
-        </tr>
-        <tr *ngIf="displayOption(billingTypeApplicationFees)">
-          <td>
-            <generic-toggle [(model)]="provision.isApplicationFees" label="Frais de dossier ?" [form]="optionForm"
-              (onToggleChange)="provisionChangeFunction()" propertyName="isApplicationFees"></generic-toggle>
-          </td>
-        </tr>
-        <tr *ngIf="displayOption(billingTypeBankCheque)">
-          <td>
-            <generic-toggle [(model)]="provision.isBankCheque" label="Chèque de Banque / Virement ?" [form]="optionForm"
-              (onToggleChange)="provisionChangeFunction()" propertyName="isBankCheque">
-            </generic-toggle>
-          </td>
-        </tr>
-        <tr *ngIf="displayOption(billingTypeComplexeFile)">
-          <td>
-            <generic-toggle [(model)]="provision.isComplexeFile" label="Analyse Dossier Complexe ?" [form]="optionForm"
-              (onToggleChange)="provisionChangeFunction()" propertyName="isComplexeFile"></generic-toggle>
-          </td>
-        </tr>
-        <tr *ngIf="displayOption(billingTypeBilan)">
-          <td>
-            <generic-toggle [(model)]="provision.isBilan" label="Relecture de bilan ?" [form]="optionForm"
-              (onToggleChange)="provisionChangeFunction()" propertyName="isBilan"></generic-toggle>
-          </td>
-        </tr>
-        <tr *ngIf="displayOption(billingTypeDocumentScanning)">
-          <td>
-            <generic-toggle [(model)]="provision.isDocumentScanning" label="Numérisation de Document ?"
-              (onToggleChange)="provisionChangeFunction()" [form]="optionForm" propertyName="isDocumentScanning">
-            </generic-toggle>
-          </td>
-        </tr>
-        <tr *ngIf="displayOption(billingTypeEmergency)">
-          <td>
-            <generic-toggle [(model)]="provision.isEmergency" label="Urgence ?" [form]="optionForm"
-              (onToggleChange)="provisionChangeFunction()" propertyName="isEmergency">
-            </generic-toggle>
-          </td>
-        </tr>
-        <tr *ngIf="displayOption(billingTypeRneUpdate)">
-          <td>
-            <generic-toggle [(model)]="provision.isRneUpdate" label="Mise à jour de la fiche RNE ?" [form]="optionForm"
-              (onToggleChange)="provisionChangeFunction()" propertyName="isRneUpdate">
-            </generic-toggle>
-          </td>
-        </tr>
-        <tr *ngIf="displayOption(billingTypeVacationUpdateBeneficialOwners)">
-          <td>
-            <generic-toggle [(model)]="provision.isVacationUpdateBeneficialOwners"
-              label="Vacation - Mise à jour - Bénéficiaires Effectifs ?" (onToggleChange)="provisionChangeFunction()"
-              [form]="optionForm" propertyName="isVacationUpdateBeneficialOwners">
-            </generic-toggle>
-          </td>
-        </tr>
-        <tr *ngIf="displayOption(billingTypeFormalityAdditionalDeclaration)">
-          <td>
-            <generic-toggle [(model)]="provision.isFormalityAdditionalDeclaration"
-              label="Formalité - Déclaration Supplémentaire ?" (onToggleChange)="provisionChangeFunction()"
-              [form]="optionForm" propertyName="isFormalityAdditionalDeclaration">
-            </generic-toggle>
-          </td>
-        </tr>
-        <tr *ngIf="displayOption(billingTypeCorrespondenceFees)">
-          <td>
-            <generic-toggle [(model)]="provision.isCorrespondenceFees" label="Frais de Correspondance ?"
-              (onToggleChange)="provisionChangeFunction()" [form]="optionForm" propertyName="isCorrespondenceFees">
-            </generic-toggle>
-          </td>
-        </tr>
-        <tr *ngIf="displayOption(billingTypeSupplyFullBeCopy)">
-          <td>
-            <generic-toggle [(model)]="provision.isSupplyFullBeCopy" label="Fourniture de copie intégrale des BE ?"
-              (onToggleChange)="provisionChangeFunction()" [form]="optionForm" propertyName="isSupplyFullBeCopy">
-            </generic-toggle>
-          </td>
-        </tr>
-        <tr *ngIf="displayOption(billingTypeKbis)">
-          <td>
-            <generic-input [(model)]="provision.kbisOrderedNumber" label="Commande de KBis" [form]="optionForm"
-              propertyName="kbisOrderedNumber" [isMandatory]="false" [isDisabled]="!editMode"
-              type="number"></generic-input>
-          </td>
-        </tr>
-        <tr *ngIf="provision.announcement && provision.announcement.id">
-          <td>
-            <generic-toggle [(model)]="provision.isOverrideCharacterNumber" label="Modifier le nombre de caractères ?"
-              (onToggleChange)="provisionChangeFunction()" [form]="optionForm" propertyName="isOverrideCharacterNumber">
-            </generic-toggle>
-          </td>
-        </tr>
-        <tr *ngIf="provision.announcement && provision.announcement.id && provision.isOverrideCharacterNumber">
-          <td>
-            <generic-input [(model)]="provision.overridedCharacterNumber" label="Nombre de caractères forcé"
-              [form]="optionForm" propertyName="overridedCharacterNumber" [isMandatory]="false" [isDisabled]="!editMode"
-              type="number"></generic-input>
-          </td>
-        </tr>
-      </table>
-      <table class="full-width">
-        <tr *ngIf="provision.provisionType.isCouldNotifyBodacc">
-          <td>
-            <generic-toggle [(model)]="provision.isNotifyBodacc" label="Me notifier des modifications au BODACC ?"
-              [form]="optionForm" propertyName="isNotifyBodacc"></generic-toggle>
-          </td>
-        </tr>
-        <tr *ngIf="provision.provisionType.isCouldNotifyBalo">
-          <td>
-            <generic-toggle [(model)]="provision.isNotifyBalo" label="Me notifier des modifications au BALO ?"
-              [form]="optionForm" propertyName="isNotifyBalo"></generic-toggle>
-          </td>
-        </tr>
-        <tr *ngIf="provision.provisionType.isCouldNotifyJo">
-          <td>
-            <generic-toggle [(model)]="provision.isNotifyJo" label="Me notifier des modifications au JO ?"
-              [form]="optionForm" propertyName="isNotifyJo"></generic-toggle>
-          </td>
-        </tr>
-      </table>
-    </div>
-  </form>
+  @if ( provision) {
+    <form [formGroup]="optionForm">
+      <div class="form-div">
+        <table class="full-width">
+          @if (displayOption(billingTypeLogo)) {
+            <tr>
+              <td>
+                <generic-toggle [(model)]="provision.isLogo" label="Logo ?" [form]="optionForm" propertyName="isLogo"
+                  (onToggleChange)="provisionChangeFunction()"
+                  [hint]="(provision.id)?undefined:'Veuiller enregistrer pour pouvoir ajouter le logo'">
+                </generic-toggle>
+              </td>
+              @if (provision.isLogo && provision.id) {
+                <td>
+                  <single-attachment [entity]="provision!" [entityType]="PROVISION_ENTITY_TYPE.entityType"
+                    [editMode]="editMode" [attachmentTypeToDisplay]="attachmentTypeLogo"
+                    (onUploadedFile)="updateAttachments($event)">
+                  </single-attachment>
+                </td>
+              }
+              @if (provision.isLogo && provision.id && logoUrl ) {
+                <td><img width="150px" [src]="logoUrl" />
+                </td>
+              }
+            </tr>
+          }
+          @if (displayOption(billingTypeRedactedByJss) || displayOption(billingTypeRedactedByJssSimple) || displayOption(billingTypeRedactedByJssComplex) || displayOption(billingTypeRedactedByJssFree)) {
+            <tr
+              >
+              <td>
+                <generic-toggle [(model)]="provision.isRedactedByJss" label="Rédigé par le JSS ?" [form]="optionForm"
+                (onToggleChange)="provisionChangeFunction()" propertyName="isRedactedByJss"></generic-toggle>
+              </td>
+            </tr>
+          }
+          @if (displayOption(billingTypeBaloPackage)) {
+            <tr>
+              <td>
+                <generic-toggle [(model)]="provision.isBaloPackage" label="Forfait Image BALO ?" [form]="optionForm"
+                (onToggleChange)="provisionChangeFunction()" propertyName="isBaloPackage"></generic-toggle>
+              </td>
+            </tr>
+          }
+          @if (displayOption(billingTypeBaloNormalization)) {
+            <tr>
+              <td>
+                <generic-toggle [(model)]="provision.isBaloNormalization" label="Frais de normalisation BALO ?"
+                  [form]="optionForm" (onToggleChange)="provisionChangeFunction()"
+                propertyName="isBaloNormalization"></generic-toggle>
+              </td>
+            </tr>
+          }
+          @if (displayOption(billingTypeBaloPublicationFlag)) {
+            <tr>
+              <td>
+                <generic-toggle [(model)]="provision.isBaloPublicationFlag" label="Justificatif numérique BALO ?"
+                  [form]="optionForm" (onToggleChange)="provisionChangeFunction()"
+                propertyName="isBaloPublicationFlag"></generic-toggle>
+              </td>
+            </tr>
+          }
+          @if (displayOption(billingTypePublicationReceipt) && provision.announcement && provision.announcement.confrere
+            && provision.announcement.confrere.journalType.id==journalTypePaper.id) {
+            <tr>
+              <td>
+                <generic-toggle [(model)]="provision.isPublicationReceipt" label="Justificatif de parution ?"
+                  (onToggleChange)="provisionChangeFunction()" [form]="optionForm" propertyName="isPublicationReceipt">
+                </generic-toggle>
+              </td>
+            </tr>
+          }
+          @if (displayOption(billingTypePublicationPaper) && provision.announcement && provision.announcement.confrere
+            && provision.announcement.confrere.journalType.id==journalTypePaper.id) {
+            <tr>
+              <td>
+                <generic-toggle [(model)]="provision.isPublicationPaper" label="Envoi de journaux papier ?"
+                  [form]="optionForm" (onToggleChange)="provisionChangeFunction()" propertyName="isPublicationPaper">
+                </generic-toggle>
+              </td>
+            </tr>
+          }
+          @if (displayOption(billingTypePublicationFlag)  && provision.announcement && provision.announcement.confrere
+            && provision.announcement.confrere.journalType.id==journalTypeSpel.id) {
+            <tr>
+              <td>
+                <generic-toggle [(model)]="provision.isPublicationFlag" label="Témoin de Parution ?" [form]="optionForm"
+                (onToggleChange)="provisionChangeFunction()" propertyName="isPublicationFlag"></generic-toggle>
+              </td>
+            </tr>
+          }
+          @if (displayOption(billingTypeNantissementDeposit) && canDisplayNantissementDeposit()) {
+            <tr>
+              <td>
+                <generic-toggle [(model)]="provision.isNantissementDeposit" label="Dépôt de Nantissement ?"
+                  (onToggleChange)="provisionChangeFunction()" [form]="optionForm" propertyName="isNantissementDeposit">
+                </generic-toggle>
+              </td>
+            </tr>
+          }
+          @if (displayOption(billingTypeSocialShareNantissementRedaction)  && canDisplayNantissementSocialShare()) {
+            <tr>
+              <td>
+                <generic-toggle [(model)]="provision.isSocialShareNantissementRedaction"
+                  (onToggleChange)="provisionChangeFunction()"
+                  label="Rédaction de Bordereaux de nantissement de parts sociales ?" [form]="optionForm"
+                propertyName="isSocialShareNantissementRedaction"></generic-toggle>
+              </td>
+            </tr>
+          }
+          @if (displayOption(billingTypeBusinnessNantissementRedaction)  && canDisplayNantissementBusiness()) {
+            <tr>
+              <td>
+                <generic-toggle [(model)]="provision.isBusinnessNantissementRedaction"
+                  label="Rédaction de Bordereaux de nantissement de fonds de commerce ?" [form]="optionForm"
+                  (onToggleChange)="changeNantissementDeposit(provision.isSellerPrivilegeRedaction);provisionChangeFunction()"
+                propertyName="isBusinnessNantissementRedaction"></generic-toggle>
+              </td>
+            </tr>
+          }
+          @if (displayOption(billingTypeSellerPrivilegeRedaction)) {
+            <tr>
+              <td>
+                <generic-toggle [(model)]="provision.isSellerPrivilegeRedaction"
+                  label="Rédaction de Bordereaux de privilège vendeur ?" [form]="optionForm"
+                (onToggleChange)="provisionChangeFunction()" propertyName="isSellerPrivilegeRedaction"></generic-toggle>
+              </td>
+            </tr>
+          }
+          @if (displayOption(billingTypeTreatmentMultipleModiciation)) {
+            <tr>
+              <td>
+                <generic-toggle [(model)]="provision.isTreatmentMultipleModiciation"
+                  label="Traitement - Modification Multiple ?" [form]="optionForm"
+                  (onToggleChange)="toggleIsMultipleTreatment();provisionChangeFunction()"
+                  propertyName="isTreatmentMultipleModiciation">
+                </generic-toggle>
+              </td>
+            </tr>
+          }
+          @if (displayOption(billingTypeVacationMultipleModification)) {
+            <tr>
+              <td>
+                <generic-toggle [(model)]="provision.isVacationMultipleModification"
+                  label="Vacation - Modification Multiple ?" [form]="optionForm"
+                  (onToggleChange)="toggleIsMultipleVacation();provisionChangeFunction()"
+                  propertyName="isVacationMultipleModification">
+                </generic-toggle>
+              </td>
+            </tr>
+          }
+          @if (displayOption(billingTypeRegisterPurchase)) {
+            <tr>
+              <td>
+                <generic-toggle [(model)]="provision.isRegisterPurchase" label="Achat de Registre ?" [form]="optionForm"
+                (onToggleChange)="provisionChangeFunction()" propertyName="isRegisterPurchase"></generic-toggle>
+              </td>
+            </tr>
+          }
+          @if (displayOption(billingTypeRegisterInitials)) {
+            <tr>
+              <td>
+                <generic-toggle [(model)]="provision.isRegisterInitials" label="Paraphe de Registre ?" [form]="optionForm"
+                (onToggleChange)="provisionChangeFunction()" propertyName="isRegisterInitials"></generic-toggle>
+              </td>
+            </tr>
+          }
+          @if (displayOption(billingTypeRegisterShippingCosts)) {
+            <tr>
+              <td>
+                <generic-toggle [(model)]="provision.isRegisterShippingCosts" label="Frais de Port de Registre ?"
+                  (onToggleChange)="provisionChangeFunction()" [form]="optionForm" propertyName="isRegisterShippingCosts">
+                </generic-toggle>
+              </td>
+            </tr>
+          }
+          @if (displayOption(billingTypeFeasibilityStudy)) {
+            <tr>
+              <td>
+                <generic-toggle [(model)]="provision.isFeasibilityStudy" label="Etude de faisabilité ?" [form]="optionForm"
+                (onToggleChange)="provisionChangeFunction()" propertyName="isFeasibilityStudy"></generic-toggle>
+              </td>
+            </tr>
+          }
+          @if (displayOption(billingTypeChronopostFees)) {
+            <tr>
+              <td>
+                <generic-toggle [(model)]="provision.isChronopostFees" label="Frais de ports ?" [form]="optionForm"
+                (onToggleChange)="provisionChangeFunction()" propertyName="isChronopostFees"></generic-toggle>
+              </td>
+            </tr>
+          }
+          @if (displayOption(billingTypeApplicationFees)) {
+            <tr>
+              <td>
+                <generic-toggle [(model)]="provision.isApplicationFees" label="Frais de dossier ?" [form]="optionForm"
+                (onToggleChange)="provisionChangeFunction()" propertyName="isApplicationFees"></generic-toggle>
+              </td>
+            </tr>
+          }
+          @if (displayOption(billingTypeBankCheque)) {
+            <tr>
+              <td>
+                <generic-toggle [(model)]="provision.isBankCheque" label="Chèque de Banque / Virement ?" [form]="optionForm"
+                  (onToggleChange)="provisionChangeFunction()" propertyName="isBankCheque">
+                </generic-toggle>
+              </td>
+            </tr>
+          }
+          @if (displayOption(billingTypeComplexeFile)) {
+            <tr>
+              <td>
+                <generic-toggle [(model)]="provision.isComplexeFile" label="Analyse Dossier Complexe ?" [form]="optionForm"
+                (onToggleChange)="provisionChangeFunction()" propertyName="isComplexeFile"></generic-toggle>
+              </td>
+            </tr>
+          }
+          @if (displayOption(billingTypeBilan)) {
+            <tr>
+              <td>
+                <generic-toggle [(model)]="provision.isBilan" label="Relecture de bilan ?" [form]="optionForm"
+                (onToggleChange)="provisionChangeFunction()" propertyName="isBilan"></generic-toggle>
+              </td>
+            </tr>
+          }
+          @if (displayOption(billingTypeDocumentScanning)) {
+            <tr>
+              <td>
+                <generic-toggle [(model)]="provision.isDocumentScanning" label="Numérisation de Document ?"
+                  (onToggleChange)="provisionChangeFunction()" [form]="optionForm" propertyName="isDocumentScanning">
+                </generic-toggle>
+              </td>
+            </tr>
+          }
+          @if (displayOption(billingTypeEmergency)) {
+            <tr>
+              <td>
+                <generic-toggle [(model)]="provision.isEmergency" label="Urgence ?" [form]="optionForm"
+                  (onToggleChange)="provisionChangeFunction()" propertyName="isEmergency">
+                </generic-toggle>
+              </td>
+            </tr>
+          }
+          @if (displayOption(billingTypeRneUpdate)) {
+            <tr>
+              <td>
+                <generic-toggle [(model)]="provision.isRneUpdate" label="Mise à jour de la fiche RNE ?" [form]="optionForm"
+                  (onToggleChange)="provisionChangeFunction()" propertyName="isRneUpdate">
+                </generic-toggle>
+              </td>
+            </tr>
+          }
+          @if (displayOption(billingTypeVacationUpdateBeneficialOwners)) {
+            <tr>
+              <td>
+                <generic-toggle [(model)]="provision.isVacationUpdateBeneficialOwners"
+                  label="Vacation - Mise à jour - Bénéficiaires Effectifs ?" (onToggleChange)="provisionChangeFunction()"
+                  [form]="optionForm" propertyName="isVacationUpdateBeneficialOwners">
+                </generic-toggle>
+              </td>
+            </tr>
+          }
+          @if (displayOption(billingTypeFormalityAdditionalDeclaration)) {
+            <tr>
+              <td>
+                <generic-toggle [(model)]="provision.isFormalityAdditionalDeclaration"
+                  label="Formalité - Déclaration Supplémentaire ?" (onToggleChange)="provisionChangeFunction()"
+                  [form]="optionForm" propertyName="isFormalityAdditionalDeclaration">
+                </generic-toggle>
+              </td>
+            </tr>
+          }
+          @if (displayOption(billingTypeCorrespondenceFees)) {
+            <tr>
+              <td>
+                <generic-toggle [(model)]="provision.isCorrespondenceFees" label="Frais de Correspondance ?"
+                  (onToggleChange)="provisionChangeFunction()" [form]="optionForm" propertyName="isCorrespondenceFees">
+                </generic-toggle>
+              </td>
+            </tr>
+          }
+          @if (displayOption(billingTypeSupplyFullBeCopy)) {
+            <tr>
+              <td>
+                <generic-toggle [(model)]="provision.isSupplyFullBeCopy" label="Fourniture de copie intégrale des BE ?"
+                  (onToggleChange)="provisionChangeFunction()" [form]="optionForm" propertyName="isSupplyFullBeCopy">
+                </generic-toggle>
+              </td>
+            </tr>
+          }
+          @if (displayOption(billingTypeKbis)) {
+            <tr>
+              <td>
+                <generic-input [(model)]="provision.kbisOrderedNumber" label="Commande de KBis" [form]="optionForm"
+                  propertyName="kbisOrderedNumber" [isMandatory]="false" [isDisabled]="!editMode"
+                type="number"></generic-input>
+              </td>
+            </tr>
+          }
+          @if (provision.announcement && provision.announcement.id) {
+            <tr>
+              <td>
+                <generic-toggle [(model)]="provision.isOverrideCharacterNumber" label="Modifier le nombre de caractères ?"
+                  (onToggleChange)="provisionChangeFunction()" [form]="optionForm" propertyName="isOverrideCharacterNumber">
+                </generic-toggle>
+              </td>
+            </tr>
+          }
+          @if (provision.announcement && provision.announcement.id && provision.isOverrideCharacterNumber) {
+            <tr>
+              <td>
+                <generic-input [(model)]="provision.overridedCharacterNumber" label="Nombre de caractères forcé"
+                  [form]="optionForm" propertyName="overridedCharacterNumber" [isMandatory]="false" [isDisabled]="!editMode"
+                type="number"></generic-input>
+              </td>
+            </tr>
+          }
+        </table>
+        <table class="full-width">
+          @if (provision.provisionType.isCouldNotifyBodacc) {
+            <tr>
+              <td>
+                <generic-toggle [(model)]="provision.isNotifyBodacc" label="Me notifier des modifications au BODACC ?"
+                [form]="optionForm" propertyName="isNotifyBodacc"></generic-toggle>
+              </td>
+            </tr>
+          }
+          @if (provision.provisionType.isCouldNotifyBalo) {
+            <tr>
+              <td>
+                <generic-toggle [(model)]="provision.isNotifyBalo" label="Me notifier des modifications au BALO ?"
+                [form]="optionForm" propertyName="isNotifyBalo"></generic-toggle>
+              </td>
+            </tr>
+          }
+          @if (provision.provisionType.isCouldNotifyJo) {
+            <tr>
+              <td>
+                <generic-toggle [(model)]="provision.isNotifyJo" label="Me notifier des modifications au JO ?"
+                [form]="optionForm" propertyName="isNotifyJo"></generic-toggle>
+              </td>
+            </tr>
+          }
+        </table>
+      </div>
+    </form>
+  }
 </fieldset>

@@ -5,15 +5,17 @@
         <td>
           <generic-datepicker [(model)]="accountingDate" label="Date de rapprochement" [form]="bankBalanceForm"
             (onDateChange)="refresh()" propertyName="accountingDate" [isMandatory]="false"
-            [isDisabled]="false"></generic-datepicker>
+          [isDisabled]="false"></generic-datepicker>
         </td>
       </tr>
     </table>
     <sort-table [columns]="displayedColumns" (onRowClick)="selectPayments($event)" [values]="totalJssBankBalance"
       tableName="Solde bancaire">
     </sort-table>
-    <sort-table [columns]="displayedColumnsPayment" [values]="paymentList" *ngIf="paymentList && paymentList.length>0"
-      [actions]="tableActionPayment" tableName="Solde bancaire détail">
-    </sort-table>
+    @if (paymentList && paymentList.length>0) {
+      <sort-table [columns]="displayedColumnsPayment" [values]="paymentList"
+        [actions]="tableActionPayment" tableName="Solde bancaire détail">
+      </sort-table>
+    }
   </div>
 </div>

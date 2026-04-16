@@ -1,13 +1,17 @@
-<div class="mat-elevation-z2 form-div" *ngIf="customerMails ">
-  <div class="full-width">
-    <div class="row-field-container" *ngIf="!isHideSearchField">
-      <mat-form-field class="full-width">
-        <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
-      </mat-form-field>
+@if (customerMails ) {
+  <div class="mat-elevation-z2 form-div">
+    <div class="full-width">
+      @if (!isHideSearchField) {
+        <div class="row-field-container">
+          <mat-form-field class="full-width">
+            <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
+          </mat-form-field>
+        </div>
+      }
+      <sort-table [columns]="displayedColumns" [actions]="tableActions" [values]="customerMails"
+        tableName="Mails automatiques" [filterText]="searchText" [isSmallerHeight]="true"
+        [refreshTable]="refreshTable.asObservable()">
+      </sort-table>
     </div>
-    <sort-table [columns]="displayedColumns" [actions]="tableActions" [values]="customerMails"
-      tableName="Mails automatiques" [filterText]="searchText" [isSmallerHeight]="true"
-      [refreshTable]="refreshTable.asObservable()">
-    </sort-table>
   </div>
-</div>
+}

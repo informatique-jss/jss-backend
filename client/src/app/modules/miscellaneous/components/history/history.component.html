@@ -1,12 +1,14 @@
-<div class="mat-elevation-z2 form-div" *ngIf="entity && entity.id!=undefined && entity.id!=null">
-  <div class="full-width">
-    <div class="row-field-container">
-      <mat-form-field class="full-width">
-        <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
-      </mat-form-field>
+@if (entity && entity.id!=undefined && entity.id!=null) {
+  <div class="mat-elevation-z2 form-div">
+    <div class="full-width">
+      <div class="row-field-container">
+        <mat-form-field class="full-width">
+          <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
+        </mat-form-field>
+      </div>
+      <sort-table [columns]="displayedColumns" [values]="finalAudits" tableName="Historique" [filterText]="searchText"
+        [noPaddingBottom]="true" [noMaxHeight]="true">
+      </sort-table>
     </div>
-    <sort-table [columns]="displayedColumns" [values]="finalAudits" tableName="Historique" [filterText]="searchText"
-      [noPaddingBottom]="true" [noMaxHeight]="true">
-    </sort-table>
   </div>
-</div>
+}

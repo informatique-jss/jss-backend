@@ -1,143 +1,175 @@
 <div class="mat-elevation-z2 form-div  ">
   <div class=" full-width">
-    <table class="full-width table-fixed-layout" *ngIf="!accountingRecordSearch.idPayment">
-      <tr>
-        <td>
-          <autocomplete-accounting-account [(model)]="accountingRecordSearch.accountingAccount"
-            [filteredAccountSubNumber]="tiersToDisplay && tiersToDisplay.accountingAccountCustomer?tiersToDisplay.accountingAccountCustomer.accountingAccountSubNumber:undefined"
-            [form]="accountingRecordForm" propertyName="accountingAccounts" label="Compte comptable">
-          </autocomplete-accounting-account>
-        </td>
-        <td *ngIf="tiersToDisplay==undefined">
-          <select-accounting-account-class [(model)]="accountingRecordSearch.accountingClass" label="Classe comptable"
-            [form]="accountingRecordForm" propertyName="accountingClass"></select-accounting-account-class>
-        </td>
-        <td *ngIf="tiersToDisplay==undefined">
-          <select-accounting-journal [(model)]="accountingRecordSearch.accountingJournal" label="Journal"
-            [form]="accountingRecordForm" propertyName="accountingJournal">
-          </select-accounting-journal>
-        </td>
-        <td>
-          <generic-datepicker [(model)]="accountingRecordSearch.startDate" label="Date de début"
-            [form]="accountingRecordForm" propertyName="startDate" [isMandatory]="false"
+    @if (!accountingRecordSearch.idPayment) {
+      <table class="full-width table-fixed-layout">
+        <tr>
+          <td>
+            <autocomplete-accounting-account [(model)]="accountingRecordSearch.accountingAccount"
+              [filteredAccountSubNumber]="tiersToDisplay && tiersToDisplay.accountingAccountCustomer?tiersToDisplay.accountingAccountCustomer.accountingAccountSubNumber:undefined"
+              [form]="accountingRecordForm" propertyName="accountingAccounts" label="Compte comptable">
+            </autocomplete-accounting-account>
+          </td>
+          @if (tiersToDisplay==undefined) {
+            <td>
+              <select-accounting-account-class [(model)]="accountingRecordSearch.accountingClass" label="Classe comptable"
+              [form]="accountingRecordForm" propertyName="accountingClass"></select-accounting-account-class>
+            </td>
+          }
+          @if (tiersToDisplay==undefined) {
+            <td>
+              <select-accounting-journal [(model)]="accountingRecordSearch.accountingJournal" label="Journal"
+                [form]="accountingRecordForm" propertyName="accountingJournal">
+              </select-accounting-journal>
+            </td>
+          }
+          <td>
+            <generic-datepicker [(model)]="accountingRecordSearch.startDate" label="Date de début"
+              [form]="accountingRecordForm" propertyName="startDate" [isMandatory]="false"
             [isDisabled]="false"></generic-datepicker>
-        </td>
-        <td>
-          <generic-datepicker [(model)]="accountingRecordSearch.endDate" label="Date de fin"
-            [form]="accountingRecordForm" propertyName="endDate" [isMandatory]="false"
+          </td>
+          <td>
+            <generic-datepicker [(model)]="accountingRecordSearch.endDate" label="Date de fin"
+              [form]="accountingRecordForm" propertyName="endDate" [isMandatory]="false"
             [isDisabled]="false"></generic-datepicker>
-        </td>
-        <td class="fab-td-button padding-fab">
-          <button mat-mini-fab matTooltip="Mois en cours" (click)="setCurentMonth()" class="add-button">
-            <mat-icon>calendar_view_month</mat-icon>
-          </button>
-        </td>
-        <td class="fab-td-button padding-fab">
-          <button mat-mini-fab matTooltip="Exercice en cours" (click)="setCurentFiscalYear()" class="add-button">
-            <mat-icon>date_range</mat-icon>
-          </button>
-        </td>
-        <td class="fab-td-button">
-          <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchRecords()" class="add-button">
-            <mat-icon>search</mat-icon>
-          </button>
-        </td>
-      </tr>
-    </table>
-    <table class="full-width table-fixed-layout" *ngIf="!accountingRecordSearch.idPayment">
-      <tr>
-        <td class="toggle-td">
-          <generic-toggle [(model)]="accountingRecordSearch.hideLettered" label="Cacher lettrées ?"
+          </td>
+          <td class="fab-td-button padding-fab">
+            <button mat-mini-fab matTooltip="Mois en cours" (click)="setCurentMonth()" class="add-button">
+              <mat-icon>calendar_view_month</mat-icon>
+            </button>
+          </td>
+          <td class="fab-td-button padding-fab">
+            <button mat-mini-fab matTooltip="Exercice en cours" (click)="setCurentFiscalYear()" class="add-button">
+              <mat-icon>date_range</mat-icon>
+            </button>
+          </td>
+          <td class="fab-td-button">
+            <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchRecords()" class="add-button">
+              <mat-icon>search</mat-icon>
+            </button>
+          </td>
+        </tr>
+      </table>
+    }
+    @if (!accountingRecordSearch.idPayment) {
+      <table class="full-width table-fixed-layout">
+        <tr>
+          <td class="toggle-td">
+            <generic-toggle [(model)]="accountingRecordSearch.hideLettered" label="Cacher lettrées ?"
             [form]="accountingRecordForm" propertyName="hideLettered"></generic-toggle>
-        </td>
-        <td class="toggle-td">
-          <generic-toggle [(model)]="accountingRecordSearch.hideCancelled" label="Cacher paiements annulés ?"
+          </td>
+          <td class="toggle-td">
+            <generic-toggle [(model)]="accountingRecordSearch.hideCancelled" label="Cacher paiements annulés ?"
             [form]="accountingRecordForm" propertyName="hideCancelled"></generic-toggle>
-        </td>
-        <td class="toggle-td">
-          <generic-toggle [(model)]="accountingRecordSearch.isFromAs400" label="Depuis l'AS400 ?"
+          </td>
+          <td class="toggle-td">
+            <generic-toggle [(model)]="accountingRecordSearch.isFromAs400" label="Depuis l'AS400 ?"
             [form]="accountingRecordForm" propertyName="isFromAs400"></generic-toggle>
-        </td>
-      </tr>
-    </table>
+          </td>
+        </tr>
+      </table>
+    }
     <sort-table [columns]="displayedColumns" [values]="accountingRecords" tableName="Ecritures" [isSmallerHeight]="true"
       [actions]="tableAction">
     </sort-table>
-    <table mat-table [dataSource]="accumulatedDataSource" class="mat-elevation-z8 table total-table min-widht-table"
-      cdkDrag [cdkDragFreeDragPosition]="currentUserPosition" (cdkDragEnded)="dropTotalDiv($event)"
-      *ngIf="accountingRecords && !accountingRecordSearch.idPayment">
-      <ng-container matColumnDef="label">
-        <th mat-header-cell *matHeaderCellDef class="without-padding-left">
-          <mat-icon color="accent" (click)="restoreDefaultTotalDivPosition()" class="pointer"
+    @if (accountingRecords && !accountingRecordSearch.idPayment) {
+      <table mat-table [dataSource]="accumulatedDataSource" class="mat-elevation-z8 table total-table min-widht-table"
+        cdkDrag [cdkDragFreeDragPosition]="currentUserPosition" (cdkDragEnded)="dropTotalDiv($event)"
+        >
+        <ng-container matColumnDef="label">
+          <th mat-header-cell *matHeaderCellDef class="without-padding-left">
+            <mat-icon color="accent" (click)="restoreDefaultTotalDivPosition()" class="pointer"
             matTooltip="Restaurer la position initiale">location_on</mat-icon>
-        </th>
-        <td mat-cell *matCellDef="let element">{{element.label}}</td>
-      </ng-container>
-      <ng-container matColumnDef="debit">
-        <th mat-header-cell *matHeaderCellDef>Débit</th>
-        <td mat-cell *matCellDef="let element">{{element.debit}} {{(element.debit?" €":"")}}</td>
-      </ng-container>
-      <ng-container matColumnDef="credit">
-        <th mat-header-cell *matHeaderCellDef>Crédit</th>
-        <td mat-cell *matCellDef="let element">{{element.credit}} €</td>
-      </ng-container>
-      <tr mat-header-row *matHeaderRowDef="displayedColumnsTotal"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumnsTotal;"></tr>
-    </table>
+          </th>
+          <td mat-cell *matCellDef="let element">{{element.label}}</td>
+        </ng-container>
+        <ng-container matColumnDef="debit">
+          <th mat-header-cell *matHeaderCellDef>Débit</th>
+          <td mat-cell *matCellDef="let element">{{element.debit}} {{(element.debit?" €":"")}}</td>
+        </ng-container>
+        <ng-container matColumnDef="credit">
+          <th mat-header-cell *matHeaderCellDef>Crédit</th>
+          <td mat-cell *matCellDef="let element">{{element.credit}} €</td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumnsTotal"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumnsTotal;"></tr>
+      </table>
+    }
   </div>
 </div>
-<div *ngIf="toLetteredValues && toLetteredValues.length>0">
-  <p>Ecritures à lettrer</p>
-  <sort-table [columns]="displayedColumns" [values]="toLetteredValues" tableName="Ecritures à lettrer"
-    [isSmallestHeight]="true" [actions]="tableActionToLetterValues"
-    [refreshTable]="refreshLetteringTable.asObservable()">
-  </sort-table>
-</div>
+@if (toLetteredValues && toLetteredValues.length>0) {
+  <div>
+    <p>Ecritures à lettrer</p>
+    <sort-table [columns]="displayedColumns" [values]="toLetteredValues" tableName="Ecritures à lettrer"
+      [isSmallestHeight]="true" [actions]="tableActionToLetterValues"
+      [refreshTable]="refreshLetteringTable.asObservable()">
+    </sort-table>
+  </div>
+}
 <div class="align-right">
   <span class="mat-mdc-cell mdc-data-table__cell ">Balance : {{getLetteringBalance()}} €</span>
 </div>
-<button matTooltip="Exporter" mat-fab color="accent" class="second-fab-button" [matMenuTriggerFor]="menu"
-  *ngIf="!tiersToDisplay">
-  <mat-icon>file_download</mat-icon>
-  <mat-menu #menu="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
-    <button mat-menu-item (click)="exportGrandLivre()"
-      *ngIf="accountingRecordSearch && accountingRecordSearch.accountingClass && accountingRecordSearch.startDate && accountingRecordSearch.endDate">Exporter
-      le grand livre pour la classe
-      {{accountingRecordSearch.accountingClass.label}}
-    </button>
-    <button mat-menu-item (click)="exportJournal()"
-      *ngIf="accountingRecordSearch && accountingRecordSearch.accountingJournal && accountingRecordSearch.startDate && accountingRecordSearch.endDate">Exporter
-      le journal {{accountingRecordSearch.accountingJournal.label}}
-    </button>
-    <button mat-menu-item (click)="exportAccountingAccount()"
-      *ngIf="accountingRecordSearch && accountingRecordSearch.accountingAccount && accountingRecordSearch.startDate && accountingRecordSearch.endDate">Exporter
-      le compte
-      {{accountingRecordSearch.accountingAccount.principalAccountingAccount.code}}{{accountingRecordSearch.accountingAccount.accountingAccountSubNumber}}
-    </button>
-    <button mat-menu-item (click)="exportAllGrandLivre()"
-      *ngIf="accountingRecordSearch &&  accountingRecordSearch.startDate && accountingRecordSearch.endDate">Exporter
-      l'ensemble du grand livre
-    </button>
-  </mat-menu>
-</button>
-<button matTooltip="Ajouter des écritures comptables" mat-fab color="accent" class="fab-button"
-  *ngIf="canAddNewAccountingRecord()" (click)=" createAccountingRecords($event)"
-  (auxclick)=" createAccountingRecords($event)">
-  <mat-icon>add</mat-icon>
-</button>
-<button matTooltip="Télécharger un relevé de comptes" mat-fab color="accent" class="sixth-fab-button"
-  *ngIf="tiersToDisplay || responsableToDisplay" (click)="downloadBillingClosureReceipt()">
-  <mat-icon>download</mat-icon>
-</button>
-<button matTooltip="Lettrer les lignes sélectionnées" mat-fab color="accent" class="third-fab-button"
-  *ngIf="toLetteredValues && toLetteredValues.length>0" (click)="letterSelectedRecords()">
-  <mat-icon>spellcheck</mat-icon>
-</button>
-<button matTooltip="Envoyer un relevé de comptes" mat-fab color="accent" class="eight-fab-button"
-  *ngIf="tiersToDisplay || responsableToDisplay" (click)="sendBillingClosureReceipt()">
-  <mat-icon>outgoing_mail</mat-icon>
-</button>
-<button *ngIf="canImportSageFile()" matTooltip="Importer un fichier Sage (PNM)" mat-fab color="accent"
-  class="fifth-fab-button" (click)="importSageFile()">
-  <mat-icon>upload</mat-icon>
-</button>
+@if (!tiersToDisplay) {
+  <button matTooltip="Exporter" mat-fab color="accent" class="second-fab-button" [matMenuTriggerFor]="menu"
+    >
+    <mat-icon>file_download</mat-icon>
+    <mat-menu #menu="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
+      @if (accountingRecordSearch && accountingRecordSearch.accountingClass && accountingRecordSearch.startDate && accountingRecordSearch.endDate) {
+        <button mat-menu-item (click)="exportGrandLivre()"
+          >Exporter
+          le grand livre pour la classe
+          {{accountingRecordSearch.accountingClass.label}}
+        </button>
+      }
+      @if (accountingRecordSearch && accountingRecordSearch.accountingJournal && accountingRecordSearch.startDate && accountingRecordSearch.endDate) {
+        <button mat-menu-item (click)="exportJournal()"
+          >Exporter
+          le journal {{accountingRecordSearch.accountingJournal.label}}
+        </button>
+      }
+      @if (accountingRecordSearch && accountingRecordSearch.accountingAccount && accountingRecordSearch.startDate && accountingRecordSearch.endDate) {
+        <button mat-menu-item (click)="exportAccountingAccount()"
+          >Exporter
+          le compte
+          {{accountingRecordSearch.accountingAccount.principalAccountingAccount.code}}{{accountingRecordSearch.accountingAccount.accountingAccountSubNumber}}
+        </button>
+      }
+      @if (accountingRecordSearch &&  accountingRecordSearch.startDate && accountingRecordSearch.endDate) {
+        <button mat-menu-item (click)="exportAllGrandLivre()"
+          >Exporter
+          l'ensemble du grand livre
+        </button>
+      }
+    </mat-menu>
+  </button>
+}
+@if (canAddNewAccountingRecord()) {
+  <button matTooltip="Ajouter des écritures comptables" mat-fab color="accent" class="fab-button"
+    (click)=" createAccountingRecords($event)"
+    (auxclick)=" createAccountingRecords($event)">
+    <mat-icon>add</mat-icon>
+  </button>
+}
+@if (tiersToDisplay || responsableToDisplay) {
+  <button matTooltip="Télécharger un relevé de comptes" mat-fab color="accent" class="sixth-fab-button"
+    (click)="downloadBillingClosureReceipt()">
+    <mat-icon>download</mat-icon>
+  </button>
+}
+@if (toLetteredValues && toLetteredValues.length>0) {
+  <button matTooltip="Lettrer les lignes sélectionnées" mat-fab color="accent" class="third-fab-button"
+    (click)="letterSelectedRecords()">
+    <mat-icon>spellcheck</mat-icon>
+  </button>
+}
+@if (tiersToDisplay || responsableToDisplay) {
+  <button matTooltip="Envoyer un relevé de comptes" mat-fab color="accent" class="eight-fab-button"
+    (click)="sendBillingClosureReceipt()">
+    <mat-icon>outgoing_mail</mat-icon>
+  </button>
+}
+@if (canImportSageFile()) {
+  <button matTooltip="Importer un fichier Sage (PNM)" mat-fab color="accent"
+    class="fifth-fab-button" (click)="importSageFile()">
+    <mat-icon>upload</mat-icon>
+  </button>
+}

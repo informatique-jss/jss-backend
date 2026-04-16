@@ -8,11 +8,13 @@
               <autocomplete-responsable [(model)]="searchedResponsable" [form]="orderingCustomerForm"
                 label="Responsable" [isDisabled]="!editMode" propertyName="responsable" [isMandatory]="true"
                 fieldToCheckAgainstForValidation="entityId"
-                (onOptionSelected)="fillResponsable($event)"></autocomplete-responsable>
+              (onOptionSelected)="fillResponsable($event)"></autocomplete-responsable>
             </td>
             <td style="vertical-align: middle;">
-              <avatar-chip *ngIf="quotation.responsable" [employee]="quotation.responsable.salesEmployee"
+              @if (quotation.responsable) {
+                <avatar-chip [employee]="quotation.responsable.salesEmployee"
                 [disableEmployeeDialog]="true"></avatar-chip>
+              }
             </td>
           </fieldset>
         </tr>
@@ -25,45 +27,56 @@
             </td>
             <td>
               <autocomplete-voucher [(model)]="quotation.voucher" [form]="orderingCustomerForm" propertyName="voucher"
-                label="Coupon de réduction" [isDisabled]="!editMode"></autocomplete-voucher>
+              label="Coupon de réduction" [isDisabled]="!editMode"></autocomplete-voucher>
             </td>
           </fieldset>
         </tr>
       </table>
-      <table class="full-width" *ngIf="quotation.description">
-        <tr>
-          <td>
-            <generic-textarea [(model)]="quotation.description" label="Description de la demande"
-              [form]="orderingCustomerForm" propertyName="description" [isMandatory]="false" [isDisabled]="true"
+      @if (quotation.description) {
+        <table class="full-width">
+          <tr>
+            <td>
+              <generic-textarea [(model)]="quotation.description" label="Description de la demande"
+                [form]="orderingCustomerForm" propertyName="description" [isMandatory]="false" [isDisabled]="true"
               [numberOfLines]="4"></generic-textarea>
-          </td>
-        </tr>
-      </table>
-      <table class="full-width" *ngIf="quotation && quotation.responsable">
-        <tr>
-          <td>
-            <single-chips-mail [(model)]="quotation.responsable.mail" label="Mail" [form]="orderingCustomerForm"
+            </td>
+          </tr>
+        </table>
+      }
+      @if (quotation && quotation.responsable) {
+        <table class="full-width">
+          <tr>
+            <td>
+              <single-chips-mail [(model)]="quotation.responsable.mail" label="Mail" [form]="orderingCustomerForm"
               propertyName="mail" [isDisabled]="true"></single-chips-mail>
-          </td>
-          <td>
-            <chips-phone [(model)]="quotation.responsable.phones" label="Téléphones" [form]="orderingCustomerForm"
+            </td>
+            <td>
+              <chips-phone [(model)]="quotation.responsable.phones" label="Téléphones" [form]="orderingCustomerForm"
               propertyName="phones" [isDisabled]="true"></chips-phone>
-          </td>
-          <td style="vertical-align: middle;"><span *ngIf="quotation.responsable && quotation.responsable.tiers">Adresse
-              :
-              {{quotation.responsable.tiers.address}}
-              {{quotation.responsable.tiers.postalCode}}
-              {{quotation.responsable.tiers.city?quotation.responsable.tiers.city.label:""}}
-              {{quotation.responsable.tiers.country?quotation.responsable.tiers.country.label:""}}</span></td>
-          <td style="vertical-align: middle;"><span *ngIf="billingDocument && billingDocument.billingLabel">Libellé de
-              facturation :
+            </td>
+            <td style="vertical-align: middle;">@if (quotation.responsable && quotation.responsable.tiers) {
+              <span>Adresse
+                :
+                {{quotation.responsable.tiers.address}}
+                {{quotation.responsable.tiers.postalCode}}
+                {{quotation.responsable.tiers.city?quotation.responsable.tiers.city.label:""}}
+              {{quotation.responsable.tiers.country?quotation.responsable.tiers.country.label:""}}</span>
+            }</td>
+            <td style="vertical-align: middle;">@if (billingDocument && billingDocument.billingLabel) {
+              <span>Libellé de
+                facturation :
               {{billingDocument.billingLabel}}</span>
-            <span *ngIf="billingDocument && billingDocument.commandNumber">Numéro de commande annuelle :
+            }
+            @if (billingDocument && billingDocument.commandNumber) {
+              <span>Numéro de commande annuelle :
               {{billingDocument.commandNumber}}</span>
+            }
           </td>
         </tr>
       </table>
-      <div *ngIf="instanceOfCustomerOrderFn(quotation)">
+    }
+    @if (instanceOfCustomerOrderFn(quotation)) {
+      <div>
         <div class=" full-width">
           <table class="full-width table-fixed-layout">
             <tr>
@@ -71,133 +84,170 @@
                 <autocomplete-employee [(model)]="quotation.orderingEmployee" [form]="orderingCustomerForm"
                   propertyName="orderingEmployee" [isMandatory]="false" [isDisabled]="!canChangeInvoicingResponsible()"
                   label="Responsable de la création"
-                  (onOptionSelected)="assignOrderEmployee($event)"></autocomplete-employee>
+                (onOptionSelected)="assignOrderEmployee($event)"></autocomplete-employee>
               </td>
               <td>
                 <select-order-blockage [(model)]="quotation.orderBlockage" label="Type de blocage de la création"
                   [form]="orderingCustomerForm" propertyName="orderBlockage" [isMandatory]="false"
-                  (onFormChange)="modifyOrderBlockage($event)" [isDisabled]="false"></select-order-blockage>
+                (onFormChange)="modifyOrderBlockage($event)" [isDisabled]="false"></select-order-blockage>
               </td>
             </tr>
           </table>
         </div>
       </div>
+    }
+    @if (quotation && instanceOfCustomerOrder(quotation) &&  quotation.customerOrderAssignations && canAddAssignOrderForProduction()) {
       <table class="full-width"
-        *ngIf="quotation && instanceOfCustomerOrder(quotation) &&  quotation.customerOrderAssignations && canAddAssignOrderForProduction()">
+        >
         <tr>
-          <td *ngFor="let customerOrderAssignation of quotation.customerOrderAssignations">
-            <autocomplete-employee [(model)]="customerOrderAssignation.employee" [form]="orderingCustomerForm"
-              [propertyName]="'assignedTo'+customerOrderAssignation.id" [isMandatory]="false" [isDisabled]="false"
-              [label]="customerOrderAssignation.assignationType.label"
-              (onOptionSelected)="updateAssignedToFor($event,customerOrderAssignation)">
-            </autocomplete-employee>
-          </td>
+          @for (customerOrderAssignation of quotation.customerOrderAssignations; track customerOrderAssignation) {
+            <td>
+              <autocomplete-employee [(model)]="customerOrderAssignation.employee" [form]="orderingCustomerForm"
+                [propertyName]="'assignedTo'+customerOrderAssignation.id" [isMandatory]="false" [isDisabled]="false"
+                [label]="customerOrderAssignation.assignationType.label"
+                (onOptionSelected)="updateAssignedToFor($event,customerOrderAssignation)">
+              </autocomplete-employee>
+            </td>
+          }
           <td>
             <button mat-raised-button color="accent" (click)="assignImmediatlyOrder()">Assigner immédiatement</button>
           </td>
         </tr>
       </table>
-      <mat-divider class="margin-mat-divider"></mat-divider>
-      <fieldset [disabled]="editMode==false" class="fieldset-no-border">
-        <table class="full-width" *ngIf="quotation && instanceOfCustomerOrder(quotation)">
+    }
+    <mat-divider class="margin-mat-divider"></mat-divider>
+    <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+      @if (quotation && instanceOfCustomerOrder(quotation)) {
+        <table class="full-width">
           <tr>
             <td><generic-toggle [(model)]="quotation.isRecurring" label="Est récurrente ?" [form]="orderingCustomerForm"
-                propertyName="propeisRecurringrtyName" [isDisabled]="!editMode"></generic-toggle></td>
+            propertyName="propeisRecurringrtyName" [isDisabled]="!editMode"></generic-toggle></td>
           </tr>
         </table>
-        <table class="full-width" *ngIf="quotation && instanceOfCustomerOrder(quotation) && quotation.isRecurring">
+      }
+      @if (quotation && instanceOfCustomerOrder(quotation) && quotation.isRecurring) {
+        <table class="full-width">
           <tr>
             <td>
               <generic-datepicker [(model)]="quotation.recurringPeriodStartDate" label="Date de début de récurrence"
                 [form]="orderingCustomerForm" propertyName="recurringPeriodStartDate" [isMandatory]="true"
-                [isDisabled]="!editMode"></generic-datepicker>
+              [isDisabled]="!editMode"></generic-datepicker>
             </td>
             <td>
               <generic-datepicker [(model)]="quotation.recurringPeriodEndDate" label="Date de fin de récurrence"
                 [form]="orderingCustomerForm" propertyName="recurringPeriodEndDate" [isMandatory]="true"
-                [isDisabled]="!editMode"></generic-datepicker>
+              [isDisabled]="!editMode"></generic-datepicker>
             </td>
-          <tr>
-            <td>
-              <select-customer-order-frequency [(model)]="quotation.customerOrderFrequency"
-                label="Fréquence de génération" [form]="orderingCustomerForm" propertyName="customerOrderFrequency"
+            <tr>
+              <td>
+                <select-customer-order-frequency [(model)]="quotation.customerOrderFrequency"
+                  label="Fréquence de génération" [form]="orderingCustomerForm" propertyName="customerOrderFrequency"
                 [isMandatory]="false" [isDisabled]="false"></select-customer-order-frequency>
-            </td>
-            <td>
-              <generic-toggle [(model)]="quotation.isRecurringAutomaticallyBilled"
-                label="Facturation automatique des commandes générées ?" [form]="orderingCustomerForm"
+              </td>
+              <td>
+                <generic-toggle [(model)]="quotation.isRecurringAutomaticallyBilled"
+                  label="Facturation automatique des commandes générées ?" [form]="orderingCustomerForm"
                 propertyName="isRecurringAutomaticallyBilled" [isDisabled]="!editMode"></generic-toggle>
-            </td>
-          </tr>
-        </table>
-        <table class="full-width"
-          *ngIf="quotation && instanceOfCustomerOrder(quotation) && (quotation.hasCustomerOrderParentRecurring || quotation.isRecurring)">
-          <tr>
-            <td>
-              <generic-datepicker [(model)]="quotation.recurringStartDate" label="Date de début"
-                [form]="orderingCustomerForm" propertyName="recurringStartDate" [isMandatory]="true"
+              </td>
+            </tr>
+          </table>
+        }
+        @if (quotation && instanceOfCustomerOrder(quotation) && (quotation.hasCustomerOrderParentRecurring || quotation.isRecurring)) {
+          <table class="full-width"
+            >
+            <tr>
+              <td>
+                <generic-datepicker [(model)]="quotation.recurringStartDate" label="Date de début"
+                  [form]="orderingCustomerForm" propertyName="recurringStartDate" [isMandatory]="true"
                 [isDisabled]="!editMode"></generic-datepicker>
-            </td>
-            <td>
-              <generic-datepicker [(model)]="quotation.recurringEndDate" label="Date de fin"
-                [form]="orderingCustomerForm" propertyName="recurringEndDate" [isMandatory]="true"
+              </td>
+              <td>
+                <generic-datepicker [(model)]="quotation.recurringEndDate" label="Date de fin"
+                  [form]="orderingCustomerForm" propertyName="recurringEndDate" [isMandatory]="true"
                 [isDisabled]="!editMode"></generic-datepicker>
-            </td>
-        </table>
-        <div class="div-customer-order"
-          *ngIf="quotation && instanceOfCustomerOrder(quotation) &&   customerOrderRecurring && customerOrderRecurring.length>0">
-          <p *ngIf=" quotation.isRecurring">Commandes enfants issues de cette commande</p>
-          <p *ngIf=" !quotation.isRecurring">Commande récurrente parente</p>
-          <sort-table [actions]="customerOrderRecurringTableActions" [columns]="customerOrderRecurringDisplayedColumns"
-            [noMaxHeight]="true" [noPaddingBottom]="true" [values]="customerOrderRecurring"
-            tableName="Liste commandes récurrentes">
-          </sort-table>
-        </div>
-        <div>
-          <div class="div-customer-order"
-            *ngIf="quotation && instanceOfQuotation(quotation) && quotationCustomerOrders && quotationCustomerOrders.length>0">
-            <p>Commandes issues de ce devis</p>
-            <sort-table [actions]="customerOrderTableActions" [columns]="customerOrderDisplayedColumns"
-              [noMaxHeight]="true" [noPaddingBottom]="true" [values]="quotationCustomerOrders"
-              tableName="Liste commandes">
-            </sort-table>
+              </td>
+            </table>
+          }
+          @if (quotation && instanceOfCustomerOrder(quotation) &&   customerOrderRecurring && customerOrderRecurring.length>0) {
+            <div class="div-customer-order"
+              >
+              @if ( quotation.isRecurring) {
+                <p>Commandes enfants issues de cette commande</p>
+              }
+              @if ( !quotation.isRecurring) {
+                <p>Commande récurrente parente</p>
+              }
+              <sort-table [actions]="customerOrderRecurringTableActions" [columns]="customerOrderRecurringDisplayedColumns"
+                [noMaxHeight]="true" [noPaddingBottom]="true" [values]="customerOrderRecurring"
+                tableName="Liste commandes récurrentes">
+              </sort-table>
+            </div>
+          }
+          <div>
+            @if (quotation && instanceOfQuotation(quotation) && quotationCustomerOrders && quotationCustomerOrders.length>0) {
+              <div class="div-customer-order"
+                >
+                <p>Commandes issues de ce devis</p>
+                <sort-table [actions]="customerOrderTableActions" [columns]="customerOrderDisplayedColumns"
+                  [noMaxHeight]="true" [noPaddingBottom]="true" [values]="quotationCustomerOrders"
+                  tableName="Liste commandes">
+                </sort-table>
+              </div>
+            }
+            @if (quotation && instanceOfQuotation(quotation) && (!quotationCustomerOrders || quotationCustomerOrders.length==0) && quotation.quotationStatus.code==QUOTATION_STATUS_SENT_TO_CUSTOMER) {
+              <div class="div-customer-order"
+                >
+                <autocomplete-customer-order [(model)]="selectedCustomerOrder" [form]="orderingCustomerForm"
+                  propertyName="selectedCustomerOrder" [isMandatory]="false" label="Associer ce devis à une commande"
+                  (onOptionSelected)="selectCustomerOrderOnQuotation($event)" [isDisabled]="!editMode">
+                </autocomplete-customer-order>
+              </div>
+            }
+            @if (quotation && instanceOfCustomerOrder(quotation) && customerOrderQuotations && customerOrderQuotations.length>0) {
+              <div class="div-customer-order"
+                >
+                <p>Devis issus de cette commande</p>
+                <sort-table [actions]="quotationTableActions" [columns]="quotationDisplayedColumns" [noMaxHeight]="true"
+                  [noPaddingBottom]="true" [values]="customerOrderQuotations" tableName="Liste devis">
+                </sort-table>
+              </div>
+            }
           </div>
-          <div class="div-customer-order"
-            *ngIf="quotation && instanceOfQuotation(quotation) && (!quotationCustomerOrders || quotationCustomerOrders.length==0) && quotation.quotationStatus.code==QUOTATION_STATUS_SENT_TO_CUSTOMER">
-            <autocomplete-customer-order [(model)]="selectedCustomerOrder" [form]="orderingCustomerForm"
-              propertyName="selectedCustomerOrder" [isMandatory]="false" label="Associer ce devis à une commande"
-              (onOptionSelected)="selectCustomerOrderOnQuotation($event)" [isDisabled]="!editMode">
-            </autocomplete-customer-order>
+        </fieldset>
+        <mat-divider class="margin-mat-divider"></mat-divider>
+        @if (quotation && instanceOfCustomerOrder(quotation) && quotation.id) {
+          <customer-order-comment
+          [customerOrder]="quotation"></customer-order-comment>
+        }
+        @if (quotation && instanceOfQuotation(quotation) && quotation.id) {
+          <customer-order-comment
+          [quotation]="quotation"></customer-order-comment>
+        }
+        @if ( quotation.abandonReason) {
+          <div>Abandonné avec le motif : {{quotation.abandonReason.label}}
           </div>
-          <div class="div-customer-order"
-            *ngIf="quotation && instanceOfCustomerOrder(quotation) && customerOrderQuotations && customerOrderQuotations.length>0">
-            <p>Devis issus de cette commande</p>
-            <sort-table [actions]="quotationTableActions" [columns]="quotationDisplayedColumns" [noMaxHeight]="true"
-              [noPaddingBottom]="true" [values]="customerOrderQuotations" tableName="Liste devis">
-            </sort-table>
+        }
+        @if (quotation.firstReminderDateTime) {
+          <div>
+            <ul>
+              @if (quotation.firstReminderDateTime) {
+                <li>Relance n°1 : {{quotation.firstReminderDateTime
+                  |date:'dd/MM/yyyy'}}
+                </li>
+              }
+              @if (quotation.secondReminderDateTime) {
+                <li>Relance n°2 : {{quotation.secondReminderDateTime
+                  |date:'dd/MM/yyyy'}}
+                </li>
+              }
+              @if (quotation.thirdReminderDateTime) {
+                <li>Relance n°3 : {{quotation.thirdReminderDateTime
+                  |date:'dd/MM/yyyy'}}
+                </li>
+              }
+            </ul>
           </div>
-        </div>
-      </fieldset>
-      <mat-divider class="margin-mat-divider"></mat-divider>
-      <customer-order-comment *ngIf="quotation && instanceOfCustomerOrder(quotation) && quotation.id"
-        [customerOrder]="quotation"></customer-order-comment>
-      <customer-order-comment *ngIf="quotation && instanceOfQuotation(quotation) && quotation.id"
-        [quotation]="quotation"></customer-order-comment>
-      <div *ngIf=" quotation.abandonReason">Abandonné avec le motif : {{quotation.abandonReason.label}}
+        }
       </div>
-      <div *ngIf="quotation.firstReminderDateTime">
-        <ul>
-          <li *ngIf="quotation.firstReminderDateTime">Relance n°1 : {{quotation.firstReminderDateTime
-            |date:'dd/MM/yyyy'}}
-          </li>
-          <li *ngIf="quotation.secondReminderDateTime">Relance n°2 : {{quotation.secondReminderDateTime
-            |date:'dd/MM/yyyy'}}
-          </li>
-          <li *ngIf="quotation.thirdReminderDateTime">Relance n°3 : {{quotation.thirdReminderDateTime
-            |date:'dd/MM/yyyy'}}
-          </li>
-        </ul>
-      </div>
-    </div>
-  </form>
-</div>
+    </form>
+  </div>

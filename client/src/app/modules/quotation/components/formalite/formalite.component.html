@@ -1,84 +1,111 @@
-<form [formGroup]="formaliteForm" *ngIf="formalite && provision">
-  <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
-    <mat-tab [label]="provision.provisionType.label">
-      <div class=" form-div">
-        <div class="full-width">
-          <div class="row-field-container">
-            <mat-form-field class="full-width">
-              <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
-            </mat-form-field>
-            <button (click)="associateLiasseWithFormalite()" mat-mini-fab color="warn" class="mini-fab-add"
-              *ngIf="editMode && formalite && formalite.id"
-              matTooltip="Associer une liasse à un fournisseur de service">
-              <mat-icon>add</mat-icon>
-            </button>
-          </div>
-          <sort-table [columns]="displayedColumns" [values]="formalites" tableName="Liasses Formalites"
-            [refreshTable]="refreshFormalityTable.asObservable()" [filterText]="searchText"
+@if (formalite && provision) {
+  <form [formGroup]="formaliteForm">
+    <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
+      <mat-tab [label]="provision.provisionType.label">
+        <div class=" form-div">
+          <div class="full-width">
+            <div class="row-field-container">
+              <mat-form-field class="full-width">
+                <input matInput (keyup)="applyFilter($event.target)" placeholder="Rechercher">
+              </mat-form-field>
+              @if (editMode && formalite && formalite.id) {
+                <button (click)="associateLiasseWithFormalite()" mat-mini-fab color="warn" class="mini-fab-add"
+                  matTooltip="Associer une liasse à un fournisseur de service">
+                  <mat-icon>add</mat-icon>
+                </button>
+              }
+            </div>
+            <sort-table [columns]="displayedColumns" [values]="formalites" tableName="Liasses Formalites"
+              [refreshTable]="refreshFormalityTable.asObservable()" [filterText]="searchText"
             [actions]="tableAction"></sort-table>
+          </div>
         </div>
-      </div>
-      <div class="form-div">
-        <table class="full-width">
-          <tr *ngIf="formalite.waitedCompetentAuthority && formalite.formaliteStatus">
-            <td>
-              <autocomplete-competent-authority [(model)]="formalite.waitedCompetentAuthority" [form]="formaliteForm"
-                propertyName="waitedCompetentAuthority" [isMandatory]="false"
-                label="Autorité compétente en attente"></autocomplete-competent-authority>
-            </td>
-            <td><generic-datepicker *ngIf="provision.lastCompetentAuthorityReminderDateTime" [isMandatory]="false"
-                [(model)]="provision.lastCompetentAuthorityReminderDateTime" label="Dernière relance de l'AC"
-                [form]="formaliteForm" propertyName="lastCompetentAuthorityReminderDateTime"></generic-datepicker></td>
-          </tr>
-        </table>
-      </div>
-      <div class="form-div">
-        <mat-divider class="margin-mat-divider"></mat-divider>
-        <customer-order-comment *ngIf="provision && provision.id" [provision]="provision"></customer-order-comment>
-      </div>
-    </mat-tab>
-    <mat-tab label="Dépôt d'actes"
-      *ngIf="provision && provision.provisionType && provision.provisionType.isDisplayActeDepositScreen">
-      <acte-deposit [editMode]="editMode" [provision]="provision" [affaire]="affaire"></acte-deposit>
-    </mat-tab>
-    <mat-tab label="Options">
-      <provision-options [editMode]="editMode" [provision]="provision" (provisionChange)="provisionChangeFunction()">
-      </provision-options>
-    </mat-tab>
-    <mat-tab label="Documents" *ngIf="formalite.id && provision ">
-      <paper-set *ngIf="quotation &&  instanceOfCustomerOrderFn(quotation)" [customerOrder]="quotation"></paper-set>
-      <attachments [entity]="provision" [editMode]="true" [entityType]="PROVISION_ENTITY_TYPE.entityType">
-      </attachments>
-    </mat-tab>
-    <mat-tab label="Paiements & factures"
-      *ngIf="formalite.id && provision && quotation &&  instanceOfCustomerOrderFn(quotation)">
-      <provision-payment [editMode]="editMode" [provision]="provision" [quotation]="quotation">
-      </provision-payment>
-    </mat-tab>
-    <mat-tab label="Historique GU" *ngIf="formalite && formalite.id && formalite.formalitesGuichetUnique ">
-      <ng-template matTabContent>
-        <guichet-unique-status [formalitesGuichetUniqueIn]="formalite.formalitesGuichetUnique"></guichet-unique-status>
-      </ng-template>
-    </mat-tab>
-    <mat-tab label="Historique Infogreffe" *ngIf="formalite && formalite.id && formalite.formalitesInfogreffe ">
-      <ng-template matTabContent>
-        <infogreffe-status [formalitesInfogreffe]="formalite.formalitesInfogreffe"></infogreffe-status>
-      </ng-template>
-    </mat-tab>
-    <mat-tab label="Historique" *ngIf="formalite && formalite.id">
-      <ng-template matTabContent>
-        <history [entity]="formalite" [entityType]="FORMALITE_ENTITY_TYPE" [parseTypeList]="formaliteStatus"></history>
-      </ng-template>
-    </mat-tab>
-    <mat-tab label="Historique (prestation)" *ngIf="provision && provision.id">
-      <ng-template matTabContent>
-        <history [entity]="provision" [entityType]="PROVISION_ENTITY_TYPE"></history>
-      </ng-template>
-    </mat-tab>
-    <mat-tab label="Débours" *ngIf="formalite && formalite.id && canAddNewInvoice()">
-      <ng-template matTabContent>
-        <debour [provision]="provision"></debour>
-      </ng-template>
-    </mat-tab>
-  </mat-tab-group>
-</form>
+        <div class="form-div">
+          <table class="full-width">
+            @if (formalite.waitedCompetentAuthority && formalite.formaliteStatus) {
+              <tr>
+                <td>
+                  <autocomplete-competent-authority [(model)]="formalite.waitedCompetentAuthority" [form]="formaliteForm"
+                    propertyName="waitedCompetentAuthority" [isMandatory]="false"
+                  label="Autorité compétente en attente"></autocomplete-competent-authority>
+                </td>
+                <td>@if (provision.lastCompetentAuthorityReminderDateTime) {
+                  <generic-datepicker [isMandatory]="false"
+                    [(model)]="provision.lastCompetentAuthorityReminderDateTime" label="Dernière relance de l'AC"
+                  [form]="formaliteForm" propertyName="lastCompetentAuthorityReminderDateTime"></generic-datepicker>
+                }</td>
+              </tr>
+            }
+          </table>
+        </div>
+        <div class="form-div">
+          <mat-divider class="margin-mat-divider"></mat-divider>
+          @if (provision && provision.id) {
+            <customer-order-comment [provision]="provision"></customer-order-comment>
+          }
+        </div>
+      </mat-tab>
+      @if (provision && provision.provisionType && provision.provisionType.isDisplayActeDepositScreen) {
+        <mat-tab label="Dépôt d'actes"
+          >
+          <acte-deposit [editMode]="editMode" [provision]="provision" [affaire]="affaire"></acte-deposit>
+        </mat-tab>
+      }
+      <mat-tab label="Options">
+        <provision-options [editMode]="editMode" [provision]="provision" (provisionChange)="provisionChangeFunction()">
+        </provision-options>
+      </mat-tab>
+      @if (formalite.id && provision ) {
+        <mat-tab label="Documents">
+          @if (quotation &&  instanceOfCustomerOrderFn(quotation)) {
+            <paper-set [customerOrder]="quotation"></paper-set>
+          }
+          <attachments [entity]="provision" [editMode]="true" [entityType]="PROVISION_ENTITY_TYPE.entityType">
+          </attachments>
+        </mat-tab>
+      }
+      @if (formalite.id && provision && quotation &&  instanceOfCustomerOrderFn(quotation)) {
+        <mat-tab label="Paiements & factures"
+          >
+          <provision-payment [editMode]="editMode" [provision]="provision" [quotation]="quotation">
+          </provision-payment>
+        </mat-tab>
+      }
+      @if (formalite && formalite.id && formalite.formalitesGuichetUnique ) {
+        <mat-tab label="Historique GU">
+          <ng-template matTabContent>
+            <guichet-unique-status [formalitesGuichetUniqueIn]="formalite.formalitesGuichetUnique"></guichet-unique-status>
+          </ng-template>
+        </mat-tab>
+      }
+      @if (formalite && formalite.id && formalite.formalitesInfogreffe ) {
+        <mat-tab label="Historique Infogreffe">
+          <ng-template matTabContent>
+            <infogreffe-status [formalitesInfogreffe]="formalite.formalitesInfogreffe"></infogreffe-status>
+          </ng-template>
+        </mat-tab>
+      }
+      @if (formalite && formalite.id) {
+        <mat-tab label="Historique">
+          <ng-template matTabContent>
+            <history [entity]="formalite" [entityType]="FORMALITE_ENTITY_TYPE" [parseTypeList]="formaliteStatus"></history>
+          </ng-template>
+        </mat-tab>
+      }
+      @if (provision && provision.id) {
+        <mat-tab label="Historique (prestation)">
+          <ng-template matTabContent>
+            <history [entity]="provision" [entityType]="PROVISION_ENTITY_TYPE"></history>
+          </ng-template>
+        </mat-tab>
+      }
+      @if (formalite && formalite.id && canAddNewInvoice()) {
+        <mat-tab label="Débours">
+          <ng-template matTabContent>
+            <debour [provision]="provision"></debour>
+          </ng-template>
+        </mat-tab>
+      }
+    </mat-tab-group>
+  </form>
+}

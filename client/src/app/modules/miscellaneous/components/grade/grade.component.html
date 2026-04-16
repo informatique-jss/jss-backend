@@ -1,3 +1,5 @@
-<span *ngFor="let star of splitString(grade)">
-  <mat-icon color="accent"  class="star" color="primary">star</mat-icon>
-</span>
+@for (star of splitString(grade); track star) {
+  <span>
+    <mat-icon color="accent"  class="star" color="primary">star</mat-icon>
+  </span>
+}

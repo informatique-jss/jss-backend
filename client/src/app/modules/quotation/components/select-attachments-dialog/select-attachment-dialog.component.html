@@ -11,22 +11,26 @@
     </tr>
     <tr>
       <td>
-        <div *ngIf="selectedAttachments && selectedAttachments.length>0">
-          <p>Pièces envoyées : </p>
-          <ul>
-            <li *ngFor="let attachment of selectedAttachments; let index = index">{{attachment.attachmentType.label}} -
-              {{attachment.uploadedFile.filename}} <span class="pointer"
+        @if (selectedAttachments && selectedAttachments.length>0) {
+          <div>
+            <p>Pièces envoyées : </p>
+            <ul>
+              @for (attachment of selectedAttachments; track attachment; let index = $index) {
+                <li>{{attachment.attachmentType.label}} -
+                  {{attachment.uploadedFile.filename}} <span class="pointer"
                 (click)="deleteAttachment(index)">(supprimer)</span>
-            </li>
+              </li>
+            }
           </ul>
         </div>
-      </td>
-    </tr>
-  </table>
-  <generic-textarea [(model)]="attachmentMailRequest.comment" label="Commentaire" [form]="attachmentsForm"
-    propertyName="comment" [isMandatory]="false"></generic-textarea>
-  <generic-toggle [(model)]="attachmentMailRequest.sendToMe" label="Me l'envoyer" [form]="attachmentsForm"
-    propertyName="sendToMe"></generic-toggle>
+      }
+    </td>
+  </tr>
+</table>
+<generic-textarea [(model)]="attachmentMailRequest.comment" label="Commentaire" [form]="attachmentsForm"
+propertyName="comment" [isMandatory]="false"></generic-textarea>
+<generic-toggle [(model)]="attachmentMailRequest.sendToMe" label="Me l'envoyer" [form]="attachmentsForm"
+propertyName="sendToMe"></generic-toggle>
 </div>
 <div mat-dialog-actions align="end">
   <button mat-raised-button color="accent" (click)="closeDialog()">Annuler</button>

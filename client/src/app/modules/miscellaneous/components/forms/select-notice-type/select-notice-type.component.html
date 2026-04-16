@@ -2,15 +2,19 @@
   <mat-label>{{label}}</mat-label>
   <mat-select [formControlName]="propertyName"
     [required]="isMandatory && (conditionnalRequired==undefined || conditionnalRequired)" [compareWith]="compareWithId">
-    <ng-container *ngFor="let type of types">
-      <mat-option *ngIf="!filteredNoticeTypeFamily || type.noticeTypeFamily.id == filteredNoticeTypeFamily.id"
-        [value]="type">
-        {{displayLabel(type)}}
-      </mat-option>
-    </ng-container>
+    @for (type of types; track type) {
+      @if (!filteredNoticeTypeFamily || type.noticeTypeFamily.id == filteredNoticeTypeFamily.id) {
+        <mat-option
+          [value]="type">
+          {{displayLabel(type)}}
+        </mat-option>
+      }
+    }
   </mat-select>
-  <mat-icon color="accent" matSuffix (click)="clearField();$event.stopPropagation()"
-    *ngIf="!isDisabled && model!=undefined" class="pointer">
-    close
-  </mat-icon>
+  @if (!isDisabled && model!=undefined) {
+    <mat-icon color="accent" matSuffix (click)="clearField();$event.stopPropagation()"
+      class="pointer">
+      close
+    </mat-icon>
+  }
 </mat-form-field>

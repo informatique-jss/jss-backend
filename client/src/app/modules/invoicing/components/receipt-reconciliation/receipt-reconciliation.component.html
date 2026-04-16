@@ -1,77 +1,111 @@
 <div class="form-div">
-  <div class="table-container-scroll" *ngIf="attachments">
-    <sort-table [idRowSelected]="selectedAttachmentId" [columns]="displayedColumns" (onRowClick)="selectReceipt($event)"
-      [noMaxHeight]="true" [noPaddingBottom]="true" [actions]="tableActions" [values]="attachments"
-      tableName="Relevés de compte fournissuers">
-    </sort-table>
-  </div>
-  <div *ngIf="selectedAzureReceipt" class="flex-card">
-    <mat-card appearance="outlined" class="card-margin"
-      *ngFor="let invoice of selectedAzureReceipt.azureReceiptInvoices">
-      <mat-card-header>
-        <mat-card-title>{{invoice.invoiceId}} - <span class="pointer" matTooltip="Non pointée"
-            *ngIf="!invoice.isReconciliated">❌</span><span class="pointer" matTooltip="Pointée"
-            *ngIf="invoice.isReconciliated">✔️</span></mat-card-title>
-        <mat-card-subtitle>Total TTC : {{invoice.invoiceTotal}} €</mat-card-subtitle>
-      </mat-card-header>
-      <div *ngIf="invoice.azureReceiptInvoiceStatus">
-        <div>
-          <div>
-            <div
-              *ngIf="!invoice.azureReceiptInvoiceStatus.invoices || invoice.azureReceiptInvoiceStatus.invoices.length==0">
-              <p>❌ Aucune facture Osiris trouvée </p>
-            </div>
-            <div
-              *ngIf="invoice.azureReceiptInvoiceStatus.invoices && invoice.azureReceiptInvoiceStatus.invoices.length==1">
-              <p>✔️ Facture Osiris trouvée : <ng-container [ngTemplateOutlet]="osirisInvoices"
-                  [ngTemplateOutletContext]="{invoice:invoice.azureReceiptInvoiceStatus.invoices[0], azureReceiptInvoice : invoice,multiple : false}"></ng-container>
-              </p>
-            </div>
-            <div
-              *ngIf="invoice.azureReceiptInvoiceStatus.invoices && invoice.azureReceiptInvoiceStatus.invoices.length>1">
-              <p>❌ Plusieurs factures Osiris trouvées : </p>
-              <div *ngFor="let osirisInvoice of invoice.azureReceiptInvoiceStatus.invoices"><ng-container
-                  [ngTemplateOutlet]="osirisInvoices"
-                  [ngTemplateOutletContext]="{invoice:osirisInvoice,multiple : true}"></ng-container>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          *ngIf="(!invoice.azureReceiptInvoiceStatus.invoices || invoice.azureReceiptInvoiceStatus.invoices.length==0) ">
-          <div>
-            <div
-              *ngIf="!invoice.azureReceiptInvoiceStatus.azureInvoices || invoice.azureReceiptInvoiceStatus.azureInvoices.length==0">
-              <p>❌ Aucune facture automatique trouvée </p>
-            </div>
-            <div
-              *ngIf="invoice.azureReceiptInvoiceStatus.azureInvoices && invoice.azureReceiptInvoiceStatus.azureInvoices.length==1">
-              <p>✔️ Facture automatique trouvée : <ng-container [ngTemplateOutlet]="osirisAzureInvoices"
-                  [ngTemplateOutletContext]="{invoice:invoice.azureReceiptInvoiceStatus.azureInvoices[0], multiple : false}"></ng-container>
-              </p>
-            </div>
-            <div
-              *ngIf="invoice.azureReceiptInvoiceStatus.invoices && invoice.azureReceiptInvoiceStatus.invoices.length>1">
-              <p>❌ Plusieurs automatiques trouvées : </p>
-              <div *ngFor="let osirisInvoice of invoice.azureReceiptInvoiceStatus.invoices"><ng-container
-                  [ngTemplateOutlet]="osirisAzureInvoices"
-                  [ngTemplateOutletContext]="{invoice:osirisInvoice, multiple : true}"></ng-container>
-                <mat-divider></mat-divider>
-              </div>
+  @if (attachments) {
+    <div class="table-container-scroll">
+      <sort-table [idRowSelected]="selectedAttachmentId" [columns]="displayedColumns" (onRowClick)="selectReceipt($event)"
+        [noMaxHeight]="true" [noPaddingBottom]="true" [actions]="tableActions" [values]="attachments"
+        tableName="Relevés de compte fournissuers">
+      </sort-table>
+    </div>
+  }
+  @if (selectedAzureReceipt) {
+    <div class="flex-card">
+      @for (invoice of selectedAzureReceipt.azureReceiptInvoices; track invoice) {
+        <mat-card appearance="outlined" class="card-margin"
+          >
+          <mat-card-header>
+            <mat-card-title>{{invoice.invoiceId}} - @if (!invoice.isReconciliated) {
+              <span class="pointer" matTooltip="Non pointée"
+              >❌</span>
+              }@if (invoice.isReconciliated) {
+              <span class="pointer" matTooltip="Pointée"
+              >✔️</span>
+            }</mat-card-title>
+            <mat-card-subtitle>Total TTC : {{invoice.invoiceTotal}} €</mat-card-subtitle>
+          </mat-card-header>
+          @if (invoice.azureReceiptInvoiceStatus) {
+            <div>
+              <div>
+                <div>
+                  @if (!invoice.azureReceiptInvoiceStatus.invoices || invoice.azureReceiptInvoiceStatus.invoices.length==0) {
+                    <div
+                      >
+                      <p>❌ Aucune facture Osiris trouvée </p>
+                    </div>
+                  }
+                  @if (invoice.azureReceiptInvoiceStatus.invoices && invoice.azureReceiptInvoiceStatus.invoices.length==1) {
+                    <div
+                      >
+                      <p>✔️ Facture Osiris trouvée : <ng-container [ngTemplateOutlet]="osirisInvoices"
+                      [ngTemplateOutletContext]="{invoice:invoice.azureReceiptInvoiceStatus.invoices[0], azureReceiptInvoice : invoice,multiple : false}"></ng-container>
+                    </p>
+                  </div>
+                }
+                @if (invoice.azureReceiptInvoiceStatus.invoices && invoice.azureReceiptInvoiceStatus.invoices.length>1) {
+                  <div
+                    >
+                    <p>❌ Plusieurs factures Osiris trouvées : </p>
+                    @for (osirisInvoice of invoice.azureReceiptInvoiceStatus.invoices; track osirisInvoice) {
+                      <div><ng-container
+                        [ngTemplateOutlet]="osirisInvoices"
+                      [ngTemplateOutletContext]="{invoice:osirisInvoice,multiple : true}"></ng-container>
+                    </div>
+                  }
+                </div>
+              }
             </div>
           </div>
+          @if ((!invoice.azureReceiptInvoiceStatus.invoices || invoice.azureReceiptInvoiceStatus.invoices.length==0) ) {
+            <div
+              >
+              <div>
+                @if (!invoice.azureReceiptInvoiceStatus.azureInvoices || invoice.azureReceiptInvoiceStatus.azureInvoices.length==0) {
+                  <div
+                    >
+                    <p>❌ Aucune facture automatique trouvée </p>
+                  </div>
+                }
+                @if (invoice.azureReceiptInvoiceStatus.azureInvoices && invoice.azureReceiptInvoiceStatus.azureInvoices.length==1) {
+                  <div
+                    >
+                    <p>✔️ Facture automatique trouvée : <ng-container [ngTemplateOutlet]="osirisAzureInvoices"
+                    [ngTemplateOutletContext]="{invoice:invoice.azureReceiptInvoiceStatus.azureInvoices[0], multiple : false}"></ng-container>
+                  </p>
+                </div>
+              }
+              @if (invoice.azureReceiptInvoiceStatus.invoices && invoice.azureReceiptInvoiceStatus.invoices.length>1) {
+                <div
+                  >
+                  <p>❌ Plusieurs automatiques trouvées : </p>
+                  @for (osirisInvoice of invoice.azureReceiptInvoiceStatus.invoices; track osirisInvoice) {
+                    <div><ng-container
+                      [ngTemplateOutlet]="osirisAzureInvoices"
+                    [ngTemplateOutletContext]="{invoice:osirisInvoice, multiple : true}"></ng-container>
+                    <mat-divider></mat-divider>
+                  </div>
+                }
+              </div>
+            }
+          </div>
         </div>
-      </div>
-      <mat-card-actions align="end">
-        <button mat-raised-button color="accent" (click)="modifyAzureReceiptInvoice(invoice)">Modifier la
-          reconnaissance</button>
-        <button mat-raised-button color="warn" *ngIf="!invoice.isReconciliated"
-          (click)="markAsReconciliated(invoice)">Pointer</button>
-        <button mat-raised-button color="accent" *ngIf="invoice.isReconciliated"
-          (click)="markAsNotReconciliated(invoice)">Dé-pointer</button>
-      </mat-card-actions>
-    </mat-card>
-  </div>
+      }
+    </div>
+  }
+  <mat-card-actions align="end">
+    <button mat-raised-button color="accent" (click)="modifyAzureReceiptInvoice(invoice)">Modifier la
+    reconnaissance</button>
+    @if (!invoice.isReconciliated) {
+      <button mat-raised-button color="warn"
+      (click)="markAsReconciliated(invoice)">Pointer</button>
+    }
+    @if (invoice.isReconciliated) {
+      <button mat-raised-button color="accent"
+      (click)="markAsNotReconciliated(invoice)">Dé-pointer</button>
+    }
+  </mat-card-actions>
+</mat-card>
+}
+</div>
+}
 </div>
 
 
@@ -85,69 +119,97 @@
       <span style="display: flex;"><span class="text-status">Numéro de facture Osiris : n°{{invoice.id}}
         </span><chips-status [status]="invoice.invoiceStatus.code" [value]="invoice.invoiceStatus.label"></chips-status>
         <mat-icon color="accent" (click)="openInvoice($event,invoice)" (auxclick)="openInvoice($event, invoice)"
-          class="pointer small-icon" matTooltip="Voir la facture">visibility</mat-icon></span>
-    </li>
-    <li>
-      Commande Osiris : {{invoice.customerOrderForInboundInvoice.id}} -
-      {{invoice.customerOrderForInboundInvoice.customerOrderStatus.label}}<mat-icon
+        class="pointer small-icon" matTooltip="Voir la facture">visibility</mat-icon></span>
+      </li>
+      <li>
+        Commande Osiris : {{invoice.customerOrderForInboundInvoice.id}} -
+        {{invoice.customerOrderForInboundInvoice.customerOrderStatus.label}}<mat-icon
         (click)="openCustomerOrder($event,invoice.customerOrderForInboundInvoice)"
         (auxclick)="openCustomerOrder($event, invoice.customerOrderForInboundInvoice)" class="pointer small-icon"
-        matTooltip="Voir la commande">visibility</mat-icon>
+      matTooltip="Voir la commande">visibility</mat-icon>
     </li>
     <li>
       Affaire(s) : {{getAffaireList(invoice)}}
     </li>
   </ul>
-  <p *ngIf="!multiple">
-    <span *ngIf="azureReceiptInvoice.azureReceiptInvoiceStatus.customerInvoicedStatus">✔️ Saisie avant la facturation
-      du client</span>
-    <span *ngIf="!azureReceiptInvoice.azureReceiptInvoiceStatus.customerInvoicedStatus">❌ Saisie après la facturation
-      du client</span>
-  </p>
+  @if (!multiple) {
+    <p>
+      @if (azureReceiptInvoice.azureReceiptInvoiceStatus.customerInvoicedStatus) {
+        <span>✔️ Saisie avant la facturation
+        du client</span>
+      }
+      @if (!azureReceiptInvoice.azureReceiptInvoiceStatus.customerInvoicedStatus) {
+        <span>❌ Saisie après la facturation
+        du client</span>
+      }
+    </p>
+  }
   <p>⚖️ Débours :</p>
   <ul>
-    <ng-container *ngFor="let invoiceItem of invoice.invoiceItems">
-      <ng-container *ngIf="invoiceItem.debours">
-        <li *ngFor="let debour of invoiceItem.debours">
-          {{debour.billingType.label}} - {{debour.debourAmount}} € TTC <span
-            *ngIf="debour.debourAmount!=debour.invoicedAmount">- Facturé {{debour.invoicedAmount}} </span>
+    @for (invoiceItem of invoice.invoiceItems; track invoiceItem) {
+      @if (invoiceItem.debours) {
+        @for (debour of invoiceItem.debours; track debour) {
+          <li>
+            {{debour.billingType.label}} - {{debour.debourAmount}} € TTC @if (debour.debourAmount!=debour.invoicedAmount) {
+            <span
+            >- Facturé {{debour.invoicedAmount}} </span>
+          }
         </li>
-      </ng-container>
-    </ng-container>
-  </ul>
-  <p>💸 Paiement par {{invoice.manualPaymentType.label.toLowerCase()}}
-    <span *ngIf="invoice.manualPaymentType.id==paymentTypeVirement.id">
-      <span *ngIf="invoice.bankTransfert.isAlreadyExported">: ✔️ virement émis </span>
-      <span *ngIf="!invoice.bankTransfert.isAlreadyExported && invoice.bankTransfert.isSelectedForExport">: ✔️ virement
-        prévu pour le prochain export <mat-icon
+      }
+    }
+  }
+</ul>
+<p>💸 Paiement par {{invoice.manualPaymentType.label.toLowerCase()}}
+  @if (invoice.manualPaymentType.id==paymentTypeVirement.id) {
+    <span>
+      @if (invoice.bankTransfert.isAlreadyExported) {
+        <span>: ✔️ virement émis </span>
+      }
+      @if (!invoice.bankTransfert.isAlreadyExported && invoice.bankTransfert.isSelectedForExport) {
+        <span>: ✔️ virement
+          prévu pour le prochain export <mat-icon
           (click)="unmarkBankTransfertForExport(invoice.bankTransfert,azureReceiptInvoice)" class="pointer small-icon"
-          matTooltip="Exclure du prochain export">check_box</mat-icon></span>
-      <span *ngIf="!invoice.bankTransfert.isAlreadyExported  && !invoice.bankTransfert.isSelectedForExport">: ❌ virement
-        en attente <mat-icon color="accent"
+        matTooltip="Exclure du prochain export">check_box</mat-icon></span>
+      }
+      @if (!invoice.bankTransfert.isAlreadyExported  && !invoice.bankTransfert.isSelectedForExport) {
+        <span>: ❌ virement
+          en attente <mat-icon color="accent"
           (click)="markBankTransfertForExport(invoice.bankTransfert,azureReceiptInvoice)" class="pointer small-icon"
-          matTooltip="Inclure dans le prochain export">check_box_outline_blank</mat-icon></span>
+        matTooltip="Inclure dans le prochain export">check_box_outline_blank</mat-icon></span>
+      }
     </span>
-    <span *ngIf="invoice.manualPaymentType.id==paymentTypeEspece.id">✔️</span>
-    <span *ngIf="invoice.manualPaymentType.id==paymentTypeAccount.id">✔️</span>
-  </p>
-  <mat-divider *ngIf="multiple"></mat-divider>
+  }
+  @if (invoice.manualPaymentType.id==paymentTypeEspece.id) {
+    <span>✔️</span>
+  }
+  @if (invoice.manualPaymentType.id==paymentTypeAccount.id) {
+    <span>✔️</span>
+  }
+</p>
+@if (multiple) {
+  <mat-divider></mat-divider>
+}
 </ng-template>
 
 <ng-template #osirisAzureInvoices let-invoice='invoice' let-multiple="multiple">
-  <ul *ngFor="let attachment of invoice.attachments">
-    <ng-container *ngIf="attachment.provision">
-      <li>Commande : {{attachment.provision.service.assoAffaireOrder.customerOrder.id}} -
-        {{attachment.provision.service.assoAffaireOrder.customerOrder.customerOrderStatus.label}} <mat-icon
+  @for (attachment of invoice.attachments; track attachment) {
+    <ul>
+      @if (attachment.provision) {
+        <li>Commande : {{attachment.provision.service.assoAffaireOrder.customerOrder.id}} -
+          {{attachment.provision.service.assoAffaireOrder.customerOrder.customerOrderStatus.label}} <mat-icon
           (click)="openCustomerOrder($event,attachment.provision.service.assoAffaireOrder.customerOrder)"
           (auxclick)="openCustomerOrder($event, attachment.provision.service.assoAffaireOrder.customerOrder)"
-          class="pointer small-icon" matTooltip="Voir la commande">visibility</mat-icon>
-      <li>Affaire : {{getAffaireLabel(attachment.provision.service.assoAffaireOrder.affaire)}}
-      <li>Prestation : {{attachment.provision.provisionFamilyType.label}} -
-        {{attachment.provision.provisionType.label}} <mat-icon color="accent"
-          (click)="openProvision($event,attachment.provision)" (auxclick)="openProvision($event, attachment.provision)"
+        class="pointer small-icon" matTooltip="Voir la commande">visibility</mat-icon>
+        <li>Affaire : {{getAffaireLabel(attachment.provision.service.assoAffaireOrder.affaire)}}
+          <li>Prestation : {{attachment.provision.provisionFamilyType.label}} -
+            {{attachment.provision.provisionType.label}} <mat-icon color="accent"
+            (click)="openProvision($event,attachment.provision)" (auxclick)="openProvision($event, attachment.provision)"
           class="pointer small-icon" matTooltip="Voir la prestation">visibility</mat-icon>
-      </li>
-    </ng-container>
-  </ul>
-  <mat-divider *ngIf="multiple"></mat-divider>
+        </li>
+      }
+    </ul>
+  }
+  @if (multiple) {
+    <mat-divider></mat-divider>
+  }
 </ng-template>

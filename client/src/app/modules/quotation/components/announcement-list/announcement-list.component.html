@@ -1,31 +1,35 @@
 <div class="mat-elevation-z2 form-div">
   <div class=" full-width">
-    <table class="full-width table-fixed-layout" *ngIf="announcementSearch">
-      <tr>
-        <td>
-          <select-provision-stauts [(model)]="announcementSearch.announcementStatus" label="Statut"
-            [form]="announcementListForm" propertyName="paymentWay" [isMandatory]="false" [loadDomiciliation]="false"
-            [loadFormalite]="false" [loadSimpleprovision]="false">
-          </select-provision-stauts>
-        </td>
-        <td>
-          <generic-datepicker [(model)]="announcementSearch.startDate" label="Date de début"
-            [form]="announcementListForm" propertyName="startDate" [isMandatory]="false"
+    @if (announcementSearch) {
+      <table class="full-width table-fixed-layout">
+        <tr>
+          <td>
+            <select-provision-stauts [(model)]="announcementSearch.announcementStatus" label="Statut"
+              [form]="announcementListForm" propertyName="paymentWay" [isMandatory]="false" [loadDomiciliation]="false"
+              [loadFormalite]="false" [loadSimpleprovision]="false">
+            </select-provision-stauts>
+          </td>
+          <td>
+            <generic-datepicker [(model)]="announcementSearch.startDate" label="Date de début"
+              [form]="announcementListForm" propertyName="startDate" [isMandatory]="false"
             [isDisabled]="false"></generic-datepicker>
-        </td>
-        <td>
-          <generic-datepicker [(model)]="announcementSearch.endDate" label="Date de fin" [form]="announcementListForm"
+          </td>
+          <td>
+            <generic-datepicker [(model)]="announcementSearch.endDate" label="Date de fin" [form]="announcementListForm"
             propertyName="endDate" [isMandatory]="false" [isDisabled]="false"></generic-datepicker>
-        </td>
-        <td class="fab-td-button">
-          <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchAnnouncements()" class="add-button">
-            <mat-icon>search</mat-icon>
-          </button>
-        </td>
-      </tr>
-    </table>
-    <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="announcements" tableName="Annonces"
-      [displayTotalLines]="true" *ngIf="displayedColumns && displayedColumns.length>0 " [noMaxHeight]="true">
-    </sort-table>
+          </td>
+          <td class="fab-td-button">
+            <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchAnnouncements()" class="add-button">
+              <mat-icon>search</mat-icon>
+            </button>
+          </td>
+        </tr>
+      </table>
+    }
+    @if (displayedColumns && displayedColumns.length>0 ) {
+      <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="announcements" tableName="Annonces"
+        [displayTotalLines]="true" [noMaxHeight]="true">
+      </sort-table>
+    }
   </div>
 </div>

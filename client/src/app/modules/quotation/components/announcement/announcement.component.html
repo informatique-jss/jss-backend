@@ -1,273 +1,348 @@
-<form [formGroup]="announcementForm" *ngIf=" announcement">
-  <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
-    <mat-tab label="Informations générales">
-      <fieldset [disabled]="editMode==false" class="fieldset-no-border">
-        <div class="form-div">
-          <table class="full-width">
-            <tr>
-              <td>
-                <autocomplete-department [(model)]="announcement.department" [form]="announcementForm"
-                  propertyName="department" [isMandatory]="true" label="Département" [isDisabled]="!editMode"
-                  (onOptionSelected)="updateConfrereAndCharacterPrice()"
-                  [filterAvailableEntities]="announcement.confrere?announcement.confrere.departments:undefined"
-                  [conditionnalRequired]=" !isStatusOpen">
-                </autocomplete-department>
-              </td>
-              <td>
-                <autocomplete-confrere [(model)]="announcement.confrere" [form]="announcementForm"
-                  propertyName="confrere" [isMandatory]="true" [isDisabled]="!editMode" *ngIf="announcement.department"
-                  [filteredDepartment]="announcement.department" (onOptionSelected)="updateHeaderFree()"
-                  [hint]="getPublicationDays(announcement.confrere)">
-                </autocomplete-confrere>
-              </td>
-              <td *ngIf="announcement.confrere && announcement.confrere.provider">
-                <autocomplete-provider [(model)]="announcement.confrere.provider" [form]="announcementForm"
-                  label="Fournisseur" propertyName="provider" [isMandatory]="false" [isDisabled]="true">
-                </autocomplete-provider>
-              </td>
-            </tr>
-          </table>
-          <table>
-            <tr>
-              <td>
-                <generic-datepicker [(model)]="announcement.publicationDate" label="Date de publication"
-                  [minDate]="getCurrentDate()" [form]="announcementForm" propertyName="publicationDate"
-                  [isMandatory]="false" [isDisabled]="!editMode"
+@if ( announcement) {
+  <form [formGroup]="announcementForm">
+    <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event)" [selectedIndex]="index">
+      <mat-tab label="Informations générales">
+        <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+          <div class="form-div">
+            <table class="full-width">
+              <tr>
+                <td>
+                  <autocomplete-department [(model)]="announcement.department" [form]="announcementForm"
+                    propertyName="department" [isMandatory]="true" label="Département" [isDisabled]="!editMode"
+                    (onOptionSelected)="updateConfrereAndCharacterPrice()"
+                    [filterAvailableEntities]="announcement.confrere?announcement.confrere.departments:undefined"
+                    [conditionnalRequired]=" !isStatusOpen">
+                  </autocomplete-department>
+                </td>
+                <td>
+                  @if (announcement.department) {
+                    <autocomplete-confrere [(model)]="announcement.confrere" [form]="announcementForm"
+                      propertyName="confrere" [isMandatory]="true" [isDisabled]="!editMode"
+                      [filteredDepartment]="announcement.department" (onOptionSelected)="updateHeaderFree()"
+                      [hint]="getPublicationDays(announcement.confrere)">
+                    </autocomplete-confrere>
+                  }
+                </td>
+                @if (announcement.confrere && announcement.confrere.provider) {
+                  <td>
+                    <autocomplete-provider [(model)]="announcement.confrere.provider" [form]="announcementForm"
+                      label="Fournisseur" propertyName="provider" [isMandatory]="false" [isDisabled]="true">
+                    </autocomplete-provider>
+                  </td>
+                }
+              </tr>
+            </table>
+            <table>
+              <tr>
+                <td>
+                  <generic-datepicker [(model)]="announcement.publicationDate" label="Date de publication"
+                    [minDate]="getCurrentDate()" [form]="announcementForm" propertyName="publicationDate"
+                    [isMandatory]="false" [isDisabled]="!editMode"
                   (onDateChange)="updateCharacterPrice()"></generic-datepicker>
-              </td>
-              <td>
-                <generic-toggle [(model)]="announcement.isProofReadingDocument" label="Epreuve de relecture ?"
+                </td>
+                <td>
+                  <generic-toggle [(model)]="announcement.isProofReadingDocument" label="Epreuve de relecture ?"
                   [form]="announcementForm" propertyName="isProofReadingDocument"></generic-toggle>
-              </td>
-              <td>
-                <generic-toggle [(model)]="announcement.isReReadByJss" label="Relecture demandée par le client ?"
+                </td>
+                <td>
+                  <generic-toggle [(model)]="announcement.isReReadByJss" label="Relecture demandée par le client ?"
                   [form]="announcementForm" propertyName="isReReadByJss"></generic-toggle>
-              </td>
-            </tr>
-          </table>
-          <table class="full-width">
-            <tr>
-              <td>
-                <select-notice-family [(model)]="announcement.noticeTypeFamily" label="Rubrique"
-                  [form]="announcementForm" propertyName="noticeTypeFamily" [isMandatory]="false"
-                  (onFormChange)="clearNoticeTypeField()" [isDisabled]="!editMode">
-                </select-notice-family>
-              </td>
-              <td *ngIf="announcement.noticeTypeFamily">
-                <mat-form-field class="full-width">
-                  <mat-label>Sous-rubrique(s)</mat-label>
-                  <mat-chip-grid #chipListNoticeTypes>
-                    <mat-chip-row *ngFor="let noticeType of announcement.noticeTypes"
-                      (removed)="removeNoticeType(noticeType)">
-                      {{noticeType.label}}
-                      <button matChipRemove *ngIf="editMode">
-                        <mat-icon>cancel</mat-icon>
-                      </button>
-                    </mat-chip-row>
-                    <input placeholder="Saisir une sous-rubrique" #noticeTypesInput formControlName="noticeTypes"
-                      [matChipInputFor]="chipListNoticeTypes" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
-                      [matAutocomplete]="autoCompleteNoticeTypes">
-                  </mat-chip-grid>
-                  <mat-autocomplete autoActiveFirstOption #autoCompleteNoticeTypes="matAutocomplete"
-                    [displayWith]="displayLabel" (optionSelected)="addNoticeType($event)">
-                    <mat-option *ngFor="let noticeType of filteredNoticeTypes | async" [value]="noticeType">
-                      {{noticeType.label}}
-                    </mat-option>
-                  </mat-autocomplete>
-                </mat-form-field>
-              </td>
-            </tr>
-          </table>
-          <table class="full-width" *ngIf="announcement && announcement.id && announcement.confrere">
-            <tr>
-              <td>
-                <generic-input [(model)]="announcement.id" label="Numéro de l'annonce" [form]="announcementForm"
-                  propertyName="id" [isMandatory]="false" [isDisabled]="true">
-                </generic-input>
-              </td>
-              <td *ngIf="announcement.actuLegaleId">
-                <generic-input [(model)]="announcement.actuLegaleId" label="Identifiant ActuLegale"
-                  [form]="announcementForm" propertyName="actuLegaleId" [isMandatory]="false" [isDisabled]="true">
-                </generic-input>
-              </td>
-            </tr>
-          </table>
-          <table class="full-width">
-            <tr>
-              <td *ngIf="announcement.confrere && announcement.confrere.id !=confrereJssSpel.id && provision ">
-                <single-attachment [entity]=" provision" [entityType]="PROVISION_ENTITY_TYPE.entityType"
-                  [editMode]="editMode" [attachmentTypeToDisplay]="attachmentTypePublicationReceipt"
-                  (onUploadedFile)="updateAttachments($event)">
-                </single-attachment>
-              </td>
-              <td *ngIf="announcement.confrere && announcement.confrere.id !=confrereJssSpel.id && provision">
-                <single-attachment [entity]=" provision" [entityType]="PROVISION_ENTITY_TYPE.entityType"
-                  [editMode]="editMode" [attachmentTypeToDisplay]="attachmentTypePublicationFlag"
-                  (onUploadedFile)="updateAttachments($event)">
-                </single-attachment>
-              </td>
-            </tr>
-          </table>
-        </div>
-      </fieldset>
-      <mat-divider class="margin-mat-divider"></mat-divider>
-      <customer-order-comment *ngIf="provision && provision.id " [provision]="provision"></customer-order-comment>
-    </mat-tab>
-    <mat-tab label="Annonce">
-      <fieldset [disabled]="editMode==false" class="fieldset-no-border">
-        <div class="form-div">
-          <table class="full-width">
-            <tr>
-              <td>
-                <generic-toggle [(model)]="announcement.isHeader" label="En-tête ?" [form]="announcementForm"
-                  propertyName="isHeader" [isDisabled]="!editMode"></generic-toggle>
-              </td>
-              <td>
-                <generic-toggle *ngIf="announcement.isHeader" [(model)]="announcement.isHeaderFree"
-                  label="En-tête gratuit ?" [form]="announcementForm" propertyName="isHeaderFree"></generic-toggle>
-              </td>
-              <td>
-                <generic-toggle [(model)]="announcement.isComplexAnnouncement" label="Annonce complexe ?"
-                  [form]="announcementForm" propertyName="isComplexAnnouncement"></generic-toggle>
-              </td>
-              <td>
-                <generic-toggle [(model)]="announcement.isAnonymised" label="Annonce anonymisée"
-                  [form]="announcementForm" propertyName="isAnonymised"></generic-toggle>
-              </td>
-            </tr>
-          </table>
-          <table class="full-width" *ngIf="!announcement.isComplexAnnouncement">
-            <tr>
-              <td>
-                <mat-form-field class="full-width">
-                  <mat-label>Utiliser des modèles d'annonces</mat-label>
-                  <mat-chip-grid #chipListNoticeTemplates>
-                    <mat-chip-row *ngFor="let noticeTemplate of selectedNoticeTemplates"
-                      (removed)="removeNoticeTemplate(noticeTemplate)">
-                      {{noticeTemplate.label}}
-                      <button matChipRemove *ngIf="editMode">
-                        <mat-icon>cancel</mat-icon>
-                      </button>
-                    </mat-chip-row>
-                    <input placeholder="Saisir un modèle d'annonce" #noticeTemplateInput
-                      formControlName="noticeTemplates" [matChipInputFor]="chipListNoticeTemplates"
-                      [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
-                      [matAutocomplete]="autoCompleteNoticeTemplates">
-                  </mat-chip-grid>
-                  <mat-autocomplete autoActiveFirstOption #autoCompleteNoticeTemplates="matAutocomplete"
-                    [displayWith]="displayLabel" (optionSelected)="addNoticeTemplate($event)">
-                    <mat-option *ngFor="let noticeTemplate of filteredNoticeTemplates | async" [value]="noticeTemplate">
-                      {{noticeTemplate.label}}
-                    </mat-option>
-                  </mat-autocomplete>
-                </mat-form-field>
-              </td>
-            </tr>
-            <tr *ngIf="announcement.isHeader">
-              <td>
-                <p>En-tête :</p>
-                <div *ngIf="!editMode">
-                  <span [innerHTML]="announcement.noticeHeader | trustHtml" class="announce-container"></span>
-                </div>
-                <ckeditor *ngIf="editMode" [editor]="ckEditorHeader" [config]="config" [data]="initialHeaderValue"
-                  (change)="onNoticeHeaderChange($event)">
-                </ckeditor>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div *ngIf="!editMode">
-                  <span [innerHTML]="announcement.notice | trustHtml" class="announce-container"></span>
-                </div>
-                <ckeditor *ngIf="editMode" [editor]="ckEditorNotice" [config]="config" [data]="initialNoticeValue"
-                  (change)="onNoticeChange($event)">
-                </ckeditor>
-              </td>
-            </tr>
-
-            <tr *ngIf="announcement.isAnonymised">
-              <td>
-                <div *ngIf="!editMode">
-                  <hr>
-                  <span [innerHTML]="announcement.anonymisedNotice | trustHtml" class="announce-container"></span>
-                </div>
-                <ckeditor *ngIf="editMode" [editor]="ckEditorAnonymisedNotice" [config]="config"
-                  [data]="initialAnonymisedNoticeValue" (change)="onAnonymisedNoticeChange($event)">
-                </ckeditor>
-              </td>
-            </tr>
-          </table>
-          <table class="full-width" *ngIf="announcement.isComplexAnnouncement">
-            <tr *ngIf="announcement.id">
-              <td>
-                <single-attachment [entity]="provision!" [entityType]="PROVISION_ENTITY_TYPE.entityType"
-                  [editMode]="editMode" [attachmentTypeToDisplay]="attachmentTypeComplexAnnouncement"
-                  [forcedFileExtension]="'pdf'" (onUploadedFile)="updateAttachments($event)">
-                </single-attachment>
-              </td>
-            </tr>
-            <tr *ngIf="editMode && announcement.id">
-              <td>
-                <p>Ajoutez ici le PDF de l'annonce à publier.</p>
-                <p class="color-warn">Attention à bien laisser un en-tête de 5 cm sur la première page.</p>
-                <p>Le nombre de caractères et le prix seront calculés à l'enregistrement</p>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <p>Enregistrez une première fois l'annonce avant de pouvoir ajouter le PDF</p>
-              </td>
-            </tr>
-          </table>
-          <hr *ngIf="!editMode">
-          <table class="full-width">
-            <tr>
-              <td
-                *ngIf="announcement.confrere!=undefined && announcement.department!=undefined && announcement.publicationDate!=undefined">
-                Prix au caractère : {{characterPrice.price}} €
-              </td>
-              <td
-                *ngIf="announcement.confrere!=undefined && announcement.department!=undefined && announcement.publicationDate!=undefined">
-                Nombre de caractères : {{characterNumber}}
-              </td>
-              <td
-                *ngIf="announcement.confrere!=undefined && announcement.department!=undefined && announcement.publicationDate!=undefined">
-                Prix total : {{characterNumber*characterPrice.price | number}} €
-              </td>
-            </tr>
-          </table>
-        </div>
-      </fieldset>
-    </mat-tab>
-    <mat-tab label="Options">
-      <provision-options [editMode]="editMode" [provision]="provision" (provisionChange)="noticeChangeFunction()">
-      </provision-options>
-    </mat-tab>
-    <mat-tab label="Documents" *ngIf="announcement.id!=null && announcement.id!=undefined && provision">
-      <paper-set *ngIf="quotation &&  instanceOfCustomerOrderFn(quotation)" [customerOrder]="quotation"></paper-set>
-      <attachments [entity]="provision" [editMode]="true" [entityType]="PROVISION_ENTITY_TYPE.entityType">
-      </attachments>
-    </mat-tab>
-    <mat-tab label="Paiements & factures"
-      *ngIf="announcement.id && provision && quotation &&  instanceOfCustomerOrderFn(quotation)">
-      <provision-payment [editMode]="editMode" [provision]="provision" [quotation]="quotation">
-      </provision-payment>
-    </mat-tab>
-    <mat-tab label="Historique" *ngIf="announcement && announcement.id">
-      <ng-template matTabContent>
-        <history [entity]="announcement" [entityType]="ANNOUNCEMENT_ENTITY_TYPE" [parseTypeList]="announcementStatus">
-        </history>
-      </ng-template>
-    </mat-tab>
-    <mat-tab label="Historique (prestation)" *ngIf="provision && provision.id">
-      <ng-template matTabContent>
-        <history [entity]="provision" [entityType]="PROVISION_ENTITY_TYPE"></history>
-      </ng-template>
-    </mat-tab>
-    <mat-tab label="Débours" *ngIf=" announcement && announcement.id && canAddNewInvoice()">
-      <ng-template matTabContent>
-        <debour [provision]="provision"></debour>
-      </ng-template>
-    </mat-tab>
-  </mat-tab-group>
-</form>
+                </td>
+              </tr>
+            </table>
+            <table class="full-width">
+              <tr>
+                <td>
+                  <select-notice-family [(model)]="announcement.noticeTypeFamily" label="Rubrique"
+                    [form]="announcementForm" propertyName="noticeTypeFamily" [isMandatory]="false"
+                    (onFormChange)="clearNoticeTypeField()" [isDisabled]="!editMode">
+                  </select-notice-family>
+                </td>
+                @if (announcement.noticeTypeFamily) {
+                  <td>
+                    <mat-form-field class="full-width">
+                      <mat-label>Sous-rubrique(s)</mat-label>
+                      <mat-chip-grid #chipListNoticeTypes>
+                        @for (noticeType of announcement.noticeTypes; track noticeType) {
+                          <mat-chip-row
+                            (removed)="removeNoticeType(noticeType)">
+                            {{noticeType.label}}
+                            @if (editMode) {
+                              <button matChipRemove>
+                                <mat-icon>cancel</mat-icon>
+                              </button>
+                            }
+                          </mat-chip-row>
+                        }
+                        <input placeholder="Saisir une sous-rubrique" #noticeTypesInput formControlName="noticeTypes"
+                          [matChipInputFor]="chipListNoticeTypes" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
+                          [matAutocomplete]="autoCompleteNoticeTypes">
+                        </mat-chip-grid>
+                        <mat-autocomplete autoActiveFirstOption #autoCompleteNoticeTypes="matAutocomplete"
+                          [displayWith]="displayLabel" (optionSelected)="addNoticeType($event)">
+                          @for (noticeType of filteredNoticeTypes | async; track noticeType) {
+                            <mat-option [value]="noticeType">
+                              {{noticeType.label}}
+                            </mat-option>
+                          }
+                        </mat-autocomplete>
+                      </mat-form-field>
+                    </td>
+                  }
+                </tr>
+              </table>
+              @if (announcement && announcement.id && announcement.confrere) {
+                <table class="full-width">
+                  <tr>
+                    <td>
+                      <generic-input [(model)]="announcement.id" label="Numéro de l'annonce" [form]="announcementForm"
+                        propertyName="id" [isMandatory]="false" [isDisabled]="true">
+                      </generic-input>
+                    </td>
+                    @if (announcement.actuLegaleId) {
+                      <td>
+                        <generic-input [(model)]="announcement.actuLegaleId" label="Identifiant ActuLegale"
+                          [form]="announcementForm" propertyName="actuLegaleId" [isMandatory]="false" [isDisabled]="true">
+                        </generic-input>
+                      </td>
+                    }
+                  </tr>
+                </table>
+              }
+              <table class="full-width">
+                <tr>
+                  @if (announcement.confrere && announcement.confrere.id !=confrereJssSpel.id && provision ) {
+                    <td>
+                      <single-attachment [entity]=" provision" [entityType]="PROVISION_ENTITY_TYPE.entityType"
+                        [editMode]="editMode" [attachmentTypeToDisplay]="attachmentTypePublicationReceipt"
+                        (onUploadedFile)="updateAttachments($event)">
+                      </single-attachment>
+                    </td>
+                  }
+                  @if (announcement.confrere && announcement.confrere.id !=confrereJssSpel.id && provision) {
+                    <td>
+                      <single-attachment [entity]=" provision" [entityType]="PROVISION_ENTITY_TYPE.entityType"
+                        [editMode]="editMode" [attachmentTypeToDisplay]="attachmentTypePublicationFlag"
+                        (onUploadedFile)="updateAttachments($event)">
+                      </single-attachment>
+                    </td>
+                  }
+                </tr>
+              </table>
+            </div>
+          </fieldset>
+          <mat-divider class="margin-mat-divider"></mat-divider>
+          @if (provision && provision.id ) {
+            <customer-order-comment [provision]="provision"></customer-order-comment>
+          }
+        </mat-tab>
+        <mat-tab label="Annonce">
+          <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+            <div class="form-div">
+              <table class="full-width">
+                <tr>
+                  <td>
+                    <generic-toggle [(model)]="announcement.isHeader" label="En-tête ?" [form]="announcementForm"
+                    propertyName="isHeader" [isDisabled]="!editMode"></generic-toggle>
+                  </td>
+                  <td>
+                    @if (announcement.isHeader) {
+                      <generic-toggle [(model)]="announcement.isHeaderFree"
+                      label="En-tête gratuit ?" [form]="announcementForm" propertyName="isHeaderFree"></generic-toggle>
+                    }
+                  </td>
+                  <td>
+                    <generic-toggle [(model)]="announcement.isComplexAnnouncement" label="Annonce complexe ?"
+                    [form]="announcementForm" propertyName="isComplexAnnouncement"></generic-toggle>
+                  </td>
+                  <td>
+                    <generic-toggle [(model)]="announcement.isAnonymised" label="Annonce anonymisée"
+                    [form]="announcementForm" propertyName="isAnonymised"></generic-toggle>
+                  </td>
+                </tr>
+              </table>
+              @if (!announcement.isComplexAnnouncement) {
+                <table class="full-width">
+                  <tr>
+                    <td>
+                      <mat-form-field class="full-width">
+                        <mat-label>Utiliser des modèles d'annonces</mat-label>
+                        <mat-chip-grid #chipListNoticeTemplates>
+                          @for (noticeTemplate of selectedNoticeTemplates; track noticeTemplate) {
+                            <mat-chip-row
+                              (removed)="removeNoticeTemplate(noticeTemplate)">
+                              {{noticeTemplate.label}}
+                              @if (editMode) {
+                                <button matChipRemove>
+                                  <mat-icon>cancel</mat-icon>
+                                </button>
+                              }
+                            </mat-chip-row>
+                          }
+                          <input placeholder="Saisir un modèle d'annonce" #noticeTemplateInput
+                            formControlName="noticeTemplates" [matChipInputFor]="chipListNoticeTemplates"
+                            [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
+                            [matAutocomplete]="autoCompleteNoticeTemplates">
+                          </mat-chip-grid>
+                          <mat-autocomplete autoActiveFirstOption #autoCompleteNoticeTemplates="matAutocomplete"
+                            [displayWith]="displayLabel" (optionSelected)="addNoticeTemplate($event)">
+                            @for (noticeTemplate of filteredNoticeTemplates | async; track noticeTemplate) {
+                              <mat-option [value]="noticeTemplate">
+                                {{noticeTemplate.label}}
+                              </mat-option>
+                            }
+                          </mat-autocomplete>
+                        </mat-form-field>
+                      </td>
+                    </tr>
+                    @if (announcement.isHeader) {
+                      <tr>
+                        <td>
+                          <p>En-tête :</p>
+                          @if (!editMode) {
+                            <div>
+                              <span [innerHTML]="announcement.noticeHeader | trustHtml" class="announce-container"></span>
+                            </div>
+                          }
+                          @if (editMode) {
+                            <ckeditor [editor]="ckEditorHeader" [config]="config" [data]="initialHeaderValue"
+                              (change)="onNoticeHeaderChange($event)">
+                            </ckeditor>
+                          }
+                        </td>
+                      </tr>
+                    }
+                    <tr>
+                      <td>
+                        @if (!editMode) {
+                          <div>
+                            <span [innerHTML]="announcement.notice | trustHtml" class="announce-container"></span>
+                          </div>
+                        }
+                        @if (editMode) {
+                          <ckeditor [editor]="ckEditorNotice" [config]="config" [data]="initialNoticeValue"
+                            (change)="onNoticeChange($event)">
+                          </ckeditor>
+                        }
+                      </td>
+                    </tr>
+                    @if (announcement.isAnonymised) {
+                      <tr>
+                        <td>
+                          @if (!editMode) {
+                            <div>
+                              <hr>
+                                <span [innerHTML]="announcement.anonymisedNotice | trustHtml" class="announce-container"></span>
+                              </div>
+                            }
+                            @if (editMode) {
+                              <ckeditor [editor]="ckEditorAnonymisedNotice" [config]="config"
+                                [data]="initialAnonymisedNoticeValue" (change)="onAnonymisedNoticeChange($event)">
+                              </ckeditor>
+                            }
+                          </td>
+                        </tr>
+                      }
+                    </table>
+                  }
+                  @if (announcement.isComplexAnnouncement) {
+                    <table class="full-width">
+                      @if (announcement.id) {
+                        <tr>
+                          <td>
+                            <single-attachment [entity]="provision!" [entityType]="PROVISION_ENTITY_TYPE.entityType"
+                              [editMode]="editMode" [attachmentTypeToDisplay]="attachmentTypeComplexAnnouncement"
+                              [forcedFileExtension]="'pdf'" (onUploadedFile)="updateAttachments($event)">
+                            </single-attachment>
+                          </td>
+                        </tr>
+                      }
+                      @if (editMode && announcement.id) {
+                        <tr>
+                          <td>
+                            <p>Ajoutez ici le PDF de l'annonce à publier.</p>
+                            <p class="color-warn">Attention à bien laisser un en-tête de 5 cm sur la première page.</p>
+                            <p>Le nombre de caractères et le prix seront calculés à l'enregistrement</p>
+                          </td>
+                        </tr>
+                      }
+                      <tr>
+                        <td>
+                          <p>Enregistrez une première fois l'annonce avant de pouvoir ajouter le PDF</p>
+                        </td>
+                      </tr>
+                    </table>
+                  }
+                  @if (!editMode) {
+                    <hr>
+                    }
+                    <table class="full-width">
+                      <tr>
+                        @if (announcement.confrere!=undefined && announcement.department!=undefined && announcement.publicationDate!=undefined) {
+                          <td
+                            >
+                            Prix au caractère : {{characterPrice.price}} €
+                          </td>
+                        }
+                        @if (announcement.confrere!=undefined && announcement.department!=undefined && announcement.publicationDate!=undefined) {
+                          <td
+                            >
+                            Nombre de caractères : {{characterNumber}}
+                          </td>
+                        }
+                        @if (announcement.confrere!=undefined && announcement.department!=undefined && announcement.publicationDate!=undefined) {
+                          <td
+                            >
+                            Prix total : {{characterNumber*characterPrice.price | number}} €
+                          </td>
+                        }
+                      </tr>
+                    </table>
+                  </div>
+                </fieldset>
+              </mat-tab>
+              <mat-tab label="Options">
+                <provision-options [editMode]="editMode" [provision]="provision" (provisionChange)="noticeChangeFunction()">
+                </provision-options>
+              </mat-tab>
+              @if (announcement.id!=null && announcement.id!=undefined && provision) {
+                <mat-tab label="Documents">
+                  @if (quotation &&  instanceOfCustomerOrderFn(quotation)) {
+                    <paper-set [customerOrder]="quotation"></paper-set>
+                  }
+                  <attachments [entity]="provision" [editMode]="true" [entityType]="PROVISION_ENTITY_TYPE.entityType">
+                  </attachments>
+                </mat-tab>
+              }
+              @if (announcement.id && provision && quotation &&  instanceOfCustomerOrderFn(quotation)) {
+                <mat-tab label="Paiements & factures"
+                  >
+                  <provision-payment [editMode]="editMode" [provision]="provision" [quotation]="quotation">
+                  </provision-payment>
+                </mat-tab>
+              }
+              @if (announcement && announcement.id) {
+                <mat-tab label="Historique">
+                  <ng-template matTabContent>
+                    <history [entity]="announcement" [entityType]="ANNOUNCEMENT_ENTITY_TYPE" [parseTypeList]="announcementStatus">
+                    </history>
+                  </ng-template>
+                </mat-tab>
+              }
+              @if (provision && provision.id) {
+                <mat-tab label="Historique (prestation)">
+                  <ng-template matTabContent>
+                    <history [entity]="provision" [entityType]="PROVISION_ENTITY_TYPE"></history>
+                  </ng-template>
+                </mat-tab>
+              }
+              @if ( announcement && announcement.id && canAddNewInvoice()) {
+                <mat-tab label="Débours">
+                  <ng-template matTabContent>
+                    <debour [provision]="provision"></debour>
+                  </ng-template>
+                </mat-tab>
+              }
+            </mat-tab-group>
+          </form>
+        }

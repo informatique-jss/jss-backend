@@ -10,11 +10,11 @@
         <td>
           <chips-principal-accounting-account [(model)]="accountingBalanceSearch.principalAccountingAccounts"
             [form]="accountingBalanceForm" propertyName="principalAccountingAccounts" [isMandatory]="false"
-            label="Compte comptable principal" [isDisabled]="false"></chips-principal-accounting-account>
+          label="Compte comptable principal" [isDisabled]="false"></chips-principal-accounting-account>
         </td>
         <td>
           <select-accounting-account-class [(model)]="accountingBalanceSearch.accountingClass" label="Classe comptable"
-            [form]="accountingBalanceForm" propertyName="accountingClass"></select-accounting-account-class>
+          [form]="accountingBalanceForm" propertyName="accountingClass"></select-accounting-account-class>
         </td>
         <td>
           <select-accounting-journal [(model)]="accountingBalanceSearch.accountingJournal" label="Journal"
@@ -24,12 +24,12 @@
         <td>
           <generic-datepicker [(model)]="accountingBalanceSearch.startDate" label="Date de début"
             [form]="accountingBalanceForm" propertyName="startDate" [isMandatory]="false"
-            [isDisabled]="false"></generic-datepicker>
+          [isDisabled]="false"></generic-datepicker>
         </td>
         <td>
           <generic-datepicker [(model)]="accountingBalanceSearch.endDate" label="Date de fin"
             [form]="accountingBalanceForm" propertyName="endDate" [isMandatory]="false"
-            [isDisabled]="false"></generic-datepicker>
+          [isDisabled]="false"></generic-datepicker>
         </td>
         <td class="fab-td-button padding-fab">
           <button mat-mini-fab matTooltip="Mois en cours" (click)="setCurentMonth()" class="add-button">
@@ -53,52 +53,58 @@
         <td class="toggle-td">
           <generic-toggle [(model)]="accountingBalanceSearch.doNotDisplayZeroTiersAccounts"
             label="Cacher les comptes de Tiers soldés ?" [form]="accountingBalanceForm"
-            propertyName="doNotDisplayZeroTiersAccounts"></generic-toggle>
+          propertyName="doNotDisplayZeroTiersAccounts"></generic-toggle>
         </td>
         <td class="toggle-td">
           <generic-toggle [(model)]="accountingBalanceSearch.isFromAs400" label="Depuis l'AS400 ?"
-            [form]="accountingBalanceForm" propertyName="isFromAs400"></generic-toggle>
+          [form]="accountingBalanceForm" propertyName="isFromAs400"></generic-toggle>
         </td>
       </tr>
     </table>
     <sort-table [columns]="displayedColumns" [values]="accountingBalances" tableName="Balance"
-      [isSmallerHeight]="true"></sort-table>
+    [isSmallerHeight]="true"></sort-table>
     <sort-table [columns]="displayedColumnsClassTotal" [values]="classTotals" tableName="Balance total"
-      [isSmallerHeight]="true"></sort-table>
-    <table mat-table [dataSource]="accumulatedDataSource" class="mat-elevation-z8 table total-table min-widht-table"
-      cdkDrag [cdkDragFreeDragPosition]="currentUserPosition" (cdkDragEnded)="dropTotalDiv($event)"
-      *ngIf="accountingBalances">
-      <ng-container matColumnDef="label">
-        <th mat-header-cell *matHeaderCellDef class="without-padding-left">
-          <mat-icon color="accent" (click)="restoreDefaultTotalDivPosition()" class="pointer"
+    [isSmallerHeight]="true"></sort-table>
+    @if (accountingBalances) {
+      <table mat-table [dataSource]="accumulatedDataSource" class="mat-elevation-z8 table total-table min-widht-table"
+        cdkDrag [cdkDragFreeDragPosition]="currentUserPosition" (cdkDragEnded)="dropTotalDiv($event)"
+        >
+        <ng-container matColumnDef="label">
+          <th mat-header-cell *matHeaderCellDef class="without-padding-left">
+            <mat-icon color="accent" (click)="restoreDefaultTotalDivPosition()" class="pointer"
             matTooltip="Restaurer la position initiale">location_on</mat-icon>
-        </th>
-        <td mat-cell *matCellDef="let element">{{element.label}}</td>
-      </ng-container>
-      <ng-container matColumnDef="debit">
-        <th mat-header-cell *matHeaderCellDef>Débit</th>
-        <td mat-cell *matCellDef="let element">{{element.debit}} {{(element.debit?" €":"")}}</td>
-      </ng-container>
-      <ng-container matColumnDef="credit">
-        <th mat-header-cell *matHeaderCellDef>Crédit</th>
-        <td mat-cell *matCellDef="let element">{{element.credit}} {{(element.credit?" €":"")}}</td>
-      </ng-container>
-      <ng-container matColumnDef="balance">
-        <th mat-header-cell *matHeaderCellDef>Balance</th>
-        <td mat-cell *matCellDef="let element">{{element.balance}} {{(element.balance?" €":"")}}</td>
-      </ng-container>
-      <tr mat-header-row *matHeaderRowDef="displayedColumnsTotal"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumnsTotal;"></tr>
-    </table>
+          </th>
+          <td mat-cell *matCellDef="let element">{{element.label}}</td>
+        </ng-container>
+        <ng-container matColumnDef="debit">
+          <th mat-header-cell *matHeaderCellDef>Débit</th>
+          <td mat-cell *matCellDef="let element">{{element.debit}} {{(element.debit?" €":"")}}</td>
+        </ng-container>
+        <ng-container matColumnDef="credit">
+          <th mat-header-cell *matHeaderCellDef>Crédit</th>
+          <td mat-cell *matCellDef="let element">{{element.credit}} {{(element.credit?" €":"")}}</td>
+        </ng-container>
+        <ng-container matColumnDef="balance">
+          <th mat-header-cell *matHeaderCellDef>Balance</th>
+          <td mat-cell *matCellDef="let element">{{element.balance}} {{(element.balance?" €":"")}}</td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumnsTotal"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumnsTotal;"></tr>
+      </table>
+    }
   </div>
 </div>
-<button matTooltip="Exporter" mat-fab color="accent" class="fab-button" *ngIf="accountingBalances"
-  [matMenuTriggerFor]="menu">
-  <mat-icon>file_download</mat-icon>
-  <mat-menu #menu="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
-    <button mat-menu-item (click)="exportBalance()"
-      *ngIf="accountingBalanceSearch && accountingBalanceSearch.startDate && accountingBalanceSearch.endDate">Exporter
-      la balance affichée
-    </button>
-  </mat-menu>
-</button>
+@if (accountingBalances) {
+  <button matTooltip="Exporter" mat-fab color="accent" class="fab-button"
+    [matMenuTriggerFor]="menu">
+    <mat-icon>file_download</mat-icon>
+    <mat-menu #menu="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
+      @if (accountingBalanceSearch && accountingBalanceSearch.startDate && accountingBalanceSearch.endDate) {
+        <button mat-menu-item (click)="exportBalance()"
+          >Exporter
+          la balance affichée
+        </button>
+      }
+    </mat-menu>
+  </button>
+}

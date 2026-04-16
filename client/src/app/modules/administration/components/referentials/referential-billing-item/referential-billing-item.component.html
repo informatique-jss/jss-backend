@@ -11,38 +11,42 @@
     </sort-table>
   </div>
 </div>
-<div class="mat-elevation-z2 form-div" *ngIf="selectedEntity ">
-  <form [formGroup]="entityForm">
-    <div class="full-width">
-      <fieldset [disabled]="editMode==false" class="fieldset-no-border">
-        <table class="full-width">
-          <tr *ngIf="selectedEntity.id">
-            <td>
-              <generic-input [(model)]="selectedEntity.id" label="Identifiant technique" [form]="entityForm"
-                propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <autocomplete-billing-type [(model)]="selectedEntity.billingType" label="Famille de poste de facturation"
-                [form]="entityForm" propertyName="billingType" [isMandatory]="true" [isDisabled]="!editMode">
-              </autocomplete-billing-type>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <generic-input [(model)]="selectedEntity.preTaxPrice" label="Prix HT (€)" [form]="entityForm"
+@if (selectedEntity ) {
+  <div class="mat-elevation-z2 form-div">
+    <form [formGroup]="entityForm">
+      <div class="full-width">
+        <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+          <table class="full-width">
+            @if (selectedEntity.id) {
+              <tr>
+                <td>
+                  <generic-input [(model)]="selectedEntity.id" label="Identifiant technique" [form]="entityForm"
+                  propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
+                </td>
+              </tr>
+            }
+            <tr>
+              <td>
+                <autocomplete-billing-type [(model)]="selectedEntity.billingType" label="Famille de poste de facturation"
+                  [form]="entityForm" propertyName="billingType" [isMandatory]="true" [isDisabled]="!editMode">
+                </autocomplete-billing-type>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <generic-input [(model)]="selectedEntity.preTaxPrice" label="Prix HT (€)" [form]="entityForm"
                 propertyName="preTaxPrice" [isMandatory]="true" [isDisabled]="!editMode" type="number"></generic-input>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <generic-datepicker [(model)]="selectedEntity.startDate" label="Date d'application" [form]="entityForm"
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <generic-datepicker [(model)]="selectedEntity.startDate" label="Date d'application" [form]="entityForm"
                 propertyName="startDate" [isMandatory]="true" [isDisabled]="!editMode"></generic-datepicker>
-            </td>
-          </tr>
-        </table>
-      </fieldset>
-    </div>
-  </form>
-</div>
+              </td>
+            </tr>
+          </table>
+        </fieldset>
+      </div>
+    </form>
+  </div>
+}

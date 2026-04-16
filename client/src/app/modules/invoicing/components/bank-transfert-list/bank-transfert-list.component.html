@@ -4,27 +4,27 @@
       <tr>
         <td>
           <autocomplete-provider [(model)]="transfertSearch.provider" [form]="transfertForm" propertyName="provider"
-            [isMandatory]="false" label="Fournisseur"></autocomplete-provider>
+          [isMandatory]="false" label="Fournisseur"></autocomplete-provider>
         </td>
         <td>
           <generic-input [(model)]="transfertSearch.minAmount" label="Montant minimum" [form]="transfertForm"
-            propertyName="minAmount" [isMandatory]="false" [isDisabled]="false" type="number"></generic-input>
+          propertyName="minAmount" [isMandatory]="false" [isDisabled]="false" type="number"></generic-input>
         </td>
         <td>
           <generic-input [(model)]="transfertSearch.maxAmount" label="Montant maximum" [form]="transfertForm"
-            propertyName="maxAmount" [isMandatory]="false" [isDisabled]="false" type="number"></generic-input>
+          propertyName="maxAmount" [isMandatory]="false" [isDisabled]="false" type="number"></generic-input>
         </td>
         <td>
           <generic-input [(model)]="transfertSearch.label" label="Contenu du libellé" [form]="transfertForm"
-            propertyName="label" [isMandatory]="false" [isDisabled]="false"></generic-input>
+          propertyName="label" [isMandatory]="false" [isDisabled]="false"></generic-input>
         </td>
         <td>
           <generic-datepicker [(model)]="transfertSearch.startDate" label="Date de début" [form]="transfertForm"
-            propertyName="startDate" [isMandatory]="false" [isDisabled]="false"></generic-datepicker>
+          propertyName="startDate" [isMandatory]="false" [isDisabled]="false"></generic-datepicker>
         </td>
         <td>
           <generic-datepicker [(model)]="transfertSearch.endDate" label="Date de fin" [form]="transfertForm"
-            propertyName="endDate" [isMandatory]="false" [isDisabled]="false"></generic-datepicker>
+          propertyName="endDate" [isMandatory]="false" [isDisabled]="false"></generic-datepicker>
         </td>
         <td class="fab-td-button">
           <button mat-mini-fab color="warn" matTooltip="Rechercher" (click)="searchTransferts()" class="add-button">
@@ -35,28 +35,30 @@
       <tr>
         <td>
           <generic-toggle [(model)]="transfertSearch.isHideExportedBankTransfert" label="Masquer les virements exportés"
-            [form]="transfertForm" propertyName="isHideExportedBankTransfert"></generic-toggle>
+          [form]="transfertForm" propertyName="isHideExportedBankTransfert"></generic-toggle>
         </td>
         <td>
           <generic-toggle [(model)]="transfertSearch.isHideNonExportedBankTransfert"
             label="Masquer les virements non exportés" [form]="transfertForm"
-            propertyName="isHideNonExportedBankTransfert"></generic-toggle>
+          propertyName="isHideNonExportedBankTransfert"></generic-toggle>
         </td>
         <td>
           <generic-toggle [(model)]="transfertSearch.isDisplaySelectedForExportBankTransfert"
             label="Afficher la sélection" [form]="transfertForm"
-            propertyName="isDisplaySelectedForExportBankTransfert"></generic-toggle>
+          propertyName="isDisplaySelectedForExportBankTransfert"></generic-toggle>
         </td>
         <td>
           <generic-toggle [(model)]="transfertSearch.isHideMatchedBankTransfert"
             label="Masquer les virements rapprochés" [form]="transfertForm"
-            propertyName="isHideMatchedBankTransfert"></generic-toggle>
+          propertyName="isHideMatchedBankTransfert"></generic-toggle>
         </td>
       </tr>
     </table>
-    <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="transfers" tableName="Virements"
-      [isSmallestHeight]="true" [displayTotalLines]="true" *ngIf="displayedColumns && displayedColumns.length>0 ">
-    </sort-table>
+    @if (displayedColumns && displayedColumns.length>0 ) {
+      <sort-table [actions]="tableAction" [columns]="displayedColumns" [values]="transfers" tableName="Virements"
+        [isSmallestHeight]="true" [displayTotalLines]="true">
+      </sort-table>
+    }
   </div>
 </div>
 <button matTooltip="Exporter pour la banque" mat-fab color="accent" class="fab-button" [matMenuTriggerFor]="menu">

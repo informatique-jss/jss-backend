@@ -11,57 +11,61 @@
     </sort-table>
   </div>
 </div>
-<div class="mat-elevation-z2 form-div" *ngIf="selectedEntity ">
-  <form [formGroup]="entityForm">
-    <div class="full-width">
-      <fieldset [disabled]="editMode==false" class="fieldset-no-border">
-        <table class="full-width">
-          <tr *ngIf="selectedEntity.id">
-            <td>
-              <generic-input [(model)]="selectedEntity.id" label="Identifiant technique" [form]="entityForm"
-                propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <generic-input [(model)]="selectedEntity.code" label="Codification" [maxLength]="20" [form]="entityForm"
+@if (selectedEntity ) {
+  <div class="mat-elevation-z2 form-div">
+    <form [formGroup]="entityForm">
+      <div class="full-width">
+        <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+          <table class="full-width">
+            @if (selectedEntity.id) {
+              <tr>
+                <td>
+                  <generic-input [(model)]="selectedEntity.id" label="Identifiant technique" [form]="entityForm"
+                  propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
+                </td>
+              </tr>
+            }
+            <tr>
+              <td>
+                <generic-input [(model)]="selectedEntity.code" label="Codification" [maxLength]="20" [form]="entityForm"
                 propertyName="code" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <generic-input [(model)]="selectedEntity.label" label="Nom fonctionnel" [maxLength]="255"
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <generic-input [(model)]="selectedEntity.label" label="Nom fonctionnel" [maxLength]="255"
                 [form]="entityForm" propertyName="label" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccountDebit" [form]="entityForm"
-                propertyName="accountingAccountDebit" [isMandatory]="false"
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccountDebit" [form]="entityForm"
+                  propertyName="accountingAccountDebit" [isMandatory]="false"
                 label="Compte comptable débit"></autocomplete-accounting-account>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccountCredit" [form]="entityForm"
-                propertyName="accountingAccountCredit" [isMandatory]="false"
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <autocomplete-accounting-account [(model)]="selectedEntity.accountingAccountCredit" [form]="entityForm"
+                  propertyName="accountingAccountCredit" [isMandatory]="false"
                 label="Compte comptable crédit"></autocomplete-accounting-account>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <generic-toggle [(model)]="selectedEntity.isNotToUse" label="Ne pas utiliser ?" [form]="entityForm"
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <generic-toggle [(model)]="selectedEntity.isNotToUse" label="Ne pas utiliser ?" [form]="entityForm"
                 propertyName="isNotToUse" [isDisabled]="!editMode"></generic-toggle>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <generic-toggle [(model)]="selectedEntity.isUseEmployerPart" label="Utiliser la part employeur ?"
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <generic-toggle [(model)]="selectedEntity.isUseEmployerPart" label="Utiliser la part employeur ?"
                 [form]="entityForm" propertyName="isUseEmployerPart" [isDisabled]="!editMode"></generic-toggle>
-            </td>
-          </tr>
-        </table>
-      </fieldset>
-    </div>
-  </form>
-</div>
+              </td>
+            </tr>
+          </table>
+        </fieldset>
+      </div>
+    </form>
+  </div>
+}

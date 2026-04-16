@@ -1,16 +1,22 @@
 <mat-form-field class="full-width" [formGroup]="form!">
   <mat-label>{{label}}</mat-label>
   <mat-chip-grid #chipList [formControlName]="propertyName">
-    <mat-chip-row *ngIf="model" (removed)="removeElement(model)">
-      {{getValueFromObject(model)}}
-      <button matChipRemove *ngIf="!isDisabled">
-        <mat-icon>cancel</mat-icon>
-      </button>
-      <mat-icon color="accent" matChipRemove *ngIf="isDisabled" class="always-clickable"
-        (click)="prepareMail(model)">mail</mat-icon>
-    </mat-chip-row>
+    @if (model) {
+      <mat-chip-row (removed)="removeElement(model)">
+        {{getValueFromObject(model)}}
+        @if (!isDisabled) {
+          <button matChipRemove>
+            <mat-icon>cancel</mat-icon>
+          </button>
+        }
+        @if (isDisabled) {
+          <mat-icon color="accent" matChipRemove class="always-clickable"
+          (click)="prepareMail(model)">mail</mat-icon>
+        }
+      </mat-chip-row>
+    }
     <input [placeholder]="isDisabled?'':'Saisir un mail et appuyer sur Entrée'" #chipInput [matChipInputFor]="chipList"
       [disabled]="isDisabled" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
       (matChipInputTokenEnd)="addElement($event)">
-  </mat-chip-grid>
-</mat-form-field>
+    </mat-chip-grid>
+  </mat-form-field>

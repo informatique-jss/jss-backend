@@ -2,81 +2,117 @@
   <img class="navbar-brand" ui-sref='main.tiers' [src]="logoOsiris" [ngClass]="{'navbar-brand-invert':isDarkTheme}" />
 </div>
 <mat-nav-list class="nav-list-main-menu">
-  <a mat-list-item routerLink="/dashboard" *ngIf="canViewDashboardModule()"
-    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/dashboard' )>=0}">
-    <mat-icon>dashboard</mat-icon> <span>Tableau de bord</span>
-  </a>
-  <a mat-list-item routerLink="/tiers" *ngIf="canViewTiersModule()"
-    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/tiers' )>=0}">
-    <mat-icon>group</mat-icon> <span>Tiers / Responsables</span>
-  </a>
-  <a mat-list-item routerLink="/crm" *ngIf="canViewCrmModule()"
-    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/crm' )>=0}">
-    <mat-icon>how_to_reg</mat-icon> <span>CRM</span>
-  </a>
-  <a mat-list-item routerLink="/confrere/null" *ngIf="canViewConfrereModule()"
-    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/confrere' )>=0}">
-    <mat-icon>share</mat-icon> <span>Confreres</span>
-  </a>
-  <a mat-list-item routerLink="/administration/competent/authority" *ngIf="canViewCompetentAuthorityModule()"
-    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/administration/competent/authority' )>=0}">
-    <mat-icon>gavel</mat-icon> <span>Autorités compétentes</span>
-  </a>
-  <a mat-list-item routerLink="/administration/provider" *ngIf="canViewProviderModule()"
-    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/administration/provider' )>=0}">
-    <mat-icon>factory</mat-icon> <span>Fournisseurs</span>
-  </a>
-  <a mat-list-item routerLink="/quotation" *ngIf="canViewQuotationModule()"
-    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/quotation' )>=0 && getCurrentRoute().indexOf('/kanban' )<0}">
-    <mat-icon>request_quote</mat-icon> <span>Devis</span>
-  </a>
-  <a mat-list-item routerLink="/order" *ngIf="canViewCustomerOrderModule()"
-    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/order' )>=0 && getCurrentRoute().indexOf('/kanban' )<0}">
-    <mat-icon>shopping_cart</mat-icon> <span>Commandes</span>
-  </a>
-  <a mat-list-item routerLink="/recurring-order" *ngIf="canViewCustomerOrderModule()"
-    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/recurring-order' )>=0}">
-    <mat-icon>repeat</mat-icon> <span>Commandes récurrentes</span>
-  </a>
-  <a mat-list-item routerLink="/paper-set" *ngIf="canViewPaperSetModule()"
-    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/paper-set' )>=0}">
-    <mat-icon>history_edu</mat-icon> <span>Gestion des documents</span>
-  </a>
-  <a mat-list-item routerLink="/affaire" *ngIf="canViewAffaireModule()"
-    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/affaire' )>=0}">
-    <mat-icon>work</mat-icon> <span>Affaires</span>
-  </a>
-  <a mat-list-item routerLink="/provision" *ngIf="canViewProvisionModule()"
-    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/provision' )>=0 && getCurrentRoute().indexOf('/kanban' )<0}">
-    <mat-icon>design_services</mat-icon> <span>Prestations</span>
-  </a>
-  <a mat-list-item routerLink="/invoicing" *ngIf="canViewInvoiceModule()"
-    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/invoicing' )>=0}">
-    <mat-icon>point_of_sale</mat-icon> <span>Facturation</span>
-  </a>
-  <a mat-list-item routerLink="/accounting" *ngIf="canViewAccountingModule()"
-    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/accounting' )>=0}">
-    <mat-icon>account_balance</mat-icon> <span>Comptabilité</span>
-  </a>
-  <a mat-list-item routerLink="/reporting/list" *ngIf="canViewReportingModule()"
-    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/reporting' )>=0}">
-    <mat-icon>trending_up</mat-icon> <span>Reporting</span>
-  </a>
-  <a mat-list-item routerLink="/indicator" *ngIf="canViewIndicatorModule()"
-    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/indicator' )>=0}">
-    <mat-icon>monitoring</mat-icon> <span>Indicateurs</span>
-  </a>
-  <a mat-list-item routerLink="/administration" *ngIf="canViewAdministrationModule()"
-    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/administration' )>=0 && getCurrentRoute().indexOf('/administration/competent/authority' )<0 && getCurrentRoute().indexOf('/administration/provider' )<0}">
-    <mat-icon>settings</mat-icon> <span>Administration</span>
-  </a>
+  @if (canViewDashboardModule()) {
+    <a mat-list-item routerLink="/dashboard"
+      [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/dashboard' )>=0}">
+      <mat-icon>dashboard</mat-icon> <span>Tableau de bord</span>
+    </a>
+  }
+  @if (canViewTiersModule()) {
+    <a mat-list-item routerLink="/tiers"
+      [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/tiers' )>=0}">
+      <mat-icon>group</mat-icon> <span>Tiers / Responsables</span>
+    </a>
+  }
+  @if (canViewCrmModule()) {
+    <a mat-list-item routerLink="/crm"
+      [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/crm' )>=0}">
+      <mat-icon>how_to_reg</mat-icon> <span>CRM</span>
+    </a>
+  }
+  @if (canViewConfrereModule()) {
+    <a mat-list-item routerLink="/confrere/null"
+      [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/confrere' )>=0}">
+      <mat-icon>share</mat-icon> <span>Confreres</span>
+    </a>
+  }
+  @if (canViewCompetentAuthorityModule()) {
+    <a mat-list-item routerLink="/administration/competent/authority"
+      [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/administration/competent/authority' )>=0}">
+      <mat-icon>gavel</mat-icon> <span>Autorités compétentes</span>
+    </a>
+  }
+  @if (canViewProviderModule()) {
+    <a mat-list-item routerLink="/administration/provider"
+      [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/administration/provider' )>=0}">
+      <mat-icon>factory</mat-icon> <span>Fournisseurs</span>
+    </a>
+  }
+  @if (canViewQuotationModule()) {
+    <a mat-list-item routerLink="/quotation"
+      [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/quotation' )>=0 && getCurrentRoute().indexOf('/kanban' )<0}">
+      <mat-icon>request_quote</mat-icon> <span>Devis</span>
+    </a>
+  }
+  @if (canViewCustomerOrderModule()) {
+    <a mat-list-item routerLink="/order"
+      [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/order' )>=0 && getCurrentRoute().indexOf('/kanban' )<0}">
+      <mat-icon>shopping_cart</mat-icon> <span>Commandes</span>
+    </a>
+  }
+  @if (canViewCustomerOrderModule()) {
+    <a mat-list-item routerLink="/recurring-order"
+      [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/recurring-order' )>=0}">
+      <mat-icon>repeat</mat-icon> <span>Commandes récurrentes</span>
+    </a>
+  }
+  @if (canViewPaperSetModule()) {
+    <a mat-list-item routerLink="/paper-set"
+      [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/paper-set' )>=0}">
+      <mat-icon>history_edu</mat-icon> <span>Gestion des documents</span>
+    </a>
+  }
+  @if (canViewAffaireModule()) {
+    <a mat-list-item routerLink="/affaire"
+      [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/affaire' )>=0}">
+      <mat-icon>work</mat-icon> <span>Affaires</span>
+    </a>
+  }
+  @if (canViewProvisionModule()) {
+    <a mat-list-item routerLink="/provision"
+      [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/provision' )>=0 && getCurrentRoute().indexOf('/kanban' )<0}">
+      <mat-icon>design_services</mat-icon> <span>Prestations</span>
+    </a>
+  }
+  @if (canViewInvoiceModule()) {
+    <a mat-list-item routerLink="/invoicing"
+      [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/invoicing' )>=0}">
+      <mat-icon>point_of_sale</mat-icon> <span>Facturation</span>
+    </a>
+  }
+  @if (canViewAccountingModule()) {
+    <a mat-list-item routerLink="/accounting"
+      [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/accounting' )>=0}">
+      <mat-icon>account_balance</mat-icon> <span>Comptabilité</span>
+    </a>
+  }
+  @if (canViewReportingModule()) {
+    <a mat-list-item routerLink="/reporting/list"
+      [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/reporting' )>=0}">
+      <mat-icon>trending_up</mat-icon> <span>Reporting</span>
+    </a>
+  }
+  @if (canViewIndicatorModule()) {
+    <a mat-list-item routerLink="/indicator"
+      [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/indicator' )>=0}">
+      <mat-icon>monitoring</mat-icon> <span>Indicateurs</span>
+    </a>
+  }
+  @if (canViewAdministrationModule()) {
+    <a mat-list-item routerLink="/administration"
+      [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/administration' )>=0 && getCurrentRoute().indexOf('/administration/competent/authority' )<0 && getCurrentRoute().indexOf('/administration/provider' )<0}">
+      <mat-icon>settings</mat-icon> <span>Administration</span>
+    </a>
+  }
   <a mat-list-item routerLink="/my-profil" [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/my-profil' )>=0}">
     <mat-icon>manage_accounts</mat-icon> <span>Mon profil</span>
   </a>
-  <a mat-list-item routerLink="/monitoring" *ngIf="canViewSupervisionModule()"
-    [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/monitoring' )>=0}">
-    <mat-icon>bar_chart_4_bars</mat-icon> <span>Supervision</span>
-  </a>
+  @if (canViewSupervisionModule()) {
+    <a mat-list-item routerLink="/monitoring"
+      [ngClass]="{'menu-item-active':getCurrentRoute().indexOf('/monitoring' )>=0}">
+      <mat-icon>bar_chart_4_bars</mat-icon> <span>Supervision</span>
+    </a>
+  }
 </mat-nav-list>
 <button mat-mini-fab color="accent" class="light" (click)="toggleDarkTheme()" matTooltip="Ca va être tout noir ...">
   <mat-icon>lightbulb</mat-icon>
@@ -87,9 +123,11 @@
 <button mat-mini-fab color="accent" class="search" (click)="openSearch()">
   <mat-icon>search</mat-icon>
 </button>
-<button mat-mini-fab color="accent" class="notif" routerLink="notifications" [matBadge]="getNotificationNumber()"
-  matBadgePosition="below after" matBadgeColor="warn" matBadgeSize="small" [matBadgeHidden]="getNotificationNumber()<=0"
-  [matTooltip]="getNotificationNumber() + ' notification'+(getNotificationNumber()>1?'s':'')"
-  *ngIf="canDisplayNotifications()">
-  <mat-icon>notifications</mat-icon>
-</button>
+@if (canDisplayNotifications()) {
+  <button mat-mini-fab color="accent" class="notif" routerLink="notifications" [matBadge]="getNotificationNumber()"
+    matBadgePosition="below after" matBadgeColor="warn" matBadgeSize="small" [matBadgeHidden]="getNotificationNumber()<=0"
+    [matTooltip]="getNotificationNumber() + ' notification'+(getNotificationNumber()>1?'s':'')"
+    >
+    <mat-icon>notifications</mat-icon>
+  </button>
+}

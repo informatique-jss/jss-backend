@@ -8,8 +8,8 @@
 }
 
 .mat-mdc-chip {
-  --mdc-chip-label-text-color: #fff !important;
-  --mdc-chip-with-icon-selected-icon-color: #fff !important;
+  --mat-chip-label-text-color: #fff !important;
+  --mat-chip-with-icon-selected-icon-color: #fff !important;
 }
 
 .mat-mdc-chip.mat-mdc-standard-chip.ko-status {

@@ -35,11 +35,13 @@
         <kanban-invoicing></kanban-invoicing>
       </ng-template>
     </mat-tab>
-    <mat-tab label="Solde bancaire" *ngIf="canViewBankBalance()">
-      <ng-template matTabContent>
-        <bank-balance></bank-balance>
-      </ng-template>
-    </mat-tab>
+    @if (canViewBankBalance()) {
+      <mat-tab label="Solde bancaire">
+        <ng-template matTabContent>
+          <bank-balance></bank-balance>
+        </ng-template>
+      </mat-tab>
+    }
     <mat-tab label="Rapprochement auto.">
       <ng-template matTabContent>
         <ofx-matching></ofx-matching>

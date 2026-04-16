@@ -10,116 +10,162 @@
     <mat-tab label="Responsable(s)">
       <responsable-main [tiers]="tiers" [editMode]="editMode"></responsable-main>
     </mat-tab>
-    <mat-tab label="Documents" *ngIf="tiers.id!=null && tiers.id!=undefined">
-      <attachments [entity]="tiers" [editMode]="true" [entityType]="TIERS_ENTITY_TYPE.entityType">
-      </attachments>
-    </mat-tab>
-    <mat-tab label="Mails" *ngIf="tiers.id">
-      <ng-template matTabContent>
-        <automatic-mail-list [tiers]="tiers">
-        </automatic-mail-list>
-      </ng-template>
-    </mat-tab>
-    <mat-tab label="Devis" *ngIf="tiers.id!=null && tiers.id!=undefined">
-      <ng-template matTabContent>
-        <quotation-list class="integration-component" *ngIf="this.quotationSearch.customerOrders"
-          [quotationSearch]="quotationSearch" [isForTiersIntegration]="true">
-        </quotation-list>
-      </ng-template>
-    </mat-tab>
-    <mat-tab label="Commandes" *ngIf="tiers.id!=null && tiers.id!=undefined">
-      <ng-template matTabContent>
-        <ordering-list class="integration-component" *ngIf="this.orderingSearch.customerOrders"
-          [orderingSearch]="orderingSearch" [isForTiersIntegration]="true">
-        </ordering-list>
-      </ng-template>
-    </mat-tab>
-    <mat-tab label="Prepa visite" *ngIf="tiers.id!=null && tiers.id!=undefined">
-      <ng-template matTabContent>
-        <visit-prepa-tiers-responsible-info [tiers]="tiers"></visit-prepa-tiers-responsible-info>
-        <visit-prepa-customer-orders-responsible [tiers]="tiers"></visit-prepa-customer-orders-responsible>
-        <provision-list class="integration-component"
-          *ngIf="this.provisionSearch.customerOrders && this.provisionSearch.customerOrders.length>0"
-          [affaireSearch]="provisionSearch" [isForTiersIntegration]="true">
-        </provision-list>
-      </ng-template>
-    </mat-tab>
+    @if (tiers.id!=null && tiers.id!=undefined) {
+      <mat-tab label="Documents">
+        <attachments [entity]="tiers" [editMode]="true" [entityType]="TIERS_ENTITY_TYPE.entityType">
+        </attachments>
+      </mat-tab>
+    }
+    @if (tiers.id) {
+      <mat-tab label="Mails">
+        <ng-template matTabContent>
+          <automatic-mail-list [tiers]="tiers">
+          </automatic-mail-list>
+        </ng-template>
+      </mat-tab>
+    }
+    @if (tiers.id!=null && tiers.id!=undefined) {
+      <mat-tab label="Devis">
+        <ng-template matTabContent>
+          @if (this.quotationSearch.customerOrders) {
+            <quotation-list class="integration-component"
+              [quotationSearch]="quotationSearch" [isForTiersIntegration]="true">
+            </quotation-list>
+          }
+        </ng-template>
+      </mat-tab>
+    }
+    @if (tiers.id!=null && tiers.id!=undefined) {
+      <mat-tab label="Commandes">
+        <ng-template matTabContent>
+          @if (this.orderingSearch.customerOrders) {
+            <ordering-list class="integration-component"
+              [orderingSearch]="orderingSearch" [isForTiersIntegration]="true">
+            </ordering-list>
+          }
+        </ng-template>
+      </mat-tab>
+    }
+    @if (tiers.id!=null && tiers.id!=undefined) {
+      <mat-tab label="Prepa visite">
+        <ng-template matTabContent>
+          <visit-prepa-tiers-responsible-info [tiers]="tiers"></visit-prepa-tiers-responsible-info>
+          <visit-prepa-customer-orders-responsible [tiers]="tiers"></visit-prepa-customer-orders-responsible>
+          @if (this.provisionSearch.customerOrders && this.provisionSearch.customerOrders.length>0) {
+            <provision-list class="integration-component"
+              [affaireSearch]="provisionSearch" [isForTiersIntegration]="true">
+            </provision-list>
+          }
+        </ng-template>
+      </mat-tab>
+    }
     <mat-tab label="CRI">
       <ng-template matTabContent>
         <incident-report-list [tiers]="tiers"></incident-report-list>
       </ng-template>
     </mat-tab>
-    <mat-tab label="Prestations" *ngIf="tiers.id!=null && tiers.id!=undefined">
-      <ng-template matTabContent>
-        <provision-list class="integration-component"
-          *ngIf="this.provisionSearch.customerOrders && this.provisionSearch.customerOrders.length>0"
-          [affaireSearch]="provisionSearch" [isForTiersIntegration]="true">
-        </provision-list>
-      </ng-template>
-    </mat-tab>
-    <mat-tab label="Factures" *ngIf="invoiceSearch.customerOrders">
-      <ng-template matTabContent>
-        <invoice-list [invoiceSearch]="invoiceSearch" [isForTiersIntegration]="true"></invoice-list>
-      </ng-template>
-    </mat-tab>
-    <mat-tab label="Comptes"
-      *ngIf="responsableAccountSearch && responsableAccountSearch.id && !this.idResponsable && tiers.id">
-      <ng-template matTabContent>
-        <accounting-record [tiersToDisplay]="responsableAccountSearch"></accounting-record>
-      </ng-template>
-    </mat-tab>
-    <mat-tab label="RFF" *ngIf="rffSearch && rffSearch.tiers  ">
-      <ng-template matTabContent>
-        <div class="mat-elevation-z2 form-div">
-          <rff-list [rffSearch]="rffSearch" [isForTiersIntegration]="true"></rff-list>
-        </div>
-      </ng-template>
-    </mat-tab>
-    <mat-tab label="Suivi" *ngIf="tiers.id!=null && tiers.id!=undefined">
-      <ng-template matTabContent>
-        <tiers-followup [tiers]="tiers" [editMode]="editMode"></tiers-followup>
-      </ng-template>
-    </mat-tab>
-    <mat-tab label="Historique" *ngIf="tiers.id!=null && tiers.id!=undefined">
-      <ng-template matTabContent>
-        <history [entity]="tiers" [entityType]="TIERS_ENTITY_TYPE"></history>
-      </ng-template>
-    </mat-tab>
+    @if (tiers.id!=null && tiers.id!=undefined) {
+      <mat-tab label="Prestations">
+        <ng-template matTabContent>
+          @if (this.provisionSearch.customerOrders && this.provisionSearch.customerOrders.length>0) {
+            <provision-list class="integration-component"
+              [affaireSearch]="provisionSearch" [isForTiersIntegration]="true">
+            </provision-list>
+          }
+        </ng-template>
+      </mat-tab>
+    }
+    @if (invoiceSearch.customerOrders) {
+      <mat-tab label="Factures">
+        <ng-template matTabContent>
+          <invoice-list [invoiceSearch]="invoiceSearch" [isForTiersIntegration]="true"></invoice-list>
+        </ng-template>
+      </mat-tab>
+    }
+    @if (responsableAccountSearch && responsableAccountSearch.id && !this.idResponsable && tiers.id) {
+      <mat-tab label="Comptes"
+        >
+        <ng-template matTabContent>
+          <accounting-record [tiersToDisplay]="responsableAccountSearch"></accounting-record>
+        </ng-template>
+      </mat-tab>
+    }
+    @if (rffSearch && rffSearch.tiers  ) {
+      <mat-tab label="RFF">
+        <ng-template matTabContent>
+          <div class="mat-elevation-z2 form-div">
+            <rff-list [rffSearch]="rffSearch" [isForTiersIntegration]="true"></rff-list>
+          </div>
+        </ng-template>
+      </mat-tab>
+    }
+    @if (tiers.id!=null && tiers.id!=undefined) {
+      <mat-tab label="Suivi">
+        <ng-template matTabContent>
+          <tiers-followup [tiers]="tiers" [editMode]="editMode"></tiers-followup>
+        </ng-template>
+      </mat-tab>
+    }
+    @if (tiers.id!=null && tiers.id!=undefined) {
+      <mat-tab label="Historique">
+        <ng-template matTabContent>
+          <history [entity]="tiers" [entityType]="TIERS_ENTITY_TYPE"></history>
+        </ng-template>
+      </mat-tab>
+    }
   </mat-tab-group>
 </div>
-<div [hidden]="(tiers.id!=undefined && tiers.id!=null)" *ngIf="!editMode">
-  <tiers-list></tiers-list>
-</div>
-<button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode==true" (click)="saveTiers()">
-  <mat-icon>save</mat-icon>
-</button>
-<button matTooltip="Modifier le tiers" mat-fab color="accent" class="fab-button"
-  *ngIf="editMode==false && tiers.id!=undefined && tiers.id!=null" (click)="editTiers()">
-  <mat-icon>edit</mat-icon>
-</button>
-<button matTooltip="Ajouter un tiers" mat-fab color="accent" class="fab-button"
-  *ngIf="editMode==false && (tiers.id==undefined || tiers.id==null)" (click)="createTiers()">
-  <mat-icon>add</mat-icon>
-</button>
-<button matTooltip="Supprimer le tiers" mat-fab color="warn" class="third-fab-button"
-  *ngIf="editMode==false &&  tiers.id" (click)="deleteTiers()">
-  <mat-icon>delete</mat-icon>
-</button>
-<a matTooltip="Voir le tiers dans Osiris V2" mat-fab color="accent" class="fourth-fab-button"
-  *ngIf="editMode==false &&  tiers.id" [href]="frontendOsirisV2Url + OSIRIS_V2_TIERS_ROUTE + tiers.id" target="_blank">
-  <mat-icon>launch</mat-icon>
-</a>
-<button matTooltip="Imprimer une étiquette pour le tiers" mat-fab color="accent" class="fifth-fab-button"
-  *ngIf="editMode==false &&  tiers.id" (click)="printLabel()">
-  <mat-icon>print</mat-icon>
-</button>
-<button matTooltip="Redresser les comptes" mat-fab color="accent" class="sixth-fab-button"
-  *ngIf="editMode==false &&  tiers.id && canRepairAccounts()" (click)="repairAccounts()">
-  <mat-icon>build</mat-icon>
-</button>
-<button matTooltip="Ajouter une notification sur ce tiers" mat-fab color="accent" class="second-fab-button"
-  (click)="addNewNotification()" *ngIf="editMode==false &&  tiers.id && canDisplayNotifications()"
-  [matBadge]="getNotificationForTiers().length" [matBadgeHidden]="getNotificationForTiers().length<=0"
-  matBadgePosition="below after" matBadgeColor="warn">
-  <mat-icon>notifications</mat-icon>
-</button>
+@if (!editMode) {
+  <div [hidden]="(tiers.id!=undefined && tiers.id!=null)">
+    <tiers-list></tiers-list>
+  </div>
+}
+@if (editMode==true) {
+  <button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" (click)="saveTiers()">
+    <mat-icon>save</mat-icon>
+  </button>
+}
+@if (editMode==false && tiers.id!=undefined && tiers.id!=null) {
+  <button matTooltip="Modifier le tiers" mat-fab color="accent" class="fab-button"
+    (click)="editTiers()">
+    <mat-icon>edit</mat-icon>
+  </button>
+}
+@if (editMode==false && (tiers.id==undefined || tiers.id==null)) {
+  <button matTooltip="Ajouter un tiers" mat-fab color="accent" class="fab-button"
+    (click)="createTiers()">
+    <mat-icon>add</mat-icon>
+  </button>
+}
+@if (editMode==false &&  tiers.id) {
+  <button matTooltip="Supprimer le tiers" mat-fab color="warn" class="third-fab-button"
+    (click)="deleteTiers()">
+    <mat-icon>delete</mat-icon>
+  </button>
+}
+@if (editMode==false &&  tiers.id) {
+  <a matTooltip="Voir le tiers dans Osiris V2" mat-fab color="accent" class="fourth-fab-button"
+    [href]="frontendOsirisV2Url + OSIRIS_V2_TIERS_ROUTE + tiers.id" target="_blank">
+    <mat-icon>launch</mat-icon>
+  </a>
+}
+@if (editMode==false &&  tiers.id) {
+  <button matTooltip="Imprimer une étiquette pour le tiers" mat-fab color="accent" class="fifth-fab-button"
+    (click)="printLabel()">
+    <mat-icon>print</mat-icon>
+  </button>
+}
+@if (editMode==false &&  tiers.id && canRepairAccounts()) {
+  <button matTooltip="Redresser les comptes" mat-fab color="accent" class="sixth-fab-button"
+    (click)="repairAccounts()">
+    <mat-icon>build</mat-icon>
+  </button>
+}
+@if (editMode==false &&  tiers.id && canDisplayNotifications()) {
+  <button matTooltip="Ajouter une notification sur ce tiers" mat-fab color="accent" class="second-fab-button"
+    (click)="addNewNotification()"
+    [matBadge]="getNotificationForTiers().length" [matBadgeHidden]="getNotificationForTiers().length<=0"
+    matBadgePosition="below after" matBadgeColor="warn">
+    <mat-icon>notifications</mat-icon>
+  </button>
+}

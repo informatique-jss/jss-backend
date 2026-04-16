@@ -4,13 +4,15 @@
       <tr>
         <td>
           <generic-input [(model)]="textSearch" label="Rechercher" [form]="affaireSearchForm" propertyName="textSearch"
-            [isMandatory]="true" [isDisabled]="false" (onFormChange)="searchAffaires()"></generic-input>
+          [isMandatory]="true" [isDisabled]="false" (onFormChange)="searchAffaires()"></generic-input>
         </td>
       </tr>
     </table>
-    <sort-table *ngIf="textSearch && textSearch.length>=2" [actions]="tableAction" [columns]="displayedColumns"
-      [displayTotalLines]="true" [values]="affaires" tableName="Affaires">
-    </sort-table>
+    @if (textSearch && textSearch.length>=2) {
+      <sort-table [actions]="tableAction" [columns]="displayedColumns"
+        [displayTotalLines]="true" [values]="affaires" tableName="Affaires">
+      </sort-table>
+    }
   </div>
 </div>
 <button matTooltip="Corriger les affaires" mat-fab color="accent" class="fab-button" (click)="correctAffaire()">

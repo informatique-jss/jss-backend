@@ -11,60 +11,66 @@
     </sort-table>
   </div>
 </div>
-<div class="mat-elevation-z2 form-div" *ngIf="selectedEntity ">
-  <form [formGroup]="entityForm">
-    <div class="full-width">
-      <fieldset [disabled]="editMode==false" class="fieldset-no-border">
-        <table class="full-width">
-          <tr *ngIf="selectedEntity.id">
-            <td>
-              <generic-input [(model)]="selectedEntity.id" label="Identifiant technique" [form]="entityForm"
-                propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <generic-input [(model)]="selectedEntity.code" label="Codification" [maxLength]="20" [form]="entityForm"
+@if (selectedEntity ) {
+  <div class="mat-elevation-z2 form-div">
+    <form [formGroup]="entityForm">
+      <div class="full-width">
+        <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+          <table class="full-width">
+            @if (selectedEntity.id) {
+              <tr>
+                <td>
+                  <generic-input [(model)]="selectedEntity.id" label="Identifiant technique" [form]="entityForm"
+                  propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
+                </td>
+              </tr>
+            }
+            <tr>
+              <td>
+                <generic-input [(model)]="selectedEntity.code" label="Codification" [maxLength]="20" [form]="entityForm"
                 propertyName="code" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <generic-input [(model)]="selectedEntity.label" label="Nom fonctionnel" [maxLength]="100"
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <generic-input [(model)]="selectedEntity.label" label="Nom fonctionnel" [maxLength]="100"
                 [form]="entityForm" propertyName="label" [isMandatory]="true" [isDisabled]="!editMode"></generic-input>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <generic-input [(model)]="selectedEntity.customLabel" label="Nom affiché" [maxLength]="200"
-                [form]="entityForm" propertyName="customLabel" [isMandatory]="true"
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <generic-input [(model)]="selectedEntity.customLabel" label="Nom affiché" [maxLength]="200"
+                  [form]="entityForm" propertyName="customLabel" [isMandatory]="true"
                 [isDisabled]="!editMode"></generic-input>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <generic-toggle [(model)]="selectedEntity.isToDownloadOnProvision"
-                label="Télécharger automatiquement la pièce-jointe sur la prestation ?" [form]="entityForm"
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <generic-toggle [(model)]="selectedEntity.isToDownloadOnProvision"
+                  label="Télécharger automatiquement la pièce-jointe sur la prestation ?" [form]="entityForm"
                 propertyName="isToDownloadOnProvision"></generic-toggle>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <select-attachment-type [(model)]="selectedEntity.attachmentType"
-                label="Type de pièce jointe correspondante" [form]="entityForm" propertyName="attachmentType"
-                [isMandatory]="selectedEntity.isToDownloadOnProvision"
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <select-attachment-type [(model)]="selectedEntity.attachmentType"
+                  label="Type de pièce jointe correspondante" [form]="entityForm" propertyName="attachmentType"
+                  [isMandatory]="selectedEntity.isToDownloadOnProvision"
                 [isDisabled]="!editMode"></select-attachment-type>
-            </td>
-          </tr>
-          <tr *ngIf="selectedEntity.code">
-            <td>
-              <single-attachment [entity]="selectedEntity" [entityType]="TYPE_DOCUMENT_ATTACHMENT_TYPE.entityType"
-                [editMode]="true" [attachmentTypeToDisplay]="attachmentTypeTemplate"
-                (onUploadedFile)="updateAttachments($event)"></single-attachment>
-            </td>
-          </tr>
-        </table>
-      </fieldset>
-    </div>
-  </form>
-</div>
+              </td>
+            </tr>
+            @if (selectedEntity.code) {
+              <tr>
+                <td>
+                  <single-attachment [entity]="selectedEntity" [entityType]="TYPE_DOCUMENT_ATTACHMENT_TYPE.entityType"
+                    [editMode]="true" [attachmentTypeToDisplay]="attachmentTypeTemplate"
+                  (onUploadedFile)="updateAttachments($event)"></single-attachment>
+                </td>
+              </tr>
+            }
+          </table>
+        </fieldset>
+      </div>
+    </form>
+  </div>
+}

@@ -1,282 +1,318 @@
-<form [formGroup]="settlementBillingForm" *ngIf="tiers">
-  <div class="mat-accordion-container full-width">
-    <fieldset [disabled]="editMode==false" class="fieldset-no-border">
-      <mat-accordion multi>
-        <mat-expansion-panel>
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              Documents papiers
-            </mat-panel-title>
-            <mat-icon *ngIf="instanceOfResponsable(tiers)"
-              matTooltip="Appliquer le paramétrage aux commandes et devis du responsable" color="accent"
-              class="pointer icon-padding" (click)="applyParametersDocumentToQuotation(paperDocument, tiers)">
-              folder_copy</mat-icon>
-            <ng-template></ng-template>
-          </mat-expansion-panel-header>
-          <addressing [editMode]=" editMode" [document]="paperDocument" [displayOverrideMail]="true"
-            [displayNumberMailing]="true" [displayOverrideEMail]="false">
-          </addressing>
-        </mat-expansion-panel>
-        <mat-expansion-panel>
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              Documents numériques
-            </mat-panel-title>
-            <mat-icon *ngIf="instanceOfResponsable(tiers)"
-              matTooltip="Appliquer le paramétrage aux commandes et devis du responsable" color="accent"
-              class="pointer icon-padding" (click)="applyParametersDocumentToQuotation(digitalDocument, tiers)">
-              folder_copy</mat-icon>
-            <ng-template></ng-template>
-          </mat-expansion-panel-header>
-          <addressing [editMode]="editMode" [document]="digitalDocument" [displayOverrideMail]="false"
-            [displayOverrideEMail]="true">
-          </addressing>
-        </mat-expansion-panel>
-        <mat-expansion-panel>
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              Facture
-            </mat-panel-title>
-            <mat-icon *ngIf="instanceOfResponsable(tiers)"
-              matTooltip="Appliquer le paramétrage aux commandes et devis du responsable" color="accent"
-              class="pointer icon-padding" (click)="applyParametersDocumentToQuotation(billingDocument, tiers)">
-              folder_copy</mat-icon>
-            <ng-template></ng-template>
-          </mat-expansion-panel-header>
-          <table class="full-width">
-            <tr>
-              <td>
-                <radio-group-billing-label [(model)]="billingDocument.billingLabelType" [form]="settlementBillingForm"
-                  [isDisabled]="!editMode" propertyName="billingLabelType" label="Libellé sur facture">
-                </radio-group-billing-label>
-              </td>
-            </tr>
-          </table>
-          <table class="full-width"
-            *ngIf="billingDocument.billingLabelType!=undefined && billingDocument.billingLabelType.code!=undefined && billingDocument.billingLabelType.id==billingLableTypeOther.id">
-            <tr>
-              <td>
-                <generic-input [(model)]="billingDocument.billingLabel" label="Libellé" [form]="settlementBillingForm"
-                  propertyName="billingLabel" [maxLength]="200" [isMandatory]="true"
-                  [isDisabled]="!editMode"></generic-input>
-              </td>
-              <td>
-                <generic-input [(model)]="billingDocument.billingAddress" label="Adresse" [form]="settlementBillingForm"
-                  propertyName="billingAddress" [isMandatory]="true" [isDisabled]="!editMode"
-                  [maxLength]="200"></generic-input>
-              </td>
-              <td>
-                <autocomplete-postal-code [(model)]="billingDocument.billingPostalCode" [form]="settlementBillingForm"
-                  [byPassAutocompletValidator]="true" propertyName="postalCode" [isMandatory]="true" label="Code postal"
-                  [isDisabled]="!editMode"
-                  [conditionnalRequired]="billingDocument.billingLabelCountry != null && billingDocument.billingLabelCountry.id == countryFrance.id"
-                  (onOptionSelected)="fillCity($event)"></autocomplete-postal-code>
-              </td>
-              <td>
-                <generic-input [(model)]="billingDocument.cedexComplement" label="Complément CEDEX"
-                  [form]="settlementBillingForm" propertyName="cedexComplement" [isMandatory]="false"
-                  [isDisabled]="!editMode" [maxLength]="20"></generic-input>
-              </td>
-              <td>
-                <autocomplete-city [(model)]="billingDocument.billingLabelCity" [isDisabled]="!editMode" label="Ville"
-                  [preFilterPostalCode]="billingDocument.billingPostalCode"
-                  [modelCountry]="billingDocument.billingLabelCountry" [form]="settlementBillingForm"
-                  propertyName="city" [isMandatory]="true" (onOptionSelected)="fillPostalCode($event)">
-                </autocomplete-city>
-              </td>
-              <td>
-                <autocomplete-country [(model)]="billingDocument.billingLabelCountry" [form]="settlementBillingForm"
-                  label="Pays" [isDisabled]="!editMode" propertyName="country" [isMandatory]="true">
-                </autocomplete-country>
-              </td>
-              <td>
-                <generic-toggle [(model)]="billingDocument.billingLabelIsIndividual" label="Est particulier ?"
-                  [form]="settlementBillingForm" propertyName="billingLabelIsIndividual"></generic-toggle>
-              </td>
-            </tr>
-          </table>
-          <table class="full-width" *ngIf="billingDocument">
-            <tr>
-              <td>
-                <generic-toggle [(model)]="billingDocument.isResponsableOnBilling" label="Responsable sur facture ?"
-                  [form]="settlementBillingForm" propertyName="isResponsableOnBilling"></generic-toggle>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <generic-toggle [(model)]="billingDocument.isQrCodePaymentDisabled"
-                  label="Désactiver le QR code de paiement ?" [form]="settlementBillingForm"
-                  propertyName="isQrCodePaymentDisabled"></generic-toggle>
-              </td>
-            </tr>
-          </table>
-          <table class="full-width">
-            <tr>
-              <td>
-                <generic-toggle [(model)]="billingDocument.isCommandNumberMandatory"
-                  label="Numéro de commande obligatoire ?" [form]="settlementBillingForm"
+@if (tiers) {
+  <form [formGroup]="settlementBillingForm">
+    <div class="mat-accordion-container full-width">
+      <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+        <mat-accordion multi>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Documents papiers
+              </mat-panel-title>
+              @if (instanceOfResponsable(tiers)) {
+                <mat-icon
+                  matTooltip="Appliquer le paramétrage aux commandes et devis du responsable" color="accent"
+                  class="pointer icon-padding" (click)="applyParametersDocumentToQuotation(paperDocument, tiers)">
+                folder_copy</mat-icon>
+              }
+              <ng-template></ng-template>
+            </mat-expansion-panel-header>
+            <addressing [editMode]=" editMode" [document]="paperDocument" [displayOverrideMail]="true"
+              [displayNumberMailing]="true" [displayOverrideEMail]="false">
+            </addressing>
+          </mat-expansion-panel>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Documents numériques
+              </mat-panel-title>
+              @if (instanceOfResponsable(tiers)) {
+                <mat-icon
+                  matTooltip="Appliquer le paramétrage aux commandes et devis du responsable" color="accent"
+                  class="pointer icon-padding" (click)="applyParametersDocumentToQuotation(digitalDocument, tiers)">
+                folder_copy</mat-icon>
+              }
+              <ng-template></ng-template>
+            </mat-expansion-panel-header>
+            <addressing [editMode]="editMode" [document]="digitalDocument" [displayOverrideMail]="false"
+              [displayOverrideEMail]="true">
+            </addressing>
+          </mat-expansion-panel>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Facture
+              </mat-panel-title>
+              @if (instanceOfResponsable(tiers)) {
+                <mat-icon
+                  matTooltip="Appliquer le paramétrage aux commandes et devis du responsable" color="accent"
+                  class="pointer icon-padding" (click)="applyParametersDocumentToQuotation(billingDocument, tiers)">
+                folder_copy</mat-icon>
+              }
+              <ng-template></ng-template>
+            </mat-expansion-panel-header>
+            <table class="full-width">
+              <tr>
+                <td>
+                  <radio-group-billing-label [(model)]="billingDocument.billingLabelType" [form]="settlementBillingForm"
+                    [isDisabled]="!editMode" propertyName="billingLabelType" label="Libellé sur facture">
+                  </radio-group-billing-label>
+                </td>
+              </tr>
+            </table>
+            @if (billingDocument.billingLabelType!=undefined && billingDocument.billingLabelType.code!=undefined && billingDocument.billingLabelType.id==billingLableTypeOther.id) {
+              <table class="full-width"
+                >
+                <tr>
+                  <td>
+                    <generic-input [(model)]="billingDocument.billingLabel" label="Libellé" [form]="settlementBillingForm"
+                      propertyName="billingLabel" [maxLength]="200" [isMandatory]="true"
+                    [isDisabled]="!editMode"></generic-input>
+                  </td>
+                  <td>
+                    <generic-input [(model)]="billingDocument.billingAddress" label="Adresse" [form]="settlementBillingForm"
+                      propertyName="billingAddress" [isMandatory]="true" [isDisabled]="!editMode"
+                    [maxLength]="200"></generic-input>
+                  </td>
+                  <td>
+                    <autocomplete-postal-code [(model)]="billingDocument.billingPostalCode" [form]="settlementBillingForm"
+                      [byPassAutocompletValidator]="true" propertyName="postalCode" [isMandatory]="true" label="Code postal"
+                      [isDisabled]="!editMode"
+                      [conditionnalRequired]="billingDocument.billingLabelCountry != null && billingDocument.billingLabelCountry.id == countryFrance.id"
+                    (onOptionSelected)="fillCity($event)"></autocomplete-postal-code>
+                  </td>
+                  <td>
+                    <generic-input [(model)]="billingDocument.cedexComplement" label="Complément CEDEX"
+                      [form]="settlementBillingForm" propertyName="cedexComplement" [isMandatory]="false"
+                    [isDisabled]="!editMode" [maxLength]="20"></generic-input>
+                  </td>
+                  <td>
+                    <autocomplete-city [(model)]="billingDocument.billingLabelCity" [isDisabled]="!editMode" label="Ville"
+                      [preFilterPostalCode]="billingDocument.billingPostalCode"
+                      [modelCountry]="billingDocument.billingLabelCountry" [form]="settlementBillingForm"
+                      propertyName="city" [isMandatory]="true" (onOptionSelected)="fillPostalCode($event)">
+                    </autocomplete-city>
+                  </td>
+                  <td>
+                    <autocomplete-country [(model)]="billingDocument.billingLabelCountry" [form]="settlementBillingForm"
+                      label="Pays" [isDisabled]="!editMode" propertyName="country" [isMandatory]="true">
+                    </autocomplete-country>
+                  </td>
+                  <td>
+                    <generic-toggle [(model)]="billingDocument.billingLabelIsIndividual" label="Est particulier ?"
+                    [form]="settlementBillingForm" propertyName="billingLabelIsIndividual"></generic-toggle>
+                  </td>
+                </tr>
+              </table>
+            }
+            @if (billingDocument) {
+              <table class="full-width">
+                <tr>
+                  <td>
+                    <generic-toggle [(model)]="billingDocument.isResponsableOnBilling" label="Responsable sur facture ?"
+                    [form]="settlementBillingForm" propertyName="isResponsableOnBilling"></generic-toggle>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <generic-toggle [(model)]="billingDocument.isQrCodePaymentDisabled"
+                      label="Désactiver le QR code de paiement ?" [form]="settlementBillingForm"
+                    propertyName="isQrCodePaymentDisabled"></generic-toggle>
+                  </td>
+                </tr>
+              </table>
+            }
+            <table class="full-width">
+              <tr>
+                <td>
+                  <generic-toggle [(model)]="billingDocument.isCommandNumberMandatory"
+                    label="Numéro de commande obligatoire ?" [form]="settlementBillingForm"
                   propertyName="isCommandNumberMandatory"></generic-toggle>
-              </td>
-              <td *ngIf="billingDocument.isCommandNumberMandatory">
-                <generic-input [(model)]="billingDocument.commandNumber" label="N° de commande annuel"
-                  [form]="settlementBillingForm" propertyName="commandNumber" [maxLength]="40"></generic-input>
-              </td>
-            </tr>
-          </table>
-          <addressing [editMode]="editMode" [document]="billingDocument "></addressing>
-          <table class="full-width">
-            <tr>
-              <td>
-                <single-chips-mail label="Mails" [(model)]="billingDocument.reminderMail" [form]="settlementBillingForm"
-                  propertyName="reminderMail" label="Adresse mail de relance pour facturation"
+                </td>
+                @if (billingDocument.isCommandNumberMandatory) {
+                  <td>
+                    <generic-input [(model)]="billingDocument.commandNumber" label="N° de commande annuel"
+                    [form]="settlementBillingForm" propertyName="commandNumber" [maxLength]="40"></generic-input>
+                  </td>
+                }
+              </tr>
+            </table>
+            <addressing [editMode]="editMode" [document]="billingDocument "></addressing>
+            <table class="full-width">
+              <tr>
+                <td>
+                  <single-chips-mail label="Mails" [(model)]="billingDocument.reminderMail" [form]="settlementBillingForm"
+                    propertyName="reminderMail" label="Adresse mail de relance pour facturation"
                   [isDisabled]="!editMode"></single-chips-mail>
-              </td>
-            </tr>
-          </table>
-        </mat-expansion-panel>
-        <mat-expansion-panel *ngIf="instanceOfTiers(tiers) && !instanceOfResponsable(tiers)">
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              Règlement
-            </mat-panel-title>
-            <ng-template></ng-template>
-          </mat-expansion-panel-header>
-          <table class="full-width">
-            <tr>
-              <td>
-                <select-payment-types [(model)]="tiers.paymentType" label="Type" [form]="settlementBillingForm"
-                  propertyName="paymentType" [isMandatory]="true" [isDisabled]="!editMode"
-                  [filteredPaymentType]="[paymentTypePrelevement,paymentTypeVirement,paymentTypeCB, paymentTypeEspeces]">
-                </select-payment-types>
-              </td>
-              <td
-                *ngIf="tiers  && tiers.paymentType && (tiers.paymentType.id==paymentTypePrelevement.id || tiers.paymentType.id==paymentTypeVirement.id)">
-                <generic-input [(model)]="tiers.paymentIban" label="IBAN" [form]="settlementBillingForm"
-                  propertyName="paymentIban" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40">
-                </generic-input>
-              </td>
-              <td
-                *ngIf="tiers  && tiers.paymentType && (tiers.paymentType.id==paymentTypePrelevement.id || tiers.paymentType.id==paymentTypeVirement.id)">
-                <generic-input [(model)]="tiers.paymentBic" label="BIC" [form]="settlementBillingForm"
-                  propertyName="paymentBic" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40">
-                </generic-input>
-              </td>
-              <td *ngIf="tiers&& tiers.paymentType && tiers.paymentType.id==paymentTypePrelevement.id">
-                <generic-toggle [(model)]="tiers.isSepaMandateReceived" label="Mandat SEPA reçu ?"
-                  [form]="settlementBillingForm" propertyName="isSepaMandateReceived"></generic-toggle>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <generic-toggle [(model)]="tiers.isProvisionalPaymentMandatory" label="Provision obligatoire ?"
-                  [form]="settlementBillingForm" propertyName="isProvisionalPaymentMandatory"></generic-toggle>
-              </td>
-              <td>
-                <select-payment-deadline [(model)]="dunningDocument.paymentDeadlineType" label="Délai de paiement"
-                  [form]="settlementBillingForm" propertyName="paymentDeadlineType" [isDisabled]="!editMode">
-                </select-payment-deadline>
-              </td>
-              <td *ngIf="tiers && tiers.paymentType && tiers.paymentType.id==paymentTypePrelevement.id">
-                <generic-datepicker [(model)]="tiers.sepaMandateSignatureDate" label="Date de signature du mandat SEPA"
-                  [form]="settlementBillingForm" propertyName="sepaMandateSignatureDate" [isMandatory]="true"
-                  [isDisabled]="!editMode"
-                  [conditionnalRequired]="tiers.paymentType && tiers.paymentType.id==paymentTypePrelevement.id"></generic-datepicker>
-              </td>
-            </tr>
-          </table>
-        </mat-expansion-panel>
-        <mat-expansion-panel *ngIf="instanceOfTiers(tiers) && !instanceOfResponsable(tiers)">
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              Remboursement
-            </mat-panel-title>
-            <ng-template></ng-template>
-          </mat-expansion-panel-header>
-          <table class="full-width">
-            <tr>
-              <td>
-                <select-refund-type [(model)]="refundDocument.refundType" label="Type de remboursement"
-                  [isDisabled]="!editMode" [form]="settlementBillingForm" propertyName="refundType">
-                </select-refund-type>
-              </td>
-              <td
-                *ngIf=" refundDocument !=undefined && refundDocument.refundType!=undefined && refundDocument.refundType.code!=undefined && refundDocument.refundType.id==refundTypeVirement.id">
-                <generic-input [(model)]="refundDocument.refundIBAN" label="IBAN" [form]="settlementBillingForm"
-                  propertyName="refundIBAN" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40">
-                </generic-input>
-              </td>
-              <td
-                *ngIf=" refundDocument !=undefined && refundDocument.refundType!=undefined && refundDocument.refundType.code!=undefined && refundDocument.refundType.id==refundTypeVirement.id">
-                <generic-input [(model)]="refundDocument.refundBic" label="BIC" [form]="settlementBillingForm"
-                  propertyName="refundBic" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40">
-                </generic-input>
-              </td>
-            </tr>
-          </table>
-        </mat-expansion-panel>
-        <mat-expansion-panel *ngIf="instanceOfTiers(tiers) && !instanceOfResponsable(tiers) ">
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              Relevés de compte
-            </mat-panel-title>
-            <ng-template></ng-template>
-          </mat-expansion-panel-header>
-          <table class="full-width">
-            <tr>
-              <td>
-                <radio-group-billing-closure [(model)]="billingClosureDocument.billingClosureType" [isMandatory]="true"
-                  [isDisabled]="!editMode" [form]="settlementBillingForm" propertyName="billingClosureType"
-                  label="Type">
-                </radio-group-billing-closure>
-              </td>
-              <td>
-                <radio-group-billing-closure-recipient [(model)]="billingClosureDocument.billingClosureRecipientType"
-                  [isDisabled]="!editMode" [isMandatory]="true" [form]="settlementBillingForm"
-                  propertyName="billingClosureRecipientType" label="Destinataire(s)">
-                </radio-group-billing-closure-recipient>
-              </td>
-              <td
-                *ngIf="billingClosureDocument.billingClosureRecipientType && billingClosureDocument.billingClosureRecipientType.id == billingClosureRecipientTypeOther.id">
-                <chips-mail [(model)]="billingClosureDocument.mailsClient" label="Mails" [form]="settlementBillingForm"
-                  propertyName="mailsClient" [isMandatory]="true" [isDisabled]="!editMode"></chips-mail>
-              </td>
-              <td
-                *ngIf="billingClosureDocument.billingClosureRecipientType && billingClosureDocument.billingClosureRecipientType.id != billingClosureRecipientTypeOther.id">
-                <chips-mail [(model)]="billingClosureDocument.mailsClient" label="Destinataires supplémentaires"
-                  [form]="settlementBillingForm" propertyName="mailsClient" [isMandatory]="false"
-                  [isDisabled]="!editMode"></chips-mail>
-              </td>
-            </tr>
-          </table>
-        </mat-expansion-panel>
-        <mat-expansion-panel>
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              RFF
-            </mat-panel-title>
-            <ng-template></ng-template>
-          </mat-expansion-panel-header>
-          <table class="full-width">
-            <tr>
-              <td>
-                <generic-input [(model)]="tiers.rffIban" label="IBAN de versement du RFF" [form]="settlementBillingForm"
-                  propertyName="rffIban" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40">
-                </generic-input>
-              </td>
-              <td>
-                <generic-input [(model)]="tiers.rffBic" label="BIC de versement du RFF" [form]="settlementBillingForm"
-                  propertyName="rffBic" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40">
-                </generic-input>
-              </td>
-              <td>
-                <generic-input [(model)]="tiers.rffMail" label="Mail d'envoi du RFF" [form]="settlementBillingForm"
-                  propertyName="rffMail" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="100">
-                </generic-input>
-              </td>
-            </tr>
-          </table>
-        </mat-expansion-panel>
-      </mat-accordion>
-    </fieldset>
-  </div>
-</form>
+                </td>
+              </tr>
+            </table>
+          </mat-expansion-panel>
+          @if (instanceOfTiers(tiers) && !instanceOfResponsable(tiers)) {
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  Règlement
+                </mat-panel-title>
+                <ng-template></ng-template>
+              </mat-expansion-panel-header>
+              <table class="full-width">
+                <tr>
+                  <td>
+                    <select-payment-types [(model)]="tiers.paymentType" label="Type" [form]="settlementBillingForm"
+                      propertyName="paymentType" [isMandatory]="true" [isDisabled]="!editMode"
+                      [filteredPaymentType]="[paymentTypePrelevement,paymentTypeVirement,paymentTypeCB, paymentTypeEspeces]">
+                    </select-payment-types>
+                  </td>
+                  @if (tiers  && tiers.paymentType && (tiers.paymentType.id==paymentTypePrelevement.id || tiers.paymentType.id==paymentTypeVirement.id)) {
+                    <td
+                      >
+                      <generic-input [(model)]="tiers.paymentIban" label="IBAN" [form]="settlementBillingForm"
+                        propertyName="paymentIban" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40">
+                      </generic-input>
+                    </td>
+                  }
+                  @if (tiers  && tiers.paymentType && (tiers.paymentType.id==paymentTypePrelevement.id || tiers.paymentType.id==paymentTypeVirement.id)) {
+                    <td
+                      >
+                      <generic-input [(model)]="tiers.paymentBic" label="BIC" [form]="settlementBillingForm"
+                        propertyName="paymentBic" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40">
+                      </generic-input>
+                    </td>
+                  }
+                  @if (tiers&& tiers.paymentType && tiers.paymentType.id==paymentTypePrelevement.id) {
+                    <td>
+                      <generic-toggle [(model)]="tiers.isSepaMandateReceived" label="Mandat SEPA reçu ?"
+                      [form]="settlementBillingForm" propertyName="isSepaMandateReceived"></generic-toggle>
+                    </td>
+                  }
+                </tr>
+                <tr>
+                  <td>
+                    <generic-toggle [(model)]="tiers.isProvisionalPaymentMandatory" label="Provision obligatoire ?"
+                    [form]="settlementBillingForm" propertyName="isProvisionalPaymentMandatory"></generic-toggle>
+                  </td>
+                  <td>
+                    <select-payment-deadline [(model)]="dunningDocument.paymentDeadlineType" label="Délai de paiement"
+                      [form]="settlementBillingForm" propertyName="paymentDeadlineType" [isDisabled]="!editMode">
+                    </select-payment-deadline>
+                  </td>
+                  @if (tiers && tiers.paymentType && tiers.paymentType.id==paymentTypePrelevement.id) {
+                    <td>
+                      <generic-datepicker [(model)]="tiers.sepaMandateSignatureDate" label="Date de signature du mandat SEPA"
+                        [form]="settlementBillingForm" propertyName="sepaMandateSignatureDate" [isMandatory]="true"
+                        [isDisabled]="!editMode"
+                      [conditionnalRequired]="tiers.paymentType && tiers.paymentType.id==paymentTypePrelevement.id"></generic-datepicker>
+                    </td>
+                  }
+                </tr>
+              </table>
+            </mat-expansion-panel>
+          }
+          @if (instanceOfTiers(tiers) && !instanceOfResponsable(tiers)) {
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  Remboursement
+                </mat-panel-title>
+                <ng-template></ng-template>
+              </mat-expansion-panel-header>
+              <table class="full-width">
+                <tr>
+                  <td>
+                    <select-refund-type [(model)]="refundDocument.refundType" label="Type de remboursement"
+                      [isDisabled]="!editMode" [form]="settlementBillingForm" propertyName="refundType">
+                    </select-refund-type>
+                  </td>
+                  @if ( refundDocument !=undefined && refundDocument.refundType!=undefined && refundDocument.refundType.code!=undefined && refundDocument.refundType.id==refundTypeVirement.id) {
+                    <td
+                      >
+                      <generic-input [(model)]="refundDocument.refundIBAN" label="IBAN" [form]="settlementBillingForm"
+                        propertyName="refundIBAN" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40">
+                      </generic-input>
+                    </td>
+                  }
+                  @if ( refundDocument !=undefined && refundDocument.refundType!=undefined && refundDocument.refundType.code!=undefined && refundDocument.refundType.id==refundTypeVirement.id) {
+                    <td
+                      >
+                      <generic-input [(model)]="refundDocument.refundBic" label="BIC" [form]="settlementBillingForm"
+                        propertyName="refundBic" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40">
+                      </generic-input>
+                    </td>
+                  }
+                </tr>
+              </table>
+            </mat-expansion-panel>
+          }
+          @if (instanceOfTiers(tiers) && !instanceOfResponsable(tiers) ) {
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  Relevés de compte
+                </mat-panel-title>
+                <ng-template></ng-template>
+              </mat-expansion-panel-header>
+              <table class="full-width">
+                <tr>
+                  <td>
+                    <radio-group-billing-closure [(model)]="billingClosureDocument.billingClosureType" [isMandatory]="true"
+                      [isDisabled]="!editMode" [form]="settlementBillingForm" propertyName="billingClosureType"
+                      label="Type">
+                    </radio-group-billing-closure>
+                  </td>
+                  <td>
+                    <radio-group-billing-closure-recipient [(model)]="billingClosureDocument.billingClosureRecipientType"
+                      [isDisabled]="!editMode" [isMandatory]="true" [form]="settlementBillingForm"
+                      propertyName="billingClosureRecipientType" label="Destinataire(s)">
+                    </radio-group-billing-closure-recipient>
+                  </td>
+                  @if (billingClosureDocument.billingClosureRecipientType && billingClosureDocument.billingClosureRecipientType.id == billingClosureRecipientTypeOther.id) {
+                    <td
+                      >
+                      <chips-mail [(model)]="billingClosureDocument.mailsClient" label="Mails" [form]="settlementBillingForm"
+                      propertyName="mailsClient" [isMandatory]="true" [isDisabled]="!editMode"></chips-mail>
+                    </td>
+                  }
+                  @if (billingClosureDocument.billingClosureRecipientType && billingClosureDocument.billingClosureRecipientType.id != billingClosureRecipientTypeOther.id) {
+                    <td
+                      >
+                      <chips-mail [(model)]="billingClosureDocument.mailsClient" label="Destinataires supplémentaires"
+                        [form]="settlementBillingForm" propertyName="mailsClient" [isMandatory]="false"
+                      [isDisabled]="!editMode"></chips-mail>
+                    </td>
+                  }
+                </tr>
+              </table>
+            </mat-expansion-panel>
+          }
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                RFF
+              </mat-panel-title>
+              <ng-template></ng-template>
+            </mat-expansion-panel-header>
+            <table class="full-width">
+              <tr>
+                <td>
+                  <generic-input [(model)]="tiers.rffIban" label="IBAN de versement du RFF" [form]="settlementBillingForm"
+                    propertyName="rffIban" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40">
+                  </generic-input>
+                </td>
+                <td>
+                  <generic-input [(model)]="tiers.rffBic" label="BIC de versement du RFF" [form]="settlementBillingForm"
+                    propertyName="rffBic" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="40">
+                  </generic-input>
+                </td>
+                <td>
+                  <generic-input [(model)]="tiers.rffMail" label="Mail d'envoi du RFF" [form]="settlementBillingForm"
+                    propertyName="rffMail" [isMandatory]="false" [isDisabled]="!editMode" [maxLength]="100">
+                  </generic-input>
+                </td>
+              </tr>
+            </table>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </fieldset>
+    </div>
+  </form>
+}

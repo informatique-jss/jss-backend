@@ -1,16 +1,22 @@
 <mat-form-field class="full-width" [formGroup]="form!">
   <mat-label>Téléphones</mat-label>
   <mat-chip-grid #chipList [formControlName]="propertyName">
-    <mat-chip-row *ngFor="let chip of model" (removed)="removeElement(chip)">
-      {{getValueFromObject(chip)}}
-      <button matChipRemove *ngIf="!isDisabled">
-        <mat-icon>cancel</mat-icon>
-      </button>
-      <mat-icon color="accent" matChipRemove *ngIf="isDisabled" class="always-clickable"
-        (click)="call(chip)">phone</mat-icon>
-    </mat-chip-row>
+    @for (chip of model; track chip) {
+      <mat-chip-row (removed)="removeElement(chip)">
+        {{getValueFromObject(chip)}}
+        @if (!isDisabled) {
+          <button matChipRemove>
+            <mat-icon>cancel</mat-icon>
+          </button>
+        }
+        @if (isDisabled) {
+          <mat-icon color="accent" matChipRemove class="always-clickable"
+          (click)="call(chip)">phone</mat-icon>
+        }
+      </mat-chip-row>
+    }
     <input [placeholder]="isDisabled?'':'Saisir un téléphone et appuyer sur Entrée'" #chipInput
       [matChipInputFor]="chipList" [disabled]="isDisabled" [matChipInputSeparatorKeyCodes]="SEPARATOR_KEY_CODES"
       (matChipInputTokenEnd)="addElement($event)">
-  </mat-chip-grid>
-</mat-form-field>
+    </mat-chip-grid>
+  </mat-form-field>

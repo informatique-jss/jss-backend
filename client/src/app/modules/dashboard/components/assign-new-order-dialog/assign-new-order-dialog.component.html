@@ -1,22 +1,30 @@
 <div class=" form-div">
   <mat-vertical-stepper #stepper (selectionChange)="onStepChange($event)">
     <mat-step label="Commandes à créer" state="prio_fond" [editable]="false">
-      <div *ngIf="isLoading" style="display: flex; align-items: center; gap: 8px;">
-        <span>Recherche d'une commande à créer</span>
-        <mat-spinner diameter="20"></mat-spinner>
-      </div>
-      <div *ngIf="foundOrder">
-        <button mat-raised-button color="accent" (click)="onConfirm()">Voir la commande n°{{foundOrder}}</button>
-      </div>
+      @if (isLoading) {
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span>Recherche d'une commande à créer</span>
+          <mat-spinner diameter="20"></mat-spinner>
+        </div>
+      }
+      @if (foundOrder) {
+        <div>
+          <button mat-raised-button color="accent" (click)="onConfirm()">Voir la commande n°{{foundOrder}}</button>
+        </div>
+      }
     </mat-step>
     <mat-step label="Commandes prioritaires du fond" state="prio_fond" [editable]="false">
-      <div *ngIf="isLoading" style="display: flex; align-items: center; gap: 8px;">
-        <span>Recherche d'une commande prioritaire sur le fond</span>
-        <mat-spinner diameter="20"></mat-spinner>
-      </div>
-      <div *ngIf="foundOrder">
-        <button mat-raised-button color="accent" (click)="onConfirm()">Voir la commande n°{{foundOrder}}</button>
-      </div>
+      @if (isLoading) {
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span>Recherche d'une commande prioritaire sur le fond</span>
+          <mat-spinner diameter="20"></mat-spinner>
+        </div>
+      }
+      @if (foundOrder) {
+        <div>
+          <button mat-raised-button color="accent" (click)="onConfirm()">Voir la commande n°{{foundOrder}}</button>
+        </div>
+      }
     </mat-step>
     <mat-step label="Complexité souhaitée" state="complexity" [editable]="false">
       <div>
@@ -30,34 +38,48 @@
       </div>
     </mat-step>
     <mat-step label="Commandes prioritaires du fond commun" state="prio_commun" [editable]="false">
-      <div *ngIf="isLoading" style="display: flex; align-items: center; gap: 8px;">
-        <span>Recherche d'une commande prioritaire sur le fond commun</span>
-        <mat-spinner diameter="20"></mat-spinner>
-      </div>
-      <div *ngIf="foundOrder">
-        <button mat-raised-button color="accent" (click)="onConfirm()">Voir la commande n°{{foundOrder}}</button>
-      </div>
+      @if (isLoading) {
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span>Recherche d'une commande prioritaire sur le fond commun</span>
+          <mat-spinner diameter="20"></mat-spinner>
+        </div>
+      }
+      @if (foundOrder) {
+        <div>
+          <button mat-raised-button color="accent" (click)="onConfirm()">Voir la commande n°{{foundOrder}}</button>
+        </div>
+      }
     </mat-step>
     <mat-step label="Commandes du fond" state="fond" [editable]="false">
-      <div *ngIf="isLoading" style="display: flex; align-items: center; gap: 8px;">
-        <span>Recherche d'une commande sur le fond</span>
-        <mat-spinner diameter="20"></mat-spinner>
-      </div>
-      <div *ngIf="foundOrder">
-        <button mat-raised-button color="accent" (click)="onConfirm()">Voir la commande n°{{foundOrder}}</button>
-      </div>
+      @if (isLoading) {
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span>Recherche d'une commande sur le fond</span>
+          <mat-spinner diameter="20"></mat-spinner>
+        </div>
+      }
+      @if (foundOrder) {
+        <div>
+          <button mat-raised-button color="accent" (click)="onConfirm()">Voir la commande n°{{foundOrder}}</button>
+        </div>
+      }
     </mat-step>
     <mat-step label="Commandes du fond commun" state="commun" [editable]="false">
-      <div *ngIf="isLoading" style="display: flex; align-items: center; gap: 8px;">
-        <span>Recherche d'une commande sur le fond commun</span>
-        <mat-spinner diameter="20"></mat-spinner>
-      </div>
-      <div *ngIf="foundOrder">
-        <button mat-raised-button color="accent" (click)="onConfirm()">Voir la commande n°{{foundOrder}}</button>
-      </div>
-      <div *ngIf="!foundOrder && !isLoading">
-        <p>Aucune commande trouvée ...</p>
-      </div>
+      @if (isLoading) {
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span>Recherche d'une commande sur le fond commun</span>
+          <mat-spinner diameter="20"></mat-spinner>
+        </div>
+      }
+      @if (foundOrder) {
+        <div>
+          <button mat-raised-button color="accent" (click)="onConfirm()">Voir la commande n°{{foundOrder}}</button>
+        </div>
+      }
+      @if (!foundOrder && !isLoading) {
+        <div>
+          <p>Aucune commande trouvée ...</p>
+        </div>
+      }
     </mat-step>
 
     <!-- Icon overrides. -->
@@ -65,7 +87,9 @@
       <mat-icon>search</mat-icon>
     </ng-template>
   </mat-vertical-stepper>
-  <div mat-dialog-actions align="end" *ngIf="!foundOrder && !isLoading">
-    <button mat-raised-button color="accent" (click)="onClose()">Fermer</button>
-  </div>
+  @if (!foundOrder && !isLoading) {
+    <div mat-dialog-actions align="end">
+      <button mat-raised-button color="accent" (click)="onClose()">Fermer</button>
+    </div>
+  }
 </div>

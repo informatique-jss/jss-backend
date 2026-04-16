@@ -1,4 +1,8 @@
-<div *ngIf="serieValue" echarts (chartInit)="onChartInit($event)" [initOpts]="{ locale: 'FR' }" [options]="chartOption"
-  class="chart">
-</div>
-<div *ngIf="!serieValue">Aucune donnée disponible</div>
+@if (serieValue) {
+  <div echarts (chartInit)="onChartInit($event)" [initOpts]="{ locale: 'FR' }" [options]="chartOption"
+    class="chart">
+  </div>
+}
+@if (!serieValue) {
+  <div>Aucune donnée disponible</div>
+}

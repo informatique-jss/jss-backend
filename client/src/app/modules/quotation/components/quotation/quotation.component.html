@@ -2,28 +2,36 @@
   <mat-sidenav #sidenav mode="side" position="end" [fixedInViewport]="true" class="sidenav-facture">
     <div class="scrollable-table">
       <table>
-        <ng-container *ngFor="let asso of quotation.assoAffaireOrders;let indexAsso = index">
+        @for (asso of quotation.assoAffaireOrders; track asso; let indexAsso = $index) {
           <tr>
-            <td class="affaire " colspan="2" *ngIf="asso.affaire && asso.affaire.denomination">
-              {{asso.affaire.denomination}}
-            </td>
-            <td class="affaire " colspan="2" *ngIf="asso.affaire && asso.affaire.firstname">
-              {{asso.affaire.firstname}} - {{asso.affaire.lastname}} -
-            </td>
-          </tr>
-          <ng-container *ngFor="let service of asso.services ">
-            <tr *ngIf="service  ">
+            @if (asso.affaire && asso.affaire.denomination) {
               <td class="affaire " colspan="2">
-                <strong>{{service.serviceLabelToDisplay}}</strong>
+                {{asso.affaire.denomination}}
               </td>
-            </tr>
-            <ng-container *ngFor="let provision of service.provisions">
-              <tr *ngIf="provision.provisionType">
+            }
+            @if (asso.affaire && asso.affaire.firstname) {
+              <td class="affaire " colspan="2">
+                {{asso.affaire.firstname}} - {{asso.affaire.lastname}} -
+              </td>
+            }
+          </tr>
+          @for (service of asso.services ; track service) {
+            @if (service  ) {
+              <tr>
                 <td class="affaire " colspan="2">
-                  {{provision.provisionType.label}}
+                  <strong>{{service.serviceLabelToDisplay}}</strong>
                 </td>
               </tr>
-              <ng-container *ngFor="let invoiceItem of provision.invoiceItems;let indexInvoiceItem = index">
+            }
+            @for (provision of service.provisions; track provision) {
+              @if (provision.provisionType) {
+                <tr>
+                  <td class="affaire " colspan="2">
+                    {{provision.provisionType.label}}
+                  </td>
+                </tr>
+              }
+              @for (invoiceItem of provision.invoiceItems; track invoiceItem; let indexInvoiceItem = $index) {
                 <table>
                   <tr>
                     <td>
@@ -33,19 +41,21 @@
                       {{invoiceItem.preTaxPrice|number}} €
                     </td>
                   </tr>
-                  <tr *ngIf="invoiceItem.discountAmount && invoiceItem.discountAmount>0">
-                    <td>
-                      Remise
-                    </td>
-                    <td class="td-price remise">
-                      - {{invoiceItem.discountAmount|number}} €
-                    </td>
-                  </tr>
+                  @if (invoiceItem.discountAmount && invoiceItem.discountAmount>0) {
+                    <tr>
+                      <td>
+                        Remise
+                      </td>
+                      <td class="td-price remise">
+                        - {{invoiceItem.discountAmount|number}} €
+                      </td>
+                    </tr>
+                  }
                 </table>
-              </ng-container>
-            </ng-container>
-          </ng-container>
-        </ng-container>
+              }
+            }
+          }
+        }
       </table>
     </div>
 
@@ -58,32 +68,38 @@
           {{getPreTaxPriceTotal() |number}} €
         </td>
       </tr>
-      <tr *ngIf="getDiscountTotal() && getDiscountTotal()">
-        <td>
-          Remise totale
-        </td>
-        <td class="td-price remise">
-          - {{getDiscountTotal()|number}} €
-        </td>
-      </tr>
-      <tr *ngIf="getDiscountTotal() && getDiscountTotal()">
-        <td>
-          Total HT
-        </td>
-        <td class="td-price">
-          {{getPreTaxPriceTotal()-getDiscountTotal()|number}} €
-        </td>
-      </tr>
-      <ng-container *ngIf="getApplicableVat().length>0">
-        <tr *ngFor="let vat of getApplicableVat()">
+      @if (getDiscountTotal() && getDiscountTotal()) {
+        <tr>
           <td>
-            Total {{vat.label}} sur la base de {{vat.base |number}} €
+            Remise totale
           </td>
-          <td class="td-price">
-            {{vat.total|number}} €
+          <td class="td-price remise">
+            - {{getDiscountTotal()|number}} €
           </td>
         </tr>
-      </ng-container>
+      }
+      @if (getDiscountTotal() && getDiscountTotal()) {
+        <tr>
+          <td>
+            Total HT
+          </td>
+          <td class="td-price">
+            {{getPreTaxPriceTotal()-getDiscountTotal()|number}} €
+          </td>
+        </tr>
+      }
+      @if (getApplicableVat().length>0) {
+        @for (vat of getApplicableVat(); track vat) {
+          <tr>
+            <td>
+              Total {{vat.label}} sur la base de {{vat.base |number}} €
+            </td>
+            <td class="td-price">
+              {{vat.total|number}} €
+            </td>
+          </tr>
+        }
+      }
       <tr>
         <td>
           Total TTC
@@ -96,28 +112,32 @@
   </mat-sidenav>
 
   <mat-sidenav-content class="padding-bottom">
-    <div *ngIf="!editMode && !quotation.id && !isQuotationUrl && !idQuotation">
-      <mat-tab-group animationDuration="0ms">
-        <mat-tab label="Commandes">
-          <ng-template matTabContent>
-            <ordering-list></ordering-list>
-          </ng-template>
-        </mat-tab>
-        <mat-tab label="Commandes taggées">
-          <ng-template matTabContent>
-            <ordering-list-tagged></ordering-list-tagged>
-          </ng-template>
-        </mat-tab>
-        <mat-tab label="Gestion commandes">
-          <ng-template matTabContent>
-            <kanban-order></kanban-order>
-          </ng-template>
-        </mat-tab>
-      </mat-tab-group>
-    </div>
-    <div *ngIf="!editMode && !quotation.id && isQuotationUrl && !idQuotation">
-      <quotation-list></quotation-list>
-    </div>
+    @if (!editMode && !quotation.id && !isQuotationUrl && !idQuotation) {
+      <div>
+        <mat-tab-group animationDuration="0ms">
+          <mat-tab label="Commandes">
+            <ng-template matTabContent>
+              <ordering-list></ordering-list>
+            </ng-template>
+          </mat-tab>
+          <mat-tab label="Commandes taggées">
+            <ng-template matTabContent>
+              <ordering-list-tagged></ordering-list-tagged>
+            </ng-template>
+          </mat-tab>
+          <mat-tab label="Gestion commandes">
+            <ng-template matTabContent>
+              <kanban-order></kanban-order>
+            </ng-template>
+          </mat-tab>
+        </mat-tab-group>
+      </div>
+    }
+    @if (!editMode && !quotation.id && isQuotationUrl && !idQuotation) {
+      <div>
+        <quotation-list></quotation-list>
+      </div>
+    }
     <div [hidden]="!editMode && (quotation.id==undefined || quotation.id==null)">
       <mat-tab-group animationDuration="0ms" [selectedIndex]="selectedTabIndex" (selectedTabChange)="changeTab($event)">
         <mat-tab label="Donneur d'ordre">
@@ -125,322 +145,406 @@
           </ordering-customer>
         </mat-tab>
         <fieldset [disabled]="editMode==false" class="fieldset-no-border">
-          <mat-tab label="Prestations" *ngIf="(quotation.responsable)  ">
-            <div class="mat-elevation-z2 form-div" *ngIf="quotation.assoAffaireOrders">
-              <mat-tab-group animationDuration="0ms" [selectedIndex]="selectedTabIndexAsso"
-                (selectedTabChange)="changeTabAsso($event)">
-                <mat-tab *ngFor="let asso of quotation.assoAffaireOrders">
-                  <ng-template mat-tab-label>
-                    {{asso.affaire.denomination?asso.affaire.denomination:(asso.affaire.firstname + ' ' +
-                    asso.affaire.lastname)}} {{asso.affaire.city?('- ' + asso.affaire.city.label):''}} <mat-icon
-                      color="accent" matTooltip="Supprimer l'affaire" *ngIf="editMode"
-                      (click)="deleteAffaire(asso.affaire);$event.stopPropagation();" class="pointer">delete</mat-icon>
-                    <mat-icon color="accent" matTooltip="Ajouter une notification sur cette affaire"
-                      *ngIf="canDisplayNotifications()"
-                      (click)="addNewNotificationOnAffaire(asso.affaire);$event.stopPropagation();"
-                      [matBadge]="getNotificationForAffaire(asso.affaire).length"
-                      [matBadgeHidden]="getNotificationForAffaire(asso.affaire).length<=0"
-                      matBadgePosition="below after" matBadgeColor="warn" matBadgeSize="small"
-                      class="pointer">notifications</mat-icon>
-                  </ng-template>
-                  <ng-template matTabContent>
-                    <div class="mat-accordion-container full-width">
-                      <mat-accordion multi>
-                        <mat-expansion-panel expanded="false">
-                          <mat-expansion-panel-header>
-                            <mat-panel-title>Détails de l'affaire -
-                              {{asso.affaire.denomination?asso.affaire.denomination:(asso.affaire.firstname + ' '
-                              +asso.affaire.lastname)}} - {{asso.affaire.address}} - {{asso.affaire.postalCode}} -
-                              {{asso.affaire.city.label}}
-                            </mat-panel-title>
-                            <mat-panel-description>
-                              <mat-icon color="accent" matTooltip="Voir/éditer l'affaire"
-                                (click)="displayAffaire($event, asso.affaire);$event.stopPropagation();"
-                                (auxclick)="displayAffaire($event, asso.affaire);$event.stopPropagation();"
-                                class="pointer">
-                                edit</mat-icon>
-                              <ng-template></ng-template>
-                            </mat-panel-description>
-                          </mat-expansion-panel-header>
-                          <add-affaire [affaire]="asso.affaire" [editMode]="false"></add-affaire>
-                        </mat-expansion-panel>
-                      </mat-accordion>
-                    </div>
-                    <ng-container *ngFor="let service of asso.services">
-                      <div class="mat-accordion-container full-width">
-                        <mat-accordion multi>
-                          <mat-expansion-panel expanded="false" class="service-tab ">
-                            <mat-expansion-panel-header>
-                              <mat-panel-title>Service - {{service.serviceLabelToDisplay}}
-                              </mat-panel-title>
-                              <mat-panel-description style="height:40px">
-                                <mat-icon color="accent" *ngIf="!editMode && service.id"
-                                  matTooltip="Modifier le type de service"
-                                  (click)="modifyService(service, asso.affaire);$event.stopPropagation()"
-                                  class="pointer">
+          @if ((quotation.responsable)  ) {
+            <mat-tab label="Prestations">
+              @if (quotation.assoAffaireOrders) {
+                <div class="mat-elevation-z2 form-div">
+                  <mat-tab-group animationDuration="0ms" [selectedIndex]="selectedTabIndexAsso"
+                    (selectedTabChange)="changeTabAsso($event)">
+                    @for (asso of quotation.assoAffaireOrders; track asso) {
+                      <mat-tab>
+                        <ng-template mat-tab-label>
+                          {{asso.affaire.denomination?asso.affaire.denomination:(asso.affaire.firstname + ' ' +
+                          asso.affaire.lastname)}} {{asso.affaire.city?('- ' + asso.affaire.city.label):''}} @if (editMode) {
+                          <mat-icon
+                            color="accent" matTooltip="Supprimer l'affaire"
+                          (click)="deleteAffaire(asso.affaire);$event.stopPropagation();" class="pointer">delete</mat-icon>
+                        }
+                        @if (canDisplayNotifications()) {
+                          <mat-icon color="accent" matTooltip="Ajouter une notification sur cette affaire"
+                            (click)="addNewNotificationOnAffaire(asso.affaire);$event.stopPropagation();"
+                            [matBadge]="getNotificationForAffaire(asso.affaire).length"
+                            [matBadgeHidden]="getNotificationForAffaire(asso.affaire).length<=0"
+                            matBadgePosition="below after" matBadgeColor="warn" matBadgeSize="small"
+                          class="pointer">notifications</mat-icon>
+                        }
+                      </ng-template>
+                      <ng-template matTabContent>
+                        <div class="mat-accordion-container full-width">
+                          <mat-accordion multi>
+                            <mat-expansion-panel expanded="false">
+                              <mat-expansion-panel-header>
+                                <mat-panel-title>Détails de l'affaire -
+                                  {{asso.affaire.denomination?asso.affaire.denomination:(asso.affaire.firstname + ' '
+                                  +asso.affaire.lastname)}} - {{asso.affaire.address}} - {{asso.affaire.postalCode}} -
+                                  {{asso.affaire.city.label}}
+                                </mat-panel-title>
+                                <mat-panel-description>
+                                  <mat-icon color="accent" matTooltip="Voir/éditer l'affaire"
+                                    (click)="displayAffaire($event, asso.affaire);$event.stopPropagation();"
+                                    (auxclick)="displayAffaire($event, asso.affaire);$event.stopPropagation();"
+                                    class="pointer">
                                   edit</mat-icon>
-                                <mat-icon color="accent" *ngIf="!editMode  " matTooltip="Supprimer le service"
-                                  (click)="deleteService(asso,service);$event.stopPropagation()" class="pointer">
-                                  delete</mat-icon>
-                                <mat-icon color="accent" matTooltip="Ajouter une notification sur ce service"
-                                  *ngIf="canDisplayNotifications()"
-                                  (click)="addNewNotificationOnService(service);$event.stopPropagation();"
-                                  [matBadge]="getNotificationForService(service).length"
-                                  [matBadgeHidden]="getNotificationForService(service).length<=0"
-                                  matBadgePosition="below after" matBadgeColor="warn" matBadgeSize="small"
-                                  class="pointer">notifications</mat-icon>
-                              </mat-panel-description>
-                            </mat-expansion-panel-header>
-                            <service [service]=" service" [editMode]="isValidatedStatusForUploadFile()"
-                              [quotation]="quotation"></service>
-                          </mat-expansion-panel>
-                        </mat-accordion>
-                      </div>
-                      <div class="mat-accordion-container full-width" style="padding-bottom:15px">
-                        <mat-accordion multi class="mat-accordion-container">
-                          <mat-expansion-panel *ngFor="let provision of service.provisions"
-                            [expanded]="!provision.id || inputProvision && provision.id==inputProvision.id">
-                            <mat-expansion-panel-header>
-                              <mat-panel-title>
-                                {{computeProvisionLabel(service, provision, true)}}
-                              </mat-panel-title>
-                              <span class="status-text"
-                                *ngIf="instanceOfCustomerOrderFn(quotation) && getActiveWorkflowElementsForProvision(provision)">{{getActiveWorkflowElementsForProvision(provision).label}}</span>
-                              <avatar-chip [employee]="provision.assignedTo"
-                                (onChangeAssigne)="updateAssignedToForProvision($event, provision)">
-                              </avatar-chip>
-                              <ng-template></ng-template>
-                              <mat-panel-description style="height:40px">
-                                <mat-icon color="accent"
-                                  *ngIf="(!editMode && provision.id) || (!provision.id && editMode)"
-                                  matTooltip="Supprimer la prestation" style="padding-right: 20px;"
-                                  (click)="deleteProvision(service, provision);$event.stopPropagation()"
-                                  class="pointer">
-                                  delete</mat-icon>
-                                <mat-icon color="accent" *ngIf="editMode" matTooltip="Dupliquer la prestation"
-                                  (click)="duplicateProvision(service,provision)" class="pointer">
-                                  content_copy</mat-icon>
-                                <mat-icon color="accent"
-                                  *ngIf="instanceOfCustomerOrderFn(quotation) && quotation.id && !editMode"
-                                  matTooltip="Voir/éditer la prestation"
-                                  (click)="displayProvision($event, asso,provision);$event.stopPropagation()"
-                                  (auxclick)="displayProvision($event, asso,provision);$event.stopPropagation()"
-                                  class="pointer">
-                                  work</mat-icon>
-                                <mat-icon color="accent" matTooltip="Ajouter une notification sur cette prestation"
-                                  *ngIf="canDisplayNotifications()"
-                                  (click)="addNewNotificationOnProvision(provision);$event.stopPropagation();"
-                                  [matBadge]="getNotificationForProvision(provision).length"
-                                  [matBadgeHidden]="getNotificationForProvision(provision).length<=0"
-                                  matBadgePosition="below after" matBadgeColor="warn" matBadgeSize="small"
-                                  class="pointer">notifications</mat-icon>
-                              </mat-panel-description>
-                            </mat-expansion-panel-header>
-                            <provision-item [quotation]="quotation" *ngIf="asso.affaire && asso.affaire.id"
-                              [editMode]="isValidatedStatusForUploadFile()" [provision]="provision"
-                              [affaire]="asso.affaire"
-                              (selectedProvisionTypeChange)="changeSelectedProvisionType($event)"
-                              [instanceOfCustomerOrder]="instanceOfCustomerOrder" [isStatusOpen]="isStatusOpen">
-                            </provision-item>
-                          </mat-expansion-panel>
-                        </mat-accordion>
-                      </div>
-                      <div class="fab-extended-button-containter"><button mat-fab extended color="primary"
-                          *ngIf="editMode" (click)="createProvision(service)">
-                          <mat-icon>work</mat-icon>
-                          Ajouter une prestation pour le service {{service.serviceLabelToDisplay}}
-                        </button></div>
-                    </ng-container>
-                    <div class="fab-extended-button-containter"><button mat-fab extended color="primary"
-                        *ngIf="editMode" (click)="createService(asso)">
-                        <mat-icon>room_service</mat-icon>
-                        Ajouter un service
-                      </button></div>
-                  </ng-template>
-                </mat-tab>
-              </mat-tab-group>
-            </div>
+                                  <ng-template></ng-template>
+                                </mat-panel-description>
+                              </mat-expansion-panel-header>
+                              <add-affaire [affaire]="asso.affaire" [editMode]="false"></add-affaire>
+                            </mat-expansion-panel>
+                          </mat-accordion>
+                        </div>
+                        @for (service of asso.services; track service) {
+                          <div class="mat-accordion-container full-width">
+                            <mat-accordion multi>
+                              <mat-expansion-panel expanded="false" class="service-tab ">
+                                <mat-expansion-panel-header>
+                                  <mat-panel-title>Service - {{service.serviceLabelToDisplay}}
+                                  </mat-panel-title>
+                                  <mat-panel-description style="height:40px">
+                                    @if (!editMode && service.id) {
+                                      <mat-icon color="accent"
+                                        matTooltip="Modifier le type de service"
+                                        (click)="modifyService(service, asso.affaire);$event.stopPropagation()"
+                                        class="pointer">
+                                      edit</mat-icon>
+                                    }
+                                    @if (!editMode  ) {
+                                      <mat-icon color="accent" matTooltip="Supprimer le service"
+                                        (click)="deleteService(asso,service);$event.stopPropagation()" class="pointer">
+                                      delete</mat-icon>
+                                    }
+                                    @if (canDisplayNotifications()) {
+                                      <mat-icon color="accent" matTooltip="Ajouter une notification sur ce service"
+                                        (click)="addNewNotificationOnService(service);$event.stopPropagation();"
+                                        [matBadge]="getNotificationForService(service).length"
+                                        [matBadgeHidden]="getNotificationForService(service).length<=0"
+                                        matBadgePosition="below after" matBadgeColor="warn" matBadgeSize="small"
+                                      class="pointer">notifications</mat-icon>
+                                    }
+                                  </mat-panel-description>
+                                </mat-expansion-panel-header>
+                                <service [service]=" service" [editMode]="isValidatedStatusForUploadFile()"
+                                [quotation]="quotation"></service>
+                              </mat-expansion-panel>
+                            </mat-accordion>
+                          </div>
+                          <div class="mat-accordion-container full-width" style="padding-bottom:15px">
+                            <mat-accordion multi class="mat-accordion-container">
+                              @for (provision of service.provisions; track provision) {
+                                <mat-expansion-panel
+                                  [expanded]="!provision.id || inputProvision && provision.id==inputProvision.id">
+                                  <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                      {{computeProvisionLabel(service, provision, true)}}
+                                    </mat-panel-title>
+                                    @if (instanceOfCustomerOrderFn(quotation) && getActiveWorkflowElementsForProvision(provision)) {
+                                      <span class="status-text"
+                                      >{{getActiveWorkflowElementsForProvision(provision).label}}</span>
+                                    }
+                                    <avatar-chip [employee]="provision.assignedTo"
+                                      (onChangeAssigne)="updateAssignedToForProvision($event, provision)">
+                                    </avatar-chip>
+                                    <ng-template></ng-template>
+                                    <mat-panel-description style="height:40px">
+                                      @if ((!editMode && provision.id) || (!provision.id && editMode)) {
+                                        <mat-icon color="accent"
+                                          matTooltip="Supprimer la prestation" style="padding-right: 20px;"
+                                          (click)="deleteProvision(service, provision);$event.stopPropagation()"
+                                          class="pointer">
+                                        delete</mat-icon>
+                                      }
+                                      @if (editMode) {
+                                        <mat-icon color="accent" matTooltip="Dupliquer la prestation"
+                                          (click)="duplicateProvision(service,provision)" class="pointer">
+                                        content_copy</mat-icon>
+                                      }
+                                      @if (instanceOfCustomerOrderFn(quotation) && quotation.id && !editMode) {
+                                        <mat-icon color="accent"
+                                          matTooltip="Voir/éditer la prestation"
+                                          (click)="displayProvision($event, asso,provision);$event.stopPropagation()"
+                                          (auxclick)="displayProvision($event, asso,provision);$event.stopPropagation()"
+                                          class="pointer">
+                                        work</mat-icon>
+                                      }
+                                      @if (canDisplayNotifications()) {
+                                        <mat-icon color="accent" matTooltip="Ajouter une notification sur cette prestation"
+                                          (click)="addNewNotificationOnProvision(provision);$event.stopPropagation();"
+                                          [matBadge]="getNotificationForProvision(provision).length"
+                                          [matBadgeHidden]="getNotificationForProvision(provision).length<=0"
+                                          matBadgePosition="below after" matBadgeColor="warn" matBadgeSize="small"
+                                        class="pointer">notifications</mat-icon>
+                                      }
+                                    </mat-panel-description>
+                                  </mat-expansion-panel-header>
+                                  @if (asso.affaire && asso.affaire.id) {
+                                    <provision-item [quotation]="quotation"
+                                      [editMode]="isValidatedStatusForUploadFile()" [provision]="provision"
+                                      [affaire]="asso.affaire"
+                                      (selectedProvisionTypeChange)="changeSelectedProvisionType($event)"
+                                      [instanceOfCustomerOrder]="instanceOfCustomerOrder" [isStatusOpen]="isStatusOpen">
+                                    </provision-item>
+                                  }
+                                </mat-expansion-panel>
+                              }
+                            </mat-accordion>
+                          </div>
+                          <div class="fab-extended-button-containter">@if (editMode) {
+                            <button mat-fab extended color="primary"
+                              (click)="createProvision(service)">
+                              <mat-icon>work</mat-icon>
+                              Ajouter une prestation pour le service {{service.serviceLabelToDisplay}}
+                            </button>
+                          }</div>
+                        }
+                        <div class="fab-extended-button-containter">@if (editMode) {
+                          <button mat-fab extended color="primary"
+                            (click)="createService(asso)">
+                            <mat-icon>room_service</mat-icon>
+                            Ajouter un service
+                          </button>
+                        }</div>
+                      </ng-template>
+                    </mat-tab>
+                  }
+                </mat-tab-group>
+              </div>
+            }
           </mat-tab>
-        </fieldset>
-        <mat-tab label="Facturation" *ngIf="quotation && quotation.id">
+        }
+      </fieldset>
+      @if (quotation && quotation.id) {
+        <mat-tab label="Facturation">
           <invoice-management [quotation]="quotation" [editMode]="editMode"
             [customerOrderInvoices]="customerOrderInvoices" (invoiceItemChange)="invoiceItemChange($event)"
             [instanceOfCustomerOrder]="instanceOfCustomerOrder">
           </invoice-management>
         </mat-tab>
-        <mat-tab [label]="'Eléments '+(instanceOfCustomerOrder ? 'de la commande' : 'du devis')">
-          <quotation-management [(quotation)]="quotation" [editMode]="editMode" [isStatusOpen]="isStatusOpen"
-            [instanceOfCustomerOrder]="instanceOfCustomerOrder"
-            [updateDocumentsEvent]="updateDocumentsEvent.asObservable()"></quotation-management>
-        </mat-tab>
-        <mat-tab label="Documents" *ngIf="quotation.id!=null && quotation.id!=undefined">
+      }
+      <mat-tab [label]="'Eléments '+(instanceOfCustomerOrder ? 'de la commande' : 'du devis')">
+        <quotation-management [(quotation)]="quotation" [editMode]="editMode" [isStatusOpen]="isStatusOpen"
+          [instanceOfCustomerOrder]="instanceOfCustomerOrder"
+        [updateDocumentsEvent]="updateDocumentsEvent.asObservable()"></quotation-management>
+      </mat-tab>
+      @if (quotation.id!=null && quotation.id!=undefined) {
+        <mat-tab label="Documents">
           <attachments [entity]="quotation" [editMode]="isValidatedStatusForUploadFile()"
             [entityType]="getEntityType().entityType">
           </attachments>
-          <attachments [entity]="getEntityForPendingAttachments()!" [editMode]="false"
-            *ngIf="instanceOfCustomerOrderFn(quotation) && quotation.pendingAttachments && quotation.pendingAttachments.length>0  && getEntityForPendingAttachments()"
-            [entityType]="getEntityType().entityType">
-          </attachments>
+          @if (instanceOfCustomerOrderFn(quotation) && quotation.pendingAttachments && quotation.pendingAttachments.length>0  && getEntityForPendingAttachments()) {
+            <attachments [entity]="getEntityForPendingAttachments()!" [editMode]="false"
+              [entityType]="getEntityType().entityType">
+            </attachments>
+          }
         </mat-tab>
+      }
+      @if (quotation && instanceOfCustomerOrderFn(quotation) && (hasOneCri() || isAskNewCri())) {
         <mat-tab label="CRI"
-          *ngIf="quotation && instanceOfCustomerOrderFn(quotation) && (hasOneCri() || isAskNewCri())">
+          >
           <incident-report-list [customerOrder]="quotation" [askForNewCri]="askForNewCri">
           </incident-report-list>
         </mat-tab>
-        <mat-tab label="Pièces manquantes" *ngIf="quotation && instanceOfCustomerOrderFn(quotation) && hasOnePm()">
+      }
+      @if (quotation && instanceOfCustomerOrderFn(quotation) && hasOnePm()) {
+        <mat-tab label="Pièces manquantes">
           <missing-attachment-queries [customerOrder]="quotation">
           </missing-attachment-queries>
         </mat-tab>
-        <mat-tab label="Mails" *ngIf="quotation.id && instanceOfQuotationFn(quotation)">
+      }
+      @if (quotation.id && instanceOfQuotationFn(quotation)) {
+        <mat-tab label="Mails">
           <ng-template matTabContent>
             <automatic-mail-list [quotation]="quotation">
             </automatic-mail-list>
           </ng-template>
         </mat-tab>
-        <mat-tab label="Mails" *ngIf="quotation.id && instanceOfCustomerOrderFn(quotation)">
+      }
+      @if (quotation.id && instanceOfCustomerOrderFn(quotation)) {
+        <mat-tab label="Mails">
           <ng-template matTabContent>
             <automatic-mail-list [customerOrder]="quotation">
             </automatic-mail-list>
           </ng-template>
         </mat-tab>
+      }
+      @if (  instanceOfCustomerOrderFn(quotation) && quotation.customerOrderStatus && quotation.customerOrderStatus.code!=CUSTOMER_ORDER_STATUS_BILLED  && quotation.customerOrderStatus.code!=CUSTOMER_ORDER_STATUS_ABANDONED) {
         <mat-tab label="Associer un paiement"
-          *ngIf="  instanceOfCustomerOrderFn(quotation) && quotation.customerOrderStatus && quotation.customerOrderStatus.code!=CUSTOMER_ORDER_STATUS_BILLED  && quotation.customerOrderStatus.code!=CUSTOMER_ORDER_STATUS_ABANDONED">
+          >
           <ng-template matTabContent>
             <customer-order-payment (stateChanged)="onStateChange()" [customerOrder]="quotation">
             </customer-order-payment>
           </ng-template>
         </mat-tab>
-        <mat-tab label="Historique" *ngIf="quotation.id!=null && quotation.id!=undefined">
+      }
+      @if (quotation.id!=null && quotation.id!=undefined) {
+        <mat-tab label="Historique">
           <ng-template matTabContent>
             <history [entity]="quotation" [entityType]="getEntityType()" [parseTypeList]="getParseTypeList()"></history>
           </ng-template>
         </mat-tab>
-      </mat-tab-group>
-    </div>
-  </mat-sidenav-content>
+      }
+    </mat-tab-group>
+  </div>
+</mat-sidenav-content>
 </mat-sidenav-container>
-<button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button" *ngIf="editMode==true"
-  (click)="saveQuotation()">
-  <mat-icon>save</mat-icon>
-</button>
-<button matTooltip="Ajouter une affaire / prestation" mat-fab color="accent" class="third-fab-button"
-  *ngIf="editMode  &&  (quotation.responsable) " (click)="addAffaire()">
-  <mat-icon>person_add</mat-icon>
-</button>
-<button [matTooltip]="instanceOfCustomerOrder?'Modifier la commande' : 'Modifier le devis'" mat-fab color="accent"
-  class="fab-button" *ngIf="editMode==false && quotation.id!=undefined && quotation.id!=null" (click)="editQuotation()">
-  <mat-icon>edit</mat-icon>
-</button>
-<button [matTooltip]="instanceOfCustomerOrder?'Ajouter une commande' : 'Ajouter un devis'" mat-fab color="accent"
-  class="fab-button"
-  *ngIf="editMode==false && (quotation.id==undefined || quotation.id==null) && (!instanceOfCustomerOrder || canCreateCustomerOrder())"
-  (click)="createQuotation()">
-  <mat-icon>add</mat-icon>
-</button>
-<button [matTooltip]="instanceOfCustomerOrder?'Rechercher une commande' : 'Rechercher un devis'" mat-fab color="accent"
-  class="second-fab-button" *ngIf="editMode==false" (click)="openSearch()">
-  <mat-icon>search</mat-icon>
-</button>
-<button [matTooltip]='sidenav.opened?"Cacher le détail":"Voir le détail"' mat-fab color="accent"
-  class="second-fab-button" *ngIf="(editMode==false && quotation.id!=undefined && quotation.id!=null || editMode)"
-  (click)=" sidenav.toggle()">
-  <mat-icon>receipt_long</mat-icon>
-</button>
-<button matTooltip="Recevoir le mail de devis" mat-fab color="accent" class="fourth-fab-button"
-  *ngIf="editMode==false && instanceOfQuotationFn(quotation) && quotation.id" (click)="generateQuotationMail()">
-  <mat-icon>mail</mat-icon>
-</button>
-<button matTooltip="Réinitialiser la facturation" mat-fab color="accent" class="fifth-fab-button"
-  *ngIf="editMode==false && instanceOfCustomerOrderFn(quotation) && quotation.id && canReinitInvoicing()"
-  (click)="reinitInvoicing()">
-  <mat-icon>autorenew</mat-icon>
-</button>
+@if (editMode==true) {
+  <button matTooltip="Sauvegarder" mat-fab color="warn" class="fab-button"
+    (click)="saveQuotation()">
+    <mat-icon>save</mat-icon>
+  </button>
+}
+@if (editMode  &&  (quotation.responsable) ) {
+  <button matTooltip="Ajouter une affaire / prestation" mat-fab color="accent" class="third-fab-button"
+    (click)="addAffaire()">
+    <mat-icon>person_add</mat-icon>
+  </button>
+}
+@if (editMode==false && quotation.id!=undefined && quotation.id!=null) {
+  <button [matTooltip]="instanceOfCustomerOrder?'Modifier la commande' : 'Modifier le devis'" mat-fab color="accent"
+    class="fab-button" (click)="editQuotation()">
+    <mat-icon>edit</mat-icon>
+  </button>
+}
+@if (editMode==false && (quotation.id==undefined || quotation.id==null) && (!instanceOfCustomerOrder || canCreateCustomerOrder())) {
+  <button [matTooltip]="instanceOfCustomerOrder?'Ajouter une commande' : 'Ajouter un devis'" mat-fab color="accent"
+    class="fab-button"
+    (click)="createQuotation()">
+    <mat-icon>add</mat-icon>
+  </button>
+}
+@if (editMode==false) {
+  <button [matTooltip]="instanceOfCustomerOrder?'Rechercher une commande' : 'Rechercher un devis'" mat-fab color="accent"
+    class="second-fab-button" (click)="openSearch()">
+    <mat-icon>search</mat-icon>
+  </button>
+}
+@if ((editMode==false && quotation.id!=undefined && quotation.id!=null || editMode)) {
+  <button [matTooltip]='sidenav.opened?"Cacher le détail":"Voir le détail"' mat-fab color="accent"
+    class="second-fab-button"
+    (click)=" sidenav.toggle()">
+    <mat-icon>receipt_long</mat-icon>
+  </button>
+}
+@if (editMode==false && instanceOfQuotationFn(quotation) && quotation.id) {
+  <button matTooltip="Recevoir le mail de devis" mat-fab color="accent" class="fourth-fab-button"
+    (click)="generateQuotationMail()">
+    <mat-icon>mail</mat-icon>
+  </button>
+}
+@if (editMode==false && instanceOfCustomerOrderFn(quotation) && quotation.id && canReinitInvoicing()) {
+  <button matTooltip="Réinitialiser la facturation" mat-fab color="accent" class="fifth-fab-button"
+    (click)="reinitInvoicing()">
+    <mat-icon>autorenew</mat-icon>
+  </button>
+}
 
-<button matTooltip="Actions" mat-fab color="accent" class="fourth-fab-button mail-menu"
-  *ngIf="editMode==false && instanceOfCustomerOrderFn(quotation) && quotation.id" [matMenuTriggerFor]="menuMail">
-  <mat-icon>more_horiz</mat-icon>
-  <mat-menu #menuMail="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
-    <button mat-menu-item (click)="generateCustomerOrderCreationConfirmationToCustomer()">
-      <span>Recevoir le mail de confirmation de la commande</span>
-    </button>
-    <button mat-menu-item (click)="generateInvoiceMail()">
-      <span>Recevoir le mail de facturation</span>
-    </button>
-    <button mat-menu-item (click)="generateMailingLabel()">
-      <span>Imprimer une étiquette/lettre postale</span>
-    </button>
-    <button mat-menu-item (click)="askForNewCriFn()">
-      <span>Demander un compte rendu d'incident</span>
-    </button>
-  </mat-menu>
-</button>
+@if (editMode==false && instanceOfCustomerOrderFn(quotation) && quotation.id) {
+  <button matTooltip="Actions" mat-fab color="accent" class="fourth-fab-button mail-menu"
+    [matMenuTriggerFor]="menuMail">
+    <mat-icon>more_horiz</mat-icon>
+    <mat-menu #menuMail="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
+      <button mat-menu-item (click)="generateCustomerOrderCreationConfirmationToCustomer()">
+        <span>Recevoir le mail de confirmation de la commande</span>
+      </button>
+      <button mat-menu-item (click)="generateInvoiceMail()">
+        <span>Recevoir le mail de facturation</span>
+      </button>
+      <button mat-menu-item (click)="generateMailingLabel()">
+        <span>Imprimer une étiquette/lettre postale</span>
+      </button>
+      <button mat-menu-item (click)="askForNewCriFn()">
+        <span>Demander un compte rendu d'incident</span>
+      </button>
+    </mat-menu>
+  </button>
+}
 
-<button matTooltip="Ajouter une notification sur cette commande" mat-fab color="accent" class="sixth-fab-button"
-  [matBadge]="getNotificationForCustomerOrder().length" [matBadgeHidden]="getNotificationForCustomerOrder ().length<=0"
-  matBadgePosition="below after" matBadgeColor="warn"
-  *ngIf="editMode==false && instanceOfCustomerOrderFn(quotation) && quotation.id && canDisplayNotifications() "
-  (click)="addNewNotification()">
-  <mat-icon>notifications</mat-icon>
-</button>
-<button matTooltip="Ajouter une notification sur ce devis" mat-fab color="accent" class="fifth-fab-button"
-  [matBadge]="getNotificationForQuotation().length" [matBadgeHidden]="getNotificationForQuotation().length<=0"
-  matBadgePosition="below after" matBadgeColor="warn"
-  *ngIf="editMode==false && instanceOfQuotationFn(quotation) && quotation.id && canDisplayNotifications() "
-  (click)="addNewNotification()">
-  <mat-icon>notifications</mat-icon>
-</button>
+@if (editMode==false && instanceOfCustomerOrderFn(quotation) && quotation.id && canDisplayNotifications() ) {
+  <button matTooltip="Ajouter une notification sur cette commande" mat-fab color="accent" class="sixth-fab-button"
+    [matBadge]="getNotificationForCustomerOrder().length" [matBadgeHidden]="getNotificationForCustomerOrder ().length<=0"
+    matBadgePosition="below after" matBadgeColor="warn"
+    (click)="addNewNotification()">
+    <mat-icon>notifications</mat-icon>
+  </button>
+}
+@if (editMode==false && instanceOfQuotationFn(quotation) && quotation.id && canDisplayNotifications() ) {
+  <button matTooltip="Ajouter une notification sur ce devis" mat-fab color="accent" class="fifth-fab-button"
+    [matBadge]="getNotificationForQuotation().length" [matBadgeHidden]="getNotificationForQuotation().length<=0"
+    matBadgePosition="below after" matBadgeColor="warn"
+    (click)="addNewNotification()">
+    <mat-icon>notifications</mat-icon>
+  </button>
+}
 
-<button matTooltip="Changer de statut" mat-fab color="accent" class="third-fab-button"
-  *ngIf="editMode==false && instanceOfQuotationFn(this.quotation) &&quotation && quotation.quotationStatus "
-  [matMenuTriggerFor]="menu">
-  <mat-icon>done</mat-icon>
-  <mat-menu #menu="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
-    <button mat-menu-item (click)="displayQuotationWorkflowDialog()">
-      <span>Voir le workflow</span>
-    </button>
-    <button disabled mat-menu-item *ngIf="quotation.quotationStatus.successors">
-      <span>Passer à</span>
-    </button>
-    <button mat-menu-item *ngFor="let status of quotation.quotationStatus.successors" (click)="changeStatus(status)">
-      <mat-icon>{{status.icon}}</mat-icon><span>{{status.label}}</span>
-    </button>
-    <button disabled mat-menu-item
-      *ngIf="quotation.quotationStatus.predecessors && quotation.quotationStatus.predecessors.length>0">
-      <span>Revenir à</span>
-    </button>
-    <button mat-menu-item *ngFor="let status of quotation.quotationStatus.predecessors" (click)="changeStatus(status)">
-      <mat-icon>{{status.icon}}</mat-icon><span>{{status.label}}</span>
-    </button>
-  </mat-menu>
-</button>
+@if (editMode==false && instanceOfQuotationFn(this.quotation) &&quotation && quotation.quotationStatus ) {
+  <button matTooltip="Changer de statut" mat-fab color="accent" class="third-fab-button"
+    [matMenuTriggerFor]="menu">
+    <mat-icon>done</mat-icon>
+    <mat-menu #menu="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
+      <button mat-menu-item (click)="displayQuotationWorkflowDialog()">
+        <span>Voir le workflow</span>
+      </button>
+      @if (quotation.quotationStatus.successors) {
+        <button disabled mat-menu-item>
+          <span>Passer à</span>
+        </button>
+      }
+      @for (status of quotation.quotationStatus.successors; track status) {
+        <button mat-menu-item (click)="changeStatus(status)">
+          <mat-icon>{{status.icon}}</mat-icon><span>{{status.label}}</span>
+        </button>
+      }
+      @if (quotation.quotationStatus.predecessors && quotation.quotationStatus.predecessors.length>0) {
+        <button disabled mat-menu-item
+          >
+          <span>Revenir à</span>
+        </button>
+      }
+      @for (status of quotation.quotationStatus.predecessors; track status) {
+        <button mat-menu-item (click)="changeStatus(status)">
+          <mat-icon>{{status.icon}}</mat-icon><span>{{status.label}}</span>
+        </button>
+      }
+    </mat-menu>
+  </button>
+}
 
 
-<button matTooltip="Changer de statut" mat-fab color="accent" class="third-fab-button"
-  *ngIf="editMode==false && instanceOfCustomerOrderFn(this.quotation) &&quotation && quotation.customerOrderStatus && (!quotation.isGifted)"
-  [matMenuTriggerFor]="menu">
-  <mat-icon>done</mat-icon>
-  <mat-menu #menu="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
-    <button mat-menu-item (click)="displayCustomerOrderWorkflowDialog()">
-      <span>Voir le workflow</span>
-    </button>
-    <button mat-menu-item (click)="offerCustomerOrder()"
-      *ngIf="quotation.customerOrderStatus.code==CUSTOMER_ORDER_STATUS_BILLED && canOfferCustomerOrder()">
-      <mat-icon>redeem</mat-icon><span>Offrir la commande</span>
-    </button>
-    <button disabled mat-menu-item *ngIf="quotation.customerOrderStatus.successors">
-      <span>Passer à</span>
-    </button>
-    <button mat-menu-item *ngFor="let status of quotation.customerOrderStatus.successors"
-      (click)="changeStatus(status)">
-      <mat-icon>{{status.icon}}</mat-icon><span>{{status.label}}</span>
-    </button>
-    <button disabled mat-menu-item
-      *ngIf="quotation.customerOrderStatus.predecessors && quotation.customerOrderStatus.predecessors.length>0">
-      <span>Revenir à</span>
-    </button>
-    <button mat-menu-item *ngFor="let status of quotation.customerOrderStatus.predecessors"
-      (click)="changeStatus(status)">
-      <mat-icon>{{status.icon}}</mat-icon><span>{{status.label}}</span>
-    </button>
-  </mat-menu>
-</button>
+@if (editMode==false && instanceOfCustomerOrderFn(this.quotation) &&quotation && quotation.customerOrderStatus && (!quotation.isGifted)) {
+  <button matTooltip="Changer de statut" mat-fab color="accent" class="third-fab-button"
+    [matMenuTriggerFor]="menu">
+    <mat-icon>done</mat-icon>
+    <mat-menu #menu="matMenu" style="min-height: 0px;padding: 0;" xPosition="before">
+      <button mat-menu-item (click)="displayCustomerOrderWorkflowDialog()">
+        <span>Voir le workflow</span>
+      </button>
+      @if (quotation.customerOrderStatus.code==CUSTOMER_ORDER_STATUS_BILLED && canOfferCustomerOrder()) {
+        <button mat-menu-item (click)="offerCustomerOrder()"
+          >
+          <mat-icon>redeem</mat-icon><span>Offrir la commande</span>
+        </button>
+      }
+      @if (quotation.customerOrderStatus.successors) {
+        <button disabled mat-menu-item>
+          <span>Passer à</span>
+        </button>
+      }
+      @for (status of quotation.customerOrderStatus.successors; track status) {
+        <button mat-menu-item
+          (click)="changeStatus(status)">
+          <mat-icon>{{status.icon}}</mat-icon><span>{{status.label}}</span>
+        </button>
+      }
+      @if (quotation.customerOrderStatus.predecessors && quotation.customerOrderStatus.predecessors.length>0) {
+        <button disabled mat-menu-item
+          >
+          <span>Revenir à</span>
+        </button>
+      }
+      @for (status of quotation.customerOrderStatus.predecessors; track status) {
+        <button mat-menu-item
+          (click)="changeStatus(status)">
+          <mat-icon>{{status.icon}}</mat-icon><span>{{status.label}}</span>
+        </button>
+      }
+    </mat-menu>
+  </button>
+}

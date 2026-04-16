@@ -2,18 +2,22 @@
 <div mat-dialog-content>
   <p>{{text}}</p>
   <form [formGroup]="assignedForm">
-    <div><mat-radio-group class="radio-group-column" formControlName="choosedEmployee" [(ngModel)]="choosedEmployee"
-        *ngIf="userList">
-        <mat-radio-button *ngFor="let user of userList" [value]="user">
-          {{user?user.firstname:""}} {{user?user.lastname:""}}
-        </mat-radio-button>
+    <div>@if (userList) {
+      <mat-radio-group class="radio-group-column" formControlName="choosedEmployee" [(ngModel)]="choosedEmployee"
+        >
+        @for (user of userList; track user) {
+          <mat-radio-button [value]="user">
+            {{user?user.firstname:""}} {{user?user.lastname:""}}
+          </mat-radio-button>
+        }
       </mat-radio-group>
-    </div>
-    <div>
-      <autocomplete-employee [(model)]="choosedEmployee" [form]="assignedForm" propertyName="choosedEmployee"
-        [isMandatory]="true" [isDisabled]="false" label="Employé"></autocomplete-employee>
-    </div>
-  </form>
+    }
+  </div>
+  <div>
+    <autocomplete-employee [(model)]="choosedEmployee" [form]="assignedForm" propertyName="choosedEmployee"
+    [isMandatory]="true" [isDisabled]="false" label="Employé"></autocomplete-employee>
+  </div>
+</form>
 </div>
 <div mat-dialog-actions align="end">
   <button mat-raised-button color="accent" (click)="onClose()">Annuler</button>

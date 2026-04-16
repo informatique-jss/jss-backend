@@ -1,114 +1,151 @@
-<div class="field-row" *ngIf="provision">
-  <div class="label pointer" style="width: 100%;"
-    (click)="assoAffaireOrder?displayProvision($event, assoAffaireOrder, provision):''">
-    <strong>{{provision.provisionFamilyType.label}} -
-      {{provision.provisionType.label}} <mat-icon color="accent" class="small-mat-icon">open_in_new</mat-icon></strong>
-    <mat-icon color="accent" matTooltip="Ajouter une notification sur cette prestation"
-      (click)="addNewNotificationOnProvision(provision);$event.stopPropagation();"
-      [matBadge]="getNotificationForProvision(provision).length" matBadgeSize="small" *ngIf="canDisplayNotifications()"
-      [matBadgeHidden]="getNotificationForProvision(provision).length<=0" matBadgePosition="below after"
-      matBadgeColor="warn" class="pointer">notifications</mat-icon>
-  </div>
-</div>
-
-<ng-container *ngIf="provision && provision.announcement">
-  <div class="field-row" *ngIf="displayStatus">
-    <div class="label">Status</div>
-    <div class="value">
-      {{provision.announcement.announcementStatus.label}}
-    </div>
-  </div>
-  <div class="field-row" *ngIf="provision.announcement.confrere">
-    <div class="label">Confrère</div>
-    <div class="value">
-      {{provision.announcement.confrere.label}}
-    </div>
-  </div>
-  <div class="field-row" *ngIf="provision.announcement.department">
-    <div class="label">Département</div>
-    <div class="value">
-      {{provision.announcement.department.code}}
-    </div>
-  </div>
-  <div class="field-row" *ngIf="provision.announcement.noticeTypeFamily">
-    <div class="label">Rubrique</div>
-    <div class="value">
-      {{provision.announcement.noticeTypeFamily.label}} - {{(provision.announcement.noticeTypes &&
-      provision.announcement.noticeTypes[0])?provision.announcement.noticeTypes[0].label:''}}
-    </div>
-  </div>
-  <div class="field-row" *ngIf="provision.announcement.publicationDate">
-    <div class="label">Date de publication</div>
-    <div class="value">
-      {{provision.announcement.publicationDate | date:'EEEE d MMMM HH:mm'}}
-    </div>
-  </div>
-  <div class="field-row" *ngIf="provision.announcement.characterNumber">
-    <div class="label">Nombre de caractères</div>
-    <div class="value">
-      {{provision.announcement.characterNumber}}
-    </div>
-  </div>
-</ng-container>
-<ng-container *ngIf="provision && provision.simpleProvision">
-  <div class="field-row" *ngIf="displayStatus">
-    <div class="label">Status</div>
-    <div class="value">
-      {{provision.simpleProvision.simpleProvisionStatus.label}}
-    </div>
-  </div>
-  <div class="field-row"
-    *ngIf="provision.simpleProvision.waitedCompetentAuthority && provision.simpleProvision.simpleProvisionStatus.code==SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY">
-    <div class="label">AC en attente</div>
-    <div class="value">
-      {{provision.simpleProvision.waitedCompetentAuthority.label}}
-    </div>
-  </div>
-</ng-container>
-<ng-container *ngIf="provision && provision.formalite">
-  <div class="field-row" *ngIf="displayStatus">
-    <div class="label">Status</div>
-    <div class="value">
-      {{provision.formalite.formaliteStatus.label}}
-    </div>
-  </div>
-  <div class="field-row"
-    *ngIf="provision.formalite.waitedCompetentAuthority && provision.formalite.formaliteStatus.code==FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY">
-    <div class="label">AC en attente</div>
-    <div class="value">
-      {{provision.formalite.waitedCompetentAuthority.label}}
-    </div>
-  </div>
-  <ng-container
-    *ngIf="provision.formalite.formalitesGuichetUnique && provision.formalite.formalitesGuichetUnique.length>0">
-    <div class="field-row" *ngFor="let formaliteGu of provision.formalite.formalitesGuichetUnique">
-      <div class="label pointer" (click)="openFormaliteGu(formaliteGu)">Liasse {{formaliteGu.liasseNumber}} <mat-icon
-          color="accent" class="small-mat-icon">open_in_new</mat-icon></div>
-      <div class="value">
-        {{formaliteGu.status.label}}
+@if (provision) {
+  <div class="field-row">
+    <div class="label pointer" style="width: 100%;"
+      (click)="assoAffaireOrder?displayProvision($event, assoAffaireOrder, provision):''">
+      <strong>{{provision.provisionFamilyType.label}} -
+        {{provision.provisionType.label}} <mat-icon color="accent" class="small-mat-icon">open_in_new</mat-icon></strong>
+        @if (canDisplayNotifications()) {
+          <mat-icon color="accent" matTooltip="Ajouter une notification sur cette prestation"
+            (click)="addNewNotificationOnProvision(provision);$event.stopPropagation();"
+            [matBadge]="getNotificationForProvision(provision).length" matBadgeSize="small"
+            [matBadgeHidden]="getNotificationForProvision(provision).length<=0" matBadgePosition="below after"
+          matBadgeColor="warn" class="pointer">notifications</mat-icon>
+        }
       </div>
     </div>
-  </ng-container>
-</ng-container>
+  }
 
-<div class="activity" *ngIf="provision">
-  <div class="activity-tabs">
-    <button mat-raised-button [color]="currentTabDisplayed === 'COMMENTS' ? 'primary' : 'accent'"
-      (click)="currentTabDisplayed='COMMENTS'">Commentaires</button>
-    <button mat-raised-button [color]="currentTabDisplayed === 'ATTACHMENT' ? 'primary' : 'accent'"
-      (click)="currentTabDisplayed='ATTACHMENT'">Documents</button>
-    <button mat-raised-button [color]="currentTabDisplayed === 'HISTORY_GU' ? 'primary' : 'accent'"
-      (click)="currentTabDisplayed='HISTORY_GU'"
-      *ngIf="provision.formalite && provision.formalite.formalitesGuichetUnique && provision.formalite.formalitesGuichetUnique.length>0">Historique
-      GU</button>
-    <button mat-raised-button [color]="currentTabDisplayed === 'HISTORY' ? 'primary' : 'accent'"
-      (click)="currentTabDisplayed='HISTORY'">Historique</button>
-  </div>
-  <customer-order-comment [isDisplayCommentInput]="true" [provision]="provision"
-    *ngIf="currentTabDisplayed=='COMMENTS'"></customer-order-comment>
-  <history [entity]="provision" [entityType]="PROVISION_ENTITY_TYPE" *ngIf="currentTabDisplayed=='HISTORY'"></history>
-  <guichet-unique-status [formalitesGuichetUniqueIn]="provision.formalite.formalitesGuichetUnique"
-    *ngIf="provision.formalite && currentTabDisplayed=='HISTORY_GU'"></guichet-unique-status>
-  <attachments [entity]="provision" *ngIf="currentTabDisplayed=='ATTACHMENT'" [editMode]="false"
-    [entityType]="PROVISION_ENTITY_TYPE.entityType"></attachments>
-</div>
+  @if (provision && provision.announcement) {
+    @if (displayStatus) {
+      <div class="field-row">
+        <div class="label">Status</div>
+        <div class="value">
+          {{provision.announcement.announcementStatus.label}}
+        </div>
+      </div>
+    }
+    @if (provision.announcement.confrere) {
+      <div class="field-row">
+        <div class="label">Confrère</div>
+        <div class="value">
+          {{provision.announcement.confrere.label}}
+        </div>
+      </div>
+    }
+    @if (provision.announcement.department) {
+      <div class="field-row">
+        <div class="label">Département</div>
+        <div class="value">
+          {{provision.announcement.department.code}}
+        </div>
+      </div>
+    }
+    @if (provision.announcement.noticeTypeFamily) {
+      <div class="field-row">
+        <div class="label">Rubrique</div>
+        <div class="value">
+          {{provision.announcement.noticeTypeFamily.label}} - {{(provision.announcement.noticeTypes &&
+          provision.announcement.noticeTypes[0])?provision.announcement.noticeTypes[0].label:''}}
+        </div>
+      </div>
+    }
+    @if (provision.announcement.publicationDate) {
+      <div class="field-row">
+        <div class="label">Date de publication</div>
+        <div class="value">
+          {{provision.announcement.publicationDate | date:'EEEE d MMMM HH:mm'}}
+        </div>
+      </div>
+    }
+    @if (provision.announcement.characterNumber) {
+      <div class="field-row">
+        <div class="label">Nombre de caractères</div>
+        <div class="value">
+          {{provision.announcement.characterNumber}}
+        </div>
+      </div>
+    }
+  }
+  @if (provision && provision.simpleProvision) {
+    @if (displayStatus) {
+      <div class="field-row">
+        <div class="label">Status</div>
+        <div class="value">
+          {{provision.simpleProvision.simpleProvisionStatus.label}}
+        </div>
+      </div>
+    }
+    @if (provision.simpleProvision.waitedCompetentAuthority && provision.simpleProvision.simpleProvisionStatus.code==SIMPLE_PROVISION_STATUS_WAITING_DOCUMENT_AUTHORITY) {
+      <div class="field-row"
+        >
+        <div class="label">AC en attente</div>
+        <div class="value">
+          {{provision.simpleProvision.waitedCompetentAuthority.label}}
+        </div>
+      </div>
+    }
+  }
+  @if (provision && provision.formalite) {
+    @if (displayStatus) {
+      <div class="field-row">
+        <div class="label">Status</div>
+        <div class="value">
+          {{provision.formalite.formaliteStatus.label}}
+        </div>
+      </div>
+    }
+    @if (provision.formalite.waitedCompetentAuthority && provision.formalite.formaliteStatus.code==FORMALITE_STATUS_WAITING_DOCUMENT_AUTHORITY) {
+      <div class="field-row"
+        >
+        <div class="label">AC en attente</div>
+        <div class="value">
+          {{provision.formalite.waitedCompetentAuthority.label}}
+        </div>
+      </div>
+    }
+    @if (provision.formalite.formalitesGuichetUnique && provision.formalite.formalitesGuichetUnique.length>0) {
+      @for (formaliteGu of provision.formalite.formalitesGuichetUnique; track formaliteGu) {
+        <div class="field-row">
+          <div class="label pointer" (click)="openFormaliteGu(formaliteGu)">Liasse {{formaliteGu.liasseNumber}} <mat-icon
+          color="accent" class="small-mat-icon">open_in_new</mat-icon></div>
+          <div class="value">
+            {{formaliteGu.status.label}}
+          </div>
+        </div>
+      }
+    }
+  }
+
+  @if (provision) {
+    <div class="activity">
+      <div class="activity-tabs">
+        <button mat-raised-button [color]="currentTabDisplayed === 'COMMENTS' ? 'primary' : 'accent'"
+        (click)="currentTabDisplayed='COMMENTS'">Commentaires</button>
+        <button mat-raised-button [color]="currentTabDisplayed === 'ATTACHMENT' ? 'primary' : 'accent'"
+        (click)="currentTabDisplayed='ATTACHMENT'">Documents</button>
+        @if (provision.formalite && provision.formalite.formalitesGuichetUnique && provision.formalite.formalitesGuichetUnique.length>0) {
+          <button mat-raised-button [color]="currentTabDisplayed === 'HISTORY_GU' ? 'primary' : 'accent'"
+            (click)="currentTabDisplayed='HISTORY_GU'"
+            >Historique
+          GU</button>
+        }
+        <button mat-raised-button [color]="currentTabDisplayed === 'HISTORY' ? 'primary' : 'accent'"
+        (click)="currentTabDisplayed='HISTORY'">Historique</button>
+      </div>
+      @if (currentTabDisplayed=='COMMENTS') {
+        <customer-order-comment [isDisplayCommentInput]="true" [provision]="provision"
+        ></customer-order-comment>
+      }
+      @if (currentTabDisplayed=='HISTORY') {
+        <history [entity]="provision" [entityType]="PROVISION_ENTITY_TYPE"></history>
+      }
+      @if (provision.formalite && currentTabDisplayed=='HISTORY_GU') {
+        <guichet-unique-status [formalitesGuichetUniqueIn]="provision.formalite.formalitesGuichetUnique"
+        ></guichet-unique-status>
+      }
+      @if (currentTabDisplayed=='ATTACHMENT') {
+        <attachments [entity]="provision" [editMode]="false"
+        [entityType]="PROVISION_ENTITY_TYPE.entityType"></attachments>
+      }
+    </div>
+  }

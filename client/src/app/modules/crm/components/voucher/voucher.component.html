@@ -5,27 +5,33 @@
         <td class="toggle-td">
           <generic-toggle [(model)]="isDisplayOnlyActiveVouchers"
             label="Afficher uniquement les coupons actifs/valides ?" [form]="vouchersForm"
-            propertyName="isDisplayActiveVoucher" (modelChange)="getAllVouchers()"></generic-toggle>
+          propertyName="isDisplayActiveVoucher" (modelChange)="getAllVouchers()"></generic-toggle>
         </td>
 
-        <td class="fab-td-button" *ngIf="canCreateVoucher()">
-          <button mat-mini-fab color="warn" matTooltip="Créer un coupon" (click)="createVoucher()" class="add-button">
-            <mat-icon>add</mat-icon>
-          </button>
-        </td>
+        @if (canCreateVoucher()) {
+          <td class="fab-td-button">
+            <button mat-mini-fab color="warn" matTooltip="Créer un coupon" (click)="createVoucher()" class="add-button">
+              <mat-icon>add</mat-icon>
+            </button>
+          </td>
+        }
       </tr>
     </table>
 
-    <sort-table [actions]="tableActionVoucher" [columns]="displayedColumnsVoucher" [values]="vouchers"
-      tableName="vouchers" *ngIf="displayedColumnsVoucher && displayedColumnsVoucher.length>0 "
-      (onRowClick)="openOrdersUsingVoucher($event)" [displayTotalLines]="true">
-    </sort-table>
-
-    <div *ngIf="selectedVoucher&& displayedColumnsOrdersOfVoucher && displayedColumnsOrdersOfVoucher.length>0">
-      <h4>Commandes et responsables utilisant le coupon : {{selectedVoucher.code}}</h4>
-      <sort-table [columns]="displayedColumnsOrdersOfVoucher" [values]="ordersUsedBySelectedVoucher" tableName="orders"
-        [displayTotalLines]="true">
+    @if (displayedColumnsVoucher && displayedColumnsVoucher.length>0 ) {
+      <sort-table [actions]="tableActionVoucher" [columns]="displayedColumnsVoucher" [values]="vouchers"
+        tableName="vouchers"
+        (onRowClick)="openOrdersUsingVoucher($event)" [displayTotalLines]="true">
       </sort-table>
-    </div>
+    }
+
+    @if (selectedVoucher&& displayedColumnsOrdersOfVoucher && displayedColumnsOrdersOfVoucher.length>0) {
+      <div>
+        <h4>Commandes et responsables utilisant le coupon : {{selectedVoucher.code}}</h4>
+        <sort-table [columns]="displayedColumnsOrdersOfVoucher" [values]="ordersUsedBySelectedVoucher" tableName="orders"
+          [displayTotalLines]="true">
+        </sort-table>
+      </div>
+    }
   </div>
 </div>

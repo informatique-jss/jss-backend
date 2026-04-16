@@ -11,43 +11,47 @@
     </sort-table>
   </div>
 </div>
-<div class="mat-elevation-z2 form-div" *ngIf="selectedEntity ">
-  <form [formGroup]="entityForm">
-    <div class="full-width">
-      <fieldset [disabled]="editMode==false" class="fieldset-no-border">
-        <table class="full-width">
-          <tr *ngIf="selectedEntity.id">
-            <td>
-              <generic-input [(model)]="selectedEntity.id" label="Identifiant technique" [form]="entityForm"
-                propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <generic-input [(model)]="selectedEntity.code" label="Codification" [form]="entityForm"
+@if (selectedEntity ) {
+  <div class="mat-elevation-z2 form-div">
+    <form [formGroup]="entityForm">
+      <div class="full-width">
+        <fieldset [disabled]="editMode==false" class="fieldset-no-border">
+          <table class="full-width">
+            @if (selectedEntity.id) {
+              <tr>
+                <td>
+                  <generic-input [(model)]="selectedEntity.id" label="Identifiant technique" [form]="entityForm"
+                  propertyName="id" [isMandatory]="true" [isDisabled]="true"></generic-input>
+                </td>
+              </tr>
+            }
+            <tr>
+              <td>
+                <generic-input [(model)]="selectedEntity.code" label="Codification" [form]="entityForm"
                 propertyName="code" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="20"></generic-input>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <generic-input [(model)]="selectedEntity.label" label="Nom fonctionnel" [form]="entityForm"
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <generic-input [(model)]="selectedEntity.label" label="Nom fonctionnel" [form]="entityForm"
                 propertyName="label" [isMandatory]="true" [isDisabled]="!editMode" [maxLength]="100"></generic-input>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <generic-toggle [(model)]="selectedEntity.isActive" label="Est actif ?" [form]="entityForm"
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <generic-toggle [(model)]="selectedEntity.isActive" label="Est actif ?" [form]="entityForm"
                 propertyName="isActive" [isDisabled]="!editMode"></generic-toggle>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <generic-textarea [(model)]="selectedEntity.text" label="Information à afficher" [form]="entityForm"
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <generic-textarea [(model)]="selectedEntity.text" label="Information à afficher" [form]="entityForm"
                 propertyName="text" [isMandatory]="true" [isDisabled]="!editMode"></generic-textarea>
-            </td>
-          </tr>
-        </table>
-      </fieldset>
-    </div>
-  </form>
-</div>
+              </td>
+            </tr>
+          </table>
+        </fieldset>
+      </div>
+    </form>
+  </div>
+}

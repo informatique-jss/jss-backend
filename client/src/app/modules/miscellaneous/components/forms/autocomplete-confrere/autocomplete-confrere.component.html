@@ -2,20 +2,28 @@
   <mat-label>{{label}}</mat-label>
   <input matInput [placeholder]="label" [formControlName]="propertyName" [matAutocomplete]="matAutocomplete"
     autocomplete="do-not-autofill" [required]="isMandatory">
-  <button *ngIf="model==undefined || model==null || model.id ==undefined || model.id==null" matSuffix mat-icon-button
-    (click)="openConfrereDialog()">
-    <mat-icon>search</mat-icon>
-  </button>
-  <button (click)="clearField()"
-    *ngIf="model!=undefined && model!=null && model.id !=undefined && model.id!=null && !isDisabled " matSuffix
-    mat-icon-button>
-    <mat-icon>close</mat-icon>
-  </button>
-  <mat-autocomplete autoActiveFirstOption #matAutocomplete="matAutocomplete"
-    (optionSelected)='optionSelected($event.option.value!)' [displayWith]="displayLabel">
-    <mat-option *ngFor="let confrere of filteredTypes " [value]="confrere">
-      {{displayLabel(confrere)}}
-    </mat-option>
-  </mat-autocomplete>
-  <mat-hint *ngIf="hint && hint.length>0">{{hint}}</mat-hint>
-</mat-form-field>
+    @if (model==undefined || model==null || model.id ==undefined || model.id==null) {
+      <button matSuffix mat-icon-button
+        (click)="openConfrereDialog()">
+        <mat-icon>search</mat-icon>
+      </button>
+    }
+    @if (model!=undefined && model!=null && model.id !=undefined && model.id!=null && !isDisabled ) {
+      <button (click)="clearField()"
+        matSuffix
+        mat-icon-button>
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+    <mat-autocomplete autoActiveFirstOption #matAutocomplete="matAutocomplete"
+      (optionSelected)='optionSelected($event.option.value!)' [displayWith]="displayLabel">
+      @for (confrere of filteredTypes ; track confrere) {
+        <mat-option [value]="confrere">
+          {{displayLabel(confrere)}}
+        </mat-option>
+      }
+    </mat-autocomplete>
+    @if (hint && hint.length>0) {
+      <mat-hint>{{hint}}</mat-hint>
+    }
+  </mat-form-field>

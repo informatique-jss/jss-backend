@@ -4,28 +4,38 @@
     [required]="isMandatory && (conditionnalRequired==undefined || conditionnalRequired)"
     [compareWith]="compareWithCode">
     <mat-optgroup label="Annonce légale" [disabled]="isDisabled">
-      <mat-option *ngFor="let type of announcementStatus" [value]="type">
-        {{displayLabel(type)}}
-      </mat-option>
+      @for (type of announcementStatus; track type) {
+        <mat-option [value]="type">
+          {{displayLabel(type)}}
+        </mat-option>
+      }
     </mat-optgroup>
     <mat-optgroup label="Formalité" [disabled]="isDisabled">
-      <mat-option *ngFor="let type of formaliteStatus" [value]="type">
-        {{displayLabel(type)}}
-      </mat-option>
+      @for (type of formaliteStatus; track type) {
+        <mat-option [value]="type">
+          {{displayLabel(type)}}
+        </mat-option>
+      }
     </mat-optgroup>
     <mat-optgroup label="Prestation simple" [disabled]="isDisabled">
-      <mat-option *ngFor="let type of simpleProvisionStatus" [value]="type">
-        {{displayLabel(type)}}
-      </mat-option>
+      @for (type of simpleProvisionStatus; track type) {
+        <mat-option [value]="type">
+          {{displayLabel(type)}}
+        </mat-option>
+      }
     </mat-optgroup>
     <mat-optgroup label="Domiciliation" [disabled]="isDisabled">
-      <mat-option *ngFor="let type of domiciliationStatus" [value]="type">
-        {{displayLabel(type)}}
-      </mat-option>
+      @for (type of domiciliationStatus; track type) {
+        <mat-option [value]="type">
+          {{displayLabel(type)}}
+        </mat-option>
+      }
     </mat-optgroup>
   </mat-select>
-  <mat-icon color="accent" matSuffix (click)="clearField();$event.stopPropagation()"
-    *ngIf="!isDisabled && model!=undefined" class="pointer">
-    close
-  </mat-icon>
+  @if (!isDisabled && model!=undefined) {
+    <mat-icon color="accent" matSuffix (click)="clearField();$event.stopPropagation()"
+      class="pointer">
+      close
+    </mat-icon>
+  }
 </mat-form-field>
