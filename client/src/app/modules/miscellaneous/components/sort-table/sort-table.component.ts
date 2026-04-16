@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Observable, Subscription } from 'rxjs';
@@ -48,7 +48,8 @@ export class SortTableComponent<T> implements OnInit {
 
   constructor(protected userPreferenceService: UserPreferenceService,
     private appService: AppService,
-    private employeeService: EmployeeService
+    private employeeService: EmployeeService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit() {
@@ -57,6 +58,7 @@ export class SortTableComponent<T> implements OnInit {
         if (this.values) {
           this.dataSource.data = this.getSortTableElementsFromValues(this.values);
           this.internalActions = this.actions;
+          this.cdr.markForCheck();
         }
       });
     this.internalActions = this.actions;
@@ -64,6 +66,7 @@ export class SortTableComponent<T> implements OnInit {
     this.employeeService.getEmployees().subscribe(res => {
       this.allEmployees = res;
       this.refreshValues();
+      this.cdr.markForCheck();
     });
 
     // Restore displayed columns
@@ -82,6 +85,7 @@ export class SortTableComponent<T> implements OnInit {
     this.setDisplayedColumns();
     if (this.values)
       this.dataSource.data = this.getSortTableElementsFromValues(this.values);
+    this.cdr.markForCheck();
   }
 
   getSortTableElementsFromValues(values: T[]): SortTableElement<T>[] {
@@ -150,6 +154,7 @@ export class SortTableComponent<T> implements OnInit {
         if (action == internalAction && internalAction.actionClick) {
           internalAction.actionClick(action, element, event);
           this.refreshValues();
+          this.cdr.markForCheck();
         }
     }
   }
