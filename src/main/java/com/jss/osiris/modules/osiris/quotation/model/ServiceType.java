@@ -99,6 +99,7 @@ public class ServiceType implements Serializable, IId {
 	@ManyToOne
 	@JoinColumn(name = "id_service_type_linked")
 	@JsonIgnoreProperties(value = { "serviceTypeLinked", "serviceFamily" })
+	@JsonView(JacksonViews.MyJssDetailedView.class)
 	private ServiceType serviceTypeLinked;
 
 	private Boolean hideInMyJss;
