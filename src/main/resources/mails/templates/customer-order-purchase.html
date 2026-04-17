@@ -226,11 +226,8 @@
         </table>
 
         <th:block th:each="asso : ${assos}">
-            <th:block th:each="service : ${asso.services.?[
-                assoServiceFieldTypes != null
-                and assoServiceFieldTypes.?[isMandatory].size() > 0
-        ]}">
-
+            <th:block
+                th:each="service : ${asso.services.?[ assoServiceFieldTypes != null and assoServiceFieldTypes.size() > 0]}">
                 <p>
                     <strong>
                         Service - <span th:text="${service.serviceLabelToDisplay}"></span>: <span
@@ -242,33 +239,12 @@
 
                 <ul>
                     <li th:each="field : ${service.assoServiceFieldTypes}" th:if="${field.isMandatory}">
-
-                        <span th:text="${field.serviceFieldType.label}"></span> :
-                        <span th:switch="${field.serviceFieldType.dataType}">
-
-                            <span th:case="SERVICE_FIELD_TYPE_INTEGER"
-                                th:text="${field.integerValue != null ? field.integerValue : 'À renseigner'}"></span>
-
-                            <span th:case="SERVICE_FIELD_TYPE_SELECT"
-                                th:text="${field.selectValue != null ? field.selectValue.value : 'À renseigner'}"></span>
-
-                            <span th:case="SERVICE_FIELD_TYPE_TEXT"
-                                th:text="${!#strings.isEmpty(field.stringValue) ? field.stringValue : 'À renseigner'}"></span>
-
-                            <span th:case="SERVICE_FIELD_TYPE_TEXTAREA"
-                                th:text="${!#strings.isEmpty(field.textAreaValue) ? field.textAreaValue : 'À renseigner'}"></span>
-
-                            <span th:case="SERVICE_FIELD_TYPE_DATE"
-                                th:text="${field.dateValue != null ? #temporals.format(field.dateValue,'dd/MM/yyyy') : 'À renseigner'}"></span>
-
-                            <span th:case="*">À renseigner</span>
-                        </span>
+                        <span th:text="${field.serviceFieldType.label}"></span>
                     </li>
                 </ul>
 
             </th:block>
         </th:block>
-
     </div>
 
 
@@ -323,27 +299,94 @@
 
     </th:block>
 
-    <div style="margin-bottom: 10px;">
-        <span th:if="${digitalMails!=null}">
-            Les pièces numériques seront envoyées à : <span th:text="${digitalMails}"></span>
-        </span><br />
-    </div>
-    <div style="margin-bottom: 10px;">
-        <span th:if="${billingLabel!=null}">
-            La facture sera libellée à : <br />
-            <span th:text="${billingLabel}"></span><br />
-            <span th:text="${billingLabelAddress}"></span><br />
-            <span><span th:text="${billingLabelPostalCode}"></span> <span th:text="${billingLabelCity}"></span>
-                <span th:text="${billingLabelCountry}"></span>
-            </span>
-        </span><br />
-    </div>
-    <div style="margin-bottom: 10px;">
-        <span th:if="${billingMails!=null}">
-            La facture sera envoyée à : <span th:text="${billingMails}"></span>
-        </span> <br />
-    </div>
+    <th:block th:if="${assos != null and assos.?[ services != null and services.?[assoServiceFieldTypes != null
+                            and assoServiceFieldTypes.?[integerValue != null
+                                or selectValue != null
+                                or (stringValue != null and stringValue != '')
+                                or (textAreaValue != null and textAreaValue != '')
+                                or dateValue != null ].size() > 0 ].size() > 0].size() > 0}">
 
+        <div class="no-page-break">
+
+            <table style="width:690px">
+                <tr>
+                    <td style="font-size:16px;text-align:center;font-weight:bolder;">
+                        Informations déjà renseignées
+                    </td>
+                </tr>
+            </table>
+
+            <th:block th:each="asso : ${assos}">
+                <th:block th:each="service : ${asso.services.?[#this != null
+                     and assoServiceFieldTypes != null 
+                     and assoServiceFieldTypes.?[integerValue != null 
+                     or selectValue != null or (stringValue != null and stringValue != '') 
+                     or (textAreaValue != null and textAreaValue != '') or dateValue != null].size() > 0]}">
+
+
+                    <p>
+                        <strong>
+                            Service -
+                            <span th:text="${service.serviceLabelToDisplay}"></span>
+                            <span th:if="${service.customerComment}">
+                                : <span th:text="${service.customerComment}"></span>
+                            </span>
+                        </strong>
+                    </p>
+
+                    <ul>
+                        <li th:each="field : ${service.assoServiceFieldTypes.?[ integerValue != null
+                                    or selectValue != null
+                                    or (stringValue != null and stringValue != '')
+                                    or (textAreaValue != null and textAreaValue != '')
+                                    or dateValue != null  ]}">
+
+                            <span th:text="${field.serviceFieldType.label}"></span> :
+                            <span th:switch="${field.serviceFieldType.dataType}">
+
+                                <span th:case="SERVICE_FIELD_TYPE_INTEGER" th:text="${field.integerValue}"></span>
+
+                                <span th:case="SERVICE_FIELD_TYPE_SELECT" th:text="${field.selectValue.value}"></span>
+
+                                <span th:case="SERVICE_FIELD_TYPE_TEXT" th:text="${field.stringValue}"></span>
+
+                                <span th:case="SERVICE_FIELD_TYPE_TEXTAREA" th:text="${field.textAreaValue}"></span>
+
+                                <span th:case="SERVICE_FIELD_TYPE_DATE"
+                                    th:text="${#temporals.format(field.dateValue,'dd/MM/yyyy')}"></span>
+
+                            </span>
+                        </li>
+                    </ul>
+
+                </th:block>
+            </th:block>
+
+        </div>
+    </th:block>
+    <br>
+    <div class="no-page-break">
+        <div style="margin-bottom: 10px;">
+            <span th:if="${digitalMails!=null}">
+                Les pièces numériques seront envoyées à : <span th:text="${digitalMails}"></span>
+            </span><br />
+        </div>
+        <div style="margin-bottom: 10px;">
+            <span th:if="${billingLabel!=null}">
+                La facture sera libellée à : <br />
+                <span th:text="${billingLabel}"></span><br />
+                <span th:text="${billingLabelAddress}"></span><br />
+                <span><span th:text="${billingLabelPostalCode}"></span> <span th:text="${billingLabelCity}"></span>
+                    <span th:text="${billingLabelCountry}"></span>
+                </span>
+            </span><br />
+        </div>
+        <div style="margin-bottom: 10px;">
+            <span th:if="${billingMails!=null}">
+                La facture sera envoyée à : <span th:text="${billingMails}"></span>
+            </span> <br />
+        </div>
+    </div>
     <div>
         <span th:if="${comment!=null}">
             Vos commentaires : <span th:text="${comment}"></span>

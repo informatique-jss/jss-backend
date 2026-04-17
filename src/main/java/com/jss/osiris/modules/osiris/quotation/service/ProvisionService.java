@@ -7,6 +7,7 @@ import com.jss.osiris.libs.exception.OsirisClientMessageException;
 import com.jss.osiris.libs.exception.OsirisDuplicateException;
 import com.jss.osiris.libs.exception.OsirisException;
 import com.jss.osiris.libs.exception.OsirisValidationException;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
 import com.jss.osiris.modules.osiris.profile.model.Employee;
 import com.jss.osiris.modules.osiris.quotation.model.IWorkflowElement;
 import com.jss.osiris.modules.osiris.quotation.model.Provision;
@@ -36,4 +37,6 @@ public interface ProvisionService {
             throws OsirisClientMessageException, OsirisValidationException, OsirisDuplicateException, OsirisException;
 
     public void deleteProvisionAndDependencies(Provision provision) throws OsirisException;
+
+    public Attachment getLastAttachmentForProvisionAndAttachmentType(Provision provision, String attachmentTypeCode);
 }

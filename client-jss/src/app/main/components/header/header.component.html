@@ -4,113 +4,109 @@
       <div class="navbar-brand-wrapper py-1 d-flex justify-content-between align-items-center">
         <a class="btn btn-secondary btn-fixed-secondary px-3 align-items-center d-flex" (click)="openMyJss()"
           target="_blank" [href]="frontendMyJssUrl+MY_JSS_HOME_ROUTE"><img
-          src="assets/images/homepage/my-jss-logo-link.svg" /><i class="bi-arrow-up-right ms-1"></i></a>
-          <a class="navbar-brand ms-5 ps-3 " [routerLink]="['/']">
-            <img class="lazyload" src="assets/images/homepage/logo.svg" style="max-height: 90px;" alt="image">
-          </a>
-          <div>
-            @if (!currentUser) {
-              <a class="btn btn-light me-2 pointer" (click)="openSignIn()"
-              [href]="frontendMyJssUrl+MY_JSS_SIGN_IN_ROUTE">Se connecter</a>
-            }
-            @if (!currentUser) {
-              <a class="btn btn-yellow " (click)="openSubscribe($event)"
-              routerLink="/subscription">S'abonner</a>
-            }
-            <!-- User signed in state. Account dropdown on screens > 576px -->
-            @if (currentUser && currentUser.id) {
-              <div class="dropdown nav" [ngClass]="{ show: dropdownOpen }">
-                <a href="#" role="button" class="d-flex align-items-center p-0 user-account dropdown-toggle"
-                  (click)="toggleDropdown($event)" [attr.aria-expanded]="dropdownOpen">
-                  <avatar class="avatar-select" [user]="currentUser" [size]="48"></avatar>
-                  <div class="ps-2 d-none d-md-block">
-                    <div class="fs-xs lh-1 opacity-60">Bonjour,</div>
-                    <div class="fs-sm">{{ capitalizeName(currentUser.firstname + ' ' + currentUser.lastname) }}</div>
-                  </div>
-                </a>
-                <div class="dropdown-menu dropdown-menu-end my-1 custom-drop" [ngClass]="{ show: dropdownOpen }">
-                  <a class="dropdown-item" [href]="frontendMyJssUrl+'/quotation/identification'">
-                    <i class="fs-lg opacity-70 me-2 ai-circle-plus"></i>
-                    Nouvelle demande
-                  </a>
-                  <h6 class="dropdown-header fs-xs fw-medium text-body-secondary text-uppercase pb-1">Tableau de
-                  bord</h6>
-                  @for (item of myAccountItems; track item) {
-                    @if (item.mainItem==MAIN_ITEM_DASHBOARD) {
-                      <a class="dropdown-item" [href]="frontendMyJssUrl+item.route"
-                        >
-                        <i class="fs-lg opacity-70 me-2" [ngClass]="item.iconClass"></i>
-                        {{item.label}}
-                      </a>
-                    }
-                  }
-                  <div class="dropdown-divider"></div>
-                  <h6 class="dropdown-header fs-xs fw-medium text-body-secondary text-uppercase pb-1">Mon compte</h6>
-                  @for (item of myAccountItems; track item) {
-                    @if (item.mainItem==MAIN_ITEM_ACCOUNT) {
-                      <a class="dropdown-item pointer" [href]="frontendMyJssUrl+item.route"
-                        >
-                        <i class=" fs-lg opacity-70 me-2" [ngClass]="item.iconClass"></i>
-                        {{item.label}}
-                      </a>
-                    }
-                  }
-                  <div class="dropdown-divider"></div>
-                  <a class="dropdown-item btn-outline-light" (click)="disconnect()">
-                    Se déconnecter
-                  </a>
-                </div>
+            src="assets/images/homepage/my-jss-logo-link.svg" /><i class="bi-arrow-up-right ms-1"></i></a>
+        <a class="navbar-brand ms-5 ps-3 " [routerLink]="['/']">
+          <img class="lazyload" src="assets/images/homepage/logo.svg" style="max-height: 90px;" alt="image">
+        </a>
+        <div>
+          @if (!currentUser) {
+          <a class="btn btn-light me-2 pointer" (click)="openSignIn()" [href]="frontendMyJssUrl+MY_JSS_SIGN_IN_ROUTE">Se
+            connecter</a>
+          }
+          @if (!currentUser) {
+          <a class="btn btn-yellow " (click)="openSubscribe($event)" routerLink="/subscription">S'abonner</a>
+          }
+          <!-- User signed in state. Account dropdown on screens > 576px -->
+          @if (currentUser && currentUser.id) {
+          <div class="dropdown nav" [ngClass]="{ show: dropdownOpen }">
+            <a href="#" role="button" class="d-flex align-items-center p-0 user-account dropdown-toggle"
+              (click)="toggleDropdown($event)" [attr.aria-expanded]="dropdownOpen">
+              <avatar class="avatar-select" [user]="currentUser" [size]="48"></avatar>
+              <div class="ps-2 d-none d-md-block">
+                <div class="fs-xs lh-1 opacity-60">Bonjour,</div>
+                <div class="fs-sm">{{ capitalizeName(currentUser.firstname + ' ' + currentUser.lastname) }}</div>
               </div>
-            }
+            </a>
+            <div class="dropdown-menu dropdown-menu-end my-1 custom-drop" [ngClass]="{ show: dropdownOpen }">
+              <a class="dropdown-item" [href]="frontendMyJssUrl+'/quotation/identification'">
+                <i class="fs-lg opacity-70 me-2 ai-circle-plus"></i>
+                Nouvelle demande
+              </a>
+              <h6 class="dropdown-header fs-xs fw-medium text-body-secondary text-uppercase pb-1">Tableau de
+                bord</h6>
+              @for (item of myAccountItems; track item) {
+              @if (item.mainItem==MAIN_ITEM_DASHBOARD) {
+              <a class="dropdown-item" [href]="frontendMyJssUrl+item.route">
+                <i class="fs-lg opacity-70 me-2" [ngClass]="item.iconClass"></i>
+                {{item.label}}
+              </a>
+              }
+              }
+              <div class="dropdown-divider"></div>
+              <h6 class="dropdown-header fs-xs fw-medium text-body-secondary text-uppercase pb-1">Mon compte</h6>
+              @for (item of myAccountItems; track item) {
+              @if (item.mainItem==MAIN_ITEM_ACCOUNT) {
+              <a class="dropdown-item pointer" [href]="frontendMyJssUrl+item.route">
+                <i class=" fs-lg opacity-70 me-2" [ngClass]="item.iconClass"></i>
+                {{item.label}}
+              </a>
+              }
+              }
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item btn-outline-light" (click)="disconnect()">
+                Se déconnecter
+              </a>
+            </div>
           </div>
-
+          }
         </div>
+
       </div>
     </div>
-    <div class="header-navbar-bottom pt-2 pt-lg-0 border-top border-light">
-      <div class="container themeix-menu-selector">
+  </div>
+  <div class="header-navbar-bottom pt-2 pt-lg-0 border-top border-light">
+    <div class="container themeix-menu-selector">
 
-        <!-- Top bar on mobile: burger - logo - search -->
-        <div class="d-flex justify-content-between align-items-center d-lg-none pb-2 pt-1">
-          <!-- Burger button -->
-          <a class="btn btn-sm text-white rounded-1 border-light" (click)=" toggleMobileMenu()">
-            <i class="bi bi-list fs-3"></i>
-          </a>
+      <!-- Top bar on mobile: burger - logo - search -->
+      <div class="d-flex justify-content-between align-items-center d-lg-none pb-2 pt-1">
+        <!-- Burger button -->
+        <a class="btn btn-sm text-white rounded-1 border-light" (click)=" toggleMobileMenu()">
+          <i class="bi bi-list fs-3"></i>
+        </a>
 
-          <!-- Mobile logo -->
-          <a class="navbar-brand mx-auto" [routerLink]="['/']">
-            <img src="assets/images/homepage/logo-white.svg" alt="logo" style="height: 40px;" />
-          </a>
+        <!-- Mobile logo -->
+        <a class="navbar-brand mx-auto" [routerLink]="['/']">
+          <img src="assets/images/homepage/logo-white.svg" alt="logo" style="height: 40px;" />
+        </a>
 
-          <!-- Search icon -->
-          <a class="nav-link pointer text-white" (click)="displaySearchModal(searchModal)">
-            <i class="fas fa-search fs-5"></i>
-          </a>
-        </div>
+        <!-- Search icon -->
+        <a class="nav-link pointer text-white" (click)="displaySearchModal(searchModal)">
+          <i class="fas fa-search fs-5"></i>
+        </a>
+      </div>
 
-        <!-- Navigation (desktop layout) -->
-        <nav class="navbar navbar-expand-lg text-uppercase text-white-100 d-none d-lg-flex">
-          <div class="collapse navbar-collapse" id="main_nav">
-            <ul class="navbar-nav me-auto">
-              <li class="nav-item dropdown"> @if (idfPublishingDepartment) {
-                <a class="nav-link"
-                  [ngClass]="{'active': getCurrentRoute().includes('/post/department') && getCurrentRoute().includes('/post/department')}"
+      <!-- Navigation (desktop layout) -->
+      <nav class="navbar navbar-expand-lg text-uppercase text-white-100 d-none d-lg-flex">
+        <div class="collapse navbar-collapse" id="main_nav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item dropdown"> @if (idfPublishingDepartment) {
+              <a class="nav-link"
+                [ngClass]="{'active': getCurrentRoute().includes('/post/department') && getCurrentRoute().includes('/post/department')}"
                 [routerLink]='"post/department/"+ idfPublishingDepartment.code + "/page" '>Ile-de-France</a>
               }
               <ul class="dropdown-menu">
                 <li> @for (department of departments; track department) {
-                  <a class="dropdown-item"
-                    [routerLink]='"/post/department/" + department.code + "/page" '
+                  <a class="dropdown-item" [routerLink]='"/post/department/" + department.code + "/page" '
                     (click)="openDepartment()">{{department.code.trim().length>0 &&
                     department.code!="0" ?(department.code+ " - ")
-                  :""}}{{department.name}}</a>
-                }
-              </li>
-            </ul>
-          </li>
+                    :""}}{{department.name}}</a>
+                  }
+                </li>
+              </ul>
+            </li>
 
-          <!-- Categories -->
-          @for (category of categoriesByOrder; track category) {
+            <!-- Categories -->
+            @for (category of categoriesByOrder; track category) {
             <li class="nav-item">
               <a class="nav-link"
                 [ngClass]="{'active': getCurrentRoute().includes('/post/category') && getCurrentRoute().includes('/'+category.slug)}"
@@ -118,55 +114,55 @@
                 {{category.name}}
               </a>
             </li>
-          }
+            }
 
-          <!-- Podcast -->
-          <li class="nav-item border-left nav-item-podcast">
-            <span>
-              <a class="nav-link podcast-nav-link mt-auto py-0 ps-2"
-                [ngClass]="{'active': getCurrentRoute().includes('/podcasts') && getCurrentRoute().includes('/podcasts')}"
-                routerLink="/podcasts">
-                Podcast
+            <!-- Podcast -->
+            <li class="nav-item border-left nav-item-podcast">
+              <span>
+                <a class="nav-link podcast-nav-link mt-auto py-0 ps-2"
+                  [ngClass]="{'active': getCurrentRoute().includes('/podcasts') && getCurrentRoute().includes('/podcasts')}"
+                  routerLink="/podcasts">
+                  Podcast
+                </a>
+              </span>
+            </li>
+
+            <!-- Premium -->
+            <li class="nav-item">
+              <a class="nav-link" (click)="openPremium()" routerLink="/post/premium">
+                <img src="assets/images/premium-icon.svg" class="me-1" />Premium
               </a>
-            </span>
-          </li>
+            </li>
 
-          <!-- Premium -->
-          <li class="nav-item">
-            <a class="nav-link" (click)="openPremium()" routerLink="/post/premium">
-              <img src="assets/images/premium-icon.svg" class="me-1" />Premium
-            </a>
-          </li>
+            <!-- Annonce légale -->
+            <li class="nav-item d-flex align-items-center">
+              <a routerLink="/announcement/search" style="padding: 0 !important;"
+                (click)="openSearchAnnouncement($event)">
+                <button class="btn btn-outline-light fs-9 px-2 m-0 rounded-1" (click)="$event.stopPropagation()">
+                  CONSULTER UNE ANNONCE LÉGALE
+                </button>
+              </a>
+            </li>
+          </ul>
+          <a class="nav-link pointer text-white" (click)="displaySearchModal(searchModal)">
+            <i class="fas fa-search fs-5"></i>
+          </a>
+        </div>
+      </nav>
 
-          <!-- Annonce légale -->
-          <li class="nav-item d-flex align-items-center">
-            <a routerLink="/announcement/search" style="padding: 0 !important;"
-              (click)="openSearchAnnouncement($event)">
-              <button class="btn btn-outline-light fs-9 px-2 m-0 rounded-1" (click)="$event.stopPropagation()">
-                CONSULTER UNE ANNONCE LÉGALE
-              </button>
-            </a>
-          </li>
-        </ul>
-        <a class="nav-link pointer text-white" (click)="displaySearchModal(searchModal)">
-          <i class="fas fa-search fs-5"></i>
-        </a>
-      </div>
-    </nav>
-
-    <!-- Navigation Mobile (expandable) -->
-    @if (isMobileMenuOpen) {
+      <!-- Navigation Mobile (expandable) -->
+      @if (isMobileMenuOpen) {
       <div class="d-lg-none" #menuMobile>
         <div class="py-3 row g-2">
           <div class="col">
             @if (!currentUser) {
-              <a class="btn btn-light w-100" [href]="" (click)="openSignIn()"
+            <a class="btn btn-light w-100" [href]="" (click)="openSignIn()"
               [href]="frontendMyJssUrl+MY_JSS_SIGN_IN_ROUTE">Se connecter</a>
             }
           </div>
           <div class="col">
             @if (!currentUser) {
-              <a class="btn btn-yellow btn-yellow-burger w-100" routerLink="/subscription"
+            <a class="btn btn-yellow btn-yellow-burger w-100" routerLink="/subscription"
               (click)="openSubscribe($event)">S'abonner</a>
             }
           </div>
@@ -177,30 +173,30 @@
             <a class="w-100 mb-2" (click)="toggleDepartmentDropdown()">
               Île-de-France
               <i class="bi float-end"
-              [ngClass]="{'bi-chevron-down': !showDepartments, 'bi-chevron-up': showDepartments}"></i>
+                [ngClass]="{'bi-chevron-down': !showDepartments, 'bi-chevron-up': showDepartments}"></i>
             </a>
             @if (showDepartments) {
-              <ul class="list-unstyled ps-3">
-                @for (department of departments; track department) {
-                  <li class="py-1">
-                    <a class="text-white dropdown-item" (click)="openDepartment()"
-                      [routerLink]='"/post/department/" + department.code + "/page" '>
-                      {{department.code !== '0' ? department.code + ' - ' : ''}}{{department.name}}
-                    </a>
-                  </li>
-                }
-              </ul>
+            <ul class="list-unstyled ps-3">
+              @for (department of departments; track department) {
+              <li class="py-1">
+                <a class="text-white dropdown-item" (click)="openDepartment()"
+                  [routerLink]='"/post/department/" + department.code + "/page" '>
+                  {{department.code !== '0' ? department.code + ' - ' : ''}}{{department.name}}
+                </a>
+              </li>
+              }
+            </ul>
             }
           </li>
           <!-- Categories -->
           @for (category of categoriesByOrder; track category) {
-            <li class="nav-item">
-              <a class="nav-link"
-                [ngClass]="{'active': getCurrentRoute().includes('/post/category') && getCurrentRoute().includes('/'+category.slug)}"
-                (click)="openCategoryPosts()" [routerLink]='"/post/category/" + category.slug'>
-                {{category.name}}
-              </a>
-            </li>
+          <li class="nav-item">
+            <a class="nav-link"
+              [ngClass]="{'active': getCurrentRoute().includes('/post/category') && getCurrentRoute().includes('/'+category.slug)}"
+              (click)="openCategoryPosts()" [routerLink]='"/post/category/" + category.slug'>
+              {{category.name}}
+            </a>
+          </li>
           }
           <!-- Podcast -->
           <li class="nav-item">
@@ -216,23 +212,23 @@
           </li>
         </ul>
         <hr>
-          <!-- End buttons -->
-          <div class="pt-1">
-            <div class="pb-2 row g-2">
-              <div class="col-sm col-12">
-                <a class="btn btn-outline-light w-100 h-100 fs-9 d-flex align-items-center justify-content-center"
-                  (click)="openSearchAnnouncement($event)" routerLink="/announcement/search">CONSULTER UNE ANNONCE
+        <!-- End buttons -->
+        <div class="pt-1">
+          <div class="pb-2 row g-2">
+            <div class="col-sm col-12">
+              <a class="btn btn-outline-light w-100 h-100 fs-9 d-flex align-items-center justify-content-center"
+                (click)="openSearchAnnouncement($event)" routerLink="/announcement/search">CONSULTER UNE ANNONCE
                 LÉGALE</a>
-              </div>
-              <div class="col-sm col-12 ">
-                <a class="btn btn-outline-dark w-100 h-100 d-flex align-items-center justify-content-center border-light"
-                  (click)=" openMyJss()" [href]="frontendMyJssUrl+MY_JSS_HOME_ROUTE">
-                  <img src="assets/images/homepage/my-jss-logo-link.svg" /> <i class="bi-arrow-up-right ms-1"></i>
-                </a>
-              </div>
+            </div>
+            <div class="col-sm col-12 ">
+              <a class="btn btn-outline-dark w-100 h-100 d-flex align-items-center justify-content-center border-light"
+                (click)=" openMyJss()" [href]="frontendMyJssUrl+MY_JSS_HOME_ROUTE">
+                <img src="assets/images/homepage/my-jss-logo-link.svg" /> <i class="bi-arrow-up-right ms-1"></i>
+              </a>
             </div>
           </div>
         </div>
+      </div>
       }
     </div>
   </div>
@@ -241,20 +237,21 @@
 
 <!-- Modal Search START -->
 <ng-template #searchModal let-modal>
-  <div class="modal-header border-0 pt-sm-5 pe-sm-5">
-    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
-  </div>
-  <div class="modal-body">
-    <div class="row align-items-center"
-      [ngClass]="{'h-50': (posts && posts.length>0) || (newspapers && newspapers.length>0) , 'h-100':  !(posts && posts.length>0) && !(newspapers && newspapers.length>0)}">
-      <div class="col-lg-5 mx-auto mb-5">
-        <h2 class="mb-4">Rechercher des articles du JSS</h2>
-        <!-- Search form START -->
-        <form class="position-relative w-100">
-          <div class="row mt-0 mb-1 align-items-center">
-            <div class="col ms-1 mt-0 mb-2 form-check form-switch custom-toggle mt-2">
-              <input color="primary" type="checkbox" class="form-check-input" [(ngModel)]="isWithKiosk"
-                name="isWithKiosk" id="isWithKiosk" required="false" (change)="globalSearch()">
+  <div class="background-header h-100">
+    <div class="modal-header border-0 pt-sm-5 w-75 mx-auto" style="background-color: white;">
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+    </div>
+    <div class="modal-body h-100 w-75 mx-auto" style="background-color: white;">
+      <div class="row align-items-center"
+        [ngClass]="{'h-50': (posts && posts.length>0) || (newspapers && newspapers.length>0) , 'h-100':  !(posts && posts.length>0) && !(newspapers && newspapers.length>0)}">
+        <div class="col-lg-5 mx-auto mb-5">
+          <h2 class="mb-4">Rechercher des articles du JSS</h2>
+          <!-- Search form START -->
+          <form class="position-relative w-100">
+            <div class="row mt-0 mb-1 align-items-center">
+              <div class="col ms-1 mt-0 mb-2 form-check form-switch custom-toggle mt-2">
+                <input color="primary" type="checkbox" class="form-check-input" [(ngModel)]="isWithKiosk"
+                  name="isWithKiosk" id="isWithKiosk" required="false" (change)="globalSearch()">
                 <label class="form-check-label" for="isWithKiosk">Inclure le Kiosque JSS ?</label>
               </div>
               <div class="col me-2">
@@ -282,146 +279,139 @@
                 <input class="form-control mb-0 pe-6" type="text" name="search" placeholder="Que recherchez-vous ?"
                   autocomplete='off' autocomplete="nope" [(ngModel)]="searchText" (keydown)="searchEntities()"
                   [ngModelOptions]="{standalone: true}" autocorrect="off" autocapitalize="off" spellcheck="false">
-                </div>
-                @if (searchInProgress) {
-                  <div class="position-absolute top-50 translate-middle-y end-4 me-4"
-                    style="z-index: 2;">
-                    <div class="spinner-border spinner-border-sm text-secondary" role="status" aria-hidden="true"></div>
-                  </div>
-                }
-                <!-- Search button -->
-                <button type="button" class="position-absolute end-0 top-0 btn h-100 border-0">
-                  <i class="bi bi-search display-8"></i>
-                </button>
               </div>
-            </form>
-            <!-- Search form END -->
-            <p class="small mb-0">exemple : bâtonnier de Paris, trafic de stupéfiants, liquidation judiciaire...</p>
-
-          </div>
-        </div>
-        <div class="container">
-          @if (!searchInProgress) {
-            <div class="row justify-content-between gap-2">
-              @if (posts) {
-                <div class="col">
-                  @if (isWithKiosk && posts && posts.length > 0) {
-                    <h3 class="">Les articles JSS</h3>
-                  }
-                  @for (post of posts; track post) {
-                    <div>
-                      <article data-aos="fade-up" class="blog-style2 card my-3">
-                        <div class="feature-image order-1 order-lg-0">
-                          <div class="image-frame image-hover-style-1">
-                            <a [routerLink]='"/post/" + post.slug'> @if (post.media) {
-                              <img class="lazyload"
-                                [src]="post.media.urlLarge!=null ? post.media.urlLarge : post.media.urlFull"
-                                [alt]="post.media.alt_text" class="w-100">
-                            }</a>
-                          </div>
-                        </div>
-                        <div data-aos="fade-in" class="ms-3 card-body d-flex flex-column flex-lg-row align-items-stretch p-0">
-                          <div class="order-0 order-lg-1">
-                            @if (post.jssCategories && post.jssCategories.length>0) {
-                              <div class="row align-items-center ms-0 mb-1"
-                                >
-                                <a (click)="openCategoryPosts()" (click)="openPost()"
-                                  [routerLink]='"/post/category/" + post.jssCategories[0].slug'
-                                class="badge bg-info rounded-pill px-1 col-auto me-2 mb-0">{{post.jssCategories[0].name}}</a>
-                              </div>
-                            }
-                            <h4>
-                              <a class="card-text-truncate" (click)="openPost()" [routerLink]='"/post/" + post.slug'> @if (post.isPremium) {
-                                <img
-                                  class="col-auto pe-1" src="/assets/images/premium-icon.svg">
-                                  }@if (post.isHidePremium) {
-                                  <img
-                                    class="ms-1 pe-0"
-                                    src="/assets/images/subscribed-icon.svg">
-                                  }{{post.titleText}}</a>
-                                </h4>
-                                <div class="">
-                                  <span class="card-truncate-6-line" [innerHTML]="post.excerptText| trustHtml"></span>
-                                </div>
-                                <div class="row align-items-center">
-                                  @if (post.isHiddenAuthor==undefined || post.isHiddenAuthor==null || post.isHiddenAuthor==false) {
-                                    <div class="col-lg-6"
-                                      >
-                                      <div class="author-block">
-                                        <ul class="avatar list-inline mb-0">
-                                          @if (post.fullAuthor) {
-                                            <li class="list-inline-item align-items-center"><a class="fs-9"><img
-                                              [src]="post.fullAuthor.avatar_url_size_24" [alt]="post.fullAuthor.name" placement="top"
-                                              [ngbTooltip]="post.fullAuthor.name">
-                                            {{post.fullAuthor.name}}</a></li>
-                                          }
-                                        </ul>
-                                      </div>
-                                    </div>
-                                  }
-                                  <div class="col-lg-6"> <span class="date-info fs-9 float-lg-end">
-                                    <span>Publié le {{post.date | literalDatePipe}}</span>
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </article>
-                      </div>
-                    }
-                  </div>
-                }
-                @if (newspapers && newspapers.length > 0) {
-                  <div class="col">
-                    @if (isWithKiosk && newspapers && newspapers.length > 0) {
-                      <h3 class="">Les archives du kiosque JSS</h3>
-                    }
-                    @for (newspaper of newspapers; track newspaper) {
-                      <div>
-                        <article data-aos="fade-up" class="blog-style2 card my-3">
-                          <div class="feature-image order-1 order-lg-0">
-                            <div class="image-frame image-hover-style-1">
-                  <a (click)="openPost()" [routerLink]='"/kiosk/" + getYearDate(newspaper.text.newspaper.date) + "/" +
-                      newspaper.text.newspaper.newspaperIssueNumber'>
-                                @if (getNewspaperImage(newspaper.text.newspaper.id)) {
-                                  <img class="lazyload w-100"
-                                    style="object-fit: cover; aspect-ratio: 16/9; max-height: 250px;"
-                                    [src]="getNewspaperImage(newspaper.text.newspaper.id)" alt="Couverture du magazine">
-                                }
-                                @if (!getNewspaperImage(newspaper.text.newspaper.id)) {
-                                  <img class="w-100"
-                                    style="object-fit: cover; aspect-ratio: 16/9; max-height: 250px;"
-                                    src="assets/images/kiosk/jss_11.jpg" alt="Couverture par défaut">
-                                  }
-                                </a>
-                              </div>
-                            </div>
-                            <div data-aos="fade-in" class="ms-3 card-body d-flex flex-column flex-lg-row align-items-stretch p-0">
-                              <div class="order-0 order-lg-1 w-100">
-                                @if (newspaper.text.newspaper.newspaperCategory) {
-                                  <div class="row align-items-center ms-0 mb-1">
-                                    <div class="badge bg-info rounded-pill px-1 col-auto me-2 mb-0">
-                                      {{newspaper.text.newspaper.newspaperCategory ==
-                                      "JDS"
-                                      ?
-                                    "Journal de la Seine" : "Journal Spécial des Société"}}</div>
-                                  </div>
-                                }
-                                <h4>
-                    <a class="card-text-truncate" (click)="openPost()" [routerLink]='"/kiosk/" + getYearDate(newspaper.text.newspaper.date) + "/" +
-                      newspaper.text.newspaper.newspaperIssueNumber'>{{newspaper.text.newspaper.date
-                                    | date:'yyyy'}} - Numéro {{newspaper.text.newspaper.newspaperIssueNumber}} - page
-                                  {{newspaper.text.pageNumber}}</a>
-                                </h4>
-                              </div>
-                            </div>
-                          </article>
-                        </div>
-                      }
-                    </div>
-                  }
-                </div>
+              @if (searchInProgress) {
+              <div class="position-absolute top-50 translate-middle-y end-4 me-4" style="z-index: 2;">
+                <div class="spinner-border spinner-border-sm text-secondary" role="status" aria-hidden="true"></div>
+              </div>
               }
+              <!-- Search button -->
+              <button type="button" class="position-absolute end-0 top-0 btn h-100 border-0">
+                <i class="bi bi-search display-8"></i>
+              </button>
             </div>
+          </form>
+          <!-- Search form END -->
+          <p class="small mb-0">exemple : bâtonnier de Paris, trafic de stupéfiants, liquidation judiciaire...</p>
+
+        </div>
+      </div>
+      <div class="container">
+        @if (!searchInProgress) {
+        <div class="row justify-content-between gap-2">
+          @if (posts) {
+          <div class="col">
+            @if (isWithKiosk && posts && posts.length > 0) {
+            <h3 class="">Les articles JSS</h3>
+            }
+            @for (post of posts; track post) {
+            <div>
+              <article data-aos="fade-up" class="blog-style2 card my-3">
+                <div class="feature-image order-1 order-lg-0">
+                  <div class="image-frame image-hover-style-1">
+                    <a [routerLink]='"/post/" + post.slug'> @if (post.media) {
+                      <img class="lazyload" [src]="post.media.urlLarge!=null ? post.media.urlLarge : post.media.urlFull"
+                        [alt]="post.media.alt_text" class="w-100">
+                      }</a>
+                  </div>
+                </div>
+                <div data-aos="fade-in" class="ms-3 card-body d-flex flex-column flex-lg-row align-items-stretch p-0">
+                  <div class="order-0 order-lg-1">
+                    @if (post.jssCategories && post.jssCategories.length>0) {
+                    <div class="row align-items-center ms-0 mb-1">
+                      <a (click)="openCategoryPosts()" (click)="openPost()"
+                        [routerLink]='"/post/category/" + post.jssCategories[0].slug'
+                        class="badge bg-info rounded-pill px-1 col-auto me-2 mb-0">{{post.jssCategories[0].name}}</a>
+                    </div>
+                    }
+                    <h4>
+                      <a class="card-text-truncate" (click)="openPost()" [routerLink]='"/post/" + post.slug'> @if
+                        (post.isPremium) {
+                        <img class="col-auto pe-1" src="/assets/images/premium-icon.svg">
+                        }@if (post.isHidePremium) {
+                        <img class="ms-1 pe-0" src="/assets/images/subscribed-icon.svg">
+                        }{{post.titleText}}</a>
+                    </h4>
+                    <div class="">
+                      <span class="card-truncate-6-line" [innerHTML]="post.excerptText| trustHtml"></span>
+                    </div>
+                    <div class="row align-items-center">
+                      @if (post.isHiddenAuthor==undefined || post.isHiddenAuthor==null || post.isHiddenAuthor==false) {
+                      <div class="col-lg-6">
+                        <div class="author-block">
+                          <ul class="avatar list-inline mb-0">
+                            @if (post.fullAuthor) {
+                            <li class="list-inline-item align-items-center"><a class="fs-9"><img
+                                  [src]="post.fullAuthor.avatar_url_size_24" [alt]="post.fullAuthor.name"
+                                  placement="top" [ngbTooltip]="post.fullAuthor.name">
+                                {{post.fullAuthor.name}}</a></li>
+                            }
+                          </ul>
+                        </div>
+                      </div>
+                      }
+                      <div class="col-lg-6"> <span class="date-info fs-9 float-lg-end">
+                          <span>Publié le {{post.date | literalDatePipe}}</span>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            </div>
+            }
           </div>
-        </ng-template>
+          }
+          @if (newspapers && newspapers.length > 0) {
+          <div class="col">
+            @if (isWithKiosk && newspapers && newspapers.length > 0) {
+            <h3 class="">Les archives du kiosque JSS</h3>
+            }
+            @for (newspaper of newspapers; track newspaper) {
+            <div>
+              <article data-aos="fade-up" class="blog-style2 card my-3">
+                <div class="feature-image order-1 order-lg-0">
+                  <div class="image-frame image-hover-style-1">
+                    <a (click)="openPost()" [routerLink]='"/kiosk/" + getYearDate(newspaper.text.newspaper.date) + "/" +
+                      newspaper.text.newspaper.newspaperIssueNumber'>
+                      @if (getNewspaperImage(newspaper.text.newspaper.id)) {
+                      <img class="lazyload w-100" style="object-fit: cover; aspect-ratio: 16/9; max-height: 250px;"
+                        [src]="getNewspaperImage(newspaper.text.newspaper.id)" alt="Couverture du magazine">
+                      }
+                      @if (!getNewspaperImage(newspaper.text.newspaper.id)) {
+                      <img class="w-100" style="object-fit: cover; aspect-ratio: 16/9; max-height: 250px;"
+                        src="assets/images/kiosk/jss_11.jpg" alt="Couverture par défaut">
+                      }
+                    </a>
+                  </div>
+                </div>
+                <div data-aos="fade-in" class="ms-3 card-body d-flex flex-column flex-lg-row align-items-stretch p-0">
+                  <div class="order-0 order-lg-1 w-100">
+                    @if (newspaper.text.newspaper.newspaperCategory) {
+                    <div class="row align-items-center ms-0 mb-1">
+                      <div class="badge bg-info rounded-pill px-1 col-auto me-2 mb-0">
+                        {{newspaper.text.newspaper.newspaperCategory ==
+                        "JDS"
+                        ?
+                        "Journal de la Seine" : "Journal Spécial des Société"}}</div>
+                    </div>
+                    }
+                    <h4>
+                      <a class="card-text-truncate" (click)="openPost()" [routerLink]='"/kiosk/" + getYearDate(newspaper.text.newspaper.date) + "/" +
+                      newspaper.text.newspaper.newspaperIssueNumber'>{{newspaper.text.newspaper.date
+                        | date:'yyyy'}} - Numéro {{newspaper.text.newspaper.newspaperIssueNumber}} - page
+                        {{newspaper.text.pageNumber}}</a>
+                    </h4>
+                  </div>
+                </div>
+              </article>
+            </div>
+            }
+          </div>
+          }
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+</ng-template>

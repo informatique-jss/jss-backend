@@ -432,22 +432,24 @@
                               <div class="col-auto p-0 ms-1">
                                 <button type="button" class="btn btn-secondary btn-icon rounded-circle" aria-label="see"
                                   placement="top"
-                                  [ngbTooltip]="'Consultez votre annonce légale : ' + asso.affaire.denomination + ' - ' "
-                                  (click)="$event.stopPropagation(); goToJssAnnouncement(service, $event ); $event.preventDefault();">
+                                  [ngbTooltip]="'Consultez votre annonce légale : ' + asso.affaire.denomination + ' - ' + provision.announcement.department.label"
+                                  (click)="$event.stopPropagation(); goToJssAnnouncementFromProvision(provision, $event ); $event.preventDefault();">
                                   <i class="ai-search"></i>
                                 </button>
                               </div>
-                              <div class="col-auto p-0 ms-1">
+                              <div class="col-auto p-0 ms-1"
+                                *ngIf="publicationReceiptAttachmentForProvisions[provision.id]">
                                 <button type="button" class="btn btn-secondary btn-icon rounded-circle" aria-label="see"
                                   placement="top" [ngbTooltip]="'Téléchargez votre attestation de parution.'"
-                                  (click)="$event.stopPropagation(); downloadPublicationReceipt(provision.announcement, provision); $event.preventDefault();">
+                                  (click)="$event.stopPropagation(); downloadPublicationReceipt(provision); $event.preventDefault();">
                                   <i class="ai-award"></i>
                                 </button>
                               </div>
-                              <div class="col-auto p-0 ms-1">
+                              <div class="col-auto p-0 ms-1"
+                                *ngIf="publicationFlagAttachmentForProvisions[provision.id]">
                                 <button type="button" class="btn btn-secondary btn-icon rounded-circle" aria-label="see"
                                   placement="top" [ngbTooltip]="'Téléchargez votre témoin de parution.'"
-                                  (click)="$event.stopPropagation(); downloadPublicationFlag(provision.announcement); $event.preventDefault();">
+                                  (click)="$event.stopPropagation(); downloadPublicationFlag(provision); $event.preventDefault();">
                                   <i class="ai-pen"></i>
                                 </button>
                               </div>
