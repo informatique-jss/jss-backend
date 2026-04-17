@@ -6,7 +6,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cache.spi.RegionFactory;
 import org.hibernate.stat.CacheRegionStatistics;
 import org.hibernate.stat.Statistics;
-import org.infinispan.configuration.cache.Configuration;
 import org.infinispan.hibernate.cache.v62.InfinispanRegionFactory;
 import org.springframework.stereotype.Component;
 
@@ -56,35 +55,6 @@ public class HibernateCacheUtil {
                     System.err.println("Erreur lors de l'analyse du cache " + region + " : " + e.getMessage());
                 }
             }
-        }
-    }
-
-    public void printCacheStats() {
-        RegionFactory regionFactory = getRegionFactory();
-
-        if (regionFactory instanceof InfinispanRegionFactory infinispanRegionFactory) {
-            var cacheManager = infinispanRegionFactory.getCacheManager();
-
-            try {
-                Configuration conf = cacheManager.getCache("entity").getCacheConfiguration();
-                System.out.println("Max entries: " + conf.memory().maxCount());
-                System.out.println("Storage type: " + conf.memory().storageType());
-            } catch (Exception e) {
-            }
-
-            cacheManager.getCacheNames().forEach(name -> {
-                var cache = cacheManager.getCache(name, false);
-                if (cache != null) {
-                    var stats = cache.getAdvancedCache().getStats();
-                    var config = cache.getCacheConfiguration();
-                    Long maxSize = config.memory().size(); // méthode moderne (Infinispan 10+)
-                    System.out.printf("Cache: %s | Hits: %d | Misses: %d | Stores: %d | Size: %d%n | MaxSize: %s%n",
-                            name, stats.getHits(), stats.getMisses(), stats.getStores(), cache.size(),
-                            maxSize != null ? maxSize : "unbounded");
-                }
-            });
-        } else {
-            System.out.println("RegionFactory is not InfinispanRegionFactory");
         }
     }
 }
