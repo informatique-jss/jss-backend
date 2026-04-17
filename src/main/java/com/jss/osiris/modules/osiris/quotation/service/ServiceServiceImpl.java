@@ -332,12 +332,17 @@ public class ServiceServiceImpl implements ServiceService {
         List<Provision> provisions = new ArrayList<Provision>();
         if (forceNonMergeable) {
             for (AssoServiceProvisionType assoServiceProvisionType : assoServiceProvisionTypes)
-                if (assoServiceProvisionType.getProvisionType() != null)
-                    provisions.add(generateProvisionFromProvisionType(assoServiceProvisionType.getProvisionType(),
-                            service, assoServiceProvisionType, assoServiceProvisionType.getIsPriority()));
-        }
-
-        if (!forceNonMergeable)
+                if (assoServiceProvisionType.getProvisionType() != null) {
+                    Provision newProvision = generateProvisionFromProvisionType(
+                            assoServiceProvisionType.getProvisionType(),
+                            service, assoServiceProvisionType, assoServiceProvisionType.getIsPriority());
+                    if (newProvision.getProvisionType().getProvisionScreenType().getCode()
+                            .equals(ProvisionScreenType.ANNOUNCEMENT))
+                        newProvision = completeNoticesFromAnnouncementProvision(newProvision,
+                                List.of(assoServiceProvisionType), affaire);
+                    provisions.add(newProvision);
+                }
+        } else
             provisions = mergeProvisionTypes(assoServiceProvisionTypes, service, affaire);
 
         if (service.getProvisions() != null && service.getProvisions().size() > 0)
