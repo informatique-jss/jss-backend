@@ -22,6 +22,7 @@ import com.jss.osiris.libs.mail.CustomerMailService;
 import com.jss.osiris.libs.mail.model.CustomerMail;
 import com.jss.osiris.modules.osiris.invoicing.model.InvoiceItem;
 import com.jss.osiris.modules.osiris.miscellaneous.model.Attachment;
+import com.jss.osiris.modules.osiris.miscellaneous.model.Notification;
 import com.jss.osiris.modules.osiris.miscellaneous.service.AttachmentService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.ConstantService;
 import com.jss.osiris.modules.osiris.miscellaneous.service.NotificationService;
@@ -247,6 +248,10 @@ public class ServiceServiceImpl implements ServiceService {
             for (MissingAttachmentQuery maq : service.getMissingAttachmentQueries()) {
                 maq.setService(null);
             }
+        }
+        List<Notification> notifications = service.getNotifications();
+        if (notifications != null && notifications.size() > 0) {
+            notifications.forEach(notification -> notificationService.deleteNotification(notification));
         }
         service.setServiceTypes(null);
         serviceRepository.delete(service);
