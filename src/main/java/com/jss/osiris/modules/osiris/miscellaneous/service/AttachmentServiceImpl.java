@@ -525,6 +525,18 @@ public class AttachmentServiceImpl implements AttachmentService {
     }
 
     @Override
+    public Attachment getLastAttachmentForAttachmentType(List<Attachment> attachments, String attachmentTypeCode) {
+        if (attachments != null) {
+            sortAttachmentByDateDesc(attachments);
+            for (Attachment attachment : attachments)
+                if (attachment.getAttachmentType().getCode().equals(attachmentTypeCode)
+                        && !Boolean.TRUE.equals(attachment.getIsDisabled()))
+                    return attachment;
+        }
+        return null;
+    }
+
+    @Override
     public Attachment cloneAttachment(Attachment attachment) throws OsirisException {
         if (attachment == null)
             throw new OsirisException(null, "Empty attachment to clone");

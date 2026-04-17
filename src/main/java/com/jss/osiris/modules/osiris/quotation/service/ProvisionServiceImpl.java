@@ -1,7 +1,6 @@
 package com.jss.osiris.modules.osiris.quotation.service;
 
 import java.io.File;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -246,17 +245,6 @@ public class ProvisionServiceImpl implements ProvisionService {
     @Override
     @Transactional
     public Attachment getLastAttachmentForProvisionAndAttachmentType(Provision provision, String attachmentTypeCode) {
-        List<Attachment> attachments = provision.getAttachments();
-
-        LocalDateTime lastAttachmentCreatedDate = LocalDateTime.MIN;
-        Attachment attachmentToReturn = null;
-        for (Attachment attachment : attachments)
-            if (attachment.getAttachmentType().getCode().equals(attachmentTypeCode))
-                if (attachment.getCreatDateTime().isAfter(lastAttachmentCreatedDate)) {
-                    lastAttachmentCreatedDate = attachment.getCreatDateTime();
-                    attachmentToReturn = attachment;
-                }
-
-        return attachmentToReturn;
+        return attachmentService.getLastAttachmentForAttachmentType(provision.getAttachments(), attachmentTypeCode);
     }
 }

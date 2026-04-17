@@ -923,17 +923,12 @@ public class MailHelper {
         }
 
         if (attachments != null && attachments.size() > 0) {
-            for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(attachments)) {
-                if (attachment.getAttachmentType() != null &&
-                        attachment.getAttachmentType().getId()
-                                .equals(constantService.getAttachmentTypePurchaseOrder().getId())
-                        && !Boolean.TRUE.equals(attachment.getIsDisabled())) {
-                    if (mail.getAttachments() == null)
-                        mail.setAttachments(new ArrayList<Attachment>());
-                    mail.getAttachments().add(attachment);
-                    break;
-                }
-            }
+            if (mail.getAttachments() == null)
+                mail.setAttachments(new ArrayList<Attachment>());
+            Attachment attachment = attachmentService.getLastAttachmentForAttachmentType(attachments,
+                    constantService.getAttachmentTypePurchaseOrder().getCode());
+            if (attachment != null)
+                mail.getAttachments().add(attachment);
         }
 
         mail.setReplyTo(customerOrder.getResponsable().getSalesEmployee());
@@ -1101,17 +1096,14 @@ public class MailHelper {
         mail.setMailComputeResult(mailComputeHelper.computeMailForQuotationMail(quotation));
 
         if (quotation.getAttachments() != null && quotation.getAttachments().size() > 0) {
-            for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(quotation.getAttachments())) {
-                if (attachment.getAttachmentType() != null && attachment.getAttachmentType().getId()
-                        .equals(constantService.getAttachmentTypeQuotation().getId())
-                        && !Boolean.TRUE.equals(attachment.getIsDisabled())) {
-                    if (mail.getAttachments() == null)
-                        mail.setAttachments(new ArrayList<Attachment>());
-                    mail.getAttachments().add(attachment);
-                    break;
-                }
-            }
+            if (mail.getAttachments() == null)
+                mail.setAttachments(new ArrayList<Attachment>());
+            Attachment attachment = attachmentService.getLastAttachmentForAttachmentType(quotation.getAttachments(),
+                    constantService.getAttachmentTypeQuotation().getCode());
+            if (attachment != null)
+                mail.getAttachments().add(attachment);
         }
+
         mail.setSubject("Votre devis n°" + quotation.getId());
         mail.setMailTemplate(CustomerMail.TEMPLATE_WAITING_QUOTATION_VALIDATION);
 
@@ -1154,17 +1146,12 @@ public class MailHelper {
         mail.setMailComputeResult(mailComputeHelper.computeMailForCustomerOrderCreationConfirmation(customerOrder));
 
         if (attachments != null && attachments.size() > 0) {
-            for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(attachments)) {
-                if (attachment.getAttachmentType() != null &&
-                        attachment.getAttachmentType().getId()
-                                .equals(constantService.getAttachmentTypePurchaseOrder().getId())
-                        && !Boolean.TRUE.equals(attachment.getIsDisabled())) {
-                    if (mail.getAttachments() == null)
-                        mail.setAttachments(new ArrayList<Attachment>());
-                    mail.getAttachments().add(attachment);
-                    break;
-                }
-            }
+            if (mail.getAttachments() == null)
+                mail.setAttachments(new ArrayList<Attachment>());
+            Attachment attachment = attachmentService.getLastAttachmentForAttachmentType(attachments,
+                    constantService.getAttachmentTypePurchaseOrder().getCode());
+            if (attachment != null)
+                mail.getAttachments().add(attachment);
         }
 
         mail.setSubject(
@@ -1235,13 +1222,12 @@ public class MailHelper {
         currentProvision = provisionService.getProvision(currentProvision.getId());
 
         List<Attachment> attachments = new ArrayList<Attachment>();
-        if (currentProvision.getAttachments() != null) {
-            for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(currentProvision.getAttachments()))
-                if (attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypePublicationReceipt()
-                        .getId()) && !Boolean.TRUE.equals(attachment.getIsDisabled())) {
-                    attachments.add(attachment);
-                    break;
-                }
+        if (attachments != null && attachments.size() > 0) {
+            Attachment attachment = attachmentService.getLastAttachmentForAttachmentType(
+                    currentProvision.getAttachments(),
+                    constantService.getAttachmentTypePublicationReceipt().getCode());
+            if (attachment != null)
+                attachments.add(attachment);
         }
 
         // Do not check when send to me because we don't necessarily already generate
@@ -1289,14 +1275,14 @@ public class MailHelper {
             return;
 
         List<Attachment> attachments = new ArrayList<Attachment>();
-        for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(currentProvision.getAttachments()))
-            if (attachment.getAttachmentType().getId()
-                    .equals(constantService.getAttachmentTypeProofReading()
-                            .getId())
-                    && !Boolean.TRUE.equals(attachment.getIsDisabled())) {
+
+        if (attachments != null && attachments.size() > 0) {
+            Attachment attachment = attachmentService.getLastAttachmentForAttachmentType(
+                    currentProvision.getAttachments(),
+                    constantService.getAttachmentTypeProofReading().getCode());
+            if (attachment != null)
                 attachments.add(attachment);
-                break;
-            }
+        }
 
         if (attachments.size() == 0)
             throw new OsirisException(null,
@@ -1367,13 +1353,12 @@ public class MailHelper {
             return;
 
         List<Attachment> attachments = new ArrayList<Attachment>();
-        if (currentProvision.getAttachments() != null) {
-            for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(currentProvision.getAttachments()))
-                if (attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypePublicationFlag()
-                        .getId()) && !Boolean.TRUE.equals(attachment.getIsDisabled())) {
-                    attachments.add(attachment);
-                    break;
-                }
+        if (attachments != null && attachments.size() > 0) {
+            Attachment attachment = attachmentService.getLastAttachmentForAttachmentType(
+                    currentProvision.getAttachments(),
+                    constantService.getAttachmentTypePublicationFlag().getCode());
+            if (attachment != null)
+                attachments.add(attachment);
         }
 
         // Do not check when send to me because we don't necessarily already generate
@@ -1412,12 +1397,13 @@ public class MailHelper {
             mail.setMailTemplate(CustomerMail.TEMPLATE_SEND_ANNOUNCEMENT_TO_CONFRERE_REMINDER);
 
         List<Attachment> attachments = new ArrayList<Attachment>();
-        for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(provision.getAttachments()))
-            if (attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeAnnouncement()
-                    .getId()) && !Boolean.TRUE.equals(attachment.getIsDisabled())) {
+        if (attachments != null && attachments.size() > 0) {
+            Attachment attachment = attachmentService.getLastAttachmentForAttachmentType(
+                    provision.getAttachments(),
+                    constantService.getAttachmentTypeAnnouncement().getCode());
+            if (attachment != null)
                 attachments.add(attachment);
-                break;
-            }
+        }
 
         mail.setAttachments(attachments);
         mail.setReplyTo(provision.getAssignedTo());
@@ -1447,12 +1433,13 @@ public class MailHelper {
         mail.setMailTemplate(CustomerMail.TEMPLATE_SEND_ANNOUNCEMENT_ERRATUM_TO_CONFRERE);
 
         List<Attachment> attachments = new ArrayList<Attachment>();
-        for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(provision.getAttachments()))
-            if (attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeAnnouncement()
-                    .getId()) && !Boolean.TRUE.equals(attachment.getIsDisabled())) {
+        if (attachments != null && attachments.size() > 0) {
+            Attachment attachment = attachmentService.getLastAttachmentForAttachmentType(
+                    provision.getAttachments(),
+                    constantService.getAttachmentTypeAnnouncement().getCode());
+            if (attachment != null)
                 attachments.add(attachment);
-                break;
-            }
+        }
 
         mail.setAttachments(attachments);
         mail.setReplyTo(customerOrder.getResponsable().getSalesEmployee());
@@ -1480,12 +1467,13 @@ public class MailHelper {
         mail.setMailTemplate(CustomerMail.TEMPLATE_SEND_CONFRERE_PROVIDER_INVOICE_REMINDER);
 
         List<Attachment> attachments = new ArrayList<Attachment>();
-        for (Attachment attachment : attachmentService.sortAttachmentByDateDesc(provision.getAttachments()))
-            if (attachment.getAttachmentType().getId().equals(constantService.getAttachmentTypeAnnouncement()
-                    .getId()) && !Boolean.TRUE.equals(attachment.getIsDisabled())) {
+        if (attachments != null && attachments.size() > 0) {
+            Attachment attachment = attachmentService.getLastAttachmentForAttachmentType(
+                    provision.getAttachments(),
+                    constantService.getAttachmentTypeAnnouncement().getCode());
+            if (attachment != null)
                 attachments.add(attachment);
-                break;
-            }
+        }
 
         mail.setAttachments(attachments);
         if (provision.getAssignedTo() != null)

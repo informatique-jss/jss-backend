@@ -53,6 +53,8 @@ public interface AttachmentService {
 
         public List<Attachment> sortAttachmentByDateDesc(List<Attachment> attachments);
 
+        public Attachment getLastAttachmentForAttachmentType(List<Attachment> attachments, String attachmentTypeCode);
+
         public Attachment cloneAttachment(Attachment attachment) throws OsirisException;
 
         public List<Attachment> findByDocumentAssocieInfogreffe(DocumentAssocieInfogreffe documentAssocieInfogreffe);
