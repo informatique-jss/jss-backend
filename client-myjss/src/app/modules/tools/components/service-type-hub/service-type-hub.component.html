@@ -108,24 +108,23 @@
               <hr *ngIf="currentUser && serviceType.totalPreTaxPrice && serviceType.totalPreTaxPrice>0" />
               <ng-container *ngIf="currentUser && serviceType.totalPreTaxPrice && serviceType.totalPreTaxPrice>0">
                 <h6 id="pricing">Tarifs</h6>
-                <div class="col-12 col-md-4 mb-2">
-                  <span class="text-nowrap"
+                <div class="col-12 mb-2">
+                  <span
                     *ngIf="serviceType.serviceTypeLinked == null || (serviceType.serviceTypeLinked && serviceType.serviceTypeLinked.totalPreTaxPrice && serviceType.serviceTypeLinked.totalPreTaxPrice<=0)">Prix
-                    total
-                    estimé (HT) : {{serviceType.totalPreTaxPrice}} €<span
+                    total estimé (HT) : {{serviceType.totalPreTaxPrice}} €<span
                       *ngIf="serviceType.deboursAmount && serviceType.deboursAmount>0"> (dont débours
                       {{serviceType.deboursAmount}}€) </span>
                   </span>
                   <div
                     *ngIf="serviceType.serviceTypeLinked && serviceType.serviceTypeLinked.totalPreTaxPrice && serviceType.serviceTypeLinked.totalPreTaxPrice >0">
-                    <span class="text-nowrap">Prix
+                    <span>Prix
                       estimé pour l’annonce légale seule (HT) : {{serviceType.serviceTypeLinked.totalPreTaxPrice}}
                       €<span
                         *ngIf="serviceType.serviceTypeLinked.deboursAmount && serviceType.serviceTypeLinked.deboursAmount>0">
                         (dont débours
                         {{serviceType.serviceTypeLinked.deboursAmount}}€) </span>
                     </span> <br />
-                    <span class="text-nowrap">Prix
+                    <span>Prix
                       estimé pour l’annonce légale et les formalités associées (HT) :
                       {{serviceType.totalPreTaxPrice}} €<span
                         *ngIf="serviceType.deboursAmount && serviceType.deboursAmount>0">

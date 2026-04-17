@@ -8,11 +8,6 @@
 }
  
 
-.no-scroll {
-  animation: none !important;
-  transform: translateY(0) !important;
-}
-
 .fixed-title {
   font-weight: bold;
   margin-bottom: 8px;
@@ -21,35 +16,8 @@
   gap: 8px;             
 }
 
-/*Scrolling area */
-.scroll-container {
-  max-height: 65px;  
-  overflow: hidden;
-}
-
-.scroll-content {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  animation: vertical-scroll 12s linear infinite;
-}
-
-/* Pause when hovering */
-.notice-banner:hover .scroll-content {
-  animation-play-state: paused;
-}
-
 .msg-block {
   white-space: pre-line;
   font-size: 14px;
   line-height: 20px; 
-}
-
-@keyframes vertical-scroll {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(-50%);
-  }
 }

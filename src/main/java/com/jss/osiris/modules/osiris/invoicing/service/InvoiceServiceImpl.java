@@ -770,4 +770,13 @@ public class InvoiceServiceImpl implements InvoiceService {
             return invoiceRepository.findByInvoiceStatusAndResponsableIsNotNull(invoiceStatus);
         return invoiceRepository.findByInvoiceStatus(invoiceStatus);
     }
+
+    @Override
+    public List<Invoice> getInvoicesByProviderAndInvoiceStatusInAndCreatedDateBetween(Provider provider,
+            List<InvoiceStatus> invoiceStatus,
+            LocalDateTime startDate,
+            LocalDateTime endDate) {
+        return invoiceRepository.findByProviderAndInvoiceStatusInAndCreatedDateBetween(provider, invoiceStatus,
+                startDate, endDate);
+    }
 }
